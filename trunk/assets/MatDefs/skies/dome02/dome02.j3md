@@ -1,0 +1,56 @@
+// (c) Copyright 2013 Stephen Gold <sgold@sonic.net>
+// Distributed under the terms of the GNU General Public License
+
+// This file is part of the JME3 Utilities Package.
+
+// The JME3 Utilities Package is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as published by the
+// Free Software Foundation, either version 3 of the License, or (at your
+// option) any later version.
+
+// The JME3 Utilities Package is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+// or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+// for more details.
+
+// You should have received a copy of the GNU General Public License along with
+// the JME3 Utilities Package.  If not, see <http://www.gnu.org/licenses/>.
+
+// A material for use with the SkyMaterial class: this version includes zero
+// objects and two cloud layers.
+
+MaterialDef dome02 {
+    MaterialParameters {
+        Color ClearColor
+        Vector2 TopCoord
+
+        Texture2D StarsColorMap
+
+        Color Clouds0Color
+        Float Clouds0Scale : 1.0
+	Texture2D Clouds0AlphaMap
+	Vector2 Clouds0Offset
+
+        Color Clouds1Color
+        Float Clouds1Scale : 1.0
+	Texture2D Clouds1AlphaMap
+	Vector2 Clouds1Offset
+
+	Color HazeColor
+	Texture2D HazeAlphaMap
+    }
+
+    Technique {
+        Defines {
+	    HAS_STARS : StarsColorMap
+	    HAS_CLOUDS0 : Clouds0AlphaMap
+	    HAS_CLOUDS1 : Clouds1AlphaMap
+	    HAS_HAZE : HazeAlphaMap
+        }
+        FragmentShader GLSL100: MatDefs/skies/dome02/dome02.frag
+        VertexShader   GLSL100: MatDefs/skies/dome02/dome02.vert
+        WorldParameters {
+            WorldViewProjectionMatrix
+        }
+    }
+}

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ (c) Copyright 2013 Stephen Gold <sgold@sonic.net>
+ Distributed under the terms of the GNU General Public License
+
+ This file is part of the JME3 Utilities Package.
+
+ The JME3 Utilities Package is free software: you can redistribute it and/or
+ modify it under the terms of the GNU General Public License as published by the
+ Free Software Foundation, either version 3 of the License, or (at your
+ option) any later version.
+
+ The JME3 Utilities Package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ for more details.
+
+ You should have received a copy of the GNU General Public License along with
+ the JME3 Utilities Package.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!--
+ Nifty XML to support a popup menu.
+-->
+<nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
+
+    <!-- define styles and controls -->
+    <useStyles filename="nifty-default-styles.xml"/>
+    <useStyles filename="Interface/Nifty/styles/bats.xml"/>
+    <useControls filename="nifty-default-controls.xml"/>
+
+    <popup id="popup-menu"
+           controller="jme3utilities.SimpleScreenController"
+           backgroundColor="#0008"
+           childLayout="absolute-inside">
+        <control name="niftyMenu" id="#menu"/>
+        <interact
+            onClick="closeActivePopup()"
+            onSecondaryClick="closeActivePopup()"
+            onTertiaryClick="closeActivePopup()"/>
+    </popup>
+</nifty>

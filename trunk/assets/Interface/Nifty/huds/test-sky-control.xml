@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ (c) Copyright 2013 Stephen Gold <sgold@sonic.net>
+ Distributed under the terms of the GNU General Public License
+
+ This file is part of the JME3 Utilities Package.
+
+ The JME3 Utilities Package is free software: you can redistribute it and/or
+ modify it under the terms of the GNU General Public License as published by the
+ Free Software Foundation, either version 3 of the License, or (at your
+ option) any later version.
+
+ The JME3 Utilities Package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ for more details.
+
+ You should have received a copy of the GNU General Public License along with
+ the JME3 Utilities Package.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!--
+ The heads-up display (HUD) for the TestSkyControl application.
+-->
+<nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
+
+    <!-- define styles and controls -->
+    <useStyles filename="nifty-default-styles.xml"/>
+    <useStyles filename="Interface/Nifty/styles/bats.xml"/>
+    <useControls filename="nifty-default-controls.xml"/>
+
+    <screen id="test-sky-control"
+            controller="jme3utilities.sky.test.TestSkyControlHud">
+        <layer childLayout="horizontal">
+            <panel/>
+            <panel id="hud"
+                   childLayout="vertical"
+                   width="208">
+                <control name="scrollPanel"
+                         style="bats-scroll-panel"
+                         horizontal="false">
+                    <panel childLayout="vertical"
+                           padding="10"
+                           width="188">
+
+                        <panel style="statusPanel"
+                               height="40">
+                            <control name="label"
+                                     text="The H key toggles this display."/>
+                        </panel>
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="The view aximuth is:"/>
+                            <control name="label"
+                                     id="azimuthStatus"
+                                     textHAlign="right"/>
+                        </panel>
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="The field of view is:"/>
+                            <control name="label"
+                                     id="fovStatus"
+                                     textHAlign="right"/>
+                        </panel>
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="The time is:"/>
+                            <control name="label" id="time"
+                                     textHAlign="right"/>
+                        </panel>
+                        <panel style="buttonPanel"
+                               height="28">
+                            <control name="button"
+                                     id="idToAvoidOffendingNifty"
+                                     label="Select time direction">
+                                <interact onRelease="perform(direction)"/>
+                            </control>
+                        </panel>
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     id="speedSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider"
+                                 id="speedSlider"
+                                 buttonStepSize="1"
+                                 height="40"
+                                 max="4"
+                                 min="0"
+                                 stepSize="0.01"/>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     id="cloudinessSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider"
+                                 id="cloudinessSlider"
+                                 buttonStepSize="1"
+                                 height="40"
+                                 initial="1"
+                                 max="1"
+                                 min="0"
+                                 stepSize="0.01"/>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     id="cloudRateSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider"
+                                 id="cloudRateSlider"
+                                 buttonStepSize="1"
+                                 height="30"
+                                 initial="1"
+                                 max="9"
+                                 min="-9"
+                                 stepSize="0.01"/>
+
+                        <panel childLayout="horizontal">
+                            <control id="modulationCheckBox"
+                                     name="checkbox"
+                                     width="20"/>
+                            <control name="label"
+                                     text="   modulate the main light"/>
+                        </panel>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     id="latitudeSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider"
+                                 id="latitudeSlider"
+                                 buttonStepSize="90"
+                                 height="40"
+                                 initial="51.1788"
+                                 max="90"
+                                 min="-90"
+                                 stepSize="0.01"/>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     id="solarLongSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider"
+                                 id="solarLongSlider"
+                                 buttonStepSize="90"
+                                 height="40"
+                                 initial="0"
+                                 max="360"
+                                 min="0"
+                                 stepSize="1"/>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     id="phaseStatus"/>
+                        </panel>
+                        <panel style="buttonPanel"
+                               height="28">
+                            <control name="button"
+                                     id="id2ToAvoidNiftyWarning"
+                                     label="Select lunar phase">
+                                <interact onRelease="perform(phase)"/>
+                            </control>
+                        </panel>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     id="reliefSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider"
+                                 id="reliefSlider"
+                                 buttonStepSize="100"
+                                 height="40"
+                                 initial="50"
+                                 max="500"
+                                 min="1"
+                                 stepSize="0.01"/>
+                    </panel>
+                </control>
+            </panel>
+        </layer>
+    </screen>
+</nifty>
