@@ -19,7 +19,7 @@ Check out the JME3 Utilities Package source files using Subversion:
   * For "Repository Folder(s):" specify "trunk" (without the quotes).
   * For "Local folder:" specify a writable folder on a local filesystem.
   * Make sure the "Skip trunk" box is checked.
-  * Make sure the "Scan for NetBeans Projects after Checkout" box is checked.
+  * Make sure the "Scan for !NetBeans Projects after Checkout" box is checked.
   * Click on the "Finish" button.
   * When asked whether to open the project, click the "Open Project" button.
   * There will be problems due to missing JAR files.  Do not attempt to resolve them yet.
