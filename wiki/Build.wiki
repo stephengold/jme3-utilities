@@ -22,9 +22,9 @@ Check out the JME3 Utilities Package source files using Subversion:
   * Make sure the "Scan for NetBeans Projects after Checkout" box is checked.
   * Click on the "Finish" button.
   * When asked whether to open the project, click the "Open Project" button.
-  * There will be problems due to missing JAR resources.  Do not attempt to resolve them yet.
+  * There will be problems due to missing JAR files.  Do not attempt to resolve them yet.
 
-== External libraries ==
+== External JAR files ==
 
  * Download the Guava library JAR file from "https://code.google.com/p/guava-libraries" to the "jars" folder of the new project.
  * Download the JCommander JAR file from "http://mvnrepository.com/artifact/com.beust/jcommander" to the "jars" folder of the new project.
