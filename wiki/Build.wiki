@@ -34,13 +34,9 @@ Check out the JME3 Utilities Package source files using Subversion:
  * Make the new project the main project in the IDE:
    * Right-click on the new project (not its assets) in the "Projects" window of the IDE.
    * Select "Set as Main Project".
- * Delete the generic "mygame" package:
-   * Expand the new project in the "Projects" window of the IDE.
-   * Expand "Source Packages" under the new project.
-   * Right-click on the "mygame" under "Source Packages".
-   * Select "Delete".
-   * When asked to delete the package, click the "OK" button.
  * Add downloaded JARs to the project:
-   * Open the project's properties again.
+   * Open the project's properties in the IDE:
+     * Right-click on the new project (not its assets) in the "Projects" window.
+     * Select "Properties".
    * Under "Categories:" select "Libraries".
    * Click on the "OK" button.
