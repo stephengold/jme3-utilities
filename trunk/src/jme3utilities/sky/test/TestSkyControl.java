@@ -117,8 +117,6 @@ public class TestSkyControl
          */
         logger.log(Level.INFO, "jME3-core version is {0}",
                 MyString.quote(JmeVersion.getFullName()));
-        logger.log(Level.INFO, "LWJGL version is {0}",
-                MyString.quote(Sys.getVersion()));
         /*
          * Instantiate the application.
          */
@@ -165,6 +163,9 @@ public class TestSkyControl
      */
     @Override
     public void simpleInitApp() {
+        logger.log(Level.INFO, "LWJGL version is {0}",
+                MyString.quote(Sys.getVersion()));
+
         configureCamera();
         /*
          * light sources
@@ -179,7 +180,7 @@ public class TestSkyControl
         /*
          * shadow renderer
          */
-        dlsr = new DirectionalLightShadowRenderer(assetManager, 4096, 3);
+        dlsr = new DirectionalLightShadowRenderer(assetManager, 4_096, 3);
         dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
         dlsr.setLight(mainLight);
         viewPort.addProcessor(dlsr);

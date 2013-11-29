@@ -109,12 +109,10 @@ public class TestSkyMaterial
         Misc.setLoggingLevels(Level.WARNING);
         logger.setLevel(Level.INFO);
         /*
-         * Log the jME and LWJGL version strings.
+         * Log the jME version string.
          */
         logger.log(Level.INFO, "jME3-core version is {0}",
                 MyString.quote(JmeVersion.getFullName()));
-        logger.log(Level.INFO, "LWJGL version is {0}",
-                MyString.quote(Sys.getVersion()));
         /*
          * Instantiate the application.
          */
@@ -169,17 +167,10 @@ public class TestSkyMaterial
      */
     @Override
     public void simpleInitApp() {
-        /*
-         * Fish-eye view, from origin, looking upward at the zenith.
-         */
-        float fovDegrees = 90f;
-        setFrustrum(fovDegrees);
+        logger.log(Level.INFO, "LWJGL version is {0}",
+                MyString.quote(Sys.getVersion()));
 
-        cam.setLocation(Vector3f.ZERO.clone());
-
-        Quaternion zenith = new Quaternion();
-        zenith.lookAt(Vector3f.UNIT_Y, Vector3f.UNIT_X);
-        cam.setRotation(zenith);
+        configureCamera();
         /*
          * Create a dome mesh geometry for the sky.
          */
@@ -205,6 +196,27 @@ public class TestSkyMaterial
     }
     // *************************************************************************
     // private methods
+
+    /**
+     * Configure the camera, including flyCam.
+     */
+    private void configureCamera() {
+        /*
+         * Fish-eye view, from the origin, looking up at the zenith.
+         */
+        float fovDegrees = 90f;
+        setFrustum(fovDegrees);
+
+        cam.setLocation(Vector3f.ZERO.clone());
+
+        Quaternion zenith = new Quaternion();
+        zenith.lookAt(Vector3f.UNIT_Y, Vector3f.UNIT_X);
+        cam.setRotation(zenith);
+        /*
+         * Disable flyCam.
+         */
+        flyCam.setEnabled(false);
+    }
 
     /**
      * Initialize the user interface.
@@ -244,11 +256,11 @@ public class TestSkyMaterial
     }
 
     /**
-     * (Re-)initialize the render camera's frustrum.
+     * (Re-)initialize the render camera's frustum.
      *
      * @param fovDegrees the desired field-of-view angle in degrees
      */
-    private void setFrustrum(float fovDegrees) {
+    private void setFrustum(float fovDegrees) {
         Camera camera = getCamera();
         float nearPlaneDistance = 0.1f;
         float farPlaneDistance = 10000f;
