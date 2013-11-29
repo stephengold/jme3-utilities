@@ -14,5 +14,14 @@
             </source-roots>
             <test-roots/>
         </data>
+        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>app</word>
+            <word>Esc</word>
+            <word>filesystem</word>
+            <word>hotkey</word>
+            <word>popup</word>
+            <word>signal's</word>
+            <word>texture's</word>
+        </spellchecker-wordlist>
     </configuration>
 </project>
