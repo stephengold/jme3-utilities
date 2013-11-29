@@ -205,6 +205,9 @@ public class MakeStarMaps {
          * Read the star catalog.
          */
         application.readCatalog();
+        if (application.stars.isEmpty()) {
+            return;
+        }
         /*
          * Generate texture maps.
          */
@@ -581,7 +584,8 @@ public class MakeStarMaps {
             FileReader fileReader = new FileReader(catalogFile);
             bufferedReader = new BufferedReader(fileReader);
         } catch (FileNotFoundException exception) {
-            logger.log(Level.SEVERE, "open of {0} failed", catalogFilePath);
+            logger.log(Level.SEVERE, "open of {0} failed",
+                    MyString.quote(catalogFilePath));
             return;
         }
         /*
