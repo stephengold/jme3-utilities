@@ -31,9 +31,6 @@ Check out the JME3 Utilities Package source files using Subversion:
 
 == Project configuration ==
 
- * Make the new project the main project in the IDE:
-   * Right-click on the new project (not its assets) in the "Projects" window of the IDE.
-   * Select "Set as Main Project".
  * Add downloaded JARs to the project:
    * Open the project's properties in the IDE:
      * Right-click on the new project (not its assets) in the "Projects" window.
