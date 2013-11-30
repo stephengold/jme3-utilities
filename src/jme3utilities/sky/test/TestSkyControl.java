@@ -31,7 +31,6 @@ import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
-import com.jme3.system.JmeVersion;
 import de.lessvoid.nifty.Nifty;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -112,11 +111,6 @@ public class TestSkyControl
          */
         Misc.setLoggingLevels(Level.WARNING);
         logger.setLevel(Level.INFO);
-        /*
-         * Log the jME and LWJGL version strings.
-         */
-        logger.log(Level.INFO, "jME3-core version is {0}",
-                MyString.quote(JmeVersion.getFullName()));
         /*
          * Instantiate the application.
          */

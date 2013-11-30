@@ -30,7 +30,6 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.system.AppSettings;
-import com.jme3.system.JmeVersion;
 import de.lessvoid.nifty.Nifty;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -108,11 +107,6 @@ public class TestSkyMaterial
          */
         Misc.setLoggingLevels(Level.WARNING);
         logger.setLevel(Level.INFO);
-        /*
-         * Log the jME version string.
-         */
-        logger.log(Level.INFO, "jME3-core version is {0}",
-                MyString.quote(JmeVersion.getFullName()));
         /*
          * Instantiate the application.
          */
