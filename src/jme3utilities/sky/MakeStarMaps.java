@@ -99,6 +99,10 @@ public class MakeStarMaps {
     final private static float radiansPerHour =
             FastMath.TWO_PI / SkyControl.hoursPerDay;
     /**
+     * expected id of the last entry in the catalog
+     */
+    final private static int lastEntryExpected = 9110;
+    /**
      * number of degrees from equator to pole
      */
     final private static int maxDeclination = 90;
@@ -110,10 +114,6 @@ public class MakeStarMaps {
      * number of seconds in a minute
      */
     final private static int maxSeconds = 60;
-    /**
-     * number of entries in the star catalog
-     */
-    final private static int entriesExpected = 9110;
     /**
      * size of the texture map (pixels per side)
      */
@@ -590,11 +590,13 @@ public class MakeStarMaps {
         }
         /*
          * Read the catalog line by line and use the data therein
-         * to build up the collection.
+         * to build up the collection of stars.
          */
+        int duplicateEntries = 0;
         int nextEntry = 1;
+        int missedEntries = 0;
+        int readEntries = 0;
         int skippedEntries = 0;
-        int duplicateStars = 0;
         for (;;) {
             String textLine = null;
             try {
@@ -605,31 +607,61 @@ public class MakeStarMaps {
             if (textLine == null) {
                 break;
             }
-            String prefix = String.format("%5d", nextEntry);
-            if (textLine.startsWith(prefix)) {
-                Star star = null;
-                try {
-                    star = readStar(textLine, nextEntry);
-
-                } catch (InvalidEntryException exception) {
-                    return;
-
-                } catch (InvalidMagnitudeException exception) {
-                    logger.log(Level.FINE, "entry #{0} skipped", nextEntry);
-                    skippedEntries++;
-                }
-                if (star != null) {
-                    if (stars.contains(star)) {
-                        logger.log(Level.FINE, "star #{0} is a duplicate",
-                                nextEntry);
-                        duplicateStars++;
-                    } else {
-                        boolean success = stars.add(star);
-                        assert success : nextEntry;
-                    }
-                }
-                nextEntry++;
+            /*
+             * If the line does not resemble a catalog entry,
+             * then silently ignore it.
+             */
+            if (textLine.length() < 5) {
+                continue;
             }
+            String actualPrefix = textLine.substring(0, 5);
+            if (!actualPrefix.matches("[ ]*[0-9]+")) {
+                continue;
+            }
+            readEntries++;
+            /*
+             * Cope with missing/duplicate entry ids.
+             */
+            int actualEntry = Integer.valueOf(actualPrefix.trim());
+            if (actualEntry > nextEntry) {
+                logger.log(Level.FINE, "missed entries #{0} through #{1}",
+                        new Object[]{nextEntry, actualEntry - 1});
+                nextEntry = actualEntry;
+                missedEntries += actualEntry - nextEntry;
+
+            } else if (actualEntry < nextEntry) {
+                logger.log(Level.WARNING,
+                        "skipped entry due to duplicate id #{0}",
+                        actualEntry);
+                skippedEntries++;
+                continue;
+            }
+
+            assert actualEntry == nextEntry : nextEntry;
+            Star star = null;
+            try {
+                star = readStar(textLine, nextEntry);
+
+            } catch (InvalidEntryException exception) {
+                return;
+
+            } catch (InvalidMagnitudeException exception) {
+                logger.log(Level.FINE,
+                        "skipped entry #{0} due to invalid magnitude",
+                        nextEntry);
+                skippedEntries++;
+            }
+            if (star != null) {
+                if (stars.contains(star)) {
+                    logger.log(Level.FINE, "entry #{0} is a duplicate",
+                            nextEntry);
+                    duplicateEntries++;
+                } else {
+                    boolean success = stars.add(star);
+                    assert success : nextEntry;
+                }
+            }
+            nextEntry++;
         }
         try {
             bufferedReader.close();
@@ -637,25 +669,27 @@ public class MakeStarMaps {
             logger.log(Level.WARNING, "close of {0} failed", catalogFilePath);
         }
         /*
-         * Verify that the expected number of entries were read.
+         * Verify that the entire catalog was read.
          */
-        int entriesRead = nextEntry - 1;
-        if (entriesRead != entriesExpected) {
+        int lastEntryRead = nextEntry - 1;
+        if (lastEntryRead != lastEntryExpected) {
             logger.log(Level.WARNING,
-                    "expected {0} catalog entries but read {1}",
-                    new Object[]{entriesExpected, entriesRead});
-        } else {
-            logger.log(Level.INFO, "read {0} catalog entries from {1}",
-                    new Object[]{entriesRead, catalogFilePath});
+                    "expected last entry to be #{0} but it was actually #{1}",
+                    new Object[]{lastEntryExpected, lastEntryRead});
         }
         /*
          * Log statistics.
          */
+        if (missedEntries > 0) {
+            logger.log(Level.WARNING, "missed {0} entries", missedEntries);
+        }
+        logger.log(Level.INFO, "read {0} catalog entries from {1}",
+                new Object[]{readEntries, catalogFilePath});
+        if (duplicateEntries > 0) {
+            logger.log(Level.WARNING, "{0} duplicate entries", duplicateEntries);
+        }
         if (skippedEntries > 0) {
             logger.log(Level.WARNING, "{0} entries skipped", skippedEntries);
-        }
-        if (duplicateStars > 0) {
-            logger.log(Level.WARNING, "{0} duplicate stars", duplicateStars);
         }
         logger.log(Level.INFO, "collected {0} stars", stars.size());
     }
@@ -674,16 +708,19 @@ public class MakeStarMaps {
         /*
          * Extract the apparent magnitude from the text.
          */
-        String magnitudeText = textLine.substring(53, 57);
+        String magnitudeText = textLine.substring(56, 60);
         logger.log(Level.FINE, "mag={0}", magnitudeText);
         /*
-         * sanity check on the magnitude
+         * sanity checks on the magnitude
          */
+        if (magnitudeText.equals("????")) {
+            throw new InvalidMagnitudeException();
+        }
         float apparentMagnitude;
         try {
             apparentMagnitude = Float.valueOf(magnitudeText);
         } catch (NumberFormatException exception) {
-            logger.log(Level.FINE,
+            logger.log(Level.WARNING,
                     "entry #{0} has invalid magnitude {1}",
                     new Object[]{entryId, MyString.quote(magnitudeText)});
             throw new InvalidMagnitudeException();
