@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A simple water processor, extended in order to plays well with SkyControl.
+ * A simple water processor, extended so as to play well with SkyControl.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -74,7 +74,7 @@ public class WaterProcessor
             return;
         }
         /*
-         * Notify the control about this processor's viewports.
+         * Inform the control about this processor's viewports.
          */
         if (!(control instanceof SkyControl)) {
             return;
