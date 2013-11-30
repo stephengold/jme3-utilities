@@ -38,6 +38,10 @@ public class Indices
      */
     final private static Logger logger =
             Logger.getLogger(Indices.class.getName());
+    /**
+     * version for serialization
+     */
+    final private static long serialVersionUID = 1L;
     // *************************************************************************
     // new methods exposed
 
