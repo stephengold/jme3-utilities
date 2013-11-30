@@ -147,6 +147,10 @@ public class MySpatial
             float[] minMax = Misc.findMinMaxHeights(geometry);
             return minMax[1];
         }
+        if (!(spatial instanceof Node)) {
+            throw new IllegalArgumentException(
+                    "spatial must be a geometry or a node");
+        }
         Node node = (Node) spatial;
         float result = -Float.MAX_VALUE;
         for (Spatial child : node.getChildren()) {
@@ -170,6 +174,10 @@ public class MySpatial
             Geometry geometry = (Geometry) spatial;
             float[] minMax = Misc.findMinMaxHeights(geometry);
             return minMax[0];
+        }
+        if (!(spatial instanceof Node)) {
+            throw new IllegalArgumentException(
+                    "spatial must be a geometry or a node");
         }
         Node node = (Node) spatial;
         float result = Float.MAX_VALUE;
