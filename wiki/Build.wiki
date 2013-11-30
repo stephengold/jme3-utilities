@@ -24,10 +24,11 @@ Check out the JME3 Utilities Package source files using Subversion:
   * When asked whether to open the project, click the "Open Project" button.
   * There will be problems due to missing JAR files.  Do not attempt to resolve them yet.
 
-== External JAR files ==
+== External files ==
 
  * Download the Guava library JAR file from "https://code.google.com/p/guava-libraries" to the "jars" folder of the new project.
  * Download the JCommander JAR file from "http://mvnrepository.com/artifact/com.beust/jcommander" to the "jars" folder of the new project.
+ * If you plan to generate your own star maps, download the Yale Catalogue of Bright Stars from "http://www-kpno.kpno.noao.edu/Info/Caches/Catalogs/BSC5/catalog5.html" to the "assets/Textures/skies" folder of the new project.
 
 == Project configuration ==
 
