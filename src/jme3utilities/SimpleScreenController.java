@@ -605,7 +605,21 @@ public class SimpleScreenController
         assert namePrefix != null;
 
         String statusName = namePrefix + "SliderStatus";
-        String statusText = String.format("%s = %.2f", namePrefix, value);
+        /*
+         * Pick output precision based on the magnitude of the value.
+         */
+        String format;
+        if (FastMath.abs(value) >= 5f) {
+            format = "%s = %.1f";
+        } else if (FastMath.abs(value) >= 0.5f) {
+            format = "%s = %.2f";
+        } else if (FastMath.abs(value) >= 0.05f) {
+            format = "%s = %.3f";
+        } else {
+            format = "%s = %.4f";
+        }
+        String statusText = String.format(format, namePrefix, value);
+        statusText = MyString.trimFloat(statusText);
         setStatusText(statusName, statusText);
     }
 }
