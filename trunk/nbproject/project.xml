@@ -19,8 +19,14 @@
             <word>Esc</word>
             <word>filesystem</word>
             <word>hotkey</word>
+            <word>light's</word>
+            <word>moon's</word>
+            <word>observer's</word>
             <word>popup</word>
+            <word>renderer's</word>
+            <word>screen's</word>
             <word>signal's</word>
+            <word>slider's</word>
             <word>texture's</word>
         </spellchecker-wordlist>
     </configuration>
