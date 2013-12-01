@@ -142,15 +142,21 @@ public class MyString {
      * @return the trimmed string
      */
     public static String trimFloat(String input) {
-        int end = input.length();
-        char[] chars = input.toCharArray();
-        while (end >= 1 && chars[end - 1] == '0') {
-            end--;
+        String result;
+        if (input.contains(".")) {
+            int end = input.length();
+            char[] chars = input.toCharArray();
+            while (end >= 1 && chars[end - 1] == '0') {
+                end--;
+            }
+            if (end >= 1 && chars[end - 1] == '.') {
+                end--;
+            }
+            result = input.substring(0, end);
+
+        } else {
+            result = input;
         }
-        if (end >= 1 && chars[end - 1] == '.') {
-            end--;
-        }
-        String result = input.substring(0, end);
 
         if ("-0".equals(result)) {
             result = "0";
@@ -203,16 +209,23 @@ public class MyString {
 
         String[] stringCases = new String[]{
             "",
+            "-0",
+            "-900",
+            "-0.000",
+            "54.32100",
+            "0.1234",
             "hello",
             "he\\\\no\tgoodbye\n"
         };
 
         for (String s : stringCases) {
             System.out.printf("s = \"%s\"%n", s);
+            String t = trimFloat(s);
+            System.out.printf(" trimFloat(s) = \"%s\"%n", t);
             String e = escape(s);
-            System.out.printf(" e(s) = \"%s\"%n", e);
+            System.out.printf(" escape(s) = \"%s\"%n", e);
             String ue = unEscape(e);
-            System.out.printf(" u(e(s)) = \"%s\"%n", ue);
+            System.out.printf(" unEscape(escape(s)) = \"%s\"%n", ue);
             assert (s.equals(ue));
 
             String[] ss = getLine(s);
