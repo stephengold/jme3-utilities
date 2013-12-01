@@ -51,7 +51,7 @@ public class MyCamera {
     // new methods exposed
 
     /**
-     * Get a camera's azimuth angle.
+     * Calculate a camera's azimuth angle.
      *
      * @param camera which camera (not null)
      * @return radians east of north
@@ -64,7 +64,7 @@ public class MyCamera {
     }
 
     /**
-     * Get a camera's vertical field-of-view angle.
+     * Calculate a camera's vertical field-of-view angle.
      *
      * @param camera which camera (not null)
      * @return radians from top of frustum to bottom of frustum
@@ -79,5 +79,27 @@ public class MyCamera {
         assert top > 0f : top;
         float fovY = 2f * FastMath.atan(top / near);
         return fovY;
+    }
+
+    /**
+     * Decrease a camera's field-of-view tangent by a given factor.
+     *
+     * @param camera which camera (not null)
+     * @param factor amount to reduce the FOV tangent (>0)
+     */
+    public static void zoom(Camera camera, float factor) {
+        if (factor <= 0f) {
+            throw new IllegalArgumentException(
+                    "factor must be positive");
+        }
+
+        float bottom = camera.getFrustumBottom();
+        camera.setFrustumBottom(bottom * factor);
+        float left = camera.getFrustumLeft();
+        camera.setFrustumLeft(left * factor);
+        float right = camera.getFrustumRight();
+        camera.setFrustumRight(right * factor);
+        float top = camera.getFrustumTop();
+        camera.setFrustumTop(top * factor);
     }
 }
