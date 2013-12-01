@@ -83,6 +83,10 @@ class TestSkyControlHud
      */
     private float latitude = 0f;
     /**
+     * angular diameter of the moon (radians, <Pi, >0)
+     */
+    private float lunarDiameter = 0.0092f;
+    /**
      * vertical relief for terrain (Y-coordinate of peak)
      */
     private float relief = 0f;
@@ -176,11 +180,20 @@ class TestSkyControlHud
     }
 
     /**
-     * Read the current phase of the moon.
+     * Read the angular diameter of the moon.
+     *
+     * @return in radians (<Pi, >0)
+     */
+    public float getLunarDiameter() {
+        return lunarDiameter;
+    }
+
+    /**
+     * Read the phase of the moon.
      *
      * @return value, or null for no moon
      */
-    public LunarPhase getPhase() {
+    public LunarPhase getLunarPhase() {
         return phase;
     }
 
@@ -237,6 +250,8 @@ class TestSkyControlHud
         cloudModulation = checkBox.isChecked();
 
         cloudRate = updateSlider("cloudRate");
+
+        lunarDiameter = updateLogSlider("diameter", 10f);
 
         float solarLongitudeDegrees = updateSlider("solarLong");
         solarLongitude = solarLongitudeDegrees * FastMath.DEG_TO_RAD;

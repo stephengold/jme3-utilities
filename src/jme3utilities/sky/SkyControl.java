@@ -137,10 +137,6 @@ public class SkyControl
      */
     final private static float limitOfTwilight = 0.1f;
     /**
-     * texture scale for full-moon.png; larger value results in a larger moon
-     */
-    final private static float moonScale = 0.02f;
-    /**
      * the duration of a full day (in hours)
      */
     final public static int hoursPerDay = 24;
@@ -229,7 +225,7 @@ public class SkyControl
     /**
      * viewports whose background colors are updated by this control
      */
-    private Collection<ViewPort> viewPorts = new ArrayList<>();
+    final private Collection<ViewPort> viewPorts = new ArrayList<>();
     /**
      * which directional light to update (or null for none)
      */
@@ -250,6 +246,12 @@ public class SkyControl
      * rate for cloud layer animations (1=standard)
      */
     private float cloudsRelativeSpeed = 1f;
+    /**
+     * texture scale for moon images; larger value results in a larger moon
+     *
+     * The default value of 0.02 exaggerates the moon's size by a factor of 8.
+     */
+    private float moonScale = 0.02f;
     /**
      * flattened dome for clouds only: set by initialize()
      */
@@ -442,6 +444,20 @@ public class SkyControl
     }
 
     /**
+     * Alter the angular diameter of the moon.
+     *
+     * @param newDiameter (in radians, <Pi, >0)
+     */
+    public void setLunarDiameter(float newDiameter) {
+        if (newDiameter <= 0f || newDiameter >= FastMath.PI) {
+            throw new IllegalArgumentException(
+                    "diameter must be between 0 and Pi");
+        }
+
+        moonScale = newDiameter * mesh.uvScale / FastMath.HALF_PI;
+    }
+
+    /**
      * Alter the phase of the moon.
      *
      * @param phase (or null to hide the moon)
@@ -546,8 +562,8 @@ public class SkyControl
 
         updateFull();
     }
-// *************************************************************************
-// private methods
+    // *************************************************************************
+    // private methods
 
     /**
      * Create and initialize the sky node and all the dome geometries.
