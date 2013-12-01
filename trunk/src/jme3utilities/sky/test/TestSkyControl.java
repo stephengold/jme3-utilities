@@ -129,7 +129,7 @@ public class TestSkyControl
 
         application.start();
         /*
-         * ... and onward to TestSkyMaterial.simpleInitApp()!
+         * ... and onward to TestSkyControl.simpleInitApp()!
          */
     }
     // *************************************************************************
@@ -226,7 +226,10 @@ public class TestSkyControl
         float observerLatitude = hud.getLatitude();
         control.getSunAndStars().setObserverLatitude(observerLatitude);
 
-        LunarPhase lunarPhase = hud.getPhase();
+        float lunarDiameter = hud.getLunarDiameter();
+        control.setLunarDiameter(lunarDiameter);
+
+        LunarPhase lunarPhase = hud.getLunarPhase();
         control.setPhase(lunarPhase);
 
         float solarLongitude = hud.getSolarLongitude();

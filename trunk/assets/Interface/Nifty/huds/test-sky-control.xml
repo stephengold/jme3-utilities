@@ -165,6 +165,19 @@
 
                         <panel style="statusPanel">
                             <control name="label"
+                                     id="diameterSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider"
+                                 id="diameterSlider"
+                                 buttonStepSize="1"
+                                 height="40"
+                                 initial="-1.5"
+                                 max="0"
+                                 min="-3"
+                                 stepSize="0.01"/>
+
+                        <panel style="statusPanel">
+                            <control name="label"
                                      id="reliefSliderStatus"/>
                         </panel>
                         <control name="horizontalSlider"
@@ -175,6 +188,7 @@
                                  max="500"
                                  min="1"
                                  stepSize="0.01"/>
+
                     </panel>
                 </control>
             </panel>
