@@ -38,3 +38,9 @@ Check out the JME3 Utilities Package source files using Subversion:
      * Select "Properties".
    * Under "Categories:" select "Libraries".
    * Click on the "OK" button.
+ * Build the project JARs:
+   * Right-click on the jme3-utilities project in the "Projects" window.
+   * Select "Clean and Build".
+ 
+   * 
+   
