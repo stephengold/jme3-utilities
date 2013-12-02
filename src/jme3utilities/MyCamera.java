@@ -73,6 +73,7 @@ public class MyCamera {
         if (camera.isParallelProjection()) {
             return 0f;
         }
+
         float near = camera.getFrustumNear();
         assert near > 0f : near;
         float top = camera.getFrustumTop();
@@ -82,15 +83,49 @@ public class MyCamera {
     }
 
     /**
-     * Decrease a camera's field-of-view tangent by a given factor.
+     * Set a camera's field-of-view tangent.
+     *
+     * @param camera which camera (not null)
+     * @param newTangent value for the FOV tangent (>0)
+     */
+    public static void setYTangent(Camera camera, float newTangent) {
+        if (camera == null) {
+            throw new NullPointerException("camera cannot be null");
+        }
+        if (newTangent <= 0f) {
+            throw new IllegalArgumentException("tangent must be positive");
+        }
+
+        float yTangent = yTangent(camera);
+        float factor = newTangent / yTangent;
+        zoom(camera, factor);
+    }
+
+    /**
+     * Calculate a camera's field-of-view tangent.
+     *
+     * @param camera which camera (not null)
+     * @return top/near (>0)
+     */
+    public static float yTangent(Camera camera) {
+        float near = camera.getFrustumNear();
+        assert near > 0f : near;
+        float top = camera.getFrustumTop();
+        assert top > 0f : top;
+        float yTangent = top / near;
+
+        return yTangent;
+    }
+
+    /**
+     * Increase a camera's field-of-view tangent by a given factor.
      *
      * @param camera which camera (not null)
      * @param factor amount to reduce the FOV tangent (>0)
      */
     public static void zoom(Camera camera, float factor) {
         if (factor <= 0f) {
-            throw new IllegalArgumentException(
-                    "factor must be positive");
+            throw new IllegalArgumentException("factor must be positive");
         }
 
         float bottom = camera.getFrustumBottom();
