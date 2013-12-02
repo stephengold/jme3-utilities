@@ -445,6 +445,26 @@ public class SimpleScreenController
     }
 
     /**
+     * Alter the linear value of a slider. This assumes a naming convention
+     * where the slider's Nifty id ends with "Slider".
+     *
+     * @param namePrefix unique name prefix of the slider (not null)
+     * @param newValue value for the slider
+     */
+    protected void setSlider(String namePrefix, float newValue) {
+        assert namePrefix != null;
+
+        String sliderName = namePrefix + "Slider";
+        Slider slider = getScreen().findNiftyControl(sliderName, Slider.class);
+        try {
+            slider.setValue(newValue);
+        } catch (NullPointerException exception) {
+            logger.log(Level.INFO, "screen lacks slider {0}",
+                    MyString.quote(sliderName));
+        }
+    }
+
+    /**
      * Alter the text of a status label.
      *
      * @param elementId Nifty element id of the label (not null)
@@ -580,7 +600,7 @@ public class SimpleScreenController
 
     /**
      * Read the linear value of a slider. This assumes a naming convention where
-     * the slider's Nifty id begins with "Slider".
+     * the slider's Nifty id ends with "Slider".
      *
      * @param namePrefix unique name prefix of the slider (not null)
      * @return value of the slider
@@ -596,7 +616,7 @@ public class SimpleScreenController
 
     /**
      * Update the status of a slider. This assumes a naming convention where the
-     * label's Nifty id begins with "SliderStatus".
+     * label's Nifty id ends with "SliderStatus".
      *
      * @param namePrefix unique name prefix of the slider (not null)
      * @param value value of the slider
