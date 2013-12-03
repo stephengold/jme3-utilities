@@ -49,21 +49,23 @@ public class MyVector3f {
     // new methods exposed
 
     /**
-     * Calculate the altitude of a direction vector.
+     * Calculate the altitude angle of a non-zero offset.
      *
-     * @param direction (not null, not zero length, not altered)
+     * @param offset difference of world coordinates (not null, not zero length,
+     * not altered)
      * @return angle above the X-Z plane (in radians, <=Pi/2, >=-Pi/2)
      */
-    public static float altitude(Vector3f direction) {
-        if (direction == null) {
+    public static float altitude(Vector3f offset) {
+        if (offset == null) {
             throw new NullPointerException("direction cannot be null");
         }
-        if (isZeroLength(direction)) {
+        if (isZeroLength(offset)) {
             throw new IllegalArgumentException(
-                    "direction must not have zero length");
+                    "direction must have positive length");
         }
-        float xzRange = MyMath.hypotenuse(direction.x, direction.z);
-        float result = (float) Math.atan2(direction.y, xzRange);
+
+        float xzRange = MyMath.hypotenuse(offset.x, offset.z);
+        float result = (float) Math.atan2(offset.y, xzRange);
 
         assert result <= FastMath.HALF_PI : result;
         assert result >= -FastMath.HALF_PI : result;
@@ -71,24 +73,34 @@ public class MyVector3f {
     }
 
     /**
-     * Calculate the azimuth of a direction vector.
+     * Calculate the azimuth angle of an offset.
      *
-     * @param direction
-     * @return horizontal angle in radians, measured CW from the X axis.
+     * @param offset difference of world coordinates (not null, not altered)
+     * @return horizontal angle in radians (measured CW from the X axis) or 0 if
+     * the vector is zero or parallel to the Y axis.
      */
-    public static float azimuth(Vector3f direction) {
-        float result = (float) Math.atan2(direction.z, direction.x);
+    public static float azimuth(Vector3f offset) {
+        if (offset == null) {
+            throw new NullPointerException("direction cannot be null");
+        }
+
+        if (offset.x == 0f && offset.z == 0f) {
+            return 0f;
+        }
+        float result = (float) Math.atan2(offset.z, offset.x);
         return result;
     }
 
     /**
-     * Calculate a horizontal direction based on an offset.
+     * Calculate a horizontal direction of an offset.
      *
-     * @param offset difference of world coordinates (not null)
+     * @param offset difference of world coordinates (not null, not altered)
      * @return a new unit vector
      */
     public static VectorXZ direction(Vector3f offset) {
-        assert offset != null;
+        if (offset == null) {
+            throw new NullPointerException("offset cannot be null");
+        }
 
         VectorXZ result = new VectorXZ(offset);
         result.normalizeLocal();
@@ -98,8 +110,9 @@ public class MyVector3f {
     /**
      * Calculate the distance from one location to another.
      *
-     * @param from world coordinates of starting location (not null)
-     * @param to world coordinates of ending location (not null)
+     * @param from world coordinates of starting location (not null, not
+     * altered)
+     * @param to world coordinates of ending location (not null, not altered)
      * @return distance (in world units, >=0)
      */
     public static float distanceFrom(Vector3f from, Vector3f to) {
@@ -126,7 +139,7 @@ public class MyVector3f {
      * Rotate a vector CLOCKWISE about the +Y axis. Note: Used for applying
      * azimuths, which is why its rotation angle convention is non-standard.
      *
-     * @param vector input, not altered (not null)
+     * @param vector input (not null, not altered)
      * @param radians clockwise (LH) angle of rotation in radians
      * @return a new vector
      */

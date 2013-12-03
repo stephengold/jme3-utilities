@@ -58,8 +58,7 @@ public class MyCamera {
      */
     public static float azimuth(Camera camera) {
         Vector3f direction = camera.getDirection();
-        VectorXZ mapDirection = new VectorXZ(direction);
-        float azimuth = mapDirection.azimuth();
+        float azimuth = MyVector3f.azimuth(direction);
         return azimuth;
     }
 
