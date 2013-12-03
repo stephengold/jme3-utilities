@@ -80,6 +80,10 @@ public class SimpleScreenController
      */
     protected static Application application = null;
     /**
+     * false before the screen starts, true thereafter
+     */
+    protected boolean screenHasStarted = false;
+    /**
      * which Nifty display this screen uses: set by constructor
      */
     final private NiftyJmeDisplay niftyDisplay;
@@ -364,10 +368,11 @@ public class SimpleScreenController
     }
 
     /**
-     * A callback from Nifty, unused.
+     * A callback from Nifty, invoked when the screen starts up.
      */
     @Override
     public void onStartScreen() {
+        screenHasStarted = true;
     }
     // *************************************************************************
     // new protected methods
@@ -541,10 +546,9 @@ public class SimpleScreenController
         PopupMenu popup = new PopupMenu(this, actionPrefixWords);
         Screen screen = nifty.getCurrentScreen();
         String menuId = menu.getId();
-
         nifty.subscribe(screen, menuId, MenuItemActivatedEvent.class, popup);
         /*
-         * Make the element visible.
+         * Make the menu visible.
          */
         nifty.showPopup(screen, elementId, null);
         activePopupId = elementId;
