@@ -19,9 +19,15 @@
  */
 package jme3utilities.sky;
 
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import java.io.IOException;
 import jme3utilities.MyMath;
 
 /**
@@ -29,7 +35,8 @@ import jme3utilities.MyMath;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-public class SunAndStars {
+public class SunAndStars
+        implements Savable {
     // *************************************************************************
     // constants
 
@@ -231,7 +238,7 @@ public class SunAndStars {
         float siderealHour = getSiderealHour();
         float siderealAngle = siderealHour * radiansPerHour;
 
-        assert siderealAngle >= 0 : siderealAngle;
+        assert siderealAngle >= 0f : siderealAngle;
         assert siderealAngle < FastMath.TWO_PI : siderealAngle;
         return siderealAngle;
     }
@@ -242,7 +249,8 @@ public class SunAndStars {
      * @return time (in hours, <24, >=0)
      */
     public float getSiderealHour() {
-        float siderealHour = hour - solarRaHours + 12f;
+        float noon = 12f;
+        float siderealHour = hour - noon - solarRaHours;
         siderealHour = MyMath.modulo(siderealHour, hoursPerDay);
 
         return siderealHour;
@@ -308,5 +316,40 @@ public class SunAndStars {
         solarRaHours = MyMath.modulo(ra / radiansPerHour, hoursPerDay);
         assert solarRaHours >= 0f : solarRaHours;
         assert solarRaHours < hoursPerDay : solarRaHours;
+    }
+    // *************************************************************************
+    // Savable methods
+
+    /**
+     * De-serialize this instance when loading from a .jm3o file.
+     *
+     * @param importer (not null)
+     */
+    @Override
+    public void read(JmeImporter importer) throws IOException {
+        InputCapsule capsule = importer.getCapsule(this);
+
+        float value = capsule.readFloat("hour", 0f);
+        setHour(value);
+
+        value = capsule.readFloat("observerLatitude", defaultLatitude);
+        setObserverLatitude(value);
+
+        value = capsule.readFloat("solarLongitude", 0f);
+        setSolarLongitude(value);
+    }
+
+    /**
+     * Serialize this instance when saving to a .jm3o file.
+     *
+     * @param exporter (not null)
+     */
+    @Override
+    public void write(JmeExporter exporter) throws IOException {
+        OutputCapsule capsule = exporter.getCapsule(this);
+
+        capsule.write(hour, "hour", 0f);
+        capsule.write(observerLatitude, "observerLatitude", defaultLatitude);
+        capsule.write(solarLongitude, "observerLatitude", 0f);
     }
 }
