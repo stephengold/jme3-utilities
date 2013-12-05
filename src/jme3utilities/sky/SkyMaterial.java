@@ -140,18 +140,18 @@ public class SkyMaterial
     /**
      * maximum opacity of each cloud layer (<=1, >=0)
      */
-    private float[] cloudsAlpha;
+    private float[] cloudAlphas;
     /**
      * scale factor of each cloud layer
      */
-    private float[] cloudsScale;
+    private float[] cloudScales;
     /**
      * image of each cloud layer
      *
      * Since ImageRaster does not implement Savable, these are retained for use
      * by write().
      */
-    private Image[] cloudsImage;
+    private Image[] cloudImages;
     /**
      * cached rasterization of each cloud layer
      */
@@ -167,11 +167,11 @@ public class SkyMaterial
     /**
      * UV offset of each cloud layer
      */
-    private Vector2f[] cloudsOffset;
+    private Vector2f[] cloudOffsets;
     /**
      * sky texture coordinates of the center of each astronomical object
      */
-    private Vector2f[] objectCenter;
+    private Vector2f[] objectCenters;
     // *************************************************************************
     // constructors
 
@@ -180,14 +180,14 @@ public class SkyMaterial
      */
     public SkyMaterial() {
         assetManager = null;
-        cloudsAlpha = null;
-        cloudsImage = null;
-        cloudsScale = null;
+        cloudAlphas = null;
+        cloudImages = null;
+        cloudScales = null;
         cloudsRaster = null;
-        cloudsOffset = null;
+        cloudOffsets = null;
         maxCloudLayers = 0;
         maxObjects = 0;
-        objectCenter = null;
+        objectCenters = null;
     }
 
     /**
@@ -219,12 +219,12 @@ public class SkyMaterial
         this.maxCloudLayers = maxCloudLayers;
         this.maxObjects = maxObjects;
 
-        cloudsAlpha = new float[maxCloudLayers];
-        cloudsImage = new Image[maxCloudLayers];
-        cloudsOffset = new Vector2f[maxCloudLayers];
+        cloudAlphas = new float[maxCloudLayers];
+        cloudImages = new Image[maxCloudLayers];
+        cloudOffsets = new Vector2f[maxCloudLayers];
         cloudsRaster = new ImageRaster[maxCloudLayers];
-        cloudsScale = new float[maxCloudLayers];
-        objectCenter = new Vector2f[maxObjects];
+        cloudScales = new float[maxCloudLayers];
+        objectCenters = new Vector2f[maxObjects];
     }
     // *************************************************************************
     // new methods exposed
@@ -262,11 +262,11 @@ public class SkyMaterial
         setTexture(parameterName, alphaMap);
 
         Image image = alphaMap.getImage();
-        cloudsImage[layerIndex] = image;
+        cloudImages[layerIndex] = image;
         cloudsRaster[layerIndex] = ImageRaster.create(image);
 
         if (firstTime) {
-            cloudsOffset[layerIndex] = new Vector2f();
+            cloudOffsets[layerIndex] = new Vector2f();
             setCloudsColor(layerIndex, ColorRGBA.White);
             setCloudsOffset(layerIndex, 0f, 0f);
             setCloudsScale(layerIndex, 1f);
@@ -314,8 +314,8 @@ public class SkyMaterial
         String parameterName = String.format("Object%dColorMap", objectIndex);
         setTexture(parameterName, objectMap);
 
-        if (objectCenter[objectIndex] == null) {
-            objectCenter[objectIndex] = new Vector2f();
+        if (objectCenters[objectIndex] == null) {
+            objectCenters[objectIndex] = new Vector2f();
             setObjectColor(objectIndex, ColorRGBA.White);
             setObjectTransform(objectIndex, new Vector2f(topU, topV), 1f, null);
         }
@@ -367,7 +367,7 @@ public class SkyMaterial
             throw new IllegalArgumentException("object id out of range");
         }
 
-        Vector2f center = objectCenter[objectId];
+        Vector2f center = objectCenters[objectId];
         if (center == null) {
             throw new IllegalStateException("object not yet added");
         }
@@ -413,14 +413,14 @@ public class SkyMaterial
         if (objectIndex < 0 || objectIndex >= maxObjects) {
             throw new IllegalArgumentException("object index out of range");
         }
-        if (objectCenter[objectIndex] == null) {
+        if (objectCenters[objectIndex] == null) {
             throw new IllegalStateException("object not yet added");
         }
 
         String objectParameterName =
                 String.format("Object%dCenter", objectIndex);
         setVector2(objectParameterName, hidden);
-        objectCenter[objectIndex].set(hidden);
+        objectCenters[objectIndex].set(hidden);
 
         /*
          * Scale down the object to occupies only a few pixels in texture space.
@@ -480,7 +480,7 @@ public class SkyMaterial
 
         String parameterName = String.format("Clouds%dColor", layerIndex);
         setColor(parameterName, newColor);
-        cloudsAlpha[layerIndex] = newColor.a;
+        cloudAlphas[layerIndex] = newColor.a;
     }
 
     /**
@@ -504,7 +504,7 @@ public class SkyMaterial
 
         String parameterName = String.format("Clouds%dOffset", layerIndex);
         setVector2(parameterName, offset);
-        cloudsOffset[layerIndex].set(offset);
+        cloudOffsets[layerIndex].set(offset);
     }
 
     /**
@@ -526,7 +526,7 @@ public class SkyMaterial
 
         String parameterName = String.format("Clouds%dScale", layerIndex);
         setFloat(parameterName, newScale);
-        cloudsScale[layerIndex] = newScale;
+        cloudScales[layerIndex] = newScale;
     }
 
     /**
@@ -555,7 +555,7 @@ public class SkyMaterial
         if (newColor == null) {
             throw new NullPointerException("color cannot be null");
         }
-        if (objectCenter[objectIndex] == null) {
+        if (objectCenters[objectIndex] == null) {
             throw new IllegalStateException("object not yet added");
         }
 
@@ -591,7 +591,7 @@ public class SkyMaterial
                         "rotation must be a unit vector");
             }
         }
-        if (objectCenter[objectIndex] == null) {
+        if (objectCenters[objectIndex] == null) {
             throw new IllegalStateException("object not yet added");
         }
 
@@ -605,7 +605,7 @@ public class SkyMaterial
         String objectParameterName =
                 String.format("Object%dCenter", objectIndex);
         setVector2(objectParameterName, centerUV);
-        objectCenter[objectIndex].set(centerUV);
+        objectCenters[objectIndex].set(centerUV);
 
         Vector2f offset = new Vector2f(u - topU, v - topV);
         float topDist = offset.length();
@@ -689,31 +689,31 @@ public class SkyMaterial
 
         InputCapsule capsule = importer.getCapsule(this);
 
-        cloudsAlpha = capsule.readFloatArray("cloudAlphas", null);
+        cloudAlphas = capsule.readFloatArray("cloudAlphas", null);
 
         Savable[] sav = capsule.readSavableArray("cloudImages", null);
-        cloudsImage = new Image[sav.length];
-        System.arraycopy(sav, 0, cloudsImage, 0, sav.length);
+        cloudImages = new Image[sav.length];
+        System.arraycopy(sav, 0, cloudImages, 0, sav.length);
 
         sav = capsule.readSavableArray("cloudOffsets", null);
-        cloudsOffset = new Vector2f[sav.length];
-        System.arraycopy(sav, 0, cloudsOffset, 0, sav.length);
+        cloudOffsets = new Vector2f[sav.length];
+        System.arraycopy(sav, 0, cloudOffsets, 0, sav.length);
 
-        cloudsScale = capsule.readFloatArray("cloudScales", null);
+        cloudScales = capsule.readFloatArray("cloudScales", null);
 
         sav = capsule.readSavableArray("objectCenters", null);
-        objectCenter = new Vector2f[sav.length];
-        System.arraycopy(sav, 0, objectCenter, 0, sav.length);
+        objectCenters = new Vector2f[sav.length];
+        System.arraycopy(sav, 0, objectCenters, 0, sav.length);
         /*
          * cached values
          */
         assetManager = importer.getAssetManager();
-        maxCloudLayers = cloudsImage.length;
-        maxObjects = objectCenter.length;
+        maxCloudLayers = cloudImages.length;
+        maxObjects = objectCenters.length;
 
         cloudsRaster = new ImageRaster[maxCloudLayers];
         for (int layerIndex = 0; layerIndex < maxCloudLayers; layerIndex++) {
-            Image image = cloudsImage[layerIndex];
+            Image image = cloudImages[layerIndex];
             cloudsRaster[layerIndex] = ImageRaster.create(image);
         }
     }
@@ -729,11 +729,11 @@ public class SkyMaterial
 
         OutputCapsule capsule = exporter.getCapsule(this);
 
-        capsule.write(cloudsAlpha, "cloudAlphas", null);
-        capsule.write(cloudsImage, "cloudImages", null);
-        capsule.write(cloudsOffset, "cloudOffsets", null);
-        capsule.write(cloudsScale, "cloudScales", null);
-        capsule.write(objectCenter, "objectCenters", null);
+        capsule.write(cloudAlphas, "cloudAlphas", null);
+        capsule.write(cloudImages, "cloudImages", null);
+        capsule.write(cloudOffsets, "cloudOffsets", null);
+        capsule.write(cloudScales, "cloudScales", null);
+        capsule.write(objectCenters, "objectCenters", null);
     }
     // *************************************************************************
     // private methods
@@ -752,12 +752,12 @@ public class SkyMaterial
         assert skyCoordinates != null;
         assert cloudsRaster[layerIndex] != null : layerIndex;
 
-        Vector2f coord = skyCoordinates.mult(cloudsScale[layerIndex]);
-        coord.addLocal(cloudsOffset[layerIndex]);
+        Vector2f coord = skyCoordinates.mult(cloudScales[layerIndex]);
+        coord.addLocal(cloudOffsets[layerIndex]);
         coord.x = MyMath.modulo(coord.x, uvMax);
         coord.y = MyMath.modulo(coord.y, uvMax);
         float opacity = sampleRed(cloudsRaster[layerIndex], coord);
-        opacity *= cloudsAlpha[layerIndex];
+        opacity *= cloudAlphas[layerIndex];
         float result = alphaMax - opacity;
 
         assert result >= alphaMin : result;
