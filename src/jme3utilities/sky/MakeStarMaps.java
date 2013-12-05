@@ -150,7 +150,7 @@ public class MakeStarMaps {
     /**
      * sample dome mesh for calculating texture coordinates
      */
-    private DomeMesh mesh = new DomeMesh();
+    private DomeMesh mesh = new DomeMesh(3, 2);
     /**
      * name of preset
      */

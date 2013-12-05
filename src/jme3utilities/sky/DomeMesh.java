@@ -19,12 +19,17 @@
  */
 package jme3utilities.sky;
 
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.util.BufferUtils;
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.logging.Level;
@@ -109,7 +114,6 @@ public class DomeMesh
      * Default constructor. Do not invoke!
      */
     public DomeMesh() {
-        this(3, 2);
     }
 
     /**
@@ -238,6 +242,53 @@ public class DomeMesh
         return elevationAngle;
     }
     // *************************************************************************
+    // Savable methods
+
+    /**
+     * De-serialize this instance when loading.
+     *
+     * @param importer (not null)
+     */
+    @Override
+    public void read(JmeImporter importer) throws IOException {
+        super.read(importer);
+
+        InputCapsule capsule = importer.getCapsule(this);
+
+        inwardFacing = capsule.readBoolean("inwardFacing", true);
+        quadrantSamples = capsule.readInt("quadrantSamples", 2);
+        rimSamples = capsule.readInt("rimSamples", 3);
+        topU = capsule.readFloat("topU", SkyMaterial.topU);
+        topV = capsule.readFloat("topV", SkyMaterial.topV);
+        uvScale = capsule.readFloat("uvScale", SkyMaterial.uvScale);
+        /*
+         * cached values
+         */
+        int quadsPerGore = quadrantSamples - 2;
+        int trianglesPerGore = 2 * quadsPerGore + 1;
+        triangleCount = trianglesPerGore * rimSamples;
+        vertexCount = (quadrantSamples - 1) * rimSamples + 1;
+    }
+
+    /**
+     * Serialize this instance when saving.
+     *
+     * @param exporter (not null)
+     */
+    @Override
+    public void write(JmeExporter exporter) throws IOException {
+        super.write(exporter);
+
+        OutputCapsule capsule = exporter.getCapsule(this);
+
+        capsule.write(inwardFacing, "inwardFacing", true);
+        capsule.write(quadrantSamples, "quadrantSamples", 2);
+        capsule.write(rimSamples, "rimSamples", 3);
+        capsule.write(topU, "topU", SkyMaterial.topU);
+        capsule.write(topV, "topV", SkyMaterial.topV);
+        capsule.write(uvScale, "uvScale", SkyMaterial.uvScale);
+    }
+    // *************************************************************************
     // private methods
 
     /**
@@ -310,7 +361,7 @@ public class DomeMesh
                 float z = xzDistance * sinLongitude;
 
                 int vertexIndex = parallel * rimSamples + meridian;
-                logger.log(Level.INFO, "coords {0}", vertexIndex);
+                logger.log(Level.FINE, "coords {0}", vertexIndex);
                 Vector3f location = new Vector3f(x, y, z);
                 locationArray[vertexIndex] = location;
 
@@ -363,7 +414,7 @@ public class DomeMesh
 
                 int triIndex = 2 * v0Index;
                 int baseIndex = vpt * triIndex;
-                logger.log(Level.INFO, "index {0}", triIndex);
+                logger.log(Level.FINE, "index {0}", triIndex);
                 indexArray[vpt * triIndex] = (short) v0Index;
                 if (inwardFacing) {
                     indexArray[baseIndex + 1] = (short) v1Index;
@@ -375,7 +426,7 @@ public class DomeMesh
 
                 triIndex++;
                 baseIndex = vpt * triIndex;
-                logger.log(Level.INFO, "index {0}", triIndex);
+                logger.log(Level.FINE, "index {0}", triIndex);
                 indexArray[baseIndex] = (short) v0Index;
                 if (inwardFacing) {
                     indexArray[baseIndex + 1] = (short) v3Index;
@@ -400,7 +451,7 @@ public class DomeMesh
 
             int triIndex = 2 * quadsPerGore * rimSamples + meridian;
             int baseIndex = vpt * triIndex;
-            logger.log(Level.INFO, "index {0}", triIndex);
+            logger.log(Level.FINE, "index {0}", triIndex);
             indexArray[baseIndex] = (short) v0Index;
             if (inwardFacing) {
                 indexArray[baseIndex + 1] = (short) v1Index;
@@ -443,7 +494,7 @@ public class DomeMesh
                 normal.negateLocal();
             }
 
-            logger.log(Level.INFO, "normal {0}", vertexIndex);
+            logger.log(Level.FINE, "normal {0}", vertexIndex);
             normalArray[vertexIndex] = normal;
         }
         /*
