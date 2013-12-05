@@ -21,6 +21,11 @@ package jme3utilities.sky;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.TextureKey;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
@@ -30,6 +35,7 @@ import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import com.jme3.texture.image.ImageRaster;
+import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.MyMath;
 
@@ -130,35 +136,42 @@ public class SkyMaterial
      * asset manager used to load textures and material definitions: set by
      * constructor
      */
-    final private AssetManager assetManager;
+    private AssetManager assetManager;
     /**
-     * maximum number of cloud layers (>=0)
+     * maximum opacity of each cloud layer (<=1, >=0)
      */
-    final private int maxCloudLayers;
-    /**
-     * maximum number of astronomical objects (>=0)
-     */
-    final private int maxObjects;
-    /**
-     * max opacity of each cloud layer (<=1, >=0)
-     */
-    final private float[] cloudsAlpha;
+    private float[] cloudsAlpha;
     /**
      * scale factor of each cloud layer
      */
-    final private float[] cloudsScale;
+    private float[] cloudsScale;
     /**
-     * rasterized image of each cloud layer
+     * image of each cloud layer
+     *
+     * Since ImageRaster does not implement Savable, these are retained for use
+     * by write().
      */
-    final private ImageRaster[] cloudsRaster;
+    private Image[] cloudsImage;
+    /**
+     * cached rasterization of each cloud layer
+     */
+    private ImageRaster[] cloudsRaster;
+    /**
+     * maximum number of cloud layers (>=0)
+     */
+    private int maxCloudLayers;
+    /**
+     * maximum number of astronomical objects (>=0)
+     */
+    private int maxObjects;
     /**
      * UV offset of each cloud layer
      */
-    final private Vector2f[] cloudsOffset;
+    private Vector2f[] cloudsOffset;
     /**
      * sky texture coordinates of the center of each astronomical object
      */
-    final private Vector2f[] objectCenter;
+    private Vector2f[] objectCenter;
     // *************************************************************************
     // constructors
 
@@ -168,6 +181,7 @@ public class SkyMaterial
     public SkyMaterial() {
         assetManager = null;
         cloudsAlpha = null;
+        cloudsImage = null;
         cloudsScale = null;
         cloudsRaster = null;
         cloudsOffset = null;
@@ -206,6 +220,7 @@ public class SkyMaterial
         this.maxObjects = maxObjects;
 
         cloudsAlpha = new float[maxCloudLayers];
+        cloudsImage = new Image[maxCloudLayers];
         cloudsOffset = new Vector2f[maxCloudLayers];
         cloudsRaster = new ImageRaster[maxCloudLayers];
         cloudsScale = new float[maxCloudLayers];
@@ -227,7 +242,7 @@ public class SkyMaterial
     }
 
     /**
-     * Add a cloud layer to this material using a specified alpha map..
+     * Add a cloud layer to this material using the specified alpha map asset.
      *
      * @param layerIndex (<maxCloudLayers, >=0)
      * @param assetPath asset path to the alpha map (not null)
@@ -246,8 +261,9 @@ public class SkyMaterial
         String parameterName = String.format("Clouds%dAlphaMap", layerIndex);
         setTexture(parameterName, alphaMap);
 
-        Image cloudsImage = alphaMap.getImage();
-        cloudsRaster[layerIndex] = ImageRaster.create(cloudsImage);
+        Image image = alphaMap.getImage();
+        cloudsImage[layerIndex] = image;
+        cloudsRaster[layerIndex] = ImageRaster.create(image);
 
         if (firstTime) {
             cloudsOffset[layerIndex] = new Vector2f();
@@ -258,14 +274,14 @@ public class SkyMaterial
     }
 
     /**
-     * Add horizon haze to this material.
+     * Add horizon haze to this material using the default alpha map.
      */
     public void addHaze() {
         addHaze(hazeMapPath);
     }
 
     /**
-     * Add horizon haze to this material using a specific alpha map asset.
+     * Add horizon haze to this material using the specified alpha map asset.
      *
      * @param assetPath asset path to the alpha map (not null)
      */
@@ -274,13 +290,13 @@ public class SkyMaterial
             throw new NullPointerException("path cannot be null");
         }
 
-        Texture alphaMap = loadTextureRepeat(assetPath);
+        Texture alphaMap = loadTextureClamp(assetPath);
         setTexture("HazeAlphaMap", alphaMap);
         setHazeColor(ColorRGBA.White);
     }
 
     /**
-     * Add an astronomical object to this material using a specific color map
+     * Add an astronomical object to this material using the specified color map
      * asset.
      *
      * @param objectIndex (<maxObjects, >=0)
@@ -313,28 +329,28 @@ public class SkyMaterial
     }
 
     /**
-     * Add stars to this material using a specific color map asset.
+     * Add stars to this material using the specified color map asset.
      *
-     * @param colorMapAssetPath (not null)
+     * @param assetPath (not null)
      */
-    public void addStars(String colorMapAssetPath) {
-        if (colorMapAssetPath == null) {
+    public void addStars(String assetPath) {
+        if (assetPath == null) {
             throw new NullPointerException("path cannot be null");
         }
 
-        Texture starsMap = loadTextureRepeat(colorMapAssetPath);
-        setTexture("StarsColorMap", starsMap);
+        Texture colorMap = loadTextureClamp(assetPath);
+        setTexture("StarsColorMap", colorMap);
     }
 
     /**
-     * Read the limit on the number of cloud layers.
+     * Read the upper limit on the number of cloud layers.
      */
     public int getMaxCloudLayers() {
         return maxCloudLayers;
     }
 
     /**
-     * Read the limit on the number of astronomical objects.
+     * Read the upper limit on the number of astronomical objects.
      */
     public int getMaxObjects() {
         return maxObjects;
@@ -361,8 +377,8 @@ public class SkyMaterial
     }
 
     /**
-     * Estimate how much light is transmitted through the clouds at specific
-     * texture coordinates.
+     * Estimate how much light is transmitted through the clouds at the
+     * specified texture coordinates.
      *
      * @param skyCoordinates (unaffected, not null)
      * @return fraction of light transmitted (<=1, >=0)
@@ -660,13 +676,73 @@ public class SkyMaterial
         setVector2(transformVParameterName, transformV);
     }
     // *************************************************************************
+    // Savable methods
+
+    /**
+     * De-serialize this instance when loading.
+     *
+     * @param importer (not null)
+     */
+    @Override
+    public void read(JmeImporter importer) throws IOException {
+        super.read(importer);
+
+        InputCapsule capsule = importer.getCapsule(this);
+
+        cloudsAlpha = capsule.readFloatArray("cloudAlphas", null);
+
+        Savable[] sav = capsule.readSavableArray("cloudImages", null);
+        cloudsImage = new Image[sav.length];
+        System.arraycopy(sav, 0, cloudsImage, 0, sav.length);
+
+        sav = capsule.readSavableArray("cloudOffsets", null);
+        cloudsOffset = new Vector2f[sav.length];
+        System.arraycopy(sav, 0, cloudsOffset, 0, sav.length);
+
+        cloudsScale = capsule.readFloatArray("cloudScales", null);
+
+        sav = capsule.readSavableArray("objectCenters", null);
+        objectCenter = new Vector2f[sav.length];
+        System.arraycopy(sav, 0, objectCenter, 0, sav.length);
+        /*
+         * cached values
+         */
+        assetManager = importer.getAssetManager();
+        maxCloudLayers = cloudsImage.length;
+        maxObjects = objectCenter.length;
+
+        cloudsRaster = new ImageRaster[maxCloudLayers];
+        for (int layerIndex = 0; layerIndex < maxCloudLayers; layerIndex++) {
+            Image image = cloudsImage[layerIndex];
+            cloudsRaster[layerIndex] = ImageRaster.create(image);
+        }
+    }
+
+    /**
+     * Serialize this instance when saving.
+     *
+     * @param exporter (not null)
+     */
+    @Override
+    public void write(JmeExporter exporter) throws IOException {
+        super.write(exporter);
+
+        OutputCapsule capsule = exporter.getCapsule(this);
+
+        capsule.write(cloudsAlpha, "cloudAlphas", null);
+        capsule.write(cloudsImage, "cloudImages", null);
+        capsule.write(cloudsOffset, "cloudOffsets", null);
+        capsule.write(cloudsScale, "cloudScales", null);
+        capsule.write(objectCenter, "objectCenters", null);
+    }
+    // *************************************************************************
     // private methods
 
     /**
      * Estimate how much light is transmitted through a particular cloud layer
-     * at specific texture coordinates.
+     * at the specified texture coordinates.
      *
-     * @param layerIndex (<maxLayers, >=0)
+     * @param layerIndex (<maxCloudLayers, >=0)
      * @param skyCoordinates (unaffected, not null)
      * @return fraction of light transmitted (<=1, >=0)
      */
