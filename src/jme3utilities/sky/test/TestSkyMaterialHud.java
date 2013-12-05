@@ -70,7 +70,7 @@ class TestSkyMaterialHud
     // fields
     /**
      * if true, the flyby camera will get re-enabled each time this HUD is
-     * disabled
+     * disabled: set by constructor
      */
     final private boolean reenableFlyby;
     /**
@@ -78,9 +78,9 @@ class TestSkyMaterialHud
      */
     private LunarPhase phase = LunarPhase.FULL;
     /**
-     * material controlled by this HUD (set by constructor)
+     * material controlled by this HUD
      */
-    final private SkyMaterial material;
+    private SkyMaterial material = null;
     // *************************************************************************
     // constructors
 
@@ -89,16 +89,25 @@ class TestSkyMaterialHud
      *
      * @param display (not null)
      * @param screenId Nifty screen id of the HUD (not null)
-     * @param material (not null)
      * @param reenableFlyby if true, the flyby camera will get re-enabled each
      * time this HUD is disabled
      */
     public TestSkyMaterialHud(NiftyJmeDisplay display, String screenId,
-            SkyMaterial material, boolean reenableFlyby) {
+            boolean reenableFlyby) {
         super(display, screenId);
+        this.reenableFlyby = reenableFlyby;
+    }
+    // *************************************************************************
+    // new methods exported
+
+    /**
+     * Alter the material under test.
+     *
+     * @param material (not null)
+     */
+    public void setMaterial(SkyMaterial material) {
         assert material != null;
         this.material = material;
-        this.reenableFlyby = reenableFlyby;
     }
     // *************************************************************************
     // ActionListener methods
@@ -121,12 +130,7 @@ class TestSkyMaterialHud
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
         switch (actionString) {
             case "phase":
-                String[] phasePrefixWords = {"phase"};
-                String[] phaseItems = {
-                    "full", "waning-crescent", "waning-gibbous",
-                    "waxing-crescent", "waxing-gibbous"
-                };
-                showPopup(phasePrefixWords, phaseItems);
+                showPhaseMenu();
                 break;
 
             case "phase full":
@@ -135,29 +139,34 @@ class TestSkyMaterialHud
             case "phase waxing-crescent":
             case "phase waxing-gibbous":
                 String name = actionString.substring(6);
-                phase = LunarPhase.fromDescription(name);
-                String assetPath = phase.imagePath();
-                material.addObject(moonIndex, assetPath);
+                setPhase(name);
                 break;
 
             case "toggle":
+                /*
+                 * Toggle the visibility of this display.
+                 */
                 boolean newState = !isEnabled();
                 setEnabled(newState);
                 break;
 
             case "view":
-                String[] viewPrefixWords = {"view"};
-                String[] viewItems = {"north-horizon", "zenith"};
-                showPopup(viewPrefixWords, viewItems);
+                showViewMenu();
                 break;
 
             case "view north-horizon":
+                /*
+                 * Re-orient the camera toward the north horizon.
+                 */
                 Quaternion north = new Quaternion();
                 north.lookAt(Vector3f.UNIT_X, Vector3f.UNIT_Y);
                 application.getCamera().setRotation(north);
                 break;
 
             case "view zenith":
+                /*
+                 * Re-orient the camera toward the zenith.
+                 */
                 Quaternion zenith = new Quaternion();
                 zenith.lookAt(Vector3f.UNIT_Y, Vector3f.UNIT_X);
                 application.getCamera().setRotation(zenith);
@@ -283,6 +292,40 @@ class TestSkyMaterialHud
     }
     // *************************************************************************
     // private methods
+
+    /**
+     * Alter the phase of the moon.
+     *
+     * @param name name of the new phase (not null)
+     */
+    private void setPhase(String name) {
+        assert name != null;
+
+        phase = LunarPhase.fromDescription(name);
+        String assetPath = phase.imagePath();
+        material.addObject(moonIndex, assetPath);
+    }
+
+    /**
+     * Display a phase-of-the-moon menu.
+     */
+    private void showPhaseMenu() {
+        String[] phasePrefixWords = {"phase"};
+        String[] phaseItems = {
+            "full", "waning-crescent", "waning-gibbous",
+            "waxing-crescent", "waxing-gibbous"
+        };
+        showPopup(phasePrefixWords, phaseItems);
+    }
+
+    /**
+     * Display a camera orientation menu.
+     */
+    private void showViewMenu() {
+        String[] viewPrefixWords = {"view"};
+        String[] viewItems = {"north-horizon", "zenith"};
+        showPopup(viewPrefixWords, viewItems);
+    }
 
     /**
      * Update a bank of four sliders which control a color.

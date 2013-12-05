@@ -21,7 +21,9 @@ package jme3utilities.sky.test;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.ScreenshotAppState;
+import com.jme3.export.binary.BinaryExporter;
 import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -29,8 +31,11 @@ import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import de.lessvoid.nifty.Nifty;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
@@ -49,7 +54,8 @@ import org.lwjgl.Sys;
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class TestSkyMaterial
-        extends SimpleApplication {
+        extends SimpleApplication
+        implements ActionListener {
     // *************************************************************************
     // constants
 
@@ -76,6 +82,14 @@ public class TestSkyMaterial
     final private static Logger logger =
             Logger.getLogger(TestSkyMaterial.class.getName());
     /**
+     * name for the dome geometry
+     */
+    final private static String geometryName = "sky dome";
+    /**
+     * asset path for loading and saving
+     */
+    final private static String savePath = "Models/TestSkyMaterial.j3o";
+    /**
      * Nifty screen id of the HUD
      */
     final private static String screenId = "test-sky-material";
@@ -85,10 +99,6 @@ public class TestSkyMaterial
     final private static String windowTitle = "TestSkyMaterial";
     // *************************************************************************
     // fields
-    /**
-     * instance under test
-     */
-    private SkyMaterial material = null;
     /**
      * heads-up display (HUD)
      */
@@ -137,6 +147,40 @@ public class TestSkyMaterial
          */
     }
     // *************************************************************************
+    // ActionListener methods
+
+    /**
+     * Process an action from the GUI or keyboard.
+     *
+     * @param actionString textual description of the action (not null)
+     * @param ongoing true if the action is ongoing, otherwise false
+     * @param ignored
+     */
+    @Override
+    public void onAction(String actionString, boolean ongoing, float ignored) {
+        /*
+         * Ignore actions which are not ongoing.
+         */
+        if (!ongoing) {
+            return;
+        }
+        logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
+        switch (actionString) {
+            case "load":
+                load();
+                break;
+
+            case "save":
+                save();
+                break;
+
+            default:
+                logger.log(Level.WARNING, "Action {0} was not handled.",
+                        MyString.quote(actionString));
+                break;
+        }
+    }
+    // *************************************************************************
     // Application methods
 
     /**
@@ -169,13 +213,13 @@ public class TestSkyMaterial
          * Create a dome mesh geometry for the sky.
          */
         DomeMesh mesh = new DomeMesh(rimSamples, quadrantSamples);
-        Geometry geometry = new Geometry("sky dome", mesh);
+        Geometry geometry = new Geometry(geometryName, mesh);
         rootNode.attachChild(geometry);
         geometry.setQueueBucket(Bucket.Translucent);
         /*
          * Create a material for the sky.
          */
-        material = new SkyMaterial(assetManager);
+        SkyMaterial material = new SkyMaterial(assetManager);
         geometry.setMaterial(material);
         material.initialize();
         material.addClouds(0);
@@ -186,7 +230,7 @@ public class TestSkyMaterial
         material.addObject(TestSkyMaterialHud.sunIndex, SkyMaterial.sunMapPath);
         material.addStars();
 
-        initializeUserInterface();
+        initializeUserInterface(material);
     }
     // *************************************************************************
     // private methods
@@ -215,7 +259,7 @@ public class TestSkyMaterial
     /**
      * Initialize the user interface.
      */
-    private void initializeUserInterface() {
+    private void initializeUserInterface(SkyMaterial material) {
         /*
          * Capture a screenshot when the KEY_SYSRQ hotkey is pressed.
          */
@@ -239,7 +283,8 @@ public class TestSkyMaterial
         /*
          * Create the heads-up display (HUD).
          */
-        hud = new TestSkyMaterialHud(display, screenId, material, false);
+        hud = new TestSkyMaterialHud(display, screenId, false);
+        hud.setMaterial(material);
         success = stateManager.attach(hud);
         assert success;
         /*
@@ -247,6 +292,61 @@ public class TestSkyMaterial
          */
         inputManager.addMapping("toggle", new KeyTrigger(KeyInput.KEY_H));
         inputManager.addListener(hud, "toggle");
+        /*
+         * Map the 'L' key to load material from a file.
+         */
+        inputManager.addMapping("load", new KeyTrigger(KeyInput.KEY_L));
+        inputManager.addListener(this, "load");
+        /*
+         * Map the 'S' key to save material to a file.
+         */
+        inputManager.addMapping("save", new KeyTrigger(KeyInput.KEY_S));
+        inputManager.addListener(this, "save");
+    }
+
+    /**
+     * Load a saved sky dome from a file.
+     */
+    private void load() {
+        Geometry loadedDome = (Geometry) assetManager.loadModel(savePath);
+        SkyMaterial material = (SkyMaterial) loadedDome.getMaterial();
+        assert material != null;
+
+        logger.log(Level.INFO, "Loaded {0} from asset {1}",
+                new Object[]{
+            MyString.quote(loadedDome.getName()),
+            MyString.quote(savePath)
+        });
+
+        Spatial oldDome = rootNode.getChild(geometryName);
+        rootNode.detachChild(oldDome);
+
+        rootNode.attachChild(loadedDome);
+        hud.setMaterial(material);
+        hud.setEnabled(false);
+    }
+
+    /**
+     * Save the sky dome to a file.
+     */
+    private void save() {
+        String filePath = "assets/" + savePath;
+        File file = new File(filePath);
+
+        BinaryExporter exporter = BinaryExporter.getInstance();
+        Spatial dome = rootNode.getChild(geometryName);
+        try {
+            exporter.save(dome, file);
+        } catch (IOException exception) {
+            logger.log(Level.SEVERE,
+                    "Output exception while saving dome to file {0}",
+                    MyString.quote(filePath));
+        }
+        logger.log(Level.INFO, "Saved {0} to file {1}",
+                new Object[]{
+            MyString.quote(dome.getName()),
+            MyString.quote(savePath)
+        });
     }
 
     /**
