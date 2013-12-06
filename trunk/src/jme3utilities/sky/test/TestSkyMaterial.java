@@ -345,7 +345,7 @@ public class TestSkyMaterial
         logger.log(Level.INFO, "Saved {0} to file {1}",
                 new Object[]{
             MyString.quote(dome.getName()),
-            MyString.quote(savePath)
+            MyString.quote(filePath)
         });
     }
 

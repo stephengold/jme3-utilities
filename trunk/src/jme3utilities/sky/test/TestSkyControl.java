@@ -235,7 +235,7 @@ public class TestSkyControl
         float solarLongitude = hud.getSolarLongitude();
         control.getSunAndStars().setSolarLongitude(solarLongitude);
         /*
-         * Adjust the relief of the terrain.
+         * Adjust the scale of the terrain.
          */
         float radius = 0.5f * cam.getFrustumFar();
         float baseY = 0f;
