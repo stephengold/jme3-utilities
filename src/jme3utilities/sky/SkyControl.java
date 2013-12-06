@@ -39,7 +39,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.shadow.AbstractShadowRenderer;
 import com.jme3.texture.Texture;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyMath;
 import jme3utilities.MySpatial;
@@ -60,7 +60,7 @@ import jme3utilities.SimpleControl;
  * setShadowRenderer().
  *
  * The "top" dome is oriented so that its rim coincides with the horizon. The
- * top dome always includes the clear sky color, sun, moon, and horizon haze.
+ * top dome always includes the sun, moon, clear sky color, and horizon haze.
  * Object index 0 is used for the sun, and the remaining object indices are used
  * for phases of the moon.
  *
@@ -72,6 +72,8 @@ import jme3utilities.SimpleControl;
  * To simulate star motion, several more domes are added: one for northern
  * stars, one for southern stars, and an optional bottom dome which extends the
  * horizon haze for scenes with a low horizon.
+ *
+ * This control is not serializable.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -175,15 +177,31 @@ public class SkyControl
     final private static Logger logger =
             Logger.getLogger(SkyControl.class.getName());
     /**
+     * name for the bottom geometry
+     */
+    final private static String bottomName = "bottom";
+    /**
+     * name for the clouds-only geometry
+     */
+    final private static String cloudsName = "clouds";
+    /**
      * asset path of the northern sky texture map
      */
     final private static String northAssetPath =
             "Textures/skies/star-maps/northern.png";
     /**
+     * name for the northern sky geometry
+     */
+    final private static String northName = "north";
+    /**
      * asset path of the southern sky texture map
      */
     final private static String southAssetPath =
             "Textures/skies/star-maps/southern.png";
+    /**
+     * name for the southern sky geometry
+     */
+    final private static String southName = "south";
     /**
      * asset path of the Unshaded material definition
      */
@@ -205,6 +223,11 @@ public class SkyControl
      */
     final private AssetManager assetManager;
     /**
+     * viewports whose background colors are updated by this control - not
+     * serialized
+     */
+    final private ArrayList<ViewPort> viewPorts = new ArrayList<>();
+    /**
      * true to create a material and geometry for the hemisphere below the
      * horizon, false to leave this hemisphere to background color (if
      * starMotionFlag=false) or stars (if starMotionFlag=true)
@@ -223,10 +246,6 @@ public class SkyControl
      */
     final private Camera camera;
     /**
-     * viewports whose background colors are updated by this control
-     */
-    final private Collection<ViewPort> viewPorts = new ArrayList<>();
-    /**
      * which directional light to update (or null for none)
      */
     private DirectionalLight mainLight = null;
@@ -243,7 +262,7 @@ public class SkyControl
      */
     private float cloudsAnimationTime = 0f;
     /**
-     * rate for cloud layer animations (1=standard)
+     * rate of motion for cloud layer animations (1=standard)
      */
     private float cloudsRelativeSpeed = 1f;
     /**
@@ -356,7 +375,8 @@ public class SkyControl
         int numLayers = cloudsMaterial.getMaxCloudLayers();
         for (int layer = 0; layer < numLayers; layer++) {
             cloudsMaterial.addClouds(layer);
-            cloudsMaterial.setCloudsScale(layer, 1.5f);
+            float scale = 1.5f;
+            cloudsMaterial.setCloudsScale(layer, scale);
         }
 
         if (bottomDomeFlag) {
@@ -377,8 +397,8 @@ public class SkyControl
     // new methods exposed
 
     /**
-     * Add a viewport to the collection of viewports whose background colors are
-     * updated by this control.
+     * Add a viewport to the list of viewports whose background colors are
+     * updated by this control. Note that the list is not serialized.
      *
      * @param viewPort (not null)
      */
@@ -397,6 +417,23 @@ public class SkyControl
      */
     public SunAndStars getSunAndStars() {
         return sunAndStars;
+    }
+
+    /**
+     * Remove a viewport from the list of viewports whose background colors are
+     * updated by this control. Note that the list is not serialized.
+     *
+     * @param viewPort (not null)
+     */
+    public void removeViewPort(ViewPort viewPort) {
+        if (viewPort == null) {
+            throw new NullPointerException("view port cannot be null");
+        }
+
+        boolean success = viewPorts.remove(viewPort);
+        if (!success) {
+            logger.log(Level.WARNING, "not removed");
+        }
     }
 
     /**
@@ -566,7 +603,10 @@ public class SkyControl
     // private methods
 
     /**
-     * Create and initialize the sky node and all the dome geometries.
+     * Create and initialize the sky node and all its dome geometries.
+     *
+     * @param cloudFlattening the oblateness (ellipticity) of the dome with the
+     * clouds: 0=no flattening (hemisphere), 1=maximum flattening
      */
     private void createSpatials(float cloudFlattening) {
         /*
@@ -580,9 +620,8 @@ public class SkyControl
         float innerDomeScale;
         if (starMotionFlag) {
             /*
-             * For star motion, make the bottom, cloud-only, and top domes
-             * slightly smaller than the star domes, so stars will be visible
-             * only at night.
+             * For star motion, make the non-star domes slightly smaller
+             * than the star domes so they can obscure the stars.
              */
             innerDomeScale = 0.9f;
         } else {
@@ -590,8 +629,9 @@ public class SkyControl
         }
 
         if (bottomDomeFlag) {
-            Geometry bottomDome = new Geometry("bottom", mesh);
+            Geometry bottomDome = new Geometry(bottomName, mesh);
             skyNode.attachChild(bottomDome);
+
             Quaternion upsideDown = new Quaternion();
             upsideDown.lookAt(Vector3f.UNIT_X, Vector3f.UNIT_Y.negate());
             bottomDome.setLocalRotation(upsideDown);
@@ -600,13 +640,13 @@ public class SkyControl
         }
 
         if (starMotionFlag) {
-            northDome = new Geometry("north", mesh);
+            northDome = new Geometry(northName, mesh);
             skyNode.attachChild(northDome);
             Material north = createUnshadedMaterial(northAssetPath);
             northDome.setMaterial(north);
             northDome.setQueueBucket(Bucket.Sky);
 
-            southDome = new Geometry("south", mesh);
+            southDome = new Geometry(southName, mesh);
             skyNode.attachChild(southDome);
             Material south = createUnshadedMaterial(southAssetPath);
             southDome.setMaterial(south);
@@ -626,7 +666,7 @@ public class SkyControl
              * Flatten the clouds-only dome in order to foreshorten clouds
              * near the horizon.
              */
-            cloudsOnlyDome = new Geometry("clouds", mesh);
+            cloudsOnlyDome = new Geometry(cloudsName, mesh);
             skyNode.attachChild(cloudsOnlyDome);
             float yScale = innerDomeScale * (1f - cloudFlattening);
             cloudsOnlyDome.setLocalScale(innerDomeScale, yScale, innerDomeScale);
@@ -654,7 +694,7 @@ public class SkyControl
      * Load a non-flipped texture asset in edge-clamp mode.
      *
      * @param assetPath pathname to the texture asset (not null)
-     * @return the texture which was loaded
+     * @return the texture which was loaded (not null)
      */
     private Texture loadTexture(String assetPath) {
         assert assetPath != null;
