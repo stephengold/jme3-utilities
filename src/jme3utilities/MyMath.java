@@ -278,10 +278,10 @@ public class MyMath {
     }
 
     /**
-     * Standardize a rotation angle to the range [-PI, PI).
+     * Standardize a rotation angle to the range [-Pi, Pi).
      *
      * @param angle (in radians)
-     * @return a standard angle (in radians)
+     * @return a standard angle (in radians, <Pi, >=-Pi)
      */
     public static float standardizeAngle(float angle) {
         float result = modulo(angle, FastMath.TWO_PI);

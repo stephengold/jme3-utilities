@@ -141,7 +141,7 @@ public class VectorXZ
      * Calculate the azimuth of this vector. Note: the directional convention is
      * left-handed.
      *
-     * @return angle in radians (between -PI and PI), measured CW from the north
+     * @return angle in radians (between -Pi and Pi), measured CW from the north
      * (+X direction)
      */
     public float azimuth() {
