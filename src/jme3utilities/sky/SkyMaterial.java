@@ -714,7 +714,11 @@ public class SkyMaterial
         cloudsRaster = new ImageRaster[maxCloudLayers];
         for (int layerIndex = 0; layerIndex < maxCloudLayers; layerIndex++) {
             Image image = cloudImages[layerIndex];
-            cloudsRaster[layerIndex] = ImageRaster.create(image);
+            if (image == null) {
+                cloudsRaster[layerIndex] = null;
+            } else {
+                cloudsRaster[layerIndex] = ImageRaster.create(image);
+            }
         }
     }
 
