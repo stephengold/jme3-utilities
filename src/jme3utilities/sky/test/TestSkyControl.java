@@ -185,31 +185,40 @@ public class TestSkyControl
         rootNode.addControl(landscapeControl);
         landscapeControl.setEnabled(true);
         /*
-         * Create, add, and configure a control to animate the sky.
+         * Create a SkyControl to animate the sky.
          */
-        boolean starMotion = true;
-        boolean bottomDome = true;
+        boolean starMotion = true; // allow stars to move
+        boolean bottomDome = true; // helpful in case scene has a low horizon
         control = new SkyControl(assetManager, cam, cloudFlattening, starMotion,
                 bottomDome);
-        rootNode.addControl(control);
+        /*
+         * Put SkyControl in charge of the lights, the
+         * shadow renderer, and the viewport background. (optional)
+         */
         control.addViewPort(viewPort);
         control.setAmbientLight(ambientLight);
         control.setMainLight(mainLight);
         control.setShadowRenderer(dlsr);
+        /*
+         * Add SkyControl to the scene and enable it.
+         */
+        rootNode.addControl(control);
         control.setEnabled(true);
 
         initializeUserInterface();
     }
 
     /**
-     * Update the time of day.
+     * Update the scene.
      *
      * @param tpf real seconds elapsed since the previous update (>=0)
      */
     @Override
     public void simpleUpdate(float tpf) {
+        LunarPhase lunarPhase = hud.getLunarPhase();
+        control.setPhase(lunarPhase);
         /*
-         * Adjust sky parameters.
+         * Adjust SkyControl parameters based on sliders in the HUD.
          */
         float cloudiness = hud.getCloudiness();
         control.setCloudiness(cloudiness);
@@ -228,9 +237,6 @@ public class TestSkyControl
 
         float lunarDiameter = hud.getLunarDiameter();
         control.setLunarDiameter(lunarDiameter);
-
-        LunarPhase lunarPhase = hud.getLunarPhase();
-        control.setPhase(lunarPhase);
 
         float solarLongitude = hud.getSolarLongitude();
         control.getSunAndStars().setSolarLongitude(solarLongitude);
@@ -301,7 +307,7 @@ public class TestSkyControl
         success = stateManager.attach(hud);
         assert success;
         /*
-         * Map the 'H' key to toggle HUD visibility.
+         * Map the 'H' hotkey to toggle HUD visibility.
          */
         inputManager.addMapping("toggle", new KeyTrigger(KeyInput.KEY_H));
         inputManager.addListener(hud, "toggle");
