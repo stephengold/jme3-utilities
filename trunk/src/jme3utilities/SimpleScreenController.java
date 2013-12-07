@@ -35,6 +35,7 @@ import de.lessvoid.nifty.controls.CheckBox;
 import de.lessvoid.nifty.controls.Controller;
 import de.lessvoid.nifty.controls.Menu;
 import de.lessvoid.nifty.controls.MenuItemActivatedEvent;
+import de.lessvoid.nifty.controls.RadioButton;
 import de.lessvoid.nifty.controls.Slider;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
@@ -426,8 +427,11 @@ public class SimpleScreenController
         try {
             button.setText(newText);
         } catch (NullPointerException exception) {
-            logger.log(Level.INFO, "screen lacks button {0}",
-                    MyString.quote(elementId));
+            logger.log(Level.INFO, "screen {0} lacks button {1}",
+                    new Object[]{
+                MyString.quote(screenId),
+                MyString.quote(elementId)
+            });
         }
     }
 
@@ -444,8 +448,58 @@ public class SimpleScreenController
         try {
             box.setChecked(newStatus);
         } catch (NullPointerException exception) {
-            logger.log(Level.INFO, "screen lacks checkbox {0}",
-                    MyString.quote(elementId));
+            logger.log(Level.INFO, "screen {0} lacks checkbox {1}",
+                    new Object[]{
+                MyString.quote(screenId),
+                MyString.quote(elementId)
+            });
+        }
+    }
+
+    /**
+     * Select a radio button.
+     *
+     * @param elementId Nifty element id of the radio button (not null)
+     */
+    protected void setRadioButton(String elementId) {
+        assert elementId != null;
+
+        RadioButton button =
+                getScreen().findNiftyControl(elementId, RadioButton.class);
+        try {
+            button.select();
+        } catch (NullPointerException exception) {
+            logger.log(Level.INFO, "screen {0} lacks radio button {1}",
+                    new Object[]{
+                MyString.quote(screenId),
+                MyString.quote(elementId)
+            });
+        }
+    }
+
+    /**
+     * Enable or disable a radio button.
+     *
+     * @param elementId Nifty element id of the radio button (not null)
+     * @param newState true to enable the button, false to disable it
+     */
+    protected void setRadioButtonEnabled(String elementId, boolean newState) {
+        assert elementId != null;
+
+        RadioButton button =
+                getScreen().findNiftyControl(elementId, RadioButton.class);
+        try {
+            if (newState) {
+                button.enable();
+            } else {
+                button.disable();
+            }
+        } catch (NullPointerException exception) {
+            logger.log(Level.INFO, "screen {0} lacks radio button {1}",
+                    new Object[]{
+                MyString.quote(screenId),
+                MyString.quote(elementId)
+            });
         }
     }
 
@@ -464,8 +518,11 @@ public class SimpleScreenController
         try {
             slider.setValue(newValue);
         } catch (NullPointerException exception) {
-            logger.log(Level.INFO, "screen lacks slider {0}",
-                    MyString.quote(sliderName));
+            logger.log(Level.INFO, "screen {0} lacks slider {1}",
+                    new Object[]{
+                MyString.quote(screenId),
+                MyString.quote(sliderName)
+            });
         }
     }
 
@@ -481,8 +538,11 @@ public class SimpleScreenController
 
         Element element = getScreen().findElementByName(elementId);
         if (element == null) {
-            logger.log(Level.INFO, "Screen lacks element {0}",
-                    MyString.quote(elementId));
+            logger.log(Level.INFO, "screen {0} lacks element {1}",
+                    new Object[]{
+                MyString.quote(screenId),
+                MyString.quote(elementId)
+            });
             return;
         }
         TextRenderer textRenderer = element.getRenderer(TextRenderer.class);
@@ -490,7 +550,8 @@ public class SimpleScreenController
             textRenderer.setText(newText);
             return;
         }
-        logger.log(Level.WARNING, "Nifty element {0} lacks a text renderer",
+        logger.log(Level.WARNING,
+                "Nifty element {0} lacks a text renderer",
                 MyString.quote(elementId));
     }
 
