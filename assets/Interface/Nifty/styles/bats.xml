@@ -23,16 +23,25 @@
  Some useful Nifty styles, including a bugfix to scrollpanel.
 -->
 <nifty-styles>
+    <!-- custom style for a panel with a centered button -->
     <style id="buttonPanel">
         <attributes
             childLayout="center"
             padding="3"/>
     </style>
 
+    <!-- custom style for an indented horizontal panel -->
+    <style id="indentPanel">
+        <attributes
+            childLayout="horizontal"
+            padding="0,10"/>
+    </style>
+
+    <!-- custom style for combining left- and right-aligned labels -->
     <style id="statusPanel">
         <attributes
             childLayout="overlay"
-            height="23"/>
+            height="30"/>
     </style>
 
     <!-- custom style for a scrollpanel without the rendering bug -->
