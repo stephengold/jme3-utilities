@@ -23,6 +23,7 @@ import com.jme3.audio.AudioNode;
 import com.jme3.light.Light;
 import com.jme3.light.LightList;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -45,6 +46,10 @@ public class Printer {
     // *************************************************************************
     // constants
 
+    /**
+     * enable printing of render queue bucket assignments
+     */
+    final private static boolean printBucketFlag = false;
     /**
      * enable printing of cull hints
      */
@@ -147,6 +152,26 @@ public class Printer {
      */
     public boolean isControlEnabled(Object control) {
         return MyControl.isEnabled(control);
+    }
+
+    /**
+     * Dump the render queue bucket to which a spatial is assigned.
+     *
+     * @param spatial which spatial (not null)
+     */
+    public void printBucket(Spatial spatial) {
+        /*
+         * Print its local assignment.
+         */
+        Bucket bucket = spatial.getLocalQueueBucket();
+        stream.printf(" bucket=%s", bucket.toString());
+        if (bucket == Bucket.Inherit) {
+            /*
+             * Print its effective assignment.
+             */
+            bucket = spatial.getQueueBucket();
+            stream.printf("/%s", bucket.toString());
+        }
     }
 
     /**
@@ -288,6 +313,9 @@ public class Printer {
         }
         if (printUserFlag) {
             printUserData(spatial);
+        }
+        if (printBucketFlag) {
+            printBucket(spatial);
         }
         if (printShadowFlag) {
             printShadowModes(spatial);
