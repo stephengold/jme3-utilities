@@ -23,6 +23,7 @@
             <word>filesystem</word>
             <word>hotkey</word>
             <word>light's</word>
+            <word>lintels</word>
             <word>moon's</word>
             <word>observer's</word>
             <word>popup</word>
@@ -33,6 +34,7 @@
             <word>signal's</word>
             <word>slider's</word>
             <word>texture's</word>
+            <word>unscaled</word>
         </spellchecker-wordlist>
     </configuration>
 </project>
