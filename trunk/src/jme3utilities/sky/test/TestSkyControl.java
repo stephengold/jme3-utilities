@@ -19,6 +19,8 @@
  */
 package jme3utilities.sky.test;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.input.KeyInput;
@@ -55,28 +57,37 @@ public class TestSkyControl
     // constants
 
     /**
-     * flattening of the cloud dome: 0=none, 1=maximum
-     */
-    final private static float cloudFlattening = 0.9f;
-    /**
      * message logger for this class
      */
     final private static Logger logger =
             Logger.getLogger(TestSkyControl.class.getName());
     /**
+     * application name for its window's title bar and its usage message
+     */
+    final private static String applicationName = "TestSkyControl";
+    /**
      * Nifty screen id of the HUD
      */
     final private static String screenId = "test-sky-control";
-    /**
-     * application name for its window's title bar
-     */
-    final private static String windowTitle = "TestSkyControl";
     // *************************************************************************
     // fields
     /**
      * the ambient light in the scene
      */
     private AmbientLight ambientLight = null;
+    /**
+     * true means use just a single dome; false means use five domes
+     */
+    @Parameter(names = {"-s", "--single"},
+            description = "use just a single dome")
+    private static boolean singleDome = false;
+    /**
+     * true means just display the usage message; false means run the
+     * application
+     */
+    @Parameter(names = {"-h", "-u", "--help", "--usage"}, help = true,
+            description = "display this usage message")
+    private static boolean usageOnly = false;
     /**
      * the main light in the scene, which represents the sun or moon
      */
@@ -116,6 +127,15 @@ public class TestSkyControl
          */
         TestSkyControl application = new TestSkyControl();
         /*
+         * Parse the command-line arguments.
+         */
+        JCommander jCommander = new JCommander(application, arguments);
+        jCommander.setProgramName(applicationName);
+        if (usageOnly) {
+            jCommander.usage();
+            return;
+        }
+        /*
          * Don't pause on lost focus.  This simplifies debugging and
          * permits the application to keep running while minimized.
          */
@@ -124,7 +144,7 @@ public class TestSkyControl
          * Customize the window's title bar.
          */
         AppSettings settings = new AppSettings(true);
-        settings.setTitle(windowTitle);
+        settings.setTitle(applicationName);
         application.setSettings(settings);
 
         application.start();
@@ -187,8 +207,18 @@ public class TestSkyControl
         /*
          * Create a SkyControl to animate the sky.
          */
-        boolean starMotion = true; // allow stars to move
-        boolean bottomDome = true; // helpful in case scene has a low horizon
+        float cloudFlattening;
+        boolean starMotion;
+        boolean bottomDome;
+        if (singleDome) {
+            cloudFlattening = 0f; // single dome implies clouds on hemisphere
+            starMotion = false; // single dome implies non-moving stars
+            bottomDome = false; // single dome implies exposed background
+        } else {
+            cloudFlattening = 0.9f; // clouds overhead are 10x closer
+            starMotion = true; // allow stars to move
+            bottomDome = true; // helpful in case scene has a low horizon
+        }
         control = new SkyControl(assetManager, cam, cloudFlattening, starMotion,
                 bottomDome);
         /*
