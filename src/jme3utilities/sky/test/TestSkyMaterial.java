@@ -49,7 +49,8 @@ import org.lwjgl.Sys;
  * A simple application for testing the SkyMaterial class using a Nifty heads-up
  * display (HUD).
  *
- * Use the 'H' key to toggle HUD visibility.
+ * Use the 'H' key to toggle HUD visibility, the 'S' key to save the scene, the
+ * 'L' key to load a saved scene.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */

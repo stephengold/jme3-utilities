@@ -65,8 +65,7 @@ public class PopupMenu
      * null)
      * @param elementId id of the popup element (not null)
      */
-    PopupMenu(SimpleScreenController controller,
-            String[] actionPrefixWords) {
+    PopupMenu(SimpleScreenController controller, String[] actionPrefixWords) {
         assert controller != null;
         assert actionPrefixWords != null;
 

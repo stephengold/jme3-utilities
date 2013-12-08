@@ -662,14 +662,16 @@ public class SkyControl
         if (cloudsMaterial != topMaterial) {
             assert cloudFlattening > 0f : cloudFlattening;
             assert cloudFlattening < 1f : cloudFlattening;
+
+            cloudsOnlyDome = new Geometry(cloudsName, mesh);
+            skyNode.attachChild(cloudsOnlyDome);
             /*
              * Flatten the clouds-only dome in order to foreshorten clouds
              * near the horizon.
              */
-            cloudsOnlyDome = new Geometry(cloudsName, mesh);
-            skyNode.attachChild(cloudsOnlyDome);
             float yScale = innerDomeScale * (1f - cloudFlattening);
             cloudsOnlyDome.setLocalScale(innerDomeScale, yScale, innerDomeScale);
+
             cloudsOnlyDome.setMaterial(cloudsMaterial);
             cloudsOnlyDome.setQueueBucket(Bucket.Translucent);
         }
@@ -719,7 +721,8 @@ public class SkyControl
          * clear color accordingly.
          */
         ColorRGBA clearColor = colorDay.clone();
-        clearColor.a = MyMath.clampFraction(1f + sunDirection.y / limitOfTwilight);
+        clearColor.a =
+                MyMath.clampFraction(1f + sunDirection.y / limitOfTwilight);
         topMaterial.setClearColor(clearColor);
 
         Vector3f moonDirection = updateMoon();
@@ -759,7 +762,7 @@ public class SkyControl
             assert moonDirection.isUnitVector() : moonDirection;
         }
         /*
-         * Determine the direction to the main light source.
+         * Determine the world direction to the main light source.
          */
         float sineSolarAltitude = sunDirection.y;
         boolean sunUp = sineSolarAltitude >= 0f;
