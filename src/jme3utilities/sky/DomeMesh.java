@@ -150,30 +150,35 @@ public class DomeMesh
     public DomeMesh(int rimSamples, int quadrantSamples, float topU, float topV,
             float uvScale, boolean inwardFacing) {
         if (rimSamples < 3) {
+            logger.log(Level.SEVERE, "rimSamples={0}", rimSamples);
             throw new IllegalArgumentException(
                     "must have at least 3 samples on the rim");
         }
         this.rimSamples = rimSamples;
 
-        if (rimSamples < 2) {
+        if (quadrantSamples < 2) {
+            logger.log(Level.SEVERE, "quadrantSamples={0}", quadrantSamples);
             throw new IllegalArgumentException(
                     "must have at least 2 samples per quadrant");
         }
         this.quadrantSamples = quadrantSamples;
 
         if (topU < uvMin || topU > uvMax) {
+            logger.log(Level.SEVERE, "topU={0}", topU);
             throw new IllegalArgumentException(
                     "topU must be between 0 and 1, inclusive");
         }
         this.topU = topU;
 
         if (topV < uvMin || topV > uvMax) {
+            logger.log(Level.SEVERE, "topV={0}", topV);
             throw new IllegalArgumentException(
                     "topV must be between 0 and 1, inclusive");
         }
         this.topV = topV;
 
         if (uvScale <= 0f || uvScale >= 0.5f) {
+            logger.log(Level.SEVERE, "uvScale={0}", uvScale);
             throw new IllegalArgumentException(
                     "uvScale must be between 0 and 0.5");
         }
@@ -197,6 +202,7 @@ public class DomeMesh
             throw new NullPointerException("direction cannot be null");
         }
         if (!direction.isUnitVector()) {
+            logger.log(Level.SEVERE, "direction={0}", direction);
             throw new IllegalArgumentException(
                     "direction must be a unit vector");
         }
@@ -236,6 +242,7 @@ public class DomeMesh
      */
     public float elevationAngle(float u, float v) {
         if (u > uvMax || u < uvMin || v > uvMax || v < uvMin) {
+            logger.log(Level.SEVERE, "u={0}, v={1}", new Object[]{u, v});
             throw new IllegalArgumentException(
                     "texture coordinates must be between 0 and 1, inclusive");
         }
@@ -302,10 +309,12 @@ public class DomeMesh
      */
     private void updateAll() {
         if (rimSamples < 3) {
+            logger.log(Level.SEVERE, "rimSamples={0}", rimSamples);
             throw new IllegalArgumentException(
                     "A dome must have at least 3 samples on its rim");
         }
         if (quadrantSamples < 2) {
+            logger.log(Level.SEVERE, "rimSamples={0}", quadrantSamples);
             throw new IllegalArgumentException("A dome must have at least "
                     + "2 samples per longitudinal quadrant");
         }
