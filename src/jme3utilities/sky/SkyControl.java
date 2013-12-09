@@ -619,20 +619,28 @@ public class SkyControl
          * Sky node serves as the parent for all sky geometries.
          */
         skyNode = new Node("sky node");
+        skyNode.setQueueBucket(Bucket.Sky);
         skyNode.setShadowMode(ShadowMode.Off);
-
+        /*
+         * Attach domes to the sky node from the outside in so that they'll be
+         * rendered in that order.
+         */
         mesh = new DomeMesh(rimSamples, quadrantSamples);
-
-        float innerDomeScale;
         if (starMotionFlag) {
-            /*
-             * For star motion, make the non-star domes slightly smaller
-             * than the star domes so they can obscure the stars.
-             */
-            innerDomeScale = 0.9f;
-        } else {
-            innerDomeScale = 1f;
+            northDome = new Geometry(northName, mesh);
+            skyNode.attachChild(northDome);
+            Material north = createUnshadedMaterial(northAssetPath);
+            northDome.setMaterial(north);
+
+            southDome = new Geometry(southName, mesh);
+            skyNode.attachChild(southDome);
+            Material south = createUnshadedMaterial(southAssetPath);
+            southDome.setMaterial(south);
         }
+
+        Geometry topDome = new Geometry("top", mesh);
+        skyNode.attachChild(topDome);
+        topDome.setMaterial(topMaterial);
 
         if (bottomDomeFlag) {
             Geometry bottomDome = new Geometry(bottomName, mesh);
@@ -641,29 +649,8 @@ public class SkyControl
             Quaternion upsideDown = new Quaternion();
             upsideDown.lookAt(Vector3f.UNIT_X, Vector3f.UNIT_Y.negate());
             bottomDome.setLocalRotation(upsideDown);
-            bottomDome.setLocalScale(innerDomeScale);
             bottomDome.setMaterial(bottomMaterial);
         }
-
-        if (starMotionFlag) {
-            northDome = new Geometry(northName, mesh);
-            skyNode.attachChild(northDome);
-            Material north = createUnshadedMaterial(northAssetPath);
-            northDome.setMaterial(north);
-            northDome.setQueueBucket(Bucket.Sky);
-
-            southDome = new Geometry(southName, mesh);
-            skyNode.attachChild(southDome);
-            Material south = createUnshadedMaterial(southAssetPath);
-            southDome.setMaterial(south);
-            southDome.setQueueBucket(Bucket.Sky);
-        }
-
-        Geometry topDome = new Geometry("top", mesh);
-        skyNode.attachChild(topDome);
-        topDome.setLocalScale(innerDomeScale);
-        topDome.setMaterial(topMaterial);
-        topDome.setQueueBucket(Bucket.Translucent);
 
         if (cloudsMaterial != topMaterial) {
             assert cloudFlattening > 0f : cloudFlattening;
@@ -675,11 +662,9 @@ public class SkyControl
              * Flatten the clouds-only dome in order to foreshorten clouds
              * near the horizon.
              */
-            float yScale = innerDomeScale * (1f - cloudFlattening);
-            cloudsOnlyDome.setLocalScale(innerDomeScale, yScale, innerDomeScale);
-
+            float yScale = 1f - cloudFlattening;
+            cloudsOnlyDome.setLocalScale(1f, yScale, 1f);
             cloudsOnlyDome.setMaterial(cloudsMaterial);
-            cloudsOnlyDome.setQueueBucket(Bucket.Translucent);
         }
     }
 
