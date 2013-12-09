@@ -280,7 +280,7 @@ class TestSkyControlHud
         String timeString = timeOfDay.toString();
         setStatusText("time", timeString);
 
-        Camera camera = application.getCamera();
+        Camera camera = getApplication().getCamera();
         float azimuthDegrees = MyCamera.azimuth(camera) * FastMath.RAD_TO_DEG;
         azimuthDegrees = MyMath.modulo(azimuthDegrees, 360f);
         String azimuthStatus = String.format("%03.0f", azimuthDegrees);
@@ -393,7 +393,8 @@ class TestSkyControlHud
      */
     @Override
     public void setEnabled(boolean newState) {
-        FlyByCamera fbc = ((SimpleApplication) application).getFlyByCamera();
+        SimpleApplication app = (SimpleApplication) getApplication();
+        FlyByCamera fbc = app.getFlyByCamera();
         if (newState) {
             enable(this);
             fbc.setEnabled(false);
