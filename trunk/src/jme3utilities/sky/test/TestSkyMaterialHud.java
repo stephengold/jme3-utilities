@@ -166,7 +166,7 @@ class TestSkyMaterialHud
                  */
                 Quaternion north = new Quaternion();
                 north.lookAt(Vector3f.UNIT_X, Vector3f.UNIT_Y);
-                application.getCamera().setRotation(north);
+                getApplication().getCamera().setRotation(north);
                 break;
 
             case "view zenith":
@@ -175,7 +175,7 @@ class TestSkyMaterialHud
                  */
                 Quaternion zenith = new Quaternion();
                 zenith.lookAt(Vector3f.UNIT_Y, Vector3f.UNIT_X);
-                application.getCamera().setRotation(zenith);
+                getApplication().getCamera().setRotation(zenith);
                 break;
 
             default:
@@ -215,7 +215,8 @@ class TestSkyMaterialHud
      */
     @Override
     public void setEnabled(boolean newState) {
-        FlyByCamera fbc = ((SimpleApplication) application).getFlyByCamera();
+        SimpleApplication app = (SimpleApplication) getApplication();
+        FlyByCamera fbc = app.getFlyByCamera();
         if (newState) {
             enable(this);
             fbc.setEnabled(false);
@@ -242,7 +243,7 @@ class TestSkyMaterialHud
         }
 
         ColorRGBA bgColor = updateColorBank("bg");
-        application.getViewPort().setBackgroundColor(bgColor);
+        getApplication().getViewPort().setBackgroundColor(bgColor);
 
         ColorRGBA clearColor = updateColorBank("clear");
         material.setClearColor(clearColor);

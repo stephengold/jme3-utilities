@@ -85,7 +85,7 @@ public class SimpleScreenController
     /**
      * reference to the application instance: set by initialize()
      */
-    protected static Application application = null;
+    private static Application application = null;
     /**
      * false before the screen starts, true thereafter
      */
@@ -385,7 +385,7 @@ public class SimpleScreenController
     // new protected methods
 
     /**
-     * Access the application which owns the screen.
+     * Access the application which owns this screen.
      *
      * @return the pre-existing instance (not null)
      */
