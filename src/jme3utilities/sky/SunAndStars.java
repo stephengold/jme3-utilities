@@ -324,6 +324,18 @@ public class SunAndStars
         assert solarRaHours < hoursPerDay : solarRaHours;
     }
     // *************************************************************************
+    // Object methods
+
+    /**
+     * Represent this instance as a string.
+     */
+    @Override
+    public String toString() {
+        String result = String.format("[hour=%f, lat=%f, long=%f, ra=%f]",
+                hour, observerLatitude, solarLongitude, solarRaHours);
+        return result;
+    }
+    // *************************************************************************
     // Savable methods
 
     /**
