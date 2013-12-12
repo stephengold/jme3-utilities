@@ -45,6 +45,12 @@ class TestSkyControlParameters {
     // *************************************************************************
     // fields
     /**
+     * true means use a shadow filter; false means use a shadow renderer
+     */
+    @Parameter(names = {"-f", "--filter"},
+            description = "use a shadow filter")
+    private boolean shadowFilter = false;
+    /**
      * true means use just a single dome; false means use all five domes
      */
     @Parameter(names = {"-s", "--single"},
@@ -59,6 +65,13 @@ class TestSkyControlParameters {
     private boolean usageOnly = false;
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Test whether the shadow filter option was specified.
+     */
+    boolean shadowFilter() {
+        return shadowFilter;
+    }
 
     /**
      * Test whether the single dome option was specified.

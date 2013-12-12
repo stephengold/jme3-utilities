@@ -42,6 +42,7 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.shadow.AbstractShadowFilter;
 import com.jme3.shadow.AbstractShadowRenderer;
 import com.jme3.texture.Texture;
 import java.util.ArrayList;
@@ -219,6 +220,10 @@ public class SkyControl
      * which shadow renderer to update (or null for none)
      */
     private AbstractShadowRenderer shadowRenderer = null;
+    /**
+     * which shadow filter to update (or null for none)
+     */
+    private AbstractShadowFilter shadowFilter = null;
     /**
      * which ambient light to update (or null for none)
      */
@@ -518,6 +523,17 @@ public class SkyControl
      */
     public void setMainLight(DirectionalLight mainLight) {
         this.mainLight = mainLight;
+    }
+
+    /**
+     * Save a reference to the scene's shadow filter. As long as the reference
+     * has a non-null value, this control will continuously update the filter's
+     * shadow intensity.
+     *
+     * @param renderer the scene's shadow renderer (or null for none)
+     */
+    public void setShadowFilter(AbstractShadowFilter filter) {
+        this.shadowFilter = filter;
     }
 
     /**
@@ -880,7 +896,7 @@ public class SkyControl
             ambientLight.setColor(ambient);
         }
 
-        if (shadowRenderer != null) {
+        if (shadowFilter != null || shadowRenderer != null) {
             float mainAmount = main.r + main.g + main.b;
             float ambientAmount = ambient.r + ambient.g + ambient.b;
             float totalAmount = mainAmount + ambientAmount;
@@ -894,7 +910,12 @@ public class SkyControl
             } else {
                 shadowIntensity = alphaMin;
             }
-            shadowRenderer.setShadowIntensity(shadowIntensity);
+            if (shadowFilter != null) {
+                shadowFilter.setShadowIntensity(shadowIntensity);
+            }
+            if (shadowRenderer != null) {
+                shadowRenderer.setShadowIntensity(shadowIntensity);
+            }
         }
     }
 
