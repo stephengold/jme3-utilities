@@ -35,6 +35,8 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
@@ -62,6 +64,14 @@ public class TestSkyControl
     // constants
 
     /**
+     * width and height of rendered shadow maps (pixels per side, >0)
+     */
+    final private static int shadowMapSize = 4_096;
+    /**
+     * number of shadow map splits (>0)
+     */
+    final private static int shadowMapSplits = 3;
+    /**
      * message logger for this class
      */
     final private static Logger logger =
@@ -85,7 +95,11 @@ public class TestSkyControl
      */
     private DirectionalLight mainLight = null;
     /**
-     * shadow renderer for the main light
+     * shadow filter for the main light (null means none)
+     */
+    private DirectionalLightShadowFilter dlsf = null;
+    /**
+     * shadow renderer for the main light (null means none)
      */
     private DirectionalLightShadowRenderer dlsr = null;
     /**
@@ -189,12 +203,24 @@ public class TestSkyControl
         ambientLight.setName("ambient");
         rootNode.addLight(ambientLight);
         /*
-         * shadow renderer
+         * Add shadows, using a filter or a renderer.
          */
-        dlsr = new DirectionalLightShadowRenderer(assetManager, 4_096, 3);
-        dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
-        dlsr.setLight(mainLight);
-        viewPort.addProcessor(dlsr);
+        if (parameters.shadowFilter()) {
+            dlsf = new DirectionalLightShadowFilter(
+                    assetManager, shadowMapSize, shadowMapSplits);
+            dlsf.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
+            dlsf.setLight(mainLight);
+            FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+            fpp.addFilter(dlsf);
+            viewPort.addProcessor(fpp);
+
+        } else {
+            dlsr = new DirectionalLightShadowRenderer(
+                    assetManager, shadowMapSize, shadowMapSplits);
+            dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
+            dlsr.setLight(mainLight);
+            viewPort.addProcessor(dlsr);
+        }
         /*
          * Create, add, and enable the landscape.
          */
@@ -212,20 +238,25 @@ public class TestSkyControl
             starMotion = false; // single dome implies non-moving stars
             bottomDome = false; // single dome implies exposed background
         } else {
-            cloudFlattening = 0.9f; // clouds overhead are 10x closer
+            cloudFlattening = 0.9f; // overhead clouds 10x closer than horizon
             starMotion = true; // allow stars to move
             bottomDome = true; // helpful in case scene has a low horizon
         }
         control = new SkyControl(assetManager, cam, cloudFlattening, starMotion,
                 bottomDome);
         /*
-         * Put SkyControl in charge of the lights, the
-         * shadow renderer, and the viewport background. (optional)
+         * Put SkyControl in charge of the lights, shadows, and background.
+         * (all optional)
          */
         control.addViewPort(viewPort);
         control.setAmbientLight(ambientLight);
         control.setMainLight(mainLight);
-        control.setShadowRenderer(dlsr);
+        if (dlsf != null) {
+            control.setShadowFilter(dlsf);
+        }
+        if (dlsr != null) {
+            control.setShadowRenderer(dlsr);
+        }
         /*
          * Add SkyControl to the scene and enable it.
          */
@@ -283,7 +314,7 @@ public class TestSkyControl
      */
     private void configureCamera() {
         /*
-         * The camera is initially pointed due west.
+         * The camera is initially pointed 10 degrees north of west.
          */
         cam.setLocation(new Vector3f(6.5f, 13f, 50f));
         Quaternion orientation = new Quaternion();
