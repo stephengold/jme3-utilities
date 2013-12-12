@@ -26,7 +26,6 @@
 package jme3utilities.sky.test;
 
 import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.input.KeyInput;
@@ -82,19 +81,6 @@ public class TestSkyControl
      */
     private AmbientLight ambientLight = null;
     /**
-     * true means use just a single dome; false means use five domes
-     */
-    @Parameter(names = {"-s", "--single"},
-            description = "use just a single dome")
-    private static boolean singleDome = false;
-    /**
-     * true means just display the usage message; false means run the
-     * application
-     */
-    @Parameter(names = {"-h", "-u", "--help", "--usage"}, help = true,
-            description = "display this usage message")
-    private static boolean usageOnly = false;
-    /**
      * the main light in the scene, which represents the sun or moon
      */
     private DirectionalLight mainLight = null;
@@ -114,6 +100,11 @@ public class TestSkyControl
      * the heads-up display (HUD)
      */
     private TestSkyControlHud hud = null;
+    /**
+     * command-line parameters
+     */
+    final private static TestSkyControlParameters parameters =
+            new TestSkyControlParameters();
     // *************************************************************************
     // new methods exposed
 
@@ -135,9 +126,9 @@ public class TestSkyControl
         /*
          * Parse the command-line arguments.
          */
-        JCommander jCommander = new JCommander(application, arguments);
+        JCommander jCommander = new JCommander(parameters, arguments);
         jCommander.setProgramName(applicationName);
-        if (usageOnly) {
+        if (parameters.usageOnly()) {
             jCommander.usage();
             return;
         }
@@ -216,7 +207,7 @@ public class TestSkyControl
         float cloudFlattening;
         boolean starMotion;
         boolean bottomDome;
-        if (singleDome) {
+        if (parameters.singleDome()) {
             cloudFlattening = 0f; // single dome implies clouds on hemisphere
             starMotion = false; // single dome implies non-moving stars
             bottomDome = false; // single dome implies exposed background
