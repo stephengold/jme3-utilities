@@ -34,15 +34,20 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jme3utilities.MyMath;
 
 /**
- * The orientations of the sun and stars relative to an observer on Earth.
+ * Represent the orientations of the sun and stars relative to an observer on
+ * Earth.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class SunAndStars
-        implements Savable {
+        implements Cloneable, Savable {
     // *************************************************************************
     // constants
 
@@ -51,7 +56,7 @@ public class SunAndStars
      */
     final public static float defaultLatitude = 51.1788f * FastMath.DEG_TO_RAD;
     /**
-     * obliquity of the ecliptic, in degrees
+     * obliquity of the ecliptic, in radians
      */
     final private static float obliquity = 23.44f * FastMath.DEG_TO_RAD;
     /**
@@ -62,6 +67,11 @@ public class SunAndStars
      * Earth's rate of rotation (radians per sidereal hour)
      */
     final private static float radiansPerHour = FastMath.TWO_PI / hoursPerDay;
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger =
+            Logger.getLogger(SunAndStars.class.getName());
     // *************************************************************************
     // fields
     /**
@@ -303,7 +313,7 @@ public class SunAndStars
     }
 
     /**
-     * Alter the sun's celestial longitude.
+     * Alter the sun's celestial longitude directly.
      *
      * @param longitude radians east of the vernal equinox (<=2*Pi, >=0)
      */
@@ -323,16 +333,74 @@ public class SunAndStars
         assert solarRaHours >= 0f : solarRaHours;
         assert solarRaHours < hoursPerDay : solarRaHours;
     }
+
+    /**
+     * Set the sun's celestial longitude to approximate a specific day of the
+     * year.
+     *
+     * This convenience method uses a crude approximation which is accurate
+     * within a couple degrees of arc. A more accurate formula may be obtained
+     * from Steyaert, C. (1991) "Calculating the solar longitude 2000.0", WGN
+     * (Journal of the International Meteor Organization) 19-2, pages 31-34,
+     * available from http://adsabs.harvard.edu/full/1991JIMO...19...31S
+     *
+     * @param month zero-based month of the Gregorian year (>=0, <12)
+     * @param date day of the Gregorian month (>=1, <=31)
+     */
+    public void setSolarLongitude(int month, int day) {
+        if (month < 0 || month >= 12) {
+            throw new IllegalArgumentException(
+                    "month must be between 0 and 11, inclusive");
+        }
+        if (day < 1 || day > 31) {
+            throw new IllegalArgumentException(
+                    "day must be between 1 and 31, inclusive");
+        }
+        /*
+         * Convert month and day to day-of-the-year.
+         */
+        int year = 2000; // a recent leap year
+        Calendar calendar = new GregorianCalendar();
+        calendar.set(year, month, day, 12, 0, 0); // noon, standard time
+        int dayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
+        /*
+         * Calculate approximate solar longitude (in radians).
+         */
+        float daysSinceEquinox = (float) (dayOfYear - 80);
+        float longitude = FastMath.TWO_PI * daysSinceEquinox / 366f;
+
+        longitude = MyMath.modulo(longitude, FastMath.TWO_PI);
+        setSolarLongitude(longitude);
+    }
     // *************************************************************************
     // Object methods
+
+    /**
+     * Clone this instance.
+     *
+     * @return a new instance equivalent to this one
+     */
+    @Override
+    public SunAndStars clone() {
+        try {
+            SunAndStars clone = (SunAndStars) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new AssertionError();
+        }
+    }
 
     /**
      * Represent this instance as a string.
      */
     @Override
     public String toString() {
-        String result = String.format("[hour=%f, lat=%f, long=%f, ra=%f]",
-                hour, observerLatitude, solarLongitude, solarRaHours);
+        float latitudeDegrees = observerLatitude * FastMath.RAD_TO_DEG;
+        float longitudeDegrees = solarLongitude * FastMath.RAD_TO_DEG;
+        String result = String.format(
+                "[hour=%f, lat=%f deg, long=%f deg, ra=%f]",
+                hour, latitudeDegrees, longitudeDegrees, solarRaHours);
+
         return result;
     }
     // *************************************************************************
@@ -344,7 +412,8 @@ public class SunAndStars
      * @param importer (not null)
      */
     @Override
-    public void read(JmeImporter importer) throws IOException {
+    public void read(JmeImporter importer)
+            throws IOException {
         InputCapsule capsule = importer.getCapsule(this);
 
         float value = capsule.readFloat("hour", 0f);
@@ -363,11 +432,57 @@ public class SunAndStars
      * @param exporter (not null)
      */
     @Override
-    public void write(JmeExporter exporter) throws IOException {
+    public void write(JmeExporter exporter)
+            throws IOException {
         OutputCapsule capsule = exporter.getCapsule(this);
 
         capsule.write(hour, "hour", 0f);
         capsule.write(observerLatitude, "observerLatitude", defaultLatitude);
         capsule.write(solarLongitude, "observerLatitude", 0f);
+    }
+    // *************************************************************************
+    // test cases
+
+    /**
+     * Console app to test this class.
+     *
+     * @param ignored
+     */
+    public static void main(String[] ignored) {
+        logger.setLevel(Level.INFO);
+        System.out.print("Test results for class SunAndStars:\n\n");
+
+        SunAndStars test = new SunAndStars();
+        System.out.printf("Default value:  %s%n", test.toString());
+
+        test.setSolarLongitude(Calendar.DECEMBER, 31);
+        System.out.printf(" on December 31st:  %s%n", test.toString());
+
+        test.setSolarLongitude(Calendar.JANUARY, 1);
+        System.out.printf(" on January 1st:  %s%n", test.toString());
+
+        test.setSolarLongitude(Calendar.FEBRUARY, 29);
+        System.out.printf(" on February 29th:  %s%n", test.toString());
+
+        test.setSolarLongitude(Calendar.MARCH, 1);
+        System.out.printf(" on March 1st:  %s%n", test.toString());
+
+        SunAndStars copy = test.clone();
+        System.out.printf("Clone of last value:  %s%n", copy.toString());
+
+        test.setSolarLongitude(Calendar.MARCH, 20);
+        System.out.printf(" on March 20th:  %s%n", test.toString());
+
+        test.setObserverLatitude(FastMath.HALF_PI);
+        System.out.printf(" at the North Pole:  %s%n", test.toString());
+
+        test.setObserverLatitude(-FastMath.HALF_PI);
+        System.out.printf(" at the South Pole:  %s%n", test.toString());
+
+        test.setObserverLatitude(0f);
+        System.out.printf(" at the Equator:  %s%n", test.toString());
+
+        test.setHour(23f + (59f + 59f / 60f) / 60f);
+        System.out.printf(" at 23:59:59 LST:  %s%n", test.toString());
     }
 }
