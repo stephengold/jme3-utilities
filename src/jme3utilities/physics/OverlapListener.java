@@ -23,15 +23,15 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities;
+package jme3utilities.physics;
 
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 
 /**
- * Callback interface for notifying controls when they physically overlap with
- * an unrelated PhysicsRigidBody.
+ * Callback interface for notifying physics controls when they physically
+ * overlap with an unrelated PhysicsRigidBody.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
