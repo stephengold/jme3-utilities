@@ -33,12 +33,14 @@ import com.jme3.export.Savable;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Spatial;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyMath;
+import jme3utilities.MySpatial;
 
 /**
  * Represent the orientations of the sun and stars relative to an observer on
@@ -282,6 +284,35 @@ public class SunAndStars
         assert solarLongitude >= 0f : solarLongitude;
 
         return solarLongitude;
+    }
+
+    /**
+     * Update the orientations of north and south star domes.
+     */
+    void orientStarDomes(Spatial northDome, Spatial southDome) {
+        float siderealAngle = getSiderealAngle();
+        Quaternion yRotation = new Quaternion();
+        Quaternion zRotation = new Quaternion();
+        if (northDome != null) {
+            /*
+             * Orient the north dome.
+             */
+            yRotation.fromAngleNormalAxis(-siderealAngle, Vector3f.UNIT_Y);
+            float coLatitude = FastMath.HALF_PI - observerLatitude;
+            zRotation.fromAngleNormalAxis(-coLatitude, Vector3f.UNIT_Z);
+            Quaternion orientation = zRotation.mult(yRotation);
+            MySpatial.setWorldOrientation(northDome, orientation);
+        }
+        if (southDome != null) {
+            /*
+             * Orient the north dome.
+             */
+            yRotation.fromAngleNormalAxis(siderealAngle, Vector3f.UNIT_Y);
+            float angle = FastMath.HALF_PI + observerLatitude;
+            zRotation.fromAngleNormalAxis(angle, Vector3f.UNIT_Z);
+            Quaternion orientation = zRotation.mult(yRotation);
+            MySpatial.setWorldOrientation(southDome, orientation);
+        }
     }
 
     /**
