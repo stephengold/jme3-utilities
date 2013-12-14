@@ -735,7 +735,7 @@ public class SkyControl
         Vector3f moonDirection = updateMoon();
         updateLighting(sunDirection, moonDirection);
         if (starMotionFlag) {
-            updateStars();
+            sunAndStars.orientStarDomes(northDome, southDome);
         }
     }
 
@@ -961,30 +961,8 @@ public class SkyControl
                 topMaterial.hideObject(objectIndex);
             }
         }
+
         return worldDirection;
-    }
-
-    /**
-     * Update the orientation of the star domes.
-     */
-    private void updateStars() {
-        float siderealAngle = sunAndStars.getSiderealAngle();
-        Quaternion yRotation = new Quaternion();
-        Quaternion zRotation = new Quaternion();
-        /*
-         * Rotate the star domes.
-         */
-        yRotation.fromAngleNormalAxis(-siderealAngle, Vector3f.UNIT_Y);
-        float coLatitude = FastMath.HALF_PI - sunAndStars.getObserverLatitude();
-        zRotation.fromAngleNormalAxis(-coLatitude, Vector3f.UNIT_Z);
-        Quaternion orientation = zRotation.mult(yRotation);
-        MySpatial.setWorldOrientation(northDome, orientation);
-
-        yRotation.fromAngleNormalAxis(siderealAngle, Vector3f.UNIT_Y);
-        float angle = FastMath.HALF_PI + sunAndStars.getObserverLatitude();
-        zRotation.fromAngleNormalAxis(angle, Vector3f.UNIT_Z);
-        orientation = zRotation.mult(yRotation);
-        MySpatial.setWorldOrientation(southDome, orientation);
     }
 
     /**
