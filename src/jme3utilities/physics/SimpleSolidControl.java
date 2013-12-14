@@ -58,12 +58,6 @@ public class SimpleSolidControl
     final private static Logger logger =
             Logger.getLogger(SimpleSolidControl.class.getName());
     // *************************************************************************
-    // fields
-    /**
-     * which physics space will contain the object: set by constructor
-     */
-    final private PhysicsSpace initialSpace;
-    // *************************************************************************
     // constructors
 
     /**
@@ -79,12 +73,10 @@ public class SimpleSolidControl
     public SimpleSolidControl(boolean enabled, CollisionShape initialShape,
             float mass, PhysicsSpace initialSpace) {
         super(initialShape, mass);
-        assert initialShape != null;
         assert mass >= 0f : mass;
-
-        this.initialSpace = initialSpace;
-
-        super.setEnabled(enabled);
+        assert initialSpace != null;
+        space = initialSpace;
+        setEnabled(enabled);
     }
     // *************************************************************************
     // new methods exposed
@@ -163,17 +155,20 @@ public class SimpleSolidControl
     }
 
     /**
-     * Set the control's spatial.
+     * Enable or disable the control.
      *
-     * @param spatial which represents the object (or null)
+     * @param newState true to enable or false to disable
      */
     @Override
-    public void setSpatial(Spatial spatial) {
-        super.setSpatial(spatial);
-        if (spatial == null) {
-            return;
+    final public void setEnabled(boolean newState) {
+        enabled = newState;
+        if (enabled && !added) {
+            onAdd();
+            added = true;
+        } else if (!enabled && added) {
+            onRemove();
+            added = false;
         }
-        initialize();
     }
 
     /**
@@ -191,13 +186,26 @@ public class SimpleSolidControl
     // new protected methods
 
     /**
-     * Initialize this control as soon as its spatial is set: add to physics
-     * space and register as a physics tick listener.
+     * (Re-)Initialize this control each time it is added.
      *
      * Meant to be overridden.
      */
-    protected void initialize() {
-        initialSpace.add(this);
-        initialSpace.addTickListener(this);
+    protected void onAdd() {
+        if (spatial != null) {
+            setPhysicsLocation(spatial.getWorldTranslation());
+            setPhysicsRotation(spatial.getWorldRotation());
+        }
+        space.addCollisionObject(this);
+        space.addTickListener(this);
+    }
+
+    /**
+     * De-initialize this control each time it is removed.
+     *
+     * Meant to be overridden.
+     */
+    protected void onRemove() {
+        space.removeCollisionObject(this);
+        space.removeTickListener(this);
     }
 }
