@@ -28,12 +28,16 @@ package jme3utilities;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.Bone;
 import com.jme3.animation.LoopMode;
+import com.jme3.asset.AssetManager;
+import com.jme3.asset.TextureKey;
+import com.jme3.material.Material;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.texture.Texture;
 import com.jme3.util.IntMap;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -62,6 +66,11 @@ public class Misc {
      */
     final private static Logger logger =
             Logger.getLogger(Misc.class.getName());
+    /**
+     * asset path to the Unshaded material definition
+     */
+    final public static String unshadedMaterialAssetPath =
+            "Common/MatDefs/Misc/Unshaded.j3md";
     // *************************************************************************
     // constructors
 
@@ -138,6 +147,55 @@ public class Misc {
          */
         float[] minMax = {minY, maxY};
         return minMax;
+    }
+
+    /**
+     * Create an unshaded material.
+     *
+     * @param assetManager (not null)
+     * @return a new instance
+     */
+    public static Material createUnshadedMaterial(AssetManager assetManager) {
+        Material result = new Material(assetManager, unshadedMaterialAssetPath);
+        return result;
+    }
+
+    /**
+     * Create an unshaded material from a texture asset path.
+     *
+     * @param assetManager (not null)
+     * @param assetPath to the texture asset (not null)
+     * @return a new instance
+     */
+    public static Material createUnshadedMaterial(AssetManager assetManager,
+            String assetPath) {
+        assert assetPath != null;
+
+        Material result = createUnshadedMaterial(assetManager);
+        Texture texture = loadTexture(assetManager, assetPath);
+        result.setTexture("ColorMap", texture);
+
+        return result;
+    }
+
+    /**
+     * Load a non-flipped texture asset in edge-clamp mode.
+     *
+     * @param assetManager (not null)
+     * @param assetPath to the texture asset (not null)
+     * @return the texture which was loaded (not null)
+     */
+    public static Texture loadTexture(AssetManager assetManager,
+            String assetPath) {
+        assert assetPath != null;
+
+        boolean flipY = false;
+        TextureKey key = new TextureKey(assetPath, flipY);
+        Texture texture = assetManager.loadTexture(key);
+        // edge-clamp mode is the default
+
+        assert texture != null;
+        return texture;
     }
 
     /**
