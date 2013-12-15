@@ -27,6 +27,7 @@ package jme3utilities;
 
 import com.jme3.math.FastMath;
 import java.util.Random;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -71,9 +72,11 @@ public class MyMath {
      */
     public static float circle(float abscissa) {
         if (abscissa < -1f || abscissa > 1f) {
+            logger.log(Level.SEVERE, "abscissa={0}", abscissa);
             throw new IllegalArgumentException(
-                    "abscissa must lie between -1 and 1, inclusive");
+                    "abscissa should be between -1 and 1, inclusive");
         }
+
         double x = (double) abscissa;
         float y = (float) Math.sqrt(1.0 - x * x);
         assert y >= 0f : y;
@@ -92,13 +95,14 @@ public class MyMath {
      */
     public static float clamp(float fValue, float maxMagnitude) {
         if (maxMagnitude < 0f) {
-            throw new IllegalArgumentException("limit cannot be negative");
+            logger.log(Level.SEVERE, "maxMagnitude={0}", maxMagnitude);
+            throw new IllegalArgumentException("limit shouldn't be negative");
         }
         return FastMath.clamp(fValue, -maxMagnitude, maxMagnitude);
     }
 
     /**
-     * Clamp a value to lie between 0 and 1.
+     * Clamp a value to be between 0 and 1, inclusive.
      *
      * @param fValue value to be clamped
      * @return value between 0 and 1 inclusive which is closest to fValue
@@ -215,7 +219,8 @@ public class MyMath {
      */
     public static float modulo(float fValue, float modulus) {
         if (modulus <= 0f) {
-            throw new IllegalArgumentException("modulus must be positive");
+            logger.log(Level.SEVERE, "modulus={0}", modulus);
+            throw new IllegalArgumentException("modulus should be positive");
         }
 
         float result = (fValue % modulus + modulus) % modulus;
@@ -235,7 +240,8 @@ public class MyMath {
      */
     public static double modulo(double dValue, double modulus) {
         if (modulus <= 0.0) {
-            throw new IllegalArgumentException("modulus must be positive");
+            logger.log(Level.SEVERE, "modulus={0}", modulus);
+            throw new IllegalArgumentException("modulus should be positive");
         }
 
         double result = (dValue % modulus + modulus) % modulus;
@@ -273,8 +279,9 @@ public class MyMath {
     public static float sphere(float x, float y) {
         double rSquared = sumOfSquares(x, y);
         if (rSquared > 1.0) {
+            logger.log(Level.SEVERE, "x={0}, y={1}", new Object[]{x, y});
             throw new IllegalArgumentException(
-                    "(x,y) must lie on or within the unit circle");
+                    "(x,y) should be on or within the unit circle");
         }
 
         float z = (float) Math.sqrt(1.0 - rSquared);
@@ -320,7 +327,7 @@ public class MyMath {
     // test cases
 
     /**
-     * Test cases for this class.
+     * Console app to test the MyMath class.
      *
      * @param ignored
      */

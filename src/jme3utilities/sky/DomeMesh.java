@@ -117,7 +117,7 @@ public class DomeMesh
     // constructors
 
     /**
-     * Default constructor. Do not invoke!
+     * No-argument constructor for serialization purposes only. Do not use!
      */
     public DomeMesh() {
     }
@@ -152,35 +152,35 @@ public class DomeMesh
         if (rimSamples < 3) {
             logger.log(Level.SEVERE, "rimSamples={0}", rimSamples);
             throw new IllegalArgumentException(
-                    "must have at least 3 samples on the rim");
+                    "need at least 3 samples on the rim");
         }
         this.rimSamples = rimSamples;
 
         if (quadrantSamples < 2) {
             logger.log(Level.SEVERE, "quadrantSamples={0}", quadrantSamples);
             throw new IllegalArgumentException(
-                    "must have at least 2 samples per quadrant");
+                    "need at least 2 samples per quadrant");
         }
         this.quadrantSamples = quadrantSamples;
 
         if (topU < uvMin || topU > uvMax) {
             logger.log(Level.SEVERE, "topU={0}", topU);
             throw new IllegalArgumentException(
-                    "topU must be between 0 and 1, inclusive");
+                    "topU should be between 0 and 1, inclusive");
         }
         this.topU = topU;
 
         if (topV < uvMin || topV > uvMax) {
             logger.log(Level.SEVERE, "topV={0}", topV);
             throw new IllegalArgumentException(
-                    "topV must be between 0 and 1, inclusive");
+                    "topV should be between 0 and 1, inclusive");
         }
         this.topV = topV;
 
         if (uvScale <= 0f || uvScale >= 0.5f) {
             logger.log(Level.SEVERE, "uvScale={0}", uvScale);
             throw new IllegalArgumentException(
-                    "uvScale must be between 0 and 0.5");
+                    "uvScale should be between 0 and 0.5");
         }
         this.uvScale = uvScale;
         this.inwardFacing = inwardFacing;
@@ -195,16 +195,16 @@ public class DomeMesh
      * in a particular direction from its center.
      *
      * @param direction (unit vector, not altered)
-     * @return a new vector, or null if direction lies too far below the rim
+     * @return a new vector, or null if direction is too far below the rim
      */
     public Vector2f directionUV(Vector3f direction) {
         if (direction == null) {
-            throw new NullPointerException("direction cannot be null");
+            throw new NullPointerException("direction should not be null");
         }
         if (!direction.isUnitVector()) {
             logger.log(Level.SEVERE, "direction={0}", direction);
             throw new IllegalArgumentException(
-                    "direction must be a unit vector");
+                    "direction should be a unit vector");
         }
         float angleFromTop = FastMath.acos(direction.y);
         float uvDistance = uvScale * angleFromTop / FastMath.HALF_PI;
@@ -244,7 +244,7 @@ public class DomeMesh
         if (u > uvMax || u < uvMin || v > uvMax || v < uvMin) {
             logger.log(Level.SEVERE, "u={0}, v={1}", new Object[]{u, v});
             throw new IllegalArgumentException(
-                    "texture coordinates must be between 0 and 1, inclusive");
+                    "texture coordinates should be between 0 and 1, inclusive");
         }
 
         float uvDistance = MyMath.hypotenuse(u - topU, v - topV);
@@ -263,7 +263,8 @@ public class DomeMesh
      * @param importer (not null)
      */
     @Override
-    public void read(JmeImporter importer) throws IOException {
+    public void read(JmeImporter importer)
+            throws IOException {
         super.read(importer);
 
         InputCapsule capsule = importer.getCapsule(this);
@@ -289,7 +290,8 @@ public class DomeMesh
      * @param exporter (not null)
      */
     @Override
-    public void write(JmeExporter exporter) throws IOException {
+    public void write(JmeExporter exporter)
+            throws IOException {
         super.write(exporter);
 
         OutputCapsule capsule = exporter.getCapsule(this);
@@ -311,11 +313,11 @@ public class DomeMesh
         if (rimSamples < 3) {
             logger.log(Level.SEVERE, "rimSamples={0}", rimSamples);
             throw new IllegalArgumentException(
-                    "A dome must have at least 3 samples on its rim");
+                    "need at least 3 samples on the rim");
         }
         if (quadrantSamples < 2) {
             logger.log(Level.SEVERE, "rimSamples={0}", quadrantSamples);
-            throw new IllegalArgumentException("A dome must have at least "
+            throw new IllegalArgumentException("need at least "
                     + "2 samples per longitudinal quadrant");
         }
         /*

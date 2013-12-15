@@ -123,10 +123,10 @@ public class SimpleScreenController
     public SimpleScreenController(NiftyJmeDisplay niftyDisplay,
             String screenId) {
         if (niftyDisplay == null) {
-            throw new NullPointerException("display cannot be null");
+            throw new NullPointerException("display should not be null");
         }
         if (screenId == null) {
-            throw new NullPointerException("id cannot be null");
+            throw new NullPointerException("id should not be null");
         }
 
         this.niftyDisplay = niftyDisplay;
@@ -184,7 +184,7 @@ public class SimpleScreenController
      */
     public void enable(ActionListener newListener) {
         if (newListener == null) {
-            throw new NullPointerException("listener cannot be null");
+            throw new NullPointerException("listener should not be null");
         }
         if (!isInitialized()) {
             throw new IllegalStateException("not initialized");
@@ -235,7 +235,7 @@ public class SimpleScreenController
      */
     public boolean isMouseInsideElement(String elementId) {
         if (elementId == null) {
-            throw new NullPointerException("id cannot be null");
+            throw new NullPointerException("id should not be null");
         }
 
         if (!isEnabled()) {
@@ -261,13 +261,13 @@ public class SimpleScreenController
 
     /**
      * Perform the action specified by an action string. Invoked via
-     * NiftyMethodInvoker, so the method must be public.
+     * NiftyMethodInvoker, so the class and method must be public.
      *
      * @param actionString (not null)
      */
     public static void perform(String actionString) {
         if (actionString == null) {
-            throw new NullPointerException("action string cannot be null");
+            throw new NullPointerException("action string should not be null");
         }
 
         logger.log(Level.INFO, "{0}", actionString);
@@ -294,12 +294,14 @@ public class SimpleScreenController
         if (isInitialized()) {
             throw new IllegalStateException("already initialized");
         }
-        assert !isEnabled();
+        if (isEnabled()) {
+            throw new IllegalStateException("already enabled");
+        }
         if (stateManager == null) {
-            throw new NullPointerException("manager cannot be null");
+            throw new NullPointerException("manager should not be null");
         }
         if (app == null) {
-            throw new NullPointerException("application cannot be null");
+            throw new NullPointerException("application should not be null");
         }
 
         super.initialize(stateManager, app);
@@ -426,8 +428,12 @@ public class SimpleScreenController
      * @param newText (not null)
      */
     protected void setButtonLabel(String elementId, String newText) {
-        assert elementId != null;
-        assert newText != null;
+        if (elementId == null) {
+            throw new NullPointerException("id should not be null");
+        }
+        if (newText == null) {
+            throw new NullPointerException("text should not be null");
+        }
 
         Button button = getScreen().findNiftyControl(elementId, Button.class);
         try {
@@ -448,7 +454,9 @@ public class SimpleScreenController
      * @param newStatus true to tick the box, false to un-tick it
      */
     protected void setCheckBox(String elementId, boolean newStatus) {
-        assert elementId != null;
+        if (elementId == null) {
+            throw new NullPointerException("id should not be null");
+        }
 
         CheckBox box = getScreen().findNiftyControl(elementId, CheckBox.class);
         try {
@@ -468,7 +476,9 @@ public class SimpleScreenController
      * @param elementId Nifty element id of the radio button (not null)
      */
     protected void setRadioButton(String elementId) {
-        assert elementId != null;
+        if (elementId == null) {
+            throw new NullPointerException("id should not be null");
+        }
 
         RadioButton button =
                 getScreen().findNiftyControl(elementId, RadioButton.class);
@@ -490,7 +500,9 @@ public class SimpleScreenController
      * @param newState true to enable the button, false to disable it
      */
     protected void setRadioButtonEnabled(String elementId, boolean newState) {
-        assert elementId != null;
+        if (elementId == null) {
+            throw new NullPointerException("id should not be null");
+        }
 
         RadioButton button =
                 getScreen().findNiftyControl(elementId, RadioButton.class);
@@ -517,7 +529,9 @@ public class SimpleScreenController
      * @param newValue value for the slider
      */
     protected void setSlider(String namePrefix, float newValue) {
-        assert namePrefix != null;
+        if (namePrefix == null) {
+            throw new NullPointerException("prefix should not be null");
+        }
 
         String sliderName = namePrefix + "Slider";
         Slider slider = getScreen().findNiftyControl(sliderName, Slider.class);
@@ -539,8 +553,12 @@ public class SimpleScreenController
      * @param newText (not null)
      */
     protected void setStatusText(String elementId, String newText) {
-        assert elementId != null;
-        assert newText != null;
+        if (elementId == null) {
+            throw new NullPointerException("id should not be null");
+        }
+        if (newText == null) {
+            throw new NullPointerException("text should not be null");
+        }
 
         Element element = getScreen().findElementByName(elementId);
         if (element == null) {
@@ -570,9 +588,13 @@ public class SimpleScreenController
      */
     protected void showPopup(String actionStringPrefix,
             Collection<String> menuItems) {
+        if (actionStringPrefix == null) {
+            throw new NullPointerException("prefix should not be null");
+        }
+        if (menuItems == null) {
+            throw new NullPointerException("collection should not be null");
+        }
         assert activePopupId == null : activePopupId;
-        assert actionStringPrefix != null;
-        assert menuItems != null;
         /*
          * Parse the action string prefix into words.
          */
@@ -590,8 +612,10 @@ public class SimpleScreenController
      * @param items list of menu items (not null)
      */
     protected void showPopup(String[] actionPrefixWords, String[] items) {
+        if (actionPrefixWords == null) {
+            throw new NullPointerException("array should not be null");
+        }
         assert activePopupId == null : activePopupId;
-        assert actionPrefixWords != null;
         /*
          * Create a popup modeled after "popup-menu" in the XML.
          */
@@ -633,7 +657,7 @@ public class SimpleScreenController
      */
     protected float updateSlider(String namePrefix) {
         if (namePrefix == null) {
-            throw new NullPointerException("prefix cannot be null");
+            throw new NullPointerException("prefix should not be null");
         }
 
         float value = readSlider(namePrefix);
@@ -654,10 +678,11 @@ public class SimpleScreenController
      */
     protected float updateLogSlider(String namePrefix, float logBase) {
         if (namePrefix == null) {
-            throw new NullPointerException("prefix cannot be null");
+            throw new NullPointerException("prefix should not be null");
         }
         if (logBase <= 0f) {
-            throw new IllegalArgumentException("log base must be positive");
+            logger.log(Level.SEVERE, "logBase={0}", logBase);
+            throw new IllegalArgumentException("log base should be positive");
         }
 
         float value = readSlider(namePrefix);
@@ -677,7 +702,9 @@ public class SimpleScreenController
      * @return value of the slider
      */
     private float readSlider(String namePrefix) {
-        assert namePrefix != null;
+        if (namePrefix == null) {
+            throw new NullPointerException("prefix should not be null");
+        }
 
         String sliderName = namePrefix + "Slider";
         Slider slider = getScreen().findNiftyControl(sliderName, Slider.class);
@@ -693,7 +720,9 @@ public class SimpleScreenController
      * @param value value of the slider
      */
     private void updateSliderStatus(String namePrefix, float value) {
-        assert namePrefix != null;
+        if (namePrefix == null) {
+            throw new NullPointerException("prefix should not be null");
+        }
 
         String statusName = namePrefix + "SliderStatus";
         /*

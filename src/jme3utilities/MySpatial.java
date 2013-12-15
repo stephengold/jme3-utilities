@@ -73,14 +73,17 @@ public class MySpatial
      * non-uniform scaling.
      *
      * @param newParent (not null)
-     * @param child which spatial (not null)
+     * @param child which spatial (not null, not orphan)
      */
     public static void adopt(Node newParent, Spatial child) {
-        assert newParent != null;
-        assert child != null;
-
+        if (newParent == null) {
+            throw new NullPointerException("new parent should not be null");
+        }
         Node oldParent = child.getParent();
-        assert oldParent != null;
+        if (oldParent == null) {
+            throw new NullPointerException("child should not be an orphan");
+        }
+
         if (newParent != oldParent) {
             float scaleFactor = oldParent.getWorldScale().x
                     / newParent.getWorldScale().x;
@@ -118,7 +121,9 @@ public class MySpatial
      * @return a new vector
      */
     public static VectorXZ getMapLocation(Spatial spatial) {
-        assert spatial != null;
+        if (spatial == null) {
+            throw new NullPointerException("spatial should not be null");
+        }
 
         Vector3f worldLocation = getWorldLocation(spatial);
         VectorXZ result = new VectorXZ(worldLocation);
@@ -146,7 +151,9 @@ public class MySpatial
      * @return world Y-coordinate
      */
     public static float getMaxY(Spatial spatial) {
-        assert spatial != null;
+        if (spatial == null) {
+            throw new NullPointerException("spatial should not be null");
+        }
 
         if (spatial instanceof Geometry) {
             Geometry geometry = (Geometry) spatial;
@@ -155,7 +162,7 @@ public class MySpatial
         }
         if (!(spatial instanceof Node)) {
             throw new IllegalArgumentException(
-                    "spatial must be a geometry or a node");
+                    "spatial should be a geometry or a node");
         }
         Node node = (Node) spatial;
         float result = -Float.MAX_VALUE;
@@ -183,8 +190,9 @@ public class MySpatial
         }
         if (!(spatial instanceof Node)) {
             throw new IllegalArgumentException(
-                    "spatial must be a geometry or a node");
+                    "spatial should be a geometry or a node");
         }
+
         Node node = (Node) spatial;
         float result = Float.MAX_VALUE;
         for (Spatial child : node.getChildren()) {
@@ -295,7 +303,6 @@ public class MySpatial
      * @return true if the spatial is an orphan, otherwise false
      */
     public static boolean isOrphan(Spatial spatial) {
-        assert spatial != null;
         Node parent = spatial.getParent();
         return parent == null;
     }
@@ -354,7 +361,9 @@ public class MySpatial
      * @param offset world translation (in meters, not null)
      */
     public static void moveChildWorld(Spatial spatial, Vector3f offset) {
-        assert spatial != null;
+        if (spatial == null) {
+            throw new NullPointerException("spatial should not be null");
+        }
 
         if (isPhysical(spatial)) {
             Vector3f location = getWorldLocation(spatial);
@@ -379,9 +388,15 @@ public class MySpatial
      */
     public static void rotateChild(Spatial spatial, Vector3f center,
             Quaternion rotation) {
-        assert spatial != null;
-        assert center != null;
-        assert rotation != null;
+        if (spatial == null) {
+            throw new NullPointerException("spatial should not be null");
+        }
+        if (center == null) {
+            throw new NullPointerException("vector should not be null");
+        }
+        if (rotation == null) {
+            throw new NullPointerException("rotation should not be null");
+        }
 
         if (isPhysical(spatial)) {
             Vector3f location = getWorldLocation(spatial);
@@ -436,7 +451,9 @@ public class MySpatial
      * @param angle clockwise rotation angle (in radians)
      */
     public static void rotateY(Spatial spatial, float angle) {
-        assert spatial != null;
+        if (spatial == null) {
+            throw new NullPointerException("spatial should not be null");
+        }
 
         Quaternion rotation = new Quaternion();
         rotation.fromAngleNormalAxis(-angle, Vector3f.UNIT_Y);
@@ -513,10 +530,13 @@ public class MySpatial
      * non-uniform scaling.
      *
      * @param spatial which spatial (not null, not orphan)
-     * @param scale desired world scale (> 0)
+     * @param scale desired world scale (>0)
      */
     public static void setWorldScale(Spatial spatial, float scale) {
-        assert scale > 0f : scale;
+        if (scale <= 0f) {
+            logger.log(Level.SEVERE, "scale={0}", scale);
+            throw new IllegalArgumentException("scale should be positive");
+        }
 
         Spatial parent = spatial.getParent();
         float parentScale = parent.getWorldScale().x;
@@ -527,7 +547,7 @@ public class MySpatial
     // test cases
 
     /**
-     * Test cases for the MySpatial class.
+     * Console app to test the MySpatial class.
      *
      * @param ignored
      */
@@ -541,7 +561,7 @@ public class MySpatial
     @Override
     public void simpleInitApp() {
         logger.setLevel(Level.INFO);
-        System.out.print("Test results for the MySpatial class:\n");
+        System.out.print("Test results for class MySpatial:\n\n");
 
         Node parent = new Node("parent");
         rootNode.attachChild(parent);

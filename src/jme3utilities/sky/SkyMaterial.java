@@ -42,6 +42,7 @@ import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import com.jme3.texture.image.ImageRaster;
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyMath;
 
@@ -182,7 +183,7 @@ public class SkyMaterial
     // constructors
 
     /**
-     * Null constructor for serialization purposes only. Do not use!
+     * No-argument constructor for serialization purposes only. Do not use!
      */
     public SkyMaterial() {
         assetManager = null;
@@ -222,8 +223,20 @@ public class SkyMaterial
         super(assetManager, assetPath);
 
         this.assetManager = assetManager;
-        this.maxCloudLayers = maxCloudLayers;
+
+        if (maxObjects < 0) {
+            logger.log(Level.SEVERE, "maxObjects={0}", maxObjects);
+            throw new IllegalArgumentException(
+                    "object limit should not be negative");
+        }
         this.maxObjects = maxObjects;
+
+        if (maxCloudLayers < 0) {
+            logger.log(Level.SEVERE, "maxCloudLayers={0}", maxObjects);
+            throw new IllegalArgumentException(
+                    "layer limit should not be negative");
+        }
+        this.maxCloudLayers = maxCloudLayers;
 
         cloudAlphas = new float[maxCloudLayers];
         cloudImages = new Image[maxCloudLayers];
@@ -242,6 +255,8 @@ public class SkyMaterial
      */
     public void addClouds(int layerIndex) {
         if (layerIndex < 0 || layerIndex >= maxCloudLayers) {
+            logger.log(Level.SEVERE, "layerIndex={0}, maxCloudLayers={1}",
+                    new Object[]{layerIndex, maxCloudLayers});
             throw new IllegalArgumentException("layer index out of range");
         }
         addClouds(layerIndex, cloudsMapPath);
@@ -255,10 +270,12 @@ public class SkyMaterial
      */
     public void addClouds(int layerIndex, String assetPath) {
         if (layerIndex < 0 || layerIndex >= maxCloudLayers) {
+            logger.log(Level.SEVERE, "layerIndex={0}, maxCloudLayers={1}",
+                    new Object[]{layerIndex, maxCloudLayers});
             throw new IllegalArgumentException("layer index out of range");
         }
         if (assetPath == null) {
-            throw new NullPointerException("path cannot be null");
+            throw new NullPointerException("path should not be null");
         }
 
         boolean firstTime = (cloudsRaster[layerIndex] == null);
@@ -293,7 +310,7 @@ public class SkyMaterial
      */
     public void addHaze(String assetPath) {
         if (assetPath == null) {
-            throw new NullPointerException("path cannot be null");
+            throw new NullPointerException("path should not be null");
         }
 
         Texture alphaMap = loadTextureClamp(assetPath);
@@ -310,10 +327,12 @@ public class SkyMaterial
      */
     public void addObject(int objectIndex, String assetPath) {
         if (objectIndex < 0 || objectIndex >= maxObjects) {
+            logger.log(Level.SEVERE, "objectIndex={0}, maxObjects={1}",
+                    new Object[]{objectIndex, maxObjects});
             throw new IllegalArgumentException("object index out of range");
         }
         if (assetPath == null) {
-            throw new NullPointerException("path cannot be null");
+            throw new NullPointerException("path should not be null");
         }
 
         Texture objectMap = loadTextureClamp(assetPath);
@@ -341,7 +360,7 @@ public class SkyMaterial
      */
     public void addStars(String assetPath) {
         if (assetPath == null) {
-            throw new NullPointerException("path cannot be null");
+            throw new NullPointerException("path should not be null");
         }
 
         Texture colorMap = loadTextureClamp(assetPath);
@@ -365,15 +384,17 @@ public class SkyMaterial
     /**
      * Estimate how much of an object's light is transmitted through the clouds.
      *
-     * @param objectId (<maxObjects, >=0)
+     * @param objectIndex (<maxObjects, >=0)
      * @return fraction of light transmitted (<=1, >=0)
      */
-    public float getTransmission(int objectId) {
-        if (objectId < 0 || objectId >= maxObjects) {
-            throw new IllegalArgumentException("object id out of range");
+    public float getTransmission(int objectIndex) {
+        if (objectIndex < 0 || objectIndex >= maxObjects) {
+            logger.log(Level.SEVERE, "objectIndex={0}, maxObjects={1}",
+                    new Object[]{objectIndex, maxObjects});
+            throw new IllegalArgumentException("object index out of range");
         }
 
-        Vector2f center = objectCenters[objectId];
+        Vector2f center = objectCenters[objectIndex];
         if (center == null) {
             throw new IllegalStateException("object not yet added");
         }
@@ -391,7 +412,7 @@ public class SkyMaterial
      */
     public float getTransmission(Vector2f skyCoordinates) {
         if (skyCoordinates == null) {
-            throw new NullPointerException("coordinates cannot be null");
+            throw new NullPointerException("coordinates should not be null");
         }
 
         float result = 1f;
@@ -417,6 +438,8 @@ public class SkyMaterial
      */
     public void hideObject(int objectIndex) {
         if (objectIndex < 0 || objectIndex >= maxObjects) {
+            logger.log(Level.SEVERE, "objectIndex={0}, maxObjects={1}",
+                    new Object[]{objectIndex, maxObjects});
             throw new IllegalArgumentException("object index out of range");
         }
         if (objectCenters[objectIndex] == null) {
@@ -461,7 +484,7 @@ public class SkyMaterial
      */
     public void setClearColor(ColorRGBA newColor) {
         if (newColor == null) {
-            throw new NullPointerException("color cannot be null");
+            throw new NullPointerException("color should not be null");
         }
 
         setColor("ClearColor", newColor);
@@ -475,10 +498,12 @@ public class SkyMaterial
      */
     public void setCloudsColor(int layerIndex, ColorRGBA newColor) {
         if (layerIndex < 0 || layerIndex >= maxCloudLayers) {
+            logger.log(Level.SEVERE, "layerIndex={0}, maxCloudLayers={1}",
+                    new Object[]{layerIndex, maxCloudLayers});
             throw new IllegalArgumentException("layer index out of range");
         }
         if (newColor == null) {
-            throw new NullPointerException("color cannot be null");
+            throw new NullPointerException("color should not be null");
         }
         if (cloudsRaster[layerIndex] == null) {
             throw new IllegalStateException("layer not yet added");
@@ -498,6 +523,8 @@ public class SkyMaterial
      */
     public void setCloudsOffset(int layerIndex, float newU, float newV) {
         if (layerIndex < 0 || layerIndex >= maxCloudLayers) {
+            logger.log(Level.SEVERE, "layerIndex={0}, maxCloudLayers={1}",
+                    new Object[]{layerIndex, maxCloudLayers});
             throw new IllegalArgumentException("layer index out of range");
         }
         if (cloudsRaster[layerIndex] == null) {
@@ -521,10 +548,13 @@ public class SkyMaterial
      */
     public void setCloudsScale(int layerIndex, float newScale) {
         if (layerIndex < 0 || layerIndex >= maxCloudLayers) {
+            logger.log(Level.SEVERE, "layerIndex={0}, maxCloudLayers={1}",
+                    new Object[]{layerIndex, maxCloudLayers});
             throw new IllegalArgumentException("layer index out of range");
         }
         if (newScale <= 0f) {
-            throw new IllegalArgumentException("scale must be positive");
+            logger.log(Level.SEVERE, "newScale={0}", newScale);
+            throw new IllegalArgumentException("scale should be positive");
         }
         if (cloudsRaster[layerIndex] == null) {
             throw new IllegalStateException("layer not yet added");
@@ -542,7 +572,7 @@ public class SkyMaterial
      */
     public void setHazeColor(ColorRGBA newColor) {
         if (newColor == null) {
-            throw new NullPointerException("color cannot be null");
+            throw new NullPointerException("color should not be null");
         }
 
         setColor("HazeColor", newColor);
@@ -556,10 +586,12 @@ public class SkyMaterial
      */
     public void setObjectColor(int objectIndex, ColorRGBA newColor) {
         if (objectIndex < 0 || objectIndex >= maxObjects) {
+            logger.log(Level.SEVERE, "objectIndex={0}, maxObjects={1}",
+                    new Object[]{objectIndex, maxObjects});
             throw new IllegalArgumentException("object index out of range");
         }
         if (newColor == null) {
-            throw new NullPointerException("color cannot be null");
+            throw new NullPointerException("color should not be null");
         }
         if (objectCenters[objectIndex] == null) {
             throw new IllegalStateException("object not yet added");
@@ -583,18 +615,22 @@ public class SkyMaterial
     public void setObjectTransform(int objectIndex, Vector2f centerUV,
             float newScale, Vector2f newRotate) {
         if (objectIndex < 0 || objectIndex >= maxObjects) {
+            logger.log(Level.SEVERE, "objectIndex={0}, maxObjects={1}",
+                    new Object[]{objectIndex, maxObjects});
             throw new IllegalArgumentException("object index out of range");
         }
         if (centerUV == null) {
-            throw new NullPointerException("coordinates cannot be null");
+            throw new NullPointerException("coordinates should not be null");
         }
         if (newScale <= 0f) {
-            throw new IllegalArgumentException("scale must be positive");
+            logger.log(Level.SEVERE, "newScale={0}", newScale);
+            throw new IllegalArgumentException("scale should be positive");
         }
         if (newRotate != null) {
             if (FastMath.abs(newRotate.lengthSquared() - 1f) > 1e-4) {
+                logger.log(Level.SEVERE, "newRotate={0}", newRotate);
                 throw new IllegalArgumentException(
-                        "rotation must be a unit vector");
+                        "rotation should be a unit vector");
             }
         }
         if (objectCenters[objectIndex] == null) {
@@ -604,8 +640,9 @@ public class SkyMaterial
         float u = centerUV.x;
         float v = centerUV.y;
         if (u > uvMax || u < uvMin || v > uvMax || v < uvMin) {
+            logger.log(Level.SEVERE, "u={0}, v={1}", new Object[]{u, v});
             throw new IllegalArgumentException(
-                    "texture coordinates must be between 0 and 1, inclusive");
+                    "texture coordinates should be between 0 and 1, inclusive");
         }
 
         String objectParameterName =
@@ -690,7 +727,8 @@ public class SkyMaterial
      * @param importer (not null)
      */
     @Override
-    public void read(JmeImporter importer) throws IOException {
+    public void read(JmeImporter importer)
+            throws IOException {
         super.read(importer);
 
         InputCapsule capsule = importer.getCapsule(this);
@@ -734,7 +772,8 @@ public class SkyMaterial
      * @param exporter (not null)
      */
     @Override
-    public void write(JmeExporter exporter) throws IOException {
+    public void write(JmeExporter exporter)
+            throws IOException {
         super.write(exporter);
 
         OutputCapsule capsule = exporter.getCapsule(this);

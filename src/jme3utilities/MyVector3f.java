@@ -27,6 +27,7 @@ package jme3utilities;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -63,11 +64,12 @@ public class MyVector3f {
      */
     public static float altitude(Vector3f offset) {
         if (offset == null) {
-            throw new NullPointerException("direction cannot be null");
+            throw new NullPointerException("direction should not be null");
         }
         if (isZeroLength(offset)) {
+            logger.log(Level.SEVERE, "offset={0}", offset);
             throw new IllegalArgumentException(
-                    "direction must have positive length");
+                    "direction should have positive length");
         }
 
         float xzRange = MyMath.hypotenuse(offset.x, offset.z);
@@ -86,10 +88,6 @@ public class MyVector3f {
      * the vector is zero or parallel to the Y axis.
      */
     public static float azimuth(Vector3f offset) {
-        if (offset == null) {
-            throw new NullPointerException("direction cannot be null");
-        }
-
         if (offset.x == 0f && offset.z == 0f) {
             return 0f;
         }
@@ -105,7 +103,7 @@ public class MyVector3f {
      */
     public static VectorXZ direction(Vector3f offset) {
         if (offset == null) {
-            throw new NullPointerException("offset cannot be null");
+            throw new NullPointerException("offset should not be null");
         }
 
         VectorXZ result = new VectorXZ(offset);
@@ -122,8 +120,12 @@ public class MyVector3f {
      * @return distance (in world units, >=0)
      */
     public static float distanceFrom(Vector3f from, Vector3f to) {
-        assert from != null;
-        assert to != null;
+        if (from == null) {
+            throw new NullPointerException("start location should not be null");
+        }
+        if (to == null) {
+            throw new NullPointerException("end location should not be null");
+        }
 
         Vector3f offset = to.subtract(from);
         float distance = offset.length();
@@ -156,18 +158,19 @@ public class MyVector3f {
         float y = vector.y;
         float z = cosine * vector.z + sine * vector.x;
         Vector3f result = new Vector3f(x, y, z);
+
         return result;
     }
     // *************************************************************************
     // test cases
 
     /**
-     * Test cases for this class.
+     * Console app to test the MyVector3f class.
      *
      * @param ignored
      */
     public static void main(String[] ignored) {
-        System.out.print("Test results for class MyVector3f:\n");
+        System.out.print("Test results for class MyVector3f:\n\n");
 
         // vector test cases
         Vector3f[] vectorCases = new Vector3f[]{
