@@ -26,7 +26,6 @@
 package jme3utilities.sky;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.asset.TextureKey;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
@@ -44,10 +43,10 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.shadow.AbstractShadowFilter;
 import com.jme3.shadow.AbstractShadowRenderer;
-import com.jme3.texture.Texture;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Misc;
 import jme3utilities.MyMath;
 import jme3utilities.MySpatial;
 import jme3utilities.SimpleControl;
@@ -209,11 +208,6 @@ public class SkyControl
      * name for the southern sky geometry
      */
     final private static String southName = "south";
-    /**
-     * asset path of the Unshaded material definition
-     */
-    final private static String unshadedMaterialAssetPath =
-            "Common/MatDefs/Misc/Unshaded.j3md";
     // *************************************************************************
     // fields
     /**
@@ -391,11 +385,7 @@ public class SkyControl
         }
 
         if (bottomDomeFlag) {
-            /*
-             * Create and initialize a material for the bottom dome.
-             */
-            bottomMaterial = new Material(assetManager,
-                    unshadedMaterialAssetPath);
+            bottomMaterial = Misc.createUnshadedMaterial(assetManager);
         } else {
             bottomMaterial = null;
         }
@@ -645,12 +635,14 @@ public class SkyControl
         if (starMotionFlag) {
             northDome = new Geometry(northName, mesh);
             skyNode.attachChild(northDome);
-            Material north = createUnshadedMaterial(northAssetPath);
+            Material north = Misc.createUnshadedMaterial(assetManager,
+                    northAssetPath);
             northDome.setMaterial(north);
 
             southDome = new Geometry(southName, mesh);
             skyNode.attachChild(southDome);
-            Material south = createUnshadedMaterial(southAssetPath);
+            Material south = Misc.createUnshadedMaterial(assetManager,
+                    southAssetPath);
             southDome.setMaterial(south);
         }
 
@@ -682,39 +674,6 @@ public class SkyControl
             cloudsOnlyDome.setLocalScale(1f, yScale, 1f);
             cloudsOnlyDome.setMaterial(cloudsMaterial);
         }
-    }
-
-    /**
-     * Create an unshaded material from a texture asset path.
-     *
-     * @param assetPath to load the texture from (not null)
-     * @return a new instance
-     */
-    private Material createUnshadedMaterial(String assetPath) {
-        assert assetPath != null;
-
-        Material result = new Material(assetManager, unshadedMaterialAssetPath);
-        Texture texture = loadTexture(assetPath);
-        result.setTexture("ColorMap", texture);
-        return result;
-    }
-
-    /**
-     * Load a non-flipped texture asset in edge-clamp mode.
-     *
-     * @param assetPath pathname to the texture asset (not null)
-     * @return the texture which was loaded (not null)
-     */
-    private Texture loadTexture(String assetPath) {
-        assert assetPath != null;
-
-        boolean flipY = false;
-        TextureKey key = new TextureKey(assetPath, flipY);
-        Texture texture = assetManager.loadTexture(key);
-        // edge-clamp mode is the default
-
-        assert texture != null;
-        return texture;
     }
 
     /**
