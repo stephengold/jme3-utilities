@@ -26,7 +26,6 @@
 package jme3utilities.sky.test;
 
 import com.beust.jcommander.JCommander;
-import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.KeyTrigger;
@@ -34,32 +33,31 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
-import de.lessvoid.nifty.Nifty;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.LandscapeControl;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
+import jme3utilities.GuiApplication;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
 import org.lwjgl.Sys;
 
 /**
- * A simple application for testing/demonstrating the SkyControl class using a
- * Nifty heads-up display (HUD).
+ * A GUI application for testing/demonstrating the SkyControl class using a
+ * heads-up display (HUD).
  *
  * Use the 'H' key to toggle HUD visibility.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class TestSkyControl
-        extends SimpleApplication {
+        extends GuiApplication {
     // *************************************************************************
     // constants
 
@@ -138,7 +136,7 @@ public class TestSkyControl
          */
         TestSkyControl application = new TestSkyControl();
         /*
-         * Parse the command-line arguments.
+         * Parse the command-line arguments into parameters.
          */
         JCommander jCommander = new JCommander(parameters, arguments);
         jCommander.setProgramName(applicationName);
@@ -193,7 +191,7 @@ public class TestSkyControl
 
         configureCamera();
         /*
-         * light sources
+         * Add light sources.
          */
         mainLight = new DirectionalLight();
         mainLight.setName("main");
@@ -203,7 +201,7 @@ public class TestSkyControl
         ambientLight.setName("ambient");
         rootNode.addLight(ambientLight);
         /*
-         * Add shadows, using a filter or a renderer.
+         * Add shadows, using a filter or renderer.
          */
         if (parameters.shadowFilter()) {
             dlsf = new DirectionalLightShadowFilter(
@@ -269,10 +267,10 @@ public class TestSkyControl
     /**
      * Update the scene.
      *
-     * @param tpf real seconds elapsed since the previous update (>=0)
+     * @param unused
      */
     @Override
-    public void simpleUpdate(float tpf) {
+    public void simpleUpdate(float unused) {
         LunarPhase lunarPhase = hud.getLunarPhase();
         control.setPhase(lunarPhase);
         /*
@@ -314,7 +312,7 @@ public class TestSkyControl
      */
     private void configureCamera() {
         /*
-         * The camera is initially pointed 10 degrees north of west.
+         * Point the camera 10 degrees north of west.
          */
         cam.setLocation(new Vector3f(6.5f, 13f, 50f));
         Quaternion orientation = new Quaternion();
@@ -324,8 +322,8 @@ public class TestSkyControl
         flyCam.setDragToRotate(true);
         flyCam.setRotationSpeed(2f);
         flyCam.setMoveSpeed(20f);
-        flyCam.setZoomSpeed(20f);
         flyCam.setUpVector(Vector3f.UNIT_Y);
+        flyCam.setZoomSpeed(20f);
     }
 
     /**
@@ -345,19 +343,9 @@ public class TestSkyControl
         setDisplayFps(false);
         setDisplayStatView(false);
         /*
-         * Initialize Nifty and log the Nifty version string.
+         * Initialize Nifty for the graphical user interface (GUI).
          */
-        NiftyJmeDisplay display = new NiftyJmeDisplay(assetManager,
-                inputManager, audioRenderer, guiViewPort);
-        Nifty nifty = display.getNifty();
-        //nifty.setDebugOptionPanelColors(true);
-        String niftyVersion = nifty.getVersion();
-        logger.log(Level.INFO, "Nifty version is {0}",
-                MyString.quote(niftyVersion));
-        /*
-         * Load the Nifty XML for generic popup menus.
-         */
-        nifty.addXml("Interface/Nifty/popup-menu.xml");
+        startGui();
         /*
          * Create and attach the heads-up display (HUD).
          */

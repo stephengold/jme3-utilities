@@ -25,7 +25,6 @@
  */
 package jme3utilities.sky.test;
 
-import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.input.KeyInput;
@@ -33,17 +32,16 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
-import de.lessvoid.nifty.Nifty;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.GuiApplication;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.sky.DomeMesh;
@@ -52,8 +50,8 @@ import jme3utilities.sky.SkyMaterial;
 import org.lwjgl.Sys;
 
 /**
- * A simple application for testing the SkyMaterial class using a Nifty heads-up
- * display (HUD).
+ * A GUI application for testing the SkyMaterial class using a heads-up display
+ * (HUD).
  *
  * Use the 'H' key to toggle HUD visibility, the 'S' key to save the scene, the
  * 'L' key to load a saved scene.
@@ -61,7 +59,7 @@ import org.lwjgl.Sys;
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class TestSkyMaterial
-        extends SimpleApplication
+        extends GuiApplication
         implements ActionListener {
     // *************************************************************************
     // constants
@@ -274,19 +272,9 @@ public class TestSkyMaterial
         boolean success = stateManager.attach(screenShotState);
         assert success;
         /*
-         * Initialize Nifty and log the Nifty version string.
+         * Initialize Nifty for the graphical user interface (GUI).
          */
-        NiftyJmeDisplay display = new NiftyJmeDisplay(assetManager,
-                inputManager, audioRenderer, guiViewPort);
-        Nifty nifty = display.getNifty();
-        //nifty.setDebugOptionPanelColors(true);
-        String niftyVersion = nifty.getVersion();
-        logger.log(Level.INFO, "Nifty version is {0}",
-                MyString.quote(niftyVersion));
-        /*
-         * Load the Nifty XML for generic popup menus.
-         */
-        nifty.addXml("Interface/Nifty/popup-menu.xml");
+        startGui();
         /*
          * Create the heads-up display (HUD).
          */
