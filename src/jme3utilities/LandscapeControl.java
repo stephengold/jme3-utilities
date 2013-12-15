@@ -26,7 +26,6 @@
 package jme3utilities;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.asset.TextureKey;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -328,27 +327,14 @@ public class LandscapeControl
      * @return a new instance
      */
     private AbstractHeightMap loadHeightMap() {
-        Texture heightTexture = loadTexture(heightMapAssetPath, false);
+        Texture heightTexture =
+                Misc.loadTexture(assetManager, heightMapAssetPath);
         Image heightImage = heightTexture.getImage();
         float heightScale = 1f;
         AbstractHeightMap heightMap =
                 new ImageBasedHeightMap(heightImage, heightScale);
         heightMap.load();
+
         return heightMap;
-    }
-
-    /**
-     * Load a texture asset in edge-clamp mode.
-     *
-     * @param assetPath asset path to the texture (not null)
-     * @param flipY if true, flip the texture's Y axis, else don't flip
-     * @return the texture which was loaded
-     */
-    private Texture loadTexture(String assetPath, boolean flipY) {
-        assert assetPath != null;
-
-        TextureKey key = new TextureKey(assetPath, flipY);
-        Texture texture = assetManager.loadTexture(key);
-        return texture;
     }
 }
