@@ -78,13 +78,11 @@ abstract public class GuiApplication
          * Validate and load the Nifty XML for generic popup menus.
          */
         try {
-            nifty.validateXml(popupPath + "foo");
+            nifty.validateXml(popupPath);
         } catch (Exception exception) {
-            logger.log(Level.SEVERE, "Validation of "
+            logger.log(Level.WARNING, "Validation of "
                     + MyString.quote(popupPath) + " failed with exception:",
                     exception);
-            stop();
-            return;
         }
         nifty.addXml(popupPath);
     }
