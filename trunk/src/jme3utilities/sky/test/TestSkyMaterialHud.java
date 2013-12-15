@@ -62,11 +62,11 @@ class TestSkyMaterialHud
     /**
      * object index for the moon
      */
-    final public static int moonIndex = 1;
+    final static int moonIndex = 1;
     /**
      * object index for the sun
      */
-    final public static int sunIndex = 0;
+    final static int sunIndex = 0;
     /**
      * message logger for this class
      */
@@ -98,7 +98,7 @@ class TestSkyMaterialHud
      * @param reenableFlyby if true, the flyby camera will get re-enabled each
      * time this HUD is disabled
      */
-    public TestSkyMaterialHud(NiftyJmeDisplay display, String screenId,
+    TestSkyMaterialHud(NiftyJmeDisplay display, String screenId,
             boolean reenableFlyby) {
         super(display, screenId);
         this.reenableFlyby = reenableFlyby;
@@ -111,8 +111,11 @@ class TestSkyMaterialHud
      *
      * @param material (not null)
      */
-    public void setMaterial(SkyMaterial material) {
-        assert material != null;
+    void setMaterial(SkyMaterial material) {
+        if (material == null) {
+            throw new NullPointerException("material should not be null");
+        }
+
         this.material = material;
     }
     // *************************************************************************
@@ -229,14 +232,17 @@ class TestSkyMaterialHud
     }
 
     /**
-     * Update this display. (Invoked once per frame.)
+     * Callback to update this display. (Invoked once per frame.)
      *
-     * @param simInterval seconds since previous update (>=0)
+     * @param tpf seconds since the previous update (>=0)
      */
     @Override
-    public void update(float simInterval) {
-        assert simInterval >= 0f : simInterval;
-        super.update(simInterval);
+    public void update(float tpf) {
+        if (tpf < 0f) {
+            logger.log(Level.SEVERE, "tpf={0}", tpf);
+            throw new IllegalArgumentException("tpf should not be negative");
+        }
+        super.update(tpf);
 
         if (!isEnabled()) {
             return;

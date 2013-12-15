@@ -73,8 +73,12 @@ public class MySkeleton
      * @return the pre-existing instance (or null if not found)
      */
     public static Bone getBone(Spatial spatial, String boneName) {
-        assert spatial != null;
-        assert boneName != null;
+        if (spatial == null) {
+            throw new NullPointerException("spatial should not be null");
+        }
+        if (boneName == null) {
+            throw new NullPointerException("name should not be null");
+        }
 
         Skeleton skeleton = getSkeleton(spatial);
         if (skeleton == null) {
@@ -94,10 +98,17 @@ public class MySkeleton
      */
     public static float getBoneAngle(Spatial spatial, String boneName,
             int axis) {
-        assert spatial != null;
-        assert boneName != null;
-        assert axis >= 0 : axis;
-        assert axis <= 2 : axis;
+        if (spatial == null) {
+            throw new NullPointerException("spatial should not be null");
+        }
+        if (boneName == null) {
+            throw new NullPointerException("name should not be null");
+        }
+        if (axis < 0 || axis > 2) {
+            logger.log(Level.SEVERE, "{0}", axis);
+            throw new IllegalArgumentException(
+                    "axis should be between 0 and 2, inclusive");
+        }
 
         Bone bone = getBone(spatial, boneName);
         if (bone == null) {
@@ -117,8 +128,12 @@ public class MySkeleton
      * @return a new vector
      */
     public static Vector3f getBoneLocation(Spatial spatial, String boneName) {
-        assert spatial != null;
-        assert boneName != null;
+        if (spatial == null) {
+            throw new NullPointerException("spatial should not be null");
+        }
+        if (boneName == null) {
+            throw new NullPointerException("name should not be null");
+        }
 
         SkeletonControl skeletonControl =
                 spatial.getControl(SkeletonControl.class);
@@ -134,8 +149,6 @@ public class MySkeleton
      * @return the pre-existing instance (or null if not found)
      */
     public static Skeleton getSkeleton(Spatial spatial) {
-        assert spatial != null;
-
         SkeletonControl control = spatial.getControl(SkeletonControl.class);
         if (control == null) {
             return null;
@@ -179,10 +192,17 @@ public class MySkeleton
      */
     public static void setBoneAngle(Spatial spatial, String boneName, int axis,
             float newAngle) {
-        assert spatial != null;
-        assert boneName != null;
-        assert axis >= 0 : axis;
-        assert axis <= 2 : axis;
+        if (spatial == null) {
+            throw new NullPointerException("spatial should not be null");
+        }
+        if (boneName == null) {
+            throw new NullPointerException("name should not be null");
+        }
+        if (axis < 0 || axis > 2) {
+            logger.log(Level.SEVERE, "{0}", axis);
+            throw new IllegalArgumentException(
+                    "axis should be between 0 and 2, inclusive");
+        }
 
         Bone bone = getBone(spatial, boneName);
         if (bone == null) {
@@ -195,7 +215,7 @@ public class MySkeleton
     // test cases
 
     /**
-     * Test cases for the MySkeleton class.
+     * Console app to test the MySkeleton class.
      *
      * @param ignored
      */
@@ -209,7 +229,7 @@ public class MySkeleton
     @Override
     public void simpleInitApp() {
         logger.setLevel(Level.INFO);
-        System.out.print("Test results for the MySkeleton class:\n");
+        System.out.print("Test results for class MySkeleton:\n\n");
 
         String modelPath = "Models/Oto/Oto.mesh.xml";
         Node node = (Node) assetManager.loadModel(modelPath);

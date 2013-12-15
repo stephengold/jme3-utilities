@@ -61,7 +61,9 @@ public class MyString {
      * @return true if a precedes or equals b, false otherwise
      */
     public static boolean areLexOrdered(String a, String b) {
-        assert b != null;
+        if (b == null) {
+            throw new NullPointerException("string shuold not be null");
+        }
 
         boolean result = a.compareTo(b) <= 0;
         return result;
@@ -135,7 +137,9 @@ public class MyString {
      * @param text the text to enclose (not null)
      */
     public static String quote(String text) {
-        assert text != null;
+        if (text == null) {
+            throw new NullPointerException("text shuold not be null");
+        }
 
         return String.format("\"%s\"", text);
     }
@@ -202,16 +206,16 @@ public class MyString {
         assert !inEscape;
         return result.toString();
     }
-
     // *************************************************************************
     // test cases
+
     /**
-     * Test cases for this class.
+     * Console app to test the MyString class.
      *
      * @param ignored
      */
     public static void main(String[] ignored) {
-        System.out.print("Test results for class MyString:\n");
+        System.out.print("Test results for class MyString:\n\n");
 
         String[] stringCases = new String[]{
             "",

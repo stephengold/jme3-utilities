@@ -34,6 +34,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -185,14 +186,17 @@ public class VectorXZ
     }
 
     /**
-     * Clamp this direction to lie within a given angle of the X-axis (in
-     * place).
+     * Clamp this direction to be within a given angle of the X-axis (in place).
      *
      * @param maxAbsAngle angle in radians (>=0)
      * @return this vector (with its components modified)
      */
     public VectorXZ clampDirectionLocal(float maxAbsAngle) {
-        assert maxAbsAngle >= 0f : maxAbsAngle;
+        if (maxAbsAngle < 0f) {
+            logger.log(Level.SEVERE, "maxAbsAngle={0}", maxAbsAngle);
+            throw new IllegalArgumentException("angle should not be negative");
+        }
+
         if (maxAbsAngle >= FastMath.HALF_PI) {
             maxAbsAngle = FastMath.HALF_PI;
         }
@@ -222,7 +226,7 @@ public class VectorXZ
     }
 
     /**
-     * Clamp this vector to lie within an axis-aligned ellipse (with no
+     * Clamp this vector to be within an axis-aligned ellipse (with no
      * side-effect).
      *
      * @param maxX radius of the ellipse in the X-direction
@@ -236,7 +240,7 @@ public class VectorXZ
     }
 
     /**
-     * Clamp this vector to lie within an axis-aligned ellipse (in place).
+     * Clamp this vector to be within an axis-aligned ellipse (in place).
      *
      * @param maxX radius of the ellipse in the X-direction
      * @param maxZ radius of the ellipse in the Z-direction
@@ -293,8 +297,15 @@ public class VectorXZ
      * if the angle's magnitude exceeds 90 degrees
      */
     public float directionError(VectorXZ goal) {
-        assert isUnitVector() : this;
-        assert goal.isUnitVector() : goal;
+        if (!goal.isUnitVector()) {
+            logger.log(Level.SEVERE, "goal={0}", goal);
+            throw new IllegalArgumentException("goal should have length=1");
+        }
+        if (!isUnitVector()) {
+            logger.log(Level.SEVERE, "this={0}", this);
+            throw new IllegalStateException("vector should have length=1");
+        }
+
         float cosine = dot(goal);
         float sine = cross(goal);
         if (cosine >= 0f) {
@@ -583,7 +594,7 @@ public class VectorXZ
     // Object methods
 
     /**
-     * Clone a vector.
+     * Clone this instance.
      *
      * @return a new vector with the same components as this vector
      */
@@ -641,12 +652,12 @@ public class VectorXZ
     // test cases
 
     /**
-     * Test cases for this class.
+     * Console app to test the VectorXZ class.
      *
      * @param ignored
      */
     public static void main(String[] ignored) {
-        System.out.print("Test results for class VectorXZ:\n");
+        System.out.print("Test results for class VectorXZ:\n\n");
 
         // vector test cases
         VectorXZ[] cases = new VectorXZ[4];

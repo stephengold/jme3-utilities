@@ -136,7 +136,7 @@ class TestSkyControlHud
      *
      * @return maximum opacity (>=0, <=1)
      */
-    public float getCloudiness() {
+    float getCloudiness() {
         assert cloudiness >= 0f : cloudiness;
         assert cloudiness <= 1f : cloudiness;
         return cloudiness;
@@ -148,7 +148,7 @@ class TestSkyControlHud
      * @return true if clouds should modulate the main light, false for steady
      * light
      */
-    public boolean getCloudModulation() {
+    boolean getCloudModulation() {
         return cloudModulation;
     }
 
@@ -157,7 +157,7 @@ class TestSkyControlHud
      *
      * @return rate relative to the standard rate (negative means reverse)
      */
-    public float getCloudRate() {
+    float getCloudRate() {
         return cloudRate;
     }
 
@@ -166,7 +166,7 @@ class TestSkyControlHud
      *
      * @return hours since midnight (<24. >=0)
      */
-    public float getHour() {
+    float getHour() {
         float hour = timeOfDay.getHour();
 
         assert hour >= 0f : hour;
@@ -179,7 +179,7 @@ class TestSkyControlHud
      *
      * @return angle (radians north of equator, <=Pi/2, >=-Pi/2)
      */
-    public float getLatitude() {
+    float getLatitude() {
         assert latitude >= -FastMath.HALF_PI : latitude;
         assert latitude <= FastMath.HALF_PI : latitude;
         return latitude;
@@ -190,7 +190,7 @@ class TestSkyControlHud
      *
      * @return in radians (<Pi, >0)
      */
-    public float getLunarDiameter() {
+    float getLunarDiameter() {
         return lunarDiameter;
     }
 
@@ -199,7 +199,7 @@ class TestSkyControlHud
      *
      * @return value, or null for no moon
      */
-    public LunarPhase getLunarPhase() {
+    LunarPhase getLunarPhase() {
         return phase;
     }
 
@@ -208,7 +208,7 @@ class TestSkyControlHud
      *
      * @return Y-coordinate of peak
      */
-    public float getRelief() {
+    float getRelief() {
         return relief;
     }
 
@@ -217,7 +217,7 @@ class TestSkyControlHud
      *
      * @return angle (radians east of vernal equinox, <=2*Pi, >=0)
      */
-    public float getSolarLongitude() {
+    float getSolarLongitude() {
         return solarLongitude;
     }
     // *************************************************************************
@@ -238,11 +238,14 @@ class TestSkyControlHud
     /**
      * Callback to update this display. (Invoked once per frame.)
      *
-     * @param tpf real seconds since the previous update (>=0)
+     * @param tpf seconds since the previous update (>=0)
      */
     @Override
     public void update(float tpf) {
-        assert tpf >= 0f : tpf;
+        if (tpf < 0f) {
+            logger.log(Level.SEVERE, "tpf={0}", tpf);
+            throw new IllegalArgumentException("tpf should not be negative");
+        }
         super.update(tpf);
 
         if (!isEnabled()) {
