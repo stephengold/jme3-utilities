@@ -156,8 +156,13 @@ public class Misc {
      * @return a new instance
      */
     public static Material createUnshadedMaterial(AssetManager assetManager) {
-        Material result = new Material(assetManager, unshadedMaterialAssetPath);
-        return result;
+        if (assetManager == null) {
+            throw new NullPointerException("asset manager should not be null");
+        }
+
+        Material material = new Material(assetManager,
+                unshadedMaterialAssetPath);
+        return material;
     }
 
     /**
@@ -169,33 +174,33 @@ public class Misc {
      */
     public static Material createUnshadedMaterial(AssetManager assetManager,
             String assetPath) {
-        assert assetPath != null;
+        if (assetManager == null) {
+            throw new NullPointerException("asset manager should not be null");
+        }
 
-        Material result = createUnshadedMaterial(assetManager);
         Texture texture = loadTexture(assetManager, assetPath);
-        result.setTexture("ColorMap", texture);
+        Material material = createUnshadedMaterial(assetManager, texture);
 
-        return result;
+        return material;
     }
 
     /**
-     * Load a non-flipped texture asset in edge-clamp mode.
+     * Create an unshaded material from a texture.
      *
      * @param assetManager (not null)
-     * @param assetPath to the texture asset (not null)
-     * @return the texture which was loaded (not null)
+     * @param texture (not null)
+     * @return a new instance
      */
-    public static Texture loadTexture(AssetManager assetManager,
-            String assetPath) {
-        assert assetPath != null;
+    public static Material createUnshadedMaterial(AssetManager assetManager,
+            Texture texture) {
+        if (assetManager == null) {
+            throw new NullPointerException("asset manager should not be null");
+        }
 
-        boolean flipY = false;
-        TextureKey key = new TextureKey(assetPath, flipY);
-        Texture texture = assetManager.loadTexture(key);
-        // edge-clamp mode is the default
+        Material material = createUnshadedMaterial(assetManager);
+        material.setTexture("ColorMap", texture);
 
-        assert texture != null;
-        return texture;
+        return material;
     }
 
     /**
@@ -205,7 +210,9 @@ public class Misc {
      * @return the generated path
      */
     public static String getUserPath(String fileName) {
-        assert fileName != null;
+        if (fileName == null) {
+            throw new NullPointerException("file name should not be null");
+        }
 
         String homePath = System.getProperty("user.home");
         String result = String.format("%s/%s", homePath, fileName);
@@ -219,7 +226,9 @@ public class Misc {
      * @return world elevation of the surface (in world units)
      */
     public static float getYLevel(Geometry geometry) {
-        assert geometry != null;
+        if (geometry == null) {
+            throw new NullPointerException("geometry should not be null");
+        }
 
         float minMax[] = findMinMaxHeights(geometry);
         assert minMax[0] == minMax[1] : minMax[0];
@@ -240,6 +249,28 @@ public class Misc {
     }
 
     /**
+     * Load a non-flipped texture asset in edge-clamp mode.
+     *
+     * @param assetManager (not null)
+     * @param assetPath to the texture asset (not null)
+     * @return the texture which was loaded (not null)
+     */
+    public static Texture loadTexture(AssetManager assetManager,
+            String assetPath) {
+        if (assetPath == null) {
+            throw new NullPointerException("path should not be null");
+        }
+
+        boolean flipY = false;
+        TextureKey key = new TextureKey(assetPath, flipY);
+        Texture texture = assetManager.loadTexture(key);
+        // edge-clamp mode is the default
+
+        assert texture != null;
+        return texture;
+    }
+
+    /**
      * Alter a single bone angle in the bind pose.
      *
      * @param bone which bone to adjust (not null)
@@ -247,9 +278,14 @@ public class Misc {
      * @param newAngle new rotation angle (in radians)
      */
     public static void setAngle(Bone bone, int axis, float newAngle) {
-        assert bone != null;
-        assert axis >= 0 : axis;
-        assert axis <= 2 : axis;
+        if (bone == null) {
+            throw new NullPointerException("bone should not be null");
+        }
+        if (axis < 0 || axis > 2) {
+            logger.log(Level.SEVERE, "{0}", axis);
+            throw new IllegalArgumentException(
+                    "axis should be between 0 and 2, inclusive");
+        }
 
         Vector3f location = bone.getLocalPosition();
         Vector3f scale = bone.getLocalScale();
@@ -266,7 +302,9 @@ public class Misc {
      * @param newLevel (not null)
      */
     public static void setLoggingLevels(Level newLevel) {
-        assert newLevel != null;
+        if (newLevel == null) {
+            throw new NullPointerException("level should not be null");
+        }
 
         Logger.getLogger("").setLevel(newLevel);
     }
@@ -300,10 +338,10 @@ public class Misc {
     public static void writeMap(String filePath, RenderedImage image)
             throws IOException {
         if (filePath == null) {
-            throw new NullPointerException("path cannot be null");
+            throw new NullPointerException("path should not be null");
         }
         if (image == null) {
-            throw new NullPointerException("image cannot be null");
+            throw new NullPointerException("image should not be null");
         }
 
         File textureFile = new File(filePath);
