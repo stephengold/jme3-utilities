@@ -35,10 +35,11 @@
            controller="jme3utilities.SimpleScreenController"
            backgroundColor="#0008"
            childLayout="absolute-inside">
-        <control name="niftyMenu" id="#menu"/>
-        <interact
-            onClick="closeActivePopup()"
-            onSecondaryClick="closeActivePopup()"
-            onTertiaryClick="closeActivePopup()"/>
+        <control name="niftyMenu" id="#menu">
+            <interact
+                onClick="closeActivePopup()"
+                onSecondaryClick="closeActivePopup()"
+                onTertiaryClick="closeActivePopup()"/>
+        </control>
     </popup>
 </nifty>
