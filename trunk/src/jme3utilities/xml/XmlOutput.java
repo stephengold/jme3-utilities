@@ -23,12 +23,13 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities;
+package jme3utilities.xml;
 
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.io.PrintStream;
 import java.util.logging.Logger;
+import jme3utilities.MyString;
 
 /**
  * XML input utility methods. Aside from test cases, all methods here should be
