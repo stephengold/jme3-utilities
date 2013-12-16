@@ -55,8 +55,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A simplified controller for a Nifty screen, with support for sliders and
- * popup menus.
+ * A simplified controller for a Nifty screen, with support for check boxes,
+ * popup menus, radio buttons, sliders, and dynamic labels.
  *
  * Although this is an abstract class, certain methods are implemented to
  * simplify the implementation of subclasses -- unlike Controller and
@@ -95,9 +95,9 @@ public class SimpleScreenController
      */
     final private NiftyJmeDisplay niftyDisplay;
     /**
-     * Nifty element id of the active popup menu (null means none active)
+     * the active popup menu (null means none are active)
      */
-    private static String activePopupId = null;
+    private static PopupMenu activePopupMenu = null;
     /**
      * Nifty id of this screen: set by constructor
      */
@@ -141,16 +141,47 @@ public class SimpleScreenController
     // new methods exposed
 
     /**
-     * Close the active popup element. Invoked via NiftyMethodInvoker, so the
+     * Close the enabled popup menu. Invoked via NiftyMethodInvoker, so the
      * class and method must be public.
      */
     public void closeActivePopup() {
-        if (activePopupId == null) {
+        if (activePopupMenu == null) {
             throw new IllegalStateException("no active popup");
         }
 
-        getNifty().closePopup(activePopupId);
-        activePopupId = null;
+        activePopupMenu.close();
+        activePopupMenu = activePopupMenu.getParent();
+        if (activePopupMenu != null) {
+            /*
+             * Re-enable the parent menu.
+             */
+            activePopupMenu.setEnabled(true);
+        }
+    }
+
+    /**
+     * If the specified popup menu is active, close it and all its ancestors.
+     *
+     * @param popupMenu (not null)
+     */
+    public void closeActivePopup(PopupMenu popupMenu) {
+        if (popupMenu == null) {
+            throw new NullPointerException("popup menu should not be null");
+        }
+        if (activePopupMenu == null) {
+            throw new IllegalStateException("no active popup menu");
+        }
+
+        if (popupMenu != activePopupMenu) {
+            return;
+        }
+        popupMenu.close();
+        PopupMenu ancestor = popupMenu.getParent();
+        while (ancestor != null) {
+            ancestor.close();
+            ancestor = ancestor.getParent();
+        }
+        activePopupMenu = null;
     }
 
     /**
@@ -223,7 +254,7 @@ public class SimpleScreenController
      * @return true if there's an active popup element, false if there's none
      */
     public boolean hasActivePopup() {
-        return activePopupId != null;
+        return activePopupMenu != null;
     }
 
     /**
@@ -243,6 +274,9 @@ public class SimpleScreenController
         }
         Element element = getScreen().findElementByName(elementId);
         if (element == null) {
+            /*
+             * non-existent element
+             */
             return false;
         }
 
@@ -279,6 +313,78 @@ public class SimpleScreenController
             logger.log(Level.SEVERE, "Caught unexpected throwable:", throwable);
             application.stop(false);
         }
+    }
+
+    /**
+     * Create and activate a popup menu.
+     *
+     * @param actionStringPrefix common prefix of the menu's action strings (not
+     * null)
+     * @param menuItems collection of menu items (not null)
+     */
+    public void showPopup(String actionStringPrefix,
+            Collection<String> menuItems) {
+        if (actionStringPrefix == null) {
+            throw new NullPointerException("prefix should not be null");
+        }
+        if (menuItems == null) {
+            throw new NullPointerException("collection should not be null");
+        }
+        /*
+         * Parse the action string prefix into words.
+         */
+        String[] actionPrefixWords = actionStringPrefix.split("\\s+");
+
+        String[] items = Misc.toArray(menuItems);
+        showPopup(actionPrefixWords, items);
+    }
+
+    /**
+     * Create and activate a popup menu.
+     *
+     * @param actionPrefixWords prefix words for the menu's action strings (not
+     * null)
+     * @param items list of menu items (not null)
+     */
+    public void showPopup(String[] actionPrefixWords, String[] items) {
+        if (actionPrefixWords == null) {
+            throw new NullPointerException("array should not be null");
+        }
+        /*
+         * Create the popup using the "popup-menu.xml" resource.
+         */
+        Nifty nifty = getNifty();
+        Element element = nifty.createPopup("popup-menu");
+        /*
+         * Add items to the popup's menu.
+         */
+        Menu<String> menu = element.findNiftyControl("#menu", Menu.class);
+        for (String item : items) {
+            menu.addMenuItem(item, item);
+        }
+        String elementId = element.getId();
+        assert elementId != null;
+        /*
+         * Create a controller with a subscription to the menu's
+         * item activation events.
+         */
+        PopupMenu popup = new PopupMenu(this, elementId, actionPrefixWords,
+                activePopupMenu);
+        Screen screen = nifty.getCurrentScreen();
+        String controlId = menu.getId();
+        nifty.subscribe(screen, controlId, MenuItemActivatedEvent.class, popup);
+        /*
+         * Make the menu visible.
+         */
+        nifty.showPopup(screen, elementId, null);
+
+        if (activePopupMenu != null) {
+            /*
+             * Disable the parent menu.
+             */
+            activePopupMenu.setEnabled(false);
+        }
+        activePopupMenu = popup;
     }
     // *************************************************************************
     // AbstractAppState methods
@@ -577,73 +683,6 @@ public class SimpleScreenController
         logger.log(Level.WARNING,
                 "Nifty element {0} lacks a text renderer",
                 MyString.quote(elementId));
-    }
-
-    /**
-     * Create and activate a popup menu.
-     *
-     * @param actionStringPrefix common prefix of the menu's action strings (not
-     * null)
-     * @param menuItems collection of menu items (not null)
-     */
-    protected void showPopup(String actionStringPrefix,
-            Collection<String> menuItems) {
-        if (actionStringPrefix == null) {
-            throw new NullPointerException("prefix should not be null");
-        }
-        if (menuItems == null) {
-            throw new NullPointerException("collection should not be null");
-        }
-        assert activePopupId == null : activePopupId;
-        /*
-         * Parse the action string prefix into words.
-         */
-        String[] actionPrefixWords = actionStringPrefix.split("\\s+");
-
-        String[] items = Misc.toArray(menuItems);
-        showPopup(actionPrefixWords, items);
-    }
-
-    /**
-     * Create and activate a popup menu.
-     *
-     * @param actionPrefixWords prefix words for the menu's action strings (not
-     * null)
-     * @param items list of menu items (not null)
-     */
-    protected void showPopup(String[] actionPrefixWords, String[] items) {
-        if (actionPrefixWords == null) {
-            throw new NullPointerException("array should not be null");
-        }
-        assert activePopupId == null : activePopupId;
-        /*
-         * Create a popup modeled after "popup-menu" in the XML.
-         */
-        Nifty nifty = getNifty();
-        Element element = nifty.createPopup("popup-menu");
-        /*
-         * Add items to the popup's menu.
-         */
-        Menu<String> menu = element.findNiftyControl("#menu", Menu.class);
-        for (String item : items) {
-            menu.addMenuItem(item, item);
-        }
-        /*
-         * Create a controller with a subscription to the menu's
-         * item activation events.
-         */
-        String elementId = element.getId();
-        assert elementId != null;
-        PopupMenu popup = new PopupMenu(this, actionPrefixWords);
-        Screen screen = nifty.getCurrentScreen();
-        String menuId = menu.getId();
-        nifty.subscribe(screen, menuId, MenuItemActivatedEvent.class, popup);
-        /*
-         * Make the menu visible.
-         */
-        nifty.showPopup(screen, elementId, null);
-        activePopupId = elementId;
-        assert activePopupId != null;
     }
 
     /**
