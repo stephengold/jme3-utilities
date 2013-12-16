@@ -51,7 +51,7 @@ import org.lwjgl.Sys;
 
 /**
  * A GUI application for testing the SkyMaterial class using a heads-up display
- * (HUD).
+ * (HUD). The application's main entry point is here.
  *
  * Use the 'H' key to toggle HUD visibility, the 'S' key to save the scene, the
  * 'L' key to load a saved scene.

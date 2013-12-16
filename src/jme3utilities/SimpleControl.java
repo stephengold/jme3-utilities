@@ -90,24 +90,26 @@ abstract public class SimpleControl
     }
 
     /**
-     * De-serialize this control when loading from a .jm3o file.
+     * De-serialize this control when loading from a JM3O file.
      *
      * @param importer (not null)
      * @throws IOException TODO when?
      */
     @Override
-    public void read(JmeImporter importer) throws IOException {
+    public void read(JmeImporter importer)
+            throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
-     * Serialize this control when saving to a .jm3o file.
+     * Serialize this control when saving to a JM3O file.
      *
      * @param exporter (not null)
      * @throws IOException TODO when?
      */
     @Override
-    public void write(JmeExporter exporter) throws IOException {
+    public void write(JmeExporter exporter)
+            throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     // *************************************************************************
