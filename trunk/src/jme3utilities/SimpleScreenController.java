@@ -386,6 +386,34 @@ public class SimpleScreenController
         }
         activePopupMenu = popup;
     }
+
+    /**
+     * Validate and load a Nifty interface description.
+     *
+     * @param interfaceAssetPath (not null)
+     */
+    public void validateAndLoad(String interfaceAssetPath) {
+        if (interfaceAssetPath == null) {
+            throw new NullPointerException("path should not be null");
+        }
+
+        Nifty nifty = getNifty();
+        /*
+         * Read and validate the interface XML.
+         */
+        try {
+            nifty.validateXml(interfaceAssetPath);
+        } catch (Exception exception) {
+            logger.log(Level.WARNING, "Nifty validation of "
+                    + MyString.quote(interfaceAssetPath)
+                    + " failed with exception:",
+                    exception);
+        }
+        /*
+         * Re-read the XML and build the interface.
+         */
+        nifty.addXml(interfaceAssetPath);
+    }
     // *************************************************************************
     // AbstractAppState methods
 

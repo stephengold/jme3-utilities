@@ -381,11 +381,12 @@ class TestSkyControlHud
         assert !isEnabled();
         super.initialize(stateManager, application);
         /*
-         * Read the interface description from an XML asset.
+         * Validate and load the Nifty interface XML which describes the HUD.
          */
-        String interfaceAssetPath = String.format("Interface/Nifty/huds/%s.xml",
-                screenId);
-        getNifty().addXml(interfaceAssetPath);
+        String interfaceAssetPath =
+                String.format("Interface/Nifty/huds/%s.xml", screenId);
+        validateAndLoad(interfaceAssetPath);
+
         setEnabled(true);
     }
 
