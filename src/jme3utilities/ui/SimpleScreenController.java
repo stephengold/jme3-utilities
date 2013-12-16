@@ -23,7 +23,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities;
+package jme3utilities.ui;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -53,6 +53,8 @@ import java.util.Collection;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Misc;
+import jme3utilities.MyString;
 
 /**
  * A simplified controller for a Nifty screen, with support for check boxes,

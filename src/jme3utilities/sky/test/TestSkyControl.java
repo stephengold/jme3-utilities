@@ -43,9 +43,9 @@ import java.util.logging.Logger;
 import jme3utilities.LandscapeControl;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
-import jme3utilities.GuiApplication;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
+import jme3utilities.ui.GuiApplication;
 import org.lwjgl.Sys;
 
 /**

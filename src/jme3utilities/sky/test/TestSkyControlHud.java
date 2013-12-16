@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 import jme3utilities.MyCamera;
 import jme3utilities.MyMath;
 import jme3utilities.MyString;
-import jme3utilities.SimpleScreenController;
+import jme3utilities.ui.SimpleScreenController;
 import jme3utilities.TimeOfDay;
 import jme3utilities.sky.LunarPhase;
 
