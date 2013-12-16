@@ -33,7 +33,9 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.math.FastMath;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.renderer.Camera;
+import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.CheckBox;
+import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyCamera;
@@ -53,7 +55,7 @@ import jme3utilities.sky.LunarPhase;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-class TestSkyControlHud
+public class TestSkyControlHud
         extends SimpleScreenController
         implements ActionListener {
     // *************************************************************************
@@ -220,6 +222,39 @@ class TestSkyControlHud
     float getSolarLongitude() {
         return solarLongitude;
     }
+
+    /**
+     * Callback which Nifty invokes after the user selects a radio button.
+     * Invoked by means of reflection, so both the class and method must be
+     * public.
+     *
+     * @param buttonId Nifty element id of the radio button (not null)
+     * @param event details of the event (not null)
+     */
+    @NiftyEventSubscriber(pattern = ".*RadioButton")
+    public void onRadioButtonChanged(final String buttonId,
+            final RadioButtonStateChangedEvent event) {
+        assert buttonId != null;
+        if (!screenHasStarted) {
+            return;
+        }
+
+        switch (buttonId) {
+            case "forwardRadioButton":
+                clockDirection = +1;
+                return;
+
+            case "pauseRadioButton":
+                clockDirection = 0;
+                return;
+
+            case "reverseRadioButton":
+                clockDirection = -1;
+                return;
+        }
+        logger.log(Level.WARNING, "unknown radio button: id={0}",
+                MyString.quote(buttonId));
+    }
     // *************************************************************************
     // AbstractAppState methods
 
@@ -313,21 +348,6 @@ class TestSkyControlHud
         }
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
         switch (actionString) {
-            case "backward":
-                clockDirection = -1;
-                break;
-
-            case "direction":
-                String[] actionPrefixWords = {};
-                String[] items = {"forward", "stop", "backward"};
-                clockDirection = 0;
-                showPopup(actionPrefixWords, items);
-                break;
-
-            case "forward":
-                clockDirection = +1;
-                break;
-
             case "phase":
                 String[] phasePrefixWords = {"phase"};
                 String[] phaseItems = {
@@ -348,10 +368,6 @@ class TestSkyControlHud
             case "phase waxing-gibbous":
                 String name = actionString.substring(6);
                 phase = LunarPhase.fromDescription(name);
-                break;
-
-            case "stop":
-                clockDirection = 0;
                 break;
 
             case "toggle":
@@ -386,6 +402,7 @@ class TestSkyControlHud
         String interfaceAssetPath =
                 String.format("Interface/Nifty/huds/%s.xml", screenId);
         validateAndLoad(interfaceAssetPath);
+        setRadioButton("forwardRadioButton");
 
         setEnabled(true);
     }
