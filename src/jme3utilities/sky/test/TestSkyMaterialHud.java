@@ -36,6 +36,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
+import de.lessvoid.nifty.Nifty;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
@@ -203,11 +204,12 @@ class TestSkyMaterialHud
         assert !isEnabled();
         super.initialize(stateManager, application);
         /*
-         * Read the interface description from an XML asset.
+         * Validate and load the Nifty interface XML which describes the HUD.
          */
-        String interfaceAssetPath = String.format("Interface/Nifty/huds/%s.xml",
-                screenId);
-        getNifty().addXml(interfaceAssetPath);
+        String interfaceAssetPath =
+                String.format("Interface/Nifty/huds/%s.xml", screenId);
+        validateAndLoad(interfaceAssetPath);
+
         setEnabled(true);
     }
 
