@@ -36,7 +36,6 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
-import de.lessvoid.nifty.Nifty;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
@@ -95,13 +94,11 @@ class TestSkyMaterialHud
      * Instantiate the display.
      *
      * @param display (not null)
-     * @param screenId Nifty screen id of the HUD (not null)
      * @param reenableFlyby if true, the flyby camera will get re-enabled each
      * time this HUD is disabled
      */
-    TestSkyMaterialHud(NiftyJmeDisplay display, String screenId,
-            boolean reenableFlyby) {
-        super(display, screenId);
+    TestSkyMaterialHud(NiftyJmeDisplay display, boolean reenableFlyby) {
+        super(display, "test-sky-material");
         this.reenableFlyby = reenableFlyby;
     }
     // *************************************************************************

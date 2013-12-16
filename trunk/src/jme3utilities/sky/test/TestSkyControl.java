@@ -42,11 +42,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.LandscapeControl;
 import jme3utilities.Misc;
-import jme3utilities.MyString;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
 import jme3utilities.ui.GuiApplication;
-import org.lwjgl.Sys;
 
 /**
  * A GUI application for testing/demonstrating the SkyControl class using a
@@ -78,10 +76,6 @@ public class TestSkyControl
      * application name for its window's title bar and its usage message
      */
     final private static String applicationName = "TestSkyControl";
-    /**
-     * Nifty screen id of the HUD
-     */
-    final private static String screenId = "test-sky-control";
     // *************************************************************************
     // fields
     /**
@@ -126,14 +120,7 @@ public class TestSkyControl
      * @param arguments array of command-line arguments (not null)
      */
     public static void main(String[] arguments) {
-        /*
-         * Set logging levels.
-         */
         Misc.setLoggingLevels(Level.WARNING);
-        logger.setLevel(Level.INFO);
-        /*
-         * Instantiate the application.
-         */
         TestSkyControl application = new TestSkyControl();
         /*
          * Parse the command-line arguments into parameters.
@@ -158,7 +145,7 @@ public class TestSkyControl
 
         application.start();
         /*
-         * ... and onward to TestSkyControl.simpleInitApp()!
+         * ... and onward to TestSkyControl.guiInitApp()!
          */
     }
     // *************************************************************************
@@ -179,16 +166,13 @@ public class TestSkyControl
         super.stop(false);
     }
     // *************************************************************************
-    // SimpleApplication methods
+    // GuiApplication methods
 
     /**
      * Initialize this application.
      */
     @Override
-    public void simpleInitApp() {
-        logger.log(Level.INFO, "LWJGL version is {0}",
-                MyString.quote(Sys.getVersion()));
-
+    public void guiInitializeApplication() {
         configureCamera();
         /*
          * Add light sources.
@@ -263,6 +247,8 @@ public class TestSkyControl
 
         initializeUserInterface();
     }
+    // *************************************************************************
+    // SimpleApplication methods
 
     /**
      * Update the scene.
@@ -343,13 +329,9 @@ public class TestSkyControl
         setDisplayFps(false);
         setDisplayStatView(false);
         /*
-         * Initialize Nifty for the graphical user interface (GUI).
-         */
-        startGui();
-        /*
          * Create and attach the heads-up display (HUD).
          */
-        hud = new TestSkyControlHud(display, screenId, true);
+        hud = new TestSkyControlHud(niftyDisplay, true);
         success = stateManager.attach(hud);
         assert success;
         /*
