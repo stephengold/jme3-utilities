@@ -26,12 +26,14 @@
 package jme3utilities;
 
 import com.google.common.base.Joiner;
+import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.MenuItemActivatedEvent;
+import de.lessvoid.nifty.elements.Element;
 import java.util.logging.Logger;
 import org.bushe.swing.event.EventTopicSubscriber;
 
 /**
- * Event subscriber for a simple Nifty popup menu.
+ * Event subscriber for a simple Nifty popup menu or submenu.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -52,9 +54,18 @@ public class PopupMenu
     // *************************************************************************
     // fields
     /**
+     * the parent popup menu which opened this submenu, or null if not a
+     * submenu: set by constructor
+     */
+    final private PopupMenu parent;
+    /**
      * which screen controls this popup menu: set by constructor
      */
     final private SimpleScreenController controller;
+    /**
+     * Nifty id of the popup: set by constructor
+     */
+    final private String popupId;
     /**
      * prefix words for the menu's action strings: set by constructor
      */
@@ -63,32 +74,87 @@ public class PopupMenu
     // constructors
 
     /**
-     * Instantiate for a particular screen controller, action prefix, and
-     * element.
+     * Instantiate a menu for a particular screen controller and action prefix.
      *
-     * @param controller which screen owns the popup menu (not null)
+     * @param controller which screen will own this menu (not null)
+     * @param popupId Nifty id of the popup (not null)
      * @param actionPrefixWords prefix words for action strings (unaffected, not
      * null)
-     * @param elementId id of the popup element (not null)
      */
-    PopupMenu(SimpleScreenController controller, String[] actionPrefixWords) {
+    PopupMenu(SimpleScreenController controller, String popupId,
+            String[] actionPrefixWords) {
+        this(controller, popupId, actionPrefixWords, null);
+    }
+
+    /**
+     * Instantiate a submenu for a particular screen controller, action prefix,
+     * and parent menu.
+     *
+     * @param controller which screen will own this menu (not null)
+     * @param popupId Nifty id of the popup (not null)
+     * @param actionPrefixWords prefix words for action strings (unaffected, not
+     * null)
+     * @param parent the parent popup menu which opened this submenu (or null if
+     * not a submenu)
+     */
+    PopupMenu(SimpleScreenController controller, String popupId,
+            String[] actionPrefixWords, PopupMenu parent) {
         assert controller != null;
         assert actionPrefixWords != null;
 
         this.controller = controller;
         this.actionPrefixWords = actionPrefixWords.clone();
+        this.popupId = popupId;
+        this.parent = parent;
+    }
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Close this menu.
+     */
+    void close() {
+        Nifty nifty = controller.getNifty();
+        nifty.closePopup(popupId);
+    }
+
+    /**
+     * Access the parent: the popup menu which opened this submenu.
+     *
+     * @return the pre-existing instance, or null if no parent
+     */
+    PopupMenu getParent() {
+        return parent;
+    }
+
+    /**
+     * Enable or disable this menu.
+     *
+     * @param newState true to enable, false to disable
+     */
+    void setEnabled(boolean newState) {
+        Nifty nifty = controller.getNifty();
+        Element element = nifty.findPopupByName(popupId);
+        if (newState) {
+            element.enable();
+        } else {
+            element.disable();
+        }
     }
     // *************************************************************************
     // EventTopicSubscriber methods
 
     /**
-     * Handle an event from the Nifty GUI.
+     * Callback to deal with the activation of an item in this menu.
      *
-     * @param ignored
-     * @param event (not null)
+     * @param controlId Nifty id of this menu's control (not null)
+     * @param event details, such as which item got activated (not null)
      */
     @Override
-    public void onEvent(String ignored, MenuItemActivatedEvent<String> event) {
+    public void onEvent(String controlId,
+            MenuItemActivatedEvent<String> event) {
+        assert controlId != null;
+
         String itemName = event.getItem();
         /*
          * Generate the action string for the item by appending the item's
@@ -103,9 +169,12 @@ public class PopupMenu
             actionString = itemName;
         }
         /*
-         * Perform the action and then close the popup.
+         * Perform the corresponding action.
          */
         SimpleScreenController.perform(actionString);
-        controller.closeActivePopup();
+        /*
+         * If this menu is still enabled, close it and all of its ancestors.
+         */
+        controller.closeActivePopup(this);
     }
 }
