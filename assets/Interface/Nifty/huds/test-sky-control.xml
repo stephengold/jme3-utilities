@@ -77,7 +77,7 @@
                         </panel>
                         <control name="radioButtonGroup" id="timeGroup"/>
                         <panel style="indentPanel">
-                            <control name="radioButton" label="forwardRadioButton"
+                            <control name="radioButton" id="forwardRadioButton"
                                      group="timeGroup"/>
                             <control name="label"
                                      width="12"/>
