@@ -296,8 +296,8 @@ public class SimpleScreenController
     }
 
     /**
-     * Perform the action specified by an action string. Invoked via
-     * NiftyMethodInvoker, so the class and method must be public.
+     * Perform the action specified by an action string. Invoked by means of
+     * reflection, so both the class and method must be public.
      *
      * @param actionString (not null)
      */
@@ -415,6 +415,15 @@ public class SimpleScreenController
          * Re-read the XML and build the interface.
          */
         nifty.addXml(interfaceAssetPath);
+    }
+
+    /**
+     * Validate and load a HUD interface description.
+     */
+    public void validateAndLoadHud() {
+        String assetPath =
+                String.format("Interface/Nifty/huds/%s.xml", screenId);
+        validateAndLoad(assetPath);
     }
     // *************************************************************************
     // AbstractAppState methods
@@ -795,7 +804,7 @@ public class SimpleScreenController
 
         String statusName = namePrefix + "SliderStatus";
         /*
-         * Pick output precision based on the magnitude of the value.
+         * Select output precision based on the magnitude of the value.
          */
         String format;
         if (FastMath.abs(value) >= 5f) {
