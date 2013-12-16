@@ -121,13 +121,11 @@ public class TestSkyControlHud
      * Instantiate the display.
      *
      * @param display (not null)
-     * @param screenId Nifty screen id of the HUD (not null)
      * @param reenableFlyby if true, the flyby camera will get re-enabled each
      * time this HUD is disabled
      */
-    TestSkyControlHud(NiftyJmeDisplay display, String screenId,
-            boolean reenableFlyby) {
-        super(display, screenId);
+    TestSkyControlHud(NiftyJmeDisplay display, boolean reenableFlyby) {
+        super(display, "test-sky-control");
         this.reenableFlyby = reenableFlyby;
     }
     // *************************************************************************

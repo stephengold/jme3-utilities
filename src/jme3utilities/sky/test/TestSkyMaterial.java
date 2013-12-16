@@ -47,7 +47,6 @@ import jme3utilities.sky.DomeMesh;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyMaterial;
 import jme3utilities.ui.GuiApplication;
-import org.lwjgl.Sys;
 
 /**
  * A GUI application for testing the SkyMaterial class using a heads-up display
@@ -95,10 +94,6 @@ public class TestSkyMaterial
      */
     final private static String savePath = "Models/TestSkyMaterial.j3o";
     /**
-     * Nifty screen id of the HUD
-     */
-    final private static String screenId = "test-sky-material";
-    /**
      * application name for its window's title bar
      */
     final private static String windowTitle = "TestSkyMaterial";
@@ -117,14 +112,7 @@ public class TestSkyMaterial
      * @param arguments array of command-line arguments (not null)
      */
     public static void main(String[] arguments) {
-        /*
-         * Set logging levels.
-         */
         Misc.setLoggingLevels(Level.WARNING);
-        logger.setLevel(Level.INFO);
-        /*
-         * Instantiate the application.
-         */
         TestSkyMaterial application = new TestSkyMaterial();
         /*
          * Don't pause on lost focus.  This simplifies debugging and
@@ -148,7 +136,7 @@ public class TestSkyMaterial
 
         application.start();
         /*
-         * ... and onward to TestSkyMaterial.simpleInitApp()!
+         * ... and onward to TestSkyMaterial.guiInitApp()!
          */
     }
     // *************************************************************************
@@ -203,26 +191,23 @@ public class TestSkyMaterial
         super.stop(false);
     }
     // *************************************************************************
-    // SimpleApplication methods
+    // GuiApplication methods
 
     /**
      * Initialize this application.
      */
     @Override
-    public void simpleInitApp() {
-        logger.log(Level.INFO, "LWJGL version is {0}",
-                MyString.quote(Sys.getVersion()));
-
+    public void guiInitializeApplication() {
         configureCamera();
         /*
-         * Create a dome mesh geometry for the sky.
+         * Create and attach a dome mesh geometry for the sky.
          */
         DomeMesh mesh = new DomeMesh(rimSamples, quadrantSamples);
         Geometry geometry = new Geometry(geometryName, mesh);
         rootNode.attachChild(geometry);
-        geometry.setQueueBucket(Bucket.Translucent);
+        geometry.setQueueBucket(Bucket.Sky);
         /*
-         * Create a material for the sky.
+         * Create and initialize a material for the sky.
          */
         SkyMaterial material = new SkyMaterial(assetManager);
         geometry.setMaterial(material);
@@ -272,13 +257,9 @@ public class TestSkyMaterial
         boolean success = stateManager.attach(screenShotState);
         assert success;
         /*
-         * Initialize Nifty for the graphical user interface (GUI).
-         */
-        startGui();
-        /*
          * Create the heads-up display (HUD).
          */
-        hud = new TestSkyMaterialHud(display, screenId, false);
+        hud = new TestSkyMaterialHud(niftyDisplay, false);
         hud.setMaterial(material);
         success = stateManager.attach(hud);
         assert success;

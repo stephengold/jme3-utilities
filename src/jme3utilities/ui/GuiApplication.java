@@ -33,7 +33,9 @@ import java.util.logging.Logger;
 import jme3utilities.MyString;
 
 /**
- * A simple application with a Nifty graphical user interface (GUI).
+ * A simple application with a Nifty graphical user interface (GUI). By
+ * extending this class, an application gets automatic initialization of Nifty
+ * and easy access to the Nifty instance.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -50,26 +52,59 @@ abstract public class GuiApplication
     /**
      * asset path to the Nifty XML for generic popup menus
      */
-    final private static String popupPath = "Interface/Nifty/popup-menu.xml";
+    final private static String popupMenuAsssetPath =
+            "Interface/Nifty/popup-menu.xml";
     // *************************************************************************
     // fields
     /**
-     * GUI display: set in startGui()
+     * Nifty display: set in #simpleInitApp()
      */
-    protected NiftyJmeDisplay display = null;
+    protected NiftyJmeDisplay niftyDisplay = null;
     // *************************************************************************
-    // new protected methods
+    // new public methods
 
-    /*
-     * Initialize the GUI.
+    /**
+     * Access the Nifty instance.
+     *
+     * @return pre-existing instance (not null)
      */
-    protected void startGui() {
-        assert display == null : display;
+    public Nifty getNifty() {
+        Nifty result = getNiftyDisplay().getNifty();
+        assert niftyDisplay != null;
+        return result;
+    }
 
-        display = new NiftyJmeDisplay(assetManager,
-                inputManager, audioRenderer, guiViewPort);
+    /**
+     * Access the Nifty display instance.
+     *
+     * @return pre-existing instance (not null)
+     */
+    public NiftyJmeDisplay getNiftyDisplay() {
+        assert niftyDisplay != null;
+        return niftyDisplay;
+    }
 
-        Nifty nifty = display.getNifty();
+    /**
+     * Callback to the user's startup code.
+     */
+    abstract public void guiInitializeApplication();
+    // *************************************************************************
+    // SimpleApplication methods
+
+    /**
+     * Startup code for the application: initialize Nifty with generic popup
+     * menus, then invoke the user's guiInitApp().
+     */
+    @Override
+    public void simpleInitApp() {
+        assert niftyDisplay == null : niftyDisplay;
+        /*
+         * Start Nifty without the batched renderer.
+         */
+        niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager,
+                audioRenderer, guiViewPort);
+
+        Nifty nifty = getNifty();
         //nifty.setDebugOptionPanelColors(true);
 
         String niftyVersion = nifty.getVersion();
@@ -79,15 +114,17 @@ abstract public class GuiApplication
          * Validate and load the Nifty XML for generic popup menus.
          */
         try {
-            nifty.validateXml(popupPath);
+            nifty.validateXml(popupMenuAsssetPath);
         } catch (Exception exception) {
             logger.log(Level.WARNING, "Nifty validation of "
-                    + MyString.quote(popupPath) + " failed with exception:",
+                    + MyString.quote(popupMenuAsssetPath)
+                    + " failed with exception:",
                     exception);
         }
+        nifty.addXml(popupMenuAsssetPath);
         /*
-         * Re-read the XML to add support for popup menus.
+         * Invoke the user's startup code.
          */
-        nifty.addXml(popupPath);
+        guiInitializeApplication();
     }
 }
