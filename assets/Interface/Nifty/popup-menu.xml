@@ -32,7 +32,7 @@
     <useControls filename="nifty-default-controls.xml"/>
 
     <popup id="popup-menu"
-           controller="jme3utilities.SimpleScreenController"
+           controller="jme3utilities.ui.SimpleScreenController"
            backgroundColor="#0008"
            childLayout="absolute-inside">
         <control name="niftyMenu" id="#menu">
