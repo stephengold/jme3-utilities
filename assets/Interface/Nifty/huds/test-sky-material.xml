@@ -61,13 +61,27 @@
                                      id="sunTransmissionStatus"
                                      textHAlign="right"/>
                         </panel>
-                        <panel style="buttonPanel"
-                               height="60">
-                            <control name="button"
-                                     id="idToAvoidNiftyWarning"
-                                     label="Select view">
-                                <interact onRelease="perform(view)"/>
-                            </control>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="Views:"/>
+                        </panel>
+                        <control name="radioButtonGroup" id="viewGroup"/>
+                        <panel style="indentPanel">
+                            <control name="radioButton" id="zenithRadioButton"
+                                     group="viewGroup"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="zenith"/>
+                        </panel>
+                        <panel style="indentPanel">
+                            <control name="radioButton" id="northRadioButton"
+                                     group="viewGroup"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="north horizon"/>
                         </panel>
 
                         <control name="label"
