@@ -70,13 +70,35 @@
                             <control name="label" id="time"
                                      textHAlign="right"/>
                         </panel>
-                        <panel style="buttonPanel"
-                               height="28">
-                            <control name="button"
-                                     id="idToAvoidOffendingNifty"
-                                     label="Select time direction">
-                                <interact onRelease="perform(direction)"/>
-                            </control>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="Time direction:"/>
+                        </panel>
+                        <control name="radioButtonGroup" id="timeGroup"/>
+                        <panel style="indentPanel">
+                            <control name="radioButton" label="forwardRadioButton"
+                                     group="timeGroup"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="forward"/>
+                        </panel>
+                        <panel style="indentPanel">
+                            <control name="radioButton" id="pauseRadioButton"
+                                     group="timeGroup"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="pause"/>
+                        </panel>
+                        <panel style="indentPanel">
+                            <control name="radioButton" id="reverseRadioButton"
+                                     group="timeGroup"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="reverse"/>
                         </panel>
                         <panel style="statusPanel">
                             <control name="label"
