@@ -15,6 +15,7 @@
             <test-roots/>
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>angle's</word>
             <word>app</word>
             <word>checkbox</word>
             <word>dome's</word>
@@ -22,6 +23,8 @@
             <word>Esc</word>
             <word>filesystem</word>
             <word>hotkey</word>
+            <word>hotkey's</word>
+            <word>hotkeys</word>
             <word>light's</word>
             <word>lintels</word>
             <word>moon's</word>
@@ -33,7 +36,9 @@
             <word>screen's</word>
             <word>signal's</word>
             <word>slider's</word>
+            <word>submenu</word>
             <word>texture's</word>
+            <word>unescaped</word>
             <word>unscaled</word>
         </spellchecker-wordlist>
     </configuration>
