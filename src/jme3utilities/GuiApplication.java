@@ -80,10 +80,13 @@ abstract public class GuiApplication
         try {
             nifty.validateXml(popupPath);
         } catch (Exception exception) {
-            logger.log(Level.WARNING, "Validation of "
+            logger.log(Level.WARNING, "Nifty validation of "
                     + MyString.quote(popupPath) + " failed with exception:",
                     exception);
         }
+        /*
+         * Re-read the XML to add support for popup menus.
+         */
         nifty.addXml(popupPath);
     }
 }

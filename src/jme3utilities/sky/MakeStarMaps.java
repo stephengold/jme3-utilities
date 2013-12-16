@@ -314,17 +314,17 @@ public class MakeStarMaps {
         int degrees = Integer.valueOf(dd);
         if (degrees < -maxDeclination || degrees > maxDeclination) {
             throw new InvalidEntryException(
-                    "dec degrees must be between -90 and 90, inclusive");
+                    "dec degrees should be between -90 and 90, inclusive");
         }
         int minutes = Integer.valueOf(mm);
         if (minutes < 0 || minutes >= maxMinutes) {
             throw new InvalidEntryException(
-                    "dec minutes must be between 0 and 59, inclusive");
+                    "dec minutes should be between 0 and 59, inclusive");
         }
         float seconds = Float.valueOf(ss);
         if (seconds < 0f || seconds >= maxSeconds) {
             throw new InvalidEntryException(
-                    "dec seconds must be between 0 and 59, inclusive");
+                    "dec seconds should be between 0 and 59, inclusive");
         }
         /*
          * Convert to an angle.
@@ -364,17 +364,17 @@ public class MakeStarMaps {
         int hours = Integer.valueOf(hh);
         if (hours < 0 || hours >= SkyControl.hoursPerDay) {
             throw new InvalidEntryException(
-                    "RA hours must be between 0 and 23, inclusive");
+                    "RA hours should be between 0 and 23, inclusive");
         }
         int minutes = Integer.valueOf(mm);
         if (minutes < 0 || minutes >= maxMinutes) {
             throw new InvalidEntryException(
-                    "RA minutes must be between 0 and 59, inclusive");
+                    "RA minutes should be between 0 and 59, inclusive");
         }
         float seconds = Float.valueOf(ss);
         if (seconds < 0f || seconds >= maxSeconds) {
             throw new InvalidEntryException(
-                    "RA seconds must be between 0 and 59, inclusive");
+                    "RA seconds should be between 0 and 59, inclusive");
         }
         /*
          * Convert to an angle.

@@ -28,6 +28,7 @@ package jme3utilities;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -95,10 +96,11 @@ public class MyCamera {
      */
     public static void setYTangent(Camera camera, float newTangent) {
         if (camera == null) {
-            throw new NullPointerException("camera cannot be null");
+            throw new NullPointerException("camera should not be null");
         }
         if (newTangent <= 0f) {
-            throw new IllegalArgumentException("tangent must be positive");
+            logger.log(Level.SEVERE, "newTangent={0}", newTangent);
+            throw new IllegalArgumentException("tangent should be positive");
         }
 
         float yTangent = yTangent(camera);
@@ -130,7 +132,8 @@ public class MyCamera {
      */
     public static void zoom(Camera camera, float factor) {
         if (factor <= 0f) {
-            throw new IllegalArgumentException("factor must be positive");
+            logger.log(Level.SEVERE, "factor={0}", factor);
+            throw new IllegalArgumentException("factor should be positive");
         }
 
         float bottom = camera.getFrustumBottom();

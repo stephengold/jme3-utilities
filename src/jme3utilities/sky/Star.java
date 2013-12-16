@@ -146,8 +146,9 @@ class Star
     @Override
     public int compareTo(Object object) {
         if (object == null) {
-            throw new NullPointerException("object cannot be null");
+            throw new NullPointerException("object should not be null");
         }
+        
         if (object instanceof Star) {
             Star other = (Star) object;
 

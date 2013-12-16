@@ -26,6 +26,7 @@
 package jme3utilities;
 
 import com.jme3.app.state.AbstractAppState;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -86,7 +87,9 @@ public class TimeOfDay
      */
     public TimeOfDay(float startHour) {
         if (startHour < 0f || startHour >= hoursPerDay) {
-            throw new IllegalArgumentException("hour must be between 0 and 24");
+            logger.log(Level.SEVERE, "startHour={0}", startHour);
+            throw new IllegalArgumentException(
+                    "hour should be between 0 and 24");
         }
 
         timeOfDay = startHour * secondsPerHour;
