@@ -50,7 +50,7 @@ import org.lwjgl.Sys;
 
 /**
  * A GUI application for testing/demonstrating the SkyControl class using a
- * heads-up display (HUD).
+ * heads-up display (HUD). The application's main entry point is here.
  *
  * Use the 'H' key to toggle HUD visibility.
  *

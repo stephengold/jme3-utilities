@@ -146,7 +146,7 @@ public class NameGenerator
     // Savable methods
 
     /**
-     * De-serialize this name generator when loading from a .jm3o file. TODO use
+     * De-serialize this name generator when loading from a JM3O file. TODO use
      * readSavableArrayList
      *
      * @param importer
@@ -167,7 +167,7 @@ public class NameGenerator
     }
 
     /**
-     * Serialize this name generator when saving to a .jm3o file. TODO use
+     * Serialize this name generator when saving to a JM3O file. TODO use
      * writeSavableArrayList
      *
      * @param exporter
