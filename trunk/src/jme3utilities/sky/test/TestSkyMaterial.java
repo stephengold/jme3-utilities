@@ -41,12 +41,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.GuiApplication;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.sky.DomeMesh;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyMaterial;
+import jme3utilities.ui.GuiApplication;
 import org.lwjgl.Sys;
 
 /**

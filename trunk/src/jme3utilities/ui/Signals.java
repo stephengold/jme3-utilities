@@ -23,13 +23,15 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities;
+package jme3utilities.ui;
 
 import com.jme3.input.controls.ActionListener;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Indices;
+import jme3utilities.MyString;
 
 /**
  * Track the active/inactive status of named command signals. A signal may

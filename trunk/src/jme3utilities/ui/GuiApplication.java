@@ -23,13 +23,14 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities;
+package jme3utilities.ui;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.MyString;
 
 /**
  * A simple application with a Nifty graphical user interface (GUI).
