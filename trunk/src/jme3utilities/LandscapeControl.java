@@ -41,6 +41,7 @@ import com.jme3.terrain.heightmap.AbstractHeightMap;
 import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -149,7 +150,7 @@ public class LandscapeControl
         super.setEnabled(false);
 
         if (assetManager == null) {
-            throw new NullPointerException("manager cannot be null");
+            throw new NullPointerException("manager should not be null");
         }
         this.assetManager = assetManager;
         /*
@@ -172,10 +173,13 @@ public class LandscapeControl
      */
     public void setTerrainScale(float radius, float baseY, float peakY) {
         if (radius <= 0f) {
-            throw new IllegalArgumentException("radius must be positive");
+            logger.log(Level.SEVERE, "radius={0}", radius);
+            throw new IllegalArgumentException("radius should be positive");
         }
         if (peakY <= baseY) {
-            throw new IllegalArgumentException("peak must be above base");
+            logger.log(Level.SEVERE, "peakY={0}, baseY={1}",
+                    new Object[]{peakY, baseY});
+            throw new IllegalArgumentException("peak should be above base");
         }
 
         float yScale = (peakY - baseY) / terrainHeight;

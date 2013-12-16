@@ -69,7 +69,7 @@ public class WaterProcessor
      */
     public void addSkyControl(Control control) {
         if (control == null) {
-            throw new NullPointerException("control cannot be null");
+            throw new NullPointerException("control should not be null");
         }
 
         if (!isInitialized()) {

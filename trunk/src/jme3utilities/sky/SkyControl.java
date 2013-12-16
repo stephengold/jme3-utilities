@@ -61,23 +61,23 @@ import jme3utilities.SimpleControl;
  *
  * The control is disabled by default. When enabled, it attaches a "sky" node to
  * the controlled spatial, which must also be a node. For best results, place
- * the scene's main light, ambient light, and directional light shadow renderer
- * under simulation control by invoking setMainLight(), setAmbientLight(), and
- * setShadowRenderer().
+ * the scene's main light, ambient light, and shadow filter/renderer under
+ * simulation control by invoking setMainLight(), setAmbientLight(), and
+ * setShadowFilter()/setShadowRenderer().
  *
  * The "top" dome is oriented so that its rim coincides with the horizon. The
- * top dome always includes the sun, moon, clear sky color, and horizon haze.
- * Object index 0 is used for the sun, and the remaining object indices are used
- * for phases of the moon.
+ * top dome implements the sun, moon, clear sky color, and horizon haze. Object
+ * index 0 is used for the sun, and the remaining object indices are used for
+ * phases of the moon.
  *
  * This control simulates two layers of clouds. The cloud density may be
  * adjusted by invoking setCloudiness(). The rate of cloud motion may be
  * adjusted by invoking setCloudsSpeed(). Flatten the clouds for best results;
- * this puts them on their own translucent "clouds only" dome.
+ * this puts them on a translucent "clouds only" dome.
  *
  * To simulate star motion, several more domes are added: one for northern
- * stars, one for southern stars, and an optional bottom dome which extends the
- * horizon haze for scenes with a low horizon.
+ * stars, one for southern stars, and an optional "bottom" dome which extends
+ * the horizon haze for scenes with a low horizon.
  *
  * This control is not serializable.
  *
@@ -334,14 +334,15 @@ public class SkyControl
             float cloudFlattening, boolean starMotion, boolean bottomDome) {
         super.setEnabled(false);
         if (assetManager == null) {
-            throw new NullPointerException("asset manager cannot be null");
+            throw new NullPointerException("asset manager should not be null");
         }
         if (camera == null) {
-            throw new NullPointerException("camera cannot be null");
+            throw new NullPointerException("camera should not be null");
         }
         if (cloudFlattening < 0f || cloudFlattening >= 1f) {
+            logger.log(Level.SEVERE, "cloudFlattening={0}", cloudFlattening);
             throw new IllegalArgumentException(
-                    "flattening must be between 0 and 1");
+                    "flattening should be between 0 and 1");
         }
 
         this.assetManager = assetManager;
@@ -405,7 +406,7 @@ public class SkyControl
      */
     public void addViewPort(ViewPort viewPort) {
         if (viewPort == null) {
-            throw new NullPointerException("view port cannot be null");
+            throw new NullPointerException("view port should not be null");
         }
 
         viewPorts.add(viewPort);
@@ -428,7 +429,7 @@ public class SkyControl
      */
     public void removeViewPort(ViewPort viewPort) {
         if (viewPort == null) {
-            throw new NullPointerException("view port cannot be null");
+            throw new NullPointerException("view port should not be null");
         }
 
         boolean success = viewPorts.remove(viewPort);
@@ -456,7 +457,7 @@ public class SkyControl
     public void setCloudiness(float newAlpha) {
         if (newAlpha < alphaMin || newAlpha > alphaMax) {
             throw new IllegalArgumentException(
-                    "alpha must be between 0 and 1, inclusive");
+                    "alpha should be between 0 and 1, inclusive");
         }
 
         cloudiness = newAlpha;
@@ -489,7 +490,7 @@ public class SkyControl
     public void setLunarDiameter(float newDiameter) {
         if (newDiameter <= 0f || newDiameter >= FastMath.PI) {
             throw new IllegalArgumentException(
-                    "diameter must be between 0 and Pi");
+                    "diameter should be between 0 and Pi");
         }
 
         moonScale = newDiameter * mesh.uvScale / FastMath.HALF_PI;

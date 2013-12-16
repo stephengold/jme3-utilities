@@ -282,7 +282,7 @@ public class Misc {
             throw new NullPointerException("bone should not be null");
         }
         if (axis < 0 || axis > 2) {
-            logger.log(Level.SEVERE, "{0}", axis);
+            logger.log(Level.SEVERE, "axis={0}", axis);
             throw new IllegalArgumentException(
                     "axis should be between 0 and 2, inclusive");
         }
