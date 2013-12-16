@@ -36,6 +36,8 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
+import de.lessvoid.nifty.NiftyEventSubscriber;
+import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
@@ -53,7 +55,7 @@ import jme3utilities.sky.SkyMaterial;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-class TestSkyMaterialHud
+public class TestSkyMaterialHud
         extends SimpleScreenController
         implements ActionListener {
     // *************************************************************************
@@ -102,7 +104,46 @@ class TestSkyMaterialHud
         this.reenableFlyby = reenableFlyby;
     }
     // *************************************************************************
-    // new methods exported
+    // new methods exposed
+
+    /**
+     * Callback which Nifty invokes after the user selects a radio button.
+     * Invoked by means of reflection, so both the class and method must be
+     * public.
+     *
+     * @param buttonId Nifty element id of the radio button (not null)
+     * @param event details of the event (not null)
+     */
+    @NiftyEventSubscriber(pattern = ".*RadioButton")
+    public void onRadioButtonChanged(final String buttonId,
+            final RadioButtonStateChangedEvent event) {
+        assert buttonId != null;
+        if (!screenHasStarted) {
+            return;
+        }
+
+        switch (buttonId) {
+            case "zenithRadioButton":
+                /*
+                 * Re-orient the camera toward the zenith.
+                 */
+                Quaternion zenith = new Quaternion();
+                zenith.lookAt(Vector3f.UNIT_Y, Vector3f.UNIT_X);
+                getApplication().getCamera().setRotation(zenith);
+                return;
+
+            case "northRadioButton":
+                /*
+                 * Re-orient the camera toward the north horizon.
+                 */
+                Quaternion north = new Quaternion();
+                north.lookAt(Vector3f.UNIT_X, Vector3f.UNIT_Y);
+                getApplication().getCamera().setRotation(north);
+                return;
+        }
+        logger.log(Level.WARNING, "unknown radio button: id={0}",
+                MyString.quote(buttonId));
+    }
 
     /**
      * Alter the material under test.
@@ -157,28 +198,6 @@ class TestSkyMaterialHud
                 setEnabled(newState);
                 break;
 
-            case "view":
-                showViewMenu();
-                break;
-
-            case "view north-horizon":
-                /*
-                 * Re-orient the camera toward the north horizon.
-                 */
-                Quaternion north = new Quaternion();
-                north.lookAt(Vector3f.UNIT_X, Vector3f.UNIT_Y);
-                getApplication().getCamera().setRotation(north);
-                break;
-
-            case "view zenith":
-                /*
-                 * Re-orient the camera toward the zenith.
-                 */
-                Quaternion zenith = new Quaternion();
-                zenith.lookAt(Vector3f.UNIT_Y, Vector3f.UNIT_X);
-                getApplication().getCamera().setRotation(zenith);
-                break;
-
             default:
                 logger.log(Level.WARNING, "Action {0} was not handled.",
                         MyString.quote(actionString));
@@ -207,6 +226,7 @@ class TestSkyMaterialHud
                 String.format("Interface/Nifty/huds/%s.xml", screenId);
         validateAndLoad(interfaceAssetPath);
 
+        setRadioButton("zenithRadioButton");
         setEnabled(true);
     }
 
@@ -328,15 +348,6 @@ class TestSkyMaterialHud
             "waxing-crescent", "waxing-gibbous"
         };
         showPopup(phasePrefixWords, phaseItems);
-    }
-
-    /**
-     * Display a camera orientation menu.
-     */
-    private void showViewMenu() {
-        String[] viewPrefixWords = {"view"};
-        String[] viewItems = {"north-horizon", "zenith"};
-        showPopup(viewPrefixWords, viewItems);
     }
 
     /**
