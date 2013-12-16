@@ -394,14 +394,9 @@ public class TestSkyControlHud
         assert !initialized;
         assert !isEnabled();
         super.initialize(stateManager, application);
-        /*
-         * Validate and load the Nifty interface XML which describes the HUD.
-         */
-        String interfaceAssetPath =
-                String.format("Interface/Nifty/huds/%s.xml", screenId);
-        validateAndLoad(interfaceAssetPath);
-        setRadioButton("forwardRadioButton");
 
+        validateAndLoadHud();
+        setRadioButton("forwardRadioButton");
         setEnabled(true);
     }
 
