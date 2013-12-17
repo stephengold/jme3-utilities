@@ -63,6 +63,12 @@ class TestSkyControlParameters {
     @Parameter(names = {"-h", "-u", "--help", "--usage"}, help = true,
             description = "display this usage message")
     private boolean usageOnly = false;
+    /**
+     * true means scene with water; false means no water
+     */
+    @Parameter(names = {"-w", "--water"},
+            description = "scene with water")
+    private boolean water = false;
     // *************************************************************************
     // new methods exposed
 
@@ -81,9 +87,16 @@ class TestSkyControlParameters {
     }
 
     /**
-     * Test whether the usage only option was specified.
+     * Test whether the "usage only" option was specified.
      */
     boolean usageOnly() {
         return usageOnly;
+    }
+
+    /**
+     * Test whether the water option was specified.
+     */
+    boolean water() {
+        return water;
     }
 }
