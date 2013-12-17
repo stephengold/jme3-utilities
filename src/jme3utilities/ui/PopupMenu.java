@@ -25,7 +25,6 @@
  */
 package jme3utilities.ui;
 
-import com.google.common.base.Joiner;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.MenuItemActivatedEvent;
 import de.lessvoid.nifty.elements.Element;
@@ -43,10 +42,6 @@ public class PopupMenu
     // constants
 
     /**
-     * joiner for constructing action strings
-     */
-    final private static Joiner actionJoiner = Joiner.on(" ");
-    /**
      * message logger for this class
      */
     final private static Logger logger =
@@ -63,28 +58,15 @@ public class PopupMenu
      */
     final private SimpleScreenController controller;
     /**
+     * prefix for the menu's action strings: set by constructor
+     */
+    final private String actionPrefix;
+    /**
      * Nifty id of the popup: set by constructor
      */
     final private String popupId;
-    /**
-     * prefix words for the menu's action strings: set by constructor
-     */
-    final private String[] actionPrefixWords;
     // *************************************************************************
     // constructors
-
-    /**
-     * Instantiate a menu for a particular screen controller and action prefix.
-     *
-     * @param controller which screen will own this menu (not null)
-     * @param popupId Nifty id of the popup (not null)
-     * @param actionPrefixWords prefix words for action strings (unaffected, not
-     * null)
-     */
-    PopupMenu(SimpleScreenController controller, String popupId,
-            String[] actionPrefixWords) {
-        this(controller, popupId, actionPrefixWords, null);
-    }
 
     /**
      * Instantiate a submenu for a particular screen controller, action prefix,
@@ -92,18 +74,17 @@ public class PopupMenu
      *
      * @param controller which screen will own this menu (not null)
      * @param popupId Nifty id of the popup (not null)
-     * @param actionPrefixWords prefix words for action strings (unaffected, not
-     * null)
+     * @param actionPrefix prefix for action strings (not null)
      * @param parent the parent popup menu which opened this submenu (or null if
      * not a submenu)
      */
     PopupMenu(SimpleScreenController controller, String popupId,
-            String[] actionPrefixWords, PopupMenu parent) {
+            String actionPrefix, PopupMenu parent) {
         assert controller != null;
-        assert actionPrefixWords != null;
+        assert actionPrefix != null;
 
         this.controller = controller;
-        this.actionPrefixWords = actionPrefixWords.clone();
+        this.actionPrefix = actionPrefix;
         this.popupId = popupId;
         this.parent = parent;
     }
@@ -160,14 +141,7 @@ public class PopupMenu
          * Generate the action string for the item by appending the item's
          * name to the menu's action prefix.
          */
-        String actionString;
-        int wordCount = actionPrefixWords.length;
-        if (wordCount > 0) {
-            String actionPrefix = actionJoiner.join(actionPrefixWords);
-            actionString = actionJoiner.join(actionPrefix, itemName);
-        } else {
-            actionString = itemName;
-        }
+        String actionString = actionPrefix + itemName;
         /*
          * Perform the corresponding action.
          */

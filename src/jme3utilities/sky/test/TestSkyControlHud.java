@@ -350,12 +350,7 @@ public class TestSkyControlHud
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
         switch (actionString) {
             case "phase":
-                String[] phasePrefixWords = {"phase"};
-                String[] phaseItems = {
-                    "full", "none", "waning-crescent", "waning-gibbous",
-                    "waxing-crescent", "waxing-gibbous"
-                };
-                showPopup(phasePrefixWords, phaseItems);
+                showPhaseMenu();
                 break;
 
             case "phase none":
@@ -421,5 +416,18 @@ public class TestSkyControlHud
                 fbc.setEnabled(true);
             }
         }
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Display a phase-of-the-moon menu.
+     */
+    private void showPhaseMenu() {
+        String[] phaseItems = {
+            "full", "none", "waning-crescent", "waning-gibbous",
+            "waxing-crescent", "waxing-gibbous"
+        };
+        showPopup("phase ", phaseItems);
     }
 }

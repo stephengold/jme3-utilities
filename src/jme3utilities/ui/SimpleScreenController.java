@@ -25,6 +25,7 @@
  */
 package jme3utilities.ui;
 
+import com.google.common.base.Joiner;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
@@ -72,6 +73,10 @@ public class SimpleScreenController
     // *************************************************************************
     // constants
 
+    /**
+     * joiner for constructing action prefixes
+     */
+    final private static Joiner actionJoiner = Joiner.on(" ");
     /**
      * message logger for this class
      */
@@ -320,37 +325,32 @@ public class SimpleScreenController
     /**
      * Create and activate a popup menu.
      *
-     * @param actionStringPrefix common prefix of the menu's action strings (not
-     * null)
-     * @param menuItems collection of menu items (not null)
+     * @param actionPrefix common prefix of the menu's action strings (not null,
+     * usually the final character will be a blank)
+     * @param items collection of menu items (not null, unaffected)
      */
-    public void showPopup(String actionStringPrefix,
-            Collection<String> menuItems) {
-        if (actionStringPrefix == null) {
+    public void showPopup(String actionPrefix, Collection<String> items) {
+        if (actionPrefix == null) {
             throw new NullPointerException("prefix should not be null");
         }
-        if (menuItems == null) {
+        if (items == null) {
             throw new NullPointerException("collection should not be null");
         }
-        /*
-         * Parse the action string prefix into words.
-         */
-        String[] actionPrefixWords = actionStringPrefix.split("\\s+");
 
-        String[] items = Misc.toArray(menuItems);
-        showPopup(actionPrefixWords, items);
+        String[] itemArray = Misc.toArray(items);
+        showPopup(actionPrefix, itemArray);
     }
 
     /**
      * Create and activate a popup menu.
      *
-     * @param actionPrefixWords prefix words for the menu's action strings (not
-     * null)
-     * @param items list of menu items (not null)
+     * @param actionPrefix common prefix of the menu's action strings (not null,
+     * usually the final character will be a blank)
+     * @param items array of menu items (not null, unaffected)
      */
-    public void showPopup(String[] actionPrefixWords, String[] items) {
-        if (actionPrefixWords == null) {
-            throw new NullPointerException("array should not be null");
+    public void showPopup(String actionPrefix, String[] itemArray) {
+        if (actionPrefix == null) {
+            throw new NullPointerException("prefix should not be null");
         }
         /*
          * Create the popup using the "popup-menu.xml" resource.
@@ -361,7 +361,7 @@ public class SimpleScreenController
          * Add items to the popup's menu.
          */
         Menu<String> menu = element.findNiftyControl("#menu", Menu.class);
-        for (String item : items) {
+        for (String item : itemArray) {
             menu.addMenuItem(item, item);
         }
         String elementId = element.getId();
@@ -370,7 +370,7 @@ public class SimpleScreenController
          * Create a controller with a subscription to the menu's
          * item activation events.
          */
-        PopupMenu popup = new PopupMenu(this, elementId, actionPrefixWords,
+        PopupMenu popup = new PopupMenu(this, elementId, actionPrefix,
                 activePopupMenu);
         Screen screen = nifty.getCurrentScreen();
         String controlId = menu.getId();
@@ -387,6 +387,32 @@ public class SimpleScreenController
             activePopupMenu.setEnabled(false);
         }
         activePopupMenu = popup;
+    }
+
+    /**
+     * Create and activate a popup menu.
+     *
+     * @param actionPrefixWords common prefix words of the menu's action strings
+     * (not null, unaffected)
+     * @param itemArray array of menu items (not null, unaffected)
+     */
+    public void showPopup(String[] actionPrefixWords, String[] itemArray) {
+        if (actionPrefixWords == null) {
+            throw new NullPointerException("word array should not be null");
+        }
+        if (itemArray == null) {
+            throw new NullPointerException("item array should not be null");
+        }
+
+        /*
+         * Generate the action prefix for this menu.
+         */
+        String actionPrefix = "";
+        int wordCount = actionPrefixWords.length;
+        if (wordCount > 0) {
+            actionPrefix = actionJoiner.join(actionPrefixWords) + " ";
+        }
+        showPopup(actionPrefix, itemArray);
     }
 
     /**
