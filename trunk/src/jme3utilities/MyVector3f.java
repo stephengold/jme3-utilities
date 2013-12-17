@@ -26,12 +26,13 @@
 package jme3utilities;
 
 import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 3-D vector utility methods.
+ * Utility methods for 3-D vectors.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -130,6 +131,23 @@ public class MyVector3f {
         Vector3f offset = to.subtract(from);
         float distance = offset.length();
         return distance;
+    }
+
+    /**
+     * Generate a direction from altitude and azimuth angles.
+     *
+     * @param altitude angle above the X-Z plane (radians toward +Y)
+     * @param azimuth angle in the X-Z plane (radians CCW from +X)
+     * @return a new unit vector
+     */
+    public static Vector3f fromAltAz(float altitude, float azimuth) {
+        Quaternion elevate = new Quaternion();
+        elevate.fromAngleNormalAxis(altitude, Vector3f.UNIT_Z);
+        Vector3f elevation = elevate.mult(Vector3f.UNIT_X);
+        Vector3f direction = MyVector3f.yRotate(elevation, azimuth);
+
+        assert direction.isUnitVector() : direction;
+        return direction;
     }
 
     /**
