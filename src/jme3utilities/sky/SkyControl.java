@@ -562,17 +562,19 @@ public class SkyControl
         } else if (!enabled && newState) {
             if (node == null) {
                 throw new IllegalStateException(
-                        "cannot enable control before adding it to a node");
+                        "cannot enable control until it's added to a node");
             }
             /*
              * Attach the sky node to the controlled node.
              */
             node.attachChild(skyNode);
             /*
-             * Scale skyNode that the geometries lie near the far end of
-             * the view frustrum.
+             * Scale the sky node so that its furthest geometries are midway between
+             * the near and far planes of the view frustrum.
              */
-            float radius = camera.getFrustumFar();
+            float far = camera.getFrustumFar();
+            float near = camera.getFrustumNear();
+            float radius = (near + far) / 2f;
             MySpatial.setWorldScale(skyNode, radius);
         }
         super.setEnabled(newState);
