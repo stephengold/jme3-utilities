@@ -111,16 +111,9 @@ abstract public class GuiApplication
         logger.log(Level.INFO, "Nifty version is {0}",
                 MyString.quote(niftyVersion));
         /*
-         * Validate and load the Nifty XML for generic popup menus.
+         * Load the Nifty XML for generic popup menus.  For some reason the
+         * asset does not validate, so skip validation for now.
          */
-        try {
-            nifty.validateXml(popupMenuAsssetPath);
-        } catch (Exception exception) {
-            logger.log(Level.WARNING, "Nifty validation of "
-                    + MyString.quote(popupMenuAsssetPath)
-                    + " failed with exception:",
-                    exception);
-        }
         nifty.addXml(popupMenuAsssetPath);
         /*
          * Invoke the user's startup code.

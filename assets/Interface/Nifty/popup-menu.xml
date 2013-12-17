@@ -20,7 +20,12 @@
 -->
 
 <!--
- Nifty XML to support a popup menu.
+ Nifty XML to create a generic popup menu for a screen controlled by
+ SimpleScreenController.
+
+ When a popup is activated, the rest of the screen dims by 50%.
+ To close an active popup without selecting an item, simply click
+ outside the popup.
 -->
 <nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -28,18 +33,15 @@
 
     <!-- define styles and controls -->
     <useStyles filename="nifty-default-styles.xml"/>
-    <useStyles filename="Interface/Nifty/styles/bats.xml"/>
     <useControls filename="nifty-default-controls.xml"/>
 
     <popup id="popup-menu"
-           controller="jme3utilities.ui.SimpleScreenController"
            backgroundColor="#0008"
            childLayout="absolute-inside">
-        <control name="niftyMenu" id="#menu">
-            <interact
-                onClick="closeActivePopup()"
-                onSecondaryClick="closeActivePopup()"
-                onTertiaryClick="closeActivePopup()"/>
-        </control>
+        <control name="niftyMenu" id="#menu"/>
+        <interact
+            onClick="closeActivePopup()"
+            onSecondaryClick="closeActivePopup()"
+            onTertiaryClick="closeActivePopup()"/>
     </popup>
 </nifty>
