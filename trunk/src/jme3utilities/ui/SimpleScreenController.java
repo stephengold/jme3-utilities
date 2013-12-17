@@ -147,8 +147,8 @@ public class SimpleScreenController
     // new methods exposed
 
     /**
-     * Close the enabled popup menu. Invoked via NiftyMethodInvoker, so the
-     * class and method must be public.
+     * Close the active popup menu. Invoked from NiftyMethodInvoker using
+     * reflection, so the class and method must be public.
      */
     public void closeActivePopup() {
         if (activePopupMenu == null) {
@@ -170,7 +170,7 @@ public class SimpleScreenController
      *
      * @param popupMenu (not null)
      */
-    public void closeActivePopup(PopupMenu popupMenu) {
+    void closePopup(PopupMenu popupMenu) {
         if (popupMenu == null) {
             throw new NullPointerException("popup menu should not be null");
         }
