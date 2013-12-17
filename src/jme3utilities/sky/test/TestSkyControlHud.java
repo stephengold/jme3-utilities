@@ -357,6 +357,12 @@ public class TestSkyControlHud
                 phase = null;
                 break;
 
+            case "phase waning":
+            case "phase waxing":
+                showPopup(actionString + "-",
+                        new String[]{"crescent", "gibbous"});
+                break;
+
             case "phase full":
             case "phase waning-crescent":
             case "phase waning-gibbous":
@@ -424,10 +430,6 @@ public class TestSkyControlHud
      * Display a phase-of-the-moon menu.
      */
     private void showPhaseMenu() {
-        String[] phaseItems = {
-            "full", "none", "waning-crescent", "waning-gibbous",
-            "waxing-crescent", "waxing-gibbous"
-        };
-        showPopup("phase ", phaseItems);
+        showPopup("phase ", new String[]{"full", "none", "waning", "waxing"});
     }
 }
