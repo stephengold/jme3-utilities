@@ -337,12 +337,11 @@ public class TestSkyMaterialHud
      * Display a phase-of-the-moon menu.
      */
     private void showPhaseMenu() {
-        String[] phasePrefixWords = {"phase"};
         String[] phaseItems = {
             "full", "waning-crescent", "waning-gibbous",
             "waxing-crescent", "waxing-gibbous"
         };
-        showPopup(phasePrefixWords, phaseItems);
+        showPopup("phase ", phaseItems);
     }
 
     /**
