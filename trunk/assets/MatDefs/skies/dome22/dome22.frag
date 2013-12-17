@@ -67,14 +67,14 @@ void main(){
         #ifdef HAS_STARS
                 vec4 stars = texture2D(m_StarsColorMap, skyTexCoord);
         #else
-                vec4 stars = 0;
+                vec4 stars = vec4(0.0);
         #endif
 
         #ifdef HAS_OBJECT0
                 vec4 objects = texture2D(m_Object0ColorMap, object0Coord);
                 objects *= m_Object0Color;
         #else
-                vec4 objects = 0;
+                vec4 objects = vec4(0.0);
 	#endif
 
         #ifdef HAS_OBJECT1
@@ -87,7 +87,7 @@ void main(){
         color = mix(color, m_ClearColor, m_ClearColor.a);
 
         // Bright parts of objects shine through the clear color.
-        color += objects * objects.a * (1 - m_ClearColor) * m_ClearColor.a;
+        color += objects * objects.a * (1.0 - m_ClearColor) * m_ClearColor.a;
 
 	#ifdef HAS_CLOUDS0
 		float density0 = texture2D(m_Clouds0AlphaMap, clouds0Coord).r;
