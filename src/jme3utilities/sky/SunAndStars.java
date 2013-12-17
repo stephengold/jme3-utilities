@@ -144,7 +144,6 @@ public class SunAndStars
      * @param ecliptical coordinates in a system where: +X points to the vernal
      * equinox, +Y points to the ecliptic 90 degrees east of the vernal equinox,
      * and +Z points to the ecliptic north pole (not null)
-     *
      * @return a new vector in a system where: +X points to the vernal equinox,
      * +Y points to the celestial equator 90 degrees east of the vernal equinox,
      * and +Z points to the north celestial pole
@@ -376,7 +375,7 @@ public class SunAndStars
     /**
      * Set the sun's celestial longitude to approximate a specific day of the
      * year.
-     *
+     * <p>
      * This convenience method uses a crude approximation which is accurate
      * within a couple degrees of arc. A more accurate formula may be obtained
      * from Steyaert, C. (1991) "Calculating the solar longitude 2000.0", WGN
@@ -384,7 +383,7 @@ public class SunAndStars
      * available from http://adsabs.harvard.edu/full/1991JIMO...19...31S
      *
      * @param month zero-based month of the Gregorian year (>=0, <12)
-     * @param date day of the Gregorian month (>=1, <=31)
+     * @param day of the Gregorian month (>=1, <=31)
      */
     public void setSolarLongitude(int month, int day) {
         if (month < 0 || month >= 12) {
