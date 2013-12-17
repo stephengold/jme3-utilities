@@ -69,15 +69,15 @@ public class TestSkyControlHud
     // *************************************************************************
     // fields
     /**
-     * if true, the flyby camera will get re-enabled each time this HUD is
-     * disabled
-     */
-    final private boolean reenableFlyby;
-    /**
      * if true, clouds will modulate the main light; if false, the main light
      * will be steady
      */
     private boolean cloudModulation = true;
+    /**
+     * if true, the flyby camera will get re-enabled each time this HUD is
+     * disabled
+     */
+    final private boolean reenableFlyby;
     /**
      * maximum opacity for clouds (<=1, >=0)
      */
@@ -111,7 +111,7 @@ public class TestSkyControlHud
      */
     private LunarPhase phase = LunarPhase.FULL;
     /**
-     * the time of day
+     * the time of day: initially 4:45 a.m.
      */
     final private TimeOfDay timeOfDay = new TimeOfDay(4.75f);
     // *************************************************************************
@@ -298,14 +298,6 @@ public class TestSkyControlHud
         float solarLongitudeDegrees = updateSlider("solarLong");
         solarLongitude = solarLongitudeDegrees * FastMath.DEG_TO_RAD;
 
-        String phaseDescription;
-        if (phase == null) {
-            phaseDescription = "none";
-        } else {
-            phaseDescription = phase.describe();
-        }
-        setStatusText("phaseStatus", "Lunar phase: " + phaseDescription);
-
         float latitudeDegrees = updateSlider("latitude");
         latitude = latitudeDegrees * FastMath.DEG_TO_RAD;
 
@@ -313,6 +305,9 @@ public class TestSkyControlHud
 
         float speed = updateLogSlider("speed", 10f);
         timeOfDay.setRate(clockDirection * speed);
+        /*
+         * Update the labels which show status.
+         */
         String timeString = timeOfDay.toString();
         setStatusText("time", timeString);
 
@@ -325,6 +320,14 @@ public class TestSkyControlHud
         float fovYDegrees = MyCamera.fovY(camera) * FastMath.RAD_TO_DEG;
         String fovStatus = String.format("%.0f", fovYDegrees);
         setStatusText("fovStatus", fovStatus);
+
+        String phaseDescription;
+        if (phase == null) {
+            phaseDescription = "none";
+        } else {
+            phaseDescription = phase.describe();
+        }
+        setStatusText("phaseStatus", "Lunar phase: " + phaseDescription);
     }
     // *************************************************************************
     // ActionListener methods
