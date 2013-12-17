@@ -39,19 +39,15 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventAnnotationProcessor;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.CheckBox;
-import de.lessvoid.nifty.controls.Controller;
 import de.lessvoid.nifty.controls.Menu;
 import de.lessvoid.nifty.controls.MenuItemActivatedEvent;
 import de.lessvoid.nifty.controls.RadioButton;
 import de.lessvoid.nifty.controls.Slider;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
-import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import de.lessvoid.xml.xpp3.Attributes;
 import java.util.Collection;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
@@ -60,15 +56,12 @@ import jme3utilities.MyString;
 /**
  * A simplified controller for a Nifty screen, with support for check boxes,
  * popup menus, radio buttons, sliders, and dynamic labels.
- * <p>
- * Certain methods are implemented to simplify the implementation of subclasses
- * -- unlike Controller and ScreenController.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class SimpleScreenController
         extends AbstractAppState
-        implements Controller, ScreenController {
+        implements ScreenController {
     // *************************************************************************
     // constants
 
@@ -454,7 +447,7 @@ public class SimpleScreenController
     // AbstractAppState methods
 
     /**
-     * Initialize this screen controller.
+     * Initialize this controller.
      *
      * @param stateManager (not null)
      * @param app which application owns this screen (not null)
@@ -490,38 +483,6 @@ public class SimpleScreenController
     @Override
     public void setEnabled(boolean newState) {
         throw new UnsupportedOperationException("not supported");
-    }
-    // *************************************************************************
-    // Controller methods
-
-    /**
-     * A callback from Nifty, unused.
-     */
-    @Override
-    public void bind(Nifty nifty, Screen screen, Element element,
-            Properties properties, Attributes attributes) {
-    }
-
-    /**
-     * A callback from Nifty, unused.
-     */
-    @Override
-    public void init(Properties properties, Attributes attributes) {
-    }
-
-    /**
-     * A callback from Nifty, unused.
-     */
-    @Override
-    public boolean inputEvent(NiftyInputEvent event) {
-        return false;
-    }
-
-    /**
-     * A callback from Nifty, unused.
-     */
-    @Override
-    public void onFocus(boolean flag) {
     }
     // *************************************************************************
     // ScreenController methods
