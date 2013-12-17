@@ -60,10 +60,9 @@ import jme3utilities.MyString;
 /**
  * A simplified controller for a Nifty screen, with support for check boxes,
  * popup menus, radio buttons, sliders, and dynamic labels.
- *
- * Although this is an abstract class, certain methods are implemented to
- * simplify the implementation of subclasses -- unlike Controller and
- * ScreenController.
+ * <p>
+ * Certain methods are implemented to simplify the implementation of subclasses
+ * -- unlike Controller and ScreenController.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -346,7 +345,7 @@ public class SimpleScreenController
      *
      * @param actionPrefix common prefix of the menu's action strings (not null,
      * usually the final character will be a blank)
-     * @param items array of menu items (not null, unaffected)
+     * @param itemArray menu items (not null, unaffected)
      */
     public void showPopup(String actionPrefix, String[] itemArray) {
         if (actionPrefix == null) {
@@ -394,7 +393,7 @@ public class SimpleScreenController
      *
      * @param actionPrefixWords common prefix words of the menu's action strings
      * (not null, unaffected)
-     * @param itemArray array of menu items (not null, unaffected)
+     * @param itemArray menu items (not null, unaffected)
      */
     public void showPopup(String[] actionPrefixWords, String[] itemArray) {
         if (actionPrefixWords == null) {
@@ -514,15 +513,15 @@ public class SimpleScreenController
      * A callback from Nifty, unused.
      */
     @Override
-    public void onFocus(boolean flag) {
+    public boolean inputEvent(NiftyInputEvent event) {
+        return false;
     }
 
     /**
      * A callback from Nifty, unused.
      */
     @Override
-    public boolean inputEvent(NiftyInputEvent event) {
-        return false;
+    public void onFocus(boolean flag) {
     }
     // *************************************************************************
     // ScreenController methods

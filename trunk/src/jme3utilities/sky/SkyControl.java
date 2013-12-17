@@ -52,33 +52,35 @@ import jme3utilities.MySpatial;
 import jme3utilities.SimpleControl;
 
 /**
- * A simple control to simulate a dynamic sky dome using assets and techniques
+ * A simple control to simulate a dynamic sky using assets and techniques
  * derived from
  * http://code.google.com/p/jmonkeyplatform-contributions/source/browse/trunk/SkyDome
- *
+ * <p>
  * While not astronomically accurate, the simulation approximates the motion of
- * the sun and moon. The sun crosses the meridian at noon (12:00 hours).
- *
- * The control is disabled by default. When enabled, it attaches a "sky" node to
- * the controlled spatial, which must also be a node. For best results, place
+ * the sun and moon as seen from Earth. The coordinate system is: +X=north
+ * horizon, +Y=zenith (up), and +Z=east horizon. The sun crosses the meridian at
+ * noon (12:00 hours).
+ * <p>
+ * The control is disabled at creation. When enabled, it attaches a "sky" node
+ * to the controlled spatial, which must also be a node. For best results, place
  * the scene's main light, ambient light, and shadow filter/renderer under
  * simulation control by invoking setMainLight(), setAmbientLight(), and
  * setShadowFilter()/setShadowRenderer().
- *
+ * <p>
  * The "top" dome is oriented so that its rim coincides with the horizon. The
  * top dome implements the sun, moon, clear sky color, and horizon haze. Object
  * index 0 is used for the sun, and the remaining object indices are used for
  * phases of the moon.
- *
+ * <p>
  * This control simulates two layers of clouds. The cloud density may be
  * adjusted by invoking setCloudiness(). The rate of cloud motion may be
  * adjusted by invoking setCloudsSpeed(). Flatten the clouds for best results;
  * this puts them on a translucent "clouds only" dome.
- *
+ * <p>
  * To simulate star motion, several more domes are added: one for northern
  * stars, one for southern stars, and an optional "bottom" dome which extends
  * the horizon haze for scenes with a low horizon.
- *
+ * <p>
  * This control is not serializable.
  *
  * @author Stephen Gold <sgold@sonic.net>
@@ -521,7 +523,7 @@ public class SkyControl
      * has a non-null value, this control will continuously update the filter's
      * shadow intensity.
      *
-     * @param renderer the scene's shadow renderer (or null for none)
+     * @param filter the scene's shadow filter (or null for none)
      */
     public void setShadowFilter(AbstractShadowFilter filter) {
         this.shadowFilter = filter;

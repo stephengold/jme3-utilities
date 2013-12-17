@@ -49,19 +49,19 @@ import jme3utilities.MyMath;
 /**
  * A material for a dynamic sky dome using assets and techniques derived from
  * http://code.google.com/p/jmonkeyplatform-contributions/source/browse/trunk/SkyDome
- *
+ * <p>
  * The color of clear sky may be adjusted by invoking setClearColor().
- *
+ * <p>
  * Stars can be added to the material by invoking addStars().
- *
+ * <p>
  * Up to two astronomical objects can be added to the material by invoking
  * addObject(); once added, their positions, sizes, and colors may be adjusted
  * by invoking setObjectTransform() and setObjectColor().
- *
+ * <p>
  * Up to two layers of clouds can be added to the material by invoking
  * addClouds(); once added, their positions, sizes, and colors may be adjusted
  * by invoking setCloudsOffset(), setCloudsScale(), and setCloudsColor().
- *
+ * <p>
  * Horizon haze can be added to the material by invoking addHaze(); once added,
  * its color may be adjusted by invoking setHazeColor().
  *
