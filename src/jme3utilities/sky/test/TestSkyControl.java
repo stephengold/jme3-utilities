@@ -31,9 +31,13 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
-import com.jme3.math.Quaternion;
+import com.jme3.math.FastMath;
+import com.jme3.math.Plane;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
@@ -42,8 +46,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.LandscapeControl;
 import jme3utilities.Misc;
+import jme3utilities.MyVector3f;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
+import jme3utilities.sky.WaterProcessor;
 import jme3utilities.ui.GuiApplication;
 
 /**
@@ -174,40 +180,50 @@ public class TestSkyControl
     @Override
     public void guiInitializeApplication() {
         configureCamera();
+        /**
+         * A node to parent geometries which can appear reflected in the water.
+         */
+        Node sceneNode = new Node("scene node");
+        rootNode.attachChild(sceneNode);
         /*
          * Add light sources.
          */
         mainLight = new DirectionalLight();
         mainLight.setName("main");
-        rootNode.addLight(mainLight);
+        sceneNode.addLight(mainLight);
 
         ambientLight = new AmbientLight();
         ambientLight.setName("ambient");
-        rootNode.addLight(ambientLight);
+        sceneNode.addLight(ambientLight);
         /*
-         * Add shadows, using a filter or renderer.
+         * Shadows don't play well with simple water.
          */
-        if (parameters.shadowFilter()) {
-            dlsf = new DirectionalLightShadowFilter(
-                    assetManager, shadowMapSize, shadowMapSplits);
-            dlsf.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
-            dlsf.setLight(mainLight);
-            FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
-            fpp.addFilter(dlsf);
-            viewPort.addProcessor(fpp);
+        if (!parameters.water()) {
+            /*
+             * Add shadows, using either a filter or a renderer.
+             */
+            if (parameters.shadowFilter()) {
+                dlsf = new DirectionalLightShadowFilter(
+                        assetManager, shadowMapSize, shadowMapSplits);
+                dlsf.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
+                dlsf.setLight(mainLight);
+                FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+                fpp.addFilter(dlsf);
+                viewPort.addProcessor(fpp);
 
-        } else {
-            dlsr = new DirectionalLightShadowRenderer(
-                    assetManager, shadowMapSize, shadowMapSplits);
-            dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
-            dlsr.setLight(mainLight);
-            viewPort.addProcessor(dlsr);
+            } else {
+                dlsr = new DirectionalLightShadowRenderer(
+                        assetManager, shadowMapSize, shadowMapSplits);
+                dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
+                dlsr.setLight(mainLight);
+                viewPort.addProcessor(dlsr);
+            }
         }
         /*
          * Create, add, and enable the landscape.
          */
         landscapeControl = new LandscapeControl(assetManager);
-        rootNode.addControl(landscapeControl);
+        sceneNode.addControl(landscapeControl);
         landscapeControl.setEnabled(true);
         /*
          * Create a SkyControl to animate the sky.
@@ -242,9 +258,44 @@ public class TestSkyControl
         /*
          * Add SkyControl to the scene and enable it.
          */
-        rootNode.addControl(control);
+        sceneNode.addControl(control);
         control.setEnabled(true);
 
+        if (parameters.water()) {
+            /*
+             * Create a horizontal square of water and add it to the scene.
+             *
+             * During initialization of the water processor (on the first
+             * update), the processor will discover the SkyControl and put
+             * SkyControl in charge of the processor's background colors.
+             */
+            WaterProcessor wp = new WaterProcessor(assetManager);
+            viewPort.addProcessor(wp);
+            //wp.setDebug(true);
+            wp.setDistortionMix(1f);
+            wp.setDistortionScale(0.1f);
+            wp.setReflectionClippingOffset(0f);
+            wp.setReflectionScene(sceneNode);
+            wp.setRefractionClippingOffset(0f);
+            wp.setWaterTransparency(0f);
+            wp.setWaveSpeed(0.02f);
+
+            float diameter = 400f; // world units
+            Geometry water = wp.createWaterGeometry(diameter, diameter);
+            rootNode.attachChild(water);
+
+            float depth = 0.3f; // world units
+            Plane waterPlane = new Plane(Vector3f.UNIT_Y, depth);
+            wp.setPlane(waterPlane);
+            wp.setWaterDepth(depth);
+
+            float xzOffset = diameter / 2f;
+            water.setLocalTranslation(-xzOffset, depth, xzOffset);
+            Vector2f textureScale = new Vector2f(10f, 10f);
+            water.getMesh().scaleTextureCoordinates(textureScale);
+        }
+
+        //new jme3utilities.Printer().printSubtree(rootNode);
         initializeUserInterface();
     }
     // *************************************************************************
@@ -283,7 +334,7 @@ public class TestSkyControl
         float solarLongitude = hud.getSolarLongitude();
         control.getSunAndStars().setSolarLongitude(solarLongitude);
         /*
-         * Adjust the scale of the terrain.
+         * Adjust vertical scale of the terrain based on a slider in the HUD.
          */
         float radius = 0.5f * cam.getFrustumFar();
         float baseY = 0f;
@@ -298,17 +349,20 @@ public class TestSkyControl
      */
     private void configureCamera() {
         /*
-         * Point the camera 10 degrees north of west.
+         * Point the camera 10 degrees north of west, tilted down 1 degree
+         * to work around a bug in SimpleWater.
          */
         cam.setLocation(new Vector3f(6.5f, 13f, 50f));
-        Quaternion orientation = new Quaternion();
-        orientation.lookAt(new Vector3f(0.17f, 0f, -0.985f), Vector3f.UNIT_Y);
-        cam.setRotation(orientation);
+        float altitudeAngle = -1f * FastMath.DEG_TO_RAD;
+        float azimuthAngle = 280f * FastMath.DEG_TO_RAD;
+        Vector3f direction = MyVector3f.fromAltAz(altitudeAngle, azimuthAngle);
+        Vector3f up = Vector3f.UNIT_Y.clone();
+        cam.lookAtDirection(direction, up);
 
         flyCam.setDragToRotate(true);
         flyCam.setRotationSpeed(2f);
         flyCam.setMoveSpeed(20f);
-        flyCam.setUpVector(Vector3f.UNIT_Y);
+        flyCam.setUpVector(up);
         flyCam.setZoomSpeed(20f);
     }
 
@@ -323,8 +377,8 @@ public class TestSkyControl
         boolean success = stateManager.attach(screenShotState);
         assert success;
         /*
-         * Disable rendering of JME statistics.
-         * Statistics can be re-enabled by pressing the F5 hotkey.
+         * Disable display of JME statistics.
+         * Statistics display can be re-enabled by pressing the F5 hotkey.
          */
         setDisplayFps(false);
         setDisplayStatView(false);
