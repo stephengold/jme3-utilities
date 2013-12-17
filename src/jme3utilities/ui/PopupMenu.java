@@ -32,7 +32,11 @@ import java.util.logging.Logger;
 import org.bushe.swing.event.EventTopicSubscriber;
 
 /**
- * Event subscriber for a simple Nifty popup menu or submenu.
+ * Event subscriber for a simple Nifty popup menu or submenu whose items are
+ * Strings.
+ * <p>
+ * When a menu item gets activated, invoke SimpleScreenController.perform() with
+ * the item appended to the menu's action prefix, then close the menu.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -143,12 +147,12 @@ public class PopupMenu
          */
         String actionString = actionPrefix + itemName;
         /*
-         * Perform the corresponding action.
+         * Perform the action specified by the action string.
          */
         SimpleScreenController.perform(actionString);
         /*
-         * If this menu is still enabled, close it and all of its ancestors.
+         * If this menu is still active, close it and all of its ancestors.
          */
-        controller.closeActivePopup(this);
+        controller.closePopup(this);
     }
 }
