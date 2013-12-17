@@ -81,8 +81,8 @@ MaterialDef dome42 {
 	    HAS_CLOUDS1 : Clouds1AlphaMap
 	    HAS_HAZE : HazeAlphaMap
         }
-        FragmentShader GLSL110: MatDefs/skies/dome42/dome42.frag
-        VertexShader   GLSL110: MatDefs/skies/dome42/dome42.vert
+        FragmentShader GLSL110: Shaders/skies/dome42/dome42.frag
+        VertexShader   GLSL110: Shaders/skies/dome42/dome42.vert
         WorldParameters {
             WorldViewProjectionMatrix
         }
