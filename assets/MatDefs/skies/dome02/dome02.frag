@@ -55,7 +55,7 @@ void main(){
         #ifdef HAS_STARS
                 vec4 stars = texture2D(m_StarsColorMap, skyTexCoord);
         #else
-                vec4 stars = 0;
+                vec4 stars = vec4(0.0);
         #endif
 
         vec4 color = mix(stars, m_ClearColor, m_ClearColor.a);
