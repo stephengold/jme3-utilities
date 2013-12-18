@@ -60,6 +60,10 @@ abstract public class GuiApplication
      * Nifty display: set in #simpleInitApp()
      */
     protected NiftyJmeDisplay niftyDisplay = null;
+    /**
+     * signal tracker set in #simpleInitApp()
+     */
+    protected Signals signals = null;
     // *************************************************************************
     // new public methods
 
@@ -85,6 +89,16 @@ abstract public class GuiApplication
     }
 
     /**
+     * Access the signal tracker.
+     *
+     * @return pre-existing instance (not null)
+     */
+    public Signals getSignals() {
+        assert signals != null;
+        return signals;
+    }
+
+    /**
      * Callback to the user's startup code.
      */
     abstract public void guiInitializeApplication();
@@ -99,7 +113,13 @@ abstract public class GuiApplication
     public void simpleInitApp() {
         assert niftyDisplay == null : niftyDisplay;
         /*
-         * Start Nifty without the batched renderer.
+         * Initialize the hotkeys and instantiate the signal
+         * tracker for modal hotkeys.
+         */
+        signals = new Signals();
+        Hotkey.intialize();
+        /*
+         * Start Nifty -- without the batched renderer!
          */
         niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager,
                 audioRenderer, guiViewPort);
