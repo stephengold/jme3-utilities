@@ -31,7 +31,6 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.cursors.plugins.JmeCursor;
 import com.jme3.input.InputManager;
 import com.jme3.input.controls.ActionListener;
-import com.jme3.niftygui.NiftyJmeDisplay;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -126,13 +125,10 @@ abstract public class InputMode
     /**
      * Instantiate a disabled, uninitialized mode.
      *
-     * @param niftyDisplay display for GUI (not null)
      * @param shortName terse name for the mode (not null)
      */
-    public InputMode(NiftyJmeDisplay niftyDisplay, String shortName) {
-        assert niftyDisplay != null;
+    public InputMode(String shortName) {
         assert shortName != null;
-
         this.shortName = shortName;
 
         super.setEnabled(false);

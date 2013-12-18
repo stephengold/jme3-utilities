@@ -55,7 +55,7 @@ import jme3utilities.sky.LunarPhase;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-public class TestSkyControlHud
+class TestSkyControlHud
         extends SimpleScreenController
         implements ActionListener {
     // *************************************************************************
@@ -120,12 +120,11 @@ public class TestSkyControlHud
     /**
      * Instantiate the display.
      *
-     * @param display (not null)
      * @param reenableFlyby if true, the flyby camera will get re-enabled each
      * time this HUD is disabled
      */
-    TestSkyControlHud(NiftyJmeDisplay display, boolean reenableFlyby) {
-        super(display, "test-sky-control");
+    TestSkyControlHud(boolean reenableFlyby) {
+        super("test-sky-control");
         this.reenableFlyby = reenableFlyby;
     }
     // *************************************************************************

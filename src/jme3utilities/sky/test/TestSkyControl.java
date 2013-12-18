@@ -385,7 +385,8 @@ public class TestSkyControl
         /*
          * Create and attach the heads-up display (HUD).
          */
-        hud = new TestSkyControlHud(niftyDisplay, true);
+        boolean reenableFlyCam = true;
+        hud = new TestSkyControlHud(reenableFlyCam);
         success = stateManager.attach(hud);
         assert success;
         /*

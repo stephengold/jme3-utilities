@@ -259,7 +259,8 @@ public class TestSkyMaterial
         /*
          * Create the heads-up display (HUD).
          */
-        hud = new TestSkyMaterialHud(niftyDisplay, false);
+        boolean reenableFlyCam = false;
+        hud = new TestSkyMaterialHud(reenableFlyCam);
         hud.setMaterial(material);
         success = stateManager.attach(hud);
         assert success;
