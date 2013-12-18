@@ -277,11 +277,20 @@ public class MyMath {
      * >=0)
      */
     public static float sphere(float x, float y) {
-        double rSquared = sumOfSquares(x, y);
-        if (rSquared > 1.0) {
-            logger.log(Level.SEVERE, "x={0}, y={1}", new Object[]{x, y});
+        if (x < -1f || x > 1f) {
+            logger.log(Level.SEVERE, "x={0}", x);
             throw new IllegalArgumentException(
-                    "(x,y) should be on or within the unit circle");
+                    "x should be between -1 and 1, inclusive");
+        }
+        if (y < -1f || y > 1f) {
+            logger.log(Level.SEVERE, "y={0}", y);
+            throw new IllegalArgumentException(
+                    "y should be between -1 and 1, inclusive");
+        }
+
+        double rSquared = sumOfSquares(x, y);
+        if (rSquared >= 1.0) {
+            return 0f;
         }
 
         float z = (float) Math.sqrt(1.0 - rSquared);
