@@ -95,12 +95,11 @@ public class TestSkyMaterialHud
     /**
      * Instantiate the display.
      *
-     * @param display (not null)
      * @param reenableFlyby if true, the flyby camera will get re-enabled each
      * time this HUD is disabled
      */
-    TestSkyMaterialHud(NiftyJmeDisplay display, boolean reenableFlyby) {
-        super(display, "test-sky-material");
+    TestSkyMaterialHud(boolean reenableFlyby) {
+        super("test-sky-material");
         this.reenableFlyby = reenableFlyby;
     }
     // *************************************************************************

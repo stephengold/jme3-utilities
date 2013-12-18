@@ -82,17 +82,13 @@ public class SimpleScreenController
      */
     private static volatile ActionListener listener = null;
     /**
-     * reference to the application instance: set by initialize()
-     */
-    private static Application application = null;
-    /**
      * false before the screen starts, true thereafter
      */
     protected boolean screenHasStarted = false;
     /**
-     * which Nifty display this screen uses: set by constructor
+     * reference to the application instance: set by initialize()
      */
-    final private NiftyJmeDisplay niftyDisplay;
+    private static GuiApplication application = null;
     /**
      * the active popup menu (null means none are active)
      */
@@ -105,30 +101,15 @@ public class SimpleScreenController
     // constructors
 
     /**
-     * Default constructor. Do not invoke!
-     */
-    public SimpleScreenController() {
-        niftyDisplay = null;
-        screenId = null;
-    }
-
-    /**
-     * Instantiate a disabled screen for a particular display and id. After
+     * Instantiate a disabled screen for a particular screen id. After
      * instantiation, the first method invoked should be initialize().
      *
-     * @param niftyDisplay (not null)
      * @param screenId Nifty screen id (not null)
      */
-    public SimpleScreenController(NiftyJmeDisplay niftyDisplay,
-            String screenId) {
-        if (niftyDisplay == null) {
-            throw new NullPointerException("display should not be null");
-        }
+    public SimpleScreenController(String screenId) {
         if (screenId == null) {
             throw new NullPointerException("id should not be null");
         }
-
-        this.niftyDisplay = niftyDisplay;
         this.screenId = screenId;
 
         super.setEnabled(false);
@@ -141,7 +122,7 @@ public class SimpleScreenController
 
     /**
      * Close the active popup menu. Invoked from NiftyMethodInvoker using
-     * reflection, so the class and method must be public.
+     * reflection, so the class and method must both be public.
      */
     public void closeActivePopup() {
         if (activePopupMenu == null) {
@@ -161,7 +142,7 @@ public class SimpleScreenController
     /**
      * If the specified popup menu is active, close it and all its ancestors.
      *
-     * @param popupMenu (not null)
+     * @param popupMenu which menu to close (not null)
      */
     void closePopup(PopupMenu popupMenu) {
         if (popupMenu == null) {
@@ -198,6 +179,7 @@ public class SimpleScreenController
          * Detatch Nifty from the viewport.
          */
         ViewPort viewPort = application.getGuiViewPort();
+        NiftyJmeDisplay niftyDisplay = application.getNiftyDisplay();
         viewPort.removeProcessor(niftyDisplay);
 
         NiftyEventAnnotationProcessor.unprocess(this);
@@ -227,6 +209,7 @@ public class SimpleScreenController
          * Attach Nifty to the viewport.
          */
         ViewPort viewPort = application.getGuiViewPort();
+        NiftyJmeDisplay niftyDisplay = application.getNiftyDisplay();
         viewPort.addProcessor(niftyDisplay);
 
         getNifty().gotoScreen(screenId);
@@ -303,7 +286,7 @@ public class SimpleScreenController
             throw new NullPointerException("action string should not be null");
         }
 
-        logger.log(Level.INFO, "{0}", actionString);
+        logger.log(Level.INFO, "actionString={0}", actionString);
         boolean isOnGoing = true;
         float simInterval = 0f;
         try {
@@ -345,7 +328,8 @@ public class SimpleScreenController
             throw new NullPointerException("prefix should not be null");
         }
         /*
-         * Create the popup using the "popup-menu.xml" resource.
+         * Create the popup using "popup-menu" as a base.
+         * Nifty assigns the popup a new id.
          */
         Nifty nifty = getNifty();
         Element element = nifty.createPopup("popup-menu");
@@ -368,7 +352,7 @@ public class SimpleScreenController
         String controlId = menu.getId();
         nifty.subscribe(screen, controlId, MenuItemActivatedEvent.class, popup);
         /*
-         * Make the menu visible.
+         * Make the popup menu visible.
          */
         nifty.showPopup(screen, elementId, null);
 
@@ -468,7 +452,7 @@ public class SimpleScreenController
         }
 
         super.initialize(stateManager, app);
-        application = app;
+        application = (GuiApplication) app;
         getNifty().registerScreenController(this);
 
         assert isInitialized();
@@ -539,15 +523,12 @@ public class SimpleScreenController
     }
 
     /**
-     * Access the Nifty interface.
+     * Access the Nifty instance.
      *
      * @return the pre-existing instance (not null)
      */
     protected Nifty getNifty() {
-        if (niftyDisplay == null) {
-            throw new IllegalStateException("no Nifty display");
-        }
-        Nifty result = niftyDisplay.getNifty();
+        Nifty result = application.getNifty();
         assert result != null;
         return result;
     }
