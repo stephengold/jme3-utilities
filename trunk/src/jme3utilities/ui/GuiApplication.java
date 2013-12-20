@@ -26,6 +26,7 @@
 package jme3utilities.ui;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.input.controls.ActionListener;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
 import java.util.logging.Level;
@@ -40,7 +41,8 @@ import jme3utilities.MyString;
  * @author Stephen Gold <sgold@sonic.net>
  */
 abstract public class GuiApplication
-        extends SimpleApplication {
+        extends SimpleApplication
+        implements ActionListener {
     // *************************************************************************
     // constants
 
@@ -57,15 +59,29 @@ abstract public class GuiApplication
     // *************************************************************************
     // fields
     /**
+     * the initial input mode: set in #simpleInitApp()
+     */
+    private InputMode defaultInputMode = null;
+    /**
      * Nifty display: set in #simpleInitApp()
      */
-    protected NiftyJmeDisplay niftyDisplay = null;
+    private NiftyJmeDisplay niftyDisplay = null;
     /**
      * signal tracker set in #simpleInitApp()
      */
-    protected Signals signals = null;
+    private Signals signals = null;
     // *************************************************************************
     // new public methods
+
+    /**
+     * Access the default input mode.
+     *
+     * @return pre-existing instance (not null)
+     */
+    public InputMode getDefaultInputMode() {
+        assert defaultInputMode != null;
+        return defaultInputMode;
+    }
 
     /**
      * Access the Nifty instance.
@@ -74,7 +90,7 @@ abstract public class GuiApplication
      */
     public Nifty getNifty() {
         Nifty result = getNiftyDisplay().getNifty();
-        assert niftyDisplay != null;
+        assert result != null;
         return result;
     }
 
@@ -99,9 +115,33 @@ abstract public class GuiApplication
     }
 
     /**
-     * Callback to the user's startup code.
+     * Callback to the user's application startup code.
      */
     abstract public void guiInitializeApplication();
+    // *************************************************************************
+    // ActionListener methods
+
+    /**
+     * Process an action from the GUI or keyboard which is not handled by the
+     * default input mode. This method is a placeholder which may be overridden
+     * as desired.
+     *
+     * @param actionString textual description of the action (not null)
+     * @param ongoing true if the action is ongoing, otherwise false
+     * @param ignored
+     */
+    @Override
+    public void onAction(String actionString, boolean ongoing, float ignored) {
+        /*
+         * Ignore actions which are not ongoing.
+         */
+        if (!ongoing) {
+            return;
+        }
+
+        logger.log(Level.WARNING, "Action {0} was not handled.",
+                MyString.quote(actionString));
+    }
     // *************************************************************************
     // SimpleApplication methods
 
@@ -113,11 +153,21 @@ abstract public class GuiApplication
     public void simpleInitApp() {
         assert niftyDisplay == null : niftyDisplay;
         /*
-         * Initialize the hotkeys and instantiate the signal
-         * tracker for modal hotkeys.
+         * Initialize hotkeys and signal tracker for modal hotkeys.
          */
         signals = new Signals();
         Hotkey.intialize();
+        /*
+         * Attach and enable the default input mode.
+         */
+        defaultInputMode = new DefaultInputMode();
+        stateManager.attach(defaultInputMode);
+        defaultInputMode.setEnabled(true);
+        /*
+         * Attach the input mode for popup menus.
+         */
+        InputMode menuMode = new MenuInputMode();
+        stateManager.attach(menuMode);
         /*
          * Start Nifty -- without the batched renderer!
          */

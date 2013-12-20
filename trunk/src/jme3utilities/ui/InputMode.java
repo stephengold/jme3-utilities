@@ -89,9 +89,9 @@ abstract public class InputMode
      */
     private boolean startEnabled = false;
     /**
-     * the application's input manager: set by initialize()
+     * the application instance which owns this mode
      */
-    protected InputManager inputManager = null;
+    protected GuiApplication application = null;
     /**
      * keep track of the currently enabled mode (null means there's none)
      */
@@ -106,10 +106,6 @@ abstract public class InputMode
      * can look up hotkey bindings while this mode is disabled
      */
     final private Properties hotkeyBindings = new Properties();
-    /**
-     * the application's signals: set by initialize()
-     */
-    protected Signals signals = null;
     /**
      * file name for loading and saving the custom hotkey bindings (or null if
      * the bindings are not customizable): set by setSaveFileName()
@@ -137,10 +133,32 @@ abstract public class InputMode
     // new methods exposed
 
     /**
-     * Bind a given action to a hotkey.
+     * Bind a given action to a hotkey, but don't map it yet.
+     * <p>
+     * Each hotkey can bind to at most one action, but the same action can be
+     * shared by multiple hotkeys. Signals are used to track the state of mode
+     * keys (such as the shift keys).
      *
-     * @param actionName (not null)
-     * @param hotkey (not null)
+     * @param actionName which action (not null)
+     * @param keyCode the hotkey's keycode
+     */
+    public void bind(String actionName, int keyCode) {
+        assert actionName != null;
+
+        Hotkey hotkey = Hotkey.getInstance(keyCode);
+        assert hotkey != null : keyCode;
+        bind(actionName, hotkey);
+    }
+
+    /**
+     * Bind a given action to a hotkey, but don't map it yet.
+     * <p>
+     * Each hotkey can bind to at most one action, but the same action can be
+     * shared by multiple hotkeys. Signals are used to track the state of mode
+     * keys (such as the shift keys).
+     *
+     * @param actionName which action (not null)
+     * @param hotkey which hotkey (not null)
      */
     public void bind(String actionName, Hotkey hotkey) {
         assert actionName != null;
@@ -152,7 +170,7 @@ abstract public class InputMode
     }
 
     /**
-     * Test whether this input mode binds a specified hotkey.
+     * Test whether this input mode binds the specified hotkey.
      *
      * @param hotkey which hotkey (not null)
      * @return true if bound, otherwise false
@@ -321,7 +339,7 @@ abstract public class InputMode
     // AbstractAppState methods
 
     /**
-     * Initialize this (disabled) mode when it gets attached.
+     * Initialize this (disabled) mode after it gets attached.
      *
      * @param stateManager (not null)
      * @param application (not null)
@@ -333,8 +351,7 @@ abstract public class InputMode
         assert !isEnabled();
         super.initialize(stateManager, application);
 
-        inputManager = application.getInputManager();
-        signals = ((GuiApplication) application).getSignals();
+        this.application = (GuiApplication) application;
 
         boolean changed = modes.add(this);
         assert changed;
@@ -362,6 +379,7 @@ abstract public class InputMode
             shortName, newState
         });
 
+        InputManager inputManager = application.getInputManager();
         if (!isEnabled() && newState) {
             assert enabledMode == null : enabledMode;
             enabledMode = this;
@@ -378,30 +396,13 @@ abstract public class InputMode
             assert enabledMode == this : enabledMode;
             enabledMode = null;
 
+            inputManager.setCursorVisible(false);
             unmapBoundHotkeys();
         }
         super.setEnabled(newState);
     }
     // *************************************************************************
     // new protected methods
-
-    /**
-     * Bind a hotkey to an action name, but don't map it yet.
-     *
-     * Each hotkey can bind to at most one action, but the same action can be
-     * shared by multiple hotkeys. Signals are used to track the state of mode
-     * keys (such as the shift keys).
-     *
-     * @param actionName which action (not null)
-     * @param keyCode which hotkey
-     */
-    protected void bind(String actionName, int keyCode) {
-        assert actionName != null;
-
-        Hotkey hotkey = Hotkey.getInstance(keyCode);
-        assert hotkey != null : keyCode;
-        bind(actionName, hotkey);
-    }
 
     /**
      * Add the default hotkey bindings. These bindings will be used if no custom
@@ -545,6 +546,7 @@ abstract public class InputMode
     private void mapActionString(String actionString, Hotkey hotkey) {
         assert actionString != null;
 
+        InputManager inputManager = application.getInputManager();
         hotkey.map(actionString, inputManager);
     }
 
@@ -570,6 +572,7 @@ abstract public class InputMode
         assert actionName != null;
         assert hotkey != null;
 
+        InputManager inputManager = application.getInputManager();
         inputManager.addListener(this, actionName);
         /*
          * For a non-signal action, the action string is simply the name.
@@ -593,6 +596,7 @@ abstract public class InputMode
         assert words.length > 1 : MyString.quote(actionName);
         assert "signal".equals(words[0]);
         String signalName = words[1];
+        Signals signals = application.getSignals();
         signals.add(signalName);
         /*
          * Append the decimal keyCode ensure a unique action string.
@@ -601,6 +605,7 @@ abstract public class InputMode
         int count = countBindings(actionString);
         boolean isUnique = (count == 0);
         assert isUnique : count;
+        InputManager inputManager = application.getInputManager();
         inputManager.addListener(signals, actionString);
         /*
          * Add the mapping to the input manager.
@@ -658,6 +663,7 @@ abstract public class InputMode
         /*
          * Delete the mapping.
          */
+        InputManager inputManager = application.getInputManager();
         if (inputManager.hasMapping(actionString)) {
             inputManager.deleteMapping(actionString);
         }
