@@ -93,7 +93,7 @@ abstract public class InputMode
      */
     protected InputManager inputManager = null;
     /**
-     * keep track of the currently enabled input mode (null means there's none)
+     * keep track of the currently enabled mode (null means there's none)
      */
     private static InputMode enabledMode = null;
     /**
@@ -111,8 +111,8 @@ abstract public class InputMode
      */
     protected Signals signals = null;
     /**
-     * file name for loading and saving the custom hotkey bindings: set by
-     * setSaveFileName()
+     * file name for loading and saving the custom hotkey bindings (or null if
+     * the bindings are not customizable): set by setSaveFileName()
      */
     private String customBindingsFileName = null;
     /**
@@ -239,6 +239,10 @@ abstract public class InputMode
      * Load a set of hotkey bindings from a file.
      */
     public void loadBindings() {
+        if (customBindingsFileName == null) {
+            logger.log(Level.WARNING, "bindings not loaded: file name not set");
+            return;
+        }
         String path = getSavePath();
         try {
             loadHotkeyFile(path);
@@ -261,13 +265,17 @@ abstract public class InputMode
             throws IOException {
         assert initialized;
 
+        if (customBindingsFileName == null) {
+            logger.log(Level.WARNING, "bindings not saved: file name not set");
+            return;
+        }
         String path = getSavePath();
         logger.log(Level.INFO, "Save hotkey bindings to XML file at {0}.",
                 MyString.quote(path));
 
         try (FileOutputStream stream = new FileOutputStream(path)) {
             String comment = String.format(
-                    "custom hotkey bindings for the Bats Game in %s mode",
+                    "custom hotkey bindings for %s mode",
                     shortName);
 
             hotkeyBindings.storeToXML(stream, comment);
@@ -275,28 +283,22 @@ abstract public class InputMode
     }
 
     /**
-     * Initialize the mouse cursor for this mode.
+     * Alter the mouse cursor for this uninitialized mode.
      *
-     * @param newCursor (not null)
+     * @param newCursor or null to hide the cursor when enabled
      */
     public void setCursor(JmeCursor newCursor) {
         assert !initialized;
-        assert cursor == null : cursor;
-        assert newCursor != null;
-
         cursor = newCursor;
     }
 
     /**
-     * Initialize the file name for this mode's custom hotkey bindings.
+     * Alter the file name for this mode's custom hotkey bindings.
      *
-     * @param newFileName file name and extension (not null)
+     * @param newFileName file name and extension (or null to make the bindings
+     * not loadable or savable)
      */
     public void setSaveFileName(String newFileName) {
-        assert !initialized;
-        assert customBindingsFileName == null : customBindingsFileName;
-        assert newFileName != null;
-
         customBindingsFileName = newFileName;
     }
 
@@ -446,6 +448,10 @@ abstract public class InputMode
      * Initialize the hotkey bindings.
      */
     private void initializeHotkeyBindings() {
+        if (customBindingsFileName == null) {
+            defaultBindings();
+            return;
+        }
         /*
          * Attempt to load custom hotkey bindings from a file.  If that fails,
          * load the default bindings for this mode.
