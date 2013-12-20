@@ -94,6 +94,11 @@ public class SimpleScreenController
      */
     private static PopupMenu activePopupMenu = null;
     /**
+     * keep track of the currently enabled screen controller (null means there's
+     * none)
+     */
+    private static SimpleScreenController enabledScreen = null;
+    /**
      * Nifty id of this screen: set by constructor
      */
     final protected String screenId;
@@ -121,7 +126,8 @@ public class SimpleScreenController
     // new methods exposed
 
     /**
-     * Close the active popup menu. Invoked from NiftyMethodInvoker using
+     * Escape from the active popup menu and return control to its parent
+     * without making a selection. Invoked from NiftyMethodInvoker using
      * reflection, so the class and method must both be public.
      */
     public void closeActivePopup() {
@@ -141,6 +147,7 @@ public class SimpleScreenController
 
     /**
      * If the specified popup menu is active, close it and all its ancestors.
+     * This method is invoked after a menu selection is made.
      *
      * @param popupMenu which menu to close (not null)
      */
@@ -174,6 +181,7 @@ public class SimpleScreenController
         if (!isEnabled()) {
             throw new IllegalStateException("already disabled");
         }
+        assert enabledScreen == this : enabledScreen;
         assert listener != null;
         /*
          * Detatch Nifty from the viewport.
@@ -184,6 +192,7 @@ public class SimpleScreenController
 
         NiftyEventAnnotationProcessor.unprocess(this);
 
+        enabledScreen = null;
         listener = null;
         super.setEnabled(false);
     }
@@ -204,6 +213,7 @@ public class SimpleScreenController
         if (isEnabled()) {
             throw new IllegalStateException("already enabled");
         }
+        assert enabledScreen == null : enabledScreen;
         assert listener == null : listener;
         /*
          * Attach Nifty to the viewport.
@@ -215,12 +225,22 @@ public class SimpleScreenController
         getNifty().gotoScreen(screenId);
         NiftyEventAnnotationProcessor.process(this);
 
+        enabledScreen = this;
         listener = newListener;
         super.setEnabled(true);
     }
 
     /**
-     * Access the Nifty screen.
+     * Find the enabled screen controller, if any.
+     *
+     * @return a pre-existing instance (or null if none enabled)
+     */
+    public static SimpleScreenController getEnabledScreen() {
+        return enabledScreen;
+    }
+
+    /**
+     * Access the Nifty Screen instance.
      *
      * @return the pre-existing instance (not null)
      */
