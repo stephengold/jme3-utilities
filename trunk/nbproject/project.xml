@@ -18,6 +18,7 @@
             <word>angle's</word>
             <word>app</word>
             <word>checkbox</word>
+            <word>display's</word>
             <word>dome's</word>
             <word>ecliptical</word>
             <word>Esc</word>
@@ -25,8 +26,10 @@
             <word>hotkey</word>
             <word>hotkey's</word>
             <word>hotkeys</word>
+            <word>initially</word>
             <word>light's</word>
             <word>lintels</word>
+            <word>mode's</word>
             <word>moon's</word>
             <word>observer's</word>
             <word>popup</word>
@@ -40,6 +43,7 @@
             <word>texture's</word>
             <word>unescaped</word>
             <word>unscaled</word>
+            <word>water's</word>
         </spellchecker-wordlist>
     </configuration>
 </project>
