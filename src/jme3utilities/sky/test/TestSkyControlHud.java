@@ -31,7 +31,6 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.input.FlyByCamera;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.FastMath;
-import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.renderer.Camera;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.CheckBox;
@@ -55,7 +54,7 @@ import jme3utilities.sky.LunarPhase;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-class TestSkyControlHud
+public class TestSkyControlHud
         extends SimpleScreenController
         implements ActionListener {
     // *************************************************************************
