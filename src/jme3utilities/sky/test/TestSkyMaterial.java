@@ -28,8 +28,6 @@ package jme3utilities.sky.test;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.input.KeyInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -47,19 +45,19 @@ import jme3utilities.sky.DomeMesh;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyMaterial;
 import jme3utilities.ui.GuiApplication;
+import jme3utilities.ui.InputMode;
 
 /**
  * A GUI application for testing the SkyMaterial class using a heads-up display
  * (HUD). The application's main entry point is here.
  *
- * Use the 'H' key to toggle HUD visibility, the 'S' key to save the scene, the
- * 'L' key to load a saved scene.
+ * Use the 'H' key to toggle HUD visibility, the 'S' key to save the current sky
+ * geometry, the 'L' key to temporarily load a saved geometry.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class TestSkyMaterial
-        extends GuiApplication
-        implements ActionListener {
+        extends GuiApplication {
     // *************************************************************************
     // constants
 
@@ -85,6 +83,18 @@ public class TestSkyMaterial
      */
     final private static Logger logger =
             Logger.getLogger(TestSkyMaterial.class.getName());
+    /**
+     * action string to temporarily load a saved geometry
+     */
+    final private static String actionStringLoad = "load sky";
+    /**
+     * action string to save the current sky geometry
+     */
+    final private static String actionStringSave = "save sky";
+    /**
+     * action string to toggle HUD visibility
+     */
+    final private static String actionStringToggle = "toggle hud";
     /**
      * name for the dome geometry
      */
@@ -140,57 +150,6 @@ public class TestSkyMaterial
          */
     }
     // *************************************************************************
-    // ActionListener methods
-
-    /**
-     * Process an action from the GUI or keyboard.
-     *
-     * @param actionString textual description of the action (not null)
-     * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored
-     */
-    @Override
-    public void onAction(String actionString, boolean ongoing, float ignored) {
-        /*
-         * Ignore actions which are not ongoing.
-         */
-        if (!ongoing) {
-            return;
-        }
-        logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
-        switch (actionString) {
-            case "load":
-                load();
-                break;
-
-            case "save":
-                save();
-                break;
-
-            default:
-                logger.log(Level.WARNING, "Action {0} was not handled.",
-                        MyString.quote(actionString));
-                break;
-        }
-    }
-    // *************************************************************************
-    // Application methods
-
-    /**
-     * Handle the Esc hotkey: if there's an active popup menu, close it.
-     * Otherwise, stop the application.
-     */
-    @Override
-    public void stop() {
-        if (hud.hasActivePopup()) {
-            hud.closeActivePopup();
-            return;
-        }
-
-        logger.log(Level.INFO, "Stopping the application.");
-        super.stop(false);
-    }
-    // *************************************************************************
     // GuiApplication methods
 
     /**
@@ -221,6 +180,40 @@ public class TestSkyMaterial
         material.addStars();
 
         initializeUserInterface(material);
+    }
+
+    /**
+     * Process an action from the GUI or keyboard which was not handled by the
+     * default input mode.
+     *
+     * @param actionString textual description of the action (not null)
+     * @param ongoing true if the action is ongoing, otherwise false
+     * @param ignored
+     */
+    @Override
+    public void onAction(String actionString, boolean ongoing, float ignored) {
+        /*
+         * Ignore actions which are not ongoing.
+         */
+        if (!ongoing) {
+            return;
+        }
+
+        switch (actionString) {
+            case actionStringLoad:
+                load();
+                return;
+
+            case actionStringSave:
+                save();
+                return;
+
+            case actionStringToggle:
+                boolean newState = !hud.isEnabled();
+                hud.setEnabled(newState);
+                return;
+        }
+        super.onAction(actionString, ongoing, ignored);
     }
     // *************************************************************************
     // private methods
@@ -265,20 +258,12 @@ public class TestSkyMaterial
         success = stateManager.attach(hud);
         assert success;
         /*
-         * Map the 'H' key to toggle HUD visibility.
+         * Add hotkey bindings to the default input mode.
          */
-        inputManager.addMapping("toggle", new KeyTrigger(KeyInput.KEY_H));
-        inputManager.addListener(hud, "toggle");
-        /*
-         * Map the 'L' key to load material from a file.
-         */
-        inputManager.addMapping("load", new KeyTrigger(KeyInput.KEY_L));
-        inputManager.addListener(this, "load");
-        /*
-         * Map the 'S' key to save material to a file.
-         */
-        inputManager.addMapping("save", new KeyTrigger(KeyInput.KEY_S));
-        inputManager.addListener(this, "save");
+        InputMode defaultInputMode = getDefaultInputMode();
+        defaultInputMode.bind(actionStringToggle, KeyInput.KEY_H);
+        defaultInputMode.bind(actionStringLoad, KeyInput.KEY_L);
+        defaultInputMode.bind(actionStringSave, KeyInput.KEY_S);
     }
 
     /**

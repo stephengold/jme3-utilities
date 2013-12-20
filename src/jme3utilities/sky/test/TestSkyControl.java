@@ -28,7 +28,6 @@ package jme3utilities.sky.test;
 import com.beust.jcommander.JCommander;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.input.KeyInput;
-import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.FastMath;
@@ -78,6 +77,10 @@ public class TestSkyControl
      */
     final private static Logger logger =
             Logger.getLogger(TestSkyControl.class.getName());
+    /**
+     * action string to toggle HUD visibility
+     */
+    final private static String actionStringToggle = "toggle hud";
     /**
      * application name for its window's title bar and its usage message
      */
@@ -153,23 +156,6 @@ public class TestSkyControl
         /*
          * ... and onward to TestSkyControl.guiInitApp()!
          */
-    }
-    // *************************************************************************
-    // Application methods
-
-    /**
-     * Handle the Esc hotkey: if there's an active popup menu, close it.
-     * Otherwise, stop the application.
-     */
-    @Override
-    public void stop() {
-        if (hud.hasActivePopup()) {
-            hud.closeActivePopup();
-            return;
-        }
-
-        logger.log(Level.INFO, "Stopping the application.");
-        super.stop(false);
     }
     // *************************************************************************
     // GuiApplication methods
@@ -298,6 +284,31 @@ public class TestSkyControl
         //new jme3utilities.Printer().printSubtree(rootNode);
         initializeUserInterface();
     }
+
+    /**
+     * Process an action from the GUI or keyboard which was not handled by the
+     * default input mode.
+     *
+     * @param actionString textual description of the action (not null)
+     * @param ongoing true if the action is ongoing, otherwise false
+     * @param ignored
+     */
+    @Override
+    public void onAction(String actionString, boolean ongoing, float ignored) {
+        /*
+         * Ignore actions which are not ongoing.
+         */
+        if (!ongoing) {
+            return;
+        }
+
+        if (actionString.equals(actionStringToggle)) {
+            boolean newState = !hud.isEnabled();
+            hud.setEnabled(newState);
+            return;
+        }
+        super.onAction(actionString, ongoing, ignored);
+    }
     // *************************************************************************
     // SimpleApplication methods
 
@@ -390,9 +401,8 @@ public class TestSkyControl
         success = stateManager.attach(hud);
         assert success;
         /*
-         * Map the 'H' hotkey to toggle HUD visibility.
+         * Bind the 'H' hotkey to toggle HUD visibility in default input mode.
          */
-        inputManager.addMapping("toggle", new KeyTrigger(KeyInput.KEY_H));
-        inputManager.addListener(hud, "toggle");
+        getDefaultInputMode().bind(actionStringToggle, KeyInput.KEY_H);
     }
 }

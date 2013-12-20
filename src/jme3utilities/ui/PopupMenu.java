@@ -32,11 +32,11 @@ import java.util.logging.Logger;
 import org.bushe.swing.event.EventTopicSubscriber;
 
 /**
- * Event subscriber for a simple Nifty popup menu or submenu whose items are
+ * Event subscriber for a simple Nifty popup menu (or submenu) whose items are
  * Strings.
  * <p>
- * When a menu item gets activated, invoke SimpleScreenController.perform() with
- * the item appended to the menu's action prefix, then close the menu.
+ * When a menu item is activated, invoke SimpleScreenController.perform() with
+ * the item appended to the popup menu's action prefix, then close the popup.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -53,8 +53,8 @@ public class PopupMenu
     // *************************************************************************
     // fields
     /**
-     * the parent popup menu which opened this submenu, or null if not a
-     * submenu: set by constructor
+     * the parent popup menu which opened the menu, or null if not a submenu:
+     * set by constructor
      */
     final private PopupMenu parent;
     /**
@@ -66,6 +66,10 @@ public class PopupMenu
      */
     final private String actionPrefix;
     /**
+     * items in the menu: set by constructor
+     */
+    final private String[] itemArray;
+    /**
      * Nifty id of the popup: set by constructor
      */
     final private String popupId;
@@ -73,30 +77,33 @@ public class PopupMenu
     // constructors
 
     /**
-     * Instantiate a submenu for a particular screen controller, action prefix,
-     * and parent menu.
+     * Instantiate a record of a popup menu (or submenu).
      *
-     * @param controller which screen will own this menu (not null)
+     * @param controller which screen owns this popup menu (not null)
      * @param popupId Nifty id of the popup (not null)
      * @param actionPrefix prefix for action strings (not null)
-     * @param parent the parent popup menu which opened this submenu (or null if
-     * not a submenu)
+     * @param itemArray the items in the popup menu (not null, unaffected)
+     * @param parent the parent menu which opened this submenu (or null if not a
+     * submenu)
      */
     PopupMenu(SimpleScreenController controller, String popupId,
-            String actionPrefix, PopupMenu parent) {
+            String actionPrefix, String[] itemArray, PopupMenu parent) {
         assert controller != null;
+        assert popupId != null;
         assert actionPrefix != null;
+        assert itemArray != null;
 
         this.controller = controller;
-        this.actionPrefix = actionPrefix;
         this.popupId = popupId;
+        this.actionPrefix = actionPrefix;
+        this.itemArray = itemArray.clone();
         this.parent = parent;
     }
     // *************************************************************************
     // new methods exposed
 
     /**
-     * Close this menu.
+     * Close the menu.
      */
     void close() {
         Nifty nifty = controller.getNifty();
@@ -104,22 +111,41 @@ public class PopupMenu
     }
 
     /**
-     * Access the parent: the popup menu which opened this submenu.
+     * Generate the action string for specific item from the menu.
      *
-     * @return the pre-existing instance, or null if no parent
+     * @param index which item (>=0, 0=first)
+     * @return action string or null for an invalid index
+     */
+    String getActionString(int index) {
+        if (index < 0 || index >= itemArray.length) {
+            return null;
+        }
+        String itemName = itemArray[index];
+        /*
+         * Generate the action string for the item by appending the item's
+         * name to this popup menu's action prefix.
+         */
+        String actionString = actionPrefix + itemName;
+
+        return actionString;
+    }
+
+    /**
+     * Access the parent: the popup menu which opened the submenu.
+     *
+     * @return the pre-existing instance, or null if not a submenu
      */
     PopupMenu getParent() {
         return parent;
     }
 
     /**
-     * Enable or disable this menu.
+     * Enable or disable the menu or submenu.
      *
      * @param newState true to enable, false to disable
      */
     void setEnabled(boolean newState) {
-        Nifty nifty = controller.getNifty();
-        Element element = nifty.findPopupByName(popupId);
+        Element element = getElement();
         if (newState) {
             element.enable();
         } else {
@@ -130,9 +156,9 @@ public class PopupMenu
     // EventTopicSubscriber methods
 
     /**
-     * Callback to deal with the activation of an item in this menu.
+     * Callback to deal with the activation of an item in the submenu.
      *
-     * @param controlId Nifty id of this menu's control (not null)
+     * @param controlId Nifty id of the menu's control (not null)
      * @param event details, such as which item got activated (not null)
      */
     @Override
@@ -143,7 +169,7 @@ public class PopupMenu
         String itemName = event.getItem();
         /*
          * Generate the action string for the item by appending the item's
-         * name to the menu's action prefix.
+         * name to this popup menu's action prefix.
          */
         String actionString = actionPrefix + itemName;
         /*
@@ -151,8 +177,21 @@ public class PopupMenu
          */
         SimpleScreenController.perform(actionString);
         /*
-         * If this menu is still active, close it and all of its ancestors.
+         * If the menu is still active, close it and all of its ancestors.
          */
         controller.closePopup(this);
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Access the Nifty element for this popup menu.
+     *
+     * @return the pre-existing instance
+     */
+    private Element getElement() {
+        Nifty nifty = controller.getNifty();
+        Element element = nifty.findPopupByName(popupId);
+        return element;
     }
 }

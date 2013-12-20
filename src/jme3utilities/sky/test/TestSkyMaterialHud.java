@@ -35,7 +35,6 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
 import java.util.logging.Level;
@@ -187,14 +186,6 @@ public class TestSkyMaterialHud
             case "phase waxing-gibbous":
                 String name = actionString.substring(6);
                 setPhase(name);
-                break;
-
-            case "toggle":
-                /*
-                 * Toggle the visibility of this display.
-                 */
-                boolean newState = !isEnabled();
-                setEnabled(newState);
                 break;
 
             default:

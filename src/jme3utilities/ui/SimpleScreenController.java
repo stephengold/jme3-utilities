@@ -54,8 +54,9 @@ import jme3utilities.Misc;
 import jme3utilities.MyString;
 
 /**
- * A simplified controller for a Nifty screen, with support for check boxes,
- * popup menus, radio buttons, sliders, and dynamic labels.
+ * A controller for a Nifty screen, including support for check boxes, popup
+ * menus, radio buttons, sliders, and dynamic labels. At most one screen is
+ * enabled at a time.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -86,9 +87,13 @@ public class SimpleScreenController
      */
     protected boolean screenHasStarted = false;
     /**
-     * reference to the application instance: set by initialize()
+     * the application instance: set by initialize()
      */
     private static GuiApplication application = null;
+    /**
+     * save the input mode while a popup is active
+     */
+    private static InputMode savedMode;
     /**
      * the active popup menu (null means none are active)
      */
@@ -142,6 +147,18 @@ public class SimpleScreenController
              * Re-enable the parent menu.
              */
             activePopupMenu.setEnabled(true);
+        } else {
+            /*
+             * No parent menu, so disable the menu's input mode and
+             * re-enable the screen's input mode.
+             */
+            InputMode menuMode = InputMode.getEnabledMode();
+            menuMode.setEnabled(false);
+            if (savedMode != null) {
+                assert !savedMode.isEnabled();
+                savedMode.setEnabled(true);
+                savedMode = null;
+            }
         }
     }
 
@@ -169,6 +186,16 @@ public class SimpleScreenController
             ancestor = ancestor.getParent();
         }
         activePopupMenu = null;
+        /*
+         * Disable the menu's input mode and re-enable the screen's.
+         */
+        InputMode menuMode = InputMode.getEnabledMode();
+        menuMode.setEnabled(false);
+        if (savedMode != null) {
+            assert !savedMode.isEnabled();
+            savedMode.setEnabled(true);
+            savedMode = null;
+        }
     }
 
     /**
@@ -306,7 +333,8 @@ public class SimpleScreenController
             throw new NullPointerException("action string should not be null");
         }
 
-        logger.log(Level.INFO, "actionString={0}", actionString);
+        logger.log(Level.INFO, "actionString={0}",
+                MyString.quote(actionString));
         boolean isOnGoing = true;
         float simInterval = 0f;
         try {
@@ -315,6 +343,34 @@ public class SimpleScreenController
             logger.log(Level.SEVERE, "Caught unexpected throwable:", throwable);
             application.stop(false);
         }
+    }
+
+    /**
+     * Select a menu item in the active popup.
+     *
+     * @param index which item (>=0, 0=first)
+     */
+    public void selectMenuItem(int index) {
+        if (index < 0) {
+            logger.log(Level.SEVERE, "index={0}", index);
+            throw new IllegalArgumentException("index should not be negative");
+        }
+        if (activePopupMenu == null) {
+            throw new IllegalStateException("no active popup menu");
+        }
+
+        String actionString = activePopupMenu.getActionString(index);
+        if (actionString == null) {
+            return;
+        }
+        /*
+         * Perform the action specified by the action string.
+         */
+        perform(actionString);
+        /*
+         * If the menu is still active, close it and all of its ancestors.
+         */
+        closePopup(activePopupMenu);
     }
 
     /**
@@ -367,7 +423,7 @@ public class SimpleScreenController
          * item activation events.
          */
         PopupMenu popup = new PopupMenu(this, elementId, actionPrefix,
-                activePopupMenu);
+                itemArray, activePopupMenu);
         Screen screen = nifty.getCurrentScreen();
         String controlId = menu.getId();
         nifty.subscribe(screen, controlId, MenuItemActivatedEvent.class, popup);
@@ -381,6 +437,18 @@ public class SimpleScreenController
              * Disable the parent menu.
              */
             activePopupMenu.setEnabled(false);
+        } else {
+            /*
+             * Disable the screen's input mode (if any) and
+             * enable the input mode for menus.
+             */
+            assert savedMode == null : savedMode;
+            savedMode = InputMode.getEnabledMode();
+            if (savedMode != null) {
+                savedMode.setEnabled(false);
+            }
+            InputMode menuMode = InputMode.findMode("menu");
+            menuMode.setEnabled(true);
         }
         activePopupMenu = popup;
     }

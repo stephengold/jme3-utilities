@@ -370,11 +370,6 @@ public class TestSkyControlHud
                 phase = LunarPhase.fromDescription(name);
                 break;
 
-            case "toggle":
-                boolean newState = !isEnabled();
-                setEnabled(newState);
-                break;
-
             default:
                 logger.log(Level.WARNING, "Action {0} was not handled.",
                         MyString.quote(actionString));
