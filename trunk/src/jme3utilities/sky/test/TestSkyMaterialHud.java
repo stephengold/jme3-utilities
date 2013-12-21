@@ -40,7 +40,7 @@ import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
-import jme3utilities.ui.SimpleScreenController;
+import jme3utilities.ui.GuiScreenController;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyMaterial;
 
@@ -55,7 +55,7 @@ import jme3utilities.sky.SkyMaterial;
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class TestSkyMaterialHud
-        extends SimpleScreenController
+        extends GuiScreenController
         implements ActionListener {
     // *************************************************************************
     // constants

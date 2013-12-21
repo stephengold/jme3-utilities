@@ -60,7 +60,7 @@ public class PopupMenu
     /**
      * which screen controls this popup menu: set by constructor
      */
-    final private SimpleScreenController controller;
+    final private GuiScreenController controller;
     /**
      * prefix for the menu's action strings: set by constructor
      */
@@ -86,7 +86,7 @@ public class PopupMenu
      * @param parent the parent menu which opened this submenu (or null if not a
      * submenu)
      */
-    PopupMenu(SimpleScreenController controller, String popupId,
+    PopupMenu(GuiScreenController controller, String popupId,
             String actionPrefix, String[] itemArray, PopupMenu parent) {
         assert controller != null;
         assert popupId != null;
@@ -175,7 +175,7 @@ public class PopupMenu
         /*
          * Perform the action specified by the action string.
          */
-        SimpleScreenController.perform(actionString);
+        GuiScreenController.perform(actionString);
         /*
          * If the menu is still active, close it and all of its ancestors.
          */

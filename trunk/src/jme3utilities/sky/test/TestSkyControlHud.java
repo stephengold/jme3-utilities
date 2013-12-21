@@ -40,7 +40,7 @@ import java.util.logging.Logger;
 import jme3utilities.MyCamera;
 import jme3utilities.MyMath;
 import jme3utilities.MyString;
-import jme3utilities.ui.SimpleScreenController;
+import jme3utilities.ui.GuiScreenController;
 import jme3utilities.TimeOfDay;
 import jme3utilities.sky.LunarPhase;
 
@@ -55,7 +55,7 @@ import jme3utilities.sky.LunarPhase;
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class TestSkyControlHud
-        extends SimpleScreenController
+        extends GuiScreenController
         implements ActionListener {
     // *************************************************************************
     // constants
