@@ -35,6 +35,7 @@ import com.jme3.math.Plane;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
+import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.shadow.DirectionalLightShadowFilter;
@@ -48,7 +49,8 @@ import jme3utilities.Misc;
 import jme3utilities.MyVector3f;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
-import jme3utilities.sky.WaterProcessor;
+import jme3utilities.ViewPortListener;
+import jme3utilities.WaterProcessor;
 import jme3utilities.ui.GuiApplication;
 
 /**
@@ -60,7 +62,8 @@ import jme3utilities.ui.GuiApplication;
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class TestSkyControl
-        extends GuiApplication {
+        extends GuiApplication
+        implements ViewPortListener {
     // *************************************************************************
     // constants
 
@@ -154,7 +157,7 @@ public class TestSkyControl
 
         application.start();
         /*
-         * ... and onward to TestSkyControl.guiInitApp()!
+         * ... and onward to TestSkyControl.guiInitializeApplication()!
          */
     }
     // *************************************************************************
@@ -172,7 +175,7 @@ public class TestSkyControl
         Node sceneNode = new Node("scene node");
         rootNode.attachChild(sceneNode);
         /*
-         * Add light sources.
+         * Add light sources and shadows.
          */
         mainLight = new DirectionalLight();
         mainLight.setName("main");
@@ -181,30 +184,8 @@ public class TestSkyControl
         ambientLight = new AmbientLight();
         ambientLight.setName("ambient");
         sceneNode.addLight(ambientLight);
-        /*
-         * Shadows don't play well with simple water.
-         */
-        if (!parameters.water()) {
-            /*
-             * Add shadows, using either a filter or a renderer.
-             */
-            if (parameters.shadowFilter()) {
-                dlsf = new DirectionalLightShadowFilter(
-                        assetManager, shadowMapSize, shadowMapSplits);
-                dlsf.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
-                dlsf.setLight(mainLight);
-                FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
-                fpp.addFilter(dlsf);
-                viewPort.addProcessor(fpp);
 
-            } else {
-                dlsr = new DirectionalLightShadowRenderer(
-                        assetManager, shadowMapSize, shadowMapSplits);
-                dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
-                dlsr.setLight(mainLight);
-                viewPort.addProcessor(dlsr);
-            }
-        }
+        addShadows(viewPort);
         /*
          * Create, add, and enable the landscape.
          */
@@ -257,6 +238,8 @@ public class TestSkyControl
              */
             WaterProcessor wp = new WaterProcessor(assetManager);
             viewPort.addProcessor(wp);
+            wp.addListener(control);
+            wp.addListener(this);
             //wp.setDebug(true);
             wp.setDistortionMix(1f);
             wp.setDistortionScale(0.1f);
@@ -353,15 +336,66 @@ public class TestSkyControl
         landscapeControl.setTerrainScale(radius, baseY, topY);
     }
     // *************************************************************************
+    // ViewPortListener methods
+
+    /**
+     * Callback when a view port is added, to apply shadows to the viewport.
+     *
+     * @param viewPort
+     */
+    @Override
+    public void addViewPort(ViewPort viewPort) {
+        assert viewPort != null;
+
+        addShadows(viewPort);
+    }
+
+    /**
+     * Callback when a view port is removed. Does nothing.
+     *
+     * @param viewPort
+     */
+    @Override
+    public void removeViewPort(ViewPort unused) {
+        /* no action required */
+    }
+    // *************************************************************************
     // private methods
+
+    /**
+     * Add shadows to a view port, using either a filter or a renderer.
+     *
+     * @param viewPort
+     */
+    private void addShadows(ViewPort viewPort) {
+        assert viewPort != null;
+
+        if (parameters.shadowFilter()) {
+            dlsf = new DirectionalLightShadowFilter(
+                    assetManager, shadowMapSize, shadowMapSplits);
+            dlsf.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
+            dlsf.setLight(mainLight);
+            FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+            fpp.addFilter(dlsf);
+            viewPort.addProcessor(fpp);
+
+        } else {
+            dlsr = new DirectionalLightShadowRenderer(
+                    assetManager, shadowMapSize, shadowMapSplits);
+            dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
+            dlsr.setLight(mainLight);
+            viewPort.addProcessor(dlsr);
+        }
+    }
 
     /**
      * Configure the camera, including flyCam.
      */
     private void configureCamera() {
         /*
-         * Point the camera 10 degrees north of west, tilted down 1 degree
-         * to work around a bug in SimpleWater.
+         * Point the camera 10 degrees north of west, tilted down 1 degree.
+         * The downward tilt is to work around a bug in SimpleWater which was
+         * fixed at r10899.
          */
         cam.setLocation(new Vector3f(6.5f, 13f, 50f));
         float altitudeAngle = -1f * FastMath.DEG_TO_RAD;
