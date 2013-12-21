@@ -60,7 +60,7 @@ import jme3utilities.MyString;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-public class SimpleScreenController
+public class GuiScreenController
         extends AbstractAppState
         implements ScreenController {
     // *************************************************************************
@@ -74,7 +74,7 @@ public class SimpleScreenController
      * message logger for this class
      */
     final private static Logger logger =
-            Logger.getLogger(SimpleScreenController.class.getName());
+            Logger.getLogger(GuiScreenController.class.getName());
     // *************************************************************************
     // fields
     /**
@@ -102,7 +102,7 @@ public class SimpleScreenController
      * keep track of the currently enabled screen controller (null means there's
      * none)
      */
-    private static SimpleScreenController enabledScreen = null;
+    private static GuiScreenController enabledScreen = null;
     /**
      * Nifty id of this screen: set by constructor
      */
@@ -116,7 +116,7 @@ public class SimpleScreenController
      *
      * @param screenId Nifty screen id (not null)
      */
-    public SimpleScreenController(String screenId) {
+    public GuiScreenController(String screenId) {
         if (screenId == null) {
             throw new NullPointerException("id should not be null");
         }
@@ -242,6 +242,7 @@ public class SimpleScreenController
         }
         assert enabledScreen == null : enabledScreen;
         assert listener == null : listener;
+        logger.log(Level.INFO, "screenId={0}", screenId);
         /*
          * Attach Nifty to the viewport.
          */
@@ -262,7 +263,7 @@ public class SimpleScreenController
      *
      * @return a pre-existing instance (or null if none enabled)
      */
-    public static SimpleScreenController getEnabledScreen() {
+    public static GuiScreenController getEnabledScreen() {
         return enabledScreen;
     }
 
