@@ -381,7 +381,12 @@ abstract public class InputMode
 
         InputManager inputManager = application.getInputManager();
         if (!isEnabled() && newState) {
-            assert enabledMode == null : enabledMode;
+            if (enabledMode != null) {
+                String message = String.format(
+                        "tried to enable %s input mode with %s mode active",
+                        shortName, enabledMode.shortName);
+                throw new IllegalStateException(message);
+            }
             enabledMode = this;
 
             if (cursor == null) {
@@ -400,6 +405,24 @@ abstract public class InputMode
             unmapBoundHotkeys();
         }
         super.setEnabled(newState);
+    }
+    // *************************************************************************
+    // Object methods
+
+    /**
+     * Format the mode as a string, for debugging.
+     */
+    @Override
+    public String toString() {
+        String status;
+        if (isInitialized()) {
+            status = isEnabled() ? "enabled" : "disabled";
+        } else {
+            status = String.format("uninitialized, startEnabled=%s",
+                    startEnabled);
+        }
+        String result = String.format("%s (%s)", shortName, status);
+        return result;
     }
     // *************************************************************************
     // new protected methods
