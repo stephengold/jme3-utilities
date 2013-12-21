@@ -49,7 +49,7 @@ import jme3utilities.MyMath;
 import jme3utilities.MyString;
 
 /**
- * A utility application to generate starry sky texture maps for use with
+ * A console application to generate starry sky texture maps for use with
  * SkyMaterial and DomeMesh, based on data from a star catalog. In the resulting
  * textures, east is at the top and north is to the right.
  *
@@ -152,7 +152,7 @@ public class MakeStarMaps {
     /**
      * stars read from the catalog
      */
-    private Collection<Star> stars = new TreeSet();
+    private Collection<Star> stars = new TreeSet<>();
     /**
      * sample dome mesh for calculating texture coordinates
      */
