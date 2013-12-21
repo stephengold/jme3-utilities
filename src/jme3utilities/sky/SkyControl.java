@@ -25,6 +25,7 @@
  */
 package jme3utilities.sky;
 
+import jme3utilities.ViewPortListener;
 import com.jme3.asset.AssetManager;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -86,7 +87,8 @@ import jme3utilities.SimpleControl;
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class SkyControl
-        extends SimpleControl {
+        extends SimpleControl
+        implements ViewPortListener {
     // *************************************************************************
     // constants
 
@@ -401,43 +403,12 @@ public class SkyControl
     // new methods exposed
 
     /**
-     * Add a viewport to the list of viewports whose background colors are
-     * updated by this control. Note that the list is not serialized.
-     *
-     * @param viewPort (not null)
-     */
-    public void addViewPort(ViewPort viewPort) {
-        if (viewPort == null) {
-            throw new NullPointerException("view port should not be null");
-        }
-
-        viewPorts.add(viewPort);
-    }
-
-    /**
      * Access the orientations of the sun and stars.
      *
      * @return the pre-existing object
      */
     public SunAndStars getSunAndStars() {
         return sunAndStars;
-    }
-
-    /**
-     * Remove a viewport from the list of viewports whose background colors are
-     * updated by this control. Note that the list is not serialized.
-     *
-     * @param viewPort (not null)
-     */
-    public void removeViewPort(ViewPort viewPort) {
-        if (viewPort == null) {
-            throw new NullPointerException("view port should not be null");
-        }
-
-        boolean success = viewPorts.remove(viewPort);
-        if (!success) {
-            logger.log(Level.WARNING, "not removed");
-        }
     }
 
     /**
@@ -615,6 +586,41 @@ public class SkyControl
         MySpatial.setWorldLocation(skyNode, cameraLocation);
 
         updateFull();
+    }
+    // *************************************************************************
+    // ViewportListener methods
+
+    /**
+     * Add a viewport to the list of viewports whose background colors are
+     * updated by this control. Note that the list is not serialized.
+     *
+     * @param viewPort (not null)
+     */
+    @Override
+    public void addViewPort(ViewPort viewPort) {
+        if (viewPort == null) {
+            throw new NullPointerException("view port should not be null");
+        }
+
+        viewPorts.add(viewPort);
+    }
+
+    /**
+     * Remove a viewport from the list of viewports whose background colors are
+     * updated by this control. Note that the list is not serialized.
+     *
+     * @param viewPort (not null)
+     */
+    @Override
+    public void removeViewPort(ViewPort viewPort) {
+        if (viewPort == null) {
+            throw new NullPointerException("view port should not be null");
+        }
+
+        boolean success = viewPorts.remove(viewPort);
+        if (!success) {
+            logger.log(Level.WARNING, "not removed");
+        }
     }
     // *************************************************************************
     // private methods

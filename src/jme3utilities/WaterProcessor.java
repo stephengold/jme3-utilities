@@ -23,18 +23,17 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.sky;
+package jme3utilities;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
-import com.jme3.scene.control.Control;
 import com.jme3.water.SimpleWaterProcessor;
-import java.util.logging.Level;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /**
- * A simple water processor, extended so as to play well with SkyControl.
+ * A simple water processor, extended to interact with view port listeners.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -48,6 +47,12 @@ public class WaterProcessor
      */
     final private static Logger logger =
             Logger.getLogger(WaterProcessor.class.getName());
+    // *************************************************************************
+    // fields
+    /**
+     * view port listeners registered prior to initialization
+     */
+    final private ArrayList<ViewPortListener> listeners = new ArrayList<>();
     // *************************************************************************
     // constructors
 
@@ -63,31 +68,28 @@ public class WaterProcessor
     // new methods exposed
 
     /**
-     * Register a sky control with this (already initialized) processor.
+     * Add a view port listener to this processor.
      *
-     * @param control which control (not null)
+     * @param listener (not null)
      */
-    public void addSkyControl(Control control) {
-        if (control == null) {
-            throw new NullPointerException("control should not be null");
+    public void addListener(ViewPortListener listener) {
+        if (listener == null) {
+            throw new NullPointerException("listener should not be null");
         }
 
-        if (!isInitialized()) {
+        if (isInitialized()) {
             /*
-             * The viewports haven't been created yet!
+             * Inform the listener about the already-created view ports.
              */
-            logger.log(Level.WARNING, "not initialized yet");
-            return;
+            listener.addViewPort(reflectionView);
+            listener.addViewPort(refractionView);
+        } else {
+            /*
+             * The view ports haven't been created yet, so queue up the listener
+             * to be notified after they're created.
+             */
+            listeners.add(listener);
         }
-        /*
-         * Inform the control about this processor's viewports.
-         */
-        if (!(control instanceof SkyControl)) {
-            return;
-        }
-        SkyControl skyControl = (SkyControl) control;
-        skyControl.addViewPort(reflectionView);
-        skyControl.addViewPort(refractionView);
     }
     // *************************************************************************
     // SimpleWaterProcessor methods
@@ -101,15 +103,12 @@ public class WaterProcessor
     @Override
     public void initialize(RenderManager renderManager, ViewPort viewPort) {
         super.initialize(renderManager, viewPort);
-
-        SkyControl skyControl = reflectionScene.getControl(SkyControl.class);
-        if (skyControl == null) {
-            return;
-        }
         /*
-         * Inform the control about this processor's viewports.
+         * Inform registered listeners about two new view ports.
          */
-        skyControl.addViewPort(reflectionView);
-        skyControl.addViewPort(refractionView);
+        for (ViewPortListener listener : listeners) {
+            listener.addViewPort(reflectionView);
+            listener.addViewPort(refractionView);
+        }
     }
 }
