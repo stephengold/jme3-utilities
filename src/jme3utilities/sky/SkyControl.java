@@ -227,23 +227,24 @@ public class SkyControl
      */
     private AmbientLight ambientLight = null;
     /**
-     * which asset manager to use for loading textures and material definitions:
-     * set by constructor
-     */
-    final private AssetManager assetManager;
-    /**
      * viewports whose background colors are updated by this control - not
      * serialized
      */
     final private ArrayList<ViewPort> viewPorts = new ArrayList<>();
     /**
+     * which asset manager to use for loading textures and material definitions:
+     * set by constructor
+     */
+    final private AssetManager assetManager;
+    /**
      * true to create a material and geometry for the hemisphere below the
      * horizon, false to leave this hemisphere to background color (if
-     * starMotionFlag=false) or stars (if starMotionFlag=true)
+     * starMotionFlag==false) or stars (if starMotionFlag==true)
      */
     final private boolean bottomDomeFlag;
     /**
-     * true if clouds modulate the main light, false for steady light
+     * true if clouds modulate the main light, false for steady light (the
+     * default)
      */
     private boolean cloudModulationFlag = false;
     /**
@@ -263,7 +264,7 @@ public class SkyControl
      */
     private DomeMesh mesh = null;
     /**
-     * cloud opacity: 0=cloudless, 1=maximum opacity
+     * cloud opacity: 0=>cloudless, 1=>maximum opacity (the default)
      */
     private float cloudiness = 0f;
     /**
@@ -271,7 +272,7 @@ public class SkyControl
      */
     private float cloudsAnimationTime = 0f;
     /**
-     * rate of motion for cloud layer animations (1=standard)
+     * rate of motion for cloud layer animations (1=>standard)
      */
     private float cloudsRelativeSpeed = 1f;
     /**
@@ -293,7 +294,7 @@ public class SkyControl
      */
     private Geometry southDome = null;
     /**
-     * phase of the moon
+     * phase of the moon: default is FULL
      */
     private LunarPhase phase = LunarPhase.FULL;
     /**
@@ -321,7 +322,8 @@ public class SkyControl
 
     /**
      * Instantiate a disabled control for dense clouds moving at the standard
-     * speed, with no lights and no viewports.
+     * speed, with full moon, no cloud modulation, no lights, no shadows, and no
+     * viewports.
      *
      * @param assetManager for loading textures and material definitions (not
      * null)
@@ -356,8 +358,10 @@ public class SkyControl
         /*
          * Create and initialize the sky material for sun, moon, and haze.
          */
-        topMaterial = new SkyMaterial(assetManager,
-                "MatDefs/skies/dome62/dome62.j3md", 6, numCloudLayers);
+        int topObjects = 1 + LunarPhase.values().length;
+        boolean cloudDomeFlag = cloudFlattening != 0f;
+        int topLayers = cloudDomeFlag ? 0 : numCloudLayers;
+        topMaterial = new SkyMaterial(assetManager, topObjects, topLayers);
         topMaterial.initialize();
         topMaterial.addHaze();
         topMaterial.addObject(sunIndex, SkyMaterial.sunMapPath);
@@ -370,12 +374,13 @@ public class SkyControl
             topMaterial.addStars();
         }
 
-        if (cloudFlattening != 0f) {
+        if (cloudDomeFlag) {
             /*
              * Create and initialize a separate sky material for clouds only.
              */
-            cloudsMaterial = new SkyMaterial(assetManager,
-                    "MatDefs/skies/dome02/dome02.j3md", 0, numCloudLayers);
+            int cloudsObjects = 0;
+            cloudsMaterial = new SkyMaterial(assetManager, cloudsObjects,
+                    numCloudLayers);
             cloudsMaterial.initialize();
             cloudsMaterial.getAdditionalRenderState().setDepthWrite(false);
             cloudsMaterial.setClearColor(ColorRGBA.BlackNoAlpha);

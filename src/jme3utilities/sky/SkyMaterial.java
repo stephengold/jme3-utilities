@@ -205,7 +205,23 @@ public class SkyMaterial
      * null)
      */
     public SkyMaterial(AssetManager assetManager) {
-        this(assetManager, "MatDefs/skies/dome22/dome22.j3md", 2, 2);
+        this(assetManager, 2, 2);
+    }
+
+    /**
+     * Instantiate a sky material with the specified number of objects and cloud
+     * layers. Material definitions will be automatically selected. The first
+     * method invoked should be initialize().
+     *
+     * @param assetManager for loading textures and material definitions (not
+     * null)
+     * @param maxObjects number of astronomical objects allowed (>=0)
+     * @param maxCloudLayers number of cloud layers allowed (>=0)
+     */
+    public SkyMaterial(AssetManager assetManager, int maxObjects,
+            int maxCloudLayers) {
+        this(assetManager, pickMatDefs(maxObjects, maxCloudLayers), maxObjects,
+                maxCloudLayers);
     }
 
     /**
@@ -860,6 +876,37 @@ public class SkyMaterial
         texture.setWrap(WrapMode.Repeat);
 
         return texture;
+    }
+
+    /**
+     * Select a material definitions asset with at least the specified numbers
+     * of objects and cloud layers.
+     *
+     * @param numObjects (>=0)
+     * @param numCloudLayers (>=0)
+     * @return asset path
+     */
+    private static String pickMatDefs(int numObjects, int numCloudLayers) {
+        assert numObjects >= 0 : numObjects;
+        assert numCloudLayers >= 0 : numCloudLayers;
+
+        if (numObjects == 0 && numCloudLayers <= 2) {
+            return "MatDefs/skies/dome02/dome02.j3md";
+        } else if (numObjects <= 2 && numCloudLayers <= 2) {
+            return "MatDefs/skies/dome22/dome22.j3md";
+        } else if (numObjects <= 4 && numCloudLayers <= 2) {
+            return "MatDefs/skies/dome42/dome42.j3md";
+        } else if (numObjects <= 6 && numCloudLayers <= 2) {
+            return "MatDefs/skies/dome62/dome62.j3md";
+        }
+
+        if (numObjects > 6) {
+            logger.log(Level.SEVERE, "numObjects={0}", numObjects);
+            throw new IllegalArgumentException("too many objects");
+        } else {
+            logger.log(Level.SEVERE, "numCloudLayers={0}", numCloudLayers);
+            throw new IllegalArgumentException("too many cloud layers");
+        }
     }
 
     /**
