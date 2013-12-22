@@ -547,8 +547,8 @@ public class SkyControl
              */
             node.attachChild(skyNode);
             /*
-             * Scale the sky node so that its furthest geometries are midway between
-             * the near and far planes of the view frustrum.
+             * Scale the sky node so that its furthest geometries are midway
+             * between the near and far planes of the view frustrum.
              */
             float far = camera.getFrustumFar();
             float near = camera.getFrustumNear();
@@ -590,7 +590,7 @@ public class SkyControl
         Vector3f cameraLocation = camera.getLocation();
         MySpatial.setWorldLocation(skyNode, cameraLocation);
 
-        updateFull();
+        updateAll();
     }
     // *************************************************************************
     // ViewportListener methods
@@ -693,9 +693,49 @@ public class SkyControl
     }
 
     /**
+     * Calculate the clockwise (left-handed) rotation of the moon's texture
+     * relative to the sky's texture.
+     *
+     * @param longitude the moon's celestial longitude (in radians)
+     * @param uvCenter texture coordinates of the moon's center (not null)
+     * @return a new unit vector with its x-component equal to the cosine of the
+     * rotation angle and its y-component equal to the sine of the rotation
+     * angle
+     */
+    private Vector2f lunarRotation(float longitude, Vector2f uvCenter) {
+        assert uvCenter != null;
+        /*
+         * Compute UV coordinates for 0.01 radians north of the center
+         * of the moon.
+         */
+        Vector3f north = sunAndStars.convertToWorld(1f, longitude);
+        Vector2f uvNorth = mesh.directionUV(north);
+        if (uvNorth != null) {
+            Vector2f offset = uvNorth.subtract(uvCenter);
+            assert offset.length() > 0f : offset;
+            Vector2f result = offset.normalize();
+            return result;
+        }
+        /*
+         * Compute UV coordinates for 0.01 radians south of the center
+         * of the moon.
+         */
+        Vector3f south = sunAndStars.convertToWorld(-1f, longitude);
+        Vector2f uvSouth = mesh.directionUV(south);
+        if (uvSouth != null) {
+            Vector2f offset = uvCenter.subtract(uvSouth);
+            assert offset.length() > 0f : offset;
+            Vector2f result = offset.normalize();
+            return result;
+        }
+        assert false : uvSouth;
+        return null;
+    }
+
+    /**
      * Update astronomical objects, sky color, lighting, and stars.
      */
-    private void updateFull() {
+    private void updateAll() {
         Vector3f sunDirection = updateSun();
         /*
          * Daytime sky texture is phased in during the twilight periods
@@ -908,29 +948,28 @@ public class SkyControl
             }
             return null;
         }
-
+        /*
+         * Compute the UV coordinates of the center of the moon.
+         */
         float solarLongitude = sunAndStars.getSolarLongitude();
         float celestialLongitude = solarLongitude + phase.longitudeDifference();
         celestialLongitude = MyMath.modulo(celestialLongitude, FastMath.TWO_PI);
         Vector3f worldDirection =
                 sunAndStars.convertToWorld(0f, celestialLongitude);
+        Vector2f uvCenter = mesh.directionUV(worldDirection);
         /*
-         * Convert world coordinates to mesh coordinates.
-         */
-        Vector2f uv = mesh.directionUV(worldDirection);
-        /*
-         * Update the active phases's position and size and hide
-         * phases that are inactive.
+         * Size and position of the active lunar object.
+         * Hide the inactive ones.
          */
         int activeObjectIndex = phase.ordinal() + moonBaseIndex;
         for (LunarPhase potm : LunarPhase.values()) {
             int objectIndex = potm.ordinal() + moonBaseIndex;
-            if (objectIndex == activeObjectIndex && uv != null) {
+            if (objectIndex == activeObjectIndex && uvCenter != null) {
+                Vector2f rotation = lunarRotation(celestialLongitude, uvCenter);
                 /*
                  * Reveal the object and update its texture transform.
                  */
-                Vector2f rotation = new Vector2f(1f, 0f); // TODO
-                topMaterial.setObjectTransform(objectIndex, uv, moonScale,
+                topMaterial.setObjectTransform(objectIndex, uvCenter, moonScale,
                         rotation);
             } else {
                 topMaterial.hideObject(objectIndex);
@@ -953,7 +992,6 @@ public class SkyControl
          * Convert world direction to mesh coordinates.
          */
         Vector2f uv = mesh.directionUV(worldDirection);
-
         if (uv == null) {
             /*
              * The sun is below the horizon, so hide it.
