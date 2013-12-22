@@ -26,6 +26,8 @@
 package jme3utilities;
 
 import com.jme3.math.FastMath;
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -117,6 +119,27 @@ public class MyMath {
     }
 
     /**
+     * Compute the product of two complex numbers or the composition of two
+     * scale-and-rotate vectors.
+     *
+     * @param a first complex number
+     * @param b second complex number
+     * @return a new vector
+     */
+    public static Vector2f complexProduct(Vector2f a, Vector2f b) {
+        if (a == null) {
+            throw new NullPointerException("vector a should not be null");
+        }
+        if (b == null) {
+            throw new NullPointerException("vector b should not be null");
+        }
+
+        float productX = a.x * b.x - a.y * b.y;
+        float productY = a.y * b.x + a.x * b.y;
+        return new Vector2f(productX, productY);
+    }
+
+    /**
      * Cube a single-precision value.
      *
      * @param fValue value to be cubed
@@ -189,6 +212,14 @@ public class MyMath {
     public static boolean isOdd(int iValue) {
         boolean result = (iValue % 2) != 0;
         return result;
+    }
+
+    /**
+     * Test whether a vector has length about equal to 1.
+     */
+    public static boolean isUnitVector(Vector2f vector) {
+        float norm = vector.length();
+        return 0.99f < norm && norm < 1.01f;
     }
 
     /**
@@ -336,12 +367,25 @@ public class MyMath {
     // test cases
 
     /**
-     * Console app to test the MyMath class.
+     * Console application to test the MyMath class.
      *
      * @param ignored
      */
     public static void main(String[] ignored) {
         System.out.print("Test results for class MyMath:\n\n");
+
+        Vector2f[] v2Cases = new Vector2f[]{new Vector2f(0f, 0f),
+            new Vector2f(1f, 0f),
+            new Vector2f(0f, 1f),
+            new Vector2f(0.6f, -0.8f)
+        };
+
+        for (Vector2f x : v2Cases) {
+            for (Vector2f y : v2Cases) {
+                System.out.printf("%s * %s = %s%n", x, y, complexProduct(x, y));
+            }
+            System.out.println();
+        }
 
         float h = hypotenuse(3f, 4f);
         System.out.printf("hypot(3,4)=%f%n", h);
