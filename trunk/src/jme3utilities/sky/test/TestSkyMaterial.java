@@ -146,7 +146,7 @@ public class TestSkyMaterial
 
         application.start();
         /*
-         * ... and onward to TestSkyMaterial.guiInitApp()!
+         * ... and onward to TestSkyMaterial.guiInitializeApplication()!
          */
     }
     // *************************************************************************
@@ -168,7 +168,10 @@ public class TestSkyMaterial
         /*
          * Create and initialize a material for the sky.
          */
-        SkyMaterial material = new SkyMaterial(assetManager);
+        int numObjects = 2;
+        int numLayers = 2;
+        SkyMaterial material = new SkyMaterial(assetManager, numObjects,
+                numLayers);
         geometry.setMaterial(material);
         material.initialize();
         material.addClouds(0);
