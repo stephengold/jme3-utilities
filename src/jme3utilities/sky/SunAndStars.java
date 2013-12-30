@@ -484,7 +484,7 @@ public class SunAndStars
     // test cases
 
     /**
-     * Console app to test this class.
+     * Console application to test this class.
      *
      * @param ignored
      */

@@ -37,10 +37,10 @@ import java.io.IOException;
 
 /**
  * A simplified abstract control.
- *
- * Although this is an abstract class, it implements all its required methods in
- * order to simplify the development of subclasses -- unlike AbstractControl.
- *
+ * <p>
+ * Although this is an abstract class, it defines all required methods in order
+ * to simplify the development of subclasses -- unlike AbstractControl.
+ * <p>
  * Each instance is enabled at creation.
  *
  * @author Stephen Gold <sgold@sonic.net>

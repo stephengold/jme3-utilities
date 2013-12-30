@@ -652,7 +652,7 @@ public class VectorXZ
     // test cases
 
     /**
-     * Console app to test the VectorXZ class.
+     * Console application to test the VectorXZ class.
      *
      * @param ignored
      */

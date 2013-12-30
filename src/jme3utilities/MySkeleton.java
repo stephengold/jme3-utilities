@@ -215,7 +215,7 @@ public class MySkeleton
     // test cases
 
     /**
-     * Console app to test the MySkeleton class.
+     * Simple application to test the MySkeleton class.
      *
      * @param ignored
      */
