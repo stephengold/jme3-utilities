@@ -109,7 +109,7 @@ class DefaultInputMode
         if (inputManager.hasMapping(exit)) {
             /*
              * Delete the mapping (probably added by SimpleApplication) in order
-             * to avoid a warning from InputManager.
+             * to avoid a warning from the input manager.
              */
             inputManager.deleteMapping(exit);
         }

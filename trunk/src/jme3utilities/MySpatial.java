@@ -547,7 +547,7 @@ public class MySpatial
     // test cases
 
     /**
-     * Console app to test the MySpatial class.
+     * Simple application to test the MySpatial class.
      *
      * @param ignored
      */

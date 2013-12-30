@@ -341,19 +341,16 @@ public class TestSkyControl
     /**
      * Callback when a view port is added, to apply shadows to the viewport.
      *
-     * @param viewPort
+     * @param viewPort (not null)
      */
     @Override
     public void addViewPort(ViewPort viewPort) {
         assert viewPort != null;
-
         addShadows(viewPort);
     }
 
     /**
      * Callback when a view port is removed. Does nothing.
-     *
-     * @param viewPort
      */
     @Override
     public void removeViewPort(ViewPort unused) {

@@ -210,7 +210,7 @@ public class MyString {
     // test cases
 
     /**
-     * Console app to test the MyString class.
+     * Console application to test the MyString class.
      *
      * @param ignored
      */

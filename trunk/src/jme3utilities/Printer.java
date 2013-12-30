@@ -43,8 +43,12 @@ import java.util.logging.Logger;
 
 /**
  * Dump portions of a JME3 scene graph for debugging.
- *
- * printSubtree() is the usual interface to this class.
+ * <p>
+ * printSubtree() is the usual interface to this class. The level of detail can
+ * be configured statically by means of flag constants.
+ * <p>
+ * The following forum post may be of interest:
+ * http://hub.jmonkeyengine.org/forum/topic/a-simple-node-tree-printer-to-html/
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
