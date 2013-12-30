@@ -643,7 +643,7 @@ public class SkyMaterial
             throw new IllegalArgumentException("scale should be positive");
         }
         if (newRotate != null) {
-            if (FastMath.abs(newRotate.lengthSquared() - 1f) > 1e-4) {
+            if (!MyMath.isUnitVector(newRotate)) {
                 logger.log(Level.SEVERE, "newRotate={0}", newRotate);
                 throw new IllegalArgumentException(
                         "rotation should be a unit vector");
