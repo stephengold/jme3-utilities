@@ -65,12 +65,12 @@ public class MyVector3f {
      */
     public static float altitude(Vector3f offset) {
         if (offset == null) {
-            throw new NullPointerException("direction should not be null");
+            throw new NullPointerException("offset should not be null");
         }
         if (isZeroLength(offset)) {
             logger.log(Level.SEVERE, "offset={0}", offset);
             throw new IllegalArgumentException(
-                    "direction should have positive length");
+                    "offset should have positive length");
         }
 
         float xzRange = MyMath.hypotenuse(offset.x, offset.z);
@@ -165,16 +165,16 @@ public class MyVector3f {
      * Rotate a vector CLOCKWISE about the +Y axis. Note: Used for applying
      * azimuths, which is why its rotation angle convention is non-standard.
      *
-     * @param vector input (not null, not altered)
-     * @param radians clockwise (LH) angle of rotation in radians
+     * @param input (not null, not altered)
+     * @param angle clockwise (LH) angle of rotation in radians
      * @return a new vector
      */
-    public static Vector3f yRotate(Vector3f vector, float radians) {
-        float cosine = FastMath.cos(radians);
-        float sine = FastMath.sin(radians);
-        float x = cosine * vector.x - sine * vector.z;
-        float y = vector.y;
-        float z = cosine * vector.z + sine * vector.x;
+    public static Vector3f yRotate(Vector3f input, float angle) {
+        float cosine = FastMath.cos(angle);
+        float sine = FastMath.sin(angle);
+        float x = cosine * input.x - sine * input.z;
+        float y = input.y;
+        float z = cosine * input.z + sine * input.x;
         Vector3f result = new Vector3f(x, y, z);
 
         return result;
@@ -183,7 +183,7 @@ public class MyVector3f {
     // test cases
 
     /**
-     * Console app to test the MyVector3f class.
+     * Console application to test the MyVector3f class.
      *
      * @param ignored
      */
