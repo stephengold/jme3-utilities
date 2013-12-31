@@ -112,7 +112,7 @@ public class SimpleGhostControl
     }
 
     /**
-     * De-serialize this control when loading from a JM3O file.
+     * De-serialize this control when loading from a J3O file.
      *
      * @param importer (not null)
      * @throws IOException TODO when?
@@ -141,7 +141,7 @@ public class SimpleGhostControl
     }
 
     /**
-     * Serialize this control when saving to a JM3O file.
+     * Serialize this control when saving to a J3O file.
      *
      * @param exporter (not null)
      * @throws IOException TODO when?

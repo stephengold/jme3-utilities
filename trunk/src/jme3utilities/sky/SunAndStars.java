@@ -43,8 +43,8 @@ import jme3utilities.MyMath;
 import jme3utilities.MySpatial;
 
 /**
- * Represent the orientations of the sun and stars relative to an observer on
- * Earth.
+ * The component of SkyControl which models the orientations of the sun and
+ * stars relative to an observer on Earth.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -447,7 +447,7 @@ public class SunAndStars
     // Savable methods
 
     /**
-     * De-serialize this instance when loading from a JM3O file.
+     * De-serialize this instance when loading from a J3O file.
      *
      * @param importer (not null)
      */
@@ -467,7 +467,7 @@ public class SunAndStars
     }
 
     /**
-     * Serialize this instance when saving to a JM3O file.
+     * Serialize this instance when saving to a J3O file.
      *
      * @param exporter (not null)
      */
@@ -484,7 +484,7 @@ public class SunAndStars
     // test cases
 
     /**
-     * Console application to test this class.
+     * A console application to test this class.
      *
      * @param ignored
      */
