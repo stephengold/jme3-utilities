@@ -622,7 +622,7 @@ public class VectorXZ
     // Savable methods
 
     /**
-     * De-serialize the vector when loading from a JM3O file.
+     * De-serialize the vector when loading from a J3O file.
      *
      * @param importer (not null)
      * @throws IOException TODO when?
@@ -636,7 +636,7 @@ public class VectorXZ
     }
 
     /**
-     * Serialize the vector when saving to a JM3O file.
+     * Serialize the vector when saving to a J3O file.
      *
      * @param exporter (not null)
      * @throws IOException TODO when?

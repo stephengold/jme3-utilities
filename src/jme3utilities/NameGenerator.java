@@ -146,14 +146,15 @@ public class NameGenerator
     // Savable methods
 
     /**
-     * De-serialize this name generator when loading from a JM3O file. TODO use
+     * De-serialize this name generator when loading from a J3O file. TODO use
      * readSavableArrayList
      *
      * @param importer
      * @throws IOException
      */
     @Override
-    public void read(JmeImporter importer) throws IOException {
+    public void read(JmeImporter importer)
+            throws IOException {
         InputCapsule capsule = importer.getCapsule(this);
         String allEncoded = capsule.readString("all", "");
         reset();
@@ -167,14 +168,15 @@ public class NameGenerator
     }
 
     /**
-     * Serialize this name generator when saving to a JM3O file. TODO use
+     * Serialize this name generator when saving to a J3O file. TODO use
      * writeSavableArrayList
      *
      * @param exporter
      * @throws IOException
      */
     @Override
-    public void write(JmeExporter exporter) throws IOException {
+    public void write(JmeExporter exporter)
+            throws IOException {
         StringBuilder allEncoded = new StringBuilder();
         for (Map.Entry<String, Integer> entry
                 : nextSequenceNumbers.entrySet()) {
