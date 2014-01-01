@@ -1,0 +1,110 @@
+#summary how to add SkyControl to an existing game
+
+== Introduction ==
+
+!SkyControl is a reusable sky simulation for jMonkeyEngine games.  Adding it to an existing game should be a simple five-step process:
+  # Add the JME3 Utilities Package JARs to the project.
+  # Disable any existing sky simulation which might interfere with !SkyControl.
+  # Add a !SkyControl instance to some node in the scene graph.
+  # Configure the !SkyControl instance.
+  # Enable the !SkyControl instance.
+
+To demonstrate this process, we'll apply it to !BasicGame.  I encourage you to follow along in your development environment.
+
+== Prerequisites ==
+
+You'll need:
+  * A development machine with Java and the JME3 SDK installed.
+  * A clean install of the JME3 Utilities Package.
+  * A clean instance of the !BasicGame project.
+
+Instructions installing the SDK and the JME3 Utilities Package can be found at https://code.google.com/p/jme3-utilities/wiki/Build
+
+To instantiate the !BasicGame Project:
+  * Open the "New Project" wizard in the IDE:
+    * Menu bar -> "File" -> "New Project..."
+  * Under "Categories:" select "JME3".
+  * Under "Projects:" select "!BasicGame".
+  * Click on the "Next >" button.
+  * For "Project Location:" specify a new folder on a local filesystem.
+  * Click on the "Finish" button.
+
+If you're unfamiliar with !BasicGame, you may wish to run it (and/or examine the source code) to see how it works before modifying it.
+  
+== Add the JME3 Utilities Package JARs to the project ==
+
+Two JARs are required: one for compiled classes and another for assets.
+ 
+  * Open the project's properties in the IDE:
+    * Right-click on the !BasicGame project (not its assets) in the "Projects" window.
+    * Select "Properties".
+  * Under "Categories:" select "Libraries".
+  * Click on the "Compile" tab.
+  * Click on the "Add JAR/Folder" button.
+  * Navigate to the folder where you installed the JME3 Utilities Package and then to the "dist" folder therein.
+  * Select the "jME3-utilities.jar" file.
+  * Click on the "Open" button.
+  * Click on the "Add JAR/Folder" button again.
+  * Navigate to the "lib" folder.
+  * Select the "jME3-utilities-assets.jar" file.
+  * Click on the "Open" button again.
+  * Click on the "OK" button.
+
+== Disable any existing sky simulation ==
+
+Since !BasicGame comes without any sky simulation -- just the default (black) viewport background -- there is nothing to remove.
+
+== Add a !SkyControl instance ==
+
+  * Open the "Main.java" source file in the IDE:
+    * In the "Projects" window, expand the "Source Packages" node under the !BasicGame project.
+    * Expand the "mygame" package under "Source Packages".
+    * Select "Main.java" file under the "mygame" package.
+    * Double-click to open the file.
+
+The scene graph of !BasicGame has only one node, the root node.  The root node is typically a good place to add !SkyControl.
+
+  * In the import section of "Main.java", add the following code:
+{{{
+   import jme3utilities.sky.SkyControl;
+}}}
+  * Scroll down to the simpleInitApp() method and insert the following code just before the final close-brace:
+{{{
+   SkyControl sc = new SkyControl(assetManager, cam, 0.9f, true, true);
+   rootNode.addControl(sc);
+}}}
+
+The parameters of the constructor are documented in the !JavaDoc for the !SkyControl class.
+
+== Configure the !SkyControl instance ==
+
+By default, !SkyControl simulates midnight on March 21st in Wiltshire, England, with no clouds and a full moon.  Instead, let's configure 6 a.m. on February 10th in San Francisco, with dense clouds:
+  * In the import section of "Main.java", add the following code:
+{{{
+   import com.jme3.math.FastMath;
+   import java.util.Calendar;
+}}}
+  * In simpleInitApp(), insert the following code just before the final close brace:
+{{{
+   sc.getSunAndStars().setHour(6f);
+   sc.getSunAndStars().setObserverLatitude(37.7833f * FastMath.DEG_TO_RAD);
+   sc.getSunAndStars().setSolarLongitude(Calendar.FEBRUARY, 10);
+   sc.setCloudiness(1f);
+}}}
+
+Other configuration methods are documented in the !JavaDoc for the !SkyControl, !SunAndStars, and Updater classes.
+  
+== Enable the !SkyControl instance ==
+
+Unlike most JME3 controls, !SkyControl instantiates in a disabled state. In order to see the sky, you must enable the control:
+  * In simpleInitApp(), insert the following code just before the final close-brace:
+{{{
+   sc.setEnabled(true);
+}}}
+
+== Next steps ==
+
+To test the modified !BasicGame, right-click in the "Main.java" editor window and select "Run File (Shift+F6)".
+
+For a demonstration of the more advanced features of !SkyControl,
+you may wish to study the !TestSkyControl class in the "jme3utilities.sky.test" package. 
