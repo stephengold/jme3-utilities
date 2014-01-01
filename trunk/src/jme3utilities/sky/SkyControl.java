@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -25,10 +25,7 @@
  */
 package jme3utilities.sky;
 
-import jme3utilities.ViewPortListener;
 import com.jme3.asset.AssetManager;
-import com.jme3.light.AmbientLight;
-import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -36,15 +33,11 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
-import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.shadow.AbstractShadowFilter;
-import com.jme3.shadow.AbstractShadowRenderer;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
@@ -64,9 +57,8 @@ import jme3utilities.SimpleControl;
  * <p>
  * The control is disabled at creation. When enabled, it attaches a "sky" node
  * to the controlled spatial, which must also be a node. For best results, place
- * the scene's main light, ambient light, and shadow filter/renderer under
- * simulation control by invoking setMainLight(), setAmbientLight(), and
- * setShadowFilter()/setShadowRenderer().
+ * the scene's main light, ambient light, and shadow filters/renderers under
+ * simulation control by adding them to the Updater.
  * <p>
  * The "top" dome is oriented so that its rim coincides with the horizon. The
  * top dome implements the sun, moon, clear sky color, and horizon haze. Object
@@ -87,8 +79,7 @@ import jme3utilities.SimpleControl;
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class SkyControl
-        extends SimpleControl
-        implements ViewPortListener {
+        extends SimpleControl {
     // *************************************************************************
     // constants
 
@@ -215,23 +206,6 @@ public class SkyControl
     // *************************************************************************
     // fields
     /**
-     * which shadow renderer to update (or null for none)
-     */
-    private AbstractShadowRenderer shadowRenderer = null;
-    /**
-     * which shadow filter to update (or null for none)
-     */
-    private AbstractShadowFilter shadowFilter = null;
-    /**
-     * which ambient light to update (or null for none)
-     */
-    private AmbientLight ambientLight = null;
-    /**
-     * viewports whose background colors are updated by this control - not
-     * serialized
-     */
-    final private ArrayList<ViewPort> viewPorts = new ArrayList<>();
-    /**
      * which asset manager to use for loading textures and material definitions:
      * set by constructor
      */
@@ -255,10 +229,6 @@ public class SkyControl
      * the application's camera: set by constructor
      */
     final private Camera camera;
-    /**
-     * which directional light to update (or null for none)
-     */
-    private DirectionalLight mainLight = null;
     /**
      * mesh used to generate dome geometries
      */
@@ -317,6 +287,10 @@ public class SkyControl
      * orientations of the sun and stars relative to the observer
      */
     final private SunAndStars sunAndStars = new SunAndStars();
+    /**
+     * which lights, shadows, and viewports to update
+     */
+    final private Updater updater = new Updater();
     // *************************************************************************
     // constructors
 
@@ -417,14 +391,12 @@ public class SkyControl
     }
 
     /**
-     * Save a reference to the scene's main ambient light. As long as the
-     * reference has a non-null value, this control will continuously update the
-     * light's color and intensity.
+     * Access the updater.
      *
-     * @param ambientLight the scene's main ambient light (or null for none)
+     * @return the pre-existing object
      */
-    public void setAmbientLight(AmbientLight ambientLight) {
-        this.ambientLight = ambientLight;
+    public Updater getUpdater() {
+        return updater;
     }
 
     /**
@@ -482,39 +454,6 @@ public class SkyControl
     public void setPhase(LunarPhase phase) {
         this.phase = phase;
     }
-
-    /**
-     * Save a reference to the scene's main directional light. As long as the
-     * reference has a non-null value, this control will continuously update the
-     * light's color and direction.
-     *
-     * @param mainLight the scene's main directional light (or null for none)
-     */
-    public void setMainLight(DirectionalLight mainLight) {
-        this.mainLight = mainLight;
-    }
-
-    /**
-     * Save a reference to the scene's shadow filter. As long as the reference
-     * has a non-null value, this control will continuously update the filter's
-     * shadow intensity.
-     *
-     * @param filter the scene's shadow filter (or null for none)
-     */
-    public void setShadowFilter(AbstractShadowFilter filter) {
-        this.shadowFilter = filter;
-    }
-
-    /**
-     * Save a reference to the scene's shadow renderer. As long as the reference
-     * has a non-null value, this control will continuously update the
-     * renderer's shadow intensity.
-     *
-     * @param renderer the scene's shadow renderer (or null for none)
-     */
-    public void setShadowRenderer(AbstractShadowRenderer renderer) {
-        this.shadowRenderer = renderer;
-    }
     // *************************************************************************
     // AbstractControl methods
 
@@ -540,7 +479,7 @@ public class SkyControl
         } else if (!enabled && newState) {
             if (node == null) {
                 throw new IllegalStateException(
-                        "cannot enable control until it's added to a node");
+                        "cannot enable control before it's added to a node");
             }
             /*
              * Attach the sky node to the controlled node.
@@ -591,41 +530,6 @@ public class SkyControl
         MySpatial.setWorldLocation(skyNode, cameraLocation);
 
         updateAll();
-    }
-    // *************************************************************************
-    // ViewportListener methods
-
-    /**
-     * Add a viewport to the list of viewports whose background colors are
-     * updated by this control. Note that the list is not serialized.
-     *
-     * @param viewPort (not null)
-     */
-    @Override
-    public void addViewPort(ViewPort viewPort) {
-        if (viewPort == null) {
-            throw new NullPointerException("view port should not be null");
-        }
-
-        viewPorts.add(viewPort);
-    }
-
-    /**
-     * Remove a viewport from the list of viewports whose background colors are
-     * updated by this control. Note that the list is not serialized.
-     *
-     * @param viewPort (not null)
-     */
-    @Override
-    public void removeViewPort(ViewPort viewPort) {
-        if (viewPort == null) {
-            throw new NullPointerException("view port should not be null");
-        }
-
-        boolean success = viewPorts.remove(viewPort);
-        if (!success) {
-            logger.log(Level.WARNING, "not removed");
-        }
     }
     // *************************************************************************
     // private methods
@@ -825,9 +729,6 @@ public class SkyControl
         if (bottomMaterial != null) {
             bottomMaterial.setColor("Color", baseColor);
         }
-        for (ViewPort viewPort : viewPorts) {
-            viewPort.setBackgroundColor(baseColor);
-        }
         /*
          * Each cloud layer gets a saturated version of the base color,
          * with its opacity equal to the sky's cloudiness.
@@ -888,50 +789,28 @@ public class SkyControl
             mainFactor *= cloudsTransmission;
         }
         main.multLocal(mainFactor);
-
-        if (mainLight != null) {
-            mainLight.setColor(main);
-            /*
-             * The direction of the main light is the direction in which it
-             * propagates, which is the opposite of the direction to the
-             * light source.
-             */
-            Vector3f lightDirection = mainDirection.negate();
-            mainLight.setDirection(lightDirection);
-        }
         /*
-         * Set ambient light based on the cloud color; its intensity is
+         * The ambient light color is based on the cloud color; its intensity is
          * modulated according to the "slack" left by strongest component
          * of the main light.
          */
         float slack = 1f - MyMath.max(main.r, main.g, main.b);
         assert slack >= 0f : slack;
         ColorRGBA ambient = cloudsColor.mult(slack);
-        if (ambientLight != null) {
-            ambientLight.setColor(ambient);
+        /*
+         * Compute shadow strength as the fraction of
+         * the total light which is directional.
+         */
+        float mainAmount = main.r + main.g + main.b;
+        float ambientAmount = ambient.r + ambient.g + ambient.b;
+        float totalAmount = mainAmount + ambientAmount;
+        float shadowStrength;
+        if (totalAmount > 0f) {
+            shadowStrength = mainAmount / totalAmount;
+        } else {
+            shadowStrength = alphaMin;
         }
-
-        if (shadowFilter != null || shadowRenderer != null) {
-            float mainAmount = main.r + main.g + main.b;
-            float ambientAmount = ambient.r + ambient.g + ambient.b;
-            float totalAmount = mainAmount + ambientAmount;
-            float shadowIntensity;
-            if (totalAmount > 0f) {
-                /*
-                 * Set shadow intensity equal to the fraction of
-                 * the total light which is directional.
-                 */
-                shadowIntensity = mainAmount / totalAmount;
-            } else {
-                shadowIntensity = alphaMin;
-            }
-            if (shadowFilter != null) {
-                shadowFilter.setShadowIntensity(shadowIntensity);
-            }
-            if (shadowRenderer != null) {
-                shadowRenderer.setShadowIntensity(shadowIntensity);
-            }
-        }
+        updater.update(ambient, baseColor, main, shadowStrength, mainDirection);
     }
 
     /**

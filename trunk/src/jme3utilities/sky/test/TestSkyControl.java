@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -51,6 +51,7 @@ import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
 import jme3utilities.ViewPortListener;
 import jme3utilities.WaterProcessor;
+import jme3utilities.sky.Updater;
 import jme3utilities.ui.GuiApplication;
 
 /**
@@ -184,8 +185,6 @@ public class TestSkyControl
         ambientLight = new AmbientLight();
         ambientLight.setName("ambient");
         sceneNode.addLight(ambientLight);
-
-        addShadows(viewPort);
         /*
          * Create, add, and enable the landscape.
          */
@@ -210,35 +209,35 @@ public class TestSkyControl
         control = new SkyControl(assetManager, cam, cloudFlattening, starMotion,
                 bottomDome);
         /*
-         * Put SkyControl in charge of the lights, shadows, and background.
+         * Put SkyControl in charge of updating the lights and background.
          * (all optional)
          */
-        control.addViewPort(viewPort);
-        control.setAmbientLight(ambientLight);
-        control.setMainLight(mainLight);
-        if (dlsf != null) {
-            control.setShadowFilter(dlsf);
-        }
-        if (dlsr != null) {
-            control.setShadowRenderer(dlsr);
-        }
+        Updater updater = control.getUpdater();
+        updater.addViewPort(viewPort);
+        updater.setAmbientLight(ambientLight);
+        updater.setMainLight(mainLight);
         /*
          * Add SkyControl to the scene and enable it.
          */
         sceneNode.addControl(control);
         control.setEnabled(true);
+        /*
+         * Add shadows to the main view port, with shadow intensities
+         * updated by SkyControl.
+         */
+        addShadows(viewPort);
 
         if (parameters.water()) {
             /*
              * Create a horizontal square of water and add it to the scene.
              *
              * During initialization of the water processor (on the first
-             * update), the processor will discover the SkyControl and put
+             * update), the processor will discover the SkyControl and put the
              * SkyControl in charge of the processor's background colors.
              */
             WaterProcessor wp = new WaterProcessor(assetManager);
             viewPort.addProcessor(wp);
-            wp.addListener(control);
+            wp.addListener(updater);
             wp.addListener(this);
             //wp.setDebug(true);
             wp.setDistortionMix(1f);
@@ -362,11 +361,12 @@ public class TestSkyControl
     /**
      * Add shadows to a view port, using either a filter or a renderer.
      *
-     * @param viewPort
+     * @param viewPort (not null)
      */
     private void addShadows(ViewPort viewPort) {
         assert viewPort != null;
 
+        Updater updater = control.getUpdater();
         if (parameters.shadowFilter()) {
             dlsf = new DirectionalLightShadowFilter(
                     assetManager, shadowMapSize, shadowMapSplits);
@@ -374,6 +374,7 @@ public class TestSkyControl
             dlsf.setLight(mainLight);
             FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
             fpp.addFilter(dlsf);
+            updater.addShadowFilter(dlsf);
             viewPort.addProcessor(fpp);
 
         } else {
@@ -381,6 +382,7 @@ public class TestSkyControl
                     assetManager, shadowMapSize, shadowMapSplits);
             dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
             dlsr.setLight(mainLight);
+            updater.addShadowRenderer(dlsr);
             viewPort.addProcessor(dlsr);
         }
     }
