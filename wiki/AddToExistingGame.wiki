@@ -2,7 +2,7 @@
 
 == Introduction ==
 
-!SkyControl is a reusable sky simulation for jMonkeyEngine games.  Adding it to an existing game should be a simple five-step process:
+!SkyControl is a reusable sky simulation for jMonkeyEngine games.  Adding it to an existing project should be a simple five-step process:
   # Add the JME3 Utilities Package JARs to the project.
   # Disable any existing sky simulation which might interfere with !SkyControl.
   # Add a !SkyControl instance to some node in the scene graph.
@@ -57,7 +57,8 @@ Since !BasicGame comes without any sky simulation -- just the default (black) vi
 == Add a !SkyControl instance ==
 
   * Open the "Main.java" source file in the IDE:
-    * In the "Projects" window, expand the "Source Packages" node under the !BasicGame project.
+    * In the "Projects" window, expand the !BasicGame project node.
+    * Expand the "Source Packages" node under the !BasicGame project.
     * Expand the "mygame" package under "Source Packages".
     * Select "Main.java" file under the "mygame" package.
     * Double-click to open the file.
