@@ -295,9 +295,8 @@ public class SkyControl
     // constructors
 
     /**
-     * Instantiate a disabled control for dense clouds moving at the standard
-     * speed, with full moon, no cloud modulation, no lights, no shadows, and no
-     * viewports.
+     * Instantiate a disabled control for no clouds, full moon, no cloud
+     * modulation, no lights, no shadows, and no viewports.
      *
      * @param assetManager for loading textures and material definitions (not
      * null)
