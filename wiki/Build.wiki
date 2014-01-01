@@ -8,6 +8,8 @@
    * an integrated development environment (IDE) based on !NetBeans, and
    * the Blender 3D application.
 
+The hardware and software requirements of the SDK are documented at http://hub.jmonkeyengine.org/wiki/doku.php/jme3:requirements
+
 == Source files ==
 
 Check out the JME3 Utilities Package source files using Subversion:
