@@ -315,6 +315,9 @@ public class TestSkyControl
         float cloudRate = hud.getCloudRate();
         control.setCloudRate(cloudRate);
 
+        float cloudYOffset = hud.getCloudYOffset();
+        control.setCloudYOffset(cloudYOffset);
+
         float hour = hud.getHour();
         control.getSunAndStars().setHour(hour);
 

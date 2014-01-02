@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,6 @@ package jme3utilities;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,8 +64,29 @@ public class MyMath {
     // new methods exposed
 
     /**
+     * Calculate the circle function sqrt(1 - x^2) for a double-precision value.
+     *
+     * @param abscissa (<=1, >=-1)
+     * @return the positive ordinate of the unit circle at the abscissa (<=1,
+     * >=0)
+     */
+    public static double circle(double abscissa) {
+        if (abscissa < -1.0 || abscissa > 1.0) {
+            logger.log(Level.SEVERE, "abscissa={0}", abscissa);
+            throw new IllegalArgumentException(
+                    "abscissa should be between -1 and 1, inclusive");
+        }
+
+        double y = Math.sqrt(1.0 - abscissa * abscissa);
+
+        assert y >= 0.0 : y;
+        assert y <= 1.0 : y;
+        return y;
+    }
+
+    /**
      * Calculate the circle function sqrt(1 - x^2) for a single-precision value.
-     * Double precision is used to reduce the risk of overflow.
+     * Double precision arithmetic is used to reduce the risk of overflow.
      *
      * @param abscissa (<=1, >=-1)
      * @return the positive ordinate of the unit circle at the abscissa (<=1,
@@ -80,7 +100,8 @@ public class MyMath {
         }
 
         double x = (double) abscissa;
-        float y = (float) Math.sqrt(1.0 - x * x);
+        float y = (float) circle(x);
+
         assert y >= 0f : y;
         assert y <= 1f : y;
         return y;
@@ -170,8 +191,22 @@ public class MyMath {
 
     /**
      * Calculate the discriminant (b^2 - 4*a*c) of a standard quadratic equation
-     * (a*x^2 + b*x + c). Double precision is used to reduce the risk of
-     * overflow.
+     * (a*x^2 + b*x + c).
+     *
+     * @param a coefficient of the square term
+     * @param b coefficient of the linear term
+     * @param c constant term
+     */
+    public static double discriminant(double a, double b, double c) {
+        double result = b * b - 4.0 * a * c;
+
+        return result;
+    }
+
+    /**
+     * Calculate the discriminant (b^2 - 4*a*c) of a standard quadratic equation
+     * (a*x^2 + b*x + c). Double precision arithmetic is used to reduce the risk
+     * of overflow.
      *
      * @param a coefficient of the square term
      * @param b coefficient of the linear term
@@ -181,7 +216,7 @@ public class MyMath {
         double aa = (double) a;
         double bb = (double) b;
         double cc = (double) c;
-        double result = bb * bb - 4.0 * aa * cc;
+        double result = discriminant(aa, bb, cc);
 
         return result;
     }
@@ -349,7 +384,7 @@ public class MyMath {
 
     /**
      * Calculate the sum-of-squares of two single-precision values. Double
-     * precision is used to reduce the risk of overflow.
+     * precision arithmetic is used to reduce the risk of overflow.
      *
      * @param firstValue
      * @param secondValue
