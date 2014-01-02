@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -45,8 +45,8 @@ import jme3utilities.TimeOfDay;
 import jme3utilities.sky.LunarPhase;
 
 /**
- * A simple screen controller for the heads-up display (HUD) of the
- * TestSkyControl application.
+ * A GUI screen controller for the heads-up display (HUD) of the TestSkyControl
+ * application.
  *
  * Each time this HUD is enabled, the flyby camera is disabled so that Nifty can
  * grab mouse events. If enableFlyby is true, the flyby camera will get
@@ -85,6 +85,11 @@ public class TestSkyControlHud
      * rate of motion of clouds (relative to standard rate)
      */
     private float cloudRate = 0f;
+    /**
+     * vertical offset of the clouds-only dome (fraction of dome height,
+     * <1, >=0)
+     */
+    private float cloudYOffset = 0f;
     /**
      * observer's latitude (radians north of equator, <=Pi/2, >=-Pi/2)
      */
@@ -160,9 +165,20 @@ public class TestSkyControlHud
     }
 
     /**
+     * Read the current vertical offset of the clouds-only dome.
+     *
+     * @return offset as a fraction of dome height (<1, >=0)
+     */
+    float getCloudYOffset() {
+        assert cloudYOffset >= 0f : cloudYOffset;
+        assert cloudYOffset < 1f : cloudYOffset;
+        return cloudYOffset;
+    }
+
+    /**
      * Read the current solar time.
      *
-     * @return hours since midnight (<24. >=0)
+     * @return hours since midnight (<24, >=0)
      */
     float getHour() {
         float hour = timeOfDay.getHour();
@@ -290,7 +306,7 @@ public class TestSkyControlHud
         cloudModulation = checkBox.isChecked();
 
         cloudRate = updateSlider("cloudRate");
-
+        cloudYOffset = updateSlider("cloudYOffset");
         lunarDiameter = updateLogSlider("diameter", 10f);
 
         float solarLongitudeDegrees = updateSlider("solarLong");

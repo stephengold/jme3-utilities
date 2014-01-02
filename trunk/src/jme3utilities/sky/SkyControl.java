@@ -386,6 +386,7 @@ public class SkyControl
      * @return the pre-existing object
      */
     public SunAndStars getSunAndStars() {
+        assert sunAndStars != null;
         return sunAndStars;
     }
 
@@ -395,6 +396,7 @@ public class SkyControl
      * @return the pre-existing object
      */
     public Updater getUpdater() {
+        assert updater != null;
         return updater;
     }
 
@@ -405,6 +407,7 @@ public class SkyControl
      */
     public void setCloudiness(float newAlpha) {
         if (newAlpha < alphaMin || newAlpha > alphaMax) {
+            logger.log(Level.SEVERE, "alpha={0}", newAlpha);
             throw new IllegalArgumentException(
                     "alpha should be between 0 and 1, inclusive");
         }
@@ -432,12 +435,37 @@ public class SkyControl
     }
 
     /**
+     * Alter the vertical position of the clouds-only dome. When the scene's
+     * horizon lies below the astronomical horizon, it may be helpful to depress
+     * the clouds-only dome.
+     * <p>
+     * This method is effective only when cloudFlattening > 0.
+     *
+     * @param newYOffset desired vertical offset as a fraction of the dome
+     * height (<1, >=0)
+     */
+    public void setCloudYOffset(float newYOffset) {
+        if (newYOffset < 0f || newYOffset >= 1f) {
+            logger.log(Level.SEVERE, "offset={0}", newYOffset);
+            throw new IllegalArgumentException(
+                    "offset should be between 0 and 1");
+        }
+        if (cloudsOnlyDome == null) {
+            throw new IllegalStateException("control has no clouds-only dome");
+        }
+
+        float deltaY = -newYOffset * cloudsOnlyDome.getLocalScale().y;
+        cloudsOnlyDome.setLocalTranslation(0f, deltaY, 0f);
+    }
+
+    /**
      * Alter the angular diameter of the moon.
      *
      * @param newDiameter (in radians, <Pi, >0)
      */
     public void setLunarDiameter(float newDiameter) {
         if (newDiameter <= 0f || newDiameter >= FastMath.PI) {
+            logger.log(Level.SEVERE, "diameter={0}", newDiameter);
             throw new IllegalArgumentException(
                     "diameter should be between 0 and Pi");
         }
@@ -541,16 +569,19 @@ public class SkyControl
      */
     private void createSpatials(float cloudFlattening) {
         /*
-         * Sky node serves as the parent for all sky geometries.
+         * A mesh which serves as a prototype for the dome geometries.
+         */
+        mesh = new DomeMesh(rimSamples, quadrantSamples);
+        /*
+         * A node which serves as the parent for the dome geometries.
          */
         skyNode = new Node("sky node");
         skyNode.setQueueBucket(Bucket.Sky);
         skyNode.setShadowMode(ShadowMode.Off);
         /*
-         * Attach domes to the sky node from the outside in so that they'll be
-         * rendered in that order.
+         * Attach dome geometries to the sky node from the outside in
+         * because they'll be rendered in that order.
          */
-        mesh = new DomeMesh(rimSamples, quadrantSamples);
         if (starMotionFlag) {
             northDome = new Geometry(northName, mesh);
             skyNode.attachChild(northDome);
@@ -587,12 +618,83 @@ public class SkyControl
             skyNode.attachChild(cloudsOnlyDome);
             /*
              * Flatten the clouds-only dome in order to foreshorten clouds
-             * near the horizon.
+             * near the horizon -- even if cloudYOffset=0.
              */
             float yScale = 1f - cloudFlattening;
             cloudsOnlyDome.setLocalScale(1f, yScale, 1f);
             cloudsOnlyDome.setMaterial(cloudsMaterial);
         }
+    }
+
+    /**
+     * Calculate where mainDirection intersects the cloud dome in the dome's
+     * local coordinates, accounting for the dome's flattening and vertical
+     * offset.
+     *
+     * @param mainDirection (unit vector with non-negative y-component)
+     * @return a new unit vector
+     */
+    private Vector3f intersectCloudDome(Vector3f mainDirection) {
+        assert mainDirection != null;
+        assert mainDirection.isUnitVector() : mainDirection;
+        assert mainDirection.y >= 0f : mainDirection;
+
+        double cosSquared = MyMath.sumOfSquares(mainDirection.x,
+                mainDirection.z);
+        if (cosSquared == 0.0) {
+            /*
+             * Special case when the main light is directly overhead.
+             */
+            return Vector3f.UNIT_Y.clone();
+        }
+
+        float deltaY;
+        float semiMinorAxis;
+        if (cloudsOnlyDome == null) {
+            deltaY = 0f;
+            semiMinorAxis = 1f;
+        } else {
+            Vector3f offset = cloudsOnlyDome.getLocalTranslation();
+            assert offset.x == 0f : offset;
+            assert offset.y <= 0f : offset;
+            assert offset.z == 0f : offset;
+            deltaY = offset.y;
+
+            Vector3f scale = cloudsOnlyDome.getLocalScale();
+            assert scale.x == 1f : scale;
+            assert scale.y > 0f : scale;
+            assert scale.z == 1f : scale;
+            semiMinorAxis = scale.y;
+        }
+        /*
+         * Solve for the most positive root of a quadratic equation
+         * in w = sqrt(x^2 + z^2).  Use double precision arithmetic.
+         */
+        double cosAltitude = Math.sqrt(cosSquared);
+        double tanAltitude = mainDirection.y / cosAltitude;
+        double smaSquared = semiMinorAxis * semiMinorAxis;
+        double a = tanAltitude * tanAltitude + smaSquared;
+        assert a > 0.0 : a;
+        double b = -2.0 * deltaY * tanAltitude;
+        double c = deltaY * deltaY - smaSquared;
+        double discriminant = MyMath.discriminant(a, b, c);
+        assert discriminant >= 0.0 : discriminant;
+        double w = (-b + Math.sqrt(discriminant)) / (2.0 * a);
+
+        double distance = w / cosAltitude;
+        if (distance > 1.0) {
+            /*
+             * Squash rounding errors.
+             */
+            distance = 1.0;
+        }
+        float x = (float) (mainDirection.x * distance);
+        float y = (float) MyMath.circle(w);
+        float z = (float) (mainDirection.z * distance);
+        Vector3f result = new Vector3f(x, y, z);
+
+        assert result.isUnitVector() : result;
+        return result;
     }
 
     /**
@@ -764,20 +866,7 @@ public class SkyControl
          */
         float mainFactor = MyMath.cubeRoot(mainDirection.y);
         if (cloudModulationFlag) {
-            /*
-             * Calculate where mainDirection intersects the cloud dome,
-             * in the dome's local coordinates.
-             */
-            float minorAxis = cloudsOnlyDome.getLocalScale().y
-                    / cloudsOnlyDome.getLocalScale().x;
-            float sinAltitude = mainDirection.y;
-            float cosAltitude = MyMath.circle(sinAltitude);
-            float distance = minorAxis / MyMath.hypotenuse(sinAltitude,
-                    cosAltitude * minorAxis);
-            float x = distance * mainDirection.x;
-            float z = distance * mainDirection.z;
-            float y = MyMath.sphere(x, z);
-            Vector3f intersection = new Vector3f(x, y, z);
+            Vector3f intersection = intersectCloudDome(mainDirection);
             /*
              * Calculate the texture coordinates of the cloud dome
              * at the point of intersection.
