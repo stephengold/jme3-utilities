@@ -65,6 +65,8 @@ public class MakeStarMaps {
     static class InvalidEntryException
             extends Exception {
 
+        static final long serialVersionUID = 1L;
+
         InvalidEntryException(String message) {
             super(message);
         }
@@ -76,6 +78,8 @@ public class MakeStarMaps {
      */
     static class InvalidMagnitudeException
             extends Exception {
+
+        static final long serialVersionUID = 1L;
     }
     // *************************************************************************
     // constants

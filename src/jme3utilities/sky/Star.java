@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  * @author Stephen Gold <sgold@sonic.net>
  */
 class Star
-        implements Comparable {
+        implements Comparable<Star> {
     // *************************************************************************
     // constants
 
@@ -140,34 +140,31 @@ class Star
     /**
      * Compare this star to another star.
      *
-     * @param object the other star
+     * @param other the other star
      * @return 0 if the stars are identical or not comparable
      */
     @Override
-    public int compareTo(Object object) {
-        if (object == null) {
+    public int compareTo(Star other) {
+        if (other == null) {
             throw new NullPointerException("object should not be null");
         }
-        
-        if (object instanceof Star) {
-            Star other = (Star) object;
 
-            if (apparentMagnitude < other.apparentMagnitude) {
-                return 1;
-            } else if (apparentMagnitude > other.apparentMagnitude) {
-                return -1;
-            }
-            if (rightAscension < other.rightAscension) {
-                return 1;
-            } else if (rightAscension > other.rightAscension) {
-                return -1;
-            }
-            if (declination < other.declination) {
-                return 1;
-            } else if (declination > other.declination) {
-                return -1;
-            }
+        if (apparentMagnitude < other.apparentMagnitude) {
+            return 1;
+        } else if (apparentMagnitude > other.apparentMagnitude) {
+            return -1;
         }
+        if (rightAscension < other.rightAscension) {
+            return 1;
+        } else if (rightAscension > other.rightAscension) {
+            return -1;
+        }
+        if (declination < other.declination) {
+            return 1;
+        } else if (declination > other.declination) {
+            return -1;
+        }
+
         return 0;
     }
     // *************************************************************************
@@ -179,7 +176,7 @@ class Star
     @Override
     public boolean equals(Object other) {
         if (other instanceof Star) {
-            return compareTo(other) == 0;
+            return compareTo((Star) other) == 0;
         }
         return false;
     }
