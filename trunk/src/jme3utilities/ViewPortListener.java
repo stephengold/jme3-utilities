@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -39,12 +39,12 @@ public interface ViewPortListener {
      *
      * @param viewPort (not null)
      */
-    public void addViewPort(ViewPort viewPort);
+    void addViewPort(ViewPort viewPort);
 
     /**
      * Notify the listener that a view port has been removed.
      *
      * @param viewPort (not null)
      */
-    public void removeViewPort(ViewPort viewPort);
+    void removeViewPort(ViewPort viewPort);
 }

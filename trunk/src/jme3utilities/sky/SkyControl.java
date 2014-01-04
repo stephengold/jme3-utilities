@@ -733,7 +733,7 @@ public class SkyControl
             Vector2f result = offset.normalize();
             return result;
         }
-        assert false : uvSouth;
+        assert false : south;
         return null;
     }
 
