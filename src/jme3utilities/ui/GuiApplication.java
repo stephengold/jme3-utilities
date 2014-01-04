@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -118,6 +118,15 @@ abstract public class GuiApplication
      * Callback to the user's application startup code.
      */
     abstract public void guiInitializeApplication();
+
+    /**
+     * Alter the effective speeds of all animations.
+     *
+     * @param newSpeed animation speed (paused=0, standard speed=1)
+     */
+    public void setSpeed(float newSpeed) {
+        speed = newSpeed;
+    }
     // *************************************************************************
     // ActionListener methods
 
