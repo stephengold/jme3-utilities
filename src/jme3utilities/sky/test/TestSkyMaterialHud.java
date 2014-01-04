@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -45,8 +45,8 @@ import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyMaterial;
 
 /**
- * A simple screen controller for the heads-up display (HUD) of the
- * TestSkyMaterial application.
+ * A GUI screen controller for the heads-up display (HUD) of the TestSkyMaterial
+ * application.
  *
  * Each time the HUD is enabled, the flyby camera is disabled so that Nifty can
  * grab the mouse pointer. If enableFlyby is true, the flyby camera will get

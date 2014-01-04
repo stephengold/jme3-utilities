@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -46,8 +46,6 @@ public interface OverlapListener {
      * @param localPoint the location of the overlap (rotated and translated to
      * the this control's object, but at world scale, not null)
      */
-    public void onOverlap(
-            PhysicsRigidBody overlappingBody,
-            Spatial overlappingSpatial,
+    void onOverlap(PhysicsRigidBody overlappingBody, Spatial overlappingSpatial,
             Vector3f localPoint);
 }
