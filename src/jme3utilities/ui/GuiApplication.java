@@ -34,9 +34,9 @@ import java.util.logging.Logger;
 import jme3utilities.MyString;
 
 /**
- * A simple application with a Nifty graphical user interface (GUI). By
- * extending this class, an application gets automatic initialization of Nifty
- * and easy access to the Nifty instance.
+ * A simple application with a Nifty graphical user interface (GUI). Extending
+ * this class (instead of SimpleApplication) provides automatic initialization
+ * of Nifty and easy access to the Nifty instance.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -122,9 +122,13 @@ abstract public class GuiApplication
     /**
      * Alter the effective speeds of all animations.
      *
-     * @param newSpeed animation speed (paused=0, standard speed=1)
+     * @param newSpeed animation speed (>0, standard speed=1)
      */
     public void setSpeed(float newSpeed) {
+        if (newSpeed <= 0f) {
+            logger.log(Level.SEVERE, "speed={0}", newSpeed);
+            throw new IllegalArgumentException("speed should be positive");
+        }
         speed = newSpeed;
     }
     // *************************************************************************
@@ -160,7 +164,9 @@ abstract public class GuiApplication
      */
     @Override
     public void simpleInitApp() {
+        assert defaultInputMode == null : defaultInputMode;
         assert niftyDisplay == null : niftyDisplay;
+        assert signals == null : signals;
         /*
          * Initialize hotkeys and signal tracker for modal hotkeys.
          */
