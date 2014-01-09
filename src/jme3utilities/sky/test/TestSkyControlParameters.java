@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,13 @@ class TestSkyControlParameters {
     // *************************************************************************
     // fields
     /**
+     * true means use high-resolution (16-megapixel) star maps; false means use
+     * default star maps
+     */
+    @Parameter(names = {"--high"},
+            description = "use high-resolution star maps")
+    private boolean highResStars = false;
+    /**
      * true means use a shadow filter; false means use a shadow renderer
      */
     @Parameter(names = {"-f", "--filter"},
@@ -71,6 +78,13 @@ class TestSkyControlParameters {
     private boolean water = false;
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Test whether the high-resolution star maps option was specified.
+     */
+    boolean highResStars() {
+        return highResStars;
+    }
 
     /**
      * Test whether the shadow filter option was specified.

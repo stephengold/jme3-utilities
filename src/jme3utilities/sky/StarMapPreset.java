@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -36,40 +36,24 @@ enum StarMapPreset {
     // *************************************************************************
     // values
 
-    NORTH, SOUTH, WILTSHIRE;
+    NORTH_4M, NORTH_16M, SOUTH_4M, SOUTH_16M, WILTSHIRE_4M;
     // *************************************************************************
     // new methods exposed
-
-    /**
-     * Look up the observer's latitude for this preset.
-     *
-     * @return radians north of the equator (>=-Pi/2, <=Pi/2)
-     */
-    float latitude() {
-        switch (this) {
-            case NORTH:
-                return FastMath.HALF_PI;
-            case SOUTH:
-                return -FastMath.HALF_PI;
-            case WILTSHIRE:
-                /*
-                 * Stonehenge
-                 */
-                return 51.1788f * FastMath.DEG_TO_RAD;
-        }
-        throw new IllegalStateException();
-    }
 
     /**
      * Look up the textual description of this preset.
      */
     String describe() {
         switch (this) {
-            case NORTH:
+            case NORTH_4M:
                 return "north";
-            case SOUTH:
+            case NORTH_16M:
+                return "north_16m";
+            case SOUTH_4M:
                 return "south";
-            case WILTSHIRE:
+            case SOUTH_16M:
+                return "south_16m";
+            case WILTSHIRE_4M:
                 return "wiltshire";
         }
         return "?";
@@ -96,10 +80,12 @@ enum StarMapPreset {
      */
     float hour() {
         switch (this) {
-            case NORTH:
-            case SOUTH:
+            case NORTH_4M:
+            case NORTH_16M:
+            case SOUTH_4M:
+            case SOUTH_16M:
                 return 0f;
-            case WILTSHIRE:
+            case WILTSHIRE_4M:
                 /*
                  * At 10h33m, Orion is about to set in the west and the
                  * Pointers of the Big Dipper are near the meridian.
@@ -110,16 +96,60 @@ enum StarMapPreset {
     }
 
     /**
+     * Look up the observer's latitude for this preset.
+     *
+     * @return radians north of the equator (>=-Pi/2, <=Pi/2)
+     */
+    float latitude() {
+        switch (this) {
+            case NORTH_4M:
+            case NORTH_16M:
+                return FastMath.HALF_PI;
+            case SOUTH_4M:
+            case SOUTH_16M:
+                return -FastMath.HALF_PI;
+            case WILTSHIRE_4M:
+                /*
+                 * Stonehenge
+                 */
+                return 51.1788f * FastMath.DEG_TO_RAD;
+        }
+        throw new IllegalStateException();
+    }
+
+    /**
      * Look up the name of the texture file corresponding to this preset.
      */
     String textureFileName() {
         switch (this) {
-            case NORTH:
+            case NORTH_4M:
                 return "northern";
-            case SOUTH:
+            case NORTH_16M:
+                return "16m/northern";
+            case SOUTH_4M:
                 return "southern";
-            case WILTSHIRE:
+            case SOUTH_16M:
+                return "16m/southern";
+            case WILTSHIRE_4M:
                 return "wiltshire";
+        }
+        throw new IllegalStateException();
+    }
+
+    /**
+     * Look up the texture resolution for this preset.
+     *
+     * @return size of the texture map (pixels per side)
+     */
+    int textureSize() {
+        switch (this) {
+            case NORTH_4M:
+            case SOUTH_4M:
+            case WILTSHIRE_4M:
+                return 2048;
+            case NORTH_16M:
+            case SOUTH_16M:
+                return 4096;
         }
         throw new IllegalStateException();
     }

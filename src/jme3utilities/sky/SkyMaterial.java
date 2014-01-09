@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -73,43 +73,10 @@ public class SkyMaterial
     // constants
 
     /**
-     * maximum value for opacity
-     */
-    final private static float alphaMax = 1f;
-    /**
      * default color of clear sky: pale blue
      */
     final private static ColorRGBA defaultClearColor =
-            new ColorRGBA(0.4f, 0.6f, 1f, alphaMax);
-    /**
-     * minimum value for opacity
-     */
-    final private static float alphaMin = 0f;
-    /**
-     * 1st (U) texture coordinate of the zenith
-     */
-    final static float topU = 0.5f;
-    /**
-     * 2nd (V) texture coordinate of the zenith
-     */
-    final static float topV = 0.5f;
-    /**
-     * maximum value for texture coordinates which do not wrap
-     */
-    final private static float uvMax = 1f;
-    /**
-     * minimum value for texture coordinates which do not wrap
-     */
-    final private static float uvMin = 0f;
-    /**
-     * UV distance from zenith to horizon (<0.5, >0)
-     */
-    final static float uvScale = 0.44f;
-    /**
-     * coefficient used to compute stretchFactor
-     */
-    final private static float stretchCoefficient =
-            (FastMath.HALF_PI - uvMax) / (uvScale * uvScale);
+            new ColorRGBA(0.4f, 0.6f, 1f, Constants.alphaMax);
     /**
      * message logger for this class
      */
@@ -358,7 +325,7 @@ public class SkyMaterial
         if (objectCenters[objectIndex] == null) {
             objectCenters[objectIndex] = new Vector2f();
             setObjectColor(objectIndex, ColorRGBA.White);
-            setObjectTransform(objectIndex, new Vector2f(topU, topV), 1f, null);
+            setObjectTransform(objectIndex, Constants.topUV, 1f, null);
         }
     }
 
@@ -440,8 +407,8 @@ public class SkyMaterial
             }
         }
 
-        assert result >= alphaMin : result;
-        assert result <= alphaMax : result;
+        assert result >= Constants.alphaMin : result;
+        assert result <= Constants.alphaMax : result;
         return result;
     }
 
@@ -484,7 +451,7 @@ public class SkyMaterial
      */
     public void initialize() {
         setClearColor(defaultClearColor);
-        setVector2("TopCoord", new Vector2f(topU, topV));
+        setVector2("TopCoord", Constants.topUV);
         /*
          * The default blend mode is "off".  Since this material may have
          * translucent regions, specify "alpha" blending.
@@ -653,20 +620,12 @@ public class SkyMaterial
             throw new IllegalStateException("object not yet added");
         }
 
-        float u = centerUV.x;
-        float v = centerUV.y;
-        if (u > uvMax || u < uvMin || v > uvMax || v < uvMin) {
-            logger.log(Level.SEVERE, "u={0}, v={1}", new Object[]{u, v});
-            throw new IllegalArgumentException(
-                    "texture coordinates should be between 0 and 1, inclusive");
-        }
-
         String objectParameterName =
                 String.format("Object%dCenter", objectIndex);
         setVector2(objectParameterName, centerUV);
         objectCenters[objectIndex].set(centerUV);
 
-        Vector2f offset = new Vector2f(u - topU, v - topV);
+        Vector2f offset = centerUV.subtract(Constants.topUV);
         float topDist = offset.length();
         /*
          * The texture coordinate transforms are broken into pairs of
@@ -687,7 +646,8 @@ public class SkyMaterial
             tU.set(b, -a);
             tV.set(a, b);
 
-            float stretchFactor = 1f + stretchCoefficient * topDist * topDist;
+            float stretchFactor = 1f
+                    + Constants.stretchCoefficient * topDist * topDist;
             tU.divideLocal(stretchFactor);
 
             if (newRotate != null) {
@@ -819,14 +779,14 @@ public class SkyMaterial
 
         Vector2f coord = skyCoordinates.mult(cloudScales[layerIndex]);
         coord.addLocal(cloudOffsets[layerIndex]);
-        coord.x = MyMath.modulo(coord.x, uvMax);
-        coord.y = MyMath.modulo(coord.y, uvMax);
+        coord.x = MyMath.modulo(coord.x, Constants.uvMax);
+        coord.y = MyMath.modulo(coord.y, Constants.uvMax);
         float opacity = sampleRed(cloudsRaster[layerIndex], coord);
         opacity *= cloudAlphas[layerIndex];
-        float result = alphaMax - opacity;
+        float result = Constants.alphaMax - opacity;
 
-        assert result >= alphaMin : result;
-        assert result <= alphaMax : result;
+        assert result >= Constants.alphaMin : result;
+        assert result <= Constants.alphaMax : result;
         return result;
     }
 
@@ -923,10 +883,10 @@ public class SkyMaterial
         assert uv != null;
         float u = uv.x;
         float v = uv.y;
-        assert u >= uvMin : uv;
-        assert u < uvMax : uv;
-        assert v >= uvMin : uv;
-        assert v < uvMax : uv;
+        assert u >= Constants.uvMin : uv;
+        assert u < Constants.uvMax : uv;
+        assert v >= Constants.uvMin : uv;
+        assert v < Constants.uvMax : uv;
 
         int width = colorImage.getWidth();
         float x = u * width;
@@ -956,8 +916,8 @@ public class SkyMaterial
                 + r10 * xFraction1 * yFraction0
                 + r11 * xFraction1 * yFraction1;
 
-        assert result >= alphaMin : result;
-        assert result <= alphaMax : result;
+        assert result >= Constants.alphaMin : result;
+        assert result <= Constants.alphaMax : result;
         return result;
     }
 }
