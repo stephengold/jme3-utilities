@@ -84,42 +84,34 @@ public class SkyControl
     // constants
 
     /**
-     * maximum value for any opacity
-     */
-    final static float alphaMax = 1f;
-    /**
      * base color of the daytime sky: pale blue
      */
     final private static ColorRGBA colorDay =
-            new ColorRGBA(0.4f, 0.6f, 1f, alphaMax);
+            new ColorRGBA(0.4f, 0.6f, 1f, Constants.alphaMax);
     /**
      * light color and intensity for full moonlight: bluish gray
      */
     final private static ColorRGBA moonLight =
-            new ColorRGBA(0.4f, 0.4f, 0.6f, alphaMax);
+            new ColorRGBA(0.4f, 0.4f, 0.6f, Constants.alphaMax);
     /**
      * light color and intensity for moonless night: nearly black
      */
     final private static ColorRGBA starLight =
-            new ColorRGBA(0.03f, 0.03f, 0.03f, alphaMax);
+            new ColorRGBA(0.03f, 0.03f, 0.03f, Constants.alphaMax);
     /**
      * light color and intensity for full sunlight: yellowish white
      */
     final private static ColorRGBA sunLight =
-            new ColorRGBA(0.8f, 0.8f, 0.75f, alphaMax);
+            new ColorRGBA(0.8f, 0.8f, 0.75f, Constants.alphaMax);
     /**
      * color blended in around sunrise and sunset: ruddy orange
      */
     final private static ColorRGBA twilight =
-            new ColorRGBA(0.8f, 0.4f, 0.2f, alphaMax);
-    /**
-     * minimum value for opacity
-     */
-    final static float alphaMin = 0f;
+            new ColorRGBA(0.8f, 0.4f, 0.2f, Constants.alphaMax);
     /**
      * U-component of the initial offset of each cloud layer
      */
-    final private static float[] layerU0 = {0.4f, DomeMesh.uvMin};
+    final private static float[] layerU0 = {0.4f, Constants.uvMin};
     /**
      * U-component of the standard motion of each cloud layer (cycles per
      * second)
@@ -128,7 +120,7 @@ public class SkyControl
     /**
      * V-component of the initial offset of each cloud layer
      */
-    final private static float[] layerV0 = {0.3f, DomeMesh.uvMin};
+    final private static float[] layerV0 = {0.3f, Constants.uvMin};
     /**
      * V-component of the standard motion of each cloud layer (cycles per
      * second)
@@ -186,19 +178,9 @@ public class SkyControl
      */
     final private static String cloudsName = "clouds";
     /**
-     * asset path of the northern sky texture map
-     */
-    final private static String northAssetPath =
-            "Textures/skies/star-maps/northern.png";
-    /**
      * name for the northern sky geometry
      */
     final private static String northName = "north";
-    /**
-     * asset path of the southern sky texture map
-     */
-    final private static String southAssetPath =
-            "Textures/skies/star-maps/southern.png";
     /**
      * name for the southern sky geometry
      */
@@ -374,6 +356,9 @@ public class SkyControl
         }
 
         createSpatials(cloudFlattening);
+        if (starMotionFlag) {
+            setStarMaps("Textures/skies/star-maps");
+        }
 
         assert !isEnabled();
     }
@@ -406,7 +391,7 @@ public class SkyControl
      * @param newAlpha desired opacity of the cloud layers (<=1, >=0)
      */
     public void setCloudiness(float newAlpha) {
-        if (newAlpha < alphaMin || newAlpha > alphaMax) {
+        if (newAlpha < Constants.alphaMin || newAlpha > Constants.alphaMax) {
             logger.log(Level.SEVERE, "alpha={0}", newAlpha);
             throw new IllegalArgumentException(
                     "alpha should be between 0 and 1, inclusive");
@@ -480,6 +465,29 @@ public class SkyControl
      */
     public void setPhase(LunarPhase phase) {
         this.phase = phase;
+    }
+
+    /**
+     * Alter the star maps. Requires starMotion=true.
+     *
+     * @param folderPath asset folder containing the starry sky textures (not
+     * null)
+     */
+    final public void setStarMaps(String folderPath) {
+        if (folderPath == null) {
+            throw new NullPointerException("path should not be null");
+        }
+        if (!starMotionFlag) {
+            throw new IllegalStateException("can't alter star maps");
+        }
+
+        String path = String.format("%s/%sern.png", folderPath, northName);
+        Material north = Misc.createUnshadedMaterial(assetManager, path);
+        northDome.setMaterial(north);
+
+        path = String.format("%s/%sern.png", folderPath, southName);
+        Material south = Misc.createUnshadedMaterial(assetManager, path);
+        southDome.setMaterial(south);
     }
     // *************************************************************************
     // AbstractControl methods
@@ -585,15 +593,9 @@ public class SkyControl
         if (starMotionFlag) {
             northDome = new Geometry(northName, mesh);
             skyNode.attachChild(northDome);
-            Material north = Misc.createUnshadedMaterial(assetManager,
-                    northAssetPath);
-            northDome.setMaterial(north);
 
             southDome = new Geometry(southName, mesh);
             skyNode.attachChild(southDome);
-            Material south = Misc.createUnshadedMaterial(assetManager,
-                    southAssetPath);
-            southDome.setMaterial(south);
         }
 
         Geometry topDome = new Geometry("top", mesh);
@@ -896,7 +898,7 @@ public class SkyControl
         if (totalAmount > 0f) {
             shadowStrength = mainAmount / totalAmount;
         } else {
-            shadowStrength = alphaMin;
+            shadowStrength = Constants.alphaMin;
         }
         updater.update(ambient, baseColor, main, shadowStrength, mainDirection);
     }

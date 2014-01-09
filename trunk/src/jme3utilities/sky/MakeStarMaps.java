@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -84,10 +84,6 @@ public class MakeStarMaps {
     // *************************************************************************
     // constants
     /**
-     * luminosity of a magnitude-0 star
-     */
-    final private static float luminosity0 = 37f;
-    /**
      * luminosity of the faintest stars to include
      */
     final private static float luminosityCutoff = 0.1f;
@@ -125,9 +121,17 @@ public class MakeStarMaps {
      */
     final private static int maxSeconds = 60;
     /**
-     * size of the texture map (pixels per side)
+     * number of points per ellipse
      */
-    final private static int textureSize = 2048;
+    final private static int ellipseNumPoints = 32;
+    /**
+     * x-coordinates used to draw an ellipse
+     */
+    final private static int[] ellipseXs = new int[ellipseNumPoints];
+    /**
+     * y-coordinates used to draw an ellipse
+     */
+    final private static int[] ellipseYs = new int[ellipseNumPoints];
     /**
      * message logger for this class
      */
@@ -249,8 +253,12 @@ public class MakeStarMaps {
         float siderealHour = preset.hour();
         logger.log(Level.INFO, "sidereal time is {0} hours", siderealHour);
 
-        RenderedImage image = generateMap(latitude, siderealHour);
-        String filePath = String.format("assets/Textures/skies/star-maps/%s.png",
+        int textureSize = preset.textureSize();
+        logger.log(Level.INFO, "resolution is {0} pixels", textureSize);
+
+        RenderedImage image = generateMap(latitude, siderealHour, textureSize);
+        String filePath = String.format(
+                "assets/Textures/skies/star-maps/%s.png",
                 preset.textureFileName());
         try {
             Misc.writeMap(filePath, image);
@@ -262,16 +270,18 @@ public class MakeStarMaps {
     /**
      * Generate a starry sky texture map.
      *
-     * @param latitude radians north of the equator (>=-Pi/2, <=Pi/2)
-     *
-     * @param siderealTime hours since sidereal midnight (>=0, <24)
+     * @param latitude radians north of the equator (<=Pi/2, >=-Pi/2)
+     * @param siderealTime hours since sidereal midnight (<24, >=0)
+     * @param textureSize size of the texture map (pixels per side, >2)
      * @return a new instance
      */
-    private RenderedImage generateMap(float latitude, float siderealHour) {
+    private RenderedImage generateMap(float latitude, float siderealHour,
+            int textureSize) {
         assert latitude >= -FastMath.HALF_PI : latitude;
         assert latitude <= FastMath.HALF_PI : latitude;
         assert siderealHour >= 0f : siderealHour;
         assert siderealHour < SkyControl.hoursPerDay : siderealHour;
+        assert textureSize > 2 : textureSize;
         /*
          * Create a blank, grayscale buffered image for the texture map.
          */
@@ -286,7 +296,8 @@ public class MakeStarMaps {
          */
         int plotCount = 0;
         for (Star star : stars) {
-            boolean success = plotStar(map, star, latitude, siderealTime);
+            boolean success = plotStar(map, star, latitude, siderealTime,
+                    textureSize);
             if (success) {
                 plotCount++;
             }
@@ -392,23 +403,77 @@ public class MakeStarMaps {
     }
 
     /**
+     * Draw an ellipse -- a circle stretched to compensate for UV distortion
+     * near the rim of the dome.
+     *
+     * @param map which texture map (not null)
+     * @param luminosity the star's relative luminosity (>0)
+     * @param textureSize size of the texture map (pixels per side, >2)
+     * @param uv the star's texture coordinates (not null)
+     * @return true if the star was successfully plotted, otherwise false
+     */
+    private void plotEllipse(BufferedImage map, float luminosity,
+            int textureSize, Vector2f uv) {
+        assert luminosity > 0f : luminosity;
+        assert textureSize > 2 : textureSize;
+        assert uv != null;
+        float u = uv.x;
+        float v = uv.y;
+        assert u >= Constants.uvMin : u;
+        assert u <= Constants.uvMax : u;
+        assert v >= Constants.uvMin : v;
+        assert v <= Constants.uvMax : v;
+
+        Vector2f offset = uv.subtract(Constants.topUV);
+        float topDist = offset.length();
+        float xDir, yDir;
+        if (topDist > 0f) {
+            xDir = offset.x / topDist;
+            yDir = offset.y / topDist;
+        } else {
+            xDir = 1f;
+            yDir = 0f;
+        }
+        float stretchFactor = 1f
+                + Constants.stretchCoefficient * topDist * topDist;
+        float a = FastMath.sqrt(luminosity * stretchFactor / FastMath.PI);
+        float b = a / stretchFactor;
+
+        for (int i = 0; i < ellipseNumPoints; i++) {
+            float theta = FastMath.TWO_PI * i / (float) ellipseNumPoints;
+            float da = a * FastMath.cos(theta);
+            float db = b * FastMath.sin(theta);
+            float dx = db * xDir + da * yDir;
+            float dy = db * yDir - da * xDir;
+            int x = Math.round(u * textureSize + dx);
+            int y = Math.round(v * textureSize + dy);
+            ellipseXs[i] = x;
+            ellipseYs[i] = y;
+        }
+        Graphics2D graphics = map.createGraphics();
+        graphics.setColor(Color.WHITE); // TODO
+        graphics.fillPolygon(ellipseXs, ellipseYs, ellipseNumPoints);
+    }
+
+    /**
      * Plot a star's position at a particular time onto a texture map.
      *
      * @param map which texture map (not null)
      * @param star which star to plot (not null)
-     * @param latitude radians north of the equator (>=-Pi/2, <=Pi/2)
-     *
-     * @param siderealTime radians since sidereal midnight (>=0, <2*Pi)
+     * @param latitude radians north of the equator (<=Pi/2, >=-Pi/2)
+     * @param siderealTime radians since sidereal midnight (<2*Pi, >=0)
+     * @param textureSize size of the texture map (pixels per side, >2)
      * @return true if the star was successfully plotted, otherwise false
      */
     private boolean plotStar(BufferedImage map, Star star, float latitude,
-            float siderealTime) {
+            float siderealTime, int textureSize) {
         assert map != null;
         assert star != null;
         assert latitude >= -FastMath.HALF_PI : latitude;
         assert latitude <= FastMath.HALF_PI : latitude;
         assert siderealTime >= 0f : siderealTime;
         assert siderealTime < FastMath.TWO_PI : siderealTime;
+        assert textureSize > 2 : textureSize;
 
         Vector3f equatorial = star.getEquatorialLocation(siderealTime);
         /*
@@ -434,7 +499,7 @@ public class MakeStarMaps {
         Vector3f world = new Vector3f(-rotated.x, rotated.z, rotated.y);
 
         float apparentMagnitude = star.getApparentMagnitude();
-        boolean success = plotStar(map, apparentMagnitude, world);
+        boolean success = plotStar(map, apparentMagnitude, textureSize, world);
 
         return success;
     }
@@ -444,17 +509,21 @@ public class MakeStarMaps {
      *
      * @param map which texture map (not null)
      * @param apparentMagnitude the star's brightness
+     * @param textureSize size of the texture map (pixels per side, >2)
      * @param worldDirection the star's world coordinates (unit vector)
      * @return true if the star was successfully plotted, otherwise false
      */
     private boolean plotStar(BufferedImage map, float apparentMagnitude,
-            Vector3f worldDirection) {
+            int textureSize, Vector3f worldDirection) {
         assert map != null;
         assert worldDirection != null;
         assert worldDirection.isUnitVector() : worldDirection;
+        assert textureSize > 2 : textureSize;
         /*
          * Convert apparent magnitude to relative luminosity.
          */
+        float resolution = ((float) textureSize) / 2048f;
+        float luminosity0 = 37f * resolution * resolution;
         float luminosity = luminosity0
                 * FastMath.pow(pogsonsRatio, -apparentMagnitude);
         if (luminosity < luminosityCutoff) {
@@ -465,26 +534,33 @@ public class MakeStarMaps {
          */
         Vector2f uv = mesh.directionUV(worldDirection);
 
-        boolean success = plotStar(map, luminosity, uv);
-        return success;
+        if (luminosity <= 37f) {
+            boolean success = plot4PointStar(map, luminosity, textureSize, uv);
+            return success;
+        }
+        plotEllipse(map, luminosity, textureSize, uv);
+        return true;
     }
 
     /**
-     * Plot a star on a texture map.
+     * Plot a four-pointed star shape on a texture map.
      *
      * @param map which texture map (not null)
      * @param luminosity the star's relative luminosity (>0, <=37)
+     * @param textureSize size of the texture map (pixels per side, >2)
      * @param uv the star's texture coordinates (not null)
      * @return true if the star was successfully plotted, otherwise false
      */
-    private boolean plotStar(BufferedImage map, float luminosity, Vector2f uv) {
+    private boolean plot4PointStar(BufferedImage map, float luminosity,
+            int textureSize, Vector2f uv) {
         assert luminosity > 0f : luminosity;
         assert luminosity <= 37f : luminosity;
+        assert textureSize > 2 : textureSize;
         assert uv != null;
         /*
          * Convert the star's luminosity into a shape and pixel color.
          *
-         * The shape must be big enough that the pixels will not be
+         * The shape must be big enough to ensure that the pixels will not be
          * oversaturated. For instance, a star with luminosity=4.1
          * must fill at least 5 pixels.
          */
@@ -541,10 +617,10 @@ public class MakeStarMaps {
          */
         float u = uv.x;
         float v = uv.y;
-        assert u >= DomeMesh.uvMin : u;
-        assert u <= DomeMesh.uvMax : u;
-        assert v >= DomeMesh.uvMin : v;
-        assert v <= DomeMesh.uvMax : v;
+        assert u >= Constants.uvMin : u;
+        assert u <= Constants.uvMax : u;
+        assert v >= Constants.uvMin : v;
+        assert v <= Constants.uvMax : v;
         float cornerOffset = 0.5f * (squareSize - 1);
         int x = Math.round(u * textureSize - cornerOffset);
         int y = Math.round(v * textureSize - cornerOffset);

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -62,14 +62,6 @@ public class DomeMesh
     // constants
 
     /**
-     * maximum value for texture coordinates which do not wrap
-     */
-    final public static float uvMax = 1f;
-    /**
-     * minimum value for texture coordinates which do not wrap
-     */
-    final public static float uvMin = 0f;
-    /**
      * number of vertices per triangle
      */
     final private static int vpt = 3;
@@ -130,8 +122,8 @@ public class DomeMesh
      * @param quadrantSamples number of samples from top to rim, inclusive (>=2)
      */
     public DomeMesh(int rimSamples, int quadrantSamples) {
-        this(rimSamples, quadrantSamples, SkyMaterial.topU, SkyMaterial.topV,
-                SkyMaterial.uvScale, true);
+        this(rimSamples, quadrantSamples, Constants.topU, Constants.topV,
+                Constants.uvScale, true);
     }
 
     /**
@@ -163,14 +155,14 @@ public class DomeMesh
         }
         this.quadrantSamples = quadrantSamples;
 
-        if (topU < uvMin || topU > uvMax) {
+        if (topU < Constants.uvMin || topU > Constants.uvMax) {
             logger.log(Level.SEVERE, "topU={0}", topU);
             throw new IllegalArgumentException(
                     "topU should be between 0 and 1, inclusive");
         }
         this.topU = topU;
 
-        if (topV < uvMin || topV > uvMax) {
+        if (topV < Constants.uvMin || topV > Constants.uvMax) {
             logger.log(Level.SEVERE, "topV={0}", topV);
             throw new IllegalArgumentException(
                     "topV should be between 0 and 1, inclusive");
@@ -226,7 +218,8 @@ public class DomeMesh
         float sinLongitude = z / xzDistance;
         float u = topU + uvDistance * cosLongitude;
         float v = topV - uvDistance * sinLongitude;
-        if (u < uvMin || u > uvMax || v < uvMin || v > uvMax) {
+        if (u < Constants.uvMin || u > Constants.uvMax || v < Constants.uvMin
+                || v > Constants.uvMax) {
             return null;
         }
         return new Vector2f(u, v);
@@ -241,7 +234,8 @@ public class DomeMesh
      * @return angle in radians (<=Pi/2)
      */
     public float elevationAngle(float u, float v) {
-        if (u > uvMax || u < uvMin || v > uvMax || v < uvMin) {
+        if (u > Constants.uvMax || u < Constants.uvMin || v > Constants.uvMax
+                || v < Constants.uvMin) {
             logger.log(Level.SEVERE, "u={0}, v={1}", new Object[]{u, v});
             throw new IllegalArgumentException(
                     "texture coordinates should be between 0 and 1, inclusive");
@@ -272,9 +266,9 @@ public class DomeMesh
         inwardFacing = capsule.readBoolean("inwardFacing", true);
         quadrantSamples = capsule.readInt("quadrantSamples", 2);
         rimSamples = capsule.readInt("rimSamples", 3);
-        topU = capsule.readFloat("topU", SkyMaterial.topU);
-        topV = capsule.readFloat("topV", SkyMaterial.topV);
-        uvScale = capsule.readFloat("uvScale", SkyMaterial.uvScale);
+        topU = capsule.readFloat("topU", Constants.topU);
+        topV = capsule.readFloat("topV", Constants.topV);
+        uvScale = capsule.readFloat("uvScale", Constants.uvScale);
         /*
          * cached values
          */
@@ -299,9 +293,9 @@ public class DomeMesh
         capsule.write(inwardFacing, "inwardFacing", true);
         capsule.write(quadrantSamples, "quadrantSamples", 2);
         capsule.write(rimSamples, "rimSamples", 3);
-        capsule.write(topU, "topU", SkyMaterial.topU);
-        capsule.write(topV, "topV", SkyMaterial.topV);
-        capsule.write(uvScale, "uvScale", SkyMaterial.uvScale);
+        capsule.write(topU, "topU", Constants.topU);
+        capsule.write(topV, "topV", Constants.topV);
+        capsule.write(uvScale, "uvScale", Constants.uvScale);
     }
     // *************************************************************************
     // private methods

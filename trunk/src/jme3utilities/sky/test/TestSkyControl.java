@@ -204,10 +204,13 @@ public class TestSkyControl
         } else {
             cloudFlattening = 0.9f; // overhead clouds 10x closer than horizon
             starMotion = true; // allow stars to move
-            bottomDome = true; // helpful in case scene has a low horizon
+            bottomDome = true; // helpful in case the scene has a low horizon
         }
         control = new SkyControl(assetManager, cam, cloudFlattening, starMotion,
                 bottomDome);
+        if (parameters.highResStars() && !parameters.singleDome()) {
+            control.setStarMaps("Textures/skies/star-maps/16m");
+        }
         /*
          * Put SkyControl in charge of updating the lights and background.
          * (all optional)

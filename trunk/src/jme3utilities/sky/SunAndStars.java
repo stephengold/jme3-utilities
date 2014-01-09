@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -54,10 +54,6 @@ public class SunAndStars
     // constants
 
     /**
-     * default observer's latitude (radians north of the equator)
-     */
-    final public static float defaultLatitude = 51.1788f * FastMath.DEG_TO_RAD;
-    /**
      * obliquity of the ecliptic, in radians
      */
     final private static float obliquity = 23.44f * FastMath.DEG_TO_RAD;
@@ -83,7 +79,7 @@ public class SunAndStars
     /**
      * the observer's latitude (radians north of the equator)
      */
-    private float observerLatitude = defaultLatitude;
+    private float observerLatitude = Constants.defaultLatitude;
     /**
      * celestial longitude of the sun (radians east of the vernal equinox,
      * <2*Pi, >=0)
@@ -459,7 +455,8 @@ public class SunAndStars
         float value = capsule.readFloat("hour", 0f);
         setHour(value);
 
-        value = capsule.readFloat("observerLatitude", defaultLatitude);
+        value = capsule.readFloat("observerLatitude",
+                Constants.defaultLatitude);
         setObserverLatitude(value);
 
         value = capsule.readFloat("solarLongitude", 0f);
@@ -477,7 +474,8 @@ public class SunAndStars
         OutputCapsule capsule = exporter.getCapsule(this);
 
         capsule.write(hour, "hour", 0f);
-        capsule.write(observerLatitude, "observerLatitude", defaultLatitude);
+        capsule.write(observerLatitude, "observerLatitude",
+                Constants.defaultLatitude);
         capsule.write(solarLongitude, "observerLatitude", 0f);
     }
     // *************************************************************************
