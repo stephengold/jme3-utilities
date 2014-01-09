@@ -79,7 +79,7 @@ The parameters of the constructor are documented in the !JavaDoc for the !SkyCon
 
 == Configure the !SkyControl instance ==
 
-By default, !SkyControl simulates midnight on March 21st in Wiltshire, England, with no clouds and a full moon.  Instead, let's configure 6 a.m. on February 10th in San Francisco, with dense clouds:
+By default, !SkyControl simulates midnight on March 21st in Wiltshire, England, with no clouds and a full moon.  Instead, let's configure 6 a.m. on February 10th in Sunnyvale, California with dense clouds:
   * In the import section of "Main.java", add the following code:
 {{{
    import com.jme3.math.FastMath;
@@ -88,7 +88,7 @@ By default, !SkyControl simulates midnight on March 21st in Wiltshire, England, 
   * In simpleInitApp(), insert the following code just before the final close brace:
 {{{
    sc.getSunAndStars().setHour(6f);
-   sc.getSunAndStars().setObserverLatitude(37.7833f * FastMath.DEG_TO_RAD);
+   sc.getSunAndStars().setObserverLatitude(37.4046f * FastMath.DEG_TO_RAD);
    sc.getSunAndStars().setSolarLongitude(Calendar.FEBRUARY, 10);
    sc.setCloudiness(1f);
 }}}
