@@ -103,7 +103,7 @@ public class MakeStarMaps {
      * Earth's rate of rotation (radians per sidereal hour)
      */
     final private static float radiansPerHour =
-            FastMath.TWO_PI / SkyControl.hoursPerDay;
+            FastMath.TWO_PI / Constants.hoursPerDay;
     /**
      * expected id of the last entry in the catalog
      */
@@ -280,7 +280,7 @@ public class MakeStarMaps {
         assert latitude >= -FastMath.HALF_PI : latitude;
         assert latitude <= FastMath.HALF_PI : latitude;
         assert siderealHour >= 0f : siderealHour;
-        assert siderealHour < SkyControl.hoursPerDay : siderealHour;
+        assert siderealHour < Constants.hoursPerDay : siderealHour;
         assert textureSize > 2 : textureSize;
         /*
          * Create a blank, grayscale buffered image for the texture map.
@@ -377,7 +377,7 @@ public class MakeStarMaps {
          * sanity checks
          */
         int hours = Integer.valueOf(hh);
-        if (hours < 0 || hours >= SkyControl.hoursPerDay) {
+        if (hours < 0 || hours >= Constants.hoursPerDay) {
             throw new InvalidEntryException(
                     "RA hours should be between 0 and 23, inclusive");
         }
@@ -397,7 +397,7 @@ public class MakeStarMaps {
         float result = hours + minutes / 60f + seconds / 3600f; // in hours
 
         assert result >= 0f : result;
-        assert result < SkyControl.hoursPerDay : result;
+        assert result < Constants.hoursPerDay : result;
         logger.log(Level.FINE, "result = {0}", result);
         return result;
     }

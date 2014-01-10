@@ -73,6 +73,10 @@ class Constants {
     final static float stretchCoefficient =
             (FastMath.HALF_PI - uvMax) / (uvScale * uvScale);
     /**
+     * the duration of a full day (in hours)
+     */
+    final static int hoursPerDay = 24;
+    /**
      * texture coordinates of the top of a DomeMesh
      */
     final static Vector2f topUV = new Vector2f(topU, topV);

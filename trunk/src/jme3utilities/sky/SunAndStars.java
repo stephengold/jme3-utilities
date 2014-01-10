@@ -58,13 +58,10 @@ public class SunAndStars
      */
     final private static float obliquity = 23.44f * FastMath.DEG_TO_RAD;
     /**
-     * the duration of a full day (in hours)
-     */
-    final private static int hoursPerDay = 24;
-    /**
      * Earth's rate of rotation (radians per sidereal hour)
      */
-    final private static float radiansPerHour = FastMath.TWO_PI / hoursPerDay;
+    final private static float radiansPerHour =
+            FastMath.TWO_PI / Constants.hoursPerDay;
     /**
      * message logger for this class
      */
@@ -229,7 +226,7 @@ public class SunAndStars
      * @return hours since midnight, solar time (<=24, >=0)
      */
     public float getHour() {
-        assert hour <= hoursPerDay : hour;
+        assert hour <= Constants.hoursPerDay : hour;
         assert hour >= 0f : hour;
 
         return hour;
@@ -269,7 +266,7 @@ public class SunAndStars
     public float getSiderealHour() {
         float noon = 12f;
         float siderealHour = hour - noon - solarRaHours;
-        siderealHour = MyMath.modulo(siderealHour, hoursPerDay);
+        siderealHour = MyMath.modulo(siderealHour, Constants.hoursPerDay);
 
         return siderealHour;
     }
@@ -321,7 +318,7 @@ public class SunAndStars
      * @param newHour hours since midnight, solar time (<=24, >=0)
      */
     public void setHour(float newHour) {
-        if (newHour < 0f || newHour > hoursPerDay) {
+        if (newHour < 0f || newHour > Constants.hoursPerDay) {
             logger.log(Level.SEVERE, "hour={0}", newHour);
             throw new IllegalArgumentException(
                     "hour should be between 0 and 24, inclusive");
@@ -363,9 +360,10 @@ public class SunAndStars
          */
         Vector3f equatorial = convertToEquatorial(0f, longitude);
         float ra = -FastMath.atan2(equatorial.y, equatorial.x);
-        solarRaHours = MyMath.modulo(ra / radiansPerHour, hoursPerDay);
+        solarRaHours =
+                MyMath.modulo(ra / radiansPerHour, Constants.hoursPerDay);
         assert solarRaHours >= 0f : solarRaHours;
-        assert solarRaHours < hoursPerDay : solarRaHours;
+        assert solarRaHours < Constants.hoursPerDay : solarRaHours;
     }
 
     /**
