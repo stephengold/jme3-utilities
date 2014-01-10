@@ -90,6 +90,14 @@
                                      text="north horizon"/>
                         </panel>
 
+                        <panel style="buttonPanel"
+                               height="60">
+                            <control name="button"
+                                     id="id0ToAvoidNiftyWarning"
+                                     label="Select cloud layer 0 texture">
+                                <interact onRelease="perform(c0Texture)"/>
+                            </control>
+                        </panel>
                         <control name="label"
                                  text="Cloud layer 0 offset and scale:"/>
                         <panel childLayout="horizontal" padding="10">
@@ -109,7 +117,7 @@
                                      buttonStepSize="0.5"
                                      height="160"
                                      max="1"
-                                     min="-1"
+                                     min="-2"
                                      stepSize="0.01"/>
                             <panel childLayout="vertical"
                                    width="34">
@@ -119,6 +127,14 @@
                             </panel>
                         </panel>
 
+                        <panel style="buttonPanel"
+                               height="60">
+                            <control name="button"
+                                     id="id1ToAvoidNiftyWarning"
+                                     label="Select cloud layer 1 texture">
+                                <interact onRelease="perform(c1Texture)"/>
+                            </control>
+                        </panel>
                         <control name="label"
                                  text="Cloud layer 1 offset and scale:"/>
                         <panel childLayout="horizontal" padding="10">
@@ -138,7 +154,7 @@
                                      buttonStepSize="0.5"
                                      height="160"
                                      max="1"
-                                     min="-1"
+                                     min="-2"
                                      stepSize="0.01"/>
                             <panel childLayout="vertical"
                                    width="34">
