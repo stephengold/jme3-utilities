@@ -10,5 +10,5 @@ public domain.
 Stephen Gold makes these files available under the Creative Commons
 Attribution-Share Alike 3.0 Unported license -- see
 http://creativecommons.org/licenses/by-sa/3.0/deed.en
-for details.  When sharing or reusing this file, please attribute it to
+for details.  When sharing or reusing these files, please attribute it to
 "Stephen Gold's JME3 Utilities Package at https://code.google.com/p/jme3-utilities/"
