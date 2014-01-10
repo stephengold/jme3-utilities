@@ -242,6 +242,7 @@ public class SkyMaterial
                     new Object[]{layerIndex, maxCloudLayers});
             throw new IllegalArgumentException("layer index out of range");
         }
+
         addClouds(layerIndex, cloudsMapPath);
     }
 
@@ -858,6 +859,8 @@ public class SkyMaterial
             return "MatDefs/skies/dome42/dome42.j3md";
         } else if (numObjects <= 6 && numCloudLayers <= 2) {
             return "MatDefs/skies/dome62/dome62.j3md";
+        } else if (numObjects <= 6 && numCloudLayers <= 6) {
+            return "MatDefs/skies/dome66/dome66.j3md";
         }
 
         if (numObjects > 6) {
