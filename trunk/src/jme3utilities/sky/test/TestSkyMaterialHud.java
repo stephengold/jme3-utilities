@@ -175,6 +175,30 @@ public class TestSkyMaterialHud
         }
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
         switch (actionString) {
+            case "c0Texture":
+            case "c1Texture":
+                showCloudsMenu(actionString + " ");
+                break;
+
+            case "c0Texture clear":
+            case "c0Texture cyclone":
+            case "c0Texture overcast":
+            case "c1Texture clear":
+            case "c1Texture cyclone":
+            case "c1Texture overcast":
+                String layer = actionString.substring(1, 2);
+                String name = actionString.substring(10);
+                String path = String.format("Textures/skies/clouds/%s.png",
+                        name);
+                setCloudTexture(layer, path);
+                break;
+
+            case "c0Texture t0neg0d":
+            case "c1Texture t0neg0d":
+                layer = actionString.substring(1, 2);
+                setCloudTexture(layer, "Textures/skies/t0neg0d/Clouds_L.png");
+                break;
+
             case "phase":
                 showPhaseMenu();
                 break;
@@ -184,7 +208,7 @@ public class TestSkyMaterialHud
             case "phase waning-gibbous":
             case "phase waxing-crescent":
             case "phase waxing-gibbous":
-                String name = actionString.substring(6);
+                name = actionString.substring(6);
                 setPhase(name);
                 break;
 
@@ -311,6 +335,27 @@ public class TestSkyMaterialHud
     // private methods
 
     /**
+     * Alter a cloud texture.
+     *
+     * @param indexString which layer ("0" or "1")
+     * @param assetPath to the new texture (not null)
+     */
+    private void setCloudTexture(String indexString, String assetPath) {
+        assert indexString != null;
+        assert assetPath != null;
+
+        switch (indexString) {
+            case "0":
+                material.addClouds(0, assetPath);
+                return;
+            case "1":
+                material.addClouds(1, assetPath);
+                return;
+        }
+        assert false : indexString;
+    }
+
+    /**
      * Alter the phase of the moon.
      *
      * @param name name of the new phase (not null)
@@ -321,6 +366,14 @@ public class TestSkyMaterialHud
         phase = LunarPhase.fromDescription(name);
         String assetPath = phase.imagePath();
         material.addObject(moonIndex, assetPath);
+    }
+
+    /**
+     * Display a cloud texture menu.
+     */
+    private void showCloudsMenu(String actionPrefix) {
+        String[] textureItems = {"clear", "overcast", "cyclone", "t0neg0d"};
+        showPopup(actionPrefix, textureItems);
     }
 
     /**

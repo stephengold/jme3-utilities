@@ -109,36 +109,10 @@ public class SkyControl
     final private static ColorRGBA twilight =
             new ColorRGBA(0.8f, 0.4f, 0.2f, Constants.alphaMax);
     /**
-     * U-component of the initial offset of each cloud layer
-     */
-    final private static float[] layerU0 = {0.4f, Constants.uvMin};
-    /**
-     * U-component of the standard motion of each cloud layer (cycles per
-     * second)
-     */
-    final private static float[] layerURate = {-0.0005f, 0.0003f};
-    /**
-     * V-component of the initial offset of each cloud layer
-     */
-    final private static float[] layerV0 = {0.3f, Constants.uvMin};
-    /**
-     * V-component of the standard motion of each cloud layer (cycles per
-     * second)
-     */
-    final private static float[] layerVRate = {0.003f, 0.001f};
-    /**
      * extent of the twilight periods before sunrise and after sunset, expressed
      * as the sine of the sun's angle below the horizon (<=1, >=0)
      */
     final private static float limitOfTwilight = 0.1f;
-    /**
-     * the duration of a full day (in hours)
-     */
-    final public static int hoursPerDay = 24;
-    /**
-     * Earth's rate of rotation (radians per sidereal hour)
-     */
-    final static float radiansPerHour = FastMath.TWO_PI / hoursPerDay;
     /**
      * texture scale for Sun_L.png
      */
@@ -212,19 +186,19 @@ public class SkyControl
      */
     final private Camera camera;
     /**
+     * information about individual cloud layers
+     */
+    final private CloudLayer[] cloudLayers;
+    /**
      * mesh used to generate dome geometries
      */
     private DomeMesh mesh = null;
-    /**
-     * cloud opacity: 0=>cloudless, 1=>maximum opacity (the default)
-     */
-    private float cloudiness = 0f;
     /**
      * simulation time for cloud layer animations
      */
     private float cloudsAnimationTime = 0f;
     /**
-     * rate of motion for cloud layer animations (1=>standard)
+     * rate of motion for cloud layer animations (1->standard)
      */
     private float cloudsRelativeSpeed = 1f;
     /**
@@ -278,7 +252,9 @@ public class SkyControl
 
     /**
      * Instantiate a disabled control for no clouds, full moon, no cloud
-     * modulation, no lights, no shadows, and no viewports.
+     * modulation, no lights, no shadows, and no viewports. For a visible sky,
+     * the control must be (1) added to a node of the scene graph and (2)
+     * enabled.
      *
      * @param assetManager for loading textures and material definitions (not
      * null)
@@ -315,8 +291,8 @@ public class SkyControl
          */
         int topObjects = 1 + LunarPhase.values().length;
         boolean cloudDomeFlag = cloudFlattening != 0f;
-        int topLayers = cloudDomeFlag ? 0 : numCloudLayers;
-        topMaterial = new SkyMaterial(assetManager, topObjects, topLayers);
+        int topCloudLayers = cloudDomeFlag ? 0 : numCloudLayers;
+        topMaterial = new SkyMaterial(assetManager, topObjects, topCloudLayers);
         topMaterial.initialize();
         topMaterial.addHaze();
         topMaterial.addObject(sunIndex, SkyMaterial.sunMapPath);
@@ -333,8 +309,8 @@ public class SkyControl
             /*
              * Create and initialize a separate sky material for clouds only.
              */
-            int cloudsObjects = 0;
-            cloudsMaterial = new SkyMaterial(assetManager, cloudsObjects,
+            int numObjects = 0;
+            cloudsMaterial = new SkyMaterial(assetManager, numObjects,
                     numCloudLayers);
             cloudsMaterial.initialize();
             cloudsMaterial.getAdditionalRenderState().setDepthWrite(false);
@@ -342,11 +318,13 @@ public class SkyControl
         } else {
             cloudsMaterial = topMaterial;
         }
-        int numLayers = cloudsMaterial.getMaxCloudLayers();
-        for (int layer = 0; layer < numLayers; layer++) {
-            cloudsMaterial.addClouds(layer);
-            float scale = 1.5f;
-            cloudsMaterial.setCloudsScale(layer, scale);
+        /*
+         * Initialize the cloud layers.
+         */
+        cloudLayers = new CloudLayer[numCloudLayers];
+        for (int layerIndex = 0; layerIndex < numCloudLayers; layerIndex++) {
+            cloudLayers[layerIndex] =
+                    new CloudLayer(cloudsMaterial, layerIndex);
         }
 
         if (bottomDomeFlag) {
@@ -364,6 +342,24 @@ public class SkyControl
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Access a particular cloud layer.
+     *
+     * @param layerIndex (<numCloudLayers, >=0)
+     * @return the pre-existing object
+     */
+    public CloudLayer getCloudLayer(int layerIndex) {
+        if (layerIndex < 0 || layerIndex >= numCloudLayers) {
+            logger.log(Level.SEVERE, "index={0}", layerIndex);
+            throw new IllegalArgumentException("index out of range");
+        }
+
+        CloudLayer layer = cloudLayers[layerIndex];
+
+        assert layer != null;
+        return layer;
+    }
 
     /**
      * Access the orientations of the sun and stars.
@@ -386,7 +382,7 @@ public class SkyControl
     }
 
     /**
-     * Alter the opacity of the clouds.
+     * Alter the opacity of all cloud layers.
      *
      * @param newAlpha desired opacity of the cloud layers (<=1, >=0)
      */
@@ -397,7 +393,9 @@ public class SkyControl
                     "alpha should be between 0 and 1, inclusive");
         }
 
-        cloudiness = newAlpha;
+        for (int layer = 0; layer < numCloudLayers; layer++) {
+            cloudLayers[layer].setOpacity(newAlpha);
+        }
     }
 
     /**
@@ -771,9 +769,7 @@ public class SkyControl
 
         cloudsAnimationTime += tpf * cloudsRelativeSpeed;
         for (int layer = 0; layer < numCloudLayers; layer++) {
-            float u = layerU0[layer] + cloudsAnimationTime * layerURate[layer];
-            float v = layerV0[layer] + cloudsAnimationTime * layerVRate[layer];
-            cloudsMaterial.setCloudsOffset(layer, u, v);
+            cloudLayers[layer].updateOffset(cloudsAnimationTime);
         }
     }
 
@@ -844,10 +840,8 @@ public class SkyControl
              */
             cloudsColor.multLocal(0.25f);
         }
-        cloudsColor.a = cloudiness;
-        int numLayers = cloudsMaterial.getMaxCloudLayers();
-        for (int layer = 0; layer < numLayers; layer++) {
-            cloudsMaterial.setCloudsColor(layer, cloudsColor);
+        for (int layer = 0; layer < numCloudLayers; layer++) {
+            cloudLayers[layer].setColor(cloudsColor);
         }
         /*
          * The main light is based on the base color during the day,

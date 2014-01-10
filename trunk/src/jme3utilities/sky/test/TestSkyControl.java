@@ -51,6 +51,7 @@ import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
 import jme3utilities.ViewPortListener;
 import jme3utilities.WaterProcessor;
+import jme3utilities.sky.CloudLayer;
 import jme3utilities.sky.Updater;
 import jme3utilities.ui.GuiApplication;
 
@@ -208,12 +209,18 @@ public class TestSkyControl
         }
         control = new SkyControl(assetManager, cam, cloudFlattening, starMotion,
                 bottomDome);
+        if (parameters.cyclone()) {
+            CloudLayer mainLayer = control.getCloudLayer(0);
+            mainLayer.setMotion(0.37f, 0f, 0.2f, 0.001f);
+            mainLayer.setTexture("Textures/skies/clouds/cyclone.png", 0.3f);
+            control.getCloudLayer(1).clearTexture();
+        }
         if (parameters.highResStars() && !parameters.singleDome()) {
             control.setStarMaps("Textures/skies/star-maps/16m");
         }
         /*
-         * Put SkyControl in charge of updating the lights and background.
-         * (all optional)
+         * Put SkyControl in charge of updating the lights and
+         * viewport background. (all optional)
          */
         Updater updater = control.getUpdater();
         updater.addViewPort(viewPort);
