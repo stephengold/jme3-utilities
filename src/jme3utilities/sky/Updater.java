@@ -39,7 +39,8 @@ import jme3utilities.ViewPortListener;
 
 /**
  * The component of SkyControl which keeps track of all the lights, shadows, and
- * viewports which the control is expected to update.
+ * viewports which the control updates. It also keeps track of the values
+ * applied during the most recent update.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -75,11 +76,32 @@ public class Updater
      * viewports whose background colors are updated by the control - not
      * serialized
      */
-    final private ArrayList<ViewPort> viewPorts = new ArrayList<>();
+    private ArrayList<ViewPort> viewPorts = new ArrayList<>();
+    /**
+     * most recent color for ambient light (or null if not updated yet)
+     */
+    private ColorRGBA ambientColor = null;
+    /**
+     * most recent color for viewport background (or null if not updated yet)
+     */
+    private ColorRGBA backgroundColor = null;
+    /**
+     * most recent color for main directional light (or null if not updated yet)
+     */
+    private ColorRGBA mainColor = null;
     /**
      * which directional light to update (or null for none)
      */
     private DirectionalLight mainLight = null;
+    /**
+     * most recent shadow intensity
+     */
+    private float shadowIntensity = 0f;
+    /**
+     * most recent direction for main directional light (unit vector, or null if
+     * not updated yet)
+     */
+    private Vector3f direction = null;
     // *************************************************************************
     // new methods exposed
 
@@ -110,6 +132,63 @@ public class Updater
         }
 
         shadowRenderers.add(shadowRenderer);
+    }
+
+    /**
+     * Copy the most recent color for ambient light.
+     *
+     * @return a new instance (or null if not updated yet)
+     */
+    public ColorRGBA getAmbientColor() {
+        if (ambientColor == null) {
+            return null;
+        }
+        return ambientColor.clone();
+    }
+
+    /**
+     * Copy the most recent color for the viewport background.
+     *
+     * @return a new instance (or null if not updated yet)
+     */
+    public ColorRGBA getBackgroundColor() {
+        if (backgroundColor == null) {
+            return null;
+        }
+        return backgroundColor.clone();
+    }
+
+    /**
+     * Copy the most recent direction for the main directional light.
+     *
+     * @return a new instance (or null if not updated yet)
+     */
+    public Vector3f getDirection() {
+        if (direction == null) {
+            return null;
+        }
+        return direction.clone();
+    }
+
+    /**
+     * Copy the most recent color for the main directional light.
+     *
+     * @return a new instance (or null if not updated yet)
+     */
+    public ColorRGBA getMainColor() {
+        if (mainColor == null) {
+            return null;
+        }
+        return mainColor.clone();
+    }
+
+    /**
+     * Read the most recent shadow intensity.
+     *
+     * @return intensity of shadows (<=1, >=0)
+     */
+    public float getShadowIntensity() {
+        return shadowIntensity;
     }
 
     /**
@@ -206,6 +285,30 @@ public class Updater
             logger.log(Level.SEVERE, "direction={0}", direction);
             throw new IllegalArgumentException(
                     "direction should be a unit vector");
+        }
+        /*
+         * Copy new values to the corresponding "most recent" fields.
+         */
+        if (this.ambientColor == null) {
+            this.ambientColor = ambientColor.clone();
+        } else {
+            this.ambientColor.set(ambientColor);
+        }
+        if (this.backgroundColor == null) {
+            this.backgroundColor = backgroundColor.clone();
+        } else {
+            this.backgroundColor.set(backgroundColor);
+        }
+        if (this.mainColor == null) {
+            this.mainColor = mainColor.clone();
+        } else {
+            this.mainColor.set(mainColor);
+        }
+        this.shadowIntensity = shadowIntensity;
+        if (this.direction == null) {
+            this.direction = direction.clone();
+        } else {
+            this.direction.set(direction);
         }
 
         if (mainLight != null) {
