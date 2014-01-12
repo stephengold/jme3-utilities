@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -26,11 +26,13 @@
 package jme3utilities;
 
 import com.jme3.audio.AudioNode;
+import com.jme3.effect.ParticleEmitter;
 import com.jme3.light.Light;
 import com.jme3.light.LightList;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
+import com.jme3.scene.BatchNode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -142,12 +144,16 @@ public class Printer {
     public static char describeType(Spatial spatial) {
         if (spatial instanceof AudioNode) {
             return 'a';
-        } else if (spatial instanceof Geometry) {
-            return 'g';
+        } else if (spatial instanceof BatchNode) {
+            return 'b';
+        } else if (spatial instanceof ParticleEmitter) {
+            return 'e';
         } else if (spatial instanceof SkeletonDebugger) {
             return 's';
         } else if (spatial instanceof TerrainQuad) {
             return 't';
+        } else if (spatial instanceof Geometry) {
+            return 'g';
         } else if (spatial instanceof Node) {
             return 'n';
         }
