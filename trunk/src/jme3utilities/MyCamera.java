@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -32,8 +32,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Camera utility methods. Aside from test cases, all methods should be public
- * and static.
+ * Utility methods which operate on jME3 cameras. Aside from test cases, all
+ * methods should be public and static.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */

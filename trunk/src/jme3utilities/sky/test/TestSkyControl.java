@@ -58,8 +58,9 @@ import jme3utilities.ui.GuiApplication;
 /**
  * A GUI application for testing/demonstrating the SkyControl class using a
  * heads-up display (HUD). The application's main entry point is here.
- *
- * Use the 'H' key to toggle HUD visibility.
+ * <p>
+ * Use the 'H' key to toggle HUD visibility. When the HUD is hidden, the flyCam
+ * (LMB and scroll wheel) controls are enabled for scene navigation.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -434,7 +435,7 @@ public class TestSkyControl
         boolean success = stateManager.attach(screenShotState);
         assert success;
         /*
-         * Disable display of JME statistics.
+         * Disable display of jME3 statistics.
          * Statistics display can be re-enabled by pressing the F5 hotkey.
          */
         setDisplayFps(false);

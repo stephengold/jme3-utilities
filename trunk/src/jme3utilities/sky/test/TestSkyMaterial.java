@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -50,9 +50,9 @@ import jme3utilities.ui.InputMode;
 /**
  * A GUI application for testing the SkyMaterial class using a heads-up display
  * (HUD). The application's main entry point is here.
- *
+ * <p>
  * Use the 'H' key to toggle HUD visibility, the 'S' key to save the current sky
- * geometry, the 'L' key to temporarily load a saved geometry.
+ * geometry, and the 'L' key to temporarily load a saved geometry.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */

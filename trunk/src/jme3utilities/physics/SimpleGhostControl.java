@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -38,9 +38,9 @@ import java.util.logging.Logger;
 
 /**
  * A simplified physics control for a non-solid object.
- *
+ * <p>
  * Implements key methods in order to simplify the development of subclasses.
- *
+ * <p>
  * Assumes that the object will live in a single physics space and listen to
  * overlap events.
  *

@@ -47,8 +47,9 @@ import jme3utilities.MyMath;
  * the origin, with its top at y=1 and its rim in the XZ plane.
  * <p>
  * The main differences between this class and com.jme3.scene.shape.Dome are:
- * (1) the radius and center are not configurable and (2) the texture
- * coordinates are configurable.
+ * (1) the radius and center are not configurable, (2) the texture coordinates
+ * are configurable, and (3) the normal vectors have the correct sign (issue
+ * #615).
  * <p>
  * The projection to texture space is an "azimuthal equidistant projection". The
  * maximum U coordinate (= topU + uvScale) occurs at X=1. Y=0, Z=0. The maximum

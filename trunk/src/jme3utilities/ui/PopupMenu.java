@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -35,8 +35,8 @@ import org.bushe.swing.event.EventTopicSubscriber;
  * Event subscriber for a simple Nifty popup menu (or submenu) whose items are
  * Strings.
  * <p>
- * When a menu item is activated, invoke SimpleScreenController.perform() with
- * the item appended to the popup menu's action prefix, then close the popup.
+ * When a menu item is activated, invoke GuiScreenController.perform() with the
+ * item appended to the popup menu's action prefix, then close the popup.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */

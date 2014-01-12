@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -321,10 +321,10 @@ public class MySpatial
     }
 
     /**
-     * List all animations for a particular unit.
+     * List all animations in an animated spatial.
      *
-     * @param spatial which unit (or null)
-     * @return a new sorted set
+     * @param spatial (not null)
+     * @return a new collection in lexicographic order
      */
     public static Collection<String> listAnimations(Spatial spatial) {
         AnimControl control = spatial.getControl(AnimControl.class);
