@@ -122,9 +122,9 @@ public class SkyControl
      */
     final private static int moonBaseIndex = 1;
     /**
-     * number of cloud layers
+     * maximum number of cloud layers
      */
-    final private static int numCloudLayers = 2;
+    final private static int numCloudLayers = 6;
     /**
      * number of samples in each longitudinal quadrant of the dome, including
      * the top and the rim (>=2)
