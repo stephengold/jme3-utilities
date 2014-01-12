@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 
 /**
  * Name generator class which represents a namespace. Used to generate unique
- * name strings for objects (such as JME spatials).
+ * name strings for objects (such as jME3 spatials).
  *
  * @author Stephen Gold <sgold@sonic.net>
  */

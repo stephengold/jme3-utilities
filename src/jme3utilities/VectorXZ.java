@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,7 @@ import java.util.logging.Logger;
  * A single-precision vector with no 'y' coordinate. These vectors are used to
  * represent map coordinates, directions, and map offsets. For viewport
  * coordinates use Vector2f instead.
- *
+ * <p>
  * By convention, +X is north and +Z is east
  *
  * @author Stephen Gold <sgold@sonic.net>

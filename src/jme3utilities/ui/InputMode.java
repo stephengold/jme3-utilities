@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -162,9 +162,10 @@ abstract public class InputMode
      */
     public void bind(String actionName, Hotkey hotkey) {
         assert actionName != null;
+
         String hotkeyName = hotkey.name();
         /*
-         * Add to the bindings.
+         * Add to the bindings.  Remove any old binding of this hotkey.
          */
         hotkeyBindings.put(hotkeyName, actionName);
     }

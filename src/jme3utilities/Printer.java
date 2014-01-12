@@ -44,7 +44,7 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 /**
- * Dump portions of a JME3 scene graph for debugging.
+ * Dump portions of a jME3 scene graph for debugging.
  * <p>
  * printSubtree() is the usual interface to this class. The level of detail can
  * be configured statically by means of flag constants.

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -48,9 +48,9 @@ import java.util.logging.Logger;
  * A simple control to provide a landscape for tests and demos. The landscape
  * consists of a circular monument (resembling Stonehenge) set on a plain
  * surrounded by hills.
- *
+ * <p>
  * The controlled spatial must be a Node.
- *
+ * <p>
  * The control is disabled by default. When enabled, it attaches two nodes (one
  * for the terrain and one for the monument) to the controlled spatial.
  *

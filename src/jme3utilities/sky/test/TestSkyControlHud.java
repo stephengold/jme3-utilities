@@ -47,7 +47,7 @@ import jme3utilities.sky.LunarPhase;
 /**
  * A GUI screen controller for the heads-up display (HUD) of the TestSkyControl
  * application.
- *
+ * <p>
  * Each time this HUD is enabled, the flyby camera is disabled so that Nifty can
  * grab mouse events. If enableFlyby is true, the flyby camera will get
  * re-enabled when this HUD is disabled.

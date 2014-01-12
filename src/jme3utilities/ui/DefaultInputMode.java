@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 import jme3utilities.MyString;
 
 /**
- * The default input mode for an application.
+ * The default input mode for a GUI application.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
