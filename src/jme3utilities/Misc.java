@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -217,6 +217,13 @@ public class Misc {
         String homePath = System.getProperty("user.home");
         String result = String.format("%s/%s", homePath, fileName);
         return result;
+    }
+
+    /**
+     * Read version information for this package.
+     */
+    public static String getVersion() {
+        return "jme3-utilities trunk $Rev$";
     }
 
     /**
