@@ -80,11 +80,17 @@ public class SimpleGhostControl
 
     /**
      * Alter the object's collision shape. Assumes that the object has already
-     * been added to physics space.
+     * been added to a physics space.
+     *
+     * @param newShape (not null)
      */
-    public void changeShape(CollisionShape shape) {
-        assert shape != null;
-        assert space != null;
+    public void changeShape(CollisionShape newShape) {
+        if (newShape == null) {
+            throw new NullPointerException("shape should not be null");
+        }
+        if (space == null) {
+            throw new IllegalStateException("should be in a physics space");
+        }
         /*
          * The remove() method will null out the "space" field, so save a copy.
          */
@@ -94,7 +100,7 @@ public class SimpleGhostControl
          * remove the control from physics space and then re-add it.
          */
         physicsSpace.remove(this);
-        super.setCollisionShape(shape);
+        super.setCollisionShape(newShape);
         physicsSpace.add(this);
     }
     // *************************************************************************

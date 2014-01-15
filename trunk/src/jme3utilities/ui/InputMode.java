@@ -247,7 +247,7 @@ abstract public class InputMode
     }
 
     /**
-     * Access the short-form name for this mode.
+     * Read the short-form name for this mode.
      */
     public String getShortName() {
         assert shortName != null;
@@ -352,6 +352,10 @@ abstract public class InputMode
         assert !isEnabled();
         super.initialize(stateManager, application);
 
+        if (!(application instanceof GuiApplication)) {
+            throw new IllegalArgumentException(
+                    "application should be a GuiApplication");
+        }
         this.application = (GuiApplication) application;
 
         boolean changed = modes.add(this);
@@ -382,13 +386,7 @@ abstract public class InputMode
 
         InputManager inputManager = application.getInputManager();
         if (!isEnabled() && newState) {
-            if (enabledMode != null) {
-                String message = String.format(
-                        "tried to enable %s input mode with %s mode active",
-                        shortName, enabledMode.shortName);
-                throw new IllegalStateException(message);
-            }
-            enabledMode = this;
+            setEnabledMode(this);
 
             if (cursor == null) {
                 inputManager.setCursorVisible(false);
@@ -400,7 +398,7 @@ abstract public class InputMode
 
         } else if (isEnabled() && !newState) {
             assert enabledMode == this : enabledMode;
-            enabledMode = null;
+            setEnabledMode(null);
 
             inputManager.setCursorVisible(false);
             unmapBoundHotkeys();
@@ -635,6 +633,24 @@ abstract public class InputMode
          * Add the mapping to the input manager.
          */
         mapActionString(actionString, hotkey);
+    }
+
+    /**
+     * Alter the reference to the currently-enabled input mode. At most one mode
+     * is enabled at a time.
+     *
+     * @param mode (or null if none)
+     */
+    private static void setEnabledMode(InputMode mode) {
+        if (mode != null && enabledMode != null) {
+            String message = String.format(
+                    "tried to enable %s input mode while %s mode was active",
+                    MyString.quote(mode.shortName),
+                    MyString.quote(enabledMode.shortName));
+            throw new IllegalStateException(message);
+        }
+
+        enabledMode = mode;
     }
 
     /**

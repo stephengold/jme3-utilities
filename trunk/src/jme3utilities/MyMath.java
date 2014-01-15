@@ -190,7 +190,7 @@ public class MyMath {
     }
 
     /**
-     * Calculate the discriminant (b^2 - 4*a*c) of a standard quadratic equation
+     * Compute the discriminant (b^2 - 4*a*c) of a standard quadratic equation
      * (a*x^2 + b*x + c).
      *
      * @param a coefficient of the square term
@@ -204,7 +204,7 @@ public class MyMath {
     }
 
     /**
-     * Calculate the discriminant (b^2 - 4*a*c) of a standard quadratic equation
+     * Compute the discriminant (b^2 - 4*a*c) of a standard quadratic equation
      * (a*x^2 + b*x + c). Double precision arithmetic is used to reduce the risk
      * of overflow.
      *
@@ -253,6 +253,10 @@ public class MyMath {
      * Test whether a vector has length about equal to 1.
      */
     public static boolean isUnitVector(Vector2f vector) {
+        if (vector == null) {
+            throw new NullPointerException("vector should not be null");
+        }
+
         float norm = vector.length();
         return 0.99f < norm && norm < 1.01f;
     }
