@@ -73,11 +73,6 @@ public class TestSkyControlHud
      */
     private boolean cloudModulation = true;
     /**
-     * if true, the flyby camera will get re-enabled each time this HUD is
-     * disabled
-     */
-    final private boolean reenableFlyby;
-    /**
      * maximum opacity for clouds (<=1, >=0)
      */
     private float cloudiness = 0f;
@@ -122,14 +117,12 @@ public class TestSkyControlHud
     // constructors
 
     /**
-     * Instantiate the display.
-     *
-     * @param reenableFlyby if true, the flyby camera will get re-enabled each
-     * time this HUD is disabled
+     * Instantiate a disabled display which will be enabled during
+     * initialization.
      */
-    TestSkyControlHud(boolean reenableFlyby) {
-        super("test-sky-control");
-        this.reenableFlyby = reenableFlyby;
+    TestSkyControlHud() {
+        super("test-sky-control", "Interface/Nifty/huds/test-sky-control.xml",
+                true);
     }
     // *************************************************************************
     // new methods exposed
@@ -137,7 +130,7 @@ public class TestSkyControlHud
     /**
      * Read the current opacity of the clouds.
      *
-     * @return maximum opacity (>=0, <=1)
+     * @return maximum opacity (<=1, >=0)
      */
     float getCloudiness() {
         assert cloudiness >= 0f : cloudiness;
@@ -247,7 +240,7 @@ public class TestSkyControlHud
     public void onRadioButtonChanged(final String buttonId,
             final RadioButtonStateChangedEvent event) {
         assert buttonId != null;
-        if (!screenHasStarted) {
+        if (!hasStarted()) {
             return;
         }
 
@@ -393,7 +386,7 @@ public class TestSkyControlHud
         }
     }
     // *************************************************************************
-    // SimpleScreenController methods
+    // GuiScreenController methods
 
     /**
      * Initialize and enable this display.
@@ -404,33 +397,31 @@ public class TestSkyControlHud
     @Override
     public void initialize(AppStateManager stateManager,
             Application application) {
-        assert !initialized;
-        assert !isEnabled();
-        super.initialize(stateManager, application);
+        if (isInitialized()) {
+            throw new IllegalStateException("already initialized");
+        }
+        if (isEnabled()) {
+            throw new IllegalStateException("shouldn't be enabled yet");
+        }
 
-        validateAndLoadHud();
+        setListener(this);
+        super.initialize(stateManager, application);
         setRadioButton("forwardRadioButton");
-        setEnabled(true);
     }
 
     /**
-     * Enable or disable this display.
+     * Enable or disable this display. Enabling the display disables flyCam, and
+     * disabling the display re-enables flyCam.
      *
-     * @param newState true to enable, false to disable
+     * @param newState true to enable the display, false to disable it
      */
     @Override
     public void setEnabled(boolean newState) {
-        SimpleApplication app = (SimpleApplication) getApplication();
+        super.setEnabled(newState);
+
+        SimpleApplication app = getApplication();
         FlyByCamera fbc = app.getFlyByCamera();
-        if (newState) {
-            enable(this);
-            fbc.setEnabled(false);
-        } else {
-            disable();
-            if (reenableFlyby) {
-                fbc.setEnabled(true);
-            }
-        }
+        fbc.setEnabled(!newState);
     }
     // *************************************************************************
     // private methods

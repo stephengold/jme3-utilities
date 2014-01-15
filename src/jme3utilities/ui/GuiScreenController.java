@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -67,7 +67,7 @@ public class GuiScreenController
     // constants
 
     /**
-     * joiner for constructing action prefixes
+     * joiner for constructing action strings
      */
     final private static Joiner actionJoiner = Joiner.on(" ");
     /**
@@ -78,18 +78,26 @@ public class GuiScreenController
     // *************************************************************************
     // fields
     /**
-     * which action listener handles GUI actions for the screen that's currently
-     * enabled (or null for none)
+     * action listener for GUI actions from this screen
      */
-    private static volatile ActionListener listener = null;
+    private ActionListener listener = null;
     /**
-     * false before the screen starts, true thereafter
+     * if true, enable this screen during initialization; if false, leave it
+     * disabled: set by constructor
      */
-    protected boolean screenHasStarted = false;
+    final private boolean enableDuringInitialization;
+    /**
+     * false before the screen starts, then true ever after
+     */
+    private boolean hasStarted = false;
     /**
      * the application instance: set by initialize()
      */
     private static GuiApplication application = null;
+    /**
+     * the currently enabled screen controller (null means there's none)
+     */
+    private static GuiScreenController enabledScreen = null;
     /**
      * save the input mode while a popup is active
      */
@@ -99,28 +107,35 @@ public class GuiScreenController
      */
     private static PopupMenu activePopupMenu = null;
     /**
-     * keep track of the currently enabled screen controller (null means there's
-     * none)
-     */
-    private static GuiScreenController enabledScreen = null;
-    /**
      * Nifty id of this screen: set by constructor
      */
-    final protected String screenId;
+    final private String screenId;
+    /**
+     * path to the Nifty XML layout asset for this screen: set by constructor
+     */
+    final private String xmlAssetPath;
     // *************************************************************************
     // constructors
 
     /**
-     * Instantiate a disabled screen for a particular screen id. After
-     * instantiation, the first method invoked should be initialize().
+     * Instantiate a disabled screen for a particular screen id and layout.
      *
-     * @param screenId Nifty screen id (not null)
+     * @param screenId Nifty id (not null)
+     * @param xmlAssetPath path to the Nifty XML layout asset (not null)
+     * @param enableDuringInitialization
      */
-    public GuiScreenController(String screenId) {
+    public GuiScreenController(String screenId, String xmlAssetPath,
+            boolean enableDuringInitialization) {
         if (screenId == null) {
             throw new NullPointerException("id should not be null");
         }
+        if (xmlAssetPath == null) {
+            throw new NullPointerException("path should not be null");
+        }
+
+        this.xmlAssetPath = xmlAssetPath;
         this.screenId = screenId;
+        this.enableDuringInitialization = enableDuringInitialization;
 
         super.setEnabled(false);
 
@@ -135,7 +150,7 @@ public class GuiScreenController
      * without making a selection. Invoked from NiftyMethodInvoker using
      * reflection, so the class and method must both be public.
      */
-    public void closeActivePopup() {
+    public static synchronized void closeActivePopup() {
         if (activePopupMenu == null) {
             throw new IllegalStateException("no active popup");
         }
@@ -168,7 +183,7 @@ public class GuiScreenController
      *
      * @param popupMenu which menu to close (not null)
      */
-    void closePopup(PopupMenu popupMenu) {
+    static synchronized void closePopup(PopupMenu popupMenu) {
         if (popupMenu == null) {
             throw new NullPointerException("popup menu should not be null");
         }
@@ -199,66 +214,6 @@ public class GuiScreenController
     }
 
     /**
-     * Disable this controller. Assumes it is initialized and enabled.
-     */
-    public void disable() {
-        if (!isInitialized()) {
-            throw new IllegalStateException("not initialized");
-        }
-        if (!isEnabled()) {
-            throw new IllegalStateException("already disabled");
-        }
-        assert enabledScreen == this : enabledScreen;
-        assert listener != null;
-        /*
-         * Detatch Nifty from the viewport.
-         */
-        ViewPort viewPort = application.getGuiViewPort();
-        NiftyJmeDisplay niftyDisplay = application.getNiftyDisplay();
-        viewPort.removeProcessor(niftyDisplay);
-
-        NiftyEventAnnotationProcessor.unprocess(this);
-
-        enabledScreen = null;
-        listener = null;
-        super.setEnabled(false);
-    }
-
-    /**
-     * Enable this controller for a particular listener. Assumes this controller
-     * is initialized and disabled.
-     *
-     * @param newListener new listener for GUI actions (not null)
-     */
-    public void enable(ActionListener newListener) {
-        if (newListener == null) {
-            throw new NullPointerException("listener should not be null");
-        }
-        if (!isInitialized()) {
-            throw new IllegalStateException("not initialized");
-        }
-        if (isEnabled()) {
-            throw new IllegalStateException("already enabled");
-        }
-        assert enabledScreen == null : enabledScreen;
-        assert listener == null : listener;
-        logger.log(Level.INFO, "screenId={0}", screenId);
-        /*
-         * Attach Nifty to the viewport.
-         */
-        ViewPort viewPort = application.getGuiViewPort();
-        NiftyJmeDisplay niftyDisplay = application.getNiftyDisplay();
-        viewPort.addProcessor(niftyDisplay);
-
-        getNifty().gotoScreen(screenId);
-        NiftyEventAnnotationProcessor.process(this);
-
-        enabledScreen = this;
-        listener = newListener;
-        super.setEnabled(true);
-    }
-
-    /**
      * Find the enabled screen controller, if any.
      *
      * @return a pre-existing instance (or null if none enabled)
@@ -279,19 +234,36 @@ public class GuiScreenController
     }
 
     /**
-     * Identify the screen's active popup element.
+     * Read the Nifty screen id.
+     */
+    public String getScreenId() {
+        return screenId;
+    }
+
+    /**
+     * Test whether the screen has an active popup element.
      *
      * @return true if there's an active popup element, false if there's none
      */
-    public boolean hasActivePopup() {
+    public static boolean hasActivePopup() {
         return activePopupMenu != null;
+    }
+
+    /**
+     * Test whether Nifty has started the screen yet. As long as the screen has
+     * not started, Nifty events sent to it should be ignored.
+     *
+     * @return true if started, false if not started yet
+     */
+    public boolean hasStarted() {
+        return hasStarted;
     }
 
     /**
      * Test whether the mouse cursor is inside a particular element of this
      * screen.
      *
-     * @param elementId the ID string of the element (not null)
+     * @param elementId the Nifty id of the element (not null)
      * @return true if the mouse is
      */
     public boolean isMouseInsideElement(String elementId) {
@@ -338,8 +310,9 @@ public class GuiScreenController
                 MyString.quote(actionString));
         boolean isOnGoing = true;
         float simInterval = 0f;
+        ActionListener actionListener = enabledScreen.listener;
         try {
-            listener.onAction(actionString, isOnGoing, simInterval);
+            actionListener.onAction(actionString, isOnGoing, simInterval);
         } catch (Throwable throwable) {
             logger.log(Level.SEVERE, "Caught unexpected throwable:", throwable);
             application.stop(false);
@@ -375,6 +348,18 @@ public class GuiScreenController
     }
 
     /**
+     * Alter the listener for GUI actions from this screen.
+     *
+     * @param newListener (not null)
+     */
+    public void setListener(ActionListener newListener) {
+        if (newListener == null) {
+            throw new NullPointerException("listener should not be null");
+        }
+        listener = newListener;
+    }
+
+    /**
      * Create and activate a popup menu.
      *
      * @param actionPrefix common prefix of the menu's action strings (not null,
@@ -400,9 +385,13 @@ public class GuiScreenController
      * usually the final character will be a blank)
      * @param itemArray menu items (not null, unaffected)
      */
-    public void showPopup(String actionPrefix, String[] itemArray) {
+    public static synchronized void showPopup(String actionPrefix,
+            String[] itemArray) {
         if (actionPrefix == null) {
             throw new NullPointerException("prefix should not be null");
+        }
+        if (itemArray == null) {
+            throw new NullPointerException("item array should not be null");
         }
         /*
          * Create the popup using "popup-menu" as a base.
@@ -423,7 +412,7 @@ public class GuiScreenController
          * Create a controller with a subscription to the menu's
          * item activation events.
          */
-        PopupMenu popup = new PopupMenu(this, elementId, actionPrefix,
+        PopupMenu popup = new PopupMenu(elementId, actionPrefix,
                 itemArray, activePopupMenu);
         Screen screen = nifty.getCurrentScreen();
         String controlId = menu.getId();
@@ -440,10 +429,9 @@ public class GuiScreenController
             activePopupMenu.setEnabled(false);
         } else {
             /*
-             * Disable the screen's input mode (if any) and
+             * Save and disable the screen's input mode (if any) and
              * enable the input mode for menus.
              */
-            assert savedMode == null : savedMode;
             savedMode = InputMode.getEnabledMode();
             if (savedMode != null) {
                 savedMode.setEnabled(false);
@@ -451,7 +439,7 @@ public class GuiScreenController
             InputMode menuMode = InputMode.findMode("menu");
             menuMode.setEnabled(true);
         }
-        activePopupMenu = popup;
+        setActivePopupMenu(popup);
     }
 
     /**
@@ -481,12 +469,10 @@ public class GuiScreenController
     }
 
     /**
-     * Validate and load a Nifty interface description.
-     *
-     * @param interfaceAssetPath (not null)
+     * Validate and load a Nifty screen layout from an asset.
      */
-    public void validateAndLoad(String interfaceAssetPath) {
-        if (interfaceAssetPath == null) {
+    public void validateAndLoad() {
+        if (xmlAssetPath == null) {
             throw new NullPointerException("path should not be null");
         }
 
@@ -495,26 +481,17 @@ public class GuiScreenController
          * Read and validate the interface XML.
          */
         try {
-            nifty.validateXml(interfaceAssetPath);
+            nifty.validateXml(xmlAssetPath);
         } catch (Exception exception) {
             logger.log(Level.WARNING, "Nifty validation of "
-                    + MyString.quote(interfaceAssetPath)
+                    + MyString.quote(xmlAssetPath)
                     + " failed with exception:",
                     exception);
         }
         /*
          * Re-read the XML and build the interface.
          */
-        nifty.addXml(interfaceAssetPath);
-    }
-
-    /**
-     * Validate and load a HUD interface description.
-     */
-    public void validateAndLoadHud() {
-        String assetPath =
-                String.format("Interface/Nifty/huds/%s.xml", screenId);
-        validateAndLoad(assetPath);
+        nifty.addXml(xmlAssetPath);
     }
     // *************************************************************************
     // AbstractAppState methods
@@ -523,39 +500,55 @@ public class GuiScreenController
      * Initialize this controller.
      *
      * @param stateManager (not null)
-     * @param app which application owns this screen (not null)
+     * @param application which application owns this screen (not null)
      */
     @Override
-    public void initialize(AppStateManager stateManager, Application app) {
+    public void initialize(AppStateManager stateManager,
+            Application application) {
         if (isInitialized()) {
             throw new IllegalStateException("already initialized");
         }
         if (isEnabled()) {
-            throw new IllegalStateException("already enabled");
+            throw new IllegalStateException("shouldn't be enabled yet");
         }
         if (stateManager == null) {
-            throw new NullPointerException("manager should not be null");
+            throw new NullPointerException("manager shouldn't be null");
         }
-        if (app == null) {
-            throw new NullPointerException("application should not be null");
+        if (application == null) {
+            throw new NullPointerException("application shouldn't be null");
+        }
+        if (!(application instanceof GuiApplication)) {
+            throw new IllegalArgumentException(
+                    "application should be a GuiApplication");
         }
 
-        super.initialize(stateManager, app);
-        application = (GuiApplication) app;
+        super.initialize(stateManager, application);
+        setApplication((GuiApplication) application);
         getNifty().registerScreenController(this);
+        validateAndLoad();
+        if (enableDuringInitialization) {
+            setEnabled(true);
+        }
 
         assert isInitialized();
     }
 
     /**
-     * Do not invoke!
+     * Enable or disable this screen.
      *
-     * @see #enable(ActionListener)
-     * @see #disable()
+     * @param newState true to enable, false to disable
      */
     @Override
     public void setEnabled(boolean newState) {
-        throw new UnsupportedOperationException("not supported");
+        if (listener == null) {
+            throw new IllegalStateException("listener should be set");
+        }
+
+        if (newState && !isEnabled()) {
+            enable();
+        } else if (!newState && isEnabled()) {
+            disable();
+        }
     }
     // *************************************************************************
     // ScreenController methods
@@ -585,7 +578,7 @@ public class GuiScreenController
      */
     @Override
     public void onStartScreen() {
-        screenHasStarted = true;
+        hasStarted = true;
     }
     // *************************************************************************
     // new protected methods
@@ -595,9 +588,9 @@ public class GuiScreenController
      *
      * @return the pre-existing instance (not null)
      */
-    protected Application getApplication() {
+    protected GuiApplication getApplication() {
         assert application != null;
-        return application;
+        return (GuiApplication) application;
     }
 
     /**
@@ -616,7 +609,7 @@ public class GuiScreenController
      *
      * @return the pre-existing instance (not null)
      */
-    protected Nifty getNifty() {
+    protected static Nifty getNifty() {
         Nifty result = application.getNifty();
         assert result != null;
         return result;
@@ -806,7 +799,7 @@ public class GuiScreenController
      * "Slider" and (b) the Nifty id of the corresponding label consists of the
      * same prefix followed by "SliderStatus".
      *
-     * @param namePrefix unique name prefix of the slider (not null)
+     * @param namePrefix unique id prefix of the slider (not null)
      * @param logBase logarithm base of the slider (>0)
      * @return scaled value of the slider
      */
@@ -829,10 +822,53 @@ public class GuiScreenController
     // private methods
 
     /**
+     * Disable this controller. Assumes it is initialized and enabled.
+     */
+    private void disable() {
+        assert isInitialized();
+        assert isEnabled();
+        assert enabledScreen == this : enabledScreen;
+        logger.log(Level.INFO, "screenId={0}", MyString.quote(screenId));
+        /*
+         * Detatch Nifty from the viewport.
+         */
+        ViewPort viewPort = application.getGuiViewPort();
+        NiftyJmeDisplay niftyDisplay = application.getNiftyDisplay();
+        viewPort.removeProcessor(niftyDisplay);
+
+        NiftyEventAnnotationProcessor.unprocess(this);
+
+        enabledScreen = null;
+        super.setEnabled(false);
+    }
+
+    /**
+     * Enable this controller for a particular listener. Assumes this controller
+     * is initialized and disabled.
+     */
+    private void enable() {
+        assert isInitialized();
+        assert !isEnabled();
+        logger.log(Level.INFO, "screenId={0}", MyString.quote(screenId));
+        /*
+         * Attach Nifty to the viewport.
+         */
+        ViewPort viewPort = application.getGuiViewPort();
+        NiftyJmeDisplay niftyDisplay = application.getNiftyDisplay();
+        viewPort.addProcessor(niftyDisplay);
+
+        getNifty().gotoScreen(screenId);
+        NiftyEventAnnotationProcessor.process(this);
+
+        enabledScreen = this;
+        super.setEnabled(true);
+    }
+
+    /**
      * Read the linear value of a slider. This assumes a naming convention where
      * the slider's Nifty id ends with "Slider".
      *
-     * @param namePrefix unique name prefix of the slider (not null)
+     * @param namePrefix unique id prefix of the slider (not null)
      * @return value of the slider
      */
     private float readSlider(String namePrefix) {
@@ -847,10 +883,31 @@ public class GuiScreenController
     }
 
     /**
+     * Update the static reference to the active popup menu.
+     */
+    private static void setActivePopupMenu(PopupMenu popupMenu) {
+        activePopupMenu = popupMenu;
+    }
+
+    /**
+     * Save a static reference to the current application.
+     *
+     * @param app (not null)
+     */
+    private static synchronized void setApplication(GuiApplication app) {
+        assert app != null;
+
+        if (application != app) {
+            assert application == null : application;
+            application = app;
+        }
+    }
+
+    /**
      * Update the status of a slider. This assumes a naming convention where the
      * label's Nifty id ends with "SliderStatus".
      *
-     * @param namePrefix unique name prefix of the slider (not null)
+     * @param namePrefix unique id prefix of the slider (not null)
      * @param value value of the slider
      */
     private void updateSliderStatus(String namePrefix, float value) {

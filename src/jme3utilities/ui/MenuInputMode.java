@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -88,15 +88,14 @@ class MenuInputMode
             return;
         }
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
-        GuiScreenController screen =
-                GuiScreenController.getEnabledScreen();
+        GuiScreenController screen = GuiScreenController.getEnabledScreen();
         if (actionString.equals("close")) {
             /*
              * Close the popup menu.
              */
             if (screen != null) {
-                assert screen.hasActivePopup();
-                screen.closeActivePopup();
+                assert GuiScreenController.hasActivePopup();
+                GuiScreenController.closeActivePopup();
             }
             return;
 
@@ -105,7 +104,7 @@ class MenuInputMode
              * Select a menu item based on its index.
              */
             if (screen != null) {
-                assert screen.hasActivePopup();
+                assert GuiScreenController.hasActivePopup();
                 String indexString = actionString.substring("select ".length());
                 int index = Integer.valueOf(indexString);
                 screen.selectMenuItem(index - 1);

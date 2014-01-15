@@ -429,22 +429,21 @@ public class TestSkyControl
      */
     private void initializeUserInterface() {
         /*
-         * Capture a screenshot when the KEY_SYSRQ hotkey is pressed.
+         * Capture a screenshot each time the KEY_SYSRQ hotkey is pressed.
          */
         ScreenshotAppState screenShotState = new ScreenshotAppState();
         boolean success = stateManager.attach(screenShotState);
         assert success;
         /*
          * Disable display of jME3 statistics.
-         * Statistics display can be re-enabled by pressing the F5 hotkey.
+         * These displays can be re-enabled by pressing the F5 hotkey.
          */
         setDisplayFps(false);
         setDisplayStatView(false);
         /*
          * Create and attach the heads-up display (HUD).
          */
-        boolean reenableFlyCam = true;
-        hud = new TestSkyControlHud(reenableFlyCam);
+        hud = new TestSkyControlHud();
         success = stateManager.attach(hud);
         assert success;
         /*

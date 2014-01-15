@@ -220,7 +220,10 @@ public class Misc {
     }
 
     /**
-     * Read version information for this package.
+     * Read the version information for this package.
+     *
+     * @return a version string consisting of the package name, branch, and
+     * revision of this file
      */
     public static String getVersion() {
         return "jme3-utilities trunk $Rev$";

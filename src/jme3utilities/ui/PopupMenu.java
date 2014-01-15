@@ -58,10 +58,6 @@ public class PopupMenu
      */
     final private PopupMenu parent;
     /**
-     * which screen controls this popup menu: set by constructor
-     */
-    final private GuiScreenController controller;
-    /**
      * prefix for the menu's action strings: set by constructor
      */
     final private String actionPrefix;
@@ -79,21 +75,18 @@ public class PopupMenu
     /**
      * Instantiate a record of a popup menu (or submenu).
      *
-     * @param controller which screen owns this popup menu (not null)
      * @param popupId Nifty id of the popup (not null)
      * @param actionPrefix prefix for action strings (not null)
      * @param itemArray the items in the popup menu (not null, unaffected)
      * @param parent the parent menu which opened this submenu (or null if not a
      * submenu)
      */
-    PopupMenu(GuiScreenController controller, String popupId,
-            String actionPrefix, String[] itemArray, PopupMenu parent) {
-        assert controller != null;
+    PopupMenu(String popupId, String actionPrefix, String[] itemArray,
+            PopupMenu parent) {
         assert popupId != null;
         assert actionPrefix != null;
         assert itemArray != null;
 
-        this.controller = controller;
         this.popupId = popupId;
         this.actionPrefix = actionPrefix;
         this.itemArray = itemArray.clone();
@@ -106,7 +99,7 @@ public class PopupMenu
      * Close the menu.
      */
     void close() {
-        Nifty nifty = controller.getNifty();
+        Nifty nifty = GuiScreenController.getNifty();
         nifty.closePopup(popupId);
     }
 
@@ -179,7 +172,7 @@ public class PopupMenu
         /*
          * If the menu is still active, close it and all of its ancestors.
          */
-        controller.closePopup(this);
+        GuiScreenController.closePopup(this);
     }
     // *************************************************************************
     // private methods
@@ -190,7 +183,7 @@ public class PopupMenu
      * @return the pre-existing instance
      */
     private Element getElement() {
-        Nifty nifty = controller.getNifty();
+        Nifty nifty = GuiScreenController.getNifty();
         Element element = nifty.findPopupByName(popupId);
         return element;
     }
