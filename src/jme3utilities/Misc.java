@@ -226,7 +226,7 @@ public class Misc {
      * revision of this file
      */
     public static String getVersion() {
-        return "jme3-utilities trunk $Rev$";//
+        return "jme3-utilities trunk $Rev$";
     }
 
     /**

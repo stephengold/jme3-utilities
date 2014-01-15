@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -39,8 +39,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Utility methods for manipulating unit skeletons. Aside from test cases, all
- * methods should be public and static.
+ * Utility methods for manipulating bones and skeletons. Aside from test cases,
+ * all methods should be public and static.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -66,9 +66,9 @@ public class MySkeleton
     // new methods exposed
 
     /**
-     * Access a named bone in a unit.
+     * Access a named bone in an animated spatial.
      *
-     * @param spatial which unit (not null)
+     * @param spatial (not null)
      * @param boneName which bone to measure (not null)
      * @return the pre-existing instance (or null if not found)
      */
@@ -89,9 +89,9 @@ public class MySkeleton
     }
 
     /**
-     * Access one bone angle in a unit's pose.
+     * Access a specific bone angle in an animated spatial's pose.
      *
-     * @param spatial which unit (not null)
+     * @param spatial (not null)
      * @param boneName which bone to measure (not null)
      * @param axis which axis to measure (0 = x, 1 = y, 2 = z)
      * @return the rotation angle (in radians) or zero for unknown bone
@@ -121,9 +121,9 @@ public class MySkeleton
     }
 
     /**
-     * Access the world coordinates of a bone.
+     * Access the world coordinates of a bone's tail.
      *
-     * @param spatial which unit (not null)
+     * @param spatial (not null)
      * @param boneName which bone to measure (not null)
      * @return a new vector
      */
@@ -143,9 +143,9 @@ public class MySkeleton
     }
 
     /**
-     * Access a unit's skeleton.
+     * Access the skeleton of an animated spatial.
      *
-     * @param spatial which unit (not null)
+     * @param spatial (not null)
      * @return the pre-existing instance (or null if not found)
      */
     public static Skeleton getSkeleton(Spatial spatial) {
@@ -158,34 +158,32 @@ public class MySkeleton
     }
 
     /**
-     * List the bones in the skeleton of a particular unit.
+     * List all bones in an animated spatial.
      *
-     * @param spatial which unit (or null)
-     * @return a new sorted set
+     * @param spatial (or null)
+     * @return a new collection in lexicographic order
      */
     public static Collection<String> listBones(Spatial spatial) {
-        /*
-         * Collect all bone names.
-         */
         Collection<String> names = new TreeSet<>();
-        if (spatial != null) {
-            Skeleton skeleton = getSkeleton(spatial);
-            if (skeleton != null) {
-                int boneCount = skeleton.getBoneCount();
-                for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
-                    Bone bone = skeleton.getBone(boneIndex);
-                    String name = bone.getName();
-                    names.add(name);
-                }
+        if (spatial == null) {
+            return names;
+        }
+        Skeleton skeleton = getSkeleton(spatial);
+        if (skeleton != null) {
+            int boneCount = skeleton.getBoneCount();
+            for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
+                Bone bone = skeleton.getBone(boneIndex);
+                String name = bone.getName();
+                names.add(name);
             }
         }
         return names;
     }
 
     /**
-     * Alter one bone rotation angle in a unit's bind pose.
+     * Alter one bone rotation angle in the bind pose of an animated spatial.
      *
-     * @param spatial which unit (not null)
+     * @param spatial (not null)
      * @param boneName which bone to adjust (not null)
      * @param axis which axis to adjust (0 = x, 1 = y, 2 = z)
      * @param newAngle new rotation angle (in radians)
