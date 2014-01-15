@@ -26,9 +26,7 @@
 package jme3utilities.sky.test;
 
 import com.jme3.app.Application;
-import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.input.FlyByCamera;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -49,8 +47,8 @@ import jme3utilities.sky.SkyMaterial;
  * application.
  *
  * Each time the HUD is enabled, the flyby camera is disabled so that Nifty can
- * grab the mouse pointer. If enableFlyby is true, the flyby camera will get
- * re-enabled when the HUD is disabled.
+ * grab the mouse pointer. The flyby camera gets re-enabled when the HUD is
+ * disabled.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -76,30 +74,24 @@ public class TestSkyMaterialHud
     // *************************************************************************
     // fields
     /**
-     * if true, the flyby camera will get re-enabled each time this HUD is
-     * disabled: set by constructor
-     */
-    final private boolean reenableFlyby;
-    /**
-     * the phase of the moon, selected from a popup menu
+     * phase of the moon, selected from a popup menu
      */
     private LunarPhase phase = LunarPhase.FULL;
     /**
-     * material controlled by this HUD
+     * material controlled by this HUD: set by constructor
      */
     private SkyMaterial material = null;
     // *************************************************************************
     // constructors
 
     /**
-     * Instantiate the display.
-     *
-     * @param reenableFlyby if true, the flyby camera will get re-enabled each
-     * time this HUD is disabled
+     * Instantiate a disabled display which will be enabled during
+     * initialization. Invoke setMaterial() before attaching it to the state
+     * manager.
      */
-    TestSkyMaterialHud(boolean reenableFlyby) {
-        super("test-sky-material");
-        this.reenableFlyby = reenableFlyby;
+    TestSkyMaterialHud() {
+        super("test-sky-material", "Interface/Nifty/huds/test-sky-material.xml",
+                true);
     }
     // *************************************************************************
     // new methods exposed
@@ -116,7 +108,7 @@ public class TestSkyMaterialHud
     public void onRadioButtonChanged(final String buttonId,
             final RadioButtonStateChangedEvent event) {
         assert buttonId != null;
-        if (!screenHasStarted) {
+        if (!hasStarted()) {
             return;
         }
 
@@ -148,7 +140,7 @@ public class TestSkyMaterialHud
      *
      * @param material (not null)
      */
-    void setMaterial(SkyMaterial material) {
+    final void setMaterial(SkyMaterial material) {
         if (material == null) {
             throw new NullPointerException("material should not be null");
         }
@@ -156,108 +148,7 @@ public class TestSkyMaterialHud
         this.material = material;
     }
     // *************************************************************************
-    // ActionListener methods
-
-    /**
-     * Process an action from the GUI or keyboard.
-     *
-     * @param actionString textual description of the action (not null)
-     * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored
-     */
-    @Override
-    public void onAction(String actionString, boolean ongoing, float ignored) {
-        /*
-         * Ignore actions which are not ongoing.
-         */
-        if (!ongoing) {
-            return;
-        }
-        logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
-        switch (actionString) {
-            case "c0Texture":
-            case "c1Texture":
-                showCloudsMenu(actionString + " ");
-                break;
-
-            case "c0Texture clear":
-            case "c0Texture cyclone":
-            case "c0Texture overcast":
-            case "c1Texture clear":
-            case "c1Texture cyclone":
-            case "c1Texture overcast":
-                String layer = actionString.substring(1, 2);
-                String name = actionString.substring(10);
-                String path = String.format("Textures/skies/clouds/%s.png",
-                        name);
-                setCloudTexture(layer, path);
-                break;
-
-            case "c0Texture t0neg0d":
-            case "c1Texture t0neg0d":
-                layer = actionString.substring(1, 2);
-                setCloudTexture(layer, "Textures/skies/t0neg0d/Clouds_L.png");
-                break;
-
-            case "phase":
-                showPhaseMenu();
-                break;
-
-            case "phase full":
-            case "phase waning-crescent":
-            case "phase waning-gibbous":
-            case "phase waxing-crescent":
-            case "phase waxing-gibbous":
-                name = actionString.substring(6);
-                setPhase(name);
-                break;
-
-            default:
-                logger.log(Level.WARNING, "Action {0} was not handled.",
-                        MyString.quote(actionString));
-                break;
-        }
-    }
-    // *************************************************************************
-    // SimpleScreenController methods
-
-    /**
-     * Initialize and enable this display.
-     *
-     * @param stateManager (not null)
-     * @param application (not null)
-     */
-    @Override
-    public void initialize(AppStateManager stateManager,
-            Application application) {
-        assert !initialized;
-        assert !isEnabled();
-        super.initialize(stateManager, application);
-
-        validateAndLoadHud();
-        setRadioButton("zenithRadioButton");
-        setEnabled(true);
-    }
-
-    /**
-     * Enable or disable this display.
-     *
-     * @param newState true to enable, false to disable
-     */
-    @Override
-    public void setEnabled(boolean newState) {
-        SimpleApplication app = (SimpleApplication) getApplication();
-        FlyByCamera fbc = app.getFlyByCamera();
-        if (newState) {
-            enable(this);
-            fbc.setEnabled(false);
-        } else {
-            disable();
-            if (reenableFlyby) {
-                fbc.setEnabled(true);
-            }
-        }
-    }
+    // AbstractAppState methods
 
     /**
      * Callback to update this display. (Invoked once per frame.)
@@ -332,12 +223,98 @@ public class TestSkyMaterialHud
         setStatusText("sunTransmissionStatus", transmissionStatus);
     }
     // *************************************************************************
+    // ActionListener methods
+
+    /**
+     * Process an action from the GUI.
+     *
+     * @param actionString textual description of the action (not null)
+     * @param ongoing true if the action is ongoing, otherwise false
+     * @param ignored
+     */
+    @Override
+    public void onAction(String actionString, boolean ongoing, float ignored) {
+        /*
+         * Ignore actions which are not ongoing.
+         */
+        if (!ongoing) {
+            return;
+        }
+        logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
+        switch (actionString) {
+            case "c0Texture":
+            case "c1Texture":
+                showCloudsMenu(actionString + " ");
+                break;
+
+            case "c0Texture clear":
+            case "c0Texture cyclone":
+            case "c0Texture overcast":
+            case "c1Texture clear":
+            case "c1Texture cyclone":
+            case "c1Texture overcast":
+                String layer = actionString.substring(1, 2);
+                String name = actionString.substring(10);
+                String path = String.format("Textures/skies/clouds/%s.png",
+                        name);
+                setCloudTexture(layer, path);
+                break;
+
+            case "c0Texture t0neg0d":
+            case "c1Texture t0neg0d":
+                layer = actionString.substring(1, 2);
+                setCloudTexture(layer, "Textures/skies/t0neg0d/Clouds_L.png");
+                break;
+
+            case "phase":
+                showPhaseMenu();
+                break;
+
+            case "phase full":
+            case "phase waning-crescent":
+            case "phase waning-gibbous":
+            case "phase waxing-crescent":
+            case "phase waxing-gibbous":
+                name = actionString.substring(6);
+                setPhase(name);
+                break;
+
+            default:
+                logger.log(Level.WARNING, "Action {0} was not handled.",
+                        MyString.quote(actionString));
+                break;
+        }
+    }
+    // *************************************************************************
+    // GuiScreenController methods
+
+    /**
+     * Initialize and enable this display.
+     *
+     * @param stateManager (not null)
+     * @param application (not null)
+     */
+    @Override
+    public void initialize(AppStateManager stateManager,
+            Application application) {
+        if (isInitialized()) {
+            throw new IllegalStateException("already initialized");
+        }
+        if (isEnabled()) {
+            throw new IllegalStateException("shouldn't be enabled yet");
+        }
+
+        setListener(this);
+        super.initialize(stateManager, application);
+        setRadioButton("zenithRadioButton");
+    }
+    // *************************************************************************
     // private methods
 
     /**
      * Alter a cloud texture.
      *
-     * @param indexString which layer ("0" or "1")
+     * @param indexString which cloud layer ("0" or "1")
      * @param assetPath to the new texture (not null)
      */
     private void setCloudTexture(String indexString, String assetPath) {
@@ -364,42 +341,46 @@ public class TestSkyMaterialHud
         assert name != null;
 
         phase = LunarPhase.fromDescription(name);
-        String assetPath = phase.imagePath();
-        material.addObject(moonIndex, assetPath);
+        String imageAssetPath = phase.imagePath();
+        material.addObject(moonIndex, imageAssetPath);
     }
 
     /**
      * Display a cloud texture menu.
+     *
+     * @param actionPrefix common prefix of the menu's action strings (not null)
      */
     private void showCloudsMenu(String actionPrefix) {
-        String[] textureItems = {"clear", "overcast", "cyclone", "t0neg0d"};
-        showPopup(actionPrefix, textureItems);
+        assert actionPrefix != null;
+
+        showPopup(actionPrefix, new String[]{
+            "clear", "overcast", "cyclone", "t0neg0d"
+        });
     }
 
     /**
      * Display a phase-of-the-moon menu.
      */
     private void showPhaseMenu() {
-        String[] phaseItems = {
+        showPopup("phase ", new String[]{
             "full", "waning-crescent", "waning-gibbous",
             "waxing-crescent", "waxing-gibbous"
-        };
-        showPopup("phase ", phaseItems);
+        });
     }
 
     /**
      * Update a bank of four sliders which control a color.
      *
-     * @param namePrefix unique name prefix of the bank (not null)
+     * @param prefix unique id prefix of the bank (not null)
      * @return the color indicated by the sliders (a new instance)
      */
-    private ColorRGBA updateColorBank(String namePrefix) {
-        assert namePrefix != null;
+    private ColorRGBA updateColorBank(String prefix) {
+        assert prefix != null;
 
-        float r = updateSlider(namePrefix + "R");
-        float g = updateSlider(namePrefix + "G");
-        float b = updateSlider(namePrefix + "B");
-        float a = updateSlider(namePrefix + "A");
+        float r = updateSlider(prefix + "R");
+        float g = updateSlider(prefix + "G");
+        float b = updateSlider(prefix + "B");
+        float a = updateSlider(prefix + "A");
         ColorRGBA color = new ColorRGBA(r, g, b, a);
 
         return color;
@@ -409,14 +390,14 @@ public class TestSkyMaterialHud
      * Update a bank of two sliders which control a set of texture (UV)
      * coordinates.
      *
-     * @param namePrefix unique name prefix of the bank (not null)
+     * @param prefix unique id prefix of the bank (not null)
      * @return the coordinates indicated by the sliders (a new instance)
      */
-    private Vector2f updateUVBank(String namePrefix) {
-        assert namePrefix != null;
+    private Vector2f updateUVBank(String prefix) {
+        assert prefix != null;
 
-        float u = updateSlider(namePrefix + "U");
-        float v = updateSlider(namePrefix + "V");
+        float u = updateSlider(prefix + "U");
+        float v = updateSlider(prefix + "V");
         Vector2f result = new Vector2f(u, v);
 
         return result;

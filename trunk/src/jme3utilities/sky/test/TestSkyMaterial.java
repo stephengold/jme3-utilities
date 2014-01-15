@@ -247,23 +247,22 @@ public class TestSkyMaterial
      */
     private void initializeUserInterface(SkyMaterial material) {
         /*
-         * Capture a screenshot when the KEY_SYSRQ hotkey is pressed.
+         * Capture a screenshot each time the KEY_SYSRQ hotkey is pressed.
          */
         ScreenshotAppState screenShotState = new ScreenshotAppState();
         boolean success = stateManager.attach(screenShotState);
         assert success;
         /*
-         * Create the heads-up display (HUD).
+         * Create and attach the heads-up display (HUD).
          */
-        boolean reenableFlyCam = false;
-        hud = new TestSkyMaterialHud(reenableFlyCam);
+        InputMode defaultInputMode = getDefaultInputMode();
+        hud = new TestSkyMaterialHud();
         hud.setMaterial(material);
         success = stateManager.attach(hud);
         assert success;
         /*
          * Add hotkey bindings to the default input mode.
          */
-        InputMode defaultInputMode = getDefaultInputMode();
         defaultInputMode.bind(actionStringToggle, KeyInput.KEY_H);
         defaultInputMode.bind(actionStringLoad, KeyInput.KEY_L);
         defaultInputMode.bind(actionStringSave, KeyInput.KEY_S);
