@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -292,7 +292,7 @@ public class Hotkey {
     }
 
     /**
-     * Get the key code of a hotkey.
+     * Read the key code of a hotkey.
      */
     public int keyCode() {
         return keyCode;
@@ -313,7 +313,7 @@ public class Hotkey {
     }
 
     /**
-     * Get the name of a hotkey.
+     * Read the name of a hotkey.
      */
     public String name() {
         return name;

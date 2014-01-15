@@ -179,7 +179,7 @@ abstract public class GuiApplication
         stateManager.attach(defaultInputMode);
         defaultInputMode.setEnabled(true);
         /*
-         * Attach the input mode for popup menus.
+         * Attach the (disabled) input mode for popup menus.
          */
         InputMode menuMode = new MenuInputMode();
         stateManager.attach(menuMode);
