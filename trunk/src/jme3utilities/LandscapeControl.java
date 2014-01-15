@@ -145,6 +145,9 @@ public class LandscapeControl
 
     /**
      * Instantiate a disabled control.
+     * 
+     * @param assetManager for loading textures and material definitions (not
+     * null)
      */
     public LandscapeControl(AssetManager assetManager) {
         super.setEnabled(false);
