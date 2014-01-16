@@ -59,6 +59,10 @@ abstract public class GuiApplication
     // *************************************************************************
     // fields
     /**
+     * the currently enabled screen controller (null means there's none)
+     */
+    private static BasicScreenController enabledScreen = null;
+    /**
      * the initial input mode: set in #simpleInitApp()
      */
     private InputMode defaultInputMode = null;
@@ -81,6 +85,15 @@ abstract public class GuiApplication
     public InputMode getDefaultInputMode() {
         assert defaultInputMode != null;
         return defaultInputMode;
+    }
+
+    /**
+     * Access the screen controller which is currently enabled.
+     *
+     * @return pre-existing instance (or null if none)
+     */
+    public BasicScreenController getEnabledScreen() {
+        return enabledScreen;
     }
 
     /**
@@ -118,6 +131,17 @@ abstract public class GuiApplication
      * Callback to the user's application startup code.
      */
     abstract public void guiInitializeApplication();
+
+    /**
+     * Update which screen controller is enabled.
+     *
+     * @param newScreen (or null for none)
+     */
+    public void setEnabledScreen(BasicScreenController newScreen) {
+        assert newScreen == null || enabledScreen == null;
+
+        enabledScreen = newScreen;
+    }
 
     /**
      * Alter the effective speeds of all animations.

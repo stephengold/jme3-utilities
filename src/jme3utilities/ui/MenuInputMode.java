@@ -88,7 +88,8 @@ class MenuInputMode
             return;
         }
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
-        GuiScreenController screen = GuiScreenController.getEnabledScreen();
+        GuiScreenController screen =
+                (GuiScreenController) application.getEnabledScreen();
         if (actionString.equals("close")) {
             /*
              * Close the popup menu.
