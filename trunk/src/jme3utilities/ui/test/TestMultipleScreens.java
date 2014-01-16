@@ -29,13 +29,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
+import jme3utilities.ui.BasicScreenController;
 import jme3utilities.ui.GuiApplication;
-import jme3utilities.ui.GuiScreenController;
 import jme3utilities.ui.InputMode;
 
 /**
  * A GUI application for testing/demonstrating multiple instances of the
- * GuiScreenController class. The application's main entry point is here.
+ * BasicScreenController class. The application's main entry point is here.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -54,15 +54,15 @@ public class TestMultipleScreens
     /**
      * controller for screen s1: set in guiInitializeApplication()
      */
-    private GuiScreenController s1 = null;
+    private BasicScreenController s1 = null;
     /**
      * controller for screen s2: set in guiInitializeApplication()
      */
-    private GuiScreenController s2 = null;
+    private BasicScreenController s2 = null;
     /**
      * controller for screen s3: set in guiInitializeApplication()
      */
-    private GuiScreenController s3 = null;
+    private BasicScreenController s3 = null;
     // *************************************************************************
     // new methods exposed
 
@@ -105,19 +105,19 @@ public class TestMultipleScreens
         /*
          * Create and attach a screen controller for each screen.
          */
-        s1 = new GuiScreenController("TestMultipleScreens/s1",
+        s1 = new BasicScreenController("TestMultipleScreens/s1",
                 "Interface/Nifty/screens/TestMultipleScreens/s1.xml", true);
         s1.setListener(inputMode);
         boolean success = stateManager.attach(s1);
         assert success;
 
-        s2 = new GuiScreenController("TestMultipleScreens/s2",
+        s2 = new BasicScreenController("TestMultipleScreens/s2",
                 "Interface/Nifty/screens/TestMultipleScreens/s2.xml", false);
         s2.setListener(inputMode);
         success = stateManager.attach(s2);
         assert success;
 
-        s3 = new GuiScreenController("TestMultipleScreens/s3",
+        s3 = new BasicScreenController("TestMultipleScreens/s3",
                 "Interface/Nifty/screens/TestMultipleScreens/s3.xml", false);
         s3.setListener(inputMode);
         success = stateManager.attach(s3);
@@ -134,7 +134,7 @@ public class TestMultipleScreens
     @Override
     public void onAction(String actionString, boolean ongoing, float ignored) {
         if (ongoing) {
-            GuiScreenController old = GuiScreenController.getEnabledScreen();
+            BasicScreenController old = getEnabledScreen();
             switch (actionString) {
                 case "go s1":
                     old.setEnabled(false);
