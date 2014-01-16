@@ -122,7 +122,15 @@ public class TestSkyMaterial
      * @param arguments array of command-line arguments (not null)
      */
     public static void main(String[] arguments) {
+        /*
+         * Mute the chatty loggers found in some imported packages.
+         */
         Misc.setLoggingLevels(Level.WARNING);
+        /*
+         * Set the logging level for this class.
+         */
+        logger.setLevel(Level.INFO);
+
         TestSkyMaterial application = new TestSkyMaterial();
         /*
          * Don't pause on lost focus.  This simplifies debugging and
@@ -157,6 +165,12 @@ public class TestSkyMaterial
      */
     @Override
     public void guiInitializeApplication() {
+        /*
+         * Log the jME3-utilities version string.
+         */
+        logger.log(Level.INFO, "jME3-utilities version is {0}",
+                MyString.quote(Misc.getVersionShort()));
+
         configureCamera();
         /*
          * Create and attach a dome mesh geometry for the sky.
@@ -244,8 +258,11 @@ public class TestSkyMaterial
 
     /**
      * Initialize the user interface.
+     *
+     * @param material the sky material under test (not null)
      */
     private void initializeUserInterface(SkyMaterial material) {
+        assert material != null;
         /*
          * Capture a screenshot each time the KEY_SYSRQ hotkey is pressed.
          */
@@ -316,9 +333,11 @@ public class TestSkyMaterial
     /**
      * (Re-)initialize the render camera's frustum.
      *
-     * @param fovDegrees the desired field-of-view angle in degrees
+     * @param fovDegrees the desired field-of-view angle in degrees (>0)
      */
     private void setFrustum(float fovDegrees) {
+        assert fovDegrees > 0f : fovDegrees;
+
         Camera camera = getCamera();
         float nearPlaneDistance = 0.1f;
         float farPlaneDistance = 10000f;

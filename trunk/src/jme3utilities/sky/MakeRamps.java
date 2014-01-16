@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -110,6 +110,11 @@ public class MakeRamps {
             jCommander.usage();
             return;
         }
+        /*
+         * Log the jME3-utilities version string and working directory.
+         */
+        logger.log(Level.INFO, "jME3-utilities version is {0}",
+                MyString.quote(Misc.getVersionShort()));
         String userDir = System.getProperty("user.dir");
         logger.log(Level.INFO, "working directory is {0}",
                 MyString.quote(userDir));
