@@ -220,13 +220,27 @@ public class Misc {
     }
 
     /**
-     * Read the version information for this package.
+     * Read the verbose version information for this package.
      *
      * @return a version string consisting of the package name, branch, and
      * revision of this file
      */
     public static String getVersion() {
         return "jme3-utilities trunk $Rev$";//
+    }
+
+    /**
+     * Read the terse version information for this package.
+     *
+     * @return a version string consisting of the branch and revision of this
+     * file
+     */
+    public static String getVersionShort() {
+        String verbose = getVersion();
+        String[] words = verbose.split("\\s+");
+        String result = String.format("%s %s", words[1], words[3]);
+
+        return result;
     }
 
     /**

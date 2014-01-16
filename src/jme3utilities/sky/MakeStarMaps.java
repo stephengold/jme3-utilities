@@ -186,7 +186,7 @@ public class MakeStarMaps {
         /*
          * Set the logging level for this class and also for writeMap().
          */
-        logger.setLevel(Level.WARNING);
+        logger.setLevel(Level.INFO);
         Logger.getLogger(jme3utilities.Misc.class.getName())
                 .setLevel(Level.INFO);
         /*
@@ -212,6 +212,11 @@ public class MakeStarMaps {
                 return;
             }
         }
+        /*
+         * Log the jME3-utilities version string and working directory.
+         */
+        logger.log(Level.INFO, "jME3-utilities version is {0}",
+                MyString.quote(Misc.getVersionShort()));
         String userDir = System.getProperty("user.dir");
         logger.log(Level.INFO, "working directory is {0}",
                 MyString.quote(userDir));
@@ -247,14 +252,14 @@ public class MakeStarMaps {
         assert preset != null;
 
         float latitude = preset.latitude();
-        logger.log(Level.INFO, "latitude is {0} degrees",
+        logger.log(Level.FINE, "latitude is {0} degrees",
                 latitude * FastMath.RAD_TO_DEG);
 
         float siderealHour = preset.hour();
-        logger.log(Level.INFO, "sidereal time is {0} hours", siderealHour);
+        logger.log(Level.FINE, "sidereal time is {0} hours", siderealHour);
 
         int textureSize = preset.textureSize();
-        logger.log(Level.INFO, "resolution is {0} pixels", textureSize);
+        logger.log(Level.FINE, "resolution is {0} pixels", textureSize);
 
         RenderedImage image = generateMap(latitude, siderealHour, textureSize);
         String filePath = String.format(
@@ -302,7 +307,7 @@ public class MakeStarMaps {
                 plotCount++;
             }
         }
-        logger.log(Level.INFO, "plotted {0} stars", plotCount);
+        logger.log(Level.FINE, "plotted {0} stars", plotCount);
 
         return map;
     }

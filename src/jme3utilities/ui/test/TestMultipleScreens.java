@@ -28,6 +28,7 @@ package jme3utilities.ui.test;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
+import jme3utilities.MyString;
 import jme3utilities.ui.GuiApplication;
 import jme3utilities.ui.GuiScreenController;
 import jme3utilities.ui.InputMode;
@@ -66,12 +67,19 @@ public class TestMultipleScreens
     // new methods exposed
 
     /**
-     * Main entry point for the application.
+     * Main entry point for the test harness.
      *
      * @param unused array of command-line arguments (not null)
      */
     public static void main(String[] unused) {
+        /*
+         * Mute the chatty loggers found in some imported packages.
+         */
         Misc.setLoggingLevels(Level.WARNING);
+        /*
+         * Set the logging level for this class.
+         */
+        logger.setLevel(Level.INFO);
 
         TestMultipleScreens application = new TestMultipleScreens();
         application.start();
@@ -87,6 +95,12 @@ public class TestMultipleScreens
      */
     @Override
     public void guiInitializeApplication() {
+        /*
+         * Log the jME3-utilities version string.
+         */
+        logger.log(Level.INFO, "jME3-utilities version is {0}",
+                MyString.quote(Misc.getVersionShort()));
+
         InputMode inputMode = getDefaultInputMode();
         /*
          * Create and attach a screen controller for each screen.

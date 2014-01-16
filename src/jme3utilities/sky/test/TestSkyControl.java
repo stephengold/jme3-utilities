@@ -46,6 +46,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.LandscapeControl;
 import jme3utilities.Misc;
+import jme3utilities.MyString;
 import jme3utilities.MyVector3f;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
@@ -135,7 +136,15 @@ public class TestSkyControl
      * @param arguments array of command-line arguments (not null)
      */
     public static void main(String[] arguments) {
+        /*
+         * Mute the chatty loggers found in some imported packages.
+         */
         Misc.setLoggingLevels(Level.WARNING);
+        /*
+         * Set the logging level for this class.
+         */
+        logger.setLevel(Level.INFO);
+
         TestSkyControl application = new TestSkyControl();
         /*
          * Parse the command-line arguments into parameters.
@@ -171,6 +180,12 @@ public class TestSkyControl
      */
     @Override
     public void guiInitializeApplication() {
+        /*
+         * Log the jME3-utilities version string.
+         */
+        logger.log(Level.INFO, "jME3-utilities version is {0}",
+                MyString.quote(Misc.getVersionShort()));
+
         configureCamera();
         /**
          * A node to parent geometries which can appear reflected in the water.
