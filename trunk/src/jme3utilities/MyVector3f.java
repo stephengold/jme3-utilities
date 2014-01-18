@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -124,9 +124,6 @@ public class MyVector3f {
         if (from == null) {
             throw new NullPointerException("start location should not be null");
         }
-        if (to == null) {
-            throw new NullPointerException("end location should not be null");
-        }
 
         Vector3f offset = to.subtract(from);
         float distance = offset.length();
@@ -148,6 +145,16 @@ public class MyVector3f {
 
         assert direction.isUnitVector() : direction;
         return direction;
+    }
+
+    /**
+     * Test whether all components of a vector are positive.
+     *
+     * @param vector (not null, not altered)
+     */
+    public static boolean isAllNonNegative(Vector3f vector) {
+        boolean result = (vector.x > 0f && vector.y > 0f && vector.z > 0f);
+        return result;
     }
 
     /**
