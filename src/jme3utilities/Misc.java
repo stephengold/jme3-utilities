@@ -177,6 +177,9 @@ public class Misc {
         if (assetManager == null) {
             throw new NullPointerException("asset manager should not be null");
         }
+        if (assetPath == null) {
+            throw new NullPointerException("path should not be null");
+        }
 
         Texture texture = loadTexture(assetManager, assetPath);
         Material material = createUnshadedMaterial(assetManager, texture);
@@ -195,6 +198,9 @@ public class Misc {
             Texture texture) {
         if (assetManager == null) {
             throw new NullPointerException("asset manager should not be null");
+        }
+        if (texture == null) {
+            throw new NullPointerException("texture should not be null");
         }
 
         Material material = createUnshadedMaterial(assetManager);
@@ -220,20 +226,18 @@ public class Misc {
     }
 
     /**
-     * Read the verbose version information for this package.
+     * Read the verbose version string for this package.
      *
-     * @return a version string consisting of the package name, branch, and
-     * revision of this file
+     * @return the package name, branch, and revision of this file
      */
     public static String getVersion() {
         return "jme3-utilities trunk $Rev$";
     }
 
     /**
-     * Read the terse version information for this package.
+     * Read the terse version string for this package.
      *
-     * @return a version string consisting of the branch and revision of this
-     * file
+     * @return the branch and revision of this file
      */
     public static String getVersionShort() {
         String verbose = getVersion();
@@ -298,13 +302,10 @@ public class Misc {
      * Alter a single bone angle in the bind pose.
      *
      * @param bone which bone to adjust (not null)
-     * @param axis which local rotation axis to adjust (0 = x, 1 = y, 2 = z)
+     * @param axis which local rotation axis to adjust (0 -> x, 1 -> y, 2 -> z)
      * @param newAngle new rotation angle (in radians)
      */
     public static void setAngle(Bone bone, int axis, float newAngle) {
-        if (bone == null) {
-            throw new NullPointerException("bone should not be null");
-        }
         if (axis < 0 || axis > 2) {
             logger.log(Level.SEVERE, "axis={0}", axis);
             throw new IllegalArgumentException(
@@ -371,15 +372,19 @@ public class Misc {
         File textureFile = new File(filePath);
         try {
             ImageIO.write(image, "png", textureFile);
-            logger.log(Level.INFO, "wrote texture to {0}", filePath);
+            logger.log(Level.INFO, "wrote texture to {0}",
+                    MyString.quote(filePath));
 
         } catch (IOException exception) {
-            logger.log(Level.SEVERE, "write to {0} failed", filePath);
+            logger.log(Level.SEVERE, "write to {0} failed",
+                    MyString.quote(filePath));
             boolean success = textureFile.delete();
             if (success) {
-                logger.log(Level.INFO, "deleted file {0}", filePath);
+                logger.log(Level.INFO, "deleted file {0}",
+                        MyString.quote(filePath));
             } else {
-                logger.log(Level.SEVERE, "delete of {0} failed", filePath);
+                logger.log(Level.SEVERE, "delete of {0} failed",
+                        MyString.quote(filePath));
             }
             throw exception;
         }
