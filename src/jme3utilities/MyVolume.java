@@ -99,9 +99,8 @@ public class MyVolume {
             throw new IllegalArgumentException("height shouldn't be negative");
         }
 
-        float cylinderHalfHeight = 0.5f * height - radius;
-        Vector3f cylinderHalfExtents =
-                new Vector3f(cylinderHalfHeight, radius, radius);
+        float halfHeight = 0.5f * height;
+        Vector3f cylinderHalfExtents = new Vector3f(halfHeight, radius, radius);
         float cylinderVolume = cylinderVolume(cylinderHalfExtents);
         float volume = cylinderVolume + sphereVolume(radius);
 
@@ -169,7 +168,7 @@ public class MyVolume {
     /**
      * Compute the volume of a closed collision shape.
      *
-     * @param shape (not null)
+     * @param shape (not null, not altered)
      * @return volume in world units (>0)
      */
     public static float volume(CollisionShape shape) {
@@ -183,8 +182,8 @@ public class MyVolume {
 
         } else if (shape instanceof CapsuleCollisionShape) {
             CapsuleCollisionShape capsule = (CapsuleCollisionShape) shape;
-            float radius = capsule.getRadius();
             float height = capsule.getHeight();
+            float radius = capsule.getRadius();
             volume *= capsuleVolume(radius, height);
 
         } else if (shape instanceof CompoundCollisionShape) {

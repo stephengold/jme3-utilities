@@ -148,12 +148,12 @@ public class MyVector3f {
     }
 
     /**
-     * Test whether all components of a vector are positive.
+     * Test whether all components of a vector are all non-negative.
      *
      * @param vector (not null, not altered)
      */
     public static boolean isAllNonNegative(Vector3f vector) {
-        boolean result = (vector.x > 0f && vector.y > 0f && vector.z > 0f);
+        boolean result = (vector.x >= 0f && vector.y >= 0f && vector.z >= 0f);
         return result;
     }
 
