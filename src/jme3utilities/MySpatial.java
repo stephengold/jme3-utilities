@@ -115,7 +115,7 @@ public class MySpatial
     }
 
     /**
-     * Calculate the map (2-D) location of a spatial.
+     * Compute the map (2-D) location of a spatial.
      *
      * @param spatial which spatial to locate (not null)
      * @return a new vector

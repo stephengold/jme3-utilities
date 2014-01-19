@@ -45,6 +45,26 @@ import jme3utilities.MySpatial;
 /**
  * The component of SkyControl which models the orientations of the sun and
  * stars relative to an observer on Earth.
+ * <p>
+ * Three right-handed Cartesian coordinate systems are used: ecliptical,
+ * equatorial, and world.
+ * <p>
+ * In ecliptical coordinates:<ul>
+ * <li>+X points to the vernal equinox
+ * <li>+Y points to the celestial equator 90 degrees east of the vernal equinox
+ * <li>+Z points to the north celestial pole
+ * </ul>
+ * In equatorial coordinates:<ul>
+ * <li>+X points to the vernal equinox
+ * <li>+Y points to the celestial equator 90 degrees east of the vernal equinox
+ * <li>+Z points to the north celestial pole
+ * </ul>
+ * In world coordinates:<ul>
+ * <li>+X points to the north horizon,
+ * <li>+Y points to the zenith
+ * <li>+Z points to the east horizon
+ * </ul>
+ *
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -96,9 +116,7 @@ public class SunAndStars
      * <=Pi/2, >=-Pi/2)
      * @param longitude celestial longitude (radians east of the vernal equinox,
      * <=2*Pi, >=0)
-     * @return a new unit vector in a system where: +X points to the vernal
-     * equinox, +Y points to the celestial equator 90 degrees east of the vernal
-     * equinox, and +Z points to the north celestial pole
+     * @return a new unit vector in equatorial coordinates
      */
     public static Vector3f convertToEquatorial(float latitude,
             float longitude) {
@@ -132,21 +150,17 @@ public class SunAndStars
     }
 
     /**
-     * Convert ecliptical coordinates into an equatorial coordinates.
+     * Convert ecliptical coordinates to equatorial coordinates.
      *
-     * @param ecliptical coordinates in a system where: +X points to the vernal
-     * equinox, +Y points to the ecliptic 90 degrees east of the vernal equinox,
-     * and +Z points to the ecliptic north pole (not null)
-     * @return a new vector in a system where: +X points to the vernal equinox,
-     * +Y points to the celestial equator 90 degrees east of the vernal equinox,
-     * and +Z points to the north celestial pole
+     * @param ecliptical coordinates (not null, not altered)
+     * @return a new vector in equatorial coordinates
      */
     public static Vector3f convertToEquatorial(Vector3f ecliptical) {
         if (ecliptical == null) {
             throw new NullPointerException("coordinates should not be null");
         }
         /*
-         * The conversion consists of an (obliquity) rotation about the X
+         * The conversion consists of a rotation about the +X
          * (vernal equinox) axis.
          */
         Quaternion rotate = new Quaternion();
@@ -163,8 +177,7 @@ public class SunAndStars
      * <=Pi/2, >=-Pi/2)
      * @param longitude celestial longitude (radians east of the vernal equinox,
      * <=2*Pi, >=0)
-     * @return a new unit vector in a system where: +X points to the north
-     * horizon, +Y points to the zenith, and +Z points to the east horizon
+     * @return a new unit vector in world (horizontal) coordinates
      */
     public Vector3f convertToWorld(float latitude, float longitude) {
         if (latitude < -FastMath.HALF_PI || latitude > FastMath.HALF_PI) {
@@ -186,14 +199,10 @@ public class SunAndStars
     }
 
     /**
-     * Convert equatorial coordinates to world coordinates.
+     * Convert equatorial coordinates to world (horizontal) coordinates.
      *
-     * @param equatorial coordinates in in a system where: +X points to the
-     * vernal equinox, +Y points to the celestial equator 90 degrees east of the
-     * vernal equinox, and +Z points to the north celestial pole (not null)
-     *
-     * @return a new vector in a system where: +X points to the north horizon,
-     * +Y points to the zenith, and +Z points to the east horizon
+     * @param equatorial coordinates (not null, not altered)
+     * @return a new vector in a world coordinates
      */
     public Vector3f convertToWorld(Vector3f equatorial) {
         if (equatorial == null) {
@@ -285,6 +294,9 @@ public class SunAndStars
 
     /**
      * Update the orientations of north and south star domes.
+     *
+     * @param northDome (ignored if null)
+     * @param southDome (ignored if null)
      */
     void orientStarDomes(Spatial northDome, Spatial southDome) {
         float siderealAngle = getSiderealAngle();
@@ -376,8 +388,8 @@ public class SunAndStars
      * (Journal of the International Meteor Organization) 19-2, pages 31-34,
      * available from http://adsabs.harvard.edu/full/1991JIMO...19...31S
      *
-     * @param month zero-based month of the Gregorian year (>=0, <12)
-     * @param day of the Gregorian month (>=1, <=31)
+     * @param month zero-based month of the Gregorian year (<12, >=0)
+     * @param day of the Gregorian month (<=31, >=1)
      */
     public void setSolarLongitude(int month, int day) {
         if (month < 0 || month >= 12) {
@@ -398,7 +410,7 @@ public class SunAndStars
         calendar.set(year, month, day, 12, 0, 0); // noon, standard time
         int dayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
         /*
-         * Calculate approximate solar longitude (in radians).
+         * Compute the approximate solar longitude (in radians).
          */
         float daysSinceEquinox = (float) (dayOfYear - 80);
         float longitude = FastMath.TWO_PI * daysSinceEquinox / 366f;

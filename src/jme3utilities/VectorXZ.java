@@ -145,7 +145,7 @@ public class VectorXZ
     }
 
     /**
-     * Calculate the azimuth of this vector. Note: the directional convention is
+     * Compute the azimuth of this vector. Note: the directional convention is
      * left-handed.
      *
      * @return angle in radians (between -Pi and Pi), measured CW from the north
@@ -269,7 +269,7 @@ public class VectorXZ
     }
 
     /**
-     * Copy both of a vector's components to this vector.
+     * Copy another vector's components to this vector.
      *
      * @param vector the vector to copy (unaffected, not null)
      */
@@ -279,7 +279,7 @@ public class VectorXZ
     }
 
     /**
-     * Calculate the cross product of this vector with another.
+     * Compute the cross product of this vector with another.
      *
      * @param other the other vector (unaffected, not null)
      * @return the cross product
@@ -290,7 +290,7 @@ public class VectorXZ
     }
 
     /**
-     * Calculate the directional error of this direction with respect to a goal.
+     * Compute the directional error of this direction with respect to a goal.
      *
      * @param goal a unit vector (unaffected)
      * @return the sine of the angle from the goal to this direction, or +1/-1
@@ -345,7 +345,7 @@ public class VectorXZ
     }
 
     /**
-     * Calculate the dot product of this vector with another.
+     * Compute the dot product of this vector with another.
      *
      * @param other the other vector (unaffected, not null)
      * @return the dot product
@@ -377,7 +377,7 @@ public class VectorXZ
     }
 
     /**
-     * Calculate the length of this vector.
+     * Compute the length of this vector.
      *
      * @return length (>=0) of this vector
      */

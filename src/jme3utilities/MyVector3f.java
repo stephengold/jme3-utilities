@@ -57,7 +57,7 @@ public class MyVector3f {
     // new methods exposed
 
     /**
-     * Calculate the altitude angle of a non-zero offset.
+     * Compute the altitude angle of a non-zero offset.
      *
      * @param offset difference of world coordinates (not null, not zero length,
      * not altered)
@@ -82,7 +82,7 @@ public class MyVector3f {
     }
 
     /**
-     * Calculate the azimuth angle of an offset.
+     * Compute the azimuth angle of an offset.
      *
      * @param offset difference of world coordinates (not null, not altered)
      * @return horizontal angle in radians (measured CW from the X axis) or 0 if
@@ -97,7 +97,7 @@ public class MyVector3f {
     }
 
     /**
-     * Calculate a horizontal direction of an offset.
+     * Compute a horizontal direction of an offset.
      *
      * @param offset difference of world coordinates (not null, not altered)
      * @return a new unit vector
@@ -113,7 +113,7 @@ public class MyVector3f {
     }
 
     /**
-     * Calculate the distance from one location to another.
+     * Compute the distance from one location to another.
      *
      * @param from world coordinates of starting location (not null, not
      * altered)

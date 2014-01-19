@@ -184,8 +184,8 @@ public class DomeMesh
     // new methods exposed
 
     /**
-     * Calculate the texture coordinate of a point on this mesh that's located
-     * in a particular direction from its center.
+     * Compute the texture coordinate of a point on this mesh that's located in
+     * a particular direction from its center.
      *
      * @param direction (unit vector, not altered)
      * @return a new vector, or null if direction is too far below the rim
@@ -227,7 +227,7 @@ public class DomeMesh
     }
 
     /**
-     * Calculate the elevation angle of a point on this mesh, given it's texture
+     * Compute the elevation angle of a point on this mesh, given it's texture
      * coordinates.
      *
      * @param u 1st texture coordinate (<=1, >=0)
@@ -351,7 +351,7 @@ public class DomeMesh
          */
         Vector2f[] texCoordArray = new Vector2f[vertexCount];
         /*
-         * Calculate the non-polar vertices first. Vertices are arranged first
+         * Compute the non-polar vertices first. Vertices are arranged first
          * by latitude (starting from the rim).
          */
         float quadHeight = FastMath.HALF_PI / (quadrantSamples - 1); // radians
@@ -406,7 +406,7 @@ public class DomeMesh
          */
         short[] indexArray = new short[vpt * triangleCount];
         /*
-         * Calculate the quad triangles first. Quads are arranged first
+         * Compute the quad triangles first. Quads are arranged first
          * by latitude (starting from the rim).
          */
         int quadsPerGore = quadrantSamples - 2;

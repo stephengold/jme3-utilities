@@ -102,7 +102,7 @@ public class Misc {
     }
 
     /**
-     * Calculate the minimum and maximum elevations of a mesh geometry.
+     * Compute the minimum and maximum elevations of a mesh geometry.
      *
      * @param geometry which geometry to measure (not null)
      * @return array consisting of array[0]: the lowest world Y-coordinate (in
@@ -231,7 +231,7 @@ public class Misc {
      * @return the package name, branch, and revision of this file
      */
     public static String getVersion() {
-        return "jme3-utilities trunk $Rev$";//
+        return "jme3-utilities trunk $Rev$";
     }
 
     /**
@@ -248,7 +248,7 @@ public class Misc {
     }
 
     /**
-     * Calculate the world elevation of a horizontal surface.
+     * Compute the world elevation of a horizontal surface.
      *
      * @param geometry which surface to measure (not null)
      * @return world elevation of the surface (in world units)
