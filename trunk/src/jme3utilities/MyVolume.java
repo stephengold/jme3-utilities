@@ -65,7 +65,7 @@ public class MyVolume {
     // new methods exposed
 
     /**
-     * Calculate the volume of an axis-aligned box with specified half-extents.
+     * Compute the volume of an axis-aligned box with specified half-extents.
      *
      * @param halfExtents (not null, all components >=0, not altered)
      */
@@ -84,7 +84,7 @@ public class MyVolume {
     }
 
     /**
-     * Calculate the volume of a capsule with a given radius and height.
+     * Compute the volume of a capsule with a given radius and height.
      *
      * @param radius (>=0)
      * @param height (>=0)
@@ -108,7 +108,7 @@ public class MyVolume {
     }
 
     /**
-     * Calculate the volume of a cone with a given radius and height.
+     * Compute the volume of a cone with a given radius and height.
      *
      * @param radius (>=0)
      * @param height (>=0)
@@ -129,7 +129,7 @@ public class MyVolume {
     }
 
     /**
-     * Calculate the volume of an axis-aligned cylinder with specified
+     * Compute the volume of an axis-aligned cylinder with specified
      * half-extents.
      *
      * @param halfExtents (not null, all components >=0, not altered)
@@ -150,7 +150,7 @@ public class MyVolume {
     }
 
     /**
-     * Calculate the volume of a sphere with a given radius.
+     * Compute the volume of a sphere with a given radius.
      *
      * @param radius (>=0)
      */

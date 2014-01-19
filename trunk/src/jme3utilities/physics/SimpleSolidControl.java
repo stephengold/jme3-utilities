@@ -61,7 +61,8 @@ public class SimpleSolidControl
     // constructors
 
     /**
-     * Instantiate a control.
+     * Instantiate a dynamic control for an object with a particular shape and
+     * mass.
      *
      * @param enabled true for an enabled object, false for a disabled one
      * @param initialShape collision shape for the object (not null)

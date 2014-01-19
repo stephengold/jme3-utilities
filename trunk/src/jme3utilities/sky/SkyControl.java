@@ -627,9 +627,8 @@ public class SkyControl
     }
 
     /**
-     * Calculate where mainDirection intersects the cloud dome in the dome's
-     * local coordinates, accounting for the dome's flattening and vertical
-     * offset.
+     * Compute where mainDirection intersects the cloud dome in the dome's local
+     * coordinates, accounting for the dome's flattening and vertical offset.
      *
      * @param mainDirection (unit vector with non-negative y-component)
      * @return a new unit vector
@@ -698,7 +697,7 @@ public class SkyControl
     }
 
     /**
-     * Calculate the clockwise (left-handed) rotation of the moon's texture
+     * Compute the clockwise (left-handed) rotation of the moon's texture
      * relative to the sky's texture.
      *
      * @param longitude the moon's celestial longitude (in radians)
@@ -864,7 +863,7 @@ public class SkyControl
         if (cloudModulationFlag) {
             Vector3f intersection = intersectCloudDome(mainDirection);
             /*
-             * Calculate the texture coordinates of the cloud dome
+             * Compute the texture coordinates of the cloud dome
              * at the point of intersection.
              */
             Vector2f texCoord = mesh.directionUV(intersection);

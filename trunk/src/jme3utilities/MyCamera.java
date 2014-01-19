@@ -58,7 +58,7 @@ public class MyCamera {
     // new methods exposed
 
     /**
-     * Calculate a camera's azimuth angle.
+     * Compute a camera's azimuth angle.
      *
      * @param camera which camera (not null)
      * @return radians east of north
@@ -70,7 +70,7 @@ public class MyCamera {
     }
 
     /**
-     * Calculate a camera's vertical field-of-view angle.
+     * Compute a camera's vertical field-of-view angle.
      *
      * @param camera which camera (not null)
      * @return radians from top of frustum to bottom of frustum
@@ -109,7 +109,7 @@ public class MyCamera {
     }
 
     /**
-     * Calculate a camera's field-of-view tangent.
+     * Compute a camera's field-of-view tangent.
      *
      * @param camera which camera (not null)
      * @return top/near (>0)

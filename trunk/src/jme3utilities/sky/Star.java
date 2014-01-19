@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -100,14 +100,12 @@ class Star
     }
 
     /**
-     * Calculate a star's position in a right-handed Cartesian equatorial
-     * coordinate system where:
-     *
-     * +X points to the juncture of the meridian with the celestial equator
-     *
-     * +Y points to the east horizon (also on the celestial equator)
-     *
-     * +Z points to the celestial north pole
+     * Compute a star's position in a right-handed Cartesian equatorial
+     * coordinate system where:<ul>
+     * <li>+X points to the juncture of the meridian with the celestial equator
+     * <li>+Y points to the east horizon (also on the celestial equator)
+     * <li>+Z points to the celestial north pole
+     * </ul>
      *
      * @param siderealTime radians since sidereal midnight (>=0, <2*Pi)
      * @return a new unit vector
@@ -182,7 +180,7 @@ class Star
     }
 
     /**
-     * Calculate a hash code for the object.
+     * Generate the hash code for this star.
      */
     @Override
     public int hashCode() {
