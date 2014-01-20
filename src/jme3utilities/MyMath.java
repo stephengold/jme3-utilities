@@ -85,46 +85,6 @@ public class MyMath {
     }
 
     /**
-     * Compute the circle function sqrt(1 - x^2) for a single-precision value.
-     * Double precision arithmetic is used to reduce the risk of overflow.
-     *
-     * @param abscissa (<=1, >=-1)
-     * @return the positive ordinate of the unit circle at the abscissa (<=1,
-     * >=0)
-     */
-    public static float circle(float abscissa) {
-        if (abscissa < -1f || abscissa > 1f) {
-            logger.log(Level.SEVERE, "abscissa={0}", abscissa);
-            throw new IllegalArgumentException(
-                    "abscissa should be between -1 and 1, inclusive");
-        }
-
-        double x = (double) abscissa;
-        float y = (float) circle(x);
-
-        assert y >= 0f : y;
-        assert y <= 1f : y;
-        return y;
-    }
-
-    /**
-     * Clamp the magnitude of a single-precision value.
-     *
-     * @param fValue value to be clamped
-     * @param maxMagnitude limit of the clamp (>=0)
-     * @return value between -maxMagnitude and +maxMagnitude inclusive which is
-     * closest to fValue
-     * @see FastMath#clamp(float,float,float)
-     */
-    public static float clamp(float fValue, float maxMagnitude) {
-        if (maxMagnitude < 0f) {
-            logger.log(Level.SEVERE, "maxMagnitude={0}", maxMagnitude);
-            throw new IllegalArgumentException("limit shouldn't be negative");
-        }
-        return FastMath.clamp(fValue, -maxMagnitude, maxMagnitude);
-    }
-
-    /**
      * Clamp a value to be between 0 and 1, inclusive.
      *
      * @param fValue value to be clamped
@@ -137,38 +97,6 @@ public class MyMath {
         assert result >= 0f : result;
         assert result <= 1f : result;
         return result;
-    }
-
-    /**
-     * Compute the product of two complex numbers or the composition of two
-     * scale-and-rotate vectors.
-     *
-     * @param a first complex number
-     * @param b second complex number
-     * @return a new vector
-     */
-    public static Vector2f complexProduct(Vector2f a, Vector2f b) {
-        if (a == null) {
-            throw new NullPointerException("vector a should not be null");
-        }
-        if (b == null) {
-            throw new NullPointerException("vector b should not be null");
-        }
-
-        float productX = a.x * b.x - a.y * b.y;
-        float productY = a.y * b.x + a.x * b.y;
-        return new Vector2f(productX, productY);
-    }
-
-    /**
-     * Cube a single-precision value.
-     *
-     * @param fValue value to be cubed
-     * @return fValue raised to the third power
-     * @see #cubeRoot(float)
-     */
-    public static float cube(float fValue) {
-        return fValue * fValue * fValue;
     }
 
     /**
@@ -199,24 +127,6 @@ public class MyMath {
      */
     public static double discriminant(double a, double b, double c) {
         double result = b * b - 4.0 * a * c;
-
-        return result;
-    }
-
-    /**
-     * Compute the discriminant (b^2 - 4*a*c) of a quadratic equation in
-     * standard form: (a*x^2 + b*x + c). Double precision arithmetic is used to
-     * reduce the risk of overflow.
-     *
-     * @param a coefficient of the square term
-     * @param b coefficient of the linear term
-     * @param c constant term
-     */
-    public static double discriminant(float a, float b, float c) {
-        double aa = (double) a;
-        double bb = (double) b;
-        double cc = (double) c;
-        double result = discriminant(aa, bb, cc);
 
         return result;
     }
@@ -318,71 +228,6 @@ public class MyMath {
     }
 
     /**
-     * Get the next pseudo-random single-precision value.
-     */
-    public static float nextFloat() {
-        return generator.nextFloat();
-    }
-
-    /**
-     * Re-seed the pseudo-random generator.
-     *
-     * @param newSeed
-     */
-    public static void reseedGenerator(long newSeed) {
-        generator.setSeed(newSeed);
-    }
-
-    /**
-     * Compute the sphere function sqrt(1 - x^2 - y^2) for single-precision
-     * values. Double precision is used to reduce the risk of overflow.
-     *
-     * @param x coordinate (<=1, >=-1)
-     * @param y coordinate (<=1, >=-1)
-     * @return the positive height of the unit sphere at the coordinates (<=1,
-     * >=0)
-     */
-    public static float sphere(float x, float y) {
-        if (x < -1f || x > 1f) {
-            logger.log(Level.SEVERE, "x={0}", x);
-            throw new IllegalArgumentException(
-                    "x should be between -1 and 1, inclusive");
-        }
-        if (y < -1f || y > 1f) {
-            logger.log(Level.SEVERE, "y={0}", y);
-            throw new IllegalArgumentException(
-                    "y should be between -1 and 1, inclusive");
-        }
-
-        double rSquared = sumOfSquares(x, y);
-        if (rSquared >= 1.0) {
-            return 0f;
-        }
-
-        float z = (float) Math.sqrt(1.0 - rSquared);
-        assert z >= 0f : z;
-        assert z <= 1f : z;
-        return z;
-    }
-
-    /**
-     * Standardize a rotation angle to the range [-Pi, Pi).
-     *
-     * @param angle (in radians)
-     * @return a standard angle (in radians, <Pi, >=-Pi)
-     */
-    public static float standardizeAngle(float angle) {
-        float result = modulo(angle, FastMath.TWO_PI);
-        if (result >= FastMath.PI) {
-            result -= FastMath.TWO_PI;
-        }
-
-        assert result >= -FastMath.PI : result;
-        assert result < FastMath.PI : result;
-        return result;
-    }
-
-    /**
      * Compute the sum-of-squares of two single-precision values. Double
      * precision arithmetic is used to reduce the risk of overflow.
      *
@@ -409,19 +254,6 @@ public class MyMath {
     public static void main(String[] ignored) {
         System.out.print("Test results for class MyMath:\n\n");
 
-        Vector2f[] v2Cases = new Vector2f[]{new Vector2f(0f, 0f),
-            new Vector2f(1f, 0f),
-            new Vector2f(0f, 1f),
-            new Vector2f(0.6f, -0.8f)
-        };
-
-        for (Vector2f x : v2Cases) {
-            for (Vector2f y : v2Cases) {
-                System.out.printf("%s * %s = %s%n", x, y, complexProduct(x, y));
-            }
-            System.out.println();
-        }
-
         float h = hypotenuse(3f, 4f);
         System.out.printf("hypot(3,4)=%f%n", h);
 
@@ -429,17 +261,9 @@ public class MyMath {
             -3f, 0f, 1f, 8f, Float.MAX_VALUE / 2f, Float.MAX_VALUE
         };
         for (float x : floatCases) {
-            float c = cube(x);
-            float cr = cubeRoot(x);
-
             System.out.println();
             h = hypotenuse(x, x);
-            System.out.printf("x=%e  hypot(x,x)=%e%n",
-                    x, h);
-            System.out.printf("  cube(x)=%e  cubeRoot(x)=%e%n",
-                    c, cr);
-            System.out.printf("  cube(cubeRoot(x))=%e  cubeRoot(cube(x))=%e%n",
-                    cube(cr), cubeRoot(c));
+            System.out.printf("x=%e  hypot(x,x)=%e%n", x, h);
         }
         System.out.println();
     }

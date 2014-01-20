@@ -95,42 +95,4 @@ public class MyControl {
             return false;
         }
     }
-
-    /**
-     * Check whether a scene-graph control is compatible with isEnabled() and
-     * setEnabled().
-     *
-     * @param control which control to validate
-     * @return true if it's compatible, otherwise false
-     */
-    public static boolean isValid(Object control) {
-        return control instanceof AbstractControl
-                || control instanceof GhostControl
-                || control instanceof KinematicRagdollControl
-                || control instanceof RigidBodyControl
-                || control instanceof ParticleEmitter.ParticleEmitterControl;
-    }
-
-    /**
-     * Alter the enabled state of a scene-graph control.
-     *
-     * @param control which control to alter
-     * @param newState true means enable the control, false means disable it
-     */
-    public static void setEnabled(Object control, boolean newState) {
-        if (control instanceof AbstractControl) {
-            ((AbstractControl) control).setEnabled(newState);
-        } else if (control instanceof GhostControl) {
-            ((GhostControl) control).setEnabled(newState);
-        } else if (control instanceof KinematicRagdollControl) {
-            ((KinematicRagdollControl) control).setEnabled(newState);
-        } else if (control instanceof RigidBodyControl) {
-            ((RigidBodyControl) control).setEnabled(newState);
-        } else if (control instanceof ParticleEmitter.ParticleEmitterControl) {
-            ((ParticleEmitter.ParticleEmitterControl) control)
-                    .setEnabled(newState);
-        } else {
-            assert false : control.getClass();
-        }
-    }
 }

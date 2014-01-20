@@ -25,23 +25,10 @@
  */
 package jme3utilities;
 
-import com.jme3.animation.AnimChannel;
-import com.jme3.animation.Bone;
-import com.jme3.animation.LoopMode;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.TextureKey;
-import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.material.Material;
-import com.jme3.math.Matrix3f;
-import com.jme3.math.Quaternion;
-import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
-import com.jme3.scene.VertexBuffer;
-import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.texture.Texture;
-import com.jme3.util.IntMap;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
@@ -84,108 +71,6 @@ public class Misc {
     }
     // *************************************************************************
     // new methods exposed
-
-    /**
-     * Augment an existing compound collision collision shape with a scaled
-     * shape.
-     *
-     * @param parent compound shape to augment (not null, altered)
-     * @param child unscaled child shape (not null, altered)
-     * @param offset child's location relative to the parent's center, in
-     * unscaled world coordinates (not null, not altered)
-     * @param orientation child's orientation in world coordinates (null means
-     * don't care, not altered)
-     * @param worldScale to be applied to child and offset (not null, not
-     * altered, all components non-negative)
-     */
-    public static void addChildShape(CompoundCollisionShape parent,
-            CollisionShape child, Vector3f offset, Matrix3f orientation,
-            Vector3f worldScale) {
-        if (worldScale == null) {
-            throw new NullPointerException("scale should not be null");
-        }
-        if (!MyVector3f.isAllNonNegative(worldScale)) {
-            logger.log(Level.SEVERE, "scale={0}", worldScale);
-            throw new IllegalArgumentException(
-                    "scale factors should all be non-negative");
-        }
-
-        child.setScale(worldScale);
-        Vector3f scaledOffset = offset.mult(worldScale);
-
-        if (orientation == null) {
-            parent.addChildShape(child, scaledOffset);
-        } else {
-            parent.addChildShape(child, scaledOffset, orientation);
-        }
-    }
-
-    /**
-     * Smoothly transition an animation channel to a new animation.
-     *
-     * @param channel which animation channel (not null)
-     * @param newAnimation name of animation (or null to reset the channel)
-     */
-    public static void blendTo(AnimChannel channel, String newAnimation) {
-        if (newAnimation == null) {
-            channel.reset(true);
-            return;
-        }
-        String oldAnimation = channel.getAnimationName();
-        if (newAnimation.equals(oldAnimation)) {
-            return;
-        }
-        channel.setAnim(newAnimation, blendTime);
-        channel.setLoopMode(LoopMode.Loop);
-    }
-
-    /**
-     * Compute the minimum and maximum elevations of a mesh geometry.
-     *
-     * @param geometry which geometry to measure (not null)
-     * @return array consisting of array[0]: the lowest world Y-coordinate (in
-     * world units) and array[1]: the highest world Y-coordinate (in world
-     * units)
-     */
-    public static float[] findMinMaxHeights(Geometry geometry) {
-        Vector3f vertexLocal[] = new Vector3f[3];
-        for (int j = 0; j < 3; j++) {
-            vertexLocal[j] = new Vector3f();
-        }
-        Vector3f worldLocation = new Vector3f();
-
-        float minY = Float.MAX_VALUE;
-        float maxY = -Float.MAX_VALUE;
-
-        Mesh mesh = geometry.getMesh();
-        assert mesh.getMode() == Mesh.Mode.Triangles : mesh.getMode();
-        int count = mesh.getTriangleCount();
-        for (int triangleIndex = 0; triangleIndex < count; triangleIndex++) {
-            /*
-             * Get the vertex locations for a triangle in the mesh.
-             */
-            mesh.getTriangle(triangleIndex, vertexLocal[0], vertexLocal[1],
-                    vertexLocal[2]);
-            /*
-             * Compare with lowest and highest world elevations so far.
-             */
-            for (int j = 0; j < 3; j++) {
-                geometry.localToWorld(vertexLocal[j], worldLocation);
-                float y = worldLocation.y;
-                if (y < minY) {
-                    minY = y;
-                }
-                if (y > maxY) {
-                    maxY = y;
-                }
-            }
-        }
-        /*
-         * Create the result array.
-         */
-        float[] minMax = {minY, maxY};
-        return minMax;
-    }
 
     /**
      * Create an unshaded material.
@@ -269,7 +154,7 @@ public class Misc {
      * @return the package name, branch, and revision of this file
      */
     public static String getVersion() {
-        return "jme3-utilities trunk $Rev$";//
+        return "jme3-utilities skybeta $Rev$";
     }
 
     /**
@@ -282,35 +167,6 @@ public class Misc {
         String[] words = verbose.split("\\s+");
         String result = String.format("%s %s", words[1], words[3]);
 
-        return result;
-    }
-
-    /**
-     * Compute the world elevation of a horizontal surface.
-     *
-     * @param geometry which surface to measure (not null)
-     * @return world elevation of the surface (in world units)
-     */
-    public static float getYLevel(Geometry geometry) {
-        if (geometry == null) {
-            throw new NullPointerException("geometry should not be null");
-        }
-
-        float minMax[] = findMinMaxHeights(geometry);
-        assert minMax[0] == minMax[1] : minMax[0];
-        return minMax[0];
-    }
-
-    /**
-     * Test whether a mesh has texture (U-V) coordinates.
-     *
-     * @param mesh which mesh to test (not null)
-     * @return true if the mesh has texture coordinates, otherwise false
-     */
-    public static boolean hasUV(Mesh mesh) {
-        IntMap<VertexBuffer> buffers = mesh.getBuffers();
-        int key = Type.TexCoord.ordinal();
-        boolean result = buffers.containsKey(key);
         return result;
     }
 
@@ -334,29 +190,6 @@ public class Misc {
 
         assert texture != null;
         return texture;
-    }
-
-    /**
-     * Alter a single bone angle in the bind pose.
-     *
-     * @param bone which bone to adjust (not null)
-     * @param axis which local rotation axis to adjust (0 -> x, 1 -> y, 2 -> z)
-     * @param newAngle new rotation angle (in radians)
-     */
-    public static void setAngle(Bone bone, int axis, float newAngle) {
-        if (axis < 0 || axis > 2) {
-            logger.log(Level.SEVERE, "axis={0}", axis);
-            throw new IllegalArgumentException(
-                    "axis should be between 0 and 2, inclusive");
-        }
-
-        Vector3f location = bone.getLocalPosition();
-        Vector3f scale = bone.getLocalScale();
-        Quaternion orientation = bone.getLocalRotation().clone();
-        float[] angles = orientation.toAngles(null);
-        angles[axis] = newAngle;
-        orientation.fromAngles(angles);
-        bone.setBindTransforms(location, orientation, scale);
     }
 
     /**
