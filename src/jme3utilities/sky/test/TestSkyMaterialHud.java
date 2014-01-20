@@ -138,14 +138,12 @@ public class TestSkyMaterialHud
     /**
      * Alter the material under test.
      *
-     * @param material (not null)
+     * @param newMaterial (not null)
      */
-    final void setMaterial(SkyMaterial material) {
-        if (material == null) {
-            throw new NullPointerException("material should not be null");
-        }
+    final void setMaterial(SkyMaterial newMaterial) {
+        assert newMaterial != null;
 
-        this.material = material;
+        this.material = newMaterial;
     }
     // *************************************************************************
     // AbstractAppState methods

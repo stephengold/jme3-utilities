@@ -169,10 +169,15 @@ public class MyVolume {
      * Compute the volume of a closed collision shape.
      *
      * @param shape (not null, not altered)
-     * @return volume in world units (>0)
+     * @return volume in world units (>=0)
      */
     public static float volume(CollisionShape shape) {
         Vector3f scale = shape.getScale();
+        if (!MyVector3f.isAllNonNegative(scale)) {
+            logger.log(Level.SEVERE, "scale={0}", scale);
+            throw new IllegalArgumentException(
+                    "scale factors should all be non-negative");
+        }
         float volume = scale.x * scale.y * scale.z;
 
         if (shape instanceof BoxCollisionShape) {
@@ -219,6 +224,8 @@ public class MyVolume {
             throw new IllegalArgumentException(
                     "shape should be closed");
         }
+
+        assert volume >= 0f : volume;
         return volume;
     }
 }
