@@ -18,13 +18,13 @@ Check out the JME3 Utilities Package source files using Subversion:
   * For "Repository URL:" specify "https://jme3-utilities.googlecode.com/svn" (without the quotes).
   * Clear the "User:" and "Password:" text boxes.
   * Click on the "Next >" button.
-  * For "Repository Folder(s):" specify "trunk" (without the quotes).
-  * For "Local Folder:" specify a writable folder on a local filesystem.
-  * Make sure the "Skip trunk" box is checked.
+  * For "Repository Folder(s):" specify "trunk" (without the quotes) if you want a bleeding-edge version or "branches/skybeta" (without the quotes) if you want a more stable version.
+  * For "Local Folder:" specify a writable folder on a local filesystem or a non-existent subfolder of such a folder.
+  * Make sure the "Skip ... and checkout only its content" box is checked.
   * Make sure the "Scan for !NetBeans Projects after Checkout" box is checked.
   * Click on the "Finish" button.
   * When asked whether to open the project, click the "Open Project" button.
-  * There will be problems due to missing JAR files.  Do not attempt to resolve them yet.
+  * There will be problems due to missing JAR files.  Do not attempt to resolve them yet!
 
 == External files ==
 
