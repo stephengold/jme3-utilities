@@ -855,6 +855,10 @@ public class SkyMaterial
             return "MatDefs/skies/dome02/dome02.j3md";
         } else if (numObjects <= 2 && numCloudLayers <= 2) {
             return "MatDefs/skies/dome22/dome22.j3md";
+        } else if (numObjects == 0 && numCloudLayers <= 6) {
+            return "MatDefs/skies/dome06/dome06.j3md";
+        } else if (numObjects <= 6 && numCloudLayers <= 0) {
+            return "MatDefs/skies/dome60/dome60.j3md";
         } else if (numObjects <= 4 && numCloudLayers <= 2) {
             return "MatDefs/skies/dome42/dome42.j3md";
         } else if (numObjects <= 6 && numCloudLayers <= 2) {
