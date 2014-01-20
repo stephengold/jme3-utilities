@@ -30,7 +30,10 @@ import com.jme3.animation.Bone;
 import com.jme3.animation.LoopMode;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.TextureKey;
+import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.material.Material;
+import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -81,6 +84,41 @@ public class Misc {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Augment an existing compound collision collision shape with a scaled
+     * shape.
+     *
+     * @param parent compound shape to augment (not null, altered)
+     * @param child unscaled child shape (not null, altered)
+     * @param offset child's location relative to the parent's center, in
+     * unscaled world coordinates (not null, not altered)
+     * @param orientation child's orientation in world coordinates (null means
+     * don't care, not altered)
+     * @param worldScale to be applied to child and offset (not null, not
+     * altered, all components non-negative)
+     */
+    public static void addChildShape(CompoundCollisionShape parent,
+            CollisionShape child, Vector3f offset, Matrix3f orientation,
+            Vector3f worldScale) {
+        if (worldScale == null) {
+            throw new NullPointerException("scale should not be null");
+        }
+        if (!MyVector3f.isAllNonNegative(worldScale)) {
+            logger.log(Level.SEVERE, "scale={0}", worldScale);
+            throw new IllegalArgumentException(
+                    "scale factors should all be non-negative");
+        }
+
+        child.setScale(worldScale);
+        Vector3f scaledOffset = offset.mult(worldScale);
+
+        if (orientation == null) {
+            parent.addChildShape(child, scaledOffset);
+        } else {
+            parent.addChildShape(child, scaledOffset, orientation);
+        }
+    }
 
     /**
      * Smoothly transition an animation channel to a new animation.
@@ -231,7 +269,7 @@ public class Misc {
      * @return the package name, branch, and revision of this file
      */
     public static String getVersion() {
-        return "jme3-utilities trunk $Rev$";
+        return "jme3-utilities trunk $Rev$";//
     }
 
     /**
@@ -355,7 +393,8 @@ public class Misc {
     }
 
     /**
-     * Write an image to a file, attempting to overwrite any pre-existing file.
+     * Write an image to a PNG file, attempting to overwrite any pre-existing
+     * file.
      *
      * @param filePath path to the output file (not null)
      * @param image to be written (not null)
