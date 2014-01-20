@@ -58,6 +58,24 @@ public class MyCamera {
     // new methods exposed
 
     /**
+     * Compute a camera's aspect ratio.
+     *
+     * @param which camera (not null)
+     * @return width divided by height
+     */
+    public static float aspectRatio(Camera camera) {
+        float height = camera.getHeight();
+        assert height > 0f : height;
+
+        float width = camera.getWidth();
+        assert width > 0f : width;
+
+        float ratio = width / height;
+
+        return ratio;
+    }
+
+    /**
      * Compute a camera's azimuth angle.
      *
      * @param camera which camera (not null)
@@ -89,7 +107,41 @@ public class MyCamera {
     }
 
     /**
-     * Set a camera's field-of-view tangent.
+     * Alter a camera's near and far planes without affecting its aspect ratio
+     * or field-of-view.
+     *
+     * @param camera which camera (not null)
+     * @param newNear distance to the near clipping plane (<newFar, >0)
+     * @param newFar distance to the far clipping plane (>newNear)
+     */
+    public static void setNearFar(Camera camera, float newNear, float newFar) {
+        if (camera == null) {
+            throw new NullPointerException("camera should not be null");
+        }
+        if (newNear <= 0f) {
+            logger.log(Level.SEVERE, "near={0}", newNear);
+            throw new IllegalArgumentException("near should be positive");
+        }
+        if (newFar <= newNear) {
+            logger.log(Level.SEVERE, "far={0} near={1}",
+                    new Object[]{newFar, newNear});
+            throw new IllegalArgumentException(
+                    "far should be greater than near");
+        }
+
+        if (camera.isParallelProjection()) {
+            camera.setFrustumFar(newFar);
+            camera.setFrustumNear(newNear);
+        } else {
+            float aspectRatio = aspectRatio(camera);
+            float yDegrees = yDegrees(camera);
+            camera.setFrustumPerspective(yDegrees, aspectRatio, newNear,
+                    newFar);
+        }
+    }
+
+    /**
+     * Alter a camera's field-of-view tangent.
      *
      * @param camera which camera (not null)
      * @param newTangent value for the FOV tangent (>0)
@@ -106,6 +158,27 @@ public class MyCamera {
         float yTangent = yTangent(camera);
         float factor = newTangent / yTangent;
         zoom(camera, factor);
+    }
+
+    /**
+     * Compute a camera's vertical field-of-view in degrees.
+     *
+     * @param camera which camera (not null)
+     * @return vertical angle in degrees (>0)
+     */
+    public static float yDegrees(Camera camera) {
+        if (camera == null) {
+            throw new NullPointerException("camera should not be null");
+        }
+        if (camera.isParallelProjection()) {
+            return 0f;
+        }
+
+        float yTangent = yTangent(camera);
+        float yRadians = 2f * FastMath.atan(yTangent);
+        float yDegrees = yRadians * FastMath.RAD_TO_DEG;
+
+        return yDegrees;
     }
 
     /**
