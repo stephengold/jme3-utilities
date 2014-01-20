@@ -96,7 +96,8 @@ public class SimpleSolidControl
             throw new IllegalStateException("should be in a physics space");
         }
         /*
-         * The remove() method will null out the "space" field, so save a copy.
+         * The remove() method will null out the "space" field,
+         * so save a reference.
          */
         PhysicsSpace physicsSpace = space;
         /*

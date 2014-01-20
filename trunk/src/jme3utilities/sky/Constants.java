@@ -34,6 +34,8 @@ import com.jme3.math.Vector2f;
  * @author Stephen Gold <sgold@sonic.net>
  */
 class Constants {
+    // *************************************************************************
+    // constants
 
     /**
      * maximum value for any opacity
@@ -80,4 +82,12 @@ class Constants {
      * texture coordinates of the top of a DomeMesh
      */
     final static Vector2f topUV = new Vector2f(topU, topV);
+    // *************************************************************************
+    // constructors
+
+    /**
+     * A private constructor to inhibit instantiation of this class.
+     */
+    private Constants() {
+    }
 }

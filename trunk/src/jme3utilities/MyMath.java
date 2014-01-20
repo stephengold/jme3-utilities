@@ -49,7 +49,7 @@ public class MyMath {
     // *************************************************************************
     // fields
     /**
-     * pseudo-random generator
+     * shared pseudo-random generator
      */
     final private static Random generator = new Random();
     // *************************************************************************
@@ -64,7 +64,7 @@ public class MyMath {
     // new methods exposed
 
     /**
-     * Calculate the circle function sqrt(1 - x^2) for a double-precision value.
+     * Compute the circle function sqrt(1 - x^2) for a double-precision value.
      *
      * @param abscissa (<=1, >=-1)
      * @return the positive ordinate of the unit circle at the abscissa (<=1,
@@ -85,7 +85,7 @@ public class MyMath {
     }
 
     /**
-     * Calculate the circle function sqrt(1 - x^2) for a single-precision value.
+     * Compute the circle function sqrt(1 - x^2) for a single-precision value.
      * Double precision arithmetic is used to reduce the risk of overflow.
      *
      * @param abscissa (<=1, >=-1)
@@ -190,8 +190,8 @@ public class MyMath {
     }
 
     /**
-     * Compute the discriminant (b^2 - 4*a*c) of a standard quadratic equation
-     * (a*x^2 + b*x + c).
+     * Compute the discriminant (b^2 - 4*a*c) of a quadratic equation in
+     * standard form: (a*x^2 + b*x + c).
      *
      * @param a coefficient of the square term
      * @param b coefficient of the linear term
@@ -204,9 +204,9 @@ public class MyMath {
     }
 
     /**
-     * Compute the discriminant (b^2 - 4*a*c) of a standard quadratic equation
-     * (a*x^2 + b*x + c). Double precision arithmetic is used to reduce the risk
-     * of overflow.
+     * Compute the discriminant (b^2 - 4*a*c) of a quadratic equation in
+     * standard form: (a*x^2 + b*x + c). Double precision arithmetic is used to
+     * reduce the risk of overflow.
      *
      * @param a coefficient of the square term
      * @param b coefficient of the linear term
@@ -222,8 +222,8 @@ public class MyMath {
     }
 
     /**
-     * Calculate the hypotenuse of a right triangle using the Pythagorean
-     * Theorem. This method accepts negative arguments.
+     * Compute the hypotenuse of a right triangle using the Pythagorean Theorem.
+     * This method accepts negative arguments.
      *
      * @param legA length of the first leg (may be negative)
      * @param legB length of the second leg (may be negative)
@@ -250,13 +250,9 @@ public class MyMath {
     }
 
     /**
-     * Test whether a vector has length about equal to 1.
+     * Test whether a vector has length within 1% of 1.
      */
     public static boolean isUnitVector(Vector2f vector) {
-        if (vector == null) {
-            throw new NullPointerException("vector should not be null");
-        }
-
         float norm = vector.length();
         return 0.99f < norm && norm < 1.01f;
     }
@@ -280,7 +276,7 @@ public class MyMath {
     }
 
     /**
-     * Calculate the least non-negative value congruent with a single-precision
+     * Compute the least non-negative value congruent with a single-precision
      * value with respect to a given modulus.
      *
      * @param fValue which value
@@ -301,7 +297,7 @@ public class MyMath {
     }
 
     /**
-     * Calculate the least non-negative value congruent with a double-precision
+     * Compute the least non-negative value congruent with a double-precision
      * value with respect to a given modulus.
      *
      * @param dValue which value
@@ -338,7 +334,7 @@ public class MyMath {
     }
 
     /**
-     * Calculate the sphere function sqrt(1 - x^2 - y^2) for single-precision
+     * Compute the sphere function sqrt(1 - x^2 - y^2) for single-precision
      * values. Double precision is used to reduce the risk of overflow.
      *
      * @param x coordinate (<=1, >=-1)
@@ -387,7 +383,7 @@ public class MyMath {
     }
 
     /**
-     * Calculate the sum-of-squares of two single-precision values. Double
+     * Compute the sum-of-squares of two single-precision values. Double
      * precision arithmetic is used to reduce the risk of overflow.
      *
      * @param firstValue
