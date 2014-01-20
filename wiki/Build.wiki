@@ -34,6 +34,11 @@ Check out the JME3 Utilities Package source files using Subversion:
 
 == Project configuration ==
 
+ * (optional) Rename the project:
+   * Right-click on the jme3-utilities project in the "Projects" window.
+   * Select "Rename...".
+   * Type a new name in the text box.
+   * Click on the "Rename" button.
  * Add downloaded JARs to the project:
    * Open the project's properties in the IDE:
      * Right-click on the new project (not its assets) in the "Projects" window.
@@ -42,8 +47,8 @@ Check out the JME3 Utilities Package source files using Subversion:
    * Click on the "OK" button.
  * Resolve any remaining project problems.
  * Build the project's JARs:
-   * Right-click on the jme3-utilities project in the "Projects" window.
+   * Right-click on the new project in the "Projects" window.
    * Select "Clean and Build".
  * (optional) Generate the project's javadoc:
-   * Right-click on the jme3-utilities project in the "Projects" window.
+   * Right-click on the new project in the "Projects" window.
    * Select "Generate Javadoc".   
