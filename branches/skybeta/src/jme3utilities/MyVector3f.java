@@ -28,7 +28,6 @@ package jme3utilities;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -57,31 +56,6 @@ public class MyVector3f {
     // new methods exposed
 
     /**
-     * Compute the altitude angle of a non-zero offset.
-     *
-     * @param offset difference of world coordinates (not null, not zero length,
-     * not altered)
-     * @return angle above the X-Z plane (in radians, <=Pi/2, >=-Pi/2)
-     */
-    public static float altitude(Vector3f offset) {
-        if (offset == null) {
-            throw new NullPointerException("offset should not be null");
-        }
-        if (isZeroLength(offset)) {
-            logger.log(Level.SEVERE, "offset={0}", offset);
-            throw new IllegalArgumentException(
-                    "offset should have positive length");
-        }
-
-        float xzRange = MyMath.hypotenuse(offset.x, offset.z);
-        float result = (float) Math.atan2(offset.y, xzRange);
-
-        assert result <= FastMath.HALF_PI : result;
-        assert result >= -FastMath.HALF_PI : result;
-        return result;
-    }
-
-    /**
      * Compute the azimuth angle of an offset.
      *
      * @param offset difference of world coordinates (not null, not altered)
@@ -94,40 +68,6 @@ public class MyVector3f {
         }
         float result = (float) Math.atan2(offset.z, offset.x);
         return result;
-    }
-
-    /**
-     * Compute a horizontal direction of an offset.
-     *
-     * @param offset difference of world coordinates (not null, not altered)
-     * @return a new unit vector
-     */
-    public static VectorXZ direction(Vector3f offset) {
-        if (offset == null) {
-            throw new NullPointerException("offset should not be null");
-        }
-
-        VectorXZ result = new VectorXZ(offset);
-        result.normalizeLocal();
-        return result;
-    }
-
-    /**
-     * Compute the distance from one location to another.
-     *
-     * @param from world coordinates of starting location (not null, not
-     * altered)
-     * @param to world coordinates of ending location (not null, not altered)
-     * @return distance (in world units, >=0)
-     */
-    public static float distanceFrom(Vector3f from, Vector3f to) {
-        if (from == null) {
-            throw new NullPointerException("start location should not be null");
-        }
-
-        Vector3f offset = to.subtract(from);
-        float distance = offset.length();
-        return distance;
     }
 
     /**
@@ -145,27 +85,6 @@ public class MyVector3f {
 
         assert direction.isUnitVector() : direction;
         return direction;
-    }
-
-    /**
-     * Test whether all components of a vector are all non-negative.
-     *
-     * @param vector (not null, not altered)
-     */
-    public static boolean isAllNonNegative(Vector3f vector) {
-        boolean result = (vector.x >= 0f && vector.y >= 0f && vector.z >= 0f);
-        return result;
-    }
-
-    /**
-     * Test a vector for zero length.
-     *
-     * @param vector (not null, not altered)
-     * @return true if the vector has zero length, false otherwise
-     */
-    public static boolean isZeroLength(Vector3f vector) {
-        boolean result = (vector.x == 0f && vector.y == 0f && vector.z == 0f);
-        return result;
     }
 
     /**
