@@ -1,0 +1,86 @@
+// Copyright (c) 2014, Stephen Gold
+// All rights reserved.
+
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//    * Stephen Gold's name may not be used to endorse or promote products
+//      derived from this software without specific prior written permission.
+
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL STEPHEN GOLD BE LIABLE FOR ANY
+// DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+// A material for use with the SkyMaterial class: this version includes zero
+// objects and six cloud layers.
+
+MaterialDef dome06 {
+    MaterialParameters {
+        Color ClearColor
+        Vector2 TopCoord
+
+        Texture2D StarsColorMap
+
+        Color Clouds0Color
+        Float Clouds0Scale : 1.0
+	Texture2D Clouds0AlphaMap
+	Vector2 Clouds0Offset
+
+        Color Clouds1Color
+        Float Clouds1Scale : 1.0
+	Texture2D Clouds1AlphaMap
+	Vector2 Clouds1Offset
+
+        Color Clouds2Color
+        Float Clouds2Scale : 1.0
+	Texture2D Clouds2AlphaMap
+	Vector2 Clouds2Offset
+
+        Color Clouds3Color
+        Float Clouds3Scale : 1.0
+	Texture2D Clouds3AlphaMap
+	Vector2 Clouds3Offset
+
+        Color Clouds4Color
+        Float Clouds4Scale : 1.0
+	Texture2D Clouds4AlphaMap
+	Vector2 Clouds4Offset
+
+        Color Clouds5Color
+        Float Clouds5Scale : 1.0
+	Texture2D Clouds5AlphaMap
+	Vector2 Clouds5Offset
+
+	Color HazeColor
+	Texture2D HazeAlphaMap
+    }
+
+    Technique {
+        Defines {
+	    HAS_STARS : StarsColorMap
+	    HAS_CLOUDS0 : Clouds0AlphaMap
+	    HAS_CLOUDS1 : Clouds1AlphaMap
+	    HAS_CLOUDS2 : Clouds2AlphaMap
+	    HAS_CLOUDS3 : Clouds3AlphaMap
+	    HAS_CLOUDS4 : Clouds4AlphaMap
+	    HAS_CLOUDS5 : Clouds5AlphaMap
+	    HAS_HAZE : HazeAlphaMap
+        }
+        FragmentShader GLSL110: Shaders/skies/dome06/dome06.frag
+        VertexShader   GLSL110: Shaders/skies/dome06/dome06.vert
+        WorldParameters {
+            WorldViewProjectionMatrix
+        }
+    }
+}

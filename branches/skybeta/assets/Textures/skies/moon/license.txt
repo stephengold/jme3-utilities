@@ -1,0 +1,14 @@
+Licensing history for files in assets/Textures/skies/moon
+
+The files "full.png", "waning-crescent.png", "waning-gibbous.png",
+"waxing-crescent.png", and "waxing-gibbous.png" are derived from frames
+32, 48, 38, 14, and 25 of an animation downloaded in 2013 from
+https://commons.wikimedia.org/wiki/File:Lunar_libration_with_phase_Oct_2007.gif
+where it was described as the work of Tom Ruen, who had released it into the
+public domain.
+
+Stephen Gold makes these files available under the Creative Commons
+Attribution-Share Alike 3.0 Unported license -- see
+http://creativecommons.org/licenses/by-sa/3.0/deed.en
+for details.  When sharing or reusing these files, please attribute it to
+"Stephen Gold's JME3 Utilities Package at https://code.google.com/p/jme3-utilities/"
