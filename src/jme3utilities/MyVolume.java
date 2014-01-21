@@ -186,10 +186,13 @@ public class MyVolume {
             volume *= boxVolume(halfExtents);
 
         } else if (shape instanceof CapsuleCollisionShape) {
+            /*
+             * CapsuleCollisionShape ignores scaling due to Bullet issue #178.
+             */
             CapsuleCollisionShape capsule = (CapsuleCollisionShape) shape;
             float height = capsule.getHeight();
             float radius = capsule.getRadius();
-            volume *= capsuleVolume(radius, height);
+            volume = capsuleVolume(radius, height);
 
         } else if (shape instanceof CompoundCollisionShape) {
             /*
