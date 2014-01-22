@@ -48,10 +48,6 @@ public class Misc {
     // constants
 
     /**
-     * blend time for animations (in real seconds, >=0)
-     */
-    final public static float blendTime = 0.3f;
-    /**
      * message logger for this class
      */
     final private static Logger logger =
@@ -153,7 +149,7 @@ public class Misc {
      *
      * @return the package name, branch, and revision of this file
      */
-    public static String getVersion() {
+    public static String getVersion() {//
         return "jme3-utilities skybeta $Rev$";
     }
 
