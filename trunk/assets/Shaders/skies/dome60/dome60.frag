@@ -125,5 +125,11 @@ void main(){
         // Bright parts of objects shine through the clear color.
         color += objects * objects.a * (1.0 - m_ClearColor) * m_ClearColor.a;
 
+	#ifdef HAS_HAZE
+                float density = texture2D(m_HazeAlphaMap, skyTexCoord).r;
+                density *= m_HazeColor.a;
+	        color = mix(color, m_HazeColor, density);
+	#endif
+
 	gl_FragColor = color;
 }
