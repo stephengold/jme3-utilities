@@ -421,20 +421,22 @@ public class SkyControl
      * Alter the vertical position of the clouds-only dome. When the scene's
      * horizon lies below the astronomical horizon, it may be helpful to depress
      * the clouds-only dome.
-     * <p>
-     * This method is effective only when cloudFlattening > 0.
      *
      * @param newYOffset desired vertical offset as a fraction of the dome
-     * height (<1, >=0)
+     * height (<1, >=0 when flattening>0; 0 when flattening=0)
      */
     public void setCloudYOffset(float newYOffset) {
+        if (cloudsOnlyDome == null) {
+            if (newYOffset != 0f) {
+                logger.log(Level.SEVERE, "offset={0}", newYOffset);
+                throw new IllegalArgumentException("offset should be 0");
+            }
+            return;
+        }
         if (newYOffset < 0f || newYOffset >= 1f) {
             logger.log(Level.SEVERE, "offset={0}", newYOffset);
             throw new IllegalArgumentException(
                     "offset should be between 0 and 1");
-        }
-        if (cloudsOnlyDome == null) {
-            throw new IllegalStateException("control has no clouds-only dome");
         }
 
         float deltaY = -newYOffset * cloudsOnlyDome.getLocalScale().y;
@@ -520,7 +522,7 @@ public class SkyControl
             node.attachChild(skyNode);
             /*
              * Scale the sky node so that its furthest geometries are midway
-             * between the near and far planes of the view frustrum.
+             * between the near and far planes of the view frustum.
              */
             float far = camera.getFrustumFar();
             float near = camera.getFrustumNear();
