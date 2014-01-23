@@ -298,7 +298,7 @@ public class SunAndStars
      * @param northDome (ignored if null)
      * @param southDome (ignored if null)
      */
-    void orientStarDomes(Spatial northDome, Spatial southDome) {
+    public void orientStarDomes(Spatial northDome, Spatial southDome) {
         float siderealAngle = getSiderealAngle();
         Quaternion yRotation = new Quaternion();
         Quaternion zRotation = new Quaternion();
