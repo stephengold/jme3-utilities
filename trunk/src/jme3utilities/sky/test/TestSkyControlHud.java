@@ -38,7 +38,7 @@ import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyCamera;
-import jme3utilities.MyMath;
+import jme3utilities.math.MyMath;
 import jme3utilities.MyString;
 import jme3utilities.ui.GuiScreenController;
 import jme3utilities.TimeOfDay;

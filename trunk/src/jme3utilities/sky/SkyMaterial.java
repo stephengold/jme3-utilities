@@ -44,7 +44,7 @@ import com.jme3.texture.image.ImageRaster;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.MyMath;
+import jme3utilities.math.MyMath;
 
 /**
  * A material for a dynamic sky dome using assets and techniques derived from

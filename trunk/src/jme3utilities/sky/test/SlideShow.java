@@ -51,7 +51,7 @@ import jme3utilities.LandscapeControl;
 import jme3utilities.Misc;
 import jme3utilities.MyCamera;
 import jme3utilities.MyString;
-import jme3utilities.MyVector3f;
+import jme3utilities.math.MyVector3f;
 import jme3utilities.LoopMesh;
 import jme3utilities.sky.DomeMesh;
 import jme3utilities.sky.LunarPhase;

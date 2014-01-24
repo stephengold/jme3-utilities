@@ -41,7 +41,7 @@ import com.jme3.scene.Spatial;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
-import jme3utilities.MyMath;
+import jme3utilities.math.MyMath;
 import jme3utilities.MySpatial;
 import jme3utilities.SimpleControl;
 

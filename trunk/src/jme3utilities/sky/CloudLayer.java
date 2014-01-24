@@ -28,7 +28,7 @@ package jme3utilities.sky;
 import com.jme3.math.ColorRGBA;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.MyMath;
+import jme3utilities.math.MyMath;
 
 /**
  * The component of SkyControl which manages a particular cloud layer.

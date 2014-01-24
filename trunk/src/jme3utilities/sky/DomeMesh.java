@@ -40,7 +40,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.MyMath;
+import jme3utilities.math.MyMath;
 
 /**
  * A custom mesh for a hemispherical dome (or a pie-cut segment thereof) with
