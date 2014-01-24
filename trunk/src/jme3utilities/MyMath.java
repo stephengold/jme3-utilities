@@ -434,10 +434,8 @@ public class MyMath {
 
             System.out.println();
             h = hypotenuse(x, x);
-            System.out.printf("x=%e  hypot(x,x)=%e%n",
-                    x, h);
-            System.out.printf("  cube(x)=%e  cubeRoot(x)=%e%n",
-                    c, cr);
+            System.out.printf("x=%e  hypot(x,x)=%e%n", x, h);
+            System.out.printf("  cube(x)=%e  cubeRoot(x)=%e%n", c, cr);
             System.out.printf("  cube(cubeRoot(x))=%e  cubeRoot(cube(x))=%e%n",
                     cube(cr), cubeRoot(c));
         }

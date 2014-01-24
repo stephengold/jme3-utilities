@@ -145,13 +145,11 @@ public class LandscapeControl
 
     /**
      * Instantiate a disabled control.
-     * 
+     *
      * @param assetManager for loading textures and material definitions (not
      * null)
      */
     public LandscapeControl(AssetManager assetManager) {
-        super.setEnabled(false);
-
         if (assetManager == null) {
             throw new NullPointerException("manager should not be null");
         }
@@ -162,7 +160,7 @@ public class LandscapeControl
         monument = createMonument();
         terrain = createTerrain();
 
-        assert !isEnabled();
+        super.setEnabled(false);
     }
     // *************************************************************************
     // new methods exposed
@@ -205,7 +203,10 @@ public class LandscapeControl
      */
     @Override
     public void setEnabled(boolean newState) {
-        assert spatial != null;
+        if (spatial == null) {
+            throw new IllegalStateException(
+                    "control should be added to a node");
+        }
 
         Node node = (Node) spatial;
         if (enabled && !newState) {
