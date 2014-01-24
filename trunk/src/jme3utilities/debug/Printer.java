@@ -23,7 +23,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities;
+package jme3utilities.debug;
 
 import com.jme3.audio.AudioNode;
 import com.jme3.effect.ParticleEmitter;
@@ -42,6 +42,9 @@ import com.jme3.terrain.geomipmap.TerrainQuad;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.logging.Logger;
+import jme3utilities.MyControl;
+import jme3utilities.MySpatial;
+import jme3utilities.MyString;
 
 /**
  * Dump portions of a jME3 scene graph for debugging.

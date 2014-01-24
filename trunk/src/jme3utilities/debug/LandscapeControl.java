@@ -23,7 +23,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities;
+package jme3utilities.debug;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
@@ -43,6 +43,9 @@ import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Misc;
+import jme3utilities.MySpatial;
+import jme3utilities.SimpleControl;
 
 /**
  * A simple control to provide a landscape for tests and demos. The landscape
