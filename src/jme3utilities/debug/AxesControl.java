@@ -23,7 +23,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities;
+package jme3utilities.debug;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
@@ -35,6 +35,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Arrow;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.SimpleControl;
 
 /**
  * A simple control to provide visible coordinate axes for a Node.

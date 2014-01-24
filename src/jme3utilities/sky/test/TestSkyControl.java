@@ -44,7 +44,7 @@ import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.LandscapeControl;
+import jme3utilities.debug.LandscapeControl;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.math.MyVector3f;
