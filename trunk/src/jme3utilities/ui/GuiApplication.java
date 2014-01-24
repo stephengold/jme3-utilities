@@ -137,7 +137,7 @@ abstract public class GuiApplication
      *
      * @param newScreen (or null for none)
      */
-    public void setEnabledScreen(BasicScreenController newScreen) {
+    public static void setEnabledScreen(BasicScreenController newScreen) {
         assert newScreen == null || enabledScreen == null;
 
         enabledScreen = newScreen;

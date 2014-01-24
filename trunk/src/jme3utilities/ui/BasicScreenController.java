@@ -347,7 +347,7 @@ public class BasicScreenController
 
         NiftyEventAnnotationProcessor.unprocess(this);
 
-        application.setEnabledScreen(null);
+        GuiApplication.setEnabledScreen(null);
         super.setEnabled(false);
     }
 
@@ -369,7 +369,7 @@ public class BasicScreenController
         getNifty().gotoScreen(screenId);
         NiftyEventAnnotationProcessor.process(this);
 
-        application.setEnabledScreen(this);
+        GuiApplication.setEnabledScreen(this);
         super.setEnabled(true);
     }
 
