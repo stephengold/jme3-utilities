@@ -45,7 +45,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
-import jme3utilities.MyMath;
+import jme3utilities.math.MyMath;
 import jme3utilities.MyString;
 
 /**
