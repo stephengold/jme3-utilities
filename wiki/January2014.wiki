@@ -1,14 +1,14 @@
 #summary Key improvements to SkyControl during the alpha test phase.
 #labels SkyControl
 
-Key improvements made to SkyControl during the alpha test phase (November 2013-January 2014):
-  # moved to this Google Code project
+Key improvements made to !SkyControl during the alpha test phase (November 2013-January 2014):
+  # moved to (this) Google Code project
   # source code re-licensed under a New BSD license
-  # star motion and lunar rotation now work correctly
+  # star motion and lunar rotation now fully functional
   # flatten cloud layers to foreshorten clouds near the horizon
-  # depress cloud layers so they don’t stop abruptly
+  # depress cloud layers to hide their edges
   # new and improved image maps
-  # 5 lunar phases and up to 6 cloud layers
-  # re-size the moon
+  # five lunar phases and up to six cloud layers
+  # re-sizable moon
   # specify a day of the year
   # shadow filters and simple water processors.
