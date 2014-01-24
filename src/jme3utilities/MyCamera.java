@@ -60,7 +60,7 @@ public class MyCamera {
     /**
      * Compute a camera's aspect ratio.
      *
-     * @param which camera (not null)
+     * @param camera which camera (not null)
      * @return width divided by height
      */
     public static float aspectRatio(Camera camera) {

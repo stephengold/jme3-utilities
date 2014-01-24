@@ -66,7 +66,6 @@ public class MySpatial
     // new methods exposed
 
     /**
-     *
      * Re-parent a spatial, keeping its world scale unchanged.
      *
      * NOTE: This method may yield incorrect results in the presence of
@@ -552,7 +551,7 @@ public class MySpatial
      * @param ignored
      */
     public static void main(String[] ignored) {
-        Misc.setLoggingLevels(Level.SEVERE);
+        Misc.setLoggingLevels(Level.WARNING);
         MySpatial application = new MySpatial();
         application.setShowSettings(false);
         application.start();
