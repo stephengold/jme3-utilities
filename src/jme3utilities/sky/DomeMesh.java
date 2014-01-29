@@ -311,7 +311,7 @@ public class DomeMesh
                     "need at least 3 samples on the rim");
         }
         if (quadrantSamples < 2) {
-            logger.log(Level.SEVERE, "rimSamples={0}", quadrantSamples);
+            logger.log(Level.SEVERE, "quadrantSamples={0}", quadrantSamples);
             throw new IllegalArgumentException("need at least "
                     + "2 samples per longitudinal quadrant");
         }
