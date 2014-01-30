@@ -33,6 +33,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.post.filters.BloomFilter;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
 import java.util.logging.Level;
@@ -74,11 +75,15 @@ public class TestSkyMaterialHud
     // *************************************************************************
     // fields
     /**
+     * bloom filter controlled by this HUD: set by constructor
+     */
+    private BloomFilter bloom;
+    /**
      * phase of the moon, selected from a popup menu
      */
     private LunarPhase phase = LunarPhase.FULL;
     /**
-     * material controlled by this HUD: set by constructor
+     * material controlled by this HUD: set by setMaterial()
      */
     private SkyMaterial material = null;
     // *************************************************************************
@@ -89,9 +94,10 @@ public class TestSkyMaterialHud
      * initialization. Invoke setMaterial() before attaching it to the state
      * manager.
      */
-    TestSkyMaterialHud() {
+    TestSkyMaterialHud(BloomFilter bloom) {
         super("test-sky-material", "Interface/Nifty/huds/test-sky-material.xml",
                 true);
+        this.bloom = bloom;
     }
     // *************************************************************************
     // new methods exposed
@@ -209,6 +215,15 @@ public class TestSkyMaterialHud
         float sunScale = updateLogSlider("sunScale", 10f);
         Vector2f sunOffset = updateUVBank("sun");
         material.setObjectTransform(sunIndex, sunOffset, sunScale, null);
+
+        float bloomIntensity = updateSlider("bloomIntensity");
+        bloom.setBloomIntensity(bloomIntensity);
+
+        float blurScale = updateSlider("blurScale");
+        bloom.setBlurScale(blurScale);
+
+        float exposurePower = updateSlider("exposurePower");
+        bloom.setExposurePower(exposurePower);
 
         setStatusText("phaseStatus", "Lunar phase: " + phase.describe());
 

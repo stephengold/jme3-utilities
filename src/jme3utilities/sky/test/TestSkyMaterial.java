@@ -30,6 +30,8 @@ import com.jme3.export.binary.BinaryExporter;
 import com.jme3.input.KeyInput;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.BloomFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
@@ -195,8 +197,15 @@ public class TestSkyMaterial
                 LunarPhase.FULL.imagePath());
         material.addObject(TestSkyMaterialHud.sunIndex, SkyMaterial.sunMapPath);
         material.addStars();
+        /*
+         * Create and apply a bloom filter to the view port.
+         */
+        BloomFilter bloom = new BloomFilter();
 
-        initializeUserInterface(material);
+        FilterPostProcessor fpp = Misc.getFpp(viewPort, assetManager);
+        fpp.addFilter(bloom);
+
+        initializeUserInterface(material, bloom);
     }
 
     /**
@@ -260,9 +269,11 @@ public class TestSkyMaterial
      * Initialize the user interface.
      *
      * @param material the sky material under test (not null)
+     * @param bloom the bloom filter applied to the view port (not null)
      */
-    private void initializeUserInterface(SkyMaterial material) {
+    private void initializeUserInterface(SkyMaterial material, BloomFilter bloom) {
         assert material != null;
+        assert bloom != null;
         /*
          * Capture a screenshot each time the KEY_SYSRQ hotkey is pressed.
          */
@@ -273,7 +284,7 @@ public class TestSkyMaterial
          * Create and attach the heads-up display (HUD).
          */
         InputMode defaultInputMode = getDefaultInputMode();
-        hud = new TestSkyMaterialHud();
+        hud = new TestSkyMaterialHud(bloom);
         hud.setMaterial(material);
         success = stateManager.attach(hud);
         assert success;
