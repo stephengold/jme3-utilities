@@ -545,6 +545,39 @@
                             </panel>
                         </panel>
 
+                        <control name="label"
+                                 text="Bloom filter parameters:"/>
+
+                        <panel style="statusPanel">
+                            <control name="label" id="bloomIntensitySliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider" id="bloomIntensitySlider"
+                                 buttonStepSize="1"
+                                 initial="2"
+                                 max="4"
+                                 min="0"
+                                 stepSize="0.1"/>
+
+                        <panel style="statusPanel">
+                            <control name="label" id="blurScaleSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider" id="blurScaleSlider"
+                                 buttonStepSize="1"
+                                 initial="1.5"
+                                 max="6"
+                                 min="0"
+                                 stepSize="0.1"/>
+
+                        <panel style="statusPanel">
+                            <control name="label" id="exposurePowerSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider" id="exposurePowerSlider"
+                                 buttonStepSize="1"
+                                 initial="5"
+                                 max="16"
+                                 min="1"
+                                 stepSize="0.2"/>
+
                     </panel>
                 </control>
             </panel>

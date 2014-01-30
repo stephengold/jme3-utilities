@@ -37,6 +37,9 @@ import com.jme3.material.Material;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.SceneProcessor;
+import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
@@ -249,6 +252,32 @@ public class Misc {
     }
 
     /**
+     * Get the existing filter post-processor for a viewport, or else create a
+     * new one for it.
+     *
+     * @param viewPort (not null)
+     * @param assetManager (not null)
+     */
+    public static FilterPostProcessor getFpp(ViewPort viewPort,
+            AssetManager assetManager) {
+        if (assetManager == null) {
+            throw new NullPointerException("asset manager should not be null");
+        }
+
+        for (SceneProcessor processor : viewPort.getProcessors()) {
+            if (processor instanceof FilterPostProcessor) {
+                return (FilterPostProcessor) processor;
+            }
+        }
+        /*
+         * Create a new filter post-processor.
+         */
+        FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+        viewPort.addProcessor(fpp);
+        return fpp;
+    }
+
+    /**
      * Generate the filesystem path to a file in the user's home directory.
      *
      * @param fileName (not null)
@@ -269,7 +298,7 @@ public class Misc {
      *
      * @return the package name, branch, and revision of this file
      */
-    public static String getVersion() {
+    public static String getVersion() {//
         return "jme3-utilities trunk $Rev$";
     }
 
