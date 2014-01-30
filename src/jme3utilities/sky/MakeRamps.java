@@ -120,65 +120,12 @@ public class MakeRamps {
                 MyString.quote(userDir));
 
         try {
-            application.generateRamp("haze", 0f);
+            application.makeRamp("haze", 0f);
         } catch (IOException exception) {
         }
     }
     // *************************************************************************
     // private methods
-
-    /**
-     * Generate a color ramp image.
-     *
-     * @param fileName (not null)
-     * @param flattening the oblateness (ellipticity) of the dome with the haze:
-     * 0=no flattening (hemisphere), 1=maximum flattening
-     */
-    private void generateRamp(String fileName, float flattening)
-            throws IOException {
-        assert fileName != null;
-
-        RenderedImage image = generateRamp(flattening);
-        String filePath = String.format("assets/Textures/skies/ramps/%s.png",
-                fileName);
-        Misc.writeMap(filePath, image);
-    }
-
-    /**
-     * Generate a color ramp image.
-     *
-     * @param flattening the oblateness (ellipticity) of the dome with the haze:
-     * 0=no flattening (hemisphere), 1=maximum flattening
-     * @return a new instance
-     */
-    private RenderedImage generateRamp(float flattening) {
-        /*
-         * Create a blank, grayscale buffered image for the texture map.
-         */
-        BufferedImage map = new BufferedImage(textureSize, textureSize,
-                BufferedImage.TYPE_BYTE_GRAY);
-        Graphics2D graphics = map.createGraphics();
-        /*
-         * Compute the alpha of each pixel.
-         */
-        for (int x = 0; x < textureSize; x++) {
-            float u = ((float) x) / textureSize;
-            for (int y = 0; y < textureSize; y++) {
-                float v = ((float) y) / textureSize;
-                float elevationAngle = mesh.elevationAngle(u, v);
-                if (elevationAngle != FastMath.HALF_PI) {
-                    float tan = FastMath.tan(elevationAngle);
-                    tan *= 1f - flattening;
-                    elevationAngle = FastMath.atan(tan);
-                }
-                float alpha = hazeAlpha(elevationAngle);
-                int brightness = Math.round(255f * alpha);
-                setPixel(graphics, x, y, brightness);
-            }
-        }
-
-        return map;
-    }
 
     /**
      * Compute the haze opacity for a given elevation angle.
@@ -214,6 +161,59 @@ public class MakeRamps {
         assert result > 0f : result;
         assert result <= 1f : result;
         return result;
+    }
+
+    /**
+     * Generate a grayscale ramp image.
+     *
+     * @param fileName (not null)
+     * @param flattening the oblateness (ellipticity) of the dome with the haze:
+     * 0=no flattening (hemisphere), 1=maximum flattening
+     */
+    private void makeRamp(String fileName, float flattening)
+            throws IOException {
+        assert fileName != null;
+
+        RenderedImage image = makeRamp(flattening);
+        String filePath = String.format("assets/Textures/skies/ramps/%s.png",
+                fileName);
+        Misc.writeMap(filePath, image);
+    }
+
+    /**
+     * Generate a grayscale ramp image.
+     *
+     * @param flattening the oblateness (ellipticity) of the dome with the haze:
+     * 0=no flattening (hemisphere), 1=maximum flattening
+     * @return a new instance
+     */
+    private RenderedImage makeRamp(float flattening) {
+        /*
+         * Create a blank, grayscale buffered image for the texture map.
+         */
+        BufferedImage map = new BufferedImage(textureSize, textureSize,
+                BufferedImage.TYPE_BYTE_GRAY);
+        Graphics2D graphics = map.createGraphics();
+        /*
+         * Compute the alpha of each pixel.
+         */
+        for (int x = 0; x < textureSize; x++) {
+            float u = ((float) x) / textureSize;
+            for (int y = 0; y < textureSize; y++) {
+                float v = ((float) y) / textureSize;
+                float elevationAngle = mesh.elevationAngle(u, v);
+                if (elevationAngle != FastMath.HALF_PI) {
+                    float tan = FastMath.tan(elevationAngle);
+                    tan *= 1f - flattening;
+                    elevationAngle = FastMath.atan(tan);
+                }
+                float alpha = hazeAlpha(elevationAngle);
+                int brightness = Math.round(255f * alpha);
+                setPixel(graphics, x, y, brightness);
+            }
+        }
+
+        return map;
     }
 
     /**
