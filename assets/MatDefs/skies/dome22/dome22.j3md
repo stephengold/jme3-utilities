@@ -1,4 +1,4 @@
-// Copyright (c) 2013, Stephen Gold
+// Copyright (c) 2013-2014, Stephen Gold
 // All rights reserved.
 
 // Redistribution and use in source and binary forms, with or without
@@ -32,12 +32,14 @@ MaterialDef dome22 {
 
         Texture2D StarsColorMap
 
+        Boolean Object0Glow
         Color Object0Color
 	Texture2D Object0ColorMap
 	Vector2 Object0Center
 	Vector2 Object0TransformU
 	Vector2 Object0TransformV
 
+        Boolean Object1Glow
         Color Object1Color
 	Texture2D Object1ColorMap
 	Vector2 Object1Center
@@ -66,6 +68,18 @@ MaterialDef dome22 {
 	    HAS_CLOUDS0 : Clouds0AlphaMap
 	    HAS_CLOUDS1 : Clouds1AlphaMap
 	    HAS_HAZE : HazeAlphaMap
+        }
+        FragmentShader GLSL110: Shaders/skies/dome22/dome22.frag
+        VertexShader   GLSL110: Shaders/skies/dome22/dome22.vert
+        WorldParameters {
+            WorldViewProjectionMatrix
+        }
+    }
+
+    Technique Glow {
+        Defines {
+	    HAS_OBJECT0 : Object0Glow
+	    HAS_OBJECT1 : Object1Glow
         }
         FragmentShader GLSL110: Shaders/skies/dome22/dome22.frag
         VertexShader   GLSL110: Shaders/skies/dome22/dome22.vert

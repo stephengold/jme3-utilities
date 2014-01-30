@@ -196,12 +196,12 @@ public class TestSkyMaterial
         material.addObject(TestSkyMaterialHud.moonIndex,
                 LunarPhase.FULL.imagePath());
         material.addObject(TestSkyMaterialHud.sunIndex, SkyMaterial.sunMapPath);
+        material.setObjectGlow(TestSkyMaterialHud.sunIndex, true);
         material.addStars();
         /*
          * Create and apply a bloom filter to the view port.
          */
-        BloomFilter bloom = new BloomFilter();
-
+        BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
         FilterPostProcessor fpp = Misc.getFpp(viewPort, assetManager);
         fpp.addFilter(bloom);
 
