@@ -788,9 +788,16 @@ public class SkyControl
             assert moonDirection.isUnitVector() : moonDirection;
         }
         /*
-         * Determine the world direction to the main light source.
+         * Modulate the sun's color based on its altitude.
          */
         float sineSolarAltitude = sunDirection.y;
+        float green = MyMath.clampFraction(sineSolarAltitude * 20f - 1f);
+        float blue = MyMath.clampFraction(sineSolarAltitude * 20f - 2f);
+        ColorRGBA sunColor = new ColorRGBA(1f, green, blue, Constants.alphaMax);
+        topMaterial.setObjectColor(sunIndex, sunColor);
+        /*
+         * Determine the world direction to the main light source.
+         */
         boolean sunUp = sineSolarAltitude >= 0f;
         boolean moonUp = moonDirection != null && moonDirection.y >= 0f;
         Vector3f mainDirection;
