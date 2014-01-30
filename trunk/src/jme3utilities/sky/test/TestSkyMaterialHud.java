@@ -277,6 +277,16 @@ public class TestSkyMaterialHud
                 setPhase(name);
                 break;
 
+            case "style":
+                showStyleMenu();
+                break;
+
+            case "style disc":
+            case "style rayed":
+                name = actionString.substring(6);
+                setStyle(name);
+                break;
+
             default:
                 logger.log(Level.WARNING, "Action {0} was not handled.",
                         MyString.quote(actionString));
@@ -344,6 +354,24 @@ public class TestSkyMaterialHud
     }
 
     /**
+     * Alter the style of the sun.
+     *
+     * @param name name of the new style (not null)
+     */
+    private void setStyle(String name) {
+        assert name != null;
+
+        switch (name) {
+            case "disc":
+                material.addObject(sunIndex, "Textures/skies/sun/disc.png");
+                return;
+
+            case "rayed":
+                material.addObject(sunIndex, SkyMaterial.sunMapPath);
+        }
+    }
+
+    /**
      * Display a cloud texture menu.
      *
      * @param actionPrefix common prefix of the menu's action strings (not null)
@@ -364,6 +392,13 @@ public class TestSkyMaterialHud
             "full", "waning-crescent", "waning-gibbous",
             "waxing-crescent", "waxing-gibbous"
         });
+    }
+
+    /**
+     * Display a style menu for the sun.
+     */
+    private void showStyleMenu() {
+        showPopup("style ", new String[]{"disc", "rayed"});
     }
 
     /**

@@ -114,7 +114,9 @@ public class SkyControl
      */
     final private static float limitOfTwilight = 0.1f;
     /**
-     * texture scale for Sun_L.png
+     * texture scale for sun images; larger value would give a larger sun
+     *
+     * The value 0.08 exaggerates the sun's size by a factor of 8.
      */
     final private static float sunScale = 0.08f;
     /**
@@ -202,7 +204,7 @@ public class SkyControl
      */
     private float cloudsRelativeSpeed = 1f;
     /**
-     * texture scale for moon images; larger value results in a larger moon
+     * texture scale for moon images; larger value gives a larger moon
      *
      * The default value of 0.02 exaggerates the moon's size by a factor of 8.
      */
@@ -295,7 +297,7 @@ public class SkyControl
         topMaterial = new SkyMaterial(assetManager, topObjects, topCloudLayers);
         topMaterial.initialize();
         topMaterial.addHaze();
-        topMaterial.addObject(sunIndex, SkyMaterial.sunMapPath);
+        topMaterial.addObject(sunIndex, "Textures/skies/sun/disc.png");
         for (LunarPhase potm : LunarPhase.values()) {
             int objectIndex = potm.ordinal() + moonBaseIndex;
             String assetPath = potm.imagePath();
