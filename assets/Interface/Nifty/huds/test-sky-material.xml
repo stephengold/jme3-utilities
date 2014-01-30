@@ -217,6 +217,14 @@
                             </panel>
                         </panel>
 
+                        <panel style="buttonPanel"
+                               height="60">
+                            <control name="button"
+                                     id="id3ToAvoidNiftyWarning"
+                                     label="Select sun style">
+                                <interact onRelease="perform(style)"/>
+                            </control>
+                        </panel>
                         <control name="label"
                                  text="Sun offset and scale:"/>
                         <panel childLayout="horizontal" padding="10">
