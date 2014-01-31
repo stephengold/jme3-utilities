@@ -505,6 +505,47 @@
                         </panel>
 
                         <control name="label"
+                                 text="Moon glow:"/>
+                        <panel childLayout="horizontal" padding="10">
+                            <control name="verticalSlider" id="mGloRSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="0"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="mGloGSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="0"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="mGloBSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="0"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="mGloASlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <panel childLayout="vertical"
+                                   height="180"
+                                   width="34">
+                                <control name="label" id="mGlowRSliderStatus"/>
+                                <control name="label" id="mGlowGSliderStatus"/>
+                                <control name="label" id="mGlowBSliderStatus"/>
+                                <control name="label" id="mGlowASliderStatus"/>
+                            </panel>
+                        </panel>
+
+                        <control name="label"
                                  text="Sun color:"/>
                         <panel childLayout="horizontal" padding="10">
                             <control name="verticalSlider" id="sunRSlider"
@@ -542,6 +583,47 @@
                                 <control name="label" id="sunGSliderStatus"/>
                                 <control name="label" id="sunBSliderStatus"/>
                                 <control name="label" id="sunASliderStatus"/>
+                            </panel>
+                        </panel>
+
+                        <control name="label"
+                                 text="Sun glow:"/>
+                        <panel childLayout="horizontal" padding="10">
+                            <control name="verticalSlider" id="sGloRSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="sGloGSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="sGloBSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="sGloASlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <panel childLayout="vertical"
+                                   height="180"
+                                   width="34">
+                                <control name="label" id="sGloRSliderStatus"/>
+                                <control name="label" id="sGloGSliderStatus"/>
+                                <control name="label" id="sGloBSliderStatus"/>
+                                <control name="label" id="sGloASliderStatus"/>
                             </panel>
                         </panel>
 

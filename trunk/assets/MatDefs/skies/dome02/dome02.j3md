@@ -1,4 +1,4 @@
-// Copyright (c) 2013, Stephen Gold
+// Copyright (c) 2013-2014, Stephen Gold
 // All rights reserved.
 
 // Redistribution and use in source and binary forms, with or without
@@ -28,21 +28,25 @@
 MaterialDef dome02 {
     MaterialParameters {
         Color ClearColor
+        Color ClearGlow
         Vector2 TopCoord
 
         Texture2D StarsColorMap
 
         Color Clouds0Color
+        Color Clouds0Glow
         Float Clouds0Scale : 1.0
 	Texture2D Clouds0AlphaMap
 	Vector2 Clouds0Offset
 
         Color Clouds1Color
+        Color Clouds1Glow
         Float Clouds1Scale : 1.0
 	Texture2D Clouds1AlphaMap
 	Vector2 Clouds1Offset
 
 	Color HazeColor
+        Color HazeGlow
 	Texture2D HazeAlphaMap
     }
 
@@ -54,6 +58,19 @@ MaterialDef dome02 {
 	    HAS_HAZE : HazeAlphaMap
         }
         FragmentShader GLSL110: Shaders/skies/dome02/dome02.frag
+        VertexShader   GLSL110: Shaders/skies/dome02/dome02.vert
+        WorldParameters {
+            WorldViewProjectionMatrix
+        }
+    }
+
+    Technique Glow {
+        Defines {
+	    HAS_CLOUDS0 : Clouds0AlphaMap
+	    HAS_CLOUDS1 : Clouds1AlphaMap
+	    HAS_HAZE : HazeAlphaMap
+        }
+        FragmentShader GLSL110: Shaders/skies/dome02/dome02glow.frag
         VertexShader   GLSL110: Shaders/skies/dome02/dome02.vert
         WorldParameters {
             WorldViewProjectionMatrix

@@ -28,41 +28,49 @@
 MaterialDef dome06 {
     MaterialParameters {
         Color ClearColor
+        Color ClearGlow
         Vector2 TopCoord
 
         Texture2D StarsColorMap
 
         Color Clouds0Color
+        Color Clouds0Glow
         Float Clouds0Scale : 1.0
 	Texture2D Clouds0AlphaMap
 	Vector2 Clouds0Offset
 
         Color Clouds1Color
+        Color Clouds1Glow
         Float Clouds1Scale : 1.0
 	Texture2D Clouds1AlphaMap
 	Vector2 Clouds1Offset
 
         Color Clouds2Color
+        Color Clouds2Glow
         Float Clouds2Scale : 1.0
 	Texture2D Clouds2AlphaMap
 	Vector2 Clouds2Offset
 
         Color Clouds3Color
+        Color Clouds3Glow
         Float Clouds3Scale : 1.0
 	Texture2D Clouds3AlphaMap
 	Vector2 Clouds3Offset
 
         Color Clouds4Color
+        Color Clouds4Glow
         Float Clouds4Scale : 1.0
 	Texture2D Clouds4AlphaMap
 	Vector2 Clouds4Offset
 
         Color Clouds5Color
+        Color Clouds5Glow
         Float Clouds5Scale : 1.0
 	Texture2D Clouds5AlphaMap
 	Vector2 Clouds5Offset
 
 	Color HazeColor
+        Color HazeGlow
 	Texture2D HazeAlphaMap
     }
 
@@ -78,6 +86,23 @@ MaterialDef dome06 {
 	    HAS_HAZE : HazeAlphaMap
         }
         FragmentShader GLSL110: Shaders/skies/dome06/dome06.frag
+        VertexShader   GLSL110: Shaders/skies/dome06/dome06.vert
+        WorldParameters {
+            WorldViewProjectionMatrix
+        }
+    }
+
+    Technique Glow {
+        Defines {
+	    HAS_CLOUDS0 : Clouds0AlphaMap
+	    HAS_CLOUDS1 : Clouds1AlphaMap
+	    HAS_CLOUDS2 : Clouds2AlphaMap
+	    HAS_CLOUDS3 : Clouds3AlphaMap
+	    HAS_CLOUDS4 : Clouds4AlphaMap
+	    HAS_CLOUDS5 : Clouds5AlphaMap
+	    HAS_HAZE : HazeAlphaMap
+        }
+        FragmentShader GLSL110: Shaders/skies/dome06/dome06glow.frag
         VertexShader   GLSL110: Shaders/skies/dome06/dome06.vert
         WorldParameters {
             WorldViewProjectionMatrix

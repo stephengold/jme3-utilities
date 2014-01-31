@@ -200,6 +200,8 @@ public class TestSkyMaterialHud
 
         ColorRGBA moonColor = updateColorBank("moon");
         material.setObjectColor(moonIndex, moonColor);
+        ColorRGBA moonGlow = updateColorBank("mGlo");
+        material.setObjectGlow(moonIndex, moonGlow);
 
         Vector2f moonOffset = updateUVBank("m");
         float moonScale = updateLogSlider("mSca", 10f);
@@ -211,6 +213,8 @@ public class TestSkyMaterialHud
 
         ColorRGBA sunColor = updateColorBank("sun");
         material.setObjectColor(sunIndex, sunColor);
+        ColorRGBA sunGlow = updateColorBank("sGlo");
+        material.setObjectGlow(sunIndex, sunGlow);
 
         float sunScale = updateLogSlider("sunScale", 10f);
         Vector2f sunOffset = updateUVBank("sun");
