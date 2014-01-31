@@ -538,10 +538,10 @@
                             <panel childLayout="vertical"
                                    height="180"
                                    width="34">
-                                <control name="label" id="mGlowRSliderStatus"/>
-                                <control name="label" id="mGlowGSliderStatus"/>
-                                <control name="label" id="mGlowBSliderStatus"/>
-                                <control name="label" id="mGlowASliderStatus"/>
+                                <control name="label" id="mGloRSliderStatus"/>
+                                <control name="label" id="mGloGSliderStatus"/>
+                                <control name="label" id="mGloBSliderStatus"/>
+                                <control name="label" id="mGloASliderStatus"/>
                             </panel>
                         </panel>
 
