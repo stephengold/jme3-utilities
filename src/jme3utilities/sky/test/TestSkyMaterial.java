@@ -25,6 +25,8 @@
  */
 package jme3utilities.sky.test;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.input.KeyInput;
@@ -98,6 +100,10 @@ public class TestSkyMaterial
      */
     final private static String actionStringToggle = "toggle hud";
     /**
+     * application name for the usage message and the window's title bar
+     */
+    final private static String applicationName = "TestSkyMaterial";
+    /**
      * name for the dome geometry
      */
     final private static String geometryName = "sky dome";
@@ -105,12 +111,20 @@ public class TestSkyMaterial
      * asset path for loading and saving
      */
     final private static String savePath = "Models/TestSkyMaterial.j3o";
-    /**
-     * application name for its window's title bar
-     */
-    final private static String windowTitle = "TestSkyMaterial";
     // *************************************************************************
     // fields
+    /**
+     * true means just display the usage message; false means run the
+     * application
+     */
+    @Parameter(names = {"-h", "-u", "--help", "--usage"}, help = true,
+            description = "display this usage message")
+    private static boolean usageOnly = false;
+    /**
+     * name of material to test, or null to auto-select
+     */
+    @Parameter(names = {"-m", "--material"}, description = "specify material")
+    private static String materialName = null;
     /**
      * heads-up display (HUD)
      */
@@ -132,8 +146,19 @@ public class TestSkyMaterial
          * Set the logging level for this class.
          */
         logger.setLevel(Level.INFO);
-
+        /*
+         * Instantiate the application.
+         */
         TestSkyMaterial application = new TestSkyMaterial();
+        /*
+         * Parse the command-line arguments.
+         */
+        JCommander jCommander = new JCommander(application, arguments);
+        jCommander.setProgramName(applicationName);
+        if (usageOnly) {
+            jCommander.usage();
+            return;
+        }
         /*
          * Don't pause on lost focus.  This simplifies debugging and
          * permits the application to keep running while minimized.
@@ -151,7 +176,7 @@ public class TestSkyMaterial
         /*
          * Customize the window's title bar.
          */
-        settings.setTitle(windowTitle);
+        settings.setTitle(applicationName);
         application.setSettings(settings);
 
         application.start();
@@ -186,8 +211,18 @@ public class TestSkyMaterial
          */
         int numObjects = 2;
         int numLayers = 2;
-        SkyMaterial material = new SkyMaterial(assetManager, numObjects,
-                numLayers);
+        SkyMaterial material;
+        if (materialName == null) {
+            /*
+             * auto-select the material asset
+             */
+            material = new SkyMaterial(assetManager, numObjects, numLayers);
+        } else {
+            String assetPath = String.format("MatDefs/skies/%s/%s.j3md",
+                    materialName, materialName);
+            material = new SkyMaterial(assetManager, assetPath, numObjects,
+                    numLayers);
+        }
         geometry.setMaterial(material);
         material.initialize();
         material.addClouds(0);
