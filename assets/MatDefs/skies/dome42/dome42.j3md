@@ -28,49 +28,53 @@
 MaterialDef dome42 {
     MaterialParameters {
         Color ClearColor
+        Color ClearGlow
         Vector2 TopCoord
 
         Texture2D StarsColorMap
 
-        Boolean Object0Glow
         Color Object0Color
+        Color Object0Glow
 	Texture2D Object0ColorMap
 	Vector2 Object0Center
 	Vector2 Object0TransformU
 	Vector2 Object0TransformV
 
-        Boolean Object1Glow
         Color Object1Color
+        Color Object1Glow
 	Texture2D Object1ColorMap
 	Vector2 Object1Center
 	Vector2 Object1TransformU
 	Vector2 Object1TransformV
 
-        Boolean Object2Glow
         Color Object2Color
+        Color Object2Glow
 	Texture2D Object2ColorMap
 	Vector2 Object2Center
 	Vector2 Object2TransformU
 	Vector2 Object2TransformV
 
-        Boolean Object3Glow
         Color Object3Color
+        Color Object3Glow
 	Texture2D Object3ColorMap
 	Vector2 Object3Center
 	Vector2 Object3TransformU
 	Vector2 Object3TransformV
 
         Color Clouds0Color
+        Color Clouds0Glow
         Float Clouds0Scale : 1.0
 	Texture2D Clouds0AlphaMap
 	Vector2 Clouds0Offset
 
         Color Clouds1Color
+        Color Clouds1Glow
         Float Clouds1Scale : 1.0
 	Texture2D Clouds1AlphaMap
 	Vector2 Clouds1Offset
 
 	Color HazeColor
+        Color HazeGlow
 	Texture2D HazeAlphaMap
     }
 
@@ -94,12 +98,15 @@ MaterialDef dome42 {
 
     Technique Glow {
         Defines {
-	    HAS_OBJECT0 : Object0Glow
-	    HAS_OBJECT1 : Object1Glow
-	    HAS_OBJECT2 : Object2Glow
-	    HAS_OBJECT3 : Object3Glow
+	    HAS_OBJECT0 : Object0ColorMap
+	    HAS_OBJECT1 : Object1ColorMap
+	    HAS_OBJECT2 : Object2ColorMap
+	    HAS_OBJECT3 : Object3ColorMap
+	    HAS_CLOUDS0 : Clouds0AlphaMap
+	    HAS_CLOUDS1 : Clouds1AlphaMap
+	    HAS_HAZE : HazeAlphaMap
         }
-        FragmentShader GLSL110: Shaders/skies/dome42/dome42.frag
+        FragmentShader GLSL110: Shaders/skies/dome42/dome42glow.frag
         VertexShader   GLSL110: Shaders/skies/dome42/dome42.vert
         WorldParameters {
             WorldViewProjectionMatrix

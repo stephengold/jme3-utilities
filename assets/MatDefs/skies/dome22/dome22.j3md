@@ -28,35 +28,39 @@
 MaterialDef dome22 {
     MaterialParameters {
         Color ClearColor
+        Color ClearGlow
         Vector2 TopCoord
 
         Texture2D StarsColorMap
 
-        Boolean Object0Glow
         Color Object0Color
+        Color Object0Glow
 	Texture2D Object0ColorMap
 	Vector2 Object0Center
 	Vector2 Object0TransformU
 	Vector2 Object0TransformV
 
-        Boolean Object1Glow
         Color Object1Color
+        Color Object1Glow
 	Texture2D Object1ColorMap
 	Vector2 Object1Center
 	Vector2 Object1TransformU
 	Vector2 Object1TransformV
 
         Color Clouds0Color
+        Color Clouds0Glow
         Float Clouds0Scale : 1.0
 	Texture2D Clouds0AlphaMap
 	Vector2 Clouds0Offset
 
         Color Clouds1Color
+        Color Clouds1Glow
         Float Clouds1Scale : 1.0
 	Texture2D Clouds1AlphaMap
 	Vector2 Clouds1Offset
 
 	Color HazeColor
+        Color HazeGlow
 	Texture2D HazeAlphaMap
     }
 
@@ -78,10 +82,13 @@ MaterialDef dome22 {
 
     Technique Glow {
         Defines {
-	    HAS_OBJECT0 : Object0Glow
-	    HAS_OBJECT1 : Object1Glow
+	    HAS_OBJECT0 : Object0ColorMap
+	    HAS_OBJECT1 : Object1ColorMap
+	    HAS_CLOUDS0 : Clouds0AlphaMap
+	    HAS_CLOUDS1 : Clouds1AlphaMap
+	    HAS_HAZE : HazeAlphaMap
         }
-        FragmentShader GLSL110: Shaders/skies/dome22/dome22.frag
+        FragmentShader GLSL110: Shaders/skies/dome22/dome22glow.frag
         VertexShader   GLSL110: Shaders/skies/dome22/dome22.vert
         WorldParameters {
             WorldViewProjectionMatrix

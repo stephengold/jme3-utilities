@@ -326,7 +326,7 @@ public class SkyMaterial
         if (objectCenters[objectIndex] == null) {
             objectCenters[objectIndex] = new Vector2f();
             setObjectColor(objectIndex, ColorRGBA.White);
-            setObjectGlow(objectIndex, false);
+            setObjectGlow(objectIndex, ColorRGBA.Black);
             setObjectTransform(objectIndex, Constants.topUV, 1f, null);
         }
     }
@@ -590,20 +590,23 @@ public class SkyMaterial
      * Alter the glow flag of an astronomical object.
      *
      * @param objectIndex (<maxObjects, >=0)
-     * @param newValue true to enable glow, false to disable it
+     * @param newColor (not null)
      */
-    public void setObjectGlow(int objectIndex, boolean newValue) {
+    public void setObjectGlow(int objectIndex, ColorRGBA newColor) {
         if (objectIndex < 0 || objectIndex >= maxObjects) {
             logger.log(Level.SEVERE, "objectIndex={0}, maxObjects={1}",
                     new Object[]{objectIndex, maxObjects});
             throw new IllegalArgumentException("object index out of range");
+        }
+        if (newColor == null) {
+            throw new NullPointerException("color should not be null");
         }
         if (objectCenters[objectIndex] == null) {
             throw new IllegalStateException("object not yet added");
         }
 
         String parameterName = String.format("Object%dGlow", objectIndex);
-        setBoolean(parameterName, newValue);
+        setColor(parameterName, newColor);
     }
 
     /**
