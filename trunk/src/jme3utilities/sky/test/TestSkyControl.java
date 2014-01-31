@@ -34,7 +34,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Plane;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.BloomFilter;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -288,6 +288,10 @@ public class TestSkyControl
             Vector2f textureScale = new Vector2f(10f, 10f);
             water.getMesh().scaleTextureCoordinates(textureScale);
         }
+        /*
+         * Add bloom filter to the main view port.
+         */
+        addBloom(viewPort);
 
         //new jme3utilities.Printer().printSubtree(rootNode);
         initializeUserInterface();
@@ -350,8 +354,9 @@ public class TestSkyControl
         float observerLatitude = hud.getLatitude();
         control.getSunAndStars().setObserverLatitude(observerLatitude);
 
-        float lunarDiameter = hud.getLunarDiameter();
-        control.setLunarDiameter(lunarDiameter);
+        float diameter = hud.getLunarDiameter();
+        control.setLunarDiameter(diameter);
+        control.setSolarDiameter(diameter);
 
         float solarLongitude = hud.getSolarLongitude();
         control.getSunAndStars().setSolarLongitude(solarLongitude);
@@ -388,6 +393,22 @@ public class TestSkyControl
     // private methods
 
     /**
+     * Add a bloom filter to a view port.
+     *
+     * @param viewPort (not null)
+     */
+    private void addBloom(ViewPort viewPort) {
+        assert viewPort != null;
+
+        BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
+        bloom.setBloomIntensity(1.7f);
+        bloom.setBlurScale(2.5f);
+        bloom.setExposurePower(1f);
+        Misc.getFpp(viewPort, assetManager).addFilter(bloom);
+        //control.getUpdater().addBloom(bloom);
+    }
+
+    /**
      * Add shadows to a view port, using either a filter or a renderer.
      *
      * @param viewPort (not null)
@@ -401,10 +422,8 @@ public class TestSkyControl
                     assetManager, shadowMapSize, shadowMapSplits);
             dlsf.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
             dlsf.setLight(mainLight);
-            FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
-            fpp.addFilter(dlsf);
+            Misc.getFpp(viewPort, assetManager).addFilter(dlsf);
             updater.addShadowFilter(dlsf);
-            viewPort.addProcessor(fpp);
 
         } else {
             dlsr = new DirectionalLightShadowRenderer(
@@ -422,8 +441,8 @@ public class TestSkyControl
     private void configureCamera() {
         /*
          * Point the camera 10 degrees north of west, tilted down 1 degree.
-         * The downward tilt is to work around a bug in SimpleWater which was
-         * fixed at r10899.
+         * The downward tilt is to work around a bug in SimpleWaterProcessor
+         * which was fixed at r10899.
          */
         cam.setLocation(new Vector3f(6.5f, 13f, 50f));
         float altitudeAngle = -1f * FastMath.DEG_TO_RAD;

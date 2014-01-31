@@ -252,8 +252,8 @@ public class Misc {
     }
 
     /**
-     * Get the existing filter post-processor for a viewport, or else create a
-     * new one for it.
+     * Get the existing filter post-processor for a viewport, or if it has none
+     * add a new one to it.
      *
      * @param viewPort (not null)
      * @param assetManager (not null)
@@ -270,7 +270,7 @@ public class Misc {
             }
         }
         /*
-         * Create a new filter post-processor.
+         * Add a new filter post-processor.
          */
         FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
         viewPort.addProcessor(fpp);
@@ -298,7 +298,7 @@ public class Misc {
      *
      * @return the package name, branch, and revision of this file
      */
-    public static String getVersion() {//
+    public static String getVersion() {
         return "jme3-utilities trunk $Rev$";
     }
 
