@@ -114,12 +114,6 @@ public class SkyControl
      */
     final private static float limitOfTwilight = 0.1f;
     /**
-     * texture scale for sun images; larger value would give a larger sun
-     *
-     * The value 0.08 exaggerates the sun's size by a factor of 8.
-     */
-    final private static float sunScale = 0.08f;
-    /**
      * object index for the first lunar phase
      */
     final private static int moonBaseIndex = 1;
@@ -209,6 +203,12 @@ public class SkyControl
      * The default value of 0.02 exaggerates the moon's size by a factor of 8.
      */
     private float moonScale = 0.02f;
+    /**
+     * texture scale for sun images; larger value would give a larger sun
+     *
+     * The default value 0.08 exaggerates the sun's size by a factor of 8.
+     */
+    private float sunScale = 0.08f;
     /**
      * flattened dome for clouds only: set by initialize()
      */
@@ -467,6 +467,24 @@ public class SkyControl
      */
     public void setPhase(LunarPhase phase) {
         this.phase = phase;
+    }
+
+    /**
+     * Alter the angular diameter of the sun.
+     *
+     * @param newDiameter (in radians, <Pi, >0)
+     */
+    public void setSolarDiameter(float newDiameter) {
+        if (newDiameter <= 0f || newDiameter >= FastMath.PI) {
+            logger.log(Level.SEVERE, "diameter={0}", newDiameter);
+            throw new IllegalArgumentException(
+                    "diameter should be between 0 and Pi");
+        }
+        /*
+         * In order to accommodate rays, the sun's disk is only 1/4 as 
+         * wide as its color map.
+         */
+        sunScale = 4f * newDiameter * mesh.uvScale / FastMath.HALF_PI;
     }
 
     /**
@@ -777,7 +795,8 @@ public class SkyControl
     }
 
     /**
-     * Update background colors, cloud colors, haze color, lights, and shadows.
+     * Update background colors, cloud colors, haze color, sun color, lights,
+     * and shadows.
      *
      * @param sunDirection the world direction to the sun (unit vector)
      * @param moonDirection the world direction to the moon (unit vector or
@@ -797,6 +816,7 @@ public class SkyControl
         float blue = MyMath.clampFraction(sineSolarAltitude * 20f - 2f);
         ColorRGBA sunColor = new ColorRGBA(1f, green, blue, Constants.alphaMax);
         topMaterial.setObjectColor(sunIndex, sunColor);
+        topMaterial.setObjectGlow(sunIndex, sunColor);
         /*
          * Determine the world direction to the main light source.
          */
