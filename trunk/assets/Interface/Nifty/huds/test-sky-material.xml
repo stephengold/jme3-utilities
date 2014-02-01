@@ -182,7 +182,7 @@
                             <control name="verticalSlider" id="mUSlider"
                                      buttonStepSize="0.5"
                                      height="160"
-                                     initial="0.5"
+                                     initial="0.45"
                                      max="1"
                                      min="0"
                                      stepSize="0.01"/>
@@ -572,7 +572,7 @@
                             <control name="verticalSlider" id="sunASlider"
                                      buttonStepSize="1"
                                      height="160"
-                                     initial="0"
+                                     initial="1"
                                      max="1"
                                      min="0"
                                      stepSize="0.01"/>
@@ -635,7 +635,7 @@
                         </panel>
                         <control name="horizontalSlider" id="bloomIntensitySlider"
                                  buttonStepSize="1"
-                                 initial="2"
+                                 initial="0"
                                  max="4"
                                  min="0"
                                  stepSize="0.1"/>
