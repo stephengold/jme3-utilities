@@ -50,6 +50,11 @@ class Constants {
      */
     final static float defaultLatitude = 51.1788f * FastMath.DEG_TO_RAD;
     /**
+     * UV diameter of a sun's disc: in order to leave room for rays, haloes, and
+     * haze, the disc is only 1/4 as wide as the color map.
+     */
+    final static float discDiameter = 0.25f;
+    /**
      * 1st (U) texture coordinate of the top of a DomeMesh
      */
     final static float topU = 0.5f;
@@ -70,7 +75,8 @@ class Constants {
      */
     final static float uvScale = 0.44f;
     /**
-     * coefficient used to compute stretchFactor
+     * coefficient used to compute the stretchFactor for objects projected onto
+     * a DomeMesh
      */
     final static float stretchCoefficient =
             (FastMath.HALF_PI - uvMax) / (uvScale * uvScale);

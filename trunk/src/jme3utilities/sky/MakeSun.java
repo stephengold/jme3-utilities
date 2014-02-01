@@ -27,6 +27,7 @@ package jme3utilities.sky;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.jme3.math.FastMath;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -39,7 +40,7 @@ import jme3utilities.MyString;
 import jme3utilities.math.MyMath;
 
 /**
- * A utility application to generate sun images for use with SkyMaterial.
+ * A console application to generate sun images for use with SkyMaterial.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -47,6 +48,14 @@ public class MakeSun {
     // *************************************************************************
     // constants
 
+    /**
+     * UV radius of a sun's disc
+     */
+    final private static float discRadius = Constants.discDiameter / 2f;
+    /**
+     * UV radius of a sun's surround
+     */
+    final private static float maxSurroundRadius = 0.49f;
     /**
      * size of the texture map (pixels per side)
      */
@@ -111,7 +120,10 @@ public class MakeSun {
                 MyString.quote(userDir));
 
         try {
-            application.makeSun("disc", 0.125f, 60f);
+            application.makeSun("chaotic", 1f, 1.1f, -1);
+            application.makeSun("disc", 60f, 0f, 0);
+            application.makeSun("hazy-disc", 60f, 0.25f, 0);
+            application.makeSun("rayed", 60f, 1f, 16);
         } catch (IOException exception) {
         }
     }
@@ -119,36 +131,79 @@ public class MakeSun {
     // private methods
 
     /**
-     * Generate a color image map.
+     * Compute how much the surround is indented in a particular direction from
+     * the center of the image.
+     *
+     * @param theta direction angle in radians, measured CCW from the U-axis
+     * (<=Pi, >=-Pi)
+     * @param numRays number of rays in the surround (>0, or 0 for a circular
+     * haze, or -1 for an irregular surround)
+     * @return a fraction (<=1, >=0)
+     */
+    private float indent(float theta, int numRays) {
+        assert theta <= FastMath.PI : theta;
+        assert theta >= -FastMath.PI : theta;
+        assert numRays >= -1 : numRays;
+
+        float result;
+        if (numRays == -1) {
+            /*
+             * chaotic surround
+             */
+            float phaseShift = 2.5f * FastMath.sin(7f * theta);
+            result = FastMath.sin(theta + phaseShift);
+            result = (1f + result) / 2f;
+            result = 0.4f * FastMath.sqrt(result);
+        } else {
+            /*
+             * straight rays or circular haze
+             */
+            result = FastMath.sin(theta * numRays / 2f);
+            result = FastMath.abs(result);
+        }
+
+        assert result >= 0f : result;
+        assert result <= 1f : result;
+        return result;
+    }
+
+    /**
+     * Generate a color image map for a disc with an optional surround.
      *
      * @param fileName (not null)
-     * @param discRadius UV radius of the disc (<=0.5, >0)
-     * @param sharpness of the disc's edge (>0)
+     * @param discSharpness alpha slope inside the disc's edge (>0)
+     * @param surroundAlpha opacity of the surround at the disc's edge (>=0)
+     * @param numRays number of rays in the surround (>0, or 0 for a circular
+     * haze, or -1 for a chaotic surround)
      */
-    private void makeSun(String fileName, float discRadius, float sharpness)
+    private void makeSun(String fileName, float discSharpness,
+            float surroundAlpha, int numRays)
             throws IOException {
         assert fileName != null;
-        assert discRadius > 0f : discRadius;
-        assert discRadius <= 0.5f : discRadius;
-        assert sharpness > 0f : sharpness;
+        assert discSharpness > 0f : discSharpness;
+        assert surroundAlpha >= 0f : surroundAlpha;
+        assert numRays >= -1 : numRays;
 
-        RenderedImage image = makeSun(discRadius, sharpness);
-        String filePath = String.format("assets/Textures/skies/sun/%s.png",
+        RenderedImage image = makeSun(discSharpness, surroundAlpha, numRays);
+        String filePath = String.format("assets/Textures/skies/suns/%s.png",
                 fileName);
         Misc.writeMap(filePath, image);
     }
 
     /**
-     * Generate a color image map.
+     * Generate a color image map for a disc with an optional surround.
      *
-     * @param discRadius UV radius of the disc (<=0.5, >0)
-     * @param sharpness of the disc's edge (>0)
+     * @param discSharpness alpha slope inside the disc's edge (>0)
+     * @param surroundAlpha opacity of the surround at the disc's edge (>=0)
+     * @param numRays number of rays in the surround (>0, or 0 for a circular
+     * haze, or -1 for a chaotic surround)
      * @return a new instance
      */
-    private RenderedImage makeSun(float discRadius, float sharpness) {
-        assert discRadius > 0f : discRadius;
-        assert discRadius <= 0.5f : discRadius;
-        assert sharpness > 0f : sharpness;
+    private RenderedImage makeSun(float discSharpness, float surroundAlpha,
+            int numRays) {
+        assert discSharpness > 0f : discSharpness;
+        assert surroundAlpha >= 0f : surroundAlpha;
+        assert numRays >= -1 : numRays;
         /*
          * Create a blank, color buffered image for the texture map.
          */
@@ -156,17 +211,36 @@ public class MakeSun {
                 BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D graphics = map.createGraphics();
         /*
-         * Compute the alpha of each pixel.
+         * Compute the opacity of each pixel.
          */
         for (int x = 0; x < textureSize; x++) {
             float u = ((float) x) / textureSize;
+            float du = u - 0.5f;
             for (int y = 0; y < textureSize; y++) {
                 float v = ((float) y) / textureSize;
-                float r = MyMath.hypotenuse(u - 0.5f, v - 0.5f);
-                float alpha = sharpness * (discRadius - r);
+                float dv = v - 0.5f;
+                /*
+                 * Convert Cartesian texture coordinates to polar coordinates.
+                 */
+                float r = MyMath.hypotenuse(dv, du);
+                float theta = FastMath.atan2(dv, du);
+                /*
+                 * Compute the surround radius as a function of theta.
+                 */
+                float indent = indent(theta, numRays);
+                float surroundRadius = FastMath.interpolateLinear(indent,
+                        maxSurroundRadius, discRadius);
+
+                float alpha = discSharpness * (discRadius - r);
+                if (surroundRadius > discRadius) {
+                    float hazeAlpha = surroundAlpha * (surroundRadius - r)
+                            / (surroundRadius - discRadius);
+                    alpha = Math.max(alpha, hazeAlpha);
+                }
                 alpha = MyMath.clampFraction(alpha);
-                int brightness = Math.round(255f * alpha);
-                setPixel(graphics, x, y, brightness);
+
+                int opacity = Math.round(255f * alpha);
+                setPixel(graphics, x, y, opacity);
             }
         }
 
@@ -177,8 +251,8 @@ public class MakeSun {
      * Set a particular pixel to a particular brightness.
      *
      * @param graphics context (not null)
-     * @param x coordinate (<=textureSize, >=0)
-     * @param y coordinate (<=textureSize, >=0)
+     * @param x coordinate (<textureSize, >=0)
+     * @param y coordinate (<textureSize, >=0)
      * @param alpha (<=255, >=0)
      */
     private void setPixel(Graphics2D graphics, int x, int y, int alpha) {
