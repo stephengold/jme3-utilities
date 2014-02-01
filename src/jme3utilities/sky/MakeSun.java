@@ -78,6 +78,11 @@ public class MakeSun {
     @Parameter(names = {"-h", "-u", "--help", "--usage"}, help = true,
             description = "display this usage message")
     private static boolean usageOnly = false;
+    /**
+     * name of style
+     */
+    @Parameter(names = {"-s", "--style"}, description = "specify style")
+    private static String styleName = "all";
     // *************************************************************************
     // new methods exposed
 
@@ -118,13 +123,16 @@ public class MakeSun {
         String userDir = System.getProperty("user.dir");
         logger.log(Level.INFO, "working directory is {0}",
                 MyString.quote(userDir));
-
-        try {
-            application.makeSun("chaotic", 1f, 1.1f, -1);
-            application.makeSun("disc", 60f, 0f, 0);
-            application.makeSun("hazy-disc", 60f, 0.25f, 0);
-            application.makeSun("rayed", 60f, 1f, 16);
-        } catch (IOException exception) {
+        /*
+         * Generate color image maps.
+         */
+        if ("all".equals(styleName)) {
+            application.makeSun("chaotic");
+            application.makeSun("disc");
+            application.makeSun("hazy-disc");
+            application.makeSun("rayed");
+        } else {
+            application.makeSun(styleName);
         }
     }
     // *************************************************************************
@@ -168,7 +176,37 @@ public class MakeSun {
     }
 
     /**
-     * Generate a color image map for a disc with an optional surround.
+     * Generate an image map for a disc with an optional surround.
+     *
+     * @param styleName (not null)
+     */
+    private void makeSun(String styleName) {
+        assert styleName != null;
+
+        try {
+            switch (styleName) {
+                case "chaotic":
+                    makeSun(styleName, 1f, 1.1f, -1);
+                    break;
+                case "disc":
+                    makeSun(styleName, 60f, 0f, 0);
+                    break;
+                case "hazy-disc":
+                    makeSun(styleName, 60f, 0.25f, 0);
+                    break;
+                case "rayed":
+                    makeSun(styleName, 60f, 1f, 16);
+                    break;
+                default:
+                    logger.log(Level.SEVERE, "style={0}", styleName);
+                    throw new IllegalArgumentException("unknown style");
+            }
+        } catch (IOException exception) {
+        }
+    }
+
+    /**
+     * Generate an image map for a disc with an optional surround.
      *
      * @param fileName (not null)
      * @param discSharpness alpha slope inside the disc's edge (>0)
@@ -176,22 +214,22 @@ public class MakeSun {
      * @param numRays number of rays in the surround (>0, or 0 for a circular
      * haze, or -1 for a chaotic surround)
      */
-    private void makeSun(String fileName, float discSharpness,
+    private void makeSun(String styleName, float discSharpness,
             float surroundAlpha, int numRays)
             throws IOException {
-        assert fileName != null;
+        assert styleName != null;
         assert discSharpness > 0f : discSharpness;
         assert surroundAlpha >= 0f : surroundAlpha;
         assert numRays >= -1 : numRays;
 
         RenderedImage image = makeSun(discSharpness, surroundAlpha, numRays);
         String filePath = String.format("assets/Textures/skies/suns/%s.png",
-                fileName);
+                styleName);
         Misc.writeMap(filePath, image);
     }
 
     /**
-     * Generate a color image map for a disc with an optional surround.
+     * Generate an image map for a disc with an optional surround.
      *
      * @param discSharpness alpha slope inside the disc's edge (>0)
      * @param surroundAlpha opacity of the surround at the disc's edge (>=0)
