@@ -297,7 +297,7 @@ public class SkyControl
         topMaterial = new SkyMaterial(assetManager, topObjects, topCloudLayers);
         topMaterial.initialize();
         topMaterial.addHaze();
-        topMaterial.addObject(sunIndex, "Textures/skies/sun/disc.png");
+        topMaterial.addObject(sunIndex, "Textures/skies/suns/disc.png");
         for (LunarPhase potm : LunarPhase.values()) {
             int objectIndex = potm.ordinal() + moonBaseIndex;
             String assetPath = potm.imagePath();
@@ -480,11 +480,9 @@ public class SkyControl
             throw new IllegalArgumentException(
                     "diameter should be between 0 and Pi");
         }
-        /*
-         * In order to accommodate rays, the sun's disk is only 1/4 as 
-         * wide as its color map.
-         */
-        sunScale = 4f * newDiameter * mesh.uvScale / FastMath.HALF_PI;
+
+        sunScale = newDiameter * mesh.uvScale
+                / (Constants.discDiameter * FastMath.HALF_PI);
     }
 
     /**

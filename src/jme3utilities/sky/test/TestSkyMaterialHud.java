@@ -300,8 +300,11 @@ public class TestSkyMaterialHud
                 showStyleMenu();
                 break;
 
+            case "style chaotic":
             case "style disc":
+            case "style hazy-disc":
             case "style rayed":
+            case "style t0neg0d":
                 name = actionString.substring(6);
                 setStyle(name);
                 break;
@@ -381,12 +384,14 @@ public class TestSkyMaterialHud
         assert name != null;
 
         switch (name) {
-            case "disc":
-                material.addObject(sunIndex, "Textures/skies/sun/disc.png");
+            case "t0neg0d":
+                material.addObject(sunIndex, SkyMaterial.sunMapPath);
                 return;
 
-            case "rayed":
-                material.addObject(sunIndex, SkyMaterial.sunMapPath);
+            default:
+                String assetPath =
+                        String.format("Textures/skies/suns/%s.png", name);
+                material.addObject(sunIndex, assetPath);
         }
     }
 
@@ -417,7 +422,9 @@ public class TestSkyMaterialHud
      * Display a style menu for the sun.
      */
     private void showStyleMenu() {
-        showPopup("style ", new String[]{"disc", "rayed"});
+        showPopup("style ", new String[]{
+            "chaotic", "disc", "hazy-disc", "rayed", "t0neg0d"
+        });
     }
 
     /**
