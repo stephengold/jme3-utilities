@@ -346,6 +346,21 @@ public class SkyControl
     // new methods exposed
 
     /**
+     * Clear the star maps.
+     */
+    public void clearStarMaps() {
+        if (!starMotionFlag) {
+            topMaterial.removeStars();
+            return;
+        }
+
+        String path = "Textures/skies/clouds/clear.png";
+        Material clear = Misc.createUnshadedMaterial(assetManager, path);
+        northDome.setMaterial(clear);
+        southDome.setMaterial(clear);
+    }
+
+    /**
      * Access a particular cloud layer.
      *
      * @param layerIndex (<numCloudLayers, >=0)
@@ -487,25 +502,27 @@ public class SkyControl
     }
 
     /**
-     * Alter the star maps. Requires starMotion=true.
+     * Alter the star maps.
      *
-     * @param folderPath asset folder containing the starry sky textures (not
-     * null)
+     * @param assetPath if starMotion is true: path to an asset folder
+     * containing "northern.png" and "southern.png" textures (not null)<br>
+     * if starMotion is false: path to a star dome texture asset (not null)
      */
-    final public void setStarMaps(String folderPath) {
-        if (folderPath == null) {
+    final public void setStarMaps(String assetPath) {
+        if (assetPath == null) {
             throw new NullPointerException("path should not be null");
         }
         if (!starMotionFlag) {
-            throw new IllegalStateException("can't alter star maps");
+            topMaterial.addStars(assetPath);
+            return;
         }
 
-        String path = String.format("%s/%sern.png", folderPath, northName);
-        Material north = Misc.createUnshadedMaterial(assetManager, path);
+        String northPath = String.format("%s/%sern.png", assetPath, northName);
+        Material north = Misc.createUnshadedMaterial(assetManager, northPath);
         northDome.setMaterial(north);
 
-        path = String.format("%s/%sern.png", folderPath, southName);
-        Material south = Misc.createUnshadedMaterial(assetManager, path);
+        String southPath = String.format("%s/%sern.png", assetPath, southName);
+        Material south = Misc.createUnshadedMaterial(assetManager, southPath);
         southDome.setMaterial(south);
     }
     // *************************************************************************
