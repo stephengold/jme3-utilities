@@ -120,16 +120,15 @@ void main(){
 	#endif
 
         vec4 color = mix(stars, objects, objects.a);
-        color = mix(color, m_ClearColor, m_ClearColor.a);
-
-        // Bright parts of objects shine through the clear color.
-        color += objects * objects.a * (1.0 - m_ClearColor) * m_ClearColor.a;
-
+        vec4 clear = m_ClearColor;
 	#ifdef HAS_HAZE
                 float density = texture2D(m_HazeAlphaMap, skyTexCoord).r;
                 density *= m_HazeColor.a;
-	        color = mix(color, m_HazeColor, density);
+	        clear = mix(clear, m_HazeColor, density);
 	#endif
+        color = mix(color, clear, clear.a);
+        // Bright parts of objects shine through the clear areas.
+        color += objects * objects.a * (1.0 - clear) * clear.a;
 
 	gl_FragColor = color;
 }

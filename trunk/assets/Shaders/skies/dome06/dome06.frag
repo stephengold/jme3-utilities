@@ -82,7 +82,14 @@ void main(){
                 vec4 stars = vec4(0.0);
         #endif
 
-        vec4 color = mix(stars, m_ClearColor, m_ClearColor.a);
+        vec4 color = stars;
+        vec4 clear = m_ClearColor;
+	#ifdef HAS_HAZE
+                float density = texture2D(m_HazeAlphaMap, skyTexCoord).r;
+                density *= m_HazeColor.a;
+	        clear = mix(clear, m_HazeColor, density);
+	#endif
+        color = mix(color, clear, clear.a);
 
 	#ifdef HAS_CLOUDS0
 		float density0 = texture2D(m_Clouds0AlphaMap, clouds0Coord).r;
@@ -119,12 +126,6 @@ void main(){
 		density5 *= m_Clouds5Color.a;
 		color = mix(color, m_Clouds5Color, density5);
         #endif
-
-	#ifdef HAS_HAZE
-                float density = texture2D(m_HazeAlphaMap, skyTexCoord).r;
-                density *= m_HazeColor.a;
-	        color = mix(color, m_HazeColor, density);
-	#endif
 
 	gl_FragColor = color;
 }
