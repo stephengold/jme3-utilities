@@ -107,7 +107,7 @@ public class SkyControl
      * color blended in around sunrise and sunset: ruddy orange
      */
     final private static ColorRGBA twilight =
-            new ColorRGBA(0.8f, 0.4f, 0.2f, Constants.alphaMax);
+            new ColorRGBA(0.6f, 0.3f, 0.15f, Constants.alphaMax);
     /**
      * extent of the twilight periods before sunrise and after sunset, expressed
      * as the sine of the sun's angle below the horizon (<=1, >=0)
@@ -278,7 +278,7 @@ public class SkyControl
         if (camera == null) {
             throw new NullPointerException("camera should not be null");
         }
-        if (cloudFlattening < 0f || cloudFlattening >= 1f) {
+        if (!(cloudFlattening >= 0f && cloudFlattening < 1f)) {
             logger.log(Level.SEVERE, "cloudFlattening={0}", cloudFlattening);
             throw new IllegalArgumentException(
                     "flattening should be between 0 and 1");
@@ -297,7 +297,7 @@ public class SkyControl
         topMaterial = new SkyMaterial(assetManager, topObjects, topCloudLayers);
         topMaterial.initialize();
         topMaterial.addHaze();
-        topMaterial.addObject(sunIndex, "Textures/skies/suns/disc.png");
+        topMaterial.addObject(sunIndex, "Textures/skies/suns/hazy-disc.png");
         for (LunarPhase potm : LunarPhase.values()) {
             int objectIndex = potm.ordinal() + moonBaseIndex;
             String assetPath = potm.imagePath();
@@ -389,7 +389,8 @@ public class SkyControl
      * @param newAlpha desired opacity of the cloud layers (<=1, >=0)
      */
     public void setCloudiness(float newAlpha) {
-        if (newAlpha < Constants.alphaMin || newAlpha > Constants.alphaMax) {
+        if (!(newAlpha >= Constants.alphaMin
+                && newAlpha <= Constants.alphaMax)) {
             logger.log(Level.SEVERE, "alpha={0}", newAlpha);
             throw new IllegalArgumentException(
                     "alpha should be between 0 and 1, inclusive");
@@ -435,7 +436,7 @@ public class SkyControl
             }
             return;
         }
-        if (newYOffset < 0f || newYOffset >= 1f) {
+        if (!(newYOffset >= 0f && newYOffset < 1f)) {
             logger.log(Level.SEVERE, "offset={0}", newYOffset);
             throw new IllegalArgumentException(
                     "offset should be between 0 and 1");
@@ -451,7 +452,7 @@ public class SkyControl
      * @param newDiameter (in radians, <Pi, >0)
      */
     public void setLunarDiameter(float newDiameter) {
-        if (newDiameter <= 0f || newDiameter >= FastMath.PI) {
+        if (!(newDiameter > 0f && newDiameter < FastMath.PI)) {
             logger.log(Level.SEVERE, "diameter={0}", newDiameter);
             throw new IllegalArgumentException(
                     "diameter should be between 0 and Pi");
@@ -475,7 +476,7 @@ public class SkyControl
      * @param newDiameter (in radians, <Pi, >0)
      */
     public void setSolarDiameter(float newDiameter) {
-        if (newDiameter <= 0f || newDiameter >= FastMath.PI) {
+        if (!(newDiameter > 0f && newDiameter < FastMath.PI)) {
             logger.log(Level.SEVERE, "diameter={0}", newDiameter);
             throw new IllegalArgumentException(
                     "diameter should be between 0 and Pi");
@@ -810,8 +811,8 @@ public class SkyControl
          * Modulate the sun's color based on its altitude.
          */
         float sineSolarAltitude = sunDirection.y;
-        float green = MyMath.clampFraction(sineSolarAltitude * 20f - 1f);
-        float blue = MyMath.clampFraction(sineSolarAltitude * 20f - 2f);
+        float green = MyMath.clampFraction(3f * sineSolarAltitude);
+        float blue = MyMath.clampFraction(sineSolarAltitude - 0.1f);
         ColorRGBA sunColor = new ColorRGBA(1f, green, blue, Constants.alphaMax);
         topMaterial.setObjectColor(sunIndex, sunColor);
         topMaterial.setObjectGlow(sunIndex, sunColor);
@@ -910,19 +911,26 @@ public class SkyControl
         assert slack >= 0f : slack;
         ColorRGBA ambient = cloudsColor.mult(slack);
         /*
-         * Compute shadow strength as the fraction of
+         * Compute recommended shadow intensity as the fraction of
          * the total light which is directional.
          */
         float mainAmount = main.r + main.g + main.b;
         float ambientAmount = ambient.r + ambient.g + ambient.b;
         float totalAmount = mainAmount + ambientAmount;
-        float shadowStrength;
+        float shadowIntensity;
         if (totalAmount > 0f) {
-            shadowStrength = mainAmount / totalAmount;
+            shadowIntensity = mainAmount / totalAmount;
         } else {
-            shadowStrength = Constants.alphaMin;
+            shadowIntensity = Constants.alphaMin;
         }
-        updater.update(ambient, baseColor, main, shadowStrength, mainDirection);
+        /*
+         * Compute reccomended bloom intensity.
+         */
+        float bloomIntensity = 6f * sineSolarAltitude;
+        bloomIntensity = FastMath.clamp(bloomIntensity, 0f, 1.7f);
+
+        updater.update(ambient, baseColor, main, bloomIntensity,
+                shadowIntensity, mainDirection);
     }
 
     /**

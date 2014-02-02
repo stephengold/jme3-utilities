@@ -103,14 +103,6 @@ public class TestSkyControl
      */
     private DirectionalLight mainLight = null;
     /**
-     * shadow filter for the main light (null means none)
-     */
-    private DirectionalLightShadowFilter dlsf = null;
-    /**
-     * shadow renderer for the main light (null means none)
-     */
-    private DirectionalLightShadowRenderer dlsr = null;
-    /**
      * landscape control
      */
     private LandscapeControl landscapeControl = null;
@@ -393,7 +385,7 @@ public class TestSkyControl
     // private methods
 
     /**
-     * Add a bloom filter to a view port.
+     * Add a bloom filter to a specified view port.
      *
      * @param viewPort (not null)
      */
@@ -405,7 +397,7 @@ public class TestSkyControl
         bloom.setBlurScale(2.5f);
         bloom.setExposurePower(1f);
         Misc.getFpp(viewPort, assetManager).addFilter(bloom);
-        //control.getUpdater().addBloom(bloom);
+        control.getUpdater().addBloomFilter(bloom);
     }
 
     /**
@@ -418,16 +410,18 @@ public class TestSkyControl
 
         Updater updater = control.getUpdater();
         if (parameters.shadowFilter()) {
-            dlsf = new DirectionalLightShadowFilter(
-                    assetManager, shadowMapSize, shadowMapSplits);
+            DirectionalLightShadowFilter dlsf =
+                    new DirectionalLightShadowFilter(assetManager,
+                    shadowMapSize, shadowMapSplits);
             dlsf.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
             dlsf.setLight(mainLight);
             Misc.getFpp(viewPort, assetManager).addFilter(dlsf);
             updater.addShadowFilter(dlsf);
 
         } else {
-            dlsr = new DirectionalLightShadowRenderer(
-                    assetManager, shadowMapSize, shadowMapSplits);
+            DirectionalLightShadowRenderer dlsr =
+                    new DirectionalLightShadowRenderer(assetManager,
+                    shadowMapSize, shadowMapSplits);
             dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
             dlsr.setLight(mainLight);
             updater.addShadowRenderer(dlsr);
