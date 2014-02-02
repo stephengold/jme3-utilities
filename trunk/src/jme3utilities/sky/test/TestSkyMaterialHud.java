@@ -296,6 +296,20 @@ public class TestSkyMaterialHud
                 setPhase(name);
                 break;
 
+            case "stars":
+                showStarsMenu();
+                break;
+
+            case "stars 16m/northern":
+            case "stars 16m/southern":
+            case "stars none":
+            case "stars northern":
+            case "stars southern":
+            case "stars wiltshire":
+                name = actionString.substring(6);
+                setStars(name);
+                break;
+
             case "style":
                 showStyleMenu();
                 break;
@@ -376,6 +390,26 @@ public class TestSkyMaterialHud
     }
 
     /**
+     * Alter or clear the star map.
+     *
+     * @param name name of the new star map or "none" (not null)
+     */
+    private void setStars(String name) {
+        assert name != null;
+
+        switch (name) {
+            case "none":
+                material.removeStars();
+                break;
+
+            default:
+                String assetPath =
+                        String.format("Textures/skies/star-maps/%s.png", name);
+                material.addStars(assetPath);
+        }
+    }
+
+    /**
      * Alter the style of the sun.
      *
      * @param name name of the new style (not null)
@@ -386,7 +420,7 @@ public class TestSkyMaterialHud
         switch (name) {
             case "t0neg0d":
                 material.addObject(sunIndex, SkyMaterial.sunMapPath);
-                return;
+                break;
 
             default:
                 String assetPath =
@@ -396,7 +430,7 @@ public class TestSkyMaterialHud
     }
 
     /**
-     * Display a cloud texture menu.
+     * Display a menu of cloud textures.
      *
      * @param actionPrefix common prefix of the menu's action strings (not null)
      */
@@ -409,7 +443,7 @@ public class TestSkyMaterialHud
     }
 
     /**
-     * Display a phase-of-the-moon menu.
+     * Display a menu of lunar phases.
      */
     private void showPhaseMenu() {
         showPopup("phase ", new String[]{
@@ -419,7 +453,17 @@ public class TestSkyMaterialHud
     }
 
     /**
-     * Display a style menu for the sun.
+     * Display a menu of star maps.
+     */
+    private void showStarsMenu() {
+        showPopup("stars ", new String[]{
+            "16m/northern", "16m/southern", "none",
+            "northern", "southern", "wiltshire"
+        });
+    }
+
+    /**
+     * Display a menu of sun styles.
      */
     private void showStyleMenu() {
         showPopup("style ", new String[]{

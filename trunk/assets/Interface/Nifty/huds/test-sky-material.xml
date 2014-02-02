@@ -93,6 +93,15 @@
                         <panel style="buttonPanel"
                                height="60">
                             <control name="button"
+                                     id="id4ToAvoidNiftyWarning"
+                                     label="Select star map">
+                                <interact onRelease="perform(stars)"/>
+                            </control>
+                        </panel>
+
+                        <panel style="buttonPanel"
+                               height="60">
+                            <control name="button"
                                      id="id0ToAvoidNiftyWarning"
                                      label="Select cloud layer 0 texture">
                                 <interact onRelease="perform(c0Texture)"/>
