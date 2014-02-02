@@ -1,15 +1,18 @@
 #summary how to add SkyControl to an existing game
 
-== Introduction ==
+= Introduction =
 
-!SkyControl is a reusable sky simulation for jMonkeyEngine games.  Adding it to an existing project should be a simple five-step process:
+!SkyControl is a reusable sky simulation for jMonkeyEngine games.  Adding it to an existing project should be a simple six-step process:
   # Add the JME3 Utilities Package JARs to the project.
   # Disable any existing sky simulation which might interfere with !SkyControl.
   # Add a !SkyControl instance to some node in the scene graph.
   # Configure the !SkyControl instance.
   # Enable the !SkyControl instance.
+  # Test and tune as necessary.
 
-To demonstrate this process, we'll apply it to !BasicGame.  I encourage you to follow along in your development environment.
+To demonstrate this process, we'll apply it to !BasicGame and then to !CubeMapExample, a more sophisticated application.  I encourage you to follow along in your development environment.
+
+= !BasicGame =
 
 == Prerequisites ==
 
@@ -103,9 +106,91 @@ Unlike most JME3 controls, !SkyControl instantiates in a disabled state. In orde
    sc.setEnabled(true);
 }}}
 
-== Next steps ==
+== Test ==
 
 To test the modified !BasicGame, right-click in the "Main.java" editor window and select "Run File (Shift+F6)".
+
+= !CubeMapExample =
+
+Sometimes you'll want to combine !SkyControl with other sky elements.  The JME3 Utilities Packages includes !CubeMapExample, a slightly more sophisticated application than !BasicGame.  !CubeMapExample includes a cube-mapped sky, lit terrain, and multiple light sources.  In this section, you'll see how !SkyControl can be used to add sun, moon, and clouds to !CubeMapExample.
+
+== Add a !SkyControl instance ==
+
+  * In the Projects window of the IDE, navigate to the "jme3utilities.sky.test" source package.
+  * Open the "!CubeMapExample.java" file and study the code.
+
+Since !CubeMapExample is part of the JME3 Utilities Package, there are no libraries to add.  And since we plan to use the existing cube map, there's nothing to remove.
+
+Both !SkyFactory and !SkyControl add geometries to `Bucket.Sky`. Geometries in this bucket are rendered in the order they were added. Since the cube map is opaque, we want to !SkyControl to add its geometries _after_ the sky cube.
+
+  * In the import section of "!CubeMapExample.java", add the following code:
+{{{
+   import jme3utilities.sky.SkyControl;
+}}}
+  * Scroll down to the initializeSky() method and insert the following code just before the final close-brace:
+{{{
+        SkyControl sc = new SkyControl(assetManager, cam, 0.8f, false, true);
+        rootNode.addControl(sc);
+}}}
+
+For this application, it makes sense to turn star motion off, since the cube map isn't meant to rotate.  The lower value (0.8) for cloud flattening will make it easier to compensate for the scene's low horizon.
+
+== Configure the !SkyControl instance ==
+
+  * It's very important to disable the control's built-in star maps so that the cube map's stars will be visible at night:
+{{{
+        sc.clearStarMaps();
+}}}
+  * Adjust the cloudiness so that clouds will be visible:
+{{{
+        sc.setCloudiness(0.8f);
+}}}
+
+== Enable the !SkyControl instance ==
+
+  * In initializeSky(), insert the following code just before the final close-brace:
+{{{
+        sc.setEnabled(true);
+}}}
+
+== Test and tune ==
+
+At this point, the application should run successfully. However, for the best possible result, it needs some tuning.
+
+  * To lower the edge of the cloud dome so that it's hidden by the terrain, add the following code:
+{{{
+        sc.setCloudYOffset(0.4f);
+}}}
+  * To see the scene in daylight, add this:
+{{{
+        sc.getSunAndStars().setHour(12f);
+}}}
+  * Synchronize the lights with !SkyControl, add the following to the end of the initializeSky() method:
+{{{
+        for (Light light : rootNode.getLocalLightList()) {
+            if (light.getName().equals("ambient")) {
+                sc.getUpdater().setAmbientLight((AmbientLight) light);
+            } else if (light.getName().equals("main")) {
+                sc.getUpdater().setMainLight((DirectionalLight) light);
+            }
+        }
+}}}
+The uneven shading of the level terrain is due to sunlight coming in at a low angle.  Since it's noon, the easiest way to raise the sun's elevation is to decrease the observer's latitude.
+  * Try, for instance:
+{{{
+        sc.getSunAndStars().setObserverLatitude(0.2f);
+}}}
+The sun is rendered a boring white disc in the southern sky.
+  * To make the sun look more impressive, apply a bloom filter to it:
+{{{
+        BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
+        bloom.setBlurScale(2.5f);
+        bloom.setExposurePower(1f);
+        Misc.getFpp(viewPort, assetManager).addFilter(bloom);
+        control.getUpdater().addBloomFilter(bloom);
+}}}
+
+= Next steps =
 
 For a demonstration of the more advanced features of !SkyControl,
 you may wish to study the !TestSkyControl class in the "jme3utilities.sky.test" package. 
