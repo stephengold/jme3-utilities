@@ -29,6 +29,7 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.post.filters.BloomFilter;
 import com.jme3.renderer.ViewPort;
 import com.jme3.shadow.AbstractShadowFilter;
 import com.jme3.shadow.AbstractShadowRenderer;
@@ -73,6 +74,11 @@ public class Updater
     final private ArrayList<AbstractShadowRenderer> shadowRenderers =
             new ArrayList<>();
     /**
+     * bloom filters whose intensities are updated by the control - not
+     * serialized
+     */
+    final private ArrayList<BloomFilter> bloomFilters = new ArrayList<>();
+    /**
      * viewports whose background colors are updated by the control - not
      * serialized
      */
@@ -94,6 +100,10 @@ public class Updater
      */
     private DirectionalLight mainLight = null;
     /**
+     * most recent bloom intensity
+     */
+    private float bloomIntensity = 0f;
+    /**
      * most recent shadow intensity
      */
     private float shadowIntensity = 0f;
@@ -106,32 +116,45 @@ public class Updater
     // new methods exposed
 
     /**
+     * Add a bloom filter to the list of filters whose intensities are updated
+     * by the control. Note that the list is not serialized.
+     *
+     * @param filter (not null)
+     */
+    public void addBloomFilter(BloomFilter filter) {
+        if (filter == null) {
+            throw new NullPointerException("filter should not be null");
+        }
+
+        bloomFilters.add(filter);
+    }
+
+    /**
      * Add a shadow filter to the list of filters whose intensities are updated
      * by the control. Note that the list is not serialized.
      *
-     * @param shadowFilter (not null)
+     * @param filter (not null)
      */
-    public void addShadowFilter(AbstractShadowFilter shadowFilter) {
-        if (shadowFilter == null) {
-            throw new NullPointerException("shadow filter should not be null");
+    public void addShadowFilter(AbstractShadowFilter filter) {
+        if (filter == null) {
+            throw new NullPointerException("filter should not be null");
         }
 
-        shadowFilters.add(shadowFilter);
+        shadowFilters.add(filter);
     }
 
     /**
      * Add a shadow renderer to the list of renderers whose intensities are
      * updated by the control. Note that the list is not serialized.
      *
-     * @param shadowRenderer (not null)
+     * @param renderer (not null)
      */
-    public void addShadowRenderer(AbstractShadowRenderer shadowRenderer) {
-        if (shadowRenderer == null) {
-            throw new NullPointerException(
-                    "shadow renderer should not be null");
+    public void addShadowRenderer(AbstractShadowRenderer renderer) {
+        if (renderer == null) {
+            throw new NullPointerException("renderer should not be null");
         }
 
-        shadowRenderers.add(shadowRenderer);
+        shadowRenderers.add(renderer);
     }
 
     /**
@@ -156,6 +179,15 @@ public class Updater
             return null;
         }
         return backgroundColor.clone();
+    }
+
+    /**
+     * Read the most recent bloom intensity.
+     *
+     * @return intensity of bloom effect (>=0)
+     */
+    public float getBloomIntensity() {
+        return bloomIntensity;
     }
 
     /**
@@ -192,17 +224,34 @@ public class Updater
     }
 
     /**
+     * Remove a bloom filter from the list of filters whose intensities are
+     * updated by the control. Note that the list is not serialized.
+     *
+     * @param filter (not null)
+     */
+    public void removeBloomFilter(BloomFilter filter) {
+        if (filter == null) {
+            throw new NullPointerException("filter should not be null");
+        }
+
+        boolean success = bloomFilters.remove(filter);
+        if (!success) {
+            logger.log(Level.WARNING, "not removed");
+        }
+    }
+
+    /**
      * Remove a shadow filter from the list of filters whose intensities are
      * updated by the control. Note that the list is not serialized.
      *
-     * @param shadowFilter (not null)
+     * @param filter (not null)
      */
-    public void removeShadowFilter(AbstractShadowFilter shadowFilter) {
-        if (shadowFilter == null) {
-            throw new NullPointerException("shadow filter should not be null");
+    public void removeShadowFilter(AbstractShadowFilter filter) {
+        if (filter == null) {
+            throw new NullPointerException("filter should not be null");
         }
 
-        boolean success = shadowFilters.remove(shadowFilter);
+        boolean success = shadowFilters.remove(filter);
         if (!success) {
             logger.log(Level.WARNING, "not removed");
         }
@@ -212,15 +261,14 @@ public class Updater
      * Remove a shadow renderer from the list of renderers whose intensities are
      * updated by the control. Note that the list is not serialized.
      *
-     * @param shadowRenderer (not null)
+     * @param renderer (not null)
      */
-    public void removeShadowRenderer(AbstractShadowRenderer shadowRenderer) {
-        if (shadowRenderer == null) {
-            throw new NullPointerException(
-                    "shadow renderer should not be null");
+    public void removeShadowRenderer(AbstractShadowRenderer renderer) {
+        if (renderer == null) {
+            throw new NullPointerException("renderer should not be null");
         }
 
-        boolean success = shadowRenderers.remove(shadowRenderer);
+        boolean success = shadowRenderers.remove(renderer);
         if (!success) {
             logger.log(Level.WARNING, "not removed");
         }
@@ -257,35 +305,22 @@ public class Updater
      * altered)
      * @param mainColor color and intensity of the main directional light (not
      * null, not altered)
+     * @param bloomIntensity intensity of bloom effect (>=0)
      * @param shadowIntensity intensity of shadows (<=1, >=0)
      * @param direction direction to the main light source (unit vector, not
      * altered)
      */
     void update(ColorRGBA ambientColor, ColorRGBA backgroundColor,
-            ColorRGBA mainColor, float shadowIntensity, Vector3f direction) {
-        if (ambientColor == null) {
-            throw new NullPointerException("ambient color should not be null");
-        }
-        if (backgroundColor == null) {
-            throw new NullPointerException(
-                    "background color should not be null");
-        }
-        if (mainColor == null) {
-            throw new NullPointerException("main color should not be null");
-        }
-        if (shadowIntensity > 1f || shadowIntensity < 0f) {
-            logger.log(Level.SEVERE, "intensity={0}", shadowIntensity);
-            throw new IllegalArgumentException(
-                    "shadow intensity should be between 0 and 1");
-        }
-        if (direction == null) {
-            throw new NullPointerException("direction should not be null");
-        }
-        if (!direction.isUnitVector()) {
-            logger.log(Level.SEVERE, "direction={0}", direction);
-            throw new IllegalArgumentException(
-                    "direction should be a unit vector");
-        }
+            ColorRGBA mainColor, float bloomIntensity, float shadowIntensity,
+            Vector3f direction) {
+        assert ambientColor != null;
+        assert backgroundColor != null;
+        assert mainColor != null;
+        assert bloomIntensity >= 0f : bloomIntensity;
+        assert shadowIntensity >= 0f : shadowIntensity;
+        assert shadowIntensity <= 1f : shadowIntensity;
+        assert direction != null;
+        assert direction.isUnitVector() : direction;
         /*
          * Copy new values to the corresponding "most recent" fields.
          */
@@ -304,6 +339,7 @@ public class Updater
         } else {
             this.mainColor.set(mainColor);
         }
+        this.bloomIntensity = bloomIntensity;
         this.shadowIntensity = shadowIntensity;
         if (this.direction == null) {
             this.direction = direction.clone();
@@ -323,6 +359,9 @@ public class Updater
         }
         if (ambientLight != null) {
             ambientLight.setColor(ambientColor);
+        }
+        for (BloomFilter filter : bloomFilters) {
+            filter.setBloomIntensity(bloomIntensity);
         }
         for (AbstractShadowFilter filter : shadowFilters) {
             filter.setShadowIntensity(shadowIntensity);
