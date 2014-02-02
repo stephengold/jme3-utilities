@@ -164,7 +164,8 @@ public class CloudLayer {
      * @param newAlpha desired opacity of the layer (<=1, >=0)
      */
     public void setOpacity(float newAlpha) {
-        if (newAlpha < Constants.alphaMin || newAlpha > Constants.alphaMax) {
+        if (!(newAlpha >= Constants.alphaMin
+                && newAlpha <= Constants.alphaMax)) {
             logger.log(Level.SEVERE, "alpha={0}", newAlpha);
             throw new IllegalArgumentException(
                     "alpha should be between 0 and 1, inclusive");
@@ -183,7 +184,7 @@ public class CloudLayer {
         if (assetPath == null) {
             throw new NullPointerException("path should not be null");
         }
-        if (scale <= 0f) {
+        if (!(scale > 0f)) {
             logger.log(Level.SEVERE, "scale={0}", scale);
             throw new IllegalArgumentException("scale should be positive");
         }

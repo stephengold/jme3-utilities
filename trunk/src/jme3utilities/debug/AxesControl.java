@@ -111,13 +111,13 @@ public class AxesControl
         }
         this.assetManager = assetManager;
 
-        if (length <= 0f) {
+        if (!(length > 0f)) {
             logger.log(Level.SEVERE, "length={0}", length);
             throw new IllegalArgumentException("length should be positive");
         }
         this.length = length;
 
-        if (width <= 0f) {
+        if (!(width > 0f)) {
             logger.log(Level.SEVERE, "width={0}", length);
             throw new IllegalArgumentException("width should be positive");
         }

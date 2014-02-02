@@ -161,7 +161,7 @@ public class TestSkyMaterialHud
      */
     @Override
     public void update(float tpf) {
-        if (tpf < 0f) {
+        if (!(tpf >= 0f)) {
             logger.log(Level.SEVERE, "tpf={0}", tpf);
             throw new IllegalArgumentException("tpf should not be negative");
         }

@@ -533,7 +533,7 @@ public class MySpatial
      * @param scale desired world scale (>0)
      */
     public static void setWorldScale(Spatial spatial, float scale) {
-        if (scale <= 0f) {
+        if (!(scale > 0f)) {
             logger.log(Level.SEVERE, "scale={0}", scale);
             throw new IllegalArgumentException("scale should be positive");
         }

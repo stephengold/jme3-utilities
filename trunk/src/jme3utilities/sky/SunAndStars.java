@@ -120,12 +120,12 @@ public class SunAndStars
      */
     public static Vector3f convertToEquatorial(float latitude,
             float longitude) {
-        if (latitude < -FastMath.HALF_PI || latitude > FastMath.HALF_PI) {
+        if (!(latitude >= -FastMath.HALF_PI && latitude <= FastMath.HALF_PI)) {
             logger.log(Level.SEVERE, "latitude={0}", latitude);
             throw new IllegalArgumentException(
                     "latitude should be between -Pi/2 and Pi/2, inclusive");
         }
-        if (longitude < 0f || longitude > FastMath.TWO_PI) {
+        if (!(longitude >= 0f && longitude <= FastMath.TWO_PI)) {
             logger.log(Level.SEVERE, "longitude={0}", longitude);
             throw new IllegalArgumentException(
                     "longitude should be between 0 and 2*Pi, inclusive");
@@ -180,12 +180,12 @@ public class SunAndStars
      * @return a new unit vector in world (horizontal) coordinates
      */
     public Vector3f convertToWorld(float latitude, float longitude) {
-        if (latitude < -FastMath.HALF_PI || latitude > FastMath.HALF_PI) {
+        if (!(latitude >= -FastMath.HALF_PI && latitude <= FastMath.HALF_PI)) {
             logger.log(Level.SEVERE, "latitude={0}", latitude);
             throw new IllegalArgumentException(
                     "latitude should be between -Pi/2 and Pi/2, inclusive");
         }
-        if (longitude < 0f || longitude > FastMath.TWO_PI) {
+        if (!(longitude >= 0f && longitude <= FastMath.TWO_PI)) {
             logger.log(Level.SEVERE, "latitude={0}", latitude);
             throw new IllegalArgumentException(
                     "longitude should be between 0 and 2*Pi, inclusive");
@@ -330,7 +330,7 @@ public class SunAndStars
      * @param newHour hours since midnight, solar time (<=24, >=0)
      */
     public void setHour(float newHour) {
-        if (newHour < 0f || newHour > Constants.hoursPerDay) {
+        if (!(newHour >= 0f && newHour <= Constants.hoursPerDay)) {
             logger.log(Level.SEVERE, "hour={0}", newHour);
             throw new IllegalArgumentException(
                     "hour should be between 0 and 24, inclusive");
@@ -345,7 +345,7 @@ public class SunAndStars
      * @param latitude radians north of the equator (<=Pi/2, >=-Pi/2)
      */
     public void setObserverLatitude(float latitude) {
-        if (latitude < -FastMath.HALF_PI || latitude > FastMath.HALF_PI) {
+        if (!(latitude >= -FastMath.HALF_PI && latitude <= FastMath.HALF_PI)) {
             logger.log(Level.SEVERE, "latitude={0}", latitude);
             throw new IllegalArgumentException(
                     "latitude should be between -Pi/2 and Pi/2, inclusive");
@@ -360,7 +360,7 @@ public class SunAndStars
      * @param longitude radians east of the vernal equinox (<=2*Pi, >=0)
      */
     public void setSolarLongitude(float longitude) {
-        if (longitude < 0f || longitude > FastMath.TWO_PI) {
+        if (!(longitude >= 0f && longitude <= FastMath.TWO_PI)) {
             logger.log(Level.SEVERE, "longitude={0}", longitude);
             throw new IllegalArgumentException(
                     "longitude should be between 0 and 2*Pi");

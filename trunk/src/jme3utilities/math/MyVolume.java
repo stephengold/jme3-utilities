@@ -90,11 +90,11 @@ public class MyVolume {
      * @param height (>=0)
      */
     public static float capsuleVolume(float radius, float height) {
-        if (radius < 0f) {
+        if (!(radius >= 0f)) {
             logger.log(Level.SEVERE, "radius={0}", radius);
             throw new IllegalArgumentException("radius shouldn't be negative");
         }
-        if (height < 0f) {
+        if (!(height >= 0f)) {
             logger.log(Level.SEVERE, "height={0}", height);
             throw new IllegalArgumentException("height shouldn't be negative");
         }
@@ -114,11 +114,11 @@ public class MyVolume {
      * @param height (>=0)
      */
     public static float coneVolume(float radius, float height) {
-        if (radius < 0f) {
+        if (!(radius >= 0f)) {
             logger.log(Level.SEVERE, "radius={0}", radius);
             throw new IllegalArgumentException("radius shouldn't be negative");
         }
-        if (height < 0f) {
+        if (!(height >= 0f)) {
             logger.log(Level.SEVERE, "height={0}", height);
             throw new IllegalArgumentException("height shouldn't be negative");
         }
@@ -155,7 +155,7 @@ public class MyVolume {
      * @param radius (>=0)
      */
     public static float sphereVolume(float radius) {
-        if (radius < 0f) {
+        if (!(radius >= 0f)) {
             logger.log(Level.SEVERE, "radius={0}", radius);
             throw new IllegalArgumentException("radius shouldn't be negative");
         }
@@ -224,8 +224,7 @@ public class MyVolume {
 
         } else {
             logger.log(Level.SEVERE, "shape={0}", shape.getClass());
-            throw new IllegalArgumentException(
-                    "shape should be closed");
+            throw new IllegalArgumentException("shape should be closed");
         }
 
         assert volume >= 0f : volume;

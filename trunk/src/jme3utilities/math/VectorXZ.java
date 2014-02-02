@@ -192,7 +192,7 @@ public class VectorXZ
      * @return this vector (with its components modified)
      */
     public VectorXZ clampDirectionLocal(float maxAbsAngle) {
-        if (maxAbsAngle < 0f) {
+        if (!(maxAbsAngle >= 0f)) {
             logger.log(Level.SEVERE, "maxAbsAngle={0}", maxAbsAngle);
             throw new IllegalArgumentException("angle should not be negative");
         }

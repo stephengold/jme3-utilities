@@ -87,7 +87,7 @@ public class TimeOfDay
      * @param startHour hours since midnight (<24, >=0)
      */
     public TimeOfDay(float startHour) {
-        if (startHour < 0f || startHour >= hoursPerDay) {
+        if (!(startHour >= 0f && startHour < hoursPerDay)) {
             logger.log(Level.SEVERE, "startHour={0}", startHour);
             throw new IllegalArgumentException(
                     "hour should be between 0 and 24");

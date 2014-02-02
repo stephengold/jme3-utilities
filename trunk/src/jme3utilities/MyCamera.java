@@ -119,11 +119,11 @@ public class MyCamera {
         if (camera == null) {
             throw new NullPointerException("camera should not be null");
         }
-        if (newNear <= 0f) {
+        if (!(newNear > 0f)) {
             logger.log(Level.SEVERE, "near={0}", newNear);
             throw new IllegalArgumentException("near should be positive");
         }
-        if (newFar <= newNear) {
+        if (!(newFar > newNear)) {
             logger.log(Level.SEVERE, "far={0} near={1}",
                     new Object[]{newFar, newNear});
             throw new IllegalArgumentException(
@@ -151,7 +151,7 @@ public class MyCamera {
         if (camera == null) {
             throw new NullPointerException("camera should not be null");
         }
-        if (newTangent <= 0f) {
+        if (!(newTangent > 0f)) {
             logger.log(Level.SEVERE, "newTangent={0}", newTangent);
             throw new IllegalArgumentException("tangent should be positive");
         }
@@ -205,7 +205,7 @@ public class MyCamera {
      * @param factor amount to reduce the FOV tangent (>0)
      */
     public static void zoom(Camera camera, float factor) {
-        if (factor <= 0f) {
+        if (!(factor > 0f)) {
             logger.log(Level.SEVERE, "factor={0}", factor);
             throw new IllegalArgumentException("factor should be positive");
         }
