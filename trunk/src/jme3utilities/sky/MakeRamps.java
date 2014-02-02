@@ -39,7 +39,7 @@ import jme3utilities.Misc;
 import jme3utilities.MyString;
 
 /**
- * A utility application to generate ramping alpha maps for use with SkyMaterial
+ * A console application to generate ramping alpha maps for use with SkyMaterial
  * and DomeMesh.
  *
  * @author Stephen Gold <sgold@sonic.net>
@@ -137,7 +137,6 @@ public class MakeRamps {
         if (elevationAngle < 0f) {
             return 1f;
         }
-        double dMax = Math.sqrt(delta * (2.0 + delta));
 
         double cosElevation = Math.cos(elevationAngle);
         /*
@@ -151,12 +150,18 @@ public class MakeRamps {
          */
         double gamma = Math.PI / 2.0 - elevationAngle - Math.asin(sinBeta);
         /*
-         * D is the (positive) path length from the observer to
+         * Path is the (positive) path length from the observer to
          * the "top" of the atmosphere, in Earth radii.
          */
-        double d = (1.0 + delta) * Math.sin(gamma) / cosElevation;
-
-        float result = (float) (d / dMax);
+        double path = (1.0 + delta) * Math.sin(gamma) / cosElevation;
+        double pathMax = Math.sqrt(delta * (2.0 + delta));
+        /*
+         * Apply a Gaussian function to the path difference so that the
+         * result changes very slowly near the horizon, ensuring
+         * a smooth transition to the background color or the bottom dome.
+         */
+        double deltaPath = 8f * (pathMax - path);
+        float result = (float) Math.exp(-deltaPath * deltaPath);
 
         assert result > 0f : result;
         assert result <= 1f : result;
@@ -208,6 +213,7 @@ public class MakeRamps {
                     elevationAngle = FastMath.atan(tan);
                 }
                 float alpha = hazeAlpha(elevationAngle);
+
                 int brightness = Math.round(255f * alpha);
                 setPixel(graphics, x, y, brightness);
             }
@@ -220,8 +226,8 @@ public class MakeRamps {
      * Set a particular pixel to a particular brightness.
      *
      * @param graphics context (not null)
-     * @param x coordinate (<=textureSize, >=0)
-     * @param y coordinate (<=textureSize, >=0)
+     * @param x coordinate (<textureSize, >=0)
+     * @param y coordinate (<textureSize, >=0)
      * @param brightness (<=255, >=0)
      *
      */
