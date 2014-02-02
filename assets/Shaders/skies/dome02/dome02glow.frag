@@ -48,8 +48,14 @@ varying vec2 skyTexCoord;
 #endif
 
 void main(){
-        vec4 stars = vec4(0.0);
-        vec4 color = mix(stars, m_ClearGlow, m_ClearGlow.a);
+        vec4 color = vec4(0.0);
+        vec4 clear = m_ClearGlow;
+	#ifdef HAS_HAZE
+                float density = texture2D(m_HazeAlphaMap, skyTexCoord).r;
+                density *= m_HazeGlow.a;
+	        clear = mix(clear, m_HazeGlow, density);
+	#endif
+        color = mix(color, clear, clear.a);
 
 	#ifdef HAS_CLOUDS0
 		float density0 = texture2D(m_Clouds0AlphaMap, clouds0Coord).r;
@@ -62,12 +68,6 @@ void main(){
 		density1 *= m_Clouds1Glow.a;
 		color = mix(color, m_Clouds1Glow, density1);
         #endif
-
-	#ifdef HAS_HAZE
-                float density = texture2D(m_HazeAlphaMap, skyTexCoord).r;
-                density *= m_HazeGlow.a;
-	        color = mix(color, m_HazeGlow, density);
-	#endif
 
 	gl_FragColor = color;
 }
