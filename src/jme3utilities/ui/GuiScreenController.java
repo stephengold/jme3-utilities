@@ -500,7 +500,7 @@ public class GuiScreenController
         if (namePrefix == null) {
             throw new NullPointerException("prefix should not be null");
         }
-        if (logBase <= 0f) {
+        if (!(logBase > 0f)) {
             logger.log(Level.SEVERE, "logBase={0}", logBase);
             throw new IllegalArgumentException("log base should be positive");
         }

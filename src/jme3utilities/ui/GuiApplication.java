@@ -149,7 +149,7 @@ abstract public class GuiApplication
      * @param newSpeed animation speed (>0, standard speed=1)
      */
     public void setSpeed(float newSpeed) {
-        if (newSpeed <= 0f) {
+        if (!(newSpeed > 0f)) {
             logger.log(Level.SEVERE, "speed={0}", newSpeed);
             throw new IllegalArgumentException("speed should be positive");
         }

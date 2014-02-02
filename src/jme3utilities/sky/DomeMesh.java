@@ -167,21 +167,21 @@ public class DomeMesh
         }
         this.quadrantSamples = quadrantSamples;
 
-        if (topU < Constants.uvMin || topU > Constants.uvMax) {
+        if (!(topU >= Constants.uvMin && topU <= Constants.uvMax)) {
             logger.log(Level.SEVERE, "topU={0}", topU);
             throw new IllegalArgumentException(
                     "topU should be between 0 and 1, inclusive");
         }
         this.topU = topU;
 
-        if (topV < Constants.uvMin || topV > Constants.uvMax) {
+        if (!(topV >= Constants.uvMin && topV <= Constants.uvMax)) {
             logger.log(Level.SEVERE, "topV={0}", topV);
             throw new IllegalArgumentException(
                     "topV should be between 0 and 1, inclusive");
         }
         this.topV = topV;
 
-        if (uvScale <= 0f || uvScale >= 0.5f) {
+        if (!(uvScale > 0f && uvScale < 0.5f)) {
             logger.log(Level.SEVERE, "uvScale={0}", uvScale);
             throw new IllegalArgumentException(
                     "uvScale should be between 0 and 0.5");
@@ -250,8 +250,8 @@ public class DomeMesh
      * @return angle in radians (<=Pi/2)
      */
     public float elevationAngle(float u, float v) {
-        if (u > Constants.uvMax || u < Constants.uvMin || v > Constants.uvMax
-                || v < Constants.uvMin) {
+        if (!(u <= Constants.uvMax && u >= Constants.uvMin
+                && v <= Constants.uvMax && v >= Constants.uvMin)) {
             logger.log(Level.SEVERE, "u={0}, v={1}", new Object[]{u, v});
             throw new IllegalArgumentException(
                     "texture coordinates should be between 0 and 1, inclusive");
@@ -272,7 +272,7 @@ public class DomeMesh
      * @param newAngle (in radians, <=2*Pi, >0)
      */
     public void setSegmentAngle(float newAngle) {
-        if (newAngle <= 0f || newAngle > FastMath.TWO_PI) {
+        if (!(newAngle > 0f && newAngle <= FastMath.TWO_PI)) {
             logger.log(Level.SEVERE, "angle={0}", newAngle);
             throw new IllegalArgumentException(
                     "angle should be between 0 and 2*Pi");

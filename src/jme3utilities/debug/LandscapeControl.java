@@ -176,11 +176,11 @@ public class LandscapeControl
      * @param peakY Y-coordinate of the peak (>baseY)
      */
     public void setTerrainScale(float radius, float baseY, float peakY) {
-        if (radius <= 0f) {
+        if (!(radius > 0f)) {
             logger.log(Level.SEVERE, "radius={0}", radius);
             throw new IllegalArgumentException("radius should be positive");
         }
-        if (peakY <= baseY) {
+        if (!(peakY > baseY)) {
             logger.log(Level.SEVERE, "peakY={0}, baseY={1}",
                     new Object[]{peakY, baseY});
             throw new IllegalArgumentException("peak should be above base");

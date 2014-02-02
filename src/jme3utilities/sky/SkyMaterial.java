@@ -537,7 +537,7 @@ public class SkyMaterial
                     new Object[]{layerIndex, maxCloudLayers});
             throw new IllegalArgumentException("layer index out of range");
         }
-        if (newScale <= 0f) {
+        if (!(newScale > 0f)) {
             logger.log(Level.SEVERE, "newScale={0}", newScale);
             throw new IllegalArgumentException("scale should be positive");
         }
@@ -630,7 +630,7 @@ public class SkyMaterial
         if (centerUV == null) {
             throw new NullPointerException("coordinates should not be null");
         }
-        if (newScale <= 0f) {
+        if (!(newScale > 0f)) {
             logger.log(Level.SEVERE, "newScale={0}", newScale);
             throw new IllegalArgumentException("scale should be positive");
         }

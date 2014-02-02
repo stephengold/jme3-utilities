@@ -71,7 +71,7 @@ public class MyMath {
      * >=0)
      */
     public static double circle(double abscissa) {
-        if (abscissa < -1.0 || abscissa > 1.0) {
+        if (!(abscissa >= -1.0 && abscissa <= 1.0)) {
             logger.log(Level.SEVERE, "abscissa={0}", abscissa);
             throw new IllegalArgumentException(
                     "abscissa should be between -1 and 1, inclusive");
@@ -93,7 +93,7 @@ public class MyMath {
      * >=0)
      */
     public static float circle(float abscissa) {
-        if (abscissa < -1f || abscissa > 1f) {
+        if (!(abscissa >= -1f && abscissa <= 1f)) {
             logger.log(Level.SEVERE, "abscissa={0}", abscissa);
             throw new IllegalArgumentException(
                     "abscissa should be between -1 and 1, inclusive");
@@ -117,7 +117,7 @@ public class MyMath {
      * @see FastMath#clamp(float,float,float)
      */
     public static float clamp(float fValue, float maxMagnitude) {
-        if (maxMagnitude < 0f) {
+        if (!(maxMagnitude >= 0f)) {
             logger.log(Level.SEVERE, "maxMagnitude={0}", maxMagnitude);
             throw new IllegalArgumentException("limit shouldn't be negative");
         }
@@ -284,7 +284,7 @@ public class MyMath {
      * @return x MOD modulus (<modulus, >=0)
      */
     public static float modulo(float fValue, float modulus) {
-        if (modulus <= 0f) {
+        if (!(modulus > 0f)) {
             logger.log(Level.SEVERE, "modulus={0}", modulus);
             throw new IllegalArgumentException("modulus should be positive");
         }
@@ -305,7 +305,7 @@ public class MyMath {
      * @return x MOD modulus (<modulus, >=0)
      */
     public static double modulo(double dValue, double modulus) {
-        if (modulus <= 0.0) {
+        if (!(modulus > 0.0)) {
             logger.log(Level.SEVERE, "modulus={0}", modulus);
             throw new IllegalArgumentException("modulus should be positive");
         }
@@ -343,12 +343,12 @@ public class MyMath {
      * >=0)
      */
     public static float sphere(float x, float y) {
-        if (x < -1f || x > 1f) {
+        if (!(x >= -1f && x <= 1f)) {
             logger.log(Level.SEVERE, "x={0}", x);
             throw new IllegalArgumentException(
                     "x should be between -1 and 1, inclusive");
         }
-        if (y < -1f || y > 1f) {
+        if (!(y >= -1f && y <= 1f)) {
             logger.log(Level.SEVERE, "y={0}", y);
             throw new IllegalArgumentException(
                     "y should be between -1 and 1, inclusive");
