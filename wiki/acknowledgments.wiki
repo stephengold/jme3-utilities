@@ -27,9 +27,10 @@ Like most projects, the jme3-utilities project builds upon the work of many who 
     * Microsoft Windows
     * the !NetBeans integrated development environment
     * the Nifty GUI
+    * Open Broadcaster Software
     * the PMD source code analyzer
     * the !RealWorld Cursor Editor
-    * Open Broadcaster Software
+    * Alex Peterson's Spacescape tool
     * the Subversion revision control system
     * the !WinMerge differencing and merging tool
 
