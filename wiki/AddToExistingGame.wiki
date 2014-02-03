@@ -210,7 +210,7 @@ to
         SkyControl sc = new SkyControl(assetManager, cam, 0.8f, true, true);
 }}}
 
-It's also necessary to rotate the cube map to match SkyControl's notions of time and space.  To achieve this, override the application's simpleUpdate() method:
+It's also necessary to rotate the cube map to match !SkyControl's notions of time and space.  To achieve this, override the application's simpleUpdate() method:
 {{{
     @Override
     public void simpleUpdate(float unused) {
@@ -220,13 +220,13 @@ It's also necessary to rotate the cube map to match SkyControl's notions of time
     }
 }}}
 
-To simulate the passage of time, we need some state and a mechanism to update it.  The jme3utilities.TimeOfDay class is an app state which addresses this need.
+To simulate the passage of time, we need some state and a mechanism to update it.  The jme3utilities.!TimeOfDay class is an app state which addresses this need.
 
   * Import the class:
 {{{
 import jme3utilities.TimeOfDay;
 }}}
-  * Declare a field in CubeMapExample:
+  * Declare a field in !CubeMapExample:
 {{{
     TimeOfDay timeOfDay;
 }}}
