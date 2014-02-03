@@ -185,13 +185,18 @@ The uneven shading of the level terrain is due to sunlight coming in at a low an
         sc.getSunAndStars().setObserverLatitude(0.2f);
 }}}
 The sun looks like a boring white disc in the southern sky.
-  * To make the sun look more impressive, apply a bloom filter to it:
+  * For a more impressive sun, apply a bloom filter to it:
+{{{
+import com.jme3.post.filters.BloomFilter;
+import jme3utilities.Misc;
+}}}
+...
 {{{
         BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
         bloom.setBlurScale(2.5f);
         bloom.setExposurePower(1f);
         Misc.getFpp(viewPort, assetManager).addFilter(bloom);
-        control.getUpdater().addBloomFilter(bloom);
+        sc.getUpdater().addBloomFilter(bloom);
 }}}
 
 = Next steps =
