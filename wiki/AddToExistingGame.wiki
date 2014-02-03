@@ -165,7 +165,7 @@ At this point, the application should run successfully. However, for the best po
 {{{
         sc.getSunAndStars().setHour(12f);
 }}}
-  * Synchronize the lights with !SkyControl, add the following to the end of the initializeSky() method:
+  * To synchronize the lights with !SkyControl, add the following to the end of the initializeSky() method:
 {{{
         for (Light light : rootNode.getLocalLightList()) {
             if (light.getName().equals("ambient")) {
