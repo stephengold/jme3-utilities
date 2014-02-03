@@ -169,7 +169,7 @@ At this point, the application should run successfully. However, for the best po
 {{{
 import com.jme3.light.Light;
 }}}
-and this to the end of the initializeSky() method:
+  and this to the end of the initializeSky() method:
 {{{
         for (Light light : rootNode.getLocalLightList()) {
             if (light.getName().equals("ambient")) {
@@ -190,7 +190,7 @@ The sun looks like a boring white disc in the southern sky.
 import com.jme3.post.filters.BloomFilter;
 import jme3utilities.Misc;
 }}}
-  * ...
+  ...
 {{{
         BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
         bloom.setBlurScale(2.5f);
@@ -201,7 +201,47 @@ import jme3utilities.Misc;
 
 == Adding star motion ==
 
+To add star motion, it's not sufficient simply to change the control's constructor from
+{{{
+        SkyControl sc = new SkyControl(assetManager, cam, 0.8f, false, true);
+}}}
+to
+{{{
+        SkyControl sc = new SkyControl(assetManager, cam, 0.8f, true, true);
+}}}
 
+It's also necessary to rotate the cube map to match SkyControl's notions of time and space.  To achieve this, override the application's simpleUpdate() method:
+{{{
+    @Override
+    public void simpleUpdate(float unused) {
+        Spatial starMap = rootNode.getChild("Sky");
+        SkyControl sc = rootNode.getControl(SkyControl.class);
+        sc.getSunAndStars().orientExternalSky(starMap);
+    }
+}}}
+
+To simulate the passage of time, we need some state and a mechanism to update it.  The jme3utilities.TimeOfDay class is an app state which addresses this need.
+
+  * Import the class:
+{{{
+import jme3utilities.TimeOfDay;
+}}}
+  * Declare a field in CubeMapExample:
+{{{
+    TimeOfDay timeOfDay;
+}}}
+  * Initialize and attach it in simpleInitApp():
+{{{
+        timeOfDay = new TimeOfDay(19f);
+        stateManager.attach(timeOfDay);
+        timeOfDay.setRate(1000f);
+}}}
+
+All that remains is to update the control.  Add two lines to simpleUpdate(), right before the invocation of orientExternalSky():
+{{{
+        float hour = timeOfDay.getHour();
+        sc.getSunAndStars().setHour(hour);
+}}}
 
 = Next steps =
 
