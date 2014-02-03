@@ -24,6 +24,7 @@
             <word>ecliptical</word>
             <word>Esc</word>
             <word>filesystem</word>
+            <word>grayscale</word>
             <word>hotkey</word>
             <word>hotkey's</word>
             <word>hotkeys</word>
@@ -37,6 +38,7 @@
             <word>moon's</word>
             <word>namespace</word>
             <word>observer's</word>
+            <word>Peterson's</word>
             <word>popup</word>
             <word>rasterization</word>
             <word>rasterized</word>
@@ -45,6 +47,7 @@
             <word>screen's</word>
             <word>signal's</word>
             <word>slider's</word>
+            <word>Spacescape</word>
             <word>spatial's</word>
             <word>spatials</word>
             <word>submenu</word>
@@ -53,6 +56,7 @@
             <word>unscaled</word>
             <word>water's</word>
             <word>wireframe</word>
+            <word>wireframes</word>
         </spellchecker-wordlist>
     </configuration>
 </project>
