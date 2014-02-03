@@ -133,7 +133,7 @@ Both !SkyFactory and !SkyControl add geometries to `Bucket.Sky`. Geometries in t
         rootNode.addControl(sc);
 }}}
 
-For this application, it makes sense to turn star motion off, since the cube map isn't meant to rotate.  The lower value (0.8) for cloud flattening will make it easier to compensate for the scene's low horizon.
+For now, we'll turn star motion off, since that simplifies things.  The lower value (0.8) for cloud flattening will make it easier to compensate for the scene's low horizon.
 
 == Configure the !SkyControl instance ==
 
@@ -190,7 +190,7 @@ The sun looks like a boring white disc in the southern sky.
 import com.jme3.post.filters.BloomFilter;
 import jme3utilities.Misc;
 }}}
-...
+  * ...
 {{{
         BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
         bloom.setBlurScale(2.5f);
@@ -198,6 +198,10 @@ import jme3utilities.Misc;
         Misc.getFpp(viewPort, assetManager).addFilter(bloom);
         sc.getUpdater().addBloomFilter(bloom);
 }}}
+
+== Adding star motion ==
+
+
 
 = Next steps =
 
