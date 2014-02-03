@@ -237,11 +237,7 @@ public class SkyMaterial
      * @param layerIndex (<maxCloudLayers, >=0)
      */
     public void addClouds(int layerIndex) {
-        if (layerIndex < 0 || layerIndex >= maxCloudLayers) {
-            logger.log(Level.SEVERE, "layerIndex={0}, maxCloudLayers={1}",
-                    new Object[]{layerIndex, maxCloudLayers});
-            throw new IllegalArgumentException("layer index out of range");
-        }
+        validateLayerIndex(layerIndex);
 
         addClouds(layerIndex, cloudsMapPath);
     }
@@ -253,11 +249,7 @@ public class SkyMaterial
      * @param assetPath asset path to the alpha map (not null)
      */
     public void addClouds(int layerIndex, String assetPath) {
-        if (layerIndex < 0 || layerIndex >= maxCloudLayers) {
-            logger.log(Level.SEVERE, "layerIndex={0}, maxCloudLayers={1}",
-                    new Object[]{layerIndex, maxCloudLayers});
-            throw new IllegalArgumentException("layer index out of range");
-        }
+        validateLayerIndex(layerIndex);
         if (assetPath == null) {
             throw new NullPointerException("path should not be null");
         }
@@ -310,18 +302,30 @@ public class SkyMaterial
      * @param assetPath asset path to the color map (not null)
      */
     public void addObject(int objectIndex, String assetPath) {
-        if (objectIndex < 0 || objectIndex >= maxObjects) {
-            logger.log(Level.SEVERE, "objectIndex={0}, maxObjects={1}",
-                    new Object[]{objectIndex, maxObjects});
-            throw new IllegalArgumentException("object index out of range");
-        }
+        validateObjectIndex(objectIndex);
         if (assetPath == null) {
             throw new NullPointerException("path should not be null");
         }
 
-        Texture objectMap = loadTextureClamp(assetPath);
+        Texture colorMap = loadTextureClamp(assetPath);
+        addObject(objectIndex, colorMap);
+    }
+
+    /**
+     * Add an astronomical object to this material using the specified color
+     * map.
+     *
+     * @param objectIndex (<maxObjects, >=0)
+     * @param colorMap which color map (not null)
+     */
+    public void addObject(int objectIndex, Texture colorMap) {
+        validateObjectIndex(objectIndex);
+        if (colorMap == null) {
+            throw new NullPointerException("texture should not be null");
+        }
+
         String parameterName = String.format("Object%dColorMap", objectIndex);
-        setTexture(parameterName, objectMap);
+        setTexture(parameterName, colorMap);
 
         if (objectCenters[objectIndex] == null) {
             objectCenters[objectIndex] = new Vector2f();
@@ -373,11 +377,7 @@ public class SkyMaterial
      * @return fraction of light transmitted (<=1, >=0)
      */
     public float getTransmission(int objectIndex) {
-        if (objectIndex < 0 || objectIndex >= maxObjects) {
-            logger.log(Level.SEVERE, "objectIndex={0}, maxObjects={1}",
-                    new Object[]{objectIndex, maxObjects});
-            throw new IllegalArgumentException("object index out of range");
-        }
+        validateObjectIndex(objectIndex);
 
         Vector2f center = objectCenters[objectIndex];
         if (center == null) {
@@ -422,11 +422,7 @@ public class SkyMaterial
      * @param objectIndex (<maxObjects, >=0)
      */
     public void hideObject(int objectIndex) {
-        if (objectIndex < 0 || objectIndex >= maxObjects) {
-            logger.log(Level.SEVERE, "objectIndex={0}, maxObjects={1}",
-                    new Object[]{objectIndex, maxObjects});
-            throw new IllegalArgumentException("object index out of range");
-        }
+        validateObjectIndex(objectIndex);
         if (objectCenters[objectIndex] == null) {
             throw new IllegalStateException("object not yet added");
         }
@@ -489,11 +485,7 @@ public class SkyMaterial
      * @param newColor (not null)
      */
     public void setCloudsColor(int layerIndex, ColorRGBA newColor) {
-        if (layerIndex < 0 || layerIndex >= maxCloudLayers) {
-            logger.log(Level.SEVERE, "layerIndex={0}, maxCloudLayers={1}",
-                    new Object[]{layerIndex, maxCloudLayers});
-            throw new IllegalArgumentException("layer index out of range");
-        }
+        validateLayerIndex(layerIndex);
         if (newColor == null) {
             throw new NullPointerException("color should not be null");
         }
@@ -514,11 +506,7 @@ public class SkyMaterial
      * @param newV 2nd component of the new offset
      */
     public void setCloudsOffset(int layerIndex, float newU, float newV) {
-        if (layerIndex < 0 || layerIndex >= maxCloudLayers) {
-            logger.log(Level.SEVERE, "layerIndex={0}, maxCloudLayers={1}",
-                    new Object[]{layerIndex, maxCloudLayers});
-            throw new IllegalArgumentException("layer index out of range");
-        }
+        validateLayerIndex(layerIndex);
         if (cloudsRaster[layerIndex] == null) {
             throw new IllegalStateException("layer not yet added");
         }
@@ -539,11 +527,7 @@ public class SkyMaterial
      * @param newScale (>0)
      */
     public void setCloudsScale(int layerIndex, float newScale) {
-        if (layerIndex < 0 || layerIndex >= maxCloudLayers) {
-            logger.log(Level.SEVERE, "layerIndex={0}, maxCloudLayers={1}",
-                    new Object[]{layerIndex, maxCloudLayers});
-            throw new IllegalArgumentException("layer index out of range");
-        }
+        validateLayerIndex(layerIndex);
         if (!(newScale > 0f)) {
             logger.log(Level.SEVERE, "newScale={0}", newScale);
             throw new IllegalArgumentException("scale should be positive");
@@ -577,11 +561,7 @@ public class SkyMaterial
      * @param newColor (not null)
      */
     public void setObjectColor(int objectIndex, ColorRGBA newColor) {
-        if (objectIndex < 0 || objectIndex >= maxObjects) {
-            logger.log(Level.SEVERE, "objectIndex={0}, maxObjects={1}",
-                    new Object[]{objectIndex, maxObjects});
-            throw new IllegalArgumentException("object index out of range");
-        }
+        validateObjectIndex(objectIndex);
         if (newColor == null) {
             throw new NullPointerException("color should not be null");
         }
@@ -600,11 +580,7 @@ public class SkyMaterial
      * @param newColor (not null)
      */
     public void setObjectGlow(int objectIndex, ColorRGBA newColor) {
-        if (objectIndex < 0 || objectIndex >= maxObjects) {
-            logger.log(Level.SEVERE, "objectIndex={0}, maxObjects={1}",
-                    new Object[]{objectIndex, maxObjects});
-            throw new IllegalArgumentException("object index out of range");
-        }
+        validateObjectIndex(objectIndex);
         if (newColor == null) {
             throw new NullPointerException("color should not be null");
         }
@@ -629,11 +605,7 @@ public class SkyMaterial
      */
     public void setObjectTransform(int objectIndex, Vector2f centerUV,
             float newScale, Vector2f newRotate) {
-        if (objectIndex < 0 || objectIndex >= maxObjects) {
-            logger.log(Level.SEVERE, "objectIndex={0}, maxObjects={1}",
-                    new Object[]{objectIndex, maxObjects});
-            throw new IllegalArgumentException("object index out of range");
-        }
+        validateObjectIndex(objectIndex);
         if (centerUV == null) {
             throw new NullPointerException("coordinates should not be null");
         }
@@ -957,5 +929,34 @@ public class SkyMaterial
         assert result >= Constants.alphaMin : result;
         assert result <= Constants.alphaMax : result;
         return result;
+    }
+
+    /**
+     * Validate an layer index.
+     *
+     * @param layerIndex the index of a cloud layer
+     * @throws IllegalArgumentException if the index is out of range
+     */
+    private void validateLayerIndex(int layerIndex) {
+        if (layerIndex < 0 || layerIndex >= maxCloudLayers) {
+            logger.log(Level.SEVERE, "layerIndex={0}, maxCloudLayers={1}",
+                    new Object[]{layerIndex, maxCloudLayers});
+            throw new IllegalArgumentException(
+                    "cloud layer index out of range");
+        }
+    }
+
+    /**
+     * Validate an object index.
+     *
+     * @param objectIndex the index of an astronomical object
+     * @throws IllegalArgumentException if the index is out of range
+     */
+    private void validateObjectIndex(int objectIndex) {
+        if (objectIndex < 0 || objectIndex >= maxObjects) {
+            logger.log(Level.SEVERE, "objectIndex={0}, maxObjects={1}",
+                    new Object[]{objectIndex, maxObjects});
+            throw new IllegalArgumentException("object index out of range");
+        }
     }
 }
