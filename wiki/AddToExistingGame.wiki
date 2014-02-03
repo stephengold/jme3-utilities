@@ -165,7 +165,11 @@ At this point, the application should run successfully. However, for the best po
 {{{
         sc.getSunAndStars().setHour(12f);
 }}}
-  * To synchronize the lights with !SkyControl, add the following to the end of the initializeSky() method:
+  * To synchronize the lights with !SkyControl, add this to the import section:
+{{{
+import com.jme3.light.Light;
+}}}
+and this to the end of the initializeSky() method:
 {{{
         for (Light light : rootNode.getLocalLightList()) {
             if (light.getName().equals("ambient")) {
