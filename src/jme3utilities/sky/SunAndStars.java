@@ -293,6 +293,26 @@ public class SunAndStars
     }
 
     /**
+     * Update the orientation of an external sky.
+     *
+     * @param spatial the external sky (not null)
+     */
+    public void orientExternalSky(Spatial spatial) {
+        if (spatial == null) {
+            throw new NullPointerException("spatial should not be null");
+        }
+
+        float siderealAngle = getSiderealAngle();
+        Quaternion xRotation = new Quaternion();
+        xRotation.fromAngleNormalAxis(siderealAngle, Vector3f.UNIT_X);
+
+        Quaternion zRotation = new Quaternion();
+        zRotation.fromAngleNormalAxis(-observerLatitude, Vector3f.UNIT_Z);
+        Quaternion orientation = xRotation.mult(zRotation);
+        MySpatial.setWorldOrientation(spatial, orientation);
+    }
+
+    /**
      * Update the orientations of north and south star domes.
      *
      * @param northDome (ignored if null)
@@ -314,7 +334,7 @@ public class SunAndStars
         }
         if (southDome != null) {
             /*
-             * Orient the north dome.
+             * Orient the south dome.
              */
             yRotation.fromAngleNormalAxis(siderealAngle, Vector3f.UNIT_Y);
             float angle = FastMath.HALF_PI + observerLatitude;
