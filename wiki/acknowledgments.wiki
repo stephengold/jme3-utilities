@@ -14,6 +14,7 @@ Like most projects, the jme3-utilities project builds upon the work of many who 
     * Roger (aka "stenb")
   * the beta testers for !SkyControl, including:
     * "madjack"
+    * Benjamin D.
   * the creators of (and contributors to) the following software:
     * Adobe Photoshop Elements
     * the Blender 3D animation suite
