@@ -39,6 +39,7 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
@@ -201,13 +202,13 @@ public class SkyControl
     /**
      * texture scale for moon images; larger value gives a larger moon
      *
-     * The default value of 0.02 exaggerates the moon's size by a factor of 8.
+     * The default value (0.02) exaggerates the moon's size by a factor of 8.
      */
     private float moonScale = 0.02f;
     /**
      * texture scale for sun images; larger value would give a larger sun
      *
-     * The default value 0.08 exaggerates the sun's size by a factor of 8.
+     * The default value (0.08) exaggerates the sun's size by a factor of 8.
      */
     private float sunScale = 0.08f;
     /**
@@ -394,6 +395,25 @@ public class SkyControl
     public SunAndStars getSunAndStars() {
         assert sunAndStars != null;
         return sunAndStars;
+    }
+
+    /**
+     * Alter an object's color map texture.
+     *
+     * @param objectIndex which object (>=0)
+     * @param newColorMap texture to apply (not null)
+     */
+    public void setObjectTexture(int objectIndex, Texture newColorMap) {
+        if (objectIndex < 0) {
+            logger.log(Level.SEVERE, "objectIndex={0}", objectIndex);
+            throw new IllegalArgumentException(
+                    "objectIndex should not be negative");
+        }
+        if (newColorMap == null) {
+            throw new NullPointerException("texture should not be null");
+        }
+
+        topMaterial.addObject(objectIndex, newColorMap);
     }
 
     /**
@@ -631,7 +651,7 @@ public class SkyControl
         skyNode.setQueueBucket(Bucket.Sky);
         skyNode.setShadowMode(ShadowMode.Off);
         /*
-         * Attach dome geometries to the sky node from the outside in
+         * Attach geometries to the sky node from the outside in
          * because they'll be rendered in that order.
          */
         if (starMotionFlag) {
@@ -936,20 +956,16 @@ public class SkyControl
         assert slack >= 0f : slack;
         ColorRGBA ambient = cloudsColor.mult(slack);
         /*
-         * Compute recommended shadow intensity as the fraction of
+         * Compute the recommended shadow intensity as the fraction of
          * the total light which is directional.
          */
         float mainAmount = main.r + main.g + main.b;
         float ambientAmount = ambient.r + ambient.g + ambient.b;
         float totalAmount = mainAmount + ambientAmount;
-        float shadowIntensity;
-        if (totalAmount > 0f) {
-            shadowIntensity = mainAmount / totalAmount;
-        } else {
-            shadowIntensity = Constants.alphaMin;
-        }
+        assert totalAmount > 0f : totalAmount;
+        float shadowIntensity = MyMath.clampFraction(mainAmount / totalAmount);
         /*
-         * Compute reccomended bloom intensity.
+         * Compute the recommended bloom intensity.
          */
         float bloomIntensity = 6f * sineSolarAltitude;
         bloomIntensity = FastMath.clamp(bloomIntensity, 0f, 1.7f);
