@@ -61,18 +61,21 @@ varying vec2 skyTexCoord;
 
 void main(){
         vec4 stars = vec4(0.0);
+        vec4 objects = vec4(0.0);
 
         #ifdef HAS_OBJECT0
-                vec4 objects = texture2D(m_Object0ColorMap, object0Coord);
-                objects *= m_Object0Glow;
-        #else
-                vec4 objects = vec4(0.0);
+                if (all(floor(object0Coord) == vec2(0, 0))) {
+                        objects = texture2D(m_Object0ColorMap, object0Coord);
+                        objects *= m_Object0Glow;
+                }
 	#endif
 
         #ifdef HAS_OBJECT1
-                vec4 object1 = texture2D(m_Object1ColorMap, object1Coord);
-                object1 *= m_Object1Glow;
-                objects = mix(objects, object1, object1.a);
+                if (all(floor(object1Coord) == vec2(0, 0))) {
+                        vec4 object1 = texture2D(m_Object1ColorMap, object1Coord);
+                        object1 *= m_Object1Glow;
+                        objects = mix(objects, object1, object1.a);
+                }
 	#endif
 
         vec4 color = mix(stars, objects, objects.a);
