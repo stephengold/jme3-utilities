@@ -85,42 +85,53 @@ varying vec2 skyTexCoord;
 
 void main(){
         vec4 stars = vec4(0.0);
+        vec4 objects = vec4(0.0);
 
         #ifdef HAS_OBJECT0
-                vec4 objects = texture2D(m_Object0ColorMap, object0Coord);
-                objects *= m_Object0Glow;
-        #else
-                vec4 objects = vec4(0.0);
+                if (all(floor(object0Coord) == vec2(0, 0))) {
+                        objects = texture2D(m_Object0ColorMap, object0Coord);
+                        objects *= m_Object0Glow;
+                }
 	#endif
 
         #ifdef HAS_OBJECT1
-                vec4 object1 = texture2D(m_Object1ColorMap, object1Coord);
-                object1 *= m_Object1Glow;
-                objects = mix(objects, object1, object1.a);
+                if (all(floor(object1Coord) == vec2(0, 0))) {
+                        vec4 object1 = texture2D(m_Object1ColorMap, object1Coord);
+                        object1 *= m_Object1Glow;
+                        objects = mix(objects, object1, object1.a);
+                }
 	#endif
 
         #ifdef HAS_OBJECT2
-                vec4 object2 = texture2D(m_Object2ColorMap, object2Coord);
-                object2 *= m_Object2Glow;
-                objects = mix(objects, object2, object2.a);
+                if (all(floor(object2Coord) == vec2(0, 0))) {
+                        vec4 object2 = texture2D(m_Object2ColorMap, object2Coord);
+                        object2 *= m_Object2Glow;
+                        objects = mix(objects, object2, object2.a);
+                }
 	#endif
 
         #ifdef HAS_OBJECT3
-                vec4 object3 = texture2D(m_Object3ColorMap, object3Coord);
-                object3 *= m_Object3Glow;
-                objects = mix(objects, object3, object3.a);
+                if (all(floor(object3Coord) == vec2(0, 0))) {
+                        vec4 object3 = texture2D(m_Object3ColorMap, object3Coord);
+                        object3 *= m_Object3Glow;
+                        objects = mix(objects, object3, object3.a);
+                }
 	#endif
 
         #ifdef HAS_OBJECT4
-                vec4 object4 = texture2D(m_Object4ColorMap, object4Coord);
-                object4 *= m_Object4Glow;
-                objects = mix(objects, object4, object4.a);
+                if (all(floor(object4Coord) == vec2(0, 0))) {
+                        vec4 object4 = texture2D(m_Object4ColorMap, object4Coord);
+                        object4 *= m_Object4Glow;
+                        objects = mix(objects, object4, object4.a);
+                }
 	#endif
 
         #ifdef HAS_OBJECT5
-                vec4 object5 = texture2D(m_Object5ColorMap, object5Coord);
-                object5 *= m_Object5Glow;
-                objects = mix(objects, object5, object5.a);
+                if (all(floor(object5Coord) == vec2(0, 0))) {
+                        vec4 object5 = texture2D(m_Object5ColorMap, object5Coord);
+                        object5 *= m_Object5Glow;
+                        objects = mix(objects, object5, object5.a);
+                }
 	#endif
 
         vec4 color = mix(stars, objects, objects.a);
