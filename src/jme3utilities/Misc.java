@@ -74,6 +74,11 @@ public class Misc {
     final private static Logger logger =
             Logger.getLogger(Misc.class.getName());
     /**
+     * asset path of the shaded material definition
+     */
+    final public static String shadedMaterialAssetPath =
+            "Common/MatDefs/Light/Lighting.j3md";
+    /**
      * asset path to the Unshaded material definition
      */
     final public static String unshadedMaterialAssetPath =
@@ -192,6 +197,27 @@ public class Misc {
     }
 
     /**
+     * Create a shaded material for a specific diffuse texture.
+     *
+     * @param assetManager (not null)
+     * @param texture (not null)
+     * @return a new instance
+     */
+    public static Material createShadedMaterial(AssetManager assetManager,
+            Texture texture) {
+        if (assetManager == null) {
+            throw new NullPointerException("asset manager should not be null");
+        }
+        if (texture == null) {
+            throw new NullPointerException("texture should not be null");
+        }
+
+        Material material = new Material(assetManager, shadedMaterialAssetPath);
+        material.setTexture("DiffuseMap", texture);
+        return material;
+    }
+
+    /**
      * Create an unshaded material.
      *
      * @param assetManager (not null)
@@ -230,7 +256,7 @@ public class Misc {
     }
 
     /**
-     * Create an unshaded material from a texture.
+     * Create an unshaded material for a specific colormap texture.
      *
      * @param assetManager (not null)
      * @param texture (not null)
@@ -298,7 +324,7 @@ public class Misc {
      *
      * @return the package name, branch, and revision of this file
      */
-    public static String getVersion() {
+    public static String getVersion() {//
         return "jme3-utilities trunk $Rev$";
     }
 

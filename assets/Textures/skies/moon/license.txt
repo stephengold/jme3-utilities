@@ -7,6 +7,10 @@ https://commons.wikimedia.org/wiki/File:Lunar_libration_with_phase_Oct_2007.gif
 where it was described as the work of Tom Ruen, who had released it into the
 public domain.
 
+The file "clementine.jpg" is derived from a digital image downloaded in
+2014 from http://www.nrl.navy.mil/clm/  As a work prepared by the United States
+Naval Research Laboratory, it is presumed to be in the public domain.
+
 Stephen Gold makes these files available under the Creative Commons
 Attribution-Share Alike 3.0 Unported license -- see
 http://creativecommons.org/licenses/by-sa/3.0/deed.en
