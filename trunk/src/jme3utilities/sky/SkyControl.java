@@ -206,6 +206,10 @@ public class SkyControl
      */
     private float moonScale = 0.02f;
     /**
+     * phase angle of the moon: default corresponds to a 100% full moon
+     */
+    private float phaseAngle = FastMath.PI;
+    /**
      * texture scale for sun images; larger value would give a larger sun
      *
      * The default value (0.08) exaggerates the sun's size by a factor of 8.
@@ -223,6 +227,10 @@ public class SkyControl
      * dome representing the southern stars: set by initialize()
      */
     private Geometry southDome = null;
+    /**
+     * off-screen renderer for the moon
+     */
+    private GlobeRenderer moonRenderer = null;
     /**
      * phase of the moon: default is FULL
      */
@@ -500,16 +508,48 @@ public class SkyControl
     }
 
     /**
-     * Alter the phase of the moon.
+     * Alter the phase of the moon to a pre-set value.
      *
-     * @param phase (or null to hide the moon)
+     * @param newPreset (or null to hide the moon)
      */
-    public void setPhase(LunarPhase phase) {
-        this.phase = phase;
-        if (phase != null) {
-            String assetPath = phase.imagePath();
+    public void setPhase(LunarPhase newPreset) {
+        if (newPreset == LunarPhase.CUSTOM) {
+            setPhaseAngle(phaseAngle);
+            return;
+        }
+
+        if (moonRenderer != null) {
+            moonRenderer.setEnabled(false);
+        }
+        phase = newPreset;
+        if (newPreset != null) {
+            phaseAngle = newPreset.longitudeDifference();
+            String assetPath = newPreset.imagePath();
             topMaterial.addObject(moonIndex, assetPath);
         }
+    }
+
+    /**
+     * Customize the phase angle of the moon for off-screen rendering.
+     *
+     * @param newAngle (in radians, <=2*Pi, >=0)
+     */
+    public void setPhaseAngle(float newAngle) {
+        if (!(newAngle >= 0f && newAngle <= FastMath.TWO_PI)) {
+            logger.log(Level.SEVERE, "angle={0}", newAngle);
+            throw new IllegalArgumentException(
+                    "angle should be between 0 and 2*Pi");
+        }
+        if (moonRenderer == null) {
+            throw new IllegalStateException("moon renderer not yet added");
+        }
+
+        moonRenderer.setEnabled(true);
+        phase = LunarPhase.CUSTOM;
+        phaseAngle = newAngle;
+
+        Texture dynamicTexture = moonRenderer.getTexture();
+        topMaterial.addObject(moonIndex, dynamicTexture);
     }
 
     /**
@@ -539,6 +579,7 @@ public class SkyControl
         if (assetPath == null) {
             throw new NullPointerException("path should not be null");
         }
+
         if (!starMotionFlag) {
             topMaterial.addStars(assetPath);
             return;
@@ -802,6 +843,28 @@ public class SkyControl
     }
 
     /**
+     * Specify a globe renderer for the moon.
+     *
+     * @param newRenderer (not null)
+     */
+    public void setMoonRenderer(GlobeRenderer newRenderer) {
+        if (newRenderer == null) {
+            throw new NullPointerException("renderer should not be null");
+        }
+
+        if (moonRenderer != null) {
+            boolean enabledFlag = moonRenderer.isEnabled();
+            newRenderer.setEnabled(enabledFlag);
+        }
+        moonRenderer = newRenderer;
+
+        if (moonRenderer.isEnabled()) {
+            Texture dynamicTexture = moonRenderer.getTexture();
+            topMaterial.addObject(moonIndex, dynamicTexture);
+        }
+    }
+
+    /**
      * Update astronomical objects, sky color, lighting, and stars.
      */
     private void updateAll() {
@@ -984,11 +1047,17 @@ public class SkyControl
             topMaterial.hideObject(moonIndex);
             return null;
         }
+        if (phase == LunarPhase.CUSTOM) {
+            assert moonRenderer != null;
+            float intensity = 2f + FastMath.abs(phaseAngle - FastMath.PI);
+            moonRenderer.setLightIntensity(intensity);
+            moonRenderer.setPhase(phaseAngle);
+        }
         /*
          * Compute the UV coordinates of the center of the moon.
          */
         float solarLongitude = sunAndStars.getSolarLongitude();
-        float celestialLongitude = solarLongitude + phase.longitudeDifference();
+        float celestialLongitude = solarLongitude + phaseAngle;
         celestialLongitude = MyMath.modulo(celestialLongitude, FastMath.TWO_PI);
         Vector3f worldDirection =
                 sunAndStars.convertToWorld(0f, celestialLongitude);

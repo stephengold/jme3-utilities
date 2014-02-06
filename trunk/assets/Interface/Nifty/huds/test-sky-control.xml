@@ -173,6 +173,16 @@
                         </panel>
 
                         <panel style="statusPanel">
+                            <control name="label" id="phaseDegreesSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider" id="phaseDegreesSlider"
+                                 buttonStepSize="90"
+                                 initial="180"
+                                 max="360"
+                                 min="0"
+                                 stepSize="1"/>
+
+                        <panel style="statusPanel">
                             <control name="label" id="diameterSliderStatus"/>
                         </panel>
                         <control name="horizontalSlider" id="diameterSlider"

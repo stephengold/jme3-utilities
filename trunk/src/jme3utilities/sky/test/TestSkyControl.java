@@ -30,6 +30,7 @@ import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
+import com.jme3.material.Material;
 import com.jme3.math.FastMath;
 import com.jme3.math.Plane;
 import com.jme3.math.Vector2f;
@@ -42,6 +43,7 @@ import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
+import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
@@ -51,6 +53,7 @@ import jme3utilities.WaterProcessor;
 import jme3utilities.debug.LandscapeControl;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.sky.CloudLayer;
+import jme3utilities.sky.GlobeRenderer;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
 import jme3utilities.sky.Updater;
@@ -226,6 +229,13 @@ public class TestSkyControl
         if (parameters.highResStars() && !parameters.singleDome()) {
             control.setStarMaps("Textures/skies/star-maps/16m");
         }
+        Texture moonTexture = Misc.loadTexture(assetManager,
+                "Textures/skies/moon/clementine.png");
+        Material moonMaterial = Misc.createShadedMaterial(assetManager,
+                moonTexture);
+        GlobeRenderer moonRenderer = new GlobeRenderer(512, moonMaterial);
+        stateManager.attach(moonRenderer);
+        control.setMoonRenderer(moonRenderer); 
         /*
          * Put SkyControl in charge of updating the lights and
          * viewport background. (all optional)
@@ -329,11 +339,16 @@ public class TestSkyControl
                     "elapsed time shouldn't be negative");
         }
 
-        LunarPhase lunarPhase = hud.getLunarPhase();
-        control.setPhase(lunarPhase);
         /*
          * Adjust SkyControl parameters based on sliders in the HUD.
          */
+        LunarPhase lunarPhase = hud.getLunarPhase();
+        control.setPhase(lunarPhase);
+        if (lunarPhase == LunarPhase.CUSTOM) {
+            float phaseAngle = hud.getPhaseAngle();
+            control.setPhaseAngle(phaseAngle);
+        }
+
         float cloudiness = hud.getCloudiness();
         control.setCloudiness(cloudiness);
 

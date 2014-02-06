@@ -38,11 +38,11 @@ import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyCamera;
-import jme3utilities.math.MyMath;
 import jme3utilities.MyString;
-import jme3utilities.ui.GuiScreenController;
 import jme3utilities.TimeOfDay;
+import jme3utilities.math.MyMath;
 import jme3utilities.sky.LunarPhase;
+import jme3utilities.ui.GuiScreenController;
 
 /**
  * A GUI screen controller for the heads-up display (HUD) of the TestSkyControl
@@ -97,6 +97,10 @@ public class TestSkyControlHud
      * vertical relief for terrain (Y-coordinate of peak)
      */
     private float relief = 0f;
+    /**
+     * phase angle for custom moon (radians east of the sun, <=2*Pi, >=0)
+     */
+    private float phaseAngle = FastMath.HALF_PI;
     /**
      * sun's longitude (radians east of vernal equinox, <=2*Pi, >=0)
      */
@@ -198,6 +202,8 @@ public class TestSkyControlHud
      * @return in radians (<Pi, >0)
      */
     float getLunarDiameter() {
+        assert lunarDiameter >= 0f : lunarDiameter;
+        assert lunarDiameter < FastMath.PI : lunarDiameter;
         return lunarDiameter;
     }
 
@@ -220,11 +226,24 @@ public class TestSkyControlHud
     }
 
     /**
+     * Read the phase angle for custom moon.
+     *
+     * @return angle (radians east of the sun, <=2*Pi, >=0)
+     */
+    float getPhaseAngle() {
+        assert phaseAngle >= 0f : phaseAngle;
+        assert phaseAngle <= FastMath.TWO_PI : phaseAngle;
+        return phaseAngle;
+    }
+
+    /**
      * Read the current solar longitude.
      *
      * @return angle (radians east of vernal equinox, <=2*Pi, >=0)
      */
     float getSolarLongitude() {
+        assert solarLongitude >= 0f : solarLongitude;
+        assert solarLongitude <= FastMath.TWO_PI : solarLongitude;
         return solarLongitude;
     }
 
@@ -302,6 +321,9 @@ public class TestSkyControlHud
         cloudYOffset = updateSlider("cloudYOffset");
         lunarDiameter = updateLogSlider("diameter", 10f);
 
+        float moonPhaseDegrees = updateSlider("phaseDegrees");
+        phaseAngle = moonPhaseDegrees * FastMath.DEG_TO_RAD;
+
         float solarLongitudeDegrees = updateSlider("solarLong");
         solarLongitude = solarLongitudeDegrees * FastMath.DEG_TO_RAD;
 
@@ -370,6 +392,7 @@ public class TestSkyControlHud
                         new String[]{"crescent", "gibbous"});
                 break;
 
+            case "phase custom":
             case "phase full":
             case "phase waning-crescent":
             case "phase waning-gibbous":
@@ -430,6 +453,8 @@ public class TestSkyControlHud
      * Display a phase-of-the-moon menu.
      */
     private void showPhaseMenu() {
-        showPopup("phase ", new String[]{"full", "none", "waning", "waxing"});
+        showPopup("phase ", new String[]{
+            "custom", "full", "none", "waning", "waxing"
+        });
     }
 }

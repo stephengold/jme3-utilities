@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@ package jme3utilities.sky;
 import com.jme3.math.FastMath;
 
 /**
- * Enumerate the phases of the moon.
+ * Enumerate some phases of the moon.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -36,27 +36,62 @@ public enum LunarPhase {
     // *************************************************************************
     // values
 
-    FULL, WANING_CRESCENT, WANING_GIBBOUS, WAXING_CRESCENT, WAXING_GIBBOUS;
+    /**
+     * full moon: phase angle = 180 degrees
+     */
+    FULL,
+    /**
+     * 3/4 past full: phase angle = 315 degrees
+     */
+    WANING_CRESCENT,
+    /**
+     * 1/4 past full: phase angle = 225 degrees
+     */
+    WANING_GIBBOUS,
+    /**
+     * 1/4 past new: phase angle = 45 degrees
+     */
+    WAXING_CRESCENT,
+    /**
+     * 3/4 past new: phase angle = 135 degrees
+     */
+    WAXING_GIBBOUS,
+    /**
+     * custom phase: phase angle not defined
+     */
+    CUSTOM;
     // *************************************************************************
     // new methods exposed
 
     /**
-     * Look up the textual description of this phase.
+     * Look up the textual description of this phase. Unlike toString(), the
+     * description is in lower case.
      */
     public String describe() {
+        String result;
         switch (this) {
+            case CUSTOM:
+                result = "custom";
+                break;
             case FULL:
-                return "full";
+                result = "full";
+                break;
             case WANING_CRESCENT:
-                return "waning-crescent";
+                result = "waning-crescent";
+                break;
             case WANING_GIBBOUS:
-                return "waning-gibbous";
+                result = "waning-gibbous";
+                break;
             case WAXING_CRESCENT:
-                return "waxing-crescent";
+                result = "waxing-crescent";
+                break;
             case WAXING_GIBBOUS:
-                return "waxing-gibbous";
+                result = "waxing-gibbous";
+                break;
+            default:
+                result = String.format("ordinal=%d", ordinal());
         }
-        return "?";
+        return result;
     }
 
     /**
@@ -75,11 +110,14 @@ public enum LunarPhase {
     }
 
     /**
-     * Look up the path to the image map for this phase.
+     * Look up the path to the color map for this phase.
      *
      * @return asset path (not null)
      */
     public String imagePath() {
+        if (this == CUSTOM) {
+            throw new IllegalStateException("custom phase has no color map");
+        }
         String description = describe();
         String assetPath =
                 String.format("Textures/skies/moon/%s.png", description);
@@ -104,6 +142,6 @@ public enum LunarPhase {
             case WAXING_GIBBOUS:
                 return 0.75f * FastMath.PI;
         }
-        throw new IllegalStateException();
+        throw new IllegalStateException(this.describe());
     }
 }
