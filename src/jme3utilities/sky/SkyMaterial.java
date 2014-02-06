@@ -26,7 +26,6 @@
 package jme3utilities.sky;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.asset.TextureKey;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -44,6 +43,7 @@ import com.jme3.texture.image.ImageRaster;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.math.MyMath;
 
@@ -256,7 +256,7 @@ public class SkyMaterial
 
         boolean firstTime = (cloudsRaster[layerIndex] == null);
 
-        Texture alphaMap = loadTexture(assetPath);
+        Texture alphaMap = Misc.loadTexture(assetManager, assetPath);
         alphaMap.setWrap(WrapMode.Repeat);
         String parameterName = String.format("Clouds%dAlphaMap", layerIndex);
         setTexture(parameterName, alphaMap);
@@ -290,7 +290,7 @@ public class SkyMaterial
             throw new NullPointerException("path should not be null");
         }
 
-        Texture alphaMap = loadTexture(assetPath);
+        Texture alphaMap = Misc.loadTexture(assetManager, assetPath);
         setTexture("HazeAlphaMap", alphaMap);
         setHazeColor(ColorRGBA.White);
     }
@@ -308,7 +308,7 @@ public class SkyMaterial
             throw new NullPointerException("path should not be null");
         }
 
-        Texture colorMap = loadTexture(assetPath);
+        Texture colorMap = Misc.loadTexture(assetManager, assetPath);
         addObject(objectIndex, colorMap);
     }
 
@@ -353,7 +353,7 @@ public class SkyMaterial
             throw new NullPointerException("path should not be null");
         }
 
-        Texture colorMap = loadTexture(assetPath);
+        Texture colorMap = Misc.loadTexture(assetManager, assetPath);
         setTexture("StarsColorMap", colorMap);
     }
 
@@ -793,24 +793,6 @@ public class SkyMaterial
         assert result >= Constants.alphaMin : result;
         assert result <= Constants.alphaMax : result;
         return result;
-    }
-
-    /**
-     * Load a non-flipped texture asset in edge-clamp mode.
-     *
-     * @param assetPath pathname to the texture asset (not null)
-     * @return the texture which was loaded
-     */
-    private Texture loadTexture(String assetPath) {
-        assert assetPath != null;
-
-        boolean flipY = false;
-        TextureKey key = new TextureKey(assetPath, flipY);
-        Texture texture = assetManager.loadTexture(key);
-        // edge-clamp mode is the default
-
-        assert texture != null;
-        return texture;
     }
 
     /**
