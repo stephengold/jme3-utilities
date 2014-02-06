@@ -44,15 +44,15 @@ import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.debug.LandscapeControl;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
-import jme3utilities.math.MyVector3f;
-import jme3utilities.sky.LunarPhase;
-import jme3utilities.sky.SkyControl;
 import jme3utilities.ViewPortListener;
 import jme3utilities.WaterProcessor;
+import jme3utilities.debug.LandscapeControl;
+import jme3utilities.math.MyVector3f;
 import jme3utilities.sky.CloudLayer;
+import jme3utilities.sky.LunarPhase;
+import jme3utilities.sky.SkyControl;
 import jme3utilities.sky.Updater;
 import jme3utilities.ui.GuiApplication;
 
@@ -133,7 +133,7 @@ public class TestSkyControl
          */
         Misc.setLoggingLevels(Level.WARNING);
         /*
-         * Set the logging level for this class.
+         * Lower the logging level for this class.
          */
         logger.setLevel(Level.INFO);
 
@@ -178,7 +178,7 @@ public class TestSkyControl
         logger.log(Level.INFO, "jME3-utilities version is {0}",
                 MyString.quote(Misc.getVersionShort()));
 
-        configureCamera();
+        initializeCamera();
         /**
          * A node to parent geometries which can appear reflected in the water.
          */
@@ -319,10 +319,16 @@ public class TestSkyControl
     /**
      * Update the scene.
      *
-     * @param unused
+     * @param elapsedTime since previous update (>=0, in seconds)
      */
     @Override
-    public void simpleUpdate(float unused) {
+    public void simpleUpdate(float elapsedTime) {
+        if (!(elapsedTime >= 0f)) {
+            logger.log(Level.SEVERE, "elapsedTime={0}", elapsedTime);
+            throw new IllegalArgumentException(
+                    "elapsed time shouldn't be negative");
+        }
+
         LunarPhase lunarPhase = hud.getLunarPhase();
         control.setPhase(lunarPhase);
         /*
@@ -430,9 +436,9 @@ public class TestSkyControl
     }
 
     /**
-     * Configure the camera, including flyCam.
+     * Configure the default camera, including flyCam.
      */
-    private void configureCamera() {
+    private void initializeCamera() {
         /*
          * Point the camera 10 degrees north of west, tilted down 1 degree.
          * The downward tilt is to work around a bug in SimpleWaterProcessor
