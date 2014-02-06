@@ -43,9 +43,9 @@ import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
+import jme3utilities.math.MyMath;
 import jme3utilities.MySpatial;
 import jme3utilities.SimpleControl;
-import jme3utilities.math.MyMath;
 
 /**
  * A simple control to simulate a dynamic sky using assets and techniques
@@ -223,6 +223,10 @@ public class SkyControl
      * dome representing the southern stars: set by initialize()
      */
     private Geometry southDome = null;
+    /**
+     * off-screen renderer for the moon
+     */
+    private GlobeRenderer renderMoon = null;
     /**
      * phase of the moon: default is FULL
      */
@@ -506,10 +510,27 @@ public class SkyControl
      */
     public void setPhase(LunarPhase phase) {
         this.phase = phase;
-        if (phase != null) {
-            String assetPath = phase.imagePath();
-            topMaterial.addObject(moonIndex, assetPath);
+
+        String assetPath = phase.imagePath();
+        topMaterial.addObject(moonIndex, assetPath);
+    }
+
+    /**
+     * Alter the phase of the moon.
+     *
+     * @param phaseAngle (>=0, <=2*Pi)
+     */
+    public void setPhase(float phaseAngle) {
+        if (!(phaseAngle >= 0f && phaseAngle <= FastMath.TWO_PI)) {
         }
+        if (renderMoon == null) {
+            // TODO
+        }
+        float intensity = 2f + FastMath.abs(phaseAngle - FastMath.PI);
+        renderMoon.setLightIntensity(intensity);
+        renderMoon.setPhase(phaseAngle);
+        Texture dynamicTexture = renderMoon.getTexture();
+        topMaterial.addObject(moonIndex, dynamicTexture);
     }
 
     /**
