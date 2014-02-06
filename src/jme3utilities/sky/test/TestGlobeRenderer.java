@@ -238,7 +238,7 @@ public class TestGlobeRenderer
     }
 
     /**
-     *
+     * Update the scene after changing the phase.
      */
     private void updateScene() {
         /*
@@ -248,8 +248,7 @@ public class TestGlobeRenderer
                 "Textures/skies/moon/clementine.png");
         Material moonMaterial = Misc.createShadedMaterial(assetManager,
                 moonTexture);
-        GlobeRenderer renderMoon = new GlobeRenderer(assetManager, renderManager,
-                resolution, moonMaterial);
+        GlobeRenderer renderMoon = new GlobeRenderer(resolution, moonMaterial);
         stateManager.attach(renderMoon);
         renderMoon.setGamma(2f);
         float phaseAngle = phase.longitudeDifference();
