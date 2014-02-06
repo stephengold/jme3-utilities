@@ -63,7 +63,7 @@ public class TestGlobeRenderer
     /**
      * size of the dynamic texture (pixels per side)
      */
-    final private static int resolution = 512;
+    final private static int moonRendererResolution = 512;
     /**
      * message logger for this class
      */
@@ -83,17 +83,21 @@ public class TestGlobeRenderer
             description = "display this usage message")
     private static boolean usageOnly = false;
     /**
-     * quad geometry on the left: set in simpleInitApp()
+     * globe renderer for the moon: set in simpleInitApp()
      */
-    private Geometry left = null;
-    /**
-     * quad geometry on the right: set in simpleInitApp()
-     */
-    private Geometry right = null;
+    private GlobeRenderer moonRenderer = null;
     /**
      * current phase of the moon: set in simpleInitApp()
      */
     private LunarPhase phase = null;
+    /**
+     * material with dynamic color map
+     */
+    private Material dynamicMaterial = null;
+    /**
+     * material with color map loaded from asset
+     */
+    private Material loadedMaterial = null;
     /**
      * name of initial phase (default is "full")
      */
@@ -192,20 +196,45 @@ public class TestGlobeRenderer
         flyCam.setEnabled(false);
         initializeUserInterface();
         /*
-         * Add two quads to the scene.
+         * Add a globe renderer for the moon.
+         */
+        Texture moonTexture = Misc.loadTexture(assetManager,
+                "Textures/skies/moon/clementine.png");
+        Material moonMaterial = Misc.createShadedMaterial(assetManager,
+                moonTexture);
+        moonRenderer = new GlobeRenderer(moonRendererResolution, moonMaterial);
+        stateManager.attach(moonRenderer);
+        /*
+         * Create an unshaded material for each texture.
+         */
+        Texture dynamicTexture = moonRenderer.getTexture();
+        dynamicMaterial =
+                Misc.createUnshadedMaterial(assetManager, dynamicTexture);
+        RenderState additional = dynamicMaterial.getAdditionalRenderState();
+        additional.setBlendMode(RenderState.BlendMode.Alpha);
+        additional.setDepthWrite(false);
+
+        loadedMaterial = Misc.createUnshadedMaterial(assetManager);
+        additional = loadedMaterial.getAdditionalRenderState();
+        additional.setBlendMode(RenderState.BlendMode.Alpha);
+        additional.setDepthWrite(false);
+        /*
+         * Add twin quads to the scene and apply a different material to each.
          */
         float quadSize = 3f; // world units
         boolean flip = true;
         Quad quad = new Quad(quadSize, quadSize, flip);
 
-        left = new Geometry("left", quad);
+        Geometry left = new Geometry("left", quad);
         rootNode.attachChild(left);
         float offset = quadSize / 2f;
         left.setLocalTranslation(-2f - offset, -offset, 0f);
+        left.setMaterial(dynamicMaterial);
 
-        right = new Geometry("right", quad);
+        Geometry right = new Geometry("right", quad);
         rootNode.attachChild(right);
         right.setLocalTranslation(2f - offset, -offset, 0f);
+        right.setMaterial(loadedMaterial);
 
         phase = LunarPhase.fromDescription(phaseName);
         updateScene();
@@ -228,10 +257,9 @@ public class TestGlobeRenderer
          */
         setDisplayStatView(false);
         /*
-         * Press spacebar or left-click to advance the slides.
+         * Press spacebar or left-click to advance to the next phase.
          */
-        inputManager.addMapping("next",
-                new KeyTrigger(KeyInput.KEY_SPACE));
+        inputManager.addMapping("next", new KeyTrigger(KeyInput.KEY_SPACE));
         inputManager.addMapping("next",
                 new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         inputManager.addListener(this, "next");
@@ -241,44 +269,15 @@ public class TestGlobeRenderer
      * Update the scene after changing the phase.
      */
     private void updateScene() {
-        /*
-         * Generate the dynamic moon texture.
-         */
-        Texture moonTexture = Misc.loadTexture(assetManager,
-                "Textures/skies/moon/clementine.png");
-        Material moonMaterial = Misc.createShadedMaterial(assetManager,
-                moonTexture);
-        GlobeRenderer renderMoon = new GlobeRenderer(resolution, moonMaterial);
-        stateManager.attach(renderMoon);
-        renderMoon.setGamma(2f);
         float phaseAngle = phase.longitudeDifference();
         float intensity = 2f + FastMath.abs(phaseAngle - FastMath.PI);
-        renderMoon.setLightIntensity(intensity);
-        renderMoon.setPhase(phaseAngle);
-        Texture dynamicTexture = renderMoon.getTexture();
+        moonRenderer.setLightIntensity(intensity);
+        moonRenderer.setPhase(phaseAngle);
         /*
          * Load the corresponding static texture.
          */
         String loadPath = phase.imagePath();
         Texture loadedTexture = Misc.loadTexture(assetManager, loadPath);
-        /*
-         * Create unshaded material for each texture.
-         */
-        Material dynamicMaterial =
-                Misc.createUnshadedMaterial(assetManager, dynamicTexture);
-        RenderState additional = dynamicMaterial.getAdditionalRenderState();
-        additional.setBlendMode(RenderState.BlendMode.Alpha);
-        additional.setDepthWrite(false);
-
-        Material loadedMaterial =
-                Misc.createUnshadedMaterial(assetManager, loadedTexture);
-        additional = loadedMaterial.getAdditionalRenderState();
-        additional.setBlendMode(RenderState.BlendMode.Alpha);
-        additional.setDepthWrite(false);
-        /*
-         * Apply each material to a quad geometry.
-         */
-        left.setMaterial(dynamicMaterial);
-        right.setMaterial(loadedMaterial);
+        loadedMaterial.setTexture("ColorMap", loadedTexture);
     }
 }
