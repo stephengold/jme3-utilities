@@ -25,7 +25,9 @@
  */
 package jme3utilities.sky;
 
+import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
+import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
@@ -81,15 +83,27 @@ public class GlobeRenderer
     // *************************************************************************
     // fields
     /**
+     * camera for off-screen render: set by constructor
+     */
+    final private Camera camera;
+    /**
      * light source for the scene: set by constructor
      */
     final private DirectionalLight light;
     /**
-     * filter to adjust the contrast: set by constructor
+     * gamma value to use in initialize()
      */
-    final private GammaCorrectionFilter filter;
+    private float initialGamma = 2f;
     /**
-     * root of the the off-screen scene: set by constructor
+     * frame buffer for off-screen render: set by constructor
+     */
+    final private FrameBuffer frameBuffer;
+    /**
+     * filter to adjust the contrast: set by initialize()
+     */
+    private GammaCorrectionFilter filter = null;
+    /**
+     * root of the the preview scene: set by constructor
      */
     final private Node rootNode;
     /**
@@ -100,27 +114,19 @@ public class GlobeRenderer
     // constructors
 
     /**
-     * Instantiate an enabled renderer.
+     * Instantiate an enabled renderer with the specified resolution and globe
+     * material.
      *
-     * @param assetManager (not null)
-     * @param renderManager (not null)
      * @param resolution (in pixels, >0)
-     * @param material (not null)
+     * @param globeMaterial (not null)
      */
-    public GlobeRenderer(AssetManager assetManager, RenderManager renderManager,
-            int resolution, Material material) {
-        if (assetManager == null) {
-            throw new NullPointerException("asset manager should not be null");
-        }
-        if (renderManager == null) {
-            throw new NullPointerException("render manager should not be null");
-        }
+    public GlobeRenderer(int resolution, Material globeMaterial) {
         if (resolution <= 0) {
             logger.log(Level.SEVERE, "resolution={0}", resolution);
             throw new IllegalArgumentException(
                     "resolution should be positive");
         }
-        if (material == null) {
+        if (globeMaterial == null) {
             throw new NullPointerException("material should not be null");
         }
 
@@ -130,7 +136,7 @@ public class GlobeRenderer
          */
         light = new DirectionalLight();
         rootNode.addLight(light);
-        setLightIntensity(5f);
+        setLightIntensity(2f);
         setPhase(FastMath.PI);
         /*
          * Add a globe at the origin.
@@ -147,11 +153,11 @@ public class GlobeRenderer
         globe.setLocalRotation(orientation);
         Vector3f planetCenter = Vector3f.ZERO;
         globe.setLocalTranslation(planetCenter);
-        globe.setMaterial(material);
+        globe.setMaterial(globeMaterial);
         /*
          * Add a camera on the +Z axis.
          */
-        Camera camera = new Camera(resolution, resolution);
+        camera = new Camera(resolution, resolution);
         camera.setLocation(new Vector3f(0f, 0f, distance));
         camera.lookAt(planetCenter, Vector3f.UNIT_X);
         float fovY = 2f * FastMath.asin(radius / distance);
@@ -168,22 +174,8 @@ public class GlobeRenderer
         outputTexture.setMinFilter(Texture.MinFilter.Trilinear);
 
         int numSamples = 1;
-        FrameBuffer frameBuffer =
-                new FrameBuffer(resolution, resolution, numSamples);
+        frameBuffer = new FrameBuffer(resolution, resolution, numSamples);
         frameBuffer.setColorTexture(outputTexture);
-
-        ViewPort viewPort = renderManager.createPreView("off-screen View",
-                camera);
-        viewPort.attachScene(rootNode);
-        viewPort.setClearFlags(true, true, true);
-        viewPort.setOutputFrameBuffer(frameBuffer);
-        /*
-         * Apply a contrast correction filter to the output.
-         */
-        FilterPostProcessor fpp = Misc.getFpp(viewPort, assetManager);
-        filter = new GammaCorrectionFilter();
-        fpp.addFilter(filter);
-        setGamma(2f);
 
         assert isEnabled();
     }
@@ -211,11 +203,16 @@ public class GlobeRenderer
             throw new IllegalArgumentException("gamma should be positive");
         }
 
-        filter.setGamma(newGamma);
+        if (isInitialized()) {
+            filter.setGamma(newGamma);
+        } else {
+            assert filter == null : filter;
+            initialGamma = newGamma;
+        }
     }
 
     /**
-     * Alter the intensity of the light.
+     * Alter the intensity of the (white) light.
      *
      * @param intensity (>=0, 1->standard)
      */
@@ -248,6 +245,45 @@ public class GlobeRenderer
     }
     // *************************************************************************
     // AbstractAppState methods
+
+    /**
+     * Initialize this controller.
+     *
+     * @param stateManager (not null)
+     * @param application which application owns this screen (not null)
+     */
+    @Override
+    public void initialize(AppStateManager stateManager,
+            Application application) {
+        if (isInitialized()) {
+            throw new IllegalStateException("already initialized");
+        }
+        if (!isEnabled()) {
+            throw new IllegalStateException("should be enabled");
+        }
+        if (stateManager == null) {
+            throw new NullPointerException("manager shouldn't be null");
+        }
+        if (application == null) {
+            throw new NullPointerException("application shouldn't be null");
+        }
+
+        super.initialize(stateManager, application);
+
+        RenderManager renderManager = application.getRenderManager();
+        ViewPort viewPort =
+                renderManager.createPreView("off-screen render", camera);
+        viewPort.attachScene(rootNode);
+        viewPort.setClearFlags(true, true, true);
+        viewPort.setOutputFrameBuffer(frameBuffer);
+        /*
+         * Apply a contrast correction filter to the render.
+         */
+        AssetManager assetManager = application.getAssetManager();
+        FilterPostProcessor fpp = Misc.getFpp(viewPort, assetManager);
+        filter = new GammaCorrectionFilter(initialGamma);
+        fpp.addFilter(filter);
+    }
 
     /**
      * Update the off-screen scene.
