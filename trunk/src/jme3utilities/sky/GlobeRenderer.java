@@ -152,13 +152,13 @@ public class GlobeRenderer
          * Add a camera on the +Z axis.
          */
         Camera camera = new Camera(resolution, resolution);
+        camera.setLocation(new Vector3f(0f, 0f, distance));
         camera.lookAt(planetCenter, Vector3f.UNIT_X);
         float fovY = 2f * FastMath.asin(radius / distance);
         float fovYDegrees = fovY * FastMath.RAD_TO_DEG;
         float near = 0.5f * (distance - radius);
         float far = 2f * (distance + radius);
         camera.setFrustumPerspective(fovYDegrees, aspectRatio, near, far);
-        camera.setLocation(new Vector3f(0f, 0f, distance));
         /*
          * Create a texture, frame buffer, and viewport for output.
          */
