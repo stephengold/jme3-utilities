@@ -142,12 +142,14 @@ public class TimeOfDay
     // AbstractAppState methods
 
     /**
-     * Update the time of day.
+     * Callback to update the time of day.
      *
      * @param interval real seconds elapsed since the previous update (>=0)
      */
     @Override
     public void update(float interval) {
+        super.update(interval);
+
         double simulatedSeconds = rate * interval;
         timeOfDay = timeOfDay + simulatedSeconds;
         timeOfDay = MyMath.modulo(timeOfDay, secondsPerDay);

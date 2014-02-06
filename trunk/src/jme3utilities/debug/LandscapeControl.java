@@ -112,11 +112,6 @@ public class LandscapeControl
     final private static Logger logger =
             Logger.getLogger(LandscapeControl.class.getName());
     /**
-     * asset path of the shaded material definition
-     */
-    final private static String shadedMaterialAssetPath =
-            "Common/MatDefs/Light/Lighting.j3md";
-    /**
      * asset path of the terrain's height map
      */
     final private static String heightMapAssetPath =
@@ -297,7 +292,8 @@ public class LandscapeControl
     private Material createShadedMaterial(ColorRGBA color) {
         assert color != null;
 
-        Material material = new Material(assetManager, shadedMaterialAssetPath);
+        Material material = new Material(assetManager,
+                Misc.shadedMaterialAssetPath);
         material.setBoolean("UseMaterialColors", true);
         material.setColor("Ambient", color);
         material.setColor("Diffuse", color);

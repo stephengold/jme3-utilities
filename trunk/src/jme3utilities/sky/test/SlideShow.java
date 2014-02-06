@@ -241,7 +241,7 @@ public class SlideShow
     // ActionListener methods
 
     /**
-     * Process a keystroke.
+     * Process a keystroke or mouse click.
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
