@@ -39,8 +39,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.math.MyMath;
 import jme3utilities.MySpatial;
+import jme3utilities.math.MyMath;
 
 /**
  * The component of SkyControl which models the orientations of the sun and

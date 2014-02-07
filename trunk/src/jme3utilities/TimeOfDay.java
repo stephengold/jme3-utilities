@@ -25,10 +25,10 @@
  */
 package jme3utilities;
 
-import jme3utilities.math.MyMath;
 import com.jme3.app.state.AbstractAppState;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.math.MyMath;
 
 /**
  * An app state for tracking the time of day in a game.
