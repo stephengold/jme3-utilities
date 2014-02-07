@@ -40,13 +40,14 @@ import com.jme3.math.FastMath;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Quad;
 import com.jme3.system.AppSettings;
+import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
-import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.GlobeRenderer;
+import jme3utilities.sky.LunarPhase;
 
 /**
  * A simple application to test the GlobeRenderer class. The application's main
@@ -60,6 +61,14 @@ public class TestGlobeRenderer
     // *************************************************************************
     // constants
 
+    /**
+     * number of samples around the globe's middle
+     */
+    final private static int equatorSamples = 12;
+    /*
+     * number of samples from pole to pole
+     */
+    final private static int meridianSamples = 24;
     /**
      * size of the dynamic texture (pixels per side)
      */
@@ -172,6 +181,9 @@ public class TestGlobeRenderer
              * switch to the next phase
              */
             int ordinal = phase.ordinal() + 1;
+            if (ordinal == LunarPhase.CUSTOM.ordinal()) {
+                ++ordinal;
+            }
             if (ordinal >= LunarPhase.values().length) {
                 ordinal = 0;
             }
@@ -202,7 +214,9 @@ public class TestGlobeRenderer
                 "Textures/skies/moon/clementine.png");
         Material moonMaterial = Misc.createShadedMaterial(assetManager,
                 moonTexture);
-        moonRenderer = new GlobeRenderer(moonRendererResolution, moonMaterial);
+        moonRenderer = new GlobeRenderer(moonMaterial,
+                Image.Format.Luminance8Alpha8, equatorSamples, meridianSamples,
+                moonRendererResolution);
         stateManager.attach(moonRenderer);
         /*
          * Create an unshaded material for each texture.

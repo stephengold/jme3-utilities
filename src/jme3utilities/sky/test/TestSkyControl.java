@@ -43,6 +43,7 @@ import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
+import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -109,6 +110,10 @@ public class TestSkyControl
      * landscape control
      */
     private LandscapeControl landscapeControl = null;
+    /**
+     * node to parent geometries which can appear reflected in water
+     */
+    private Node sceneNode = new Node("scene node");
     /**
      * the control under test
      */
@@ -182,11 +187,6 @@ public class TestSkyControl
                 MyString.quote(Misc.getVersionShort()));
 
         initializeCamera();
-        /**
-         * A node to parent geometries which can appear reflected in the water.
-         */
-        Node sceneNode = new Node("scene node");
-        rootNode.attachChild(sceneNode);
         /*
          * Add light sources and shadows.
          */
@@ -200,9 +200,7 @@ public class TestSkyControl
         /*
          * Create, add, and enable the landscape.
          */
-        landscapeControl = new LandscapeControl(assetManager);
-        sceneNode.addControl(landscapeControl);
-        landscapeControl.setEnabled(true);
+        initializeLandscape();
         /*
          * Create a SkyControl to animate the sky.
          */
@@ -233,9 +231,14 @@ public class TestSkyControl
                 "Textures/skies/moon/clementine.png");
         Material moonMaterial = Misc.createShadedMaterial(assetManager,
                 moonTexture);
-        GlobeRenderer moonRenderer = new GlobeRenderer(512, moonMaterial);
+        int equatorSamples = 12;
+        int meridianSamples = 24;
+        int resolution = 512;
+        GlobeRenderer moonRenderer = new GlobeRenderer(moonMaterial,
+                Image.Format.Luminance8Alpha8, equatorSamples, meridianSamples,
+                resolution);
         stateManager.attach(moonRenderer);
-        control.setMoonRenderer(moonRenderer); 
+        control.setMoonRenderer(moonRenderer);
         /*
          * Put SkyControl in charge of updating the lights and
          * viewport background. (all optional)
@@ -471,6 +474,16 @@ public class TestSkyControl
         flyCam.setMoveSpeed(20f);
         flyCam.setUpVector(up);
         flyCam.setZoomSpeed(20f);
+    }
+
+    /**
+     * Create, configure, add, and enable the landscape.
+     */
+    private void initializeLandscape() {
+        rootNode.attachChild(sceneNode);
+        landscapeControl = new LandscapeControl(assetManager);
+        sceneNode.addControl(landscapeControl);
+        landscapeControl.setEnabled(true);
     }
 
     /**
