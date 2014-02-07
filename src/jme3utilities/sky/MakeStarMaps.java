@@ -45,8 +45,8 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
-import jme3utilities.math.MyMath;
 import jme3utilities.MyString;
+import jme3utilities.math.MyMath;
 
 /**
  * A console application to generate starry sky texture maps for use with

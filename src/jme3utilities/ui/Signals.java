@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.math.Indices;
 import jme3utilities.MyString;
+import jme3utilities.math.Indices;
 
 /**
  * Track the active/inactive status of named command signals. A signal may

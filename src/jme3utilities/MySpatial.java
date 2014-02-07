@@ -25,7 +25,6 @@
  */
 package jme3utilities;
 
-import jme3utilities.math.VectorXZ;
 import com.jme3.animation.AnimControl;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -38,6 +37,7 @@ import java.util.Collection;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.math.VectorXZ;
 
 /**
  * Utility methods for generic operations on nodes and spatials. Aside from test

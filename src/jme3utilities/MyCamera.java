@@ -25,12 +25,12 @@
  */
 package jme3utilities;
 
-import jme3utilities.math.MyVector3f;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.math.MyVector3f;
 
 /**
  * Utility methods which operate on jME3 cameras. Aside from test cases, all
