@@ -51,6 +51,8 @@ import com.jme3.texture.Texture2D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
+import jme3utilities.MySpatial;
+import jme3utilities.math.MyVector3f;
 
 /**
  * An app state which generates a dynamic texture for an object by rendering an
@@ -68,32 +70,40 @@ public class GlobeRenderer
      */
     final private static float aspectRatio = 1f;
     /**
-     * distance from camera to globe (in meters)
+     * initial distance from camera to center of globe (in world units)
      */
-    final private static float distance = 4e8f;
+    final private static float initialCameraDistance = 4e8f;
     /**
-     * radius of the globe (in meters)
+     * initial radius of the globe (in world units)
      */
-    final private static float radius = 1.738e6f;
+    final private static float initialGlobeRadius = 1.738e6f;
     /**
      * message logger for this class
      */
     final private static Logger logger =
             Logger.getLogger(GlobeRenderer.class.getName());
+    /**
+     * location of the globe's center (in world coordinates)
+     */
+    final private static Vector3f globeCenter = Vector3f.ZERO;
     // *************************************************************************
     // fields
     /**
      * camera for off-screen render: set by constructor
      */
-    final private Camera camera;
+    private Camera camera = null;
     /**
      * light source for the scene: set by constructor
      */
-    final private DirectionalLight light;
+    private DirectionalLight light = null;
     /**
-     * gamma value to use in initialize()
+     * gamma value to set in initialize(): afterwards it's ignored
      */
     private float initialGamma = 2f;
+    /**
+     * spin rate (in radians per second) default is 0
+     */
+    private float spinRate = 0f;
     /**
      * frame buffer for off-screen render: set by constructor
      */
@@ -103,13 +113,21 @@ public class GlobeRenderer
      */
     private GammaCorrectionFilter filter = null;
     /**
-     * root of the the preview scene: set by constructor
+     * geometry for the globe: set by constructor
      */
-    final private Node rootNode;
+    private Geometry globe = null;
+    /**
+     * root of the the preview scene
+     */
+    final private Node rootNode = new Node("off-screen root node");
     /**
      * dynamic output texture: set by constructor
      */
     final private Texture2D outputTexture;
+    /**
+     * spin axis (unit vector)
+     */
+    final private Vector3f spinAxis = Vector3f.UNIT_Z.clone();
     // *************************************************************************
     // constructors
 
@@ -117,59 +135,43 @@ public class GlobeRenderer
      * Instantiate an enabled renderer with the specified resolution and globe
      * material.
      *
-     * @param resolution (in pixels, >0)
-     * @param globeMaterial (not null)
+     * @param globeMaterial suitable for equirectangular projection (not null)
+     * @param outputFormat (not null, ABGR8->color, Luminance8Alpha8->grayscale)
+     * @param equatorSamples number of samples around the globe's middle (>=3)
+     * @param meridianSamples number of samples from pole to pole (>=3)
+     * @param resolution number of pixels per side of the output texture (>0)
      */
-    public GlobeRenderer(int resolution, Material globeMaterial) {
+    public GlobeRenderer(Material globeMaterial, Image.Format outputFormat,
+            int equatorSamples, int meridianSamples, int resolution) {
+        if (globeMaterial == null) {
+            throw new NullPointerException("material should not be null");
+        }
+        if (outputFormat == null) {
+            throw new NullPointerException("format should not be null");
+        }
+        if (equatorSamples < 3) {
+            logger.log(Level.SEVERE, "equatorSamples={0}", equatorSamples);
+            throw new IllegalArgumentException(
+                    "need at least 3 samples on the globe's equator");
+        }
+        if (meridianSamples < 3) {
+            logger.log(Level.SEVERE, "meridianSamples={0}", meridianSamples);
+            throw new IllegalArgumentException(
+                    "need at least 3 samples on each meridian");
+        }
         if (resolution <= 0) {
             logger.log(Level.SEVERE, "resolution={0}", resolution);
             throw new IllegalArgumentException(
                     "resolution should be positive");
         }
-        if (globeMaterial == null) {
-            throw new NullPointerException("material should not be null");
-        }
 
-        rootNode = new Node("off-screen root node");
-        /*
-         * Add a directional light to the scene.
-         */
-        light = new DirectionalLight();
-        rootNode.addLight(light);
-        setLightIntensity(2f);
-        setPhase(FastMath.PI);
-        /*
-         * Add a globe at the origin.
-         * North is in the +X direction.
-         */
-        int zSamples = 24;
-        int radialSamples = 10;
-        Sphere mesh = new Sphere(zSamples, radialSamples, radius);
-        mesh.setTextureMode(TextureMode.Projected);
-        Geometry globe = new Geometry("off-screen globe", mesh);
-        rootNode.attachChild(globe);
-        Quaternion orientation = new Quaternion();
-        orientation.fromAngles(0f, FastMath.HALF_PI, 0f);
-        globe.setLocalRotation(orientation);
-        Vector3f planetCenter = Vector3f.ZERO;
-        globe.setLocalTranslation(planetCenter);
-        globe.setMaterial(globeMaterial);
-        /*
-         * Add a camera on the +Z axis.
-         */
-        camera = new Camera(resolution, resolution);
-        camera.setLocation(new Vector3f(0f, 0f, distance));
-        camera.lookAt(planetCenter, Vector3f.UNIT_X);
-        float fovY = 2f * FastMath.asin(radius / distance);
-        float fovYDegrees = fovY * FastMath.RAD_TO_DEG;
-        float near = 0.5f * (distance - radius);
-        float far = 2f * (distance + radius);
-        camera.setFrustumPerspective(fovYDegrees, aspectRatio, near, far);
+        initializeCamera(resolution);
+        initializeGlobe(globeMaterial, equatorSamples, meridianSamples);
+        initializeLights();
         /*
          * Create a texture, frame buffer, and viewport for output.
          */
-        outputTexture = new Texture2D(resolution, resolution,
-                Image.Format.Luminance8Alpha8);
+        outputTexture = new Texture2D(resolution, resolution, outputFormat);
         outputTexture.setMagFilter(Texture.MagFilter.Bilinear);
         outputTexture.setMinFilter(Texture.MinFilter.Trilinear);
 
@@ -183,6 +185,31 @@ public class GlobeRenderer
     // new methods exposed
 
     /**
+     * Compute the distance from the camera to the center of the globe.
+     *
+     * @return distance in world units (>0)
+     */
+    public float getCameraDistance() {
+        Vector3f cameraLocation = camera.getLocation();
+        float result = MyVector3f.distanceFrom(cameraLocation, globeCenter);
+
+        assert result > 0f : result;
+        return result;
+    }
+
+    /**
+     * Read the radius of the globe.
+     *
+     * @return radius in world units (>0)
+     */
+    public float getGlobeRadius() {
+        float result = MySpatial.getUniformScale(globe);
+
+        assert result > 0f : result;
+        return result;
+    }
+
+    /**
      * Access the output texture.
      *
      * @return pre-existing instance
@@ -190,6 +217,30 @@ public class GlobeRenderer
     public Texture2D getTexture() {
         assert outputTexture != null;
         return outputTexture;
+    }
+
+    /**
+     * Move the camera to a new location and orientation.
+     *
+     * @param newLocation (in world coordinates, not null)
+     * @param newUpDirection (not null, not zero)
+     */
+    final public void moveCamera(Vector3f newLocation,
+            Vector3f newUpDirection) {
+        if (newLocation == null) {
+            throw new NullPointerException("location should not be null");
+        }
+        if (newUpDirection == null) {
+            throw new NullPointerException("up direction should not be null");
+        }
+        if (MyVector3f.isZeroLength(newUpDirection)) {
+            logger.log(Level.SEVERE, "upDirection={0}", newUpDirection);
+            throw new IllegalArgumentException(
+                    "upDirection should not be zero");
+        }
+
+        camera.setLocation(newLocation);
+        camera.lookAt(globeCenter, newUpDirection);
     }
 
     /**
@@ -212,7 +263,21 @@ public class GlobeRenderer
     }
 
     /**
-     * Alter the intensity of the (white) light.
+     * Change the size of the globe.
+     *
+     * @param newRadius (in world units, >0)
+     */
+    final public void setGlobeRadius(float newRadius) {
+        if (!(newRadius > 0f)) {
+            logger.log(Level.SEVERE, "radius={0}", newRadius);
+            throw new IllegalArgumentException("radius should be positive");
+        }
+
+        MySpatial.setWorldScale(globe, newRadius);
+    }
+
+    /**
+     * Alter the intensity of the (directional white) light.
      *
      * @param intensity (>=0, 1->standard)
      */
@@ -230,18 +295,45 @@ public class GlobeRenderer
     /**
      * Alter the lighting phase of the globe.
      *
-     * @param phaseAngle (in radians, <=2*Pi, >=0, 0->dark, Pi->fully lit)
+     * @param newAngle (in radians, <=2*Pi, >=0, 0->dark, Pi->fully lit)
      */
-    final public void setPhase(float phaseAngle) {
-        if (!(phaseAngle >= 0f && phaseAngle <= FastMath.TWO_PI)) {
-            logger.log(Level.SEVERE, "phase={0}", phaseAngle);
+    final public void setPhase(float newAngle) {
+        if (!(newAngle >= 0f && newAngle <= FastMath.TWO_PI)) {
+            logger.log(Level.SEVERE, "angle={0}", newAngle);
             throw new IllegalArgumentException(
-                    "phase should be between 0 and 2*Pi");
+                    "angle should be between 0 and 2*Pi");
         }
 
-        Quaternion turn = new Quaternion().fromAngles(-phaseAngle, 0f, 0f);
+        Quaternion turn = new Quaternion().fromAngles(-newAngle, 0f, 0f);
         Vector3f lightDirection = turn.mult(Vector3f.UNIT_Z);
         light.setDirection(lightDirection);
+    }
+
+    /**
+     * Alter the spin axis of the globe.
+     *
+     * @param newAxis unit vector in the globe's local coordinate system
+     */
+    public void setSpinAxis(Vector3f newAxis) {
+        if (newAxis == null) {
+            throw new NullPointerException("axis should not be null");
+        }
+        if (!newAxis.isUnitVector()) {
+            logger.log(Level.SEVERE, "axis={0}", newAxis);
+            throw new IllegalArgumentException(
+                    "axis should be a unit vector");
+        }
+
+        spinAxis.set(newAxis);
+    }
+
+    /**
+     * Alter the spin rate of the globe.
+     *
+     * @param newRate (in radians per second)
+     */
+    public void setSpinRate(float newRate) {
+        spinRate = newRate;
     }
     // *************************************************************************
     // AbstractAppState methods
@@ -297,8 +389,86 @@ public class GlobeRenderer
             throw new IllegalArgumentException(
                     "elapsed time shouldn't be negative");
         }
+        /*
+         * spin the globe on its axis
+         */
+        float angle = spinRate * elapsedTime;
+        Quaternion spin = new Quaternion().fromAngleNormalAxis(angle, spinAxis);
+        globe.rotate(spin);
+
+        updateFrustum();
 
         rootNode.updateLogicalState(elapsedTime);
         rootNode.updateGeometricState();
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Add a camera on the +Z axis.
+     */
+    private void initializeCamera(int resolution) {
+        assert resolution > 0 : resolution;
+
+        camera = new Camera(resolution, resolution);
+        Vector3f location = new Vector3f(0f, 0f, initialCameraDistance);
+        Vector3f upDirection = Vector3f.UNIT_X;
+        moveCamera(location, upDirection);
+    }
+
+    /**
+     * Add a globe and orient it so that its north pole is in the global +X
+     * direction.
+     */
+    private void initializeGlobe(Material globeMaterial, int equatorSamples,
+            int meridianSamples) {
+        assert globeMaterial != null : globeMaterial;
+        assert equatorSamples >= 3 : equatorSamples;
+        assert meridianSamples >= 3 : meridianSamples;
+
+        Sphere mesh = new Sphere(meridianSamples, equatorSamples, 1f);
+        mesh.setTextureMode(TextureMode.Projected);
+        globe = new Geometry("off-screen globe", mesh);
+        rootNode.attachChild(globe);
+        Quaternion orientation = new Quaternion();
+        orientation.fromAngles(0f, FastMath.HALF_PI, 0f);
+        globe.setLocalRotation(orientation);
+        globe.setLocalTranslation(globeCenter);
+        globe.setMaterial(globeMaterial);
+        setGlobeRadius(initialGlobeRadius);
+    }
+
+    /**
+     * Add a directional light to the scene.
+     */
+    private void initializeLights() {
+        light = new DirectionalLight();
+        rootNode.addLight(light);
+        setLightIntensity(2f);
+        setPhase(FastMath.PI);
+    }
+
+    /**
+     * Update the camera's frustum so that the rendered globe will fill the
+     * frame buffer.
+     */
+    private void updateFrustum() {
+        float cameraDistance = getCameraDistance();
+        float globeRadius = getGlobeRadius();
+
+        if (!(cameraDistance > globeRadius)) {
+            logger.log(Level.SEVERE, "cameraDistance={0} globeRadius={1}",
+                    new Object[]{
+                cameraDistance, globeRadius
+            });
+            throw new IllegalArgumentException(
+                    "camera should be outside of the globe");
+        }
+
+        float fovY = 2f * FastMath.asin(globeRadius / cameraDistance);
+        float fovYDegrees = fovY * FastMath.RAD_TO_DEG;
+        float near = 0.5f * (cameraDistance - globeRadius);
+        float far = 2f * (cameraDistance + globeRadius);
+        camera.setFrustumPerspective(fovYDegrees, aspectRatio, near, far);
     }
 }
