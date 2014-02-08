@@ -177,14 +177,27 @@ public class SkyMaterial
     }
 
     /**
+     * Instantiate a sky material from a particular asset path. The first method
+     * invoked should be initialize().
+     *
+     * @param assetManager for loading textures and material definitions (not
+     * null)
+     * @param assetPath pathname to the material definitions asset (not null)
+     */
+    public SkyMaterial(AssetManager assetManager, String assetPath) {
+        this(assetManager, assetPath, numObjects(assetPath),
+                numCloudLayers(assetPath));
+    }
+
+    /**
      * Instantiate a sky material with the specified number of objects and cloud
      * layers. Material definitions will be automatically selected. The first
      * method invoked should be initialize().
      *
      * @param assetManager for loading textures and material definitions (not
      * null)
-     * @param maxObjects number of astronomical objects allowed (>=0)
-     * @param maxCloudLayers number of cloud layers allowed (>=0)
+     * @param maxObjects number of astronomical objects required (>=0)
+     * @param maxCloudLayers number of cloud layers required (>=0)
      */
     public SkyMaterial(AssetManager assetManager, int maxObjects,
             int maxCloudLayers) {
@@ -792,6 +805,62 @@ public class SkyMaterial
 
         assert result >= Constants.alphaMin : result;
         assert result <= Constants.alphaMax : result;
+        return result;
+    }
+
+    /**
+     * Determine the number of cloud layers supported by a specified asset.
+     *
+     * @param assetPath path to material definitions (not null)
+     */
+    private static int numCloudLayers(String assetPath) {
+        assert assetPath != null;
+
+        int result;
+        switch (assetPath) {
+            case "MatDefs/skies/dome60/dome60.j3md":
+                result = 0;
+                break;
+            case "MatDefs/skies/dome02/dome02.j3md":
+            case "MatDefs/skies/dome22/dome22.j3md":
+                result = 2;
+                break;
+            case "MatDefs/skies/dome06/dome06.j3md":
+            case "MatDefs/skies/dome66/dome66.j3md":
+                result = 6;
+                break;
+            default:
+                logger.log(Level.SEVERE, "assetPath={0}", assetPath);
+                throw new IllegalArgumentException("unknown asset");
+        }
+        return result;
+    }
+
+    /**
+     * Determine the number of objects supported by a specified asset.
+     *
+     * @param assetPath path to material definitions (not null)
+     */
+    private static int numObjects(String assetPath) {
+        assert assetPath != null;
+
+        int result;
+        switch (assetPath) {
+            case "MatDefs/skies/dome02/dome02.j3md":
+            case "MatDefs/skies/dome06/dome06.j3md":
+                result = 0;
+                break;
+            case "MatDefs/skies/dome22/dome22.j3md":
+                result = 2;
+                break;
+            case "MatDefs/skies/dome60/dome60.j3md":
+            case "MatDefs/skies/dome66/dome66.j3md":
+                result = 6;
+                break;
+            default:
+                logger.log(Level.SEVERE, "assetPath={0}", assetPath);
+                throw new IllegalArgumentException("unknown asset");
+        }
         return result;
     }
 
