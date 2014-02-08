@@ -34,6 +34,11 @@ varying vec2 skyTexCoord;
         uniform sampler2D m_StarsColorMap;
 #endif
 
+#ifdef HAS_HAZE
+        uniform sampler2D m_HazeAlphaMap;
+        uniform vec4 m_HazeColor;
+#endif
+
 #ifdef HAS_CLOUDS0
         uniform sampler2D m_Clouds0AlphaMap;
         uniform vec4 m_Clouds0Color;
@@ -46,10 +51,12 @@ varying vec2 skyTexCoord;
 	varying vec2 clouds1Coord;
 #endif
 
-#ifdef HAS_HAZE
-        uniform sampler2D m_HazeAlphaMap;
-        uniform vec4 m_HazeColor;
-#endif
+vec4 mixColors(vec4 color0, vec4 color1) {
+        vec4 result;
+        result.rgb = mix(color0.rgb, color1.rgb, color1.a);
+        result.a = color0.a + color1.a * (1.0 - color0.a);
+        return result;
+}
 
 void main(){
         #ifdef HAS_STARS
@@ -57,26 +64,26 @@ void main(){
         #else
                 vec4 stars = vec4(0.0);
         #endif
-
         vec4 color = stars;
+
         vec4 clear = m_ClearColor;
 	#ifdef HAS_HAZE
-                float density = texture2D(m_HazeAlphaMap, skyTexCoord).r;
-                density *= m_HazeColor.a;
-	        clear = mix(clear, m_HazeColor, density);
+                vec4 haze = m_HazeColor;
+                haze.a *= texture2D(m_HazeAlphaMap, skyTexCoord).r;
+	        clear = mixColors(clear, haze);
 	#endif
-        color = mix(color, clear, clear.a);
+        color = mixColors(color, clear);
 
 	#ifdef HAS_CLOUDS0
-		float density0 = texture2D(m_Clouds0AlphaMap, clouds0Coord).r;
-		density0 *= m_Clouds0Color.a;
-		color = mix(color, m_Clouds0Color, density0);
+                vec4 clouds0 = m_Clouds0Color;
+		clouds0.a *= texture2D(m_Clouds0AlphaMap, clouds0Coord).r;
+                color = mixColors(color, clouds0);
         #endif
 
 	#ifdef HAS_CLOUDS1
-		float density1 = texture2D(m_Clouds1AlphaMap, clouds1Coord).r;
-		density1 *= m_Clouds1Color.a;
-		color = mix(color, m_Clouds1Color, density1);
+                vec4 clouds1 = m_Clouds1Color;
+		clouds1.a *= texture2D(m_Clouds1AlphaMap, clouds1Coord).r;
+                color = mixColors(color, clouds1);
         #endif
 
 	gl_FragColor = color;
