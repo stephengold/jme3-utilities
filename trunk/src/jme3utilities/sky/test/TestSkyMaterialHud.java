@@ -177,48 +177,69 @@ public class TestSkyMaterialHud
         ColorRGBA clearColor = updateColorBank("clear");
         material.setClearColor(clearColor);
 
-        ColorRGBA c0Color = updateColorBank("c0");
-        material.setCloudsColor(0, c0Color);
+        int maxCloudLayers = material.getMaxCloudLayers();
+        if (maxCloudLayers > 0) {
+            ColorRGBA c0Color = updateColorBank("c0");
+            material.setCloudsColor(0, c0Color);
 
-        Vector2f c0Offset = updateUVBank("c0");
-        material.setCloudsOffset(0, c0Offset.x, c0Offset.y);
+            Vector2f c0Offset = updateUVBank("c0");
+            material.setCloudsOffset(0, c0Offset.x, c0Offset.y);
 
-        float c0Scale = updateLogSlider("c0Scale", 2f);
-        material.setCloudsScale(0, c0Scale);
+            float c0Scale = updateLogSlider("c0Scale", 2f);
+            material.setCloudsScale(0, c0Scale);
+        }
 
-        ColorRGBA c1Color = updateColorBank("c1");
-        material.setCloudsColor(1, c1Color);
+        if (maxCloudLayers > 1) {
+            ColorRGBA c1Color = updateColorBank("c1");
+            material.setCloudsColor(1, c1Color);
 
-        Vector2f c1Offset = updateUVBank("c1");
-        material.setCloudsOffset(1, c1Offset.x, c1Offset.y);
+            Vector2f c1Offset = updateUVBank("c1");
+            material.setCloudsOffset(1, c1Offset.x, c1Offset.y);
 
-        float c1Scale = updateLogSlider("c1Scale", 2f);
-        material.setCloudsScale(1, c1Scale);
+            float c1Scale = updateLogSlider("c1Scale", 2f);
+            material.setCloudsScale(1, c1Scale);
+        }
 
         ColorRGBA hazeColor = updateColorBank("haze");
         material.setHazeColor(hazeColor);
 
-        ColorRGBA moonColor = updateColorBank("moon");
-        material.setObjectColor(moonIndex, moonColor);
-        ColorRGBA moonGlow = updateColorBank("mGlo");
-        material.setObjectGlow(moonIndex, moonGlow);
+        int maxObjects = material.getMaxObjects();
+        if (maxObjects > moonIndex) {
+            ColorRGBA moonColor = updateColorBank("moon");
+            material.setObjectColor(moonIndex, moonColor);
+            ColorRGBA moonGlow = updateColorBank("mGlo");
+            material.setObjectGlow(moonIndex, moonGlow);
 
-        Vector2f moonOffset = updateUVBank("m");
-        float moonScale = updateLogSlider("mSca", 10f);
-        float moonRotation = updateSlider("mRot");
-        moonRotation *= FastMath.DEG_TO_RAD;
-        Vector2f rotate = new Vector2f(FastMath.cos(moonRotation),
-                FastMath.sin(moonRotation));
-        material.setObjectTransform(moonIndex, moonOffset, moonScale, rotate);
+            Vector2f moonOffset = updateUVBank("m");
+            float moonScale = updateLogSlider("mSca", 10f);
+            float moonRotation = updateSlider("mRot");
+            moonRotation *= FastMath.DEG_TO_RAD;
+            Vector2f rotate = new Vector2f(FastMath.cos(moonRotation),
+                    FastMath.sin(moonRotation));
+            material.setObjectTransform(moonIndex, moonOffset, moonScale,
+                    rotate);
 
-        ColorRGBA sunColor = updateColorBank("sun");
-        material.setObjectColor(sunIndex, sunColor);
-        ColorRGBA sunGlow = updateColorBank("sGlo");
-        material.setObjectGlow(sunIndex, sunGlow);
+            float percentage = 100f * material.getTransmission(moonIndex);
+            String transmissionStatus = String.format("%5.1f%%", percentage);
+            setStatusText("moonTransmissionStatus", transmissionStatus);
 
-        float sunScale = updateLogSlider("sunScale", 10f);
-        Vector2f sunOffset = updateUVBank("sun");
-        material.setObjectTransform(sunIndex, sunOffset, sunScale, null);
+            setStatusText("phaseStatus", "Lunar phase: " + phase.describe());
+        }
+
+        if (maxObjects > sunIndex) {
+            ColorRGBA sunColor = updateColorBank("sun");
+            material.setObjectColor(sunIndex, sunColor);
+            ColorRGBA sunGlow = updateColorBank("sGlo");
+            material.setObjectGlow(sunIndex, sunGlow);
+
+            float sunScale = updateLogSlider("sunScale", 10f);
+            Vector2f sunOffset = updateUVBank("sun");
+            material.setObjectTransform(sunIndex, sunOffset, sunScale, null);
+
+            float percentage = 100f * material.getTransmission(sunIndex);
+            String transmissionStatus = String.format("%5.1f%%", percentage);
+            setStatusText("sunTransmissionStatus", transmissionStatus);
+        }
 
         float bloomIntensity = updateSlider("bloomIntensity");
         bloom.setBloomIntensity(bloomIntensity);
@@ -228,16 +249,6 @@ public class TestSkyMaterialHud
 
         float exposurePower = updateSlider("exposurePower");
         bloom.setExposurePower(exposurePower);
-
-        setStatusText("phaseStatus", "Lunar phase: " + phase.describe());
-
-        float percentage = 100f * material.getTransmission(moonIndex);
-        String transmissionStatus = String.format("%5.1f%%", percentage);
-        setStatusText("moonTransmissionStatus", transmissionStatus);
-
-        percentage = 100f * material.getTransmission(sunIndex);
-        transmissionStatus = String.format("%5.1f%%", percentage);
-        setStatusText("sunTransmissionStatus", transmissionStatus);
     }
     // *************************************************************************
     // ActionListener methods
@@ -365,12 +376,17 @@ public class TestSkyMaterialHud
         assert indexString != null;
         assert assetPath != null;
 
+        int maxCloudLayers = material.getMaxCloudLayers();
         switch (indexString) {
             case "0":
-                material.addClouds(0, assetPath);
+                if (maxCloudLayers > 0) {
+                    material.addClouds(0, assetPath);
+                }
                 return;
             case "1":
-                material.addClouds(1, assetPath);
+                if (maxCloudLayers > 1) {
+                    material.addClouds(1, assetPath);
+                }
                 return;
         }
         assert false : indexString;
@@ -384,9 +400,14 @@ public class TestSkyMaterialHud
     private void setPhase(String name) {
         assert name != null;
 
+        if (material.getMaxObjects() <= moonIndex) {
+            return;
+        }
+
         phase = LunarPhase.fromDescription(name);
         String imageAssetPath = phase.imagePath();
         material.addObject(moonIndex, imageAssetPath);
+
     }
 
     /**
@@ -417,6 +438,10 @@ public class TestSkyMaterialHud
     private void setStyle(String name) {
         assert name != null;
 
+        if (material.getMaxObjects() <= sunIndex) {
+            return;
+        }
+
         switch (name) {
             case "t0neg0d":
                 material.addObject(sunIndex, SkyMaterial.sunMapPath);
@@ -437,6 +462,10 @@ public class TestSkyMaterialHud
     private void showCloudsMenu(String actionPrefix) {
         assert actionPrefix != null;
 
+        if (material.getMaxCloudLayers() == 0) {
+            return;
+        }
+
         showPopup(actionPrefix, new String[]{
             "clear", "overcast", "cyclone", "t0neg0d"
         });
@@ -446,6 +475,10 @@ public class TestSkyMaterialHud
      * Display a menu of lunar phases.
      */
     private void showPhaseMenu() {
+        if (material.getMaxObjects() <= moonIndex) {
+            return;
+        }
+
         showPopup("phase ", new String[]{
             "full", "waning-crescent", "waning-gibbous",
             "waxing-crescent", "waxing-gibbous"
@@ -466,6 +499,10 @@ public class TestSkyMaterialHud
      * Display a menu of sun styles.
      */
     private void showStyleMenu() {
+        if (material.getMaxObjects() <= sunIndex) {
+            return;
+        }
+
         showPopup("style ", new String[]{
             "chaotic", "disc", "hazy-disc", "rayed", "t0neg0d"
         });
