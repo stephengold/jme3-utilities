@@ -209,28 +209,41 @@ public class TestSkyMaterial
         /*
          * Create and initialize a material for the sky.
          */
-        int numObjects = 2;
-        int numLayers = 2;
         SkyMaterial material;
         if (materialName == null) {
             /*
-             * auto-select the material asset
+             * Auto-select the material asset.
              */
-            material = new SkyMaterial(assetManager, numObjects, numLayers);
+            int objects = 2;
+            int cloudLayers = 2;
+            material = new SkyMaterial(assetManager, objects, cloudLayers);
         } else {
+            /*
+             * Select material asset by pathname.
+             */
             String assetPath = String.format("MatDefs/skies/%s/%s.j3md",
                     materialName, materialName);
-            material = new SkyMaterial(assetManager, assetPath, numObjects,
-                    numLayers);
+            material = new SkyMaterial(assetManager, assetPath);
         }
         geometry.setMaterial(material);
         material.initialize();
-        material.addClouds(0);
-        material.addClouds(1);
+        int maxCloudLayers = material.getMaxCloudLayers();
+        if (maxCloudLayers > 0) {
+            material.addClouds(0);
+        }
+        if (maxCloudLayers > 1) {
+            material.addClouds(1);
+        }
         material.addHaze();
-        material.addObject(TestSkyMaterialHud.moonIndex,
-                LunarPhase.FULL.imagePath());
-        material.addObject(TestSkyMaterialHud.sunIndex, SkyMaterial.sunMapPath);
+        int maxObjects = material.getMaxObjects();
+        if (maxObjects > TestSkyMaterialHud.moonIndex) {
+            material.addObject(TestSkyMaterialHud.moonIndex,
+                    LunarPhase.FULL.imagePath());
+        }
+        if (maxObjects > TestSkyMaterialHud.sunIndex) {
+            material.addObject(TestSkyMaterialHud.sunIndex,
+                    SkyMaterial.sunMapPath);
+        }
         material.addStars();
         /*
          * Create and apply a bloom filter to the view port.
