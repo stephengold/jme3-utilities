@@ -309,7 +309,7 @@
                         </panel>
 
                         <control name="label"
-                                 text="Clear color:"/>
+                                 text="Clear sky color:"/>
                         <panel childLayout="horizontal" padding="10">
                             <control name="verticalSlider" id="clearRSlider"
                                      buttonStepSize="1"
@@ -346,6 +346,47 @@
                                 <control name="label" id="clearGSliderStatus"/>
                                 <control name="label" id="clearBSliderStatus"/>
                                 <control name="label" id="clearASliderStatus"/>
+                            </panel>
+                        </panel>
+
+                        <control name="label"
+                                 text="Clear sky glow:"/>
+                        <panel childLayout="horizontal" padding="10">
+                            <control name="verticalSlider" id="clrGloRSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="0.4"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="clrGloGSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="0.6"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="clrGloBSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="clrGloASlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="0"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <panel childLayout="vertical"
+                                   height="180"
+                                   width="34">
+                                <control name="label" id="clrGloRSliderStatus"/>
+                                <control name="label" id="clrGloGSliderStatus"/>
+                                <control name="label" id="clrGloBSliderStatus"/>
+                                <control name="label" id="clrGloASliderStatus"/>
                             </panel>
                         </panel>
 
@@ -391,6 +432,47 @@
                         </panel>
 
                         <control name="label"
+                                 text="Cloud layer 0 glow:"/>
+                        <panel childLayout="horizontal" padding="10">
+                            <control name="verticalSlider" id="c0gRSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="c0gGSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="c0gBSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="c0gASlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <panel childLayout="vertical"
+                                   height="180"
+                                   width="34">
+                                <control name="label" id="c0gRSliderStatus"/>
+                                <control name="label" id="c0gGSliderStatus"/>
+                                <control name="label" id="c0gBSliderStatus"/>
+                                <control name="label" id="c0gASliderStatus"/>
+                            </panel>
+                        </panel>
+
+                        <control name="label"
                                  text="Cloud layer 1 color:"/>
                         <panel childLayout="horizontal" padding="10">
                             <control name="verticalSlider" id="c1RSlider"
@@ -428,6 +510,47 @@
                                 <control name="label" id="c1GSliderStatus"/>
                                 <control name="label" id="c1BSliderStatus"/>
                                 <control name="label" id="c1ASliderStatus"/>
+                            </panel>
+                        </panel>
+
+                        <control name="label"
+                                 text="Cloud layer 1 glow:"/>
+                        <panel childLayout="horizontal" padding="10">
+                            <control name="verticalSlider" id="c1gRSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="c1gGSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="c1gBSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="c1gASlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="0"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <panel childLayout="vertical"
+                                   height="180"
+                                   width="34">
+                                <control name="label" id="c1gRSliderStatus"/>
+                                <control name="label" id="c1gGSliderStatus"/>
+                                <control name="label" id="c1gBSliderStatus"/>
+                                <control name="label" id="c1gASliderStatus"/>
                             </panel>
                         </panel>
 

@@ -55,13 +55,14 @@ import jme3utilities.math.MyMath;
  * <p>
  * Stars can be added to the material by invoking addStars().
  * <p>
- * Up to two astronomical objects can be added to the material by invoking
- * addObject(); once added, their positions, sizes, and colors may be adjusted
- * by invoking setObjectTransform() and setObjectColor().
+ * Astronomical objects can be added to the material by invoking addObject();
+ * once added, their positions, sizes, and colors may be adjusted by invoking
+ * setObjectTransform(), setObjectColor(), and setObjectGlow(). Each object is
+ * identified by an index: 0 indicates the object furthest from the observer.
  * <p>
- * Up to two layers of clouds can be added to the material by invoking
- * addClouds(); once added, their positions, sizes, and colors may be adjusted
- * by invoking setCloudsOffset(), setCloudsScale(), and setCloudsColor().
+ * Cloud layers can be added to the material by invoking addClouds(); once
+ * added, their positions, sizes, and colors may be adjusted by invoking
+ * setCloudsOffset(), setCloudsScale(), setCloudsColor(), and setCloudsGlow().
  * <p>
  * Horizon haze can be added to the material by invoking addHaze(); once added,
  * its color may be adjusted by invoking setHazeColor().
@@ -493,6 +494,19 @@ public class SkyMaterial
     }
 
     /**
+     * Alter the glow color of clear sky.
+     *
+     * @param newColor (not null)
+     */
+    public void setClearGlow(ColorRGBA newColor) {
+        if (newColor == null) {
+            throw new NullPointerException("color should not be null");
+        }
+
+        setColor("ClearGlow", newColor);
+    }
+
+    /**
      * Alter the color of a cloud layer.
      *
      * @param layerIndex (<maxCloudLayers, >=0)
@@ -510,6 +524,25 @@ public class SkyMaterial
         String parameterName = String.format("Clouds%dColor", layerIndex);
         setColor(parameterName, newColor);
         cloudAlphas[layerIndex] = newColor.a;
+    }
+
+    /**
+     * Alter the glow color of a cloud layer.
+     *
+     * @param layerIndex (<maxCloudLayers, >=0)
+     * @param newColor (not null)
+     */
+    public void setCloudsGlow(int layerIndex, ColorRGBA newColor) {
+        validateLayerIndex(layerIndex);
+        if (newColor == null) {
+            throw new NullPointerException("color should not be null");
+        }
+        if (cloudsRaster[layerIndex] == null) {
+            throw new IllegalStateException("layer not yet added");
+        }
+
+        String parameterName = String.format("Clouds%dGlow", layerIndex);
+        setColor(parameterName, newColor);
     }
 
     /**
@@ -588,7 +621,7 @@ public class SkyMaterial
     }
 
     /**
-     * Alter the glow flag of an astronomical object.
+     * Alter the glow color of an astronomical object.
      *
      * @param objectIndex (<maxObjects, >=0)
      * @param newColor (not null)
