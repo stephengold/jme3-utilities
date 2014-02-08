@@ -176,11 +176,15 @@ public class TestSkyMaterialHud
 
         ColorRGBA clearColor = updateColorBank("clear");
         material.setClearColor(clearColor);
+        ColorRGBA clearGlow = updateColorBank("clrGlo");
+        material.setClearGlow(clearGlow);
 
         int maxCloudLayers = material.getMaxCloudLayers();
         if (maxCloudLayers > 0) {
             ColorRGBA c0Color = updateColorBank("c0");
             material.setCloudsColor(0, c0Color);
+            ColorRGBA c0Glow = updateColorBank("c0g");
+            material.setCloudsGlow(0, c0Glow);
 
             Vector2f c0Offset = updateUVBank("c0");
             material.setCloudsOffset(0, c0Offset.x, c0Offset.y);
@@ -192,6 +196,8 @@ public class TestSkyMaterialHud
         if (maxCloudLayers > 1) {
             ColorRGBA c1Color = updateColorBank("c1");
             material.setCloudsColor(1, c1Color);
+            ColorRGBA c1Glow = updateColorBank("c1g");
+            material.setCloudsGlow(1, c1Glow);
 
             Vector2f c1Offset = updateUVBank("c1");
             material.setCloudsOffset(1, c1Offset.x, c1Offset.y);
