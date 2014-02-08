@@ -42,6 +42,11 @@ varying vec2 skyTexCoord;
 	varying vec2 object1Coord;
 #endif
 
+#ifdef HAS_HAZE
+        uniform sampler2D m_HazeAlphaMap;
+        uniform vec4 m_HazeGlow;
+#endif
+
 #ifdef HAS_CLOUDS0
         uniform sampler2D m_Clouds0AlphaMap;
         uniform vec4 m_Clouds0Glow;
@@ -54,51 +59,55 @@ varying vec2 skyTexCoord;
 	varying vec2 clouds1Coord;
 #endif
 
-#ifdef HAS_HAZE
-        uniform sampler2D m_HazeAlphaMap;
-        uniform vec4 m_HazeGlow;
-#endif
+vec4 mixColors(vec4 color0, vec4 color1) {
+        vec4 result;
+        result.rgb = mix(color0.rgb, color1.rgb, color1.a);
+        result.a = color0.a + color1.a * (1.0 - color0.a);
+        return result;
+}
 
 void main(){
         vec4 stars = vec4(0.0);
+
         vec4 objects = vec4(0.0);
 
         #ifdef HAS_OBJECT0
                 if (all(floor(object0Coord) == vec2(0, 0))) {
-                        objects = texture2D(m_Object0ColorMap, object0Coord);
-                        objects *= m_Object0Glow;
+                        objects = m_Object0Glow;
+                        objects *= texture2D(m_Object0ColorMap, object0Coord);
                 }
 	#endif
 
         #ifdef HAS_OBJECT1
                 if (all(floor(object1Coord) == vec2(0, 0))) {
-                        vec4 object1 = texture2D(m_Object1ColorMap, object1Coord);
-                        object1 *= m_Object1Glow;
-                        objects = mix(objects, object1, object1.a);
+                        vec4 object1 = m_Object1Glow;
+                        object1 *= texture2D(m_Object1ColorMap, object1Coord);
+                        objects = mixColors(objects, object1);
                 }
 	#endif
 
-        vec4 color = mix(stars, objects, objects.a);
+        vec4 color = mixColors(stars, objects);
+
         vec4 clear = m_ClearGlow;
 	#ifdef HAS_HAZE
-                float density = texture2D(m_HazeAlphaMap, skyTexCoord).r;
-                density *= m_HazeGlow.a;
-	        clear = mix(clear, m_HazeGlow, density);
+                vec4 haze = m_HazeGlow;
+                haze.a *= texture2D(m_HazeAlphaMap, skyTexCoord).r;
+	        clear = mixColors(clear, haze);
 	#endif
-        color = mix(color, clear, clear.a);
+        color = mixColors(color, clear);
         // Bright parts of objects shine through the clear areas.
-        color += objects * objects.a * (1.0 - clear) * clear.a;
+        color.rgb += objects.rgb * objects.a * (1.0 - clear.rgb) * clear.a;
 
 	#ifdef HAS_CLOUDS0
-		float density0 = texture2D(m_Clouds0AlphaMap, clouds0Coord).r;
-		density0 *= m_Clouds0Glow.a;
-		color = mix(color, m_Clouds0Glow, density0);
+                vec4 clouds0 = m_Clouds0Glow;
+		clouds0.a *= texture2D(m_Clouds0AlphaMap, clouds0Coord).r;
+                color = mixColors(color, clouds0);
         #endif
 
 	#ifdef HAS_CLOUDS1
-		float density1 = texture2D(m_Clouds1AlphaMap, clouds1Coord).r;
-		density1 *= m_Clouds1Glow.a;
-		color = mix(color, m_Clouds1Glow, density1);
+                vec4 clouds1 = m_Clouds1Glow;
+		clouds1.a *= texture2D(m_Clouds1AlphaMap, clouds1Coord).r;
+                color = mixColors(color, clouds1);
         #endif
 
 	gl_FragColor = color;
