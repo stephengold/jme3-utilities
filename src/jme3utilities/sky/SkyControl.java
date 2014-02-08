@@ -707,7 +707,8 @@ public class SkyControl
         topDome.setMaterial(topMaterial);
 
         if (bottomDomeFlag) {
-            Geometry bottomDome = new Geometry(bottomName, mesh);
+            DomeMesh bottomMesh = new DomeMesh(3, 2);
+            Geometry bottomDome = new Geometry(bottomName, bottomMesh);
             skyNode.attachChild(bottomDome);
 
             Quaternion upsideDown = new Quaternion();
@@ -926,8 +927,8 @@ public class SkyControl
         /*
          * Determine the world direction to the main light source.
          */
-        boolean sunUp = sineSolarAltitude >= 0f;
         boolean moonUp = moonDirection != null && moonDirection.y >= 0f;
+        boolean sunUp = sineSolarAltitude >= 0f;
         Vector3f mainDirection;
         if (sunUp) {
             mainDirection = sunDirection.clone();
