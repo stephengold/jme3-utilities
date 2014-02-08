@@ -816,10 +816,6 @@ public class SkyMaterial
             assetPath = "MatDefs/skies/dome06/dome06.j3md";
         } else if (numObjects <= 6 && numCloudLayers <= 0) {
             assetPath = "MatDefs/skies/dome60/dome60.j3md";
-        } else if (numObjects <= 4 && numCloudLayers <= 2) {
-            assetPath = "MatDefs/skies/dome42/dome42.j3md";
-        } else if (numObjects <= 6 && numCloudLayers <= 2) {
-            assetPath = "MatDefs/skies/dome62/dome62.j3md";
         } else if (numObjects <= 6 && numCloudLayers <= 6) {
             assetPath = "MatDefs/skies/dome66/dome66.j3md";
         } else if (numObjects > 6) {
