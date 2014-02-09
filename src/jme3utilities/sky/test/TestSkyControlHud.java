@@ -311,28 +311,28 @@ public class TestSkyControlHud
             return;
         }
 
-        cloudiness = updateSlider("cloudiness");
+        cloudiness = updateSlider("cloudiness", "");
 
         CheckBox checkBox = getScreen().findNiftyControl("modulationCheckBox",
                 CheckBox.class);
         cloudModulation = checkBox.isChecked();
 
-        cloudRate = updateSlider("cloudRate");
-        cloudYOffset = updateSlider("cloudYOffset");
-        lunarDiameter = updateLogSlider("diameter", 10f);
+        cloudRate = updateSlider("cloudRate", "x");
+        cloudYOffset = updateSlider("cloudYOffset", "");
+        lunarDiameter = updateLogSlider("diameter", 10f, " rad");
 
-        float moonPhaseDegrees = updateSlider("phaseDegrees");
-        phaseAngle = moonPhaseDegrees * FastMath.DEG_TO_RAD;
+        float phaseDegrees = updateSlider("customLunarPhase", " deg");
+        phaseAngle = phaseDegrees * FastMath.DEG_TO_RAD;
 
-        float solarLongitudeDegrees = updateSlider("solarLong");
+        float solarLongitudeDegrees = updateSlider("solarLongitude", " deg");
         solarLongitude = solarLongitudeDegrees * FastMath.DEG_TO_RAD;
 
-        float latitudeDegrees = updateSlider("latitude");
+        float latitudeDegrees = updateSlider("latitude", " deg");
         latitude = latitudeDegrees * FastMath.DEG_TO_RAD;
 
-        relief = updateSlider("relief");
+        relief = updateSlider("relief", " wu");
 
-        float speed = updateLogSlider("speed", 10f);
+        float speed = updateLogSlider("speed", 10f, "x");
         timeOfDay.setRate(clockDirection * speed);
         /*
          * Update the labels which show status.

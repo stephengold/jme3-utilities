@@ -473,15 +473,19 @@ public class GuiScreenController
      * same prefix followed by "SliderStatus".
      *
      * @param namePrefix the unique name prefix of the slider (not null)
+     * @param statusSuffix to specify a unit of measurement (not null)
      * @return value of the slider
      */
-    protected float updateSlider(String namePrefix) {
+    protected float updateSlider(String namePrefix, String statusSuffix) {
         if (namePrefix == null) {
             throw new NullPointerException("prefix should not be null");
         }
+        if (statusSuffix == null) {
+            throw new NullPointerException("suffix should not be null");
+        }
 
         float value = readSlider(namePrefix);
-        updateSliderStatus(namePrefix, value);
+        updateSliderStatus(namePrefix, value, statusSuffix);
 
         return value;
     }
@@ -494,9 +498,11 @@ public class GuiScreenController
      *
      * @param namePrefix unique id prefix of the slider (not null)
      * @param logBase logarithm base of the slider (>0)
+     * @param statusSuffix to specify a unit of measurement (not null)
      * @return scaled value of the slider
      */
-    protected float updateLogSlider(String namePrefix, float logBase) {
+    protected float updateLogSlider(String namePrefix, float logBase,
+            String statusSuffix) {
         if (namePrefix == null) {
             throw new NullPointerException("prefix should not be null");
         }
@@ -504,10 +510,13 @@ public class GuiScreenController
             logger.log(Level.SEVERE, "logBase={0}", logBase);
             throw new IllegalArgumentException("log base should be positive");
         }
+        if (statusSuffix == null) {
+            throw new NullPointerException("suffix should not be null");
+        }
 
         float value = readSlider(namePrefix);
         float scaledValue = FastMath.pow(logBase, value);
-        updateSliderStatus(namePrefix, scaledValue);
+        updateSliderStatus(namePrefix, scaledValue, statusSuffix);
 
         return scaledValue;
     }
@@ -543,26 +552,32 @@ public class GuiScreenController
      *
      * @param namePrefix unique id prefix of the slider (not null)
      * @param value value of the slider
+     * @param statusSuffix to specify a unit of measurement (not null)
      */
-    private void updateSliderStatus(String namePrefix, float value) {
+    private void updateSliderStatus(String namePrefix, float value,
+            String statusSuffix) {
         assert namePrefix != null;
+        assert statusSuffix != null;
 
-        String statusName = namePrefix + "SliderStatus";
         /*
          * Select output precision based on the magnitude of the value.
          */
         String format;
         if (FastMath.abs(value) >= 5f) {
-            format = "%s = %.1f";
+            format = "%.1f";
         } else if (FastMath.abs(value) >= 0.5f) {
-            format = "%s = %.2f";
+            format = "%.2f";
         } else if (FastMath.abs(value) >= 0.05f) {
-            format = "%s = %.3f";
+            format = "%.3f";
         } else {
-            format = "%s = %.4f";
+            format = "%.4f";
         }
-        String statusText = String.format(format, namePrefix, value);
-        statusText = MyString.trimFloat(statusText);
+        String valueString = String.format(format, value);
+        valueString = MyString.trimFloat(valueString);
+        String statusText = String.format("%s = %s%s",
+                namePrefix, valueString, statusSuffix);
+
+        String statusName = namePrefix + "SliderStatus";
         setStatusText(statusName, statusText);
     }
 }

@@ -189,7 +189,7 @@ public class TestSkyMaterialHud
             Vector2f c0Offset = updateUVBank("c0");
             material.setCloudsOffset(0, c0Offset.x, c0Offset.y);
 
-            float c0Scale = updateLogSlider("c0Scale", 2f);
+            float c0Scale = updateLogSlider("c0Scale", 2f, "x");
             material.setCloudsScale(0, c0Scale);
         }
 
@@ -202,7 +202,7 @@ public class TestSkyMaterialHud
             Vector2f c1Offset = updateUVBank("c1");
             material.setCloudsOffset(1, c1Offset.x, c1Offset.y);
 
-            float c1Scale = updateLogSlider("c1Scale", 2f);
+            float c1Scale = updateLogSlider("c1Scale", 2f, "x");
             material.setCloudsScale(1, c1Scale);
         }
 
@@ -217,8 +217,8 @@ public class TestSkyMaterialHud
             material.setObjectGlow(moonIndex, moonGlow);
 
             Vector2f moonOffset = updateUVBank("m");
-            float moonScale = updateLogSlider("mSca", 10f);
-            float moonRotation = updateSlider("mRot");
+            float moonScale = updateLogSlider("mSca", 10f, "x");
+            float moonRotation = updateSlider("mRot", " deg");
             moonRotation *= FastMath.DEG_TO_RAD;
             Vector2f rotate = new Vector2f(FastMath.cos(moonRotation),
                     FastMath.sin(moonRotation));
@@ -238,7 +238,7 @@ public class TestSkyMaterialHud
             ColorRGBA sunGlow = updateColorBank("sGlo");
             material.setObjectGlow(sunIndex, sunGlow);
 
-            float sunScale = updateLogSlider("sunScale", 10f);
+            float sunScale = updateLogSlider("sunScale", 10f, "x");
             Vector2f sunOffset = updateUVBank("sun");
             material.setObjectTransform(sunIndex, sunOffset, sunScale, null);
 
@@ -247,13 +247,13 @@ public class TestSkyMaterialHud
             setStatusText("sunTransmissionStatus", transmissionStatus);
         }
 
-        float bloomIntensity = updateSlider("bloomIntensity");
+        float bloomIntensity = updateSlider("bloomIntensity", "");
         bloom.setBloomIntensity(bloomIntensity);
 
-        float blurScale = updateSlider("blurScale");
+        float blurScale = updateSlider("blurScale", "");
         bloom.setBlurScale(blurScale);
 
-        float exposurePower = updateSlider("exposurePower");
+        float exposurePower = updateSlider("exposurePower", "");
         bloom.setExposurePower(exposurePower);
     }
     // *************************************************************************
@@ -523,10 +523,10 @@ public class TestSkyMaterialHud
     private ColorRGBA updateColorBank(String prefix) {
         assert prefix != null;
 
-        float r = updateSlider(prefix + "R");
-        float g = updateSlider(prefix + "G");
-        float b = updateSlider(prefix + "B");
-        float a = updateSlider(prefix + "A");
+        float r = updateSlider(prefix + "R", "");
+        float g = updateSlider(prefix + "G", "");
+        float b = updateSlider(prefix + "B", "");
+        float a = updateSlider(prefix + "A", "");
         ColorRGBA color = new ColorRGBA(r, g, b, a);
 
         return color;
@@ -542,8 +542,8 @@ public class TestSkyMaterialHud
     private Vector2f updateUVBank(String prefix) {
         assert prefix != null;
 
-        float u = updateSlider(prefix + "U");
-        float v = updateSlider(prefix + "V");
+        float u = updateSlider(prefix + "U", "");
+        float v = updateSlider(prefix + "V", "");
         Vector2f result = new Vector2f(u, v);
 
         return result;
