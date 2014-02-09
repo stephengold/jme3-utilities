@@ -33,7 +33,7 @@ import com.jme3.math.Vector2f;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-class Constants {
+public class Constants {
     // *************************************************************************
     // constants
 
@@ -53,7 +53,7 @@ class Constants {
      * UV diameter of a sun's disc: in order to leave room for rays, haloes, and
      * haze, the disc is only 1/4 as wide as the color map.
      */
-    final static float discDiameter = 0.25f;
+    final public static float discDiameter = 0.25f;
     /**
      * 1st (U) texture coordinate of the top of a DomeMesh
      */
@@ -65,11 +65,11 @@ class Constants {
     /**
      * maximum value for texture coordinates which do not wrap
      */
-    final static float uvMax = 1f;
+    final public static float uvMax = 1f;
     /**
      * minimum value for texture coordinates which do not wrap
      */
-    final static float uvMin = 0f;
+    final public static float uvMin = 0f;
     /**
      * UV distance from top to rim (<0.5, >0)
      */
@@ -78,16 +78,16 @@ class Constants {
      * coefficient used to compute the stretchFactor for objects projected onto
      * a DomeMesh
      */
-    final static float stretchCoefficient =
+    final public static float stretchCoefficient =
             (FastMath.HALF_PI - uvMax) / (uvScale * uvScale);
     /**
      * the duration of a full day (in hours)
      */
-    final static int hoursPerDay = 24;
+    final public static int hoursPerDay = 24;
     /**
      * texture coordinates of the top of a DomeMesh
      */
-    final static Vector2f topUV = new Vector2f(topU, topV);
+    final public static Vector2f topUV = new Vector2f(topU, topV);
     // *************************************************************************
     // constructors
 
