@@ -179,7 +179,9 @@ public class SkyControl
     public SkyControl(AssetManager assetManager, Camera camera,
             float cloudFlattening, boolean starMotion, boolean bottomDome) {
         super(assetManager, camera, cloudFlattening, starMotion, bottomDome);
+
         topMaterial.addObject(sunIndex, "Textures/skies/suns/hazy-disc.png");
+        setPhase(phase);
 
         assert !isEnabled();
     }
@@ -236,7 +238,7 @@ public class SkyControl
      *
      * @param newPreset (or null to hide the moon)
      */
-    public void setPhase(LunarPhase newPreset) {
+    final public void setPhase(LunarPhase newPreset) {
         if (newPreset == LunarPhase.CUSTOM) {
             setPhaseAngle(phaseAngle);
             return;
