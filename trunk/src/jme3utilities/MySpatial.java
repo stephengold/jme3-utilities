@@ -28,6 +28,7 @@ package jme3utilities;
 import com.jme3.animation.AnimControl;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.light.Light;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -98,17 +99,34 @@ public class MySpatial
     }
 
     /**
-     * Find a node's first child which is an assignable from a given class.
+     * Find a node's first child which is an assignable from a specified class.
      *
-     * @param node which node
+     * @param node which node (not null)
      * @param spatialType which superclass of Spatial to search for
-     * @return the first matching child, or null if none exists
+     * @return the first matching child, or null if none found
      */
     public static <T extends Spatial> T findChild(Node node,
             Class<T> spatialType) {
         for (Spatial child : node.getChildren()) {
             if (spatialType.isAssignableFrom(child.getClass())) {
                 return (T) child;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Find a local light with a specified name.
+     *
+     * @param spatial which spatial (not null)
+     * @param lightName (not null)
+     * @return the first matching light, or null if none found
+     */
+    public static Light findLight(Spatial spatial, String lightName) {
+        for (Light light : spatial.getLocalLightList()) {
+            String name = light.getName();
+            if (lightName.equals(name)) {
+                return light;
             }
         }
         return null;
