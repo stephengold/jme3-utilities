@@ -26,6 +26,7 @@
 package jme3utilities.sky.test;
 
 import com.beust.jcommander.JCommander;
+import com.google.common.base.Joiner;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.light.AmbientLight;
@@ -83,6 +84,10 @@ public class TestSkyControl
      * number of shadow map splits (>0)
      */
     final private static int shadowMapSplits = 3;
+    /**
+     * joiner to reconstruct the command line
+     */
+    final private static Joiner commandLineJoiner = Joiner.on(" ");
     /**
      * message logger for this class
      */
@@ -164,7 +169,9 @@ public class TestSkyControl
          * Customize the window's title bar.
          */
         AppSettings settings = new AppSettings(true);
-        settings.setTitle(applicationName);
+        String title = applicationName + " "
+                + commandLineJoiner.join(arguments);
+        settings.setTitle(title);
         application.setSettings(settings);
 
         application.start();
