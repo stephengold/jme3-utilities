@@ -26,25 +26,14 @@
 package jme3utilities.sky;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.material.Material;
-import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
-import com.jme3.renderer.queue.RenderQueue.Bucket;
-import com.jme3.renderer.queue.RenderQueue.ShadowMode;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
-import jme3utilities.MySpatial;
-import jme3utilities.SimpleControl;
 import jme3utilities.math.MyMath;
 import jme3utilities.sky.textures.GlobeRenderer;
 
@@ -65,10 +54,9 @@ import jme3utilities.sky.textures.GlobeRenderer;
  * <p>
  * The "top" dome is oriented so that its rim coincides with the horizon. The
  * top dome implements the sun, moon, clear sky color, and horizon haze. Object
- * index 0 is used for the sun, and the remaining object indices are used for
- * phases of the moon.
+ * 0 is the sun, and object 1 is the moon.
  * <p>
- * This control simulates two layers of clouds. The cloud density may be
+ * This control simulates up to six layers of clouds. The cloud density may be
  * adjusted by invoking setCloudiness(). The rate of cloud motion may be
  * adjusted by invoking setCloudsSpeed(). Flatten the clouds for best results;
  * this puts them on a translucent "clouds only" dome.
@@ -82,7 +70,7 @@ import jme3utilities.sky.textures.GlobeRenderer;
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class SkyControl
-        extends SimpleControl {
+        extends SkyControlCore {
     // *************************************************************************
     // constants
 
@@ -121,19 +109,6 @@ public class SkyControl
      */
     final public static int moonIndex = 1;
     /**
-     * maximum number of cloud layers
-     */
-    final private static int numCloudLayers = 6;
-    /**
-     * number of samples in each longitudinal quadrant of the dome, including
-     * the top and the rim (>=2)
-     */
-    final private static int quadrantSamples = 16;
-    /**
-     * number of samples around the rim of the dome (>=3)
-     */
-    final private static int rimSamples = 60;
-    /**
      * object index for the sun
      */
     final public static int sunIndex = 0;
@@ -142,64 +117,13 @@ public class SkyControl
      */
     final private static Logger logger =
             Logger.getLogger(SkyControl.class.getName());
-    /**
-     * name for the bottom geometry
-     */
-    final private static String bottomName = "bottom";
-    /**
-     * name for the clouds-only geometry
-     */
-    final private static String cloudsName = "clouds";
-    /**
-     * name for the northern sky geometry
-     */
-    final private static String northName = "north";
-    /**
-     * name for the southern sky geometry
-     */
-    final private static String southName = "south";
     // *************************************************************************
     // fields
-    /**
-     * which asset manager to use for loading textures and material definitions:
-     * set by constructor
-     */
-    final private AssetManager assetManager;
-    /**
-     * true to create a material and geometry for the hemisphere below the
-     * horizon, false to leave this hemisphere to background color (if
-     * starMotionFlag==false) or stars (if starMotionFlag==true)
-     */
-    final private boolean bottomDomeFlag;
     /**
      * true if clouds modulate the main light, false for steady light (the
      * default)
      */
     private boolean cloudModulationFlag = false;
-    /**
-     * true to simulate moving stars, false for fixed stars
-     */
-    final private boolean starMotionFlag;
-    /**
-     * the application's camera: set by constructor
-     */
-    final private Camera camera;
-    /**
-     * information about individual cloud layers
-     */
-    final private CloudLayer[] cloudLayers;
-    /**
-     * mesh used to generate dome geometries
-     */
-    private DomeMesh mesh = null;
-    /**
-     * simulation time for cloud layer animations
-     */
-    private float cloudsAnimationTime = 0f;
-    /**
-     * rate of motion for cloud layer animations (1->standard)
-     */
-    private float cloudsRelativeSpeed = 1f;
     /**
      * texture scale for moon images; larger value gives a larger moon
      *
@@ -217,18 +141,6 @@ public class SkyControl
      */
     private float sunScale = 0.08f;
     /**
-     * flattened dome for clouds only: set by initialize()
-     */
-    private Geometry cloudsOnlyDome = null;
-    /**
-     * dome representing the northern stars: set by initialize()
-     */
-    private Geometry northDome = null;
-    /**
-     * dome representing the southern stars: set by initialize()
-     */
-    private Geometry southDome = null;
-    /**
      * off-screen renderer for the moon
      */
     private GlobeRenderer moonRenderer = null;
@@ -236,22 +148,6 @@ public class SkyControl
      * phase of the moon: default is FULL
      */
     private LunarPhase phase = LunarPhase.FULL;
-    /**
-     * material for bottom dome: set by constructor
-     */
-    final private Material bottomMaterial;
-    /**
-     * parent node for attaching the geometries: set by initialize()
-     */
-    private Node skyNode = null;
-    /**
-     * material for clouds-only dome: set by constructor
-     */
-    final private SkyMaterial cloudsMaterial;
-    /**
-     * material for top dome: set by constructor
-     */
-    final private SkyMaterial topMaterial;
     /**
      * orientations of the sun and stars relative to the observer
      */
@@ -282,114 +178,13 @@ public class SkyControl
      */
     public SkyControl(AssetManager assetManager, Camera camera,
             float cloudFlattening, boolean starMotion, boolean bottomDome) {
-        super.setEnabled(false);
-        if (assetManager == null) {
-            throw new NullPointerException("asset manager should not be null");
-        }
-        if (camera == null) {
-            throw new NullPointerException("camera should not be null");
-        }
-        if (!(cloudFlattening >= 0f && cloudFlattening < 1f)) {
-            logger.log(Level.SEVERE, "cloudFlattening={0}", cloudFlattening);
-            throw new IllegalArgumentException(
-                    "flattening should be between 0 and 1");
-        }
-
-        this.assetManager = assetManager;
-        this.camera = camera;
-        this.starMotionFlag = starMotion;
-        this.bottomDomeFlag = bottomDome;
-        /*
-         * Create and initialize the sky material for sun, moon, and haze.
-         */
-        int topObjects = 2; // a sun and a moon
-        boolean cloudDomeFlag = cloudFlattening != 0f;
-        int topCloudLayers = cloudDomeFlag ? 0 : numCloudLayers;
-        topMaterial = new SkyMaterial(assetManager, topObjects, topCloudLayers);
-        topMaterial.initialize();
-        topMaterial.addHaze();
+        super(assetManager, camera, cloudFlattening, starMotion, bottomDome);
         topMaterial.addObject(sunIndex, "Textures/skies/suns/hazy-disc.png");
-        if (!starMotionFlag) {
-            topMaterial.addStars();
-        }
-
-        if (cloudDomeFlag) {
-            /*
-             * Create and initialize a separate sky material for clouds only.
-             */
-            int numObjects = 0;
-            cloudsMaterial = new SkyMaterial(assetManager, numObjects,
-                    numCloudLayers);
-            cloudsMaterial.initialize();
-            cloudsMaterial.getAdditionalRenderState().setDepthWrite(false);
-            cloudsMaterial.setClearColor(ColorRGBA.BlackNoAlpha);
-        } else {
-            cloudsMaterial = topMaterial;
-        }
-        /*
-         * Initialize the cloud layers.
-         */
-        cloudLayers = new CloudLayer[numCloudLayers];
-        for (int layerIndex = 0; layerIndex < numCloudLayers; layerIndex++) {
-            cloudLayers[layerIndex] =
-                    new CloudLayer(cloudsMaterial, layerIndex);
-        }
-
-        if (bottomDomeFlag) {
-            bottomMaterial = Misc.createUnshadedMaterial(assetManager);
-        } else {
-            bottomMaterial = null;
-        }
-
-        createSpatials(cloudFlattening);
-        if (starMotionFlag) {
-            setStarMaps("Textures/skies/star-maps");
-        }
 
         assert !isEnabled();
     }
     // *************************************************************************
     // new methods exposed
-
-    /**
-     * Clear the star maps.
-     */
-    public void clearStarMaps() {
-        if (!starMotionFlag) {
-            topMaterial.removeStars();
-            return;
-        }
-        /*
-         * Don't remove the north/south domes because, then how would you add
-         * them back into the render queue ahead of the top dome?
-         * Instead, make the north/south domes fully transparent.
-         */
-        Material clear = Misc.createUnshadedMaterial(assetManager);
-        clear.setColor("Color", ColorRGBA.BlackNoAlpha);
-        RenderState additional = clear.getAdditionalRenderState();
-        additional.setBlendMode(RenderState.BlendMode.Alpha);
-        additional.setDepthWrite(false);
-        northDome.setMaterial(clear);
-        southDome.setMaterial(clear);
-    }
-
-    /**
-     * Access a particular cloud layer.
-     *
-     * @param layerIndex (<numCloudLayers, >=0)
-     * @return the pre-existing object
-     */
-    public CloudLayer getCloudLayer(int layerIndex) {
-        if (layerIndex < 0 || layerIndex >= numCloudLayers) {
-            logger.log(Level.SEVERE, "index={0}", layerIndex);
-            throw new IllegalArgumentException("index out of range");
-        }
-
-        CloudLayer layer = cloudLayers[layerIndex];
-
-        assert layer != null;
-        return layer;
-    }
 
     /**
      * Access the orientations of the sun and stars.
@@ -399,25 +194,6 @@ public class SkyControl
     public SunAndStars getSunAndStars() {
         assert sunAndStars != null;
         return sunAndStars;
-    }
-
-    /**
-     * Alter an object's color map texture.
-     *
-     * @param objectIndex which object (>=0)
-     * @param newColorMap texture to apply (not null)
-     */
-    public void setObjectTexture(int objectIndex, Texture newColorMap) {
-        if (objectIndex < 0) {
-            logger.log(Level.SEVERE, "objectIndex={0}", objectIndex);
-            throw new IllegalArgumentException(
-                    "objectIndex should not be negative");
-        }
-        if (newColorMap == null) {
-            throw new NullPointerException("texture should not be null");
-        }
-
-        topMaterial.addObject(objectIndex, newColorMap);
     }
 
     /**
@@ -431,24 +207,6 @@ public class SkyControl
     }
 
     /**
-     * Alter the opacity of all cloud layers.
-     *
-     * @param newAlpha desired opacity of the cloud layers (<=1, >=0)
-     */
-    public void setCloudiness(float newAlpha) {
-        if (!(newAlpha >= Constants.alphaMin
-                && newAlpha <= Constants.alphaMax)) {
-            logger.log(Level.SEVERE, "alpha={0}", newAlpha);
-            throw new IllegalArgumentException(
-                    "alpha should be between 0 and 1, inclusive");
-        }
-
-        for (int layer = 0; layer < numCloudLayers; layer++) {
-            cloudLayers[layer].setOpacity(newAlpha);
-        }
-    }
-
-    /**
      * Alter the cloud modulation flag.
      *
      * @param newValue true for clouds to modulate the main light, false for a
@@ -456,41 +214,6 @@ public class SkyControl
      */
     public void setCloudModulation(boolean newValue) {
         cloudModulationFlag = newValue;
-    }
-
-    /**
-     * Alter the speed or direction of cloud motion.
-     *
-     * @param newRate rate relative to the standard (may be negative)
-     */
-    public void setCloudRate(float newRate) {
-        cloudsRelativeSpeed = newRate;
-    }
-
-    /**
-     * Alter the vertical position of the clouds-only dome. When the scene's
-     * horizon lies below the astronomical horizon, it may be helpful to depress
-     * the clouds-only dome.
-     *
-     * @param newYOffset desired vertical offset as a fraction of the dome
-     * height (<1, >=0 when flattening>0; 0 when flattening=0)
-     */
-    public void setCloudYOffset(float newYOffset) {
-        if (cloudsOnlyDome == null) {
-            if (newYOffset != 0f) {
-                logger.log(Level.SEVERE, "offset={0}", newYOffset);
-                throw new IllegalArgumentException("offset should be 0");
-            }
-            return;
-        }
-        if (!(newYOffset >= 0f && newYOffset < 1f)) {
-            logger.log(Level.SEVERE, "offset={0}", newYOffset);
-            throw new IllegalArgumentException(
-                    "offset should be between 0 and 1");
-        }
-
-        float deltaY = -newYOffset * cloudsOnlyDome.getLocalScale().y;
-        cloudsOnlyDome.setLocalTranslation(0f, deltaY, 0f);
     }
 
     /**
@@ -568,87 +291,8 @@ public class SkyControl
         sunScale = newDiameter * mesh.uvScale
                 / (Constants.discDiameter * FastMath.HALF_PI);
     }
-
-    /**
-     * Alter the star maps.
-     *
-     * @param assetPath if starMotion is true: path to an asset folder
-     * containing "northern.png" and "southern.png" textures (not null)<br>
-     * if starMotion is false: path to a star dome texture asset (not null)
-     */
-    final public void setStarMaps(String assetPath) {
-        if (assetPath == null) {
-            throw new NullPointerException("path should not be null");
-        }
-
-        if (!starMotionFlag) {
-            topMaterial.addStars(assetPath);
-            return;
-        }
-
-        String northPath = String.format("%s/%sern.png", assetPath, northName);
-        Material north = Misc.createUnshadedMaterial(assetManager, northPath);
-        northDome.setMaterial(north);
-
-        String southPath = String.format("%s/%sern.png", assetPath, southName);
-        Material south = Misc.createUnshadedMaterial(assetManager, southPath);
-        southDome.setMaterial(south);
-    }
     // *************************************************************************
-    // AbstractControl methods
-
-    /**
-     * Alter the visibility of this control's sky. This control must be added to
-     * a node before its sky can be revealed.
-     *
-     * @param newState if true, reveal the sky; if false, hide it
-     */
-    @Override
-    public void setEnabled(boolean newState) {
-        Node node = (Node) spatial;
-
-        if (enabled && !newState) {
-            if (node != null) {
-                /*
-                 * Detach the sky node from the controlled node.
-                 */
-                int position = node.detachChild(skyNode);
-                assert position != -1;
-            }
-
-        } else if (!enabled && newState) {
-            if (node == null) {
-                throw new IllegalStateException(
-                        "cannot enable control before it's added to a node");
-            }
-            /*
-             * Attach the sky node to the controlled node.
-             */
-            node.attachChild(skyNode);
-            /*
-             * Scale the sky node so that its furthest geometries are midway
-             * between the near and far planes of the view frustum.
-             */
-            float far = camera.getFrustumFar();
-            float near = camera.getFrustumNear();
-            float radius = (near + far) / 2f;
-            MySpatial.setWorldScale(skyNode, radius);
-        }
-        super.setEnabled(newState);
-    }
-
-    /**
-     * Alter the controlled node.
-     *
-     * @param newNode which node to control (or null)
-     */
-    @Override
-    public void setSpatial(Spatial newNode) {
-        super.setSpatial(newNode);
-        if (enabled && newNode != null) {
-            ((Node) spatial).attachChild(skyNode);
-        }
-    }
+    // SkyControlCore methods
 
     /**
      * Callback to update this control. (Invoked once per frame.)
@@ -662,77 +306,11 @@ public class SkyControl
             return;
         }
         assert tpf >= 0f : tpf;
-        updateClouds(tpf);
-        /*
-         * Translate the sky node to center it on the camera.
-         */
-        Vector3f cameraLocation = camera.getLocation();
-        MySpatial.setWorldLocation(skyNode, cameraLocation);
 
         updateAll();
     }
     // *************************************************************************
     // private methods
-
-    /**
-     * Create and initialize the sky node and all its dome geometries.
-     *
-     * @param cloudFlattening the oblateness (ellipticity) of the dome with the
-     * clouds: 0=no flattening (hemisphere), 1=maximum flattening
-     */
-    private void createSpatials(float cloudFlattening) {
-        /*
-         * A mesh which serves as a prototype for the dome geometries.
-         */
-        mesh = new DomeMesh(rimSamples, quadrantSamples);
-        /*
-         * A node which serves as the parent for the dome geometries.
-         */
-        skyNode = new Node("sky node");
-        skyNode.setQueueBucket(Bucket.Sky);
-        skyNode.setShadowMode(ShadowMode.Off);
-        /*
-         * Attach geometries to the sky node from the outside in
-         * because they'll be rendered in that order.
-         */
-        if (starMotionFlag) {
-            northDome = new Geometry(northName, mesh);
-            skyNode.attachChild(northDome);
-
-            southDome = new Geometry(southName, mesh);
-            skyNode.attachChild(southDome);
-        }
-
-        Geometry topDome = new Geometry("top", mesh);
-        skyNode.attachChild(topDome);
-        topDome.setMaterial(topMaterial);
-
-        if (bottomDomeFlag) {
-            DomeMesh bottomMesh = new DomeMesh(3, 2);
-            Geometry bottomDome = new Geometry(bottomName, bottomMesh);
-            skyNode.attachChild(bottomDome);
-
-            Quaternion upsideDown = new Quaternion();
-            upsideDown.lookAt(Vector3f.UNIT_X, Vector3f.UNIT_Y.negate());
-            bottomDome.setLocalRotation(upsideDown);
-            bottomDome.setMaterial(bottomMaterial);
-        }
-
-        if (cloudsMaterial != topMaterial) {
-            assert cloudFlattening > 0f : cloudFlattening;
-            assert cloudFlattening < 1f : cloudFlattening;
-
-            cloudsOnlyDome = new Geometry(cloudsName, mesh);
-            skyNode.attachChild(cloudsOnlyDome);
-            /*
-             * Flatten the clouds-only dome in order to foreshorten clouds
-             * near the horizon -- even if cloudYOffset=0.
-             */
-            float yScale = 1f - cloudFlattening;
-            cloudsOnlyDome.setLocalScale(1f, yScale, 1f);
-            cloudsOnlyDome.setMaterial(cloudsMaterial);
-        }
-    }
 
     /**
      * Compute where mainDirection intersects the cloud dome in the dome's local
@@ -889,20 +467,6 @@ public class SkyControl
     }
 
     /**
-     * Update the cloud layers. (Invoked once per frame.)
-     *
-     * @param tpf seconds since the previous update (>=0)
-     */
-    private void updateClouds(float tpf) {
-        assert tpf >= 0f : tpf;
-
-        cloudsAnimationTime += tpf * cloudsRelativeSpeed;
-        for (int layer = 0; layer < numCloudLayers; layer++) {
-            cloudLayers[layer].updateOffset(cloudsAnimationTime);
-        }
-    }
-
-    /**
      * Update background colors, cloud colors, haze color, sun color, lights,
      * and shadows.
      *
@@ -966,21 +530,7 @@ public class SkyControl
         if (bottomMaterial != null) {
             bottomMaterial.setColor("Color", baseColor);
         }
-        /*
-         * Each cloud layer gets a saturated version of the base color,
-         * with its opacity equal to the sky's cloudiness.
-         */
-        float factor = 1f / MyMath.max(baseColor.r, baseColor.g, baseColor.b);
-        ColorRGBA cloudsColor = baseColor.mult(factor);
-        if (!sunUp && !moonUp) {
-            /*
-             * On moonless nights, darken all clouds by 75%.
-             */
-            cloudsColor.multLocal(0.25f);
-        }
-        for (int layer = 0; layer < numCloudLayers; layer++) {
-            cloudLayers[layer].setColor(cloudsColor);
-        }
+        ColorRGBA cloudsColor = updateCloudsColor(baseColor, sunUp, moonUp);
         /*
          * The main light is based on the base color during the day,
          * on moonlight at night when the moon is up, and on starlight
@@ -1012,7 +562,7 @@ public class SkyControl
         }
         main.multLocal(mainFactor);
         /*
-         * The ambient light color is based on the cloud color; its intensity is
+         * The ambient light color is based on the clouds color; its intensity is
          * modulated according to the "slack" left by strongest component
          * of the main light.
          */
