@@ -153,9 +153,9 @@
                                  stepSize="0.01"/>
 
                         <panel style="statusPanel">
-                            <control name="label" id="solarLongSliderStatus"/>
+                            <control name="label" id="solarLongitudeSliderStatus"/>
                         </panel>
-                        <control name="horizontalSlider" id="solarLongSlider"
+                        <control name="horizontalSlider" id="solarLongitudeSlider"
                                  buttonStepSize="90"
                                  initial="0"
                                  max="360"
@@ -173,9 +173,9 @@
                         </panel>
 
                         <panel style="statusPanel">
-                            <control name="label" id="phaseDegreesSliderStatus"/>
+                            <control name="label" id="customLunarPhaseSliderStatus"/>
                         </panel>
-                        <control name="horizontalSlider" id="phaseDegreesSlider"
+                        <control name="horizontalSlider" id="customLunarPhaseSlider"
                                  buttonStepSize="90"
                                  initial="180"
                                  max="360"
