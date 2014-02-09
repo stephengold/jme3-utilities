@@ -194,71 +194,9 @@ public class TestSkyControl
                 MyString.quote(Misc.getVersionShort()));
 
         initializeCamera();
-        /*
-         * Add light sources and shadows.
-         */
-        mainLight = new DirectionalLight();
-        mainLight.setName("main");
-        sceneNode.addLight(mainLight);
-
-        ambientLight = new AmbientLight();
-        ambientLight.setName("ambient");
-        sceneNode.addLight(ambientLight);
-        /*
-         * Create, add, and enable the landscape.
-         */
         initializeLandscape();
-        /*
-         * Create a SkyControl to animate the sky.
-         */
-        float cloudFlattening;
-        boolean starMotion;
-        boolean bottomDome;
-        if (parameters.singleDome()) {
-            cloudFlattening = 0f; // single dome implies clouds on hemisphere
-            starMotion = false; // single dome implies non-moving stars
-            bottomDome = false; // single dome implies exposed background
-        } else {
-            cloudFlattening = 0.9f; // overhead clouds 10x closer than horizon
-            starMotion = true; // allow stars to move
-            bottomDome = true; // helpful in case the scene has a low horizon
-        }
-        control = new SkyControl(assetManager, cam, cloudFlattening, starMotion,
-                bottomDome);
-        if (parameters.cyclone()) {
-            CloudLayer mainLayer = control.getCloudLayer(0);
-            mainLayer.setMotion(0.37f, 0f, 0.2f, 0.001f);
-            mainLayer.setTexture("Textures/skies/clouds/cyclone.png", 0.3f);
-            control.getCloudLayer(1).clearTexture();
-        }
-        if (parameters.highResStars() && !parameters.singleDome()) {
-            control.setStarMaps("Textures/skies/star-maps/16m");
-        }
-        Texture moonTexture = Misc.loadTexture(assetManager,
-                "Textures/skies/moon/clementine.png");
-        Material moonMaterial = Misc.createShadedMaterial(assetManager,
-                moonTexture);
-        int equatorSamples = 12;
-        int meridianSamples = 24;
-        int resolution = 512;
-        GlobeRenderer moonRenderer = new GlobeRenderer(moonMaterial,
-                Image.Format.Luminance8Alpha8, equatorSamples, meridianSamples,
-                resolution);
-        stateManager.attach(moonRenderer);
-        control.setMoonRenderer(moonRenderer);
-        /*
-         * Put SkyControl in charge of updating the lights and
-         * viewport background. (all optional)
-         */
-        Updater updater = control.getUpdater();
-        updater.addViewPort(viewPort);
-        updater.setAmbientLight(ambientLight);
-        updater.setMainLight(mainLight);
-        /*
-         * Add SkyControl to the scene and enable it.
-         */
-        sceneNode.addControl(control);
-        control.setEnabled(true);
+        initializeLights();
+        initializeSky();
         /*
          * Add shadows to the main view port, with shadow intensities
          * updated by SkyControl.
@@ -266,39 +204,7 @@ public class TestSkyControl
         addShadows(viewPort);
 
         if (parameters.water()) {
-            /*
-             * Create a horizontal square of water and add it to the scene.
-             *
-             * During initialization of the water processor (on the first
-             * update), the processor will discover the SkyControl and put the
-             * SkyControl in charge of the processor's background colors.
-             */
-            WaterProcessor wp = new WaterProcessor(assetManager);
-            viewPort.addProcessor(wp);
-            wp.addListener(updater);
-            wp.addListener(this);
-            //wp.setDebug(true);
-            wp.setDistortionMix(1f);
-            wp.setDistortionScale(0.1f);
-            wp.setReflectionClippingOffset(0f);
-            wp.setReflectionScene(sceneNode);
-            wp.setRefractionClippingOffset(0f);
-            wp.setWaterTransparency(0f);
-            wp.setWaveSpeed(0.02f);
-
-            float diameter = 400f; // world units
-            Geometry water = wp.createWaterGeometry(diameter, diameter);
-            rootNode.attachChild(water);
-
-            float depth = 0.3f; // world units
-            Plane waterPlane = new Plane(Vector3f.UNIT_Y, depth);
-            wp.setPlane(waterPlane);
-            wp.setWaterDepth(depth);
-
-            float xzOffset = diameter / 2f;
-            water.setLocalTranslation(-xzOffset, depth, xzOffset);
-            Vector2f textureScale = new Vector2f(10f, 10f);
-            water.getMesh().scaleTextureCoordinates(textureScale);
+            addWater();
         }
         /*
          * Add bloom filter to the main view port.
@@ -463,6 +369,97 @@ public class TestSkyControl
     }
 
     /**
+     * Create a horizontal square of water and add it to the scene.
+     * <p>
+     * During initialization of the water processor (on the first update), the
+     * processor will discover the SkyControl and put the SkyControl in charge
+     * of the processor's background colors.
+     */
+    private void addWater() {
+        WaterProcessor wp = new WaterProcessor(assetManager);
+        viewPort.addProcessor(wp);
+        wp.addListener(control.getUpdater());
+        wp.addListener(this);
+        //wp.setDebug(true);
+        wp.setDistortionMix(1f);
+        wp.setDistortionScale(0.1f);
+        wp.setReflectionClippingOffset(0f);
+        wp.setReflectionScene(sceneNode);
+        wp.setRefractionClippingOffset(0f);
+        wp.setWaterTransparency(0f);
+        wp.setWaveSpeed(0.02f);
+
+        float diameter = 400f; // world units
+        Geometry water = wp.createWaterGeometry(diameter, diameter);
+        rootNode.attachChild(water);
+
+        float depth = 0.3f; // world units
+        Plane waterPlane = new Plane(Vector3f.UNIT_Y, depth);
+        wp.setPlane(waterPlane);
+        wp.setWaterDepth(depth);
+
+        float xzOffset = diameter / 2f;
+        water.setLocalTranslation(-xzOffset, depth, xzOffset);
+        Vector2f textureScale = new Vector2f(10f, 10f);
+        water.getMesh().scaleTextureCoordinates(textureScale);
+    }
+
+    /**
+     * Add SkyControl to the scene and enable it.
+     */
+    private void initializeSky() {
+        /*
+         * Create a SkyControl to animate the sky.
+         */
+        float cloudFlattening;
+        boolean starMotion;
+        boolean bottomDome;
+        if (parameters.singleDome()) {
+            cloudFlattening = 0f; // single dome implies clouds on hemisphere
+            starMotion = false; // single dome implies non-moving stars
+            bottomDome = false; // single dome implies exposed background
+        } else {
+            cloudFlattening = 0.9f; // overhead clouds 10x closer than horizon
+            starMotion = true; // allow stars to move
+            bottomDome = true; // helpful in case the scene has a low horizon
+        }
+        control = new SkyControl(assetManager, cam, cloudFlattening, starMotion,
+                bottomDome);
+        if (parameters.cyclone()) {
+            CloudLayer mainLayer = control.getCloudLayer(0);
+            mainLayer.setMotion(0.37f, 0f, 0.2f, 0.001f);
+            mainLayer.setTexture("Textures/skies/clouds/cyclone.png", 0.3f);
+            control.getCloudLayer(1).clearTexture();
+        }
+        if (parameters.highResStars() && !parameters.singleDome()) {
+            control.setStarMaps("Textures/skies/star-maps/16m");
+        }
+        Texture moonTexture = Misc.loadTexture(assetManager,
+                "Textures/skies/moon/clementine.png");
+        Material moonMaterial = Misc.createShadedMaterial(assetManager,
+                moonTexture);
+        int equatorSamples = 12;
+        int meridianSamples = 24;
+        int resolution = 512;
+        GlobeRenderer moonRenderer = new GlobeRenderer(moonMaterial,
+                Image.Format.Luminance8Alpha8, equatorSamples, meridianSamples,
+                resolution);
+        stateManager.attach(moonRenderer);
+        control.setMoonRenderer(moonRenderer);
+        /*
+         * Put SkyControl in charge of updating the lights and
+         * viewport background. (all optional)
+         */
+        Updater updater = control.getUpdater();
+        updater.addViewPort(viewPort);
+        updater.setAmbientLight(ambientLight);
+        updater.setMainLight(mainLight);
+
+        sceneNode.addControl(control);
+        control.setEnabled(true);
+    }
+
+    /**
      * Configure the default camera, including flyCam.
      */
     private void initializeCamera() {
@@ -493,6 +490,19 @@ public class TestSkyControl
         landscapeControl = new LandscapeControl(assetManager);
         sceneNode.addControl(landscapeControl);
         landscapeControl.setEnabled(true);
+    }
+
+    /**
+     * Add light sources to the scene.
+     */
+    private void initializeLights() {
+        mainLight = new DirectionalLight();
+        mainLight.setName("main");
+        sceneNode.addLight(mainLight);
+
+        ambientLight = new AmbientLight();
+        ambientLight.setName("ambient");
+        sceneNode.addLight(ambientLight);
     }
 
     /**
