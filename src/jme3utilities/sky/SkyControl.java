@@ -46,6 +46,7 @@ import jme3utilities.Misc;
 import jme3utilities.MySpatial;
 import jme3utilities.SimpleControl;
 import jme3utilities.math.MyMath;
+import jme3utilities.sky.textures.GlobeRenderer;
 
 /**
  * A simple control to simulate a dynamic sky using assets and techniques

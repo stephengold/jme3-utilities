@@ -55,10 +55,10 @@ import jme3utilities.WaterProcessor;
 import jme3utilities.debug.LandscapeControl;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.sky.CloudLayer;
-import jme3utilities.sky.GlobeRenderer;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
 import jme3utilities.sky.Updater;
+import jme3utilities.sky.textures.GlobeRenderer;
 import jme3utilities.ui.GuiApplication;
 
 /**
