@@ -28,6 +28,9 @@ package jme3utilities;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.TextureKey;
 import com.jme3.material.Material;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.SceneProcessor;
+import com.jme3.renderer.ViewPort;
 import com.jme3.texture.Texture;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -129,6 +132,32 @@ public class Misc {
     }
 
     /**
+     * Get the existing filter post-processor for a viewport, or if it has none
+     * add a new one to it.
+     *
+     * @param viewPort (not null)
+     * @param assetManager (not null)
+     */
+    public static FilterPostProcessor getFpp(ViewPort viewPort,
+            AssetManager assetManager) {
+        if (assetManager == null) {
+            throw new NullPointerException("asset manager should not be null");
+        }
+
+        for (SceneProcessor processor : viewPort.getProcessors()) {
+            if (processor instanceof FilterPostProcessor) {
+                return (FilterPostProcessor) processor;
+            }
+        }
+        /*
+         * Add a new filter post-processor.
+         */
+        FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+        viewPort.addProcessor(fpp);
+        return fpp;
+    }
+
+    /**
      * Generate the filesystem path to a file in the user's home directory.
      *
      * @param fileName (not null)
@@ -149,7 +178,7 @@ public class Misc {
      *
      * @return the package name, branch, and revision of this file
      */
-    public static String getVersion() {
+    public static String getVersion() {//
         return "jme3-utilities skybeta $Rev$";
     }
 

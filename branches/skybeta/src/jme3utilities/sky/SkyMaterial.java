@@ -462,6 +462,13 @@ public class SkyMaterial
     }
 
     /**
+     * Remove any stars from this material.
+     */
+    public void removeStars() {
+        clearParam("StarsColorMap");
+    }
+
+    /**
      * Alter the color of clear sky.
      *
      * @param newColor (not null)
