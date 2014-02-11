@@ -101,7 +101,7 @@ public class SkyControl
             new ColorRGBA(0.6f, 0.3f, 0.15f, Constants.alphaMax);
     /**
      * extent of the twilight periods before sunrise and after sunset, expressed
-     * as the sine of the sun's angle below the horizon (<=1, >=0)
+     * as the sine of the sun's angle below the horizon (&le;1, &ge;0)
      */
     final private static float limitOfTwilight = 0.1f;
     /**
@@ -126,7 +126,7 @@ public class SkyControl
     private boolean cloudModulationFlag = false;
     /**
      * texture scale for moon images; larger value gives a larger moon
-     *
+     * <p>
      * The default value (0.02) exaggerates the moon's size by a factor of 8.
      */
     private float moonScale = 0.02f;
@@ -136,7 +136,7 @@ public class SkyControl
     private float phaseAngle = FastMath.PI;
     /**
      * texture scale for sun images; larger value would give a larger sun
-     *
+     * <p>
      * The default value (0.08) exaggerates the sun's size by a factor of 8.
      */
     private float sunScale = 0.08f;
@@ -221,7 +221,7 @@ public class SkyControl
     /**
      * Alter the angular diameter of the moon.
      *
-     * @param newDiameter (in radians, <Pi, >0)
+     * @param newDiameter (in radians, &lt;Pi, &gt;0)
      */
     public void setLunarDiameter(float newDiameter) {
         if (!(newDiameter > 0f && newDiameter < FastMath.PI)) {
@@ -230,7 +230,7 @@ public class SkyControl
                     "diameter should be between 0 and Pi");
         }
 
-        moonScale = newDiameter * mesh.uvScale / FastMath.HALF_PI;
+        moonScale = newDiameter * topMesh.uvScale / FastMath.HALF_PI;
     }
 
     /**
@@ -258,7 +258,7 @@ public class SkyControl
     /**
      * Customize the phase angle of the moon for off-screen rendering.
      *
-     * @param newAngle (in radians, <=2*Pi, >=0)
+     * @param newAngle (in radians, &le;2*Pi, &ge;0)
      */
     public void setPhaseAngle(float newAngle) {
         if (!(newAngle >= 0f && newAngle <= FastMath.TWO_PI)) {
@@ -281,7 +281,7 @@ public class SkyControl
     /**
      * Alter the angular diameter of the sun.
      *
-     * @param newDiameter (in radians, <Pi, >0)
+     * @param newDiameter (in radians, &lt;Pi, &gt;0)
      */
     public void setSolarDiameter(float newDiameter) {
         if (!(newDiameter > 0f && newDiameter < FastMath.PI)) {
@@ -290,7 +290,7 @@ public class SkyControl
                     "diameter should be between 0 and Pi");
         }
 
-        sunScale = newDiameter * mesh.uvScale
+        sunScale = newDiameter * topMesh.uvScale
                 / (Constants.discDiameter * FastMath.HALF_PI);
     }
     // *************************************************************************
@@ -299,7 +299,7 @@ public class SkyControl
     /**
      * Callback to update this control. (Invoked once per frame.)
      *
-     * @param tpf seconds since the previous update (>=0)
+     * @param tpf seconds since the previous update (&ge;0)
      */
     @Override
     public void update(float tpf) {
@@ -401,7 +401,7 @@ public class SkyControl
          * of the moon.
          */
         Vector3f north = sunAndStars.convertToWorld(1f, longitude);
-        Vector2f uvNorth = mesh.directionUV(north);
+        Vector2f uvNorth = topMesh.directionUV(north);
         if (uvNorth != null) {
             Vector2f offset = uvNorth.subtract(uvCenter);
             assert offset.length() > 0f : offset;
@@ -413,7 +413,7 @@ public class SkyControl
          * of the moon.
          */
         Vector3f south = sunAndStars.convertToWorld(-1f, longitude);
-        Vector2f uvSouth = mesh.directionUV(south);
+        Vector2f uvSouth = topMesh.directionUV(south);
         if (uvSouth != null) {
             Vector2f offset = uvCenter.subtract(uvSouth);
             assert offset.length() > 0f : offset;
@@ -557,7 +557,7 @@ public class SkyControl
              * Compute the texture coordinates of the cloud dome
              * at the point of intersection.
              */
-            Vector2f texCoord = mesh.directionUV(intersection);
+            Vector2f texCoord = cloudsMesh.directionUV(intersection);
 
             float cloudsTransmission = cloudsMaterial.getTransmission(texCoord);
             mainFactor *= cloudsTransmission;
@@ -615,7 +615,7 @@ public class SkyControl
         celestialLongitude = MyMath.modulo(celestialLongitude, FastMath.TWO_PI);
         Vector3f worldDirection =
                 sunAndStars.convertToWorld(0f, celestialLongitude);
-        Vector2f uvCenter = mesh.directionUV(worldDirection);
+        Vector2f uvCenter = topMesh.directionUV(worldDirection);
 
         if (uvCenter != null) {
             Vector2f rotation = lunarRotation(celestialLongitude, uvCenter);
@@ -641,9 +641,9 @@ public class SkyControl
         Vector3f worldDirection =
                 sunAndStars.convertToWorld(0f, solarLongitude);
         /*
-         * Convert world direction to mesh coordinates.
+         * Convert world direction to topMesh coordinates.
          */
-        Vector2f uv = mesh.directionUV(worldDirection);
+        Vector2f uv = topMesh.directionUV(worldDirection);
         if (uv == null) {
             /*
              * The sun is below the horizon, so hide it.

@@ -73,7 +73,7 @@ public class TestSkyControlHud
      */
     private boolean cloudModulation = true;
     /**
-     * maximum opacity for clouds (<=1, >=0)
+     * maximum opacity for clouds (&le;1, &ge;0)
      */
     private float cloudiness = 0f;
     /**
@@ -86,11 +86,11 @@ public class TestSkyControlHud
      */
     private float cloudYOffset = 0f;
     /**
-     * observer's latitude (radians north of equator, <=Pi/2, >=-Pi/2)
+     * observer's latitude (radians north of equator, &le;Pi/2, &ge;-Pi/2)
      */
     private float latitude = 0f;
     /**
-     * angular diameter of the moon (radians, <Pi, >0)
+     * angular diameter of the moon (radians, &lt;Pi, &gt;0)
      */
     private float lunarDiameter = 0.0092f;
     /**
@@ -98,15 +98,19 @@ public class TestSkyControlHud
      */
     private float relief = 0f;
     /**
-     * phase angle for custom moon (radians east of the sun, <=2*Pi, >=0)
+     * phase angle for custom moon (radians east of the sun, &le;2*Pi, &ge;0)
      */
-    private float phaseAngle = FastMath.HALF_PI;
+    private float phaseAngle = FastMath.PI;
     /**
-     * sun's longitude (radians east of vernal equinox, <=2*Pi, >=0)
+     * sun's longitude (radians east of vernal equinox, &le;2*Pi, &ge;0)
      */
     private float solarLongitude = 0f;
     /**
-     * clock direction (<=1, >=-1)
+     * vertical angle for top dome (radians from top to rim, &lt;Pi, &gt;0)
+     */
+    private float topVerticalAngle = FastMath.HALF_PI;
+    /**
+     * clock direction (&le;1, &ge;-1)
      */
     private int clockDirection = +1;
     /**
@@ -134,7 +138,7 @@ public class TestSkyControlHud
     /**
      * Read the current opacity of the clouds.
      *
-     * @return maximum opacity (<=1, >=0)
+     * @return maximum opacity (&le;1, &ge;0)
      */
     float getCloudiness() {
         assert cloudiness >= 0f : cloudiness;
@@ -164,7 +168,7 @@ public class TestSkyControlHud
     /**
      * Read the current vertical offset of the clouds-only dome.
      *
-     * @return offset as a fraction of dome height (<1, >=0)
+     * @return offset as a fraction of dome height (&lt;1, &ge;0)
      */
     float getCloudYOffset() {
         assert cloudYOffset >= 0f : cloudYOffset;
@@ -175,7 +179,7 @@ public class TestSkyControlHud
     /**
      * Read the current solar time.
      *
-     * @return hours since midnight (<24, >=0)
+     * @return hours since midnight (<24, &ge;0)
      */
     float getHour() {
         float hour = timeOfDay.getHour();
@@ -188,7 +192,7 @@ public class TestSkyControlHud
     /**
      * Read the observer's latitude.
      *
-     * @return angle (radians north of equator, <=Pi/2, >=-Pi/2)
+     * @return angle (radians north of equator, &le;Pi/2, &ge;-Pi/2)
      */
     float getLatitude() {
         assert latitude >= -FastMath.HALF_PI : latitude;
@@ -199,7 +203,7 @@ public class TestSkyControlHud
     /**
      * Read the angular diameter of the moon.
      *
-     * @return in radians (<Pi, >0)
+     * @return in radians (&lt;Pi, &gt;0)
      */
     float getLunarDiameter() {
         assert lunarDiameter >= 0f : lunarDiameter;
@@ -228,7 +232,7 @@ public class TestSkyControlHud
     /**
      * Read the phase angle for custom moon.
      *
-     * @return angle (radians east of the sun, <=2*Pi, >=0)
+     * @return angle (radians east of the sun, &le;2*Pi, &ge;0)
      */
     float getPhaseAngle() {
         assert phaseAngle >= 0f : phaseAngle;
@@ -239,12 +243,23 @@ public class TestSkyControlHud
     /**
      * Read the current solar longitude.
      *
-     * @return angle (radians east of vernal equinox, <=2*Pi, >=0)
+     * @return angle (radians east of vernal equinox, &le;2*Pi, &ge;0)
      */
     float getSolarLongitude() {
         assert solarLongitude >= 0f : solarLongitude;
         assert solarLongitude <= FastMath.TWO_PI : solarLongitude;
         return solarLongitude;
+    }
+
+    /**
+     * Read the current vertical angle for the top dome.
+     *
+     * @return angle (radians from top to rim, &lt;Pi, &gt;0)
+     */
+    float getTopVerticalAngle() {
+        assert topVerticalAngle > 0f : topVerticalAngle;
+        assert topVerticalAngle < FastMath.PI : topVerticalAngle;
+        return topVerticalAngle;
     }
 
     /**
@@ -297,7 +312,7 @@ public class TestSkyControlHud
     /**
      * Callback to update this display. (Invoked once per frame.)
      *
-     * @param tpf seconds since the previous update (>=0)
+     * @param tpf seconds since the previous update (&ge;0)
      */
     @Override
     public void update(float tpf) {
@@ -329,6 +344,9 @@ public class TestSkyControlHud
 
         float latitudeDegrees = updateSlider("latitude", " deg");
         latitude = latitudeDegrees * FastMath.DEG_TO_RAD;
+
+        float tvaDegrees = updateSlider("topVerticalAngle", " deg");
+        topVerticalAngle = tvaDegrees * FastMath.DEG_TO_RAD;
 
         relief = updateSlider("relief", " wu");
 

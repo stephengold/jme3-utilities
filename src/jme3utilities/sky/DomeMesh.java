@@ -43,19 +43,19 @@ import java.util.logging.Logger;
 import jme3utilities.math.MyMath;
 
 /**
- * A custom mesh for a hemispherical dome (or a pie-cut segment thereof) with
- * radius=1, centered at the origin, with its top at y=1 and its rim in the XZ
+ * A custom mesh for a dome (or a pie-cut segment thereof) with radius=1,
+ * centered at the origin, with its top at (0,1,0) and its equator in the XZ
  * plane.
  * <p>
- * The main differences between this class and com.jme3.scene.shape.Dome
- * are:<ol>
- * <li> the radius and center are not configurable,
- * <li> the texture coordinates and segment angle ARE configurable, and
+ * The key differences between this class and com.jme3.scene.shape.Dome are:<ol>
+ * <li> the radius and center ARE NOT configurable,
+ * <li> the texture coordinates, segment angle, and vertical angle ARE
+ * configurable, and
  * <li> the normal vectors have the correct sign (issue #615).</ol>
  * <p>
  * The projection to texture space is an "azimuthal equidistant projection". The
- * maximum U coordinate (= topU + uvScale) occurs at X=1. Y=0, Z=0. The maximum
- * V coordinate (= topV + uvScale) occurs at X=0, Y=0, Z=-1.
+ * dome's equator maps to a circle of radius uvScale centered at (topU,topV).
+ * The +X direction map to +U, and the +Z direction maps to -V.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -76,8 +76,8 @@ public class DomeMesh
     // *************************************************************************
     // fields
     /**
-     * if true, generate a complete hemisphere; if false, generate a pie-cut
-     * segment of a hemisphere
+     * if true, generate a complete dome; if false, generate a pie-cut segment
+     * of a dome
      */
     protected boolean complete;
     /**
@@ -85,28 +85,32 @@ public class DomeMesh
      */
     protected boolean inwardFacing;
     /**
-     * how much of a hemisphere to generate (in radians, <=2*Pi, >0)
+     * how much of the rim to generate (in radians, &le;2*Pi, &gt;0)
      */
     protected float segmentAngle;
     /**
-     * U-coordinate of the top (<=1, >=0)
+     * U-coordinate of the top (&le;1, &ge;0)
      */
     protected float topU;
     /**
-     * V-coordinate of the top (<=1, >=0)
+     * V-coordinate of the top (&le;1, &ge;0)
      */
     protected float topV;
     /**
-     * UV distance from top to rim (<0.5, >0)
+     * UV distance from top to equator (&lt;0.5, &gt;0)
      */
     protected float uvScale;
     /**
+     * angle from top to rim (in radians, &lt;Pi, &gt;0, Pi/2->hemisphere)
+     */
+    protected float verticalAngle;
+    /**
      * number of samples in each longitudinal quadrant of the dome, including
-     * both the top and the rim (>=2)
+     * both the top and the rim (&ge;2)
      */
     protected int quadrantSamples;
     /**
-     * number of samples around the dome's rim (>=3)
+     * number of samples around the dome's rim (&ge;3)
      */
     protected int rimSamples;
     /**
@@ -127,11 +131,13 @@ public class DomeMesh
     }
 
     /**
-     * Instantiate an inward-facing dome with a specific number of samples on
-     * each axis. Use this constructor to generate domes for SkyMaterial.
+     * Instantiate an inward-facing hemispherical dome with a specific number of
+     * samples on each axis. Use this constructor to generate domes for
+     * SkyMaterial.
      *
-     * @param rimSamples number of samples around the rim (>=3)
-     * @param quadrantSamples number of samples from top to rim, inclusive (>=2)
+     * @param rimSamples number of samples around the rim (&ge;3)
+     * @param quadrantSamples number of samples from top to rim, inclusive
+     * (&ge;2)
      */
     public DomeMesh(int rimSamples, int quadrantSamples) {
         this(rimSamples, quadrantSamples, Constants.topU, Constants.topV,
@@ -139,15 +145,16 @@ public class DomeMesh
     }
 
     /**
-     * Instantiate a dome with a specific number of samples on each axis and a
-     * specific texture coordinate system. This is the most general form of the
-     * constructor.
+     * Instantiate a hemispherical dome with a specific number of samples on
+     * each axis and a specific texture coordinate-system. This is the most
+     * general form of the constructor.
      *
-     * @param rimSamples number of samples around the rim (>=3)
-     * @param quadrantSamples number of samples from top to rim, inclusive (>=2)
-     * @param topU U-coordinate of the top (<=1, >=0)
-     * @param topV V-coordinate of the top (<=1, >=0)
-     * @param uvScale UV distance from top to rim (<0.5, >0)
+     * @param rimSamples number of samples around the rim (&ge;3)
+     * @param quadrantSamples number of samples from top to rim, inclusive
+     * (&ge;2)
+     * @param topU U-coordinate of the top (&le;1, &ge;0)
+     * @param topV V-coordinate of the top (&le;1, &ge;0)
+     * @param uvScale UV distance from top to equator (&lt;0.5, &gt;0)
      * @param inwardFacing if true, vertex normals point inward; if false, they
      * point outward
      */
@@ -189,7 +196,9 @@ public class DomeMesh
         this.uvScale = uvScale;
 
         this.inwardFacing = inwardFacing;
-        this.segmentAngle = FastMath.TWO_PI;
+
+        segmentAngle = FastMath.TWO_PI;
+        verticalAngle = FastMath.HALF_PI;
 
         updateAll();
         setStatic();
@@ -202,7 +211,7 @@ public class DomeMesh
      * a particular direction from its center.
      *
      * @param direction (unit vector, not altered)
-     * @return a new vector, or null if direction is too far below the rim
+     * @return a new vector, or null if direction is too far below the equator
      */
     public Vector2f directionUV(Vector3f direction) {
         if (direction == null) {
@@ -222,9 +231,9 @@ public class DomeMesh
         float xzDistance = MyMath.hypotenuse(x, z);
         if (xzDistance == 0f) {
             /*
-             * Avoid division by zero at the top and base of the dome.
+             * Avoid division by zero at the Y-axis.
              */
-            if (direction.y < 0f) { // base
+            if (direction.y < 0f) {
                 return null;
             } else { // top
                 return new Vector2f(topU, topV);
@@ -245,9 +254,9 @@ public class DomeMesh
      * Compute the elevation angle of a point on this mesh, given its texture
      * coordinates.
      *
-     * @param u 1st texture coordinate (<=1, >=0)
-     * @param v 2nd texture coordinate (<=1, >=0)
-     * @return angle in radians (<=Pi/2)
+     * @param u 1st texture coordinate (&le;1, &ge;0)
+     * @param v 2nd texture coordinate (&le;1, &ge;0)
+     * @return angle in radians (&le;Pi/2)
      */
     public float elevationAngle(float u, float v) {
         if (!(u <= Constants.uvMax && u >= Constants.uvMin
@@ -259,6 +268,7 @@ public class DomeMesh
 
         float uvDistance = MyMath.hypotenuse(u - topU, v - topV);
         float angleFromTop = uvDistance / uvScale * FastMath.HALF_PI;
+        assert angleFromTop < FastMath.PI : angleFromTop;
         float elevationAngle = FastMath.HALF_PI - angleFromTop;
 
         assert elevationAngle <= FastMath.HALF_PI : elevationAngle;
@@ -267,9 +277,9 @@ public class DomeMesh
 
     /**
      * Regenerate the mesh for a new segment angle: 2*Pi produces a complete
-     * hemisphere, and Pi results in a quarter of a sphere, and so on.
+     * dome, and Pi results in a quarter of a dome, and so on.
      *
-     * @param newAngle (in radians, <=2*Pi, >0)
+     * @param newAngle (in radians, &le;2*Pi, &gt;0)
      */
     public void setSegmentAngle(float newAngle) {
         if (!(newAngle > 0f && newAngle <= FastMath.TWO_PI)) {
@@ -278,6 +288,23 @@ public class DomeMesh
                     "angle should be between 0 and 2*Pi");
         }
         segmentAngle = newAngle;
+
+        updateAll();
+    }
+
+    /**
+     * Regenerate the mesh for a new vertical angle: Pi/2 produces a hemisphere
+     * and so on.
+     *
+     * @param newAngle (in radians, &lt;Pi, &gt;0)
+     */
+    public void setVerticalAngle(float newAngle) {
+        if (!(newAngle > 0f && newAngle < FastMath.PI)) {
+            logger.log(Level.SEVERE, "angle={0}", newAngle);
+            throw new IllegalArgumentException(
+                    "angle should be between 0 and Pi");
+        }
+        verticalAngle = newAngle;
 
         updateAll();
     }
@@ -303,6 +330,7 @@ public class DomeMesh
         topU = capsule.readFloat("topU", Constants.topU);
         topV = capsule.readFloat("topV", Constants.topV);
         uvScale = capsule.readFloat("uvScale", Constants.uvScale);
+        verticalAngle = capsule.readFloat("verticalAngle", FastMath.HALF_PI);
         /*
          * Recompute the derived properties.
          */
@@ -328,6 +356,7 @@ public class DomeMesh
         capsule.write(topU, "topU", Constants.topU);
         capsule.write(topV, "topV", Constants.topV);
         capsule.write(uvScale, "uvScale", Constants.uvScale);
+        capsule.write(verticalAngle, "verticalAngle", FastMath.HALF_PI);
     }
     // *************************************************************************
     // private methods
@@ -369,7 +398,7 @@ public class DomeMesh
          * Compute the non-polar vertices first. Vertices are arranged first
          * by latitude (starting from the rim).
          */
-        float quadHeight = FastMath.HALF_PI / (quadrantSamples - 1); // radians
+        float quadHeight = verticalAngle / (quadrantSamples - 1); // radians
         float quadWidth;  // radians
         if (complete) {
             quadWidth = FastMath.TWO_PI / rimSamples;
@@ -377,7 +406,8 @@ public class DomeMesh
             quadWidth = segmentAngle / (rimSamples - 1);
         }
         for (int parallel = 0; parallel < quadrantSamples - 1; parallel++) {
-            float latitude = quadHeight * parallel;
+            float latitude = FastMath.HALF_PI - verticalAngle
+                    + quadHeight * parallel;
             float y = FastMath.sin(latitude);
             float xzDistance = FastMath.cos(latitude);
             /*
@@ -542,7 +572,7 @@ public class DomeMesh
 
     /**
      * Update the buffered vertex normals of each vertex in this dome.
-     *
+     * <p>
      * Assumes that the coordinates have already been updated.
      */
     private void updateNormals() {

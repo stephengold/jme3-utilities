@@ -29,6 +29,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -75,12 +76,12 @@ public class SkyControlCore
      */
     final private static int numCloudLayers = 6;
     /**
-     * number of samples in each longitudinal quadrant of the dome, including
-     * the top and the rim (>=2)
+     * number of samples in each longitudinal quadrant of a major dome,
+     * including both its top and rim (&ge;2)
      */
     final private static int quadrantSamples = 16;
     /**
-     * number of samples around the rim of the dome (>=3)
+     * number of samples around the rim of a major dome (&ge;3)
      */
     final private static int rimSamples = 60;
     /**
@@ -131,9 +132,17 @@ public class SkyControlCore
      */
     final private CloudLayer[] cloudLayers;
     /**
-     * mesh used to generate dome geometries
+     * mesh of the bottom dome, or null if there's no bottom dome
      */
-    protected DomeMesh mesh = null;
+    protected DomeMesh bottomMesh = null;
+    /**
+     * mesh of the dome with clouds
+     */
+    protected DomeMesh cloudsMesh = null;
+    /**
+     * mesh of the dome with sun, moon, and horizon haze
+     */
+    protected DomeMesh topMesh = null;
     /**
      * simulation time for cloud layer animations
      */
@@ -147,6 +156,10 @@ public class SkyControlCore
      */
     protected Geometry cloudsOnlyDome = null;
     /**
+     * bottom dome: set by initialize()
+     */
+    protected Geometry bottomDome = null;
+    /**
      * dome representing the northern stars: set by initialize()
      */
     protected Geometry northDome = null;
@@ -154,6 +167,10 @@ public class SkyControlCore
      * dome representing the southern stars: set by initialize()
      */
     protected Geometry southDome = null;
+    /**
+     * dome representing the sun, moon, and horizon haze: set by initialize()
+     */
+    protected Geometry topDome = null;
     /**
      * material for bottom dome: set by constructor
      */
@@ -163,11 +180,11 @@ public class SkyControlCore
      */
     private Node skyNode = null;
     /**
-     * material for clouds-only dome: set by constructor
+     * material of the dome with clouds: set by constructor
      */
     final protected SkyMaterial cloudsMaterial;
     /**
-     * material for top dome: set by constructor
+     * material of the top dome: set by constructor
      */
     final protected SkyMaterial topMaterial;
     // *************************************************************************
@@ -184,14 +201,14 @@ public class SkyControlCore
      * @param camera the application's camera (not null)
      * @param cloudFlattening the oblateness (ellipticity) of the dome with the
      * clouds: 0=no flattening (hemisphere), 1=maximum flattening
-     * @param starMotion true to simulate moving stars, false for fixed stars
-     * @param bottomDome true to create a material and geometry for the
-     * hemisphere below the horizon, false to leave this hemisphere to
-     * background color (if starMotionFlag=false) or stars (if
+     * @param starMotionFlag true to simulate moving stars, false for fixed
+     * stars
+     * @param bottomDomeFlag true to create a bottom dome, false to leave this
+     * region to background color (if starMotionFlag=false) or stars (if
      * starMotionFlag=true)
      */
     public SkyControlCore(AssetManager assetManager, Camera camera,
-            float cloudFlattening, boolean starMotion, boolean bottomDome) {
+            float cloudFlattening, boolean starMotionFlag, boolean bottomDomeFlag) {
         super.setEnabled(false);
         if (assetManager == null) {
             throw new NullPointerException("asset manager should not be null");
@@ -207,8 +224,8 @@ public class SkyControlCore
 
         this.assetManager = assetManager;
         this.camera = camera;
-        this.starMotionFlag = starMotion;
-        this.bottomDomeFlag = bottomDome;
+        this.starMotionFlag = starMotionFlag;
+        this.bottomDomeFlag = bottomDomeFlag;
         /*
          * Create and initialize the sky material for sun, moon, and haze.
          */
@@ -285,7 +302,7 @@ public class SkyControlCore
     /**
      * Access a particular cloud layer.
      *
-     * @param layerIndex (<numCloudLayers, >=0)
+     * @param layerIndex (&lt;numCloudLayers, &ge;0)
      * @return the pre-existing object
      */
     public CloudLayer getCloudLayer(int layerIndex) {
@@ -303,7 +320,7 @@ public class SkyControlCore
     /**
      * Alter the opacity of all cloud layers.
      *
-     * @param newAlpha desired opacity of the cloud layers (<=1, >=0)
+     * @param newAlpha desired opacity of the cloud layers (&le;1, &ge;0)
      */
     public void setCloudiness(float newAlpha) {
         if (!(newAlpha >= Constants.alphaMin
@@ -329,11 +346,11 @@ public class SkyControlCore
 
     /**
      * Alter the vertical position of the clouds-only dome. When the scene's
-     * horizon lies below the astronomical horizon, it may be helpful to depress
-     * the clouds-only dome.
+     * horizon lies below the astronomical horizon, it may help to depress the
+     * clouds-only dome.
      *
      * @param newYOffset desired vertical offset as a fraction of the dome
-     * height (<1, >=0 when flattening>0; 0 when flattening=0)
+     * height (&lt;1, &ge;0 when flattening&gt;0; 0 when flattening=0)
      */
     public void setCloudYOffset(float newYOffset) {
         if (cloudsOnlyDome == null) {
@@ -356,7 +373,7 @@ public class SkyControlCore
     /**
      * Alter an object's color map texture.
      *
-     * @param objectIndex which object (>=0)
+     * @param objectIndex which object (&ge;0)
      * @param newColorMap texture to apply (not null)
      */
     public void setObjectTexture(int objectIndex, Texture newColorMap) {
@@ -396,6 +413,28 @@ public class SkyControlCore
         String southPath = String.format("%s/%sern.png", assetPath, southName);
         Material south = Misc.createUnshadedMaterial(assetManager, southPath);
         southDome.setMaterial(south);
+    }
+
+    /**
+     * Alter the vertical angle of the top dome. When the scene's horizon lies
+     * below the astronomical horizon, it may help to increase this angle.
+     *
+     * @param newAngle desired angle from the zenith to the rim of the top dome
+     * (in radians, &lt;Pi, &gt;0)
+     */
+    public void setTopVerticalAngle(float newAngle) {
+        if (!(newAngle > 0f && newAngle < FastMath.PI)) {
+            logger.log(Level.SEVERE, "angle={0}", newAngle);
+            throw new IllegalArgumentException(
+                    "angle should be between 0 and Pi");
+        }
+
+        topMesh.setVerticalAngle(newAngle);
+        topDome.setMesh(topMesh);
+        if (bottomDomeFlag) {
+            bottomMesh.setVerticalAngle(FastMath.PI - newAngle);
+            bottomDome.setMesh(bottomMesh);
+        }
     }
     // *************************************************************************
     // protected methods
@@ -485,7 +524,7 @@ public class SkyControlCore
     /**
      * Callback to update this control. (Invoked once per frame.)
      *
-     * @param tpf seconds since the previous update (>=0)
+     * @param tpf seconds since the previous update (&ge;0)
      */
     @Override
     public void update(float tpf) {
@@ -512,10 +551,6 @@ public class SkyControlCore
      */
     private void createSpatials(float cloudFlattening) {
         /*
-         * A mesh which serves as a prototype for the dome geometries.
-         */
-        mesh = new DomeMesh(rimSamples, quadrantSamples);
-        /*
          * A node which serves as the parent for the dome geometries.
          */
         skyNode = new Node("sky node");
@@ -526,20 +561,22 @@ public class SkyControlCore
          * because they'll be rendered in that order.
          */
         if (starMotionFlag) {
-            northDome = new Geometry(northName, mesh);
+            DomeMesh hemisphere = new DomeMesh(rimSamples, quadrantSamples);
+            northDome = new Geometry(northName, hemisphere);
             skyNode.attachChild(northDome);
 
-            southDome = new Geometry(southName, mesh);
+            southDome = new Geometry(southName, hemisphere);
             skyNode.attachChild(southDome);
         }
 
-        Geometry topDome = new Geometry("top", mesh);
+        topMesh = new DomeMesh(rimSamples, quadrantSamples);
+        topDome = new Geometry("top", topMesh);
         skyNode.attachChild(topDome);
         topDome.setMaterial(topMaterial);
 
         if (bottomDomeFlag) {
-            DomeMesh bottomMesh = new DomeMesh(3, 2);
-            Geometry bottomDome = new Geometry(bottomName, bottomMesh);
+            bottomMesh = new DomeMesh(3, 2);
+            bottomDome = new Geometry(bottomName, bottomMesh);
             skyNode.attachChild(bottomDome);
 
             Quaternion upsideDown = new Quaternion();
@@ -552,7 +589,8 @@ public class SkyControlCore
             assert cloudFlattening > 0f : cloudFlattening;
             assert cloudFlattening < 1f : cloudFlattening;
 
-            cloudsOnlyDome = new Geometry(cloudsName, mesh);
+            cloudsMesh = new DomeMesh(rimSamples, quadrantSamples);
+            cloudsOnlyDome = new Geometry(cloudsName, cloudsMesh);
             skyNode.attachChild(cloudsOnlyDome);
             /*
              * Flatten the clouds-only dome in order to foreshorten clouds
@@ -561,13 +599,15 @@ public class SkyControlCore
             float yScale = 1f - cloudFlattening;
             cloudsOnlyDome.setLocalScale(1f, yScale, 1f);
             cloudsOnlyDome.setMaterial(cloudsMaterial);
+        } else {
+            cloudsMesh = topMesh;
         }
     }
 
     /**
      * Update the cloud layers. (Invoked once per frame.)
      *
-     * @param tpf seconds since the previous update (>=0)
+     * @param tpf seconds since the previous update (&ge;0)
      */
     private void updateClouds(float tpf) {
         assert tpf >= 0f : tpf;
