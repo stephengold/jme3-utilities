@@ -29,6 +29,7 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.post.filters.BloomFilter;
 import com.jme3.renderer.ViewPort;
 import com.jme3.shadow.AbstractShadowFilter;
 import com.jme3.shadow.AbstractShadowRenderer;
@@ -78,6 +79,11 @@ public class Updater
      */
     private ArrayList<ViewPort> viewPorts = new ArrayList<>();
     /**
+     * bloom filters whose intensities are updated by the control - not
+     * serialized
+     */
+    final private ArrayList<BloomFilter> bloomFilters = new ArrayList<>();
+    /**
      * most recent color for ambient light (or null if not updated yet)
      */
     private ColorRGBA ambientColor = null;
@@ -94,6 +100,10 @@ public class Updater
      */
     private DirectionalLight mainLight = null;
     /**
+     * most recent bloom intensity
+     */
+    private float bloomIntensity = 0f;
+    /**
      * most recent shadow intensity
      */
     private float shadowIntensity = 0f;
@@ -104,6 +114,20 @@ public class Updater
     private Vector3f direction = null;
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Add a bloom filter to the list of filters whose intensities are updated
+     * by the control. Note that the list is not serialized.
+     *
+     * @param filter (not null)
+     */
+    public void addBloomFilter(BloomFilter filter) {
+        if (filter == null) {
+            throw new NullPointerException("filter should not be null");
+        }
+
+        bloomFilters.add(filter);
+    }
 
     /**
      * Add a shadow filter to the list of filters whose intensities are updated
@@ -257,12 +281,14 @@ public class Updater
      * altered)
      * @param mainColor color and intensity of the main directional light (not
      * null, not altered)
+     * @param bloomIntensity intensity of bloom effect (>=0)
      * @param shadowIntensity intensity of shadows (<=1, >=0)
      * @param direction direction to the main light source (unit vector, not
      * altered)
      */
     void update(ColorRGBA ambientColor, ColorRGBA backgroundColor,
-            ColorRGBA mainColor, float shadowIntensity, Vector3f direction) {
+            ColorRGBA mainColor, float bloomIntensity, float shadowIntensity,
+            Vector3f direction) {
         if (ambientColor == null) {
             throw new NullPointerException("ambient color should not be null");
         }
@@ -273,6 +299,7 @@ public class Updater
         if (mainColor == null) {
             throw new NullPointerException("main color should not be null");
         }
+        assert bloomIntensity >= 0f : bloomIntensity;
         if (shadowIntensity > 1f || shadowIntensity < 0f) {
             logger.log(Level.SEVERE, "intensity={0}", shadowIntensity);
             throw new IllegalArgumentException(
@@ -304,6 +331,7 @@ public class Updater
         } else {
             this.mainColor.set(mainColor);
         }
+        this.bloomIntensity = bloomIntensity;
         this.shadowIntensity = shadowIntensity;
         if (this.direction == null) {
             this.direction = direction.clone();
@@ -323,6 +351,9 @@ public class Updater
         }
         if (ambientLight != null) {
             ambientLight.setColor(ambientColor);
+        }
+        for (BloomFilter filter : bloomFilters) {
+            filter.setBloomIntensity(bloomIntensity);
         }
         for (AbstractShadowFilter filter : shadowFilters) {
             filter.setShadowIntensity(shadowIntensity);

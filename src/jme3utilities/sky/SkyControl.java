@@ -27,6 +27,7 @@ package jme3utilities.sky;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
@@ -342,6 +343,28 @@ public class SkyControl
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Clear the star maps.
+     */
+    public void clearStarMaps() {
+        if (!starMotionFlag) {
+            topMaterial.removeStars();
+            return;
+        }
+        /*
+         * Don't remove the north/south domes because, then how would you add
+         * them back into the render queue ahead of the top dome?
+         * Instead, make the north/south domes fully transparent.
+         */
+        Material clear = Misc.createUnshadedMaterial(assetManager);
+        clear.setColor("Color", ColorRGBA.BlackNoAlpha);
+        RenderState additional = clear.getAdditionalRenderState();
+        additional.setBlendMode(RenderState.BlendMode.Alpha);
+        additional.setDepthWrite(false);
+        northDome.setMaterial(clear);
+        southDome.setMaterial(clear);
+    }
 
     /**
      * Access a particular cloud layer.
@@ -902,7 +925,14 @@ public class SkyControl
         } else {
             shadowStrength = Constants.alphaMin;
         }
-        updater.update(ambient, baseColor, main, shadowStrength, mainDirection);
+        /*
+         * Compute the recommended bloom intensity.
+         */
+        float bloomIntensity = 6f * sineSolarAltitude;
+        bloomIntensity = FastMath.clamp(bloomIntensity, 0f, 1.7f);
+
+        updater.update(ambient, baseColor, main, bloomIntensity,
+                shadowStrength, mainDirection);
     }
 
     /**
