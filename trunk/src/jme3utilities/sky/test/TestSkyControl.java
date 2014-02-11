@@ -285,9 +285,11 @@ public class TestSkyControl
         float observerLatitude = hud.getLatitude();
         control.getSunAndStars().setObserverLatitude(observerLatitude);
 
-        float diameter = hud.getLunarDiameter();
-        control.setLunarDiameter(diameter);
-        control.setSolarDiameter(diameter);
+        float lunarDiameter = hud.getLunarDiameter();
+        control.setLunarDiameter(lunarDiameter);
+
+        float solarDiameter = hud.getSolarDiameter();
+        control.setSolarDiameter(solarDiameter);
 
         float solarLongitude = hud.getSolarLongitude();
         control.getSunAndStars().setSolarLongitude(solarLongitude);
