@@ -65,7 +65,7 @@ public class Misc {
     // constants
 
     /**
-     * blend time for animations (in real seconds, >=0)
+     * blend time for animations (in real seconds, &ge;0)
      */
     final public static float blendTime = 0.3f;
     /**
@@ -324,7 +324,7 @@ public class Misc {
      *
      * @return the package name, branch, and revision of this file
      */
-    public static String getVersion() {//
+    public static String getVersion() {
         return "jme3-utilities trunk $Rev$";
     }
 
@@ -396,7 +396,8 @@ public class Misc {
      * Alter a single bone angle in the bind pose.
      *
      * @param bone which bone to adjust (not null)
-     * @param axis which local rotation axis to adjust (0 -> x, 1 -> y, 2 -> z)
+     * @param axis which local rotation axis to adjust (0 &rarr; X, 1 &rarr; Y,
+     * 2 &rarr; Z)
      * @param newAngle new rotation angle (in radians)
      */
     public static void setAngle(Bone bone, int axis, float newAngle) {

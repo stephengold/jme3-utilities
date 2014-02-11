@@ -92,7 +92,7 @@ public class TestSkyControlHud
     /**
      * angular diameter of the moon (radians, &lt;Pi, &gt;0)
      */
-    private float lunarDiameter = 0.0092f;
+    private float lunarDiameter = 0.031f;
     /**
      * vertical relief for terrain (Y-coordinate of peak)
      */
@@ -101,6 +101,10 @@ public class TestSkyControlHud
      * phase angle for custom moon (radians east of the sun, &le;2*Pi, &ge;0)
      */
     private float phaseAngle = FastMath.PI;
+    /**
+     * angular diameter of the sun (radians, &lt;Pi, &gt;0)
+     */
+    private float solarDiameter = 0.031f;
     /**
      * sun's longitude (radians east of vernal equinox, &le;2*Pi, &ge;0)
      */
@@ -179,7 +183,7 @@ public class TestSkyControlHud
     /**
      * Read the current solar time.
      *
-     * @return hours since midnight (<24, &ge;0)
+     * @return hours since midnight (&lt;24, &ge;0)
      */
     float getHour() {
         float hour = timeOfDay.getHour();
@@ -203,10 +207,10 @@ public class TestSkyControlHud
     /**
      * Read the angular diameter of the moon.
      *
-     * @return in radians (&lt;Pi, &gt;0)
+     * @return diameter (in radians, &lt;Pi, &gt;0)
      */
     float getLunarDiameter() {
-        assert lunarDiameter >= 0f : lunarDiameter;
+        assert lunarDiameter > 0f : lunarDiameter;
         assert lunarDiameter < FastMath.PI : lunarDiameter;
         return lunarDiameter;
     }
@@ -238,6 +242,17 @@ public class TestSkyControlHud
         assert phaseAngle >= 0f : phaseAngle;
         assert phaseAngle <= FastMath.TWO_PI : phaseAngle;
         return phaseAngle;
+    }
+
+    /**
+     * Read the diameter of the sun.
+     *
+     * @return angular diameter (in radians, &lt;Pi, &gt;0)
+     */
+    float getSolarDiameter() {
+        assert solarDiameter > 0f : solarDiameter;
+        assert solarDiameter < FastMath.PI : solarDiameter;
+        return solarDiameter;
     }
 
     /**
@@ -334,7 +349,14 @@ public class TestSkyControlHud
 
         cloudRate = updateSlider("cloudRate", "x");
         cloudYOffset = updateSlider("cloudYOffset", "");
-        lunarDiameter = updateLogSlider("diameter", 10f, " rad");
+
+        float lunarDiameterDegrees =
+                updateLogSlider("lunarDiameter", 10f, " deg");
+        lunarDiameter = lunarDiameterDegrees * FastMath.DEG_TO_RAD;
+
+        float solarDiameterDegrees =
+                updateLogSlider("solarDiameter", 10f, " deg");
+        solarDiameter = solarDiameterDegrees * FastMath.DEG_TO_RAD;
 
         float phaseDegrees = updateSlider("customLunarPhase", " deg");
         phaseAngle = phaseDegrees * FastMath.DEG_TO_RAD;
