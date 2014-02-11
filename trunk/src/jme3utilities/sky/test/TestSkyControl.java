@@ -77,11 +77,11 @@ public class TestSkyControl
     // constants
 
     /**
-     * width and height of rendered shadow maps (pixels per side, >0)
+     * width and height of rendered shadow maps (pixels per side, &gt;0)
      */
     final private static int shadowMapSize = 4_096;
     /**
-     * number of shadow map splits (>0)
+     * number of shadow map splits (&gt;0)
      */
     final private static int shadowMapSplits = 3;
     /**
@@ -245,7 +245,7 @@ public class TestSkyControl
     /**
      * Update the scene.
      *
-     * @param elapsedTime since previous update (>=0, in seconds)
+     * @param elapsedTime since previous update (&ge;0, in seconds)
      */
     @Override
     public void simpleUpdate(float elapsedTime) {
@@ -291,6 +291,9 @@ public class TestSkyControl
 
         float solarLongitude = hud.getSolarLongitude();
         control.getSunAndStars().setSolarLongitude(solarLongitude);
+
+        float topVerticalAngle = hud.getTopVerticalAngle();
+        control.setTopVerticalAngle(topVerticalAngle);
         /*
          * Adjust vertical scale of the terrain based on a slider in the HUD.
          */
