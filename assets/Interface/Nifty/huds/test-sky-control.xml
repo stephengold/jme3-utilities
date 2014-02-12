@@ -206,11 +206,11 @@
                             <control name="label" id="topVerticalAngleSliderStatus"/>
                         </panel>
                         <control name="horizontalSlider" id="topVerticalAngleSlider"
-                                 buttonStepSize="5"
+                                 buttonStepSize="3"
                                  initial="90"
-                                 max="135"
+                                 max="102"
                                  min="90"
-                                 stepSize="1"/>
+                                 stepSize="0.1"/>
 
                         <panel style="statusPanel">
                             <control name="label" id="cloudYOffsetSliderStatus"/>

@@ -416,17 +416,19 @@ public class SkyControlCore
     }
 
     /**
-     * Alter the vertical angle of the top dome. When the scene's horizon lies
-     * below the astronomical horizon, it may help to increase this angle.
+     * Alter the vertical angle of the top dome, which is Pi/2 by default. If
+     * the terrain's horizon lies below the horizontal, increase this angle (to
+     * values greater than Pi/2) to avoid clipping the sun and moon when they
+     * are near the horizontal.
      *
      * @param newAngle desired angle from the zenith to the rim of the top dome
-     * (in radians, &lt;Pi, &gt;0)
+     * (in radians, &lt;1.785, &gt;0)
      */
     public void setTopVerticalAngle(float newAngle) {
         if (!(newAngle > 0f && newAngle < FastMath.PI)) {
             logger.log(Level.SEVERE, "angle={0}", newAngle);
             throw new IllegalArgumentException(
-                    "angle should be between 0 and Pi");
+                    "angle should be between 0 and 1.785");
         }
 
         topMesh.setVerticalAngle(newAngle);
