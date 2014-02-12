@@ -148,7 +148,7 @@ public class SkyControlCore
      */
     private float cloudsAnimationTime = 0f;
     /**
-     * rate of motion for cloud layer animations (1->standard)
+     * rate of motion for cloud layer animations (1 &rarr; standard)
      */
     private float cloudsRelativeSpeed = 1f;
     /**
@@ -575,7 +575,7 @@ public class SkyControlCore
         topDome.setMaterial(topMaterial);
 
         if (bottomDomeFlag) {
-            bottomMesh = new DomeMesh(3, 2);
+            bottomMesh = new DomeMesh(rimSamples, 2);
             bottomDome = new Geometry(bottomName, bottomMesh);
             skyNode.attachChild(bottomDome);
 
