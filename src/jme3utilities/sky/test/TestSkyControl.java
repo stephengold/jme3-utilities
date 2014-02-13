@@ -55,6 +55,7 @@ import jme3utilities.WaterProcessor;
 import jme3utilities.debug.LandscapeControl;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.sky.CloudLayer;
+import jme3utilities.sky.FloorControl;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
 import jme3utilities.sky.Updater;
@@ -111,6 +112,10 @@ public class TestSkyControl
      * the main light in the scene, which represents the sun or moon
      */
     private DirectionalLight mainLight = null;
+    /**
+     * floor control
+     */
+    private FloorControl floorControl = null;
     /**
      * landscape control
      */
@@ -197,6 +202,7 @@ public class TestSkyControl
         initializeLandscape();
         initializeLights();
         initializeSky();
+        initializeFloor();
         /*
          * Add shadows to the main view port, with shadow intensities
          * updated by SkyControl.
@@ -303,6 +309,11 @@ public class TestSkyControl
         float baseY = 0f;
         float topY = hud.getRelief();
         landscapeControl.setTerrainScale(radius, baseY, topY);
+        /*
+         * Enable or disable the floor based on a check box in the HUD.
+         */
+        boolean floorFlag = hud.getFloorFlag();
+        floorControl.setEnabled(floorFlag);
     }
     // *************************************************************************
     // ViewPortListener methods
@@ -485,6 +496,17 @@ public class TestSkyControl
         flyCam.setMoveSpeed(20f);
         flyCam.setUpVector(up);
         flyCam.setZoomSpeed(20f);
+    }
+
+    /**
+     * Create a floor for the scene. Do this after the landscape is created and
+     * after the sky in attached.
+     */
+    private void initializeFloor() {
+        Material grass = landscapeControl.getGrass();
+        float textureScale = 10f;
+        floorControl = new FloorControl(cam, grass, textureScale);
+        sceneNode.addControl(floorControl);
     }
 
     /**
