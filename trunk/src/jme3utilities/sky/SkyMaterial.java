@@ -305,6 +305,7 @@ public class SkyMaterial
 
         int result;
         switch (assetPath) {
+            case "MatDefs/skies/dome20/dome20.j3md":
             case "MatDefs/skies/dome60/dome60.j3md":
                 result = 0;
                 break;
@@ -337,6 +338,7 @@ public class SkyMaterial
             case "MatDefs/skies/dome06/dome06.j3md":
                 result = 0;
                 break;
+            case "MatDefs/skies/dome20/dome20.j3md":
             case "MatDefs/skies/dome22/dome22.j3md":
                 result = 2;
                 break;
@@ -366,6 +368,8 @@ public class SkyMaterial
         String assetPath;
         if (numObjects == 0 && numCloudLayers <= 2) {
             assetPath = "MatDefs/skies/dome02/dome02.j3md";
+        } else if (numObjects <= 2 && numCloudLayers <= 0) {
+            assetPath = "MatDefs/skies/dome20/dome20.j3md";
         } else if (numObjects <= 2 && numCloudLayers <= 2) {
             assetPath = "MatDefs/skies/dome22/dome22.j3md";
         } else if (numObjects == 0 && numCloudLayers <= 6) {
