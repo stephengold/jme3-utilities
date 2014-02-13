@@ -112,8 +112,8 @@ public class MyCamera {
      * or field-of-view.
      *
      * @param camera which camera (not null)
-     * @param newNear distance to the near clipping plane (<newFar, >0)
-     * @param newFar distance to the far clipping plane (>newNear)
+     * @param newNear distance to the near clipping plane (&lt;newFar, &gt;0)
+     * @param newFar distance to the far clipping plane (&gt;newNear)
      */
     public static void setNearFar(Camera camera, float newNear, float newFar) {
         if (camera == null) {
@@ -145,7 +145,7 @@ public class MyCamera {
      * Alter a camera's field-of-view tangent.
      *
      * @param camera which camera (not null)
-     * @param newTangent value for the FOV tangent (>0)
+     * @param newTangent value for the FOV tangent (&gt;0)
      */
     public static void setYTangent(Camera camera, float newTangent) {
         if (camera == null) {
@@ -165,7 +165,7 @@ public class MyCamera {
      * Compute a camera's vertical field-of-view in degrees.
      *
      * @param camera which camera (not null)
-     * @return vertical angle in degrees (>0)
+     * @return vertical angle in degrees (&gt;0)
      */
     public static float yDegrees(Camera camera) {
         if (camera == null) {
@@ -186,7 +186,7 @@ public class MyCamera {
      * Compute a camera's field-of-view tangent.
      *
      * @param camera which camera (not null)
-     * @return top/near (>0)
+     * @return top/near (&gt;0)
      */
     public static float yTangent(Camera camera) {
         float near = camera.getFrustumNear();
@@ -202,7 +202,7 @@ public class MyCamera {
      * Increase a camera's field-of-view tangent by a given factor.
      *
      * @param camera which camera (not null)
-     * @param factor amount to reduce the FOV tangent (>0)
+     * @param factor amount to reduce the FOV tangent (&gt;0)
      */
     public static void zoom(Camera camera, float factor) {
         if (!(factor > 0f)) {

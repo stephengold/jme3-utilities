@@ -172,7 +172,7 @@ public class GuiScreenController
     /**
      * Select a menu item in the active popup.
      *
-     * @param index which item (>=0, 0=first)
+     * @param index which item (&ge;0, 0 &rarr; first)
      */
     public void selectMenuItem(int index) {
         if (index < 0) {
@@ -497,7 +497,7 @@ public class GuiScreenController
      * same prefix followed by "SliderStatus".
      *
      * @param namePrefix unique id prefix of the slider (not null)
-     * @param logBase logarithm base of the slider (>0)
+     * @param logBase logarithm base of the slider (&gt;0)
      * @param statusSuffix to specify a unit of measurement (not null)
      * @return scaled value of the slider
      */

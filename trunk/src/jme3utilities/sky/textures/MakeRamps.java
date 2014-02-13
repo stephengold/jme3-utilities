@@ -132,7 +132,7 @@ public class MakeRamps {
      * Compute the haze opacity for a given elevation angle.
      *
      * @param elevationAngle in radians above the horizon
-     * @return opacity (<=1, >0)
+     * @return opacity (&le;1, &gt;0)
      */
     private float hazeAlpha(float elevationAngle) {
         if (elevationAngle < 0f) {
@@ -227,9 +227,9 @@ public class MakeRamps {
      * Set a particular pixel to a particular brightness.
      *
      * @param graphics context (not null)
-     * @param x coordinate (<textureSize, >=0)
-     * @param y coordinate (<textureSize, >=0)
-     * @param brightness (<=255, >=0)
+     * @param x coordinate (&lt;textureSize, &ge;0)
+     * @param y coordinate (&lt;textureSize, &ge;0)
+     * @param brightness (&le;255, &ge;0)
      *
      */
     private void setPixel(Graphics2D graphics, int x, int y, int brightness) {

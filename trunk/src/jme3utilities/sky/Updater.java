@@ -184,7 +184,7 @@ public class Updater
     /**
      * Read the most recent bloom intensity.
      *
-     * @return intensity of bloom effect (>=0)
+     * @return intensity of bloom effect (&ge;0)
      */
     public float getBloomIntensity() {
         return bloomIntensity;
@@ -217,7 +217,7 @@ public class Updater
     /**
      * Read the most recent shadow intensity.
      *
-     * @return intensity of shadows (<=1, >=0)
+     * @return intensity of shadows (&le;1, &ge;0)
      */
     public float getShadowIntensity() {
         return shadowIntensity;
@@ -305,8 +305,8 @@ public class Updater
      * altered)
      * @param mainColor color and intensity of the main directional light (not
      * null, not altered)
-     * @param bloomIntensity intensity of bloom effect (>=0)
-     * @param shadowIntensity intensity of shadows (<=1, >=0)
+     * @param bloomIntensity intensity of bloom effect (&ge;0)
+     * @param shadowIntensity intensity of shadows (&lt;1, &ge;0)
      * @param direction direction to the main light source (unit vector, not
      * altered)
      */

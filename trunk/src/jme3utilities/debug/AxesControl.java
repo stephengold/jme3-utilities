@@ -76,11 +76,11 @@ public class AxesControl
      */
     final private AssetManager assetManager;
     /**
-     * length of each axis (in local units, >0): set by constructor
+     * length of each axis (in local units, &gt;0): set by constructor
      */
     final private float length;
     /**
-     * width of each axis indicator (in pixels, >0): set by constructor
+     * width of each axis indicator (in pixels, &gt;0): set by constructor
      */
     final private float thickness;
     /**
@@ -102,8 +102,8 @@ public class AxesControl
      * Instantiate a set of hidden coordinate axes.
      *
      * @param assetManager for loading material definitions (not null)
-     * @param length length of each axis (in local units, >0)
-     * @param width width of each axis indicator (in pixels, >0)
+     * @param length length of each axis (in local units, &gt;0)
+     * @param width width of each axis indicator (in pixels, &gt;0)
      */
     public AxesControl(AssetManager assetManager, float length, float width) {
         if (assetManager == null) {

@@ -277,9 +277,9 @@ public class MakeStarMaps {
     /**
      * Generate a starry sky texture map.
      *
-     * @param latitude radians north of the equator (<=Pi/2, >=-Pi/2)
-     * @param siderealTime hours since sidereal midnight (<24, >=0)
-     * @param textureSize size of the texture map (pixels per side, >2)
+     * @param latitude radians north of the equator (&le;Pi/2, &ge;-Pi/2)
+     * @param siderealTime hours since sidereal midnight (&lt;24, &ge;0)
+     * @param textureSize size of the texture map (pixels per side, &gt;2)
      * @return a new instance
      */
     private RenderedImage generateMap(float latitude, float siderealHour,
@@ -318,7 +318,8 @@ public class MakeStarMaps {
      * Extract a star's declination from a catalog entry.
      *
      * @param line of text read from the catalog (not null)
-     * @return angle north of the celestial equator (in degrees, >=-90, <=90)
+     * @return angle north of the celestial equator (in degrees, &le;90,
+     * &ge;-90)
      */
     private float getDeclinationDegrees(String line)
             throws InvalidEntryException {
@@ -368,7 +369,7 @@ public class MakeStarMaps {
      * Extract a star's right ascension from a catalog entry.
      *
      * @param line of text read from the catalog (not null)
-     * @return angle east of the vernal equinox (in hours, >=0, <24)
+     * @return angle east of the vernal equinox (in hours, &lt;24, &ge;0)
      */
     private float getRightAscensionHours(String line)
             throws InvalidEntryException {
@@ -414,8 +415,8 @@ public class MakeStarMaps {
      * near the rim of the dome.
      *
      * @param map which texture map (not null)
-     * @param luminosity the star's relative luminosity (>0)
-     * @param textureSize size of the texture map (pixels per side, >2)
+     * @param luminosity the star's relative luminosity (&gt;0)
+     * @param textureSize size of the texture map (pixels per side, &gt;2)
      * @param uv the star's texture coordinates (not null)
      * @return true if the star was successfully plotted, otherwise false
      */
@@ -467,9 +468,9 @@ public class MakeStarMaps {
      *
      * @param map which texture map (not null)
      * @param star which star to plot (not null)
-     * @param latitude radians north of the equator (<=Pi/2, >=-Pi/2)
-     * @param siderealTime radians since sidereal midnight (<2*Pi, >=0)
-     * @param textureSize size of the texture map (pixels per side, >2)
+     * @param latitude radians north of the equator (&le;Pi/2, &ge;-Pi/2)
+     * @param siderealTime radians since sidereal midnight (&lt;2*Pi, &ge;0)
+     * @param textureSize size of the texture map (pixels per side, &gt;2)
      * @return true if the star was successfully plotted, otherwise false
      */
     private boolean plotStar(BufferedImage map, Star star, float latitude,
@@ -516,7 +517,7 @@ public class MakeStarMaps {
      *
      * @param map which texture map (not null)
      * @param apparentMagnitude the star's brightness
-     * @param textureSize size of the texture map (pixels per side, >2)
+     * @param textureSize size of the texture map (pixels per side, &lt;2)
      * @param worldDirection the star's world coordinates (unit vector)
      * @return true if the star was successfully plotted, otherwise false
      */
@@ -553,8 +554,8 @@ public class MakeStarMaps {
      * Plot a four-pointed star shape on a texture map.
      *
      * @param map which texture map (not null)
-     * @param luminosity the star's relative luminosity (>0, <=37)
-     * @param textureSize size of the texture map (pixels per side, >2)
+     * @param luminosity the star's relative luminosity (&le;37, &gt;0)
+     * @param textureSize size of the texture map (pixels per side, &gt;2)
      * @param uv the star's texture coordinates (not null)
      * @return true if the star was successfully plotted, otherwise false
      */
@@ -791,7 +792,7 @@ public class MakeStarMaps {
      * Construct a new star based on a catalog entry.
      *
      * @param textLine which was read from the catalog (not null)
-     * @param entryId (>=1)
+     * @param entryId (&ge;1)
      * @return a new instance
      */
     private Star readStar(String textLine, int entryId)

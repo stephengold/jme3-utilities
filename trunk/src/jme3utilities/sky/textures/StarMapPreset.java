@@ -76,7 +76,7 @@ enum StarMapPreset {
     /**
      * Get the sidereal time for this preset.
      *
-     * @return number of hours since midnight (>=0, <=24)
+     * @return number of hours since midnight (&le;24, &ge;0)
      */
     float hour() {
         switch (this) {
@@ -98,7 +98,7 @@ enum StarMapPreset {
     /**
      * Look up the observer's latitude for this preset.
      *
-     * @return radians north of the equator (>=-Pi/2, <=Pi/2)
+     * @return radians north of the equator (&le;Pi/2, &ge;-Pi/2)
      */
     float latitude() {
         switch (this) {

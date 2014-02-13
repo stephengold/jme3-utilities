@@ -72,11 +72,11 @@ public class TestSkyMaterial
     final private static float viewportAspectRatio = 1f;
     /**
      * number of samples in each longitudinal quadrant of the dome, including
-     * the top and the rim (>=2)
+     * the top and the rim (&ge;2)
      */
     final private static int quadrantSamples = 16;
     /**
-     * number of samples around the rim of the dome (>=3)
+     * number of samples around the rim of the dome (&ge;3)
      */
     final private static int rimSamples = 60;
     /**
@@ -398,7 +398,7 @@ public class TestSkyMaterial
     /**
      * (Re-)initialize the render camera's frustum.
      *
-     * @param fovDegrees the desired field-of-view angle in degrees (>0)
+     * @param fovDegrees the desired field-of-view angle in degrees (&gt;0)
      */
     private void setFrustum(float fovDegrees) {
         assert fovDegrees > 0f : fovDegrees;

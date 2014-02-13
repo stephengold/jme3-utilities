@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -76,9 +76,9 @@ public class AudioControl
     }
 
     /**
-     * Update this control. (Invoked once per frame.)
+     * Callback to update this control. (Invoked once per frame.)
      *
-     * @param unused seconds since the previous update (>=0)
+     * @param unused seconds since the previous update (&ge;0)
      */
     @Override
     public void update(float unused) {

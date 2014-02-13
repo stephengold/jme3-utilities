@@ -46,7 +46,7 @@ class Star
     // *************************************************************************
     // fields
     /**
-     * id number in the catalog (>=1)
+     * id number in the catalog (&ge;1)
      */
     int entryId;
     /**
@@ -54,11 +54,11 @@ class Star
      */
     float apparentMagnitude;
     /**
-     * declination (radians north of the celestial equator, <=Pi/2, >=-Pi/2)
+     * declination (radians north of the celestial equator, &le;Pi/2, &ge;-Pi/2)
      */
     float declination;
     /**
-     * right ascension (radians east of the vernal equinox, <2*Pi, >=0)
+     * right ascension (radians east of the vernal equinox, &lt;2*Pi, &ge;0)
      */
     float rightAscension;
     // *************************************************************************
@@ -67,10 +67,11 @@ class Star
     /**
      * Instantiate a star.
      *
-     * @param entryId id number in the catalog (>=1)
-     * @param rightAscension radians east of the vernal equinox (<2*Pi, >=0)
-     * @param declination radians north of the celestial equator (>=-Pi/2,
-     * <=Pi/2)
+     * @param entryId id number in the catalog (&ge;1)
+     * @param rightAscension radians east of the vernal equinox (&le;2*Pi,
+     * &ge;0)
+     * @param declination radians north of the celestial equator (&le;Pi/2,
+     * &ge;-Pi/2)
      *
      * @param apparentMagnitude apparent brightness (inverted logarithmic scale)
      */
@@ -107,7 +108,7 @@ class Star
      * <li>+Z points to the celestial north pole
      * </ul>
      *
-     * @param siderealTime radians since sidereal midnight (>=0, <2*Pi)
+     * @param siderealTime radians since sidereal midnight (&ge;0, &lt;2*Pi)
      * @return a new unit vector
      */
     Vector3f getEquatorialLocation(float siderealTime) {

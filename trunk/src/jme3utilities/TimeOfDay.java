@@ -68,7 +68,7 @@ public class TimeOfDay
     // *************************************************************************
     // fields
     /**
-     * simulated time of day (seconds since midnight, <86400, >=0)
+     * simulated time of day (seconds since midnight, &lt;86400, &ge;0)
      *
      * The simulated time is stored in double precision because it is
      * incremented by a small amount for each frame.
@@ -84,7 +84,7 @@ public class TimeOfDay
     /**
      * Instantiate a new simulation clock, specifying the start time.
      *
-     * @param startHour hours since midnight (<24, >=0)
+     * @param startHour hours since midnight (&lt;24, &ge;0)
      */
     public TimeOfDay(float startHour) {
         if (!(startHour >= 0f && startHour < hoursPerDay)) {
@@ -101,7 +101,7 @@ public class TimeOfDay
     /**
      * Read the simulated time of day.
      *
-     * @return hours since midnight (<24, >=0)
+     * @return hours since midnight (&lt;24, &ge;0)
      */
     public float getHour() {
         float result = (float) timeOfDay / secondsPerHour;
@@ -117,7 +117,7 @@ public class TimeOfDay
     /**
      * Read the simulated time of day.
      *
-     * @return seconds since midnight (<86400, >=0)
+     * @return seconds since midnight (&lt;86400, &ge;0)
      */
     public int getSecond() {
         int result = (int) Math.round(timeOfDay);
@@ -144,7 +144,7 @@ public class TimeOfDay
     /**
      * Callback to update the time of day.
      *
-     * @param interval real seconds elapsed since the previous update (>=0)
+     * @param interval real seconds elapsed since the previous update (&ge;0)
      */
     @Override
     public void update(float interval) {

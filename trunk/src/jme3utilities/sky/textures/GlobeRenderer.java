@@ -136,10 +136,11 @@ public class GlobeRenderer
      * material.
      *
      * @param globeMaterial suitable for equirectangular projection (not null)
-     * @param outputFormat (not null, ABGR8->color, Luminance8Alpha8->grayscale)
-     * @param equatorSamples number of samples around the globe's middle (>=3)
-     * @param meridianSamples number of samples from pole to pole (>=3)
-     * @param resolution number of pixels per side of the output texture (>0)
+     * @param outputFormat (not null, ABGR8 &rarr; color, Luminance8Alpha8
+     * &rarr; grayscale)
+     * @param equatorSamples number of samples around the globe's middle (&ge;3)
+     * @param meridianSamples number of samples from pole to pole (&ge;3)
+     * @param resolution number of pixels per side of the output texture (&gt;0)
      */
     public GlobeRenderer(Material globeMaterial, Image.Format outputFormat,
             int equatorSamples, int meridianSamples, int resolution) {
@@ -187,7 +188,7 @@ public class GlobeRenderer
     /**
      * Compute the distance from the camera to the center of the globe.
      *
-     * @return distance in world units (>0)
+     * @return distance in world units (&gt;0)
      */
     public float getCameraDistance() {
         Vector3f cameraLocation = camera.getLocation();
@@ -200,7 +201,7 @@ public class GlobeRenderer
     /**
      * Read the radius of the globe.
      *
-     * @return radius in world units (>0)
+     * @return radius in world units (&gt;0)
      */
     public float getGlobeRadius() {
         float result = MySpatial.getUniformScale(globe);
@@ -246,7 +247,7 @@ public class GlobeRenderer
     /**
      * Alter the contrast of the render.
      *
-     * @param newGamma parameter for the filter (>0, 1->linear)
+     * @param newGamma parameter for the filter (&gt;0, 1 &rarr; linear)
      */
     final public void setGamma(float newGamma) {
         if (!(newGamma > 0f)) {
@@ -265,7 +266,7 @@ public class GlobeRenderer
     /**
      * Change the size of the globe.
      *
-     * @param newRadius (in world units, >0)
+     * @param newRadius (in world units, &gt;0)
      */
     final public void setGlobeRadius(float newRadius) {
         if (!(newRadius > 0f)) {
@@ -279,7 +280,7 @@ public class GlobeRenderer
     /**
      * Alter the intensity of the (directional white) light.
      *
-     * @param intensity (>=0, 1->standard)
+     * @param intensity (&ge;0, 1 &rarr; standard)
      */
     final public void setLightIntensity(float intensity) {
         if (!(intensity >= 0f)) {
@@ -295,7 +296,8 @@ public class GlobeRenderer
     /**
      * Alter the lighting phase of the globe.
      *
-     * @param newAngle (in radians, <=2*Pi, >=0, 0->dark, Pi->fully lit)
+     * @param newAngle (in radians, &le;2*Pi, &ge;0, 0 &rarr; dark, Pi &rarr;
+     * fully lit)
      */
     final public void setPhase(float newAngle) {
         if (!(newAngle >= 0f && newAngle <= FastMath.TWO_PI)) {
@@ -380,7 +382,7 @@ public class GlobeRenderer
     /**
      * Update the off-screen scene.
      *
-     * @param elapsedTime since previous update (>=0, in seconds)
+     * @param elapsedTime since previous update (&ge;0, in seconds)
      */
     @Override
     public void update(float elapsedTime) {

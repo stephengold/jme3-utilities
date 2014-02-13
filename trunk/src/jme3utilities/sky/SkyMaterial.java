@@ -123,8 +123,8 @@ public class SkyMaterial
      *
      * @param assetManager for loading textures and material definitions (not
      * null)
-     * @param maxObjects number of astronomical objects required (>=0)
-     * @param maxCloudLayers number of cloud layers required (>=0)
+     * @param maxObjects number of astronomical objects required (&ge;0)
+     * @param maxCloudLayers number of cloud layers required (&ge;0)
      */
     public SkyMaterial(AssetManager assetManager, int maxObjects,
             int maxCloudLayers) {
@@ -139,8 +139,8 @@ public class SkyMaterial
      * @param assetManager for loading textures and material definitions (not
      * null)
      * @param assetPath pathname to the material definitions asset (not null)
-     * @param maxObjects number of astronomical objects allowed (>=0)
-     * @param maxCloudLayers number of cloud layers allowed (>=0)
+     * @param maxObjects number of astronomical objects allowed (&ge;0)
+     * @param maxCloudLayers number of cloud layers allowed (&ge;0)
      */
     public SkyMaterial(AssetManager assetManager, String assetPath,
             int maxObjects, int maxCloudLayers) {
@@ -152,7 +152,7 @@ public class SkyMaterial
     /**
      * Add a cloud layer to this material using the default alpha map.
      *
-     * @param layerIndex (<maxCloudLayers, >=0)
+     * @param layerIndex (&lt;maxCloudLayers, &ge;0)
      */
     public void addClouds(int layerIndex) {
         validateLayerIndex(layerIndex);
@@ -185,7 +185,7 @@ public class SkyMaterial
      * Add an astronomical object to this material using the specified color map
      * asset.
      *
-     * @param objectIndex (<maxObjects, >=0)
+     * @param objectIndex (&lt;maxObjects, &ge;0)
      * @param assetPath asset path to the color map (not null)
      */
     public void addObject(int objectIndex, String assetPath) {
@@ -355,8 +355,8 @@ public class SkyMaterial
      * Select a material definitions asset with at least the specified numbers
      * of objects and cloud layers.
      *
-     * @param numObjects (<=6, >=0)
-     * @param numCloudLayers (<=6, >=0)
+     * @param numObjects (&le;6, &ge;0)
+     * @param numCloudLayers (&le;6, &ge;0)
      * @return asset path
      */
     private static String pickMatDefs(int numObjects, int numCloudLayers) {

@@ -157,7 +157,7 @@ public class TestSkyMaterialHud
     /**
      * Callback to update this display. (Invoked once per frame.)
      *
-     * @param tpf seconds since the previous update (>=0)
+     * @param tpf seconds since the previous update (&ge;0)
      */
     @Override
     public void update(float tpf) {

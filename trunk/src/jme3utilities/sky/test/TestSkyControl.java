@@ -420,7 +420,7 @@ public class TestSkyControl
         boolean starMotion;
         boolean bottomDome;
         if (parameters.singleDome()) {
-            cloudFlattening = 0f; // single dome implies clouds on hemisphere
+            cloudFlattening = 0f; // single dome implies clouds on top dome
             starMotion = false; // single dome implies non-moving stars
             bottomDome = false; // single dome implies exposed background
         } else {
@@ -452,7 +452,7 @@ public class TestSkyControl
         stateManager.attach(moonRenderer);
         control.setMoonRenderer(moonRenderer);
         /*
-         * Put SkyControl in charge of updating the lights and
+         * Put SkyControl in charge of updating both lights plus the
          * viewport background. (all optional)
          */
         Updater updater = control.getUpdater();
@@ -465,7 +465,7 @@ public class TestSkyControl
     }
 
     /**
-     * Configure the default camera, including flyCam.
+     * Configure the camera, including flyCam.
      */
     private void initializeCamera() {
         /*
@@ -488,7 +488,7 @@ public class TestSkyControl
     }
 
     /**
-     * Create, configure, add, and enable the landscape.
+     * Create, configure, add, and enable the landscape/terrain.
      */
     private void initializeLandscape() {
         rootNode.attachChild(sceneNode);

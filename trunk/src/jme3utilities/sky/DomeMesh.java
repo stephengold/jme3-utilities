@@ -101,7 +101,7 @@ public class DomeMesh
      */
     protected float uvScale;
     /**
-     * angle from top to rim (in radians, &lt;Pi, &gt;0, Pi/2->hemisphere)
+     * angle from top to rim (in radians, &lt;Pi, &gt;0, Pi/2 &rarr; hemisphere)
      */
     protected float verticalAngle;
     /**

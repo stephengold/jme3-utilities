@@ -166,9 +166,9 @@ public class LandscapeControl
     /**
      * Alter the terrain's radius and vertical relief.
      *
-     * @param radius distance from center to edge (>0)
+     * @param radius distance from center to edge (&gt;0)
      * @param baseY lowest possible Y-coordinate
-     * @param peakY Y-coordinate of the peak (>baseY)
+     * @param peakY Y-coordinate of the peak (&gt;baseY)
      */
     public void setTerrainScale(float radius, float baseY, float peakY) {
         if (!(radius > 0f)) {

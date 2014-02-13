@@ -144,10 +144,10 @@ public class MakeSun {
      * the center of the image.
      *
      * @param theta direction angle in radians, measured CCW from the U-axis
-     * (<=Pi, >=-Pi)
-     * @param numRays number of rays in the surround (>0, or 0 for a circular
+     * (&le;Pi, &ge;-Pi)
+     * @param numRays number of rays in the surround (&gt;0, or 0 for a circular
      * haze, or -1 for an irregular surround)
-     * @return a fraction (<=1, >=0)
+     * @return a fraction (&le;1, &ge;0)
      */
     private float indent(float theta, int numRays) {
         assert theta <= FastMath.PI : theta;
@@ -210,9 +210,9 @@ public class MakeSun {
      * Generate an image map for a disc with an optional surround.
      *
      * @param fileName (not null)
-     * @param discSharpness alpha slope inside the disc's edge (>0)
-     * @param surroundAlpha opacity of the surround at the disc's edge (>=0)
-     * @param numRays number of rays in the surround (>0, or 0 for a circular
+     * @param discSharpness alpha slope inside the disc's edge (&gt;0)
+     * @param surroundAlpha opacity of the surround at the disc's edge (&ge;0)
+     * @param numRays number of rays in the surround (&gt;0, or 0 for a circular
      * haze, or -1 for a chaotic surround)
      */
     private void makeSun(String styleName, float discSharpness,
@@ -232,9 +232,9 @@ public class MakeSun {
     /**
      * Generate an image map for a disc with an optional surround.
      *
-     * @param discSharpness alpha slope inside the disc's edge (>0)
-     * @param surroundAlpha opacity of the surround at the disc's edge (>=0)
-     * @param numRays number of rays in the surround (>0, or 0 for a circular
+     * @param discSharpness alpha slope inside the disc's edge (&gt;0)
+     * @param surroundAlpha opacity of the surround at the disc's edge (&ge;0)
+     * @param numRays number of rays in the surround (&gt;0, or 0 for a circular
      * haze, or -1 for a chaotic surround)
      * @return a new instance
      */
@@ -290,9 +290,9 @@ public class MakeSun {
      * Set a particular pixel to a particular brightness.
      *
      * @param graphics context (not null)
-     * @param x coordinate (<textureSize, >=0)
-     * @param y coordinate (<textureSize, >=0)
-     * @param alpha (<=255, >=0)
+     * @param x coordinate (&lt;textureSize, &ge;0)
+     * @param y coordinate (&lt;textureSize, &ge;0)
+     * @param alpha (&le;255, &ge;0)
      */
     private void setPixel(Graphics2D graphics, int x, int y, int alpha) {
         assert graphics != null;

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -80,7 +80,7 @@ public class DomInput {
      * Create a vector from a DOM element.
      *
      * @param element which element (not null)
-     * @param scaleFactor scale factor (in meters per world unit, >0)
+     * @param scaleFactor scale factor (in meters per world unit, &gt;0)
      * @return a new instance
      */
     public static Vector3f createVector3f(Element element, float scaleFactor) {

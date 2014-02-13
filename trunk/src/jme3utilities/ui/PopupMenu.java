@@ -106,7 +106,7 @@ public class PopupMenu
     /**
      * Generate the action string for specific item from the menu.
      *
-     * @param index which item (>=0, 0=first)
+     * @param index which item (&ge;0, 0 &rarr; first)
      * @return action string or null for an invalid index
      */
     String getActionString(int index) {
