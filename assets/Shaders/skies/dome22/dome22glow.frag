@@ -61,12 +61,17 @@ varying vec2 skyTexCoord;
 
 vec4 mixColors(vec4 color0, vec4 color1) {
         vec4 result;
-        result.rgb = mix(color0.rgb, color1.rgb, color1.a);
-        result.a = color0.a + color1.a * (1.0 - color0.a);
+        float a0 = color0.a * (1.0 - color1.a);
+        result.a = a0 + color1.a;
+        if (result.a > 0.0) {
+                result.rgb = (a0 * color0.rgb + color1.a * color1.rgb)/result.a;
+        } else {
+                result.rgb = vec3(0.0);
+        }
         return result;
 }
 
-void main(){
+void main() {
         vec4 stars = vec4(0.0);
 
         vec4 objects = vec4(0.0);
