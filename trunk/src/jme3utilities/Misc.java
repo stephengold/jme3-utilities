@@ -28,6 +28,9 @@ package jme3utilities;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.Bone;
 import com.jme3.animation.LoopMode;
+import com.jme3.app.DebugKeysAppState;
+import com.jme3.app.state.AppState;
+import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.TextureKey;
 import com.jme3.bullet.collision.shapes.CollisionShape;
@@ -278,6 +281,28 @@ public class Misc {
     }
 
     /**
+     * Detach all app states which are subclasses of a specified class.
+     *
+     * @param stateManager (not null)
+     * @param whichClass (not null)
+     */
+    public static void detachAll(AppStateManager stateManager,
+            Class whichClass) {
+        if (stateManager == null) {
+            throw new NullPointerException("state manager should not be null");
+        }
+        if (whichClass == null) {
+            throw new NullPointerException("class should not be null");
+        }
+
+        AppState state = stateManager.getState(whichClass);
+        while (state != null) {
+            stateManager.detach(state);
+            state = stateManager.getState(whichClass);
+        }
+    }
+
+    /**
      * Get the existing filter post-processor for a viewport, or if it has none
      * add a new one to it.
      *
@@ -324,7 +349,7 @@ public class Misc {
      *
      * @return the package name, branch, and revision of this file
      */
-    public static String getVersion() {
+    public static String getVersion() {//
         return "jme3-utilities trunk $Rev$";
     }
 
