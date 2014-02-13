@@ -234,6 +234,15 @@
                                  min="1"
                                  stepSize="1"/>
 
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="floorCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="floor"/>
+                        </panel>
+
                     </panel>
                 </control>
             </panel>

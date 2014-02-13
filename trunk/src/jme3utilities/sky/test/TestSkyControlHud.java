@@ -181,6 +181,18 @@ public class TestSkyControlHud
     }
 
     /**
+     * Read the status of the "floor" check box.
+     *
+     * @return true if the box is checked, otherwise false
+     */
+    boolean getFloorFlag() {
+        CheckBox box =
+                getScreen().findNiftyControl("floorCheckBox", CheckBox.class);
+        boolean result = box.isChecked();
+        return result;
+    }
+
+    /**
      * Read the current solar time.
      *
      * @return hours since midnight (&lt;24, &ge;0)
