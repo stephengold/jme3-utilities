@@ -70,7 +70,7 @@ public class MySkeleton
      *
      * @param spatial animated spatial which contains the bone (not null)
      * @param boneName name of the bone to measure (not null)
-     * @param axis which axis to measure (0 -> x, 1 -> y, 2 -> z)
+     * @param axis which axis to measure (0 &rarr; x, 1 &rarr; y, 2 &rarr; z)
      * @return the rotation angle (in radians) or zero for unknown bone
      */
     public static float boneAngle(Spatial spatial, String boneName, int axis) {
@@ -180,7 +180,7 @@ public class MySkeleton
      *
      * @param spatial animated spatial which contains the bone (not null)
      * @param boneName name of the bone to adjust (not null)
-     * @param axis which axis to adjust (0 -> x, 1 -> y, 2 -> z)
+     * @param axis which axis to adjust (0 &rarr; x, 1 &rarr; y, 2 &rarr; z)
      * @param newAngle new rotation angle (in radians)
      */
     public static void setBoneAngle(Spatial spatial, String boneName, int axis,

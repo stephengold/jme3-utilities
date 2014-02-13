@@ -61,7 +61,7 @@ public class MyVector3f {
      *
      * @param offset difference of world coordinates (not null, not zero length,
      * not altered)
-     * @return angle above the X-Z plane (in radians, <=Pi/2, >=-Pi/2)
+     * @return angle above the X-Z plane (in radians, &le;Pi/2, &ge;-Pi/2)
      */
     public static float altitude(Vector3f offset) {
         if (offset == null) {
@@ -118,7 +118,7 @@ public class MyVector3f {
      * @param from world coordinates of starting location (not null, not
      * altered)
      * @param to world coordinates of ending location (not null, not altered)
-     * @return distance (in world units, >=0)
+     * @return distance (in world units, &ge;0)
      */
     public static float distanceFrom(Vector3f from, Vector3f to) {
         if (from == null) {

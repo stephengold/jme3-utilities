@@ -71,7 +71,7 @@ public class Constants {
      */
     final public static float uvMin = 0f;
     /**
-     * UV distance from top to rim (<0.5, >0)
+     * UV distance from top to rim (&lt;0.5, &gt;0)
      */
     final static float uvScale = 0.44f;
     /**

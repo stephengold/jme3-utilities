@@ -66,9 +66,9 @@ public class MyMath {
     /**
      * Compute the circle function sqrt(1 - x^2) for a double-precision value.
      *
-     * @param abscissa (<=1, >=-1)
-     * @return the positive ordinate of the unit circle at the abscissa (<=1,
-     * >=0)
+     * @param abscissa (&le;1, &ge;-1)
+     * @return the positive ordinate of the unit circle at the abscissa (&le;1,
+     * &ge;0)
      */
     public static double circle(double abscissa) {
         if (!(abscissa >= -1.0 && abscissa <= 1.0)) {
@@ -88,9 +88,9 @@ public class MyMath {
      * Compute the circle function sqrt(1 - x^2) for a single-precision value.
      * Double precision arithmetic is used to reduce the risk of overflow.
      *
-     * @param abscissa (<=1, >=-1)
-     * @return the positive ordinate of the unit circle at the abscissa (<=1,
-     * >=0)
+     * @param abscissa (&le;1, &ge;-1)
+     * @return the positive ordinate of the unit circle at the abscissa (&le;1,
+     * &ge;0)
      */
     public static float circle(float abscissa) {
         if (!(abscissa >= -1f && abscissa <= 1f)) {
@@ -111,7 +111,7 @@ public class MyMath {
      * Clamp the magnitude of a single-precision value.
      *
      * @param fValue value to be clamped
-     * @param maxMagnitude limit of the clamp (>=0)
+     * @param maxMagnitude limit of the clamp (&ge;0)
      * @return value between -maxMagnitude and +maxMagnitude inclusive which is
      * closest to fValue
      * @see FastMath#clamp(float,float,float)
@@ -227,7 +227,7 @@ public class MyMath {
      *
      * @param legA length of the first leg (may be negative)
      * @param legB length of the second leg (may be negative)
-     * @return length of the hypotenuse (>=0)
+     * @return length of the hypotenuse (&ge;0)
      * @see #sumOfSquares(float,float)
      */
     public static float hypotenuse(float legA, float legB) {
@@ -280,8 +280,8 @@ public class MyMath {
      * value with respect to a given modulus.
      *
      * @param fValue which value
-     * @param modulus (>0)
-     * @return x MOD modulus (<modulus, >=0)
+     * @param modulus (&gt;0)
+     * @return x MOD modulus (&lt;modulus, &ge;0)
      */
     public static float modulo(float fValue, float modulus) {
         if (!(modulus > 0f)) {
@@ -301,8 +301,8 @@ public class MyMath {
      * value with respect to a given modulus.
      *
      * @param dValue which value
-     * @param modulus (>0)
-     * @return x MOD modulus (<modulus, >=0)
+     * @param modulus (&gt;0)
+     * @return x MOD modulus (&lt;modulus, &ge;0)
      */
     public static double modulo(double dValue, double modulus) {
         if (!(modulus > 0.0)) {
@@ -337,10 +337,10 @@ public class MyMath {
      * Compute the sphere function sqrt(1 - x^2 - y^2) for single-precision
      * values. Double precision is used to reduce the risk of overflow.
      *
-     * @param x coordinate (<=1, >=-1)
-     * @param y coordinate (<=1, >=-1)
-     * @return the positive height of the unit sphere at the coordinates (<=1,
-     * >=0)
+     * @param x coordinate (&le;1, &ge;-1)
+     * @param y coordinate (&le;1, &ge;-1)
+     * @return the positive height of the unit sphere at the coordinates (&le;1,
+     * &ge;0)
      */
     public static float sphere(float x, float y) {
         if (!(x >= -1f && x <= 1f)) {
@@ -369,7 +369,7 @@ public class MyMath {
      * Standardize a rotation angle to the range [-Pi, Pi).
      *
      * @param angle (in radians)
-     * @return a standard angle (in radians, <Pi, >=-Pi)
+     * @return a standard angle (in radians, &lt;Pi, &ge;-Pi)
      */
     public static float standardizeAngle(float angle) {
         float result = modulo(angle, FastMath.TWO_PI);
@@ -388,7 +388,7 @@ public class MyMath {
      *
      * @param firstValue
      * @param secondValue
-     * @return sum of squares (>=0)
+     * @return sum of squares (&ge;0)
      */
     public static double sumOfSquares(float firstValue, float secondValue) {
         double x = (double) firstValue;

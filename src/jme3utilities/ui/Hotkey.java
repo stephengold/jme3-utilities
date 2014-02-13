@@ -43,11 +43,11 @@ public class Hotkey {
     // constants
 
     /**
-     * largest valid key code (per com.jme3.input.KeyInput, >= minKeyCode)
+     * largest valid key code (per com.jme3.input.KeyInput, &ge;minKeyCode)
      */
     final private static int maxKeyCode = KeyInput.KEY_SLEEP;
     /**
-     * smallest valid key code (per com.jme3.input.KeyInput, >= 0)
+     * smallest valid key code (per com.jme3.input.KeyInput, &ge;0)
      */
     final private static int minKeyCode = KeyInput.KEY_ESCAPE;
     /**

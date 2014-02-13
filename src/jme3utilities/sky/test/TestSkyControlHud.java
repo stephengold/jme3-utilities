@@ -81,8 +81,8 @@ public class TestSkyControlHud
      */
     private float cloudRate = 0f;
     /**
-     * vertical offset of the clouds-only dome (fraction of dome height,
-     * <1, >=0)
+     * vertical offset of the clouds-only dome (fraction of dome height, &lt;1,
+     * &ge;0)
      */
     private float cloudYOffset = 0f;
     /**

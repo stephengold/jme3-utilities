@@ -90,7 +90,7 @@ public class SunAndStars
     // *************************************************************************
     // fields
     /**
-     * local solar time (hours since midnight, <24, >=0)
+     * local solar time (hours since midnight, &lt;24, &ge;0)
      */
     private float hour = 0f;
     /**
@@ -99,11 +99,12 @@ public class SunAndStars
     private float observerLatitude = Constants.defaultLatitude;
     /**
      * celestial longitude of the sun (radians east of the vernal equinox,
-     * <2*Pi, >=0)
+     * &lt;2*Pi, &ge;0)
      */
     private float solarLongitude = 0f;
     /**
-     * right ascension of the sun (hours east of the vernal equinox, <24, >=0)
+     * right ascension of the sun (hours east of the vernal equinox, &lt;24,
+     * &ge;0)
      */
     private float solarRaHours = 0f;
     // *************************************************************************
@@ -113,9 +114,9 @@ public class SunAndStars
      * Convert ecliptical angles into an equatorial direction vector.
      *
      * @param latitude celestial latitude (radians north of the ecliptic,
-     * <=Pi/2, >=-Pi/2)
+     * &le;Pi/2, &ge;-Pi/2)
      * @param longitude celestial longitude (radians east of the vernal equinox,
-     * <=2*Pi, >=0)
+     * &le;2*Pi, &ge;0)
      * @return a new unit vector in equatorial coordinates
      */
     public static Vector3f convertToEquatorial(float latitude,
@@ -174,9 +175,9 @@ public class SunAndStars
      * Convert ecliptical angles into a world direction vector.
      *
      * @param latitude celestial latitude (radians north of the ecliptic,
-     * <=Pi/2, >=-Pi/2)
+     * &le;Pi/2, &ge;-Pi/2)
      * @param longitude celestial longitude (radians east of the vernal equinox,
-     * <=2*Pi, >=0)
+     * &le;2*Pi, &ge;0)
      * @return a new unit vector in world (horizontal) coordinates
      */
     public Vector3f convertToWorld(float latitude, float longitude) {
@@ -232,7 +233,7 @@ public class SunAndStars
     /**
      * Read the time of day.
      *
-     * @return hours since midnight, solar time (<=24, >=0)
+     * @return hours since midnight, solar time (&le;24, &ge;0)
      */
     public float getHour() {
         assert hour <= Constants.hoursPerDay : hour;
@@ -244,7 +245,7 @@ public class SunAndStars
     /**
      * Read the observer's latitude.
      *
-     * @return radians north of the equator (<=Pi/2, >=-Pi/2)
+     * @return radians north of the equator (&le;Pi/2, &ge;-Pi/2)
      */
     public float getObserverLatitude() {
         assert observerLatitude <= FastMath.HALF_PI : observerLatitude;
@@ -256,7 +257,7 @@ public class SunAndStars
     /**
      * Compute the angle between the meridian and the vernal equinox.
      *
-     * @return angle (in radians, <2*Pi, >=0)
+     * @return angle (in radians, &lt;2*Pi, &ge;0)
      */
     public float getSiderealAngle() {
         float siderealHour = getSiderealHour();
@@ -270,7 +271,7 @@ public class SunAndStars
     /**
      * Compute the sidereal time.
      *
-     * @return time (in hours, <24, >=0)
+     * @return time (in hours, &lt;24, &ge;0)
      */
     public float getSiderealHour() {
         float noon = 12f;
@@ -283,7 +284,7 @@ public class SunAndStars
     /**
      * Read the solar longitude.
      *
-     * @return radians east of the vernal equinox (<=2*Pi, >=0)
+     * @return radians east of the vernal equinox (&le;2*Pi, &ge;0)
      */
     public float getSolarLongitude() {
         assert solarLongitude <= FastMath.TWO_PI : solarLongitude;
@@ -347,7 +348,7 @@ public class SunAndStars
     /**
      * Alter the time of day.
      *
-     * @param newHour hours since midnight, solar time (<=24, >=0)
+     * @param newHour hours since midnight, solar time (&le;24, &ge;0)
      */
     public void setHour(float newHour) {
         if (!(newHour >= 0f && newHour <= Constants.hoursPerDay)) {
@@ -362,7 +363,7 @@ public class SunAndStars
     /**
      * Alter the observer's latitude.
      *
-     * @param latitude radians north of the equator (<=Pi/2, >=-Pi/2)
+     * @param latitude radians north of the equator (&le;Pi/2, &ge;-Pi/2)
      */
     public void setObserverLatitude(float latitude) {
         if (!(latitude >= -FastMath.HALF_PI && latitude <= FastMath.HALF_PI)) {
@@ -377,7 +378,7 @@ public class SunAndStars
     /**
      * Alter the sun's celestial longitude directly.
      *
-     * @param longitude radians east of the vernal equinox (<=2*Pi, >=0)
+     * @param longitude radians east of the vernal equinox (&le;2*Pi, &ge;0)
      */
     public void setSolarLongitude(float longitude) {
         if (!(longitude >= 0f && longitude <= FastMath.TWO_PI)) {
@@ -408,8 +409,9 @@ public class SunAndStars
      * (Journal of the International Meteor Organization) 19-2, pages 31-34,
      * available from http://adsabs.harvard.edu/full/1991JIMO...19...31S
      *
-     * @param month zero-based month of the Gregorian year (<12, >=0)
-     * @param day of the Gregorian month (<=31, >=1)
+     * @param month zero-based month of the Gregorian year (&lt;12, &ge;0, 0
+     * &rarr; January)
+     * @param day of the Gregorian month (&le;31, &ge;1)
      */
     public void setSolarLongitude(int month, int day) {
         if (month < 0 || month >= 12) {

@@ -36,6 +36,8 @@ import jme3utilities.math.MyMath;
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class CloudLayer {
+    // *************************************************************************
+    // constants
 
     /**
      * default UV scaling factor for cloud layers
@@ -49,7 +51,8 @@ public class CloudLayer {
     // *************************************************************************
     // fields
     /**
-     * opacity of the layer: 0->transparent/cloudless, 1->maximum opacity
+     * opacity of the layer: 0 &rarr; transparent/cloudless, 1 &rarr; maximum
+     * opacity
      */
     private float opacity = 0f;
     /**
@@ -85,7 +88,7 @@ public class CloudLayer {
      * Instantiate a layer with a particular index for a particular material.
      *
      * @param material (not null)
-     * @param layerIndex (>=0)
+     * @param layerIndex (&ge;0)
      */
     CloudLayer(SkyMaterial material, int layerIndex) {
         assert material != null;
@@ -132,7 +135,7 @@ public class CloudLayer {
     /**
      * Alter the color of this layer.
      *
-     * @param newColor (unaffected, not null)
+     * @param newColor (not null, unaffected, alpha is ignored)
      */
     void setColor(ColorRGBA newColor) {
         assert newColor != null;
@@ -161,7 +164,7 @@ public class CloudLayer {
     /**
      * Alter the opacity of this layer.
      *
-     * @param newAlpha desired opacity of the layer (<=1, >=0)
+     * @param newAlpha desired opacity of the layer (&le;1, &ge;0)
      */
     public void setOpacity(float newAlpha) {
         if (!(newAlpha >= Constants.alphaMin
@@ -178,7 +181,7 @@ public class CloudLayer {
      * Change the texture and scale of this layer.
      *
      * @param assetPath asset path to the new alpha map texture (not null)
-     * @param scale texture scaling factor (>0, typically <=2)
+     * @param scale texture scaling factor (&gt;0, typically &le;2)
      */
     public void setTexture(String assetPath, float scale) {
         if (assetPath == null) {

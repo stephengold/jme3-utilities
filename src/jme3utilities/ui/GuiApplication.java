@@ -146,7 +146,7 @@ abstract public class GuiApplication
     /**
      * Alter the effective speeds of all animations.
      *
-     * @param newSpeed animation speed (>0, standard speed=1)
+     * @param newSpeed animation speed (&gt;0, standard speed &rarr; 1)
      */
     public void setSpeed(float newSpeed) {
         if (!(newSpeed > 0f)) {

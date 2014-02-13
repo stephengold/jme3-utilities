@@ -438,7 +438,7 @@ abstract public class InputMode
      * Count how many hotkeys are bound to a particular action name.
      *
      * @param actionName (not null)
-     * @return count (>=0)
+     * @return count (&ge;0)
      */
     private int countBindings(String actionName) {
         assert actionName != null;

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -82,7 +82,7 @@ abstract public class SimpleControl
      *
      * Does nothing. Meant to be overridden.
      *
-     * @param simInterval seconds since the previous update (>=0)
+     * @param simInterval seconds since the previous update (&ge;0)
      */
     @Override
     protected void controlUpdate(float simInterval) {

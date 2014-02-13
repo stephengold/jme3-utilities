@@ -66,7 +66,7 @@ public class SimpleSolidControl
      *
      * @param enabled true for an enabled object, false for a disabled one
      * @param initialShape collision shape for the object (not null)
-     * @param mass the object's mass (in kilograms, >0) or zero for a static
+     * @param mass the object's mass (in kilograms, &gt;0) or zero for a static
      * object
      * @param initialSpace which physics space will contain the object (not
      * null)

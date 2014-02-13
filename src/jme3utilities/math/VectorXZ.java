@@ -188,7 +188,7 @@ public class VectorXZ
     /**
      * Clamp this direction to be within a given angle of the X-axis (in place).
      *
-     * @param maxAbsAngle angle in radians (>=0)
+     * @param maxAbsAngle angle in radians (&ge;0)
      * @return this vector (with its components modified)
      */
     public VectorXZ clampDirectionLocal(float maxAbsAngle) {
@@ -379,7 +379,7 @@ public class VectorXZ
     /**
      * Compute the length of this vector.
      *
-     * @return length (>=0) of this vector
+     * @return length (&ge;0) of this vector
      */
     public float length() {
         float result = MyMath.hypotenuse(x, z);

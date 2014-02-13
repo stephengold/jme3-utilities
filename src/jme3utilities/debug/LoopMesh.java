@@ -63,7 +63,7 @@ public class LoopMesh
     // *************************************************************************
     // fields
     /**
-     * number of vertices (>=3)
+     * number of vertices (&ge;3)
      */
     protected int vertexCount;
     // *************************************************************************
@@ -78,7 +78,7 @@ public class LoopMesh
     /**
      * Instantiate a loop with a specific number of vertices.
      *
-     * @param vertexCount (>=3)
+     * @param vertexCount (&ge;3)
      */
     public LoopMesh(int vertexCount) {
         if (vertexCount < 3) {

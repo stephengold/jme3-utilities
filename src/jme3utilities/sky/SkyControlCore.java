@@ -200,7 +200,8 @@ public class SkyControlCore
      * null)
      * @param camera the application's camera (not null)
      * @param cloudFlattening the oblateness (ellipticity) of the dome with the
-     * clouds: 0=no flattening (hemisphere), 1=maximum flattening
+     * clouds (&ge; 0, &lt;1, 0 &rarr; no flattening (hemisphere), 1 &rarr;
+     * maximum flattening
      * @param starMotionFlag true to simulate moving stars, false for fixed
      * stars
      * @param bottomDomeFlag true to create a bottom dome, false to leave this
@@ -549,11 +550,12 @@ public class SkyControlCore
      * Create and initialize the sky node and all its dome geometries.
      *
      * @param cloudFlattening the oblateness (ellipticity) of the dome with the
-     * clouds: 0=no flattening (hemisphere), 1=maximum flattening
+     * clouds (&ge; 0, &lt;1, 0 &rarr; no flattening (hemisphere), 1 &rarr;
+     * maximum flattening
      */
     private void createSpatials(float cloudFlattening) {
         /*
-         * A node which serves as the parent for the dome geometries.
+         * Create a node to parent the dome geometries.
          */
         skyNode = new Node("sky node");
         skyNode.setQueueBucket(Bucket.Sky);

@@ -152,12 +152,14 @@ public class MySpatial
      * Access an object's mass.
      *
      * @param spatial which object to measure (not null)
-     * @return mass in kilograms (>0) or zero for a static object.
+     * @return mass in kilograms (&gt;0) or zero for a static object.
      */
     public static float getMass(Spatial spatial) {
         RigidBodyControl rigidBodyControl =
                 spatial.getControl(RigidBodyControl.class);
         float mass = rigidBodyControl.getMass();
+
+        assert mass >= 0f : mass;
         return mass;
     }
 
@@ -226,7 +228,7 @@ public class MySpatial
      * Get the world scale factor for a uniformly scaled spatial.
      *
      * @param spatial which spatial to measure (not null)
-     * @return scale factor (>0)
+     * @return scale factor (&gt;0)
      */
     public static float getUniformScale(Spatial spatial) {
         Vector3f worldScale = spatial.getWorldScale();
@@ -548,7 +550,7 @@ public class MySpatial
      * non-uniform scaling.
      *
      * @param spatial which spatial (not null, not orphan)
-     * @param scale desired world scale (>0)
+     * @param scale desired world scale (&gt;0)
      */
     public static void setWorldScale(Spatial spatial, float scale) {
         if (!(scale > 0f)) {

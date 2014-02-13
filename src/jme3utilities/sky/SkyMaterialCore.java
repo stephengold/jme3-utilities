@@ -71,7 +71,7 @@ public class SkyMaterialCore
      */
     protected AssetManager assetManager;
     /**
-     * maximum opacity of each cloud layer (<=1, >=0)
+     * maximum opacity of each cloud layer (&le;1, &ge;0)
      */
     private float[] cloudAlphas;
     /**
@@ -90,11 +90,11 @@ public class SkyMaterialCore
      */
     private ImageRaster[] cloudsRaster;
     /**
-     * maximum number of cloud layers (>=0)
+     * maximum number of cloud layers (&ge;0)
      */
     protected int maxCloudLayers;
     /**
-     * maximum number of astronomical objects (>=0)
+     * maximum number of astronomical objects (&ge;0)
      */
     protected int maxObjects;
     /**
@@ -130,8 +130,8 @@ public class SkyMaterialCore
      * @param assetManager for loading textures and material definitions (not
      * null)
      * @param assetPath pathname to the material definitions asset (not null)
-     * @param maxObjects number of astronomical objects allowed (>=0)
-     * @param maxCloudLayers number of cloud layers allowed (>=0)
+     * @param maxObjects number of astronomical objects allowed (&ge;0)
+     * @param maxCloudLayers number of cloud layers allowed (&ge;0)
      */
     public SkyMaterialCore(AssetManager assetManager, String assetPath,
             int maxObjects, int maxCloudLayers) {
@@ -166,7 +166,7 @@ public class SkyMaterialCore
     /**
      * Add a cloud layer to this material using the specified alpha map asset.
      *
-     * @param layerIndex (<maxCloudLayers, >=0)
+     * @param layerIndex (&lt;maxCloudLayers, &ge;0)
      * @param assetPath asset path to the alpha map (not null)
      */
     public void addClouds(int layerIndex, String assetPath) {
@@ -198,7 +198,7 @@ public class SkyMaterialCore
      * Add an astronomical object to this material using the specified color
      * map.
      *
-     * @param objectIndex (<maxObjects, >=0)
+     * @param objectIndex (&lt;maxObjects, &ge;0)
      * @param colorMap which color map (not null)
      */
     public void addObject(int objectIndex, Texture colorMap) {
@@ -221,8 +221,8 @@ public class SkyMaterialCore
     /**
      * Estimate how much of an object's light is transmitted through the clouds.
      *
-     * @param objectIndex (<maxObjects, >=0)
-     * @return fraction of light transmitted (<=1, >=0)
+     * @param objectIndex (&lt;maxObjects, &ge;0)
+     * @return fraction of light transmitted (&lt;1, &ge;0)
      */
     public float getTransmission(int objectIndex) {
         validateObjectIndex(objectIndex);
@@ -241,7 +241,7 @@ public class SkyMaterialCore
      * specified texture coordinates.
      *
      * @param skyCoordinates (unaffected, not null)
-     * @return fraction of light transmitted (<=1, >=0)
+     * @return fraction of light transmitted (&le;1, &ge;0)
      */
     public float getTransmission(Vector2f skyCoordinates) {
         if (skyCoordinates == null) {
@@ -267,7 +267,7 @@ public class SkyMaterialCore
      *
      * Use setObjectTransform() to reveal an object which has been hidden.
      *
-     * @param objectIndex (<maxObjects, >=0)
+     * @param objectIndex (&lt;maxObjects, &ge;0)
      */
     public void hideObject(int objectIndex) {
         validateObjectIndex(objectIndex);
@@ -295,7 +295,7 @@ public class SkyMaterialCore
     /**
      * Alter the color of a cloud layer.
      *
-     * @param layerIndex (<maxCloudLayers, >=0)
+     * @param layerIndex (&lt;maxCloudLayers, &ge;0)
      * @param newColor (not null)
      */
     public void setCloudsColor(int layerIndex, ColorRGBA newColor) {
@@ -315,7 +315,7 @@ public class SkyMaterialCore
     /**
      * Alter the glow color of a cloud layer.
      *
-     * @param layerIndex (<maxCloudLayers, >=0)
+     * @param layerIndex (&lt;maxCloudLayers, &ge;0)
      * @param newColor (not null)
      */
     public void setCloudsGlow(int layerIndex, ColorRGBA newColor) {
@@ -334,7 +334,7 @@ public class SkyMaterialCore
     /**
      * Alter the texture offset of a cloud layer.
      *
-     * @param layerIndex (<maxCloudLayers, >=0)
+     * @param layerIndex (&lt;maxCloudLayers, &ge;0)
      * @param newU 1st component of the new offset
      * @param newV 2nd component of the new offset
      */
@@ -356,8 +356,8 @@ public class SkyMaterialCore
     /**
      * Alter the texture scale of a cloud layer.
      *
-     * @param layerIndex (<maxCloudLayers, >=0)
-     * @param newScale (>0)
+     * @param layerIndex (&lt;maxCloudLayers, &ge;0)
+     * @param newScale (&gt;0)
      */
     public void setCloudsScale(int layerIndex, float newScale) {
         validateLayerIndex(layerIndex);
@@ -377,7 +377,7 @@ public class SkyMaterialCore
     /**
      * Alter the color of an astronomical object.
      *
-     * @param objectIndex (<maxObjects, >=0)
+     * @param objectIndex (&lt;maxObjects, &ge;0)
      * @param newColor (not null)
      */
     public void setObjectColor(int objectIndex, ColorRGBA newColor) {
@@ -396,7 +396,7 @@ public class SkyMaterialCore
     /**
      * Alter the glow color of an astronomical object.
      *
-     * @param objectIndex (<maxObjects, >=0)
+     * @param objectIndex (&lt;maxObjects, &ge;0)
      * @param newColor (not null)
      */
     public void setObjectGlow(int objectIndex, ColorRGBA newColor) {
@@ -415,11 +415,11 @@ public class SkyMaterialCore
     /**
      * Alter the location and scaling of an astronomical object.
      *
-     * @param objectIndex (<maxObjects, >=0)
+     * @param objectIndex (&lt;maxObjects, &ge;0)
      * @param centerUV sky texture coordinates for the center of the object (not
-     * null, each component <=1 and >=0, unaffected)
+     * null, each component &le;1 and &ge;0, unaffected)
      * @param newScale ratio of the sky's texture scale to that of the object
-     * (>0, usually <1)
+     * (&ge;0, usually &lt;1)
      * @param newRotate (cos, sin) of clockwise rotation angle (or null if
      * rotation doesn't matter)
      */
@@ -622,9 +622,9 @@ public class SkyMaterialCore
      * Estimate how much light is transmitted through a particular cloud layer
      * at the specified texture coordinates.
      *
-     * @param layerIndex (<maxCloudLayers, >=0)
+     * @param layerIndex (&lt;maxCloudLayers, &ge;0)
      * @param skyCoordinates (unaffected, not null)
-     * @return fraction of light transmitted (<=1, >=0)
+     * @return fraction of light transmitted (&le;1, &ge;0)
      */
     private float getTransparency(int layerIndex, Vector2f skyCoordinates) {
         assert layerIndex >= 0 : layerIndex;
@@ -650,9 +650,9 @@ public class SkyMaterialCore
      * coordinates.
      *
      * @param colorImage the texture to sample (not null, unaffected)
-     * @param uv texture coordinates to sample (not null, each component <1 and
-     * >=0, unaffected)
-     * @return red intensity (<=1, >=0)
+     * @param uv texture coordinates to sample (not null, each component &lt;1
+     * and &ge;0, unaffected)
+     * @return red intensity (&le;1, &ge;0)
      */
     private float sampleRed(ImageRaster colorImage, Vector2f uv) {
         assert colorImage != null;

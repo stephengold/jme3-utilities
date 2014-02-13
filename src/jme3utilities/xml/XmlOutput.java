@@ -85,7 +85,7 @@ public class XmlOutput {
      * @param tag XML tag (not null)
      * @param vector which vector to serialize (not null, unaffected)
      * @param indent whitespace at the start of the line (not null)
-     * @param scaleFactor (in meters per world unit, >0)
+     * @param scaleFactor (in meters per world unit, &gt;0)
      */
     public static void put(PrintStream stream, String tag, Vector3f vector,
             String indent, float scaleFactor) {
@@ -106,7 +106,7 @@ public class XmlOutput {
      * @param stream (not null)
      * @param name name of the attribute (not null)
      * @param floatValue value of the attribute
-     * @param precision max digits after the decimal point (>=0)
+     * @param precision max digits after the decimal point (&ge;0)
      */
     public static void putAttribute(PrintStream stream, String name,
             float floatValue, int precision) {
