@@ -667,12 +667,10 @@ public class SkyControl
      * @return world direction to the sun (new unit vector)
      */
     private Vector3f updateSun() {
-        float solarLongitude = sunAndStars.getSolarLongitude();
-        Vector3f worldDirection =
-                sunAndStars.convertToWorld(0f, solarLongitude);
         /*
-         * Convert world direction to topMesh coordinates.
+         * Compute the UV coordinates of the center of the sun.
          */
+        Vector3f worldDirection = sunAndStars.getSunDirection();
         Vector2f uv = topMesh.directionUV(worldDirection);
         if (uv == null) {
             /*
