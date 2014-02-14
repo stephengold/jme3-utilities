@@ -297,17 +297,24 @@ public class SkyControl
     // SkyControlCore methods
 
     /**
-     * Callback to update this control. (Invoked once per frame.)
+     * Callback to update this control while it is enabled. (Invoked once per
+     * frame.)
      *
-     * @param tpf seconds since the previous update (&ge;0)
+     * @param elapsedTime seconds since the previous update (&ge;0)
      */
     @Override
-    public void update(float tpf) {
-        super.update(tpf);
-        if (spatial == null || !enabled) {
-            return;
+    public void controlUpdate(float elapsedTime) {
+        super.controlUpdate(elapsedTime);
+        if (!isEnabled()) {
+            throw new IllegalStateException("should be enabled");
         }
-        assert tpf >= 0f : tpf;
+        if (spatial == null) {
+            throw new IllegalStateException("should be added to a spatial");
+        }
+        if (!(elapsedTime >= 0f)) {
+            logger.log(Level.SEVERE, "time={0}", elapsedTime);
+            throw new IllegalArgumentException("time should not be negative");
+        }
 
         updateAll();
     }

@@ -34,12 +34,11 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MySpatial;
-import jme3utilities.SimpleControl;
+import jme3utilities.SubtreeControl;
 
 /**
  * A simple control to provide a visual "floor" for a scene. The floor would
@@ -54,7 +53,7 @@ import jme3utilities.SimpleControl;
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class FloorControl
-        extends SimpleControl {
+        extends SubtreeControl {
     // *************************************************************************
     // constants
 
@@ -77,10 +76,6 @@ public class FloorControl
      * the application's camera: set by constructor
      */
     final private Camera camera;
-    /**
-     * parent node for attaching the floor: set by initialize()
-     */
-    private Node floorNode = null;
     // *************************************************************************
     // constructors
 
@@ -89,10 +84,9 @@ public class FloorControl
      *
      * @param camera the application's camera (not null)
      * @param material to apply to the floor (not null)
-     * @param textureScale scale to apply to texture coordinates (>0)
+     * @param textureScale scale to apply to texture coordinates (&gt;0)
      */
     public FloorControl(Camera camera, Material material, float textureScale) {
-        super.setEnabled(false);
         if (camera == null) {
             throw new NullPointerException("camera should not be null");
         }
@@ -110,71 +104,34 @@ public class FloorControl
         assert !isEnabled();
     }
     // *************************************************************************
-    // AbstractControl methods
+    // SimpleControl methods
 
     /**
-     * Alter the visibility of this control's floor. This control must be added
-     * to a node before its floor can be revealed.
+     * Callback to update this control while it is enabled. (Invoked once per
+     * frame.)
      *
-     * @param newState if true, reveal the floor; if false, hide it
+     * @param elapsedTime seconds since the previous update (&ge;0)
      */
     @Override
-    public void setEnabled(boolean newState) {
-        Node node = (Node) spatial;
-
-        if (enabled && !newState) {
-            if (node != null) {
-                /*
-                 * Detach the floor node from the controlled node.
-                 */
-                int position = node.detachChild(floorNode);
-                assert position != -1;
-            }
-
-        } else if (!enabled && newState) {
-            if (node == null) {
-                throw new IllegalStateException(
-                        "cannot enable control before it's added to a node");
-            }
-            /*
-             * Attach the floor node to the controlled node.
-             */
-            node.attachChild(floorNode);
-            MySpatial.setWorldScale(floorNode, 1f);
+    public void controlUpdate(float elapsedTime) {
+        super.controlUpdate(elapsedTime);
+        if (!isEnabled()) {
+            throw new IllegalStateException("should be enabled");
         }
-        super.setEnabled(newState);
-    }
-
-    /**
-     * Alter the controlled node.
-     *
-     * @param newNode which node to control (or null)
-     */
-    @Override
-    public void setSpatial(Spatial newNode) {
-        super.setSpatial(newNode);
-        if (enabled && newNode != null) {
-            ((Node) spatial).attachChild(floorNode);
+        if (spatial == null) {
+            throw new IllegalStateException("should be added to a spatial");
         }
-    }
-
-    /**
-     * Callback to update this control. (Invoked once per frame.)
-     *
-     * @param tpf seconds since the previous update (&ge;0)
-     */
-    @Override
-    public void update(float tpf) {
-        super.update(tpf);
-        if (spatial == null || !enabled) {
-            return;
+        if (!(elapsedTime >= 0f)) {
+            logger.log(Level.SEVERE, "time={0}", elapsedTime);
+            throw new IllegalArgumentException("time should not be negative");
         }
-        assert tpf >= 0f : tpf;
         /*
          * Translate the floor to center it below the camera.
          */
         Vector3f cameraLocation = camera.getLocation();
-        MySpatial.setWorldLocation(floorNode, cameraLocation);
+        MySpatial.setWorldLocation(subtree, cameraLocation);
+        MySpatial.setWorldOrientation(subtree, Quaternion.IDENTITY);
+        MySpatial.setWorldScale(subtree, 1f);
     }
     // *************************************************************************
     // private methods
@@ -183,7 +140,7 @@ public class FloorControl
      * Create and initialize the floor node and geometry.
      *
      * @param material to apply to the floor (not null)
-     * @param textureScale scale to apply to texture coordinates (>0)
+     * @param textureScale scale to apply to texture coordinates (&gt;0)
      */
     private void createSpatials(Material material, float textureScale) {
         assert material != null;
@@ -191,15 +148,15 @@ public class FloorControl
         /*
          * Create a node to parent the floor geometry.
          */
-        floorNode = new Node(nodeName);
-        floorNode.setQueueBucket(Bucket.Sky);
+        subtree = new Node(nodeName);
+        subtree.setQueueBucket(Bucket.Sky);
         /*
          * Create and attach the floor geometry.
          */
         Quad mesh = new Quad(1f, 1f);
         mesh.scaleTextureCoordinates(new Vector2f(textureScale, textureScale));
         Geometry floor = new Geometry(geometryName, mesh);
-        floorNode.attachChild(floor);
+        subtree.attachChild(floor);
         floor.setMaterial(material);
 
         Quaternion rotation = new Quaternion();
