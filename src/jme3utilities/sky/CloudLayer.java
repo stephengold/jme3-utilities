@@ -25,7 +25,13 @@
  */
 package jme3utilities.sky;
 
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.math.ColorRGBA;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.math.MyMath;
@@ -35,7 +41,8 @@ import jme3utilities.math.MyMath;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-public class CloudLayer {
+public class CloudLayer
+        implements Savable {
     // *************************************************************************
     // constants
 
@@ -74,15 +81,23 @@ public class CloudLayer {
      */
     private float vRate;
     /**
-     * this layer's index in the material
+     * this layer's index within the material: set by constructor
      */
-    final private int layerIndex;
+    private int layerIndex;
     /**
-     * the material
+     * the cloud material: set by constructor
      */
-    final private SkyMaterial material;
+    private SkyMaterial material;
     // *************************************************************************
     // constructors
+
+    /**
+     * No-argument constructor for serialization purposes only. Do not use!
+     */
+    public CloudLayer() {
+        layerIndex = -1;
+        material = null;
+    }
 
     /**
      * Instantiate a layer with a particular index for a particular material.
@@ -205,5 +220,45 @@ public class CloudLayer {
         float u = u0 + time * uRate;
         float v = v0 + time * vRate;
         material.setCloudsOffset(layerIndex, u, v);
+    }
+    // *************************************************************************
+    // Savable methods
+
+    /**
+     * De-serialize this instance when loading.
+     *
+     * @param importer (not null)
+     */
+    @Override
+    public void read(JmeImporter importer)
+            throws IOException {
+        InputCapsule capsule = importer.getCapsule(this);
+
+        layerIndex = capsule.readInt("layerIndex", 0);
+        material = (SkyMaterial) capsule.readSavable("material", null);
+        opacity = capsule.readFloat("opacity", 0f);
+        u0 = capsule.readFloat("u0", 0f);
+        uRate = capsule.readFloat("uRate", 0f);
+        v0 = capsule.readFloat("v0", 0f);
+        vRate = capsule.readFloat("vRate", 0f);
+    }
+
+    /**
+     * Serialize this instance when saving.
+     *
+     * @param exporter (not null)
+     */
+    @Override
+    public void write(JmeExporter exporter)
+            throws IOException {
+        OutputCapsule capsule = exporter.getCapsule(this);
+
+        capsule.write(layerIndex, "layerIndex", 0);
+        capsule.write(material, "material", null);
+        capsule.write(opacity, "opacity", 0f);
+        capsule.write(u0, "u0", 0f);
+        capsule.write(uRate, "uRate", 0f);
+        capsule.write(v0, "v0", 0f);
+        capsule.write(vRate, "vRate", 0f);
     }
 }
