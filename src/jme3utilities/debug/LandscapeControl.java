@@ -132,10 +132,6 @@ public class LandscapeControl
      */
     private int terrainDiameter = 0;
     /**
-     * material applied to the terrain: set by constructor
-     */
-    final private Material grass;
-    /**
      * spatial which represents the monument: set by constructor
      */
     final private Spatial monument;
@@ -158,10 +154,6 @@ public class LandscapeControl
         }
         this.assetManager = assetManager;
         /*
-         * Create a shaded material which vaguely resembles grass.
-         */
-        grass = createShadedMaterial(grassColor);
-        /*
          * Generate monument and terrain, but don't attach them yet.
          */
         monument = createMonument();
@@ -173,12 +165,12 @@ public class LandscapeControl
     // new methods exposed
 
     /**
-     * Access the material applied to the terrain.
+     * Access a material identical to the one applied to the terrain.
      *
-     * @return the pre-existing instance
+     * @return a new instance
      */
     public Material getGrass() {
-        return grass;
+        return createShadedMaterial(grassColor);
     }
 
     /**
@@ -332,6 +324,7 @@ public class LandscapeControl
         float[] heightArray = heightMap.getHeightMap();
         TerrainQuad quad =
                 new TerrainQuad("terrain", patchSize, mapSize, heightArray);
+        Material grass = getGrass();
         quad.setMaterial(grass);
         quad.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
 
