@@ -482,19 +482,19 @@ public class SkyControl
         if (moonDirection != null) {
             assert moonDirection.isUnitVector() : moonDirection;
         }
-        /*
-         * Modulate the sun's color based on its altitude.
-         */
+
         float sineSolarAltitude = sunDirection.y;
-        float green = MyMath.clampFraction(3f * sineSolarAltitude);
-        float blue = MyMath.clampFraction(sineSolarAltitude - 0.1f);
-        ColorRGBA sunColor = new ColorRGBA(1f, green, blue, Constants.alphaMax);
-        topMaterial.setObjectColor(sunIndex, sunColor);
-        topMaterial.setObjectGlow(sunIndex, sunColor);
+        float sineLunarAltitude;
+        if (moonDirection != null) {
+            sineLunarAltitude = moonDirection.y;
+        } else {
+            sineLunarAltitude = -1f;
+        }
+        updateObjectColors(sineSolarAltitude, sineLunarAltitude);
         /*
          * Determine the world direction to the main light source.
          */
-        boolean moonUp = moonDirection != null && moonDirection.y >= 0f;
+        boolean moonUp = sineLunarAltitude >= 0f;
         boolean sunUp = sineSolarAltitude >= 0f;
         Vector3f mainDirection;
         if (sunUp) {
@@ -629,6 +629,36 @@ public class SkyControl
         }
 
         return worldDirection;
+    }
+
+    /**
+     * Update the colors of the sun and moon based on their altitudes.
+     *
+     * @param sineSolarAltitude (&le;1, &ge:-1)
+     * @param sineLunarAltitude (&le;1, &ge:-1)
+     */
+    private void updateObjectColors(float sineSolarAltitude,
+            float sineLunarAltitude) {
+        assert sineSolarAltitude <= 1f : sineSolarAltitude;
+        assert sineSolarAltitude >= -1f : sineSolarAltitude;
+        assert sineLunarAltitude <= 1f : sineLunarAltitude;
+        assert sineLunarAltitude >= -1f : sineLunarAltitude;
+        /*
+         * Update the sun's color.
+         */
+        float green = MyMath.clampFraction(3f * sineSolarAltitude);
+        float blue = MyMath.clampFraction(sineSolarAltitude - 0.1f);
+        ColorRGBA sunColor = new ColorRGBA(1f, green, blue, Constants.alphaMax);
+        topMaterial.setObjectColor(sunIndex, sunColor);
+        topMaterial.setObjectGlow(sunIndex, sunColor);
+        /*
+         * Update the sun's color.
+         */
+        green = MyMath.clampFraction(2f * sineLunarAltitude + 0.6f);
+        blue = MyMath.clampFraction(5f * sineLunarAltitude + 0.1f);
+        ColorRGBA moonColor =
+                new ColorRGBA(1f, green, blue, Constants.alphaMax);
+        topMaterial.setObjectColor(moonIndex, moonColor);
     }
 
     /**
