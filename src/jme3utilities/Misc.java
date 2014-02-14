@@ -28,7 +28,6 @@ package jme3utilities;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.Bone;
 import com.jme3.animation.LoopMode;
-import com.jme3.app.DebugKeysAppState;
 import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
@@ -349,7 +348,7 @@ public class Misc {
      *
      * @return the package name, branch, and revision of this file
      */
-    public static String getVersion() {//
+    public static String getVersion() {
         return "jme3-utilities trunk $Rev$";
     }
 
