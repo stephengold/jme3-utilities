@@ -180,8 +180,8 @@ public class SkyControl
             float cloudFlattening, boolean starMotion, boolean bottomDome) {
         super(assetManager, camera, cloudFlattening, starMotion, bottomDome);
 
-        topMaterial.addObject(sunIndex, "Textures/skies/suns/hazy-disc.png");
         setPhase(phase);
+        setSunStyle("Textures/skies/suns/hazy-disc.png");
 
         assert !isEnabled();
     }
@@ -293,6 +293,19 @@ public class SkyControl
         sunScale = newDiameter * topMesh.uvScale
                 / (Constants.discDiameter * FastMath.HALF_PI);
     }
+
+    /**
+     * Alter the sun's color map.
+     *
+     * @param assetPath to new color map (not null)
+     */
+    final public void setSunStyle(String assetPath) {
+        if (assetPath == null) {
+            throw new NullPointerException("path should not be null");
+        }
+
+        topMaterial.addObject(sunIndex, assetPath);
+    }
     // *************************************************************************
     // SkyControlCore methods
 
@@ -300,22 +313,11 @@ public class SkyControl
      * Callback to update this control while it is enabled. (Invoked once per
      * frame.)
      *
-     * @param elapsedTime seconds since the previous update (&ge;0)
+     * @param elapsedTime since the previous update (in seconds, &ge;0)
      */
     @Override
     public void controlUpdate(float elapsedTime) {
         super.controlUpdate(elapsedTime);
-        if (!isEnabled()) {
-            throw new IllegalStateException("should be enabled");
-        }
-        if (spatial == null) {
-            throw new IllegalStateException("should be added to a spatial");
-        }
-        if (!(elapsedTime >= 0f)) {
-            logger.log(Level.SEVERE, "time={0}", elapsedTime);
-            throw new IllegalArgumentException("time should not be negative");
-        }
-
         updateAll();
     }
     // *************************************************************************
