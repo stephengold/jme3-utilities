@@ -240,7 +240,25 @@
                             <control name="label"
                                      width="12"/>
                             <control name="label"
-                                     text="floor"/>
+                                     text="enable floor"/>
+                        </panel>
+
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="landscapeCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="enable landscape"/>
+                        </panel>
+
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="skyCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="enable sky"/>
                         </panel>
 
                     </panel>
