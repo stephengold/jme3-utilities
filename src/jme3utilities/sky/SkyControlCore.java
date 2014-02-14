@@ -36,13 +36,12 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
-import jme3utilities.SimpleControl;
+import jme3utilities.SubtreeControl;
 import jme3utilities.math.MyMath;
 
 /**
@@ -66,7 +65,7 @@ import jme3utilities.math.MyMath;
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class SkyControlCore
-        extends SimpleControl {
+        extends SubtreeControl {
     // *************************************************************************
     // constants
 
@@ -175,10 +174,6 @@ public class SkyControlCore
      */
     final protected Material bottomMaterial;
     /**
-     * parent node for attaching the geometries: set by initialize()
-     */
-    private Node skyNode = null;
-    /**
      * material of the dome with clouds: set by constructor
      */
     final protected SkyMaterial cloudsMaterial;
@@ -208,8 +203,8 @@ public class SkyControlCore
      * starMotionFlag=true)
      */
     public SkyControlCore(AssetManager assetManager, Camera camera,
-            float cloudFlattening, boolean starMotionFlag, boolean bottomDomeFlag) {
-        super.setEnabled(false);
+            float cloudFlattening, boolean starMotionFlag,
+            boolean bottomDomeFlag) {
         if (assetManager == null) {
             throw new NullPointerException("asset manager should not be null");
         }
@@ -286,7 +281,7 @@ public class SkyControlCore
             return;
         }
         /*
-         * Don't remove the north/south domes because, then how would you add
+         * Don't remove the north/south domes because, then how would you insert
          * them back into the render queue ahead of the top dome?
          * Instead, make the north/south domes fully transparent.
          */
@@ -466,79 +461,42 @@ public class SkyControlCore
         return cloudsColor;
     }
     // *************************************************************************
-    // AbstractControl methods
+    // SimpleControl methods
 
     /**
-     * Alter the visibility of this control's sky. This control must be added to
-     * a node before its sky can be revealed.
+     * Callback to update this control while it is enabled. (Invoked once per
+     * frame.)
      *
-     * @param newState if true, reveal the sky; if false, hide it
+     * @param elapsedTime seconds since the previous update (&ge;0)
      */
     @Override
-    public void setEnabled(boolean newState) {
-        Node node = (Node) spatial;
-
-        if (enabled && !newState) {
-            if (node != null) {
-                /*
-                 * Detach the sky node from the controlled node.
-                 */
-                int position = node.detachChild(skyNode);
-                assert position != -1;
-            }
-
-        } else if (!enabled && newState) {
-            if (node == null) {
-                throw new IllegalStateException(
-                        "cannot enable control before it's added to a node");
-            }
-            /*
-             * Attach the sky node to the controlled node.
-             */
-            node.attachChild(skyNode);
-            /*
-             * Scale the sky node so that its furthest geometries are midway
-             * between the near and far planes of the view frustum.
-             */
-            float far = camera.getFrustumFar();
-            float near = camera.getFrustumNear();
-            float radius = (near + far) / 2f;
-            MySpatial.setWorldScale(skyNode, radius);
+    public void controlUpdate(float elapsedTime) {
+        super.controlUpdate(elapsedTime);
+        if (!isEnabled()) {
+            throw new IllegalStateException("should be enabled");
         }
-        super.setEnabled(newState);
-    }
-
-    /**
-     * Alter the controlled node.
-     *
-     * @param newNode which node to control (or null)
-     */
-    @Override
-    public void setSpatial(Spatial newNode) {
-        super.setSpatial(newNode);
-        if (enabled && newNode != null) {
-            ((Node) spatial).attachChild(skyNode);
+        if (spatial == null) {
+            throw new IllegalStateException("should be added to a spatial");
         }
-    }
-
-    /**
-     * Callback to update this control. (Invoked once per frame.)
-     *
-     * @param tpf seconds since the previous update (&ge;0)
-     */
-    @Override
-    public void update(float tpf) {
-        super.update(tpf);
-        if (spatial == null || !enabled) {
-            return;
+        if (!(elapsedTime >= 0f)) {
+            logger.log(Level.SEVERE, "time={0}", elapsedTime);
+            throw new IllegalArgumentException("time should not be negative");
         }
-        assert tpf >= 0f : tpf;
-        updateClouds(tpf);
+        updateClouds(elapsedTime);
         /*
          * Translate the sky node to center the sky on the camera.
          */
         Vector3f cameraLocation = camera.getLocation();
-        MySpatial.setWorldLocation(skyNode, cameraLocation);
+        MySpatial.setWorldLocation(subtree, cameraLocation);
+        MySpatial.setWorldOrientation(subtree, Quaternion.IDENTITY);
+        /*
+         * Scale the sky node so that its furthest geometries are midway
+         * between the near and far planes of the view frustum.
+         */
+        float far = camera.getFrustumFar();
+        float near = camera.getFrustumNear();
+        float radius = (near + far) / 2f;
+        MySpatial.setWorldScale(subtree, radius);
     }
     // *************************************************************************
     // private methods
@@ -554,9 +512,9 @@ public class SkyControlCore
         /*
          * Create a node to parent the dome geometries.
          */
-        skyNode = new Node("sky node");
-        skyNode.setQueueBucket(Bucket.Sky);
-        skyNode.setShadowMode(ShadowMode.Off);
+        subtree = new Node("sky node");
+        subtree.setQueueBucket(Bucket.Sky);
+        subtree.setShadowMode(ShadowMode.Off);
         /*
          * Attach geometries to the sky node from the outside in
          * because they'll be rendered in that order.
@@ -564,21 +522,21 @@ public class SkyControlCore
         if (starMotionFlag) {
             DomeMesh hemisphere = new DomeMesh(rimSamples, quadrantSamples);
             northDome = new Geometry(northName, hemisphere);
-            skyNode.attachChild(northDome);
+            subtree.attachChild(northDome);
 
             southDome = new Geometry(southName, hemisphere);
-            skyNode.attachChild(southDome);
+            subtree.attachChild(southDome);
         }
 
         topMesh = new DomeMesh(rimSamples, quadrantSamples);
         topDome = new Geometry("top", topMesh);
-        skyNode.attachChild(topDome);
+        subtree.attachChild(topDome);
         topDome.setMaterial(topMaterial);
 
         if (bottomDomeFlag) {
             bottomMesh = new DomeMesh(rimSamples, 2);
             bottomDome = new Geometry(bottomName, bottomMesh);
-            skyNode.attachChild(bottomDome);
+            subtree.attachChild(bottomDome);
 
             Quaternion upsideDown = new Quaternion();
             upsideDown.lookAt(Vector3f.UNIT_X, Vector3f.UNIT_Y.negate());
@@ -592,7 +550,7 @@ public class SkyControlCore
 
             cloudsMesh = new DomeMesh(rimSamples, quadrantSamples);
             cloudsOnlyDome = new Geometry(cloudsName, cloudsMesh);
-            skyNode.attachChild(cloudsOnlyDome);
+            subtree.attachChild(cloudsOnlyDome);
             /*
              * Flatten the clouds-only dome in order to foreshorten clouds
              * near the horizon -- even if cloudYOffset=0.
@@ -608,12 +566,12 @@ public class SkyControlCore
     /**
      * Update the cloud layers. (Invoked once per frame.)
      *
-     * @param tpf seconds since the previous update (&ge;0)
+     * @param elapsedTime seconds since the previous update (&ge;0)
      */
-    private void updateClouds(float tpf) {
-        assert tpf >= 0f : tpf;
+    private void updateClouds(float elapsedTime) {
+        assert elapsedTime >= 0f : elapsedTime;
 
-        cloudsAnimationTime += tpf * cloudsRelativeSpeed;
+        cloudsAnimationTime += elapsedTime * cloudsRelativeSpeed;
         for (int layer = 0; layer < numCloudLayers; layer++) {
             cloudLayers[layer].updateOffset(cloudsAnimationTime);
         }

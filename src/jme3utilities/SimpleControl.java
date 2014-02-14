@@ -29,14 +29,14 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
-import com.jme3.scene.SceneGraphVisitor;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
 import java.io.IOException;
 
 /**
- * A simplified abstract control.
+ * A simplified abstract control which does not implement serialization or
+ * cloning.
  * <p>
  * Although this is an abstract class, it defines all required methods in order
  * to simplify the development of subclasses -- unlike AbstractControl.
@@ -47,19 +47,6 @@ import java.io.IOException;
  */
 abstract public class SimpleControl
         extends AbstractControl {
-    // *************************************************************************
-    // new public methods
-
-    /**
-     * Traverse the node's subtree in depth-first order.
-     *
-     * @param visitor method invoked on each spatial (not null)
-     */
-    public void traverse(SceneGraphVisitor visitor) {
-        assert visitor != null;
-
-        spatial.depthFirstTraversal(visitor);
-    }
     // *************************************************************************
     // AbstractControl methods
 
@@ -78,14 +65,15 @@ abstract public class SimpleControl
     }
 
     /**
-     * Callback to update this control. (Invoked once per frame.)
+     * Callback to update this control while it is enabled. (Invoked once per
+     * frame.)
      *
      * Does nothing. Meant to be overridden.
      *
-     * @param simInterval seconds since the previous update (&ge;0)
+     * @param elapsedTime seconds since the previous update (&ge;0)
      */
     @Override
-    protected void controlUpdate(float simInterval) {
+    protected void controlUpdate(float elapsedTime) {
         /* no updating required */
     }
 
