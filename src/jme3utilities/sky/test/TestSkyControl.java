@@ -128,7 +128,7 @@ public class TestSkyControl
     /**
      * the control under test
      */
-    private SkyControl control = null;
+    private SkyControl skyControl = null;
     /**
      * the heads-up display (HUD)
      */
@@ -251,9 +251,9 @@ public class TestSkyControl
     // SimpleApplication methods
 
     /**
-     * Update the scene.
+     * Callback to update the scene. (Invoked once per frame.)
      *
-     * @param elapsedTime since previous update (&ge;0, in seconds)
+     * @param elapsedTime since the previous update (in seconds, &ge;0)
      */
     @Override
     public void simpleUpdate(float elapsedTime) {
@@ -262,48 +262,47 @@ public class TestSkyControl
             throw new IllegalArgumentException(
                     "elapsed time shouldn't be negative");
         }
-
         /*
          * Adjust SkyControl parameters based on sliders in the HUD.
          */
         LunarPhase lunarPhase = hud.getLunarPhase();
-        control.setPhase(lunarPhase);
+        skyControl.setPhase(lunarPhase);
         if (lunarPhase == LunarPhase.CUSTOM) {
             float phaseAngle = hud.getPhaseAngle();
-            control.setPhaseAngle(phaseAngle);
+            skyControl.setPhaseAngle(phaseAngle);
         }
 
         float cloudiness = hud.getCloudiness();
-        control.setCloudiness(cloudiness);
+        skyControl.setCloudiness(cloudiness);
 
         boolean cloudModulation = hud.getCloudModulation();
-        control.setCloudModulation(cloudModulation);
+        skyControl.setCloudModulation(cloudModulation);
 
         float cloudRate = hud.getCloudRate();
-        control.setCloudRate(cloudRate);
+        skyControl.setCloudRate(cloudRate);
 
         if (!parameters.singleDome()) {
             float cloudYOffset = hud.getCloudYOffset();
-            control.setCloudYOffset(cloudYOffset);
+            skyControl.setCloudYOffset(cloudYOffset);
         }
 
         float hour = hud.getHour();
-        control.getSunAndStars().setHour(hour);
+        skyControl.getSunAndStars().setHour(hour);
 
         float observerLatitude = hud.getLatitude();
-        control.getSunAndStars().setObserverLatitude(observerLatitude);
+        skyControl.getSunAndStars().setObserverLatitude(observerLatitude);
 
         float lunarDiameter = hud.getLunarDiameter();
-        control.setLunarDiameter(lunarDiameter);
+        skyControl.setLunarDiameter(lunarDiameter);
 
         float solarDiameter = hud.getSolarDiameter();
-        control.setSolarDiameter(solarDiameter);
+        skyControl.setSolarDiameter(solarDiameter);
 
         float solarLongitude = hud.getSolarLongitude();
-        control.getSunAndStars().setSolarLongitude(solarLongitude);
+        skyControl.getSunAndStars().setSolarLongitude(solarLongitude);
 
         float topVerticalAngle = hud.getTopVerticalAngle();
-        control.setTopVerticalAngle(topVerticalAngle);
+        skyControl.setTopVerticalAngle(topVerticalAngle);
         /*
          * Adjust vertical scale of the terrain based on a slider in the HUD.
          */
@@ -312,10 +311,14 @@ public class TestSkyControl
         float topY = hud.getRelief();
         landscapeControl.setTerrainScale(radius, baseY, topY);
         /*
-         * Enable or disable the floor based on a check box in the HUD.
+         * Enable or disable controls based on check boxes in the HUD.
          */
         boolean floorFlag = hud.getFloorFlag();
         floorControl.setEnabled(floorFlag);
+        boolean landscapeFlag = hud.getLandscapeFlag();
+        landscapeControl.setEnabled(landscapeFlag);
+        boolean skyFlag = hud.getSkyFlag();
+        skyControl.setEnabled(skyFlag);
     }
     // *************************************************************************
     // ViewPortListener methods
@@ -354,7 +357,7 @@ public class TestSkyControl
         bloom.setBlurScale(2.5f);
         bloom.setExposurePower(1f);
         Misc.getFpp(viewPort, assetManager).addFilter(bloom);
-        control.getUpdater().addBloomFilter(bloom);
+        skyControl.getUpdater().addBloomFilter(bloom);
     }
 
     /**
@@ -365,7 +368,7 @@ public class TestSkyControl
     private void addShadows(ViewPort viewPort) {
         assert viewPort != null;
 
-        Updater updater = control.getUpdater();
+        Updater updater = skyControl.getUpdater();
         if (parameters.shadowFilter()) {
             DirectionalLightShadowFilter dlsf =
                     new DirectionalLightShadowFilter(assetManager,
@@ -396,7 +399,7 @@ public class TestSkyControl
     private void addWater() {
         WaterProcessor wp = new WaterProcessor(assetManager);
         viewPort.addProcessor(wp);
-        wp.addListener(control.getUpdater());
+        wp.addListener(skyControl.getUpdater());
         wp.addListener(this);
         //wp.setDebug(true);
         wp.setDistortionMix(1f);
@@ -441,16 +444,16 @@ public class TestSkyControl
             starMotion = true; // allow stars to move
             bottomDome = true; // helpful in case the scene has a low horizon
         }
-        control = new SkyControl(assetManager, cam, cloudFlattening, starMotion,
+        skyControl = new SkyControl(assetManager, cam, cloudFlattening, starMotion,
                 bottomDome);
         if (parameters.cyclone()) {
-            CloudLayer mainLayer = control.getCloudLayer(0);
+            CloudLayer mainLayer = skyControl.getCloudLayer(0);
             mainLayer.setMotion(0.37f, 0f, 0.2f, 0.001f);
             mainLayer.setTexture("Textures/skies/clouds/cyclone.png", 0.3f);
-            control.getCloudLayer(1).clearTexture();
+            skyControl.getCloudLayer(1).clearTexture();
         }
         if (parameters.highResStars() && !parameters.singleDome()) {
-            control.setStarMaps("Textures/skies/star-maps/16m");
+            skyControl.setStarMaps("Textures/skies/star-maps/16m");
         }
         Texture moonTexture = MyAsset.loadTexture(assetManager,
                 "Textures/skies/moon/clementine.png");
@@ -463,18 +466,18 @@ public class TestSkyControl
                 Image.Format.Luminance8Alpha8, equatorSamples, meridianSamples,
                 resolution);
         stateManager.attach(moonRenderer);
-        control.setMoonRenderer(moonRenderer);
+        skyControl.setMoonRenderer(moonRenderer);
         /*
          * Put SkyControl in charge of updating both lights plus the
          * viewport background. (all optional)
          */
-        Updater updater = control.getUpdater();
+        Updater updater = skyControl.getUpdater();
         updater.addViewPort(viewPort);
         updater.setAmbientLight(ambientLight);
         updater.setMainLight(mainLight);
 
-        sceneNode.addControl(control);
-        control.setEnabled(true);
+        sceneNode.addControl(skyControl);
+        skyControl.setEnabled(true);
     }
 
     /**

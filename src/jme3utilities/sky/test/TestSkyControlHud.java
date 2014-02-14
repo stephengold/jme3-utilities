@@ -181,7 +181,7 @@ public class TestSkyControlHud
     }
 
     /**
-     * Read the status of the "floor" check box.
+     * Read the status of the "enable floor" check box.
      *
      * @return true if the box is checked, otherwise false
      */
@@ -203,6 +203,18 @@ public class TestSkyControlHud
         assert hour >= 0f : hour;
         assert hour < 24f : hour;
         return hour;
+    }
+
+    /**
+     * Read the status of the "enable landscape" check box.
+     *
+     * @return true if the box is checked, otherwise false
+     */
+    boolean getLandscapeFlag() {
+        CheckBox box = getScreen().findNiftyControl("landscapeCheckBox",
+                CheckBox.class);
+        boolean result = box.isChecked();
+        return result;
     }
 
     /**
@@ -254,6 +266,18 @@ public class TestSkyControlHud
         assert phaseAngle >= 0f : phaseAngle;
         assert phaseAngle <= FastMath.TWO_PI : phaseAngle;
         return phaseAngle;
+    }
+
+    /**
+     * Read the status of the "enable sky" check box.
+     *
+     * @return true if the box is checked, otherwise false
+     */
+    boolean getSkyFlag() {
+        CheckBox box =
+                getScreen().findNiftyControl("skyCheckBox", CheckBox.class);
+        boolean result = box.isChecked();
+        return result;
     }
 
     /**
@@ -339,15 +363,15 @@ public class TestSkyControlHud
     /**
      * Callback to update this display. (Invoked once per frame.)
      *
-     * @param tpf seconds since the previous update (&ge;0)
+     * @param elapsedTime since the previous update (in seconds, &ge;0)
      */
     @Override
-    public void update(float tpf) {
-        if (!(tpf >= 0f)) {
-            logger.log(Level.SEVERE, "tpf={0}", tpf);
-            throw new IllegalArgumentException("tpf should not be negative");
+    public void update(float elapsedTime) {
+        if (!(elapsedTime >= 0f)) {
+            logger.log(Level.SEVERE, "time={0}", elapsedTime);
+            throw new IllegalArgumentException("time should not be negative");
         }
-        super.update(tpf);
+        super.update(elapsedTime);
 
         if (!isEnabled()) {
             return;
@@ -481,6 +505,10 @@ public class TestSkyControlHud
 
         setListener(this);
         super.initialize(stateManager, application);
+
+        setCheckBox("floorCheckBox", false);
+        setCheckBox("landscapeCheckBox", true);
+        setCheckBox("skyCheckBox", true);
         setRadioButton("forwardRadioButton");
     }
 
