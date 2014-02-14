@@ -172,6 +172,13 @@
                             </control>
                         </panel>
 
+                        <panel style="buttonPanel">
+                            <control name="button" id="id3ToAvoidNiftyWarning"
+                                     label="Select sun style">
+                                <interact onRelease="perform(style)"/>
+                            </control>
+                        </panel>
+
                         <panel style="statusPanel">
                             <control name="label" id="customLunarPhaseSliderStatus"/>
                         </panel>

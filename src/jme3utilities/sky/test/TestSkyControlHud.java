@@ -42,6 +42,7 @@ import jme3utilities.MyString;
 import jme3utilities.TimeOfDay;
 import jme3utilities.math.MyMath;
 import jme3utilities.sky.LunarPhase;
+import jme3utilities.sky.SkyMaterial;
 import jme3utilities.ui.GuiScreenController;
 
 /**
@@ -121,6 +122,10 @@ public class TestSkyControlHud
      * phase of the moon, selected from a popup menu
      */
     private LunarPhase phase = LunarPhase.FULL;
+    /**
+     * sun color map asset path, selected from a popup menu
+     */
+    private String sunAssetPath = SkyMaterial.sunMapPath;
     /**
      * the time of day: initially 4:45 a.m.
      */
@@ -303,6 +308,15 @@ public class TestSkyControlHud
     }
 
     /**
+     * Read the sun's color map.
+     *
+     * @return asset path (or null for no sun)
+     */
+    String getSunStyle() {
+        return sunAssetPath;
+    }
+
+    /**
      * Read the current vertical angle for the top dome.
      *
      * @return angle (radians from top to rim, &lt;Pi, &gt;0)
@@ -478,6 +492,19 @@ public class TestSkyControlHud
                 phase = LunarPhase.fromDescription(name);
                 break;
 
+            case "style":
+                showStyleMenu();
+                break;
+
+            case "style chaotic":
+            case "style disc":
+            case "style hazy-disc":
+            case "style rayed":
+            case "style t0neg0d":
+                name = actionString.substring(6);
+                setStyle(name);
+                break;
+
             default:
                 logger.log(Level.WARNING, "Action {0} was not handled.",
                         MyString.quote(actionString));
@@ -530,11 +557,39 @@ public class TestSkyControlHud
     // private methods
 
     /**
-     * Display a phase-of-the-moon menu.
+     * Alter the style of the sun.
+     *
+     * @param name of new style (not null)
+     */
+    private void setStyle(String name) {
+        assert name != null;
+
+        switch (name) {
+            case "t0neg0d":
+                sunAssetPath = SkyMaterial.sunMapPath;
+                break;
+
+            default:
+                sunAssetPath =
+                        String.format("Textures/skies/suns/%s.png", name);
+        }
+    }
+
+    /**
+     * Display a menu of lunar phases.
      */
     private void showPhaseMenu() {
         showPopup("phase ", new String[]{
             "custom", "full", "none", "waning", "waxing"
+        });
+    }
+
+    /**
+     * Display a menu of sun styles.
+     */
+    private void showStyleMenu() {
+        showPopup("style ", new String[]{
+            "chaotic", "disc", "hazy-disc", "rayed", "t0neg0d"
         });
     }
 }

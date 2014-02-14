@@ -263,7 +263,7 @@ public class TestSkyControl
                     "elapsed time shouldn't be negative");
         }
         /*
-         * Adjust SkyControl parameters based on sliders in the HUD.
+         * Adjust SkyControl parameters based on GUI controls in the HUD.
          */
         LunarPhase lunarPhase = hud.getLunarPhase();
         skyControl.setPhase(lunarPhase);
@@ -271,6 +271,8 @@ public class TestSkyControl
             float phaseAngle = hud.getPhaseAngle();
             skyControl.setPhaseAngle(phaseAngle);
         }
+        String sunStyle = hud.getSunStyle();
+        skyControl.setSunStyle(sunStyle);
 
         float cloudiness = hud.getCloudiness();
         skyControl.setCloudiness(cloudiness);
