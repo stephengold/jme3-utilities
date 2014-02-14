@@ -446,6 +446,8 @@ public class TestSkyControl
         }
         skyControl = new SkyControl(assetManager, cam, cloudFlattening, starMotion,
                 bottomDome);
+        sceneNode.addControl(skyControl);
+
         if (parameters.cyclone()) {
             CloudLayer mainLayer = skyControl.getCloudLayer(0);
             mainLayer.setMotion(0.37f, 0f, 0.2f, 0.001f);
@@ -475,9 +477,6 @@ public class TestSkyControl
         updater.addViewPort(viewPort);
         updater.setAmbientLight(ambientLight);
         updater.setMainLight(mainLight);
-
-        sceneNode.addControl(skyControl);
-        skyControl.setEnabled(true);
     }
 
     /**
@@ -515,13 +514,12 @@ public class TestSkyControl
     }
 
     /**
-     * Create, configure, add, and enable the landscape/terrain.
+     * Create, configure, and add the landscape/terrain.
      */
     private void initializeLandscape() {
         rootNode.attachChild(sceneNode);
         landscapeControl = new LandscapeControl(assetManager);
         sceneNode.addControl(landscapeControl);
-        landscapeControl.setEnabled(true);
     }
 
     /**
