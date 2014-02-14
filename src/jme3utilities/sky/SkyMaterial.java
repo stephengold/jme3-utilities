@@ -31,7 +31,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
+import jme3utilities.MyAsset;
 import jme3utilities.MyString;
 
 /**
@@ -176,7 +176,7 @@ public class SkyMaterial
             throw new NullPointerException("path should not be null");
         }
 
-        Texture alphaMap = Misc.loadTexture(assetManager, assetPath);
+        Texture alphaMap = MyAsset.loadTexture(assetManager, assetPath);
         setTexture("HazeAlphaMap", alphaMap);
         setHazeColor(ColorRGBA.White);
     }
@@ -194,7 +194,7 @@ public class SkyMaterial
             throw new NullPointerException("path should not be null");
         }
 
-        Texture colorMap = Misc.loadTexture(assetManager, assetPath);
+        Texture colorMap = MyAsset.loadTexture(assetManager, assetPath);
         addObject(objectIndex, colorMap);
     }
 
@@ -215,7 +215,7 @@ public class SkyMaterial
             throw new NullPointerException("path should not be null");
         }
 
-        Texture colorMap = Misc.loadTexture(assetManager, assetPath);
+        Texture colorMap = MyAsset.loadTexture(assetManager, assetPath);
         setTexture("StarsColorMap", colorMap);
     }
 

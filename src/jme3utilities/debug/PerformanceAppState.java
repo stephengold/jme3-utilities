@@ -40,7 +40,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
+import jme3utilities.MyAsset;
 
 /**
  * An app state which implements a performance monitor for jME3. Each second it
@@ -148,7 +148,8 @@ public class PerformanceAppState
         /*
          * Create and attach a colored background for the display.
          */
-        Material backgroudMaterial = Misc.createUnshadedMaterial(assetManager);
+        Material backgroudMaterial =
+                MyAsset.createUnshadedMaterial(assetManager);
         backgroudMaterial.setColor("Color", backgroundColor);
         RenderState renderState = backgroudMaterial.getAdditionalRenderState();
         renderState.setBlendMode(RenderState.BlendMode.Alpha);
