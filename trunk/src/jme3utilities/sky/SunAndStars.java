@@ -294,6 +294,18 @@ public class SunAndStars
     }
 
     /**
+     * Compute the direction to the center of the sun.
+     *
+     * @return a new unit vector in world coordinates
+     */
+    public Vector3f getSunDirection() {
+        Vector3f result = convertToWorld(0f, solarLongitude);
+
+        assert result.isUnitVector();
+        return result;
+    }
+
+    /**
      * Update the orientation of an external sky.
      *
      * @param spatial the external sky (not null)
