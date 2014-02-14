@@ -44,6 +44,7 @@ import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
+import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.SimpleControl;
 
@@ -348,7 +349,7 @@ public class LandscapeControl
      */
     private AbstractHeightMap loadHeightMap() {
         Texture heightTexture =
-                Misc.loadTexture(assetManager, heightMapAssetPath);
+                MyAsset.loadTexture(assetManager, heightMapAssetPath);
         Image heightImage = heightTexture.getImage();
         float heightScale = 1f;
         AbstractHeightMap heightMap =

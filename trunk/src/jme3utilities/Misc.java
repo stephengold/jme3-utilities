@@ -31,10 +31,8 @@ import com.jme3.animation.LoopMode;
 import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
-import com.jme3.asset.TextureKey;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
-import com.jme3.material.Material;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -45,7 +43,6 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
-import com.jme3.texture.Texture;
 import com.jme3.util.IntMap;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -199,87 +196,6 @@ public class Misc {
     }
 
     /**
-     * Create a shaded material for a specific diffuse texture.
-     *
-     * @param assetManager (not null)
-     * @param texture (not null)
-     * @return a new instance
-     */
-    public static Material createShadedMaterial(AssetManager assetManager,
-            Texture texture) {
-        if (assetManager == null) {
-            throw new NullPointerException("asset manager should not be null");
-        }
-        if (texture == null) {
-            throw new NullPointerException("texture should not be null");
-        }
-
-        Material material = new Material(assetManager, shadedMaterialAssetPath);
-        material.setTexture("DiffuseMap", texture);
-        return material;
-    }
-
-    /**
-     * Create an unshaded material.
-     *
-     * @param assetManager (not null)
-     * @return a new instance
-     */
-    public static Material createUnshadedMaterial(AssetManager assetManager) {
-        if (assetManager == null) {
-            throw new NullPointerException("asset manager should not be null");
-        }
-
-        Material material = new Material(assetManager,
-                unshadedMaterialAssetPath);
-        return material;
-    }
-
-    /**
-     * Create an unshaded material from a texture asset path.
-     *
-     * @param assetManager (not null)
-     * @param assetPath to the texture asset (not null)
-     * @return a new instance
-     */
-    public static Material createUnshadedMaterial(AssetManager assetManager,
-            String assetPath) {
-        if (assetManager == null) {
-            throw new NullPointerException("asset manager should not be null");
-        }
-        if (assetPath == null) {
-            throw new NullPointerException("path should not be null");
-        }
-
-        Texture texture = loadTexture(assetManager, assetPath);
-        Material material = createUnshadedMaterial(assetManager, texture);
-
-        return material;
-    }
-
-    /**
-     * Create an unshaded material for a specific colormap texture.
-     *
-     * @param assetManager (not null)
-     * @param texture (not null)
-     * @return a new instance
-     */
-    public static Material createUnshadedMaterial(AssetManager assetManager,
-            Texture texture) {
-        if (assetManager == null) {
-            throw new NullPointerException("asset manager should not be null");
-        }
-        if (texture == null) {
-            throw new NullPointerException("texture should not be null");
-        }
-
-        Material material = createUnshadedMaterial(assetManager);
-        material.setTexture("ColorMap", texture);
-
-        return material;
-    }
-
-    /**
      * Detach all app states which are subclasses of a specified class.
      *
      * @param stateManager (not null)
@@ -392,28 +308,6 @@ public class Misc {
         int key = Type.TexCoord.ordinal();
         boolean result = buffers.containsKey(key);
         return result;
-    }
-
-    /**
-     * Load a non-flipped texture asset in edge-clamp mode.
-     *
-     * @param assetManager (not null)
-     * @param assetPath to the texture asset (not null)
-     * @return the texture which was loaded (not null)
-     */
-    public static Texture loadTexture(AssetManager assetManager,
-            String assetPath) {
-        if (assetPath == null) {
-            throw new NullPointerException("path should not be null");
-        }
-
-        boolean flipY = false;
-        TextureKey key = new TextureKey(assetPath, flipY);
-        Texture texture = assetManager.loadTexture(key);
-        // edge-clamp mode is the default
-
-        assert texture != null;
-        return texture;
     }
 
     /**

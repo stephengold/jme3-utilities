@@ -47,6 +47,7 @@ import com.jme3.system.AppSettings;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
+import jme3utilities.MyAsset;
 import jme3utilities.MyCamera;
 import jme3utilities.MyString;
 import jme3utilities.debug.AxesControl;
@@ -277,7 +278,7 @@ public class SlideShow
         /*
          * Initialize the material for wireframes.
          */
-        wireframe = Misc.createUnshadedMaterial(assetManager);
+        wireframe = MyAsset.createUnshadedMaterial(assetManager);
         wireframe.setColor("Color", ColorRGBA.Magenta);
         wireframe.getAdditionalRenderState()
                 .setFaceCullMode(FaceCullMode.Front);
@@ -492,7 +493,7 @@ public class SlideShow
                 /*
                  * Apply starry material to the north dome.
                  */
-                Material northern = Misc.createUnshadedMaterial(assetManager,
+                Material northern = MyAsset.createUnshadedMaterial(assetManager,
                         "Textures/skies/star-maps/northern.png");
                 northern.getAdditionalRenderState()
                         .setFaceCullMode(FaceCullMode.Off);
@@ -511,7 +512,7 @@ public class SlideShow
                 southDome.setMaterial(wireframe);
                 break;
             case 17:
-                Material southern = Misc.createUnshadedMaterial(assetManager,
+                Material southern = MyAsset.createUnshadedMaterial(assetManager,
                         "Textures/skies/star-maps/southern.png");
                 southern.getAdditionalRenderState()
                         .setFaceCullMode(FaceCullMode.Off);
@@ -613,7 +614,7 @@ public class SlideShow
                 /*
                  * Make bottom dome solid white.
                  */
-                bottomMaterial = Misc.createUnshadedMaterial(assetManager);
+                bottomMaterial = MyAsset.createUnshadedMaterial(assetManager);
                 bottomMaterial.setColor("Color", ColorRGBA.White);
                 bottomDome.setMaterial(bottomMaterial);
                 break;

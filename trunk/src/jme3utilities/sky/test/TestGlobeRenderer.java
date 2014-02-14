@@ -45,6 +45,7 @@ import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
+import jme3utilities.MyAsset;
 import jme3utilities.MyString;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.textures.GlobeRenderer;
@@ -210,9 +211,9 @@ public class TestGlobeRenderer
         /*
          * Add a globe renderer for the moon.
          */
-        Texture moonTexture = Misc.loadTexture(assetManager,
+        Texture moonTexture = MyAsset.loadTexture(assetManager,
                 "Textures/skies/moon/clementine.png");
-        Material moonMaterial = Misc.createShadedMaterial(assetManager,
+        Material moonMaterial = MyAsset.createShadedMaterial(assetManager,
                 moonTexture);
         moonRenderer = new GlobeRenderer(moonMaterial,
                 Image.Format.Luminance8Alpha8, equatorSamples, meridianSamples,
@@ -223,12 +224,12 @@ public class TestGlobeRenderer
          */
         Texture dynamicTexture = moonRenderer.getTexture();
         dynamicMaterial =
-                Misc.createUnshadedMaterial(assetManager, dynamicTexture);
+                MyAsset.createUnshadedMaterial(assetManager, dynamicTexture);
         RenderState additional = dynamicMaterial.getAdditionalRenderState();
         additional.setBlendMode(RenderState.BlendMode.Alpha);
         additional.setDepthWrite(false);
 
-        loadedMaterial = Misc.createUnshadedMaterial(assetManager);
+        loadedMaterial = MyAsset.createUnshadedMaterial(assetManager);
         additional = loadedMaterial.getAdditionalRenderState();
         additional.setBlendMode(RenderState.BlendMode.Alpha);
         additional.setDepthWrite(false);
@@ -291,7 +292,7 @@ public class TestGlobeRenderer
          * Load the corresponding static texture.
          */
         String loadPath = phase.imagePath();
-        Texture loadedTexture = Misc.loadTexture(assetManager, loadPath);
+        Texture loadedTexture = MyAsset.loadTexture(assetManager, loadPath);
         loadedMaterial.setTexture("ColorMap", loadedTexture);
     }
 }

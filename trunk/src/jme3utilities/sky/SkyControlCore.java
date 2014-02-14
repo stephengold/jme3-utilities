@@ -27,7 +27,6 @@ package jme3utilities.sky;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
-import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
@@ -41,7 +40,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
+import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.SimpleControl;
 import jme3utilities.math.MyMath;
@@ -263,7 +262,7 @@ public class SkyControlCore
         }
 
         if (bottomDomeFlag) {
-            bottomMaterial = Misc.createUnshadedMaterial(assetManager);
+            bottomMaterial = MyAsset.createUnshadedMaterial(assetManager);
         } else {
             bottomMaterial = null;
         }
@@ -291,11 +290,7 @@ public class SkyControlCore
          * them back into the render queue ahead of the top dome?
          * Instead, make the north/south domes fully transparent.
          */
-        Material clear = Misc.createUnshadedMaterial(assetManager);
-        clear.setColor("Color", ColorRGBA.BlackNoAlpha);
-        RenderState additional = clear.getAdditionalRenderState();
-        additional.setBlendMode(RenderState.BlendMode.Alpha);
-        additional.setDepthWrite(false);
+        Material clear = MyAsset.createInvisibleMaterial(assetManager);
         northDome.setMaterial(clear);
         southDome.setMaterial(clear);
     }
@@ -408,11 +403,13 @@ public class SkyControlCore
         }
 
         String northPath = String.format("%s/%sern.png", assetPath, northName);
-        Material north = Misc.createUnshadedMaterial(assetManager, northPath);
+        Material north =
+                MyAsset.createUnshadedMaterial(assetManager, northPath);
         northDome.setMaterial(north);
 
         String southPath = String.format("%s/%sern.png", assetPath, southName);
-        Material south = Misc.createUnshadedMaterial(assetManager, southPath);
+        Material south =
+                MyAsset.createUnshadedMaterial(assetManager, southPath);
         southDome.setMaterial(south);
     }
 
@@ -538,7 +535,7 @@ public class SkyControlCore
         assert tpf >= 0f : tpf;
         updateClouds(tpf);
         /*
-         * Translate the sky node to center it on the camera.
+         * Translate the sky node to center the sky on the camera.
          */
         Vector3f cameraLocation = camera.getLocation();
         MySpatial.setWorldLocation(skyNode, cameraLocation);

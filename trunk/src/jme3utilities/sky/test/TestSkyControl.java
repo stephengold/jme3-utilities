@@ -49,6 +49,7 @@ import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
+import jme3utilities.MyAsset;
 import jme3utilities.MyString;
 import jme3utilities.ViewPortListener;
 import jme3utilities.WaterProcessor;
@@ -198,6 +199,7 @@ public class TestSkyControl
         logger.log(Level.INFO, "jME3-utilities version is {0}",
                 MyString.quote(Misc.getVersionShort()));
 
+        //Misc.detachAll(stateManager, DebugKeysAppState.class);
         initializeCamera();
         initializeLandscape();
         initializeLights();
@@ -450,9 +452,9 @@ public class TestSkyControl
         if (parameters.highResStars() && !parameters.singleDome()) {
             control.setStarMaps("Textures/skies/star-maps/16m");
         }
-        Texture moonTexture = Misc.loadTexture(assetManager,
+        Texture moonTexture = MyAsset.loadTexture(assetManager,
                 "Textures/skies/moon/clementine.png");
-        Material moonMaterial = Misc.createShadedMaterial(assetManager,
+        Material moonMaterial = MyAsset.createShadedMaterial(assetManager,
                 moonTexture);
         int equatorSamples = 12;
         int meridianSamples = 24;

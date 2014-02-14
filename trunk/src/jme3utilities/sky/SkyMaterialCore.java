@@ -41,7 +41,7 @@ import com.jme3.texture.image.ImageRaster;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
+import jme3utilities.MyAsset;
 import jme3utilities.math.MyMath;
 
 /**
@@ -177,7 +177,7 @@ public class SkyMaterialCore
 
         boolean firstTime = (cloudsRaster[layerIndex] == null);
 
-        Texture alphaMap = Misc.loadTexture(assetManager, assetPath);
+        Texture alphaMap = MyAsset.loadTexture(assetManager, assetPath);
         alphaMap.setWrap(Texture.WrapMode.Repeat);
         String parameterName = String.format("Clouds%dAlphaMap", layerIndex);
         setTexture(parameterName, alphaMap);
