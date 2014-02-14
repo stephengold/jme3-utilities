@@ -125,7 +125,7 @@ public class TestSkyControlHud
     /**
      * sun color map asset path, selected from a popup menu
      */
-    private String sunAssetPath = SkyMaterial.sunMapPath;
+    private String sunAssetPath = "Textures/skies/suns/hazy-disc.png";
     /**
      * the time of day: initially 4:45 a.m.
      */
