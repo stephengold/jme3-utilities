@@ -40,6 +40,7 @@ import com.jme3.post.filters.BloomFilter;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
@@ -129,6 +130,10 @@ public class TestSkyControl
      * the control under test
      */
     private SkyControl skyControl = null;
+    /**
+     * background cube map
+     */
+    private Spatial cubeMap = null;
     /**
      * the heads-up display (HUD)
      */
@@ -313,7 +318,8 @@ public class TestSkyControl
         float topY = hud.getRelief();
         landscapeControl.setTerrainScale(radius, baseY, topY);
         /*
-         * Enable or disable controls based on check boxes in the HUD.
+         * Enable or disable controls and filters based on
+         * check boxes in the HUD.
          */
         boolean floorFlag = hud.getFloorFlag();
         floorControl.setEnabled(floorFlag);
@@ -321,6 +327,25 @@ public class TestSkyControl
         landscapeControl.setEnabled(landscapeFlag);
         boolean skyFlag = hud.getSkyFlag();
         skyControl.setEnabled(skyFlag);
+        boolean bloomFlag = hud.getBloomFlag();
+        skyControl.getUpdater().setBloomEnabled(bloomFlag);
+
+        String starMapPath = hud.getStarMapAssetPath();
+        if (starMapPath == null) {
+            skyControl.clearStarMaps();
+        } else {
+            if (parameters.singleDome()) {
+                starMapPath += "/wiltshire.png";
+            }
+            skyControl.setStarMaps(starMapPath);
+        }
+
+        if (!parameters.singleDome()) {
+            /*
+             * Re-orient the external cube map.
+             */
+            skyControl.getSunAndStars().orientExternalSky(cubeMap);
+        }
     }
     // *************************************************************************
     // ViewPortListener methods
@@ -432,6 +457,11 @@ public class TestSkyControl
      */
     private void initializeSky() {
         /*
+         * Add a cube map background.
+         */
+        cubeMap = MyAsset.createStarMap(assetManager, "purple-nebula-complex");
+        sceneNode.attachChild(cubeMap);
+        /*
          * Create a SkyControl to animate the sky.
          */
         float cloudFlattening;
@@ -455,9 +485,6 @@ public class TestSkyControl
             mainLayer.setMotion(0.37f, 0f, 0.2f, 0.001f);
             mainLayer.setTexture("Textures/skies/clouds/cyclone.png", 0.3f);
             skyControl.getCloudLayer(1).clearTexture();
-        }
-        if (parameters.highResStars() && !parameters.singleDome()) {
-            skyControl.setStarMaps("Textures/skies/star-maps/16m");
         }
         Texture moonTexture = MyAsset.loadTexture(assetManager,
                 "Textures/skies/moon/clementine.png");

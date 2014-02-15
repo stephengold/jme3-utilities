@@ -115,13 +115,17 @@ public class TestSkyControlHud
      */
     private float topVerticalAngle = FastMath.HALF_PI;
     /**
-     * clock direction (&le;1, &ge;-1)
+     * clock direction (&le;1, &ge;-1, 0 &rarr; paused)
      */
     private int clockDirection = +1;
     /**
      * phase of the moon, selected from a popup menu
      */
     private LunarPhase phase = LunarPhase.FULL;
+    /**
+     * star map asset path (or null for none), selected from a popup menu
+     */
+    private String starMapAssetPath = "Textures/skies/star-maps/16m";
     /**
      * sun color map asset path, selected from a popup menu
      */
@@ -143,6 +147,18 @@ public class TestSkyControlHud
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Read the status of the "enable bloom" check box.
+     *
+     * @return true if the box is checked, otherwise false
+     */
+    boolean getBloomFlag() {
+        CheckBox box =
+                getScreen().findNiftyControl("bloomCheckBox", CheckBox.class);
+        boolean result = box.isChecked();
+        return result;
+    }
 
     /**
      * Read the current opacity of the clouds.
@@ -308,9 +324,18 @@ public class TestSkyControlHud
     }
 
     /**
+     * Read the star map.
+     *
+     * @return asset path (or null for none)
+     */
+    String getStarMapAssetPath() {
+        return starMapAssetPath;
+    }
+
+    /**
      * Read the sun's color map.
      *
-     * @return asset path (or null for no sun)
+     * @return asset path
      */
     String getSunStyle() {
         return sunAssetPath;
@@ -492,6 +517,17 @@ public class TestSkyControlHud
                 phase = LunarPhase.fromDescription(name);
                 break;
 
+            case "star-map":
+                showStarMapMenu();
+                break;
+
+            case "star-map 4m":
+            case "star-map 16m":
+            case "star-map nebula":
+                name = actionString.substring(9);
+                setStarMap(name);
+                break;
+
             case "style":
                 showStyleMenu();
                 break;
@@ -532,7 +568,10 @@ public class TestSkyControlHud
 
         setListener(this);
         super.initialize(stateManager, application);
-
+        /*
+         * Initialize check boxes and radio buttons.
+         */
+        setCheckBox("bloomCheckBox", true);
         setCheckBox("floorCheckBox", false);
         setCheckBox("landscapeCheckBox", true);
         setCheckBox("skyCheckBox", true);
@@ -555,6 +594,30 @@ public class TestSkyControlHud
     }
     // *************************************************************************
     // private methods
+
+    /**
+     * Alter the star map.
+     *
+     * @param name of new star map (not null)
+     */
+    private void setStarMap(String name) {
+        assert name != null;
+
+        switch (name) {
+            case "16m":
+                starMapAssetPath = "Textures/skies/star-maps/16m";
+                break;
+            case "4m":
+                starMapAssetPath = "Textures/skies/star-maps";
+                break;
+            case "nebula":
+                starMapAssetPath = null;
+                break;
+            default:
+                logger.log(Level.SEVERE, "name={0}", name);
+                throw new IllegalArgumentException("unknown star map name");
+        }
+    }
 
     /**
      * Alter the style of the sun.
@@ -581,6 +644,15 @@ public class TestSkyControlHud
     private void showPhaseMenu() {
         showPopup("phase ", new String[]{
             "custom", "full", "none", "waning", "waxing"
+        });
+    }
+
+    /**
+     * Display a menu of star maps.
+     */
+    private void showStarMapMenu() {
+        showPopup("star-map ", new String[]{
+            "16m", "4m", "nebula"
         });
     }
 
