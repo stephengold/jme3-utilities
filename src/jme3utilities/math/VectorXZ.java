@@ -167,8 +167,8 @@ public class VectorXZ
             /*
              * pick random X and Z, each between -0.5 and +0.5
              */
-            x = MyMath.nextFloat() - 0.5f;
-            z = MyMath.nextFloat() - 0.5f;
+            x = Noise.nextFloat() - 0.5f;
+            z = Noise.nextFloat() - 0.5f;
             length = length();
         }
 
@@ -463,8 +463,8 @@ public class VectorXZ
         float length = length();
         while (length == 0f) {
             // pick random X and Z, each between -0.5 and +0.5
-            x = MyMath.nextFloat() - 0.5f;
-            z = MyMath.nextFloat() - 0.5f;
+            x = Noise.nextFloat() - 0.5f;
+            z = Noise.nextFloat() - 0.5f;
             length = length();
         }
         divideLocal(length);

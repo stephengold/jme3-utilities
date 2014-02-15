@@ -27,7 +27,6 @@ package jme3utilities.math;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,12 +45,6 @@ public class MyMath {
      */
     final private static Logger logger =
             Logger.getLogger(MyMath.class.getName());
-    // *************************************************************************
-    // fields
-    /**
-     * shared pseudo-random generator
-     */
-    final private static Random generator = new Random();
     // *************************************************************************
     // constructors
 
@@ -315,22 +308,6 @@ public class MyMath {
         assert result >= 0.0 : result;
         assert result < modulus : result;
         return result;
-    }
-
-    /**
-     * Get the next pseudo-random single-precision value.
-     */
-    public static float nextFloat() {
-        return generator.nextFloat();
-    }
-
-    /**
-     * Re-seed the pseudo-random generator.
-     *
-     * @param newSeed
-     */
-    public static void reseedGenerator(long newSeed) {
-        generator.setSeed(newSeed);
     }
 
     /**
