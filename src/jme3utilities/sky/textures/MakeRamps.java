@@ -28,7 +28,6 @@ package jme3utilities.sky.textures;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.jme3.math.FastMath;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -170,11 +169,11 @@ public class MakeRamps {
     }
 
     /**
-     * Generate a grayscale ramp image.
+     * Generate a grayscale ramp image and write it to a PNG file.
      *
-     * @param fileName (not null)
+     * @param fileName for writing the image (no extension, not null)
      * @param flattening the oblateness (ellipticity) of the dome with the haze:
-     * 0=no flattening (hemisphere), 1=maximum flattening
+     * 0 &rarr; no flattening (hemisphere), 1 &rarr; maximum flattening
      */
     private void makeRamp(String fileName, float flattening)
             throws IOException {
@@ -190,7 +189,7 @@ public class MakeRamps {
      * Generate a grayscale ramp image.
      *
      * @param flattening the oblateness (ellipticity) of the dome with the haze:
-     * 0=no flattening (hemisphere), 1=maximum flattening
+     * 0 &rarr; no flattening (hemisphere), 1 &rarr; maximum flattening
      * @return a new instance
      */
     private RenderedImage makeRamp(float flattening) {
@@ -214,35 +213,10 @@ public class MakeRamps {
                     elevationAngle = FastMath.atan(tan);
                 }
                 float alpha = hazeAlpha(elevationAngle);
-
-                int brightness = Math.round(255f * alpha);
-                setPixel(graphics, x, y, brightness);
+                Misc.setGrayPixel(graphics, x, y, alpha);
             }
         }
 
         return map;
-    }
-
-    /**
-     * Set a particular pixel to a particular brightness.
-     *
-     * @param graphics context (not null)
-     * @param x coordinate (&lt;textureSize, &ge;0)
-     * @param y coordinate (&lt;textureSize, &ge;0)
-     * @param brightness (&le;255, &ge;0)
-     *
-     */
-    private void setPixel(Graphics2D graphics, int x, int y, int brightness) {
-        assert graphics != null;
-        assert x >= 0 : x;
-        assert y >= 0 : y;
-        assert x < textureSize : x;
-        assert y < textureSize : y;
-        assert brightness >= 0 : brightness;
-        assert brightness <= 255 : brightness;
-
-        Color color = new Color(brightness, brightness, brightness);
-        graphics.setColor(color);
-        graphics.fillRect(x, y, 1, 1);
     }
 }
