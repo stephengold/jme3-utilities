@@ -266,7 +266,7 @@ public class Misc {
      *
      * @return the package name, branch, and revision of this file
      */
-    public static String getVersion() {//
+    public static String getVersion() {
         return "jme3-utilities trunk $Rev$";
     }
 
@@ -345,7 +345,8 @@ public class Misc {
      * @param brightness (&le;1, &ge;0, 0 &rarr; black, 1 &rarr; white)
      *
      */
-    public static void setGrayPixel(Graphics2D graphics, int x, int y, float brightness) {
+    public static void setGrayPixel(Graphics2D graphics, int x, int y,
+            float brightness) {
         if (x < 0 || x >= graphics.getDeviceConfiguration().getBounds().width) {
             logger.log(Level.SEVERE, "x={0}", x);
             throw new IllegalArgumentException(

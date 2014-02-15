@@ -59,7 +59,7 @@ public class MyMath {
     /**
      * Compute the circle function sqrt(1 - x^2) for a double-precision value.
      *
-     * @param abscissa (&le;1, &ge;-1)
+     * @param abscissa input (&le;1, &ge;-1)
      * @return the positive ordinate of the unit circle at the abscissa (&le;1,
      * &ge;0)
      */
@@ -81,7 +81,7 @@ public class MyMath {
      * Compute the circle function sqrt(1 - x^2) for a single-precision value.
      * Double precision arithmetic is used to reduce the risk of overflow.
      *
-     * @param abscissa (&le;1, &ge;-1)
+     * @param abscissa input (&le;1, &ge;-1)
      * @return the positive ordinate of the unit circle at the abscissa (&le;1,
      * &ge;0)
      */
@@ -103,7 +103,7 @@ public class MyMath {
     /**
      * Clamp the magnitude of a single-precision value.
      *
-     * @param fValue value to be clamped
+     * @param fValue input value to be clamped
      * @param maxMagnitude limit of the clamp (&ge;0)
      * @return value between -maxMagnitude and +maxMagnitude inclusive which is
      * closest to fValue
@@ -120,7 +120,7 @@ public class MyMath {
     /**
      * Clamp a value to be between 0 and 1, inclusive.
      *
-     * @param fValue value to be clamped
+     * @param fValue input value to be clamped
      * @return value between 0 and 1 inclusive which is closest to fValue
      * @see FastMath#clamp(float,float,float)
      */
@@ -156,7 +156,7 @@ public class MyMath {
     /**
      * Cube a single-precision value.
      *
-     * @param fValue value to be cubed
+     * @param fValue input value to be cubed
      * @return fValue raised to the third power
      * @see #cubeRoot(float)
      */
@@ -168,7 +168,7 @@ public class MyMath {
      * Extract the cube root of a single-precision value. Unlike FastMath.pow(),
      * this method works on negative values.
      *
-     * @param fValue cube to be extracted (may be negative)
+     * @param fValue input cube to be extracted (may be negative)
      * @return cube root of fValue
      * @see #cube(float)
      * @see FastMath#pow(float,float)
@@ -215,6 +215,28 @@ public class MyMath {
     }
 
     /**
+     * Fade polynomial for Perlin noise. Double precision arithmetic is used to
+     * reduce rounding error.
+     *
+     * @param t input value (&le;1, &ge;0)
+     * @return 6*t^5 - 15*t^4 + 10*t^3 (&le;1, &ge;0)
+     */
+    public static float fade(float t) {
+        if (!(t >= 0f && t < 1f)) {
+            logger.log(Level.SEVERE, "t={0}", t);
+            throw new IllegalArgumentException(
+                    "t should be between 0 and 1");
+        }
+        double tt = (double) t;
+        double ff = tt * tt * tt * (10.0 + tt * (-15.0 + 6.0 * tt));
+        float result = (float) ff;
+
+        assert result >= 0f : result;
+        assert result <= 1f : result;
+        return result;
+    }
+
+    /**
      * Compute the hypotenuse of a right triangle using the Pythagorean Theorem.
      * This method accepts negative arguments.
      *
@@ -234,7 +256,7 @@ public class MyMath {
     /**
      * Test whether an integer value is odd.
      *
-     * @param iValue value to be tested
+     * @param iValue input value to be tested
      * @return true if x is odd, false if it's even
      */
     public static boolean isOdd(int iValue) {
@@ -243,7 +265,7 @@ public class MyMath {
     }
 
     /**
-     * Test whether a vector has length within 1% of 1.
+     * Test whether a vector's length is within 1% of unity.
      */
     public static boolean isUnitVector(Vector2f vector) {
         float norm = vector.length();
@@ -253,9 +275,9 @@ public class MyMath {
     /**
      * Find the max of three single-precision values.
      *
-     * @param a the first value
-     * @param b the second value
-     * @param c the third value
+     * @param a first input value
+     * @param b second input value
+     * @param c third input value
      * @return greatest of the three values
      */
     public static float max(float a, float b, float c) {
@@ -269,10 +291,50 @@ public class MyMath {
     }
 
     /**
+     * Interpolate linearly between two single-precision values.
+     *
+     * @param a first input value
+     * @param b second input value
+     * @param fraction (&lt;1, &gt;0)
+     * @return a*(1-fraction) + b*fraction
+     */
+    public static float mix(float a, float b, float fraction) {
+        if (!(fraction >= 0f && fraction <= 1f)) {
+            logger.log(Level.SEVERE, "fraction={0}", fraction);
+            throw new IllegalArgumentException(
+                    "fraction should be between 0 and 1");
+        }
+
+        float result = a * (1f - fraction) + b * fraction;
+        return result;
+    }
+
+    /**
+     * Compute the least non-negative value congruent with an integer value with
+     * respect to a given modulus.
+     *
+     * @param iValue input value
+     * @param modulus (&gt;0)
+     * @return x MOD modulus (&lt;modulus, &ge;0)
+     */
+    public static int modulo(int iValue, int modulus) {
+        if (!(modulus > 0f)) {
+            logger.log(Level.SEVERE, "modulus={0}", modulus);
+            throw new IllegalArgumentException("modulus should be positive");
+        }
+
+        int result = (iValue % modulus + modulus) % modulus;
+
+        assert result >= 0f : result;
+        assert result < modulus : result;
+        return result;
+    }
+
+    /**
      * Compute the least non-negative value congruent with a single-precision
      * value with respect to a given modulus.
      *
-     * @param fValue which value
+     * @param fValue input value
      * @param modulus (&gt;0)
      * @return x MOD modulus (&lt;modulus, &ge;0)
      */
@@ -293,7 +355,7 @@ public class MyMath {
      * Compute the least non-negative value congruent with a double-precision
      * value with respect to a given modulus.
      *
-     * @param dValue which value
+     * @param dValue input value
      * @param modulus (&gt;0)
      * @return x MOD modulus (&lt;modulus, &ge;0)
      */
@@ -314,8 +376,8 @@ public class MyMath {
      * Compute the sphere function sqrt(1 - x^2 - y^2) for single-precision
      * values. Double precision is used to reduce the risk of overflow.
      *
-     * @param x coordinate (&le;1, &ge;-1)
-     * @param y coordinate (&le;1, &ge;-1)
+     * @param x first coordinate (&le;1, &ge;-1)
+     * @param y second coordinate (&le;1, &ge;-1)
      * @return the positive height of the unit sphere at the coordinates (&le;1,
      * &ge;0)
      */
@@ -345,7 +407,7 @@ public class MyMath {
     /**
      * Standardize a rotation angle to the range [-Pi, Pi).
      *
-     * @param angle (in radians)
+     * @param angle input (in radians)
      * @return a standard angle (in radians, &lt;Pi, &ge;-Pi)
      */
     public static float standardizeAngle(float angle) {
