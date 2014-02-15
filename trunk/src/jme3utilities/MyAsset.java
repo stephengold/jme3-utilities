@@ -30,7 +30,10 @@ import com.jme3.asset.TextureKey;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
+import com.jme3.util.SkyFactory;
 import java.util.logging.Logger;
 
 /**
@@ -112,6 +115,34 @@ public class MyAsset {
     }
 
     /**
+     * Create a cubic star map.
+     *
+     * @param assetManager (not null)
+     * @param name name of the star map (not null)
+     */
+    public static Spatial createStarMap(AssetManager assetManager,
+            String name) {
+        assert name != null;
+        /*
+         * Load the cube map textures.
+         */
+        Texture right = loadFace(assetManager, name, "right1");
+        Texture left = loadFace(assetManager, name, "left2");
+        Texture top = loadFace(assetManager, name, "top3");
+        Texture bottom = loadFace(assetManager, name, "bottom4");
+        Texture front = loadFace(assetManager, name, "front5");
+        Texture back = loadFace(assetManager, name, "back6");
+        /*
+         * Create the map.
+         */
+        Vector3f normalScale = Vector3f.UNIT_XYZ;
+        int sphereRadius = 10;
+        Spatial starMap = SkyFactory.createSky(assetManager, right, left, back,
+                front, top, bottom, normalScale, sphereRadius);
+        return starMap;
+    }
+
+    /**
      * Create an unshaded material.
      *
      * @param assetManager (not null)
@@ -169,6 +200,24 @@ public class MyAsset {
         material.setTexture("ColorMap", texture);
 
         return material;
+    }
+
+    /**
+     * Load the texture asset for a specific face of a cubical star map.
+     *
+     * @param assetManager (not null)
+     * @param mapName name of the star map folder (not null)
+     * @param faceName which face (not null, e.g. "top3")
+     */
+    public static Texture loadFace(AssetManager assetManager, String mapName,
+            String faceName) {
+        assert mapName != null;
+        assert faceName != null;
+
+        String path = String.format("Textures/skies/star-maps/%s/%s_%s.png",
+                mapName, mapName, faceName);
+        Texture result = assetManager.loadTexture(path);
+        return result;
     }
 
     /**
