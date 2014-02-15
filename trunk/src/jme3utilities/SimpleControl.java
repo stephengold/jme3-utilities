@@ -70,7 +70,7 @@ abstract public class SimpleControl
      *
      * Does nothing. Meant to be overridden.
      *
-     * @param elapsedTime seconds since the previous update (&ge;0)
+     * @param elapsedTime since the previous update (in seconds, &ge;0)
      */
     @Override
     protected void controlUpdate(float elapsedTime) {
