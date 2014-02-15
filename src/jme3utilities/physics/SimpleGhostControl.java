@@ -166,10 +166,10 @@ public class SimpleGhostControl
      * Does nothing. Meant to be overridden.
      *
      * @param space
-     * @param tpf
+     * @param elapsedTime (in seconds, &ge;0)
      */
     @Override
-    public void physicsTick(PhysicsSpace space, float tpf) {
+    public void physicsTick(PhysicsSpace space, float elapsedTime) {
         /* do nothing */
     }
 
@@ -179,10 +179,10 @@ public class SimpleGhostControl
      * Does nothing. Meant to be overridden.
      *
      * @param space
-     * @param tpf
+     * @param elapsedTime (in seconds, &ge;0)
      */
     @Override
-    public void prePhysicsTick(PhysicsSpace space, float tpf) {
+    public void prePhysicsTick(PhysicsSpace space, float elapsedTime) {
         /* do nothing */
     }
     // *************************************************************************

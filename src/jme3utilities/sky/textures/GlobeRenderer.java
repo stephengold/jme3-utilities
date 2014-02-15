@@ -382,7 +382,7 @@ public class GlobeRenderer
     /**
      * Update the off-screen scene.
      *
-     * @param elapsedTime since previous update (&ge;0, in seconds)
+     * @param elapsedTime since previous update (in seconds, &ge;0)
      */
     @Override
     public void update(float elapsedTime) {

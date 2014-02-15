@@ -164,7 +164,7 @@ public class PerformanceAppState
     /**
      * Update the performance statistics.
      *
-     * @param elapsedTime since previous frame/update (&ge;0, in seconds)
+     * @param elapsedTime since previous frame/update (in seconds, &ge;0)
      */
     @Override
     public void update(float elapsedTime) {

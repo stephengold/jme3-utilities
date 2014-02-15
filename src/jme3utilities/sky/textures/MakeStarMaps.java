@@ -802,6 +802,9 @@ public class MakeStarMaps {
         /*
          * Extract the apparent magnitude from the text.
          */
+        if (textLine.length() < 60) {
+            throw new InvalidEntryException("catalog entry is too short");
+        }
         String magnitudeText = textLine.substring(56, 60);
         logger.log(Level.FINE, "mag={0}", magnitudeText);
         /*

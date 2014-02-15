@@ -110,7 +110,7 @@ public class FloorControl
      * Callback to update this control while it is enabled. (Invoked once per
      * frame.)
      *
-     * @param elapsedTime seconds since the previous update (&ge;0)
+     * @param elapsedTime since the previous update (in seconds, &ge;0)
      */
     @Override
     public void controlUpdate(float elapsedTime) {

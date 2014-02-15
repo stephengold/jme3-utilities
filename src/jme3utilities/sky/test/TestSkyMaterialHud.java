@@ -157,15 +157,15 @@ public class TestSkyMaterialHud
     /**
      * Callback to update this display. (Invoked once per frame.)
      *
-     * @param tpf seconds since the previous update (&ge;0)
+     * @param elapsedTime since the previous update (in seconds, &ge;0)
      */
     @Override
-    public void update(float tpf) {
-        if (!(tpf >= 0f)) {
-            logger.log(Level.SEVERE, "tpf={0}", tpf);
-            throw new IllegalArgumentException("tpf should not be negative");
+    public void update(float elapsedTime) {
+        if (!(elapsedTime >= 0f)) {
+            logger.log(Level.SEVERE, "time={0}", elapsedTime);
+            throw new IllegalArgumentException("time should not be negative");
         }
-        super.update(tpf);
+        super.update(elapsedTime);
 
         if (!isEnabled()) {
             return;
