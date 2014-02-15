@@ -286,6 +286,17 @@ public class Updater
     }
 
     /**
+     * Enable or disable all known bloom filters.
+     *
+     * @param newState true to enable, false to disable
+     */
+    public void setBloomEnabled(boolean newState) {
+        for (BloomFilter filter : bloomFilters) {
+            filter.setEnabled(newState);
+        }
+    }
+
+    /**
      * Save a reference to the scene's main directional light. As long as the
      * reference has a non-null value, the control will continuously update the
      * light's color, direction, and intensity.

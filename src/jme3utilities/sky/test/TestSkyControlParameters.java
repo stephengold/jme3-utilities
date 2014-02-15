@@ -51,13 +51,6 @@ class TestSkyControlParameters {
             description = "use cyclone cloud map")
     private boolean cyclone = false;
     /**
-     * true means use high-resolution (16-megapixel) star maps; false means use
-     * default (4-megapixel) star maps
-     */
-    @Parameter(names = {"-H", "--high"},
-            description = "use high-resolution star maps")
-    private boolean highResStars = false;
-    /**
      * true means use a shadow filter; false means use a shadow renderer
      */
     @Parameter(names = {"-f", "--filter"},
@@ -90,13 +83,6 @@ class TestSkyControlParameters {
      */
     boolean cyclone() {
         return cyclone;
-    }
-
-    /**
-     * Test whether the high-resolution star maps option was specified.
-     */
-    boolean highResStars() {
-        return highResStars;
     }
 
     /**

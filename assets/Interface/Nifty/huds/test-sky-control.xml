@@ -179,6 +179,13 @@
                             </control>
                         </panel>
 
+                        <panel style="buttonPanel">
+                            <control name="button" id="id4ToAvoidNiftyWarning"
+                                     label="Select star map">
+                                <interact onRelease="perform(star-map)"/>
+                            </control>
+                        </panel>
+
                         <panel style="statusPanel">
                             <control name="label" id="customLunarPhaseSliderStatus"/>
                         </panel>
@@ -240,6 +247,15 @@
                                  max="500"
                                  min="1"
                                  stepSize="1"/>
+
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="bloomCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="enable bloom"/>
+                        </panel>
 
                         <panel style="indentPanel">
                             <control name="checkbox" id="floorCheckBox"
