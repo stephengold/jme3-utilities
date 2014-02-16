@@ -42,15 +42,15 @@ public class Noise {
     // constants
 
     /**
-     *
+     * the square root of 1/2
      */
     final private static float rootHalf = FastMath.sqrt(0.5f);
     /**
-     * default length for the permutation table
+     * default length for the permutation
      */
     final private static int defaultLength = 256;
     /**
-     * default seed for generating permutation tables
+     * default seed for generating the permutation
      */
     final private static long defaultSeed = -35930871;
     /**
@@ -59,28 +59,20 @@ public class Noise {
     final private static Logger logger =
             Logger.getLogger(Noise.class.getName());
     /**
-     * array of 2-D gradients (must all be unit vectors)
-     */
-    final private static Vector2f gradients[] = {
-        new Vector2f(rootHalf, rootHalf),
-        new Vector2f(-rootHalf, rootHalf),
-        new Vector2f(rootHalf, -rootHalf),
-        new Vector2f(-rootHalf, -rootHalf),
-        new Vector2f(1f, 0f),
-        new Vector2f(-1f, 0f),
-        new Vector2f(0f, 1f),
-        new Vector2f(0f, -1f)
-    };
-    // *************************************************************************
-    // fields
-    /**
-     * permutation table for generating Perlin noise
-     */
-    private static int[] permutationTable = null;
-    /**
      * shared pseudo-random generator
      */
     final private static Random generator = new Random();
+    // *************************************************************************
+    // fields
+    /**
+     * permutation for generating Perlin noise
+     */
+    private static int[] permutation = null;
+    /**
+     * array of 2-D gradients for generating Perlin noise (must all be unit
+     * vectors)
+     */
+    private static Vector2f gradients[] = null;
     // *************************************************************************
     // constructors
 
@@ -140,37 +132,58 @@ public class Noise {
     }
 
     /**
-     * Generate the default permutation table for a specific length.
+     * Generate the default gradients for a specific length.
      *
      * @param length (&gt;1)
      */
-    public static void generateTable(int length) {
+    public static void generateGradients(int length) {
         if (length <= 1) {
             logger.log(Level.SEVERE, "length={0}", length);
             throw new IllegalArgumentException(
                     "length should be greater than 1");
         }
-        generateTable(length, defaultSeed);
+        gradients = new Vector2f[length];
+        Random thetaGenerator = new Random(defaultSeed);
+        for (int i = 0; i < length; i++) {
+            float theta = thetaGenerator.nextFloat() * FastMath.TWO_PI;
+            float x = FastMath.cos(theta);
+            float y = FastMath.sin(theta);
+            gradients[i] = new Vector2f(x, y);
+        }
     }
 
     /**
-     * Generate the permutation table for a specific length and seed.
+     * Generate the default permutation of a specific length.
+     *
+     * @param length (&gt;1)
+     */
+    public static void generatePermutation(int length) {
+        if (length <= 1) {
+            logger.log(Level.SEVERE, "length={0}", length);
+            throw new IllegalArgumentException(
+                    "length should be greater than 1");
+        }
+        generatePermutation(length, defaultSeed);
+    }
+
+    /**
+     * Generate a permutation with a specific length and seed.
      *
      * @param length (&gt;1)
      * @param seed for the pseudo-random generator
      */
-    public static void generateTable(int length, long seed) {
+    public static void generatePermutation(int length, long seed) {
         if (length <= 1) {
             logger.log(Level.SEVERE, "length={0}", length);
             throw new IllegalArgumentException(
                     "length should be greater than 1");
         }
         /*
-         * Initialize to the identity permutation.
+         * Initialize the permutation to identity.
          */
-        permutationTable = new int[length];
-        for (short i = 0; i < length; i++) {
-            permutationTable[i] = i;
+        permutation = new int[length];
+        for (int i = 0; i < length; i++) {
+            permutation[i] = i;
         }
         /*
          * Shuffle the permutation by performing one pass of
@@ -185,7 +198,7 @@ public class Noise {
     }
 
     /**
-     * Compute the noise contribution at a specific grid point to a Perlin noise
+     * Compute the contribution of a specific grid point to a Perlin noise
      * sample.
      *
      * @param gridX first coordinate of grid point
@@ -194,7 +207,10 @@ public class Noise {
      * @param y second coordinate of sample point
      */
     public static float gradient(int gridX, int gridY, double x, double y) {
-        int index = permutation(gridX + permutation(gridY));
+        if (gradients == null) {
+            generateGradients(23);
+        }
+        int index = permute(gridX + permute(gridY));
         index = MyMath.modulo(index, gradients.length);
         Vector2f gradient = gradients[index];
         float offsetX = (float) (x - gridX);
@@ -252,20 +268,20 @@ public class Noise {
     }
 
     /**
-     * Look up a permutation in the table, wrapping to table length.
+     * Permute an index, wrapping to table length.
      *
      * @param index of the desired entry
      * @return (&lt;length, &ge;0)
      */
-    public static int permutation(int index) {
-        if (permutationTable == null) {
-            generateTable(defaultLength);
+    public static int permute(int index) {
+        if (permutation == null) {
+            generatePermutation(defaultLength);
         }
-        int i = MyMath.modulo(index, permutationTable.length);
-        int result = permutationTable[i];
+        int i = MyMath.modulo(index, permutation.length);
+        int result = permutation[i];
 
         assert result >= 0 : result;
-        assert result < permutationTable.length : result;
+        assert result < permutation.length : result;
         return result;
     }
 
@@ -279,14 +295,14 @@ public class Noise {
     }
 
     /**
-     * Swap two entries in the permutation table.
+     * Swap two entries in the permutation.
      *
      * @param i index of the first entry (&lt;length, &ge;0)
      * @param j index of the second entry (&lt;length, &ge;0)
      */
     public static void swapTableEntries(int i, int j) {
-        int saveValue = permutationTable[i];
-        permutationTable[i] = permutationTable[j];
-        permutationTable[j] = saveValue;
+        int saveValue = permutation[i];
+        permutation[i] = permutation[j];
+        permutation[j] = saveValue;
     }
 }

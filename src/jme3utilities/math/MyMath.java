@@ -222,7 +222,7 @@ public class MyMath {
      * @return 6*t^5 - 15*t^4 + 10*t^3 (&le;1, &ge;0)
      */
     public static float fade(float t) {
-        if (!(t >= 0f && t < 1f)) {
+        if (!(t >= 0f && t <= 1f)) {
             logger.log(Level.SEVERE, "t={0}", t);
             throw new IllegalArgumentException(
                     "t should be between 0 and 1");
