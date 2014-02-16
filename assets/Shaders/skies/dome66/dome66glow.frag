@@ -125,14 +125,16 @@ void main() {
         vec4 objects = vec4(0.0);
 
         #ifdef HAS_OBJECT0
-                if (all(floor(object0Coord) == vec2(0, 0))) {
+                if (floor(object0Coord.s) == 0.0 &&
+                    floor(object0Coord.t) == 0.0) {
                         objects = m_Object0Glow;
                         objects *= texture2D(m_Object0ColorMap, object0Coord);
                 }
 	#endif
 
         #ifdef HAS_OBJECT1
-                if (all(floor(object1Coord) == vec2(0, 0))) {
+                if (floor(object1Coord.s) == 0.0 &&
+                    floor(object1Coord.t) == 0.0) {
                         vec4 object1 = m_Object1Glow;
                         object1 *= texture2D(m_Object1ColorMap, object1Coord);
                         objects = mixColors(objects, object1);
@@ -140,7 +142,8 @@ void main() {
 	#endif
 
         #ifdef HAS_OBJECT2
-                if (all(floor(object2Coord) == vec2(0, 0))) {
+                if (floor(object2Coord.s) == 0.0 &&
+                    floor(object2Coord.t) == 0.0) {
                         vec4 object2 = m_Object2Glow;
                         object2 *= texture2D(m_Object2ColorMap, object2Coord);
                         objects = mixColors(objects, object2);
@@ -148,7 +151,8 @@ void main() {
 	#endif
 
         #ifdef HAS_OBJECT3
-                if (all(floor(object3Coord) == vec2(0, 0))) {
+                if (floor(object3Coord.s) == 0.0 &&
+                    floor(object3Coord.t) == 0.0) {
                         vec4 object3 = m_Object3Glow;
                         object3 *= texture2D(m_Object3ColorMap, object3Coord);
                         objects = mixColors(objects, object3);
@@ -156,7 +160,8 @@ void main() {
 	#endif
 
         #ifdef HAS_OBJECT4
-                if (all(floor(object4Coord) == vec2(0, 0))) {
+                if (floor(object4Coord.s) == 0.0 &&
+                    floor(object4Coord.t) == 0.0) {
                         vec4 object4 = m_Object4Glow;
                         object4 *= texture2D(m_Object4ColorMap, object4Coord);
                         objects = mixColors(objects, object4);
@@ -164,7 +169,8 @@ void main() {
 	#endif
 
         #ifdef HAS_OBJECT5
-                if (all(floor(object5Coord) == vec2(0, 0))) {
+                if (floor(object5Coord.s) == 0.0 &&
+                    floor(object5Coord.t) == 0.0) {
                         vec4 object5 = m_Object5Glow;
                         object5 *= texture2D(m_Object5ColorMap, object5Coord);
                         objects = mixColors(objects, object5);
