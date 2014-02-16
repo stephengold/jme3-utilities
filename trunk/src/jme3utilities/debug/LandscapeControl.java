@@ -46,22 +46,22 @@ import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
-import jme3utilities.SimpleControl;
+import jme3utilities.SubtreeControl;
 
 /**
- * A simple control to provide a landscape for tests and demos. The landscape
+ * A subtree control to provide a landscape for tests and demos. The landscape
  * consists of a circular monument (resembling Stonehenge) set on a plain
  * surrounded by hills.
  * <p>
  * The controlled spatial must be a Node.
  * <p>
  * The control is disabled by default. When enabled, it attaches two nodes (one
- * for the terrain and one for the monument) to the controlled spatial.
+ * for the terrain and one for the monument) to the scene graph.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class LandscapeControl
-        extends SimpleControl {
+        extends SubtreeControl {
     // *************************************************************************
     // constants
 
@@ -150,15 +150,17 @@ public class LandscapeControl
      */
     public LandscapeControl(AssetManager assetManager) {
         Validate.nonNull(assetManager, "asset manager");
-        
+
         this.assetManager = assetManager;
         /*
-         * Generate monument and terrain, but don't attach them yet.
+         * Generate monument and terrain and attach them to the subtree.
          */
         monument = createMonument();
         terrain = createTerrain();
 
-        super.setEnabled(false);
+        subtree = new Node("landscape node");
+        subtree.attachChild(monument);
+        subtree.attachChild(terrain);
     }
     // *************************************************************************
     // new methods exposed
@@ -194,47 +196,6 @@ public class LandscapeControl
 
         Vector3f center = new Vector3f(0f, baseY, 0f);
         MySpatial.setWorldLocation(terrain, center);
-    }
-    // *************************************************************************
-    // AbstractControl methods
-
-    /**
-     * Alter the visibility of this landscape. Assumes that the control has been
-     * added to a node.
-     *
-     * @param newState if true, make this landscape visible; if false, hide this
-     * landscape
-     */
-    @Override
-    public void setEnabled(boolean newState) {
-        if (spatial == null) {
-            throw new IllegalStateException("control should be added");
-        }
-
-        Node node = (Node) spatial;
-        if (enabled && !newState) {
-            node.detachChild(monument);
-            node.detachChild(terrain);
-        } else if (!enabled && newState) {
-            node.attachChild(monument);
-            node.attachChild(terrain);
-        }
-        super.setEnabled(newState);
-    }
-
-    /**
-     * Alter the controlled node.
-     *
-     * @param newNode which node to control (or null)
-     */
-    @Override
-    public void setSpatial(Spatial newNode) {
-        super.setSpatial(newNode);
-        if (enabled && newNode != null) {
-            Node node = (Node) spatial;
-            node.attachChild(monument);
-            node.attachChild(terrain);
-        }
     }
     // *************************************************************************
     // private methods

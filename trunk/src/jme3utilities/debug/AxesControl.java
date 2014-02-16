@@ -31,23 +31,22 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Arrow;
 import java.util.logging.Logger;
-import jme3utilities.SimpleControl;
+import jme3utilities.SubtreeControl;
 
 /**
- * A simple control to provide visible coordinate axes for a Node.
+ * A subtree control to provide visible coordinate axes for a Node.
  * <p>
  * The controlled spatial must be a Node.
  * <p>
  * The control is disabled by default. When enabled, it attaches three
- * geometries (one for each arrow) to the controlled spatial.
+ * geometries (one for each arrow) to the scene graph.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class AxesControl
-        extends SimpleControl {
+        extends SubtreeControl {
     // *************************************************************************
     // constants
 
@@ -82,18 +81,6 @@ public class AxesControl
      * width of each axis indicator (in pixels, &gt;0): set by constructor
      */
     final private float thickness;
-    /**
-     * geometry which represents the X-axis
-     */
-    final private Geometry xAxis;
-    /**
-     * geometry which represents the Y-axis
-     */
-    final private Geometry yAxis;
-    /**
-     * geometry which represents the Z-axis
-     */
-    final private Geometry zAxis;
     // *************************************************************************
     // constructors
 
@@ -108,59 +95,15 @@ public class AxesControl
         Validate.nonNull(assetManager, "asset manager");
         Validate.positive(length, "length");
         Validate.positive(width, "width");
-        
+
         this.assetManager = assetManager;
         this.length = length;
         this.thickness = width;
 
-        xAxis = createAxis(xColor, "xAxis", Vector3f.UNIT_X);
-        yAxis = createAxis(yColor, "yAxis", Vector3f.UNIT_Y);
-        zAxis = createAxis(zColor, "zAxis", Vector3f.UNIT_Z);
-
-        super.setEnabled(false);
-    }
-    // *************************************************************************
-    // AbstractControl methods
-
-    /**
-     * Alter the visibility of these coordinate axes. Assumes that the control
-     * has been added to a node.
-     *
-     * @param newState if true, reveal the axes; if false, hide them
-     */
-    @Override
-    public void setEnabled(boolean newState) {
-        if (spatial == null) {
-            throw new IllegalStateException("control should be added");
-        }
-
-        Node node = (Node) spatial;
-        if (!enabled && newState) {
-            node.attachChild(xAxis);
-            node.attachChild(yAxis);
-            node.attachChild(zAxis);
-        } else if (enabled && !newState) {
-            node.detachChild(xAxis);
-            node.detachChild(yAxis);
-            node.detachChild(zAxis);
-        }
-        super.setEnabled(newState);
-    }
-
-    /**
-     * Alter the controlled node.
-     *
-     * @param newNode which node to control (or null)
-     */
-    @Override
-    public void setSpatial(Spatial newNode) {
-        super.setSpatial(newNode);
-        if (enabled && newNode != null) {
-            Node node = (Node) spatial;
-            node.attachChild(xAxis);
-            node.attachChild(yAxis);
-            node.attachChild(zAxis);
-        }
+        subtree = new Node("axes node");
+        createAxis(xColor, "xAxis", Vector3f.UNIT_X);
+        createAxis(yColor, "yAxis", Vector3f.UNIT_Y);
+        createAxis(zColor, "zAxis", Vector3f.UNIT_Z);
     }
     // *************************************************************************
     // private methods
@@ -188,6 +131,7 @@ public class AxesControl
         Arrow mesh = new Arrow(extent);
         mesh.setLineWidth(thickness);
         Geometry geometry = new Geometry(name, mesh);
+        subtree.attachChild(geometry);
         geometry.setMaterial(wireMaterial);
 
         return geometry;
