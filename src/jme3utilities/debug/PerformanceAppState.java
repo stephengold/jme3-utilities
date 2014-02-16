@@ -27,6 +27,7 @@ package jme3utilities.debug;
 
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.StatsAppState;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
@@ -39,6 +40,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
 import java.util.logging.Logger;
+import jme3utilities.Misc;
 import jme3utilities.MyAsset;
 
 /**
@@ -116,17 +118,18 @@ public class PerformanceAppState
     /**
      * Initialize this performance monitor on attach.
      *
-     * @param unused (not null)
+     * @param stateManager (not null)
      * @param application (not null)
      */
     @Override
-    public void initialize(AppStateManager unused,
+    public void initialize(AppStateManager stateManager,
             Application application) {
         if (isInitialized()) {
             throw new IllegalStateException("already initialized");
         }
         Validate.nonNull(application, "application");
-        super.initialize(unused, application);
+        Validate.nonNull(stateManager, "state manager");
+        super.initialize(stateManager, application);
 
         secondsToNextUpdate = updateInterval;
         simpleApplication = (SimpleApplication) application;
@@ -156,6 +159,10 @@ public class PerformanceAppState
         background.setMaterial(backgroudMaterial);
         background.setLocalTranslation(0f, 0f, -1f);
         guiNode.attachChild(background);
+        /*
+         * Detach any JME stats app state.
+         */
+        Misc.detachAll(stateManager, StatsAppState.class);
     }
 
     /**
