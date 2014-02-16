@@ -283,9 +283,11 @@ public class TestSkyMaterialHud
 
             case "c0Texture clear":
             case "c0Texture cyclone":
+            case "c0Texture fbm":
             case "c0Texture overcast":
             case "c1Texture clear":
             case "c1Texture cyclone":
+            case "c1Texture fbm":
             case "c1Texture overcast":
                 String layer = actionString.substring(1, 2);
                 String name = actionString.substring(10);
@@ -473,7 +475,7 @@ public class TestSkyMaterialHud
         }
 
         showPopup(actionPrefix, new String[]{
-            "clear", "overcast", "cyclone", "t0neg0d"
+            "clear", "cyclone", "fbm", "overcast", "t0neg0d"
         });
     }
 
