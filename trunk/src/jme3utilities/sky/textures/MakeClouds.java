@@ -37,6 +37,7 @@ import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.math.MyMath;
 import jme3utilities.math.Noise;
+import jme3utilities.math.Perlin2;
 
 /**
  * A console application to generate cloud layer alpha maps for use with
@@ -136,11 +137,12 @@ public class MakeClouds {
     private static void initializeSamples(int numRows, int fundamental) {
         assert numRows >= 1 : numRows;
         assert fundamental >= 1 : fundamental;
-
-        Noise.generatePermutation(fundamental);
         /*
-         * FBM parameters
+         * noise parameters for fractional Brownian motion (FBM)
+         * and Perlin generator
          */
+        long seed = -35930871;
+        Perlin2 generator = new Perlin2(fundamental, fundamental, seed, seed);
         int numOctaves = 12;
         float gain = 0.45f;
         float lacunarity = 2f;
@@ -153,8 +155,8 @@ public class MakeClouds {
             samples[x] = new float[numRows];
             for (int y = 0; y < numRows; y++) {
                 float v = ((float) y) / numRows;
-                float n = Noise.fbmNoise(u, v, numOctaves, fundamental, gain,
-                        lacunarity);
+                float n = Noise.fbmNoise(generator, u, v, numOctaves,
+                        fundamental, gain, lacunarity);
                 samples[x][y] = n;
             }
         }
@@ -180,7 +182,7 @@ public class MakeClouds {
     }
 
     /**
-     * Generate a grayscale cloud layer using FBM noise.
+     * Generate a grayscale cloud layer from FBM noise.
      *
      * @param textureSize size of the texture map (pixels per side, &ge;1)
      * @param blackCutoff normalized noise value below which pixel is black
