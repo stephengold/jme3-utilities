@@ -28,6 +28,7 @@ package jme3utilities.sky.textures;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
+import jme3utilities.debug.Validate;
 
 /**
  * A star from a star catalog, used by MakeStarMaps.
@@ -144,9 +145,7 @@ class Star
      */
     @Override
     public int compareTo(Star other) {
-        if (other == null) {
-            throw new NullPointerException("object should not be null");
-        }
+        Validate.nonNull(other, "object");
 
         if (apparentMagnitude < other.apparentMagnitude) {
             return 1;

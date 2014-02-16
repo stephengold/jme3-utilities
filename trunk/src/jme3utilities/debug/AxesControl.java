@@ -33,7 +33,6 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Arrow;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.SimpleControl;
 
@@ -106,21 +105,12 @@ public class AxesControl
      * @param width width of each axis indicator (in pixels, &gt;0)
      */
     public AxesControl(AssetManager assetManager, float length, float width) {
-        if (assetManager == null) {
-            throw new NullPointerException("asset manager should not be null");
-        }
+        Validate.nonNull(assetManager, "asset manager");
+        Validate.positive(length, "length");
+        Validate.positive(width, "width");
+        
         this.assetManager = assetManager;
-
-        if (!(length > 0f)) {
-            logger.log(Level.SEVERE, "length={0}", length);
-            throw new IllegalArgumentException("length should be positive");
-        }
         this.length = length;
-
-        if (!(width > 0f)) {
-            logger.log(Level.SEVERE, "width={0}", length);
-            throw new IllegalArgumentException("width should be positive");
-        }
         this.thickness = width;
 
         xAxis = createAxis(xColor, "xAxis", Vector3f.UNIT_X);
@@ -141,8 +131,7 @@ public class AxesControl
     @Override
     public void setEnabled(boolean newState) {
         if (spatial == null) {
-            throw new IllegalStateException(
-                    "control should be added to a node");
+            throw new IllegalStateException("control should be added");
         }
 
         Node node = (Node) spatial;

@@ -55,6 +55,7 @@ import jme3utilities.MyString;
 import jme3utilities.ViewPortListener;
 import jme3utilities.WaterProcessor;
 import jme3utilities.debug.LandscapeControl;
+import jme3utilities.debug.Validate;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.sky.CloudLayer;
 import jme3utilities.sky.FloorControl;
@@ -262,11 +263,7 @@ public class TestSkyControl
      */
     @Override
     public void simpleUpdate(float elapsedTime) {
-        if (!(elapsedTime >= 0f)) {
-            logger.log(Level.SEVERE, "elapsedTime={0}", elapsedTime);
-            throw new IllegalArgumentException(
-                    "elapsed time shouldn't be negative");
-        }
+        Validate.nonNegative(elapsedTime, "interval");
         /*
          * Adjust SkyControl parameters based on GUI controls in the HUD.
          */

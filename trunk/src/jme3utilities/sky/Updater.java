@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.ViewPortListener;
+import jme3utilities.debug.Validate;
 
 /**
  * The component of SkyControl which keeps track of all the lights, shadows, and
@@ -122,9 +123,7 @@ public class Updater
      * @param filter (not null)
      */
     public void addBloomFilter(BloomFilter filter) {
-        if (filter == null) {
-            throw new NullPointerException("filter should not be null");
-        }
+        Validate.nonNull(filter, "filter");
 
         bloomFilters.add(filter);
     }
@@ -136,9 +135,7 @@ public class Updater
      * @param filter (not null)
      */
     public void addShadowFilter(AbstractShadowFilter filter) {
-        if (filter == null) {
-            throw new NullPointerException("filter should not be null");
-        }
+        Validate.nonNull(filter, "filter");
 
         shadowFilters.add(filter);
     }
@@ -150,9 +147,7 @@ public class Updater
      * @param renderer (not null)
      */
     public void addShadowRenderer(AbstractShadowRenderer renderer) {
-        if (renderer == null) {
-            throw new NullPointerException("renderer should not be null");
-        }
+        Validate.nonNull(renderer, "renderer");
 
         shadowRenderers.add(renderer);
     }
@@ -230,9 +225,7 @@ public class Updater
      * @param filter (not null)
      */
     public void removeBloomFilter(BloomFilter filter) {
-        if (filter == null) {
-            throw new NullPointerException("filter should not be null");
-        }
+        Validate.nonNull(filter, "filter");
 
         boolean success = bloomFilters.remove(filter);
         if (!success) {
@@ -247,9 +240,7 @@ public class Updater
      * @param filter (not null)
      */
     public void removeShadowFilter(AbstractShadowFilter filter) {
-        if (filter == null) {
-            throw new NullPointerException("filter should not be null");
-        }
+        Validate.nonNull(filter, "filter");
 
         boolean success = shadowFilters.remove(filter);
         if (!success) {
@@ -264,9 +255,7 @@ public class Updater
      * @param renderer (not null)
      */
     public void removeShadowRenderer(AbstractShadowRenderer renderer) {
-        if (renderer == null) {
-            throw new NullPointerException("renderer should not be null");
-        }
+        Validate.nonNull(renderer, "renderer");
 
         boolean success = shadowRenderers.remove(renderer);
         if (!success) {
@@ -395,9 +384,7 @@ public class Updater
      */
     @Override
     public void addViewPort(ViewPort viewPort) {
-        if (viewPort == null) {
-            throw new NullPointerException("view port should not be null");
-        }
+        Validate.nonNull(viewPort, "view port");
 
         viewPorts.add(viewPort);
     }
@@ -410,9 +397,7 @@ public class Updater
      */
     @Override
     public void removeViewPort(ViewPort viewPort) {
-        if (viewPort == null) {
-            throw new NullPointerException("view port should not be null");
-        }
+        Validate.nonNull(viewPort, "view port");
 
         boolean success = viewPorts.remove(viewPort);
         if (!success) {

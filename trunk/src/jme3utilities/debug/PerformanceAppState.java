@@ -38,7 +38,6 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 
@@ -126,9 +125,7 @@ public class PerformanceAppState
         if (isInitialized()) {
             throw new IllegalStateException("already initialized");
         }
-        if (application == null) {
-            throw new NullPointerException("application shouldn't be null");
-        }
+        Validate.nonNull(application, "application");
         super.initialize(unused, application);
 
         secondsToNextUpdate = updateInterval;
@@ -168,11 +165,7 @@ public class PerformanceAppState
      */
     @Override
     public void update(float elapsedTime) {
-        if (!(elapsedTime >= 0f)) {
-            logger.log(Level.SEVERE, "elapsedTime={0}", elapsedTime);
-            throw new IllegalArgumentException(
-                    "elapsed time shouldn't be negative");
-        }
+        Validate.nonNegative(elapsedTime, "interval");
         super.update(elapsedTime);
 
         maxTPF = Math.max(maxTPF, elapsedTime);

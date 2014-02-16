@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
+import jme3utilities.debug.Validate;
 import jme3utilities.math.MyMath;
 
 /**
@@ -136,21 +137,12 @@ public class SkyMaterialCore
     public SkyMaterialCore(AssetManager assetManager, String assetPath,
             int maxObjects, int maxCloudLayers) {
         super(assetManager, assetPath);
+        Validate.nonNull(assetManager, "asset manager");
+        Validate.nonNegative(maxObjects, "limit");
+        Validate.nonNegative(maxCloudLayers, "limit");
 
         this.assetManager = assetManager;
-
-        if (maxObjects < 0) {
-            logger.log(Level.SEVERE, "maxObjects={0}", maxObjects);
-            throw new IllegalArgumentException(
-                    "object limit should not be negative");
-        }
         this.maxObjects = maxObjects;
-
-        if (maxCloudLayers < 0) {
-            logger.log(Level.SEVERE, "maxCloudLayers={0}", maxObjects);
-            throw new IllegalArgumentException(
-                    "layer limit should not be negative");
-        }
         this.maxCloudLayers = maxCloudLayers;
 
         cloudAlphas = new float[maxCloudLayers];
@@ -171,9 +163,7 @@ public class SkyMaterialCore
      */
     public void addClouds(int layerIndex, String assetPath) {
         validateLayerIndex(layerIndex);
-        if (assetPath == null) {
-            throw new NullPointerException("path should not be null");
-        }
+        Validate.nonNull(assetPath, "path");
 
         boolean firstTime = (cloudsRaster[layerIndex] == null);
 
@@ -203,9 +193,7 @@ public class SkyMaterialCore
      */
     public void addObject(int objectIndex, Texture colorMap) {
         validateObjectIndex(objectIndex);
-        if (colorMap == null) {
-            throw new NullPointerException("texture should not be null");
-        }
+        Validate.nonNull(colorMap, "texture");
 
         String parameterName = String.format("Object%dColorMap", objectIndex);
         setTexture(parameterName, colorMap);
@@ -244,9 +232,7 @@ public class SkyMaterialCore
      * @return fraction of light transmitted (&le;1, &ge;0)
      */
     public float getTransmission(Vector2f skyCoordinates) {
-        if (skyCoordinates == null) {
-            throw new NullPointerException("coordinates should not be null");
-        }
+        Validate.nonNull(skyCoordinates, "coordinates");
 
         float result = 1f;
         for (int layerIndex = 0; layerIndex < maxCloudLayers; layerIndex++) {
@@ -300,9 +286,7 @@ public class SkyMaterialCore
      */
     public void setCloudsColor(int layerIndex, ColorRGBA newColor) {
         validateLayerIndex(layerIndex);
-        if (newColor == null) {
-            throw new NullPointerException("color should not be null");
-        }
+        Validate.nonNull(newColor, "color");
         if (cloudsRaster[layerIndex] == null) {
             throw new IllegalStateException("layer not yet added");
         }
@@ -320,9 +304,7 @@ public class SkyMaterialCore
      */
     public void setCloudsGlow(int layerIndex, ColorRGBA newColor) {
         validateLayerIndex(layerIndex);
-        if (newColor == null) {
-            throw new NullPointerException("color should not be null");
-        }
+        Validate.nonNull(newColor, "color");
         if (cloudsRaster[layerIndex] == null) {
             throw new IllegalStateException("layer not yet added");
         }
@@ -361,10 +343,7 @@ public class SkyMaterialCore
      */
     public void setCloudsScale(int layerIndex, float newScale) {
         validateLayerIndex(layerIndex);
-        if (!(newScale > 0f)) {
-            logger.log(Level.SEVERE, "newScale={0}", newScale);
-            throw new IllegalArgumentException("scale should be positive");
-        }
+        Validate.positive(newScale, "scale");
         if (cloudsRaster[layerIndex] == null) {
             throw new IllegalStateException("layer not yet added");
         }
@@ -382,9 +361,7 @@ public class SkyMaterialCore
      */
     public void setObjectColor(int objectIndex, ColorRGBA newColor) {
         validateObjectIndex(objectIndex);
-        if (newColor == null) {
-            throw new NullPointerException("color should not be null");
-        }
+        Validate.nonNull(newColor, "color");
         if (objectCenters[objectIndex] == null) {
             throw new IllegalStateException("object not yet added");
         }
@@ -401,9 +378,7 @@ public class SkyMaterialCore
      */
     public void setObjectGlow(int objectIndex, ColorRGBA newColor) {
         validateObjectIndex(objectIndex);
-        if (newColor == null) {
-            throw new NullPointerException("color should not be null");
-        }
+        Validate.nonNull(newColor, "color");
         if (objectCenters[objectIndex] == null) {
             throw new IllegalStateException("object not yet added");
         }
@@ -426,13 +401,8 @@ public class SkyMaterialCore
     public void setObjectTransform(int objectIndex, Vector2f centerUV,
             float newScale, Vector2f newRotate) {
         validateObjectIndex(objectIndex);
-        if (centerUV == null) {
-            throw new NullPointerException("coordinates should not be null");
-        }
-        if (!(newScale > 0f)) {
-            logger.log(Level.SEVERE, "newScale={0}", newScale);
-            throw new IllegalArgumentException("scale should be positive");
-        }
+        Validate.nonNull(centerUV, "coordinates");
+        Validate.positive(newScale, "scale");
         if (newRotate != null) {
             if (!MyMath.isUnitVector(newRotate)) {
                 logger.log(Level.SEVERE, "newRotate={0}", newRotate);

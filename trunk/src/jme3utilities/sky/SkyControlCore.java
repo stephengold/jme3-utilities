@@ -42,6 +42,7 @@ import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
+import jme3utilities.debug.Validate;
 import jme3utilities.math.MyMath;
 
 /**
@@ -205,12 +206,8 @@ public class SkyControlCore
     public SkyControlCore(AssetManager assetManager, Camera camera,
             float cloudFlattening, boolean starMotionFlag,
             boolean bottomDomeFlag) {
-        if (assetManager == null) {
-            throw new NullPointerException("asset manager should not be null");
-        }
-        if (camera == null) {
-            throw new NullPointerException("camera should not be null");
-        }
+        Validate.nonNull(assetManager, "asset manager");
+        Validate.nonNull(camera, "camera");
         if (!(cloudFlattening >= 0f && cloudFlattening < 1f)) {
             logger.log(Level.SEVERE, "cloudFlattening={0}", cloudFlattening);
             throw new IllegalArgumentException(
@@ -314,12 +311,7 @@ public class SkyControlCore
      * @param newAlpha desired opacity of the cloud layers (&le;1, &ge;0)
      */
     public void setCloudiness(float newAlpha) {
-        if (!(newAlpha >= Constants.alphaMin
-                && newAlpha <= Constants.alphaMax)) {
-            logger.log(Level.SEVERE, "alpha={0}", newAlpha);
-            throw new IllegalArgumentException(
-                    "alpha should be between 0 and 1, inclusive");
-        }
+        Validate.fraction(newAlpha, "alpha");
 
         for (int layer = 0; layer < numCloudLayers; layer++) {
             cloudLayers[layer].setOpacity(newAlpha);
@@ -368,14 +360,8 @@ public class SkyControlCore
      * @param newColorMap texture to apply (not null)
      */
     public void setObjectTexture(int objectIndex, Texture newColorMap) {
-        if (objectIndex < 0) {
-            logger.log(Level.SEVERE, "objectIndex={0}", objectIndex);
-            throw new IllegalArgumentException(
-                    "objectIndex should not be negative");
-        }
-        if (newColorMap == null) {
-            throw new NullPointerException("texture should not be null");
-        }
+        Validate.nonNegative(objectIndex, "index");
+        Validate.nonNull(newColorMap, "texture");
 
         topMaterial.addObject(objectIndex, newColorMap);
     }
@@ -388,9 +374,7 @@ public class SkyControlCore
      * if starMotion is false: path to a star dome texture asset (not null)
      */
     final public void setStarMaps(String assetPath) {
-        if (assetPath == null) {
-            throw new NullPointerException("path should not be null");
-        }
+        Validate.nonNull(assetPath, "path");
 
         if (!starMotionFlag) {
             topMaterial.addStars(assetPath);
@@ -476,12 +460,9 @@ public class SkyControlCore
             throw new IllegalStateException("should be enabled");
         }
         if (spatial == null) {
-            throw new IllegalStateException("should be added to a spatial");
+            throw new IllegalStateException("should be added");
         }
-        if (!(elapsedTime >= 0f)) {
-            logger.log(Level.SEVERE, "time={0}", elapsedTime);
-            throw new IllegalArgumentException("time should not be negative");
-        }
+        Validate.nonNegative(elapsedTime, "interval");
         updateClouds(elapsedTime);
         /*
          * Translate the sky node to center the sky on the camera.

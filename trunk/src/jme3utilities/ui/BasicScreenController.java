@@ -40,6 +40,7 @@ import de.lessvoid.nifty.screen.ScreenController;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
+import jme3utilities.debug.Validate;
 
 /**
  * An app state to control a Nifty screen. A screen is displayed if and only if
@@ -97,12 +98,8 @@ public class BasicScreenController
      */
     public BasicScreenController(String screenId, String xmlAssetPath,
             boolean enableDuringInitialization) {
-        if (screenId == null) {
-            throw new NullPointerException("id should not be null");
-        }
-        if (xmlAssetPath == null) {
-            throw new NullPointerException("path should not be null");
-        }
+        Validate.nonNull(screenId, "screen id");
+        Validate.nonNull(xmlAssetPath, "path");
 
         this.xmlAssetPath = xmlAssetPath;
         this.screenId = screenId;
@@ -124,9 +121,7 @@ public class BasicScreenController
      * @return true if the mouse is
      */
     public boolean isMouseInsideElement(String elementId) {
-        if (elementId == null) {
-            throw new NullPointerException("id should not be null");
-        }
+        Validate.nonNull(elementId, "element id");
 
         if (!isEnabled()) {
             return false;
@@ -159,9 +154,7 @@ public class BasicScreenController
      * @param actionString (not null)
      */
     public static void perform(String actionString) {
-        if (actionString == null) {
-            throw new NullPointerException("action string should not be null");
-        }
+        Validate.nonNull(actionString, "action string");
 
         logger.log(Level.INFO, "actionString={0}",
                 MyString.quote(actionString));
@@ -182,9 +175,8 @@ public class BasicScreenController
      * @param newListener (not null)
      */
     public void setListener(ActionListener newListener) {
-        if (newListener == null) {
-            throw new NullPointerException("listener should not be null");
-        }
+        Validate.nonNull(newListener, "listener");
+
         listener = newListener;
     }
     // *************************************************************************
@@ -205,12 +197,8 @@ public class BasicScreenController
         if (isEnabled()) {
             throw new IllegalStateException("shouldn't be enabled yet");
         }
-        if (stateManager == null) {
-            throw new NullPointerException("manager shouldn't be null");
-        }
-        if (application == null) {
-            throw new NullPointerException("application shouldn't be null");
-        }
+        Validate.nonNull(stateManager, "state manager");
+        Validate.nonNull(application, "application");
         if (!(application instanceof GuiApplication)) {
             throw new IllegalArgumentException(
                     "application should be a GuiApplication");

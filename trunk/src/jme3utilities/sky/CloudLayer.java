@@ -32,8 +32,8 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
 import com.jme3.math.ColorRGBA;
 import java.io.IOException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.debug.Validate;
 import jme3utilities.math.MyMath;
 
 /**
@@ -182,12 +182,7 @@ public class CloudLayer
      * @param newAlpha desired opacity of the layer (&le;1, &ge;0)
      */
     public void setOpacity(float newAlpha) {
-        if (!(newAlpha >= Constants.alphaMin
-                && newAlpha <= Constants.alphaMax)) {
-            logger.log(Level.SEVERE, "alpha={0}", newAlpha);
-            throw new IllegalArgumentException(
-                    "alpha should be between 0 and 1, inclusive");
-        }
+        Validate.fraction(newAlpha, "alpha");
 
         opacity = newAlpha;
     }
@@ -199,13 +194,8 @@ public class CloudLayer
      * @param scale texture scaling factor (&gt;0, typically &le;2)
      */
     public void setTexture(String assetPath, float scale) {
-        if (assetPath == null) {
-            throw new NullPointerException("path should not be null");
-        }
-        if (!(scale > 0f)) {
-            logger.log(Level.SEVERE, "scale={0}", scale);
-            throw new IllegalArgumentException("scale should be positive");
-        }
+        Validate.nonNull(assetPath, "path");
+        Validate.positive(scale, "scale");
 
         material.addClouds(layerIndex, assetPath);
         material.setCloudsScale(layerIndex, scale);

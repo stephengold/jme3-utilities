@@ -26,6 +26,7 @@
 package jme3utilities;
 
 import java.util.logging.Logger;
+import jme3utilities.debug.Validate;
 
 /**
  * Utility methods for Strings. Aside from test cases, all methods should be
@@ -61,9 +62,7 @@ public class MyString {
      * @return true if a precedes or equals b, false otherwise
      */
     public static boolean areLexOrdered(String a, String b) {
-        if (b == null) {
-            throw new NullPointerException("string shuold not be null");
-        }
+        Validate.nonNull(b, "string");
 
         boolean result = a.compareTo(b) <= 0;
         return result;
@@ -137,9 +136,7 @@ public class MyString {
      * @param text the text to enclose (not null)
      */
     public static String quote(String text) {
-        if (text == null) {
-            throw new NullPointerException("text shuold not be null");
-        }
+        Validate.nonNull(text, "text");
 
         return String.format("\"%s\"", text);
     }

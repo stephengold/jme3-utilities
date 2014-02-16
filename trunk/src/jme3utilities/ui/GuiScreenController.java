@@ -42,6 +42,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
+import jme3utilities.debug.Validate;
 
 /**
  * A BasicScreenController which supports check boxes, popup menus, radio
@@ -131,9 +132,7 @@ public class GuiScreenController
      * @param popupMenu which menu to close (not null)
      */
     static synchronized void closePopup(PopupMenu popupMenu) {
-        if (popupMenu == null) {
-            throw new NullPointerException("popup menu should not be null");
-        }
+        Validate.nonNull(popupMenu, "popup menu");
         if (activePopupMenu == null) {
             throw new IllegalStateException("no active popup menu");
         }
@@ -175,10 +174,7 @@ public class GuiScreenController
      * @param index which item (&ge;0, 0 &rarr; first)
      */
     public void selectMenuItem(int index) {
-        if (index < 0) {
-            logger.log(Level.SEVERE, "index={0}", index);
-            throw new IllegalArgumentException("index should not be negative");
-        }
+        Validate.nonNegative(index, "index");
         if (activePopupMenu == null) {
             throw new IllegalStateException("no active popup menu");
         }
@@ -205,12 +201,8 @@ public class GuiScreenController
      * @param items collection of menu items (not null, unaffected)
      */
     public void showPopup(String actionPrefix, Collection<String> items) {
-        if (actionPrefix == null) {
-            throw new NullPointerException("prefix should not be null");
-        }
-        if (items == null) {
-            throw new NullPointerException("collection should not be null");
-        }
+        Validate.nonNull(actionPrefix, "prefix");
+        Validate.nonNull(items, "collection");
 
         String[] itemArray = Misc.toArray(items);
         showPopup(actionPrefix, itemArray);
@@ -225,12 +217,8 @@ public class GuiScreenController
      */
     public static synchronized void showPopup(String actionPrefix,
             String[] itemArray) {
-        if (actionPrefix == null) {
-            throw new NullPointerException("prefix should not be null");
-        }
-        if (itemArray == null) {
-            throw new NullPointerException("item array should not be null");
-        }
+        Validate.nonNull(actionPrefix, "prefix");
+        Validate.nonNull(itemArray, "item array");
         /*
          * Create the popup using "popup-menu" as a base.
          * Nifty assigns the popup a new id.
@@ -288,13 +276,8 @@ public class GuiScreenController
      * @param itemArray menu items (not null, unaffected)
      */
     public void showPopup(String[] actionPrefixWords, String[] itemArray) {
-        if (actionPrefixWords == null) {
-            throw new NullPointerException("word array should not be null");
-        }
-        if (itemArray == null) {
-            throw new NullPointerException("item array should not be null");
-        }
-
+        Validate.nonNull(actionPrefixWords, "word array");
+        Validate.nonNull(itemArray, "item array");
         /*
          * Generate the action prefix for this menu.
          */
@@ -315,12 +298,8 @@ public class GuiScreenController
      * @param newText (not null)
      */
     protected void setButtonLabel(String elementId, String newText) {
-        if (elementId == null) {
-            throw new NullPointerException("id should not be null");
-        }
-        if (newText == null) {
-            throw new NullPointerException("text should not be null");
-        }
+        Validate.nonNull(elementId, "element id");
+        Validate.nonNull(newText, "text");
 
         Button button = getScreen().findNiftyControl(elementId, Button.class);
         try {
@@ -341,9 +320,7 @@ public class GuiScreenController
      * @param newStatus true to tick the box, false to un-tick it
      */
     protected void setCheckBox(String elementId, boolean newStatus) {
-        if (elementId == null) {
-            throw new NullPointerException("id should not be null");
-        }
+        Validate.nonNull(elementId, "element id");
 
         CheckBox box = getScreen().findNiftyControl(elementId, CheckBox.class);
         try {
@@ -363,9 +340,7 @@ public class GuiScreenController
      * @param elementId Nifty element id of the radio button (not null)
      */
     protected void setRadioButton(String elementId) {
-        if (elementId == null) {
-            throw new NullPointerException("id should not be null");
-        }
+        Validate.nonNull(elementId, "element id");
 
         RadioButton button =
                 getScreen().findNiftyControl(elementId, RadioButton.class);
@@ -387,9 +362,7 @@ public class GuiScreenController
      * @param newState true to enable the button, false to disable it
      */
     protected void setRadioButtonEnabled(String elementId, boolean newState) {
-        if (elementId == null) {
-            throw new NullPointerException("id should not be null");
-        }
+        Validate.nonNull(elementId, "element id");
 
         RadioButton button =
                 getScreen().findNiftyControl(elementId, RadioButton.class);
@@ -416,9 +389,7 @@ public class GuiScreenController
      * @param newValue value for the slider
      */
     protected void setSlider(String namePrefix, float newValue) {
-        if (namePrefix == null) {
-            throw new NullPointerException("prefix should not be null");
-        }
+        Validate.nonNull(namePrefix, "prefix");
 
         String sliderName = namePrefix + "Slider";
         Slider slider = getScreen().findNiftyControl(sliderName, Slider.class);
@@ -440,12 +411,8 @@ public class GuiScreenController
      * @param newText (not null)
      */
     protected void setStatusText(String elementId, String newText) {
-        if (elementId == null) {
-            throw new NullPointerException("id should not be null");
-        }
-        if (newText == null) {
-            throw new NullPointerException("text should not be null");
-        }
+        Validate.nonNull(elementId, "element id");
+        Validate.nonNull(newText, "text");
 
         Element element = getScreen().findElementByName(elementId);
         if (element == null) {
@@ -477,12 +444,8 @@ public class GuiScreenController
      * @return value of the slider
      */
     protected float updateSlider(String namePrefix, String statusSuffix) {
-        if (namePrefix == null) {
-            throw new NullPointerException("prefix should not be null");
-        }
-        if (statusSuffix == null) {
-            throw new NullPointerException("suffix should not be null");
-        }
+        Validate.nonNull(namePrefix, "prefix");
+        Validate.nonNull(statusSuffix, "suffix");
 
         float value = readSlider(namePrefix);
         updateSliderStatus(namePrefix, value, statusSuffix);
@@ -503,16 +466,9 @@ public class GuiScreenController
      */
     protected float updateLogSlider(String namePrefix, float logBase,
             String statusSuffix) {
-        if (namePrefix == null) {
-            throw new NullPointerException("prefix should not be null");
-        }
-        if (!(logBase > 0f)) {
-            logger.log(Level.SEVERE, "logBase={0}", logBase);
-            throw new IllegalArgumentException("log base should be positive");
-        }
-        if (statusSuffix == null) {
-            throw new NullPointerException("suffix should not be null");
-        }
+        Validate.nonNull(namePrefix, "prefix");
+        Validate.positive(logBase, "base");
+        Validate.nonNull(statusSuffix, "suffix");
 
         float value = readSlider(namePrefix);
         float scaledValue = FastMath.pow(logBase, value);

@@ -34,6 +34,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.debug.Validate;
 import jme3utilities.math.MyMath;
 import jme3utilities.sky.textures.GlobeRenderer;
 
@@ -300,9 +301,7 @@ public class SkyControl
      * @param assetPath to new color map (not null)
      */
     final public void setSunStyle(String assetPath) {
-        if (assetPath == null) {
-            throw new NullPointerException("path should not be null");
-        }
+        Validate.nonNull(assetPath, "path");
 
         topMaterial.addObject(sunIndex, assetPath);
     }
@@ -439,9 +438,7 @@ public class SkyControl
      * @param newRenderer (not null)
      */
     public void setMoonRenderer(GlobeRenderer newRenderer) {
-        if (newRenderer == null) {
-            throw new NullPointerException("renderer should not be null");
-        }
+        Validate.nonNull(newRenderer, "renderer");
 
         if (moonRenderer != null) {
             boolean enabledFlag = moonRenderer.isEnabled();

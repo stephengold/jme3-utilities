@@ -44,6 +44,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
+import jme3utilities.debug.Validate;
 
 /**
  * An app state to implement a configurable input mode. At most one mode is
@@ -213,9 +214,8 @@ abstract public class InputMode
      * @return the pre-existing instance (or null if none)
      */
     public static InputMode findMode(String shortName) {
-        if (shortName == null) {
-            throw new NullPointerException("name cannot be null");
-        }
+        Validate.nonNull(shortName, "name");
+
         for (InputMode mode : modes) {
             if (mode.shortName.equals(shortName)) {
                 return mode;

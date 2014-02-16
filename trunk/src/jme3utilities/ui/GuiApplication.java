@@ -32,6 +32,7 @@ import de.lessvoid.nifty.Nifty;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
+import jme3utilities.debug.Validate;
 
 /**
  * A simple application with a Nifty graphical user interface (GUI). Extending
@@ -149,10 +150,8 @@ abstract public class GuiApplication
      * @param newSpeed animation speed (&gt;0, standard speed &rarr; 1)
      */
     public void setSpeed(float newSpeed) {
-        if (!(newSpeed > 0f)) {
-            logger.log(Level.SEVERE, "speed={0}", newSpeed);
-            throw new IllegalArgumentException("speed should be positive");
-        }
+        Validate.positive(newSpeed, "speed");
+
         speed = newSpeed;
     }
     // *************************************************************************

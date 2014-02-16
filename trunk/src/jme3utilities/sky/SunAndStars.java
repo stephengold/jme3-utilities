@@ -40,6 +40,7 @@ import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MySpatial;
+import jme3utilities.debug.Validate;
 import jme3utilities.math.MyMath;
 
 /**
@@ -157,9 +158,7 @@ public class SunAndStars
      * @return a new vector in equatorial coordinates
      */
     public static Vector3f convertToEquatorial(Vector3f ecliptical) {
-        if (ecliptical == null) {
-            throw new NullPointerException("coordinates should not be null");
-        }
+        Validate.nonNull(ecliptical, "coordinates");
         /*
          * The conversion consists of a rotation about the +X
          * (vernal equinox) axis.
@@ -206,9 +205,7 @@ public class SunAndStars
      * @return a new vector in a world coordinates
      */
     public Vector3f convertToWorld(Vector3f equatorial) {
-        if (equatorial == null) {
-            throw new NullPointerException("coordinates should not be null");
-        }
+        Validate.nonNull(equatorial, "coordinates");
 
         float siderealAngle = getSiderealAngle();
         /*
@@ -311,9 +308,7 @@ public class SunAndStars
      * @param spatial the external sky (not null)
      */
     public void orientExternalSky(Spatial spatial) {
-        if (spatial == null) {
-            throw new NullPointerException("spatial should not be null");
-        }
+        Validate.nonNull(spatial, "spatial");
 
         float siderealAngle = getSiderealAngle();
         Quaternion xRotation = new Quaternion();

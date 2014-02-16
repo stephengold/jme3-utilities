@@ -31,6 +31,7 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.water.SimpleWaterProcessor;
 import java.util.ArrayList;
 import java.util.logging.Logger;
+import jme3utilities.debug.Validate;
 
 /**
  * A simple water processor, extended to interact with view port listeners.
@@ -73,9 +74,7 @@ public class WaterProcessor
      * @param listener (not null)
      */
     public void addListener(ViewPortListener listener) {
-        if (listener == null) {
-            throw new NullPointerException("listener should not be null");
-        }
+        Validate.nonNull(listener, "listener");
 
         if (isInitialized()) {
             /*

@@ -35,6 +35,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
 import java.util.logging.Logger;
+import jme3utilities.debug.Validate;
 
 /**
  * Miscellaneous utility methods for loading assets. Aside from test cases, all
@@ -80,9 +81,7 @@ public class MyAsset {
      */
     public static Material createInvisibleMaterial(
             AssetManager assetManager) {
-        if (assetManager == null) {
-            throw new NullPointerException("asset manager should not be null");
-        }
+        Validate.nonNull(assetManager, "asset manager");
 
         Material material = createUnshadedMaterial(assetManager);
         material.setColor("Color", ColorRGBA.BlackNoAlpha);
@@ -102,12 +101,8 @@ public class MyAsset {
      */
     public static Material createShadedMaterial(AssetManager assetManager,
             Texture texture) {
-        if (assetManager == null) {
-            throw new NullPointerException("asset manager should not be null");
-        }
-        if (texture == null) {
-            throw new NullPointerException("texture should not be null");
-        }
+        Validate.nonNull(assetManager, "asset manager");
+        Validate.nonNull(texture, "texture");
 
         Material material = new Material(assetManager, shadedMaterialAssetPath);
         material.setTexture("DiffuseMap", texture);
@@ -149,9 +144,7 @@ public class MyAsset {
      * @return a new instance
      */
     public static Material createUnshadedMaterial(AssetManager assetManager) {
-        if (assetManager == null) {
-            throw new NullPointerException("asset manager should not be null");
-        }
+        Validate.nonNull(assetManager, "asset manager");
 
         Material material = new Material(assetManager,
                 unshadedMaterialAssetPath);
@@ -167,12 +160,8 @@ public class MyAsset {
      */
     public static Material createUnshadedMaterial(AssetManager assetManager,
             String assetPath) {
-        if (assetManager == null) {
-            throw new NullPointerException("asset manager should not be null");
-        }
-        if (assetPath == null) {
-            throw new NullPointerException("path should not be null");
-        }
+        Validate.nonNull(assetManager, "asset manager");
+        Validate.nonNull(assetPath, "path");
 
         Texture texture = loadTexture(assetManager, assetPath);
         Material material = createUnshadedMaterial(assetManager, texture);
@@ -189,12 +178,8 @@ public class MyAsset {
      */
     public static Material createUnshadedMaterial(AssetManager assetManager,
             Texture texture) {
-        if (assetManager == null) {
-            throw new NullPointerException("asset manager should not be null");
-        }
-        if (texture == null) {
-            throw new NullPointerException("texture should not be null");
-        }
+        Validate.nonNull(assetManager, "asset manager");
+        Validate.nonNull(texture, "texture");
 
         Material material = createUnshadedMaterial(assetManager);
         material.setTexture("ColorMap", texture);
@@ -229,9 +214,7 @@ public class MyAsset {
      */
     public static Texture loadTexture(AssetManager assetManager,
             String assetPath) {
-        if (assetPath == null) {
-            throw new NullPointerException("path should not be null");
-        }
+        Validate.nonNull(assetPath, "path");
 
         boolean flipY = false;
         TextureKey key = new TextureKey(assetPath, flipY);
