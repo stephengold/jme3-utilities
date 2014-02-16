@@ -81,7 +81,6 @@ abstract public class SimpleControl
      * De-serialize this control when loading from a J3O file.
      *
      * @param importer (not null)
-     * @throws IOException TODO when?
      */
     @Override
     public void read(JmeImporter importer)
@@ -93,7 +92,6 @@ abstract public class SimpleControl
      * Serialize this control when saving to a J3O file.
      *
      * @param exporter (not null)
-     * @throws IOException TODO when?
      */
     @Override
     public void write(JmeExporter exporter)
