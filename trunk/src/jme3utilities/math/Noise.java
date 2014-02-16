@@ -59,7 +59,7 @@ public class Noise {
     final private static Logger logger =
             Logger.getLogger(Noise.class.getName());
     /**
-     * array of gradients (must all be unit vectors)
+     * array of 2-D gradients (must all be unit vectors)
      */
     final private static Vector2f gradients[] = {
         new Vector2f(rootHalf, rootHalf),
@@ -74,7 +74,7 @@ public class Noise {
     // *************************************************************************
     // fields
     /**
-     * permutation table for generating simplex noise
+     * permutation table for generating Perlin noise
      */
     private static int[] permutationTable = null;
     /**
@@ -91,6 +91,53 @@ public class Noise {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Sample fractional Brownian motion (FBM) noise in two dimensions.
+     *
+     * @param x first coordinate of the point
+     * @param y second coordinate of the point
+     * @param numOctaves number of passes (&gt;0)
+     * @param fundamental frequency for the first pass (&gt;0)
+     * @param gain factor to increase amplitude after each pass (&gt;0, &lt;1)
+     * @param lacunarity factor to increase frequency after each pass (&gt;1)
+     * @return noise value (range depends on parameters)
+     */
+    public static float fbmNoise(float sampleX, float sampleY, int numOctaves,
+            float fundamental, float gain, float lacunarity) {
+        if (numOctaves <= 0) {
+            logger.log(Level.SEVERE, "numOctaves={0}", numOctaves);
+            throw new IllegalArgumentException(
+                    "numOctaves should be greater than 0");
+        }
+        if (!(fundamental > 0f)) {
+            logger.log(Level.SEVERE, "fundamental={0}", gain);
+            throw new IllegalArgumentException(
+                    "fundamental should be positive");
+        }
+        if (!(gain > 0f && gain < 1f)) {
+            logger.log(Level.SEVERE, "gain={0}", gain);
+            throw new IllegalArgumentException(
+                    "gain should be between 0 and 1");
+        }
+        if (!(lacunarity > 1f)) {
+            logger.log(Level.SEVERE, "lacunarity={0}", lacunarity);
+            throw new IllegalArgumentException(
+                    "lacunarity should be greater than 1");
+        }
+
+        float amplitude = 1f;
+        float frequency = fundamental;
+        float total = 0f;
+        for (int i = 0; i < numOctaves; i++) {
+            float p = perlinNoise(sampleX * frequency, sampleY * frequency);
+            total += amplitude * p;
+            frequency *= lacunarity;
+            amplitude *= gain;
+        }
+
+        return total;
+    }
 
     /**
      * Generate the default permutation table for a specific length.
@@ -138,7 +185,8 @@ public class Noise {
     }
 
     /**
-     * Compute the noise contribution at a specific grid point to a sample.
+     * Compute the noise contribution at a specific grid point to a Perlin noise
+     * sample.
      *
      * @param gridX first coordinate of grid point
      * @param gridY second coordinate of grid point
@@ -165,10 +213,10 @@ public class Noise {
     }
 
     /**
-     * Compute a Perlin noise sample for a given point in two dimensions.
+     * Sample Perlin noise in two dimensions.
      *
-     * @param x first coordinate of the point
-     * @param y second coordinate of the point
+     * @param sampleX first coordinate of the sample point
+     * @param sampleY second coordinate of the sample point
      * @return noise value (&lt;1, &gt;-1)
      */
     public static float perlinNoise(float sampleX, float sampleY) {
