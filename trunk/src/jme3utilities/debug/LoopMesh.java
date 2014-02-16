@@ -84,7 +84,7 @@ public class LoopMesh
         if (vertexCount < 3) {
             logger.log(Level.SEVERE, "vertexCount={0}", vertexCount);
             throw new IllegalArgumentException(
-                    "need at least 3 vertices");
+                    "should have at least 3 vertices");
         }
         this.vertexCount = vertexCount;
 

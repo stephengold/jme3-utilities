@@ -279,7 +279,7 @@ public class MakeSun {
                 alpha = MyMath.clampFraction(alpha);
 
                 int opacity = Math.round(255f * alpha);
-                setPixel(graphics, x, y, opacity);
+                setWhitePixel(graphics, x, y, opacity);
             }
         }
 
@@ -294,7 +294,7 @@ public class MakeSun {
      * @param y coordinate (&lt;textureSize, &ge;0)
      * @param alpha (&le;255, &ge;0)
      */
-    private void setPixel(Graphics2D graphics, int x, int y, int alpha) {
+    private void setWhitePixel(Graphics2D graphics, int x, int y, int alpha) {
         assert graphics != null;
         assert x >= 0 : x;
         assert y >= 0 : y;

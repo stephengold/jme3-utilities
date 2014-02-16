@@ -39,7 +39,7 @@ public interface Noise2 {
      * @param sampleY second coordinate of the sample point
      * @return noise value
      */
-    public float sample(float sampleX, float sampleY);
+    float sample(float sampleX, float sampleY);
 
     /**
      * Sample the noise function at a specified point and normalize it to the
@@ -49,5 +49,5 @@ public interface Noise2 {
      * @param sampleY second coordinate of the sample point
      * @return noise value
      */
-    public float sampleNormalized(float sampleX, float sampleY);
+    float sampleNormalized(float sampleX, float sampleY);
 }
