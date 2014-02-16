@@ -30,6 +30,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.debug.Validate;
 
 /**
  * Utility methods for 3-D vectors.
@@ -64,9 +65,7 @@ public class MyVector3f {
      * @return angle above the X-Z plane (in radians, &le;Pi/2, &ge;-Pi/2)
      */
     public static float altitude(Vector3f offset) {
-        if (offset == null) {
-            throw new NullPointerException("offset should not be null");
-        }
+        Validate.nonNull(offset, "offset");
         if (isZeroLength(offset)) {
             logger.log(Level.SEVERE, "offset={0}", offset);
             throw new IllegalArgumentException(
@@ -103,9 +102,7 @@ public class MyVector3f {
      * @return a new unit vector
      */
     public static VectorXZ direction(Vector3f offset) {
-        if (offset == null) {
-            throw new NullPointerException("offset should not be null");
-        }
+        Validate.nonNull(offset, "offset");
 
         VectorXZ result = new VectorXZ(offset);
         result.normalizeLocal();
@@ -121,9 +118,7 @@ public class MyVector3f {
      * @return distance (in world units, &ge;0)
      */
     public static float distanceFrom(Vector3f from, Vector3f to) {
-        if (from == null) {
-            throw new NullPointerException("start location should not be null");
-        }
+        Validate.nonNull(from, "vector");
 
         Vector3f offset = to.subtract(from);
         float distance = offset.length();

@@ -36,6 +36,7 @@ import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.debug.Validate;
 
 /**
  * A single-precision vector with no 'y' coordinate. These vectors are used to
@@ -192,10 +193,7 @@ public class VectorXZ
      * @return this vector (with its components modified)
      */
     public VectorXZ clampDirectionLocal(float maxAbsAngle) {
-        if (!(maxAbsAngle >= 0f)) {
-            logger.log(Level.SEVERE, "maxAbsAngle={0}", maxAbsAngle);
-            throw new IllegalArgumentException("angle should not be negative");
-        }
+        Validate.nonNegative(maxAbsAngle, "angle");
 
         if (maxAbsAngle >= FastMath.HALF_PI) {
             maxAbsAngle = FastMath.HALF_PI;

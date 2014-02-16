@@ -149,9 +149,8 @@ public class LandscapeControl
      * null)
      */
     public LandscapeControl(AssetManager assetManager) {
-        if (assetManager == null) {
-            throw new NullPointerException("manager should not be null");
-        }
+        Validate.nonNull(assetManager, "asset manager");
+        
         this.assetManager = assetManager;
         /*
          * Generate monument and terrain, but don't attach them yet.
@@ -181,10 +180,7 @@ public class LandscapeControl
      * @param peakY Y-coordinate of the peak (&gt;baseY)
      */
     public void setTerrainScale(float radius, float baseY, float peakY) {
-        if (!(radius > 0f)) {
-            logger.log(Level.SEVERE, "radius={0}", radius);
-            throw new IllegalArgumentException("radius should be positive");
-        }
+        Validate.positive(radius, "radius");
         if (!(peakY > baseY)) {
             logger.log(Level.SEVERE, "peakY={0}, baseY={1}",
                     new Object[]{peakY, baseY});
@@ -212,8 +208,7 @@ public class LandscapeControl
     @Override
     public void setEnabled(boolean newState) {
         if (spatial == null) {
-            throw new IllegalStateException(
-                    "control should be added to a node");
+            throw new IllegalStateException("control should be added");
         }
 
         Node node = (Node) spatial;

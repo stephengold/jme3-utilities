@@ -35,6 +35,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
 import java.io.IOException;
 import java.util.logging.Logger;
+import jme3utilities.debug.Validate;
 
 /**
  * A simplified physics control for a non-solid object.
@@ -85,9 +86,7 @@ public class SimpleGhostControl
      * @param newShape (not null)
      */
     public void changeShape(CollisionShape newShape) {
-        if (newShape == null) {
-            throw new NullPointerException("shape should not be null");
-        }
+        Validate.nonNull(newShape, "shape");
         if (space == null) {
             throw new IllegalStateException("should be in a physics space");
         }
@@ -121,7 +120,6 @@ public class SimpleGhostControl
      * De-serialize this control when loading from a J3O file.
      *
      * @param importer (not null)
-     * @throws IOException TODO when?
      */
     @Override
     public void read(JmeImporter importer)
@@ -150,7 +148,6 @@ public class SimpleGhostControl
      * Serialize this control when saving to a J3O file.
      *
      * @param exporter (not null)
-     * @throws IOException TODO when?
      */
     @Override
     public void write(JmeExporter exporter)

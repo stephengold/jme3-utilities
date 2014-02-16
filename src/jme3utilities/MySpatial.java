@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.debug.Validate;
 import jme3utilities.math.VectorXZ;
 
 /**
@@ -77,9 +78,7 @@ public class MySpatial
      * @param child which spatial (not null, not orphan)
      */
     public static void adopt(Node newParent, Spatial child) {
-        if (newParent == null) {
-            throw new NullPointerException("new parent should not be null");
-        }
+        Validate.nonNull(newParent, "new parent");
         Node oldParent = child.getParent();
         if (oldParent == null) {
             throw new NullPointerException("child should not be an orphan");
@@ -139,9 +138,7 @@ public class MySpatial
      * @return a new vector
      */
     public static VectorXZ getMapLocation(Spatial spatial) {
-        if (spatial == null) {
-            throw new NullPointerException("spatial should not be null");
-        }
+        Validate.nonNull(spatial, "spatial");
 
         Vector3f worldLocation = getWorldLocation(spatial);
         VectorXZ result = new VectorXZ(worldLocation);
@@ -171,10 +168,6 @@ public class MySpatial
      * @return world Y-coordinate
      */
     public static float getMaxY(Spatial spatial) {
-        if (spatial == null) {
-            throw new NullPointerException("spatial should not be null");
-        }
-
         if (spatial instanceof Geometry) {
             Geometry geometry = (Geometry) spatial;
             float[] minMax = Misc.findMinMaxHeights(geometry);
@@ -184,6 +177,7 @@ public class MySpatial
             throw new IllegalArgumentException(
                     "spatial should be a geometry or a node");
         }
+        
         Node node = (Node) spatial;
         float result = -Float.MAX_VALUE;
         for (Spatial child : node.getChildren()) {
@@ -381,9 +375,7 @@ public class MySpatial
      * @param offset world translation (in meters, not null)
      */
     public static void moveChildWorld(Spatial spatial, Vector3f offset) {
-        if (spatial == null) {
-            throw new NullPointerException("spatial should not be null");
-        }
+        Validate.nonNull(spatial, "spatial");
 
         if (isPhysical(spatial)) {
             Vector3f location = getWorldLocation(spatial);
@@ -408,15 +400,9 @@ public class MySpatial
      */
     public static void rotateChild(Spatial spatial, Vector3f center,
             Quaternion rotation) {
-        if (spatial == null) {
-            throw new NullPointerException("spatial should not be null");
-        }
-        if (center == null) {
-            throw new NullPointerException("vector should not be null");
-        }
-        if (rotation == null) {
-            throw new NullPointerException("rotation should not be null");
-        }
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(center, "vector");
+        Validate.nonNull(rotation, "rotaion");
 
         if (isPhysical(spatial)) {
             Vector3f location = getWorldLocation(spatial);
@@ -471,9 +457,7 @@ public class MySpatial
      * @param angle clockwise rotation angle (in radians)
      */
     public static void rotateY(Spatial spatial, float angle) {
-        if (spatial == null) {
-            throw new NullPointerException("spatial should not be null");
-        }
+        Validate.nonNull(spatial, "spatial");
 
         Quaternion rotation = new Quaternion();
         rotation.fromAngleNormalAxis(-angle, Vector3f.UNIT_Y);
@@ -553,10 +537,7 @@ public class MySpatial
      * @param scale desired world scale (&gt;0)
      */
     public static void setWorldScale(Spatial spatial, float scale) {
-        if (!(scale > 0f)) {
-            logger.log(Level.SEVERE, "scale={0}", scale);
-            throw new IllegalArgumentException("scale should be positive");
-        }
+        Validate.positive(scale, "scale");
 
         Spatial parent = spatial.getParent();
         float parentScale = parent.getWorldScale().x;

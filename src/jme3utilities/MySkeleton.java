@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.debug.Validate;
 
 /**
  * Utility methods for manipulating bones and skeletons. Aside from test cases,
@@ -70,16 +71,12 @@ public class MySkeleton
      *
      * @param spatial animated spatial which contains the bone (not null)
      * @param boneName name of the bone to measure (not null)
-     * @param axis which axis to measure (0 &rarr; x, 1 &rarr; y, 2 &rarr; z)
+     * @param axis which axis to measure (0 &rarr; X, 1 &rarr; Y, 2 &rarr; Z)
      * @return the rotation angle (in radians) or zero for unknown bone
      */
     public static float boneAngle(Spatial spatial, String boneName, int axis) {
-        if (spatial == null) {
-            throw new NullPointerException("spatial should not be null");
-        }
-        if (boneName == null) {
-            throw new NullPointerException("name should not be null");
-        }
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(boneName, "name");
         if (axis < 0 || axis > 2) {
             logger.log(Level.SEVERE, "axis={0}", axis);
             throw new IllegalArgumentException(
@@ -104,12 +101,8 @@ public class MySkeleton
      * @return the pre-existing instance (or null if not found)
      */
     public static Bone getBone(Spatial spatial, String boneName) {
-        if (spatial == null) {
-            throw new NullPointerException("spatial should not be null");
-        }
-        if (boneName == null) {
-            throw new NullPointerException("name should not be null");
-        }
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(boneName, "name");
 
         Skeleton skeleton = getSkeleton(spatial);
         if (skeleton == null) {
@@ -185,14 +178,10 @@ public class MySkeleton
      */
     public static void setBoneAngle(Spatial spatial, String boneName, int axis,
             float newAngle) {
-        if (spatial == null) {
-            throw new NullPointerException("spatial should not be null");
-        }
-        if (boneName == null) {
-            throw new NullPointerException("name should not be null");
-        }
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(boneName, "name");
         if (axis < 0 || axis > 2) {
-            logger.log(Level.SEVERE, "{0}", axis);
+            logger.log(Level.SEVERE, "axis={0}", axis);
             throw new IllegalArgumentException(
                     "axis should be between 0 and 2, inclusive");
         }
@@ -213,12 +202,8 @@ public class MySkeleton
      * @return a new vector
      */
     public static Vector3f worldLocation(Spatial spatial, String boneName) {
-        if (spatial == null) {
-            throw new NullPointerException("spatial should not be null");
-        }
-        if (boneName == null) {
-            throw new NullPointerException("name should not be null");
-        }
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(boneName, "name");
 
         Bone bone = getBone(spatial, boneName);
         Vector3f local = bone.getModelSpacePosition();
@@ -235,12 +220,8 @@ public class MySkeleton
      */
     public static Quaternion worldOrientation(Spatial spatial,
             String boneName) {
-        if (spatial == null) {
-            throw new NullPointerException("spatial should not be null");
-        }
-        if (boneName == null) {
-            throw new NullPointerException("name should not be null");
-        }
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(boneName, "name");
 
         Bone bone = getBone(spatial, boneName);
 

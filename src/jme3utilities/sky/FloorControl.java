@@ -35,10 +35,10 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
+import jme3utilities.debug.Validate;
 
 /**
  * A simple control to provide a visual "floor" for a scene. The floor would
@@ -87,16 +87,9 @@ public class FloorControl
      * @param textureScale scale to apply to texture coordinates (&gt;0)
      */
     public FloorControl(Camera camera, Material material, float textureScale) {
-        if (camera == null) {
-            throw new NullPointerException("camera should not be null");
-        }
-        if (material == null) {
-            throw new NullPointerException("material should not be null");
-        }
-        if (!(textureScale > 0f)) {
-            logger.log(Level.SEVERE, "uvScale={0}", textureScale);
-            throw new IllegalArgumentException("scale should be positive");
-        }
+        Validate.nonNull(camera, "camera");
+        Validate.nonNull(material, "material");
+        Validate.positive(textureScale, "scale");
 
         this.camera = camera;
         createSpatials(material, textureScale);
@@ -119,12 +112,9 @@ public class FloorControl
             throw new IllegalStateException("should be enabled");
         }
         if (spatial == null) {
-            throw new IllegalStateException("should be added to a spatial");
+            throw new IllegalStateException("should be added");
         }
-        if (!(elapsedTime >= 0f)) {
-            logger.log(Level.SEVERE, "time={0}", elapsedTime);
-            throw new IllegalArgumentException("time should not be negative");
-        }
+        Validate.nonNegative(elapsedTime, "interval");
         /*
          * Translate the floor to center it below the camera.
          */

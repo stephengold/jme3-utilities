@@ -30,6 +30,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.debug.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**
@@ -116,13 +117,8 @@ public class MyCamera {
      * @param newFar distance to the far clipping plane (&gt;newNear)
      */
     public static void setNearFar(Camera camera, float newNear, float newFar) {
-        if (camera == null) {
-            throw new NullPointerException("camera should not be null");
-        }
-        if (!(newNear > 0f)) {
-            logger.log(Level.SEVERE, "near={0}", newNear);
-            throw new IllegalArgumentException("near should be positive");
-        }
+        Validate.nonNull(camera, "camera");
+        Validate.positive(newNear, "near");
         if (!(newFar > newNear)) {
             logger.log(Level.SEVERE, "far={0} near={1}",
                     new Object[]{newFar, newNear});
@@ -148,13 +144,8 @@ public class MyCamera {
      * @param newTangent value for the FOV tangent (&gt;0)
      */
     public static void setYTangent(Camera camera, float newTangent) {
-        if (camera == null) {
-            throw new NullPointerException("camera should not be null");
-        }
-        if (!(newTangent > 0f)) {
-            logger.log(Level.SEVERE, "newTangent={0}", newTangent);
-            throw new IllegalArgumentException("tangent should be positive");
-        }
+        Validate.nonNull(camera, "camera");
+        Validate.positive(newTangent, "tangent");
 
         float yTangent = yTangent(camera);
         float factor = newTangent / yTangent;
@@ -168,9 +159,7 @@ public class MyCamera {
      * @return vertical angle in degrees (&gt;0)
      */
     public static float yDegrees(Camera camera) {
-        if (camera == null) {
-            throw new NullPointerException("camera should not be null");
-        }
+        Validate.nonNull(camera, "camera");
         if (camera.isParallelProjection()) {
             return 0f;
         }
@@ -205,10 +194,7 @@ public class MyCamera {
      * @param factor amount to reduce the FOV tangent (&gt;0)
      */
     public static void zoom(Camera camera, float factor) {
-        if (!(factor > 0f)) {
-            logger.log(Level.SEVERE, "factor={0}", factor);
-            throw new IllegalArgumentException("factor should be positive");
-        }
+        Validate.positive(factor, "factor");
 
         float bottom = camera.getFrustumBottom();
         camera.setFrustumBottom(bottom * factor);

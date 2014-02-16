@@ -33,6 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.MyString;
+import jme3utilities.debug.Validate;
 
 /**
  * A material for a dynamic sky dome using assets and techniques derived from
@@ -172,9 +173,7 @@ public class SkyMaterial
      * @param assetPath asset path to the alpha map (not null)
      */
     public void addHaze(String assetPath) {
-        if (assetPath == null) {
-            throw new NullPointerException("path should not be null");
-        }
+        Validate.nonNull(assetPath, "path");
 
         Texture alphaMap = MyAsset.loadTexture(assetManager, assetPath);
         setTexture("HazeAlphaMap", alphaMap);
@@ -190,9 +189,7 @@ public class SkyMaterial
      */
     public void addObject(int objectIndex, String assetPath) {
         validateObjectIndex(objectIndex);
-        if (assetPath == null) {
-            throw new NullPointerException("path should not be null");
-        }
+        Validate.nonNull(assetPath, "path");
 
         Texture colorMap = MyAsset.loadTexture(assetManager, assetPath);
         addObject(objectIndex, colorMap);
@@ -211,9 +208,7 @@ public class SkyMaterial
      * @param assetPath (not null)
      */
     public void addStars(String assetPath) {
-        if (assetPath == null) {
-            throw new NullPointerException("path should not be null");
-        }
+        Validate.nonNull(assetPath, "path");
 
         Texture colorMap = MyAsset.loadTexture(assetManager, assetPath);
         setTexture("StarsColorMap", colorMap);
@@ -260,9 +255,7 @@ public class SkyMaterial
      * @param newColor (not null)
      */
     public void setClearColor(ColorRGBA newColor) {
-        if (newColor == null) {
-            throw new NullPointerException("color should not be null");
-        }
+        Validate.nonNull(newColor, "color");
 
         setColor("ClearColor", newColor);
     }
@@ -273,9 +266,7 @@ public class SkyMaterial
      * @param newColor (not null)
      */
     public void setClearGlow(ColorRGBA newColor) {
-        if (newColor == null) {
-            throw new NullPointerException("color should not be null");
-        }
+        Validate.nonNull(newColor, "color");
 
         setColor("ClearGlow", newColor);
     }
@@ -286,9 +277,7 @@ public class SkyMaterial
      * @param newColor (not null)
      */
     public void setHazeColor(ColorRGBA newColor) {
-        if (newColor == null) {
-            throw new NullPointerException("color should not be null");
-        }
+        Validate.nonNull(newColor, "color");
 
         setColor("HazeColor", newColor);
     }

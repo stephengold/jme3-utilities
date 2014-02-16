@@ -30,6 +30,7 @@ import com.jme3.math.Vector2f;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.debug.Validate;
 
 /**
  * Random and noise utility methods. Aside from test cases, all methods should
@@ -87,8 +88,8 @@ public class Noise {
     /**
      * Sample fractional Brownian motion (FBM) noise in two dimensions.
      *
-     * @param x first coordinate of the point
-     * @param y second coordinate of the point
+     * @param sampleX first coordinate of the sample point
+     * @param sampleY second coordinate of the sample point
      * @param numOctaves number of passes (&gt;0)
      * @param fundamental frequency for the first pass (&gt;0)
      * @param gain factor to increase amplitude after each pass (&gt;0, &lt;1)
@@ -97,16 +98,8 @@ public class Noise {
      */
     public static float fbmNoise(float sampleX, float sampleY, int numOctaves,
             float fundamental, float gain, float lacunarity) {
-        if (numOctaves <= 0) {
-            logger.log(Level.SEVERE, "numOctaves={0}", numOctaves);
-            throw new IllegalArgumentException(
-                    "numOctaves should be greater than 0");
-        }
-        if (!(fundamental > 0f)) {
-            logger.log(Level.SEVERE, "fundamental={0}", gain);
-            throw new IllegalArgumentException(
-                    "fundamental should be positive");
-        }
+        Validate.positive(numOctaves, "octaves");
+        Validate.positive(fundamental, "fundamental");
         if (!(gain > 0f && gain < 1f)) {
             logger.log(Level.SEVERE, "gain={0}", gain);
             throw new IllegalArgumentException(

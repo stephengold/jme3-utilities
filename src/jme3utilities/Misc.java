@@ -53,6 +53,7 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import jme3utilities.debug.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**
@@ -111,9 +112,7 @@ public class Misc {
     public static void addChildShape(CompoundCollisionShape parent,
             CollisionShape child, Vector3f offset, Matrix3f orientation,
             Vector3f worldScale) {
-        if (worldScale == null) {
-            throw new NullPointerException("scale should not be null");
-        }
+        Validate.nonNull(worldScale, "scale");
         if (!MyVector3f.isAllNonNegative(worldScale)) {
             logger.log(Level.SEVERE, "scale={0}", worldScale);
             throw new IllegalArgumentException(
@@ -205,12 +204,7 @@ public class Misc {
      */
     public static void detachAll(AppStateManager stateManager,
             Class whichClass) {
-        if (stateManager == null) {
-            throw new NullPointerException("state manager should not be null");
-        }
-        if (whichClass == null) {
-            throw new NullPointerException("class should not be null");
-        }
+        Validate.nonNull(whichClass, "class");
 
         AppState state = stateManager.getState(whichClass);
         while (state != null) {
@@ -228,9 +222,7 @@ public class Misc {
      */
     public static FilterPostProcessor getFpp(ViewPort viewPort,
             AssetManager assetManager) {
-        if (assetManager == null) {
-            throw new NullPointerException("asset manager should not be null");
-        }
+        Validate.nonNull(assetManager, "asset manager");
 
         for (SceneProcessor processor : viewPort.getProcessors()) {
             if (processor instanceof FilterPostProcessor) {
@@ -252,11 +244,10 @@ public class Misc {
      * @return the generated path
      */
     public static String getUserPath(String fileName) {
-        if (fileName == null) {
-            throw new NullPointerException("file name should not be null");
-        }
+        Validate.nonNull(fileName, "file name");
 
         String homePath = System.getProperty("user.home");
+        assert homePath != null;
         String result = String.format("%s/%s", homePath, fileName);
         return result;
     }
@@ -290,9 +281,7 @@ public class Misc {
      * @return world elevation of the surface (in world units)
      */
     public static float getYLevel(Geometry geometry) {
-        if (geometry == null) {
-            throw new NullPointerException("geometry should not be null");
-        }
+        Validate.nonNull(geometry, "geometry");
 
         float minMax[] = findMinMaxHeights(geometry);
         assert minMax[0] == minMax[1] : minMax[0];
@@ -349,19 +338,13 @@ public class Misc {
             float brightness) {
         if (x < 0 || x >= graphics.getDeviceConfiguration().getBounds().width) {
             logger.log(Level.SEVERE, "x={0}", x);
-            throw new IllegalArgumentException(
-                    "X coordinate out of bounds");
+            throw new IllegalArgumentException("X coordinate out of bounds");
         }
-        if (y < 0 || y >= graphics.getDeviceConfiguration().getBounds().width) {
+        if (y < 0 || y >= graphics.getDeviceConfiguration().getBounds().height) {
             logger.log(Level.SEVERE, "y={0}", y);
-            throw new IllegalArgumentException(
-                    "Y coordinate out of bounds");
+            throw new IllegalArgumentException("Y coordinate out of bounds");
         }
-        if (brightness < 0f || brightness > 1f) {
-            logger.log(Level.SEVERE, "brightness={0}", brightness);
-            throw new IllegalArgumentException(
-                    "brightness out of bounds");
-        }
+        Validate.fraction(brightness, "brightness");
 
         Color color = new Color(brightness, brightness, brightness);
         graphics.setColor(color);
@@ -374,9 +357,7 @@ public class Misc {
      * @param newLevel (not null)
      */
     public static void setLoggingLevels(Level newLevel) {
-        if (newLevel == null) {
-            throw new NullPointerException("level should not be null");
-        }
+        Validate.nonNull(newLevel, "level");
 
         Logger.getLogger("").setLevel(newLevel);
     }
@@ -410,12 +391,8 @@ public class Misc {
      */
     public static void writeMap(String filePath, RenderedImage image)
             throws IOException {
-        if (filePath == null) {
-            throw new NullPointerException("path should not be null");
-        }
-        if (image == null) {
-            throw new NullPointerException("image should not be null");
-        }
+        Validate.nonNull(filePath, "path");
+        Validate.nonNull(image, "image");
 
         File textureFile = new File(filePath);
         try {

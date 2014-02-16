@@ -37,6 +37,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.debug.Validate;
 
 /**
  * Utility methods for computing volumes of shapes. Aside from test cases, all
@@ -70,9 +71,7 @@ public class MyVolume {
      * @param halfExtents (not null, all components &ge;0, not altered)
      */
     public static float boxVolume(Vector3f halfExtents) {
-        if (halfExtents == null) {
-            throw new NullPointerException("half-extents should not be null");
-        }
+        Validate.nonNull(halfExtents, "half-extents");
         if (!MyVector3f.isAllNonNegative(halfExtents)) {
             logger.log(Level.SEVERE, "halfExtents={0}", halfExtents);
             throw new IllegalArgumentException(
@@ -90,14 +89,8 @@ public class MyVolume {
      * @param height (&ge;0)
      */
     public static float capsuleVolume(float radius, float height) {
-        if (!(radius >= 0f)) {
-            logger.log(Level.SEVERE, "radius={0}", radius);
-            throw new IllegalArgumentException("radius shouldn't be negative");
-        }
-        if (!(height >= 0f)) {
-            logger.log(Level.SEVERE, "height={0}", height);
-            throw new IllegalArgumentException("height shouldn't be negative");
-        }
+        Validate.nonNegative(radius, "radius");
+        Validate.nonNegative(height, "height");
 
         float halfHeight = 0.5f * height;
         Vector3f cylinderHalfExtents = new Vector3f(halfHeight, radius, radius);
@@ -114,14 +107,8 @@ public class MyVolume {
      * @param height (&ge;0)
      */
     public static float coneVolume(float radius, float height) {
-        if (!(radius >= 0f)) {
-            logger.log(Level.SEVERE, "radius={0}", radius);
-            throw new IllegalArgumentException("radius shouldn't be negative");
-        }
-        if (!(height >= 0f)) {
-            logger.log(Level.SEVERE, "height={0}", height);
-            throw new IllegalArgumentException("height shouldn't be negative");
-        }
+        Validate.nonNegative(radius, "radius");
+        Validate.nonNegative(height, "height");
 
         float volume =
                 FastMath.PI * FastMath.ONE_THIRD * radius * radius * height;
@@ -135,9 +122,7 @@ public class MyVolume {
      * @param halfExtents (not null, all components &ge;0, not altered)
      */
     public static float cylinderVolume(Vector3f halfExtents) {
-        if (halfExtents == null) {
-            throw new NullPointerException("half-extents should not be null");
-        }
+        Validate.nonNull(halfExtents, "half-extents");
         if (!MyVector3f.isAllNonNegative(halfExtents)) {
             logger.log(Level.SEVERE, "halfExtents={0}", halfExtents);
             throw new IllegalArgumentException(
@@ -155,10 +140,7 @@ public class MyVolume {
      * @param radius (&ge;0)
      */
     public static float sphereVolume(float radius) {
-        if (!(radius >= 0f)) {
-            logger.log(Level.SEVERE, "radius={0}", radius);
-            throw new IllegalArgumentException("radius shouldn't be negative");
-        }
+        Validate.nonNegative(radius, "radius");
 
         float volume =
                 4f * FastMath.ONE_THIRD * FastMath.PI * MyMath.cube(radius);

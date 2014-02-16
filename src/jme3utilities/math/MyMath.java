@@ -29,6 +29,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.debug.Validate;
 
 /**
  * Mathematical utility methods. Aside from test cases, all methods should be
@@ -110,10 +111,8 @@ public class MyMath {
      * @see FastMath#clamp(float,float,float)
      */
     public static float clamp(float fValue, float maxMagnitude) {
-        if (!(maxMagnitude >= 0f)) {
-            logger.log(Level.SEVERE, "maxMagnitude={0}", maxMagnitude);
-            throw new IllegalArgumentException("limit shouldn't be negative");
-        }
+        Validate.nonNegative(maxMagnitude, "limit");
+
         return FastMath.clamp(fValue, -maxMagnitude, maxMagnitude);
     }
 
@@ -136,17 +135,13 @@ public class MyMath {
      * Compute the product of two complex numbers or the composition of two
      * scale-and-rotate vectors.
      *
-     * @param a first complex number
-     * @param b second complex number
+     * @param a first complex number (not null, not altered)
+     * @param b second complex number (not null, not altered)
      * @return a new vector
      */
     public static Vector2f complexProduct(Vector2f a, Vector2f b) {
-        if (a == null) {
-            throw new NullPointerException("vector a should not be null");
-        }
-        if (b == null) {
-            throw new NullPointerException("vector b should not be null");
-        }
+        Validate.nonNull(a, "vector a");
+        Validate.nonNull(b, "vector b");
 
         float productX = a.x * b.x - a.y * b.y;
         float productY = a.y * b.x + a.x * b.y;
@@ -222,11 +217,8 @@ public class MyMath {
      * @return 6*t^5 - 15*t^4 + 10*t^3 (&le;1, &ge;0)
      */
     public static float fade(float t) {
-        if (!(t >= 0f && t <= 1f)) {
-            logger.log(Level.SEVERE, "t={0}", t);
-            throw new IllegalArgumentException(
-                    "t should be between 0 and 1");
-        }
+        Validate.fraction(t, "t");
+
         double tt = (double) t;
         double ff = tt * tt * tt * (10.0 + tt * (-15.0 + 6.0 * tt));
         float result = (float) ff;
@@ -295,15 +287,11 @@ public class MyMath {
      *
      * @param a first input value
      * @param b second input value
-     * @param fraction (&lt;1, &gt;0)
+     * @param fraction (&le;1, &ge;0)
      * @return a*(1-fraction) + b*fraction
      */
     public static float mix(float a, float b, float fraction) {
-        if (!(fraction >= 0f && fraction <= 1f)) {
-            logger.log(Level.SEVERE, "fraction={0}", fraction);
-            throw new IllegalArgumentException(
-                    "fraction should be between 0 and 1");
-        }
+        Validate.fraction(fraction, "fraction");
 
         float result = a * (1f - fraction) + b * fraction;
         return result;
@@ -318,10 +306,7 @@ public class MyMath {
      * @return x MOD modulus (&lt;modulus, &ge;0)
      */
     public static int modulo(int iValue, int modulus) {
-        if (!(modulus > 0f)) {
-            logger.log(Level.SEVERE, "modulus={0}", modulus);
-            throw new IllegalArgumentException("modulus should be positive");
-        }
+        Validate.positive(modulus, "modulus");
 
         int result = (iValue % modulus + modulus) % modulus;
 
@@ -339,10 +324,7 @@ public class MyMath {
      * @return x MOD modulus (&lt;modulus, &ge;0)
      */
     public static float modulo(float fValue, float modulus) {
-        if (!(modulus > 0f)) {
-            logger.log(Level.SEVERE, "modulus={0}", modulus);
-            throw new IllegalArgumentException("modulus should be positive");
-        }
+        Validate.positive(modulus, "modulus");
 
         float result = (fValue % modulus + modulus) % modulus;
 

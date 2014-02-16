@@ -52,6 +52,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MySpatial;
+import jme3utilities.debug.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**
@@ -144,12 +145,8 @@ public class GlobeRenderer
      */
     public GlobeRenderer(Material globeMaterial, Image.Format outputFormat,
             int equatorSamples, int meridianSamples, int resolution) {
-        if (globeMaterial == null) {
-            throw new NullPointerException("material should not be null");
-        }
-        if (outputFormat == null) {
-            throw new NullPointerException("format should not be null");
-        }
+        Validate.nonNull(globeMaterial, "material");
+        Validate.nonNull(outputFormat, "format");
         if (equatorSamples < 3) {
             logger.log(Level.SEVERE, "equatorSamples={0}", equatorSamples);
             throw new IllegalArgumentException(
@@ -160,11 +157,7 @@ public class GlobeRenderer
             throw new IllegalArgumentException(
                     "need at least 3 samples on each meridian");
         }
-        if (resolution <= 0) {
-            logger.log(Level.SEVERE, "resolution={0}", resolution);
-            throw new IllegalArgumentException(
-                    "resolution should be positive");
-        }
+        Validate.positive(resolution, "resolution");
 
         initializeCamera(resolution);
         initializeGlobe(globeMaterial, equatorSamples, meridianSamples);
@@ -228,12 +221,8 @@ public class GlobeRenderer
      */
     final public void moveCamera(Vector3f newLocation,
             Vector3f newUpDirection) {
-        if (newLocation == null) {
-            throw new NullPointerException("location should not be null");
-        }
-        if (newUpDirection == null) {
-            throw new NullPointerException("up direction should not be null");
-        }
+        Validate.nonNull(newLocation, "location");
+        Validate.nonNull(newUpDirection, "up direction");
         if (MyVector3f.isZeroLength(newUpDirection)) {
             logger.log(Level.SEVERE, "upDirection={0}", newUpDirection);
             throw new IllegalArgumentException(
@@ -250,10 +239,7 @@ public class GlobeRenderer
      * @param newGamma parameter for the filter (&gt;0, 1 &rarr; linear)
      */
     final public void setGamma(float newGamma) {
-        if (!(newGamma > 0f)) {
-            logger.log(Level.SEVERE, "gamma={0}", newGamma);
-            throw new IllegalArgumentException("gamma should be positive");
-        }
+        Validate.positive(newGamma, "gamma");
 
         if (isInitialized()) {
             filter.setGamma(newGamma);
@@ -269,10 +255,7 @@ public class GlobeRenderer
      * @param newRadius (in world units, &gt;0)
      */
     final public void setGlobeRadius(float newRadius) {
-        if (!(newRadius > 0f)) {
-            logger.log(Level.SEVERE, "radius={0}", newRadius);
-            throw new IllegalArgumentException("radius should be positive");
-        }
+        Validate.positive(newRadius, "radius");
 
         MySpatial.setWorldScale(globe, newRadius);
     }
@@ -283,11 +266,7 @@ public class GlobeRenderer
      * @param intensity (&ge;0, 1 &rarr; standard)
      */
     final public void setLightIntensity(float intensity) {
-        if (!(intensity >= 0f)) {
-            logger.log(Level.SEVERE, "intensity={0}", intensity);
-            throw new IllegalArgumentException(
-                    "intensity shouldn't be negative");
-        }
+        Validate.nonNegative(intensity, "intensity");
 
         ColorRGBA lightColor = ColorRGBA.White.mult(intensity);
         light.setColor(lightColor);
@@ -317,9 +296,7 @@ public class GlobeRenderer
      * @param newAxis unit vector in the globe's local coordinate system
      */
     public void setSpinAxis(Vector3f newAxis) {
-        if (newAxis == null) {
-            throw new NullPointerException("axis should not be null");
-        }
+        Validate.nonNull(newAxis, "axis");
         if (!newAxis.isUnitVector()) {
             logger.log(Level.SEVERE, "axis={0}", newAxis);
             throw new IllegalArgumentException(
@@ -355,12 +332,8 @@ public class GlobeRenderer
         if (!isEnabled()) {
             throw new IllegalStateException("should be enabled");
         }
-        if (stateManager == null) {
-            throw new NullPointerException("manager shouldn't be null");
-        }
-        if (application == null) {
-            throw new NullPointerException("application shouldn't be null");
-        }
+        Validate.nonNull(stateManager, "state manager");
+        Validate.nonNull(application, "application");
 
         super.initialize(stateManager, application);
 
@@ -386,11 +359,7 @@ public class GlobeRenderer
      */
     @Override
     public void update(float elapsedTime) {
-        if (!(elapsedTime >= 0f)) {
-            logger.log(Level.SEVERE, "elapsedTime={0}", elapsedTime);
-            throw new IllegalArgumentException(
-                    "elapsed time shouldn't be negative");
-        }
+        Validate.nonNegative(elapsedTime, "interval");
         /*
          * spin the globe on its axis
          */
@@ -424,7 +393,7 @@ public class GlobeRenderer
      */
     private void initializeGlobe(Material globeMaterial, int equatorSamples,
             int meridianSamples) {
-        assert globeMaterial != null : globeMaterial;
+        assert globeMaterial != null;
         assert equatorSamples >= 3 : equatorSamples;
         assert meridianSamples >= 3 : meridianSamples;
 
@@ -464,7 +433,7 @@ public class GlobeRenderer
                 cameraDistance, globeRadius
             });
             throw new IllegalArgumentException(
-                    "camera should be outside of the globe");
+                    "camera should be outside the globe");
         }
 
         float fovY = 2f * FastMath.asin(globeRadius / cameraDistance);

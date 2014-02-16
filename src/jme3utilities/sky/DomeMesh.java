@@ -40,6 +40,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.debug.Validate;
 import jme3utilities.math.MyMath;
 
 /**
@@ -174,18 +175,10 @@ public class DomeMesh
         }
         this.quadrantSamples = quadrantSamples;
 
-        if (!(topU >= Constants.uvMin && topU <= Constants.uvMax)) {
-            logger.log(Level.SEVERE, "topU={0}", topU);
-            throw new IllegalArgumentException(
-                    "topU should be between 0 and 1, inclusive");
-        }
+        Validate.fraction(topU, "topU");
         this.topU = topU;
 
-        if (!(topV >= Constants.uvMin && topV <= Constants.uvMax)) {
-            logger.log(Level.SEVERE, "topV={0}", topV);
-            throw new IllegalArgumentException(
-                    "topV should be between 0 and 1, inclusive");
-        }
+        Validate.fraction(topV, "topV");
         this.topV = topV;
 
         if (!(uvScale > 0f && uvScale < 0.5f)) {
@@ -214,9 +207,7 @@ public class DomeMesh
      * @return a new vector, or null if direction is too far below the equator
      */
     public Vector2f directionUV(Vector3f direction) {
-        if (direction == null) {
-            throw new NullPointerException("direction should not be null");
-        }
+        Validate.nonNull(direction, "direction");
         if (!direction.isUnitVector()) {
             logger.log(Level.SEVERE, "direction={0}", direction);
             throw new IllegalArgumentException(
@@ -259,12 +250,8 @@ public class DomeMesh
      * @return angle in radians (&le;Pi/2)
      */
     public float elevationAngle(float u, float v) {
-        if (!(u <= Constants.uvMax && u >= Constants.uvMin
-                && v <= Constants.uvMax && v >= Constants.uvMin)) {
-            logger.log(Level.SEVERE, "u={0}, v={1}", new Object[]{u, v});
-            throw new IllegalArgumentException(
-                    "texture coordinates should be between 0 and 1, inclusive");
-        }
+        Validate.fraction(u, "u");
+        Validate.fraction(v, "v");
 
         float uvDistance = MyMath.hypotenuse(u - topU, v - topV);
         float angleFromTop = uvDistance / uvScale * FastMath.HALF_PI;
