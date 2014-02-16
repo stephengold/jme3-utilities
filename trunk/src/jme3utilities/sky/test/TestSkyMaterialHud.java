@@ -319,6 +319,7 @@ public class TestSkyMaterialHud
 
             case "stars 16m/northern":
             case "stars 16m/southern":
+            case "stars 16m/wiltshire":
             case "stars none":
             case "stars northern":
             case "stars southern":
@@ -496,7 +497,7 @@ public class TestSkyMaterialHud
      */
     private void showStarsMenu() {
         showPopup("stars ", new String[]{
-            "16m/northern", "16m/southern", "none",
+            "16m/northern", "16m/southern", "16m/wiltshire", "none",
             "northern", "southern", "wiltshire"
         });
     }
