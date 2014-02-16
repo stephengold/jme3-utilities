@@ -42,6 +42,10 @@ public class MyMath {
     // constants
 
     /**
+     * the square root of 1/2
+     */
+    final public static float rootHalf = FastMath.sqrt(0.5f);
+    /**
      * message logger for this class
      */
     final private static Logger logger =
