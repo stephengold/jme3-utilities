@@ -246,4 +246,4 @@ All that remains is to update the control.  Add two lines to simpleUpdate(), rig
 = Next steps =
 
 For a demonstration of the more advanced features of SkyControl,
-you may wish to study the !TestSkyControl class in the "jme3utilities.sky.test" package. 
+you may wish to study the [https://code.google.com/p/jme3-utilities/source/browse/trunk/src/jme3utilities/sky/test/TestSkyControl.java TestSkyControl] class in the "jme3utilities.sky.test" package. 
