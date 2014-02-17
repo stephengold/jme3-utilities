@@ -2,7 +2,7 @@
 
 Like most projects, the jme3-utilities project builds upon the work of many who have gone before. I therefore acknowledge the following software developers:
 
-  * Chris (aka "t0neg0d") for creating !SkyDome (which provided both an inspiration and a starting point for !SkyControl) and also for encouraging me to run with it ... thank you yet again!
+  * Cris (aka "t0neg0d") for creating !SkyDome (which provided both an inspiration and a starting point for !SkyControl) and also for encouraging me to run with it ... thank you yet again!
   * Paul Speed, for helpful insights which got me unstuck during debugging
   * the brave souls who volunteered to be alpha testers for !SkyControl, including:
     * Davis Rollman
@@ -16,6 +16,7 @@ Like most projects, the jme3-utilities project builds upon the work of many who 
     * "madjack"
     * Benjamin D.
     * "Fissll"
+    * Davis Rollman
   * the creators of (and contributors to) the following software:
     * Adobe Photoshop Elements
     * the Blender 3D animation suite
@@ -36,8 +37,8 @@ Like most projects, the jme3-utilities project builds upon the work of many who 
     * the Subversion revision control system
     * the !WinMerge differencing and merging tool
 
-Many of !SkyControl's assets are based on the works of others who licensed their works under liberal terms or contributed it to the public domain.  I therefore thank:
-  * Chris (aka "t0neg0d")
+Many of !SkyControl's assets were based on the works of others who licensed their works under liberal terms or contributed it to the public domain.  For this I thank:
+  * Cris (aka "t0neg0d")
   * Jacques Descloitres, MODIS Rapid Response Team, NASA/GSFC
   * Tom Ruen
 
