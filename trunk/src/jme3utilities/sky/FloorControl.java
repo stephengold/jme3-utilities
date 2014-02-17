@@ -73,6 +73,11 @@ public class FloorControl
     // *************************************************************************
     // fields
     /**
+     * true to counteract rotation of the controlled node, false to allow
+     * rotation
+     */
+    private boolean stabilizeFlag = false;
+    /**
      * the application's camera: set by constructor
      */
     final private Camera camera;
@@ -95,6 +100,18 @@ public class FloorControl
         createSpatials(material, textureScale);
 
         assert !isEnabled();
+    }
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Alter the stabilize flag.
+     *
+     * @param newState true to counteract rotation of the controlled node, false
+     * to allow rotation
+     */
+    public void setStabilizeFlag(boolean newState) {
+        stabilizeFlag = newState;
     }
     // *************************************************************************
     // SimpleControl methods
@@ -120,8 +137,14 @@ public class FloorControl
          */
         Vector3f cameraLocation = camera.getLocation();
         MySpatial.setWorldLocation(subtree, cameraLocation);
-        MySpatial.setWorldOrientation(subtree, Quaternion.IDENTITY);
         MySpatial.setWorldScale(subtree, 1f);
+
+        if (stabilizeFlag) {
+            /*
+             * Counteract rotation of the controlled node.
+             */
+            MySpatial.setWorldOrientation(subtree, Quaternion.IDENTITY);
+        }
     }
     // *************************************************************************
     // private methods
