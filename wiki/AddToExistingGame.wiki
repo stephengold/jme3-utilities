@@ -121,7 +121,7 @@ Sometimes you'll want to combine SkyControl with other sky elements.  The JME3 U
 
 Since !CubeMapExample is part of the JME3 Utilities Package, there are no libraries to add.  And since we plan to use the existing cube map, there's nothing to remove.
 
-Both !SkyFactory and SkyControl add geometries to `Bucket.Sky`. In the absence of a custom !GeometryComparator, geometries in this bucket are rendered in scene graph order. Since the cube map is opaque, we want to !SkyControl to add its geometries _after_ the sky cube in the scene graph.
+Both !SkyFactory and SkyControl add geometries to `Bucket.Sky`. In the absence of a custom [http://hub.jmonkeyengine.org/javadoc/com/jme3/renderer/queue/GeometryComparator.html GeometryComparator], geometries in this bucket are rendered in scene graph order. Since the cube map is opaque, we want to !SkyControl to add its geometries _after_ the sky cube in the scene graph.
 
   * In the import section of "!CubeMapExample.java", add the following code:
 {{{
