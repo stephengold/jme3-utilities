@@ -119,6 +119,11 @@ public class SkyControlCore
      */
     final private boolean bottomDomeFlag;
     /**
+     * true to counteract rotation of the controlled node, false to allow
+     * rotation
+     */
+    private boolean stabilizeFlag = false;
+    /**
      * true to simulate moving stars, false for fixed stars: set by constructor
      */
     final protected boolean starMotionFlag;
@@ -367,6 +372,16 @@ public class SkyControlCore
     }
 
     /**
+     * Alter the stabilize flag.
+     *
+     * @param newState true to counteract rotation of the controlled node, false
+     * to allow rotation
+     */
+    public void setStabilizeFlag(boolean newState) {
+        stabilizeFlag = newState;
+    }
+
+    /**
      * Alter the star maps.
      *
      * @param assetPath if starMotion is true: path to an asset folder
@@ -469,7 +484,6 @@ public class SkyControlCore
          */
         Vector3f cameraLocation = camera.getLocation();
         MySpatial.setWorldLocation(subtree, cameraLocation);
-        MySpatial.setWorldOrientation(subtree, Quaternion.IDENTITY);
         /*
          * Scale the sky node so that its furthest geometries are midway
          * between the near and far planes of the view frustum.
@@ -478,6 +492,13 @@ public class SkyControlCore
         float near = camera.getFrustumNear();
         float radius = (near + far) / 2f;
         MySpatial.setWorldScale(subtree, radius);
+
+        if (stabilizeFlag) {
+            /*
+             * Counteract rotation of the controlled node.
+             */
+            MySpatial.setWorldOrientation(subtree, Quaternion.IDENTITY);
+        }
     }
     // *************************************************************************
     // private methods
