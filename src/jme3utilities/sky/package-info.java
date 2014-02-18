@@ -24,7 +24,6 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /**
- * The SkyControl sky simulation for jMonkeyEngine3, including utility
- * applications which generate texture maps.
+ * Reusable classes for simulating skies, including SkyControl.
  */
 package jme3utilities.sky;
