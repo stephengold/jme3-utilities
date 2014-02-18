@@ -25,7 +25,6 @@
  */
 package jme3utilities.ui;
 
-import com.google.common.base.Joiner;
 import com.jme3.math.FastMath;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Button;
@@ -55,10 +54,6 @@ public class GuiScreenController
     // *************************************************************************
     // constants
 
-    /**
-     * joiner for constructing action strings
-     */
-    final private static Joiner actionJoiner = Joiner.on(" ");
     /**
      * message logger for this class
      */
@@ -284,7 +279,7 @@ public class GuiScreenController
         String actionPrefix = "";
         int wordCount = actionPrefixWords.length;
         if (wordCount > 0) {
-            actionPrefix = actionJoiner.join(actionPrefixWords) + " ";
+            actionPrefix = MyString.join(actionPrefixWords) + " ";
         }
         showPopup(actionPrefix, itemArray);
     }

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013, Stephen Gold
+ Copyright (c) 2013-2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -96,13 +96,11 @@ public class MyString {
      *
      * @param input the input string
      * @return either an array of three Strings, each containing a substring of
-     * the input, or else null.
-     *
-     * result[0] is the portion before the first '\t'.
-     *
-     * result[1] is the portion after the '\t' but before the first '\n'.
-     *
-     * result[2] is the remainder of the string
+     * the input, or else null:<ul>
+     * <li>result[0] is the portion before the first '\t'.
+     * <li>result[1] is the portion after the '\t' but before the first '\n'.
+     * <li>result[2] is the remainder of the string.
+     * </ul>
      */
     public static String[] getLine(String input) {
         String[] results = new String[3];
@@ -128,6 +126,30 @@ public class MyString {
         }
 
         return results;
+    }
+
+    /**
+     * Join an array of strings using spaces, ignoring any nulls.
+     *
+     * @param array of strings to join (not null)
+     */
+    public static String join(String[] array) {
+        Validate.nonNull(array, "array");
+
+        StringBuilder result = new StringBuilder();
+        for (String element : array) {
+            if (element != null) {
+                if (result.length() > 0) {
+                    /*
+                     * Append a space as a separator.
+                     */
+                    result.append(' ');
+                }
+                result.append(element);
+            }
+        }
+
+        return result.toString();
     }
 
     /**
@@ -241,6 +263,14 @@ public class MyString {
 
             System.out.println();
         }
+
+        String[] a1 = {"a", "fistful", "of", "bytes"};
+        String j1 = join(a1);
+        System.out.printf(" j1=\"%s\"%n", j1);
+
+        String[] a2 = {};
+        String j2 = join(a2);
+        System.out.printf(" j2=\"%s\"%n", j2);
 
         System.out.println();
     }

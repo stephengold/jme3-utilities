@@ -27,7 +27,6 @@ package jme3utilities.sky.test;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-import com.google.common.base.Joiner;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.input.KeyInput;
@@ -83,10 +82,6 @@ public class TestSkyMaterial
      * width and height of the viewport (in pixels)
      */
     final private static int viewportSize = 800;
-    /**
-     * joiner to reconstruct the command line
-     */
-    final private static Joiner commandLineJoiner = Joiner.on(" ");
     /**
      * message logger for this class
      */
@@ -181,8 +176,7 @@ public class TestSkyMaterial
         /*
          * Customize the window's title bar.
          */
-        String title = applicationName + " "
-                + commandLineJoiner.join(arguments);
+        String title = applicationName + " " + MyString.join(arguments);
         settings.setTitle(title);
         application.setSettings(settings);
 
