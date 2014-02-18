@@ -24,7 +24,6 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /**
- * Classes to generate static and dynamic textures used by SkyControl and
- * SkyMaterial.
+ * Classes to generate static textures used by SkyControl and SkyMaterial.
  */
 package jme3utilities.sky.textures;

@@ -47,8 +47,8 @@ import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyAsset;
 import jme3utilities.MyString;
+import jme3utilities.sky.GlobeRenderer;
 import jme3utilities.sky.LunarPhase;
-import jme3utilities.sky.textures.GlobeRenderer;
 
 /**
  * A simple application to test the GlobeRenderer class. The application's main
