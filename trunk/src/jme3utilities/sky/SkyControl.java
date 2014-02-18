@@ -36,7 +36,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.debug.Validate;
 import jme3utilities.math.MyMath;
-import jme3utilities.sky.textures.GlobeRenderer;
 
 /**
  * A simple control to simulate a dynamic sky using assets and techniques
