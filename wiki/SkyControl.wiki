@@ -1,6 +1,10 @@
 #summary general information about SkyControl
 
-SkyControl is an open-source sky simulation for use with the jMonkeyEngine game engine.  It is written in Java.
+SkyControl is an open-source sky simulation for use with the jMonkeyEngine game engine.
+
+It is written in Java, and is available as a plugin from the jMonkeyEngine SDK User Contributions update center.
+
+It is also part of the [https://code.google.com/p/jme3-utilities jme3-utilities project] hosted at [https://code.google.com Google Code].
 
 == Summary of features ==
 
