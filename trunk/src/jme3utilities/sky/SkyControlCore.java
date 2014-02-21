@@ -73,7 +73,7 @@ public class SkyControlCore
     /**
      * maximum number of cloud layers
      */
-    final private static int numCloudLayers = 6;
+    final protected static int numCloudLayers = 6;
     /**
      * number of samples in each longitudinal quadrant of a major dome,
      * including both its top and rim (&ge;2)
@@ -134,7 +134,7 @@ public class SkyControlCore
     /**
      * information about individual cloud layers
      */
-    final private CloudLayer[] cloudLayers;
+    final protected CloudLayer[] cloudLayers;
     /**
      * mesh of the bottom dome, or null if there's no bottom dome
      */
