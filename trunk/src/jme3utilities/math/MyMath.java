@@ -287,21 +287,6 @@ public class MyMath {
     }
 
     /**
-     * Interpolate linearly between two single-precision values.
-     *
-     * @param a first input value
-     * @param b second input value
-     * @param fraction (&le;1, &ge;0)
-     * @return a*(1-fraction) + b*fraction
-     */
-    public static float mix(float a, float b, float fraction) {
-        Validate.fraction(fraction, "fraction");
-
-        float result = a * (1f - fraction) + b * fraction;
-        return result;
-    }
-
-    /**
      * Compute the least non-negative value congruent with an integer value with
      * respect to a given modulus.
      *
