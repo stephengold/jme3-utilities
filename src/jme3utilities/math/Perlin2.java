@@ -114,11 +114,11 @@ public class Perlin2
          * 2-D interpolation between the four corners of the square.
          */
         float fadeX = MyMath.fade(sampleX - squareX);
-        float nx0 = MyMath.mix(n00, n10, fadeX);
-        float nx1 = MyMath.mix(n01, n11, fadeX);
+        float nx0 = FastMath.interpolateLinear(fadeX, n00, n10);
+        float nx1 = FastMath.interpolateLinear(fadeX, n01, n11);
 
         float fadeY = MyMath.fade(sampleY - squareY);
-        float noise = MyMath.mix(nx0, nx1, fadeY);
+        float noise = FastMath.interpolateLinear(fadeY, nx0, nx1);
 
         return noise;
     }
