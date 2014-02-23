@@ -36,22 +36,26 @@ If you're unfamiliar with !BasicGame, you may wish to run it (and/or examine the
   
 == Add the JME3 Utilities Package JARs to the project ==
 
-Two JARs are required: one for compiled classes and another for assets.
- 
   * Open the project's properties in the IDE:
     * Right-click on the !BasicGame project (not its assets) in the "Projects" window.
     * Select "Properties".
   * Under "Categories:" select "Libraries".
   * Click on the "Compile" tab.
-  * Click on the "Add JAR/Folder" button.
-  * Navigate to the folder where you installed the JME3 Utilities Package and then to the "dist" folder therein.
-  * Select the "jME3-utilities.jar" file.
-  * Click on the "Open" button.
-  * Click on the "Add JAR/Folder" button again.
-  * Navigate to the "lib" folder.
-  * Select the "jME3-utilities-assets.jar" file.
-  * Click on the "Open" button again.
-  * Click on the "OK" button.
+  * If the SkyControl plugin is installed, then the SkyControl library can provide the required JARs:
+    * Click on the "Add Library..." button.
+    * Select the "SkyControl" library.
+    * Click on the "Add Library" button.
+    * Click on the "OK" button.    
+  * If the SkyControl plugin is not installed, then two JARs are required, one for classes and one for assets:
+    * Click on the "Add JAR/Folder" button.
+    * Navigate to the folder where you installed the JME3 Utilities Package and then to the "dist" folder therein.
+    * Select the "jME3-utilities.jar" file.
+    * Click on the "Open" button.
+    * Click on the "Add JAR/Folder" button again.
+    * Navigate to the "lib" folder.
+    * Select the "jME3-utilities-assets.jar" file.
+    * Click on the "Open" button again.
+    * Click on the "OK" button.
 
 == Disable any existing sky simulation ==
 
