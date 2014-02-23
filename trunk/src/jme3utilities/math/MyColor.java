@@ -79,4 +79,21 @@ public class MyColor {
 
         return result;
     }
+
+    /**
+     * Generate a brightened and saturated version of a specific color (with no
+     * side effect).
+     *
+     * @param baseColor input color (not null, not altered)
+     * @return a new color with the same hue, but full brightness and full
+     * saturation
+     */
+    public static ColorRGBA saturate(ColorRGBA baseColor) {
+        float max = MyMath.max(baseColor.r, baseColor.g, baseColor.b);
+        if (max <= 0f) {
+            return new ColorRGBA(1f, 1f, 1f, baseColor.a);
+        }
+        ColorRGBA result = baseColor.mult(1f / max);
+        return result;
+    }
 }

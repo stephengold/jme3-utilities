@@ -43,6 +43,7 @@ import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
 import jme3utilities.debug.Validate;
+import jme3utilities.math.MyColor;
 import jme3utilities.math.MyMath;
 
 /**
@@ -155,6 +156,10 @@ public class SkyControlCore
      * rate of motion for cloud layer animations (1 &rarr; standard)
      */
     private float cloudsRelativeSpeed = 1f;
+    /**
+     * phase angle of the moon: default corresponds to a 100% full moon
+     */
+    protected float phaseAngle = FastMath.PI;
     /**
      * flattened dome for clouds only: set by initialize()
      */
@@ -311,6 +316,22 @@ public class SkyControlCore
     }
 
     /**
+     * Compute the contribution of the moon to the nighttime illumination mix
+     * using its phase, assuming it is above the horizon.
+     *
+     * @return fraction (&le;1, &ge;0) 1 &rarr; full moon, 0 &rarr; no
+     * contribution
+     */
+    public float getMoonIllumination() {
+        float fullAngle = FastMath.abs(phaseAngle - FastMath.PI);
+        float weight = 1f - MyMath.clampFraction(fullAngle * 0.6f);
+
+        assert weight >= 0f : weight;
+        assert weight <= 1f : weight;
+        return weight;
+    }
+
+    /**
      * Alter the opacity of all cloud layers.
      *
      * @param newAlpha desired opacity of the cloud layers (&le;1, &ge;0)
@@ -417,7 +438,7 @@ public class SkyControlCore
      * (in radians, &lt;1.785, &gt;0)
      */
     public void setTopVerticalAngle(float newAngle) {
-        if (!(newAngle > 0f && newAngle < FastMath.PI)) {
+        if (!(newAngle > 0f && newAngle < 1.785f)) {
             logger.log(Level.SEVERE, "angle={0}", newAngle);
             throw new IllegalArgumentException(
                     "angle should be between 0 and 1.785");
@@ -434,7 +455,9 @@ public class SkyControlCore
     // protected methods
 
     /**
-     * Apply a saturated version of the base color to each cloud layer.
+     * Apply a modified version of the base color to each cloud layer.
+     * <p>
+     * The return value is used in calculating ambient light intensity.
      *
      * @param baseColor (not null, unaffected, alpha is ignored)
      * @param sunUp true if sun is above the horizon, otherwise false
@@ -445,13 +468,16 @@ public class SkyControlCore
             boolean moonUp) {
         assert baseColor != null;
 
-        float factor = 1f / MyMath.max(baseColor.r, baseColor.g, baseColor.b);
-        ColorRGBA cloudsColor = baseColor.mult(factor);
-        if (!sunUp && !moonUp) {
+        ColorRGBA cloudsColor = MyColor.saturate(baseColor);
+        if (!sunUp) {
             /*
-             * On moonless nights, darken all clouds by 75%.
+             * At night, darken the clouds by 15%-75%.
              */
-            cloudsColor.multLocal(0.25f);
+            float cloudBrightness = 0.25f;
+            if (moonUp) {
+                cloudBrightness += 0.6f * getMoonIllumination();
+            }
+            cloudsColor.multLocal(cloudBrightness);
         }
         for (int layer = 0; layer < numCloudLayers; layer++) {
             cloudLayers[layer].setColor(cloudsColor);
