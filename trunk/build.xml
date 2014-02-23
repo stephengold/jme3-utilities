@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+<project name="jme3-utilities" default="default" basedir=".">
+    <description>Builds, tests, and runs the project jme3-utilities.</description>
+    <import file="nbproject/build-impl.xml"/>
+
+    <target name="-post-clean"
+            depends="rm-release"/>
+
+    <target name="rm-release"
+            depends="init">
+        <delete dir="release"/>
+    </target>
+    <target name="release"
+            depends="release-sky, release-ui"/>
+    <target name="releasedirs"
+            depends="init">
+        <mkdir dir="release"/>
+    </target>
+
+    <target name="release-sky"
+            depends="sky-assets-jar, sky-docs, sky-jar, sky-src"/>
+    <target name="release-ui"
+            depends="ui-assets-jar, ui-docs, ui-jar, ui-src"/>
+
+    <target name="sky-assets-jar"
+            depends="init, releasedirs">
+        <jar jarfile="release/SkyControl-assets.jar"
+             basedir="${assets.folder.name}"
+             compress="${assets.compress}"
+             excludes="Interface/Nifty/**, Models/*, Textures/cursors/**"/>
+    </target>
+
+    <target name="sky-docs"
+            depends="init, releasedirs, sky-src">
+        <javadoc destdir="release/SkyControl-javadoc"
+                 additionalparam="${javadoc.additionalparam}"
+                 author="${javadoc.author}"
+                 charset="UTF-8"
+                 docencoding="UTF-8"
+                 encoding="${javadoc.encoding.used}"
+                 failonerror="true"
+                 noindex="${javadoc.noindex}"
+                 nonavbar="${javadoc.nonavbar}"
+                 notree="${javadoc.notree}"
+                 private="${javadoc.private}"
+                 source="${javac.source}"
+                 splitindex="${javadoc.splitindex}"
+                 use="${javadoc.use}"
+                 useexternalfile="true"
+                 version="${javadoc.version}"
+                 windowtitle="Javadoc for the SkyControl Library">
+            <classpath>
+                <path path="${javac.classpath}"/>
+            </classpath>
+            <fileset dir="release/SkyControl-src"/>
+        </javadoc>
+    </target>
+
+    <target name="sky-jar"
+            depends="init, compile, releasedirs">
+        <jar jarfile="release/SkyControl.jar"
+             basedir="${build.classes.dir}"
+             includes="jme3utilities/*.class, jme3utilities/debug/*.class, jme3utilities/math/*.class, jme3utilities/sky/*.class"
+        />
+    </target>
+
+    <target name="sky-src"
+            depends="init, releasedirs">
+        <copy todir="release/SkyControl-src">
+            <fileset dir="${src.dir}"
+                     includes="jme3utilities/*.java, jme3utilities/debug/*.java, jme3utilities/math/*.java, jme3utilities/sky/*.java"
+            />
+        </copy>
+    </target>
+
+    <target name="ui-assets-jar"
+            depends="init, releasedirs">
+        <jar jarfile="release/jME3-utilities-ui-assets.jar"
+             basedir="${assets.folder.name}"
+             compress="${assets.compress}"
+             includes="Interface/Nifty/styles/**, Interface/Nifty/popup-menu.xml, Textures/cursors/**"
+        />
+    </target>
+
+    <target name="ui-docs"
+            depends="init, releasedirs, sky-jar, ui-src">
+        <javadoc destdir="release/jME3-utilities-ui-javadoc"
+                 additionalparam="${javadoc.additionalparam}"
+                 author="${javadoc.author}"
+                 charset="UTF-8"
+                 docencoding="UTF-8"
+                 encoding="${javadoc.encoding.used}"
+                 failonerror="true"
+                 noindex="${javadoc.noindex}"
+                 nonavbar="${javadoc.nonavbar}"
+                 notree="${javadoc.notree}"
+                 private="${javadoc.private}"
+                 source="${javac.source}"
+                 splitindex="${javadoc.splitindex}"
+                 use="${javadoc.use}"
+                 useexternalfile="true"
+                 version="${javadoc.version}"
+                 windowtitle="Javadoc for the JME3 Utilities UI Library">
+            <classpath>
+                <pathelement path="${javac.classpath}"/>
+                <pathelement location="release/SkyControl.jar"/>
+            </classpath>
+            <fileset dir="release/jME3-utilities-ui-src"/>
+        </javadoc>
+    </target>
+
+    <target name="ui-jar"
+            depends="init, compile, releasedirs">
+        <jar jarfile="release/jME3-utilities-ui.jar"
+             basedir="${build.classes.dir}"
+             includes="jme3utilities/ui/*.class"/>
+    </target>
+
+    <target name="ui-src"
+            depends="init, releasedirs">
+        <copy todir="release/jME3-utilities-ui-src">
+            <fileset dir="${src.dir}"
+                     includes="jme3utilities/ui/*.java"/>
+        </copy>
+    </target>
+
+    <!--
+
+    There exist several targets which are by default empty and which can be
+    used for execution of your tasks. These targets are usually executed
+    before and after some main targets. They are:
+
+      -pre-init:                 called before initialization of project properties
+      -post-init:                called after initialization of project properties
+      -pre-compile:              called before javac compilation
+      -post-compile:             called after javac compilation
+      -pre-compile-single:       called before javac compilation of single file
+      -post-compile-single:      called after javac compilation of single file
+      -pre-compile-test:         called before javac compilation of JUnit tests
+      -post-compile-test:        called after javac compilation of JUnit tests
+      -pre-compile-test-single:  called before javac compilation of single JUnit test
+      -post-compile-test-single: called after javac compilation of single JUunit test
+      -pre-jar:                  called before JAR building
+      -post-jar:                 called after JAR building
+      -post-clean:               called after cleaning build products
+
+    (Targets beginning with '-' are not intended to be called on their own.)
+
+    Example of inserting an obfuscator after compilation could look like this:
+
+        <target name="-post-compile">
+            <obfuscate>
+                <fileset dir="${build.classes.dir}"/>
+            </obfuscate>
+        </target>
+
+    For list of available properties check the imported
+    nbproject/build-impl.xml file.
+
+
+    Another way to customize the build is by overriding existing main targets.
+    The targets of interest are:
+
+      -init-macrodef-javac:     defines macro for javac compilation
+      -init-macrodef-junit:     defines macro for junit execution
+      -init-macrodef-debug:     defines macro for class debugging
+      -init-macrodef-java:      defines macro for class execution
+      -do-jar-with-manifest:    JAR building (if you are using a manifest)
+      -do-jar-without-manifest: JAR building (if you are not using a manifest)
+      run:                      execution of project
+      -javadoc-build:           Javadoc generation
+      test-report:              JUnit report generation
+
+    An example of overriding the target for project execution could look like this:
+
+        <target name="run" depends="jme3-utilities-impl.jar">
+            <exec dir="bin" executable="launcher.exe">
+                <arg file="${dist.jar}"/>
+            </exec>
+        </target>
+
+    Notice that the overridden target depends on the jar target and not only on
+    the compile target as the regular run target does. Again, for a list of available
+    properties which you can use, check the target you are overriding in the
+    nbproject/build-impl.xml file.
+
+    -->
+</project>
