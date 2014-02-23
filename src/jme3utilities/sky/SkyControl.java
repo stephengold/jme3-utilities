@@ -35,6 +35,7 @@ import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.debug.Validate;
+import jme3utilities.math.MyColor;
 import jme3utilities.math.MyMath;
 
 /**
@@ -117,6 +118,12 @@ public class SkyControl
      */
     final private static Logger logger =
             Logger.getLogger(SkyControl.class.getName());
+    /**
+     * light direction for starlight: don't make this perfectly vertical because
+     * that might cause shadow map aliasing
+     */
+    final private static Vector3f starlightDirection =
+            new Vector3f(1f, 9f, 1f).normalize();
     // *************************************************************************
     // fields
     /**
@@ -130,10 +137,6 @@ public class SkyControl
      * The default value (0.02) exaggerates the moon's size by a factor of 8.
      */
     private float moonScale = 0.02f;
-    /**
-     * phase angle of the moon: default corresponds to a 100% full moon
-     */
-    private float phaseAngle = FastMath.PI;
     /**
      * texture scale for sun images; larger value would give a larger sun
      * <p>
@@ -501,77 +504,91 @@ public class SkyControl
          */
         boolean moonUp = sineLunarAltitude >= 0f;
         boolean sunUp = sineSolarAltitude >= 0f;
+        float moonWeight = getMoonIllumination();
         Vector3f mainDirection;
         if (sunUp) {
-            mainDirection = sunDirection.clone();
-        } else if (moonUp) {
-            mainDirection = moonDirection.clone();
+            mainDirection = sunDirection;
+        } else if (moonUp && moonWeight > 0f) {
+            assert moonDirection != null;
+            mainDirection = moonDirection;
         } else {
-            mainDirection = Vector3f.UNIT_Y.clone();
+            mainDirection = starlightDirection;
         }
         assert mainDirection.isUnitVector() : mainDirection;
         assert mainDirection.y >= 0f : mainDirection;
         /*
          * Determine the base color (applied to horizon haze, bottom dome, and
-         * viewport backgrounds) based on the altitudes of the sun and moon:
+         * viewport backgrounds) using the sun's altitude:
          *  + sunlight when ssa >= 0.25,
          *  + twilight when ssa = 0,
-         *  + moonlight when ssa <= -0.04 and sla >= 0, and
-         *  + starlight when ssa <= -0.04 and sla < 0,
-         * with interpolated transitions around sunrise and sunset.
+         *  + blend of moonlight and starlight when ssa <= -0.04,
+         * with linearly interpolated transitions.
          */
-        ColorRGBA baseColor = new ColorRGBA();
+        ColorRGBA baseColor;
         if (sunUp) {
-            float weight = MyMath.clampFraction(sineSolarAltitude / 0.25f);
-            baseColor.interpolate(twilight, sunLight, weight);
+            float dayWeight = MyMath.clampFraction(sineSolarAltitude / 0.25f);
+            baseColor =
+                    MyColor.interpolateLinear(dayWeight, twilight, sunLight);
         } else {
-            float weight = MyMath.clampFraction(-sineSolarAltitude / 0.04f);
-            if (moonUp) {
-                baseColor.interpolate(twilight, moonLight, weight);
+            ColorRGBA blend;
+            if (moonUp && moonWeight > 0f) {
+                blend = MyColor.interpolateLinear(moonWeight, starLight,
+                        moonLight);
             } else {
-                baseColor.interpolate(twilight, starLight, weight);
+                blend = starLight;
             }
+            float nightWeight =
+                    MyMath.clampFraction(-sineSolarAltitude / 0.04f);
+            baseColor = MyColor.interpolateLinear(nightWeight, twilight, blend);
         }
-
         topMaterial.setHazeColor(baseColor);
         if (bottomMaterial != null) {
             bottomMaterial.setColor("Color", baseColor);
         }
+
         ColorRGBA cloudsColor = updateCloudsColor(baseColor, sunUp, moonUp);
         /*
-         * The main light is based on the base color during the day,
-         * on moonlight at night when the moon is up, and on starlight
-         * on moonless nights.
+         * Determine what fraction of the main light passes through the clouds.
+         */
+        float transmit;
+        if (cloudModulationFlag && (sunUp || moonUp && moonWeight > 0f)) {
+            /*
+             * Modulate light intensity as clouds pass in front.
+             */
+            Vector3f intersection = intersectCloudDome(mainDirection);
+            Vector2f texCoord = cloudsMesh.directionUV(intersection);
+            transmit = cloudsMaterial.getTransmission(texCoord);
+
+        } else {
+            transmit = 1f;
+        }
+        /*
+         * Determine the color and intensity of the main light.
          */
         ColorRGBA main;
         if (sunUp) {
-            main = baseColor.clone();
+            /*
+             * By day, the main light has the base color, modulated by
+             * clouds and the cube root of the sine of the sun's altitude.
+             */
+            float sunFactor = transmit * MyMath.cubeRoot(sineSolarAltitude);
+            main = baseColor.mult(sunFactor);
+
         } else if (moonUp) {
-            main = moonLight.clone();
+            /*
+             * By night, the main light is a blend of moonlight and starlight,
+             * with the moon's portion modulated by clouds and the moon's phase.
+             */
+            float moonFactor = transmit * moonWeight;
+            main = MyColor.interpolateLinear(moonFactor, starLight, moonLight);
+
         } else {
             main = starLight.clone();
         }
-        /* The main light's intensity is modulated by the cube root of the
-         * y-component of the light's direction and also (if cloud modulation
-         * is enabled) by any clouds passing in front of it.
-         */
-        float mainFactor = MyMath.cubeRoot(mainDirection.y);
-        if (cloudModulationFlag) {
-            Vector3f intersection = intersectCloudDome(mainDirection);
-            /*
-             * Compute the texture coordinates of the cloud dome
-             * at the point of intersection.
-             */
-            Vector2f texCoord = cloudsMesh.directionUV(intersection);
-
-            float cloudsTransmission = cloudsMaterial.getTransmission(texCoord);
-            mainFactor *= cloudsTransmission;
-        }
-        main.multLocal(mainFactor);
         /*
-         * The ambient light color is based on the clouds color; its intensity is
-         * modulated according to the "slack" left by strongest component
-         * of the main light.
+         * The ambient light color is based on the clouds color;
+         * its intensity is modulated by the "slack" left by
+         * strongest component of the main light.
          */
         float slack = 1f - MyMath.max(main.r, main.g, main.b);
         assert slack >= 0f : slack;
@@ -586,7 +603,7 @@ public class SkyControl
         assert totalAmount > 0f : totalAmount;
         float shadowIntensity = MyMath.clampFraction(mainAmount / totalAmount);
         /*
-         * Compute the recommended bloom intensity.
+         * Determine the recommended bloom intensity using the sun's altitude.
          */
         float bloomIntensity = 6f * sineSolarAltitude;
         bloomIntensity = FastMath.clamp(bloomIntensity, 0f, 1.7f);
@@ -657,7 +674,7 @@ public class SkyControl
         topMaterial.setObjectColor(sunIndex, sunColor);
         topMaterial.setObjectGlow(sunIndex, sunColor);
         /*
-         * Update the sun's color.
+         * Update the moon's color.
          */
         green = MyMath.clampFraction(2f * sineLunarAltitude + 0.6f);
         blue = MyMath.clampFraction(5f * sineLunarAltitude + 0.1f);
