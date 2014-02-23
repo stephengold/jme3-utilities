@@ -19,7 +19,7 @@
         <delete dir="release"/>
     </target>
     <target name="release"
-            depends="release-sky, release-ui"/>
+            depends="release-sky, release-ui, release-x"/>
     <target name="releasedirs"
             depends="init">
         <mkdir dir="release"/>
@@ -29,6 +29,8 @@
             depends="sky-assets-jar, sky-docs, sky-jar, sky-src"/>
     <target name="release-ui"
             depends="ui-assets-jar, ui-docs, ui-jar, ui-src"/>
+    <target name="release-x"
+            depends="x-docs, x-jar, x-src"/>
 
     <target name="sky-assets-jar"
             depends="init, releasedirs">
@@ -129,6 +131,48 @@
         <copy todir="release/jME3-utilities-ui-src">
             <fileset dir="${src.dir}"
                      includes="jme3utilities/ui/*.java"/>
+        </copy>
+    </target>
+
+    <target name="x-docs"
+            depends="init, releasedirs, sky-jar, x-src">
+        <javadoc destdir="release/jME3-utilities-x-javadoc"
+                 additionalparam="${javadoc.additionalparam}"
+                 author="${javadoc.author}"
+                 charset="UTF-8"
+                 docencoding="UTF-8"
+                 encoding="${javadoc.encoding.used}"
+                 failonerror="true"
+                 noindex="${javadoc.noindex}"
+                 nonavbar="${javadoc.nonavbar}"
+                 notree="${javadoc.notree}"
+                 private="${javadoc.private}"
+                 source="${javac.source}"
+                 splitindex="${javadoc.splitindex}"
+                 use="${javadoc.use}"
+                 useexternalfile="true"
+                 version="${javadoc.version}"
+                 windowtitle="Javadoc for the JME3 Utilities Library">
+            <classpath>
+                <pathelement path="${javac.classpath}"/>
+                <pathelement location="release/SkyControl.jar"/>
+            </classpath>
+            <fileset dir="release/jME3-utilities-x-src"/>
+        </javadoc>
+    </target>
+
+    <target name="x-jar"
+            depends="init, compile, releasedirs">
+        <jar jarfile="release/jME3-utilities-x.jar"
+             basedir="${build.classes.dir}"
+             includes="jme3utilities/physics/*.class, jme3utilities/xml/*.class"/>
+    </target>
+
+    <target name="x-src"
+            depends="init, releasedirs">
+        <copy todir="release/jME3-utilities-x-src">
+            <fileset dir="${src.dir}"
+                     includes="jme3utilities/physics/*.java jme3utilities/xml/*.java"/>
         </copy>
     </target>
 
