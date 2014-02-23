@@ -50,6 +50,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyAsset;
+import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.ViewPortListener;
 import jme3utilities.WaterProcessor;
@@ -309,8 +310,25 @@ public class TestSkyControl
         float topY = hud.getRelief();
         landscapeControl.setTerrainScale(radius, baseY, topY);
         /*
-         * Enable or disable controls and filters based on
-         * check boxes in the HUD.
+         * Enable or disable lights based on check boxes in the HUD.
+         */
+        boolean added =
+                MySpatial.findLight(sceneNode, "ambient") == ambientLight;
+        boolean ambientLightOn = hud.getAmbientFlag();
+        if (ambientLightOn && !added) {
+            sceneNode.addLight(ambientLight);
+        } else if (!ambientLightOn && added) {
+            sceneNode.removeLight(ambientLight);
+        }
+        added = MySpatial.findLight(sceneNode, "main") == mainLight;
+        boolean mainLightOn = hud.getMainLightFlag();
+        if (mainLightOn && !added) {
+            sceneNode.addLight(mainLight);
+        } else if (!mainLightOn && added) {
+            sceneNode.removeLight(mainLight);
+        }
+        /*
+         * Enable or disable controls based on check boxes in the HUD.
          */
         boolean floorFlag = hud.getFloorFlag();
         floorControl.setEnabled(floorFlag);
@@ -318,8 +336,13 @@ public class TestSkyControl
         landscapeControl.setEnabled(landscapeFlag);
         boolean skyFlag = hud.getSkyFlag();
         skyControl.setEnabled(skyFlag);
+        /*
+         * Enable or disable filters based on check boxes in the HUD.
+         */
         boolean bloomFlag = hud.getBloomFlag();
         skyControl.getUpdater().setBloomEnabled(bloomFlag);
+        boolean shadowFiltersFlag = hud.getShadowFiltersFlag();
+        skyControl.getUpdater().setShadowFiltersEnabled(shadowFiltersFlag);
 
         String starMapPath = hud.getStarMapAssetPath();
         if (starMapPath == null) {
@@ -467,8 +490,8 @@ public class TestSkyControl
             starMotion = true; // allow stars to move
             bottomDome = true; // helpful in case the scene has a low horizon
         }
-        skyControl = new SkyControl(assetManager, cam, cloudFlattening, starMotion,
-                bottomDome);
+        skyControl = new SkyControl(assetManager, cam, cloudFlattening,
+                starMotion, bottomDome);
         sceneNode.addControl(skyControl);
 
         if (parameters.cyclone()) {
@@ -543,16 +566,14 @@ public class TestSkyControl
     }
 
     /**
-     * Add light sources to the scene.
+     * Create light sources for the scene.
      */
     private void initializeLights() {
         mainLight = new DirectionalLight();
         mainLight.setName("main");
-        sceneNode.addLight(mainLight);
 
         ambientLight = new AmbientLight();
         ambientLight.setName("ambient");
-        sceneNode.addLight(ambientLight);
     }
 
     /**

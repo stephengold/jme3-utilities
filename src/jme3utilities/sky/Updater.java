@@ -297,6 +297,17 @@ public class Updater
     }
 
     /**
+     * Enable or disable all known shadow filters.
+     *
+     * @param newState true to enable, false to disable
+     */
+    public void setShadowFiltersEnabled(boolean newState) {
+        for (AbstractShadowFilter filter : shadowFilters) {
+            filter.setEnabled(newState);
+        }
+    }
+
+    /**
      * Update all the lights, shadows, and viewports.
      *
      * @param ambientColor color and intensity of ambient light (not null, not

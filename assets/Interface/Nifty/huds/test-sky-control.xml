@@ -244,9 +244,18 @@
                                  buttonStepSize="100"
                                  height="40"
                                  initial="50"
-                                 max="500"
+                                 max="250"
                                  min="1"
                                  stepSize="1"/>
+
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="ambientCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="enable ambient"/>
+                        </panel>
 
                         <panel style="indentPanel">
                             <control name="checkbox" id="bloomCheckBox"
@@ -273,6 +282,24 @@
                                      width="12"/>
                             <control name="label"
                                      text="enable landscape"/>
+                        </panel>
+
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="mainLightCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="enable main light"/>
+                        </panel>
+
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="shadowFiltersCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="enable shadow filters"/>
                         </panel>
 
                         <panel style="indentPanel">
