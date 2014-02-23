@@ -150,6 +150,18 @@ public class TestSkyControlHud
     // new methods exposed
 
     /**
+     * Read the status of the "enable ambient" check box.
+     *
+     * @return true if the box is checked, otherwise false
+     */
+    boolean getAmbientFlag() {
+        CheckBox box =
+                getScreen().findNiftyControl("ambientCheckBox", CheckBox.class);
+        boolean result = box.isChecked();
+        return result;
+    }
+
+    /**
      * Read the status of the "enable bloom" check box.
      *
      * @return true if the box is checked, otherwise false
@@ -271,6 +283,18 @@ public class TestSkyControlHud
     }
 
     /**
+     * Read the status of the "enable main light" check box.
+     *
+     * @return true if the box is checked, otherwise false
+     */
+    boolean getMainLightFlag() {
+        CheckBox box = getScreen().findNiftyControl(
+                "mainLightCheckBox", CheckBox.class);
+        boolean result = box.isChecked();
+        return result;
+    }
+
+    /**
      * Read the current vertical relief of the terrain.
      *
      * @return Y-coordinate of peak
@@ -288,6 +312,18 @@ public class TestSkyControlHud
         assert phaseAngle >= 0f : phaseAngle;
         assert phaseAngle <= FastMath.TWO_PI : phaseAngle;
         return phaseAngle;
+    }
+
+    /**
+     * Read the status of the "enable shadow filters" check box.
+     *
+     * @return true if the box is checked, otherwise false
+     */
+    boolean getShadowFiltersFlag() {
+        CheckBox box = getScreen().findNiftyControl(
+                "shadowFiltersCheckBox", CheckBox.class);
+        boolean result = box.isChecked();
+        return result;
     }
 
     /**
@@ -569,9 +605,12 @@ public class TestSkyControlHud
         /*
          * Initialize check boxes and radio buttons.
          */
+        setCheckBox("ambientCheckBox", true);
         setCheckBox("bloomCheckBox", true);
         setCheckBox("floorCheckBox", false);
         setCheckBox("landscapeCheckBox", true);
+        setCheckBox("mainLightCheckBox", true);
+        setCheckBox("shadowFiltersCheckBox", true);
         setCheckBox("skyCheckBox", true);
         setRadioButton("forwardRadioButton");
     }
