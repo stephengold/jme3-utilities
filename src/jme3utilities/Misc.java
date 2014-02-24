@@ -31,9 +31,6 @@ import com.jme3.animation.LoopMode;
 import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
-import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
-import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
@@ -54,7 +51,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import jme3utilities.debug.Validate;
-import jme3utilities.math.MyVector3f;
 
 /**
  * Miscellaneous utility methods. Aside from test cases, all methods here should
@@ -95,39 +91,6 @@ public class Misc {
     }
     // *************************************************************************
     // new methods exposed
-
-    /**
-     * Augment an existing compound collision collision shape with a scaled
-     * shape.
-     *
-     * @param parent compound shape to augment (not null, altered)
-     * @param child unscaled child shape (not null, altered)
-     * @param offset child's location relative to the parent's center, in
-     * unscaled world coordinates (not null, not altered)
-     * @param orientation child's orientation in world coordinates (null means
-     * don't care, not altered)
-     * @param worldScale to be applied to child and offset (not null, not
-     * altered, all components non-negative)
-     */
-    public static void addChildShape(CompoundCollisionShape parent,
-            CollisionShape child, Vector3f offset, Matrix3f orientation,
-            Vector3f worldScale) {
-        Validate.nonNull(worldScale, "scale");
-        if (!MyVector3f.isAllNonNegative(worldScale)) {
-            logger.log(Level.SEVERE, "scale={0}", worldScale);
-            throw new IllegalArgumentException(
-                    "scale factors should all be non-negative");
-        }
-
-        child.setScale(worldScale);
-        Vector3f scaledOffset = offset.mult(worldScale);
-
-        if (orientation == null) {
-            parent.addChildShape(child, scaledOffset);
-        } else {
-            parent.addChildShape(child, scaledOffset, orientation);
-        }
-    }
 
     /**
      * Smoothly transition an animation channel to a new animation.
