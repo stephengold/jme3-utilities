@@ -69,7 +69,21 @@ public class MyControl {
             int length = name.length() - "Control".length();
             name = name.substring(0, length);
         }
-        return name;
+
+        String result = name;
+        if (control instanceof RigidBodyControl) {
+            RigidBodyControl rbc = (RigidBodyControl) control;
+            float mass = rbc.getMass();
+            if (mass == 0f) {
+                result += "[static]";
+            } else if (rbc.isKinematic()) {
+                result += "[kinematic]";
+            } else {
+                result += String.format("[%.2f kg]", mass);
+            }
+        }
+
+        return result;
     }
 
     /**
