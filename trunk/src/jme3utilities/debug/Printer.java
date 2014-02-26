@@ -66,14 +66,6 @@ public class Printer {
      */
     final private static Logger logger =
             Logger.getLogger(Printer.class.getName());
-    /**
-     * indentation for each level of recursion in the scene graph dump
-     */
-    final private static String indentIncrement = "  ";
-    /**
-     * separator between control names
-     */
-    final private static String separator = ",";
     // *************************************************************************
     // fields
     /**
@@ -97,17 +89,35 @@ public class Printer {
      */
     private boolean printUserFlag = true;
     /**
-     * which stream to use for output
+     * which stream to use for output: set by constructor
      */
     final private PrintStream stream;
+    /**
+     * separator between control names
+     */
+    private String controlNameSeparator = ",";
+    /**
+     * indentation for each level of recursion in the scene graph dump
+     */
+    private String indentIncrement = "  ";
     // *************************************************************************
     // constructors
 
     /**
-     * Instantiate a printer which will use System.out for output
+     * Instantiate a printer which will use System.out for output.
      */
     public Printer() {
         stream = System.out;
+    }
+
+    /**
+     * Instantiate a printer which will use the specified output stream.
+     *
+     * @param printStream (not null)
+     */
+    public Printer(PrintStream printStream) {
+        Validate.nonNull(printStream, "print stream");
+        stream = printStream;
     }
     // *************************************************************************
     // new methods exposed
@@ -128,11 +138,11 @@ public class Printer {
             boolean isEnabled = isControlEnabled(object);
             if (isEnabled == enabled) {
                 if (addSeparators) {
-                    result.append(separator);
+                    result.append(controlNameSeparator);
                 } else {
                     addSeparators = true;
                 }
-                String description = MyControl.describe(object);
+                String description = describeControl(object);
                 result.append(description);
             }
         }
@@ -360,6 +370,30 @@ public class Printer {
             }
             stream.printf(" %s=%s", key, valueString);
         }
+    }
+
+    /**
+     * Configure the control name separator.
+     *
+     * @param newValue (not null)
+     * @return this instance for chaining
+     */
+    public Printer setControlNameSeparator(String newValue) {
+        Validate.nonNull(newValue, "separator");
+        controlNameSeparator = newValue;
+        return this;
+    }
+
+    /**
+     * Configure the indent increment.
+     *
+     * @param newValue (not null)
+     * @return this instance for chaining
+     */
+    public Printer setIndentIncrement(String newValue) {
+        Validate.nonNull(newValue, "increment");
+        indentIncrement = newValue;
+        return this;
     }
 
     /**
