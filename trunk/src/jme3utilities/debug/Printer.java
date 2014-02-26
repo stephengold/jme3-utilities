@@ -47,7 +47,7 @@ import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 
 /**
- * Dump portions of a jME3 scene graph for debugging.
+ * An object to dump portions of a jME3 scene graph for debugging.
  * <p>
  * printSubtree() is the usual interface to this class. The level of detail can
  * be configured dynamically.
@@ -194,21 +194,21 @@ public class Printer {
     }
 
     /**
-     * Dump the controls associated with a spatial.
+     * List the controls associated with a spatial.
      *
      * @param spatial which spatial (not null)
      */
     public void printControls(Spatial spatial) {
         assert spatial != null;
         /*
-         * Print its enabled controls.
+         * List its enabled controls.
          */
         String description = describeControls(spatial, true);
         if (description.length() > 0) {
             stream.printf(" %s", description);
         }
         /*
-         * Print its disabled controls in parentheses.
+         * List its disabled controls in parentheses.
          */
         description = describeControls(spatial, false);
         if (description.length() > 0) {
@@ -237,7 +237,7 @@ public class Printer {
     }
 
     /**
-     * Print the lights associated with a spatial.
+     * List the lights associated with a spatial.
      *
      * @param spatial which spatial (not null)
      */
@@ -246,6 +246,19 @@ public class Printer {
         for (Light light : lights) {
             String name = light.getName();
             stream.printf(" L(%s)", name);
+        }
+    }
+
+    /**
+     * Print the world location of a spatial.
+     *
+     * @param spatial which spatial (not null)
+     */
+    public void printLocation(Spatial spatial) {
+        Vector3f location = MySpatial.getWorldLocation(spatial);
+        if (!location.equals(Vector3f.ZERO)) {
+            stream.printf(" loc=[%.3f, %.3f, %.3f]",
+                    location.x, location.y, location.z);
         }
     }
 
@@ -321,13 +334,7 @@ public class Printer {
         printControls(spatial);
         printLights(spatial);
         if (printTransformFlag) {
-            /*
-             * Print the spatial's location, scaling, and user data.
-             */
-            Vector3f location = MySpatial.getWorldLocation(spatial);
-            if (!location.equals(Vector3f.ZERO)) {
-                stream.printf(" loc=%s", location.toString());
-            }
+            printLocation(spatial);
             printScale(spatial);
         }
         if (printUserFlag) {
