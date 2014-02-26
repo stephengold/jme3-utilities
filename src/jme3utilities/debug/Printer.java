@@ -50,7 +50,7 @@ import jme3utilities.MyString;
  * Dump portions of a jME3 scene graph for debugging.
  * <p>
  * printSubtree() is the usual interface to this class. The level of detail can
- * be configured statically by means of flag constants.
+ * be configured dynamically.
  * <p>
  * The following forum post may be of interest:
  * http://hub.jmonkeyengine.org/forum/topic/a-simple-node-tree-printer-to-html/
@@ -61,26 +61,6 @@ public class Printer {
     // *************************************************************************
     // constants
 
-    /**
-     * enable printing of render queue bucket assignments
-     */
-    final private static boolean printBucketFlag = false;
-    /**
-     * enable printing of cull hints
-     */
-    final private static boolean printCullFlag = false;
-    /**
-     * enable printing of shadow modes
-     */
-    final private static boolean printShadowFlag = false;
-    /**
-     * enable printing of position and scaling
-     */
-    final private static boolean printTransformFlag = false;
-    /**
-     * enable printing of user data
-     */
-    final private static boolean printUserFlag = true;
     /**
      * message logger for this class
      */
@@ -96,6 +76,26 @@ public class Printer {
     final private static String separator = ",";
     // *************************************************************************
     // fields
+    /**
+     * enable printing of render queue bucket assignments
+     */
+    private boolean printBucketFlag = false;
+    /**
+     * enable printing of cull hints
+     */
+    private boolean printCullFlag = false;
+    /**
+     * enable printing of shadow modes
+     */
+    private boolean printShadowFlag = false;
+    /**
+     * enable printing of location and scaling
+     */
+    private boolean printTransformFlag = false;
+    /**
+     * enable printing of user data
+     */
+    private boolean printUserFlag = true;
     /**
      * which stream to use for output
      */
@@ -161,16 +161,6 @@ public class Printer {
             return 'n';
         }
         return '?';
-    }
-
-    /**
-     * Test whether a scene-graph control is enabled.
-     *
-     * @param control which control to test (not null)
-     * @return true if the control is enabled, otherwise false
-     */
-    public boolean isControlEnabled(Object control) {
-        return MyControl.isEnabled(control);
     }
 
     /**
@@ -322,7 +312,7 @@ public class Printer {
         printLights(spatial);
         if (printTransformFlag) {
             /*
-             * Print the spatial's location, scaling, and user data..
+             * Print the spatial's location, scaling, and user data.
              */
             Vector3f location = MySpatial.getWorldLocation(spatial);
             if (!location.equals(Vector3f.ZERO)) {
@@ -370,5 +360,84 @@ public class Printer {
             }
             stream.printf(" %s=%s", key, valueString);
         }
+    }
+
+    /**
+     * Configure printing of render queue bucket assignments.
+     *
+     * @param newValue true to enable, false to disable
+     * @return this instance for chaining
+     */
+    public Printer setPrintBucket(boolean newValue) {
+        printBucketFlag = newValue;
+        return this;
+    }
+
+    /**
+     * Configure printing of cull hints.
+     *
+     * @param newValue true to enable, false to disable
+     * @return this instance for chaining
+     */
+    public Printer setPrintCull(boolean newValue) {
+        printCullFlag = newValue;
+        return this;
+    }
+
+    /**
+     * Configure printing of shadow modes.
+     *
+     * @param newValue true to enable, false to disable
+     * @return this instance for chaining
+     */
+    public Printer setPrintShadow(boolean newValue) {
+        printShadowFlag = newValue;
+        return this;
+    }
+
+    /**
+     * Configure printing of location and scaling.
+     *
+     * @param newValue true to enable, false to disable
+     * @return this instance for chaining
+     */
+    public Printer setPrintTransform(boolean newValue) {
+        printTransformFlag = newValue;
+        return this;
+    }
+
+    /**
+     * Configure printing of user data.
+     *
+     * @param newValue true to enable, false to disable
+     * @return this instance for chaining
+     */
+    public Printer setPrintUser(boolean newValue) {
+        printUserFlag = newValue;
+        return this;
+    }
+    // *************************************************************************
+    // new protected methods
+
+    /**
+     * Generate a textual description of a scene-graph control.
+     *
+     * @param control (not null)
+     */
+    protected String describeControl(Object control) {
+        Validate.nonNull(control, "control");
+
+        String result = MyControl.describe(control);
+        return result;
+    }
+
+    /**
+     * Test whether a scene-graph control is enabled.
+     *
+     * @param control which control to test (not null)
+     * @return true if the control is enabled, otherwise false
+     */
+    protected boolean isControlEnabled(Object control) {
+        return MyControl.isEnabled(control);
     }
 }
