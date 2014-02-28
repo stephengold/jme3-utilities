@@ -169,6 +169,29 @@ public class MySkeleton
     }
 
     /**
+     * Alter the location and orientation of the specified bone using world
+     * coordinates.
+     *
+     * @param model animated spatial which contains the bone (not null)
+     * @param bone (not null)
+     * @param tailLocation desired world location of the bone's tail (not null)
+     * @param orientation desired world orientation of the bone (not null)
+     */
+    public static void positionInWorld(Spatial model, Bone bone,
+            Vector3f tailLocation, Quaternion orientation) {
+        Validate.nonNull(tailLocation, "location");
+        Validate.nonNull(orientation, "orientation");
+        /*
+         * Convert location and orientation from world to model space.
+         */
+        Vector3f offset = model.worldToLocal(tailLocation, null);
+        Quaternion convert = model.getWorldRotation().inverse();
+        Quaternion rotation = convert.mult(orientation);
+
+        bone.setUserTransformsWorld(offset, rotation);
+    }
+
+    /**
      * Adjust one rotation angle in the bind pose of an animated spatial.
      *
      * @param model animated spatial which contains the bone (not null)
