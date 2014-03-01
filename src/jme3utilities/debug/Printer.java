@@ -321,7 +321,11 @@ public class Printer {
         if (spatial == null) {
             return;
         }
-        stream.printf("%s%c ", indent, describeType(spatial));
+        stream.print(indent);
+
+        int elementCount = spatial.getTriangleCount();
+        stream.printf("%c[%d] ", describeType(spatial), elementCount);
+
         String name = spatial.getName();
         if (name == null) {
             stream.print("(no name)");
@@ -352,7 +356,7 @@ public class Printer {
         stream.println();
         /*
          * If the spatial is a node (but not a terrain node),
-         * print its children with increase indentation.
+         * print its children with incremented indentation.
          */
         if (spatial instanceof Node && !(spatial instanceof TerrainQuad)) {
             Node node = (Node) spatial;
