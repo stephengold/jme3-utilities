@@ -177,7 +177,7 @@ public class MySpatial
             throw new IllegalArgumentException(
                     "spatial should be a geometry or a node");
         }
-        
+
         Node node = (Node) spatial;
         float result = -Float.MAX_VALUE;
         for (Spatial child : node.getChildren()) {
@@ -281,32 +281,16 @@ public class MySpatial
     }
 
     /**
-     * Construct the inverse of a spatial's orientation, the quaternion which
-     * undoes its rotation.
-     *
-     * NOTE: This method may yield incorrect results in the presence of
-     * non-uniform scaling.
+     * Construct the inverse of a spatial's world orientation, the quaternion
+     * which undoes its rotation.
      *
      * @param spatial which spatial (not null)
      * @return a new instance
      */
     public static Quaternion inverseOrientation(Spatial spatial) {
-        Vector3f origin = spatial.worldToLocal(Vector3f.ZERO, null);
+        Quaternion forward = spatial.getWorldRotation();
+        Quaternion result = forward.inverse();
 
-        Vector3f xAxis = spatial.worldToLocal(Vector3f.UNIT_X, null);
-        xAxis.subtractLocal(origin);
-        xAxis.normalizeLocal();
-
-        Vector3f yAxis = spatial.worldToLocal(Vector3f.UNIT_Y, null);
-        yAxis.subtractLocal(origin);
-        yAxis.normalizeLocal();
-
-        Vector3f zAxis = spatial.worldToLocal(Vector3f.UNIT_Z, null);
-        zAxis.subtractLocal(origin);
-        zAxis.normalizeLocal();
-
-        Quaternion result = new Quaternion();
-        result.fromAxes(xAxis, yAxis, zAxis);
         return result;
     }
 
@@ -328,8 +312,7 @@ public class MySpatial
      * @return true if the spatial is controlled by physics, otherwise false
      */
     public static boolean isPhysical(Spatial spatial) {
-        RigidBodyControl rigidBodyControl =
-                spatial.getControl(RigidBodyControl.class);
+        Object rigidBodyControl = spatial.getControl(RigidBodyControl.class);
         boolean result = rigidBodyControl != null;
         return result;
     }
@@ -352,9 +335,12 @@ public class MySpatial
      * Move (translate) an object in the world coordinate system.
      *
      * @param spatial which object to move (not null)
-     * @param offset world translation (in meters, not null)
+     * @param offset world translation (in world units, not null)
      */
     public static void moveWorld(Spatial spatial, Vector3f offset) {
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(offset, "offset");
+
         Vector3f location = getWorldLocation(spatial);
         location.addLocal(offset);
         setWorldLocation(spatial, location);
@@ -372,10 +358,11 @@ public class MySpatial
      * recursive
      *
      * @param spatial which object to move (not null)
-     * @param offset world translation (in meters, not null)
+     * @param offset world translation (in world units, not null)
      */
     public static void moveChildWorld(Spatial spatial, Vector3f offset) {
         Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(offset, "offset");
 
         if (isPhysical(spatial)) {
             Vector3f location = getWorldLocation(spatial);
@@ -432,6 +419,9 @@ public class MySpatial
      */
     public static void rotateObject(Spatial spatial, Vector3f center,
             Quaternion rotation) {
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(center, "center");
+
         Vector3f location = getWorldLocation(spatial);
         Vector3f offset = location.subtract(center);
         offset = rotation.mult(offset);
@@ -472,6 +462,8 @@ public class MySpatial
      * @param newLocation desired world location (not null, unaffected)
      */
     public static void setWorldLocation(Spatial spatial, Vector3f newLocation) {
+        Validate.nonNull(newLocation, "location");
+
         Spatial parent = spatial.getParent();
         Vector3f centerLocal;
         if (parent != null) {
@@ -496,9 +488,6 @@ public class MySpatial
     /**
      * Alter the world orientation of a spatial.
      *
-     * NOTE: This method may yield incorrect results in the presence of
-     * non-uniform scaling.
-     *
      * @param spatial which spatial (not null)
      * @param newOrientation desired world orientation (not null, unaffected)
      */
@@ -511,7 +500,7 @@ public class MySpatial
             localRotation.multLocal(newOrientation);
             localRotation.normalizeLocal();
         } else {
-            localRotation = newOrientation.clone();
+            localRotation = newOrientation;
         }
         /*
          * Apply to the spatial.
@@ -523,15 +512,12 @@ public class MySpatial
         RigidBodyControl rigidBodyControl =
                 spatial.getControl(RigidBodyControl.class);
         if (rigidBodyControl != null) {
-            rigidBodyControl.setPhysicsRotation(newOrientation.clone());
+            rigidBodyControl.setPhysicsRotation(newOrientation);
         }
     }
 
     /**
      * Alter the world scaling of a spatial.
-     *
-     * NOTE: This method may yield incorrect results in the presence of
-     * non-uniform scaling.
      *
      * @param spatial which spatial (not null, not orphan)
      * @param scale desired world scale (&gt;0)
@@ -540,7 +526,8 @@ public class MySpatial
         Validate.positive(scale, "scale");
 
         Spatial parent = spatial.getParent();
-        float parentScale = parent.getWorldScale().x;
+        float parentScale = MySpatial.getUniformScale(parent);
+        assert parentScale != 0f : parentScale;
         float localScale = scale / parentScale;
         spatial.setLocalScale(localScale);
     }
