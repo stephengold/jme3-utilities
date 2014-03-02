@@ -25,6 +25,7 @@
  */
 package jme3utilities;
 
+import java.util.Collection;
 import java.util.logging.Logger;
 import jme3utilities.debug.Validate;
 
@@ -126,6 +127,30 @@ public class MyString {
         }
 
         return results;
+    }
+
+    /**
+     * Join a collection of strings using spaces, ignoring any nulls.
+     *
+     * @param collection of strings to join (not null)
+     */
+    public static String join(Collection<String> collection) {
+        Validate.nonNull(collection, "collection");
+
+        StringBuilder result = new StringBuilder();
+        for (String element : collection) {
+            if (element != null) {
+                if (result.length() > 0) {
+                    /*
+                     * Append a space as a separator.
+                     */
+                    result.append(' ');
+                }
+                result.append(element);
+            }
+        }
+
+        return result.toString();
     }
 
     /**

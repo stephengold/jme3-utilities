@@ -25,6 +25,7 @@
  */
 package jme3utilities;
 
+import com.jme3.animation.AnimControl;
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
@@ -128,6 +129,23 @@ public class MySkeleton
     }
 
     /**
+     * List all animations in an animated spatial.
+     *
+     * @param spatial (not null)
+     * @return a new collection in lexicographic order
+     */
+    public static Collection<String> listAnimations(Spatial spatial) {
+        AnimControl control = spatial.getControl(AnimControl.class);
+        Collection<String> result = new TreeSet<>();
+        if (control == null) {
+            return result;
+        }
+        Collection<String> animationNames = control.getAnimationNames();
+        result.addAll(animationNames);
+        return result;
+    }
+
+    /**
      * List all bones in an animated spatial.
      *
      * @param model animated spatial (or null)
@@ -169,8 +187,8 @@ public class MySkeleton
     }
 
     /**
-     * Alter the location and orientation of the specified bone using world
-     * coordinates.
+     * Alter the position of the specified bone using world coordinates, without
+     * updating its descendents.
      *
      * @param model animated spatial which contains the bone (not null)
      * @param bone (not null)
