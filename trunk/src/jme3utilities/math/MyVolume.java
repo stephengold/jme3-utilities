@@ -83,7 +83,7 @@ public class MyVolume {
     }
 
     /**
-     * Compute the volume of a capsule with a given radius and height.
+     * Compute the volume of a capsule with the specified radius and height.
      *
      * @param radius (&ge;0)
      * @param height (&ge;0)
@@ -101,7 +101,7 @@ public class MyVolume {
     }
 
     /**
-     * Compute the volume of a cone with a given radius and height.
+     * Compute the volume of a cone with the specified radius and height.
      *
      * @param radius (&ge;0)
      * @param height (&ge;0)
@@ -135,7 +135,7 @@ public class MyVolume {
     }
 
     /**
-     * Compute the volume of a sphere with a given radius.
+     * Compute the volume of a sphere with the specified radius.
      *
      * @param radius (&ge;0)
      */

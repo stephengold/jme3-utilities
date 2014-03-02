@@ -36,7 +36,7 @@ import jme3utilities.debug.Validate;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-public class Noise {
+final public class Noise {
     // *************************************************************************
     // constants
 

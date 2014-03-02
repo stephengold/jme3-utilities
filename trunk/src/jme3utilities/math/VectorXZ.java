@@ -187,7 +187,8 @@ public class VectorXZ
     }
 
     /**
-     * Clamp this direction to be within a given angle of the X-axis (in place).
+     * Clamp this direction (in place) to be within a specified angle of the
+     * X-axis.
      *
      * @param maxAbsAngle angle in radians (&ge;0)
      * @return this vector (with its components modified)

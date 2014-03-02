@@ -43,7 +43,7 @@ import jme3utilities.debug.Validate;
  * Implements key methods in order to simplify the development of subclasses.
  * <p>
  * Assumes that the object will live in a single physics space and listen to
- * overlap events.
+ * physics ticks.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -62,18 +62,18 @@ public class SimpleGhostControl
     // constructors
 
     /**
-     * Instantiate a control.
+     * Instantiate a control for an object with a specified shape.
      *
      * @param enabled true for an enabled object, false for a disabled one
      * @param initialShape collision shape for the object (not null)
-     * @param initialSpace which physics space will contain the object (not
+     * @param physicsSpace which physics space will contain the object (not
      * null)
      */
     public SimpleGhostControl(boolean enabled, CollisionShape initialShape,
-            PhysicsSpace initialSpace) {
+            PhysicsSpace physicsSpace) {
         super(initialShape);
-        assert initialSpace != null;
-        space = initialSpace;
+        Validate.nonNull(physicsSpace, "physics space");
+        space = physicsSpace;
         setEnabled(enabled);
     }
     // *************************************************************************
@@ -91,7 +91,7 @@ public class SimpleGhostControl
             throw new IllegalStateException("should be in a physics space");
         }
         /*
-         * The remove() method will null out the "space" field, so save a copy.
+         * The remove() method will null out the "space" field, so save a reference.
          */
         PhysicsSpace physicsSpace = space;
         /*

@@ -92,6 +92,7 @@ public class AxesControl
      * @param width width of each axis indicator (in pixels, &gt;0)
      */
     public AxesControl(AssetManager assetManager, float length, float width) {
+        super();
         Validate.nonNull(assetManager, "asset manager");
         Validate.positive(length, "length");
         Validate.positive(width, "width");

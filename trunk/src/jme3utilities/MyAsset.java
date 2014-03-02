@@ -43,7 +43,7 @@ import jme3utilities.debug.Validate;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-public class MyAsset {
+final public class MyAsset {
     // *************************************************************************
     // constants
 
@@ -79,8 +79,7 @@ public class MyAsset {
      * @param assetManager (not null)
      * @return a new instance
      */
-    public static Material createInvisibleMaterial(
-            AssetManager assetManager) {
+    public static Material createInvisibleMaterial(AssetManager assetManager) {
         Validate.nonNull(assetManager, "asset manager");
 
         Material material = createUnshadedMaterial(assetManager);
@@ -202,6 +201,7 @@ public class MyAsset {
         String path = String.format("Textures/skies/star-maps/%s/%s_%s.png",
                 mapName, mapName, faceName);
         Texture result = assetManager.loadTexture(path);
+
         return result;
     }
 

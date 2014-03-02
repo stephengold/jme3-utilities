@@ -33,7 +33,7 @@ import com.jme3.math.Vector2f;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-public class Constants {
+final public class Constants {
     // *************************************************************************
     // constants
 

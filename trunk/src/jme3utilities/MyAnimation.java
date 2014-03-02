@@ -121,7 +121,7 @@ public class MyAnimation {
     /**
      * Generate a one-letter description of a track.
      *
-     * @param spatial which spatial
+     * @param track which track
      */
     public static char describeTrack(Track track) {
         if (track instanceof AudioTrack) {

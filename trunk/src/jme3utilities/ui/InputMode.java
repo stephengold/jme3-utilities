@@ -134,7 +134,7 @@ abstract public class InputMode
     // new methods exposed
 
     /**
-     * Bind a given action to a hotkey, but don't map it yet.
+     * Bind the specified action to a hotkey, but don't map it yet.
      * <p>
      * Each hotkey can bind to at most one action, but the same action can be
      * shared by multiple hotkeys. Signals are used to track the state of mode
@@ -152,7 +152,7 @@ abstract public class InputMode
     }
 
     /**
-     * Bind a given action to a hotkey, but don't map it yet.
+     * Bind the specified action to a hotkey, but don't map it yet.
      * <p>
      * Each hotkey can bind to at most one action, but the same action can be
      * shared by multiple hotkeys. Signals are used to track the state of mode
@@ -322,7 +322,7 @@ abstract public class InputMode
     }
 
     /**
-     * Unbind a given hotkey.
+     * Unbind the specified hotkey.
      *
      * @param hotkey (not null)
      */

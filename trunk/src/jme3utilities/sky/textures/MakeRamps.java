@@ -128,7 +128,7 @@ public class MakeRamps {
     // private methods
 
     /**
-     * Compute the haze opacity for a given elevation angle.
+     * Compute the haze opacity for a specified elevation angle.
      *
      * @param elevationAngle in radians above the horizon
      * @return opacity (&le;1, &gt;0)
