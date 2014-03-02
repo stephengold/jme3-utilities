@@ -33,10 +33,11 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.debug.Arrow;
 import java.util.logging.Logger;
+import jme3utilities.MyAsset;
 import jme3utilities.SubtreeControl;
 
 /**
- * A subtree control to provide visible coordinate axes for a Node.
+ * A subtree control to visualize the coordinate axes of a Node.
  * <p>
  * The controlled spatial must be a Node.
  * <p>
@@ -70,10 +71,6 @@ public class AxesControl
     // *************************************************************************
     // fields
     /**
-     * the application's asset manager: set by constructor
-     */
-    final private AssetManager assetManager;
-    /**
      * length of each axis (in local units, &gt;0): set by constructor
      */
     final private float length;
@@ -89,22 +86,22 @@ public class AxesControl
      *
      * @param assetManager for loading material definitions (not null)
      * @param length length of each axis (in local units, &gt;0)
-     * @param width width of each axis indicator (in pixels, &gt;0)
+     * @param thickness thickness of each axis indicator (in pixels, &gt;0)
      */
-    public AxesControl(AssetManager assetManager, float length, float width) {
+    public AxesControl(AssetManager assetManager, float length,
+            float thickness) {
         super();
         Validate.nonNull(assetManager, "asset manager");
         Validate.positive(length, "length");
-        Validate.positive(width, "width");
+        Validate.positive(thickness, "thickness");
 
-        this.assetManager = assetManager;
         this.length = length;
-        this.thickness = width;
+        this.thickness = thickness;
 
         subtree = new Node("axes node");
-        createAxis(xColor, "xAxis", Vector3f.UNIT_X);
-        createAxis(yColor, "yAxis", Vector3f.UNIT_Y);
-        createAxis(zColor, "zAxis", Vector3f.UNIT_Z);
+        createAxis(assetManager, xColor, "xAxis", Vector3f.UNIT_X);
+        createAxis(assetManager, yColor, "yAxis", Vector3f.UNIT_Y);
+        createAxis(assetManager, zColor, "zAxis", Vector3f.UNIT_Z);
     }
     // *************************************************************************
     // private methods
@@ -112,27 +109,27 @@ public class AxesControl
     /**
      * Create an arrow geometry for a specific axis.
      *
+     * @param assetManager (not null)
      * @param color for the wireframe (not null)
      * @param name for the geometry (not null)
      * @param direction for the arrow to point (unit vector, not altered)
      */
-    private Geometry createAxis(ColorRGBA color, String name,
-            Vector3f direction) {
+    private Geometry createAxis(AssetManager assetManager, ColorRGBA color,
+            String name, Vector3f direction) {
+        assert assetManager != null;
         assert color != null;
         assert name != null;
         assert direction != null;
         assert direction.isUnitVector() : direction;
-
-        Material wireMaterial = new Material(assetManager,
-                "Common/MatDefs/Misc/Unshaded.j3md");
-        wireMaterial.getAdditionalRenderState().setWireframe(true);
-        wireMaterial.setColor("Color", color);
 
         Vector3f extent = direction.mult(length);
         Arrow mesh = new Arrow(extent);
         mesh.setLineWidth(thickness);
         Geometry geometry = new Geometry(name, mesh);
         subtree.attachChild(geometry);
+
+        Material wireMaterial =
+                MyAsset.createWireframeMaterial(assetManager, color);
         geometry.setMaterial(wireMaterial);
 
         return geometry;

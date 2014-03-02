@@ -151,6 +151,24 @@ final public class MyAsset {
     }
 
     /**
+     * Create an unshaded material with the specified color.
+     *
+     * @param assetManager (not null)
+     * @param color which color (not null, unaffected)
+     * @return a new instance
+     */
+    public static Material createUnshadedMaterial(AssetManager assetManager,
+            ColorRGBA color) {
+        Validate.nonNull(assetManager, "asset manager");
+        Validate.nonNull(color, "color");
+
+        Material material = MyAsset.createUnshadedMaterial(assetManager);
+        material.setColor("Color", color);
+
+        return material;
+    }
+
+    /**
      * Create an unshaded material from a texture asset path.
      *
      * @param assetManager (not null)
@@ -182,6 +200,24 @@ final public class MyAsset {
 
         Material material = createUnshadedMaterial(assetManager);
         material.setTexture("ColorMap", texture);
+
+        return material;
+    }
+
+    /**
+     * Create a wireframe material.
+     *
+     * @param assetManager (not null)
+     * @param color (not null)
+     * @return a new instance
+     */
+    public static Material createWireframeMaterial(AssetManager assetManager,
+            ColorRGBA color) {
+        Validate.nonNull(assetManager, "asset manager");
+        Validate.nonNull(color, "color");
+
+        Material material = createUnshadedMaterial(assetManager, color);
+        material.getAdditionalRenderState().setWireframe(true);
 
         return material;
     }
