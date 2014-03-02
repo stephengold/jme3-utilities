@@ -48,6 +48,15 @@ import java.io.IOException;
 abstract public class SimpleControl
         extends AbstractControl {
     // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Toggle the enabled status of this control.
+     */
+    public void toggleEnabled() {
+        setEnabled(!enabled);
+    }
+    // *************************************************************************
     // AbstractControl methods
 
     /**
