@@ -93,8 +93,8 @@ public class Permutation {
      * @return (&lt;length, &ge;0)
      */
     public int permute(int index) {
-        int i = MyMath.modulo(index, indices.length);
-        int result = indices[i];
+        int wrapped = MyMath.modulo(index, indices.length);
+        int result = indices[wrapped];
 
         assert result >= 0 : result;
         assert result < indices.length : result;
@@ -106,12 +106,12 @@ public class Permutation {
     /**
      * Swap two elements in the permutation.
      *
-     * @param i index of the first element (&lt;length, &ge;0)
-     * @param j index of the second element (&lt;length, &ge;0)
+     * @param first index of the first element (&lt;length, &ge;0)
+     * @param second index of the second element (&lt;length, &ge;0)
      */
-    private void swapTableEntries(int i, int j) {
-        int savedValue = indices[i];
-        indices[i] = indices[j];
-        indices[j] = savedValue;
+    private void swapTableEntries(int first, int second) {
+        int savedValue = indices[first];
+        indices[first] = indices[second];
+        indices[second] = savedValue;
     }
 }

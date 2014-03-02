@@ -35,7 +35,7 @@ import jme3utilities.debug.Validate;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-public class MyColor {
+final public class MyColor {
     // *************************************************************************
     // constants
 

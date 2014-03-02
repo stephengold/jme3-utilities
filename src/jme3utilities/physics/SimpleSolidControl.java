@@ -62,22 +62,23 @@ public class SimpleSolidControl
     // constructors
 
     /**
-     * Instantiate a dynamic control for an object with a particular shape and
+     * Instantiate a dynamic control for an object with a specified shape and
      * mass.
      *
      * @param enabled true for an enabled object, false for a disabled one
      * @param initialShape collision shape for the object (not null)
      * @param mass the object's mass (in kilograms, &gt;0) or zero for a static
      * object
-     * @param initialSpace which physics space will contain the object (not
+     * @param physicsSpace which physics space will contain the object (not
      * null)
      */
     public SimpleSolidControl(boolean enabled, CollisionShape initialShape,
-            float mass, PhysicsSpace initialSpace) {
+            float mass, PhysicsSpace physicsSpace) {
         super(initialShape, mass);
-        assert mass >= 0f : mass;
-        assert initialSpace != null;
-        space = initialSpace;
+        Validate.nonNegative(mass, "mass");
+        Validate.nonNull(physicsSpace, "physics space");
+        assert physicsSpace != null;
+        space = physicsSpace;
         setEnabled(enabled);
     }
     // *************************************************************************
@@ -85,7 +86,7 @@ public class SimpleSolidControl
 
     /**
      * Alter the object's collision shape. Assumes that the object has already
-     * been added to physics space.
+     * been added to a physics space.
      *
      * @param newShape (not null)
      */
@@ -101,7 +102,7 @@ public class SimpleSolidControl
         PhysicsSpace physicsSpace = space;
         /*
          * In order to resize a physical object, we must
-         * remove the control from physics space and then re-add it.
+         * remove it from physics space and then re-add it.
          */
         physicsSpace.remove(this);
         super.setCollisionShape(newShape);
@@ -115,11 +116,11 @@ public class SimpleSolidControl
      *
      * Does nothing. Meant to be overridden.
      *
-     * @param space
+     * @param physicsSpace (not null)
      * @param elapsedTime (in seconds, &ge;0)
      */
     @Override
-    public void physicsTick(PhysicsSpace space, float elapsedTime) {
+    public void physicsTick(PhysicsSpace physicsSpace, float elapsedTime) {
         /* do nothing */
     }
 
@@ -128,11 +129,11 @@ public class SimpleSolidControl
      *
      * Does nothing. Meant to be overridden.
      *
-     * @param space
+     * @param physicsSpace (not null)
      * @param elapsedTime (in seconds, &ge;0)
      */
     @Override
-    public void prePhysicsTick(PhysicsSpace space, float elapsedTime) {
+    public void prePhysicsTick(PhysicsSpace physicsSpace, float elapsedTime) {
         /* do nothing */
     }
     // *************************************************************************

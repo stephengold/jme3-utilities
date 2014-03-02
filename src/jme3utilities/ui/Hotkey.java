@@ -105,7 +105,7 @@ public class Hotkey {
     }
 
     /**
-     * Get the hotkey for a given key code.
+     * Look up the hotkey with a specified key code.
      *
      * @param keyCode which hotkey
      * @return the pre-existing instance (or null for an invalid key code)
@@ -119,7 +119,7 @@ public class Hotkey {
     }
 
     /**
-     * Find the hotkey with a given name.
+     * Look up a named hotkey.
      *
      * @param name which hotkey
      * @return the pre-existing instance (or null for an invalid name)

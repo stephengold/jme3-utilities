@@ -288,7 +288,7 @@ public class MyMath {
 
     /**
      * Compute the least non-negative value congruent with an integer value with
-     * respect to a given modulus.
+     * respect to the specified modulus.
      *
      * @param iValue input value
      * @param modulus (&gt;0)
@@ -306,7 +306,7 @@ public class MyMath {
 
     /**
      * Compute the least non-negative value congruent with a single-precision
-     * value with respect to a given modulus.
+     * value with respect to the specified modulus.
      *
      * @param fValue input value
      * @param modulus (&gt;0)
@@ -324,7 +324,7 @@ public class MyMath {
 
     /**
      * Compute the least non-negative value congruent with a double-precision
-     * value with respect to a given modulus.
+     * value with respect to the specified modulus.
      *
      * @param dValue input value
      * @param modulus (&gt;0)

@@ -153,8 +153,6 @@ public class CloudLayer
      * @param newColor (not null, unaffected, alpha is ignored)
      */
     public void setColor(ColorRGBA newColor) {
-        assert newColor != null;
-
         ColorRGBA layerColor = newColor.clone();
         layerColor.a = opacity;
 

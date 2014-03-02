@@ -37,7 +37,7 @@ import jme3utilities.MyString;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-public class XmlOutput {
+final public class XmlOutput {
     // *************************************************************************
     // constants
 

@@ -40,7 +40,7 @@ import org.w3c.dom.NamedNodeMap;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-public class DomInput {
+final public class DomInput {
     // *************************************************************************
     // constants
 

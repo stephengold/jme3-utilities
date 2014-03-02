@@ -89,7 +89,7 @@ public class NameGenerator
     }
 
     /**
-     * Test whether a name could plausibly have been generated from a given
+     * Test whether a name could plausibly have been generated from a specified
      * prefix.
      *
      * @param name which name to test (not null)

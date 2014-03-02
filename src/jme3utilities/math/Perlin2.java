@@ -147,7 +147,7 @@ public class Perlin2
     // private methods
 
     /**
-     * Generate the array of 2-D gradients for a given seed.
+     * Generate the array of 2-D gradients for a specified seed.
      *
      * @param numGradients (&gt;1)
      * @param gSeed seed for generating gradients

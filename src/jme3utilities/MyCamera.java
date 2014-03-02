@@ -39,7 +39,7 @@ import jme3utilities.math.MyVector3f;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-public class MyCamera {
+final public class MyCamera {
     // *************************************************************************
     // constants
 
@@ -188,7 +188,7 @@ public class MyCamera {
     }
 
     /**
-     * Increase a camera's field-of-view tangent by a given factor.
+     * Increase a camera's field-of-view tangent by a specified factor.
      *
      * @param camera which camera (not null)
      * @param factor amount to reduce the FOV tangent (&gt;0)

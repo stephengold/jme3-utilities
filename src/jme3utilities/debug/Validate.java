@@ -37,7 +37,7 @@ import java.util.logging.Logger;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-public class Validate {
+final public class Validate {
     // *************************************************************************
     // constants
 

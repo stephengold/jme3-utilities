@@ -132,10 +132,6 @@ public class LandscapeControl
      */
     private int terrainDiameter = 0;
     /**
-     * spatial which represents the monument: set by constructor
-     */
-    final private Spatial monument;
-    /**
      * spatial which represents the terrain: set by constructor
      */
     final private Spatial terrain;
@@ -149,13 +145,14 @@ public class LandscapeControl
      * null)
      */
     public LandscapeControl(AssetManager assetManager) {
+        super();
         Validate.nonNull(assetManager, "asset manager");
 
         this.assetManager = assetManager;
         /*
          * Generate monument and terrain and attach them to the subtree.
          */
-        monument = createMonument();
+        Spatial monument = createMonument();
         terrain = createTerrain();
 
         subtree = new Node("landscape node");
@@ -170,7 +167,7 @@ public class LandscapeControl
      *
      * @return a new instance
      */
-    public Material getGrass() {
+    final public Material getGrass() {
         return createShadedMaterial(grassColor);
     }
 
@@ -210,7 +207,7 @@ public class LandscapeControl
         Box uprightMesh = new Box(uprightWidth / 2f, uprightHeight / 2f,
                 ringDepth / 2);
         for (int index = 0; index < numUprights; index++) {
-            String name = "upright" + String.valueOf(index);
+            String name = "upright" + index;
             Geometry upright = new Geometry(name, uprightMesh);
             node.attachChild(upright);
 
@@ -229,7 +226,7 @@ public class LandscapeControl
         Box lintelMesh = new Box(lintelLength / 2f, lintelThickness / 2f,
                 ringDepth / 2);
         for (int index = 0; index < numUprights; index++) {
-            String name = "lintel" + String.valueOf(index);
+            String name = "lintel" + index;
             Geometry lintel = new Geometry(name, lintelMesh);
             node.attachChild(lintel);
 
@@ -250,7 +247,7 @@ public class LandscapeControl
     }
 
     /**
-     * Create a shaded material for a given color.
+     * Create a shaded material for the specified color.
      *
      * @param color which ambient/diffuse color (not null)
      * @return a new material
