@@ -25,7 +25,6 @@
  */
 package jme3utilities;
 
-import com.jme3.animation.AnimControl;
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
@@ -41,7 +40,7 @@ import java.util.logging.Logger;
 import jme3utilities.debug.Validate;
 
 /**
- * Utility methods for manipulating animated spatials, skeletons, and bones.
+ * Utility methods for manipulating skeletal spatials, skeletons, and bones.
  * Aside from test cases, all methods should be public and static.
  *
  * @author Stephen Gold <sgold@sonic.net>
@@ -68,7 +67,7 @@ public class MySkeleton
     // new methods exposed
 
     /**
-     * Compute a specific angle of a named bone in an animated spatial.
+     * Compute a specific angle of a named bone in a skeletal spatial.
      *
      * @param model animated spatial which contains the bone (not null)
      * @param boneName name of the bone to measure (not null)
@@ -95,7 +94,7 @@ public class MySkeleton
     }
 
     /**
-     * Access a named bone in an animated spatial.
+     * Access a named bone in a skeletal spatial.
      *
      * @param model animated spatial which contains the bone (not null)
      * @param boneName which bone to access (not null)
@@ -114,7 +113,7 @@ public class MySkeleton
     }
 
     /**
-     * Access the skeleton of an animated spatial.
+     * Access the skeleton of a skeletal spatial.
      *
      * @param model animated spatial (not null)
      * @return the pre-existing instance (or null if not found)
@@ -129,24 +128,7 @@ public class MySkeleton
     }
 
     /**
-     * List all animations in an animated spatial.
-     *
-     * @param spatial (not null)
-     * @return a new collection in lexicographic order
-     */
-    public static Collection<String> listAnimations(Spatial spatial) {
-        AnimControl control = spatial.getControl(AnimControl.class);
-        Collection<String> result = new TreeSet<>();
-        if (control == null) {
-            return result;
-        }
-        Collection<String> animationNames = control.getAnimationNames();
-        result.addAll(animationNames);
-        return result;
-    }
-
-    /**
-     * List all bones in an animated spatial.
+     * List all bones in a skeletal spatial.
      *
      * @param model animated spatial (or null)
      * @return a new collection in lexicographic order (may be empty)
@@ -210,7 +192,7 @@ public class MySkeleton
     }
 
     /**
-     * Adjust one rotation angle in the bind pose of an animated spatial.
+     * Adjust one rotation angle in the bind pose of a skeletal spatial.
      *
      * @param model animated spatial which contains the bone (not null)
      * @param boneName name of the bone to adjust (not null)
@@ -231,12 +213,36 @@ public class MySkeleton
         if (bone == null) {
             return;
         }
-        Misc.setAngle(bone, axis, newAngle);
+        setAngle(bone, axis, newAngle);
         getSkeleton(model).updateWorldVectors();
     }
 
     /**
-     * Alter the user control flag for an entire animated spatial.
+     * Alter a single bone angle in the bind pose.
+     *
+     * @param bone which bone to adjust (not null)
+     * @param axis which local rotation axis to adjust (0 &rarr; X, 1 &rarr; Y,
+     * 2 &rarr; Z)
+     * @param newAngle new rotation angle (in radians)
+     */
+    public static void setAngle(Bone bone, int axis, float newAngle) {
+        if (axis < 0 || axis > 2) {
+            logger.log(Level.SEVERE, "axis={0}", axis);
+            throw new IllegalArgumentException(
+                    "axis should be between 0 and 2, inclusive");
+        }
+
+        Vector3f location = bone.getLocalPosition();
+        Vector3f scale = bone.getLocalScale();
+        Quaternion orientation = bone.getLocalRotation().clone();
+        float[] angles = orientation.toAngles(null);
+        angles[axis] = newAngle;
+        orientation.fromAngles(angles);
+        bone.setBindTransforms(location, orientation, scale);
+    }
+
+    /**
+     * Alter the user control flag for an entire skeletal spatial.
      *
      * @param model animated spatial (or null)
      * @param newValue true to enable, false to disable

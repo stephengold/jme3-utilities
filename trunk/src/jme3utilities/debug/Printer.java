@@ -25,19 +25,14 @@
  */
 package jme3utilities.debug;
 
-import com.jme3.audio.AudioNode;
-import com.jme3.effect.ParticleEmitter;
 import com.jme3.light.Light;
 import com.jme3.light.LightList;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
-import com.jme3.scene.BatchNode;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.Spatial.CullHint;
-import com.jme3.scene.debug.SkeletonDebugger;
 import com.jme3.terrain.geomipmap.TerrainQuad;
 import java.io.PrintStream;
 import java.util.Collection;
@@ -147,30 +142,6 @@ public class Printer {
             }
         }
         return result.toString();
-    }
-
-    /**
-     * Generate a one-letter description of a spatial.
-     *
-     * @param spatial which spatial
-     */
-    public static char describeType(Spatial spatial) {
-        if (spatial instanceof AudioNode) {
-            return 'a';
-        } else if (spatial instanceof BatchNode) {
-            return 'b';
-        } else if (spatial instanceof ParticleEmitter) {
-            return 'e';
-        } else if (spatial instanceof SkeletonDebugger) {
-            return 's';
-        } else if (spatial instanceof TerrainQuad) {
-            return 't';
-        } else if (spatial instanceof Geometry) {
-            return 'g';
-        } else if (spatial instanceof Node) {
-            return 'n';
-        }
-        return '?';
     }
 
     /**
@@ -478,12 +449,24 @@ public class Printer {
     }
 
     /**
+     * Generate a one-letter description of a spatial.
+     *
+     * @param spatial which spatial
+     */
+    public static char describeType(Spatial spatial) {
+        char result = MySpatial.describeType(spatial);
+        return result;
+    }
+
+    /**
      * Test whether a scene-graph control is enabled.
      *
      * @param control which control to test (not null)
      * @return true if the control is enabled, otherwise false
      */
     protected boolean isControlEnabled(Object control) {
-        return MyControl.isEnabled(control);
+        boolean result = MyControl.isEnabled(control);
+
+        return result;
     }
 }

@@ -25,18 +25,12 @@
  */
 package jme3utilities;
 
-import com.jme3.animation.AnimChannel;
-import com.jme3.animation.Bone;
-import com.jme3.animation.LoopMode;
 import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
-import com.jme3.math.Quaternion;
-import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.SceneProcessor;
 import com.jme3.renderer.ViewPort;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
@@ -46,7 +40,6 @@ import java.awt.Graphics2D;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -91,73 +84,6 @@ public class Misc {
     }
     // *************************************************************************
     // new methods exposed
-
-    /**
-     * Smoothly transition an animation channel to a new animation.
-     *
-     * @param channel which animation channel (not null)
-     * @param newAnimation name of animation (or null to reset the channel)
-     */
-    public static void blendTo(AnimChannel channel, String newAnimation) {
-        if (newAnimation == null) {
-            channel.reset(true);
-            return;
-        }
-        String oldAnimation = channel.getAnimationName();
-        if (newAnimation.equals(oldAnimation)) {
-            return;
-        }
-        channel.setAnim(newAnimation, blendTime);
-        channel.setLoopMode(LoopMode.Loop);
-    }
-
-    /**
-     * Compute the minimum and maximum elevations of a mesh geometry.
-     *
-     * @param geometry which geometry to measure (not null)
-     * @return array consisting of array[0]: the lowest world Y-coordinate (in
-     * world units) and array[1]: the highest world Y-coordinate (in world
-     * units)
-     */
-    public static float[] findMinMaxHeights(Geometry geometry) {
-        Vector3f vertexLocal[] = new Vector3f[3];
-        for (int j = 0; j < 3; j++) {
-            vertexLocal[j] = new Vector3f();
-        }
-        Vector3f worldLocation = new Vector3f();
-
-        float minY = Float.MAX_VALUE;
-        float maxY = -Float.MAX_VALUE;
-
-        Mesh mesh = geometry.getMesh();
-        assert mesh.getMode() == Mesh.Mode.Triangles : mesh.getMode();
-        int count = mesh.getTriangleCount();
-        for (int triangleIndex = 0; triangleIndex < count; triangleIndex++) {
-            /*
-             * Get the vertex locations for a triangle in the mesh.
-             */
-            mesh.getTriangle(triangleIndex, vertexLocal[0], vertexLocal[1],
-                    vertexLocal[2]);
-            /*
-             * Compare with lowest and highest world elevations so far.
-             */
-            for (int j = 0; j < 3; j++) {
-                geometry.localToWorld(vertexLocal[j], worldLocation);
-                float y = worldLocation.y;
-                if (y < minY) {
-                    minY = y;
-                }
-                if (y > maxY) {
-                    maxY = y;
-                }
-            }
-        }
-        /*
-         * Create the result array.
-         */
-        float[] minMax = {minY, maxY};
-        return minMax;
-    }
 
     /**
      * Detach all app states which are subclasses of a specified class.
@@ -220,7 +146,7 @@ public class Misc {
      *
      * @return the package name, branch, and revision of this file
      */
-    public static String getVersion() {//
+    public static String getVersion() {
         return "jme3-utilities trunk $Rev$";
     }
 
@@ -238,20 +164,6 @@ public class Misc {
     }
 
     /**
-     * Compute the world elevation of a horizontal surface.
-     *
-     * @param geometry which surface to measure (not null)
-     * @return world elevation of the surface (in world units)
-     */
-    public static float getYLevel(Geometry geometry) {
-        Validate.nonNull(geometry, "geometry");
-
-        float minMax[] = findMinMaxHeights(geometry);
-        assert minMax[0] == minMax[1] : minMax[0];
-        return minMax[0];
-    }
-
-    /**
      * Test whether a mesh has texture (U-V) coordinates.
      *
      * @param mesh which mesh to test (not null)
@@ -262,30 +174,6 @@ public class Misc {
         int key = Type.TexCoord.ordinal();
         boolean result = buffers.containsKey(key);
         return result;
-    }
-
-    /**
-     * Alter a single bone angle in the bind pose.
-     *
-     * @param bone which bone to adjust (not null)
-     * @param axis which local rotation axis to adjust (0 &rarr; X, 1 &rarr; Y,
-     * 2 &rarr; Z)
-     * @param newAngle new rotation angle (in radians)
-     */
-    public static void setAngle(Bone bone, int axis, float newAngle) {
-        if (axis < 0 || axis > 2) {
-            logger.log(Level.SEVERE, "axis={0}", axis);
-            throw new IllegalArgumentException(
-                    "axis should be between 0 and 2, inclusive");
-        }
-
-        Vector3f location = bone.getLocalPosition();
-        Vector3f scale = bone.getLocalScale();
-        Quaternion orientation = bone.getLocalRotation().clone();
-        float[] angles = orientation.toAngles(null);
-        angles[axis] = newAngle;
-        orientation.fromAngles(angles);
-        bone.setBindTransforms(location, orientation, scale);
     }
 
     /**
@@ -323,26 +211,6 @@ public class Misc {
         Validate.nonNull(newLevel, "level");
 
         Logger.getLogger("").setLevel(newLevel);
-    }
-
-    /**
-     * Convert a collection of strings into an array. This is more convenient
-     * than Collection.toArray() because the elements of the resulting array
-     * will all be strings.
-     *
-     * @param collection to convert (not null)
-     * @return new array containing the same strings in the same order
-     */
-    public static String[] toArray(Collection<String> collection) {
-        int itemCount = collection.size();
-        String[] result = new String[itemCount];
-
-        int nextIndex = 0;
-        for (String string : collection) {
-            result[nextIndex] = string;
-            nextIndex++;
-        }
-        return result;
     }
 
     /**
