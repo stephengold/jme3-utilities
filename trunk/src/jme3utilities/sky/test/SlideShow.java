@@ -278,11 +278,10 @@ public class SlideShow
         /*
          * Initialize the material for wireframes.
          */
-        wireframe = MyAsset.createUnshadedMaterial(assetManager);
-        wireframe.setColor("Color", ColorRGBA.Magenta);
+        wireframe = MyAsset.createWireframeMaterial(assetManager,
+                ColorRGBA.Magenta);
         wireframe.getAdditionalRenderState()
                 .setFaceCullMode(FaceCullMode.Front);
-        wireframe.getAdditionalRenderState().setWireframe(true);
 
         //new jme3utilities.Printer().printSubtree(rootNode);
 
