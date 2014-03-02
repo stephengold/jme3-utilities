@@ -37,10 +37,11 @@ import java.util.Collection;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.debug.SkeletonDebugControl;
 import jme3utilities.debug.Validate;
 
 /**
- * Utility methods for manipulating skeletal spatials, skeletons, and bones.
+ * Utility methods for manipulating skeletonized spatials, skeletons, and bones.
  * Aside from test cases, all methods should be public and static.
  *
  * @author Stephen Gold <sgold@sonic.net>
@@ -67,7 +68,7 @@ public class MySkeleton
     // new methods exposed
 
     /**
-     * Compute a specific angle of a named bone in a skeletal spatial.
+     * Compute a specific angle of a named bone in a skeletonized spatial.
      *
      * @param model animated spatial which contains the bone (not null)
      * @param boneName name of the bone to measure (not null)
@@ -94,7 +95,7 @@ public class MySkeleton
     }
 
     /**
-     * Access a named bone in a skeletal spatial.
+     * Access a named bone in a skeletonized spatial.
      *
      * @param model animated spatial which contains the bone (not null)
      * @param boneName which bone to access (not null)
@@ -113,9 +114,9 @@ public class MySkeleton
     }
 
     /**
-     * Access the skeleton of a skeletal spatial.
+     * Access the skeleton of a skeletonized spatial.
      *
-     * @param model animated spatial (not null)
+     * @param model skeletonized spatial (not null)
      * @return the pre-existing instance (or null if not found)
      */
     public static Skeleton getSkeleton(Spatial model) {
@@ -128,9 +129,25 @@ public class MySkeleton
     }
 
     /**
-     * List all bones in a skeletal spatial.
+     * Test whether a skeletonized spatial has debugging enabled.
      *
-     * @param model animated spatial (or null)
+     * @param model skeletonized spatial (not null)
+     */
+    public static boolean isDebugEnabled(Spatial model) {
+        SkeletonDebugControl control =
+                model.getControl(SkeletonDebugControl.class);
+        if (control == null) {
+            return false;
+        }
+        boolean result = control.isEnabled();
+
+        return result;
+    }
+
+    /**
+     * List all bones in a skeletonized spatial.
+     *
+     * @param model skeletonized spatial (or null)
      * @return a new collection in lexicographic order (may be empty)
      */
     public static Collection<String> listBones(Spatial model) {
@@ -172,7 +189,7 @@ public class MySkeleton
      * Alter the position of the specified bone using world coordinates, without
      * updating its descendents.
      *
-     * @param model animated spatial which contains the bone (not null)
+     * @param model skeletonized spatial which contains the bone (not null)
      * @param bone (not null)
      * @param tailLocation desired world location of the bone's tail (not null)
      * @param orientation desired world orientation of the bone (not null)
@@ -192,9 +209,9 @@ public class MySkeleton
     }
 
     /**
-     * Adjust one rotation angle in the bind pose of a skeletal spatial.
+     * Adjust one rotation angle in the bind pose of a skeletonized spatial.
      *
-     * @param model animated spatial which contains the bone (not null)
+     * @param model skeletonized spatial which contains the bone (not null)
      * @param boneName name of the bone to adjust (not null)
      * @param axis which axis to adjust (0 &rarr; x, 1 &rarr; y, 2 &rarr; z)
      * @param newAngle new rotation angle (in radians)
@@ -242,9 +259,23 @@ public class MySkeleton
     }
 
     /**
-     * Alter the user control flag for an entire skeletal spatial.
+     * Alter a skeletonized spatial's debug status.
      *
-     * @param model animated spatial (or null)
+     * @param model skeletonized spatial (not null)
+     * @param newState true to enable, false to disable
+     */
+    public static void setDebugEnabled(Spatial model, boolean newState) {
+        SkeletonDebugControl control =
+                model.getControl(SkeletonDebugControl.class);
+        if (control != null) {
+            control.setEnabled(newState);
+        }
+    }
+
+    /**
+     * Alter the user control flag for an entire skeletonized spatial.
+     *
+     * @param model skeletonized spatial (or null)
      * @param newValue true to enable, false to disable
      */
     public static void setUserControl(Spatial model, boolean newValue) {
@@ -263,7 +294,7 @@ public class MySkeleton
     /**
      * Compute the world location of (the tail of) a named bone.
      *
-     * @param model animated spatial which contains the bone (not null)
+     * @param model skeletonized spatial which contains the bone (not null)
      * @param boneName (not null)
      * @return a new vector
      */
@@ -280,7 +311,7 @@ public class MySkeleton
     /**
      * Compute the world orientation of a bone.
      *
-     * @param model animated spatial which contains the bone (not null)
+     * @param model skeletonized spatial which contains the bone (not null)
      * @param bone (not null)
      * @return a new instance
      */
@@ -298,7 +329,7 @@ public class MySkeleton
     /**
      * Compute the world orientation of a named bone.
      *
-     * @param model animated spatial which contains the bone (not null)
+     * @param model skeletonized spatial which contains the bone (not null)
      * @param boneName (not null)
      * @return a new instance
      */
