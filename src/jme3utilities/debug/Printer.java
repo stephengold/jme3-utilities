@@ -307,6 +307,7 @@ public class Printer {
      */
     public void printSubtree(Spatial spatial) {
         printSubtree(spatial, "");
+        stream.flush();
     }
 
     /**

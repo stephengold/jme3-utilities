@@ -25,7 +25,6 @@
  */
 package jme3utilities;
 
-import com.jme3.animation.AnimControl;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.light.Light;
@@ -34,16 +33,14 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import java.util.Collection;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.debug.Validate;
 import jme3utilities.math.VectorXZ;
 
 /**
- * Utility methods for generic operations on nodes and spatials. Aside from test
- * cases, all methods should be public and static.
+ * Utility methods for generic operations on nodes and geometries. Aside from
+ * test cases, all methods should be public and static.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -314,21 +311,8 @@ public class MySpatial
     public static boolean isPhysical(Spatial spatial) {
         Object rigidBodyControl = spatial.getControl(RigidBodyControl.class);
         boolean result = rigidBodyControl != null;
-        return result;
-    }
 
-    /**
-     * List all animations in an animated spatial.
-     *
-     * @param spatial (not null)
-     * @return a new collection in lexicographic order
-     */
-    public static Collection<String> listAnimations(Spatial spatial) {
-        AnimControl control = spatial.getControl(AnimControl.class);
-        Collection<String> animationNames = control.getAnimationNames();
-        Collection<String> itemSet = new TreeSet<>();
-        itemSet.addAll(animationNames);
-        return itemSet;
+        return result;
     }
 
     /**

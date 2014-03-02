@@ -25,11 +25,13 @@
  */
 package jme3utilities;
 
+import com.jme3.animation.AnimControl;
 import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.KinematicRagdollControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.scene.control.AbstractControl;
+import java.util.Collection;
 import java.util.logging.Logger;
 
 /**
@@ -81,6 +83,12 @@ public class MyControl {
             } else {
                 result += String.format("[%.2f kg]", mass);
             }
+
+        } else if (control instanceof AnimControl) {
+            AnimControl ac = (AnimControl) control;
+            Collection<String> nameCollection = ac.getAnimationNames();
+            String names = MyString.join(nameCollection);
+            result += String.format("[%s]", names);
         }
 
         return result;
