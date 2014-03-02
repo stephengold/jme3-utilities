@@ -39,7 +39,6 @@ import de.lessvoid.nifty.screen.Screen;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.debug.Validate;
 
@@ -199,7 +198,7 @@ public class GuiScreenController
         Validate.nonNull(actionPrefix, "prefix");
         Validate.nonNull(items, "collection");
 
-        String[] itemArray = Misc.toArray(items);
+        String[] itemArray = MyString.toArray(items);
         showPopup(actionPrefix, itemArray);
     }
 

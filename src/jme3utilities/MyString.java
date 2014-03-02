@@ -130,30 +130,6 @@ public class MyString {
     }
 
     /**
-     * Join a collection of strings using spaces, ignoring any nulls.
-     *
-     * @param collection of strings to join (not null)
-     */
-    public static String join(Collection<String> collection) {
-        Validate.nonNull(collection, "collection");
-
-        StringBuilder result = new StringBuilder();
-        for (String element : collection) {
-            if (element != null) {
-                if (result.length() > 0) {
-                    /*
-                     * Append a space as a separator.
-                     */
-                    result.append(' ');
-                }
-                result.append(element);
-            }
-        }
-
-        return result.toString();
-    }
-
-    /**
      * Join an array of strings using spaces, ignoring any nulls.
      *
      * @param array of strings to join (not null)
@@ -186,6 +162,26 @@ public class MyString {
         Validate.nonNull(text, "text");
 
         return String.format("\"%s\"", text);
+    }
+
+    /**
+     * Convert a collection of strings into an array. This is more convenient
+     * than Collection.toArray() because the elements of the resulting array
+     * will all be strings.
+     *
+     * @param collection to convert (not null)
+     * @return new array containing the same strings in the same order
+     */
+    public static String[] toArray(Collection<String> collection) {
+        int itemCount = collection.size();
+        String[] result = new String[itemCount];
+
+        int nextIndex = 0;
+        for (String string : collection) {
+            result[nextIndex] = string;
+            nextIndex++;
+        }
+        return result;
     }
 
     /**

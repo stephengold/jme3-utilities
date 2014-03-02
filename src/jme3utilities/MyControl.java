@@ -26,6 +26,7 @@
 package jme3utilities;
 
 import com.jme3.animation.AnimControl;
+import com.jme3.animation.Animation;
 import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.KinematicRagdollControl;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -87,7 +88,13 @@ public class MyControl {
         } else if (control instanceof AnimControl) {
             AnimControl ac = (AnimControl) control;
             Collection<String> nameCollection = ac.getAnimationNames();
-            String names = MyString.join(nameCollection);
+            String[] array = MyString.toArray(nameCollection);
+            for (int iAnimation = 0; iAnimation < array.length; iAnimation++) {
+                String animationName = array[iAnimation];
+                Animation animation = ac.getAnim(animationName);
+                array[iAnimation] = MyAnimation.describe(animation);
+            }
+            String names = MyString.join(array);
             result += String.format("[%s]", names);
         }
 
