@@ -489,21 +489,15 @@ public class SkyControlCore
     // SimpleControl methods
 
     /**
-     * Callback to update this control while it is enabled. (Invoked once per
-     * frame.)
+     * Callback invoked when the sky node's geometric state is about to be
+     * updated, once per frame while attached and enabled.
      *
-     * @param elapsedTime since the previous update (in seconds, &ge;0)
+     * @param updateInterval time interval between updates (in seconds, &ge;0)
      */
     @Override
     public void controlUpdate(float elapsedTime) {
         super.controlUpdate(elapsedTime);
-        if (!isEnabled()) {
-            throw new IllegalStateException("should be enabled");
-        }
-        if (spatial == null) {
-            throw new IllegalStateException("should be added");
-        }
-        Validate.nonNegative(elapsedTime, "interval");
+
         updateClouds(elapsedTime);
         /*
          * Translate the sky node to center the sky on the camera.

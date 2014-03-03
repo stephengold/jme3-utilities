@@ -117,21 +117,14 @@ public class FloorControl
     // SimpleControl methods
 
     /**
-     * Callback to update this control while it is enabled. (Invoked once per
-     * frame.)
+     * Callback invoked when the spatial's geometric state is about to be
+     * updated, once per frame while attached and enabled.
      *
-     * @param elapsedTime since the previous update (in seconds, &ge;0)
+     * @param updateInterval time interval between updates (in seconds, &ge;0)
      */
     @Override
-    public void controlUpdate(float elapsedTime) {
-        super.controlUpdate(elapsedTime);
-        if (!isEnabled()) {
-            throw new IllegalStateException("should be enabled");
-        }
-        if (spatial == null) {
-            throw new IllegalStateException("should be added");
-        }
-        Validate.nonNegative(elapsedTime, "interval");
+    public void controlUpdate(float updateInterval) {
+        super.controlUpdate(updateInterval);
         /*
          * Translate the floor to center it below the camera.
          */
