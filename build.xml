@@ -8,7 +8,7 @@
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
 <project name="jme3-utilities" default="default" basedir=".">
-    <description>Builds, tests, and runs the project jme3-utilities.</description>
+    <description>Builds, tests, and runs the jme3-utilities project.</description>
     <import file="nbproject/build-impl.xml"/>
 
     <target name="-post-clean"
@@ -165,14 +165,14 @@
             depends="init, compile, releasedirs">
         <jar jarfile="release/jME3-utilities-x.jar"
              basedir="${build.classes.dir}"
-             includes="jme3utilities/physics/*.class, jme3utilities/xml/*.class"/>
+             includes="jme3utilities/controls/*.class, jme3utilities/physics/*.class, jme3utilities/xml/*.class"/>
     </target>
 
     <target name="x-src"
             depends="init, releasedirs">
         <copy todir="release/jME3-utilities-x-src">
             <fileset dir="${src.dir}"
-                     includes="jme3utilities/physics/*.java jme3utilities/xml/*.java"/>
+                     includes="jme3utilities/controls/*.java, jme3utilities/physics/*.java jme3utilities/xml/*.java"/>
         </copy>
     </target>
 
