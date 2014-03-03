@@ -64,16 +64,18 @@ public class SimpleGhostControl
     /**
      * Instantiate a control for an object with a specified shape.
      *
-     * @param enabled true for an enabled object, false for a disabled one
-     * @param initialShape collision shape for the object (not null)
+     * @param enabled true for an enabled control, false for a disabled one
+     * @param initialShape initial collision shape for the object
      * @param physicsSpace which physics space will contain the object (not
      * null)
      */
     public SimpleGhostControl(boolean enabled, CollisionShape initialShape,
             PhysicsSpace physicsSpace) {
         super(initialShape);
+
         Validate.nonNull(physicsSpace, "physics space");
         space = physicsSpace;
+
         setEnabled(enabled);
     }
     // *************************************************************************
@@ -91,7 +93,8 @@ public class SimpleGhostControl
             throw new IllegalStateException("should be in a physics space");
         }
         /*
-         * The remove() method will null out the "space" field, so save a reference.
+         * The remove() method will null out the "space" field,
+         * so save a reference.
          */
         PhysicsSpace physicsSpace = space;
         /*
@@ -159,35 +162,37 @@ public class SimpleGhostControl
 
     /**
      * Callback invoked after each physics tick.
+     * <p>
+     * Only performs checks. Meant to be overridden.
      *
-     * Does nothing. Meant to be overridden.
-     *
-     * @param space
+     * @param physicsSpace (not null)
      * @param elapsedTime (in seconds, &ge;0)
      */
     @Override
-    public void physicsTick(PhysicsSpace space, float elapsedTime) {
-        /* do nothing */
+    public void physicsTick(PhysicsSpace physicsSpace, float elapsedTime) {
+        Validate.nonNull(physicsSpace, "physics space");
+        Validate.nonNegative(elapsedTime, "interval");
     }
 
     /**
      * Callback invoked before each physics tick.
+     * <p>
+     * Only performs checks. Meant to be overridden.
      *
-     * Does nothing. Meant to be overridden.
-     *
-     * @param space
+     * @param physicsSpace (not null)
      * @param elapsedTime (in seconds, &ge;0)
      */
     @Override
-    public void prePhysicsTick(PhysicsSpace space, float elapsedTime) {
-        /* do nothing */
+    public void prePhysicsTick(PhysicsSpace physicsSpace, float elapsedTime) {
+        Validate.nonNull(physicsSpace, "physics space");
+        Validate.nonNegative(elapsedTime, "interval");
     }
     // *************************************************************************
     // new protected methods
 
     /**
-     * (Re-)Initialize this control each time it is added.
-     *
+     * Add this control's object to its physics space.
+     * <p>
      * Meant to be overridden.
      */
     protected void onAdd() {
@@ -200,8 +205,8 @@ public class SimpleGhostControl
     }
 
     /**
-     * De-initialize this control each time it is removed.
-     *
+     * Remove this control's object from its physics space.
+     * <p>
      * Meant to be overridden.
      */
     protected void onRemove() {
