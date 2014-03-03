@@ -23,11 +23,12 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities;
+package jme3utilities.controls;
 
 import com.jme3.audio.AudioNode;
 import com.jme3.scene.Spatial;
 import java.util.logging.Logger;
+import jme3utilities.SimpleControl;
 
 /**
  * Simple control to allow audio to be initiated from a physics thread.
@@ -47,14 +48,14 @@ public class AudioControl
     // *************************************************************************
     // fields
     /**
-     * if true, play audio on next update
+     * if true, play audio node on next update
      */
     private boolean startFlag = false;
     // *************************************************************************
     // new methods exposed
 
     /**
-     * Schedule the audio to be played.
+     * Schedule the audio node to be played.
      */
     public void playInstance() {
         startFlag = true;
@@ -69,19 +70,24 @@ public class AudioControl
      */
     @Override
     public void setSpatial(Spatial newSpatial) {
-        if (newSpatial != null) {
-            assert newSpatial instanceof AudioNode;
+        if (newSpatial != null && !(newSpatial instanceof AudioNode)) {
+            throw new IllegalArgumentException("spatial is not an audio node");
         }
         super.setSpatial(newSpatial);
     }
+    // *************************************************************************
+    // SimpleControl methods
 
     /**
-     * Callback to update this control. (Invoked once per frame.)
+     * Callback invoked when the spatial's geometric state is about to be
+     * updated, once per frame while attached and enabled.
      *
-     * @param unused seconds since the previous update (&ge;0)
+     * @param updateInterval time interval between updates (in seconds, &ge;0)
      */
     @Override
-    public void update(float unused) {
+    public void controlUpdate(float updateInterval) {
+        super.controlUpdate(updateInterval);
+
         if (startFlag) {
             AudioNode node = (AudioNode) spatial;
             node.playInstance();
