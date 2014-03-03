@@ -118,6 +118,9 @@ public class DelayControl
     @Override
     protected void controlUpdate(float updateInterval) {
         super.controlUpdate(updateInterval);
+        if (spatial == null) {
+            return;
+        }
         /*
          * Update the time remaining.
          */

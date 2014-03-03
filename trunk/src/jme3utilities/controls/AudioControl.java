@@ -87,6 +87,9 @@ public class AudioControl
     @Override
     public void controlUpdate(float updateInterval) {
         super.controlUpdate(updateInterval);
+        if (spatial == null) {
+            return;
+        }
 
         if (startFlag) {
             AudioNode node = (AudioNode) spatial;
