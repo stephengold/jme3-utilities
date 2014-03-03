@@ -27,13 +27,16 @@ package jme3utilities;
 
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.Animation;
+import com.jme3.animation.SkeletonControl;
 import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.KinematicRagdollControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.effect.ParticleEmitter;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import java.util.Collection;
 import java.util.logging.Logger;
+import jme3utilities.controls.DelayControl;
 
 /**
  * Utility methods which operate on jME3 scene-graph controls in general. Aside
@@ -87,15 +90,26 @@ public class MyControl {
 
         } else if (control instanceof AnimControl) {
             AnimControl ac = (AnimControl) control;
+            Spatial spatial = ac.getSpatial();
             Collection<String> nameCollection = ac.getAnimationNames();
             String[] array = MyString.toArray(nameCollection);
             for (int iAnimation = 0; iAnimation < array.length; iAnimation++) {
                 String animationName = array[iAnimation];
                 Animation animation = ac.getAnim(animationName);
-                array[iAnimation] = MyAnimation.describe(animation);
+                array[iAnimation] = MyAnimation.describe(animation, spatial);
             }
             String names = MyString.join(array);
             result += String.format("[%s]", names);
+
+        } else if (control instanceof DelayControl) {
+            DelayControl dc = (DelayControl) control;
+            float remainingSeconds = dc.getRemainingSeconds();
+            result += String.format("[%.1f sec]", remainingSeconds);
+
+        } else if (control instanceof SkeletonControl) {
+            SkeletonControl sc = (SkeletonControl) control;
+            int boneCount = sc.getSkeleton().getBoneCount();
+            result += String.format("[%d]", boneCount);
         }
 
         return result;

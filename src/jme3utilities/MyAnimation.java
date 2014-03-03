@@ -29,9 +29,11 @@ import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.Animation;
 import com.jme3.animation.AudioTrack;
+import com.jme3.animation.Bone;
 import com.jme3.animation.BoneTrack;
 import com.jme3.animation.EffectTrack;
 import com.jme3.animation.LoopMode;
+import com.jme3.animation.Skeleton;
 import com.jme3.animation.SpatialTrack;
 import com.jme3.animation.Track;
 import com.jme3.scene.Spatial;
@@ -39,6 +41,7 @@ import java.util.Collection;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 import static jme3utilities.Misc.blendTime;
+import jme3utilities.debug.Validate;
 
 /**
  * Utility methods for manipulating skeleton spatials, skeletons, and bones.
@@ -89,17 +92,25 @@ public class MyAnimation {
      * Generate a textual description of an animation.
      *
      * @param animation (not null)
+     * @param spatial the animated spatial (not null)
      */
-    public static String describe(Animation animation) {
+    public static String describe(Animation animation, Spatial spatial) {
+        Validate.nonNull(spatial, "spatial");
+
         Track[] tracks = animation.getTracks();
         int numTracks = tracks.length;
+        String name = animation.getName();
+        if (numTracks > 2) {
+            String result = String.format("%s[%d]", name, numTracks);
+            return result;
+        }
+
         String[] trackDescriptions = new String[numTracks];
         for (int iTrack = 0; iTrack < numTracks; iTrack++) {
             Track track = tracks[iTrack];
-            trackDescriptions[iTrack] = describe(track);
+            trackDescriptions[iTrack] = describe(track, spatial);
         }
         String joined = MyString.join(trackDescriptions);
-        String name = animation.getName();
         String result = String.format("%s(%s)", name, joined);
 
         return result;
@@ -109,11 +120,21 @@ public class MyAnimation {
      * Generate a textual description of an animation track.
      *
      * @param track (not null)
+     * @param spatial the animated spatial (not null)
      */
-    public static String describe(Track track) {
+    public static String describe(Track track, Spatial spatial) {
         char typeChar = describeTrack(track);
         float length = track.getLength();
-        String result = String.format("%c[%.1f]", typeChar, length);
+        String result;
+        if (track instanceof BoneTrack) {
+            BoneTrack boneTrack = (BoneTrack) track;
+            int boneIndex = boneTrack.getTargetBoneIndex();
+            Skeleton skeleton = MySkeleton.getSkeleton(spatial);
+            Bone bone = skeleton.getBone(boneIndex);
+            result = String.format("%c:%s", typeChar, bone.getName());
+        } else {
+            result = String.format("%c[%.1f]", typeChar, length);
+        }
 
         return result;
     }
