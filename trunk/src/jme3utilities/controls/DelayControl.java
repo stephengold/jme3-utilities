@@ -88,13 +88,23 @@ public class DelayControl
     }
 
     /**
+     * Read the amount of time remaining.
+     *
+     * @return time interval (in seconds) until the final action
+     */
+    public float getRemainingSeconds() {
+        return remainingSeconds;
+    }
+
+    /**
      * Alter the amount of time remaining.
      *
-     * @param seconds time interval (in seconds, &ge;0) until the final action
+     * @param newSeconds time interval (in seconds, &ge;0) until the final
+     * action
      */
-    public void setRemainingSeconds(float seconds) {
-        Validate.nonNegative(seconds, "seconds");
-        remainingSeconds = seconds;
+    public void setRemainingSeconds(float newSeconds) {
+        Validate.nonNegative(newSeconds, "seconds");
+        remainingSeconds = newSeconds;
     }
     // *************************************************************************
     // SimpleControl methods
@@ -127,7 +137,7 @@ public class DelayControl
     /**
      * Enable a slave.
      *
-     * @param slave to enable (not null)
+     * @param slave which control to enable (not null)
      */
     protected void enableSlave(Control slave) {
         Validate.nonNull(slave, "slave control");
@@ -137,7 +147,7 @@ public class DelayControl
     /**
      * Test whether a control is valid before adding it to the list of slaves.
      *
-     * @param slave control to test
+     * @param slave which control to test
      * @return true if enableSlave() can enable the control, false otherwise
      */
     protected boolean isValidSlave(Control slave) {
