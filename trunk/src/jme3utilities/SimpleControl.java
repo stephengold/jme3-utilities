@@ -76,9 +76,6 @@ abstract public class SimpleControl
         if (!enabled) {
             throw new IllegalStateException("should be enabled");
         }
-        if (spatial == null) {
-            throw new IllegalStateException("should be added");
-        }
     }
 
     /**
@@ -94,9 +91,6 @@ abstract public class SimpleControl
         Validate.nonNegative(updateInterval, "interval");
         if (!enabled) {
             throw new IllegalStateException("should be enabled");
-        }
-        if (spatial == null) {
-            throw new IllegalStateException("should be added");
         }
     }
 
