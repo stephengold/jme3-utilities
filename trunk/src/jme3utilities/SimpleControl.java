@@ -33,6 +33,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
 import java.io.IOException;
+import jme3utilities.debug.Validate;
 
 /**
  * A simplified abstract control which does not implement serialization or
@@ -60,30 +61,43 @@ abstract public class SimpleControl
     // AbstractControl methods
 
     /**
-     * Callback to perform any rendering this control requires.
+     * Callback invoked when the spatial is about to be rendered to a view port.
+     * <p>
+     * Only performs checks. Meant to be overridden.
      *
-     * Does nothing. Meant to be overridden.
-     *
-     * @param renderManager
-     * @param viewPort
+     * @param renderManager which is rendering the spatial (not null)
+     * @param viewPort where the spatial will be rendered (not null)
      */
     @Override
     protected void controlRender(RenderManager renderManager,
             ViewPort viewPort) {
-        /* no rendering required */
+        Validate.nonNull(renderManager, "render manager");
+        Validate.nonNull(viewPort, "view port");
+        if (!enabled) {
+            throw new IllegalStateException("should be enabled");
+        }
+        if (spatial == null) {
+            throw new IllegalStateException("should be added");
+        }
     }
 
     /**
-     * Callback to update this control while it is enabled. (Invoked once per
-     * frame.)
+     * Callback invoked when the spatial's geometric state is about to be
+     * updated, once per frame while attached and enabled.
+     * <p>
+     * Only performs checks. Meant to be overridden.
      *
-     * Does nothing. Meant to be overridden.
-     *
-     * @param elapsedTime since the previous update (in seconds, &ge;0)
+     * @param updateInterval time interval between updates (in seconds, &ge;0)
      */
     @Override
-    protected void controlUpdate(float elapsedTime) {
-        /* no updating required */
+    protected void controlUpdate(float updateInterval) {
+        Validate.nonNegative(updateInterval, "interval");
+        if (!enabled) {
+            throw new IllegalStateException("should be enabled");
+        }
+        if (spatial == null) {
+            throw new IllegalStateException("should be added");
+        }
     }
 
     /**
