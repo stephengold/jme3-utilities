@@ -88,24 +88,25 @@ abstract public class SubtreeControl
      */
     @Override
     public void setEnabled(boolean newState) {
-        if (subtree == null) {
-            throw new IllegalStateException("subtree should be initialized");
-        }
         Node node = (Node) spatial;
 
         if (enabled && !newState) {
-            if (node != null) {
+            if (node != null && subtree != null) {
                 /*
                  * Detach the subtree from the controlled node.
                  */
                 int position = node.detachChild(subtree);
-                assert position != -1;
+                assert position != -1 : position;
             }
 
         } else if (!enabled && newState) {
             if (node == null) {
                 throw new IllegalStateException(
-                        "cannot enable the control before it's added to a node");
+                        "control should be added to a node");
+            }
+            if (subtree == null) {
+                throw new IllegalStateException(
+                        "subtree should be initialized");
             }
             /*
              * Attach the subtree to the controlled node.

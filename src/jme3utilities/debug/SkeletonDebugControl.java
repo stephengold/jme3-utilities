@@ -91,7 +91,7 @@ final public class SkeletonDebugControl
      */
     @Override
     public void setEnabled(boolean newState) {
-        if (subtree == null) {
+        if (newState && subtree == null) {
             Skeleton skeleton = MySkeleton.getSkeleton(spatial);
             String nodeName = spatial.getName() + " skeleton debugger";
             subtree = new SkeletonDebugger(nodeName, skeleton);
