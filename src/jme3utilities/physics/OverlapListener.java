@@ -38,13 +38,13 @@ import com.jme3.scene.Spatial;
 public interface OverlapListener {
 
     /**
-     * Report an overlap with an unrelated rigid body.
+     * Callback to handle an overlapping rigid body.
      *
-     * @param overlappingBody the overlapping rigid body (not null)
-     * @param overlappingSpatial the spatial of the overlapping rigid body (not
+     * @param overlappingBody which rigid body (not null)
+     * @param overlappingSpatial the spatial of the rigid body (not null)
+     * @param localPoint location of the overlap in the collision shape (rotated
+     * and translated to the this control's spatial, but at world scale, not
      * null)
-     * @param localPoint the location of the overlap (rotated and translated to
-     * the this control's object, but at world scale, not null)
      */
     void onOverlap(PhysicsRigidBody overlappingBody, Spatial overlappingSpatial,
             Vector3f localPoint);

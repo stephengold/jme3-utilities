@@ -492,7 +492,7 @@ public class SkyControlCore
      * Callback invoked when the sky node's geometric state is about to be
      * updated, once per frame while attached and enabled.
      *
-     * @param updateInterval time interval between updates (in seconds, &ge;0)
+     * @param elapsedTime time interval between updates (in seconds, &ge;0)
      */
     @Override
     public void controlUpdate(float elapsedTime) {

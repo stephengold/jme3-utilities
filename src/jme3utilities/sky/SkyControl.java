@@ -311,14 +311,14 @@ public class SkyControl
     // SkyControlCore methods
 
     /**
-     * Callback to update this control while it is enabled. (Invoked once per
-     * frame.)
+     * Callback invoked when the sky node's geometric state is about to be
+     * updated, once per frame while attached and enabled.
      *
-     * @param elapsedTime since the previous update (in seconds, &ge;0)
+     * @param updateInterval time interval between updates (in seconds, &ge;0)
      */
     @Override
-    public void controlUpdate(float elapsedTime) {
-        super.controlUpdate(elapsedTime);
+    public void controlUpdate(float updateInterval) {
+        super.controlUpdate(updateInterval);
         updateAll();
     }
     // *************************************************************************
