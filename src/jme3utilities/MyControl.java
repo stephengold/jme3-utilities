@@ -36,7 +36,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import java.util.Collection;
 import java.util.logging.Logger;
-import jme3utilities.controls.DelayControl;
 
 /**
  * Utility methods which operate on jME3 scene-graph controls in general. Aside
@@ -100,11 +99,6 @@ public class MyControl {
             }
             String names = MyString.join(array);
             result += String.format("[%s]", names);
-
-        } else if (control instanceof DelayControl) {
-            DelayControl dc = (DelayControl) control;
-            float remainingSeconds = dc.getRemainingSeconds();
-            result += String.format("[%.1f sec]", remainingSeconds);
 
         } else if (control instanceof SkeletonControl) {
             SkeletonControl sc = (SkeletonControl) control;
