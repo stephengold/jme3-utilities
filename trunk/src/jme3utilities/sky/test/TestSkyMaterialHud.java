@@ -451,7 +451,7 @@ public class TestSkyMaterialHud
 
         switch (name) {
             case "t0neg0d":
-                material.addObject(sunIndex, SkyMaterial.sunMapPath);
+                material.addObject(sunIndex, "Textures/skies/t0neg0d/Sun_L.png");
                 break;
 
             default:
