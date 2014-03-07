@@ -97,7 +97,8 @@ The sky library includes assets, documentation, classes, and source.
         <jar jarfile="release/SkyControl-assets.jar"
              basedir="${assets.folder.name}"
              compress="${assets.compress}"
-             excludes="Interface/Nifty/**, Models/*, Textures/cursors/**, Textures/terrain/**"/>
+             excludes="Textures/skies/clouds/cyclone.png, Textures/skies/clouds/license.txt, Textures/skies/t0neg0d/**"
+             includes="MatDefs/**, Shaders/**, Textures/skies/**"/>
     </target>
 
     <target name="sky-docs"
