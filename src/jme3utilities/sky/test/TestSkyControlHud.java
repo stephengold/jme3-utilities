@@ -666,7 +666,7 @@ public class TestSkyControlHud
 
         switch (name) {
             case "t0neg0d":
-                sunAssetPath = SkyMaterial.sunMapPath;
+                sunAssetPath = "Textures/skies/t0neg0d/Sun_L.png";
                 break;
 
             default:
