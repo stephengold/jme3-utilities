@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- You may freely edit this file. See commented blocks below for -->
-<!-- some examples of how to customize the build. -->
-<!-- (If you delete it and reopen the project it will be recreated.) -->
 <!-- By default, only the Clean and Build commands use this build script. -->
 <!-- Commands such as Run, Debug, and Test only use this build script if -->
 <!-- the Compile on Save feature is turned off for the project. -->
@@ -18,13 +15,19 @@
             depends="init">
         <delete dir="release"/>
     </target>
+
+<!--
+The jme3-utilities plugin consists of four libraries: debug, sky, ui, and x.
+-->
     <target name="release"
-            depends="release-sky, release-ui, release-x"/>
+            depends="release-debug, release-sky, release-ui, release-x"/>
     <target name="releasedirs"
             depends="init">
         <mkdir dir="release"/>
     </target>
 
+    <target name="release-debug"
+            depends="debug-assets-jar, debug-docs, debug-jar, debug-src"/>
     <target name="release-sky"
             depends="sky-assets-jar, sky-docs, sky-jar, sky-src"/>
     <target name="release-ui"
@@ -32,12 +35,69 @@
     <target name="release-x"
             depends="x-docs, x-jar, x-src"/>
 
+<!--
+The debug library includes assets, documentation, classes, and source.
+-->
+    <target name="debug-assets-jar"
+            depends="init, releasedirs">
+        <jar jarfile="release/jME3-utilities-debug-assets.jar"
+             basedir="${assets.folder.name}"
+             compress="${assets.compress}"
+             includes="Textures/terrain/**"
+        />
+    </target>
+
+    <target name="debug-docs"
+            depends="init, releasedirs, sky-jar, debug-src">
+        <javadoc destdir="release/jME3-utilities-debug-javadoc"
+                 additionalparam="${javadoc.additionalparam}"
+                 author="${javadoc.author}"
+                 charset="UTF-8"
+                 docencoding="UTF-8"
+                 encoding="${javadoc.encoding.used}"
+                 failonerror="true"
+                 noindex="${javadoc.noindex}"
+                 nonavbar="${javadoc.nonavbar}"
+                 notree="${javadoc.notree}"
+                 private="${javadoc.private}"
+                 source="${javac.source}"
+                 splitindex="${javadoc.splitindex}"
+                 use="${javadoc.use}"
+                 useexternalfile="true"
+                 version="${javadoc.version}"
+                 windowtitle="Javadoc for the JME3 Utilities Debug Library">
+            <classpath>
+                <pathelement path="${javac.classpath}"/>
+                <pathelement location="release/SkyControl.jar"/>
+            </classpath>
+            <fileset dir="release/jME3-utilities-debug-src"/>
+        </javadoc>
+    </target>
+
+    <target name="debug-jar"
+            depends="init, compile, releasedirs">
+        <jar jarfile="release/jME3-utilities-debug.jar"
+             basedir="${build.classes.dir}"
+             includes="jme3utilities/debug/*.class"/>
+    </target>
+
+    <target name="debug-src"
+            depends="init, releasedirs">
+        <copy todir="release/jME3-utilities-debug-src">
+            <fileset dir="${src.dir}"
+                     includes="jme3utilities/debug/*.java"/>
+        </copy>
+    </target>
+
+<!--
+The sky library includes assets, documentation, classes, and source.
+-->
     <target name="sky-assets-jar"
             depends="init, releasedirs">
         <jar jarfile="release/SkyControl-assets.jar"
              basedir="${assets.folder.name}"
              compress="${assets.compress}"
-             excludes="Interface/Nifty/**, Models/*, Textures/cursors/**"/>
+             excludes="Interface/Nifty/**, Models/*, Textures/cursors/**, Textures/terrain/**"/>
     </target>
 
     <target name="sky-docs"
@@ -70,7 +130,7 @@
             depends="init, compile, releasedirs">
         <jar jarfile="release/SkyControl.jar"
              basedir="${build.classes.dir}"
-             includes="jme3utilities/*.class, jme3utilities/debug/*.class, jme3utilities/math/*.class, jme3utilities/sky/*.class"
+             includes="jme3utilities/*.class, jme3utilities/math/*.class, jme3utilities/sky/*.class"
         />
     </target>
 
@@ -78,11 +138,14 @@
             depends="init, releasedirs">
         <copy todir="release/SkyControl-src">
             <fileset dir="${src.dir}"
-                     includes="jme3utilities/*.java, jme3utilities/debug/*.java, jme3utilities/math/*.java, jme3utilities/sky/*.java"
+                     includes="jme3utilities/*.java, jme3utilities/math/*.java, jme3utilities/sky/*.java"
             />
         </copy>
     </target>
 
+<!--
+The ui library includes assets, documentation, classes, and source.
+-->
     <target name="ui-assets-jar"
             depends="init, releasedirs">
         <jar jarfile="release/jME3-utilities-ui-assets.jar"
@@ -134,6 +197,9 @@
         </copy>
     </target>
 
+<!--
+The x library includes documentation, classes, and source.
+-->
     <target name="x-docs"
             depends="init, releasedirs, sky-jar, x-src">
         <javadoc destdir="release/jME3-utilities-x-javadoc"
