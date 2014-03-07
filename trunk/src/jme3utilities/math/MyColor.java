@@ -28,7 +28,7 @@ package jme3utilities.math;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import java.util.logging.Logger;
-import jme3utilities.debug.Validate;
+import jme3utilities.Validate;
 
 /**
  * Utility methods for RGBA colors.

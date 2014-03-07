@@ -44,7 +44,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
-import jme3utilities.debug.Validate;
+import jme3utilities.Validate;
 
 /**
  * An app state to implement a configurable input mode. At most one mode is

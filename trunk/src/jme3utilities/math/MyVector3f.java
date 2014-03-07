@@ -30,7 +30,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.debug.Validate;
+import jme3utilities.Validate;
 
 /**
  * Utility methods for 3-D vectors.

@@ -34,7 +34,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.debug.Validate;
+import jme3utilities.Validate;
 import jme3utilities.math.MyColor;
 import jme3utilities.math.MyMath;
 

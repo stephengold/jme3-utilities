@@ -28,7 +28,7 @@ package jme3utilities.math;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.debug.Validate;
+import jme3utilities.Validate;
 
 /**
  * Random and noise utility methods. Aside from test cases, all methods should

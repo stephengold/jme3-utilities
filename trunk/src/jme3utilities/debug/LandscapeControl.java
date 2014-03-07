@@ -47,6 +47,7 @@ import jme3utilities.Misc;
 import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
+import jme3utilities.Validate;
 
 /**
  * A subtree control to provide a landscape for tests and demos. The landscape

@@ -30,7 +30,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.debug.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**

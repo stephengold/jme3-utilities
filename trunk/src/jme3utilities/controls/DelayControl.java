@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 import jme3utilities.MyControl;
 import jme3utilities.MyString;
 import jme3utilities.SimpleControl;
-import jme3utilities.debug.Validate;
+import jme3utilities.Validate;
 
 /**
  * A simple control used to enable other "slave" controls after a pre-set

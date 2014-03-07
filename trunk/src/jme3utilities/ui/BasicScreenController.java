@@ -40,7 +40,7 @@ import de.lessvoid.nifty.screen.ScreenController;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
-import jme3utilities.debug.Validate;
+import jme3utilities.Validate;
 
 /**
  * An app state to control a Nifty screen. A screen is displayed if and only if

@@ -42,7 +42,7 @@ import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
-import jme3utilities.debug.Validate;
+import jme3utilities.Validate;
 import jme3utilities.math.MyColor;
 import jme3utilities.math.MyMath;
 

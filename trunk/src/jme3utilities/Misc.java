@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import jme3utilities.debug.Validate;
 
 /**
  * Miscellaneous utility methods. Aside from test cases, all methods here should
@@ -146,7 +145,7 @@ public class Misc {
      *
      * @return the package name, branch, and revision of this file
      */
-    public static String getVersion() {
+    public static String getVersion() {//
         return "jme3-utilities trunk $Rev$";
     }
 
