@@ -27,7 +27,6 @@ package jme3utilities;
 
 import java.util.Collection;
 import java.util.logging.Logger;
-import jme3utilities.debug.Validate;
 
 /**
  * Utility methods for Strings. Aside from test cases, all methods should be

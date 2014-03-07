@@ -42,6 +42,7 @@ import com.jme3.scene.shape.Quad;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyAsset;
+import jme3utilities.Validate;
 
 /**
  * An app state which implements a performance monitor for jME3. Each second it

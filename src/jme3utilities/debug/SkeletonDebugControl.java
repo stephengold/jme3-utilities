@@ -30,11 +30,13 @@ import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.SkeletonDebugger;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.MySkeleton;
 import jme3utilities.SubtreeControl;
+import jme3utilities.Validate;
 
 /**
  * A subtree control to visualize the skeleton of a skeletonized node.
@@ -80,6 +82,38 @@ final public class SkeletonDebugControl
 
         material = MyAsset.createWireframeMaterial(assetManager, color);
         material.getAdditionalRenderState().setDepthTest(false);
+    }
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Test whether a skeletonized spatial has debugging enabled.
+     *
+     * @param model skeletonized spatial (not null)
+     */
+    public static boolean isDebugEnabled(Spatial model) {
+        SkeletonDebugControl control =
+                model.getControl(SkeletonDebugControl.class);
+        if (control == null) {
+            return false;
+        }
+        boolean result = control.isEnabled();
+
+        return result;
+    }
+
+    /**
+     * Alter a skeletonized spatial's debug status.
+     *
+     * @param model skeletonized spatial (not null)
+     * @param newState true to enable, false to disable
+     */
+    public static void setDebugEnabled(Spatial model, boolean newState) {
+        SkeletonDebugControl control =
+                model.getControl(SkeletonDebugControl.class);
+        if (control != null) {
+            control.setEnabled(newState);
+        }
     }
     // *************************************************************************
     // SubtreeControl methods

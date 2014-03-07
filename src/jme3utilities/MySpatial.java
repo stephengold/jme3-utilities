@@ -41,7 +41,6 @@ import com.jme3.scene.debug.SkeletonDebugger;
 import com.jme3.terrain.geomipmap.TerrainQuad;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.debug.Validate;
 import jme3utilities.math.VectorXZ;
 
 /**

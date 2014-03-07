@@ -28,7 +28,7 @@ package jme3utilities.sky.textures;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
-import jme3utilities.debug.Validate;
+import jme3utilities.Validate;
 
 /**
  * A star from a star catalog, used by MakeStarMaps.

@@ -36,7 +36,7 @@ import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.debug.Validate;
+import jme3utilities.Validate;
 
 /**
  * A single-precision vector with no 'y' coordinate. These vectors are used to

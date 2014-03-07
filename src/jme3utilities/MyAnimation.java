@@ -41,7 +41,6 @@ import java.util.Collection;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 import static jme3utilities.Misc.blendTime;
-import jme3utilities.debug.Validate;
 
 /**
  * Utility methods for manipulating skeleton spatials, skeletons, and bones.

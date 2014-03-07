@@ -38,7 +38,7 @@ import com.jme3.scene.shape.Quad;
 import java.util.logging.Logger;
 import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
-import jme3utilities.debug.Validate;
+import jme3utilities.Validate;
 
 /**
  * A simple control to provide a visual "floor" for a scene. The floor would

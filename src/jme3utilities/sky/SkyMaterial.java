@@ -33,7 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.MyString;
-import jme3utilities.debug.Validate;
+import jme3utilities.Validate;
 
 /**
  * A material for a dynamic sky dome using assets and techniques derived from

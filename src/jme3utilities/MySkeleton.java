@@ -37,8 +37,6 @@ import java.util.Collection;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.debug.SkeletonDebugControl;
-import jme3utilities.debug.Validate;
 
 /**
  * Utility methods for manipulating skeletonized spatials, skeletons, and bones.
@@ -126,22 +124,6 @@ public class MySkeleton
         }
         Skeleton skeleton = control.getSkeleton();
         return skeleton;
-    }
-
-    /**
-     * Test whether a skeletonized spatial has debugging enabled.
-     *
-     * @param model skeletonized spatial (not null)
-     */
-    public static boolean isDebugEnabled(Spatial model) {
-        SkeletonDebugControl control =
-                model.getControl(SkeletonDebugControl.class);
-        if (control == null) {
-            return false;
-        }
-        boolean result = control.isEnabled();
-
-        return result;
     }
 
     /**
@@ -256,20 +238,6 @@ public class MySkeleton
         angles[axis] = newAngle;
         orientation.fromAngles(angles);
         bone.setBindTransforms(location, orientation, scale);
-    }
-
-    /**
-     * Alter a skeletonized spatial's debug status.
-     *
-     * @param model skeletonized spatial (not null)
-     * @param newState true to enable, false to disable
-     */
-    public static void setDebugEnabled(Spatial model, boolean newState) {
-        SkeletonDebugControl control =
-                model.getControl(SkeletonDebugControl.class);
-        if (control != null) {
-            control.setEnabled(newState);
-        }
     }
 
     /**

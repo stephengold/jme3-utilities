@@ -32,7 +32,7 @@ import de.lessvoid.nifty.Nifty;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
-import jme3utilities.debug.Validate;
+import jme3utilities.Validate;
 
 /**
  * A simple application with a Nifty graphical user interface (GUI). Extending

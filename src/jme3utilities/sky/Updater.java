@@ -36,8 +36,8 @@ import com.jme3.shadow.AbstractShadowRenderer;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 import jme3utilities.ViewPortListener;
-import jme3utilities.debug.Validate;
 
 /**
  * The component of SkyControl which keeps track of all the lights, shadows, and

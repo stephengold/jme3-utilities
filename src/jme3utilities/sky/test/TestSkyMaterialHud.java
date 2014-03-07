@@ -39,7 +39,7 @@ import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
-import jme3utilities.debug.Validate;
+import jme3utilities.Validate;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyMaterial;
 import jme3utilities.ui.GuiScreenController;

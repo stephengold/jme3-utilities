@@ -35,6 +35,7 @@ import com.jme3.scene.debug.Arrow;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.SubtreeControl;
+import jme3utilities.Validate;
 
 /**
  * A subtree control to visualize the coordinate axes of a Node.

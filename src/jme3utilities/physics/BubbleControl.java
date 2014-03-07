@@ -36,7 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyControl;
 import jme3utilities.MyString;
-import jme3utilities.debug.Validate;
+import jme3utilities.Validate;
 
 /**
  * A simple ghost control which enables another ("successor") control when its

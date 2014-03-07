@@ -35,7 +35,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
 import java.util.logging.Logger;
-import jme3utilities.debug.Validate;
 
 /**
  * Miscellaneous utility methods for loading assets. Aside from test cases, all

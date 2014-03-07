@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 import jme3utilities.MyControl;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
+import jme3utilities.Validate;
 
 /**
  * An object to dump portions of a jME3 scene graph for debugging.
