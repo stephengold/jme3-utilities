@@ -75,8 +75,7 @@ public class SkyMaterial
     /**
      * asset path to the default cloud layer alpha map
      */
-    final private static String cloudsMapPath =
-            "Textures/skies/t0neg0d/Clouds_L.png";
+    final private static String cloudsMapPath = "Textures/skies/clouds/fbm.png";
     /**
      * asset path to the default alpha map for horizon haze
      */
@@ -87,9 +86,9 @@ public class SkyMaterial
     final private static String starsMapPath =
             "Textures/skies/star-maps/wiltshire.png";
     /**
-     * asset path to a color map for the sun
+     * asset path to the default color map for the sun
      */
-    final public static String sunMapPath = "Textures/skies/t0neg0d/Sun_L.png";
+    final public static String sunMapPath = "Textures/skies/suns/hazy-disc.png";
     // *************************************************************************
     // constructors
 
