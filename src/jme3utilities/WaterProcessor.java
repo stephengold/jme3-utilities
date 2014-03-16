@@ -93,7 +93,7 @@ public class WaterProcessor
     // SimpleWaterProcessor methods
 
     /**
-     * Initialize this processor.
+     * Initialize this processor prior to its first update.
      *
      * @param renderManager (not null)
      * @param viewPort (not null)

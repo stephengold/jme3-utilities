@@ -24,6 +24,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /**
- * Miscellaneous reusable scene controls for use with jMonkeyEngine3.
+ * Miscellaneous reusable scene controls for use with jMonkeyEngine3. SkyControl
+ * will be found in jme3utilities.sky, not here.
  */
 package jme3utilities.controls;
