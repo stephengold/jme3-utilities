@@ -120,7 +120,7 @@ public class SimpleGhostControl
     }
 
     /**
-     * De-serialize this control when loading from a J3O file.
+     * De-serialize this control, for example when loading from a J3O file.
      *
      * @param importer (not null)
      */
@@ -148,7 +148,7 @@ public class SimpleGhostControl
     }
 
     /**
-     * Serialize this control when saving to a J3O file.
+     * Serialize this control, for example when saving to a J3O file.
      *
      * @param exporter (not null)
      */

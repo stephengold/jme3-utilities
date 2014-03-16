@@ -183,7 +183,7 @@ public class BasicScreenController
     // AbstractAppState methods
 
     /**
-     * Initialize this controller.
+     * Initialize this controller prior to its first update.
      *
      * @param stateManager (not null)
      * @param application which application owns this screen (not null)

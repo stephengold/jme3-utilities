@@ -340,7 +340,7 @@ abstract public class InputMode
     // AbstractAppState methods
 
     /**
-     * Initialize this (disabled) mode after it gets attached.
+     * Initialize this (disabled) mode prior to its first update.
      *
      * @param stateManager (not null)
      * @param application (not null)

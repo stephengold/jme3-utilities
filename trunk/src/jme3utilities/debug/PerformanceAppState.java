@@ -117,7 +117,7 @@ public class PerformanceAppState
     }
 
     /**
-     * Initialize this performance monitor on attach.
+     * Initialize this performance monitor prior to its first update.
      *
      * @param stateManager (not null)
      * @param application (not null)

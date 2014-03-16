@@ -482,7 +482,7 @@ public class SunAndStars
     // Savable methods
 
     /**
-     * De-serialize this instance when loading from a J3O file.
+     * De-serialize this instance, for example when loading from a J3O file.
      *
      * @param importer (not null)
      */
@@ -503,7 +503,7 @@ public class SunAndStars
     }
 
     /**
-     * Serialize this instance when saving to a J3O file.
+     * Serialize this instance, for example when saving to a J3O file.
      *
      * @param exporter (not null)
      */
