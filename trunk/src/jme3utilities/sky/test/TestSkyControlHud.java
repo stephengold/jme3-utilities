@@ -43,7 +43,6 @@ import jme3utilities.TimeOfDay;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 import jme3utilities.sky.LunarPhase;
-import jme3utilities.sky.SkyMaterial;
 import jme3utilities.ui.GuiScreenController;
 
 /**
