@@ -90,6 +90,10 @@ public class GlobeRenderer
     // *************************************************************************
     // fields
     /**
+     * set by initialize()
+     */
+    private Application application = null;
+    /**
      * camera for off-screen render: set by constructor
      */
     private Camera camera = null;
@@ -121,6 +125,10 @@ public class GlobeRenderer
      * root of the the preview scene
      */
     final private Node rootNode = new Node("off-screen root node");
+    /**
+     * name for the off-screen render of the globe
+     */
+    private String preViewName = "off-screen render";
     /**
      * dynamic output texture: set by constructor
      */
@@ -318,7 +326,24 @@ public class GlobeRenderer
     // AbstractAppState methods
 
     /**
-     * Initialize this controller.
+     * Callback when this state gets detached.
+     */
+    @Override
+    public void cleanup() {
+        if (!isInitialized()) {
+            throw new IllegalStateException("should be initialized");
+        }
+
+        RenderManager renderManager = application.getRenderManager();
+        ViewPort preView = renderManager.getPreView(preViewName);
+        boolean success = renderManager.removePreView(preView);
+        assert success;
+
+        super.cleanup();
+    }
+
+    /**
+     * Initialize this controller prior to its first update.
      *
      * @param stateManager (not null)
      * @param application which application owns this screen (not null)
@@ -337,9 +362,9 @@ public class GlobeRenderer
 
         super.initialize(stateManager, application);
 
+        this.application = application;
         RenderManager renderManager = application.getRenderManager();
-        ViewPort viewPort =
-                renderManager.createPreView("off-screen render", camera);
+        ViewPort viewPort = renderManager.createPreView(preViewName, camera);
         viewPort.attachScene(rootNode);
         viewPort.setClearFlags(true, true, true);
         viewPort.setOutputFrameBuffer(frameBuffer);
