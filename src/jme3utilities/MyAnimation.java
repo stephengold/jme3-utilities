@@ -39,6 +39,7 @@ import com.jme3.animation.Track;
 import com.jme3.scene.Spatial;
 import java.util.Collection;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import static jme3utilities.Misc.blendTime;
 
@@ -83,6 +84,10 @@ public class MyAnimation {
         if (newAnimation.equals(oldAnimation)) {
             return;
         }
+        /*
+         * new animation
+         */
+        logger.log(Level.INFO, "new animation={0}", newAnimation);
         channel.setAnim(newAnimation, blendTime);
         channel.setLoopMode(LoopMode.Loop);
     }

@@ -66,7 +66,7 @@ public class TestGlobeRenderer
      * number of samples around the globe's middle
      */
     final private static int equatorSamples = 12;
-    /*
+    /**
      * number of samples from pole to pole
      */
     final private static int meridianSamples = 24;
