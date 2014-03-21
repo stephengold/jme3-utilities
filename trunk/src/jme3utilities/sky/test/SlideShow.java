@@ -305,9 +305,7 @@ public class SlideShow
      */
     private void configureCamera() {
         cam.setLocation(new Vector3f(159f, 177f, -250f));
-        Vector3f lookDirection = cam.getLocation().negate().normalize();
-        Vector3f upDirection = Vector3f.UNIT_Y;
-        cam.lookAtDirection(lookDirection, upDirection);
+        MyCamera.look(cam, cam.getLocation().negate());
 
         float frustumFar = 1000f;
         float frustumNear = 0.1f;
@@ -316,7 +314,7 @@ public class SlideShow
         flyCam.setDragToRotate(true);
         flyCam.setMoveSpeed(20f);
         flyCam.setRotationSpeed(2f);
-        flyCam.setUpVector(upDirection);
+        flyCam.setUpVector(Vector3f.UNIT_Y);
         flyCam.setZoomSpeed(20f);
         /*
          * Apply a grey background to the viewport

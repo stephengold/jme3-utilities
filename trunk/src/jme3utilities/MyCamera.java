@@ -108,6 +108,29 @@ final public class MyCamera {
     }
 
     /**
+     * Rotate a camera without changing its location, setting its "up" direction
+     * automatically.
+     *
+     * @param camera which camera to rotate (not null)
+     * @param direction (not null, positive length)
+     */
+    public static void look(Camera camera, Vector3f direction) {
+        if (MyVector3f.isZeroLength(direction)) {
+            throw new IllegalArgumentException(
+                    "direction should have positive length");
+        }
+
+        if (direction.x == 0f && direction.z == 0f) {
+            /*
+             * When looking straight up or down, use +X as the up direction.
+             */
+            camera.lookAtDirection(direction, Vector3f.UNIT_X);
+        } else {
+            camera.lookAtDirection(direction, Vector3f.UNIT_Y);
+        }
+    }
+
+    /**
      * Alter a camera's near and far planes without affecting its aspect ratio
      * or field-of-view.
      *
