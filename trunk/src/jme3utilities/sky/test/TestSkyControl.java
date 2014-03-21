@@ -50,6 +50,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyAsset;
+import jme3utilities.MyCamera;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
@@ -62,6 +63,7 @@ import jme3utilities.sky.FloorControl;
 import jme3utilities.sky.GlobeRenderer;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
+import jme3utilities.sky.SunAndStars;
 import jme3utilities.sky.Updater;
 import jme3utilities.ui.GuiApplication;
 
@@ -142,6 +144,25 @@ public class TestSkyControl
             new TestSkyControlParameters();
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Callback from the HUD to aim the camera at the moon, even if it's below
+     * the horizon.
+     */
+    void lookAtTheMoon() {
+        Vector3f moonDirection = skyControl.getMoonDirection();
+        MyCamera.look(cam, moonDirection);
+    }
+
+    /**
+     * Callback from the HUD to aim the camera at the sun, even if it's below
+     * the horizon.
+     */
+    void lookAtTheSun() {
+        SunAndStars sunAndStars = skyControl.getSunAndStars();
+        Vector3f sunDirection = sunAndStars.getSunDirection();
+        MyCamera.look(cam, sunDirection);
+    }
 
     /**
      * Main entry point for the test harness.
@@ -535,13 +556,12 @@ public class TestSkyControl
         float altitudeAngle = -1f * FastMath.DEG_TO_RAD;
         float azimuthAngle = 280f * FastMath.DEG_TO_RAD;
         Vector3f direction = MyVector3f.fromAltAz(altitudeAngle, azimuthAngle);
-        Vector3f up = Vector3f.UNIT_Y.clone();
-        cam.lookAtDirection(direction, up);
+        MyCamera.look(cam, direction);
 
         flyCam.setDragToRotate(true);
         flyCam.setRotationSpeed(2f);
         flyCam.setMoveSpeed(20f);
-        flyCam.setUpVector(up);
+        flyCam.setUpVector(Vector3f.UNIT_Y);
         flyCam.setZoomSpeed(20f);
     }
 

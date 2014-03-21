@@ -152,6 +152,20 @@
                                  min="-90"
                                  stepSize="0.01"/>
 
+                        <panel style="buttonPanel">
+                            <control name="button" id="id0ToAvoidNiftyWarning"
+                                     label="Look at the sun">
+                                <interact onRelease="perform(look sun)"/>
+                            </control>
+                        </panel>
+
+                        <panel style="buttonPanel">
+                            <control name="button" id="id1ToAvoidNiftyWarning"
+                                     label="Select sun style">
+                                <interact onRelease="perform(style)"/>
+                            </control>
+                        </panel>
+
                         <panel style="statusPanel">
                             <control name="label" id="solarLongitudeSliderStatus"/>
                         </panel>
@@ -163,26 +177,29 @@
                                  stepSize="1"/>
 
                         <panel style="statusPanel">
+                            <control name="label" id="solarDiameterSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider" id="solarDiameterSlider"
+                                 buttonStepSize="0.25"
+                                 initial="0.25"
+                                 max="1.75"
+                                 min="-1.25"
+                                 stepSize="0.01"/>
+
+                        <panel style="buttonPanel">
+                            <control name="button" id="id2ToAvoidNiftyWarning"
+                                     label="Look at the moon">
+                                <interact onRelease="perform(look moon)"/>
+                            </control>
+                        </panel>
+
+                        <panel style="statusPanel">
                             <control name="label" id="phaseStatus"/>
                         </panel>
                         <panel style="buttonPanel">
-                            <control name="button" id="id2ToAvoidNiftyWarning"
+                            <control name="button" id="id3ToAvoidNiftyWarning"
                                      label="Select lunar phase">
                                 <interact onRelease="perform(phase)"/>
-                            </control>
-                        </panel>
-
-                        <panel style="buttonPanel">
-                            <control name="button" id="id3ToAvoidNiftyWarning"
-                                     label="Select sun style">
-                                <interact onRelease="perform(style)"/>
-                            </control>
-                        </panel>
-
-                        <panel style="buttonPanel">
-                            <control name="button" id="id4ToAvoidNiftyWarning"
-                                     label="Select star map">
-                                <interact onRelease="perform(star-map)"/>
                             </control>
                         </panel>
 
@@ -206,15 +223,12 @@
                                  min="-1.25"
                                  stepSize="0.01"/>
 
-                        <panel style="statusPanel">
-                            <control name="label" id="solarDiameterSliderStatus"/>
+                        <panel style="buttonPanel">
+                            <control name="button" id="id4ToAvoidNiftyWarning"
+                                     label="Select star map">
+                                <interact onRelease="perform(star-map)"/>
+                            </control>
                         </panel>
-                        <control name="horizontalSlider" id="solarDiameterSlider"
-                                 buttonStepSize="0.25"
-                                 initial="0.25"
-                                 max="1.75"
-                                 min="-1.25"
-                                 stepSize="0.01"/>
 
                         <panel style="statusPanel">
                             <control name="label" id="topVerticalAngleSliderStatus"/>

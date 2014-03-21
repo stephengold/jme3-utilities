@@ -192,6 +192,21 @@ public class SkyControl
     // new methods exposed
 
     /**
+     * Compute the direction to the center of the moon.
+     *
+     * @return a new unit vector in world (horizontal) coordinates
+     */
+    public Vector3f getMoonDirection() {
+        float solarLongitude = sunAndStars.getSolarLongitude();
+        float celestialLongitude = solarLongitude + phaseAngle;
+        celestialLongitude = MyMath.modulo(celestialLongitude, FastMath.TWO_PI);
+        Vector3f worldDirection =
+                sunAndStars.convertToWorld(0f, celestialLongitude);
+
+        return worldDirection;
+    }
+
+    /**
      * Access the orientations of the sun and stars.
      *
      * @return the pre-existing object
