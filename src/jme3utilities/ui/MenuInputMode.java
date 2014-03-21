@@ -148,6 +148,9 @@ class MenuInputMode
 
         AssetManager assetManager = application.getAssetManager();
         JmeCursor cursor = (JmeCursor) assetManager.loadAsset(assetPath);
+        /*
+         * Set the hot spot to work around issue #638.
+         */
         cursor.setxHotSpot(31);
         cursor.setyHotSpot(16);
         setCursor(cursor);

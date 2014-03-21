@@ -293,7 +293,7 @@ public class SunAndStars
     /**
      * Compute the direction to the center of the sun.
      *
-     * @return a new unit vector in world coordinates
+     * @return a new unit vector in world (horizontal) coordinates
      */
     public Vector3f getSunDirection() {
         Vector3f result = convertToWorld(0f, solarLongitude);

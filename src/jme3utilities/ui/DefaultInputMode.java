@@ -130,6 +130,9 @@ class DefaultInputMode
 
         AssetManager assetManager = application.getAssetManager();
         JmeCursor cursor = (JmeCursor) assetManager.loadAsset(assetPath);
+        /*
+         * Set the hot spot to work around issue #638.
+         */
         cursor.setxHotSpot(0);
         cursor.setyHotSpot(31);
         setCursor(cursor);
