@@ -232,14 +232,14 @@ The x library includes documentation, classes, and source.
             depends="init, compile, releasedirs">
         <jar jarfile="release/jME3-utilities-x.jar"
              basedir="${build.classes.dir}"
-             includes="jme3utilities/controls/*.class, jme3utilities/physics/*.class, jme3utilities/xml/*.class"/>
+             includes="jme3utilities/controls/*.class, jme3utilities/navigation/*.class, jme3utilities/physics/*.class, jme3utilities/xml/*.class"/>
     </target>
 
     <target name="x-src"
             depends="init, releasedirs">
         <copy todir="release/jME3-utilities-x-src">
             <fileset dir="${src.dir}"
-                     includes="jme3utilities/controls/*.java, jme3utilities/physics/*.java jme3utilities/xml/*.java"/>
+                     includes="jme3utilities/controls/*.java, jme3utilities/navigation/*.java, jme3utilities/physics/*.java, jme3utilities/xml/*.java"/>
         </copy>
     </target>
 
