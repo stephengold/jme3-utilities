@@ -64,19 +64,20 @@ public class Updater
     private AmbientLight ambientLight = null;
     /**
      * shadow filters whose intensities are updated by the control - not
-     * serialized
+     * synchronized
      */
+    @SuppressWarnings("rawtypes")
     final private ArrayList<AbstractShadowFilter> shadowFilters =
             new ArrayList<>();
     /**
      * shadow renderers whose intensities are updated by the control - not
-     * serialized
+     * synchronized
      */
     final private ArrayList<AbstractShadowRenderer> shadowRenderers =
             new ArrayList<>();
     /**
      * bloom filters whose intensities are updated by the control - not
-     * serialized
+     * synchronized
      */
     final private ArrayList<BloomFilter> bloomFilters = new ArrayList<>();
     /**
@@ -134,6 +135,7 @@ public class Updater
      *
      * @param filter (not null)
      */
+    @SuppressWarnings("rawtypes")
     public void addShadowFilter(AbstractShadowFilter filter) {
         Validate.nonNull(filter, "filter");
 
@@ -239,6 +241,7 @@ public class Updater
      *
      * @param filter (not null)
      */
+    @SuppressWarnings("rawtypes")
     public void removeShadowFilter(AbstractShadowFilter filter) {
         Validate.nonNull(filter, "filter");
 
@@ -301,6 +304,7 @@ public class Updater
      *
      * @param newState true to enable, false to disable
      */
+    @SuppressWarnings("rawtypes")
     public void setShadowFiltersEnabled(boolean newState) {
         for (AbstractShadowFilter filter : shadowFilters) {
             filter.setEnabled(newState);
@@ -374,7 +378,8 @@ public class Updater
         for (BloomFilter filter : bloomFilters) {
             filter.setBloomIntensity(bloomIntensity);
         }
-        for (AbstractShadowFilter filter : shadowFilters) {
+        for (@SuppressWarnings("rawtypes") AbstractShadowFilter filter
+                : shadowFilters) {
             filter.setShadowIntensity(shadowIntensity);
         }
         for (AbstractShadowRenderer renderer : shadowRenderers) {

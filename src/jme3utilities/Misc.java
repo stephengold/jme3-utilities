@@ -90,8 +90,8 @@ public class Misc {
      * @param stateManager (not null)
      * @param whichClass (not null)
      */
-    public static void detachAll(AppStateManager stateManager,
-            Class whichClass) {
+    public static <T extends AppState> void detachAll(
+            AppStateManager stateManager, Class<T> whichClass) {
         Validate.nonNull(whichClass, "class");
 
         AppState state = stateManager.getState(whichClass);
