@@ -529,11 +529,15 @@ abstract public class InputMode
                 "Loading hotkey bindings from an XML file at {0}.",
                 MyString.quote(filePath));
 
-        FileInputStream stream;
+        FileInputStream stream = null;
         try {
             stream = new FileInputStream(filePath);
         } catch (FileNotFoundException exception) {
             throw exception;
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
         }
         loadBindings(stream);
     }
