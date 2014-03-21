@@ -525,7 +525,16 @@ public class TestSkyControlHud
             return;
         }
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
+        TestSkyControl app = (TestSkyControl) getApplication();
         switch (actionString) {
+            case "look moon":
+                app.lookAtTheMoon();
+                break;
+
+            case "look sun":
+                app.lookAtTheSun();
+                break;
+
             case "phase":
                 showPhaseMenu();
                 break;
