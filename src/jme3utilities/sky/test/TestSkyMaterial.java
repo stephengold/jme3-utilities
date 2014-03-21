@@ -30,7 +30,6 @@ import com.beust.jcommander.Parameter;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.input.KeyInput;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
@@ -44,6 +43,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
+import jme3utilities.MyCamera;
 import jme3utilities.MyString;
 import jme3utilities.sky.DomeMesh;
 import jme3utilities.sky.LunarPhase;
@@ -303,10 +303,7 @@ public class TestSkyMaterial
         setFrustum(fovDegrees);
 
         cam.setLocation(Vector3f.ZERO.clone());
-
-        Quaternion zenith = new Quaternion();
-        zenith.lookAt(Vector3f.UNIT_Y, Vector3f.UNIT_X);
-        cam.setRotation(zenith);
+        MyCamera.look(cam, Vector3f.UNIT_Y);
         /*
          * Disable flyCam.
          */

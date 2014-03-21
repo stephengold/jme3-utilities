@@ -30,14 +30,15 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.filters.BloomFilter;
+import com.jme3.renderer.Camera;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.MyCamera;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.sky.LunarPhase;
@@ -119,23 +120,20 @@ public class TestSkyMaterialHud
             return;
         }
 
+        Camera camera = getApplication().getCamera();
         switch (buttonId) {
             case "zenithRadioButton":
                 /*
                  * Re-orient the camera toward the zenith.
                  */
-                Quaternion zenith = new Quaternion();
-                zenith.lookAt(Vector3f.UNIT_Y, Vector3f.UNIT_X);
-                getApplication().getCamera().setRotation(zenith);
+                MyCamera.look(camera, Vector3f.UNIT_Y);
                 return;
 
             case "northRadioButton":
                 /*
                  * Re-orient the camera toward the north horizon.
                  */
-                Quaternion north = new Quaternion();
-                north.lookAt(Vector3f.UNIT_X, Vector3f.UNIT_Y);
-                getApplication().getCamera().setRotation(north);
+                MyCamera.look(camera, Vector3f.UNIT_X);
                 return;
         }
         logger.log(Level.WARNING, "unknown radio button: id={0}",

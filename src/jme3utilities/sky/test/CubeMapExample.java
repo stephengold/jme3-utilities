@@ -37,6 +37,7 @@ import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import jme3utilities.MyAsset;
+import jme3utilities.MyCamera;
 import jme3utilities.debug.PerformanceAppState;
 
 /**
@@ -79,7 +80,7 @@ public class CubeMapExample
         initializeLandscape();
         initializeLights();
         initializeSky();
-        
+
         stateManager.attach(new PerformanceAppState());
     }
     // *************************************************************************
@@ -90,14 +91,13 @@ public class CubeMapExample
      */
     private void initializeCamera() {
         cam.setLocation(new Vector3f(177f, 17f, 326f));
-        Vector3f direction = new Vector3f(31f, -7f, -95f).normalize();
-        Vector3f up = Vector3f.UNIT_Y.clone();
-        cam.lookAtDirection(direction, up);
+        Vector3f direction = new Vector3f(31f, -7f, -95f);
+        MyCamera.look(cam, direction);
 
         flyCam.setDragToRotate(true);
         flyCam.setRotationSpeed(2f);
         flyCam.setMoveSpeed(20f);
-        flyCam.setUpVector(up);
+        flyCam.setUpVector(Vector3f.UNIT_Y);
         flyCam.setZoomSpeed(20f);
     }
 
