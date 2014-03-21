@@ -126,12 +126,15 @@ public class DelayControl
          */
         remainingSeconds -= updateInterval;
         if (remainingSeconds < 0f) {
+            String name = spatial.getName();
             logger.log(Level.INFO, "timed out, spatial={0}",
-                    MyString.quote(spatial.getName()));
+                    MyString.quote(name));
             for (Control slave : slaves) {
                 enableSlave(slave);
             }
             setEnabled(false);
+            boolean success = spatial.removeControl(this);
+            assert success;
         }
     }
     // *************************************************************************
