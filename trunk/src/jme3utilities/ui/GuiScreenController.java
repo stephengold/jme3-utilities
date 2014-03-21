@@ -222,6 +222,7 @@ public class GuiScreenController
         /*
          * Add items to the popup's menu.
          */
+        @SuppressWarnings("unchecked")
         Menu<String> menu = element.findNiftyControl("#menu", Menu.class);
         for (String item : itemArray) {
             menu.addMenuItem(item, item);

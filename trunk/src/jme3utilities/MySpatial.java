@@ -130,6 +130,7 @@ public class MySpatial
      * @param spatialType which superclass of Spatial to search for
      * @return the first matching child, or null if none found
      */
+    @SuppressWarnings("unchecked")
     public static <T extends Spatial> T findChild(Node node,
             Class<T> spatialType) {
         for (Spatial child : node.getChildren()) {
