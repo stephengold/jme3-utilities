@@ -215,6 +215,16 @@ public class NavNode {
     }
 
     /**
+     * Count how many arcs originate from this node.
+     *
+     * @return number of arcs (&ge;0)
+     */
+    public int getNumArcs() {
+        int result = arcs.size();
+        return result;
+    }
+
+    /**
      * Test whether the node has been visited.
      *
      * @return true if it has been visited, false if it hasn't
