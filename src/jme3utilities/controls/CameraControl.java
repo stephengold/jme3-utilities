@@ -78,7 +78,7 @@ public class CameraControl
      * null)
      * @param upDirection camera's up direction in local coordinates (not null)
      */
-    CameraControl(Camera camera, Vector3f offset, Vector3f viewDirection,
+    public CameraControl(Camera camera, Vector3f offset, Vector3f viewDirection,
             Vector3f upDirection) {
         assert camera != null;
 
