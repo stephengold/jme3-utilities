@@ -132,19 +132,27 @@ public class NavGraph {
      * graph.
      *
      * @param parentNode where in the scene to attach the geometries (not null)
+     * @param ballRadius radius of each ball (in world units, &ge;0)
      * @param ballMaterial material for geometries which represent navigation
      * nodes (not null)
+     * @param stickRadius radius of each stick (in world units, &ge;0)
      * @param stickMaterial material for geometries which represent navigation
      * arcs (not null)
      */
-    public void makeBallsAndSticks(Node parentNode, Material ballMaterial,
-            Material stickMaterial) {
+    public void makeBallsAndSticks(Node parentNode, float ballRadius,
+            float stickRadius, Material ballMaterial, Material stickMaterial) {
         Validate.nonNull(parentNode, "parent node");
+        Validate.nonNegative(ballRadius, "ball radius");
         Validate.nonNull(ballMaterial, "ball material");
+        Validate.nonNegative(stickRadius, "stick radius");
         Validate.nonNull(stickMaterial, "stick material");
 
-        makeBalls(parentNode, ballMaterial);
-        makeSticks(parentNode, stickMaterial);
+        if (ballRadius > 0f) {
+            makeBalls(parentNode, ballRadius, ballMaterial);
+        }
+        if (stickRadius > 0f) {
+            makeSticks(parentNode, stickRadius, stickMaterial);
+        }
     }
 
     /**
@@ -354,16 +362,17 @@ public class NavGraph {
      * Add balls to a ball-and-stick representation.
      *
      * @param parentNode where in the scene to attach the geometries (not null)
+     * @param radius radius of each ball (in world units, &gt;0)
      * @param material for geometries which represent navigation nodes (not
      * null)
      */
-    private void makeBalls(Node parentNode, Material material) {
+    private void makeBalls(Node parentNode, float radius, Material material) {
         assert material != null;
+        assert radius > 0f : radius;
 
         int meridianSamples = 10;
         int equatorSamples = 20;
-        float ballRadius = 0.2f;
-        Mesh ballMesh = new Sphere(meridianSamples, equatorSamples, ballRadius);
+        Mesh ballMesh = new Sphere(meridianSamples, equatorSamples, radius);
 
         for (NavNode node : nodes) {
             Vector3f location = node.getLocation();
@@ -378,17 +387,18 @@ public class NavGraph {
      * Add sticks to a ball-and-stick representation.
      *
      * @param parentNode where in the scene to attach the geometries (not null)
+     * @param radius radius of each stick (in world units, &gt;0)
      * @param material for geometries which represent navigation arcs (not null)
      */
-    private void makeSticks(Node parentNode, Material material) {
+    private void makeSticks(Node parentNode, float radius, Material material) {
         assert material != null;
+        assert radius > 0f : radius;
 
         int lengthSamples = 2;
         int circumferenceSamples = 20;
-        float stickRadius = 0.1f;
         float length = 1f;
         Cylinder stickMesh = new Cylinder(lengthSamples, circumferenceSamples,
-                stickRadius, length);
+                radius, length);
 
         for (NavArc arc : arcs) {
             NavNode fromNode = arc.getFromNode();
