@@ -41,8 +41,8 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
- * Graph for navigation. Its nodes represent reachable locations in the world.
- * Its arcs represent feasible paths between locations.
+ * Graph for navigation. Its vertices represent reachable locations in the
+ * world. Its arcs represent feasible paths between locations.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -62,27 +62,27 @@ public class NavGraph {
      */
     final protected ArrayList<NavArc> arcs = new ArrayList<>();
     /**
-     * list of nodes in this graph
+     * list of vertices in this graph
      */
-    final protected ArrayList<NavNode> nodes = new ArrayList<>();
+    final protected ArrayList<NavVertex> vertices = new ArrayList<>();
     // *************************************************************************
     // new methods exposed
 
     /**
      * Create a new arc and add it to this graph.
      *
-     * @param startNode start node (a member, distinct from endNode)
-     * @param endNode end node (a member)
+     * @param startVertex starting point (a member, distinct from endVertex)
+     * @param endVertex endpoint (a member)
      * @param pathLength length or cost (arbitrary units, &gt;0)
      * @param startDirection direction at the start (unit vector in world space,
      * unaffected)
      * @return the new instance (a member)
      */
-    NavArc addArc(NavNode startNode, NavNode endNode, float pathLength,
+    NavArc addArc(NavVertex startVertex, NavVertex endVertex, float pathLength,
             Vector3f startDirection) {
-        assert nodes.contains(startNode) : endNode;
-        assert nodes.contains(endNode) : endNode;
-        if (startNode == endNode) {
+        assert vertices.contains(startVertex) : endVertex;
+        assert vertices.contains(endVertex) : endVertex;
+        if (startVertex == endVertex) {
             throw new IllegalArgumentException("endpoints should be distinct");
         }
         Validate.positive(pathLength, "length");
@@ -92,7 +92,8 @@ public class NavGraph {
                     "direction should be a unit vector");
         }
 
-        NavArc newArc = startNode.addArc(endNode, pathLength, startDirection);
+        NavArc newArc = startVertex.addArc(endVertex, pathLength,
+                startDirection);
         boolean success = arcs.add(newArc);
         assert success : newArc;
 
@@ -100,27 +101,27 @@ public class NavGraph {
     }
 
     /**
-     * Find the node furthest from the specified starting point.
+     * Find the vertex furthest from the specified starting point.
      *
-     * @param startNode starting point (a member)
+     * @param startVertex starting point (a member)
      * @return a pre-existing instance (a member)
      */
-    public NavNode findFurthest(NavNode startNode) {
-        validateMember(startNode);
+    public NavVertex findFurthest(NavVertex startVertex) {
+        validateMember(startVertex);
 
         setAllVisited(false);
-        calculateDistances(startNode, 0f);
+        calculateDistances(startVertex, 0f);
         /*
          * Search for the maximum distance.
          */
-        NavNode result = startNode;
+        NavVertex result = startVertex;
         float maxDistance = 0f;
-        for (NavNode node : nodes) {
-            assert node.isVisited();
-            float distance = node.getFloatValue();
+        for (NavVertex vertex : vertices) {
+            assert vertex.isVisited();
+            float distance = vertex.getFloatValue();
             if (distance > maxDistance) {
                 maxDistance = distance;
-                result = node;
+                result = vertex;
             }
         }
 
@@ -134,7 +135,7 @@ public class NavGraph {
      * @param parentNode where in the scene to attach the geometries (not null)
      * @param ballRadius radius of each ball (in world units, &ge;0)
      * @param ballMaterial material for geometries which represent navigation
-     * nodes (not null)
+     * vertices (not null)
      * @param stickRadius radius of each stick (in world units, &ge;0)
      * @param stickMaterial material for geometries which represent navigation
      * arcs (not null)
@@ -177,22 +178,22 @@ public class NavGraph {
     }
 
     /**
-     * Select a random node from this graph.
+     * Select a random vertex from this graph.
      *
      * @param generator for uniform random values (not null)
      * @return a pre-existing instance (a member)
      */
-    public NavNode randomNode(Random generator) {
+    public NavVertex randomVertex(Random generator) {
         Validate.nonNull(generator, "generator");
 
-        int count = nodes.size();
+        int count = vertices.size();
         assert count >= 0 : count;
         if (count == 0) {
             return null;
         }
         int index = generator.nextInt();
         index = MyMath.modulo(index, count);
-        NavNode result = nodes.get(index);
+        NavVertex result = vertices.get(index);
 
         return result;
     }
@@ -203,9 +204,9 @@ public class NavGraph {
      * @param arc to be removed (not null)
      */
     public void remove(NavArc arc) {
-        NavNode fromNode = arc.getFromNode();
-        NavNode toNode = arc.getToNode();
-        fromNode.removeArcTo(toNode);
+        NavVertex fromVertex = arc.getFromVertex();
+        NavVertex toVertex = arc.getToVertex();
+        fromVertex.removeArcTo(toVertex);
         boolean success = arcs.remove(arc);
         assert success;
     }
@@ -223,35 +224,36 @@ public class NavGraph {
     }
 
     /**
-     * Verify that a node belongs to this graph.
+     * Verify that a vertex belongs to this graph.
      *
-     * @param node to be validated
+     * @param vertex to be validated
      */
-    public void validateMember(NavNode node) {
-        if (!nodes.contains(node)) {
-            logger.log(Level.SEVERE, "node={0}", node);
-            throw new IllegalArgumentException("graph should contain the node");
+    public void validateMember(NavVertex vertex) {
+        if (!vertices.contains(vertex)) {
+            logger.log(Level.SEVERE, "vertex={0}", vertex);
+            throw new IllegalArgumentException(
+                    "graph should contain the vertex");
         }
     }
     // *************************************************************************
     // new protected methods
 
     /**
-     * Create a node without any arcs and add it to this graph.
+     * Create a vertex without any arcs and add it to this graph.
      *
      * @param description (not null)
      * @param position (not null, unaffected)
      * @return the new instance
      */
-    protected NavNode addNode(String description, Vector3f position) {
+    protected NavVertex addVertex(String description, Vector3f position) {
         Validate.nonNull(description, "description");
         Validate.nonNull(position, "position");
 
-        NavNode newNode = new NavNode(description, position);
-        boolean success = nodes.add(newNode);
+        NavVertex newVertex = new NavVertex(description, position);
+        boolean success = vertices.add(newVertex);
         assert success;
 
-        return newNode;
+        return newVertex;
     }
 
     /**
@@ -265,9 +267,9 @@ public class NavGraph {
         validateMember(arc);
 
         setAllVisited(false);
-        NavNode fromNode = arc.getFromNode();
-        NavNode toNode = arc.getToNode();
-        boolean result = existsPathWithout(arc, fromNode, toNode);
+        NavVertex fromVertex = arc.getFromVertex();
+        NavVertex toVertex = arc.getToVertex();
+        boolean result = existsPathWithout(arc, fromVertex, toVertex);
 
         return result;
     }
@@ -280,9 +282,9 @@ public class NavGraph {
     protected void removePair(NavArc arc) {
         validateMember(arc);
 
-        NavNode fromNode = arc.getFromNode();
-        NavNode toNode = arc.getToNode();
-        NavArc reverseArc = toNode.findArcTo(fromNode);
+        NavVertex fromVertex = arc.getFromVertex();
+        NavVertex toVertex = arc.getToVertex();
+        NavArc reverseArc = toVertex.findArcTo(fromVertex);
 
         remove(arc);
         if (reverseArc != null) {
@@ -293,64 +295,66 @@ public class NavGraph {
     // private methods
 
     /**
-     * Measure the minimum distance to each node in the graph. Note: recursive!
+     * Measure the minimum distance to each vertex in the graph. Note:
+     * recursive!
      *
-     * @param startNode starting point for measurement (a member)
+     * @param startVertex starting point for measurement (a member)
      * @param startDistance distance to the starting point (&ge;0)
      */
-    private void calculateDistances(NavNode startNode, float startDistance) {
-        assert nodes.contains(startNode);
+    private void calculateDistances(NavVertex startVertex,
+            float startDistance) {
+        assert vertices.contains(startVertex);
         assert startDistance >= 0f : startDistance;
 
-        if (startNode.isVisited()
-                && startDistance > startNode.getFloatValue()) {
+        if (startVertex.isVisited()
+                && startDistance > startVertex.getFloatValue()) {
             return;
         }
         /*
-         * Update the node's distance.
+         * Update the distance of the starting point.
          */
-        startNode.setFloatValue(startDistance);
-        startNode.setVisited(true);
+        startVertex.setFloatValue(startDistance);
+        startVertex.setVisited(true);
         /*
-         * Follow each arc from the node.
+         * Follow each arc from the starting point.
          */
-        for (NavArc arc : startNode.getArcs()) {
-            NavNode node = arc.getToNode();
-            float nodeDistance = startDistance + arc.getPathLength();
-            calculateDistances(node, nodeDistance);
+        for (NavArc arc : startVertex.getArcs()) {
+            NavVertex vertex = arc.getToVertex();
+            float vertexDistance = startDistance + arc.getPathLength();
+            calculateDistances(vertex, vertexDistance);
         }
     }
 
     /**
-     * Test whether there's a path between two specified nodes which avoids a
+     * Test whether there's a path between two specified vertices which avoids a
      * specified arc. Note: recursive!
      *
      * @param avoidArc which arc to avoid (a member)
-     * @param fromNode starting point (a member)
-     * @param toNode endpoint (a member)
+     * @param fromVertex starting point (a member)
+     * @param toVertex endpoint (a member)
      * @return true if such a path exists, false if no such path exists
      */
-    private boolean existsPathWithout(NavArc avoidArc, NavNode fromNode,
-            NavNode toNode) {
+    private boolean existsPathWithout(NavArc avoidArc, NavVertex fromVertex,
+            NavVertex toVertex) {
         assert arcs.contains(avoidArc) : avoidArc;
-        assert nodes.contains(fromNode) : fromNode;
-        assert nodes.contains(toNode) : toNode;
+        assert vertices.contains(fromVertex) : fromVertex;
+        assert vertices.contains(toVertex) : toVertex;
 
-        if (fromNode == toNode) {
+        if (fromVertex == toVertex) {
             return true;
         }
-        if (fromNode.isVisited()) {
+        if (fromVertex.isVisited()) {
             return false;
         }
 
-        fromNode.setVisited(true);
+        fromVertex.setVisited(true);
 
-        for (NavArc arc : fromNode.getArcs()) {
+        for (NavArc arc : fromVertex.getArcs()) {
             if (arc == avoidArc) {
                 continue;
             }
-            NavNode node = arc.getToNode();
-            boolean pathExists = existsPathWithout(avoidArc, node, toNode);
+            NavVertex vertex = arc.getToVertex();
+            boolean pathExists = existsPathWithout(avoidArc, vertex, toVertex);
             if (pathExists) {
                 return true;
             }
@@ -363,7 +367,7 @@ public class NavGraph {
      *
      * @param parentNode where in the scene to attach the geometries (not null)
      * @param radius radius of each ball (in world units, &gt;0)
-     * @param material for geometries which represent navigation nodes (not
+     * @param material for geometries which represent navigation vertices (not
      * null)
      */
     private void makeBalls(Node parentNode, float radius, Material material) {
@@ -374,9 +378,9 @@ public class NavGraph {
         int equatorSamples = 20;
         Mesh ballMesh = new Sphere(meridianSamples, equatorSamples, radius);
 
-        for (NavNode node : nodes) {
-            Vector3f location = node.getLocation();
-            Geometry ball = new Geometry("navigation node", ballMesh);
+        for (NavVertex vertex : vertices) {
+            Vector3f location = vertex.getLocation();
+            Geometry ball = new Geometry("navigation vertex", ballMesh);
             ball.setLocalTranslation(location);
             ball.setMaterial(material);
             parentNode.attachChild(ball);
@@ -401,10 +405,10 @@ public class NavGraph {
                 radius, length);
 
         for (NavArc arc : arcs) {
-            NavNode fromNode = arc.getFromNode();
-            Vector3f from = fromNode.getLocation();
-            NavNode toNode = arc.getToNode();
-            Vector3f to = toNode.getLocation();
+            NavVertex fromVertex = arc.getFromVertex();
+            Vector3f from = fromVertex.getLocation();
+            NavVertex toVertex = arc.getToVertex();
+            Vector3f to = toVertex.getLocation();
             Vector3f midpoint = from.add(to);
             midpoint.divideLocal(2f);
 
@@ -424,13 +428,13 @@ public class NavGraph {
     }
 
     /**
-     * Alter the visited status of all nodes in this graph.
+     * Alter the visited status of all vertices in this graph.
      *
      * @param newState true &rarr; visited, false &rarr; not visited
      */
     private void setAllVisited(boolean newState) {
-        for (NavNode node : nodes) {
-            node.setVisited(newState);
+        for (NavVertex vertex : vertices) {
+            vertex.setVisited(newState);
         }
     }
 }
