@@ -29,8 +29,8 @@ import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 
 /**
- * An arc of a navigation graph: represents a feasible path from one node to
- * another node. Arcs are unidirectional and need not be straight.
+ * An arc of a navigation graph: represents a feasible path from one vertex to
+ * another vertex. Arcs are unidirectional and need not be straight.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -50,13 +50,13 @@ public class NavArc {
      */
     private float pathLength;
     /**
-     * node from which this arc originates (not null)
+     * vertex from which this arc originates (not null)
      */
-    private NavNode fromNode;
+    private NavVertex fromVertex;
     /**
-     * node at which this arc terminates (not null)
+     * vertex at which this arc terminates (not null)
      */
-    private NavNode toNode;
+    private NavVertex toVertex;
     /**
      * direction at the start of this arc (unit vector in world space)
      */
@@ -65,25 +65,25 @@ public class NavArc {
     // constructors
 
     /**
-     * Instantiate an arc from one navigation node to another.
+     * Instantiate an arc from one vertex to another.
      *
-     * @param fromNode start node (not null, distinct from toNode)
-     * @param toNode end node (not null)
+     * @param fromVertex starting point (not null, distinct from toVertex)
+     * @param toVertex endpoint (not null)
      * @param pathLength length or cost (arbitrary units, &gt;0)
      * @param startDirection direction at the start (unit vector in world space,
      * unaffected)
      */
-    NavArc(NavNode fromNode, NavNode toNode, float pathLength,
+    NavArc(NavVertex fromVertex, NavVertex toVertex, float pathLength,
             Vector3f startDirection) {
-        assert fromNode != null;
-        assert toNode != null;
-        assert fromNode != toNode : toNode;
+        assert fromVertex != null;
+        assert toVertex != null;
+        assert fromVertex != toVertex : toVertex;
         assert pathLength > 0f : pathLength;
         assert startDirection != null;
         assert startDirection.isUnitVector() : startDirection;
 
-        this.fromNode = fromNode;
-        this.toNode = toNode;
+        this.fromVertex = fromVertex;
+        this.toVertex = toVertex;
         this.pathLength = pathLength;
         this.startDirection = startDirection.clone();
     }
@@ -91,12 +91,12 @@ public class NavArc {
     // new methods exposed
 
     /**
-     * Access the start node of this arc.
+     * Access the starting vertex of this arc.
      *
      * @return the pre-existing instance
      */
-    public NavNode getFromNode() {
-        return fromNode;
+    public NavVertex getFromVertex() {
+        return fromVertex;
     }
 
     /**
@@ -118,12 +118,12 @@ public class NavArc {
     }
 
     /**
-     * Access the end node of this arc.
+     * Access the endpoint of this arc.
      *
      * @return the pre-existing instance
      */
-    public NavNode getToNode() {
-        return toNode;
+    public NavVertex getToVertex() {
+        return toVertex;
     }
     // *************************************************************************
     // Object methods
@@ -135,8 +135,8 @@ public class NavArc {
      */
     @Override
     public String toString() {
-        String fromString = fromNode.toString();
-        String toString = toNode.toString();
+        String fromString = fromVertex.toString();
+        String toString = toVertex.toString();
         String dirString = startDirection.toString();
         String result = String.format("%s to %s len=%f dir=%s",
                 fromString, toString, pathLength, dirString);

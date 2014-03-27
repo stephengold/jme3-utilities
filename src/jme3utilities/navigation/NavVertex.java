@@ -33,11 +33,11 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
- * Navigation node: represents a reachable location in the world.
+ * Navigation vertex: represents a reachable location in the world.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-public class NavNode {
+public class NavVertex {
     // *************************************************************************
     // constants
 
@@ -45,40 +45,40 @@ public class NavNode {
      * message logger for this class
      */
     final private static Logger logger =
-            Logger.getLogger(NavNode.class.getName());
+            Logger.getLogger(NavVertex.class.getName());
     // *************************************************************************
     // fields
     /**
-     * list of arcs which originate from this node
+     * list of arcs which originate from this vertex
      */
     private ArrayList<NavArc> arcs = new ArrayList<>();
     /**
-     * temporary flag to track whether this node has been visited during the
+     * temporary flag to track whether this vertex has been visited during the
      * current pass
      */
     private boolean visited = false;
     /**
-     * temporary floating-point value for this node
+     * temporary floating-point value for this vertex
      */
     private float floatValue = 0f;
     /**
-     * textual description of this node (not null)
+     * textual description of this vertex (not null)
      */
     private String description;
     /**
-     * world coordinates of this node (not null)
+     * world coordinates of this vertex (not null)
      */
     private Vector3f location;
     // *************************************************************************
     // constructors
 
     /**
-     * Instantiate a node without any arcs, at the specified location.
+     * Instantiate a vertex without any arcs, at the specified location.
      *
      * @param description textual description (not null)
      * @param location world coordinates (not null)
      */
-    NavNode(String description, Vector3f location) {
+    NavVertex(String description, Vector3f location) {
         assert description != null;
 
         this.location = location.clone();
@@ -88,16 +88,16 @@ public class NavNode {
     // new methods exposed
 
     /**
-     * Create an arc and add it to this node. Arcs should ideally be added in
+     * Create an arc and add it to this vertex. Arcs should ideally be added in
      * left-to-right order (clockwise as seen from above).
      *
-     * @param endpoint destination node (not null, not this)
+     * @param endpoint destination vertex (not null, not this)
      * @param pathLength length or cost (arbitrary units, &gt;0)
      * @param startDirection direction at the start (unit vector in world space,
      * unaffected)
      * @return the new instance
      */
-    public NavArc addArc(NavNode endpoint, float pathLength,
+    public NavArc addArc(NavVertex endpoint, float pathLength,
             Vector3f startDirection) {
         Validate.nonNull(endpoint, "endpoint");
         if (endpoint == this) {
@@ -122,14 +122,14 @@ public class NavNode {
      * @param endpoint (not null, not this)
      * @return a pre-existing instance
      */
-    public NavArc findArcTo(NavNode endpoint) {
+    public NavArc findArcTo(NavVertex endpoint) {
         Validate.nonNull(endpoint, "endpoint");
         if (endpoint == this) {
             throw new IllegalArgumentException("endpoint should be distinct");
         }
 
         for (NavArc arc : arcs) {
-            if (arc.getToNode() == endpoint) {
+            if (arc.getToVertex() == endpoint) {
                 return arc;
             }
         }
@@ -169,7 +169,7 @@ public class NavNode {
      * Find the arc at a specified list offset relative to the specified base
      * arc.
      *
-     * @param baseArc (not null, from this node)
+     * @param baseArc (not null, from this vertex)
      * @param listOffset
      * @return the pre-existing instance
      */
@@ -186,7 +186,7 @@ public class NavNode {
     }
 
     /**
-     * Copy the list of arcs which originate from this node.
+     * Copy the list of arcs which originate from this vertex.
      *
      * @return new array of existing instances
      */
@@ -199,14 +199,14 @@ public class NavNode {
     }
 
     /**
-     * Read the floating-point value associated with this node.
+     * Read the floating-point value associated with this vertex.
      */
     float getFloatValue() {
         return floatValue;
     }
 
     /**
-     * Copy the world coordinates of the node.
+     * Copy the world coordinates of the vertex.
      *
      * @return a new instance
      */
@@ -215,7 +215,7 @@ public class NavNode {
     }
 
     /**
-     * Count how many arcs originate from this node.
+     * Count how many arcs originate from this vertex.
      *
      * @return number of arcs (&ge;0)
      */
@@ -225,7 +225,7 @@ public class NavNode {
     }
 
     /**
-     * Test whether the node has been visited.
+     * Test whether this vertex has been visited.
      *
      * @return true if it has been visited, false if it hasn't
      */
@@ -239,12 +239,12 @@ public class NavNode {
      * @param endpoint (not null, not this)
      * @return true if successful, false if none found
      */
-    boolean removeArcTo(NavNode endpoint) {
+    boolean removeArcTo(NavVertex endpoint) {
         assert endpoint != null;
         assert endpoint != this : endpoint;
 
         for (NavArc arc : arcs) {
-            if (arc.getToNode() == endpoint) {
+            if (arc.getToVertex() == endpoint) {
                 arcs.remove(arc);
                 return true;
             }
@@ -253,7 +253,7 @@ public class NavNode {
     }
 
     /**
-     * Alter the floating-point value associated with this node.
+     * Alter the floating-point value associated with this vertex.
      */
     void setFloatValue(float newValue) {
         floatValue = newValue;
@@ -269,7 +269,7 @@ public class NavNode {
     // Object methods
 
     /**
-     * Format this arc as a text string.
+     * Format this vertex as a text string.
      *
      * @return description (not null)
      */
