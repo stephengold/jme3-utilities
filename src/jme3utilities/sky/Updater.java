@@ -41,8 +41,8 @@ import jme3utilities.ViewPortListener;
 
 /**
  * The component of SkyControl which keeps track of all the lights, shadows, and
- * viewports which the control updates. It also keeps track of the values
- * applied during the most recent update.
+ * viewports updated by the control. It also keeps track of the values applied
+ * during the most recent update.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -102,9 +102,17 @@ public class Updater
      */
     private DirectionalLight mainLight = null;
     /**
+     * multiplier when applying the ambient light color (1&rarr;default)
+     */
+    private float ambientMultiplier = 1f;
+    /**
      * most recent bloom intensity
      */
     private float bloomIntensity = 0f;
+    /**
+     * multiplier when applying the main light color (1&rarr;default)
+     */
+    private float mainMultiplier = 1f;
     /**
      * most recent shadow intensity
      */
@@ -278,6 +286,16 @@ public class Updater
     }
 
     /**
+     * Alter the multiplier for the ambient light intensity.
+     *
+     * @param factor (&ge;0, 1&rarr;default)
+     */
+    public void setAmbientMultiplier(float factor) {
+        Validate.nonNegative(factor, "factor");
+        ambientMultiplier = factor;
+    }
+
+    /**
      * Enable or disable all known bloom filters.
      *
      * @param newState true to enable, false to disable
@@ -297,6 +315,16 @@ public class Updater
      */
     public void setMainLight(DirectionalLight mainLight) {
         this.mainLight = mainLight;
+    }
+
+    /**
+     * Alter the multiplier for the main light intensity.
+     *
+     * @param factor (&ge;0, 1&rarr;default)
+     */
+    public void setMainMultiplier(float factor) {
+        Validate.nonNegative(factor, "factor");
+        mainMultiplier = factor;
     }
 
     /**
@@ -363,7 +391,8 @@ public class Updater
         }
 
         if (mainLight != null) {
-            mainLight.setColor(mainColor);
+            ColorRGBA color = ambientColor.mult(mainMultiplier);
+            mainLight.setColor(color);
             /*
              * The direction of the main light is the direction in which it
              * propagates, which is the opposite of the direction to the
@@ -373,7 +402,8 @@ public class Updater
             mainLight.setDirection(propagationDirection);
         }
         if (ambientLight != null) {
-            ambientLight.setColor(ambientColor);
+            ColorRGBA color = ambientColor.mult(ambientMultiplier);
+            ambientLight.setColor(color);
         }
         for (BloomFilter filter : bloomFilters) {
             filter.setBloomIntensity(bloomIntensity);
@@ -401,7 +431,6 @@ public class Updater
     @Override
     public void addViewPort(ViewPort viewPort) {
         Validate.nonNull(viewPort, "view port");
-
         viewPorts.add(viewPort);
     }
 

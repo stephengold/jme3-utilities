@@ -143,6 +143,26 @@
                         </panel>
 
                         <panel style="statusPanel">
+                            <control name="label" id="mainSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider" id="mainSlider"
+                                 buttonStepSize="0.2"
+                                 initial="1"
+                                 max="4"
+                                 min="0"
+                                 stepSize="0.05"/>
+
+                        <panel style="statusPanel">
+                            <control name="label" id="ambientSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider" id="ambientSlider"
+                                 buttonStepSize="0.2"
+                                 initial="1"
+                                 max="4"
+                                 min="0"
+                                 stepSize="0.05"/>
+
+                        <panel style="statusPanel">
                             <control name="label" id="latitudeSliderStatus"/>
                         </panel>
                         <control name="horizontalSlider" id="latitudeSlider"

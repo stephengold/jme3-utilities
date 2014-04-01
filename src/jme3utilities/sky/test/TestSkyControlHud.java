@@ -74,6 +74,10 @@ public class TestSkyControlHud
      */
     private boolean cloudModulation = true;
     /**
+     * multiplier for ambient light (&ge;0)
+     */
+    private float ambientMultiplier = 1f;
+    /**
      * maximum opacity for clouds (&le;1, &ge;0)
      */
     private float cloudiness = 0f;
@@ -94,6 +98,10 @@ public class TestSkyControlHud
      * angular diameter of the moon (radians, &lt;Pi, &gt;0)
      */
     private float lunarDiameter = 0.031f;
+    /**
+     * multiplier for main light (&ge;0)
+     */
+    private float mainMultiplier = 1f;
     /**
      * vertical relief for terrain (Y-coordinate of peak)
      */
@@ -158,6 +166,13 @@ public class TestSkyControlHud
                 getScreen().findNiftyControl("ambientCheckBox", CheckBox.class);
         boolean result = box.isChecked();
         return result;
+    }
+
+    /**
+     * Read the ambient light multiplier.
+     */
+    float getAmbientMultiplier() {
+        return ambientMultiplier;
     }
 
     /**
@@ -291,6 +306,13 @@ public class TestSkyControlHud
                 "mainLightCheckBox", CheckBox.class);
         boolean result = box.isChecked();
         return result;
+    }
+
+    /**
+     * Read the main light multiplier.
+     */
+    float getMainMultiplier() {
+        return mainMultiplier;
     }
 
     /**
@@ -454,6 +476,9 @@ public class TestSkyControlHud
         CheckBox checkBox = getScreen().findNiftyControl("modulationCheckBox",
                 CheckBox.class);
         cloudModulation = checkBox.isChecked();
+
+        mainMultiplier = updateSlider("main", "x");
+        ambientMultiplier = updateSlider("ambient", "x");
 
         cloudRate = updateSlider("cloudRate", "x");
         cloudYOffset = updateSlider("cloudYOffset", "");
