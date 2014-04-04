@@ -76,7 +76,7 @@ public class LoopMesh
     }
 
     /**
-     * Instantiate a loop with a specific number of vertices.
+     * Instantiate a loop with a specified number of vertices.
      *
      * @param vertexCount (&ge;3)
      */

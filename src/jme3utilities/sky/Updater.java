@@ -102,7 +102,7 @@ public class Updater
      */
     private DirectionalLight mainLight = null;
     /**
-     * multiplier when applying the ambient light color (1&rarr;default)
+     * multiplier when applying the ambient light color (1 &rarr; default)
      */
     private float ambientMultiplier = 1f;
     /**
@@ -110,7 +110,7 @@ public class Updater
      */
     private float bloomIntensity = 0f;
     /**
-     * multiplier when applying the main light color (1&rarr;default)
+     * multiplier when applying the main light color (1 &rarr; default)
      */
     private float mainMultiplier = 1f;
     /**
@@ -288,7 +288,7 @@ public class Updater
     /**
      * Alter the multiplier for the ambient light intensity.
      *
-     * @param factor (&ge;0, 1&rarr;default)
+     * @param factor (&ge;0, 1 &rarr; default)
      */
     public void setAmbientMultiplier(float factor) {
         Validate.nonNegative(factor, "factor");
@@ -320,7 +320,7 @@ public class Updater
     /**
      * Alter the multiplier for the main light intensity.
      *
-     * @param factor (&ge;0, 1&rarr;default)
+     * @param factor (&ge;0, 1 &rarr; default)
      */
     public void setMainMultiplier(float factor) {
         Validate.nonNegative(factor, "factor");

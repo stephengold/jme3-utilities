@@ -108,7 +108,7 @@ public class AxesControl
     // private methods
 
     /**
-     * Create an arrow geometry for a specific axis.
+     * Create an arrow geometry for the specified axis.
      *
      * @param assetManager (not null)
      * @param color for the wireframe (not null)

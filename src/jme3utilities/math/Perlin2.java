@@ -147,7 +147,7 @@ public class Perlin2
     // private methods
 
     /**
-     * Generate the array of 2-D gradients for a specified seed.
+     * Generate an array of pseudo-random 2-D gradients for a specified seed.
      *
      * @param numGradients (&gt;1)
      * @param gSeed seed for generating gradients
@@ -171,7 +171,7 @@ public class Perlin2
     }
 
     /**
-     * Compute the contribution of a specific grid point to a sample.
+     * Compute the contribution of a specified grid point to a noise sample.
      *
      * @param gridX 1st coordinate of the grid point
      * @param gridY 2nd coordinate of the grid point

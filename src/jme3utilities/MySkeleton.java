@@ -66,7 +66,7 @@ public class MySkeleton
     // new methods exposed
 
     /**
-     * Compute a specific angle of a named bone in a skeletonized spatial.
+     * Compute one rotation angle of a named bone in a skeletonized spatial.
      *
      * @param model animated spatial which contains the bone (not null)
      * @param boneName name of the bone to measure (not null)
