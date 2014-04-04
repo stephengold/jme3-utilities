@@ -117,7 +117,7 @@ final public class MyAsset {
     public static Material createShinyMaterial(AssetManager assetManager,
             ColorRGBA color) {
         Validate.nonNull(assetManager, "asset manager");
-        Validate.nonNull(color, "texture");
+        Validate.nonNull(color, "color");
 
         Material material = new Material(assetManager, shadedMaterialAssetPath);
         material.setBoolean("UseMaterialColors", true);
