@@ -30,9 +30,10 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import java.util.logging.Logger;
 import jme3utilities.SimpleControl;
+import jme3utilities.Validate;
 
 /**
- * A simple control which manages a camera attached to a spatial.
+ * A simple control which manages a camera connected with a spatial.
  * <p>
  * Each instance is enabled at creation.
  *
@@ -55,36 +56,36 @@ public class CameraControl
      */
     final private Camera camera;
     /**
-     * camera's offset in local coordinates: set by constructor
+     * the camera's offset in local coordinates: set by constructor
      */
     final private Vector3f offset;
     /**
-     * camera's up direction in local coordinates: set by constructor
+     * the camera's up direction in local coordinates: set by constructor
      */
     final private Vector3f upDirection;
     /**
      * camera's view direction in local coordinates: set by constructor
      */
-    final private Vector3f viewDirection;
+    final private Vector3f lookDirection;
     // *************************************************************************
     // constructors
 
     /**
-     * Instantiate an enabled control for the specified camera.
+     * Instantiate an enabled control to manage the specified camera.
      *
      * @param camera to manage (not null)
      * @param offset camera's offset in local coordinates (not null)
-     * @param viewDirection camera's view direction in local coordinates (not
+     * @param lookDirection camera's view direction in local coordinates (not
      * null)
      * @param upDirection camera's up direction in local coordinates (not null)
      */
-    public CameraControl(Camera camera, Vector3f offset, Vector3f viewDirection,
+    public CameraControl(Camera camera, Vector3f offset, Vector3f lookDirection,
             Vector3f upDirection) {
-        assert camera != null;
+        Validate.nonNull(camera, "camera");
 
         this.camera = camera;
         this.offset = offset.clone();
-        this.viewDirection = viewDirection.clone();
+        this.lookDirection = lookDirection.clone();
         this.upDirection = upDirection.clone();
 
         assert isEnabled();
@@ -93,9 +94,9 @@ public class CameraControl
     // SimpleControl methods
 
     /**
-     * Update the camera's location and orientation. Invoked when the camera
-     * node's geometric state is about to be updated, once per frame while this
-     * control attached and enabled.
+     * Update the camera's location and orientation. Invoked when the spatial's
+     * geometric state is about to be updated, once per frame while this control
+     * attached and enabled.
      *
      * @param updateInterval time interval between updates (in seconds, &ge;0)
      */
@@ -114,7 +115,7 @@ public class CameraControl
          * Update the camera orientation.
          */
         Quaternion rotation = spatial.getWorldRotation();
-        Vector3f worldViewDirection = rotation.mult(viewDirection);
+        Vector3f worldViewDirection = rotation.mult(lookDirection);
         Vector3f worldUpDirection = rotation.mult(upDirection);
         camera.lookAtDirection(worldViewDirection, worldUpDirection);
     }
