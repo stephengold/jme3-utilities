@@ -176,7 +176,7 @@ public class Misc {
     }
 
     /**
-     * Set a specific grayscale pixel to a specific brightness.
+     * Set a specified grayscale pixel to a specified brightness.
      *
      * @param graphics rendering context of the pixel (not null)
      * @param x coordinate of the pixel (&lt;width, &ge;0)
