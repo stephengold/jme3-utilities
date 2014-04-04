@@ -91,7 +91,7 @@ final public class MyAsset {
     }
 
     /**
-     * Create a shaded material for a specific diffuse texture.
+     * Create a shaded material for a specified diffuse texture.
      *
      * @param assetManager (not null)
      * @param texture (not null)
@@ -104,6 +104,28 @@ final public class MyAsset {
 
         Material material = new Material(assetManager, shadedMaterialAssetPath);
         material.setTexture("DiffuseMap", texture);
+        return material;
+    }
+
+    /**
+     * Create a shiny lit material with a specified uniform color.
+     *
+     * @param assetManager (not null)
+     * @param color (not null)
+     * @return a new instance
+     */
+    public static Material createShinyMaterial(AssetManager assetManager,
+            ColorRGBA color) {
+        Validate.nonNull(assetManager, "asset manager");
+        Validate.nonNull(color, "texture");
+
+        Material material = new Material(assetManager, shadedMaterialAssetPath);
+        material.setBoolean("UseMaterialColors", true);
+        material.setColor("Ambient", color);
+        material.setColor("Diffuse", color);
+        material.setColor("Specular", ColorRGBA.White);
+        material.setFloat("Shininess", 1f);
+
         return material;
     }
 
@@ -186,7 +208,7 @@ final public class MyAsset {
     }
 
     /**
-     * Create an unshaded material for a specific colormap texture.
+     * Create an unshaded material for a specified colormap texture.
      *
      * @param assetManager (not null)
      * @param texture (not null)
@@ -222,7 +244,7 @@ final public class MyAsset {
     }
 
     /**
-     * Load the texture asset for a specific face of a cubical star map.
+     * Load the texture asset for a specified face of a cubical star map.
      *
      * @param assetManager (not null)
      * @param mapName name of the star map folder (not null)
