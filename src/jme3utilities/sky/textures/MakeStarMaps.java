@@ -666,41 +666,62 @@ public class MakeStarMaps {
     }
 
     /**
-     * Read the star catalog and add valid stars to the collection.
+     * Read the star catalog and add each valid star to the collection.
      */
     private void readCatalog() {
-        /*
-         * Open the catalog file.
-         */
         File catalogFile = new File(catalogFilePath);
-        BufferedReader bufferedReader;
+        FileReader fileReader = null;
+        BufferedReader bufferedReader = null;
         try {
-            FileReader fileReader = new FileReader(catalogFile);
+            fileReader = new FileReader(catalogFile);
             bufferedReader = new BufferedReader(fileReader);
+            readCatalog(bufferedReader);
         } catch (FileNotFoundException exception) {
-            logger.log(Level.SEVERE, "open of {0} failed",
+            logger.log(Level.SEVERE, "unable to open {0}",
                     MyString.quote(catalogFilePath));
-            return;
+        } catch (IOException exception) {
+            logger.log(Level.SEVERE, "unable to read {0}",
+                    MyString.quote(catalogFilePath));
+        } catch (InvalidEntryException exception) {
+            logger.log(Level.SEVERE, "", exception);
+        } finally {
+            try {
+                if (fileReader != null) {
+                    fileReader.close();
+                }
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
+            } catch (IOException exception) {
+                logger.log(Level.WARNING, "unable to close {0}",
+                        MyString.quote(catalogFilePath));
+            }
         }
-        /*
-         * Read the catalog line by line and use the data therein
-         * to build up the collection of stars.
-         */
+    }
+
+    /**
+     * Read the catalog line by line and use the data therein to build up the
+     * collection of stars.
+     */
+    private void readCatalog(BufferedReader bufferedReader)
+            throws IOException, InvalidEntryException {
+        assert bufferedReader != null;
+
         int duplicateEntries = 0;
         int nextEntry = 1;
         int missedEntries = 0;
         int readEntries = 0;
         int skippedEntries = 0;
         for (;;) {
-            String textLine = null;
-            try {
-                textLine = bufferedReader.readLine();
-            } catch (IOException exception) {
-                logger.log(Level.SEVERE, "read of {0} failed", catalogFilePath);
-            }
+            String textLine;
+            textLine = bufferedReader.readLine();
             if (textLine == null) {
+                /*
+                 * Might have reached the end of the catalog file.
+                 */
                 break;
             }
+            logger.log(Level.FINE, "{0}", textLine);
             /*
              * If the line does not resemble a catalog entry,
              * then silently ignore it.
@@ -736,9 +757,6 @@ public class MakeStarMaps {
             try {
                 star = readStar(textLine, nextEntry);
 
-            } catch (InvalidEntryException exception) {
-                return;
-
             } catch (InvalidMagnitudeException exception) {
                 logger.log(Level.FINE,
                         "skipped entry #{0} due to invalid magnitude",
@@ -756,11 +774,6 @@ public class MakeStarMaps {
                 }
             }
             nextEntry++;
-        }
-        try {
-            bufferedReader.close();
-        } catch (IOException exception) {
-            logger.log(Level.WARNING, "close of {0} failed", catalogFilePath);
         }
         /*
          * Verify that the entire catalog was read.
@@ -780,7 +793,8 @@ public class MakeStarMaps {
         logger.log(Level.INFO, "read {0} catalog entries from {1}",
                 new Object[]{readEntries, catalogFilePath});
         if (duplicateEntries > 0) {
-            logger.log(Level.WARNING, "{0} duplicate entries", duplicateEntries);
+            logger.log(Level.WARNING, "{0} duplicate entries",
+                    duplicateEntries);
         }
         if (skippedEntries > 0) {
             logger.log(Level.WARNING, "{0} entries skipped", skippedEntries);
@@ -824,7 +838,10 @@ public class MakeStarMaps {
         }
         if (apparentMagnitude < minMagnitude
                 || apparentMagnitude > maxMagnitude) {
-            throw new InvalidEntryException("magnitude is out of range");
+            logger.log(Level.WARNING,
+                    "entry #{0} has invalid magnitude {1}",
+                    new Object[]{entryId, MyString.quote(magnitudeText)});
+            throw new InvalidMagnitudeException();
         }
         /*
          * Get the star's equatorial coordinates and convert them to radians.
