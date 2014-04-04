@@ -407,7 +407,7 @@ public class SunAndStars
     }
 
     /**
-     * Set the sun's celestial longitude to approximate a specific day of the
+     * Set the sun's celestial longitude to approximate a specified day of the
      * year.
      * <p>
      * This convenience method uses a crude approximation which is accurate

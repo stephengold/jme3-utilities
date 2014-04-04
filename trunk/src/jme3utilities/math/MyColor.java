@@ -81,7 +81,7 @@ final public class MyColor {
     }
 
     /**
-     * Generate a brightened and saturated version of a specific color (with no
+     * Generate a brightened and saturated version of a specified color (with no
      * side effect).
      *
      * @param baseColor input color (not null, not altered)

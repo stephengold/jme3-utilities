@@ -570,9 +570,9 @@ public class VectorXZ
     }
 
     /**
-     * Create an equivalent 3D vector with a specific y value.
+     * Create an equivalent 3D vector with a specified y value.
      *
-     * @return a new 3D vector with y set
+     * @return a new 3D vector
      */
     public Vector3f toVector3f(float y) {
         Vector3f result = new Vector3f(x, y, z);

@@ -132,8 +132,8 @@ public class DomeMesh
     }
 
     /**
-     * Instantiate an inward-facing hemispherical dome with a specific number of
-     * samples on each axis. Use this constructor to generate domes for
+     * Instantiate an inward-facing hemispherical dome with a specified number
+     * of samples on each axis. Use this constructor to generate domes for
      * SkyMaterial.
      *
      * @param rimSamples number of samples around the rim (&ge;3)
@@ -146,8 +146,8 @@ public class DomeMesh
     }
 
     /**
-     * Instantiate a hemispherical dome with a specific number of samples on
-     * each axis and a specific texture coordinate-system. This is the most
+     * Instantiate a hemispherical dome with a specified number of samples on
+     * each axis and a specified texture coordinate-system. This is the most
      * general form of the constructor.
      *
      * @param rimSamples number of samples around the rim (&ge;3)
