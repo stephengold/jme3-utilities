@@ -37,7 +37,8 @@ import jme3utilities.math.MyMath;
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-public class NavVertex {
+public class NavVertex
+        implements Comparable {
     // *************************************************************************
     // constants
 
@@ -117,7 +118,7 @@ public class NavVertex {
     }
 
     /**
-     * Find the arc with the specified endpoint.
+     * Find the arc with a specified endpoint.
      *
      * @param endpoint (not null, not this)
      * @return a pre-existing instance
@@ -166,7 +167,7 @@ public class NavVertex {
     }
 
     /**
-     * Find the arc at a specified list offset relative to the specified base
+     * Find the arc at a specified list-offset relative to the specified base
      * arc.
      *
      * @param baseArc (not null, from this vertex)
@@ -234,7 +235,7 @@ public class NavVertex {
     }
 
     /**
-     * Remove the arc with the specified endpoint.
+     * Remove the arc with the specified endpoint, if any.
      *
      * @param endpoint (not null, not this)
      * @return true if successful, false if none found
@@ -264,6 +265,22 @@ public class NavVertex {
      */
     void setVisited(boolean newState) {
         visited = newState;
+    }
+    // *************************************************************************
+    // Comparable methods
+
+    /**
+     * Compare with another vertex based on description.
+     *
+     * @param object (not null)
+     * @return 0 if the vertices have the same description
+     */
+    @Override
+    public int compareTo(Object object) {
+        NavVertex otherVertex = (NavVertex) object;
+        String otherString = otherVertex.toString();
+        String string = toString();
+        return string.compareTo(otherString);
     }
     // *************************************************************************
     // Object methods

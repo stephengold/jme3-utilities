@@ -145,7 +145,7 @@ public class Misc {
      *
      * @return the package name, branch, and revision of this file
      */
-    public static String getVersion() {
+    public static String getVersion() {//
         return "jme3-utilities trunk $Rev$";
     }
 
@@ -165,7 +165,7 @@ public class Misc {
     /**
      * Test whether a mesh has texture (U-V) coordinates.
      *
-     * @param mesh which mesh to test (not null)
+     * @param mesh mesh to test (not null)
      * @return true if the mesh has texture coordinates, otherwise false
      */
     public static boolean hasUV(Mesh mesh) {
