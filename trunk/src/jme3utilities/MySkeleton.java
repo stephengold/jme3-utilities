@@ -70,7 +70,8 @@ public class MySkeleton
      *
      * @param model animated spatial which contains the bone (not null)
      * @param boneName name of the bone to measure (not null)
-     * @param axis which axis to measure (0 &rarr; X, 1 &rarr; Y, 2 &rarr; Z)
+     * @param axis local rotation axis to measure (0 &rarr; X, 1 &rarr; Y, 2
+     * &rarr; Z)
      * @return the rotation angle (in radians) or zero for unknown bone
      */
     public static float boneAngle(Spatial model, String boneName, int axis) {
@@ -96,7 +97,7 @@ public class MySkeleton
      * Access a named bone in a skeletonized spatial.
      *
      * @param model animated spatial which contains the bone (not null)
-     * @param boneName which bone to access (not null)
+     * @param boneName name of the bone to access (not null)
      * @return the pre-existing instance (or null if not found)
      */
     public static Bone getBone(Spatial model, String boneName) {
@@ -195,7 +196,8 @@ public class MySkeleton
      *
      * @param model skeletonized spatial which contains the bone (not null)
      * @param boneName name of the bone to adjust (not null)
-     * @param axis which axis to adjust (0 &rarr; x, 1 &rarr; y, 2 &rarr; z)
+     * @param axis local rotation axis to adjust (0 &rarr; X, 1 &rarr; Y, 2
+     * &rarr; Z)
      * @param newAngle new rotation angle (in radians)
      */
     public static void setBoneAngle(Spatial model, String boneName, int axis,
@@ -219,9 +221,9 @@ public class MySkeleton
     /**
      * Alter a single bone angle in the bind pose.
      *
-     * @param bone which bone to adjust (not null)
-     * @param axis which local rotation axis to adjust (0 &rarr; X, 1 &rarr; Y,
-     * 2 &rarr; Z)
+     * @param bone bone to adjust (not null)
+     * @param axis local rotation axis to adjust (0 &rarr; X, 1 &rarr; Y, 2
+     * &rarr; Z)
      * @param newAngle new rotation angle (in radians)
      */
     public static void setAngle(Bone bone, int axis, float newAngle) {

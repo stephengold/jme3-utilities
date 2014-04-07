@@ -112,7 +112,7 @@ public class MyControl {
     /**
      * Test whether a scene-graph control is enabled.
      *
-     * @param control which control to test (not null)
+     * @param control control to test (not null)
      * @return true if the control is enabled, otherwise false
      */
     public static boolean isEnabled(Object control) {
@@ -137,7 +137,7 @@ public class MyControl {
      * Check whether a scene-graph control is compatible with isEnabled() and
      * setEnabled().
      *
-     * @param control which control to validate
+     * @param control control to validate
      * @return true if it's compatible, otherwise false
      */
     public static boolean isValid(Object control) {
@@ -151,7 +151,7 @@ public class MyControl {
     /**
      * Alter the enabled state of a scene-graph control.
      *
-     * @param control which control to alter
+     * @param control control to alter
      * @param newState true means enable the control, false means disable it
      */
     public static void setEnabled(Object control, boolean newState) {

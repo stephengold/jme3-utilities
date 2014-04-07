@@ -125,7 +125,7 @@ public class SkyMaterialCore
     }
 
     /**
-     * Instantiate a sky material from a particular asset path. The first method
+     * Instantiate sky material from a specified asset path. The first method
      * invoked should be initialize().
      *
      * @param assetManager for loading textures and material definitions (not
@@ -156,7 +156,8 @@ public class SkyMaterialCore
     // new methods exposed
 
     /**
-     * Add a cloud layer to this material using the specified alpha map asset.
+     * Add a cloud layer to this material using the specified alpha map asset
+     * path.
      *
      * @param layerIndex (&lt;maxCloudLayers, &ge;0)
      * @param assetPath asset path to the alpha map (not null)
@@ -589,8 +590,8 @@ public class SkyMaterialCore
     // private methods
 
     /**
-     * Estimate how much light is transmitted through a particular cloud layer
-     * at the specified texture coordinates.
+     * Estimate how much light is transmitted through an indexed cloud layer at
+     * the specified texture coordinates.
      *
      * @param layerIndex (&lt;maxCloudLayers, &ge;0)
      * @param skyCoordinates (unaffected, not null)

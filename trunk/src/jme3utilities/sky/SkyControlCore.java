@@ -298,7 +298,7 @@ public class SkyControlCore
     }
 
     /**
-     * Access a particular cloud layer.
+     * Access the indexed cloud layer.
      *
      * @param layerIndex (&lt;numCloudLayers, &ge;0)
      * @return the pre-existing object

@@ -52,7 +52,7 @@ public class Indices
     // new methods exposed
 
     /**
-     * Adjust the inclusion status of a particular index.
+     * Adjust the inclusion status of the specified index.
      *
      * @param index which index
      * @param addFlag if true, make sure the index is included in the set; if

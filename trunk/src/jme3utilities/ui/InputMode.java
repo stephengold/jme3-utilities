@@ -134,7 +134,7 @@ abstract public class InputMode
     // new methods exposed
 
     /**
-     * Bind the specified action to a hotkey, but don't map it yet.
+     * Bind the named action to a hotkey, but don't map it yet.
      * <p>
      * Each hotkey can bind to at most one action, but the same action can be
      * shared by multiple hotkeys. Signals are used to track the state of mode
@@ -152,7 +152,7 @@ abstract public class InputMode
     }
 
     /**
-     * Bind the specified action to a hotkey, but don't map it yet.
+     * Bind the named action to a hotkey, but don't map it yet.
      * <p>
      * Each hotkey can bind to at most one action, but the same action can be
      * shared by multiple hotkeys. Signals are used to track the state of mode
@@ -185,7 +185,7 @@ abstract public class InputMode
     }
 
     /**
-     * Find the names of all hotkeys bound to a particular action.
+     * Find the names of all hotkeys bound to a named action.
      *
      * @param actionName which action (not null)
      * @return a new collection of hotkey names
@@ -435,7 +435,7 @@ abstract public class InputMode
     // private methods
 
     /**
-     * Count how many hotkeys are bound to a particular action name.
+     * Count how many hotkeys are bound to a named action.
      *
      * @param actionName (not null)
      * @return count (&ge;0)

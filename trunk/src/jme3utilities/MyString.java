@@ -57,8 +57,8 @@ public class MyString {
     /**
      * Test two strings for lexicographic order.
      *
-     * @param a the string which should precede (not null)
-     * @param b the string which should follow (not null)
+     * @param a string which should precede (not null)
+     * @param b string which should follow (not null)
      * @return true if a precedes or equals b, false otherwise
      */
     public static boolean areLexOrdered(String a, String b) {

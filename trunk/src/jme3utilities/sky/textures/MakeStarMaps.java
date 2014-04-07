@@ -464,7 +464,7 @@ public class MakeStarMaps {
     }
 
     /**
-     * Plot a star's position at a particular time onto a texture map.
+     * Plot a star's position at a specified time onto a texture map.
      *
      * @param map which texture map (not null)
      * @param star which star to plot (not null)

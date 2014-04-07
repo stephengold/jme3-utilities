@@ -61,7 +61,7 @@ final public class MyCamera {
     /**
      * Compute a camera's aspect ratio.
      *
-     * @param camera which camera (not null)
+     * @param camera camera to measure (not null)
      * @return width divided by height
      */
     public static float aspectRatio(Camera camera) {
@@ -79,7 +79,7 @@ final public class MyCamera {
     /**
      * Compute a camera's azimuth angle.
      *
-     * @param camera which camera (not null)
+     * @param camera camera to measure (not null)
      * @return radians east of north
      */
     public static float azimuth(Camera camera) {
@@ -91,7 +91,7 @@ final public class MyCamera {
     /**
      * Compute a camera's vertical field-of-view angle.
      *
-     * @param camera which camera (not null)
+     * @param camera camera to measure (not null)
      * @return radians from top of frustum to bottom of frustum
      */
     public static float fovY(Camera camera) {
@@ -134,7 +134,7 @@ final public class MyCamera {
      * Alter a camera's near and far planes without affecting its aspect ratio
      * or field-of-view.
      *
-     * @param camera which camera (not null)
+     * @param camera camera to alter (not null)
      * @param newNear distance to the near clipping plane (&lt;newFar, &gt;0)
      * @param newFar distance to the far clipping plane (&gt;newNear)
      */
@@ -162,7 +162,7 @@ final public class MyCamera {
     /**
      * Alter a camera's field-of-view tangent.
      *
-     * @param camera which camera (not null)
+     * @param camera camera to alter (not null)
      * @param newTangent value for the FOV tangent (&gt;0)
      */
     public static void setYTangent(Camera camera, float newTangent) {
@@ -177,7 +177,7 @@ final public class MyCamera {
     /**
      * Compute a camera's vertical field-of-view in degrees.
      *
-     * @param camera which camera (not null)
+     * @param camera camera to measure (not null)
      * @return vertical angle in degrees (&gt;0)
      */
     public static float yDegrees(Camera camera) {
@@ -196,7 +196,7 @@ final public class MyCamera {
     /**
      * Compute a camera's field-of-view tangent.
      *
-     * @param camera which camera (not null)
+     * @param camera camera to measure (not null)
      * @return top/near (&gt;0)
      */
     public static float yTangent(Camera camera) {
@@ -212,7 +212,7 @@ final public class MyCamera {
     /**
      * Increase a camera's field-of-view tangent by a specified factor.
      *
-     * @param camera which camera (not null)
+     * @param camera camera to alter (not null)
      * @param factor amount to reduce the FOV tangent (&gt;0)
      */
     public static void zoom(Camera camera, float factor) {

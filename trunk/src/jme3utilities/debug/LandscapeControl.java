@@ -250,7 +250,7 @@ public class LandscapeControl
     /**
      * Create a shaded material for the specified color.
      *
-     * @param color which ambient/diffuse color (not null)
+     * @param color ambient/diffuse color (not null)
      * @return a new material
      */
     private Material createShadedMaterial(ColorRGBA color) {

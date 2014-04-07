@@ -100,7 +100,7 @@ public class CloudLayer
     }
 
     /**
-     * Instantiate a layer with a particular index for a particular material.
+     * Instantiate a layer with a specified index for a specified material.
      *
      * @param material (not null)
      * @param layerIndex (&ge;0)

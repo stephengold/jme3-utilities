@@ -90,7 +90,7 @@ public class BasicScreenController
     // constructors
 
     /**
-     * Instantiate a disabled screen for a particular screen id and layout.
+     * Instantiate a disabled screen for an identified screen id and layout.
      *
      * @param screenId Nifty id (not null)
      * @param xmlAssetPath path to the Nifty XML layout asset (not null)
@@ -114,7 +114,7 @@ public class BasicScreenController
     // new methods exposed
 
     /**
-     * Test whether the mouse cursor is inside a particular element of this
+     * Test whether the mouse cursor is inside the identified element of this
      * screen.
      *
      * @param elementId the Nifty id of the element (not null)
@@ -148,7 +148,7 @@ public class BasicScreenController
     }
 
     /**
-     * Perform the action specified by an action string. Invoked by means of
+     * Perform the action described by an action string. Invoked by means of
      * reflection, so both the class and method must be public.
      *
      * @param actionString (not null)

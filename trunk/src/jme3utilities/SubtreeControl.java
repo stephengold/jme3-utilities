@@ -120,7 +120,7 @@ abstract public class SubtreeControl
     /**
      * Alter the controlled node.
      *
-     * @param newNode which node to control (or null)
+     * @param newNode node to control (or null)
      */
     @Override
     public void setSpatial(Spatial newNode) {

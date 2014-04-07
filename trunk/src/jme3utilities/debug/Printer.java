@@ -121,7 +121,7 @@ public class Printer {
     /**
      * Generate a textual description of a spatial's controls.
      *
-     * @param spatial which spatial (not null)
+     * @param spatial spatial being described (not null)
      * @param enabled if true, describe only the enabled controls; if false,
      * describe only the disabled controls
      */
@@ -148,7 +148,7 @@ public class Printer {
     /**
      * Dump the render queue bucket to which a spatial is assigned.
      *
-     * @param spatial which spatial (not null)
+     * @param spatial spatial being described (not null)
      */
     public void printBucket(Spatial spatial) {
         /*
@@ -168,7 +168,7 @@ public class Printer {
     /**
      * List the controls associated with a spatial.
      *
-     * @param spatial which spatial (not null)
+     * @param spatial spatial being described (not null)
      */
     public void printControls(Spatial spatial) {
         assert spatial != null;
@@ -191,7 +191,7 @@ public class Printer {
     /**
      * Dump the view frustum culling hints associated with a spatial.
      *
-     * @param spatial which spatial (not null)
+     * @param spatial spatial being described (not null)
      */
     public void printCullHints(Spatial spatial) {
         /*
@@ -211,7 +211,7 @@ public class Printer {
     /**
      * List the lights associated with a spatial.
      *
-     * @param spatial which spatial (not null)
+     * @param spatial spatial being described (not null)
      */
     public void printLights(Spatial spatial) {
         LightList lights = spatial.getLocalLightList();
@@ -224,7 +224,7 @@ public class Printer {
     /**
      * Print the world location of a spatial.
      *
-     * @param spatial which spatial (not null)
+     * @param spatial spatial being described (not null)
      */
     public void printLocation(Spatial spatial) {
         Vector3f location = MySpatial.getWorldLocation(spatial);
@@ -237,7 +237,7 @@ public class Printer {
     /**
      * Print the world scale of a spatial.
      *
-     * @param spatial which spatial (not null)
+     * @param spatial spatial being described (not null)
      */
     public void printScale(Spatial spatial) {
         Vector3f scale = spatial.getWorldScale();
@@ -255,7 +255,7 @@ public class Printer {
     /**
      * Print the shadow modes associated with a spatial.
      *
-     * @param spatial which spatial (not null)
+     * @param spatial spatial being described (not null)
      */
     public void printShadowModes(Spatial spatial) {
         /*
@@ -342,7 +342,7 @@ public class Printer {
     /**
      * Print the user data associated with a spatial.
      *
-     * @param spatial which spatial (not null)
+     * @param spatial spatial being described (not null)
      */
     public void printUserData(Spatial spatial) {
         Collection<String> keys = spatial.getUserDataKeys();
@@ -452,7 +452,7 @@ public class Printer {
     /**
      * Generate a one-letter description of a spatial.
      *
-     * @param spatial which spatial
+     * @param spatial spatial being described
      */
     public static char describeType(Spatial spatial) {
         char result = MySpatial.describeType(spatial);
@@ -462,7 +462,7 @@ public class Printer {
     /**
      * Test whether a scene-graph control is enabled.
      *
-     * @param control which control to test (not null)
+     * @param control control to test (not null)
      * @return true if the control is enabled, otherwise false
      */
     protected boolean isControlEnabled(Object control) {
