@@ -38,7 +38,7 @@ import jme3utilities.math.MyMath;
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class NavVertex
-        implements Comparable {
+        implements Comparable<NavVertex> {
     // *************************************************************************
     // constants
 
@@ -272,12 +272,11 @@ public class NavVertex
     /**
      * Compare with another vertex based on description.
      *
-     * @param object (not null)
+     * @param otherVertex (not null)
      * @return 0 if the vertices have the same description
      */
     @Override
-    public int compareTo(Object object) {
-        NavVertex otherVertex = (NavVertex) object;
+    public int compareTo(NavVertex otherVertex) {
         String otherString = otherVertex.toString();
         String string = toString();
         return string.compareTo(otherString);
