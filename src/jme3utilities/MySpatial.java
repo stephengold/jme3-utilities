@@ -77,7 +77,7 @@ public class MySpatial
      * non-uniform scaling.
      *
      * @param newParent (not null)
-     * @param child which spatial (not null, not orphan)
+     * @param child spatial to re-parent (not null, not orphan)
      */
     public static void adopt(Node newParent, Spatial child) {
         Validate.nonNull(newParent, "new parent");
@@ -102,7 +102,7 @@ public class MySpatial
     /**
      * Generate a one-letter description of a spatial.
      *
-     * @param spatial which spatial
+     * @param spatial spatial to describe
      */
     public static char describeType(Spatial spatial) {
         if (spatial instanceof AudioNode) {
@@ -126,8 +126,8 @@ public class MySpatial
     /**
      * Find a node's first child which is an assignable from a specified class.
      *
-     * @param node which node (not null)
-     * @param spatialType which superclass of Spatial to search for
+     * @param node node to search (not null)
+     * @param spatialType which subclass of Spatial to search for
      * @return the first matching child, or null if none found
      */
     @SuppressWarnings("unchecked")
@@ -144,7 +144,7 @@ public class MySpatial
     /**
      * Find a local light with a specified name.
      *
-     * @param spatial which spatial (not null)
+     * @param spatial spatial to search (not null)
      * @param lightName (not null)
      * @return the first matching light, or null if none found
      */
@@ -161,7 +161,7 @@ public class MySpatial
     /**
      * Compute the map (2-D) location of a spatial.
      *
-     * @param spatial which spatial to locate (not null)
+     * @param spatial spatial to locate (not null)
      * @return a new vector
      */
     public static VectorXZ getMapLocation(Spatial spatial) {
@@ -175,7 +175,7 @@ public class MySpatial
     /**
      * Access an object's mass.
      *
-     * @param spatial which object to measure (not null)
+     * @param spatial object to measure (not null)
      * @return mass in kilograms (&gt;0) or zero for a static object.
      */
     public static float getMass(Spatial spatial) {
@@ -190,7 +190,7 @@ public class MySpatial
     /**
      * Compute the minimum and maximum elevations of a mesh geometry.
      *
-     * @param geometry which geometry to measure (not null)
+     * @param geometry mesh geometry to measure (not null)
      * @return array consisting of array[0]: the lowest world Y-coordinate (in
      * world units) and array[1]: the highest world Y-coordinate (in world
      * units)
@@ -296,7 +296,7 @@ public class MySpatial
     /**
      * Get the world scale factor for a uniformly scaled spatial.
      *
-     * @param spatial which spatial to measure (not null)
+     * @param spatial spatial to measure (not null)
      * @return scale factor (&gt;0)
      */
     public static float getUniformScale(Spatial spatial) {
@@ -314,7 +314,7 @@ public class MySpatial
     /**
      * Copy the world location of a spatial.
      *
-     * @param spatial which spatial to locate (not null)
+     * @param spatial spatial to locate (not null)
      * @return a new vector
      */
     public static Vector3f getWorldLocation(Spatial spatial) {
@@ -335,7 +335,7 @@ public class MySpatial
     /**
      * Copy the world orientation of a spatial.
      *
-     * @param spatial which spatial to orient (not null)
+     * @param spatial spatial to orient (not null)
      * @return a new vector
      */
     public static Quaternion getWorldOrientation(Spatial spatial) {
@@ -358,7 +358,7 @@ public class MySpatial
     /**
      * Compute the world elevation of a horizontal surface.
      *
-     * @param geometry which surface to measure (not null)
+     * @param geometry surface to measure (not null)
      * @return world elevation of the surface (in world units)
      */
     public static float getYLevel(Geometry geometry) {
@@ -373,7 +373,7 @@ public class MySpatial
      * Construct the inverse of a spatial's world orientation, the quaternion
      * which undoes its rotation.
      *
-     * @param spatial which spatial (not null)
+     * @param spatial spatial to analyze (not null)
      * @return a new instance
      */
     public static Quaternion inverseOrientation(Spatial spatial) {
@@ -386,7 +386,7 @@ public class MySpatial
     /**
      * Test whether a spatial is an orphan (has no parent node).
      *
-     * @param spatial which spatial to test (not null)
+     * @param spatial spatial to test (not null)
      * @return true if the spatial is an orphan, otherwise false
      */
     public static boolean isOrphan(Spatial spatial) {
@@ -397,7 +397,7 @@ public class MySpatial
     /**
      * Test whether a spatial is physics-controlled.
      *
-     * @param spatial which spatial (not null)
+     * @param spatial spatial to test (not null)
      * @return true if the spatial is controlled by physics, otherwise false
      */
     public static boolean isPhysical(Spatial spatial) {
@@ -410,7 +410,7 @@ public class MySpatial
     /**
      * Move (translate) an object in the world coordinate system.
      *
-     * @param spatial which object to move (not null)
+     * @param spatial object to move (not null)
      * @param offset world translation (in world units, not null)
      */
     public static void moveWorld(Spatial spatial, Vector3f offset) {
@@ -433,7 +433,7 @@ public class MySpatial
      * Move (translate) a object's child in the world coordinate system. NOTE
      * recursive
      *
-     * @param spatial which object to move (not null)
+     * @param spatial object to move (not null)
      * @param offset world translation (in world units, not null)
      */
     public static void moveChildWorld(Spatial spatial, Vector3f offset) {
@@ -457,7 +457,7 @@ public class MySpatial
     /**
      * Turn (rotate) a child object around an axis.
      *
-     * @param spatial which object to rotate (not null)
+     * @param spatial object to rotate (not null)
      * @param center world coordinates of the point to rotate around (not null)
      * @param rotation (not null)
      */
@@ -489,7 +489,7 @@ public class MySpatial
     /**
      * Turn (rotate) a physical object around an axis.
      *
-     * @param spatial which object to rotate (not null)
+     * @param spatial object to rotate (not null)
      * @param center world coordinates of the point to rotate around (not null)
      * @param rotation (not null)
      */
@@ -519,7 +519,7 @@ public class MySpatial
     /**
      * Turn (rotate) a physical object around its Y-axis.
      *
-     * @param spatial which object to rotate (not null)
+     * @param spatial object to rotate (not null)
      * @param angle clockwise rotation angle (in radians)
      */
     public static void rotateY(Spatial spatial, float angle) {
@@ -534,7 +534,7 @@ public class MySpatial
     /**
      * Alter the world location of a spatial.
      *
-     * @param spatial which spatial (not null)
+     * @param spatial spatial to relocate (not null)
      * @param newLocation desired world location (not null, unaffected)
      */
     public static void setWorldLocation(Spatial spatial, Vector3f newLocation) {
@@ -564,7 +564,7 @@ public class MySpatial
     /**
      * Alter the world orientation of a spatial.
      *
-     * @param spatial which spatial (not null)
+     * @param spatial spatial to reorient (not null)
      * @param newOrientation desired world orientation (not null, unaffected)
      */
     public static void setWorldOrientation(Spatial spatial,
@@ -595,7 +595,7 @@ public class MySpatial
     /**
      * Alter the world scaling of a spatial.
      *
-     * @param spatial which spatial (not null, not orphan)
+     * @param spatial spatial to rescale (not null, not orphan)
      * @param scale desired world scale (&gt;0)
      */
     public static void setWorldScale(Spatial spatial, float scale) {

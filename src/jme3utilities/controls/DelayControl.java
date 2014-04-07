@@ -143,7 +143,7 @@ public class DelayControl
     /**
      * Enable a slave.
      *
-     * @param slave which control to enable (not null)
+     * @param slave control to enable (not null)
      */
     protected void enableSlave(Control slave) {
         Validate.nonNull(slave, "slave control");
@@ -153,7 +153,7 @@ public class DelayControl
     /**
      * Test whether a control is valid before adding it to the list of slaves.
      *
-     * @param slave which control to test
+     * @param slave control to test
      * @return true if enableSlave() can enable the control, false otherwise
      */
     protected boolean isValidSlave(Control slave) {

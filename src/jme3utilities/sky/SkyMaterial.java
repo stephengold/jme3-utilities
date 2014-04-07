@@ -93,7 +93,7 @@ public class SkyMaterial
     // constructors
 
     /**
-     * Instantiate a sky material from the default definitions. The first method
+     * Instantiate sky material from the default definitions. The first method
      * invoked should be initialize().
      *
      * @param assetManager for loading textures and material definitions (not
@@ -104,7 +104,7 @@ public class SkyMaterial
     }
 
     /**
-     * Instantiate a sky material from a particular asset path. The first method
+     * Instantiate sky material from a specified asset path. The first method
      * invoked should be initialize().
      *
      * @param assetManager for loading textures and material definitions (not
@@ -117,7 +117,7 @@ public class SkyMaterial
     }
 
     /**
-     * Instantiate a sky material with the specified number of objects and cloud
+     * Instantiate sky material with the specified number of objects and cloud
      * layers. Material definitions will be automatically selected. The first
      * method invoked should be initialize().
      *
@@ -133,7 +133,7 @@ public class SkyMaterial
     }
 
     /**
-     * Instantiate a sky material from a particular asset path. The first method
+     * Instantiate sky material from a specified asset path. The first method
      * invoked should be initialize().
      *
      * @param assetManager for loading textures and material definitions (not
@@ -167,7 +167,8 @@ public class SkyMaterial
     }
 
     /**
-     * Add horizon haze to this material using the specified alpha map asset.
+     * Add horizon haze to this material using the specified alpha map asset
+     * path.
      *
      * @param assetPath asset path to the alpha map (not null)
      */
@@ -284,7 +285,7 @@ public class SkyMaterial
     // private methods
 
     /**
-     * Determine the number of cloud layers supported by a specified asset.
+     * Determine the number of cloud layers supported by a specified asset path.
      *
      * @param assetPath path to material definitions (not null)
      */
@@ -313,7 +314,7 @@ public class SkyMaterial
     }
 
     /**
-     * Determine the number of objects supported by a specified asset.
+     * Determine the number of objects supported by a specified asset path.
      *
      * @param assetPath path to material definitions (not null)
      */

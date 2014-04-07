@@ -140,7 +140,7 @@ public class MakeSun {
     // private methods
 
     /**
-     * Compute how much the surround is indented in a particular direction from
+     * Compute how much the surround is indented in a specified direction from
      * the center of the image.
      *
      * @param theta direction angle in radians, measured CCW from the U-axis
@@ -287,7 +287,7 @@ public class MakeSun {
     }
 
     /**
-     * Set a particular pixel to a particular brightness.
+     * Set a particular pixel to the specified brightness.
      *
      * @param graphics context (not null)
      * @param x coordinate (&lt;textureSize, &ge;0)

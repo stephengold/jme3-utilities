@@ -64,8 +64,8 @@ abstract public class SimpleControl
      * <p>
      * Only performs checks. Meant to be overridden.
      *
-     * @param renderManager which is rendering the spatial (not null)
-     * @param viewPort where the spatial will be rendered (not null)
+     * @param renderManager renderer which is rendering the spatial (not null)
+     * @param viewPort view port where the spatial will be rendered (not null)
      */
     @Override
     protected void controlRender(RenderManager renderManager,
@@ -120,7 +120,7 @@ abstract public class SimpleControl
     /**
      * Clone this control for a different spatial.
      *
-     * @param spatial which spatial to clone for (not null)
+     * @param spatial spatial to clone for (not null)
      * @return a new control
      */
     @Override

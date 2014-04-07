@@ -129,7 +129,7 @@ public class NavGraph {
     }
 
     /**
-     * Add ball-and-stick representation of this navigation graph to the scene
+     * Add ball-and-stick representation of this navigation graph to a scene
      * graph.
      *
      * @param parentNode where in the scene to attach the geometries (not null)
@@ -201,7 +201,7 @@ public class NavGraph {
     /**
      * Remove the specified arc (but not its reverse) from this graph.
      *
-     * @param arc to be removed (not null)
+     * @param arc arc to be removed (not null)
      */
     public void remove(NavArc arc) {
         NavVertex fromVertex = arc.getFromVertex();
@@ -214,7 +214,7 @@ public class NavGraph {
     /**
      * Verify that an arc belongs to this graph.
      *
-     * @param arc to be validated
+     * @param arc arc to be validated
      */
     public void validateMember(NavArc arc) {
         if (!arcs.contains(arc)) {
@@ -226,7 +226,7 @@ public class NavGraph {
     /**
      * Verify that a vertex belongs to this graph.
      *
-     * @param vertex to be validated
+     * @param vertex vertex to be validated
      */
     public void validateMember(NavVertex vertex) {
         if (!vertices.contains(vertex)) {
@@ -260,7 +260,7 @@ public class NavGraph {
      * Test whether this graph would still be connected if the specified arc
      * were removed.
      *
-     * @param arc which arc to hypothetically remove (a member)
+     * @param arc arc to hypothetically remove (a member)
      * @return true if still connected, false if not
      */
     protected boolean isConnectedWithout(NavArc arc) {
@@ -277,7 +277,7 @@ public class NavGraph {
     /**
      * Remove the specified arc (and its reverse, if any) from this graph.
      *
-     * @param arc which arc to remove (a member)
+     * @param arc arc to remove (a member)
      */
     protected void removePair(NavArc arc) {
         validateMember(arc);

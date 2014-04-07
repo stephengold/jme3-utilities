@@ -54,9 +54,9 @@ public class Permutation {
     // constructors
 
     /**
-     * Construct a permutation of specified length from a specified seed.
+     * Construct a permutation with the specified length from a specified seed.
      *
-     * @param length of the permutation (&gt;1)
+     * @param length length of the permutation (&gt;1)
      * @param seed
      */
     public Permutation(int length, long seed) {

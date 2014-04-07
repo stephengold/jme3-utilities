@@ -175,7 +175,7 @@ final public class MyAsset {
      * Create an unshaded material with the specified color.
      *
      * @param assetManager (not null)
-     * @param color which color (not null, unaffected)
+     * @param color (not null, unaffected)
      * @return a new instance
      */
     public static Material createUnshadedMaterial(AssetManager assetManager,
@@ -244,11 +244,11 @@ final public class MyAsset {
     }
 
     /**
-     * Load the texture asset for a specified face of a cubical star map.
+     * Load the texture asset for a named face of a cubical star map.
      *
      * @param assetManager (not null)
      * @param mapName name of the star map folder (not null)
-     * @param faceName which face (not null, e.g. "top3")
+     * @param faceName name of the face (not null, e.g. "top3")
      */
     public static Texture loadFace(AssetManager assetManager, String mapName,
             String faceName) {

@@ -190,7 +190,7 @@ public class VectorXZ
      * Clamp this direction (in place) to be within a specified angle of the
      * X-axis.
      *
-     * @param maxAbsAngle angle in radians (&ge;0)
+     * @param maxAbsAngle tolerance angle in radians (&ge;0)
      * @return this vector (with its components modified)
      */
     public VectorXZ clampDirectionLocal(float maxAbsAngle) {

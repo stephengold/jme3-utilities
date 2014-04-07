@@ -89,7 +89,7 @@ public class Signals
     }
 
     /**
-     * Test whether a particular signal is active.
+     * Test whether the named signal is active.
      *
      * @param name the signal's name (not null)
      * @return true if any of the signal's sources is active; false if all of
@@ -136,9 +136,9 @@ public class Signals
     // private methods
 
     /**
-     * Update whether a particular signal source is active.
+     * Update whether a named signal source is active.
      *
-     * @param name the signal's name
+     * @param name the signal's name (not null)
      * @param sourceIndex specifies which signal source (key or button) is being
      * updated
      * @param newState true if the source is active; false is the source is

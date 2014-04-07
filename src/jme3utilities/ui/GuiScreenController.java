@@ -72,7 +72,8 @@ public class GuiScreenController
     // constructors
 
     /**
-     * Instantiate a disabled screen for a particular screen id and layout.
+     * Instantiate a disabled screen for a specified screen id and layout asset
+     * path.
      *
      * @param screenId Nifty id (not null)
      * @param xmlAssetPath path to the Nifty XML layout asset (not null)
@@ -178,7 +179,7 @@ public class GuiScreenController
             return;
         }
         /*
-         * Perform the action specified by the action string.
+         * Perform the action described by the action string.
          */
         perform(actionString);
         /*

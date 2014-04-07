@@ -104,7 +104,7 @@ public class PopupMenu
     }
 
     /**
-     * Generate the action string for a specified item from the menu.
+     * Generate the action string for an indexed item in the menu.
      *
      * @param index which item (&ge;0, 0 &rarr; first)
      * @return action string or null for an invalid index
@@ -166,7 +166,7 @@ public class PopupMenu
          */
         String actionString = actionPrefix + itemName;
         /*
-         * Perform the action specified by the action string.
+         * Perform the action described by the action string.
          */
         GuiScreenController.perform(actionString);
         /*
