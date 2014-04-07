@@ -129,7 +129,7 @@ public class Misc {
      * Generate the filesystem path to a file in the user's home directory.
      *
      * @param fileName (not null)
-     * @return the generated path
+     * @return generated path
      */
     public static String getUserPath(String fileName) {
         Validate.nonNull(fileName, "file name");
@@ -143,16 +143,16 @@ public class Misc {
     /**
      * Read the verbose version string for this package.
      *
-     * @return the package name, branch, and revision of this file
+     * @return package name, branch, and revision of this file
      */
-    public static String getVersion() {
+    public static String getVersion() {//
         return "jme3-utilities trunk $Rev$";
     }
 
     /**
      * Read the terse version string for this package.
      *
-     * @return the branch and revision of this file
+     * @return branch and revision of this file
      */
     public static String getVersionShort() {
         String verbose = getVersion();
@@ -179,8 +179,8 @@ public class Misc {
      * Set a specified grayscale pixel to a specified brightness.
      *
      * @param graphics rendering context of the pixel (not null)
-     * @param x coordinate of the pixel (&lt;width, &ge;0)
-     * @param y coordinate of the pixel (&lt;height, &ge;0)
+     * @param x x-coordinate of the pixel (&lt;width, &ge;0)
+     * @param y y-coordinate of the pixel (&lt;height, &ge;0)
      * @param brightness (&le;1, &ge;0, 0 &rarr; black, 1 &rarr; white)
      *
      */
@@ -208,7 +208,6 @@ public class Misc {
      */
     public static void setLoggingLevels(Level newLevel) {
         Validate.nonNull(newLevel, "level");
-
         Logger.getLogger("").setLevel(newLevel);
     }
 
@@ -217,7 +216,7 @@ public class Misc {
      * file.
      *
      * @param filePath path to the output file (not null)
-     * @param image to be written (not null)
+     * @param image image to be written (not null)
      */
     public static void writeMap(String filePath, RenderedImage image)
             throws IOException {
