@@ -54,15 +54,6 @@ public class NavVertex
      */
     private ArrayList<NavArc> arcs = new ArrayList<>();
     /**
-     * temporary flag to track whether this vertex has been visited during the
-     * current pass
-     */
-    private boolean visited = false;
-    /**
-     * temporary floating-point value for this vertex
-     */
-    private float floatValue = 0f;
-    /**
      * textual description of this vertex (not null)
      */
     private String description;
@@ -200,13 +191,6 @@ public class NavVertex
     }
 
     /**
-     * Read the floating-point value associated with this vertex.
-     */
-    float getFloatValue() {
-        return floatValue;
-    }
-
-    /**
      * Copy the world coordinates of the vertex.
      *
      * @return a new instance
@@ -226,15 +210,6 @@ public class NavVertex
     }
 
     /**
-     * Test whether this vertex has been visited.
-     *
-     * @return true if it has been visited, false if it hasn't
-     */
-    boolean isVisited() {
-        return visited;
-    }
-
-    /**
      * Remove the arc with the specified endpoint, if any.
      *
      * @param endpoint (not null, not this)
@@ -251,20 +226,6 @@ public class NavVertex
             }
         }
         return false;
-    }
-
-    /**
-     * Alter the floating-point value associated with this vertex.
-     */
-    void setFloatValue(float newValue) {
-        floatValue = newValue;
-    }
-
-    /**
-     * Alter the state of the visited flag.
-     */
-    void setVisited(boolean newState) {
-        visited = newState;
     }
     // *************************************************************************
     // Comparable methods
