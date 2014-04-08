@@ -27,11 +27,16 @@ package jme3utilities.navigation;
 
 import com.jme3.math.Vector3f;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
-import jme3utilities.math.MyMath;
+import jme3utilities.math.Noise;
 
 /**
  * Graph for navigation. Its vertices represent reachable locations in the
@@ -94,6 +99,32 @@ public class NavGraph {
     }
 
     /**
+     * Enumerate all vertices located the specified number of hops from a
+     * specified starting point.
+     *
+     * @param hopCount (&ge;0)
+     * @param start (a member)
+     * @return new instance
+     */
+    public List<NavVertex> findByHops(int hopCount, NavVertex start) {
+        Validate.nonNegative(hopCount, "count");
+        validateMember(start);
+
+        Map<NavVertex, Integer> hopData = new TreeMap<>();
+        calculateHops(start, 0, hopData);
+
+        List<NavVertex> result = new ArrayList<>();
+        for (NavVertex vertex : vertices) {
+            Integer hops = hopData.get(vertex);
+            if (hops != null && hops == hopCount) {
+                result.add(vertex);
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Find the vertex furthest from the specified starting point.
      *
      * @param startVertex starting point (a member)
@@ -102,16 +133,15 @@ public class NavGraph {
     public NavVertex findFurthest(NavVertex startVertex) {
         validateMember(startVertex);
 
-        setAllVisited(false);
-        calculateDistances(startVertex, 0f);
+        Map<NavVertex, Float> hopData = new TreeMap<>();
+        calculateDistances(startVertex, 0f, hopData);
         /*
-         * Search for the maximum distance.
+         * Search for the maximum.
          */
         NavVertex result = startVertex;
         float maxDistance = 0f;
-        for (NavVertex vertex : vertices) {
-            assert vertex.isVisited();
-            float distance = vertex.getFloatValue();
+        for (NavVertex vertex : hopData.keySet()) {
+            float distance = hopData.get(vertex);
             if (distance > maxDistance) {
                 maxDistance = distance;
                 result = vertex;
@@ -163,16 +193,7 @@ public class NavGraph {
      */
     public NavArc randomArc(Random generator) {
         Validate.nonNull(generator, "generator");
-
-        int count = arcs.size();
-        assert count >= 0 : count;
-        if (count == 0) {
-            return null;
-        }
-        int index = generator.nextInt();
-        index = MyMath.modulo(index, count);
-        NavArc result = arcs.get(index);
-
+        NavArc result = (NavArc) Noise.pick(arcs, generator);
         return result;
     }
 
@@ -184,16 +205,7 @@ public class NavGraph {
      */
     public NavVertex randomVertex(Random generator) {
         Validate.nonNull(generator, "generator");
-
-        int count = vertices.size();
-        assert count >= 0 : count;
-        if (count == 0) {
-            return null;
-        }
-        int index = generator.nextInt();
-        index = MyMath.modulo(index, count);
-        NavVertex result = vertices.get(index);
-
+        NavVertex result = (NavVertex) Noise.pick(vertices, generator);
         return result;
     }
 
@@ -265,10 +277,11 @@ public class NavGraph {
     protected boolean isConnectedWithout(NavArc arc) {
         validateMember(arc);
 
-        setAllVisited(false);
         NavVertex fromVertex = arc.getFromVertex();
         NavVertex toVertex = arc.getToVertex();
-        boolean result = existsPathWithout(arc, fromVertex, toVertex);
+        Set<NavVertex> visitedVertices = new TreeSet<>();
+        boolean result = existsPathWithout(arc, fromVertex, toVertex,
+                visitedVertices);
 
         return result;
     }
@@ -297,30 +310,65 @@ public class NavGraph {
      * Measure the minimum distance to each vertex in the graph. Note:
      * recursive!
      *
-     * @param startVertex starting point for measurement (a member)
-     * @param startDistance distance to the starting point (&ge;0)
+     * @param currentVertex vertex being visited (a member)
+     * @param distance distance from the start vertex to the current vertex
+     * (&ge;0)
+     * @param pathData distances of all vertices already visited (not null)
      */
-    private void calculateDistances(NavVertex startVertex,
-            float startDistance) {
-        assert vertices.contains(startVertex);
-        assert startDistance >= 0f : startDistance;
+    private void calculateDistances(NavVertex currentVertex,
+            float distance, Map<NavVertex, Float> pathData) {
+        assert vertices.contains(currentVertex);
+        assert distance >= 0f : distance;
+        assert pathData != null;
 
-        if (startVertex.isVisited()
-                && startDistance > startVertex.getFloatValue()) {
+        if (pathData.containsKey(currentVertex)
+                && distance > pathData.get(currentVertex)) {
             return;
         }
         /*
-         * Update the distance of the starting point.
+         * Update the distance of the current vertex.
          */
-        startVertex.setFloatValue(startDistance);
-        startVertex.setVisited(true);
+        pathData.put(currentVertex, distance);
         /*
-         * Follow each arc from the starting point.
+         * Follow each arc from the current vertex.
          */
-        for (NavArc arc : startVertex.getArcs()) {
+        for (NavArc arc : currentVertex.getArcs()) {
             NavVertex vertex = arc.getToVertex();
-            float vertexDistance = startDistance + arc.getPathLength();
-            calculateDistances(vertex, vertexDistance);
+            float newDistance = distance + arc.getPathLength();
+            calculateDistances(vertex, newDistance, pathData);
+        }
+    }
+
+    /**
+     * Measure the minimum number of hops to each vertex in the graph. Note:
+     * recursive!
+     *
+     * @param currentVertex vertex being visited (a member)
+     * @param hopCount hop count from the start vertex to the current vertex
+     * (&ge;0)
+     * @param pathData hop counts of all vertices already visited (not null)
+     */
+    private void calculateHops(NavVertex currentVertex,
+            int hopCount, Map<NavVertex, Integer> pathData) {
+        assert vertices.contains(currentVertex);
+        assert hopCount >= 0 : hopCount;
+        assert pathData != null;
+
+        if (pathData.containsKey(currentVertex)
+                && hopCount > pathData.get(currentVertex)) {
+            return;
+        }
+        /*
+         * Update the hop count of the current vertex.
+         */
+        pathData.put(currentVertex, hopCount);
+        /*
+         * Follow each arc from the current vertex.
+         */
+        int nextHopCount = hopCount + 1;
+        for (NavArc arc : currentVertex.getArcs()) {
+            NavVertex vertex = arc.getToVertex();
+            calculateHops(vertex, nextHopCount, pathData);
         }
     }
 
@@ -334,7 +382,7 @@ public class NavGraph {
      * @return true if such a path exists, false if no such path exists
      */
     private boolean existsPathWithout(NavArc avoidArc, NavVertex fromVertex,
-            NavVertex toVertex) {
+            NavVertex toVertex, Set<NavVertex> visitedVertices) {
         assert arcs.contains(avoidArc) : avoidArc;
         assert vertices.contains(fromVertex) : fromVertex;
         assert vertices.contains(toVertex) : toVertex;
@@ -342,33 +390,23 @@ public class NavGraph {
         if (fromVertex == toVertex) {
             return true;
         }
-        if (fromVertex.isVisited()) {
+        if (visitedVertices.contains(fromVertex)) {
             return false;
         }
 
-        fromVertex.setVisited(true);
+        visitedVertices.add(fromVertex);
 
         for (NavArc arc : fromVertex.getArcs()) {
             if (arc == avoidArc) {
                 continue;
             }
             NavVertex vertex = arc.getToVertex();
-            boolean pathExists = existsPathWithout(avoidArc, vertex, toVertex);
+            boolean pathExists = existsPathWithout(avoidArc, vertex, toVertex,
+                    visitedVertices);
             if (pathExists) {
                 return true;
             }
         }
         return false;
-    }
-
-    /**
-     * Alter the visited status of all vertices in this graph.
-     *
-     * @param newState true &rarr; visited, false &rarr; not visited
-     */
-    private void setAllVisited(boolean newState) {
-        for (NavVertex vertex : vertices) {
-            vertex.setVisited(newState);
-        }
     }
 }
