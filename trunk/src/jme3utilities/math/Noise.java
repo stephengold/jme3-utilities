@@ -25,6 +25,7 @@
  */
 package jme3utilities.math;
 
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -109,6 +110,29 @@ final public class Noise {
      */
     public static float nextFloat() {
         return generator.nextFloat();
+    }
+
+    /**
+     * Pick a random member from a list using the specified generator.
+     *
+     * @param list (not null)
+     * @param generator (not null)
+     * @return member of list or null if it's empty
+     */
+    public static Object pick(List list, Random generator) {
+        Validate.nonNull(generator, "generator");
+        Validate.nonNull(list, "list");
+
+        int count = list.size();
+        assert count >= 0 : count;
+        if (count == 0) {
+            return null;
+        }
+        int index = generator.nextInt();
+        index = MyMath.modulo(index, count);
+        Object result = list.get(index);
+
+        return result;
     }
 
     /**
