@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * A single-precision vector with no 'y' coordinate. These vectors are used to
+ * Single-precision vector with no 'y' coordinate. These vectors are used to
  * represent map coordinates, directions, and map offsets. For viewport
  * coordinates use Vector2f instead.
  * <p>
@@ -48,7 +48,7 @@ import jme3utilities.Validate;
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class VectorXZ
-        implements Cloneable, Savable {
+        implements Cloneable, Comparable<VectorXZ>, Savable {
     // *************************************************************************
     // constants
 
@@ -588,6 +588,29 @@ public class VectorXZ
         x = 0f;
         z = 0f;
         return this;
+    }
+    // *************************************************************************
+    // Comparable methods
+
+    /**
+     * Compare lexicographically with another vector, with the x-component
+     * having priority.
+     *
+     * @param otherVector (not null, not altered)
+     * @return 0 if this vector equals otherVector; negative if this comes
+     * before otherVector; positive if this comes after otherVector
+     */
+    @Override
+    public int compareTo(VectorXZ otherVector) {
+        int result;
+
+        if (x != otherVector.x) {
+            result = Float.compare(x, otherVector.x);
+        } else {
+            result = Float.compare(z, otherVector.z);
+        }
+
+        return result;
     }
     // *************************************************************************
     // Object methods
