@@ -70,25 +70,25 @@ public class MyAnimation {
     // new methods exposed
 
     /**
-     * Smoothly transition an animation channel to a new animation.
+     * Smoothly transition an animation channel to a named animation.
      *
-     * @param channel which animation channel (not null)
-     * @param newAnimation name of animation (or null to reset the channel)
+     * @param channel animation channel (not null)
+     * @param animationName name of animation (or null to reset the channel)
      */
-    public static void blendTo(AnimChannel channel, String newAnimation) {
-        if (newAnimation == null) {
+    public static void blendTo(AnimChannel channel, String animationName) {
+        if (animationName == null) {
             channel.reset(true);
             return;
         }
-        String oldAnimation = channel.getAnimationName();
-        if (newAnimation.equals(oldAnimation)) {
+        String oldAnimationName = channel.getAnimationName();
+        if (animationName.equals(oldAnimationName)) {
             return;
         }
         /*
          * new animation
          */
-        logger.log(Level.INFO, "new animation={0}", newAnimation);
-        channel.setAnim(newAnimation, blendTime);
+        logger.log(Level.INFO, "new animation={0}", animationName);
+        channel.setAnim(animationName, blendTime);
         channel.setLoopMode(LoopMode.Loop);
     }
 
@@ -146,7 +146,7 @@ public class MyAnimation {
     /**
      * Generate a one-letter description of a track.
      *
-     * @param track which track
+     * @param track track to describe
      */
     public static char describeTrack(Track track) {
         if (track instanceof AudioTrack) {

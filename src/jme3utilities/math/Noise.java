@@ -115,10 +115,11 @@ final public class Noise {
     /**
      * Pick a random member from a list using the specified generator.
      *
-     * @param list (not null)
-     * @param generator (not null)
+     * @param list list to select from (not null)
+     * @param generator generator to use (not null)
      * @return member of list or null if it's empty
      */
+    @SuppressWarnings("rawtypes")
     public static Object pick(List list, Random generator) {
         Validate.nonNull(generator, "generator");
         Validate.nonNull(list, "list");

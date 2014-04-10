@@ -112,7 +112,7 @@ public class NavVertex
      * Find the arc with a specified endpoint.
      *
      * @param endpoint (not null, not this)
-     * @return a pre-existing instance
+     * @return pre-existing instance
      */
     public NavArc findArcTo(NavVertex endpoint) {
         Validate.nonNull(endpoint, "endpoint");
@@ -133,7 +133,7 @@ public class NavVertex
      * direction.
      *
      * @param direction unit vector, unaffected
-     * @return a pre-existing instance
+     * @return pre-existing instance
      */
     public NavArc findLeastTurn(Vector3f direction) {
         Validate.nonNull(direction, "direction");
@@ -163,7 +163,7 @@ public class NavVertex
      *
      * @param baseArc (not null, from this vertex)
      * @param listOffset
-     * @return the pre-existing instance
+     * @return pre-existing instance
      */
     public NavArc findNextArc(NavArc baseArc, int listOffset) {
         Validate.nonNull(baseArc, "base arc");
@@ -238,9 +238,8 @@ public class NavVertex
      */
     @Override
     public int compareTo(NavVertex otherVertex) {
-        String otherString = otherVertex.toString();
-        String string = toString();
-        return string.compareTo(otherString);
+        String otherDescription = otherVertex.description;
+        return description.compareTo(otherDescription);
     }
     // *************************************************************************
     // Object methods

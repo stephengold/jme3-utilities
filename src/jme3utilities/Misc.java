@@ -128,7 +128,7 @@ public class Misc {
     /**
      * Generate the filesystem path to a file in the user's home directory.
      *
-     * @param fileName (not null)
+     * @param fileName file name to use (not null)
      * @return generated path
      */
     public static String getUserPath(String fileName) {
@@ -145,7 +145,7 @@ public class Misc {
      *
      * @return package name, branch, and revision of this file
      */
-    public static String getVersion() {
+    public static String getVersion() {//
         return "jme3-utilities trunk $Rev$";
     }
 
