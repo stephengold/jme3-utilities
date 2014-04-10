@@ -96,6 +96,29 @@ public class MyVector3f {
     }
 
     /**
+     * Compare two vectors lexicographically, with the x-component having
+     * priority.
+     *
+     * @param v1 first vector (not null, not altered)
+     * @param v2 second vector (not null, not altered)
+     * @return 0 if v1 is equal to v2; negative if v1 comes before v2; positive
+     * if v1 comes after v2
+     */
+    public static int compare(Vector3f v1, Vector3f v2) {
+        int result;
+
+        if (v1.x != v2.x) {
+            result = Float.compare(v1.x, v2.x);
+        } else if (v1.y != v2.y) {
+            result = Float.compare(v1.y, v2.y);
+        } else {
+            result = Float.compare(v1.z, v2.z);
+        }
+
+        return result;
+    }
+
+    /**
      * Compute a horizontal direction of an offset.
      *
      * @param offset difference of world coordinates (not null, not altered)

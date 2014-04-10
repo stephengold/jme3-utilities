@@ -27,14 +27,16 @@ package jme3utilities.navigation;
 
 import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
+import jme3utilities.math.MyVector3f;
 
 /**
- * An arc of a navigation graph: represents a feasible path from one vertex to
+ * Arc of a navigation graph: represents a feasible path from one vertex to
  * another vertex. Arcs are unidirectional and need not be straight.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-public class NavArc {
+public class NavArc
+        implements Comparable<NavArc> {
     // *************************************************************************
     // constants
 
@@ -93,7 +95,7 @@ public class NavArc {
     /**
      * Access the starting vertex of this arc.
      *
-     * @return the pre-existing instance
+     * @return pre-existing instance
      */
     public NavVertex getFromVertex() {
         return fromVertex;
@@ -111,7 +113,7 @@ public class NavArc {
     /**
      * Read the initial direction of this arc.
      *
-     * @return a new unit vector
+     * @return new unit vector
      */
     public Vector3f getStartDirection() {
         return startDirection.clone();
@@ -120,10 +122,30 @@ public class NavArc {
     /**
      * Access the endpoint of this arc.
      *
-     * @return the pre-existing instance
+     * @return pre-existing instance
      */
     public NavVertex getToVertex() {
         return toVertex;
+    }
+    // *************************************************************************
+    // Comparable methods
+
+    /**
+     * Compare with another arc.
+     *
+     * @param otherArc (not null)
+     * @return 0 if the vertices have the same description
+     */
+    @Override
+    public int compareTo(NavArc otherArc) {
+        if (fromVertex != otherArc.fromVertex) {
+            return fromVertex.compareTo(otherArc.fromVertex);
+        } else if (toVertex != otherArc.toVertex) {
+            return toVertex.compareTo(otherArc.toVertex);
+        } else if (pathLength != otherArc.pathLength) {
+            return Float.compare(pathLength, otherArc.pathLength);
+        }
+        return MyVector3f.compare(startDirection, otherArc.startDirection);
     }
     // *************************************************************************
     // Object methods
