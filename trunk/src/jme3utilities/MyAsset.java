@@ -37,8 +37,8 @@ import com.jme3.util.SkyFactory;
 import java.util.logging.Logger;
 
 /**
- * Miscellaneous utility methods for loading assets. Aside from test cases, all
- * methods here should be public and static.
+ * Utility methods for loading assets. Aside from test cases, all methods here
+ * should be public and static.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -51,6 +51,11 @@ final public class MyAsset {
      */
     final private static Logger logger =
             Logger.getLogger(MyAsset.class.getName());
+    /**
+     * asset path of the Particle material definition
+     */
+    final private static String particleMaterialAssetPath =
+            "Common/MatDefs/Misc/Particle.j3md";
     /**
      * asset path of the shaded material definition
      */
@@ -91,11 +96,30 @@ final public class MyAsset {
     }
 
     /**
+     * Create a particle material from the specified texture.
+     *
+     * @param assetManager (not null)
+     * @param texture (not null)
+     * @return new instance
+     */
+    public static Material createParticleMaterial(AssetManager assetManager,
+            Texture texture) {
+        Validate.nonNull(assetManager, "asset manager");
+        Validate.nonNull(texture, "texture");
+
+        Material material =
+                new Material(assetManager, particleMaterialAssetPath);
+        material.setTexture("Texture", texture);
+
+        return material;
+    }
+
+    /**
      * Create a shaded material for a specified diffuse texture.
      *
      * @param assetManager (not null)
      * @param texture (not null)
-     * @return a new instance
+     * @return new instance
      */
     public static Material createShadedMaterial(AssetManager assetManager,
             Texture texture) {
@@ -112,7 +136,7 @@ final public class MyAsset {
      *
      * @param assetManager (not null)
      * @param color (not null)
-     * @return a new instance
+     * @return new instance
      */
     public static Material createShinyMaterial(AssetManager assetManager,
             ColorRGBA color) {
@@ -137,7 +161,8 @@ final public class MyAsset {
      */
     public static Spatial createStarMap(AssetManager assetManager,
             String name) {
-        assert name != null;
+        Validate.nonNull(assetManager, "asset manager");
+        Validate.nonNull(name, "star map name");
         /*
          * Load the cube map textures.
          */
@@ -161,13 +186,13 @@ final public class MyAsset {
      * Create an unshaded material.
      *
      * @param assetManager (not null)
-     * @return a new instance
+     * @return new instance
      */
     public static Material createUnshadedMaterial(AssetManager assetManager) {
         Validate.nonNull(assetManager, "asset manager");
 
-        Material material = new Material(assetManager,
-                unshadedMaterialAssetPath);
+        Material material =
+                new Material(assetManager, unshadedMaterialAssetPath);
         return material;
     }
 
@@ -176,7 +201,7 @@ final public class MyAsset {
      *
      * @param assetManager (not null)
      * @param color (not null, unaffected)
-     * @return a new instance
+     * @return new instance
      */
     public static Material createUnshadedMaterial(AssetManager assetManager,
             ColorRGBA color) {
@@ -194,7 +219,7 @@ final public class MyAsset {
      *
      * @param assetManager (not null)
      * @param assetPath to the texture asset (not null)
-     * @return a new instance
+     * @return new instance
      */
     public static Material createUnshadedMaterial(AssetManager assetManager,
             String assetPath) {
@@ -212,7 +237,7 @@ final public class MyAsset {
      *
      * @param assetManager (not null)
      * @param texture (not null)
-     * @return a new instance
+     * @return new instance
      */
     public static Material createUnshadedMaterial(AssetManager assetManager,
             Texture texture) {
@@ -230,7 +255,7 @@ final public class MyAsset {
      *
      * @param assetManager (not null)
      * @param color (not null)
-     * @return a new instance
+     * @return new instance
      */
     public static Material createWireframeMaterial(AssetManager assetManager,
             ColorRGBA color) {
@@ -249,17 +274,19 @@ final public class MyAsset {
      * @param assetManager (not null)
      * @param mapName name of the star map folder (not null)
      * @param faceName name of the face (not null, e.g. "top3")
+     * @return texture which was loaded (not null)
      */
     public static Texture loadFace(AssetManager assetManager, String mapName,
             String faceName) {
-        assert mapName != null;
-        assert faceName != null;
+        Validate.nonNull(mapName, "folder name");
+        Validate.nonNull(faceName, "face name");
 
         String path = String.format("Textures/skies/star-maps/%s/%s_%s.png",
                 mapName, mapName, faceName);
-        Texture result = assetManager.loadTexture(path);
+        Texture texture = assetManager.loadTexture(path);
 
-        return result;
+        assert texture != null;
+        return texture;
     }
 
     /**
@@ -267,7 +294,7 @@ final public class MyAsset {
      *
      * @param assetManager (not null)
      * @param assetPath to the texture asset (not null)
-     * @return the texture which was loaded (not null)
+     * @return texture which was loaded (not null)
      */
     public static Texture loadTexture(AssetManager assetManager,
             String assetPath) {
