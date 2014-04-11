@@ -31,6 +31,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Sphere;
 import java.util.logging.Logger;
@@ -47,10 +48,36 @@ public class NavDebug {
     // constants
 
     /**
+     * number of mesh samples around a cylinder's circumference
+     */
+    final private static int circumferenceSamples = 20;
+    /**
+     * number of mesh samples around a sphere's equator
+     */
+    final private static int equatorSamples = 20;
+    /**
+     * number of mesh samples along a cylinder's length
+     */
+    final private static int lengthSamples = 2;
+    /**
+     * number of mesh samples along a sphere's meridians
+     */
+    final private static int meridianSamples = 10;
+    /**
      * message logger for this class
      */
     final private static Logger logger =
             Logger.getLogger(NavDebug.class.getName());
+    /**
+     * sphere mesh for generating balls
+     */
+    final private static Mesh ballMesh =
+            new Sphere(meridianSamples, equatorSamples, 1f);
+    /**
+     * cylinder mesh for generating sticks
+     */
+    final private static Mesh stickMesh =
+            new Cylinder(lengthSamples, circumferenceSamples, 1f, 1f);
     // *************************************************************************
     // constructors
 
@@ -71,22 +98,56 @@ public class NavDebug {
      * @param material material for geometries which represent vertices (not
      * null)
      */
-    public static void makeBalls(NavGraph graph, Node parentNode, float radius,
+    public static void addBalls(NavGraph graph, Node parentNode, float radius,
             Material material) {
         Validate.positive(radius, "radius");
         Validate.nonNull(material, "material");
 
-        int meridianSamples = 10;
-        int equatorSamples = 20;
-        Mesh ballMesh = new Sphere(meridianSamples, equatorSamples, radius);
-
         for (NavVertex vertex : graph.getVertices()) {
-            Vector3f location = vertex.getLocation();
-            Geometry ball = new Geometry("navigation vertex", ballMesh);
-            ball.setLocalTranslation(location);
-            ball.setMaterial(material);
+            Spatial ball = makeBall(vertex, radius, material);
             parentNode.attachChild(ball);
         }
+    }
+
+    /**
+     * Add sticks to a ball-and-stick representation.
+     *
+     * @param graph graph to represent (not null)
+     * @param parentNode where in the scene to attach the geometries (not null)
+     * @param radius radius of each stick (in world units, &gt;0)
+     * @param material for geometries which represent navigation arcs (not null)
+     */
+    public static void addSticks(NavGraph graph, Node parentNode, float radius,
+            Material material) {
+        Validate.positive(radius, "radius");
+        Validate.nonNull(material, "material");
+
+        for (NavArc arc : graph.getArcs()) {
+            Spatial stick = makeStick(arc, radius, material);
+            parentNode.attachChild(stick);
+        }
+    }
+
+    /**
+     * Add a ball to a ball-and-stick representation.
+     *
+     * @param vertex vertex to represent (not null)
+     * @param radius radius of each ball (in world units, &gt;0)
+     * @param material material for geometries which represent vertices (not
+     * null)
+     */
+    public static Spatial makeBall(NavVertex vertex, float radius,
+            Material material) {
+        Validate.positive(radius, "radius");
+        Validate.nonNull(material, "material");
+
+        Geometry ball = new Geometry("navigation vertex", ballMesh);
+        ball.setLocalScale(radius);
+        Vector3f location = vertex.getLocation();
+        ball.setLocalTranslation(location);
+        ball.setMaterial(material);
+
+        return ball;
     }
 
     /**
@@ -112,52 +173,45 @@ public class NavDebug {
         Validate.nonNull(stickMaterial, "stick material");
 
         if (ballRadius > 0f) {
-            makeBalls(graph, parentNode, ballRadius, ballMaterial);
+            addBalls(graph, parentNode, ballRadius, ballMaterial);
         }
         if (stickRadius > 0f) {
-            makeSticks(graph, parentNode, stickRadius, stickMaterial);
+            addSticks(graph, parentNode, stickRadius, stickMaterial);
         }
     }
 
     /**
-     * Add sticks to a ball-and-stick representation.
+     * Create a stick for a ball-and-stick representation.
      *
-     * @param graph graph to represent (not null)
-     * @param parentNode where in the scene to attach the geometries (not null)
-     * @param radius radius of each stick (in world units, &gt;0)
-     * @param material for geometries which represent navigation arcs (not null)
+     * @param arc arc to represent (not null)
+     * @param radius radius of each ball (in world units, &gt;0)
+     * @param material material for geometries which represent vertices (not
+     * null)
      */
-    public static void makeSticks(NavGraph graph, Node parentNode, float radius,
+    public static Spatial makeStick(NavArc arc, float radius,
             Material material) {
         Validate.positive(radius, "radius");
         Validate.nonNull(material, "material");
 
-        int lengthSamples = 2;
-        int circumferenceSamples = 20;
-        float length = 1f;
-        Cylinder stickMesh = new Cylinder(lengthSamples, circumferenceSamples,
-                radius, length);
+        NavVertex fromVertex = arc.getFromVertex();
+        Vector3f from = fromVertex.getLocation();
+        NavVertex toVertex = arc.getToVertex();
+        Vector3f to = toVertex.getLocation();
+        Vector3f midpoint = from.add(to);
+        midpoint.divideLocal(2f);
 
-        for (NavArc arc : graph.getArcs()) {
-            NavVertex fromVertex = arc.getFromVertex();
-            Vector3f from = fromVertex.getLocation();
-            NavVertex toVertex = arc.getToVertex();
-            Vector3f to = toVertex.getLocation();
-            Vector3f midpoint = from.add(to);
-            midpoint.divideLocal(2f);
+        Geometry stick = new Geometry("navigation arc", stickMesh);
+        stick.setLocalTranslation(midpoint);
+        Vector3f offset = to.subtract(from);
+        float zScale = offset.length();
+        Vector3f scale = new Vector3f(radius, radius, zScale);
+        Quaternion orientation = new Quaternion();
+        orientation.lookAt(offset, Vector3f.UNIT_Y);
 
-            Geometry stick = new Geometry("navigation arc", stickMesh);
-            stick.setLocalTranslation(midpoint);
-            Vector3f offset = to.subtract(from);
-            float zScale = offset.length();
-            Vector3f scale = new Vector3f(1f, 1f, zScale);
-            Quaternion orientation = new Quaternion();
-            orientation.lookAt(offset, Vector3f.UNIT_Y);
+        stick.setLocalRotation(orientation);
+        stick.setLocalScale(scale);
+        stick.setMaterial(material);
 
-            stick.setLocalRotation(orientation);
-            stick.setLocalScale(scale);
-            stick.setMaterial(material);
-            parentNode.attachChild(stick);
-        }
+        return stick;
     }
 }

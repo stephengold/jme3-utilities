@@ -182,7 +182,7 @@ public class NavVertex
      *
      * @return new array of existing instances
      */
-    NavArc[] getArcs() {
+    public NavArc[] getArcs() {
         int size = arcs.size();
         NavArc[] result = new NavArc[size];
         arcs.toArray(result);
@@ -207,6 +207,24 @@ public class NavVertex
     public int getNumArcs() {
         int result = arcs.size();
         return result;
+    }
+
+    /**
+     * Test whether this vertex has an arc to the specified endpoint.
+     *
+     * @param endpoint (not null, not this)
+     * @return true if found, false if none found
+     */
+    public boolean hasArcTo(NavVertex endpoint) {
+        assert endpoint != null;
+        assert endpoint != this : endpoint;
+
+        for (NavArc arc : arcs) {
+            if (arc.getToVertex() == endpoint) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
