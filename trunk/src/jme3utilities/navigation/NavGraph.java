@@ -201,8 +201,8 @@ public class NavGraph {
         NavVertex result = startVertex;
         float maxDistance = 0f;
         for (NavVertex vertex : candidates) {
-            float distance = hopData.get(vertex);
-            if (distance > maxDistance) {
+            Float distance = hopData.get(vertex);
+            if (distance != null && distance > maxDistance) {
                 maxDistance = distance;
                 result = vertex;
             }
