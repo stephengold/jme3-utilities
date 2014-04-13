@@ -76,10 +76,10 @@ public class NavGraph {
      * unaffected)
      * @return the new instance (a member)
      */
-    NavArc addArc(NavVertex startVertex, NavVertex endVertex, float pathLength,
-            Vector3f startDirection) {
-        assert vertices.contains(startVertex) : endVertex;
-        assert vertices.contains(endVertex) : endVertex;
+    public NavArc addArc(NavVertex startVertex, NavVertex endVertex,
+            float pathLength, Vector3f startDirection) {
+        validateMember(startVertex);
+        validateMember(endVertex);
         if (startVertex == endVertex) {
             throw new IllegalArgumentException("endpoints should be distinct");
         }
@@ -96,6 +96,24 @@ public class NavGraph {
         assert success : newArc;
 
         return newArc;
+    }
+
+    /**
+     * Create a vertex without any arcs and add it to this graph.
+     *
+     * @param description (not null)
+     * @param position (not null, unaffected)
+     * @return new instance
+     */
+    public NavVertex addVertex(String description, Vector3f position) {
+        Validate.nonNull(description, "description");
+        Validate.nonNull(position, "position");
+
+        NavVertex newVertex = new NavVertex(description, position);
+        boolean success = vertices.add(newVertex);
+        assert success;
+
+        return newVertex;
     }
 
     /**
@@ -128,7 +146,7 @@ public class NavGraph {
      * Find the vertex furthest from the specified starting point.
      *
      * @param startVertex starting point (a member)
-     * @return a pre-existing instance (a member)
+     * @return pre-existing instance (a member)
      */
     public NavVertex findFurthest(NavVertex startVertex) {
         validateMember(startVertex);
@@ -186,10 +204,29 @@ public class NavGraph {
     }
 
     /**
+     * Test whether this graph would still be connected if the specified arc
+     * were removed.
+     *
+     * @param arc arc to hypothetically remove (a member)
+     * @return true if still connected, false if not
+     */
+    public boolean isConnectedWithout(NavArc arc) {
+        validateMember(arc);
+
+        NavVertex fromVertex = arc.getFromVertex();
+        NavVertex toVertex = arc.getToVertex();
+        Set<NavVertex> visitedVertices = new TreeSet<>();
+        boolean result = existsPathWithout(arc, fromVertex, toVertex,
+                visitedVertices);
+
+        return result;
+    }
+
+    /**
      * Select a random arc from this graph.
      *
-     * @param generator for uniform random values (not null)
-     * @return a pre-existing instance (a member)
+     * @param generator generator of uniform random values (not null)
+     * @return pre-existing instance (a member)
      */
     public NavArc randomArc(Random generator) {
         Validate.nonNull(generator, "generator");
@@ -200,8 +237,8 @@ public class NavGraph {
     /**
      * Select a random vertex from this graph.
      *
-     * @param generator for uniform random values (not null)
-     * @return a pre-existing instance (a member)
+     * @param generator generator of uniform random values (not null)
+     * @return pre-existing instance (a member)
      */
     public NavVertex randomVertex(Random generator) {
         Validate.nonNull(generator, "generator");
@@ -220,6 +257,24 @@ public class NavGraph {
         fromVertex.removeArcTo(toVertex);
         boolean success = arcs.remove(arc);
         assert success;
+    }
+
+    /**
+     * Remove the specified arc (and its reverse, if any) from this graph.
+     *
+     * @param arc arc to remove (a member)
+     */
+    public void removePair(NavArc arc) {
+        validateMember(arc);
+
+        NavVertex fromVertex = arc.getFromVertex();
+        NavVertex toVertex = arc.getToVertex();
+        NavArc reverseArc = toVertex.findArcTo(fromVertex);
+
+        remove(arc);
+        if (reverseArc != null) {
+            remove(reverseArc);
+        }
     }
 
     /**
@@ -244,63 +299,6 @@ public class NavGraph {
             logger.log(Level.SEVERE, "vertex={0}", vertex);
             throw new IllegalArgumentException(
                     "graph should contain the vertex");
-        }
-    }
-    // *************************************************************************
-    // new protected methods
-
-    /**
-     * Create a vertex without any arcs and add it to this graph.
-     *
-     * @param description (not null)
-     * @param position (not null, unaffected)
-     * @return the new instance
-     */
-    protected NavVertex addVertex(String description, Vector3f position) {
-        Validate.nonNull(description, "description");
-        Validate.nonNull(position, "position");
-
-        NavVertex newVertex = new NavVertex(description, position);
-        boolean success = vertices.add(newVertex);
-        assert success;
-
-        return newVertex;
-    }
-
-    /**
-     * Test whether this graph would still be connected if the specified arc
-     * were removed.
-     *
-     * @param arc arc to hypothetically remove (a member)
-     * @return true if still connected, false if not
-     */
-    protected boolean isConnectedWithout(NavArc arc) {
-        validateMember(arc);
-
-        NavVertex fromVertex = arc.getFromVertex();
-        NavVertex toVertex = arc.getToVertex();
-        Set<NavVertex> visitedVertices = new TreeSet<>();
-        boolean result = existsPathWithout(arc, fromVertex, toVertex,
-                visitedVertices);
-
-        return result;
-    }
-
-    /**
-     * Remove the specified arc (and its reverse, if any) from this graph.
-     *
-     * @param arc arc to remove (a member)
-     */
-    protected void removePair(NavArc arc) {
-        validateMember(arc);
-
-        NavVertex fromVertex = arc.getFromVertex();
-        NavVertex toVertex = arc.getToVertex();
-        NavArc reverseArc = toVertex.findArcTo(fromVertex);
-
-        remove(arc);
-        if (reverseArc != null) {
-            remove(reverseArc);
         }
     }
     // *************************************************************************
@@ -376,7 +374,7 @@ public class NavGraph {
      * Test whether there's a path between two specified vertices which avoids a
      * specified arc. Note: recursive!
      *
-     * @param avoidArc which arc to avoid (a member)
+     * @param avoidArc arc to avoid (a member)
      * @param fromVertex starting point (a member)
      * @param toVertex endpoint (a member)
      * @return true if such a path exists, false if no such path exists
