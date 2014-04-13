@@ -27,6 +27,7 @@ package jme3utilities.navigation;
 
 import com.jme3.math.Vector3f;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -69,12 +70,13 @@ public class NavGraph {
     /**
      * Create a new arc and add it to this graph.
      *
-     * @param startVertex starting point (a member, distinct from endVertex)
-     * @param endVertex endpoint (a member)
+     * @param startVertex starting point (member of this graph, distinct from
+     * endVertex)
+     * @param endVertex endpoint (member of this graph)
      * @param pathLength length or cost (arbitrary units, &gt;0)
      * @param startDirection direction at the start (unit vector in world space,
      * unaffected)
-     * @return the new instance (a member)
+     * @return new member
      */
     public NavArc addArc(NavVertex startVertex, NavVertex endVertex,
             float pathLength, Vector3f startDirection) {
@@ -121,20 +123,43 @@ public class NavGraph {
      * specified starting point.
      *
      * @param hopCount (&ge;0)
-     * @param start (a member)
-     * @return new instance
+     * @param startVertex (member of this graph)
+     * @return new list of members
      */
-    public List<NavVertex> findByHops(int hopCount, NavVertex start) {
+    public List<NavVertex> findByHops(int hopCount, NavVertex startVertex) {
         Validate.nonNegative(hopCount, "count");
-        validateMember(start);
+        validateMember(startVertex);
+
+        List<NavVertex> result = findByHops(hopCount, hopCount, startVertex);
+        return result;
+    }
+
+    /**
+     * Enumerate all vertices located in the specified inclusive range of hops.
+     *
+     * @param minHopCount (&ge;0)
+     * @param maxHopCount (&ge;minHopCount)
+     * @param startVertex (member of this graph)
+     * @return new list of members
+     */
+    public List<NavVertex> findByHops(int minHopCount, int maxHopCount,
+            NavVertex startVertex) {
+        Validate.nonNegative(minHopCount, "count");
+        if (minHopCount > maxHopCount) {
+            logger.log(Level.SEVERE, "min={0} max={1}",
+                    new Object[]{minHopCount, maxHopCount});
+            throw new IllegalArgumentException(
+                    "min should not be greater than max");
+        }
+        validateMember(startVertex);
 
         Map<NavVertex, Integer> hopData = new TreeMap<>();
-        calculateHops(start, 0, hopData);
+        calculateHops(startVertex, 0, hopData);
 
         List<NavVertex> result = new ArrayList<>();
         for (NavVertex vertex : vertices) {
             Integer hops = hopData.get(vertex);
-            if (hops != null && hops == hopCount) {
+            if (hops != null && hops >= minHopCount && hops <= maxHopCount) {
                 result.add(vertex);
             }
         }
@@ -145,20 +170,37 @@ public class NavGraph {
     /**
      * Find the vertex furthest from the specified starting point.
      *
-     * @param startVertex starting point (a member)
-     * @return pre-existing instance (a member)
+     * @param startVertex starting point (member of this graph)
+     * @return pre-existing member
      */
     public NavVertex findFurthest(NavVertex startVertex) {
         validateMember(startVertex);
+        NavVertex result = findFurthest(startVertex, vertices);
+        return result;
+    }
+
+    /**
+     * Find the vertex in the specified list that's furthest from the specified
+     * starting point.
+     *
+     * @param startVertex starting point (member of this graph)
+     * @param candidates collection of candidate vertices (not null, not
+     * altered)
+     * @return pre-existing member
+     */
+    public NavVertex findFurthest(NavVertex startVertex,
+            Collection<NavVertex> candidates) {
+        validateMember(startVertex);
+        Validate.nonNull(candidates, "list");
 
         Map<NavVertex, Float> hopData = new TreeMap<>();
         calculateDistances(startVertex, 0f, hopData);
         /*
-         * Search for the maximum.
+         * Search for the maximum distance.
          */
         NavVertex result = startVertex;
         float maxDistance = 0f;
-        for (NavVertex vertex : hopData.keySet()) {
+        for (NavVertex vertex : candidates) {
             float distance = hopData.get(vertex);
             if (distance > maxDistance) {
                 maxDistance = distance;
@@ -207,7 +249,7 @@ public class NavGraph {
      * Test whether this graph would still be connected if the specified arc
      * were removed.
      *
-     * @param arc arc to hypothetically remove (a member)
+     * @param arc arc to hypothetically remove (member of this graph)
      * @return true if still connected, false if not
      */
     public boolean isConnectedWithout(NavArc arc) {
@@ -226,7 +268,7 @@ public class NavGraph {
      * Select a random arc from this graph.
      *
      * @param generator generator of uniform random values (not null)
-     * @return pre-existing instance (a member)
+     * @return pre-existing member
      */
     public NavArc randomArc(Random generator) {
         Validate.nonNull(generator, "generator");
@@ -238,7 +280,7 @@ public class NavGraph {
      * Select a random vertex from this graph.
      *
      * @param generator generator of uniform random values (not null)
-     * @return pre-existing instance (a member)
+     * @return pre-existing member
      */
     public NavVertex randomVertex(Random generator) {
         Validate.nonNull(generator, "generator");
@@ -262,7 +304,7 @@ public class NavGraph {
     /**
      * Remove the specified arc (and its reverse, if any) from this graph.
      *
-     * @param arc arc to remove (a member)
+     * @param arc arc to member
      */
     public void removePair(NavArc arc) {
         validateMember(arc);
@@ -308,7 +350,7 @@ public class NavGraph {
      * Measure the minimum distance to each vertex in the graph. Note:
      * recursive!
      *
-     * @param currentVertex vertex being visited (a member)
+     * @param currentVertex vertex being visited (member of this graph)
      * @param distance distance from the start vertex to the current vertex
      * (&ge;0)
      * @param pathData distances of all vertices already visited (not null)
@@ -341,7 +383,7 @@ public class NavGraph {
      * Measure the minimum number of hops to each vertex in the graph. Note:
      * recursive!
      *
-     * @param currentVertex vertex being visited (a member)
+     * @param currentVertex vertex being visited (member of this graph)
      * @param hopCount hop count from the start vertex to the current vertex
      * (&ge;0)
      * @param pathData hop counts of all vertices already visited (not null)
@@ -374,9 +416,9 @@ public class NavGraph {
      * Test whether there's a path between two specified vertices which avoids a
      * specified arc. Note: recursive!
      *
-     * @param avoidArc arc to avoid (a member)
-     * @param fromVertex starting point (a member)
-     * @param toVertex endpoint (a member)
+     * @param avoidArc arc to avoid (member of this graph)
+     * @param fromVertex starting point (member of this graph)
+     * @param toVertex endpoint (member of this graph)
      * @return true if such a path exists, false if no such path exists
      */
     private boolean existsPathWithout(NavArc avoidArc, NavVertex fromVertex,
