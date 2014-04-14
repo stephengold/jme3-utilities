@@ -40,8 +40,8 @@ public interface OverlapListener {
     /**
      * Callback to handle an overlapping rigid body.
      *
-     * @param overlappingBody which rigid body (not null)
-     * @param overlappingSpatial the spatial of the rigid body (not null)
+     * @param overlappingBody rigid body (not null)
+     * @param overlappingSpatial spatial of the rigid body (not null)
      * @param localPoint location of the overlap in the collision shape (rotated
      * and translated to the this control's spatial, but at world scale, not
      * null)

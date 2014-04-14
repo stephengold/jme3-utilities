@@ -126,7 +126,7 @@ public class VectorXZ
      * Add to this vector (with no side effect).
      *
      * @param increment vector to be added to this vector (unaffected, not null)
-     * @return a new vector equal to the sum
+     * @return new vector equal to the sum
      */
     public VectorXZ add(VectorXZ increment) {
         VectorXZ result = new VectorXZ(x + increment.x, z + increment.z);
@@ -230,7 +230,7 @@ public class VectorXZ
      *
      * @param maxX radius of the ellipse in the X-direction
      * @param maxZ radius of the ellipse in the Z-direction
-     * @return a new vector with the same direction
+     * @return new vector with the same direction
      */
     public VectorXZ clampElliptical(float maxX, float maxZ) {
         VectorXZ result = clone();
@@ -281,7 +281,7 @@ public class VectorXZ
      * Compute the cross product of this vector with another.
      *
      * @param other the other vector (unaffected, not null)
-     * @return the cross product
+     * @return cross product
      */
     public float cross(VectorXZ other) {
         float product = x * other.z - z * other.x;
@@ -292,8 +292,8 @@ public class VectorXZ
      * Compute the directional error of this direction with respect to a goal.
      *
      * @param goal a unit vector (unaffected)
-     * @return the sine of the angle from the goal to this direction, or +1/-1
-     * if the angle's magnitude exceeds 90 degrees
+     * @return sine of the angle from the goal to this direction, or +1/-1 if
+     * the angle's magnitude exceeds 90 degrees
      */
     public float directionError(VectorXZ goal) {
         if (!goal.isUnitVector()) {
@@ -347,7 +347,7 @@ public class VectorXZ
      * Compute the dot product of this vector with another.
      *
      * @param other the other vector (unaffected, not null)
-     * @return the dot product
+     * @return dot product
      */
     public float dot(VectorXZ other) {
         float product = x * other.x + z * other.z;
@@ -389,7 +389,7 @@ public class VectorXZ
      * Mirror this vector across the X-axis (complex conjugate with no side
      * effect).
      *
-     * @return a new vector
+     * @return new vector
      */
     public VectorXZ mirrorZ() {
         VectorXZ result = new VectorXZ(x, -z);
@@ -422,7 +422,7 @@ public class VectorXZ
     /**
      * Negate this vector (with no side effect).
      *
-     * @return a new vector with same magnitude and opposite direction
+     * @return new vector with same magnitude and opposite direction
      */
     public VectorXZ negate() {
         VectorXZ result = new VectorXZ(-x, -z);
@@ -444,7 +444,7 @@ public class VectorXZ
      * Normalize this vector to a unit vector (with no side effect). If this
      * vector has zero length, generate a random direction.
      *
-     * @return a new unit vector
+     * @return new unit vector
      */
     public VectorXZ normalize() {
         VectorXZ result = clone();
@@ -475,7 +475,7 @@ public class VectorXZ
      *
      * @param change vector to be subtracted from this vector (unaffected, not
      * null)
-     * @return a new vector equal to the difference of the two vectors
+     * @return new vector equal to the difference of the two vectors
      */
     public VectorXZ subtract(VectorXZ change) {
         VectorXZ result = new VectorXZ(x - change.x, z - change.z);
@@ -488,7 +488,7 @@ public class VectorXZ
      * is left-handed.
      *
      * @param radians clockwise (LH) angle of rotation in radians
-     * @return a new vector with the same length
+     * @return new vector with the same length
      */
     public VectorXZ rotate(float radians) {
         float cosine = FastMath.cos(radians);
@@ -504,7 +504,7 @@ public class VectorXZ
      * effect).
      *
      * @param direction new direction for the X-axis (unaffected, not null)
-     * @return a new vector
+     * @return new vector
      */
     public VectorXZ rotate(VectorXZ direction) {
         float cosine = direction.x;
@@ -550,7 +550,7 @@ public class VectorXZ
     /**
      * Treat this vector as a rotation and generate an equivalent quaternion.
      *
-     * @return a new instance
+     * @return new instance
      */
     public Quaternion toQuaternion() {
         Quaternion rotation = new Quaternion();
@@ -562,7 +562,7 @@ public class VectorXZ
     /**
      * Create a 3D equivalent of this vector.
      *
-     * @return a new 3D vector with y=0
+     * @return new 3D vector with y=0
      */
     public Vector3f toVector3f() {
         Vector3f result = new Vector3f(x, 0f, z);
@@ -572,7 +572,7 @@ public class VectorXZ
     /**
      * Create an equivalent 3D vector with a specified y value.
      *
-     * @return a new 3D vector
+     * @return new 3D vector
      */
     public Vector3f toVector3f(float y) {
         Vector3f result = new Vector3f(x, y, z);
@@ -618,7 +618,7 @@ public class VectorXZ
     /**
      * Clone this instance.
      *
-     * @return a new vector with the same components as this vector
+     * @return new vector with the same components as this vector
      */
     @Override
     public VectorXZ clone() {

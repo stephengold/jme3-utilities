@@ -65,7 +65,7 @@ public class MyMath {
      * Compute the circle function sqrt(1 - x^2) for a double-precision value.
      *
      * @param abscissa input (&le;1, &ge;-1)
-     * @return the positive ordinate of the unit circle at the abscissa (&le;1,
+     * @return positive ordinate of the unit circle at the abscissa (&le;1,
      * &ge;0)
      */
     public static double circle(double abscissa) {
@@ -87,7 +87,7 @@ public class MyMath {
      * Double precision arithmetic is used to reduce the risk of overflow.
      *
      * @param abscissa input (&le;1, &ge;-1)
-     * @return the positive ordinate of the unit circle at the abscissa (&le;1,
+     * @return positive ordinate of the unit circle at the abscissa (&le;1,
      * &ge;0)
      */
     public static float circle(float abscissa) {
@@ -139,9 +139,9 @@ public class MyMath {
      * Compute the product of two complex numbers or the composition of two
      * scale-and-rotate vectors.
      *
-     * @param a first complex number (not null, not altered)
-     * @param b second complex number (not null, not altered)
-     * @return a new vector
+     * @param a 1st complex number (not null, not altered)
+     * @param b 2nd complex number (not null, not altered)
+     * @return new vector
      */
     public static Vector2f complexProduct(Vector2f a, Vector2f b) {
         Validate.nonNull(a, "vector a");
@@ -236,8 +236,8 @@ public class MyMath {
      * Compute the hypotenuse of a right triangle using the Pythagorean Theorem.
      * This method accepts negative arguments.
      *
-     * @param legA length of the first leg (may be negative)
-     * @param legB length of the second leg (may be negative)
+     * @param legA length of the 1st leg (may be negative)
+     * @param legB length of the 2nd leg (may be negative)
      * @return length of the hypotenuse (&ge;0)
      * @see #sumOfSquares(float,float)
      */
@@ -271,9 +271,9 @@ public class MyMath {
     /**
      * Find the max of three single-precision values.
      *
-     * @param a first input value
-     * @param b second input value
-     * @param c third input value
+     * @param a 1st input value
+     * @param b 2nd input value
+     * @param c 3rd input value
      * @return greatest of the three values
      */
     public static float max(float a, float b, float c) {
@@ -347,9 +347,9 @@ public class MyMath {
      * Compute the sphere function sqrt(1 - x^2 - y^2) for single-precision
      * values. Double precision is used to reduce the risk of overflow.
      *
-     * @param x first coordinate (&le;1, &ge;-1)
-     * @param y second coordinate (&le;1, &ge;-1)
-     * @return the positive height of the unit sphere at the coordinates (&le;1,
+     * @param x 1st coordinate (&le;1, &ge;-1)
+     * @param y 2nd coordinate (&le;1, &ge;-1)
+     * @return positive height of the unit sphere at the coordinates (&le;1,
      * &ge;0)
      */
     public static float sphere(float x, float y) {
@@ -379,7 +379,7 @@ public class MyMath {
      * Standardize a rotation angle to the range [-Pi, Pi).
      *
      * @param angle input (in radians)
-     * @return a standard angle (in radians, &lt;Pi, &ge;-Pi)
+     * @return standardized angle (in radians, &lt;Pi, &ge;-Pi)
      */
     public static float standardizeAngle(float angle) {
         float result = modulo(angle, FastMath.TWO_PI);
@@ -396,8 +396,8 @@ public class MyMath {
      * Compute the sum-of-squares of two single-precision values. Double
      * precision arithmetic is used to reduce the risk of overflow.
      *
-     * @param firstValue
-     * @param secondValue
+     * @param firstValue 1st input value
+     * @param secondValue 2nd input value
      * @return sum of squares (&ge;0)
      */
     public static double sumOfSquares(float firstValue, float secondValue) {

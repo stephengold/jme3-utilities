@@ -39,7 +39,7 @@ import jme3utilities.MyString;
 import jme3utilities.sky.DomeMesh;
 
 /**
- * A console application to generate ramping alpha maps for use with SkyMaterial
+ * Console application to generate ramping alpha maps for use with SkyMaterial
  * and DomeMesh.
  *
  * @author Stephen Gold <sgold@sonic.net>
@@ -190,7 +190,7 @@ public class MakeRamps {
      *
      * @param flattening the oblateness (ellipticity) of the dome with the haze:
      * 0 &rarr; no flattening (hemisphere), 1 &rarr; maximum flattening
-     * @return a new instance
+     * @return new instance
      */
     private RenderedImage makeRamp(float flattening) {
         /*

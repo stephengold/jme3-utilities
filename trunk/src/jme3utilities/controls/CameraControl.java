@@ -33,7 +33,7 @@ import jme3utilities.SimpleControl;
 import jme3utilities.Validate;
 
 /**
- * A simple control which manages a camera connected with a spatial.
+ * Simple control which manages a camera connected with a spatial.
  * <p>
  * Each instance is enabled at creation.
  *
@@ -56,11 +56,11 @@ public class CameraControl
      */
     final private Camera camera;
     /**
-     * the camera's offset in local coordinates: set by constructor
+     * camera's offset in local coordinates: set by constructor
      */
     final private Vector3f offset;
     /**
-     * the camera's up direction in local coordinates: set by constructor
+     * camera's up direction in local coordinates: set by constructor
      */
     final private Vector3f upDirection;
     /**
@@ -73,7 +73,7 @@ public class CameraControl
     /**
      * Instantiate an enabled control to manage the specified camera.
      *
-     * @param camera to manage (not null)
+     * @param camera camera to manage (not null)
      * @param offset camera's offset in local coordinates (not null)
      * @param lookDirection camera's view direction in local coordinates (not
      * null)

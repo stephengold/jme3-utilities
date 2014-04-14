@@ -52,7 +52,7 @@ import jme3utilities.ui.GuiApplication;
 import jme3utilities.ui.InputMode;
 
 /**
- * A GUI application for testing the SkyMaterial class using a heads-up display
+ * GUI application for testing the SkyMaterial class using a heads-up display
  * (HUD). The application's main entry point is here.
  * <p>
  * Use the 'H' key to toggle HUD visibility, the 'S' key to save the current sky
@@ -313,8 +313,8 @@ public class TestSkyMaterial
     /**
      * Initialize the user interface.
      *
-     * @param material the sky material under test (not null)
-     * @param bloom the bloom filter applied to the view port (not null)
+     * @param material sky material under test (not null)
+     * @param bloom bloom filter applied to the view port (not null)
      */
     private void initializeUserInterface(SkyMaterial material, BloomFilter bloom) {
         assert material != null;
@@ -389,7 +389,7 @@ public class TestSkyMaterial
     /**
      * (Re-)initialize the render camera's frustum.
      *
-     * @param fovDegrees the desired field-of-view angle in degrees (&gt;0)
+     * @param fovDegrees desired field-of-view angle in degrees (&gt;0)
      */
     private void setFrustum(float fovDegrees) {
         assert fovDegrees > 0f : fovDegrees;

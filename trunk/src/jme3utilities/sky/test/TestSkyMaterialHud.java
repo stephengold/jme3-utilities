@@ -46,7 +46,7 @@ import jme3utilities.sky.SkyMaterial;
 import jme3utilities.ui.GuiScreenController;
 
 /**
- * A GUI screen controller for the heads-up display (HUD) of the TestSkyMaterial
+ * GUI screen controller for the heads-up display (HUD) of the TestSkyMaterial
  * application.
  *
  * Each time the HUD is enabled, the flyby camera is disabled so that Nifty can
@@ -374,8 +374,8 @@ public class TestSkyMaterialHud
     /**
      * Alter a cloud texture.
      *
-     * @param indexString which cloud layer ("0" or "1")
-     * @param assetPath to the new texture (not null)
+     * @param indexString index of the cloud layer to alter ("0" or "1")
+     * @param assetPath asset path to the new texture (not null)
      */
     private void setCloudTexture(String indexString, String assetPath) {
         assert indexString != null;
@@ -517,7 +517,7 @@ public class TestSkyMaterialHud
      * Update a bank of four sliders which control a color.
      *
      * @param prefix unique id prefix of the bank (not null)
-     * @return the color indicated by the sliders (a new instance)
+     * @return color indicated by the sliders (new instance)
      */
     private ColorRGBA updateColorBank(String prefix) {
         assert prefix != null;
@@ -536,7 +536,7 @@ public class TestSkyMaterialHud
      * coordinates.
      *
      * @param prefix unique id prefix of the bank (not null)
-     * @return the coordinates indicated by the sliders (a new instance)
+     * @return coordinates indicated by the sliders (new vector)
      */
     private Vector2f updateUVBank(String prefix) {
         assert prefix != null;

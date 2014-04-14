@@ -68,7 +68,7 @@ import jme3utilities.sky.Updater;
 import jme3utilities.ui.GuiApplication;
 
 /**
- * A GUI application for testing/demonstrating the SkyControl class using a
+ * GUI application for testing/demonstrating the SkyControl class using a
  * heads-up display (HUD). The application's main entry point is here.
  * <p>
  * Use the 'H' key to toggle HUD visibility. When the HUD is hidden, the flyCam
@@ -106,11 +106,11 @@ public class TestSkyControl
     // *************************************************************************
     // fields
     /**
-     * the ambient light in the scene
+     * ambient light-source in the scene
      */
     private AmbientLight ambientLight = null;
     /**
-     * the main light in the scene, which represents the sun or moon
+     * main light-source in the scene, which represents the sun or moon
      */
     private DirectionalLight mainLight = null;
     /**
@@ -126,7 +126,7 @@ public class TestSkyControl
      */
     private Node sceneNode = new Node("scene node");
     /**
-     * the control under test
+     * control under test
      */
     private SkyControl skyControl = null;
     /**
@@ -134,7 +134,7 @@ public class TestSkyControl
      */
     private Spatial cubeMap = null;
     /**
-     * the heads-up display (HUD)
+     * heads-up display (HUD)
      */
     private TestSkyControlHud hud = null;
     /**
@@ -275,7 +275,7 @@ public class TestSkyControl
     /**
      * Callback to update the scene. (Invoked once per frame.)
      *
-     * @param elapsedTime since the previous update (in seconds, &ge;0)
+     * @param elapsedTime time since the previous update (in seconds, &ge;0)
      */
     @Override
     public void simpleUpdate(float elapsedTime) {
@@ -459,7 +459,7 @@ public class TestSkyControl
     /**
      * Create a horizontal square of water and add it to the scene.
      * <p>
-     * During initialization of the water processor (on the first update), the
+     * During initialization of the water processor (on the 1st update), the
      * processor will discover the SkyControl and put the SkyControl in charge
      * of the processor's background colors.
      */

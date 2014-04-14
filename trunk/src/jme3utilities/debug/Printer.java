@@ -43,7 +43,7 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * An object to dump portions of a jME3 scene graph for debugging.
+ * Dump portions of a jME3 scene graph for debugging.
  * <p>
  * printSubtree() is the usual interface to this class. The level of detail can
  * be configured dynamically.
@@ -85,7 +85,7 @@ public class Printer {
      */
     private boolean printUserFlag = true;
     /**
-     * which stream to use for output: set by constructor
+     * stream to use for output: set by constructor
      */
     final private PrintStream stream;
     /**

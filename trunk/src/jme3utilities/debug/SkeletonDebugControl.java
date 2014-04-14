@@ -39,7 +39,7 @@ import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 
 /**
- * A subtree control to visualize the skeleton of a skeletonized node.
+ * Subtree control to visualize the skeleton of a skeletonized node.
  * <p>
  * The controlled spatial must be a Node.
  * <p>

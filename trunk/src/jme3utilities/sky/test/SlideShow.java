@@ -60,7 +60,7 @@ import jme3utilities.sky.SkyMaterial;
 import jme3utilities.sky.SunAndStars;
 
 /**
- * A simple application to generate illustrations for a slide show about
+ * Simple application to generate illustrations for a slide show about
  * SkyControl.
  *
  * @author Stephen Gold <sgold@sonic.net>
@@ -380,7 +380,7 @@ public class SlideShow
     }
 
     /**
-     *
+     * Transition from one slide to the next based on slideIndex.
      */
     private void doStep() {
         switch (slideIndex) {

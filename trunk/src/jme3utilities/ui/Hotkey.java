@@ -34,7 +34,7 @@ import java.util.TreeMap;
 import java.util.logging.Logger;
 
 /**
- * A hotkey on the system's keyboard.
+ * Hotkey on a desktop system's keyboard.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -58,7 +58,7 @@ public class Hotkey {
     // *************************************************************************
     // fields
     /**
-     * the hotkey's key code (per com.jme3.input.KeyInput, must be between
+     * this hotkey's key code (per com.jme3.input.KeyInput, must be between
      * minKeyCode and maxKeyCode): set by constructor
      */
     final private int keyCode;
@@ -71,7 +71,7 @@ public class Hotkey {
      */
     final private static Map<String, Hotkey> instancesByName = new TreeMap<>();
     /**
-     * the hotkey's name: set by constructor
+     * this hotkey's name: set by constructor
      */
     final private String name;
     // *************************************************************************
@@ -95,9 +95,9 @@ public class Hotkey {
     // new methods exposed
 
     /**
-     * Collect all the valid hotkeys.
+     * Enumerate all the valid hotkeys.
      *
-     * @return a new collection
+     * @return new collection
      */
     public static Collection<Hotkey> getAll() {
         Collection<Hotkey> collection = instancesByName.values();
@@ -107,8 +107,8 @@ public class Hotkey {
     /**
      * Look up the hotkey with a specified key code.
      *
-     * @param keyCode which hotkey
-     * @return the pre-existing instance (or null for an invalid key code)
+     * @param keyCode key code of hotkey
+     * @return pre-existing instance (or null for an invalid key code)
      */
     public static Hotkey getInstance(int keyCode) {
         if (keyCode < minKeyCode || keyCode > maxKeyCode) {
@@ -121,8 +121,8 @@ public class Hotkey {
     /**
      * Look up a named hotkey.
      *
-     * @param name which hotkey
-     * @return the pre-existing instance (or null for an invalid name)
+     * @param name name of hotkey
+     * @return pre-existing instance (or null for an invalid name)
      */
     public static Hotkey getInstance(String name) {
         if (name == null) {
@@ -302,8 +302,8 @@ public class Hotkey {
      * Map this hotkey to an action string in an input manager. Overrides any
      * previous mappings for the hotkey.
      *
-     * @param actionString the action string (not null)
-     * @param inputManager the input manager (not null)
+     * @param actionString action string (not null)
+     * @param inputManager application's input manager (not null)
      */
     public void map(String actionString, InputManager inputManager) {
         assert actionString != null;
@@ -324,8 +324,8 @@ public class Hotkey {
     /**
      * Add a new hotkey.
      *
-     * @param keyCode an unused key code (between minKeyCode and maxKeyCode)
-     * @param name an unused hotkey name (not null)
+     * @param keyCode unused key code (between minKeyCode and maxKeyCode)
+     * @param name unused hotkey name (not null)
      */
     private static void add(int keyCode, String name) {
         assert keyCode >= minKeyCode;

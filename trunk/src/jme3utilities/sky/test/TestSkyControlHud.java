@@ -46,7 +46,7 @@ import jme3utilities.sky.LunarPhase;
 import jme3utilities.ui.GuiScreenController;
 
 /**
- * A GUI screen controller for the heads-up display (HUD) of the TestSkyControl
+ * GUI screen controller for the heads-up display (HUD) of the TestSkyControl
  * application.
  * <p>
  * Each time this HUD is enabled, the flyby camera is disabled so that Nifty can
@@ -460,7 +460,7 @@ public class TestSkyControlHud
     /**
      * Callback to update this display. (Invoked once per frame.)
      *
-     * @param elapsedTime since the previous update (in seconds, &ge;0)
+     * @param elapsedTime time since the previous update (in seconds, &ge;0)
      */
     @Override
     public void update(float elapsedTime) {
@@ -692,7 +692,7 @@ public class TestSkyControlHud
     /**
      * Alter the style of the sun.
      *
-     * @param name of new style (not null)
+     * @param name name of new style (not null)
      */
     private void setStyle(String name) {
         assert name != null;

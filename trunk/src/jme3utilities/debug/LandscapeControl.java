@@ -50,7 +50,7 @@ import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 
 /**
- * A subtree control to provide a landscape for tests and demos. The landscape
+ * Subtree control to provide a landscape for tests and demos. The landscape
  * consists of a circular monument (resembling Stonehenge) set on a plain
  * surrounded by hills.
  * <p>
@@ -121,15 +121,15 @@ public class LandscapeControl
     // *************************************************************************
     // fields
     /**
-     * the application's asset manager: set by constructor
+     * application's asset manager: set by constructor
      */
     final private AssetManager assetManager;
     /**
-     * the maximum (unscaled) height of the terrain above its base
+     * maximum (unscaled) height of the terrain above its base
      */
     private float terrainHeight = 0f;
     /**
-     * the unscaled diameter of the terrain (in pixels)
+     * unscaled diameter of the terrain (in pixels)
      */
     private int terrainDiameter = 0;
     /**
@@ -166,7 +166,7 @@ public class LandscapeControl
     /**
      * Access a material identical to the one applied to the terrain.
      *
-     * @return a new instance
+     * @return new instance
      */
     final public Material getGrass() {
         return createShadedMaterial(grassColor);
@@ -251,7 +251,7 @@ public class LandscapeControl
      * Create a shaded material for the specified color.
      *
      * @param color ambient/diffuse color (not null)
-     * @return a new material
+     * @return new material
      */
     private Material createShadedMaterial(ColorRGBA color) {
         assert color != null;
@@ -292,7 +292,7 @@ public class LandscapeControl
     /**
      * Load a height map asset.
      *
-     * @return a new instance
+     * @return new instance
      */
     private AbstractHeightMap loadHeightMap() {
         Texture heightTexture =

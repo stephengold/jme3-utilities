@@ -41,7 +41,7 @@ import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 
 /**
- * A simple control to provide a visual "floor" for a scene. The floor would
+ * Simple control to provide a visual "floor" for a scene. The floor would
  * typically be textured to look like an extension of the terrain.
  * <p>
  * The control is disabled at creation. When enabled, it attaches a floor node
@@ -78,7 +78,7 @@ public class FloorControl
      */
     private boolean stabilizeFlag = false;
     /**
-     * the application's camera: set by constructor
+     * application's camera: set by constructor
      */
     final private Camera camera;
     // *************************************************************************
@@ -145,7 +145,7 @@ public class FloorControl
     /**
      * Create and initialize the floor node and geometry.
      *
-     * @param material to apply to the floor (not null)
+     * @param material material to apply to the floor (not null)
      * @param textureScale scale to apply to texture coordinates (&gt;0)
      */
     private void createSpatials(Material material, float textureScale) {

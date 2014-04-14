@@ -35,7 +35,7 @@ import com.jme3.scene.control.Control;
 import java.io.IOException;
 
 /**
- * A simplified abstract control which does not implement serialization or
+ * Simplified abstract control which does not implement serialization or
  * cloning.
  * <p>
  * Although this is an abstract class, it defines all required methods in order
@@ -121,7 +121,7 @@ abstract public class SimpleControl
      * Clone this control for a different spatial.
      *
      * @param spatial spatial to clone for (not null)
-     * @return a new control
+     * @return new control
      */
     @Override
     public Control cloneForSpatial(Spatial spatial) {

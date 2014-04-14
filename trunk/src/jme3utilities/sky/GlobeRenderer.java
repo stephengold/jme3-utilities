@@ -56,7 +56,7 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**
- * An app state which generates a dynamic texture for an object by rendering an
+ * App state to generate a dynamic texture for an object by rendering an
  * off-screen globe. Each instance has its own camera and root node.
  *
  * @author Stephen Gold <sgold@sonic.net>
@@ -343,7 +343,7 @@ public class GlobeRenderer
     }
 
     /**
-     * Initialize this controller prior to its first update.
+     * Initialize this controller prior to its 1st update.
      *
      * @param stateManager (not null)
      * @param application which application owns this screen (not null)

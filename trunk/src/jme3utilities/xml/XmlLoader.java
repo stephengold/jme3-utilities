@@ -38,7 +38,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
- * A simple loader for XML assets.
+ * Simple loader for XML assets.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -64,9 +64,9 @@ public class XmlLoader
     /**
      * Parse an open input stream.
      *
-     * @param stream which stream (not null, open, rewound)
+     * @param stream stream to parse (not null, open, rewound)
      * @param description (not null)
-     * @return a new DOM document
+     * @return new DOM document
      */
     public static Document parse(InputStream stream, String description) {
         if (parser == null) {
@@ -98,7 +98,7 @@ public class XmlLoader
      * Load an XML asset.
      *
      * @param assetInfo (not null)
-     * @return a new DOM document
+     * @return new DOM document
      */
     @Override
     public Object load(AssetInfo assetInfo)

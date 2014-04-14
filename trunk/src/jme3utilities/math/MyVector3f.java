@@ -99,8 +99,8 @@ public class MyVector3f {
      * Compare two vectors lexicographically, with the x-component having
      * priority.
      *
-     * @param v1 first vector (not null, not altered)
-     * @param v2 second vector (not null, not altered)
+     * @param v1 1st input vector (not null, not altered)
+     * @param v2 2nd input vector (not null, not altered)
      * @return 0 if v1 is equal to v2; negative if v1 comes before v2; positive
      * if v1 comes after v2
      */
@@ -122,7 +122,7 @@ public class MyVector3f {
      * Compute a horizontal direction of an offset.
      *
      * @param offset difference of world coordinates (not null, not altered)
-     * @return a new unit vector
+     * @return new unit vector
      */
     public static VectorXZ direction(Vector3f offset) {
         Validate.nonNull(offset, "offset");
@@ -153,7 +153,7 @@ public class MyVector3f {
      *
      * @param altitude angle above the X-Z plane (radians toward +Y)
      * @param azimuth angle in the X-Z plane (radians CCW from +X)
-     * @return a new unit vector
+     * @return new unit vector
      */
     public static Vector3f fromAltAz(float altitude, float azimuth) {
         Quaternion elevate = new Quaternion();
@@ -192,7 +192,7 @@ public class MyVector3f {
      *
      * @param input (not null, not altered)
      * @param angle clockwise (LH) angle of rotation in radians
-     * @return a new vector
+     * @return new vector
      */
     public static Vector3f yRotate(Vector3f input, float angle) {
         float cosine = FastMath.cos(angle);

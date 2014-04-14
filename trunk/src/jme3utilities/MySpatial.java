@@ -124,11 +124,11 @@ public class MySpatial
     }
 
     /**
-     * Find a node's first child which is an assignable from a specified class.
+     * Find a node's 1st child which is an assignable from a specified class.
      *
      * @param node node to search (not null)
-     * @param spatialType which subclass of Spatial to search for
-     * @return the first matching child, or null if none found
+     * @param spatialType subclass of Spatial to search for
+     * @return 1st matching child, or null if none found
      */
     @SuppressWarnings("unchecked")
     public static <T extends Spatial> T findChild(Node node,
@@ -146,7 +146,7 @@ public class MySpatial
      *
      * @param spatial spatial to search (not null)
      * @param lightName (not null)
-     * @return the first matching light, or null if none found
+     * @return 1st matching light, or null if none found
      */
     public static Light findLight(Spatial spatial, String lightName) {
         for (Light light : spatial.getLocalLightList()) {
@@ -162,7 +162,7 @@ public class MySpatial
      * Compute the map (2-D) location of a spatial.
      *
      * @param spatial spatial to locate (not null)
-     * @return a new vector
+     * @return new vector
      */
     public static VectorXZ getMapLocation(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
@@ -315,7 +315,7 @@ public class MySpatial
      * Copy the world location of a spatial.
      *
      * @param spatial spatial to locate (not null)
-     * @return a new vector
+     * @return new vector
      */
     public static Vector3f getWorldLocation(Spatial spatial) {
         /*
@@ -336,7 +336,7 @@ public class MySpatial
      * Copy the world orientation of a spatial.
      *
      * @param spatial spatial to orient (not null)
-     * @return a new vector
+     * @return new vector
      */
     public static Quaternion getWorldOrientation(Spatial spatial) {
         /*
@@ -374,7 +374,7 @@ public class MySpatial
      * which undoes its rotation.
      *
      * @param spatial spatial to analyze (not null)
-     * @return a new instance
+     * @return new instance
      */
     public static Quaternion inverseOrientation(Spatial spatial) {
         Quaternion forward = spatial.getWorldRotation();

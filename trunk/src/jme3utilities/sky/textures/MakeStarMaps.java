@@ -51,7 +51,7 @@ import jme3utilities.sky.Constants;
 import jme3utilities.sky.DomeMesh;
 
 /**
- * A console application to generate starry sky texture maps for use with
+ * Console application to generate starry sky texture maps for use with
  * SkyMaterial and DomeMesh, based on data from a star catalog. In the resulting
  * textures, east is at the top and north is to the right.
  *
@@ -248,7 +248,7 @@ public class MakeStarMaps {
     /**
      * Generate a starry sky texture map.
      *
-     * @param preset which map to generate (not null)
+     * @param preset map preset to generate (not null)
      */
     private void generateMap(StarMapPreset preset) {
         assert preset != null;
@@ -280,7 +280,7 @@ public class MakeStarMaps {
      * @param latitude radians north of the equator (&le;Pi/2, &ge;-Pi/2)
      * @param siderealTime hours since sidereal midnight (&lt;24, &ge;0)
      * @param textureSize size of the texture map (pixels per side, &gt;2)
-     * @return a new instance
+     * @return new instance
      */
     private RenderedImage generateMap(float latitude, float siderealHour,
             int textureSize) {
@@ -414,10 +414,10 @@ public class MakeStarMaps {
      * Draw an ellipse -- a circle stretched to compensate for UV distortion
      * near the rim of the dome.
      *
-     * @param map which texture map (not null)
-     * @param luminosity the star's relative luminosity (&gt;0)
+     * @param map texture map (not null)
+     * @param luminosity star's relative luminosity (&gt;0)
      * @param textureSize size of the texture map (pixels per side, &gt;2)
-     * @param uv the star's texture coordinates (not null)
+     * @param uv star's texture coordinates (not null)
      * @return true if the star was successfully plotted, otherwise false
      */
     private void plotEllipse(BufferedImage map, float luminosity,
@@ -466,8 +466,8 @@ public class MakeStarMaps {
     /**
      * Plot a star's position at a specified time onto a texture map.
      *
-     * @param map which texture map (not null)
-     * @param star which star to plot (not null)
+     * @param map texture map (not null)
+     * @param star star to plot (not null)
      * @param latitude radians north of the equator (&le;Pi/2, &ge;-Pi/2)
      * @param siderealTime radians since sidereal midnight (&lt;2*Pi, &ge;0)
      * @param textureSize size of the texture map (pixels per side, &gt;2)
@@ -515,7 +515,7 @@ public class MakeStarMaps {
     /**
      * Plot a star on a texture map.
      *
-     * @param map which texture map (not null)
+     * @param map texture map (not null)
      * @param apparentMagnitude the star's brightness
      * @param textureSize size of the texture map (pixels per side, &lt;2)
      * @param worldDirection the star's world coordinates (unit vector)
@@ -553,10 +553,10 @@ public class MakeStarMaps {
     /**
      * Plot a four-pointed star shape on a texture map.
      *
-     * @param map which texture map (not null)
-     * @param luminosity the star's relative luminosity (&le;37, &gt;0)
+     * @param map texture map (not null)
+     * @param luminosity star's relative luminosity (&le;37, &gt;0)
      * @param textureSize size of the texture map (pixels per side, &gt;2)
-     * @param uv the star's texture coordinates (not null)
+     * @param uv star's texture coordinates (not null)
      * @return true if the star was successfully plotted, otherwise false
      */
     private boolean plot4PointStar(BufferedImage map, float luminosity,
@@ -805,9 +805,9 @@ public class MakeStarMaps {
     /**
      * Construct a new star based on a catalog entry.
      *
-     * @param textLine which was read from the catalog (not null)
+     * @param textLine line of text read from the catalog (not null)
      * @param entryId (&ge;1)
-     * @return a new instance
+     * @return new instance
      */
     private Star readStar(String textLine, int entryId)
             throws InvalidEntryException, InvalidMagnitudeException {

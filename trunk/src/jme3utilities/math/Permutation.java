@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A cyclic permutation of the integers from 0 to length-1, for use in noise
+ * Cyclic permutation of the integers from 0 to length-1, for use in noise
  * functions.
  *
  * @author Stephen Gold <sgold@sonic.net>
@@ -47,7 +47,7 @@ public class Permutation {
     // *************************************************************************
     // fields
     /**
-     * the array of indices which make up the permutation
+     * indices which make up the permutation
      */
     private int[] indices = null;
     // *************************************************************************
@@ -106,8 +106,8 @@ public class Permutation {
     /**
      * Swap two elements in the permutation.
      *
-     * @param first index of the first element (&lt;length, &ge;0)
-     * @param second index of the second element (&lt;length, &ge;0)
+     * @param first index of the 1st element (&lt;length, &ge;0)
+     * @param second index of the 2nd element (&lt;length, &ge;0)
      */
     private void swapTableEntries(int first, int second) {
         int savedValue = indices[first];

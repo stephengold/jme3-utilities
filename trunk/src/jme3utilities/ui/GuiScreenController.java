@@ -43,7 +43,7 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * A BasicScreenController which supports check boxes, popup menus, radio
+ * Basic screen controller which supports check boxes, popup menus, radio
  * buttons, sliders, and dynamic labels.
  *
  * @author Stephen Gold <sgold@sonic.net>
@@ -65,7 +65,7 @@ public class GuiScreenController
      */
     private static InputMode savedMode;
     /**
-     * the active popup menu (null means none are active)
+     * active popup menu (null means none are active)
      */
     private static PopupMenu activePopupMenu = null;
     // *************************************************************************
@@ -166,7 +166,7 @@ public class GuiScreenController
     /**
      * Select a menu item in the active popup.
      *
-     * @param index which item (&ge;0, 0 &rarr; first)
+     * @param index index of the item (&ge;0, 0 &rarr; 1st)
      */
     public void selectMenuItem(int index) {
         Validate.nonNegative(index, "index");
@@ -291,7 +291,7 @@ public class GuiScreenController
      * Alter the label of a button.
      *
      * @param elementId Nifty element id of the button (not null)
-     * @param newText (not null)
+     * @param newText new text for the label (not null)
      */
     protected void setButtonLabel(String elementId, String newText) {
         Validate.nonNull(elementId, "element id");
@@ -382,7 +382,7 @@ public class GuiScreenController
      * where the slider's Nifty id ends with "Slider".
      *
      * @param namePrefix unique name prefix of the slider (not null)
-     * @param newValue value for the slider
+     * @param newValue new value for the slider
      */
     protected void setSlider(String namePrefix, float newValue) {
         Validate.nonNull(namePrefix, "prefix");
@@ -435,8 +435,8 @@ public class GuiScreenController
      * "Slider" and (b) the Nifty id of the corresponding label consists of the
      * same prefix followed by "SliderStatus".
      *
-     * @param namePrefix the unique name prefix of the slider (not null)
-     * @param statusSuffix to specify a unit of measurement (not null)
+     * @param namePrefix unique name prefix of the slider (not null)
+     * @param statusSuffix suffix to specify a unit of measurement (not null)
      * @return value of the slider
      */
     protected float updateSlider(String namePrefix, String statusSuffix) {
@@ -504,7 +504,7 @@ public class GuiScreenController
      *
      * @param namePrefix unique id prefix of the slider (not null)
      * @param value value of the slider
-     * @param statusSuffix to specify a unit of measurement (not null)
+     * @param statusSuffix suffix to specify a unit of measurement (not null)
      */
     private void updateSliderStatus(String namePrefix, float value,
             String statusSuffix) {

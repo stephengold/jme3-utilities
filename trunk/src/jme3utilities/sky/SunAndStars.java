@@ -44,8 +44,8 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
- * The component of SkyControl which models the orientations of the sun and
- * stars relative to an observer on Earth.
+ * Component of SkyControl to model the orientations of the sun and stars
+ * relative to an observer on Earth.
  * <p>
  * Three right-handed Cartesian coordinate systems are used: ecliptical,
  * equatorial, and world.
@@ -95,7 +95,7 @@ public class SunAndStars
      */
     private float hour = 0f;
     /**
-     * the observer's latitude (radians north of the equator)
+     * observer's latitude (radians north of the equator)
      */
     private float observerLatitude = Constants.defaultLatitude;
     /**
@@ -118,7 +118,7 @@ public class SunAndStars
      * &le;Pi/2, &ge;-Pi/2)
      * @param longitude celestial longitude (radians east of the vernal equinox,
      * &le;2*Pi, &ge;0)
-     * @return a new unit vector in equatorial coordinates
+     * @return new unit vector in equatorial coordinates
      */
     public static Vector3f convertToEquatorial(float latitude,
             float longitude) {
@@ -155,7 +155,7 @@ public class SunAndStars
      * Convert ecliptical coordinates to equatorial coordinates.
      *
      * @param ecliptical coordinates (not null, not altered)
-     * @return a new vector in equatorial coordinates
+     * @return new vector in equatorial coordinates
      */
     public static Vector3f convertToEquatorial(Vector3f ecliptical) {
         Validate.nonNull(ecliptical, "coordinates");
@@ -177,7 +177,7 @@ public class SunAndStars
      * &le;Pi/2, &ge;-Pi/2)
      * @param longitude celestial longitude (radians east of the vernal equinox,
      * &le;2*Pi, &ge;0)
-     * @return a new unit vector in world (horizontal) coordinates
+     * @return new unit vector in world (horizontal) coordinates
      */
     public Vector3f convertToWorld(float latitude, float longitude) {
         if (!(latitude >= -FastMath.HALF_PI && latitude <= FastMath.HALF_PI)) {
@@ -202,7 +202,7 @@ public class SunAndStars
      * Convert equatorial coordinates to world (horizontal) coordinates.
      *
      * @param equatorial coordinates (not null, not altered)
-     * @return a new vector in a world coordinates
+     * @return new vector in a world coordinates
      */
     public Vector3f convertToWorld(Vector3f equatorial) {
         Validate.nonNull(equatorial, "coordinates");
@@ -293,7 +293,7 @@ public class SunAndStars
     /**
      * Compute the direction to the center of the sun.
      *
-     * @return a new unit vector in world (horizontal) coordinates
+     * @return new unit vector in world (horizontal) coordinates
      */
     public Vector3f getSunDirection() {
         Vector3f result = convertToWorld(0f, solarLongitude);
@@ -305,7 +305,7 @@ public class SunAndStars
     /**
      * Update the orientation of an external sky.
      *
-     * @param spatial the external sky (not null)
+     * @param spatial external sky (not null)
      */
     public void orientExternalSky(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
@@ -418,7 +418,7 @@ public class SunAndStars
      *
      * @param month zero-based month of the Gregorian year (&lt;12, &ge;0, 0
      * &rarr; January)
-     * @param day of the Gregorian month (&le;31, &ge;1)
+     * @param day day of the Gregorian month (&le;31, &ge;1)
      */
     public void setSolarLongitude(int month, int day) {
         if (month < 0 || month >= 12) {
@@ -453,7 +453,7 @@ public class SunAndStars
     /**
      * Clone this instance.
      *
-     * @return a new instance equivalent to this one
+     * @return new instance equivalent to this one
      */
     @Override
     public SunAndStars clone() {

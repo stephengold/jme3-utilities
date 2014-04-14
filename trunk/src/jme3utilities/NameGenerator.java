@@ -74,7 +74,7 @@ public class NameGenerator
      * Given a name, regenerate its prefix.
      *
      * @param name (not null)
-     * @return the prefix (or null if the name was not generated here)
+     * @return prefix (or null if the name was not generated here)
      */
     public static String getPrefix(String name) {
         int separatorIndex = name.indexOf(separator);
@@ -125,7 +125,7 @@ public class NameGenerator
      * separator followed by a decimal sequence number.
      *
      * @param prefix the prefix string
-     * @return a unique String which begins with the specified prefix
+     * @return unique String which begins with the specified prefix
      */
     public String unique(String prefix) {
         int separatorIndex = prefix.indexOf(separator);

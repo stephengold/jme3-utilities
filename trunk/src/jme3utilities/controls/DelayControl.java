@@ -36,8 +36,8 @@ import jme3utilities.SimpleControl;
 import jme3utilities.Validate;
 
 /**
- * A simple control used to enable other "slave" controls after a pre-set
- * simulation interval.
+ * Simple control to enable other "slave" controls after a pre-set simulation
+ * interval.
  * <p>
  * Each instance is disabled at creation.
  *

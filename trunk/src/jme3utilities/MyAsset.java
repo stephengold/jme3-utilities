@@ -81,7 +81,7 @@ final public class MyAsset {
      * Create an invisible material.
      *
      * @param assetManager (not null)
-     * @return a new instance
+     * @return new instance
      */
     public static Material createInvisibleMaterial(AssetManager assetManager) {
         Validate.nonNull(assetManager, "asset manager");

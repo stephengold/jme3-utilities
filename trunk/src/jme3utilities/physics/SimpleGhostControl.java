@@ -38,7 +38,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * A simplified physics control for a non-solid object.
+ * Simplified physics control for a non-solid object.
  * <p>
  * Implements key methods in order to simplify the development of subclasses.
  * <p>
@@ -66,7 +66,7 @@ public class SimpleGhostControl
      *
      * @param enabled true for an enabled control, false for a disabled one
      * @param initialShape initial collision shape for the object
-     * @param physicsSpace which physics space will contain the object (not
+     * @param physicsSpace physics space which will contain the object (not
      * null)
      */
     public SimpleGhostControl(boolean enabled, CollisionShape initialShape,
@@ -111,8 +111,8 @@ public class SimpleGhostControl
     /**
      * Clone this control for a different spatial.
      *
-     * @param spatial which spatial to clone for (not null)
-     * @return a new control
+     * @param spatial spatial to clone for (not null)
+     * @return new control
      */
     @Override
     public Control cloneForSpatial(Spatial spatial) {

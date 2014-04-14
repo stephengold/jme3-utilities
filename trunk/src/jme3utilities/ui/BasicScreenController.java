@@ -43,8 +43,8 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * An app state to control a Nifty screen. A screen is displayed if and only if
- * its app state is enabled. At most one screen is displayed at a time.
+ * App state to control a Nifty screen. A screen is displayed if and only if its
+ * app state is enabled. At most one screen is displayed at a time.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -117,8 +117,8 @@ public class BasicScreenController
      * Test whether the mouse cursor is inside the identified element of this
      * screen.
      *
-     * @param elementId the Nifty id of the element (not null)
-     * @return true if the mouse is
+     * @param elementId Nifty id of the element (not null)
+     * @return true if the mouse is inside, false if it's outside
      */
     public boolean isMouseInsideElement(String elementId) {
         Validate.nonNull(elementId, "element id");
@@ -183,10 +183,10 @@ public class BasicScreenController
     // AbstractAppState methods
 
     /**
-     * Initialize this controller prior to its first update.
+     * Initialize this controller prior to its 1st update.
      *
      * @param stateManager (not null)
-     * @param application which application owns this screen (not null)
+     * @param application application which owns this screen (not null)
      */
     @Override
     public void initialize(AppStateManager stateManager,
@@ -268,7 +268,7 @@ public class BasicScreenController
     /**
      * Access the application which owns this screen.
      *
-     * @return the pre-existing instance (not null)
+     * @return pre-existing instance (not null)
      */
     protected GuiApplication getApplication() {
         assert application != null;
@@ -278,7 +278,7 @@ public class BasicScreenController
     /**
      * Access the Nifty instance.
      *
-     * @return the pre-existing instance (not null)
+     * @return pre-existing instance (not null)
      */
     protected static Nifty getNifty() {
         Nifty result = application.getNifty();
@@ -289,7 +289,7 @@ public class BasicScreenController
     /**
      * Access the Nifty Screen instance.
      *
-     * @return the pre-existing instance (not null)
+     * @return pre-existing instance (not null)
      */
     protected Screen getScreen() {
         Screen screen = getNifty().getScreen(screenId);
