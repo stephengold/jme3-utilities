@@ -40,7 +40,7 @@ import jme3utilities.math.Noise;
 import jme3utilities.math.Perlin2;
 
 /**
- * A console application to generate cloud layer alpha maps for use with
+ * Console application to generate cloud layer alpha maps for use with
  * SkyMaterial and DomeMesh.
  *
  * @author Stephen Gold <sgold@sonic.net>
@@ -189,7 +189,7 @@ public class MakeClouds {
      * (&ge;0)
      * @param whiteCutoff normalized noise value above which pixel is white
      * (&le;1, &gt;blackCutoff)
-     * @return a new instance
+     * @return new instance
      */
     private RenderedImage makeFbmClouds(int textureSize, float blackCutoff,
             float whiteCutoff) {
@@ -223,7 +223,7 @@ public class MakeClouds {
      *
      * @param textureSize size of the texture map (pixels per side, &ge;1)
      * @param alpha opacity (&le;1, &ge;0)
-     * @return a new instance
+     * @return new instance
      */
     private RenderedImage makeFillClouds(int textureSize, float alpha) {
         assert textureSize >= 1 : textureSize;
@@ -250,7 +250,8 @@ public class MakeClouds {
     /**
      * Write a rendered image to a PNG file in the "clouds" folder.
      *
-     * @param fileName for writing the image (no extension, not null)
+     * @param fileName name of file to write the image to (no extension, not
+     * null)
      * @param image image to write (not null)
      */
     private static void writeClouds(String fileName, RenderedImage image)

@@ -35,7 +35,7 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * A simple application with a Nifty graphical user interface (GUI). Extending
+ * Simple application with a Nifty graphical user interface (GUI). Extending
  * this class (instead of SimpleApplication) provides automatic initialization
  * of Nifty and easy access to the Nifty instance.
  *
@@ -60,11 +60,11 @@ abstract public class GuiApplication
     // *************************************************************************
     // fields
     /**
-     * the currently enabled screen controller (null means there's none)
+     * currently enabled screen controller (null means there's none)
      */
     private static BasicScreenController enabledScreen = null;
     /**
-     * the initial input mode: set in #simpleInitApp()
+     * initial input mode: set in #simpleInitApp()
      */
     private InputMode defaultInputMode = null;
     /**

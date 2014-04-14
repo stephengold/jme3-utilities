@@ -111,7 +111,7 @@ final public class MyCamera {
      * Rotate a camera without changing its location, setting its "up" direction
      * automatically.
      *
-     * @param camera which camera to rotate (not null)
+     * @param camera camera to rotate (not null)
      * @param direction (not null, positive length)
      */
     public static void look(Camera camera, Vector3f direction) {

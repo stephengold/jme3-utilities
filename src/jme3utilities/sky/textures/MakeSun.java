@@ -41,7 +41,7 @@ import jme3utilities.math.MyMath;
 import jme3utilities.sky.Constants;
 
 /**
- * A console application to generate sun images for use with SkyMaterial.
+ * Console application to generate sun images for use with SkyMaterial.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -147,7 +147,7 @@ public class MakeSun {
      * (&le;Pi, &ge;-Pi)
      * @param numRays number of rays in the surround (&gt;0, or 0 for a circular
      * haze, or -1 for an irregular surround)
-     * @return a fraction (&le;1, &ge;0)
+     * @return fraction (&le;1, &ge;0)
      */
     private float indent(float theta, int numRays) {
         assert theta <= FastMath.PI : theta;
@@ -236,7 +236,7 @@ public class MakeSun {
      * @param surroundAlpha opacity of the surround at the disc's edge (&ge;0)
      * @param numRays number of rays in the surround (&gt;0, or 0 for a circular
      * haze, or -1 for a chaotic surround)
-     * @return a new instance
+     * @return new instance
      */
     private RenderedImage makeSun(float discSharpness, float surroundAlpha,
             int numRays) {
@@ -290,8 +290,8 @@ public class MakeSun {
      * Set a particular pixel to the specified brightness.
      *
      * @param graphics context (not null)
-     * @param x coordinate (&lt;textureSize, &ge;0)
-     * @param y coordinate (&lt;textureSize, &ge;0)
+     * @param x pixel's 1st coordinate (&lt;textureSize, &ge;0)
+     * @param y pixel's 2nd coordinate (&lt;textureSize, &ge;0)
      * @param alpha (&le;255, &ge;0)
      */
     private void setWhitePixel(Graphics2D graphics, int x, int y, int alpha) {

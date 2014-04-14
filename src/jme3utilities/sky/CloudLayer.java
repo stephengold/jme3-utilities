@@ -37,7 +37,7 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
- * The component of SkyControl which manages a particular cloud layer.
+ * Component of SkyControl which manages a particular cloud layer.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -85,7 +85,7 @@ public class CloudLayer
      */
     private int layerIndex;
     /**
-     * the cloud material: set by constructor
+     * cloud material: set by constructor
      */
     private SkyMaterial material;
     // *************************************************************************

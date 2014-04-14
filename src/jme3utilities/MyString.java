@@ -72,7 +72,7 @@ public class MyString {
      * Escape all tab, newline, and backslash characters in a string.
      *
      * @param unescaped the input string (not null)
-     * @return the escaped output string
+     * @return escaped output string
      * @see #unEscape(String)
      */
     public static String escape(String unescaped) {
@@ -97,8 +97,8 @@ public class MyString {
      * @param input the input string
      * @return either an array of three Strings, each containing a substring of
      * the input, or else null:<ul>
-     * <li>result[0] is the portion before the first '\t'.
-     * <li>result[1] is the portion after the '\t' but before the first '\n'.
+     * <li>result[0] is the portion before the 1st '\t'.
+     * <li>result[1] is the portion after the '\t' but before the 1st '\n'.
      * <li>result[2] is the remainder of the string.
      * </ul>
      */
@@ -188,7 +188,7 @@ public class MyString {
      * representation of a float. Also remove sign from zero.
      *
      * @param input the input string (not null)
-     * @return the trimmed string
+     * @return trimmed string
      */
     public static String trimFloat(String input) {
         String result;
@@ -217,7 +217,7 @@ public class MyString {
      * Undo character escapes added by escape().
      *
      * @param escaped the input string
-     * @return the unescaped output string
+     * @return unescaped output string
      * @see #escape(String)
      */
     public static String unEscape(String escaped) {

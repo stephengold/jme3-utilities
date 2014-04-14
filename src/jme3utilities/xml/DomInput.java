@@ -63,8 +63,8 @@ final public class DomInput {
     /**
      * Create a quaternion from a DOM element.
      *
-     * @param element which element (not null)
-     * @return a new instance
+     * @param element element to use (not null)
+     * @return new instance
      */
     public static Quaternion createQuaternion(Element element) {
         NamedNodeMap map = element.getAttributes();
@@ -79,9 +79,9 @@ final public class DomInput {
     /**
      * Create a vector from a DOM element.
      *
-     * @param element which element (not null)
+     * @param element element to use (not null)
      * @param scaleFactor scale factor (in meters per world unit, &gt;0)
-     * @return a new instance
+     * @return new instance
      */
     public static Vector3f createVector3f(Element element, float scaleFactor) {
         assert scaleFactor > 0f : scaleFactor;

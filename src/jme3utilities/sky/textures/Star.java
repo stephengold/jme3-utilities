@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * A star from a star catalog, used by MakeStarMaps.
+ * Star in a star catalog, used by MakeStarMaps.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -110,7 +110,7 @@ class Star
      * </ul>
      *
      * @param siderealTime radians since sidereal midnight (&ge;0, &lt;2*Pi)
-     * @return a new unit vector
+     * @return new unit vector
      */
     Vector3f getEquatorialLocation(float siderealTime) {
         assert siderealTime >= 0f : siderealTime;

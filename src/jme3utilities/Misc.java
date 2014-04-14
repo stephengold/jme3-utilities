@@ -145,7 +145,7 @@ public class Misc {
      *
      * @return package name, branch, and revision of this file
      */
-    public static String getVersion() {//
+    public static String getVersion() {
         return "jme3-utilities trunk $Rev$";
     }
 
@@ -179,8 +179,8 @@ public class Misc {
      * Set a specified grayscale pixel to a specified brightness.
      *
      * @param graphics rendering context of the pixel (not null)
-     * @param x x-coordinate of the pixel (&lt;width, &ge;0)
-     * @param y y-coordinate of the pixel (&lt;height, &ge;0)
+     * @param x pixel's 1st coordinate (&lt;width, &ge;0)
+     * @param y pixel's 2nd coordinate (&lt;height, &ge;0)
      * @param brightness (&le;1, &ge;0, 0 &rarr; black, 1 &rarr; white)
      *
      */

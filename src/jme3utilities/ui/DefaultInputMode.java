@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 import jme3utilities.MyString;
 
 /**
- * The default input mode for a GUI application.
+ * Default input mode for a GUI application.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -56,7 +56,7 @@ class DefaultInputMode
      */
     final private static String assetPath = "Textures/cursors/default.cur";
     /**
-     * the short name for this mode
+     * short name for this mode
      */
     final public static String name = "default";
     // *************************************************************************
@@ -118,7 +118,7 @@ class DefaultInputMode
     }
 
     /**
-     * Initialize this (disabled) mode prior to its first update.
+     * Initialize this (disabled) mode prior to its 1st update.
      *
      * @param stateManager (not null)
      * @param application (not null)

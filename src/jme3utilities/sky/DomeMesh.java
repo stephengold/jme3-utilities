@@ -44,9 +44,8 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
- * A custom mesh for a dome (or a pie-cut segment thereof) with radius=1,
- * centered at the origin, with its top at (0,1,0) and its equator in the XZ
- * plane.
+ * Custom mesh for a dome (or a pie-cut segment thereof) with radius=1, centered
+ * at the origin, with its top at (0,1,0) and its equator in the XZ plane.
  * <p>
  * The key differences between this class and com.jme3.scene.shape.Dome are:<ol>
  * <li> the radius and center ARE NOT configurable,
@@ -204,7 +203,7 @@ public class DomeMesh
      * specified direction from the center of the mesh.
      *
      * @param direction (unit vector, not altered)
-     * @return a new vector, or null if direction is too far below the equator
+     * @return new vector, or null if direction is too far below the equator
      */
     public Vector2f directionUV(Vector3f direction) {
         Validate.nonNull(direction, "direction");
@@ -382,7 +381,7 @@ public class DomeMesh
          */
         Vector2f[] texCoordArray = new Vector2f[vertexCount];
         /*
-         * Compute the non-polar vertices first. Vertices are arranged first
+         * Compute the non-polar vertices 1st. Vertices are arranged 1st
          * by latitude (starting from the rim).
          */
         float quadHeight = verticalAngle / (quadrantSamples - 1); // radians
@@ -472,7 +471,7 @@ public class DomeMesh
         short[] indexArray = new short[vpt * triangleCount];
         /*
          * If the dome is incomplete, leave a gap between the last rim sample
-         * and the first.
+         * and the 1st.
          */
         int numGores;
         if (complete) {
@@ -481,7 +480,7 @@ public class DomeMesh
             numGores = rimSamples - 1;
         }
         /*
-         * Compute the quad triangles first. Quads are arranged first
+         * Compute the quad triangles 1st. Quads are arranged 1st
          * and foremost by latitude, starting at the rim.
          */
         int quadsPerGore = quadrantSamples - 2;

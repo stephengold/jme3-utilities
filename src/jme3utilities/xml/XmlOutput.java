@@ -62,7 +62,7 @@ final public class XmlOutput {
      *
      * @param stream (not null)
      * @param tag XML tag (not null)
-     * @param quaternion which quaternion to serialize (not null)
+     * @param quaternion quaternion to serialize (not null)
      * @param indent whitespace at the start of the line (not null)
      */
     public static void put(PrintStream stream, String tag,
@@ -83,7 +83,7 @@ final public class XmlOutput {
      *
      * @param stream (not null)
      * @param tag XML tag (not null)
-     * @param vector which vector to serialize (not null, unaffected)
+     * @param vector vector to serialize (not null, unaffected)
      * @param indent whitespace at the start of the line (not null)
      * @param scaleFactor (in meters per world unit, &gt;0)
      */

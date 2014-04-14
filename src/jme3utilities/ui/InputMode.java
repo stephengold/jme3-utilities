@@ -47,8 +47,8 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * An app state to implement a configurable input mode. At most one mode is
- * enabled at a time.
+ * App state to implement a configurable input mode. At most one mode is enabled
+ * at a time.
  * <p>
  * An enabled mode maps hotkeys to actions and controls the appearance of the
  * mouse pointer/cursor. Some hotkeys (such as the shift keys) can be associated
@@ -140,7 +140,7 @@ abstract public class InputMode
      * shared by multiple hotkeys. Signals are used to track the state of mode
      * keys (such as the shift keys).
      *
-     * @param actionName which action (not null)
+     * @param actionName name of the action (not null)
      * @param keyCode the hotkey's keycode
      */
     public void bind(String actionName, int keyCode) {
@@ -158,8 +158,8 @@ abstract public class InputMode
      * shared by multiple hotkeys. Signals are used to track the state of mode
      * keys (such as the shift keys).
      *
-     * @param actionName which action (not null)
-     * @param hotkey which hotkey (not null)
+     * @param actionName name of the action (not null)
+     * @param hotkey hotkey to bind to (not null)
      */
     public void bind(String actionName, Hotkey hotkey) {
         assert actionName != null;
@@ -174,7 +174,7 @@ abstract public class InputMode
     /**
      * Test whether this input mode binds the specified hotkey.
      *
-     * @param hotkey which hotkey (not null)
+     * @param hotkey hotkey to test (not null)
      * @return true if bound, otherwise false
      */
     public boolean binds(Hotkey hotkey) {
@@ -187,8 +187,8 @@ abstract public class InputMode
     /**
      * Find the names of all hotkeys bound to a named action.
      *
-     * @param actionName which action (not null)
-     * @return a new collection of hotkey names
+     * @param actionName name of action (not null)
+     * @return new collection of hotkey names
      */
     public Collection<String> findHotkeys(String actionName) {
         assert actionName != null;
@@ -211,7 +211,7 @@ abstract public class InputMode
      * Find an initialized mode by its short name.
      *
      * @param shortName (not null)
-     * @return the pre-existing instance (or null if none)
+     * @return pre-existing instance (or null if none)
      */
     public static InputMode findMode(String shortName) {
         Validate.nonNull(shortName, "name");
@@ -228,7 +228,7 @@ abstract public class InputMode
      * Look up the action bound to a hotkey.
      *
      * @param hotkey (not null)
-     * @return the hotkey's action name, or null if the hotkey isn't bound
+     * @return hotkey's action name, or null if the hotkey isn't bound
      */
     public String getActionName(Hotkey hotkey) {
         String keyName = hotkey.name();
@@ -240,7 +240,7 @@ abstract public class InputMode
     /**
      * Access the enabled mode, if any.
      *
-     * @return the pre-existing instance (or null if none)
+     * @return pre-existing instance (or null if none)
      */
     public static InputMode getEnabledMode() {
         return enabledMode;
@@ -304,7 +304,7 @@ abstract public class InputMode
     /**
      * Alter the mouse cursor for this uninitialized mode.
      *
-     * @param newCursor or null to hide the cursor when enabled
+     * @param newCursor new cursor, or null to hide the cursor when enabled
      */
     public void setCursor(JmeCursor newCursor) {
         assert !initialized;
@@ -340,7 +340,7 @@ abstract public class InputMode
     // AbstractAppState methods
 
     /**
-     * Initialize this (disabled) mode prior to its first update.
+     * Initialize this (disabled) mode prior to its 1st update.
      *
      * @param stateManager (not null)
      * @param application (not null)
@@ -460,7 +460,7 @@ abstract public class InputMode
     /**
      * Generate the filesystem path to the user's customized hotkey bindings.
      *
-     * @return a new string
+     * @return path string
      */
     private String getSavePath() {
         String path = Misc.getUserPath(customBindingsFileName);
@@ -501,7 +501,7 @@ abstract public class InputMode
     /**
      * Load hotkey bindings from an XML input stream.
      *
-     * @param stream which input stream (not null)
+     * @param stream input stream to load from (not null)
      */
     private void loadBindings(InputStream stream)
             throws IOException {
@@ -566,7 +566,7 @@ abstract public class InputMode
      * Map a hotkey to an action string in the input manager. Overrides any
      * previous mapping for the hotkey.
      *
-     * @param actionString the action string (not null)
+     * @param actionString action string to map (not null)
      * @param hotkey (not null)
      */
     private void mapActionString(String actionString, Hotkey hotkey) {
@@ -591,7 +591,7 @@ abstract public class InputMode
     /**
      * Map a hotkey to a non-signal action.
      *
-     * @param actionName the name of the non-signal action (not null)
+     * @param actionName name of the non-signal action (not null)
      * @param hotkey (not null)
      */
     private void mapNonsignalHotkey(String actionName, Hotkey hotkey) {
@@ -610,7 +610,7 @@ abstract public class InputMode
     /**
      * Map a hotkey to a signal action.
      *
-     * @param actionName the name of the signal action (not null)
+     * @param actionName name of the signal action (not null)
      * @param hotkey (not null)
      */
     private void mapSignalHotkey(String actionName, Hotkey hotkey) {
@@ -660,8 +660,8 @@ abstract public class InputMode
     /**
      * Generate an action string for a signal action.
      *
-     * @param actionName the name of the action (not null)
-     * @param hotkey the triggering hotkey (not null)
+     * @param actionName name of the action (not null)
+     * @param hotkey triggering hotkey (not null)
      */
     private String signalActionString(String actionName, Hotkey hotkey) {
         assert actionName != null;
@@ -687,7 +687,7 @@ abstract public class InputMode
     /**
      * Delete a hotkey mapping from the input manager.
      *
-     * @param actionName the name of the mapped action (not null)
+     * @param actionName name of the mapped action (not null)
      * @param hotkey (not null)
      */
     private void unmapHotkey(String actionName, Hotkey hotkey) {

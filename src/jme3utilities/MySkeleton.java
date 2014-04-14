@@ -72,7 +72,7 @@ public class MySkeleton
      * @param boneName name of the bone to measure (not null)
      * @param axis local rotation axis to measure (0 &rarr; X, 1 &rarr; Y, 2
      * &rarr; Z)
-     * @return the rotation angle (in radians) or zero for unknown bone
+     * @return rotation angle (in radians) or zero for unknown bone
      */
     public static float boneAngle(Spatial model, String boneName, int axis) {
         Validate.nonNull(model, "model");
@@ -98,7 +98,7 @@ public class MySkeleton
      *
      * @param model animated spatial which contains the bone (not null)
      * @param boneName name of the bone to access (not null)
-     * @return the pre-existing instance (or null if not found)
+     * @return pre-existing instance (or null if not found)
      */
     public static Bone getBone(Spatial model, String boneName) {
         Validate.nonNull(model, "model");
@@ -116,7 +116,7 @@ public class MySkeleton
      * Access the skeleton of a skeletonized spatial.
      *
      * @param model skeletonized spatial (not null)
-     * @return the pre-existing instance (or null if not found)
+     * @return pre-existing instance (or null if not found)
      */
     public static Skeleton getSkeleton(Spatial model) {
         SkeletonControl control = model.getControl(SkeletonControl.class);
@@ -131,7 +131,7 @@ public class MySkeleton
      * List all bones in a skeletonized spatial.
      *
      * @param model skeletonized spatial (or null)
-     * @return a new collection in lexicographic order (may be empty)
+     * @return new collection in lexicographic order (may be empty)
      */
     public static Collection<String> listBones(Spatial model) {
         Collection<String> names = new TreeSet<>();
@@ -157,7 +157,7 @@ public class MySkeleton
      * @param x displacement along the bone's X-axis
      * @param y displacement along the bone's Y-axis
      * @param z displacement along the bone's Z-axis
-     * @return a new vector
+     * @return new vector
      *
      */
     public static Vector3f modelLocation(Bone bone, float x, float y, float z) {
@@ -266,7 +266,7 @@ public class MySkeleton
      *
      * @param model skeletonized spatial which contains the bone (not null)
      * @param boneName (not null)
-     * @return a new vector
+     * @return new vector
      */
     public static Vector3f worldLocation(Spatial model, String boneName) {
         Validate.nonNull(model, "model");
@@ -283,7 +283,7 @@ public class MySkeleton
      *
      * @param model skeletonized spatial which contains the bone (not null)
      * @param bone (not null)
-     * @return a new instance
+     * @return new instance
      */
     public static Quaternion worldOrientation(Spatial model, Bone bone) {
         Validate.nonNull(model, "model");
@@ -301,7 +301,7 @@ public class MySkeleton
      *
      * @param model skeletonized spatial which contains the bone (not null)
      * @param boneName (not null)
-     * @return a new instance
+     * @return new instance
      */
     public static Quaternion worldOrientation(Spatial model, String boneName) {
         Validate.nonNull(model, "model");

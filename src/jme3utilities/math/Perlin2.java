@@ -32,7 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A 2-dimensional Perlin noise generator.
+ * Two-dimensional Perlin noise generator.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -92,8 +92,8 @@ public class Perlin2
     /**
      * Sample the noise function at a specified point.
      *
-     * @param sampleX first coordinate of the sample point
-     * @param sampleY second coordinate of the sample point
+     * @param sampleX 1st coordinate of the sample point
+     * @param sampleY 2nd coordinate of the sample point
      * @return normalized noise value (&lt;1, &gt;-1)
      */
     @Override
@@ -127,8 +127,8 @@ public class Perlin2
      * Sample the noise function at a specified point and normalize it to the
      * range [-1, 1].
      *
-     * @param sampleX first coordinate of the sample point
-     * @param sampleY second coordinate of the sample point
+     * @param sampleX 1st coordinate of the sample point
+     * @param sampleY 2nd coordinate of the sample point
      * @return noise value
      */
     @Override

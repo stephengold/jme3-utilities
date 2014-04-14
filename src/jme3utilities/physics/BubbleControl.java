@@ -39,7 +39,7 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * A simple ghost control which enables another ("successor") control when its
+ * Simple ghost control which enables another ("successor") control when its
  * collision shape overlaps with an eligible rigid body.
  * <p>
  * Each instance is disabled at creation.
@@ -71,7 +71,7 @@ public class BubbleControl
      * Instantiate a disabled control.
      *
      * @param initialShape initial collision shape (not null)
-     * @param physicsSpace which physics space (not null)
+     * @param physicsSpace physics space (not null)
      * @param successor control to be enabled when the collision shape is
      * touched, or null for none
      */
@@ -90,8 +90,8 @@ public class BubbleControl
     /**
      * Callback to handle an overlapping rigid body.
      *
-     * @param overlappingBody which rigid body (not null)
-     * @param overlappingSpatial the spatial of the rigid body (not null)
+     * @param overlappingBody rigid body (not null)
+     * @param overlappingSpatial spatial of the rigid body (not null)
      * @param localPoint location of the overlap in the collision shape (rotated
      * and translated to the this control's spatial, but at world scale, not
      * null)
@@ -146,7 +146,7 @@ public class BubbleControl
     /**
      * Enable the successor.
      *
-     * @param successor which control to enable (not null)
+     * @param successor control to enable (not null)
      */
     protected void enableSuccessor(Control successor) {
         Validate.nonNull(successor, "successor control");
@@ -158,7 +158,7 @@ public class BubbleControl
      * <p>
      * Meant to be overridden.
      *
-     * @param object which object (not null)
+     * @param object object to test (not null)
      */
     protected boolean isEligible(Spatial object) {
         Validate.nonNull(object, "object");

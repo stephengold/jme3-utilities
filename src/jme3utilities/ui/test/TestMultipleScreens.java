@@ -34,7 +34,7 @@ import jme3utilities.ui.GuiApplication;
 import jme3utilities.ui.InputMode;
 
 /**
- * A GUI application for testing/demonstrating multiple instances of the
+ * GUI application for testing/demonstrating multiple instances of the
  * BasicScreenController class. The application's main entry point is here.
  *
  * @author Stephen Gold <sgold@sonic.net>

@@ -45,7 +45,7 @@ import jme3utilities.MyAsset;
 import jme3utilities.Validate;
 
 /**
- * An app state which implements a performance monitor for jME3. Each second it
+ * App state which implements a performance monitor for jME3. Each second it
  * displays the duration of the longest update during the previous second.
  * <p>
  * Each instance is enabled at creation.
@@ -98,7 +98,7 @@ public class PerformanceAppState
      */
     private Geometry background;
     /**
-     * which application to monitor: set by initialize()
+     * application to monitor: set by initialize()
      */
     private SimpleApplication simpleApplication = null;
     // *************************************************************************
@@ -117,7 +117,7 @@ public class PerformanceAppState
     }
 
     /**
-     * Initialize this performance monitor prior to its first update.
+     * Initialize this performance monitor prior to its 1st update.
      *
      * @param stateManager (not null)
      * @param application (not null)

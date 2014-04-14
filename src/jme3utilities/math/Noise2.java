@@ -26,7 +26,7 @@
 package jme3utilities.math;
 
 /**
- * Interface for a 2-dimensional noise generator.
+ * Interface for a two-dimensional noise generator.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -35,8 +35,8 @@ public interface Noise2 {
     /**
      * Sample the noise function at a specified point.
      *
-     * @param sampleX first coordinate of the sample point
-     * @param sampleY second coordinate of the sample point
+     * @param sampleX 1st coordinate of the sample point
+     * @param sampleY 2nd coordinate of the sample point
      * @return noise value
      */
     float sample(float sampleX, float sampleY);
@@ -45,8 +45,8 @@ public interface Noise2 {
      * Sample the noise function at a specified point and normalize it to the
      * range [-1, 1].
      *
-     * @param sampleX first coordinate of the sample point
-     * @param sampleY second coordinate of the sample point
+     * @param sampleX 1st coordinate of the sample point
+     * @param sampleY 2nd coordinate of the sample point
      * @return noise value
      */
     float sampleNormalized(float sampleX, float sampleY);

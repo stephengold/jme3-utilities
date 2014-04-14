@@ -95,8 +95,8 @@ public class MyAnimation {
     /**
      * Generate a textual description of an animation.
      *
-     * @param animation (not null)
-     * @param spatial the animated spatial (not null)
+     * @param animation animation to describe (not null)
+     * @param spatial animated spatial (not null)
      */
     public static String describe(Animation animation, Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
@@ -124,7 +124,7 @@ public class MyAnimation {
      * Generate a textual description of an animation track.
      *
      * @param track (not null)
-     * @param spatial the animated spatial (not null)
+     * @param spatial animated spatial (not null)
      */
     public static String describe(Track track, Spatial spatial) {
         char typeChar = describeTrack(track);
@@ -165,7 +165,7 @@ public class MyAnimation {
      * List all animations in an animated spatial.
      *
      * @param spatial (not null)
-     * @return a new collection in lexicographic order
+     * @return new collection in lexicographic order
      */
     public static Collection<String> listAnimations(Spatial spatial) {
         AnimControl control = spatial.getControl(AnimControl.class);

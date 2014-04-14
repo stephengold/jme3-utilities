@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 import jme3utilities.MyString;
 
 /**
- * The input mode for popup menus.
+ * Input mode for popup menus.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -54,7 +54,7 @@ class MenuInputMode
      */
     final private static String assetPath = "Textures/cursors/menu.cur";
     /**
-     * the short name for this mode
+     * short name for this mode
      */
     final public static String name = "menu";
     // *************************************************************************
@@ -136,7 +136,7 @@ class MenuInputMode
     }
 
     /**
-     * Initialize this (disabled) mode prior to its first update.
+     * Initialize this (disabled) mode prior to its 1st update.
      *
      * @param stateManager (not null)
      * @param application (not null)

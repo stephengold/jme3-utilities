@@ -39,8 +39,8 @@ import jme3utilities.math.MyColor;
 import jme3utilities.math.MyMath;
 
 /**
- * A simple control to simulate a dynamic sky using assets and techniques
- * derived from
+ * Simple control to simulate a dynamic sky using assets and techniques derived
+ * from
  * http://code.google.com/p/jmonkeyplatform-contributions/source/browse/trunk/SkyDome
  * <p>
  * While not astronomically accurate, the simulation approximates the motion of
@@ -156,7 +156,7 @@ public class SkyControl
      */
     final private SunAndStars sunAndStars = new SunAndStars();
     /**
-     * which lights, shadows, and viewports to update
+     * lights, shadows, and viewports to update
      */
     final private Updater updater = new Updater();
     // *************************************************************************
@@ -194,7 +194,7 @@ public class SkyControl
     /**
      * Compute the direction to the center of the moon.
      *
-     * @return a new unit vector in world (horizontal) coordinates
+     * @return new unit vector in world (horizontal) coordinates
      */
     public Vector3f getMoonDirection() {
         float solarLongitude = sunAndStars.getSolarLongitude();
@@ -209,7 +209,7 @@ public class SkyControl
     /**
      * Access the orientations of the sun and stars.
      *
-     * @return the pre-existing object
+     * @return pre-existing instance
      */
     public SunAndStars getSunAndStars() {
         assert sunAndStars != null;
@@ -219,7 +219,7 @@ public class SkyControl
     /**
      * Access the updater.
      *
-     * @return the pre-existing object
+     * @return pre-existing instance
      */
     public Updater getUpdater() {
         assert updater != null;
@@ -344,7 +344,7 @@ public class SkyControl
      * coordinates, accounting for the dome's flattening and vertical offset.
      *
      * @param mainDirection (unit vector with non-negative y-component)
-     * @return a new unit vector
+     * @return new unit vector
      */
     private Vector3f intersectCloudDome(Vector3f mainDirection) {
         assert mainDirection != null;
@@ -415,7 +415,7 @@ public class SkyControl
      *
      * @param longitude the moon's celestial longitude (in radians)
      * @param uvCenter texture coordinates of the moon's center (not null)
-     * @return a new unit vector with its x-component equal to the cosine of the
+     * @return new unit vector with its x-component equal to the cosine of the
      * rotation angle and its y-component equal to the sine of the rotation
      * angle
      */
@@ -495,9 +495,8 @@ public class SkyControl
      * Update background colors, cloud colors, haze color, sun color, lights,
      * and shadows.
      *
-     * @param sunDirection the world direction to the sun (unit vector)
-     * @param moonDirection the world direction to the moon (unit vector or
-     * null)
+     * @param sunDirection world direction to the sun (unit vector)
+     * @param moonDirection world direction to the moon (unit vector or null)
      */
     private void updateLighting(Vector3f sunDirection, Vector3f moonDirection) {
         assert sunDirection != null;

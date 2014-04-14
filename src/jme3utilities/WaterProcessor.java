@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /**
- * A simple water processor, extended to interact with view port listeners.
+ * Simple water processor, extended to interact with view port listeners.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -93,7 +93,7 @@ public class WaterProcessor
     // SimpleWaterProcessor methods
 
     /**
-     * Initialize this processor prior to its first update.
+     * Initialize this processor prior to its 1st update.
      *
      * @param renderManager (not null)
      * @param viewPort (not null)

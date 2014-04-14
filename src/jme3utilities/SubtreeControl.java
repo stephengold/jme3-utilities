@@ -31,8 +31,8 @@ import com.jme3.scene.Spatial;
 import java.util.logging.Logger;
 
 /**
- * A simple control which manages a single subtree of the scene graph. Such
- * controls can only be added to nodes, not geometries.
+ * Simple control to manage a single subtree of the scene graph. Such controls
+ * can only be added to nodes, not geometries.
  * <p>
  * Each instance is disabled at creation.
  *
@@ -51,7 +51,7 @@ abstract public class SubtreeControl
     // *************************************************************************
     // fields
     /**
-     * the subtree managed by this control: set by subclass
+     * subtree managed by this control: set by subclass
      */
     protected Node subtree = null;
     // *************************************************************************

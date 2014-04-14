@@ -36,7 +36,7 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * A material for a dynamic sky dome using assets and techniques derived from
+ * Material for a dynamic sky dome using assets and techniques derived from
  * http://code.google.com/p/jmonkeyplatform-contributions/source/browse/trunk/SkyDome
  * <p>
  * The color of clear sky may be adjusted by invoking setClearColor().
@@ -93,7 +93,7 @@ public class SkyMaterial
     // constructors
 
     /**
-     * Instantiate sky material from the default definitions. The first method
+     * Instantiate sky material from the default definitions. The 1st method
      * invoked should be initialize().
      *
      * @param assetManager for loading textures and material definitions (not
@@ -104,7 +104,7 @@ public class SkyMaterial
     }
 
     /**
-     * Instantiate sky material from a specified asset path. The first method
+     * Instantiate sky material from a specified asset path. The 1st method
      * invoked should be initialize().
      *
      * @param assetManager for loading textures and material definitions (not
@@ -118,7 +118,7 @@ public class SkyMaterial
 
     /**
      * Instantiate sky material with the specified number of objects and cloud
-     * layers. Material definitions will be automatically selected. The first
+     * layers. Material definitions will be automatically selected. The 1st
      * method invoked should be initialize().
      *
      * @param assetManager for loading textures and material definitions (not
@@ -133,7 +133,7 @@ public class SkyMaterial
     }
 
     /**
-     * Instantiate sky material from a specified asset path. The first method
+     * Instantiate sky material from a specified asset path. The 1st method
      * invoked should be initialize().
      *
      * @param assetManager for loading textures and material definitions (not

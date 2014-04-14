@@ -47,7 +47,7 @@ import jme3utilities.math.MyColor;
 import jme3utilities.math.MyMath;
 
 /**
- * The core fields and methods of a simple control to simulate a dynamic sky.
+ * Core fields and methods of a simple control to simulate a dynamic sky.
  * <p>
  * The control is disabled at creation. When enabled, it attaches a "sky" node
  * to the controlled spatial, which must also be a node.
@@ -301,7 +301,7 @@ public class SkyControlCore
      * Access the indexed cloud layer.
      *
      * @param layerIndex (&lt;numCloudLayers, &ge;0)
-     * @return the pre-existing object
+     * @return pre-existing instance
      */
     public CloudLayer getCloudLayer(int layerIndex) {
         if (layerIndex < 0 || layerIndex >= numCloudLayers) {
@@ -462,7 +462,7 @@ public class SkyControlCore
      * @param baseColor (not null, unaffected, alpha is ignored)
      * @param sunUp true if sun is above the horizon, otherwise false
      * @param moonUp true if moon is above the horizon, otherwise false
-     * @return a new instance (alpha is undefined)
+     * @return new instance (alpha is undefined)
      */
     protected ColorRGBA updateCloudsColor(ColorRGBA baseColor, boolean sunUp,
             boolean moonUp) {

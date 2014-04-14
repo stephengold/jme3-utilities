@@ -77,8 +77,8 @@ public class PopupMenu
      *
      * @param popupId Nifty id of the popup (not null)
      * @param actionPrefix prefix for action strings (not null)
-     * @param itemArray the items in the popup menu (not null, unaffected)
-     * @param parent the parent menu which opened this submenu (or null if not a
+     * @param itemArray items in the popup menu (not null, unaffected)
+     * @param parent parent menu which opened this submenu (or null if not a
      * submenu)
      */
     PopupMenu(String popupId, String actionPrefix, String[] itemArray,
@@ -106,7 +106,7 @@ public class PopupMenu
     /**
      * Generate the action string for an indexed item in the menu.
      *
-     * @param index which item (&ge;0, 0 &rarr; first)
+     * @param index item to generate for (&ge;0, 0 &rarr; 1st)
      * @return action string or null for an invalid index
      */
     String getActionString(int index) {
@@ -126,7 +126,7 @@ public class PopupMenu
     /**
      * Access the parent: the popup menu which opened the submenu.
      *
-     * @return the pre-existing instance, or null if not a submenu
+     * @return pre-existing instance, or null if not a submenu
      */
     PopupMenu getParent() {
         return parent;
@@ -180,7 +180,7 @@ public class PopupMenu
     /**
      * Access the Nifty element for this popup menu.
      *
-     * @return the pre-existing instance
+     * @return pre-existing instance
      */
     private Element getElement() {
         Nifty nifty = GuiScreenController.getNifty();

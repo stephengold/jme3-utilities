@@ -51,7 +51,7 @@ import jme3utilities.sky.GlobeRenderer;
 import jme3utilities.sky.LunarPhase;
 
 /**
- * A simple application to test the GlobeRenderer class. The application's main
+ * Simple application to test the GlobeRenderer class. The application's main
  * entry point is here.
  *
  * @author Stephen Gold <sgold@sonic.net>

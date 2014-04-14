@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 import jme3utilities.math.MyMath;
 
 /**
- * An app state for tracking the time of day in a game.
+ * App state to track the time of day in a game.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */

@@ -29,8 +29,8 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 /**
- * A set of (integer-valued) indices. Used (for instance) to track command
- * signals from multiple sources.
+ * Set of (integer-valued) indices. Used (for instance) to track command signals
+ * from multiple sources.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -52,9 +52,9 @@ public class Indices
     // new methods exposed
 
     /**
-     * Adjust the inclusion status of the specified index.
+     * Alter the inclusion status of the specified index.
      *
-     * @param index which index
+     * @param index index to alter
      * @param addFlag if true, make sure the index is included in the set; if
      * false, make sure the index is excluded
      */

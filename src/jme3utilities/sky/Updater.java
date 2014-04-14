@@ -40,7 +40,7 @@ import jme3utilities.Validate;
 import jme3utilities.ViewPortListener;
 
 /**
- * The component of SkyControl which keeps track of all the lights, shadows, and
+ * Component of SkyControl to keep track of all the lights, shadows, and
  * viewports updated by the control. It also keeps track of the values applied
  * during the most recent update.
  *
@@ -165,7 +165,7 @@ public class Updater
     /**
      * Copy the most recent color for ambient light.
      *
-     * @return a new instance (or null if not updated yet)
+     * @return new instance (or null if not updated yet)
      */
     public ColorRGBA getAmbientColor() {
         if (ambientColor == null) {
@@ -177,7 +177,7 @@ public class Updater
     /**
      * Copy the most recent color for the viewport background.
      *
-     * @return a new instance (or null if not updated yet)
+     * @return new instance (or null if not updated yet)
      */
     public ColorRGBA getBackgroundColor() {
         if (backgroundColor == null) {
@@ -198,7 +198,7 @@ public class Updater
     /**
      * Copy the most recent direction for the main directional light.
      *
-     * @return a new instance (or null if not updated yet)
+     * @return new instance (or null if not updated yet)
      */
     public Vector3f getDirection() {
         if (direction == null) {
@@ -210,7 +210,7 @@ public class Updater
     /**
      * Copy the most recent color for the main directional light.
      *
-     * @return a new instance (or null if not updated yet)
+     * @return new instance (or null if not updated yet)
      */
     public ColorRGBA getMainColor() {
         if (mainColor == null) {

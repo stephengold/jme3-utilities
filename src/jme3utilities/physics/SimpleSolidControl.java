@@ -38,7 +38,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * A simplified rigid body control for a solid object.
+ * Simplified rigid body control for a solid object.
  * <p>
  * Implements key methods in order to simplify the development of subclasses.
  * <p>
@@ -67,9 +67,9 @@ public class SimpleSolidControl
      *
      * @param enabled true for an enabled object, false for a disabled one
      * @param initialShape collision shape for the object (not null)
-     * @param mass the object's mass (in kilograms, &gt;0) or zero for a static
+     * @param mass object's mass (in kilograms, &gt;0) or zero for a static
      * object
-     * @param physicsSpace which physics space will contain the object (not
+     * @param physicsSpace physics space which will contain the object (not
      * null)
      */
     public SimpleSolidControl(boolean enabled, CollisionShape initialShape,
@@ -142,8 +142,8 @@ public class SimpleSolidControl
     /**
      * Clone this control for a different spatial.
      *
-     * @param spatial which spatial to clone for (not null)
-     * @return a new control
+     * @param spatial spatial to clone for (not null)
+     * @return new control
      */
     @Override
     public Control cloneForSpatial(Spatial spatial) {

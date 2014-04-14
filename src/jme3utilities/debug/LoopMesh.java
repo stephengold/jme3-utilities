@@ -41,7 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A custom mesh for a circle or regular polygon in the XZ plane, with radius=1,
+ * Custom mesh for a circle or regular polygon in the XZ plane, with radius=1,
  * centered at the origin.
  *
  * @author Stephen Gold <sgold@sonic.net>
@@ -63,7 +63,7 @@ public class LoopMesh
     // *************************************************************************
     // fields
     /**
-     * number of vertices (&ge;3)
+     * total number of vertices (&ge;3)
      */
     protected int vertexCount;
     // *************************************************************************
@@ -150,7 +150,7 @@ public class LoopMesh
          */
         Vector3f[] locationArray = new Vector3f[vertexCount];
         /*
-         * Compute the non-polar vertices first. Vertices are arranged first
+         * Compute the non-polar vertices 1st. Vertices are arranged 1st
          * by latitude (starting from the rim).
          */
         float increment = FastMath.TWO_PI / vertexCount;

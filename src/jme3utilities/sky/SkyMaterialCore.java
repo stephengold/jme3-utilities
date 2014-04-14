@@ -46,7 +46,7 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
- * The core fields and methods of a material for a dynamic sky dome.
+ * Core fields and methods of a material for a dynamic sky dome.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -81,7 +81,7 @@ public class SkyMaterialCore
     private float[] cloudScales;
     /**
      * image of each cloud layer
-     *
+     * <p>
      * Since ImageRaster does not implement Savable, these are retained for use
      * by write().
      */
@@ -125,11 +125,11 @@ public class SkyMaterialCore
     }
 
     /**
-     * Instantiate sky material from a specified asset path. The first method
+     * Instantiate sky material from a specified asset path. The 1st method
      * invoked should be initialize().
      *
-     * @param assetManager for loading textures and material definitions (not
-     * null)
+     * @param assetManager asset manager for loading textures and material
+     * definitions (not null)
      * @param assetPath pathname to the material definitions asset (not null)
      * @param maxObjects number of astronomical objects allowed (&ge;0)
      * @param maxCloudLayers number of cloud layers allowed (&ge;0)
@@ -190,7 +190,7 @@ public class SkyMaterialCore
      * map.
      *
      * @param objectIndex (&lt;maxObjects, &ge;0)
-     * @param colorMap which color map (not null)
+     * @param colorMap color map to use (not null)
      */
     public void addObject(int objectIndex, Texture colorMap) {
         validateObjectIndex(objectIndex);
@@ -251,7 +251,7 @@ public class SkyMaterialCore
 
     /**
      * Hide an astronomical object temporarily.
-     *
+     * <p>
      * Use setObjectTransform() to reveal an object which has been hidden.
      *
      * @param objectIndex (&lt;maxObjects, &ge;0)

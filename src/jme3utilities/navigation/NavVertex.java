@@ -87,7 +87,7 @@ public class NavVertex
      * @param pathLength length or cost (arbitrary units, &gt;0)
      * @param startDirection direction at the start (unit vector in world space,
      * unaffected)
-     * @return the new instance
+     * @return new instance
      */
     public NavArc addArc(NavVertex endpoint, float pathLength,
             Vector3f startDirection) {
@@ -193,7 +193,7 @@ public class NavVertex
     /**
      * Copy the world coordinates of the vertex.
      *
-     * @return a new instance
+     * @return new vector
      */
     public Vector3f getLocation() {
         return location.clone();

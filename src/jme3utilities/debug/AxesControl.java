@@ -38,7 +38,7 @@ import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 
 /**
- * A subtree control to visualize the coordinate axes of a Node.
+ * Subtree control to visualize the coordinate axes of a Node.
  * <p>
  * The controlled spatial must be a Node.
  * <p>
@@ -110,7 +110,7 @@ public class AxesControl
     /**
      * Create an arrow geometry to represent a particular axis.
      *
-     * @param assetManager (not null)
+     * @param assetManager for loading material definitions (not null)
      * @param color for the wireframe (not null)
      * @param name for the geometry (not null)
      * @param direction for the arrow to point (unit vector, not altered)

@@ -98,7 +98,7 @@ public enum LunarPhase {
      * Find a phase based on its textual description.
      *
      * @param description returned by describe()
-     * @return the phase, or null if the description does not match any value
+     * @return phase, or null if the description does not match any value
      */
     public static LunarPhase fromDescription(String description) {
         for (LunarPhase phase : values()) {

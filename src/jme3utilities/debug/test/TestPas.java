@@ -32,18 +32,22 @@ import jme3utilities.Misc;
 import jme3utilities.debug.PerformanceAppState;
 
 /**
- * A simple application to test the performance app state. The application's
- * main entry point is here.
+ * Simple application to test the performance app state. The application's main
+ * entry point is here.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class TestPas
         extends SimpleApplication {
+    // *************************************************************************
+    // constants
 
     /**
      * application name, displayed on its window's title bar
      */
     final private static String windowTitle = "TestPas";
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Main entry point for the TestPas application.

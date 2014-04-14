@@ -63,7 +63,7 @@ public class Signals
      * Add a new signal with all of its sources inactive. If the signal name is
      * already in use, this has no effect.
      *
-     * @param name the name of the command signal (not null)
+     * @param name name of the command signal (not null)
      */
     public void add(String name) {
         assert name != null;
@@ -78,7 +78,7 @@ public class Signals
     /**
      * Test whether a signal exists.
      *
-     * @param name the signal's name (not null)
+     * @param name signal's name (not null)
      * @return true if a signal with that name exists
      */
     public boolean exists(String name) {
@@ -91,7 +91,7 @@ public class Signals
     /**
      * Test whether the named signal is active.
      *
-     * @param name the signal's name (not null)
+     * @param name signal's name (not null)
      * @return true if any of the signal's sources is active; false if all of
      * the signal's sources are inactive
      */
@@ -139,8 +139,8 @@ public class Signals
      * Update whether a named signal source is active.
      *
      * @param name the signal's name (not null)
-     * @param sourceIndex specifies which signal source (key or button) is being
-     * updated
+     * @param sourceIndex index of the signal source (key or button) which is
+     * being updated
      * @param newState true if the source is active; false is the source is
      * inactive
      */
