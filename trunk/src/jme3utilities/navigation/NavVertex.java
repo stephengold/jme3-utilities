@@ -27,10 +27,12 @@ package jme3utilities.navigation;
 
 import com.jme3.math.Vector3f;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
+import jme3utilities.math.MyVector3f;
 
 /**
  * Navigation vertex: represents a reachable location in the world.
@@ -132,19 +134,19 @@ public class NavVertex
      * Find the arc whose starting direction is most similar to the specified
      * direction.
      *
-     * @param direction unit vector, unaffected
+     * @param direction not null, positive length, unaffected
      * @return pre-existing instance
      */
     public NavArc findLeastTurn(Vector3f direction) {
         Validate.nonNull(direction, "direction");
-        if (!direction.isUnitVector()) {
+        if (MyVector3f.isZeroLength(direction)) {
             logger.log(Level.SEVERE, "direction={0}", direction);
             throw new IllegalArgumentException(
-                    "direction should be unit vector");
+                    "direction should have positive length");
         }
 
         NavArc result = null;
-        float maxDot = -2f;
+        float maxDot = -2f * direction.length();
         for (NavArc arc : arcs) {
             Vector3f arcDirection = arc.getStartDirection();
             float dot = arcDirection.dot(direction);
@@ -251,16 +253,49 @@ public class NavVertex
     /**
      * Compare with another vertex based on description.
      *
-     * @param otherVertex (not null)
+     * @param otherVertex (not null, unaffected)
      * @return 0 if the vertices have the same description
      */
     @Override
     public int compareTo(NavVertex otherVertex) {
         String otherDescription = otherVertex.description;
-        return description.compareTo(otherDescription);
+        int result = description.compareTo(otherDescription);
+        /*
+         * Verify consistency with equals().
+         */
+        if (result == 0) {
+            assert this.equals(otherVertex);
+        }
+        return result;
     }
     // *************************************************************************
     // Object methods
+
+    /**
+     * Compare for equality based on description.
+     *
+     * @param otherObject (unaffected)
+     * @return true if the vertices have the same description, otherwise false
+     */
+    @Override
+    public boolean equals(Object otherObject) {
+        if (this == otherObject) {
+            return true;
+        } else if (otherObject instanceof NavVertex) {
+            String otherDescription = ((NavVertex) otherObject).description;
+            return description.equals(otherDescription);
+        }
+        return false;
+    }
+
+    /**
+     * Generate the hash code for this vertex.
+     */
+    @Override
+    public int hashCode() {
+        int hash = Objects.hashCode(description);
+        return hash;
+    }
 
     /**
      * Format this vertex as a text string.
@@ -269,6 +304,7 @@ public class NavVertex
      */
     @Override
     public String toString() {
+        assert description != null;
         return description;
     }
 }

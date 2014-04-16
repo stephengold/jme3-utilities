@@ -596,7 +596,7 @@ public class VectorXZ
      * Compare lexicographically with another vector, with the x-component
      * having priority.
      *
-     * @param otherVector (not null, not altered)
+     * @param otherVector (not null, unaffected)
      * @return 0 if this vector equals otherVector; negative if this comes
      * before otherVector; positive if this comes after otherVector
      */
@@ -609,7 +609,12 @@ public class VectorXZ
         } else {
             result = Float.compare(z, otherVector.z);
         }
-
+        /*
+         * Verify consistency with equals().
+         */
+        if (result == 0) {
+            assert this.equals(otherVector);
+        }
         return result;
     }
     // *************************************************************************
@@ -631,9 +636,35 @@ public class VectorXZ
     }
 
     /**
-     * Represent this vector as a string. The format is:
+     * Compare for equality.
      *
-     * [X=XX.XXX, Z=ZZ.ZZZ]
+     * @param otherObject (unaffected)
+     * @return true if the vectors are equal, otherwise false
+     */
+    @Override
+    public boolean equals(Object otherObject) {
+        if (this == otherObject) {
+            return true;
+        } else if (otherObject instanceof VectorXZ) {
+            VectorXZ otherVector = (VectorXZ) otherObject;
+            return otherVector.x == x && otherVector.z == z;
+        }
+        return false;
+    }
+
+    /**
+     * Generate the hash code for this vector.
+     */
+    @Override
+    public int hashCode() {
+        int hash = Float.floatToIntBits(this.x);
+        hash = 71 * hash + Float.floatToIntBits(this.z);
+
+        return hash;
+    }
+
+    /**
+     * Represent this vector as a string. The format is: [X=XX.XXX, Z=ZZ.ZZZ]
      */
     @Override
     public String toString() {
