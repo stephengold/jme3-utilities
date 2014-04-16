@@ -67,8 +67,8 @@ public class RotationControl
      * Instantiate an enabled control with the specified vector.
      *
      * @param rate rate of rotation (in radians per second)
-     * @param axis axis of rotation (in local coordinates, not null, not zero,
-     * not altered)
+     * @param axis axis of rotation (in local coordinates, not null, positive
+     * length, unaffected)
      */
     public RotationControl(float rate, Vector3f axis) {
         Validate.nonNull(axis, "axis");

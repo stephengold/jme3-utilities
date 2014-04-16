@@ -342,16 +342,16 @@ public class Updater
     /**
      * Update all the lights, shadows, and viewports.
      *
-     * @param ambientColor color and intensity of ambient light (not null, not
-     * altered)
-     * @param backgroundColor color of viewport backgrounds (not null, not
-     * altered)
+     * @param ambientColor color and intensity of ambient light (not null,
+     * unaffected)
+     * @param backgroundColor color of viewport backgrounds (not null,
+     * unaffected)
      * @param mainColor color and intensity of the main directional light (not
-     * null, not altered)
+     * null, unaffected)
      * @param bloomIntensity intensity of bloom effect (&ge;0)
      * @param shadowIntensity intensity of shadows (&lt;1, &ge;0)
-     * @param direction direction to the main light source (unit vector, not
-     * altered)
+     * @param direction direction to the main light source (unit vector,
+     * unaffected)
      */
     void update(ColorRGBA ambientColor, ColorRGBA backgroundColor,
             ColorRGBA mainColor, float bloomIntensity, float shadowIntensity,

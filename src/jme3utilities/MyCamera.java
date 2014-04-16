@@ -112,7 +112,7 @@ final public class MyCamera {
      * automatically.
      *
      * @param camera camera to rotate (not null)
-     * @param direction (not null, positive length)
+     * @param direction (not null, positive length, unaffected)
      */
     public static void look(Camera camera, Vector3f direction) {
         if (MyVector3f.isZeroLength(direction)) {
