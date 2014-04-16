@@ -26,6 +26,7 @@
 package jme3utilities.navigation;
 
 import com.jme3.math.Vector3f;
+import java.util.Objects;
 import java.util.logging.Logger;
 import jme3utilities.math.MyVector3f;
 
@@ -133,22 +134,75 @@ public class NavArc
     /**
      * Compare with another arc.
      *
-     * @param otherArc (not null)
-     * @return 0 if the vertices have the same description
+     * @param otherArc (not null, unaffected)
+     * @return 0 if the arcs are equivalent
      */
     @Override
     public int compareTo(NavArc otherArc) {
-        if (fromVertex != otherArc.fromVertex) {
-            return fromVertex.compareTo(otherArc.fromVertex);
-        } else if (toVertex != otherArc.toVertex) {
-            return toVertex.compareTo(otherArc.toVertex);
-        } else if (pathLength != otherArc.pathLength) {
-            return Float.compare(pathLength, otherArc.pathLength);
+        int result = fromVertex.compareTo(otherArc.fromVertex);
+        if (result != 0) {
+            return result;
         }
-        return MyVector3f.compare(startDirection, otherArc.startDirection);
+        result = toVertex.compareTo(otherArc.toVertex);
+        if (result != 0) {
+            return result;
+        }
+        result = Float.compare(pathLength, otherArc.pathLength);
+        if (result != 0) {
+            return result;
+        }
+        result = MyVector3f.compare(startDirection, otherArc.startDirection);
+        /*
+         * Verify consistency with equals().
+         */
+        if (result == 0) {
+            assert this.equals(otherArc);
+        }
+        return result;
     }
     // *************************************************************************
     // Object methods
+
+    /**
+     * Compare for equality.
+     *
+     * @param otherObject (unaffected)
+     * @return true if the arcs are equivalent, otherwise false
+     */
+    @Override
+    public boolean equals(Object otherObject) {
+        if (this == otherObject) {
+            return true;
+        } else if (otherObject instanceof NavArc) {
+            NavArc otherArc = (NavArc) otherObject;
+            if (!fromVertex.equals(otherArc.fromVertex)) {
+                return false;
+            } else if (!toVertex.equals(otherArc.toVertex)) {
+                return false;
+            } else if (pathLength != otherArc.pathLength) {
+                return false;
+            } else {
+                boolean result =
+                        startDirection.equals(otherArc.startDirection);
+                return result;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Generate the hash code for this arc.
+     */
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 17 * hash + Float.floatToIntBits(this.pathLength);
+        hash = 17 * hash + Objects.hashCode(this.fromVertex);
+        hash = 17 * hash + Objects.hashCode(this.toVertex);
+        hash = 17 * hash + Objects.hashCode(this.startDirection);
+
+        return hash;
+    }
 
     /**
      * Format this arc as a text string.
@@ -162,6 +216,7 @@ public class NavArc
         String dirString = startDirection.toString();
         String result = String.format("%s to %s len=%f dir=%s",
                 fromString, toString, pathLength, dirString);
+
         return result;
     }
 }
