@@ -33,9 +33,16 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 import jme3utilities.SimpleControl;
+import jme3utilities.Validate;
 
 /**
- * A simple control which manages a light attached to a spatial.
+ * Simple control which manages a light source attached to a spatial.
+ * <p>
+ * The key differences between this class and
+ * com.jme3.scene.control.LightControl are:<ol>
+ * <li> the spatial can affect the light source but not vice versa, and
+ * <li> the offset and direction of the light relative to the are
+ * configurable.</ol>
  * <p>
  * Each instance is enabled at creation.
  *
@@ -58,13 +65,13 @@ public class LightControl
      */
     final private Light light;
     /**
-     * the light's offset in local coordinates: set by constructor
-     */
-    final private Vector3f offset;
-    /**
-     * the light's direction in local coordinates: set by constructor
+     * light's direction in local coordinates: set by constructor
      */
     final private Vector3f direction;
+    /**
+     * light's offset in local coordinates: set by constructor
+     */
+    final private Vector3f offset;
     // *************************************************************************
     // constructors
 
@@ -88,6 +95,18 @@ public class LightControl
         this.direction = direction.clone();
 
         assert isEnabled();
+    }
+    // *************************************************************************
+    // new methods exported
+
+    /**
+     * Alter the offset of the light relative to the controlled spatial.
+     *
+     * @param newOffset camera's offset in local coordinates (not null)
+     */
+    public void setOffset(Vector3f newOffset) {
+        Validate.nonNull(newOffset, "offset");
+        offset.set(newOffset);
     }
     // *************************************************************************
     // SimpleControl methods
