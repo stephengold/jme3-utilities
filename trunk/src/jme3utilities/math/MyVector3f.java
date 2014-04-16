@@ -60,8 +60,8 @@ public class MyVector3f {
     /**
      * Compute the altitude angle of a non-zero offset.
      *
-     * @param offset difference of world coordinates (not null, not zero length,
-     * not altered)
+     * @param offset difference of world coordinates (not null, positive length,
+     * unaffected)
      * @return angle above the X-Z plane (in radians, &le;Pi/2, &ge;-Pi/2)
      */
     public static float altitude(Vector3f offset) {
@@ -99,8 +99,8 @@ public class MyVector3f {
      * Compare two vectors lexicographically, with the x-component having
      * priority.
      *
-     * @param v1 1st input vector (not null, not altered)
-     * @param v2 2nd input vector (not null, not altered)
+     * @param v1 1st input vector (not null, unaffected)
+     * @param v2 2nd input vector (not null, unaffected)
      * @return 0 if v1 is equal to v2; negative if v1 comes before v2; positive
      * if v1 comes after v2
      */
@@ -121,7 +121,7 @@ public class MyVector3f {
     /**
      * Compute a horizontal direction of an offset.
      *
-     * @param offset difference of world coordinates (not null, not altered)
+     * @param offset difference of world coordinates (not null, unaffected)
      * @return new unit vector
      */
     public static VectorXZ direction(Vector3f offset) {
@@ -135,9 +135,8 @@ public class MyVector3f {
     /**
      * Compute the distance from one location to another.
      *
-     * @param from world coordinates of starting location (not null, not
-     * altered)
-     * @param to world coordinates of ending location (not null, not altered)
+     * @param from world coordinates of starting location (not null, unaffected)
+     * @param to world coordinates of ending location (not null, unaffected)
      * @return distance (in world units, &ge;0)
      */
     public static float distanceFrom(Vector3f from, Vector3f to) {
@@ -168,7 +167,7 @@ public class MyVector3f {
     /**
      * Test whether all components of a vector are all non-negative.
      *
-     * @param vector (not null, not altered)
+     * @param vector (not null, unaffected)
      */
     public static boolean isAllNonNegative(Vector3f vector) {
         boolean result = (vector.x >= 0f && vector.y >= 0f && vector.z >= 0f);
@@ -178,7 +177,7 @@ public class MyVector3f {
     /**
      * Test a vector for zero length.
      *
-     * @param vector (not null, not altered)
+     * @param vector (not null, unaffected)
      * @return true if the vector has zero length, false otherwise
      */
     public static boolean isZeroLength(Vector3f vector) {
@@ -190,7 +189,7 @@ public class MyVector3f {
      * Rotate a vector CLOCKWISE about the +Y axis. Note: Used for applying
      * azimuths, which is why its rotation angle convention is non-standard.
      *
-     * @param input (not null, not altered)
+     * @param input (not null, unaffected)
      * @param angle clockwise (LH) angle of rotation in radians
      * @return new vector
      */

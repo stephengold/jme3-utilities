@@ -202,7 +202,7 @@ public class DomeMesh
      * Compute the texture coordinate of a point on this mesh that's in the
      * specified direction from the center of the mesh.
      *
-     * @param direction (unit vector, not altered)
+     * @param direction (unit vector, unaffected)
      * @return new vector, or null if direction is too far below the equator
      */
     public Vector2f directionUV(Vector3f direction) {

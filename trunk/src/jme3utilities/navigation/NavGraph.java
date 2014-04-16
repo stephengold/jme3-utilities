@@ -184,8 +184,7 @@ public class NavGraph {
      * starting point.
      *
      * @param startVertex starting point (member of this graph)
-     * @param candidates collection of candidate vertices (not null, not
-     * altered)
+     * @param candidates collection of candidate vertices (not null, unaffected)
      * @return pre-existing member
      */
     public NavVertex findFurthest(NavVertex startVertex,

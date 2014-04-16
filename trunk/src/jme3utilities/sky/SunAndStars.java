@@ -154,7 +154,7 @@ public class SunAndStars
     /**
      * Convert ecliptical coordinates to equatorial coordinates.
      *
-     * @param ecliptical coordinates (not null, not altered)
+     * @param ecliptical coordinates (not null, unaffected)
      * @return new vector in equatorial coordinates
      */
     public static Vector3f convertToEquatorial(Vector3f ecliptical) {
@@ -201,7 +201,7 @@ public class SunAndStars
     /**
      * Convert equatorial coordinates to world (horizontal) coordinates.
      *
-     * @param equatorial coordinates (not null, not altered)
+     * @param equatorial coordinates (not null, unaffected)
      * @return new vector in a world coordinates
      */
     public Vector3f convertToWorld(Vector3f equatorial) {

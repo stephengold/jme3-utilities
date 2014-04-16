@@ -68,7 +68,7 @@ public class MyVolume {
     /**
      * Compute the volume of an axis-aligned box with specified half-extents.
      *
-     * @param halfExtents (not null, all components &ge;0, not altered)
+     * @param halfExtents (not null, all components &ge;0, unaffected)
      */
     public static float boxVolume(Vector3f halfExtents) {
         Validate.nonNull(halfExtents, "half-extents");
@@ -119,7 +119,7 @@ public class MyVolume {
      * Compute the volume of an axis-aligned cylinder with specified
      * half-extents.
      *
-     * @param halfExtents (not null, all components &ge;0, not altered)
+     * @param halfExtents (not null, all components &ge;0, unaffected)
      */
     public static float cylinderVolume(Vector3f halfExtents) {
         Validate.nonNull(halfExtents, "half-extents");
@@ -150,7 +150,7 @@ public class MyVolume {
     /**
      * Compute the volume of a closed collision shape.
      *
-     * @param shape (not null, not altered)
+     * @param shape (not null, unaffected)
      * @return volume in world units (&ge;0)
      */
     public static float volume(CollisionShape shape) {

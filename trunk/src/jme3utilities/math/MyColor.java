@@ -61,8 +61,8 @@ final public class MyColor {
      * Use instead of ColorRGBA.interpolate(), which gets renamed in jME 3.1.
      *
      * @param fraction (&le;1, &ge;0)
-     * @param start 1st input color (not null, not altered)
-     * @param end 2nd input color (not null, not altered)
+     * @param start 1st input color (not null, unaffected)
+     * @param end 2nd input color (not null, unaffected)
      * @return new color, start*(1-fraction) + end*fraction
      */
     public static ColorRGBA interpolateLinear(float fraction, ColorRGBA start,
@@ -84,7 +84,7 @@ final public class MyColor {
      * Generate a brightened and saturated version of a specified color (with no
      * side effect).
      *
-     * @param baseColor input color (not null, not altered)
+     * @param baseColor input color (not null, unaffected)
      * @return new color with the same hue, but full brightness and full
      * saturation
      */

@@ -139,8 +139,8 @@ public class MyMath {
      * Compute the product of two complex numbers or the composition of two
      * scale-and-rotate vectors.
      *
-     * @param a 1st complex number (not null, not altered)
-     * @param b 2nd complex number (not null, not altered)
+     * @param a 1st complex number (not null, unaffected)
+     * @param b 2nd complex number (not null, unaffected)
      * @return new vector
      */
     public static Vector2f complexProduct(Vector2f a, Vector2f b) {

@@ -225,16 +225,16 @@ public class GlobeRenderer
      * Move the camera to a new location and orientation.
      *
      * @param newLocation (in world coordinates, not null)
-     * @param newUpDirection (not null, not zero)
+     * @param newUpDirection (not null, positive length, unaffected)
      */
     final public void moveCamera(Vector3f newLocation,
             Vector3f newUpDirection) {
         Validate.nonNull(newLocation, "location");
         Validate.nonNull(newUpDirection, "up direction");
         if (MyVector3f.isZeroLength(newUpDirection)) {
-            logger.log(Level.SEVERE, "upDirection={0}", newUpDirection);
+            logger.log(Level.SEVERE, "up direction={0}", newUpDirection);
             throw new IllegalArgumentException(
-                    "upDirection should not be zero");
+                    "up direction should have positive length");
         }
 
         camera.setLocation(newLocation);
