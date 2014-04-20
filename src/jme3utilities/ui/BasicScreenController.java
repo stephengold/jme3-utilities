@@ -192,7 +192,7 @@ public class BasicScreenController
     public void initialize(AppStateManager stateManager,
             Application application) {
         if (isInitialized()) {
-            throw new IllegalStateException("already initialized");
+            throw new IllegalStateException("shouldn't be initialized yet");
         }
         if (isEnabled()) {
             throw new IllegalStateException("shouldn't be enabled yet");
