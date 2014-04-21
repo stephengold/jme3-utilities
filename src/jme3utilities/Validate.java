@@ -60,8 +60,8 @@ final public class Validate {
     /**
      * Validate a non-negative proper fraction.
      *
-     * @param value to validate (&le;1, &ge;0)
-     * @param description of the value (not null)
+     * @param value fraction to validate (&le;1, &ge;0)
+     * @param description description of the value (not null)
      * @throws IllegalArgumentException if the value is outside the range [0, 1]
      */
     public static void fraction(float value, String description) {
@@ -77,8 +77,8 @@ final public class Validate {
     /**
      * Validate a non-negative integer.
      *
-     * @param value to validate (&ge;0)
-     * @param description of the value (not null)
+     * @param value value to validate (&ge;0)
+     * @param description description of the value (not null)
      * @throws IllegalArgumentException if the value is negative
      */
     public static void nonNegative(int value, String description) {
@@ -94,8 +94,8 @@ final public class Validate {
     /**
      * Validate a non-negative single-precision value.
      *
-     * @param value to validate (&ge;0)
-     * @param description of the value (not null)
+     * @param value value to validate (&ge;0)
+     * @param description description of the value (not null)
      * @throws IllegalArgumentException if the value is negative or NaN
      */
     public static void nonNegative(float value, String description) {
@@ -117,7 +117,7 @@ final public class Validate {
      * instances of this class..."
      *
      * @param object reference to validate (not null)
-     * @param description of the object (not null)
+     * @param description description of the object (not null)
      * @throws NullPointerException if the reference is null
      */
     public static void nonNull(Object object, String description) {
@@ -129,10 +129,25 @@ final public class Validate {
     }
 
     /**
-     * Validate a positive integer.
+     * Validate a non-zero single-precision value.
      *
-     * @param value to validate (&gt;0)
-     * @param description of the value (not null)
+     * @param value value to validate (&ne;0)
+     * @param description description of the value (not null)
+     * @throws IllegalArgumentException if the value is zero
+     */
+    public static void nonZero(float value, String description) {
+        if (value == 0f) {
+            String message =
+                    String.format("%s should not be zero", description);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Validate a positive integer value.
+     *
+     * @param value value to validate (&gt;0)
+     * @param description description of the value (not null)
      * @throws IllegalArgumentException if the value is negative or zero
      */
     public static void positive(int value, String description) {
@@ -148,8 +163,8 @@ final public class Validate {
     /**
      * Validate a positive single-precision value.
      *
-     * @param value to validate (&gt;0)
-     * @param description of the value (not null)
+     * @param value value to validate (&gt;0)
+     * @param description description of the value (not null)
      * @throws IllegalArgumentException if the value is not positive
      */
     public static void positive(float value, String description) {
