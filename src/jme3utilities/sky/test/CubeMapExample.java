@@ -36,6 +36,7 @@ import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
+import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.MyCamera;
 import jme3utilities.debug.PerformanceAppState;
@@ -53,6 +54,14 @@ import jme3utilities.debug.PerformanceAppState;
  */
 public class CubeMapExample
         extends SimpleApplication {
+    // *************************************************************************
+    // constants
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger =
+            Logger.getLogger(CubeMapExample.class.getName());
     // *************************************************************************
     // new methods exposed
 

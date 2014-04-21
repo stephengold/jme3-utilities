@@ -28,6 +28,7 @@ package jme3utilities.debug.test;
 import com.jme3.app.SimpleApplication;
 import com.jme3.system.AppSettings;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.debug.PerformanceAppState;
 
@@ -42,6 +43,11 @@ public class TestPas
     // *************************************************************************
     // constants
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger =
+            Logger.getLogger(TestPas.class.getName());
     /**
      * application name, displayed on its window's title bar
      */
