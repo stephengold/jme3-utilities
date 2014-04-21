@@ -77,7 +77,7 @@ abstract public class InputMode
     /**
      * list of initialized modes
      */
-    final private static ArrayList<InputMode> modes = new ArrayList<>();
+    final private static ArrayList<InputMode> modes = new ArrayList<>(3);
     /**
      * message logger for this class
      */
@@ -248,6 +248,8 @@ abstract public class InputMode
 
     /**
      * Read the short-form name for this mode.
+     *
+     * @return name (not null)
      */
     public String getShortName() {
         assert shortName != null;

@@ -76,7 +76,7 @@ public class MyString {
      * @see #unEscape(String)
      */
     public static String escape(String unescaped) {
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(50);
         for (char ch : unescaped.toCharArray()) {
             if (ch == '\n') {
                 result.append("\\n");
@@ -132,11 +132,12 @@ public class MyString {
      * Join an array of strings using spaces, ignoring any nulls.
      *
      * @param array of strings to join (not null)
+     * @return joined string
      */
     public static String join(String[] array) {
         Validate.nonNull(array, "array");
 
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(20);
         for (String element : array) {
             if (element != null) {
                 if (result.length() > 0) {
@@ -156,6 +157,7 @@ public class MyString {
      * Enclose text in quotation marks.
      *
      * @param text the text to enclose (not null)
+     * @return quoted string
      */
     public static String quote(String text) {
         Validate.nonNull(text, "text");
@@ -221,7 +223,7 @@ public class MyString {
      * @see #escape(String)
      */
     public static String unEscape(String escaped) {
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(50);
         boolean inEscape = false;
         for (char ch : escaped.toCharArray()) {
             if (inEscape) {

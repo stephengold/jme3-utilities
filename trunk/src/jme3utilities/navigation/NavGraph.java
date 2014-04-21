@@ -59,11 +59,11 @@ public class NavGraph {
     /**
      * list of arcs in this graph
      */
-    final protected ArrayList<NavArc> arcs = new ArrayList<>();
+    final protected ArrayList<NavArc> arcs = new ArrayList<>(30);
     /**
      * list of vertices in this graph
      */
-    final protected ArrayList<NavVertex> vertices = new ArrayList<>();
+    final protected ArrayList<NavVertex> vertices = new ArrayList<>(30);
     // *************************************************************************
     // new methods exposed
 
@@ -156,7 +156,7 @@ public class NavGraph {
         Map<NavVertex, Integer> hopData = new TreeMap<>();
         calculateHops(startVertex, 0, hopData);
 
-        List<NavVertex> result = new ArrayList<>();
+        List<NavVertex> result = new ArrayList<>(30);
         for (NavVertex vertex : vertices) {
             Integer hops = hopData.get(vertex);
             if (hops != null && hops >= minHopCount && hops <= maxHopCount) {
