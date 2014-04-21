@@ -107,6 +107,7 @@ public class Misc {
      *
      * @param viewPort (not null)
      * @param assetManager (not null)
+     * @return not null
      */
     public static FilterPostProcessor getFpp(ViewPort viewPort,
             AssetManager assetManager) {
@@ -145,7 +146,7 @@ public class Misc {
      *
      * @return package name, branch, and revision of this file
      */
-    public static String getVersion() {
+    public static String getVersion() {//
         return "jme3-utilities trunk $Rev$";
     }
 
