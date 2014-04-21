@@ -148,6 +148,38 @@ public class VectorXZ
     }
 
     /**
+     * Convert this vector to one of the four cardinal directions.
+     *
+     * @return new unit vector
+     */
+    public VectorXZ cardinalize() {
+        float length = length();
+        float newX = x;
+        float newZ = z;
+        while (length == 0f) {
+            /*
+             * pick random X and Z, each between -0.5 and +0.5
+             */
+            newX = Noise.nextFloat() - 0.5f;
+            newZ = Noise.nextFloat() - 0.5f;
+            length = MyMath.hypotenuse(newX, newZ);
+        }
+
+        float absX = FastMath.abs(newX);
+        float absZ = FastMath.abs(newZ);
+        if (absX > absZ) {
+            newX = FastMath.sign(newX);
+            newZ = 0f;
+        } else {
+            newX = 0f;
+            newZ = FastMath.sign(newZ);
+        }
+        VectorXZ result = new VectorXZ(newX, newZ);
+
+        return result;
+    }
+
+    /**
      * Clamp this direction to be within a specified angle of the +X axis.
      *
      * @param maxAbsAngle tolerance angle in radians (&ge;0, clamped to Pi/2)
@@ -196,11 +228,14 @@ public class VectorXZ
     /**
      * Clamp this vector to be within an axis-aligned ellipse.
      *
-     * @param maxX radius of the ellipse in the X-direction
-     * @param maxZ radius of the ellipse in the Z-direction
+     * @param maxX radius of the ellipse in the X-direction (&ge;0)
+     * @param maxZ radius of the ellipse in the Z-direction (&ge;0)
      * @return new vector with the same direction
      */
     public VectorXZ clampElliptical(float maxX, float maxZ) {
+        Validate.nonNegative(maxX, "maximum X");
+        Validate.nonNegative(maxZ, "maximum Z");
+
         if (isZeroLength()) {
             /*
              * Clamping has no effect on a zero-length vector.
@@ -225,7 +260,37 @@ public class VectorXZ
             newX *= scale;
             newZ *= scale;
         }
+        VectorXZ result = new VectorXZ(newX, newZ);
 
+        return result;
+    }
+
+    /**
+     * Clamp this vector to be within a circle.
+     *
+     * @param radius radius of the circle (&ge;0)
+     * @return new vector with the same direction
+     */
+    public VectorXZ clampLength(float radius) {
+        Validate.nonNegative(radius, "radius");
+
+        if (isZeroLength()) {
+            /*
+             * Clamping has no effect on a zero-length vector.
+             */
+            return clone();
+        }
+        /*
+         * Scale so that length <= maxRadius.
+         */
+        float length = length();
+        float newX = x;
+        float newZ = z;
+        if (length > radius) {
+            float scale = radius / length;
+            newX *= scale;
+            newZ *= scale;
+        }
         VectorXZ result = new VectorXZ(newX, newZ);
 
         return result;
@@ -452,7 +517,7 @@ public class VectorXZ
     }
 
     /**
-     * Treat this vector as a rotation and generate an equivalent quaternion.
+     * Treating this vector as a rotation, generate an equivalent quaternion.
      *
      * @return new instance
      */
