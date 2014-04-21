@@ -60,13 +60,13 @@ public class VectorXZ
     // *************************************************************************
     // fields
     /**
-     * the northing component (X coordinate)
+     * northing component (X coordinate)
      */
-    public float x;
+    private float x;
     /**
-     * the easting component (Z coordinate)
+     * easting component (Z coordinate)
      */
-    public float z;
+    private float z;
     // *************************************************************************
     // constructors
 
@@ -86,17 +86,6 @@ public class VectorXZ
     public VectorXZ(float azimuth) {
         x = FastMath.cos(azimuth);
         z = FastMath.sin(azimuth);
-    }
-
-    /**
-     * Instantiate a vector from a quaternion.
-     *
-     * @param rotation
-     */
-    public VectorXZ(Quaternion rotation) {
-        Vector3f direction = rotation.mult(Vector3f.UNIT_X);
-        x = direction.x;
-        z = direction.z;
     }
 
     /**
@@ -129,8 +118,11 @@ public class VectorXZ
      * @return new vector equal to the sum
      */
     public VectorXZ add(VectorXZ increment) {
-        VectorXZ result = new VectorXZ(x + increment.x, z + increment.z);
-        return result;
+        float sumX = x + increment.getX();
+        float sumZ = z + increment.getZ();
+        VectorXZ sum = new VectorXZ(sumX, sumZ);
+
+        return sum;
     }
 
     /**
@@ -140,8 +132,9 @@ public class VectorXZ
      * @return this vector (with its components modified)
      */
     public VectorXZ addLocal(VectorXZ increment) {
-        x += increment.x;
-        z += increment.z;
+        x += increment.getX();
+        z += increment.getZ();
+
         return this;
     }
 
@@ -196,9 +189,6 @@ public class VectorXZ
     public VectorXZ clampDirectionLocal(float maxAbsAngle) {
         Validate.nonNegative(maxAbsAngle, "angle");
 
-        if (maxAbsAngle >= FastMath.HALF_PI) {
-            maxAbsAngle = FastMath.HALF_PI;
-        }
         if (isZeroLength()) {
             /*
              * special case
@@ -216,11 +206,17 @@ public class VectorXZ
         } else {
             normalizeLocal();
         }
-        float maxAbsSine = FastMath.sin(maxAbsAngle);
+        float maxAbsSine;
+        if (maxAbsAngle >= FastMath.HALF_PI) {
+            maxAbsSine = 1f;
+        } else {
+            maxAbsSine = FastMath.sin(maxAbsAngle);
+        }
         if (FastMath.abs(z) > maxAbsSine) {
             z = maxAbsSine * signZ;
             x = MyMath.circle(z);
         }
+
         return this;
     }
 
@@ -273,8 +269,8 @@ public class VectorXZ
      * @param vector the vector to copy (unaffected, not null)
      */
     public void copy(VectorXZ vector) {
-        x = vector.x;
-        z = vector.z;
+        x = vector.getX();
+        z = vector.getZ();
     }
 
     /**
@@ -284,7 +280,7 @@ public class VectorXZ
      * @return cross product
      */
     public float cross(VectorXZ other) {
-        float product = x * other.z - z * other.x;
+        float product = x * other.getZ() - z * other.getX();
         return product;
     }
 
@@ -323,10 +319,12 @@ public class VectorXZ
     /**
      * Divide this vector by a scalar (with no side effect).
      *
-     * @param scalar scaling factor
+     * @param scalar scaling factor (not zero)
      * @return new vector 'scalar' times shorter than this one
      */
     public VectorXZ divide(float scalar) {
+        Validate.nonZero(scalar, "scalar");
+
         VectorXZ result = new VectorXZ(x / scalar, z / scalar);
         return result;
     }
@@ -334,12 +332,15 @@ public class VectorXZ
     /**
      * Divide this vector by a scalar (in place).
      *
-     * @param scalar scaling factor
+     * @param scalar scaling factor (not zero)
      * @return this vector (with its components divided)
      */
     public VectorXZ divideLocal(float scalar) {
+        Validate.nonZero(scalar, "scalar");
+
         x /= scalar;
         z /= scalar;
+
         return this;
     }
 
@@ -350,8 +351,26 @@ public class VectorXZ
      * @return dot product
      */
     public float dot(VectorXZ other) {
-        float product = x * other.x + z * other.z;
+        float product = x * other.getX() + z * other.getZ();
         return product;
+    }
+
+    /**
+     * Read the X-component of this vector.
+     *
+     * @return x-component
+     */
+    public float getX() {
+        return x;
+    }
+
+    /**
+     * Read the Z-component of this vector.
+     *
+     * @return z-component
+     */
+    public float getZ() {
+        return z;
     }
 
     /**
@@ -478,7 +497,7 @@ public class VectorXZ
      * @return new vector equal to the difference of the two vectors
      */
     public VectorXZ subtract(VectorXZ change) {
-        VectorXZ result = new VectorXZ(x - change.x, z - change.z);
+        VectorXZ result = new VectorXZ(x - change.getX(), z - change.getZ());
         return result;
     }
 
@@ -496,6 +515,7 @@ public class VectorXZ
         float newX = cosine * x - sine * z;
         float newZ = cosine * z + sine * x;
         VectorXZ result = new VectorXZ(newX, newZ);
+
         return result;
     }
 
@@ -507,11 +527,12 @@ public class VectorXZ
      * @return new vector
      */
     public VectorXZ rotate(VectorXZ direction) {
-        float cosine = direction.x;
-        float sine = direction.z;
+        float cosine = direction.getX();
+        float sine = direction.getZ();
         float newX = cosine * x - sine * z;
         float newZ = cosine * z + sine * x;
         VectorXZ result = new VectorXZ(newX, newZ);
+
         return result;
     }
 
@@ -529,6 +550,7 @@ public class VectorXZ
         float newX = cosine * x - sine * z;
         z = cosine * z + sine * x;
         x = newX;
+
         return this;
     }
 
@@ -539,11 +561,12 @@ public class VectorXZ
      * @return this vector (with its components modified)
      */
     public VectorXZ rotateLocal(VectorXZ direction) {
-        float cosine = direction.x;
-        float sine = direction.z;
+        float cosine = direction.getX();
+        float sine = direction.getZ();
         float newX = cosine * x - sine * z;
         z = cosine * z + sine * x;
         x = newX;
+
         return this;
     }
 
@@ -572,6 +595,7 @@ public class VectorXZ
     /**
      * Create an equivalent 3D vector with a specified y value.
      *
+     * @param y y-coordinate
      * @return new 3D vector
      */
     public Vector3f toVector3f(float y) {
@@ -587,6 +611,7 @@ public class VectorXZ
     public VectorXZ zeroLocal() {
         x = 0f;
         z = 0f;
+
         return this;
     }
     // *************************************************************************
@@ -604,10 +629,10 @@ public class VectorXZ
     public int compareTo(VectorXZ otherVector) {
         int result;
 
-        if (x != otherVector.x) {
-            result = Float.compare(x, otherVector.x);
+        if (x != otherVector.getX()) {
+            result = Float.compare(x, otherVector.getX());
         } else {
-            result = Float.compare(z, otherVector.z);
+            result = Float.compare(z, otherVector.getZ());
         }
         /*
          * Verify consistency with equals().
@@ -647,7 +672,7 @@ public class VectorXZ
             return true;
         } else if (otherObject instanceof VectorXZ) {
             VectorXZ otherVector = (VectorXZ) otherObject;
-            return otherVector.x == x && otherVector.z == z;
+            return otherVector.getX() == x && otherVector.getZ() == z;
         }
         return false;
     }
