@@ -434,7 +434,7 @@ public class SunAndStars
         /*
          * Convert month and day to day-of-the-year.
          */
-        int year = 2000; // a recent leap year
+        int year = 2_000; // a recent leap year
         Calendar calendar = new GregorianCalendar();
         calendar.set(year, month, day, 12, 0, 0); // noon, standard time
         int dayOfYear = calendar.get(Calendar.DAY_OF_YEAR);

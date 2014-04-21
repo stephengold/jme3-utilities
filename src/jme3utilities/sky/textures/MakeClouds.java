@@ -112,8 +112,8 @@ public class MakeClouds {
         logger.log(Level.INFO, "working directory is {0}",
                 MyString.quote(userDir));
 
-        initializeSamples(2048, 10);
-        RenderedImage fbm = application.makeFbmClouds(2048, 0.58f, 0.82f);
+        initializeSamples(2_048, 10);
+        RenderedImage fbm = application.makeFbmClouds(2_048, 0.58f, 0.82f);
 
         RenderedImage clear = application.makeFillClouds(64, 0f);
         RenderedImage overcast = application.makeFillClouds(64, 1f);
@@ -141,7 +141,7 @@ public class MakeClouds {
          * noise parameters for fractional Brownian motion (FBM)
          * and Perlin generator
          */
-        long seed = -35930871;
+        long seed = -35_930_871;
         Perlin2 generator = new Perlin2(fundamental, fundamental, seed, seed);
         int numOctaves = 12;
         float gain = 0.45f;

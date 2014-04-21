@@ -175,11 +175,11 @@ enum StarMapPreset {
             case NORTH_4M:
             case SOUTH_4M:
             case WILTSHIRE_4M:
-                return 2048;
+                return 2_048;
             case NORTH_16M:
             case SOUTH_16M:
             case WILTSHIRE_16M:
-                return 4096;
+                return 4_096;
         }
         throw new IllegalStateException();
     }
