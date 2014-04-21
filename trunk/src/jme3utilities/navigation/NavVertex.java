@@ -54,7 +54,7 @@ public class NavVertex
     /**
      * list of arcs which originate from this vertex
      */
-    private ArrayList<NavArc> arcs = new ArrayList<>();
+    private ArrayList<NavArc> arcs = new ArrayList<>(4);
     /**
      * textual description of this vertex (not null)
      */
@@ -193,6 +193,16 @@ public class NavVertex
     }
 
     /**
+     * Read the description of this vertex.
+     *
+     * @return textual description (not null)
+     */
+    public String getDescription() {
+        assert description != null;
+        return description;
+    }
+
+    /**
      * Copy the world coordinates of the vertex.
      *
      * @return new vector
@@ -258,7 +268,7 @@ public class NavVertex
      */
     @Override
     public int compareTo(NavVertex otherVertex) {
-        String otherDescription = otherVertex.description;
+        String otherDescription = otherVertex.getDescription();
         int result = description.compareTo(otherDescription);
         /*
          * Verify consistency with equals().
@@ -282,7 +292,8 @@ public class NavVertex
         if (this == otherObject) {
             return true;
         } else if (otherObject instanceof NavVertex) {
-            String otherDescription = ((NavVertex) otherObject).description;
+            NavVertex otherVertex = (NavVertex) otherObject;
+            String otherDescription = otherVertex.getDescription();
             return description.equals(otherDescription);
         }
         return false;
@@ -300,7 +311,7 @@ public class NavVertex
     /**
      * Format this vertex as a text string.
      *
-     * @return description (not null)
+     * @return textual description (not null)
      */
     @Override
     public String toString() {
