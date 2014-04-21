@@ -151,7 +151,7 @@ public class TimeOfDay
         super.update(interval);
 
         double simulatedSeconds = rate * interval;
-        timeOfDay = timeOfDay + simulatedSeconds;
+        timeOfDay += simulatedSeconds;
         timeOfDay = MyMath.modulo(timeOfDay, secondsPerDay);
     }
     // *************************************************************************
