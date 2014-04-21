@@ -148,6 +148,52 @@ public class VectorXZ
     }
 
     /**
+     * Clamp this direction to be within a specified angle of the +X axis.
+     *
+     * @param maxAbsAngle tolerance angle in radians (&ge;0, clamped to Pi/2)
+     * @return new unit vector or zero vector
+     */
+    public VectorXZ clampDirection(float maxAbsAngle) {
+        Validate.nonNegative(maxAbsAngle, "angle");
+
+        if (isZeroLength()) {
+            /*
+             * Clamping has no effect on a zero-length vector.
+             */
+            return clone();
+        }
+        /*
+         * Convert angle to sine.
+         */
+        float maxAbsSine;
+        if (maxAbsAngle >= FastMath.HALF_PI) {
+            maxAbsSine = 1f;
+        } else {
+            maxAbsSine = FastMath.sin(maxAbsAngle);
+        }
+
+        float signZ = FastMath.sign(z);
+        VectorXZ result;
+        if (x < 0f) {
+            /*
+             * Clamp to the right (+X) half-plane.
+             */
+            result = new VectorXZ(0f, signZ);
+        } else {
+            result = normalize();
+        }
+
+        float absZ = FastMath.abs(result.getZ());
+        if (absZ > maxAbsSine) {
+            float newZ = maxAbsSine * signZ;
+            float newX = MyMath.circle(newZ);
+            result = new VectorXZ(newX, newZ);
+        }
+
+        return result;
+    }
+
+    /**
      * Clamp this vector to be within an axis-aligned ellipse.
      *
      * @param maxX radius of the ellipse in the X-direction
