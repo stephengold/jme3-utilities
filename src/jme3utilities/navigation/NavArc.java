@@ -139,19 +139,20 @@ public class NavArc
      */
     @Override
     public int compareTo(NavArc otherArc) {
-        int result = fromVertex.compareTo(otherArc.fromVertex);
+        int result = fromVertex.compareTo(otherArc.getFromVertex());
         if (result != 0) {
             return result;
         }
-        result = toVertex.compareTo(otherArc.toVertex);
+        result = toVertex.compareTo(otherArc.getToVertex());
         if (result != 0) {
             return result;
         }
-        result = Float.compare(pathLength, otherArc.pathLength);
+        result = Float.compare(pathLength, otherArc.getPathLength());
         if (result != 0) {
             return result;
         }
-        result = MyVector3f.compare(startDirection, otherArc.startDirection);
+        result = MyVector3f.compare(startDirection,
+                otherArc.getStartDirection());
         /*
          * Verify consistency with equals().
          */
@@ -175,15 +176,15 @@ public class NavArc
             return true;
         } else if (otherObject instanceof NavArc) {
             NavArc otherArc = (NavArc) otherObject;
-            if (!fromVertex.equals(otherArc.fromVertex)) {
+            if (!fromVertex.equals(otherArc.getFromVertex())) {
                 return false;
-            } else if (!toVertex.equals(otherArc.toVertex)) {
+            } else if (!toVertex.equals(otherArc.getToVertex())) {
                 return false;
-            } else if (pathLength != otherArc.pathLength) {
+            } else if (pathLength != otherArc.getPathLength()) {
                 return false;
             } else {
                 boolean result =
-                        startDirection.equals(otherArc.startDirection);
+                        startDirection.equals(otherArc.getStartDirection());
                 return result;
             }
         }
