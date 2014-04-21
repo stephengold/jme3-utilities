@@ -25,30 +25,24 @@
  */
 package jme3utilities.math;
 
-import com.jme3.export.InputCapsule;
-import com.jme3.export.JmeExporter;
-import com.jme3.export.JmeImporter;
-import com.jme3.export.OutputCapsule;
-import com.jme3.export.Savable;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * Single-precision vector with no 'y' coordinate. These vectors are used to
- * represent map coordinates, directions, and map offsets. For viewport
+ * Immutable single-precision vector with no 'y' coordinate, used to represent
+ * horizontal locations, offsets, directions, and rotations. For viewport
  * coordinates use Vector2f instead.
  * <p>
- * By convention, +X is north and +Z is east
+ * By convention, +X is north and +Z is east.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class VectorXZ
-        implements Cloneable, Comparable<VectorXZ>, Savable {
+        implements Cloneable, Comparable<VectorXZ> {
     // *************************************************************************
     // constants
 
@@ -57,6 +51,22 @@ public class VectorXZ
      */
     final private static Logger logger =
             Logger.getLogger(VectorXZ.class.getName());
+    /**
+     * east direction
+     */
+    final public static VectorXZ east = new VectorXZ(0f, 1f);
+    /**
+     * north direction
+     */
+    final public static VectorXZ north = new VectorXZ(1f, 0f);
+    /**
+     * south direction
+     */
+    final public static VectorXZ south = new VectorXZ(-1f, 0f);
+    /**
+     * west direction
+     */
+    final public static VectorXZ west = new VectorXZ(0f, -1f);
     // *************************************************************************
     // fields
     /**
@@ -112,9 +122,9 @@ public class VectorXZ
     // new methods exposed
 
     /**
-     * Add to this vector (with no side effect).
+     * Add to (translate) this vector.
      *
-     * @param increment vector to be added to this vector (unaffected, not null)
+     * @param increment vector to be added to this vector (not null)
      * @return new vector equal to the sum
      */
     public VectorXZ add(VectorXZ increment) {
@@ -123,19 +133,6 @@ public class VectorXZ
         VectorXZ sum = new VectorXZ(sumX, sumZ);
 
         return sum;
-    }
-
-    /**
-     * Accumulate to this vector (add in place).
-     *
-     * @param increment vector to be added to this vector (unaffected, not null)
-     * @return this vector (with its components modified)
-     */
-    public VectorXZ addLocal(VectorXZ increment) {
-        x += increment.getX();
-        z += increment.getZ();
-
-        return this;
     }
 
     /**
@@ -151,132 +148,47 @@ public class VectorXZ
     }
 
     /**
-     * Convert this vector to one of the four cardinal directions (in place).
-     *
-     * @return this vector (with its components modified)
-     */
-    public VectorXZ cardinalizeLocal() {
-        float length = length();
-        while (length == 0f) {
-            /*
-             * pick random X and Z, each between -0.5 and +0.5
-             */
-            x = Noise.nextFloat() - 0.5f;
-            z = Noise.nextFloat() - 0.5f;
-            length = length();
-        }
-
-        float absX = FastMath.abs(x);
-        float absZ = FastMath.abs(z);
-        if (absX > absZ) {
-            x = FastMath.sign(x);
-            z = 0f;
-        } else {
-            x = 0f;
-            z = FastMath.sign(z);
-        }
-
-        return this;
-    }
-
-    /**
-     * Clamp this direction (in place) to be within a specified angle of the
-     * X-axis.
-     *
-     * @param maxAbsAngle tolerance angle in radians (&ge;0)
-     * @return this vector (with its components modified)
-     */
-    public VectorXZ clampDirectionLocal(float maxAbsAngle) {
-        Validate.nonNegative(maxAbsAngle, "angle");
-
-        if (isZeroLength()) {
-            /*
-             * special case
-             */
-            return this;
-        }
-
-        float signZ = FastMath.sign(z);
-        if (x < 0f) {
-            /*
-             * clamp to the +X half-plane
-             */
-            x = 0f;
-            z = signZ;
-        } else {
-            normalizeLocal();
-        }
-        float maxAbsSine;
-        if (maxAbsAngle >= FastMath.HALF_PI) {
-            maxAbsSine = 1f;
-        } else {
-            maxAbsSine = FastMath.sin(maxAbsAngle);
-        }
-        if (FastMath.abs(z) > maxAbsSine) {
-            z = maxAbsSine * signZ;
-            x = MyMath.circle(z);
-        }
-
-        return this;
-    }
-
-    /**
-     * Clamp this vector to be within an axis-aligned ellipse (with no
-     * side-effect).
+     * Clamp this vector to be within an axis-aligned ellipse.
      *
      * @param maxX radius of the ellipse in the X-direction
      * @param maxZ radius of the ellipse in the Z-direction
      * @return new vector with the same direction
      */
     public VectorXZ clampElliptical(float maxX, float maxZ) {
-        VectorXZ result = clone();
-        result.clampEllipticalLocal(maxX, maxZ);
-        return result;
-    }
-
-    /**
-     * Clamp this vector to be within an axis-aligned ellipse (in place).
-     *
-     * @param maxX radius of the ellipse in the X-direction
-     * @param maxZ radius of the ellipse in the Z-direction
-     * @return this vector (with its components modified)
-     */
-    public VectorXZ clampEllipticalLocal(float maxX, float maxZ) {
         if (isZeroLength()) {
             /*
-             * special case
+             * Clamping has no effect on a zero-length vector.
              */
-            return this;
+            return clone();
         }
-
+        /*
+         * Represent the ellipse in polar coordinates.
+         */
         float theta = azimuth();
-
-        // ellipse in polar coordinates
         float asin = maxX * FastMath.sin(theta);
         float bcos = maxZ * FastMath.cos(theta);
         float r = maxX * maxZ / MyMath.hypotenuse(asin, bcos);
-        // scale so that length <= r
+        /*
+         * Scale so that length <= r.
+         */
         float length = length();
+        float newX = x;
+        float newZ = z;
         if (length > r) {
-            multLocal(r / length);
+            float scale = r / length;
+            newX *= scale;
+            newZ *= scale;
         }
-        return this;
-    }
 
-    /**
-     * Copy another vector's components to this vector.
-     *
-     * @param vector the vector to copy (unaffected, not null)
-     */
-    public void copy(VectorXZ vector) {
-        x = vector.getX();
-        z = vector.getZ();
+        VectorXZ result = new VectorXZ(newX, newZ);
+
+        return result;
     }
 
     /**
      * Compute the cross product of this vector with another.
      *
-     * @param other the other vector (unaffected, not null)
+     * @param other the other vector (not null)
      * @return cross product
      */
     public float cross(VectorXZ other) {
@@ -287,7 +199,7 @@ public class VectorXZ
     /**
      * Compute the directional error of this direction with respect to a goal.
      *
-     * @param goal a unit vector (unaffected)
+     * @param goal unit vector
      * @return sine of the angle from the goal to this direction, or +1/-1 if
      * the angle's magnitude exceeds 90 degrees
      */
@@ -317,7 +229,7 @@ public class VectorXZ
     }
 
     /**
-     * Divide this vector by a scalar (with no side effect).
+     * Divide this vector by a scalar.
      *
      * @param scalar scaling factor (not zero)
      * @return new vector 'scalar' times shorter than this one
@@ -330,24 +242,9 @@ public class VectorXZ
     }
 
     /**
-     * Divide this vector by a scalar (in place).
-     *
-     * @param scalar scaling factor (not zero)
-     * @return this vector (with its components divided)
-     */
-    public VectorXZ divideLocal(float scalar) {
-        Validate.nonZero(scalar, "scalar");
-
-        x /= scalar;
-        z /= scalar;
-
-        return this;
-    }
-
-    /**
      * Compute the dot product of this vector with another.
      *
-     * @param other the other vector (unaffected, not null)
+     * @param other other vector (not null)
      * @return dot product
      */
     public float dot(VectorXZ other) {
@@ -358,7 +255,7 @@ public class VectorXZ
     /**
      * Read the X-component of this vector.
      *
-     * @return x-component
+     * @return X-component
      */
     public float getX() {
         return x;
@@ -367,7 +264,7 @@ public class VectorXZ
     /**
      * Read the Z-component of this vector.
      *
-     * @return z-component
+     * @return Z-component
      */
     public float getZ() {
         return z;
@@ -405,8 +302,7 @@ public class VectorXZ
     }
 
     /**
-     * Mirror this vector across the X-axis (complex conjugate with no side
-     * effect).
+     * Mirror this vector across the X-axis (complex conjugate).
      *
      * @return new vector
      */
@@ -416,7 +312,7 @@ public class VectorXZ
     }
 
     /**
-     * Scale this vector by a scalar (with no side effect).
+     * Scale this vector by a scalar.
      *
      * @param scalar scaling factor
      * @return new vector 'scalar' times longer than this one
@@ -427,19 +323,7 @@ public class VectorXZ
     }
 
     /**
-     * Scale this vector by a scalar (in place).
-     *
-     * @param scalar scaling factor
-     * @return this vector (with its components scaled)
-     */
-    public VectorXZ multLocal(float scalar) {
-        x *= scalar;
-        z *= scalar;
-        return this;
-    }
-
-    /**
-     * Negate this vector (with no side effect).
+     * Negate this vector.
      *
      * @return new vector with same magnitude and opposite direction
      */
@@ -449,62 +333,34 @@ public class VectorXZ
     }
 
     /**
-     * Negate this vector (in place).
-     *
-     * @return this vector (with its components negated)
-     */
-    public VectorXZ negateLocal() {
-        x = -x;
-        z = -z;
-        return this;
-    }
-
-    /**
-     * Normalize this vector to a unit vector (with no side effect). If this
-     * vector has zero length, generate a random direction.
+     * Normalize this vector to a unit vector. If this vector has zero length,
+     * generate a random direction.
      *
      * @return new unit vector
      */
     public VectorXZ normalize() {
-        VectorXZ result = clone();
-        result.normalizeLocal();
-        return result;
-    }
-
-    /**
-     * Normalize this vector to a unit vector (in place). If this vector has
-     * zero length, generate a random direction.
-     *
-     * @return this vector (with its components modified)
-     */
-    public VectorXZ normalizeLocal() {
         float length = length();
+        float newX = x;
+        float newZ = z;
         while (length == 0f) {
-            // pick random X and Z, each between -0.5 and +0.5
-            x = Noise.nextFloat() - 0.5f;
-            z = Noise.nextFloat() - 0.5f;
-            length = length();
+            /*
+             * Pick random X and Z, each between -0.5 and +0.5
+             */
+            newX = Noise.nextFloat() - 0.5f;
+            newZ = Noise.nextFloat() - 0.5f;
+            length = MyMath.hypotenuse(newX, newZ);
         }
-        divideLocal(length);
-        return this;
-    }
 
-    /**
-     * Subtract from this vector (with no side effect).
-     *
-     * @param change vector to be subtracted from this vector (unaffected, not
-     * null)
-     * @return new vector equal to the difference of the two vectors
-     */
-    public VectorXZ subtract(VectorXZ change) {
-        VectorXZ result = new VectorXZ(x - change.getX(), z - change.getZ());
+        newX /= length;
+        newZ /= length;
+        VectorXZ result = new VectorXZ(newX, newZ);
+
         return result;
     }
 
     /**
-     * Rotate a vector CLOCKWISE about the +Y axis (with no side effect). Note:
-     * This method is used to apply azimuths, which is why its angle convention
-     * is left-handed.
+     * Rotate a vector CLOCKWISE about the +Y axis. Note: This method is used to
+     * apply azimuths, which is why its angle convention is left-handed.
      *
      * @param radians clockwise (LH) angle of rotation in radians
      * @return new vector with the same length
@@ -520,10 +376,9 @@ public class VectorXZ
     }
 
     /**
-     * Rotate a vector by a direction vector (complex product with no side
-     * effect).
+     * Rotate a vector by a direction vector (complex product).
      *
-     * @param direction new direction for the X-axis (unaffected, not null)
+     * @param direction final direction for the original X-axis (not null)
      * @return new vector
      */
     public VectorXZ rotate(VectorXZ direction) {
@@ -537,37 +392,17 @@ public class VectorXZ
     }
 
     /**
-     * Rotate a vector CLOCKWISE about the +Y axis (in place). Note: This method
-     * is used to apply azimuths, which is why its angle convention is
-     * left-handed.
+     * Subtract from this vector.
      *
-     * @param radians clockwise (LH) angle of rotation in radians
-     * @return this vector (with its components modified)
+     * @param decrement vector to be subtracted from this vector (not null)
+     * @return new vector equal to the difference of the two vectors
      */
-    public VectorXZ rotateLocal(float radians) {
-        float cosine = FastMath.cos(radians);
-        float sine = FastMath.sin(radians);
-        float newX = cosine * x - sine * z;
-        z = cosine * z + sine * x;
-        x = newX;
+    public VectorXZ subtract(VectorXZ decrement) {
+        float newX = x + decrement.getX();
+        float newZ = z + decrement.getZ();
+        VectorXZ result = new VectorXZ(newX, newZ);
 
-        return this;
-    }
-
-    /**
-     * Rotate a vector by a direction vector (complex product in place).
-     *
-     * @param direction new direction for the X-axis (unaffected, not null)
-     * @return this vector (with its components modified)
-     */
-    public VectorXZ rotateLocal(VectorXZ direction) {
-        float cosine = direction.getX();
-        float sine = direction.getZ();
-        float newX = cosine * x - sine * z;
-        z = cosine * z + sine * x;
-        x = newX;
-
-        return this;
+        return result;
     }
 
     /**
@@ -576,10 +411,11 @@ public class VectorXZ
      * @return new instance
      */
     public Quaternion toQuaternion() {
-        Quaternion rotation = new Quaternion();
-        float angle = -azimuth();
-        rotation.fromAngleNormalAxis(angle, Vector3f.UNIT_Y);
-        return rotation;
+        Quaternion result = new Quaternion();
+        Vector3f direction = toVector3f();
+        result.lookAt(direction, Vector3f.UNIT_Y);
+
+        return result;
     }
 
     /**
@@ -602,26 +438,14 @@ public class VectorXZ
         Vector3f result = new Vector3f(x, y, z);
         return result;
     }
-
-    /**
-     * Reset this vector to zero length.
-     *
-     * @return this vector (with its components modified)
-     */
-    public VectorXZ zeroLocal() {
-        x = 0f;
-        z = 0f;
-
-        return this;
-    }
     // *************************************************************************
     // Comparable methods
 
     /**
-     * Compare lexicographically with another vector, with the x-component
+     * Compare lexicographically with another vector, with the X-component
      * having priority.
      *
-     * @param otherVector (not null, unaffected)
+     * @param otherVector (not null)
      * @return 0 if this vector equals otherVector; negative if this comes
      * before otherVector; positive if this comes after otherVector
      */
@@ -663,7 +487,7 @@ public class VectorXZ
     /**
      * Compare for equality.
      *
-     * @param otherObject (unaffected)
+     * @param otherObject (may be null)
      * @return true if the vectors are equal, otherwise false
      */
     @Override
@@ -695,36 +519,6 @@ public class VectorXZ
     public String toString() {
         String result = String.format("[%.3f, %.3f]", x, z);
         return result;
-    }
-    // *************************************************************************
-    // Savable methods
-
-    /**
-     * De-serialize the vector, for example when loading from a J3O file.
-     *
-     * @param importer (not null)
-     * @throws IOException TODO when?
-     */
-    @Override
-    public void read(JmeImporter importer)
-            throws IOException {
-        InputCapsule capsule = importer.getCapsule(this);
-        x = capsule.readFloat("x", 0f);
-        z = capsule.readFloat("z", 0f);
-    }
-
-    /**
-     * Serialize the vector, for example when saving to a J3O file.
-     *
-     * @param exporter (not null)
-     * @throws IOException TODO when?
-     */
-    @Override
-    public void write(JmeExporter exporter)
-            throws IOException {
-        OutputCapsule capsule = exporter.getCapsule(this);
-        capsule.write(x, "x", 0f);
-        capsule.write(z, "z", 0f);
     }
     // *************************************************************************
     // test cases

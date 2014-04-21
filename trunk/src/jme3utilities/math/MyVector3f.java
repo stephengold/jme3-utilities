@@ -119,20 +119,6 @@ public class MyVector3f {
     }
 
     /**
-     * Compute a horizontal direction of an offset.
-     *
-     * @param offset difference of world coordinates (not null, unaffected)
-     * @return new unit vector
-     */
-    public static VectorXZ direction(Vector3f offset) {
-        Validate.nonNull(offset, "offset");
-
-        VectorXZ result = new VectorXZ(offset);
-        result.normalizeLocal();
-        return result;
-    }
-
-    /**
      * Compute the distance from one location to another.
      *
      * @param from world coordinates of starting location (not null, unaffected)
@@ -165,9 +151,25 @@ public class MyVector3f {
     }
 
     /**
+     * Compute the horizontal of an offset.
+     *
+     * @param offset difference of world coordinates (not null, unaffected)
+     * @return new unit vector
+     */
+    public static VectorXZ horizontalDirection(Vector3f offset) {
+        Validate.nonNull(offset, "offset");
+
+        VectorXZ horizontalOffset = new VectorXZ(offset);
+        VectorXZ result = horizontalOffset.normalize();
+
+        return result;
+    }
+
+    /**
      * Test whether all components of a vector are all non-negative.
      *
      * @param vector (not null, unaffected)
+     * @return true if all non-negative, false otherwise
      */
     public static boolean isAllNonNegative(Vector3f vector) {
         boolean result = (vector.x >= 0f && vector.y >= 0f && vector.z >= 0f);
