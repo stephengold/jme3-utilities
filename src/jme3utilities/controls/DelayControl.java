@@ -62,7 +62,7 @@ public class DelayControl
     /**
      * list of slaves to be enabled
      */
-    final private List<Control> slaves = new ArrayList<>();
+    final private List<Control> slaves = new ArrayList<>(3);
     // *************************************************************************
     // constructors
 

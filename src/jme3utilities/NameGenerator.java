@@ -177,7 +177,7 @@ public class NameGenerator
     @Override
     public void write(JmeExporter exporter)
             throws IOException {
-        StringBuilder allEncoded = new StringBuilder();
+        StringBuilder allEncoded = new StringBuilder(50);
         for (Map.Entry<String, Integer> entry
                 : nextSequenceNumbers.entrySet()) {
             String key = entry.getKey();

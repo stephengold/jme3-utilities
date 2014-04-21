@@ -68,23 +68,23 @@ public class Updater
      */
     @SuppressWarnings("rawtypes")
     final private ArrayList<AbstractShadowFilter> shadowFilters =
-            new ArrayList<>();
+            new ArrayList<>(1);
     /**
      * shadow renderers whose intensities are updated by the control - not
      * synchronized
      */
     final private ArrayList<AbstractShadowRenderer> shadowRenderers =
-            new ArrayList<>();
+            new ArrayList<>(1);
     /**
      * bloom filters whose intensities are updated by the control - not
      * synchronized
      */
-    final private ArrayList<BloomFilter> bloomFilters = new ArrayList<>();
+    final private ArrayList<BloomFilter> bloomFilters = new ArrayList<>(1);
     /**
      * viewports whose background colors are updated by the control - not
      * serialized
      */
-    private ArrayList<ViewPort> viewPorts = new ArrayList<>();
+    private ArrayList<ViewPort> viewPorts = new ArrayList<>(3);
     /**
      * most recent color for ambient light (or null if not updated yet)
      */

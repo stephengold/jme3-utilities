@@ -124,9 +124,10 @@ public class Printer {
      * @param spatial spatial being described (not null)
      * @param enabled if true, describe only the enabled controls; if false,
      * describe only the disabled controls
+     * @return description (not null)
      */
     public String describeControls(Spatial spatial, boolean enabled) {
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(20);
         boolean addSeparators = false;
         int count = spatial.getNumControls();
         for (int i = 0; i < count; i++) {
@@ -441,6 +442,7 @@ public class Printer {
      * Generate a textual description of a scene-graph control.
      *
      * @param control (not null)
+     * @return description (not null)
      */
     protected String describeControl(Object control) {
         Validate.nonNull(control, "control");
@@ -450,9 +452,10 @@ public class Printer {
     }
 
     /**
-     * Generate a one-letter description of a spatial.
+     * Generate a single-character description of a spatial.
      *
      * @param spatial spatial being described
+     * @return mnemonic character
      */
     public static char describeType(Spatial spatial) {
         char result = MySpatial.describeType(spatial);
