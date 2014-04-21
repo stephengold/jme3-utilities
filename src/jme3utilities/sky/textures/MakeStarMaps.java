@@ -109,7 +109,7 @@ public class MakeStarMaps {
     /**
      * expected id of the last entry in the catalog
      */
-    final private static int lastEntryExpected = 9110;
+    final private static int lastEntryExpected = 9_110;
     /**
      * number of degrees from equator to pole
      */
@@ -853,8 +853,8 @@ public class MakeStarMaps {
         /*
          * Instantiate the star.
          */
-        Star result = new Star(entryId, rightAscension, declination,
-                apparentMagnitude);
+        Star result = new Star(rightAscension, declination, apparentMagnitude);
+
         return result;
     }
 }

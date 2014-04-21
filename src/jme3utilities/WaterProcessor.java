@@ -52,7 +52,7 @@ public class WaterProcessor
     /**
      * view port listeners registered prior to initialization
      */
-    final private ArrayList<ViewPortListener> listeners = new ArrayList<>();
+    final private ArrayList<ViewPortListener> listeners = new ArrayList<>(3);
     // *************************************************************************
     // constructors
 
