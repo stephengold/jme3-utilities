@@ -47,28 +47,23 @@ class Star
     // *************************************************************************
     // fields
     /**
-     * id number in the catalog (&ge;1)
-     */
-    int entryId;
-    /**
      * apparent brightness (inverted logarithmic scale)
      */
-    float apparentMagnitude;
+    private float apparentMagnitude;
     /**
      * declination (radians north of the celestial equator, &le;Pi/2, &ge;-Pi/2)
      */
-    float declination;
+    private float declination;
     /**
      * right ascension (radians east of the vernal equinox, &lt;2*Pi, &ge;0)
      */
-    float rightAscension;
+    private float rightAscension;
     // *************************************************************************
     // constructors
 
     /**
      * Instantiate a star.
      *
-     * @param entryId id number in the catalog (&ge;1)
      * @param rightAscension radians east of the vernal equinox (&le;2*Pi,
      * &ge;0)
      * @param declination radians north of the celestial equator (&le;Pi/2,
@@ -76,15 +71,12 @@ class Star
      *
      * @param apparentMagnitude apparent brightness (inverted logarithmic scale)
      */
-    Star(int entryId, float rightAscension, float declination,
-            float apparentMagnitude) {
-        assert entryId >= 1 : entryId;
+    Star(float rightAscension, float declination, float apparentMagnitude) {
         assert declination <= FastMath.HALF_PI : declination;
         assert declination >= -FastMath.HALF_PI : declination;
         assert rightAscension >= 0f : rightAscension;
         assert rightAscension < FastMath.TWO_PI : rightAscension;
 
-        this.entryId = entryId;
         this.rightAscension = rightAscension;
         this.declination = declination;
         this.apparentMagnitude = apparentMagnitude;
