@@ -74,7 +74,7 @@ public class NavGraph {
      * endVertex)
      * @param endVertex endpoint (member of this graph)
      * @param pathLength length or cost (arbitrary units, &gt;0)
-     * @param startDirection direction at the start (unit vector in world space,
+     * @param startDirection direction at the start (in world space, length=1,
      * unaffected)
      * @return new member
      */
@@ -89,7 +89,7 @@ public class NavGraph {
         Validate.nonNull(startDirection, "start direction");
         if (!startDirection.isUnitVector()) {
             throw new IllegalArgumentException(
-                    "direction should be a unit vector");
+                    "direction should have length=1");
         }
 
         NavArc newArc = startVertex.addArc(endVertex, pathLength,
