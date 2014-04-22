@@ -134,7 +134,7 @@ public class GlobeRenderer
      */
     final private Texture2D outputTexture;
     /**
-     * spin axis (unit vector)
+     * spin axis (length=1)
      */
     final private Vector3f spinAxis = Vector3f.UNIT_Z.clone();
     // *************************************************************************
@@ -307,8 +307,7 @@ public class GlobeRenderer
         Validate.nonNull(newAxis, "axis");
         if (!newAxis.isUnitVector()) {
             logger.log(Level.SEVERE, "axis={0}", newAxis);
-            throw new IllegalArgumentException(
-                    "axis should be a unit vector");
+            throw new IllegalArgumentException("axis should have length=1");
         }
 
         spinAxis.set(newAxis);

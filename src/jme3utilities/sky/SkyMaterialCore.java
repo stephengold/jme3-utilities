@@ -408,7 +408,7 @@ public class SkyMaterialCore
             if (!MyMath.isUnitVector(newRotate)) {
                 logger.log(Level.SEVERE, "newRotate={0}", newRotate);
                 throw new IllegalArgumentException(
-                        "rotation should be a unit vector");
+                        "rotation should have length=1");
             }
         }
         if (objectCenters[objectIndex] == null) {

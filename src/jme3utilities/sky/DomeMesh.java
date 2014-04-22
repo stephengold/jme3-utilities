@@ -202,7 +202,7 @@ public class DomeMesh
      * Compute the texture coordinate of a point on this mesh that's in the
      * specified direction from the center of the mesh.
      *
-     * @param direction (unit vector, unaffected)
+     * @param direction (length=1, unaffected)
      * @return new vector, or null if direction is too far below the equator
      */
     public Vector2f directionUV(Vector3f direction) {
@@ -210,7 +210,7 @@ public class DomeMesh
         if (!direction.isUnitVector()) {
             logger.log(Level.SEVERE, "direction={0}", direction);
             throw new IllegalArgumentException(
-                    "direction should be a unit vector");
+                    "direction should have length=1");
         }
 
         float angleFromTop = FastMath.acos(direction.y);
