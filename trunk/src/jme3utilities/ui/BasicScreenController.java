@@ -299,6 +299,8 @@ public class BasicScreenController
 
     /**
      * Read the Nifty screen id.
+     *
+     * @return id string (not null)
      */
     protected String getScreenId() {
         assert screenId != null;

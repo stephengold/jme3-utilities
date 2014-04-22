@@ -413,7 +413,8 @@ public class VectorXZ
     }
 
     /**
-     * Mirror this vector across the X-axis (complex conjugate).
+     * Mirror this vector across the X-axis (complex conjugate or inverse
+     * rotation).
      *
      * @return new vector
      */

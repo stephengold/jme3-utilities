@@ -53,7 +53,7 @@ public class RotationControl
     // *************************************************************************
     // fields
     /**
-     * axis of rotation in local coordinates (unit vector): set by constructor
+     * axis of rotation (in local coordinates, length=1): set by constructor
      */
     final private Vector3f axis;
     /**

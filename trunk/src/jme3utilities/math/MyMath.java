@@ -188,6 +188,7 @@ public class MyMath {
      * @param a coefficient of the square term
      * @param b coefficient of the linear term
      * @param c constant term
+     * @return discriminant
      */
     public static double discriminant(double a, double b, double c) {
         double result = b * b - 4.0 * a * c;
@@ -203,6 +204,7 @@ public class MyMath {
      * @param a coefficient of the square term
      * @param b coefficient of the linear term
      * @param c constant term
+     * @return discriminant
      */
     public static double discriminant(float a, float b, float c) {
         double aa = (double) a;
@@ -262,6 +264,9 @@ public class MyMath {
 
     /**
      * Test whether a vector's length is within 1% of unity.
+     *
+     * @param vector (not null)
+     * @return true if within 1%, else false
      */
     public static boolean isUnitVector(Vector2f vector) {
         float norm = vector.length();

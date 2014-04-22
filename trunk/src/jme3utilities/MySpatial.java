@@ -100,9 +100,10 @@ public class MySpatial
     }
 
     /**
-     * Generate a one-letter description of a spatial.
+     * Generate a single-character description of a spatial.
      *
      * @param spatial spatial to describe
+     * @return mnemonic character
      */
     public static char describeType(Spatial spatial) {
         if (spatial instanceof AudioNode) {

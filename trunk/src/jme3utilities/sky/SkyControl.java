@@ -495,8 +495,8 @@ public class SkyControl
      * Update background colors, cloud colors, haze color, sun color, lights,
      * and shadows.
      *
-     * @param sunDirection world direction to the sun (unit vector)
-     * @param moonDirection world direction to the moon (unit vector or null)
+     * @param sunDirection world direction to the sun (length=1)
+     * @param moonDirection world direction to the moon (length=1 or null)
      */
     private void updateLighting(Vector3f sunDirection, Vector3f moonDirection) {
         assert sunDirection != null;

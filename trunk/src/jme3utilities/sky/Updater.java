@@ -118,7 +118,7 @@ public class Updater
      */
     private float shadowIntensity = 0f;
     /**
-     * most recent direction for main directional light (unit vector, or null if
+     * most recent direction for main directional light (length=1, or null if
      * not updated yet)
      */
     private Vector3f direction = null;
@@ -350,7 +350,7 @@ public class Updater
      * null, unaffected)
      * @param bloomIntensity intensity of bloom effect (&ge;0)
      * @param shadowIntensity intensity of shadows (&lt;1, &ge;0)
-     * @param direction direction to the main light source (unit vector,
+     * @param direction direction to the main light source (length=1,
      * unaffected)
      */
     void update(ColorRGBA ambientColor, ColorRGBA backgroundColor,
