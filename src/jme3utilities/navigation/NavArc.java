@@ -29,10 +29,11 @@ import com.jme3.math.Vector3f;
 import java.util.Objects;
 import java.util.logging.Logger;
 import jme3utilities.math.MyVector3f;
+import jme3utilities.math.VectorXZ;
 
 /**
- * Arc of a navigation graph: represents a feasible path from one vertex to
- * another vertex. Arcs are unidirectional and need not be straight.
+ * Immutable arc of a navigation graph: represents a feasible path from one
+ * vertex to another vertex. Arcs are unidirectional and need not be straight.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -61,9 +62,13 @@ public class NavArc
      */
     private NavVertex toVertex;
     /**
-     * direction at the start of this arc (unit vector in world space)
+     * direction at the start of this arc (in world space, length=1)
      */
     private Vector3f startDirection;
+    /**
+     * direction at the start of this arc (in world space, length=1)
+     */
+    private VectorXZ horizontalDirection;
     // *************************************************************************
     // constructors
 
@@ -73,7 +78,7 @@ public class NavArc
      * @param fromVertex starting point (not null, distinct from toVertex)
      * @param toVertex endpoint (not null)
      * @param pathLength length or cost (arbitrary units, &gt;0)
-     * @param startDirection direction at the start (unit vector in world space,
+     * @param startDirection direction at the start (in world space, length=1,
      * unaffected)
      */
     NavArc(NavVertex fromVertex, NavVertex toVertex, float pathLength,
@@ -89,6 +94,8 @@ public class NavArc
         this.toVertex = toVertex;
         this.pathLength = pathLength;
         this.startDirection = startDirection.clone();
+        this.horizontalDirection =
+                MyVector3f.horizontalDirection(startDirection);
     }
     // *************************************************************************
     // new methods exposed
@@ -100,6 +107,15 @@ public class NavArc
      */
     public NavVertex getFromVertex() {
         return fromVertex;
+    }
+
+    /**
+     * Read the initial direction of this arc in the XZ plane.
+     *
+     * @return pre-existing unit vector
+     */
+    public VectorXZ getHorizontalDirection() {
+        return horizontalDirection;
     }
 
     /**

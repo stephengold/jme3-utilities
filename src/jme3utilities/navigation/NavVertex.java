@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
+import jme3utilities.math.VectorXZ;
 
 /**
  * Navigation vertex: represents a reachable location in the world.
@@ -87,7 +88,7 @@ public class NavVertex
      *
      * @param endpoint destination vertex (not null, not this)
      * @param pathLength length or cost (arbitrary units, &gt;0)
-     * @param startDirection direction at the start (unit vector in world space,
+     * @param startDirection direction at the start (in world space, length=1,
      * unaffected)
      * @return new instance
      */
@@ -102,7 +103,7 @@ public class NavVertex
         if (!startDirection.isUnitVector()) {
             logger.log(Level.SEVERE, "direction={0}", startDirection);
             throw new IllegalArgumentException(
-                    "start direction should be unit vector");
+                    "start direction should have length=1");
         }
 
         NavArc newArc = new NavArc(this, endpoint, pathLength, startDirection);
@@ -150,6 +151,35 @@ public class NavVertex
         for (NavArc arc : arcs) {
             Vector3f arcDirection = arc.getStartDirection();
             float dot = arcDirection.dot(direction);
+            if (dot > maxDot) {
+                result = arc;
+                maxDot = dot;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Find the arc whose starting direction is most similar to the specified
+     * direction.
+     *
+     * @param direction not null, positive length
+     * @return pre-existing instance
+     */
+    public NavArc findLeastTurn(VectorXZ direction) {
+        Validate.nonNull(direction, "direction");
+        if (direction.isZeroLength()) {
+            logger.log(Level.SEVERE, "direction={0}", direction);
+            throw new IllegalArgumentException(
+                    "direction should have positive length");
+        }
+
+        NavArc result = null;
+        float maxDot = -2f * direction.length();
+        for (NavArc arc : arcs) {
+            VectorXZ horizontalDirection = arc.getHorizontalDirection();
+            float dot = horizontalDirection.dot(direction);
             if (dot > maxDot) {
                 result = arc;
                 maxDot = dot;
