@@ -113,7 +113,7 @@ public class AxesControl
      * @param assetManager for loading material definitions (not null)
      * @param color for the wireframe (not null)
      * @param name for the geometry (not null)
-     * @param direction for the arrow to point (unit vector, unaffected)
+     * @param direction for the arrow to point (length=1, unaffected)
      */
     private Geometry createAxis(AssetManager assetManager, ColorRGBA color,
             String name, Vector3f direction) {

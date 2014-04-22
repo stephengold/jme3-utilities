@@ -518,7 +518,7 @@ public class MakeStarMaps {
      * @param map texture map (not null)
      * @param apparentMagnitude the star's brightness
      * @param textureSize size of the texture map (pixels per side, &lt;2)
-     * @param worldDirection the star's world coordinates (unit vector)
+     * @param worldDirection the star's world coordinates (length=1)
      * @return true if the star was successfully plotted, otherwise false
      */
     private boolean plotStar(BufferedImage map, float apparentMagnitude,

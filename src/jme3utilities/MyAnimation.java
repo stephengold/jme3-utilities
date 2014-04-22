@@ -93,10 +93,11 @@ public class MyAnimation {
     }
 
     /**
-     * Generate a textual description of an animation.
+     * Describe an animation.
      *
      * @param animation animation to describe (not null)
      * @param spatial animated spatial (not null)
+     * @return textual description (not null)
      */
     public static String describe(Animation animation, Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
@@ -121,10 +122,11 @@ public class MyAnimation {
     }
 
     /**
-     * Generate a textual description of an animation track.
+     * Describe an animation track.
      *
      * @param track (not null)
      * @param spatial animated spatial (not null)
+     * @return textual description (not null)
      */
     public static String describe(Track track, Spatial spatial) {
         char typeChar = describeTrack(track);
@@ -144,9 +146,10 @@ public class MyAnimation {
     }
 
     /**
-     * Generate a one-letter description of a track.
+     * Describe a track.
      *
      * @param track track to describe
+     * @return mnemonic character
      */
     public static char describeTrack(Track track) {
         if (track instanceof AudioTrack) {

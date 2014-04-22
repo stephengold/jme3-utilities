@@ -53,7 +53,7 @@ public class Perlin2
      */
     final private Permutation permutation;
     /**
-     * array of 2-D gradients (must all be unit vectors): set by constructor
+     * array of 2-D gradients (must all have length=1): set by constructor
      */
     private Vector2f gradients[] = null;
     // *************************************************************************

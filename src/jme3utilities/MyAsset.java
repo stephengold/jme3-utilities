@@ -158,6 +158,7 @@ final public class MyAsset {
      *
      * @param assetManager (not null)
      * @param name name of the star map (not null)
+     * @return new instance
      */
     public static Spatial createStarMap(AssetManager assetManager,
             String name) {
