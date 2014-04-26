@@ -68,32 +68,47 @@ public class NavGraph {
     // new methods exposed
 
     /**
-     * Create a new arc and add it to this graph.
+     * Create a straight arc and add it to this graph.
      *
      * @param startVertex starting point (member of this graph, distinct from
      * endVertex)
      * @param endVertex endpoint (member of this graph)
-     * @param pathLength length or cost (arbitrary units, &gt;0)
-     * @param startDirection direction at the start (in world space, length=1,
-     * unaffected)
      * @return new member
      */
-    public NavArc addArc(NavVertex startVertex, NavVertex endVertex,
-            float pathLength, Vector3f startDirection) {
+    public NavArc addArc(NavVertex startVertex, NavVertex endVertex) {
         validateMember(startVertex);
         validateMember(endVertex);
         if (startVertex == endVertex) {
             throw new IllegalArgumentException("endpoints should be distinct");
         }
-        Validate.positive(pathLength, "length");
-        Validate.nonNull(startDirection, "start direction");
-        if (!startDirection.isUnitVector()) {
-            throw new IllegalArgumentException(
-                    "direction should have length=1");
-        }
 
-        NavArc newArc = startVertex.addArc(endVertex, pathLength,
-                startDirection);
+        NavArc newArc = startVertex.addArc(endVertex);
+        boolean success = arcs.add(newArc);
+        assert success : newArc;
+
+        return newArc;
+    }
+
+    /**
+     * Create a piecewise-linear arc and add it to this graph.
+     *
+     * @param startVertex starting point (member of this graph, distinct from
+     * endVertex)
+     * @param endVertex endpoint (member of this graph)
+     * @param joints intermediate locations along the path (not null,
+     * unaffected)
+     * @return new member
+     */
+    public NavArc addArc(NavVertex startVertex, NavVertex endVertex,
+            Vector3f[] joints) {
+        validateMember(startVertex);
+        validateMember(endVertex);
+        if (startVertex == endVertex) {
+            throw new IllegalArgumentException("endpoints should be distinct");
+        }
+        Validate.nonNull(joints, "joints");
+
+        NavArc newArc = startVertex.addArc(endVertex, joints);
         boolean success = arcs.add(newArc);
         assert success : newArc;
 

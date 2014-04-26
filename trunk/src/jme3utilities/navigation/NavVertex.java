@@ -83,31 +83,42 @@ public class NavVertex
     // new methods exposed
 
     /**
-     * Create an arc and add it to this vertex. Arcs should ideally be added in
-     * left-to-right order (clockwise as seen from above).
+     * Create a straight arc and add it to this vertex. Arcs should ideally be
+     * added in left-to-right order (clockwise as seen from above).
      *
      * @param endpoint destination vertex (not null, not this)
-     * @param pathLength length or cost (arbitrary units, &gt;0)
-     * @param startDirection direction at the start (in world space, length=1,
-     * unaffected)
      * @return new instance
      */
-    public NavArc addArc(NavVertex endpoint, float pathLength,
-            Vector3f startDirection) {
+    public NavArc addArc(NavVertex endpoint) {
         Validate.nonNull(endpoint, "endpoint");
         if (endpoint == this) {
             throw new IllegalArgumentException("endpoint should be distinct");
         }
-        Validate.positive(pathLength, "length");
-        Validate.nonNull(startDirection, "start direction");
-        if (!startDirection.isUnitVector()) {
-            logger.log(Level.SEVERE, "direction={0}", startDirection);
-            throw new IllegalArgumentException(
-                    "start direction should have length=1");
-        }
 
-        NavArc newArc = new NavArc(this, endpoint, pathLength, startDirection);
+        NavArc newArc = new NavArc(this, endpoint);
         arcs.add(newArc);
+
+        return newArc;
+    }
+
+    /**
+     * Create a piecewise-linear arc and add it to this vertex.
+     *
+     * @param endpoint destination vertex (not null, not this)
+     * @param joints intermediate locations along the path (not null,
+     * unaffected)
+     * @return new instance
+     */
+    public NavArc addArc(NavVertex endpoint, Vector3f[] joints) {
+        Validate.nonNull(endpoint, "endpoint");
+        if (endpoint == this) {
+            throw new IllegalArgumentException("endpoint should be distinct");
+        }
+        Validate.nonNull(joints, "joints");
+
+        NavArc newArc = new NavArc(this, endpoint, joints);
+        arcs.add(newArc);
+
         return newArc;
     }
 

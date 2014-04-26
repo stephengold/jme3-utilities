@@ -28,7 +28,10 @@ package jme3utilities.navigation;
 import com.jme3.math.Vector3f;
 import java.util.Objects;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
+import jme3utilities.math.LinearSpline3f;
 import jme3utilities.math.MyVector3f;
+import jme3utilities.math.Spline3f;
 import jme3utilities.math.VectorXZ;
 
 /**
@@ -50,52 +53,83 @@ public class NavArc
     // *************************************************************************
     // fields
     /**
-     * length or cost of this arc's path (arbitrary units, &gt;0)
-     */
-    private float pathLength;
-    /**
      * vertex from which this arc originates (not null)
      */
-    private NavVertex fromVertex;
+    final private NavVertex fromVertex;
     /**
      * vertex at which this arc terminates (not null)
      */
-    private NavVertex toVertex;
+    final private NavVertex toVertex;
+    /**
+     * path between the two vertices
+     */
+    final private Spline3f path;
     /**
      * direction at the start of this arc (in world space, length=1)
      */
-    private Vector3f startDirection;
+    final private Vector3f startDirection;
     /**
      * direction at the start of this arc (in world space, length=1)
      */
-    private VectorXZ horizontalDirection;
+    final private VectorXZ horizontalDirection;
     // *************************************************************************
     // constructors
 
     /**
-     * Instantiate an arc from one vertex to another.
+     * Instantiate a straight arc from one vertex to another.
      *
      * @param fromVertex starting point (not null, distinct from toVertex)
      * @param toVertex endpoint (not null)
-     * @param pathLength length or cost (arbitrary units, &gt;0)
-     * @param startDirection direction at the start (in world space, length=1,
-     * unaffected)
      */
-    NavArc(NavVertex fromVertex, NavVertex toVertex, float pathLength,
-            Vector3f startDirection) {
+    NavArc(NavVertex fromVertex, NavVertex toVertex) {
         assert fromVertex != null;
         assert toVertex != null;
         assert fromVertex != toVertex : toVertex;
-        assert pathLength > 0f : pathLength;
-        assert startDirection != null;
-        assert startDirection.isUnitVector() : startDirection;
 
         this.fromVertex = fromVertex;
         this.toVertex = toVertex;
-        this.pathLength = pathLength;
-        this.startDirection = startDirection.clone();
-        this.horizontalDirection =
-                MyVector3f.horizontalDirection(startDirection);
+
+        Vector3f[] points = new Vector3f[2];
+        points[0] = fromVertex.getLocation();
+        points[1] = toVertex.getLocation();
+        path = new LinearSpline3f(points);
+
+        startDirection = path.rightDerivative(0f);
+        assert startDirection.isUnitVector() : startDirection;
+
+        horizontalDirection = MyVector3f.horizontalDirection(startDirection);
+    }
+
+    /**
+     * Instantiate a piecewise-linear arc from one vertex to another.
+     *
+     * @param fromVertex starting point (not null, distinct from toVertex)
+     * @param toVertex endpoint (not null)
+     * @param joints intermediate locations along the path (not null, world
+     * coordinates, unaffected)
+     */
+    NavArc(NavVertex fromVertex, NavVertex toVertex, Vector3f[] joints) {
+        assert fromVertex != null;
+        assert toVertex != null;
+        assert fromVertex != toVertex : toVertex;
+        assert joints != null;
+
+        this.fromVertex = fromVertex;
+        this.toVertex = toVertex;
+
+        int numJoints = joints.length;
+        Vector3f[] points = new Vector3f[numJoints + 2];
+        points[0] = fromVertex.getLocation();
+        for (int jointIndex = 0; jointIndex < numJoints; jointIndex++) {
+            points[jointIndex + 1] = joints[jointIndex].clone();
+        }
+        points[numJoints + 1] = toVertex.getLocation();
+        path = new LinearSpline3f(points);
+
+        startDirection = path.rightDerivative(0f);
+        assert startDirection.isUnitVector() : startDirection;
+
+        horizontalDirection = MyVector3f.horizontalDirection(startDirection);
     }
     // *************************************************************************
     // new methods exposed
@@ -110,7 +144,7 @@ public class NavArc
     }
 
     /**
-     * Read the initial direction of this arc in the XZ plane.
+     * Read the initial direction of this arc in the X-Z plane.
      *
      * @return pre-existing unit vector
      */
@@ -119,12 +153,13 @@ public class NavArc
     }
 
     /**
-     * Read the path length (cost) of this arc.
+     * Read the total path length (cost) of this arc.
      *
-     * @return value (&gt;0, arbitrary units)
+     * @return length (&gt;0, world units)
      */
     public float getPathLength() {
-        return pathLength;
+        float result = path.totalLength();
+        return result;
     }
 
     /**
@@ -144,6 +179,19 @@ public class NavArc
     public NavVertex getToVertex() {
         return toVertex;
     }
+
+    /**
+     * Compute the location at the specified distance along this arc's path.
+     *
+     * @param distance (&ge;0)
+     * @return new vector in world coordinates
+     */
+    public Vector3f pathLocation(float distance) {
+        Validate.nonNegative(distance, "distance");
+
+        Vector3f result = path.interpolate(distance);
+        return result;
+    }
     // *************************************************************************
     // Comparable methods
 
@@ -160,10 +208,6 @@ public class NavArc
             return result;
         }
         result = toVertex.compareTo(otherArc.getToVertex());
-        if (result != 0) {
-            return result;
-        }
-        result = Float.compare(pathLength, otherArc.getPathLength());
         if (result != 0) {
             return result;
         }
@@ -196,8 +240,6 @@ public class NavArc
                 return false;
             } else if (!toVertex.equals(otherArc.getToVertex())) {
                 return false;
-            } else if (pathLength != otherArc.getPathLength()) {
-                return false;
             } else {
                 boolean result =
                         startDirection.equals(otherArc.getStartDirection());
@@ -213,7 +255,6 @@ public class NavArc
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 17 * hash + Float.floatToIntBits(this.pathLength);
         hash = 17 * hash + Objects.hashCode(this.fromVertex);
         hash = 17 * hash + Objects.hashCode(this.toVertex);
         hash = 17 * hash + Objects.hashCode(this.startDirection);
@@ -231,8 +272,8 @@ public class NavArc
         String fromString = fromVertex.toString();
         String toString = toVertex.toString();
         String dirString = startDirection.toString();
-        String result = String.format("%s to %s len=%f dir=%s",
-                fromString, toString, pathLength, dirString);
+        String result = String.format("%s to %s dir=%s", fromString, toString,
+                dirString);
 
         return result;
     }
