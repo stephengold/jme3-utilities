@@ -330,14 +330,18 @@ public class NavVertex
      */
     @Override
     public boolean equals(Object otherObject) {
+        boolean result = false;
+
         if (this == otherObject) {
-            return true;
+            result = true;
+
         } else if (otherObject instanceof NavVertex) {
             NavVertex otherVertex = (NavVertex) otherObject;
             String otherDescription = otherVertex.getDescription();
-            return description.equals(otherDescription);
+            result = description.equals(otherDescription);
         }
-        return false;
+
+        return result;
     }
 
     /**
