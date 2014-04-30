@@ -89,7 +89,7 @@ class MenuInputMode
         }
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
         GuiScreenController screen =
-                (GuiScreenController) application.getEnabledScreen();
+                (GuiScreenController) guiApplication.getEnabledScreen();
         if (actionString.equals("close")) {
             /*
              * Close the popup menu.
@@ -144,18 +144,15 @@ class MenuInputMode
     @Override
     public void initialize(AppStateManager stateManager,
             Application application) {
-        assert !isInitialized();
-
-        AssetManager assetManager = application.getAssetManager();
-        JmeCursor cursor = (JmeCursor) assetManager.loadAsset(assetPath);
+        AssetManager am = application.getAssetManager();
+        JmeCursor cursor = (JmeCursor) am.loadAsset(assetPath);
         /*
-         * Set the hot spot to work around issue #638.
+         * Set the cursor's hot spot to work around GitHub issue #115.
          */
         cursor.setxHotSpot(31);
         cursor.setyHotSpot(16);
         setCursor(cursor);
 
         super.initialize(stateManager, application);
-        assert isInitialized();
     }
 }

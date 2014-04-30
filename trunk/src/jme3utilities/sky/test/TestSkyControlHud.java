@@ -26,12 +26,9 @@
 package jme3utilities.sky.test;
 
 import com.jme3.app.Application;
-import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.input.FlyByCamera;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.FastMath;
-import com.jme3.renderer.Camera;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.CheckBox;
 import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
@@ -40,7 +37,6 @@ import java.util.logging.Logger;
 import jme3utilities.MyCamera;
 import jme3utilities.MyString;
 import jme3utilities.TimeOfDay;
-import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.ui.GuiScreenController;
@@ -78,13 +74,13 @@ public class TestSkyControlHud
      */
     private float ambientMultiplier = 1f;
     /**
-     * maximum opacity for clouds (&le;1, &ge;0)
-     */
-    private float cloudiness = 0f;
-    /**
      * rate of motion of clouds (relative to standard rate)
      */
     private float cloudRate = 0f;
+    /**
+     * maximum opacity for clouds (&le;1, &ge;0)
+     */
+    private float cloudiness = 0f;
     /**
      * vertical offset of the clouds-only dome (fraction of dome height, &lt;1,
      * &ge;0)
@@ -165,6 +161,7 @@ public class TestSkyControlHud
         CheckBox box =
                 getScreen().findNiftyControl("ambientCheckBox", CheckBox.class);
         boolean result = box.isChecked();
+
         return result;
     }
 
@@ -184,6 +181,7 @@ public class TestSkyControlHud
         CheckBox box =
                 getScreen().findNiftyControl("bloomCheckBox", CheckBox.class);
         boolean result = box.isChecked();
+
         return result;
     }
 
@@ -237,6 +235,7 @@ public class TestSkyControlHud
         CheckBox box =
                 getScreen().findNiftyControl("floorCheckBox", CheckBox.class);
         boolean result = box.isChecked();
+
         return result;
     }
 
@@ -250,6 +249,7 @@ public class TestSkyControlHud
 
         assert hour >= 0f : hour;
         assert hour < 24f : hour;
+
         return hour;
     }
 
@@ -262,6 +262,7 @@ public class TestSkyControlHud
         CheckBox box = getScreen().findNiftyControl("landscapeCheckBox",
                 CheckBox.class);
         boolean result = box.isChecked();
+
         return result;
     }
 
@@ -302,9 +303,10 @@ public class TestSkyControlHud
      * @return true if the box is checked, otherwise false
      */
     boolean getMainLightFlag() {
-        CheckBox box = getScreen().findNiftyControl(
-                "mainLightCheckBox", CheckBox.class);
+        CheckBox box = getScreen().
+                findNiftyControl("mainLightCheckBox", CheckBox.class);
         boolean result = box.isChecked();
+
         return result;
     }
 
@@ -325,7 +327,7 @@ public class TestSkyControlHud
     }
 
     /**
-     * Read the phase angle for custom moon.
+     * Read the phase angle for a custom moon.
      *
      * @return angle (radians east of the sun, &le;2*Pi, &ge;0)
      */
@@ -341,9 +343,10 @@ public class TestSkyControlHud
      * @return true if the box is checked, otherwise false
      */
     boolean getShadowFiltersFlag() {
-        CheckBox box = getScreen().findNiftyControl(
-                "shadowFiltersCheckBox", CheckBox.class);
+        CheckBox box = getScreen().
+                findNiftyControl("shadowFiltersCheckBox", CheckBox.class);
         boolean result = box.isChecked();
+
         return result;
     }
 
@@ -356,6 +359,7 @@ public class TestSkyControlHud
         CheckBox box =
                 getScreen().findNiftyControl("skyCheckBox", CheckBox.class);
         boolean result = box.isChecked();
+
         return result;
     }
 
@@ -443,95 +447,6 @@ public class TestSkyControlHud
                 MyString.quote(buttonId));
     }
     // *************************************************************************
-    // AbstractAppState methods
-
-    /**
-     * Callback invoked when this display gets attached.
-     *
-     * @param stateManager (not null)
-     */
-    @Override
-    public void stateAttached(AppStateManager stateManager) {
-        super.stateAttached(stateManager);
-
-        stateManager.attach(timeOfDay);
-    }
-
-    /**
-     * Callback to update this display. (Invoked once per frame.)
-     *
-     * @param elapsedTime time since the previous update (in seconds, &ge;0)
-     */
-    @Override
-    public void update(float elapsedTime) {
-        Validate.nonNegative(elapsedTime, "interval");
-        super.update(elapsedTime);
-
-        if (!isEnabled()) {
-            return;
-        }
-
-        cloudiness = updateSlider("cloudiness", "");
-
-        CheckBox checkBox = getScreen().findNiftyControl("modulationCheckBox",
-                CheckBox.class);
-        cloudModulation = checkBox.isChecked();
-
-        mainMultiplier = updateSlider("main", "x");
-        ambientMultiplier = updateSlider("ambient", "x");
-
-        cloudRate = updateSlider("cloudRate", "x");
-        cloudYOffset = updateSlider("cloudYOffset", "");
-
-        float lunarDiameterDegrees =
-                updateLogSlider("lunarDiameter", 10f, " deg");
-        lunarDiameter = lunarDiameterDegrees * FastMath.DEG_TO_RAD;
-
-        float solarDiameterDegrees =
-                updateLogSlider("solarDiameter", 10f, " deg");
-        solarDiameter = solarDiameterDegrees * FastMath.DEG_TO_RAD;
-
-        float phaseDegrees = updateSlider("customLunarPhase", " deg");
-        phaseAngle = phaseDegrees * FastMath.DEG_TO_RAD;
-
-        float solarLongitudeDegrees = updateSlider("solarLongitude", " deg");
-        solarLongitude = solarLongitudeDegrees * FastMath.DEG_TO_RAD;
-
-        float latitudeDegrees = updateSlider("latitude", " deg");
-        latitude = latitudeDegrees * FastMath.DEG_TO_RAD;
-
-        float tvaDegrees = updateSlider("topVerticalAngle", " deg");
-        topVerticalAngle = tvaDegrees * FastMath.DEG_TO_RAD;
-
-        relief = updateSlider("relief", " wu");
-
-        float speed = updateLogSlider("speed", 10f, "x");
-        timeOfDay.setRate(clockDirection * speed);
-        /*
-         * Update the labels which show status.
-         */
-        String timeString = timeOfDay.toString();
-        setStatusText("time", timeString);
-
-        Camera camera = getApplication().getCamera();
-        float azimuthDegrees = MyCamera.azimuth(camera) * FastMath.RAD_TO_DEG;
-        azimuthDegrees = MyMath.modulo(azimuthDegrees, 360f);
-        String azimuthStatus = String.format("%03.0f", azimuthDegrees);
-        setStatusText("azimuthStatus", azimuthStatus);
-
-        float fovYDegrees = MyCamera.fovY(camera) * FastMath.RAD_TO_DEG;
-        String fovStatus = String.format("%.0f", fovYDegrees);
-        setStatusText("fovStatus", fovStatus);
-
-        String phaseDescription;
-        if (phase == null) {
-            phaseDescription = "none";
-        } else {
-            phaseDescription = phase.describe();
-        }
-        setStatusText("phaseStatus", "Lunar phase: " + phaseDescription);
-    }
-    // *************************************************************************
     // ActionListener methods
 
     /**
@@ -550,7 +465,7 @@ public class TestSkyControlHud
             return;
         }
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
-        TestSkyControl app = (TestSkyControl) getApplication();
+        TestSkyControl app = (TestSkyControl) guiApplication;
         switch (actionString) {
             case "look moon":
                 app.lookAtTheMoon();
@@ -626,9 +541,6 @@ public class TestSkyControlHud
     @Override
     public void initialize(AppStateManager stateManager,
             Application application) {
-        if (isInitialized()) {
-            throw new IllegalStateException("already initialized");
-        }
         if (isEnabled()) {
             throw new IllegalStateException("shouldn't be enabled yet");
         }
@@ -657,10 +569,93 @@ public class TestSkyControlHud
     @Override
     public void setEnabled(boolean newState) {
         super.setEnabled(newState);
+        flyCam.setEnabled(!newState);
+    }
+    // *************************************************************************
+    // SimpleAppState methods
 
-        SimpleApplication app = getApplication();
-        FlyByCamera fbc = app.getFlyByCamera();
-        fbc.setEnabled(!newState);
+    /**
+     * Callback invoked when this display gets attached.
+     *
+     * @param stateManager (not null)
+     */
+    @Override
+    public void stateAttached(AppStateManager stateManager) {
+        super.stateAttached(stateManager);
+        stateManager.attach(timeOfDay);
+    }
+
+    /**
+     * Callback to update this display. (Invoked once per frame.)
+     *
+     * @param elapsedTime time since the previous update (in seconds, &ge;0)
+     */
+    @Override
+    public void update(float elapsedTime) {
+        super.update(elapsedTime);
+
+        if (!isEnabled()) {
+            return;
+        }
+
+        cloudiness = updateSlider("cloudiness", "");
+
+        CheckBox checkBox = getScreen().findNiftyControl("modulationCheckBox",
+                CheckBox.class);
+        cloudModulation = checkBox.isChecked();
+
+        mainMultiplier = updateSlider("main", "x");
+        ambientMultiplier = updateSlider("ambient", "x");
+
+        cloudRate = updateSlider("cloudRate", "x");
+        cloudYOffset = updateSlider("cloudYOffset", "");
+
+        float lunarDiameterDegrees =
+                updateLogSlider("lunarDiameter", 10f, " deg");
+        lunarDiameter = lunarDiameterDegrees * FastMath.DEG_TO_RAD;
+
+        float solarDiameterDegrees =
+                updateLogSlider("solarDiameter", 10f, " deg");
+        solarDiameter = solarDiameterDegrees * FastMath.DEG_TO_RAD;
+
+        float phaseDegrees = updateSlider("customLunarPhase", " deg");
+        phaseAngle = phaseDegrees * FastMath.DEG_TO_RAD;
+
+        float solarLongitudeDegrees = updateSlider("solarLongitude", " deg");
+        solarLongitude = solarLongitudeDegrees * FastMath.DEG_TO_RAD;
+
+        float latitudeDegrees = updateSlider("latitude", " deg");
+        latitude = latitudeDegrees * FastMath.DEG_TO_RAD;
+
+        float tvaDegrees = updateSlider("topVerticalAngle", " deg");
+        topVerticalAngle = tvaDegrees * FastMath.DEG_TO_RAD;
+
+        relief = updateSlider("relief", " wu");
+
+        float speed = updateLogSlider("speed", 10f, "x");
+        timeOfDay.setRate(clockDirection * speed);
+        /*
+         * Update the labels which show status.
+         */
+        String timeString = timeOfDay.toString();
+        setStatusText("time", timeString);
+
+        float azimuthDegrees = MyCamera.azimuth(cam) * FastMath.RAD_TO_DEG;
+        azimuthDegrees = MyMath.modulo(azimuthDegrees, 360f);
+        String azimuthStatus = String.format("%03.0f", azimuthDegrees);
+        setStatusText("azimuthStatus", azimuthStatus);
+
+        float fovYDegrees = MyCamera.fovY(cam) * FastMath.RAD_TO_DEG;
+        String fovStatus = String.format("%.0f", fovYDegrees);
+        setStatusText("fovStatus", fovStatus);
+
+        String phaseDescription;
+        if (phase == null) {
+            phaseDescription = "none";
+        } else {
+            phaseDescription = phase.describe();
+        }
+        setStatusText("phaseStatus", "Lunar phase: " + phaseDescription);
     }
     // *************************************************************************
     // private methods

@@ -140,7 +140,6 @@ abstract public class GuiApplication
      */
     public static void setEnabledScreen(BasicScreenController newScreen) {
         assert newScreen == null || enabledScreen == null;
-
         enabledScreen = newScreen;
     }
 
@@ -151,7 +150,6 @@ abstract public class GuiApplication
      */
     public void setSpeed(float newSpeed) {
         Validate.positive(newSpeed, "speed");
-
         speed = newSpeed;
     }
     // *************************************************************************

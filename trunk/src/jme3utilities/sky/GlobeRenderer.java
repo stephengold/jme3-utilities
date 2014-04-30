@@ -26,9 +26,7 @@
 package jme3utilities.sky;
 
 import com.jme3.app.Application;
-import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.asset.AssetManager;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -38,7 +36,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.GammaCorrectionFilter;
 import com.jme3.renderer.Camera;
-import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -52,17 +49,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MySpatial;
+import jme3utilities.SimpleAppState;
 import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**
- * App state to generate a dynamic texture for an object by rendering an
+ * Simple app state to generate a dynamic texture for an object by rendering an
  * off-screen globe. Each instance has its own camera and root node.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class GlobeRenderer
-        extends AbstractAppState {
+        extends SimpleAppState {
     // *************************************************************************
     // constants
 
@@ -89,10 +87,6 @@ public class GlobeRenderer
     final private static Vector3f globeCenter = Vector3f.ZERO;
     // *************************************************************************
     // fields
-    /**
-     * set by initialize()
-     */
-    private Application application = null;
     /**
      * camera for off-screen render: set by constructor
      */
@@ -122,9 +116,9 @@ public class GlobeRenderer
      */
     private Geometry globe = null;
     /**
-     * root of the the preview scene
+     * root of the the off-screen scene graph
      */
-    final private Node rootNode = new Node("off-screen root node");
+    final private Node offscreenRootNode = new Node("off-screen root node");
     /**
      * name for the off-screen render of the globe
      */
@@ -322,18 +316,13 @@ public class GlobeRenderer
         spinRate = newRate;
     }
     // *************************************************************************
-    // AbstractAppState methods
+    // SimpleAppState methods
 
     /**
      * Callback when this state gets detached.
      */
     @Override
     public void cleanup() {
-        if (!isInitialized()) {
-            throw new IllegalStateException("should be initialized");
-        }
-
-        RenderManager renderManager = application.getRenderManager();
         ViewPort preView = renderManager.getPreView(preViewName);
         boolean success = renderManager.removePreView(preView);
         assert success;
@@ -350,28 +339,21 @@ public class GlobeRenderer
     @Override
     public void initialize(AppStateManager stateManager,
             Application application) {
-        if (isInitialized()) {
-            throw new IllegalStateException("already initialized");
-        }
         if (!isEnabled()) {
             throw new IllegalStateException("should be enabled");
         }
-        Validate.nonNull(stateManager, "state manager");
-        Validate.nonNull(application, "application");
 
         super.initialize(stateManager, application);
 
-        this.application = application;
-        RenderManager renderManager = application.getRenderManager();
-        ViewPort viewPort = renderManager.createPreView(preViewName, camera);
-        viewPort.attachScene(rootNode);
-        viewPort.setClearFlags(true, true, true);
-        viewPort.setOutputFrameBuffer(frameBuffer);
+        ViewPort offscreenViewPort =
+                renderManager.createPreView(preViewName, camera);
+        offscreenViewPort.attachScene(offscreenRootNode);
+        offscreenViewPort.setClearFlags(true, true, true);
+        offscreenViewPort.setOutputFrameBuffer(frameBuffer);
         /*
          * Apply a contrast correction filter to the render.
          */
-        AssetManager assetManager = application.getAssetManager();
-        FilterPostProcessor fpp = Misc.getFpp(viewPort, assetManager);
+        FilterPostProcessor fpp = Misc.getFpp(offscreenViewPort, assetManager);
         filter = new GammaCorrectionFilter(initialGamma);
         fpp.addFilter(filter);
     }
@@ -383,7 +365,7 @@ public class GlobeRenderer
      */
     @Override
     public void update(float elapsedTime) {
-        Validate.nonNegative(elapsedTime, "interval");
+        super.update(elapsedTime);
         /*
          * spin the globe on its axis
          */
@@ -393,8 +375,8 @@ public class GlobeRenderer
 
         updateFrustum();
 
-        rootNode.updateLogicalState(elapsedTime);
-        rootNode.updateGeometricState();
+        offscreenRootNode.updateLogicalState(elapsedTime);
+        offscreenRootNode.updateGeometricState();
     }
     // *************************************************************************
     // private methods
@@ -424,7 +406,7 @@ public class GlobeRenderer
         Sphere mesh = new Sphere(meridianSamples, equatorSamples, 1f);
         mesh.setTextureMode(TextureMode.Projected);
         globe = new Geometry("off-screen globe", mesh);
-        rootNode.attachChild(globe);
+        offscreenRootNode.attachChild(globe);
         Quaternion orientation = new Quaternion();
         orientation.fromAngles(0f, FastMath.HALF_PI, 0f);
         globe.setLocalRotation(orientation);
@@ -438,7 +420,7 @@ public class GlobeRenderer
      */
     private void initializeLights() {
         light = new DirectionalLight();
-        rootNode.addLight(light);
+        offscreenRootNode.addLight(light);
         setLightIntensity(2f);
         setPhase(FastMath.PI);
     }

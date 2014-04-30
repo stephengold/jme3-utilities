@@ -25,18 +25,17 @@
  */
 package jme3utilities;
 
-import com.jme3.app.state.AbstractAppState;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.math.MyMath;
 
 /**
- * App state to track the time of day in a game.
+ * Simple app state to track the time of day in a game.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class TimeOfDay
-        extends AbstractAppState {
+        extends SimpleAppState {
     // *************************************************************************
     // constants
 
@@ -49,11 +48,11 @@ public class TimeOfDay
      */
     final public static int minutesPerHour = 60;
     /**
-     * number of seconds in a minute
+     * number of seconds in a minute - declared early due to a dependency
      */
     final public static int secondsPerMinute = 60;
     /**
-     * number of seconds in an hour
+     * number of seconds in an hour - declared early due to a dependency
      */
     final public static int secondsPerHour = secondsPerMinute * minutesPerHour;
     /**
@@ -69,7 +68,7 @@ public class TimeOfDay
     // fields
     /**
      * simulated time of day (seconds since midnight, &lt;86400, &ge;0)
-     *
+     * <p>
      * The simulated time is stored in double precision because it is
      * incremented by a small amount for each frame.
      */
@@ -139,22 +138,6 @@ public class TimeOfDay
         rate = newRate;
     }
     // *************************************************************************
-    // AbstractAppState methods
-
-    /**
-     * Callback to update the time of day.
-     *
-     * @param interval real seconds elapsed since the previous update (&ge;0)
-     */
-    @Override
-    public void update(float interval) {
-        super.update(interval);
-
-        double simulatedSeconds = rate * interval;
-        timeOfDay += simulatedSeconds;
-        timeOfDay = MyMath.modulo(timeOfDay, secondsPerDay);
-    }
-    // *************************************************************************
     // Object methods
 
     /**
@@ -170,5 +153,21 @@ public class TimeOfDay
         String result = String.format("%02d:%02d:%02d", hh, mm, ss);
 
         return result;
+    }
+    // *************************************************************************
+    // SimpleAppState methods
+
+    /**
+     * Callback to update the time of day.
+     *
+     * @param interval real seconds elapsed since the previous update (&ge;0)
+     */
+    @Override
+    public void update(float interval) {
+        super.update(interval);
+
+        double simulatedSeconds = rate * interval;
+        timeOfDay += simulatedSeconds;
+        timeOfDay = MyMath.modulo(timeOfDay, secondsPerDay);
     }
 }
