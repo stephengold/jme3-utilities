@@ -25,7 +25,11 @@
  */
 package jme3utilities.navigation;
 
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.Savable;
 import com.jme3.math.Vector3f;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -41,7 +45,7 @@ import jme3utilities.math.VectorXZ;
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class NavVertex
-        implements Comparable<NavVertex> {
+        implements Comparable<NavVertex>, Savable {
     // *************************************************************************
     // constants
 
@@ -362,5 +366,29 @@ public class NavVertex
     public String toString() {
         assert description != null;
         return description;
+    }
+    // *************************************************************************
+    // Savable methods
+
+    /**
+     * De-serialize this vertex, for example when loading from a J3O file.
+     *
+     * @param importer (not null)
+     */
+    @Override
+    public void read(JmeImporter importer)
+            throws IOException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Serialize this vertex, for example when saving to a J3O file.
+     *
+     * @param exporter (not null)
+     */
+    @Override
+    public void write(JmeExporter exporter)
+            throws IOException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
