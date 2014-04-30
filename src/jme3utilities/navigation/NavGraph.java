@@ -134,6 +134,17 @@ public class NavGraph {
     }
 
     /**
+     * Test whether a particular vertex is part of this graph.
+     *
+     * @param vertex vertex to test (or null)
+     * @return true if it's a member, otherwise false
+     */
+    public boolean contains(NavVertex vertex) {
+        boolean result = vertices.contains(vertex);
+        return result;
+    }
+
+    /**
      * Enumerate all vertices located the specified number of hops from a
      * specified starting point.
      *
@@ -371,7 +382,7 @@ public class NavGraph {
      */
     private void calculateDistances(NavVertex currentVertex,
             float distance, Map<NavVertex, Float> pathData) {
-        assert vertices.contains(currentVertex);
+        assert vertices.contains(currentVertex) : currentVertex;
         assert distance >= 0f : distance;
         assert pathData != null;
 
@@ -404,7 +415,7 @@ public class NavGraph {
      */
     private void calculateHops(NavVertex currentVertex,
             int hopCount, Map<NavVertex, Integer> pathData) {
-        assert vertices.contains(currentVertex);
+        assert vertices.contains(currentVertex) : currentVertex;
         assert hopCount >= 0 : hopCount;
         assert pathData != null;
 
