@@ -26,12 +26,9 @@
 package jme3utilities.ui;
 
 import com.jme3.app.Application;
-import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.Vector2f;
-import com.jme3.niftygui.NiftyJmeDisplay;
-import com.jme3.renderer.ViewPort;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventAnnotationProcessor;
 import de.lessvoid.nifty.elements.Element;
@@ -43,13 +40,13 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * App state to control a Nifty screen. A screen is displayed if and only if its
- * app state is enabled. At most one screen is displayed at a time.
+ * GUI app state to control a Nifty screen. A screen is displayed if and only if
+ * its app state is enabled. At most one screen is displayed at a time.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class BasicScreenController
-        extends AbstractAppState
+        extends GuiAppState
         implements ScreenController {
     // *************************************************************************
     // constants
@@ -74,10 +71,6 @@ public class BasicScreenController
      * false before this screen controller starts, then true ever after
      */
     private boolean hasStarted = false;
-    /**
-     * application instance shared by all screens: set by initialize()
-     */
-    private static GuiApplication application = null;
     /**
      * Nifty id of this screen: set by constructor
      */
@@ -134,14 +127,14 @@ public class BasicScreenController
             return false;
         }
 
-        Vector2f mouseXY = application.getInputManager().getCursorPosition();
+        Vector2f mouseXY = inputManager.getCursorPosition();
         int mouseX = Math.round(mouseXY.x);
         /*
          * Nifty Y-coordinates increase in the opposite direction
          * from those reported by the input manager, so subtract Y
          * from the display height.
          */
-        int displayHeight = application.getCamera().getHeight();
+        int displayHeight = cam.getHeight();
         int mouseY = displayHeight - Math.round(mouseXY.y);
         boolean result = element.isMouseInsideElement(mouseX, mouseY);
         return result;
@@ -160,12 +153,12 @@ public class BasicScreenController
                 MyString.quote(actionString));
         boolean isOnGoing = true;
         float simInterval = 0f;
-        ActionListener actionListener = application.getEnabledScreen().listener;
+        ActionListener actionListener = guiApplication.getEnabledScreen().listener;
         try {
             actionListener.onAction(actionString, isOnGoing, simInterval);
         } catch (Throwable throwable) {
             logger.log(Level.SEVERE, "Caught unexpected throwable:", throwable);
-            application.stop(false);
+            guiApplication.stop(false);
         }
     }
 
@@ -181,39 +174,6 @@ public class BasicScreenController
     }
     // *************************************************************************
     // AbstractAppState methods
-
-    /**
-     * Initialize this controller prior to its 1st update.
-     *
-     * @param stateManager (not null)
-     * @param application application which owns this screen (not null)
-     */
-    @Override
-    public void initialize(AppStateManager stateManager,
-            Application application) {
-        if (isInitialized()) {
-            throw new IllegalStateException("shouldn't be initialized yet");
-        }
-        if (isEnabled()) {
-            throw new IllegalStateException("shouldn't be enabled yet");
-        }
-        Validate.nonNull(stateManager, "state manager");
-        Validate.nonNull(application, "application");
-        if (!(application instanceof GuiApplication)) {
-            throw new IllegalArgumentException(
-                    "application should be a GuiApplication");
-        }
-
-        super.initialize(stateManager, application);
-        setApplication((GuiApplication) application);
-        getNifty().registerScreenController(this);
-        validateAndLoad();
-        if (enableDuringInitialization) {
-            setEnabled(true);
-        }
-
-        assert isInitialized();
-    }
 
     /**
      * Enable or disable this screen.
@@ -233,6 +193,28 @@ public class BasicScreenController
         }
     }
     // *************************************************************************
+    // GuiAppState methods
+
+    /**
+     * Initialize this controller prior to its 1st update.
+     *
+     * @param stateManager (not null)
+     * @param application application which owns this screen (not null)
+     */
+    @Override
+    public void initialize(AppStateManager stateManager,
+            Application application) {
+        super.initialize(stateManager, application);
+
+        nifty.registerScreenController(this);
+        validateAndLoad();
+        if (enableDuringInitialization) {
+            setEnabled(true);
+        }
+
+        assert isInitialized();
+    }
+    // *************************************************************************
     // ScreenController methods
 
     /**
@@ -244,7 +226,7 @@ public class BasicScreenController
      */
     @Override
     public void bind(Nifty nifty, Screen screen) {
-        assert nifty == getNifty() : nifty;
+        assert nifty == this.nifty : nifty;
         assert screen == getScreen() : screen;
     }
 
@@ -266,24 +248,13 @@ public class BasicScreenController
     // new protected methods
 
     /**
-     * Access the application which owns this screen.
-     *
-     * @return pre-existing instance (not null)
-     */
-    protected GuiApplication getApplication() {
-        assert application != null;
-        return application;
-    }
-
-    /**
      * Access the Nifty instance.
      *
      * @return pre-existing instance (not null)
      */
     protected static Nifty getNifty() {
-        Nifty result = application.getNifty();
-        assert result != null;
-        return result;
+        assert nifty != null;
+        return nifty;
     }
 
     /**
@@ -292,7 +263,7 @@ public class BasicScreenController
      * @return pre-existing instance (not null)
      */
     protected Screen getScreen() {
-        Screen screen = getNifty().getScreen(screenId);
+        Screen screen = nifty.getScreen(screenId);
         assert screen != null;
         return screen;
     }
@@ -325,15 +296,13 @@ public class BasicScreenController
     private void disable() {
         assert isInitialized();
         assert isEnabled();
-        BasicScreenController enabledScreen = application.getEnabledScreen();
+        BasicScreenController enabledScreen = guiApplication.getEnabledScreen();
         assert enabledScreen == this : enabledScreen;
         logger.log(Level.INFO, "screenId={0}", MyString.quote(screenId));
         /*
          * Detatch Nifty from the viewport.
          */
-        ViewPort viewPort = application.getGuiViewPort();
-        NiftyJmeDisplay niftyDisplay = application.getNiftyDisplay();
-        viewPort.removeProcessor(niftyDisplay);
+        guiViewPort.removeProcessor(niftyDisplay);
 
         NiftyEventAnnotationProcessor.unprocess(this);
 
@@ -352,11 +321,9 @@ public class BasicScreenController
         /*
          * Attach Nifty to the viewport.
          */
-        ViewPort viewPort = application.getGuiViewPort();
-        NiftyJmeDisplay niftyDisplay = application.getNiftyDisplay();
-        viewPort.addProcessor(niftyDisplay);
+        guiViewPort.addProcessor(niftyDisplay);
 
-        getNifty().gotoScreen(screenId);
+        nifty.gotoScreen(screenId);
         NiftyEventAnnotationProcessor.process(this);
 
         GuiApplication.setEnabledScreen(this);
@@ -364,26 +331,10 @@ public class BasicScreenController
     }
 
     /**
-     * Save a static reference to the current application.
-     *
-     * @param app (not null)
-     */
-    private static synchronized void setApplication(GuiApplication app) {
-        assert app != null;
-
-        if (application != app) {
-            assert application == null : application;
-            application = app;
-        }
-    }
-
-    /**
      * Validate and load a Nifty screen layout from an XML asset.
      */
     private void validateAndLoad() {
         assert xmlAssetPath != null;
-
-        Nifty nifty = getNifty();
         /*
          * Read and validate the interface XML.
          */

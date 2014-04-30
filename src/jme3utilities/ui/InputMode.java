@@ -26,10 +26,8 @@
 package jme3utilities.ui;
 
 import com.jme3.app.Application;
-import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.cursors.plugins.JmeCursor;
-import com.jme3.input.InputManager;
 import com.jme3.input.controls.ActionListener;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -47,8 +45,8 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * App state to implement a configurable input mode. At most one mode is enabled
- * at a time.
+ * Simple app state to implement a configurable input mode. At most one mode is
+ * enabled at a time.
  * <p>
  * An enabled mode maps hotkeys to actions and controls the appearance of the
  * mouse pointer/cursor. Some hotkeys (such as the shift keys) can be associated
@@ -69,7 +67,7 @@ import jme3utilities.Validate;
  * @author Stephen Gold <sgold@sonic.net>
  */
 abstract public class InputMode
-        extends AbstractAppState
+        extends GuiAppState
         implements ActionListener {
     // *************************************************************************
     // constants
@@ -89,10 +87,6 @@ abstract public class InputMode
      * true if initialize() should enable this mode
      */
     private boolean startEnabled = false;
-    /**
-     * the application instance which owns this mode
-     */
-    protected GuiApplication application = null;
     /**
      * keep track of the currently enabled mode (null means there's none)
      */
@@ -309,7 +303,7 @@ abstract public class InputMode
      * @param newCursor new cursor, or null to hide the cursor when enabled
      */
     public void setCursor(JmeCursor newCursor) {
-        assert !initialized;
+        assert !isInitialized();
         cursor = newCursor;
     }
 
@@ -342,36 +336,6 @@ abstract public class InputMode
     // AbstractAppState methods
 
     /**
-     * Initialize this (disabled) mode prior to its 1st update.
-     *
-     * @param stateManager (not null)
-     * @param application (not null)
-     */
-    @Override
-    public void initialize(AppStateManager stateManager,
-            Application application) {
-        assert !isInitialized();
-        assert !isEnabled();
-        super.initialize(stateManager, application);
-
-        if (!(application instanceof GuiApplication)) {
-            throw new IllegalArgumentException(
-                    "application should be a GuiApplication");
-        }
-        this.application = (GuiApplication) application;
-
-        boolean changed = modes.add(this);
-        assert changed;
-        /*
-         * Load the intitial hotkey bindings.
-         */
-        initializeHotkeyBindings();
-
-        assert isInitialized();
-        setEnabled(startEnabled);
-    }
-
-    /**
      * Enable or disable this mode.
      *
      * @param newState true to enable, false to disable
@@ -386,7 +350,6 @@ abstract public class InputMode
             shortName, newState
         });
 
-        InputManager inputManager = application.getInputManager();
         if (!isEnabled() && newState) {
             setEnabledMode(this);
 
@@ -406,6 +369,30 @@ abstract public class InputMode
             unmapBoundHotkeys();
         }
         super.setEnabled(newState);
+    }
+    // *************************************************************************
+    // GuiAppState methods
+
+    /**
+     * Initialize this (disabled) mode prior to its 1st update.
+     *
+     * @param stateManager (not null)
+     * @param application (not null)
+     */
+    @Override
+    public void initialize(AppStateManager stateManager,
+            Application application) {
+        super.initialize(stateManager, application);
+
+        boolean changed = modes.add(this);
+        assert changed;
+        /*
+         * Load the intitial hotkey bindings.
+         */
+        initializeHotkeyBindings();
+
+        assert isInitialized();
+        setEnabled(startEnabled);
     }
     // *************************************************************************
     // Object methods
@@ -573,8 +560,6 @@ abstract public class InputMode
      */
     private void mapActionString(String actionString, Hotkey hotkey) {
         assert actionString != null;
-
-        InputManager inputManager = application.getInputManager();
         hotkey.map(actionString, inputManager);
     }
 
@@ -600,7 +585,6 @@ abstract public class InputMode
         assert actionName != null;
         assert hotkey != null;
 
-        InputManager inputManager = application.getInputManager();
         inputManager.addListener(this, actionName);
         /*
          * For a non-signal action, the action string is simply the name.
@@ -624,7 +608,7 @@ abstract public class InputMode
         assert words.length > 1 : MyString.quote(actionName);
         assert "signal".equals(words[0]);
         String signalName = words[1];
-        Signals signals = application.getSignals();
+        Signals signals = guiApplication.getSignals();
         signals.add(signalName);
         /*
          * Append the decimal keyCode ensure a unique action string.
@@ -633,7 +617,6 @@ abstract public class InputMode
         int count = countBindings(actionString);
         boolean isUnique = (count == 0);
         assert isUnique : count;
-        InputManager inputManager = application.getInputManager();
         inputManager.addListener(signals, actionString);
         /*
          * Add the mapping to the input manager.
@@ -709,7 +692,6 @@ abstract public class InputMode
         /*
          * Delete the mapping.
          */
-        InputManager inputManager = application.getInputManager();
         if (inputManager.hasMapping(actionString)) {
             inputManager.deleteMapping(actionString);
         }

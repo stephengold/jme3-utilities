@@ -30,7 +30,6 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.cursors.plugins.JmeCursor;
-import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -92,10 +91,10 @@ class DefaultInputMode
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
 
         if (actionString.equals(SimpleApplication.INPUT_MAPPING_EXIT)) {
-            application.stop();
+            simpleApplication.stop();
             return;
         }
-        application.onAction(actionString, ongoing, ignored);
+        guiApplication.onAction(actionString, ongoing, ignored);
     }
     // *************************************************************************
     // InputMode methods
@@ -105,7 +104,6 @@ class DefaultInputMode
      */
     @Override
     protected void defaultBindings() {
-        InputManager inputManager = application.getInputManager();
         String exit = SimpleApplication.INPUT_MAPPING_EXIT;
         if (inputManager.hasMapping(exit)) {
             /*
@@ -126,18 +124,15 @@ class DefaultInputMode
     @Override
     public void initialize(AppStateManager stateManager,
             Application application) {
-        assert !isInitialized();
-
-        AssetManager assetManager = application.getAssetManager();
-        JmeCursor cursor = (JmeCursor) assetManager.loadAsset(assetPath);
+        AssetManager am = application.getAssetManager();
+        JmeCursor cursor = (JmeCursor) am.loadAsset(assetPath);
         /*
-         * Set the hot spot to work around issue #638.
+         * Set the cursor's hot spot to work around GitHub issue #115.
          */
         cursor.setxHotSpot(0);
         cursor.setyHotSpot(31);
         setCursor(cursor);
 
         super.initialize(stateManager, application);
-        assert isInitialized();
     }
 }

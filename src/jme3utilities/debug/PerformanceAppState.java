@@ -26,23 +26,19 @@
 package jme3utilities.debug;
 
 import com.jme3.app.Application;
-import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
-import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.asset.AssetManager;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyAsset;
-import jme3utilities.Validate;
+import jme3utilities.SimpleAppState;
 
 /**
  * App state which implements a performance monitor for jME3. Each second it
@@ -53,7 +49,7 @@ import jme3utilities.Validate;
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class PerformanceAppState
-        extends AbstractAppState {
+        extends SimpleAppState {
     // *************************************************************************
     // constants
 
@@ -97,12 +93,8 @@ public class PerformanceAppState
      * background for statistics text: set by initialize()
      */
     private Geometry background;
-    /**
-     * application to monitor: set by initialize()
-     */
-    private SimpleApplication simpleApplication = null;
     // *************************************************************************
-    // AbstractAppState methods
+    // SimpleAppState methods
 
     /**
      * Clean up this performance monitor on detach.
@@ -111,7 +103,6 @@ public class PerformanceAppState
     public void cleanup() {
         super.cleanup();
 
-        Node guiNode = simpleApplication.getGuiNode();
         guiNode.detachChild(background);
         guiNode.detachChild(text);
     }
@@ -125,17 +116,9 @@ public class PerformanceAppState
     @Override
     public void initialize(AppStateManager stateManager,
             Application application) {
-        if (isInitialized()) {
-            throw new IllegalStateException("already initialized");
-        }
-        Validate.nonNull(application, "application");
-        Validate.nonNull(stateManager, "state manager");
         super.initialize(stateManager, application);
 
         secondsToNextUpdate = updateInterval;
-        simpleApplication = (SimpleApplication) application;
-        AssetManager assetManager = simpleApplication.getAssetManager();
-        Node guiNode = simpleApplication.getGuiNode();
         /*
          * Create and attach a GUI text object to display statistics.
          */
@@ -161,7 +144,7 @@ public class PerformanceAppState
         background.setLocalTranslation(0f, 0f, -1f);
         guiNode.attachChild(background);
         /*
-         * Detach any JME stats app state.
+         * Detach any JME stats app state(s).
          */
         Misc.detachAll(stateManager, StatsAppState.class);
     }
@@ -173,7 +156,6 @@ public class PerformanceAppState
      */
     @Override
     public void update(float elapsedTime) {
-        Validate.nonNegative(elapsedTime, "interval");
         super.update(elapsedTime);
 
         maxTPF = Math.max(maxTPF, elapsedTime);

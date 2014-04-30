@@ -26,7 +26,6 @@
 package jme3utilities.ui;
 
 import com.jme3.math.FastMath;
-import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.CheckBox;
 import de.lessvoid.nifty.controls.Menu;
@@ -218,7 +217,6 @@ public class GuiScreenController
          * Create the popup using "popup-menu" as a base.
          * Nifty assigns the popup a new id.
          */
-        Nifty nifty = getNifty();
         Element element = nifty.createPopup("popup-menu");
         /*
          * Add items to the popup's menu.

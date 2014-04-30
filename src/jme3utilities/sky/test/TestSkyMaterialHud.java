@@ -33,7 +33,6 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.filters.BloomFilter;
-import com.jme3.renderer.Camera;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
 import java.util.logging.Level;
@@ -48,7 +47,7 @@ import jme3utilities.ui.GuiScreenController;
 /**
  * GUI screen controller for the heads-up display (HUD) of the TestSkyMaterial
  * application.
- *
+ * <p>
  * Each time the HUD is enabled, the flyby camera is disabled so that Nifty can
  * grab the mouse pointer. The flyby camera gets re-enabled when the HUD is
  * disabled.
@@ -115,25 +114,25 @@ public class TestSkyMaterialHud
     @NiftyEventSubscriber(pattern = ".*RadioButton")
     public void onRadioButtonChanged(final String buttonId,
             final RadioButtonStateChangedEvent event) {
-        assert buttonId != null;
+        Validate.nonNull(buttonId, "button id");
+
         if (!hasStarted()) {
             return;
         }
 
-        Camera camera = getApplication().getCamera();
         switch (buttonId) {
-            case "zenithRadioButton":
-                /*
-                 * Re-orient the camera toward the zenith.
-                 */
-                MyCamera.look(camera, Vector3f.UNIT_Y);
-                return;
-
             case "northRadioButton":
                 /*
                  * Re-orient the camera toward the north horizon.
                  */
-                MyCamera.look(camera, Vector3f.UNIT_X);
+                MyCamera.look(cam, Vector3f.UNIT_X);
+                return;
+
+            case "zenithRadioButton":
+                /*
+                 * Re-orient the camera toward the zenith.
+                 */
+                MyCamera.look(cam, Vector3f.UNIT_Y);
                 return;
         }
         logger.log(Level.WARNING, "unknown radio button: id={0}",
@@ -149,108 +148,6 @@ public class TestSkyMaterialHud
         assert newMaterial != null;
 
         this.material = newMaterial;
-    }
-    // *************************************************************************
-    // AbstractAppState methods
-
-    /**
-     * Callback to update this display. (Invoked once per frame.)
-     *
-     * @param elapsedTime since the previous update (in seconds, &ge;0)
-     */
-    @Override
-    public void update(float elapsedTime) {
-        Validate.nonNegative(elapsedTime, "interval");
-        super.update(elapsedTime);
-
-        if (!isEnabled()) {
-            return;
-        }
-
-        ColorRGBA bgColor = updateColorBank("bg");
-        getApplication().getViewPort().setBackgroundColor(bgColor);
-
-        ColorRGBA clearColor = updateColorBank("clear");
-        material.setClearColor(clearColor);
-        ColorRGBA clearGlow = updateColorBank("clrGlo");
-        material.setClearGlow(clearGlow);
-
-        int maxCloudLayers = material.getMaxCloudLayers();
-        if (maxCloudLayers > 0) {
-            ColorRGBA c0Color = updateColorBank("c0");
-            material.setCloudsColor(0, c0Color);
-            ColorRGBA c0Glow = updateColorBank("c0g");
-            material.setCloudsGlow(0, c0Glow);
-
-            Vector2f c0Offset = updateUVBank("c0");
-            material.setCloudsOffset(0, c0Offset.x, c0Offset.y);
-
-            float c0Scale = updateLogSlider("c0Scale", 2f, "x");
-            material.setCloudsScale(0, c0Scale);
-        }
-
-        if (maxCloudLayers > 1) {
-            ColorRGBA c1Color = updateColorBank("c1");
-            material.setCloudsColor(1, c1Color);
-            ColorRGBA c1Glow = updateColorBank("c1g");
-            material.setCloudsGlow(1, c1Glow);
-
-            Vector2f c1Offset = updateUVBank("c1");
-            material.setCloudsOffset(1, c1Offset.x, c1Offset.y);
-
-            float c1Scale = updateLogSlider("c1Scale", 2f, "x");
-            material.setCloudsScale(1, c1Scale);
-        }
-
-        ColorRGBA hazeColor = updateColorBank("haze");
-        material.setHazeColor(hazeColor);
-
-        int maxObjects = material.getMaxObjects();
-        if (maxObjects > moonIndex) {
-            ColorRGBA moonColor = updateColorBank("moon");
-            material.setObjectColor(moonIndex, moonColor);
-            ColorRGBA moonGlow = updateColorBank("mGlo");
-            material.setObjectGlow(moonIndex, moonGlow);
-
-            Vector2f moonOffset = updateUVBank("m");
-            float moonScale = updateLogSlider("mSca", 10f, "x");
-            float moonRotation = updateSlider("mRot", " deg");
-            moonRotation *= FastMath.DEG_TO_RAD;
-            Vector2f rotate = new Vector2f(FastMath.cos(moonRotation),
-                    FastMath.sin(moonRotation));
-            material.setObjectTransform(moonIndex, moonOffset, moonScale,
-                    rotate);
-
-            float percentage = 100f * material.getTransmission(moonIndex);
-            String transmissionStatus = String.format("%5.1f%%", percentage);
-            setStatusText("moonTransmissionStatus", transmissionStatus);
-
-            setStatusText("phaseStatus", "Lunar phase: " + phase.describe());
-        }
-
-        if (maxObjects > sunIndex) {
-            ColorRGBA sunColor = updateColorBank("sun");
-            material.setObjectColor(sunIndex, sunColor);
-            ColorRGBA sunGlow = updateColorBank("sGlo");
-            material.setObjectGlow(sunIndex, sunGlow);
-
-            float sunScale = updateLogSlider("sunScale", 10f, "x");
-            Vector2f sunOffset = updateUVBank("sun");
-            material.setObjectTransform(sunIndex, sunOffset, sunScale, null);
-
-            float percentage = 100f * material.getTransmission(sunIndex);
-            String transmissionStatus = String.format("%5.1f%%", percentage);
-            setStatusText("sunTransmissionStatus", transmissionStatus);
-        }
-
-        float bloomIntensity = updateSlider("bloomIntensity", "");
-        bloom.setBloomIntensity(bloomIntensity);
-
-        float blurScale = updateSlider("blurScale", "");
-        bloom.setBlurScale(blurScale);
-
-        float exposurePower = updateSlider("exposurePower", "");
-        bloom.setExposurePower(exposurePower);
     }
     // *************************************************************************
     // ActionListener methods
@@ -346,7 +243,7 @@ public class TestSkyMaterialHud
         }
     }
     // *************************************************************************
-    // GuiScreenController methods
+    // BasicScreenController methods
 
     /**
      * Initialize and enable this display.
@@ -367,6 +264,103 @@ public class TestSkyMaterialHud
         setListener(this);
         super.initialize(stateManager, application);
         setRadioButton("zenithRadioButton");
+    }
+    // *************************************************************************
+    // SimpleAppState methods
+
+    /**
+     * Callback to update this display. (Invoked once per frame.)
+     *
+     * @param elapsedTime since the previous update (in seconds, &ge;0)
+     */
+    @Override
+    public void update(float elapsedTime) {
+        super.update(elapsedTime);
+
+        ColorRGBA bgColor = updateColorBank("bg");
+        viewPort.setBackgroundColor(bgColor);
+
+        ColorRGBA clearColor = updateColorBank("clear");
+        material.setClearColor(clearColor);
+        ColorRGBA clearGlow = updateColorBank("clrGlo");
+        material.setClearGlow(clearGlow);
+
+        int maxCloudLayers = material.getMaxCloudLayers();
+        if (maxCloudLayers > 0) {
+            ColorRGBA c0Color = updateColorBank("c0");
+            material.setCloudsColor(0, c0Color);
+            ColorRGBA c0Glow = updateColorBank("c0g");
+            material.setCloudsGlow(0, c0Glow);
+
+            Vector2f c0Offset = updateUVBank("c0");
+            material.setCloudsOffset(0, c0Offset.x, c0Offset.y);
+
+            float c0Scale = updateLogSlider("c0Scale", 2f, "x");
+            material.setCloudsScale(0, c0Scale);
+        }
+
+        if (maxCloudLayers > 1) {
+            ColorRGBA c1Color = updateColorBank("c1");
+            material.setCloudsColor(1, c1Color);
+            ColorRGBA c1Glow = updateColorBank("c1g");
+            material.setCloudsGlow(1, c1Glow);
+
+            Vector2f c1Offset = updateUVBank("c1");
+            material.setCloudsOffset(1, c1Offset.x, c1Offset.y);
+
+            float c1Scale = updateLogSlider("c1Scale", 2f, "x");
+            material.setCloudsScale(1, c1Scale);
+        }
+
+        ColorRGBA hazeColor = updateColorBank("haze");
+        material.setHazeColor(hazeColor);
+
+        int maxObjects = material.getMaxObjects();
+        if (maxObjects > moonIndex) {
+            ColorRGBA moonColor = updateColorBank("moon");
+            material.setObjectColor(moonIndex, moonColor);
+            ColorRGBA moonGlow = updateColorBank("mGlo");
+            material.setObjectGlow(moonIndex, moonGlow);
+
+            Vector2f moonOffset = updateUVBank("m");
+            float moonScale = updateLogSlider("mSca", 10f, "x");
+            float moonRotation = updateSlider("mRot", " deg");
+            moonRotation *= FastMath.DEG_TO_RAD;
+            Vector2f rotate = new Vector2f(FastMath.cos(moonRotation),
+                    FastMath.sin(moonRotation));
+            material.setObjectTransform(moonIndex, moonOffset, moonScale,
+                    rotate);
+
+            float percentage = 100f * material.getTransmission(moonIndex);
+            String transmissionStatus = String.format("%5.1f%%", percentage);
+            setStatusText("moonTransmissionStatus", transmissionStatus);
+
+            setStatusText("phaseStatus", "Lunar phase: " + phase.describe());
+        }
+
+        if (maxObjects > sunIndex) {
+            ColorRGBA sunColor = updateColorBank("sun");
+            material.setObjectColor(sunIndex, sunColor);
+            ColorRGBA sunGlow = updateColorBank("sGlo");
+            material.setObjectGlow(sunIndex, sunGlow);
+
+            float sunScale = updateLogSlider("sunScale", 10f, "x");
+            Vector2f sunOffset = updateUVBank("sun");
+            material.setObjectTransform(sunIndex, sunOffset, sunScale, null);
+
+            float percentage = 100f * material.getTransmission(sunIndex);
+            String transmissionStatus = String.format("%5.1f%%", percentage);
+            setStatusText("sunTransmissionStatus", transmissionStatus);
+        }
+
+        float bloomIntensity = updateSlider("bloomIntensity", "");
+        bloom.setBloomIntensity(bloomIntensity);
+
+        float blurScale = updateSlider("blurScale", "");
+        bloom.setBlurScale(blurScale);
+
+        float exposurePower = updateSlider("exposurePower", "");
+        bloom.setExposurePower(exposurePower);
     }
     // *************************************************************************
     // private methods
