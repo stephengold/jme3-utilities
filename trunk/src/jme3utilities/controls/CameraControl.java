@@ -31,9 +31,11 @@ import com.jme3.renderer.Camera;
 import java.util.logging.Logger;
 import jme3utilities.SimpleControl;
 import jme3utilities.Validate;
+import jme3utilities.math.MyVector3f;
 
 /**
- * Simple control which manages a camera connected with a spatial.
+ * Simple control which manages the position and orientation of a camera in the
+ * local coordinate space of a spatial.
  * <p>
  * Each instance is enabled at creation.
  *
@@ -64,7 +66,7 @@ public class CameraControl
      */
     final private Vector3f upDirection;
     /**
-     * camera's view direction in local coordinates: set by constructor
+     * camera's look direction in local coordinates: set by constructor
      */
     final private Vector3f lookDirection;
     // *************************************************************************
@@ -75,13 +77,24 @@ public class CameraControl
      *
      * @param camera camera to manage (not null)
      * @param offset camera's offset in local coordinates (not null)
-     * @param lookDirection camera's view direction in local coordinates (not
-     * null)
-     * @param upDirection camera's up direction in local coordinates (not null)
+     * @param lookDirection camera's look direction in local coordinates (not
+     * null, positive length, unaffected)
+     * @param upDirection camera's up direction in local coordinates (not null,
+     * positive length, unaffected)
      */
     public CameraControl(Camera camera, Vector3f offset, Vector3f lookDirection,
             Vector3f upDirection) {
         Validate.nonNull(camera, "camera");
+        Validate.nonNull(lookDirection, "look direction");
+        if (MyVector3f.isZeroLength(lookDirection)) {
+            throw new IllegalArgumentException(
+                    "look direction should have positive length");
+        }
+        Validate.nonNull(upDirection, "up direction");
+        if (MyVector3f.isZeroLength(upDirection)) {
+            throw new IllegalArgumentException(
+                    "up direction should have positive length");
+        }
 
         this.camera = camera;
         this.offset = offset.clone();
@@ -89,6 +102,24 @@ public class CameraControl
         this.upDirection = upDirection.clone();
 
         assert isEnabled();
+    }
+    // *************************************************************************
+    // new public methods
+
+    /**
+     * Alter the camera's look direction.
+     *
+     * @param newDirection direction in local coordinates (not null, positive
+     * length, unaffected)
+     */
+    public void setLookDirection(Vector3f newDirection) {
+        Validate.nonNull(newDirection, "direction");
+        if (MyVector3f.isZeroLength(newDirection)) {
+            throw new IllegalArgumentException(
+                    "direction should have positive length");
+        }
+
+        lookDirection.set(newDirection);
     }
     // *************************************************************************
     // SimpleControl methods
@@ -103,6 +134,7 @@ public class CameraControl
     @Override
     protected void controlUpdate(float updateInterval) {
         super.controlUpdate(updateInterval);
+
         if (spatial == null) {
             return;
         }
@@ -115,8 +147,8 @@ public class CameraControl
          * Update the camera orientation.
          */
         Quaternion rotation = spatial.getWorldRotation();
-        Vector3f worldViewDirection = rotation.mult(lookDirection);
+        Vector3f worldLookDirection = rotation.mult(lookDirection);
         Vector3f worldUpDirection = rotation.mult(upDirection);
-        camera.lookAtDirection(worldViewDirection, worldUpDirection);
+        camera.lookAtDirection(worldLookDirection, worldUpDirection);
     }
 }
