@@ -88,6 +88,7 @@ class MenuInputMode
             return;
         }
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
+        GuiApplication guiApplication = (GuiApplication) actionApplication;
         GuiScreenController screen =
                 (GuiScreenController) guiApplication.getEnabledScreen();
         if (actionString.equals("close")) {

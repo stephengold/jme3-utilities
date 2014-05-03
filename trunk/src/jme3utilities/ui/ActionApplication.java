@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2014, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -25,23 +25,21 @@
  */
 package jme3utilities.ui;
 
-import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
-import com.jme3.app.state.AppStateManager;
-import com.jme3.asset.AssetManager;
-import com.jme3.cursors.plugins.JmeCursor;
-import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
+import jme3utilities.Validate;
 
 /**
- * Default input mode for a GUI application.
+ * Simple application with an action-oriented user interface.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-class DefaultInputMode
-        extends InputMode {
+abstract public class ActionApplication
+        extends SimpleApplication
+        implements ActionListener {
     // *************************************************************************
     // constants
 
@@ -49,29 +47,60 @@ class DefaultInputMode
      * message logger for this class
      */
     final private static Logger logger =
-            Logger.getLogger(DefaultInputMode.class.getName());
-    /**
-     * asset path to the cursor for this mode
-     */
-    final private static String assetPath = "Textures/cursors/default.cur";
-    /**
-     * short name for this mode
-     */
-    final public static String name = "default";
+            Logger.getLogger(ActionApplication.class.getName());
     // *************************************************************************
-    // constructors
+    // fields
+    /**
+     * initial input mode: set in #simpleInitApp()
+     */
+    private InputMode defaultInputMode = null;
+    /**
+     * signal tracker set in #simpleInitApp()
+     */
+    private Signals signals = null;
+    // *************************************************************************
+    // new public methods
 
     /**
-     * Instantiate a disabled, uninitialized mode.
+     * Callback to the user's application startup code.
      */
-    DefaultInputMode() {
-        super(name);
+    abstract public void actionInitializeApplication();
+
+    /**
+     * Access the default input mode.
+     *
+     * @return pre-existing instance (not null)
+     */
+    public InputMode getDefaultInputMode() {
+        assert defaultInputMode != null;
+        return defaultInputMode;
+    }
+
+    /**
+     * Access the signal tracker.
+     *
+     * @return pre-existing instance (not null)
+     */
+    public Signals getSignals() {
+        assert signals != null;
+        return signals;
+    }
+
+    /**
+     * Alter the effective speeds of all animations.
+     *
+     * @param newSpeed animation speed (&gt;0, standard speed &rarr; 1)
+     */
+    public void setSpeed(float newSpeed) {
+        Validate.positive(newSpeed, "speed");
+        speed = newSpeed;
     }
     // *************************************************************************
     // ActionListener methods
 
     /**
-     * Process an action from the GUI or keyboard.
+     * Process an action from which is not handled by the default input mode.
+     * This method is a placeholder which may be overridden as desired.
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
@@ -79,60 +108,46 @@ class DefaultInputMode
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float ignored) {
-        if (!isEnabled()) {
-            return;
-        }
         /*
          * Ignore actions which are not ongoing.
          */
         if (!ongoing) {
             return;
         }
-        logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
 
-        if (actionString.equals(SimpleApplication.INPUT_MAPPING_EXIT)) {
-            simpleApplication.stop();
-            return;
-        }
-        actionApplication.onAction(actionString, ongoing, ignored);
+        logger.log(Level.WARNING, "Action {0} was not handled.",
+                MyString.quote(actionString));
     }
     // *************************************************************************
-    // InputMode methods
+    // SimpleApplication methods
 
     /**
-     * Add the default hotkey bindings.
+     * Startup code for this simple application.
      */
     @Override
-    protected void defaultBindings() {
-        String exit = SimpleApplication.INPUT_MAPPING_EXIT;
-        if (inputManager.hasMapping(exit)) {
-            /*
-             * Delete the mapping (probably added by SimpleApplication) in order
-             * to avoid a warning from the input manager.
-             */
-            inputManager.deleteMapping(exit);
+    public void simpleInitApp() {
+        if (defaultInputMode != null) {
+            throw new IllegalStateException(
+                    "app should only be initialized once");
         }
-        bind(exit, KeyInput.KEY_ESCAPE);
-    }
-
-    /**
-     * Initialize this (disabled) mode prior to its 1st update.
-     *
-     * @param stateManager (not null)
-     * @param application (not null)
-     */
-    @Override
-    public void initialize(AppStateManager stateManager,
-            Application application) {
-        AssetManager am = application.getAssetManager();
-        JmeCursor cursor = (JmeCursor) am.loadAsset(assetPath);
+        if (signals != null) {
+            throw new IllegalStateException(
+                    "app should only be initialized once");
+        }
         /*
-         * Set the cursor's hotspot to work around GitHub issue #115.
+         * Initialize hotkeys and a signal tracker for modal hotkeys.
          */
-        cursor.setxHotSpot(0);
-        cursor.setyHotSpot(31);
-        setCursor(cursor);
-
-        super.initialize(stateManager, application);
+        signals = new Signals();
+        Hotkey.intialize();
+        /*
+         * Attach and enable the default input mode.
+         */
+        defaultInputMode = new DefaultInputMode();
+        stateManager.attach(defaultInputMode);
+        defaultInputMode.setEnabled(true);
+        /*
+         * Invoke the startup code of the subclass.
+         */
+        actionInitializeApplication();
     }
 }

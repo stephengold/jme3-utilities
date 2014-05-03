@@ -67,7 +67,7 @@ import jme3utilities.Validate;
  * @author Stephen Gold <sgold@sonic.net>
  */
 abstract public class InputMode
-        extends GuiAppState
+        extends ActionAppState
         implements ActionListener {
     // *************************************************************************
     // constants
@@ -371,7 +371,7 @@ abstract public class InputMode
         super.setEnabled(newState);
     }
     // *************************************************************************
-    // GuiAppState methods
+    // SimpleAppState methods
 
     /**
      * Initialize this (disabled) mode prior to its 1st update.
@@ -608,7 +608,6 @@ abstract public class InputMode
         assert words.length > 1 : MyString.quote(actionName);
         assert "signal".equals(words[0]);
         String signalName = words[1];
-        Signals signals = guiApplication.getSignals();
         signals.add(signalName);
         /*
          * Append the decimal keyCode ensure a unique action string.

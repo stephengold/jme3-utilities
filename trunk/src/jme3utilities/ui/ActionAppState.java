@@ -27,20 +27,19 @@ package jme3utilities.ui;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.niftygui.NiftyJmeDisplay;
-import de.lessvoid.nifty.Nifty;
 import java.util.logging.Logger;
+import jme3utilities.SimpleAppState;
 
 /**
- * Action app state with protected fields analogous to the private fields of
- * GuiApplication.
+ * Simple app state with protected fields analogous to the private fields of
+ * ActionApplication.
  * <p>
  * Each instance is enabled at creation.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
-public class GuiAppState
-        extends ActionAppState {
+public class ActionAppState
+        extends SimpleAppState {
     // *************************************************************************
     // constants
 
@@ -48,23 +47,19 @@ public class GuiAppState
      * message logger for this class
      */
     final private static Logger logger =
-            Logger.getLogger(GuiAppState.class.getName());
+            Logger.getLogger(ActionAppState.class.getName());
     // *************************************************************************
     // fields
     /**
-     * GUI application instance: set by initialize()
+     * action application instance: set by initialize()
      */
-    protected static GuiApplication guiApplication;
+    protected ActionApplication actionApplication;
     /**
-     * Nifty instance: set by initialize()
+     * signal tracker: set by initialize()
      */
-    protected static Nifty nifty;
-    /**
-     * Nifty display: set by initialize()
-     */
-    protected NiftyJmeDisplay niftyDisplay;
+    protected Signals signals = null;
     // *************************************************************************
-    // ActionAppState methods
+    // SimpleAppState methods
 
     /**
      * Initialize this app state on the first update after it gets attached.
@@ -74,18 +69,15 @@ public class GuiAppState
      */
     @Override
     public void initialize(AppStateManager sm, Application app) {
-        if (!(app instanceof GuiApplication)) {
+        if (!(app instanceof ActionApplication)) {
             throw new IllegalArgumentException(
-                    "application should be a GuiApplication");
+                    "application should be an ActionApplication");
         }
 
         super.initialize(sm, app);
-        guiApplication = (GuiApplication) app;
+        actionApplication = (ActionApplication) app;
 
-        nifty = guiApplication.getNifty();
-        assert nifty != null;
-
-        niftyDisplay = guiApplication.getNiftyDisplay();
-        assert niftyDisplay != null;
+        signals = actionApplication.getSignals();
+        assert signals != null;
     }
 }
