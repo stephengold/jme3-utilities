@@ -38,8 +38,8 @@ import jme3utilities.MyCamera;
 import jme3utilities.MyString;
 import jme3utilities.TimeOfDay;
 import jme3utilities.math.MyMath;
-import jme3utilities.sky.LunarPhase;
 import jme3utilities.nifty.GuiScreenController;
+import jme3utilities.sky.LunarPhase;
 
 /**
  * GUI screen controller for the heads-up display (HUD) of the TestSkyControl

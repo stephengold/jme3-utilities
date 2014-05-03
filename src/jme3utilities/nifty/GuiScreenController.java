@@ -25,8 +25,6 @@
  */
 package jme3utilities.nifty;
 
-import jme3utilities.nifty.PopupMenu;
-import jme3utilities.nifty.BasicScreenController;
 import com.jme3.math.FastMath;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.CheckBox;

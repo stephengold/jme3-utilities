@@ -25,8 +25,6 @@
  */
 package jme3utilities.nifty;
 
-import jme3utilities.nifty.GuiScreenController;
-import jme3utilities.nifty.GuiApplication;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;

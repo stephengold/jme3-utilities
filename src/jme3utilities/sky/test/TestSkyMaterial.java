@@ -45,10 +45,10 @@ import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyCamera;
 import jme3utilities.MyString;
+import jme3utilities.nifty.GuiApplication;
 import jme3utilities.sky.DomeMesh;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyMaterial;
-import jme3utilities.nifty.GuiApplication;
 import jme3utilities.ui.InputMode;
 
 /**

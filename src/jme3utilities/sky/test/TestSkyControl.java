@@ -58,6 +58,7 @@ import jme3utilities.ViewPortListener;
 import jme3utilities.WaterProcessor;
 import jme3utilities.debug.LandscapeControl;
 import jme3utilities.math.MyVector3f;
+import jme3utilities.nifty.GuiApplication;
 import jme3utilities.sky.CloudLayer;
 import jme3utilities.sky.FloorControl;
 import jme3utilities.sky.GlobeRenderer;
@@ -65,7 +66,6 @@ import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
 import jme3utilities.sky.SunAndStars;
 import jme3utilities.sky.Updater;
-import jme3utilities.nifty.GuiApplication;
 
 /**
  * GUI application for testing/demonstrating the SkyControl class using a
