@@ -25,7 +25,6 @@
  */
 package jme3utilities.nifty;
 
-import jme3utilities.nifty.BasicScreenController;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
 import java.util.logging.Level;

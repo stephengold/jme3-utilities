@@ -40,9 +40,9 @@ import java.util.logging.Logger;
 import jme3utilities.MyCamera;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.nifty.GuiScreenController;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyMaterial;
-import jme3utilities.nifty.GuiScreenController;
 
 /**
  * GUI screen controller for the heads-up display (HUD) of the TestSkyMaterial
