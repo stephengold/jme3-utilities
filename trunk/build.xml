@@ -104,7 +104,7 @@ The nifty library includes assets, documentation, classes, and source.
     </target>
 
     <target name="nifty-docs"
-            depends="init, releasedirs, nifty-src, sky-jar">
+            depends="init, releasedirs, nifty-src, ui-jar, sky-jar">
         <javadoc destdir="release/jME3-utilities-nifty-javadoc"
                  additionalparam="${javadoc.additionalparam}"
                  author="${javadoc.author}"
@@ -125,6 +125,7 @@ The nifty library includes assets, documentation, classes, and source.
             <classpath>
                 <pathelement path="${javac.classpath}"/>
                 <pathelement location="release/SkyControl.jar"/>
+                <pathelement location="release/jME3-utilities-ui.jar"/>
             </classpath>
             <fileset dir="release/jME3-utilities-nifty-src"/>
         </javadoc>
