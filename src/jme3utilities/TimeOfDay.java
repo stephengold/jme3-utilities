@@ -160,7 +160,7 @@ public class TimeOfDay
     /**
      * Callback to update the time of day.
      *
-     * @param interval real seconds elapsed since the previous update (&ge;0)
+     * @param interval elapsed since the previous update (in seconds, &ge;0)
      */
     @Override
     public void update(float interval) {
