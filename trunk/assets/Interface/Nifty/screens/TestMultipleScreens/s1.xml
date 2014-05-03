@@ -37,7 +37,7 @@
     <useControls filename="nifty-default-controls.xml"/>
 
     <screen id="TestMultipleScreens/s1"
-            controller="jme3utilities.ui.BasicScreenController">
+            controller="jme3utilities.nifty.BasicScreenController">
         <layer childLayout="vertical"
                backgroundColor="#444f">
             <panel/>
