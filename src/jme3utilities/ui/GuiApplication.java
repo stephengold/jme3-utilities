@@ -25,25 +25,21 @@
  */
 package jme3utilities.ui;
 
-import com.jme3.app.SimpleApplication;
-import com.jme3.input.controls.ActionListener;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
-import jme3utilities.Validate;
 
 /**
- * Simple application with a Nifty graphical user interface (GUI). Extending
+ * Action application with a Nifty graphical user interface (GUI). Extending
  * this class (instead of SimpleApplication) provides automatic initialization
  * of Nifty and easy access to the Nifty instance.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
 abstract public class GuiApplication
-        extends SimpleApplication
-        implements ActionListener {
+        extends ActionApplication {
     // *************************************************************************
     // constants
 
@@ -64,29 +60,11 @@ abstract public class GuiApplication
      */
     private static BasicScreenController enabledScreen = null;
     /**
-     * initial input mode: set in #simpleInitApp()
-     */
-    private InputMode defaultInputMode = null;
-    /**
      * Nifty display: set in #simpleInitApp()
      */
     private NiftyJmeDisplay niftyDisplay = null;
-    /**
-     * signal tracker set in #simpleInitApp()
-     */
-    private Signals signals = null;
     // *************************************************************************
     // new public methods
-
-    /**
-     * Access the default input mode.
-     *
-     * @return pre-existing instance (not null)
-     */
-    public InputMode getDefaultInputMode() {
-        assert defaultInputMode != null;
-        return defaultInputMode;
-    }
 
     /**
      * Access the screen controller which is currently enabled.
@@ -119,17 +97,7 @@ abstract public class GuiApplication
     }
 
     /**
-     * Access the signal tracker.
-     *
-     * @return pre-existing instance (not null)
-     */
-    public Signals getSignals() {
-        assert signals != null;
-        return signals;
-    }
-
-    /**
-     * Callback to the user's application startup code.
+     * Callback to the startup code of the subclass.
      */
     abstract public void guiInitializeApplication();
 
@@ -142,65 +110,20 @@ abstract public class GuiApplication
         assert newScreen == null || enabledScreen == null;
         enabledScreen = newScreen;
     }
-
-    /**
-     * Alter the effective speeds of all animations.
-     *
-     * @param newSpeed animation speed (&gt;0, standard speed &rarr; 1)
-     */
-    public void setSpeed(float newSpeed) {
-        Validate.positive(newSpeed, "speed");
-        speed = newSpeed;
-    }
     // *************************************************************************
-    // ActionListener methods
+    // ActionApplication methods
 
     /**
-     * Process an action from the GUI or keyboard which is not handled by the
-     * default input mode. This method is a placeholder which may be overridden
-     * as desired.
-     *
-     * @param actionString textual description of the action (not null)
-     * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored
+     * Startup code for this class.
      */
     @Override
-    public void onAction(String actionString, boolean ongoing, float ignored) {
-        /*
-         * Ignore actions which are not ongoing.
-         */
-        if (!ongoing) {
-            return;
+    public void actionInitializeApplication() {
+        if (niftyDisplay != null) {
+            throw new IllegalStateException(
+                    "app should only be initialized once");
         }
-
-        logger.log(Level.WARNING, "Action {0} was not handled.",
-                MyString.quote(actionString));
-    }
-    // *************************************************************************
-    // SimpleApplication methods
-
-    /**
-     * Startup code for the application: initialize Nifty with generic popup
-     * menus, then invoke the user's guiInitApp().
-     */
-    @Override
-    public void simpleInitApp() {
-        assert defaultInputMode == null : defaultInputMode;
-        assert niftyDisplay == null : niftyDisplay;
-        assert signals == null : signals;
         /*
-         * Initialize hotkeys and signal tracker for modal hotkeys.
-         */
-        signals = new Signals();
-        Hotkey.intialize();
-        /*
-         * Attach and enable the default input mode.
-         */
-        defaultInputMode = new DefaultInputMode();
-        stateManager.attach(defaultInputMode);
-        defaultInputMode.setEnabled(true);
-        /*
-         * Attach the (disabled) input mode for popup menus.
+         * Attach a (disabled) input mode for popup menus.
          */
         InputMode menuMode = new MenuInputMode();
         stateManager.attach(menuMode);
@@ -222,7 +145,7 @@ abstract public class GuiApplication
          */
         nifty.addXml(popupMenuAsssetPath);
         /*
-         * Invoke the user's startup code.
+         * Invoke the startup code of the subclass.
          */
         guiInitializeApplication();
     }

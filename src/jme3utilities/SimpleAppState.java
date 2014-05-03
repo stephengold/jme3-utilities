@@ -61,47 +61,47 @@ public class SimpleAppState
     /**
      * app state manager: set by initialize()
      */
-    protected static AppStateManager stateManager;
+    protected AppStateManager stateManager;
     /**
      * asset manager: set by initialize()
      */
-    protected static AssetManager assetManager;
+    protected AssetManager assetManager;
     /**
      * default camera for rendering: set by initialize()
      */
-    protected static Camera cam;
+    protected Camera cam;
     /**
      * camera controller for demos and debugging: set by initialize()
      */
-    protected static FlyByCamera flyCam;
+    protected FlyByCamera flyCam;
     /**
      * input manager: set by initialize()
      */
-    protected static InputManager inputManager;
+    protected InputManager inputManager;
     /**
      * root node of GUI scene graph: set by initialize()
      */
-    protected static Node guiNode;
+    protected Node guiNode;
     /**
      * root node of 3-D scene graph: set by initialize()
      */
-    protected static Node rootNode;
+    protected Node rootNode;
     /**
      * render manager: set by initialize()
      */
-    protected static RenderManager renderManager;
+    protected RenderManager renderManager;
     /**
      * application instance: set by initialize()
      */
-    protected static SimpleApplication simpleApplication;
+    protected SimpleApplication simpleApplication;
     /**
      * viewport for GUI scene: set by initialize()
      */
-    protected static ViewPort guiViewPort;
+    protected ViewPort guiViewPort;
     /**
      * viewport for 3-D scene: set by initialize()
      */
-    protected static ViewPort viewPort;
+    protected ViewPort viewPort;
     // *************************************************************************
     // AbstractAppState methods
 
