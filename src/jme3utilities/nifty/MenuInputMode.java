@@ -23,8 +23,10 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.ui;
+package jme3utilities.nifty;
 
+import jme3utilities.nifty.GuiScreenController;
+import jme3utilities.nifty.GuiApplication;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
@@ -33,6 +35,7 @@ import com.jme3.input.KeyInput;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
+import jme3utilities.ui.InputMode;
 
 /**
  * Input mode for popup menus.

@@ -65,7 +65,7 @@ import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
 import jme3utilities.sky.SunAndStars;
 import jme3utilities.sky.Updater;
-import jme3utilities.ui.GuiApplication;
+import jme3utilities.nifty.GuiApplication;
 
 /**
  * GUI application for testing/demonstrating the SkyControl class using a

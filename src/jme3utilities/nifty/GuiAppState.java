@@ -23,13 +23,14 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.ui;
+package jme3utilities.nifty;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
 import java.util.logging.Logger;
+import jme3utilities.ui.ActionAppState;
 
 /**
  * Action app state with protected fields analogous to the private fields of
@@ -67,7 +68,7 @@ public class GuiAppState
     // ActionAppState methods
 
     /**
-     * Initialize this app state on the first update after it gets attached.
+     * Initialize this app state on the 1st update after it gets attached.
      *
      * @param sm application's state manager (not null)
      * @param app application which owns this state (not null)
