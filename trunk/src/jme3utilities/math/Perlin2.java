@@ -104,7 +104,7 @@ public class Perlin2
         int squareX = (int) Math.floor(sampleX);
         int squareY = (int) Math.floor(sampleY);
         /*
-         * Calculate the noise contribution of each corner.
+         * Compute the noise contribution of each corner.
          */
         float n00 = gradient(squareX, squareY, sampleX, sampleY);
         float n01 = gradient(squareX, squareY + 1, sampleX, sampleY);

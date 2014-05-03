@@ -105,15 +105,17 @@ final public class Noise {
     }
 
     /**
-     * Get the next pseudo-random single-precision value from the shared
-     * generator.
+     * Get the next uniformly distributed, pseudo-random, single-precision value
+     * from the shared generator.
+     *
+     * @return float value (&ge;0, &lt;1)
      */
     public static float nextFloat() {
         return generator.nextFloat();
     }
 
     /**
-     * Pick a random member from a list using the specified generator.
+     * Pick a pseudo-random member from a list using the specified generator.
      *
      * @param list list to select from (not null)
      * @param generator generator to use (not null)

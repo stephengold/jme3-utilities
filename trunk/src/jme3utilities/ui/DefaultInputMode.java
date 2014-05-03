@@ -127,7 +127,7 @@ class DefaultInputMode
         AssetManager am = application.getAssetManager();
         JmeCursor cursor = (JmeCursor) am.loadAsset(assetPath);
         /*
-         * Set the cursor's hot spot to work around GitHub issue #115.
+         * Set the cursor's hotspot to work around GitHub issue #115.
          */
         cursor.setxHotSpot(0);
         cursor.setyHotSpot(31);

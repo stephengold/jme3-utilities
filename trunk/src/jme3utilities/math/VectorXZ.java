@@ -490,7 +490,7 @@ public class VectorXZ
     /**
      * Rotate a vector by a direction vector (complex product).
      *
-     * @param direction final direction for the original X-axis (not null)
+     * @param direction new direction for the current X-axis (not null)
      * @return new vector
      */
     public VectorXZ rotate(VectorXZ direction) {
