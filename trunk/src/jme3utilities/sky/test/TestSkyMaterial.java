@@ -48,7 +48,7 @@ import jme3utilities.MyString;
 import jme3utilities.sky.DomeMesh;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyMaterial;
-import jme3utilities.ui.GuiApplication;
+import jme3utilities.nifty.GuiApplication;
 import jme3utilities.ui.InputMode;
 
 /**
@@ -316,7 +316,8 @@ public class TestSkyMaterial
      * @param material sky material under test (not null)
      * @param bloom bloom filter applied to the view port (not null)
      */
-    private void initializeUserInterface(SkyMaterial material, BloomFilter bloom) {
+    private void initializeUserInterface(SkyMaterial material,
+            BloomFilter bloom) {
         assert material != null;
         assert bloom != null;
         /*

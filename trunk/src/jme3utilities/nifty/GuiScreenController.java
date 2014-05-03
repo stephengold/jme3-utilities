@@ -23,8 +23,10 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.ui;
+package jme3utilities.nifty;
 
+import jme3utilities.nifty.PopupMenu;
+import jme3utilities.nifty.BasicScreenController;
 import com.jme3.math.FastMath;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.CheckBox;
@@ -40,6 +42,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.ui.InputMode;
 
 /**
  * Basic screen controller which supports check boxes, popup menus, radio

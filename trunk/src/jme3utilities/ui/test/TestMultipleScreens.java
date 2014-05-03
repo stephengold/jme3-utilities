@@ -29,8 +29,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
-import jme3utilities.ui.BasicScreenController;
-import jme3utilities.ui.GuiApplication;
+import jme3utilities.nifty.BasicScreenController;
+import jme3utilities.nifty.GuiApplication;
 import jme3utilities.ui.InputMode;
 
 /**

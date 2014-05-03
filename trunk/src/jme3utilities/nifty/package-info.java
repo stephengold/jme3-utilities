@@ -24,7 +24,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /**
- * Reusable classes for implementing action-oriented user interfaces, for use
- * with jMonkeyEngine3.
+ * Reusable classes for implementing graphical user interfaces, for use with
+ * jMonkeyEngine3 and Nifty.
  */
-package jme3utilities.ui;
+package jme3utilities.nifty;
