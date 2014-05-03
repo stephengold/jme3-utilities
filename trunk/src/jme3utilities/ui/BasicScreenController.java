@@ -226,7 +226,7 @@ public class BasicScreenController
      */
     @Override
     public void bind(Nifty nifty, Screen screen) {
-        assert nifty == this.nifty : nifty;
+        assert nifty == BasicScreenController.nifty : nifty;
         assert screen == getScreen() : screen;
     }
 
