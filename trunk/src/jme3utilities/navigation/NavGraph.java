@@ -104,7 +104,7 @@ public class NavGraph {
         validateMember(startVertex);
         validateMember(endVertex);
         if (startVertex == endVertex) {
-            throw new IllegalArgumentException("endpoints should be distinct");
+            throw new IllegalArgumentException("vertices should be distinct");
         }
         Validate.nonNull(joints, "joints");
 
@@ -218,15 +218,15 @@ public class NavGraph {
         validateMember(startVertex);
         Validate.nonNull(candidates, "list");
 
-        Map<NavVertex, Float> hopData = new TreeMap<>();
-        calculateDistances(startVertex, 0f, hopData);
+        Map<NavVertex, Float> distanceData = new TreeMap<>();
+        calculateDistances(startVertex, 0f, distanceData);
         /*
          * Search for the maximum distance.
          */
         NavVertex result = startVertex;
         float maxDistance = 0f;
         for (NavVertex vertex : candidates) {
-            Float distance = hopData.get(vertex);
+            Float distance = distanceData.get(vertex);
             if (distance != null && distance > maxDistance) {
                 maxDistance = distance;
                 result = vertex;
@@ -345,6 +345,40 @@ public class NavGraph {
     }
 
     /**
+     * Find the shortest path from one vertex to another, assuming all arcs are
+     * reversible.
+     *
+     * @param startVertex starting point (member of this graph, distinct from
+     * endVertex)
+     * @param endVertex goal (member of this graph)
+     * @return first arc in path (or null if unreachable)
+     */
+    public NavArc seek(NavVertex startVertex, NavVertex endVertex) {
+        validateMember(startVertex);
+        validateMember(endVertex);
+        if (startVertex == endVertex) {
+            throw new IllegalArgumentException(
+                    "starting point and goal should be distinct");
+        }
+
+        Map<NavVertex, Float> distanceData = new TreeMap<>();
+        calculateDistances(endVertex, 0f, distanceData);
+
+        NavArc result = null;
+        float minDistance = Float.MAX_VALUE;
+        for (NavArc arc : startVertex.getArcs()) {
+            NavVertex neighbor = arc.getToVertex();
+            float distance = distanceData.get(neighbor) + arc.getPathLength();
+            if (distance < minDistance) {
+                minDistance = distance;
+                result = arc;
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Verify that an arc belongs to this graph.
      *
      * @param arc arc to be validated
@@ -372,11 +406,11 @@ public class NavGraph {
     // private methods
 
     /**
-     * Measure the minimum distance to each vertex in the graph. Note:
-     * recursive!
+     * Measure the minimum distance to each vertex in the graph from a fixed
+     * starting point. Note: recursive!
      *
      * @param currentVertex vertex being visited (member of this graph)
-     * @param distance distance from the start vertex to the current vertex
+     * @param distance distance from the starting point to the current vertex
      * (&ge;0)
      * @param pathData distances of all vertices already visited (not null)
      */

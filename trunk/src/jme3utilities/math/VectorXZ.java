@@ -195,7 +195,7 @@ public class VectorXZ
             return clone();
         }
         /*
-         * Convert angle to sine.
+         * Convert limit angle to a sine (Z-component).
          */
         float maxAbsSine;
         if (maxAbsAngle >= FastMath.HALF_PI) {
@@ -204,20 +204,24 @@ public class VectorXZ
             maxAbsSine = FastMath.sin(maxAbsAngle);
         }
 
-        float signZ = FastMath.sign(z);
         VectorXZ result;
         if (x < 0f) {
             /*
-             * Clamp to the right (+X) half-plane.
+             * Clamp this vector to the northerly (+X) half-plane
+             * and normalize it.
              */
-            result = new VectorXZ(0f, signZ);
+            if (z >= 0f) {
+                result = east;
+            } else {
+                result = west;
+            }
         } else {
             result = normalize();
         }
 
         float absZ = FastMath.abs(result.getZ());
         if (absZ > maxAbsSine) {
-            float newZ = maxAbsSine * signZ;
+            float newZ = maxAbsSine * FastMath.sign(result.getZ());
             float newX = MyMath.circle(newZ);
             result = new VectorXZ(newX, newZ);
         }
@@ -310,13 +314,14 @@ public class VectorXZ
     /**
      * Compute the directional error of this direction with respect to a goal.
      *
-     * @param goal unit vector
+     * @param directionGoal unit vector
      * @return sine of the angle from the goal to this direction, or +1/-1 if
      * the angle's magnitude exceeds 90 degrees
      */
-    public float directionError(VectorXZ goal) {
-        if (!goal.isUnitVector()) {
-            logger.log(Level.SEVERE, "goal={0}", goal);
+    public float directionError(VectorXZ directionGoal) {
+        Validate.nonNull(directionGoal, "goal");
+        if (!directionGoal.isUnitVector()) {
+            logger.log(Level.SEVERE, "goal={0}", directionGoal);
             throw new IllegalArgumentException("goal should have length=1");
         }
         if (!isUnitVector()) {
@@ -324,8 +329,8 @@ public class VectorXZ
             throw new IllegalStateException("vector should have length=1");
         }
 
-        float cosine = dot(goal);
-        float sine = cross(goal);
+        float cosine = dot(directionGoal);
+        float sine = cross(directionGoal);
         if (cosine >= 0f) {
             return sine;
         }
