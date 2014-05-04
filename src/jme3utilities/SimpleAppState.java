@@ -106,7 +106,7 @@ public class SimpleAppState
     // AbstractAppState methods
 
     /**
-     * Clean up this app state on the first update after it gets detached.
+     * Clean up this app state on the 1st update after it gets detached.
      */
     @Override
     public void cleanup() {
@@ -118,7 +118,7 @@ public class SimpleAppState
     }
 
     /**
-     * Initialize this app state on the first update after it gets attached.
+     * Initialize this app state on the 1st update after it gets attached.
      *
      * @param sm application's state manager (not null)
      * @param app application which owns this state (not null)

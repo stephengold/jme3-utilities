@@ -64,9 +64,10 @@ public class MyControl {
     // new methods exposed
 
     /**
-     * Generate a textual description of a scene-graph control.
+     * Describe a scene-graph control.
      *
      * @param control (not null)
+     * @return textual description
      */
     public static String describe(Object control) {
         String name = control.getClass().getSimpleName();

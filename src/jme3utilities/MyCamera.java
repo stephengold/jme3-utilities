@@ -62,7 +62,7 @@ final public class MyCamera {
      * Compute a camera's aspect ratio.
      *
      * @param camera camera to measure (not null)
-     * @return width divided by height
+     * @return width divided by height (&gt;0)
      */
     public static float aspectRatio(Camera camera) {
         float height = camera.getHeight();
@@ -101,9 +101,12 @@ final public class MyCamera {
 
         float near = camera.getFrustumNear();
         assert near > 0f : near;
+
         float top = camera.getFrustumTop();
         assert top > 0f : top;
+
         float fovY = 2f * FastMath.atan(top / near);
+
         return fovY;
     }
 
@@ -160,10 +163,11 @@ final public class MyCamera {
     }
 
     /**
-     * Alter a camera's field-of-view tangent.
+     * Alter a camera's field-of-view tangents.
      *
      * @param camera camera to alter (not null)
-     * @param newTangent value for the FOV tangent (&gt;0)
+     * @param newTangent tangent of the vertical field-of-view half-angle
+     * (&gt;0)
      */
     public static void setYTangent(Camera camera, float newTangent) {
         Validate.nonNull(camera, "camera");
@@ -194,36 +198,41 @@ final public class MyCamera {
     }
 
     /**
-     * Compute a camera's field-of-view tangent.
+     * Compute a camera's vertical field-of-view tangent.
      *
      * @param camera camera to measure (not null)
-     * @return top/near (&gt;0)
+     * @return tangent of the vertical field-of-view half-angle (&gt;0)
      */
     public static float yTangent(Camera camera) {
         float near = camera.getFrustumNear();
         assert near > 0f : near;
+
         float top = camera.getFrustumTop();
         assert top > 0f : top;
+
         float yTangent = top / near;
 
         return yTangent;
     }
 
     /**
-     * Increase a camera's field-of-view tangent by a specified factor.
+     * Increase a camera's field-of-view tangents by a specified factor.
      *
      * @param camera camera to alter (not null)
-     * @param factor amount to reduce the FOV tangent (&gt;0)
+     * @param factor amount to reduce both field-of-view tangents (&gt;0)
      */
     public static void zoom(Camera camera, float factor) {
         Validate.positive(factor, "factor");
 
         float bottom = camera.getFrustumBottom();
         camera.setFrustumBottom(bottom * factor);
+
         float left = camera.getFrustumLeft();
         camera.setFrustumLeft(left * factor);
+
         float right = camera.getFrustumRight();
         camera.setFrustumRight(right * factor);
+
         float top = camera.getFrustumTop();
         camera.setFrustumTop(top * factor);
     }

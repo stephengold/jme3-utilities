@@ -138,7 +138,7 @@ public class Signals
     /**
      * Update whether a named signal source is active.
      *
-     * @param name the signal's name (not null)
+     * @param name signal's name (not null)
      * @param sourceIndex index of the signal source (key or button) which is
      * being updated
      * @param newState true if the source is active; false is the source is

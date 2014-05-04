@@ -58,7 +58,7 @@ public interface Spline3f {
     int numControlPoints();
 
     /**
-     * Compute the spline's first derivative to the right of the specified
+     * Compute the spline's 1st derivative to the right of the specified
      * parameter value.
      *
      * @param sampleT input value
