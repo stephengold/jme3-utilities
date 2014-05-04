@@ -371,7 +371,7 @@ abstract public class InputMode
         super.setEnabled(newState);
     }
     // *************************************************************************
-    // SimpleAppState methods
+    // ActionAppState methods
 
     /**
      * Initialize this (disabled) mode prior to its 1st update.

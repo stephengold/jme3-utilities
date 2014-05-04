@@ -67,7 +67,7 @@ abstract public class SubtreeControl
     // new public methods
 
     /**
-     * Traverse this control's subtree in depth-first order.
+     * Traverse this control's subtree in depth-1st order.
      *
      * @param visitor method invoked on each spatial (not null)
      */

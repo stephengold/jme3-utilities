@@ -66,7 +66,7 @@ public class LinearSpline3f
     // constructors
 
     /**
-     * Instantiate a new spline using the specified control points. The first
+     * Instantiate a new spline using the specified control points. The 1st
      * control point will be the value at t=0. t increases with Euclidean
      * distance along the path.
      *
@@ -172,7 +172,7 @@ public class LinearSpline3f
     }
 
     /**
-     * Compute the spline's first derivative to the right of the specified
+     * Compute the spline's 1st derivative to the right of the specified
      * parameter value.
      *
      * @param sampleT input value

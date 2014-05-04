@@ -172,7 +172,7 @@ public class SkyControl
      * null)
      * @param camera the application's camera (not null)
      * @param cloudFlattening the oblateness (ellipticity) of the dome with the
-     * clouds: 0=no flattening (hemisphere), 1=maximum flattening
+     * clouds: 0 &rarr; no flattening (hemisphere), 1 &rarr; maximum flattening
      * @param starMotion true to simulate moving stars, false for fixed stars
      * @param bottomDome true to create a material and geometry for the
      * hemisphere below the horizon, false to leave this hemisphere to
