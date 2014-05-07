@@ -94,7 +94,7 @@ public class Perlin2
      *
      * @param sampleX 1st coordinate of the sample point
      * @param sampleY 2nd coordinate of the sample point
-     * @return normalized noise value (&lt;1, &gt;-1)
+     * @return noise value (&le;sqrt(0.5), &ge;-sqrt(0.5))
      */
     @Override
     public float sample(float sampleX, float sampleY) {
@@ -129,7 +129,7 @@ public class Perlin2
      *
      * @param sampleX 1st coordinate of the sample point
      * @param sampleY 2nd coordinate of the sample point
-     * @return noise value
+     * @return normalized noise value (&le;1, &ge;-1)
      */
     @Override
     public float sampleNormalized(float sampleX, float sampleY) {
