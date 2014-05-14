@@ -2,9 +2,9 @@
 
 Like most projects, the jme3-utilities project builds upon the work of many who have gone before. I therefore acknowledge the following software developers:
 
-  * Cris (aka "t0neg0d") for creating !SkyDome (which provided both an inspiration and a starting point for !SkyControl) and also for encouraging me to run with it ... thank you yet again!
+  * Cris (aka "t0neg0d") for creating !SkyDome (which provided both an inspiration and a starting point for SkyControl) and also for encouraging me to run with it ... thank you yet again!
   * Paul Speed, for helpful insights which got me unstuck during debugging
-  * the brave souls who volunteered to be alpha testers for !SkyControl, including:
+  * the brave souls who volunteered to be alpha testers for SkyControl, including:
     * Davis Rollman
     * "Lockhead"
     * Jonatan Dahl
@@ -20,6 +20,7 @@ Like most projects, the jme3-utilities project builds upon the work of many who 
   * the creators of (and contributors to) the following software:
     * Adobe Photoshop Elements
     * the Blender 3D animation suite
+    * the !FindBugs source code analyzer
     * Gimp, the GNU Image Manipulation Program
     * the Google Chrome web browser
     * Guava core libraries for Java
