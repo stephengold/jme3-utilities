@@ -480,8 +480,7 @@ public class SkyControl
          * clear color accordingly.
          */
         ColorRGBA clearColor = colorDay.clone();
-        clearColor.a =
-                MyMath.clampFraction(1f + sunDirection.y / limitOfTwilight);
+        clearColor.a = FastMath.saturate(1f + sunDirection.y / limitOfTwilight);
         topMaterial.setClearColor(clearColor);
 
         Vector3f moonDirection = updateMoon();
@@ -540,7 +539,7 @@ public class SkyControl
          */
         ColorRGBA baseColor;
         if (sunUp) {
-            float dayWeight = MyMath.clampFraction(sineSolarAltitude / 0.25f);
+            float dayWeight = FastMath.saturate(sineSolarAltitude / 0.25f);
             baseColor =
                     MyColor.interpolateLinear(dayWeight, twilight, sunLight);
         } else {
@@ -551,8 +550,7 @@ public class SkyControl
             } else {
                 blend = starLight;
             }
-            float nightWeight =
-                    MyMath.clampFraction(-sineSolarAltitude / 0.04f);
+            float nightWeight = FastMath.saturate(-sineSolarAltitude / 0.04f);
             baseColor = MyColor.interpolateLinear(nightWeight, twilight, blend);
         }
         topMaterial.setHazeColor(baseColor);
@@ -615,7 +613,7 @@ public class SkyControl
         float ambientAmount = ambient.r + ambient.g + ambient.b;
         float totalAmount = mainAmount + ambientAmount;
         assert totalAmount > 0f : totalAmount;
-        float shadowIntensity = MyMath.clampFraction(mainAmount / totalAmount);
+        float shadowIntensity = FastMath.saturate(mainAmount / totalAmount);
         /*
          * Determine the recommended bloom intensity using the sun's altitude.
          */
@@ -682,16 +680,16 @@ public class SkyControl
         /*
          * Update the sun's color.
          */
-        float green = MyMath.clampFraction(3f * sineSolarAltitude);
-        float blue = MyMath.clampFraction(sineSolarAltitude - 0.1f);
+        float green = FastMath.saturate(3f * sineSolarAltitude);
+        float blue = FastMath.saturate(sineSolarAltitude - 0.1f);
         ColorRGBA sunColor = new ColorRGBA(1f, green, blue, Constants.alphaMax);
         topMaterial.setObjectColor(sunIndex, sunColor);
         topMaterial.setObjectGlow(sunIndex, sunColor);
         /*
          * Update the moon's color.
          */
-        green = MyMath.clampFraction(2f * sineLunarAltitude + 0.6f);
-        blue = MyMath.clampFraction(5f * sineLunarAltitude + 0.1f);
+        green = FastMath.saturate(2f * sineLunarAltitude + 0.6f);
+        blue = FastMath.saturate(5f * sineLunarAltitude + 0.1f);
         ColorRGBA moonColor =
                 new ColorRGBA(1f, green, blue, Constants.alphaMax);
         topMaterial.setObjectColor(moonIndex, moonColor);

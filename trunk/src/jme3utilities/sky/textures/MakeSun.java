@@ -276,7 +276,7 @@ public class MakeSun {
                             / (surroundRadius - discRadius);
                     alpha = Math.max(alpha, hazeAlpha);
                 }
-                alpha = MyMath.clampFraction(alpha);
+                alpha = FastMath.saturate(alpha);
 
                 int opacity = Math.round(255f * alpha);
                 setWhitePixel(graphics, x, y, opacity);

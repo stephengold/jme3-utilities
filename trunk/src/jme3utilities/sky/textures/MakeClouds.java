@@ -27,6 +27,7 @@ package jme3utilities.sky.textures;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.jme3.math.FastMath;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -35,7 +36,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
-import jme3utilities.math.MyMath;
 import jme3utilities.math.Noise;
 import jme3utilities.math.Perlin2;
 
@@ -210,7 +210,7 @@ public class MakeClouds {
             for (int y = 0; y < textureSize; y++) {
                 float alpha = samples[x][y];
                 alpha = (alpha - blackCutoff) / (whiteCutoff - blackCutoff);
-                alpha = MyMath.clampFraction(alpha);
+                alpha = FastMath.saturate(alpha);
                 Misc.setGrayPixel(graphics, x, y, alpha);
             }
         }
