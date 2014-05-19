@@ -121,21 +121,6 @@ public class MyMath {
     }
 
     /**
-     * Clamp a value to be between 0 and 1, inclusive.
-     *
-     * @param fValue input value to be clamped
-     * @return value between 0 and 1 inclusive which is closest to fValue
-     * @see FastMath#clamp(float,float,float)
-     */
-    public static float clampFraction(float fValue) {
-        float result = FastMath.clamp(fValue, 0f, 1f);
-
-        assert result >= 0f : result;
-        assert result <= 1f : result;
-        return result;
-    }
-
-    /**
      * Compute the product of two complex numbers or the composition of two
      * scale-and-rotate vectors.
      *

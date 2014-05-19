@@ -44,7 +44,6 @@ import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 import jme3utilities.math.MyColor;
-import jme3utilities.math.MyMath;
 
 /**
  * Core fields and methods of a simple control to simulate a dynamic sky.
@@ -324,7 +323,7 @@ public class SkyControlCore
      */
     public float getMoonIllumination() {
         float fullAngle = FastMath.abs(phaseAngle - FastMath.PI);
-        float weight = 1f - MyMath.clampFraction(fullAngle * 0.6f);
+        float weight = 1f - FastMath.saturate(fullAngle * 0.6f);
 
         assert weight >= 0f : weight;
         assert weight <= 1f : weight;
