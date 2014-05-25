@@ -116,25 +116,7 @@ public class MyMath {
      */
     public static float clamp(float fValue, float maxMagnitude) {
         Validate.nonNegative(maxMagnitude, "limit");
-
         return FastMath.clamp(fValue, -maxMagnitude, maxMagnitude);
-    }
-
-    /**
-     * Compute the product of two complex numbers or the composition of two
-     * scale-and-rotate vectors.
-     *
-     * @param a 1st complex number (not null, unaffected)
-     * @param b 2nd complex number (not null, unaffected)
-     * @return new vector
-     */
-    public static Vector2f complexProduct(Vector2f a, Vector2f b) {
-        Validate.nonNull(a, "vector a");
-        Validate.nonNull(b, "vector b");
-
-        float productX = a.x * b.x - a.y * b.y;
-        float productY = a.y * b.x + a.x * b.y;
-        return new Vector2f(productX, productY);
     }
 
     /**
@@ -177,25 +159,6 @@ public class MyMath {
      */
     public static double discriminant(double a, double b, double c) {
         double result = b * b - 4.0 * a * c;
-
-        return result;
-    }
-
-    /**
-     * Compute the discriminant (b^2 - 4*a*c) of a quadratic equation in
-     * standard form: (a*x^2 + b*x + c). Double precision arithmetic is used to
-     * reduce the risk of overflow.
-     *
-     * @param a coefficient of the square term
-     * @param b coefficient of the linear term
-     * @param c constant term
-     * @return discriminant
-     */
-    public static double discriminant(float a, float b, float c) {
-        double aa = (double) a;
-        double bb = (double) b;
-        double cc = (double) c;
-        double result = discriminant(aa, bb, cc);
 
         return result;
     }
@@ -334,38 +297,6 @@ public class MyMath {
     }
 
     /**
-     * Compute the sphere function sqrt(1 - x^2 - y^2) for single-precision
-     * values. Double precision is used to reduce the risk of overflow.
-     *
-     * @param x 1st coordinate (&le;1, &ge;-1)
-     * @param y 2nd coordinate (&le;1, &ge;-1)
-     * @return positive height of the unit sphere at the coordinates (&le;1,
-     * &ge;0)
-     */
-    public static float sphere(float x, float y) {
-        if (!(x >= -1f && x <= 1f)) {
-            logger.log(Level.SEVERE, "x={0}", x);
-            throw new IllegalArgumentException(
-                    "x should be between -1 and 1, inclusive");
-        }
-        if (!(y >= -1f && y <= 1f)) {
-            logger.log(Level.SEVERE, "y={0}", y);
-            throw new IllegalArgumentException(
-                    "y should be between -1 and 1, inclusive");
-        }
-
-        double rSquared = sumOfSquares(x, y);
-        if (rSquared >= 1.0) {
-            return 0f;
-        }
-
-        float z = (float) Math.sqrt(1.0 - rSquared);
-        assert z >= 0f : z;
-        assert z <= 1f : z;
-        return z;
-    }
-
-    /**
      * Standardize a rotation angle to the range [-Pi, Pi).
      *
      * @param angle input (in radians)
@@ -408,19 +339,6 @@ public class MyMath {
      */
     public static void main(String[] ignored) {
         System.out.print("Test results for class MyMath:\n\n");
-
-        Vector2f[] v2Cases = new Vector2f[]{new Vector2f(0f, 0f),
-            new Vector2f(1f, 0f),
-            new Vector2f(0f, 1f),
-            new Vector2f(0.6f, -0.8f)
-        };
-
-        for (Vector2f x : v2Cases) {
-            for (Vector2f y : v2Cases) {
-                System.out.printf("%s * %s = %s%n", x, y, complexProduct(x, y));
-            }
-            System.out.println();
-        }
 
         float h = hypotenuse(3f, 4f);
         System.out.printf("hypot(3,4)=%f%n", h);
