@@ -119,9 +119,8 @@ abstract public class InputMode
      * @param shortName terse name for the mode (not null)
      */
     public InputMode(String shortName) {
-        assert shortName != null;
+        Validate.nonNull(shortName, "name");
         this.shortName = shortName;
-
         super.setEnabled(false);
     }
     // *************************************************************************
@@ -138,7 +137,7 @@ abstract public class InputMode
      * @param keyCode the hotkey's keycode
      */
     public void bind(String actionName, int keyCode) {
-        assert actionName != null;
+        Validate.nonNull(actionName, "name");
 
         Hotkey hotkey = Hotkey.getInstance(keyCode);
         assert hotkey != null : keyCode;
@@ -156,7 +155,7 @@ abstract public class InputMode
      * @param hotkey hotkey to bind to (not null)
      */
     public void bind(String actionName, Hotkey hotkey) {
-        assert actionName != null;
+        Validate.nonNull(actionName, "name");
 
         String hotkeyName = hotkey.name();
         /*
@@ -172,7 +171,7 @@ abstract public class InputMode
      * @return true if bound, otherwise false
      */
     public boolean binds(Hotkey hotkey) {
-        assert hotkey != null;
+        Validate.nonNull(hotkey, "hotkey");
 
         String actionName = getActionName(hotkey);
         return actionName != null;
@@ -185,7 +184,7 @@ abstract public class InputMode
      * @return new collection of hotkey names
      */
     public Collection<String> findHotkeys(String actionName) {
-        assert actionName != null;
+        Validate.nonNull(actionName, "name");
 
         Collection<String> result = new TreeSet<>();
         for (String keyName : hotkeyBindings.stringPropertyNames()) {
@@ -368,6 +367,7 @@ abstract public class InputMode
             inputManager.setCursorVisible(false);
             unmapBoundHotkeys();
         }
+
         super.setEnabled(newState);
     }
     // *************************************************************************
@@ -410,6 +410,7 @@ abstract public class InputMode
                     startEnabled);
         }
         String result = String.format("%s (%s)", shortName, status);
+
         return result;
     }
     // *************************************************************************
@@ -443,6 +444,7 @@ abstract public class InputMode
                 count++;
             }
         }
+
         return count;
     }
 
