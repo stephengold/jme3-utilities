@@ -145,6 +145,7 @@ public class MyMath {
         float exponent = FastMath.ONE_THIRD;
         float rootMagnitude = FastMath.pow(magnitude, exponent);
         float result = FastMath.copysign(rootMagnitude, fValue);
+
         return result;
     }
 
@@ -159,7 +160,6 @@ public class MyMath {
      */
     public static double discriminant(double a, double b, double c) {
         double result = b * b - 4.0 * a * c;
-
         return result;
     }
 
@@ -241,11 +241,13 @@ public class MyMath {
 
     /**
      * Compute the least non-negative value congruent with an integer value with
-     * respect to the specified modulus.
+     * respect to the specified modulus. modulo() differs from remainder for
+     * negative values of the first argument. For instance, modulo(-1, 4) == 3,
+     * while -1 % 4 == -1.
      *
      * @param iValue input value
      * @param modulus (&gt;0)
-     * @return x MOD modulus (&lt;modulus, &ge;0)
+     * @return iValue MOD modulus (&lt;modulus, &ge;0)
      */
     public static int modulo(int iValue, int modulus) {
         Validate.positive(modulus, "modulus");
@@ -259,11 +261,13 @@ public class MyMath {
 
     /**
      * Compute the least non-negative value congruent with a single-precision
-     * value with respect to the specified modulus.
+     * value with respect to the specified modulus. modulo() differs from
+     * remainder for negative values of the first argument. For instance,
+     * modulo(-1f, 4f) == 3f, while -1f % 4f == -1f.
      *
      * @param fValue input value
      * @param modulus (&gt;0)
-     * @return x MOD modulus (&lt;modulus, &ge;0)
+     * @return fValue MOD modulus (&lt;modulus, &ge;0)
      */
     public static float modulo(float fValue, float modulus) {
         Validate.positive(modulus, "modulus");
@@ -344,7 +348,7 @@ public class MyMath {
         System.out.printf("hypot(3,4)=%f%n", h);
 
         float[] floatCases = new float[]{
-            -3f, 0f, 1f, 8f, Float.MAX_VALUE / 2f, Float.MAX_VALUE
+            -3f, 0f, 1f, 8f, Float.MAX_VALUE / 2f, Float.MAX_VALUE, -1f
         };
         for (float x : floatCases) {
             float c = cube(x);
@@ -356,6 +360,8 @@ public class MyMath {
             System.out.printf("  cube(x)=%e  cubeRoot(x)=%e%n", c, cr);
             System.out.printf("  cube(cubeRoot(x))=%e  cubeRoot(cube(x))=%e%n",
                     cube(cr), cubeRoot(c));
+            System.out.printf("  x %% 4=%f  x mod 4=%f%n",
+                    x % 4f, modulo(x, 4f));
         }
         System.out.println();
     }
