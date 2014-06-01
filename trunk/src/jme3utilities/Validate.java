@@ -116,7 +116,7 @@ final public class Validate {
      * the javadoc for NullPointerException says, "Applications should throw
      * instances of this class..."
      *
-     * @param object reference to validate (not null)
+     * @param object reference to validate (not null, unaffected)
      * @param description description of the object (not null)
      * @throws NullPointerException if the reference is null
      */
