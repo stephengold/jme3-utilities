@@ -300,8 +300,7 @@ public class GuiScreenController
         try {
             button.setText(newText);
         } catch (NullPointerException exception) {
-            logger.log(Level.INFO, "screen {0} lacks button {1}",
-                    new Object[]{
+            logger.log(Level.INFO, "screen {0} lacks button {1}", new Object[]{
                 MyString.quote(getScreenId()),
                 MyString.quote(elementId)
             });

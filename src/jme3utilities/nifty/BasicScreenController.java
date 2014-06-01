@@ -94,8 +94,8 @@ public class BasicScreenController
         Validate.nonNull(screenId, "screen id");
         Validate.nonNull(xmlAssetPath, "path");
 
-        this.xmlAssetPath = xmlAssetPath;
         this.screenId = screenId;
+        this.xmlAssetPath = xmlAssetPath;
         this.enableDuringInitialization = enableDuringInitialization;
 
         super.setEnabled(false);
@@ -137,6 +137,7 @@ public class BasicScreenController
         int displayHeight = cam.getHeight();
         int mouseY = displayHeight - Math.round(mouseXY.y);
         boolean result = element.isMouseInsideElement(mouseX, mouseY);
+
         return result;
     }
 
@@ -153,7 +154,8 @@ public class BasicScreenController
                 MyString.quote(actionString));
         boolean isOnGoing = true;
         float simInterval = 0f;
-        ActionListener actionListener = guiApplication.getEnabledScreen().listener;
+        ActionListener actionListener =
+                guiApplication.getEnabledScreen().listener;
         try {
             actionListener.onAction(actionString, isOnGoing, simInterval);
         } catch (Throwable throwable) {
