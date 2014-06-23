@@ -457,7 +457,7 @@ public class Printer {
      * @param spatial spatial being described
      * @return mnemonic character
      */
-    public static char describeType(Spatial spatial) {
+    protected static char describeType(Spatial spatial) {
         char result = MySpatial.describeType(spatial);
         return result;
     }
