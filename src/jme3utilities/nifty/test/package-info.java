@@ -25,6 +25,6 @@
  */
 /**
  * Applications to test and/or demonstrate the capabilities of the
- * jme3utilities.ui package.
+ * jme3utilities.nifty package.
  */
 package jme3utilities.nifty.test;
