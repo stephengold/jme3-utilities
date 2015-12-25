@@ -1,11 +1,8 @@
 # jme3-utilities
 
-Java packages, developed for sgold's jMonkeyEngine games, which might prove 
-useful in similar projects.  Includes SkyControl for sky simulation.
-
-This project was formerly hosted at http://code.google.com/p/jme3-utilities
-
-The source files are in JDK 7 format with CRLF line endings.
+This project contains Java packages and asset packs, developed for sgold's 
+jMonkeyEngine games, which might prove useful in similar projects.  It includes
+the SkyControl library for sky simulation.
 
 Summary of SkyControl features:
  + sun, moon, stars, horizon haze, and up to six cloud layers
@@ -21,8 +18,48 @@ Summary of SkyControl features:
  + demonstration apps and online tutorial provided
  + complete source code provided under FreeBSD license
 
+### Conventions
 
-## How to install the SDK and the jme3utilities package
+All package names in this project begin with "jme3utilities".
+The source files are in JDK 7 format with CRLF line endings.
+
+### History
+
+Since September 2015, this project has been hosted at 
+https://github.com/stephengold/jme3-utilities
+
+From November 2013 to September 2015, it was hosted at 
+http://code.google.com/p/jme3-utilities
+
+
+## SkyControl plugin
+
+This project is available in plugin (read-only) form.  Somewhat confusingly, 
+the plugin is named "SkyControl".
+
+The SkyControl plugin is derived from this project.  It is more stable, but 
+usually less advanced.  It doesn't include every package and asset in the 
+project.
+
+The plugin is available from the jMonkeyEngine User Contributions Update Center:
+ + updates from http://updates.jmonkeyengine.org/contributions/updates.xml
+ + repository hosted at https://github.com/jMonkeyEngine-Contributions
+ + archived SVN repo at https://code.google.com/p/jmonkeyplatform-contributions
+
+The SkyControl plugin consists of five libraries:
+ + SkyControl:  basic utility classes, math, and sky simulation 
+   (3 packages + assets)
+ + jme3-utilities-debug:  test/debug aids (1 package)
+ + jme3-utilities-nifty:  support for Nifty user interfaces (1 package + assets)
+ + jme3-utilities-ui:  action-oriented user interfaces (1 package + assets)
+ + jme3-utilities-x:  scene controls, navigation, physics, and XML (4 packages)
+
+If you plan to modify code or assets (or if you need any package not 
+included in the plugin), then you'll need to install the complete 
+jme3-utilities project.
+
+
+## How to install the SDK and the jme3-utilities project
 
 ### JMonkeyEngine (JME3) Software Development Kit (SDK)
 
@@ -105,7 +142,7 @@ To demonstrate this process, we'll apply it to BasicGame and then to
 CubeMapExample, a more sophisticated application. I encourage you to 
 follow along in your development environment.
 
-### BasicGame
+### BasicGame example
 
 You'll need:
  + A development machine with Java and the JME3 SDK installed.
@@ -367,6 +404,14 @@ The jme3utilities.TimeOfDay class is an app state which addresses this need.
 
 For a demonstration of the more advanced features of SkyControl, you may wish to
 study the TestSkyControl class in the "jme3utilities.sky.test" package.
+
+External links:
+  + November 2013 SkyControl demo video: 
+    https://www.youtube.com/watch?v=FsJRM6tr3oQ
+  + January 2014 SkyControl update video:
+    https://www.youtube.com/watch?v=gE4wxgBIkaw
+  + maze game which uses jme3-utilities:
+    https://github.com/stephengold/jme3-maze
 
 
 ## Acknowledgments
