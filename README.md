@@ -312,6 +312,7 @@ For a more impressive sun, apply a bloom filter to it:
     import com.jme3.post.filters.BloomFilter;
     import jme3utilities.Misc;
 ...
+    
     BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
     bloom.setBlurScale(2.5f);
     bloom.setExposurePower(1f);
