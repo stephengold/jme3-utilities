@@ -147,7 +147,7 @@ public class Misc {
      * @return package name, branch, and revision of this file
      */
     public static String getVersion() {//
-        return "jme3-utilities trunk $Rev: 436 $";
+        return "jme3-utilities trunk $Rev: 437 $";
     }
 
     /**
@@ -159,7 +159,6 @@ public class Misc {
         String verbose = getVersion();
         String[] words = verbose.split("\\s+");
         String result = String.format("%s %s", words[1], words[3]);
-
         return result;
     }
 
