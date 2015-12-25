@@ -170,13 +170,13 @@ typically a good place to add SkyControl.
 
  2. In the import section of "Main.java", add the following code:
 
-    import jme3utilities.sky.SkyControl;
+        import jme3utilities.sky.SkyControl;
    
  3. Scroll down to the simpleInitApp() method and insert the following code just 
     before the final close-brace:
 
-    SkyControl sc = new SkyControl(assetManager, cam, 0.9f, true, true);
-    rootNode.addControl(sc);
+        SkyControl sc = new SkyControl(assetManager, cam, 0.9f, true, true);
+        rootNode.addControl(sc);
 
 The parameters of the constructor are documented in the JavaDoc for the 
 SkyControl class.
@@ -189,16 +189,16 @@ in Sunnyvale, California with dense clouds:
 
  1. In the import section of "Main.java", add the following code:
 
-    import com.jme3.math.FastMath;
-    import java.util.Calendar;
+        import com.jme3.math.FastMath;
+        import java.util.Calendar;
    
  2. In simpleInitApp(), insert the following code just before the final 
     close brace:
 
-    sc.getSunAndStars().setHour(6f);
-    sc.getSunAndStars().setObserverLatitude(37.4046f * FastMath.DEG_TO_RAD);
-    sc.getSunAndStars().setSolarLongitude(Calendar.FEBRUARY, 10);
-    sc.setCloudiness(1f);
+        sc.getSunAndStars().setHour(6f);
+        sc.getSunAndStars().setObserverLatitude(37.4046f * FastMath.DEG_TO_RAD);
+        sc.getSunAndStars().setSolarLongitude(Calendar.FEBRUARY, 10);
+        sc.setCloudiness(1f);
    
 Other configuration methods are documented in the JavaDoc for the SkyControl, 
 SunAndStars, and Updater classes.
@@ -211,7 +211,7 @@ to see the sky, you must enable the control:
  1. In simpleInitApp(), insert the following code just before the final 
     close-brace:
 
-    sc.setEnabled(true);
+        sc.setEnabled(true);
    
 #### Test
 
@@ -243,13 +243,13 @@ after the sky cube in the scene graph.
 
  1. In the import section of "CubeMapExample.java", add the following code:
 
-    import jme3utilities.sky.SkyControl;
+        import jme3utilities.sky.SkyControl;
    
  2. Scroll down to the initializeSky() method and insert the following code just 
     before the final close-brace:
 
-    SkyControl sc = new SkyControl(assetManager, cam, 0.8f, false, true);
-    rootNode.addControl(sc);
+        SkyControl sc = new SkyControl(assetManager, cam, 0.8f, false, true);
+        rootNode.addControl(sc);
         
 For now, we'll turn star motion off, since that simplifies things. The lower 
 value (0.8) for cloud flattening will make it easier to compensate for the 
@@ -260,17 +260,17 @@ scene's low horizon.
  1. It's very important to disable the control's built-in star maps so that the 
     cube map's stars will be visible at night:
 
-    sc.clearStarMaps();
+        sc.clearStarMaps();
         
  2. Adjust the cloudiness so that clouds will be visible:
 
-    sc.setCloudiness(0.8f);
+        sc.setCloudiness(0.8f);
         
 #### Enable the SkyControl instance
 
 In initializeSky(), insert the following code just before the final close-brace:
 
-    sc.setEnabled(true);
+        sc.setEnabled(true);
         
 #### Tuning
 
@@ -280,25 +280,25 @@ possible result, it needs some tuning.
  1. To lower the edge of the cloud dome so that it's hidden by the terrain, add 
     the following code:
 
-    sc.setCloudYOffset(0.4f);
+        sc.setCloudYOffset(0.4f);
 
  2. To see the scene in daylight, add this:
 
-    sc.getSunAndStars().setHour(12f);
+        sc.getSunAndStars().setHour(12f);
 
  3. To synchronize the lights with SkyControl, add this to the import section:
 
-    import com.jme3.light.Light;
+        import com.jme3.light.Light;
 
-and this to the end of the initializeSky() method:
+    and this to the end of the initializeSky() method:
 
-    for (Light light : rootNode.getLocalLightList()) {
-        if (light.getName().equals("ambient")) {
-            sc.getUpdater().setAmbientLight((AmbientLight) light);
-        } else if (light.getName().equals("main")) {
-            sc.getUpdater().setMainLight((DirectionalLight) light);
+        for (Light light : rootNode.getLocalLightList()) {
+            if (light.getName().equals("ambient")) {
+                sc.getUpdater().setAmbientLight((AmbientLight) light);
+            } else if (light.getName().equals("main")) {
+                sc.getUpdater().setMainLight((DirectionalLight) light);
+            }
         }
-    }
         
 The uneven shading of the level terrain is due to sunlight coming in at a low
 angle. Since it's noon, the easiest way to raise the sun's elevation is to
@@ -311,9 +311,7 @@ For a more impressive sun, apply a bloom filter to it:
 
     import com.jme3.post.filters.BloomFilter;
     import jme3utilities.Misc;
-
 ...
-
     BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
     bloom.setBlurScale(2.5f);
     bloom.setExposurePower(1f);
@@ -326,9 +324,7 @@ To add star motion, it's not sufficient simply to change the control's
 constructor from
 
     SkyControl sc = new SkyControl(assetManager, cam, 0.8f, false, true);
-
 to
-
     SkyControl sc = new SkyControl(assetManager, cam, 0.8f, true, true);
 
 It's also necessary to rotate the cube map to match SkyControl's notions of time
@@ -346,25 +342,25 @@ The jme3utilities.TimeOfDay class is an app state which addresses this need.
 
  1. Import the class:
 
-    import jme3utilities.TimeOfDay;
+        import jme3utilities.TimeOfDay;
      
  2. Declare a field in CubeMapExample:
 
-    TimeOfDay timeOfDay;
+        TimeOfDay timeOfDay;
     
  3. Initialize and attach it in simpleInitApp():
 
-    timeOfDay = new TimeOfDay(19f);
-    stateManager.attach(timeOfDay);
-    timeOfDay.setRate(1000f);
+        timeOfDay = new TimeOfDay(19f);
+        stateManager.attach(timeOfDay);
+        timeOfDay.setRate(1000f);
 
-All that remains is to update the control.
+    All that remains is to update the control.
 
  4. Add two lines to simpleUpdate(), right before the invocation of 
     orientExternalSky():
 
-    float hour = timeOfDay.getHour();
-    sc.getSunAndStars().setHour(hour);
+        float hour = timeOfDay.getHour();
+        sc.getSunAndStars().setHour(hour);
         
 ### Next steps
 
