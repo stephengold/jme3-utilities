@@ -37,15 +37,27 @@ http://hub.jmonkeyengine.org/wiki/doku.php/jme3:requirements
 
 ### Source files
 
-[This section needs to be written for Git.]
+Clone the JME3 Utilities Package source files using Git:
+ 1. Open the Clone wizard in the IDE:
+   + Menu bar -> "Team" -> "Git" -> "Clone..."
+ 2. For "Repository URL:" specify 
+    "https://github.com/stephengold/jme3-utilities.git" (without the quotes).
+ 3. Clear the "User:" and "Password:" text boxes.
+ 4. Click on the "Next >" button.
+ 5. Make sure the "master" remote branch is checked.
+ 6. Click on the "Next >" button again.
+ 7. For "Parent Directory:" specify a writable folder on a local filesystem or 
+    a non-existent subfolder of such a folder.
+ 8. Make sure the "Scan for NetBeans Projects after Checkout" box is checked.
+ 9. Click on the "Finish" button.
 
 There will be problems due to a missing JAR file.
 Do not attempt to resolve them yet!
 
 ### External files
 
- 1. Download the JCommander JAR file from 
-      "http://mvnrepository.com/artifact/com.beust/jcommander" 
+ 1. Download the JCommander version 1.48 JAR file from 
+      "http://mvnrepository.com/artifact/com.beust/jcommander/1.48" 
     to the "jars" folder of the new project.
     
  2. If you plan to generate your own star maps, download the ASCII version of 
@@ -66,11 +78,10 @@ Do not attempt to resolve them yet!
   + Select "Properties".
   + Under "Categories:" select "Libraries".
   + Click on the "OK" button.
- 3. Resolve any remaining project problems.
- 4. Build the project's JARs:
+ 3. Build the project's JARs:
   + Right-click on the new project in the "Projects" window.
   + Select "Clean and Build".
- 5. (optional) Generate the project's javadoc:
+ 4. (optional) Generate the project's javadoc:
   + Right-click on the new project in the "Projects" window.
   + Select "Generate Javadoc".
 
