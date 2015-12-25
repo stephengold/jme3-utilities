@@ -3,7 +3,7 @@
 Java packages, developed for sgold's jMonkeyEngine games, which might prove 
 useful in similar projects.  Includes SkyControl for sky simulation.
 
-Automatically exported from http://code.google.com/p/jme3-utilities
+This project was formerly hosted at http://code.google.com/p/jme3-utilities
 
 The source files are in JDK 7 format with CRLF line endings.
 
@@ -48,9 +48,9 @@ Do not attempt to resolve them yet!
       "http://mvnrepository.com/artifact/com.beust/jcommander" 
     to the "jars" folder of the new project.
     
- 2. If you plan to generate your own star maps, download 
-    the Yale Catalogue of Bright Stars from 
-      "http://www-kpno.kpno.noao.edu/Info/Caches/Catalogs/BSC5/catalog5.html"
+ 2. If you plan to generate your own star maps, download the ASCII version of 
+    version 5 of the Yale Bright Star Catalog from 
+      "http://tdc-www.harvard.edu/catalogs/bsc5.html"
     to the "assets/Textures/skies" folder of the new project.
     
 ### Project configuration

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2015, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -96,7 +96,7 @@ public class MakeStarMaps {
     /**
      * minimum (brightest) apparent magnitude of all stars in the catalog
      */
-    final private static float minMagnitude = 0.01f;
+    final private static float minMagnitude = -1.47f;
     /**
      * luminosity ratio between successive stellar magnitudes (5th root of 100)
      */
@@ -144,12 +144,12 @@ public class MakeStarMaps {
      */
     final private static String applicationName = "MakeStarMaps";
     /**
-     * file path to the input file, a textual version of the Yale Catalogue of
-     * Bright Stars, which may be downloaded from
-     * http://www-kpno.kpno.noao.edu/Info/Caches/Catalogs/BSC5/catalog5.html
+     * file path to the input file, an ASCII version of version 5 of the 
+     * Yale Bright Star Catalog, which may be downloaded from
+     * http://tdc-www.harvard.edu/catalogs/bsc5.html
      */
     final private static String catalogFilePath =
-            "assets/Textures/skies/Bright Star Catalog.htm";
+            "assets/Textures/skies/bsc5.dat";
     // *************************************************************************
     // fields
     /**
@@ -325,11 +325,11 @@ public class MakeStarMaps {
             throws InvalidEntryException {
         assert line != null;
         /*
-         * Extract declination components from the text.
+         * Extract declination components from the line of text.
          */
-        String dd = line.substring(18, 21);
-        String mm = line.substring(22, 24);
-        String ss = line.substring(25, 30);
+        String dd = line.substring(83, 86);
+        String mm = line.substring(86, 88);
+        String ss = line.substring(88, 90);
         logger.log(Level.FINE, "{0}d {1}m {2}s", new Object[]{dd, mm, ss});
         /*
          * sanity checks
@@ -377,9 +377,9 @@ public class MakeStarMaps {
         /*
          * Extract right ascension components from the line of text.
          */
-        String hh = line.substring(6, 8);
-        String mm = line.substring(9, 11);
-        String ss = line.substring(12, 17);
+        String hh = line.substring(75, 77);
+        String mm = line.substring(77, 79);
+        String ss = line.substring(79, 83);
         logger.log(Level.FINE, "{0}:{1}:{2}", new Object[]{hh, mm, ss});
         /*
          * sanity checks
@@ -729,7 +729,7 @@ public class MakeStarMaps {
             if (textLine.length() < 5) {
                 continue;
             }
-            String actualPrefix = textLine.substring(0, 5);
+            String actualPrefix = textLine.substring(0, 4);
             if (!actualPrefix.matches("[ ]*[0-9]+")) {
                 continue;
             }
@@ -814,17 +814,17 @@ public class MakeStarMaps {
         assert textLine != null;
         assert entryId >= 1 : entryId;
         /*
-         * Extract the apparent magnitude from the text.
+         * Extract the apparent magnitude field from the line of text.
          */
-        if (textLine.length() < 60) {
+        if (textLine.length() < 107) {
             throw new InvalidEntryException("catalog entry is too short");
         }
-        String magnitudeText = textLine.substring(56, 60);
+        String magnitudeText = textLine.substring(102, 107);
         logger.log(Level.FINE, "mag={0}", magnitudeText);
         /*
          * sanity checks on the magnitude
          */
-        if (magnitudeText.equals("????")) {
+        if (magnitudeText.equals("     ")) {
             throw new InvalidMagnitudeException();
         }
         float apparentMagnitude;
