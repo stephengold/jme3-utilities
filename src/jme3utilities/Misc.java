@@ -37,6 +37,8 @@ import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.IntMap;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
@@ -87,6 +89,7 @@ public class Misc {
     /**
      * Detach all app states which are subclasses of a specified class.
      *
+     * @param <T> class to scan for
      * @param stateManager (not null)
      * @param whichClass (not null)
      */
@@ -129,11 +132,11 @@ public class Misc {
     /**
      * Generate the filesystem path to a file in the user's home directory.
      *
-     * @param fileName file name to use (not null)
+     * @param fileName file name to use (not null, not empty)
      * @return generated path
      */
     public static String getUserPath(String fileName) {
-        Validate.nonNull(fileName, "file name");
+        Validate.nonEmpty(fileName, "file name");
 
         String homePath = System.getProperty("user.home");
         assert homePath != null;
@@ -147,7 +150,7 @@ public class Misc {
      * @return package name, branch, and revision of this file
      */
     public static String getVersion() {//
-        return "jme3-utilities trunk $Rev: 438 $";
+        return "jme3-utilities trunk $Rev: 439 $";
     }
 
     /**
@@ -186,11 +189,13 @@ public class Misc {
      */
     public static void setGrayPixel(Graphics2D graphics, int x, int y,
             float brightness) {
-        if (x < 0 || x >= graphics.getDeviceConfiguration().getBounds().width) {
+        GraphicsConfiguration configuration = graphics.getDeviceConfiguration();
+        Rectangle bounds = configuration.getBounds();
+        if (x < 0 || x >= bounds.width) {
             logger.log(Level.SEVERE, "x={0}", x);
             throw new IllegalArgumentException("X coordinate out of bounds");
         }
-        if (y < 0 || y >= graphics.getDeviceConfiguration().getBounds().height) {
+        if (y < 0 || y >= bounds.height) {
             logger.log(Level.SEVERE, "y={0}", y);
             throw new IllegalArgumentException("Y coordinate out of bounds");
         }
@@ -215,12 +220,12 @@ public class Misc {
      * Write an image to a PNG file, attempting to overwrite any pre-existing
      * file.
      *
-     * @param filePath path to the output file (not null)
+     * @param filePath path to the output file (not null, not empty)
      * @param image image to be written (not null)
      */
     public static void writeMap(String filePath, RenderedImage image)
             throws IOException {
-        Validate.nonNull(filePath, "path");
+        Validate.nonEmpty(filePath, "path");
         Validate.nonNull(image, "image");
 
         File textureFile = new File(filePath);
