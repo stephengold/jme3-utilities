@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2015, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -104,6 +104,25 @@ final public class Validate {
                     new Object[]{description, value});
             String message =
                     String.format("%s should not be negative", description);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Validate a non-null, non-empty string.
+     *
+     * @param string string to validate (not null, not empty)
+     * @param description description of the string (not null)
+     * @throws NullPointerException if the string is null
+     * @throws IllegalArgumentException if the string has zero length
+     */
+    public static void nonEmpty(String string, String description) {
+        nonNull(string, description);
+
+        int length = string.length();
+        if (length <= 0) {
+            String message =
+                    String.format("%s should not be empty", description);
             throw new IllegalArgumentException(message);
         }
     }
