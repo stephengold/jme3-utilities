@@ -1,6 +1,6 @@
 # jme3-utilities
 
-This project contains Java packages and asset packs, developed for sgold's 
+This project contains Java packages and asset packs, developed for sgold's
 jMonkeyEngine games, which might prove useful in similar projects.  It includes
 the SkyControl library for sky simulation.
 
@@ -25,20 +25,20 @@ The source files are in JDK 7 format with CRLF line endings.
 
 ### History
 
-Since September 2015, this project has been hosted at 
+Since September 2015, this project has been hosted at
 https://github.com/stephengold/jme3-utilities
 
-From November 2013 to September 2015, it was hosted at 
+From November 2013 to September 2015, it was hosted at
 http://code.google.com/p/jme3-utilities
 
 
 ## SkyControl plugin
 
-This project is available in plugin (read-only) form.  Somewhat confusingly, 
+This project is available in plugin (read-only) form.  Somewhat confusingly,
 the plugin is named "SkyControl".
 
-The SkyControl plugin is derived from this project.  It is more stable, but 
-usually less advanced.  It doesn't include every package and asset in the 
+The SkyControl plugin is derived from this project.  It is more stable, but
+usually less advanced.  It doesn't include every package and asset in the
 project.
 
 The plugin is available from the jMonkeyEngine User Contributions Update Center:
@@ -47,15 +47,15 @@ The plugin is available from the jMonkeyEngine User Contributions Update Center:
  + archived SVN repo at https://code.google.com/p/jmonkeyplatform-contributions
 
 The SkyControl plugin consists of five libraries:
- + SkyControl:  basic utility classes, math, and sky simulation 
+ + SkyControl:  basic utility classes, math, and sky simulation
    (3 packages + assets)
  + jme3-utilities-debug:  test/debug aids (1 package)
  + jme3-utilities-nifty:  support for Nifty user interfaces (1 package + assets)
  + jme3-utilities-ui:  action-oriented user interfaces (1 package + assets)
  + jme3-utilities-x:  scene controls, navigation, physics, and XML (4 packages)
 
-If you plan to modify code or assets (or if you need any package not 
-included in the plugin), then you'll need to install the complete 
+If you plan to modify code or assets (or if you need any package not
+included in the plugin), then you'll need to install the complete
 jme3-utilities project.
 
 
@@ -69,7 +69,7 @@ jme3-utilities project.
    + an integrated development environment (IDE) based on NetBeans, and
    + the Blender 3D application.
 
-The hardware and software requirements of the SDK are documented at 
+The hardware and software requirements of the SDK are documented at
 http://hub.jmonkeyengine.org/wiki/doku.php/jme3:requirements
 
 ### Source files
@@ -77,13 +77,13 @@ http://hub.jmonkeyengine.org/wiki/doku.php/jme3:requirements
 Clone the JME3 Utilities Package source files using Git:
  1. Open the Clone wizard in the IDE:
    + Menu bar -> "Team" -> "Git" -> "Clone..."
- 2. For "Repository URL:" specify 
+ 2. For "Repository URL:" specify
     "https://github.com/stephengold/jme3-utilities.git" (without the quotes).
  3. Clear the "User:" and "Password:" text boxes.
  4. Click on the "Next >" button.
  5. Make sure the "master" remote branch is checked.
  6. Click on the "Next >" button again.
- 7. For "Parent Directory:" specify a writable folder on a local filesystem or 
+ 7. For "Parent Directory:" specify a writable folder on a local filesystem or
     a non-existent subfolder of such a folder.
  8. Make sure the "Scan for NetBeans Projects after Checkout" box is checked.
  9. Click on the "Finish" button.
@@ -93,15 +93,15 @@ Do not attempt to resolve them yet!
 
 ### External files
 
- 1. Download the JCommander version 1.48 JAR file from 
-    "http://mvnrepository.com/artifact/com.beust/jcommander/1.48" 
+ 1. Download the JCommander version 1.48 JAR file from
+    "http://mvnrepository.com/artifact/com.beust/jcommander/1.48"
     to the "jars" folder of the new project.
-    
- 2. If you plan to generate your own star maps, download the ASCII version of 
-    version 5 of the Yale Bright Star Catalog from 
+
+ 2. If you plan to generate your own star maps, download the ASCII version of
+    version 5 of the Yale Bright Star Catalog from
     "http://tdc-www.harvard.edu/catalogs/bsc5.html"
     to the "assets/Textures/skies" folder of the new project.
-    
+
 ### Project configuration
 
  1. (optional) Rename the project:
@@ -122,7 +122,7 @@ Do not attempt to resolve them yet!
   + Right-click on the new project in the "Projects" window.
   + Select "Generate Javadoc".
 
-Note: The source files are in JDK 7 format, but the IDE creates new JME3 
+Note: The source files are in JDK 7 format, but the IDE creates new JME3
 projects in JDK 5 format.
 
 
@@ -138,8 +138,8 @@ Adding it to an existing JME3 project should be a simple six-step process:
  5. Enable the SkyControl instance.
  6. Test and tune as necessary.
 
-To demonstrate this process, we'll apply it to BasicGame and then to 
-CubeMapExample, a more sophisticated application. I encourage you to 
+To demonstrate this process, we'll apply it to BasicGame and then to
+CubeMapExample, a more sophisticated application. I encourage you to
 follow along in your development environment.
 
 ### BasicGame example
@@ -158,27 +158,27 @@ To instantiate the BasicGame Project:
  6. For "Project Location:" specify a new folder on a local filesystem.
  7. Click on the "Finish" button.
 
-If you're unfamiliar with BasicGame, you may wish to run it (and/or examine 
+If you're unfamiliar with BasicGame, you may wish to run it (and/or examine
 the source code) to see how it works before modifying it.
 
 #### Add the JME3 Utilities Package JARs to the project
 
 Open the project's properties in the IDE:
- 1. Right-click on the BasicGame project (not its assets) in the "Projects" 
+ 1. Right-click on the BasicGame project (not its assets) in the "Projects"
     window.
  2. Select "Properties".
  3. Under "Categories:" select "Libraries".
  4. Click on the "Compile" tab.
- 5. If the SkyControl plugin is installed, then the SkyControl library can 
+ 5. If the SkyControl plugin is installed, then the SkyControl library can
     provide the required JARs:
    + Click on the "Add Library..." button.
    + Select the "SkyControl" library.
    + Click on the "Add Library" button.
    + Click on the "OK" button.
- 6. If the SkyControl plugin is not installed, then two JARs are required, one 
+ 6. If the SkyControl plugin is not installed, then two JARs are required, one
     for classes and one for assets:
    + Click on the "Add JAR/Folder" button.
-   + Navigate to the folder where you installed the JME3 Utilities Package 
+   + Navigate to the folder where you installed the JME3 Utilities Package
      and then to the "dist" folder therein.
    + Select the "jME3-utilities.jar" file.
    + Click on the "Open" button.
@@ -187,15 +187,15 @@ Open the project's properties in the IDE:
    + Select the "jME3-utilities-assets.jar" file.
    + Click on the "Open" button again.
    + Click on the "OK" button.
-   
+
 #### Disable any existing sky simulation
 
-Since BasicGame comes without any sky simulation -- just the default (black) 
+Since BasicGame comes without any sky simulation -- just the default (black)
 viewport background -- there is nothing to remove.
 
 #### Add a SkyControl instance
 
-The scene graph of BasicGame has only one node, the root node. The root node is 
+The scene graph of BasicGame has only one node, the root node. The root node is
 typically a good place to add SkyControl.
 
  1. Open the "Main.java" source file in the IDE:
@@ -208,19 +208,19 @@ typically a good place to add SkyControl.
  2. In the import section of "Main.java", add the following code:
 
         import jme3utilities.sky.SkyControl;
-   
- 3. Scroll down to the simpleInitApp() method and insert the following code just 
+
+ 3. Scroll down to the simpleInitApp() method and insert the following code just
     before the final close-brace:
 
         SkyControl sc = new SkyControl(assetManager, cam, 0.9f, true, true);
         rootNode.addControl(sc);
 
-The parameters of the constructor are documented in the JavaDoc for the 
+The parameters of the constructor are documented in the JavaDoc for the
 SkyControl class.
 
 #### Configure the SkyControl instance
 
-By default, SkyControl simulates midnight on March 21st in Wiltshire, England, 
+By default, SkyControl simulates midnight on March 21st in Wiltshire, England,
 with no clouds and a full moon. Instead, let's configure 6 a.m. on February 10th
 in Sunnyvale, California with dense clouds:
 
@@ -228,93 +228,93 @@ in Sunnyvale, California with dense clouds:
 
         import com.jme3.math.FastMath;
         import java.util.Calendar;
-   
- 2. In simpleInitApp(), insert the following code just before the final 
+
+ 2. In simpleInitApp(), insert the following code just before the final
     close brace:
 
         sc.getSunAndStars().setHour(6f);
         sc.getSunAndStars().setObserverLatitude(37.4046f * FastMath.DEG_TO_RAD);
         sc.getSunAndStars().setSolarLongitude(Calendar.FEBRUARY, 10);
         sc.setCloudiness(1f);
-   
-Other configuration methods are documented in the JavaDoc for the SkyControl, 
+
+Other configuration methods are documented in the JavaDoc for the SkyControl,
 SunAndStars, and Updater classes.
 
 #### Enable the SkyControl instance
 
-Unlike most JME3 controls, SkyControl instantiates in a disabled state. In order 
+Unlike most JME3 controls, SkyControl instantiates in a disabled state. In order
 to see the sky, you must enable the control:
 
- 1. In simpleInitApp(), insert the following code just before the final 
+ 1. In simpleInitApp(), insert the following code just before the final
     close-brace:
 
         sc.setEnabled(true);
-   
+
 #### Test
 
-To test the modified BasicGame, right-click in the "Main.java" editor window and 
+To test the modified BasicGame, right-click in the "Main.java" editor window and
 select "Run File (Shift+F6)".
 
 
 ### CubeMapExample
 
-Sometimes you'll want to combine SkyControl with other sky elements. The JME3 
-Utilities Packages includes CubeMapExample, a slightly more sophisticated 
-application than BasicGame. CubeMapExample includes a cube-mapped sky, lit 
-terrain, and multiple light sources. In this section, you'll see how SkyControl 
+Sometimes you'll want to combine SkyControl with other sky elements. The JME3
+Utilities Packages includes CubeMapExample, a slightly more sophisticated
+application than BasicGame. CubeMapExample includes a cube-mapped sky, lit
+terrain, and multiple light sources. In this section, you'll see how SkyControl
 can be used to add sun, moon, and clouds to CubeMapExample.
 
-In the Projects window of the IDE, navigate to the "jme3utilities.sky.test" 
+In the Projects window of the IDE, navigate to the "jme3utilities.sky.test"
 source package.  Open the "CubeMapExample.java" file and study the code.
 
-Since CubeMapExample is part of the JME3 Utilities Package, there are no 
-libraries to add.  And since we plan to use the existing cube map, there's 
+Since CubeMapExample is part of the JME3 Utilities Package, there are no
+libraries to add.  And since we plan to use the existing cube map, there's
 nothing to remove.
 
 #### Add a SkyControl instance
 
-Both SkyFactory and SkyControl add geometries to Bucket.Sky. In the absence of a 
-custom GeometryComparator, geometries in this bucket are rendered in scene graph 
-order. Since the cube map is opaque, we want to SkyControl to add its geometries 
+Both SkyFactory and SkyControl add geometries to Bucket.Sky. In the absence of a
+custom GeometryComparator, geometries in this bucket are rendered in scene graph
+order. Since the cube map is opaque, we want to SkyControl to add its geometries
 after the sky cube in the scene graph.
 
  1. In the import section of "CubeMapExample.java", add the following code:
 
         import jme3utilities.sky.SkyControl;
-   
- 2. Scroll down to the initializeSky() method and insert the following code just 
+
+ 2. Scroll down to the initializeSky() method and insert the following code just
     before the final close-brace:
 
         SkyControl sc = new SkyControl(assetManager, cam, 0.8f, false, true);
         rootNode.addControl(sc);
-        
-For now, we'll turn star motion off, since that simplifies things. The lower 
-value (0.8) for cloud flattening will make it easier to compensate for the 
+
+For now, we'll turn star motion off, since that simplifies things. The lower
+value (0.8) for cloud flattening will make it easier to compensate for the
 scene's low horizon.
 
 #### Configure the SkyControl instance
 
- 1. It's very important to disable the control's built-in star maps so that the 
+ 1. It's very important to disable the control's built-in star maps so that the
     cube map's stars will be visible at night:
 
         sc.clearStarMaps();
-        
+
  2. Adjust the cloudiness so that clouds will be visible:
 
         sc.setCloudiness(0.8f);
-        
+
 #### Enable the SkyControl instance
 
 In initializeSky(), insert the following code just before the final close-brace:
 
         sc.setEnabled(true);
-        
+
 #### Tuning
 
 At this point, the application should run successfully. However, for the best
 possible result, it needs some tuning.
 
- 1. To lower the edge of the cloud dome so that it's hidden by the terrain, add 
+ 1. To lower the edge of the cloud dome so that it's hidden by the terrain, add
     the following code:
 
         sc.setCloudYOffset(0.4f);
@@ -336,7 +336,7 @@ possible result, it needs some tuning.
                 sc.getUpdater().setMainLight((DirectionalLight) light);
             }
         }
-        
+
 The uneven shading of the level terrain is due to sunlight coming in at a low
 angle. Since it's noon, the easiest way to raise the sun's elevation is to
 decrease the observer's latitude.  Try, for instance:
@@ -349,16 +349,16 @@ For a more impressive sun, apply a bloom filter to it:
     import com.jme3.post.filters.BloomFilter;
     import jme3utilities.Misc;
 ...
-    
+
     BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
     bloom.setBlurScale(2.5f);
     bloom.setExposurePower(1f);
     Misc.getFpp(viewPort, assetManager).addFilter(bloom);
     sc.getUpdater().addBloomFilter(bloom);
-        
+
 #### Adding star motion
 
-To add star motion, it's not sufficient simply to change the control's 
+To add star motion, it's not sufficient simply to change the control's
 constructor from
 
     SkyControl sc = new SkyControl(assetManager, cam, 0.8f, false, true);
@@ -381,11 +381,11 @@ The jme3utilities.TimeOfDay class is an app state which addresses this need.
  1. Import the class:
 
         import jme3utilities.TimeOfDay;
-     
+
  2. Declare a field in CubeMapExample:
 
         TimeOfDay timeOfDay;
-    
+
  3. Initialize and attach it in simpleInitApp():
 
         timeOfDay = new TimeOfDay(19f);
@@ -394,19 +394,19 @@ The jme3utilities.TimeOfDay class is an app state which addresses this need.
 
     All that remains is to update the control.
 
- 4. Add two lines to simpleUpdate(), right before the invocation of 
+ 4. Add two lines to simpleUpdate(), right before the invocation of
     orientExternalSky():
 
         float hour = timeOfDay.getHour();
         sc.getSunAndStars().setHour(hour);
-        
+
 ### Next steps
 
 For a demonstration of the more advanced features of SkyControl, you may wish to
 study the TestSkyControl class in the "jme3utilities.sky.test" package.
 
 External links:
-  + November 2013 SkyControl demo video: 
+  + November 2013 SkyControl demo video:
     https://www.youtube.com/watch?v=FsJRM6tr3oQ
   + January 2014 SkyControl update video:
     https://www.youtube.com/watch?v=gE4wxgBIkaw
@@ -416,12 +416,12 @@ External links:
 
 ## Acknowledgments
 
-Like most projects, the jme3-utilities project builds upon the work of many who 
+Like most projects, the jme3-utilities project builds upon the work of many who
 have gone before.
 
 I therefore acknowledge the following software developers:
-+ Cris (aka "t0neg0d") for creating SkyDome (which provided both an inspiration 
-  and a starting point for SkyControl) and also for encouraging me to run with 
++ Cris (aka "t0neg0d") for creating SkyDome (which provided both an inspiration
+  and a starting point for SkyControl) and also for encouraging me to run with
   it ... thank you yet again!
 + Paul Speed, for helpful insights which got me unstuck during debugging
 + the brave souls who volunteered to be alpha testers for SkyControl, including:
@@ -458,18 +458,18 @@ I therefore acknowledge the following software developers:
   + Alex Peterson's Spacescape tool
   + the WinMerge differencing and merging tool
 
-Many of SkyControl's assets were based on the works of others who licensed their 
+Many of SkyControl's assets were based on the works of others who licensed their
 works under liberal terms or contributed them to the public domain.
 For this I thank:
   + Cris (aka "t0neg0d")
   + Jacques Descloitres, MODIS Rapid Response Team, NASA/GSFC
   + Tom Ruen
 
-I am grateful to Google Code and Github for providing free hosting for the 
+I am grateful to Google Code and Github for providing free hosting for the
 jme3-utilities project and many other open-source projects.
 
-I'm also grateful to Julian (for lending me one of his microphones) and finally 
+I'm also grateful to Julian (for lending me one of his microphones) and finally
 my dear Holly, for keeping me sane.
 
-If I've misattributed anything or left anyone out, please let me know so I can 
+If I've misattributed anything or left anyone out, please let me know so I can
 correct the situation.

@@ -144,8 +144,8 @@ public class MakeStarMaps {
      */
     final private static String applicationName = "MakeStarMaps";
     /**
-     * file path to the input file, an ASCII version of version 5 of the 
-     * Yale Bright Star Catalog, which may be downloaded from
+     * file path to the input file, an ASCII version of version 5 of the Yale
+     * Bright Star Catalog, which may be downloaded from
      * http://tdc-www.harvard.edu/catalogs/bsc5.html
      */
     final private static String catalogFilePath =
