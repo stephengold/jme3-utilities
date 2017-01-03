@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2015, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -222,6 +222,7 @@ public class Misc {
      *
      * @param filePath path to the output file (not null, not empty)
      * @param image image to be written (not null)
+     * @throws IOException if the image cannot be written 
      */
     public static void writeMap(String filePath, RenderedImage image)
             throws IOException {
