@@ -21,7 +21,7 @@ Summary of SkyControl features:
 ### Conventions
 
 All package names in this project begin with "jme3utilities".
-The source files are in JDK 7 format with CRLF line endings.
+The source files are in JDK 7 format.
 
 ### History
 
@@ -94,7 +94,7 @@ Do not attempt to resolve them yet!
 ### External files
 
  1. Download the JCommander version 1.48 JAR file from
-    "http://mvnrepository.com/artifact/com.beust/jcommander/1.48"
+    "https://mvnrepository.com/artifact/com.beust/jcommander/1.48"
     to the "jars" folder of the new project.
 
  2. If you plan to generate your own star maps, download the ASCII version of
@@ -363,6 +363,7 @@ constructor from
 
     SkyControl sc = new SkyControl(assetManager, cam, 0.8f, false, true);
 to
+
     SkyControl sc = new SkyControl(assetManager, cam, 0.8f, true, true);
 
 It's also necessary to rotate the cube map to match SkyControl's notions of time
@@ -468,7 +469,7 @@ For this I thank:
 I am grateful to Google Code and Github for providing free hosting for the
 jme3-utilities project and many other open-source projects.
 
-I'm also grateful to Julian (for lending me one of his microphones) and finally
+I'm also grateful to Amber (for lending me one of her microphones) and finally
 my dear Holly, for keeping me sane.
 
 If I've misattributed anything or left anyone out, please let me know so I can
