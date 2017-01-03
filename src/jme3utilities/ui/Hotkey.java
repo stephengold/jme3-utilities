@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * Hotkey on a desktop system's keyboard.
@@ -306,7 +307,8 @@ public class Hotkey {
      * @param inputManager application's input manager (not null)
      */
     public void map(String actionString, InputManager inputManager) {
-        assert actionString != null;
+        Validate.nonNull(actionString, "action");
+        Validate.nonNull(inputManager, "manager");
 
         KeyTrigger trigger = new KeyTrigger(keyCode);
         inputManager.addMapping(actionString, trigger);

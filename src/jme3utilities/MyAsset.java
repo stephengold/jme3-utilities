@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2015, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -157,13 +157,13 @@ final public class MyAsset {
      * Create a cubic star map.
      *
      * @param assetManager (not null)
-     * @param name name of the star map (not null)
+     * @param name name of the star map (not null, not empty)
      * @return new instance
      */
     public static Spatial createStarMap(AssetManager assetManager,
             String name) {
         Validate.nonNull(assetManager, "asset manager");
-        Validate.nonNull(name, "star map name");
+        Validate.nonEmpty(name, "star map name");
         /*
          * Load the cube map textures.
          */
@@ -219,13 +219,13 @@ final public class MyAsset {
      * Create an unshaded material from a texture asset path.
      *
      * @param assetManager (not null)
-     * @param assetPath to the texture asset (not null)
+     * @param assetPath to the texture asset (not null, not empty)
      * @return new instance
      */
     public static Material createUnshadedMaterial(AssetManager assetManager,
             String assetPath) {
         Validate.nonNull(assetManager, "asset manager");
-        Validate.nonNull(assetPath, "path");
+        Validate.nonEmpty(assetPath, "path");
 
         Texture texture = loadTexture(assetManager, assetPath);
         Material material = createUnshadedMaterial(assetManager, texture);
@@ -273,14 +273,14 @@ final public class MyAsset {
      * Load the texture asset for a named face of a cubical star map.
      *
      * @param assetManager (not null)
-     * @param mapName name of the star map folder (not null)
-     * @param faceName name of the face (not null, e.g. "top3")
+     * @param mapName name of the star map folder (not null, not empty)
+     * @param faceName name of the face (not null, not empty, e.g. "top3")
      * @return texture which was loaded (not null)
      */
     public static Texture loadFace(AssetManager assetManager, String mapName,
             String faceName) {
-        Validate.nonNull(mapName, "folder name");
-        Validate.nonNull(faceName, "face name");
+        Validate.nonEmpty(mapName, "folder name");
+        Validate.nonEmpty(faceName, "face name");
 
         String path = String.format("Textures/skies/star-maps/%s/%s_%s.png",
                 mapName, mapName, faceName);
@@ -294,12 +294,12 @@ final public class MyAsset {
      * Load a non-flipped texture asset in edge-clamp mode.
      *
      * @param assetManager (not null)
-     * @param assetPath to the texture asset (not null)
+     * @param assetPath to the texture asset (not null, not empty)
      * @return texture which was loaded (not null)
      */
     public static Texture loadTexture(AssetManager assetManager,
             String assetPath) {
-        Validate.nonNull(assetPath, "path");
+        Validate.nonEmpty(assetPath, "path");
 
         boolean flipY = false;
         TextureKey key = new TextureKey(assetPath, flipY);

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2015, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,7 @@
 package jme3utilities.sky;
 
 import com.jme3.math.FastMath;
+import jme3utilities.Validate;
 
 /**
  * Enumerate some phases of the moon.
@@ -97,10 +98,12 @@ public enum LunarPhase {
     /**
      * Find a phase based on its textual description.
      *
-     * @param description returned by describe()
+     * @param description returned by describe() (not null, not empty)
      * @return phase, or null if the description does not match any value
      */
     public static LunarPhase fromDescription(String description) {
+        Validate.nonEmpty(description, "description");
+
         for (LunarPhase phase : values()) {
             if (phase.describe().equals(description)) {
                 return phase;

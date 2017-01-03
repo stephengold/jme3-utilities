@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2015, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -129,6 +129,9 @@ public class MyAnimation {
      * @return textual description (not null)
      */
     public static String describe(Track track, Spatial spatial) {
+        Validate.nonNull(track, "track");
+        Validate.nonNull(spatial, "spatial");
+
         char typeChar = describeTrack(track);
         float length = track.getLength();
         String result;

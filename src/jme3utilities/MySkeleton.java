@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2015, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -69,14 +69,14 @@ public class MySkeleton
      * Compute one rotation angle of a named bone in a skeletonized spatial.
      *
      * @param model animated spatial which contains the bone (not null)
-     * @param boneName name of the bone to measure (not null)
+     * @param boneName name of the bone to measure (not null, not empty)
      * @param axis local rotation axis to measure (0 &rarr; X, 1 &rarr; Y, 2
      * &rarr; Z)
      * @return rotation angle (in radians) or zero for unknown bone
      */
     public static float boneAngle(Spatial model, String boneName, int axis) {
         Validate.nonNull(model, "model");
-        Validate.nonNull(boneName, "name");
+        Validate.nonEmpty(boneName, "bone");
         if (axis < 0 || axis > 2) {
             logger.log(Level.SEVERE, "axis={0}", axis);
             throw new IllegalArgumentException(
@@ -97,12 +97,12 @@ public class MySkeleton
      * Access a named bone in a skeletonized spatial.
      *
      * @param model animated spatial which contains the bone (not null)
-     * @param boneName name of the bone to access (not null)
+     * @param boneName name of the bone to access (not null, not empty)
      * @return pre-existing instance (or null if not found)
      */
     public static Bone getBone(Spatial model, String boneName) {
         Validate.nonNull(model, "model");
-        Validate.nonNull(boneName, "name");
+        Validate.nonEmpty(boneName, "name");
 
         Skeleton skeleton = getSkeleton(model);
         if (skeleton == null) {
@@ -195,7 +195,7 @@ public class MySkeleton
      * Adjust one rotation angle in the bind pose of a skeletonized spatial.
      *
      * @param model skeletonized spatial which contains the bone (not null)
-     * @param boneName name of the bone to adjust (not null)
+     * @param boneName name of the bone to adjust (not null, not empty)
      * @param axis local rotation axis to adjust (0 &rarr; X, 1 &rarr; Y, 2
      * &rarr; Z)
      * @param newAngle new rotation angle (in radians)
@@ -203,7 +203,7 @@ public class MySkeleton
     public static void setBoneAngle(Spatial model, String boneName, int axis,
             float newAngle) {
         Validate.nonNull(model, "model");
-        Validate.nonNull(boneName, "name");
+        Validate.nonEmpty(boneName, "bone");
         if (axis < 0 || axis > 2) {
             logger.log(Level.SEVERE, "axis={0}", axis);
             throw new IllegalArgumentException(
@@ -300,12 +300,12 @@ public class MySkeleton
      * Compute the world orientation of a named bone.
      *
      * @param model skeletonized spatial which contains the bone (not null)
-     * @param boneName (not null)
+     * @param boneName (not null, not empty)
      * @return new instance
      */
     public static Quaternion worldOrientation(Spatial model, String boneName) {
         Validate.nonNull(model, "model");
-        Validate.nonNull(boneName, "name");
+        Validate.nonEmpty(boneName, "bone");
 
         Bone bone = getBone(model, boneName);
         Quaternion result = worldOrientation(model, bone);

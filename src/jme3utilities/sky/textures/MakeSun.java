@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2015, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -179,10 +179,11 @@ public class MakeSun {
     /**
      * Generate an image map for a disc with an optional surround.
      *
-     * @param styleName (not null)
+     * @param styleName (not null, not empty)
      */
     private void makeSun(String styleName) {
         assert styleName != null;
+        assert styleName.length() > 0;
 
         try {
             switch (styleName) {
@@ -209,7 +210,7 @@ public class MakeSun {
     /**
      * Generate an image map for a disc with an optional surround.
      *
-     * @param fileName (not null)
+     * @param styleName (not null, not empty)
      * @param discSharpness alpha slope inside the disc's edge (&gt;0)
      * @param surroundAlpha opacity of the surround at the disc's edge (&ge;0)
      * @param numRays number of rays in the surround (&gt;0, or 0 for a circular
@@ -219,6 +220,7 @@ public class MakeSun {
             float surroundAlpha, int numRays)
             throws IOException {
         assert styleName != null;
+        assert styleName.length() > 0;
         assert discSharpness > 0f : discSharpness;
         assert surroundAlpha >= 0f : surroundAlpha;
         assert numRays >= -1 : numRays;

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2015, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@ import com.jme3.math.Vector3f;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
+import jme3utilities.Validate;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -84,7 +85,7 @@ final public class DomInput {
      * @return new instance
      */
     public static Vector3f createVector3f(Element element, float scaleFactor) {
-        assert scaleFactor > 0f : scaleFactor;
+        Validate.positive(scaleFactor, "scale");
 
         NamedNodeMap map = element.getAttributes();
         float x = getFloat(map, "x", 0f);
@@ -104,7 +105,7 @@ final public class DomInput {
      */
     public static float getFloat(NamedNodeMap map, String name,
             float defaultValue) {
-        assert name != null;
+        Validate.nonNull(name, "name");
 
         Attr attr = (Attr) map.getNamedItem(name);
         if (attr == null) {

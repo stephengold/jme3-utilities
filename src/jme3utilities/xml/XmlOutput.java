@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2015, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@ import com.jme3.math.Vector3f;
 import java.io.PrintStream;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
+import jme3utilities.Validate;
 
 /**
  * XML output utility methods. Aside from test cases, all methods here should be
@@ -67,8 +68,8 @@ final public class XmlOutput {
      */
     public static void put(PrintStream stream, String tag,
             Quaternion quaternion, String indent) {
-        assert tag != null;
-        assert indent != null;
+        Validate.nonNull(tag, "tag");
+        Validate.nonNull(indent, "indent");
 
         stream.printf("%s<%s", indent, tag);
         putAttribute(stream, "x", quaternion.getX(), 6);
@@ -89,9 +90,9 @@ final public class XmlOutput {
      */
     public static void put(PrintStream stream, String tag, Vector3f vector,
             String indent, float scaleFactor) {
-        assert tag != null;
-        assert indent != null;
-        assert scaleFactor > 0f : scaleFactor;
+        Validate.nonNull(tag, "tag");
+        Validate.nonNull(indent, "indent");
+        Validate.positive(scaleFactor, "scale");
 
         stream.printf("%s<%s", indent, tag);
         putAttribute(stream, "x", vector.x * scaleFactor, 4);
@@ -110,9 +111,9 @@ final public class XmlOutput {
      */
     public static void putAttribute(PrintStream stream, String name,
             float floatValue, int precision) {
-        assert stream != null;
-        assert name != null;
-        assert precision >= 0 : precision;
+        Validate.nonNull(stream, "stream");
+        Validate.nonEmpty(name, "name");
+        Validate.nonNegative(precision, "precision");
 
         String formatString = String.format("%%.%df", precision);
         String stringValue = String.format(formatString, floatValue);
@@ -124,13 +125,13 @@ final public class XmlOutput {
      * Write an attribute-value pair to an XML stream: a string.
      *
      * @param stream (not null)
-     * @param name name of the attribute (not null)
+     * @param name name of the attribute (not null, not empty)
      * @param stringValue value of the attribute (not null)
      */
     public static void putAttribute(PrintStream stream, String name,
             String stringValue) {
-        assert name != null;
-        assert stringValue != null;
+        Validate.nonEmpty(name, "name");
+        Validate.nonNull(stringValue, "value");
 
         String quotedValue = MyString.quote(stringValue);
         stream.printf(" %s=%s", name, quotedValue);

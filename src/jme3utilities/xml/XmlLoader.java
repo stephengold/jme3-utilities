@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2015, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import jme3utilities.Validate;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -72,9 +73,9 @@ public class XmlLoader
         if (parser == null) {
             initialize();
         }
-        assert stream != null;
-        assert description != null;
         assert parser != null;
+        Validate.nonNull(stream, "stream");
+        Validate.nonNull(description, "description");
 
         Document document;
         try {

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2015, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -251,12 +251,13 @@ public class MakeClouds {
      * Write a rendered image to a PNG file in the "clouds" folder.
      *
      * @param fileName name of file to write the image to (no extension, not
-     * null)
+     * null, not empty)
      * @param image image to write (not null)
      */
     private static void writeClouds(String fileName, RenderedImage image)
             throws IOException {
         assert fileName != null;
+        assert fileName.length() > 0;
         assert image != null;
 
         String filePath = String.format("assets/Textures/skies/clouds/%s.png",

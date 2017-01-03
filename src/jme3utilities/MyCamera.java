@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2015, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -142,7 +142,6 @@ final public class MyCamera {
      * @param newFar distance to the far clipping plane (&gt;newNear)
      */
     public static void setNearFar(Camera camera, float newNear, float newFar) {
-        Validate.nonNull(camera, "camera");
         Validate.positive(newNear, "near");
         if (!(newFar > newNear)) {
             logger.log(Level.SEVERE, "far={0} near={1}",

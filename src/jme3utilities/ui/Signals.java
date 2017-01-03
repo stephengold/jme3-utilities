@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2015, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
+import jme3utilities.Validate;
 import jme3utilities.math.Indices;
 
 /**
@@ -66,7 +67,7 @@ public class Signals
      * @param name name of the command signal (not null)
      */
     public void add(String name) {
-        assert name != null;
+        Validate.nonNull(name, "signal name");
 
         Indices status = statusMap.get(name);
         if (status == null) {
@@ -82,7 +83,7 @@ public class Signals
      * @return true if a signal with that name exists
      */
     public boolean exists(String name) {
-        assert name != null;
+        Validate.nonNull(name, "signal name");
 
         Indices status = statusMap.get(name);
         return status != null;
@@ -96,7 +97,7 @@ public class Signals
      * the signal's sources are inactive
      */
     public boolean test(String name) {
-        assert name != null;
+        Validate.nonNull(name, "signal name");
 
         Indices status = statusMap.get(name);
         if (status == null) {
@@ -145,6 +146,8 @@ public class Signals
      * inactive
      */
     private void update(String name, int sourceIndex, boolean newState) {
+        Validate.nonNull(name, "signal name");
+
         Indices status = statusMap.get(name);
         if (status == null) {
             logger.log(Level.WARNING, "Unknown signal: {0}",
