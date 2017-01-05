@@ -150,7 +150,7 @@ public class Misc {
      * @return package name, branch, and revision of this file
      */
     public static String getVersion() {//
-        return "jme3-utilities trunk $Rev: 440 $";
+        return "jme3-utilities trunk $Rev: 441 $";
     }
 
     /**
@@ -222,7 +222,7 @@ public class Misc {
      *
      * @param filePath path to the output file (not null, not empty)
      * @param image image to be written (not null)
-     * @throws IOException if the image cannot be written 
+     * @throws IOException if the image cannot be written
      */
     public static void writeMap(String filePath, RenderedImage image)
             throws IOException {

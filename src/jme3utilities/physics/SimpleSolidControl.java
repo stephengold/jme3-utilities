@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,7 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.scene.Spatial;
@@ -77,7 +78,6 @@ public class SimpleSolidControl
         super(initialShape, mass);
         Validate.nonNegative(mass, "mass");
         Validate.nonNull(physicsSpace, "physics space");
-        assert physicsSpace != null;
         space = physicsSpace;
         setEnabled(enabled);
     }
@@ -154,6 +154,7 @@ public class SimpleSolidControl
      * De-serialize this control, for example when loading from a J3O file.
      *
      * @param importer (not null)
+     * @throws IOException
      */
     @Override
     public void read(JmeImporter importer)
@@ -182,6 +183,7 @@ public class SimpleSolidControl
      * Serialize this control, for example when saving to a J3O file.
      *
      * @param exporter (not null)
+     * @throws IOException
      */
     @Override
     public void write(JmeExporter exporter)
@@ -201,6 +203,12 @@ public class SimpleSolidControl
             setPhysicsLocation(spatial.getWorldTranslation());
             setPhysicsRotation(spatial.getWorldRotation());
         }
+
+        for (PhysicsJoint j : joints) {
+            if (!space.getJointList().contains(j)) {
+                space.add(j);
+            }
+        }
         space.addCollisionObject(this);
         space.addTickListener(this);
     }
@@ -211,6 +219,11 @@ public class SimpleSolidControl
      * Meant to be overridden.
      */
     protected void onRemove() {
+        for (PhysicsJoint j : joints) {
+            if (space.getJointList().contains(j)) {
+                space.remove(j);
+            }
+        }
         space.removeCollisionObject(this);
         space.removeTickListener(this);
     }
