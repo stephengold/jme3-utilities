@@ -95,6 +95,7 @@ public class Misc {
      */
     public static <T extends AppState> void detachAll(
             AppStateManager stateManager, Class<T> whichClass) {
+        Validate.nonNull(stateManager, "state manager");
         Validate.nonNull(whichClass, "class");
 
         AppState state = stateManager.getState(whichClass);
@@ -114,6 +115,7 @@ public class Misc {
      */
     public static FilterPostProcessor getFpp(ViewPort viewPort,
             AssetManager assetManager) {
+        Validate.nonNull(viewPort, "viewport");
         Validate.nonNull(assetManager, "asset manager");
 
         for (SceneProcessor processor : viewPort.getProcessors()) {
@@ -133,7 +135,7 @@ public class Misc {
      * Generate the filesystem path to a file in the user's home directory.
      *
      * @param fileName file name to use (not null, not empty)
-     * @return generated path
+     * @return generated path (not empty)
      */
     public static String getUserPath(String fileName) {
         Validate.nonEmpty(fileName, "file name");
@@ -141,6 +143,9 @@ public class Misc {
         String homePath = System.getProperty("user.home");
         assert homePath != null;
         String result = String.format("%s/%s", homePath, fileName);
+
+        assert result != null;
+        assert !result.isEmpty();
         return result;
     }
 
@@ -150,18 +155,21 @@ public class Misc {
      * @return package name, branch, and revision of this file
      */
     public static String getVersion() {//
-        return "jme3-utilities trunk $Rev: 441 $";
+        return "jme3-utilities trunk $Rev: 442 $";
     }
 
     /**
      * Read the terse version string for this package.
      *
-     * @return branch and revision of this file
+     * @return branch and revision of this file (not empty)
      */
     public static String getVersionShort() {
         String verbose = getVersion();
         String[] words = verbose.split("\\s+");
         String result = String.format("%s %s", words[1], words[3]);
+
+        assert result != null;
+        assert !result.isEmpty();
         return result;
     }
 
@@ -172,6 +180,8 @@ public class Misc {
      * @return true if the mesh has texture coordinates, otherwise false
      */
     public static boolean hasUV(Mesh mesh) {
+        Validate.nonNull(mesh, "mesh");
+
         IntMap<VertexBuffer> buffers = mesh.getBuffers();
         int key = Type.TexCoord.ordinal();
         boolean result = buffers.containsKey(key);
@@ -189,6 +199,8 @@ public class Misc {
      */
     public static void setGrayPixel(Graphics2D graphics, int x, int y,
             float brightness) {
+        Validate.nonNull(graphics, "rendering context");
+
         GraphicsConfiguration configuration = graphics.getDeviceConfiguration();
         Rectangle bounds = configuration.getBounds();
         if (x < 0 || x >= bounds.width) {

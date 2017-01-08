@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2015, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -108,8 +108,29 @@ public class MySkeleton
         if (skeleton == null) {
             return null;
         }
-        Bone bone = skeleton.getBone(boneName);
-        return bone;
+        Bone result = skeleton.getBone(boneName);
+
+        return result;
+    }
+
+    /**
+     * Find a named bone in a skeletonized spatial.
+     *
+     * @param model animated spatial which contains the bone (not null)
+     * @param boneName name of the bone to access (not null, not empty)
+     * @return bone index (&ge; 0) or -1 if not found
+     */
+    public static int findBoneIndex(Spatial model, String boneName) {
+        Validate.nonNull(model, "model");
+        Validate.nonEmpty(boneName, "name");
+
+        Skeleton skeleton = getSkeleton(model);
+        if (skeleton == null) {
+            return -1;
+        }
+        int result = skeleton.getBoneIndex(boneName);
+
+        return result;
     }
 
     /**
@@ -192,7 +213,8 @@ public class MySkeleton
     }
 
     /**
-     * Adjust one rotation angle in the bind pose of a skeletonized spatial.
+     * Adjust one joint rotation angle in the bind pose of a skeletonized
+     * spatial.
      *
      * @param model skeletonized spatial which contains the bone (not null)
      * @param boneName name of the bone to adjust (not null, not empty)
@@ -249,7 +271,7 @@ public class MySkeleton
      * @param newValue true to enable, false to disable
      */
     public static void setUserControl(Spatial model, boolean newValue) {
-        assert model != null;
+        Validate.nonNull(model, "spatial");
 
         Skeleton skeleton = getSkeleton(model);
         if (skeleton != null) {
@@ -275,6 +297,7 @@ public class MySkeleton
         Bone bone = getBone(model, boneName);
         Vector3f local = bone.getModelSpacePosition();
         Vector3f world = model.localToWorld(local, null);
+
         return world;
     }
 
