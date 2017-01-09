@@ -80,6 +80,8 @@ public class SimpleSolidControl
         Validate.nonNull(physicsSpace, "physics space");
         space = physicsSpace;
         setEnabled(enabled);
+
+        assert isKinematicSpatial();
     }
     // *************************************************************************
     // new methods exposed
@@ -159,7 +161,7 @@ public class SimpleSolidControl
     @Override
     public void read(JmeImporter importer)
             throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        super.read(importer);
     }
 
     /**
@@ -188,7 +190,7 @@ public class SimpleSolidControl
     @Override
     public void write(JmeExporter exporter)
             throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        super.write(exporter);
     }
     // *************************************************************************
     // new protected methods

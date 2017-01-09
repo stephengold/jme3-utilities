@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -123,11 +123,12 @@ public class SimpleGhostControl
      * De-serialize this control, for example when loading from a J3O file.
      *
      * @param importer (not null)
+     * @throws IOException
      */
     @Override
     public void read(JmeImporter importer)
             throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        super.read(importer);
     }
 
     /**
@@ -151,11 +152,12 @@ public class SimpleGhostControl
      * Serialize this control, for example when saving to a J3O file.
      *
      * @param exporter (not null)
+     * @throws IOException
      */
     @Override
     public void write(JmeExporter exporter)
             throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        super.write(exporter);
     }
     // *************************************************************************
     // PhysicsTickListener methods
