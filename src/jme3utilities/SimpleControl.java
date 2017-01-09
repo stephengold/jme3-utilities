@@ -92,30 +92,6 @@ abstract public class SimpleControl
             throw new IllegalStateException("should be enabled");
         }
     }
-
-    /**
-     * De-serialize this control, for example when loading from a J3O file.
-     *
-     * @param importer (not null)
-     * @throws IOException
-     */
-    @Override
-    public void read(JmeImporter importer)
-            throws IOException {
-        super.read(importer);
-    }
-
-    /**
-     * Serialize this control, for example when saving to a J3O file.
-     *
-     * @param exporter (not null)
-     * @throws IOException
-     */
-    @Override
-    public void write(JmeExporter exporter)
-            throws IOException {
-        super.write(exporter);
-    }
     // *************************************************************************
     // Control methods
 

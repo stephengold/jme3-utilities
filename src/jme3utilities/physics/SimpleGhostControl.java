@@ -120,18 +120,6 @@ public class SimpleGhostControl
     }
 
     /**
-     * De-serialize this control, for example when loading from a J3O file.
-     *
-     * @param importer (not null)
-     * @throws IOException
-     */
-    @Override
-    public void read(JmeImporter importer)
-            throws IOException {
-        super.read(importer);
-    }
-
-    /**
      * Enable or disable the control.
      *
      * @param newState true to enable or false to disable
@@ -146,18 +134,6 @@ public class SimpleGhostControl
             onRemove();
             added = false;
         }
-    }
-
-    /**
-     * Serialize this control, for example when saving to a J3O file.
-     *
-     * @param exporter (not null)
-     * @throws IOException
-     */
-    @Override
-    public void write(JmeExporter exporter)
-            throws IOException {
-        super.write(exporter);
     }
     // *************************************************************************
     // PhysicsTickListener methods
