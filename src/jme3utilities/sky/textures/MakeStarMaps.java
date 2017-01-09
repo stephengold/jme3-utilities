@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2015, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -64,7 +64,7 @@ public class MakeStarMaps {
     /**
      * exception to indicate unexpected invalid data in a catalog entry
      */
-    static class InvalidEntryException
+    static private class InvalidEntryException
             extends Exception {
 
         static final long serialVersionUID = 1L;
@@ -78,7 +78,7 @@ public class MakeStarMaps {
      * exception to indicate an invalid apparent magnitude in a catalog entry:
      * such entries can be ignored
      */
-    static class InvalidMagnitudeException
+    static private class InvalidMagnitudeException
             extends Exception {
 
         static final long serialVersionUID = 1L;
@@ -321,7 +321,7 @@ public class MakeStarMaps {
      * @return angle north of the celestial equator (in degrees, &le;90,
      * &ge;-90)
      */
-    private float getDeclinationDegrees(String line)
+    private float declination(String line)
             throws InvalidEntryException {
         assert line != null;
         /*
@@ -371,7 +371,7 @@ public class MakeStarMaps {
      * @param line of text read from the catalog (not null)
      * @return angle east of the vernal equinox (in hours, &lt;24, &ge;0)
      */
-    private float getRightAscensionHours(String line)
+    private float rightAscensionHours(String line)
             throws InvalidEntryException {
         assert line != null;
         /*
@@ -847,9 +847,9 @@ public class MakeStarMaps {
          * Get the star's equatorial coordinates and convert them to radians.
          */
         float declination =
-                getDeclinationDegrees(textLine) * FastMath.DEG_TO_RAD;
+                declination(textLine) * FastMath.DEG_TO_RAD;
         float rightAscension =
-                getRightAscensionHours(textLine) * radiansPerHour;
+                rightAscensionHours(textLine) * radiansPerHour;
         /*
          * Instantiate the star.
          */

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -238,8 +238,7 @@ public class SkyMaterialCore
         float result = 1f;
         for (int layerIndex = 0; layerIndex < maxCloudLayers; layerIndex++) {
             if (cloudsRaster[layerIndex] != null) {
-                float transparency =
-                        getTransparency(layerIndex, skyCoordinates);
+                float transparency = transparency(layerIndex, skyCoordinates);
                 result *= transparency;
             }
         }
@@ -527,6 +526,7 @@ public class SkyMaterialCore
      * De-serialize this instance when loading.
      *
      * @param importer (not null)
+     * @throws IOException
      */
     @Override
     public void read(JmeImporter importer)
@@ -572,6 +572,7 @@ public class SkyMaterialCore
      * Serialize this instance when saving.
      *
      * @param exporter (not null)
+     * @throws IOException
      */
     @Override
     public void write(JmeExporter exporter)
@@ -597,7 +598,7 @@ public class SkyMaterialCore
      * @param skyCoordinates (unaffected, not null)
      * @return fraction of light transmitted (&le;1, &ge;0)
      */
-    private float getTransparency(int layerIndex, Vector2f skyCoordinates) {
+    private float transparency(int layerIndex, Vector2f skyCoordinates) {
         assert layerIndex >= 0 : layerIndex;
         assert layerIndex < maxCloudLayers : layerIndex;
         assert skyCoordinates != null;
