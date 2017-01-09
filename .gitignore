@@ -1,8 +1,12 @@
-/nbproject/private/
+/assets/Textures/skies/bsc5.dat
 /build/
 /dist/
-/assets/Textures/skies/bsc5.dat
-/OpenAL64.dll
+/lwjgl.dll
 /lwjgl64.dll
+/master-application.jnlp
 /nbproject/genfiles.properties
+/nbproject/jme3Data/
+/nbproject/private/
+/OpenAL32.dll
+/OpenAL64.dll
 /release/
