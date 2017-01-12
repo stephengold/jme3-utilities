@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@ import de.lessvoid.nifty.controls.Menu;
 import de.lessvoid.nifty.controls.MenuItemActivatedEvent;
 import de.lessvoid.nifty.controls.RadioButton;
 import de.lessvoid.nifty.controls.Slider;
+import de.lessvoid.nifty.controls.nullobjects.SliderNull;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
@@ -43,8 +44,8 @@ import jme3utilities.Validate;
 import jme3utilities.ui.InputMode;
 
 /**
- * Basic screen controller which supports check boxes, popup menus, radio
- * buttons, sliders, and dynamic labels.
+ * Basic screen controller which supports Nifty controls such as checkboxes,
+ * popup menus, radio buttons, sliders, and dynamic labels.
  *
  * @author Stephen Gold <sgold@sonic.net>
  */
@@ -287,7 +288,29 @@ public class GuiScreenController
     // new protected methods
 
     /**
-     * Alter the label of a button.
+     * Access a Nifty slider. This assumes a naming convention where the
+     * slider's Nifty id ends with "Slider".
+     *
+     * @param namePrefix unique name prefix of the slider (not null)
+     * @return pre-existing instance
+     */
+    protected Slider getSlider(String namePrefix) {
+        Validate.nonNull(namePrefix, "slider name prefix");
+
+        String sliderName = namePrefix + "Slider";
+        Slider slider = getScreen().findNiftyControl(sliderName, Slider.class);
+        if (slider == null || slider instanceof SliderNull) {
+            logger.log(Level.SEVERE, "missing slider {0} in {1}", new Object[]{
+                MyString.quote(sliderName), getScreenId()
+            });
+            throw new RuntimeException();
+        }
+
+        return slider;
+    }
+
+    /**
+     * Alter the label of a Nifty button.
      *
      * @param elementId Nifty element id of the button (not null)
      * @param newText new text for the label (not null)
@@ -308,7 +331,7 @@ public class GuiScreenController
     }
 
     /**
-     * Alter the checked status of a checkbox.
+     * Alter the checked status of a Nifty checkbox.
      *
      * @param elementId Nifty element id of the checkbox (not null)
      * @param newStatus true to tick the box, false to un-tick it
@@ -329,7 +352,7 @@ public class GuiScreenController
     }
 
     /**
-     * Select a radio button.
+     * Select a Nifty radio button.
      *
      * @param elementId Nifty element id of the radio button (not null)
      */
@@ -350,7 +373,7 @@ public class GuiScreenController
     }
 
     /**
-     * Enable or disable a radio button.
+     * Enable or disable a Nifty radio button.
      *
      * @param elementId Nifty element id of the radio button (not null)
      * @param newState true to enable the button, false to disable it
@@ -376,30 +399,21 @@ public class GuiScreenController
     }
 
     /**
-     * Alter the linear value of a slider. This assumes a naming convention
-     * where the slider's Nifty id ends with "Slider".
+     * Alter the linear value of a Nifty slider. This assumes a naming
+     * convention where the slider's Nifty id ends with "Slider".
      *
      * @param namePrefix unique name prefix of the slider (not null)
      * @param newValue new value for the slider
      */
     protected void setSlider(String namePrefix, float newValue) {
-        Validate.nonNull(namePrefix, "prefix");
+        Validate.nonNull(namePrefix, "slider name prefix");
 
-        String sliderName = namePrefix + "Slider";
-        Slider slider = getScreen().findNiftyControl(sliderName, Slider.class);
-        try {
-            slider.setValue(newValue);
-        } catch (NullPointerException exception) {
-            logger.log(Level.INFO, "screen {0} lacks slider {1}",
-                    new Object[]{
-                MyString.quote(getScreenId()),
-                MyString.quote(sliderName)
-            });
-        }
+        Slider slider = getSlider(namePrefix);
+        slider.setValue(newValue);
     }
 
     /**
-     * Alter the text of a status label.
+     * Alter the text of a Nifty label.
      *
      * @param elementId Nifty element id of the label (not null)
      * @param newText (not null)
@@ -428,7 +442,7 @@ public class GuiScreenController
     }
 
     /**
-     * Read the value of a linear slider and update its status label. This
+     * Read the value of a linear Nifty slider and update its status label. This
      * assumes a naming convention where (a) the slider's Nifty id ends in
      * "Slider" and (b) the Nifty id of the corresponding label consists of the
      * same prefix followed by "SliderStatus".
@@ -448,8 +462,8 @@ public class GuiScreenController
     }
 
     /**
-     * Read the value of a logarithmic slider and update its status label. This
-     * assumes a naming convention where (a) the slider's Nifty id ends in
+     * Read the value of a logarithmic Nifty slider and update its status label.
+     * This assumes a naming convention where (a) the slider's Nifty id ends in
      * "Slider" and (b) the Nifty id of the corresponding label consists of the
      * same prefix followed by "SliderStatus".
      *
@@ -474,8 +488,8 @@ public class GuiScreenController
     // private methods
 
     /**
-     * Read the linear value of a slider. This assumes a naming convention where
-     * the slider's Nifty id ends with "Slider".
+     * Read the linear value of a Nifty slider. This assumes a naming convention
+     * where the slider's Nifty id ends with "Slider".
      *
      * @param namePrefix unique id prefix of the slider (not null)
      * @return value of the slider
@@ -483,22 +497,22 @@ public class GuiScreenController
     private float readSlider(String namePrefix) {
         assert namePrefix != null;
 
-        String sliderName = namePrefix + "Slider";
-        Slider slider = getScreen().findNiftyControl(sliderName, Slider.class);
+        Slider slider = getSlider(namePrefix);
         float value = slider.getValue();
+
         return value;
     }
 
     /**
-     * Update the static reference to the active popup menu.
+     * Update the static reference to the active Nifty popup menu.
      */
     private static void setActivePopupMenu(PopupMenu popupMenu) {
         activePopupMenu = popupMenu;
     }
 
     /**
-     * Update the status of a slider. This assumes a naming convention where the
-     * label's Nifty id ends with "SliderStatus".
+     * Update the status of a Nifty slider. This assumes a naming convention
+     * where the label's Nifty id ends with "SliderStatus".
      *
      * @param namePrefix unique id prefix of the slider (not null)
      * @param value value of the slider
