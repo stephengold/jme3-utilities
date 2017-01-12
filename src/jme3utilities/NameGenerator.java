@@ -147,7 +147,7 @@ public class NameGenerator
 
     /**
      * De-serialize this name generator, for example when loading from a J3O
-     * file. TODO use readSavableArrayList
+     * file.
      *
      * @param importer
      * @throws IOException
@@ -156,20 +156,21 @@ public class NameGenerator
     public void read(JmeImporter importer)
             throws IOException {
         InputCapsule capsule = importer.getCapsule(this);
-        String allEncoded = capsule.readString("all", "");
+        String[] keys = capsule.readStringArray("keys", null);
+        int[] values = capsule.readIntArray("values", null);
+        int size = keys.length;
+        assert values.length == size : size;
+
         reset();
-        while (allEncoded.length() > 0) {
-            String[] substrings = MyString.getLine(allEncoded);
-            String key = MyString.unEscape(substrings[0]);
-            int value = new Integer(substrings[1]);
+        for (int i = 0; i < size; i++) {
+            String key = keys[i];
+            int value = values[i];
             nextSequenceNumbers.put(key, value);
-            allEncoded = substrings[2];
         }
     }
 
     /**
      * Serialize this name generator, for example when saving to a J3O file.
-     * TODO use writeSavableArrayList
      *
      * @param exporter
      * @throws IOException
@@ -177,18 +178,41 @@ public class NameGenerator
     @Override
     public void write(JmeExporter exporter)
             throws IOException {
-        StringBuilder allEncoded = new StringBuilder(50);
+        int size = nextSequenceNumbers.size();
+        String[] keys = new String[size];
+        int[] values = new int[size];
+        int i = 0;
         for (Map.Entry<String, Integer> entry
                 : nextSequenceNumbers.entrySet()) {
-            String key = entry.getKey();
-            String escapedKey = MyString.escape(key);
-            int value = entry.getValue();
-            String escapedValue = String.valueOf(value);
-            String line = String.format("%s\t%s\n", escapedKey, escapedValue);
-            allEncoded.append(line);
+            keys[i] = entry.getKey();
+            values[i] = entry.getValue();
+            i++;
         }
 
         OutputCapsule capsule = exporter.getCapsule(this);
-        capsule.write(allEncoded.toString(), "all", "");
+        capsule.write(keys, "keys", null);
+        capsule.write(values, "values", null);
+    }
+
+    // *************************************************************************
+    // Object methods
+    /**
+     * Encode this NameGenerator as a string.
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(200);
+
+        builder.append("{ ");
+        for (Map.Entry<String, Integer> entry
+                : nextSequenceNumbers.entrySet()) {
+            String piece = String.format("%s:%s ",
+                    entry.getKey(), entry.getValue());
+            builder.append(piece);
+        }
+        builder.append("}");
+        String result = builder.toString();
+
+        return result;
     }
 }
