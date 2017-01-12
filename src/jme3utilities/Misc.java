@@ -155,7 +155,7 @@ public class Misc {
      * @return package name, branch, and revision of this file
      */
     public static String getVersion() {//
-        return "jme3-utilities trunk $Rev: 444 $";
+        return "jme3-utilities trunk $Rev: 445 $";
     }
 
     /**
