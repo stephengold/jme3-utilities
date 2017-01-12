@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2015, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,8 @@ import com.jme3.animation.LoopMode;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SpatialTrack;
 import com.jme3.animation.Track;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.util.Collection;
 import java.util.TreeSet;
@@ -72,7 +74,7 @@ public class MyAnimation {
     /**
      * Smoothly transition an animation channel to a named animation.
      *
-     * @param channel animation channel (not null)
+     * @param channel animation channel (not null, modified)
      * @param animationName name of animation (or null to reset the channel)
      */
     public static void blendTo(AnimChannel channel, String animationName) {
@@ -90,6 +92,36 @@ public class MyAnimation {
         logger.log(Level.INFO, "new animation={0}", animationName);
         channel.setAnim(animationName, blendTime);
         channel.setLoopMode(LoopMode.Loop);
+    }
+
+    /**
+     * Create a BoneTrack consisting of a single bone with a fixed transform.
+     *
+     * @param boneIndex which bone (&ge;0)
+     * @param translation relative to bind pose (not null, unaffected)
+     * @param rotation relative to bind pose (not null, unaffected)
+     * @param scale relative to bind pose (not null, unaffected)
+     * @return a new instance
+     */
+    public static BoneTrack createTrack(int boneIndex, Vector3f translation,
+            Quaternion rotation, Vector3f scale) {
+        Validate.nonNegative(boneIndex, "bone index");
+        Validate.nonNull(translation, "translation");
+        Validate.nonNull(rotation, "rotation");
+        Validate.nonNull(scale, "scale");
+
+        Vector3f copyTranslation = translation.clone();
+        Quaternion copyRotation = rotation.clone();
+        Vector3f copyScale = scale.clone();
+
+        float[] times = {0f};
+        Vector3f[] translations = {copyTranslation};
+        Quaternion[] rotations = {copyRotation};
+        Vector3f[] scales = {copyScale};
+        BoneTrack result = new BoneTrack(boneIndex, times, translations,
+                rotations, scales);
+
+        return result;
     }
 
     /**
@@ -165,6 +197,31 @@ public class MyAnimation {
             return 's';
         }
         return '?';
+    }
+
+    /**
+     * Find a BoneTrack in a specified animation for a specified bone.
+     *
+     * @param animation which animation (not null, unaffected)
+     * @param boneIndex which bone (&ge;0)
+     * @return the pre-existing instance, or null if not found
+     */
+    public static BoneTrack findTrack(Animation animation, int boneIndex) {
+        Validate.nonNull(animation, "animation");
+        Validate.nonNegative(boneIndex, "bone index");
+
+        Track[] tracks = animation.getTracks();
+        for (Track track : tracks) {
+            if (track instanceof BoneTrack) {
+                BoneTrack boneTrack = (BoneTrack) track;
+                int trackBoneIndex = boneTrack.getTargetBoneIndex();
+                if (boneIndex == trackBoneIndex) {
+                    return boneTrack;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
