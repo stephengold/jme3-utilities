@@ -66,254 +66,175 @@ public class MySkeleton
     // new methods exposed
 
     /**
-     * Compute one rotation angle of a named bone in a skeletonized spatial.
-     *
-     * @param model animated spatial which contains the bone (not null)
-     * @param boneName name of the bone to measure (not null, not empty)
-     * @param axis local rotation axis to measure (0 &rarr; X, 1 &rarr; Y, 2
-     * &rarr; Z)
-     * @return rotation angle (in radians) or zero for unknown bone
-     */
-    public static float boneAngle(Spatial model, String boneName, int axis) {
-        Validate.nonNull(model, "model");
-        Validate.nonEmpty(boneName, "bone");
-        if (axis < 0 || axis > 2) {
-            logger.log(Level.SEVERE, "axis={0}", axis);
-            throw new IllegalArgumentException(
-                    "axis should be between 0 and 2, inclusive");
-        }
-
-        Bone bone = getBone(model, boneName);
-        if (bone == null) {
-            return 0f;
-        }
-        Quaternion orientation = bone.getLocalRotation();
-        float[] angles = orientation.toAngles(null);
-        float angle = angles[axis];
-        return angle;
-    }
-
-    /**
      * Access a named bone in a skeletonized spatial.
      *
-     * @param model animated spatial which contains the bone (not null)
-     * @param boneName name of the bone to access (not null, not empty)
+     * @param spatial skeletonized spatial which contains the bone (not null)
+     * @param boneName name of the bone to access (not null)
      * @return pre-existing instance (or null if not found)
      */
-    public static Bone getBone(Spatial model, String boneName) {
-        Validate.nonNull(model, "model");
-        Validate.nonEmpty(boneName, "name");
+    public static Bone getBone(Spatial spatial, String boneName) {
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(boneName, "bone name");
 
-        Skeleton skeleton = getSkeleton(model);
-        if (skeleton == null) {
-            return null;
-        }
+        Skeleton skeleton = getSkeleton(spatial);
         Bone result = skeleton.getBone(boneName);
 
         return result;
     }
 
+    // TODO methods out of order
     /**
-     * Find a named bone in a skeletonized spatial.
+     * Find the index of a named bone in a skeletonized spatial.
      *
-     * @param model animated spatial which contains the bone (not null)
-     * @param boneName name of the bone to access (not null, not empty)
+     * @param spatial skeletonized spatial which contains the bone (not null,
+     * unaffected)
+     * @param boneName name of the bone to find (not null)
      * @return bone index (&ge; 0) or -1 if not found
      */
-    public static int findBoneIndex(Spatial model, String boneName) {
-        Validate.nonNull(model, "model");
-        Validate.nonEmpty(boneName, "name");
+    public static int findBoneIndex(Spatial spatial, String boneName) {
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(boneName, "bone name");
 
-        Skeleton skeleton = getSkeleton(model);
-        if (skeleton == null) {
-            return -1;
-        }
-        int result = skeleton.getBoneIndex(boneName);
+        Skeleton skeleton = getSkeleton(spatial);
+        int index = skeleton.getBoneIndex(boneName);
 
-        return result;
+        return index;
     }
 
     /**
      * Access the skeleton of a skeletonized spatial.
      *
-     * @param model skeletonized spatial (not null)
-     * @return pre-existing instance (or null if not found)
+     * @param spatial skeletonized spatial (not null)
+     * @return a pre-existing instance
      */
-    public static Skeleton getSkeleton(Spatial model) {
-        SkeletonControl control = model.getControl(SkeletonControl.class);
+    public static Skeleton getSkeleton(Spatial spatial) {
+        SkeletonControl control = spatial.getControl(SkeletonControl.class);
         if (control == null) {
-            return null;
+            throw new IllegalArgumentException(
+                    "expected the spatial to have an SkeletonControl");
         }
+
         Skeleton skeleton = control.getSkeleton();
+        if (skeleton == null) {
+            throw new IllegalArgumentException(
+                    "expected the spatial to have a skeleton");
+        }
+
         return skeleton;
     }
 
     /**
      * List all bones in a skeletonized spatial.
      *
-     * @param model skeletonized spatial (or null)
-     * @return new collection in lexicographic order (may be empty)
+     * @param spatial skeletonized spatial (not null)
+     * @return a new collection in lexicographic order (may be empty)
      */
-    public static Collection<String> listBones(Spatial model) {
+    public static Collection<String> listBones(Spatial spatial) {
+        Validate.nonNull(spatial, "spatial");
+
+        Skeleton skeleton = getSkeleton(spatial);
+        int boneCount = skeleton.getBoneCount();
+
         Collection<String> names = new TreeSet<>();
-        if (model == null) {
-            return names;
+        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
+            Bone bone = skeleton.getBone(boneIndex);
+            String name = bone.getName();
+            names.add(name);
         }
-        Skeleton skeleton = getSkeleton(model);
-        if (skeleton != null) {
-            int boneCount = skeleton.getBoneCount();
-            for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
-                Bone bone = skeleton.getBone(boneIndex);
-                String name = bone.getName();
-                names.add(name);
-            }
-        }
+
         return names;
     }
 
     /**
-     * Convert a location in a bone's local space to a model location vector.
+     * Convert a location in a bone's local space to a location in model space.
      *
      * @param bone (not null)
      * @param x displacement along the bone's X-axis
      * @param y displacement along the bone's Y-axis
      * @param z displacement along the bone's Z-axis
-     * @return new vector
+     * @return a new vector
      *
      */
     public static Vector3f modelLocation(Bone bone, float x, float y, float z) {
         Vector3f tail = bone.getModelSpacePosition();
         Vector3f scale = bone.getModelSpaceScale();
-        Vector3f local = new Vector3f(x, y, z).multLocal(scale);
-        local.addLocal(tail);
-        return local;
+        Vector3f result = new Vector3f(x, y, z).multLocal(scale);
+        result.addLocal(tail);
+
+        return result;
     }
 
     /**
      * Alter the position of the specified bone using world coordinates, without
      * updating its descendents.
      *
-     * @param model skeletonized spatial which contains the bone (not null)
+     * @param spatial skeletonized spatial which contains the bone (not null)
      * @param bone (not null)
      * @param tailLocation desired world location of the bone's tail (not null)
      * @param orientation desired world orientation of the bone (not null)
      */
-    public static void positionInWorld(Spatial model, Bone bone,
+    public static void positionInWorld(Spatial spatial, Bone bone,
             Vector3f tailLocation, Quaternion orientation) {
         Validate.nonNull(tailLocation, "location");
         Validate.nonNull(orientation, "orientation");
         /*
          * Convert location and orientation from world to model space.
          */
-        Vector3f offset = model.worldToLocal(tailLocation, null);
-        Quaternion convert = model.getWorldRotation().inverse();
+        Vector3f offset = spatial.worldToLocal(tailLocation, null);
+        Quaternion convert = spatial.getWorldRotation().inverse();
         Quaternion rotation = convert.mult(orientation);
 
         bone.setUserTransformsWorld(offset, rotation);
     }
 
     /**
-     * Adjust one joint rotation angle in the bind pose of a skeletonized
-     * spatial.
+     * Alter the userControl flag for an entire skeletonized spatial.
      *
-     * @param model skeletonized spatial which contains the bone (not null)
-     * @param boneName name of the bone to adjust (not null, not empty)
-     * @param axis local rotation axis to adjust (0 &rarr; X, 1 &rarr; Y, 2
-     * &rarr; Z)
-     * @param newAngle new rotation angle (in radians)
-     */
-    public static void setBoneAngle(Spatial model, String boneName, int axis,
-            float newAngle) {
-        Validate.nonNull(model, "model");
-        Validate.nonEmpty(boneName, "bone");
-        if (axis < 0 || axis > 2) {
-            logger.log(Level.SEVERE, "axis={0}", axis);
-            throw new IllegalArgumentException(
-                    "axis should be between 0 and 2, inclusive");
-        }
-
-        Bone bone = getBone(model, boneName);
-        if (bone == null) {
-            return;
-        }
-        setAngle(bone, axis, newAngle);
-        getSkeleton(model).updateWorldVectors();
-    }
-
-    /**
-     * Alter a single bone angle in the bind pose.
-     *
-     * @param bone bone to adjust (not null)
-     * @param axis local rotation axis to adjust (0 &rarr; X, 1 &rarr; Y, 2
-     * &rarr; Z)
-     * @param newAngle new rotation angle (in radians)
-     */
-    public static void setAngle(Bone bone, int axis, float newAngle) {
-        if (axis < 0 || axis > 2) {
-            logger.log(Level.SEVERE, "axis={0}", axis);
-            throw new IllegalArgumentException(
-                    "axis should be between 0 and 2, inclusive");
-        }
-
-        Vector3f location = bone.getLocalPosition();
-        Vector3f scale = bone.getLocalScale();
-        Quaternion orientation = bone.getLocalRotation().clone();
-        float[] angles = orientation.toAngles(null);
-        angles[axis] = newAngle;
-        orientation.fromAngles(angles);
-        bone.setBindTransforms(location, orientation, scale);
-    }
-
-    /**
-     * Alter the user control flag for an entire skeletonized spatial.
-     *
-     * @param model skeletonized spatial (or null)
+     * @param spatial skeletonized spatial (not null)
      * @param newValue true to enable, false to disable
      */
-    public static void setUserControl(Spatial model, boolean newValue) {
-        Validate.nonNull(model, "spatial");
+    public static void setUserControl(Spatial spatial, boolean newValue) {
+        Validate.nonNull(spatial, "spatial");
 
-        Skeleton skeleton = getSkeleton(model);
-        if (skeleton != null) {
-            int boneCount = skeleton.getBoneCount();
-            for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
-                Bone bone = skeleton.getBone(boneIndex);
-                bone.setUserControl(newValue);
-            }
+        Skeleton skeleton = getSkeleton(spatial);
+        int boneCount = skeleton.getBoneCount();
+        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
+            Bone bone = skeleton.getBone(boneIndex);
+            bone.setUserControl(newValue);
         }
     }
 
     /**
      * Compute the world location of (the tail of) a named bone.
      *
-     * @param model skeletonized spatial which contains the bone (not null)
+     * @param spatial skeletonized spatial which contains the bone (not null)
      * @param boneName (not null)
-     * @return new vector
+     * @return new vector in world coordinates
      */
-    public static Vector3f worldLocation(Spatial model, String boneName) {
-        Validate.nonNull(model, "model");
-        Validate.nonNull(boneName, "name");
+    public static Vector3f worldLocation(Spatial spatial, String boneName) {
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(boneName, "bone name");
 
-        Bone bone = getBone(model, boneName);
-        Vector3f local = bone.getModelSpacePosition();
-        Vector3f world = model.localToWorld(local, null);
+        Bone bone = getBone(spatial, boneName);
+        Vector3f localCoordinates = bone.getModelSpacePosition();
+        Vector3f result = spatial.localToWorld(localCoordinates, null);
 
-        return world;
+        return result;
     }
 
     /**
      * Compute the world orientation of a bone.
      *
-     * @param model skeletonized spatial which contains the bone (not null)
+     * @param spatial skeletonized spatial which contains the bone (not null)
      * @param bone (not null)
-     * @return new instance
+     * @return new instance in world coordinates
      */
-    public static Quaternion worldOrientation(Spatial model, Bone bone) {
-        Validate.nonNull(model, "model");
+    public static Quaternion worldOrientation(Spatial spatial, Bone bone) {
+        Validate.nonNull(spatial, "spatial");
         Validate.nonNull(bone, "bone");
 
         Quaternion boneInModel = bone.getModelSpaceRotation();
-        Quaternion modelInWorld = model.getWorldRotation();
+        Quaternion modelInWorld = spatial.getWorldRotation();
         Quaternion result = modelInWorld.mult(boneInModel);
 
         return result;
@@ -322,16 +243,17 @@ public class MySkeleton
     /**
      * Compute the world orientation of a named bone.
      *
-     * @param model skeletonized spatial which contains the bone (not null)
-     * @param boneName (not null, not empty)
+     * @param spatial skeletonized spatial which contains the bone (not null)
+     * @param boneName (not null)
      * @return new instance
      */
-    public static Quaternion worldOrientation(Spatial model, String boneName) {
-        Validate.nonNull(model, "model");
-        Validate.nonEmpty(boneName, "bone");
+    public static Quaternion worldOrientation(Spatial spatial,
+            String boneName) {
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(boneName, "bone");
 
-        Bone bone = getBone(model, boneName);
-        Quaternion result = worldOrientation(model, bone);
+        Bone bone = getBone(spatial, boneName);
+        Quaternion result = worldOrientation(spatial, bone);
 
         return result;
     }
@@ -359,13 +281,18 @@ public class MySkeleton
         Node node = (Node) assetManager.loadModel(modelPath);
         rootNode.attachChild(node);
 
-        String bone = "uparm.right";
+        //String bone = "uparm.right";
+
+        Quaternion orientation = new Quaternion();
+        float[] angles = new float[3];
+        for (int axis = 0; axis < 3; axis++) {
+            angles[axis] = 0.4f;
+        }
         for (int axis = 0; axis < 3; axis++) {
             float angle = 0.2f + 0.1f * axis;
-            System.out.printf("angle = %s%n", angle);
-            setBoneAngle(node, bone, axis, angle);
-            float angle2 = boneAngle(node, bone, axis);
-            System.out.printf("angle2 = %s%n", angle2);
+            angles[axis] = angle;
+            orientation.fromAngles(angles);
+            //
         }
 
         stop();
