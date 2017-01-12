@@ -66,24 +66,6 @@ public class MySkeleton
     // new methods exposed
 
     /**
-     * Access a named bone in a skeletonized spatial.
-     *
-     * @param spatial skeletonized spatial which contains the bone (not null)
-     * @param boneName name of the bone to access (not null)
-     * @return pre-existing instance (or null if not found)
-     */
-    public static Bone getBone(Spatial spatial, String boneName) {
-        Validate.nonNull(spatial, "spatial");
-        Validate.nonNull(boneName, "bone name");
-
-        Skeleton skeleton = getSkeleton(spatial);
-        Bone result = skeleton.getBone(boneName);
-
-        return result;
-    }
-
-    // TODO methods out of order
-    /**
      * Find the index of a named bone in a skeletonized spatial.
      *
      * @param spatial skeletonized spatial which contains the bone (not null,
@@ -99,6 +81,23 @@ public class MySkeleton
         int index = skeleton.getBoneIndex(boneName);
 
         return index;
+    }
+
+    /**
+     * Access a named bone in a skeletonized spatial.
+     *
+     * @param spatial skeletonized spatial which contains the bone (not null)
+     * @param boneName name of the bone to access (not null)
+     * @return pre-existing instance (or null if not found)
+     */
+    public static Bone getBone(Spatial spatial, String boneName) {
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(boneName, "bone name");
+
+        Skeleton skeleton = getSkeleton(spatial);
+        Bone result = skeleton.getBone(boneName);
+
+        return result;
     }
 
     /**
