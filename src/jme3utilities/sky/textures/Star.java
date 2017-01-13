@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -139,19 +139,19 @@ class Star
     public int compareTo(Star other) {
         Validate.nonNull(other, "object");
 
-        if (apparentMagnitude < other.apparentMagnitude) {
+        if (apparentMagnitude < other.getApparentMagnitude()) {
             return 1;
-        } else if (apparentMagnitude > other.apparentMagnitude) {
+        } else if (apparentMagnitude > other.getApparentMagnitude()) {
             return -1;
         }
-        if (rightAscension < other.rightAscension) {
+        if (rightAscension < other.getRightAscension()) {
             return 1;
-        } else if (rightAscension > other.rightAscension) {
+        } else if (rightAscension > other.getRightAscension()) {
             return -1;
         }
-        if (declination < other.declination) {
+        if (declination < other.getDeclination()) {
             return 1;
-        } else if (declination > other.declination) {
+        } else if (declination > other.getDeclination()) {
             return -1;
         }
 
@@ -179,5 +179,25 @@ class Star
         float sum = apparentMagnitude + rightAscension + declination;
         int code = Float.valueOf(sum).hashCode();
         return code;
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Read the declination of the star.
+     *
+     * @return
+     */
+    private float getDeclination() {
+        return declination;
+    }
+
+    /**
+     * Read the right ascension of the star.
+     *
+     * @return
+     */
+    private float getRightAscension() {
+        return rightAscension;
     }
 }
