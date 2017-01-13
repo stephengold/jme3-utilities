@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2015, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -69,7 +69,7 @@ final public class Validate {
             logger.log(Level.SEVERE, "{0}={1}",
                     new Object[]{description, value});
             String message = String.format(
-                    "%s should be between 0 and 1, inclusive", description);
+                    "%s should be between 0 and 1, inclusive.", description);
             throw new IllegalArgumentException(message);
         }
     }
@@ -86,7 +86,7 @@ final public class Validate {
             logger.log(Level.SEVERE, "{0}={1}",
                     new Object[]{description, value});
             String message =
-                    String.format("%s should not be negative", description);
+                    String.format("%s should not be negative.", description);
             throw new IllegalArgumentException(message);
         }
     }
@@ -103,7 +103,7 @@ final public class Validate {
             logger.log(Level.SEVERE, "{0}={1}",
                     new Object[]{description, value});
             String message =
-                    String.format("%s should not be negative", description);
+                    String.format("%s should not be negative.", description);
             throw new IllegalArgumentException(message);
         }
     }
@@ -122,7 +122,7 @@ final public class Validate {
         int length = string.length();
         if (length <= 0) {
             String message =
-                    String.format("%s should not be empty", description);
+                    String.format("%s should not be empty.", description);
             throw new IllegalArgumentException(message);
         }
     }
@@ -142,7 +142,7 @@ final public class Validate {
     public static void nonNull(Object object, String description) {
         if (object == null) {
             String message =
-                    String.format("%s should not be null", description);
+                    String.format("%s should not be null.", description);
             throw new NullPointerException(message);
         }
     }
@@ -157,7 +157,7 @@ final public class Validate {
     public static void nonZero(float value, String description) {
         if (value == 0f) {
             String message =
-                    String.format("%s should not be zero", description);
+                    String.format("%s should not be zero.", description);
             throw new IllegalArgumentException(message);
         }
     }
@@ -174,7 +174,7 @@ final public class Validate {
             logger.log(Level.SEVERE, "{0}={1}",
                     new Object[]{description, value});
             String message =
-                    String.format("%s should be positive", description);
+                    String.format("%s should be positive.", description);
             throw new IllegalArgumentException(message);
         }
     }
@@ -191,7 +191,7 @@ final public class Validate {
             logger.log(Level.SEVERE, "{0}={1}",
                     new Object[]{description, value});
             String message =
-                    String.format("%s should be positive", description);
+                    String.format("%s should be positive.", description);
             throw new IllegalArgumentException(message);
         }
     }
