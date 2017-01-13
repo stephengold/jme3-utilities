@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -76,7 +76,7 @@ public class CameraControl
      * Instantiate an enabled control to manage the specified camera.
      *
      * @param camera camera to manage (not null)
-     * @param offset camera's offset in local coordinates (not null)
+     * @param offset camera's offset in local coordinates (not null, unaffected)
      * @param lookDirection camera's look direction in local coordinates (not
      * null, positive length, unaffected)
      * @param upDirection camera's up direction in local coordinates (not null,

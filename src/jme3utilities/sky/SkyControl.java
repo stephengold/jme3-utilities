@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -53,7 +53,7 @@ import jme3utilities.math.MyMath;
  * the scene's main light, ambient light, and shadow filters/renderers under
  * simulation control by adding them to the Updater.
  * <p>
- * The "top" dome is oriented so that its rim coincides with the horizon. The
+ * The "top" dome is oriented so that its rim is parallel to the horizon. The
  * top dome implements the sun, moon, clear sky color, and horizon haze. Object
  * 0 is the sun, and object 1 is the moon.
  * <p>

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -99,7 +99,7 @@ enum StarMapPreset {
     }
 
     /**
-     * Get the sidereal time for this preset.
+     * Compute the sidereal time for this preset.
      *
      * @return number of hours since midnight (&le;24, &ge;0)
      */

@@ -88,7 +88,7 @@ public class MySkeleton
      *
      * @param spatial skeletonized spatial which contains the bone (not null)
      * @param boneName name of the bone to access (not null)
-     * @return pre-existing instance (or null if not found)
+     * @return a pre-existing instance (or null if not found)
      */
     public static Bone getBone(Spatial spatial, String boneName) {
         Validate.nonNull(spatial, "spatial");

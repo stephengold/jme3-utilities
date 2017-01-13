@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -79,8 +79,9 @@ public class LightControl
      * Instantiate an enabled control to manage the specified light.
      *
      * @param light to manage (not null, spot/point/directional light)
-     * @param offset camera's offset in local coordinates (not null)
-     * @param direction camera's view direction in local coordinates (not null)
+     * @param offset camera's offset in local coordinates (not null, unaffected)
+     * @param direction camera's view direction in local coordinates (not null,
+     * unaffected)
      */
     public LightControl(Light light, Vector3f offset, Vector3f direction) {
         if (!(light instanceof DirectionalLight

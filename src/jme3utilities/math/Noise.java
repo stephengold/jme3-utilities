@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -105,8 +105,8 @@ final public class Noise {
     }
 
     /**
-     * Get the next uniformly distributed, pseudo-random, single-precision value
-     * from the shared generator.
+     * Obtain the next uniformly distributed, pseudo-random, single-precision
+     * value from the shared generator.
      *
      * @return float value (&ge;0, &lt;1)
      */

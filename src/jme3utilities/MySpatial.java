@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -127,6 +127,7 @@ public class MySpatial
     /**
      * Find a node's 1st child which is an assignable from a specified class.
      *
+     * @param <T>
      * @param node node to search (not null)
      * @param spatialType subclass of Spatial to search for
      * @return 1st matching child, or null if none found
@@ -147,7 +148,8 @@ public class MySpatial
      *
      * @param spatial spatial to search (not null)
      * @param lightName (not null)
-     * @return 1st matching light, or null if none found
+     * @return pre-existing instance of the 1st matching light, or null if none
+     * found
      */
     public static Light findLight(Spatial spatial, String lightName) {
         for (Light light : spatial.getLocalLightList()) {
@@ -156,6 +158,7 @@ public class MySpatial
                 return light;
             }
         }
+
         return null;
     }
 
@@ -170,6 +173,7 @@ public class MySpatial
 
         Vector3f worldLocation = getWorldLocation(spatial);
         VectorXZ result = new VectorXZ(worldLocation);
+
         return result;
     }
 
@@ -211,7 +215,7 @@ public class MySpatial
         int count = mesh.getTriangleCount();
         for (int triangleIndex = 0; triangleIndex < count; triangleIndex++) {
             /*
-             * Get the vertex locations for a triangle in the mesh.
+             * Access the vertex locations for a triangle in the mesh.
              */
             mesh.getTriangle(triangleIndex, vertexLocal[0], vertexLocal[1],
                     vertexLocal[2]);
@@ -295,7 +299,7 @@ public class MySpatial
     }
 
     /**
-     * Get the world scale factor for a uniformly scaled spatial.
+     * Calculate the world scale factor for a uniformly scaled spatial.
      *
      * @param spatial spatial to measure (not null)
      * @return scale factor (&gt;0)
@@ -313,14 +317,14 @@ public class MySpatial
     }
 
     /**
-     * Copy the world location of a spatial.
+     * Calculate the world location of a spatial.
      *
      * @param spatial spatial to locate (not null)
      * @return new vector
      */
     public static Vector3f getWorldLocation(Spatial spatial) {
         /*
-         * Get the physical object, if any.
+         * Access the rigid body, if any.
          */
         RigidBodyControl rigidBodyControl =
                 spatial.getControl(RigidBodyControl.class);
@@ -330,18 +334,19 @@ public class MySpatial
         } else {
             location = spatial.getWorldTranslation();
         }
+
         return location.clone();
     }
 
     /**
-     * Copy the world orientation of a spatial.
+     * Calculate the world orientation of a spatial.
      *
      * @param spatial spatial to orient (not null)
      * @return new vector
      */
     public static Quaternion getWorldOrientation(Spatial spatial) {
         /*
-         * Get the physical object, if any.
+         * Access the rigid body, if any.
          */
         RigidBodyControl rigidBodyControl =
                 spatial.getControl(RigidBodyControl.class);
@@ -353,11 +358,12 @@ public class MySpatial
         }
         Quaternion result = orientation.clone();
         result.normalizeLocal();
+
         return result;
     }
 
     /**
-     * Compute the world elevation of a horizontal surface.
+     * Calculate the world elevation of a horizontal surface.
      *
      * @param geometry surface to measure (not null)
      * @return world elevation of the surface (in world units)

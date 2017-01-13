@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -71,7 +71,7 @@ public class NameGenerator
     // new methods exposed
 
     /**
-     * Given a name, regenerate its prefix.
+     * Given a name, recreate its prefix.
      *
      * @param name (not null)
      * @return prefix (or null if the name was not generated here)

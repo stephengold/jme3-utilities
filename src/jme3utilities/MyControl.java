@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -117,6 +117,8 @@ public class MyControl {
      * @return true if the control is enabled, otherwise false
      */
     public static boolean isEnabled(Object control) {
+        Validate.nonNull(control, "control");
+
         if (control instanceof AbstractControl) {
             return ((AbstractControl) control).isEnabled();
         } else if (control instanceof GhostControl) {
@@ -135,10 +137,10 @@ public class MyControl {
     }
 
     /**
-     * Check whether a scene-graph control is compatible with isEnabled() and
+     * Check whether a scene-graph control implements isEnabled() and
      * setEnabled().
      *
-     * @param control control to validate
+     * @param control control to validate (may be null)
      * @return true if it's compatible, otherwise false
      */
     public static boolean isValid(Object control) {

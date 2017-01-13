@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -82,6 +82,8 @@ final public class SkeletonDebugControl
 
         material = MyAsset.createWireframeMaterial(assetManager, color);
         material.getAdditionalRenderState().setDepthTest(false);
+        
+        assert !isEnabled();
     }
     // *************************************************************************
     // new methods exposed
@@ -90,8 +92,11 @@ final public class SkeletonDebugControl
      * Test whether a skeletonized spatial has debugging enabled.
      *
      * @param model skeletonized spatial (not null)
+     * @return true if enabled, otherwise false
      */
     public static boolean isDebugEnabled(Spatial model) {
+        Validate.nonNull(model, "model");
+
         SkeletonDebugControl control =
                 model.getControl(SkeletonDebugControl.class);
         if (control == null) {
@@ -103,12 +108,15 @@ final public class SkeletonDebugControl
     }
 
     /**
-     * Alter a skeletonized spatial's debug status.
+     * Alter a skeletonized spatial's debug status. Has no effect if the spatial
+     * lacks a SkeletonDebugControl.
      *
      * @param model skeletonized spatial (not null)
      * @param newState true to enable, false to disable
      */
     public static void setDebugEnabled(Spatial model, boolean newState) {
+        Validate.nonNull(model, "model");
+
         SkeletonDebugControl control =
                 model.getControl(SkeletonDebugControl.class);
         if (control != null) {

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -227,7 +227,7 @@ public class LinearSpline3f
             return -1;
         }
         /*
-         * TODO: use binary search
+         * TODO: implement binary search
          */
         int numPoints = controlTs.size();
         for (int index = 1; index < numPoints; index++) {

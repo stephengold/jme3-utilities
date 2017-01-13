@@ -121,7 +121,7 @@ public class VectorXZ
     /**
      * Instantiate a vector by projecting a 3-D vector onto the X-Z plane.
      *
-     * @param vector3D the 3-D vector (unaffected, not null)
+     * @param vector3D the 3-D vector (not null, unaffected)
      */
     public VectorXZ(Vector3f vector3D) {
         x = vector3D.x;
@@ -388,8 +388,7 @@ public class VectorXZ
     }
 
     /**
-     * Read the X-component of this vector. TODO: method should be named simply
-     * "x"
+     * Read the X-component of this vector. TODO rename
      *
      * @return X-component
      */
@@ -398,8 +397,7 @@ public class VectorXZ
     }
 
     /**
-     * Read the Z-component of this vector. TODO: method should be named simply
-     * "z"
+     * Read the Z-component of this vector. TODO rename
      *
      * @return Z-component
      */
@@ -411,8 +409,8 @@ public class VectorXZ
      * Interpolate (blend) this vector with another.
      *
      * @param otherVector other vector (not null)
-     * @param otherFraction how much weight to give to the other vector (not
-     * null, &ge;0, &le;1, 0 &rarr; purely this, 1 &rarr; purely the other)
+     * @param otherFraction how much weight to give to the other vector (&ge;0,
+     * &le;1, 0 &rarr; purely this, 1 &rarr; purely the other)
      * @return a blended vector
      */
     public VectorXZ interpolate(VectorXZ otherVector, float otherFraction) {

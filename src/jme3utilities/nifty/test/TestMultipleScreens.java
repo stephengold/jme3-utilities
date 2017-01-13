@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -84,7 +84,7 @@ public class TestMultipleScreens
         TestMultipleScreens application = new TestMultipleScreens();
         application.start();
         /*
-         * ... and onward to TestGui.guiInitializeApplication()!
+         * ... and onward to TestMultipleScreens.guiInitializeApplication()!
          */
     }
     // *************************************************************************

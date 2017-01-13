@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,7 @@ import jme3utilities.math.MyColor;
  * The control is disabled at creation. When enabled, it attaches a "sky" node
  * to the controlled spatial, which must also be a node.
  * <p>
- * The "top" dome is oriented so that its rim coincides with the horizon. The
+ * The "top" dome is oriented so that its rim is parallel to the horizon. The
  * top dome implements the sun, moon, clear sky color, and horizon haze.
  * <p>
  * This control simulates up to six layers of clouds. The cloud density may be

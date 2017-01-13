@@ -650,7 +650,7 @@ public class SkyMaterialCore
         float yFraction0 = 1 - yFraction1;
         int y1 = (y0 + 1) % height;
         /*
-         * Get the red values of the four nearest pixels.
+         * Access the red values of the four nearest pixels.
          */
         float r00 = colorImage.getPixel(x0, y0).r;
         float r01 = colorImage.getPixel(x1, y0).r;

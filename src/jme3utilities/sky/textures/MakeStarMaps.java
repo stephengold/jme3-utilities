@@ -459,7 +459,7 @@ public class MakeStarMaps {
             ellipseYs[i] = y;
         }
         Graphics2D graphics = map.createGraphics();
-        graphics.setColor(Color.WHITE); // TODO
+        graphics.setColor(Color.WHITE); // TODO tint based on spectral type
         graphics.fillPolygon(ellipseXs, ellipseYs, ellipseNumPoints);
     }
 
@@ -831,25 +831,22 @@ public class MakeStarMaps {
         try {
             apparentMagnitude = Float.valueOf(magnitudeText);
         } catch (NumberFormatException exception) {
-            logger.log(Level.WARNING,
-                    "entry #{0} has invalid magnitude {1}",
+            logger.log(Level.WARNING, "entry #{0} has invalid magnitude {1}",
                     new Object[]{entryId, MyString.quote(magnitudeText)});
             throw new InvalidMagnitudeException();
         }
         if (apparentMagnitude < minMagnitude
                 || apparentMagnitude > maxMagnitude) {
-            logger.log(Level.WARNING,
-                    "entry #{0} has invalid magnitude {1}",
+            logger.log(Level.WARNING, "entry #{0} has invalid magnitude {1}",
                     new Object[]{entryId, MyString.quote(magnitudeText)});
             throw new InvalidMagnitudeException();
         }
         /*
-         * Get the star's equatorial coordinates and convert them to radians.
+         * Compute the star's equatorial coordinates 
+         * and convert them to radians.
          */
-        float declination =
-                declination(textLine) * FastMath.DEG_TO_RAD;
-        float rightAscension =
-                rightAscensionHours(textLine) * radiansPerHour;
+        float declination = declination(textLine) * FastMath.DEG_TO_RAD;
+        float rightAscension = rightAscensionHours(textLine) * radiansPerHour;
         /*
          * Instantiate the star.
          */

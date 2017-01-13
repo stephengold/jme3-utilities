@@ -106,8 +106,8 @@ public class Misc {
     }
 
     /**
-     * Get the existing filter post-processor for a viewport, or if it has none
-     * add a new one to it.
+     * Access the existing filter post-processor for a viewport, or if it has
+     * none add a new one and access that.
      *
      * @param viewPort (not null)
      * @param assetManager (not null)
@@ -128,6 +128,7 @@ public class Misc {
          */
         FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
         viewPort.addProcessor(fpp);
+
         return fpp;
     }
 
