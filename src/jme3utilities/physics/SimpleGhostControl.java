@@ -29,11 +29,8 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.GhostControl;
-import com.jme3.export.JmeExporter;
-import com.jme3.export.JmeImporter;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
-import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 

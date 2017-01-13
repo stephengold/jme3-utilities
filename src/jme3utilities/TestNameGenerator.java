@@ -32,8 +32,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static jme3utilities.NameGenerator.isFrom;
 import static jme3utilities.NameGenerator.getPrefix;
+import static jme3utilities.NameGenerator.isFrom;
 
 /**
  * Simple application to test the NameGenerator class.
