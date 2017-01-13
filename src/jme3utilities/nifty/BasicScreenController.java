@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -155,7 +155,7 @@ public class BasicScreenController
         boolean isOnGoing = true;
         float simInterval = 0f;
         ActionListener actionListener =
-                guiApplication.getEnabledScreen().listener;
+                guiApplication.getEnabledScreen().getListener();
         try {
             actionListener.onAction(actionString, isOnGoing, simInterval);
         } catch (Throwable throwable) {
@@ -330,6 +330,13 @@ public class BasicScreenController
 
         GuiApplication.setEnabledScreen(this);
         super.setEnabled(true);
+    }
+
+    /**
+     * Access the listener of this screen.
+     */
+    private ActionListener getListener() {
+        return listener;
     }
 
     /**
