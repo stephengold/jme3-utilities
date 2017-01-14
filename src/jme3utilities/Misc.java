@@ -156,7 +156,7 @@ public class Misc {
      * @return package name, branch, and revision of this file
      */
     public static String getVersion() {//
-        return "jme3-utilities trunk $Rev: 446 $";
+        return "jme3-utilities trunk $Rev: 447 $";
     }
 
     /**
@@ -204,14 +204,8 @@ public class Misc {
 
         GraphicsConfiguration configuration = graphics.getDeviceConfiguration();
         Rectangle bounds = configuration.getBounds();
-        if (x < 0 || x >= bounds.width) {
-            logger.log(Level.SEVERE, "x={0}", x);
-            throw new IllegalArgumentException("X coordinate out of bounds");
-        }
-        if (y < 0 || y >= bounds.height) {
-            logger.log(Level.SEVERE, "y={0}", y);
-            throw new IllegalArgumentException("Y coordinate out of bounds");
-        }
+        Validate.inRange(x, "X coordinate", 0, bounds.width - 1);
+        Validate.inRange(y, "Y coordinate", 0, bounds.height - 1);
         Validate.fraction(brightness, "brightness");
 
         Color color = new Color(brightness, brightness, brightness);
