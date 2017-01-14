@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2015, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -118,10 +118,7 @@ final public class MyCamera {
      * @param direction (not null, positive length, unaffected)
      */
     public static void look(Camera camera, Vector3f direction) {
-        if (MyVector3f.isZeroLength(direction)) {
-            throw new IllegalArgumentException(
-                    "direction should have positive length");
-        }
+        Validate.nonZero(direction, "new direction");
 
         if (direction.x == 0f && direction.z == 0f) {
             /*

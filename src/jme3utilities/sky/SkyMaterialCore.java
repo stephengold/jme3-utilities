@@ -492,32 +492,25 @@ public class SkyMaterialCore
     // protected methods
 
     /**
-     * Validate a layer index.
+     * Validate a cloud layer index used as a method argument.
      *
      * @param layerIndex the index of a cloud layer
      * @throws IllegalArgumentException if the index is out of range
      */
     protected void validateLayerIndex(int layerIndex) {
-        if (layerIndex < 0 || layerIndex >= maxCloudLayers) {
-            logger.log(Level.SEVERE, "layerIndex={0}, maxCloudLayers={1}",
-                    new Object[]{layerIndex, maxCloudLayers});
-            throw new IllegalArgumentException(
-                    "cloud layer index out of range");
-        }
+        Validate.inRange(layerIndex, "cloud layer index",
+                0, maxCloudLayers - 1);
     }
 
     /**
-     * Validate an object index.
+     * Validate an object index used as a method argument.
      *
      * @param objectIndex the index of an astronomical object
      * @throws IllegalArgumentException if the index is out of range
      */
     protected void validateObjectIndex(int objectIndex) {
-        if (objectIndex < 0 || objectIndex >= maxObjects) {
-            logger.log(Level.SEVERE, "objectIndex={0}, maxObjects={1}",
-                    new Object[]{objectIndex, maxObjects});
-            throw new IllegalArgumentException("object index out of range");
-        }
+        Validate.inRange(objectIndex, "object index",
+                0, maxObjects - 1);
     }
     // *************************************************************************
     // Savable methods

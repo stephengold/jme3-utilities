@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -149,16 +149,10 @@ public class GlobeRenderer
             int equatorSamples, int meridianSamples, int resolution) {
         Validate.nonNull(globeMaterial, "material");
         Validate.nonNull(outputFormat, "format");
-        if (equatorSamples < 3) {
-            logger.log(Level.SEVERE, "equatorSamples={0}", equatorSamples);
-            throw new IllegalArgumentException(
-                    "need at least 3 samples on the globe's equator");
-        }
-        if (meridianSamples < 3) {
-            logger.log(Level.SEVERE, "meridianSamples={0}", meridianSamples);
-            throw new IllegalArgumentException(
-                    "need at least 3 samples on each meridian");
-        }
+        Validate.inRange(equatorSamples, "equator samples",
+                3, Integer.MAX_VALUE);
+        Validate.inRange(meridianSamples, "meridian samples",
+                3, Integer.MAX_VALUE);
         Validate.positive(resolution, "resolution");
 
         initializeCamera(resolution);
@@ -224,12 +218,7 @@ public class GlobeRenderer
     final public void moveCamera(Vector3f newLocation,
             Vector3f newUpDirection) {
         Validate.nonNull(newLocation, "location");
-        Validate.nonNull(newUpDirection, "up direction");
-        if (MyVector3f.isZeroLength(newUpDirection)) {
-            logger.log(Level.SEVERE, "up direction={0}", newUpDirection);
-            throw new IllegalArgumentException(
-                    "up direction should have positive length");
-        }
+        Validate.nonZero(newUpDirection, "up direction");
 
         camera.setLocation(newLocation);
         camera.lookAt(globeCenter, newUpDirection);
@@ -281,11 +270,7 @@ public class GlobeRenderer
      * fully lit)
      */
     final public void setPhase(float newAngle) {
-        if (!(newAngle >= 0f && newAngle <= FastMath.TWO_PI)) {
-            logger.log(Level.SEVERE, "angle={0}", newAngle);
-            throw new IllegalArgumentException(
-                    "angle should be between 0 and 2*Pi");
-        }
+        Validate.inRange(newAngle, "phase angle", 0f, FastMath.TWO_PI);
 
         Quaternion turn = new Quaternion().fromAngles(-newAngle, 0f, 0f);
         Vector3f lightDirection = turn.mult(Vector3f.UNIT_Z);

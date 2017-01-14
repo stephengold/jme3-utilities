@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * Custom mesh for a circle or regular polygon in the XZ plane, with radius=1,
@@ -81,13 +82,10 @@ public class LoopMesh
      * @param vertexCount (&ge;3)
      */
     public LoopMesh(int vertexCount) {
-        if (vertexCount < 3) {
-            logger.log(Level.SEVERE, "vertexCount={0}", vertexCount);
-            throw new IllegalArgumentException(
-                    "should have at least 3 vertices");
-        }
-        this.vertexCount = vertexCount;
+        Validate.inRange(vertexCount, "number of vertices",
+                3, Integer.MAX_VALUE);
 
+        this.vertexCount = vertexCount;
         setMode(Mode.Lines);
         updateAll();
         setStatic();
@@ -99,6 +97,7 @@ public class LoopMesh
      * De-serialize this instance when loading.
      *
      * @param importer (not null)
+     * @throws IOException
      */
     @Override
     public void read(JmeImporter importer)
@@ -113,6 +112,7 @@ public class LoopMesh
      * Serialize this instance when saving.
      *
      * @param exporter (not null)
+     * @throws IOException
      */
     @Override
     public void write(JmeExporter exporter)

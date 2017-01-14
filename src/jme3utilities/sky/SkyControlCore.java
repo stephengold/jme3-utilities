@@ -303,11 +303,7 @@ public class SkyControlCore
      * @return pre-existing instance
      */
     public CloudLayer getCloudLayer(int layerIndex) {
-        if (layerIndex < 0 || layerIndex >= numCloudLayers) {
-            logger.log(Level.SEVERE, "index={0}", layerIndex);
-            throw new IllegalArgumentException("index out of range");
-        }
-
+        Validate.inRange(layerIndex, "cloud layer index", 0, numCloudLayers - 1);
         CloudLayer layer = cloudLayers[layerIndex];
 
         assert layer != null;

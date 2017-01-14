@@ -28,7 +28,6 @@ package jme3utilities.math;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -65,12 +64,7 @@ public class MyVector3f {
      * @return angle above the X-Z plane (in radians, &le;Pi/2, &ge;-Pi/2)
      */
     public static float altitude(Vector3f offset) {
-        Validate.nonNull(offset, "offset");
-        if (isZeroLength(offset)) {
-            logger.log(Level.SEVERE, "offset={0}", offset);
-            throw new IllegalArgumentException(
-                    "offset should have positive length");
-        }
+        Validate.nonZero(offset, "offset");
 
         float xzRange = MyMath.hypotenuse(offset.x, offset.z);
         float result = (float) Math.atan2(offset.y, xzRange);
@@ -262,9 +256,9 @@ public class MyVector3f {
      * @return a new vector with the same direction as vector2
      */
     public static Vector3f projection(Vector3f vector1, Vector3f vector2) {
-        float lengthSquared = vector2.lengthSquared();
-        Validate.positive(lengthSquared, "length squared of vector2");
+        Validate.nonZero(vector2, "vector2");
 
+        float lengthSquared = vector2.lengthSquared();
         float dot = vector1.dot(vector2);
         Vector3f projection = vector2.mult(dot / lengthSquared);
 

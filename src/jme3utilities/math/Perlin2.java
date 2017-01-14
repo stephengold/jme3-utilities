@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@ import com.jme3.math.Vector2f;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * Two-dimensional Perlin noise generator.
@@ -76,12 +77,8 @@ public class Perlin2
                     String.format("period shouldn't be less than numGradients");
             throw new IllegalArgumentException(message);
         }
-        if (numGradients < 2) {
-            logger.log(Level.SEVERE, "numGradients={0}", numGradients);
-            String message =
-                    String.format("numGradients should be greater than 1");
-            throw new IllegalArgumentException(message);
-        }
+        Validate.inRange(numGradients, "number of gradients",
+                2, Integer.MAX_VALUE);
 
         generateGradients(numGradients, gSeed);
         permutation = new Permutation(period, pSeed);
@@ -153,11 +150,8 @@ public class Perlin2
      * @param gSeed seed for generating gradients
      */
     private void generateGradients(int numGradients, long seed) {
-        if (numGradients <= 1) {
-            logger.log(Level.SEVERE, "length={0}", numGradients);
-            throw new IllegalArgumentException(
-                    "length should be greater than 1");
-        }
+        Validate.inRange(numGradients, "number of gradients",
+                2, Integer.MAX_VALUE);
 
         gradients = new Vector2f[numGradients];
         Random thetaGenerator = new Random(seed);

@@ -279,11 +279,7 @@ public class SkyControl
      * @param newAngle (in radians, &le;2*Pi, &ge;0)
      */
     public void setPhaseAngle(float newAngle) {
-        if (!(newAngle >= 0f && newAngle <= FastMath.TWO_PI)) {
-            logger.log(Level.SEVERE, "angle={0}", newAngle);
-            throw new IllegalArgumentException(
-                    "angle should be between 0 and 2*Pi");
-        }
+        Validate.inRange(newAngle, "phase angle", 0f, FastMath.TWO_PI);
         if (moonRenderer == null) {
             throw new IllegalStateException("moon renderer not yet added");
         }

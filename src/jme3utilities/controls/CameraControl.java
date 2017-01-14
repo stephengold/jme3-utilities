@@ -31,7 +31,6 @@ import com.jme3.renderer.Camera;
 import java.util.logging.Logger;
 import jme3utilities.SimpleControl;
 import jme3utilities.Validate;
-import jme3utilities.math.MyVector3f;
 
 /**
  * Simple control which manages the position and orientation of a camera in the
@@ -85,16 +84,8 @@ public class CameraControl
     public CameraControl(Camera camera, Vector3f offset, Vector3f lookDirection,
             Vector3f upDirection) {
         Validate.nonNull(camera, "camera");
-        Validate.nonNull(lookDirection, "look direction");
-        if (MyVector3f.isZeroLength(lookDirection)) {
-            throw new IllegalArgumentException(
-                    "look direction should have positive length");
-        }
-        Validate.nonNull(upDirection, "up direction");
-        if (MyVector3f.isZeroLength(upDirection)) {
-            throw new IllegalArgumentException(
-                    "up direction should have positive length");
-        }
+        Validate.nonZero(lookDirection, "look direction");
+        Validate.nonZero(upDirection, "up direction");
 
         this.camera = camera;
         this.offset = offset.clone();
@@ -113,11 +104,7 @@ public class CameraControl
      * length, unaffected)
      */
     public void setLookDirection(Vector3f newDirection) {
-        Validate.nonNull(newDirection, "direction");
-        if (MyVector3f.isZeroLength(newDirection)) {
-            throw new IllegalArgumentException(
-                    "direction should have positive length");
-        }
+        Validate.nonZero(newDirection, "direction");
 
         lookDirection.set(newDirection);
     }

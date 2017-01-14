@@ -29,7 +29,6 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -74,11 +73,8 @@ public class LinearSpline3f
      */
     public LinearSpline3f(Vector3f[] points) {
         Validate.nonNull(points, "control points");
-        if (points.length < 2) {
-            logger.log(Level.SEVERE, "length={0}", points.length);
-            throw new IllegalArgumentException(
-                    "should provide at least 2 control points");
-        }
+        Validate.inRange(points.length, "number of control points",
+                2, Integer.MAX_VALUE);
 
         float sumDistance = 0f;
         Vector3f previousPoint = null;

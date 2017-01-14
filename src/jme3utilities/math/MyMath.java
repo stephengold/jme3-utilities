@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -91,11 +91,7 @@ public class MyMath {
      * &ge;0)
      */
     public static float circle(float abscissa) {
-        if (!(abscissa >= -1f && abscissa <= 1f)) {
-            logger.log(Level.SEVERE, "abscissa={0}", abscissa);
-            throw new IllegalArgumentException(
-                    "abscissa should be between -1 and 1, inclusive");
-        }
+        Validate.inRange(abscissa, "abscissa", -1f, 1f);
 
         double x = (double) abscissa;
         float y = (float) circle(x);

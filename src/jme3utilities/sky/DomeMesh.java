@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -160,18 +160,11 @@ public class DomeMesh
      */
     public DomeMesh(int rimSamples, int quadrantSamples, float topU, float topV,
             float uvScale, boolean inwardFacing) {
-        if (rimSamples < 3) {
-            logger.log(Level.SEVERE, "rimSamples={0}", rimSamples);
-            throw new IllegalArgumentException(
-                    "need at least 3 samples on the rim");
-        }
+        Validate.inRange(rimSamples, "rim samples", 3, Integer.MAX_VALUE);
         this.rimSamples = rimSamples;
 
-        if (quadrantSamples < 2) {
-            logger.log(Level.SEVERE, "quadrantSamples={0}", quadrantSamples);
-            throw new IllegalArgumentException(
-                    "need at least 2 samples per quadrant");
-        }
+        Validate.inRange(quadrantSamples, "quadrant samples",
+                2, Integer.MAX_VALUE);
         this.quadrantSamples = quadrantSamples;
 
         Validate.fraction(topU, "topU");
@@ -301,6 +294,7 @@ public class DomeMesh
      * De-serialize this instance when loading.
      *
      * @param importer (not null)
+     * @throws IOException
      */
     @Override
     public void read(JmeImporter importer)
@@ -327,6 +321,7 @@ public class DomeMesh
      * Serialize this instance when saving.
      *
      * @param exporter (not null)
+     * @throws IOException
      */
     @Override
     public void write(JmeExporter exporter)

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -26,8 +26,8 @@
 package jme3utilities.math;
 
 import java.util.Random;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * Cyclic permutation of the integers from 0 to length-1, for use in noise
@@ -60,11 +60,7 @@ public class Permutation {
      * @param seed
      */
     public Permutation(int length, long seed) {
-        if (length <= 1) {
-            logger.log(Level.SEVERE, "length={0}", length);
-            throw new IllegalArgumentException(
-                    "length should be greater than 1");
-        }
+        Validate.inRange(length, "length", 2, Integer.MAX_VALUE);
         /*
          * Initialize the permutation to identity.
          */

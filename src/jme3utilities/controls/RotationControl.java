@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -27,11 +27,9 @@ package jme3utilities.controls;
 
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.SimpleControl;
 import jme3utilities.Validate;
-import jme3utilities.math.MyVector3f;
 
 /**
  * Simple control to rotate a spatial at a constant rate.
@@ -71,12 +69,7 @@ public class RotationControl
      * length, unaffected)
      */
     public RotationControl(float rate, Vector3f axis) {
-        Validate.nonNull(axis, "axis");
-        if (MyVector3f.isZeroLength(axis)) {
-            logger.log(Level.SEVERE, "axis={0}", axis);
-            throw new IllegalArgumentException(
-                    "axis should have positive length");
-        }
+        Validate.nonZero(axis, "axis");
 
         this.axis = axis.normalize();
         this.rate = rate;

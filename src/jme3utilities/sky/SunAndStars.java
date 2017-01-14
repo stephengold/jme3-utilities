@@ -121,16 +121,9 @@ public class SunAndStars
      */
     public static Vector3f convertToEquatorial(float latitude,
             float longitude) {
-        if (!(latitude >= -FastMath.HALF_PI && latitude <= FastMath.HALF_PI)) {
-            logger.log(Level.SEVERE, "latitude={0}", latitude);
-            throw new IllegalArgumentException(
-                    "latitude should be between -Pi/2 and Pi/2, inclusive");
-        }
-        if (!(longitude >= 0f && longitude <= FastMath.TWO_PI)) {
-            logger.log(Level.SEVERE, "longitude={0}", longitude);
-            throw new IllegalArgumentException(
-                    "longitude should be between 0 and 2*Pi, inclusive");
-        }
+        Validate.inRange(latitude, "latitude",
+                -FastMath.HALF_PI, FastMath.HALF_PI);
+        Validate.inRange(longitude, "longitude", 0f, FastMath.TWO_PI);
         /*
          * Convert angles to Cartesian ecliptical coordinates.
          */
@@ -179,16 +172,9 @@ public class SunAndStars
      * @return new unit vector in world (horizontal) coordinates
      */
     public Vector3f convertToWorld(float latitude, float longitude) {
-        if (!(latitude >= -FastMath.HALF_PI && latitude <= FastMath.HALF_PI)) {
-            logger.log(Level.SEVERE, "latitude={0}", latitude);
-            throw new IllegalArgumentException(
-                    "latitude should be between -Pi/2 and Pi/2, inclusive");
-        }
-        if (!(longitude >= 0f && longitude <= FastMath.TWO_PI)) {
-            logger.log(Level.SEVERE, "latitude={0}", latitude);
-            throw new IllegalArgumentException(
-                    "longitude should be between 0 and 2*Pi, inclusive");
-        }
+        Validate.inRange(latitude, "latitude",
+                -FastMath.HALF_PI, FastMath.HALF_PI);
+        Validate.inRange(longitude, "longitude", 0f, FastMath.TWO_PI);
 
         Vector3f equatorial = convertToEquatorial(latitude, longitude);
         Vector3f world = convertToWorld(equatorial);
@@ -357,12 +343,7 @@ public class SunAndStars
      * @param newHour hours since midnight, solar time (&le;24, &ge;0)
      */
     public void setHour(float newHour) {
-        if (!(newHour >= 0f && newHour <= Constants.hoursPerDay)) {
-            logger.log(Level.SEVERE, "hour={0}", newHour);
-            throw new IllegalArgumentException(
-                    "hour should be between 0 and 24, inclusive");
-        }
-
+        Validate.inRange(newHour, "new hour", 0f, Constants.hoursPerDay);
         this.hour = newHour;
     }
 
@@ -372,12 +353,8 @@ public class SunAndStars
      * @param latitude radians north of the equator (&le;Pi/2, &ge;-Pi/2)
      */
     public void setObserverLatitude(float latitude) {
-        if (!(latitude >= -FastMath.HALF_PI && latitude <= FastMath.HALF_PI)) {
-            logger.log(Level.SEVERE, "latitude={0}", latitude);
-            throw new IllegalArgumentException(
-                    "latitude should be between -Pi/2 and Pi/2, inclusive");
-        }
-
+        Validate.inRange(latitude, "latitude",
+                -FastMath.HALF_PI, FastMath.HALF_PI);
         this.observerLatitude = latitude;
     }
 
@@ -387,11 +364,7 @@ public class SunAndStars
      * @param longitude radians east of the vernal equinox (&le;2*Pi, &ge;0)
      */
     public void setSolarLongitude(float longitude) {
-        if (!(longitude >= 0f && longitude <= FastMath.TWO_PI)) {
-            logger.log(Level.SEVERE, "longitude={0}", longitude);
-            throw new IllegalArgumentException(
-                    "longitude should be between 0 and 2*Pi");
-        }
+        Validate.inRange(longitude, "longitude", 0f, FastMath.TWO_PI);
 
         solarLongitude = longitude;
         /*
@@ -420,16 +393,8 @@ public class SunAndStars
      * @param day day of the Gregorian month (&le;31, &ge;1)
      */
     public void setSolarLongitude(int month, int day) {
-        if (month < 0 || month >= 12) {
-            logger.log(Level.SEVERE, "month={0}", month);
-            throw new IllegalArgumentException(
-                    "month should be between 0 and 11, inclusive");
-        }
-        if (day < 1 || day > 31) {
-            logger.log(Level.SEVERE, "day={0}", day);
-            throw new IllegalArgumentException(
-                    "day should be between 1 and 31, inclusive");
-        }
+        Validate.inRange(month, "month", 0, 11);
+        Validate.inRange(month, "day", 1, 31);
         /*
          * Convert month and day to day-of-the-year.
          */
