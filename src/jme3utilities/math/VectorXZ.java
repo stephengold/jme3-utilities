@@ -42,7 +42,7 @@ import jme3utilities.Validate;
  * @author Stephen Gold <sgold@sonic.net>
  */
 public class VectorXZ
-        implements Cloneable, Comparable<VectorXZ> {
+        implements Comparable<VectorXZ> {
     // *************************************************************************
     // constants
 
@@ -622,22 +622,6 @@ public class VectorXZ
     }
     // *************************************************************************
     // Object methods
-
-    /**
-     * Clone this vector. Since vectors are immutable, this should never be
-     * necessary.
-     *
-     * @return a new vector with the same components as this vector
-     */
-    @Override
-    public VectorXZ clone() {
-        try {
-            VectorXZ clone = (VectorXZ) super.clone();
-            return clone;
-        } catch (CloneNotSupportedException exception) {
-            throw new AssertionError();
-        }
-    }
 
     /**
      * Compare for equality. TODO: also provide comparison with tolerance
