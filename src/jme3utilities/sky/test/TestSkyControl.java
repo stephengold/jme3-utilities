@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -397,12 +397,14 @@ public class TestSkyControl
      */
     @Override
     public void addViewPort(ViewPort viewPort) {
-        assert viewPort != null;
+        Validate.nonNull(viewPort, "viewport");
         addShadows(viewPort);
     }
 
     /**
      * Callback when a view port is removed. Does nothing.
+     *
+     * @param unused
      */
     @Override
     public void removeViewPort(ViewPort unused) {
