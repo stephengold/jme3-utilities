@@ -115,7 +115,7 @@ final public class Validate {
             logger.log(Level.SEVERE, "{0}={1}",
                     new Object[]{description, value});
             String message = String.format(
-                    "%s should be greater than or equal to %d.",
+                    "%s should be greater than or equal to %f.",
                     description, min);
             throw new IllegalArgumentException(message);
         }
@@ -124,7 +124,7 @@ final public class Validate {
             logger.log(Level.SEVERE, "{0}={1}",
                     new Object[]{description, value});
             String message = String.format(
-                    "%s should be less than or equal to %d.",
+                    "%s should be less than or equal to %f.",
                     description, max);
             throw new IllegalArgumentException(message);
         }
@@ -229,8 +229,8 @@ final public class Validate {
         nonNull(vector, description);
 
         if (vector.x == 0f && vector.y == 0f && vector.z == 0f) {
-            String message =
-                    String.format("%s should not be zero.", description);
+            String message = String.format("%s should have positive length.",
+                    description);
             throw new IllegalArgumentException(message);
         }
     }
