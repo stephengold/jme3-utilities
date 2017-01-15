@@ -32,7 +32,6 @@ import de.lessvoid.nifty.controls.Menu;
 import de.lessvoid.nifty.controls.MenuItemActivatedEvent;
 import de.lessvoid.nifty.controls.RadioButton;
 import de.lessvoid.nifty.controls.Slider;
-import de.lessvoid.nifty.controls.nullobjects.SliderNull;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
@@ -299,7 +298,7 @@ public class GuiScreenController
 
         String sliderName = namePrefix + "Slider";
         Slider slider = getScreen().findNiftyControl(sliderName, Slider.class);
-        if (slider == null || slider instanceof SliderNull) {
+        if (slider == null) {
             logger.log(Level.SEVERE, "missing slider {0} in {1}", new Object[]{
                 MyString.quote(sliderName), getScreenId()
             });
@@ -345,9 +344,9 @@ public class GuiScreenController
         } catch (NullPointerException exception) {
             logger.log(Level.INFO, "screen {0} lacks checkbox {1}",
                     new Object[]{
-                MyString.quote(getScreenId()),
-                MyString.quote(elementId)
-            });
+                        MyString.quote(getScreenId()),
+                        MyString.quote(elementId)
+                    });
         }
     }
 
@@ -366,9 +365,9 @@ public class GuiScreenController
         } catch (NullPointerException exception) {
             logger.log(Level.INFO, "screen {0} lacks radio button {1}",
                     new Object[]{
-                MyString.quote(getScreenId()),
-                MyString.quote(elementId)
-            });
+                        MyString.quote(getScreenId()),
+                        MyString.quote(elementId)
+                    });
         }
     }
 
@@ -392,9 +391,9 @@ public class GuiScreenController
         } catch (NullPointerException exception) {
             logger.log(Level.INFO, "screen {0} lacks radio button {1}",
                     new Object[]{
-                MyString.quote(getScreenId()),
-                MyString.quote(elementId)
-            });
+                        MyString.quote(getScreenId()),
+                        MyString.quote(elementId)
+                    });
         }
     }
 
@@ -426,9 +425,9 @@ public class GuiScreenController
         if (element == null) {
             logger.log(Level.INFO, "screen {0} lacks element {1}",
                     new Object[]{
-                MyString.quote(getScreenId()),
-                MyString.quote(elementId)
-            });
+                        MyString.quote(getScreenId()),
+                        MyString.quote(elementId)
+                    });
             return;
         }
         TextRenderer textRenderer = element.getRenderer(TextRenderer.class);
