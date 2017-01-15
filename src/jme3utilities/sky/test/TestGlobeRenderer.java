@@ -130,6 +130,8 @@ public class TestGlobeRenderer
          * Set the logging level for this class.
          */
         logger.setLevel(Level.INFO);
+        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+                .setLevel(Level.SEVERE);
         /*
          * Instantiate the application.
          */

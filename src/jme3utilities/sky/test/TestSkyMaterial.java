@@ -142,6 +142,9 @@ public class TestSkyMaterial
          * Mute the chatty loggers found in some imported packages.
          */
         Misc.setLoggingLevels(Level.WARNING);
+        Logger.getLogger("de.lessvoid.nifty.Nifty").setLevel(Level.SEVERE);
+        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+                .setLevel(Level.SEVERE);
         /*
          * Set the logging level for this class.
          */
@@ -352,9 +355,9 @@ public class TestSkyMaterial
 
         logger.log(Level.INFO, "Loaded {0} from asset {1}",
                 new Object[]{
-            MyString.quote(loadedDome.getName()),
-            MyString.quote(savePath)
-        });
+                    MyString.quote(loadedDome.getName()),
+                    MyString.quote(savePath)
+                });
 
         Spatial oldDome = rootNode.getChild(geometryName);
         rootNode.detachChild(oldDome);
@@ -382,9 +385,9 @@ public class TestSkyMaterial
         }
         logger.log(Level.INFO, "Saved {0} to file {1}",
                 new Object[]{
-            MyString.quote(dome.getName()),
-            MyString.quote(filePath)
-        });
+                    MyString.quote(dome.getName()),
+                    MyString.quote(filePath)
+                });
     }
 
     /**

@@ -174,6 +174,9 @@ public class TestSkyControl
          * Mute the chatty loggers found in some imported packages.
          */
         Misc.setLoggingLevels(Level.WARNING);
+        Logger.getLogger("de.lessvoid.nifty.Nifty").setLevel(Level.SEVERE);
+        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+                .setLevel(Level.SEVERE);
         /*
          * Lower the logging level for this class.
          */
@@ -441,7 +444,7 @@ public class TestSkyControl
         if (parameters.shadowFilter()) {
             DirectionalLightShadowFilter dlsf =
                     new DirectionalLightShadowFilter(assetManager,
-                    shadowMapSize, shadowMapSplits);
+                            shadowMapSize, shadowMapSplits);
             dlsf.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
             dlsf.setLight(mainLight);
             Misc.getFpp(viewPort, assetManager).addFilter(dlsf);
@@ -450,7 +453,7 @@ public class TestSkyControl
         } else {
             DirectionalLightShadowRenderer dlsr =
                     new DirectionalLightShadowRenderer(assetManager,
-                    shadowMapSize, shadowMapSplits);
+                            shadowMapSize, shadowMapSplits);
             dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
             dlsr.setLight(mainLight);
             updater.addShadowRenderer(dlsr);

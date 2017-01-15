@@ -215,6 +215,8 @@ public class SlideShow
          * Mute the chatty loggers found in some imported packages.
          */
         Misc.setLoggingLevels(Level.WARNING);
+        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+                .setLevel(Level.SEVERE);
         /*
          * Set the logging level for this class.
          */

@@ -65,6 +65,8 @@ public class TestPas
          * Mute the chatty loggers found in some imported packages.
          */
         Misc.setLoggingLevels(Level.WARNING);
+        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+                .setLevel(Level.SEVERE);
         /*
          * Instantiate the application.
          */

@@ -624,6 +624,9 @@ public class MySpatial
      */
     public static void main(String[] ignored) {
         Misc.setLoggingLevels(Level.WARNING);
+        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+                .setLevel(Level.SEVERE);
+
         MySpatial application = new MySpatial();
         application.setShowSettings(false);
         application.start();

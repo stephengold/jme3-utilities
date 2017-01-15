@@ -36,7 +36,9 @@ import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Misc;
 import jme3utilities.MyAsset;
 import jme3utilities.MyCamera;
 import jme3utilities.debug.PerformanceAppState;
@@ -71,6 +73,13 @@ public class CubeMapExample
      * @param unused array of command-line arguments
      */
     public static void main(String[] unused) {
+        /*
+         * Mute the chatty loggers found in some imported packages.
+         */
+        Misc.setLoggingLevels(Level.WARNING);
+        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+                .setLevel(Level.SEVERE);
+
         CubeMapExample app = new CubeMapExample();
         app.start();
         /*

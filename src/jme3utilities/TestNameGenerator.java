@@ -57,6 +57,9 @@ public class TestNameGenerator extends SimpleApplication {
      */
     public static void main(String[] ignored) {
         Misc.setLoggingLevels(Level.WARNING);
+        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+                .setLevel(Level.SEVERE);
+
         TestNameGenerator application = new TestNameGenerator();
         application.setShowSettings(false);
         application.start();
