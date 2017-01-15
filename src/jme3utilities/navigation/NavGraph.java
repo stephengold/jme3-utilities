@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,7 @@ import jme3utilities.math.Noise;
  * Graph for navigation. Its vertices represent reachable locations in the
  * world. Its arcs represent feasible paths between locations.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class NavGraph {
     // *************************************************************************
@@ -379,7 +379,7 @@ public class NavGraph {
     }
 
     /**
-     * Verify that an arc belongs to this graph.
+     * Verify that an arc (used as a method argument) belongs to this graph.
      *
      * @param arc arc to be validated
      */
@@ -391,7 +391,7 @@ public class NavGraph {
     }
 
     /**
-     * Verify that a vertex belongs to this graph.
+     * Verify that a vertex (used as a method argument) belongs to this graph.
      *
      * @param vertex vertex to be validated
      */
