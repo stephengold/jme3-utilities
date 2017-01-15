@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -36,13 +36,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
-import jme3utilities.math.MyVector3f;
 import jme3utilities.math.VectorXZ;
 
 /**
  * Navigation vertex: represents a reachable location in the world.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class NavVertex
         implements Comparable<NavVertex>, Savable {
@@ -59,15 +58,15 @@ public class NavVertex
     /**
      * list of arcs which originate from this vertex
      */
-    private ArrayList<NavArc> arcs = new ArrayList<>(4);
+    final private ArrayList<NavArc> arcs = new ArrayList<>(4);
     /**
      * textual description of this vertex (not null)
      */
-    private String description;
+    final private String description;
     /**
-     * world coordinates of this vertex (not null)
+     * a representative location in this vertex (not null, in world coordinates)
      */
-    private Vector3f location;
+    final private Vector3f location;
     // *************************************************************************
     // constructors
 
@@ -75,7 +74,8 @@ public class NavVertex
      * Instantiate a vertex without any arcs, at the specified location.
      *
      * @param description textual description (not null)
-     * @param location world coordinates (not null)
+     * @param location a representative location (in world coordinates, not
+     * null, unaffected)
      */
     NavVertex(String description, Vector3f location) {
         assert description != null;
@@ -154,12 +154,7 @@ public class NavVertex
      * @return pre-existing instance
      */
     public NavArc findLeastTurn(Vector3f direction) {
-        Validate.nonNull(direction, "direction");
-        if (MyVector3f.isZeroLength(direction)) {
-            logger.log(Level.SEVERE, "direction={0}", direction);
-            throw new IllegalArgumentException(
-                    "direction should have positive length");
-        }
+        Validate.nonZero(direction, "direction");
 
         NavArc result = null;
         float maxDot = -2f * direction.length();
@@ -227,7 +222,7 @@ public class NavVertex
     /**
      * Copy the list of arcs which originate from this vertex.
      *
-     * @return new array of existing instances
+     * @return new array of pre-existing instances
      */
     public NavArc[] getArcs() {
         int size = arcs.size();
@@ -248,7 +243,7 @@ public class NavVertex
     }
 
     /**
-     * Copy the world coordinates of the vertex.
+     * Copy the world coordinates of the vertex. TODO: rename
      *
      * @return new vector
      */
@@ -257,7 +252,7 @@ public class NavVertex
     }
 
     /**
-     * Count how many arcs originate from this vertex.
+     * Count how many arcs originate from this vertex. TODO: rename
      *
      * @return number of arcs (&ge;0)
      */
@@ -374,10 +369,12 @@ public class NavVertex
      * De-serialize this vertex, for example when loading from a J3O file.
      *
      * @param importer (not null)
+     * @throws IOException
      */
     @Override
     public void read(JmeImporter importer)
             throws IOException {
+        // TODO
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -385,10 +382,12 @@ public class NavVertex
      * Serialize this vertex, for example when saving to a J3O file.
      *
      * @param exporter (not null)
+     * @throws IOException
      */
     @Override
     public void write(JmeExporter exporter)
             throws IOException {
+        // TODO
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }
