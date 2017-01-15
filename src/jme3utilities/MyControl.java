@@ -41,7 +41,7 @@ import java.util.logging.Logger;
  * Utility methods which operate on jME3 scene-graph controls in general. Aside
  * from test cases, all methods here should be public and static.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class MyControl {
     // *************************************************************************

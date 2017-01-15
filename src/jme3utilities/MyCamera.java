@@ -36,7 +36,7 @@ import jme3utilities.math.MyVector3f;
  * Utility methods which operate on jME3 cameras. Aside from test cases, all
  * methods should be public and static.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 final public class MyCamera {
     // *************************************************************************

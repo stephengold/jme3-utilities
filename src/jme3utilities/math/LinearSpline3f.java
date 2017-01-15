@@ -35,7 +35,7 @@ import jme3utilities.Validate;
 /**
  * Immutable linear spline in three dimensions.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class LinearSpline3f
         implements Spline3f {

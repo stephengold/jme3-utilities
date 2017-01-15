@@ -38,7 +38,7 @@ import static jme3utilities.NameGenerator.isFrom;
 /**
  * Simple application to test the NameGenerator class.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class TestNameGenerator extends SimpleApplication {
     // *************************************************************************

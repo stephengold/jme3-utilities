@@ -47,7 +47,7 @@ import jme3utilities.math.VectorXZ;
  * Utility methods for generic operations on nodes and geometries. Aside from
  * test cases, all methods should be public and static.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class MySpatial
         extends SimpleApplication {

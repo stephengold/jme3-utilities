@@ -35,7 +35,7 @@ import jme3utilities.Validate;
  * Random and noise utility methods. Aside from test cases, all methods should
  * be public and static.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 final public class Noise {
     // *************************************************************************

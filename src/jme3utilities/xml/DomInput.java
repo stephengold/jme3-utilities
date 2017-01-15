@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2015, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,7 @@ import org.w3c.dom.NamedNodeMap;
  * DOM input utility methods. Aside from test cases, all methods here should be
  * public and static.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 final public class DomInput {
     // *************************************************************************

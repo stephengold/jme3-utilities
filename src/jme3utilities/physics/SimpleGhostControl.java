@@ -42,7 +42,7 @@ import jme3utilities.Validate;
  * Assumes that the object will live in a single physics space and listen to
  * physics ticks.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class SimpleGhostControl
         extends GhostControl

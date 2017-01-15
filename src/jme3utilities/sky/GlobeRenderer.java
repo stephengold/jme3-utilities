@@ -57,7 +57,7 @@ import jme3utilities.math.MyVector3f;
  * Simple app state to generate a dynamic texture for an object by rendering an
  * off-screen globe. Each instance has its own camera and root node.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class GlobeRenderer
         extends SimpleAppState {

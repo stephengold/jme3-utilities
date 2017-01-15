@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -64,7 +64,7 @@ import jme3utilities.Validate;
  * decimal hotkey code are appended to the action name generate a unique action
  * string for each signal source.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 abstract public class InputMode
         extends ActionAppState

@@ -34,7 +34,7 @@ import jme3utilities.math.Polygon3f;
 /**
  * Simple application to test the Polygon3f class.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class TestPolygon3f {
     // *************************************************************************

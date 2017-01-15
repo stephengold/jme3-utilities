@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -52,7 +52,7 @@ import jme3utilities.sky.SkyMaterial;
  * grab the mouse pointer. The flyby camera gets re-enabled when the HUD is
  * disabled.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class TestSkyMaterialHud
         extends GuiScreenController

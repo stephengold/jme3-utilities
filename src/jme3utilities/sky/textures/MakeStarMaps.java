@@ -55,7 +55,7 @@ import jme3utilities.sky.DomeMesh;
  * SkyMaterial and DomeMesh, based on data from a star catalog. In the resulting
  * textures, east is at the top and north is to the right.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class MakeStarMaps {
     // *************************************************************************

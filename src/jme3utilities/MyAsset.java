@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2015, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,7 @@ import java.util.logging.Logger;
  * Utility methods for loading assets. Aside from test cases, all methods here
  * should be public and static.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 final public class MyAsset {
     // *************************************************************************

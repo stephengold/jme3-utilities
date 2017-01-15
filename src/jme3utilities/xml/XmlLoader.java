@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2015, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
 /**
  * Simple loader for XML assets.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class XmlLoader
         implements AssetLoader {

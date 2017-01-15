@@ -33,7 +33,7 @@ import jme3utilities.Validate;
  * Cyclic permutation of the integers from 0 to length-1, for use in noise
  * functions.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class Permutation {
     // *************************************************************************

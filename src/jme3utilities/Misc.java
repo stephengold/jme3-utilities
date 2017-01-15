@@ -50,7 +50,7 @@ import javax.imageio.ImageIO;
  * Miscellaneous utility methods. Aside from test cases, all methods here should
  * be public and static.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class Misc {
     // *************************************************************************

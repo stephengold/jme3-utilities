@@ -34,7 +34,7 @@ import jme3utilities.Validate;
 /**
  * Utility methods for 3-D vectors.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class MyVector3f {
     // *************************************************************************

@@ -43,7 +43,7 @@ import jme3utilities.Validate;
  * GUI app state to control a Nifty screen. A screen is displayed if and only if
  * its app state is enabled. At most one screen is displayed at a time.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class BasicScreenController
         extends GuiAppState

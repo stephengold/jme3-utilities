@@ -39,7 +39,7 @@ import java.util.logging.Logger;
  * Name generator class which represents a namespace. Used to generate unique
  * name strings for objects (such as jME3 spatials).
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class NameGenerator
         implements Savable {

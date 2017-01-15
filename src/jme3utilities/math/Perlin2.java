@@ -35,7 +35,7 @@ import jme3utilities.Validate;
 /**
  * Two-dimensional Perlin noise generator.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class Perlin2
         implements Noise2 {

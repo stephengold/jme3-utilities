@@ -36,7 +36,7 @@ import jme3utilities.Validate;
  * <p>
  * Each instance is enabled at creation.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class RotationControl
         extends SimpleControl {

@@ -49,7 +49,7 @@ import static jme3utilities.Misc.blendTime;
  * Utility methods for manipulating skeleton spatials, skeletons, and bones.
  * Aside from test cases, all methods should be public and static.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class MyAnimation {
     // *************************************************************************

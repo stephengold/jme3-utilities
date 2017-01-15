@@ -38,7 +38,7 @@ import jme3utilities.Validate;
  * (points) connected by N sides (straight-line segments). For the sake of
  * efficiency, many calculated values are cached.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class Polygon3f {
     // *************************************************************************

@@ -37,7 +37,7 @@ import jme3utilities.ui.InputMode;
  * GUI application for testing/demonstrating multiple instances of the
  * BasicScreenController class. The application's main entry point is here.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class TestMultipleScreens
         extends GuiApplication {

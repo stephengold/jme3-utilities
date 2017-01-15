@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2015, Stephen Gold
+ Copyright (c) 2014-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,7 @@ import jme3utilities.math.Perlin2;
  * Console application to generate cloud layer alpha maps for use with
  * SkyMaterial and DomeMesh.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class MakeClouds {
     // *************************************************************************

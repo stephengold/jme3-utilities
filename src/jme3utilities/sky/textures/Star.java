@@ -33,7 +33,7 @@ import jme3utilities.Validate;
 /**
  * Star in a star catalog, used by MakeStarMaps.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 class Star
         implements Comparable<Star> {

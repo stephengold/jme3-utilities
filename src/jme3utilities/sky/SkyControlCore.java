@@ -63,7 +63,7 @@ import jme3utilities.math.MyColor;
  * stars, one for southern stars, and an optional "bottom" dome which extends
  * the horizon haze for scenes with a low horizon.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class SkyControlCore
         extends SubtreeControl {

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2015, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,7 @@ import jme3utilities.Validate;
 /**
  * Enumerate some phases of the moon.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public enum LunarPhase {
     // *************************************************************************
@@ -130,7 +130,7 @@ public enum LunarPhase {
     /**
      * Look up the celestial longitude difference for this phase.
      *
-     * @return angle in radians (&lt:2*Pi. &ge;0)
+     * @return angle in radians (&lt;2*Pi. &ge;0)
      */
     public float longitudeDifference() {
         switch (this) {

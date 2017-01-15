@@ -45,7 +45,7 @@ import jme3utilities.Validate;
  * Custom mesh for a circle or regular polygon in the XZ plane, with radius=1,
  * centered at the origin.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class LoopMesh
         extends Mesh {

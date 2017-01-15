@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -55,7 +55,7 @@ import jme3utilities.Validate;
  * Horizon haze can be added to the material by invoking addHaze(); once added,
  * its color may be adjusted by invoking setHazeColor().
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class SkyMaterial
         extends SkyMaterialCore {

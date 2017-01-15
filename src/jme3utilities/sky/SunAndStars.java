@@ -66,7 +66,7 @@ import jme3utilities.math.MyMath;
  * <li>+Z points to the east horizon
  * </ul>
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class SunAndStars
         implements Cloneable, Savable {

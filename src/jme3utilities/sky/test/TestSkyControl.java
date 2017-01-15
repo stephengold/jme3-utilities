@@ -74,7 +74,7 @@ import jme3utilities.sky.Updater;
  * Use the 'H' key to toggle HUD visibility. When the HUD is hidden, the flyCam
  * (LMB and scroll wheel) controls are enabled for scene navigation.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class TestSkyControl
         extends GuiApplication

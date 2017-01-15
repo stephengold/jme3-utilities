@@ -48,7 +48,7 @@ import jme3utilities.math.MyMath;
 /**
  * Core fields and methods of a material for a dynamic sky dome.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class SkyMaterialCore
         extends Material {

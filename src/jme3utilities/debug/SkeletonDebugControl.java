@@ -46,7 +46,7 @@ import jme3utilities.Validate;
  * The control is disabled by default. When enabled, it attaches a
  * SkeletonDebugger to the scene graph.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 final public class SkeletonDebugControl
         extends SubtreeControl {

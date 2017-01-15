@@ -68,7 +68,7 @@ import jme3utilities.math.MyMath;
  * <p>
  * This control is not serializable.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class SkyControl
         extends SkyControlCore {

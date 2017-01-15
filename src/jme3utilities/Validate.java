@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  * These methods are intended for checking the arguments of public/protected
  * methods. For private/package methods, use assertions instead.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 final public class Validate {
     // *************************************************************************

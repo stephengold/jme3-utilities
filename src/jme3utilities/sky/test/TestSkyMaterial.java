@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2017, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,7 @@ import jme3utilities.ui.InputMode;
  * Use the 'H' key to toggle HUD visibility, the 'S' key to save the current sky
  * geometry, and the 'L' key to temporarily load a saved geometry.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class TestSkyMaterial
         extends GuiApplication {

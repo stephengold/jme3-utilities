@@ -30,7 +30,7 @@ import com.jme3.math.FastMath;
 /**
  * Enumerate the pre-set conditions for MakeStarMaps.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 enum StarMapPreset {
     // *************************************************************************

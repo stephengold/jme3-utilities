@@ -37,7 +37,7 @@ import jme3utilities.Validate;
 /**
  * Hotkey on a desktop system's keyboard.
  *
- * @author Stephen Gold <sgold@sonic.net>
+ * @author Stephen Gold sgold@sonic.net
  */
 public class Hotkey {
     // *************************************************************************
