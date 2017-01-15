@@ -80,7 +80,7 @@ public class MyVector3f {
      * @param point1 location of the first point (not null, unaffected)
      * @param point2 location of the second point (not null, unaffected)
      * @param point3 location of the third point (not null, unaffected)
-     * @param tolerance2 used when comparing two points (in squared world units,
+     * @param tolerance2 used when comparing coordinates (in squared units,
      * &ge;0)
      * @return true if collinear, otherwise false
      */
@@ -102,7 +102,9 @@ public class MyVector3f {
         /*
          * The long way:
          * Calculate the projection of offset2 onto offset3.
-         * Don't use Vector3f.project() because it contains a logic bug.
+         * 
+         * Don't use Vector3f.project() because (as of jME 3.0.10) it contains 
+         * a logic bug.
          */
         Vector3f offset2 = point2.subtract(point1);
         float dot23 = offset2.dot(offset3);
@@ -174,7 +176,8 @@ public class MyVector3f {
      *
      * @param point1 coordinates of the first point (not null, unaffected)
      * @param point2 coordinates of the second point (not null, unaffected)
-     * @param tolerance2 used when comparing points (in squared units, &ge;0)
+     * @param tolerance2 used when comparing coordinates (in squared units,
+     * &ge;0)
      * @return true if they coincide, otherwise false
      */
     public static boolean doCoincide(Vector3f point1, Vector3f point2,
@@ -246,10 +249,9 @@ public class MyVector3f {
     }
 
     /**
-     *
      * Project vector1 onto vector2. Don't use Vector3f.project() for this
-     * because it contains a logic bug which gives the wrong magnitude when
-     * vector2 has length != 1.
+     * because (as of jME 3.0.10) it contains a logic bug which gives the wrong
+     * magnitude when vector2 has length != 1.
      *
      * @param vector1 (not null, unaffected)
      * @param vector2 (not null, length&gt;0, unaffected)
@@ -261,6 +263,23 @@ public class MyVector3f {
         float lengthSquared = vector2.lengthSquared();
         float dot = vector1.dot(vector2);
         Vector3f projection = vector2.mult(dot / lengthSquared);
+
+        return projection;
+    }
+
+    /**
+     * Project vector1 onto vector2.
+     *
+     * @param vector1 (not null, unaffected)
+     * @param vector2 (not null, length&gt;0, unaffected)
+     * @return the scalar projection of vector1 onto vector2
+     */
+    public static float scalarProjection(Vector3f vector1, Vector3f vector2) {
+        Validate.nonZero(vector2, "vector2");
+
+        float dot = vector1.dot(vector2);
+        float norm = vector2.length();
+        float projection = dot / norm;
 
         return projection;
     }
