@@ -394,7 +394,7 @@ public class SunAndStars
      */
     public void setSolarLongitude(int month, int day) {
         Validate.inRange(month, "month", 0, 11);
-        Validate.inRange(month, "day", 1, 31);
+        Validate.inRange(day, "day", 1, 31);
         /*
          * Convert month and day to day-of-the-year.
          */
@@ -431,6 +431,8 @@ public class SunAndStars
 
     /**
      * Represent this instance as a string.
+     *
+     * @return
      */
     @Override
     public String toString() {
