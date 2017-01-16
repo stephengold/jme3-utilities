@@ -33,12 +33,12 @@ http://code.google.com/p/jme3-utilities
 
 ## How to install the SDK and the jme3-utilities project
 
-### JMonkeyEngine (JME3) Software Development Kit (SDK)
+### jMonkeyEngine 3.0 (jME3) Software Development Kit (SDK)
 
-The "jMonkeyEngine3.0" branch of the jme3-utilities project targets 
-Version 3.0.10 of the SDK.
+The "for_jME3.0" branch of the jme3-utilities project targets 
+Version 3.0 of the SDK.
 
- 1. Download the jMonkeyEngine SDK from http://hub.jmonkeyengine.org/downloads
+ 1. Download the jMonkeyEngine 3.0 SDK from http://hub.jmonkeyengine.org/downloads
  2. Install the SDK, which includes:
    + the engine itself,
    + an integrated development environment (IDE) based on NetBeans, and
@@ -58,8 +58,7 @@ Clone the JME3 Utilities Package source files using Git:
  4. Click on the "Next >" button.
  5. Make sure the "master" remote branch is checked.
  6. Click on the "Next >" button again.
- 7. For "Parent Directory:" specify a writable folder on a local filesystem or
-    a non-existent subfolder of such a folder.
+ 7. For "Parent Directory:" specify a writable folder on a local filesystem.
  8. Make sure the "Scan for NetBeans Projects after Checkout" box is checked.
  9. Click on the "Finish" button.
 
