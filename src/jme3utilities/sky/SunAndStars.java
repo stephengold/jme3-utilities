@@ -430,9 +430,9 @@ public class SunAndStars
     }
 
     /**
-     * Represent this instance as a string.
+     * Describe this instance in a String.
      *
-     * @return
+     * @return descriptive string of text
      */
     @Override
     public String toString() {
