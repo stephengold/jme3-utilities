@@ -77,7 +77,8 @@ public class GuiScreenController
      *
      * @param screenId Nifty id (not null)
      * @param xmlAssetPath path to the Nifty XML layout asset (not null)
-     * @param enableDuringInitialization
+     * @param enableDuringInitialization if true, enable this screen controller
+     * during initialization; if false, leave it disabled
      */
     public GuiScreenController(String screenId, String xmlAssetPath,
             boolean enableDuringInitialization) {
@@ -421,7 +422,7 @@ public class GuiScreenController
         Validate.nonNull(elementId, "element id");
         Validate.nonNull(newText, "text");
 
-        Element element = getScreen().findElementByName(elementId);
+        Element element = getScreen().findElementById(elementId);
         if (element == null) {
             logger.log(Level.INFO, "screen {0} lacks element {1}",
                     new Object[]{
