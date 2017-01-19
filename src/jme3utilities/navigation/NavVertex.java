@@ -174,16 +174,12 @@ public class NavVertex
      * Find the arc whose starting direction is most similar to the specified
      * direction.
      *
-     * @param direction not null, positive length
+     * @param direction (length&gt;0, unaffected)
      * @return pre-existing instance
      */
     public NavArc findLeastTurn(VectorXZ direction) {
         Validate.nonNull(direction, "direction");
-        if (direction.isZeroLength()) {
-            logger.log(Level.SEVERE, "direction={0}", direction);
-            throw new IllegalArgumentException(
-                    "direction should have positive length");
-        }
+        VectorXZ.validateNonZero(direction, "direction");
 
         NavArc result = null;
         float maxDot = -2f * direction.length();
@@ -203,8 +199,8 @@ public class NavVertex
      * Find the arc at a specified list-offset relative to the specified base
      * arc.
      *
-     * @param baseArc (not null, from this vertex)
-     * @param listOffset
+     * @param baseArc base arc (not null, from this vertex)
+     * @param listOffset number of arcs past the base arc
      * @return pre-existing instance
      */
     public NavArc findNextArc(NavArc baseArc, int listOffset) {
@@ -268,7 +264,7 @@ public class NavVertex
      * @return true if found, false if none found
      */
     public boolean hasArcTo(NavVertex endpoint) {
-        assert endpoint != null;
+        Validate.nonNull(endpoint, "endpoint");
         assert endpoint != this : endpoint;
 
         for (NavArc arc : arcs) {
@@ -345,6 +341,8 @@ public class NavVertex
 
     /**
      * Generate the hash code for this vertex.
+     *
+     * @return value for use in hashing
      */
     @Override
     public int hashCode() {
@@ -353,9 +351,9 @@ public class NavVertex
     }
 
     /**
-     * Format this vertex as a text string.
+     * Represent this vertex as a text string.
      *
-     * @return textual description (not null)
+     * @return descriptive string of text (not null)
      */
     @Override
     public String toString() {
@@ -369,7 +367,7 @@ public class NavVertex
      * De-serialize this vertex, for example when loading from a J3O file.
      *
      * @param importer (not null)
-     * @throws IOException
+     * @throws IOException from importer
      */
     @Override
     public void read(JmeImporter importer)
@@ -382,7 +380,7 @@ public class NavVertex
      * Serialize this vertex, for example when saving to a J3O file.
      *
      * @param exporter (not null)
-     * @throws IOException
+     * @throws IOException from exporter
      */
     @Override
     public void write(JmeExporter exporter)
