@@ -149,8 +149,8 @@ public class NameGenerator
      * De-serialize this name generator, for example when loading from a J3O
      * file.
      *
-     * @param importer
-     * @throws IOException
+     * @param importer (not null)
+     * @throws IOException from importer
      */
     @Override
     public void read(JmeImporter importer)
@@ -172,8 +172,8 @@ public class NameGenerator
     /**
      * Serialize this name generator, for example when saving to a J3O file.
      *
-     * @param exporter
-     * @throws IOException
+     * @param exporter (not null)
+     * @throws IOException from exporter
      */
     @Override
     public void write(JmeExporter exporter)
@@ -197,7 +197,9 @@ public class NameGenerator
     // *************************************************************************
     // Object methods
     /**
-     * Encode this NameGenerator as a string.
+     * Represent this name generator as a text string.
+     *
+     * @return descriptive string of text (not null)
      */
     @Override
     public String toString() {
