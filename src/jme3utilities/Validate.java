@@ -25,6 +25,7 @@
  */
 package jme3utilities;
 
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -119,6 +120,44 @@ final public class Validate {
      */
     public static void inRange(float value, String description,
             float min, float max) {
+        if (!(value >= min)) {
+            String what;
+            if (description == null) {
+                what = "method argument";
+            } else {
+                what = description;
+            }
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            String message = String.format(
+                    "%s should be greater than or equal to %f.", what, min);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (!(value <= max)) {
+            String what;
+            if (description == null) {
+                what = "method argument";
+            } else {
+                what = description;
+            }
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            String message = String.format(
+                    "%s should be less than or equal to %f.", what, max);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Validate a limited double-precision value as a method argument.
+     *
+     * @param value value to validate (&le;max, &ge;min)
+     * @param description description of the value
+     * @param min the smallest valid value (&le;max)
+     * @param max the largest valid value (&ge;max)
+     * @throws IllegalArgumentException if the value is outside the range
+     */
+    public static void inRange(double value, String description,
+            double min, double max) {
         if (!(value >= min)) {
             String what;
             if (description == null) {
@@ -258,6 +297,30 @@ final public class Validate {
     }
 
     /**
+     * Validate a non-zero Vector2f as a method argument.
+     *
+     * @param vector vector to validate (not null, non-zero)
+     * @param description description of the vector
+     * @throws IllegalArgumentException if the vector has zero length
+     * @throws NullPointerException if the vector is null
+     */
+    public static void nonZero(Vector2f vector, String description) {
+        nonNull(vector, description);
+
+        if (vector.x == 0f && vector.y == 0f) {
+            String what;
+            if (description == null) {
+                what = "method argument";
+            } else {
+                what = description;
+            }
+            String message = String.format(
+                    "%s should have positive length.", what);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
      * Validate a non-zero Vector3f as a method argument.
      *
      * @param vector vector to validate (not null, non-zero)
@@ -311,6 +374,27 @@ final public class Validate {
      */
     public static void positive(float value, String description) {
         if (!(value > 0f)) {
+            String what;
+            if (description == null) {
+                what = "method argument";
+            } else {
+                what = description;
+            }
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            String message = String.format("%s should be positive.", what);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Validate a positive double-precision value as a method argument.
+     *
+     * @param value value to validate (&gt;0)
+     * @param description description of the value
+     * @throws IllegalArgumentException if the value is not positive
+     */
+    public static void positive(double value, String description) {
+        if (!(value > 0.0)) {
             String what;
             if (description == null) {
                 what = "method argument";
