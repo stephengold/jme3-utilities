@@ -156,7 +156,7 @@ public class VectorXZ
 
     /**
      * Compute the azimuth of this vector. Note: the directional convention is
-     * left-handed.
+     * left-handed. For a zero-length vector, zero is returned.
      *
      * @return angle in radians (&gt;-Pi, &le;Pi), measured CW from the north
      * (+X direction)
@@ -173,16 +173,14 @@ public class VectorXZ
      * @return a unit vector with four possible values
      */
     public VectorXZ cardinalize() {
-        float length = length();
         float newX = x;
         float newZ = z;
-        while (length == 0f) {
+        while (isZeroLength()) {
             /*
              * pick random X and Z, each between -0.5 and +0.5
              */
             newX = Noise.nextFloat() - 0.5f;
             newZ = Noise.nextFloat() - 0.5f;
-            length = MyMath.hypotenuse(newX, newZ);
         }
 
         final float absX = FastMath.abs(newX);
@@ -272,15 +270,16 @@ public class VectorXZ
         final float theta = azimuth();
         final float asin = maxX * FastMath.sin(theta);
         final float bcos = maxZ * FastMath.cos(theta);
-        final float r = maxX * maxZ / MyMath.hypotenuse(asin, bcos);
+        float product = maxX * maxZ;
+        final float rSquared = product * product / (asin * asin + bcos * bcos);
         /*
          * Scale so that length <= r.
          */
-        float length = length();
+        float lengthSquared = lengthSquared();
         float newX = x;
         float newZ = z;
-        if (length > r) {
-            final float scale = r / length;
+        if (lengthSquared > rSquared) {
+            final float scale = FastMath.sqrt(rSquared / lengthSquared);
             newX *= scale;
             newZ *= scale;
         }
@@ -305,13 +304,13 @@ public class VectorXZ
             return this;
         }
         /*
-         * Scale so that length <= maxRadius.
+         * Scale so that length <= radius.
          */
-        final float length = length();
+        final float lengthSquared = lengthSquared();
         float newX = x;
         float newZ = z;
-        if (length > radius) {
-            float scale = radius / length;
+        if (lengthSquared > radius * radius) {
+            float scale = radius / FastMath.sqrt(lengthSquared);
             newX *= scale;
             newZ *= scale;
         }
@@ -430,12 +429,22 @@ public class VectorXZ
     }
 
     /**
-     * Compute the length of this vector.
+     * Compute the length (or magnitude or norm) of this vector.
      *
      * @return the length (&ge;0) of this vector
      */
     public float length() {
         float result = MyMath.hypotenuse(x, z);
+        return result;
+    }
+
+    /**
+     * Compute the squared length of this vector.
+     *
+     * @return the length (&ge;0) of this vector
+     */
+    public float lengthSquared() {
+        float result = x * x + z * z;
         return result;
     }
 
@@ -582,15 +591,21 @@ public class VectorXZ
      * Validate a non-zero VectorXZ as a method argument.
      *
      * @param vector vector to validate (not null, non-zero)
-     * @param description textual description of the vector (not null)
+     * @param description textual description of the vector
      * @throws IllegalArgumentException if the vector has zero length
      */
     public static void validateNonZero(VectorXZ vector, String description) {
         Validate.nonNull(vector, description);
 
         if (vector.isZeroLength()) {
-            String message = String.format("%s should have positive length.",
-                    description);
+            String what;
+            if (description == null) {
+                what = "method argument";
+            } else {
+                what = description;
+            }
+            String message;
+            message = String.format("%s should have positive length.", what);
             throw new IllegalArgumentException(message);
         }
     }
