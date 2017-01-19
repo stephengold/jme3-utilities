@@ -97,7 +97,7 @@ public class LoopMesh
      * De-serialize this instance when loading.
      *
      * @param importer (not null)
-     * @throws IOException
+     * @throws IOException from importer
      */
     @Override
     public void read(JmeImporter importer)
@@ -112,7 +112,7 @@ public class LoopMesh
      * Serialize this instance when saving.
      *
      * @param exporter (not null)
-     * @throws IOException
+     * @throws IOException from exporter
      */
     @Override
     public void write(JmeExporter exporter)

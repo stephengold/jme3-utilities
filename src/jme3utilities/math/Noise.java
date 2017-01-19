@@ -141,7 +141,7 @@ final public class Noise {
     /**
      * Re-seed the shared pseudo-random generator.
      *
-     * @param newSeed
+     * @param newSeed seed for generating pseudo-random numbers
      */
     public static void reseedGenerator(long newSeed) {
         generator.setSeed(newSeed);

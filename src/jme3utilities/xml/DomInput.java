@@ -101,7 +101,8 @@ final public class DomInput {
      *
      * @param map map of named DOM attributes (not null)
      * @param name name of the desired attribute (not null)
-     * @param defaultValue
+     * @param defaultValue value used if the attribute is missing
+     * @return value obtained
      */
     public static float getFloat(NamedNodeMap map, String name,
             float defaultValue) {

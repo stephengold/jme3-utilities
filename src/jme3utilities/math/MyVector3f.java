@@ -59,8 +59,7 @@ public class MyVector3f {
     /**
      * Compute the altitude angle of a non-zero offset.
      *
-     * @param offset difference of world coordinates (not null, positive length,
-     * unaffected)
+     * @param offset difference of world coordinates (length&gt;0, unaffected)
      * @return angle above the X-Z plane (in radians, &le;Pi/2, &ge;-Pi/2)
      */
     public static float altitude(Vector3f offset) {
@@ -254,7 +253,7 @@ public class MyVector3f {
      * magnitude when vector2 has length != 1.
      *
      * @param vector1 (not null, unaffected)
-     * @param vector2 (not null, length&gt;0, unaffected)
+     * @param vector2 (length&gt;0, unaffected)
      * @return a new vector with the same direction as vector2
      */
     public static Vector3f projection(Vector3f vector1, Vector3f vector2) {
@@ -271,7 +270,7 @@ public class MyVector3f {
      * Project vector1 onto vector2.
      *
      * @param vector1 (not null, unaffected)
-     * @param vector2 (not null, length&gt;0, unaffected)
+     * @param vector2 (length&gt;0, unaffected)
      * @return the scalar projection of vector1 onto vector2
      */
     public static float scalarProjection(Vector3f vector1, Vector3f vector2) {
@@ -308,7 +307,7 @@ public class MyVector3f {
     /**
      * Console application to test the MyVector3f class.
      *
-     * @param ignored
+     * @param ignored command-line arguments
      */
     public static void main(String[] ignored) {
         System.out.print("Test results for class MyVector3f:\n\n");

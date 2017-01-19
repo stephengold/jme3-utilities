@@ -254,7 +254,7 @@ public class TestSkyControl
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored
+     * @param ignored time per frame (in seconds)
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float ignored) {
@@ -407,7 +407,7 @@ public class TestSkyControl
     /**
      * Callback when a view port is removed. Does nothing.
      *
-     * @param unused
+     * @param unused which viewport (not null)
      */
     @Override
     public void removeViewPort(ViewPort unused) {

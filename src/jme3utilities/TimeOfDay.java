@@ -141,7 +141,9 @@ public class TimeOfDay
     // Object methods
 
     /**
-     * Format the time of day as text.
+     * Represent this time of day as a text string.
+     *
+     * @return descriptive string of text (not null)
      */
     @Override
     public String toString() {

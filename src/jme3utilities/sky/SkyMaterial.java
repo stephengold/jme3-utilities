@@ -216,6 +216,8 @@ public class SkyMaterial
 
     /**
      * Read the upper limit on the number of cloud layers.
+     *
+     * @return maximum number of layers
      */
     public int getMaxCloudLayers() {
         return maxCloudLayers;
@@ -223,6 +225,8 @@ public class SkyMaterial
 
     /**
      * Read the upper limit on the number of astronomical objects.
+     *
+     * @return maximum number of objects
      */
     public int getMaxObjects() {
         return maxObjects;

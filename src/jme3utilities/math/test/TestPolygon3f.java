@@ -49,7 +49,7 @@ public class TestPolygon3f {
     /**
      * Console application to test the MyVector3f class.
      *
-     * @param ignored
+     * @param ignored command-line arguments
      */
     public static void main(String[] ignored) {
         Misc.setLoggingLevels(Level.WARNING);

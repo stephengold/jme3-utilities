@@ -173,6 +173,8 @@ class Star
 
     /**
      * Generate the hash code for this star.
+     * 
+     * @return value for use in hashing
      */
     @Override
     public int hashCode() {

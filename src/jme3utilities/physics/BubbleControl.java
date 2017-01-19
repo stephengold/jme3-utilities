@@ -159,6 +159,7 @@ public class BubbleControl
      * Meant to be overridden.
      *
      * @param object object to test (not null)
+     * @return true if eligible, otherwise false
      */
     protected boolean isEligible(Spatial object) {
         Validate.nonNull(object, "object");

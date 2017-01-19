@@ -69,6 +69,7 @@ public class MyVolume {
      * Compute the volume of an axis-aligned box with specified half-extents.
      *
      * @param halfExtents (not null, all components &ge;0, unaffected)
+     * @return volume (ge;0)
      */
     public static float boxVolume(Vector3f halfExtents) {
         Validate.nonNull(halfExtents, "half-extents");
@@ -87,6 +88,7 @@ public class MyVolume {
      *
      * @param radius (&ge;0)
      * @param height (&ge;0)
+     * @return volume (&ge;0)
      */
     public static float capsuleVolume(float radius, float height) {
         Validate.nonNegative(radius, "radius");
@@ -105,6 +107,7 @@ public class MyVolume {
      *
      * @param radius (&ge;0)
      * @param height (&ge;0)
+     * @return volume (&ge;0)
      */
     public static float coneVolume(float radius, float height) {
         Validate.nonNegative(radius, "radius");
@@ -120,6 +123,7 @@ public class MyVolume {
      * half-extents.
      *
      * @param halfExtents (not null, all components &ge;0, unaffected)
+     * @return volume (&ge;0)
      */
     public static float cylinderVolume(Vector3f halfExtents) {
         Validate.nonNull(halfExtents, "half-extents");
@@ -138,6 +142,7 @@ public class MyVolume {
      * Compute the volume of a sphere with the specified radius.
      *
      * @param radius (&ge;0)
+     * @return volume (&ge;0)
      */
     public static float sphereVolume(float radius) {
         Validate.nonNegative(radius, "radius");

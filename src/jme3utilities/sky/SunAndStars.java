@@ -430,9 +430,9 @@ public class SunAndStars
     }
 
     /**
-     * Describe this instance in a String.
+     * Represent this instance as a text string.
      *
-     * @return descriptive string of text
+     * @return descriptive string of text (not null)
      */
     @Override
     public String toString() {
@@ -451,7 +451,7 @@ public class SunAndStars
      * De-serialize this instance, for example when loading from a J3O file.
      *
      * @param importer (not null)
-     * @throws IOException
+     * @throws IOException from importer
      */
     @Override
     public void read(JmeImporter importer)
@@ -473,7 +473,7 @@ public class SunAndStars
      * Serialize this instance, for example when saving to a J3O file.
      *
      * @param exporter (not null)
-     * @throws IOException
+     * @throws IOException from exporter
      */
     @Override
     public void write(JmeExporter exporter)
@@ -491,7 +491,7 @@ public class SunAndStars
     /**
      * A console application to test this class.
      *
-     * @param ignored
+     * @param ignored command-line arguments
      */
     public static void main(String[] ignored) {
         logger.setLevel(Level.INFO);

@@ -116,9 +116,9 @@ public class Signals
     /**
      * Process a signal action.
      *
-     * @param actionString
-     * @param isOngoing
-     * @param unused
+     * @param actionString textual description of the action (not null)
+     * @param isOngoing true if the action is ongoing, otherwise false
+     * @param unused time per frame (in seconds)
      */
     @Override
     public void onAction(String actionString, boolean isOngoing, float unused) {

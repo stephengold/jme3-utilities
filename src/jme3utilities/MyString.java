@@ -253,7 +253,7 @@ public class MyString {
     /**
      * Console application to test the MyString class.
      *
-     * @param ignored
+     * @param ignored command-line arguments
      */
     public static void main(String[] ignored) {
         System.out.print("Test results for class MyString:\n\n");
