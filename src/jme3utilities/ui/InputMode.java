@@ -274,6 +274,7 @@ abstract public class InputMode
 
     /**
      * Save the hotkey bindings to a file.
+     * @throws IOException from Properties.storeToXML()
      */
     public void saveBindings()
             throws IOException {
@@ -288,8 +289,7 @@ abstract public class InputMode
                 MyString.quote(path));
 
         try (FileOutputStream stream = new FileOutputStream(path)) {
-            String comment = String.format(
-                    "custom hotkey bindings for %s mode",
+            String comment = String.format("custom hotkey bindings for %s mode",
                     shortName);
 
             hotkeyBindings.storeToXML(stream, comment);
@@ -398,7 +398,9 @@ abstract public class InputMode
     // Object methods
 
     /**
-     * Format the mode as a string, for debugging.
+     * Represent this input mode as a text string.
+     *
+     * @return descriptive string of text (not null)
      */
     @Override
     public String toString() {
