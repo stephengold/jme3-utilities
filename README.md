@@ -51,15 +51,14 @@ http://hub.jmonkeyengine.org/wiki/doku.php/jme3:requirements
 
 Clone the JME3 Utilities Package source files using Git:
  1. Open the Clone wizard in the IDE:
-   + Menu bar -> "Team" -> "Git" -> "Clone..."
+   + Menu bar -> "Team" -> "Remote" -> "Clone..."
  2. For "Repository URL:" specify
     "https://github.com/stephengold/jme3-utilities.git" (without the quotes).
  3. Clear the "User:" and "Password:" text boxes.
  4. Click on the "Next >" button.
  5. Make sure the "master" remote branch is checked.
  6. Click on the "Next >" button again.
- 7. For "Parent Directory:" specify a writable folder on a local filesystem or
-    a non-existent subfolder of such a folder.
+ 7. For "Parent Directory:" specify a writable folder on a local filesystem.
  8. Make sure the "Scan for NetBeans Projects after Checkout" box is checked.
  9. Click on the "Finish" button.
 
