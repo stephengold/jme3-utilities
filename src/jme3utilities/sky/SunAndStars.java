@@ -80,13 +80,13 @@ public class SunAndStars
     /**
      * Earth's rate of rotation (radians per sidereal hour)
      */
-    final private static float radiansPerHour
-            = FastMath.TWO_PI / Constants.hoursPerDay;
+    final private static float radiansPerHour =
+            FastMath.TWO_PI / Constants.hoursPerDay;
     /**
      * message logger for this class
      */
-    final private static Logger logger
-            = Logger.getLogger(SunAndStars.class.getName());
+    final private static Logger logger =
+            Logger.getLogger(SunAndStars.class.getName());
     // *************************************************************************
     // fields
     /**
@@ -131,8 +131,8 @@ public class SunAndStars
         float sinLat = FastMath.sin(latitude);
         float cosLon = FastMath.cos(longitude);
         float sinLon = FastMath.sin(longitude);
-        Vector3f ecliptical
-                = new Vector3f(cosLat * cosLon, cosLat * sinLon, sinLat);
+        Vector3f ecliptical =
+                new Vector3f(cosLat * cosLon, cosLat * sinLon, sinLat);
         assert ecliptical.isUnitVector();
         /*
          * Convert to equatorial coordinates.
@@ -372,8 +372,8 @@ public class SunAndStars
          */
         Vector3f equatorial = convertToEquatorial(0f, longitude);
         float ra = -FastMath.atan2(equatorial.y, equatorial.x);
-        solarRaHours
-                = MyMath.modulo(ra / radiansPerHour, Constants.hoursPerDay);
+        solarRaHours =
+                MyMath.modulo(ra / radiansPerHour, Constants.hoursPerDay);
         assert solarRaHours >= 0f : solarRaHours;
         assert solarRaHours < Constants.hoursPerDay : solarRaHours;
     }
@@ -430,9 +430,9 @@ public class SunAndStars
     }
 
     /**
-     * Represent this instance as a string.
+     * Describe this instance in a String.
      *
-     * @return
+     * @return descriptive string of text
      */
     @Override
     public String toString() {
