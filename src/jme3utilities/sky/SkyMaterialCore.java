@@ -395,8 +395,8 @@ public class SkyMaterialCore
      * null, each component &le;1 and &ge;0, unaffected)
      * @param newScale ratio of the sky's texture scale to that of the object
      * (&ge;0, usually &lt;1)
-     * @param newRotate (cos, sin) of clockwise rotation angle (or null if
-     * rotation doesn't matter)
+     * @param newRotate (cos, sin) of clockwise rotation angle (length&gt;0,
+     * unaffected) or null if rotation doesn't matter
      */
     public void setObjectTransform(int objectIndex, Vector2f centerUV,
             float newScale, Vector2f newRotate) {
@@ -404,11 +404,7 @@ public class SkyMaterialCore
         Validate.nonNull(centerUV, "coordinates");
         Validate.positive(newScale, "scale");
         if (newRotate != null) {
-            if (!MyMath.isUnitVector(newRotate)) {
-                logger.log(Level.SEVERE, "newRotate={0}", newRotate);
-                throw new IllegalArgumentException(
-                        "rotation should have length=1");
-            }
+            Validate.nonZero(newRotate, "rotation vector");
         }
         if (objectCenters[objectIndex] == null) {
             throw new IllegalStateException("object not yet added");
@@ -519,7 +515,7 @@ public class SkyMaterialCore
      * De-serialize this instance when loading.
      *
      * @param importer (not null)
-     * @throws IOException
+     * @throws IOException from importer
      */
     @Override
     public void read(JmeImporter importer)
@@ -565,7 +561,7 @@ public class SkyMaterialCore
      * Serialize this instance when saving.
      *
      * @param exporter (not null)
-     * @throws IOException
+     * @throws IOException from exporter
      */
     @Override
     public void write(JmeExporter exporter)
