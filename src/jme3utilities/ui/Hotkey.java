@@ -64,15 +64,15 @@ public class Hotkey {
      */
     final private int keyCode;
     /**
-     * array to look up the hotkey by its key code
+     * array to look up a hotkey by its key code
      */
-    private static Hotkey[] instances = new Hotkey[maxKeyCode + 1];
+    final private static Hotkey[] instances = new Hotkey[maxKeyCode + 1];
     /**
-     * map to look up the hotkey by its name
+     * map to look up a hotkey by its name
      */
     final private static Map<String, Hotkey> instancesByName = new TreeMap<>();
     /**
-     * this hotkey's name: set by constructor
+     * descriptive name for this hotkey: set by constructor
      */
     final private String name;
     // *************************************************************************
@@ -294,6 +294,9 @@ public class Hotkey {
 
     /**
      * Read the key code of a hotkey.
+     *
+     * @return key code from com.jme3.input.KeyInput (&ge;minKeyCode and
+     * &le;maxKeyCode)
      */
     public int keyCode() {
         return keyCode;
@@ -316,6 +319,8 @@ public class Hotkey {
 
     /**
      * Read the name of a hotkey.
+     *
+     * @return descriptive name (not null)
      */
     public String name() {
         return name;
@@ -326,7 +331,7 @@ public class Hotkey {
     /**
      * Add a new hotkey.
      *
-     * @param keyCode unused key code (between minKeyCode and maxKeyCode)
+     * @param keyCode unused key code (&ge;minKeyCode and &le;maxKeyCode)
      * @param name unused hotkey name (not null)
      */
     private static void add(int keyCode, String name) {
