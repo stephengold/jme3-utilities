@@ -28,7 +28,6 @@ package jme3utilities.math;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -109,7 +108,7 @@ public class VectorXZ
     }
 
     /**
-     * Instantiate a vector from an azimuth value.
+     * Instantiate a unit vector from an azimuth value.
      *
      * @param azimuth radians east of north
      */
@@ -145,7 +144,7 @@ public class VectorXZ
      * Add to (translate) this vector.
      *
      * @param increment vector to be added to this vector (not null)
-     * @return a vector equal to the sum
+     * @return the vector sum
      */
     public VectorXZ add(VectorXZ increment) {
         float sumX = x + increment.getX();
@@ -171,7 +170,7 @@ public class VectorXZ
      * Convert this vector to one of the four cardinal directions. If this
      * vector has zero length, the result is randomized.
      *
-     * @return a unit vector
+     * @return a unit vector with four possible values
      */
     public VectorXZ cardinalize() {
         float length = length();
@@ -333,31 +332,27 @@ public class VectorXZ
     }
 
     /**
-     * Compute the directional error of this direction with respect to a goal.
+     * Compute a directional error of this direction with respect to a goal.
      *
-     * @param directionGoal unit vector
+     * @param directionGoal goal direction (not null, positive length)
      * @return the sine of the angle from the goal to this direction, or +1/-1
      * if the angle's magnitude exceeds 90 degrees
      */
     public float directionError(VectorXZ directionGoal) {
-        if (!directionGoal.isUnitVector()) {
-            logger.log(Level.SEVERE, "goal={0}", directionGoal);
-            throw new IllegalArgumentException("goal should have length=1");
-        }
-        if (!isUnitVector()) {
-            logger.log(Level.SEVERE, "this={0}", this);
-            throw new IllegalStateException("vector should have length=1");
-        }
+        validateNonZero(this, "this direction");
+        validateNonZero(directionGoal, "goal direction");
 
-        final float cosine = dot(directionGoal);
-        final float sine = cross(directionGoal);
-        if (cosine >= 0f) {
+        final float dot = dot(directionGoal);
+        final float cross = cross(directionGoal);
+        if (dot >= 0f) {
+            final float lengthProduct = length() * directionGoal.length();
+            float sine = cross / lengthProduct;
             return sine;
         }
         /*
          * The goal and actual directions are more than 90 degrees apart.
          */
-        if (sine > 0f) {
+        if (cross > 0f) {
             return 1f; // turn hard right
         } else {
             return -1f; // turn hard left
@@ -422,17 +417,6 @@ public class VectorXZ
         VectorXZ blend = new VectorXZ(xBlend, zBlend);
 
         return blend;
-    }
-
-    /**
-     * Test this vector for unit length.
-     *
-     * @return true if this vector's length is roughly one, false otherwise
-     */
-    public boolean isUnitVector() {
-        float delta = length() - 1f;
-        boolean result = (FastMath.abs(delta) < 1e-4);
-        return result;
     }
 
     /**
@@ -593,6 +577,23 @@ public class VectorXZ
         Vector3f result = new Vector3f(x, y, z);
         return result;
     }
+
+    /**
+     * Validate a non-zero VectorXZ as a method argument.
+     *
+     * @param vector vector to validate (not null, non-zero)
+     * @param description textual description of the vector (not null)
+     * @throws IllegalArgumentException if the vector has zero length
+     */
+    public static void validateNonZero(VectorXZ vector, String description) {
+        Validate.nonNull(vector, description);
+
+        if (vector.isZeroLength()) {
+            String message = String.format("%s should have positive length.",
+                    description);
+            throw new IllegalArgumentException(message);
+        }
+    }
     // *************************************************************************
     // Comparable methods
 
@@ -624,7 +625,7 @@ public class VectorXZ
     // Object methods
 
     /**
-     * Compare for equality. TODO: also provide comparison with tolerance
+     * Test for exact equality. TODO: also provide comparison with tolerance
      *
      * @param otherObject (may be null)
      * @return true if the vectors are equal, otherwise false
