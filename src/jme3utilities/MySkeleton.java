@@ -164,29 +164,6 @@ public class MySkeleton
     }
 
     /**
-     * Alter the position of the specified bone using world coordinates, without
-     * updating its descendents.
-     *
-     * @param spatial skeletonized spatial which contains the bone (not null)
-     * @param bone (not null)
-     * @param tailLocation desired world location of the bone's tail (not null)
-     * @param orientation desired world orientation of the bone (not null)
-     */
-    public static void positionInWorld(Spatial spatial, Bone bone,
-            Vector3f tailLocation, Quaternion orientation) {
-        Validate.nonNull(tailLocation, "location");
-        Validate.nonNull(orientation, "orientation");
-        /*
-         * Convert location and orientation from world to model space.
-         */
-        Vector3f offset = spatial.worldToLocal(tailLocation, null);
-        Quaternion convert = spatial.getWorldRotation().inverse();
-        Quaternion rotation = convert.mult(orientation);
-
-        bone.setUserTransformsWorld(offset, rotation);
-    }
-
-    /**
      * Alter the userControl flag for an entire skeletonized spatial.
      *
      * @param spatial skeletonized spatial (not null)
