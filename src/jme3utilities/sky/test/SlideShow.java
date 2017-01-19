@@ -183,7 +183,11 @@ public class SlideShow
      */
     private Material bottomMaterial = null;
     /**
-     * material to render wireframes
+     * material to render thick wireframes for circles
+     */
+    private Material thickWireframe = null;
+    /**
+     * material to render ordinary wireframes
      */
     private Material wireframe = null;
     /**
@@ -248,7 +252,7 @@ public class SlideShow
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored
+     * @param ignored time per frame (in seconds)
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float ignored) {
@@ -278,13 +282,19 @@ public class SlideShow
         sunAndStars.setHour(baseHour);
         sunAndStars.setObserverLatitude(baseLatitude);
         /*
-         * Initialize the material for wireframes.
+         * Initialize the materials for wireframes.
          */
+        thickWireframe = MyAsset.createWireframeMaterial(assetManager,
+                ColorRGBA.Magenta);
+        thickWireframe.getAdditionalRenderState()
+                .setFaceCullMode(FaceCullMode.Front);
+        thickWireframe.getAdditionalRenderState()
+                .setLineWidth(2f);
+
         wireframe = MyAsset.createWireframeMaterial(assetManager,
                 ColorRGBA.Magenta);
         wireframe.getAdditionalRenderState()
                 .setFaceCullMode(FaceCullMode.Front);
-
         //new jme3utilities.Printer().printSubtree(rootNode);
 
         initializeUserInterface();
@@ -500,7 +510,7 @@ public class SlideShow
                 /*
                  * Attach the celestial equator.
                  */
-                equator.setMaterial(wireframe);
+                equator.setMaterial(thickWireframe);
                 skyNode.attachChild(equator);
                 break;
             case 16:
@@ -601,6 +611,8 @@ public class SlideShow
                  */
                 wireframe.getAdditionalRenderState()
                         .setFaceCullMode(FaceCullMode.Off);
+                thickWireframe.getAdditionalRenderState()
+                        .setFaceCullMode(FaceCullMode.Off);
                 bottomDome.setMaterial(wireframe);
                 skyNode.attachChild(bottomDome);
                 break;
@@ -608,7 +620,7 @@ public class SlideShow
                 /*
                  * Attach the horizon.
                  */
-                horizon.setMaterial(wireframe);
+                horizon.setMaterial(thickWireframe);
                 skyNode.attachChild(horizon);
                 /*
                  * Make bottom dome solid white.
@@ -632,7 +644,7 @@ public class SlideShow
                 /*
                  * Attach the cloud horizon.
                  */
-                cloudHorizon.setMaterial(wireframe);
+                cloudHorizon.setMaterial(thickWireframe);
                 skyNode.attachChild(cloudHorizon);
                 /*
                  * Apply translucent material to the clouds-only dome.
@@ -674,7 +686,6 @@ public class SlideShow
         int quadrantSamples = 16;
         int rimSamples = 32;
         circle = new LoopMesh(rimSamples);
-        circle.setLineWidth(2f);
         cutawayMesh = new DomeMesh(rimSamples, quadrantSamples);
         cutawayMesh.setSegmentAngle(5f);
         fullMesh = new DomeMesh(rimSamples, quadrantSamples);

@@ -125,12 +125,12 @@ public class AxesControl
 
         Vector3f extent = direction.mult(length);
         Arrow mesh = new Arrow(extent);
-        mesh.setLineWidth(thickness);
         Geometry geometry = new Geometry(name, mesh);
         subtree.attachChild(geometry);
 
-        Material wireMaterial =
-                MyAsset.createWireframeMaterial(assetManager, color);
+        Material wireMaterial
+                = MyAsset.createWireframeMaterial(assetManager, color);
+        wireMaterial.getAdditionalRenderState().setLineWidth(thickness);
         geometry.setMaterial(wireMaterial);
 
         return geometry;
