@@ -36,7 +36,7 @@ http://code.google.com/p/jme3-utilities
 ### jMonkeyEngine 3.0 (jME3) Software Development Kit (SDK)
 
 The "for_jME3.0" branch of the jme3-utilities project targets 
-Version 3.0 of the SDK.
+Version 3.0 of jMonkeyEngine.
 
  1. Download the jMonkeyEngine 3.0 SDK from http://hub.jmonkeyengine.org/downloads
  2. Install the SDK, which includes:
