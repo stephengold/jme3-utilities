@@ -145,7 +145,7 @@ abstract public class GuiApplication
          * Load the Nifty XML for generic popup menus.  For some reason the
          * asset does not validate, so skip validation for now.
          */
-        nifty.addXml(popupMenuAsssetPath);
+        nifty.fromXmlWithoutStartScreen(popupMenuAsssetPath);
         /*
          * Invoke the startup code of the subclass.
          */

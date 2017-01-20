@@ -29,12 +29,6 @@
  The heads-up display (HUD) for the TestSkyControl application.
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
-
-    <!-- define styles and controls -->
-    <useStyles filename="nifty-default-styles.xml"/>
-    <useStyles filename="Interface/Nifty/styles/bats.xml"/>
-    <useControls filename="nifty-default-controls.xml"/>
-
     <screen id="test-sky-control"
             controller="jme3utilities.sky.test.TestSkyControlHud">
         <layer childLayout="horizontal">

@@ -29,11 +29,6 @@
  Layout for screen s2 of the TestMultipleScreens application.
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
-
-    <!-- define styles and controls -->
-    <useStyles filename="nifty-default-styles.xml"/>
-    <useControls filename="nifty-default-controls.xml"/>
-
     <screen id="TestMultipleScreens/s2"
             controller="jme3utilities.nifty.BasicScreenController">
         <layer childLayout="vertical"
