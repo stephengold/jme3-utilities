@@ -465,10 +465,11 @@ public class SkyMaterialCore
             /*
              * Rotate by newRotate.
              */
-            transformU.set(tU.x * newRotate.x + tV.x * newRotate.y,
-                    tU.y * newRotate.x + tV.y * newRotate.y);
-            transformV.set(tV.x * newRotate.x - tU.x * newRotate.y,
-                    tV.y * newRotate.x - tU.y * newRotate.y);
+            Vector2f norm = newRotate.normalize();
+            transformU.set(tU.x * norm.x + tV.x * norm.y,
+                    tU.y * norm.x + tV.y * norm.y);
+            transformV.set(tV.x * norm.x - tU.x * norm.y,
+                    tV.y * norm.x - tU.y * norm.y);
         }
         /*
          * Scale by newScale.
