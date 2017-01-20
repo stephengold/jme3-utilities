@@ -57,7 +57,7 @@ public class Permutation {
      * Construct a permutation with the specified length from a specified seed.
      *
      * @param length length of the permutation (&gt;1)
-     * @param seed
+     * @param seed seed for generating pseudo-random numbers
      */
     public Permutation(int length, long seed) {
         Validate.inRange(length, "length", 2, Integer.MAX_VALUE);

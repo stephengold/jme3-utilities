@@ -239,7 +239,7 @@ public class MySkeleton
     /**
      * Simple application to test the MySkeleton class.
      *
-     * @param ignored
+     * @param ignored command-line arguments
      */
     public static void main(String[] ignored) {
         Misc.setLoggingLevels(Level.SEVERE);

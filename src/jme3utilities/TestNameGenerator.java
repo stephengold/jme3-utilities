@@ -53,7 +53,7 @@ public class TestNameGenerator extends SimpleApplication {
     /**
      * Entry point for test application.
      *
-     * @param ignored
+     * @param ignored command-line arguments
      */
     public static void main(String[] ignored) {
         Misc.setLoggingLevels(Level.WARNING);

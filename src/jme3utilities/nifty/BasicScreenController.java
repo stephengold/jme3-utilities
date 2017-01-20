@@ -87,7 +87,8 @@ public class BasicScreenController
      *
      * @param screenId Nifty id (not null)
      * @param xmlAssetPath path to the Nifty XML layout asset (not null)
-     * @param enableDuringInitialization
+     * @param enableDuringInitialization if true, enable this screen controller
+     * during initialization; if false, leave it disabled
      */
     public BasicScreenController(String screenId, String xmlAssetPath,
             boolean enableDuringInitialization) {

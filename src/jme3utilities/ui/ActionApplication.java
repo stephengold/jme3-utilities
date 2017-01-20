@@ -104,7 +104,7 @@ abstract public class ActionApplication
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored
+     * @param ignored time per frame (in seconds)
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float ignored) {

@@ -333,9 +333,9 @@ public class VectorXZ
     /**
      * Compute a directional error of this direction with respect to a goal.
      *
-     * @param directionGoal goal direction (not null, positive length)
-     * @return the sine of the angle from the goal to this direction, or +1/-1
-     * if the angle's magnitude exceeds 90 degrees
+     * @param directionGoal goal direction (length&gt;0)
+     * @return the sine of the angle from the goal, or +1/-1 if the angle's
+     * magnitude exceeds 90 degrees
      */
     public float directionError(VectorXZ directionGoal) {
         validateNonZero(this, "this direction");
@@ -349,7 +349,7 @@ public class VectorXZ
             return sine;
         }
         /*
-         * The goal and actual directions are more than 90 degrees apart.
+         * The goal and actual direction are more than 90 degrees apart.
          */
         if (cross > 0f) {
             return 1f; // turn hard right
@@ -658,6 +658,8 @@ public class VectorXZ
 
     /**
      * Generate the hash code for this vector.
+     *
+     * @return value for use in hashing
      */
     @Override
     public int hashCode() {
@@ -668,7 +670,9 @@ public class VectorXZ
     }
 
     /**
-     * Represent this vector as a string. The format is: [X=XX.XXX, Z=ZZ.ZZZ]
+     * Represent this vector as a text string. The format is: [X=XX.XXX, Z=ZZ.ZZZ]
+     *
+     * @return descriptive string of text (not null)
      */
     @Override
     public String toString() {
@@ -681,7 +685,7 @@ public class VectorXZ
     /**
      * Console application to test the VectorXZ class.
      *
-     * @param ignored
+     * @param ignored command-line arguments
      */
     public static void main(String[] ignored) {
         System.out.print("Test results for class VectorXZ:\n\n");

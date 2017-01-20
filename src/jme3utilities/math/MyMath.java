@@ -69,11 +69,7 @@ public class MyMath {
      * &ge;0)
      */
     public static double circle(double abscissa) {
-        if (!(abscissa >= -1.0 && abscissa <= 1.0)) {
-            logger.log(Level.SEVERE, "abscissa={0}", abscissa);
-            throw new IllegalArgumentException(
-                    "abscissa should be between -1 and 1, inclusive");
-        }
+        Validate.inRange(abscissa, "abscissa", -1.0, 1.0);
 
         double y = Math.sqrt(1.0 - abscissa * abscissa);
 
@@ -207,17 +203,6 @@ public class MyMath {
     }
 
     /**
-     * Test whether a vector's length is within 1% of unity.
-     *
-     * @param vector (not null)
-     * @return true if within 1%, else false
-     */
-    public static boolean isUnitVector(Vector2f vector) {
-        float norm = vector.length();
-        return 0.99f < norm && norm < 1.01f;
-    }
-
-    /**
      * Find the max of three single-precision values.
      *
      * @param a 1st input value
@@ -284,10 +269,7 @@ public class MyMath {
      * @return x MOD modulus (&lt;modulus, &ge;0)
      */
     public static double modulo(double dValue, double modulus) {
-        if (!(modulus > 0.0)) {
-            logger.log(Level.SEVERE, "modulus={0}", modulus);
-            throw new IllegalArgumentException("modulus should be positive");
-        }
+        Validate.positive(modulus, "modulus");
 
         double result = (dValue % modulus + modulus) % modulus;
 
@@ -335,7 +317,7 @@ public class MyMath {
     /**
      * Console application to test the MyMath class.
      *
-     * @param ignored
+     * @param ignored command-line arguments
      */
     public static void main(String[] ignored) {
         System.out.print("Test results for class MyMath:\n\n");

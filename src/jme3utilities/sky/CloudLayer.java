@@ -216,6 +216,7 @@ public class CloudLayer
      * De-serialize this instance when loading.
      *
      * @param importer (not null)
+     * @throws IOException from importer
      */
     @Override
     public void read(JmeImporter importer)
@@ -235,6 +236,7 @@ public class CloudLayer
      * Serialize this instance when saving.
      *
      * @param exporter (not null)
+     * @throws IOException from exporter
      */
     @Override
     public void write(JmeExporter exporter)

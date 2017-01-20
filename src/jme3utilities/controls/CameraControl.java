@@ -76,10 +76,10 @@ public class CameraControl
      *
      * @param camera camera to manage (not null)
      * @param offset camera's offset in local coordinates (not null, unaffected)
-     * @param lookDirection camera's look direction in local coordinates (not
-     * null, positive length, unaffected)
-     * @param upDirection camera's up direction in local coordinates (not null,
-     * positive length, unaffected)
+     * @param lookDirection camera's look direction in local coordinates
+     * (length&gt;0, unaffected)
+     * @param upDirection camera's up direction in local coordinates
+     * (length&gt;0, unaffected)
      */
     public CameraControl(Camera camera, Vector3f offset, Vector3f lookDirection,
             Vector3f upDirection) {
@@ -100,8 +100,7 @@ public class CameraControl
     /**
      * Alter the camera's look direction.
      *
-     * @param newDirection direction in local coordinates (not null, positive
-     * length, unaffected)
+     * @param newDirection direction in local coordinates (length&gt;0, unaffected)
      */
     public void setLookDirection(Vector3f newDirection) {
         Validate.nonZero(newDirection, "direction");

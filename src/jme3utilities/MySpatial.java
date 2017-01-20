@@ -127,7 +127,7 @@ public class MySpatial
     /**
      * Find a node's 1st child which is an assignable from a specified class.
      *
-     * @param <T>
+     * @param <T> com.jme3.scene.Geometry or com.jme3.scene.Node
      * @param node node to search (not null)
      * @param spatialType subclass of Spatial to search for
      * @return 1st matching child, or null if none found
@@ -620,7 +620,7 @@ public class MySpatial
     /**
      * Simple application to test the MySpatial class.
      *
-     * @param ignored
+     * @param ignored command-line arguments
      */
     public static void main(String[] ignored) {
         Misc.setLoggingLevels(Level.WARNING);

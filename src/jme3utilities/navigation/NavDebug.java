@@ -135,6 +135,7 @@ public class NavDebug {
      * @param radius radius of each ball (in world units, &gt;0)
      * @param material material for geometries which represent vertices (not
      * null)
+     * @return a new, orphaned Geometry instance
      */
     public static Spatial makeBall(NavVertex vertex, float radius,
             Material material) {
@@ -187,6 +188,7 @@ public class NavDebug {
      * @param radius radius of each ball (in world units, &gt;0)
      * @param material material for geometries which represent vertices (not
      * null)
+     * @return a new, orphaned Geometry instance
      */
     public static Spatial makeStick(NavArc arc, float radius,
             Material material) {

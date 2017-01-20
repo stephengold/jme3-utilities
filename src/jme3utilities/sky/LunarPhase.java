@@ -67,6 +67,8 @@ public enum LunarPhase {
     /**
      * Look up the textual description of this phase. Unlike toString(), the
      * description is in lower case.
+     *
+     * @return descriptive string of text (not null)
      */
     public String describe() {
         String result;

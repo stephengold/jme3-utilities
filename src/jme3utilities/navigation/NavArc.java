@@ -251,6 +251,8 @@ public class NavArc
 
     /**
      * Generate the hash code for this arc.
+     *
+     * @return value for use in hashing
      */
     @Override
     public int hashCode() {
@@ -263,9 +265,9 @@ public class NavArc
     }
 
     /**
-     * Format this arc as a text string.
+     * Represent this arc as a text string.
      *
-     * @return description (not null)
+     * @return descriptive string of text (not null)
      */
     @Override
     public String toString() {
