@@ -213,7 +213,7 @@ public class GlobeRenderer
      * Move the camera to a new location and orientation.
      *
      * @param newLocation (in world coordinates, not null)
-     * @param newUpDirection (not null, positive length, unaffected)
+     * @param newUpDirection (length&gt;0, unaffected)
      */
     final public void moveCamera(Vector3f newLocation,
             Vector3f newUpDirection) {
@@ -280,16 +280,13 @@ public class GlobeRenderer
     /**
      * Alter the spin axis of the globe.
      *
-     * @param newAxis unit vector in the globe's local coordinate system
+     * @param newAxis direction in the globe's local coordinate system
+     * (length&gt;0, unaffected)
      */
     public void setSpinAxis(Vector3f newAxis) {
-        Validate.nonNull(newAxis, "axis");
-        if (!newAxis.isUnitVector()) {
-            logger.log(Level.SEVERE, "axis={0}", newAxis);
-            throw new IllegalArgumentException("axis should have length=1");
-        }
-
-        spinAxis.set(newAxis);
+        Validate.nonZero(newAxis, "axis");
+        Vector3f norm = newAxis.normalize();
+        spinAxis.set(norm);
     }
 
     /**

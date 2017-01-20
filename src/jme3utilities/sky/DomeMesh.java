@@ -195,28 +195,24 @@ public class DomeMesh
      * Compute the texture coordinate of a point on this mesh that's in the
      * specified direction from the center of the mesh.
      *
-     * @param direction (length=1, unaffected)
+     * @param direction (length&gt;0, unaffected)
      * @return new vector, or null if direction is too far below the equator
      */
     public Vector2f directionUV(Vector3f direction) {
-        Validate.nonNull(direction, "direction");
-        if (!direction.isUnitVector()) {
-            logger.log(Level.SEVERE, "direction={0}", direction);
-            throw new IllegalArgumentException(
-                    "direction should have length=1");
-        }
+        Validate.nonZero(direction, "direction");
 
-        float angleFromTop = FastMath.acos(direction.y);
+        Vector3f norm = direction.normalize();
+        float angleFromTop = FastMath.acos(norm.y);
         float uvDistance = uvScale * angleFromTop / FastMath.HALF_PI;
 
-        float x = direction.x;
-        float z = direction.z;
+        float x = norm.x;
+        float z = norm.z;
         float xzDistance = MyMath.hypotenuse(x, z);
         if (xzDistance == 0f) {
             /*
              * Avoid division by zero at the Y-axis.
              */
-            if (direction.y < 0f) {
+            if (norm.y < 0f) {
                 return null;
             } else { // top
                 return new Vector2f(topU, topV);
@@ -294,7 +290,7 @@ public class DomeMesh
      * De-serialize this instance when loading.
      *
      * @param importer (not null)
-     * @throws IOException
+     * @throws IOException from importer
      */
     @Override
     public void read(JmeImporter importer)
@@ -321,7 +317,7 @@ public class DomeMesh
      * Serialize this instance when saving.
      *
      * @param exporter (not null)
-     * @throws IOException
+     * @throws IOException from exporter
      */
     @Override
     public void write(JmeExporter exporter)
