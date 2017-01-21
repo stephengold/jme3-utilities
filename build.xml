@@ -16,6 +16,9 @@
         <delete dir="release"/>
     </target>
 
+    <target name="a-release"
+            depends="release"/>
+
 <!--
 The jme3-utilities project releases five libraries: debug, nifty, sky, ui, and x.
 -->
@@ -39,7 +42,7 @@ The jme3-utilities project releases five libraries: debug, nifty, sky, ui, and x
             depends="x-javadoc, x-jar, x-sources"/>
 
 <!--
-The debug library includes assets, documentation, classes, and source.
+The debug library consists of 4 JARs: assets, documentation, classes, and source.
 -->
     <target name="debug-assets"
             depends="init, releasedirs">
@@ -74,13 +77,17 @@ The debug library includes assets, documentation, classes, and source.
             </classpath>
             <fileset dir="release/jME3-utilities-debug-sources"/>
         </javadoc>
+        <jar jarfile="release/jME3-utilities-debug-javadoc.jar"
+             basedir="release/jME3-utilities-debug-javadoc"
+             compress="${jar.compress}"/>
     </target>
 
     <target name="debug-jar"
             depends="init, compile, releasedirs">
         <jar jarfile="release/jME3-utilities-debug.jar"
              basedir="${build.classes.dir}"
-             includes="jme3utilities/debug/*.class"/>
+             includes="jme3utilities/debug/*.class"
+             compress="${jar.compress}"/>
     </target>
 
     <target name="debug-sources"
@@ -89,10 +96,13 @@ The debug library includes assets, documentation, classes, and source.
             <fileset dir="${src.dir}"
                      includes="jme3utilities/debug/*.java"/>
         </copy>
+        <jar jarfile="release/jME3-utilities-debug-sources.jar"
+             basedir="release/jME3-utilities-debug-sources"
+             compress="${jar.compress}"/>
     </target>
 
 <!--
-The nifty library includes assets, documentation, classes, and source.
+The nifty library consists of 4 JARs: assets, documentation, classes, and source.
 -->
     <target name="nifty-assets"
             depends="init, releasedirs">
@@ -128,12 +138,16 @@ The nifty library includes assets, documentation, classes, and source.
             </classpath>
             <fileset dir="release/jME3-utilities-nifty-sources"/>
         </javadoc>
+        <jar jarfile="release/jME3-utilities-nifty-javadoc.jar"
+             basedir="release/jME3-utilities-nifty-javadoc"
+             compress="${jar.compress}"/>
     </target>
 
     <target name="nifty-jar"
             depends="init, compile, releasedirs">
         <jar jarfile="release/jME3-utilities-nifty.jar"
              basedir="${build.classes.dir}"
+             compress="${jar.compress}"
              includes="jme3utilities/nifty/*.class"/>
     </target>
 
@@ -143,10 +157,13 @@ The nifty library includes assets, documentation, classes, and source.
             <fileset dir="${src.dir}"
                      includes="jme3utilities/nifty/*.java"/>
         </copy>
+        <jar jarfile="release/jME3-utilities-nifty-sources.jar"
+             basedir="release/jME3-utilities-nifty-sources"
+             compress="${jar.compress}"/>
     </target>
 
 <!--
-The sky library includes assets, documentation, classes, and source.
+The sky library consists of 4 JARs: assets, documentation, classes, and source.
 -->
     <target name="sky-assets"
             depends="init, releasedirs">
@@ -181,14 +198,17 @@ The sky library includes assets, documentation, classes, and source.
             </classpath>
             <fileset dir="release/SkyControl-sources"/>
         </javadoc>
+        <jar jarfile="release/SkyControl-javadoc.jar"
+             basedir="release/SkyControl-javadoc"
+             compress="${jar.compress}"/>
     </target>
 
     <target name="sky-jar"
             depends="init, compile, releasedirs">
         <jar jarfile="release/SkyControl.jar"
              basedir="${build.classes.dir}"
-             includes="jme3utilities/*.class, jme3utilities/math/*.class, jme3utilities/sky/*.class"
-        />
+             compress="${jar.compress}"
+             includes="jme3utilities/*.class, jme3utilities/math/*.class, jme3utilities/sky/*.class"/>
     </target>
 
     <target name="sky-sources"
@@ -198,10 +218,13 @@ The sky library includes assets, documentation, classes, and source.
                      includes="jme3utilities/*.java, jme3utilities/math/*.java, jme3utilities/sky/*.java"
             />
         </copy>
+        <jar jarfile="release/SkyControl-sources.jar"
+             basedir="release/SkyControl-sources"
+             compress="${jar.compress}"/>
     </target>
 
 <!--
-The ui library includes assets, documentation, classes, and source.
+The ui library consists of 4 JARs: assets, documentation, classes, and source.
 -->
     <target name="ui-assets"
             depends="init, releasedirs">
@@ -237,12 +260,16 @@ The ui library includes assets, documentation, classes, and source.
             </classpath>
             <fileset dir="release/jME3-utilities-ui-sources"/>
         </javadoc>
+        <jar jarfile="release/jME3-utilities-ui-javadoc.jar"
+             basedir="release/jME3-utilities-ui-javadoc"
+             compress="${jar.compress}"/>
     </target>
 
     <target name="ui-jar"
             depends="init, compile, releasedirs">
         <jar jarfile="release/jME3-utilities-ui.jar"
              basedir="${build.classes.dir}"
+             compress="${jar.compress}"
              includes="jme3utilities/ui/*.class"/>
     </target>
 
@@ -252,10 +279,13 @@ The ui library includes assets, documentation, classes, and source.
             <fileset dir="${src.dir}"
                      includes="jme3utilities/ui/*.java"/>
         </copy>
+        <jar jarfile="release/jME3-utilities-ui-sources.jar"
+             basedir="release/jME3-utilities-ui-sources"
+             compress="${jar.compress}"/>
     </target>
 
 <!--
-The x library includes documentation, classes, and source.
+The x library consists of 3 JARs: documentation, classes, and source.
 -->
     <target name="x-javadoc"
             depends="init, releasedirs, sky-jar, x-sources">
@@ -282,12 +312,16 @@ The x library includes documentation, classes, and source.
             </classpath>
             <fileset dir="release/jME3-utilities-x-sources"/>
         </javadoc>
+        <jar jarfile="release/jME3-utilities-x-javadoc.jar"
+             basedir="release/jME3-utilities-x-javadoc"
+             compress="${jar.compress}"/>
     </target>
 
     <target name="x-jar"
             depends="init, compile, releasedirs">
         <jar jarfile="release/jME3-utilities-x.jar"
              basedir="${build.classes.dir}"
+             compress="${jar.compress}"
              includes="jme3utilities/controls/*.class, jme3utilities/navigation/*.class, jme3utilities/physics/*.class, jme3utilities/xml/*.class"/>
     </target>
 
@@ -297,6 +331,9 @@ The x library includes documentation, classes, and source.
             <fileset dir="${src.dir}"
                      includes="jme3utilities/controls/*.java, jme3utilities/navigation/*.java, jme3utilities/physics/*.java, jme3utilities/xml/*.java"/>
         </copy>
+        <jar jarfile="release/jME3-utilities-x-sources.jar"
+             basedir="release/jME3-utilities-x-sources"
+             compress="${jar.compress}"/>
     </target>
 
     <!--
