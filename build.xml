@@ -31,27 +31,19 @@ The jme3-utilities project releases five libraries: debug, nifty, sky, ui, and x
     </target>
 
     <target name="release-debug"
-            depends="debug-assets, debug-javadoc, debug-jar, debug-sources"/>
+            depends="debug-javadoc, debug-jar, debug-sources"/>
     <target name="release-nifty"
-            depends="nifty-assets, nifty-javadoc, nifty-jar, nifty-sources"/>
+            depends="nifty-javadoc, nifty-jar, nifty-sources"/>
     <target name="release-sky"
-            depends="sky-assets, sky-javadoc, sky-jar, sky-sources"/>
+            depends="sky-javadoc, sky-jar, sky-sources"/>
     <target name="release-ui"
-            depends="ui-assets, ui-javadoc, ui-jar, ui-sources"/>
+            depends="ui-javadoc, ui-jar, ui-sources"/>
     <target name="release-x"
             depends="x-javadoc, x-jar, x-sources"/>
 
 <!--
-The debug library consists of 4 JARs: assets, documentation, classes, and source.
+The debug library consists of 3 JARs: documentation, classes/assets, and source.
 -->
-    <target name="debug-assets"
-            depends="init, releasedirs">
-        <jar jarfile="release/jME3-utilities-debug-assets.jar"
-             basedir="${assets.folder.name}"
-             compress="${assets.compress}"
-             includes="Textures/terrain/**"/>
-    </target>
-
     <target name="debug-javadoc"
             depends="init, releasedirs, sky-jar, debug-sources">
         <javadoc destdir="release/jME3-utilities-debug-javadoc"
@@ -88,6 +80,11 @@ The debug library consists of 4 JARs: assets, documentation, classes, and source
              basedir="${build.classes.dir}"
              includes="jme3utilities/debug/*.class"
              compress="${jar.compress}"/>
+        <jar jarfile="release/jME3-utilities-debug.jar"
+             update="true"
+             basedir="${assets.folder.name}"
+             compress="${assets.compress}"
+             includes="Textures/terrain/**"/>
     </target>
 
     <target name="debug-sources"
@@ -102,16 +99,8 @@ The debug library consists of 4 JARs: assets, documentation, classes, and source
     </target>
 
 <!--
-The nifty library consists of 4 JARs: assets, documentation, classes, and source.
+The nifty library consists of 3 JARs: documentation, classes/assets, and source.
 -->
-    <target name="nifty-assets"
-            depends="init, releasedirs">
-        <jar jarfile="release/jME3-utilities-nifty-assets.jar"
-             basedir="${assets.folder.name}"
-             compress="${assets.compress}"
-             includes="Interface/Nifty/styles/**, Interface/Nifty/popup-menu.xml"/>
-    </target>
-
     <target name="nifty-javadoc"
             depends="init, releasedirs, nifty-sources, ui-jar, sky-jar">
         <javadoc destdir="release/jME3-utilities-nifty-javadoc"
@@ -149,6 +138,11 @@ The nifty library consists of 4 JARs: assets, documentation, classes, and source
              basedir="${build.classes.dir}"
              compress="${jar.compress}"
              includes="jme3utilities/nifty/*.class"/>
+        <jar jarfile="release/jME3-utilities-nifty.jar"
+             update="true"
+             basedir="${assets.folder.name}"
+             compress="${assets.compress}"
+             includes="Interface/Nifty/styles/**, Interface/Nifty/popup-menu.xml"/>
     </target>
 
     <target name="nifty-sources"
@@ -163,17 +157,8 @@ The nifty library consists of 4 JARs: assets, documentation, classes, and source
     </target>
 
 <!--
-The sky library consists of 4 JARs: assets, documentation, classes, and source.
+The sky library consists of 3 JARs: documentation, classes/assets, and source.
 -->
-    <target name="sky-assets"
-            depends="init, releasedirs">
-        <jar jarfile="release/SkyControl-assets.jar"
-             basedir="${assets.folder.name}"
-             compress="${assets.compress}"
-             excludes="Textures/skies/clouds/cyclone.png, Textures/skies/clouds/license.txt, Textures/skies/t0neg0d/**"
-             includes="MatDefs/**, Shaders/**, Textures/skies/**"/>
-    </target>
-
     <target name="sky-javadoc"
             depends="init, releasedirs, sky-sources">
         <javadoc destdir="release/SkyControl-javadoc"
@@ -209,14 +194,19 @@ The sky library consists of 4 JARs: assets, documentation, classes, and source.
              basedir="${build.classes.dir}"
              compress="${jar.compress}"
              includes="jme3utilities/*.class, jme3utilities/math/*.class, jme3utilities/sky/*.class"/>
+        <jar jarfile="release/SkyControl.jar"
+             update="true"
+             basedir="${assets.folder.name}"
+             compress="${assets.compress}"
+             excludes="Textures/skies/clouds/cyclone.png, Textures/skies/clouds/license.txt, Textures/skies/t0neg0d/**"
+             includes="MatDefs/**, Shaders/**, Textures/skies/**"/>
     </target>
 
     <target name="sky-sources"
             depends="init, releasedirs">
         <copy todir="release/SkyControl-sources">
             <fileset dir="${src.dir}"
-                     includes="jme3utilities/*.java, jme3utilities/math/*.java, jme3utilities/sky/*.java"
-            />
+                     includes="jme3utilities/*.java, jme3utilities/math/*.java, jme3utilities/sky/*.java"/>
         </copy>
         <jar jarfile="release/SkyControl-sources.jar"
              basedir="release/SkyControl-sources"
@@ -224,17 +214,8 @@ The sky library consists of 4 JARs: assets, documentation, classes, and source.
     </target>
 
 <!--
-The ui library consists of 4 JARs: assets, documentation, classes, and source.
+The ui library consists of 3 JARs: assets, documentation, classes/assets, and source.
 -->
-    <target name="ui-assets"
-            depends="init, releasedirs">
-        <jar jarfile="release/jME3-utilities-ui-assets.jar"
-             basedir="${assets.folder.name}"
-             compress="${assets.compress}"
-             includes="Textures/cursors/**"
-        />
-    </target>
-
     <target name="ui-javadoc"
             depends="init, releasedirs, sky-jar, ui-sources">
         <javadoc destdir="release/jME3-utilities-ui-javadoc"
@@ -271,6 +252,11 @@ The ui library consists of 4 JARs: assets, documentation, classes, and source.
              basedir="${build.classes.dir}"
              compress="${jar.compress}"
              includes="jme3utilities/ui/*.class"/>
+        <jar jarfile="release/jME3-utilities-ui.jar"
+             update="true"
+             basedir="${assets.folder.name}"
+             compress="${assets.compress}"
+             includes="Textures/cursors/**"/>
     </target>
 
     <target name="ui-sources"
@@ -396,5 +382,5 @@ The x library consists of 3 JARs: documentation, classes, and source.
     properties which you can use, check the target you are overriding in the
     nbproject/build-impl.xml file.
 
-    -->
+-->
 </project>
