@@ -1,4 +1,4 @@
-# jme3-utilities
+# jme3-utilities project
 
 This project contains Java packages and asset packs, developed for sgold's
 jMonkeyEngine games, which might prove useful in similar projects.  It includes
@@ -21,7 +21,7 @@ Summary of SkyControl features:
 ### Conventions
 
 All package names in this project begin with "jme3utilities".
-The source files are in JDK 7 format.
+The source code is compatible with JDK 7.
 
 ### History
 
@@ -38,32 +38,34 @@ http://code.google.com/p/jme3-utilities
 The "for_jME3.0" branch of the jme3-utilities project targets 
 Version 3.0 of jMonkeyEngine.
 
- 1. Download the jMonkeyEngine 3.0 SDK from http://hub.jmonkeyengine.org/downloads
+The hardware and software requirements of the SDK are documented at
+http://hub.jmonkeyengine.org/wiki/doku.php/jme3:requirements
+
+ 1. Download the jMonkeyEngine 3.0 SDK from https://github.com/jMonkeyEngine/sdk/releases/tag/stable
  2. Install the SDK, which includes:
    + the engine itself,
    + an integrated development environment (IDE) based on NetBeans, and
    + the Blender 3D application.
 
-The hardware and software requirements of the SDK are documented at
-http://hub.jmonkeyengine.org/wiki/doku.php/jme3:requirements
-
 ### Source files
 
-Clone the JME3 Utilities Package source files using Git:
+Clone the jme3-utilities repository using Git:
  1. Open the Clone wizard in the IDE:
    + Menu bar -> "Team" -> "Git" -> "Clone..."
  2. For "Repository URL:" specify
     "https://github.com/stephengold/jme3-utilities.git" (without the quotes).
  3. Clear the "User:" and "Password:" text boxes.
  4. Click on the "Next >" button.
- 5. Make sure the "master" remote branch is checked.
+ 5. Make sure the "for_jme3" remote branch is checked.
  6. Click on the "Next >" button again.
- 7. For "Parent Directory:" specify a writable folder on a local filesystem.
- 8. Make sure the "Scan for NetBeans Projects after Checkout" box is checked.
- 9. Click on the "Finish" button.
-
-There will be problems due to a missing JAR file.
-Do not attempt to resolve them yet!
+ 7. For "Parent Directory:" specify a writable folder (on a local filesystem) 
+    which doesn't already contain "jme3-utilities".
+ 8. Make sure the Checkout Branch is set to "for_jME3.0".
+ 9. Make sure the "Scan for NetBeans Projects after Checkout" box is checked.
+10. Click on the "Finish" button.
+  + There will be problems due to a missing JAR file.
+    Do not attempt to resolve them yet!
+11. Click on the "Open Project" button.
 
 ### External files
 
@@ -71,41 +73,38 @@ Do not attempt to resolve them yet!
     "https://mvnrepository.com/artifact/com.beust/jcommander/1.48"
     to the "jars" folder of the new project.
 
- 2. If you plan to generate your own star maps, download the ASCII version of
-    version 5 of the Yale Bright Star Catalog from
+ 2. If you plan to generate your own star maps, download 
+    the ASCII catalog (version 5 of the Yale Bright Star Catalog) from
     "http://tdc-www.harvard.edu/catalogs/bsc5.html"
+    and extract the file "bsc5.dat"
     to the "assets/Textures/skies" folder of the new project.
 
-### Project configuration
+### Project configuration and build
 
  1. (optional) Rename the project:
   + Right-click on the jme3-utilities project in the "Projects" window.
   + Select "Rename...".
   + Type a new name in the text box.
+  + Make sure the "Also Rename Project Folder" box is not checked.
   + Click on the "Rename" button.
- 2. Add the downloaded JAR to the project:
-  + Open the project's properties in the IDE:
-  + Right-click on the new project (not its assets) in the "Projects" window.
+ 2. Make the IDE aware of the JCommander JAR you downloaded:
+  + Right-click on the new project in the "Projects" window.
   + Select "Properties".
   + Under "Categories:" select "Libraries".
   + Click on the "OK" button.
- 3. Build the project's JARs:
-  + Right-click on the new project in the "Projects" window.
-  + Select "Clean and Build".
- 4. (optional) Generate the project's javadoc:
-  + Right-click on the new project in the "Projects" window.
-  + Select "Generate Javadoc".
-
-Note: The source files are in JDK 7 format, but the IDE creates new JME3
-projects in JDK 5 format.
-
+ 3. Build the release:
+  + In the "Projects" window, expand the new project node.
+  + Expand the "Important Files" node.
+  + Expand the "Build File" node.
+  + Right-click on the "a-release" target.
+  + Select "Run Target".
 
 ## How to add SkyControl to an existing game
 
 SkyControl is a reusable sky simulation for jMonkeyEngine games.
 
 Adding it to an existing JME3 project should be a simple six-step process:
- 1. Add the JME3 Utilities Package JARs to the project.
+ 1. Add the SkyControl JARs to the project.
  2. Disable any existing sky which might interfere with SkyControl.
  3. Add a SkyControl instance to some node in the scene graph.
  4. Configure the SkyControl instance.
@@ -119,53 +118,54 @@ follow along in your development environment.
 ### BasicGame example
 
 You'll need:
- + A development machine with Java and the JME3 SDK installed.
- + A clean install of the JME3 Utilities Package.
- + A clean instance of the BasicGame project.
+ + A development machine with the JME3 SDK installed.
+ + A clean release of the jme3-utilities JARs.
 
-To instantiate the BasicGame Project:
+Instantiate a BasicGame Project:
  1. Open the "New Project" wizard in the IDE:
- 2. Menu bar -> "File" -> "New Project..."
- 3. Under "Categories:" select "JME3".
- 4. Under "Projects:" select "BasicGame".
- 5. Click on the "Next >" button.
- 6. For "Project Location:" specify a new folder on a local filesystem.
- 7. Click on the "Finish" button.
+  + Menu bar -> "File" -> "New Project..."
+ 2. Under "Categories:" select "JME3".
+ 3. Under "Projects:" select "BasicGame".
+ 4. Click on the "Next >" button.
+ 5. For "Project Location:" specify a writable folder (on a local filesystem) 
+    which doesn't already contain "BasicGame".
+ 6. Click on the "Finish" button.
 
 If you're unfamiliar with BasicGame, you may wish to run it (and/or examine
 the source code) to see how it works before modifying it.
 
-#### Add the JME3 Utilities Package JARs to the project
+Hints:
+ 1. To rotate the camera, drag while holding down the left mouse button. 
+ 2. To exit, press the Esc key. 
+
+#### Add the SkyControl JARs to the project
 
 Open the project's properties in the IDE:
  1. Right-click on the BasicGame project (not its assets) in the "Projects"
     window.
- 2. Select "Properties".
+ 2. Select "Properties to open the "Project Properties" dialog.
  3. Under "Categories:" select "Libraries".
  4. Click on the "Compile" tab.
- 5. If the SkyControl plugin is installed, then the SkyControl library can
-    provide the required JARs:
-   + Click on the "Add Library..." button.
-   + Select the "SkyControl" library.
-   + Click on the "Add Library" button.
-   + Click on the "OK" button.
- 6. If the SkyControl plugin is not installed, then two JARs are required, one
-    for classes and one for assets:
-   + Click on the "Add JAR/Folder" button.
-   + Navigate to the folder where you installed the JME3 Utilities Package
-     and then to the "dist" folder therein.
-   + Select the "jME3-utilities.jar" file.
-   + Click on the "Open" button.
-   + Click on the "Add JAR/Folder" button again.
-   + Navigate to the "lib" folder.
-   + Select the "jME3-utilities-assets.jar" file.
-   + Click on the "Open" button again.
-   + Click on the "OK" button.
+ 5. Add the SkyControl class JAR:
+  + Click on the "Add JAR/Folder" button.
+  + Navigate to the jme3-utilities "release" folder.
+  + Select the "SkyControl.jar" file.
+  + Click on the "Open" button.
+ 6. (optional) Add JARs for javadoc and sources:
+  + Click on the "Edit" button.
+  + Click on the "Browse..." button to the right of "Javadoc:"
+  + Select the "SkyControl-javadoc.jar" file.
+  + Click on the "Open" button.
+  + Click on the "Browse..." button to the right of "Sources:"
+  + Select the "SkyControl-sources.jar" file.
+  + Click on the "Open" button again.
+  + Click on the "OK" button to close the "Edit Jar Reference dialog.
+ 7. Click on the "OK" button to exit the "Project Properties" dialog.
 
-#### Disable any existing sky simulation
+#### Disable existing sky
 
-Since BasicGame comes without any sky simulation -- just the default (black)
-viewport background -- there is nothing to remove.
+Since BasicGame has no sky -- just the default (black)
+viewport background -- there is nothing to disable.
 
 #### Add a SkyControl instance
 
@@ -189,7 +189,7 @@ typically a good place to add SkyControl.
         SkyControl sc = new SkyControl(assetManager, cam, 0.9f, true, true);
         rootNode.addControl(sc);
 
-The parameters of the constructor are documented in the JavaDoc for the
+The parameters of the constructor are documented in the Javadoc for the
 SkyControl class.
 
 #### Configure the SkyControl instance
@@ -202,20 +202,23 @@ in Sunnyvale, California with dense clouds:
 
         import com.jme3.math.FastMath;
         import java.util.Calendar;
+        import jme3utilities.sky.SunAndStars;
 
  2. In simpleInitApp(), insert the following code just before the final
     close brace:
 
-        sc.getSunAndStars().setHour(6f);
-        sc.getSunAndStars().setObserverLatitude(37.4046f * FastMath.DEG_TO_RAD);
-        sc.getSunAndStars().setSolarLongitude(Calendar.FEBRUARY, 10);
+        SunAndStars sns = sc.getSunAndStars();
+        sns.setHour(6f);
+        sns.setObserverLatitude(37.4046f * FastMath.DEG_TO_RAD);
+        sns.setSolarLongitude(Calendar.FEBRUARY, 10);
         sc.setCloudiness(1f);
 
-Other configuration methods are documented in the JavaDoc for the SkyControl,
-SunAndStars, and Updater classes.
+Other configuration methods are documented in the Javadocs for the SkyControl,
+SkyControlCore, SunAndStars, and Updater classes.
 
 #### Enable the SkyControl instance
 
+If you run the modified BasicGame at this point, you'll find no visible changes.
 Unlike most JME3 controls, SkyControl instantiates in a disabled state. In order
 to see the sky, you must enable the control:
 
@@ -238,7 +241,8 @@ application than BasicGame. CubeMapExample includes a cube-mapped sky, lit
 terrain, and multiple light sources. In this section, you'll see how SkyControl
 can be used to add sun, moon, and clouds to CubeMapExample.
 
-In the Projects window of the IDE, navigate to the "jme3utilities.sky.test"
+In the "Projects" window of the IDE, expand the "jme3-utilities" project node
+and navigate to the "jme3utilities.sky.test"
 source package.  Open the "CubeMapExample.java" file and study the code.
 
 Since CubeMapExample is part of the JME3 Utilities Package, there are no
@@ -318,7 +322,7 @@ decrease the observer's latitude.  Try, for instance:
     sc.getSunAndStars().setObserverLatitude(0.2f);
 
 The sun looks like a boring white disc in the southern sky.
-For a more impressive sun, apply a bloom filter to it:
+For a more dazzling sun, apply a bloom filter to the viewport:
 
     import com.jme3.post.filters.BloomFilter;
     import jme3utilities.Misc;
@@ -377,15 +381,16 @@ The jme3utilities.TimeOfDay class is an app state which addresses this need.
 
 ### Next steps
 
-For a demonstration of the more advanced features of SkyControl, you may wish to
-study the TestSkyControl class in the "jme3utilities.sky.test" package.
+To see how some of the more advanced features of SkyControl 
+can be used, you may wish to study "TestSkyControl.java" in the 
+"jme3utilities.sky.test" package.
 
 External links:
   + November 2013 SkyControl demo video:
     https://www.youtube.com/watch?v=FsJRM6tr3oQ
   + January 2014 SkyControl update video:
     https://www.youtube.com/watch?v=gE4wxgBIkaw
-  + maze game which uses jme3-utilities:
+  + A maze game which uses jme3-utilities libraries:
     https://github.com/stephengold/jme3-maze
 
 
