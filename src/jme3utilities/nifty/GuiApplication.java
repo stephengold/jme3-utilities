@@ -146,9 +146,11 @@ abstract public class GuiApplication
          * asset does not validate, so skip validation for now.
          * Also, turn off warnings about re-registering styles.
          */
-        Logger.getLogger("de.lessvoid.nifty.Nifty").setLevel(Level.SEVERE);
+        Logger niftyLogger = Logger.getLogger("de.lessvoid.nifty.Nifty");
+        Level save = niftyLogger.getLevel();
+        niftyLogger.setLevel(Level.SEVERE);
         nifty.fromXmlWithoutStartScreen(popupMenuAsssetPath);
-        Logger.getLogger("de.lessvoid.nifty.Nifty").setLevel(Level.WARNING);
+        niftyLogger.setLevel(save);
         /*
          * Invoke the startup code of the subclass.
          */
