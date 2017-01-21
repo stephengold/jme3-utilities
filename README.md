@@ -1,4 +1,4 @@
-# jme3-utilities project
+# jme3-utilities project for jME3.0
 
 This project contains Java packages and asset packs, developed for sgold's
 jMonkeyEngine games, which might prove useful in similar projects.  It includes
