@@ -144,8 +144,11 @@ abstract public class GuiApplication
         /*
          * Load the Nifty XML for generic popup menus.  For some reason the
          * asset does not validate, so skip validation for now.
+         * Also, turn off warnings about re-registering styles.
          */
+        Logger.getLogger("de.lessvoid.nifty.Nifty").setLevel(Level.SEVERE);
         nifty.fromXmlWithoutStartScreen(popupMenuAsssetPath);
+        Logger.getLogger("de.lessvoid.nifty.Nifty").setLevel(Level.WARNING);
         /*
          * Invoke the startup code of the subclass.
          */

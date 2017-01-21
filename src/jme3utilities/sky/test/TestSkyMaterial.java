@@ -142,7 +142,6 @@ public class TestSkyMaterial
          * Mute the chatty loggers found in some imported packages.
          */
         Misc.setLoggingLevels(Level.WARNING);
-        Logger.getLogger("de.lessvoid.nifty.Nifty").setLevel(Level.SEVERE);
         Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
                 .setLevel(Level.SEVERE);
         /*
