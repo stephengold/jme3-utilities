@@ -17,40 +17,40 @@
     </target>
 
 <!--
-The jme3-utilities plugin consists of five libraries: debug, nifty, sky, ui, and x.
+The jme3-utilities project releases five libraries: debug, nifty, sky, ui, and x.
 -->
     <target name="release"
             depends="release-debug, release-nifty, release-sky, release-ui, release-x"/>
+    
     <target name="releasedirs"
             depends="init">
         <mkdir dir="release"/>
     </target>
 
     <target name="release-debug"
-            depends="debug-assets-jar, debug-docs, debug-jar, debug-src"/>
+            depends="debug-assets, debug-javadoc, debug-jar, debug-sources"/>
     <target name="release-nifty"
-            depends="nifty-assets-jar, nifty-docs, nifty-jar, nifty-src"/>
+            depends="nifty-assets, nifty-javadoc, nifty-jar, nifty-sources"/>
     <target name="release-sky"
-            depends="sky-assets-jar, sky-docs, sky-jar, sky-src"/>
+            depends="sky-assets, sky-javadoc, sky-jar, sky-sources"/>
     <target name="release-ui"
-            depends="ui-assets-jar, ui-docs, ui-jar, ui-src"/>
+            depends="ui-assets, ui-javadoc, ui-jar, ui-sources"/>
     <target name="release-x"
-            depends="x-docs, x-jar, x-src"/>
+            depends="x-javadoc, x-jar, x-sources"/>
 
 <!--
 The debug library includes assets, documentation, classes, and source.
 -->
-    <target name="debug-assets-jar"
+    <target name="debug-assets"
             depends="init, releasedirs">
         <jar jarfile="release/jME3-utilities-debug-assets.jar"
              basedir="${assets.folder.name}"
              compress="${assets.compress}"
-             includes="Textures/terrain/**"
-        />
+             includes="Textures/terrain/**"/>
     </target>
 
-    <target name="debug-docs"
-            depends="init, releasedirs, sky-jar, debug-src">
+    <target name="debug-javadoc"
+            depends="init, releasedirs, sky-jar, debug-sources">
         <javadoc destdir="release/jME3-utilities-debug-javadoc"
                  additionalparam="${javadoc.additionalparam}"
                  author="${javadoc.author}"
@@ -72,7 +72,7 @@ The debug library includes assets, documentation, classes, and source.
                 <pathelement path="${javac.classpath}"/>
                 <pathelement location="release/SkyControl.jar"/>
             </classpath>
-            <fileset dir="release/jME3-utilities-debug-src"/>
+            <fileset dir="release/jME3-utilities-debug-sources"/>
         </javadoc>
     </target>
 
@@ -83,9 +83,9 @@ The debug library includes assets, documentation, classes, and source.
              includes="jme3utilities/debug/*.class"/>
     </target>
 
-    <target name="debug-src"
+    <target name="debug-sources"
             depends="init, releasedirs">
-        <copy todir="release/jME3-utilities-debug-src">
+        <copy todir="release/jME3-utilities-debug-sources">
             <fileset dir="${src.dir}"
                      includes="jme3utilities/debug/*.java"/>
         </copy>
@@ -94,17 +94,16 @@ The debug library includes assets, documentation, classes, and source.
 <!--
 The nifty library includes assets, documentation, classes, and source.
 -->
-    <target name="nifty-assets-jar"
+    <target name="nifty-assets"
             depends="init, releasedirs">
         <jar jarfile="release/jME3-utilities-nifty-assets.jar"
              basedir="${assets.folder.name}"
              compress="${assets.compress}"
-             includes="Interface/Nifty/styles/**, Interface/Nifty/popup-menu.xml"
-        />
+             includes="Interface/Nifty/styles/**, Interface/Nifty/popup-menu.xml"/>
     </target>
 
-    <target name="nifty-docs"
-            depends="init, releasedirs, nifty-src, ui-jar, sky-jar">
+    <target name="nifty-javadoc"
+            depends="init, releasedirs, nifty-sources, ui-jar, sky-jar">
         <javadoc destdir="release/jME3-utilities-nifty-javadoc"
                  additionalparam="${javadoc.additionalparam}"
                  author="${javadoc.author}"
@@ -127,7 +126,7 @@ The nifty library includes assets, documentation, classes, and source.
                 <pathelement location="release/SkyControl.jar"/>
                 <pathelement location="release/jME3-utilities-ui.jar"/>
             </classpath>
-            <fileset dir="release/jME3-utilities-nifty-src"/>
+            <fileset dir="release/jME3-utilities-nifty-sources"/>
         </javadoc>
     </target>
 
@@ -138,9 +137,9 @@ The nifty library includes assets, documentation, classes, and source.
              includes="jme3utilities/nifty/*.class"/>
     </target>
 
-    <target name="nifty-src"
+    <target name="nifty-sources"
             depends="init, releasedirs">
-        <copy todir="release/jME3-utilities-nifty-src">
+        <copy todir="release/jME3-utilities-nifty-sources">
             <fileset dir="${src.dir}"
                      includes="jme3utilities/nifty/*.java"/>
         </copy>
@@ -149,7 +148,7 @@ The nifty library includes assets, documentation, classes, and source.
 <!--
 The sky library includes assets, documentation, classes, and source.
 -->
-    <target name="sky-assets-jar"
+    <target name="sky-assets"
             depends="init, releasedirs">
         <jar jarfile="release/SkyControl-assets.jar"
              basedir="${assets.folder.name}"
@@ -158,8 +157,8 @@ The sky library includes assets, documentation, classes, and source.
              includes="MatDefs/**, Shaders/**, Textures/skies/**"/>
     </target>
 
-    <target name="sky-docs"
-            depends="init, releasedirs, sky-src">
+    <target name="sky-javadoc"
+            depends="init, releasedirs, sky-sources">
         <javadoc destdir="release/SkyControl-javadoc"
                  additionalparam="${javadoc.additionalparam}"
                  author="${javadoc.author}"
@@ -180,7 +179,7 @@ The sky library includes assets, documentation, classes, and source.
             <classpath>
                 <path path="${javac.classpath}"/>
             </classpath>
-            <fileset dir="release/SkyControl-src"/>
+            <fileset dir="release/SkyControl-sources"/>
         </javadoc>
     </target>
 
@@ -192,9 +191,9 @@ The sky library includes assets, documentation, classes, and source.
         />
     </target>
 
-    <target name="sky-src"
+    <target name="sky-sources"
             depends="init, releasedirs">
-        <copy todir="release/SkyControl-src">
+        <copy todir="release/SkyControl-sources">
             <fileset dir="${src.dir}"
                      includes="jme3utilities/*.java, jme3utilities/math/*.java, jme3utilities/sky/*.java"
             />
@@ -204,7 +203,7 @@ The sky library includes assets, documentation, classes, and source.
 <!--
 The ui library includes assets, documentation, classes, and source.
 -->
-    <target name="ui-assets-jar"
+    <target name="ui-assets"
             depends="init, releasedirs">
         <jar jarfile="release/jME3-utilities-ui-assets.jar"
              basedir="${assets.folder.name}"
@@ -213,8 +212,8 @@ The ui library includes assets, documentation, classes, and source.
         />
     </target>
 
-    <target name="ui-docs"
-            depends="init, releasedirs, sky-jar, ui-src">
+    <target name="ui-javadoc"
+            depends="init, releasedirs, sky-jar, ui-sources">
         <javadoc destdir="release/jME3-utilities-ui-javadoc"
                  additionalparam="${javadoc.additionalparam}"
                  author="${javadoc.author}"
@@ -236,7 +235,7 @@ The ui library includes assets, documentation, classes, and source.
                 <pathelement path="${javac.classpath}"/>
                 <pathelement location="release/SkyControl.jar"/>
             </classpath>
-            <fileset dir="release/jME3-utilities-ui-src"/>
+            <fileset dir="release/jME3-utilities-ui-sources"/>
         </javadoc>
     </target>
 
@@ -247,9 +246,9 @@ The ui library includes assets, documentation, classes, and source.
              includes="jme3utilities/ui/*.class"/>
     </target>
 
-    <target name="ui-src"
+    <target name="ui-sources"
             depends="init, releasedirs">
-        <copy todir="release/jME3-utilities-ui-src">
+        <copy todir="release/jME3-utilities-ui-sources">
             <fileset dir="${src.dir}"
                      includes="jme3utilities/ui/*.java"/>
         </copy>
@@ -258,8 +257,8 @@ The ui library includes assets, documentation, classes, and source.
 <!--
 The x library includes documentation, classes, and source.
 -->
-    <target name="x-docs"
-            depends="init, releasedirs, sky-jar, x-src">
+    <target name="x-javadoc"
+            depends="init, releasedirs, sky-jar, x-sources">
         <javadoc destdir="release/jME3-utilities-x-javadoc"
                  additionalparam="${javadoc.additionalparam}"
                  author="${javadoc.author}"
@@ -281,7 +280,7 @@ The x library includes documentation, classes, and source.
                 <pathelement path="${javac.classpath}"/>
                 <pathelement location="release/SkyControl.jar"/>
             </classpath>
-            <fileset dir="release/jME3-utilities-x-src"/>
+            <fileset dir="release/jME3-utilities-x-sources"/>
         </javadoc>
     </target>
 
@@ -292,9 +291,9 @@ The x library includes documentation, classes, and source.
              includes="jme3utilities/controls/*.class, jme3utilities/navigation/*.class, jme3utilities/physics/*.class, jme3utilities/xml/*.class"/>
     </target>
 
-    <target name="x-src"
+    <target name="x-sources"
             depends="init, releasedirs">
-        <copy todir="release/jME3-utilities-x-src">
+        <copy todir="release/jME3-utilities-x-sources">
             <fileset dir="${src.dir}"
                      includes="jme3utilities/controls/*.java, jme3utilities/navigation/*.java, jme3utilities/physics/*.java, jme3utilities/xml/*.java"/>
         </copy>
