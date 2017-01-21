@@ -1,4 +1,4 @@
-# jme3-utilities project for jME3.0
+# jme3-utilities project for jMonkeyEngine 3.0
 
 This project contains Java packages and asset packs, developed for sgold's
 jMonkeyEngine games, which might prove useful in similar projects.  It includes
@@ -61,11 +61,12 @@ Clone the jme3-utilities repository using Git:
  7. For "Parent Directory:" specify a writable folder (on a local filesystem) 
     which doesn't already contain "jme3-utilities".
  8. Make sure the Checkout Branch is set to "for_jME3.0".
- 9. Make sure the "Scan for NetBeans Projects after Checkout" box is checked.
+ 9. Make sure the "Scan for NetBeans Projects after Clone" box is checked.
 10. Click on the "Finish" button.
-  + There will be problems due to a missing JAR file.
+11. When the "Clone Complete" dialog appears, click on the "Open Project" button.
+12. There will be problems due to a missing JAR file.
     Do not attempt to resolve them yet!
-11. Click on the "Open Project" button.
+    Click on the "Close" button.
 
 ### External files
 
@@ -118,8 +119,9 @@ follow along in your development environment.
 ### BasicGame example
 
 You'll need:
- + A development machine with the JME3 SDK installed.
- + A clean release of the jme3-utilities JARs.
+ + A development system with the JME3 SDK installed.
+ + A clean release of the jme3-utilities JARs, either downloaded from 
+   https://github.com/stephengold/jme3-utilities/releases or built yourself.
 
 Instantiate a BasicGame Project:
  1. Open the "New Project" wizard in the IDE:
@@ -134,8 +136,7 @@ Instantiate a BasicGame Project:
 If you're unfamiliar with BasicGame, you may wish to run it (and/or examine
 the source code) to see how it works before modifying it.
 
-Hints:
- 1. To rotate the camera, drag while holding down the left mouse button. 
+ 1. To rotate the camera, move the mouse. 
  2. To exit, press the Esc key. 
 
 #### Add the SkyControl JARs to the project
@@ -167,7 +168,7 @@ Open the project's properties in the IDE:
 Since BasicGame has no sky -- just the default (black)
 viewport background -- there is nothing to disable.
 
-#### Add a SkyControl instance
+#### Add a SkyControl instance to the scene graph
 
 The scene graph of BasicGame has only one node, the root node. The root node is
 typically a good place to add SkyControl.
@@ -214,11 +215,11 @@ in Sunnyvale, California with dense clouds:
         sc.setCloudiness(1f);
 
 Other configuration methods are documented in the Javadocs for the SkyControl,
-SkyControlCore, SunAndStars, and Updater classes.
+SkyControlCore, SunAndStars, CloudLayer, and Updater classes.
 
 #### Enable the SkyControl instance
 
-If you run the modified BasicGame at this point, you'll find no visible changes.
+If you run the modified BasicGame at this point, you'll find no visible change.
 Unlike most JME3 controls, SkyControl instantiates in a disabled state. In order
 to see the sky, you must enable the control:
 
@@ -245,11 +246,14 @@ In the "Projects" window of the IDE, expand the "jme3-utilities" project node
 and navigate to the "jme3utilities.sky.test"
 source package.  Open the "CubeMapExample.java" file and study the code.
 
+ 1. To rotate the camera, drag with the left mouse button. 
+ 2. To exit, press the Esc key. 
+
 Since CubeMapExample is part of the JME3 Utilities Package, there are no
 libraries to add.  And since we plan to use the existing cube map, there's
 nothing to remove.
 
-#### Add a SkyControl instance
+#### Add a SkyControl instance to the scene graph
 
 Both SkyFactory and SkyControl add geometries to Bucket.Sky. In the absence of a
 custom GeometryComparator, geometries in this bucket are rendered in scene graph
@@ -266,13 +270,13 @@ after the sky cube in the scene graph.
         SkyControl sc = new SkyControl(assetManager, cam, 0.8f, false, true);
         rootNode.addControl(sc);
 
-For now, we'll turn star motion off, since that simplifies things. The lower
+For now, we've turned star motion off, since that simplifies things. The lower
 value (0.8) for cloud flattening will make it easier to compensate for the
 scene's low horizon.
 
 #### Configure the SkyControl instance
 
- 1. It's very important to disable the control's built-in star maps so that the
+ 1. It's important to disable the SkyControl's built-in star maps so that the
     cube map's stars will be visible at night:
 
         sc.clearStarMaps();
@@ -289,8 +293,8 @@ In initializeSky(), insert the following code just before the final close-brace:
 
 #### Tuning
 
-At this point, the application should run successfully. However, for the best
-possible result, it needs some tuning.
+At this point, the application should run successfully. (Look!  A cloud!)
+However, for the best result, it needs some tuning.
 
  1. To lower the edge of the cloud dome so that it's hidden by the terrain, add
     the following code:
@@ -317,9 +321,11 @@ possible result, it needs some tuning.
 
 The uneven shading of the level terrain is due to sunlight coming in at a low
 angle. Since it's noon, the easiest way to raise the sun's elevation is to
-decrease the observer's latitude.  Try, for instance:
+decrease the observer's latitude.  Also, the terrain is too dark.  
+Try, for instance:
 
     sc.getSunAndStars().setObserverLatitude(0.2f);
+    sc.getUpdater().setMainMultiplier(4f);
 
 The sun looks like a boring white disc in the southern sky.
 For a more dazzling sun, apply a bloom filter to the viewport:
@@ -355,7 +361,7 @@ and space.  To achieve this, override the application's simpleUpdate() method:
     }
 
 To simulate the passage of time, we need state and a mechanism to update it.
-The jme3utilities.TimeOfDay class is an app state which addresses this need.
+The jme3utilities.TimeOfDay appstate fills this need.
 
  1. Import the class:
 
@@ -381,7 +387,7 @@ The jme3utilities.TimeOfDay class is an app state which addresses this need.
 
 ### Next steps
 
-To see how some of the more advanced features of SkyControl 
+To see how some of the other features of SkyControl 
 can be used, you may wish to study "TestSkyControl.java" in the 
 "jme3utilities.sky.test" package.
 
@@ -396,7 +402,7 @@ External links:
 
 ## Acknowledgments
 
-Like most projects, the jme3-utilities project builds upon the work of many who
+Like most projects, the jme3-utilities project builds on the work of many who
 have gone before.
 
 I therefore acknowledge the following software developers:
