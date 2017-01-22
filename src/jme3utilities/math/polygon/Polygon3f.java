@@ -23,7 +23,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.math;
+package jme3utilities.math.polygon;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
+import jme3utilities.math.MyVector3f;
 
 /**
  * An immutable polygon in three-dimensional space, consisting of N corners
