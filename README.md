@@ -33,7 +33,7 @@ http://code.google.com/p/jme3-utilities
 
 ## How to install the SDK and the jme3-utilities project
 
-### jMonkeyEngine 3.0 (jME3) Software Development Kit (SDK)
+### jMonkeyEngine3 (jME3) Software Development Kit (SDK)
 
 The "master" branch of the jme3-utilities repository targets 
 Version 3.1 of jMonkeyEngine.
