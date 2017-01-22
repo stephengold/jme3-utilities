@@ -83,7 +83,7 @@ public class VectorXZ
      */
     final public static VectorXZ west = left;
     /**
-     * zero-length vector
+     * a zero vector
      */
     final public static VectorXZ zero = new VectorXZ(0f, 0f);
     // *************************************************************************
@@ -100,7 +100,7 @@ public class VectorXZ
     // constructors
 
     /**
-     * Instantiate a vector with zero length.
+     * Instantiate a zero vector.
      */
     public VectorXZ() {
         x = 0f;
@@ -156,7 +156,7 @@ public class VectorXZ
 
     /**
      * Compute the azimuth of this vector. Note: the directional convention is
-     * left-handed. For a zero-length vector, zero is returned.
+     * left-handed. If this vector is zero, return zero.
      *
      * @return angle in radians (&gt;-Pi, &le;Pi), measured CW from the north
      * (+X direction)
@@ -168,29 +168,23 @@ public class VectorXZ
 
     /**
      * Convert this vector to one of the four cardinal directions. If this
-     * vector has zero length, the result is randomized.
+     * vector is zero, return a zero vector.
      *
-     * @return a unit vector with four possible values
+     * @return a unit vector (four possible values) or a zero vector
      */
     public VectorXZ cardinalize() {
-        float newX = x;
-        float newZ = z;
-        while (isZeroLength()) {
-            /*
-             * pick random X and Z, each between -0.5 and +0.5
-             */
-            newX = Noise.nextFloat() - 0.5f;
-            newZ = Noise.nextFloat() - 0.5f;
+        if (isZeroLength()) {
+            return zero;
         }
-
-        final float absX = FastMath.abs(newX);
-        final float absZ = FastMath.abs(newZ);
+        final float absX = FastMath.abs(x);
+        final float absZ = FastMath.abs(z);
+        float newX, newZ;
         if (absX > absZ) {
-            newX = FastMath.sign(newX);
+            newX = FastMath.sign(x);
             newZ = 0f;
         } else {
             newX = 0f;
-            newZ = FastMath.sign(newZ);
+            newZ = FastMath.sign(z);
         }
         VectorXZ result = new VectorXZ(newX, newZ);
 
@@ -198,7 +192,8 @@ public class VectorXZ
     }
 
     /**
-     * Clamp this direction to be within a specified angle of the +X axis.
+     * Clamp this direction to be within a specified angle of the +X axis. If
+     * this vector is zero, return a zero vector.
      *
      * @param maxAbsAngle tolerance angle in radians (&ge;0, clamped to Pi/2)
      * @return a unit vector or zero vector
@@ -207,10 +202,7 @@ public class VectorXZ
         Validate.nonNegative(maxAbsAngle, "angle");
 
         if (isZeroLength()) {
-            /*
-             * Clamping has no effect on a zero-length vector.
-             */
-            return this;
+            return zero;
         }
         /*
          * Convert limit angle to a sine (Z-component).
@@ -248,7 +240,8 @@ public class VectorXZ
     }
 
     /**
-     * Clamp this vector to be within an axis-aligned ellipse.
+     * Clamp this vector to be within an axis-aligned ellipse. If this vector is
+     * zero, return a zero vector.
      *
      * @param maxX radius of the ellipse in the X-direction (&ge;0)
      * @param maxZ radius of the ellipse in the Z-direction (&ge;0)
@@ -259,10 +252,7 @@ public class VectorXZ
         Validate.nonNegative(maxZ, "maximum Z");
 
         if (isZeroLength()) {
-            /*
-             * Clamping has no effect on a zero-length vector.
-             */
-            return this;
+            return zero;
         }
         /*
          * Represent the ellipse in polar coordinates.
@@ -289,7 +279,8 @@ public class VectorXZ
     }
 
     /**
-     * Clamp this vector to be within a circle.
+     * Clamp this vector to be within a circle. If this vector is zero, return a
+     * zero vector.
      *
      * @param radius radius of the circle (&ge;0)
      * @return a vector with the same direction
@@ -298,10 +289,7 @@ public class VectorXZ
         Validate.nonNegative(radius, "radius");
 
         if (isZeroLength()) {
-            /*
-             * Clamping has no effect on a zero-length vector.
-             */
-            return this;
+            return zero;
         }
         /*
          * Scale so that length <= radius.
@@ -481,26 +469,18 @@ public class VectorXZ
     }
 
     /**
-     * Normalize this vector to a unit vector. If this vector has zero length,
-     * generate a random direction.
+     * Normalize this vector to a unit vector. If this vector is zero, return a
+     * zero vector.
      *
-     * @return a unit vector
+     * @return a unit vector or a zero vector
      */
     public VectorXZ normalize() {
-        float length = length();
-        float newX = x;
-        float newZ = z;
-        while (length == 0f) {
-            /*
-             * Pick random X and Z, each between -0.5 and +0.5
-             */
-            newX = Noise.nextFloat() - 0.5f;
-            newZ = Noise.nextFloat() - 0.5f;
-            length = MyMath.hypotenuse(newX, newZ);
+        if (isZeroLength()) {
+            return zero;
         }
-
-        newX /= length;
-        newZ /= length;
+        float length = length();
+        float newX = x / length;
+        float newZ = z / length;
         VectorXZ result = new VectorXZ(newX, newZ);
 
         return result;
@@ -670,7 +650,8 @@ public class VectorXZ
     }
 
     /**
-     * Represent this vector as a text string. The format is: [X=XX.XXX, Z=ZZ.ZZZ]
+     * Represent this vector as a text string. The format is: [X=XX.XXX,
+     * Z=ZZ.ZZZ]
      *
      * @return descriptive string of text (not null)
      */
