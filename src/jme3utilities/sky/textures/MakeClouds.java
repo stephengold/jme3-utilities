@@ -36,8 +36,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
-import jme3utilities.math.Noise;
-import jme3utilities.math.Perlin2;
+import jme3utilities.math.noise.Noise;
+import jme3utilities.math.noise.Perlin2;
 
 /**
  * Console application to generate cloud layer alpha maps for use with

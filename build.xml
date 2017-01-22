@@ -285,11 +285,14 @@ The jme3-utilities project releases five libraries: debug, nifty, sky, ui, and x
 <!--
     The x library consists of 3 JARs: documentation, classes, and source.
     Its folders and JARs have names of the form jme3-utilities-x*.jar).
-    It is built from 4 source packages:
+    It is built from 7 source packages:
      1. jme3utilities.controls
-     2. jme3utilities.navigation
-     3. jme3utilities.physics
-     4. jme3utilities.xml
+     2. jme3utilities.math.noise
+     3. jme3utilities.math.polygon
+     4. jme3utilities.math.spline
+     5. jme3utilities.navigation
+     6. jme3utilities.physics
+     7. jme3utilities.xml
 -->
     <target name="x-javadoc"
             depends="init, releasedirs, sky-jar, x-sources">
@@ -326,14 +329,26 @@ The jme3-utilities project releases five libraries: debug, nifty, sky, ui, and x
         <jar jarfile="release/jme3-utilities-x.jar"
              basedir="${build.classes.dir}"
              compress="${jar.compress}"
-             includes="jme3utilities/controls/*.class, jme3utilities/navigation/*.class, jme3utilities/physics/*.class, jme3utilities/xml/*.class"/>
+             includes="jme3utilities/controls/*.class, 
+                       jme3utilities/math/noise/*.class
+                       jme3utilities/math/polygon/*.class
+                       jme3utilities/math/spline/*.class
+                       jme3utilities/navigation/*.class,
+                       jme3utilities/physics/*.class,
+                       jme3utilities/xml/*.class"/>
     </target>
 
     <target name="x-sources"
             depends="init, releasedirs">
         <copy todir="release/jme3-utilities-x-sources">
             <fileset dir="${src.dir}"
-                     includes="jme3utilities/controls/*.java, jme3utilities/navigation/*.java, jme3utilities/physics/*.java, jme3utilities/xml/*.java"/>
+                     includes="jme3utilities/controls/*.java, 
+                               jme3utilities/math/noise/*.java
+                               jme3utilities/math/polygon/*.java
+                               jme3utilities/math/spline/*.java
+                               jme3utilities/navigation/*.java, 
+                               jme3utilities/physics/*.java,
+                               jme3utilities/xml/*.java"/>
         </copy>
         <jar jarfile="release/jme3-utilities-x-sources.jar"
              basedir="release/jme3-utilities-x-sources"

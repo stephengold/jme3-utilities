@@ -37,7 +37,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
-import jme3utilities.math.Noise;
+import jme3utilities.math.noise.Noise;
 
 /**
  * Graph for navigation. Its vertices represent reachable locations in the
