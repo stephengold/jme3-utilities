@@ -160,7 +160,7 @@ public class Polygon3f {
      *
      * @return true if it is degenerate, otherwise false
      */
-    public boolean isDegenerate() {
+    final public boolean isDegenerate() {
         if (isDegenerate == null) {
             setIsDegenerate();
         }
@@ -377,6 +377,61 @@ public class Polygon3f {
     // protected methods
 
     /**
+     * Test whether all the corners in a set lie on the line connecting two
+     * given corners.
+     *
+     * @param firstIndex index of the first corner (&ge;0, &lt;numCorners)
+     * @param secondIndex index of the second corner (&ge;0, &lt;numCorners)
+     * @param corners (length&le;numCorners, cardinality&ge;2, unaffected)
+     */
+    boolean allCollinear(int firstIndex, int secondIndex, BitSet corners) {
+        validateIndex(firstIndex, "index of first corner");
+        validateIndex(secondIndex, "index of second corner");
+        Validate.nonNull(corners, "set of corners");
+        assert corners.length() <= numCorners;
+
+        if (doCoincide(firstIndex, secondIndex)) {
+            /*
+             * The line is ill-defined.
+             */
+            return true;
+        }
+        /*
+         * Calculate the offset of the last corner from the first.
+         */
+        Vector3f first = cornerLocations[firstIndex];
+        Vector3f last = cornerLocations[secondIndex];
+        Vector3f fl = last.subtract(first);
+
+        for (int middleI = corners.nextSetBit(0);
+                middleI >= 0; middleI = corners.nextSetBit(middleI + 1)) {
+            /*
+             * Calculate the offset of the middle corner from the first.
+             */
+            Vector3f middle = cornerLocations[middleI];
+            Vector3f fm = middle.subtract(first);
+            /*
+             * Project FM onto FL.
+             * 
+             * Don't use Vector3f.project() because (as of jME 3.0.10) 
+             * it contains a logic bug.
+             */
+            float fm_dot_fl = fm.dot(fl);
+            float normSquaredFL = squaredDistance(firstIndex, secondIndex);
+            Vector3f projection = fl.mult(fm_dot_fl / normSquaredFL);
+            /*
+             * If the projection coincides with FM, 
+             * then consider the three points to be collinear.
+             */
+            boolean collin = MyVector3f.doCoincide(projection, fm, tolerance2);
+            if (!collin) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Test whether three corners are collinear.
      *
      * @param cornerIndex1 index of the first corner (&ge;0, &lt;numCorners)
@@ -404,43 +459,23 @@ public class Polygon3f {
         /*
          * The hard way: find which two corners are most distant from each other.
          */
-        BitSet allCorners = new BitSet(numCorners);
-        allCorners.set(cornerIndex1);
-        allCorners.set(cornerIndex2);
-        allCorners.set(cornerIndex3);
-        int[] longest = mostDistant(allCorners);
+        BitSet corners = new BitSet(numCorners);
+        corners.set(cornerIndex1);
+        corners.set(cornerIndex2);
+        corners.set(cornerIndex3);
+        int[] longest = mostDistant(corners);
         assert longest != null;
         int firstIndex = longest[0];
         int lastIndex = longest[1];
         /*
          * The remaining corner is the middle one.
          */
-        allCorners.clear(firstIndex);
-        allCorners.clear(lastIndex);
-        int middleIndex = allCorners.nextSetBit(0);
-        /*
-         * Calculate the offsets of the middle and last corners from the first.
-         */
-        Vector3f first = cornerLocations[firstIndex];
-        Vector3f middle = cornerLocations[middleIndex];
-        Vector3f last = cornerLocations[lastIndex];
-        Vector3f fm = middle.subtract(first);
-        Vector3f fl = last.subtract(first);
-        /*
-         * Project FM onto FL.
-         * 
-         * Don't use Vector3f.project() because (as of jME 3.0.10) it contains 
-         * a logic bug.
-         */
-        float dotML = fm.dot(fl);
-        float normSquaredFL = squaredDistance(firstIndex, lastIndex);
-        Vector3f projection = fl.mult(dotML / normSquaredFL);
-        /*
-         * If the projection coincides with offset2, 
-         * then the three points are collinear.
-         */
-        boolean result = MyVector3f.doCoincide(projection, fm, tolerance2);
-        if (result == true && storeMiddleIndex != null) {
+        corners.clear(firstIndex);
+        corners.clear(lastIndex);
+        int middleIndex = corners.nextSetBit(0);
+
+        boolean result = allCollinear(firstIndex, lastIndex, corners);
+        if (result && storeMiddleIndex != null) {
             storeMiddleIndex = middleIndex;
         }
 
@@ -459,11 +494,9 @@ public class Polygon3f {
         validateIndex(cornerIndex2, "index of second corner");
 
         float d2 = squaredDistance(cornerIndex1, cornerIndex2);
-        if (d2 > tolerance2) {
-            return false;
-        } else {
-            return true;
-        }
+        boolean result = d2 <= tolerance2;
+
+        return result;
     }
 
     /**
@@ -590,7 +623,7 @@ public class Polygon3f {
         Vector3f projABonAC = ac.mult(abDotAC / ac2);
         float height2 = ab.distanceSquared(projABonAC);
         /*
-         * Calculate the squared area.
+         * Calculate the squared area.  Area = base * height / 2f.
          */
         float base2 = squaredDistance(indexA, indexC);
         float area2 = base2 * height2 / 4f;
