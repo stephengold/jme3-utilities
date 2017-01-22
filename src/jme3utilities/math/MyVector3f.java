@@ -198,7 +198,7 @@ public class MyVector3f {
      *
      * @param altitude angle above the X-Z plane (radians toward +Y)
      * @param azimuth angle in the X-Z plane (radians CCW from +X)
-     * @return new unit vector
+     * @return a new unit vector
      */
     public static Vector3f fromAltAz(float altitude, float azimuth) {
         Quaternion elevate = new Quaternion();
@@ -214,7 +214,7 @@ public class MyVector3f {
      * Compute the horizontal direction of an offset in world space.
      *
      * @param offset difference of world coordinates (not null, unaffected)
-     * @return a new unit vector
+     * @return a unit vector or a zero vector
      */
     public static VectorXZ horizontalDirection(Vector3f offset) {
         Validate.nonNull(offset, "offset");
@@ -232,8 +232,11 @@ public class MyVector3f {
      * @return true if all non-negative, false otherwise
      */
     public static boolean isAllNonNegative(Vector3f vector) {
-        boolean result = (vector.x >= 0f && vector.y >= 0f && vector.z >= 0f);
-        return result;
+        if (vector.x < 0f || vector.y < 0f || vector.z < 0f) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -243,8 +246,11 @@ public class MyVector3f {
      * @return true if the vector has zero length, false otherwise
      */
     public static boolean isZeroLength(Vector3f vector) {
-        boolean result = (vector.x == 0f && vector.y == 0f && vector.z == 0f);
-        return result;
+        if (vector.x == 0f && vector.y == 0f && vector.z == 0f) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
