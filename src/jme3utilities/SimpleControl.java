@@ -27,16 +27,14 @@ package jme3utilities;
 
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
-import com.jme3.scene.control.Control;
 
 /**
- * Simplified abstract control which does not implement serialization or
- * cloning.
+ * Simplified abstract control.
  * <p>
  * Although this is an abstract class, it defines all required methods in order
- * to simplify the development of subclasses -- unlike AbstractControl.
+ * to simplify the development of subclasses -- unlike AbstractControl. It also
+ * validates parameters of its public methods.
  * <p>
  * Each instance is enabled at creation.
  *
@@ -69,6 +67,7 @@ abstract public class SimpleControl
             ViewPort viewPort) {
         Validate.nonNull(renderManager, "render manager");
         Validate.nonNull(viewPort, "view port");
+
         if (!enabled) {
             throw new IllegalStateException("should be enabled");
         }
@@ -85,21 +84,19 @@ abstract public class SimpleControl
     @Override
     protected void controlUpdate(float updateInterval) {
         Validate.nonNegative(updateInterval, "interval");
+
         if (!enabled) {
             throw new IllegalStateException("should be enabled");
         }
     }
-    // *************************************************************************
-    // Control methods
 
     /**
-     * Clone this control for a different spatial.
+     * Test whether this control is enabled.
      *
-     * @param spatial spatial to clone for (not null)
-     * @return new control
+     * @return true if enabled, otherwise false
      */
     @Override
-    public Control cloneForSpatial(Spatial spatial) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    final public boolean isEnabled() {
+        return enabled;
     }
 }
