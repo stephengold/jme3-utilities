@@ -546,8 +546,8 @@ public class VectorXZ
      * @return a vector equal to the difference of the two vectors
      */
     public VectorXZ subtract(VectorXZ decrement) {
-        float newX = x + decrement.getX();
-        float newZ = z + decrement.getZ();
+        float newX = x - decrement.getX();
+        float newZ = z - decrement.getZ();
         VectorXZ result = new VectorXZ(newX, newZ);
 
         return result;
