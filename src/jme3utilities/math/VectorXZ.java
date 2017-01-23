@@ -198,51 +198,27 @@ public class VectorXZ
     }
 
     /**
-     * Clamp this direction to be within a specified angle of the +X axis.
+     * Clamp this vector to be within a specified angle of north (the +X axis).
      *
-     * @param maxAbsAngle tolerance angle in radians (&ge;0, clamped to Pi/2)
-     * @return a unit vector or zero vector
+     * @param maxAbsAngle tolerance angle in radians (&ge;0, &le;Pi)
+     * @return clamped vector with same length
      */
     public VectorXZ clampDirection(float maxAbsAngle) {
-        Validate.nonNegative(maxAbsAngle, "angle");
+        Validate.inRange(maxAbsAngle, "angle", 0f, FastMath.PI);
 
-        if (isZeroLength()) {
-            /*
-             * Clamping has no effect on a zero-length vector.
-             */
+        if (x >= 0 && maxAbsAngle >= FastMath.HALF_PI) {
+            return this;
+        } else if (z == 0f) {
             return this;
         }
-        /*
-         * Convert limit angle to a sine (Z-component).
-         */
-        float maxAbsSine;
-        if (maxAbsAngle >= FastMath.HALF_PI) {
-            maxAbsSine = 1f;
-        } else {
-            maxAbsSine = FastMath.sin(maxAbsAngle);
-        }
 
-        VectorXZ result;
-        if (x < 0f) {
-            /*
-             * Clamp this vector to the northerly (+X) half-plane
-             * and normalize it.
-             */
-            if (z >= 0f) {
-                result = east;
-            } else {
-                result = west;
-            }
-        } else {
-            result = normalize();
+        float length = length();
+        float minX = length * FastMath.cos(maxAbsAngle);
+        if (x >= minX) {
+            return this;
         }
-
-        final float absZ = FastMath.abs(result.getZ());
-        if (absZ > maxAbsSine) {
-            float newZ = maxAbsSine * FastMath.sign(result.getZ());
-            float newX = MyMath.circle(newZ);
-            result = new VectorXZ(newX, newZ);
-        }
+        float newZ = length * FastMath.sin(maxAbsAngle);
+        VectorXZ result = new VectorXZ(minX, newZ);
 
         return result;
     }
