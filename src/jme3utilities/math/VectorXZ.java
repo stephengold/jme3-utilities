@@ -89,11 +89,11 @@ public class VectorXZ
     // *************************************************************************
     // fields
     /**
-     * northing component (X coordinate)
+     * northing component or X coordinate or cosine
      */
     final private float x;
     /**
-     * easting component (Z coordinate)
+     * easting component or Z coordinate or sine
      */
     final private float z;
     // *************************************************************************
@@ -130,8 +130,8 @@ public class VectorXZ
     /**
      * Instantiate a vector from a pair of coordinate values.
      *
-     * @param x northing component (X coordinate)
-     * @param z easting component (Z coordinate)
+     * @param x northing component or X coordinate or cosine
+     * @param z easting component or Z coordinate or sine
      */
     public VectorXZ(float x, float z) {
         this.x = x;
@@ -158,8 +158,8 @@ public class VectorXZ
      * Compute the azimuth of this vector. Note: the directional convention is
      * left-handed. If this vector is zero, return zero.
      *
-     * @return angle in radians (&gt;-Pi, &le;Pi), measured CW from the north
-     * (+X direction)
+     * @return angle in radians (&gt;-Pi, &le;Pi), measured CW from north (the
+     * +X direction)
      */
     public float azimuth() {
         float result = (float) Math.atan2(z, x);
@@ -192,11 +192,10 @@ public class VectorXZ
     }
 
     /**
-     * Clamp this direction to be within a specified angle of the +X axis. If
-     * this vector is zero, return a zero vector.
+     * Clamp this vector to be within a specified angle of north (the +X axis).
      *
      * @param maxAbsAngle tolerance angle in radians (&ge;0, clamped to Pi/2)
-     * @return a unit vector or zero vector
+     * @return clamped vector with same length
      */
     public VectorXZ clampDirection(float maxAbsAngle) {
         Validate.nonNegative(maxAbsAngle, "angle");
@@ -245,7 +244,7 @@ public class VectorXZ
      *
      * @param maxX radius of the ellipse in the X-direction (&ge;0)
      * @param maxZ radius of the ellipse in the Z-direction (&ge;0)
-     * @return a vector with the same direction
+     * @return clamped vector with the same direction
      */
     public VectorXZ clampElliptical(float maxX, float maxZ) {
         Validate.nonNegative(maxX, "maximum X");
@@ -283,7 +282,7 @@ public class VectorXZ
      * zero vector.
      *
      * @param radius radius of the circle (&ge;0)
-     * @return a vector with the same direction
+     * @return clamped vector with the same direction
      */
     public VectorXZ clampLength(float radius) {
         Validate.nonNegative(radius, "radius");
@@ -319,7 +318,7 @@ public class VectorXZ
     }
 
     /**
-     * Compute a directional error of this direction with respect to a goal.
+     * Compute a directional error of this vector with respect to a goal.
      *
      * @param directionGoal goal direction (length&gt;0)
      * @return the sine of the angle from the goal, or +1/-1 if the angle's
@@ -350,7 +349,7 @@ public class VectorXZ
      * Divide this vector by a scalar.
      *
      * @param scalar scaling factor (not zero)
-     * @return a vector 'scalar' times shorter than this one
+     * @return a vector 'scalar' times shorter
      */
     public VectorXZ divide(float scalar) {
         Validate.nonZero(scalar, "scalar");
@@ -370,7 +369,7 @@ public class VectorXZ
     }
 
     /**
-     * Read the X-component of this vector. TODO rename
+     * Read the X-component of this vector.
      *
      * @return X-component
      */
@@ -379,7 +378,7 @@ public class VectorXZ
     }
 
     /**
-     * Read the Z-component of this vector. TODO rename
+     * Read the Z-component of this vector.
      *
      * @return Z-component
      */
@@ -409,7 +408,7 @@ public class VectorXZ
     /**
      * Test this vector for zero length.
      *
-     * @return true if this vector has zero length, false otherwise
+     * @return true if this vector equals zero, false otherwise
      */
     public boolean isZeroLength() {
         boolean result = (x == 0f && z == 0f);
@@ -419,7 +418,7 @@ public class VectorXZ
     /**
      * Compute the length (or magnitude or norm) of this vector.
      *
-     * @return the length (&ge;0) of this vector
+     * @return the length (&ge;0)
      */
     public float length() {
         float result = MyMath.hypotenuse(x, z);
@@ -429,7 +428,7 @@ public class VectorXZ
     /**
      * Compute the squared length of this vector.
      *
-     * @return the length (&ge;0) of this vector
+     * @return the squared length (&ge;0)
      */
     public float lengthSquared() {
         float result = x * x + z * z;
@@ -440,7 +439,7 @@ public class VectorXZ
      * Mirror this vector across the X-axis (complex conjugate or inverse
      * rotation).
      *
-     * @return a mirrored vector
+     * @return a mirrored vector with the same length
      */
     public VectorXZ mirrorZ() {
         VectorXZ result = new VectorXZ(x, -z);
@@ -451,7 +450,7 @@ public class VectorXZ
      * Scale this vector by a scalar.
      *
      * @param scalar scaling factor
-     * @return a vector 'scalar' times longer than this one
+     * @return a vector 'scalar' times longer
      */
     public VectorXZ mult(float scalar) {
         VectorXZ result = new VectorXZ(x * scalar, z * scalar);
@@ -472,7 +471,7 @@ public class VectorXZ
      * Normalize this vector to a unit vector. If this vector is zero, return a
      * zero vector.
      *
-     * @return a unit vector or a zero vector
+     * @return a unit vector with the same direction, or a zero vector
      */
     public VectorXZ normalize() {
         if (isZeroLength()) {
@@ -491,7 +490,7 @@ public class VectorXZ
      * apply azimuths, which is why its angle convention is left-handed.
      *
      * @param radians clockwise (LH) angle of rotation in radians
-     * @return a vector with the same length (not null)
+     * @return a vector with the same length
      */
     public VectorXZ rotate(float radians) {
         float cosine = FastMath.cos(radians);
@@ -504,10 +503,10 @@ public class VectorXZ
     }
 
     /**
-     * Rotate a vector by a direction vector (complex product).
+     * Rotate a vector by another vector (complex product).
      *
      * @param direction new direction for the current X-axis (not null)
-     * @return a rotated vector
+     * @return a rotated/multiplied vector
      */
     public VectorXZ rotate(VectorXZ direction) {
         float cosine = direction.getX();
@@ -536,7 +535,7 @@ public class VectorXZ
     /**
      * Treating this vector as a rotation, create an equivalent quaternion.
      *
-     * @return a new instance
+     * @return a new quaternion
      */
     public Quaternion toQuaternion() {
         Quaternion result = new Quaternion();
@@ -572,7 +571,7 @@ public class VectorXZ
      *
      * @param vector vector to validate (not null, non-zero)
      * @param description textual description of the vector
-     * @throws IllegalArgumentException if the vector has zero length
+     * @throws IllegalArgumentException if the vector is zero
      */
     public static void validateNonZero(VectorXZ vector, String description) {
         Validate.nonNull(vector, description);
@@ -585,7 +584,7 @@ public class VectorXZ
                 what = description;
             }
             String message;
-            message = String.format("%s should have positive length.", what);
+            message = String.format("%s should be non-zero.", what);
             throw new IllegalArgumentException(message);
         }
     }
