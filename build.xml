@@ -312,7 +312,7 @@ The jme3-utilities project releases five libraries: debug, nifty, sky, ui, and x
                  use="${javadoc.use}"
                  useexternalfile="true"
                  version="${javadoc.version}"
-                 windowtitle="Javadoc for the jme-utilities Library">
+                 windowtitle="Javadoc for the jme3-utilities Library">
             <classpath>
                 <pathelement path="${javac.classpath}"/>
                 <pathelement location="release/SkyControl.jar"/>
