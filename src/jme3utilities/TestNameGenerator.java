@@ -65,6 +65,9 @@ public class TestNameGenerator extends SimpleApplication {
         application.start();
     }
 
+    /**
+     * Initialize the application and perform tests.
+     */
     @Override
     public void simpleInitApp() {
         System.out.printf("Test results for class NameGenerator:%n%n");

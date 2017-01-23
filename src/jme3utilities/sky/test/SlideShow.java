@@ -300,8 +300,12 @@ public class SlideShow
         initializeUserInterface();
     }
 
+    /**
+     * Callback to update the scene. (Invoked once per frame.)
+     * @param unused time since the previous update (in seconds, &ge;0)
+     */
     @Override
-    public void simpleUpdate(float fps) {
+    public void simpleUpdate(float unused) {
         String message = String.format("Slide #%d", slideIndex);
         fpsText.setText(message);
 

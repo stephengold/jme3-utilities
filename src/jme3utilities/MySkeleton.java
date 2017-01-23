@@ -248,6 +248,9 @@ public class MySkeleton
         application.start();
     }
 
+    /**
+     * Initialize the application and perform tests.
+     */
     @Override
     public void simpleInitApp() {
         logger.setLevel(Level.INFO);

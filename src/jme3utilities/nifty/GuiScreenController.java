@@ -225,6 +225,7 @@ public class GuiScreenController
          */
         @SuppressWarnings("unchecked")
         Menu<String> menu = element.findNiftyControl("#menu", Menu.class);
+        assert menu != null;
         for (String item : itemArray) {
             menu.addMenuItem(item, item);
         }

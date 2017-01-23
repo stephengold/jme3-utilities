@@ -160,6 +160,7 @@ public class TestSkyControlHud
     boolean getAmbientFlag() {
         CheckBox box =
                 getScreen().findNiftyControl("ambientCheckBox", CheckBox.class);
+        assert box != null;
         boolean result = box.isChecked();
 
         return result;
@@ -602,6 +603,7 @@ public class TestSkyControlHud
 
         CheckBox checkBox = getScreen().findNiftyControl("modulationCheckBox",
                 CheckBox.class);
+        assert checkBox != null;
         cloudModulation = checkBox.isChecked();
 
         mainMultiplier = updateSlider("main", "x");
