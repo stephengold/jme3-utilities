@@ -29,7 +29,7 @@ import com.jme3.math.Vector3f;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
-import jme3utilities.math.Polygon3f;
+import jme3utilities.math.polygon.Polygon3f;
 
 /**
  * Simple application to test the Polygon3f class.

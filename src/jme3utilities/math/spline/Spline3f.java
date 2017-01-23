@@ -23,31 +23,53 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.math;
+package jme3utilities.math.spline;
+
+import com.jme3.math.Vector3f;
 
 /**
- * Interface for a two-dimensional noise generator.
+ * Interface for three-dimensional spline interpolation.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public interface Noise2 {
+public interface Spline3f {
 
     /**
-     * Sample the noise function at a specified point.
+     * Copy the specified control point of this spline.
      *
-     * @param sampleX 1st coordinate of the sample point
-     * @param sampleY 2nd coordinate of the sample point
-     * @return noise value
+     * @param index index of the control point (&ge;0)
+     * @return new vector
      */
-    float sample(float sampleX, float sampleY);
+    Vector3f getControlPoint(int index);
 
     /**
-     * Sample the noise function at a specified point and normalize it to the
-     * range [-1, 1].
+     * Interpolate the spline at the specified parameter value.
      *
-     * @param sampleX 1st coordinate of the sample point
-     * @param sampleY 2nd coordinate of the sample point
-     * @return noise value
+     * @param sampleT input value
+     * @return new vector
      */
-    float sampleNormalized(float sampleX, float sampleY);
+    Vector3f interpolate(float sampleT);
+
+    /**
+     * Read the number of control points.
+     *
+     * @return count (&gt;0)
+     */
+    int numControlPoints();
+
+    /**
+     * Compute the spline's 1st derivative to the right of the specified
+     * parameter value.
+     *
+     * @param sampleT input value
+     * @return new vector
+     */
+    Vector3f rightDerivative(float sampleT);
+
+    /**
+     * Read the total path length of this spline.
+     *
+     * @return path length from start to end (&ge;0)
+     */
+    float totalLength();
 }

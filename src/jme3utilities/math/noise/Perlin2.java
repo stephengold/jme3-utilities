@@ -23,7 +23,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.math;
+package jme3utilities.math.noise;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
@@ -31,6 +31,7 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
+import jme3utilities.math.MyMath;
 
 /**
  * Two-dimensional Perlin noise generator.

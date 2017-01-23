@@ -29,9 +29,9 @@ import com.jme3.math.Vector3f;
 import java.util.Objects;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
-import jme3utilities.math.LinearSpline3f;
+import jme3utilities.math.spline.LinearSpline3f;
 import jme3utilities.math.MyVector3f;
-import jme3utilities.math.Spline3f;
+import jme3utilities.math.spline.Spline3f;
 import jme3utilities.math.VectorXZ;
 
 /**
