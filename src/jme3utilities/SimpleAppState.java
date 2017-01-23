@@ -40,7 +40,7 @@ import java.util.logging.Logger;
 
 /**
  * App state with protected fields analogous to those of SimpleApplication. It
- * also validates the parameters of its public methods.
+ * also validates parameters of its public methods.
  * <p>
  * Each instance is enabled at creation.
  *
@@ -171,6 +171,26 @@ public class SimpleAppState
         assert viewPort != null;
 
         assert isInitialized();
+    }
+
+    /**
+     * Test whether this app state is initialized.
+     *
+     * @return true if initialized, otherwise false
+     */
+    @Override
+    final public boolean isInitialized() {
+        return initialized;
+    }
+
+    /**
+     * Test whether this app state is enabled.
+     *
+     * @return true if enabled, otherwise false
+     */
+    @Override
+    final public boolean isEnabled() {
+        return super.isEnabled();
     }
 
     /**
