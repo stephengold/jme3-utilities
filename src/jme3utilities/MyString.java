@@ -78,14 +78,19 @@ public class MyString {
     public static String escape(String unescaped) {
         StringBuilder result = new StringBuilder(50);
         for (char ch : unescaped.toCharArray()) {
-            if (ch == '\n') {
-                result.append("\\n");
-            } else if (ch == '\t') {
-                result.append("\\t");
-            } else if (ch == '\\') {
-                result.append("\\\\");
-            } else {
-                result.append(ch);
+            switch (ch) {
+                case '\n':
+                    result.append("\\n");
+                    break;
+                case '\t':
+                    result.append("\\t");
+                    break;
+                case '\\':
+                    result.append("\\\\");
+                    break;
+                default:
+                    result.append(ch);
+                    break;
             }
         }
         return result.toString();
