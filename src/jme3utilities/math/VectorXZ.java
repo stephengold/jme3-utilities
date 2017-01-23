@@ -149,6 +149,10 @@ public class VectorXZ
     public VectorXZ add(VectorXZ increment) {
         float sumX = x + increment.getX();
         float sumZ = z + increment.getZ();
+
+        if (sumX == x && sumZ == z) {
+            return this;
+        }
         VectorXZ sum = new VectorXZ(sumX, sumZ);
 
         return sum;
@@ -185,6 +189,10 @@ public class VectorXZ
         } else {
             newX = 0f;
             newZ = FastMath.sign(z);
+        }
+
+        if (newX == x && newZ == z) {
+            return this;
         }
         VectorXZ result = new VectorXZ(newX, newZ);
 
@@ -229,10 +237,7 @@ public class VectorXZ
         Validate.nonNegative(maxZ, "maximum Z");
 
         if (isZeroLength()) {
-            /*
-             * Clamping has no effect on a zero-length vector.
-             */
-            return this;
+            return zero;
         }
         /*
          * Represent the ellipse in polar coordinates.
@@ -242,18 +247,17 @@ public class VectorXZ
         final float bcos = maxZ * FastMath.cos(theta);
         float product = maxX * maxZ;
         final float rSquared = product * product / (asin * asin + bcos * bcos);
+        float lengthSquared = lengthSquared();
+        if (lengthSquared <= rSquared) {
+            return this;
+        }
         /*
          * Scale so that length <= r.
          */
-        float lengthSquared = lengthSquared();
-        float newX = x;
-        float newZ = z;
-        if (lengthSquared > rSquared) {
-            final float scale = FastMath.sqrt(rSquared / lengthSquared);
-            newX *= scale;
-            newZ *= scale;
-        }
-        VectorXZ result = new VectorXZ(newX, newZ);
+        float scale = FastMath.sqrt(rSquared / lengthSquared);
+        float clampedX = x * scale;
+        float clampedZ = z * scale;
+        VectorXZ result = new VectorXZ(clampedX, clampedZ);
 
         return result;
     }
@@ -268,23 +272,19 @@ public class VectorXZ
         Validate.nonNegative(radius, "radius");
 
         if (isZeroLength()) {
-            /*
-             * Clamping has no effect on a zero-length vector.
-             */
+            return zero;
+        }
+        final float lengthSquared = lengthSquared();
+        if (lengthSquared <= radius * radius) {
             return this;
         }
         /*
          * Scale so that length <= radius.
          */
-        final float lengthSquared = lengthSquared();
-        float newX = x;
-        float newZ = z;
-        if (lengthSquared > radius * radius) {
-            float scale = radius / FastMath.sqrt(lengthSquared);
-            newX *= scale;
-            newZ *= scale;
-        }
-        VectorXZ result = new VectorXZ(newX, newZ);
+        float scale = radius / FastMath.sqrt(lengthSquared);
+        float clampedX = x * scale;
+        float clampedZ = z * scale;
+        VectorXZ result = new VectorXZ(clampedX, clampedZ);
 
         return result;
     }
@@ -336,7 +336,14 @@ public class VectorXZ
      */
     public VectorXZ divide(float scalar) {
         Validate.nonZero(scalar, "scalar");
-        VectorXZ result = new VectorXZ(x / scalar, z / scalar);
+
+        if (scalar == 1f) {
+            return this;
+        }
+        float scaledX = x / scalar;
+        float scaledZ = z / scalar;
+        VectorXZ result = new VectorXZ(scaledX, scaledZ);
+
         return result;
     }
 
@@ -379,10 +386,12 @@ public class VectorXZ
      */
     public VectorXZ interpolate(VectorXZ otherVector, float otherFraction) {
         float thisFraction = 1f - otherFraction;
-        float xBlend = x * thisFraction
-                + otherVector.getX() * otherFraction;
-        float zBlend = z * thisFraction
-                + otherVector.getZ() * otherFraction;
+        float xBlend = x * thisFraction + otherVector.getX() * otherFraction;
+        float zBlend = z * thisFraction + otherVector.getZ() * otherFraction;
+
+        if (x == xBlend && z == zBlend) {
+            return this;
+        }
         VectorXZ blend = new VectorXZ(xBlend, zBlend);
 
         return blend;
@@ -425,7 +434,11 @@ public class VectorXZ
      * @return a mirrored vector
      */
     public VectorXZ mirrorZ() {
+        if (z == 0f) {
+            return this;
+        }
         VectorXZ result = new VectorXZ(x, -z);
+
         return result;
     }
 
@@ -436,7 +449,13 @@ public class VectorXZ
      * @return a vector 'scalar' times longer than this one
      */
     public VectorXZ mult(float scalar) {
-        VectorXZ result = new VectorXZ(x * scalar, z * scalar);
+        if (scalar == 1f) {
+            return this;
+        }
+        float scaledX = x * scalar;
+        float scaledZ = z * scalar;
+        VectorXZ result = new VectorXZ(scaledX, scaledZ);
+
         return result;
     }
 
@@ -446,7 +465,12 @@ public class VectorXZ
      * @return a vector with same magnitude and opposite direction
      */
     public VectorXZ negate() {
+        if (isZeroLength()) {
+            return zero;
+        }
+
         VectorXZ result = new VectorXZ(-x, -z);
+
         return result;
     }
 
@@ -461,10 +485,18 @@ public class VectorXZ
             return zero;
         }
 
-        float length = length();
-        assert length > 0f : length;
+        float ls = lengthSquared();
+        if (ls == 1f) {
+            return this;
+        }
+
+        float length = FastMath.sqrt(ls);
         float newX = x / length;
         float newZ = z / length;
+
+        if (newX == x && newZ == z) {
+            return this;
+        }
         VectorXZ result = new VectorXZ(newX, newZ);
 
         return result;
@@ -478,10 +510,18 @@ public class VectorXZ
      * @return a vector with the same length (not null)
      */
     public VectorXZ rotate(float radians) {
+        if (radians == 0f) {
+            return this;
+        }
+
         float cosine = FastMath.cos(radians);
         float sine = FastMath.sin(radians);
         float newX = cosine * x - sine * z;
         float newZ = cosine * z + sine * x;
+
+        if (newX == x && newZ == z) {
+            return this;
+        }
         VectorXZ result = new VectorXZ(newX, newZ);
 
         return result;
@@ -498,6 +538,10 @@ public class VectorXZ
         float sine = direction.getZ();
         float newX = cosine * x - sine * z;
         float newZ = cosine * z + sine * x;
+
+        if (newX == x && newZ == z) {
+            return this;
+        }
         VectorXZ result = new VectorXZ(newX, newZ);
 
         return result;
@@ -512,6 +556,10 @@ public class VectorXZ
     public VectorXZ subtract(VectorXZ decrement) {
         float newX = x - decrement.getX();
         float newZ = z - decrement.getZ();
+
+        if (newX == x && newZ == z) {
+            return this;
+        }
         VectorXZ result = new VectorXZ(newX, newZ);
 
         return result;
