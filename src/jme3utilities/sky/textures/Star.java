@@ -47,17 +47,19 @@ class Star
     // *************************************************************************
     // fields
     /**
-     * apparent brightness (inverted logarithmic scale)
+     * apparent brightness (inverted logarithmic scale, set by constructor)
      */
-    private float apparentMagnitude;
+    final private float apparentMagnitude;
     /**
-     * declination (radians north of the celestial equator, &le;Pi/2, &ge;-Pi/2)
+     * declination (radians north of the celestial equator, &le;Pi/2, &ge;-Pi/2,
+     * set by constructor)
      */
-    private float declination;
+    final private float declination;
     /**
-     * right ascension (radians east of the vernal equinox, &lt;2*Pi, &ge;0)
+     * right ascension (radians east of the vernal equinox, &lt;2*Pi, &ge;0, set
+     * by constructor)
      */
-    private float rightAscension;
+    final private float rightAscension;
     // *************************************************************************
     // constructors
 
@@ -173,7 +175,7 @@ class Star
 
     /**
      * Generate the hash code for this star.
-     * 
+     *
      * @return value for use in hashing
      */
     @Override

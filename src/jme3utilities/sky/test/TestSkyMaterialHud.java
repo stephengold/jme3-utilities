@@ -78,7 +78,7 @@ public class TestSkyMaterialHud
     /**
      * bloom filter controlled by this HUD: set by constructor
      */
-    private BloomFilter bloom;
+    final private BloomFilter bloom;
     /**
      * phase of the moon, selected from a popup menu
      */

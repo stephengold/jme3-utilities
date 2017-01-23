@@ -84,7 +84,7 @@ public class Updater
      * viewports whose background colors are updated by the control - not
      * serialized
      */
-    private ArrayList<ViewPort> viewPorts = new ArrayList<>(3);
+    final private ArrayList<ViewPort> viewPorts = new ArrayList<>(3);
     /**
      * most recent color for ambient light (or null if not updated yet)
      */

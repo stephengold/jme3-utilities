@@ -174,7 +174,7 @@ public class Polygon3f {
      *
      * @return true if it is planar, otherwise false
      */
-    public boolean isPlanar() {
+    final public boolean isPlanar() {
         if (isPlanar == null) {
             setIsPlanar();
         }
