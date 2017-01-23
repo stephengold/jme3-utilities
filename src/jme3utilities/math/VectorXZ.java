@@ -168,29 +168,23 @@ public class VectorXZ
 
     /**
      * Convert this vector to one of the four cardinal directions. If this
-     * vector has zero length, the result is randomized.
+     * vector is zero, return a zero vector.
      *
-     * @return a unit vector with four possible values
+     * @return a unit vector (four possible values) or a zero vector
      */
     public VectorXZ cardinalize() {
-        float newX = x;
-        float newZ = z;
-        while (isZeroLength()) {
-            /*
-             * pick random X and Z, each between -0.5 and +0.5
-             */
-            newX = Noise.nextFloat() - 0.5f;
-            newZ = Noise.nextFloat() - 0.5f;
+        if (isZeroLength()) {
+            return zero;
         }
-
-        final float absX = FastMath.abs(newX);
-        final float absZ = FastMath.abs(newZ);
+        final float absX = FastMath.abs(x);
+        final float absZ = FastMath.abs(z);
+        float newX, newZ;
         if (absX > absZ) {
-            newX = FastMath.sign(newX);
+            newX = FastMath.sign(x);
             newZ = 0f;
         } else {
             newX = 0f;
-            newZ = FastMath.sign(newZ);
+            newZ = FastMath.sign(z);
         }
         VectorXZ result = new VectorXZ(newX, newZ);
 
@@ -457,26 +451,20 @@ public class VectorXZ
     }
 
     /**
-     * Normalize this vector to a unit vector. If this vector has zero length,
-     * generate a random direction.
+     * Normalize this vector to a unit vector. If this vector is zero, return a
+     * zero vector.
      *
-     * @return a unit vector
+     * @return a unit vector with the same direction, or a zero vector
      */
     public VectorXZ normalize() {
-        float length = length();
-        float newX = x;
-        float newZ = z;
-        while (length == 0f) {
-            /*
-             * Pick random X and Z, each between -0.5 and +0.5
-             */
-            newX = Noise.nextFloat() - 0.5f;
-            newZ = Noise.nextFloat() - 0.5f;
-            length = MyMath.hypotenuse(newX, newZ);
+        if (isZeroLength()) {
+            return zero;
         }
 
-        newX /= length;
-        newZ /= length;
+        float length = length();
+        assert length > 0f : length;
+        float newX = x / length;
+        float newZ = z / length;
         VectorXZ result = new VectorXZ(newX, newZ);
 
         return result;
@@ -646,7 +634,8 @@ public class VectorXZ
     }
 
     /**
-     * Represent this vector as a text string. The format is: [X=XX.XXX, Z=ZZ.ZZZ]
+     * Represent this vector as a text string. The format is: [X=XX.XXX,
+     * Z=ZZ.ZZZ]
      *
      * @return descriptive string of text (not null)
      */
