@@ -42,7 +42,9 @@ The jme3-utilities project releases five libraries: debug, nifty, sky, ui, and x
             depends="x-javadoc, x-jar, x-sources"/>
 
 <!--
-The debug library consists of 3 JARs: documentation, classes/assets, and source.
+    The debug library consists of 3 JARs: documentation, classes/assets, and source.
+    Its folders and JARs have names of the form jme3-utilities-debug*.jar.
+    It is built from the jme3utilities.debug source package.
 -->
     <target name="debug-javadoc"
             depends="init, releasedirs, sky-jar, debug-sources">
@@ -99,7 +101,9 @@ The debug library consists of 3 JARs: documentation, classes/assets, and source.
     </target>
 
 <!--
-The nifty library consists of 3 JARs: documentation, classes/assets, and source.
+    The nifty library consists of 3 JARs: documentation, classes/assets, and source.
+    Its folders and JARs have names of the form jme3-utilities-nifty*.jar.
+    It is built from the jme3utilities.nifty source package.
 -->
     <target name="nifty-javadoc"
             depends="init, releasedirs, nifty-sources, ui-jar, sky-jar">
@@ -157,7 +161,13 @@ The nifty library consists of 3 JARs: documentation, classes/assets, and source.
     </target>
 
 <!--
-The sky library consists of 3 JARs: documentation, classes/assets, and source.
+    The sky library consists of 3 JARs: documentation, classes/assets, and source.
+    Its folders and JARs have names of the form SkyControl*.jar 
+    (not jme3-utilities-sky*.jar).
+    It is built from 3 source packages:
+     1. jme3utilities
+     2. jme3utilities.math
+     3. jme3utilities.sky
 -->
     <target name="sky-javadoc"
             depends="init, releasedirs, sky-sources">
@@ -214,7 +224,9 @@ The sky library consists of 3 JARs: documentation, classes/assets, and source.
     </target>
 
 <!--
-The ui library consists of 3 JARs: assets, documentation, classes/assets, and source.
+    The ui library consists of 3 JARs: assets, documentation, classes/assets, and source.
+    Its folders and JARs have names of the form jme3-ui-nifty*.jar.
+    It is built from the jme3utilities.ui source package.
 -->
     <target name="ui-javadoc"
             depends="init, releasedirs, sky-jar, ui-sources">
@@ -271,7 +283,16 @@ The ui library consists of 3 JARs: assets, documentation, classes/assets, and so
     </target>
 
 <!--
-The x library consists of 3 JARs: documentation, classes, and source.
+    The x library consists of 3 JARs: documentation, classes, and source.
+    Its folders and JARs have names of the form jme3-utilities-x*.jar).
+    It is built from 7 source packages:
+     1. jme3utilities.controls
+     2. jme3utilities.math.noise
+     3. jme3utilities.math.polygon
+     4. jme3utilities.math.spline
+     5. jme3utilities.navigation
+     6. jme3utilities.physics
+     7. jme3utilities.xml
 -->
     <target name="x-javadoc"
             depends="init, releasedirs, sky-jar, x-sources">

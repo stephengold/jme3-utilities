@@ -26,8 +26,6 @@
 package jme3utilities.math;
 
 import com.jme3.math.FastMath;
-import com.jme3.math.Vector2f;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 

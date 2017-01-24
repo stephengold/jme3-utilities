@@ -32,7 +32,6 @@ import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
