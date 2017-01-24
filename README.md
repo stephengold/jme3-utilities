@@ -41,7 +41,7 @@ Version 3.1 of jMonkeyEngine.
 The hardware and software requirements of the SDK are documented at
 http://hub.jmonkeyengine.org/wiki/doku.php/jme3:requirements
 
- 1. Download the jMonkeyEngine SDK from https://github.com/jMonkeyEngine/sdk/releases
+ 1. Download the jMonkeyEngine 3.1 SDK from https://github.com/jMonkeyEngine/sdk/releases
  2. Install the SDK, which includes:
    + the engine itself,
    + an integrated development environment (IDE) based on NetBeans, and
