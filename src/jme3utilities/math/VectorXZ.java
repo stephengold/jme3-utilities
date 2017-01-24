@@ -221,7 +221,10 @@ public class VectorXZ
         if (x >= minX) {
             return this;
         }
-        float newZ = length * FastMath.sin(maxAbsAngle) * FastMath.sign(z);
+        float newZ = length * FastMath.sin(maxAbsAngle);
+        if (z < 0f) {
+            newZ = -newZ;
+        }
         VectorXZ result = new VectorXZ(minX, newZ);
 
         return result;
