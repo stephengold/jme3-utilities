@@ -77,7 +77,7 @@ public class MakeRamps {
     /**
      * sample dome mesh for calculating texture coordinates
      */
-    private DomeMesh mesh = new DomeMesh(3, 2);
+    final private DomeMesh mesh = new DomeMesh(3, 2);
     // *************************************************************************
     // new methods exposed
 

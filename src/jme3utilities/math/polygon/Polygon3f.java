@@ -161,7 +161,7 @@ public class Polygon3f {
      *
      * @return true if it is degenerate, otherwise false
      */
-    public boolean isDegenerate() {
+    final public boolean isDegenerate() {
         if (isDegenerate == null) {
             setIsDegenerate();
         }
@@ -174,7 +174,7 @@ public class Polygon3f {
      *
      * @return true if it is planar, otherwise false
      */
-    public boolean isPlanar() {
+    final public boolean isPlanar() {
         if (isPlanar == null) {
             setIsPlanar();
         }
@@ -626,7 +626,7 @@ public class Polygon3f {
         Vector3f projABonAC = ac.mult(abDotAC / ac2);
         float height2 = ab.distanceSquared(projABonAC);
         /*
-         * Calculate the squared area.
+         * Calculate the squared area.  Area = base * height / 2f.
          */
         float base2 = squaredDistance(indexA, indexC);
         float area2 = base2 * height2 / 4f;
