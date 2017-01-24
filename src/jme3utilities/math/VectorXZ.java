@@ -208,10 +208,12 @@ public class VectorXZ
     public VectorXZ clampDirection(float maxAbsAngle) {
         Validate.inRange(maxAbsAngle, "angle", 0f, FastMath.PI);
 
-        if (x >= 0 && maxAbsAngle >= FastMath.HALF_PI) {
-            return this;
-        } else if (z == 0f) {
-            return this;
+        if (x >= 0) {
+            if (maxAbsAngle >= FastMath.HALF_PI) {
+                return this;
+            } else if (z == 0f) {
+                return this;
+            }
         }
 
         float length = length();
@@ -220,14 +222,16 @@ public class VectorXZ
             return this;
         }
         float newZ = length * FastMath.sin(maxAbsAngle);
+        if (z < 0f) {
+            newZ = -newZ;
+        }
         VectorXZ result = new VectorXZ(minX, newZ);
 
         return result;
     }
 
     /**
-     * Clamp this vector to be within an axis-aligned ellipse. If this vector is
-     * zero, return a zero vector.
+     * Clamp this vector to be within an axis-aligned ellipse.
      *
      * @param maxX radius of the ellipse in the X-direction (&ge;0)
      * @param maxZ radius of the ellipse in the Z-direction (&ge;0)
@@ -264,8 +268,7 @@ public class VectorXZ
     }
 
     /**
-     * Clamp this vector to be within a circle. If this vector is zero, return a
-     * zero vector.
+     * Clamp this vector to be within a circle.
      *
      * @param radius radius of the circle (&ge;0)
      * @return clamped vector with the same direction
@@ -334,7 +337,7 @@ public class VectorXZ
      * Divide this vector by a scalar.
      *
      * @param scalar scaling factor (not zero)
-     * @return a vector 'scalar' times shorter
+     * @return a vector 'scalar' times shorter than this one
      */
     public VectorXZ divide(float scalar) {
         Validate.nonZero(scalar, "scalar");
@@ -448,7 +451,7 @@ public class VectorXZ
      * Scale this vector by a scalar.
      *
      * @param scalar scaling factor
-     * @return a vector 'scalar' times longer
+     * @return a vector 'scalar' times longer than this one
      */
     public VectorXZ mult(float scalar) {
         if (scalar == 1f) {
@@ -467,9 +470,10 @@ public class VectorXZ
      * @return a vector with same magnitude and opposite direction
      */
     public VectorXZ negate() {
-        if (x == 0f && z == 0f) {
+        if (isZeroLength()) {
             return zero;
         }
+
         VectorXZ result = new VectorXZ(-x, -z);
 
         return result;
