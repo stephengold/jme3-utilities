@@ -418,15 +418,13 @@ public class SunAndStars
      * Clone this instance.
      *
      * @return new instance equivalent to this one
+     * @throws CloneNotSupportedException
      */
     @Override
-    public SunAndStars clone() {
-        try {
-            SunAndStars clone = (SunAndStars) super.clone();
-            return clone;
-        } catch (CloneNotSupportedException exception) {
-            throw new AssertionError();
-        }
+    public SunAndStars clone()
+            throws CloneNotSupportedException {
+        SunAndStars clone = (SunAndStars) super.clone();
+        return clone;
     }
 
     /**
@@ -512,7 +510,13 @@ public class SunAndStars
         test.setSolarLongitude(Calendar.MARCH, 1);
         System.out.printf(" on March 1st:  %s%n", test.toString());
 
-        SunAndStars copy = test.clone();
+        SunAndStars copy;
+        try {
+            copy = test.clone();
+        } catch (CloneNotSupportedException exception) {
+            System.out.printf("Clone not supported!%n");
+            return;
+        }
         System.out.printf("Clone of last value:  %s%n", copy.toString());
 
         test.setSolarLongitude(Calendar.MARCH, 20);
