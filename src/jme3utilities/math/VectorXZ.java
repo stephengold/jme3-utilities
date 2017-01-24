@@ -208,10 +208,12 @@ public class VectorXZ
     public VectorXZ clampDirection(float maxAbsAngle) {
         Validate.inRange(maxAbsAngle, "angle", 0f, FastMath.PI);
 
-        if (x >= 0 && maxAbsAngle >= FastMath.HALF_PI) {
-            return this;
-        } else if (z == 0f) {
-            return this;
+        if (x >= 0) {
+            if (maxAbsAngle >= FastMath.HALF_PI) {
+                return this;
+            } else if (z == 0f) {
+                return this;
+            }
         }
 
         float length = length();
@@ -219,7 +221,7 @@ public class VectorXZ
         if (x >= minX) {
             return this;
         }
-        float newZ = length * FastMath.sin(maxAbsAngle);
+        float newZ = length * FastMath.sin(maxAbsAngle) * FastMath.sign(z);
         VectorXZ result = new VectorXZ(minX, newZ);
 
         return result;
