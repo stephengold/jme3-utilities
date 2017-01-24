@@ -495,9 +495,11 @@ public class Polygon3f {
         validateIndex(cornerIndex2, "index of second corner");
 
         float d2 = squaredDistance(cornerIndex1, cornerIndex2);
-        boolean result = d2 <= tolerance2;
-
-        return result;
+        if (d2 > tolerance2) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
