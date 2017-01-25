@@ -46,8 +46,8 @@ final public class Validate {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(Validate.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            Validate.class.getName());
     // *************************************************************************
     // constructors
 
@@ -186,6 +186,30 @@ final public class Validate {
     }
 
     /**
+     * Validate a non-null, non-empty string as a method argument.
+     *
+     * @param string string to validate (not null, not empty)
+     * @param description description of the string
+     * @throws NullPointerException if the string is null
+     * @throws IllegalArgumentException if the string has zero length
+     */
+    public static void nonEmpty(String string, String description) {
+        nonNull(string, description);
+
+        int length = string.length();
+        if (length <= 0) {
+            String what;
+            if (description == null) {
+                what = "method argument";
+            } else {
+                what = description;
+            }
+            String message = String.format("%s should not be empty.", what);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
      * Validate a non-negative integer as a method argument.
      *
      * @param value value to validate (&ge;0)
@@ -223,30 +247,6 @@ final public class Validate {
             }
             logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
             String message = String.format("%s should not be negative.", what);
-            throw new IllegalArgumentException(message);
-        }
-    }
-
-    /**
-     * Validate a non-null, non-empty string as a method argument.
-     *
-     * @param string string to validate (not null, not empty)
-     * @param description description of the string
-     * @throws NullPointerException if the string is null
-     * @throws IllegalArgumentException if the string has zero length
-     */
-    public static void nonEmpty(String string, String description) {
-        nonNull(string, description);
-
-        int length = string.length();
-        if (length <= 0) {
-            String what;
-            if (description == null) {
-                what = "method argument";
-            } else {
-                what = description;
-            }
-            String message = String.format("%s should not be empty.", what);
             throw new IllegalArgumentException(message);
         }
     }
