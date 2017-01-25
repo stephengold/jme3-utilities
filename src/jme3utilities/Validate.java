@@ -252,6 +252,27 @@ final public class Validate {
     }
 
     /**
+     * Validate a non-negative double-precision value as a method argument.
+     *
+     * @param value value to validate (&ge;0)
+     * @param description description of the value
+     * @throws IllegalArgumentException if the value is negative or NaN
+     */
+    public static void nonNegative(double value, String description) {
+        if (!(value >= 0.0)) {
+            String what;
+            if (description == null) {
+                what = "method argument";
+            } else {
+                what = description;
+            }
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            String message = String.format("%s should not be negative.", what);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
      * Validate a non-null reference. In many methods, validation can be omitted
      * because the object in question is about to be dereferenced.
      * <p>
