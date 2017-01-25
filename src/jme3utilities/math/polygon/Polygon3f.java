@@ -206,48 +206,48 @@ public class Polygon3f {
     }
 
     /**
-     * Find the edge closest to a specified point in space.
+     * Find the side closest to a specified point in space.
      *
      * @param point coordinates of the specified point (not null, unaffected)
      * @param storeCoordinates if not null, used to store coordinates of the
-     * edge point closest to the specified point
+     * point on the side closest to the specified point
      *
-     * @return index of the edge (&ge;0, &lt;numCorners) or -1 if this polygon
-     * has no edges
+     * @return index of the side (&ge;0, &lt;numCorners) or -1 if this polygon
+     * has no sides
      */
-    public int findEdge(Vector3f point, Vector3f storeCoordinates) {
+    public int findSide(Vector3f point, Vector3f storeCoordinates) {
         int result = -1;
         float bestSD = Float.POSITIVE_INFINITY;
-        for (int edgeIndex = 0; edgeIndex < numCorners; edgeIndex++) {
+        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
             /*
-             * Try the first corner of the current edge.
+             * Try the first corner of the current side.
              */
-            Vector3f corner = cornerLocations[edgeIndex];
+            Vector3f corner = cornerLocations[sideIndex];
             Vector3f offset = point.subtract(corner);
             float squaredDistance = offset.lengthSquared();
             if (squaredDistance < bestSD) {
-                result = edgeIndex;
+                result = sideIndex;
                 bestSD = squaredDistance;
                 if (storeCoordinates != null) {
                     storeCoordinates.set(corner);
                 }
             }
             /*
-             * Find closest point on the straight line containing the edge.
+             * Find closest point on the straight line containing the side.
              */
-            int nextIndex = nextIndex(edgeIndex);
+            int nextIndex = nextIndex(sideIndex);
             Vector3f corner2 = cornerLocations[nextIndex];
             Vector3f offset2 = corner2.subtract(corner);
             float dot = offset.dot(offset2);
-            float lengthSquared = squaredDistance(edgeIndex, nextIndex);
+            float lengthSquared = squaredDistance(sideIndex, nextIndex);
             if (dot > 0f && dot < lengthSquared) {
                 /* 
-                 * The closest point lies on the current edge.
+                 * The closest point lies on the side.
                  */
                 Vector3f offsetClosest = offset2.mult(dot / lengthSquared);
                 squaredDistance = offsetClosest.distanceSquared(offset);
                 if (squaredDistance < bestSD) {
-                    result = edgeIndex;
+                    result = sideIndex;
                     bestSD = squaredDistance;
                     if (storeCoordinates != null) {
                         storeCoordinates.set(corner);
@@ -261,7 +261,7 @@ public class Polygon3f {
     }
 
     /**
-     * Read the number of corners, which is also the number of edges.
+     * Read the number of corners, which is also the number of sides.
      *
      * @return count (&ge; 0)
      */
@@ -323,18 +323,18 @@ public class Polygon3f {
     }
 
     /**
-     * Test whether this polygon shares one or more edges with another polygon.
+     * Test whether this polygon shares one or more sides with another polygon.
      *
      * @param other the other polygon (not null)
-     * @param edgeMap if not null, used to storage indices of matching edges
-     * @return true if one or more shared edges were found, otherwise false
+     * @param sideMap if not null, used to storage indices of matching sides
+     * @return true if one or more shared sides were found, otherwise false
      */
     public boolean sharesEdgeWith(Polygon3f other,
-            Map<Integer, Integer> edgeMap) {
+            Map<Integer, Integer> sideMap) {
         Validate.nonNull(other, "other polygon");
 
-        if (edgeMap != null) {
-            edgeMap.clear();
+        if (sideMap != null) {
+            sideMap.clear();
         }
 
         Map<Integer, Integer> cornerMap = new TreeMap<>();
@@ -351,14 +351,14 @@ public class Polygon3f {
 
             if (otherN == other.nextIndex(otherI)) {
                 result = true;
-                if (edgeMap != null) {
-                    edgeMap.put(thisI, otherI);
+                if (sideMap != null) {
+                    sideMap.put(thisI, otherI);
                 }
             }
             if (otherI == other.nextIndex(otherN)) {
                 result = true;
-                if (edgeMap != null) {
-                    edgeMap.put(thisI, otherN);
+                if (sideMap != null) {
+                    sideMap.put(thisI, otherN);
                 }
             }
         }
