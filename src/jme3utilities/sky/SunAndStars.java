@@ -418,7 +418,7 @@ public class SunAndStars
      * Clone this instance.
      *
      * @return new instance equivalent to this one
-     * @throws CloneNotSupportedException
+     * @throws CloneNotSupportedException from Object.clone()
      */
     @Override
     public SunAndStars clone()
