@@ -40,26 +40,29 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class VectorXZ
-        implements Comparable<VectorXZ> {
+public class VectorXZ implements Comparable<VectorXZ> {
     // *************************************************************************
     // constants
 
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(VectorXZ.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            VectorXZ.class.getName());
     /**
      * backward direction
      */
     final public static VectorXZ backward = new VectorXZ(-1f, 0f);
     /**
      * east direction on map
+     *
+     * @see com.jme3.math.Vector3f#UNIT_Z
      */
     final public static VectorXZ east = new VectorXZ(0f, 1f);
     /**
      * forward direction
+     *
+     * @see com.jme3.math.Vector3f#UNIT_Z
      */
     final public static VectorXZ forward = new VectorXZ(1f, 0f);
     /**
@@ -68,10 +71,14 @@ public class VectorXZ
     final public static VectorXZ left = new VectorXZ(0f, -1f);
     /**
      * north direction on map
+     *
+     * @see com.jme3.math.Vector3f#UNIT_X
      */
     final public static VectorXZ north = forward;
     /**
      * right turn/rotation
+     *
+     * @see com.jme3.math.Vector3f#UNIT_Z
      */
     final public static VectorXZ right = east;
     /**
@@ -84,6 +91,8 @@ public class VectorXZ
     final public static VectorXZ west = left;
     /**
      * a zero vector
+     *
+     * @see com.jme3.math.Vector3f#ZERO
      */
     final public static VectorXZ zero = new VectorXZ(0f, 0f);
     // *************************************************************************
@@ -101,6 +110,8 @@ public class VectorXZ
 
     /**
      * Instantiate a zero vector.
+     *
+     * @see #zero
      */
     public VectorXZ() {
         x = 0f;
@@ -145,6 +156,7 @@ public class VectorXZ
      *
      * @param increment vector to be added to this vector (not null)
      * @return the vector sum
+     * @see com.jme3.math.Vector3f#add(Vector3f)
      */
     public VectorXZ add(VectorXZ increment) {
         float sumX = x + increment.getX();
@@ -231,7 +243,7 @@ public class VectorXZ
     }
 
     /**
-     * Clamp this vector to be within an axis-aligned ellipse.
+     * Clamp this vector to be within an origin-centered, axis-aligned ellipse.
      *
      * @param maxX radius of the ellipse in the X-direction (&ge;0)
      * @param maxZ radius of the ellipse in the Z-direction (&ge;0)
@@ -245,21 +257,25 @@ public class VectorXZ
             return zero;
         }
         /*
-         * Represent the ellipse in polar coordinates.
+         * An origin-centered, axis-aligned ellipse in polar coordinates:
+         * r^2 = maxX^2 * maxZ^2 / [ (maxZ * cos(th))^2 + (maxX * sin(th))^2 ]  
          */
-        final float theta = azimuth();
-        final float asin = maxX * FastMath.sin(theta);
-        final float bcos = maxZ * FastMath.cos(theta);
-        float product = maxX * maxZ;
-        final float rSquared = product * product / (asin * asin + bcos * bcos);
-        float lengthSquared = lengthSquared();
+        float length = length();
+        float sineTheta = z / length;
+        float cosineTheta = x / length;
+        float asin = maxX * sineTheta;
+        float bcos = maxZ * cosineTheta;
+        double denominator = MyMath.sumOfSquares(asin, bcos);
+        double product = maxX * maxZ;
+        final double rSquared = product * product / denominator;
+        double lengthSquared = lengthSquared();
         if (lengthSquared <= rSquared) {
             return this;
         }
         /*
          * Scale so that length <= r.
          */
-        float scale = FastMath.sqrt(rSquared / lengthSquared);
+        float scale = (float) Math.sqrt(rSquared / lengthSquared);
         float clampedX = x * scale;
         float clampedZ = z * scale;
         VectorXZ result = new VectorXZ(clampedX, clampedZ);
@@ -268,10 +284,11 @@ public class VectorXZ
     }
 
     /**
-     * Clamp this vector to be within a circle.
+     * Clamp this vector to be within an origin-centered circle.
      *
      * @param radius radius of the circle (&ge;0)
      * @return clamped vector with the same direction
+     * @see MyMath#clamp(float, float)
      */
     public VectorXZ clampLength(float radius) {
         Validate.nonNegative(radius, "radius");
@@ -279,14 +296,16 @@ public class VectorXZ
         if (isZeroLength()) {
             return zero;
         }
-        final float lengthSquared = lengthSquared();
-        if (lengthSquared <= radius * radius) {
+        double lengthSquared = lengthSquared();
+        double dRadius = radius;
+        double rSquared = dRadius * dRadius;
+        if (lengthSquared <= rSquared) {
             return this;
         }
         /*
          * Scale so that length <= radius.
          */
-        float scale = radius / FastMath.sqrt(lengthSquared);
+        float scale = (float) Math.sqrt(rSquared / lengthSquared);
         float clampedX = x * scale;
         float clampedZ = z * scale;
         VectorXZ result = new VectorXZ(clampedX, clampedZ);
@@ -295,10 +314,12 @@ public class VectorXZ
     }
 
     /**
-     * Compute the cross product of this vector with another.
+     * Compute the left-handed cross product of this vector with another. For
+     * example, north.cross(east) = +1 and east.cross(north) = -1.
      *
      * @param otherVector the other vector (not null)
-     * @return the cross product
+     * @return the left-handed cross product
+     * @see com.jme3.math.Vector3f#cross(Vector3f)
      */
     public float cross(VectorXZ otherVector) {
         float product = x * otherVector.getZ() - z * otherVector.getX();
@@ -316,10 +337,11 @@ public class VectorXZ
         validateNonZero(this, "this direction");
         validateNonZero(directionGoal, "goal direction");
 
-        final float dot = dot(directionGoal);
-        final float cross = cross(directionGoal);
-        if (dot >= 0f) {
-            final float lengthProduct = length() * directionGoal.length();
+        float cross = cross(directionGoal);
+        double dot = dot(directionGoal);
+        if (dot >= 0.0) {
+            double lpSquared = lengthSquared() * directionGoal.lengthSquared();
+            float lengthProduct = (float) Math.sqrt(lpSquared);
             float sine = cross / lengthProduct;
             return sine;
         }
@@ -338,6 +360,7 @@ public class VectorXZ
      *
      * @param scalar scaling factor (not zero)
      * @return a vector 'scalar' times shorter than this one
+     * @see com.jme3.math.Vector3f#divide(float)
      */
     public VectorXZ divide(float scalar) {
         Validate.nonZero(scalar, "scalar");
@@ -357,9 +380,15 @@ public class VectorXZ
      *
      * @param otherVector other vector (not null)
      * @return the dot product
+     * @see MyVector3f#dot(Vector3f, Vector3f)
      */
-    public float dot(VectorXZ otherVector) {
-        float product = x * otherVector.getX() + z * otherVector.getZ();
+    public double dot(VectorXZ otherVector) {
+        double x1 = x;
+        double x2 = otherVector.getX();
+        double z1 = z;
+        double z2 = otherVector.getZ();
+        double product = x1 * x2 + z1 * z2;
+
         return product;
     }
 
@@ -367,6 +396,7 @@ public class VectorXZ
      * Read the X-component of this vector.
      *
      * @return X-component
+     * @see com.jme3.math.Vector3f#getX()
      */
     public float getX() {
         return x;
@@ -376,6 +406,7 @@ public class VectorXZ
      * Read the Z-component of this vector.
      *
      * @return Z-component
+     * @see com.jme3.math.Vector3f#getZ()
      */
     public float getZ() {
         return z;
@@ -416,6 +447,7 @@ public class VectorXZ
      * Compute the length (or magnitude or norm) of this vector.
      *
      * @return the length (&ge;0)
+     * @see com.jme3.math.Vector3f#length()
      */
     public float length() {
         float result = MyMath.hypotenuse(x, z);
@@ -423,12 +455,14 @@ public class VectorXZ
     }
 
     /**
-     * Compute the squared length of this vector.
+     * Compute the squared length of this vector. Returns a double-precision
+     * value for precise comparisons.
      *
      * @return the squared length (&ge;0)
+     * @see MyVector3f#lengthSquared(Vector3f)
      */
-    public float lengthSquared() {
-        float result = x * x + z * z;
+    public double lengthSquared() {
+        double result = MyMath.sumOfSquares(x, z);
         return result;
     }
 
@@ -468,6 +502,7 @@ public class VectorXZ
      * Negate this vector.
      *
      * @return a vector with same magnitude and opposite direction
+     * @see com.jme3.math.Vector3f#negate()
      */
     public VectorXZ negate() {
         if (isZeroLength()) {
@@ -483,14 +518,15 @@ public class VectorXZ
      * Normalize this vector to a unit vector. If this vector is zero, return a
      * zero vector.
      *
-     * @return a unit vector with the same direction, or a zero vector
+     * @return a unit vector (with the same direction) or a zero vector
+     * @see com.jme3.math.Vector3f#normalize()
      */
     public VectorXZ normalize() {
         if (isZeroLength()) {
             return zero;
         }
 
-        float ls = lengthSquared();
+        float ls = (float) lengthSquared();
         if (ls == 1f) {
             return this;
         }
@@ -533,10 +569,10 @@ public class VectorXZ
     }
 
     /**
-     * Rotate a vector by another vector (complex product).
+     * Rotate and scale this vector by another vector (complex product).
      *
-     * @param direction new direction for the current X-axis (not null)
-     * @return a rotated/multiplied vector
+     * @param direction rotated/scaled vector for the current north (not null)
+     * @return the complex product
      */
     public VectorXZ rotate(VectorXZ direction) {
         float cosine = direction.getX();
@@ -553,10 +589,11 @@ public class VectorXZ
     }
 
     /**
-     * Subtract from this vector.
+     * Subtract from (inverse translate) this vector.
      *
      * @param decrement vector to be subtracted from this vector (not null)
      * @return a vector equal to the difference of the two vectors
+     * @see com.jme3.math.Vector3f#subtract(Vector3f)
      */
     public VectorXZ subtract(VectorXZ decrement) {
         float newX = x - decrement.getX();
@@ -610,6 +647,7 @@ public class VectorXZ
      * @param vector vector to validate (not null, non-zero)
      * @param description textual description of the vector
      * @throws IllegalArgumentException if the vector is zero
+     * @see jme3utilities.Validate#nonZero(Vector3f, String)
      */
     public static void validateNonZero(VectorXZ vector, String description) {
         Validate.nonNull(vector, description);

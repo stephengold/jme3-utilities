@@ -50,8 +50,8 @@ public class NavVertex
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(NavVertex.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            NavVertex.class.getName());
     // *************************************************************************
     // fields
     /**
@@ -181,10 +181,10 @@ public class NavVertex
         VectorXZ.validateNonZero(direction, "direction");
 
         NavArc result = null;
-        float maxDot = -2f * direction.length();
+        double maxDot = Double.NEGATIVE_INFINITY;
         for (NavArc arc : arcs) {
             VectorXZ horizontalDirection = arc.getHorizontalDirection();
-            float dot = horizontalDirection.dot(direction);
+            double dot = horizontalDirection.dot(direction);
             if (dot > maxDot) {
                 result = arc;
                 maxDot = dot;
