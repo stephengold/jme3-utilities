@@ -205,6 +205,46 @@ public class Polygon3f {
     }
 
     /**
+     * Find the polygon's longest side.
+     *
+     * @return index of the longest side (&ge;0, &lt;numCorners) or -1 if this
+     * polygon has no sides
+     */
+    public int findLongest() {
+        int result = -1;
+        double biggestSD = Double.NEGATIVE_INFINITY;
+        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+            int nextI = nextIndex(sideIndex);
+            double squaredDistance = squaredDistance(sideIndex, nextI);
+            if (squaredDistance > biggestSD) {
+                result = sideIndex;
+                biggestSD = squaredDistance;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Find the polygon's shortest side.
+     *
+     * @return index of the shortest side (&ge;0, &lt;numCorners) or -1 if this
+     * polygon has no sides
+     */
+    public int findShortest() {
+        int result = -1;
+        double leastSD = Double.POSITIVE_INFINITY;
+        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+            int nextI = nextIndex(sideIndex);
+            double squaredDistance = squaredDistance(sideIndex, nextI);
+            if (squaredDistance < leastSD) {
+                result = sideIndex;
+                leastSD = squaredDistance;
+            }
+        }
+        return result;
+    }
+
+    /**
      * Find the side closest to a specified point in space.
      *
      * @param point coordinates of the specified point (not null, unaffected)
@@ -277,13 +317,12 @@ public class Polygon3f {
      */
     public float perimeter() {
         float sum = 0f;
-        for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
-            int next = nextIndex(cornerIndex);
-            double lengthSquared = squaredDistance(cornerIndex, next);
-            double length = Math.sqrt(lengthSquared);
+        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+            float length = sideLength(sideIndex);
             sum += length;
         }
 
+        assert sum >= 0f : sum;
         return sum;
     }
 
@@ -363,6 +402,20 @@ public class Polygon3f {
                 }
             }
         }
+
+        return result;
+    }
+
+    /**
+     * Calculate the length of a side.
+     *
+     * @param sideIndex index of the side to measure (&ge;0, &lt;numSides)
+     * @return length (&ge; 0)
+     */
+    public float sideLength(int sideIndex) {
+        int nextIndex = nextIndex(sideIndex);
+        double squaredDistance = squaredDistance(sideIndex, nextIndex);
+        float result = (float) Math.sqrt(squaredDistance);
 
         return result;
     }

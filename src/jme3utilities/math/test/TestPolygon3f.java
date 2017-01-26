@@ -207,10 +207,29 @@ public class TestPolygon3f {
             System.out.printf("  corner%d at %s%n",
                     i, array[i].toString());
         }
+
         System.out.printf(" %s planar,",
-                poly.isPlanar() ? "is" : "isn't");
+                poly.isPlanar() ? "IS" : "is NOT");
         System.out.printf(" perimeter = %f%n",
                 poly.perimeter());
+
+        System.out.print(" shortest side = ");
+        int shortI = poly.findShortest();
+        if (shortI == -1) {
+            System.out.printf("n/a%n");
+        } else {
+            float length = poly.sideLength(shortI);
+            System.out.printf("side%d, %f wu%n", shortI, length);
+        }
+
+        System.out.print(" longest side = ");
+        int longI = poly.findLongest();
+        if (shortI == -1) {
+            System.out.printf("n/a%n");
+        } else {
+            float length = poly.sideLength(longI);
+            System.out.printf("side%d, %f wu%n", longI, length);
+        }
 
         System.out.print(" corner closest to origin = ");
         int ccto = poly.findCorner(Vector3f.ZERO);
