@@ -29,10 +29,11 @@ import com.jme3.math.Vector3f;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
+import jme3utilities.math.polygon.GenericPolygon3f;
 import jme3utilities.math.polygon.Polygon3f;
 
 /**
- * Simple application to test the Polygon3f class.
+ * Simple application to test the Polygon3f and GenericPolygon3f classes.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -58,8 +59,7 @@ public class TestPolygon3f {
         /*
          * degenerate test cases
          */
-        int numTestCases = 13;
-        Vector3f[][] degenerateCase = new Vector3f[numTestCases][];
+        Vector3f[][] degenerateCase = new Vector3f[14][];
 
         degenerateCase[0] = new Vector3f[]{}; // null
 
@@ -72,51 +72,57 @@ public class TestPolygon3f {
             new Vector3f(3f, 4f, 0f)
         };
 
-        degenerateCase[3] = new Vector3f[]{ // small 2-gon
-            new Vector3f(3f, 4f, 12f),
-            new Vector3f(2.9f, 4.1f, 11.9f)
+        degenerateCase[3] = new Vector3f[]{ // distinct 2-gon
+            new Vector3f(1f, 4f, 9f),
+            new Vector3f(1f, 9f, 4f)
         };
 
         degenerateCase[4] = new Vector3f[]{ // duplicative triangle
-            new Vector3f(3f, 4f, 0f),
-            new Vector3f(3f, 4f, 1f),
-            new Vector3f(3f, 4f, 0f)
+            new Vector3f(3f, 4f, -1f),
+            new Vector3f(3f, 4f, 2f),
+            new Vector3f(3f, 4f, -1f)
         };
 
-        degenerateCase[5] = new Vector3f[]{ // small collinear triangle
+        degenerateCase[5] = new Vector3f[]{ // near-duplicative triangle
+            new Vector3f(3f, 2f, 0.0005f),
+            new Vector3f(3f, 2f, 1f),
+            new Vector3f(3f, 2f, 0f)
+        };
+
+        degenerateCase[6] = new Vector3f[]{ // small collinear triangle
             new Vector3f(3f, 4f, 12f),
             new Vector3f(2.9f, 4.1f, 11.9f),
             new Vector3f(2.8f, 4.2f, 11.8f)
         };
 
-        degenerateCase[6] = new Vector3f[]{ // lopsided collinear triangle
+        degenerateCase[7] = new Vector3f[]{ // lopsided collinear triangle
             new Vector3f(3f, 4f, 12f),
             new Vector3f(2.9999f, 4.0001f, 11.9999f),
             new Vector3f(0f, 0f, 0f)
         };
 
-        degenerateCase[7] = new Vector3f[]{ // small collinear quad
+        degenerateCase[8] = new Vector3f[]{ // small collinear quad
             new Vector3f(3f, 4f, 12f),
             new Vector3f(2.9f, 4.1f, 11.9f),
             new Vector3f(2.8f, 4.2f, 11.8f),
             new Vector3f(2.7f, 4.3f, 11.7f)
         };
 
-        degenerateCase[8] = new Vector3f[]{ // duplicative quad
+        degenerateCase[9] = new Vector3f[]{ // duplicative quad
             new Vector3f(3f, 4f, 0f),
             new Vector3f(3f, 4f, 1f),
             new Vector3f(3f, 5f, 1f),
             new Vector3f(3f, 4f, 0f)
         };
 
-        degenerateCase[9] = new Vector3f[]{ // horizontal quad with 180
+        degenerateCase[10] = new Vector3f[]{ // horizontal quad with 180
             new Vector3f(1f, 4f, 0f),
             new Vector3f(2f, 4f, 0f),
             new Vector3f(3f, 4f, 0f),
             new Vector3f(2f, 4f, 1f)
         };
 
-        degenerateCase[10] = new Vector3f[]{ // pent with 0-degree angle
+        degenerateCase[11] = new Vector3f[]{ // pent with 0-degree angle
             new Vector3f(1f, 4f, 0f),
             new Vector3f(2f, 4f, 0f),
             new Vector3f(1f, 4f, 0f),
@@ -124,7 +130,7 @@ public class TestPolygon3f {
             new Vector3f(2f, 4f, 1f)
         };
 
-        degenerateCase[11] = new Vector3f[]{ // non-planar hexagon with 180s
+        degenerateCase[12] = new Vector3f[]{ // non-planar hexagon with 180s
             new Vector3f(1f, 4f, 0f),
             new Vector3f(2f, 4f, 0f),
             new Vector3f(3f, 4f, 0f),
@@ -133,7 +139,7 @@ public class TestPolygon3f {
             new Vector3f(1f, 4f, 1f)
         };
 
-        degenerateCase[12] = new Vector3f[]{ // non-planar hexagon with dup
+        degenerateCase[13] = new Vector3f[]{ // non-planar hexagon with dup
             new Vector3f(1f, 4f, 0f),
             new Vector3f(3f, 4f, 0f),
             new Vector3f(3f, 4f, 0f),
@@ -144,30 +150,29 @@ public class TestPolygon3f {
         /*
          * non-degenerate test cases
          */
-        numTestCases = 4;
-        Vector3f[][] nonDegenerateCase = new Vector3f[numTestCases][];
+        Vector3f[][] genericCase = new Vector3f[4][];
 
-        nonDegenerateCase[0] = new Vector3f[]{ // 3-4-5 triangle
+        genericCase[0] = new Vector3f[]{ // 3-4-5 triangle
             new Vector3f(0f, 9f, 9f),
             new Vector3f(0f, 12f, 9f),
             new Vector3f(4f, 12f, 9f)
         };
 
-        nonDegenerateCase[1] = new Vector3f[]{ // square in Y-Z plane
+        genericCase[1] = new Vector3f[]{ // square in Y-Z plane
             new Vector3f(0f, 9f, 9f),
             new Vector3f(0f, 12f, 9f),
             new Vector3f(0f, 12f, 6f),
             new Vector3f(0f, 9f, 6f)
         };
 
-        nonDegenerateCase[2] = new Vector3f[]{ // skewed quad
+        genericCase[2] = new Vector3f[]{ // skewed quad
             new Vector3f(0f, 9f, 9f),
             new Vector3f(0f, 12f, 9f),
             new Vector3f(1f, 12f, 6f),
             new Vector3f(0f, 9f, 6f)
         };
 
-        nonDegenerateCase[3] = new Vector3f[]{ // long side close to origin
+        genericCase[3] = new Vector3f[]{ // long side close to origin
             new Vector3f(1f, 9f, 9f),
             new Vector3f(1f, -9f, -9f),
             new Vector3f(2f, 0f, 0f)
@@ -176,19 +181,18 @@ public class TestPolygon3f {
         Vector3f[] theCase;
         Polygon3f poly;
 
-        for (int caseIndex = 0; caseIndex < numTestCases; caseIndex++) {
-            System.out.printf("degenerate case %d:%n", caseIndex);
-            theCase = degenerateCase[caseIndex];
-            poly = new Polygon3f(theCase, 0.001f);
+        for (int caseI = 0; caseI < degenerateCase.length; caseI++) {
+            System.out.printf("degenerate test case #%d:%n", caseI);
+            theCase = degenerateCase[caseI];
+            poly = new Polygon3f(theCase, 0.01f);
             assert poly.isDegenerate();
             tryMethods(poly);
         }
 
-        for (int caseIndex = 0; caseIndex < numTestCases; caseIndex++) {
-            System.out.printf("non-degenerate case %d:%n", caseIndex);
-            theCase = nonDegenerateCase[caseIndex];
-            poly = new Polygon3f(theCase, 0.001f);
-            assert !poly.isDegenerate();
+        for (int caseI = 0; caseI < genericCase.length; caseI++) {
+            System.out.printf("generic test case #%d:%n", caseI);
+            theCase = genericCase[caseI];
+            poly = new GenericPolygon3f(theCase, 0.01f);
             tryMethods(poly);
         }
 
@@ -200,21 +204,32 @@ public class TestPolygon3f {
                 poly.numCorners());
         Vector3f[] array = poly.copyCornerLocations();
         for (int i = 0; i < array.length; i++) {
-            System.out.printf("  corners[%d] = %s%n",
+            System.out.printf("  corner%d at %s%n",
                     i, array[i].toString());
         }
-        System.out.printf(" %s planar%n",
+        System.out.printf(" %s planar,",
                 poly.isPlanar() ? "is" : "isn't");
-        System.out.printf(" corner closest to origin = %d%n",
-                poly.findCorner(Vector3f.ZERO));
         System.out.printf(" perimeter = %f%n",
                 poly.perimeter());
 
+        System.out.print(" corner closest to origin = ");
+        int ccto = poly.findCorner(Vector3f.ZERO);
+        if (ccto == -1) {
+            System.out.printf("n/a%n");
+        } else {
+            float distance = array[ccto].length();
+            System.out.printf("corner%d, %f wu%n", ccto, distance);
+        }
+
+        System.out.print(" side closest to origin = ");
         Vector3f tempVector = new Vector3f();
-        int tempIndex = poly.findEdge(Vector3f.ZERO, tempVector);
-        System.out.printf(" edge closest to origin = %d", tempIndex);
-        if (tempIndex >= 0) {
-            System.out.printf(" at %s", tempVector.toString());
+        int scto = poly.findSide(Vector3f.ZERO, tempVector);
+        if (scto == -1) {
+            System.out.printf("n/a");
+        } else {
+            float distance = tempVector.length();
+            System.out.printf("side%d at %s, %f wu",
+                    scto, tempVector.toString(), distance);
         }
         System.out.printf("%n%n");
     }
