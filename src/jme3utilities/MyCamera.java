@@ -30,6 +30,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
 
 /**
@@ -45,8 +46,8 @@ final public class MyCamera {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MyCamera.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MyCamera.class.getName());
     // *************************************************************************
     // constructors
 
@@ -188,7 +189,7 @@ final public class MyCamera {
 
         float yTangent = yTangent(camera);
         float yRadians = 2f * FastMath.atan(yTangent);
-        float yDegrees = yRadians * FastMath.RAD_TO_DEG;
+        float yDegrees = MyMath.toDegrees(yRadians);
 
         return yDegrees;
     }

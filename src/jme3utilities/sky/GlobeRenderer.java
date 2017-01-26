@@ -51,6 +51,7 @@ import jme3utilities.Misc;
 import jme3utilities.MySpatial;
 import jme3utilities.SimpleAppState;
 import jme3utilities.Validate;
+import jme3utilities.math.MyMath;
 
 /**
  * Simple app state to generate a dynamic texture for an object by rendering an
@@ -424,7 +425,7 @@ public class GlobeRenderer
         }
 
         float fovY = 2f * FastMath.asin(globeRadius / cameraDistance);
-        float fovYDegrees = fovY * FastMath.RAD_TO_DEG;
+        float fovYDegrees = MyMath.toDegrees(fovY);
         float near = 0.5f * (cameraDistance - globeRadius);
         float far = 2f * (cameraDistance + globeRadius);
         camera.setFrustumPerspective(fovYDegrees, aspectRatio, near, far);

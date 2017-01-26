@@ -26,6 +26,7 @@
 package jme3utilities.sky.textures;
 
 import com.jme3.math.FastMath;
+import jme3utilities.math.MyMath;
 
 /**
  * Enumerate the pre-set conditions for MakeStarMaps.
@@ -139,7 +140,7 @@ enum StarMapPreset {
                 /*
                  * Stonehenge
                  */
-                return 51.1788f * FastMath.DEG_TO_RAD;
+                return MyMath.toRadians(51.1788f);
         }
         throw new IllegalStateException();
     }

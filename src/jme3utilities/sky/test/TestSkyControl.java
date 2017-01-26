@@ -27,6 +27,7 @@ package jme3utilities.sky.test;
 
 import com.beust.jcommander.JCommander;
 import com.jme3.app.state.ScreenshotAppState;
+import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.input.KeyInput;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -57,6 +58,7 @@ import jme3utilities.Validate;
 import jme3utilities.ViewPortListener;
 import jme3utilities.WaterProcessor;
 import jme3utilities.debug.LandscapeControl;
+import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.sky.CloudLayer;
@@ -93,8 +95,8 @@ public class TestSkyControl
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(TestSkyControl.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            TestSkyControl.class.getName());
     /**
      * action string to toggle HUD visibility
      */
@@ -174,7 +176,7 @@ public class TestSkyControl
          * Mute the chatty loggers found in some imported packages.
          */
         Misc.setLoggingLevels(Level.WARNING);
-        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+        Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
         /*
          * Lower the logging level for this class.
@@ -340,8 +342,8 @@ public class TestSkyControl
         /*
          * Enable or disable lights based on check boxes in the HUD.
          */
-        boolean added =
-                MySpatial.findLight(sceneNode, "ambient") == ambientLight;
+        boolean added;
+        added = MySpatial.findLight(sceneNode, "ambient") == ambientLight;
         boolean ambientLightOn = hud.getAmbientFlag();
         if (ambientLightOn && !added) {
             sceneNode.addLight(ambientLight);
@@ -441,18 +443,18 @@ public class TestSkyControl
 
         Updater updater = skyControl.getUpdater();
         if (parameters.shadowFilter()) {
-            DirectionalLightShadowFilter dlsf =
-                    new DirectionalLightShadowFilter(assetManager,
-                            shadowMapSize, shadowMapSplits);
+            DirectionalLightShadowFilter dlsf;
+            dlsf = new DirectionalLightShadowFilter(assetManager,
+                    shadowMapSize, shadowMapSplits);
             dlsf.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
             dlsf.setLight(mainLight);
             Misc.getFpp(viewPort, assetManager).addFilter(dlsf);
             updater.addShadowFilter(dlsf);
 
         } else {
-            DirectionalLightShadowRenderer dlsr =
-                    new DirectionalLightShadowRenderer(assetManager,
-                            shadowMapSize, shadowMapSplits);
+            DirectionalLightShadowRenderer dlsr;
+            dlsr = new DirectionalLightShadowRenderer(assetManager,
+                    shadowMapSize, shadowMapSplits);
             dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
             dlsr.setLight(mainLight);
             updater.addShadowRenderer(dlsr);
@@ -562,8 +564,8 @@ public class TestSkyControl
          * which was fixed at r10899.
          */
         cam.setLocation(new Vector3f(6.5f, 13f, 50f));
-        float altitudeAngle = -1f * FastMath.DEG_TO_RAD;
-        float azimuthAngle = 280f * FastMath.DEG_TO_RAD;
+        float altitudeAngle = MyMath.toRadians(-1f);
+        float azimuthAngle = MyMath.toRadians(280f);
         Vector3f direction = MyVector3f.fromAltAz(altitudeAngle, azimuthAngle);
         MyCamera.look(cam, direction);
 

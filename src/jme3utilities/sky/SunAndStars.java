@@ -76,17 +76,17 @@ public class SunAndStars
     /**
      * obliquity of the ecliptic, in radians
      */
-    final private static float obliquity = 23.44f * FastMath.DEG_TO_RAD;
+    final private static float obliquity = MyMath.toRadians(23.44f);
     /**
      * Earth's rate of rotation (radians per sidereal hour)
      */
-    final private static float radiansPerHour =
+    final private static float radiansPerHour = 
             FastMath.TWO_PI / Constants.hoursPerDay;
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(SunAndStars.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            SunAndStars.class.getName());
     // *************************************************************************
     // fields
     /**
@@ -131,15 +131,15 @@ public class SunAndStars
         float sinLat = FastMath.sin(latitude);
         float cosLon = FastMath.cos(longitude);
         float sinLon = FastMath.sin(longitude);
-        Vector3f ecliptical =
-                new Vector3f(cosLat * cosLon, cosLat * sinLon, sinLat);
-        assert ecliptical.isUnitVector();
+        Vector3f ecliptical = new Vector3f(
+                cosLat * cosLon, cosLat * sinLon, sinLat);
+        assert ecliptical.isUnitVector() : ecliptical;
         /*
          * Convert to equatorial coordinates.
          */
         Vector3f equatorial = convertToEquatorial(ecliptical);
 
-        assert equatorial.isUnitVector();
+        assert equatorial.isUnitVector() : equatorial;
         return equatorial;
     }
 
@@ -372,8 +372,8 @@ public class SunAndStars
          */
         Vector3f equatorial = convertToEquatorial(0f, longitude);
         float ra = -FastMath.atan2(equatorial.y, equatorial.x);
-        solarRaHours =
-                MyMath.modulo(ra / radiansPerHour, Constants.hoursPerDay);
+        solarRaHours = MyMath.modulo(
+                        ra / radiansPerHour, Constants.hoursPerDay);
         assert solarRaHours >= 0f : solarRaHours;
         assert solarRaHours < Constants.hoursPerDay : solarRaHours;
     }
@@ -434,8 +434,8 @@ public class SunAndStars
      */
     @Override
     public String toString() {
-        float latitudeDegrees = observerLatitude * FastMath.RAD_TO_DEG;
-        float longitudeDegrees = solarLongitude * FastMath.RAD_TO_DEG;
+        float latitudeDegrees = MyMath.toDegrees(observerLatitude);
+        float longitudeDegrees = MyMath.toDegrees(solarLongitude);
         String result = String.format(
                 "[hour=%f, lat=%f deg, long=%f deg, ra=%f]",
                 hour, latitudeDegrees, longitudeDegrees, solarRaHours);
