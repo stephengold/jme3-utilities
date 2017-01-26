@@ -51,7 +51,6 @@ import jme3utilities.Misc;
 import jme3utilities.MySpatial;
 import jme3utilities.SimpleAppState;
 import jme3utilities.Validate;
-import jme3utilities.math.MyVector3f;
 
 /**
  * Simple app state to generate a dynamic texture for an object by rendering an
@@ -79,8 +78,8 @@ public class GlobeRenderer
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(GlobeRenderer.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            GlobeRenderer.class.getName());
     /**
      * location of the globe's center (in world coordinates)
      */
@@ -181,7 +180,7 @@ public class GlobeRenderer
      */
     public float getCameraDistance() {
         Vector3f cameraLocation = camera.getLocation();
-        float result = MyVector3f.distanceFrom(cameraLocation, globeCenter);
+        float result = cameraLocation.distance(globeCenter);
 
         assert result > 0f : result;
         return result;
@@ -327,8 +326,8 @@ public class GlobeRenderer
 
         super.initialize(stateManager, application);
 
-        ViewPort offscreenViewPort =
-                renderManager.createPreView(preViewName, camera);
+        ViewPort offscreenViewPort = renderManager.createPreView(
+                preViewName, camera);
         offscreenViewPort.attachScene(offscreenRootNode);
         offscreenViewPort.setClearFlags(true, true, true);
         offscreenViewPort.setOutputFrameBuffer(frameBuffer);
