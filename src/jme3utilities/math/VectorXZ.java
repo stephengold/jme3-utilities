@@ -523,15 +523,16 @@ public class VectorXZ implements Comparable<VectorXZ> {
      */
     public VectorXZ normalize() {
         if (isZeroLength()) {
+            logger.info("Normalizing a zero vector.");
             return zero;
         }
 
-        float ls = (float) lengthSquared();
-        if (ls == 1f) {
+        double lengthSquared = lengthSquared();
+        if ((float)lengthSquared == 1f) {
             return this;
         }
 
-        float length = FastMath.sqrt(ls);
+        float length = (float)Math.sqrt(lengthSquared);
         float newX = x / length;
         float newZ = z / length;
 
@@ -744,7 +745,7 @@ public class VectorXZ implements Comparable<VectorXZ> {
      * @param ignored command-line arguments
      */
     public static void main(String[] ignored) {
-        System.out.print("Test results for class VectorXZ:\n\n");
+        System.out.print("Test results for class VectorXZ:%n%n");
 
         // vector test cases
         VectorXZ[] cases = new VectorXZ[4];
@@ -759,7 +760,7 @@ public class VectorXZ implements Comparable<VectorXZ> {
 
             System.out.printf(
                     "vin = %s  azimuth(x)=%f (%f degrees)  vout = %s%n",
-                    vin.toString(), a, a * FastMath.RAD_TO_DEG,
+                    vin.toString(), a, MyMath.toDegrees(a),
                     vout.toString());
             System.out.println();
         }
