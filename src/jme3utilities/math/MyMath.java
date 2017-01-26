@@ -120,9 +120,11 @@ public class MyMath {
      * @param fValue input value to be cubed
      * @return fValue raised to the third power
      * @see #cubeRoot(float)
+     * @see com.jme3.math.FastMath#sqr(float)
      */
     public static float cube(float fValue) {
         float result = fValue * fValue * fValue;
+        
         if (Float.isInfinite(result)) {
             String message = String.format("Overflow from cubing %g.", fValue);
             logger.warning(message);
@@ -141,7 +143,7 @@ public class MyMath {
      * @see java.lang.Math#cbrt(double)
      */
     public static float cubeRoot(float fValue) {
-        double dValue = (float) fValue;
+        double dValue = fValue;
         float result = (float) Math.cbrt(dValue);
 
         return result;
@@ -216,6 +218,7 @@ public class MyMath {
      * @param b 2nd input value
      * @param c 3rd input value
      * @return greatest of the three values
+     * @see java.lang.Math#max(float, float)
      */
     public static float max(float a, float b, float c) {
         if (a >= b && a >= c) {
