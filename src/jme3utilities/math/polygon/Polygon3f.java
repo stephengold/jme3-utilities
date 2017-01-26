@@ -35,8 +35,8 @@ import jme3utilities.math.MyVector3f;
 
 /**
  * An immutable polygon in three-dimensional space, consisting of N corners
- * (points) connected by N sides (straight-line segments). For the sake of
- * efficiency, many calculated values are cached.
+ * (points) connected by N sides (straight-line segments). For efficiency, many
+ * calculated values are cached.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -54,17 +54,17 @@ public class Polygon3f {
     /**
      * if true, then two adjacent sides are collinear and/or there are fewer
      * than 3 corners and/or there are duplicate corners (set by
-     * setIsDegenerate())
+     * #setIsDegenerate())
      */
     private Boolean isDegenerate = null;
     /**
      * if true, then all corners (and sides) lie in a single plane (set by
-     * setIsPlanar())
+     * #setIsPlanar())
      */
     private Boolean isPlanar = null;
     /**
      * cached squared distances between pairs of corners (each &ge;0, allocated
-     * by constructor, each initialized by setSquaredDistance())
+     * by constructor, each initialized by #setSquaredDistance())
      */
     final private Double[][] squaredDistances;
     /**
@@ -369,7 +369,7 @@ public class Polygon3f {
      * @param sideMap if not null, used to storage indices of matching sides
      * @return true if one or more shared sides were found, otherwise false
      */
-    public boolean sharesEdgeWith(Polygon3f other,
+    public boolean sharesSideWith(Polygon3f other,
             Map<Integer, Integer> sideMap) {
         Validate.nonNull(other, "other polygon");
 
@@ -413,9 +413,52 @@ public class Polygon3f {
      * @return length (&ge; 0)
      */
     public float sideLength(int sideIndex) {
+        validateIndex(sideIndex, "side index");
+
         int nextIndex = nextIndex(sideIndex);
         double squaredDistance = squaredDistance(sideIndex, nextIndex);
         float result = (float) Math.sqrt(squaredDistance);
+
+        return result;
+    }
+
+    /**
+     * Generate a new polygon which shares a range of corners with this one.
+     *
+     * @param firstIndex index of the first corner in the range (&ge;0,
+     * &lt;numCorners)
+     * @param lastIndex index of the last corner in the range (&ge;0,
+     * &lt;numCorners)
+     * @return a new polygon with at least two corners
+     */
+    public Polygon3f fromRange(int firstIndex, int lastIndex) {
+        validateIndex(firstIndex, "first corner index");
+        validateIndex(lastIndex, "last corner index");
+        if (firstIndex == lastIndex) {
+            throw new IllegalArgumentException("Corner indices must differ.");
+        }
+        /*
+         * Count how many corners the new polygon will include.
+         */
+        int newNumCorners = 1;
+        for (int oldI = firstIndex; oldI != lastIndex; oldI = nextIndex(oldI)) {
+            newNumCorners++;
+        }
+        assert newNumCorners >= 2 : newNumCorners;
+        assert newNumCorners <= numCorners : newNumCorners;
+        /*        
+         * Allocate and fill the array of corner locations.
+         */
+        Vector3f newCornerLocations[] = new Vector3f[newNumCorners];
+        int newI = 0;
+        for (int oldI = firstIndex; oldI != lastIndex; oldI = nextIndex(oldI)) {
+            newCornerLocations[newI] = cornerLocations[oldI];
+            newI++;
+        }
+        assert newI + 1 == newNumCorners;
+        newCornerLocations[newI] = cornerLocations[lastIndex];
+
+        Polygon3f result = new Polygon3f(newCornerLocations, tolerance);
 
         return result;
     }
@@ -435,17 +478,22 @@ public class Polygon3f {
      * Test whether all the corners in a set lie on the line connecting two
      * given corners.
      *
-     * @param firstIndex index of the first corner (&ge;0, &lt;numCorners)
-     * @param secondIndex index of the second corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
      * @param corners (length&le;numCorners, cardinality&ge;2, unaffected)
      */
-    boolean allCollinear(int firstIndex, int secondIndex, BitSet corners) {
-        validateIndex(firstIndex, "index of first corner");
-        validateIndex(secondIndex, "index of second corner");
+    protected boolean allCollinear(int cornerIndex1, int cornerIndex2,
+            BitSet corners) {
+        validateIndex(cornerIndex1, "index of 1st corner");
+        validateIndex(cornerIndex2, "index of 2nd corner");
         Validate.nonNull(corners, "set of corners");
-        assert corners.length() <= numCorners;
+        int length = corners.length();
+        Validate.inRange(length, "length of set of corners", 2, numCorners);
+        int cardinality = corners.cardinality();
+        Validate.inRange(cardinality, "number of corners in set",
+                2, numCorners);
 
-        if (doCoincide(firstIndex, secondIndex)) {
+        if (doCoincide(cornerIndex1, cornerIndex2)) {
             /*
              * The line is ill-defined.
              */
@@ -454,8 +502,8 @@ public class Polygon3f {
         /*
          * Calculate the offset of the last corner from the first.
          */
-        Vector3f first = cornerLocations[firstIndex];
-        Vector3f last = cornerLocations[secondIndex];
+        Vector3f first = cornerLocations[cornerIndex1];
+        Vector3f last = cornerLocations[cornerIndex2];
         Vector3f fl = last.subtract(first);
 
         for (int middleI = corners.nextSetBit(0);
@@ -472,7 +520,7 @@ public class Polygon3f {
              * it contains a logic bug.
              */
             double fm_dot_fl = MyVector3f.dot(fm, fl);
-            double normSquaredFL = squaredDistance(firstIndex, secondIndex);
+            double normSquaredFL = squaredDistance(cornerIndex1, cornerIndex2);
             double fraction = fm_dot_fl / normSquaredFL;
             Vector3f projection = fl.mult((float) fraction);
             /*
@@ -490,18 +538,18 @@ public class Polygon3f {
     /**
      * Test whether three corners are collinear.
      *
-     * @param cornerIndex1 index of the first corner (&ge;0, &lt;numCorners)
-     * @param cornerIndex2 index of the second corner (&ge;0, &lt;numCorners)
-     * @param cornerIndex3 index of the third corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex3 index of the 3rd corner (&ge;0, &lt;numCorners)
      * @param storeMiddleIndex if not null and the result is true, this object
      * will be set to the index of the middle corner, if determined
      * @return true if collinear, otherwise false
      */
     protected boolean areCollinear(int cornerIndex1, int cornerIndex2,
             int cornerIndex3, Integer storeMiddleIndex) {
-        validateIndex(cornerIndex1, "index of first corner");
-        validateIndex(cornerIndex2, "index of second corner");
-        validateIndex(cornerIndex3, "index of third corner");
+        validateIndex(cornerIndex1, "index of 1st corner");
+        validateIndex(cornerIndex2, "index of 2nd corner");
+        validateIndex(cornerIndex3, "index of 3rd corner");
         /*
          * Shortcut:
          * If any of the corners coincide, then the set is collinear,
@@ -541,13 +589,13 @@ public class Polygon3f {
     /**
      * Test whether two corners coincide.
      *
-     * @param cornerIndex1 index of the first corner (&ge;0, &lt;numCorners)
-     * @param cornerIndex2 index of the second corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
      * @return true if they coincide, otherwise false
      */
     protected boolean doCoincide(int cornerIndex1, int cornerIndex2) {
-        validateIndex(cornerIndex1, "index of first corner");
-        validateIndex(cornerIndex2, "index of second corner");
+        validateIndex(cornerIndex1, "index of 1st corner");
+        validateIndex(cornerIndex2, "index of 2nd corner");
 
         double squaredDistance = squaredDistance(cornerIndex1, cornerIndex2);
         if (squaredDistance > tolerance2) {
@@ -645,17 +693,34 @@ public class Polygon3f {
     }
 
     /**
+     * Calculate which corner (or side) precedes the specified one. For this to
+     * work, there must be at least one corner.
+     *
+     * @param index index of a corner (or side) (&ge;0, &lt;numCorners)
+     * @return index of the preceding corner (or side) (&ge;0, &lt;numCorners)
+     */
+    protected int prevIndex(int index) {
+        validateIndex(index, "index");
+        if (numCorners < 1) {
+            throw new IllegalStateException("no corners");
+        }
+
+        int next = (index + numCorners - 1) % numCorners;
+        return next;
+    }
+
+    /**
      * Calculate the square of the area of the triangle formed by three corners.
      *
-     * @param indexA index of the first corner (&ge;0, &lt;numCorners)
-     * @param indexB index of the second corner (&ge;0, &lt;numCorners)
-     * @param indexC index of the third corner (&ge;0, &lt;numCorners)
+     * @param indexA index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param indexB index of the 2nd corner (&ge;0, &lt;numCorners)
+     * @param indexC index of the 3rd corner (&ge;0, &lt;numCorners)
      * @return area^2 (&ge;0)
      */
     protected double squaredArea(int indexA, int indexB, int indexC) {
-        validateIndex(indexA, "index of first corner");
-        validateIndex(indexB, "index of second corner");
-        validateIndex(indexC, "index of third corner");
+        validateIndex(indexA, "index of 1st corner");
+        validateIndex(indexB, "index of 2nd corner");
+        validateIndex(indexC, "index of 3rd corner");
         /*
          * Shortcut:
          * If any corners coincide, then the area is effectively zero. 
@@ -697,13 +762,13 @@ public class Polygon3f {
     /**
      * Calculate (or look up) the squared distance between two corners.
      *
-     * @param cornerIndex1 index of the first corner (&ge;0, &lt;numCorners)
-     * @param cornerIndex2 index of the second corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
      * @return squared distance (&ge;0)
      */
     protected double squaredDistance(int cornerIndex1, int cornerIndex2) {
-        validateIndex(cornerIndex1, "index of first corner");
-        validateIndex(cornerIndex2, "index of second corner");
+        validateIndex(cornerIndex1, "index of 1st corner");
+        validateIndex(cornerIndex2, "index of 2nd corner");
 
         if (squaredDistances[cornerIndex1][cornerIndex2] == null) {
             setSquaredDistance(cornerIndex1, cornerIndex2);
@@ -786,7 +851,7 @@ public class Polygon3f {
     }
 
     /**
-     * Initialize the isPlanar field. A polygon is planar if all corners (and
+     * Initialize the #isPlanar field. A polygon is planar if all corners (and
      * sides) lie in a single plane.
      */
     private void setIsPlanar() {
@@ -841,8 +906,7 @@ public class Polygon3f {
         Vector3f offsetJ = cornerJ.subtract(cornerI);
         Vector3f offsetK = cornerK.subtract(cornerI);
         Vector3f crossProduct = offsetJ.cross(offsetK);
-        double normSquared = MyVector3f.lengthSquared(crossProduct);
-        float norm = (float) Math.sqrt(normSquared);
+        float norm = crossProduct.length();
         if (norm == 0f) {
             /*
              * Degenerate case:
@@ -871,8 +935,8 @@ public class Polygon3f {
     }
 
     /**
-     * Initialize element(s) of the squaredDistances field for a particular pair
-     * of corners.
+     * Initialize the element(s) of the #squaredDistances field for a particular
+     * pair of corners.
      *
      * @param index1 (&ge;0, &lt;numCorners)
      * @param index2 (&ge;0, &lt;numCorners)
