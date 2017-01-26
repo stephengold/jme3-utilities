@@ -30,8 +30,6 @@ import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.joints.PhysicsJoint;
-import com.jme3.scene.Spatial;
-import com.jme3.scene.control.Control;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -54,8 +52,8 @@ public class SimpleSolidControl
     /**
      * message logger for this control
      */
-    final private static Logger logger =
-            Logger.getLogger(SimpleSolidControl.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            SimpleSolidControl.class.getName());
     // *************************************************************************
     // constructors
 
@@ -139,14 +137,13 @@ public class SimpleSolidControl
     // RigidBodyControl methods
 
     /**
-     * Clone this control for a different spatial.
+     * Test whether this control is enabled.
      *
-     * @param spatial spatial to clone for (not null)
-     * @return new control
+     * @return true if enabled, otherwise false
      */
     @Override
-    public Control cloneForSpatial(Spatial spatial) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    final public boolean isEnabled() {
+        return enabled;
     }
 
     /**
