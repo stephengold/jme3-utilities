@@ -104,7 +104,7 @@ public class MakeStarMaps {
     /**
      * Earth's rate of rotation (radians per sidereal hour)
      */
-    final private static float radiansPerHour =
+    final private static float radiansPerHour = 
             FastMath.TWO_PI / Constants.hoursPerDay;
     /**
      * expected id of the last entry in the catalog
@@ -137,8 +137,8 @@ public class MakeStarMaps {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MakeStarMaps.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MakeStarMaps.class.getName());
     /**
      * application name for the usage message
      */
@@ -255,7 +255,7 @@ public class MakeStarMaps {
 
         float latitude = preset.latitude();
         logger.log(Level.FINE, "latitude is {0} degrees",
-                latitude * FastMath.RAD_TO_DEG);
+                MyMath.toDegrees(latitude));
 
         float siderealHour = preset.hour();
         logger.log(Level.FINE, "sidereal time is {0} hours", siderealHour);
@@ -334,17 +334,17 @@ public class MakeStarMaps {
         /*
          * sanity checks
          */
-        int degrees = Integer.valueOf(dd);
+        int degrees = Integer.parseInt(dd);
         if (degrees < -maxDeclination || degrees > maxDeclination) {
             throw new InvalidEntryException(
                     "dec degrees should be between -90 and 90, inclusive");
         }
-        int minutes = Integer.valueOf(mm);
+        int minutes = Integer.parseInt(mm);
         if (minutes < 0 || minutes >= maxMinutes) {
             throw new InvalidEntryException(
                     "dec minutes should be between 0 and 59, inclusive");
         }
-        float seconds = Float.valueOf(ss);
+        float seconds = Float.parseFloat(ss);
         if (seconds < 0f || seconds >= maxSeconds) {
             throw new InvalidEntryException(
                     "dec seconds should be between 0 and 59, inclusive");
@@ -384,17 +384,17 @@ public class MakeStarMaps {
         /*
          * sanity checks
          */
-        int hours = Integer.valueOf(hh);
+        int hours = Integer.parseInt(hh);
         if (hours < 0 || hours >= Constants.hoursPerDay) {
             throw new InvalidEntryException(
                     "RA hours should be between 0 and 23, inclusive");
         }
-        int minutes = Integer.valueOf(mm);
+        int minutes = Integer.parseInt(mm);
         if (minutes < 0 || minutes >= maxMinutes) {
             throw new InvalidEntryException(
                     "RA minutes should be between 0 and 59, inclusive");
         }
-        float seconds = Float.valueOf(ss);
+        float seconds = Float.parseFloat(ss);
         if (seconds < 0f || seconds >= maxSeconds) {
             throw new InvalidEntryException(
                     "RA seconds should be between 0 and 59, inclusive");
@@ -845,7 +845,8 @@ public class MakeStarMaps {
          * Compute the star's equatorial coordinates 
          * and convert them to radians.
          */
-        float declination = declination(textLine) * FastMath.DEG_TO_RAD;
+        float declinationDegrees = declination(textLine);
+        float declination = MyMath.toRadians(declinationDegrees);
         float rightAscension = rightAscensionHours(textLine) * radiansPerHour;
         /*
          * Instantiate the star.
