@@ -64,9 +64,7 @@ public class MakeStarMaps {
     /**
      * exception to indicate unexpected invalid data in a catalog entry
      */
-    static private class InvalidEntryException
-            extends Exception {
-
+    static private class InvalidEntryException extends Exception {
         static final long serialVersionUID = 1L;
 
         InvalidEntryException(String message) {
@@ -78,9 +76,7 @@ public class MakeStarMaps {
      * exception to indicate an invalid apparent magnitude in a catalog entry:
      * such entries can be ignored
      */
-    static private class InvalidMagnitudeException
-            extends Exception {
-
+    static private class InvalidMagnitudeException extends Exception {
         static final long serialVersionUID = 1L;
     }
     // *************************************************************************
@@ -737,7 +733,7 @@ public class MakeStarMaps {
             /*
              * Cope with missing/duplicate entry ids.
              */
-            int actualEntry = Integer.valueOf(actualPrefix.trim());
+            int actualEntry = Integer.parseInt(actualPrefix.trim());
             if (actualEntry > nextEntry) {
                 logger.log(Level.FINE, "missed entries #{0} through #{1}",
                         new Object[]{nextEntry, actualEntry - 1});
