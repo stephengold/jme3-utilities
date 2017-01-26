@@ -26,6 +26,7 @@
 package jme3utilities;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.binary.BinaryExporter;
 import java.io.File;
@@ -57,7 +58,7 @@ public class TestNameGenerator extends SimpleApplication {
      */
     public static void main(String[] ignored) {
         Misc.setLoggingLevels(Level.WARNING);
-        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+        Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
 
         TestNameGenerator application = new TestNameGenerator();

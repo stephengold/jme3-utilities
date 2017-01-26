@@ -27,6 +27,7 @@ package jme3utilities;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.audio.AudioNode;
+import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.light.Light;
@@ -57,8 +58,8 @@ public class MySpatial
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MySpatial.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MySpatial.class.getName());
     // *************************************************************************
     // constructors
 
@@ -184,8 +185,8 @@ public class MySpatial
      * @return mass in kilograms (&gt;0) or zero for a static object.
      */
     public static float getMass(Spatial spatial) {
-        RigidBodyControl rigidBodyControl =
-                spatial.getControl(RigidBodyControl.class);
+        RigidBodyControl rigidBodyControl = spatial.getControl(
+                RigidBodyControl.class);
         float mass = rigidBodyControl.getMass();
 
         assert mass >= 0f : mass;
@@ -326,8 +327,8 @@ public class MySpatial
         /*
          * Access the rigid body, if any.
          */
-        RigidBodyControl rigidBodyControl =
-                spatial.getControl(RigidBodyControl.class);
+        RigidBodyControl rigidBodyControl = spatial.getControl(
+                RigidBodyControl.class);
         Vector3f location;
         if (rigidBodyControl != null) {
             location = rigidBodyControl.getPhysicsLocation();
@@ -348,8 +349,8 @@ public class MySpatial
         /*
          * Access the rigid body, if any.
          */
-        RigidBodyControl rigidBodyControl =
-                spatial.getControl(RigidBodyControl.class);
+        RigidBodyControl rigidBodyControl = spatial.getControl(
+                RigidBodyControl.class);
         Quaternion orientation;
         if (rigidBodyControl != null) {
             orientation = rigidBodyControl.getPhysicsRotation();
@@ -561,8 +562,8 @@ public class MySpatial
         /*
          * Apply to the physical object, if any.
          */
-        RigidBodyControl rigidBodyControl =
-                spatial.getControl(RigidBodyControl.class);
+        RigidBodyControl rigidBodyControl = spatial.getControl(
+                RigidBodyControl.class);
         if (rigidBodyControl != null) {
             rigidBodyControl.setPhysicsLocation(newLocation.clone());
         }
@@ -592,8 +593,8 @@ public class MySpatial
         /*
          * Apply to the physical object, if any.
          */
-        RigidBodyControl rigidBodyControl =
-                spatial.getControl(RigidBodyControl.class);
+        RigidBodyControl rigidBodyControl = spatial.getControl(
+                RigidBodyControl.class);
         if (rigidBodyControl != null) {
             rigidBodyControl.setPhysicsRotation(newOrientation);
         }
@@ -624,7 +625,7 @@ public class MySpatial
      */
     public static void main(String[] ignored) {
         Misc.setLoggingLevels(Level.WARNING);
-        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+        Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
 
         MySpatial application = new MySpatial();

@@ -25,6 +25,7 @@
  */
 package jme3utilities.nifty.test;
 
+import com.jme3.audio.openal.ALAudioRenderer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
@@ -46,8 +47,8 @@ public class ClockDemo
     /**
      * message logger for this class
      */
-    final private static Logger logger = 
-            Logger.getLogger(ClockDemo.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            ClockDemo.class.getName());
     // *************************************************************************
     // new methods exposed
 
@@ -61,7 +62,7 @@ public class ClockDemo
          * Mute the chatty loggers found in some imported packages.
          */
         Misc.setLoggingLevels(Level.WARNING);
-        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+        Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
 
         ClockDemo application = new ClockDemo();

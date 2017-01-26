@@ -29,6 +29,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.ScreenshotAppState;
+import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
@@ -77,8 +78,8 @@ public class TestGlobeRenderer
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(TestGlobeRenderer.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            TestGlobeRenderer.class.getName());
     /**
      * application name for the title bar and usage message
      */
@@ -130,7 +131,7 @@ public class TestGlobeRenderer
          * Set the logging level for this class.
          */
         logger.setLevel(Level.INFO);
-        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+        Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
         /*
          * Instantiate the application.
@@ -225,8 +226,8 @@ public class TestGlobeRenderer
          * Create an unshaded material for each texture.
          */
         Texture dynamicTexture = moonRenderer.getTexture();
-        dynamicMaterial =
-                MyAsset.createUnshadedMaterial(assetManager, dynamicTexture);
+        dynamicMaterial = MyAsset.createUnshadedMaterial(
+                assetManager, dynamicTexture);
         RenderState additional = dynamicMaterial.getAdditionalRenderState();
         additional.setBlendMode(RenderState.BlendMode.Alpha);
         additional.setDepthWrite(false);

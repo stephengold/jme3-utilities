@@ -26,6 +26,7 @@
 package jme3utilities.debug.test;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.system.AppSettings;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,8 +47,8 @@ public class TestPas
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(TestPas.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            TestPas.class.getName());
     /**
      * application name, displayed on its window's title bar
      */
@@ -65,7 +66,7 @@ public class TestPas
          * Mute the chatty loggers found in some imported packages.
          */
         Misc.setLoggingLevels(Level.WARNING);
-        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+        Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
         /*
          * Instantiate the application.

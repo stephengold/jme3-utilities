@@ -26,6 +26,7 @@
 package jme3utilities.sky.test;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
@@ -62,8 +63,8 @@ public class CubeMapExample
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(CubeMapExample.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            CubeMapExample.class.getName());
     // *************************************************************************
     // new methods exposed
 
@@ -77,7 +78,7 @@ public class CubeMapExample
          * Mute the chatty loggers found in some imported packages.
          */
         Misc.setLoggingLevels(Level.WARNING);
-        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+        Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
 
         CubeMapExample app = new CubeMapExample();
@@ -187,8 +188,8 @@ public class CubeMapExample
      * Create and attach the sky.
      */
     private void initializeSky() {
-        Spatial starMap =
-                MyAsset.createStarMap(assetManager, "purple-nebula-complex");
+        Spatial starMap = MyAsset.createStarMap(assetManager,
+                "purple-nebula-complex");
         rootNode.attachChild(starMap);
     }
 

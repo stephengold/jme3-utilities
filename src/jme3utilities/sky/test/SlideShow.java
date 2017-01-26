@@ -27,6 +27,7 @@ package jme3utilities.sky.test;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.ScreenshotAppState;
+import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
@@ -106,8 +107,8 @@ public class SlideShow
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(SlideShow.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            SlideShow.class.getName());
     /**
      * application name for its window's title bar
      */
@@ -219,7 +220,7 @@ public class SlideShow
          * Mute the chatty loggers found in some imported packages.
          */
         Misc.setLoggingLevels(Level.WARNING);
-        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+        Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
         /*
          * Set the logging level for this class.
@@ -302,6 +303,7 @@ public class SlideShow
 
     /**
      * Callback to update the scene. (Invoked once per frame.)
+     *
      * @param unused time since the previous update (in seconds, &ge;0)
      */
     @Override
@@ -377,7 +379,6 @@ public class SlideShow
 
         cloudsDome = new Geometry("clouds", fullMesh);
         cloudsDome.setLocalScale(cloudScale);
-
 
         horizon = new Geometry("horizon", circle);
         horizon.setLocalScale(innerScale);

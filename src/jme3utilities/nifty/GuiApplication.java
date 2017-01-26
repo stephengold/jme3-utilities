@@ -48,8 +48,8 @@ abstract public class GuiApplication
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(GuiApplication.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            GuiApplication.class.getName());
     /**
      * asset path to the Nifty XML for generic popup menus
      */
@@ -146,7 +146,7 @@ abstract public class GuiApplication
          * asset does not validate, so skip validation for now.
          * Also, turn off warnings about re-registering styles.
          */
-        Logger niftyLogger = Logger.getLogger("de.lessvoid.nifty.Nifty");
+        Logger niftyLogger = Logger.getLogger(Nifty.class.getName());
         Level save = niftyLogger.getLevel();
         niftyLogger.setLevel(Level.SEVERE);
         nifty.fromXmlWithoutStartScreen(popupMenuAsssetPath);

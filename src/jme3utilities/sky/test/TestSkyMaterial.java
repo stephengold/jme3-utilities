@@ -28,6 +28,7 @@ package jme3utilities.sky.test;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.jme3.app.state.ScreenshotAppState;
+import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.input.KeyInput;
 import com.jme3.math.Vector3f;
@@ -85,8 +86,8 @@ public class TestSkyMaterial
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(TestSkyMaterial.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            TestSkyMaterial.class.getName());
     /**
      * action string to temporarily load a saved geometry
      */
@@ -142,7 +143,7 @@ public class TestSkyMaterial
          * Mute the chatty loggers found in some imported packages.
          */
         Misc.setLoggingLevels(Level.WARNING);
-        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+        Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
         /*
          * Set the logging level for this class.

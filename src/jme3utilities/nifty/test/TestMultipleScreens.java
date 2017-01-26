@@ -25,6 +25,7 @@
  */
 package jme3utilities.nifty.test;
 
+import com.jme3.audio.openal.ALAudioRenderer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
@@ -47,8 +48,8 @@ public class TestMultipleScreens
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(TestMultipleScreens.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            TestMultipleScreens.class.getName());
     // *************************************************************************
     // fields
     /**
@@ -76,7 +77,7 @@ public class TestMultipleScreens
          * Mute the chatty loggers found in some imported packages.
          */
         Misc.setLoggingLevels(Level.WARNING);
-        Logger.getLogger("com.jme3.audio.openal.ALAudioRenderer")
+        Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
         /*
          * Set the logging level for this class.
