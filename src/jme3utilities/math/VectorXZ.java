@@ -189,7 +189,7 @@ public class VectorXZ implements Comparable<VectorXZ> {
      * @return a unit vector (four possible values) or a zero vector
      */
     public VectorXZ cardinalize() {
-        if (isZeroLength()) {
+        if (isZero()) {
             return zero;
         }
         final float absX = FastMath.abs(x);
@@ -253,7 +253,7 @@ public class VectorXZ implements Comparable<VectorXZ> {
         Validate.nonNegative(maxX, "maximum X");
         Validate.nonNegative(maxZ, "maximum Z");
 
-        if (isZeroLength()) {
+        if (isZero()) {
             return zero;
         }
         /*
@@ -293,7 +293,7 @@ public class VectorXZ implements Comparable<VectorXZ> {
     public VectorXZ clampLength(float radius) {
         Validate.nonNegative(radius, "radius");
 
-        if (isZeroLength()) {
+        if (isZero()) {
             return zero;
         }
         double lengthSquared = lengthSquared();
@@ -434,11 +434,11 @@ public class VectorXZ implements Comparable<VectorXZ> {
     }
 
     /**
-     * Test this vector for zero length.
+     * Test this vector to see if it's the zero vector.
      *
-     * @return true if this vector equals zero, false otherwise
+     * @return true if both components are zero, false otherwise
      */
-    public boolean isZeroLength() {
+    public boolean isZero() {
         boolean result = (x == 0f && z == 0f);
         return result;
     }
@@ -505,7 +505,7 @@ public class VectorXZ implements Comparable<VectorXZ> {
      * @see com.jme3.math.Vector3f#negate()
      */
     public VectorXZ negate() {
-        if (isZeroLength()) {
+        if (isZero()) {
             return zero;
         }
 
@@ -522,17 +522,17 @@ public class VectorXZ implements Comparable<VectorXZ> {
      * @see com.jme3.math.Vector3f#normalize()
      */
     public VectorXZ normalize() {
-        if (isZeroLength()) {
+        if (isZero()) {
             logger.info("Normalizing a zero vector.");
             return zero;
         }
 
         double lengthSquared = lengthSquared();
-        if ((float)lengthSquared == 1f) {
+        if ((float) lengthSquared == 1f) {
             return this;
         }
 
-        float length = (float)Math.sqrt(lengthSquared);
+        float length = (float) Math.sqrt(lengthSquared);
         float newX = x / length;
         float newZ = z / length;
 
@@ -653,7 +653,7 @@ public class VectorXZ implements Comparable<VectorXZ> {
     public static void validateNonZero(VectorXZ vector, String description) {
         Validate.nonNull(vector, description);
 
-        if (vector.isZeroLength()) {
+        if (vector.isZero()) {
             String what;
             if (description == null) {
                 what = "method argument";
