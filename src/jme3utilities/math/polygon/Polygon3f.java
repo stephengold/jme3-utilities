@@ -81,6 +81,12 @@ public class Polygon3f {
      */
     final protected int numCorners;
     /**
+     * cached vector of corner indices which define the largest triangle (each
+     * &ge;0 and &lt;numCorners, in ascending order, set by
+     * #setLargestTriangle())
+     */
+    private int[] largestTriangle = null;
+    /**
      * locations of all corners, in sequence (not null or containing any nulls,
      * initialized by constructor)
      */
@@ -302,6 +308,30 @@ public class Polygon3f {
     }
 
     /**
+     * Calculate (or look up) the largest triangle formed by any three corners
+     * in this polygon.
+     *
+     * @return a new vector of three corner indices (sorted in ascending order)
+     * or null if the polygon has fewer than three corners
+     */
+    public int[] largestTriangle() {
+        if (largestTriangle == null) {
+            setLargestTriangle();
+        }
+        if (largestTriangle == null) {
+            return null;
+        }
+        int[] result = new int[3];
+        result[0] = largestTriangle[0];
+        result[1] = largestTriangle[1];
+        result[2] = largestTriangle[2];
+
+        assert result[0] < result[1];
+        assert result[1] < result[2];
+        return result;
+    }
+
+    /**
      * Read the number of corners, which is also the number of sides.
      *
      * @return count (&ge; 0)
@@ -480,7 +510,7 @@ public class Polygon3f {
      *
      * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
      * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
-     * @param corners (length&le;numCorners, cardinality&ge;2, unaffected)
+     * @param corners (length&ge;1, length&le;numCorners, unaffected)
      */
     protected boolean allCollinear(int cornerIndex1, int cornerIndex2,
             BitSet corners) {
@@ -488,10 +518,7 @@ public class Polygon3f {
         validateIndex(cornerIndex2, "index of 2nd corner");
         Validate.nonNull(corners, "set of corners");
         int length = corners.length();
-        Validate.inRange(length, "length of set of corners", 2, numCorners);
-        int cardinality = corners.cardinality();
-        Validate.inRange(cardinality, "number of corners in set",
-                2, numCorners);
+        Validate.inRange(length, "length of set of corners", 1, numCorners);
 
         if (doCoincide(cornerIndex1, cornerIndex2)) {
             /*
@@ -508,6 +535,7 @@ public class Polygon3f {
 
         for (int middleI = corners.nextSetBit(0);
                 middleI >= 0; middleI = corners.nextSetBit(middleI + 1)) {
+            assert middleI < numCorners : middleI;
             /*
              * Calculate the offset of the middle corner from the first.
              */
@@ -603,44 +631,6 @@ public class Polygon3f {
         } else {
             return true;
         }
-    }
-
-    /**
-     * Find the largest triangle formed by any three corners in the specified
-     * set.
-     *
-     * @param cornerSet indices of the corners to consider (not null,
-     * unaffected)
-     * @return a new array of three corner indices, or null if no triangles were
-     * found
-     */
-    protected int[] largestTriangle(BitSet cornerSet) {
-        Validate.nonNull(cornerSet, "corner set");
-
-        double largestSA = -1f;
-        int[] result = null;
-
-        for (int i = cornerSet.nextSetBit(0);
-                i >= 0; i = cornerSet.nextSetBit(i + 1)) {
-            for (int j = cornerSet.nextSetBit(i + 1);
-                    j >= 0; j = cornerSet.nextSetBit(j + 1)) {
-                for (int k = cornerSet.nextSetBit(j + 1);
-                        k >= 0; k = cornerSet.nextSetBit(k + 1)) {
-                    double sa = squaredArea(i, j, k);
-                    if (sa > largestSA) {
-                        largestSA = sa;
-                        if (result == null) {
-                            result = new int[3];
-                        }
-                        result[0] = i;
-                        result[1] = j;
-                        result[2] = k;
-                    }
-                }
-            }
-        }
-
-        return result;
     }
 
     /**
@@ -835,7 +825,7 @@ public class Polygon3f {
             }
         }
         /*
-         * Search for collinear adjacent sides.
+         * Search for adjacent sides that are collinear.
          */
         for (int iCorner = 0; iCorner < numCorners; iCorner++) {
             int next = nextIndex(iCorner);
@@ -882,9 +872,7 @@ public class Polygon3f {
         /*
          * The hard way: find the three corners which form the largest triangle.
          */
-        BitSet allCorners = new BitSet(numCorners);
-        allCorners.set(0, numCorners - 1);
-        int[] triangle = largestTriangle(allCorners);
+        int[] triangle = largestTriangle();
         if (triangle == null) {
             /*
              * Degenerate case:
@@ -894,20 +882,20 @@ public class Polygon3f {
             isPlanar = true;
             return;
         }
+        int aIndex = triangle[0];
+        int bIndex = triangle[1];
+        int cIndex = triangle[2];
         /*
          * Calculate the plane containing that triangle.
          */
-        int bestI = triangle[0];
-        int bestJ = triangle[1];
-        int bestK = triangle[2];
-        Vector3f cornerI = cornerLocations[bestI];
-        Vector3f cornerJ = cornerLocations[bestJ];
-        Vector3f cornerK = cornerLocations[bestK];
-        Vector3f offsetJ = cornerJ.subtract(cornerI);
-        Vector3f offsetK = cornerK.subtract(cornerI);
-        Vector3f crossProduct = offsetJ.cross(offsetK);
-        float norm = crossProduct.length();
-        if (norm == 0f) {
+        Vector3f a = cornerLocations[aIndex];
+        Vector3f b = cornerLocations[bIndex];
+        Vector3f c = cornerLocations[cIndex];
+        Vector3f offsetB = b.subtract(a);
+        Vector3f offsetC = c.subtract(b);
+        Vector3f crossProduct = offsetB.cross(offsetC);
+        float crossLength = crossProduct.length();
+        if (crossLength == 0f) {
             /*
              * Degenerate case:
              * Treat as planar even though the plane is ill-defined.
@@ -916,17 +904,17 @@ public class Polygon3f {
             isPlanar = true;
             return;
         }
-        Vector3f planeNormal = crossProduct.divide(norm);
-        float planeConstant = planeNormal.dot(cornerI);
+        Vector3f planeNormal = crossProduct.divide(crossLength);
+        float planeConstant = -planeNormal.dot(a);
         /*
          * If all the polygon's corners lie in that plane, 
          * then the polygon is planar, otherwise it isn't.
          */
         for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
             Vector3f corner = cornerLocations[cornerIndex];
-            float pseudoDistance = planeNormal.dot(corner) - planeConstant;
-            float d2 = pseudoDistance * pseudoDistance;
-            if (d2 > tolerance2) {
+            float pseudoDistance = planeNormal.dot(corner) + planeConstant;
+            float distanceSquared = pseudoDistance * pseudoDistance;
+            if (distanceSquared > tolerance2) {
                 isPlanar = false;
                 return;
             }
@@ -935,21 +923,50 @@ public class Polygon3f {
     }
 
     /**
+     * Initialize the #largestTriangle field if numCorners&gt;3, otherwise leave
+     * it unchanged.
+     */
+    private void setLargestTriangle() {
+        double largestSA = -1f;
+        for (int i = 0; i < numCorners - 2; i++) {
+            for (int j = i + 1; j < numCorners - 1; j++) {
+                for (int k = j + 1; k < numCorners; k++) {
+                    double sa = squaredArea(i, j, k);
+                    if (sa > largestSA) {
+                        largestSA = sa;
+                        if (largestTriangle == null) {
+                            largestTriangle = new int[3];
+                        }
+                        largestTriangle[0] = i;
+                        largestTriangle[1] = j;
+                        largestTriangle[2] = k;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Initialize the element(s) of the #squaredDistances field for a particular
      * pair of corners.
      *
-     * @param index1 (&ge;0, &lt;numCorners)
-     * @param index2 (&ge;0, &lt;numCorners)
+     * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
      */
-    private void setSquaredDistance(int index1, int index2) {
-        if (index1 == index2) {
-            squaredDistances[index1][index2] = 0.0;
+    private void setSquaredDistance(int cornerIndex1, int cornerIndex2) {
+        assert cornerIndex1 >= 0 : cornerIndex1;
+        assert cornerIndex1 < numCorners : cornerIndex1;
+        assert cornerIndex2 >= 0 : cornerIndex2;
+        assert cornerIndex2 < numCorners : cornerIndex1;
+
+        if (cornerIndex1 == cornerIndex2) {
+            squaredDistances[cornerIndex1][cornerIndex2] = 0.0;
         } else {
-            Vector3f corner1 = cornerLocations[index1];
-            Vector3f corner2 = cornerLocations[index2];
+            Vector3f corner1 = cornerLocations[cornerIndex1];
+            Vector3f corner2 = cornerLocations[cornerIndex2];
             double square = MyVector3f.distanceSquared(corner1, corner2);
-            squaredDistances[index1][index2] = square;
-            squaredDistances[index2][index1] = square;
+            squaredDistances[cornerIndex1][cornerIndex2] = square;
+            squaredDistances[cornerIndex2][cornerIndex1] = square;
         }
     }
 }
