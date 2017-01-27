@@ -25,6 +25,7 @@
  */
 package jme3utilities.math.polygon;
 
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import java.util.BitSet;
 import java.util.Map;
@@ -229,53 +230,24 @@ public class Polygon3f {
      * Find the side closest to a specified point in space.
      *
      * @param point coordinates of the specified point (not null, unaffected)
-     * @param storeCoordinates if not null, used to store coordinates of the
-     * point on the side closest to the specified point
-     *
-     * @return index of the side (&ge;0, &lt;numCorners) or -1 if this polygon
-     * has no sides
+     * @param storeClosestPoint if not null, used to store the coordinates of
+     * the closest point on the perimeter, if determined
+     * @return index of closest the side (&ge;0, &lt;numCorners) or -1 if this
+     * polygon has no sides
      */
-    public int findSide(Vector3f point, Vector3f storeCoordinates) {
+    public int findSide(Vector3f point, Vector3f storeClosestPoint) {
+        Validate.nonNull(point, "coordinates of point");
+
         int result = -1;
         double leastSD = Double.POSITIVE_INFINITY;
+        Vector3f closestPointCurrentSide = new Vector3f();
         for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
-            /*
-             * Try the first corner of the current side.
-             */
-            Vector3f corner = cornerLocations[sideIndex];
-            Vector3f offset = point.subtract(corner);
-            double squaredDistance = MyVector3f.lengthSquared(offset);
+            double squaredDistance = squaredDistanceToSide(
+                    point, sideIndex, closestPointCurrentSide);
             if (squaredDistance < leastSD) {
                 result = sideIndex;
                 leastSD = squaredDistance;
-                if (storeCoordinates != null) {
-                    storeCoordinates.set(corner);
-                }
-            }
-            /*
-             * Find closest point on the straight line containing the side.
-             */
-            int nextIndex = nextIndex(sideIndex);
-            Vector3f corner2 = cornerLocations[nextIndex];
-            Vector3f offset2 = corner2.subtract(corner);
-            double dot = MyVector3f.dot(offset, offset2);
-            double lengthSquared = squaredDistance(sideIndex, nextIndex);
-            if (dot > 0f && dot < lengthSquared) {
-                /* 
-                 * The closest point lies on the side.
-                 */
-                double fraction = dot / lengthSquared;
-                Vector3f offsetClosest = offset2.mult((float) fraction);
-                squaredDistance = MyVector3f.distanceSquared(
-                        offset, offsetClosest);
-                if (squaredDistance < leastSD) {
-                    result = sideIndex;
-                    leastSD = squaredDistance;
-                    if (storeCoordinates != null) {
-                        storeCoordinates.set(corner);
-                        storeCoordinates.addLocal(offsetClosest);
-                    }
-                }
+                storeClosestPoint.set(closestPointCurrentSide);
             }
         }
 
@@ -397,7 +369,95 @@ public class Polygon3f {
      * @return count (&ge; 0)
      */
     public int numCorners() {
+        assert numCorners >= 0 : numCorners;
         return numCorners;
+    }
+
+    /**
+     * Calculate which corner (or side) follows the specified one. For this to
+     * work, there must be at least one corner.
+     *
+     * @param index index of a corner (or side) (&ge;0, &lt;numCorners)
+     * @return index of the following corner (or side) (&ge;0, &lt;numCorners)
+     */
+    public int nextIndex(int index) {
+        validateIndex(index, "index");
+        if (numCorners < 1) {
+            throw new IllegalStateException("no corners");
+        }
+
+        int next = (index + 1) % numCorners;
+        return next;
+    }
+
+    /**
+     * Find a corner with which a given point coincides.
+     *
+     * @param point coordinates of the point (not null, unaffected)
+     * @return index of the coincident corner, or -1 if none coincide
+     */
+    public int onCorner(Vector3f point) {
+        Validate.nonNull(point, "point");
+
+        for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
+            if (onCorner(point, cornerIndex)) {
+                return cornerIndex;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Test whether a point coincides with a specific corner of this polygon.
+     *
+     * @param point coordinates of the point (not null, unaffected)
+     * @param cornerIndex index of the corner (&ge;0, &lt;numCorners-1)
+     * @return true if the point coincides, false if it doesn't
+     */
+    public boolean onCorner(Vector3f point, int cornerIndex) {
+        Validate.nonNull(point, "point");
+        validateIndex(cornerIndex, "corner index");
+
+        Vector3f corner = cornerLocations[cornerIndex];
+        boolean result = MyVector3f.doCoincide(corner, point, tolerance2);
+
+        return result;
+    }
+
+    /**
+     * Find a side on which a given point lies.
+     *
+     * @param point coordinates of the point (not null, unaffected)
+     * @return index of the side, or -1 if none coincide
+     */
+    public int onSide(Vector3f point) {
+        Validate.nonNull(point, "point");
+
+        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+            if (onSide(point, sideIndex)) {
+                return sideIndex;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Test whether a point lies on a specific side of this polygon.
+     *
+     * @param point coordinates of the point (not null, unaffected)
+     * @param sideIndex index of the side (&ge;0, &lt;numCorners-1)
+     * @return true if the point lies on the side, false if it doesn't
+     */
+    public boolean onSide(Vector3f point, int sideIndex) {
+        Validate.nonNull(point, "point");
+        validateIndex(sideIndex, "side index");
+
+        double squaredDistance = squaredDistanceToSide(point, sideIndex, null);
+        if (squaredDistance > tolerance2) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -417,19 +477,37 @@ public class Polygon3f {
     }
 
     /**
+     * Calculate which corner (or side) precedes the specified one. For this to
+     * work, there must be at least one corner.
+     *
+     * @param index index of a corner (or side) (&ge;0, &lt;numCorners)
+     * @return index of the preceding corner (or side) (&ge;0, &lt;numCorners)
+     */
+    public int prevIndex(int index) {
+        validateIndex(index, "index");
+        if (numCorners < 1) {
+            throw new IllegalStateException("no corners");
+        }
+
+        int next = (index + numCorners - 1) % numCorners;
+        return next;
+    }
+
+    /**
      * Test whether this polygon shares one or more corners with another
      * polygon.
      *
      * @param other the other polygon (not null)
-     * @param cornerMap if not null, used to store indices of matching corners
+     * @param storeCornerMap if not null, used to store indices of matching
+     * corners
      * @return true if one or more shared corners were found, otherwise false
      */
     public boolean sharesCornerWith(Polygon3f other,
-            Map<Integer, Integer> cornerMap) {
+            Map<Integer, Integer> storeCornerMap) {
         Validate.nonNull(other, "other polygon");
 
-        if (cornerMap != null) {
-            cornerMap.clear();
+        if (storeCornerMap != null) {
+            storeCornerMap.clear();
         }
 
         float tol = other.tolerance();
@@ -442,8 +520,8 @@ public class Polygon3f {
                 Vector3f thisCorner = cornerLocations[thisI];
                 if (MyVector3f.doCoincide(otherCorner, thisCorner, tol2)) {
                     result = true;
-                    if (cornerMap != null) {
-                        cornerMap.put(thisI, otherI);
+                    if (storeCornerMap != null) {
+                        storeCornerMap.put(thisI, otherI);
                     }
                 }
             }
@@ -456,15 +534,15 @@ public class Polygon3f {
      * Test whether this polygon shares one or more sides with another polygon.
      *
      * @param other the other polygon (not null)
-     * @param sideMap if not null, used to storage indices of matching sides
+     * @param storeMap if not null, used to store indices of matching sides
      * @return true if one or more shared sides were found, otherwise false
      */
     public boolean sharesSideWith(Polygon3f other,
-            Map<Integer, Integer> sideMap) {
+            Map<Integer, Integer> storeMap) {
         Validate.nonNull(other, "other polygon");
 
-        if (sideMap != null) {
-            sideMap.clear();
+        if (storeMap != null) {
+            storeMap.clear();
         }
 
         Map<Integer, Integer> cornerMap = new TreeMap<>();
@@ -481,14 +559,14 @@ public class Polygon3f {
 
             if (otherN == other.nextIndex(otherI)) {
                 result = true;
-                if (sideMap != null) {
-                    sideMap.put(thisI, otherI);
+                if (storeMap != null) {
+                    storeMap.put(thisI, otherI);
                 }
             }
             if (otherI == other.nextIndex(otherN)) {
                 result = true;
-                if (sideMap != null) {
-                    sideMap.put(thisI, otherN);
+                if (storeMap != null) {
+                    storeMap.put(thisI, otherN);
                 }
             }
         }
@@ -509,6 +587,78 @@ public class Polygon3f {
         double squaredDistance = squaredDistance(sideIndex, nextIndex);
         float result = (float) Math.sqrt(squaredDistance);
 
+        return result;
+    }
+
+    /**
+     * Calculate the squared distance from a point to a specific corner of this
+     * polygon.
+     *
+     * @param point coordinates of the point (not null, unaffected)
+     * @param cornerIndex index of the side (&ge;0, &lt;numCorners-1)
+     * @return squared distance from point to corner (&ge;0)
+     */
+    public double squaredDistanceToCorner(Vector3f point, int cornerIndex) {
+        Validate.nonNull(point, "point");
+        validateIndex(cornerIndex, "corner index");
+
+        Vector3f corner = cornerLocations[cornerIndex];
+        double result = MyVector3f.distanceSquared(corner, point);
+
+        assert result >= 0.0 : result;
+        return result;
+    }
+
+    /**
+     * Calculate the squared distance from a point to a specific side of this
+     * polygon.
+     *
+     * @param point coordinates of the point (not null, unaffected)
+     * @param sideIndex index of the side (&ge;0, &lt;numCorners-1)
+     * @param storeClosestPoint if not null, used to store the coordinates of
+     * the closest point
+     * @return squared distance from point to side (&ge;0)
+     */
+    public double squaredDistanceToSide(Vector3f point, int sideIndex,
+            Vector3f storeClosestPoint) {
+        Validate.nonNull(point, "point");
+        validateIndex(sideIndex, "side index");
+        /*
+         * Calculate start and direction of a straight line containing the side.
+         */
+        Vector3f corner1 = cornerLocations[sideIndex];
+        int nextIndex = nextIndex(sideIndex);
+        Vector3f corner2 = cornerLocations[nextIndex];
+        Vector3f sideDirection = corner2.subtract(corner1);
+        /*
+         * If the side has zero length, return the squared distance to corner1.
+         */
+        double sideLengthSquared = squaredDistance(sideIndex, nextIndex);
+        if (sideLengthSquared == 0.0) {
+            if (storeClosestPoint != null) {
+                storeClosestPoint.set(corner1);
+            }
+            double result = MyVector3f.distanceSquared(corner1, point);
+            return result;
+        }
+        /*
+         * Calculate parametric value for the closest point on that line.
+         */
+        Vector3f fromC1 = point.subtract(corner1);
+        double dot = MyVector3f.dot(fromC1, sideDirection);
+        double t = dot / sideLengthSquared;
+        /*
+         * Calculate offset of the closest point on the side.
+         */
+        float scaleFactor = FastMath.clamp((float) t, 0f, 1f);
+        Vector3f closestOffset = sideDirection.mult(scaleFactor);
+        if (storeClosestPoint != null) {
+            storeClosestPoint.set(corner1);
+            storeClosestPoint.addLocal(closestOffset);
+        }
+        double result = MyVector3f.distanceSquared(closestOffset, fromC1);
+
+        assert result >= 0.0 : result;
         return result;
     }
 
@@ -589,8 +739,8 @@ public class Polygon3f {
      * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
      * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
      * @param cornerIndex3 index of the 3rd corner (&ge;0, &lt;numCorners)
-     * @param storeMiddleIndex if not null and the result is true, this object
-     * will be set to the index of the middle corner, if determined
+     * @param storeMiddleIndex if not null and the result is true, used to store
+     * the index of the middle corner, if determined
      * @return true if collinear, otherwise false
      */
     protected boolean areCollinear(int cornerIndex1, int cornerIndex2,
@@ -683,40 +833,6 @@ public class Polygon3f {
         }
 
         return result;
-    }
-
-    /**
-     * Calculate which corner (or side) follows the specified one. For this to
-     * work, there must be at least one corner.
-     *
-     * @param index index of a corner (or side) (&ge;0, &lt;numCorners)
-     * @return index of the following corner (or side) (&ge;0, &lt;numCorners)
-     */
-    protected int nextIndex(int index) {
-        validateIndex(index, "index");
-        if (numCorners < 1) {
-            throw new IllegalStateException("no corners");
-        }
-
-        int next = (index + 1) % numCorners;
-        return next;
-    }
-
-    /**
-     * Calculate which corner (or side) precedes the specified one. For this to
-     * work, there must be at least one corner.
-     *
-     * @param index index of a corner (or side) (&ge;0, &lt;numCorners)
-     * @return index of the preceding corner (or side) (&ge;0, &lt;numCorners)
-     */
-    protected int prevIndex(int index) {
-        validateIndex(index, "index");
-        if (numCorners < 1) {
-            throw new IllegalStateException("no corners");
-        }
-
-        int next = (index + numCorners - 1) % numCorners;
-        return next;
     }
 
     /**
