@@ -57,9 +57,9 @@ public class TestPolygon3f {
         System.out.printf("Test results for class Polygon3f:%n%n");
 
         /*
-         * degenerate test cases
+         * degenerate planar test cases
          */
-        Vector3f[][] degenerateCase = new Vector3f[14][];
+        Vector3f[][] degenerateCase = new Vector3f[12][];
 
         degenerateCase[0] = new Vector3f[]{}; // null
 
@@ -108,7 +108,7 @@ public class TestPolygon3f {
             new Vector3f(2.7f, 4.3f, 11.7f)
         };
 
-        degenerateCase[9] = new Vector3f[]{ // duplicative quad
+        degenerateCase[9] = new Vector3f[]{ // duplicative quad in Y-Z plane
             new Vector3f(3f, 4f, 0f),
             new Vector3f(3f, 4f, 1f),
             new Vector3f(3f, 5f, 1f),
@@ -122,15 +122,19 @@ public class TestPolygon3f {
             new Vector3f(2f, 4f, 1f)
         };
 
-        degenerateCase[11] = new Vector3f[]{ // pent with 0-degree angle
+        degenerateCase[11] = new Vector3f[]{ // horizontal pent w/0-degree angle
             new Vector3f(1f, 4f, 0f),
             new Vector3f(2f, 4f, 0f),
             new Vector3f(1f, 4f, 0f),
             new Vector3f(3f, 4f, 0f),
             new Vector3f(2f, 4f, 1f)
         };
+        /*
+         * degenerate non-planar test cases
+         */
+        Vector3f[][] dnpCase = new Vector3f[2][];
 
-        degenerateCase[12] = new Vector3f[]{ // non-planar hexagon with 180s
+        dnpCase[0] = new Vector3f[]{ // non-planar hexagon with 180s
             new Vector3f(1f, 4f, 0f),
             new Vector3f(2f, 4f, 0f),
             new Vector3f(3f, 4f, 0f),
@@ -139,7 +143,7 @@ public class TestPolygon3f {
             new Vector3f(1f, 4f, 1f)
         };
 
-        degenerateCase[13] = new Vector3f[]{ // non-planar hexagon with dup
+        dnpCase[1] = new Vector3f[]{ // non-planar hexagon with dup
             new Vector3f(1f, 4f, 0f),
             new Vector3f(3f, 4f, 0f),
             new Vector3f(3f, 4f, 0f),
@@ -148,7 +152,7 @@ public class TestPolygon3f {
             new Vector3f(1f, 4f, 1f)
         };
         /*
-         * non-degenerate test cases
+         * generic planar test cases
          */
         Vector3f[][] genericCase = new Vector3f[4][];
 
@@ -165,34 +169,64 @@ public class TestPolygon3f {
             new Vector3f(0f, 9f, 6f)
         };
 
-        genericCase[2] = new Vector3f[]{ // skewed quad
+        genericCase[2] = new Vector3f[]{ // long side close to origin
+            new Vector3f(1f, 9f, 9f),
+            new Vector3f(1f, -9f, -9f),
+            new Vector3f(2f, 0f, 0f)
+        };
+
+        genericCase[3] = new Vector3f[]{ // self-intersecting quad
+            new Vector3f(1f, 9f, 9f),
+            new Vector3f(1f, -9f, -9f),
+            new Vector3f(2f, 9f, 9f),
+            new Vector3f(2f, -9f, -9f)
+        };
+        /*
+         * generic non-planar test cases
+         */
+        Vector3f[][] gnpCase = new Vector3f[1][];
+
+        gnpCase[0] = new Vector3f[]{ // skewed quad
             new Vector3f(0f, 9f, 9f),
             new Vector3f(0f, 12f, 9f),
             new Vector3f(1f, 12f, 6f),
             new Vector3f(0f, 9f, 6f)
         };
 
-        genericCase[3] = new Vector3f[]{ // long side close to origin
-            new Vector3f(1f, 9f, 9f),
-            new Vector3f(1f, -9f, -9f),
-            new Vector3f(2f, 0f, 0f)
-        };
-
         Vector3f[] theCase;
         Polygon3f poly;
 
         for (int caseI = 0; caseI < degenerateCase.length; caseI++) {
-            System.out.printf("degenerate test case #%d:%n", caseI);
+            System.out.printf("degenerate/planar test case #%d:%n", caseI);
             theCase = degenerateCase[caseI];
             poly = new Polygon3f(theCase, 0.01f);
             assert poly.isDegenerate();
+            assert poly.isPlanar();
+            tryMethods(poly);
+        }
+
+        for (int caseI = 0; caseI < dnpCase.length; caseI++) {
+            System.out.printf("degenerate/non-planar test case #%d:%n", caseI);
+            theCase = dnpCase[caseI];
+            poly = new Polygon3f(theCase, 0.01f);
+            assert poly.isDegenerate();
+            assert !poly.isPlanar();
             tryMethods(poly);
         }
 
         for (int caseI = 0; caseI < genericCase.length; caseI++) {
-            System.out.printf("generic test case #%d:%n", caseI);
+            System.out.printf("generic/planar test case #%d:%n", caseI);
             theCase = genericCase[caseI];
             poly = new GenericPolygon3f(theCase, 0.01f);
+            assert poly.isPlanar();
+            tryMethods(poly);
+        }
+
+        for (int caseI = 0; caseI < gnpCase.length; caseI++) {
+            System.out.printf("generic/non-planar test case #%d:%n", caseI);
+            theCase = gnpCase[caseI];
+            poly = new GenericPolygon3f(theCase, 0.01f);
+            assert !poly.isPlanar();
             tryMethods(poly);
         }
 
@@ -200,18 +234,31 @@ public class TestPolygon3f {
     }
 
     static void tryMethods(Polygon3f poly) {
-        System.out.printf(" numCorners = %d:%n",
-                poly.numCorners());
-        Vector3f[] array = poly.copyCornerLocations();
-        for (int i = 0; i < array.length; i++) {
-            System.out.printf("  corner%d at %s%n",
-                    i, array[i].toString());
+        GenericPolygon3f generic = null;
+        if (poly instanceof GenericPolygon3f) {
+            generic = (GenericPolygon3f) poly;
         }
 
-        System.out.printf(" %s planar,",
-                poly.isPlanar() ? "IS" : "is NOT");
-        System.out.printf(" perimeter = %f%n",
-                poly.perimeter());
+        int numCorners = poly.numCorners();
+        System.out.printf(" numCorners = %d:%n", numCorners);
+
+        Vector3f[] array = poly.copyCornerLocations();
+        assert array.length == numCorners : array.length;
+        for (int i = 0; i < numCorners; i++) {
+            System.out.printf("  corner%d at %s%n", i, array[i].toString());
+        }
+        for (int i = 0; i < numCorners; i++) {
+            System.out.printf("  side%d: %f wu%n", i, poly.sideLength(i));
+        }
+
+        System.out.printf(" %s degenerate,",
+                poly.isDegenerate() ? "IS" : "is NOT");
+        if (generic != null) {
+            System.out.printf(" %s self-intersecting,",
+                    generic.isSelfIntersecting() ? "IS" : "is NOT");
+        }
+        System.out.printf(" %s planar,", poly.isPlanar() ? "IS" : "is NOT");
+        System.out.printf(" perimeter = %f%n", poly.perimeter());
 
         System.out.print(" shortest side = ");
         int shortI = poly.findShortest();
@@ -229,6 +276,14 @@ public class TestPolygon3f {
         } else {
             float length = poly.sideLength(longI);
             System.out.printf("side%d, %f wu%n", longI, length);
+        }
+
+        System.out.print(" largest triangle = ");
+        int tri[] = poly.largestTriangle();
+        if (tri == null) {
+            System.out.printf("n/a%n");
+        } else {
+            System.out.printf("%d-%d-%d%n", tri[0], tri[1], tri[2]);
         }
 
         System.out.print(" corner closest to origin = ");
@@ -251,5 +306,12 @@ public class TestPolygon3f {
                     scto, tempVector.toString(), distance);
         }
         System.out.printf("%n%n");
+
+        if (poly.numCorners() > 3) {
+            Polygon3f sub = poly.fromRange(numCorners - 1, 1);
+            System.out.printf("triangle %d-0-1:%n", numCorners - 1);
+            assert sub.numCorners() == 3 : sub.numCorners();
+            tryMethods(sub);
+        }
     }
 }
