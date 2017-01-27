@@ -162,32 +162,6 @@ public class Polygon3f {
     }
 
     /**
-     * Test (or look up) whether this polygon is degenerate.
-     *
-     * @return true if it is degenerate, otherwise false
-     */
-    final public boolean isDegenerate() {
-        if (isDegenerate == null) {
-            setIsDegenerate();
-        }
-
-        return isDegenerate;
-    }
-
-    /**
-     * Test (or look up) whether this polygon is planar.
-     *
-     * @return true if it is planar, otherwise false
-     */
-    final public boolean isPlanar() {
-        if (isPlanar == null) {
-            setIsPlanar();
-        }
-
-        return isPlanar;
-    }
-
-    /**
      * Find the corner closest to a point in space.
      *
      * @param point coordinates of the point (not null, unaffected)
@@ -305,6 +279,73 @@ public class Polygon3f {
         }
 
         return result;
+    }
+
+    /**
+     * Generate a new polygon which shares a range of corners with this one.
+     *
+     * @param firstIndex index of the first corner in the shared range (&ge;0,
+     * &lt;numCorners)
+     * @param lastIndex index of the last corner in the shared range (&ge;0,
+     * &lt;numCorners)
+     * @return a new polygon with at least two corners
+     */
+    public Polygon3f fromRange(int firstIndex, int lastIndex) {
+        validateIndex(firstIndex, "first corner index");
+        validateIndex(lastIndex, "last corner index");
+        if (firstIndex == lastIndex) {
+            throw new IllegalArgumentException("Corner indices must differ.");
+        }
+        /*
+         * Count how many corners the new polygon will include.
+         */
+        int newNumCorners = 1;
+        for (int oldI = firstIndex; oldI != lastIndex; oldI = nextIndex(oldI)) {
+            newNumCorners++;
+        }
+        assert newNumCorners >= 2 : newNumCorners;
+        assert newNumCorners <= numCorners : newNumCorners;
+        /*        
+         * Allocate and fill the array of corner locations.
+         */
+        Vector3f newCornerLocations[] = new Vector3f[newNumCorners];
+        int newI = 0;
+        for (int oldI = firstIndex; oldI != lastIndex; oldI = nextIndex(oldI)) {
+            newCornerLocations[newI] = cornerLocations[oldI];
+            newI++;
+        }
+        assert newI + 1 == newNumCorners;
+        newCornerLocations[newI] = cornerLocations[lastIndex];
+
+        Polygon3f result = new Polygon3f(newCornerLocations, tolerance);
+
+        return result;
+    }
+
+    /**
+     * Test (or look up) whether this polygon is degenerate.
+     *
+     * @return true if it is degenerate, otherwise false
+     */
+    final public boolean isDegenerate() {
+        if (isDegenerate == null) {
+            setIsDegenerate();
+        }
+
+        return isDegenerate;
+    }
+
+    /**
+     * Test (or look up) whether this polygon is planar.
+     *
+     * @return true if it is planar, otherwise false
+     */
+    final public boolean isPlanar() {
+        if (isPlanar == null) {
+            setIsPlanar();
+        }
+
+        return isPlanar;
     }
 
     /**
@@ -448,47 +489,6 @@ public class Polygon3f {
         int nextIndex = nextIndex(sideIndex);
         double squaredDistance = squaredDistance(sideIndex, nextIndex);
         float result = (float) Math.sqrt(squaredDistance);
-
-        return result;
-    }
-
-    /**
-     * Generate a new polygon which shares a range of corners with this one.
-     *
-     * @param firstIndex index of the first corner in the range (&ge;0,
-     * &lt;numCorners)
-     * @param lastIndex index of the last corner in the range (&ge;0,
-     * &lt;numCorners)
-     * @return a new polygon with at least two corners
-     */
-    public Polygon3f fromRange(int firstIndex, int lastIndex) {
-        validateIndex(firstIndex, "first corner index");
-        validateIndex(lastIndex, "last corner index");
-        if (firstIndex == lastIndex) {
-            throw new IllegalArgumentException("Corner indices must differ.");
-        }
-        /*
-         * Count how many corners the new polygon will include.
-         */
-        int newNumCorners = 1;
-        for (int oldI = firstIndex; oldI != lastIndex; oldI = nextIndex(oldI)) {
-            newNumCorners++;
-        }
-        assert newNumCorners >= 2 : newNumCorners;
-        assert newNumCorners <= numCorners : newNumCorners;
-        /*        
-         * Allocate and fill the array of corner locations.
-         */
-        Vector3f newCornerLocations[] = new Vector3f[newNumCorners];
-        int newI = 0;
-        for (int oldI = firstIndex; oldI != lastIndex; oldI = nextIndex(oldI)) {
-            newCornerLocations[newI] = cornerLocations[oldI];
-            newI++;
-        }
-        assert newI + 1 == newNumCorners;
-        newCornerLocations[newI] = cornerLocations[lastIndex];
-
-        Polygon3f result = new Polygon3f(newCornerLocations, tolerance);
 
         return result;
     }
