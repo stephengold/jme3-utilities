@@ -35,8 +35,9 @@ import jme3utilities.math.MyVector3f;
 
 /**
  * An immutable polygon in three-dimensional space, consisting of N corners
- * (points) connected by N sides (straight-line segments). For efficiency, many
- * calculated values are cached.
+ * (points) connected by N sides (straight-line segments). It may be degenerate
+ * and/or planar, though it need not be. For efficiency, many calculated values
+ * are cached.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -284,9 +285,9 @@ public class Polygon3f {
     /**
      * Generate a new polygon which shares a range of corners with this one.
      *
-     * @param firstIndex index of the first corner in the shared range (&ge;0,
+     * @param firstIndex index of the first corner in the range (&ge;0,
      * &lt;numCorners)
-     * @param lastIndex index of the last corner in the shared range (&ge;0,
+     * @param lastIndex index of the last corner in the range (&ge;0,
      * &lt;numCorners)
      * @return a new polygon with at least two corners
      */
@@ -308,16 +309,34 @@ public class Polygon3f {
         /*        
          * Allocate and fill the array of corner locations.
          */
-        Vector3f newCornerLocations[] = new Vector3f[newNumCorners];
+        Vector3f[] newCornerLocations = new Vector3f[newNumCorners];
+        int[] oldIndex = new int[newNumCorners];
         int newI = 0;
         for (int oldI = firstIndex; oldI != lastIndex; oldI = nextIndex(oldI)) {
+            oldIndex[newI] = oldI;
             newCornerLocations[newI] = cornerLocations[oldI];
             newI++;
         }
-        assert newI + 1 == newNumCorners;
+        assert newI == newNumCorners - 1;
+        oldIndex[newI] = lastIndex;
         newCornerLocations[newI] = cornerLocations[lastIndex];
 
         Polygon3f result = new Polygon3f(newCornerLocations, tolerance);
+        assert result.numCorners() == newNumCorners;
+
+        if (isPlanar != null && isPlanar) {
+            result.setIsPlanar(true);
+        }
+        for (newI = 0; newI < newNumCorners; newI++) {
+            int oldI = oldIndex[newI];
+            for (int newJ = newI; newJ < newNumCorners; newJ++) {
+                int oldJ = oldIndex[newJ];
+                Double sd = squaredDistances[oldI][oldJ];
+                if (sd != null) {
+                    result.setSquaredDistance(newI, newJ, sd);
+                }
+            }
+        }
 
         return result;
     }
@@ -511,6 +530,7 @@ public class Polygon3f {
      * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
      * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
      * @param corners (length&ge;1, length&le;numCorners, unaffected)
+     * @return true if the corners are collinear, false otherwise
      */
     protected boolean allCollinear(int cornerIndex1, int cornerIndex2,
             BitSet corners) {
@@ -716,13 +736,13 @@ public class Polygon3f {
          * If any corners coincide, then the area is effectively zero. 
          */
         if (doCoincide(indexA, indexB)) {
-            return 0f;
+            return 0.0;
         }
         if (doCoincide(indexA, indexC)) {
-            return 0f;
+            return 0.0;
         }
         if (doCoincide(indexB, indexC)) {
-            return 0f;
+            return 0.0;
         }
         /*
          * Calculate the offsets of the B and C relative to A.
@@ -739,14 +759,14 @@ public class Polygon3f {
         double ac2 = squaredDistance(indexA, indexC);
         double fraction = abDotAC / ac2;
         Vector3f projABonAC = ac.mult((float) fraction);
-        double height2 = MyVector3f.distanceSquared(ab, projABonAC);
+        double heightSquared = MyVector3f.distanceSquared(ab, projABonAC);
         /*
          * Calculate the squared area.  Area = base * height / 2f.
          */
-        double base2 = squaredDistance(indexA, indexC);
-        double area2 = base2 * height2 / 4f;
+        double baseSquared = squaredDistance(indexA, indexC);
+        double areaSquared = baseSquared * heightSquared / 4f;
 
-        return area2;
+        return areaSquared;
     }
 
     /**
@@ -810,34 +830,43 @@ public class Polygon3f {
      */
     private void setIsDegenerate() {
         if (numCorners < 3) {
-            isDegenerate = true;
+            setIsDegenerate(true);
             return;
         }
         /*
-         * Search for duplicate corners.
+         * (2) Test for duplicate corners.
          */
         for (int iCorner = 0; iCorner < numCorners; iCorner++) {
             for (int jCorner = iCorner + 1; jCorner < numCorners; jCorner++) {
                 if (doCoincide(iCorner, jCorner)) {
-                    isDegenerate = true;
+                    setIsDegenerate(true);
                     return;
                 }
             }
         }
         /*
-         * Search for adjacent sides that are collinear.
+         * (3) Test adjacent sides for collinearity.
          */
         for (int iCorner = 0; iCorner < numCorners; iCorner++) {
             int next = nextIndex(iCorner);
             int nextNext = nextIndex(next);
             if (areCollinear(iCorner, next, nextNext, null)) {
-                isDegenerate = true;
+                setIsDegenerate(true);
                 return;
-
             }
         }
 
-        isDegenerate = false;
+        setIsDegenerate(false);
+    }
+
+    /**
+     * Direct setter for the #isDegenerate field.
+     *
+     * @param newValue new value
+     */
+    private void setIsDegenerate(boolean newValue) {
+        assert isDegenerate == null;
+        isDegenerate = newValue;
     }
 
     /**
@@ -849,7 +878,7 @@ public class Polygon3f {
          * Shortcut #1: all polygons with less than 4 sides are planar.
          */
         if (numCorners < 4) {
-            isPlanar = true;
+            setIsPlanar(true);
             return;
         }
         /*
@@ -866,7 +895,7 @@ public class Polygon3f {
             }
         }
         if (sameY) {
-            isPlanar = true;
+            setIsPlanar(true);
             return;
         }
         /*
@@ -879,7 +908,7 @@ public class Polygon3f {
              * Treat as planar even though the plane is ill-defined.
              */
             assert isDegenerate();
-            isPlanar = true;
+            setIsPlanar(true);
             return;
         }
         int aIndex = triangle[0];
@@ -901,7 +930,7 @@ public class Polygon3f {
              * Treat as planar even though the plane is ill-defined.
              */
             assert isDegenerate();
-            isPlanar = true;
+            setIsPlanar(true);
             return;
         }
         Vector3f planeNormal = crossProduct.divide(crossLength);
@@ -915,11 +944,21 @@ public class Polygon3f {
             float pseudoDistance = planeNormal.dot(corner) + planeConstant;
             float distanceSquared = pseudoDistance * pseudoDistance;
             if (distanceSquared > tolerance2) {
-                isPlanar = false;
+                setIsPlanar(false);
                 return;
             }
         }
-        isPlanar = true;
+        setIsPlanar(true);
+    }
+
+    /**
+     * Direct setter for the #isPlanar field.
+     *
+     * @param newValue new value
+     */
+    private void setIsPlanar(boolean newValue) {
+        assert isPlanar == null;
+        isPlanar = newValue;
     }
 
     /**
@@ -928,22 +967,50 @@ public class Polygon3f {
      */
     private void setLargestTriangle() {
         double largestSA = -1f;
+        int[] largest = null;
         for (int i = 0; i < numCorners - 2; i++) {
             for (int j = i + 1; j < numCorners - 1; j++) {
                 for (int k = j + 1; k < numCorners; k++) {
                     double sa = squaredArea(i, j, k);
                     if (sa > largestSA) {
                         largestSA = sa;
-                        if (largestTriangle == null) {
-                            largestTriangle = new int[3];
+                        if (largest == null) {
+                            largest = new int[3];
                         }
-                        largestTriangle[0] = i;
-                        largestTriangle[1] = j;
-                        largestTriangle[2] = k;
+                        largest[0] = i;
+                        largest[1] = j;
+                        largest[2] = k;
                     }
                 }
             }
         }
+        if (largest != null) {
+            setLargestTriangle(largest);
+        }
+    }
+
+    /**
+     * Direct setter for the #largestTriangle field.
+     *
+     * @param newValue indices of the triangle's corners (not null, each &ge;0
+     * and &lt;numCorners, in ascending order, unaffected)
+     */
+    private void setLargestTriangle(int[] newValue) {
+        assert largestTriangle == null;
+        assert newValue != null;
+        assert newValue[0] >= 0 : newValue[0];
+        assert newValue[1] >= 0 : newValue[1];
+        assert newValue[2] >= 0 : newValue[2];
+        assert newValue[0] < numCorners : newValue[0];
+        assert newValue[1] < numCorners : newValue[1];
+        assert newValue[2] < numCorners : newValue[2];
+        assert newValue[1] > newValue[0];
+        assert newValue[2] > newValue[1];
+
+        largestTriangle = new int[3];
+        largestTriangle[0] = newValue[0];
+        largestTriangle[1] = newValue[1];
+        largestTriangle[2] = newValue[2];
     }
 
     /**
@@ -957,16 +1024,35 @@ public class Polygon3f {
         assert cornerIndex1 >= 0 : cornerIndex1;
         assert cornerIndex1 < numCorners : cornerIndex1;
         assert cornerIndex2 >= 0 : cornerIndex2;
-        assert cornerIndex2 < numCorners : cornerIndex1;
+        assert cornerIndex2 < numCorners : cornerIndex2;
 
         if (cornerIndex1 == cornerIndex2) {
-            squaredDistances[cornerIndex1][cornerIndex2] = 0.0;
+            setSquaredDistance(cornerIndex1, cornerIndex2, 0.0);
         } else {
             Vector3f corner1 = cornerLocations[cornerIndex1];
             Vector3f corner2 = cornerLocations[cornerIndex2];
             double square = MyVector3f.distanceSquared(corner1, corner2);
-            squaredDistances[cornerIndex1][cornerIndex2] = square;
-            squaredDistances[cornerIndex2][cornerIndex1] = square;
+            setSquaredDistance(cornerIndex1, cornerIndex2, square);
         }
+    }
+
+    /**
+     * Direct setter for the #squaredDistances field.
+     *
+     * @param ci1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param ci2 index of the 2nd corner (&ge;0, &lt;numCorners)
+     * @param newValue new value for squared distance (&ge;0)
+     */
+    private void setSquaredDistance(int ci1, int ci2, double newValue) {
+        assert ci1 >= 0 : ci1;
+        assert ci1 < numCorners : ci1;
+        assert ci2 >= 0 : ci2;
+        assert ci2 < numCorners : ci2;
+        assert newValue >= 0.0 : newValue;
+        assert squaredDistances[ci1][ci2] == null;
+        assert squaredDistances[ci2][ci1] == null;
+
+        squaredDistances[ci1][ci2] = newValue;
+        squaredDistances[ci2][ci1] = newValue;
     }
 }
