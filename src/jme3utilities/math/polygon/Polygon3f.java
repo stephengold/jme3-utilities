@@ -65,8 +65,13 @@ public class Polygon3f {
      */
     private Boolean isPlanar = null;
     /**
-     * cached squared distances between pairs of corners (each &ge;0, allocated
-     * by constructor, each initialized by #setSquaredDistance())
+     * cached dot product at each corner (allocated by constructor; initialized
+     * by #setCorner())
+     */
+    final private Double[] dotProducts;
+    /**
+     * cached squared distance between each pair of corners (each &ge;0,
+     * allocated by constructor, each initialized by #setSquaredDistance())
      */
     final private Double[][] squaredDistances;
     /**
@@ -93,6 +98,11 @@ public class Polygon3f {
      * initialized by constructor)
      */
     final protected Vector3f[] cornerLocations;
+    /**
+     * cached cross product at each corner (allocated by constructor;
+     * initialized by #setCorner())
+     */
+    final private Vector3f[] crossProducts;
     // *************************************************************************
     // constructors
 
@@ -114,9 +124,11 @@ public class Polygon3f {
 
         numCorners = cornerList.length;
         /*
-         * Allocate array space.
+         * Allocate array space for caching values.
          */
         cornerLocations = new Vector3f[numCorners];
+        crossProducts = new Vector3f[numCorners];
+        dotProducts = new Double[numCorners];
         squaredDistances = new Double[numCorners][];
         for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
             squaredDistances[cornerIndex] = new Double[numCorners];
@@ -159,6 +171,77 @@ public class Polygon3f {
         for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
             result[cornerIndex] = cornerLocations[cornerIndex].clone();
         }
+
+        return result;
+    }
+
+    /**
+     * Calculate the magnitude of the turn angle at the specified corner. The
+     * turn angle is sometimes called the "external angle".
+     *
+     * @param cornerIndex which corner (&ge;0, &lt;numCorners)
+     * @return magnitude of the angle (&ge;0, &le;Pi) or NaN if an adjacent side
+     * has zero length
+     */
+    public double absTurnAngle(int cornerIndex) {
+        validateIndex(cornerIndex, "corner index");
+
+        int nextI = nextIndex(cornerIndex);
+        int prevI = prevIndex(cornerIndex);
+        double lsPrevious = squaredDistance(prevI, cornerIndex);
+        double lsCurrent = squaredDistance(cornerIndex, nextI);
+        double lsProduct = lsPrevious * lsCurrent;
+        if (lsProduct == 0.0) {
+            return Double.NaN;
+        }
+
+        double dot = dotProduct(cornerIndex);
+        double cosAngle = dot / Math.sqrt(lsProduct);
+        if (cosAngle > 1.0) {
+            assert false;
+        }
+        assert cosAngle >= -1.0 : cosAngle;
+        assert cosAngle <= 1.0 : cosAngle;
+
+        double result = Math.acos(cosAngle);
+
+        assert result >= 0.0 : result;
+        assert result <= Math.PI : result;
+        return result;
+    }
+
+    /**
+     * Calculate (or look up) the cross product of successive sides which meet
+     * at the specified corner.
+     *
+     * @param cornerIndex which corner (&ge;0, &lt;numCorners)
+     * @return cross product (not null)
+     */
+    public Vector3f crossProduct(int cornerIndex) {
+        validateIndex(cornerIndex, "corner index");
+
+        if (crossProducts[cornerIndex] == null) {
+            setCorner(cornerIndex);
+        }
+        Vector3f result = crossProducts[cornerIndex].clone();
+
+        return result;
+    }
+
+    /**
+     * Calculate (or look up) the dot product of successive sides which meet at
+     * the specified corner.
+     *
+     * @param cornerIndex which corner (&ge;0, &lt;numCorners)
+     * @return dot product
+     */
+    public double dotProduct(int cornerIndex) {
+        validateIndex(cornerIndex, "corner index");
+
+        if (dotProducts[cornerIndex] == null) {
+            setCorner(cornerIndex);
+        }
+        double result = dotProducts[cornerIndex];
 
         return result;
     }
@@ -938,6 +1021,48 @@ public class Polygon3f {
     }
     // *************************************************************************
     // private methods
+
+    /**
+     * Initialize the elements of the #cosTurnAngles and #crossProducts fields
+     * for a particular corner.
+     *
+     * @param cornerIndex which corner (&ge;0, &lt;numCorners)
+     */
+    private void setCorner(int cornerIndex) {
+        int nextI = nextIndex(cornerIndex);
+        int prevI = prevIndex(cornerIndex);
+        /*
+         * Calculate the offsets of the two adjacent sides.
+         */
+        Vector3f a = cornerLocations[prevI];
+        Vector3f b = cornerLocations[cornerIndex];
+        Vector3f c = cornerLocations[nextI];
+        Vector3f offsetB = b.subtract(a);
+        Vector3f offsetC = c.subtract(b);
+
+        double dot = MyVector3f.dot(offsetB, offsetC);
+        Vector3f cross = offsetB.cross(offsetC);
+        setCorner(cornerIndex, dot, cross);
+    }
+
+    /**
+     * Direct setter for the #cosTurnAngles and #crossProduct fields.
+     *
+     * @param cornerIndex index of the corner (&ge;0, &lt;numCorners)
+     * @param newDot new value for dot product
+     * @param newCross new value for cross product (not null, unaffected)
+     */
+    private void setCorner(int cornerIndex, double newDot,
+            Vector3f newCross) {
+        assert cornerIndex >= 0 : cornerIndex;
+        assert cornerIndex < numCorners : cornerIndex;
+        assert newCross != null;
+        assert crossProducts[cornerIndex] == null;
+        assert dotProducts[cornerIndex] == null;
+
+        crossProducts[cornerIndex] = newCross.clone();
+        dotProducts[cornerIndex] = newDot;
+    }
 
     /**
      * Initialize the isDegenerate field. The polygon is degenerate if (1) it
