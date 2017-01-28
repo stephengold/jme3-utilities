@@ -47,7 +47,7 @@ public class GenericPolygon3f extends Polygon3f {
      * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
-            ConvexPolygon3f.class.getName());
+            GenericPolygon3f.class.getName());
     // *************************************************************************
     // fields
 
