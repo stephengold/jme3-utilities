@@ -29,14 +29,13 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
-import jme3utilities.math.MyVector3f;
 import jme3utilities.math.VectorXZ;
 
 /**
  * An immutable polygon in three-dimensional space, consisting of N corners
  * (points) connected by N sides (straight-line segments). The polygon must be
  * simple, in other words: non-degenerate, planar, and non-self-intersecting.
- * This means it has a well-defined isInterior and exterior. It may also be
+ * This means it has a well-defined interior and exterior. It may also be
  * convex, though it need not be.
  *
  * @author Stephen Gold sgold@sonic.net
@@ -68,11 +67,6 @@ public class SimplePolygon3f extends GenericPolygon3f {
      * setSignedArea()).
      */
     private Float signedArea = null;
-    /**
-     * cached turn angle at each corner (allocated by constructor; each in
-     * radians, &gt;-Pi and &lt;Pi, initialized by #setAngle())
-     */
-    final private Float[] turnAngles;
     /**
      * cached planar offset of the centroid of a this polygon (initialized by
      * #setCentroid()).
@@ -123,7 +117,6 @@ public class SimplePolygon3f extends GenericPolygon3f {
         /*
          * Allocate array space.
          */
-        turnAngles = new Float[numCorners];
         planarOffsets = new VectorXZ[numCorners];
         planarOffsets[0] = new VectorXZ(0f, 0f);
     }
@@ -182,21 +175,18 @@ public class SimplePolygon3f extends GenericPolygon3f {
     }
 
     /**
-     * Calculate the isInterior angle at the specified corner.
+     * Calculate the interior angle at the specified corner.
      *
      * @param cornerIndex which corner (&ge;0, &lt;numCorners)
      * @return angle (in radians, &gt;0, &lt;2*Pi)
      */
-    public float interiorAngle(int cornerIndex) {
+    public double interiorAngle(int cornerIndex) {
         validateIndex(cornerIndex, "corner index");
 
-        if (turnAngles[cornerIndex] == null) {
-            setTurnAngle(cornerIndex);
-        }
-        float result = FastMath.PI - turnAngles[cornerIndex];
+        double result = Math.PI - turnAngle(cornerIndex);
 
         assert result > 0f : result;
-        assert result < FastMath.TWO_PI : result;
+        assert result < 2 * Math.PI : result;
         return result;
     }
 
@@ -219,9 +209,9 @@ public class SimplePolygon3f extends GenericPolygon3f {
      * TODO implement ray-casting algorithm?
      *
      * @param point coordinates of the point (not null, unaffected)
-     * @return true if the point is in the polygon's isInterior, false otherwise
+     * @return true if the point is in the polygon's interior, false otherwise
      */
-    public boolean isInterior(Vector3f point) {
+    public boolean isInside(Vector3f point) {
         Validate.nonNull(point, "point");
 
         if (!inPlane(point)) {
@@ -263,8 +253,8 @@ public class SimplePolygon3f extends GenericPolygon3f {
     }
 
     /**
-     * Calculate (or look up) the signed turn angle at the specified corner.
-     * This is sometimes called the "external angle".
+     * Calculate the signed turn angle at the specified corner. This is
+     * sometimes called the "external angle".
      *
      * The sign of the angle is positive for an inward turn, negative for an
      * outward turn.
@@ -272,16 +262,28 @@ public class SimplePolygon3f extends GenericPolygon3f {
      * @param cornerIndex which corner (&ge;0, &lt;numCorners)
      * @return angle (in radians, &gt;-Pi, &lt;Pi)
      */
-    public float turnAngle(int cornerIndex) {
+    public double turnAngle(int cornerIndex) {
         validateIndex(cornerIndex, "corner index");
-
-        if (turnAngles[cornerIndex] == null) {
-            setTurnAngle(cornerIndex);
+        /*
+         * Calculate the magnitude of the turn.
+         */
+        double turnMagnitude = absTurnAngle(cornerIndex);
+        assert !Double.isNaN(turnMagnitude);
+        assert turnMagnitude > 0f : turnMagnitude;
+        assert turnMagnitude < Math.PI : turnMagnitude;
+        /*
+         * Calculate the direction/sign of the turn.
+         */
+        if (planeNormal == null) {
+            setPlane();
         }
-        float result = turnAngles[cornerIndex];
+        Vector3f crossProduct = crossProduct(cornerIndex);
+        float sign = planeNormal.dot(crossProduct);
 
-        assert result > -FastMath.PI : result;
-        assert result < FastMath.PI : result;
+        double result = Math.copySign(turnMagnitude, sign);
+
+        assert result > -Math.PI : result;
+        assert result < Math.PI : result;
         return result;
     }
     // *************************************************************************
@@ -315,11 +317,16 @@ public class SimplePolygon3f extends GenericPolygon3f {
     /**
      * Initialize the #isConvex field.
      *
-     * The polygon is convex if all the turn angles are positive.
+     * The polygon is convex if all the turns are inward.
      */
     private void setIsConvex() {
+        if (planeNormal == null) {
+            setPlane();
+        }
         for (int cornerI = 0; cornerI < numCorners; cornerI++) {
-            if (!(turnAngle(cornerI) > 0f)) {
+            Vector3f cross = crossProduct(cornerI);
+            float dot = planeNormal.dot(cross);
+            if (!(dot > 0f)) {
                 isConvex = false;
                 return;
             }
@@ -355,9 +362,9 @@ public class SimplePolygon3f extends GenericPolygon3f {
      * #planeZBasis fields.
      *
      * The direction of the normal is chosen so that when traversing the sides
-     * in order, turns toward the isInterior are right-handed and turns toward
-     * the exterior are left-handed. The constant is simply the pseudo-distance
-     * of the origin from the plane.
+     * in order, turns toward the interior are right-handed and turns toward the
+     * exterior are left-handed. The constant is simply the pseudo-distance of
+     * the origin from the plane.
      *
      * #planeXBasis, #planeNormal, and #planeZBasis are orthogonal unit vectors,
      * constituting a basis for planar coordinates.
@@ -417,43 +424,5 @@ public class SimplePolygon3f extends GenericPolygon3f {
             total += cross;
         }
         signedArea = 0.5f * total;
-    }
-
-    /**
-     * Initialize the element of the #turnAngles field for a particular corner.
-     *
-     * The sign of the angle is positive for an inward turn, negative for an
-     * outward turn.
-     *
-     * @param cornerIndex which corner (&ge;0, &lt;numCorners)
-     */
-    private void setTurnAngle(int cornerIndex) {
-        int nextI = nextIndex(cornerIndex);
-        int prevI = prevIndex(cornerIndex);
-        /*
-         * Calculate the magnitude of the turn, in radians.
-         */
-        Vector3f a = cornerLocations[prevI];
-        Vector3f b = cornerLocations[cornerIndex];
-        Vector3f c = cornerLocations[nextI];
-        Vector3f offsetB = b.subtract(a);
-        Vector3f offsetC = c.subtract(b);
-        Vector3f crossProduct = offsetB.cross(offsetC);
-        double lsB = MyVector3f.lengthSquared(offsetB);
-        double lsC = MyVector3f.lengthSquared(offsetC);
-        double lengthProduct = Math.sqrt(lsB * lsC);
-        assert lengthProduct > 0.0 : lengthProduct;
-        double cosAngle = offsetB.dot(offsetC) / lengthProduct;
-        float magnitude = (float) Math.acos(cosAngle);
-        assert magnitude > 0f : magnitude;
-        assert magnitude < FastMath.PI : magnitude;
-        /*
-         * Determine the direction of the turn.
-         */
-        if (planeNormal == null) {
-            setPlane();
-        }
-        float sign = planeNormal.dot(crossProduct);
-        turnAngles[cornerIndex] = Math.copySign(magnitude, sign);
     }
 }

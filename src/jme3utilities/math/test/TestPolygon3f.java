@@ -307,40 +307,43 @@ public class TestPolygon3f {
         float turnSum = 0f;
         for (int cornerI = 0; cornerI < numCorners; cornerI++) {
             assert poly.onCorner(array[cornerI], cornerI);
-            System.out.printf("  corner%d at %s",
+            System.out.printf("  C%d at %s",
                     cornerI, array[cornerI].toString());
-            if (simple != null) {
+            if (simple == null) {
+                double turn = poly.absTurnAngle(cornerI);
+                if (!Double.isNaN(turn)) {
+                    System.out.printf(": turn +/- %.1f degrees",
+                            Math.toDegrees(turn));
+                }
+            } else {
                 assert simple.inPlane(array[cornerI]);
-                float interior = simple.interiorAngle(cornerI);
-                float turn = simple.turnAngle(cornerI);
+                double interior = simple.interiorAngle(cornerI);
+                double turn = simple.turnAngle(cornerI);
                 turnSum += turn;
-                System.out.printf(": %f-degree turn, %f-degree internal",
-                        MyMath.toDegrees(turn), MyMath.toDegrees(interior));
+                System.out.printf(
+                        ": turn %.1f degrees, %.1f-degree internal angle",
+                        Math.toDegrees(turn), Math.toDegrees(interior));
                 VectorXZ xz = simple.planarOffset(cornerI);
                 System.out.printf(", xz = %s", xz.toString());
             }
             System.out.println();
         }
         if (simple != null) {
-            System.out.printf(" sum of turns = %f degrees%n",
+            System.out.printf(" sum of turns = %.1f degrees%n",
                     MyMath.toDegrees(turnSum));
-            Vector3f centroid = simple.centroid();
-            System.out.printf(" centroid: %s", centroid.toString());
-            assert simple.inPlane(centroid);
-            System.out.printf(" %s inside the polygon%n",
-                    simple.isInterior(centroid) ? "IS" : "is NOT");
         }
 
         for (int sideI = 0; sideI < numCorners; sideI++) {
             int next = poly.nextIndex(sideI);
             Vector3f midpoint = array[sideI].add(array[next]).divide(2f);
             assert poly.onSide(midpoint, sideI);
-            System.out.printf("  side%d: %f wu%n",
+            System.out.printf("  S%d is %f wu in length.%n",
                     sideI, poly.sideLength(sideI));
         }
         /*
          * Classify the polygon as degenerate, planar, etc.
          */
+        System.out.printf(" This polygon");
         if (simple != null) {
             System.out.printf(" %s convex,",
                     simple.isConvex() ? "IS" : "is NOT");
@@ -351,73 +354,53 @@ public class TestPolygon3f {
             System.out.printf(" %s self-intersecting,",
                     generic.isSelfIntersecting() ? "IS" : "is NOT");
         }
-        System.out.printf(" %s planar%n", poly.isPlanar() ? "IS" : "is NOT");
+        System.out.printf(" %s planar.%n", poly.isPlanar() ? "IS" : "is NOT");
         /*
          * Calculate the perimeter, shortest/longest side.
          */
-        System.out.printf(" perimeter = %f%n", poly.perimeter());
-        System.out.print(" shortest = ");
+        System.out.printf(" The perimeter is %f wu.%n", poly.perimeter());
+        System.out.print(" The shortest side is ");
         int shortI = poly.findShortest();
         if (shortI == -1) {
-            System.out.printf("n/a%n");
+            System.out.printf("n/a.%n");
         } else {
             float length = poly.sideLength(shortI);
-            System.out.printf("side%d, %f wu%n", shortI, length);
+            System.out.printf("S%d (%f wu).%n", shortI, length);
         }
-        System.out.print(" longest = ");
+        System.out.print(" The longest side is ");
         int longI = poly.findLongest();
         if (shortI == -1) {
             System.out.printf("n/a%n");
         } else {
             float length = poly.sideLength(longI);
-            System.out.printf("side%d, %f wu%n", longI, length);
+            System.out.printf("S%d (%f wu).%n", longI, length);
         }
         /*
          * Find the largest triangle.
          */
-        System.out.print(" largest triangle = ");
+        System.out.print(" The largest triangle is: ");
         int tri[] = poly.largestTriangle();
         if (tri == null) {
-            System.out.printf("n/a%n");
+            System.out.printf("n/a.%n");
         } else {
-            System.out.printf("%d-%d-%d%n", tri[0], tri[1], tri[2]);
+            System.out.printf("%d-%d-%d.%n", tri[0], tri[1], tri[2]);
         }
         /*
-         * Compare with the origin.
+         * Test with the origin and the centroid.
          */
-        System.out.print(" corner closest to origin = ");
-        int ccto = poly.findCorner(Vector3f.ZERO);
-        if (ccto == -1) {
-            System.out.printf("n/a%n");
-        } else {
-            float distance = array[ccto].length();
-            System.out.printf("corner%d, %f wu%n", ccto, distance);
+        testPoint(Vector3f.ZERO, "The origin", poly);
+        if (simple != null) {
+            Vector3f centroid = simple.centroid();
+            assert simple.inPlane(centroid);
+            testPoint(centroid, "The centroid", poly);
         }
-
-        System.out.print(" side closest to origin = ");
-        Vector3f storage = new Vector3f(Float.NaN, Float.NaN, Float.NaN);
-        int scto = poly.findSide(Vector3f.ZERO, storage);
-        if (scto == -1) {
-            System.out.print("n/a");
-        } else {
-            System.out.printf("side%d at ", scto);
-            int corner = poly.onCorner(storage);
-            if (corner == -1) {
-                System.out.print(storage.toString());
-            } else {
-                System.out.printf("corner%d", corner);
-            }
-            float distance = storage.length();
-            System.out.printf(", %f wu", distance);
-        }
-        System.out.println();
         /*
          * Calculate the area.
          */
         if (simple != null) {
             System.out.printf(" area = %f wu^2%n", simple.area());
         }
-        
+
         System.out.println();
         if (poly.numCorners() > 3) {
             Polygon3f sub = poly.fromRange(numCorners - 1, 1);
@@ -426,5 +409,48 @@ public class TestPolygon3f {
             testPolygon(sub);
             System.out.println();
         }
+    }
+
+    private static void testPoint(Vector3f point, String name, Polygon3f poly) {
+        assert point != null;
+        assert name != null;
+        assert poly != null;
+
+        System.out.printf(" %s at %s:%n", name, point.toString());
+        if (poly instanceof SimplePolygon3f) {
+            SimplePolygon3f simple = (SimplePolygon3f) poly;
+            System.out.printf("  %s in the plane,",
+                    simple.inPlane(point) ? "IS" : "is NOT");
+            System.out.printf(" %s inside the polygon.%n",
+                    simple.isInside(point) ? "IS" : "is NOT");
+        }
+
+        System.out.printf("  Its closest corner is ", name);
+        int cornerIndex = poly.findCorner(point);
+        if (cornerIndex == -1) {
+            System.out.print("n/a.");
+        } else {
+            double sd = poly.squaredDistanceToCorner(point, cornerIndex);
+            System.out.printf("C%d, %f wu away.", cornerIndex, Math.sqrt(sd));
+        }
+        System.out.println();
+
+        System.out.printf("  Its closest side is ", name);
+        Vector3f storage = new Vector3f(Float.NaN, Float.NaN, Float.NaN);
+        int sideIndex = poly.findSide(point, storage);
+        if (sideIndex == -1) {
+            System.out.print("n/a.");
+        } else {
+            System.out.printf("S%d at ", sideIndex);
+            int corner = poly.onCorner(storage);
+            if (corner == -1) {
+                System.out.print(storage.toString());
+            } else {
+                System.out.printf("C%d", corner);
+            }
+            float distance = point.distance(storage);
+            System.out.printf(", %f wu away.", distance);
+        }
+        System.out.println();
     }
 }
