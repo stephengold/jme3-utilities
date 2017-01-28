@@ -31,11 +31,11 @@ import java.util.logging.Logger;
 import jme3utilities.math.MyVector3f;
 
 /**
- * An immutable, non-degenerate polygon in three-dimensional space, consisting
- * of N corners (points) connected by N sides (straight-line segments). The
- * polygon must be non-degenerate, which implies it has N&ge;3, all corners
- * distinct, and no consecutive sides collinear. The polygon may also be planar,
- * though it need not be.
+ * An immutable polygon in three-dimensional space, consisting of N corners
+ * (points) connected by N sides (straight-line segments). The polygon must be
+ * non-degenerate, which implies it has N&ge;3, all corners distinct, and no
+ * consecutive sides collinear. The polygon may also be planar and/or
+ * self-intersecting, though it need not be.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -50,9 +50,10 @@ public class GenericPolygon3f extends Polygon3f {
             ConvexPolygon3f.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * if true, then two (or more) sides intersect at some location other their
-     * corners (set by setIsSelfIntersecting())
+     * corners (set by #setIsSelfIntersecting())
      */
     private Boolean isSelfIntersecting = null;
     // *************************************************************************
@@ -255,8 +256,9 @@ public class GenericPolygon3f extends Polygon3f {
     }
 
     /**
-     * Initialize the isSelfIntersecting field. The polygon is self-intersecting
-     * if two (or more) sides intersect at some location other their corners.
+     * Initialize the #isSelfIntersecting field. The polygon is
+     * self-intersecting if two (or more) sides intersect at some location other
+     * their corners.
      */
     private void setIsSelfIntersecting() {
         /*
