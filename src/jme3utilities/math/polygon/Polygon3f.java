@@ -247,7 +247,9 @@ public class Polygon3f {
             if (squaredDistance < leastSD) {
                 result = sideIndex;
                 leastSD = squaredDistance;
-                storeClosestPoint.set(closestPointCurrentSide);
+                if (storeClosestPoint != null) {
+                    storeClosestPoint.set(closestPointCurrentSide);
+                }
             }
         }
 
@@ -428,7 +430,7 @@ public class Polygon3f {
      * Find a side on which a given point lies.
      *
      * @param point coordinates of the point (not null, unaffected)
-     * @return index of the side, or -1 if none coincide
+     * @return index of the side, or -1 if point not on perimeter
      */
     public int onSide(Vector3f point) {
         Validate.nonNull(point, "point");
@@ -629,7 +631,7 @@ public class Polygon3f {
         Vector3f corner1 = cornerLocations[sideIndex];
         int nextIndex = nextIndex(sideIndex);
         Vector3f corner2 = cornerLocations[nextIndex];
-        Vector3f sideDirection = corner2.subtract(corner1);
+        Vector3f sideOffset = corner2.subtract(corner1);
         /*
          * If the side has zero length, return the squared distance to corner1.
          */
@@ -644,19 +646,19 @@ public class Polygon3f {
         /*
          * Calculate parametric value for the closest point on that line.
          */
-        Vector3f fromC1 = point.subtract(corner1);
-        double dot = MyVector3f.dot(fromC1, sideDirection);
+        Vector3f pointOffset = point.subtract(corner1);
+        double dot = MyVector3f.dot(pointOffset, sideOffset);
         double t = dot / sideLengthSquared;
         /*
          * Calculate offset of the closest point on the side.
          */
         float scaleFactor = FastMath.clamp((float) t, 0f, 1f);
-        Vector3f closestOffset = sideDirection.mult(scaleFactor);
+        Vector3f closestOffset = sideOffset.mult(scaleFactor);
         if (storeClosestPoint != null) {
             storeClosestPoint.set(corner1);
             storeClosestPoint.addLocal(closestOffset);
         }
-        double result = MyVector3f.distanceSquared(closestOffset, fromC1);
+        double result = MyVector3f.distanceSquared(closestOffset, pointOffset);
 
         assert result >= 0.0 : result;
         return result;
