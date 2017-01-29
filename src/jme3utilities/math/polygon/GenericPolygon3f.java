@@ -224,26 +224,29 @@ public class GenericPolygon3f extends Polygon3f {
         Vector3f n1 = offset1.cross(n);
         Vector3f n2 = offset2.cross(n);
         float t1 = p2.subtract(p1).dot(n2) / offset1.dot(n2);
-        if (t1 <= 0f || t1 >= 1f) {
-            /*
-             * Nearest point on the first line is outside the segment.
-             */
-            return false;
-        }
         float t2 = p1.subtract(p2).dot(n1) / offset2.dot(n1);
-        if (t2 <= 0f || t2 >= 1f) {
-            /*
-             * Nearest point on the second line is outside the segment.
-             */
-            return false;
-        }
         Vector3f c1 = offset1.mult(t1).add(p1);
         Vector3f c2 = offset2.mult(t2).add(p2);
-        if (MyVector3f.doCoincide(c1, c2, tolerance2)) {
-            return true;
-        } else {
+        if (!MyVector3f.doCoincide(c1, c2, tolerance2)) {
             return false;
         }
+        double fuzz1 = tolerance2 * squaredDistance(corner1, partner1);
+        if (t1 < 0f && t1 * t1 > fuzz1) {
+            return false;
+        }
+        float ct1 = 1f - t1;
+        if (ct1 < 0f && ct1 * ct1 > fuzz1) {
+            return false;
+        }
+        double fuzz2 = tolerance2 * squaredDistance(corner2, partner2);
+        if (t2 < 0 && t2 * t2 > fuzz2) {
+            return false;
+        }
+        float ct2 = 1f - t2;
+        if (ct2 < 0f && ct2 * ct2 > fuzz2) {
+            return false;
+        }
+        return true;
     }
 
     /**

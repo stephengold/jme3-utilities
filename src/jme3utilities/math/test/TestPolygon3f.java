@@ -174,13 +174,21 @@ public class TestPolygon3f {
         /*
          * generic planar test cases
          */
-        genericCase = new Vector3f[1][];
+        genericCase = new Vector3f[2][];
 
         genericCase[0] = new Vector3f[]{ // self-intersecting quad
             new Vector3f(1f, 9f, 9f),
             new Vector3f(1f, -9f, -9f),
             new Vector3f(2f, 9f, 9f),
             new Vector3f(2f, -9f, -9f)
+        };
+
+        genericCase[1] = new Vector3f[]{ // chevron with clipped point
+            new Vector3f(1f, 0f, 2f),
+            new Vector3f(0f, 0f, 0f),
+            new Vector3f(1f, 0f, -2f),
+            new Vector3f(0f, 0f, -1f),
+            new Vector3f(0f, 0f, 1f)
         };
 
         /*
@@ -255,7 +263,7 @@ public class TestPolygon3f {
     }
 
     /**
-     * Run all the tests.
+     * Run all the tests on all the test cases.
      */
     private static void runAll() {
         Polygon3f poly;
@@ -298,7 +306,7 @@ public class TestPolygon3f {
     }
 
     /**
-     * Run all tests on a specific polygon.
+     * Run all tests on a specific case.
      *
      * @param poly which polygon to test (no null)
      */
