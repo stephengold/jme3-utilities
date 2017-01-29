@@ -34,8 +34,8 @@ import jme3utilities.math.MyVector3f;
  * An immutable polygon in three-dimensional space, consisting of N corners
  * (points) connected by N sides (straight-line segments). The polygon must be
  * non-degenerate, which implies it has N&ge;3, all corners distinct, and no
- * consecutive sides collinear. The polygon may also be planar and/or
- * self-intersecting, though it need not be.
+ * 180-degree turns. The polygon may also be planar and/or self-intersecting,
+ * though it need not be.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -97,162 +97,233 @@ public class GenericPolygon3f extends Polygon3f {
     // protected methods
 
     /**
-     * Test whether two sides intersect (other than at a shared corner).
+     * Test whether the line segment (connecting two distinct corners)
+     * intersects the perimeter (apart from any shared corners).
      *
-     * @param sideI1 index of the first side (&ge;0, &lt;numCorners)
-     * @param sideI2 index of the second side (&ge;0, &lt;numCorners)
-     * @return true if they coincide, otherwise false
+     * @param corner index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param partner index of the 2nd corner (&ge;0, &lt;numCorners)
+     * @return true if connecting segment crosses a side, otherwise false
      */
-    protected boolean doIntersect(int sideI1, int sideI2) {
-        validateIndex(sideI1, "index of first side");
-        validateIndex(sideI2, "index of second side");
+    protected boolean doesSegmentIntersectPerimeter(int corner, int partner) {
+        validateIndex(corner, "index of first corner");
+        validateIndex(partner, "index of second corner");
+        if (corner == partner) {
+            throw new IllegalArgumentException("segment is trivial.");
+        }
+
+        for (int side = 0; side < numCorners; side++) {
+            int next = nextIndex(side);
+            if (doSegmentsIntersect(corner, partner, side, next)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Test whether two line segments (each connecting two distinct corners)
+     * intersect (apart from shared any corners).
+     *
+     * @param corner1 index of 1st corner, 1st segment (&ge;0, &lt;numCorners)
+     * @param partner1 index of 2nd corner, 1st segment (&ge;0, &lt;numCorners)
+     * @param corner2 index of 1st corner, 2nd segment (&ge;0, &lt;numCorners)
+     * @param partner2 index of 2nd corner, 2nd segment (&ge;0, &lt;numCorners)
+     * @return true if the segments intersect, otherwise false
+     */
+    protected boolean doSegmentsIntersect(int corner1, int partner1,
+            int corner2, int partner2) {
+        validateIndex(corner1, "index of 1st corner of 1st segment");
+        validateIndex(partner1, "index of 2nd corner of 1st segment");
+        if (corner1 == partner1) {
+            throw new IllegalArgumentException("1st segment is trivial.");
+        }
+        validateIndex(corner2, "index of 1st corner of 2nd segment");
+        validateIndex(partner2, "index of 2st corner of 2nd segment");
+        if (corner2 == partner2) {
+            throw new IllegalArgumentException("2nd segment is trivial.");
+        }
         /*
-         * Check for any corners shared between the two sides. 
+         * Check for any corners shared between the two segments. 
          */
         BitSet corners = new BitSet(numCorners);
-        corners.set(sideI1);
-        corners.set(sideI2);
-        int next1 = nextIndex(sideI1);
-        int next2 = nextIndex(sideI2);
-        corners.set(next1);
-        corners.set(next2);
+        corners.set(corner1);
+        corners.set(partner1);
+        corners.set(corner2);
+        corners.set(partner2);
         int numUnique = corners.cardinality();
         assert numUnique >= 2 : numUnique;
         assert numUnique <= 4 : numUnique;
-        if (numUnique == 4) {
-            /*
-             * Four unique corners, so none shared between the two sides.
-             * Find a vector N perpendicular to the directions of both sides.
-             */
-            Vector3f p1 = cornerLocations[sideI1];
-            Vector3f q1 = cornerLocations[next1];
-            Vector3f offset1 = q1.subtract(p1);
-            Vector3f p2 = cornerLocations[sideI2];
-            Vector3f q2 = cornerLocations[next2];
-            Vector3f offset2 = q2.subtract(p2);
-            Vector3f n = offset1.cross(offset2);
 
-            if (MyVector3f.lengthSquared(n) < tolerance2) {
-                /*
-                 * The sides are parallel. Are they also collinear? 
-                 * Find the most distant pair of corners.
-                 */
-                int[] longest = mostDistant(corners);
-                assert longest != null;
-                int firstI = longest[0];
-                int lastI = longest[1];
-                assert firstI != lastI;
-                /*
-                 * Test the remaining two corners.
-                 */
-                BitSet middleCorners = (BitSet) corners.clone();
-                middleCorners.clear(firstI);
-                middleCorners.clear(lastI);
-                boolean collin = allCollinear(firstI, lastI, middleCorners);
-                if (collin) {
-                    /*
-                     * All four corners are collinear.  The sides intersect
-                     * if and only if they overlap.
-                     */
-                    boolean result = isOverlap(firstI, sideI1, sideI2);
-                    return result;
-                } else {
-                    /*
-                     * The sides are parallel and not collinear, so they
-                     * do not intersect.
-                     */
-                    return false;
-                }
-            }
+        if (numUnique == 2) {
+            assert (corner1 == partner2 && corner2 == partner1)
+                    || (corner1 == partner1 && corner2 == partner2);
             /*
-             * Extend the sides into straight lines and find the 
-             * points of closest approach (c1 and c2) on each line. 
-             * The sides intersect if and only if c1 and c2 both lie 
-             * on their respective sides, and they also coincide.
-             */
-            Vector3f n1 = offset1.cross(n);
-            Vector3f n2 = offset2.cross(n);
-            float t1 = p2.subtract(p1).dot(n2) / offset1.dot(n2);
-            if (t1 <= 0f || t1 >= 1f) {
-                /*
-                 * Nearest point on the first line is outside the side.
-                 */
-                return false;
-            }
-            float t2 = p1.subtract(p2).dot(n1) / offset2.dot(n1);
-            if (t2 <= 0f || t2 >= 1f) {
-                /*
-                 * Nearest point on the second line is outside the side.
-                 */
-                return false;
-            }
-            Vector3f c1 = offset1.mult(t1).add(p1);
-            Vector3f c2 = offset2.mult(t2).add(p2);
-            if (MyVector3f.doCoincide(c1, c2, tolerance2)) {
-                return true;
-            } else {
-                return false;
-            }
-
-        } else if (sideI1 == sideI2) {
-            assert numUnique == 2 : numUnique;
-            /*
-             * Two shared corners, so the sides definitely intersect.
+             * Two shared corners, so the segments coincide.
              */
             return true;
-
         }
-        assert numUnique == 3 : numUnique;
         /*
-         * Sharing exactly one corner.
+         * Find a vector N perpendicular to the directions of both segments.
          */
-        return false;
+        Vector3f p1 = cornerLocations[corner1];
+        Vector3f q1 = cornerLocations[partner1];
+        Vector3f offset1 = q1.subtract(p1);
+        Vector3f p2 = cornerLocations[corner2];
+        Vector3f q2 = cornerLocations[partner2];
+        Vector3f offset2 = q2.subtract(p2);
+        Vector3f n = offset1.cross(offset2);
+
+        if (MyVector3f.lengthSquared(n) < tolerance2) {
+            /*
+             * The segments are parallel. Are they also collinear? 
+             * Find the most distant pair of corners.
+             */
+            int[] longest = mostDistant(corners);
+            assert longest != null;
+            int firstI = longest[0];
+            int lastI = longest[1];
+            assert firstI != lastI;
+            /*
+             * Test the middle two corners.
+             */
+            BitSet middleCorners = (BitSet) corners.clone();
+            middleCorners.clear(firstI);
+            middleCorners.clear(lastI);
+            boolean collin = allCollinear(firstI, lastI, middleCorners);
+            if (collin) {
+                /*
+                 * All corners are collinear.  The segments intersect
+                 * if and only if they overlap.
+                 */
+                boolean result = isOverlap(firstI, corner1, partner1,
+                        corner2, partner2);
+                return result;
+            } else {
+                /*
+                 * The segments are parallel but not collinear, so they
+                 * do not intersect.
+                 */
+                assert numUnique == 4 : numUnique;
+                return false;
+            }
+        }
+        if (numUnique == 3) {
+            /*
+             * Segments not parallel with one shared corner.
+             */
+            return false;
+        }
+        assert numUnique == 4 : numUnique;
+        /*
+         * Segments not parallel and no shared corners.
+         * Extend the segments into straight lines and find the 
+         * points of closest approach (c1 and c2) on each line. 
+         * The segments intersect if and only if c1 and c2 not only
+         * lie on their respective segments but also coincide.
+         */
+        Vector3f n1 = offset1.cross(n);
+        Vector3f n2 = offset2.cross(n);
+        float t1 = p2.subtract(p1).dot(n2) / offset1.dot(n2);
+        if (t1 <= 0f || t1 >= 1f) {
+            /*
+             * Nearest point on the first line is outside the segment.
+             */
+            return false;
+        }
+        float t2 = p1.subtract(p2).dot(n1) / offset2.dot(n1);
+        if (t2 <= 0f || t2 >= 1f) {
+            /*
+             * Nearest point on the second line is outside the segment.
+             */
+            return false;
+        }
+        Vector3f c1 = offset1.mult(t1).add(p1);
+        Vector3f c2 = offset2.mult(t2).add(p2);
+        if (MyVector3f.doCoincide(c1, c2, tolerance2)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Test whether two sides intersect (other than at a shared corner).
+     *
+     * @param side1 index of the 1st side (&ge;0, &lt;numCorners)
+     * @param side2 index of the 2nd side (&ge;0, &lt;numCorners)
+     * @return true if they cross, otherwise false
+     */
+    protected boolean doSidesIntersect(int side1, int side2) {
+        validateIndex(side1, "index of 1st side");
+        validateIndex(side2, "index of 2nd side");
+
+        int next1 = nextIndex(side1);
+        int next2 = nextIndex(side2);
+
+        if (doSegmentsIntersect(side1, next1, side2, next2)) {
+            return true;
+        } else {
+            return false;
+        }
     }
     // *************************************************************************
     // private methods
 
     /**
-     * Helper method to determine whether two distinct-but-collinear sides
-     * overlap.
+     * Helper method to determine whether two collinear segments overlap.
      *
-     * @param firstI index of an outer corner (&ge;0, &lt; numCorners)
-     * @param sideIndex1 index of the first side (&ge;0, &lt; numCorners)
-     * @param sideIndex2 index of the second side (&ge;0, &lt; numCorners)
+     * @param ext index of an outer corner (&ge;0, &lt; numCorners)
+     * @param corner1 index of 1st corner, 1st segment (&ge;0, &lt;numCorners)
+     * @param partner1 index of 2nd corner, 1st segment (&ge;0, &lt;numCorners)
+     * @param corner2 index of 1st corner, 2nd segment (&ge;0, &lt;numCorners)
+     * @param partner2 index of 2nd corner, 2nd segment (&ge;0, &lt;numCorners)
      */
-    private boolean isOverlap(int firstI, int sideIndex1, int sideIndex2) {
-        int next1 = nextIndex(sideIndex1);
-        int next2 = nextIndex(sideIndex2);
+    private boolean isOverlap(int ext, int corner1, int partner1,
+            int corner2, int partner2) {
+        assert corner1 != partner1;
+        assert corner2 != partner2;
+        assert (corner1 != partner2 || corner2 != partner1)
+                && (corner1 != partner1 || corner2 != partner2);
         /*
-         * Test the partner of firstI against both corners of the other side.
+         * Test the partner of ext against both corners of the other segment.
          */
-        int otherSide, partner;
-        if (firstI == sideIndex1) {
-            otherSide = sideIndex2;
-            partner = next1;
-        } else if (firstI == next1) {
-            otherSide = sideIndex2;
-            partner = sideIndex1;
-        } else if (firstI == sideIndex2) {
-            otherSide = sideIndex1;
-            partner = next2;
+        int otherCorner, otherPartner;
+        if (ext == corner1 || ext == partner1) {
+            otherCorner = corner2;
+            otherPartner = partner2;
         } else {
-            assert firstI == next2;
-            otherSide = sideIndex1;
-            partner = sideIndex2;
+            assert ext == corner2 || ext == partner2;
+            otherCorner = corner1;
+            otherPartner = partner1;
         }
-        double sdPartner = squaredDistance(firstI, partner);
-        double sdOther = squaredDistance(firstI, otherSide);
+        int extPartner;
+        if (ext == corner1) {
+            extPartner = partner1;
+        } else if (ext == partner1) {
+            extPartner = corner1;
+        } else if (ext == corner2) {
+            extPartner = partner2;
+        } else {
+            assert ext == partner2;
+            extPartner = corner2;
+        }
+
+        if (ext == otherCorner || ext == otherPartner) {
+            return true;
+        }
+        double sdPartner = squaredDistance(ext, extPartner);
+        double sdOther = squaredDistance(ext, otherCorner);
         if (sdPartner > sdOther) {
             return true;
-        } else {
-            int otherNext = nextIndex(otherSide);
-            double sdOtherNext = squaredDistance(firstI, otherNext);
-            if (sdPartner > sdOtherNext) {
-                return true;
-            } else {
-                return false;
-            }
         }
+        double sdOtherPartner = squaredDistance(ext, otherPartner);
+        if (sdPartner > sdOtherPartner) {
+            return true;
+        }
+        /*
+         * Segments are disjoint.
+         */
+        return false;
     }
 
     /**
@@ -261,12 +332,13 @@ public class GenericPolygon3f extends Polygon3f {
      * their corners.
      */
     private void setIsSelfIntersecting() {
+        assert isSelfIntersecting == null;
         /*
          * consider each pair of sides
          */
         for (int sideI = 0; sideI < numCorners; sideI++) {
             for (int sideJ = sideI + 1; sideJ < numCorners; sideJ++) {
-                if (doIntersect(sideI, sideJ)) {
+                if (doSidesIntersect(sideI, sideJ)) {
                     isSelfIntersecting = true;
                     return;
                 }

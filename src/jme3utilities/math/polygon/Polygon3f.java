@@ -54,9 +54,8 @@ public class Polygon3f {
     // *************************************************************************
     // fields
     /**
-     * if true, then two adjacent sides are collinear and/or there are fewer
-     * than 3 corners and/or there are duplicate corners (set by
-     * #setIsDegenerate())
+     * if true, then there are fewer than 3 corners and/or there are coincident
+     * corners and/or there is a 180-degree turn (set by #setIsDegenerate())
      */
     private Boolean isDegenerate = null;
     /**
@@ -1065,11 +1064,10 @@ public class Polygon3f {
     }
 
     /**
-     * Initialize the isDegenerate field. The polygon is degenerate if (1) it
-     * has fewer than three corners OR (2) it has duplicate corners OR (3) two
-     * adjacent sides are collinear. In a non-degenerate polygon, each corner
-     * forms an angle that is neither 0 nor Pi radians, though the sign of the
-     * angle may be ambiguous.
+     * Initialize the isDegenerate field. The polygon is degenerate if it has
+     * (1) fewer than three corners OR (2) coincident corners OR (3) a
+     * 180-degree turn. In a non-degenerate polygon, each corner forms an angle
+     * less than Pi radians, though the sign of the angle may be ambiguous.
      */
     private void setIsDegenerate() {
         if (numCorners < 3) {
@@ -1077,7 +1075,7 @@ public class Polygon3f {
             return;
         }
         /*
-         * (2) Test for duplicate corners.
+         * (2) Test for coincident corners.
          */
         for (int iCorner = 0; iCorner < numCorners; iCorner++) {
             for (int jCorner = iCorner + 1; jCorner < numCorners; jCorner++) {
@@ -1088,12 +1086,18 @@ public class Polygon3f {
             }
         }
         /*
-         * (3) Test adjacent sides for collinearity.
+         * (3) Test for 180-degree turns.
          */
-        for (int iCorner = 0; iCorner < numCorners; iCorner++) {
-            int next = nextIndex(iCorner);
-            int nextNext = nextIndex(next);
-            if (areCollinear(iCorner, next, nextNext, null)) {
+        for (int cornerI = 0; cornerI < numCorners; cornerI++) {
+            double dot = dotProduct(cornerI);
+            int nextI = nextIndex(cornerI);
+            int prevI = prevIndex(cornerI);
+            double lsPrevious = squaredDistance(prevI, cornerI);
+            double lsCurrent = squaredDistance(cornerI, nextI);
+            double lsProduct = lsPrevious * lsCurrent;
+            double lengthProduct = Math.sqrt(lsProduct);
+
+            if (dot < tolerance2 - lengthProduct) {
                 setIsDegenerate(true);
                 return;
             }

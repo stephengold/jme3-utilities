@@ -85,7 +85,7 @@ public class TestPolygon3f {
         /*
          * degenerate planar test cases
          */
-        degenerateCase = new Vector3f[12][];
+        degenerateCase = new Vector3f[11][];
 
         degenerateCase[0] = new Vector3f[]{}; // null
 
@@ -141,14 +141,7 @@ public class TestPolygon3f {
             new Vector3f(3f, 4f, 0f)
         };
 
-        degenerateCase[10] = new Vector3f[]{ // horizontal quad with 180
-            new Vector3f(1f, 4f, 0f),
-            new Vector3f(2f, 4f, 0f),
-            new Vector3f(3f, 4f, 0f),
-            new Vector3f(2f, 4f, 1f)
-        };
-
-        degenerateCase[11] = new Vector3f[]{ // horizontal pent w/0-degree angle
+        degenerateCase[10] = new Vector3f[]{ // duplicative pent in X-Z plane
             new Vector3f(1f, 4f, 0f),
             new Vector3f(2f, 4f, 0f),
             new Vector3f(1f, 4f, 0f),
@@ -161,22 +154,21 @@ public class TestPolygon3f {
          */
         dnpCase = new Vector3f[2][];
 
-        dnpCase[0] = new Vector3f[]{ // non-planar hexagon with 180s
+        dnpCase[0] = new Vector3f[]{ // non-planar hexagon with dup corner
             new Vector3f(1f, 4f, 0f),
-            new Vector3f(2f, 4f, 0f),
+            new Vector3f(3f, 4f, 0f),
             new Vector3f(3f, 4f, 0f),
             new Vector3f(3f, 5f, 1f),
             new Vector3f(2f, 4f, 1f),
             new Vector3f(1f, 4f, 1f)
         };
 
-        dnpCase[1] = new Vector3f[]{ // non-planar hexagon with dup
-            new Vector3f(1f, 4f, 0f),
-            new Vector3f(3f, 4f, 0f),
-            new Vector3f(3f, 4f, 0f),
-            new Vector3f(3f, 5f, 1f),
-            new Vector3f(2f, 4f, 1f),
-            new Vector3f(1f, 4f, 1f)
+        dnpCase[1] = new Vector3f[]{ // non-planar pentagon with 180
+            new Vector3f(1f, 2f, 1f),
+            new Vector3f(1f, 2f, 3f),
+            new Vector3f(1f, 2f, 2f),
+            new Vector3f(-2f, 2f, 2f),
+            new Vector3f(-1f, 3f, 1f)
         };
 
         /*
@@ -194,7 +186,7 @@ public class TestPolygon3f {
         /*
          * generic non-planar test cases
          */
-        gnpCase = new Vector3f[1][];
+        gnpCase = new Vector3f[2][];
 
         gnpCase[0] = new Vector3f[]{ // skewed quad
             new Vector3f(0f, 9f, 9f),
@@ -203,10 +195,19 @@ public class TestPolygon3f {
             new Vector3f(0f, 9f, 6f)
         };
 
+        gnpCase[1] = new Vector3f[]{ // non-planar hexagon with redundant corner
+            new Vector3f(1f, 4f, 0f),
+            new Vector3f(2f, 4f, 0f),
+            new Vector3f(3f, 4f, 0f),
+            new Vector3f(3f, 5f, 1f),
+            new Vector3f(2f, 4f, 1f),
+            new Vector3f(1f, 4f, 1f)
+        };
+
         /*
          * simple test cases
          */
-        simpleCase = new Vector3f[4][];
+        simpleCase = new Vector3f[6][];
 
         simpleCase[0] = new Vector3f[]{ // 3-4-5 triangle in X-Y plane
             new Vector3f(0f, 9f, 9f),
@@ -233,25 +234,43 @@ public class TestPolygon3f {
             new Vector3f(1f, -9f, -9f),
             new Vector3f(2f, 0f, 0f)
         };
+
+        simpleCase[4] = new Vector3f[]{ // horizontal quad with 180
+            new Vector3f(1f, 4f, 0f),
+            new Vector3f(2f, 4f, 0f),
+            new Vector3f(3f, 4f, 0f),
+            new Vector3f(2f, 4f, 1f)
+        };
+
+        simpleCase[5] = new Vector3f[]{ // four-pointed star
+            new Vector3f(1f, 2f, 0f),
+            new Vector3f(0f, 6f, 0f),
+            new Vector3f(-1f, 2f, 0f),
+            new Vector3f(-5f, 1f, 0f),
+            new Vector3f(-1f, 0f, 0f),
+            new Vector3f(0f, -4f, 0f),
+            new Vector3f(1f, 0f, 0f),
+            new Vector3f(5f, 1f, 0f)
+        };
     }
 
     /**
      * Run all the tests.
      */
     private static void runAll() {
+        Polygon3f poly;
+
         for (int caseI = 0; caseI < degenerateCase.length; caseI++) {
             System.out.printf("degenerate/planar test case #%d:%n", caseI);
-            Vector3f[] theCase = degenerateCase[caseI];
-            Polygon3f poly = new Polygon3f(theCase, 0.01f);
-            assert poly.isDegenerate();
-            assert poly.isPlanar();
+            poly = new Polygon3f(degenerateCase[caseI], 0.01f);
+            assert poly.isDegenerate() : caseI;
+            assert poly.isPlanar() : caseI;
             testPolygon(poly);
         }
 
         for (int caseI = 0; caseI < dnpCase.length; caseI++) {
             System.out.printf("degenerate/non-planar test case #%d:%n", caseI);
-            Vector3f[] theCase = dnpCase[caseI];
-            Polygon3f poly = new Polygon3f(theCase, 0.01f);
+            poly = new Polygon3f(dnpCase[caseI], 0.01f);
             assert poly.isDegenerate();
             assert !poly.isPlanar();
             testPolygon(poly);
@@ -259,25 +278,21 @@ public class TestPolygon3f {
 
         for (int caseI = 0; caseI < genericCase.length; caseI++) {
             System.out.printf("generic/planar test case #%d:%n", caseI);
-            Vector3f[] theCase = genericCase[caseI];
-            Polygon3f poly = new GenericPolygon3f(theCase, 0.01f);
+            poly = new GenericPolygon3f(genericCase[caseI], 0.01f);
             assert poly.isPlanar();
             testPolygon(poly);
         }
 
         for (int caseI = 0; caseI < gnpCase.length; caseI++) {
             System.out.printf("generic/non-planar test case #%d:%n", caseI);
-            Vector3f[] theCase = gnpCase[caseI];
-            Polygon3f poly = new GenericPolygon3f(theCase, 0.01f);
+            poly = new GenericPolygon3f(gnpCase[caseI], 0.01f);
             assert !poly.isPlanar();
             testPolygon(poly);
         }
 
         for (int caseI = 0; caseI < simpleCase.length; caseI++) {
             System.out.printf("simple test case #%d:%n", caseI);
-            Vector3f[] theCase = simpleCase[caseI];
-            Polygon3f poly = new SimplePolygon3f(theCase, 0.01f);
-            assert poly.isPlanar();
+            poly = new SimplePolygon3f(simpleCase[caseI], 0.01f);
             testPolygon(poly);
         }
     }
@@ -388,11 +403,11 @@ public class TestPolygon3f {
         /*
          * Test with the origin and the centroid.
          */
-        testPoint(Vector3f.ZERO, "The origin", poly);
+        testPoint(Vector3f.ZERO, "the origin", poly);
         if (simple != null) {
             Vector3f centroid = simple.centroid();
             assert simple.inPlane(centroid);
-            testPoint(centroid, "The centroid", poly);
+            testPoint(centroid, "the centroid", poly);
         }
         /*
          * Calculate the area.
@@ -416,7 +431,7 @@ public class TestPolygon3f {
         assert name != null;
         assert poly != null;
 
-        System.out.printf(" %s at %s:%n", name, point.toString());
+        System.out.printf(" For %s at %s:%n", name, point.toString());
         if (poly instanceof SimplePolygon3f) {
             SimplePolygon3f simple = (SimplePolygon3f) poly;
             System.out.printf("  %s in the plane,",

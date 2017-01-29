@@ -269,7 +269,7 @@ public class SimplePolygon3f extends GenericPolygon3f {
          */
         double turnMagnitude = absTurnAngle(cornerIndex);
         assert !Double.isNaN(turnMagnitude);
-        assert turnMagnitude > 0f : turnMagnitude;
+        assert turnMagnitude >= 0f : turnMagnitude;
         assert turnMagnitude < Math.PI : turnMagnitude;
         /*
          * Calculate the direction/sign of the turn.
@@ -320,13 +320,15 @@ public class SimplePolygon3f extends GenericPolygon3f {
      * The polygon is convex if all the turns are inward.
      */
     private void setIsConvex() {
+        assert isConvex == null : isConvex;
+
         if (planeNormal == null) {
             setPlane();
         }
         for (int cornerI = 0; cornerI < numCorners; cornerI++) {
             Vector3f cross = crossProduct(cornerI);
             float dot = planeNormal.dot(cross);
-            if (!(dot > 0f)) {
+            if (!(dot >= 0f)) {
                 isConvex = false;
                 return;
             }
