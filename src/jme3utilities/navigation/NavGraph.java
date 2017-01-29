@@ -52,10 +52,11 @@ public class NavGraph {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(NavGraph.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            NavGraph.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * list of arcs in this graph
      */
@@ -141,6 +142,40 @@ public class NavGraph {
      */
     public boolean contains(NavVertex vertex) {
         boolean result = vertices.contains(vertex);
+        return result;
+    }
+
+    /**
+     * Enumerate all arcs.
+     *
+     * @return new array
+     */
+    public NavArc[] copyArcs() {
+        int size = arcs.size();
+        NavArc[] result = new NavArc[size];
+        int index = 0;
+        for (NavArc item : arcs) {
+            result[index] = item;
+            index++;
+        }
+
+        return result;
+    }
+
+    /**
+     * Enumerate all vertices.
+     *
+     * @return new array
+     */
+    public NavVertex[] copyVertices() {
+        int size = vertices.size();
+        NavVertex[] result = new NavVertex[size];
+        int index = 0;
+        for (NavVertex item : vertices) {
+            result[index] = item;
+            index++;
+        }
+
         return result;
     }
 
@@ -231,40 +266,6 @@ public class NavGraph {
                 maxDistance = distance;
                 result = vertex;
             }
-        }
-
-        return result;
-    }
-
-    /**
-     * Enumerate all arcs.
-     *
-     * @return new array
-     */
-    public NavArc[] getArcs() {
-        int size = arcs.size();
-        NavArc[] result = new NavArc[size];
-        int index = 0;
-        for (NavArc item : arcs) {
-            result[index] = item;
-            index++;
-        }
-
-        return result;
-    }
-
-    /**
-     * Enumerate all vertices.
-     *
-     * @return new array
-     */
-    public NavVertex[] getVertices() {
-        int size = vertices.size();
-        NavVertex[] result = new NavVertex[size];
-        int index = 0;
-        for (NavVertex item : vertices) {
-            result[index] = item;
-            index++;
         }
 
         return result;
@@ -366,7 +367,7 @@ public class NavGraph {
 
         NavArc result = null;
         float minDistance = Float.MAX_VALUE;
-        for (NavArc arc : startVertex.getArcs()) {
+        for (NavArc arc : startVertex.copyArcs()) {
             NavVertex neighbor = arc.getToVertex();
             float distance = distanceData.get(neighbor) + arc.getPathLength();
             if (distance < minDistance) {
@@ -431,7 +432,7 @@ public class NavGraph {
         /*
          * Follow each arc from the current vertex.
          */
-        for (NavArc arc : currentVertex.getArcs()) {
+        for (NavArc arc : currentVertex.copyArcs()) {
             NavVertex vertex = arc.getToVertex();
             float newDistance = distance + arc.getPathLength();
             calculateDistances(vertex, newDistance, pathData);
@@ -465,7 +466,7 @@ public class NavGraph {
          * Follow each arc from the current vertex.
          */
         int nextHopCount = hopCount + 1;
-        for (NavArc arc : currentVertex.getArcs()) {
+        for (NavArc arc : currentVertex.copyArcs()) {
             NavVertex vertex = arc.getToVertex();
             calculateHops(vertex, nextHopCount, pathData);
         }
@@ -495,7 +496,7 @@ public class NavGraph {
 
         visitedVertices.add(fromVertex);
 
-        for (NavArc arc : fromVertex.getArcs()) {
+        for (NavArc arc : fromVertex.copyArcs()) {
             if (arc == avoidArc) {
                 continue;
             }

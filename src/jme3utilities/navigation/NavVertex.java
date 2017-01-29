@@ -54,6 +54,7 @@ public class NavVertex
             NavVertex.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * list of arcs which originate from this vertex
      */
@@ -123,6 +124,28 @@ public class NavVertex
         arcs.add(newArc);
 
         return newArc;
+    }
+
+    /**
+     * Copy the list of arcs which originate from this vertex.
+     *
+     * @return new array of pre-existing instances
+     */
+    public NavArc[] copyArcs() {
+        int size = arcs.size();
+        NavArc[] result = new NavArc[size];
+        arcs.toArray(result);
+
+        return result;
+    }
+
+    /**
+     * Copy the world coordinates of the vertex.
+     *
+     * @return new vector
+     */
+    public Vector3f copyLocation() {
+        return location.clone();
     }
 
     /**
@@ -215,19 +238,6 @@ public class NavVertex
     }
 
     /**
-     * Copy the list of arcs which originate from this vertex.
-     *
-     * @return new array of pre-existing instances
-     */
-    public NavArc[] getArcs() {
-        int size = arcs.size();
-        NavArc[] result = new NavArc[size];
-        arcs.toArray(result);
-
-        return result;
-    }
-
-    /**
      * Read the description of this vertex.
      *
      * @return textual description (not null)
@@ -235,25 +245,6 @@ public class NavVertex
     public String getDescription() {
         assert description != null;
         return description;
-    }
-
-    /**
-     * Copy the world coordinates of the vertex. TODO: rename
-     *
-     * @return new vector
-     */
-    public Vector3f getLocation() {
-        return location.clone();
-    }
-
-    /**
-     * Count how many arcs originate from this vertex. TODO: rename
-     *
-     * @return number of arcs (&ge;0)
-     */
-    public int getNumArcs() {
-        int result = arcs.size();
-        return result;
     }
 
     /**
@@ -272,6 +263,16 @@ public class NavVertex
             }
         }
         return false;
+    }
+
+    /**
+     * Count how many arcs originate from this vertex.
+     *
+     * @return number of arcs (&ge;0)
+     */
+    public int numArcs() {
+        int result = arcs.size();
+        return result;
     }
 
     /**

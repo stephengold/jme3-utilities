@@ -66,18 +66,18 @@ public class NavDebug {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(NavDebug.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            NavDebug.class.getName());
     /**
      * sphere mesh for generating balls
      */
-    final private static Mesh ballMesh =
-            new Sphere(meridianSamples, equatorSamples, 1f);
+    final private static Mesh ballMesh = new Sphere(
+            meridianSamples, equatorSamples, 1f);
     /**
      * cylinder mesh for generating sticks
      */
-    final private static Mesh stickMesh =
-            new Cylinder(lengthSamples, circumferenceSamples, 1f, 1f);
+    final private static Mesh stickMesh = new Cylinder(
+            lengthSamples, circumferenceSamples, 1f, 1f);
     // *************************************************************************
     // constructors
 
@@ -103,7 +103,7 @@ public class NavDebug {
         Validate.positive(radius, "radius");
         Validate.nonNull(material, "material");
 
-        for (NavVertex vertex : graph.getVertices()) {
+        for (NavVertex vertex : graph.copyVertices()) {
             Spatial ball = makeBall(vertex, radius, material);
             parentNode.attachChild(ball);
         }
@@ -122,7 +122,7 @@ public class NavDebug {
         Validate.positive(radius, "radius");
         Validate.nonNull(material, "material");
 
-        for (NavArc arc : graph.getArcs()) {
+        for (NavArc arc : graph.copyArcs()) {
             Spatial stick = makeStick(arc, radius, material);
             parentNode.attachChild(stick);
         }
@@ -144,7 +144,7 @@ public class NavDebug {
 
         Geometry ball = new Geometry("navigation vertex", ballMesh);
         ball.setLocalScale(radius);
-        Vector3f location = vertex.getLocation();
+        Vector3f location = vertex.copyLocation();
         ball.setLocalTranslation(location);
         ball.setMaterial(material);
 
@@ -196,9 +196,9 @@ public class NavDebug {
         Validate.nonNull(material, "material");
 
         NavVertex fromVertex = arc.getFromVertex();
-        Vector3f from = fromVertex.getLocation();
+        Vector3f from = fromVertex.copyLocation();
         NavVertex toVertex = arc.getToVertex();
-        Vector3f to = toVertex.getLocation();
+        Vector3f to = toVertex.copyLocation();
         Vector3f midpoint = from.add(to);
         midpoint.divideLocal(2f);
 

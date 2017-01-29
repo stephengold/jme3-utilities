@@ -48,10 +48,11 @@ public class NavArc
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(NavArc.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            NavArc.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * vertex from which this arc originates (not null)
      */
@@ -90,8 +91,8 @@ public class NavArc
         this.toVertex = toVertex;
 
         Vector3f[] points = new Vector3f[2];
-        points[0] = fromVertex.getLocation();
-        points[1] = toVertex.getLocation();
+        points[0] = fromVertex.copyLocation();
+        points[1] = toVertex.copyLocation();
         path = new LinearSpline3f(points);
 
         startDirection = path.rightDerivative(0f);
@@ -119,11 +120,11 @@ public class NavArc
 
         int numJoints = joints.length;
         Vector3f[] points = new Vector3f[numJoints + 2];
-        points[0] = fromVertex.getLocation();
+        points[0] = fromVertex.copyLocation();
         for (int jointIndex = 0; jointIndex < numJoints; jointIndex++) {
             points[jointIndex + 1] = joints[jointIndex].clone();
         }
-        points[numJoints + 1] = toVertex.getLocation();
+        points[numJoints + 1] = toVertex.copyLocation();
         path = new LinearSpline3f(points);
 
         startDirection = path.rightDerivative(0f);
@@ -241,8 +242,8 @@ public class NavArc
             } else if (!toVertex.equals(otherArc.getToVertex())) {
                 return false;
             } else {
-                boolean result =
-                        startDirection.equals(otherArc.getStartDirection());
+                boolean result = startDirection.equals(
+                        otherArc.getStartDirection());
                 return result;
             }
         }
