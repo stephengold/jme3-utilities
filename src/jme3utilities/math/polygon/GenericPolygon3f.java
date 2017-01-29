@@ -225,27 +225,27 @@ public class GenericPolygon3f extends Polygon3f {
         /*
          * Test the partner of firstI against both corners of the other side.
          */
-        int otherEdge, partner;
+        int otherSide, partner;
         if (firstI == sideIndex1) {
-            otherEdge = sideIndex2;
+            otherSide = sideIndex2;
             partner = next1;
         } else if (firstI == next1) {
-            otherEdge = sideIndex2;
+            otherSide = sideIndex2;
             partner = sideIndex1;
         } else if (firstI == sideIndex2) {
-            otherEdge = sideIndex1;
+            otherSide = sideIndex1;
             partner = next2;
         } else {
             assert firstI == next2;
-            otherEdge = sideIndex1;
+            otherSide = sideIndex1;
             partner = sideIndex2;
         }
         double sdPartner = squaredDistance(firstI, partner);
-        double sdOther = squaredDistance(firstI, otherEdge);
+        double sdOther = squaredDistance(firstI, otherSide);
         if (sdPartner > sdOther) {
             return true;
         } else {
-            int otherNext = nextIndex(otherEdge);
+            int otherNext = nextIndex(otherSide);
             double sdOtherNext = squaredDistance(firstI, otherNext);
             if (sdPartner > sdOtherNext) {
                 return true;
