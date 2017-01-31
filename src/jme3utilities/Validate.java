@@ -85,7 +85,7 @@ final public class Validate {
         if (value < min) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "int argument";
             } else {
                 what = description;
             }
@@ -98,7 +98,7 @@ final public class Validate {
         if (value > max) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "int argument";
             } else {
                 what = description;
             }
@@ -123,7 +123,7 @@ final public class Validate {
         if (!(value >= min)) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "float argument";
             } else {
                 what = description;
             }
@@ -136,7 +136,7 @@ final public class Validate {
         if (!(value <= max)) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "float argument";
             } else {
                 what = description;
             }
@@ -161,7 +161,7 @@ final public class Validate {
         if (!(value >= min)) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "double argument";
             } else {
                 what = description;
             }
@@ -174,7 +174,7 @@ final public class Validate {
         if (!(value <= max)) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "double argument";
             } else {
                 what = description;
             }
@@ -200,7 +200,7 @@ final public class Validate {
         if (length <= 0) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "String argument";
             } else {
                 what = description;
             }
@@ -220,7 +220,7 @@ final public class Validate {
         if (value < 0) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "int argument";
             } else {
                 what = description;
             }
@@ -241,7 +241,7 @@ final public class Validate {
         if (!(value >= 0f)) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "float argument";
             } else {
                 what = description;
             }
@@ -262,7 +262,7 @@ final public class Validate {
         if (!(value >= 0.0)) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "double argument";
             } else {
                 what = description;
             }
@@ -308,7 +308,7 @@ final public class Validate {
         if (value == 0f) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "float argument";
             } else {
                 what = description;
             }
@@ -331,7 +331,7 @@ final public class Validate {
         if (vector.x == 0f && vector.y == 0f) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "Vector2f argument";
             } else {
                 what = description;
             }
@@ -355,7 +355,7 @@ final public class Validate {
         if (vector.x == 0f && vector.y == 0f && vector.z == 0f) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "Vector3f argument";
             } else {
                 what = description;
             }
@@ -376,7 +376,7 @@ final public class Validate {
         if (value <= 0) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "int argument";
             } else {
                 what = description;
             }
@@ -397,7 +397,7 @@ final public class Validate {
         if (!(value > 0f)) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "float argument";
             } else {
                 what = description;
             }
@@ -418,7 +418,7 @@ final public class Validate {
         if (!(value > 0.0)) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "double argument";
             } else {
                 what = description;
             }
