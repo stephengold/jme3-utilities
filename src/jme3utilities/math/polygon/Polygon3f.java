@@ -128,10 +128,7 @@ public class Polygon3f {
         cornerLocations = new Vector3f[numCorners];
         crossProducts = new Vector3f[numCorners];
         dotProducts = new Double[numCorners];
-        squaredDistances = new Double[numCorners][];
-        for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
-            squaredDistances[cornerIndex] = new Double[numCorners];
-        }
+        squaredDistances = new Double[numCorners][numCorners];
         /*
          * Copy corner locations.
          */
