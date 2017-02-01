@@ -668,12 +668,12 @@ public class VectorXZ implements Comparable<VectorXZ> {
         if (vector.isZero()) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "VectorXZ argument";
             } else {
                 what = description;
             }
             String message;
-            message = String.format("%s should be non-zero.", what);
+            message = String.format("%s must not be zero.", what);
             throw new IllegalArgumentException(message);
         }
     }
