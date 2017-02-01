@@ -258,12 +258,12 @@ public class MyVector3f {
     }
 
     /**
-     * Test a vector for zero length.
+     * Test for a zero vector.
      *
      * @param vector input (not null, unaffected)
-     * @return true if the vector has zero length, false otherwise
+     * @return true if the vector equals the zero vector, false otherwise
      */
-    public static boolean isZeroLength(Vector3f vector) {
+    public static boolean isZero(Vector3f vector) {
         if (vector.x == 0f && vector.y == 0f && vector.z == 0f) {
             return true;
         } else {
@@ -284,6 +284,23 @@ public class MyVector3f {
         double yy = vector.y;
         double zz = vector.z;
         double result = xx * xx + yy * yy + zz * zz;
+
+        return result;
+    }
+
+    /**
+     * Compute the midpoint between two vectors.
+     *
+     * @param vector1 input (not null, unaffected)
+     * @param vector2 input (not null, unaffected)
+     * @return new vector
+     */
+    public static Vector3f midpoint(Vector3f vector1, Vector3f vector2) {
+        float x = (vector1.x + vector2.x) / 2f;
+        float y = (vector1.y + vector2.y) / 2f;
+        float z = (vector1.z + vector2.z) / 2f;
+
+        Vector3f result = new Vector3f(x, y, z);
 
         return result;
     }
