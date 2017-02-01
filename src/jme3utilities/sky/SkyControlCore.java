@@ -104,8 +104,17 @@ public class SkyControlCore
      * name for the southern sky geometry
      */
     final private static String southName = "south";
+   /**
+     * local copy of Vector3f#UNIT_X
+     */
+    final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
+    /**
+     * negative Y-axis
+     */
+    final private static Vector3f negativeYAxis = new Vector3f(0f, -1f, 0f);
     // *************************************************************************
     // fields
+    
     /**
      * which asset manager to use for loading textures and material definitions:
      * set by constructor
@@ -556,7 +565,7 @@ public class SkyControlCore
             subtree.attachChild(bottomDome);
 
             Quaternion upsideDown = new Quaternion();
-            upsideDown.lookAt(Vector3f.UNIT_X, Vector3f.UNIT_Y.negate());
+            upsideDown.lookAt(xAxis, negativeYAxis);
             bottomDome.setLocalRotation(upsideDown);
             bottomDome.setMaterial(bottomMaterial);
         }

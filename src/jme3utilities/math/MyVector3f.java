@@ -45,6 +45,14 @@ public class MyVector3f {
      */
     final private static Logger logger = Logger.getLogger(
             MyVector3f.class.getName());
+    /**
+     * local copy of Vector3f#UNIT_X
+     */
+    final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
+    /**
+     * local copy of Vector3f#UNIT_Z
+     */
+    final private static Vector3f zAxis = new Vector3f(0f, 0f, 1f);
     // *************************************************************************
     // constructors
 
@@ -216,12 +224,12 @@ public class MyVector3f {
      *
      * @param altitude angle above the X-Z plane (radians toward +Y)
      * @param azimuth angle in the X-Z plane (radians CCW from +X)
-     * @return a new unit vector
+     * @return new unit vector
      */
     public static Vector3f fromAltAz(float altitude, float azimuth) {
         Quaternion elevate = new Quaternion();
-        elevate.fromAngleNormalAxis(altitude, Vector3f.UNIT_Z);
-        Vector3f elevation = elevate.mult(Vector3f.UNIT_X);
+        elevate.fromAngleNormalAxis(altitude, zAxis);
+        Vector3f elevation = elevate.mult(xAxis);
         Vector3f direction = MyVector3f.yRotate(elevation, azimuth);
 
         assert direction.isUnitVector() : direction;

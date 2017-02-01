@@ -84,9 +84,18 @@ public class GlobeRenderer
     /**
      * location of the globe's center (in world coordinates)
      */
-    final private static Vector3f globeCenter = Vector3f.ZERO;
+    final private static Vector3f globeCenter = new Vector3f(0f, 0f, 0f);
+    /**
+     * local copy of Vector3f#UNIT_X
+     */
+    final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
+    /**
+     * local copy of Vector3f#UNIT_Z
+     */
+    final private static Vector3f zAxis = new Vector3f(0f, 0f, 1f);
     // *************************************************************************
     // fields
+
     /**
      * camera for off-screen render: set by constructor
      */
@@ -130,7 +139,7 @@ public class GlobeRenderer
     /**
      * spin axis (length=1)
      */
-    final private Vector3f spinAxis = Vector3f.UNIT_Z.clone();
+    final private Vector3f spinAxis = new Vector3f(0f, 0f, 1f);
     // *************************************************************************
     // constructors
 
@@ -212,7 +221,7 @@ public class GlobeRenderer
     /**
      * Move the camera to a new location and orientation.
      *
-     * @param newLocation (in world coordinates, not null)
+     * @param newLocation (in world coordinates, not null, unaffected)
      * @param newUpDirection (length&gt;0, unaffected)
      */
     final public void moveCamera(Vector3f newLocation,
@@ -220,7 +229,7 @@ public class GlobeRenderer
         Validate.nonNull(newLocation, "location");
         Validate.nonZero(newUpDirection, "up direction");
 
-        camera.setLocation(newLocation);
+        camera.setLocation(newLocation.clone());
         camera.lookAt(globeCenter, newUpDirection);
     }
 
@@ -273,7 +282,7 @@ public class GlobeRenderer
         Validate.inRange(newAngle, "phase angle", 0f, FastMath.TWO_PI);
 
         Quaternion turn = new Quaternion().fromAngles(-newAngle, 0f, 0f);
-        Vector3f lightDirection = turn.mult(Vector3f.UNIT_Z);
+        Vector3f lightDirection = turn.mult(zAxis);
         light.setDirection(lightDirection);
     }
 
@@ -371,7 +380,7 @@ public class GlobeRenderer
 
         camera = new Camera(resolution, resolution);
         Vector3f location = new Vector3f(0f, 0f, initialCameraDistance);
-        Vector3f upDirection = Vector3f.UNIT_X;
+        Vector3f upDirection = xAxis;
         moveCamera(location, upDirection);
     }
 

@@ -60,6 +60,10 @@ public class MySpatial
      */
     final private static Logger logger = Logger.getLogger(
             MySpatial.class.getName());
+    /**
+     * direction of the negative Y-axis
+     */
+    final private static Vector3f negativeYAxis = new Vector3f(0f, -1f, 0f);
     // *************************************************************************
     // constructors
 
@@ -525,7 +529,7 @@ public class MySpatial
     }
 
     /**
-     * Turn (rotate) a physical object around its Y-axis.
+     * Turn (rotate) a physical object around the world's Y-axis.
      *
      * @param spatial object to rotate (not null)
      * @param angle clockwise rotation angle (in radians)
@@ -534,7 +538,7 @@ public class MySpatial
         Validate.nonNull(spatial, "spatial");
 
         Quaternion rotation = new Quaternion();
-        rotation.fromAngleNormalAxis(-angle, Vector3f.UNIT_Y);
+        rotation.fromAngleNormalAxis(angle, negativeYAxis);
         Vector3f center = getWorldLocation(spatial);
         rotateObject(spatial, center, rotation);
     }
