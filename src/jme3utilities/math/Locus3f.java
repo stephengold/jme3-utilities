@@ -40,12 +40,12 @@ public interface Locus3f {
      * @param point coordinates of the point (not null, unaffected)
      * @return true if the point lies in the region, false otherwise
      */
-    public boolean contains(Vector3f point);
+    boolean contains(Vector3f point);
 
     /**
      * Quickly provide a representative point for the region.
      *
      * @return new vector
      */
-    public Vector3f representative();
+    Vector3f representative();
 }
