@@ -29,6 +29,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.math.MyVector3f;
 
 /**
  * Utility methods to throw exceptions for invalid method arguments. Aside from
@@ -335,8 +336,7 @@ final public class Validate {
             } else {
                 what = description;
             }
-            String message = String.format(
-                    "%s must have positive length.", what);
+            String message = String.format("%s must not be zero.", what);
             throw new IllegalArgumentException(message);
         }
     }
@@ -352,15 +352,14 @@ final public class Validate {
     public static void nonZero(Vector3f vector, String description) {
         nonNull(vector, description);
 
-        if (vector.x == 0f && vector.y == 0f && vector.z == 0f) {
+        if (MyVector3f.isZero(vector)) {
             String what;
             if (description == null) {
                 what = "Vector3f argument";
             } else {
                 what = description;
             }
-            String message = String.format(
-                    "%s must have positive length.", what);
+            String message = String.format("%s must not be zero.", what);
             throw new IllegalArgumentException(message);
         }
     }
