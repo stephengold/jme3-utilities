@@ -448,7 +448,7 @@ public class TestPolygon3f {
                     simple.contains(point) ? "IS" : "is NOT");
         }
 
-        System.out.printf("  Its closest corner is ", name);
+        System.out.print("  Its closest corner is ");
         int cornerIndex = poly.findCorner(point);
         if (cornerIndex == -1) {
             System.out.print("n/a.");
@@ -458,7 +458,7 @@ public class TestPolygon3f {
         }
         System.out.println();
 
-        System.out.printf("  Its closest side is ", name);
+        System.out.print("  Its closest side is ");
         Vector3f storage = new Vector3f(Float.NaN, Float.NaN, Float.NaN);
         int sideIndex = poly.findSide(point, storage);
         if (sideIndex == -1) {
