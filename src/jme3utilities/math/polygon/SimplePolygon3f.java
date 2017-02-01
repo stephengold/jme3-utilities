@@ -29,6 +29,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
+import jme3utilities.math.Locus3f;
 import jme3utilities.math.VectorXZ;
 
 /**
@@ -40,7 +41,9 @@ import jme3utilities.math.VectorXZ;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class SimplePolygon3f extends GenericPolygon3f {
+public class SimplePolygon3f
+        extends GenericPolygon3f
+        implements Locus3f {
     // *************************************************************************
     // constants
 
@@ -140,7 +143,7 @@ public class SimplePolygon3f extends GenericPolygon3f {
     /**
      * Calculate (or look up) the centroid of the polygon.
      *
-     * @return world coordinates of the centroid (not null)
+     * @return new vector with world coordinates of the centroid
      */
     public Vector3f centroid() {
         if (centroid == null) {
@@ -204,37 +207,6 @@ public class SimplePolygon3f extends GenericPolygon3f {
     }
 
     /**
-     * Test whether a specific point lies inside this polygon.
-     *
-     * TODO implement ray-casting algorithm?
-     *
-     * @param point coordinates of the point (not null, unaffected)
-     * @return true if the point is in the polygon's interior, false otherwise
-     */
-    public boolean isInside(Vector3f point) {
-        Validate.nonNull(point, "point");
-
-        if (!inPlane(point)) {
-            return false;
-        }
-
-        int closestSide = findSide(point, null);
-
-        Vector3f corner1 = cornerLocations[closestSide];
-        Vector3f pointOffset = point.subtract(corner1);
-        int next = nextIndex(closestSide);
-        Vector3f corner2 = cornerLocations[next];
-        Vector3f sideOffset = corner2.subtract(corner1);
-        Vector3f cross = sideOffset.cross(pointOffset);
-        double crossDot = cross.dot(planeNormal);
-        if (crossDot > 0f) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Calculate (or look up) the planar offset of the specified corner.
      *
      * @param cornerIndex which corner (&ge;0, &lt;numCorners)
@@ -287,6 +259,51 @@ public class SimplePolygon3f extends GenericPolygon3f {
         return result;
     }
     // *************************************************************************
+    // Locus3f methods
+
+    /**
+     * Test whether this polygon contains a specific point.
+     *
+     * TODO implement ray-casting algorithm?
+     *
+     * @param point coordinates of the point (not null, unaffected)
+     * @return true if the point is in the polygon's interior, false otherwise
+     */
+    @Override
+    public boolean contains(Vector3f point) {
+        Validate.nonNull(point, "point");
+
+        if (!inPlane(point)) {
+            return false;
+        }
+
+        int closestSide = findSide(point, null);
+
+        Vector3f corner1 = cornerLocations[closestSide];
+        Vector3f pointOffset = point.subtract(corner1);
+        int next = nextIndex(closestSide);
+        Vector3f corner2 = cornerLocations[next];
+        Vector3f sideOffset = corner2.subtract(corner1);
+        Vector3f cross = sideOffset.cross(pointOffset);
+        double crossDot = cross.dot(planeNormal);
+        if (crossDot > 0f) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Quickly provide a representative point for the polygon.
+     *
+     * @return new vector
+     */
+    @Override
+    public Vector3f representative() {
+        Vector3f result = centroid();
+        return result;
+    }
+    // *************************************************************************
     // private methods
 
     /**
@@ -296,9 +313,9 @@ public class SimplePolygon3f extends GenericPolygon3f {
         float sumX = 0f;
         float sumZ = 0f;
         for (int cornerI = 0; cornerI < numCorners; cornerI++) {
-            VectorXZ p1 = planarOffsets[cornerI];
+            VectorXZ p1 = planarOffset(cornerI);
             int nextI = nextIndex(cornerI);
-            VectorXZ p2 = planarOffsets[nextI];
+            VectorXZ p2 = planarOffset(nextI);
             float cross = p1.cross(p2);
             float termX = (p1.getX() + p2.getX()) * cross;
             sumX += termX;

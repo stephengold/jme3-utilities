@@ -57,9 +57,9 @@ public class TestPolygon3f {
     private static Vector3f[][] genericCase;
     private static Vector3f[][] gnpCase;
     private static Vector3f[][] simpleCase;
-
     // *************************************************************************
     // new methods exposed
+
     /**
      * Console application to test the MyVector3f class.
      *
@@ -445,7 +445,7 @@ public class TestPolygon3f {
             System.out.printf("  %s in the plane,",
                     simple.inPlane(point) ? "IS" : "is NOT");
             System.out.printf(" %s inside the polygon.%n",
-                    simple.isInside(point) ? "IS" : "is NOT");
+                    simple.contains(point) ? "IS" : "is NOT");
         }
 
         System.out.printf("  Its closest corner is ", name);
