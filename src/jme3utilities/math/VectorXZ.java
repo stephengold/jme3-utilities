@@ -50,6 +50,10 @@ public class VectorXZ implements Comparable<VectorXZ> {
     final private static Logger logger = Logger.getLogger(
             VectorXZ.class.getName());
     /**
+     * local copy of #Vector3f.UNIT_Y
+     */
+    final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
+    /**
      * backward direction
      */
     final public static VectorXZ backward = new VectorXZ(-1f, 0f);
@@ -327,10 +331,12 @@ public class VectorXZ implements Comparable<VectorXZ> {
     }
 
     /**
-     * Compute a directional error of this vector with respect to a goal.
+     * Compute a signed directional error of this vector with respect to a goal.
+     * The result is positive if the goal is to the right and negative if the
+     * goal is to the left.
      *
      * @param directionGoal goal direction (length&gt;0)
-     * @return the sine of the angle from the goal, or +1/-1 if the angle's
+     * @return the sine of the angle from the goal, or +/-1 if that angle's
      * magnitude exceeds 90 degrees
      */
     public float directionError(VectorXZ directionGoal) {
@@ -609,14 +615,20 @@ public class VectorXZ implements Comparable<VectorXZ> {
     }
 
     /**
-     * Treating this vector as a rotation, create an equivalent quaternion.
+     * Treating this vector as a rotation (from north), generate an equivalent
+     * quaternion.
      *
-     * @return a new quaternion
+     * @return new quaternion
      */
     public Quaternion toQuaternion() {
         Quaternion result = new Quaternion();
-        Vector3f direction = toVector3f();
-        result.lookAt(direction, Vector3f.UNIT_Y);
+        /*
+         * Vector3f.lookAt() orients the Z-axis, whereas VectorXZ.rotate() 
+         * orients the X-axis, so a 90-degree tranformation of coordinates is
+         * required.
+         */
+        Vector3f direction = new Vector3f(-z, 0f, x);
+        result.lookAt(direction, yAxis);
 
         return result;
     }
@@ -624,7 +636,7 @@ public class VectorXZ implements Comparable<VectorXZ> {
     /**
      * Create a 3D equivalent of this vector.
      *
-     * @return a new 3D vector with y=0
+     * @return new 3D vector with y=0
      */
     public Vector3f toVector3f() {
         Vector3f result = new Vector3f(x, 0f, z);
@@ -745,14 +757,14 @@ public class VectorXZ implements Comparable<VectorXZ> {
      * @param ignored command-line arguments
      */
     public static void main(String[] ignored) {
-        System.out.print("Test results for class VectorXZ:%n%n");
+        System.out.printf("Test results for class VectorXZ:%n%n");
 
         // vector test cases
         VectorXZ[] cases = new VectorXZ[4];
         cases[0] = east;
         cases[1] = new VectorXZ(1f, 1f);
-        cases[2] = zero;
-        cases[3] = west;
+        cases[2] = west;
+        cases[3] = zero;
 
         for (VectorXZ vin : cases) {
             float a = vin.azimuth();
@@ -762,6 +774,22 @@ public class VectorXZ implements Comparable<VectorXZ> {
                     "vin = %s  azimuth(x)=%f (%f degrees)  vout = %s%n",
                     vin.toString(), a, MyMath.toDegrees(a),
                     vout.toString());
+            System.out.println();
+
+            Vector3f v3 = new Vector3f(1f, 2f, 3f);
+            VectorXZ vxz = new VectorXZ(v3);
+            VectorXZ r1 = vin.normalize().rotate(vxz);
+
+            Quaternion q1 = vin.toQuaternion();
+            VectorXZ r2 = new VectorXZ(q1.mult(v3));
+
+            Quaternion q2 = new Quaternion();
+            q2.fromAngleAxis(-a, yAxis);
+            VectorXZ r3 = new VectorXZ(q2.mult(v3));
+
+            System.out.printf("vin=%s  r1=%s, r2=%s, r3=%s%n",
+                    vin.toString(), r1.toString(), r2.toString(),
+                    r3.toString());
             System.out.println();
         }
         System.out.println();
