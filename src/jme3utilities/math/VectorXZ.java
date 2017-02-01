@@ -66,7 +66,7 @@ public class VectorXZ implements Comparable<VectorXZ> {
     /**
      * forward direction
      *
-     * @see com.jme3.math.Vector3f#UNIT_Z
+     * @see com.jme3.math.Vector3f#UNIT_X
      */
     final public static VectorXZ forward = new VectorXZ(1f, 0f);
     /**
@@ -101,6 +101,7 @@ public class VectorXZ implements Comparable<VectorXZ> {
     final public static VectorXZ zero = new VectorXZ(0f, 0f);
     // *************************************************************************
     // fields
+
     /**
      * northing component or X coordinate or cosine
      */
@@ -399,6 +400,22 @@ public class VectorXZ implements Comparable<VectorXZ> {
     }
 
     /**
+     * Mirror (or reflect) this vector to the 1st quadrant.
+     *
+     * @return a mirrored vector with the same length, both components &ge;0
+     */
+    public VectorXZ firstQuadrant() {
+        if (isFirstQuadrant()) {
+            return this;
+        }
+        float newX = FastMath.abs(x);
+        float newZ = FastMath.abs(z);
+        VectorXZ result = new VectorXZ(newX, newZ);
+
+        return result;
+    }
+
+    /**
      * Read the X-component of this vector.
      *
      * @return X-component
@@ -440,6 +457,16 @@ public class VectorXZ implements Comparable<VectorXZ> {
     }
 
     /**
+     * Test this vector to see if it's in the 1st quadrant.
+     *
+     * @return true if both components are &ge;0, false otherwise
+     */
+    public boolean isFirstQuadrant() {
+        boolean result = (x >= 0f && z >= 0f);
+        return result;
+    }
+
+    /**
      * Test this vector to see if it's the zero vector.
      *
      * @return true if both components are zero, false otherwise
@@ -473,8 +500,8 @@ public class VectorXZ implements Comparable<VectorXZ> {
     }
 
     /**
-     * Mirror this vector across the X-axis (complex conjugate or inverse
-     * rotation).
+     * Mirror (or reflect) this vector across the X-axis (complex conjugate or
+     * inverse rotation).
      *
      * @return a mirrored vector with the same length
      */
@@ -505,7 +532,8 @@ public class VectorXZ implements Comparable<VectorXZ> {
     }
 
     /**
-     * Negate this vector.
+     * Negate this vector (or reverse its direction or reflect it in the
+     * origin).
      *
      * @return a vector with same magnitude and opposite direction
      * @see com.jme3.math.Vector3f#negate()
@@ -784,7 +812,7 @@ public class VectorXZ implements Comparable<VectorXZ> {
             VectorXZ r2 = new VectorXZ(q1.mult(v3));
 
             Quaternion q2 = new Quaternion();
-            q2.fromAngleAxis(-a, yAxis);
+            q2.fromAngleNormalAxis(-a, yAxis);
             VectorXZ r3 = new VectorXZ(q2.mult(v3));
 
             System.out.printf("vin=%s  r1=%s, r2=%s, r3=%s%n",
