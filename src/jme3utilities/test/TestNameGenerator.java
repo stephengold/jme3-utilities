@@ -23,7 +23,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities;
+package jme3utilities.test;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.audio.openal.ALAudioRenderer;
@@ -33,6 +33,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Misc;
+import jme3utilities.NameGenerator;
 import static jme3utilities.NameGenerator.getPrefix;
 import static jme3utilities.NameGenerator.isFrom;
 
@@ -50,6 +52,8 @@ public class TestNameGenerator extends SimpleApplication {
      */
     final private static Logger logger = Logger.getLogger(
             TestNameGenerator.class.getName());
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Entry point for test application.
@@ -98,7 +102,7 @@ public class TestNameGenerator extends SimpleApplication {
 
         System.out.printf("used = %s%n", example.toString());
 
-        File targetFile = new File("assets/tmp.j3o");
+        File targetFile = new File("assets/testNameGenerator.j3o");
         JmeExporter exporter = BinaryExporter.getInstance();
         try {
             exporter.save(example, targetFile);
@@ -111,7 +115,7 @@ public class TestNameGenerator extends SimpleApplication {
         System.out.printf("reset = %s%n", example.toString());
 
         NameGenerator imported = (NameGenerator) assetManager.loadAsset(
-                "tmp.j3o");
+                "testNameGenerator.j3o");
         System.out.printf("imported = %s%n%n", imported.toString());
 
         System.out.printf("Success.%n");
