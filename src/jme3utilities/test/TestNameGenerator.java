@@ -23,7 +23,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities;
+package jme3utilities.test;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.export.JmeExporter;
@@ -32,6 +32,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Misc;
+import jme3utilities.NameGenerator;
 import static jme3utilities.NameGenerator.getPrefix;
 import static jme3utilities.NameGenerator.isFrom;
 
