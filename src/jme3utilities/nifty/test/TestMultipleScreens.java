@@ -47,10 +47,11 @@ public class TestMultipleScreens
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(TestMultipleScreens.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            TestMultipleScreens.class.getName());
     // *************************************************************************
     // fields
+    
     /**
      * controller for screen s1: set in guiInitializeApplication()
      */

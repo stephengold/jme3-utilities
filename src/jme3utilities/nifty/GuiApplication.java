@@ -48,8 +48,8 @@ abstract public class GuiApplication
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(GuiApplication.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            GuiApplication.class.getName());
     /**
      * asset path to the Nifty XML for generic popup menus
      */
@@ -57,6 +57,7 @@ abstract public class GuiApplication
             "Interface/Nifty/popup-menu.xml";
     // *************************************************************************
     // fields
+    
     /**
      * currently enabled screen controller (null means there's none)
      */

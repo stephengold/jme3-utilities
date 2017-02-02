@@ -57,16 +57,16 @@ public class NameGenerator
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(NameGenerator.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            NameGenerator.class.getName());
     // *************************************************************************
     // fields
+    
     /**
      * Track which sequence numbers remain available for the prefix strings seen
      * so far.
      */
-    final private Map<String, Integer> nextSequenceNumbers =
-            new TreeMap<>();
+    final private Map<String, Integer> nextSequenceNumbers = new TreeMap<>();
     // *************************************************************************
     // new methods exposed
 
@@ -193,9 +193,9 @@ public class NameGenerator
         capsule.write(keys, "keys", null);
         capsule.write(values, "values", null);
     }
-
     // *************************************************************************
     // Object methods
+    
     /**
      * Represent this name generator as a text string.
      *

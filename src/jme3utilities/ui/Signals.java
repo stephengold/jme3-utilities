@@ -49,10 +49,11 @@ public class Signals
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(Signals.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            Signals.class.getName());
     // *************************************************************************
     // fields
+    
     /**
      * map signal names to statuses
      */

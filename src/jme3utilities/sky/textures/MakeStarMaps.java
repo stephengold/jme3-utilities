@@ -331,17 +331,17 @@ public class MakeStarMaps {
         /*
          * sanity checks
          */
-        int degrees = Integer.valueOf(dd);
+        int degrees = Integer.parseInt(dd);
         if (degrees < -maxDeclination || degrees > maxDeclination) {
             throw new InvalidEntryException(
                     "dec degrees should be between -90 and 90, inclusive");
         }
-        int minutes = Integer.valueOf(mm);
+        int minutes = Integer.parseInt(mm);
         if (minutes < 0 || minutes >= maxMinutes) {
             throw new InvalidEntryException(
                     "dec minutes should be between 0 and 59, inclusive");
         }
-        float seconds = Float.valueOf(ss);
+        float seconds = Float.parseFloat(ss);
         if (seconds < 0f || seconds >= maxSeconds) {
             throw new InvalidEntryException(
                     "dec seconds should be between 0 and 59, inclusive");
@@ -381,17 +381,17 @@ public class MakeStarMaps {
         /*
          * sanity checks
          */
-        int hours = Integer.valueOf(hh);
+        int hours = Integer.parseInt(hh);
         if (hours < 0 || hours >= Constants.hoursPerDay) {
             throw new InvalidEntryException(
                     "RA hours should be between 0 and 23, inclusive");
         }
-        int minutes = Integer.valueOf(mm);
+        int minutes = Integer.parseInt(mm);
         if (minutes < 0 || minutes >= maxMinutes) {
             throw new InvalidEntryException(
                     "RA minutes should be between 0 and 59, inclusive");
         }
-        float seconds = Float.valueOf(ss);
+        float seconds = Float.parseFloat(ss);
         if (seconds < 0f || seconds >= maxSeconds) {
             throw new InvalidEntryException(
                     "RA seconds should be between 0 and 59, inclusive");
@@ -734,7 +734,7 @@ public class MakeStarMaps {
             /*
              * Cope with missing/duplicate entry ids.
              */
-            int actualEntry = Integer.valueOf(actualPrefix.trim());
+            int actualEntry = Integer.parseInt(actualPrefix.trim());
             if (actualEntry > nextEntry) {
                 logger.log(Level.FINE, "missed entries #{0} through #{1}",
                         new Object[]{nextEntry, actualEntry - 1});

@@ -79,10 +79,11 @@ abstract public class InputMode
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(InputMode.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            InputMode.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * true if initialize() should enable this mode
      */
@@ -181,7 +182,7 @@ abstract public class InputMode
      * Find the names of all hotkeys bound to a named action.
      *
      * @param actionName name of action (not null)
-     * @return new collection of hotkey names
+     * @return new collection of hotkey names in lexicographic order
      */
     public Collection<String> findHotkeys(String actionName) {
         Validate.nonNull(actionName, "name");
@@ -190,7 +191,7 @@ abstract public class InputMode
         for (String keyName : hotkeyBindings.stringPropertyNames()) {
             String property = hotkeyBindings.getProperty(keyName);
             /*
-             * Note that ction string comparisons are sensitive to both
+             * Note that action string comparisons are sensitive to both
              * case and whitespace.
              */
             if (property.equals(actionName)) {
@@ -274,6 +275,7 @@ abstract public class InputMode
 
     /**
      * Save the hotkey bindings to a file.
+     *
      * @throws IOException from Properties.storeToXML()
      */
     public void saveBindings()

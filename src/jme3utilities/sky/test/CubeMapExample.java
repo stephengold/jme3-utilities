@@ -62,8 +62,8 @@ public class CubeMapExample
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(CubeMapExample.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            CubeMapExample.class.getName());
     // *************************************************************************
     // new methods exposed
 
@@ -185,8 +185,8 @@ public class CubeMapExample
      * Create and attach the sky.
      */
     private void initializeSky() {
-        Spatial starMap =
-                MyAsset.createStarMap(assetManager, "purple-nebula-complex");
+        Spatial starMap = MyAsset.createStarMap(assetManager,
+                "purple-nebula-complex");
         rootNode.attachChild(starMap);
     }
 

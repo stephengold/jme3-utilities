@@ -106,8 +106,8 @@ public class SlideShow
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(SlideShow.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            SlideShow.class.getName());
     /**
      * application name for its window's title bar
      */
@@ -290,6 +290,7 @@ public class SlideShow
 
     /**
      * Callback to update the scene. (Invoked once per frame.)
+     *
      * @param unused time since the previous update (in seconds, &ge;0)
      */
     @Override
@@ -365,7 +366,6 @@ public class SlideShow
 
         cloudsDome = new Geometry("clouds", fullMesh);
         cloudsDome.setLocalScale(cloudScale);
-
 
         horizon = new Geometry("horizon", circle);
         horizon.setLocalScale(innerScale);

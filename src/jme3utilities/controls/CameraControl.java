@@ -48,10 +48,11 @@ public class CameraControl
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(CameraControl.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            CameraControl.class.getName());
     // *************************************************************************
     // fields
+    
     /**
      * camera managed by this control: set by constructor
      */
