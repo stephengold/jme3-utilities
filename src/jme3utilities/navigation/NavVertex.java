@@ -25,25 +25,25 @@
  */
 package jme3utilities.navigation;
 
-import com.jme3.export.JmeExporter;
-import com.jme3.export.JmeImporter;
-import com.jme3.export.Savable;
 import com.jme3.math.Vector3f;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
-import jme3utilities.math.MyMath;
+import jme3utilities.math.Locus3f;
+import jme3utilities.math.MyVector3f;
 import jme3utilities.math.VectorXZ;
 
 /**
- * Navigation vertex: represents a reachable location in the world.
+ * Navigation vertex: represents a reachable location or region in the world.
  *
  * @author Stephen Gold sgold@sonic.net
  */
 public class NavVertex
-        implements Comparable<NavVertex>, Savable {
+        implements Comparable<NavVertex> {
     // *************************************************************************
     // constants
 
@@ -56,112 +56,125 @@ public class NavVertex
     // fields
 
     /**
-     * list of arcs which originate from this vertex
+     * region represented by this vertex (in world coordinates, not null,
+     * initialized by constructor)
      */
-    final private ArrayList<NavArc> arcs = new ArrayList<>(4);
+    private Locus3f locus;
     /**
-     * textual description of this vertex (not null)
+     * set of arcs which terminate at this vertex
      */
-    final private String description;
+    final private Set<NavArc> incoming = new HashSet<>(4);
     /**
-     * a representative location in this vertex (not null, in world coordinates)
+     * set of arcs which originate from this vertex
      */
-    final private Vector3f location;
+    final private Set<NavArc> outgoing = new HashSet<>(4);
+    /**
+     * name of this vertex (not null, initialized by constructor)
+     */
+    final private String name;
     // *************************************************************************
     // constructors
 
     /**
-     * Instantiate a vertex without any arcs, at the specified location.
+     * Instantiate a vertex without any arcs.
      *
-     * @param description textual description (not null)
-     * @param location a representative location (in world coordinates, not
-     * null, unaffected)
+     * @param name name for the new vertex (not null)
+     * @param locus region represented (in world coordinates, not null)
      */
-    NavVertex(String description, Vector3f location) {
-        assert description != null;
+    NavVertex(String name, Locus3f locus) {
+        assert name != null;
+        assert locus != null;
 
-        this.location = location.clone();
-        this.description = description;
+        this.name = name;
+        this.locus = locus;
     }
     // *************************************************************************
     // new methods exposed
 
     /**
-     * Create a straight arc and add it to this vertex. Arcs should ideally be
-     * added in left-to-right order (clockwise as seen from above).
+     * Add a new incoming arc to this vertex.
      *
-     * @param endpoint destination vertex (not null, not this)
-     * @return new instance
+     * @param arc (not null, terminating at this vertex, not present)
      */
-    public NavArc addArc(NavVertex endpoint) {
-        Validate.nonNull(endpoint, "endpoint");
-        if (endpoint == this) {
-            throw new IllegalArgumentException("endpoint should be distinct");
-        }
+    void addIncoming(NavArc arc) {
+        assert arc != null;
+        assert arc.getToVertex() == this : arc;
+        assert arc.getFromVertex() != this : arc;
 
-        NavArc newArc = new NavArc(this, endpoint);
-        arcs.add(newArc);
-
-        return newArc;
+        boolean success = incoming.add(arc);
+        assert success : arc;
     }
 
     /**
-     * Create a piecewise-linear arc and add it to this vertex.
+     * Add a new outgoing arc for this vertex.
      *
-     * @param endpoint destination vertex (not null, not this)
-     * @param joints intermediate locations along the path (not null,
-     * unaffected)
-     * @return new instance
+     * @param arc (not null, originating at this vertex, not present)
      */
-    public NavArc addArc(NavVertex endpoint, Vector3f[] joints) {
-        Validate.nonNull(endpoint, "endpoint");
-        if (endpoint == this) {
-            throw new IllegalArgumentException("endpoint should be distinct");
-        }
-        Validate.nonNull(joints, "joints");
+    void addOutgoing(NavArc arc) {
+        assert arc != null;
+        assert arc.getFromVertex() == this : arc;
+        assert arc.getToVertex() != this : arc;
 
-        NavArc newArc = new NavArc(this, endpoint, joints);
-        arcs.add(newArc);
-
-        return newArc;
+        boolean success = outgoing.add(arc);
+        assert success : arc;
     }
 
     /**
-     * Copy the list of arcs which originate from this vertex.
+     * Copy all incoming arcs.
      *
      * @return new array of pre-existing instances
      */
-    public NavArc[] copyArcs() {
-        int size = arcs.size();
-        NavArc[] result = new NavArc[size];
-        arcs.toArray(result);
+    public NavArc[] copyIncoming() {
+        NavArc[] result = new NavArc[incoming.size()];
+        int i = 0;
+        for (NavArc arc : incoming) {
+            result[i] = arc;
+            i++;
+        }
 
         return result;
     }
 
     /**
-     * Copy the world coordinates of the vertex.
+     * Copy the representative location.
      *
      * @return new vector
      */
     public Vector3f copyLocation() {
-        return location.clone();
+        Vector3f result = locus.representative();
+        return result;
     }
 
     /**
-     * Find the arc with a specified endpoint.
+     * Copy all outgoing arcs.
      *
-     * @param endpoint (not null, not this)
-     * @return pre-existing instance
+     * @return new array of pre-existing instances
      */
-    public NavArc findArcTo(NavVertex endpoint) {
-        Validate.nonNull(endpoint, "endpoint");
-        if (endpoint == this) {
-            throw new IllegalArgumentException("endpoint should be distinct");
+    public NavArc[] copyOutgoing() {
+        NavArc[] result = new NavArc[outgoing.size()];
+        int i = 0;
+        for (NavArc arc : outgoing) {
+            result[i] = arc;
+            i++;
         }
 
-        for (NavArc arc : arcs) {
-            if (arc.getToVertex() == endpoint) {
+        return result;
+    }
+
+    /**
+     * Find the outgoing arc (if any) to a specified terminus.
+     *
+     * @param terminus (not null, not this)
+     * @return pre-existing instance, or null if none found
+     */
+    public NavArc findOutgoing(NavVertex terminus) {
+        Validate.nonNull(terminus, "terminus");
+        if (terminus == this) {
+            throw new IllegalArgumentException("terminus not distinct");
+        }
+
+        for (NavArc arc : outgoing) {
+            if (arc.getToVertex() == terminus) {
                 return arc;
             }
         }
@@ -169,23 +182,31 @@ public class NavVertex
     }
 
     /**
-     * Find the arc whose starting direction is most similar to the specified
-     * direction.
+     * Find the outgoing arc (if any) with direction closest to a specified
+     * direction with a specified tolerance.
      *
-     * @param direction not null, positive length, unaffected
-     * @return pre-existing instance
+     * @param direction (not zero, unaffected)
+     * @param cosineTolerance maximum cosine of angle between directions (&le;1,
+     * &ge;-1)
+     * @return pre-existing instance, or null if none found
      */
-    public NavArc findLeastTurn(Vector3f direction) {
+    public NavArc findOutgoing(Vector3f direction, double cosineTolerance) {
         Validate.nonZero(direction, "direction");
+        Validate.inRange(cosineTolerance, "cosine tolerance", -1f, 1f);
+
+        double ls = MyVector3f.lengthSquared(direction);
 
         NavArc result = null;
-        float maxDot = -2f * direction.length();
-        for (NavArc arc : arcs) {
-            Vector3f arcDirection = arc.getStartDirection();
-            float dot = arcDirection.dot(direction);
-            if (dot > maxDot) {
+        double bestCosine = cosineTolerance;
+        for (NavArc arc : outgoing) {
+            Vector3f offset = arc.offset();
+            double dot = MyVector3f.dot(direction, offset);
+            double arcLS = MyVector3f.lengthSquared(offset);
+            assert arcLS > 0.0 : arcLS;
+            double cosine = dot / Math.sqrt(ls * arcLS);
+            if (cosine >= bestCosine) {
+                bestCosine = cosine;
                 result = arc;
-                maxDot = dot;
             }
         }
 
@@ -193,24 +214,33 @@ public class NavVertex
     }
 
     /**
-     * Find the arc whose starting direction is most similar to the specified
-     * direction.
+     * Find the outgoing arc (if any) with horizontal direction closest to a
+     * specified direction with a specified tolerance.
      *
-     * @param direction (length&gt;0, unaffected)
-     * @return pre-existing instance
+     * @param horizontalDirection (not zero, unaffected)
+     * @param cosineTolerance maximum cosine of angle between directions (&le;1,
+     * &ge;-1)
+     * @return pre-existing instance, or null if none found
      */
-    public NavArc findLeastTurn(VectorXZ direction) {
-        Validate.nonNull(direction, "direction");
-        VectorXZ.validateNonZero(direction, "direction");
+    public NavArc findOutgoing(VectorXZ horizontalDirection,
+            double cosineTolerance) {
+        VectorXZ.validateNonZero(horizontalDirection, "horizontal direction");
+        Validate.inRange(cosineTolerance, "cosine tolerance", -1f, 1f);
+
+        double ls = horizontalDirection.lengthSquared();
 
         NavArc result = null;
-        double maxDot = Double.NEGATIVE_INFINITY;
-        for (NavArc arc : arcs) {
-            VectorXZ horizontalDirection = arc.getHorizontalDirection();
-            double dot = horizontalDirection.dot(direction);
-            if (dot > maxDot) {
+        double bestCosine = cosineTolerance;
+        for (NavArc arc : outgoing) {
+            Vector3f offset = arc.offset();
+            VectorXZ offsetXZ = new VectorXZ(offset);
+            double dot = horizontalDirection.dot(offsetXZ);
+            double arcLS = offset.lengthSquared();
+            assert arcLS > 0.0 : arcLS;
+            double cosine = dot / Math.sqrt(ls * arcLS);
+            if (cosine >= bestCosine) {
+                bestCosine = cosine;
                 result = arc;
-                maxDot = dot;
             }
         }
 
@@ -218,51 +248,81 @@ public class NavVertex
     }
 
     /**
-     * Find the arc at a specified list-offset relative to the specified base
-     * arc.
+     * Find the arc (if any) from a specified origin.
      *
-     * @param baseArc base arc (not null, from this vertex)
-     * @param listOffset number of arcs past the base arc
-     * @return pre-existing instance
+     * @param origin (not null, not this)
+     * @return pre-existing instance, or null if not found
      */
-    public NavArc findNextArc(NavArc baseArc, int listOffset) {
-        Validate.nonNull(baseArc, "base arc");
+    public NavArc findIncoming(NavVertex origin) {
+        Validate.nonNull(origin, "origin");
+        if (origin == this) {
+            throw new IllegalArgumentException("origin not distinct");
+        }
 
-        int baseIndex = arcs.indexOf(baseArc);
-        assert baseIndex != -1 : baseArc;
-        int limit = arcs.size();
-        int index = MyMath.modulo(baseIndex + listOffset, limit);
-        NavArc result = arcs.get(index);
+        for (NavArc arc : incoming) {
+            if (arc.getFromVertex() == origin) {
+                return arc;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Read the name of this vertex.
+     *
+     * @return textual name (not null)
+     */
+    public String getName() {
+        assert name != null;
+        return name;
+    }
+
+    /**
+     * Access the current locus of this vertex.
+     *
+     * @return locus (not null)
+     */
+    public Locus3f getLocus() {
+        assert locus != null;
+        return locus;
+    }
+
+    /**
+     * List the incoming arcs.
+     *
+     * @return new list of pre-existing instances
+     */
+    public List<NavArc> listIncoming() {
+        List<NavArc> result = new ArrayList<>(incoming.size());
+        for (NavArc arc : incoming) {
+            result.add(arc);
+        }
 
         return result;
     }
 
     /**
-     * Read the description of this vertex.
+     * List the outgoing arcs.
      *
-     * @return textual description (not null)
+     * @return new list of pre-existing instances
      */
-    public String getDescription() {
-        assert description != null;
-        return description;
+    public List<NavArc> listOutgoing() {
+        List<NavArc> result = new ArrayList<>(outgoing.size());
+        for (NavArc arc : outgoing) {
+            result.add(arc);
+        }
+
+        return result;
     }
 
     /**
-     * Test whether this vertex has an arc to the specified endpoint.
+     * Count how many arcs terminate at this vertex.
      *
-     * @param endpoint (not null, not this)
-     * @return true if found, false if none found
+     * @return number of arcs (&ge;0)
      */
-    public boolean hasArcTo(NavVertex endpoint) {
-        Validate.nonNull(endpoint, "endpoint");
-        assert endpoint != this : endpoint;
-
-        for (NavArc arc : arcs) {
-            if (arc.getToVertex() == endpoint) {
-                return true;
-            }
-        }
-        return false;
+    public int numIncoming() {
+        int result = incoming.size();
+        return result;
     }
 
     /**
@@ -270,42 +330,59 @@ public class NavVertex
      *
      * @return number of arcs (&ge;0)
      */
-    public int numArcs() {
-        int result = arcs.size();
+    public int numOutgoing() {
+        int result = outgoing.size();
         return result;
     }
 
     /**
-     * Remove the arc with the specified endpoint, if any.
+     * Remove an incoming arc.
      *
-     * @param endpoint (not null, not this)
-     * @return true if successful, false if none found
+     * @param arc (not null, terminating at this vertex, present)
      */
-    boolean removeArcTo(NavVertex endpoint) {
-        assert endpoint != null;
-        assert endpoint != this : endpoint;
+    void removeIncoming(NavArc arc) {
+        assert arc != null;
+        assert arc.getToVertex() == this : arc;
 
-        for (NavArc arc : arcs) {
-            if (arc.getToVertex() == endpoint) {
-                arcs.remove(arc);
-                return true;
-            }
-        }
-        return false;
+        boolean success = incoming.remove(arc);
+        assert success : arc;
     }
-    // *************************************************************************
-    // Comparable methods
 
     /**
-     * Compare with another vertex based on description.
+     * Remove an outgoing arc.
+     *
+     * @param arc (not null, originating at this vertex, present)
+     */
+    void removeOutgoing(NavArc arc) {
+        assert arc != null;
+        assert arc.getFromVertex() == this : arc;
+
+        boolean success = outgoing.remove(arc);
+        assert success : arc;
+    }
+
+    /**
+     * Alter the current locus of this vertex.
+     *
+     * @param newLocus (not null)
+     */
+    public void setLocus(Locus3f newLocus) {
+        assert newLocus != null;
+        this.locus = newLocus;
+    }
+
+    // *************************************************************************
+    // Comparable methods
+    /**
+     * Compare with another vertex based on name.
      *
      * @param otherVertex (not null, unaffected)
-     * @return 0 if the vertices have the same description
+     * @return 0 if the vertices have the same name
      */
     @Override
     public int compareTo(NavVertex otherVertex) {
-        String otherDescription = otherVertex.getDescription();
-        int result = description.compareTo(otherDescription);
+        String otherDescription = otherVertex.getName();
+        int result = name.compareTo(otherDescription);
         /*
          * Verify consistency with equals().
          */
@@ -318,10 +395,10 @@ public class NavVertex
     // Object methods
 
     /**
-     * Compare for equality based on description.
+     * Compare for equality based on name.
      *
      * @param otherObject (unaffected)
-     * @return true if the vertices have the same description, otherwise false
+     * @return true if the vertices have the same name, otherwise false
      */
     @Override
     public boolean equals(Object otherObject) {
@@ -332,8 +409,8 @@ public class NavVertex
 
         } else if (otherObject instanceof NavVertex) {
             NavVertex otherVertex = (NavVertex) otherObject;
-            String otherDescription = otherVertex.getDescription();
-            result = description.equals(otherDescription);
+            String otherDescription = otherVertex.getName();
+            result = name.equals(otherDescription);
         }
 
         return result;
@@ -346,7 +423,7 @@ public class NavVertex
      */
     @Override
     public int hashCode() {
-        int hash = Objects.hashCode(description);
+        int hash = Objects.hashCode(name);
         return hash;
     }
 
@@ -357,35 +434,7 @@ public class NavVertex
      */
     @Override
     public String toString() {
-        assert description != null;
-        return description;
-    }
-    // *************************************************************************
-    // Savable methods
-
-    /**
-     * De-serialize this vertex, for example when loading from a J3O file.
-     *
-     * @param importer (not null)
-     * @throws IOException from importer
-     */
-    @Override
-    public void read(JmeImporter importer)
-            throws IOException {
-        // TODO
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * Serialize this vertex, for example when saving to a J3O file.
-     *
-     * @param exporter (not null)
-     * @throws IOException from exporter
-     */
-    @Override
-    public void write(JmeExporter exporter)
-            throws IOException {
-        // TODO
-        throw new UnsupportedOperationException("Not supported yet.");
+        assert name != null;
+        return name;
     }
 }
