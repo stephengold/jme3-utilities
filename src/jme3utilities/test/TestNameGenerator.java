@@ -51,6 +51,8 @@ public class TestNameGenerator extends SimpleApplication {
      */
     final private static Logger logger = Logger.getLogger(
             TestNameGenerator.class.getName());
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Entry point for test application.
@@ -96,7 +98,7 @@ public class TestNameGenerator extends SimpleApplication {
 
         System.out.printf("used = %s%n", example.toString());
 
-        File targetFile = new File("assets/tmp.j3o");
+        File targetFile = new File("assets/testNameGenerator.j3o");
         JmeExporter exporter = BinaryExporter.getInstance();
         try {
             exporter.save(example, targetFile);
@@ -109,7 +111,7 @@ public class TestNameGenerator extends SimpleApplication {
         System.out.printf("reset = %s%n", example.toString());
 
         NameGenerator imported = (NameGenerator) assetManager.loadAsset(
-                "tmp.j3o");
+                "testNameGenerator.j3o");
         System.out.printf("imported = %s%n%n", imported.toString());
 
         System.out.printf("Success.%n");
