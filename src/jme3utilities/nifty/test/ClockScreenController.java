@@ -75,9 +75,11 @@ public class ClockScreenController
 
         Calendar rightNow = Calendar.getInstance();
         int hours = rightNow.get(Calendar.HOUR);
+        if (hours == 0) {
+            hours = 12;
+        }
         int minutes = rightNow.get(Calendar.MINUTE);
         int seconds = rightNow.get(Calendar.SECOND);
-        int millis = rightNow.get(Calendar.MILLISECOND);
         /*
          * Update the labels which show status.
          */
@@ -90,7 +92,15 @@ public class ClockScreenController
         } else {
             setStatusText("time2", "even");
         }
-        double ssm = millis * 1e-3 + seconds + minutes * 60f + hours * 3600f;
+
+        Calendar midnight = (Calendar) rightNow.clone();
+        midnight.set(Calendar.HOUR_OF_DAY, 0);
+        midnight.set(Calendar.MINUTE, 0);
+        midnight.set(Calendar.SECOND, 0);
+        midnight.set(Calendar.MILLISECOND, 0);
+        long mssm = rightNow.getTimeInMillis() - midnight.getTimeInMillis();
+        double ssm = ((double) mssm) / 1000.0;
+
         String text3 = String.format("%.3f", ssm);
         setStatusText("time3", text3);
     }
