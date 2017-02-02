@@ -29,8 +29,6 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.GhostControl;
-import com.jme3.scene.Spatial;
-import com.jme3.scene.control.Control;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -53,8 +51,8 @@ public class SimpleGhostControl
     /**
      * message logger for this control
      */
-    final private static Logger logger =
-            Logger.getLogger(SimpleGhostControl.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            SimpleGhostControl.class.getName());
     // *************************************************************************
     // constructors
 
@@ -106,14 +104,13 @@ public class SimpleGhostControl
     // GhostControl methods
 
     /**
-     * Clone this control for a different spatial.
+     * Test whether this control is enabled.
      *
-     * @param spatial spatial to clone for (not null)
-     * @return new control
+     * @return true if enabled, otherwise false
      */
     @Override
-    public Control cloneForSpatial(Spatial spatial) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    final public boolean isEnabled() {
+        return enabled;
     }
 
     /**
