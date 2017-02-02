@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 import jme3utilities.MyCamera;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.math.MyMath;
 import jme3utilities.nifty.GuiScreenController;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyMaterial;
@@ -71,8 +72,8 @@ public class TestSkyMaterialHud
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(TestSkyMaterialHud.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            TestSkyMaterialHud.class.getName());
     // *************************************************************************
     // fields
     /**
@@ -325,7 +326,7 @@ public class TestSkyMaterialHud
             Vector2f moonOffset = updateUVBank("m");
             float moonScale = updateLogSlider("mSca", 10f, "x");
             float moonRotation = updateSlider("mRot", " deg");
-            moonRotation *= FastMath.DEG_TO_RAD;
+            moonRotation = MyMath.toRadians(moonRotation);
             Vector2f rotate = new Vector2f(FastMath.cos(moonRotation),
                     FastMath.sin(moonRotation));
             material.setObjectTransform(moonIndex, moonOffset, moonScale,
@@ -423,8 +424,8 @@ public class TestSkyMaterialHud
                 break;
 
             default:
-                String assetPath =
-                        String.format("Textures/skies/star-maps/%s.png", name);
+                String assetPath = String.format(
+                        "Textures/skies/star-maps/%s.png", name);
                 material.addStars(assetPath);
         }
     }
@@ -447,8 +448,8 @@ public class TestSkyMaterialHud
                 break;
 
             default:
-                String assetPath =
-                        String.format("Textures/skies/suns/%s.png", name);
+                String assetPath = String.format(
+                        "Textures/skies/suns/%s.png", name);
                 material.addObject(sunIndex, assetPath);
         }
     }

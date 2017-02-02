@@ -64,9 +64,7 @@ public class MakeStarMaps {
     /**
      * exception to indicate unexpected invalid data in a catalog entry
      */
-    static private class InvalidEntryException
-            extends Exception {
-
+    static private class InvalidEntryException extends Exception {
         static final long serialVersionUID = 1L;
 
         InvalidEntryException(String message) {
@@ -78,9 +76,7 @@ public class MakeStarMaps {
      * exception to indicate an invalid apparent magnitude in a catalog entry:
      * such entries can be ignored
      */
-    static private class InvalidMagnitudeException
-            extends Exception {
-
+    static private class InvalidMagnitudeException extends Exception {
         static final long serialVersionUID = 1L;
     }
     // *************************************************************************
@@ -137,8 +133,8 @@ public class MakeStarMaps {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MakeStarMaps.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MakeStarMaps.class.getName());
     /**
      * application name for the usage message
      */
@@ -152,6 +148,7 @@ public class MakeStarMaps {
             "assets/Textures/skies/bsc5.dat";
     // *************************************************************************
     // fields
+    
     /**
      * true means just display the usage message; false means run the
      * application
@@ -255,7 +252,7 @@ public class MakeStarMaps {
 
         float latitude = preset.latitude();
         logger.log(Level.FINE, "latitude is {0} degrees",
-                latitude * FastMath.RAD_TO_DEG);
+                MyMath.toDegrees(latitude));
 
         float siderealHour = preset.hour();
         logger.log(Level.FINE, "sidereal time is {0} hours", siderealHour);
@@ -845,7 +842,8 @@ public class MakeStarMaps {
          * Compute the star's equatorial coordinates 
          * and convert them to radians.
          */
-        float declination = declination(textLine) * FastMath.DEG_TO_RAD;
+        float declinationDegrees = declination(textLine);
+        float declination = MyMath.toRadians(declinationDegrees);
         float rightAscension = rightAscensionHours(textLine) * radiansPerHour;
         /*
          * Instantiate the star.

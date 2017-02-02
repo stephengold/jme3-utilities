@@ -69,13 +69,13 @@ public class LandscapeControl
     /**
      * color for grass
      */
-    final private static ColorRGBA grassColor =
-            new ColorRGBA(0.65f, 0.8f, 0.2f, 1f);
+    final private static ColorRGBA grassColor = new ColorRGBA(
+            0.65f, 0.8f, 0.2f, 1f);
     /**
      * color for stone
      */
-    final private static ColorRGBA stoneColor =
-            new ColorRGBA(0.8f, 0.8f, 0.6f, 1f);
+    final private static ColorRGBA stoneColor = new ColorRGBA(
+            0.8f, 0.8f, 0.6f, 1f);
     /**
      * length of the lintel stones in the monument
      */
@@ -111,15 +111,20 @@ public class LandscapeControl
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(LandscapeControl.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            LandscapeControl.class.getName());
     /**
      * asset path of the terrain's height map
      */
     final private static String heightMapAssetPath =
             "Textures/terrain/height/basin.png";
+    /**
+     * local copy of Vector3f#UNIT_Y
+     */
+    final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
     // *************************************************************************
     // fields
+
     /**
      * application's asset manager: set by constructor
      */
@@ -220,7 +225,7 @@ public class LandscapeControl
             Vector3f location = new Vector3f(x, uprightHeight / 2f, z);
             MySpatial.setWorldLocation(upright, location);
             Quaternion rotation = new Quaternion();
-            rotation.fromAngleAxis(theta, Vector3f.UNIT_Y);
+            rotation.fromAngleNormalAxis(theta, yAxis);
             MySpatial.setWorldOrientation(upright, rotation);
         }
 
@@ -240,7 +245,7 @@ public class LandscapeControl
             Vector3f location = new Vector3f(x, y, z);
             MySpatial.setWorldLocation(lintel, location);
             Quaternion rotation = new Quaternion();
-            rotation.fromAngleAxis(theta, Vector3f.UNIT_Y);
+            rotation.fromAngleNormalAxis(theta, yAxis);
             MySpatial.setWorldOrientation(lintel, rotation);
         }
 
@@ -261,6 +266,7 @@ public class LandscapeControl
         material.setBoolean("UseMaterialColors", true);
         material.setColor("Ambient", color);
         material.setColor("Diffuse", color);
+
         return material;
     }
 
@@ -276,8 +282,8 @@ public class LandscapeControl
 
         int mapSize = terrainDiameter + 1; // number of samples on a side
         float[] heightArray = heightMap.getHeightMap();
-        TerrainQuad quad =
-                new TerrainQuad("terrain", patchSize, mapSize, heightArray);
+        TerrainQuad quad = new TerrainQuad(
+                "terrain", patchSize, mapSize, heightArray);
         Material grass = getGrass();
         quad.setMaterial(grass);
         quad.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
@@ -295,12 +301,12 @@ public class LandscapeControl
      * @return new instance
      */
     private AbstractHeightMap loadHeightMap() {
-        Texture heightTexture =
-                MyAsset.loadTexture(assetManager, heightMapAssetPath);
+        Texture heightTexture = MyAsset.loadTexture(
+                assetManager, heightMapAssetPath);
         Image heightImage = heightTexture.getImage();
         float heightScale = 1f;
-        AbstractHeightMap heightMap =
-                new ImageBasedHeightMap(heightImage, heightScale);
+        AbstractHeightMap heightMap = new ImageBasedHeightMap(
+                heightImage, heightScale);
         heightMap.load();
 
         return heightMap;

@@ -78,28 +78,28 @@ public class SkyControl
     /**
      * base color of the daytime sky: pale blue
      */
-    final private static ColorRGBA colorDay =
-            new ColorRGBA(0.4f, 0.6f, 1f, Constants.alphaMax);
+    final private static ColorRGBA colorDay = new ColorRGBA(
+            0.4f, 0.6f, 1f, Constants.alphaMax);
     /**
      * light color and intensity for full moonlight: bluish gray
      */
-    final private static ColorRGBA moonLight =
-            new ColorRGBA(0.4f, 0.4f, 0.6f, Constants.alphaMax);
+    final private static ColorRGBA moonLight = new ColorRGBA(
+            0.4f, 0.4f, 0.6f, Constants.alphaMax);
     /**
      * light color and intensity for moonless night: nearly black
      */
-    final private static ColorRGBA starLight =
-            new ColorRGBA(0.03f, 0.03f, 0.03f, Constants.alphaMax);
+    final private static ColorRGBA starLight = new ColorRGBA(
+            0.03f, 0.03f, 0.03f, Constants.alphaMax);
     /**
      * light color and intensity for full sunlight: yellowish white
      */
-    final private static ColorRGBA sunLight =
-            new ColorRGBA(0.8f, 0.8f, 0.75f, Constants.alphaMax);
+    final private static ColorRGBA sunLight = new ColorRGBA(
+            0.8f, 0.8f, 0.75f, Constants.alphaMax);
     /**
      * color blended in around sunrise and sunset: ruddy orange
      */
-    final private static ColorRGBA twilight =
-            new ColorRGBA(0.6f, 0.3f, 0.15f, Constants.alphaMax);
+    final private static ColorRGBA twilight = new ColorRGBA(
+            0.6f, 0.3f, 0.15f, Constants.alphaMax);
     /**
      * extent of the twilight periods before sunrise and after sunset, expressed
      * as the sine of the sun's angle below the horizon (&le;1, &ge;0)
@@ -116,16 +116,17 @@ public class SkyControl
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(SkyControl.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            SkyControl.class.getName());
     /**
      * light direction for starlight: don't make this perfectly vertical because
      * that might cause shadow map aliasing
      */
-    final private static Vector3f starlightDirection =
-            new Vector3f(1f, 9f, 1f).normalize();
+    final private static Vector3f starlightDirection = new Vector3f(
+            1f, 9f, 1f).normalizeLocal();
     // *************************************************************************
     // fields
+    
     /**
      * true if clouds modulate the main light, false for steady light (the
      * default)
@@ -200,8 +201,8 @@ public class SkyControl
         float solarLongitude = sunAndStars.getSolarLongitude();
         float celestialLongitude = solarLongitude + phaseAngle;
         celestialLongitude = MyMath.modulo(celestialLongitude, FastMath.TWO_PI);
-        Vector3f worldDirection =
-                sunAndStars.convertToWorld(0f, celestialLongitude);
+        Vector3f worldDirection = sunAndStars.convertToWorld(
+                0f, celestialLongitude);
 
         return worldDirection;
     }
@@ -353,7 +354,7 @@ public class SkyControl
             /*
              * Special case when the main light is directly overhead.
              */
-            return Vector3f.UNIT_Y.clone();
+            return new Vector3f(0f, 1f, 0f);
         }
 
         float deltaY;
@@ -536,8 +537,8 @@ public class SkyControl
         ColorRGBA baseColor;
         if (sunUp) {
             float dayWeight = FastMath.saturate(sineSolarAltitude / 0.25f);
-            baseColor =
-                    MyColor.interpolateLinear(dayWeight, twilight, sunLight);
+            baseColor = MyColor.interpolateLinear(
+                    dayWeight, twilight, sunLight);
         } else {
             ColorRGBA blend;
             if (moonUp && moonWeight > 0f) {
@@ -643,8 +644,8 @@ public class SkyControl
         float solarLongitude = sunAndStars.getSolarLongitude();
         float celestialLongitude = solarLongitude + phaseAngle;
         celestialLongitude = MyMath.modulo(celestialLongitude, FastMath.TWO_PI);
-        Vector3f worldDirection =
-                sunAndStars.convertToWorld(0f, celestialLongitude);
+        Vector3f worldDirection = sunAndStars.convertToWorld(
+                0f, celestialLongitude);
         Vector2f uvCenter = topMesh.directionUV(worldDirection);
 
         if (uvCenter != null) {
@@ -686,8 +687,8 @@ public class SkyControl
          */
         green = FastMath.saturate(2f * sineLunarAltitude + 0.6f);
         blue = FastMath.saturate(5f * sineLunarAltitude + 0.1f);
-        ColorRGBA moonColor =
-                new ColorRGBA(1f, green, blue, Constants.alphaMax);
+        ColorRGBA moonColor = new ColorRGBA(
+                1f, green, blue, Constants.alphaMax);
         topMaterial.setObjectColor(moonIndex, moonColor);
     }
 

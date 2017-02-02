@@ -76,7 +76,7 @@ public class SunAndStars
     /**
      * obliquity of the ecliptic, in radians
      */
-    final private static float obliquity = 23.44f * FastMath.DEG_TO_RAD;
+    final private static float obliquity = MyMath.toRadians(23.44f);
     /**
      * Earth's rate of rotation (radians per sidereal hour)
      */
@@ -85,10 +85,23 @@ public class SunAndStars
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(SunAndStars.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            SunAndStars.class.getName());
+    /**
+     * local copy of Vector3f#UNIT_X
+     */
+    final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
+    /**
+     * local copy of Vector3f#UNIT_Y
+     */
+    final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
+    /**
+     * local copy of Vector3f#UNIT_Z
+     */
+    final private static Vector3f zAxis = new Vector3f(0f, 0f, 1f);
     // *************************************************************************
     // fields
+
     /**
      * local solar time (hours since midnight, &lt;24, &ge;0)
      */
@@ -131,15 +144,15 @@ public class SunAndStars
         float sinLat = FastMath.sin(latitude);
         float cosLon = FastMath.cos(longitude);
         float sinLon = FastMath.sin(longitude);
-        Vector3f ecliptical =
-                new Vector3f(cosLat * cosLon, cosLat * sinLon, sinLat);
-        assert ecliptical.isUnitVector();
+        Vector3f ecliptical = new Vector3f(
+                cosLat * cosLon, cosLat * sinLon, sinLat);
+        assert ecliptical.isUnitVector() : ecliptical;
         /*
          * Convert to equatorial coordinates.
          */
         Vector3f equatorial = convertToEquatorial(ecliptical);
 
-        assert equatorial.isUnitVector();
+        assert equatorial.isUnitVector() : equatorial;
         return equatorial;
     }
 
@@ -156,7 +169,7 @@ public class SunAndStars
          * (vernal equinox) axis.
          */
         Quaternion rotate = new Quaternion();
-        rotate.fromAngleNormalAxis(obliquity, Vector3f.UNIT_X);
+        rotate.fromAngleNormalAxis(obliquity, xAxis);
         Vector3f equatorial = rotate.mult(ecliptical);
 
         return equatorial;
@@ -199,12 +212,12 @@ public class SunAndStars
          * about the Y (east) axis followed by a permutation of the axes.
          */
         Quaternion zRotation = new Quaternion();
-        zRotation.fromAngleNormalAxis(-siderealAngle, Vector3f.UNIT_Z);
+        zRotation.fromAngleNormalAxis(-siderealAngle, zAxis);
         Vector3f rotated = zRotation.mult(equatorial);
 
         float coLatitude = FastMath.HALF_PI - observerLatitude;
         Quaternion yRotation = new Quaternion();
-        yRotation.fromAngleNormalAxis(-coLatitude, Vector3f.UNIT_Y);
+        yRotation.fromAngleNormalAxis(-coLatitude, yAxis);
         rotated = yRotation.mult(rotated);
 
         Vector3f world = new Vector3f(-rotated.x, rotated.z, rotated.y);
@@ -297,10 +310,10 @@ public class SunAndStars
 
         float siderealAngle = getSiderealAngle();
         Quaternion xRotation = new Quaternion();
-        xRotation.fromAngleNormalAxis(siderealAngle, Vector3f.UNIT_X);
+        xRotation.fromAngleNormalAxis(siderealAngle, xAxis);
 
         Quaternion zRotation = new Quaternion();
-        zRotation.fromAngleNormalAxis(-observerLatitude, Vector3f.UNIT_Z);
+        zRotation.fromAngleNormalAxis(-observerLatitude, zAxis);
         Quaternion orientation = xRotation.mult(zRotation);
         MySpatial.setWorldOrientation(spatial, orientation);
     }
@@ -319,9 +332,9 @@ public class SunAndStars
             /*
              * Orient the north dome.
              */
-            yRotation.fromAngleNormalAxis(-siderealAngle, Vector3f.UNIT_Y);
+            yRotation.fromAngleNormalAxis(-siderealAngle, yAxis);
             float coLatitude = FastMath.HALF_PI - observerLatitude;
-            zRotation.fromAngleNormalAxis(-coLatitude, Vector3f.UNIT_Z);
+            zRotation.fromAngleNormalAxis(-coLatitude, zAxis);
             Quaternion orientation = zRotation.mult(yRotation);
             MySpatial.setWorldOrientation(northDome, orientation);
         }
@@ -329,9 +342,9 @@ public class SunAndStars
             /*
              * Orient the south dome.
              */
-            yRotation.fromAngleNormalAxis(siderealAngle, Vector3f.UNIT_Y);
+            yRotation.fromAngleNormalAxis(siderealAngle, yAxis);
             float angle = FastMath.HALF_PI + observerLatitude;
-            zRotation.fromAngleNormalAxis(angle, Vector3f.UNIT_Z);
+            zRotation.fromAngleNormalAxis(angle, zAxis);
             Quaternion orientation = zRotation.mult(yRotation);
             MySpatial.setWorldOrientation(southDome, orientation);
         }
@@ -372,8 +385,8 @@ public class SunAndStars
          */
         Vector3f equatorial = convertToEquatorial(0f, longitude);
         float ra = -FastMath.atan2(equatorial.y, equatorial.x);
-        solarRaHours =
-                MyMath.modulo(ra / radiansPerHour, Constants.hoursPerDay);
+        solarRaHours = MyMath.modulo(
+                ra / radiansPerHour, Constants.hoursPerDay);
         assert solarRaHours >= 0f : solarRaHours;
         assert solarRaHours < Constants.hoursPerDay : solarRaHours;
     }
@@ -418,7 +431,7 @@ public class SunAndStars
      * Clone this instance.
      *
      * @return new instance equivalent to this one
-     * @throws CloneNotSupportedException
+     * @throws CloneNotSupportedException from Object.clone()
      */
     @Override
     public SunAndStars clone()
@@ -434,8 +447,8 @@ public class SunAndStars
      */
     @Override
     public String toString() {
-        float latitudeDegrees = observerLatitude * FastMath.RAD_TO_DEG;
-        float longitudeDegrees = solarLongitude * FastMath.RAD_TO_DEG;
+        float latitudeDegrees = MyMath.toDegrees(observerLatitude);
+        float longitudeDegrees = MyMath.toDegrees(solarLongitude);
         String result = String.format(
                 "[hour=%f, lat=%f deg, long=%f deg, ra=%f]",
                 hour, latitudeDegrees, longitudeDegrees, solarRaHours);

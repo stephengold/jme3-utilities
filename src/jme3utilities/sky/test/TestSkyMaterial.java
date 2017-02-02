@@ -85,8 +85,8 @@ public class TestSkyMaterial
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(TestSkyMaterial.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            TestSkyMaterial.class.getName());
     /**
      * action string to temporarily load a saved geometry
      */
@@ -113,6 +113,7 @@ public class TestSkyMaterial
     final private static String savePath = "Models/TestSkyMaterial.j3o";
     // *************************************************************************
     // fields
+    
     /**
      * true means just display the usage message; false means run the
      * application
@@ -302,7 +303,7 @@ public class TestSkyMaterial
         float fovDegrees = 90f;
         setFrustum(fovDegrees);
 
-        cam.setLocation(Vector3f.ZERO.clone());
+        cam.setLocation(new Vector3f(0f, 0f, 0f));
         MyCamera.look(cam, Vector3f.UNIT_Y);
         /*
          * Disable flyCam.

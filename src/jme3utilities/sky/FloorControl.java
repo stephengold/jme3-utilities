@@ -60,8 +60,8 @@ public class FloorControl
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(FloorControl.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            FloorControl.class.getName());
     /**
      * name for the geometry
      */
@@ -70,8 +70,13 @@ public class FloorControl
      * name for the geometry
      */
     final private static String nodeName = "floor node";
+    /**
+     * local copy of Vector3f#UNIT_X
+     */
+    final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
     // *************************************************************************
     // fields
+
     /**
      * true to counteract rotation of the controlled node, false to allow
      * rotation
@@ -166,7 +171,7 @@ public class FloorControl
         floor.setMaterial(material);
 
         Quaternion rotation = new Quaternion();
-        rotation.fromAngleAxis(-FastMath.HALF_PI, Vector3f.UNIT_X);
+        rotation.fromAngleNormalAxis(-FastMath.HALF_PI, xAxis);
         floor.setLocalRotation(rotation); // rotate from X-Y plane to X-Z plane
         float radius = camera.getFrustumFar();
         floor.setLocalScale(2f * radius);

@@ -27,6 +27,7 @@ package jme3utilities.sky;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
+import jme3utilities.math.MyMath;
 
 /**
  * Constants shared among classes the jme3utilities.sky package.
@@ -48,7 +49,7 @@ final public class Constants {
     /**
      * default observer's latitude - Wiltshire (radians north of the equator)
      */
-    final static float defaultLatitude = 51.1788f * FastMath.DEG_TO_RAD;
+    final static float defaultLatitude = MyMath.toRadians(51.1788f);
     /**
      * UV diameter of a sun's disc: in order to leave room for rays, haloes, and
      * haze, the disc is only 1/4 as wide as the color map.

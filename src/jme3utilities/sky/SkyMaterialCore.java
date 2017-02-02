@@ -57,14 +57,15 @@ public class SkyMaterialCore
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(SkyMaterialCore.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            SkyMaterialCore.class.getName());
     /**
      * texture coordinate for hidden objects
      */
-    final private static Vector2f hidden = Vector2f.ZERO;
+    final private static Vector2f hidden = new Vector2f(0f, 0f);
     // *************************************************************************
     // fields
+    
     /**
      * asset manager used to load textures and material definitions: set by
      * constructor
@@ -250,7 +251,7 @@ public class SkyMaterialCore
     /**
      * Hide an astronomical object temporarily.
      * <p>
-     * Use setObjectTransform() to reveal an object which has been hidden.
+     * Use #setObjectTransform() to reveal an object which has been hidden.
      *
      * @param objectIndex (&lt;maxObjects, &ge;0)
      */
@@ -260,20 +261,20 @@ public class SkyMaterialCore
             throw new IllegalStateException("object not yet added");
         }
 
-        String objectParameterName =
-                String.format("Object%dCenter", objectIndex);
+        String objectParameterName = String.format(
+                "Object%dCenter", objectIndex);
         setVector2(objectParameterName, hidden);
         objectCenters[objectIndex].set(hidden);
 
         /*
-         * Scale down the object to occupies only a few pixels in texture space.
+         * Scale down the object to occupy only a few pixels in texture space.
          */
         float scale = 1000f;
-        String transformUParameterName =
-                String.format("Object%dTransformU", objectIndex);
+        String transformUParameterName = String.format(
+                "Object%dTransformU", objectIndex);
         setVector2(transformUParameterName, new Vector2f(scale, scale));
-        String transformVParameterName =
-                String.format("Object%dTransformV", objectIndex);
+        String transformVParameterName = String.format(
+                "Object%dTransformV", objectIndex);
         setVector2(transformVParameterName, new Vector2f(scale, scale));
     }
 
@@ -409,8 +410,8 @@ public class SkyMaterialCore
             throw new IllegalStateException("object not yet added");
         }
 
-        String objectParameterName =
-                String.format("Object%dCenter", objectIndex);
+        String objectParameterName = String.format(
+                "Object%dCenter", objectIndex);
         setVector2(objectParameterName, centerUV);
         objectCenters[objectIndex].set(centerUV);
 
@@ -476,12 +477,12 @@ public class SkyMaterialCore
         transformU.divideLocal(newScale);
         transformV.divideLocal(newScale);
 
-        String transformUParameterName =
-                String.format("Object%dTransformU", objectIndex);
+        String transformUParameterName = String.format(
+                "Object%dTransformU", objectIndex);
         setVector2(transformUParameterName, transformU);
 
-        String transformVParameterName =
-                String.format("Object%dTransformV", objectIndex);
+        String transformVParameterName = String.format(
+                "Object%dTransformV", objectIndex);
         setVector2(transformVParameterName, transformV);
     }
     // *************************************************************************

@@ -67,10 +67,23 @@ public class AxesControl
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(AxesControl.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            AxesControl.class.getName());
+    /**
+     * local copy of Vector3f#UNIT_X
+     */
+    final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
+    /**
+     * local copy of Vector3f#UNIT_Y
+     */
+    final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
+    /**
+     * local copy of Vector3f#UNIT_Z
+     */
+    final private static Vector3f zAxis = new Vector3f(0f, 0f, 1f);
     // *************************************************************************
     // fields
+    
     /**
      * length of each axis (in local units, &gt;0): set by constructor
      */
@@ -100,9 +113,9 @@ public class AxesControl
         this.thickness = thickness;
 
         subtree = new Node("axes node");
-        createAxis(assetManager, xColor, "xAxis", Vector3f.UNIT_X);
-        createAxis(assetManager, yColor, "yAxis", Vector3f.UNIT_Y);
-        createAxis(assetManager, zColor, "zAxis", Vector3f.UNIT_Z);
+        createAxis(assetManager, xColor, "xAxis", xAxis);
+        createAxis(assetManager, yColor, "yAxis", yAxis);
+        createAxis(assetManager, zColor, "zAxis", zAxis);
     }
     // *************************************************************************
     // private methods

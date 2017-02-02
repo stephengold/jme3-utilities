@@ -60,8 +60,8 @@ public class TestSkyControlHud
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(TestSkyControlHud.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            TestSkyControlHud.class.getName());
     // *************************************************************************
     // fields
     /**
@@ -158,8 +158,8 @@ public class TestSkyControlHud
      * @return true if the box is checked, otherwise false
      */
     boolean getAmbientFlag() {
-        CheckBox box =
-                getScreen().findNiftyControl("ambientCheckBox", CheckBox.class);
+        CheckBox box = getScreen().findNiftyControl(
+                "ambientCheckBox", CheckBox.class);
         assert box != null;
         boolean result = box.isChecked();
 
@@ -179,8 +179,8 @@ public class TestSkyControlHud
      * @return true if the box is checked, otherwise false
      */
     boolean getBloomFlag() {
-        CheckBox box =
-                getScreen().findNiftyControl("bloomCheckBox", CheckBox.class);
+        CheckBox box = getScreen().findNiftyControl(
+                "bloomCheckBox", CheckBox.class);
         boolean result = box.isChecked();
 
         return result;
@@ -233,8 +233,8 @@ public class TestSkyControlHud
      * @return true if the box is checked, otherwise false
      */
     boolean getFloorFlag() {
-        CheckBox box =
-                getScreen().findNiftyControl("floorCheckBox", CheckBox.class);
+        CheckBox box = getScreen().findNiftyControl(
+                "floorCheckBox", CheckBox.class);
         boolean result = box.isChecked();
 
         return result;
@@ -260,8 +260,8 @@ public class TestSkyControlHud
      * @return true if the box is checked, otherwise false
      */
     boolean getLandscapeFlag() {
-        CheckBox box = getScreen().findNiftyControl("landscapeCheckBox",
-                CheckBox.class);
+        CheckBox box = getScreen().findNiftyControl(
+                "landscapeCheckBox", CheckBox.class);
         boolean result = box.isChecked();
 
         return result;
@@ -357,8 +357,8 @@ public class TestSkyControlHud
      * @return true if the box is checked, otherwise false
      */
     boolean getSkyFlag() {
-        CheckBox box =
-                getScreen().findNiftyControl("skyCheckBox", CheckBox.class);
+        CheckBox box = getScreen().findNiftyControl(
+                "skyCheckBox", CheckBox.class);
         boolean result = box.isChecked();
 
         return result;
@@ -612,25 +612,25 @@ public class TestSkyControlHud
         cloudRate = updateSlider("cloudRate", "x");
         cloudYOffset = updateSlider("cloudYOffset", "");
 
-        float lunarDiameterDegrees =
-                updateLogSlider("lunarDiameter", 10f, " deg");
-        lunarDiameter = lunarDiameterDegrees * FastMath.DEG_TO_RAD;
+        float lunarDiameterDegrees = updateLogSlider(
+                "lunarDiameter", 10f, " deg");
+        lunarDiameter = MyMath.toRadians(lunarDiameterDegrees);
 
-        float solarDiameterDegrees =
-                updateLogSlider("solarDiameter", 10f, " deg");
-        solarDiameter = solarDiameterDegrees * FastMath.DEG_TO_RAD;
+        float solarDiameterDegrees = updateLogSlider(
+                "solarDiameter", 10f, " deg");
+        solarDiameter = MyMath.toRadians(solarDiameterDegrees);
 
         float phaseDegrees = updateSlider("customLunarPhase", " deg");
-        phaseAngle = phaseDegrees * FastMath.DEG_TO_RAD;
+        phaseAngle = MyMath.toRadians(phaseDegrees);
 
         float solarLongitudeDegrees = updateSlider("solarLongitude", " deg");
-        solarLongitude = solarLongitudeDegrees * FastMath.DEG_TO_RAD;
+        solarLongitude = MyMath.toRadians(solarLongitudeDegrees);
 
         float latitudeDegrees = updateSlider("latitude", " deg");
-        latitude = latitudeDegrees * FastMath.DEG_TO_RAD;
+        latitude = MyMath.toRadians(latitudeDegrees);
 
         float tvaDegrees = updateSlider("topVerticalAngle", " deg");
-        topVerticalAngle = tvaDegrees * FastMath.DEG_TO_RAD;
+        topVerticalAngle = MyMath.toRadians(tvaDegrees);
 
         relief = updateSlider("relief", " wu");
 
@@ -642,12 +642,14 @@ public class TestSkyControlHud
         String timeString = timeOfDay.toString();
         setStatusText("time", timeString);
 
-        float azimuthDegrees = MyCamera.azimuth(cam) * FastMath.RAD_TO_DEG;
+        float azimuth = MyCamera.azimuth(cam);
+        float azimuthDegrees = MyMath.toDegrees(azimuth);
         azimuthDegrees = MyMath.modulo(azimuthDegrees, 360f);
         String azimuthStatus = String.format("%03.0f", azimuthDegrees);
         setStatusText("azimuthStatus", azimuthStatus);
 
-        float fovYDegrees = MyCamera.fovY(cam) * FastMath.RAD_TO_DEG;
+        float fovY = MyCamera.fovY(cam);
+        float fovYDegrees = MyMath.toDegrees(fovY);
         String fovStatus = String.format("%.0f", fovYDegrees);
         setStatusText("fovStatus", fovStatus);
 
@@ -700,8 +702,8 @@ public class TestSkyControlHud
                 break;
 
             default:
-                sunAssetPath =
-                        String.format("Textures/skies/suns/%s.png", name);
+                sunAssetPath = String.format(
+                        "Textures/skies/suns/%s.png", name);
         }
     }
 

@@ -41,6 +41,7 @@ import jme3utilities.MyControl;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.math.MyVector3f;
 
 /**
  * Dump portions of a jME3 scene graph for debugging.
@@ -60,10 +61,11 @@ public class Printer {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(Printer.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            Printer.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * enable printing of render queue bucket assignments
      */
@@ -229,7 +231,7 @@ public class Printer {
      */
     public void printLocation(Spatial spatial) {
         Vector3f location = MySpatial.getWorldLocation(spatial);
-        if (!location.equals(Vector3f.ZERO)) {
+        if (!MyVector3f.isZero(location)) {
             stream.printf(" loc=[%.3f, %.3f, %.3f]",
                     location.x, location.y, location.z);
         }

@@ -57,8 +57,12 @@ public class MySpatial
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MySpatial.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MySpatial.class.getName());
+    /**
+     * direction of the negative Y-axis
+     */
+    final private static Vector3f negativeYAxis = new Vector3f(0f, -1f, 0f);
     // *************************************************************************
     // constructors
 
@@ -184,8 +188,8 @@ public class MySpatial
      * @return mass in kilograms (&gt;0) or zero for a static object.
      */
     public static float getMass(Spatial spatial) {
-        RigidBodyControl rigidBodyControl =
-                spatial.getControl(RigidBodyControl.class);
+        RigidBodyControl rigidBodyControl = spatial.getControl(
+                RigidBodyControl.class);
         float mass = rigidBodyControl.getMass();
 
         assert mass >= 0f : mass;
@@ -326,8 +330,8 @@ public class MySpatial
         /*
          * Access the rigid body, if any.
          */
-        RigidBodyControl rigidBodyControl =
-                spatial.getControl(RigidBodyControl.class);
+        RigidBodyControl rigidBodyControl = spatial.getControl(
+                RigidBodyControl.class);
         Vector3f location;
         if (rigidBodyControl != null) {
             location = rigidBodyControl.getPhysicsLocation();
@@ -348,8 +352,8 @@ public class MySpatial
         /*
          * Access the rigid body, if any.
          */
-        RigidBodyControl rigidBodyControl =
-                spatial.getControl(RigidBodyControl.class);
+        RigidBodyControl rigidBodyControl = spatial.getControl(
+                RigidBodyControl.class);
         Quaternion orientation;
         if (rigidBodyControl != null) {
             orientation = rigidBodyControl.getPhysicsRotation();
@@ -524,7 +528,7 @@ public class MySpatial
     }
 
     /**
-     * Turn (rotate) a physical object around its Y-axis.
+     * Turn (rotate) a physical object around its world Y-axis.
      *
      * @param spatial object to rotate (not null)
      * @param angle clockwise rotation angle (in radians)
@@ -533,7 +537,7 @@ public class MySpatial
         Validate.nonNull(spatial, "spatial");
 
         Quaternion rotation = new Quaternion();
-        rotation.fromAngleNormalAxis(-angle, Vector3f.UNIT_Y);
+        rotation.fromAngleNormalAxis(angle, negativeYAxis);
         Vector3f center = getWorldLocation(spatial);
         rotateObject(spatial, center, rotation);
     }
@@ -561,8 +565,8 @@ public class MySpatial
         /*
          * Apply to the physical object, if any.
          */
-        RigidBodyControl rigidBodyControl =
-                spatial.getControl(RigidBodyControl.class);
+        RigidBodyControl rigidBodyControl = spatial.getControl(
+                RigidBodyControl.class);
         if (rigidBodyControl != null) {
             rigidBodyControl.setPhysicsLocation(newLocation.clone());
         }
@@ -592,8 +596,8 @@ public class MySpatial
         /*
          * Apply to the physical object, if any.
          */
-        RigidBodyControl rigidBodyControl =
-                spatial.getControl(RigidBodyControl.class);
+        RigidBodyControl rigidBodyControl = spatial.getControl(
+                RigidBodyControl.class);
         if (rigidBodyControl != null) {
             rigidBodyControl.setPhysicsRotation(newOrientation);
         }

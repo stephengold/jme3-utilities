@@ -49,8 +49,8 @@ final public class MyAsset {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MyAsset.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MyAsset.class.getName());
     /**
      * asset path of the Particle material definition
      */
@@ -66,6 +66,10 @@ final public class MyAsset {
      */
     final public static String unshadedMaterialAssetPath =
             "Common/MatDefs/Misc/Unshaded.j3md";
+    /**
+     * default scale
+     */
+    final private static Vector3f defaultScale = new Vector3f(1f, 1f, 1f);
     // *************************************************************************
     // constructors
 
@@ -107,8 +111,8 @@ final public class MyAsset {
         Validate.nonNull(assetManager, "asset manager");
         Validate.nonNull(texture, "texture");
 
-        Material material =
-                new Material(assetManager, particleMaterialAssetPath);
+        Material material = new Material(
+                assetManager, particleMaterialAssetPath);
         material.setTexture("Texture", texture);
 
         return material;
@@ -176,10 +180,10 @@ final public class MyAsset {
         /*
          * Create the map.
          */
-        Vector3f normalScale = Vector3f.UNIT_XYZ;
         int sphereRadius = 10;
         Spatial starMap = SkyFactory.createSky(assetManager, right, left, back,
-                front, top, bottom, normalScale, sphereRadius);
+                front, top, bottom, defaultScale, sphereRadius);
+
         return starMap;
     }
 
@@ -192,8 +196,9 @@ final public class MyAsset {
     public static Material createUnshadedMaterial(AssetManager assetManager) {
         Validate.nonNull(assetManager, "asset manager");
 
-        Material material =
-                new Material(assetManager, unshadedMaterialAssetPath);
+        Material material = new Material(
+                assetManager, unshadedMaterialAssetPath);
+
         return material;
     }
 
