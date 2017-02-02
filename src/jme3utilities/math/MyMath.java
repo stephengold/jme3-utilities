@@ -26,6 +26,7 @@
 package jme3utilities.math;
 
 import com.jme3.math.FastMath;
+import java.io.PrintStream;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -46,8 +47,8 @@ public class MyMath {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MyMath.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MyMath.class.getName());
     // *************************************************************************
     // constructors
 
@@ -102,46 +103,55 @@ public class MyMath {
      * @param maxMagnitude limit of the clamp (&ge;0)
      * @return value between -maxMagnitude and +maxMagnitude inclusive which is
      * closest to fValue
-     * @see FastMath#clamp(float,float,float)
+     * @see com.jme3.math.FastMath#clamp(float,float,float)
      */
     public static float clamp(float fValue, float maxMagnitude) {
         Validate.nonNegative(maxMagnitude, "limit");
-        return FastMath.clamp(fValue, -maxMagnitude, maxMagnitude);
+        float result = FastMath.clamp(fValue, -maxMagnitude, maxMagnitude);
+
+        assert result >= -maxMagnitude : result;
+        assert result <= maxMagnitude : result;
+        return result;
     }
 
     /**
-     * Cube a single-precision value.
+     * Cube a single-precision value. Logs a warning in case of overflow.
      *
      * @param fValue input value to be cubed
      * @return fValue raised to the third power
      * @see #cubeRoot(float)
+     * @see com.jme3.math.FastMath#sqr(float)
      */
     public static float cube(float fValue) {
-        return fValue * fValue * fValue;
+        float result = fValue * fValue * fValue;
+
+        if (Float.isInfinite(result)) {
+            String message = String.format("Overflow from cubing %g.", fValue);
+            logger.warning(message);
+        }
+        return result;
     }
 
     /**
-     * Extract the cube root of a single-precision value. Unlike FastMath.pow(),
-     * this method works on negative values.
+     * Extract the cube root of a single-precision value. Unlike
+     * com.jme3.math.FastMath#pow(), this method works on negative values.
      *
      * @param fValue input cube to be extracted (may be negative)
      * @return cube root of fValue
      * @see #cube(float)
-     * @see FastMath#pow(float,float)
-     * @see Math#cbrt(double)
+     * @see com.jme3.math.FastMath#pow(float,float)
+     * @see java.lang.Math#cbrt(double)
      */
     public static float cubeRoot(float fValue) {
-        float magnitude = FastMath.abs(fValue);
-        float exponent = FastMath.ONE_THIRD;
-        float rootMagnitude = FastMath.pow(magnitude, exponent);
-        float result = FastMath.copysign(rootMagnitude, fValue);
+        double dValue = fValue;
+        float result = (float) Math.cbrt(dValue);
 
         return result;
     }
 
     /**
      * Compute the discriminant (b^2 - 4*a*c) of a quadratic equation in
-     * standard form: (a*x^2 + b*x + c).
+     * standard form (a*x^2 + b*x + c).
      *
      * @param a coefficient of the square term
      * @param b coefficient of the linear term
@@ -180,6 +190,7 @@ public class MyMath {
      * @param legB length of the 2nd leg (may be negative)
      * @return length of the hypotenuse (&ge;0)
      * @see #sumOfSquares(float,float)
+     * @see java.lang.Math#hypot(double, double)
      */
     public static float hypotenuse(float legA, float legB) {
         double sumSquares = sumOfSquares(legA, legB);
@@ -201,12 +212,13 @@ public class MyMath {
     }
 
     /**
-     * Find the max of three single-precision values.
+     * Find the maximum of three single-precision values.
      *
      * @param a 1st input value
      * @param b 2nd input value
      * @param c 3rd input value
      * @return greatest of the three values
+     * @see java.lang.Math#max(float, float)
      */
     public static float max(float a, float b, float c) {
         if (a >= b && a >= c) {
@@ -309,6 +321,30 @@ public class MyMath {
         assert result >= 0.0 : result;
         return result;
     }
+
+    /**
+     * Convert an angle from radians to degrees.
+     *
+     * @param radians input angle
+     * @return equivalent in degrees
+     * @see java.lang.Math#toDegrees(double)
+     */
+    public static float toDegrees(float radians) {
+        float result = radians * FastMath.RAD_TO_DEG;
+        return result;
+    }
+
+    /**
+     * Convert an angle from degrees to radians.
+     *
+     * @param degrees input angle
+     * @return equivalent in radians
+     * @see java.lang.Math#toRadians(double)
+     */
+    public static float toRadians(float degrees) {
+        float result = degrees * FastMath.DEG_TO_RAD;
+        return result;
+    }
     // *************************************************************************
     // test cases
 
@@ -318,27 +354,34 @@ public class MyMath {
      * @param ignored command-line arguments
      */
     public static void main(String[] ignored) {
-        System.out.print("Test results for class MyMath:\n\n");
+        PrintStream console = System.out;
+        console.print("Test results for class MyMath:\n\n");
 
         float h = hypotenuse(3f, 4f);
-        System.out.printf("hypot(3,4)=%f%n", h);
+        console.printf("hypot(3,4) = %f%n", h);
 
         float[] floatCases = new float[]{
             -3f, 0f, 1f, 8f, Float.MAX_VALUE / 2f, Float.MAX_VALUE, -1f
         };
         for (float x : floatCases) {
+            console.println();
+
+            h = hypotenuse(x, x);
+            console.printf("x = %g    hypot(x,x) = %g%n", x, h);
+
             float c = cube(x);
             float cr = cubeRoot(x);
+            console.printf("  cube(x)=%g    cubeRoot(x)=%g%n", c, cr);
 
-            System.out.println();
-            h = hypotenuse(x, x);
-            System.out.printf("x=%e  hypot(x,x)=%e%n", x, h);
-            System.out.printf("  cube(x)=%e  cubeRoot(x)=%e%n", c, cr);
-            System.out.printf("  cube(cubeRoot(x))=%e  cubeRoot(cube(x))=%e%n",
-                    cube(cr), cubeRoot(c));
-            System.out.printf("  x %% 4=%f  x mod 4=%f%n",
+            float x1 = cube(cr);
+            console.printf("  cube(cubeRoot(x)) = %g%n", x1);
+
+            float x2 = cubeRoot(c);
+            console.printf("  cubeRoot(cube(x)) = %g%n", x2);
+
+            console.printf("  x %% 4 = %f    x mod 4 = %f%n",
                     x % 4f, modulo(x, 4f));
         }
-        System.out.println();
+        console.println();
     }
 }
