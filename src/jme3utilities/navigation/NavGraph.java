@@ -28,16 +28,16 @@ package jme3utilities.navigation;
 import com.jme3.math.Vector3f;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
-import jme3utilities.math.noise.Noise;
+import jme3utilities.math.Locus3f;
+import jme3utilities.math.MyVector3f;
 
 /**
  * Graph for navigation. Its vertices represent reachable locations in the
@@ -52,121 +52,237 @@ public class NavGraph {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(NavGraph.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            NavGraph.class.getName());
     // *************************************************************************
     // fields
+    
     /**
-     * list of arcs in this graph
+     * cost (or length) of each arc in this graph
      */
-    final protected ArrayList<NavArc> arcs = new ArrayList<>(30);
+    final private Map<NavArc, Float> arcCosts = new HashMap<>(100);
     /**
-     * list of vertices in this graph
+     * vertex for each name
      */
-    final protected ArrayList<NavVertex> vertices = new ArrayList<>(30);
+    final private Map<String, NavVertex> vertices = new HashMap<>(30);
     // *************************************************************************
     // new methods exposed
 
     /**
-     * Create a straight arc and add it to this graph.
+     * Connect two member vertices with a new arc.
      *
-     * @param startVertex starting point (member of this graph, distinct from
-     * endVertex)
-     * @param endVertex endpoint (member of this graph)
-     * @return new member
+     * @param origin originating member vertex (distinct from terminus)
+     * @param terminus terminating member vertex (distinct from origin)
+     * @param initialCost initial cost (or length) of the arc
+     * @return new member arc
      */
-    public NavArc addArc(NavVertex startVertex, NavVertex endVertex) {
-        validateMember(startVertex);
-        validateMember(endVertex);
-        if (startVertex == endVertex) {
-            throw new IllegalArgumentException("endpoints should be distinct");
+    public NavArc addArc(NavVertex origin, NavVertex terminus,
+            float initialCost) {
+        validateMember(origin, "origin");
+        validateMember(terminus, "terminus");
+        if (origin == terminus) {
+            throw new IllegalArgumentException("vertices not distinct");
         }
 
-        NavArc newArc = startVertex.addArc(endVertex);
-        boolean success = arcs.add(newArc);
-        assert success : newArc;
+        NavArc newArc = new NavArc(origin, terminus);
+        if (arcCosts.containsKey(newArc)) {
+            throw new IllegalStateException("arc already exists");
+        }
+        Float oldcost = arcCosts.put(newArc, initialCost);
+        assert oldcost == null;
+
+        origin.addOutgoing(newArc);
+        terminus.addIncoming(newArc);
 
         return newArc;
     }
 
     /**
-     * Create a piecewise-linear arc and add it to this graph.
+     * Connect two member vertices with a pair of new arcs.
      *
-     * @param startVertex starting point (member of this graph, distinct from
-     * endVertex)
-     * @param endVertex endpoint (member of this graph)
-     * @param joints intermediate locations along the path (not null,
-     * unaffected)
-     * @return new member
+     * @param v1 first vertex (member of this graph, distinct from endVertex)
+     * @param v2 second vertex (member of this graph)
+     * @param initialCost initial cost (or length) applied to both new arcs
      */
-    public NavArc addArc(NavVertex startVertex, NavVertex endVertex,
-            Vector3f[] joints) {
-        validateMember(startVertex);
-        validateMember(endVertex);
-        if (startVertex == endVertex) {
-            throw new IllegalArgumentException("vertices should be distinct");
+    public void addArcPair(NavVertex v1, NavVertex v2, float initialCost) {
+        validateMember(v1, "v1");
+        validateMember(v2, "v2");
+        if (v1 == v2) {
+            throw new IllegalArgumentException("vertices not distinct");
         }
-        Validate.nonNull(joints, "joints");
 
-        NavArc newArc = startVertex.addArc(endVertex, joints);
-        boolean success = arcs.add(newArc);
-        assert success : newArc;
-
-        return newArc;
+        addArc(v1, v2, initialCost);
+        addArc(v2, v1, initialCost);
     }
 
     /**
-     * Create a vertex without any arcs and add it to this graph.
+     * Create a new vertex without any arcs and add it to this graph.
      *
-     * @param description (not null)
-     * @param position (not null, unaffected)
-     * @return new instance
+     * @param name name for the new vertex (not null, not in use)
+     * @param locus region represented by the new vertex (in world coordinates,
+     * not null)
+     * @return new member vertex
      */
-    public NavVertex addVertex(String description, Vector3f position) {
-        Validate.nonNull(description, "description");
-        Validate.nonNull(position, "position");
+    public NavVertex addVertex(String name, Locus3f locus) {
+        Validate.nonNull(name, "name");
+        Validate.nonNull(locus, "locus");
+        if (vertices.containsKey(name)) {
+            throw new IllegalArgumentException("name already in use");
+        }
 
-        NavVertex newVertex = new NavVertex(description, position);
-        boolean success = vertices.add(newVertex);
-        assert success;
+        NavVertex newVertex = new NavVertex(name, locus);
+        NavVertex oldVertex = vertices.put(name, newVertex);
+        assert oldVertex == null : oldVertex;
 
         return newVertex;
     }
 
     /**
-     * Test whether a particular vertex is part of this graph.
+     * Test whether a particular arc is a member of this graph.
      *
-     * @param vertex vertex to test (or null)
+     * @param arc arc to test (not null)
      * @return true if it's a member, otherwise false
      */
-    public boolean contains(NavVertex vertex) {
-        boolean result = vertices.contains(vertex);
+    public boolean contains(NavArc arc) {
+        Validate.nonNull(arc, "arc");
+
+        boolean result = arcCosts.containsKey(arc);
         return result;
     }
 
     /**
-     * Enumerate all vertices located the specified number of hops from a
-     * specified starting point.
+     * Test whether a particular vertex is a member of this graph.
+     *
+     * @param vertex vertex to test (not null)
+     * @return true if it's a member, otherwise false
+     */
+    public boolean contains(NavVertex vertex) {
+        Validate.nonNull(vertex, "vertex");
+
+        boolean result = vertices.containsValue(vertex);
+        return result;
+    }
+
+    /**
+     * Enumerate all member arcs as an array.
+     *
+     * @return new array of pre-existing member arcs
+     */
+    public NavArc[] copyArcs() {
+        NavArc[] result = new NavArc[numArcs()];
+        int i = 0;
+        for (NavArc arc : arcCosts.keySet()) {
+            result[i] = arc;
+            i++;
+        }
+
+        return result;
+    }
+
+    /**
+     * Enumerate all member vertices as an array.
+     *
+     * @return new array of pre-existing member vertices
+     */
+    public NavVertex[] copyVertices() {
+        NavVertex[] result = new NavVertex[numVertices()];
+        int i = 0;
+        for (NavVertex vertex : vertices.values()) {
+            result[i] = vertex;
+            i++;
+        }
+
+        return result;
+    }
+
+    /**
+     * Count the number of vertices reachable from the specified member vertex.
+     *
+     * @param start input vertex (member)
+     * @return true if connected, false otherwise
+     */
+    public int countReachableFrom(NavVertex start) {
+        validateMember(start, "start");
+
+        Set<NavVertex> visited = new HashSet<>();
+        visitReachable(start, visited);
+
+        return visited.size();
+    }
+
+    /**
+     * Find a member vertex with the specified name.
+     *
+     * @param name (not null)
+     * @return pre-existing member vertex, or null if none found
+     */
+    public NavVertex find(String name) {
+        Validate.nonNull(name, "name");
+        NavVertex result = vertices.get(name);
+        return result;
+    }
+
+    /**
+     * Find a member vertex which contains the specified point.
+     *
+     * @param point (not null)
+     * @return pre-existing member vertex, or null if none found
+     */
+    public NavVertex find(Vector3f point) {
+        Validate.nonNull(point, "point");
+        /*
+         * Test the closest vertex first.
+         */
+        Collection<NavVertex> allVertices = vertices.values();
+        NavVertex result = findNearest(allVertices, point);
+        if (result == null || result.getLocus().contains(point)) {
+            return result;
+        }
+        /*
+         * Test the next closest, and so on.
+         */
+        Collection<NavVertex> remainingVertices;
+        remainingVertices = new HashSet<>(allVertices);
+        remainingVertices.remove(result);
+
+        while (!remainingVertices.isEmpty()) {
+            result = findNearest(remainingVertices, point);
+            assert result != null;
+
+            if (result.getLocus().contains(point)) {
+                return result;
+            }
+
+            remainingVertices.remove(result);
+        }
+
+        return null;
+    }
+
+    /**
+     * Enumerate all member vertices which are exactly a specified number of
+     * hops from a specified vertex.
      *
      * @param hopCount (&ge;0)
      * @param startVertex (member of this graph)
-     * @return new list of members
+     * @return new list of per-existing member vertices
      */
     public List<NavVertex> findByHops(int hopCount, NavVertex startVertex) {
         Validate.nonNegative(hopCount, "count");
-        validateMember(startVertex);
+        validateMember(startVertex, "start vertex");
 
         List<NavVertex> result = findByHops(hopCount, hopCount, startVertex);
         return result;
     }
 
     /**
-     * Enumerate all vertices located in the specified inclusive range of hops.
+     * Enumerate all member vertices which are in a specified inclusive range of
+     * hops from a specified vertex.
      *
      * @param minHopCount (&ge;0)
      * @param maxHopCount (&ge;minHopCount)
      * @param startVertex (member of this graph)
-     * @return new list of members
+     * @return new list of pre-existing member vertices
      */
     public List<NavVertex> findByHops(int minHopCount, int maxHopCount,
             NavVertex startVertex) {
@@ -174,16 +290,15 @@ public class NavGraph {
         if (minHopCount > maxHopCount) {
             logger.log(Level.SEVERE, "min={0} max={1}",
                     new Object[]{minHopCount, maxHopCount});
-            throw new IllegalArgumentException(
-                    "min should not be greater than max");
+            throw new IllegalArgumentException("min should exceed max");
         }
-        validateMember(startVertex);
+        validateMember(startVertex, "start vertex");
 
-        Map<NavVertex, Integer> hopData = new TreeMap<>();
+        Map<NavVertex, Integer> hopData = new HashMap<>(numVertices());
         calculateHops(startVertex, 0, hopData);
 
         List<NavVertex> result = new ArrayList<>(30);
-        for (NavVertex vertex : vertices) {
+        for (NavVertex vertex : vertices.values()) {
             Integer hops = hopData.get(vertex);
             if (hops != null && hops >= minHopCount && hops <= maxHopCount) {
                 result.add(vertex);
@@ -194,41 +309,72 @@ public class NavGraph {
     }
 
     /**
-     * Find the vertex furthest from the specified starting point.
+     * Enumerate all member vertices which are the maximal number of hops from a
+     * specified vertex.
      *
-     * @param startVertex starting point (member of this graph)
-     * @return pre-existing member
+     * @param startVertex (member of this graph)
+     * @return new list of pre-existing member vertices
      */
-    public NavVertex findFurthest(NavVertex startVertex) {
-        validateMember(startVertex);
-        NavVertex result = findFurthest(startVertex, vertices);
+    public List<NavVertex> findMostHops(NavVertex startVertex) {
+        validateMember(startVertex, "start vertex");
+        List<NavVertex> result = findMostHops(
+                startVertex, vertices.values());
         return result;
     }
 
     /**
-     * Find the vertex in the specified list that's furthest from the specified
-     * starting point.
+     * Enumerate all member vertices in a specified subset which are the maximal
+     * number of hops from a specified vertex.
      *
-     * @param startVertex starting point (member of this graph)
-     * @param candidates collection of candidate vertices (not null, unaffected)
-     * @return pre-existing member
+     * @param startVertex (member of this graph)
+     * @param subset (not null, all members of this graph, unaffected)
+     * @return new list of pre-existing member vertices
      */
-    public NavVertex findFurthest(NavVertex startVertex,
-            Collection<NavVertex> candidates) {
-        validateMember(startVertex);
-        Validate.nonNull(candidates, "list");
+    public List<NavVertex> findMostHops(NavVertex startVertex,
+            Collection<NavVertex> subset) {
+        validateMember(startVertex, "start vertex");
 
-        Map<NavVertex, Float> distanceData = new TreeMap<>();
-        calculateDistances(startVertex, 0f, distanceData);
-        /*
-         * Search for the maximum distance.
-         */
-        NavVertex result = startVertex;
-        float maxDistance = 0f;
-        for (NavVertex vertex : candidates) {
-            Float distance = distanceData.get(vertex);
-            if (distance != null && distance > maxDistance) {
-                maxDistance = distance;
+        Map<NavVertex, Integer> hopData = new HashMap<>(subset.size());
+        calculateHops(startVertex, 0, hopData);
+
+        int mostHops = 0;
+        List<NavVertex> result = new ArrayList<>(10);
+        for (NavVertex vertex : subset) {
+            Integer hops = hopData.get(vertex);
+            if (hops != null) {
+                if (hops > mostHops) {
+                    mostHops = hops;
+                    result.clear();
+                }
+                if (hops == mostHops) {
+                    result.add(vertex);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Find the vertex in a specified subset which is nearest to a specified
+     * point.
+     *
+     * @param subset (not null)
+     * @param point (not null)
+     * @return pre-existing member vertex, or null if none were specified
+     */
+    public NavVertex findNearest(Collection<NavVertex> subset, Vector3f point) {
+        Validate.nonNull(point, "point");
+        Validate.nonNull(subset, "subset");
+
+        NavVertex result = null;
+        double nearest = Double.POSITIVE_INFINITY;
+
+        for (NavVertex vertex : vertices.values()) {
+            Vector3f location = vertex.copyLocation();
+            double ds = MyVector3f.distanceSquared(point, location);
+            if (ds < nearest) {
+                nearest = ds;
                 result = vertex;
             }
         }
@@ -237,138 +383,198 @@ public class NavGraph {
     }
 
     /**
-     * Enumerate all arcs.
+     * Read the current cost (or length) of a member arc.
      *
-     * @return new array
+     * @param arc which arc to modify (member of this graph)
+     * @return cost (or length) of arc
      */
-    public NavArc[] getArcs() {
-        int size = arcs.size();
-        NavArc[] result = new NavArc[size];
-        int index = 0;
-        for (NavArc item : arcs) {
-            result[index] = item;
-            index++;
-        }
-
+    public float getCost(NavArc arc) {
+        validateMember(arc, "arc");
+        Float result = arcCosts.get(arc);
         return result;
     }
 
     /**
-     * Enumerate all vertices.
+     * Test whether every vertex in is reachable from every other.
      *
-     * @return new array
+     * @return true if connected, false otherwise
      */
-    public NavVertex[] getVertices() {
-        int size = vertices.size();
-        NavVertex[] result = new NavVertex[size];
-        int index = 0;
-        for (NavVertex item : vertices) {
-            result[index] = item;
-            index++;
+    public boolean isConnected() {
+        int numVertices = numVertices();
+        for (NavVertex vertex : vertices.values()) {
+            if (countReachableFrom(vertex) != numVertices) {
+                return false;
+            }
         }
 
-        return result;
+        return true;
     }
 
     /**
-     * Test whether this graph would still be connected if the specified arc
-     * were removed.
+     * Test whether the endpoints of the specified arc would still be connected
+     * if the arc were removed. In other words, whether the arc is part of a
+     * loop.
      *
      * @param arc arc to hypothetically remove (member of this graph)
      * @return true if still connected, false if not
      */
     public boolean isConnectedWithout(NavArc arc) {
-        validateMember(arc);
+        validateMember(arc, "arc");
 
         NavVertex fromVertex = arc.getFromVertex();
         NavVertex toVertex = arc.getToVertex();
-        Set<NavVertex> visitedVertices = new TreeSet<>();
-        boolean result = existsPathWithout(arc, fromVertex, toVertex,
-                visitedVertices);
+        Set<NavVertex> visitedVertices = new HashSet<>();
+        boolean result = existsPathWithout(
+                arc, fromVertex, toVertex, visitedVertices);
 
         return result;
     }
 
     /**
-     * Select a random arc from this graph.
+     * Test whether the specified vertex is a member of this graph.
      *
-     * @param generator generator of uniform random values (not null)
-     * @return pre-existing member
+     * @param vertex input (may be null)
+     * @return true if a member, otherwise false
      */
-    public NavArc randomArc(Random generator) {
-        Validate.nonNull(generator, "generator");
-        NavArc result = (NavArc) Noise.pick(arcs, generator);
-        return result;
-    }
-
-    /**
-     * Select a random vertex from this graph.
-     *
-     * @param generator generator of uniform random values (not null)
-     * @return pre-existing member
-     */
-    public NavVertex randomVertex(Random generator) {
-        Validate.nonNull(generator, "generator");
-        NavVertex result = (NavVertex) Noise.pick(vertices, generator);
-        return result;
-    }
-
-    /**
-     * Remove the specified arc (but not its reverse) from this graph.
-     *
-     * @param arc arc to be removed (not null)
-     */
-    public void remove(NavArc arc) {
-        NavVertex fromVertex = arc.getFromVertex();
-        NavVertex toVertex = arc.getToVertex();
-        fromVertex.removeArcTo(toVertex);
-        boolean success = arcs.remove(arc);
-        assert success;
-    }
-
-    /**
-     * Remove the specified arc (and its reverse, if any) from this graph.
-     *
-     * @param arc arc to member
-     */
-    public void removePair(NavArc arc) {
-        validateMember(arc);
-
-        NavVertex fromVertex = arc.getFromVertex();
-        NavVertex toVertex = arc.getToVertex();
-        NavArc reverseArc = toVertex.findArcTo(fromVertex);
-
-        remove(arc);
-        if (reverseArc != null) {
-            remove(reverseArc);
+    public boolean isMember(NavVertex vertex) {
+        if (vertex == null) {
+            return false;
+        }
+        String name = vertex.getName();
+        if (find(name) == vertex) {
+            return true;
+        } else {
+            return false;
         }
     }
 
     /**
-     * Find the shortest path from one vertex to another, assuming all arcs are
-     * reversible.
+     * Test whether this graph contains a reverse arc for every member arc.
+     *
+     * @return true if a reversible, otherwise false
+     */
+    public boolean isReversible() {
+        for (NavArc arc : arcCosts.keySet()) {
+            NavArc reverse = arc.findReverse();
+            if (!contains(reverse)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Enumerate all member arcs as a list.
+     *
+     * @return new list of pre-existing member arcs
+     */
+    public List<NavArc> listArcs() {
+        Set<NavArc> arcs = arcCosts.keySet();
+        List<NavArc> result = new ArrayList<>(numArcs());
+        for (NavArc arc : arcs) {
+            result.add(arc);
+        }
+
+        return result;
+    }
+
+    /**
+     * Enumerate all member vertices as a list.
+     *
+     * @return new list of pre-existing member vertices
+     */
+    public List<NavVertex> listVertices() {
+        List<NavVertex> result = new ArrayList<>(numVertices());
+        for (NavVertex vertex : vertices.values()) {
+            result.add(vertex);
+        }
+
+        return result;
+    }
+
+    /**
+     * Count how many arcs this graph contains.
+     *
+     * @return count (&ge;0)
+     */
+    public int numArcs() {
+        int result = arcCosts.size();
+        assert result >= 0 : result;
+        return result;
+    }
+
+    /**
+     * Count how many vertices this graph contains.
+     *
+     * @return count (&ge;0)
+     */
+    public int numVertices() {
+        int result = vertices.size();
+        assert result >= 0 : result;
+        return result;
+    }
+
+    /**
+     * Remove the specified member arc from this graph.
+     *
+     * @param arc member arc to remove
+     */
+    public void remove(NavArc arc) {
+        validateMember(arc, "arc");
+
+        Float oldCost = arcCosts.remove(arc);
+        assert oldCost != null;
+
+        NavVertex fromVertex = arc.getFromVertex();
+        fromVertex.removeOutgoing(arc);
+
+        NavVertex toVertex = arc.getToVertex();
+        toVertex.removeIncoming(arc);
+    }
+
+    /**
+     * Remove the arc from one member vertex to another.
+     *
+     * @param origin originating member vertex (not null)
+     * @param terminus terminating member vertex (not null)
+     * @return true for success, false arc not found
+     */
+    public boolean remove(NavVertex origin, NavVertex terminus) {
+        validateMember(origin, "origin");
+        validateMember(terminus, "terminus");
+
+        NavArc arc = origin.findOutgoing(terminus);
+        if (arc == null) {
+            return false;
+        }
+        remove(arc);
+        return true;
+    }
+
+    /**
+     * Find the shortest (or cheapest) path from one vertex to another.
      *
      * @param startVertex starting point (member of this graph, distinct from
      * endVertex)
      * @param endVertex goal (member of this graph)
-     * @return first arc in path (or null if unreachable)
+     * @return first arc in path (existing member arc) or null if unreachable
      */
     public NavArc seek(NavVertex startVertex, NavVertex endVertex) {
-        validateMember(startVertex);
-        validateMember(endVertex);
+        validateMember(startVertex, "start vertex");
+        validateMember(endVertex, "end vertex");
         if (startVertex == endVertex) {
-            throw new IllegalArgumentException(
-                    "starting point and goal should be distinct");
+            throw new IllegalArgumentException("vertices not distinct");
         }
 
-        Map<NavVertex, Float> distanceData = new TreeMap<>();
-        calculateDistances(endVertex, 0f, distanceData);
+        Map<NavVertex, Float> distanceData = new HashMap<>(numVertices());
+        calculateTotalCosts(endVertex, 0f, distanceData);
 
         NavArc result = null;
         float minDistance = Float.MAX_VALUE;
-        for (NavArc arc : startVertex.getArcs()) {
+        for (NavArc arc : startVertex.copyOutgoing()) {
             NavVertex neighbor = arc.getToVertex();
-            float distance = distanceData.get(neighbor) + arc.getPathLength();
+            float distance = distanceData.get(neighbor) + arcCosts.get(arc);
             if (distance < minDistance) {
                 minDistance = distance;
                 result = arc;
@@ -379,62 +585,94 @@ public class NavGraph {
     }
 
     /**
-     * Verify that an arc (used as a method argument) belongs to this graph.
+     * Alter the cost (or length) of a member arc.
      *
-     * @param arc arc to be validated
+     * @param arc which arc to modify (member of this graph)
+     * @param newCost value for cost (or length) of arc
      */
-    public void validateMember(NavArc arc) {
-        if (!arcs.contains(arc)) {
-            logger.log(Level.SEVERE, "arc={0}", arc);
-            throw new IllegalArgumentException("graph should contain the arc");
+    public void setCost(NavArc arc, float newCost) {
+        validateMember(arc, "arc");
+        Float oldCost = arcCosts.put(arc, newCost);
+        assert oldCost != null;
+    }
+
+    /**
+     * Verify that an arc (used as a method argument) is a member of this graph.
+     *
+     * @param arc arc argument to be validated
+     * @param description description of the argument
+     */
+    public void validateMember(NavArc arc, String description) {
+        if (!arcCosts.keySet().contains(arc)) {
+            String what;
+            if (description == null) {
+                what = "arc argument";
+            } else {
+                what = description;
+            }
+
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, arc});
+            String message = String.format("%s must be a member.", what);
+            throw new IllegalArgumentException(message);
         }
     }
 
     /**
-     * Verify that a vertex (used as a method argument) belongs to this graph.
+     * Verify that a vertex (used as a method argument) is a member of this
+     * graph.
      *
-     * @param vertex vertex to be validated
+     * @param vertex vertex argument to be validated
+     * @param description description of the argument
      */
-    public void validateMember(NavVertex vertex) {
-        if (!vertices.contains(vertex)) {
-            logger.log(Level.SEVERE, "vertex={0}", vertex);
-            throw new IllegalArgumentException(
-                    "graph should contain the vertex");
+    public void validateMember(NavVertex vertex, String description) {
+        Validate.nonNull(vertex, description);
+
+        if (!isMember(vertex)) {
+            String what;
+            if (description == null) {
+                what = "vertex argument";
+            } else {
+                what = description;
+            }
+
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, vertex});
+            String message = String.format("%s must be a member.", what);
+            throw new IllegalArgumentException(message);
         }
     }
     // *************************************************************************
     // private methods
 
     /**
-     * Measure the minimum distance to each vertex in the graph from a fixed
-     * starting point. Note: recursive!
+     * Calculate the minimum total cost (or distance) to each vertex in the
+     * graph from a fixed starting point. Note: recursive!
      *
      * @param currentVertex vertex being visited (member of this graph)
-     * @param distance distance from the starting point to the current vertex
+     * @param costSoFar total cost from the starting point to the current vertex
      * (&ge;0)
-     * @param pathData distances of all vertices already visited (not null)
+     * @param costData total costs of vertices already visited (not null)
      */
-    private void calculateDistances(NavVertex currentVertex,
-            float distance, Map<NavVertex, Float> pathData) {
-        assert vertices.contains(currentVertex) : currentVertex;
-        assert distance >= 0f : distance;
-        assert pathData != null;
+    private void calculateTotalCosts(NavVertex currentVertex,
+            float costSoFar, Map<NavVertex, Float> costData) {
+        assert isMember(currentVertex) : currentVertex;
+        assert costSoFar >= 0f : costSoFar;
+        assert costData != null;
 
-        if (pathData.containsKey(currentVertex)
-                && distance > pathData.get(currentVertex)) {
+        if (costData.containsKey(currentVertex)
+                && costSoFar > costData.get(currentVertex)) {
             return;
         }
         /*
          * Update the distance of the current vertex.
          */
-        pathData.put(currentVertex, distance);
+        costData.put(currentVertex, costSoFar);
         /*
-         * Follow each arc from the current vertex.
+         * Follow each outgoing arc from the current vertex.
          */
-        for (NavArc arc : currentVertex.getArcs()) {
+        for (NavArc arc : currentVertex.copyOutgoing()) {
             NavVertex vertex = arc.getToVertex();
-            float newDistance = distance + arc.getPathLength();
-            calculateDistances(vertex, newDistance, pathData);
+            float newDistance = costSoFar + arcCosts.get(arc);
+            calculateTotalCosts(vertex, newDistance, costData);
         }
     }
 
@@ -443,48 +681,49 @@ public class NavGraph {
      * recursive!
      *
      * @param currentVertex vertex being visited (member of this graph)
-     * @param hopCount hop count from the start vertex to the current vertex
+     * @param hopsSoFar hop count from the start vertex to the current vertex
      * (&ge;0)
-     * @param pathData hop counts of all vertices already visited (not null)
+     * @param hopData hop counts of all vertices already visited (not null)
      */
     private void calculateHops(NavVertex currentVertex,
-            int hopCount, Map<NavVertex, Integer> pathData) {
-        assert vertices.contains(currentVertex) : currentVertex;
-        assert hopCount >= 0 : hopCount;
-        assert pathData != null;
+            int hopsSoFar, Map<NavVertex, Integer> hopData) {
+        assert isMember(currentVertex) : currentVertex;
+        assert hopsSoFar >= 0 : hopsSoFar;
+        assert hopData != null;
 
-        if (pathData.containsKey(currentVertex)
-                && hopCount > pathData.get(currentVertex)) {
+        if (hopData.containsKey(currentVertex)
+                && hopsSoFar > hopData.get(currentVertex)) {
             return;
         }
         /*
          * Update the hop count of the current vertex.
          */
-        pathData.put(currentVertex, hopCount);
+        hopData.put(currentVertex, hopsSoFar);
         /*
-         * Follow each arc from the current vertex.
+         * Follow each outgoing arc from the current vertex.
          */
-        int nextHopCount = hopCount + 1;
-        for (NavArc arc : currentVertex.getArcs()) {
+        int newHopCount = hopsSoFar + 1;
+        for (NavArc arc : currentVertex.copyOutgoing()) {
             NavVertex vertex = arc.getToVertex();
-            calculateHops(vertex, nextHopCount, pathData);
+            calculateHops(vertex, newHopCount, hopData);
         }
     }
 
     /**
-     * Test whether there's a path between two specified vertices which avoids a
-     * specified arc. Note: recursive!
+     * Test whether there's a path between two specified member vertices which
+     * avoids a specified arc. Note: recursive!
      *
      * @param avoidArc arc to avoid (member of this graph)
      * @param fromVertex starting point (member of this graph)
      * @param toVertex endpoint (member of this graph)
+     * @param visitedVertices
      * @return true if such a path exists, false if no such path exists
      */
     private boolean existsPathWithout(NavArc avoidArc, NavVertex fromVertex,
             NavVertex toVertex, Set<NavVertex> visitedVertices) {
-        assert arcs.contains(avoidArc) : avoidArc;
-        assert vertices.contains(fromVertex) : fromVertex;
-        assert vertices.contains(toVertex) : toVertex;
+        assert arcCosts.keySet().contains(avoidArc) : avoidArc;
+        assert isMember(fromVertex) : fromVertex;
+        assert isMember(toVertex) : toVertex;
 
         if (fromVertex == toVertex) {
             return true;
@@ -493,19 +732,43 @@ public class NavGraph {
             return false;
         }
 
-        visitedVertices.add(fromVertex);
+        Set<NavVertex> newSet = new HashSet<>(visitedVertices);
+        newSet.add(fromVertex);
 
-        for (NavArc arc : fromVertex.getArcs()) {
-            if (arc == avoidArc) {
+        for (NavArc arc : fromVertex.copyOutgoing()) {
+            if (arc.equals(avoidArc)) {
                 continue;
             }
             NavVertex vertex = arc.getToVertex();
-            boolean pathExists = existsPathWithout(avoidArc, vertex, toVertex,
-                    visitedVertices);
+            boolean pathExists = existsPathWithout(
+                    avoidArc, vertex, toVertex, newSet);
             if (pathExists) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Enumerate all vertices reachable from a given member vertex. Note:
+     * recursive!
+     *
+     * @param fromVertex starting point (member of this graph)
+     * @param visited vertices visited so far, potentially added to (not null)
+     */
+    private void visitReachable(NavVertex fromVertex, Set<NavVertex> visited) {
+        assert isMember(fromVertex) : fromVertex;
+        assert visited != null;
+
+        if (visited.contains(fromVertex)) {
+            return;
+        }
+        boolean success = visited.add(fromVertex);
+        assert success;
+
+        for (NavArc arc : fromVertex.copyOutgoing()) {
+            NavVertex vertex = arc.getToVertex();
+            visitReachable(vertex, visited);
+        }
     }
 }

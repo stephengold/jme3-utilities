@@ -66,18 +66,22 @@ public class NavDebug {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(NavDebug.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            NavDebug.class.getName());
     /**
      * sphere mesh for generating balls
      */
-    final private static Mesh ballMesh =
-            new Sphere(meridianSamples, equatorSamples, 1f);
+    final private static Mesh ballMesh = new Sphere(
+            meridianSamples, equatorSamples, 1f);
     /**
      * cylinder mesh for generating sticks
      */
-    final private static Mesh stickMesh =
-            new Cylinder(lengthSamples, circumferenceSamples, 1f, 1f);
+    final private static Mesh stickMesh = new Cylinder(
+            lengthSamples, circumferenceSamples, 1f, 1f);
+    /**
+     * local copy of Vector3f#UNIT_Y
+     */
+    final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
     // *************************************************************************
     // constructors
 
@@ -103,7 +107,7 @@ public class NavDebug {
         Validate.positive(radius, "radius");
         Validate.nonNull(material, "material");
 
-        for (NavVertex vertex : graph.getVertices()) {
+        for (NavVertex vertex : graph.copyVertices()) {
             Spatial ball = makeBall(vertex, radius, material);
             parentNode.attachChild(ball);
         }
@@ -122,7 +126,7 @@ public class NavDebug {
         Validate.positive(radius, "radius");
         Validate.nonNull(material, "material");
 
-        for (NavArc arc : graph.getArcs()) {
+        for (NavArc arc : graph.copyArcs()) {
             Spatial stick = makeStick(arc, radius, material);
             parentNode.attachChild(stick);
         }
@@ -135,7 +139,7 @@ public class NavDebug {
      * @param radius radius of each ball (in world units, &gt;0)
      * @param material material for geometries which represent vertices (not
      * null)
-     * @return a new, orphaned Geometry instance
+     * @return a new orphaned Geometry
      */
     public static Spatial makeBall(NavVertex vertex, float radius,
             Material material) {
@@ -144,7 +148,7 @@ public class NavDebug {
 
         Geometry ball = new Geometry("navigation vertex", ballMesh);
         ball.setLocalScale(radius);
-        Vector3f location = vertex.getLocation();
+        Vector3f location = vertex.copyLocation();
         ball.setLocalTranslation(location);
         ball.setMaterial(material);
 
@@ -188,30 +192,24 @@ public class NavDebug {
      * @param radius radius of each ball (in world units, &gt;0)
      * @param material material for geometries which represent vertices (not
      * null)
-     * @return a new, orphaned Geometry instance
+     * @return new orphaned Geometry
      */
     public static Spatial makeStick(NavArc arc, float radius,
             Material material) {
         Validate.positive(radius, "radius");
         Validate.nonNull(material, "material");
 
-        NavVertex fromVertex = arc.getFromVertex();
-        Vector3f from = fromVertex.getLocation();
-        NavVertex toVertex = arc.getToVertex();
-        Vector3f to = toVertex.getLocation();
-        Vector3f midpoint = from.add(to);
-        midpoint.divideLocal(2f);
-
-        Geometry stick = new Geometry("navigation arc", stickMesh);
-        stick.setLocalTranslation(midpoint);
-        Vector3f offset = to.subtract(from);
+        Vector3f midpoint = arc.midpoint();
+        Vector3f offset = arc.offset();
         float zScale = offset.length();
         Vector3f scale = new Vector3f(radius, radius, zScale);
         Quaternion orientation = new Quaternion();
-        orientation.lookAt(offset, Vector3f.UNIT_Y);
+        orientation.lookAt(offset, yAxis);
 
+        Geometry stick = new Geometry("navigation arc", stickMesh);
         stick.setLocalRotation(orientation);
         stick.setLocalScale(scale);
+        stick.setLocalTranslation(midpoint);
         stick.setMaterial(material);
 
         return stick;
