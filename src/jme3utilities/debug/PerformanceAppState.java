@@ -56,14 +56,15 @@ public class PerformanceAppState
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(PerformanceAppState.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            PerformanceAppState.class.getName());
     /**
      * asset path to the default font
      */
     final private static String fontPath = "Interface/Fonts/Default.fnt";
     // *************************************************************************
     // fields
+    
     /**
      * text object to display statistics: set by initialize()
      */
@@ -71,11 +72,11 @@ public class PerformanceAppState
     /**
      * color of background for statistics text
      */
-    private ColorRGBA backgroundColor = new ColorRGBA(0f, 0f, 0f, 0.5f);
+    final private ColorRGBA backgroundColor = new ColorRGBA(0f, 0f, 0f, 0.5f);
     /**
      * color of statistics text
      */
-    private ColorRGBA textColor = ColorRGBA.White;
+    final private ColorRGBA textColor = ColorRGBA.White;
     /**
      * time remaining in the current measurement interval (in seconds)
      */
@@ -132,8 +133,8 @@ public class PerformanceAppState
         /*
          * Create and attach a colored background for the display.
          */
-        Material backgroudMaterial =
-                MyAsset.createUnshadedMaterial(assetManager);
+        Material backgroudMaterial = MyAsset.createUnshadedMaterial(
+                assetManager);
         backgroudMaterial.setColor("Color", backgroundColor);
         RenderState renderState = backgroudMaterial.getAdditionalRenderState();
         renderState.setBlendMode(RenderState.BlendMode.Alpha);
