@@ -40,26 +40,33 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class VectorXZ
-        implements Comparable<VectorXZ> {
+public class VectorXZ implements Comparable<VectorXZ> {
     // *************************************************************************
     // constants
 
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(VectorXZ.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            VectorXZ.class.getName());
+    /**
+     * local copy of #Vector3f.UNIT_Y
+     */
+    final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
     /**
      * backward direction
      */
     final public static VectorXZ backward = new VectorXZ(-1f, 0f);
     /**
      * east direction on map
+     *
+     * @see com.jme3.math.Vector3f#UNIT_Z
      */
     final public static VectorXZ east = new VectorXZ(0f, 1f);
     /**
      * forward direction
+     *
+     * @see com.jme3.math.Vector3f#UNIT_X
      */
     final public static VectorXZ forward = new VectorXZ(1f, 0f);
     /**
@@ -68,10 +75,14 @@ public class VectorXZ
     final public static VectorXZ left = new VectorXZ(0f, -1f);
     /**
      * north direction on map
+     *
+     * @see com.jme3.math.Vector3f#UNIT_X
      */
     final public static VectorXZ north = forward;
     /**
      * right turn/rotation
+     *
+     * @see com.jme3.math.Vector3f#UNIT_Z
      */
     final public static VectorXZ right = east;
     /**
@@ -84,10 +95,13 @@ public class VectorXZ
     final public static VectorXZ west = left;
     /**
      * a zero vector
+     *
+     * @see com.jme3.math.Vector3f#ZERO
      */
     final public static VectorXZ zero = new VectorXZ(0f, 0f);
     // *************************************************************************
     // fields
+    
     /**
      * northing component or X coordinate or cosine
      */
@@ -101,6 +115,8 @@ public class VectorXZ
 
     /**
      * Instantiate a zero vector.
+     *
+     * @see #zero
      */
     public VectorXZ() {
         x = 0f;
@@ -145,6 +161,7 @@ public class VectorXZ
      *
      * @param increment vector to be added to this vector (not null)
      * @return the vector sum
+     * @see com.jme3.math.Vector3f#add(Vector3f)
      */
     public VectorXZ add(VectorXZ increment) {
         float sumX = x + increment.getX();
@@ -177,7 +194,7 @@ public class VectorXZ
      * @return a unit vector (four possible values) or a zero vector
      */
     public VectorXZ cardinalize() {
-        if (isZeroLength()) {
+        if (isZero()) {
             return zero;
         }
         final float absX = FastMath.abs(x);
@@ -231,7 +248,7 @@ public class VectorXZ
     }
 
     /**
-     * Clamp this vector to be within an axis-aligned ellipse.
+     * Clamp this vector to be within an origin-centered, axis-aligned ellipse.
      *
      * @param maxX radius of the ellipse in the X-direction (&ge;0)
      * @param maxZ radius of the ellipse in the Z-direction (&ge;0)
@@ -241,25 +258,29 @@ public class VectorXZ
         Validate.nonNegative(maxX, "maximum X");
         Validate.nonNegative(maxZ, "maximum Z");
 
-        if (isZeroLength()) {
+        if (isZero()) {
             return zero;
         }
         /*
-         * Represent the ellipse in polar coordinates.
+         * An origin-centered, axis-aligned ellipse in polar coordinates:
+         * r^2 = maxX^2 * maxZ^2 / [ (maxZ * cos(th))^2 + (maxX * sin(th))^2 ]  
          */
-        final float theta = azimuth();
-        final float asin = maxX * FastMath.sin(theta);
-        final float bcos = maxZ * FastMath.cos(theta);
-        float product = maxX * maxZ;
-        final float rSquared = product * product / (asin * asin + bcos * bcos);
-        float lengthSquared = lengthSquared();
+        float length = length();
+        float sineTheta = z / length;
+        float cosineTheta = x / length;
+        float asin = maxX * sineTheta;
+        float bcos = maxZ * cosineTheta;
+        double denominator = MyMath.sumOfSquares(asin, bcos);
+        double product = maxX * maxZ;
+        final double rSquared = product * product / denominator;
+        double lengthSquared = lengthSquared();
         if (lengthSquared <= rSquared) {
             return this;
         }
         /*
          * Scale so that length <= r.
          */
-        float scale = FastMath.sqrt(rSquared / lengthSquared);
+        float scale = (float) Math.sqrt(rSquared / lengthSquared);
         float clampedX = x * scale;
         float clampedZ = z * scale;
         VectorXZ result = new VectorXZ(clampedX, clampedZ);
@@ -268,25 +289,28 @@ public class VectorXZ
     }
 
     /**
-     * Clamp this vector to be within a circle.
+     * Clamp this vector to be within an origin-centered circle.
      *
      * @param radius radius of the circle (&ge;0)
      * @return clamped vector with the same direction
+     * @see MyMath#clamp(float, float)
      */
     public VectorXZ clampLength(float radius) {
         Validate.nonNegative(radius, "radius");
 
-        if (isZeroLength()) {
+        if (isZero()) {
             return zero;
         }
-        final float lengthSquared = lengthSquared();
-        if (lengthSquared <= radius * radius) {
+        double lengthSquared = lengthSquared();
+        double dRadius = radius;
+        double rSquared = dRadius * dRadius;
+        if (lengthSquared <= rSquared) {
             return this;
         }
         /*
          * Scale so that length <= radius.
          */
-        float scale = radius / FastMath.sqrt(lengthSquared);
+        float scale = (float) Math.sqrt(rSquared / lengthSquared);
         float clampedX = x * scale;
         float clampedZ = z * scale;
         VectorXZ result = new VectorXZ(clampedX, clampedZ);
@@ -295,10 +319,12 @@ public class VectorXZ
     }
 
     /**
-     * Compute the cross product of this vector with another.
+     * Compute the left-handed cross product of this vector with another. For
+     * example, north.cross(east) = +1 and east.cross(north) = -1.
      *
      * @param otherVector the other vector (not null)
-     * @return the cross product
+     * @return the left-handed cross product
+     * @see com.jme3.math.Vector3f#cross(Vector3f)
      */
     public float cross(VectorXZ otherVector) {
         float product = x * otherVector.getZ() - z * otherVector.getX();
@@ -306,20 +332,23 @@ public class VectorXZ
     }
 
     /**
-     * Compute a directional error of this vector with respect to a goal.
+     * Compute a signed directional error of this vector with respect to a goal.
+     * The result is positive if the goal is to the right and negative if the
+     * goal is to the left.
      *
      * @param directionGoal goal direction (length&gt;0)
-     * @return the sine of the angle from the goal, or +1/-1 if the angle's
+     * @return the sine of the angle from the goal, or +/-1 if that angle's
      * magnitude exceeds 90 degrees
      */
     public float directionError(VectorXZ directionGoal) {
         validateNonZero(this, "this direction");
         validateNonZero(directionGoal, "goal direction");
 
-        final float dot = dot(directionGoal);
-        final float cross = cross(directionGoal);
-        if (dot >= 0f) {
-            final float lengthProduct = length() * directionGoal.length();
+        float cross = cross(directionGoal);
+        double dot = dot(directionGoal);
+        if (dot >= 0.0) {
+            double lpSquared = lengthSquared() * directionGoal.lengthSquared();
+            float lengthProduct = (float) Math.sqrt(lpSquared);
             float sine = cross / lengthProduct;
             return sine;
         }
@@ -338,6 +367,7 @@ public class VectorXZ
      *
      * @param scalar scaling factor (not zero)
      * @return a vector 'scalar' times shorter than this one
+     * @see com.jme3.math.Vector3f#divide(float)
      */
     public VectorXZ divide(float scalar) {
         Validate.nonZero(scalar, "scalar");
@@ -357,16 +387,39 @@ public class VectorXZ
      *
      * @param otherVector other vector (not null)
      * @return the dot product
+     * @see MyVector3f#dot(Vector3f, Vector3f)
      */
-    public float dot(VectorXZ otherVector) {
-        float product = x * otherVector.getX() + z * otherVector.getZ();
+    public double dot(VectorXZ otherVector) {
+        double x1 = x;
+        double x2 = otherVector.getX();
+        double z1 = z;
+        double z2 = otherVector.getZ();
+        double product = x1 * x2 + z1 * z2;
+
         return product;
+    }
+
+    /**
+     * Mirror (or reflect) this vector to the 1st quadrant.
+     *
+     * @return a mirrored vector with the same length, both components &ge;0
+     */
+    public VectorXZ firstQuadrant() {
+        if (isFirstQuadrant()) {
+            return this;
+        }
+        float newX = FastMath.abs(x);
+        float newZ = FastMath.abs(z);
+        VectorXZ result = new VectorXZ(newX, newZ);
+
+        return result;
     }
 
     /**
      * Read the X-component of this vector.
      *
      * @return X-component
+     * @see com.jme3.math.Vector3f#getX()
      */
     public float getX() {
         return x;
@@ -376,6 +429,7 @@ public class VectorXZ
      * Read the Z-component of this vector.
      *
      * @return Z-component
+     * @see com.jme3.math.Vector3f#getZ()
      */
     public float getZ() {
         return z;
@@ -403,11 +457,21 @@ public class VectorXZ
     }
 
     /**
-     * Test this vector for zero length.
+     * Test this vector to see if it's in the 1st quadrant.
      *
-     * @return true if this vector equals zero, false otherwise
+     * @return true if both components are &ge;0, false otherwise
      */
-    public boolean isZeroLength() {
+    public boolean isFirstQuadrant() {
+        boolean result = (x >= 0f && z >= 0f);
+        return result;
+    }
+
+    /**
+     * Test this vector to see if it's the zero vector.
+     *
+     * @return true if both components are zero, false otherwise
+     */
+    public boolean isZero() {
         boolean result = (x == 0f && z == 0f);
         return result;
     }
@@ -416,6 +480,7 @@ public class VectorXZ
      * Compute the length (or magnitude or norm) of this vector.
      *
      * @return the length (&ge;0)
+     * @see com.jme3.math.Vector3f#length()
      */
     public float length() {
         float result = MyMath.hypotenuse(x, z);
@@ -423,18 +488,20 @@ public class VectorXZ
     }
 
     /**
-     * Compute the squared length of this vector.
+     * Compute the squared length of this vector. Returns a double-precision
+     * value for precise comparisons.
      *
      * @return the squared length (&ge;0)
+     * @see MyVector3f#lengthSquared(Vector3f)
      */
-    public float lengthSquared() {
-        float result = x * x + z * z;
+    public double lengthSquared() {
+        double result = MyMath.sumOfSquares(x, z);
         return result;
     }
 
     /**
-     * Mirror this vector across the X-axis (complex conjugate or inverse
-     * rotation).
+     * Mirror (or reflect) this vector across the X-axis (complex conjugate or
+     * inverse rotation).
      *
      * @return a mirrored vector with the same length
      */
@@ -465,12 +532,14 @@ public class VectorXZ
     }
 
     /**
-     * Negate this vector.
+     * Negate this vector (or reverse its direction or reflect it in the
+     * origin).
      *
      * @return a vector with same magnitude and opposite direction
+     * @see com.jme3.math.Vector3f#negate()
      */
     public VectorXZ negate() {
-        if (isZeroLength()) {
+        if (isZero()) {
             return zero;
         }
 
@@ -483,19 +552,21 @@ public class VectorXZ
      * Normalize this vector to a unit vector. If this vector is zero, return a
      * zero vector.
      *
-     * @return a unit vector with the same direction, or a zero vector
+     * @return a unit vector (with the same direction) or a zero vector
+     * @see com.jme3.math.Vector3f#normalize()
      */
     public VectorXZ normalize() {
-        if (isZeroLength()) {
+        if (isZero()) {
+            logger.info("Normalizing a zero vector.");
             return zero;
         }
 
-        float ls = lengthSquared();
-        if (ls == 1f) {
+        double lengthSquared = lengthSquared();
+        if ((float) lengthSquared == 1f) {
             return this;
         }
 
-        float length = FastMath.sqrt(ls);
+        float length = (float) Math.sqrt(lengthSquared);
         float newX = x / length;
         float newZ = z / length;
 
@@ -533,10 +604,10 @@ public class VectorXZ
     }
 
     /**
-     * Rotate a vector by another vector (complex product).
+     * Rotate and scale this vector by another vector (complex product).
      *
-     * @param direction new direction for the current X-axis (not null)
-     * @return a rotated/multiplied vector
+     * @param direction rotated/scaled vector for the current north (not null)
+     * @return the complex product
      */
     public VectorXZ rotate(VectorXZ direction) {
         float cosine = direction.getX();
@@ -553,10 +624,11 @@ public class VectorXZ
     }
 
     /**
-     * Subtract from this vector.
+     * Subtract from (inverse translate) this vector.
      *
      * @param decrement vector to be subtracted from this vector (not null)
      * @return a vector equal to the difference of the two vectors
+     * @see com.jme3.math.Vector3f#subtract(Vector3f)
      */
     public VectorXZ subtract(VectorXZ decrement) {
         float newX = x - decrement.getX();
@@ -571,14 +643,20 @@ public class VectorXZ
     }
 
     /**
-     * Treating this vector as a rotation, create an equivalent quaternion.
+     * Treating this vector as a rotation (from north), generate an equivalent
+     * quaternion.
      *
-     * @return a new quaternion
+     * @return new quaternion
      */
     public Quaternion toQuaternion() {
         Quaternion result = new Quaternion();
-        Vector3f direction = toVector3f();
-        result.lookAt(direction, Vector3f.UNIT_Y);
+        /*
+         * Vector3f.lookAt() orients the Z-axis, whereas VectorXZ.rotate() 
+         * orients the X-axis, so a 90-degree tranformation of coordinates is
+         * required.
+         */
+        Vector3f direction = new Vector3f(-z, 0f, x);
+        result.lookAt(direction, yAxis);
 
         return result;
     }
@@ -586,7 +664,7 @@ public class VectorXZ
     /**
      * Create a 3D equivalent of this vector.
      *
-     * @return a new 3D vector with y=0
+     * @return new 3D vector with y=0
      */
     public Vector3f toVector3f() {
         Vector3f result = new Vector3f(x, 0f, z);
@@ -610,19 +688,20 @@ public class VectorXZ
      * @param vector vector to validate (not null, non-zero)
      * @param description textual description of the vector
      * @throws IllegalArgumentException if the vector is zero
+     * @see jme3utilities.Validate#nonZero(Vector3f, String)
      */
     public static void validateNonZero(VectorXZ vector, String description) {
         Validate.nonNull(vector, description);
 
-        if (vector.isZeroLength()) {
+        if (vector.isZero()) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "VectorXZ argument";
             } else {
                 what = description;
             }
             String message;
-            message = String.format("%s should be non-zero.", what);
+            message = String.format("%s must not be zero.", what);
             throw new IllegalArgumentException(message);
         }
     }
@@ -706,14 +785,14 @@ public class VectorXZ
      * @param ignored command-line arguments
      */
     public static void main(String[] ignored) {
-        System.out.print("Test results for class VectorXZ:\n\n");
+        System.out.printf("Test results for class VectorXZ:%n%n");
 
         // vector test cases
         VectorXZ[] cases = new VectorXZ[4];
         cases[0] = east;
         cases[1] = new VectorXZ(1f, 1f);
-        cases[2] = zero;
-        cases[3] = west;
+        cases[2] = west;
+        cases[3] = zero;
 
         for (VectorXZ vin : cases) {
             float a = vin.azimuth();
@@ -721,8 +800,24 @@ public class VectorXZ
 
             System.out.printf(
                     "vin = %s  azimuth(x)=%f (%f degrees)  vout = %s%n",
-                    vin.toString(), a, a * FastMath.RAD_TO_DEG,
+                    vin.toString(), a, MyMath.toDegrees(a),
                     vout.toString());
+            System.out.println();
+
+            Vector3f v3 = new Vector3f(1f, 2f, 3f);
+            VectorXZ vxz = new VectorXZ(v3);
+            VectorXZ r1 = vin.normalize().rotate(vxz);
+
+            Quaternion q1 = vin.toQuaternion();
+            VectorXZ r2 = new VectorXZ(q1.mult(v3));
+
+            Quaternion q2 = new Quaternion();
+            q2.fromAngleNormalAxis(-a, yAxis);
+            VectorXZ r3 = new VectorXZ(q2.mult(v3));
+
+            System.out.printf("vin=%s  r1=%s, r2=%s, r3=%s%n",
+                    vin.toString(), r1.toString(), r2.toString(),
+                    r3.toString());
             System.out.println();
         }
         System.out.println();

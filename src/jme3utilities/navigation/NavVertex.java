@@ -184,7 +184,7 @@ public class NavVertex
         float maxDot = -2f * direction.length();
         for (NavArc arc : arcs) {
             VectorXZ horizontalDirection = arc.getHorizontalDirection();
-            float dot = horizontalDirection.dot(direction);
+            float dot = (float) horizontalDirection.dot(direction);
             if (dot > maxDot) {
                 result = arc;
                 maxDot = dot;
