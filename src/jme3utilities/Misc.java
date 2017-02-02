@@ -63,8 +63,8 @@ public class Misc {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(Misc.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            Misc.class.getName());
     /**
      * asset path of the shaded material definition
      */
@@ -155,8 +155,8 @@ public class Misc {
      *
      * @return package name, branch, and revision of this file
      */
-    public static String getVersion() {//
-        return "jme3-utilities for_jME3.0 $Rev: 459 $";
+    public static String getVersion() {
+        return "jme3-utilities for_jME3.0 $Rev: 460 $";
     }
 
     /**
