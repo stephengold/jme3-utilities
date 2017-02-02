@@ -45,8 +45,8 @@ final public class Noise {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(Noise.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            Noise.class.getName());
     /**
      * shared pseudo-random generator
      */
@@ -113,6 +113,30 @@ final public class Noise {
      */
     public static float nextFloat() {
         return generator.nextFloat();
+    }
+
+    /**
+     * Pick a pseudo-random element from an array using the specified generator.
+     *
+     * @param array array to select from (not null)
+     * @param generator generator to use (not null)
+     * @return element of array or null if it's empty
+     */
+    @SuppressWarnings("rawtypes")
+    public static Object pick(Object[] array, Random generator) {
+        Validate.nonNull(generator, "generator");
+        Validate.nonNull(array, "array");
+
+        int count = array.length;
+        assert count >= 0 : count;
+        if (count == 0) {
+            return null;
+        }
+        int index = generator.nextInt();
+        index = MyMath.modulo(index, count);
+        Object result = array[index];
+
+        return result;
     }
 
     /**
