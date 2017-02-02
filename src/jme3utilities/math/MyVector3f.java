@@ -43,8 +43,16 @@ public class MyVector3f {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MyVector3f.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MyVector3f.class.getName());
+    /**
+     * local copy of Vector3f#UNIT_X
+     */
+    final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
+    /**
+     * local copy of Vector3f#UNIT_Z
+     */
+    final private static Vector3f zAxis = new Vector3f(0f, 0f, 1f);
     // *************************************************************************
     // constructors
 
@@ -59,7 +67,8 @@ public class MyVector3f {
     /**
      * Compute the altitude angle of a non-zero offset.
      *
-     * @param offset difference of world coordinates (length&gt;0, unaffected)
+     * @param offset difference of world coordinates (not null, not zero,
+     * unaffected)
      * @return angle above the X-Z plane (in radians, &le;Pi/2, &ge;-Pi/2)
      */
     public static float altitude(Vector3f offset) {
@@ -76,25 +85,23 @@ public class MyVector3f {
     /**
      * Test whether three points are collinear.
      *
-     * @param point1 location of the first point (not null, unaffected)
-     * @param point2 location of the second point (not null, unaffected)
-     * @param point3 location of the third point (not null, unaffected)
-     * @param tolerance2 used when comparing coordinates (in squared units,
-     * &ge;0)
+     * @param point1 location of the 1st point (not null, unaffected)
+     * @param point2 location of the 2nd point (not null, unaffected)
+     * @param point3 location of the 3rd point (not null, unaffected)
+     * @param tolerance2 for coincidence (in squared units, &ge;0)
      * @return true if collinear, otherwise false
      */
     public static boolean areCollinear(Vector3f point1, Vector3f point2,
             Vector3f point3, float tolerance2) {
-        Validate.nonNull(point1, "first point");
-        Validate.nonNull(point2, "second point");
-        Validate.nonNull(point3, "third point");
+        Validate.nonNull(point1, "1st point");
+        Validate.nonNull(point2, "2nd point");
         Validate.nonNegative(tolerance2, "tolerance");
         /*
          * Shortcut:
          * If point1 and point3 coincide, then the three points are collinear. 
          */
         Vector3f offset3 = point3.subtract(point1);
-        float normSquared3 = offset3.lengthSquared();
+        double normSquared3 = lengthSquared(offset3);
         if (normSquared3 <= tolerance2) {
             return true;
         }
@@ -106,8 +113,8 @@ public class MyVector3f {
          * a logic bug.
          */
         Vector3f offset2 = point2.subtract(point1);
-        float dot23 = offset2.dot(offset3);
-        Vector3f projection = offset3.mult(dot23 / normSquared3);
+        double scaleFactor = MyVector3f.dot(offset2, offset3) / normSquared3;
+        Vector3f projection = offset3.mult((float) scaleFactor);
         /*
          * If the projection coincides with offset2, 
          * then the three points are collinear.
@@ -120,20 +127,17 @@ public class MyVector3f {
     /**
      * Compute the azimuth angle of an offset.
      *
-     * @param offset difference of world coordinates (not null, not altered)
+     * @param offset difference of world coordinates (not null, unaffected)
      * @return horizontal angle in radians (measured CW from the X axis) or 0 if
      * the vector is zero or parallel to the Y axis.
      */
     public static float azimuth(Vector3f offset) {
-        if (offset.x == 0f && offset.z == 0f) {
-            return 0f;
-        }
         float result = (float) Math.atan2(offset.z, offset.x);
         return result;
     }
 
     /**
-     * Compare two vectors lexicographically, with the x-component having
+     * Compare two vectors lexicographically, with the X-component having
      * priority.
      *
      * @param v1 1st input vector (not null, unaffected)
@@ -156,27 +160,29 @@ public class MyVector3f {
     }
 
     /**
-     * Compute the distance from one location to another.
+     * Compute the squared distance between two vectors. Unlike
+     * {@link com.jme3.math.Vector3f#distanceSquared(Vector3f)}, this method
+     * returns a double-precision value for precise comparison of distances.
      *
-     * @param from coordinates of starting location (not null, unaffected)
-     * @param to coordinates of ending location (not null, unaffected)
-     * @return distance (&ge;0)
+     * @param vector1 1st input vector (not null, unaffected)
+     * @param vector2 2nd input vector (not null, unaffected)
+     * @return the squared distance (&ge;0)
      */
-    public static float distanceFrom(Vector3f from, Vector3f to) {
-        Validate.nonNull(from, "vector");
+    public static double distanceSquared(Vector3f vector1, Vector3f vector2) {
+        double dx = vector1.x - vector2.x;
+        double dy = vector1.y - vector2.y;
+        double dz = vector1.z - vector2.z;
+        double result = dx * dx + dy * dy + dz * dz;
 
-        Vector3f offset = to.subtract(from);
-        float distance = offset.length();
-        return distance;
+        return result;
     }
 
     /**
      * Test whether two points coincide.
      *
-     * @param point1 coordinates of the first point (not null, unaffected)
-     * @param point2 coordinates of the second point (not null, unaffected)
-     * @param tolerance2 used when comparing coordinates (in squared units,
-     * &ge;0)
+     * @param point1 coordinates of the 1st point (not null, unaffected)
+     * @param point2 coordinates of the 2nd point (not null, unaffected)
+     * @param tolerance2 for coincidence (in squared units, &ge;0)
      * @return true if they coincide, otherwise false
      */
     public static boolean doCoincide(Vector3f point1, Vector3f point2,
@@ -185,7 +191,7 @@ public class MyVector3f {
         Validate.nonNull(point2, "second point");
         Validate.nonNegative(tolerance2, "tolerance");
 
-        float d2 = point1.distanceSquared(point2);
+        double d2 = MyVector3f.distanceSquared(point1, point2);
         if (d2 > tolerance2) {
             return false;
         } else {
@@ -194,16 +200,37 @@ public class MyVector3f {
     }
 
     /**
+     * Compute the dot (scalar) product of two vectors. Unlike
+     * {@link com.jme3.math.Vector3f#dot(Vector3f)}, this method returns a
+     * double-precision value for precise calculation of angles.
+     *
+     * @param vector1 1st input vector (not null, unaffected)
+     * @param vector2 2nd input vector (not null, unaffected)
+     * @return the dot product
+     */
+    public static double dot(Vector3f vector1, Vector3f vector2) {
+        double x1 = vector1.x;
+        double x2 = vector2.x;
+        double y1 = vector1.y;
+        double y2 = vector2.y;
+        double z1 = vector1.z;
+        double z2 = vector2.z;
+        double product = x1 * x2 + y1 * y2 + z1 * z2;
+
+        return product;
+    }
+
+    /**
      * Generate a direction from altitude and azimuth angles.
      *
      * @param altitude angle above the X-Z plane (radians toward +Y)
      * @param azimuth angle in the X-Z plane (radians CCW from +X)
-     * @return a new unit vector
+     * @return new unit vector
      */
     public static Vector3f fromAltAz(float altitude, float azimuth) {
         Quaternion elevate = new Quaternion();
-        elevate.fromAngleNormalAxis(altitude, Vector3f.UNIT_Z);
-        Vector3f elevation = elevate.mult(Vector3f.UNIT_X);
+        elevate.fromAngleNormalAxis(altitude, zAxis);
+        Vector3f elevation = elevate.mult(xAxis);
         Vector3f direction = MyVector3f.yRotate(elevation, azimuth);
 
         assert direction.isUnitVector() : direction;
@@ -228,7 +255,7 @@ public class MyVector3f {
     /**
      * Test whether all components of a vector are all non-negative.
      *
-     * @param vector (not null, unaffected)
+     * @param vector input (not null, unaffected)
      * @return true if all non-negative, false otherwise
      */
     public static boolean isAllNonNegative(Vector3f vector) {
@@ -240,12 +267,12 @@ public class MyVector3f {
     }
 
     /**
-     * Test a vector for zero length.
+     * Test for a zero vector.
      *
-     * @param vector (not null, unaffected)
-     * @return true if the vector has zero length, false otherwise
+     * @param vector input (not null, unaffected)
+     * @return true if the vector equals the zero vector, false otherwise
      */
-    public static boolean isZeroLength(Vector3f vector) {
+    public static boolean isZero(Vector3f vector) {
         if (vector.x == 0f && vector.y == 0f && vector.z == 0f) {
             return true;
         } else {
@@ -254,20 +281,56 @@ public class MyVector3f {
     }
 
     /**
-     * Project vector1 onto vector2. Don't use Vector3f.project() for this
-     * because (as of jME 3.0.10) it contains a logic bug which gives the wrong
-     * magnitude when vector2 has length != 1.
+     * Compute the squared length of a vector. Unlike
+     * {@link com.jme3.math.Vector3f#lengthSquared()}, this method returns a
+     * double-precision value for precise comparison of lengths.
      *
-     * @param vector1 (not null, unaffected)
-     * @param vector2 (length&gt;0, unaffected)
+     * @param vector input (not null, unaffected)
+     * @return the squared length (&ge;0)
+     */
+    public static double lengthSquared(Vector3f vector) {
+        double xx = vector.x;
+        double yy = vector.y;
+        double zz = vector.z;
+        double result = xx * xx + yy * yy + zz * zz;
+
+        return result;
+    }
+
+    /**
+     * Compute the midpoint between two vectors.
+     *
+     * @param vector1 input (not null, unaffected)
+     * @param vector2 input (not null, unaffected)
+     * @return new vector
+     */
+    public static Vector3f midpoint(Vector3f vector1, Vector3f vector2) {
+        float x = (vector1.x + vector2.x) / 2f;
+        float y = (vector1.y + vector2.y) / 2f;
+        float z = (vector1.z + vector2.z) / 2f;
+
+        Vector3f result = new Vector3f(x, y, z);
+
+        return result;
+    }
+
+    /**
+     * Project vector1 onto vector2. Don't use
+     * {@link com.jme3.math.Vector3f#project(Vector3f)} for this because (as of
+     * jME 3.0.10) it contains a logic bug which gives the wrong magnitude when
+     * vector2 has length != 1.
+     *
+     * @param vector1 1st input vector (not null, unaffected)
+     * @param vector2 2nd input vector (length&gt;0, unaffected)
      * @return a new vector with the same direction as vector2
      */
     public static Vector3f projection(Vector3f vector1, Vector3f vector2) {
         Validate.nonZero(vector2, "vector2");
 
-        float lengthSquared = vector2.lengthSquared();
-        float dot = vector1.dot(vector2);
-        Vector3f projection = vector2.mult(dot / lengthSquared);
+        double lengthSquared = lengthSquared(vector2);
+        double dot = MyVector3f.dot(vector1, vector2);
+        double scaleFactor = dot / lengthSquared;
+        Vector3f projection = vector2.mult((float) scaleFactor);
 
         return projection;
     }
@@ -275,8 +338,8 @@ public class MyVector3f {
     /**
      * Project vector1 onto vector2.
      *
-     * @param vector1 (not null, unaffected)
-     * @param vector2 (length&gt;0, unaffected)
+     * @param vector1 1st input vector (not null, unaffected)
+     * @param vector2 2nd input vector (length&gt;0, unaffected)
      * @return the scalar projection of vector1 onto vector2
      */
     public static float scalarProjection(Vector3f vector1, Vector3f vector2) {
