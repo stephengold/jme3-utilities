@@ -67,7 +67,8 @@ public class MyVector3f {
     /**
      * Compute the altitude angle of a non-zero offset.
      *
-     * @param offset difference of world coordinates (length&gt;0, unaffected)
+     * @param offset difference of world coordinates (not null, not zero,
+     * unaffected)
      * @return angle above the X-Z plane (in radians, &le;Pi/2, &ge;-Pi/2)
      */
     public static float altitude(Vector3f offset) {
@@ -92,8 +93,8 @@ public class MyVector3f {
      */
     public static boolean areCollinear(Vector3f point1, Vector3f point2,
             Vector3f point3, float tolerance2) {
-        Validate.nonNull(point1, "first point");
-        Validate.nonNull(point2, "second point");
+        Validate.nonNull(point1, "1st point");
+        Validate.nonNull(point2, "2nd point");
         Validate.nonNegative(tolerance2, "tolerance");
         /*
          * Shortcut:
@@ -136,7 +137,7 @@ public class MyVector3f {
     }
 
     /**
-     * Compare two vectors lexicographically, with the x-component having
+     * Compare two vectors lexicographically, with the X-component having
      * priority.
      *
      * @param v1 1st input vector (not null, unaffected)

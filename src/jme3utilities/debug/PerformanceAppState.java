@@ -64,6 +64,7 @@ public class PerformanceAppState
     final private static String fontPath = "Interface/Fonts/Default.fnt";
     // *************************************************************************
     // fields
+    
     /**
      * text object to display statistics: set by initialize()
      */

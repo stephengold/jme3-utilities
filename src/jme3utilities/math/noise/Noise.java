@@ -45,8 +45,8 @@ final public class Noise {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(Noise.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            Noise.class.getName());
     /**
      * shared pseudo-random generator
      */

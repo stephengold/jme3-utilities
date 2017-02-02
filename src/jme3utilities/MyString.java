@@ -41,8 +41,8 @@ public class MyString {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MyString.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MyString.class.getName());
     // *************************************************************************
     // constructors
 
@@ -187,6 +187,7 @@ public class MyString {
             result[nextIndex] = string;
             nextIndex++;
         }
+        
         return result;
     }
 
