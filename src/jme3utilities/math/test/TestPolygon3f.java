@@ -211,7 +211,7 @@ public class TestPolygon3f {
                 poly.perimeter());
 
         Vector3f tempVector = new Vector3f();
-        int tempIndex = poly.findEdge(Vector3f.ZERO, tempVector);
+        int tempIndex = poly.findSide(Vector3f.ZERO, tempVector);
         System.out.printf(" edge closest to origin = %d", tempIndex);
         if (tempIndex >= 0) {
             System.out.printf(" at %s", tempVector.toString());

@@ -36,8 +36,9 @@ import jme3utilities.math.MyVector3f;
 
 /**
  * An immutable polygon in three-dimensional space, consisting of N corners
- * (points) connected by N sides (straight-line segments). For the sake of
- * efficiency, many calculated values are cached.
+ * (points) connected by N sides (straight-line segments). It may be degenerate
+ * and/or planar, though it need not be. For efficiency, many calculated values
+ * are cached.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -48,21 +49,30 @@ public class Polygon3f {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(Polygon3f.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            Polygon3f.class.getName());
     // *************************************************************************
     // fields
     /**
-     * if true, then two adjacent sides are collinear and/or there are fewer
-     * than 3 corners and/or there are duplicate corners (set by
-     * setIsDegenerate())
+     * if true, then there are fewer than 3 corners and/or there are coincident
+     * corners and/or there is a 180-degree turn (set by #setIsDegenerate())
      */
     private Boolean isDegenerate = null;
     /**
      * if true, then all corners (and sides) lie in a single plane (set by
-     * setIsPlanar())
+     * #setIsPlanar())
      */
     private Boolean isPlanar = null;
+    /**
+     * cached dot product at each corner (allocated by constructor; initialized
+     * by #setCorner())
+     */
+    final private Double[] dotProducts;
+    /**
+     * cached squared distance between each pair of corners (each &ge;0,
+     * allocated by constructor, each initialized by #setSquaredDistance())
+     */
+    final private Double[][] squaredDistances;
     /**
      * maximum distance for points to coincide (&ge;0, set by constructor)
      */
@@ -72,20 +82,26 @@ public class Polygon3f {
      */
     final protected float tolerance2;
     /**
-     * cached squared distances between corners (each &ge;0, allocated by
-     * constructor, each initialized by setSquaredDistance())
-     */
-    final private Float[][] squaredDistances;
-    /**
      * the number of corners, which is also the number of sides (&ge;0, set by
      * constructor)
      */
     final protected int numCorners;
     /**
+     * cached vector of corner indices which define the largest triangle (each
+     * &ge;0 and &lt;numCorners, in ascending order, set by
+     * #setLargestTriangle())
+     */
+    private int[] largestTriangle = null;
+    /**
      * locations of all corners, in sequence (not null or containing any nulls,
      * initialized by constructor)
      */
     final protected Vector3f[] cornerLocations;
+    /**
+     * cached cross product at each corner (allocated by constructor;
+     * initialized by #setCorner())
+     */
+    final private Vector3f[] crossProducts;
     // *************************************************************************
     // constructors
 
@@ -107,13 +123,12 @@ public class Polygon3f {
 
         numCorners = cornerList.length;
         /*
-         * Allocate array space.
+         * Allocate array space for caching values.
          */
         cornerLocations = new Vector3f[numCorners];
-        squaredDistances = new Float[numCorners][];
-        for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
-            squaredDistances[cornerIndex] = new Float[numCorners];
-        }
+        crossProducts = new Vector3f[numCorners];
+        dotProducts = new Double[numCorners];
+        squaredDistances = new Double[numCorners][numCorners];
         /*
          * Copy corner locations.
          */
@@ -157,29 +172,74 @@ public class Polygon3f {
     }
 
     /**
-     * Test (or look up) whether this polygon is degenerate.
+     * Calculate the magnitude of the turn angle at the specified corner. The
+     * turn angle is sometimes called the "external angle".
      *
-     * @return true if it is degenerate, otherwise false
+     * @param cornerIndex which corner (&ge;0, &lt;numCorners)
+     * @return magnitude of the angle (&ge;0, &le;Pi) or NaN if an adjacent side
+     * has zero length
      */
-    final public boolean isDegenerate() {
-        if (isDegenerate == null) {
-            setIsDegenerate();
+    public double absTurnAngle(int cornerIndex) {
+        validateIndex(cornerIndex, "corner index");
+
+        int nextI = nextIndex(cornerIndex);
+        int prevI = prevIndex(cornerIndex);
+        double lsPrevious = squaredDistance(prevI, cornerIndex);
+        double lsCurrent = squaredDistance(cornerIndex, nextI);
+        double lsProduct = lsPrevious * lsCurrent;
+        if (lsProduct == 0.0) {
+            return Double.NaN;
         }
 
-        return isDegenerate;
+        double dot = dotProduct(cornerIndex);
+        double cosAngle = dot / Math.sqrt(lsProduct);
+        if (cosAngle > 1.0) {
+            assert false;
+        }
+        assert cosAngle >= -1.0 : cosAngle;
+        assert cosAngle <= 1.0 : cosAngle;
+
+        double result = Math.acos(cosAngle);
+
+        assert result >= 0.0 : result;
+        assert result <= Math.PI : result;
+        return result;
     }
 
     /**
-     * Test (or look up) whether this polygon is planar.
+     * Calculate (or look up) the cross product of successive sides which meet
+     * at the specified corner.
      *
-     * @return true if it is planar, otherwise false
+     * @param cornerIndex which corner (&ge;0, &lt;numCorners)
+     * @return cross product (not null)
      */
-    final public boolean isPlanar() {
-        if (isPlanar == null) {
-            setIsPlanar();
-        }
+    public Vector3f crossProduct(int cornerIndex) {
+        validateIndex(cornerIndex, "corner index");
 
-        return isPlanar;
+        if (crossProducts[cornerIndex] == null) {
+            setCorner(cornerIndex);
+        }
+        Vector3f result = crossProducts[cornerIndex].clone();
+
+        return result;
+    }
+
+    /**
+     * Calculate (or look up) the dot product of successive sides which meet at
+     * the specified corner.
+     *
+     * @param cornerIndex which corner (&ge;0, &lt;numCorners)
+     * @return dot product
+     */
+    public double dotProduct(int cornerIndex) {
+        validateIndex(cornerIndex, "corner index");
+
+        if (dotProducts[cornerIndex] == null) {
+            setCorner(cornerIndex);
+        }
+        double result = dotProducts[cornerIndex];
+
+        return result;
     }
 
     /**
@@ -192,13 +252,13 @@ public class Polygon3f {
      */
     public int findCorner(Vector3f point) {
         int result = -1;
-        float bestDS = Float.POSITIVE_INFINITY;
+        double bestSD = Double.POSITIVE_INFINITY;
         for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
             Vector3f corner = cornerLocations[cornerIndex];
-            float distanceSquared = corner.distanceSquared(point);
-            if (distanceSquared < bestDS) {
+            double squaredDistance = MyVector3f.distanceSquared(corner, point);
+            if (squaredDistance < bestSD) {
                 result = cornerIndex;
-                bestDS = distanceSquared;
+                bestSD = squaredDistance;
             }
         }
 
@@ -206,53 +266,68 @@ public class Polygon3f {
     }
 
     /**
-     * Find the edge closest to a specified point in space.
+     * Find the polygon's longest side.
+     *
+     * @return index of the longest side (&ge;0, &lt;numCorners) or -1 if this
+     * polygon has no sides
+     */
+    public int findLongest() {
+        int result = -1;
+        double biggestSD = Double.NEGATIVE_INFINITY;
+        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+            int nextI = nextIndex(sideIndex);
+            double squaredDistance = squaredDistance(sideIndex, nextI);
+            if (squaredDistance > biggestSD) {
+                result = sideIndex;
+                biggestSD = squaredDistance;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Find the polygon's shortest side.
+     *
+     * @return index of the shortest side (&ge;0, &lt;numCorners) or -1 if this
+     * polygon has no sides
+             */
+    public int findShortest() {
+        int result = -1;
+        double leastSD = Double.POSITIVE_INFINITY;
+        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+            int nextI = nextIndex(sideIndex);
+            double squaredDistance = squaredDistance(sideIndex, nextI);
+            if (squaredDistance < leastSD) {
+                result = sideIndex;
+                leastSD = squaredDistance;
+                }
+            }
+        return result;
+    }
+
+    /**
+     * Find the side closest to a specified point in space.
      *
      * @param point coordinates of the specified point (not null, unaffected)
-     * @param storeCoordinates if not null, used to store coordinates of the
-     * edge point closest to the specified point
-     *
-     * @return index of the edge (&ge;0, &lt;numCorners) or -1 if this polygon
-     * has no edges
-     */
-    public int findEdge(Vector3f point, Vector3f storeCoordinates) {
+     * @param storeClosestPoint if not null, used to store the coordinates of
+     * the closest point on the perimeter, if determined
+     * @return index of closest the side (&ge;0, &lt;numCorners) or -1 if this
+     * polygon has no sides
+             */
+    public int findSide(Vector3f point, Vector3f storeClosestPoint) {
+        Validate.nonNull(point, "coordinates of point");
+
         int result = -1;
-        float bestSD = Float.POSITIVE_INFINITY;
-        for (int edgeIndex = 0; edgeIndex < numCorners; edgeIndex++) {
-            /*
-             * Try the first corner of the current edge.
-             */
-            Vector3f corner = cornerLocations[edgeIndex];
-            Vector3f offset = point.subtract(corner);
-            float squaredDistance = offset.lengthSquared();
-            if (squaredDistance < bestSD) {
-                result = edgeIndex;
-                bestSD = squaredDistance;
-                if (storeCoordinates != null) {
-                    storeCoordinates.set(corner);
-                }
-            }
-            /*
-             * Find closest point on the straight line containing the edge.
-             */
-            int nextIndex = nextIndex(edgeIndex);
-            Vector3f corner2 = cornerLocations[nextIndex];
-            Vector3f offset2 = corner2.subtract(corner);
-            float dot = offset.dot(offset2);
-            float lengthSquared = squaredDistance(edgeIndex, nextIndex);
-            if (dot > 0f && dot < lengthSquared) {
-                /* 
-                 * The closest point lies on the current edge.
-                 */
-                Vector3f offsetClosest = offset2.mult(dot / lengthSquared);
-                squaredDistance = offsetClosest.distanceSquared(offset);
-                if (squaredDistance < bestSD) {
-                    result = edgeIndex;
-                    bestSD = squaredDistance;
-                    if (storeCoordinates != null) {
-                        storeCoordinates.set(corner);
-                        storeCoordinates.addLocal(offsetClosest);
-                    }
+        double leastSD = Double.POSITIVE_INFINITY;
+        Vector3f closestPointCurrentSide = new Vector3f();
+        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+            double squaredDistance = squaredDistanceToSide(
+                    point, sideIndex, closestPointCurrentSide);
+            if (squaredDistance < leastSD) {
+                result = sideIndex;
+                leastSD = squaredDistance;
+                if (storeClosestPoint != null) {
+                    storeClosestPoint.set(closestPointCurrentSide);
                 }
             }
         }
@@ -261,12 +336,209 @@ public class Polygon3f {
     }
 
     /**
-     * Read the number of corners, which is also the number of edges.
+     * Generate a new polygon which shares a range of corners with this one.
+     *
+     * @param firstIndex index of the first corner in the range (&ge;0,
+     * &lt;numCorners)
+     * @param lastIndex index of the last corner in the range (&ge;0,
+     * &lt;numCorners)
+     * @return a new polygon with at least two corners
+     */
+    public Polygon3f fromRange(int firstIndex, int lastIndex) {
+        validateIndex(firstIndex, "first corner index");
+        validateIndex(lastIndex, "last corner index");
+        if (firstIndex == lastIndex) {
+            throw new IllegalArgumentException("Corner indices must differ.");
+        }
+        /*
+         * Count how many corners the new polygon will include.
+         */
+        int newNumCorners = 1;
+        for (int oldI = firstIndex; oldI != lastIndex; oldI = nextIndex(oldI)) {
+            newNumCorners++;
+        }
+        assert newNumCorners >= 2 : newNumCorners;
+        assert newNumCorners <= numCorners : newNumCorners;
+        /*        
+         * Allocate and fill the array of corner locations.
+         */
+        Vector3f[] newCornerLocations = new Vector3f[newNumCorners];
+        int[] oldIndex = new int[newNumCorners];
+        int newI = 0;
+        for (int oldI = firstIndex; oldI != lastIndex; oldI = nextIndex(oldI)) {
+            oldIndex[newI] = oldI;
+            newCornerLocations[newI] = cornerLocations[oldI];
+            newI++;
+        }
+        assert newI == newNumCorners - 1;
+        oldIndex[newI] = lastIndex;
+        newCornerLocations[newI] = cornerLocations[lastIndex];
+
+        Polygon3f result = new Polygon3f(newCornerLocations, tolerance);
+        assert result.numCorners() == newNumCorners;
+
+        if (isPlanar != null && isPlanar) {
+            result.setIsPlanar(true);
+        }
+        for (newI = 0; newI < newNumCorners; newI++) {
+            int oldI = oldIndex[newI];
+            for (int newJ = newI; newJ < newNumCorners; newJ++) {
+                int oldJ = oldIndex[newJ];
+                Double sd = squaredDistances[oldI][oldJ];
+                if (sd != null) {
+                    result.setSquaredDistance(newI, newJ, sd);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Test (or look up) whether this polygon is degenerate.
+     *
+     * @return true if it is degenerate, otherwise false
+                 */
+    final public boolean isDegenerate() {
+        if (isDegenerate == null) {
+            setIsDegenerate();
+                    }
+
+        return isDegenerate;
+                }
+
+    /**
+     * Test (or look up) whether this polygon is planar.
+     *
+     * @return true if it is planar, otherwise false
+     */
+    final public boolean isPlanar() {
+        if (isPlanar == null) {
+            setIsPlanar();
+            }
+
+        return isPlanar;
+        }
+
+    /**
+     * Calculate (or look up) the largest triangle formed by any three corners
+     * in this polygon.
+     *
+     * @return a new vector of three corner indices (sorted in ascending order)
+     * or null if the polygon has fewer than three corners
+     */
+    public int[] largestTriangle() {
+        if (largestTriangle == null) {
+            setLargestTriangle();
+        }
+        if (largestTriangle == null) {
+            return null;
+        }
+        int[] result = new int[3];
+        result[0] = largestTriangle[0];
+        result[1] = largestTriangle[1];
+        result[2] = largestTriangle[2];
+
+        assert result[0] < result[1];
+        assert result[1] < result[2];
+        return result;
+    }
+
+    /**
+     * Read the number of corners, which is also the number of sides.
      *
      * @return count (&ge; 0)
      */
     public int numCorners() {
+        assert numCorners >= 0 : numCorners;
         return numCorners;
+    }
+
+    /**
+     * Calculate which corner (or side) follows the specified one. For this to
+     * work, there must be at least one corner.
+     *
+     * @param index index of a corner (or side) (&ge;0, &lt;numCorners)
+     * @return index of the following corner (or side) (&ge;0, &lt;numCorners)
+     */
+    public int nextIndex(int index) {
+        validateIndex(index, "index");
+        if (numCorners < 1) {
+            throw new IllegalStateException("no corners");
+        }
+
+        int next = (index + 1) % numCorners;
+        return next;
+    }
+
+    /**
+     * Find a corner with which a given point coincides.
+     *
+     * @param point coordinates of the point (not null, unaffected)
+     * @return index of the coincident corner, or -1 if none coincide
+     */
+    public int onCorner(Vector3f point) {
+        Validate.nonNull(point, "point");
+
+        for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
+            if (onCorner(point, cornerIndex)) {
+                return cornerIndex;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Test whether a point coincides with a specific corner of this polygon.
+     *
+     * @param point coordinates of the point (not null, unaffected)
+     * @param cornerIndex index of the corner (&ge;0, &lt;numCorners-1)
+     * @return true if the point coincides, false if it doesn't
+     */
+    public boolean onCorner(Vector3f point, int cornerIndex) {
+        Validate.nonNull(point, "point");
+        validateIndex(cornerIndex, "corner index");
+
+        Vector3f corner = cornerLocations[cornerIndex];
+        boolean result = MyVector3f.doCoincide(corner, point, tolerance2);
+
+        return result;
+    }
+
+    /**
+     * Find a side on which a given point lies.
+     *
+     * @param point coordinates of the point (not null, unaffected)
+     * @return index of the side, or -1 if point not on perimeter
+     */
+    public int onSide(Vector3f point) {
+        Validate.nonNull(point, "point");
+
+        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+            if (onSide(point, sideIndex)) {
+                return sideIndex;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Test whether a point lies on a specific side of this polygon.
+     *
+     * @param point coordinates of the point (not null, unaffected)
+     * @param sideIndex index of the side (&ge;0, &lt;numCorners-1)
+     * @return true if the point lies on the side, false if it doesn't
+     */
+    public boolean onSide(Vector3f point, int sideIndex) {
+        Validate.nonNull(point, "point");
+        validateIndex(sideIndex, "side index");
+
+        double squaredDistance = squaredDistanceToSide(point, sideIndex, null);
+        if (squaredDistance > tolerance2) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -276,14 +548,30 @@ public class Polygon3f {
      */
     public float perimeter() {
         float sum = 0f;
-        for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
-            int next = nextIndex(cornerIndex);
-            float length2 = squaredDistance(cornerIndex, next);
-            float length = FastMath.sqrt(length2);
+        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+            float length = sideLength(sideIndex);
             sum += length;
         }
 
+        assert sum >= 0f : sum;
         return sum;
+    }
+
+    /**
+     * Calculate which corner (or side) precedes the specified one. For this to
+     * work, there must be at least one corner.
+     *
+     * @param index index of a corner (or side) (&ge;0, &lt;numCorners)
+     * @return index of the preceding corner (or side) (&ge;0, &lt;numCorners)
+     */
+    public int prevIndex(int index) {
+        validateIndex(index, "index");
+        if (numCorners < 1) {
+            throw new IllegalStateException("no corners");
+        }
+
+        int next = (index + numCorners - 1) % numCorners;
+        return next;
     }
 
     /**
@@ -291,19 +579,20 @@ public class Polygon3f {
      * polygon.
      *
      * @param other the other polygon (not null)
-     * @param cornerMap if not null, used to store indices of matching corners
+     * @param storeCornerMap if not null, used to store indices of matching
+     * corners
      * @return true if one or more shared corners were found, otherwise false
      */
     public boolean sharesCornerWith(Polygon3f other,
-            Map<Integer, Integer> cornerMap) {
+            Map<Integer, Integer> storeCornerMap) {
         Validate.nonNull(other, "other polygon");
 
-        if (cornerMap != null) {
-            cornerMap.clear();
+        if (storeCornerMap != null) {
+            storeCornerMap.clear();
         }
 
-        float tol2 = other.tolerance();
-        tol2 = (tolerance2 + tol2 * tol2) / 2f;
+        float tol = other.tolerance();
+        float tol2 = (tolerance2 + tol * tol) / 2f;
 
         boolean result = false;
         for (int otherI = 0; otherI < other.numCorners(); otherI++) {
@@ -312,8 +601,8 @@ public class Polygon3f {
                 Vector3f thisCorner = cornerLocations[thisI];
                 if (MyVector3f.doCoincide(otherCorner, thisCorner, tol2)) {
                     result = true;
-                    if (cornerMap != null) {
-                        cornerMap.put(thisI, otherI);
+                    if (storeCornerMap != null) {
+                        storeCornerMap.put(thisI, otherI);
                     }
                 }
             }
@@ -323,18 +612,18 @@ public class Polygon3f {
     }
 
     /**
-     * Test whether this polygon shares one or more edges with another polygon.
+     * Test whether this polygon shares one or more sides with another polygon.
      *
      * @param other the other polygon (not null)
-     * @param edgeMap if not null, used to storage indices of matching edges
-     * @return true if one or more shared edges were found, otherwise false
+     * @param storeMap if not null, used to store indices of matching sides
+     * @return true if one or more shared sides were found, otherwise false
      */
-    public boolean sharesEdgeWith(Polygon3f other,
-            Map<Integer, Integer> edgeMap) {
+    public boolean sharesSideWith(Polygon3f other,
+            Map<Integer, Integer> storeMap) {
         Validate.nonNull(other, "other polygon");
 
-        if (edgeMap != null) {
-            edgeMap.clear();
+        if (storeMap != null) {
+            storeMap.clear();
         }
 
         Map<Integer, Integer> cornerMap = new TreeMap<>();
@@ -351,18 +640,106 @@ public class Polygon3f {
 
             if (otherN == other.nextIndex(otherI)) {
                 result = true;
-                if (edgeMap != null) {
-                    edgeMap.put(thisI, otherI);
+                if (storeMap != null) {
+                    storeMap.put(thisI, otherI);
                 }
             }
             if (otherI == other.nextIndex(otherN)) {
                 result = true;
-                if (edgeMap != null) {
-                    edgeMap.put(thisI, otherN);
+                if (storeMap != null) {
+                    storeMap.put(thisI, otherN);
                 }
             }
         }
 
+        return result;
+    }
+
+    /**
+     * Calculate the length of a side.
+     *
+     * @param sideIndex index of the side to measure (&ge;0, &lt;numSides)
+     * @return length (&ge; 0)
+     */
+    public float sideLength(int sideIndex) {
+        validateIndex(sideIndex, "side index");
+
+        int nextIndex = nextIndex(sideIndex);
+        double squaredDistance = squaredDistance(sideIndex, nextIndex);
+        float result = (float) Math.sqrt(squaredDistance);
+
+        return result;
+    }
+
+    /**
+     * Calculate the squared distance from a point to a specific corner of this
+     * polygon.
+     *
+     * @param point coordinates of the point (not null, unaffected)
+     * @param cornerIndex index of the side (&ge;0, &lt;numCorners-1)
+     * @return squared distance from point to corner (&ge;0)
+     */
+    public double squaredDistanceToCorner(Vector3f point, int cornerIndex) {
+        Validate.nonNull(point, "point");
+        validateIndex(cornerIndex, "corner index");
+
+        Vector3f corner = cornerLocations[cornerIndex];
+        double result = MyVector3f.distanceSquared(corner, point);
+
+        assert result >= 0.0 : result;
+        return result;
+    }
+
+    /**
+     * Calculate the squared distance from a point to a specific side of this
+     * polygon.
+     *
+     * @param point coordinates of the point (not null, unaffected)
+     * @param sideIndex index of the side (&ge;0, &lt;numCorners-1)
+     * @param storeClosestPoint if not null, used to store the coordinates of
+     * the closest point
+     * @return squared distance from point to side (&ge;0)
+     */
+    public double squaredDistanceToSide(Vector3f point, int sideIndex,
+            Vector3f storeClosestPoint) {
+        Validate.nonNull(point, "point");
+        validateIndex(sideIndex, "side index");
+        /*
+         * Calculate start and direction of a straight line containing the side.
+         */
+        Vector3f corner1 = cornerLocations[sideIndex];
+        int nextIndex = nextIndex(sideIndex);
+        Vector3f corner2 = cornerLocations[nextIndex];
+        Vector3f sideOffset = corner2.subtract(corner1);
+        /*
+         * If the side has zero length, return the squared distance to corner1.
+         */
+        double sideLengthSquared = squaredDistance(sideIndex, nextIndex);
+        if (sideLengthSquared == 0.0) {
+            if (storeClosestPoint != null) {
+                storeClosestPoint.set(corner1);
+            }
+            double result = MyVector3f.distanceSquared(corner1, point);
+            return result;
+        }
+        /*
+         * Calculate parametric value for the closest point on that line.
+         */
+        Vector3f pointOffset = point.subtract(corner1);
+        double dot = MyVector3f.dot(pointOffset, sideOffset);
+        double t = dot / sideLengthSquared;
+        /*
+         * Calculate offset of the closest point on the side.
+         */
+        float scaleFactor = FastMath.clamp((float) t, 0f, 1f);
+        Vector3f closestOffset = sideOffset.mult(scaleFactor);
+        if (storeClosestPoint != null) {
+            storeClosestPoint.set(corner1);
+            storeClosestPoint.addLocal(closestOffset);
+        }
+        double result = MyVector3f.distanceSquared(closestOffset, pointOffset);
+
+        assert result >= 0.0 : result;
         return result;
     }
 
@@ -381,17 +758,20 @@ public class Polygon3f {
      * Test whether all the corners in a set lie on the line connecting two
      * given corners.
      *
-     * @param firstIndex index of the first corner (&ge;0, &lt;numCorners)
-     * @param secondIndex index of the second corner (&ge;0, &lt;numCorners)
-     * @param corners (length&le;numCorners, cardinality&ge;2, unaffected)
+     * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
+     * @param corners (length&ge;1, length&le;numCorners, unaffected)
+     * @return true if the corners are collinear, false otherwise
      */
-    boolean allCollinear(int firstIndex, int secondIndex, BitSet corners) {
-        validateIndex(firstIndex, "index of first corner");
-        validateIndex(secondIndex, "index of second corner");
+    protected boolean allCollinear(int cornerIndex1, int cornerIndex2,
+            BitSet corners) {
+        validateIndex(cornerIndex1, "index of 1st corner");
+        validateIndex(cornerIndex2, "index of 2nd corner");
         Validate.nonNull(corners, "set of corners");
-        assert corners.length() <= numCorners;
+        int length = corners.length();
+        Validate.inRange(length, "length of set of corners", 1, numCorners);
 
-        if (doCoincide(firstIndex, secondIndex)) {
+        if (doCoincide(cornerIndex1, cornerIndex2)) {
             /*
              * The line is ill-defined.
              */
@@ -400,12 +780,13 @@ public class Polygon3f {
         /*
          * Calculate the offset of the last corner from the first.
          */
-        Vector3f first = cornerLocations[firstIndex];
-        Vector3f last = cornerLocations[secondIndex];
+        Vector3f first = cornerLocations[cornerIndex1];
+        Vector3f last = cornerLocations[cornerIndex2];
         Vector3f fl = last.subtract(first);
 
         for (int middleI = corners.nextSetBit(0);
                 middleI >= 0; middleI = corners.nextSetBit(middleI + 1)) {
+            assert middleI < numCorners : middleI;
             /*
              * Calculate the offset of the middle corner from the first.
              */
@@ -417,9 +798,10 @@ public class Polygon3f {
              * Don't use Vector3f.project() because (as of jME 3.0.10) 
              * it contains a logic bug.
              */
-            float fm_dot_fl = fm.dot(fl);
-            float normSquaredFL = squaredDistance(firstIndex, secondIndex);
-            Vector3f projection = fl.mult(fm_dot_fl / normSquaredFL);
+            double fm_dot_fl = MyVector3f.dot(fm, fl);
+            double normSquaredFL = squaredDistance(cornerIndex1, cornerIndex2);
+            double fraction = fm_dot_fl / normSquaredFL;
+            Vector3f projection = fl.mult((float) fraction);
             /*
              * If the projection coincides with FM, 
              * then consider the three points to be collinear.
@@ -435,18 +817,18 @@ public class Polygon3f {
     /**
      * Test whether three corners are collinear.
      *
-     * @param cornerIndex1 index of the first corner (&ge;0, &lt;numCorners)
-     * @param cornerIndex2 index of the second corner (&ge;0, &lt;numCorners)
-     * @param cornerIndex3 index of the third corner (&ge;0, &lt;numCorners)
-     * @param storeMiddleIndex if not null and the result is true, this object
-     * will be set to the index of the middle corner, if determined
+     * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex3 index of the 3rd corner (&ge;0, &lt;numCorners)
+     * @param storeMiddleIndex if not null and the result is true, used to store
+     * the index of the middle corner, if determined
      * @return true if collinear, otherwise false
      */
     protected boolean areCollinear(int cornerIndex1, int cornerIndex2,
             int cornerIndex3, Integer storeMiddleIndex) {
-        validateIndex(cornerIndex1, "index of first corner");
-        validateIndex(cornerIndex2, "index of second corner");
-        validateIndex(cornerIndex3, "index of third corner");
+        validateIndex(cornerIndex1, "index of 1st corner");
+        validateIndex(cornerIndex2, "index of 2nd corner");
+        validateIndex(cornerIndex3, "index of 3rd corner");
         /*
          * Shortcut:
          * If any of the corners coincide, then the set is collinear,
@@ -486,58 +868,20 @@ public class Polygon3f {
     /**
      * Test whether two corners coincide.
      *
-     * @param cornerIndex1 index of the first corner (&ge;0, &lt;numCorners)
-     * @param cornerIndex2 index of the second corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
      * @return true if they coincide, otherwise false
      */
     protected boolean doCoincide(int cornerIndex1, int cornerIndex2) {
-        validateIndex(cornerIndex1, "index of first corner");
-        validateIndex(cornerIndex2, "index of second corner");
+        validateIndex(cornerIndex1, "index of 1st corner");
+        validateIndex(cornerIndex2, "index of 2nd corner");
 
-        float d2 = squaredDistance(cornerIndex1, cornerIndex2);
-        if (d2 > tolerance2) {
+        double squaredDistance = squaredDistance(cornerIndex1, cornerIndex2);
+        if (squaredDistance > tolerance2) {
             return false;
         } else {
             return true;
         }
-    }
-
-    /**
-     * Find the largest triangle formed by any three corners in the specified
-     * set.
-     *
-     * @param cornerSet indices of the corners to consider (not null,
-     * unaffected)
-     * @return a new array of three corner indices, or null if no triangles were
-     * found
-     */
-    protected int[] largestTriangle(BitSet cornerSet) {
-        Validate.nonNull(cornerSet, "corner set");
-
-        float bestSA = -1f;
-        int[] result = null;
-
-        for (int i = cornerSet.nextSetBit(0);
-                i >= 0; i = cornerSet.nextSetBit(i + 1)) {
-            for (int j = cornerSet.nextSetBit(i + 1);
-                    j >= 0; j = cornerSet.nextSetBit(j + 1)) {
-                for (int k = cornerSet.nextSetBit(j + 1);
-                        k >= 0; k = cornerSet.nextSetBit(k + 1)) {
-                    float sa = squaredArea(i, j, k);
-                    if (sa > bestSA) {
-                        bestSA = sa;
-                        if (result == null) {
-                            result = new int[3];
-                        }
-                        result[0] = i;
-                        result[1] = j;
-                        result[2] = k;
-                    }
-                }
-            }
-        }
-
-        return result;
     }
 
     /**
@@ -550,16 +894,16 @@ public class Polygon3f {
     protected int[] mostDistant(BitSet cornerSet) {
         Validate.nonNull(cornerSet, "corner set");
 
-        float bestSD = -1f;
+        double largestSD = -1.0;
         int[] result = null;
 
         for (int i = cornerSet.nextSetBit(0);
                 i >= 0; i = cornerSet.nextSetBit(i + 1)) {
             for (int j = cornerSet.nextSetBit(i + 1);
                     j >= 0; j = cornerSet.nextSetBit(j + 1)) {
-                float sd = squaredDistance(i, j);
-                if (sd > bestSD) {
-                    bestSD = sd;
+                double squaredDistance = squaredDistance(i, j);
+                if (squaredDistance > largestSD) {
+                    largestSD = squaredDistance;
                     if (result == null) {
                         result = new int[2];
                     }
@@ -573,42 +917,29 @@ public class Polygon3f {
     }
 
     /**
-     * Calculate which corner (or side) follows the specified one.
-     *
-     * @param index which corner (or side) (&ge;0, &lt;numCorners)
-     * @return index of the following corner (or side) (&ge;0, &lt;numCorners)
-     */
-    protected int nextIndex(int index) {
-        validateIndex(index, "index");
-
-        int next = (index + 1) % numCorners;
-        return next;
-    }
-
-    /**
      * Calculate the square of the area of the triangle formed by three corners.
      *
-     * @param indexA index of the first corner (&ge;0, &lt;numCorners)
-     * @param indexB index of the second corner (&ge;0, &lt;numCorners)
-     * @param indexC index of the third corner (&ge;0, &lt;numCorners)
+     * @param indexA index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param indexB index of the 2nd corner (&ge;0, &lt;numCorners)
+     * @param indexC index of the 3rd corner (&ge;0, &lt;numCorners)
      * @return area^2 (&ge;0)
      */
-    protected float squaredArea(int indexA, int indexB, int indexC) {
-        validateIndex(indexA, "index of first corner");
-        validateIndex(indexB, "index of second corner");
-        validateIndex(indexC, "index of third corner");
+    protected double squaredArea(int indexA, int indexB, int indexC) {
+        validateIndex(indexA, "index of 1st corner");
+        validateIndex(indexB, "index of 2nd corner");
+        validateIndex(indexC, "index of 3rd corner");
         /*
          * Shortcut:
          * If any corners coincide, then the area is effectively zero. 
          */
         if (doCoincide(indexA, indexB)) {
-            return 0f;
+            return 0.0;
         }
         if (doCoincide(indexA, indexC)) {
-            return 0f;
+            return 0.0;
         }
         if (doCoincide(indexB, indexC)) {
-            return 0f;
+            return 0.0;
         }
         /*
          * Calculate the offsets of the B and C relative to A.
@@ -621,29 +952,30 @@ public class Polygon3f {
         /*
          * Using AC as the base, calculate the squared height.
          */
-        float abDotAC = ab.dot(ac);
-        float ac2 = squaredDistance(indexA, indexC);
-        Vector3f projABonAC = ac.mult(abDotAC / ac2);
-        float height2 = ab.distanceSquared(projABonAC);
+        double abDotAC = MyVector3f.dot(ab, ac);
+        double ac2 = squaredDistance(indexA, indexC);
+        double fraction = abDotAC / ac2;
+        Vector3f projABonAC = ac.mult((float) fraction);
+        double heightSquared = MyVector3f.distanceSquared(ab, projABonAC);
         /*
          * Calculate the squared area.  Area = base * height / 2f.
          */
-        float base2 = squaredDistance(indexA, indexC);
-        float area2 = base2 * height2 / 4f;
+        double baseSquared = squaredDistance(indexA, indexC);
+        double areaSquared = baseSquared * heightSquared / 4f;
 
-        return area2;
+        return areaSquared;
     }
 
     /**
      * Calculate (or look up) the squared distance between two corners.
      *
-     * @param cornerIndex1 index of the first corner (&ge;0, &lt;numCorners)
-     * @param cornerIndex2 index of the second corner (&ge;0, &lt;numCorners)
-     * @return squared distance in
+     * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
+     * @return squared distance (&ge;0)
      */
-    protected float squaredDistance(int cornerIndex1, int cornerIndex2) {
-        validateIndex(cornerIndex1, "index of first corner");
-        validateIndex(cornerIndex2, "index of second corner");
+    protected double squaredDistance(int cornerIndex1, int cornerIndex2) {
+        validateIndex(cornerIndex1, "index of 1st corner");
+        validateIndex(cornerIndex2, "index of 2nd corner");
 
         if (squaredDistances[cornerIndex1][cornerIndex2] == null) {
             setSquaredDistance(cornerIndex1, cornerIndex2);
@@ -687,46 +1019,102 @@ public class Polygon3f {
     // private methods
 
     /**
-     * Initialize the isDegenerate field. The polygon is degenerate if (1) it
-     * has fewer than three corners OR (2) it has duplicate corners OR (3) two
-     * adjacent sides are collinear. In a non-degenerate polygon, each corner
-     * forms an angle that is neither 0 nor Pi radians, though the sign of the
-     * angle may be ambiguous.
+     * Initialize the elements of the #cosTurnAngles and #crossProducts fields
+     * for a particular corner.
+     *
+     * @param cornerIndex which corner (&ge;0, &lt;numCorners)
+     */
+    private void setCorner(int cornerIndex) {
+        int nextI = nextIndex(cornerIndex);
+        int prevI = prevIndex(cornerIndex);
+        /*
+         * Calculate the offsets of the two adjacent sides.
+         */
+        Vector3f a = cornerLocations[prevI];
+        Vector3f b = cornerLocations[cornerIndex];
+        Vector3f c = cornerLocations[nextI];
+        Vector3f offsetB = b.subtract(a);
+        Vector3f offsetC = c.subtract(b);
+
+        double dot = MyVector3f.dot(offsetB, offsetC);
+        Vector3f cross = offsetB.cross(offsetC);
+        setCorner(cornerIndex, dot, cross);
+    }
+
+    /**
+     * Direct setter for the #cosTurnAngles and #crossProduct fields.
+     *
+     * @param cornerIndex index of the corner (&ge;0, &lt;numCorners)
+     * @param newDot new value for dot product
+     * @param newCross new value for cross product (not null, unaffected)
+     */
+    private void setCorner(int cornerIndex, double newDot,
+            Vector3f newCross) {
+        assert cornerIndex >= 0 : cornerIndex;
+        assert cornerIndex < numCorners : cornerIndex;
+        assert newCross != null;
+        assert crossProducts[cornerIndex] == null;
+        assert dotProducts[cornerIndex] == null;
+
+        crossProducts[cornerIndex] = newCross.clone();
+        dotProducts[cornerIndex] = newDot;
+    }
+
+    /**
+     * Initialize the isDegenerate field. The polygon is degenerate if it has
+     * (1) fewer than three corners OR (2) coincident corners OR (3) a
+     * 180-degree turn. In a non-degenerate polygon, each corner forms an angle
+     * less than Pi radians, though the sign of the angle may be ambiguous.
      */
     private void setIsDegenerate() {
         if (numCorners < 3) {
-            isDegenerate = true;
+            setIsDegenerate(true);
             return;
         }
         /*
-         * Search for duplicate corners.
+         * (2) Test for coincident corners.
          */
         for (int iCorner = 0; iCorner < numCorners; iCorner++) {
             for (int jCorner = iCorner + 1; jCorner < numCorners; jCorner++) {
                 if (doCoincide(iCorner, jCorner)) {
-                    isDegenerate = true;
+                    setIsDegenerate(true);
                     return;
                 }
             }
         }
         /*
-         * Search for collinear adjacent sides.
+         * (3) Test for 180-degree turns.
          */
-        for (int iCorner = 0; iCorner < numCorners; iCorner++) {
-            int next = nextIndex(iCorner);
-            int nextNext = nextIndex(next);
-            if (areCollinear(iCorner, next, nextNext, null)) {
-                isDegenerate = true;
-                return;
+        for (int cornerI = 0; cornerI < numCorners; cornerI++) {
+            double dot = dotProduct(cornerI);
+            int nextI = nextIndex(cornerI);
+            int prevI = prevIndex(cornerI);
+            double lsPrevious = squaredDistance(prevI, cornerI);
+            double lsCurrent = squaredDistance(cornerI, nextI);
+            double lsProduct = lsPrevious * lsCurrent;
+            double lengthProduct = Math.sqrt(lsProduct);
 
+            if (dot < tolerance2 - lengthProduct) {
+                setIsDegenerate(true);
+                return;
             }
+            }
+
+        setIsDegenerate(false);
         }
 
-        isDegenerate = false;
+    /**
+     * Direct setter for the #isDegenerate field.
+     *
+     * @param newValue new value
+     */
+    private void setIsDegenerate(boolean newValue) {
+        assert isDegenerate == null;
+        isDegenerate = newValue;
     }
 
     /**
-     * Initialize the isPlanar field. A polygon is planar if all corners (and
+     * Initialize the #isPlanar field. A polygon is planar if all corners (and
      * sides) lie in a single plane.
      */
     private void setIsPlanar() {
@@ -734,7 +1122,7 @@ public class Polygon3f {
          * Shortcut #1: all polygons with less than 4 sides are planar.
          */
         if (numCorners < 4) {
-            isPlanar = true;
+            setIsPlanar(true);
             return;
         }
         /*
@@ -751,81 +1139,164 @@ public class Polygon3f {
             }
         }
         if (sameY) {
-            isPlanar = true;
+            setIsPlanar(true);
             return;
         }
         /*
          * The hard way: find the three corners which form the largest triangle.
          */
-        BitSet allCorners = new BitSet(numCorners);
-        allCorners.set(0, numCorners - 1);
-        int[] triangle = largestTriangle(allCorners);
+        int[] triangle = largestTriangle();
         if (triangle == null) {
             /*
              * Degenerate case:
              * Treat as planar even though the plane is ill-defined.
              */
             assert isDegenerate();
-            isPlanar = true;
+            setIsPlanar(true);
             return;
         }
+        int aIndex = triangle[0];
+        int bIndex = triangle[1];
+        int cIndex = triangle[2];
         /*
          * Calculate the plane containing that triangle.
          */
-        int bestI = triangle[0];
-        int bestJ = triangle[1];
-        int bestK = triangle[2];
-        Vector3f cornerI = cornerLocations[bestI];
-        Vector3f cornerJ = cornerLocations[bestJ];
-        Vector3f cornerK = cornerLocations[bestK];
-        Vector3f offsetJ = cornerJ.subtract(cornerI);
-        Vector3f offsetK = cornerK.subtract(cornerI);
-        Vector3f crossProduct = offsetJ.cross(offsetK);
-        float normSquared = crossProduct.lengthSquared();
-        if (normSquared == 0f) {
+        Vector3f a = cornerLocations[aIndex];
+        Vector3f b = cornerLocations[bIndex];
+        Vector3f c = cornerLocations[cIndex];
+        Vector3f offsetB = b.subtract(a);
+        Vector3f offsetC = c.subtract(b);
+        Vector3f crossProduct = offsetB.cross(offsetC);
+        float crossLength = crossProduct.length();
+        if (crossLength == 0f) {
             /*
              * Degenerate case:
              * Treat as planar even though the plane is ill-defined.
              */
             assert isDegenerate();
-            isPlanar = true;
+            setIsPlanar(true);
             return;
         }
-        float norm = FastMath.sqrt(normSquared);
-        Vector3f planeNormal = crossProduct.divide(norm);
-        float planeConstant = planeNormal.dot(cornerI);
+        Vector3f planeNormal = crossProduct.divide(crossLength);
+        float planeConstant = -planeNormal.dot(a);
         /*
          * If all the polygon's corners lie in that plane, 
          * then the polygon is planar, otherwise it isn't.
          */
         for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
             Vector3f corner = cornerLocations[cornerIndex];
-            float pseudoDistance = planeNormal.dot(corner) - planeConstant;
-            float d2 = pseudoDistance * pseudoDistance;
-            if (d2 > tolerance2) {
-                isPlanar = false;
+            float pseudoDistance = planeNormal.dot(corner) + planeConstant;
+            float distanceSquared = pseudoDistance * pseudoDistance;
+            if (distanceSquared > tolerance2) {
+                setIsPlanar(false);
                 return;
             }
         }
-        isPlanar = true;
+        setIsPlanar(true);
     }
 
     /**
-     * Initialize element(s) of the squaredDistances field for a particular pair
-     * of corners.
+     * Direct setter for the #isPlanar field.
      *
-     * @param index1 (&ge;0, &lt;numCorners)
-     * @param index2 (&ge;0, &lt;numCorners)
+     * @param newValue new value
      */
-    private void setSquaredDistance(int index1, int index2) {
-        if (index1 == index2) {
-            squaredDistances[index1][index2] = 0f;
-        } else {
-            Vector3f corner1 = cornerLocations[index1];
-            Vector3f corner2 = cornerLocations[index2];
-            float square = corner1.distanceSquared(corner2);
-            squaredDistances[index1][index2] = square;
-            squaredDistances[index2][index1] = square;
+    private void setIsPlanar(boolean newValue) {
+        assert isPlanar == null;
+        isPlanar = newValue;
+    }
+
+    /**
+     * Initialize the #largestTriangle field if numCorners&gt;3, otherwise leave
+     * it unchanged.
+     */
+    private void setLargestTriangle() {
+        double largestSA = -1f;
+        int[] largest = null;
+        for (int i = 0; i < numCorners - 2; i++) {
+            for (int j = i + 1; j < numCorners - 1; j++) {
+                for (int k = j + 1; k < numCorners; k++) {
+                    double sa = squaredArea(i, j, k);
+                    if (sa > largestSA) {
+                        largestSA = sa;
+                        if (largest == null) {
+                            largest = new int[3];
+                        }
+                        largest[0] = i;
+                        largest[1] = j;
+                        largest[2] = k;
+                    }
+                }
+            }
         }
+        if (largest != null) {
+            setLargestTriangle(largest);
+        }
+    }
+
+    /**
+     * Direct setter for the #largestTriangle field.
+     *
+     * @param newValue indices of the triangle's corners (not null, each &ge;0
+     * and &lt;numCorners, in ascending order, unaffected)
+     */
+    private void setLargestTriangle(int[] newValue) {
+        assert largestTriangle == null;
+        assert newValue != null;
+        assert newValue[0] >= 0 : newValue[0];
+        assert newValue[1] >= 0 : newValue[1];
+        assert newValue[2] >= 0 : newValue[2];
+        assert newValue[0] < numCorners : newValue[0];
+        assert newValue[1] < numCorners : newValue[1];
+        assert newValue[2] < numCorners : newValue[2];
+        assert newValue[1] > newValue[0];
+        assert newValue[2] > newValue[1];
+
+        largestTriangle = new int[3];
+        largestTriangle[0] = newValue[0];
+        largestTriangle[1] = newValue[1];
+        largestTriangle[2] = newValue[2];
+    }
+
+    /**
+     * Initialize the element(s) of the #squaredDistances field for a particular
+     * pair of corners.
+     *
+     * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
+     */
+    private void setSquaredDistance(int cornerIndex1, int cornerIndex2) {
+        assert cornerIndex1 >= 0 : cornerIndex1;
+        assert cornerIndex1 < numCorners : cornerIndex1;
+        assert cornerIndex2 >= 0 : cornerIndex2;
+        assert cornerIndex2 < numCorners : cornerIndex2;
+
+        if (cornerIndex1 == cornerIndex2) {
+            setSquaredDistance(cornerIndex1, cornerIndex2, 0.0);
+        } else {
+            Vector3f corner1 = cornerLocations[cornerIndex1];
+            Vector3f corner2 = cornerLocations[cornerIndex2];
+            double square = MyVector3f.distanceSquared(corner1, corner2);
+            setSquaredDistance(cornerIndex1, cornerIndex2, square);
+        }
+    }
+
+    /**
+     * Direct setter for the #squaredDistances field.
+     *
+     * @param ci1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param ci2 index of the 2nd corner (&ge;0, &lt;numCorners)
+     * @param newValue new value for squared distance (&ge;0)
+     */
+    private void setSquaredDistance(int ci1, int ci2, double newValue) {
+        assert ci1 >= 0 : ci1;
+        assert ci1 < numCorners : ci1;
+        assert ci2 >= 0 : ci2;
+        assert ci2 < numCorners : ci2;
+        assert newValue >= 0.0 : newValue;
+        assert squaredDistances[ci1][ci2] == null;
+        assert squaredDistances[ci2][ci1] == null;
+
+        squaredDistances[ci1][ci2] = newValue;
+        squaredDistances[ci2][ci1] = newValue;
     }
 }
