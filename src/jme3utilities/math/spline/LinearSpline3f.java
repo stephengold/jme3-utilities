@@ -33,22 +33,22 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * Immutable linear spline in three dimensions.
+ * Immutable spline in three dimensions, composed of straight-line segments.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class LinearSpline3f
-        implements Spline3f {
+public class LinearSpline3f implements Spline3f {
     // *************************************************************************
     // constants
 
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(LinearSpline3f.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            LinearSpline3f.class.getName());
     // *************************************************************************
     // fields
+    
     /**
      * location of each control point (size&ge;2)
      */
@@ -69,18 +69,22 @@ public class LinearSpline3f
      * control point will be the value at t=0. t increases with Euclidean
      * distance along the path.
      *
-     * @param points control points (not null, totalLength&ge;2, unaffected)
+     * @param points control points (not null, length&gt;0, elements not null,
+     * unaffected)
      */
     public LinearSpline3f(Vector3f[] points) {
         Validate.nonNull(points, "control points");
-        Validate.inRange(points.length, "number of control points",
-                2, Integer.MAX_VALUE);
+        Validate.positive(points.length, "number of control points");
 
         float sumDistance = 0f;
         Vector3f previousPoint = null;
         for (Vector3f point : points) {
+            Validate.nonNull(point, "control point");
             if (previousPoint != null) {
                 float distance = previousPoint.distance(point);
+                /*
+                 * Skip any redundant control point.
+                 */
                 if (distance > 0f) {
                     sumDistance += distance;
                     controlPoints.add(point);
@@ -102,12 +106,12 @@ public class LinearSpline3f
     /**
      * Copy the specified control point of this spline.
      *
-     * @param index index of the control point (&ge;0)
-     * @return new vector
+     * @param index index of the control point (&ge;0, &lt;numControlPoints)
+     * @return a new vector
      */
     @Override
-    public Vector3f getControlPoint(int index) {
-        Validate.nonNegative(index, "index");
+    public Vector3f copyControlPoint(int index) {
+        Validate.inRange(index, "index", 0, controlPoints.size() - 1);
         Vector3f result = controlPoints.get(index);
         return result.clone();
     }
@@ -212,10 +216,9 @@ public class LinearSpline3f
     // private methods
 
     /**
-     * Find the index of the control point at or to the left of a given
-     * coordinate.
+     * Find the index of the control point at or before a given parameter value.
      *
-     * @param sampleT sample coordinate
+     * @param sampleT input parameter value
      * @return index (&ge;0, &lt;numPoints) or -1 if sampleT&lt;0
      */
     private int leftIndex(float sampleT) {
