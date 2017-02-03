@@ -33,7 +33,8 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * Immutable spline in three dimensions, composed of straight-line segments.
+ * An immutable spline (in three dimensions) that is piecewise linear, being
+ * composed of straight-line segments.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -200,6 +201,19 @@ public class LinearSpline3f implements Spline3f {
         Vector3f result = offset.divide(dt);
 
         return result;
+    }
+
+    /**
+     * Calculate the ending location of this spline.
+     *
+     * @return new vector
+     */
+    @Override
+    public Vector3f terminus() {
+        int lastIndex = controlPoints.size() - 1;
+        Vector3f result = controlPoints.get(lastIndex);
+
+        return result.clone();
     }
 
     /**

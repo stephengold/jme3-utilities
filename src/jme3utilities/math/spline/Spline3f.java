@@ -28,7 +28,7 @@ package jme3utilities.math.spline;
 import com.jme3.math.Vector3f;
 
 /**
- * Interface for three-dimensional spline interpolation. A spline is a
+ * Interface for three-dimensional spline interpolation.  A spline is a
  * continuous path defined by a series of control points.
  *
  * @author Stephen Gold sgold@sonic.net
@@ -65,6 +65,13 @@ public interface Spline3f {
      * @return new vector
      */
     Vector3f rightDerivative(float sampleT);
+
+    /**
+     * Calculate the ending location of this spline.
+     *
+     * @return new vector
+     */
+    Vector3f terminus();
 
     /**
      * Read the total path length of this spline.
