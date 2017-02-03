@@ -33,10 +33,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
-import jme3utilities.math.Locus3f;
+import jme3utilities.math.spline.Locus3f;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.math.ReadXZ;
 import jme3utilities.math.VectorXZ;
+import jme3utilities.math.spline.Spline3f;
 
 /**
  * Navigation vertex: represents a reachable location or region in the world.
@@ -370,6 +371,24 @@ public class NavVertex
     public void setLocus(Locus3f newLocus) {
         assert newLocus != null;
         this.locus = newLocus;
+    }
+    
+    /**
+     * Find the shortest path between two points in the locus.
+     *
+     * @param startingPoint world coordinates (not null)
+     * @param goal world coordinates (not null)
+     * @return a new path, or null if none found
+     */
+    public Spline3f shortestPath(Vector3f startingPoint, Vector3f goal) {
+        Validate.nonNull(startingPoint, "starting point");
+        Validate.nonNull(goal, "goal");
+
+        assert locus.contains(startingPoint) : startingPoint;
+        assert locus.contains(goal) : goal;
+
+        Spline3f result = locus.shortestPath(startingPoint, goal);
+        return result;
     }
     // *************************************************************************
     // Comparable methods

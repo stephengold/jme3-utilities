@@ -29,8 +29,10 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
-import jme3utilities.math.Locus3f;
+import jme3utilities.math.spline.Locus3f;
 import jme3utilities.math.VectorXZ;
+import jme3utilities.math.spline.LinearSpline3f;
+import jme3utilities.math.spline.Spline3f;
 
 /**
  * An immutable polygon in three-dimensional space, consisting of N corners
@@ -301,6 +303,25 @@ public class SimplePolygon3f
     @Override
     public Vector3f representative() {
         Vector3f result = centroid();
+        return result;
+    }
+
+    /**
+     * Find the shortest path between two points in this polygon. TODO obstacles
+     *
+     * @param startingPoint world coordinates (contained in polygon, unaffected)
+     * @param goal world coordinates (contained in polygon, unaffected)
+     * @return a new path, or null if none found
+     */
+    @Override
+    public Spline3f shortestPath(Vector3f startingPoint, Vector3f goal) {
+        assert contains(startingPoint) : startingPoint;
+        assert contains(goal) : goal;
+
+        assert isConvex(); // TODO
+        Vector3f[] joints = {startingPoint, goal};
+        Spline3f result = new LinearSpline3f(joints);
+
         return result;
     }
     // *************************************************************************

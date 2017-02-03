@@ -23,7 +23,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.math;
+package jme3utilities.math.spline;
 
 import com.jme3.math.Vector3f;
 
@@ -33,7 +33,6 @@ import com.jme3.math.Vector3f;
  * @author Stephen Gold sgold@sonic.net
  */
 public interface Locus3f {
-
     /**
      * Test whether this region contains a specific point.
      *
@@ -48,4 +47,13 @@ public interface Locus3f {
      * @return new vector
      */
     Vector3f representative();
+    
+    /**
+     * Find the shortest path between two points in this region.
+     *
+     * @param startingPoint world coordinates (contained in region, unaffected)
+     * @param goal world coordinates (contained in region, unaffected)
+     * @return a new path, or null if none found
+     */
+    Spline3f shortestPath(Vector3f startingPoint, Vector3f goal);
 }
