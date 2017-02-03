@@ -37,7 +37,7 @@ import com.jme3.math.Vector3f;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public interface ReadXZ {
+public interface ReadXZ {   
     /**
      * Add to (translate) this vector.
      *
@@ -214,7 +214,7 @@ public interface ReadXZ {
     /**
      * Multiply this vector by another (complex product or rotate-and-scale).
      *
-     * @param mutliplier rotated/scaled result for the current north (not null)
+     * @param multiplier rotated/scaled result for the current north (not null)
      * @return the complex product
      */
     ReadXZ mult(ReadXZ multiplier);

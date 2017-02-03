@@ -583,7 +583,7 @@ public class VectorXZ
     /**
      * Multiply this vector by another (complex product or rotate-and-scale).
      *
-     * @param mutliplier rotated/scaled result for the current north (not null)
+     * @param multiplier rotated/scaled result for the current north (not null)
      * @return the complex product
      */
     @Override
