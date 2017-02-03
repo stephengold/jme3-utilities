@@ -163,6 +163,26 @@ public class NavVertex
     }
 
     /**
+     * Find the arc (if any) from a specified origin.
+     *
+     * @param origin (not null, not this)
+     * @return pre-existing instance, or null if not found
+     */
+    public NavArc findIncoming(NavVertex origin) {
+        Validate.nonNull(origin, "origin");
+        if (origin == this) {
+            throw new IllegalArgumentException("origin not distinct");
+        }
+
+        for (NavArc arc : incoming) {
+            if (arc.getFromVertex() == origin) {
+                return arc;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Find the outgoing arc (if any) to a specified terminus.
      *
      * @param terminus (not null, not this)
@@ -246,26 +266,6 @@ public class NavVertex
         }
 
         return result;
-    }
-
-    /**
-     * Find the arc (if any) from a specified origin.
-     *
-     * @param origin (not null, not this)
-     * @return pre-existing instance, or null if not found
-     */
-    public NavArc findIncoming(NavVertex origin) {
-        Validate.nonNull(origin, "origin");
-        if (origin == this) {
-            throw new IllegalArgumentException("origin not distinct");
-        }
-
-        for (NavArc arc : incoming) {
-            if (arc.getFromVertex() == origin) {
-                return arc;
-            }
-        }
-        return null;
     }
 
     /**
@@ -371,9 +371,9 @@ public class NavVertex
         assert newLocus != null;
         this.locus = newLocus;
     }
-
     // *************************************************************************
     // Comparable methods
+
     /**
      * Compare with another vertex based on name.
      *
