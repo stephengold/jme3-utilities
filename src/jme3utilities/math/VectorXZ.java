@@ -587,9 +587,9 @@ public class VectorXZ
      * @return the complex product
      */
     @Override
-    public ReadXZ mult(ReadXZ direction) {
-        float cosine = direction.getX();
-        float sine = direction.getZ();
+    public ReadXZ mult(ReadXZ multiplier) {
+        float cosine = multiplier.getX();
+        float sine = multiplier.getZ();
         float newX = cosine * x - sine * z;
         float newZ = cosine * z + sine * x;
 
