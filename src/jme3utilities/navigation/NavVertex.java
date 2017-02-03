@@ -35,6 +35,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.Locus3f;
 import jme3utilities.math.MyVector3f;
+import jme3utilities.math.ReadXZ;
 import jme3utilities.math.VectorXZ;
 
 /**
@@ -222,7 +223,7 @@ public class NavVertex
      * &ge;-1)
      * @return pre-existing instance, or null if none found
      */
-    public NavArc findOutgoing(VectorXZ horizontalDirection,
+    public NavArc findOutgoing(ReadXZ horizontalDirection,
             double cosineTolerance) {
         VectorXZ.validateNonZero(horizontalDirection, "horizontal direction");
         Validate.inRange(cosineTolerance, "cosine tolerance", -1f, 1f);
