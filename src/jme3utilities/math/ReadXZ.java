@@ -37,7 +37,7 @@ import com.jme3.math.Vector3f;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public interface ReadXZ {   
+public interface ReadXZ {
     /**
      * Add to (translate) this vector.
      *
@@ -213,6 +213,8 @@ public interface ReadXZ {
 
     /**
      * Multiply this vector by another (complex product or rotate-and-scale).
+     * This is NOT analogous to {@link com.jme3.math.Vector3f#mult(Vector3f)},
+     * which performs non-uniform scaling.
      *
      * @param multiplier rotated/scaled result for the current north (not null)
      * @return the complex product
@@ -245,6 +247,15 @@ public interface ReadXZ {
      * @return a vector with the same length
      */
     ReadXZ rotate(float radians);
+
+    /**
+     * Scale this vector by another (non-uniform scaling).
+     *
+     * @param multiplier scaled result for the current north (not null)
+     * @return scaled vector
+     * @see com.jme3.math.Vector3f#mult(Vector3f)
+     */
+    ReadXZ scale(ReadXZ multiplier);
 
     /**
      * Subtract from (inverse translate) this vector.

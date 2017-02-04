@@ -582,6 +582,8 @@ public class VectorXZ
 
     /**
      * Multiply this vector by another (complex product or rotate-and-scale).
+     * This is NOT analogous to {@link com.jme3.math.Vector3f#mult(Vector3f)},
+     * which performs non-uniform scaling.
      *
      * @param multiplier rotated/scaled result for the current north (not null)
      * @return the complex product
@@ -667,6 +669,26 @@ public class VectorXZ
         float sine = FastMath.sin(radians);
         float newX = cosine * x - sine * z;
         float newZ = cosine * z + sine * x;
+
+        if (newX == x && newZ == z) {
+            return this;
+        }
+        VectorXZ result = new VectorXZ(newX, newZ);
+
+        return result;
+    }
+
+    /**
+     * Scale this vector by another (non-uniform scaling).
+     *
+     * @param multiplier scaled result for the current north (not null)
+     * @return scaled vector
+     * @see com.jme3.math.Vector3f#mult(Vector3f)
+     */
+    @Override
+    public ReadXZ scale(ReadXZ multiplier) {
+        float newX = x * multiplier.getX();
+        float newZ = z * multiplier.getZ();
 
         if (newX == x && newZ == z) {
             return this;
