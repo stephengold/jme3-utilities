@@ -53,6 +53,7 @@ public class Polygon3f {
             Polygon3f.class.getName());
     // *************************************************************************
     // fields
+    
     /**
      * if true, then there are fewer than 3 corners and/or there are coincident
      * corners and/or there is a 180-degree turn (set by #setIsDegenerate())
@@ -225,6 +226,27 @@ public class Polygon3f {
     }
 
     /**
+     * Calculate this polygon's diameter: the distance between its two most
+     * distant corners.
+     *
+     * @return diameter squared (in squared world units, &ge;0)
+     */
+    public float diameter() {
+        if (numCorners < 2) {
+            return 0f;
+        }
+
+        BitSet allCorners = new BitSet(numCorners);
+        allCorners.set(0, numCorners - 1);
+        int[] segment = mostDistant(allCorners);
+        double squaredDistance = squaredDistance(segment[0], segment[1]);
+        float max = (float) Math.sqrt(squaredDistance);
+
+        assert max >= 0.0 : max;
+        return max;
+    }
+
+    /**
      * Calculate (or look up) the dot product of successive sides which meet at
      * the specified corner.
      *
@@ -290,7 +312,7 @@ public class Polygon3f {
      *
      * @return index of the shortest side (&ge;0, &lt;numCorners) or -1 if this
      * polygon has no sides
-             */
+     */
     public int findShortest() {
         int result = -1;
         double leastSD = Double.POSITIVE_INFINITY;
@@ -300,8 +322,8 @@ public class Polygon3f {
             if (squaredDistance < leastSD) {
                 result = sideIndex;
                 leastSD = squaredDistance;
-                }
             }
+        }
         return result;
     }
 
@@ -313,7 +335,7 @@ public class Polygon3f {
      * the closest point on the perimeter, if determined
      * @return index of closest the side (&ge;0, &lt;numCorners) or -1 if this
      * polygon has no sides
-             */
+     */
     public int findSide(Vector3f point, Vector3f storeClosestPoint) {
         Validate.nonNull(point, "coordinates of point");
 
@@ -398,14 +420,14 @@ public class Polygon3f {
      * Test (or look up) whether this polygon is degenerate.
      *
      * @return true if it is degenerate, otherwise false
-                 */
+     */
     final public boolean isDegenerate() {
         if (isDegenerate == null) {
             setIsDegenerate();
-                    }
+        }
 
         return isDegenerate;
-                }
+    }
 
     /**
      * Test (or look up) whether this polygon is planar.
@@ -415,10 +437,10 @@ public class Polygon3f {
     final public boolean isPlanar() {
         if (isPlanar == null) {
             setIsPlanar();
-            }
+        }
 
         return isPlanar;
-        }
+    }
 
     /**
      * Calculate (or look up) the largest triangle formed by any three corners
@@ -1098,10 +1120,10 @@ public class Polygon3f {
                 setIsDegenerate(true);
                 return;
             }
-            }
+        }
 
         setIsDegenerate(false);
-        }
+    }
 
     /**
      * Direct setter for the #isDegenerate field.
