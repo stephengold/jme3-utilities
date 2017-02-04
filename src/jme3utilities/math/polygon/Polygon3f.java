@@ -232,18 +232,20 @@ public class Polygon3f {
      * @return diameter squared (in squared world units, &ge;0)
      */
     public float diameter() {
-        if (numCorners < 2) {
-            return 0f;
+        double largestSD = 0.0;
+
+        for (int i = 0; i < numCorners; i++) {
+            for (int j = i + 1; j < numCorners; j++) {
+                double squaredDistance = squaredDistance(i, j);
+                if (squaredDistance > largestSD) {
+                    largestSD = squaredDistance;
+                }
+            }
         }
+        float result = (float) Math.sqrt(largestSD);
 
-        BitSet allCorners = new BitSet(numCorners);
-        allCorners.set(0, numCorners - 1);
-        int[] segment = mostDistant(allCorners);
-        double squaredDistance = squaredDistance(segment[0], segment[1]);
-        float max = (float) Math.sqrt(squaredDistance);
-
-        assert max >= 0.0 : max;
-        return max;
+        assert result >= 0.0 : result;
+        return result;
     }
 
     /**
