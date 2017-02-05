@@ -28,32 +28,42 @@ package jme3utilities.math.spline;
 import com.jme3.math.Vector3f;
 
 /**
- * Represents a region in 3-D space.
+ * Represents a region (set of locations) in 3-D space.
  *
  * @author Stephen Gold sgold@sonic.net
  */
 public interface Locus3f {
     /**
-     * Test whether this region contains a specific point.
+     * Test whether this region contains a specific location.
      *
-     * @param point coordinates of the point (not null, unaffected)
-     * @return true if the point lies in the region, false otherwise
+     * @param location coordinates of location to test (not null, unaffected)
+     * @return true if location is in this region, false otherwise
      */
-    boolean contains(Vector3f point);
+    boolean contains(Vector3f location);
 
     /**
-     * Quickly provide a representative point for the region.
+     * Quickly provide a representative location for this region. The location
+     * need not be contained in this region, but it should be relatively close
+     * to all locations that are.
      *
-     * @return new vector
+     * @return a new coordinate vector
      */
     Vector3f representative();
-    
+
     /**
-     * Find the shortest path between two points in this region.
+     * Score a location based on how well it "fits" into this region.
      *
-     * @param startingPoint world coordinates (contained in region, unaffected)
-     * @param goal world coordinates (contained in region, unaffected)
-     * @return a new path, or null if none found
+     * @return score value (more positive &rarr; better)
      */
-    Spline3f shortestPath(Vector3f startingPoint, Vector3f goal);
+    double score(Vector3f location);
+
+    /**
+     * Find a path between two locations in this region without leaving the
+     * region. Short paths are preferred over long ones.
+     *
+     * @param startLocation coordinates (contained in region, unaffected)
+     * @param goalLocation coordinates (contained in region, unaffected)
+     * @return a new path spline, or null if none found
+     */
+    Spline3f shortestPath(Vector3f startLocation, Vector3f goalLocation);
 }

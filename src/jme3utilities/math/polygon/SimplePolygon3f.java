@@ -29,6 +29,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
+import jme3utilities.math.MyVector3f;
 import jme3utilities.math.spline.Locus3f;
 import jme3utilities.math.VectorXZ;
 import jme3utilities.math.spline.LinearSpline3f;
@@ -56,7 +57,7 @@ public class SimplePolygon3f
             SimplePolygon3f.class.getName());
     // *************************************************************************
     // fields
-
+    
     /**
      * if true, then one (or more) of the internal angles is &gt;180 degrees
      * (set by #setIsConvex())
@@ -78,16 +79,18 @@ public class SimplePolygon3f
      */
     private VectorXZ centroid = null;
     /**
-     * cached normal vector of the plane containing the polygon (initialized by
-     * #setPlane())
+     * cached normal vector of the plane containing the polygon (unit vector,
+     * initialized by #setPlane())
      */
     private Vector3f planeNormal = null;
     /**
-     * cached 1st basis vector for planar offsets (initialized by #setPlane())
+     * cached 1st basis vector for planar offsets (unit vector, initialized by
+     * #setPlane())
      */
     private Vector3f planeXBasis = null;
     /**
-     * cached 2nd basis vector for planar offsets (initialized by #setPlane())
+     * cached 2nd basis vector for planar offsets (unit vector, initialized by
+     * #setPlane())
      */
     private Vector3f planeZBasis = null;
     /**
@@ -145,7 +148,7 @@ public class SimplePolygon3f
     /**
      * Calculate (or look up) the centroid of the polygon.
      *
-     * @return new vector with world coordinates of the centroid
+     * @return a new vector with coordinates of the centroid
      */
     public Vector3f centroid() {
         if (centroid == null) {
@@ -264,12 +267,10 @@ public class SimplePolygon3f
     // Locus3f methods
 
     /**
-     * Test whether this polygon contains a specific point.
+     * Test whether this polygon contains a specific location.
      *
-     * TODO implement ray-casting algorithm?
-     *
-     * @param point coordinates of the point (not null, unaffected)
-     * @return true if the point is in the polygon's interior, false otherwise
+     * @param location coordinates of location to test (not null, unaffected)
+     * @return true if location is in this polygon, false otherwise
      */
     @Override
     public boolean contains(Vector3f point) {
@@ -279,7 +280,12 @@ public class SimplePolygon3f
             return false;
         }
 
-        int closestSide = findSide(point, null);
+        Vector3f closestLocation = new Vector3f();
+        int closestSide = findSide(point, closestLocation);
+        assert closestSide >= 0 : closestSide;
+        if (MyVector3f.doCoincide(point, closestLocation, tolerance2)) {
+            return true;
+        }
 
         Vector3f corner1 = cornerLocations[closestSide];
         Vector3f pointOffset = point.subtract(corner1);
@@ -288,7 +294,7 @@ public class SimplePolygon3f
         Vector3f sideOffset = corner2.subtract(corner1);
         Vector3f cross = sideOffset.cross(pointOffset);
         double crossDot = cross.dot(planeNormal);
-        if (crossDot > 0f) {
+        if (crossDot >= 0.0) {
             return true;
         } else {
             return false;
@@ -296,9 +302,11 @@ public class SimplePolygon3f
     }
 
     /**
-     * Quickly provide a representative point for the polygon.
+     * Quickly provide a representative point for the polygon. The point need
+     * not be contained in this polygon, but it should be relatively close to
+     * all points that are.
      *
-     * @return new vector
+     * @return a new vector
      */
     @Override
     public Vector3f representative() {
@@ -307,11 +315,50 @@ public class SimplePolygon3f
     }
 
     /**
-     * Find the shortest path between two points in this polygon. TODO obstacles
+     * Score a location based on how well it "fits" into this polygon.
      *
-     * @param startingPoint world coordinates (contained in polygon, unaffected)
-     * @param goal world coordinates (contained in polygon, unaffected)
-     * @return a new path, or null if none found
+     * @return score value (more positive &rarr; better)
+     */
+    @Override
+    public double score(Vector3f location) {
+        Validate.nonNull(location, "location");
+
+        if (planeConstant == null) {
+            setPlane();
+        }
+
+        float pseudoDistance = planeNormal.dot(location) + planeConstant;
+        double squaredPD = pseudoDistance * pseudoDistance;
+
+        if (squaredPD > tolerance2) {
+            Vector3f rejection = planeNormal.mult(-pseudoDistance);
+            Vector3f projection = location.subtract(rejection);
+            assert inPlane(projection) : projection;
+            double result = score(projection);
+            result += squaredPD;
+            return result;
+        }
+
+        Vector3f closestLocation = new Vector3f();
+        int sideIndex = findSide(location, closestLocation);
+        assert sideIndex >= 0 : sideIndex;
+        double distanceSquared = MyVector3f.distanceSquared(
+                location, closestLocation);
+
+        if (contains(location)) {
+            return distanceSquared;
+        } else {
+            return -distanceSquared;
+        }
+    }
+
+    /**
+     * Find a path between two locations in this polygon without leaving the
+     * polygon. Short paths are preferred over long ones.
+     *
+     * @param startLocation coordinates (contained in polygon, unaffected)
+     * @param goalLocation coordinates (contained in polygon, unaffected)
+     * @return a new path spline, or null if none found
      */
     @Override
     public Spline3f shortestPath(Vector3f startingPoint, Vector3f goal) {
