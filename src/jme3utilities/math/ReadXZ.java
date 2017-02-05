@@ -30,8 +30,8 @@ import com.jme3.math.Vector3f;
 
 /**
  * Single-precision vector with no 'y' coordinate, used to represent horizontal
- * locations, offsets, directions, and rotations. For viewport coordinates, use
- * Vector2f instead.
+ * locations, offsets, orientations, directions, rotations, and extents. For
+ * viewport coordinates, use {@link com.jme3.math.Vector2f} instead.
  * <p>
  * By convention, +X is north/forward and +Z is east/right.
  *
@@ -42,13 +42,13 @@ public interface ReadXZ {
      * Add to (translate) this vector.
      *
      * @param increment vector to be added to this vector (not null)
-     * @return the vector sum
-     * @see com.jme3.math.Vector3f#add(Vector3f)
+     * @return a sum vector
+     * @see com.jme3.math.Vector3f#add(com.jme3.math.Vector3f)
      */
     ReadXZ add(ReadXZ increment);
 
     /**
-     * Compute the azimuth of this vector. Note: the directional convention is
+     * Calculate the azimuth of this vector. Note: the directional convention is
      * left-handed. If this vector is zero, return zero.
      *
      * @return angle in radians (&gt;-Pi, &le;Pi), measured CW from north (the
@@ -91,19 +91,31 @@ public interface ReadXZ {
     ReadXZ clampLength(float radius);
 
     /**
-     * Compute the (left-handed) cross product of this vector with another. For
-     * example, north.cross(east) = +1 and east.cross(north) = -1.
+     * Calculate the cosine of the angle between this vector and another. This
+     * is used to compare the similarity of direction vectors. Returns a
+     * double-precision value for precise comparisons.
+     *
+     * @param otherVector the other vector (not null)
+     * @return the cosine of the angle (&ge;-1, &le;1) or 1 if either vector is
+     * zero
+     * @see com.jme3.math.Vector3f#angleBetween(com.jme3.math.Vector3f)
+     */
+    double cosineAngleBetween(ReadXZ otherVector);
+
+    /**
+     * Calculate the (left-handed) cross product of this vector with another.
+     * For example, north.cross(east) = +1 and east.cross(north) = -1.
      *
      * @param otherVector the other vector (not null)
      * @return the left-handed cross product
-     * @see com.jme3.math.Vector3f#cross(Vector3f)
+     * @see com.jme3.math.Vector3f#cross(com.jme3.math.Vector3f)
      */
     float cross(ReadXZ otherVector);
 
     /**
-     * Compute a signed directional error of this vector with respect to a goal.
-     * The result is positive if the goal is to the right and negative if the
-     * goal is to the left.
+     * Calculate a signed directional error of this vector with respect to a
+     * goal. The result is positive if the goal is to the right and negative if
+     * the goal is to the left.
      *
      * @param directionGoal goal direction (not null, not zero)
      * @return the sine of the angle from the goal, or +/-1 if that angle's
@@ -122,11 +134,11 @@ public interface ReadXZ {
     ReadXZ divide(float scalar);
 
     /**
-     * Compute the dot (scalar) product of this vector with another.
+     * Calculate the dot (scalar) product of this vector with another.
      *
      * @param otherVector other vector (not null)
      * @return the dot product
-     * @see MyVector3f#dot(Vector3f, Vector3f)
+     * @see MyVector3f#dot(com.jme3.math.Vector3f, com.jme3.math.Vector3f)
      */
     double dot(ReadXZ otherVector);
 
@@ -164,21 +176,22 @@ public interface ReadXZ {
     ReadXZ interpolate(ReadXZ otherVector, float otherFraction);
 
     /**
-     * Test this vector to see if it's in the 1st quadrant.
+     * Test whether this vector is in the 1st quadrant.
      *
      * @return true if both components are &ge;0, false otherwise
      */
     boolean isFirstQuadrant();
 
     /**
-     * Test this vector to see if it's a zero vector.
+     * Test whether this vector is a zero vector.
      *
      * @return true if both components are zero, false otherwise
+     * @see MyVector3f#isZero(com.jme3.math.Vector3f)
      */
     boolean isZero();
 
     /**
-     * Compute the length (or magnitude or norm) of this vector.
+     * Calculate the length (or magnitude or norm) of this vector.
      *
      * @return the length (&ge;0)
      * @see com.jme3.math.Vector3f#length()
@@ -186,8 +199,9 @@ public interface ReadXZ {
     float length();
 
     /**
-     * Compute the squared length of this vector. Returns a double-precision
-     * value for precise comparisons.
+     * Calculate the squared length of this vector. This is used to compare the
+     * lengths of vectors. Returns a double-precision value for precise
+     * comparisons.
      *
      * @return the squared length (&ge;0)
      * @see MyVector3f#lengthSquared(Vector3f)
@@ -208,6 +222,7 @@ public interface ReadXZ {
      * @param multiplier scaling factor
      * @return a vector 'scalar' times longer than this one, with same direction
      * if multiplier&gt;0, opposite direction if multiplier&lt;0
+     * @see com.jme3.math.Vector3f#mult(float)
      */
     ReadXZ mult(float multiplier);
 
@@ -218,12 +233,15 @@ public interface ReadXZ {
      *
      * @param multiplier rotated/scaled result for the current north (not null)
      * @return the complex product
+     *
+     * @see #cross(jme3utilities.math.ReadXZ), #dot(jme3utilities.math.ReadXZ),
+     * #scale(jme3utilities.math.ReadXZ)
      */
     ReadXZ mult(ReadXZ multiplier);
 
     /**
      * Negate this vector (or reverse its direction or reflect it in the
-     * origin).
+     * origin). This is equivalent to #mult(-1f)
      *
      * @return a vector with same magnitude and opposite direction
      * @see com.jme3.math.Vector3f#negate()
@@ -252,8 +270,8 @@ public interface ReadXZ {
      * Scale this vector by another (non-uniform scaling).
      *
      * @param multiplier scaled result for the current north (not null)
-     * @return scaled vector
-     * @see com.jme3.math.Vector3f#mult(Vector3f)
+     * @return a scaled vector
+     * @see com.jme3.math.Vector3f#mult(com.jme3.math.Vector3f)
      */
     ReadXZ scale(ReadXZ multiplier);
 
@@ -262,7 +280,7 @@ public interface ReadXZ {
      *
      * @param decrement vector to be subtracted from this vector (not null)
      * @return a vector equal to the difference of the two vectors
-     * @see com.jme3.math.Vector3f#subtract(Vector3f)
+     * @see com.jme3.math.Vector3f#subtract(com.jme3.math.Vector3f)
      */
     ReadXZ subtract(ReadXZ decrement);
 
