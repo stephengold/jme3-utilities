@@ -121,7 +121,7 @@ final public class Noise {
      * Generate a uniformly distributed, pseudo-random unit vector.
      *
      * @param generator (not null)
-     * @result a new unit vector
+     * @return a new unit vector
      */
     public static Vector3f nextVector3f(Random generator) {
         Validate.nonNull(generator, "generator");
@@ -146,7 +146,7 @@ final public class Noise {
      *
      * @param input input vector (not null, not zero, unaffected)
      * @param generator (not null)
-     * @result a new unit vector
+     * @return a new unit vector
      */
     public static Vector3f ortho(Vector3f input, Random generator) {
         Validate.nonZero(input, "input");

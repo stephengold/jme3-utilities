@@ -320,7 +320,7 @@ public class Shell3f implements Locus3f {
     /**
      * Alter the orientation of this shell.
      *
-     * @param newRotation left-multiply to convert UVW (local) coordinates to
+     * @param newOrientation left-multiply to convert UVW (local) coordinates to
      * XYZ (world) coordinates (unaffected) or null to skip rotation
      */
     public void setOrientation(Quaternion newOrientation) {
@@ -404,12 +404,13 @@ public class Shell3f implements Locus3f {
      * @return a new path spline, or null if none found
      */
     @Override
-    public Spline3f shortestPath(Vector3f startingPoint, Vector3f goal) {
-        assert contains(startingPoint) : startingPoint;
-        assert contains(goal) : goal;
+    public Spline3f shortestPath(Vector3f startLocation,
+            Vector3f goalLocation) {
+        assert contains(startLocation) : startLocation;
+        assert contains(goalLocation) : goalLocation;
 
         assert isConvex() : innerRSquared; // TODO
-        Vector3f[] joints = {startingPoint, goal};
+        Vector3f[] joints = {startLocation, goalLocation};
         Spline3f result = new LinearSpline3f(joints);
 
         return result;

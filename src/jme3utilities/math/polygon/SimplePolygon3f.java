@@ -273,22 +273,22 @@ public class SimplePolygon3f
      * @return true if location is in this polygon, false otherwise
      */
     @Override
-    public boolean contains(Vector3f point) {
-        Validate.nonNull(point, "point");
+    public boolean contains(Vector3f location) {
+        Validate.nonNull(location, "location");
 
-        if (!inPlane(point)) {
+        if (!inPlane(location)) {
             return false;
         }
 
         Vector3f closestLocation = new Vector3f();
-        int closestSide = findSide(point, closestLocation);
+        int closestSide = findSide(location, closestLocation);
         assert closestSide >= 0 : closestSide;
-        if (MyVector3f.doCoincide(point, closestLocation, tolerance2)) {
+        if (MyVector3f.doCoincide(location, closestLocation, tolerance2)) {
             return true;
         }
 
         Vector3f corner1 = cornerLocations[closestSide];
-        Vector3f pointOffset = point.subtract(corner1);
+        Vector3f pointOffset = location.subtract(corner1);
         int next = nextIndex(closestSide);
         Vector3f corner2 = cornerLocations[next];
         Vector3f sideOffset = corner2.subtract(corner1);
@@ -361,12 +361,13 @@ public class SimplePolygon3f
      * @return a new path spline, or null if none found
      */
     @Override
-    public Spline3f shortestPath(Vector3f startingPoint, Vector3f goal) {
-        assert contains(startingPoint) : startingPoint;
-        assert contains(goal) : goal;
+    public Spline3f shortestPath(Vector3f startLocation,
+            Vector3f goalLocation) {
+        assert contains(startLocation) : startLocation;
+        assert contains(goalLocation) : goalLocation;
 
         assert isConvex(); // TODO
-        Vector3f[] joints = {startingPoint, goal};
+        Vector3f[] joints = {startLocation, goalLocation};
         Spline3f result = new LinearSpline3f(joints);
 
         return result;
