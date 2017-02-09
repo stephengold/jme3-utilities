@@ -379,9 +379,10 @@ public class TestPolygon3f {
         }
         System.out.printf(" %s planar.%n", poly.isPlanar() ? "IS" : "is NOT");
         /*
-         * Calculate the perimeter, shortest/longest side.
+         * Calculate the perimeter, diameter, and shortest/longest side.
          */
         System.out.printf(" The perimeter is %f wu.%n", poly.perimeter());
+        System.out.printf(" The diameter is %f wu.%n", poly.diameter());
         System.out.print(" The shortest side is ");
         int shortI = poly.findShortest();
         if (shortI == -1) {
