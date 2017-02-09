@@ -42,13 +42,11 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * Custom mesh for a circle or regular polygon in the XZ plane, with radius=1,
- * centered at the origin.
+ * Custom mesh for a circle or polygon.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class LoopMesh
-        extends Mesh {
+public class LoopMesh extends Mesh {
     // *************************************************************************
     // constants
 
@@ -59,11 +57,11 @@ public class LoopMesh
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(LoopMesh.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            LoopMesh.class.getName());
     // *************************************************************************
     // fields
-    
+
     /**
      * total number of vertices (&ge;3)
      */
@@ -72,13 +70,15 @@ public class LoopMesh
     // constructors
 
     /**
-     * No-argument constructor for serialization purposes only. Do not use!
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
      */
     public LoopMesh() {
     }
 
     /**
-     * Instantiate a loop with a specified number of vertices.
+     * Instantiate a regular polygon (or circle) in the XZ plane, centered at
+     * the origin, with radius=1 and the specified number of vertices.
      *
      * @param vertexCount (&ge;3)
      */
@@ -88,7 +88,40 @@ public class LoopMesh
 
         this.vertexCount = vertexCount;
         setMode(Mode.Lines);
-        updateAll();
+        updateCoordinates();
+        
+        updateIndices();
+        updateBound();
+        setStatic();
+    }
+
+    /**
+     * Instantiate a polygon from an array of corners.
+     *
+     * @param cornerArray locations of the corners, in sequence (not null or
+     * containing any nulls, length&ge;3, unaffected)
+     */
+    public LoopMesh(Vector3f[] cornerArray) {
+        Validate.nonNull(cornerArray, "corner list");
+        vertexCount = cornerArray.length;
+        Validate.inRange(vertexCount, "length of corner list",
+                3, Integer.MAX_VALUE);
+        for (int index = 0; index < vertexCount; index++) {
+            String description = String.format("cornerArray[%d]", index);
+            Validate.nonNull(cornerArray[index], description);
+        }
+
+        setMode(Mode.Lines);
+        Vector3f[] locationArray = new Vector3f[vertexCount];
+        System.arraycopy(cornerArray, 0, locationArray, 0, vertexCount);
+        /*
+         * Allocate and assign a buffer.
+         */
+        FloatBuffer locBuffer = BufferUtils.createFloatBuffer(locationArray);
+        setBuffer(VertexBuffer.Type.Position, 3, locBuffer);
+
+        updateIndices();
+        updateBound();
         setStatic();
     }
     // *************************************************************************
@@ -127,23 +160,9 @@ public class LoopMesh
     // private methods
 
     /**
-     * Rebuild this mesh after a parameter change.
-     */
-    private void updateAll() {
-        /*
-         * Update each buffer.
-         */
-        updateCoordinates();
-        updateIndices();
-        /*
-         * Update the bounds of the mesh.
-         */
-        updateBound();
-    }
-
-    /**
-     * Update the buffered locations and texture coordinates of each vertex in
-     * this mesh.
+     * Update the buffered locations for a regular polygon (or circle) in the XZ
+     * plane, centered at the origin, with radius=1 and the specified number of
+     * vertices.
      */
     private void updateCoordinates() {
         /*
@@ -169,7 +188,7 @@ public class LoopMesh
     }
 
     /**
-     * Update the buffered indices of each edge in this mesh.
+     * Update the buffered indices for a new vertex count.
      */
     private void updateIndices() {
         /*
