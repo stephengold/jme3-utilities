@@ -33,14 +33,16 @@ import jme3utilities.Validate;
 
 /**
  * Immutable single-precision vector with no 'y' coordinate, used to represent
- * horizontal locations, offsets, directions, and rotations. For viewport
+ *  horizontal
+ * locations, offsets, orientations, directions, rotations, and extents. For viewport
  * coordinates, use Vector2f instead.
  * <p>
  * By convention, +X is north/forward and +Z is east/right.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class VectorXZ implements Comparable<VectorXZ> {
+public class VectorXZ
+        implements Comparable<ReadXZ>, ReadXZ {
     // *************************************************************************
     // constants
 
@@ -157,13 +159,40 @@ public class VectorXZ implements Comparable<VectorXZ> {
     // new methods exposed
 
     /**
+     * Validate a non-zero VectorXZ as a method argument.
+     *
+     * @param vector vector to validate (not null, non-zero)
+     * @param description textual description of the vector
+     * @throws IllegalArgumentException if the vector is zero
+     * @see jme3utilities.Validate#nonZero(Vector3f, String)
+     */
+    public static void validateNonZero(ReadXZ vector, String description) {
+        Validate.nonNull(vector, description);
+
+        if (vector.isZero()) {
+            String what;
+            if (description == null) {
+                what = "VectorXZ argument";
+            } else {
+                what = description;
+            }
+            String message;
+            message = String.format("%s must not be zero.", what);
+            throw new IllegalArgumentException(message);
+        }
+    }
+    // *************************************************************************
+    // ReadXZ methods
+
+    /**
      * Add to (translate) this vector.
      *
      * @param increment vector to be added to this vector (not null)
-     * @return the vector sum
-     * @see com.jme3.math.Vector3f#add(Vector3f)
+     * @return a sum vector
+     * @see com.jme3.math.Vector3f#add(com.jme3.math.Vector3f)
      */
-    public VectorXZ add(VectorXZ increment) {
+    @Override
+    public ReadXZ add(ReadXZ increment) {
         float sumX = x + increment.getX();
         float sumZ = z + increment.getZ();
 
@@ -176,12 +205,13 @@ public class VectorXZ implements Comparable<VectorXZ> {
     }
 
     /**
-     * Compute the azimuth of this vector. Note: the directional convention is
+     * Calculate the azimuth of this vector. Note: the directional convention is
      * left-handed. If this vector is zero, return zero.
      *
      * @return angle in radians (&gt;-Pi, &le;Pi), measured CW from north (the
      * +X direction)
      */
+    @Override
     public float azimuth() {
         float result = (float) Math.atan2(z, x);
         return result;
@@ -193,7 +223,8 @@ public class VectorXZ implements Comparable<VectorXZ> {
      *
      * @return a unit vector (four possible values) or a zero vector
      */
-    public VectorXZ cardinalize() {
+    @Override
+    public ReadXZ cardinalize() {
         if (isZero()) {
             return zero;
         }
@@ -222,7 +253,8 @@ public class VectorXZ implements Comparable<VectorXZ> {
      * @param maxAbsAngle tolerance angle in radians (&ge;0, &le;Pi)
      * @return clamped vector with same length
      */
-    public VectorXZ clampDirection(float maxAbsAngle) {
+    @Override
+    public ReadXZ clampDirection(float maxAbsAngle) {
         Validate.inRange(maxAbsAngle, "angle", 0f, FastMath.PI);
 
         if (x >= 0) {
@@ -254,7 +286,8 @@ public class VectorXZ implements Comparable<VectorXZ> {
      * @param maxZ radius of the ellipse in the Z-direction (&ge;0)
      * @return clamped vector with the same direction
      */
-    public VectorXZ clampElliptical(float maxX, float maxZ) {
+    @Override
+    public ReadXZ clampElliptical(float maxX, float maxZ) {
         Validate.nonNegative(maxX, "maximum X");
         Validate.nonNegative(maxZ, "maximum Z");
 
@@ -295,7 +328,8 @@ public class VectorXZ implements Comparable<VectorXZ> {
      * @return clamped vector with the same direction
      * @see MyMath#clamp(float, float)
      */
-    public VectorXZ clampLength(float radius) {
+    @Override
+    public ReadXZ clampLength(float radius) {
         Validate.nonNegative(radius, "radius");
 
         if (isZero()) {
@@ -319,28 +353,63 @@ public class VectorXZ implements Comparable<VectorXZ> {
     }
 
     /**
-     * Compute the left-handed cross product of this vector with another. For
-     * example, north.cross(east) = +1 and east.cross(north) = -1.
+     * Calculate the cosine of the angle between this vector and another. This
+     * is used to compare the similarity of direction vectors. Returns a
+     * double-precision value for precise comparisons.
+     *
+     * @param otherVector the other vector (not null)
+     * @return the cosine of the angle (&ge;-1, &le;1) or 1 if either vector is
+     * zero
+     * @see com.jme3.math.Vector3f#angleBetween(com.jme3.math.Vector3f)
+     */
+    @Override
+    public double cosineAngleBetween(ReadXZ otherVector) {
+        double x2 = otherVector.getX();
+        double z2 = otherVector.getZ();
+        double otherLengthSquared = x2 * x2 + z2 * z2;
+
+        double x1 = x;
+        double z1 = z;
+        double lengthSquared = x1 * x1 + z1 * z1;
+
+        double lsProduct = lengthSquared * otherLengthSquared;
+        if (lsProduct == 0.0) {
+            return 1.0;
+        }
+
+        double dotProduct = x1 * x2 + z1 * z2;
+        double cosine = dotProduct / Math.sqrt(lsProduct);
+
+        assert cosine >= -1.0 : cosine;
+        assert cosine <= 1.0 : cosine;
+        return cosine;
+    }
+
+    /**
+     * Calculate the (left-handed) cross product of this vector with another.
+     * For example, north.cross(east) = +1 and east.cross(north) = -1.
      *
      * @param otherVector the other vector (not null)
      * @return the left-handed cross product
-     * @see com.jme3.math.Vector3f#cross(Vector3f)
+     * @see com.jme3.math.Vector3f#cross(com.jme3.math.Vector3f)
      */
-    public float cross(VectorXZ otherVector) {
+    @Override
+    public float cross(ReadXZ otherVector) {
         float product = x * otherVector.getZ() - z * otherVector.getX();
         return product;
     }
 
     /**
-     * Compute a signed directional error of this vector with respect to a goal.
-     * The result is positive if the goal is to the right and negative if the
-     * goal is to the left.
+     * Calculate a signed directional error of this vector with respect to a
+     * goal. The result is positive if the goal is to the right and negative if
+     * the goal is to the left.
      *
-     * @param directionGoal goal direction (length&gt;0)
+     * @param directionGoal goal direction (not null, not zero)
      * @return the sine of the angle from the goal, or +/-1 if that angle's
      * magnitude exceeds 90 degrees
      */
-    public float directionError(VectorXZ directionGoal) {
+    @Override
+    public float directionError(ReadXZ directionGoal) {
         validateNonZero(this, "this direction");
         validateNonZero(directionGoal, "goal direction");
 
@@ -366,10 +435,12 @@ public class VectorXZ implements Comparable<VectorXZ> {
      * Divide this vector by a scalar.
      *
      * @param scalar scaling factor (not zero)
-     * @return a vector 'scalar' times shorter than this one
+     * @return a vector 'scalar' times shorter than this one, with same
+     * direction if scalar&gt;0, opposite direction if scalar&lt;0
      * @see com.jme3.math.Vector3f#divide(float)
      */
-    public VectorXZ divide(float scalar) {
+    @Override
+    public ReadXZ divide(float scalar) {
         Validate.nonZero(scalar, "scalar");
 
         if (scalar == 1f) {
@@ -383,13 +454,14 @@ public class VectorXZ implements Comparable<VectorXZ> {
     }
 
     /**
-     * Compute the dot (scalar) product of this vector with another.
+     * Calculate the dot product of this vector with another.
      *
      * @param otherVector other vector (not null)
      * @return the dot product
-     * @see MyVector3f#dot(Vector3f, Vector3f)
+     * @see MyVector3f#dot(com.jme3.math.Vector3f, com.jme3.math.Vector3f)
      */
-    public double dot(VectorXZ otherVector) {
+    @Override
+    public double dot(ReadXZ otherVector) {
         double x1 = x;
         double x2 = otherVector.getX();
         double z1 = z;
@@ -404,7 +476,8 @@ public class VectorXZ implements Comparable<VectorXZ> {
      *
      * @return a mirrored vector with the same length, both components &ge;0
      */
-    public VectorXZ firstQuadrant() {
+    @Override
+    public ReadXZ firstQuadrant() {
         if (isFirstQuadrant()) {
             return this;
         }
@@ -418,9 +491,10 @@ public class VectorXZ implements Comparable<VectorXZ> {
     /**
      * Read the X-component of this vector.
      *
-     * @return X-component
+     * @return the X-component
      * @see com.jme3.math.Vector3f#getX()
      */
+    @Override
     public float getX() {
         return x;
     }
@@ -428,9 +502,10 @@ public class VectorXZ implements Comparable<VectorXZ> {
     /**
      * Read the Z-component of this vector.
      *
-     * @return Z-component
+     * @return the Z-component
      * @see com.jme3.math.Vector3f#getZ()
      */
+    @Override
     public float getZ() {
         return z;
     }
@@ -443,7 +518,8 @@ public class VectorXZ implements Comparable<VectorXZ> {
      * &le;1, 0 &rarr; purely this, 1 &rarr; purely the other)
      * @return a blended vector
      */
-    public VectorXZ interpolate(VectorXZ otherVector, float otherFraction) {
+    @Override
+    public ReadXZ interpolate(ReadXZ otherVector, float otherFraction) {
         float thisFraction = 1f - otherFraction;
         float xBlend = x * thisFraction + otherVector.getX() * otherFraction;
         float zBlend = z * thisFraction + otherVector.getZ() * otherFraction;
@@ -457,43 +533,49 @@ public class VectorXZ implements Comparable<VectorXZ> {
     }
 
     /**
-     * Test this vector to see if it's in the 1st quadrant.
+     * Test whether this vector is in the 1st quadrant.
      *
      * @return true if both components are &ge;0, false otherwise
      */
+    @Override
     public boolean isFirstQuadrant() {
         boolean result = (x >= 0f && z >= 0f);
         return result;
     }
 
     /**
-     * Test this vector to see if it's the zero vector.
+     * Test whether this vector is a zero vector.
      *
      * @return true if both components are zero, false otherwise
+     * @see MyVector3f#isZero(com.jme3.math.Vector3f)
      */
+    @Override
     public boolean isZero() {
         boolean result = (x == 0f && z == 0f);
         return result;
     }
 
     /**
-     * Compute the length (or magnitude or norm) of this vector.
+     * Calculate the length (or magnitude or norm) of this vector.
      *
      * @return the length (&ge;0)
      * @see com.jme3.math.Vector3f#length()
      */
+    @Override
     public float length() {
         float result = MyMath.hypotenuse(x, z);
         return result;
     }
 
     /**
-     * Compute the squared length of this vector. Returns a double-precision
-     * value for precise comparisons.
+     * Calculate the squared length of this vector. This is used to compare the
+     * lengths of vectors. Returns a double-precision value for precise
+     * comparisons.
      *
      * @return the squared length (&ge;0)
      * @see MyVector3f#lengthSquared(Vector3f)
      */
+    @Override
     public double lengthSquared() {
         double result = MyMath.sumOfSquares(x, z);
         return result;
@@ -505,7 +587,8 @@ public class VectorXZ implements Comparable<VectorXZ> {
      *
      * @return a mirrored vector with the same length
      */
-    public VectorXZ mirrorZ() {
+    @Override
+    public ReadXZ mirrorZ() {
         if (z == 0f) {
             return this;
         }
@@ -517,28 +600,59 @@ public class VectorXZ implements Comparable<VectorXZ> {
     /**
      * Scale this vector by a scalar.
      *
-     * @param scalar scaling factor
-     * @return a vector 'scalar' times longer than this one
+     * @param multiplier scaling factor
+     * @return a vector 'scalar' times longer than this one, with same direction
+     * if multiplier&gt;0, opposite direction if multiplier&lt;0
+     * @see com.jme3.math.Vector3f#mult(float)
      */
-    public VectorXZ mult(float scalar) {
-        if (scalar == 1f) {
+    @Override
+    public ReadXZ mult(float multiplier) {
+        if (multiplier == 1f) {
             return this;
         }
-        float scaledX = x * scalar;
-        float scaledZ = z * scalar;
+        float scaledX = x * multiplier;
+        float scaledZ = z * multiplier;
         VectorXZ result = new VectorXZ(scaledX, scaledZ);
 
         return result;
     }
 
     /**
+     * Multiply this vector by another (complex product or rotate-and-scale).
+     * This is NOT analogous to {@link com.jme3.math.Vector3f#mult(Vector3f)},
+     * which performs non-uniform scaling.
+     *
+     * @param multiplier rotated/scaled result for the current north (not null)
+     * @return the complex product
+     *
+     * @see #cross(jme3utilities.math.ReadXZ)
+     * @see #dot(jme3utilities.math.ReadXZ)
+     * @see #scale(jme3utilities.math.ReadXZ)
+     */
+    @Override
+    public ReadXZ mult(ReadXZ multiplier) {
+        float cosine = multiplier.getX();
+        float sine = multiplier.getZ();
+        float newX = cosine * x - sine * z;
+        float newZ = cosine * z + sine * x;
+
+        if (newX == x && newZ == z) {
+            return this;
+        }
+        VectorXZ result = new VectorXZ(newX, newZ);
+
+        return result;
+    }
+
+    /**
      * Negate this vector (or reverse its direction or reflect it in the
-     * origin).
+     * origin). This is equivalent to #mult(-1f)
      *
      * @return a vector with same magnitude and opposite direction
      * @see com.jme3.math.Vector3f#negate()
      */
-    public VectorXZ negate() {
+    @Override
+    public ReadXZ negate() {
         if (isZero()) {
             return zero;
         }
@@ -555,7 +669,8 @@ public class VectorXZ implements Comparable<VectorXZ> {
      * @return a unit vector (with the same direction) or a zero vector
      * @see com.jme3.math.Vector3f#normalize()
      */
-    public VectorXZ normalize() {
+    @Override
+    public ReadXZ normalize() {
         if (isZero()) {
             logger.info("Normalizing a zero vector.");
             return zero;
@@ -585,7 +700,8 @@ public class VectorXZ implements Comparable<VectorXZ> {
      * @param radians clockwise (LH) angle of rotation in radians
      * @return a vector with the same length
      */
-    public VectorXZ rotate(float radians) {
+    @Override
+    public ReadXZ rotate(float radians) {
         if (radians == 0f) {
             return this;
         }
@@ -604,16 +720,16 @@ public class VectorXZ implements Comparable<VectorXZ> {
     }
 
     /**
-     * Rotate and scale this vector by another vector (complex product).
+     * Scale this vector by another (non-uniform scaling).
      *
-     * @param direction rotated/scaled vector for the current north (not null)
-     * @return the complex product
+     * @param multiplier scaled result for the current north (not null)
+     * @return a scaled vector
+     * @see com.jme3.math.Vector3f#mult(com.jme3.math.Vector3f)
      */
-    public VectorXZ rotate(VectorXZ direction) {
-        float cosine = direction.getX();
-        float sine = direction.getZ();
-        float newX = cosine * x - sine * z;
-        float newZ = cosine * z + sine * x;
+    @Override
+    public ReadXZ scale(ReadXZ multiplier) {
+        float newX = x * multiplier.getX();
+        float newZ = z * multiplier.getZ();
 
         if (newX == x && newZ == z) {
             return this;
@@ -628,9 +744,10 @@ public class VectorXZ implements Comparable<VectorXZ> {
      *
      * @param decrement vector to be subtracted from this vector (not null)
      * @return a vector equal to the difference of the two vectors
-     * @see com.jme3.math.Vector3f#subtract(Vector3f)
+     * @see com.jme3.math.Vector3f#subtract(com.jme3.math.Vector3f)
      */
-    public VectorXZ subtract(VectorXZ decrement) {
+    @Override
+    public ReadXZ subtract(ReadXZ decrement) {
         float newX = x - decrement.getX();
         float newZ = z - decrement.getZ();
 
@@ -646,8 +763,9 @@ public class VectorXZ implements Comparable<VectorXZ> {
      * Treating this vector as a rotation (from north), generate an equivalent
      * quaternion.
      *
-     * @return new quaternion
+     * @return a new quaternion
      */
+    @Override
     public Quaternion toQuaternion() {
         Quaternion result = new Quaternion();
         /*
@@ -662,10 +780,11 @@ public class VectorXZ implements Comparable<VectorXZ> {
     }
 
     /**
-     * Create a 3D equivalent of this vector.
+     * Create an equivalent 3D vector.
      *
-     * @return new 3D vector with y=0
+     * @return a new 3D vector with y=0
      */
+    @Override
     public Vector3f toVector3f() {
         Vector3f result = new Vector3f(x, 0f, z);
         return result;
@@ -677,33 +796,10 @@ public class VectorXZ implements Comparable<VectorXZ> {
      * @param y y-coordinate
      * @return a new 3D vector
      */
+    @Override
     public Vector3f toVector3f(float y) {
         Vector3f result = new Vector3f(x, y, z);
         return result;
-    }
-
-    /**
-     * Validate a non-zero VectorXZ as a method argument.
-     *
-     * @param vector vector to validate (not null, non-zero)
-     * @param description textual description of the vector
-     * @throws IllegalArgumentException if the vector is zero
-     * @see jme3utilities.Validate#nonZero(Vector3f, String)
-     */
-    public static void validateNonZero(VectorXZ vector, String description) {
-        Validate.nonNull(vector, description);
-
-        if (vector.isZero()) {
-            String what;
-            if (description == null) {
-                what = "VectorXZ argument";
-            } else {
-                what = description;
-            }
-            String message;
-            message = String.format("%s must not be zero.", what);
-            throw new IllegalArgumentException(message);
-        }
     }
     // *************************************************************************
     // Comparable methods
@@ -717,7 +813,7 @@ public class VectorXZ implements Comparable<VectorXZ> {
      * before otherVector; positive if this comes after otherVector
      */
     @Override
-    public int compareTo(VectorXZ otherVector) {
+    public int compareTo(ReadXZ otherVector) {
         int result;
         if (x != otherVector.getX()) {
             result = Float.compare(x, otherVector.getX());
@@ -745,8 +841,8 @@ public class VectorXZ implements Comparable<VectorXZ> {
     public boolean equals(Object otherObject) {
         if (this == otherObject) {
             return true;
-        } else if (otherObject instanceof VectorXZ) {
-            VectorXZ otherVector = (VectorXZ) otherObject;
+        } else if (otherObject instanceof ReadXZ) {
+            ReadXZ otherVector = (ReadXZ) otherObject;
             return otherVector.getX() == x && otherVector.getZ() == z;
         }
         return false;
@@ -806,7 +902,7 @@ public class VectorXZ implements Comparable<VectorXZ> {
 
             Vector3f v3 = new Vector3f(1f, 2f, 3f);
             VectorXZ vxz = new VectorXZ(v3);
-            VectorXZ r1 = vin.normalize().rotate(vxz);
+            ReadXZ r1 = vin.normalize().mult(vxz);
 
             Quaternion q1 = vin.toQuaternion();
             VectorXZ r2 = new VectorXZ(q1.mult(v3));

@@ -243,11 +243,11 @@ public class MyVector3f {
      * @param offset difference of world coordinates (not null, unaffected)
      * @return a unit vector or a zero vector
      */
-    public static VectorXZ horizontalDirection(Vector3f offset) {
+    public static ReadXZ horizontalDirection(Vector3f offset) {
         Validate.nonNull(offset, "offset");
 
         VectorXZ horizontalOffset = new VectorXZ(offset);
-        VectorXZ result = horizontalOffset.normalize();
+        ReadXZ result = horizontalOffset.normalize();
 
         return result;
     }
