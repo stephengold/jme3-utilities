@@ -229,7 +229,7 @@ public class NavGraph {
      * @param point (not null, unaffected)
      * @return pre-existing member vertex, or null if none found
      */
-    public NavVertex find(Vector3f point) {
+    public NavVertex findContains(Vector3f point) {
         Validate.nonNull(point, "point");
         /*
          * Test the closest vertex first.
@@ -240,21 +240,27 @@ public class NavGraph {
             return result;
         }
         /*
-         * Test the next closest, and so on.
+         * Test the next closest, and so on.  TODO sort
          */
         Collection<NavVertex> remainingVertices;
-        remainingVertices = new HashSet<>(allVertices);
-        remainingVertices.remove(result);
+        remainingVertices = new HashSet<>(vertices.size());
+        for (NavVertex v : vertices.values()) {
+            remainingVertices.add(v);
+        }
+        boolean success = remainingVertices.remove(result);
+        assert success;
 
         while (!remainingVertices.isEmpty()) {
             result = findNearest(remainingVertices, point);
             assert result != null;
+            assert remainingVertices.contains(result);
 
             if (result.getLocus().contains(point)) {
                 return result;
             }
 
-            remainingVertices.remove(result);
+            success = remainingVertices.remove(result);
+            assert success;
         }
 
         return null;
@@ -357,11 +363,36 @@ public class NavGraph {
     }
 
     /**
-     * Find the vertex in a specified subset which is nearest to a specified
+     * Find the vertex nearest to a specified point.
+     *
+     * @param point coordinate vector (not null, unaffected)
+     * @return pre-existing member vertex, or null if none were specified
+     */
+    public NavVertex findNearest(Vector3f point) {
+        Validate.nonNull(point, "point");
+
+        NavVertex result = null;
+        double nearest = Double.POSITIVE_INFINITY;
+
+        for (NavVertex vertex : vertices.values()) {
+            Locus3f locus = vertex.getLocus();
+            Vector3f location = locus.findLocation(point);
+            double ds = MyVector3f.distanceSquared(point, location);
+            if (ds < nearest) {
+                nearest = ds;
+                result = vertex;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Find the vertex (in a specified subset) nearest to a specified
      * point.
      *
-     * @param subset (not null)
-     * @param point (not null)
+     * @param subset (not null, all elements non-null, unaffected)
+     * @param point coordinate vector (not null, unaffected)
      * @return pre-existing member vertex, or null if none were specified
      */
     public NavVertex findNearest(Collection<NavVertex> subset, Vector3f point) {
@@ -371,8 +402,9 @@ public class NavGraph {
         NavVertex result = null;
         double nearest = Double.POSITIVE_INFINITY;
 
-        for (NavVertex vertex : vertices.values()) {
-            Vector3f location = vertex.copyLocation();
+        for (NavVertex vertex : subset) {
+            Locus3f locus = vertex.getLocus();
+            Vector3f location = locus.findLocation(point);
             double ds = MyVector3f.distanceSquared(point, location);
             if (ds < nearest) {
                 nearest = ds;
@@ -595,6 +627,30 @@ public class NavGraph {
         validateMember(arc, "arc");
         Float oldCost = arcCosts.put(arc, newCost);
         assert oldCost != null;
+    }
+
+    /**
+     * Calculate the distance from the specified starting point to the first
+     * point of support (if any) directly below it in the locus of this vertex.
+     *
+     * @param location coordinates of starting point(not null, unaffected)
+     * @param cosineTolerance cosine of maximum slope for support (&gt;0, &lt;1)
+     * @return the shortest support distance (&ge;0) or
+     * {@link Float#POSITIVE_INFINITY} if no support
+     */
+    public float supportDistance(Vector3f location, float cosineTolerance) {
+        Validate.nonNull(location, "point");
+
+        float shortest = Float.POSITIVE_INFINITY;
+        for (NavVertex vertex : vertices.values()) {
+            Locus3f locus = vertex.getLocus();
+            float distance = locus.supportDistance(location, cosineTolerance);
+            if (distance < shortest) {
+                shortest = distance;
+            }
+        }
+
+        return shortest;
     }
 
     /**
