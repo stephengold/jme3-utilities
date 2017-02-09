@@ -433,6 +433,15 @@ public class Polygon3f {
     }
 
     /**
+     * Read the tolerance.
+     *
+     * @return tolerance (&ge; 0)
+     */
+    public float getTolerance() {
+        return tolerance;
+    }
+
+    /**
      * Test (or look up) whether this polygon is degenerate.
      *
      * @return true if it is degenerate, otherwise false
@@ -629,7 +638,7 @@ public class Polygon3f {
             storeCornerMap.clear();
         }
 
-        float tol = other.tolerance();
+        float tol = other.getTolerance();
         float tol2 = (tolerance2 + tol * tol) / 2f;
 
         boolean result = false;
@@ -779,15 +788,6 @@ public class Polygon3f {
 
         assert result >= 0.0 : result;
         return result;
-    }
-
-    /**
-     * Read the tolerance.
-     *
-     * @return tolerance (&ge; 0)
-     */
-    public float tolerance() {
-        return tolerance;
     }
     // *************************************************************************
     // protected methods
