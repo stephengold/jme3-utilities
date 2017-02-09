@@ -27,6 +27,7 @@ package jme3utilities.math.polygon;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
@@ -102,19 +103,47 @@ public class SimplePolygon3f
     // constructors
 
     /**
-     * Instantiate a simple polygon with the specified sequence of corners.
+     * Instantiate a simple polygon from an array of corners.
      *
-     * @param cornerList locations of the corners, in sequence (not null or
-     * containing any nulls)
+     * @param cornerArray locations of the corners, in sequence (not null or
+     * containing any nulls, unaffected)
      * @param compareTolerance tolerance (&ge;0) used when comparing two points
      * or testing for intersection
      * @throws IllegalArgumentException if the corners provided don't form a
      * simple polygon
      */
-    public SimplePolygon3f(Vector3f[] cornerList, float compareTolerance) {
+    public SimplePolygon3f(Vector3f[] cornerArray, float compareTolerance) {
+        super(cornerArray, compareTolerance);
+        /*
+         * Verify that the polygon is simple.
+         */
+        if (!isPlanar()) {
+            throw new IllegalArgumentException("non-planar polygon");
+        }
+        if (isSelfIntersecting()) {
+            throw new IllegalArgumentException("self-intersecting polygon");
+        }
+        /*
+         * Allocate array space.
+         */
+        planarOffsets = new VectorXZ[numCorners];
+        planarOffsets[0] = new VectorXZ(0f, 0f);
+    }
+
+    /**
+     * Instantiate a simple polygon from a list of corners.
+     *
+     * @param cornerList locations of the corners, in sequence (not null or
+     * containing any nulls, unaffected)
+     * @param compareTolerance tolerance (&ge;0) used when comparing two points
+     * or testing for intersection
+     * @throws IllegalArgumentException if the corners provided don't form a
+     * simple polygon
+     */
+    public SimplePolygon3f(List<Vector3f> cornerList, float compareTolerance) {
         super(cornerList, compareTolerance);
         /*
-         * Verify that the polygon is convex.
+         * Verify that the polygon is simple.
          */
         if (!isPlanar()) {
             throw new IllegalArgumentException("non-planar polygon");
@@ -382,7 +411,7 @@ public class SimplePolygon3f
             assert inPlane(projection) : projection;
             double result = score(projection);
             result += squaredPD;
-        return result;
+            return result;
         }
 
         Vector3f closestLocation = new Vector3f();

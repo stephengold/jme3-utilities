@@ -27,6 +27,7 @@ package jme3utilities.math.polygon;
 
 import com.jme3.math.Vector3f;
 import java.util.BitSet;
+import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.math.MyVector3f;
 
@@ -60,16 +61,36 @@ public class GenericPolygon3f extends Polygon3f {
     // constructors
 
     /**
-     * Instantiate a generic polygon with the specified sequence of corners.
+     * Instantiate a generic polygon from an array of corners.
      *
-     * @param cornerList locations of the corners, in sequence (not null or
-     * containing any nulls)
+     * @param cornerArray locations of the corners, in sequence (not null or
+     * containing any nulls, unaffected)
      * @param compareTolerance tolerance (&ge;0) used when comparing two points
      * or testing for intersection
      * @throws IllegalArgumentException if the corners provided don't form a
      * generic polygon
      */
-    public GenericPolygon3f(Vector3f[] cornerList, float compareTolerance) {
+    public GenericPolygon3f(Vector3f[] cornerArray, float compareTolerance) {
+        super(cornerArray, compareTolerance);
+        /*
+         * Verify that the polygon is generic.
+         */
+        if (isDegenerate()) {
+            throw new IllegalArgumentException("degenerate polygon");
+        }
+    }
+
+    /**
+     * Instantiate a generic polygon from a list of corners.
+     *
+     * @param cornerList locations of the corners, in sequence (not null or
+     * containing any nulls, unaffected)
+     * @param compareTolerance tolerance (&ge;0) used when comparing two points
+     * or testing for intersection
+     * @throws IllegalArgumentException if the corners provided don't form a
+     * generic polygon
+     */
+    public GenericPolygon3f(List<Vector3f> cornerList, float compareTolerance) {
         super(cornerList, compareTolerance);
         /*
          * Verify that the polygon is generic.
@@ -335,7 +356,7 @@ public class GenericPolygon3f extends Polygon3f {
      * their corners.
      */
     private void setIsSelfIntersecting() {
-        assert isSelfIntersecting == null;
+        assert isSelfIntersecting == null : isSelfIntersecting;
         /*
          * consider each pair of sides
          */
