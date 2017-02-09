@@ -23,7 +23,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.debug;
+package jme3utilities.navigation;
 
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
@@ -63,6 +63,7 @@ public class LoopMesh
             Logger.getLogger(LoopMesh.class.getName());
     // *************************************************************************
     // fields
+    
     /**
      * total number of vertices (&ge;3)
      */
@@ -149,10 +150,7 @@ public class LoopMesh
          * Allocate an array to hold the local (XYZ) coordinates.
          */
         Vector3f[] locationArray = new Vector3f[vertexCount];
-        /*
-         * Compute the non-polar vertices 1st. Vertices are arranged 1st
-         * by latitude (starting from the rim).
-         */
+
         float increment = FastMath.TWO_PI / vertexCount;
         for (int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
             float longitude = increment * vertexIndex;
