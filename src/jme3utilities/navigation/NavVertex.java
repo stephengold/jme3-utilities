@@ -141,7 +141,7 @@ public class NavVertex
      * @return new vector
      */
     public Vector3f copyLocation() {
-        Vector3f result = locus.representative();
+        Vector3f result = locus.rep();
         return result;
     }
 
