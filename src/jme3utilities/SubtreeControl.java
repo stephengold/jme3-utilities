@@ -25,9 +25,14 @@
  */
 package jme3utilities;
 
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
 import com.jme3.scene.Node;
 import com.jme3.scene.SceneGraphVisitor;
 import com.jme3.scene.Spatial;
+import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
@@ -50,6 +55,7 @@ abstract public class SubtreeControl
             Logger.getLogger(SubtreeControl.class.getName());
     // *************************************************************************
     // fields
+    
     /**
      * subtree managed by this control: set by subclass
      */
@@ -78,6 +84,19 @@ abstract public class SubtreeControl
     }
     // *************************************************************************
     // AbstractControl methods
+
+    /**
+     * De-serialize this instance, for example when loading from a J3O file.
+     *
+     * @param importer (not null)
+     * @throws IOException from importer
+     */
+    @Override
+    public void read(JmeImporter importer) throws IOException {
+        super.read(importer);
+        InputCapsule ic = importer.getCapsule(this);
+        subtree = (Node) ic.readSavable("subtree", null);
+    }
 
     /**
      * Alter the visibility of this control's subtree by adding or removing it
@@ -130,5 +149,19 @@ abstract public class SubtreeControl
             Node node = (Node) spatial;
             node.attachChild(subtree);
         }
+    }
+
+    /**
+     * Serialize this instance, for example when saving to a J3O file.
+     *
+     * @param exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter exporter) throws IOException {
+        super.write(exporter);
+
+        OutputCapsule oc = exporter.getCapsule(this);
+        oc.write(subtree, "subtree", null);
     }
 }
