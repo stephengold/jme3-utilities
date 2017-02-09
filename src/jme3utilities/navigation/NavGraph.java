@@ -74,7 +74,7 @@ public class NavGraph {
      * @param origin originating member vertex (distinct from terminus)
      * @param terminus terminating member vertex (distinct from origin)
      * @param initialCost initial cost (or length) of the arc
-     * @return new member arc
+     * @return a new member arc
      */
     public NavArc addArc(NavVertex origin, NavVertex terminus,
             float initialCost) {
@@ -119,18 +119,19 @@ public class NavGraph {
      * Create a new vertex without any arcs and add it to this graph.
      *
      * @param name name for the new vertex (not null, not in use)
-     * @param locus region represented by the new vertex (in world coordinates,
-     * not null)
-     * @return new member vertex
+     * @param locus region represented by the new vertex (in world coordinates) or null
+     * @param location coordinates for calculating arc offsets (not null,
+     * unaffected)
+     * @return a new member vertex
      */
-    public NavVertex addVertex(String name, Locus3f locus) {
+    public NavVertex addVertex(String name, Locus3f locus, Vector3f location) {
         Validate.nonNull(name, "name");
-        Validate.nonNull(locus, "locus");
         if (vertices.containsKey(name)) {
             throw new IllegalArgumentException("name already in use");
         }
+        Validate.nonNull(location, "location");
 
-        NavVertex newVertex = new NavVertex(name, locus);
+        NavVertex newVertex = new NavVertex(name, locus, location);
         NavVertex oldVertex = vertices.put(name, newVertex);
         assert oldVertex == null : oldVertex;
 
@@ -166,7 +167,7 @@ public class NavGraph {
     /**
      * Enumerate all member arcs as an array.
      *
-     * @return new array of pre-existing member arcs
+     * @return a new array of pre-existing member arcs
      */
     public NavArc[] copyArcs() {
         NavArc[] result = new NavArc[numArcs()];
@@ -225,7 +226,7 @@ public class NavGraph {
     /**
      * Find a member vertex which contains the specified point.
      *
-     * @param point (not null)
+     * @param point (not null, unaffected)
      * @return pre-existing member vertex, or null if none found
      */
     public NavVertex find(Vector3f point) {

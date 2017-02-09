@@ -35,10 +35,12 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.locus.Locus3f;
 import jme3utilities.math.MyVector3f;
+import jme3utilities.math.ReadXZ;
 import jme3utilities.math.VectorXZ;
 
 /**
- * Navigation vertex: represents a reachable location or region in the world.
+ * Navigation vertex: represents a reachable region of 3-D space, along with
+ * its connections to other such regions.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -56,7 +58,7 @@ public class NavVertex
     // fields
 
     /**
-     * region represented by this vertex (in world coordinates, not null,
+     * region represented by this vertex or null (in world coordinates,
      * initialized by constructor)
      */
     private Locus3f locus;
@@ -72,6 +74,11 @@ public class NavVertex
      * name of this vertex (not null, initialized by constructor)
      */
     final private String name;
+    /**
+     * location for calculating arc offsets (not null, initialized by
+     * constructor)
+     */
+    final private Vector3f location;
     // *************************************************************************
     // constructors
 
@@ -79,14 +86,16 @@ public class NavVertex
      * Instantiate a vertex without any arcs.
      *
      * @param name name for the new vertex (not null)
-     * @param locus region represented (in world coordinates, not null)
+     * @param locus region represented or null
+     * @param location for calculating arc offsets (not null, unaffected)
      */
-    NavVertex(String name, Locus3f locus) {
+    NavVertex(String name, Locus3f locus, Vector3f location) {
         assert name != null;
-        assert locus != null;
+        assert location != null;
 
         this.name = name;
         this.locus = locus;
+        this.location = location;
     }
     // *************************************************************************
     // new methods exposed
@@ -122,7 +131,7 @@ public class NavVertex
     /**
      * Copy all incoming arcs.
      *
-     * @return new array of pre-existing instances
+     * @return a new array of pre-existing instances
      */
     public NavArc[] copyIncoming() {
         NavArc[] result = new NavArc[incoming.size()];
@@ -136,19 +145,20 @@ public class NavVertex
     }
 
     /**
-     * Copy the representative location.
+     * Copy the location used to calculate arc offsets, which need not be in the
+     * locus of this vertex.
      *
-     * @return new vector
+     * @return a new coordinate vector
      */
     public Vector3f copyLocation() {
-        Vector3f result = locus.rep();
+        Vector3f result = location.clone();
         return result;
     }
 
     /**
      * Copy all outgoing arcs.
      *
-     * @return new array of pre-existing instances
+     * @return a new array of pre-existing instances
      */
     public NavArc[] copyOutgoing() {
         NavArc[] result = new NavArc[outgoing.size()];
@@ -162,10 +172,30 @@ public class NavVertex
     }
 
     /**
+     * Find the arc (if any) from a specified origin.
+     *
+     * @param origin (not null, not this)
+     * @return a pre-existing instance, or null if not found
+     */
+    public NavArc findIncoming(NavVertex origin) {
+        Validate.nonNull(origin, "origin");
+        if (origin == this) {
+            throw new IllegalArgumentException("origin not distinct");
+        }
+
+        for (NavArc arc : incoming) {
+            if (arc.getFromVertex() == origin) {
+                return arc;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Find the outgoing arc (if any) to a specified terminus.
      *
      * @param terminus (not null, not this)
-     * @return pre-existing instance, or null if none found
+     * @return a pre-existing instance, or null if none found
      */
     public NavArc findOutgoing(NavVertex terminus) {
         Validate.nonNull(terminus, "terminus");
@@ -188,7 +218,7 @@ public class NavVertex
      * @param direction (not zero, unaffected)
      * @param cosineTolerance maximum cosine of angle between directions (&le;1,
      * &ge;-1)
-     * @return pre-existing instance, or null if none found
+     * @return a pre-existing instance, or null if none found
      */
     public NavArc findOutgoing(Vector3f direction, double cosineTolerance) {
         Validate.nonZero(direction, "direction");
@@ -220,9 +250,9 @@ public class NavVertex
      * @param horizontalDirection (not zero, unaffected)
      * @param cosineTolerance maximum cosine of angle between directions (&le;1,
      * &ge;-1)
-     * @return pre-existing instance, or null if none found
+     * @return a pre-existing instance, or null if none found
      */
-    public NavArc findOutgoing(VectorXZ horizontalDirection,
+    public NavArc findOutgoing(ReadXZ horizontalDirection,
             double cosineTolerance) {
         VectorXZ.validateNonZero(horizontalDirection, "horizontal direction");
         Validate.inRange(cosineTolerance, "cosine tolerance", -1f, 1f);
@@ -248,26 +278,6 @@ public class NavVertex
     }
 
     /**
-     * Find the arc (if any) from a specified origin.
-     *
-     * @param origin (not null, not this)
-     * @return pre-existing instance, or null if not found
-     */
-    public NavArc findIncoming(NavVertex origin) {
-        Validate.nonNull(origin, "origin");
-        if (origin == this) {
-            throw new IllegalArgumentException("origin not distinct");
-        }
-
-        for (NavArc arc : incoming) {
-            if (arc.getFromVertex() == origin) {
-                return arc;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Read the name of this vertex.
      *
      * @return textual name (not null)
@@ -278,19 +288,18 @@ public class NavVertex
     }
 
     /**
-     * Access the current locus of this vertex.
+     * Access the region currently represented by this vertex.
      *
-     * @return locus (not null)
+     * @return the pre-existing locus, or null if none
      */
     public Locus3f getLocus() {
-        assert locus != null;
         return locus;
     }
 
     /**
      * List the incoming arcs.
      *
-     * @return new list of pre-existing instances
+     * @return a new list of pre-existing instances
      */
     public List<NavArc> listIncoming() {
         List<NavArc> result = new ArrayList<>(incoming.size());
@@ -304,7 +313,7 @@ public class NavVertex
     /**
      * List the outgoing arcs.
      *
-     * @return new list of pre-existing instances
+     * @return a new list of pre-existing instances
      */
     public List<NavArc> listOutgoing() {
         List<NavArc> result = new ArrayList<>(outgoing.size());
@@ -338,7 +347,7 @@ public class NavVertex
     /**
      * Remove an incoming arc.
      *
-     * @param arc (not null, terminating at this vertex, present)
+     * @param arc (not null, terminating at this vertex)
      */
     void removeIncoming(NavArc arc) {
         assert arc != null;
@@ -351,7 +360,7 @@ public class NavVertex
     /**
      * Remove an outgoing arc.
      *
-     * @param arc (not null, originating at this vertex, present)
+     * @param arc (not null, originating at this vertex)
      */
     void removeOutgoing(NavArc arc) {
         assert arc != null;
@@ -362,17 +371,16 @@ public class NavVertex
     }
 
     /**
-     * Alter the current locus of this vertex.
+     * Alter the region represented by this vertex.
      *
-     * @param newLocus (not null)
+     * @param newLocus region or null
      */
     public void setLocus(Locus3f newLocus) {
-        assert newLocus != null;
         this.locus = newLocus;
     }
-
     // *************************************************************************
     // Comparable methods
+
     /**
      * Compare with another vertex based on name.
      *
