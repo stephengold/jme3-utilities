@@ -230,7 +230,7 @@ public class GenericPolygon3f extends Polygon3f {
         if (!MyVector3f.doCoincide(c1, c2, tolerance2)) {
             return false;
         }
-        double fuzz1 = tolerance2 * squaredDistance(corner1, partner1);
+        double fuzz1 = tolerance2 / squaredDistance(corner1, partner1);
         if (t1 < 0f && t1 * t1 > fuzz1) {
             return false;
         }
@@ -238,7 +238,7 @@ public class GenericPolygon3f extends Polygon3f {
         if (ct1 < 0f && ct1 * ct1 > fuzz1) {
             return false;
         }
-        double fuzz2 = tolerance2 * squaredDistance(corner2, partner2);
+        double fuzz2 = tolerance2 / squaredDistance(corner2, partner2);
         if (t2 < 0 && t2 * t2 > fuzz2) {
             return false;
         }
