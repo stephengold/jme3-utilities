@@ -28,6 +28,7 @@ package jme3utilities.navigation;
 import com.jme3.material.Material;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
@@ -36,6 +37,7 @@ import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Sphere;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
+import jme3utilities.math.polygon.SimplePolygon3f;
 
 /**
  * Utility methods for visualizing navigation graphs. Aside from test cases, all
@@ -94,16 +96,17 @@ public class NavDebug {
     // new methods exposed
 
     /**
-     * Add balls to a ball-and-stick representation.
+     * Add balls to visualize the vertices of a navigation graph.
      *
-     * @param graph graph to represent (not null)
+     * @param graph graph to visualize (not null)
      * @param parentNode where in the scene to attach the geometries (not null)
      * @param radius radius of each ball (in world units, &gt;0)
-     * @param material material for geometries which represent vertices (not
+     * @param material material for geometries that represent vertices (not
      * null)
      */
     public static void addBalls(NavGraph graph, Node parentNode, float radius,
             Material material) {
+        Validate.nonNull(parentNode, "parent node");
         Validate.positive(radius, "radius");
         Validate.nonNull(material, "material");
 
@@ -114,12 +117,30 @@ public class NavDebug {
     }
 
     /**
-     * Add sticks to a ball-and-stick representation.
+     * Add loops to visualize the locus of each vertex in a navigation graph.
      *
-     * @param graph graph to represent (not null)
+     * @param graph graph to visualize (not null)
+     * @param parentNode where in the scene to attach the geometries (not null)
+     * @param material material for geometries that represent loci (not null)
+     */
+    public static void addLoops(NavGraph graph, Node parentNode,
+            Material material) {
+        Validate.nonNull(parentNode, "parent node");
+        Validate.nonNull(material, "material");
+
+        for (NavVertex vertex : graph.copyVertices()) {
+            Spatial loop = makePerimeter(vertex, material);
+            parentNode.attachChild(loop);
+        }
+    }
+
+    /**
+     * Add sticks to visualize the arcs of a navigation graph.
+     *
+     * @param graph graph to visualize (not null)
      * @param parentNode where in the scene to attach the geometries (not null)
      * @param radius radius of each stick (in world units, &gt;0)
-     * @param material for geometries which represent navigation arcs (not null)
+     * @param material for geometries that represent navigation arcs (not null)
      */
     public static void addSticks(NavGraph graph, Node parentNode, float radius,
             Material material) {
@@ -133,11 +154,11 @@ public class NavDebug {
     }
 
     /**
-     * Add a ball to a ball-and-stick representation.
+     * Create a ball to visualize a navigation vertex.
      *
-     * @param vertex vertex to represent (not null)
+     * @param vertex vertex to visualize (not null)
      * @param radius radius of each ball (in world units, &gt;0)
-     * @param material material for geometries which represent vertices (not
+     * @param material material for geometries that represent vertices (not
      * null)
      * @return a new orphaned Geometry
      */
@@ -156,16 +177,16 @@ public class NavDebug {
     }
 
     /**
-     * Add ball-and-stick representation of a specified navigation graph to a
-     * specified node.
+     * Add balls and sticks to visualize the vertices and arcs of a navigation
+     * graph. TODO rename
      *
-     * @param graph graph to represent (not null)
+     * @param graph graph to visualize (not null)
      * @param parentNode where in the scene to attach geometries (not null)
      * @param ballRadius radius of each ball (in world units, &ge;0)
-     * @param ballMaterial material for geometries which represent navigation
+     * @param ballMaterial material for geometries that represent navigation
      * vertices (not null)
      * @param stickRadius radius of each stick (in world units, &ge;0)
-     * @param stickMaterial material for geometries which represent navigation
+     * @param stickMaterial material for geometries that represent navigation
      * arcs (not null)
      */
     public static void makeBallsAndSticks(NavGraph graph, Node parentNode,
@@ -186,13 +207,33 @@ public class NavDebug {
     }
 
     /**
-     * Create a stick for a ball-and-stick representation.
+     * Create a perimeter loop to visualize the locus of a navigation vertex.
      *
-     * @param arc arc to represent (not null)
-     * @param radius radius of each ball (in world units, &gt;0)
-     * @param material material for geometries which represent vertices (not
-     * null)
-     * @return new orphaned Geometry
+     * @param vertex vertex to visualize (not null, locus is polygon)
+     * @param material material for geometries that represent loci (not null)
+     * @return a new orphaned Geometry
+     */
+    public static Spatial makePerimeter(NavVertex vertex, Material material) {
+        Validate.nonNull(material, "material");
+
+        SimplePolygon3f poly = (SimplePolygon3f) vertex.getLocus();
+        Vector3f[] corners = poly.copyCornerLocations();
+        LoopMesh perimeterMesh = new LoopMesh(corners);
+        String name = String.format("perimeter of %s", vertex.getName());
+        Geometry perimeter = new Geometry(name, perimeterMesh);
+        perimeter.setMaterial(material);
+        perimeter.setShadowMode(ShadowMode.Off);
+
+        return perimeter;
+    }
+
+    /**
+     * Create a stick to visualize a navigation arc.
+     *
+     * @param arc arc to visualize (not null)
+     * @param radius radius of each stick (in world units, &gt;0)
+     * @param material material for geometries that represent arcs (not null)
+     * @return a new orphaned Geometry
      */
     public static Spatial makeStick(NavArc arc, float radius,
             Material material) {
@@ -206,7 +247,7 @@ public class NavDebug {
         Quaternion orientation = new Quaternion();
         orientation.lookAt(offset, yAxis);
 
-        Geometry stick = new Geometry("navigation arc", stickMesh);
+        Geometry stick = new Geometry(arc.toString(), stickMesh);
         stick.setLocalRotation(orientation);
         stick.setLocalScale(scale);
         stick.setLocalTranslation(midpoint);
