@@ -71,10 +71,11 @@ public class DomeMesh
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(DomeMesh.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            DomeMesh.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * if true, generate a complete dome; if false, generate a pie-cut segment
      * of a dome

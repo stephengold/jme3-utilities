@@ -40,10 +40,11 @@ class TestSkyControlParameters {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(TestSkyControlParameters.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            TestSkyControlParameters.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * true means use the cyclone cloud map; false means use default cloud maps
      */

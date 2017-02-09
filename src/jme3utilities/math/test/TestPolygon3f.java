@@ -52,10 +52,25 @@ public class TestPolygon3f {
     // *************************************************************************
     // fields
 
+    /**
+     * test cases for degenerate planar polygons
+     */
     private static Vector3f[][] degenerateCase;
+    /**
+     * test cases for degenerate non-planar polygons
+     */
     private static Vector3f[][] dnpCase;
+    /**
+     * test cases for generic planar polygons
+     */
     private static Vector3f[][] genericCase;
+    /**
+     * test cases for generic non-planar polygons
+     */
     private static Vector3f[][] gnpCase;
+    /**
+     * test cases for simple polygons
+     */
     private static Vector3f[][] simpleCase;
     // *************************************************************************
     // new methods exposed

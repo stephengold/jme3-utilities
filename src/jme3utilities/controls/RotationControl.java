@@ -46,10 +46,11 @@ public class RotationControl
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(RotationControl.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            RotationControl.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * axis of rotation (in local coordinates, length=1): set by constructor
      */
@@ -65,7 +66,8 @@ public class RotationControl
      * Instantiate an enabled control with the specified vector.
      *
      * @param rate rate of rotation (in radians per second)
-     * @param axis axis of rotation (in local coordinates, length&gt;0, unaffected)
+     * @param axis axis of rotation (in local coordinates, length&gt;0,
+     * unaffected)
      */
     public RotationControl(float rate, Vector3f axis) {
         Validate.nonZero(axis, "axis");

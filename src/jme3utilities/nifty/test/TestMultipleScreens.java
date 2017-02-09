@@ -52,6 +52,7 @@ public class TestMultipleScreens
             TestMultipleScreens.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * controller for screen s1: set in guiInitializeApplication()
      */

@@ -42,8 +42,8 @@ public class Indices
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(Indices.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            Indices.class.getName());
     /**
      * version for serialization
      */

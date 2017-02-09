@@ -48,8 +48,8 @@ class DefaultInputMode
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(DefaultInputMode.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            DefaultInputMode.class.getName());
     /**
      * asset path to the cursor for this mode
      */

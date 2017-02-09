@@ -57,6 +57,7 @@ abstract public class GuiApplication
             "Interface/Nifty/popup-menu.xml";
     // *************************************************************************
     // fields
+
     /**
      * currently enabled screen controller (null means there's none)
      */

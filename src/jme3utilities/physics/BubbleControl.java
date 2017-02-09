@@ -55,10 +55,11 @@ public class BubbleControl
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(BubbleControl.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            BubbleControl.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * successor control to be enabled when the collision shape is touched, or
      * null for none
@@ -133,8 +134,8 @@ public class BubbleControl
         /*
          * Assume the shape of the rigid body.
          */
-        RigidBodyControl rigidBodyControl =
-                spatial.getControl(RigidBodyControl.class);
+        RigidBodyControl rigidBodyControl = spatial.getControl(
+                RigidBodyControl.class);
         CollisionShape shape = rigidBodyControl.getCollisionShape();
         setCollisionShape(shape);
 

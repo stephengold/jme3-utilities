@@ -45,10 +45,11 @@ public class WaterProcessor
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(WaterProcessor.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            WaterProcessor.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * view port listeners registered prior to initialization
      */

@@ -35,7 +35,7 @@ import jme3utilities.math.VectorXZ;
  * An immutable connecting arc in a navigation graph: represents feasible
  * path(s) originating from a particular vertex and terminating at one of its
  * neighbors. Arcs are unidirectional and need not be straight. Properties such
- * as cost and implementation are stored externally.
+ * as cost and implementation must be stored externally.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -85,7 +85,7 @@ public class NavArc
     /**
      * Find the reverse of this arc, if it exists.
      *
-     * @return pre-existing instance or null if none found
+     * @return a pre-existing instance or null if none found
      */
     public NavArc findReverse() {
         NavArc result = toVertex.findOutgoing(fromVertex);
@@ -95,7 +95,7 @@ public class NavArc
     /**
      * Access the starting vertex of this arc.
      *
-     * @return pre-existing instance
+     * @return the pre-existing instance
      */
     public NavVertex getFromVertex() {
         return fromVertex;
@@ -104,16 +104,16 @@ public class NavArc
     /**
      * Access the endpoint of this arc.
      *
-     * @return pre-existing instance
+     * @return the pre-existing instance
      */
     public NavVertex getToVertex() {
         return toVertex;
     }
 
     /**
-     * Calculate the (representative) horizontal offset of this arc.
+     * Calculate the horizontal offset vector of this arc.
      *
-     * @return new vector
+     * @return a new offset vector
      */
     public VectorXZ horizontalOffset() {
         Vector3f offset = offset();
@@ -139,9 +139,9 @@ public class NavArc
     }
 
     /**
-     * Calculate the (representative) midpoint of this arc.
+     * Calculate the midpoint of this arc.
      *
-     * @return new vector
+     * @return a new coordinate vector
      */
     public Vector3f midpoint() {
         Vector3f p1 = fromVertex.copyLocation();
@@ -152,9 +152,9 @@ public class NavArc
     }
 
     /**
-     * Calculate the (representative) offset of this arc.
+     * Calculate the 3-D offset vector of this arc.
      *
-     * @return new vector
+     * @return a new offset vector
      */
     public Vector3f offset() {
         Vector3f p1 = fromVertex.copyLocation();
@@ -170,7 +170,8 @@ public class NavArc
      * Compare with another arc.
      *
      * @param otherArc (not null, unaffected)
-     * @return 0 if the arcs are equivalent
+     * @return 0 if the arcs are equivalent, negative if the other arc comes
+     * before this arc, positive if this arc comes before the other arc
      */
     @Override
     public int compareTo(NavArc otherArc) {

@@ -60,10 +60,11 @@ final public class SkeletonDebugControl
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(SkeletonDebugControl.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            SkeletonDebugControl.class.getName());
     // *************************************************************************
     // fields
+
     /*
      * material for the wire frame: set by constructor
      */
@@ -82,7 +83,7 @@ final public class SkeletonDebugControl
 
         material = MyAsset.createWireframeMaterial(assetManager, color);
         material.getAdditionalRenderState().setDepthTest(false);
-        
+
         assert !isEnabled();
     }
     // *************************************************************************
@@ -97,8 +98,8 @@ final public class SkeletonDebugControl
     public static boolean isDebugEnabled(Spatial model) {
         Validate.nonNull(model, "model");
 
-        SkeletonDebugControl control =
-                model.getControl(SkeletonDebugControl.class);
+        SkeletonDebugControl control = model.getControl(
+                SkeletonDebugControl.class);
         if (control == null) {
             return false;
         }
@@ -117,8 +118,8 @@ final public class SkeletonDebugControl
     public static void setDebugEnabled(Spatial model, boolean newState) {
         Validate.nonNull(model, "model");
 
-        SkeletonDebugControl control =
-                model.getControl(SkeletonDebugControl.class);
+        SkeletonDebugControl control = model.getControl(
+                SkeletonDebugControl.class);
         if (control != null) {
             control.setEnabled(newState);
         }

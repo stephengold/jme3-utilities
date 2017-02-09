@@ -45,8 +45,8 @@ final public class XmlOutput {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(XmlOutput.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            XmlOutput.class.getName());
     // *************************************************************************
     // constructors
 

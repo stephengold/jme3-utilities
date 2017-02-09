@@ -52,8 +52,8 @@ public class MyVolume {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MyVolume.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MyVolume.class.getName());
     // *************************************************************************
     // constructors
 

@@ -127,6 +127,7 @@ public class SlideShow
     final private static Vector2f uvSun = new Vector2f(0.5f, 0.8f);
     // *************************************************************************
     // fields
+
     /**
      * mesh for a hemisphere with a slice removed
      */

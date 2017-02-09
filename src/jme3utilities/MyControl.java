@@ -50,8 +50,8 @@ public class MyControl {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MyControl.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MyControl.class.getName());
     // *************************************************************************
     // constructors
 

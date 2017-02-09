@@ -62,10 +62,11 @@ public class TimeOfDay
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(TimeOfDay.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            TimeOfDay.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * simulated time of day (seconds since midnight, &lt;86400, &ge;0)
      * <p>

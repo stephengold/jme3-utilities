@@ -56,10 +56,11 @@ public class GuiScreenController
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(GuiScreenController.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            GuiScreenController.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * screen's input mode while a popup menu is active
      */
@@ -360,8 +361,8 @@ public class GuiScreenController
     protected void setRadioButton(String elementId) {
         Validate.nonNull(elementId, "element id");
 
-        RadioButton button =
-                getScreen().findNiftyControl(elementId, RadioButton.class);
+        RadioButton button = getScreen().findNiftyControl(
+                elementId, RadioButton.class);
         try {
             button.select();
         } catch (NullPointerException exception) {
@@ -382,8 +383,8 @@ public class GuiScreenController
     protected void setRadioButtonEnabled(String elementId, boolean newState) {
         Validate.nonNull(elementId, "element id");
 
-        RadioButton button =
-                getScreen().findNiftyControl(elementId, RadioButton.class);
+        RadioButton button = getScreen().findNiftyControl(
+                elementId, RadioButton.class);
         try {
             if (newState) {
                 button.enable();

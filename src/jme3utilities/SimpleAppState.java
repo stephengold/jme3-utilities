@@ -54,10 +54,11 @@ public class SimpleAppState
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(SimpleAppState.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            SimpleAppState.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * app state manager: set by initialize()
      */

@@ -43,8 +43,8 @@ public class ClockScreenController
     /**
      * message logger for this class
      */
-    final private static Logger logger = 
-            Logger.getLogger(ClockScreenController.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            ClockScreenController.class.getName());
     // *************************************************************************
     // constructors
 
@@ -57,9 +57,9 @@ public class ClockScreenController
                 "Interface/Nifty/screens/ClockDemo/clockScreen.xml",
                 true);
     }
-
     // *************************************************************************
     // SimpleAppState methods
+
     /**
      * Callback to update this display. (Invoked once per frame.)
      *

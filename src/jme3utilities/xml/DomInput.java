@@ -48,8 +48,8 @@ final public class DomInput {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(DomInput.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            DomInput.class.getName());
     // *************************************************************************
     // constructors
 
@@ -113,8 +113,8 @@ final public class DomInput {
             logger.log(Level.SEVERE,
                     "Attribute {0} was missing from XML document, set to {1}.",
                     new Object[]{
-                MyString.quote(name), defaultValue
-            });
+                        MyString.quote(name), defaultValue
+                    });
             return defaultValue;
         }
         String text = attr.getValue();

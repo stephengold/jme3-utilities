@@ -58,8 +58,8 @@ public class MyAnimation {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MyAnimation.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MyAnimation.class.getName());
     // *************************************************************************
     // constructors
 

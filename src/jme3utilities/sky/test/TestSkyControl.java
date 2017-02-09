@@ -106,6 +106,7 @@ public class TestSkyControl
     final private static String applicationName = "TestSkyControl";
     // *************************************************************************
     // fields
+
     /**
      * ambient light-source in the scene
      */

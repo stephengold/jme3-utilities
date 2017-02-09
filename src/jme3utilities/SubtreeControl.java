@@ -51,11 +51,11 @@ abstract public class SubtreeControl
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(SubtreeControl.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            SubtreeControl.class.getName());
     // *************************************************************************
     // fields
-    
+
     /**
      * subtree managed by this control: set by subclass
      */

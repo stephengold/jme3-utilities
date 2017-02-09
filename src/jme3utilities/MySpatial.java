@@ -529,7 +529,7 @@ public class MySpatial
     }
 
     /**
-     * Turn (rotate) a physical object around the world's Y-axis.
+     * Turn (rotate) a physical object around its world Y-axis.
      *
      * @param spatial object to rotate (not null)
      * @param angle clockwise rotation angle (in radians)

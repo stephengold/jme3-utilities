@@ -48,8 +48,8 @@ class MenuInputMode
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MenuInputMode.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MenuInputMode.class.getName());
     /**
      * asset path to the cursor for this mode
      */

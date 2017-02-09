@@ -81,6 +81,7 @@ public class MakeStarMaps {
     }
     // *************************************************************************
     // constants
+
     /**
      * luminosity of the faintest stars to include
      */
@@ -148,6 +149,7 @@ public class MakeStarMaps {
             "assets/Textures/skies/bsc5.dat";
     // *************************************************************************
     // fields
+
     /**
      * true means just display the usage message; false means run the
      * application

@@ -51,10 +51,11 @@ public class XmlLoader
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(XmlLoader.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            XmlLoader.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * DOM parser for XML
      */

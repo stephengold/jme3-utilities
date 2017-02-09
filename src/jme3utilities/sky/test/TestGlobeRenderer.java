@@ -86,6 +86,7 @@ public class TestGlobeRenderer
     final private static String applicationName = "TestGlobeRenderer";
     // *************************************************************************
     // fields
+
     /**
      * true means just display the usage message; false means run the
      * application

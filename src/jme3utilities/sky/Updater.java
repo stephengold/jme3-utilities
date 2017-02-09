@@ -54,10 +54,11 @@ public class Updater
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(Updater.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            Updater.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * which ambient light to update (or null for none)
      */
