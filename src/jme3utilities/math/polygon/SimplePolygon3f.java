@@ -29,7 +29,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
-import jme3utilities.math.Locus3f;
+import jme3utilities.math.locus.Locus3f;
 import jme3utilities.math.VectorXZ;
 
 /**

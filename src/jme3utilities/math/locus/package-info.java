@@ -23,29 +23,8 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.math;
-
-import com.jme3.math.Vector3f;
-
 /**
- * Represents a region in 3-D space.
- *
- * @author Stephen Gold sgold@sonic.net
+ * Reusable classes which describe regions in space, for use with
+ * jMonkeyEngine3.
  */
-public interface Locus3f {
-
-    /**
-     * Test whether this region contains a specific point.
-     *
-     * @param point coordinates of the point (not null, unaffected)
-     * @return true if the point lies in the region, false otherwise
-     */
-    boolean contains(Vector3f point);
-
-    /**
-     * Quickly provide a representative point for the region.
-     *
-     * @return new vector
-     */
-    Vector3f representative();
-}
+package jme3utilities.math.locus;

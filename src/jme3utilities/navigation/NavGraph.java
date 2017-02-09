@@ -36,7 +36,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
-import jme3utilities.math.Locus3f;
+import jme3utilities.math.locus.Locus3f;
 import jme3utilities.math.MyVector3f;
 
 /**
