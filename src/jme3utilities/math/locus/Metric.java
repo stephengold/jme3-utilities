@@ -25,7 +25,6 @@
  */
 package jme3utilities.math.locus;
 
-import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
@@ -40,7 +39,18 @@ public enum Metric {
     // *************************************************************************
     // values
 
-    EUCLID, CHEBYSHEV, MANHATTAN;
+    /**
+     * Euclidean metric (sqrt(x^2 + y^2)) for spherical and ellipsoidal shapes
+     */
+    EUCLID,
+    /**
+     * Chebyshev metric (max{abs{x},abs{y}}) for cubic and rectangular shapes
+     */
+    CHEBYSHEV,
+    /**
+     * Manhattan metric (abs{x}+abs{y}) for octahedral shapes
+     */
+    MANHATTAN;
     // *************************************************************************
     // new methods exposed
 
@@ -92,14 +102,16 @@ public enum Metric {
                 break;
 
             case CHEBYSHEV:
-                float max = MyMath.max(offset.x, offset.y, offset.z);
-                result = max * max;
+                double dx = offset.x;
+                double dy = offset.y;
+                double dz = offset.z;
+                result = MyMath.max(dx * dx, dy * dy, dz * dz);
                 break;
 
             case MANHATTAN:
-                float dx = FastMath.abs(offset.x);
-                float dy = FastMath.abs(offset.y);
-                float dz = FastMath.abs(offset.z);
+                dx = Math.abs(offset.x);
+                dy = Math.abs(offset.y);
+                dz = Math.abs(offset.z);
                 double sum = dx + dy + dz;
                 result = sum * sum;
                 break;

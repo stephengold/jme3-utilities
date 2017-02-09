@@ -231,6 +231,25 @@ public class MyMath {
     }
 
     /**
+     * Find the maximum of three double-precision values.
+     *
+     * @param a 1st input value
+     * @param b 2nd input value
+     * @param c 3rd input value
+     * @return greatest of the three values
+     * @see java.lang.Math#max(double, double)
+     */
+    public static double max(double a, double b, double c) {
+        if (a >= b && a >= c) {
+            return a;
+        } else if (b >= c) {
+            return b;
+        } else {
+            return c;
+        }
+    }
+
+    /**
      * Compute the least non-negative value congruent with an integer value with
      * respect to the specified modulus. modulo() differs from remainder for
      * negative values of the first argument. For instance, modulo(-1, 4) == 3,
