@@ -61,6 +61,48 @@ final public class Validate {
     // new methods exposed
 
     /**
+     * Validate a finite single-precision value as a method argument.
+     *
+     * @param value value to validate (finite)
+     * @param description description of the value
+     * @throws IllegalArgumentException if the value is NaN or infinite
+     */
+    public static void finite(float value, String description) {
+        if (Float.isNaN(value) || Float.isInfinite(value)) {
+            String what;
+            if (description == null) {
+                what = "float argument";
+            } else {
+                what = description;
+            }
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            String message = String.format("%s must be a finite number.", what);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Validate a finite double-precision value as a method argument.
+     *
+     * @param value value to validate (finite)
+     * @param description description of the value
+     * @throws IllegalArgumentException if the value is NaN or infinite
+     */
+    public static void finite(double value, String description) {
+        if (Double.isNaN(value) || Double.isInfinite(value)) {
+            String what;
+            if (description == null) {
+                what = "double argument";
+            } else {
+                what = description;
+            }
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            String message = String.format("%s must be a finite number.", what);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
      * Validate a non-negative proper fraction as a method argument.
      *
      * @param value fraction to validate (&le;1, &ge;0)
