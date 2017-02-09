@@ -263,6 +263,29 @@ public class Polygon3f {
     }
 
     /**
+     * Calculate this polygon's diameter: the distance between its two most
+     * distant corners.
+     *
+     * @return distance (in world units, &ge;0)
+     */
+    public float diameter() {
+        double largestSD = 0.0;
+
+        for (int i = 0; i < numCorners; i++) {
+            for (int j = i + 1; j < numCorners; j++) {
+                double squaredDistance = squaredDistance(i, j);
+                if (squaredDistance > largestSD) {
+                    largestSD = squaredDistance;
+                }
+            }
+        }
+        float result = (float) Math.sqrt(largestSD);
+
+        assert result >= 0.0 : result;
+        return result;
+    }
+
+    /**
      * Calculate (or look up) the dot product of successive sides which meet at
      * the specified corner.
      *
