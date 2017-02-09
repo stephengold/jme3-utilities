@@ -25,24 +25,30 @@
  */
 package jme3utilities.math;
 
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * Immutable single-precision vector with no 'y' coordinate, used to represent
- *  horizontal
- * locations, offsets, orientations, directions, rotations, and extents. For viewport
- * coordinates, use Vector2f instead.
+ * Single-precision vector with no 'y' coordinate, used to represent horizontal
+ * locations, offsets, orientations, directions, rotations, and extents.
+ * Immutable except for {@link #read(com.jme3.export.JmeImporter)}. For viewport
+ * coordinates, use {@link com.jme3.math.Vector2f} instead.
  * <p>
  * By convention, +X is north/forward and +Z is east/right.
  *
  * @author Stephen Gold sgold@sonic.net
  */
 public class VectorXZ
-        implements Comparable<ReadXZ>, ReadXZ {
+        implements Comparable<ReadXZ>, ReadXZ, Savable {
     // *************************************************************************
     // constants
 
@@ -107,11 +113,11 @@ public class VectorXZ
     /**
      * northing component or X coordinate or cosine
      */
-    final private float x;
+    private float x;
     /**
      * easting component or Z coordinate or sine
      */
-    final private float z;
+    private float z;
     // *************************************************************************
     // constructors
 
@@ -871,6 +877,38 @@ public class VectorXZ
     public String toString() {
         String result = String.format("[%.3f, %.3f]", x, z);
         return result;
+    }
+    // *************************************************************************
+    // Savable methods
+
+    /**
+     * De-serialize this instance, for example when loading from a J3O file.
+     *
+     * @param importer (not null)
+     * @throws IOException from importer
+     */
+    @Override
+    public void read(JmeImporter importer)
+            throws IOException {
+        InputCapsule capsule = importer.getCapsule(this);
+
+        x = capsule.readFloat("x", 0f);
+        z = capsule.readFloat("z", 0f);
+    }
+
+    /**
+     * Serialize this instance, for example when saving to a J3O file.
+     *
+     * @param exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter exporter)
+            throws IOException {
+        OutputCapsule capsule = exporter.getCapsule(this);
+
+        capsule.write(x, "x", 0f);
+        capsule.write(z, "z", 0f);
     }
     // *************************************************************************
     // test cases
