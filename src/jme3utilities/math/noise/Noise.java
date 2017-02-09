@@ -25,12 +25,14 @@
  */
 package jme3utilities.math.noise;
 
+import com.jme3.math.Vector3f;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
+import jme3utilities.math.MyVector3f;
 
 /**
  * Random and noise utility methods. Aside from test cases, all methods should
@@ -116,7 +118,56 @@ final public class Noise {
     }
 
     /**
-     * Pick a pseudo-random element from an array using the specified generator.
+     * Generate a uniformly distributed, pseudo-random unit vector.
+     *
+     * @param generator (not null)
+     * @return a new unit vector
+     */
+    public static Vector3f nextVector3f(Random generator) {
+        Validate.nonNull(generator, "generator");
+
+        Vector3f result = new Vector3f();
+        double lengthSquared = 0.0;
+        while (lengthSquared < 0.1 || lengthSquared > 1.0) {
+            float x = 2f * generator.nextFloat() - 1f;
+            float y = 2f * generator.nextFloat() - 1f;
+            float z = 2f * generator.nextFloat() - 1f;
+            result.set(x, y, z);
+            lengthSquared = MyVector3f.lengthSquared(result);
+        }
+        double scaleFactor = 1.0 / Math.sqrt(lengthSquared);
+        result.multLocal((float) scaleFactor);
+
+        return result;
+    }
+
+    /**
+     * Generate a pseudo-random unit vector orthogonal to the input vector.
+     *
+     * @param input input vector (not null, not zero, unaffected)
+     * @param generator (not null)
+     * @return a new unit vector
+     */
+    public static Vector3f ortho(Vector3f input, Random generator) {
+        Validate.nonZero(input, "input");
+        Validate.nonNull(generator, "generator");
+
+        Vector3f ref = input.normalize();
+        Vector3f result = new Vector3f();
+        double lengthSquared = 0.0;
+        while (lengthSquared < 0.1) {
+            Vector3f sample = nextVector3f(generator);
+            ref.cross(sample, result);
+            lengthSquared = MyVector3f.lengthSquared(result);
+        }
+        double scaleFactor = 1.0 / Math.sqrt(lengthSquared);
+        result.multLocal((float) scaleFactor);
+
+        return result;
+    }
+
+    /**
+     * Pick a pseudo-random element from an array.
      *
      * @param array array to select from (not null)
      * @param generator generator to use (not null)
@@ -140,7 +191,7 @@ final public class Noise {
     }
 
     /**
-     * Pick a pseudo-random member from a list using the specified generator.
+     * Pick a pseudo-random element from a list.
      *
      * @param list list to select from (not null)
      * @param generator generator to use (not null)
