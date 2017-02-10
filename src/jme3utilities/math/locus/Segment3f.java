@@ -333,6 +333,17 @@ public class Segment3f implements Locus3f {
     // Locus3f methods
 
     /**
+     * Test whether this region can be merged with another.
+     *
+     * @param otherLocus (not null, unaffected)
+     * @return true if can merge, otherwise false
+     */
+    @Override
+    public boolean canMerge(Locus3f otherLocus) {
+        return false;
+    }
+
+    /**
      * Calculate the centroid of this region. The centroid need not be contained
      * in the region, but it should be relatively near all locations that are.
      *
@@ -381,6 +392,17 @@ public class Segment3f implements Locus3f {
         return closestLocation;
     }
 
+    /**
+     * Merge this region with another.
+     *
+     * @param otherLocus (not null, unaffected)
+     * @return a new region representing the union of the two regions
+     */
+    @Override
+    public Locus3f merge(Locus3f otherLocus) {
+        throw new IllegalArgumentException("unable to merge");
+    }
+    
     /**
      * Calculate a representative location (or rep) for this region. The rep
      * must be contained in the region.

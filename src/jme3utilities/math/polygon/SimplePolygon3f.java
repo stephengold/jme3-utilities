@@ -27,9 +27,11 @@ package jme3utilities.math.polygon;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
+import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.math.locus.Locus3f;
 import jme3utilities.math.VectorXZ;
@@ -225,6 +227,20 @@ public class SimplePolygon3f
     }
 
     /**
+     * Calculate a normal vector of the plane containing this polygon.
+     *
+     * @return a new unit vector
+     */
+    public Vector3f planeNormal() {
+        if (planeNormal == null) {
+            setPlane();
+        }
+        Vector3f result = planeNormal.clone();
+
+        return result;
+    }
+
+    /**
      * Calculate (or look up) the planar offset of the specified corner.
      *
      * @param cornerIndex which corner (&ge;0, &lt;numCorners)
@@ -278,6 +294,39 @@ public class SimplePolygon3f
     }
     // *************************************************************************
     // Locus3f methods
+
+    /**
+     * Test whether this region can be merged with another.
+     *
+     * @param otherLocus (not null, unaffected)
+     * @return true if can merge, otherwise false
+     */
+    @Override
+    public boolean canMerge(Locus3f otherLocus) {
+        Validate.nonNull(otherLocus, "other locus");
+
+        if (!(otherLocus instanceof SimplePolygon3f)) {
+            return false;
+        }
+        SimplePolygon3f otherPoly = (SimplePolygon3f) otherLocus;
+        if (otherPoly.getTolerance() != tolerance) {
+            return false;
+        }
+        List<Vector3f> locs = mergeCorners(otherPoly);
+        if (locs == null) {
+            return false;
+        }
+        Polygon3f tempPoly = new Polygon3f(locs, tolerance);
+        if (tempPoly.isDegenerate() || !tempPoly.isPlanar()) {
+            return false;
+        }
+        GenericPolygon3f genPoly = new GenericPolygon3f(locs, tolerance);
+        if (genPoly.isSelfIntersecting()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     /**
      * Calculate the centroid of this region. The centroid need not be contained
@@ -386,6 +435,23 @@ public class SimplePolygon3f
         assert sideIndex >= 0 : sideIndex;
 
         assert contains(result) : result;
+        return result;
+    }
+
+    /**
+     * Merge this region with another.
+     *
+     * @param otherLocus (not null, unaffected)
+     * @return a new region representing the union of the two regions
+     */
+    @Override
+    public Locus3f merge(Locus3f otherLocus) {
+        Validate.nonNull(otherLocus, "other locus");
+
+        SimplePolygon3f otherPoly = (SimplePolygon3f) otherLocus;
+        List<Vector3f> locs = mergeCorners(otherPoly);
+        SimplePolygon3f result = new SimplePolygon3f(locs, tolerance);
+
         return result;
     }
 
@@ -499,6 +565,101 @@ public class SimplePolygon3f
     }
     // *************************************************************************
     // private methods
+
+    /**
+     * List the corners of the polygon that would result from merging this
+     * polygon with another.
+     *
+     * @param otherPoly (not null)
+     * @return a new list with all elements non-null, or null if the polygons
+     * cannot be merged
+     */
+    private List<Vector3f> mergeCorners(SimplePolygon3f otherPoly) {
+        Vector3f otherNorm = otherPoly.planeNormal();
+        if (planeNormal == null) {
+            setPlane();
+        }
+        float dot = otherNorm.dot(planeNormal);
+        if (dot == 0f) {
+            /*
+             * The planes of the two polygons are orthogonal.
+             */
+            return null;
+        }
+        int otherNumCorners = otherPoly.numCorners();
+        boolean[][] sideMap = new boolean[numCorners][otherNumCorners];
+        if (!sharesSideWith(otherPoly, sideMap)) {
+            /*
+             * The two polygons have no shared sides.
+             */
+            return null;
+        }
+        boolean[][] revMap = new boolean[otherNumCorners][numCorners];
+        boolean success = otherPoly.sharesSideWith(this, revMap);
+        assert success;
+        /*
+         * Create a list of corner locations for the result.
+         */
+        int maxCorners = numCorners + otherNumCorners - 2;
+        List<Vector3f> result = new ArrayList<>(maxCorners);
+        /*
+         * Start with an unshared side of this polygon.
+         */
+        int startI = 0;
+        while (MyMath.first(sideMap[startI]) >= 0) {
+            startI++;
+            assert startI < numCorners : startI;
+        }
+        /*
+         * Add its first corner to the result.
+         */
+        Vector3f location = cornerLocations[startI];
+        result.add(location);
+        
+        for (int cornerI = nextIndex(startI);
+                cornerI != startI;
+                cornerI = nextIndex(cornerI)) {
+            location = cornerLocations[cornerI];
+            result.add(location);
+            
+            int startJ = MyMath.first(sideMap[cornerI]);
+            if (startJ >= 0) {
+                int cornerJ;
+                if (dot > 0f) {
+                    /*
+                     * The two polygons wind in the same direction. Iterate in 
+                     * the same (forward) direction through the other polygon's 
+                     * corners until a shared side is found.
+                     */
+                    startJ = otherPoly.nextIndex(startJ);
+                    for (cornerJ = otherPoly.nextIndex(startJ);
+                            MyMath.first(revMap[cornerJ]) < 0;
+                            cornerJ = otherPoly.nextIndex(cornerJ)) {
+                        location = otherPoly.copyCornerLocation(cornerJ);
+                        result.add(location);
+                    }
+                    cornerI = MyMath.first(revMap[cornerJ]);
+
+                } else {
+                    /*
+                     * The two polygons wind in opposite directions.  Iterate in
+                     * the opposite (reverse) direction through the other 
+                     * polygon's corners until a shared side is found.
+                     */
+                    for (cornerJ = otherPoly.prevIndex(startJ);
+                            MyMath.first(revMap[otherPoly.prevIndex(cornerJ)]) < 0;
+                            cornerJ = otherPoly.prevIndex(cornerJ)) {
+                        location = otherPoly.copyCornerLocation(cornerJ);
+                        result.add(location);
+                    }
+                    cornerI = MyMath.first(revMap[otherPoly.prevIndex(cornerJ)]);
+                }
+            }
+        }
+
+        assert result.size() <= maxCorners : result.size();
+        return result;
+    }
 
     /**
      * Initialize the #centroid field.
