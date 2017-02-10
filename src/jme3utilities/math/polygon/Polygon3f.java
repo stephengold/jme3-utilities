@@ -29,8 +29,6 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import java.util.BitSet;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
@@ -646,34 +644,43 @@ public class Polygon3f {
 
     /**
      * Test whether this polygon shares one or more corners with another
-     * polygon.
+     * polygon. The polygons must have the same tolerances.
      *
      * @param other the other polygon (not null)
-     * @param storeCornerMap if not null, used to store indices of matching
-     * corners
+     * @param sharedCorners if not null, a matrix of numCorners rows and
+     * other.numCorners columns used to record shared corners (updated)
      * @return true if one or more shared corners were found, otherwise false
      */
     public boolean sharesCornerWith(Polygon3f other,
-            Map<Integer, Integer> storeCornerMap) {
+            boolean[][] sharedCorners) {
         Validate.nonNull(other, "other polygon");
-
-        if (storeCornerMap != null) {
-            storeCornerMap.clear();
+        if (other.getTolerance() != tolerance) {
+            throw new IllegalArgumentException("tolerances differ");
         }
-
-        float tol = other.getTolerance();
-        float tol2 = (tolerance2 + tol * tol) / 2f;
+        if (sharedCorners != null) {
+            if (sharedCorners.length != numCorners) {
+                throw new IllegalArgumentException("wrong number of rows");
+            }
+            for (boolean[] row : sharedCorners) {
+                if (row == null || row.length != other.numCorners()) {
+                    throw new IllegalArgumentException(
+                            "wrong number of columns");
+                }
+            }
+        }
 
         boolean result = false;
         for (int otherI = 0; otherI < other.numCorners(); otherI++) {
             Vector3f otherCorner = other.copyCornerLocation(otherI);
             for (int thisI = 0; thisI < numCorners; thisI++) {
                 Vector3f thisCorner = cornerLocations[thisI];
-                if (MyVector3f.doCoincide(otherCorner, thisCorner, tol2)) {
+                if (MyVector3f.doCoincide(otherCorner, thisCorner, tolerance)) {
                     result = true;
-                    if (storeCornerMap != null) {
-                        storeCornerMap.put(thisI, otherI);
+                    if (sharedCorners != null) {
+                        sharedCorners[thisI][otherI] = true;
                     }
+                } else if (sharedCorners != null) {
+                    sharedCorners[thisI][otherI] = false;
                 }
             }
         }
@@ -683,41 +690,55 @@ public class Polygon3f {
 
     /**
      * Test whether this polygon shares one or more sides with another polygon.
+     * The polygons must have the same tolerances.
      *
      * @param other the other polygon (not null)
-     * @param storeMap if not null, used to store indices of matching sides
+     * @param sharedSides if not null, a matrix of numCorners rows and
+     * other.numCorners columns used to record shared sides (updated)
      * @return true if one or more shared sides were found, otherwise false
      */
-    public boolean sharesSideWith(Polygon3f other,
-            Map<Integer, Integer> storeMap) {
+    public boolean sharesSideWith(Polygon3f other, boolean[][] sharedSides) {
         Validate.nonNull(other, "other polygon");
-
-        if (storeMap != null) {
-            storeMap.clear();
+        if (other.getTolerance() != tolerance) {
+            throw new IllegalArgumentException("tolerances differ");
+        }
+        if (sharedSides != null) {
+            if (sharedSides.length != numCorners) {
+                throw new IllegalArgumentException("wrong number of rows");
+            }
+            for (boolean[] row : sharedSides) {
+                if (row == null || row.length != other.numCorners()) {
+                    throw new IllegalArgumentException(
+                            "wrong number of columns");
+                }
+            }
         }
 
-        Map<Integer, Integer> cornerMap = new TreeMap<>();
+        boolean[][] cornerMap = new boolean[numCorners][other.numCorners()];
         boolean result = sharesCornerWith(other, cornerMap);
         if (result == false) {
             return false;
         }
 
-        for (Map.Entry<Integer, Integer> entry : cornerMap.entrySet()) {
-            int thisI = entry.getKey();
-            int thisN = nextIndex(thisI);
-            int otherI = entry.getValue();
-            int otherN = cornerMap.get(thisN);
-
-            if (otherN == other.nextIndex(otherI)) {
-                result = true;
-                if (storeMap != null) {
-                    storeMap.put(thisI, otherI);
-                }
-            }
-            if (otherI == other.nextIndex(otherN)) {
-                result = true;
-                if (storeMap != null) {
-                    storeMap.put(thisI, otherN);
+        result = false;
+        for (int otherI = 0; otherI < other.numCorners(); otherI++) {
+            int otherN = other.nextIndex(otherI);
+            for (int thisI = 0; thisI < numCorners; thisI++) {
+                if (cornerMap[thisI][otherI]) {
+                    int thisN = nextIndex(thisI);
+                    if (cornerMap[thisN][otherN]) {
+                        result = true;
+                        if (sharedSides != null) {
+                            sharedSides[thisI][otherI] = true;
+                        }
+                    }
+                    int thisP = prevIndex(thisI);
+                    if (cornerMap[thisP][otherN]) {
+                        result = true;
+                        if (sharedSides != null) {
+                            sharedSides[thisP][otherI] = true;
+                        }
+                    }
                 }
             }
         }
