@@ -40,8 +40,8 @@ import jme3utilities.math.locus.Locus3f;
 import jme3utilities.math.MyVector3f;
 
 /**
- * Graph for navigation. Its vertices represent reachable locations in the
- * world. Its arcs represent feasible paths between locations.
+ * Graph for navigation. Its vertices represent reachable regions of the world.
+ * Its arcs represent feasible routes between regions.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -58,7 +58,7 @@ public class NavGraph {
     // fields
 
     /**
-     * cost (or length) of each arc in this graph
+     * cost (or length) of each arc in this graph (all &ge;0)
      */
     final private Map<NavArc, Float> arcCosts = new HashMap<>(100);
     /**
@@ -73,7 +73,7 @@ public class NavGraph {
      *
      * @param origin originating member vertex (distinct from terminus)
      * @param terminus terminating member vertex (distinct from origin)
-     * @param initialCost initial cost (or length) of the arc
+     * @param initialCost initial cost (or length) of the arc (&ge;0)
      * @return a new member arc
      */
     public NavArc addArc(NavVertex origin, NavVertex terminus,
@@ -83,6 +83,7 @@ public class NavGraph {
         if (origin == terminus) {
             throw new IllegalArgumentException("vertices not distinct");
         }
+        Validate.nonNegative(initialCost, "initial cost");
 
         NavArc newArc = new NavArc(origin, terminus);
         if (arcCosts.containsKey(newArc)) {
@@ -100,8 +101,8 @@ public class NavGraph {
     /**
      * Connect two member vertices with a pair of new arcs.
      *
-     * @param v1 first vertex (member of this graph, distinct from endVertex)
-     * @param v2 second vertex (member of this graph)
+     * @param v1 first vertex (member, distinct from v2)
+     * @param v2 second vertex (member, distinct from v1)
      * @param initialCost initial cost (or length) applied to both new arcs
      */
     public void addArcPair(NavVertex v1, NavVertex v2, float initialCost) {
@@ -119,7 +120,8 @@ public class NavGraph {
      * Create a new vertex without any arcs and add it to this graph.
      *
      * @param name name for the new vertex (not null, not in use)
-     * @param locus region represented by the new vertex (in world coordinates) or null
+     * @param locus region represented by the new vertex (in world coordinates)
+     * or null
      * @param location coordinates for calculating arc offsets (not null,
      * unaffected)
      * @return a new member vertex
@@ -227,7 +229,7 @@ public class NavGraph {
      * Find a member vertex which contains the specified point.
      *
      * @param point (not null, unaffected)
-     * @return pre-existing member vertex, or null if none found
+     * @return a pre-existing member vertex, or null if none found
      */
     public NavVertex findContains(Vector3f point) {
         Validate.nonNull(point, "point");
@@ -271,7 +273,7 @@ public class NavGraph {
      * hops from a specified vertex.
      *
      * @param hopCount (&ge;0)
-     * @param startVertex (member of this graph)
+     * @param startVertex (member)
      * @return new list of per-existing member vertices
      */
     public List<NavVertex> findByHops(int hopCount, NavVertex startVertex) {
@@ -288,8 +290,8 @@ public class NavGraph {
      *
      * @param minHopCount (&ge;0)
      * @param maxHopCount (&ge;minHopCount)
-     * @param startVertex (member of this graph)
-     * @return new list of pre-existing member vertices
+     * @param startVertex (member)
+     * @return a new list of pre-existing member vertices
      */
     public List<NavVertex> findByHops(int minHopCount, int maxHopCount,
             NavVertex startVertex) {
@@ -319,7 +321,7 @@ public class NavGraph {
      * Enumerate all member vertices which are the maximal number of hops from a
      * specified vertex.
      *
-     * @param startVertex (member of this graph)
+     * @param startVertex (member)
      * @return new list of pre-existing member vertices
      */
     public List<NavVertex> findMostHops(NavVertex startVertex) {
@@ -333,9 +335,9 @@ public class NavGraph {
      * Enumerate all member vertices in a specified subset which are the maximal
      * number of hops from a specified vertex.
      *
-     * @param startVertex (member of this graph)
+     * @param startVertex (member)
      * @param subset (not null, all members of this graph, unaffected)
-     * @return new list of pre-existing member vertices
+     * @return a new list of pre-existing member vertices
      */
     public List<NavVertex> findMostHops(NavVertex startVertex,
             Collection<NavVertex> subset) {
@@ -388,8 +390,7 @@ public class NavGraph {
     }
 
     /**
-     * Find the vertex (in a specified subset) nearest to a specified
-     * point.
+     * Find the vertex (in a specified subset) nearest to a specified point.
      *
      * @param subset (not null, all elements non-null, unaffected)
      * @param point coordinate vector (not null, unaffected)
@@ -418,12 +419,14 @@ public class NavGraph {
     /**
      * Read the current cost (or length) of a member arc.
      *
-     * @param arc which arc to modify (member of this graph)
-     * @return cost (or length) of arc
+     * @param arc which arc to modify (member)
+     * @return cost (or length) of arc (&ge;0)
      */
     public float getCost(NavArc arc) {
         validateMember(arc, "arc");
         Float result = arcCosts.get(arc);
+
+        assert result >= 0f : result;
         return result;
     }
 
@@ -484,7 +487,7 @@ public class NavGraph {
     /**
      * Test whether this graph contains a reverse arc for every member arc.
      *
-     * @return true if a reversible, otherwise false
+     * @return true if every arc is reversible, otherwise false
      */
     public boolean isReversible() {
         for (NavArc arc : arcCosts.keySet()) {
@@ -620,11 +623,13 @@ public class NavGraph {
     /**
      * Alter the cost (or length) of a member arc.
      *
-     * @param arc which arc to modify (member of this graph)
-     * @param newCost value for cost (or length) of arc
+     * @param arc which arc to modify (member)
+     * @param newCost value for cost (or length) of arc (&ge;0)
      */
     public void setCost(NavArc arc, float newCost) {
         validateMember(arc, "arc");
+        Validate.nonNegative(newCost, "new cost");
+
         Float oldCost = arcCosts.put(arc, newCost);
         assert oldCost != null;
     }
