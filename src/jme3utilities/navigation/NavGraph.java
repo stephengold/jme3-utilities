@@ -143,27 +143,36 @@ public class NavGraph {
     /**
      * Test whether the specified arc is a member of this graph.
      *
-     * @param arc arc to test (not null)
+     * @param arc input (may be null)
      * @return true if it's a member, otherwise false
      */
     public boolean contains(NavArc arc) {
-        Validate.nonNull(arc, "arc");
-
-        boolean result = arcCosts.containsKey(arc);
-        return result;
+        if (arc == null) {
+            return false;
+        }
+        if (arcCosts.containsKey(arc)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
      * Test whether the specified vertex is a member of this graph.
      *
-     * @param vertex vertex to test (not null)
+     * @param vertex input (may be null)
      * @return true if it's a member, otherwise false
      */
     public boolean contains(NavVertex vertex) {
-        Validate.nonNull(vertex, "vertex");
-
-        boolean result = vertices.containsValue(vertex);
-        return result;
+        if (vertex == null) {
+            return false;
+        }
+        String name = vertex.getName();
+        if (find(name) == vertex) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -467,24 +476,6 @@ public class NavGraph {
     }
 
     /**
-     * Test whether the specified vertex is a member of this graph.
-     *
-     * @param vertex input (may be null)
-     * @return true if a member, otherwise false
-     */
-    public boolean isMember(NavVertex vertex) {
-        if (vertex == null) {
-            return false;
-        }
-        String name = vertex.getName();
-        if (find(name) == vertex) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Test whether this graph contains a reverse arc for every member arc.
      *
      * @return true if every arc is reversible, otherwise false
@@ -665,7 +656,7 @@ public class NavGraph {
      * @param description description of the argument
      */
     public void validateMember(NavArc arc, String description) {
-        if (!arcCosts.keySet().contains(arc)) {
+        if (!contains(arc)) {
             String what;
             if (description == null) {
                 what = "arc argument";
@@ -689,7 +680,7 @@ public class NavGraph {
     public void validateMember(NavVertex vertex, String description) {
         Validate.nonNull(vertex, description);
 
-        if (!isMember(vertex)) {
+        if (!contains(vertex)) {
             String what;
             if (description == null) {
                 what = "vertex argument";
@@ -716,7 +707,7 @@ public class NavGraph {
      */
     private void calculateTotalCosts(NavVertex currentVertex,
             float costSoFar, Map<NavVertex, Float> costData) {
-        assert isMember(currentVertex) : currentVertex;
+        assert contains(currentVertex) : currentVertex;
         assert costSoFar >= 0f : costSoFar;
         assert costData != null;
 
@@ -749,7 +740,7 @@ public class NavGraph {
      */
     private void calculateHops(NavVertex currentVertex,
             int hopsSoFar, Map<NavVertex, Integer> hopData) {
-        assert isMember(currentVertex) : currentVertex;
+        assert contains(currentVertex) : currentVertex;
         assert hopsSoFar >= 0 : hopsSoFar;
         assert hopData != null;
 
@@ -784,8 +775,8 @@ public class NavGraph {
     private boolean existsRouteWithout(NavArc avoidArc, NavVertex fromVertex,
             NavVertex toVertex, Set<NavVertex> visitedVertices) {
         assert arcCosts.keySet().contains(avoidArc) : avoidArc;
-        assert isMember(fromVertex) : fromVertex;
-        assert isMember(toVertex) : toVertex;
+        assert contains(fromVertex) : fromVertex;
+        assert contains(toVertex) : toVertex;
 
         if (fromVertex == toVertex) {
             return true;
@@ -819,7 +810,7 @@ public class NavGraph {
      * @param visited vertices visited so far, potentially added to (not null)
      */
     private void visitReachable(NavVertex fromVertex, Set<NavVertex> visited) {
-        assert isMember(fromVertex) : fromVertex;
+        assert contains(fromVertex) : fromVertex;
         assert visited != null;
 
         if (visited.contains(fromVertex)) {
