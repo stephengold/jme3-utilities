@@ -141,7 +141,7 @@ public class NavGraph {
     }
 
     /**
-     * Test whether a particular arc is a member of this graph.
+     * Test whether the specified arc is a member of this graph.
      *
      * @param arc arc to test (not null)
      * @return true if it's a member, otherwise false
@@ -154,7 +154,7 @@ public class NavGraph {
     }
 
     /**
-     * Test whether a particular vertex is a member of this graph.
+     * Test whether the specified vertex is a member of this graph.
      *
      * @param vertex vertex to test (not null)
      * @return true if it's a member, otherwise false
@@ -451,7 +451,7 @@ public class NavGraph {
      * if the arc were removed. In other words, whether the arc is part of a
      * loop.
      *
-     * @param arc arc to hypothetically remove (member of this graph)
+     * @param arc arc to hypothetically remove (member)
      * @return true if still connected, false if not
      */
     public boolean isConnectedWithout(NavArc arc) {
@@ -460,7 +460,7 @@ public class NavGraph {
         NavVertex fromVertex = arc.getFromVertex();
         NavVertex toVertex = arc.getToVertex();
         Set<NavVertex> visitedVertices = new HashSet<>();
-        boolean result = existsPathWithout(
+        boolean result = existsRouteWithout(
                 arc, fromVertex, toVertex, visitedVertices);
 
         return result;
@@ -589,12 +589,12 @@ public class NavGraph {
     }
 
     /**
-     * Find the shortest (or cheapest) path from one vertex to another.
+     * Find the shortest (or cheapest) route from one vertex to another.
      *
      * @param startVertex starting point (member of this graph, distinct from
      * endVertex)
      * @param endVertex goal (member of this graph)
-     * @return first arc in path (existing member arc) or null if unreachable
+     * @return first arc in route (existing member arc) or null if unreachable
      */
     public NavArc seek(NavVertex startVertex, NavVertex endVertex) {
         validateMember(startVertex, "start vertex");
@@ -772,16 +772,16 @@ public class NavGraph {
     }
 
     /**
-     * Test whether there's a path between two specified member vertices which
+     * Test whether there's a route between two specified member vertices which
      * avoids a specified arc. Note: recursive!
      *
      * @param avoidArc arc to avoid (member of this graph)
      * @param fromVertex starting point (member of this graph)
      * @param toVertex endpoint (member of this graph)
      * @param visitedVertices
-     * @return true if such a path exists, false if no such path exists
+     * @return true if such a route exists, false if no such route exists
      */
-    private boolean existsPathWithout(NavArc avoidArc, NavVertex fromVertex,
+    private boolean existsRouteWithout(NavArc avoidArc, NavVertex fromVertex,
             NavVertex toVertex, Set<NavVertex> visitedVertices) {
         assert arcCosts.keySet().contains(avoidArc) : avoidArc;
         assert isMember(fromVertex) : fromVertex;
@@ -802,9 +802,9 @@ public class NavGraph {
                 continue;
             }
             NavVertex vertex = arc.getToVertex();
-            boolean pathExists = existsPathWithout(
+            boolean routeExists = existsRouteWithout(
                     avoidArc, vertex, toVertex, newSet);
-            if (pathExists) {
+            if (routeExists) {
                 return true;
             }
         }
