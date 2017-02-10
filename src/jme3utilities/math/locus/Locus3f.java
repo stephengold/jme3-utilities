@@ -35,6 +35,14 @@ import jme3utilities.math.spline.Spline3f;
  */
 public interface Locus3f {
     /**
+     * Test whether this region can be merged with another.
+     *
+     * @param otherLocus (not null, unaffected)
+     * @return true if can merge, otherwise false
+     */
+    boolean canMerge(Locus3f otherLocus);
+
+    /**
      * Calculate the centroid of this region. The centroid need not be contained
      * in the region, but it should be relatively near all locations that are.
      *
@@ -57,6 +65,14 @@ public interface Locus3f {
      * @return a new vector, or null it none found
      */
     Vector3f findLocation(Vector3f location);
+
+    /**
+     * Merge this region with another.
+     *
+     * @param otherLocus (not null, unaffected)
+     * @return a new region representing the union of the two regions
+     */
+    Locus3f merge(Locus3f otherLocus);
 
     /**
      * Calculate a representative location (or rep) for this region. The rep
