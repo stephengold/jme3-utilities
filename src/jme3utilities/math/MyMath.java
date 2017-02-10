@@ -183,6 +183,21 @@ public class MyMath {
     }
 
     /**
+     * Find the first true element of the input array.
+     *
+     * @param array input (not null)
+     * @return index (&ge;0, &lt;length) or -1 if no true element found
+     */
+    public static int first(boolean[] array) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Compute the hypotenuse of a right triangle using the Pythagorean Theorem.
      * This method accepts negative arguments.
      *
