@@ -76,6 +76,7 @@ public class TestSkyMaterialHud
             TestSkyMaterialHud.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * bloom filter controlled by this HUD: set by constructor
      */

@@ -27,10 +27,11 @@ package jme3utilities.math.polygon;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
-import jme3utilities.math.spline.Locus3f;
+import jme3utilities.math.locus.Locus3f;
 import jme3utilities.math.VectorXZ;
 import jme3utilities.math.spline.LinearSpline3f;
 import jme3utilities.math.spline.Spline3f;
@@ -102,19 +103,47 @@ public class SimplePolygon3f
     // constructors
 
     /**
-     * Instantiate a simple polygon with the specified sequence of corners.
+     * Instantiate a simple polygon from an array of corners.
      *
-     * @param cornerList locations of the corners, in sequence (not null or
-     * containing any nulls)
+     * @param cornerArray locations of the corners, in sequence (not null or
+     * containing any nulls, unaffected)
      * @param compareTolerance tolerance (&ge;0) used when comparing two points
      * or testing for intersection
      * @throws IllegalArgumentException if the corners provided don't form a
      * simple polygon
      */
-    public SimplePolygon3f(Vector3f[] cornerList, float compareTolerance) {
+    public SimplePolygon3f(Vector3f[] cornerArray, float compareTolerance) {
+        super(cornerArray, compareTolerance);
+        /*
+         * Verify that the polygon is simple.
+         */
+        if (!isPlanar()) {
+            throw new IllegalArgumentException("non-planar polygon");
+        }
+        if (isSelfIntersecting()) {
+            throw new IllegalArgumentException("self-intersecting polygon");
+        }
+        /*
+         * Allocate array space.
+         */
+        planarOffsets = new VectorXZ[numCorners];
+        planarOffsets[0] = new VectorXZ(0f, 0f);
+    }
+
+    /**
+     * Instantiate a simple polygon from a list of corners.
+     *
+     * @param cornerList locations of the corners, in sequence (not null or
+     * containing any nulls, unaffected)
+     * @param compareTolerance tolerance (&ge;0) used when comparing two points
+     * or testing for intersection
+     * @throws IllegalArgumentException if the corners provided don't form a
+     * simple polygon
+     */
+    public SimplePolygon3f(List<Vector3f> cornerList, float compareTolerance) {
         super(cornerList, compareTolerance);
         /*
-         * Verify that the polygon is convex.
+         * Verify that the polygon is simple.
          */
         if (!isPlanar()) {
             throw new IllegalArgumentException("non-planar polygon");
@@ -141,22 +170,6 @@ public class SimplePolygon3f
             setSignedArea();
         }
         float result = FastMath.abs(signedArea);
-
-        return result;
-    }
-
-    /**
-     * Calculate (or look up) the centroid of the polygon.
-     *
-     * @return a new vector with coordinates of the centroid
-     */
-    public Vector3f centroid() {
-        if (centroid == null) {
-            setCentroid();
-        }
-        Vector3f result = cornerLocations[0].clone();
-        result.addLocal(planeXBasis.mult(centroid.getX()));
-        result.addLocal(planeZBasis.mult(centroid.getZ()));
 
         return result;
     }
@@ -267,10 +280,28 @@ public class SimplePolygon3f
     // Locus3f methods
 
     /**
-     * Test whether this polygon contains a specific location.
+     * Calculate the centroid of this region. The centroid need not be contained
+     * in the region, but it should be relatively near all locations that are.
+     *
+     * @return a new coordinate vector
+     */
+    @Override
+    public Vector3f centroid() {
+        if (centroid == null) {
+            setCentroid();
+        }
+        Vector3f result = cornerLocations[0].clone();
+        result.addLocal(planeXBasis.mult(centroid.getX()));
+        result.addLocal(planeZBasis.mult(centroid.getZ()));
+
+        return result;
+    }
+
+    /**
+     * Test whether this region contains a specified location.
      *
      * @param location coordinates of location to test (not null, unaffected)
-     * @return true if location is in this polygon, false otherwise
+     * @return true if location is in this region, false otherwise
      */
     @Override
     public boolean contains(Vector3f location) {
@@ -302,21 +333,66 @@ public class SimplePolygon3f
     }
 
     /**
-     * Quickly provide a representative point for the polygon. The point need
-     * not be contained in this polygon, but it should be relatively close to
-     * all points that are.
+     * Find the location in this region nearest to a specified location.
      *
-     * @return a new vector
+     * @param location coordinates of the input (not null, unaffected)
+     * @return a new vector, or null it none found
      */
     @Override
-    public Vector3f representative() {
-        Vector3f result = centroid();
+    public Vector3f findLocation(Vector3f location) {
+        Vector3f result = location.clone();
+        if (contains(result)) {
+            return result;
+        }
+
+        if (!inPlane(result)) {
+            float pseudoDistance = planeNormal.dot(location) + planeConstant;
+            Vector3f rejection = planeNormal.mult(pseudoDistance);
+            result.subtractLocal(rejection);
+            if (!inPlane(result)) {
+                assert false;
+            }
+            assert inPlane(result) : result;
+            if (contains(result)) {
+                return result;
+            }
+        }
+
+        Vector3f closestLocation = new Vector3f();
+        int sideIndex = findSide(result, closestLocation);
+        assert sideIndex >= 0 : sideIndex;
+
+        assert contains(closestLocation) : closestLocation;
+        return closestLocation;
+    }
+
+    /**
+     * Calculate a representative location (or rep) for this region. The rep
+     * must be contained in the region.
+     *
+     * @return a new coordinate vector, or null if none found
+     */
+    @Override
+    public Vector3f rep() {
+        Vector3f center = centroid();
+
+        if (contains(center)) {
+            return center;
+        }
+        assert inPlane(center);
+
+        Vector3f result = new Vector3f();
+        int sideIndex = findSide(center, result);
+        assert sideIndex >= 0 : sideIndex;
+
+        assert contains(result) : result;
         return result;
     }
 
     /**
-     * Score a location based on how well it "fits" into this polygon.
+     * Score a location based on how well it "fits" with this region.
      *
+     * @param location coordinates of the input (not null, unaffected)
      * @return score value (more positive &rarr; better)
      */
     @Override
@@ -326,7 +402,6 @@ public class SimplePolygon3f
         if (planeConstant == null) {
             setPlane();
         }
-
         float pseudoDistance = planeNormal.dot(location) + planeConstant;
         double squaredPD = pseudoDistance * pseudoDistance;
 
@@ -353,11 +428,11 @@ public class SimplePolygon3f
     }
 
     /**
-     * Find a path between two locations in this polygon without leaving the
-     * polygon. Short paths are preferred over long ones.
+     * Find a path between two locations in this region without leaving the
+     * region. Short paths are preferred over long ones.
      *
-     * @param startLocation coordinates (contained in polygon, unaffected)
-     * @param goalLocation coordinates (contained in polygon, unaffected)
+     * @param startLocation coordinates (contained in region, unaffected)
+     * @param goalLocation coordinates (contained in region, unaffected)
      * @return a new path spline, or null if none found
      */
     @Override
@@ -366,11 +441,61 @@ public class SimplePolygon3f
         assert contains(startLocation) : startLocation;
         assert contains(goalLocation) : goalLocation;
 
-        assert isConvex(); // TODO
+        if (!isConvex()) {
+            throw new UnsupportedOperationException(); // TODO
+        }
         Vector3f[] joints = {startLocation, goalLocation};
         Spline3f result = new LinearSpline3f(joints);
 
         return result;
+    }
+
+    /**
+     * Calculate the distance from the specified starting point to the first
+     * point of support (if any) directly below it in this region.
+     *
+     * @param location coordinates of starting point(not null, unaffected)
+     * @param cosineTolerance cosine of maximum slope for support (&gt;0, &lt;1)
+     * @return he shortest support distance (&ge;0) or
+     * {@link Float#POSITIVE_INFINITY} if no support
+     */
+    @Override
+    public float supportDistance(Vector3f location, float cosineTolerance) {
+        Validate.nonNull(location, "location");
+        Validate.fraction(cosineTolerance, "cosine tolerance");
+
+        if (planeNormal == null) {
+            setPlane();
+        }
+        float cosineSlope = FastMath.abs(planeNormal.y);
+        if (cosineSlope < cosineTolerance) {
+            /*
+             * Slope of this polygon's plane exceeds the limit, so it
+             * won't provide support.
+             */
+            return Float.POSITIVE_INFINITY;
+        }
+
+        float dot = planeNormal.dot(location);
+        float distance = (dot + planeConstant) / planeNormal.y;
+        if (distance < 0f) {
+            /*
+             * Starting point is located below the plane of this polygon.
+             */
+            return Float.POSITIVE_INFINITY;
+        }
+
+        Vector3f projection = location.clone();
+        projection.y -= distance;
+        assert inPlane(projection) : projection;
+        if (!contains(projection)) {
+            /*
+             * Calculated point of support lies outside this polygon.
+             */
+            return Float.POSITIVE_INFINITY;
+        } else {
+            return distance;
+        }
     }
     // *************************************************************************
     // private methods

@@ -52,8 +52,8 @@ import jme3utilities.MyCamera;
 import jme3utilities.MyString;
 import jme3utilities.debug.AxesControl;
 import jme3utilities.debug.LandscapeControl;
-import jme3utilities.debug.LoopMesh;
 import jme3utilities.math.MyVector3f;
+import jme3utilities.navigation.LoopMesh;
 import jme3utilities.sky.DomeMesh;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyMaterial;
@@ -126,6 +126,7 @@ public class SlideShow
     final private static Vector2f uvSun = new Vector2f(0.5f, 0.8f);
     // *************************************************************************
     // fields
+
     /**
      * mesh for a hemisphere with a slice removed
      */

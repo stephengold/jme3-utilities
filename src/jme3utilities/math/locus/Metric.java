@@ -23,24 +23,34 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.math.spline;
+package jme3utilities.math.locus;
 
-import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
 
 /**
- * Enumerate the 3-D metrics available in Shell3f.
+ * Enumerate the metrics available in Shell3f.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public enum Metric3f {
+public enum Metric {
     // *************************************************************************
     // values
 
-    EUCLID, CHEBYSHEV, MANHATTAN;
+    /**
+     * Euclidean metric (sqrt(x^2 + y^2)) for spherical and ellipsoidal shapes
+     */
+    EUCLID,
+    /**
+     * Chebyshev metric (max{abs{x},abs{y}}) for cubic and rectangular shapes
+     */
+    CHEBYSHEV,
+    /**
+     * Manhattan metric (abs{x}+abs{y}) for octahedral shapes
+     */
+    MANHATTAN;
     // *************************************************************************
     // new methods exposed
 
@@ -67,8 +77,8 @@ public enum Metric3f {
      * @param description text returned by #describe()
      * @return enum value, or for an invalid input
      */
-    public static Metric3f fromDescription(String description) {
-        for (Metric3f mode : Metric3f.values()) {
+    public static Metric fromDescription(String description) {
+        for (Metric mode : Metric.values()) {
             if (mode.describe().equals(description)) {
                 return mode;
             }
@@ -77,9 +87,10 @@ public enum Metric3f {
     }
 
     /**
-     * Calculate the squared value of this metric for a specified offset.
+     * Calculate the squared value of this metric for a specified 3-D offset.
      *
-     * @param offset input vector (not null)
+     * @param offset input vector (not null, unaffected)
+     * @return squared metric value (&ge;0)
      */
     public double squaredValue(Vector3f offset) {
         Validate.nonNull(offset, "offset");
@@ -91,14 +102,16 @@ public enum Metric3f {
                 break;
 
             case CHEBYSHEV:
-                float max = MyMath.max(offset.x, offset.y, offset.z);
-                result = max * max;
+                double dx = offset.x;
+                double dy = offset.y;
+                double dz = offset.z;
+                result = MyMath.max(dx * dx, dy * dy, dz * dz);
                 break;
 
             case MANHATTAN:
-                float dx = FastMath.abs(offset.x);
-                float dy = FastMath.abs(offset.y);
-                float dz = FastMath.abs(offset.z);
+                dx = Math.abs(offset.x);
+                dy = Math.abs(offset.y);
+                dz = Math.abs(offset.z);
                 double sum = dx + dy + dz;
                 result = sum * sum;
                 break;

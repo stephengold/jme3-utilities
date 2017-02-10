@@ -23,7 +23,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.math.spline;
+package jme3utilities.math.locus;
 
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -34,6 +34,8 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 import jme3utilities.math.noise.Noise;
 import jme3utilities.math.polygon.SimplePolygon3f;
+import jme3utilities.math.spline.LinearSpline3f;
+import jme3utilities.math.spline.Spline3f;
 
 /**
  * Represents a metric-based shell in 3-D space, which includes all points whose
@@ -79,9 +81,14 @@ public class Shell3f implements Locus3f {
     /**
      * metric employed by this shell (not null)
      */
-    private Metric3f metric;
+    private Metric metric;
     /**
-     * minimum squared metric value for points in the shell (&ge;0, may be
+     * minimum metric value for points in the shell (&ge;0, &le;outerRadius, may
+     * be {@link Float#POSITIVE_INFINITY})
+     */
+    private float innerRadius;
+    /**
+     * the square of innerRadius (&ge;0, &le;outerRSquared, may be
      * {@link Double#POSITIVE_INFINITY})
      */
     private double innerRSquared;
@@ -91,7 +98,12 @@ public class Shell3f implements Locus3f {
      */
     private double optimalRSquared;
     /**
-     * maximum squared metric value for points in the shell (&ge;0, may be
+     * maximum metric value for points in the shell (&ge;innerRadius, may be
+     * {@link Float#POSITIVE_INFINITY})
+     */
+    private float outerRadius;
+    /**
+     * the square of outerRadius (&ge;innerRSquared, may be
      * {@link Double#POSITIVE_INFINITY})
      */
     private double outerRSquared;
@@ -99,7 +111,12 @@ public class Shell3f implements Locus3f {
      * left-multiply to convert XYZ (world) coordinates to UVW (local)
      * coordinates or null to skip rotation
      */
-    private Quaternion rotation;
+    private Quaternion inverseRotation;
+    /**
+     * left-multiply to convert UVW (local) coordinates to XYZ (world)
+     * coordinates or null to skip rotation
+     */
+    private Quaternion orientation;
     /**
      * coordinates of the shell's center (not null)
      */
@@ -119,32 +136,32 @@ public class Shell3f implements Locus3f {
      * @param radius (in world units, &gt;0, finite)
      */
     public Shell3f(Vector3f center, float radius) {
-        this(Metric3f.EUCLID, center, radius);
+        this(Metric.EUCLID, center, radius);
     }
 
     /**
      * Instantiate an axis-aligned cube or octahedron.
      *
-     * @param metric {@link Metric3f#CHEBYSHEV} &rarr; cube,
-     * {@link Metric3f#MANHATTAN} &rarr; octahedron (not null)
+     * @param metric {@link Metric#CHEBYSHEV} &rarr; cube,
+     * {@link Metric#MANHATTAN} &rarr; octahedron (not null)
      * @param center coordinates of the shell's center (not null, unaffected)
      * @param radius (in world units, &gt;0, finite)
      */
-    public Shell3f(Metric3f metric, Vector3f center, float radius) {
+    public Shell3f(Metric metric, Vector3f center, float radius) {
         this(metric, center, radius, radius, radius);
     }
 
     /**
      * Instantiate an axis-aligned ellipsoid or rectangular solid.
      *
-     * @param metric {@link Metric3f#EUCLID} &rarr; ellipsoid,
-     * {@link Metric3f#CHEBYSHEV} &rarr; rectangular solid (not null)
+     * @param metric {@link Metric#EUCLID} &rarr; ellipsoid,
+     * {@link Metric#CHEBYSHEV} &rarr; rectangular solid (not null)
      * @param center coordinates of the shell's center (not null, unaffected)
      * @param xRadius (in world units, &gt;0, finite)
      * @param yRadius (in world units, &gt;0, finite)
      * @param zRadius (in world units, &gt;0, finite)
      */
-    public Shell3f(Metric3f metric, Vector3f center, float xRadius,
+    public Shell3f(Metric metric, Vector3f center, float xRadius,
             float yRadius, float zRadius) {
         this(metric, center, null, xRadius, yRadius, zRadius);
     }
@@ -154,13 +171,13 @@ public class Shell3f implements Locus3f {
      *
      * @param metric metric employed by this shell (not null)
      * @param center coordinates of the shell's center (not null, unaffected)
-     * @param rotation left-multiply to convert XYZ (world) coordinates to UVW
-     * (local) coordinates (unaffected) or null to skip rotation
+     * @param orient left-multiply to convert UVW (local) coordinates to XYZ
+     * (world) coordinates (unaffected) or null to skip rotation
      * @param uRadius (in world units, &gt;0, finite)
      * @param vRadius (in world units, &gt;0, finite)
      * @param wRadius (in world units, &gt;0, finite)
      */
-    public Shell3f(Metric3f metric, Vector3f center, Quaternion rotation,
+    public Shell3f(Metric metric, Vector3f center, Quaternion orient,
             float uRadius, float vRadius, float wRadius) {
         Validate.nonNull(metric, "metric");
         Validate.nonNull(center, "center");
@@ -173,14 +190,10 @@ public class Shell3f implements Locus3f {
 
         this.metric = metric;
         this.center = center.clone();
-        if (rotation == null) {
-            this.rotation = null;
-        } else {
-            this.rotation = rotation.clone();
-        }
+        setOrientation(orient);
         if (uRadius == vRadius && vRadius == wRadius) {
             weights = null;
-            outerRSquared = uRadius * uRadius;
+            outerRadius = uRadius;
         } else {
             float maxRadius = MyMath.max(uRadius, vRadius, wRadius);
             assert maxRadius > 0f : maxRadius;
@@ -188,10 +201,12 @@ public class Shell3f implements Locus3f {
             float vWeight = maxRadius / vRadius;
             float wWeight = maxRadius / wRadius;
             weights = new Vector3f(uWeight, vWeight, wWeight);
-            outerRSquared = maxRadius * maxRadius;
+            outerRadius = maxRadius;
         }
+        innerRadius = 0f;
         innerRSquared = 0.0;
         optimalRSquared = 0.0;
+        outerRSquared = outerRadius * outerRadius;
     }
 
     /**
@@ -209,21 +224,24 @@ public class Shell3f implements Locus3f {
         Validate.positive(radius, "radius");
         Validate.finite(radius, "radius");
 
-        metric = Metric3f.EUCLID;
+        metric = Metric.EUCLID;
         this.center = center.clone();
         Vector3f uAxis = axis.normalize();
         Vector3f vAxis = Noise.ortho(uAxis, generator);
         Vector3f wAxis = uAxis.cross(vAxis);
-        rotation = new Quaternion();
-        rotation.fromAxes(uAxis, vAxis, wAxis).inverseLocal();
+        orientation = new Quaternion();
+        orientation.fromAxes(uAxis, vAxis, wAxis);
+        inverseRotation = orientation.inverse();
         if (slabFlag) {
             weights = slabWeights;
         } else {
             weights = cylinderWeights;
         }
-        this.innerRSquared = 0.0;
-        this.optimalRSquared = 0.0;
-        this.outerRSquared = radius * radius;
+        innerRadius = 0f;
+        innerRSquared = 0.0;
+        optimalRSquared = 0.0;
+        outerRadius = radius;
+        outerRSquared = radius * radius;
     }
 
     /**
@@ -236,7 +254,7 @@ public class Shell3f implements Locus3f {
      * &ge;innerRadius, may be {@link Float#POSITIVE_INFINITY})
      */
     public Shell3f(Vector3f center, float innerRadius, float outerRadius) {
-        this(Metric3f.EUCLID, center, null, null, innerRadius, outerRadius);
+        this(Metric.EUCLID, center, null, null, innerRadius, outerRadius);
     }
 
     /**
@@ -244,8 +262,8 @@ public class Shell3f implements Locus3f {
      *
      * @param metric metric employed by this shell (not null)
      * @param center coordinates of the shell's center (not null, unaffected)
-     * @param rotation left-multiply to convert XYZ (world) coordinates to UVW
-     * (local) coordinates (unaffected) or null to skip rotation
+     * @param orient left-multiply to convert UVW (local) coordinates to XYZ
+     * (world) coordinates (unaffected) or null to skip rotation
      * @param weights axis weights (all components &ge;0) or null to skip
      * weighting
      * @param innerRadius radius of the negative space (in world units, &ge;0,
@@ -253,7 +271,7 @@ public class Shell3f implements Locus3f {
      * @param outerRadius radius of the positive space (in world units,
      * &ge;innerRadius, may be {@link Float#POSITIVE_INFINITY})
      */
-    public Shell3f(Metric3f metric, Vector3f center, Quaternion rotation,
+    public Shell3f(Metric metric, Vector3f center, Quaternion orient,
             Vector3f weights, float innerRadius, float outerRadius) {
         Validate.nonNull(metric, "metric");
         Validate.nonNull(center, "center");
@@ -267,11 +285,8 @@ public class Shell3f implements Locus3f {
 
         this.metric = metric;
         this.center = center.clone();
-        if (rotation == null) {
-            this.rotation = null;
-        } else {
-            this.rotation = rotation.clone();
-        }
+        setOrientation(orient);
+
         if (weights == null) {
             this.weights = null;
         } else {
@@ -280,6 +295,7 @@ public class Shell3f implements Locus3f {
             Validate.positive(weights.z, "W-axis weight");
             this.weights = weights.clone();
         }
+        this.innerRadius = innerRadius;
         innerRSquared = innerRadius * innerRadius;
         if (Float.isInfinite(outerRadius)) {
             optimalRSquared = Double.POSITIVE_INFINITY;
@@ -288,6 +304,7 @@ public class Shell3f implements Locus3f {
             double optimalRadius = 0.5 * (double) (innerRadius + outerRadius);
             optimalRSquared = optimalRadius * optimalRadius;
         }
+        this.outerRadius = outerRadius;
         outerRSquared = outerRadius * outerRadius;
     }
     // *************************************************************************
@@ -296,7 +313,7 @@ public class Shell3f implements Locus3f {
     /**
      * Test whether this shell is convex.
      *
-     * @return true if convex, false if there is a hole.
+     * @return true if convex, false if there is a hole
      */
     public boolean isConvex() {
         if (innerRSquared == 0.0) {
@@ -307,44 +324,56 @@ public class Shell3f implements Locus3f {
     }
 
     /**
-     * Alter the center of this shell.
+     * Relocate this shell.
      *
      * @param newCenter new coordinates for center (not null, unaffected)
      */
-    public void setCenter(Vector3f newCenter) {
+    final public void setCenter(Vector3f newCenter) {
         Validate.nonNull(newCenter, "new center");
 
         center.set(newCenter);
     }
 
     /**
-     * Alter the orientation of this shell.
+     * Reorient this shell.
      *
      * @param newOrientation left-multiply to convert UVW (local) coordinates to
      * XYZ (world) coordinates (unaffected) or null to skip rotation
      */
-    public void setOrientation(Quaternion newOrientation) {
+    final public void setOrientation(Quaternion newOrientation) {
         if (newOrientation == null) {
-            rotation = null;
+            orientation = null;
+            inverseRotation = null;
         } else {
-            rotation.set(newOrientation);
-            rotation.inverseLocal();
+            orientation = newOrientation.clone();
+            inverseRotation = newOrientation.inverse();
         }
     }
     // *************************************************************************
     // Locus3f methods    
 
     /**
-     * Test whether this shell contains a specific location.
+     * Calculate the centroid of this region. The centroid need not be contained
+     * in the region, but it should be relatively near all locations that are.
+     *
+     * @return a new coordinate vector
+     */
+    @Override
+    public Vector3f centroid() {
+        return center.clone();
+    }
+
+    /**
+     * Test whether this region contains a specified location.
      *
      * @param location coordinates of location to test (not null, unaffected)
-     * @return true if location is in this shell, false otherwise
+     * @return true if location is in this region, false otherwise
      */
     @Override
     public boolean contains(Vector3f location) {
         Vector3f offset = location.subtract(center);
-        if (rotation != null) {
-            offset = rotation.mult(offset);
+        if (inverseRotation != null) {
+            offset = inverseRotation.mult(offset);
         }
         if (weights != null) {
             offset.multLocal(weights);
@@ -358,28 +387,170 @@ public class Shell3f implements Locus3f {
     }
 
     /**
-     * Quickly provide a representative location for this shell. The location
-     * need not be contained in this shell, but it should be relatively close to
-     * all locations that are.
+     * Find the location in this region nearest to a specified location.
      *
-     * @return a new coordinate vector
+     * @param location coordinates of the input (not null, unaffected)
+     * @return a new vector, or null it none found
      */
     @Override
-    public Vector3f representative() {
-        Vector3f result = center.clone();
+    public Vector3f findLocation(Vector3f location) {
+        Vector3f result = location.clone();
+
+        Vector3f offset = location.subtract(center);
+        if (inverseRotation != null) {
+            offset = inverseRotation.mult(offset);
+        }
+        Vector3f unweighted = offset.clone();
+        if (weights != null) {
+            offset.multLocal(weights);
+        }
+        double squaredValue = metric.squaredValue(offset);
+
+        if (squaredValue == 0.0 && innerRadius > 0.0) {
+            /*
+             * Location is the center.  Pick an offset on the inner surface.
+             */
+            if (weights == null) {
+                unweighted.set(innerRadius, 0f, 0f);
+                offset.set(unweighted);
+            } else {
+                float max = MyMath.max(weights.x, weights.y, weights.z);
+                assert max > 0f : weights;
+                if (weights.x == max) {
+                    unweighted.set(innerRadius / weights.x, 0f, 0f);
+                } else if (weights.y == max) {
+                    unweighted.set(0f, innerRadius / weights.y, 0f);
+                } else {
+                    assert weights.z == max : weights;
+                    unweighted.set(0f, 0f, innerRadius / weights.z);
+                }
+                offset.set(unweighted).multLocal(weights);
+            }
+            squaredValue = innerRSquared;
+            assert squaredValue == metric.squaredValue(offset) : squaredValue;
+        }
+
+        double scaleFactor;
+        if (squaredValue < innerRSquared) {
+            assert squaredValue > 0.0 : squaredValue;
+            scaleFactor = Math.sqrt(innerRSquared / squaredValue);
+        } else if (squaredValue > outerRSquared) {
+            assert squaredValue > 0.0 : squaredValue;
+            scaleFactor = Math.sqrt(outerRSquared / squaredValue);
+        } else {
+            /*
+             * The shell contains the original location.
+             */
+            return result;
+        }
+        assert scaleFactor > 0.0 : scaleFactor;
+        /*
+         * Scale the offset to the surface of the shell.  For non-spherical 
+         * shells, this won't usually produce the nearest point, but it 
+         * provides a starting point for optimization.
+         */
+        if (weights != null) {
+            /*
+             * Undo axis weighting.
+             */
+            if (weights.x != 0f) {
+                offset.x /= weights.x;
+            } else {
+                offset.x = unweighted.x;
+            }
+            if (weights.y != 0f) {
+                offset.y /= weights.y;
+            } else {
+                offset.y = unweighted.y;
+            }
+            if (weights.z != 0f) {
+                offset.z /= weights.z;
+            } else {
+                offset.z = unweighted.z;
+            }
+        }
+
+        if (orientation == null) {
+            result = offset;
+        } else {
+            /*
+             * Undo rotation.
+             */
+            result = orientation.mult(offset);
+        }
+        result.addLocal(center);
+        /*
+         * TODO if shell is non-spherical, optimize the result 
+         */
+        assert contains(result) : result;
         return result;
     }
 
     /**
-     * Score a location based on how well it "fits" into this shell.
+     * Calculate a representative location (or rep) for this region. The rep
+     * must be contained in the region.
      *
+     * @return a new coordinate vector, or null if none found
+     */
+    @Override
+    public Vector3f rep() {
+        Vector3f result = new Vector3f();
+
+        if (isConvex()) {
+            result.set(center);
+            assert contains(result) : result;
+            return result;
+        }
+        /*
+         * Pick an offset on the inner surface.
+         */
+        if (weights == null) {
+            if (metric == Metric.MANHATTAN) {
+                float coord = innerRadius / 3f;
+                result.set(coord, coord, coord);
+            } else {
+                result.set(innerRadius, 0f, 0f);
+            }
+
+        } else if (metric == Metric.MANHATTAN) {
+                float sum = weights.x + weights.y + weights.z;
+                result.set(weights.x, weights.y, weights.z);
+                result.multLocal(innerRadius / sum);
+            } else {
+                float max = MyMath.max(weights.x, weights.y, weights.z);
+                assert max > 0f : weights;
+                if (weights.x == max) {
+                    result.set(innerRadius, 0f, 0f);
+                } else if (weights.y == max) {
+                    result.set(0f, innerRadius, 0f);
+                } else {
+                    assert weights.z == max : weights;
+                    result.set(0f, 0f, innerRadius);
+            }
+        }
+        if (orientation != null) {
+            /*
+             * Undo rotation.
+             */
+            result = orientation.mult(result);
+        }
+
+        result.addLocal(center);
+        assert contains(result) : result;
+        return result;
+    }
+
+    /**
+     * Score a location based on how well it "fits" with this region.
+     *
+     * @param location coordinates of the input (not null, unaffected)
      * @return score value (more positive &rarr; better)
      */
     @Override
     public double score(Vector3f location) {
         Vector3f offset = location.subtract(center);
-        if (rotation != null) {
-            offset = rotation.mult(offset);
+        if (inverseRotation != null) {
+            offset = inverseRotation.mult(offset);
         }
         if (weights != null) {
             offset.multLocal(weights);
@@ -396,8 +567,8 @@ public class Shell3f implements Locus3f {
     }
 
     /**
-     * Find a path between two locations in this shell without leaving the
-     * shell. Short paths are preferred over long ones.
+     * Find a path between two locations in this region without leaving the
+     * region. Short paths are preferred over long ones.
      *
      * @param startLocation coordinates (contained in region, unaffected)
      * @param goalLocation coordinates (contained in region, unaffected)
@@ -409,10 +580,28 @@ public class Shell3f implements Locus3f {
         assert contains(startLocation) : startLocation;
         assert contains(goalLocation) : goalLocation;
 
-        assert isConvex() : innerRSquared; // TODO
+        if (!isConvex()) {
+            throw new UnsupportedOperationException(); // TODO
+        }
         Vector3f[] joints = {startLocation, goalLocation};
         Spline3f result = new LinearSpline3f(joints);
 
         return result;
+    }
+
+    /**
+     * Calculate the distance from the specified starting point to the first
+     * point of support (if any) directly below it in this region.
+     *
+     * @param location coordinates of starting point(not null, unaffected)
+     * @param cosineTolerance cosine of maximum slope for support (&gt;0, &lt;1)
+     * @return the shortest support distance (&ge;0) or
+     * {@link Float#POSITIVE_INFINITY} if no support
+     */
+    @Override
+    public float supportDistance(Vector3f location, float cosineTolerance) {
+        Validate.nonNull(location, "location");
+        Validate.fraction(cosineTolerance, "cosine tolerance");
+        throw new UnsupportedOperationException(); // TODO
     }
 }

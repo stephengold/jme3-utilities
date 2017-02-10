@@ -64,6 +64,7 @@ public class TestSkyControlHud
             TestSkyControlHud.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * if true, clouds will modulate the main light; if false, the main light
      * will be steady

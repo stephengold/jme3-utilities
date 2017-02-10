@@ -28,6 +28,7 @@ package jme3utilities.math.polygon;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import java.util.BitSet;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
@@ -107,22 +108,22 @@ public class Polygon3f {
     // constructors
 
     /**
-     * Instantiate a polygon with the specified sequence of corners.
+     * Instantiate a polygon from an array of corners.
      *
-     * @param cornerList locations of the corners, in sequence (not null or
-     * containing any nulls)
+     * @param cornerArray locations of the corners, in sequence (not null or
+     * containing any nulls, unaffected)
      * @param compareTolerance tolerance (&ge;0) used when comparing two points
      * or testing for intersection
      */
-    public Polygon3f(Vector3f[] cornerList, float compareTolerance) {
-        Validate.nonNull(cornerList, "corner list");
-        for (int index = 0; index < cornerList.length; index++) {
+    public Polygon3f(Vector3f[] cornerArray, float compareTolerance) {
+        Validate.nonNull(cornerArray, "corner array");
+        numCorners = cornerArray.length;
+        for (int index = 0; index < numCorners; index++) {
             String description = String.format("cornerList[%d]", index);
-            Validate.nonNull(cornerList[index], description);
+            Validate.nonNull(cornerArray[index], description);
         }
         Validate.nonNegative(compareTolerance, "compare tolerance");
 
-        numCorners = cornerList.length;
         /*
          * Allocate array space for caching values.
          */
@@ -134,7 +135,43 @@ public class Polygon3f {
          * Copy corner locations.
          */
         for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
-            cornerLocations[cornerIndex] = cornerList[cornerIndex].clone();
+            cornerLocations[cornerIndex] = cornerArray[cornerIndex].clone();
+        }
+        /*
+         * Set compare tolerancess.
+         */
+        tolerance = compareTolerance;
+        tolerance2 = tolerance * tolerance;
+    }
+
+    /**
+     * Instantiate a polygon from a list of corners.
+     *
+     * @param cornerList locations of the corners, in sequence (not null or
+     * containing any nulls, unaffected)
+     * @param compareTolerance tolerance (&ge;0) used when comparing two points
+     * or testing for intersection
+     */
+    public Polygon3f(List<Vector3f> cornerList, float compareTolerance) {
+        Validate.nonNull(cornerList, "corner list");
+        numCorners = cornerList.size();
+        for (int index = 0; index < numCorners; index++) {
+            String description = String.format("cornerList[%d]", index);
+            Validate.nonNull(cornerList.get(index), description);
+        }
+        Validate.nonNegative(compareTolerance, "compare tolerance");
+        /*
+         * Allocate array space for caching values.
+         */
+        cornerLocations = new Vector3f[numCorners];
+        crossProducts = new Vector3f[numCorners];
+        dotProducts = new Double[numCorners];
+        squaredDistances = new Double[numCorners][numCorners];
+        /*
+         * Copy corner locations.
+         */
+        for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
+            cornerLocations[cornerIndex] = cornerList.get(cornerIndex).clone();
         }
         /*
          * Set compare tolerances.
@@ -229,7 +266,7 @@ public class Polygon3f {
      * Calculate this polygon's diameter: the distance between its two most
      * distant corners.
      *
-     * @return diameter squared (in squared world units, &ge;0)
+     * @return distance (in world units, &ge;0)
      */
     public float diameter() {
         double largestSD = 0.0;
@@ -267,19 +304,19 @@ public class Polygon3f {
     }
 
     /**
-     * Find the corner closest to a point in space.
+     * Find the corner nearest to a specified location.
      *
-     * @param point coordinates of the point (not null, unaffected)
+     * @param location input coordinates (not null, unaffected)
      *
-     * @return index of the corner (&ge;0, &lt;numCorners) or -1 if this polygon
-     * has no corners
+     * @return index of the nearest corner (&ge;0, &lt;numCorners) or -1 if this
+     * polygon has no corners
      */
-    public int findCorner(Vector3f point) {
+    public int findCorner(Vector3f location) {
         int result = -1;
         double bestSD = Double.POSITIVE_INFINITY;
         for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
             Vector3f corner = cornerLocations[cornerIndex];
-            double squaredDistance = MyVector3f.distanceSquared(corner, point);
+            double squaredDistance = MyVector3f.distanceSquared(corner, location);
             if (squaredDistance < bestSD) {
                 result = cornerIndex;
                 bestSD = squaredDistance;
@@ -416,6 +453,15 @@ public class Polygon3f {
         }
 
         return result;
+    }
+
+    /**
+     * Read the tolerance.
+     *
+     * @return tolerance (&ge; 0)
+     */
+    public float getTolerance() {
+        return tolerance;
     }
 
     /**
@@ -615,7 +661,7 @@ public class Polygon3f {
             storeCornerMap.clear();
         }
 
-        float tol = other.tolerance();
+        float tol = other.getTolerance();
         float tol2 = (tolerance2 + tol * tol) / 2f;
 
         boolean result = false;
@@ -700,7 +746,7 @@ public class Polygon3f {
      * polygon.
      *
      * @param point coordinates of the point (not null, unaffected)
-     * @param cornerIndex index of the side (&ge;0, &lt;numCorners-1)
+     * @param cornerIndex index of the corner (&ge;0, &le;numCorners-1)
      * @return squared distance from point to corner (&ge;0)
      */
     public double squaredDistanceToCorner(Vector3f point, int cornerIndex) {
@@ -765,15 +811,6 @@ public class Polygon3f {
 
         assert result >= 0.0 : result;
         return result;
-    }
-
-    /**
-     * Read the tolerance.
-     *
-     * @return tolerance (&ge; 0)
-     */
-    public float tolerance() {
-        return tolerance;
     }
     // *************************************************************************
     // protected methods
