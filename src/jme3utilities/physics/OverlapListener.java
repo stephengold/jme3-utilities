@@ -36,7 +36,6 @@ import com.jme3.scene.Spatial;
  * @author Stephen Gold sgold@sonic.net
  */
 public interface OverlapListener {
-
     /**
      * Callback to handle an overlapping rigid body.
      *

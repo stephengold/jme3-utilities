@@ -48,10 +48,11 @@ public class PopupMenu
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(PopupMenu.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            PopupMenu.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * the parent popup menu which opened the menu, or null if not a submenu:
      * set by constructor

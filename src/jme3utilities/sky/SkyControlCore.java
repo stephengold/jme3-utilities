@@ -86,8 +86,8 @@ public class SkyControlCore
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(SkyControlCore.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            SkyControlCore.class.getName());
     /**
      * name for the bottom geometry
      */
@@ -267,8 +267,8 @@ public class SkyControlCore
          */
         cloudLayers = new CloudLayer[numCloudLayers];
         for (int layerIndex = 0; layerIndex < numCloudLayers; layerIndex++) {
-            cloudLayers[layerIndex] =
-                    new CloudLayer(cloudsMaterial, layerIndex);
+            cloudLayers[layerIndex] = new CloudLayer(
+                     cloudsMaterial, layerIndex);
         }
 
         if (bottomDomeFlag) {
@@ -422,13 +422,13 @@ public class SkyControlCore
         }
 
         String northPath = String.format("%s/%sern.png", assetPath, northName);
-        Material north =
-                MyAsset.createUnshadedMaterial(assetManager, northPath);
+        Material north = MyAsset.createUnshadedMaterial(
+                assetManager, northPath);
         northDome.setMaterial(north);
 
         String southPath = String.format("%s/%sern.png", assetPath, southName);
-        Material south =
-                MyAsset.createUnshadedMaterial(assetManager, southPath);
+        Material south = MyAsset.createUnshadedMaterial(
+                assetManager, southPath);
         southDome.setMaterial(south);
     }
 

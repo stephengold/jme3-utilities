@@ -46,10 +46,11 @@ abstract public class ActionApplication
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(ActionApplication.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            ActionApplication.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * initial input mode: set in #simpleInitApp()
      */

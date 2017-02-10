@@ -52,14 +52,15 @@ public class MakeClouds {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MakeClouds.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MakeClouds.class.getName());
     /**
      * application name for the usage message
      */
     final private static String applicationName = "MakeClouds";
     // *************************************************************************
     // fields
+
     /**
      * true means just display the usage message; false means run the
      * application

@@ -43,10 +43,11 @@ public class Permutation {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(Permutation.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            Permutation.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * indices which make up the permutation
      */

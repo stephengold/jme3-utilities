@@ -48,10 +48,11 @@ public class GuiAppState
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(GuiAppState.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            GuiAppState.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * GUI application instance: set by initialize()
      */

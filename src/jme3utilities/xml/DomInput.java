@@ -48,8 +48,8 @@ final public class DomInput {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(DomInput.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            DomInput.class.getName());
     // *************************************************************************
     // constructors
 

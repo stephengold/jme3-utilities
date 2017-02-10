@@ -43,10 +43,11 @@ public class AudioControl
     /**
      * message logger for this control
      */
-    final private static Logger logger =
-            Logger.getLogger(AudioControl.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            AudioControl.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * if true, play audio node on next update
      */

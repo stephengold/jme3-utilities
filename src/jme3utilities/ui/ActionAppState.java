@@ -46,10 +46,11 @@ public class ActionAppState
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(ActionAppState.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            ActionAppState.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * action application instance: set by initialize()
      */

@@ -63,7 +63,7 @@ final public class Validate {
     /**
      * Validate a finite single-precision value as a method argument.
      *
-     * @param value value to validate (&gt;0)
+     * @param value value to validate (finite)
      * @param description description of the value
      * @throws IllegalArgumentException if the value is NaN or infinite
      */
@@ -84,7 +84,7 @@ final public class Validate {
     /**
      * Validate a finite double-precision value as a method argument.
      *
-     * @param value value to validate (&gt;0)
+     * @param value value to validate (finite)
      * @param description description of the value
      * @throws IllegalArgumentException if the value is NaN or infinite
      */

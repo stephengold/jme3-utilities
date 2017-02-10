@@ -53,10 +53,11 @@ public class CloudLayer
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(CloudLayer.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            CloudLayer.class.getName());
     // *************************************************************************
     // fields
+    
     /**
      * opacity of the layer: 0 &rarr; transparent/cloudless, 1 &rarr; maximum
      * opacity
@@ -213,7 +214,7 @@ public class CloudLayer
     // Savable methods
 
     /**
-     * De-serialize this instance when loading.
+     * De-serialize this instance, for example when loading from a J3O file.
      *
      * @param importer (not null)
      * @throws IOException from importer
@@ -233,7 +234,7 @@ public class CloudLayer
     }
 
     /**
-     * Serialize this instance when saving.
+     * Serialize this instance, for example when saving to a J3O file.
      *
      * @param exporter (not null)
      * @throws IOException from exporter

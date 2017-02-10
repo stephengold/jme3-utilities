@@ -42,8 +42,8 @@ final public class MyColor {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MyColor.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MyColor.class.getName());
     // *************************************************************************
     // constructors
 

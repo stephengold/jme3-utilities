@@ -46,10 +46,11 @@ public class Perlin2
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(Perlin2.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            Perlin2.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * permutation for hashing: set by constructor
      */
@@ -74,8 +75,8 @@ public class Perlin2
         if (period < numGradients) {
             logger.log(Level.SEVERE, "period={0}, numGradients={1}",
                     new Object[]{period, numGradients});
-            String message =
-                    String.format("period shouldn't be less than numGradients");
+            String message = String.format(
+                    "period shouldn't be less than numGradients");
             throw new IllegalArgumentException(message);
         }
         Validate.inRange(numGradients, "number of gradients",

@@ -234,8 +234,9 @@ public interface ReadXZ {
      * @param multiplier rotated/scaled result for the current north (not null)
      * @return the complex product
      *
-     * @see #cross(jme3utilities.math.ReadXZ), #dot(jme3utilities.math.ReadXZ),
-     * #scale(jme3utilities.math.ReadXZ)
+     * @see #cross(jme3utilities.math.ReadXZ)
+     * @see #dot(jme3utilities.math.ReadXZ)
+     * @see #scale(jme3utilities.math.ReadXZ)
      */
     ReadXZ mult(ReadXZ multiplier);
 

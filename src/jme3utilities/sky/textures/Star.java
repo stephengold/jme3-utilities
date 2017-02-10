@@ -35,8 +35,7 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-class Star
-        implements Comparable<Star> {
+class Star implements Comparable<Star> {
     // *************************************************************************
     // constants
 
@@ -46,6 +45,7 @@ class Star
     final private static Logger logger = Logger.getLogger(Star.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * apparent brightness (inverted logarithmic scale, set by constructor)
      */

@@ -54,10 +54,11 @@ public class Hotkey {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(Hotkey.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            Hotkey.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * this hotkey's key code (per com.jme3.input.KeyInput, must be between
      * minKeyCode and maxKeyCode): set by constructor

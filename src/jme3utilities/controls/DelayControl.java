@@ -51,10 +51,11 @@ public class DelayControl
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(DelayControl.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            DelayControl.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * time interval (in seconds) until the timer pops
      */

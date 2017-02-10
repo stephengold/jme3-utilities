@@ -64,14 +64,15 @@ public class MakeSun {
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MakeSun.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MakeSun.class.getName());
     /**
      * application name for the usage message
      */
     final private static String applicationName = "MakeSun";
     // *************************************************************************
     // fields
+
     /**
      * true means just display the usage message; false means run the
      * application

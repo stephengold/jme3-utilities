@@ -52,8 +52,8 @@ public class MySkeleton
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(MySkeleton.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            MySkeleton.class.getName());
     // *************************************************************************
     // constructors
 
@@ -261,7 +261,6 @@ public class MySkeleton
         rootNode.attachChild(node);
 
         //String bone = "uparm.right";
-
         Quaternion orientation = new Quaternion();
         float[] angles = new float[3];
         for (int axis = 0; axis < 3; axis++) {

@@ -81,6 +81,7 @@ public class MakeStarMaps {
     }
     // *************************************************************************
     // constants
+
     /**
      * luminosity of the faintest stars to include
      */

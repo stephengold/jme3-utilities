@@ -56,10 +56,11 @@ public class LightControl
     /**
      * message logger for this class
      */
-    final private static Logger logger =
-            Logger.getLogger(LightControl.class.getName());
+    final private static Logger logger = Logger.getLogger(
+            LightControl.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * light managed by this control: set by constructor
      */

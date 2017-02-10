@@ -31,7 +31,6 @@ package jme3utilities.math.noise;
  * @author Stephen Gold sgold@sonic.net
  */
 public interface Noise2 {
-
     /**
      * Sample the noise function at a specified point.
      *
