@@ -234,7 +234,7 @@ public class NavArc
     public String toString() {
         String fromString = fromVertex.toString();
         String toString = toVertex.toString();
-        String result = String.format("%s to %s", fromString, toString);
+        String result = String.format("%s->%s", fromString, toString);
 
         return result;
     }
