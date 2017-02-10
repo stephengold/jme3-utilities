@@ -313,7 +313,7 @@ public class NavGraph {
         validateMember(startVertex, "start vertex");
 
         Map<NavVertex, Integer> hopData = new HashMap<>(numVertices());
-        calculateHops(startVertex, 0, hopData);
+        forwardHopCounts(startVertex, 0, hopData);
 
         List<NavVertex> result = new ArrayList<>(30);
         for (NavVertex vertex : vertices.values()) {
@@ -353,7 +353,7 @@ public class NavGraph {
         validateMember(startVertex, "start vertex");
 
         Map<NavVertex, Integer> hopData = new HashMap<>(subset.size());
-        calculateHops(startVertex, 0, hopData);
+        forwardHopCounts(startVertex, 0, hopData);
 
         int mostHops = 0;
         List<NavVertex> result = new ArrayList<>(10);
@@ -582,30 +582,38 @@ public class NavGraph {
     /**
      * Find the shortest (or cheapest) route from one vertex to another.
      *
-     * @param startVertex starting point (member of this graph, distinct from
-     * endVertex)
-     * @param endVertex goal (member of this graph)
-     * @return first arc in route (existing member arc) or null if unreachable
+     * @param startVertex starting point (member, distinct from endVertex)
+     * @param endVertex goal (member, distinct from startVertex)
+     * @return a new list of arcs, or null if goal is unreachable
      */
-    public NavArc seek(NavVertex startVertex, NavVertex endVertex) {
+    public List<NavArc> seek(NavVertex startVertex, NavVertex endVertex) {
         validateMember(startVertex, "start vertex");
         validateMember(endVertex, "end vertex");
         if (startVertex == endVertex) {
             throw new IllegalArgumentException("vertices not distinct");
         }
 
-        Map<NavVertex, Float> distanceData = new HashMap<>(numVertices());
-        calculateTotalCosts(endVertex, 0f, distanceData);
-
-        NavArc result = null;
+        Map<NavVertex, Float> totalCosts = new HashMap<>(numVertices());
+        reverseTotalCosts(endVertex, 0f, totalCosts);
+        if (totalCosts.get(startVertex) == null) {
+            return null;
+        }
+        List<NavArc> result = new ArrayList<>(10);
+        NavVertex routeVertex = startVertex;
+        while (routeVertex != endVertex) {
+            NavArc nextArc = null;
         float minDistance = Float.MAX_VALUE;
-        for (NavArc arc : startVertex.copyOutgoing()) {
+            for (NavArc arc : routeVertex.copyOutgoing()) {
             NavVertex neighbor = arc.getToVertex();
-            float distance = distanceData.get(neighbor) + arcCosts.get(arc);
+                float distance = totalCosts.get(neighbor) + arcCosts.get(arc);
             if (distance < minDistance) {
                 minDistance = distance;
-                result = arc;
+                    nextArc = arc;
             }
+        }
+            routeVertex = nextArc.getToVertex();
+            assert routeVertex != startVertex;
+            result.add(nextArc);
         }
 
         return result;
@@ -697,105 +705,41 @@ public class NavGraph {
     // private methods
 
     /**
-     * Calculate the minimum total cost (or distance) to each vertex in the
-     * graph from a fixed starting point. Note: recursive!
+     * Test whether there's a route from a starting vertex to an ending vertex
+     * which avoids a specified arc. Note: recursive depth-first traversal.
      *
-     * @param currentVertex vertex being visited (member of this graph)
-     * @param costSoFar total cost from the starting point to the current vertex
-     * (&ge;0)
-     * @param costData total costs of vertices already visited (not null)
-     */
-    private void calculateTotalCosts(NavVertex currentVertex,
-            float costSoFar, Map<NavVertex, Float> costData) {
-        assert contains(currentVertex) : currentVertex;
-        assert costSoFar >= 0f : costSoFar;
-        assert costData != null;
-
-        if (costData.containsKey(currentVertex)
-                && costSoFar > costData.get(currentVertex)) {
-            return;
-        }
-        /*
-         * Update the distance of the current vertex.
-         */
-        costData.put(currentVertex, costSoFar);
-        /*
-         * Follow each outgoing arc from the current vertex.
-         */
-        for (NavArc arc : currentVertex.copyOutgoing()) {
-            NavVertex vertex = arc.getToVertex();
-            float newDistance = costSoFar + arcCosts.get(arc);
-            calculateTotalCosts(vertex, newDistance, costData);
-        }
-    }
-
-    /**
-     * Measure the minimum number of hops to each vertex in the graph. Note:
-     * recursive!
-     *
-     * @param currentVertex vertex being visited (member of this graph)
-     * @param hopsSoFar hop count from the start vertex to the current vertex
-     * (&ge;0)
-     * @param hopData hop counts of all vertices already visited (not null)
-     */
-    private void calculateHops(NavVertex currentVertex,
-            int hopsSoFar, Map<NavVertex, Integer> hopData) {
-        assert contains(currentVertex) : currentVertex;
-        assert hopsSoFar >= 0 : hopsSoFar;
-        assert hopData != null;
-
-        if (hopData.containsKey(currentVertex)
-                && hopsSoFar > hopData.get(currentVertex)) {
-            return;
-        }
-        /*
-         * Update the hop count of the current vertex.
-         */
-        hopData.put(currentVertex, hopsSoFar);
-        /*
-         * Follow each outgoing arc from the current vertex.
-         */
-        int newHopCount = hopsSoFar + 1;
-        for (NavArc arc : currentVertex.copyOutgoing()) {
-            NavVertex vertex = arc.getToVertex();
-            calculateHops(vertex, newHopCount, hopData);
-        }
-    }
-
-    /**
-     * Test whether there's a route between two specified member vertices which
-     * avoids a specified arc. Note: recursive!
-     *
-     * @param avoidArc arc to avoid (member of this graph)
-     * @param fromVertex starting point (member of this graph)
-     * @param toVertex endpoint (member of this graph)
-     * @param visitedVertices
+     * @param avoid arc to avoid (member)
+     * @param visit vertex being visited, initially the starting vertex (member,
+     * unaffected)
+     * @param ending ending vertex (member, unaffected)
+     * @param visitedSet set of vertices previously visited, initially empty
+     * (not null, unaffected)
      * @return true if such a route exists, false if no such route exists
      */
-    private boolean existsRouteWithout(NavArc avoidArc, NavVertex fromVertex,
-            NavVertex toVertex, Set<NavVertex> visitedVertices) {
-        assert arcCosts.keySet().contains(avoidArc) : avoidArc;
-        assert contains(fromVertex) : fromVertex;
-        assert contains(toVertex) : toVertex;
+    private boolean existsRouteWithout(NavArc avoid, NavVertex visit,
+            NavVertex ending, Set<NavVertex> visitedSet) {
+        assert contains(avoid) : avoid;
+        assert contains(visit) : visit;
+        assert contains(ending) : ending;
 
-        if (fromVertex == toVertex) {
+        if (visit == ending) {
             return true;
         }
-        if (visitedVertices.contains(fromVertex)) {
+        if (visitedSet.contains(visit)) {
             return false;
         }
 
-        Set<NavVertex> newSet = new HashSet<>(visitedVertices);
-        newSet.add(fromVertex);
+        Set<NavVertex> nextVisited = new HashSet<>(visitedSet);
+        nextVisited.add(visit);
 
-        for (NavArc arc : fromVertex.copyOutgoing()) {
-            if (arc.equals(avoidArc)) {
+        for (NavArc arc : visit.copyOutgoing()) {
+            if (arc.equals(avoid)) {
                 continue;
             }
-            NavVertex vertex = arc.getToVertex();
-            boolean routeExists = existsRouteWithout(
-                    avoidArc, vertex, toVertex, newSet);
-            if (routeExists) {
+            NavVertex nextVisit = arc.getToVertex();
+            boolean exists = existsRouteWithout(
+                    avoid, nextVisit, ending, nextVisited);
+            if (exists) {
                 return true;
             }
         }
@@ -803,25 +747,99 @@ public class NavGraph {
     }
 
     /**
-     * Enumerate all vertices reachable from a given member vertex. Note:
-     * recursive!
+     * Calculate the minimum number of hops (arcs traversed) to each vertex from
+     * a starting vertex. Note: recursive depth-first traversal.
      *
-     * @param fromVertex starting point (member of this graph)
-     * @param visited vertices visited so far, potentially added to (not null)
+     * @param visit vertex being visited, initially the starting vertex (member,
+     * unaffected)
+     * @param hopCount hop count from the start vertex to the current vertex,
+     * initially zero (&ge;0)
+     * @param minHopCounts minimum hop counts to vertices previously visited,
+     * initially empty (not null, updated)
      */
-    private void visitReachable(NavVertex fromVertex, Set<NavVertex> visited) {
-        assert contains(fromVertex) : fromVertex;
-        assert visited != null;
+    private void forwardHopCounts(NavVertex visit, int hopCount,
+            Map<NavVertex, Integer> minHopCounts) {
+        assert contains(visit) : visit;
+        assert hopCount >= 0 : hopCount;
+        assert minHopCounts != null;
 
-        if (visited.contains(fromVertex)) {
+        if (minHopCounts.containsKey(visit)
+                && hopCount > minHopCounts.get(visit)) {
             return;
         }
-        boolean success = visited.add(fromVertex);
+        /*
+         * Update the hop count of the current vertex.
+         */
+        minHopCounts.put(visit, hopCount);
+        /*
+         * Follow each outgoing arc from the current vertex.
+         */
+        int nextHopCount = hopCount + 1;
+        for (NavArc arc : visit.copyOutgoing()) {
+            NavVertex nextVisit = arc.getToVertex();
+            forwardHopCounts(nextVisit, nextHopCount, minHopCounts);
+        }
+    }
+
+    /**
+     * Calculate the minimum total cost (or distance) from each vertex to an
+     * ending vertex. Note: recursive depth-first traversal.
+     *
+     * @param visit vertex being visited, initially the ending vertex (member,
+     * unaffected)
+     * @param totalCost total cost from the current vertex to the ending vertex,
+     * initially zero (&ge;0)
+     * @param minTotalCosts minimum total costs from vertices previously
+     * visited, initially empty (not null, updated)
+     */
+    private void reverseTotalCosts(NavVertex visit, float totalCost,
+            Map<NavVertex, Float> minTotalCosts) {
+        assert contains(visit) : visit;
+        assert totalCost >= 0f : totalCost;
+        assert minTotalCosts != null;
+
+        if (minTotalCosts.containsKey(visit)
+                && totalCost > minTotalCosts.get(visit)) {
+            return;
+        }
+        /*
+         * Update the total cost of the current vertex.
+         */
+        minTotalCosts.put(visit, totalCost);
+        /*
+         * Follow each incoming arc of the current vertex.
+         */
+        for (NavArc arc : visit.copyIncoming()) {
+            NavVertex nextVisit = arc.getFromVertex();
+            float arcCost = arcCosts.get(arc);
+            float nextTotalCost = totalCost + arcCost;
+            reverseTotalCosts(nextVisit, nextTotalCost, minTotalCosts);
+        }
+    }
+
+    /**
+     * Enumerate all vertices reachable from a starting vertex. Note: recursive
+     * depth-first traversal.
+     *
+     * @param visit vertex being visited, initially the starting vertex (member,
+     * unaffected)
+     * @param visitedVertices set of vertices previously visited, initially
+     * empty (not null, updated)
+     */
+    private void visitReachable(NavVertex visit,
+            Set<NavVertex> visitedVertices) {
+        assert contains(visit) : visit;
+        assert visitedVertices != null;
+
+        if (visitedVertices.contains(visit)) {
+            return;
+        }
+        boolean success = visitedVertices.add(visit);
         assert success;
 
-        for (NavArc arc : fromVertex.copyOutgoing()) {
+        for (NavArc arc : visit.copyOutgoing()) {
             NavVertex vertex = arc.getToVertex();
-            visitReachable(vertex, visited);
+            visitReachable(vertex, visitedVertices);
         }
     }
 }
