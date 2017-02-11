@@ -372,11 +372,10 @@ public class TestPolygon3f {
         }
 
         for (int sideI = 0; sideI < numCorners; sideI++) {
-            int next = poly.nextIndex(sideI);
-            Vector3f midpoint = array[sideI].add(array[next]).divide(2f);
+            Vector3f midpoint = poly.midpoint(sideI);
             assert poly.onSide(midpoint, sideI);
-            System.out.printf("  S%d is %f wu in length.%n",
-                    sideI, poly.sideLength(sideI));
+            System.out.printf("  S%d is %f wu in length, midpoint at %s.%n",
+                    sideI, poly.sideLength(sideI), midpoint);
         }
         /*
          * Classify the polygon as degenerate, planar, etc.
