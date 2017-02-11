@@ -513,6 +513,23 @@ public class Polygon3f {
     }
 
     /**
+     * Calculate the midpoint of a specified side.
+     *
+     * @param sideIndex which corner (&ge;0, &lt;numCorners)
+     * @return a new coordinate vector
+     */
+    public Vector3f midpoint(int sideIndex) {
+        validateIndex(sideIndex, "side index");
+        
+        Vector3f corner1 = cornerLocations[sideIndex];
+        int next = nextIndex(sideIndex);
+        Vector3f corner2 = cornerLocations[next];
+        Vector3f result = MyVector3f.midpoint(corner1, corner2);
+        
+        return result;
+    }
+
+    /**
      * Read the number of corners, which is also the number of sides.
      *
      * @return count (&ge; 0)
