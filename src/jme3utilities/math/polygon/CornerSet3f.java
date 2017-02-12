@@ -33,8 +33,8 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**
- * A set of corners. Each corner represents a location (or point) in
- * 3-dimensional space. For efficiency, many calculated values are cached.
+ * An immutable set of corners (points) in 3-dimensional space. For efficiency,
+ * many calculated values are cached.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -90,7 +90,7 @@ public class CornerSet3f {
      *
      * @param cornerArray coordinates of the corners (not null or containing any
      * nulls, unaffected)
-     * @param compareTolerance tolerance (&ge;0) for comparing locations for
+     * @param compareTolerance tolerance (&ge;0) used to compare locations for
      * coincidence
      */
     public CornerSet3f(Vector3f[] cornerArray, float compareTolerance) {
@@ -125,7 +125,7 @@ public class CornerSet3f {
      *
      * @param cornerList coordinates of the corners (not null or containing any
      * nulls, unaffected)
-     * @param compareTolerance tolerance (&ge;0) for comparing locations for
+     * @param compareTolerance tolerance (&ge;0) used to compare locations for
      * coincidence
      */
     public CornerSet3f(List<Vector3f> cornerList, float compareTolerance) {
@@ -303,7 +303,7 @@ public class CornerSet3f {
     /**
      * Test whether a specified location coincides with a specified corner.
      *
-     * @param location input coordinates (not null, unaffected)
+     * @param location coordinates of the test location (not null, unaffected)
      * @param cornerIndex index of the corner (&ge;0, &lt;numCorners-1)
      * @return true if the location coincides, false if it doesn't
      */
@@ -386,7 +386,7 @@ public class CornerSet3f {
 
     /**
      * Test whether all the corners in a specified subset lie on the line
-     * segment connecting 2 specified corners.
+     * connecting 2 specified corners.
      *
      * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
      * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
@@ -559,40 +559,18 @@ public class CornerSet3f {
         validateIndex(indexB, "index of 2nd corner");
         validateIndex(indexC, "index of 3rd corner");
         /*
-         * Shortcut:
-         * If any corners coincide, then the area is effectively zero. 
-         */
-        if (doCoincide(indexA, indexB)) {
-            return 0.0;
-        }
-        if (doCoincide(indexA, indexC)) {
-            return 0.0;
-        }
-        if (doCoincide(indexB, indexC)) {
-            return 0.0;
-        }
-        /*
-         * Calculate the offsets of the B and C relative to A.
+         * Calculate the offsets of B and C relative to A.
          */
         Vector3f a = cornerLocations[indexA];
         Vector3f b = cornerLocations[indexB];
         Vector3f c = cornerLocations[indexC];
         Vector3f ab = b.subtract(a);
         Vector3f ac = c.subtract(a);
-        /*
-         * Using AC as the base, calculate the squared height.
-         */
-        double abDotAC = MyVector3f.dot(ab, ac);
-        double ac2 = squaredDistance(indexA, indexC);
-        double fraction = abDotAC / ac2;
-        Vector3f projABonAC = ac.mult((float) fraction);
-        double heightSquared = MyVector3f.distanceSquared(ab, projABonAC);
-        /*
-         * Calculate the squared area.  Area = base * height / 2f.
-         */
-        double baseSquared = squaredDistance(indexA, indexC);
-        double areaSquared = baseSquared * heightSquared / 4f;
 
+        Vector3f cross = ab.cross(ac);
+        double areaSquared = MyVector3f.lengthSquared(cross) / 4f;
+
+        assert areaSquared >= 0.0 : areaSquared;
         return areaSquared;
     }
 
