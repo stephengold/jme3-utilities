@@ -118,7 +118,7 @@ final public class Noise {
     }
 
     /**
-     * Generate a uniformly distributed, pseudo-random unit vector.
+     * Generate a uniformly distributed, pseudo-random unit vector. TODO rename
      *
      * @param generator (not null)
      * @return a new unit vector
@@ -137,7 +137,8 @@ final public class Noise {
         }
         double scaleFactor = 1.0 / Math.sqrt(lengthSquared);
         result.multLocal((float) scaleFactor);
-
+        
+        assert result.isUnitVector();
         return result;
     }
 
@@ -163,6 +164,7 @@ final public class Noise {
         double scaleFactor = 1.0 / Math.sqrt(lengthSquared);
         result.multLocal((float) scaleFactor);
 
+        assert result.isUnitVector();
         return result;
     }
 

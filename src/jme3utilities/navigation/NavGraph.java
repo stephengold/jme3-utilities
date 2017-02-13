@@ -144,7 +144,7 @@ public class NavGraph {
      * Test whether the specified arc is a member of this graph.
      *
      * @param arc input (may be null)
-     * @return true if a member, otherwise false
+     * @return true if it's a member, otherwise false
      */
     public boolean contains(NavArc arc) {
         if (arc == null) {
@@ -161,7 +161,7 @@ public class NavGraph {
      * Test whether the specified vertex is a member of this graph.
      *
      * @param vertex input (may be null)
-     * @return true if a member, otherwise false
+     * @return true if it's a member, otherwise false
      */
     public boolean contains(NavVertex vertex) {
         if (vertex == null) {
@@ -635,7 +635,7 @@ public class NavGraph {
 
     /**
      * Calculate the distance from the specified starting point to the first
-     * point of support (if any) directly below it in the locus of this vertex.
+     * point of support (if any) directly below it in this graph.
      *
      * @param location coordinates of starting point(not null, unaffected)
      * @param cosineTolerance cosine of maximum slope for support (&gt;0, &lt;1)

@@ -34,9 +34,9 @@ import jme3utilities.math.MyVector3f;
 
 /**
  * An immutable polygon in 3-dimensional space, consisting of N corners (points)
- * connected by N sides (straight-line segments). It may be degenerate and/or
- * planar, though it need not be. For efficiency, many calculated values are
- * cached.
+ * connected by N sides (straight-line segments) to form a loop. It may be
+ * degenerate and/or planar, though it need not be. For efficiency, many
+ * calculated values are cached.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -59,12 +59,12 @@ public class Polygon3f extends CornerSet3f {
     private Boolean isDegenerate = null;
     /**
      * cached dot product at each corner (allocated by constructor; initialized
-     * by #setCorner())
+     * by #setCornerProducts())
      */
     final private Double[] dotProducts;
     /**
      * cached cross product at each corner (allocated by constructor;
-     * initialized by #setCorner())
+     * initialized by #setCornerProducts())
      */
     final private Vector3f[] crossProducts;
     // *************************************************************************
@@ -149,7 +149,7 @@ public class Polygon3f extends CornerSet3f {
         validateIndex(cornerIndex, "corner index");
 
         if (crossProducts[cornerIndex] == null) {
-            setCorner(cornerIndex);
+            setCornerProducts(cornerIndex);
         }
         Vector3f result = crossProducts[cornerIndex].clone();
 
@@ -167,7 +167,7 @@ public class Polygon3f extends CornerSet3f {
         validateIndex(cornerIndex, "corner index");
 
         if (dotProducts[cornerIndex] == null) {
-            setCorner(cornerIndex);
+            setCornerProducts(cornerIndex);
         }
         double result = dotProducts[cornerIndex];
 
@@ -313,6 +313,7 @@ public class Polygon3f extends CornerSet3f {
         Vector3f corner2 = cornerLocations[next];
         Vector3f result = MyVector3f.midpoint(corner1, corner2);
 
+        assert onSide(result, sideIndex);
         return result;
     }
 
@@ -353,7 +354,7 @@ public class Polygon3f extends CornerSet3f {
     /**
      * Test whether a specified location lies on a specified side.
      *
-     * @param location coordinates of input location (not null, unaffected)
+     * @param location coordinates of test location (not null, unaffected)
      * @param sideIndex index of the side (&ge;0, &lt;numCorners-1)
      * @return true if the location lies on the side, false if it doesn't
      */
@@ -547,11 +548,11 @@ public class Polygon3f extends CornerSet3f {
 
     /**
      * Initialize the elements of the #cosTurnAngles and #crossProducts fields
-     * for a particular corner.
+     * for a specified corner.
      *
      * @param cornerIndex which corner (&ge;0, &lt;numCorners)
      */
-    private void setCorner(int cornerIndex) {
+    private void setCornerProducts(int cornerIndex) {
         int nextI = nextIndex(cornerIndex);
         int prevI = prevIndex(cornerIndex);
         /*
@@ -560,12 +561,12 @@ public class Polygon3f extends CornerSet3f {
         Vector3f a = cornerLocations[prevI];
         Vector3f b = cornerLocations[cornerIndex];
         Vector3f c = cornerLocations[nextI];
-        Vector3f offsetB = b.subtract(a);
-        Vector3f offsetC = c.subtract(b);
+        Vector3f offsetAB = b.subtract(a);
+        Vector3f offsetBC = c.subtract(b);
 
-        double dot = MyVector3f.dot(offsetB, offsetC);
-        Vector3f cross = offsetB.cross(offsetC);
-        setCorner(cornerIndex, dot, cross);
+        double dot = MyVector3f.dot(offsetAB, offsetBC);
+        Vector3f cross = offsetAB.cross(offsetBC);
+        setCornerProducts(cornerIndex, dot, cross);
     }
 
     /**
@@ -575,7 +576,8 @@ public class Polygon3f extends CornerSet3f {
      * @param newDot value for dot product
      * @param newCross vector for cross product (not null, unaffected)
      */
-    private void setCorner(int cornerIndex, double newDot, Vector3f newCross) {
+    private void setCornerProducts(int cornerIndex, double newDot,
+            Vector3f newCross) {
         assert cornerIndex >= 0 : cornerIndex;
         assert cornerIndex < numCorners : cornerIndex;
         assert newCross != null;
