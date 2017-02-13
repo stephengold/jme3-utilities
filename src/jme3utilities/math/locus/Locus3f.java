@@ -51,15 +51,27 @@ public interface Locus3f {
     Vector3f centroid();
 
     /**
-     * Test whether this region contains a specified location.
+     * Test whether this region contains the specified location.
      *
-     * @param location coordinates of location to test (not null, unaffected)
-     * @return true if location is in this region, false otherwise
+     * @param location coordinates of test location (not null, unaffected)
+     * @return true if location is in region, false otherwise
      */
     boolean contains(Vector3f location);
 
     /**
-     * Find the location in this region nearest to a specified location.
+     * Test whether this region contains the specified segment.
+     *
+     * @param startLocation coordinates of start of test segment (not null,
+     * unaffected)
+     * @param endLocation coordinates of end of test segment (not null,
+     * unaffected)
+     * @return true if test segment is entirely contained in region, false
+     * otherwise
+     */
+    boolean contains(Vector3f startLocation, Vector3f endLocation);
+
+    /**
+     * Find the location in this region nearest to the specified location.
      *
      * @param location coordinates of the input (not null, unaffected)
      * @return a new vector, or null it none found
@@ -91,23 +103,25 @@ public interface Locus3f {
     double score(Vector3f location);
 
     /**
-     * Find a path between two locations in this region without leaving the
+     * Find a path between 2 locations in this region without leaving the
      * region. Short paths are preferred over long ones.
      *
      * @param startLocation coordinates (contained in region, unaffected)
      * @param goalLocation coordinates (contained in region, unaffected)
+     * @param maxPoints maximum number of control points to use (&ge;2)
      * @return a new path spline, or null if none found
      */
-    Spline3f shortestPath(Vector3f startLocation, Vector3f goalLocation);
+    Spline3f shortestPath(Vector3f startLocation, Vector3f goalLocation,
+            int maxPoints);
 
     /**
-     * Calculate the distance from the specified starting point to the first
-     * point of support (if any) directly below it in this region.
+     * Calculate the distance from the specified starting point to the 1st point
+     * of support (if any) directly below it in this region.
      *
-     * @param location coordinates of starting point(not null, unaffected)
+     * @param location coordinates of starting point (not null, unaffected)
      * @param cosineTolerance cosine of maximum slope for support (&gt;0, &lt;1)
-     * @return the shortest support distance (&ge;0) or
-     * {@link Float#POSITIVE_INFINITY} if no support
+     * @return the minimum distance (&ge;0) or {@link Float#POSITIVE_INFINITY}
+     * if no support
      */
     float supportDistance(Vector3f location, float cosineTolerance);
 }

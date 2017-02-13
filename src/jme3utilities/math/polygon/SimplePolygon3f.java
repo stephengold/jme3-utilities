@@ -39,11 +39,11 @@ import jme3utilities.math.spline.LinearSpline3f;
 import jme3utilities.math.spline.Spline3f;
 
 /**
- * An immutable polygon in three-dimensional space, consisting of N corners
- * (points) connected by N sides (straight-line segments). The polygon must be
- * simple, in other words: non-degenerate, planar, and non-self-intersecting.
- * This means it has a well-defined interior and exterior. It may also be
- * convex, though it need not be.
+ * An immutable polygon in 3-dimensional space, consisting of N corners (points)
+ * connected by N sides (straight-line segments) to form a loop. The polygon
+ * must be simple, in other words: non-degenerate, planar, and
+ * non-self-intersecting. This means it has a well-defined interior and
+ * exterior. It may also be convex, though it need not be.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -97,7 +97,7 @@ public class SimplePolygon3f
      */
     private Vector3f planeZBasis = null;
     /**
-     * cached planar offsets relative to the first corner (allocated by
+     * cached planar offsets relative to the 1st corner (allocated by
      * constructor, initialized by #setPlanarOffset())
      */
     final private VectorXZ[] planarOffsets;
@@ -109,8 +109,8 @@ public class SimplePolygon3f
      *
      * @param cornerArray locations of the corners, in sequence (not null or
      * containing any nulls, unaffected)
-     * @param compareTolerance tolerance (&ge;0) used when comparing two points
-     * or testing for intersection
+     * @param compareTolerance tolerance (&ge;0) used to compare locations for
+     * coincidence
      * @throws IllegalArgumentException if the corners provided don't form a
      * simple polygon
      */
@@ -137,8 +137,8 @@ public class SimplePolygon3f
      *
      * @param cornerList locations of the corners, in sequence (not null or
      * containing any nulls, unaffected)
-     * @param compareTolerance tolerance (&ge;0) used when comparing two points
-     * or testing for intersection
+     * @param compareTolerance tolerance (&ge;0) used to compare locations for
+     * coincidence
      * @throws IllegalArgumentException if the corners provided don't form a
      * simple polygon
      */
@@ -163,7 +163,7 @@ public class SimplePolygon3f
     // new methods exposed
 
     /**
-     * Calculate the unsigned area of the polygon.
+     * Calculate the unsigned area of this polygon.
      *
      * @return area in square units (&ge;0)
      */
@@ -177,9 +177,9 @@ public class SimplePolygon3f
     }
 
     /**
-     * Test whether a specific point lies in the plane of this polygon.
+     * Test whether the specified location lies in the plane of this polygon.
      *
-     * @param point coordinates of the point (not null, unaffected)
+     * @param point coordinates of the test location (not null, unaffected)
      * @return true if the point lies in the plane, false if it doesn't
      */
     public boolean inPlane(Vector3f point) {
@@ -347,10 +347,10 @@ public class SimplePolygon3f
     }
 
     /**
-     * Test whether this region contains a specified location.
+     * Test whether this region contains the specified location.
      *
-     * @param location coordinates of location to test (not null, unaffected)
-     * @return true if location is in this region, false otherwise
+     * @param location coordinates of test location (not null, unaffected)
+     * @return true if location is in region, false otherwise
      */
     @Override
     public boolean contains(Vector3f location) {
@@ -382,10 +382,73 @@ public class SimplePolygon3f
     }
 
     /**
-     * Find the location in this region nearest to a specified location.
+     * Test whether this region contains the specified segment. Note: recursive!
+     *
+     * @param startLocation coordinates of start of test segment (not null,
+     * unaffected)
+     * @param endLocation coordinates of end of test segment (not null,
+     * unaffected)
+     * @return true if test segment is entirely contained in region, false
+     * otherwise
+     */
+    @Override
+    public boolean contains(Vector3f startLocation, Vector3f endLocation) {
+        Validate.nonNull(startLocation, "start location");
+        Validate.nonNull(endLocation, "end location");
+
+        if (!contains(startLocation)) {
+            return false;
+        } else if (!contains(endLocation)) {
+            return false;
+        } else if (isConvex()) {
+            return true;
+        }
+
+        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+            boolean startOnSide = onSide(startLocation, sideIndex);
+            boolean endOnSide = onSide(endLocation, sideIndex);
+            if (startOnSide && endOnSide) {
+                /*
+                 * Both endpoints lie on a single side, so entirely contained.
+                 */
+                return true;
+            }
+        }
+        /*
+         * Find where the test segment intersects the perimeter, preferably
+         * at a corner.
+         */
+        Vector3f joint = intersectionWithPerimeter(startLocation, endLocation);
+        if (joint == null) {
+            /*
+             * No intersection with perimeter, so entirely contained.
+             */
+            return true;
+        }
+        /*
+         * Split the test segment and test each sub-segment separately.
+         *
+         * If the intersection is one of the endpoints,
+         * split at the midpoint instead.
+         */
+        if (MyVector3f.doCoincide(startLocation, joint, tolerance2)
+                || MyVector3f.doCoincide(endLocation, joint, tolerance2)) {
+            joint = MyVector3f.midpoint(startLocation, endLocation);
+        }
+        if (!contains(startLocation, joint)) {
+            return false;
+        } else if (contains(joint, endLocation)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Find the location in this region nearest to the specified location.
      *
      * @param location coordinates of the input (not null, unaffected)
-     * @return a new vector, or null it none found
+     * @return a new coordinate vector, or null if none found
      */
     @Override
     public Vector3f findLocation(Vector3f location) {
@@ -442,7 +505,7 @@ public class SimplePolygon3f
      * Merge this region with another.
      *
      * @param otherLocus (not null, unaffected)
-     * @return a new region representing the union of the two regions
+     * @return a new region representing the union of the 2 regions
      */
     @Override
     public Locus3f merge(Locus3f otherLocus) {
@@ -494,36 +557,58 @@ public class SimplePolygon3f
     }
 
     /**
-     * Find a path between two locations in this region without leaving the
+     * Find a path between 2 locations in this region without leaving the
      * region. Short paths are preferred over long ones.
      *
      * @param startLocation coordinates (contained in region, unaffected)
      * @param goalLocation coordinates (contained in region, unaffected)
+     * @param maxPoints maximum number of control points to use (&ge;2)
      * @return a new path spline, or null if none found
      */
     @Override
-    public Spline3f shortestPath(Vector3f startLocation,
-            Vector3f goalLocation) {
+    public Spline3f shortestPath(Vector3f startLocation, Vector3f goalLocation,
+            int maxPoints) {
+        Validate.nonNull(startLocation, "start location");
+        Validate.nonNull(goalLocation, "goal location");
+        Validate.inRange(maxPoints, "max control points", 2, Integer.MAX_VALUE);
         assert contains(startLocation) : startLocation;
         assert contains(goalLocation) : goalLocation;
 
-        if (!isConvex()) {
-            throw new UnsupportedOperationException(); // TODO
-        }
-        Vector3f[] joints = {startLocation, goalLocation};
+        List<Vector3f> joints = new ArrayList<>(maxPoints);
+        joints.add(startLocation);
+        joints.add(goalLocation);
         Spline3f result = new LinearSpline3f(joints);
+
+        if (!result.isContainedIn(this) && maxPoints > joints.size()) {
+            float bestLength = Float.MAX_VALUE;
+            result = null;
+            for (int i = 0; i < numCorners; i++) {
+                Vector3f corner = cornerLocations[i];
+                List<Vector3f> newJoints = new ArrayList<>(joints);
+                newJoints.add(1, corner);
+                Spline3f newResult = new LinearSpline3f(newJoints);
+                if (newResult.isContainedIn(this)) {
+                    float newLength = newResult.totalLength();
+                    if (newLength < bestLength) {
+                        bestLength = newLength;
+                        result = newResult;
+                    }
+                }
+            }
+        }
+        // TODO further searches if unsuccessful
 
         return result;
     }
 
     /**
-     * Calculate the distance from the specified starting point to the first
-     * point of support (if any) directly below it in this region.
+     * Calculate the distance from the specified starting point to the 1st point
+     * of support (if any) directly below it in this region.
      *
-     * @param location coordinates of starting point(not null, unaffected)
+     * @param location coordinates of starting point (not null, unaffected)
      * @param cosineTolerance cosine of maximum slope for support (&gt;0, &lt;1)
-     * @return he shortest support distance (&ge;0) or
-     * {@link Float#POSITIVE_INFINITY} if no support
+     * @return the minimum distance (&ge;0) or {@link Float#POSITIVE_INFINITY}
+     * if no support
      */
     @Override
     public float supportDistance(Vector3f location, float cosineTolerance) {
@@ -546,7 +631,7 @@ public class SimplePolygon3f
         float distance = (dot + planeConstant) / planeNormal.y;
         if (distance < 0f) {
             /*
-             * Starting point is located below the plane of this polygon.
+             * Starting point is below the plane of this polygon.
              */
             return Float.POSITIVE_INFINITY;
         }
@@ -567,8 +652,8 @@ public class SimplePolygon3f
     // private methods
 
     /**
-     * List the corners of the polygon that would result from merging this
-     * polygon with another.
+     * List the corners that would result from merging this polygon with
+     * another.
      *
      * @param otherPoly (not null)
      * @return a new list with all elements non-null, or null if the polygons
@@ -582,7 +667,7 @@ public class SimplePolygon3f
         float dot = otherNorm.dot(planeNormal);
         if (dot == 0f) {
             /*
-             * The planes of the two polygons are orthogonal.
+             * The planes of the 2 polygons are orthogonal.
              */
             return null;
         }
@@ -590,7 +675,7 @@ public class SimplePolygon3f
         boolean[][] sideMap = new boolean[numCorners][otherNumCorners];
         if (!sharesSideWith(otherPoly, sideMap)) {
             /*
-             * The two polygons have no shared sides.
+             * The 2 polygons have no shared sides.
              */
             return null;
         }
@@ -611,23 +696,23 @@ public class SimplePolygon3f
             assert startI < numCorners : startI;
         }
         /*
-         * Add its first corner to the result.
+         * Add its 1st corner to the result.
          */
         Vector3f location = cornerLocations[startI];
         result.add(location);
-        
+
         for (int cornerI = nextIndex(startI);
                 cornerI != startI;
                 cornerI = nextIndex(cornerI)) {
             location = cornerLocations[cornerI];
             result.add(location);
-            
+
             int startJ = MyMath.first(sideMap[cornerI]);
             if (startJ >= 0) {
                 int cornerJ;
                 if (dot > 0f) {
                     /*
-                     * The two polygons wind in the same direction. Iterate in 
+                     * The 2 polygons wind in the same direction. Iterate in 
                      * the same (forward) direction through the other polygon's 
                      * corners until a shared side is found.
                      */
@@ -642,7 +727,7 @@ public class SimplePolygon3f
 
                 } else {
                     /*
-                     * The two polygons wind in opposite directions.  Iterate in
+                     * The 2 polygons wind in opposite directions.  Iterate in
                      * the opposite (reverse) direction through the other 
                      * polygon's corners until a shared side is found.
                      */
@@ -709,7 +794,7 @@ public class SimplePolygon3f
     }
 
     /**
-     * Initialize the element of the #planarOffsets field for a particular
+     * Initialize the element of the #planarOffsets field for the specified
      * corner.
      *
      * @param cornerIndex which corner (&ge;0, &lt;numCorners)
@@ -745,7 +830,7 @@ public class SimplePolygon3f
      */
     private void setPlane() {
         /*
-         * Find the three corners which form the largest triangle.
+         * Find the 3 corners which form the largest triangle.
          */
         int[] triangle = largestTriangle();
         assert triangle != null;

@@ -27,6 +27,8 @@ package jme3utilities.math.locus;
 
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -277,10 +279,14 @@ public class Shell3f implements Locus3f {
         Validate.nonNull(center, "center");
         Validate.nonNegative(innerRadius, "inner radius");
         if (outerRadius < innerRadius) {
-            logger.log(Level.SEVERE, "inner radius={0}, outerRadius={1}",
+            logger.log(Level.SEVERE, "innerRadius={0}, outerRadius={1}",
                     new Object[]{innerRadius, outerRadius});
             throw new IllegalArgumentException(
                     "Inner radius must not exceed outer radius.");
+        }
+        float thickness = outerRadius - innerRadius;
+        if (thickness < 1e-6 * Metric.CHEBYSHEV.value(center)) {
+            logger.log(Level.WARNING, "perilously thin shell");
         }
 
         this.metric = metric;
@@ -375,10 +381,10 @@ public class Shell3f implements Locus3f {
     }
 
     /**
-     * Test whether this region contains a specified location.
+     * Test whether this region contains the specified location.
      *
-     * @param location coordinates of location to test (not null, unaffected)
-     * @return true if location is in this region, false otherwise
+     * @param location coordinates of test location (not null, unaffected)
+     * @return true if location is in region, false otherwise
      */
     @Override
     public boolean contains(Vector3f location) {
@@ -398,96 +404,144 @@ public class Shell3f implements Locus3f {
     }
 
     /**
-     * Find the location in this region nearest to a specified location.
+     * Test whether this region contains the specified segment.
+     *
+     * @param startLocation coordinates of start of test segment (not null,
+     * unaffected)
+     * @param endLocation coordinates of end of test segment (not null,
+     * unaffected)
+     * @return true if test segment is entirely contained in region, false
+     * otherwise
+     */
+    @Override
+    public boolean contains(Vector3f startLocation, Vector3f endLocation) {
+        Validate.nonNull(startLocation, "start location");
+        Validate.nonNull(endLocation, "end location");
+
+        if (!contains(startLocation)) {
+            return false;
+        } else if (!contains(endLocation)) {
+            return false;
+        } else if (isConvex()) {
+            return true;
+        }
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    /**
+     * Find the location in this region nearest to the specified location.
      *
      * @param location coordinates of the input (not null, unaffected)
      * @return a new vector, or null it none found
      */
     @Override
     public Vector3f findLocation(Vector3f location) {
-        Vector3f result = location.clone();
-
-        Vector3f offset = location.subtract(center);
+        /*
+         * Test whether the shell contains the location, calculating
+         * unweighted and weighted offsets along the way.
+         */
+        Vector3f unweighted = location.subtract(center);
         if (inverseRotation != null) {
-            offset = inverseRotation.mult(offset);
+            unweighted = inverseRotation.mult(unweighted);
         }
-        Vector3f unweighted = offset.clone();
-        if (weights != null) {
-            offset.multLocal(weights);
+        Vector3f offset;
+        if (weights == null) {
+            offset = unweighted.clone();
+        } else {
+            offset = unweighted.mult(weights);
         }
         double squaredValue = metric.squaredValue(offset);
 
         if (squaredValue == 0.0 && innerRadius > 0.0) {
             /*
-             * Location is the center.  Pick an offset on the inner surface.
+             * Location is the center.  
+             * Substitute an offset halfway to the inner surface.
              */
+            float r = innerRadius / 2f;
             if (weights == null) {
-                unweighted.set(innerRadius, 0f, 0f);
+                unweighted.set(r, 0f, 0f);
                 offset.set(unweighted);
             } else {
                 float max = MyMath.max(weights.x, weights.y, weights.z);
                 assert max > 0f : weights;
                 if (weights.x == max) {
-                    unweighted.set(innerRadius / weights.x, 0f, 0f);
+                    unweighted.set(r / weights.x, 0f, 0f);
                 } else if (weights.y == max) {
-                    unweighted.set(0f, innerRadius / weights.y, 0f);
+                    unweighted.set(0f, r / weights.y, 0f);
                 } else {
                     assert weights.z == max : weights;
-                    unweighted.set(0f, 0f, innerRadius / weights.z);
+                    unweighted.set(0f, 0f, r / weights.z);
                 }
                 offset.set(unweighted).multLocal(weights);
             }
-            squaredValue = innerRSquared;
-            assert squaredValue == metric.squaredValue(offset) : squaredValue;
+            squaredValue = metric.squaredValue(offset);
+            assert squaredValue > 0.0 : squaredValue;
+            assert squaredValue < innerRSquared : squaredValue;
         }
 
         double scaleFactor;
         if (squaredValue < innerRSquared) {
-            assert squaredValue > 0.0 : squaredValue;
-            scaleFactor = Math.sqrt(innerRSquared / squaredValue);
+            /*
+             * The original location is in the hole, so project outward radially 
+             * from the center to the inner surface.
+             */
+            double centerMagnitude = Metric.CHEBYSHEV.value(center);
+            double ratio = centerMagnitude / minInnerRadius();
+            double fuzz = 3e-7 * Math.max(1.0, ratio);
+            double fudge = 1.0 + fuzz;
+            scaleFactor = fudge * Math.sqrt(innerRSquared / squaredValue);
+
         } else if (squaredValue > outerRSquared) {
-            assert squaredValue > 0.0 : squaredValue;
-            scaleFactor = Math.sqrt(outerRSquared / squaredValue);
+            /*
+             * The original location is outside the shell, so project inward
+             * radially toward the center to the outer surface.
+             */
+            double centerMagnitude = Metric.CHEBYSHEV.value(center);
+            double ratio = centerMagnitude / minOuterRadius();
+            double fuzz = 3e-7 * Math.max(1.0, ratio);
+            double fudge = 1.0 / (1.0 + fuzz);
+            scaleFactor = fudge * Math.sqrt(outerRSquared / squaredValue);
+
         } else {
             /*
-             * The shell contains the original location.
+             * The original location is in the shell.
              */
-            return result;
+            assert contains(location);
+            return location.clone();
         }
         assert scaleFactor > 0.0 : scaleFactor;
         /*
-         * Scale the offset to the surface of the shell.  For non-spherical 
+         * Project to the surface of the shell.  For non-spherical 
          * shells, this won't usually produce the nearest point, but it 
          * provides a starting point for optimization.
          */
+        Vector3f result = offset.mult((float) scaleFactor);
+
         if (weights != null) {
             /*
              * Undo axis weighting.
              */
             if (weights.x != 0f) {
-                offset.x /= weights.x;
+                result.x /= weights.x;
             } else {
-                offset.x = unweighted.x;
+                result.x = unweighted.x;
             }
             if (weights.y != 0f) {
-                offset.y /= weights.y;
+                result.y /= weights.y;
             } else {
-                offset.y = unweighted.y;
+                result.y = unweighted.y;
             }
             if (weights.z != 0f) {
-                offset.z /= weights.z;
+                result.z /= weights.z;
             } else {
-                offset.z = unweighted.z;
+                result.z = unweighted.z;
             }
         }
-
-        if (orientation == null) {
-            result = offset;
-        } else {
+        if (orientation != null) {
             /*
              * Undo rotation.
              */
-            result = orientation.mult(offset);
+            result = orientation.mult(result);
         }
         result.addLocal(center);
         /*
@@ -507,7 +561,7 @@ public class Shell3f implements Locus3f {
     public Locus3f merge(Locus3f otherLocus) {
         throw new IllegalArgumentException("unable to merge");
     }
-    
+
     /**
      * Calculate a representative location (or rep) for this region. The rep
      * must be contained in the region.
@@ -535,19 +589,20 @@ public class Shell3f implements Locus3f {
             }
 
         } else if (metric == Metric.MANHATTAN) {
-                float sum = weights.x + weights.y + weights.z;
-                result.set(weights.x, weights.y, weights.z);
-                result.multLocal(innerRadius / sum);
+            float sum = weights.x + weights.y + weights.z;
+            result.set(weights.x, weights.y, weights.z);
+            result.multLocal(innerRadius / sum);
+
+        } else {
+            float max = MyMath.max(weights.x, weights.y, weights.z);
+            assert max > 0f : weights;
+            if (weights.x == max) {
+                result.set(innerRadius, 0f, 0f);
+            } else if (weights.y == max) {
+                result.set(0f, innerRadius, 0f);
             } else {
-                float max = MyMath.max(weights.x, weights.y, weights.z);
-                assert max > 0f : weights;
-                if (weights.x == max) {
-                    result.set(innerRadius, 0f, 0f);
-                } else if (weights.y == max) {
-                    result.set(0f, innerRadius, 0f);
-                } else {
-                    assert weights.z == max : weights;
-                    result.set(0f, 0f, innerRadius);
+                assert weights.z == max : weights;
+                result.set(0f, 0f, innerRadius);
             }
         }
         if (orientation != null) {
@@ -589,41 +644,158 @@ public class Shell3f implements Locus3f {
     }
 
     /**
-     * Find a path between two locations in this region without leaving the
+     * Find a path between 2 locations in this region without leaving the
      * region. Short paths are preferred over long ones.
      *
      * @param startLocation coordinates (contained in region, unaffected)
      * @param goalLocation coordinates (contained in region, unaffected)
+     * @param maxPoints maximum number of control points to use (&ge;2)
      * @return a new path spline, or null if none found
      */
     @Override
     public Spline3f shortestPath(Vector3f startLocation,
-            Vector3f goalLocation) {
+            Vector3f goalLocation, int maxPoints) {
+        Validate.nonNull(startLocation, "start location");
+        Validate.nonNull(goalLocation, "goal location");
+        Validate.inRange(maxPoints, "max control points", 2, Integer.MAX_VALUE);
         assert contains(startLocation) : startLocation;
         assert contains(goalLocation) : goalLocation;
 
-        if (!isConvex()) {
-            throw new UnsupportedOperationException(); // TODO
-        }
-        Vector3f[] joints = {startLocation, goalLocation};
+        List<Vector3f> joints = new ArrayList<>(maxPoints);
+        joints.add(startLocation);
+        joints.add(goalLocation);
         Spline3f result = new LinearSpline3f(joints);
+        if (!result.isContainedIn(this) && maxPoints > joints.size()) {
+            assert false; // TODO
+        }
 
         return result;
     }
 
     /**
-     * Calculate the distance from the specified starting point to the first
-     * point of support (if any) directly below it in this region.
+     * Calculate the distance from the specified starting point to the 1st point
+     * of support (if any) directly below it in this region.
      *
-     * @param location coordinates of starting point(not null, unaffected)
+     * @param location coordinates of starting point (not null, unaffected)
      * @param cosineTolerance cosine of maximum slope for support (&gt;0, &lt;1)
-     * @return the shortest support distance (&ge;0) or
-     * {@link Float#POSITIVE_INFINITY} if no support
+     * @return the minimum distance (&ge;0) or {@link Float#POSITIVE_INFINITY}
+     * if no support
      */
     @Override
     public float supportDistance(Vector3f location, float cosineTolerance) {
         Validate.nonNull(location, "location");
         Validate.fraction(cosineTolerance, "cosine tolerance");
         throw new UnsupportedOperationException(); // TODO
+    }
+    // Object methods    
+
+    /**
+     * Represent this shell as a text string.
+     *
+     * @return descriptive string of text (not null)
+     */
+    @Override
+    public String toString() {
+        String result = String.format("[%s cen%s ori=%s wei=%s %.2f<r<%.2f]",
+                metric.describe(), center, orientation, weights, innerRadius,
+                outerRadius);
+        return result;
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Calculate the smallest inner radius of this shell.
+     *
+     * @return (&ge;0)
+     */
+    private float minInnerRadius() {
+        if (weights == null) {
+            return innerRadius;
+        }
+        float maxWeight = MyMath.max(weights.x, weights.y, weights.z);
+        assert maxWeight > 0f : maxWeight;
+        float result = innerRadius / maxWeight;
+
+        assert result >= 0f : result;
+        return result;
+    }
+
+    /**
+     * Calculate the smallest outer radius of this shell.
+     *
+     * @return (&ge;0)
+     */
+    private float minOuterRadius() {
+        if (weights == null) {
+            return outerRadius;
+        }
+        float maxWeight = MyMath.max(weights.x, weights.y, weights.z);
+        assert maxWeight > 0f : maxWeight;
+        float result = outerRadius / maxWeight;
+
+        assert result >= 0f : result;
+        return result;
+    }
+    // *************************************************************************
+    // test cases
+
+    /**
+     * Console application to test the Shell3f class.
+     *
+     * @param ignored command-line arguments
+     */
+    public static void main(String[] ignored) {
+        System.out.print("Test results for class Shell3f:\n\n");
+
+        float r1, r2, r3, x, y, z;
+        Shell3f hole, shell, solid;
+        Vector3f center, location;
+
+        Random random = new Random(395782);
+
+        float[] scales = {0.1f, 1f, 10f, 10000f, 1e10f, 0.0001f, 1e-10f};
+
+        for (float centerScale : scales) {
+            for (float radiusScale : scales) {
+                for (float locScale : scales) {
+                    for (int i = 0; i < 10000; i++) {
+                        center = Noise.nextVector3f(random);
+                        center.multLocal(centerScale);
+
+                        x = random.nextFloat() * locScale;
+                        y = random.nextFloat() * locScale;
+                        z = random.nextFloat() * locScale;
+                        location = new Vector3f(x, y, z);
+                        location.addLocal(center);
+
+                        r1 = random.nextFloat() * radiusScale;
+                        r2 = random.nextFloat() * radiusScale;
+                        r3 = random.nextFloat() * radiusScale;
+                        if (r1 == 0f || r2 == 0f || r3 == 0f) {
+                            continue;
+                        }
+
+                        hole = new Shell3f(center, r1, Float.POSITIVE_INFINITY);
+                        hole.findLocation(location);
+                        hole.findLocation(center);
+
+                        solid = new Shell3f(Metric.EUCLID, center, r1, r2, r3);
+                        solid.findLocation(location);
+                        solid.findLocation(center);
+
+                        float inner = Math.min(r1, r2);
+                        float outer = Math.max(r1, r2);
+                        double cm = Metric.CHEBYSHEV.value(center);
+                        if (outer - inner < cm * 1e-6) {
+                            continue;
+                        }
+                        shell = new Shell3f(center, inner, outer);
+                        shell.findLocation(location);
+                        shell.findLocation(center);
+                    }
+                }
+            }
+        }
     }
 }
