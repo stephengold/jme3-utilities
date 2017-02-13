@@ -109,7 +109,7 @@ public class VectorXZ
     final public static VectorXZ zero = new VectorXZ(0f, 0f);
     // *************************************************************************
     // fields
-
+    
     /**
      * northing component or X coordinate or cosine
      */
@@ -385,9 +385,8 @@ public class VectorXZ
 
         double dotProduct = x1 * x2 + z1 * z2;
         double cosine = dotProduct / Math.sqrt(lsProduct);
+        cosine = MyMath.clamp(cosine, 1.0);
 
-        assert cosine >= -1.0 : cosine;
-        assert cosine <= 1.0 : cosine;
         return cosine;
     }
 
@@ -542,6 +541,7 @@ public class VectorXZ
      * Test whether this vector is in the 1st quadrant.
      *
      * @return true if both components are &ge;0, false otherwise
+     * @see MyVector3f#isAllNonNegative(com.jme3.math.Vector3f)
      */
     @Override
     public boolean isFirstQuadrant() {
@@ -868,14 +868,14 @@ public class VectorXZ
     }
 
     /**
-     * Represent this vector as a text string. The format is: [X=XX.XXX,
-     * Z=ZZ.ZZZ]
+     * Represent this vector as a text string. The format is: (x=XX.XXX,
+     * z=ZZ.ZZZ)
      *
      * @return descriptive string of text (not null)
      */
     @Override
     public String toString() {
-        String result = String.format("[%.3f, %.3f]", x, z);
+        String result = String.format("(x=%.3f, z=%.3f)", x, z);
         return result;
     }
     // *************************************************************************
