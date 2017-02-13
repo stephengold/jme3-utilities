@@ -25,18 +25,20 @@
  */
 package jme3utilities.math.polygon;
 
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import java.util.BitSet;
 import java.util.List;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**
- * An immutable polygon in three-dimensional space, consisting of N corners
- * (points) connected by N sides (straight-line segments). The polygon must be
- * non-degenerate, which implies it has N&ge;3, all corners distinct, and no
- * 180-degree turns. The polygon may also be planar and/or self-intersecting,
- * though it need not be.
+ * An immutable polygon in 3-dimensional space, consisting of N corners (points)
+ * connected by N sides (straight-line segments) to form a loop. The polygon
+ * must be non-degenerate, which implies it has N&ge;3, all corners distinct,
+ * and no 180-degree turns. The polygon may also be planar and/or
+ * self-intersecting, though it need not be.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -53,8 +55,8 @@ public class GenericPolygon3f extends Polygon3f {
     // fields
     
     /**
-     * if true, then two (or more) sides intersect at some location other their
-     * corners (set by #setIsSelfIntersecting())
+     * if true, then 2 (or more) sides intersect at some location other their
+     * shared corners (set by #setIsSelfIntersecting())
      */
     private Boolean isSelfIntersecting = null;
     // *************************************************************************
@@ -65,8 +67,8 @@ public class GenericPolygon3f extends Polygon3f {
      *
      * @param cornerArray locations of the corners, in sequence (not null or
      * containing any nulls, unaffected)
-     * @param compareTolerance tolerance (&ge;0) used when comparing two points
-     * or testing for intersection
+     * @param compareTolerance tolerance (&ge;0) used to compare locations for
+     * coincidence
      * @throws IllegalArgumentException if the corners provided don't form a
      * generic polygon
      */
@@ -85,8 +87,8 @@ public class GenericPolygon3f extends Polygon3f {
      *
      * @param cornerList locations of the corners, in sequence (not null or
      * containing any nulls, unaffected)
-     * @param compareTolerance tolerance (&ge;0) used when comparing two points
-     * or testing for intersection
+     * @param compareTolerance tolerance (&ge;0) used to compare locations for
+     * coincidence
      * @throws IllegalArgumentException if the corners provided don't form a
      * generic polygon
      */
@@ -118,31 +120,7 @@ public class GenericPolygon3f extends Polygon3f {
     // protected methods
 
     /**
-     * Test whether the line segment (connecting two distinct corners)
-     * intersects the perimeter (apart from any shared corners).
-     *
-     * @param corner index of the 1st corner (&ge;0, &lt;numCorners)
-     * @param partner index of the 2nd corner (&ge;0, &lt;numCorners)
-     * @return true if connecting segment crosses a side, otherwise false
-     */
-    protected boolean doesSegmentIntersectPerimeter(int corner, int partner) {
-        validateIndex(corner, "index of first corner");
-        validateIndex(partner, "index of second corner");
-        if (corner == partner) {
-            throw new IllegalArgumentException("segment is trivial.");
-        }
-
-        for (int side = 0; side < numCorners; side++) {
-            int next = nextIndex(side);
-            if (doSegmentsIntersect(corner, partner, side, next)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Test whether two line segments (each connecting two distinct corners)
+     * Test whether 2 line segments (each connecting 2 distinct corners)
      * intersect (apart from shared any corners).
      *
      * @param corner1 index of 1st corner, 1st segment (&ge;0, &lt;numCorners)
@@ -164,7 +142,7 @@ public class GenericPolygon3f extends Polygon3f {
             throw new IllegalArgumentException("2nd segment is trivial.");
         }
         /*
-         * Check for any corners shared between the two segments. 
+         * Check for any corners shared between the 2 segments. 
          */
         BitSet corners = new BitSet(numCorners);
         corners.set(corner1);
@@ -179,7 +157,7 @@ public class GenericPolygon3f extends Polygon3f {
             assert (corner1 == partner2 && corner2 == partner1)
                     || (corner1 == partner1 && corner2 == partner2);
             /*
-             * Two shared corners, so the segments coincide.
+             * 2 shared corners, so the segments coincide.
              */
             return true;
         }
@@ -205,7 +183,7 @@ public class GenericPolygon3f extends Polygon3f {
             int lastI = longest[1];
             assert firstI != lastI;
             /*
-             * Test the middle two corners.
+             * Test the middle 2 corners.
              */
             BitSet middleCorners = (BitSet) corners.clone();
             middleCorners.clear(firstI);
@@ -238,7 +216,7 @@ public class GenericPolygon3f extends Polygon3f {
         /*
          * Segments not parallel and no shared corners.
          * Extend the segments into straight lines and find the 
-         * points of closest approach (c1 and c2) on each line. 
+         * locations of closest approach (c1 and c2) on each line. 
          * The segments intersect if and only if c1 and c2 not only
          * lie on their respective segments but also coincide.
          */
@@ -271,11 +249,11 @@ public class GenericPolygon3f extends Polygon3f {
     }
 
     /**
-     * Test whether two sides intersect (other than at a shared corner).
+     * Test whether 2 sides intersect (other than at a shared corner).
      *
      * @param side1 index of the 1st side (&ge;0, &lt;numCorners)
      * @param side2 index of the 2nd side (&ge;0, &lt;numCorners)
-     * @return true if they cross, otherwise false
+     * @return true if they intersect, otherwise false
      */
     protected boolean doSidesIntersect(int side1, int side2) {
         validateIndex(side1, "index of 1st side");
@@ -290,11 +268,125 @@ public class GenericPolygon3f extends Polygon3f {
             return false;
         }
     }
+
+    /**
+     * Find a location (if any) where the specified segment intersects the
+     * perimeter, preferably at a corner.
+     *
+     * @param startLocation coordinates of start of segment (not null,
+     * unaffected)
+     * @param endLocation coordinates of end of segment (not null, unaffected)
+     * @return a new coordinate vector or null if no intersection found
+     */
+    protected Vector3f intersectionWithPerimeter(Vector3f startLocation,
+            Vector3f endLocation) {
+        Validate.nonNull(startLocation, "start location");
+        Validate.nonNull(endLocation, "end location");
+        /*
+         * Check for intersection at a corner.
+         */
+        for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
+            Vector3f result = intersectionWithCorner(cornerIndex, startLocation,
+                    endLocation);
+            if (result != null) {
+                return result;
+            }
+        }
+        /*
+         * Check for intersection with a side.
+         */
+        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+            Vector3f result = intersectionWithSide(sideIndex, startLocation,
+                    endLocation);
+            if (result != null) {
+                return result;
+            }
+        }
+        /*
+         * No intersection found.
+         */
+        return null;
+    }
     // *************************************************************************
     // private methods
 
     /**
-     * Helper method to determine whether two collinear segments overlap.
+     * Find a location (if any) where the specified segment intersects the
+     * specified corner.
+     *
+     * @param cornerIndex (&ge;0, &lt;numCorners)
+     * @param start coordinates of start of segment (not null, unaffected)
+     * @param end coordinates of end of segment (not null, unaffected)
+     * @return a new coordinate vector or null if no intersection found
+     */
+    private Vector3f intersectionWithCorner(int cornerIndex, Vector3f start,
+            Vector3f end) {
+        validateIndex(cornerIndex, "corner index");
+        Validate.nonNull(start, "start location");
+        Validate.nonNull(end, "end location");
+        /*
+         * Calculate the direction of a straight line containing the segment.
+         */
+        Vector3f segmentOffset = end.subtract(start);
+        /*
+         * If the segment has zero length, test its stert for coincidence 
+         * with the corner.
+         */
+        double segmentDS = MyVector3f.lengthSquared(segmentOffset);
+        Vector3f corner = cornerLocations[cornerIndex];
+        if (segmentDS == 0.0) {
+            if (MyVector3f.doCoincide(start, corner, tolerance2)) {
+                return corner.clone();
+            } else {
+                return null;
+            }
+        }
+        /*
+         * Calculate parametric value for the closest point on that line.
+         */
+        Vector3f cornerOffset = corner.subtract(start);
+        double dot = MyVector3f.dot(cornerOffset, segmentOffset);
+        double t = dot / segmentDS;
+        /*
+         * Calculate offset of the closest point on the segment.
+         */
+        float scaleFactor = FastMath.clamp((float) t, 0f, 1f);
+        Vector3f closestOffset = segmentOffset.mult(scaleFactor);
+        double result = MyVector3f.distanceSquared(closestOffset, cornerOffset);
+
+        if (result > tolerance2) {
+            return null;
+        } else {
+            return corner.clone();
+        }
+    }
+
+    /**
+     * Find a location (if any) where the specified segment intersects the
+     * specified side.
+     *
+     * @param sideIndex (&ge;0, &lt;numCorners)
+     * @param start coordinates of start of segment (not null, unaffected)
+     * @param end coordinates of end of segment (not null, unaffected)
+     * @return a new coordinate vector or null if no intersection found
+     */
+    private Vector3f intersectionWithSide(int sideIndex,
+            Vector3f start, Vector3f end) {
+        validateIndex(sideIndex, "side index");
+        Validate.nonNull(start, "start location");
+        Validate.nonNull(end, "end location");
+
+        Vector3f corner1 = cornerLocations[sideIndex];
+        int corner2Index = nextIndex(sideIndex);
+        Vector3f corner2 = cornerLocations[corner2Index];
+        Vector3f result = MyVector3f.intersectSegments(corner1, corner2,
+                start, end, tolerance2);
+
+        return result;
+    }
+
+    /**
+     * Helper method to determine whether 2 collinear segments overlap.
      *
      * @param ext index of an outer corner (&ge;0, &lt; numCorners)
      * @param corner1 index of 1st corner, 1st segment (&ge;0, &lt;numCorners)
@@ -352,7 +444,7 @@ public class GenericPolygon3f extends Polygon3f {
 
     /**
      * Initialize the #isSelfIntersecting field. The polygon is
-     * self-intersecting if two (or more) sides intersect at some location other
+     * self-intersecting if 2 (or more) sides intersect at some location other
      * their corners.
      */
     private void setIsSelfIntersecting() {
