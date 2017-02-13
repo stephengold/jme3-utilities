@@ -115,6 +115,27 @@ public class MyMath {
     }
 
     /**
+     * Clamp the magnitude of a double-precision value.
+     *
+     * @param dValue input value to be clamped
+     * @param maxMagnitude limit of the clamp (&ge;0)
+     * @return value between -maxMagnitude and +maxMagnitude inclusive which is
+     * closest to fValue
+     * @see com.jme3.math.FastMath#clamp(float,float,float)
+     */
+    public static double clamp(double dValue, double maxMagnitude) {
+        Validate.nonNegative(maxMagnitude, "limit");
+
+        if (dValue < -maxMagnitude) {
+            return -maxMagnitude;
+        } else if (dValue > maxMagnitude) {
+            return maxMagnitude;
+        } else {
+            return dValue;
+        }
+    }
+
+    /**
      * Cube a single-precision value. Logs a warning in case of overflow.
      *
      * @param fValue input value to be cubed
