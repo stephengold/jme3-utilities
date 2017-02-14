@@ -136,7 +136,8 @@ public class MyMath {
     }
 
     /**
-     * Cube a single-precision value. Logs a warning in case of overflow.
+     * Cube the specified single-precision value. Logs a warning in case of
+     * overflow.
      *
      * @param fValue input value to be cubed
      * @return fValue raised to the third power
@@ -340,6 +341,27 @@ public class MyMath {
 
         assert result >= 0.0 : result;
         assert result < modulus : result;
+        return result;
+    }
+
+    /**
+     * Square the specified double-precision value. Logs a warning in case of
+     * overflow.
+     *
+     * @param dValue input value to be squared
+     * @return dValue squared (&ge;0)
+     * @see com.jme3.math.FastMath#sqr(float)
+     * @see Math#sqrt(double)
+     */
+    public static double sqr(double dValue) {
+        double result = dValue * dValue;
+
+        if (Double.isInfinite(result)) {
+            String message = String.format(
+                    "Overflow from squaring %g.", dValue);
+            logger.warning(message);
+        }
+        assert result >= 0.0 : result;
         return result;
     }
 
