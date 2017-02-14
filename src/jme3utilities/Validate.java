@@ -114,6 +114,17 @@ final public class Validate {
     }
 
     /**
+     * Validate a non-negative proper fraction as a method argument.
+     *
+     * @param value fraction to validate (&le;1, &ge;0)
+     * @param description description of the value
+     * @throws IllegalArgumentException if the value is outside the range [0, 1]
+     */
+    public static void fraction(double value, String description) {
+        inRange(value, description, 0.0, 1.0);
+    }
+
+    /**
      * Validate a limited integer as a method argument.
      *
      * @param value value to validate (&le;max, &ge;min)
