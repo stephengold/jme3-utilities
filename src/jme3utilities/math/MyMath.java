@@ -115,7 +115,29 @@ public class MyMath {
     }
 
     /**
-     * Cube a single-precision value. Logs a warning in case of overflow.
+     * Clamp the magnitude of a double-precision value.
+     *
+     * @param dValue input value to be clamped
+     * @param maxMagnitude limit of the clamp (&ge;0)
+     * @return value between -maxMagnitude and +maxMagnitude inclusive which is
+     * closest to fValue
+     * @see com.jme3.math.FastMath#clamp(float,float,float)
+     */
+    public static double clamp(double dValue, double maxMagnitude) {
+        Validate.nonNegative(maxMagnitude, "limit");
+
+        if (dValue < -maxMagnitude) {
+            return -maxMagnitude;
+        } else if (dValue > maxMagnitude) {
+            return maxMagnitude;
+        } else {
+            return dValue;
+        }
+    }
+
+    /**
+     * Cube the specified single-precision value. Logs a warning in case of
+     * overflow.
      *
      * @param fValue input value to be cubed
      * @return fValue raised to the third power
@@ -319,6 +341,27 @@ public class MyMath {
 
         assert result >= 0.0 : result;
         assert result < modulus : result;
+        return result;
+    }
+
+    /**
+     * Square the specified double-precision value. Logs a warning in case of
+     * overflow.
+     *
+     * @param dValue input value to be squared
+     * @return dValue squared (&ge;0)
+     * @see com.jme3.math.FastMath#sqr(float)
+     * @see Math#sqrt(double)
+     */
+    public static double sqr(double dValue) {
+        double result = dValue * dValue;
+
+        if (Double.isInfinite(result)) {
+            String message = String.format(
+                    "Overflow from squaring %g.", dValue);
+            logger.warning(message);
+        }
+        assert result >= 0.0 : result;
         return result;
     }
 
