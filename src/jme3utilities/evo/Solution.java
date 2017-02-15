@@ -165,11 +165,12 @@ public class Solution {
      * @param otherSolution (not null, same species and number of parameters)
      * @param blendProbability probability of copying from the other solution
      * (&ge;0, &le;1)
+     * @param generator pseudo-random generator to use (not null)
+     * @return a new instance
      */
     public Solution blendRandom(Solution otherSolution,
             double blendProbability, Random generator) {
         Validate.nonNull(otherSolution, "other solution");
-        Validate.fraction(blendProbability, "blend probability");
         String otherSpecies = otherSolution.getSpecies();
         if (!species.equals(otherSpecies)) {
             throw new IllegalArgumentException("species mismatch");
@@ -178,6 +179,8 @@ public class Solution {
         if (parameters.length != otherNum) {
             throw new IllegalArgumentException("parameter count mismatch");
         }
+        Validate.fraction(blendProbability, "blend probability");
+        Validate.nonNull(generator, "generator");
 
         float[] newParameters = new float[otherNum];
         for (int iParameter = 0; iParameter < otherNum; iParameter++) {
