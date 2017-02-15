@@ -296,13 +296,14 @@ The jme3-utilities project releases five libraries: debug, nifty, sky, ui, and x
     Its folders and JARs have names of the form jme3-utilities-x*.jar).
     It is built from 8 source packages:
      1. jme3utilities.controls
-     2. jme3utilities.math.locus
-     3. jme3utilities.math.noise
-     4. jme3utilities.math.polygon
-     5. jme3utilities.math.spline
-     6. jme3utilities.navigation
-     7. jme3utilities.physics
-     8. jme3utilities.xml
+     2. jme3utilities.evo
+     3. jme3utilities.math.locus
+     4. jme3utilities.math.noise
+     5. jme3utilities.math.polygon
+     6. jme3utilities.math.spline
+     7. jme3utilities.navigation
+     8. jme3utilities.physics
+     9. jme3utilities.xml
 -->
     <target name="x-javadoc"
             depends="init, releasedirs, sky-jar, x-sources">
@@ -340,6 +341,7 @@ The jme3-utilities project releases five libraries: debug, nifty, sky, ui, and x
              basedir="${build.classes.dir}"
              compress="${jar.compress}"
              includes="jme3utilities/controls/*.class
+                       jme3utilities/evo/*.class
                        jme3utilities/math/locus/*.class
                        jme3utilities/math/noise/*.class
                        jme3utilities/math/polygon/*.class
@@ -354,6 +356,7 @@ The jme3-utilities project releases five libraries: debug, nifty, sky, ui, and x
         <copy todir="release/jme3-utilities-x-sources">
             <fileset dir="${src.dir}"
                      includes="jme3utilities/controls/*.java
+                               jme3utilities/evo/*.java
                                jme3utilities/math/locus/*.java
                                jme3utilities/math/noise/*.java
                                jme3utilities/math/polygon/*.java
