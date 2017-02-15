@@ -63,19 +63,19 @@ final public class Validate {
     /**
      * Validate a finite single-precision value as a method argument.
      *
-     * @param value value to validate (finite)
+     * @param fValue value to validate (finite)
      * @param description description of the value
      * @throws IllegalArgumentException if the value is NaN or infinite
      */
-    public static void finite(float value, String description) {
-        if (Float.isNaN(value) || Float.isInfinite(value)) {
+    public static void finite(float fValue, String description) {
+        if (Float.isNaN(fValue) || Float.isInfinite(fValue)) {
             String what;
             if (description == null) {
                 what = "float argument";
             } else {
                 what = description;
             }
-            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, fValue});
             String message = String.format("%s must be a finite number.", what);
             throw new IllegalArgumentException(message);
         }
@@ -84,19 +84,19 @@ final public class Validate {
     /**
      * Validate a finite double-precision value as a method argument.
      *
-     * @param value value to validate (finite)
+     * @param dValue value to validate (finite)
      * @param description description of the value
      * @throws IllegalArgumentException if the value is NaN or infinite
      */
-    public static void finite(double value, String description) {
-        if (Double.isNaN(value) || Double.isInfinite(value)) {
+    public static void finite(double dValue, String description) {
+        if (Double.isNaN(dValue) || Double.isInfinite(dValue)) {
             String what;
             if (description == null) {
                 what = "double argument";
             } else {
                 what = description;
             }
-            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, dValue});
             String message = String.format("%s must be a finite number.", what);
             throw new IllegalArgumentException(message);
         }
@@ -105,47 +105,58 @@ final public class Validate {
     /**
      * Validate a non-negative proper fraction as a method argument.
      *
-     * @param value fraction to validate (&le;1, &ge;0)
+     * @param fValue fraction to validate (&le;1, &ge;0)
      * @param description description of the value
      * @throws IllegalArgumentException if the value is outside the range [0, 1]
      */
-    public static void fraction(float value, String description) {
-        inRange(value, description, 0f, 1f);
+    public static void fraction(float fValue, String description) {
+        inRange(fValue, description, 0f, 1f);
+    }
+
+    /**
+     * Validate a non-negative proper fraction as a method argument.
+     *
+     * @param dValue fraction to validate (&le;1, &ge;0)
+     * @param description description of the value
+     * @throws IllegalArgumentException if the value is outside the range [0, 1]
+     */
+    public static void fraction(double dValue, String description) {
+        inRange(dValue, description, 0.0, 1.0);
     }
 
     /**
      * Validate a limited integer as a method argument.
      *
-     * @param value value to validate (&le;max, &ge;min)
+     * @param iValue value to validate (&le;max, &ge;min)
      * @param description description of the value
      * @param min the smallest valid value (&le;max)
      * @param max the largest valid value (&ge;max)
      * @throws IllegalArgumentException if the value is outside the range [min,
      * max]
      */
-    public static void inRange(int value, String description,
+    public static void inRange(int iValue, String description,
             int min, int max) {
-        if (value < min) {
+        if (iValue < min) {
             String what;
             if (description == null) {
                 what = "int argument";
             } else {
                 what = description;
             }
-            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, iValue});
             String message = String.format(
                     "%s must be greater than or equal to %d.", what, min);
             throw new IllegalArgumentException(message);
         }
 
-        if (value > max) {
+        if (iValue > max) {
             String what;
             if (description == null) {
                 what = "int argument";
             } else {
                 what = description;
             }
-            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, iValue});
             String message = String.format(
                     "%s must be less than or equal to %d.", what, max);
             throw new IllegalArgumentException(message);
@@ -155,35 +166,35 @@ final public class Validate {
     /**
      * Validate a limited single-precision value as a method argument.
      *
-     * @param value value to validate (&le;max, &ge;min)
+     * @param fValue value to validate (&le;max, &ge;min)
      * @param description description of the value
      * @param min the smallest valid value (&le;max)
      * @param max the largest valid value (&ge;max)
      * @throws IllegalArgumentException if the value is outside the range
      */
-    public static void inRange(float value, String description,
+    public static void inRange(float fValue, String description,
             float min, float max) {
-        if (!(value >= min)) {
+        if (!(fValue >= min)) {
             String what;
             if (description == null) {
                 what = "float argument";
             } else {
                 what = description;
             }
-            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, fValue});
             String message = String.format(
                     "%s must be greater than or equal to %f.", what, min);
             throw new IllegalArgumentException(message);
         }
 
-        if (!(value <= max)) {
+        if (!(fValue <= max)) {
             String what;
             if (description == null) {
                 what = "float argument";
             } else {
                 what = description;
             }
-            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, fValue});
             String message = String.format(
                     "%s must be less than or equal to %f.", what, max);
             throw new IllegalArgumentException(message);
@@ -193,37 +204,77 @@ final public class Validate {
     /**
      * Validate a limited double-precision value as a method argument.
      *
-     * @param value value to validate (&le;max, &ge;min)
+     * @param dValue value to validate (&le;max, &ge;min)
      * @param description description of the value
      * @param min the smallest valid value (&le;max)
      * @param max the largest valid value (&ge;max)
      * @throws IllegalArgumentException if the value is outside the range
      */
-    public static void inRange(double value, String description,
+    public static void inRange(double dValue, String description,
             double min, double max) {
-        if (!(value >= min)) {
+        if (!(dValue >= min)) {
             String what;
             if (description == null) {
                 what = "double argument";
             } else {
                 what = description;
             }
-            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, dValue});
             String message = String.format(
                     "%s must be greater than or equal to %f.", what, min);
             throw new IllegalArgumentException(message);
         }
 
-        if (!(value <= max)) {
+        if (!(dValue <= max)) {
             String what;
             if (description == null) {
                 what = "double argument";
             } else {
                 what = description;
             }
-            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, dValue});
             String message = String.format(
                     "%s must be less than or equal to %f.", what, max);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Validate a single-precision number as a method argument.
+     *
+     * @param fValue value to validate (number)
+     * @param description description of the value
+     * @throws IllegalArgumentException if the value is NaN
+     */
+    public static void isNumber(float fValue, String description) {
+        if (Float.isNaN(fValue)) {
+            String what;
+            if (description == null) {
+                what = "float argument";
+            } else {
+                what = description;
+            }
+            String message = String.format("%s must be a number.", what);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Validate a double-precision number as a method argument.
+     *
+     * @param dValue value to validate (number)
+     * @param description description of the value
+     * @throws IllegalArgumentException if the value is NaN
+     */
+    public static void isNumber(double dValue, String description) {
+        if (Double.isNaN(dValue)) {
+            String what;
+            if (description == null) {
+                what = "double argument";
+            } else {
+                what = description;
+            }
+            String message = String.format("%s must be a number.", what);
             throw new IllegalArgumentException(message);
         }
     }
@@ -255,19 +306,19 @@ final public class Validate {
     /**
      * Validate a non-negative integer as a method argument.
      *
-     * @param value value to validate (&ge;0)
+     * @param iValue value to validate (&ge;0)
      * @param description description of the value
      * @throws IllegalArgumentException if the value is negative
      */
-    public static void nonNegative(int value, String description) {
-        if (value < 0) {
+    public static void nonNegative(int iValue, String description) {
+        if (iValue < 0) {
             String what;
             if (description == null) {
                 what = "int argument";
             } else {
                 what = description;
             }
-            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, iValue});
             String message = String.format("%s must not be negative.", what);
             throw new IllegalArgumentException(message);
         }
@@ -276,19 +327,19 @@ final public class Validate {
     /**
      * Validate a non-negative single-precision value as a method argument.
      *
-     * @param value value to validate (&ge;0)
+     * @param fValue value to validate (&ge;0)
      * @param description description of the value
      * @throws IllegalArgumentException if the value is negative or NaN
      */
-    public static void nonNegative(float value, String description) {
-        if (!(value >= 0f)) {
+    public static void nonNegative(float fValue, String description) {
+        if (!(fValue >= 0f)) {
             String what;
             if (description == null) {
                 what = "float argument";
             } else {
                 what = description;
             }
-            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, fValue});
             String message = String.format("%s must not be negative.", what);
             throw new IllegalArgumentException(message);
         }
@@ -297,19 +348,19 @@ final public class Validate {
     /**
      * Validate a non-negative double-precision value as a method argument.
      *
-     * @param value value to validate (&ge;0)
+     * @param dValue value to validate (&ge;0)
      * @param description description of the value
      * @throws IllegalArgumentException if the value is negative or NaN
      */
-    public static void nonNegative(double value, String description) {
-        if (!(value >= 0.0)) {
+    public static void nonNegative(double dValue, String description) {
+        if (!(dValue >= 0.0)) {
             String what;
             if (description == null) {
                 what = "double argument";
             } else {
                 what = description;
             }
-            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, dValue});
             String message = String.format("%s must not be negative.", what);
             throw new IllegalArgumentException(message);
         }
@@ -343,12 +394,12 @@ final public class Validate {
     /**
      * Validate a non-zero single-precision value as a method argument.
      *
-     * @param value value to validate (&ne;0)
+     * @param fValue value to validate (&ne;0)
      * @param description description of the value
      * @throws IllegalArgumentException if the value is zero
      */
-    public static void nonZero(float value, String description) {
-        if (value == 0f) {
+    public static void nonZero(float fValue, String description) {
+        if (fValue == 0f) {
             String what;
             if (description == null) {
                 what = "float argument";
@@ -409,19 +460,19 @@ final public class Validate {
     /**
      * Validate a positive integer value as a method argument.
      *
-     * @param value value to validate (&gt;0)
+     * @param iValue value to validate (&gt;0)
      * @param description description of the value
      * @throws IllegalArgumentException if the value is negative or zero
      */
-    public static void positive(int value, String description) {
-        if (value <= 0) {
+    public static void positive(int iValue, String description) {
+        if (iValue <= 0) {
             String what;
             if (description == null) {
                 what = "int argument";
             } else {
                 what = description;
             }
-            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, iValue});
             String message = String.format("%s must be positive.", what);
             throw new IllegalArgumentException(message);
         }
@@ -430,19 +481,19 @@ final public class Validate {
     /**
      * Validate a positive single-precision value as a method argument.
      *
-     * @param value value to validate (&gt;0)
+     * @param fValue value to validate (&gt;0)
      * @param description description of the value
      * @throws IllegalArgumentException if the value is not positive
      */
-    public static void positive(float value, String description) {
-        if (!(value > 0f)) {
+    public static void positive(float fValue, String description) {
+        if (!(fValue > 0f)) {
             String what;
             if (description == null) {
                 what = "float argument";
             } else {
                 what = description;
             }
-            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, fValue});
             String message = String.format("%s must be positive.", what);
             throw new IllegalArgumentException(message);
         }
@@ -451,19 +502,19 @@ final public class Validate {
     /**
      * Validate a positive double-precision value as a method argument.
      *
-     * @param value value to validate (&gt;0)
+     * @param dValue value to validate (&gt;0)
      * @param description description of the value
      * @throws IllegalArgumentException if the value is not positive
      */
-    public static void positive(double value, String description) {
-        if (!(value > 0.0)) {
+    public static void positive(double dValue, String description) {
+        if (!(dValue > 0.0)) {
             String what;
             if (description == null) {
                 what = "double argument";
             } else {
                 what = description;
             }
-            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, value});
+            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, dValue});
             String message = String.format("%s must be positive.", what);
             throw new IllegalArgumentException(message);
         }
