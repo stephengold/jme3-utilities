@@ -194,13 +194,13 @@ final public class Noise {
     /**
      * Pick a bit with the specified value from the specified set.
      *
-     * @param bitValue true or false
      * @param bitset (not null, positive size, unaffected)
      * @param maxIndex the last usable bit index (&ge;0, &lt;size)
+     * @param bitValue true or false
      * @param generator generator to use (not null)
      * @return bit index (&ge;0, &le;maxIndex)
      */
-    public static int pick(BitSet bitset, int maxIndex, boolean value,
+    public static int pick(BitSet bitset, int maxIndex, boolean bitValue,
             Random generator) {
         Validate.nonNull(bitset, "bit set");
         Validate.inRange(maxIndex, "max index", 0, bitset.size() - 1);
@@ -208,7 +208,7 @@ final public class Noise {
 
         int firstIndex;
         int lastIndex;
-        if (value) {
+        if (bitValue) {
             firstIndex = bitset.nextSetBit(0);
             lastIndex = bitset.previousSetBit(maxIndex);
         } else {
@@ -230,7 +230,7 @@ final public class Noise {
 
         int numPossibilties = lastIndex - firstIndex + 1;
         int bitIndex = firstIndex + generator.nextInt(numPossibilties);
-        while (bitset.get(bitIndex) != value) {
+        while (bitset.get(bitIndex) != bitValue) {
             bitIndex = firstIndex + generator.nextInt(numPossibilties);
         }
 
