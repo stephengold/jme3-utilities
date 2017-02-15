@@ -26,10 +26,11 @@
 package jme3utilities.math.spline;
 
 import com.jme3.math.Vector3f;
+import jme3utilities.math.locus.Locus3f;
 
 /**
- * Interface for three-dimensional spline interpolation.  A spline is a
- * continuous path defined by a series of control points.
+ * Interface for 3-dimensional spline interpolation. A spline is a continuous
+ * path defined by a series of control points.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -51,6 +52,14 @@ public interface Spline3f {
     Vector3f interpolate(float sampleT);
 
     /**
+     * Test whether this spline is entirely contained in the specified region.
+     *
+     * @param locus region (not null)
+     * @return true if contained, otherwise false
+     */
+    boolean isContainedIn(Locus3f locus);
+
+    /**
      * Read the number of control points.
      *
      * @return count (&gt;0)
@@ -58,7 +67,7 @@ public interface Spline3f {
     int numControlPoints();
 
     /**
-     * Compute the spline's 1st derivative to the right of the specified
+     * Calculate the spline's 1st derivative to the right of the specified
      * parameter value.
      *
      * @param sampleT input value
@@ -74,7 +83,7 @@ public interface Spline3f {
     Vector3f terminus();
 
     /**
-     * Read the total path length of this spline.
+     * Read the total path length of this spline. TODO rename
      *
      * @return path length from start to end (&ge;0)
      */

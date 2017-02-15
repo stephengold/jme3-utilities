@@ -51,7 +51,7 @@ public class Segment3f implements Locus3f {
             Segment3f.class.getName());
     // *************************************************************************
     // fields
-
+    
     /**
      * maximum distance for points to coincide (&ge;0, set by constructor)
      */
@@ -290,7 +290,7 @@ public class Segment3f implements Locus3f {
          * If the segment has zero length, return the squared 
          * distance to corner0.
          */
-        double segmentDS = MyVector3f.distanceSquared(corner0, corner1);
+        double segmentDS = MyVector3f.lengthSquared(segmentOffset);
         if (segmentDS == 0.0) {
             if (storeClosestPoint != null) {
                 storeClosestPoint.set(corner0);
@@ -359,10 +359,10 @@ public class Segment3f implements Locus3f {
     }
 
     /**
-     * Test whether this region contains a specified location.
+     * Test whether this region contains the specified location.
      *
-     * @param location coordinates of location to test (not null, unaffected)
-     * @return true if location is in this region, false otherwise
+     * @param location coordinates of test location (not null, unaffected)
+     * @return true if location is in region, false otherwise
      */
     @Override
     public boolean contains(Vector3f location) {
@@ -377,7 +377,31 @@ public class Segment3f implements Locus3f {
     }
 
     /**
-     * Find the location in this region nearest to a specified location.
+     * Test whether this region contains the specified segment.
+     *
+     * @param startLocation coordinates of start of test segment (not null,
+     * unaffected)
+     * @param endLocation coordinates of end of test segment (not null,
+     * unaffected)
+     * @return true if test segment is entirely contained in region, false
+     * otherwise
+     */
+    @Override
+    public boolean contains(Vector3f startLocation, Vector3f endLocation) {
+        Validate.nonNull(startLocation, "start location");
+        Validate.nonNull(endLocation, "end location");
+
+        if (!contains(startLocation)) {
+            return false;
+        } else if (contains(endLocation)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Find the location in this region nearest to the specified location.
      *
      * @param location coordinates of the input (not null, unaffected)
      * @return a new vector, or null it none found
@@ -402,7 +426,7 @@ public class Segment3f implements Locus3f {
     public Locus3f merge(Locus3f otherLocus) {
         throw new IllegalArgumentException("unable to merge");
     }
-    
+
     /**
      * Calculate a representative location (or rep) for this region. The rep
      * must be contained in the region.
@@ -433,33 +457,38 @@ public class Segment3f implements Locus3f {
     }
 
     /**
-     * Find a path between two locations in this region without leaving the
+     * Find a path between 2 locations in this region without leaving the
      * region. Short paths are preferred over long ones.
      *
      * @param startLocation coordinates (contained in region, unaffected)
      * @param goalLocation coordinates (contained in region, unaffected)
+     * @param maxPoints maximum number of control points to use (&ge;2)
      * @return a new path spline, or null if none found
      */
     @Override
     public Spline3f shortestPath(Vector3f startLocation,
-            Vector3f goalLocation) {
+            Vector3f goalLocation, int maxPoints) {
+        Validate.nonNull(startLocation, "start location");
+        Validate.nonNull(goalLocation, "goal location");
+        Validate.inRange(maxPoints, "max control points", 2, Integer.MAX_VALUE);
         assert contains(startLocation) : startLocation;
         assert contains(goalLocation) : goalLocation;
 
         Vector3f[] joints = {startLocation, goalLocation};
         Spline3f result = new LinearSpline3f(joints);
+        assert result.isContainedIn(this);
 
         return result;
     }
 
     /**
-     * Calculate the distance from the specified starting point to the first
-     * point of support (if any) directly below it in this region.
+     * Calculate the distance from the specified starting point to the 1st point
+     * of support (if any) directly below it in this region.
      *
-     * @param location coordinates of starting point(not null, unaffected)
+     * @param location coordinates of starting point (not null, unaffected)
      * @param cosineTolerance cosine of maximum slope for support (&gt;0, &lt;1)
-     * @return the shortest support distance (&ge;0) or
-     * {@link Float#POSITIVE_INFINITY} if no support
+     * @return the minimum distance (&ge;0) or {@link Float#POSITIVE_INFINITY}
+     * if no support
      */
     @Override
     public float supportDistance(Vector3f location, float cosineTolerance) {
