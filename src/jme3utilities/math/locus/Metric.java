@@ -122,4 +122,41 @@ public enum Metric {
 
         return result;
     }
+
+    /**
+     * Evaluate this metric for a specified 3-D offset.
+     *
+     * @param offset input vector (not null, unaffected)
+     * @return metric value (&ge;0)
+     */
+    public double value(Vector3f offset) {
+        Validate.nonNull(offset, "offset");
+        double result;
+
+        switch (this) {
+            case EUCLID:
+                result = MyVector3f.lengthSquared(offset);
+                result = Math.sqrt(result);
+                break;
+
+            case CHEBYSHEV:
+                double dx = Math.abs(offset.x);
+                double dy = Math.abs(offset.y);
+                double dz = Math.abs(offset.z);
+                result = MyMath.max(dx, dy, dz);
+                break;
+
+            case MANHATTAN:
+                dx = Math.abs(offset.x);
+                dy = Math.abs(offset.y);
+                dz = Math.abs(offset.z);
+                result = dx + dy + dz;
+                break;
+
+            default:
+                throw new IllegalStateException();
+        }
+
+        return result;
+    }
 }
