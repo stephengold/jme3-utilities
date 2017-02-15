@@ -26,6 +26,7 @@
 package jme3utilities.math.noise;
 
 import com.jme3.math.Vector3f;
+import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
@@ -191,7 +192,53 @@ final public class Noise {
     }
 
     /**
-     * Pick a pseudo-random element from a list.
+     * Pick a bit with the specified value from the specified set.
+     *
+     * @param bitset (not null, positive size, unaffected)
+     * @param maxIndex the last usable bit index (&ge;0, &lt;size)
+     * @param bitValue true or false
+     * @param generator generator to use (not null)
+     * @return bit index (&ge;0, &le;maxIndex)
+     */
+    public static int pick(BitSet bitset, int maxIndex, boolean bitValue,
+            Random generator) {
+        Validate.nonNull(bitset, "bit set");
+        Validate.inRange(maxIndex, "max index", 0, bitset.size() - 1);
+        Validate.nonNull(generator, "generator");
+
+        int firstIndex;
+        int lastIndex;
+        if (bitValue) {
+            firstIndex = bitset.nextSetBit(0);
+            lastIndex = bitset.previousSetBit(maxIndex);
+        } else {
+            firstIndex = bitset.nextClearBit(0);
+            lastIndex = bitset.previousClearBit(maxIndex);
+        }
+        if (firstIndex == -1) {
+            /*
+             * No possibilities.
+             */
+            assert lastIndex == -1 : lastIndex;
+            return -1;
+        } else if (firstIndex == lastIndex) {
+            /*
+             * Single possibility.
+             */
+            return firstIndex;
+        }
+
+        int numPossibilties = lastIndex - firstIndex + 1;
+        int bitIndex = firstIndex + generator.nextInt(numPossibilties);
+        while (bitset.get(bitIndex) != bitValue) {
+            bitIndex = firstIndex + generator.nextInt(numPossibilties);
+        }
+
+        return bitIndex;
+    }
+
+    /**
+     * Pick a pseudo-random element from the specified list.
      *
      * @param list list to select from (not null)
      * @param generator generator to use (not null)
