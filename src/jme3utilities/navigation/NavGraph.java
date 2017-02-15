@@ -602,15 +602,15 @@ public class NavGraph {
         NavVertex routeVertex = startVertex;
         while (routeVertex != endVertex) {
             NavArc nextArc = null;
-        float minDistance = Float.MAX_VALUE;
+            float minDistance = Float.MAX_VALUE;
             for (NavArc arc : routeVertex.copyOutgoing()) {
-            NavVertex neighbor = arc.getToVertex();
+                NavVertex neighbor = arc.getToVertex();
                 float distance = totalCosts.get(neighbor) + arcCosts.get(arc);
-            if (distance < minDistance) {
-                minDistance = distance;
+                if (distance < minDistance) {
+                    minDistance = distance;
                     nextArc = arc;
+                }
             }
-        }
             routeVertex = nextArc.getToVertex();
             assert routeVertex != startVertex;
             result.add(nextArc);
@@ -635,7 +635,7 @@ public class NavGraph {
 
     /**
      * Calculate the distance from the specified starting point to the first
-     * point of support (if any) directly below it in the locus of this vertex.
+     * point of support (if any) directly below it in this graph.
      *
      * @param location coordinates of starting point(not null, unaffected)
      * @param cosineTolerance cosine of maximum slope for support (&gt;0, &lt;1)

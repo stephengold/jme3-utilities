@@ -251,7 +251,8 @@ public class SimpleAppState
     }
 
     /**
-     * Update this app state (if enabled) prior to rendering.
+     * Callback to update this app state (if enabled) prior to rendering.
+     * (Invoked once per frame.)
      *
      * @param elapsedTime time interval since previous frame/update (in seconds,
      * &ge;0)
