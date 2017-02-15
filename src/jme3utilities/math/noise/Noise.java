@@ -26,12 +26,12 @@
 package jme3utilities.math.noise;
 
 import com.jme3.math.Vector3f;
+import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
-import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
 
 /**
@@ -137,7 +137,7 @@ final public class Noise {
         }
         double scaleFactor = 1.0 / Math.sqrt(lengthSquared);
         result.multLocal((float) scaleFactor);
-        
+
         assert result.isUnitVector();
         return result;
     }
@@ -169,7 +169,7 @@ final public class Noise {
     }
 
     /**
-     * Pick a pseudo-random element from an array.
+     * Pick a pseudo-random element from the specified array.
      *
      * @param array array to select from (not null)
      * @param generator generator to use (not null)
@@ -185,15 +185,60 @@ final public class Noise {
         if (count == 0) {
             return null;
         }
-        int index = generator.nextInt();
-        index = MyMath.modulo(index, count);
+        int index = generator.nextInt(count);
         Object result = array[index];
 
         return result;
     }
 
     /**
-     * Pick a pseudo-random element from a list.
+     * Pick a bit with the specified value from the specified set.
+     *
+     * @param bitValue true or false
+     * @param bitset (not null, positive size, unaffected)
+     * @param maxIndex the last usable bit index (&ge;0, &lt;size)
+     * @param generator generator to use (not null)
+     * @return bit index (&ge;0, &le;maxIndex)
+     */
+    public static int pick(BitSet bitset, int maxIndex, boolean value,
+            Random generator) {
+        Validate.nonNull(bitset, "bit set");
+        Validate.inRange(maxIndex, "max index", 0, bitset.size() - 1);
+        Validate.nonNull(generator, "generator");
+
+        int firstIndex;
+        int lastIndex;
+        if (value) {
+            firstIndex = bitset.nextSetBit(0);
+            lastIndex = bitset.previousSetBit(maxIndex);
+        } else {
+            firstIndex = bitset.nextClearBit(0);
+            lastIndex = bitset.previousClearBit(maxIndex);
+        }
+        if (firstIndex == -1) {
+            /*
+             * No possibilities.
+             */
+            assert lastIndex == -1 : lastIndex;
+            return -1;
+        } else if (firstIndex == lastIndex) {
+            /*
+             * Single possibility.
+             */
+            return firstIndex;
+        }
+
+        int numPossibilties = lastIndex - firstIndex + 1;
+        int bitIndex = firstIndex + generator.nextInt(numPossibilties);
+        while (bitset.get(bitIndex) != value) {
+            bitIndex = firstIndex + generator.nextInt(numPossibilties);
+        }
+
+        return bitIndex;
+    }
+
+    /**
+     * Pick a pseudo-random element from the specified list.
      *
      * @param list list to select from (not null)
      * @param generator generator to use (not null)
@@ -209,8 +254,7 @@ final public class Noise {
         if (count == 0) {
             return null;
         }
-        int index = generator.nextInt();
-        index = MyMath.modulo(index, count);
+        int index = generator.nextInt(count);
         Object result = list.get(index);
 
         return result;
