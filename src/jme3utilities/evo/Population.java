@@ -59,6 +59,10 @@ public class Population<Fitness, Element> {
     // fields
     
     /**
+     * maximum number of elements (&gt;0, set by constructor)
+     */
+    final private int maxSize;
+    /**
      * the number of elements in this population (&ge;0)
      */
     private int numElements = 0;
@@ -67,6 +71,18 @@ public class Population<Fitness, Element> {
      */
     protected TreeMap<Fitness, List<Element>> elementsByFitness =
             new TreeMap<>();
+    // *************************************************************************
+    // constructors
+
+    /**
+     * Instantiate a population with the specified capacity.
+     *
+     * @param capacity maximum size (&gt;1)
+     */
+    public Population(int capacity) {
+        Validate.positive(capacity, "capacity");
+        this.maxSize = capacity;
+    }
     // *************************************************************************
     // new methods exposed
 
@@ -90,6 +106,7 @@ public class Population<Fitness, Element> {
 
         list.add(element);
         numElements++;
+        cull(maxSize);
     }
 
     /**
@@ -115,6 +132,7 @@ public class Population<Fitness, Element> {
 
         list.addAll(addList);
         numElements += addCount;
+        cull(maxSize);
     }
 
     /**
