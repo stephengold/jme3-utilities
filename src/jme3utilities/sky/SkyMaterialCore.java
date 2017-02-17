@@ -31,6 +31,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
+import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -49,8 +50,7 @@ import jme3utilities.math.MyMath;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class SkyMaterialCore
-        extends Material {
+public class SkyMaterialCore extends Material {
     // *************************************************************************
     // constants
 
@@ -60,7 +60,7 @@ public class SkyMaterialCore
     final private static Logger logger = Logger.getLogger(
             SkyMaterialCore.class.getName());
     /**
-     * texture coordinate for hidden objects
+     * special texture coordinates for hidden objects
      */
     final private static Vector2f hidden = new Vector2f(0f, 0f);
     // *************************************************************************
@@ -76,9 +76,13 @@ public class SkyMaterialCore
      */
     private float[] cloudAlphas;
     /**
-     * scale factor of each cloud layer
+     * scale factors of cloud layers (each &gt;0)
      */
     private float[] cloudScales;
+    /**
+     * scale factors of astronomical objects (each &gt;0)
+     */
+    private float[] objectScales;
     /**
      * image of each cloud layer
      * <p>
@@ -106,11 +110,16 @@ public class SkyMaterialCore
      * sky texture coordinates of the center of each astronomical object
      */
     private Vector2f[] objectCenters;
+    /**
+     * rotation vectors of astronomical objects (each may be null)
+     */
+    private Vector2f[] objectRotations;
     // *************************************************************************
     // constructors
 
     /**
-     * No-argument constructor for serialization purposes only. Do not use!
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
      */
     public SkyMaterialCore() {
         assetManager = null;
@@ -121,7 +130,10 @@ public class SkyMaterialCore
         cloudOffsets = null;
         maxCloudLayers = 0;
         maxObjects = 0;
+
         objectCenters = null;
+        objectRotations = null;
+        objectScales = null;
     }
 
     /**
@@ -150,7 +162,10 @@ public class SkyMaterialCore
         cloudOffsets = new Vector2f[maxCloudLayers];
         cloudsRaster = new ImageRaster[maxCloudLayers];
         cloudScales = new float[maxCloudLayers];
+
         objectCenters = new Vector2f[maxObjects];
+        objectRotations = new Vector2f[maxObjects];
+        objectScales = new float[maxObjects];
     }
     // *************************************************************************
     // new methods exposed
@@ -201,10 +216,228 @@ public class SkyMaterialCore
 
         if (objectCenters[objectIndex] == null) {
             objectCenters[objectIndex] = new Vector2f();
+            objectRotations[objectIndex] = new Vector2f();
             setObjectColor(objectIndex, ColorRGBA.White);
             setObjectGlow(objectIndex, ColorRGBA.Black);
             setObjectTransform(objectIndex, Constants.topUV, 1f, null);
         }
+    }
+
+    /**
+     * Copy the color of the specified cloud layer.
+     *
+     * @param layerIndex (&lt;maxCloudLayers, &ge;0)
+     * @return a new instance
+     * @see #setCloudsColor(int, com.jme3.math.ColorRGBA)
+     */
+    public ColorRGBA copyCloudsColor(int layerIndex) {
+        validateLayerIndex(layerIndex);
+        if (cloudsRaster[layerIndex] == null) {
+            throw new IllegalStateException("layer not yet added");
+        }
+
+        String parameterName = String.format("Clouds%dColor", layerIndex);
+        ColorRGBA color = copyColor(parameterName);
+        color.a = cloudAlphas[layerIndex];
+
+        return color;
+    }
+
+    /**
+     * Copy the glow color of the specified cloud layer.
+     *
+     * @param layerIndex (&lt;maxCloudLayers, &ge;0)
+     * @return a new instance
+     * @see #setCloudsGlow(int, com.jme3.math.ColorRGBA)
+     */
+    public ColorRGBA copyCloudsGlow(int layerIndex) {
+        validateLayerIndex(layerIndex);
+        if (cloudsRaster[layerIndex] == null) {
+            throw new IllegalStateException("layer not yet added");
+        }
+
+        String parameterName = String.format("Clouds%dGlow", layerIndex);
+        ColorRGBA color = copyColor(parameterName);
+
+        return color;
+    }
+
+    /**
+     * Copy the texture offset of the specified cloud layer.
+     *
+     * @param layerIndex (&lt;maxCloudLayers, &ge;0)
+     * @return a new instance
+     * @see #setCloudsOffset(int, float, float)
+     */
+    public Vector2f copyCloudsOffset(int layerIndex) {
+        validateLayerIndex(layerIndex);
+        if (cloudsRaster[layerIndex] == null) {
+            throw new IllegalStateException("layer not yet added");
+        }
+
+        Vector2f offset = cloudOffsets[layerIndex];
+        return offset.clone();
+    }
+
+    /**
+     * Copy the value of the specified color parameter.
+     *
+     * @param name name of the color parameter
+     * @return a new instance
+     * @see com.jme3.material.Material#setColor(java.lang.String,
+     * com.jme3.math.ColorRGBA)
+     */
+    public ColorRGBA copyColor(String name) {
+        MatParam parameter = getParam(name);
+        ColorRGBA color = (ColorRGBA) parameter.getValue();
+
+        return color.clone();
+    }
+
+    /**
+     * Copy the color of the specified astronomical object.
+     *
+     * @param objectIndex (&lt;maxObjects, &ge;0)
+     * @return a new instance
+     * @see #setObjectColor(int, com.jme3.math.ColorRGBA)
+     */
+    public ColorRGBA copyObjectColor(int objectIndex) {
+        validateObjectIndex(objectIndex);
+        if (objectCenters[objectIndex] == null) {
+            throw new IllegalStateException("object not yet added");
+        }
+
+        String parameterName = String.format("Object%dColor", objectIndex);
+        ColorRGBA color = copyColor(parameterName);
+
+        return color;
+    }
+
+    /**
+     * Copy the glow color of the specified astronomical object.
+     *
+     * @param objectIndex (&lt;maxObjects, &ge;0)
+     * @return a new instance
+     * @see #setObjectGlow(int, com.jme3.math.ColorRGBA)
+     */
+    public ColorRGBA copyObjectGlow(int objectIndex) {
+        validateObjectIndex(objectIndex);
+        if (objectCenters[objectIndex] == null) {
+            throw new IllegalStateException("object not yet added");
+        }
+
+        String parameterName = String.format("Object%dGlow", objectIndex);
+        ColorRGBA color = copyColor(parameterName);
+
+        return color;
+    }
+
+    /**
+     * Copy the texture offset of the specified astronomical object.
+     *
+     * @param objectIndex (&lt;maxObjects, &ge;0)
+     * @return a new instance
+     * @see #setObjectTransform(int, com.jme3.math.Vector2f, float,
+     * com.jme3.math.Vector2f)
+     */
+    public Vector2f copyObjectOffset(int objectIndex) {
+        validateObjectIndex(objectIndex);
+        if (objectCenters[objectIndex] == null) {
+            throw new IllegalStateException("object not yet added");
+        }
+
+        Vector2f offset = objectCenters[objectIndex];
+        return offset.clone();
+    }
+
+    /**
+     * Copy the texture rotation vector of the specified astronomical object.
+     *
+     * @param objectIndex (&lt;maxObjects, &ge;0)
+     * @return a new instance
+     * @see #setObjectTransform(int, com.jme3.math.Vector2f, float,
+     * com.jme3.math.Vector2f)
+     */
+    public Vector2f copyObjectRotation(int objectIndex) {
+        validateObjectIndex(objectIndex);
+        if (objectCenters[objectIndex] == null) {
+            throw new IllegalStateException("object not yet added");
+        }
+
+        Vector2f vector = objectRotations[objectIndex];
+        if (vector == null) {
+            return null;
+        } else {
+            return vector.clone();
+        }
+    }
+
+    /**
+     * Copy the value of the specified vector2 parameter.
+     *
+     * @param name name of the parameter
+     * @return a new instance
+     * @see com.jme3.material.Material#setVector2(java.lang.String,
+     * com.jme3.math.Vector2f)
+     */
+    public Vector2f copyVector2(String name) {
+        MatParam parameter = getParam(name);
+        Vector2f vector = (Vector2f) parameter.getValue();
+
+        return vector.clone();
+    }
+
+    /**
+     * Read the scale of the specified cloud layer.
+     *
+     * @param layerIndex (&lt;maxCloudLayers, &ge;0)
+     * @return scale factor (&gt;0)
+     */
+    public float getCloudsScale(int layerIndex) {
+        validateLayerIndex(layerIndex);
+        if (cloudsRaster[layerIndex] == null) {
+            throw new IllegalStateException("layer not yet added");
+        }
+
+        String parameterName = String.format("Clouds%dScale", layerIndex);
+        float result = getFloat(parameterName);
+
+        assert result > 0f : result;
+        return result;
+    }
+
+    /**
+     * Read the scale of the specified astronomical object.
+     *
+     * @param objectIndex (&lt;maxObjects, &ge;0)
+     * @return scale factor (&gt;0)
+     * @see #setObjectTransform(int, com.jme3.math.Vector2f, float,
+     * com.jme3.math.Vector2f)
+     */
+    public float getObjectScale(int objectIndex) {
+        validateObjectIndex(objectIndex);
+        if (objectCenters[objectIndex] == null) {
+            throw new IllegalStateException("object not yet added");
+        }
+
+        float result = objectScales[objectIndex];
+
+        assert result > 0f : result;
+        return result;
+    }
+
+    /**
+     * Read the value of the specified float parameter.
+     *
+     * @param name name of the parameter
+     * @return value
+     * @see com.jme3.material.Material#setFloat(java.lang.String, float)
+     */
+    public float getFloat(String name) {
+        MatParam parameter = getParam(name);
+        float result = (float) parameter.getValue();
+
+        return result;
     }
 
     /**
@@ -339,7 +572,7 @@ public class SkyMaterialCore
      * Alter the texture scale of a cloud layer.
      *
      * @param layerIndex (&lt;maxCloudLayers, &ge;0)
-     * @param newScale (&gt;0)
+     * @param newScale scale factor (&gt;0)
      */
     public void setCloudsScale(int layerIndex, float newScale) {
         validateLayerIndex(layerIndex);
@@ -354,7 +587,7 @@ public class SkyMaterialCore
     }
 
     /**
-     * Alter the color of an astronomical object.
+     * Alter the color of the specified astronomical object.
      *
      * @param objectIndex (&lt;maxObjects, &ge;0)
      * @param newColor (not null)
@@ -371,7 +604,7 @@ public class SkyMaterialCore
     }
 
     /**
-     * Alter the glow color of an astronomical object.
+     * Alter the glow color of the specified astronomical object.
      *
      * @param objectIndex (&lt;maxObjects, &ge;0)
      * @param newColor (not null)
@@ -388,7 +621,7 @@ public class SkyMaterialCore
     }
 
     /**
-     * Alter the location and scaling of an astronomical object.
+     * Alter the position and scaling of the specified astronomical object.
      *
      * @param objectIndex (&lt;maxObjects, &ge;0)
      * @param centerUV sky texture coordinates for the center of the object (not
@@ -409,11 +642,20 @@ public class SkyMaterialCore
         if (objectCenters[objectIndex] == null) {
             throw new IllegalStateException("object not yet added");
         }
+        /*
+         * Record transform parameters for save().
+         */
+        objectCenters[objectIndex] = centerUV.clone();
+        if (newRotate == null) {
+            objectRotations[objectIndex] = null;
+        } else {
+            objectRotations[objectIndex] = newRotate.clone();
+        }
+        objectScales[objectIndex] = newScale;
 
         String objectParameterName = String.format(
                 "Object%dCenter", objectIndex);
         setVector2(objectParameterName, centerUV);
-        objectCenters[objectIndex].set(centerUV);
 
         Vector2f offset = centerUV.subtract(Constants.topUV);
         float topDist = offset.length();
@@ -519,12 +761,12 @@ public class SkyMaterialCore
      * @throws IOException from importer
      */
     @Override
-    public void read(JmeImporter importer)
-            throws IOException {
+    public void read(JmeImporter importer) throws IOException {
         super.read(importer);
-
         InputCapsule capsule = importer.getCapsule(this);
-
+        /*
+         * cloud layers
+         */
         cloudAlphas = capsule.readFloatArray("cloudAlphas", null);
 
         Savable[] sav = capsule.readSavableArray("cloudImages", null);
@@ -536,10 +778,18 @@ public class SkyMaterialCore
         System.arraycopy(sav, 0, cloudOffsets, 0, sav.length);
 
         cloudScales = capsule.readFloatArray("cloudScales", null);
-
+        /*
+         * astronomical objects
+         */
         sav = capsule.readSavableArray("objectCenters", null);
         objectCenters = new Vector2f[sav.length];
         System.arraycopy(sav, 0, objectCenters, 0, sav.length);
+
+        sav = capsule.readSavableArray("objectRotations", null);
+        objectRotations = new Vector2f[sav.length];
+        System.arraycopy(sav, 0, objectRotations, 0, sav.length);
+
+        objectScales = capsule.readFloatArray("objectScales", null);
         /*
          * cached values
          */
@@ -565,8 +815,7 @@ public class SkyMaterialCore
      * @throws IOException from exporter
      */
     @Override
-    public void write(JmeExporter exporter)
-            throws IOException {
+    public void write(JmeExporter exporter) throws IOException {
         super.write(exporter);
 
         OutputCapsule capsule = exporter.getCapsule(this);
@@ -575,7 +824,10 @@ public class SkyMaterialCore
         capsule.write(cloudImages, "cloudImages", null);
         capsule.write(cloudOffsets, "cloudOffsets", null);
         capsule.write(cloudScales, "cloudScales", null);
+
         capsule.write(objectCenters, "objectCenters", null);
+        capsule.write(objectRotations, "objectRotations", null);
+        capsule.write(objectScales, "objectScales", null);
     }
     // *************************************************************************
     // private methods
