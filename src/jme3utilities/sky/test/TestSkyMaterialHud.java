@@ -144,12 +144,90 @@ public class TestSkyMaterialHud
     /**
      * Alter the material under test.
      *
-     * @param newMaterial (not null)
+     * @param newMaterial test material (not null)
      */
     final void setMaterial(SkyMaterial newMaterial) {
         assert newMaterial != null;
 
-        this.material = newMaterial;
+        material = newMaterial;
+        if (!isInitialized()) {
+            return;
+        }
+        /*
+         * Adjust HUD controls to reflect the test material.
+         */
+        ColorRGBA clearColor = material.copyClearColor();
+        setColorBank("clear", clearColor);
+        ColorRGBA clearGlow = material.copyClearColor();
+        setColorBank("clrGlo", clearGlow);
+
+        int maxCloudLayers = material.getMaxCloudLayers();
+        if (maxCloudLayers > 0) {
+            ColorRGBA c0Color = material.copyCloudsColor(0);
+            setColorBank("c0", c0Color);
+            ColorRGBA c0Glow = material.copyCloudsGlow(0);
+            setColorBank("c0g", c0Glow);
+
+            Vector2f c0Offset = material.copyCloudsOffset(0);
+            setUVBank("c0", c0Offset);
+
+            float c0Scale = material.getCloudsScale(0);
+            float logC0Scale = FastMath.log(c0Scale, 2f);
+            setSlider("c0Scale", logC0Scale);
+        }
+
+        if (maxCloudLayers > 1) {
+            ColorRGBA c1Color = material.copyCloudsColor(1);
+            setColorBank("c1", c1Color);
+            ColorRGBA c1Glow = material.copyCloudsGlow(1);
+            setColorBank("c1g", c1Glow);
+
+            Vector2f c1Offset = material.copyCloudsOffset(1);
+            setUVBank("c1", c1Offset);
+
+            float c1Scale = material.getCloudsScale(1);
+            float logC1Scale = FastMath.log(c1Scale, 2f);
+            setSlider("c1Scale", logC1Scale);
+        }
+
+        ColorRGBA hazeColor = material.copyHazeColor();
+        setColorBank("haze", hazeColor);
+
+        int maxObjects = material.getMaxObjects();
+        if (maxObjects > moonIndex) {
+            ColorRGBA moonColor = material.copyObjectColor(moonIndex);
+            setColorBank("moon", moonColor);
+
+            ColorRGBA moonGlow = material.copyObjectGlow(moonIndex);
+            setColorBank("mGlo", moonGlow);
+
+            Vector2f moonOffset = material.copyObjectOffset(moonIndex);
+            setUVBank("m", moonOffset);
+
+            float moonScale = material.getObjectScale(moonIndex);
+            float logMoonScale = FastMath.log(moonScale, 10f);
+            setSlider("mSca", logMoonScale);
+
+            Vector2f moonRotation = material.copyObjectRotation(moonIndex);
+            float radians = moonRotation.getAngle();
+            float degrees = MyMath.toDegrees(radians);
+            setSlider("mRot", degrees);
+        }
+
+        if (maxObjects > sunIndex) {
+            ColorRGBA sunColor = material.copyObjectColor(sunIndex);
+            setColorBank("sun", sunColor);
+
+            ColorRGBA sunGlow = material.copyObjectGlow(sunIndex);
+            setColorBank("sGlo", sunGlow);
+
+            Vector2f sunOffset = material.copyObjectOffset(sunIndex);
+            setUVBank("sun", sunOffset);
+
+            float sunScale = material.getObjectScale(sunIndex);
+            float logSunScale = FastMath.log(sunScale, 10f);
+            setSlider("sunScale", logSunScale);
+        }
     }
     // *************************************************************************
     // ActionListener methods
@@ -394,6 +472,21 @@ public class TestSkyMaterialHud
     }
 
     /**
+     * Alter the positions of 4 sliders which control a color.
+     *
+     * @param prefix unique id prefix of the bank (not null)
+     * @param color values to use (unaffected)
+     */
+    private void setColorBank(String prefix, ColorRGBA color) {
+        assert prefix != null;
+
+        setSlider(prefix + "R", color.r);
+        setSlider(prefix + "G", color.g);
+        setSlider(prefix + "B", color.b);
+        setSlider(prefix + "A", color.a);
+    }
+
+    /**
      * Alter the phase of the moon.
      *
      * @param name name of the new phase (not null)
@@ -445,7 +538,8 @@ public class TestSkyMaterialHud
 
         switch (name) {
             case "t0neg0d":
-                material.addObject(sunIndex, "Textures/skies/t0neg0d/Sun_L.png");
+                material.addObject(sunIndex,
+                        "Textures/skies/t0neg0d/Sun_L.png");
                 break;
 
             default:
@@ -453,6 +547,20 @@ public class TestSkyMaterialHud
                         "Textures/skies/suns/%s.png", name);
                 material.addObject(sunIndex, assetPath);
         }
+    }
+
+    /**
+     * Alter the positions of a pair of sliders which control a set of texture
+     * (UV) coordinates.
+     *
+     * @param prefix unique id prefix of the bank (not null)
+     * @param uv values to use (unaffected)
+     */
+    private void setUVBank(String prefix, Vector2f uv) {
+        assert prefix != null;
+
+        setSlider(prefix + "U", uv.x);
+        setSlider(prefix + "V", uv.y);
     }
 
     /**
