@@ -93,6 +93,14 @@ public class SkyMaterial
     // constructors
 
     /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
+    public SkyMaterial() {
+        super();
+    }
+
+    /**
      * Instantiate sky material from the default definitions. The 1st method
      * invoked should be initialize().
      *
@@ -215,6 +223,36 @@ public class SkyMaterial
     }
 
     /**
+     * Copy the color of clear sky.
+     *
+     * @return a new instance
+     */
+    public ColorRGBA copyClearColor() {
+        ColorRGBA result = copyColor("ClearColor");
+        return result;
+    }
+
+    /**
+     * Copy the glow color of clear sky.
+     *
+     * @return a new instance
+     */
+    public ColorRGBA copyClearGlow() {
+        ColorRGBA result = copyColor("ClearGlow");
+        return result;
+    }
+
+    /**
+     * Copy the color of the horizon haze.
+     *
+     * @return a new instance
+     */
+    public ColorRGBA copyHazeColor() {
+        ColorRGBA result = copyColor("HazeColor");
+        return result;
+    }
+
+    /**
      * Read the upper limit on the number of cloud layers.
      *
      * @return maximum number of layers
@@ -260,7 +298,6 @@ public class SkyMaterial
      */
     public void setClearColor(ColorRGBA newColor) {
         Validate.nonNull(newColor, "color");
-
         setColor("ClearColor", newColor);
     }
 
@@ -271,7 +308,6 @@ public class SkyMaterial
      */
     public void setClearGlow(ColorRGBA newColor) {
         Validate.nonNull(newColor, "color");
-
         setColor("ClearGlow", newColor);
     }
 
@@ -282,7 +318,6 @@ public class SkyMaterial
      */
     public void setHazeColor(ColorRGBA newColor) {
         Validate.nonNull(newColor, "color");
-
         setColor("HazeColor", newColor);
     }
     // *************************************************************************
