@@ -38,15 +38,16 @@ import jme3utilities.Validate;
 import jme3utilities.math.noise.Noise;
 
 /**
- * A collection of elements, each associated with a score (measure of fitness).
- * Duplicates are possible.
+ * A container for elements, sorted based on a measure of fitness. Duplicate
+ * fitness scores are possible, but duplicate elements are suppressed.
  *
- * @param <Fitness> the type of fitness score
- * @param <Element> the type of elements collected
+ * @param <Fitness> type of fitness score (such as Float or ScoreDoubles, must
+ * implement Comparable interface
+ * @param <Element> type of elements collected (such as Solution)
  *
  * @author Stephen Gold
  */
-public class Population<Fitness, Element> {
+public class Population<Fitness extends Comparable<Fitness>, Element> {
     // *************************************************************************
     // constants
 
@@ -59,25 +60,49 @@ public class Population<Fitness, Element> {
     // fields
     
     /**
-     * the number of elements in this population (&ge;0)
+     * maximum number of elements (&gt;0, set by constructor or
+     * {@link #setCapacity(int)})
+     */
+    private int capacity;
+    /**
+     * current number of elements (&ge;0)
      */
     private int numElements = 0;
     /**
-     * map of fitness scores to elements (not null)
+     * map fitness scores to elements (not null)
      */
-    protected TreeMap<Fitness, List<Element>> elementsByFitness =
+    final protected TreeMap<Fitness, List<Element>> elementsByFitness =
             new TreeMap<>();
+    // *************************************************************************
+    // constructors
+
+    /**
+     * Instantiate a population with the specified capacity.
+     *
+     * @param capacity maximum number of elements (&gt;1)
+     */
+    public Population(int capacity) {
+        Validate.positive(capacity, "capacity");
+        this.capacity = capacity;
+    }
     // *************************************************************************
     // new methods exposed
 
     /**
-     * Add an element to this population. Does not check for duplication.
+     * Add a single element to this population (unless it is a duplicate).
      *
      * @param element instance to add (not null)
      * @param score (may be null)
      */
     public void add(Element element, Fitness score) {
         Validate.nonNull(element, "element");
+
+        if (numElements >= capacity) {
+            assert numElements == capacity : numElements;
+            if (worstScore().compareTo(score) >= 0) {
+                return;
+            }
+        }
 
         List<Element> list = elementsByFitness.get(score);
         if (list == null) {
@@ -88,20 +113,34 @@ public class Population<Fitness, Element> {
             assert !list.isEmpty();
         }
 
+        if (!list.contains(element)) {
         list.add(element);
         numElements++;
+            cull(capacity);
+        }
+
+        if (list.isEmpty()) {
+            list = elementsByFitness.remove(score);
+            assert list != null;
+        }
     }
 
     /**
-     * Add a list of elements (all with the same score) to this population. Does
-     * not check for duplication.
+     * Add a list of elements (all with the same fitness score) to this
+     * population, excluding duplicates.
      *
-     * @param addList list of instances to add (not null, all elements non-null,
-     * unaffected)
+     * @param addList list of elements to add (not null, all elements non-null)
      * @param score (may be null)
      */
     public void add(List<Element> addList, Fitness score) {
         Validate.nonNull(addList, "list");
+
+        if (numElements >= capacity) {
+            assert numElements == capacity : numElements;
+            if (worstScore().compareTo(score) >= 0) {
+                return;
+            }
+        }
 
         int addCount = addList.size();
         List<Element> list = elementsByFitness.get(score);
@@ -113,12 +152,21 @@ public class Population<Fitness, Element> {
             assert !list.isEmpty();
         }
 
-        list.addAll(addList);
-        numElements += addCount;
+        for (Element element : addList) {
+            if (!list.contains(element)) {
+                list.add(element);
+                numElements++;
+            }
+        }
+        if (list.isEmpty()) {
+            list = elementsByFitness.remove(score);
+            assert list != null;
+        }
+        cull(capacity);
     }
 
     /**
-     * Find the highest score in this population.
+     * Find the highest fitness score in this population.
      *
      * @return the pre-existing instance or null
      * @see #fittest()
@@ -136,15 +184,15 @@ public class Population<Fitness, Element> {
     }
 
     /**
-     * Cull this population, based solely on fitness, until only the specified
-     * number of elements remain.
+     * Cull this population, based solely on fitness, until no more than the
+     * specified number of elements remain.
      *
      * @param targetSize target number of elements (&ge;0)
      */
     public void cull(int targetSize) {
         Validate.nonNegative(targetSize, "target size");
 
-        while (elementsByFitness.size() > targetSize) {
+        while (numElements > targetSize) {
             Fitness worst = elementsByFitness.firstKey();
             List<Element> list = elementsByFitness.get(worst);
             int listSize = list.size();
@@ -154,9 +202,9 @@ public class Population<Fitness, Element> {
                 assert old != null;
                 numElements -= listSize;
             } else {
-                for (Iterator<Element> it = list.iterator();
-                        it.hasNext();
-                        it.next()) {
+                Iterator<Element> it = list.iterator();
+                while (it.hasNext()) {
+                    it.next();
                     if (numElements > targetSize) {
                         it.remove();
                         numElements--;
@@ -169,7 +217,7 @@ public class Population<Fitness, Element> {
     /**
      * Find the fittest (highest-scoring) element in this population.
      *
-     * @return the pre-existing instance or null
+     * @return the pre-existing instance or null if none
      */
     public Element fittest() {
         Map.Entry<Fitness, List<Element>> bestEntry =
@@ -185,10 +233,20 @@ public class Population<Fitness, Element> {
     }
 
     /**
+     * Read the capacity of this population.
+     *
+     * @return number of elements (&gt;0)
+     * @see #size()
+     */
+    public int getCapacity() {
+        return capacity;
+    }
+
+    /**
      * Merge the fittest elements into another population.
      *
      * @param maxCount maximum number of elements to merge (&ge;0)
-     * @param destination (not null, modified)
+     * @param destination population to merge into (not null, modified)
      * @return the number of elements merged (&ge;0, &le;maxCount)
      */
     public int mergeFittestTo(int maxCount,
@@ -270,7 +328,7 @@ public class Population<Fitness, Element> {
     /**
      * Merge all elements into another population.
      *
-     * @param destination (not null, modified)
+     * @param destination population to merge into (not null, modified)
      */
     public void mergeTo(Population<Fitness, Element> destination) {
         Validate.nonNull(destination, "destination");
@@ -315,12 +373,29 @@ public class Population<Fitness, Element> {
     }
 
     /**
+     * Alter the capacity of this container.
+     *
+     * @newCapacity number of elements (&gt;0)
+     * @see #cull(int)
+     * @see #getCapacity()
+     */
+    public void setCapacity(int newCapacity) {
+        Validate.positive(newCapacity, "new capacity");
+
+        capacity = newCapacity;
+        cull(capacity);
+    }
+
+    /**
      * Read the number of elements in this population.
      *
-     * @return count (&ge;0)
+     * @return count of elements (&ge;0)
+     * @see #getCapacity()
      */
     public int size() {
         assert numElements >= 0 : numElements;
+        assert numElements <= capacity : numElements;
+        assert numElements <= elementsByFitness.size() : numElements;
         return numElements;
     }
 
