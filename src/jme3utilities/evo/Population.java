@@ -38,11 +38,12 @@ import jme3utilities.Validate;
 import jme3utilities.math.noise.Noise;
 
 /**
- * A collection of elements, each associated with a score (measure of fitness).
- * Duplicate scores are possible, but duplicate elements are suppressed.
+ * A container for elements, sorted based on a measure of fitness. Duplicate
+ * fitness scores are possible, but duplicate elements are suppressed.
  *
- * @param <Fitness> type of fitness score, must implement Comparable interface
- * @param <Element> type of elements collected
+ * @param <Fitness> type of fitness score (such as Float or ScoreDoubles, must
+ * implement Comparable interface
+ * @param <Element> type of elements collected (such as Solution)
  *
  * @author Stephen Gold
  */
@@ -59,9 +60,10 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
     // fields
     
     /**
-     * maximum number of elements (&gt;0, set by constructor)
+     * maximum number of elements (&gt;0, set by constructor or
+     * {@link #setCapacity(int)})
      */
-    final private int capacity;
+    private int capacity;
     /**
      * current number of elements (&ge;0)
      */
@@ -124,11 +126,10 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
     }
 
     /**
-     * Add a list of elements (all with the same score) to this population,
-     * while excluding duplicates.
+     * Add a list of elements (all with the same fitness score) to this
+     * population, excluding duplicates.
      *
-     * @param addList list of instances to add (not null, all elements non-null,
-     * unaffected)
+     * @param addList list of elements to add (not null, all elements non-null)
      * @param score (may be null)
      */
     public void add(List<Element> addList, Fitness score) {
@@ -165,7 +166,7 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
     }
 
     /**
-     * Find the highest score in this population.
+     * Find the highest fitness score in this population.
      *
      * @return the pre-existing instance or null
      * @see #fittest()
@@ -216,7 +217,7 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
     /**
      * Find the fittest (highest-scoring) element in this population.
      *
-     * @return the pre-existing instance or null
+     * @return the pre-existing instance or null if none
      */
     public Element fittest() {
         Map.Entry<Fitness, List<Element>> bestEntry =
@@ -233,6 +234,9 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
 
     /**
      * Read the capacity of this population.
+     *
+     * @return number of elements (&gt;0)
+     * @see #size()
      */
     public int getCapacity() {
         return capacity;
@@ -242,7 +246,7 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
      * Merge the fittest elements into another population.
      *
      * @param maxCount maximum number of elements to merge (&ge;0)
-     * @param destination (not null, modified)
+     * @param destination population to merge into (not null, modified)
      * @return the number of elements merged (&ge;0, &le;maxCount)
      */
     public int mergeFittestTo(int maxCount,
@@ -324,7 +328,7 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
     /**
      * Merge all elements into another population.
      *
-     * @param destination (not null, modified)
+     * @param destination population to merge into (not null, modified)
      */
     public void mergeTo(Population<Fitness, Element> destination) {
         Validate.nonNull(destination, "destination");
@@ -369,9 +373,24 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
     }
 
     /**
+     * Alter the capacity of this container.
+     *
+     * @newCapacity number of elements (&gt;0)
+     * @see #cull(int)
+     * @see #getCapacity()
+     */
+    public void setCapacity(int newCapacity) {
+        Validate.positive(newCapacity, "new capacity");
+
+        capacity = newCapacity;
+        cull(capacity);
+    }
+
+    /**
      * Read the number of elements in this population.
      *
-     * @return count (&ge;0)
+     * @return count of elements (&ge;0)
+     * @see #getCapacity()
      */
     public int size() {
         assert numElements >= 0 : numElements;
