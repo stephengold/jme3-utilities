@@ -46,7 +46,7 @@ import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 
 /**
- * Simple control to provide a visual "floor" for a scene. The floor would
+ * Subtree control to provide a visual "floor" for a scene. The floor would
  * typically be textured to look like an extension of the terrain.
  * <p>
  * The control is disabled at creation. When enabled, it attaches a floor node
@@ -57,8 +57,7 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class FloorControl
-        extends SubtreeControl {
+public class FloorControl extends SubtreeControl {
     // *************************************************************************
     // constants
 
@@ -68,6 +67,10 @@ public class FloorControl
     final private static Logger logger = Logger.getLogger(
             FloorControl.class.getName());
     /**
+     * local copy of {@link com.jme3.math.Quaternion#IDENTITY}
+     */
+    final private static Quaternion nullRotation = new Quaternion();
+    /**
      * name for the geometry
      */
     final private static String geometryName = "floor";
@@ -76,7 +79,7 @@ public class FloorControl
      */
     final private static String nodeName = "floor node";
     /**
-     * local copy of Vector3f#UNIT_X
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
     final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
     // *************************************************************************
@@ -146,7 +149,7 @@ public class FloorControl
             /*
              * Counteract rotation of the controlled node.
              */
-            MySpatial.setWorldOrientation(subtree, Quaternion.IDENTITY);
+            MySpatial.setWorldOrientation(subtree, nullRotation);
         }
     }
     // *************************************************************************
@@ -163,7 +166,6 @@ public class FloorControl
         super.read(importer);
 
         InputCapsule ic = importer.getCapsule(this);
-        subtree = (Node) ic.readSavable("subtree", null);
         stabilizeFlag = ic.readBoolean("stabilizeFlag", false);
         camera = (Camera) ic.readSavable("camera", null);
     }
@@ -179,7 +181,6 @@ public class FloorControl
         super.write(exporter);
 
         OutputCapsule oc = exporter.getCapsule(this);
-        oc.write(subtree, "subtree", null);
         oc.write(stabilizeFlag, "stabilizeFlag", false);
         oc.write(camera, "camera", null);
     }
