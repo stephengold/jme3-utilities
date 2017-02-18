@@ -28,6 +28,7 @@ package jme3utilities.sky.test;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.jme3.app.state.ScreenshotAppState;
+import com.jme3.asset.DesktopAssetManager;
 import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.input.KeyInput;
@@ -57,7 +58,7 @@ import jme3utilities.ui.InputMode;
  * (HUD). The application's main entry point is here.
  * <p>
  * Use the 'H' key to toggle HUD visibility, the 'S' key to save the current sky
- * geometry, and the 'L' key to temporarily load a saved geometry.
+ * geometry, and the 'L' key to load a saved geometry.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -347,9 +348,17 @@ public class TestSkyMaterial
     }
 
     /**
-     * Load a saved sky dome from a file.
+     * Load a sky geometry from an asset.
      */
     private void load() {
+        if (assetManager instanceof DesktopAssetManager) {
+            /*
+             * Clear cache to force loadModel() to read the J3O file.
+             */
+            DesktopAssetManager dam = (DesktopAssetManager) assetManager;
+            dam.clearCache();
+        }
+
         Geometry loadedDome = (Geometry) assetManager.loadModel(savePath);
         SkyMaterial material = (SkyMaterial) loadedDome.getMaterial();
         assert material != null;
@@ -365,16 +374,14 @@ public class TestSkyMaterial
 
         rootNode.attachChild(loadedDome);
         hud.setMaterial(material);
-        hud.setEnabled(false);
     }
 
     /**
-     * Save the sky dome to a file.
+     * Save the current sky geometry to a J3O file.
      */
     private void save() {
         String filePath = "assets/" + savePath;
         File file = new File(filePath);
-
         BinaryExporter exporter = BinaryExporter.getInstance();
         Spatial dome = rootNode.getChild(geometryName);
         try {
