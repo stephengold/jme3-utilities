@@ -49,8 +49,7 @@ import jme3utilities.math.VectorXZ;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class MySpatial
-        extends SimpleApplication {
+public class MySpatial extends SimpleApplication {
     // *************************************************************************
     // constants
 
@@ -129,7 +128,7 @@ public class MySpatial
     }
 
     /**
-     * Find a node's 1st child which is an assignable from a specified class.
+     * Find a node's 1st child which is an assignable from the specified class.
      *
      * @param <T> com.jme3.scene.Geometry or com.jme3.scene.Node
      * @param node node to search (not null)
@@ -144,6 +143,31 @@ public class MySpatial
                 return (T) child;
             }
         }
+
+        return null;
+    }
+
+    /**
+     * Find the 1st child of the specified node with the specified name. The
+     * search is case-sensitive and looks only at the node's immediate children,
+     * not all its descendents.
+     *
+     * @param node node to search (not null)
+     * @param childName name to search for (not null)
+     * @return 1st matching child, or null if none found
+     *
+     * @see com.jme3.scene.Node#getChild(java.lang.String)
+     */
+    public static Spatial findChild(Node node, String childName) {
+        Validate.nonNull(childName, "child name");
+
+        for (Spatial child : node.getChildren()) {
+            String name = child.getName();
+            if (childName.equals(name)) {
+                return child;
+            }
+        }
+
         return null;
     }
 
@@ -156,6 +180,8 @@ public class MySpatial
      * found
      */
     public static Light findLight(Spatial spatial, String lightName) {
+        Validate.nonNull(lightName, "light name");
+
         for (Light light : spatial.getLocalLightList()) {
             String name = light.getName();
             if (lightName.equals(name)) {
