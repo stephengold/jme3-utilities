@@ -32,6 +32,7 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.scene.Node;
 import com.jme3.scene.SceneGraphVisitor;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.control.Control;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -78,12 +79,51 @@ abstract public class SubtreeControl
      * @param visitor method invoked on each spatial (not null)
      */
     public void traverse(SceneGraphVisitor visitor) {
-        assert visitor != null;
+        Validate.nonNull(visitor, "visitor");
 
-        spatial.depthFirstTraversal(visitor);
+        subtree.depthFirstTraversal(visitor);
     }
     // *************************************************************************
     // AbstractControl methods
+
+    /**
+     * Clone this control for a different node.
+     *
+     * @param cloneSpatial node for clone to control (or null)
+     * @return a new instance
+     */
+    @Override
+    public Control cloneForSpatial(Spatial cloneSpatial) {
+        if (cloneSpatial != null && !(cloneSpatial instanceof Node)) {
+            throw new IllegalArgumentException(
+                    "Clone's spatial must be a Node or null.");
+        }
+
+        SubtreeControl clone;
+        try {
+            clone = (SubtreeControl) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Can't clone control.", e);
+        }
+
+        Node node = (Node) spatial;
+        int childIndex = node.getChildIndex(subtree);
+        if (subtree == null || cloneSpatial == null || childIndex == -1) {
+            clone.subtree = subtree.clone(true);
+        } else {
+            /*
+             * The subtree was cloned when the controlled node was cloned.
+             * Assume the cloned subtree has the same child index.
+             */
+            Node cloneNode = (Node) cloneSpatial;
+            Spatial cloneChild = cloneNode.getChild(childIndex);
+            assert cloneChild != null;
+            clone.subtree = (Node) cloneChild;
+        }
+
+        clone.setSpatial(cloneSpatial);
+        return clone;
+    }
 
     /**
      * De-serialize this instance, for example when loading from a J3O file.
@@ -103,7 +143,7 @@ abstract public class SubtreeControl
      * from the scene graph. This control must be added to a node before its
      * subtree can be revealed.
      *
-     * @param newState if true, reveal the subtree; if false, hide them
+     * @param newState if true, reveal the subtree; if false, hide it
      */
     @Override
     public void setEnabled(boolean newState) {
@@ -137,18 +177,25 @@ abstract public class SubtreeControl
     }
 
     /**
-     * Alter the controlled node.
+     * Alter which node is controlled.
      *
-     * @param newNode node to control (or null)
+     * @param newSpatial node to control (or null)
      */
     @Override
-    public void setSpatial(Spatial newNode) {
-        super.setSpatial(newNode);
-
-        if (enabled && newNode != null) {
-            Node node = (Node) spatial;
-            node.attachChild(subtree);
+    public void setSpatial(Spatial newSpatial) {
+        if (newSpatial != null && !(newSpatial instanceof Node)) {
+            throw new IllegalArgumentException(
+                    "New spatial must be a Node or null.");
         }
+
+        if (subtree != null) {
+            subtree.removeFromParent();
+            if (enabled && newSpatial != null) {
+                Node newNode = (Node) newSpatial;
+                newNode.attachChild(subtree);
+            }
+        }
+        spatial = newSpatial;
     }
 
     /**
