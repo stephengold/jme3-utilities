@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /**
- * Simple water processor, extended to interact with view port listeners.
+ * Simple water processor, extended to interact with viewport listeners.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -51,7 +51,7 @@ public class WaterProcessor
     // fields
 
     /**
-     * view port listeners registered prior to initialization
+     * viewport listeners registered prior to initialization
      */
     final private ArrayList<ViewPortListener> listeners = new ArrayList<>(3);
     // *************************************************************************
@@ -69,7 +69,7 @@ public class WaterProcessor
     // new methods exposed
 
     /**
-     * Add a view port listener to this processor.
+     * Add a viewport listener to this processor.
      *
      * @param listener (not null)
      */
@@ -78,13 +78,13 @@ public class WaterProcessor
 
         if (isInitialized()) {
             /*
-             * Inform the listener about the already-created view ports.
+             * Inform the listener about the already-created viewports.
              */
             listener.addViewPort(reflectionView);
             listener.addViewPort(refractionView);
         } else {
             /*
-             * The view ports haven't been created yet, so queue up the listener
+             * The viewports haven't been created yet, so queue up the listener
              * to be notified after they're created.
              */
             listeners.add(listener);
@@ -103,7 +103,7 @@ public class WaterProcessor
     public void initialize(RenderManager renderManager, ViewPort viewPort) {
         super.initialize(renderManager, viewPort);
         /*
-         * Inform registered listeners about two new view ports.
+         * Inform registered listeners about two new viewports.
          */
         for (ViewPortListener listener : listeners) {
             listener.addViewPort(reflectionView);

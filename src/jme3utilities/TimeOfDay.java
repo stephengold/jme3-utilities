@@ -30,12 +30,11 @@ import java.util.logging.Logger;
 import jme3utilities.math.MyMath;
 
 /**
- * Simple app state to track the time of day in a game.
+ * Simple app state to simulate the time of day in a game.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class TimeOfDay
-        extends SimpleAppState {
+public class TimeOfDay extends SimpleAppState {
     // *************************************************************************
     // constants
 
@@ -99,7 +98,7 @@ public class TimeOfDay
     // new methods exposed
 
     /**
-     * Read the simulated time of day.
+     * Read the simulated time of day in hours.
      *
      * @return hours since midnight (&lt;24, &ge;0)
      */
@@ -115,7 +114,7 @@ public class TimeOfDay
     }
 
     /**
-     * Read the simulated time of day.
+     * Read the simulated time of day in seconds.
      *
      * @return seconds since midnight (&lt;86400, &ge;0)
      */
@@ -131,9 +130,9 @@ public class TimeOfDay
     }
 
     /**
-     * Write the simulation rate.
+     * Alter the simulation rate.
      *
-     * @param newRate simulation rate relative to real time
+     * @param newRate simulation rate relative to real time (may be negative)
      */
     public void setRate(float newRate) {
         rate = newRate;
@@ -161,9 +160,11 @@ public class TimeOfDay
     // SimpleAppState methods
 
     /**
-     * Callback to update the time of day.
+     * Callback to update this app state (if enabled) prior to rendering.
+     * (Invoked once per frame.)
      *
-     * @param interval elapsed since the previous update (in seconds, &ge;0)
+     * @param elapsedTime time interval since previous frame/update (in seconds,
+     * &ge;0)
      */
     @Override
     public void update(float interval) {
