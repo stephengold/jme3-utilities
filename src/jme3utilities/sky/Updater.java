@@ -25,6 +25,11 @@
  */
 package jme3utilities.sky;
 
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
@@ -33,6 +38,7 @@ import com.jme3.post.filters.BloomFilter;
 import com.jme3.renderer.ViewPort;
 import com.jme3.shadow.AbstractShadowFilter;
 import com.jme3.shadow.AbstractShadowRenderer;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,7 +53,7 @@ import jme3utilities.ViewPortListener;
  * @author Stephen Gold sgold@sonic.net
  */
 public class Updater
-        implements ViewPortListener {
+        implements Savable, ViewPortListener {
     // *************************************************************************
     // constants
 
@@ -58,7 +64,7 @@ public class Updater
             Updater.class.getName());
     // *************************************************************************
     // fields
-
+    
     /**
      * which ambient light to update (or null for none)
      */
@@ -68,24 +74,24 @@ public class Updater
      * synchronized
      */
     @SuppressWarnings("rawtypes")
-    final private ArrayList<AbstractShadowFilter> shadowFilters =
+    private ArrayList<AbstractShadowFilter> shadowFilters =
             new ArrayList<>(1);
     /**
      * shadow renderers whose intensities are updated by the control - not
      * synchronized
      */
-    final private ArrayList<AbstractShadowRenderer> shadowRenderers =
+    private ArrayList<AbstractShadowRenderer> shadowRenderers =
             new ArrayList<>(1);
     /**
      * bloom filters whose intensities are updated by the control - not
      * synchronized
      */
-    final private ArrayList<BloomFilter> bloomFilters = new ArrayList<>(1);
+    private ArrayList<BloomFilter> bloomFilters = new ArrayList<>(1);
     /**
      * viewports whose background colors are updated by the control - not
      * serialized
      */
-    final private ArrayList<ViewPort> viewPorts = new ArrayList<>(3);
+    private ArrayList<ViewPort> viewPorts = new ArrayList<>(3);
     /**
      * most recent color for ambient light (or null if not updated yet)
      */
@@ -176,6 +182,15 @@ public class Updater
     }
 
     /**
+     * Access the ambient light.
+     *
+     * @return the pre-existing instance (or null for none)
+     */
+    public AmbientLight getAmbientLight() {
+        return ambientLight;
+    }
+
+    /**
      * Copy the most recent color for the viewport background.
      *
      * @return new instance (or null if not updated yet)
@@ -218,6 +233,15 @@ public class Updater
             return null;
         }
         return mainColor.clone();
+    }
+
+    /**
+     * Access the main directional light.
+     *
+     * @return the pre-existing instance (or null for none)
+     */
+    public DirectionalLight getMainLight() {
+        return mainLight;
     }
 
     /**
@@ -280,7 +304,7 @@ public class Updater
      * has a non-null value, the control will continuously update the light's
      * color and intensity.
      *
-     * @param ambientLight the scene's main ambient light (or null for none)
+     * @param ambientLight the scene's ambient light (or null for none)
      */
     public void setAmbientLight(AmbientLight ambientLight) {
         this.ambientLight = ambientLight;
@@ -307,6 +331,18 @@ public class Updater
         }
     }
 
+    /**
+     * Set filters, renderers, and viewports based on another updater.
+     * 
+     * @param otherUpdater 
+     */
+    public void setFRV(Updater otherUpdater) {
+        bloomFilters = otherUpdater.bloomFilters;
+        shadowFilters = otherUpdater.shadowFilters;
+        shadowRenderers = otherUpdater.shadowRenderers;
+        viewPorts = otherUpdater.viewPorts;
+    }
+    
     /**
      * Save a reference to the scene's main directional light. As long as the
      * reference has a non-null value, the control will continuously update the
@@ -421,6 +457,54 @@ public class Updater
         }
     }
     // *************************************************************************
+    // Savable methods
+
+    /**
+     * De-serialize this instance, for example when loading from a J3O file.
+     *
+     * @param importer (not null)
+     * @throws IOException from importer
+     */
+    @Override
+    public void read(JmeImporter importer) throws IOException {
+        InputCapsule ic = importer.getCapsule(this);
+
+        ambientLight = (AmbientLight) ic.readSavable("ambientLight", null);
+        /* filters, renderers, and viewports not serialized */
+        ambientColor = (ColorRGBA) ic.readSavable("ambientColor", null);
+        backgroundColor = (ColorRGBA) ic.readSavable("backgroundColor", null);
+        mainColor = (ColorRGBA) ic.readSavable("mainColor", null);
+        mainLight = (DirectionalLight) ic.readSavable("mainLight", null);
+        ambientMultiplier = ic.readFloat("ambientMultiplier", 1f);
+        bloomIntensity = ic.readFloat("bloomIntensity", 0f);
+        mainMultiplier = ic.readFloat("mainMultiplier", 1f);
+        shadowIntensity = ic.readFloat("shadowIntensity", 0f);
+        direction = (Vector3f) ic.readSavable("direction", null);
+    }
+
+    /**
+     * Serialize this instance, for example when saving to a J3O file.
+     *
+     * @param exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter exporter) throws IOException {
+        OutputCapsule oc = exporter.getCapsule(this);
+
+        oc.write(ambientLight, "ambientLight", null);
+        /* filters, renderers, and viewports not serialized */
+        oc.write(ambientColor, "ambientColor", null);
+        oc.write(backgroundColor, "backgroundColor", null);
+        oc.write(mainColor, "mainColor", null);
+        oc.write(mainLight, "mainLight", null);
+        oc.write(ambientMultiplier, "ambientMultiplier", 1f);
+        oc.write(bloomIntensity, "bloomIntensity", 0f);
+        oc.write(mainMultiplier, "mainMultiplier", 1f);
+        oc.write(shadowIntensity, "shadowIntensity", 0f);
+        oc.write(direction, "direction", null);
+    }
+    // *************************************************************************
     // ViewPortListener methods
 
     /**
@@ -431,7 +515,7 @@ public class Updater
      */
     @Override
     public void addViewPort(ViewPort viewPort) {
-        Validate.nonNull(viewPort, "view port");
+        Validate.nonNull(viewPort, "viewport");
         viewPorts.add(viewPort);
     }
 
@@ -443,7 +527,7 @@ public class Updater
      */
     @Override
     public void removeViewPort(ViewPort viewPort) {
-        Validate.nonNull(viewPort, "view port");
+        Validate.nonNull(viewPort, "viewport");
 
         boolean success = viewPorts.remove(viewPort);
         if (!success) {
