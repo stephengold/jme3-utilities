@@ -45,6 +45,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyCamera;
+import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.sky.DomeMesh;
@@ -89,11 +90,11 @@ public class TestSkyMaterial
     final private static Logger logger = Logger.getLogger(
             TestSkyMaterial.class.getName());
     /**
-     * action string to temporarily load a saved geometry
+     * action string to load sky geometry from an asset
      */
     final private static String actionStringLoad = "load sky";
     /**
-     * action string to save the current sky geometry
+     * action string to save the current sky geometry to a file
      */
     final private static String actionStringSave = "save sky";
     /**
@@ -249,7 +250,7 @@ public class TestSkyMaterial
         }
         material.addStars();
         /*
-         * Create and apply a bloom filter to the view port.
+         * Create and apply a bloom filter to the viewport.
          */
         BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
         FilterPostProcessor fpp = Misc.getFpp(viewPort, assetManager);
@@ -316,7 +317,7 @@ public class TestSkyMaterial
      * Initialize the user interface.
      *
      * @param material sky material under test (not null)
-     * @param bloom bloom filter applied to the view port (not null)
+     * @param bloom bloom filter applied to the viewport (not null)
      */
     private void initializeUserInterface(SkyMaterial material,
             BloomFilter bloom) {
@@ -331,21 +332,24 @@ public class TestSkyMaterial
         /*
          * Create and attach the heads-up display (HUD).
          */
-        InputMode defaultInputMode = getDefaultInputMode();
         hud = new TestSkyMaterialHud(bloom);
         hud.setMaterial(material);
         success = stateManager.attach(hud);
         assert success;
         /*
-         * Add hotkey bindings to the default input mode.
+         * Add hotkey bindings to the default input mode:
+         *  'H' to toggle HUD visibility
+         *  'L' to load sky geometry from an asset
+         *  'S' to save the current sky geometry to a file
          */
+        InputMode defaultInputMode = getDefaultInputMode();
         defaultInputMode.bind(actionStringToggle, KeyInput.KEY_H);
         defaultInputMode.bind(actionStringLoad, KeyInput.KEY_L);
         defaultInputMode.bind(actionStringSave, KeyInput.KEY_S);
     }
 
     /**
-     * Load a sky geometry from an asset.
+     * Load sky geometry from an asset.
      */
     private void load() {
         if (assetManager instanceof DesktopAssetManager) {
@@ -360,13 +364,12 @@ public class TestSkyMaterial
         SkyMaterial material = (SkyMaterial) loadedDome.getMaterial();
         assert material != null;
 
-        logger.log(Level.INFO, "Loaded {0} from asset {1}",
-                new Object[]{
+        logger.log(Level.INFO, "Loaded {0} from asset {1}", new Object[]{
             MyString.quote(loadedDome.getName()),
             MyString.quote(savePath)
         });
 
-        Spatial oldDome = rootNode.getChild(geometryName);
+        Spatial oldDome = MySpatial.findChild(rootNode, geometryName);
         rootNode.detachChild(oldDome);
 
         rootNode.attachChild(loadedDome);
@@ -380,16 +383,19 @@ public class TestSkyMaterial
         String filePath = "assets/" + savePath;
         File file = new File(filePath);
         BinaryExporter exporter = BinaryExporter.getInstance();
-        Spatial dome = rootNode.getChild(geometryName);
+        Spatial dome = MySpatial.findChild(rootNode, geometryName);
         try {
             exporter.save(dome, file);
         } catch (IOException exception) {
             logger.log(Level.SEVERE,
-                    "Output exception while saving dome to file {0}",
-                    MyString.quote(filePath));
+                    "Output exception while saving {0} to file {1}",
+                    new Object[]{
+                MyString.quote(dome.getName()),
+                MyString.quote(filePath)
+            });
+            return;
         }
-        logger.log(Level.INFO, "Saved {0} to file {1}",
-                new Object[]{
+        logger.log(Level.INFO, "Saved {0} to file {1}", new Object[]{
             MyString.quote(dome.getName()),
             MyString.quote(filePath)
         });
