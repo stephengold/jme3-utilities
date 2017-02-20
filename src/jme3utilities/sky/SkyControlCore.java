@@ -26,6 +26,11 @@
 package jme3utilities.sky;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -37,6 +42,7 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.texture.Texture;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
@@ -46,10 +52,10 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyColor;
 
 /**
- * Core fields and methods of a simple control to simulate a dynamic sky.
+ * Core fields and methods of a subtree control to simulate a dynamic sky.
  * <p>
  * The control is disabled at creation. When enabled, it attaches a "sky" node
- * to the controlled spatial, which must also be a node.
+ * to the controlled spatial, which must be a scene-graph node.
  * <p>
  * The "top" dome is oriented so that its rim is parallel to the horizon. The
  * top dome implements the sun, moon, clear sky color, and horizon haze.
@@ -66,7 +72,8 @@ import jme3utilities.math.MyColor;
  * @author Stephen Gold sgold@sonic.net
  */
 public class SkyControlCore
-        extends SubtreeControl {
+        extends SubtreeControl
+        implements Cloneable {
     // *************************************************************************
     // constants
 
@@ -89,6 +96,10 @@ public class SkyControlCore
     final private static Logger logger = Logger.getLogger(
             SkyControlCore.class.getName());
     /**
+     * local copy of {@link com.jme3.math.Quaternion#IDENTITY}
+     */
+    final private static Quaternion nullRotation = new Quaternion();
+    /**
      * name for the bottom geometry
      */
     final private static String bottomName = "bottom";
@@ -104,8 +115,12 @@ public class SkyControlCore
      * name for the southern sky geometry
      */
     final private static String southName = "south";
-   /**
-     * local copy of Vector3f#UNIT_X
+    /**
+     * name for the top geometry
+     */
+    final private static String topName = "top";
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
     final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
     /**
@@ -116,17 +131,17 @@ public class SkyControlCore
     // fields
     
     /**
-     * which asset manager to use for loading textures and material definitions:
-     * set by constructor
+     * asset manager for loading textures and material definitions: set by
+     * constructor
      */
-    final private AssetManager assetManager;
+    private AssetManager assetManager;
     /**
      * true to create a material and geometry for the hemisphere below the
      * horizon, false to leave this hemisphere to background color (if
      * starMotionFlag==false) or stars (if starMotionFlag==true): set by
      * constructor
      */
-    final private boolean bottomDomeFlag;
+    private boolean bottomDomeFlag;
     /**
      * true to counteract rotation of the controlled node, false to allow
      * rotation
@@ -135,15 +150,16 @@ public class SkyControlCore
     /**
      * true to simulate moving stars, false for fixed stars: set by constructor
      */
-    final protected boolean starMotionFlag;
+    protected boolean starMotionFlag;
     /**
-     * the application's camera: set by constructor
+     * which camera to track: set by constructor or
+     * {@link #setCamera(com.jme3.renderer.Camera)}
      */
-    final private Camera camera;
+    private Camera camera;
     /**
      * information about individual cloud layers
      */
-    final protected CloudLayer[] cloudLayers;
+    protected CloudLayer[] cloudLayers;
     /**
      * mesh of the bottom dome, or null if there's no bottom dome
      */
@@ -191,17 +207,32 @@ public class SkyControlCore
     /**
      * material for bottom dome: set by constructor
      */
-    final protected Material bottomMaterial;
+    protected Material bottomMaterial;
     /**
      * material of the dome with clouds: set by constructor
      */
-    final protected SkyMaterial cloudsMaterial;
+    protected SkyMaterial cloudsMaterial;
     /**
      * material of the top dome: set by constructor
      */
-    final protected SkyMaterial topMaterial;
+    protected SkyMaterial topMaterial;
     // *************************************************************************
     // constructors
+
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
+    public SkyControlCore() {
+        assetManager = null;
+        bottomDomeFlag = false;
+        starMotionFlag = false;
+        camera = null;
+        cloudLayers = null;
+        bottomMaterial = null;
+        cloudsMaterial = null;
+        topMaterial = null;
+    }
 
     /**
      * Instantiate a disabled control for no clouds, full moon, no cloud
@@ -268,7 +299,7 @@ public class SkyControlCore
         cloudLayers = new CloudLayer[numCloudLayers];
         for (int layerIndex = 0; layerIndex < numCloudLayers; layerIndex++) {
             cloudLayers[layerIndex] = new CloudLayer(
-                     cloudsMaterial, layerIndex);
+                    cloudsMaterial, layerIndex);
         }
 
         if (bottomDomeFlag) {
@@ -333,6 +364,14 @@ public class SkyControlCore
         assert weight >= 0f : weight;
         assert weight <= 1f : weight;
         return weight;
+    }
+
+    /**
+     * Alter which camera to track.
+     */
+    public void setCamera(Camera camera) {
+        Validate.nonNull(camera, "camera");
+        this.camera = camera;
     }
 
     /**
@@ -521,8 +560,89 @@ public class SkyControlCore
             /*
              * Counteract rotation of the controlled node.
              */
-            MySpatial.setWorldOrientation(subtree, Quaternion.IDENTITY);
+            MySpatial.setWorldOrientation(subtree, nullRotation);
         }
+    }
+
+    /**
+     * De-serialize this instance, for example when loading from a J3O file.
+     *
+     * @param importer (not null)
+     * @throws IOException from importer
+     */
+    @Override
+    public void read(JmeImporter importer) throws IOException {
+        super.read(importer);
+        InputCapsule ic = importer.getCapsule(this);
+
+        assetManager = importer.getAssetManager();
+        stabilizeFlag = ic.readBoolean("stabilizeFlag", false);
+        /* camera not serialized */
+        Savable[] sav = ic.readSavableArray("cloudLayers", null);
+        cloudLayers = new CloudLayer[sav.length];
+        System.arraycopy(sav, 0, cloudLayers, 0, sav.length);
+
+        cloudsAnimationTime = ic.readFloat("cloudsAnimationTime", 0f);
+        cloudsRelativeSpeed = ic.readFloat("cloudsRelativeSpeed", 1f);
+        phaseAngle = ic.readFloat("phaseAngle", FastMath.PI);
+        /*
+         * Infer cached references and values from the subtree.
+         */
+        northDome = (Geometry) MySpatial.findChild(subtree, northName);
+        southDome = (Geometry) MySpatial.findChild(subtree, southName);
+        starMotionFlag = (northDome != null);
+
+        topDome = (Geometry) MySpatial.findChild(subtree, topName);
+        topMaterial = (SkyMaterial) topDome.getMaterial();
+        topMesh = (DomeMesh) topDome.getMesh();
+
+        cloudsOnlyDome = (Geometry) MySpatial.findChild(subtree, cloudsName);
+        if (cloudsOnlyDome == null) {
+            cloudsMaterial = topMaterial;
+            cloudsMesh = topMesh;
+        } else {
+            cloudsMaterial = (SkyMaterial) cloudsOnlyDome.getMaterial();
+            cloudsMesh = (DomeMesh) cloudsOnlyDome.getMesh();
+        }
+
+        bottomDome = (Geometry) MySpatial.findChild(subtree, bottomName);
+        if (bottomDome != null) {
+            bottomDomeFlag = true;
+            bottomMaterial = bottomDome.getMaterial();
+            bottomMesh = (DomeMesh) bottomDome.getMesh();
+        }
+    }
+
+    /**
+     * Serialize this instance, for example when saving to a J3O file.
+     *
+     * @param exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter exporter) throws IOException {
+        super.write(exporter);
+        OutputCapsule oc = exporter.getCapsule(this);
+
+        oc.write(stabilizeFlag, "stabilizeFlag", false);
+        /* camera not serialized */
+        oc.write(cloudLayers, "cloudLayers", null);
+        oc.write(cloudsAnimationTime, "cloudsAnimationTime", 0f);
+        oc.write(cloudsRelativeSpeed, "cloudsRelativeSpeed", 1f);
+        oc.write(phaseAngle, "phaseAngle", FastMath.PI);
+    }
+    // *************************************************************************
+    // Object methods
+
+    /**
+     * Create a shallow copy of this control.
+     *
+     * @return a new instance
+     */
+    @Override
+    public SkyControlCore clone() throws CloneNotSupportedException {
+        SkyControlCore clone = (SkyControlCore) super.clone();
+        return clone;
     }
     // *************************************************************************
     // private methods
@@ -555,7 +675,7 @@ public class SkyControlCore
         }
 
         topMesh = new DomeMesh(rimSamples, quadrantSamples);
-        topDome = new Geometry("top", topMesh);
+        topDome = new Geometry(topName, topMesh);
         subtree.attachChild(topDome);
         topDome.setMaterial(topMaterial);
 

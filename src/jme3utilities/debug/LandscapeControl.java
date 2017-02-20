@@ -26,6 +26,10 @@
 package jme3utilities.debug;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -41,6 +45,7 @@ import com.jme3.terrain.heightmap.AbstractHeightMap;
 import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
@@ -62,7 +67,8 @@ import jme3utilities.Validate;
  * @author Stephen Gold sgold@sonic.net
  */
 public class LandscapeControl
-        extends SubtreeControl {
+        extends SubtreeControl
+        implements Cloneable {
     // *************************************************************************
     // constants
 
@@ -128,7 +134,7 @@ public class LandscapeControl
     /**
      * application's asset manager: set by constructor
      */
-    final private AssetManager assetManager;
+    private AssetManager assetManager;
     /**
      * maximum (unscaled) height of the terrain above its base
      */
@@ -140,9 +146,19 @@ public class LandscapeControl
     /**
      * spatial which represents the terrain: set by constructor
      */
-    final private Spatial terrain;
+    private Spatial terrain;
     // *************************************************************************
     // constructors
+
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
+    public LandscapeControl() {
+        super();
+        assetManager = null;
+        terrain = null;
+    }
 
     /**
      * Instantiate a disabled control.
@@ -199,6 +215,56 @@ public class LandscapeControl
 
         Vector3f center = new Vector3f(0f, baseY, 0f);
         MySpatial.setWorldLocation(terrain, center);
+    }
+    // *************************************************************************
+    // SubtreeControl methods
+
+    /**
+     * De-serialize this instance, for example when loading from a J3O file.
+     *
+     * @param importer (not null)
+     * @throws IOException from importer
+     */
+    @Override
+    public void read(JmeImporter importer) throws IOException {
+        super.read(importer);
+        InputCapsule ic = importer.getCapsule(this);
+
+        assetManager = importer.getAssetManager();
+        terrainHeight = ic.readFloat("terrainHeight", 0f);
+        terrainDiameter = ic.readInt("terrainDiameter", 0);
+        /*
+         * Infer cached reference from the subtree.
+         */
+        terrain = MySpatial.findChild(subtree, "terrain");
+    }
+
+    /**
+     * Serialize this instance, for example when saving to a J3O file.
+     *
+     * @param exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter exporter) throws IOException {
+        super.write(exporter);
+        OutputCapsule oc = exporter.getCapsule(this);
+
+        oc.write(terrainHeight, "terrainHeight", 0f);
+        oc.write(terrainDiameter, "terrainDiameter", 0);
+    }
+    // *************************************************************************
+    // Object methods
+
+    /**
+     * Create a shallow copy of this control.
+     *
+     * @return a new instance
+     */
+    @Override
+    public LandscapeControl clone() throws CloneNotSupportedException {
+        LandscapeControl clone = (LandscapeControl) super.clone();
+        return clone;
     }
     // *************************************************************************
     // private methods
