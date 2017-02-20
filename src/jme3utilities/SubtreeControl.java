@@ -44,8 +44,7 @@ import java.util.logging.Logger;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-abstract public class SubtreeControl
-        extends SimpleControl {
+abstract public class SubtreeControl extends SimpleControl {
     // *************************************************************************
     // constants
 
@@ -188,7 +187,7 @@ abstract public class SubtreeControl
                     "New spatial must be a Node or null.");
         }
 
-        if (subtree != null) {
+        if (subtree != null && subtree.getParent() != newSpatial) {
             subtree.removeFromParent();
             if (enabled && newSpatial != null) {
                 Node newNode = (Node) newSpatial;
