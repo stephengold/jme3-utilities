@@ -103,7 +103,9 @@ The jme3-utilities project releases five libraries: debug, nifty, sky, ui, and x
 <!--
     The nifty library consists of 3 JARs: documentation, classes/assets, and source.
     Its folders and JARs have names of the form jme3-utilities-nifty*.jar.
-    It is built from the jme3utilities.nifty source package.
+    It is built from two source packages:
+     1. jme3utilities.nifty
+     2. jme3utilities.nifty.bind
 -->
     <target name="nifty-javadoc"
             depends="init, releasedirs, nifty-sources, ui-jar, sky-jar">
@@ -147,6 +149,8 @@ The jme3-utilities project releases five libraries: debug, nifty, sky, ui, and x
              basedir="${assets.folder.name}"
              compress="${assets.compress}"
              includes="Interface/Nifty/styles/**
+                       Interface/Nifty/huds/message-display.xml
+                       Interface/Nifty/screens/bind.xml
                        Interface/Nifty/popup-menu.xml"/>
     </target>
 
@@ -154,7 +158,8 @@ The jme3-utilities project releases five libraries: debug, nifty, sky, ui, and x
             depends="init, releasedirs">
         <copy todir="release/jme3-utilities-nifty-sources">
             <fileset dir="${src.dir}"
-                     includes="jme3utilities/nifty/*.java"/>
+                     includes="jme3utilities/nifty/*.java
+                               jme3utilities/nifty/bind/*.java"/>
         </copy>
         <jar jarfile="release/jme3-utilities-nifty-sources.jar"
              basedir="release/jme3-utilities-nifty-sources"
