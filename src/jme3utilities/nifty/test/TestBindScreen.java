@@ -96,7 +96,7 @@ public class TestBindScreen extends GuiApplication {
     /**
      * hotkey bindings editor
      */
-    BindScreen bindScreen;
+    private BindScreen bindScreen;
     /**
      * rate of movement in the direction the camera is pointed
      */
@@ -108,23 +108,23 @@ public class TestBindScreen extends GuiApplication {
     /**
      * distance from the origin to the edge of the object zone
      */
-    float zoneRadius;
+    private float zoneRadius;
     /**
-     * Heads-up display for messages.
+     * heads-up display for messages
      */
-    MessageDisplay messageHud;
+    private MessageDisplay messageHud;
     /**
      * scene node for the backdrop
      */
-    Node backdrop;
+    private Node backdrop;
     /**
      * scene node for objects
      */
-    Node objects;
+    private Node objects;
     /**
      * axis about which the camera rotates
      */
-    Vector3f rotationAxis;
+    private Vector3f rotationAxis;
     // *************************************************************************
     // new methods exposed
 
@@ -442,8 +442,8 @@ public class TestBindScreen extends GuiApplication {
     }
 
     /**
-     * Wrap an object coordinate to keep it in a cubical zone centered on the
-     * origin.
+     * Wrap an object coordinate to {-zoneRadius, +zoneRadius} in order to keep
+     * it in a cubical zone centered on the origin.
      *
      * @param input object coordinate
      * @return wrapped coordinate
