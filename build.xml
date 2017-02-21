@@ -143,7 +143,8 @@ The jme3-utilities project releases five libraries: debug, nifty, sky, ui, and x
         <jar jarfile="release/jme3-utilities-nifty.jar"
              basedir="${build.classes.dir}"
              compress="${jar.compress}"
-             includes="jme3utilities/nifty/*.class"/>
+             includes="jme3utilities/nifty/*.class
+                       jme3utilities/nifty/bind/*.class"/>
         <jar jarfile="release/jme3-utilities-nifty.jar"
              update="true"
              basedir="${assets.folder.name}"
