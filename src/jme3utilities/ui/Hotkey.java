@@ -97,11 +97,11 @@ public class Hotkey {
     // new methods exposed
 
     /**
-     * Enumerate all the valid hotkeys.
+     * Enumerate all valid hotkeys.
      *
      * @return new collection
      */
-    public static Collection<Hotkey> getAll() {
+    public static Collection<Hotkey> collectAll() {
         Collection<Hotkey> collection = instancesByName.values();
         return collection;
     }
