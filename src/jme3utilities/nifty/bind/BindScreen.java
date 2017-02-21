@@ -249,7 +249,7 @@ public class BindScreen
 
             case "select":
                 if (words.length == 2) {
-                    int keyCode = Integer.valueOf(words[1]);
+                    int keyCode = Integer.parseInt(words[1]);
                     selectHotkey(keyCode);
                     return;
                 }
@@ -380,8 +380,8 @@ public class BindScreen
     private ListBox<HotkeyItem> getHotkeyBox() {
         Screen screen = getScreen();
         @SuppressWarnings("unchecked")
-        ListBox<HotkeyItem> listBox
-                = screen.findNiftyControl("hotkeyList", ListBox.class);
+        ListBox<HotkeyItem> listBox =
+                screen.findNiftyControl("hotkeyList", ListBox.class);
 
         assert listBox != null;
         return listBox;

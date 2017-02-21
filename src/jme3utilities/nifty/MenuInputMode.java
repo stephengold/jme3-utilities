@@ -109,7 +109,7 @@ class MenuInputMode
             if (screen != null) {
                 assert GuiScreenController.hasActivePopup();
                 String indexString = actionString.substring("select ".length());
-                int index = Integer.valueOf(indexString);
+                int index = Integer.parseInt(indexString);
                 screen.selectMenuItem(index - 1);
             }
             return;
