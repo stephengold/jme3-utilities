@@ -98,7 +98,7 @@ public class BindInputMode extends InputMode {
     protected void defaultBindings() {
         bind("close", KeyInput.KEY_ESCAPE);
 
-        for (Hotkey hotkey : Hotkey.getAll()) {
+        for (Hotkey hotkey : Hotkey.collectAll()) {
             if (BindScreen.isExempt(hotkey)) {
                 continue;
             }

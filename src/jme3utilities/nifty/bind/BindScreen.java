@@ -468,7 +468,7 @@ public class BindScreen
      */
     private void populateHotkeyBox(boolean boundFlag) {
         ListBox<HotkeyItem> listBox = getHotkeyBox();
-        Collection<Hotkey> allHotkeys = Hotkey.getAll();
+        Collection<Hotkey> allHotkeys = Hotkey.collectAll();
         for (Hotkey hotkey : allHotkeys) {
             if (isExempt(hotkey)) {
                 continue;
