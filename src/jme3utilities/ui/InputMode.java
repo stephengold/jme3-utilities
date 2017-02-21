@@ -168,7 +168,8 @@ abstract public class InputMode
      * @param hotkey hotkey to bind to (not null)
      */
     public void bind(String actionName, Hotkey hotkey) {
-        Validate.nonNull(actionName, "name");
+        Validate.nonNull(actionName, "action name");
+        Validate.nonNull(hotkey, "hotkey");
 
         String hotkeyName = hotkey.name();
         /*
