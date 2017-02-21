@@ -138,27 +138,20 @@ public class BindScreen
          * Windows uses these hotkeys:
          *  KEY_LMETA to open the Windows menu
          *  KEY_NUMLOCK to toggle keypad key definitions
-         * SimpleApplication pre-assigns these hotkeys:
-         *  KEY_ESCAPE to quit the application
-         *  KEY_F5 to toggle the stats display
-         *  KEY_C to print camera coordinates
-         *  KEY_M to print memory statistics
          * In addition, the Nifty GUI uses these hotkeys:
-         *  KEY_TAB for navigation
+         *  KEY_DOWN, KEY_TAB, and KEY_UP for navigation
          *  KEY_RETURN for selection
          *  KEY_SPACE to reset the GUI
          * And com.jme3.app.state.ScreenshotAppState uses:
          *  KEY_SYSRQ to save a screenshot
-         * For now, avoid re-assigning those hotkeys.
+         * Avoid re-binding those hotkeys.
          */
         switch (keyCode) {
             case KeyInput.KEY_LMETA:
             case KeyInput.KEY_NUMLOCK:
-            case KeyInput.KEY_ESCAPE:
-            case KeyInput.KEY_F5:
-            case KeyInput.KEY_C:
-            case KeyInput.KEY_M:
+            case KeyInput.KEY_DOWN:
             case KeyInput.KEY_TAB:
+            case KeyInput.KEY_UP:
             case KeyInput.KEY_RETURN:
             case KeyInput.KEY_SPACE:
             case KeyInput.KEY_SYSRQ:
