@@ -58,7 +58,7 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
             Population.class.getName());
     // *************************************************************************
     // fields
-    
+
     /**
      * maximum number of elements (&gt;0, set by constructor or
      * {@link #setCapacity(int)})
@@ -114,8 +114,8 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
         }
 
         if (!list.contains(element)) {
-        list.add(element);
-        numElements++;
+            list.add(element);
+            numElements++;
             cull(capacity);
         }
 
@@ -375,7 +375,7 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
     /**
      * Alter the capacity of this container.
      *
-     * @newCapacity number of elements (&gt;0)
+     * @param newCapacity number of elements (&gt;0)
      * @see #cull(int)
      * @see #getCapacity()
      */

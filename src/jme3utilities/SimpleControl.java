@@ -40,8 +40,7 @@ import com.jme3.scene.control.AbstractControl;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-abstract public class SimpleControl
-        extends AbstractControl {
+abstract public class SimpleControl extends AbstractControl {
     // *************************************************************************
     // new methods exposed
 
@@ -55,18 +54,18 @@ abstract public class SimpleControl
     // AbstractControl methods
 
     /**
-     * Callback invoked when the spatial is about to be rendered to a view port.
+     * Callback invoked when the spatial is about to be rendered to a viewport.
      * <p>
      * Only performs checks. Meant to be overridden.
      *
      * @param renderManager renderer which is rendering the spatial (not null)
-     * @param viewPort view port where the spatial will be rendered (not null)
+     * @param viewPort viewport where the spatial will be rendered (not null)
      */
     @Override
     protected void controlRender(RenderManager renderManager,
             ViewPort viewPort) {
         Validate.nonNull(renderManager, "render manager");
-        Validate.nonNull(viewPort, "view port");
+        Validate.nonNull(viewPort, "viewport");
 
         if (!enabled) {
             throw new IllegalStateException("should be enabled");

@@ -28,21 +28,21 @@ package jme3utilities;
 import com.jme3.renderer.ViewPort;
 
 /**
- * Interface to receive notifications when a view port is created or removed.
+ * Interface to receive notifications when a viewport is created or removed.
  *
  * @author Stephen Gold sgold@sonic.net
  */
 public interface ViewPortListener {
 
     /**
-     * Notify the listener that a view port has been created.
+     * Notify the listener that a viewport has been created.
      *
      * @param viewPort (not null)
      */
     void addViewPort(ViewPort viewPort);
 
     /**
-     * Notify the listener that a view port has been removed.
+     * Notify the listener that a viewport has been removed.
      *
      * @param viewPort (not null)
      */

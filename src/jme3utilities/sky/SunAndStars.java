@@ -250,7 +250,8 @@ public class SunAndStars
     }
 
     /**
-     * Compute the angle between the meridian and the vernal equinox.
+     * Compute the angle between the meridian and the vernal equinox. TODO
+     * rename
      *
      * @return angle (in radians, &lt;2*Pi, &ge;0)
      */
@@ -264,7 +265,7 @@ public class SunAndStars
     }
 
     /**
-     * Compute the sidereal time.
+     * Compute the sidereal time. TODO rename
      *
      * @return time (in hours, &lt;24, &ge;0)
      */
@@ -289,7 +290,7 @@ public class SunAndStars
     }
 
     /**
-     * Compute the direction to the center of the sun.
+     * Compute the direction to the center of the sun. TODO rename
      *
      * @return new unit vector in world (horizontal) coordinates
      */
@@ -357,7 +358,7 @@ public class SunAndStars
      */
     public void setHour(float newHour) {
         Validate.inRange(newHour, "new hour", 0f, Constants.hoursPerDay);
-        this.hour = newHour;
+        hour = newHour;
     }
 
     /**
@@ -368,7 +369,7 @@ public class SunAndStars
     public void setObserverLatitude(float latitude) {
         Validate.inRange(latitude, "latitude",
                 -FastMath.HALF_PI, FastMath.HALF_PI);
-        this.observerLatitude = latitude;
+        observerLatitude = latitude;
     }
 
     /**
@@ -434,8 +435,7 @@ public class SunAndStars
      * @throws CloneNotSupportedException from Object.clone()
      */
     @Override
-    public SunAndStars clone()
-            throws CloneNotSupportedException {
+    public SunAndStars clone() throws CloneNotSupportedException {
         SunAndStars clone = (SunAndStars) super.clone();
         return clone;
     }
@@ -465,8 +465,7 @@ public class SunAndStars
      * @throws IOException from importer
      */
     @Override
-    public void read(JmeImporter importer)
-            throws IOException {
+    public void read(JmeImporter importer) throws IOException {
         InputCapsule capsule = importer.getCapsule(this);
 
         float value = capsule.readFloat("hour", 0f);
@@ -487,8 +486,7 @@ public class SunAndStars
      * @throws IOException from exporter
      */
     @Override
-    public void write(JmeExporter exporter)
-            throws IOException {
+    public void write(JmeExporter exporter) throws IOException {
         OutputCapsule capsule = exporter.getCapsule(this);
 
         capsule.write(hour, "hour", 0f);
