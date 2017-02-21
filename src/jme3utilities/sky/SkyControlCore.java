@@ -71,9 +71,7 @@ import jme3utilities.math.MyColor;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class SkyControlCore
-        extends SubtreeControl
-        implements Cloneable {
+public class SkyControlCore extends SubtreeControl {
     // *************************************************************************
     // constants
 
@@ -368,6 +366,8 @@ public class SkyControlCore
 
     /**
      * Alter which camera to track.
+     *
+     * @param camera which camera to track (not null)
      */
     public void setCamera(Camera camera) {
         Validate.nonNull(camera, "camera");
@@ -638,6 +638,7 @@ public class SkyControlCore
      * Create a shallow copy of this control.
      *
      * @return a new instance
+     * @throws CloneNotSupportedException if superclass isn't cloneable
      */
     @Override
     public SkyControlCore clone() throws CloneNotSupportedException {

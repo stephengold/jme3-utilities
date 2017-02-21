@@ -57,9 +57,7 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class FloorControl
-        extends SubtreeControl
-        implements Cloneable {
+public class FloorControl extends SubtreeControl {
     // *************************************************************************
     // constants
 
@@ -131,6 +129,8 @@ public class FloorControl
 
     /**
      * Alter which camera to track.
+     *
+     * @param camera which camera to track (not null)
      */
     public void setCamera(Camera camera) {
         Validate.nonNull(camera, "camera");
@@ -211,6 +211,7 @@ public class FloorControl
      * Create a shallow copy of this control.
      *
      * @return a new instance
+     * @throws CloneNotSupportedException if superclass isn't cloneable
      */
     @Override
     public FloorControl clone() throws CloneNotSupportedException {
