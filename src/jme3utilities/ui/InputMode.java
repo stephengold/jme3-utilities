@@ -36,11 +36,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 
@@ -73,17 +74,16 @@ abstract public class InputMode
     // constants
 
     /**
-     * list of initialized modes
-     */
-    final private static ArrayList<InputMode> modes = new ArrayList<>(3);
-    /**
      * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
             InputMode.class.getName());
     // *************************************************************************
     // fields
-
+    /**
+     * list of initialized modes
+     */
+    final private static ArrayList<InputMode> modes = new ArrayList<>(3);
     /**
      * true if initialize() should enable this mode
      */
@@ -98,10 +98,14 @@ abstract public class InputMode
     private JmeCursor cursor = null;
     /**
      * bindings from hotkeys to action names: needed because the InputManager
-     * doesn't provide access to its mappings and also so that the bind screen
-     * can look up hotkey bindings while this mode is disabled
+     * doesn't provide access to its mappings and also so that the hotkey
+     * bindings editor can examine hotkey bindings while this mode is disabled
      */
     final private Properties hotkeyBindings = new Properties();
+    /**
+     * all known action names, bound and unbound
+     */
+    final private Set<String> actionNames = new TreeSet<String>();
     /**
      * file name for loading and saving the custom hotkey bindings (or null if
      * the bindings are not customizable): set by setSaveFileName()
@@ -126,6 +130,13 @@ abstract public class InputMode
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Add an action name without binding anything to it.
+     */
+    public void addActionName(String name) {
+        actionNames.add(name);
+    }
 
     /**
      * Bind the named action to a hotkey, but don't map it yet.
@@ -163,6 +174,7 @@ abstract public class InputMode
          * Add to the bindings.  Remove any old binding of this hotkey.
          */
         hotkeyBindings.put(hotkeyName, actionName);
+        addActionName(actionName);
     }
 
     /**
@@ -251,7 +263,17 @@ abstract public class InputMode
     }
 
     /**
-     * Load a set of hotkey bindings from a file.
+     * List all known action names.
+     *
+     * @return a new list
+     */
+    public List<String> listActionNames() {
+        List<String> result = new ArrayList<>(actionNames);
+        return result;
+    }
+
+    /**
+     * Load a set of hotkey bindings from a properties file.
      */
     public void loadBindings() {
         if (customBindingsFileName == null) {
@@ -267,19 +289,17 @@ abstract public class InputMode
                     MyString.quote(path));
 
         } catch (IOException exception) {
-            logger.log(Level.SEVERE, "Input exception while loading hotkey "
-                    + "bindings from the file {0}!",
+            logger.log(Level.SEVERE,
+                    "Input exception while loading hotkey bindings from {0}!",
                     MyString.quote(path));
+            throw new RuntimeException(exception);
         }
     }
 
     /**
-     * Save the hotkey bindings to a file.
-     *
-     * @throws IOException from Properties.storeToXML()
+     * Save the hotkey bindings to a properties file.
      */
-    public void saveBindings()
-            throws IOException {
+    public void saveBindings() {
         assert initialized;
 
         if (customBindingsFileName == null) {
@@ -290,11 +310,18 @@ abstract public class InputMode
         logger.log(Level.INFO, "Save hotkey bindings to XML file at {0}.",
                 MyString.quote(path));
 
-        try (FileOutputStream stream = new FileOutputStream(path)) {
-            String comment = String.format("custom hotkey bindings for %s mode",
-                    shortName);
+        String comment = String.format("custom hotkey bindings for %s mode",
+                shortName);
 
+        try {
+            FileOutputStream stream = new FileOutputStream(path);
             hotkeyBindings.storeToXML(stream, comment);
+
+        } catch (IOException exception) {
+            logger.log(Level.SEVERE,
+                    "Output exception while saving hotkey bindings to {0}!",
+                    MyString.quote(path));
+            throw new RuntimeException(exception);
         }
     }
 
@@ -453,12 +480,12 @@ abstract public class InputMode
     }
 
     /**
-     * Generate the filesystem path to the user's customized hotkey bindings.
+     * Read the filesystem path to the user's customized hotkey bindings.
      *
-     * @return path string
+     * @return path string (may be null)
      */
     private String getSavePath() {
-        String path = Misc.getUserPath(customBindingsFileName);
+        String path = customBindingsFileName;
         return path;
     }
 
@@ -527,6 +554,7 @@ abstract public class InputMode
         FileInputStream stream = null;
         try {
             stream = new FileInputStream(filePath);
+            loadBindings(stream);
         } catch (FileNotFoundException exception) {
             throw exception;
         } finally {
@@ -534,7 +562,6 @@ abstract public class InputMode
                 stream.close();
             }
         }
-        loadBindings(stream);
     }
 
     /**
