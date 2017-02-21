@@ -334,7 +334,7 @@ public class Updater
     /**
      * Set filters, renderers, and viewports based on another updater.
      * 
-     * @param otherUpdater 
+     * @param otherUpdater updater to copy from (not null)
      */
     public void setFRV(Updater otherUpdater) {
         bloomFilters = otherUpdater.bloomFilters;

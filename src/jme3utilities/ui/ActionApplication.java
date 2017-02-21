@@ -157,7 +157,6 @@ abstract public class ActionApplication
                 return;
         }
 
-
         logger.log(Level.WARNING, "Action {0} was not handled.",
                 MyString.quote(actionString));
     }

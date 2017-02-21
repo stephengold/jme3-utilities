@@ -81,6 +81,7 @@ abstract public class InputMode
             InputMode.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * list of initialized modes
      */
@@ -133,9 +134,12 @@ abstract public class InputMode
     // new methods exposed
 
     /**
-     * Add an action name without binding anything to it.
+     * Add the specified action name without binding anything to it.
+     *
+     * @param name action name (not null)
      */
     public void addActionName(String name) {
+        Validate.nonNull(name, "name");
         actionNames.add(name);
     }
 
