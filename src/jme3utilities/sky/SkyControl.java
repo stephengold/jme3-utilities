@@ -74,8 +74,7 @@ import jme3utilities.math.MyMath;
  * @author Stephen Gold sgold@sonic.net
  */
 public class SkyControl
-        extends SkyControlCore
-        implements Cloneable {
+        extends SkyControlCore {
     // *************************************************************************
     // constants
 
