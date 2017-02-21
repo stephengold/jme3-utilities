@@ -28,7 +28,6 @@ package jme3utilities.nifty;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import de.lessvoid.nifty.controls.ListBox;
-import de.lessvoid.nifty.screen.Screen;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
