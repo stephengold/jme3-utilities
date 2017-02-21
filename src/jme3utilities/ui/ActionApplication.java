@@ -26,7 +26,11 @@
 package jme3utilities.ui;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.StatsAppState;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
+import com.jme3.util.BufferUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
@@ -50,7 +54,7 @@ abstract public class ActionApplication
             ActionApplication.class.getName());
     // *************************************************************************
     // fields
-
+    
     /**
      * initial input mode: set in #simpleInitApp()
      */
@@ -115,6 +119,44 @@ abstract public class ActionApplication
         if (!ongoing) {
             return;
         }
+        /*
+         * Handle actions whose mappings may have been deleted by 
+         * DefaultInputMode.initialize() .
+         */
+        switch (actionString) {
+            case SimpleApplication.INPUT_MAPPING_EXIT:
+                stop();
+                return;
+
+            case SimpleApplication.INPUT_MAPPING_CAMERA_POS:
+                if (cam != null) {
+                    Vector3f loc = cam.getLocation();
+                    Quaternion rot = cam.getRotation();
+                    System.out.println("Camera Position: ("
+                            + loc.x + ", " + loc.y + ", " + loc.z + ")");
+                    System.out.println("Camera Rotation: " + rot);
+                    System.out.println("Camera Direction: " + cam.getDirection());
+                    System.out.println("cam.setLocation(new Vector3f("
+                            + loc.x + "f, " + loc.y + "f, " + loc.z + "f));");
+                    System.out.println("cam.setRotation(new Quaternion(" + 
+                            rot.getX() + "f, " + rot.getY() + "f, " + rot.getZ() 
+                            + "f, " + rot.getW() + "f));");
+
+                }
+                return;
+
+            case SimpleApplication.INPUT_MAPPING_HIDE_STATS:
+                StatsAppState sas = stateManager.getState(StatsAppState.class);
+                if (sas != null) {
+                    sas.toggleStats();
+                }
+                return;
+
+            case SimpleApplication.INPUT_MAPPING_MEMORY:
+                BufferUtils.printCurrentDirectMemory(null);
+                return;
+        }
+
 
         logger.log(Level.WARNING, "Action {0} was not handled.",
                 MyString.quote(actionString));
