@@ -57,7 +57,9 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class FloorControl extends SubtreeControl {
+public class FloorControl
+        extends SubtreeControl
+        implements Cloneable {
     // *************************************************************************
     // constants
 
@@ -75,7 +77,7 @@ public class FloorControl extends SubtreeControl {
      */
     final private static String geometryName = "floor";
     /**
-     * name for the geometry
+     * name for the node
      */
     final private static String nodeName = "floor node";
     /**
@@ -91,11 +93,21 @@ public class FloorControl extends SubtreeControl {
      */
     private boolean stabilizeFlag = false;
     /**
-     * application's camera: set by constructor
+     * which camera to track: set by constructor or
+     * {@link #setCamera(com.jme3.renderer.Camera)}
      */
     private Camera camera;
     // *************************************************************************
     // constructors
+
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
+    public FloorControl() {
+        super();
+        camera = null;
+    }
 
     /**
      * Instantiate a disabled control.
@@ -116,6 +128,16 @@ public class FloorControl extends SubtreeControl {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Alter which camera to track.
+     *
+     * @param camera which camera to track (not null)
+     */
+    public void setCamera(Camera camera) {
+        Validate.nonNull(camera, "camera");
+        this.camera = camera;
+    }
 
     /**
      * Alter the stabilize flag.
@@ -167,7 +189,7 @@ public class FloorControl extends SubtreeControl {
 
         InputCapsule ic = importer.getCapsule(this);
         stabilizeFlag = ic.readBoolean("stabilizeFlag", false);
-        camera = (Camera) ic.readSavable("camera", null);
+        /* camera not serialized */
     }
 
     /**
@@ -182,7 +204,20 @@ public class FloorControl extends SubtreeControl {
 
         OutputCapsule oc = exporter.getCapsule(this);
         oc.write(stabilizeFlag, "stabilizeFlag", false);
-        oc.write(camera, "camera", null);
+        /* camera not serialized */
+    }
+    // *************************************************************************
+    // Object methods
+
+    /**
+     * Create a shallow copy of this control.
+     *
+     * @return a new instance
+     */
+    @Override
+    public FloorControl clone() throws CloneNotSupportedException {
+        FloorControl clone = (FloorControl) super.clone();
+        return clone;
     }
     // *************************************************************************
     // private methods
