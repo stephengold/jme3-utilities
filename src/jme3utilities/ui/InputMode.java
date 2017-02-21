@@ -34,6 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -105,7 +106,7 @@ abstract public class InputMode
     /**
      * all known action names, bound and unbound
      */
-    final private Set<String> actionNames = new TreeSet<String>();
+    final private Set<String> actionNames = new TreeSet<>();
     /**
      * file name for loading and saving the custom hotkey bindings (or null if
      * the bindings are not customizable): set by setSaveFileName()
@@ -273,16 +274,17 @@ abstract public class InputMode
     }
 
     /**
-     * Load a set of hotkey bindings from a properties file.
+     * Load a set of hotkey bindings from the properties file.
      */
     public void loadBindings() {
         if (customBindingsFileName == null) {
             logger.log(Level.WARNING, "bindings not loaded: file name not set");
             return;
         }
+
         String path = getSavePath();
         try {
-            loadHotkeyFile(path);
+            loadBindings(path);
 
         } catch (FileNotFoundException exception) {
             logger.log(Level.SEVERE, "Didn''t find any hotkey bindings at {0}.",
@@ -297,7 +299,7 @@ abstract public class InputMode
     }
 
     /**
-     * Save the hotkey bindings to a properties file.
+     * Save all hotkey bindings to the properties file.
      */
     public void saveBindings() {
         assert initialized;
@@ -306,22 +308,26 @@ abstract public class InputMode
             logger.log(Level.WARNING, "bindings not saved: file name not set");
             return;
         }
+
         String path = getSavePath();
-        logger.log(Level.INFO, "Save hotkey bindings to XML file at {0}.",
-                MyString.quote(path));
 
-        String comment = String.format("custom hotkey bindings for %s mode",
-                shortName);
-
+        FileOutputStream stream = null;
         try {
-            FileOutputStream stream = new FileOutputStream(path);
-            hotkeyBindings.storeToXML(stream, comment);
+            saveBindings(path);
 
         } catch (IOException exception) {
             logger.log(Level.SEVERE,
                     "Output exception while saving hotkey bindings to {0}!",
                     MyString.quote(path));
             throw new RuntimeException(exception);
+            
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                }
+            }
         }
     }
 
@@ -354,11 +360,12 @@ abstract public class InputMode
         assert initialized;
 
         String hotkeyName = hotkey.name();
-        assert hotkeyBindings.containsKey(hotkeyName) : hotkeyName;
-        /*
-         * Remove the binding.
-         */
-        hotkeyBindings.remove(hotkeyName);
+        if (hotkeyBindings.containsKey(hotkeyName)) {
+            /*
+             * Remove the binding.
+             */
+            hotkeyBindings.remove(hotkeyName);
+        }
     }
     // *************************************************************************
     // AbstractAppState methods
@@ -503,25 +510,27 @@ abstract public class InputMode
          */
         String path = getSavePath();
         try {
-            loadHotkeyFile(path);
+            loadBindings(path);
 
         } catch (FileNotFoundException exception) {
             logger.log(Level.INFO, "Didn''t find any hotkey bindings at {0}.",
                     MyString.quote(path));
+
             hotkeyBindings.clear();
             defaultBindings();
 
         } catch (IOException exception) {
             logger.log(Level.SEVERE, "Input exception while loading hotkey "
-                    + "bindings from the file {0}!",
+                    + "bindings from {0}!",
                     MyString.quote(path));
+
             hotkeyBindings.clear();
             defaultBindings();
         }
     }
 
     /**
-     * Load hotkey bindings from an XML input stream.
+     * Load hotkey bindings from an input stream.
      *
      * @param stream input stream to load from (not null)
      */
@@ -531,7 +540,7 @@ abstract public class InputMode
 
         hotkeyBindings.clear();
         hotkeyBindings.loadFromXML(stream);
-        stream.close();
+
         for (String keyString : hotkeyBindings.stringPropertyNames()) {
             String actionName = hotkeyBindings.getProperty(keyString);
             Hotkey hotkey = Hotkey.getInstance(keyString);
@@ -540,23 +549,23 @@ abstract public class InputMode
     }
 
     /**
-     * Load hotkey bindings from an XML file.
+     * Load hotkey bindings from a properties file.
      *
-     * @param filePath file system path to the XML file (not null)
+     * @param filePath filesystem path (not null)
      */
-    private void loadHotkeyFile(String filePath)
+    private void loadBindings(String filePath)
             throws FileNotFoundException, IOException {
         assert filePath != null;
+
         logger.log(Level.INFO,
-                "Loading hotkey bindings from an XML file at {0}.",
+                "Loading hotkey bindings from properties file at {0}.",
                 MyString.quote(filePath));
 
         FileInputStream stream = null;
         try {
             stream = new FileInputStream(filePath);
             loadBindings(stream);
-        } catch (FileNotFoundException exception) {
-            throw exception;
+            
         } finally {
             if (stream != null) {
                 stream.close();
@@ -654,6 +663,44 @@ abstract public class InputMode
          * Add the mapping to the input manager.
          */
         mapActionString(actionString, hotkey);
+    }
+
+    /**
+     * Save hotkey bindings to an output stream.
+     *
+     * @param stream output stream to save to (not null)
+     */
+    private void saveBindings(OutputStream stream) throws IOException {
+        assert stream != null;
+
+        String comment = String.format("custom hotkey bindings for %s mode",
+                shortName);
+        hotkeyBindings.storeToXML(stream, comment);
+    }
+
+    /**
+     * Save hotkey bindings to a properties file.
+     *
+     * @param filePath filesystem path (not null)
+     */
+    private void saveBindings(String filePath) throws IOException {
+        assert filePath != null;
+
+        logger.log(Level.INFO,
+                "Saving hotkey bindings to properties file at {0}.",
+                MyString.quote(filePath));
+
+        FileOutputStream stream = null;
+        try {
+            stream = new FileOutputStream(filePath);
+            saveBindings(stream);
+        } catch (FileNotFoundException exception) {
+            throw exception;
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
+        }
     }
 
     /**
