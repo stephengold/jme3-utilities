@@ -107,7 +107,7 @@ abstract public class SubtreeControl extends SimpleControl {
 
         Node node = (Node) spatial;
         int childIndex = node.getChildIndex(subtree);
-        if (subtree == null || cloneSpatial == null || childIndex == -1) {
+        if (cloneSpatial == null || childIndex == -1) {
             clone.subtree = subtree.clone(true);
         } else {
             /*
