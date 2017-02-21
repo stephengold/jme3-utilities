@@ -149,6 +149,7 @@ The jme3-utilities project releases five libraries: debug, nifty, sky, ui, and x
              basedir="${assets.folder.name}"
              compress="${assets.compress}"
              includes="Interface/Nifty/styles/**
+                       Interface/Nifty/huds/message-display.xml
                        Interface/Nifty/screens/bind.xml
                        Interface/Nifty/popup-menu.xml"/>
     </target>
