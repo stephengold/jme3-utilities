@@ -169,10 +169,17 @@ public class BindScreen
      */
     @Override
     public void update(float simInterval) {
-        assert simInterval >= 0f : simInterval;
         assert isEnabled();
         super.update(simInterval);
 
+        Screen screen = getScreen();
+        if (!screen.isBound()) {
+            /*
+             * Avoid Nifty exceptions and warnings regarding unbound controls.
+             */
+            return;
+        }
+        
         getActionBox().refresh();
         getHotkeyBox().refresh();
         updateButtonLabels();
@@ -189,7 +196,7 @@ public class BindScreen
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored
+     * @param ignored elapsed time
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float ignored) {
@@ -242,7 +249,7 @@ public class BindScreen
 
             case "select":
                 if (words.length == 2) {
-                    int keyCode = Integer.valueOf(words[1]);
+                    int keyCode = Integer.parseInt(words[1]);
                     selectHotkey(keyCode);
                     return;
                 }
