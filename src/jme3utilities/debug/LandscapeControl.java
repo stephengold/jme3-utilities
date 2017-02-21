@@ -66,9 +66,7 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class LandscapeControl
-        extends SubtreeControl
-        implements Cloneable {
+public class LandscapeControl extends SubtreeControl {
     // *************************************************************************
     // constants
 
@@ -260,6 +258,7 @@ public class LandscapeControl
      * Create a shallow copy of this control.
      *
      * @return a new instance
+     * @throws CloneNotSupportedException if superclass isn't cloneable
      */
     @Override
     public LandscapeControl clone() throws CloneNotSupportedException {
