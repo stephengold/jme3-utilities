@@ -290,6 +290,11 @@ public class LinearSpline3f implements Spline3f {
     // *************************************************************************
     // Object methods
 
+    /**
+     * Represent this score as a string of text.
+     *
+     * @return descriptive string of text (not null, not empty)
+     */
     @Override
     public String toString() {
         StringBuilder buffer = new StringBuilder(50);

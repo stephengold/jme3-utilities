@@ -138,8 +138,8 @@ abstract public class ActionApplication
                     System.out.println("Camera Direction: " + cam.getDirection());
                     System.out.println("cam.setLocation(new Vector3f("
                             + loc.x + "f, " + loc.y + "f, " + loc.z + "f));");
-                    System.out.println("cam.setRotation(new Quaternion("
-                            + rot.getX() + "f, " + rot.getY() + "f, " + rot.getZ()
+                    System.out.println("cam.setRotation(new Quaternion(" + 
+                            rot.getX() + "f, " + rot.getY() + "f, " + rot.getZ() 
                             + "f, " + rot.getW() + "f));");
 
                 }
