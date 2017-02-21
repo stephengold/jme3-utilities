@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2013-2017 Stephen Gold <sgold@sonic.net>
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ * Redistributions of source code must retain the above copyright
+ notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ notice, this list of conditions and the following disclaimer in the
+ documentation and/or other materials provided with the distribution.
+ * Stephen Gold's name may not be used to endorse or promote products
+ derived from this software without specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL STEPHEN GOLD BE LIABLE FOR ANY
+ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!--
+Nifty XML to lay out the screen for the hotkey bindings editor.
+-->
+<nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
+    <screen id="bind" controller="jme3utilities.nifty.bind.BindScreen">
+        <layer childLayout="vertical"
+               backgroundColor="#444f">
+            <panel/>
+            <panel childLayout="horizontal"
+                   backgroundColor="#aaaf"
+                   height="25px">
+                <control name="label" id="modeStatus"
+                         color="#000f"
+                         textHAlign="center"
+                         width="*"/>
+            </panel>
+            <panel childLayout="horizontal"
+                   backgroundColor="#aaaf"
+                   height="320px"
+                   padding="3px">
+
+                <panel childLayout="vertical">
+                    <panel childLayout="horizontal">
+                        <control name="label"
+                                 text="Hotkeys:"
+                                 color="#000f"
+                                 textHAlign="center"
+                                 width="*"/>
+                    </panel>
+                    <panel childLayout="horizontal">
+                        <control name="listBox" id="hotkeyList"
+                                 displayItems="12"
+                                 horizontal="optional"/>
+                    </panel>
+                </panel>
+
+                <panel childLayout="vertical"
+                       padding="3px"
+                       width="60px">
+                    <panel/>
+                    <control name="button" id="bindButton"
+                             height="60px">
+                        <interact onRelease="perform(bind)"/>
+                    </control>
+                    <panel/>
+                </panel>
+
+                <panel childLayout="vertical">
+                    <panel childLayout="horizontal">
+                        <control name="label"
+                                 text="Actions:"
+                                 color="#000f"
+                                 textHAlign="center"
+                                 width="*"/>
+                    </panel>
+                    <panel childLayout="horizontal">
+                        <control name="listBox" id="actionList"
+                                 displayItems="12"
+                                 horizontal="optional"/>
+                    </panel>
+                </panel>
+
+            </panel>
+            <panel childLayout="horizontal"
+                   backgroundColor="#aaaf"
+                   height="40px"
+                   padding="10px">
+                <control name="button" id="unbindButton"
+                         width="100px">
+                    <interact onRelease="perform(unbind)"/>
+                </control>
+                <panel/>
+                <control name="button" id="id30ToAvoidOffendingNifty"
+                         label="Load from file"
+                         width="100px">
+                    <interact onRelease="perform(load)"/>
+                </control>
+                <control name="button" id="id31ToAvoidOffendingNifty"
+                         label="Save to file"
+                         width="100px">
+                    <interact onRelease="perform(save)"/>
+                </control>
+                <panel/>
+                <control name="button" id="returnButton"
+                         width="200px">
+                    <interact onRelease="perform(return)"/>
+                </control>
+            </panel>
+            <panel/>
+        </layer>
+    </screen>
+</nifty>
