@@ -39,15 +39,15 @@ import com.jme3.scene.Node;
 import java.util.logging.Logger;
 
 /**
- * App state with protected fields analogous to those of SimpleApplication. It
- * also validates parameters of its public methods.
+ * An app state with protected fields analogous to those of
+ * {@link com.jme3.app.SimpleApplication}. If any of these fields change, these
+ * states should be notified by invoking {@link #refreshCachedFields()}.
  * <p>
  * Each instance is enabled at creation.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class SimpleAppState
-        extends AbstractAppState {
+public class SimpleAppState extends AbstractAppState {
     // *************************************************************************
     // constants
 
@@ -104,45 +104,14 @@ public class SimpleAppState
      */
     protected ViewPort viewPort;
     // *************************************************************************
-    // AbstractAppState methods
+    // new methods exposed
 
     /**
-     * Clean up this app state on the 1st update after it gets detached.
+     * Update cached references to match the application.
      */
-    @Override
-    public void cleanup() {
-        if (!isInitialized()) {
-            throw new IllegalStateException("should be initialized");
-        }
-
-        super.cleanup();
-    }
-
-    /**
-     * Initialize this app state on the 1st update after it gets attached.
-     *
-     * @param sm application's state manager (not null)
-     * @param app application which owns this state (not null)
-     */
-    @Override
-    public void initialize(AppStateManager sm, Application app) {
-        if (isInitialized()) {
-            throw new IllegalStateException("already initialized");
-        }
-        if (!(app instanceof SimpleApplication)) {
-            throw new IllegalArgumentException(
-                    "application should be a SimpleApplication");
-        }
-        Validate.nonNull(app, "application");
-        Validate.nonNull(sm, "state manager");
-
-        super.initialize(sm, app);
-
-        simpleApplication = (SimpleApplication) app;
-        if (sm != simpleApplication.getStateManager()) {
-            throw new IllegalArgumentException("wrong state manager");
-        }
-        stateManager = sm;
+    public void refreshCachedFields() {
+        stateManager = simpleApplication.getStateManager();
+        assert stateManager != null;
 
         assetManager = simpleApplication.getAssetManager();
         assert assetManager != null;
@@ -170,12 +139,53 @@ public class SimpleAppState
 
         viewPort = simpleApplication.getViewPort();
         assert viewPort != null;
+    }
+    // *************************************************************************
+    // AbstractAppState methods
+
+    /**
+     * Clean up this app state on the 1st update after it gets detached.
+     */
+    @Override
+    public void cleanup() {
+        if (!isInitialized()) {
+            throw new IllegalStateException("should be initialized");
+        }
+
+        super.cleanup();
+    }
+
+    /**
+     * Initialize this app state on the 1st update after it gets attached.
+     *
+     * @param sm application's state manager (not null)
+     * @param app application which owns this state (not null)
+     */
+    @Override
+    public void initialize(AppStateManager sm, Application app) {
+        if (isInitialized()) {
+            throw new IllegalStateException("already initialized");
+        }
+        Validate.nonNull(sm, "state manager");
+        if (!(app instanceof SimpleApplication)) {
+            throw new IllegalArgumentException(
+                    "application should be a SimpleApplication");
+        }
+
+        super.initialize(sm, app);
+
+        simpleApplication = (SimpleApplication) app;
+        if (sm != simpleApplication.getStateManager()) {
+            throw new IllegalArgumentException("wrong state manager");
+        }
+        refreshCachedFields();
 
         assert isInitialized();
     }
 
     /**
-     * Test whether this app state is initialized.
+     * Test whether this app state is initialized. Declared final here to
+     * prevent it being overridden by subclasses.
      *
      * @return true if initialized, otherwise false
      */
@@ -185,7 +195,8 @@ public class SimpleAppState
     }
 
     /**
-     * Test whether this app state is enabled.
+     * Test whether this app state is enabled. Declared final here to prevent it
+     * being overridden by subclasses.
      *
      * @return true if enabled, otherwise false
      */
@@ -195,33 +206,34 @@ public class SimpleAppState
     }
 
     /**
-     * Callback on each update after all rendering is complete.
+     * Callback during each render pass after all rendering is complete.
      */
     @Override
     public void postRender() {
         if (!isInitialized()) {
             throw new IllegalStateException("should be initialized");
         }
-
-        super.postRender();
+        if (!isEnabled()) {
+            throw new IllegalStateException("should be enabled");
+        }
     }
 
     /**
-     * Callback to perform rendering for this app state on each update.
+     * Callback to perform rendering for this state during each render pass.
      *
      * @param rm application's render manager (not null)
      */
     @Override
     public void render(RenderManager rm) {
-        Validate.nonNull(rm, "render manager");
-        if (!isInitialized()) {
-            throw new IllegalStateException("should be initialized");
-        }
         if (rm != renderManager) {
             throw new IllegalArgumentException("wrong render manager");
         }
-
-        super.render(rm);
+        if (!isInitialized()) {
+            throw new IllegalStateException("should be initialized");
+        }
+        if (!isEnabled()) {
+            throw new IllegalStateException("should be enabled");
+        }
     }
 
     /**
@@ -232,11 +244,6 @@ public class SimpleAppState
     @Override
     public void stateAttached(AppStateManager sm) {
         Validate.nonNull(sm, "state manager");
-        if (isInitialized()) {
-            throw new IllegalStateException("should not be initialized yet");
-        }
-
-        super.stateAttached(sm);
     }
 
     /**
@@ -246,15 +253,16 @@ public class SimpleAppState
      */
     @Override
     public void stateDetached(AppStateManager sm) {
-        Validate.nonNull(sm, "state manager");
-        super.stateDetached(sm);
+        if (sm != stateManager) {
+            throw new IllegalArgumentException("wrong state manager");
+        }
     }
 
     /**
-     * Callback to update this app state (if enabled) prior to rendering.
-     * (Invoked once per frame.)
+     * Callback to update this state prior to rendering. (Invoked once per
+     * render pass.)
      *
-     * @param elapsedTime time interval since previous frame/update (in seconds,
+     * @param elapsedTime time interval since previous update (in seconds,
      * &ge;0)
      */
     @Override
@@ -266,7 +274,5 @@ public class SimpleAppState
         if (!isEnabled()) {
             throw new IllegalStateException("should be enabled");
         }
-
-        super.update(elapsedTime);
     }
 }
