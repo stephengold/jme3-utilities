@@ -38,6 +38,7 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -98,6 +99,10 @@ public class SimpleAppState implements AppState {
      */
     final private List<AppState> influenceList = new ArrayList<>(2);
     /**
+     * generator for unique names
+     */
+    final private static NameGenerator nameGenerator = new NameGenerator();
+    /**
      * root node of GUI scene graph: set by initialize()
      */
     protected Node guiNode;
@@ -114,6 +119,10 @@ public class SimpleAppState implements AppState {
      */
     protected SimpleApplication simpleApplication;
     /**
+     * unique name for debugging (not null, set by constructor)
+     */
+    final public String appStateName;
+    /**
      * viewport for GUI scene: set by initialize()
      */
     protected ViewPort guiViewPort;
@@ -125,11 +134,13 @@ public class SimpleAppState implements AppState {
     // constructor
 
     /**
-     * Instantiate an uninitialized state.
+     * Instantiate an uninitialized state with a unique name.
      *
      * @param enabled true &rarr; enabled, false &rarr; disabled
      */
     public SimpleAppState(boolean enabled) {
+        String className = getClass().getSimpleName();
+        appStateName = nameGenerator.unique(className);
         this.enabled = enabled;
     }
     // *************************************************************************
@@ -229,6 +240,7 @@ public class SimpleAppState implements AppState {
      */
     @Override
     public void initialize(AppStateManager sm, Application app) {
+        logger.log(Level.INFO, "initialize {0}", appStateName);
         if (isInitialized()) {
             throw new IllegalStateException("already initialized");
         }
@@ -313,6 +325,12 @@ public class SimpleAppState implements AppState {
         enabled = newSetting;
 
         if (oldSetting != newSetting) {
+            if (newSetting) {
+                logger.log(Level.INFO, "enable {0}", appStateName);
+            } else {
+                logger.log(Level.INFO, "disable {0}", appStateName);
+
+            }
             /*
              * Exert influence over other app states.
              */
@@ -329,6 +347,7 @@ public class SimpleAppState implements AppState {
      */
     @Override
     public void stateAttached(AppStateManager sm) {
+        logger.log(Level.INFO, "attach {0}", appStateName);
         Validate.nonNull(sm, "state manager");
     }
 
@@ -339,6 +358,8 @@ public class SimpleAppState implements AppState {
      */
     @Override
     public void stateDetached(AppStateManager sm) {
+        logger.log(Level.INFO, "detach {0}", appStateName);
+
         if (sm != stateManager) {
             throw new IllegalArgumentException("wrong state manager");
         }
@@ -360,5 +381,19 @@ public class SimpleAppState implements AppState {
         if (!isEnabled()) {
             throw new IllegalStateException("should be enabled");
         }
+    }
+    // *************************************************************************
+    // Object methods    
+
+    /**
+     * Represent this app state as a text string.
+     *
+     * @return descriptive string of text (not null)
+     */
+    @Override
+    public String toString() {
+        String result = String.format("%s (%sinitialized, (%senabled)",
+                appStateName, initialized ? "" : "un", enabled ? "" : "not ");
+        return result;
     }
 }
