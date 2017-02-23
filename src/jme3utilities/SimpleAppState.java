@@ -245,10 +245,6 @@ public class SimpleAppState
     @Override
     public void stateAttached(AppStateManager sm) {
         Validate.nonNull(sm, "state manager");
-        if (isInitialized()) {
-            throw new IllegalStateException("should not be initialized yet");
-        }
-
         super.stateAttached(sm);
     }
 
