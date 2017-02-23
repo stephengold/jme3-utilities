@@ -54,10 +54,6 @@ class DefaultInputMode extends InputMode {
      * asset path to the cursor for this mode
      */
     final private static String assetPath = "Textures/cursors/default.cur";
-    /**
-     * short name for this mode
-     */
-    final public static String name = "default";
     // *************************************************************************
     // constructors
 
@@ -65,7 +61,7 @@ class DefaultInputMode extends InputMode {
      * Instantiate a disabled, uninitialized mode.
      */
     DefaultInputMode() {
-        super(name);
+        super("default");
     }
     // *************************************************************************
     // ActionListener methods
@@ -98,7 +94,8 @@ class DefaultInputMode extends InputMode {
     // InputMode methods
 
     /**
-     * Add hotkey bindings to mimic SimpleApplication.
+     * Add default hotkey bindings to mimic SimpleApplication. These bindings 
+     * will be used if no custom bindings are found.
      */
     @Override
     protected void defaultBindings() {

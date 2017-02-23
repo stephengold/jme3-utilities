@@ -98,8 +98,6 @@ public class PerformanceAppState extends SimpleAppState {
 
     /**
      * Instantiate a new enabled, uninitialized state.
-     *
-     * @param enabled true &rarr; enabled, false &rarr; disabled
      */
     public PerformanceAppState() {
         super(true);

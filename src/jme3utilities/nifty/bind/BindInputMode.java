@@ -64,8 +64,7 @@ public class BindInputMode extends InputMode {
     // constructors
 
     /**
-     * Instantiate a disabled mode. After instantiation, the first method
-     * invoked should be initialize().
+     * Instantiate a disabled, uninitialized mode.
      *
      * @param screen corresponding screen (not null)
      */
@@ -92,7 +91,7 @@ public class BindInputMode extends InputMode {
     // InputMode methods
 
     /**
-     * Add the hotkey bindings.
+     * Add the default hotkey bindings.
      */
     @Override
     protected void defaultBindings() {
