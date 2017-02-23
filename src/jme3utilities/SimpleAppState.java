@@ -392,7 +392,7 @@ public class SimpleAppState implements AppState {
      */
     @Override
     public String toString() {
-        String result = String.format("%s (%sinitialized, (%senabled)",
+        String result = String.format("%s (%sinitialized, %senabled)",
                 appStateName, initialized ? "" : "un", enabled ? "" : "not ");
         return result;
     }
