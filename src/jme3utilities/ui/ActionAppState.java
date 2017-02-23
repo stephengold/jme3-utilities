@@ -33,8 +33,6 @@ import jme3utilities.SimpleAppState;
 /**
  * Simple app state with protected fields analogous to the private fields of
  * ActionApplication.
- * <p>
- * Each instance is enabled at creation.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -62,12 +60,12 @@ public class ActionAppState extends SimpleAppState {
     // constructor
 
     /**
-     * Instantiate a new enabled, uninitialized state.
+     * Instantiate an uninitialized state.
      *
      * @param enabled true &rarr; enabled, false &rarr; disabled
      */
-    public ActionAppState() {
-        super(true);
+    public ActionAppState(boolean enabled) {
+        super(enabled);
     }
     // *************************************************************************
     // SimpleAppState methods

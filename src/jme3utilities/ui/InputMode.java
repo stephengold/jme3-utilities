@@ -65,6 +65,8 @@ import jme3utilities.Validate;
  * of "signal " followed by the name of the signal. In that case, a space and
  * decimal hotkey code are appended to the action name generate a unique action
  * string for each signal source.
+ * <p>
+ * Each instance is disabled at creation.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -81,7 +83,7 @@ abstract public class InputMode
             InputMode.class.getName());
     // *************************************************************************
     // fields
-
+    
     /**
      * list of initialized modes
      */
@@ -126,9 +128,9 @@ abstract public class InputMode
      * @param shortName terse name for the mode (not null)
      */
     public InputMode(String shortName) {
+        super(false);
         Validate.nonNull(shortName, "name");
         this.shortName = shortName;
-        super.setEnabled(false);
     }
     // *************************************************************************
     // new methods exposed
@@ -325,7 +327,7 @@ abstract public class InputMode
                     "Output exception while saving hotkey bindings to {0}!",
                     MyString.quote(path));
             throw new RuntimeException(exception);
-            
+
         } finally {
             if (stream != null) {
                 try {
@@ -570,7 +572,7 @@ abstract public class InputMode
         try {
             stream = new FileInputStream(filePath);
             loadBindings(stream);
-            
+
         } finally {
             if (stream != null) {
                 stream.close();

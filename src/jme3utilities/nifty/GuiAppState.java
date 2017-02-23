@@ -40,8 +40,7 @@ import jme3utilities.ui.ActionAppState;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class GuiAppState
-        extends ActionAppState {
+public class GuiAppState extends ActionAppState {
     // *************************************************************************
     // constants
 
@@ -65,6 +64,15 @@ public class GuiAppState
      * Nifty display: set by initialize()
      */
     protected NiftyJmeDisplay niftyDisplay;
+    // *************************************************************************
+    // constructor
+    
+    /**
+     * Instantiate an enabled, uninitialized state.
+     */
+    public GuiAppState() {
+        super(true);
+    }
     // *************************************************************************
     // ActionAppState methods
 
