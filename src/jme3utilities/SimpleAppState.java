@@ -210,30 +210,34 @@ public class SimpleAppState
     }
 
     /**
-     * Callback on each update after all rendering is complete.
+     * Callback during each render pass after all rendering is complete.
      */
     @Override
     public void postRender() {
         if (!isInitialized()) {
             throw new IllegalStateException("should be initialized");
         }
-
+        if (!isEnabled()) {
+            throw new IllegalStateException("should be enabled");
+        }
         super.postRender();
     }
 
     /**
-     * Callback to perform rendering for this app state on each update.
+     * Callback to perform rendering for this state during each render pass.
      *
      * @param rm application's render manager (not null)
      */
     @Override
     public void render(RenderManager rm) {
-        Validate.nonNull(rm, "render manager");
+        if (rm != renderManager) {
+            throw new IllegalArgumentException("wrong render manager");
+        }
         if (!isInitialized()) {
             throw new IllegalStateException("should be initialized");
         }
-        if (rm != renderManager) {
-            throw new IllegalArgumentException("wrong render manager");
+        if (!isEnabled()) {
+            throw new IllegalStateException("should be enabled");
         }
 
         super.render(rm);
