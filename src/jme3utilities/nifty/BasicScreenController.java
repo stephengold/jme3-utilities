@@ -42,6 +42,8 @@ import jme3utilities.Validate;
 /**
  * GUI app state to control a Nifty screen. A screen is displayed if and only if
  * its app state is enabled. At most one screen is displayed at a time.
+ * <p>
+ * Each instance is disabled at creation.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -58,7 +60,7 @@ public class BasicScreenController
             BasicScreenController.class.getName());
     // *************************************************************************
     // fields
-
+    
     /**
      * action listener for GUI actions from the screen
      */
@@ -84,7 +86,8 @@ public class BasicScreenController
     // constructors
 
     /**
-     * Instantiate a disabled screen for an identified screen id and layout.
+     * Instantiate an uninitialized, disabled screen for the specified screen 
+     * id and layout.
      *
      * @param screenId Nifty id (not null)
      * @param xmlAssetPath path to the Nifty XML layout asset (not null)
@@ -93,14 +96,13 @@ public class BasicScreenController
      */
     public BasicScreenController(String screenId, String xmlAssetPath,
             boolean enableDuringInitialization) {
+        super(false);
         Validate.nonNull(screenId, "screen id");
         Validate.nonNull(xmlAssetPath, "path");
 
         this.screenId = screenId;
         this.xmlAssetPath = xmlAssetPath;
         this.enableDuringInitialization = enableDuringInitialization;
-
-        super.setEnabled(false);
 
         assert !isInitialized();
         assert !isEnabled();
@@ -177,7 +179,7 @@ public class BasicScreenController
         listener = newListener;
     }
     // *************************************************************************
-    // AbstractAppState methods
+    // SimpleAppState methods
 
     /**
      * Enable or disable this screen.
@@ -284,7 +286,7 @@ public class BasicScreenController
 
     /**
      * Test whether Nifty has started the screen yet. As long as the screen has
-     * not started, Nifty events sent to it should be ignored.
+     * not started, Nifty events should be ignored.
      *
      * @return true if started, false if not started yet
      */
