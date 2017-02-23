@@ -36,12 +36,19 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
  * An app state with protected fields analogous to those of
  * {@link com.jme3.app.SimpleApplication}. If any of these fields change, these
  * states should be notified by invoking {@link #refreshCachedFields()}.
+ * <p>
+ * A simple app state can influence other app states. Enabling a disabled simple
+ * app state causes all the states influenced by it to get enabled. Likewise,
+ * disabling an enabled simple app state disables any states it influences.
+ * Influence may be mutual or one-way.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -87,6 +94,10 @@ public class SimpleAppState implements AppState {
      */
     protected InputManager inputManager;
     /**
+     * app states influenced by this one (not null)
+     */
+    final private List<AppState> influenceList = new ArrayList<>(2);
+    /**
      * root node of GUI scene graph: set by initialize()
      */
     protected Node guiNode;
@@ -125,6 +136,34 @@ public class SimpleAppState implements AppState {
     // new methods exposed
 
     /**
+     * Test whether this state influences the specified state.
+     *
+     * @param appState state to test
+     * @return true if influenced, false if not influenced
+     */
+    public boolean hasInfluenceOver(AppState appState) {
+        boolean result = influenceList.contains(appState);
+        return result;
+    }
+
+    /**
+     * Cause this state to influence the specified state.
+     *
+     * @param appState (not null, not this)
+     */
+    final public void influence(AppState appState) {
+        Validate.nonNull(appState, "app state");
+        if (appState == this) {
+            throw new IllegalArgumentException("self-influence not allowed");
+        }
+        if (appState.isEnabled() != isEnabled()) {
+            logger.warning("influenced state is out-of-synch");
+        }
+
+        influenceList.add(appState);
+    }
+
+    /**
      * Update cached references to match the application.
      */
     public void refreshCachedFields() {
@@ -157,6 +196,15 @@ public class SimpleAppState implements AppState {
 
         viewPort = simpleApplication.getViewPort();
         assert viewPort != null;
+    }
+
+    /**
+     * Remove any influence this state has over the specified state.
+     *
+     * @param appState which state to stop influencing
+     */
+    public void stopInfluencing(AppState appState) {
+        influenceList.remove(appState);
     }
     // *************************************************************************
     // AppState methods
@@ -261,7 +309,17 @@ public class SimpleAppState implements AppState {
      */
     @Override
     public void setEnabled(boolean newSetting) {
+        boolean oldSetting = isEnabled();
         enabled = newSetting;
+
+        if (oldSetting != newSetting) {
+            /*
+             * Exert influence over other app states.
+             */
+            for (AppState as : influenceList) {
+                as.setEnabled(newSetting);
+            }
+        }
     }
 
     /**
