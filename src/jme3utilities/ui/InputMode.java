@@ -307,7 +307,7 @@ abstract public class InputMode
      * Save all hotkey bindings to the properties file.
      */
     public void saveBindings() {
-        assert initialized;
+        assert isInitialized();
 
         if (customBindingsFileName == null) {
             logger.log(Level.WARNING, "bindings not saved: file name not set");
@@ -362,7 +362,7 @@ abstract public class InputMode
      * @param hotkey (not null)
      */
     public void unbind(Hotkey hotkey) {
-        assert initialized;
+        assert isInitialized();
 
         String hotkeyName = hotkey.name();
         if (hotkeyBindings.containsKey(hotkeyName)) {

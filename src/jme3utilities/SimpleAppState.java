@@ -76,7 +76,7 @@ public class SimpleAppState implements AppState {
     /**
      * true &rarr; initialized, false &rarr; uninitialized
      */
-    public boolean initialized = false;
+    private boolean initialized = false;
     /**
      * default camera for rendering: set by initialize()
      */
