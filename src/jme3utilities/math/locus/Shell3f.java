@@ -687,6 +687,7 @@ public class Shell3f implements Locus3f {
         Validate.fraction(cosineTolerance, "cosine tolerance");
         throw new UnsupportedOperationException(); // TODO
     }
+    // *************************************************************************
     // Object methods    
 
     /**
