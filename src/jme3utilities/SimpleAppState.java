@@ -39,8 +39,10 @@ import com.jme3.scene.Node;
 import java.util.logging.Logger;
 
 /**
- * App state with protected fields analogous to those of SimpleApplication. It
- * also validates parameters of its public methods.
+ * An app state with protected fields analogous to those of
+ * {@link com.jme3.app.SimpleApplication}. If any of these fields change, these
+ * states should be notified by invoking {@link #refreshCachedFields()}.
+
  * <p>
  * Each instance is enabled at creation.
  *
@@ -104,6 +106,44 @@ public class SimpleAppState
      */
     protected ViewPort viewPort;
     // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Update cached references to match the application.
+     */
+    public void refreshCachedFields() {
+        stateManager = simpleApplication.getStateManager();
+        assert stateManager != null;
+
+        assetManager = simpleApplication.getAssetManager();
+        assert assetManager != null;
+
+        cam = simpleApplication.getCamera();
+        assert cam != null;
+
+        flyCam = simpleApplication.getFlyByCamera();
+        assert flyCam != null;
+
+        inputManager = simpleApplication.getInputManager();
+        assert inputManager != null;
+
+        guiNode = simpleApplication.getGuiNode();
+        assert guiNode != null;
+
+        rootNode = simpleApplication.getRootNode();
+        assert rootNode != null;
+
+        renderManager = simpleApplication.getRenderManager();
+        assert renderManager != null;
+
+        guiViewPort = simpleApplication.getGuiViewPort();
+        assert guiViewPort != null;
+
+        viewPort = simpleApplication.getViewPort();
+        assert viewPort != null;
+    }
+
+    // *************************************************************************
     // AbstractAppState methods
 
     /**
@@ -142,34 +182,7 @@ public class SimpleAppState
         if (sm != simpleApplication.getStateManager()) {
             throw new IllegalArgumentException("wrong state manager");
         }
-        stateManager = sm;
-
-        assetManager = simpleApplication.getAssetManager();
-        assert assetManager != null;
-
-        cam = simpleApplication.getCamera();
-        assert cam != null;
-
-        flyCam = simpleApplication.getFlyByCamera();
-        assert flyCam != null;
-
-        inputManager = simpleApplication.getInputManager();
-        assert inputManager != null;
-
-        guiNode = simpleApplication.getGuiNode();
-        assert guiNode != null;
-
-        rootNode = simpleApplication.getRootNode();
-        assert rootNode != null;
-
-        renderManager = simpleApplication.getRenderManager();
-        assert renderManager != null;
-
-        guiViewPort = simpleApplication.getGuiViewPort();
-        assert guiViewPort != null;
-
-        viewPort = simpleApplication.getViewPort();
-        assert viewPort != null;
+        refreshCachedFields();
 
         assert isInitialized();
     }
