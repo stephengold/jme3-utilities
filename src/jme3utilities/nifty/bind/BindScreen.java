@@ -317,17 +317,6 @@ public class BindScreen
         inputMode.initialize(stateManager, application);
         super.initialize(stateManager, application);
     }
-
-    /**
-     * Alter the visibility of this screen.
-     *
-     * @param newState if true, make this screen visible; if false, hide it
-     */
-    @Override
-    public void setEnabled(boolean newState) {
-        inputMode.setEnabled(newState);
-        super.setEnabled(newState);
-    }
     // *************************************************************************
     // private methods
 
