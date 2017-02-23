@@ -98,7 +98,7 @@ public class BasicScreenController
             boolean enableDuringInitialization) {
         super(false);
         Validate.nonNull(screenId, "screen id");
-        Validate.nonNull(xmlAssetPath, "path");
+        Validate.nonNull(xmlAssetPath, "asset path");
 
         this.screenId = screenId;
         this.xmlAssetPath = xmlAssetPath;
@@ -173,9 +173,8 @@ public class BasicScreenController
      *
      * @param newListener (not null)
      */
-    public void setListener(ActionListener newListener) {
+    final public void setListener(ActionListener newListener) {
         Validate.nonNull(newListener, "listener");
-
         listener = newListener;
     }
     // *************************************************************************
@@ -184,24 +183,24 @@ public class BasicScreenController
     /**
      * Enable or disable this screen.
      *
-     * @param newState true to enable, false to disable
+     * @param newSetting true &rarr; enable, false &rarr; disable
      */
     @Override
-    public void setEnabled(boolean newState) {
+    public void setEnabled(boolean newSetting) {
         if (!isInitialized()) {
             /*
              * Defer until initialization.
              */
-            enableDuringInitialization = newState;
+            enableDuringInitialization = newSetting;
             return;
         }
         if (listener == null) {
             throw new IllegalStateException("listener should be set");
         }
 
-        if (newState && !isEnabled()) {
+        if (newSetting && !isEnabled()) {
             enable();
-        } else if (!newState && isEnabled()) {
+        } else if (!newSetting && isEnabled()) {
             disable();
         }
     }
@@ -222,7 +221,7 @@ public class BasicScreenController
         nifty.registerScreenController(this);
         validateAndLoad();
         if (enableDuringInitialization) {
-            setEnabled(true);
+            enable();
         }
 
         assert isInitialized();
