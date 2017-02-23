@@ -188,23 +188,25 @@ public class SimpleAppState
     }
 
     /**
-     * Test whether this app state is initialized.
-     *
-     * @return true if initialized, otherwise false
-     */
-    @Override
-    final public boolean isInitialized() {
-        return initialized;
-    }
-
-    /**
-     * Test whether this app state is enabled.
+     * Test whether this app state is enabled. Declared final here to prevent
+     * subclasses from overriding it.
      *
      * @return true if enabled, otherwise false
      */
     @Override
     final public boolean isEnabled() {
         return super.isEnabled();
+    }
+
+    /**
+     * Test whether this app state is initialized. Declared final here to
+     * prevent subclasses from overriding it.
+     *
+     * @return true if initialized, otherwise false
+     */
+    @Override
+    final public boolean isInitialized() {
+        return initialized;
     }
 
     /**
