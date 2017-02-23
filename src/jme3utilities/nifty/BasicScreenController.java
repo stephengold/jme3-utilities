@@ -69,7 +69,7 @@ public class BasicScreenController
      * if true, enable this screen controller during initialization; if false,
      * leave it disabled: set by constructor
      */
-    final private boolean enableDuringInitialization;
+    private boolean enableDuringInitialization;
     /**
      * false before this screen controller starts, then true ever after
      */
@@ -173,9 +173,8 @@ public class BasicScreenController
      *
      * @param newListener (not null)
      */
-    public void setListener(ActionListener newListener) {
+    final public void setListener(ActionListener newListener) {
         Validate.nonNull(newListener, "listener");
-
         listener = newListener;
     }
     // *************************************************************************
@@ -184,17 +183,24 @@ public class BasicScreenController
     /**
      * Enable or disable this screen.
      *
-     * @param newState true to enable, false to disable
+     * @param newSetting true &rarr; enable, false &rarr; disable
      */
     @Override
-    public void setEnabled(boolean newState) {
+    public void setEnabled(boolean newSetting) {
+        if (!isInitialized()) {
+            /*
+             * Defer until initialization.
+             */
+            enableDuringInitialization = newSetting;
+            return;
+        }
         if (listener == null) {
             throw new IllegalStateException("listener should be set");
         }
         
-        if (newState && !isEnabled()) {
+        if (newSetting && !isEnabled()) {
             enable();
-        } else if (!newState && isEnabled()) {
+        } else if (!newSetting && isEnabled()) {
             disable();
         }
     }
@@ -215,7 +221,7 @@ public class BasicScreenController
         nifty.registerScreenController(this);
         validateAndLoad();
         if (enableDuringInitialization) {
-            setEnabled(true);
+            enable();
         }
 
         assert isInitialized();
@@ -286,7 +292,7 @@ public class BasicScreenController
 
     /**
      * Test whether Nifty has started the screen yet. As long as the screen has
-     * not started, Nifty events sent to it should be ignored.
+     * not started, Nifty events should be ignored.
      *
      * @return true if started, false if not started yet
      */
