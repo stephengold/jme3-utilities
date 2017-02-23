@@ -31,7 +31,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
-import jme3utilities.SimpleAppState;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.MessageDisplay;
 import jme3utilities.nifty.bind.BindScreen;
@@ -148,7 +147,7 @@ public class TestBindScreen extends GuiApplication {
         /*
          * Create and attach the starfield animation.
          */
-        starfield = new StarfieldState(true, numObjects,
+        starfield = new StarfieldState(false, numObjects,
                 "Textures/skies/star-maps");
         boolean success = stateManager.attach(starfield);
         assert success;
@@ -160,6 +159,12 @@ public class TestBindScreen extends GuiApplication {
         success = stateManager.attach(messageHud);
         assert success;
         messageHud.addLine("Press the H key to view/edit hotkey bindings.");
+        /*
+         * The (default) input mode should influence the animation and HUD.
+         */
+        InputMode mode = getDefaultInputMode();
+        mode.influence(starfield);
+        mode.influence(messageHud);
         /*
          * Attach a screen controller for the hotkey bindings editor.
          */
@@ -194,7 +199,6 @@ public class TestBindScreen extends GuiApplication {
                 messageHud.addLine("Hailing frequencies open.");
                 return;
             case asHelp:
-                messageHud.setEnabled(false);
                 InputMode thisMode = InputMode.getEnabledMode();
                 bindScreen.activate(thisMode);
                 return;

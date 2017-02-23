@@ -87,6 +87,8 @@ public class BindScreen
 
         inputMode = new BindInputMode(this);
         setListener(inputMode);
+        influence(inputMode);
+        inputMode.influence(this);
 
         assert !isEnabled();
         assert !isInitialized();
@@ -112,7 +114,7 @@ public class BindScreen
     }
 
     /**
-     * Deactivate this screen and return to the mode that was being edited.
+     * Deactivate this screen and return to the mode that was just edited.
      */
     void deactivate() {
         assert isEnabled();
