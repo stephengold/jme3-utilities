@@ -27,7 +27,7 @@ package jme3utilities;
 
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
-import com.jme3.app.state.AbstractAppState;
+import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.input.FlyByCamera;
@@ -48,8 +48,7 @@ import java.util.logging.Logger;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class SimpleAppState
-        extends AbstractAppState {
+public class SimpleAppState implements AppState {
     // *************************************************************************
     // constants
 
@@ -69,6 +68,15 @@ public class SimpleAppState
      * asset manager: set by initialize()
      */
     protected AssetManager assetManager;
+    /**
+     * true &rarr; enabled, false &rarr; disabled (set by constructor and
+     * {@link #setEnabled(boolean)})
+     */
+    private boolean enabled = true;
+    /**
+     * true &rarr; initialized, false &rarr; uninitialized
+     */
+    public boolean initialized = false;
     /**
      * default camera for rendering: set by initialize()
      */
@@ -155,7 +163,7 @@ public class SimpleAppState
             throw new IllegalStateException("should be initialized");
         }
 
-        super.cleanup();
+        initialized = false;
     }
 
     /**
@@ -169,14 +177,13 @@ public class SimpleAppState
         if (isInitialized()) {
             throw new IllegalStateException("already initialized");
         }
+        Validate.nonNull(sm, "state manager");
         if (!(app instanceof SimpleApplication)) {
             throw new IllegalArgumentException(
                     "application should be a SimpleApplication");
         }
-        Validate.nonNull(app, "application");
-        Validate.nonNull(sm, "state manager");
 
-        super.initialize(sm, app);
+        initialized = true;
 
         simpleApplication = (SimpleApplication) app;
         if (sm != simpleApplication.getStateManager()) {
@@ -195,7 +202,7 @@ public class SimpleAppState
      */
     @Override
     final public boolean isEnabled() {
-        return super.isEnabled();
+        return enabled;
     }
 
     /**
@@ -220,7 +227,6 @@ public class SimpleAppState
         if (!isEnabled()) {
             throw new IllegalStateException("should be enabled");
         }
-        super.postRender();
     }
 
     /**
@@ -239,8 +245,16 @@ public class SimpleAppState
         if (!isEnabled()) {
             throw new IllegalStateException("should be enabled");
         }
+    }
 
-        super.render(rm);
+    /**
+     * Enable or disable the functionality of this app state.
+     *
+     * @param newSetting true &rarr; enable, false &rarr; disable
+     */
+    @Override
+    public void setEnabled(boolean newSetting) {
+        enabled = newSetting;
     }
 
     /**
@@ -251,7 +265,6 @@ public class SimpleAppState
     @Override
     public void stateAttached(AppStateManager sm) {
         Validate.nonNull(sm, "state manager");
-        super.stateAttached(sm);
     }
 
     /**
@@ -261,15 +274,16 @@ public class SimpleAppState
      */
     @Override
     public void stateDetached(AppStateManager sm) {
-        Validate.nonNull(sm, "state manager");
-        super.stateDetached(sm);
+        if (sm != stateManager) {
+            throw new IllegalArgumentException("wrong state manager");
+        }
     }
 
     /**
-     * Callback to update this app state (if enabled) prior to rendering.
-     * (Invoked once per frame.)
+     * Callback to update this state prior to rendering. (Invoked once per
+     * render pass.)
      *
-     * @param elapsedTime time interval since previous frame/update (in seconds,
+     * @param elapsedTime time interval between render passes (in seconds,
      * &ge;0)
      */
     @Override
@@ -281,7 +295,5 @@ public class SimpleAppState
         if (!isEnabled()) {
             throw new IllegalStateException("should be enabled");
         }
-
-        super.update(elapsedTime);
     }
 }
