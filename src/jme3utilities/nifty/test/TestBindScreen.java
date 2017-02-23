@@ -27,30 +27,14 @@ package jme3utilities.nifty.test;
 
 import com.jme3.app.StatsAppState;
 import com.jme3.audio.openal.ALAudioRenderer;
-import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
-import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Sphere;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
-import jme3utilities.MyAsset;
-import jme3utilities.MySpatial;
 import jme3utilities.MyString;
-import jme3utilities.NameGenerator;
-import jme3utilities.math.MyMath;
-import jme3utilities.math.noise.Noise;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.MessageDisplay;
 import jme3utilities.nifty.bind.BindScreen;
-import jme3utilities.sky.DomeMesh;
 import jme3utilities.ui.InputMode;
 
 /**
@@ -91,41 +75,32 @@ public class TestBindScreen extends GuiApplication {
     final private static String asStopRotation = "stop rotation";
     final private static String asYawLeft = "yaw left";
     final private static String asYawRight = "yaw right";
+    /**
+     * axes of rotation
+     */
+    final private Vector3f pitchAxis = new Vector3f(1f, 0f, 0f);
+    final private Vector3f rollAxis = new Vector3f(0f, 0f, 1f);
+    final private Vector3f yawAxis = new Vector3f(0f, 1f, 0f);
     // *************************************************************************
     // fields
 
     /**
-     * hotkey bindings editor
+     * editor for hotkey bindings (set by guiInitializeApplication())
      */
     private BindScreen bindScreen;
     /**
-     * rate of movement in the direction the camera is pointed
+     * rate of movement in the direction the camera is pointed (arbitrary units,
+     * may be negative)
      */
-    private int warpFactor;
+    private int warpFactor = 0;
     /**
-     * rate of rotation (in radians/sec)
-     */
-    private float rotationRate;
-    /**
-     * distance from the origin to the edge of the object zone
-     */
-    private float zoneRadius;
-    /**
-     * heads-up display for messages
+     * heads-up display for messages (set by guiInitializeApplication())
      */
     private MessageDisplay messageHud;
     /**
-     * scene node for the backdrop
+     * app state to animate a field of stars (set by guiInitializeApplication())
      */
-    private Node backdrop;
-    /**
-     * scene node for objects
-     */
-    private Node objects;
-    /**
-     * axis about which the camera rotates
-     */
-    private Vector3f rotationAxis;
+    private StarfieldState starfield;
     // *************************************************************************
     // new methods exposed
 
@@ -169,87 +144,36 @@ public class TestBindScreen extends GuiApplication {
         sas.setDisplayFps(false);
         sas.setDisplayStatView(false);
         /*
-         * Relocate camera to origin.
-         */
-        cam.setLocation(new Vector3f(0f, 0f, 0f));
-        /*
-         * The objects zone extends halfway to the far 
-         * plane of the view frustrum.
-         */
-        zoneRadius = 0.5f * cam.getFrustumFar();
-        /*
-         * Initialize the scene graph.
-         */
-        initializeBackdrop();
-        initializeObjects();
-        /*
-         * Initialize motion:  stationary.
-         */
-        warpFactor = 0;
-        rotationRate = 0f;
-        rotationAxis = new Vector3f();
-        /*
-         * Initialize the input mode for playing the game.
+         * Initialize the (default) input mode for playing the game.
          */
         initializeBindings();
+        /*
+         * Create and attach the starfield animation.
+         */
+        starfield = new StarfieldState(false, numObjects,
+                "Textures/skies/star-maps");
+        boolean success = stateManager.attach(starfield);
+        assert success;
         /*
          * Attach a HUD for messages.
          */
         messageHud = new MessageDisplay();
         messageHud.setListener(this);
-        boolean success = stateManager.attach(messageHud);
+        success = stateManager.attach(messageHud);
         assert success;
         messageHud.addLine("Press the H key to view/edit hotkey bindings.");
+        /*
+         * The (default) input mode should influence the animation and HUD.
+         */
+        InputMode mode = getDefaultInputMode();
+        mode.influence(starfield);
+        mode.influence(messageHud);
         /*
          * Attach a screen controller for the hotkey bindings editor.
          */
         bindScreen = new BindScreen();
         success = stateManager.attach(bindScreen);
         assert success;
-    }
-
-    /**
-     * Callback invoked once per frame.
-     *
-     * @param updateInterval time interval between updates (in seconds, &ge;0)
-     */
-    @Override
-    public void simpleUpdate(float updateInterval) {
-        super.simpleUpdate(updateInterval);
-
-        if (rotationRate != 0f) {
-            /*
-             * Rotate the camera.
-             */
-            float angle = rotationRate * updateInterval;
-            Quaternion rotation = new Quaternion();
-            rotation.fromAngleNormalAxis(angle, rotationAxis);
-            Quaternion oldOrientation = cam.getRotation();
-            Quaternion newOrientation = oldOrientation.mult(rotation);
-            cam.setRotation(newOrientation);
-        }
-
-        if (warpFactor != 0) {
-            /*
-             * Create an illusion of forward motion by moving all the
-             * objects in the direction opposite where the camera is pointing.
-             * 
-             * Objects which leave the zone wrap around to the other side,
-             * giving the illusion of an inexhaustible set of objects.
-             */
-            float forwardSpeed = 0.1f * warpFactor * zoneRadius;
-            float distance = forwardSpeed * updateInterval;
-            Vector3f offset = cam.getDirection().mult(-distance);
-
-            for (Spatial object : objects.getChildren()) {
-                Vector3f location = MySpatial.getWorldLocation(object);
-                location.addLocal(offset);
-                location.x = wrapToZone(location.x);
-                location.y = wrapToZone(location.y);
-                location.z = wrapToZone(location.z);
-                MySpatial.setWorldLocation(object, location);
-            }
-        }
     }
 
     /**
@@ -272,14 +196,12 @@ public class TestBindScreen extends GuiApplication {
                 messageHud.addLine("Torpedos away!");
                 return;
             case asForward:
-                warpFactor++;
-                messageWarp();
+                setWarpFactor(warpFactor + 1);
                 return;
             case asHail:
                 messageHud.addLine("Hailing frequencies open.");
                 return;
             case asHelp:
-                messageHud.setEnabled(false);
                 InputMode thisMode = InputMode.getEnabledMode();
                 bindScreen.activate(thisMode);
                 return;
@@ -287,43 +209,35 @@ public class TestBindScreen extends GuiApplication {
                 messageHud.addLine("Shields are down.");
                 return;
             case asPitchDown:
-                rotationAxis.set(1f, 0f, 0f);
-                rotationRate = 0.2f;
+                starfield.setRotation(0.2f, pitchAxis);
                 return;
             case asPitchUp:
-                rotationAxis.set(1f, 0f, 0f);
-                rotationRate = -0.2f;
+                starfield.setRotation(-0.2f, pitchAxis);
                 return;
             case asRaiseShields:
                 messageHud.addLine("Shields up!");
                 return;
             case asReverse:
-                warpFactor--;
-                messageWarp();
+                setWarpFactor(warpFactor - 1);
                 return;
             case asRollLeft:
-                rotationAxis.set(0f, 0f, 1f);
-                rotationRate = 0.2f;
+                starfield.setRotation(0.2f, rollAxis);
                 return;
             case asRollRight:
-                rotationAxis.set(0f, 0f, 1f);
-                rotationRate = -0.2f;
+                starfield.setRotation(-0.2f, rollAxis);
                 return;
             case asStopAll:
-                rotationRate = 0f;
-                warpFactor = 0;
-                messageWarp();
+                starfield.setRotation(0f, yawAxis);
+                setWarpFactor(0);
                 return;
             case asStopRotation:
-                rotationRate = 0f;
+                starfield.setRotation(0f, yawAxis);
                 return;
             case asYawLeft:
-                rotationAxis.set(0f, 1f, 0f);
-                rotationRate = 0.2f;
+                starfield.setRotation(0.2f, yawAxis);
                 return;
             case asYawRight:
-                rotationAxis.set(0f, 1f, 0f);
-                rotationRate = -0.2f;
+                starfield.setRotation(-0.2f, yawAxis);
                 return;
         }
         /*
@@ -333,43 +247,6 @@ public class TestBindScreen extends GuiApplication {
     }
     // *************************************************************************
     // private methods
-
-    /**
-     * Create and attach the backdrop.
-     */
-    private void initializeBackdrop() {
-        backdrop = new Node("backdrop node");
-        backdrop.setQueueBucket(RenderQueue.Bucket.Sky);
-        rootNode.attachChild(backdrop);
-        /*
-         * The backdrop consists of two hemispherical dome geometries, one
-         * for northern stars and one for southern ones.
-         */
-        Mesh hemisphere = new DomeMesh(60, 16);
-        Geometry northDome = new Geometry("north", hemisphere);
-        Material north = MyAsset.createUnshadedMaterial(
-                assetManager, "Textures/skies/star-maps/northern.png");
-        northDome.setMaterial(north);
-        backdrop.attachChild(northDome);
-
-        Geometry southDome = new Geometry("south", hemisphere);
-        Material south = MyAsset.createUnshadedMaterial(
-                assetManager, "Textures/skies/star-maps/southern.png");
-        southDome.setMaterial(south);
-        backdrop.attachChild(southDome);
-
-        Quaternion z180 = new Quaternion();
-        z180.fromAngleNormalAxis(FastMath.PI, new Vector3f(0f, 0f, 1f));
-        MySpatial.setWorldOrientation(southDome, z180);
-        /*
-         * Scale the backdrop so its furthest geometries are midway
-         * between the near and far planes of the view frustum.
-         */
-        float far = cam.getFrustumFar();
-        float near = cam.getFrustumNear();
-        float radius = (near + far) / 2f;
-        MySpatial.setWorldScale(backdrop, radius);
-    }
 
     /**
      * Add action strings and hotkey bindings to the default input mode.
@@ -400,37 +277,7 @@ public class TestBindScreen extends GuiApplication {
     }
 
     /**
-     * Create and attach moving objects.
-     */
-    private void initializeObjects() {
-        objects = new Node("objects node");
-        rootNode.attachChild(objects);
-        /*
-         * The moving objects are small white spheres, distributed randomly 
-         * trhoughout a cubical zone centered on the origin
-         */
-        NameGenerator names = new NameGenerator();
-        Material white = MyAsset.createUnshadedMaterial(
-                assetManager, new ColorRGBA(1f, 1f, 1f, 1f));
-        float objectRadius = 0.01f * zoneRadius
-                / MyMath.cubeRoot((float) numObjects);
-        Mesh sphere = new Sphere(3, 10, objectRadius);
-
-        for (int i = 0; i < numObjects; i++) {
-            String name = names.unique("obj");
-            Geometry object = new Geometry(name, sphere);
-            object.setMaterial(white);
-            objects.attachChild(object);
-            float x = zoneRadius * (2f * Noise.nextFloat() - 1f);
-            float y = zoneRadius * (2f * Noise.nextFloat() - 1f);
-            float z = zoneRadius * (2f * Noise.nextFloat() - 1f);
-            Vector3f location = new Vector3f(x, y, z);
-            MySpatial.setWorldLocation(object, location);
-        }
-    }
-
-    /**
-     * Add a message to the HUD about how fast we're going.
+     * Display a message in the HUD about how fast we're going.
      */
     private void messageWarp() {
         String line;
@@ -445,20 +292,19 @@ public class TestBindScreen extends GuiApplication {
     }
 
     /**
-     * Wrap an object coordinate to {-zoneRadius, +zoneRadius} in order to keep
-     * it in a cubical zone centered on the origin.
+     * Set a new warp factor and direction.
      *
-     * @param input object coordinate
-     * @return wrapped coordinate
+     * @param newWarpFactor input value
      */
-    private float wrapToZone(float coordinate) {
-        if (Math.abs(coordinate) <= zoneRadius) {
-            return coordinate;
+    private void setWarpFactor(int newWarpFactor) {
+        if (newWarpFactor == warpFactor) {
+            return;
         }
-        float result = MyMath.modulo(coordinate + zoneRadius, 2f * zoneRadius)
-                - zoneRadius;
 
-        assert Math.abs(result) <= zoneRadius : result;
-        return result;
+        warpFactor = newWarpFactor;
+        messageWarp();
+        float zoneRadius = starfield.getZoneRadius();
+        float forwardVelocity = 0.1f * warpFactor * zoneRadius;
+        starfield.setForwardVelocity(forwardVelocity);
     }
 }
