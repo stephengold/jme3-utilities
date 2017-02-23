@@ -69,7 +69,7 @@ public class BasicScreenController
      * if true, enable this screen controller during initialization; if false,
      * leave it disabled: set by constructor
      */
-    final private boolean enableDuringInitialization;
+    private boolean enableDuringInitialization;
     /**
      * false before this screen controller starts, then true ever after
      */
@@ -188,6 +188,13 @@ public class BasicScreenController
      */
     @Override
     public void setEnabled(boolean newState) {
+        if (!isInitialized()) {
+            /*
+             * Defer until initialization.
+             */
+            enableDuringInitialization = newState;
+            return;
+        }
         if (listener == null) {
             throw new IllegalStateException("listener should be set");
         }
