@@ -42,9 +42,6 @@ import java.util.logging.Logger;
  * An app state with protected fields analogous to those of
  * {@link com.jme3.app.SimpleApplication}. If any of these fields change, these
  * states should be notified by invoking {@link #refreshCachedFields()}.
-
- * <p>
- * Each instance is enabled at creation.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -59,7 +56,7 @@ public class SimpleAppState implements AppState {
             SimpleAppState.class.getName());
     // *************************************************************************
     // fields
-
+    
     /**
      * app state manager: set by initialize()
      */
@@ -72,7 +69,7 @@ public class SimpleAppState implements AppState {
      * true &rarr; enabled, false &rarr; disabled (set by constructor and
      * {@link #setEnabled(boolean)})
      */
-    private boolean enabled = true;
+    private boolean enabled;
     /**
      * true &rarr; initialized, false &rarr; uninitialized
      */
@@ -114,6 +111,17 @@ public class SimpleAppState implements AppState {
      */
     protected ViewPort viewPort;
     // *************************************************************************
+    // constructor
+
+    /**
+     * Instantiate an uninitialized state.
+     *
+     * @param enabled true &rarr; enabled, false &rarr; disabled
+     */
+    public SimpleAppState(boolean enabled) {
+        this.enabled = enabled;
+    }
+    // *************************************************************************
     // new methods exposed
 
     /**
@@ -150,9 +158,8 @@ public class SimpleAppState implements AppState {
         viewPort = simpleApplication.getViewPort();
         assert viewPort != null;
     }
-
     // *************************************************************************
-    // AbstractAppState methods
+    // AppState methods
 
     /**
      * Clean up this app state on the 1st update after it gets detached.

@@ -31,6 +31,8 @@ import jme3utilities.math.MyMath;
 
 /**
  * Simple app state to simulate the time of day in a game.
+ * <p>
+ * Each instance is enabled at creation.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -65,7 +67,7 @@ public class TimeOfDay extends SimpleAppState {
             TimeOfDay.class.getName());
     // *************************************************************************
     // fields
-
+    
     /**
      * simulated time of day (seconds since midnight, &lt;86400, &ge;0)
      * <p>
@@ -81,11 +83,13 @@ public class TimeOfDay extends SimpleAppState {
     // constructors
 
     /**
-     * Instantiate a new simulation clock, specifying the start time.
+     * Instantiate a new enabled, uninitialized simulation clock, specifying the
+     * start time.
      *
      * @param startHour hours since midnight (&lt;24, &ge;0)
      */
     public TimeOfDay(float startHour) {
+        super(true);
         if (!(startHour >= 0f && startHour < hoursPerDay)) {
             logger.log(Level.SEVERE, "startHour={0}", startHour);
             throw new IllegalArgumentException(

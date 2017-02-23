@@ -48,8 +48,7 @@ import jme3utilities.SimpleAppState;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class PerformanceAppState
-        extends SimpleAppState {
+public class PerformanceAppState extends SimpleAppState {
     // *************************************************************************
     // constants
 
@@ -94,6 +93,17 @@ public class PerformanceAppState
      * background for statistics text: set by initialize()
      */
     private Geometry background;
+    // *************************************************************************
+    // constructor
+
+    /**
+     * Instantiate a new enabled, uninitialized state.
+     *
+     * @param enabled true &rarr; enabled, false &rarr; disabled
+     */
+    public PerformanceAppState() {
+        super(true);
+    }
     // *************************************************************************
     // SimpleAppState methods
 

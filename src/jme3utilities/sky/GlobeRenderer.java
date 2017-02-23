@@ -56,11 +56,12 @@ import jme3utilities.math.MyMath;
 /**
  * Simple app state to generate a dynamic texture for an object by rendering an
  * off-screen globe. Each instance has its own camera and root node.
+ * <p>
+ * Each instance is enabled at creation.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class GlobeRenderer
-        extends SimpleAppState {
+public class GlobeRenderer extends SimpleAppState {
     // *************************************************************************
     // constants
 
@@ -144,8 +145,8 @@ public class GlobeRenderer
     // constructors
 
     /**
-     * Instantiate an enabled renderer with the specified resolution and globe
-     * material.
+     * Instantiate a new enabled, uninitialized renderer with the specified
+     * resolution and globe material.
      *
      * @param globeMaterial suitable for equirectangular projection (not null)
      * @param outputFormat (not null, ABGR8 &rarr; color, Luminance8Alpha8
@@ -156,6 +157,7 @@ public class GlobeRenderer
      */
     public GlobeRenderer(Material globeMaterial, Image.Format outputFormat,
             int equatorSamples, int meridianSamples, int resolution) {
+        super(true);
         Validate.nonNull(globeMaterial, "material");
         Validate.nonNull(outputFormat, "format");
         Validate.inRange(equatorSamples, "equator samples",

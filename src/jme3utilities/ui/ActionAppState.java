@@ -38,8 +38,7 @@ import jme3utilities.SimpleAppState;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class ActionAppState
-        extends SimpleAppState {
+public class ActionAppState extends SimpleAppState {
     // *************************************************************************
     // constants
 
@@ -50,7 +49,7 @@ public class ActionAppState
             ActionAppState.class.getName());
     // *************************************************************************
     // fields
-
+    
     /**
      * action application instance: set by initialize()
      */
@@ -59,6 +58,17 @@ public class ActionAppState
      * signal tracker: set by initialize()
      */
     protected Signals signals = null;
+    // *************************************************************************
+    // constructor
+
+    /**
+     * Instantiate a new enabled, uninitialized state.
+     *
+     * @param enabled true &rarr; enabled, false &rarr; disabled
+     */
+    public ActionAppState() {
+        super(true);
+    }
     // *************************************************************************
     // SimpleAppState methods
 
