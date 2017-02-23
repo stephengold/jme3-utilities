@@ -50,8 +50,6 @@ import java.util.logging.Logger;
  * app state causes all the states influenced by it to get enabled. Likewise,
  * disabling an enabled simple app state disables any states it influences.
  * Influence may be mutual or one-way.
- * <p>
- * Each instance is enabled at creation.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -76,10 +74,10 @@ public class SimpleAppState implements AppState {
      */
     protected AssetManager assetManager;
     /**
-     * true &rarr; enabled, false &rarr; disabled (set by
+     * true &rarr; enabled, false &rarr; disabled (set by constructor and
      * {@link #setEnabled(boolean)})
      */
-    private boolean enabled = true;
+    private boolean enabled;
     /**
      * true &rarr; initialized, false &rarr; uninitialized
      */
@@ -136,11 +134,14 @@ public class SimpleAppState implements AppState {
     // constructor
 
     /**
-     * Instantiate an enabled, uninitialized state with a unique name.
+     * Instantiate an uninitialized state with a unique name.
+     *
+     * @param enabled true &rarr; enabled, false &rarr; disabled
      */
-    public SimpleAppState() {
+    public SimpleAppState(boolean enabled) {
         String className = getClass().getSimpleName();
         appStateName = nameGenerator.unique(className);
+        this.enabled = enabled;
     }
     // *************************************************************************
     // new methods exposed

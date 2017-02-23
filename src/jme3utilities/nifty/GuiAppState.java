@@ -35,13 +35,10 @@ import jme3utilities.ui.ActionAppState;
 /**
  * Action app state with protected fields analogous to the private fields of
  * GuiApplication.
- * <p>
- * Each instance is enabled at creation.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class GuiAppState
-        extends ActionAppState {
+public class GuiAppState extends ActionAppState {
     // *************************************************************************
     // constants
 
@@ -65,6 +62,17 @@ public class GuiAppState
      * Nifty display: set by initialize()
      */
     protected NiftyJmeDisplay niftyDisplay;
+    // *************************************************************************
+    // constructor
+
+    /**
+     * Instantiate an uninitialized state.
+     *
+     * @param enabled true &rarr; enabled, false &rarr; disabled
+     */
+    public GuiAppState(boolean enabled) {
+        super(enabled);
+    }
     // *************************************************************************
     // ActionAppState methods
 
