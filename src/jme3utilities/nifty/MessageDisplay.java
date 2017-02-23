@@ -76,7 +76,7 @@ public class MessageDisplay extends GuiScreenController {
     public void addLine(String line) {
         Validate.nonNull(line, "line");
 
-        if (!initialized) {
+        if (!isInitialized()) {
             /*
              * Can't access the listbox yet, so add the line to the backlog.
              */
@@ -113,7 +113,7 @@ public class MessageDisplay extends GuiScreenController {
     public void initialize(AppStateManager stateManager,
             Application application) {
         super.initialize(stateManager, application);
-        assert initialized;
+        assert isInitialized();
         /*
          * Process any backlog.
          */

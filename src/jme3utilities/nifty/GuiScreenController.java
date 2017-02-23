@@ -43,13 +43,12 @@ import jme3utilities.Validate;
 import jme3utilities.ui.InputMode;
 
 /**
- * Basic screen controller which supports Nifty controls such as checkboxes,
- * popup menus, radio buttons, sliders, and dynamic labels.
+ * Basic screen controller with extra support for Nifty controls such as
+ * checkboxes, popup menus, radio buttons, sliders, and dynamic labels.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class GuiScreenController
-        extends BasicScreenController {
+public class GuiScreenController extends BasicScreenController {
     // *************************************************************************
     // constants
 
