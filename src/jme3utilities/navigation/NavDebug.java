@@ -117,6 +117,36 @@ public class NavDebug {
     }
 
     /**
+     * Add balls and sticks to visualize the vertices and arcs of a navigation
+     * graph.
+     *
+     * @param graph graph to visualize (not null)
+     * @param parentNode where in the scene to attach geometries (not null)
+     * @param ballRadius radius of each ball (in world units, &ge;0)
+     * @param ballMaterial material for geometries that represent navigation
+     * vertices (not null)
+     * @param stickRadius radius of each stick (in world units, &ge;0)
+     * @param stickMaterial material for geometries that represent navigation
+     * arcs (not null)
+     */
+    public static void addBallsAndSticks(NavGraph graph, Node parentNode,
+            float ballRadius, float stickRadius, Material ballMaterial,
+            Material stickMaterial) {
+        Validate.nonNull(parentNode, "parent node");
+        Validate.nonNegative(ballRadius, "ball radius");
+        Validate.nonNull(ballMaterial, "ball material");
+        Validate.nonNegative(stickRadius, "stick radius");
+        Validate.nonNull(stickMaterial, "stick material");
+
+        if (ballRadius > 0f) {
+            addBalls(graph, parentNode, ballRadius, ballMaterial);
+        }
+        if (stickRadius > 0f) {
+            addSticks(graph, parentNode, stickRadius, stickMaterial);
+        }
+    }
+
+    /**
      * Add loops to visualize the locus of each vertex in a navigation graph.
      *
      * @param graph graph to visualize (not null)
@@ -174,36 +204,6 @@ public class NavDebug {
         ball.setMaterial(material);
 
         return ball;
-    }
-
-    /**
-     * Add balls and sticks to visualize the vertices and arcs of a navigation
-     * graph. TODO rename
-     *
-     * @param graph graph to visualize (not null)
-     * @param parentNode where in the scene to attach geometries (not null)
-     * @param ballRadius radius of each ball (in world units, &ge;0)
-     * @param ballMaterial material for geometries that represent navigation
-     * vertices (not null)
-     * @param stickRadius radius of each stick (in world units, &ge;0)
-     * @param stickMaterial material for geometries that represent navigation
-     * arcs (not null)
-     */
-    public static void makeBallsAndSticks(NavGraph graph, Node parentNode,
-            float ballRadius, float stickRadius, Material ballMaterial,
-            Material stickMaterial) {
-        Validate.nonNull(parentNode, "parent node");
-        Validate.nonNegative(ballRadius, "ball radius");
-        Validate.nonNull(ballMaterial, "ball material");
-        Validate.nonNegative(stickRadius, "stick radius");
-        Validate.nonNull(stickMaterial, "stick material");
-
-        if (ballRadius > 0f) {
-            addBalls(graph, parentNode, ballRadius, ballMaterial);
-        }
-        if (stickRadius > 0f) {
-            addSticks(graph, parentNode, stickRadius, stickMaterial);
-        }
     }
 
     /**
