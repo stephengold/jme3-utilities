@@ -29,12 +29,11 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
-import jme3utilities.math.noise.Noise;
+import jme3utilities.math.noise.Generator;
 import jme3utilities.math.polygon.SimplePolygon3f;
 import jme3utilities.math.spline.LinearSpline3f;
 import jme3utilities.math.spline.Spline3f;
@@ -66,9 +65,9 @@ public class Shell3f implements Locus3f {
     final private static Logger logger = Logger.getLogger(
             SimplePolygon3f.class.getName());
     /**
-     * pseudo-random number generator for this class
+     * pseudo-random generator for this class
      */
-    final private static Random generator = new Random();
+    final private static Generator generator = new Generator();
     /**
      * weights for an infinite cylinder
      */
@@ -79,7 +78,7 @@ public class Shell3f implements Locus3f {
     final private static Vector3f slabWeights = new Vector3f(1f, 0f, 0f);
     // *************************************************************************
     // fields
-    
+
     /**
      * metric employed by this shell (not null)
      */
@@ -229,7 +228,7 @@ public class Shell3f implements Locus3f {
         metric = Metric.EUCLID;
         this.center = center.clone();
         Vector3f uAxis = axis.normalize();
-        Vector3f vAxis = Noise.ortho(uAxis, generator);
+        Vector3f vAxis = generator.ortho(uAxis);
         Vector3f wAxis = uAxis.cross(vAxis);
         orientation = new Quaternion();
         orientation.fromAxes(uAxis, vAxis, wAxis);
@@ -753,7 +752,7 @@ public class Shell3f implements Locus3f {
         Shell3f hole, shell, solid;
         Vector3f center, location;
 
-        Random random = new Random(395782);
+        Generator random = new Generator(395782);
 
         float[] scales = {0.1f, 1f, 10f, 10000f, 1e10f, 0.0001f, 1e-10f};
 
@@ -761,7 +760,7 @@ public class Shell3f implements Locus3f {
             for (float radiusScale : scales) {
                 for (float locScale : scales) {
                     for (int i = 0; i < 10000; i++) {
-                        center = Noise.nextVector3f(random);
+                        center = random.nextUnitVector3f();
                         center.multLocal(centerScale);
 
                         x = random.nextFloat() * locScale;

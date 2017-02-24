@@ -25,18 +25,13 @@
  */
 package jme3utilities.math.noise;
 
-import com.jme3.math.Vector3f;
-import java.util.BitSet;
-import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
-import jme3utilities.math.MyVector3f;
 
 /**
- * Random and noise utility methods. Aside from test cases, all methods should
- * be public and static.
+ * Pseudo-random and noise utility methods. Aside from test cases, all methods
+ * should be public and static.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -50,9 +45,9 @@ final public class Noise {
     final private static Logger logger = Logger.getLogger(
             Noise.class.getName());
     /**
-     * shared pseudo-random generator
+     * shared generator, for when you're not feeling fastidious
      */
-    final private static Random generator = new Random();
+    final private static Generator generator = new Generator();
     // *************************************************************************
     // constructors
 
@@ -108,6 +103,15 @@ final public class Noise {
     }
 
     /**
+     * Access the shared generator.
+     *
+     * @return float value (&ge;0, &lt;1)
+     */
+    public static Generator getSharedGenerator() {
+        return generator;
+    }
+
+    /**
      * Obtain the next uniformly distributed, pseudo-random, single-precision
      * value from the shared generator.
      *
@@ -118,150 +122,7 @@ final public class Noise {
     }
 
     /**
-     * Generate a uniformly distributed, pseudo-random unit vector. TODO rename
-     *
-     * @param generator (not null)
-     * @return a new unit vector
-     */
-    public static Vector3f nextVector3f(Random generator) {
-        Validate.nonNull(generator, "generator");
-
-        Vector3f result = new Vector3f();
-        double lengthSquared = 0.0;
-        while (lengthSquared < 0.1 || lengthSquared > 1.0) {
-            float x = 2f * generator.nextFloat() - 1f;
-            float y = 2f * generator.nextFloat() - 1f;
-            float z = 2f * generator.nextFloat() - 1f;
-            result.set(x, y, z);
-            lengthSquared = MyVector3f.lengthSquared(result);
-        }
-        double scaleFactor = 1.0 / Math.sqrt(lengthSquared);
-        result.multLocal((float) scaleFactor);
-
-        assert result.isUnitVector();
-        return result;
-    }
-
-    /**
-     * Generate a pseudo-random unit vector orthogonal to the input vector.
-     *
-     * @param input input vector (not null, not zero, unaffected)
-     * @param generator (not null)
-     * @return a new unit vector
-     */
-    public static Vector3f ortho(Vector3f input, Random generator) {
-        Validate.nonZero(input, "input");
-        Validate.nonNull(generator, "generator");
-
-        Vector3f ref = input.normalize();
-        Vector3f result = new Vector3f();
-        double lengthSquared = 0.0;
-        while (lengthSquared < 0.1) {
-            Vector3f sample = nextVector3f(generator);
-            ref.cross(sample, result);
-            lengthSquared = MyVector3f.lengthSquared(result);
-        }
-        double scaleFactor = 1.0 / Math.sqrt(lengthSquared);
-        result.multLocal((float) scaleFactor);
-
-        assert result.isUnitVector();
-        return result;
-    }
-
-    /**
-     * Pick a pseudo-random element from the specified array.
-     *
-     * @param array array to select from (not null)
-     * @param generator generator to use (not null)
-     * @return element of array or null if it's empty
-     */
-    @SuppressWarnings("rawtypes")
-    public static Object pick(Object[] array, Random generator) {
-        Validate.nonNull(generator, "generator");
-        Validate.nonNull(array, "array");
-
-        int count = array.length;
-        assert count >= 0 : count;
-        if (count == 0) {
-            return null;
-        }
-        int index = generator.nextInt(count);
-        Object result = array[index];
-
-        return result;
-    }
-
-    /**
-     * Pick a bit with the specified value from the specified set.
-     *
-     * @param bitset (not null, positive size, unaffected)
-     * @param maxIndex the last usable bit index (&ge;0, &lt;size)
-     * @param bitValue true or false
-     * @param generator generator to use (not null)
-     * @return bit index (&ge;0, &le;maxIndex)
-     */
-    public static int pick(BitSet bitset, int maxIndex, boolean bitValue,
-            Random generator) {
-        Validate.nonNull(bitset, "bit set");
-        Validate.inRange(maxIndex, "max index", 0, bitset.size() - 1);
-        Validate.nonNull(generator, "generator");
-
-        int firstIndex;
-        int lastIndex;
-        if (bitValue) {
-            firstIndex = bitset.nextSetBit(0);
-            lastIndex = bitset.previousSetBit(maxIndex);
-        } else {
-            firstIndex = bitset.nextClearBit(0);
-            lastIndex = bitset.previousClearBit(maxIndex);
-        }
-        if (firstIndex == -1) {
-            /*
-             * No possibilities.
-             */
-            assert lastIndex == -1 : lastIndex;
-            return -1;
-        } else if (firstIndex == lastIndex) {
-            /*
-             * Single possibility.
-             */
-            return firstIndex;
-        }
-
-        int numPossibilties = lastIndex - firstIndex + 1;
-        int bitIndex = firstIndex + generator.nextInt(numPossibilties);
-        while (bitset.get(bitIndex) != bitValue) {
-            bitIndex = firstIndex + generator.nextInt(numPossibilties);
-        }
-
-        return bitIndex;
-    }
-
-    /**
-     * Pick a pseudo-random element from the specified list.
-     *
-     * @param list list to select from (not null)
-     * @param generator generator to use (not null)
-     * @return member of list or null if it's empty
-     */
-    @SuppressWarnings("rawtypes")
-    public static Object pick(List list, Random generator) {
-        Validate.nonNull(generator, "generator");
-        Validate.nonNull(list, "list");
-
-        int count = list.size();
-        assert count >= 0 : count;
-        if (count == 0) {
-            return null;
-        }
-        int index = generator.nextInt(count);
-        Object result = list.get(index);
-
-        return result;
-    }
-
-    /**
-     * Re-seed the shared pseudo-random generator.
+     * Re-seed the shared generator.
      *
      * @param newSeed seed for generating pseudo-random numbers
      */

@@ -31,11 +31,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
-import jme3utilities.math.noise.Noise;
+import jme3utilities.math.noise.Generator;
 
 /**
  * A container for elements, sorted based on a measure of fitness. Duplicate
@@ -350,7 +349,7 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
      * @param destination (not null, modified)
      * @return count of elements merged (&ge;0, &le;maxCount)
      */
-    public int mergeUniformTo(int maxCount, Random generator,
+    public int mergeUniformTo(int maxCount, Generator generator,
             Population<Fitness, Element> destination) {
         Validate.nonNegative(maxCount, "maxCount");
         Validate.nonNull(generator, "generator");
@@ -363,7 +362,7 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
         BitSet selected = new BitSet(numElements);
         int lastIndex = numElements - 1;
         for (int i = 0; i < maxCount; i++) {
-            int bitIndex = Noise.pick(selected, lastIndex, false, generator);
+            int bitIndex = generator.pick(selected, lastIndex, false);
             assert bitIndex != -1;
             selected.set(bitIndex);
         }
