@@ -33,6 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
+import jme3utilities.math.MyVector3f;
 import jme3utilities.math.noise.Generator;
 import jme3utilities.math.polygon.SimplePolygon3f;
 import jme3utilities.math.spline.LinearSpline3f;
@@ -64,10 +65,6 @@ public class Shell3f implements Locus3f {
      */
     final private static Logger logger = Logger.getLogger(
             SimplePolygon3f.class.getName());
-    /**
-     * pseudo-random generator for this class
-     */
-    final private static Generator generator = new Generator();
     /**
      * weights for an infinite cylinder
      */
@@ -227,9 +224,10 @@ public class Shell3f implements Locus3f {
 
         metric = Metric.EUCLID;
         this.center = center.clone();
-        Vector3f uAxis = axis.normalize();
-        Vector3f vAxis = generator.ortho(uAxis);
-        Vector3f wAxis = uAxis.cross(vAxis);
+        Vector3f uAxis = axis.clone();
+        Vector3f vAxis = new Vector3f();
+        Vector3f wAxis = new Vector3f();
+        MyVector3f.generateBasis(uAxis, vAxis, wAxis);
         orientation = new Quaternion();
         orientation.fromAxes(uAxis, vAxis, wAxis);
         inverseRotation = orientation.inverse();
