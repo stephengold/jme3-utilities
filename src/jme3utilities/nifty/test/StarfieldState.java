@@ -29,10 +29,8 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
@@ -47,7 +45,6 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.math.noise.Noise;
-import jme3utilities.sky.DomeMesh;
 
 /**
  * App state to animate a seemingly-endless field of stars. Used by
@@ -111,8 +108,8 @@ public class StarfieldState extends SimpleAppState {
     // constructor
 
     /**
-     * Instantiate an uninitialized state with the specified backdrop
-     * and number of objects.
+     * Instantiate an uninitialized state with the specified backdrop and number
+     * of objects.
      *
      * @param enabled true &rarr; enabled, false &rarr; disabled
      * @param numObjects number of objects to animate (&gt;0)
@@ -140,7 +137,7 @@ public class StarfieldState extends SimpleAppState {
         if (!isInitialized()) {
             throw new IllegalStateException("not yet initialized");
         }
-        
+
         return zoneRadius;
     }
 
@@ -245,38 +242,9 @@ public class StarfieldState extends SimpleAppState {
      * Create and attach the backdrop.
      */
     private void initializeBackdrop() {
-        backdrop.setQueueBucket(RenderQueue.Bucket.Sky);
+        Spatial cubeMap = MyAsset.createStarMap(assetManager, "equator");
+        backdrop.attachChild(cubeMap);
         rootNode.attachChild(backdrop);
-        /*
-         * The backdrop consists of two hemispherical dome geometries, one
-         * for northern stars and one for southern ones.
-         */
-        Mesh hemisphere = new DomeMesh(60, 16);
-        Geometry northDome = new Geometry("north", hemisphere);
-        String assetPath = String.format("%s/northern.png", backdropAssetPath);
-        Material north = MyAsset.createUnshadedMaterial(
-                assetManager, assetPath);
-        northDome.setMaterial(north);
-        backdrop.attachChild(northDome);
-
-        Geometry southDome = new Geometry("south", hemisphere);
-        assetPath = String.format("%s/southern.png", backdropAssetPath);
-        Material south = MyAsset.createUnshadedMaterial(
-                assetManager, assetPath);
-        southDome.setMaterial(south);
-        backdrop.attachChild(southDome);
-
-        Quaternion z180 = new Quaternion();
-        z180.fromAngleNormalAxis(FastMath.PI, new Vector3f(0f, 0f, 1f));
-        MySpatial.setWorldOrientation(southDome, z180);
-        /*
-         * Scale the backdrop so its furthest geometries are midway
-         * between the near and far planes of the view frustum.
-         */
-        float far = cam.getFrustumFar();
-        float near = cam.getFrustumNear();
-        float radius = (near + far) / 2f;
-        MySpatial.setWorldScale(backdrop, radius);
     }
 
     /**
