@@ -169,14 +169,14 @@ final public class MyAsset {
         Validate.nonNull(assetManager, "asset manager");
         Validate.nonEmpty(name, "star map name");
         /*
-         * Load the cube map textures.
+         * Load the cube map textures for a viewer facing the south horizon.
          */
-        Texture right = loadFace(assetManager, name, "right1");
-        Texture left = loadFace(assetManager, name, "left2");
-        Texture top = loadFace(assetManager, name, "top3");
-        Texture bottom = loadFace(assetManager, name, "bottom4");
-        Texture front = loadFace(assetManager, name, "front5");
-        Texture back = loadFace(assetManager, name, "back6");
+        Texture right = loadFace(assetManager, name, "right1"); // west
+        Texture left = loadFace(assetManager, name, "left2"); // east
+        Texture top = loadFace(assetManager, name, "top3"); // up
+        Texture bottom = loadFace(assetManager, name, "bottom4"); // down
+        Texture front = loadFace(assetManager, name, "front5"); // south
+        Texture back = loadFace(assetManager, name, "back6"); // north
         /*
          * Create the map.
          */

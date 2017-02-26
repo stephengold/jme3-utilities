@@ -59,8 +59,7 @@ import jme3utilities.math.MyMath;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class DomeMesh
-        extends Mesh {
+public class DomeMesh extends Mesh {
     // *************************************************************************
     // constants
 
@@ -193,11 +192,11 @@ public class DomeMesh
     // new methods exposed
 
     /**
-     * Compute the texture coordinate of a point on this mesh that's in the
+     * Calculate the texture coordinate of a point on this mesh that's in the
      * specified direction from the center of the mesh.
      *
      * @param direction (length&gt;0, unaffected)
-     * @return new vector, or null if direction is too far below the equator
+     * @return a new vector, or null if direction is too far below the equator
      */
     public Vector2f directionUV(Vector3f direction) {
         Validate.nonZero(direction, "direction");
