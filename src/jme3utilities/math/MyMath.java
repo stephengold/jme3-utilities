@@ -287,6 +287,44 @@ public class MyMath {
     }
 
     /**
+     * Find the minimum of three single-precision values.
+     *
+     * @param a 1st input value
+     * @param b 2nd input value
+     * @param c 3rd input value
+     * @return least of the three values
+     * @see java.lang.Math#min(float, float)
+     */
+    public static float min(float a, float b, float c) {
+        if (a <= b && a <= c) {
+            return a;
+        } else if (b <= c) {
+            return b;
+        } else {
+            return c;
+        }
+    }
+
+    /**
+     * Find the minimum of three double-precision values.
+     *
+     * @param a 1st input value
+     * @param b 2nd input value
+     * @param c 3rd input value
+     * @return least of the three values
+     * @see java.lang.Math#min(double, double)
+     */
+    public static double min(double a, double b, double c) {
+        if (a <= b && a <= c) {
+            return a;
+        } else if (b <= c) {
+            return b;
+        } else {
+            return c;
+        }
+    }
+
+    /**
      * Compute the least non-negative value congruent with an integer value with
      * respect to the specified modulus. modulo() differs from remainder for
      * negative values of the first argument. For instance, modulo(-1, 4) == 3,
