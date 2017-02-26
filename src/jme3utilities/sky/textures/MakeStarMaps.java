@@ -47,6 +47,7 @@ import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.math.MyMath;
+import jme3utilities.math.MyVector3f;
 import jme3utilities.sky.Constants;
 import jme3utilities.sky.DomeMesh;
 
@@ -147,6 +148,46 @@ public class MakeStarMaps {
      */
     final private static String catalogFilePath =
             "assets/Textures/skies/bsc5.dat";
+    /**
+     * English names for the faces of a cube, in the order expected by
+     * {@link jme3utilities.MyAsset#createStarMap(com.jme3.asset.AssetManager, java.lang.String)}
+     */
+    final private static String[] faceName = {
+        "right", "left", "top", "bottom", "front", "back"
+    };
+    /**
+     * Direction vector for the center of each cube faces.
+     */
+    final private static Vector3f[] faceDirection = {
+        new Vector3f(-1f, 0f, 0f),
+        new Vector3f(1f, 0f, 0f),
+        new Vector3f(0f, 1f, 0f),
+        new Vector3f(0f, -1f, 0f),
+        new Vector3f(0f, 0f, -1f),
+        new Vector3f(0f, 0f, 1f)
+    };
+    /**
+     * Direction vector for 1st (+U) texture coordinate of each cube face.
+     */
+    final private static Vector3f[] uDirection = {
+        new Vector3f(0f, 0f, 1f),
+        new Vector3f(0f, 0f, -1f),
+        new Vector3f(-1f, 0f, 0f),
+        new Vector3f(-1f, 0f, 0f),
+        new Vector3f(-1f, 0f, 0f),
+        new Vector3f(1f, 0f, 0f)
+    };
+    /**
+     * Direction vector for 2nd (+V) texture coordinate of each cube face.
+     */
+    final private static Vector3f[] vDirection = {
+        new Vector3f(0f, -1f, 0f),
+        new Vector3f(0f, -1f, 0f),
+        new Vector3f(0f, 0f, -1f),
+        new Vector3f(0f, 0f, 1f),
+        new Vector3f(0f, -1f, 0f),
+        new Vector3f(0f, -1f, 0f)
+    };
     // *************************************************************************
     // fields
     
@@ -158,13 +199,18 @@ public class MakeStarMaps {
             description = "display this usage message")
     private static boolean usageOnly = false;
     /**
+     * true &rarr; generate textures for a cube; false &rarr; for a dome
+     */
+    @Parameter(names = {"-c", "--cube"}, description = "generate for a cube")
+    private static boolean forCube = false;
+    /**
      * stars read from the catalog
      */
     final private Collection<Star> stars = new TreeSet<>();
     /**
      * sample dome mesh for calculating texture coordinates
      */
-    final private DomeMesh mesh = new DomeMesh(3, 2);
+    final private DomeMesh domeMesh = new DomeMesh(3, 2);
     /**
      * name of preset
      */
@@ -244,7 +290,85 @@ public class MakeStarMaps {
     // private methods
 
     /**
-     * Generate a starry sky texture map.
+     * Calculate the texture coordinates of a point that lies in the specified
+     * direction from the center of the cube.
+     *
+     * @param direction (length&gt;0, unaffected)
+     * @param faceIndex (&ge;0, &lt;6) which face of the cube
+     * @return a new vector, or null if direction is too far outside the face
+     */
+    private Vector2f cubeUV(Vector3f direction, int faceIndex) {
+        assert direction != null;
+        assert !MyVector3f.isZero(direction);
+        assert faceIndex >= 0 : faceIndex;
+        assert faceIndex < 6 : faceIndex;
+
+        Vector3f faceDir = faceDirection[faceIndex];
+        Vector3f norm = direction.normalize();
+        float dot = faceDir.dot(norm);
+        if (dot < 0.5f) {
+            /*
+             * way outside the face
+             */
+            return null;
+        }
+        /*
+         * project outward to the plane of the face
+         */
+        norm.divideLocal(dot);
+        /*
+         * convert to texture coordinates
+         */
+        Vector3f uDir = uDirection[faceIndex];
+        Vector3f vDir = vDirection[faceIndex];
+        float u = 0.5f * (1f + uDir.dot(norm));
+        float v = 0.5f * (1f + vDir.dot(norm));
+        Vector2f uv = new Vector2f(u, v);
+
+        return uv;
+    }
+
+    /**
+     * Generate 6 starry sky texture maps for a cube.
+     *
+     * @param latitude radians north of the equator (&le;Pi/2, &ge;-Pi/2)
+     * @param siderealTime radians since sidereal midnight (&lt;2*Pi, &ge;0)
+     * @param textureSize size of each texture map (pixels per side, &gt;2)
+     * @return new instance
+     */
+    private RenderedImage[] generateCubeMap(float latitude, float siderealTime,
+            int textureSize) {
+        assert latitude >= -FastMath.HALF_PI : latitude;
+        assert latitude <= FastMath.HALF_PI : latitude;
+        assert siderealTime >= 0f : siderealTime;
+        assert siderealTime < FastMath.TWO_PI : siderealTime;
+        assert textureSize > 2 : textureSize;
+        /*
+         * Create a blank, grayscale buffered image for each texture map.
+         */
+        BufferedImage[] maps = new BufferedImage[6];
+        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+            maps[faceIndex] = new BufferedImage(textureSize, textureSize,
+                    BufferedImage.TYPE_BYTE_GRAY);
+        }
+        /*
+         * Plot individual stars on the images, starting with the faintest.
+         */
+        int plotCount = 0;
+        for (Star star : stars) {
+            boolean success = plotStarOnCube(maps, star, latitude,
+                    siderealTime, textureSize);
+            if (success) {
+                plotCount++;
+            }
+        }
+        logger.log(Level.FINE, "plotted {0} stars", plotCount);
+
+        return maps;
+    }
+
+    /**
+     * Generate starry sky texture map(s) for the specified preset.
      *
      * @param preset map preset to generate (not null)
      */
@@ -260,8 +384,36 @@ public class MakeStarMaps {
 
         int textureSize = preset.textureSize();
         logger.log(Level.FINE, "resolution is {0} pixels", textureSize);
+        /*
+         * Convert the sidereal time from hours to radians.
+         */
+        float siderealTime = siderealHour * radiansPerHour;
 
-        RenderedImage image = generateMap(latitude, siderealHour, textureSize);
+        if (forCube) {
+            /*
+            * Generate 6 texture maps for a cube.
+             */
+            RenderedImage images[] = generateCubeMap(latitude, siderealTime,
+                    textureSize);
+            assert images.length == 6 : images.length;
+            for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+                String filePath = String.format(
+                        "assets/Textures/skies/star-maps/%s/%s_%s%d.png",
+                        preset.textureFileName(), preset.textureFileName(),
+                        faceName[faceIndex], faceIndex + 1);
+                try {
+                    Misc.writeMap(filePath, images[faceIndex]);
+                } catch (IOException exception) {
+                    // ignored
+                }
+            }
+
+        } else {
+            /*
+             * Generate a texture map for a dome.
+             */
+            RenderedImage image = generateDomeMap(latitude, siderealTime,
+                    textureSize);
         String filePath = String.format(
                 "assets/Textures/skies/star-maps/%s.png",
                 preset.textureFileName());
@@ -271,21 +423,22 @@ public class MakeStarMaps {
             // ignored
         }
     }
+    }
 
     /**
-     * Generate a starry sky texture map.
+     * Generate a starry sky texture map for a dome.
      *
      * @param latitude radians north of the equator (&le;Pi/2, &ge;-Pi/2)
-     * @param siderealTime hours since sidereal midnight (&lt;24, &ge;0)
+     * @param siderealTime radians since sidereal midnight (&lt;2*Pi, &ge;0)
      * @param textureSize size of the texture map (pixels per side, &gt;2)
      * @return new instance
      */
-    private RenderedImage generateMap(float latitude, float siderealHour,
+    private RenderedImage generateDomeMap(float latitude, float siderealTime,
             int textureSize) {
         assert latitude >= -FastMath.HALF_PI : latitude;
         assert latitude <= FastMath.HALF_PI : latitude;
-        assert siderealHour >= 0f : siderealHour;
-        assert siderealHour < Constants.hoursPerDay : siderealHour;
+        assert siderealTime >= 0f : siderealTime;
+        assert siderealTime < FastMath.TWO_PI : siderealTime;
         assert textureSize > 2 : textureSize;
         /*
          * Create a blank, grayscale buffered image for the texture map.
@@ -293,15 +446,11 @@ public class MakeStarMaps {
         BufferedImage map = new BufferedImage(textureSize, textureSize,
                 BufferedImage.TYPE_BYTE_GRAY);
         /*
-         * Convert the sidereal time from hours to radians.
-         */
-        float siderealTime = siderealHour * radiansPerHour;
-        /*
          * Plot individual stars on the image, starting with the faintest.
          */
         int plotCount = 0;
         for (Star star : stars) {
-            boolean success = plotStar(map, star, latitude, siderealTime,
+            boolean success = plotStarOnDome(map, star, latitude, siderealTime,
                     textureSize);
             if (success) {
                 plotCount++;
@@ -413,13 +562,15 @@ public class MakeStarMaps {
      * near the rim of the dome.
      *
      * @param map texture map (not null)
-     * @param luminosity star's relative luminosity (&gt;0)
+     * @param luminosity star's relative luminosity (in terms of pure white
+     * pixels, &gt;0)
      * @param textureSize size of the texture map (pixels per side, &gt;2)
      * @param uv star's texture coordinates (not null)
      * @return true if the star was successfully plotted, otherwise false
      */
-    private void plotEllipse(BufferedImage map, float luminosity,
+    private void plotEllipseForDome(BufferedImage map, float luminosity,
             int textureSize, Vector2f uv) {
+        assert map != null;
         assert luminosity > 0f : luminosity;
         assert textureSize > 2 : textureSize;
         assert uv != null;
@@ -462,16 +613,164 @@ public class MakeStarMaps {
     }
 
     /**
-     * Plot a star's position at a specified time onto a texture map.
+     * Draw an ellipse -- a circle stretched to compensate for UV distortion
+     * near the edges of the quad.
      *
      * @param map texture map (not null)
+     * @param luminosity star's relative luminosity (&gt;0)
+     * @param textureSize size of the texture map (pixels per side, &gt;2)
+     * @param worldDirection the star's world coordinates (length=1)
+     * @param faceIndex which face of the cube (&ge;0, &lt;6)
+     * @return true if the star was successfully plotted, otherwise false
+     */
+    private void plotEllipseForQuad(BufferedImage map, float luminosity,
+            int textureSize, Vector3f worldDirection, int faceIndex) {
+        assert map != null;
+        assert luminosity > 0f : luminosity;
+        assert textureSize > 2 : textureSize;
+        assert worldDirection != null;
+        assert faceIndex >= 0 : faceIndex;
+        assert faceIndex < 6 : faceIndex;
+
+        Vector3f basis1 = worldDirection.clone();
+        Vector3f basis2 = new Vector3f();
+        Vector3f basis3 = new Vector3f();
+        MyVector3f.generateBasis(basis1, basis2, basis3);
+        float numPixels = textureSize * textureSize;
+        float area = luminosity / numPixels;
+        float r = 1.2f * FastMath.sqrt(area);
+
+        Vector3f p = new Vector3f();
+        for (int i = 0; i < ellipseNumPoints; i++) {
+            float theta = FastMath.TWO_PI * i / (float) ellipseNumPoints;
+            float rCos = r * FastMath.cos(theta);
+            float rSin = r * FastMath.sin(theta);
+            p.scaleAdd(rCos, basis2, basis1);
+            p.scaleAdd(rSin, basis3, p);
+            Vector2f uv = cubeUV(p, faceIndex);
+            if (uv == null) {
+                return;
+            }
+            int x = Math.round(uv.x * textureSize);
+            int y = Math.round(uv.y * textureSize);
+            ellipseXs[i] = x;
+            ellipseYs[i] = y;
+        }
+        Graphics2D graphics = map.createGraphics();
+        graphics.setColor(Color.WHITE); // TODO tint based on spectral type
+        graphics.fillPolygon(ellipseXs, ellipseYs, ellipseNumPoints);
+    }
+
+    /**
+     * Plot a star's position at the specified time onto a cube.
+     *
+     * @param maps texture maps for 6 cube faces (not null, modified)
      * @param star star to plot (not null)
      * @param latitude radians north of the equator (&le;Pi/2, &ge;-Pi/2)
      * @param siderealTime radians since sidereal midnight (&lt;2*Pi, &ge;0)
      * @param textureSize size of the texture map (pixels per side, &gt;2)
      * @return true if the star was successfully plotted, otherwise false
      */
-    private boolean plotStar(BufferedImage map, Star star, float latitude,
+    private boolean plotStarOnCube(BufferedImage[] maps, Star star,
+            float latitude, float siderealTime, int textureSize) {
+        assert maps != null;
+        assert maps.length == 6 : maps.length;
+        assert star != null;
+        assert latitude >= -FastMath.HALF_PI : latitude;
+        assert latitude <= FastMath.HALF_PI : latitude;
+        assert siderealTime >= 0f : siderealTime;
+        assert siderealTime < FastMath.TWO_PI : siderealTime;
+        assert textureSize > 2 : textureSize;
+
+        Vector3f equatorial = star.getEquatorialLocation(siderealTime);
+        /*
+         * Convert equatorial coordinates to world coordinates, where:
+         *   +X points to the north horizon
+         *   +Y points to the zenith
+         *   +Z points to the east horizon
+         *
+         * The conversion consists of a (latitude - Pi/2) rotation about the Y
+         * (east) axis followed by permutation of the axes.
+         */
+        float coLatitude = FastMath.HALF_PI - latitude;
+        Quaternion rotation = new Quaternion();
+        rotation.fromAngleNormalAxis(-coLatitude, Vector3f.UNIT_Y);
+        Vector3f rotated = rotation.mult(equatorial);
+        assert rotated.isUnitVector() : rotated;
+        Vector3f world = new Vector3f(-rotated.x, rotated.z, rotated.y);
+
+        float apparentMagnitude = star.getApparentMagnitude();
+        boolean success = plotStarOnCube(maps, apparentMagnitude,
+                textureSize, world);
+
+        return success;
+    }
+
+    /**
+     * Plot a star onto a texture map for a cube.
+     *
+     * @param maps texture maps for 6 cube faces (not null, modified)
+     * @param apparentMagnitude the star's brightness (log scale)
+     * @param textureSize size of the texture map (pixels per side, &lt;2)
+     * @param worldDirection the star's world coordinates (length=1)
+     * @return true if the star was successfully plotted, otherwise false
+     */
+    private boolean plotStarOnCube(BufferedImage[] maps,
+            float apparentMagnitude, int textureSize, Vector3f worldDirection) {
+        assert maps != null;
+        assert maps.length == 6 : maps.length;
+        assert worldDirection != null;
+        assert worldDirection.isUnitVector() : worldDirection;
+        assert textureSize > 2 : textureSize;
+        /*
+         * Convert apparent magnitude to relative luminosity.
+         */
+        float resolution = ((float) textureSize) / 2_048f;
+        float luminosity0 = 100f * resolution * resolution;
+        float luminosity = luminosity0 * 1.5f
+                * FastMath.pow(pogsonsRatio, -apparentMagnitude);
+        if (luminosity < luminosityCutoff) {
+            return false;
+        }
+
+        boolean success = false;
+        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+            /*
+             * Convert world direction to texture coordinates on this
+             * face of the cube.
+             */
+            Vector2f uv = cubeUV(worldDirection, faceIndex);
+            if (uv != null) {
+                BufferedImage map = maps[faceIndex];
+
+                if (luminosity <= 37f) {
+                    boolean succ = plot4PointStar(map, luminosity,
+                            textureSize, uv);
+                    if (succ) {
+                        success = true;
+                    }
+                } else {
+                    plotEllipseForQuad(map, luminosity, textureSize,
+                            worldDirection, faceIndex);
+                    success = true;
+                }
+            }
+        }
+        return success;
+    }
+
+    /**
+     * Plot a star's position at the specified time onto a texture map for a
+     * dome.
+     *
+     * @param map texture map (not null, modified)
+     * @param star star to plot (not null)
+     * @param latitude radians north of the equator (&le;Pi/2, &ge;-Pi/2)
+     * @param siderealTime radians since sidereal midnight (&lt;2*Pi, &ge;0)
+     * @param textureSize size of the texture map (pixels per side, &gt;2)
+     * @return true if the star was successfully plotted, otherwise false
+     */
+    private boolean plotStarOnDome(BufferedImage map, Star star, float latitude,
             float siderealTime, int textureSize) {
         assert map != null;
         assert star != null;
@@ -505,13 +804,14 @@ public class MakeStarMaps {
         Vector3f world = new Vector3f(-rotated.x, rotated.z, rotated.y);
 
         float apparentMagnitude = star.getApparentMagnitude();
-        boolean success = plotStar(map, apparentMagnitude, textureSize, world);
+        boolean success = plotStarOnDome(map, apparentMagnitude,
+                textureSize, world);
 
         return success;
     }
 
     /**
-     * Plot a star on a texture map.
+     * Plot a star on a texture map for a dome.
      *
      * @param map texture map (not null)
      * @param apparentMagnitude the star's brightness
@@ -519,7 +819,7 @@ public class MakeStarMaps {
      * @param worldDirection the star's world coordinates (length=1)
      * @return true if the star was successfully plotted, otherwise false
      */
-    private boolean plotStar(BufferedImage map, float apparentMagnitude,
+    private boolean plotStarOnDome(BufferedImage map, float apparentMagnitude,
             int textureSize, Vector3f worldDirection) {
         assert map != null;
         assert worldDirection != null;
@@ -528,7 +828,7 @@ public class MakeStarMaps {
         /*
          * Convert apparent magnitude to relative luminosity.
          */
-        float resolution = ((float) textureSize) / 2048f;
+        float resolution = ((float) textureSize) / 2_048f;
         float luminosity0 = 37f * resolution * resolution;
         float luminosity = luminosity0
                 * FastMath.pow(pogsonsRatio, -apparentMagnitude);
@@ -536,15 +836,15 @@ public class MakeStarMaps {
             return false;
         }
         /*
-         * Convert world direction to texture coordinates.
+         * Convert world direction to texture coordinates on a dome.
          */
-        Vector2f uv = mesh.directionUV(worldDirection);
+        Vector2f uv = domeMesh.directionUV(worldDirection);
 
         if (luminosity <= 37f) {
             boolean success = plot4PointStar(map, luminosity, textureSize, uv);
             return success;
         }
-        plotEllipse(map, luminosity, textureSize, uv);
+        plotEllipseForDome(map, luminosity, textureSize, uv);
         return true;
     }
 
@@ -552,7 +852,8 @@ public class MakeStarMaps {
      * Plot a four-pointed star shape on a texture map.
      *
      * @param map texture map (not null)
-     * @param luminosity star's relative luminosity (&le;37, &gt;0)
+     * @param luminosity star's relative luminosity (in terms of pure white
+     * pixels, &le;37, &gt;0)
      * @param textureSize size of the texture map (pixels per side, &gt;2)
      * @param uv star's texture coordinates (not null)
      * @return true if the star was successfully plotted, otherwise false
@@ -615,7 +916,7 @@ public class MakeStarMaps {
         int brightness = Math.round(255f * luminosity / numPixels);
         assert brightness >= 0 : brightness;
         assert brightness <= 255 : brightness;
-        // TODO apply tint based on spectral type
+        // TODO tint based on spectral type
         Color color = new Color(brightness, brightness, brightness);
         /*
          * Convert the texture coordinates into (x, y) image coordinates of
@@ -623,10 +924,6 @@ public class MakeStarMaps {
          */
         float u = uv.x;
         float v = uv.y;
-        assert u >= Constants.uvMin : u;
-        assert u <= Constants.uvMax : u;
-        assert v >= Constants.uvMin : v;
-        assert v <= Constants.uvMax : v;
         float cornerOffset = 0.5f * (squareSize - 1);
         int x = Math.round(u * textureSize - cornerOffset);
         int y = Math.round(v * textureSize - cornerOffset);
