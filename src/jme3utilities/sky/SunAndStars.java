@@ -51,14 +51,16 @@ import jme3utilities.math.MyMath;
  * equatorial, and world.
  * <p>
  * In ecliptical coordinates:<ul>
- * <li>+X points to the vernal equinox
- * <li>+Y points to the celestial equator 90 degrees east of the vernal equinox
- * <li>+Z points to the north celestial pole
+ * <li>+X points to the March equinox (in Pisces)
+ * <li>+Y points to the ecliptic 90 degrees east of the March equinox (in
+ * Gemini)
+ * <li>+Z points to the north ecliptic pole (in Draco)
  * </ul>
  * In equatorial coordinates:<ul>
- * <li>+X points to the vernal equinox
- * <li>+Y points to the celestial equator 90 degrees east of the vernal equinox
- * <li>+Z points to the north celestial pole
+ * <li>+X points to the March equinox (in Pisces)
+ * <li>+Y points to the celestial equator 90 degrees east of the March equinox
+ * (in Orion)
+ * <li>+Z points to the north celestial pole (in Ursa Minor)
  * </ul>
  * In world coordinates:<ul>
  * <li>+X points to the north horizon,
@@ -205,7 +207,7 @@ public class SunAndStars
     public Vector3f convertToWorld(Vector3f equatorial) {
         Validate.nonNull(equatorial, "coordinates");
 
-        float siderealAngle = getSiderealAngle();
+        float siderealAngle = siderealAngle();
         /*
          * The conversion consists of a (-siderealAngle) rotation about the Z
          * (north celestial pole) axis followed by a (latitude - Pi/2) rotation
@@ -250,34 +252,6 @@ public class SunAndStars
     }
 
     /**
-     * Compute the angle between the meridian and the vernal equinox. TODO
-     * rename
-     *
-     * @return angle (in radians, &lt;2*Pi, &ge;0)
-     */
-    public float getSiderealAngle() {
-        float siderealHour = getSiderealHour();
-        float siderealAngle = siderealHour * radiansPerHour;
-
-        assert siderealAngle >= 0f : siderealAngle;
-        assert siderealAngle < FastMath.TWO_PI : siderealAngle;
-        return siderealAngle;
-    }
-
-    /**
-     * Compute the sidereal time. TODO rename
-     *
-     * @return time (in hours, &lt;24, &ge;0)
-     */
-    public float getSiderealHour() {
-        float noon = 12f;
-        float siderealHour = hour - noon - solarRaHours;
-        siderealHour = MyMath.modulo(siderealHour, Constants.hoursPerDay);
-
-        return siderealHour;
-    }
-
-    /**
      * Read the solar longitude.
      *
      * @return radians east of the vernal equinox (&le;2*Pi, &ge;0)
@@ -302,14 +276,15 @@ public class SunAndStars
     }
 
     /**
-     * Update the orientation of an external sky.
+     * Update the orientation of an external sky. The sky's local axes are
+     * assumed to equatorial.
      *
      * @param spatial external sky (not null)
      */
     public void orientExternalSky(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
 
-        float siderealAngle = getSiderealAngle();
+        float siderealAngle = siderealAngle();
         Quaternion xRotation = new Quaternion();
         xRotation.fromAngleNormalAxis(siderealAngle, xAxis);
 
@@ -326,7 +301,7 @@ public class SunAndStars
      * @param southDome (ignored if null)
      */
     public void orientStarDomes(Spatial northDome, Spatial southDome) {
-        float siderealAngle = getSiderealAngle();
+        float siderealAngle = siderealAngle();
         Quaternion yRotation = new Quaternion();
         Quaternion zRotation = new Quaternion();
         if (northDome != null) {
@@ -424,6 +399,33 @@ public class SunAndStars
 
         longitude = MyMath.modulo(longitude, FastMath.TWO_PI);
         setSolarLongitude(longitude);
+    }
+
+    /**
+     * Compute the angle between the meridian and the vernal equinox.
+     *
+     * @return angle (in radians, &lt;2*Pi, &ge;0)
+     */
+    public float siderealAngle() {
+        float siderealHour = siderealHour();
+        float siderealAngle = siderealHour * radiansPerHour;
+
+        assert siderealAngle >= 0f : siderealAngle;
+        assert siderealAngle < FastMath.TWO_PI : siderealAngle;
+        return siderealAngle;
+    }
+
+    /**
+     * Compute the sidereal time.
+     *
+     * @return time (in hours, &lt;24, &ge;0)
+     */
+    public float siderealHour() {
+        float noon = 12f;
+        float siderealHour = hour - noon - solarRaHours;
+        siderealHour = MyMath.modulo(siderealHour, Constants.hoursPerDay);
+
+        return siderealHour;
     }
     // *************************************************************************
     // Object methods
