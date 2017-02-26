@@ -38,6 +38,10 @@ enum StarMapPreset {
     // values
 
     /**
+     * Equator 0h local sidereal time at 2048x2048 resolution (for cube)
+     */
+    EQUATOR_4M,
+    /**
      * stars of the Northern Hemisphere at 2048x2048 resolution
      */
     NORTH_4M,
@@ -69,6 +73,8 @@ enum StarMapPreset {
      */
     String describe() {
         switch (this) {
+            case EQUATOR_4M:
+                return "equator";
             case NORTH_4M:
                 return "north";
             case NORTH_16M:
@@ -106,6 +112,7 @@ enum StarMapPreset {
      */
     float hour() {
         switch (this) {
+            case EQUATOR_4M:
             case NORTH_4M:
             case NORTH_16M:
             case SOUTH_4M:
@@ -129,6 +136,8 @@ enum StarMapPreset {
      */
     float latitude() {
         switch (this) {
+            case EQUATOR_4M:
+                return 0f;
             case NORTH_4M:
             case NORTH_16M:
                 return FastMath.HALF_PI;
@@ -146,10 +155,13 @@ enum StarMapPreset {
     }
 
     /**
-     * Look up the name of the texture file corresponding to this preset.
+     * Look up the name of the texture file or folder corresponding to this
+     * preset.
      */
     String textureFileName() {
         switch (this) {
+            case EQUATOR_4M:
+                return "equator";
             case NORTH_4M:
                 return "northern";
             case NORTH_16M:
@@ -173,6 +185,7 @@ enum StarMapPreset {
      */
     int textureSize() {
         switch (this) {
+            case EQUATOR_4M:
             case NORTH_4M:
             case SOUTH_4M:
             case WILTSHIRE_4M:
