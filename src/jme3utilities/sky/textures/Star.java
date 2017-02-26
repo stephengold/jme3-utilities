@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * Star in a star catalog, used by MakeStarMaps.
+ * An immutable star in a star catalog, used by MakeStarMaps.
  *
  * @author Stephen Gold sgold@sonic.net
  */

@@ -51,14 +51,16 @@ import jme3utilities.math.MyMath;
  * equatorial, and world.
  * <p>
  * In ecliptical coordinates:<ul>
- * <li>+X points to the vernal equinox
- * <li>+Y points to the celestial equator 90 degrees east of the vernal equinox
- * <li>+Z points to the north celestial pole
+ * <li>+X points to the March equinox (in Pisces)
+ * <li>+Y points to the ecliptic 90 degrees east of the March equinox (in
+ * Gemini)
+ * <li>+Z points to the north ecliptic pole (in Draco)
  * </ul>
  * In equatorial coordinates:<ul>
- * <li>+X points to the vernal equinox
- * <li>+Y points to the celestial equator 90 degrees east of the vernal equinox
- * <li>+Z points to the north celestial pole
+ * <li>+X points to the March equinox (in Pisces)
+ * <li>+Y points to the celestial equator 90 degrees east of the March equinox
+ * (in Orion)
+ * <li>+Z points to the north celestial pole (in Ursa Minor)
  * </ul>
  * In world coordinates:<ul>
  * <li>+X points to the north horizon,
@@ -274,7 +276,8 @@ public class SunAndStars
     }
 
     /**
-     * Update the orientation of an external sky.
+     * Update the orientation of an external sky. The sky's local axes are
+     * assumed to equatorial.
      *
      * @param spatial external sky (not null)
      */

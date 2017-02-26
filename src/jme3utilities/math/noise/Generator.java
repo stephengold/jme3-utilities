@@ -69,9 +69,9 @@ public class Generator extends Random {
     public Generator(long seed) {
         super(seed);
     }
-
     // *************************************************************************
     // new methods exposed
+    
     /**
      * Generate a pseudo-random vector that is uniformly distributed throughout
      * the unit sphere centered on the origin.

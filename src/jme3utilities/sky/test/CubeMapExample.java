@@ -49,14 +49,13 @@ import jme3utilities.debug.PerformanceAppState;
  * Peterson's Spacescape tool: http://alexcpeterson.com/spacescape
  * <p>
  * This application is used as an example in the tutorial at
- * https://code.google.com/p/jme3-utilities/wiki/AddToExistingGame
+ * https://github.com/stephengold/jme3-utilities/blob/master/README.md
  * <p>
  * This application also uses assets from the jme3-test-data library.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class CubeMapExample
-        extends SimpleApplication {
+public class CubeMapExample extends SimpleApplication {
     // *************************************************************************
     // constants
 
@@ -144,9 +143,9 @@ public class CubeMapExample
                 "Common/MatDefs/Terrain/TerrainLighting.j3md");
         terrainMaterial.setBoolean("useTriPlanarMapping", false);
         terrainMaterial.setBoolean("WardIso", true);
-        terrainMaterial.setFloat("DiffuseMap_0_scale", 64);
-        terrainMaterial.setFloat("DiffuseMap_1_scale", 16);
-        terrainMaterial.setFloat("DiffuseMap_2_scale", 128);
+        terrainMaterial.setFloat("DiffuseMap_0_scale", 64f);
+        terrainMaterial.setFloat("DiffuseMap_1_scale", 16f);
+        terrainMaterial.setFloat("DiffuseMap_2_scale", 128f);
         terrainMaterial.setTexture("AlphaMap", alphaMap);
         terrainMaterial.setTexture("DiffuseMap", grass);
         terrainMaterial.setTexture("DiffuseMap_1", dirt);
