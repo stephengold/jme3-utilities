@@ -65,16 +65,6 @@ public class Misc {
      */
     final private static Logger logger = Logger.getLogger(
             Misc.class.getName());
-    /**
-     * asset path of the shaded material definition
-     */
-    final public static String shadedMaterialAssetPath =
-            "Common/MatDefs/Light/Lighting.j3md";
-    /**
-     * asset path to the Unshaded material definition
-     */
-    final public static String unshadedMaterialAssetPath =
-            "Common/MatDefs/Misc/Unshaded.j3md";
     // *************************************************************************
     // constructors
 

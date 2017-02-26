@@ -327,7 +327,7 @@ public class LandscapeControl extends SubtreeControl {
         assert color != null;
 
         Material material = new Material(assetManager,
-                Misc.shadedMaterialAssetPath);
+                MyAsset.shadedMaterialAssetPath);
         material.setBoolean("UseMaterialColors", true);
         material.setColor("Ambient", color);
         material.setColor("Diffuse", color);
