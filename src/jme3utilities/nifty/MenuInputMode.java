@@ -148,11 +148,6 @@ class MenuInputMode
             Application application) {
         AssetManager am = application.getAssetManager();
         JmeCursor cursor = (JmeCursor) am.loadAsset(assetPath);
-        /*
-         * Set the cursor's hotspot to work around GitHub issue #115.
-         */
-        cursor.setxHotSpot(31);
-        cursor.setyHotSpot(16);
         setCursor(cursor);
 
         super.initialize(stateManager, application);
