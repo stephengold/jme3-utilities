@@ -277,16 +277,21 @@ public class SunAndStars
 
     /**
      * Update the orientation of an external sky. The sky's local axes are
-     * assumed to equatorial.
+     * assumed to be equatorial.
      *
      * @param spatial external sky (not null)
+     * @param mirrored true for mirrored materials such as Sky.j3md, false for
+     * ordinary materials such as Unshaded.j3md
      */
-    public void orientExternalSky(Spatial spatial) {
+    public void orientExternalSky(Spatial spatial, boolean mirrored) {
         Validate.nonNull(spatial, "spatial");
 
         float siderealAngle = siderealAngle();
+        if (mirrored) {
+            siderealAngle = -siderealAngle;
+        }
         Quaternion xRotation = new Quaternion();
-        xRotation.fromAngleNormalAxis(siderealAngle, xAxis);
+        xRotation.fromAngleNormalAxis(-siderealAngle, xAxis);
 
         Quaternion zRotation = new Quaternion();
         zRotation.fromAngleNormalAxis(-observerLatitude, zAxis);
