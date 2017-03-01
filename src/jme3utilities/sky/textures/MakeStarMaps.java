@@ -156,7 +156,7 @@ public class MakeStarMaps {
         "right", "left", "top", "bottom", "front", "back"
     };
     /**
-     * Direction vector for the center of each cube faces.
+     * Direction vector for the center of each cube face.
      */
     final private static Vector3f[] faceDirection = {
         new Vector3f(-1f, 0f, 0f),
@@ -329,6 +329,57 @@ public class MakeStarMaps {
     }
 
     /**
+     * Extract a star's declination from a catalog entry.
+     *
+     * @param line of text read from the catalog (not null)
+     * @return angle north of the celestial equator (in degrees, &le;90,
+     * &ge;-90)
+     */
+    private float declination(String line)
+            throws InvalidEntryException {
+        assert line != null;
+        /*
+         * Extract declination components from the line of text.
+         */
+        String dd = line.substring(83, 86);
+        String mm = line.substring(86, 88);
+        String ss = line.substring(88, 90);
+        logger.log(Level.FINE, "{0}d {1}m {2}s", new Object[]{dd, mm, ss});
+        /*
+         * sanity checks
+         */
+        int degrees = Integer.parseInt(dd);
+        if (degrees < -maxDeclination || degrees > maxDeclination) {
+            throw new InvalidEntryException(
+                    "dec degrees should be between -90 and 90, inclusive");
+        }
+        int minutes = Integer.parseInt(mm);
+        if (minutes < 0 || minutes >= maxMinutes) {
+            throw new InvalidEntryException(
+                    "dec minutes should be between 0 and 59, inclusive");
+        }
+        float seconds = Float.parseFloat(ss);
+        if (seconds < 0f || seconds >= maxSeconds) {
+            throw new InvalidEntryException(
+                    "dec seconds should be between 0 and 59, inclusive");
+        }
+        /*
+         * Convert to an angle.
+         */
+        float result; // in degrees
+        if (degrees > 0) {
+            result = degrees + minutes / 60f + seconds / 3600f;
+        } else {
+            result = degrees - minutes / 60f - seconds / 3600f;
+        }
+
+        assert result >= -maxDeclination : result;
+        assert result <= maxDeclination : result;
+        logger.log(Level.FINE, "result = {0}", result);
+        return result;
+    }
+
+    /**
      * Generate 6 starry sky texture maps for a cube.
      *
      * @param latitude radians north of the equator (&le;Pi/2, &ge;-Pi/2)
@@ -365,6 +416,42 @@ public class MakeStarMaps {
         logger.log(Level.FINE, "plotted {0} stars", plotCount);
 
         return maps;
+    }
+
+    /**
+     * Generate a starry sky texture map for a dome.
+     *
+     * @param latitude radians north of the equator (&le;Pi/2, &ge;-Pi/2)
+     * @param siderealTime radians since sidereal midnight (&lt;2*Pi, &ge;0)
+     * @param textureSize size of the texture map (pixels per side, &gt;2)
+     * @return new instance
+     */
+    private RenderedImage generateDomeMap(float latitude, float siderealTime,
+            int textureSize) {
+        assert latitude >= -FastMath.HALF_PI : latitude;
+        assert latitude <= FastMath.HALF_PI : latitude;
+        assert siderealTime >= 0f : siderealTime;
+        assert siderealTime < FastMath.TWO_PI : siderealTime;
+        assert textureSize > 2 : textureSize;
+        /*
+         * Create a blank, grayscale buffered image for the texture map.
+         */
+        BufferedImage map = new BufferedImage(textureSize, textureSize,
+                BufferedImage.TYPE_BYTE_GRAY);
+        /*
+         * Plot individual stars on the image, starting with the faintest.
+         */
+        int plotCount = 0;
+        for (Star star : stars) {
+            boolean success = plotStarOnDome(map, star, latitude, siderealTime,
+                    textureSize);
+            if (success) {
+                plotCount++;
+            }
+        }
+        logger.log(Level.FINE, "plotted {0} stars", plotCount);
+
+        return map;
     }
 
     /**
@@ -426,135 +513,115 @@ public class MakeStarMaps {
     }
 
     /**
-     * Generate a starry sky texture map for a dome.
+     * Plot a four-pointed star shape on a texture map.
      *
-     * @param latitude radians north of the equator (&le;Pi/2, &ge;-Pi/2)
-     * @param siderealTime radians since sidereal midnight (&lt;2*Pi, &ge;0)
+     * @param map texture map (not null)
+     * @param luminosity star's relative luminosity (in terms of pure white
+     * pixels, &le;37, &gt;0)
      * @param textureSize size of the texture map (pixels per side, &gt;2)
-     * @return new instance
+     * @param uv star's texture coordinates (not null)
+     * @return true if the star was successfully plotted, otherwise false
      */
-    private RenderedImage generateDomeMap(float latitude, float siderealTime,
-            int textureSize) {
-        assert latitude >= -FastMath.HALF_PI : latitude;
-        assert latitude <= FastMath.HALF_PI : latitude;
-        assert siderealTime >= 0f : siderealTime;
-        assert siderealTime < FastMath.TWO_PI : siderealTime;
+    private boolean plot4PointStar(BufferedImage map, float luminosity,
+            int textureSize, Vector2f uv) {
+        assert luminosity > 0f : luminosity;
+        assert luminosity <= 37f : luminosity;
         assert textureSize > 2 : textureSize;
+        assert uv != null;
         /*
-         * Create a blank, grayscale buffered image for the texture map.
+         * Convert the star's luminosity into a shape and pixel color.
+         *
+         * The shape must be big enough to ensure that the pixels will not be
+         * oversaturated. For instance, a star with luminosity=4.1
+         * must fill at least 5 pixels.
          */
-        BufferedImage map = new BufferedImage(textureSize, textureSize,
-                BufferedImage.TYPE_BYTE_GRAY);
+        int minPixels = (int) FastMath.ceil(luminosity);
+        assert minPixels >= 1 : minPixels;
         /*
-         * Plot individual stars on the image, starting with the faintest.
+         * Star shapes consist of a square portion (up to 5x5 pixels)
+         * plus optional rays.  Rays are used only with odd-sized squares;
+         * they add either 1 or 3 pixels to each side of the square.
+         * In other words, they add either 4 or 12 pixels.
          */
-        int plotCount = 0;
-        for (Star star : stars) {
-            boolean success = plotStarOnDome(map, star, latitude, siderealTime,
-                    textureSize);
-            if (success) {
-                plotCount++;
-            }
-        }
-        logger.log(Level.FINE, "plotted {0} stars", plotCount);
-
-        return map;
-    }
-
-    /**
-     * Extract a star's declination from a catalog entry.
-     *
-     * @param line of text read from the catalog (not null)
-     * @return angle north of the celestial equator (in degrees, &le;90,
-     * &ge;-90)
-     */
-    private float declination(String line)
-            throws InvalidEntryException {
-        assert line != null;
-        /*
-         * Extract declination components from the line of text.
-         */
-        String dd = line.substring(83, 86);
-        String mm = line.substring(86, 88);
-        String ss = line.substring(88, 90);
-        logger.log(Level.FINE, "{0}d {1}m {2}s", new Object[]{dd, mm, ss});
-        /*
-         * sanity checks
-         */
-        int degrees = Integer.parseInt(dd);
-        if (degrees < -maxDeclination || degrees > maxDeclination) {
-            throw new InvalidEntryException(
-                    "dec degrees should be between -90 and 90, inclusive");
-        }
-        int minutes = Integer.parseInt(mm);
-        if (minutes < 0 || minutes >= maxMinutes) {
-            throw new InvalidEntryException(
-                    "dec minutes should be between 0 and 59, inclusive");
-        }
-        float seconds = Float.parseFloat(ss);
-        if (seconds < 0f || seconds >= maxSeconds) {
-            throw new InvalidEntryException(
-                    "dec seconds should be between 0 and 59, inclusive");
-        }
-        /*
-         * Convert to an angle.
-         */
-        float result; // in degrees
-        if (degrees > 0) {
-            result = degrees + minutes / 60f + seconds / 3600f;
+        int raySize, squareSize;
+        if (minPixels == 1) {
+            raySize = 0;
+            squareSize = 1;
+        } else if (minPixels <= 4) {
+            raySize = 0;
+            squareSize = 2;
+        } else if (minPixels <= 5) {
+            raySize = 1;
+            squareSize = 1;
+        } else if (minPixels <= 9) {
+            raySize = 0;
+            squareSize = 3;
+        } else if (minPixels <= 13) {
+            raySize = 1;
+            squareSize = 3;
+        } else if (minPixels <= 16) {
+            raySize = 0;
+            squareSize = 4;
+        } else if (minPixels <= 21) {
+            raySize = 3;
+            squareSize = 3;
+        } else if (minPixels <= 29) {
+            raySize = 1;
+            squareSize = 5;
+        } else if (minPixels <= 37) {
+            raySize = 3;
+            squareSize = 5;
         } else {
-            result = degrees - minutes / 60f - seconds / 3600f;
+            logger.log(Level.SEVERE, "no shape contains {0} pixels", minPixels);
+            return false;
+        }
+        int numPixels = squareSize * squareSize + 4 * raySize;
+        assert numPixels >= minPixels : minPixels;
+        int brightness = Math.round(255f * luminosity / numPixels);
+        assert brightness >= 0 : brightness;
+        assert brightness <= 255 : brightness;
+        // TODO tint based on spectral type
+        Color color = new Color(brightness, brightness, brightness);
+        /*
+         * Convert the texture coordinates into (x, y) image coordinates of
+         * the square's upper-left pixel.
+         */
+        float u = uv.x;
+        float v = uv.y;
+        float cornerOffset = 0.5f * (squareSize - 1);
+        int x = Math.round(u * textureSize - cornerOffset);
+        int y = Math.round(v * textureSize - cornerOffset);
+        /*
+         * Plot the star onto the texture map.
+         */
+        Graphics2D graphics = map.createGraphics();
+        graphics.setColor(color);
+        graphics.fillRect(x, y, squareSize, squareSize);
+        if (raySize == 0) {
+            return true;
         }
 
-        assert result >= -maxDeclination : result;
-        assert result <= maxDeclination : result;
-        logger.log(Level.FINE, "result = {0}", result);
-        return result;
-    }
+        assert MyMath.isOdd(squareSize) : squareSize;
+        int halfSize = (squareSize - 1) / 2;
+        switch (raySize) {
+            case 1:
+                graphics.fillRect(x - 1, y + halfSize, 1, 1);
+                graphics.fillRect(x + halfSize, y - 1, 1, 1);
+                graphics.fillRect(x + halfSize, y + squareSize, 1, 1);
+                graphics.fillRect(x + squareSize, y + halfSize, 1, 1);
+                break;
 
-    /**
-     * Extract a star's right ascension from a catalog entry.
-     *
-     * @param line of text read from the catalog (not null)
-     * @return angle east of the vernal equinox (in hours, &lt;24, &ge;0)
-     */
-    private float rightAscensionHours(String line)
-            throws InvalidEntryException {
-        assert line != null;
-        /*
-         * Extract right ascension components from the line of text.
-         */
-        String hh = line.substring(75, 77);
-        String mm = line.substring(77, 79);
-        String ss = line.substring(79, 83);
-        logger.log(Level.FINE, "{0}:{1}:{2}", new Object[]{hh, mm, ss});
-        /*
-         * sanity checks
-         */
-        int hours = Integer.parseInt(hh);
-        if (hours < 0 || hours >= Constants.hoursPerDay) {
-            throw new InvalidEntryException(
-                    "RA hours should be between 0 and 23, inclusive");
-        }
-        int minutes = Integer.parseInt(mm);
-        if (minutes < 0 || minutes >= maxMinutes) {
-            throw new InvalidEntryException(
-                    "RA minutes should be between 0 and 59, inclusive");
-        }
-        float seconds = Float.parseFloat(ss);
-        if (seconds < 0f || seconds >= maxSeconds) {
-            throw new InvalidEntryException(
-                    "RA seconds should be between 0 and 59, inclusive");
-        }
-        /*
-         * Convert to an angle.
-         */
-        float result = hours + minutes / 60f + seconds / 3600f; // in hours
+            case 3:
+                graphics.fillRect(x - 1, y + halfSize - 1, 1, 3);
+                graphics.fillRect(x + halfSize - 1, y - 1, 3, 1);
+                graphics.fillRect(x + halfSize - 1, y + squareSize, 3, 1);
+                graphics.fillRect(x + squareSize, y + halfSize - 1, 1, 3);
+                break;
 
-        assert result >= 0f : result;
-        assert result < Constants.hoursPerDay : result;
-        logger.log(Level.FINE, "result = {0}", result);
-        return result;
+            default:
+                assert false : raySize;
+        }
+        return true;
     }
 
     /**
@@ -849,118 +916,6 @@ public class MakeStarMaps {
     }
 
     /**
-     * Plot a four-pointed star shape on a texture map.
-     *
-     * @param map texture map (not null)
-     * @param luminosity star's relative luminosity (in terms of pure white
-     * pixels, &le;37, &gt;0)
-     * @param textureSize size of the texture map (pixels per side, &gt;2)
-     * @param uv star's texture coordinates (not null)
-     * @return true if the star was successfully plotted, otherwise false
-     */
-    private boolean plot4PointStar(BufferedImage map, float luminosity,
-            int textureSize, Vector2f uv) {
-        assert luminosity > 0f : luminosity;
-        assert luminosity <= 37f : luminosity;
-        assert textureSize > 2 : textureSize;
-        assert uv != null;
-        /*
-         * Convert the star's luminosity into a shape and pixel color.
-         *
-         * The shape must be big enough to ensure that the pixels will not be
-         * oversaturated. For instance, a star with luminosity=4.1
-         * must fill at least 5 pixels.
-         */
-        int minPixels = (int) FastMath.ceil(luminosity);
-        assert minPixels >= 1 : minPixels;
-        /*
-         * Star shapes consist of a square portion (up to 5x5 pixels)
-         * plus optional rays.  Rays are used only with odd-sized squares;
-         * they add either 1 or 3 pixels to each side of the square.
-         * In other words, they add either 4 or 12 pixels.
-         */
-        int raySize, squareSize;
-        if (minPixels == 1) {
-            raySize = 0;
-            squareSize = 1;
-        } else if (minPixels <= 4) {
-            raySize = 0;
-            squareSize = 2;
-        } else if (minPixels <= 5) {
-            raySize = 1;
-            squareSize = 1;
-        } else if (minPixels <= 9) {
-            raySize = 0;
-            squareSize = 3;
-        } else if (minPixels <= 13) {
-            raySize = 1;
-            squareSize = 3;
-        } else if (minPixels <= 16) {
-            raySize = 0;
-            squareSize = 4;
-        } else if (minPixels <= 21) {
-            raySize = 3;
-            squareSize = 3;
-        } else if (minPixels <= 29) {
-            raySize = 1;
-            squareSize = 5;
-        } else if (minPixels <= 37) {
-            raySize = 3;
-            squareSize = 5;
-        } else {
-            logger.log(Level.SEVERE, "no shape contains {0} pixels", minPixels);
-            return false;
-        }
-        int numPixels = squareSize * squareSize + 4 * raySize;
-        assert numPixels >= minPixels : minPixels;
-        int brightness = Math.round(255f * luminosity / numPixels);
-        assert brightness >= 0 : brightness;
-        assert brightness <= 255 : brightness;
-        // TODO tint based on spectral type
-        Color color = new Color(brightness, brightness, brightness);
-        /*
-         * Convert the texture coordinates into (x, y) image coordinates of
-         * the square's upper-left pixel.
-         */
-        float u = uv.x;
-        float v = uv.y;
-        float cornerOffset = 0.5f * (squareSize - 1);
-        int x = Math.round(u * textureSize - cornerOffset);
-        int y = Math.round(v * textureSize - cornerOffset);
-        /*
-         * Plot the star onto the texture map.
-         */
-        Graphics2D graphics = map.createGraphics();
-        graphics.setColor(color);
-        graphics.fillRect(x, y, squareSize, squareSize);
-        if (raySize == 0) {
-            return true;
-        }
-
-        assert MyMath.isOdd(squareSize) : squareSize;
-        int halfSize = (squareSize - 1) / 2;
-        switch (raySize) {
-            case 1:
-                graphics.fillRect(x - 1, y + halfSize, 1, 1);
-                graphics.fillRect(x + halfSize, y - 1, 1, 1);
-                graphics.fillRect(x + halfSize, y + squareSize, 1, 1);
-                graphics.fillRect(x + squareSize, y + halfSize, 1, 1);
-                break;
-
-            case 3:
-                graphics.fillRect(x - 1, y + halfSize - 1, 1, 3);
-                graphics.fillRect(x + halfSize - 1, y - 1, 3, 1);
-                graphics.fillRect(x + halfSize - 1, y + squareSize, 3, 1);
-                graphics.fillRect(x + squareSize, y + halfSize - 1, 1, 3);
-                break;
-
-            default:
-                assert false : raySize;
-        }
-        return true;
-    }
-
-    /**
      * Read the star catalog and add each valid star to the collection.
      */
     private void readCatalog() {
@@ -1148,6 +1103,51 @@ public class MakeStarMaps {
          */
         Star result = new Star(rightAscension, declination, apparentMagnitude);
 
+        return result;
+    }
+
+    /**
+     * Extract a star's right ascension from a catalog entry.
+     *
+     * @param line of text read from the catalog (not null)
+     * @return angle east of the vernal equinox (in hours, &lt;24, &ge;0)
+     */
+    private float rightAscensionHours(String line)
+            throws InvalidEntryException {
+        assert line != null;
+        /*
+         * Extract right ascension components from the line of text.
+         */
+        String hh = line.substring(75, 77);
+        String mm = line.substring(77, 79);
+        String ss = line.substring(79, 83);
+        logger.log(Level.FINE, "{0}:{1}:{2}", new Object[]{hh, mm, ss});
+        /*
+         * sanity checks
+         */
+        int hours = Integer.parseInt(hh);
+        if (hours < 0 || hours >= Constants.hoursPerDay) {
+            throw new InvalidEntryException(
+                    "RA hours should be between 0 and 23, inclusive");
+        }
+        int minutes = Integer.parseInt(mm);
+        if (minutes < 0 || minutes >= maxMinutes) {
+            throw new InvalidEntryException(
+                    "RA minutes should be between 0 and 59, inclusive");
+        }
+        float seconds = Float.parseFloat(ss);
+        if (seconds < 0f || seconds >= maxSeconds) {
+            throw new InvalidEntryException(
+                    "RA seconds should be between 0 and 59, inclusive");
+        }
+        /*
+         * Convert to an angle.
+         */
+        float result = hours + minutes / 60f + seconds / 3600f; // in hours
+
+        assert result >= 0f : result;
+        assert result < Constants.hoursPerDay : result;
+        logger.log(Level.FINE, "result = {0}", result);
         return result;
     }
 }
