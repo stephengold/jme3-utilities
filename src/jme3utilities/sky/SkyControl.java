@@ -26,12 +26,17 @@
 package jme3utilities.sky;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.texture.Texture;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
@@ -49,9 +54,9 @@ import jme3utilities.math.MyMath;
  * noon (12:00 hours).
  * <p>
  * The control is disabled at creation. When enabled, it attaches a "sky" node
- * to the controlled spatial, which must also be a node. For best results, place
- * the scene's main light, ambient light, and shadow filters/renderers under
- * simulation control by adding them to the Updater.
+ * to the controlled spatial, which must be a scene-graph node. For best
+ * results, place the scene's main light, ambient light, and shadow
+ * filters/renderers under simulation control by adding them to the Updater.
  * <p>
  * The "top" dome is oriented so that its rim is parallel to the horizon. The
  * top dome implements the sun, moon, clear sky color, and horizon haze. Object
@@ -65,8 +70,6 @@ import jme3utilities.math.MyMath;
  * To simulate star motion, several more domes are added: one for northern
  * stars, one for southern stars, and an optional "bottom" dome which extends
  * the horizon haze for scenes with a low horizon.
- * <p>
- * This control is not serializable.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -155,13 +158,21 @@ public class SkyControl
     /**
      * orientations of the sun and stars relative to the observer
      */
-    final private SunAndStars sunAndStars = new SunAndStars();
+    private SunAndStars sunAndStars = null;
     /**
      * lights, shadows, and viewports to update
      */
-    final private Updater updater = new Updater();
+    private Updater updater = null;
     // *************************************************************************
     // constructors
+
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
+    public SkyControl() {
+        super();
+    }
 
     /**
      * Instantiate a disabled control for no clouds, full moon, no cloud
@@ -184,6 +195,8 @@ public class SkyControl
             float cloudFlattening, boolean starMotion, boolean bottomDome) {
         super(assetManager, camera, cloudFlattening, starMotion, bottomDome);
 
+        sunAndStars = new SunAndStars();
+        updater = new Updater();
         setPhase(phase);
         setSunStyle("Textures/skies/suns/hazy-disc.png");
 
@@ -323,6 +336,17 @@ public class SkyControl
     // SkyControlCore methods
 
     /**
+     * Create a shallow copy of this control.
+     *
+     * @return a new instance
+     */
+    @Override
+    public SkyControl clone() throws CloneNotSupportedException {
+        SkyControl clone = (SkyControl) super.clone();
+        return clone;
+    }
+
+    /**
      * Callback invoked when the sky node's geometric state is about to be
      * updated, once per frame while attached and enabled.
      *
@@ -332,6 +356,46 @@ public class SkyControl
     public void controlUpdate(float updateInterval) {
         super.controlUpdate(updateInterval);
         updateAll();
+    }
+
+    /**
+     * De-serialize this instance, for example when loading from a J3O file.
+     *
+     * @param importer (not null)
+     * @throws IOException from importer
+     */
+    @Override
+    public void read(JmeImporter importer) throws IOException {
+        super.read(importer);
+        InputCapsule ic = importer.getCapsule(this);
+
+        cloudModulationFlag = ic.readBoolean("cloudModulationFlag", false);
+        moonScale = ic.readFloat("moonScale", 0.02f);
+        sunScale = ic.readFloat("sunScale", 0.08f);
+        /* moon renderer not serialized */
+        phase = ic.readEnum("phase", LunarPhase.class, LunarPhase.FULL);
+        sunAndStars = (SunAndStars) ic.readSavable("sunAndStars", null);
+        updater = (Updater) ic.readSavable("updater", null);
+    }
+
+    /**
+     * Serialize this instance, for example when saving to a J3O file.
+     *
+     * @param exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter exporter) throws IOException {
+        super.write(exporter);
+        OutputCapsule oc = exporter.getCapsule(this);
+
+        oc.write(cloudModulationFlag, "cloudModulationFlag", false);
+        oc.write(moonScale, "moonScale", 0.02f);
+        oc.write(sunScale, "sunScale", 0.08f);
+        /* moon renderer not serialized */
+        oc.write(phase, "phase", LunarPhase.FULL);
+        oc.write(sunAndStars, "sunAndStars", null);
+        oc.write(updater, "updater", null);
     }
     // *************************************************************************
     // private methods
