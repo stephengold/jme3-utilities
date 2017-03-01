@@ -546,8 +546,8 @@ public class SkyControl
 
         Vector3f moonDirection = updateMoon();
         updateLighting(sunDirection, moonDirection);
-        if (starMotionFlag) {
-            sunAndStars.orientStarDomes(northDome, southDome);
+        if (starMotionFlag && starCube != null) {
+            sunAndStars.orientExternalSky(starCube, false);
         }
     }
 
