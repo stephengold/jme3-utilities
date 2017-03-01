@@ -132,7 +132,7 @@ public class TestSkyControl
      */
     private SkyControl skyControl = null;
     /**
-     * background cube map
+     * star map background (external to SkyControl)
      */
     private Spatial cubeMap = null;
     /**
@@ -383,13 +383,24 @@ public class TestSkyControl
             }
             skyControl.setStarMaps(starMapPath);
         }
-
-        if (!parameters.singleDome()) {
-            /*
-             * Re-orient the external cube map.
-             */
-            skyControl.getSunAndStars().orientExternalSky(cubeMap);
-        }
+        /*
+         * Translate the external star map to center it on the camera.
+         */
+        Vector3f cameraLocation = cam.getLocation();
+        MySpatial.setWorldLocation(cubeMap, cameraLocation);
+        /*
+         * Scale the external star map so that its geometries lie
+         * between the near and far planes of the view frustum.
+         */
+        float far = cam.getFrustumFar();
+        float near = cam.getFrustumNear();
+        float cubeRadius = (near + far) / 2f;
+        assert cubeRadius > cam.getFrustumNear() : cubeRadius;
+        MySpatial.setWorldScale(cubeMap, cubeRadius);
+        /*
+         * Re-orient the external star map.
+         */
+        skyControl.getSunAndStars().orientExternalSky(cubeMap, false);
     }
     // *************************************************************************
     // ViewPortListener methods
@@ -503,9 +514,10 @@ public class TestSkyControl
      */
     private void initializeSky() {
         /*
-         * Add a cube map background.
+         * Load and attach the external star map.
          */
-        cubeMap = MyAsset.createStarMap(assetManager, "purple-nebula-complex");
+        cubeMap = MyAsset.createStarMapQuads(assetManager, 
+                "purple-nebula-complex");
         sceneNode.attachChild(cubeMap);
         /*
          * Create a SkyControl to animate the sky.
