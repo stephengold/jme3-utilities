@@ -185,8 +185,8 @@ public class CubeMapExample
      * Create and attach the sky.
      */
     private void initializeSky() {
-        Spatial starMap = MyAsset.createStarMap(assetManager,
-                "purple-nebula-complex");
+        Spatial starMap = MyAsset.createStarMapSphere(assetManager,
+                "purple-nebula-complex", 100f);
         rootNode.attachChild(starMap);
     }
 

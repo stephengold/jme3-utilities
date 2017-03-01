@@ -30,8 +30,13 @@ import com.jme3.asset.TextureKey;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
 import java.util.logging.Logger;
@@ -52,6 +57,10 @@ final public class MyAsset {
     final private static Logger logger = Logger.getLogger(
             MyAsset.class.getName());
     /**
+     * reusable unit-square mesh
+     */
+    final private static Quad unitSquare = new Quad(1f, 1f);
+    /**
      * asset path of the Particle material definition
      */
     final private static String particleMaterialAssetPath =
@@ -70,6 +79,39 @@ final public class MyAsset {
      * default scale
      */
     final private static Vector3f defaultScale = new Vector3f(1f, 1f, 1f);
+    /**
+     * Direction vector for the center of each cube face.
+     */
+    final private static Vector3f[] faceDirection = {
+        new Vector3f(-1f, 0f, 0f),
+        new Vector3f(1f, 0f, 0f),
+        new Vector3f(0f, 1f, 0f),
+        new Vector3f(0f, -1f, 0f),
+        new Vector3f(0f, 0f, -1f),
+        new Vector3f(0f, 0f, 1f)
+    };
+    /**
+     * Direction vector for 1st (+U) texture coordinate of each cube face.
+     */
+    final private static Vector3f[] uDirection = {
+        new Vector3f(0f, 0f, 1f),
+        new Vector3f(0f, 0f, -1f),
+        new Vector3f(-1f, 0f, 0f),
+        new Vector3f(-1f, 0f, 0f),
+        new Vector3f(-1f, 0f, 0f),
+        new Vector3f(1f, 0f, 0f)
+    };
+    /**
+     * Direction vector for 2nd (+V) texture coordinate of each cube face.
+     */
+    final private static Vector3f[] vDirection = {
+        new Vector3f(0f, -1f, 0f),
+        new Vector3f(0f, -1f, 0f),
+        new Vector3f(0f, 0f, -1f),
+        new Vector3f(0f, 0f, 1f),
+        new Vector3f(0f, -1f, 0f),
+        new Vector3f(0f, -1f, 0f)
+    };
     // *************************************************************************
     // constructors
 
@@ -158,47 +200,128 @@ final public class MyAsset {
     }
 
     /**
-     * Create a cubic star map.
+     * Load a cube-mapped star map onto a cube formed by 6 quads, each 2 world
+     * units on a side.
+     * <p>
+     * This method uses Unshaded.j3md materials, which can be translated,
+     * rotated, and scaled in the usual fashion.
+     * <p>
+     * For the sky to be visible, its surface must lie between the near and far
+     * planes of the camera's frustum. This can usually be achieved by scaling
+     * the Node. Prior to scaling, the sky's surface ranges from 1.0 to 1.732
+     * world units from the center.
+     * <p>
+     * To avoid distortion, the camera must remain at the center of the sky.
+     * This can usually be achieved by translating the Node to the camera's
+     * location.
      *
      * @param assetManager (not null)
-     * @param name name of the star map (not null, not empty)
-     * @return new instance
+     * @param name name of the star map in the Textures/skies/star-maps asset
+     * folder (not null, not empty)
+     * @return a new instance
      */
-    public static Spatial createStarMap(AssetManager assetManager,
+    public static Node createStarMapQuads(AssetManager assetManager,
             String name) {
         Validate.nonNull(assetManager, "asset manager");
         Validate.nonEmpty(name, "star map name");
         /*
-         * Load the cube map textures for a viewer facing the south horizon.
+         * Load the cube map textures.
          */
-        Texture right = loadFace(assetManager, name, "right1"); // west
-        Texture left = loadFace(assetManager, name, "left2"); // east
-        Texture top = loadFace(assetManager, name, "top3"); // up
-        Texture bottom = loadFace(assetManager, name, "bottom4"); // down
-        Texture front = loadFace(assetManager, name, "front5"); // south
-        Texture back = loadFace(assetManager, name, "back6"); // north
+        Texture[] faceTexture = new Texture[6];
+        faceTexture[0] = loadFace(assetManager, name, "right1", false);
+        faceTexture[1] = loadFace(assetManager, name, "left2", false);
+        faceTexture[2] = loadFace(assetManager, name, "top3", false);
+        faceTexture[3] = loadFace(assetManager, name, "bottom4", false);
+        faceTexture[4] = loadFace(assetManager, name, "front5", false);
+        faceTexture[5] = loadFace(assetManager, name, "back6", false);
         /*
-         * Create the map.
+         * Create the quads.
          */
-        int sphereRadius = 10;
-        Spatial starMap = SkyFactory.createSky(assetManager, right, left, back,
-                front, top, bottom, defaultScale, sphereRadius);
+        Node result = new Node("star map");
+        result.setQueueBucket(Bucket.Sky);
+        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+            Geometry geometry = new Geometry(name, unitSquare);
+            result.attachChild(geometry);
+            /*
+             * Apply material to quad.
+             */
+            Texture texture = faceTexture[faceIndex];
+            Material material = createUnshadedMaterial(assetManager, texture);
+            geometry.setMaterial(material);
+            /*
+             * Set location of quad.
+             */
+            Vector3f u = uDirection[faceIndex];
+            Vector3f v = vDirection[faceIndex];
+            Vector3f offset = faceDirection[faceIndex].clone();
+            offset.subtractLocal(u);
+            offset.subtractLocal(v);
+            geometry.setLocalTranslation(offset);
+            /*
+             * Set orientation of quad.
+             */
+            Vector3f w = faceDirection[faceIndex].negate();
+            Quaternion orientation = new Quaternion();
+            orientation.fromAxes(u, v, w);
+            geometry.setLocalRotation(orientation);
+            /*
+             * Set scale of quad.
+             */
+            geometry.setLocalScale(2f);
+        }
 
-        return starMap;
+        return result;
     }
 
     /**
-     * Create an unshaded material.
+     * Load a cube-mapped star map onto a sky sphere with the specified radius.
+     * <p>
+     * For the sky to be visible, its radius must fall between the near and far
+     * planes of the camera's frustum.
+     * <p>
+     * Sky spheres use Sky.j3md materials. Translation and scaling of the
+     * geometry is ignored and rotations are applied in the shader. The effect
+     * of rotating a sky sphere is the inverse of rotating an ordinary geometry.
+     *
+     * @param assetManager (not null)
+     * @param name name of the star map in the Textures/skies/star-maps asset
+     * folder (not null, not empty)
+     * @param radius size of the sphere (&gt;0)
+     * @return a new instance
+     */
+    public static Geometry createStarMapSphere(AssetManager assetManager,
+            String name, float radius) {
+        Validate.nonNull(assetManager, "asset manager");
+        Validate.nonEmpty(name, "star map name");
+        Validate.positive(radius, "radius");
+        /*
+         * Load the cube map textures for a viewer facing the south horizon.
+         */
+        Texture right = loadFace(assetManager, name, "right1", true); // west
+        Texture left = loadFace(assetManager, name, "left2", true); // east
+        Texture top = loadFace(assetManager, name, "top3", true); // up
+        Texture bottom = loadFace(assetManager, name, "bottom4", true); // down
+        Texture front = loadFace(assetManager, name, "front5", true); // south
+        Texture back = loadFace(assetManager, name, "back6", true); // north
+        /*
+         * Create the sky sphere.
+         */
+        Spatial starMap = SkyFactory.createSky(assetManager, right, left, back,
+                front, top, bottom, defaultScale, radius);
+
+        return (Geometry) starMap;
+    }
+
+    /**
+     * Create a default unshaded material.
      *
      * @param assetManager (not null)
      * @return new instance
      */
     public static Material createUnshadedMaterial(AssetManager assetManager) {
         Validate.nonNull(assetManager, "asset manager");
-
         Material material = new Material(
                 assetManager, unshadedMaterialAssetPath);
-
         return material;
     }
 
@@ -280,16 +403,19 @@ final public class MyAsset {
      * @param assetManager (not null)
      * @param mapName name of the star map folder (not null, not empty)
      * @param faceName name of the face (not null, not empty, e.g. "top3")
+     * @param flipY true &rarr; flipped, false &rarr; not flipped
      * @return texture which was loaded (not null)
      */
     public static Texture loadFace(AssetManager assetManager, String mapName,
-            String faceName) {
+            String faceName, boolean flipY) {
         Validate.nonEmpty(mapName, "folder name");
         Validate.nonEmpty(faceName, "face name");
 
         String path = String.format("Textures/skies/star-maps/%s/%s_%s.png",
                 mapName, mapName, faceName);
-        Texture texture = assetManager.loadTexture(path);
+        TextureKey key = new TextureKey(path, flipY);
+        key.setGenerateMips(true);
+        Texture texture = assetManager.loadTexture(key);
 
         assert texture != null;
         return texture;
