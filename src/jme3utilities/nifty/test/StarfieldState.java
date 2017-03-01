@@ -207,7 +207,8 @@ public class StarfieldState extends SimpleAppState {
         float far = cam.getFrustumFar();
         float near = cam.getFrustumNear();
         float cubeScale = (near + far) / 2f;
-        backdrop.setLocalScale(cubeScale);
+        assert cubeScale > near : cubeScale;
+        MySpatial.setWorldScale(backdrop, cubeScale);
 
         if (rotationRate != 0f) {
             /*
