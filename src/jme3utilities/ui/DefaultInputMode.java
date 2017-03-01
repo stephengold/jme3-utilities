@@ -30,6 +30,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.cursors.plugins.JmeCursor;
+import com.jme3.input.CameraInput;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import java.util.logging.Level;
@@ -71,34 +72,35 @@ class DefaultInputMode extends InputMode {
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored time per frame (in seconds)
+     * @param tpf time per frame (in seconds)
      */
     @Override
-    public void onAction(String actionString, boolean ongoing, float ignored) {
-        if (!isEnabled()) {
-            return;
-        }
-        /*
-         * Ignore actions which are not ongoing.
-         */
-        if (!ongoing) {
-            return;
-        }
-        logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
+    public void onAction(String actionString, boolean ongoing, float tpf) {
+        logger.log(Level.INFO, "Got action {0} ongoing={1}", new Object[]{
+            MyString.quote(actionString), ongoing
+        });
         /*
          * Action not yet handled: fall back on the application's handler.
          */
-        actionApplication.onAction(actionString, ongoing, ignored);
+        actionApplication.onAction(actionString, ongoing, tpf);
     }
     // *************************************************************************
     // InputMode methods
 
     /**
-     * Add default hotkey bindings to mimic SimpleApplication. These bindings 
-     * will be used if no custom bindings are found.
+     * Add default hotkey bindings to mimic SimpleApplication. These bindings
+     * will be used if no custom bindings are found. They are handled by the
+     * ActionApplication class.
      */
     @Override
     protected void defaultBindings() {
+        bindSignal(CameraInput.FLYCAM_BACKWARD, KeyInput.KEY_S);
+        bindSignal(CameraInput.FLYCAM_FORWARD, KeyInput.KEY_W);
+        bindSignal(CameraInput.FLYCAM_LOWER, KeyInput.KEY_R);
+        bindSignal(CameraInput.FLYCAM_RISE, KeyInput.KEY_Q);
+        bindSignal(CameraInput.FLYCAM_STRAFELEFT, KeyInput.KEY_A);
+        bindSignal(CameraInput.FLYCAM_STRAFERIGHT, KeyInput.KEY_D);
+
         bind(SimpleApplication.INPUT_MAPPING_CAMERA_POS, KeyInput.KEY_C);
         bind(SimpleApplication.INPUT_MAPPING_EXIT, KeyInput.KEY_ESCAPE);
         bind(SimpleApplication.INPUT_MAPPING_HIDE_STATS, KeyInput.KEY_F5);
@@ -118,23 +120,50 @@ class DefaultInputMode extends InputMode {
         JmeCursor cursor = (JmeCursor) am.loadAsset(assetPath);
         setCursor(cursor);
         /*
-         * Delete mappings added by SimpleApplication in order
-         * to avoid warnings from the input manager.
+         * Delete any mappings added by SimpleApplication in order
+         * to avoid future warnings from the input manager.
          */
         InputManager im = application.getInputManager();
-        if (im.hasMapping(SimpleApplication.INPUT_MAPPING_CAMERA_POS)) {
-            im.deleteMapping(SimpleApplication.INPUT_MAPPING_CAMERA_POS);
+        for (String signalName : ActionApplication.flycamNames) {
+            deleteAnyMapping(im, signalName);
         }
-        if (im.hasMapping(SimpleApplication.INPUT_MAPPING_EXIT)) {
-            im.deleteMapping(SimpleApplication.INPUT_MAPPING_EXIT);
-        }
-        if (im.hasMapping(SimpleApplication.INPUT_MAPPING_HIDE_STATS)) {
-            im.deleteMapping(SimpleApplication.INPUT_MAPPING_HIDE_STATS);
-        }
-        if (im.hasMapping(SimpleApplication.INPUT_MAPPING_MEMORY)) {
-            im.deleteMapping(SimpleApplication.INPUT_MAPPING_MEMORY);
-        }
+        deleteAnyMapping(im, SimpleApplication.INPUT_MAPPING_CAMERA_POS);
+        deleteAnyMapping(im, SimpleApplication.INPUT_MAPPING_EXIT);
+        deleteAnyMapping(im, SimpleApplication.INPUT_MAPPING_HIDE_STATS);
+        deleteAnyMapping(im, SimpleApplication.INPUT_MAPPING_MEMORY);
 
         super.initialize(stateManager, application);
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Bind the specified signal to a hotkey, but don't map it yet.
+     *
+     * @param signalName name of signal (not null, not empty)
+     * @param keyCode code for hotkey
+     */
+    private void bindSignal(String signalName, int keyCode) {
+        assert signalName != null;
+        assert !signalName.isEmpty();
+
+        String actionName = String.format("signal %s", signalName);
+        bind(actionName, keyCode);
+    }
+
+    /**
+     * Delete the specified mapping if it exists.
+     *
+     * @param inputManager input manager (not null)
+     * @param mappingName name of mapping (not null)
+     */
+    private void deleteAnyMapping(InputManager inputManager,
+            String mappingName) {
+        assert inputManager != null;
+        assert mappingName != null;
+
+        if (inputManager.hasMapping(mappingName)) {
+            inputManager.deleteMapping(mappingName);
+        }
     }
 }

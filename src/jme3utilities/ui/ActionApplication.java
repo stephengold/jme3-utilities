@@ -27,6 +27,7 @@ package jme3utilities.ui;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
+import com.jme3.input.CameraInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -52,6 +53,18 @@ abstract public class ActionApplication
      */
     final private static Logger logger = Logger.getLogger(
             ActionApplication.class.getName());
+
+    /**
+     * names of flyCam actions and the signals used to simulate them
+     */
+    final public static String[] flycamNames = {
+        CameraInput.FLYCAM_BACKWARD,
+        CameraInput.FLYCAM_FORWARD,
+        CameraInput.FLYCAM_LOWER,
+        CameraInput.FLYCAM_RISE,
+        CameraInput.FLYCAM_STRAFELEFT,
+        CameraInput.FLYCAM_STRAFERIGHT
+    };
     // *************************************************************************
     // fields
 
@@ -109,62 +122,59 @@ abstract public class ActionApplication
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored time per frame (in seconds)
+     * @param tpf time per frame (in seconds)
      */
     @Override
-    public void onAction(String actionString, boolean ongoing, float ignored) {
-        /*
-         * Ignore actions which are not ongoing.
-         */
-        if (!ongoing) {
-            return;
-        }
+    public void onAction(String actionString, boolean ongoing, float tpf) {
         /*
          * Handle actions whose mappings may have been deleted by 
-         * DefaultInputMode.initialize() .
+         * DefaultInputMode.initialize().
          */
-        switch (actionString) {
-            case SimpleApplication.INPUT_MAPPING_EXIT:
-                stop();
-                return;
+        if (ongoing) {
+            switch (actionString) {
+                case SimpleApplication.INPUT_MAPPING_EXIT:
+                    stop();
+                    return;
 
-            case SimpleApplication.INPUT_MAPPING_CAMERA_POS:
-                if (cam != null) {
-                    Vector3f loc = cam.getLocation();
-                    Quaternion rot = cam.getRotation();
-                    System.out.println("Camera Position: ("
-                            + loc.x + ", " + loc.y + ", " + loc.z + ")");
-                    System.out.println("Camera Rotation: " + rot);
-                    System.out.println("Camera Direction: " + cam.getDirection());
-                    System.out.println("cam.setLocation(new Vector3f("
-                            + loc.x + "f, " + loc.y + "f, " + loc.z + "f));");
-                    System.out.println("cam.setRotation(new Quaternion(" + 
+                case SimpleApplication.INPUT_MAPPING_CAMERA_POS:
+                    if (cam != null) {
+                        Vector3f loc = cam.getLocation();
+                        Quaternion rot = cam.getRotation();
+                        System.out.println("Camera Position: ("
+                                + loc.x + ", " + loc.y + ", " + loc.z + ")");
+                        System.out.println("Camera Rotation: " + rot);
+                        System.out.println("Camera Direction: " + cam.getDirection());
+                        System.out.println("cam.setLocation(new Vector3f("
+                                + loc.x + "f, " + loc.y + "f, " + loc.z + "f));");
+                        System.out.println("cam.setRotation(new Quaternion(" + 
                             rot.getX() + "f, " + rot.getY() + "f, " + rot.getZ() 
-                            + "f, " + rot.getW() + "f));");
+                                + "f, " + rot.getW() + "f));");
+                    }
+                    return;
 
-                }
-                return;
+                case SimpleApplication.INPUT_MAPPING_HIDE_STATS:
+                    StatsAppState sas = stateManager.getState(StatsAppState.class);
+                    if (sas != null) {
+                        sas.toggleStats();
+                    }
+                    return;
 
-            case SimpleApplication.INPUT_MAPPING_HIDE_STATS:
-                StatsAppState sas = stateManager.getState(StatsAppState.class);
-                if (sas != null) {
-                    sas.toggleStats();
-                }
-                return;
+                case SimpleApplication.INPUT_MAPPING_MEMORY:
+                    BufferUtils.printCurrentDirectMemory(null);
+                    return;
 
-            case SimpleApplication.INPUT_MAPPING_MEMORY:
-                BufferUtils.printCurrentDirectMemory(null);
-                return;
+                default:
+                    logger.log(Level.WARNING,
+                            "Ongoing action {0} was not handled.",
+                            MyString.quote(actionString));
+            }
         }
-
-        logger.log(Level.WARNING, "Action {0} was not handled.",
-                MyString.quote(actionString));
     }
     // *************************************************************************
     // SimpleApplication methods
 
     /**
-     * Startup code for this simple application.
+     * Startup code for this application.
      */
     @Override
     public void simpleInitApp() {
@@ -191,5 +201,24 @@ abstract public class ActionApplication
          * Invoke the startup code of the subclass.
          */
         actionInitializeApplication();
+    }
+
+    /**
+     * Callback invoked once per render pass.
+     *
+     * @param tpf time interval between render passes (in seconds, &ge;0)
+     */
+    public void simpleUpdate(float tpf) {
+        /* 
+         * Handle flyCam signals whose mappings may have been deleted by
+         * DefaultInputMode.initialize().
+         */
+        if (flyCam != null && flyCam.isEnabled()) {
+            for (String signalName : flycamNames) {
+                if (signals.test(signalName)) {
+                    flyCam.onAnalog(signalName, tpf, tpf);
+                }
+            }
+        }
     }
 }
