@@ -271,13 +271,14 @@ public class TestSkyControl
     // SimpleApplication methods
 
     /**
-     * Callback to update the scene. (Invoked once per frame.)
+     * Callback invoked once per render pass.
      *
-     * @param elapsedTime time since the previous update (in seconds, &ge;0)
+     * @param tpf time interval between render passes (in seconds, &ge;0)
      */
     @Override
     public void simpleUpdate(float elapsedTime) {
         Validate.nonNegative(elapsedTime, "interval");
+        super.simpleUpdate(elapsedTime);
         /*
          * Adjust SkyControl parameters based on GUI controls in the HUD.
          */
