@@ -272,27 +272,23 @@ public class TestSkyMaterial
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float ignored) {
-        /*
-         * Ignore actions which are not ongoing.
-         */
-        if (!ongoing) {
-            return;
+        if (ongoing) {
+            switch (actionString) {
+                case actionStringLoad:
+                    load();
+                    return;
+
+                case actionStringSave:
+                    save();
+                    return;
+
+                case actionStringToggle:
+                    boolean newState = !hud.isEnabled();
+                    hud.setEnabled(newState);
+                    return;
+            }
         }
 
-        switch (actionString) {
-            case actionStringLoad:
-                load();
-                return;
-
-            case actionStringSave:
-                save();
-                return;
-
-            case actionStringToggle:
-                boolean newState = !hud.isEnabled();
-                hud.setEnabled(newState);
-                return;
-        }
         super.onAction(actionString, ongoing, ignored);
     }
     // *************************************************************************

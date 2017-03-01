@@ -259,18 +259,12 @@ public class TestSkyControl
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float ignored) {
-        /*
-         * Ignore actions which are not ongoing.
-         */
-        if (!ongoing) {
-            return;
-        }
-
-        if (actionString.equals(actionStringToggle)) {
+        if (ongoing && actionString.equals(actionStringToggle)) {
             boolean newState = !hud.isEnabled();
             hud.setEnabled(newState);
             return;
         }
+
         super.onAction(actionString, ongoing, ignored);
     }
     // *************************************************************************
