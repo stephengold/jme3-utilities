@@ -255,17 +255,17 @@ public class TestSkyControl
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored time per frame (in seconds)
+     * @param tpf time interval between render passes (in seconds, &ge;0)
      */
     @Override
-    public void onAction(String actionString, boolean ongoing, float ignored) {
+    public void onAction(String actionString, boolean ongoing, float tpf) {
         if (ongoing && actionString.equals(actionStringToggle)) {
             boolean newState = !hud.isEnabled();
             hud.setEnabled(newState);
             return;
         }
 
-        super.onAction(actionString, ongoing, ignored);
+        super.onAction(actionString, ongoing, tpf);
     }
     // *************************************************************************
     // SimpleApplication methods
@@ -389,7 +389,7 @@ public class TestSkyControl
                 break;
             case "nebula":
                 /*
-                 * Turn off star maps to reveal the external sky.
+                 * Turn off SkyControl's star maps to reveal the external sky.
                  */
                 skyControl.clearStarMaps();
                 break;
@@ -408,7 +408,7 @@ public class TestSkyControl
         float far = cam.getFrustumFar();
         float near = cam.getFrustumNear();
         float cubeRadius = (near + far) / 2f;
-        assert cubeRadius > cam.getFrustumNear() : cubeRadius;
+        assert cubeRadius > near : cubeRadius;
         MySpatial.setWorldScale(cubeMap, cubeRadius);
         /*
          * Re-orient the external star map.

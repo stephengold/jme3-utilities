@@ -180,10 +180,10 @@ public class TestBindScreen extends GuiApplication {
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored time per frame (in seconds)
+     * @param tpf time interval between render passes (in seconds, &ge;0)
      */
     @Override
-    public void onAction(String actionString, boolean ongoing, float ignored) {
+    public void onAction(String actionString, boolean ongoing, float tpf) {
         if (ongoing) {
             switch (actionString) {
                 case asFeels:
@@ -236,12 +236,12 @@ public class TestBindScreen extends GuiApplication {
                 case asYawRight:
                     starfield.setRotation(-0.2f, yawAxis);
                     return;
-            }
+        }
         }
         /*
          * Action not yet handled: fall back on ActionApplication's handler.
          */
-        super.onAction(actionString, ongoing, ignored);
+        super.onAction(actionString, ongoing, tpf);
     }
     // *************************************************************************
     // private methods

@@ -201,7 +201,7 @@ final public class MyAsset {
 
     /**
      * Load a cube-mapped star map onto a cube formed by 6 quads, each 2 world
-     * units square.
+     * units on a side.
      * <p>
      * This method uses Unshaded.j3md materials, which can be translated,
      * rotated, and scaled in the usual fashion.
@@ -279,10 +279,9 @@ final public class MyAsset {
      * For the sky to be visible, its radius must fall between the near and far
      * planes of the camera's frustum.
      * <p>
-     * Sky spheres use Sky.j3md materials, so translation and scaling of the
+     * Sky spheres use Sky.j3md materials. Translation and scaling of the
      * geometry is ignored and rotations are applied in the shader. The effect
-     * of rotating a sky sphere is the mirror-opposite of rotating an ordinary
-     * geometry.
+     * of rotating a sky sphere is the inverse of rotating an ordinary geometry.
      *
      * @param assetManager (not null)
      * @param name name of the star map in the Textures/skies/star-maps asset

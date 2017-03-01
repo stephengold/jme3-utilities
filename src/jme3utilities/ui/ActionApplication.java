@@ -122,7 +122,7 @@ abstract public class ActionApplication
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param tpf time per frame (in seconds)
+     * @param tpf time interval between render passes (in seconds, &ge;0)
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
@@ -208,6 +208,7 @@ abstract public class ActionApplication
      *
      * @param tpf time interval between render passes (in seconds, &ge;0)
      */
+    @Override
     public void simpleUpdate(float tpf) {
         /* 
          * Handle flyCam signals whose mappings may have been deleted by

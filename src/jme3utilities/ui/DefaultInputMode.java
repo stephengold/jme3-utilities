@@ -72,7 +72,7 @@ class DefaultInputMode extends InputMode {
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param tpf time per frame (in seconds)
+     * @param tpf time interval between render passes (in seconds, &ge;0)
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
@@ -120,7 +120,7 @@ class DefaultInputMode extends InputMode {
         JmeCursor cursor = (JmeCursor) am.loadAsset(assetPath);
         setCursor(cursor);
         /*
-         * Delete any mappings added by SimpleApplication in order
+         * Delete any mappings added by SimpleApplication, in order
          * to avoid future warnings from the input manager.
          */
         InputManager im = application.getInputManager();
