@@ -265,32 +265,28 @@ public class TestSkyMaterial
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored time per frame (in seconds)
+     * @param tpf time interval between render passes (in seconds, &ge;0)
      */
     @Override
-    public void onAction(String actionString, boolean ongoing, float ignored) {
-        /*
-         * Ignore actions which are not ongoing.
-         */
-        if (!ongoing) {
-            return;
+    public void onAction(String actionString, boolean ongoing, float tpf) {
+        if (ongoing) {
+            switch (actionString) {
+                case actionStringLoad:
+                    load();
+                    return;
+
+                case actionStringSave:
+                    save();
+                    return;
+
+                case actionStringToggle:
+                    boolean newState = !hud.isEnabled();
+                    hud.setEnabled(newState);
+                    return;
+            }
         }
 
-        switch (actionString) {
-            case actionStringLoad:
-                load();
-                return;
-
-            case actionStringSave:
-                save();
-                return;
-
-            case actionStringToggle:
-                boolean newState = !hud.isEnabled();
-                hud.setEnabled(newState);
-                return;
-        }
-        super.onAction(actionString, ongoing, ignored);
+        super.onAction(actionString, ongoing, tpf);
     }
     // *************************************************************************
     // private methods

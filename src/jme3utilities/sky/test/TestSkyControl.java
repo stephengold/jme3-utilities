@@ -252,23 +252,17 @@ public class TestSkyControl
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored time per frame (in seconds)
+     * @param tpf time interval between render passes (in seconds, &ge;0)
      */
     @Override
-    public void onAction(String actionString, boolean ongoing, float ignored) {
-        /*
-         * Ignore actions which are not ongoing.
-         */
-        if (!ongoing) {
-            return;
-        }
-
-        if (actionString.equals(actionStringToggle)) {
+    public void onAction(String actionString, boolean ongoing, float tpf) {
+        if (ongoing && actionString.equals(actionStringToggle)) {
             boolean newState = !hud.isEnabled();
             hud.setEnabled(newState);
             return;
         }
-        super.onAction(actionString, ongoing, ignored);
+
+        super.onAction(actionString, ongoing, tpf);
     }
     // *************************************************************************
     // SimpleApplication methods
@@ -374,11 +368,11 @@ public class TestSkyControl
         String starMapName = hud.getStarMapName();
         switch (starMapName) {
             case "4m":
-            if (parameters.singleDome()) {
+                if (parameters.singleDome()) {
                     starMapName = "Textures/skies/star-maps/wiltshire.png";
                 } else {
                     starMapName = "equator";
-            }
+                }
                 skyControl.setStarMaps(starMapName);
                 break;
             case "16m":
@@ -386,13 +380,13 @@ public class TestSkyControl
                     starMapName = "Textures/skies/star-maps/16m/wiltshire.png";
                 } else {
                     starMapName = "equator16m";
-        }
+                }
                 skyControl.setStarMaps(starMapName);
                 break;
             case "nebula":
-            /*
+                /*
                  * Turn off SkyControl's star maps to reveal the external sky.
-             */
+                 */
                 skyControl.clearStarMaps();
                 break;
             default:
@@ -531,7 +525,7 @@ public class TestSkyControl
         /*
          * Load and attach the external star map.
          */
-        cubeMap = MyAsset.createStarMapQuads(assetManager, 
+        cubeMap = MyAsset.createStarMapQuads(assetManager,
                 "purple-nebula-complex");
         sceneNode.attachChild(cubeMap);
         /*

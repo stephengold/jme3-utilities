@@ -177,69 +177,68 @@ public class TestBindScreen extends GuiApplication {
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored time per frame (in seconds)
+     * @param tpf time interval between render passes (in seconds, &ge;0)
      */
     @Override
-    public void onAction(String actionString, boolean ongoing, float ignored) {
-        if (!ongoing) {
-            return;
-        }
-        switch (actionString) {
-            case asFeels:
-                messageHud.addLine("I have a bad feeling about this.");
-                return;
-            case asFire:
-                messageHud.addLine("Torpedos away!");
-                return;
-            case asForward:
-                setWarpFactor(warpFactor + 1);
-                return;
-            case asHail:
-                messageHud.addLine("Hailing frequencies open.");
-                return;
-            case asHelp:
-                InputMode thisMode = InputMode.getEnabledMode();
-                bindScreen.activate(thisMode);
-                return;
-            case asLowerShields:
-                messageHud.addLine("Shields are down.");
-                return;
-            case asPitchDown:
-                starfield.setRotation(0.2f, pitchAxis);
-                return;
-            case asPitchUp:
-                starfield.setRotation(-0.2f, pitchAxis);
-                return;
-            case asRaiseShields:
-                messageHud.addLine("Shields up!");
-                return;
-            case asReverse:
-                setWarpFactor(warpFactor - 1);
-                return;
-            case asRollLeft:
-                starfield.setRotation(0.2f, rollAxis);
-                return;
-            case asRollRight:
-                starfield.setRotation(-0.2f, rollAxis);
-                return;
-            case asStopAll:
-                starfield.setRotation(0f, yawAxis);
-                setWarpFactor(0);
-                return;
-            case asStopRotation:
-                starfield.setRotation(0f, yawAxis);
-                return;
-            case asYawLeft:
-                starfield.setRotation(0.2f, yawAxis);
-                return;
-            case asYawRight:
-                starfield.setRotation(-0.2f, yawAxis);
-                return;
+    public void onAction(String actionString, boolean ongoing, float tpf) {
+        if (ongoing) {
+            switch (actionString) {
+                case asFeels:
+                    messageHud.addLine("I have a bad feeling about this.");
+                    return;
+                case asFire:
+                    messageHud.addLine("Torpedos away!");
+                    return;
+                case asForward:
+                    setWarpFactor(warpFactor + 1);
+                    return;
+                case asHail:
+                    messageHud.addLine("Hailing frequencies open.");
+                    return;
+                case asHelp:
+                    InputMode thisMode = InputMode.getEnabledMode();
+                    bindScreen.activate(thisMode);
+                    return;
+                case asLowerShields:
+                    messageHud.addLine("Shields are down.");
+                    return;
+                case asPitchDown:
+                    starfield.setRotation(0.2f, pitchAxis);
+                    return;
+                case asPitchUp:
+                    starfield.setRotation(-0.2f, pitchAxis);
+                    return;
+                case asRaiseShields:
+                    messageHud.addLine("Shields up!");
+                    return;
+                case asReverse:
+                    setWarpFactor(warpFactor - 1);
+                    return;
+                case asRollLeft:
+                    starfield.setRotation(0.2f, rollAxis);
+                    return;
+                case asRollRight:
+                    starfield.setRotation(-0.2f, rollAxis);
+                    return;
+                case asStopAll:
+                    starfield.setRotation(0f, yawAxis);
+                    setWarpFactor(0);
+                    return;
+                case asStopRotation:
+                    starfield.setRotation(0f, yawAxis);
+                    return;
+                case asYawLeft:
+                    starfield.setRotation(0.2f, yawAxis);
+                    return;
+                case asYawRight:
+                    starfield.setRotation(-0.2f, yawAxis);
+                    return;
+            }
         }
         /*
          * Action not yet handled: fall back on ActionApplication's handler.
          */
-        super.onAction(actionString, ongoing, ignored);
+        super.onAction(actionString, ongoing, tpf);
     }
     // *************************************************************************
     // private  methods
