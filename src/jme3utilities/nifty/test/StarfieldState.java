@@ -96,10 +96,10 @@ public class StarfieldState extends SimpleAppState {
      */
     final private Node objects = new Node("objects node");
     /**
-     * asset path to the folder containing the backdrop textures (not null, set
-     * by constructor)
+     * name of the backdrop star map in the Textures/skies/star-maps asset
+     * folder (not null, not empty, set by constructor)
      */
-    final private String backdropAssetPath;
+    final private String backdropName;
     /**
      * local axis about which the camera rotates (not zero)
      */
@@ -113,16 +113,16 @@ public class StarfieldState extends SimpleAppState {
      *
      * @param enabled true &rarr; enabled, false &rarr; disabled
      * @param numObjects number of objects to animate (&gt;0)
-     * @param backdropAssetPath asset path to folder containing backdrop
-     * textures (not null)
+     * @param backdropName name of the star map in the Textures/skies/star-maps
+     * asset folder (not null, not empty)
      */
-    StarfieldState(boolean enabled, int numObjects, String backdropAssetPath) {
+    StarfieldState(boolean enabled, int numObjects, String backdropName) {
         super(enabled);
         Validate.positive(numObjects, "number of objects");
-        Validate.nonNull(backdropAssetPath, "backdrop asset path");
+        Validate.nonEmpty(backdropName, "name of backdrop");
 
         this.numObjects = numObjects;
-        this.backdropAssetPath = backdropAssetPath;
+        this.backdropName = backdropName;
     }
     // *************************************************************************
     // new methods exposed
@@ -200,6 +200,14 @@ public class StarfieldState extends SimpleAppState {
         super.update(updateInterval);
 
         assert MyVector3f.isZero(cam.getLocation());
+        /*
+         * Scale the backdrop so that its furthest geometries are
+         * between the near and far planes of the view frustum.
+         */
+        float far = cam.getFrustumFar();
+        float near = cam.getFrustumNear();
+        float cubeScale = (near + far) / 2f;
+        backdrop.setLocalScale(cubeScale);
 
         if (rotationRate != 0f) {
             /*
@@ -242,7 +250,8 @@ public class StarfieldState extends SimpleAppState {
      * Create and attach the backdrop.
      */
     private void initializeBackdrop() {
-        Spatial cubeMap = MyAsset.createStarMap(assetManager, "equator");
+        Spatial cubeMap = MyAsset.createStarMapQuads(
+                assetManager, backdropName);
         backdrop.attachChild(cubeMap);
         rootNode.attachChild(backdrop);
     }
