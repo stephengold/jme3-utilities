@@ -131,7 +131,7 @@ public class TestSkyControl
      */
     private SkyControl skyControl = null;
     /**
-     * background cube map
+     * star map background (external to SkyControl)
      */
     private Spatial cubeMap = null;
     /**
@@ -274,9 +274,9 @@ public class TestSkyControl
     // SimpleApplication methods
 
     /**
-     * Callback to update the scene. (Invoked once per frame.)
+     * Callback invoked once per render pass.
      *
-     * @param elapsedTime time since the previous update (in seconds, &ge;0)
+     * @param tpf time interval between render passes (in seconds, &ge;0)
      */
     @Override
     public void simpleUpdate(float elapsedTime) {
@@ -371,21 +371,32 @@ public class TestSkyControl
         boolean shadowFiltersFlag = hud.getShadowFiltersFlag();
         skyControl.getUpdater().setShadowFiltersEnabled(shadowFiltersFlag);
 
-        String starMapPath = hud.getStarMapAssetPath();
-        if (starMapPath == null) {
-            skyControl.clearStarMaps();
-        } else {
+        String starMapName = hud.getStarMapName();
+        switch (starMapName) {
+            case "4m":
             if (parameters.singleDome()) {
-                starMapPath += "/wiltshire.png";
+                    starMapName = "Textures/skies/star-maps/wiltshire.png";
+                } else {
+                    starMapName = "equator";
             }
-            skyControl.setStarMaps(starMapPath);
+                skyControl.setStarMaps(starMapName);
+                break;
+            case "16m":
+                if (parameters.singleDome()) {
+                    starMapName = "Textures/skies/star-maps/16m/wiltshire.png";
+                } else {
+                    starMapName = "equator16m";
         }
-
-        if (!parameters.singleDome()) {
+                skyControl.setStarMaps(starMapName);
+                break;
+            case "nebula":
             /*
-             * Re-orient the external cube map.
+                 * Turn off SkyControl's star maps to reveal the external sky.
              */
-            skyControl.getSunAndStars().orientExternalSky(cubeMap);
+                skyControl.clearStarMaps();
+                break;
+            default:
+                throw new IllegalStateException("unknown star map name");
         }
         /*
          * Translate the external star map to center it on the camera.
@@ -404,7 +415,7 @@ public class TestSkyControl
         /*
          * Re-orient the external star map.
          */
-        skyControl.getSunAndStars().orientExternalSky(cubeMap);
+        skyControl.getSunAndStars().orientExternalSky(cubeMap, false);
     }
     // *************************************************************************
     // ViewPortListener methods
