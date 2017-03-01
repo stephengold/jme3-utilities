@@ -287,15 +287,18 @@ public class SunAndStars
         Validate.nonNull(spatial, "spatial");
 
         float siderealAngle = siderealAngle();
-        if (mirrored) {
-            siderealAngle = -siderealAngle;
-        }
         Quaternion xRotation = new Quaternion();
-        xRotation.fromAngleNormalAxis(-siderealAngle, xAxis);
-
         Quaternion zRotation = new Quaternion();
-        zRotation.fromAngleNormalAxis(-observerLatitude, zAxis);
-        Quaternion orientation = xRotation.mult(zRotation);
+        Quaternion orientation;
+        if (mirrored) {
+            xRotation.fromAngleNormalAxis(siderealAngle, xAxis);
+            zRotation.fromAngleNormalAxis(-observerLatitude, zAxis);
+            orientation = xRotation.mult(zRotation);
+        } else {
+            xRotation.fromAngleNormalAxis(-siderealAngle, xAxis);
+            zRotation.fromAngleNormalAxis(observerLatitude, zAxis);
+            orientation = zRotation.mult(xRotation);
+        }
         MySpatial.setWorldOrientation(spatial, orientation);
     }
 
