@@ -150,8 +150,7 @@ public class TestBindScreen extends GuiApplication {
         /*
          * Create and attach the starfield animation.
          */
-        starfield = new StarfieldState(false, numObjects,
-                "Textures/skies/star-maps");
+        starfield = new StarfieldState(false, numObjects, "equator");
         boolean success = stateManager.attach(starfield);
         assert success;
         /*
