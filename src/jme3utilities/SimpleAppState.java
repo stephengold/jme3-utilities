@@ -38,9 +38,9 @@ import com.jme3.scene.Node;
 import java.util.logging.Logger;
 
 /**
- * A named app state with protected fields analogous to those of
- * {@link com.jme3.app.SimpleApplication}. If any of these fields change, these
- * states should be notified by invoking {@link #refreshCachedFields()}.
+ * A NamedAppState with protected fields analogous to those of
+ * {@link com.jme3.app.SimpleApplication}. If any of these fields change, notify
+ * these states by invoking {@link #refreshCachedFields()}.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -55,9 +55,9 @@ public class SimpleAppState extends NamedAppState {
             SimpleAppState.class.getName());
     // *************************************************************************
     // fields
-    
+
     /**
-     * app state manager: set by initialize()
+     * AppState manager: set by initialize()
      */
     protected AppStateManager stateManager;
     /**
@@ -104,7 +104,7 @@ public class SimpleAppState extends NamedAppState {
     // constructor
 
     /**
-     * Instantiate an uninitialized app state.
+     * Instantiate an uninitialized state.
      *
      * @param enabled true &rarr; enabled, false &rarr; disabled
      */
@@ -152,7 +152,7 @@ public class SimpleAppState extends NamedAppState {
     // NamedAppState methods
 
     /**
-     * Initialize this app state on the 1st update after it gets attached.
+     * Initialize this state on the 1st update after it gets attached.
      *
      * @param sm application's state manager (not null)
      * @param app application which owns this state (not null)
@@ -163,10 +163,12 @@ public class SimpleAppState extends NamedAppState {
             throw new IllegalArgumentException(
                     "application should be a SimpleApplication");
         }
+        super.initialize(sm, app);
 
         simpleApplication = (SimpleApplication) app;
         refreshCachedFields();
-        super.initialize(sm, app);
+
+        assert isInitialized();
     }
 
     /**
@@ -179,12 +181,11 @@ public class SimpleAppState extends NamedAppState {
         if (rm != renderManager) {
             throw new IllegalArgumentException("wrong render manager");
         }
-
         super.render(rm);
     }
 
     /**
-     * Callback when this app state gets detached.
+     * Callback when this state gets detached.
      *
      * @param sm application's state manager (not null)
      */
@@ -193,7 +194,6 @@ public class SimpleAppState extends NamedAppState {
         if (sm != stateManager) {
             throw new IllegalArgumentException("wrong state manager");
         }
-
         super.stateDetached(sm);
     }
 }

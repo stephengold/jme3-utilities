@@ -26,6 +26,7 @@
 package jme3utilities;
 
 import com.jme3.app.Application;
+import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.renderer.RenderManager;
@@ -35,10 +36,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * An app state with a unique name, able to influence other app states. Enabling
- * a disabled named app state causes all the states influenced by it to get
- * enabled. Likewise, disabling an enabled named app state disables any states
- * it influences. Influence may be mutual or one-way.
+ * An AppState with a unique name, able to influence other AppStates. Enabling a
+ * disabled state causes all the states influenced by it to get enabled.
+ * Likewise, disabling an enabled state disables any states it influences.
+ * Influence may be mutual or one-way.
  *
  * @author Stephen Gold sgold@sonic.net
  * @see com.jme3.app.state.AbstractAppState
@@ -65,7 +66,7 @@ public class NamedAppState implements AppState {
      */
     private boolean initialized = false;
     /**
-     * app states influenced by this one (not null)
+     * AppStates influenced by this one (not null)
      */
     final private List<AppState> influenceList = new ArrayList<>(2);
     /**
@@ -80,7 +81,7 @@ public class NamedAppState implements AppState {
     // constructor
 
     /**
-     * Instantiate an uninitialized app state with a unique name.
+     * Instantiate an uninitialized state with a unique name.
      *
      * @param enabled true &rarr; enabled, false &rarr; disabled
      */
@@ -132,7 +133,7 @@ public class NamedAppState implements AppState {
     // AppState methods
 
     /**
-     * Clean up this app state on the 1st update after it gets detached.
+     * Clean up this state on the 1st update after it gets detached.
      */
     @Override
     public void cleanup() {
@@ -144,7 +145,7 @@ public class NamedAppState implements AppState {
     }
 
     /**
-     * Initialize this app state on the 1st update after it gets attached.
+     * Initialize this state on the 1st update after it gets attached.
      *
      * @param sm application's state manager (not null)
      * @param app application which owns this state (not null)
@@ -156,17 +157,19 @@ public class NamedAppState implements AppState {
             throw new IllegalStateException("already initialized");
         }
         Validate.nonNull(sm, "state manager");
-        Validate.nonNull(app, "application");
+        if (!(app instanceof SimpleApplication)) {
+            throw new IllegalArgumentException(
+                    "application should be a SimpleApplication");
+        }
         if (sm != app.getStateManager()) {
             throw new IllegalArgumentException("wrong state manager");
         }
 
         initialized = true;
-        assert isInitialized();
     }
 
     /**
-     * Test whether this app state is enabled. Declared final here to prevent
+     * Test whether this state is enabled. Declared final here to prevent
      * subclasses from overriding it.
      *
      * @return true if enabled, otherwise false
@@ -177,7 +180,7 @@ public class NamedAppState implements AppState {
     }
 
     /**
-     * Test whether this app state is initialized. Declared final here to
+     * Test whether this state is initialized. Declared final here to
      * prevent subclasses from overriding it.
      *
      * @return true if initialized, otherwise false
@@ -207,6 +210,7 @@ public class NamedAppState implements AppState {
      */
     @Override
     public void render(RenderManager rm) {
+        Validate.nonNull(rm, "render manager");
         if (!isInitialized()) {
             throw new IllegalStateException("should be initialized");
         }
@@ -216,7 +220,7 @@ public class NamedAppState implements AppState {
     }
 
     /**
-     * Enable or disable the functionality of this app state.
+     * Enable or disable the functionality of this state.
      *
      * @param newSetting true &rarr; enable, false &rarr; disable
      */
@@ -233,7 +237,7 @@ public class NamedAppState implements AppState {
 
             }
             /*
-             * Exert influence over other app states.
+             * Exert influence over other AppStates.
              */
             for (AppState as : influenceList) {
                 as.setEnabled(newSetting);
@@ -242,7 +246,7 @@ public class NamedAppState implements AppState {
     }
 
     /**
-     * Callback when this app state gets attached.
+     * Callback when this state gets attached.
      *
      * @param sm application's state manager (not null)
      */
@@ -253,13 +257,14 @@ public class NamedAppState implements AppState {
     }
 
     /**
-     * Callback when this app state gets detached.
+     * Callback when this state gets detached.
      *
      * @param sm application's state manager (not null)
      */
     @Override
     public void stateDetached(AppStateManager sm) {
         logger.log(Level.INFO, "detach {0}", appStateName);
+        Validate.nonNull(sm, "state manager");
     }
 
     /**
@@ -283,7 +288,7 @@ public class NamedAppState implements AppState {
     // Object methods    
 
     /**
-     * Represent this app state as a text string.
+     * Represent this state as a text string.
      *
      * @return descriptive string of text (not null)
      */
