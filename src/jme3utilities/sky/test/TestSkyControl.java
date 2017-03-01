@@ -374,14 +374,32 @@ public class TestSkyControl
         boolean shadowFiltersFlag = hud.getShadowFiltersFlag();
         skyControl.getUpdater().setShadowFiltersEnabled(shadowFiltersFlag);
 
-        String starMapPath = hud.getStarMapAssetPath();
-        if (starMapPath == null) {
-            skyControl.clearStarMaps();
-        } else {
-            if (parameters.singleDome()) {
-                starMapPath += "/wiltshire.png";
-            }
-            skyControl.setStarMaps(starMapPath);
+        String starMapName = hud.getStarMapName();
+        switch (starMapName) {
+            case "4m":
+                if (parameters.singleDome()) {
+                    starMapName = "Textures/skies/star-maps/wiltshire.png";
+                } else {
+                    starMapName = "equator";
+                }
+                skyControl.setStarMaps(starMapName);
+                break;
+            case "16m":
+                if (parameters.singleDome()) {
+                    starMapName = "Textures/skies/star-maps/16m/wiltshire.png";
+                } else {
+                    starMapName = "equator16m";
+                }
+                skyControl.setStarMaps(starMapName);
+                break;
+            case "nebula":
+                /*
+                 * Turn off star maps to reveal the external sky.
+                 */
+                skyControl.clearStarMaps();
+                break;
+            default:
+                throw new IllegalStateException("unknown star map name");
         }
         /*
          * Translate the external star map to center it on the camera.
@@ -516,7 +534,7 @@ public class TestSkyControl
         /*
          * Load and attach the external star map.
          */
-        cubeMap = MyAsset.createStarMapQuads(assetManager, 
+        cubeMap = MyAsset.createStarMapQuads(assetManager,
                 "purple-nebula-complex");
         sceneNode.attachChild(cubeMap);
         /*

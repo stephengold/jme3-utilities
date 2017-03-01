@@ -41,6 +41,7 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -65,9 +66,9 @@ import jme3utilities.math.MyColor;
  * adjusted by invoking setCloudsRate(). Flatten the clouds for best results;
  * this puts them on a translucent "clouds only" dome.
  * <p>
- * To simulate star motion, several more domes are added: one for northern
- * stars, one for southern stars, and an optional "bottom" dome which extends
- * the horizon haze for scenes with a low horizon.
+ * To simulate star motion, additional geometries are added: a star cube and an
+ * optional "bottom" dome which extends the horizon haze for scenes with a low
+ * horizon.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -106,13 +107,9 @@ public class SkyControlCore extends SubtreeControl {
      */
     final private static String cloudsName = "clouds";
     /**
-     * name for the northern sky geometry
+     * name for the star cube spatial
      */
-    final private static String northName = "north";
-    /**
-     * name for the southern sky geometry
-     */
-    final private static String southName = "south";
+    final private static String starCubeName = "star cube";
     /**
      * name for the top geometry
      */
@@ -191,14 +188,6 @@ public class SkyControlCore extends SubtreeControl {
      */
     protected Geometry bottomDome = null;
     /**
-     * dome representing the northern stars: set by initialize()
-     */
-    protected Geometry northDome = null;
-    /**
-     * dome representing the southern stars: set by initialize()
-     */
-    protected Geometry southDome = null;
-    /**
      * dome representing the sun, moon, and horizon haze: set by initialize()
      */
     protected Geometry topDome = null;
@@ -214,6 +203,10 @@ public class SkyControlCore extends SubtreeControl {
      * material of the top dome: set by constructor
      */
     protected SkyMaterial topMaterial;
+    /**
+     * spatial for movable stars (if starMotionFlag is true)
+     */
+    protected Spatial starCube = null;
     // *************************************************************************
     // constructors
 
@@ -307,9 +300,6 @@ public class SkyControlCore extends SubtreeControl {
         }
 
         createSpatials(cloudFlattening);
-        if (starMotionFlag) {
-            setStarMaps("Textures/skies/star-maps");
-        }
 
         assert !isEnabled();
     }
@@ -320,18 +310,14 @@ public class SkyControlCore extends SubtreeControl {
      * Clear the star maps.
      */
     public void clearStarMaps() {
-        if (!starMotionFlag) {
+        if (starMotionFlag) {
+            if (starCube != null) {
+                subtree.detachChild(starCube);
+                starCube = null;
+            }
+        } else {
             topMaterial.removeStars();
-            return;
         }
-        /*
-         * Don't remove the north/south domes because, then how would you insert
-         * them back into the render queue ahead of the top dome?
-         * Instead, make the north/south domes fully transparent.
-         */
-        Material clear = MyAsset.createInvisibleMaterial(assetManager);
-        northDome.setMaterial(clear);
-        southDome.setMaterial(clear);
     }
 
     /**
@@ -446,29 +432,26 @@ public class SkyControlCore extends SubtreeControl {
     }
 
     /**
-     * Alter the star maps.
+     * Alter the star map.
      *
-     * @param assetPath if starMotion is true: path to an asset folder
-     * containing "northern.png" and "southern.png" textures (not null)<br>
-     * if starMotion is false: path to a star dome texture asset (not null)
+     * @param assetName if starMotion is true: name of a cube map folder in
+     * Textures/skies/star-maps (not null, not empty)<br>
+     * if starMotion is false: path to texture asset (not null, not empty)
      */
-    final public void setStarMaps(String assetPath) {
-        Validate.nonNull(assetPath, "path");
+    final public void setStarMaps(String assetName) {
+        Validate.nonEmpty(assetName, "asset name");
 
-        if (!starMotionFlag) {
-            topMaterial.addStars(assetPath);
-            return;
+        if (starMotionFlag) {
+            if (starCube != null) {
+                int index = subtree.detachChild(starCube);
+                assert index == 0;
+                starCube = null;
+            }
+            starCube = MyAsset.createStarMapQuads(assetManager, assetName);
+            subtree.attachChildAt(starCube, 0);
+        } else {
+            topMaterial.addStars(assetName);
         }
-
-        String northPath = String.format("%s/%sern.png", assetPath, northName);
-        Material north = MyAsset.createUnshadedMaterial(
-                assetManager, northPath);
-        northDome.setMaterial(north);
-
-        String southPath = String.format("%s/%sern.png", assetPath, southName);
-        Material south = MyAsset.createUnshadedMaterial(
-                assetManager, southPath);
-        southDome.setMaterial(south);
     }
 
     /**
@@ -577,6 +560,7 @@ public class SkyControlCore extends SubtreeControl {
 
         assetManager = importer.getAssetManager();
         stabilizeFlag = ic.readBoolean("stabilizeFlag", false);
+        starMotionFlag = ic.readBoolean("starMotionFlag", false);
         /* camera not serialized */
         Savable[] sav = ic.readSavableArray("cloudLayers", null);
         cloudLayers = new CloudLayer[sav.length];
@@ -588,10 +572,7 @@ public class SkyControlCore extends SubtreeControl {
         /*
          * Infer cached references and values from the subtree.
          */
-        northDome = (Geometry) MySpatial.findChild(subtree, northName);
-        southDome = (Geometry) MySpatial.findChild(subtree, southName);
-        starMotionFlag = (northDome != null);
-
+        starCube = MySpatial.findChild(subtree, starCubeName);
         topDome = (Geometry) MySpatial.findChild(subtree, topName);
         topMaterial = (SkyMaterial) topDome.getMaterial();
         topMesh = (DomeMesh) topDome.getMesh();
@@ -625,6 +606,7 @@ public class SkyControlCore extends SubtreeControl {
         OutputCapsule oc = exporter.getCapsule(this);
 
         oc.write(stabilizeFlag, "stabilizeFlag", false);
+        oc.write(starMotionFlag, "starMotionFlag", false);
         /* camera not serialized */
         oc.write(cloudLayers, "cloudLayers", null);
         oc.write(cloudsAnimationTime, "cloudsAnimationTime", 0f);
@@ -667,12 +649,7 @@ public class SkyControlCore extends SubtreeControl {
          * because they'll be rendered in that order.
          */
         if (starMotionFlag) {
-            DomeMesh hemisphere = new DomeMesh(rimSamples, quadrantSamples);
-            northDome = new Geometry(northName, hemisphere);
-            subtree.attachChild(northDome);
-
-            southDome = new Geometry(southName, hemisphere);
-            subtree.attachChild(southDome);
+            setStarMaps("equator");
         }
 
         topMesh = new DomeMesh(rimSamples, quadrantSamples);

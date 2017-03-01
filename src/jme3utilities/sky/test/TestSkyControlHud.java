@@ -128,9 +128,9 @@ public class TestSkyControlHud
      */
     private LunarPhase phase = LunarPhase.FULL;
     /**
-     * star map asset path (or null for none), selected from a popup menu
+     * star map name, selected from a popup menu
      */
-    private String starMapAssetPath = "Textures/skies/star-maps/16m";
+    private String starMapName = "16m";
     /**
      * sun color map asset path, selected from a popup menu
      */
@@ -388,12 +388,13 @@ public class TestSkyControlHud
     }
 
     /**
-     * Read the star map.
+     * Read the star map name.
      *
-     * @return asset path (or null for none)
+     * @return name (not null)
      */
-    String getStarMapAssetPath() {
-        return starMapAssetPath;
+    String getStarMapName() {
+        assert starMapName != null;
+        return starMapName;
     }
 
     /**
@@ -509,7 +510,7 @@ public class TestSkyControlHud
             case "star-map 16m":
             case "star-map nebula":
                 name = actionString.substring(9);
-                setStarMap(name);
+                setStarMapName(name);
                 break;
 
             case "style":
@@ -666,27 +667,13 @@ public class TestSkyControlHud
     // private methods
 
     /**
-     * Alter the star map.
+     * Alter the star map name.
      *
-     * @param name of new star map (not null)
+     * @param name name of desired star map (not null)
      */
-    private void setStarMap(String name) {
+    private void setStarMapName(String name) {
         assert name != null;
-
-        switch (name) {
-            case "16m":
-                starMapAssetPath = "Textures/skies/star-maps/16m";
-                break;
-            case "4m":
-                starMapAssetPath = "Textures/skies/star-maps";
-                break;
-            case "nebula":
-                starMapAssetPath = null;
-                break;
-            default:
-                logger.log(Level.SEVERE, "name={0}", name);
-                throw new IllegalArgumentException("unknown star map name");
-        }
+        starMapName = name;
     }
 
     /**
