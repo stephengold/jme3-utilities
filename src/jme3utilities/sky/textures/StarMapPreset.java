@@ -42,6 +42,10 @@ enum StarMapPreset {
      */
     EQUATOR_4M,
     /**
+     * Equator 0h local sidereal time at 4096x4096 resolution (for cube)
+     */
+    EQUATOR_16M,
+    /**
      * stars of the Northern Hemisphere at 2048x2048 resolution
      */
     NORTH_4M,
@@ -75,6 +79,8 @@ enum StarMapPreset {
         switch (this) {
             case EQUATOR_4M:
                 return "equator";
+            case EQUATOR_16M:
+                return "equator_16m";
             case NORTH_4M:
                 return "north";
             case NORTH_16M:
@@ -106,13 +112,14 @@ enum StarMapPreset {
     }
 
     /**
-     * Compute the sidereal time for this preset.
+     * Look up the sidereal time for this preset.
      *
      * @return number of hours since midnight (&le;24, &ge;0)
      */
     float hour() {
         switch (this) {
             case EQUATOR_4M:
+            case EQUATOR_16M:
             case NORTH_4M:
             case NORTH_16M:
             case SOUTH_4M:
@@ -137,6 +144,7 @@ enum StarMapPreset {
     float latitude() {
         switch (this) {
             case EQUATOR_4M:
+            case EQUATOR_16M:
                 return 0f;
             case NORTH_4M:
             case NORTH_16M:
@@ -155,13 +163,14 @@ enum StarMapPreset {
     }
 
     /**
-     * Look up the name of the texture file or folder corresponding to this
-     * preset.
+     * Look up the name of the texture asset file or folder for this preset.
      */
     String textureFileName() {
         switch (this) {
             case EQUATOR_4M:
                 return "equator";
+            case EQUATOR_16M:
+                return "equator16m";
             case NORTH_4M:
                 return "northern";
             case NORTH_16M:
@@ -181,7 +190,7 @@ enum StarMapPreset {
     /**
      * Look up the texture resolution for this preset.
      *
-     * @return size of the texture map (pixels per side)
+     * @return size of each texture map (pixels per side)
      */
     int textureSize() {
         switch (this) {
@@ -190,6 +199,7 @@ enum StarMapPreset {
             case SOUTH_4M:
             case WILTSHIRE_4M:
                 return 2_048;
+            case EQUATOR_16M:
             case NORTH_16M:
             case SOUTH_16M:
             case WILTSHIRE_16M:
