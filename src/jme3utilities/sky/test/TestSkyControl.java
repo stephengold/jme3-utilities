@@ -270,11 +270,12 @@ public class TestSkyControl
     /**
      * Callback invoked once per render pass.
      *
-     * @param tpf time interval between render passes (in seconds, &ge;0)
+     * @param elapsedTime interval between render passes (in seconds, &ge;0)
      */
     @Override
     public void simpleUpdate(float elapsedTime) {
         Validate.nonNegative(elapsedTime, "interval");
+        super.simpleUpdate(elapsedTime);
         /*
          * Adjust SkyControl parameters based on GUI controls in the HUD.
          */
