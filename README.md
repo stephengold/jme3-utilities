@@ -22,6 +22,10 @@ Summary of SkyControl features:
 
 All package names in this project begin with "jme3utilities".
 The source code is compatible with JDK 7.
+World coordinate system:
+ + the X axis points toward the northern horizon
+ + the Y axis points up (toward the zenith)
+ + the Z axis point toward the eastern horizon
 
 ### History
 
