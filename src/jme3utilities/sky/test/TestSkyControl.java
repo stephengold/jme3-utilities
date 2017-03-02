@@ -42,8 +42,8 @@ import jme3utilities.ui.InputMode;
  * GUI application for testing/demonstrating the SkyControl class using a
  * heads-up display (HUD). The application's main entry point is here.
  * <p>
- * Use the 'H' key to toggle HUD visibility. When the HUD is hidden, the flyCam
- * (LMB and scroll wheel) controls are enabled for scene navigation.
+ * Use the 'H' key to toggle HUD visibility.
+ * Use the 'F1' key to edit hotkey bindings.
  *
  * @author Stephen Gold sgold@sonic.net
  */

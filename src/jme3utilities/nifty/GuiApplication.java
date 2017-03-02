@@ -35,13 +35,12 @@ import jme3utilities.ui.InputMode;
 
 /**
  * Action application with a Nifty graphical user interface (GUI). Extending
- * this class (instead of SimpleApplication) provides automatic initialization
+ * this class (instead of ActionApplication) provides automatic initialization
  * of Nifty and easy access to the Nifty instance.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-abstract public class GuiApplication
-        extends ActionApplication {
+abstract public class GuiApplication extends ActionApplication {
     // *************************************************************************
     // constants
 
@@ -63,14 +62,14 @@ abstract public class GuiApplication
      */
     private static BasicScreenController enabledScreen = null;
     /**
-     * Nifty display: set in #simpleInitApp()
+     * Nifty display: set in {@link #actionInitializeApplication()}
      */
     private NiftyJmeDisplay niftyDisplay = null;
     // *************************************************************************
     // new public methods
 
     /**
-     * Access the screen controller which is currently enabled.
+     * Access the screen controller that is currently enabled.
      *
      * @return pre-existing instance (or null if none)
      */
@@ -110,6 +109,7 @@ abstract public class GuiApplication
      * @param newScreen (or null for none)
      */
     public static void setEnabledScreen(BasicScreenController newScreen) {
+        logger.log(Level.INFO, "newScreen={0}", newScreen);
         assert newScreen == null || enabledScreen == null;
         enabledScreen = newScreen;
     }
@@ -129,7 +129,8 @@ abstract public class GuiApplication
          * Attach a (disabled) input mode for popup menus.
          */
         InputMode menuMode = new MenuInputMode();
-        stateManager.attach(menuMode);
+        boolean success = stateManager.attach(menuMode);
+        assert success;
         /*
          * Start Nifty -- without the batched renderer!
          */
