@@ -124,6 +124,41 @@ final public class MyAsset {
     // new methods exposed
 
     /**
+     * Copy the direction to the center of the specified face of a sky cube.
+     *
+     * @param faceIndex (&ge;0, &lt;6)
+     * @return a new unit vector
+     */
+    public static Vector3f copyFaceDirection(int faceIndex) {
+        Vector3f result = faceDirection[faceIndex].normalize();
+        return result;
+    }
+
+    /**
+     * Copy the direction of the 1st (+U) texture axis of the specified face of
+     * a sky cube.
+     *
+     * @param faceIndex (&ge;0, &lt;6)
+     * @return a new unit vector
+     */
+    public static Vector3f copyUDirection(int faceIndex) {
+        Vector3f result = uDirection[faceIndex].normalize();
+        return result;
+    }
+
+    /**
+     * Copy the direction of the 2nd (+V) texture axis of the specified face of
+     * a sky cube.
+     *
+     * @param faceIndex (&ge;0, &lt;6)
+     * @return a new unit vector
+     */
+    public static Vector3f copyVDirection(int faceIndex) {
+        Vector3f result = uDirection[faceIndex].normalize();
+        return result;
+    }
+
+    /**
      * Create an invisible material.
      *
      * @param assetManager (not null)
