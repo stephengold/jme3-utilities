@@ -114,7 +114,7 @@ public class BindScreen
     }
 
     /**
-     * Deactivate this screen and return to the mode that was just edited.
+     * Deactivate this screen and go to the mode that was just edited.
      */
     void deactivate() {
         assert isEnabled();
@@ -181,14 +181,23 @@ public class BindScreen
              */
             return;
         }
-        
+
         getActionBox().refresh();
         getHotkeyBox().refresh();
         updateButtonLabels();
 
-        String modeStatus = String.format("Editing hotkey bindings for %s mode",
-                subjectMode.getShortName());
+        String modeStatus = String.format("Edit hotkey bindings for %s mode",
+                MyString.quote(subjectMode.getShortName()));
         setStatusText("modeStatus", modeStatus);
+        
+        String configPath = subjectMode.getConfigPath();
+        if (configPath == null) {
+            setStatusText("configStatus", "");
+        } else {
+            String configStatus = String.format("Path for load/save is %s",
+                    MyString.quote(configPath));
+            setStatusText("configStatus", configStatus);
+        }
     }
     // *************************************************************************
     // ActionListener methods
@@ -507,13 +516,22 @@ public class BindScreen
         setButtonLabel("bindButton", bindLabel);
 
         String returnLabel = String.format("Return to %s mode",
-                subjectMode.getShortName());
+                MyString.quote(subjectMode.getShortName()));
         setButtonLabel("returnButton", returnLabel);
 
         String unbindLabel = "";
         if (isBoundHotkeySelected()) {
-            unbindLabel = "Unbind hotkey";
+            unbindLabel = "Unbind selected hotkey";
         }
         setButtonLabel("unbindButton", unbindLabel);
+        
+        String loadLabel = "";
+        String saveLabel = "";
+        if (subjectMode.getConfigPath() != null) {
+            loadLabel = "Load from file";
+            saveLabel = "Save to file";
+        }
+        setButtonLabel("loadConfig", loadLabel);
+        setButtonLabel("saveConfig", saveLabel);
     }
 }

@@ -28,6 +28,7 @@ package jme3utilities.sky.test;
 import com.beust.jcommander.JCommander;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.audio.openal.ALAudioRenderer;
+import com.jme3.input.KeyInput;
 import com.jme3.system.AppSettings;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -185,7 +186,7 @@ public class TestSkyControl extends GuiApplication {
         /*
          * Load hotkey bindings from file.
          */
-        dim.setSaveFileName(hotkeyBindingsPath);
+        dim.setConfigPath(hotkeyBindingsPath);
     }
 
     /**

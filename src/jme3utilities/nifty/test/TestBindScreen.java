@@ -269,7 +269,7 @@ public class TestBindScreen extends GuiApplication {
         mode.addActionName(asYawLeft);
         mode.addActionName(asYawRight);
 
-        mode.setSaveFileName(
+        mode.setConfigPath(
                 "assets/Interface/bindings/TestBindScreen.properties");
         mode.loadBindings();
     }
