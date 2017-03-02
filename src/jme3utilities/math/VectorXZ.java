@@ -705,6 +705,7 @@ public class VectorXZ
      *
      * @param radians clockwise (LH) angle of rotation in radians
      * @return a vector with the same length
+     * @see com.jme3.math.Vector2f#rotateAroundOrigin(float, boolean)
      */
     @Override
     public ReadXZ rotate(float radians) {

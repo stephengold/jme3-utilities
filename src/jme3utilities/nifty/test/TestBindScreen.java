@@ -82,6 +82,7 @@ public class TestBindScreen extends GuiApplication {
     final private Vector3f yawAxis = new Vector3f(0f, 1f, 0f);
     // *************************************************************************
     // fields
+
     /**
      * editor for hotkey bindings (set by guiInitializeApplication())
      */
