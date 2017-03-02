@@ -95,6 +95,10 @@ public class TestSkyControlRun
      */
     private AmbientLight ambientLight = null;
     /**
+     * show the HUD when this state is enabled
+     */
+    private boolean showHud = true;
+    /**
      * main light-source in the scene, which represents the sun or moon
      */
     private DirectionalLight mainLight = null;
@@ -130,10 +134,10 @@ public class TestSkyControlRun
     // constructor
 
     /**
-     * Instantiate an uninitialized, enabled state.
+     * Instantiate an uninitialized, disabled state.
      */
     TestSkyControlRun() {
-        super(true);
+        super(false);
     }
     // *************************************************************************
     // new methods exposed
@@ -156,8 +160,18 @@ public class TestSkyControlRun
         Vector3f sunDirection = sunAndStars.getSunDirection();
         MyCamera.look(cam, sunDirection);
     }
+
+    /**
+     * Toggle the visibility of the HUD.
+     */
+    void toggleHud() {
+        showHud = !showHud;
+        if (isEnabled()) {
+            hud.setEnabled(showHud);
+        }
+    }
     // *************************************************************************
-    // ActionApplication methods
+    // ActionAppState methods
 
     /**
      * Initialize this app state on the 1st update after it gets attached.
@@ -171,6 +185,7 @@ public class TestSkyControlRun
 
         hud = TestSkyControl.hud;
         assert hud != null;
+        showHud = hud.isEnabled();
         parameters = TestSkyControl.parameters;
         assert parameters != null;
 
@@ -194,6 +209,25 @@ public class TestSkyControlRun
         addBloom(viewPort);
 
         //new jme3utilities.Printer().printSubtree(rootNode);
+    }
+
+    /**
+     * Enable or disable the functionality of this state.
+     *
+     * @param newSetting true &rarr; enable, false &rarr; disable
+     */
+    @Override
+    public void setEnabled(boolean newSetting) {
+        boolean oldSetting = isEnabled();
+        super.setEnabled(newSetting);
+        /*
+         * Show HUD only when this state is enabled.
+         */
+        if (!oldSetting && newSetting) {
+            TestSkyControl.hud.setEnabled(showHud);
+        } else if (oldSetting && !newSetting) {
+            TestSkyControl.hud.setEnabled(false);
+        }
     }
 
     /**
