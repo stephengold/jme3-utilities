@@ -29,7 +29,6 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.cursors.plugins.JmeCursor;
-import com.jme3.input.KeyInput;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.ui.Hotkey;
@@ -95,8 +94,6 @@ public class BindInputMode extends InputMode {
      */
     @Override
     protected void defaultBindings() {
-        bind("close", KeyInput.KEY_ESCAPE);
-
         for (Hotkey hotkey : Hotkey.collectAll()) {
             if (BindScreen.isExempt(hotkey)) {
                 continue;
