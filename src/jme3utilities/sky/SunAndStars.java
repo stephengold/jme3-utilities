@@ -44,7 +44,7 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
- * Component of SkyControl to model the orientations of the sun and stars
+ * Component of SkyControl to model the orientations of the sun, moon, and stars
  * relative to an observer on Earth.
  * <p>
  * Three right-handed Cartesian coordinate systems are used: ecliptical,
@@ -283,7 +283,7 @@ public class SunAndStars
      * @param invertRotation true for rotation-inverting materials such as
      * Sky.j3md, false for ordinary materials such as Unshaded.j3md
      */
-    public void orientExternalSky(Spatial spatial, boolean invertRotation) {
+    public void orientEquatorialSky(Spatial spatial, boolean invertRotation) {
         Validate.nonNull(spatial, "spatial");
 
         float siderealAngle = siderealAngle();

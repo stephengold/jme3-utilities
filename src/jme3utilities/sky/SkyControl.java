@@ -339,6 +339,7 @@ public class SkyControl
      * Create a shallow copy of this control.
      *
      * @return a new instance
+     * @throws CloneNotSupportedException if superclass isn't cloneable
      */
     @Override
     public SkyControl clone() throws CloneNotSupportedException {
@@ -547,7 +548,7 @@ public class SkyControl
         Vector3f moonDirection = updateMoon();
         updateLighting(sunDirection, moonDirection);
         if (starMotionFlag && starCube != null) {
-            sunAndStars.orientExternalSky(starCube, false);
+            sunAndStars.orientEquatorialSky(starCube, false);
         }
     }
 
