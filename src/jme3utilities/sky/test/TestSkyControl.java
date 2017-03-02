@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.nifty.GuiApplication;
+import jme3utilities.ui.InputMode;
 
 /**
  * GUI application for testing/demonstrating the SkyControl class using a
@@ -127,7 +128,7 @@ public class TestSkyControl extends GuiApplication {
     // GuiApplication methods
 
     /**
-     * Initialize this application.
+     * Initialize this GUI application.
      */
     @Override
     public void guiInitializeApplication() {
@@ -151,19 +152,22 @@ public class TestSkyControl extends GuiApplication {
         setDisplayFps(false);
         setDisplayStatView(false);
         /*
-         * Create and attach the scene manager.
-         */
-        success = stateManager.attach(run);
-        assert success;
-        /*
-         * Create and attach the heads-up display (HUD).
+         * Create and attach the heads-up display (HUD) and scene manager.
          */
         success = stateManager.attach(hud);
         assert success;
+        success = stateManager.attach(run);
+        assert success;
         /*
-         * Bind the 'H' hotkey to toggle HUD visibility in default input mode.
+         * Bind hotkeys in default input mode:
+         *  + 'H' to toggle HUD visibility
          */
-        getDefaultInputMode().bind(actionStringToggle, KeyInput.KEY_H);
+        InputMode dim = getDefaultInputMode();
+        dim.bind(actionStringToggle, KeyInput.KEY_H);
+        /*
+         * Default input mode directly influencess the scene manager. 
+         */
+        dim.influence(run);
     }
 
     /**
@@ -176,10 +180,12 @@ public class TestSkyControl extends GuiApplication {
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
-        if (ongoing && actionString.equals(actionStringToggle)) {
-            boolean newState = !hud.isEnabled();
-            hud.setEnabled(newState);
+        if (ongoing) {
+            switch (actionString) {
+                case actionStringToggle:
+                    run.toggleHud();
             return;
+            }
         }
 
         super.onAction(actionString, ongoing, tpf);
