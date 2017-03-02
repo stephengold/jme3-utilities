@@ -28,13 +28,13 @@ package jme3utilities.sky.test;
 import com.beust.jcommander.JCommander;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.audio.openal.ALAudioRenderer;
-import com.jme3.input.KeyInput;
 import com.jme3.system.AppSettings;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.nifty.GuiApplication;
+import jme3utilities.nifty.bind.BindScreen;
 import jme3utilities.ui.InputMode;
 
 /**
@@ -56,6 +56,10 @@ public class TestSkyControl extends GuiApplication {
     final private static Logger logger = Logger.getLogger(
             TestSkyControl.class.getName());
     /**
+     * action string to open hotkey bindings editor
+     */
+    final private static String actionStringEdit = "edit bindings";
+    /**
      * action string to toggle HUD visibility
      */
     final private static String actionStringToggle = "toggle hud";
@@ -63,9 +67,18 @@ public class TestSkyControl extends GuiApplication {
      * application name for its window's title bar and its usage message
      */
     final private static String applicationName = "TestSkyControl";
+    /**
+     * path to hotkey bindings configuration file
+     */
+    final private static String hotkeyBindingsPath = 
+            "assets/Interface/bindings/TestSkyControl.properties";
     // *************************************************************************
     // fields
 
+    /**
+     * Nifty screen for editing hotkey bindings
+     */
+    static BindScreen bindScreen = new BindScreen();
     /**
      * heads-up display (HUD)
      */
@@ -155,22 +168,24 @@ public class TestSkyControl extends GuiApplication {
         setDisplayFps(false);
         setDisplayStatView(false);
         /*
-         * Create and attach the heads-up display (HUD) and scene manager.
+         * Create and attach the heads-up display (HUD), the scene manger,
+         * and the hotkey bindings editor.
          */
         success = stateManager.attach(hud);
         assert success;
         success = stateManager.attach(run);
         assert success;
-        /*
-         * Bind hotkeys in default input mode:
-         *  + 'H' to toggle HUD visibility
-         */
-        InputMode dim = getDefaultInputMode();
-        dim.bind(actionStringToggle, KeyInput.KEY_H);
+        success = stateManager.attach(bindScreen);
+        assert success;
         /*
          * Default input mode directly influencess the scene manager. 
          */
+        InputMode dim = getDefaultInputMode();
         dim.influence(run);
+        /*
+         * Load hotkey bindings from file.
+         */
+        dim.setSaveFileName(hotkeyBindingsPath);
     }
 
     /**
@@ -185,6 +200,10 @@ public class TestSkyControl extends GuiApplication {
     public void onAction(String actionString, boolean ongoing, float tpf) {
         if (ongoing) {
             switch (actionString) {
+                case actionStringEdit:
+                    InputMode im = InputMode.getEnabledMode();
+                    bindScreen.activate(im);
+                    return;
                 case actionStringToggle:
                     run.toggleHud();
                     return;
