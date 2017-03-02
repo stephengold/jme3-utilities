@@ -28,8 +28,7 @@ package jme3utilities;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.Animation;
 import com.jme3.animation.SkeletonControl;
-import com.jme3.bullet.control.GhostControl;
-import com.jme3.bullet.control.KinematicRagdollControl;
+import com.jme3.bullet.control.PhysicsControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.scene.Spatial;
@@ -121,12 +120,8 @@ public class MyControl {
 
         if (control instanceof AbstractControl) {
             return ((AbstractControl) control).isEnabled();
-        } else if (control instanceof GhostControl) {
-            return ((GhostControl) control).isEnabled();
-        } else if (control instanceof KinematicRagdollControl) {
-            return ((KinematicRagdollControl) control).isEnabled();
-        } else if (control instanceof RigidBodyControl) {
-            return ((RigidBodyControl) control).isEnabled();
+        } else if (control instanceof PhysicsControl) {
+            return ((PhysicsControl) control).isEnabled();
         } else if (control instanceof ParticleEmitter.ParticleEmitterControl) {
             return ((ParticleEmitter.ParticleEmitterControl) control)
                     .isEnabled();
@@ -145,9 +140,7 @@ public class MyControl {
      */
     public static boolean isValid(Object control) {
         return control instanceof AbstractControl
-                || control instanceof GhostControl
-                || control instanceof KinematicRagdollControl
-                || control instanceof RigidBodyControl
+                || control instanceof PhysicsControl
                 || control instanceof ParticleEmitter.ParticleEmitterControl;
     }
 
@@ -160,12 +153,8 @@ public class MyControl {
     public static void setEnabled(Object control, boolean newState) {
         if (control instanceof AbstractControl) {
             ((AbstractControl) control).setEnabled(newState);
-        } else if (control instanceof GhostControl) {
-            ((GhostControl) control).setEnabled(newState);
-        } else if (control instanceof KinematicRagdollControl) {
-            ((KinematicRagdollControl) control).setEnabled(newState);
-        } else if (control instanceof RigidBodyControl) {
-            ((RigidBodyControl) control).setEnabled(newState);
+        } else if (control instanceof PhysicsControl) {
+            ((PhysicsControl) control).setEnabled(newState);
         } else if (control instanceof ParticleEmitter.ParticleEmitterControl) {
             ((ParticleEmitter.ParticleEmitterControl) control)
                     .setEnabled(newState);
