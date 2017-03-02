@@ -327,14 +327,11 @@ public class GlobeRenderer extends SimpleAppState {
      * Initialize this controller prior to its 1st update.
      *
      * @param stateManager (not null)
-     * @param application which application owns this screen (not null)
+     * @param application which application owns this state (not null)
      */
     @Override
     public void initialize(AppStateManager stateManager,
             Application application) {
-        if (!isEnabled()) {
-            throw new IllegalStateException("should be enabled");
-        }
 
         super.initialize(stateManager, application);
 
@@ -343,6 +340,10 @@ public class GlobeRenderer extends SimpleAppState {
         offscreenViewPort.attachScene(offscreenRootNode);
         offscreenViewPort.setClearFlags(true, true, true);
         offscreenViewPort.setOutputFrameBuffer(frameBuffer);
+        if (!isEnabled()) {
+            offscreenRootNode.updateLogicalState(0f);
+            offscreenRootNode.updateGeometricState();
+        }
         /*
          * Apply a contrast correction filter to the render.
          */
@@ -354,21 +355,21 @@ public class GlobeRenderer extends SimpleAppState {
     /**
      * Update the off-screen scene.
      *
-     * @param elapsedTime since previous update (in seconds, &ge;0)
+     * @param tpf time interval between render passes (in seconds, &ge;0)
      */
     @Override
-    public void update(float elapsedTime) {
-        super.update(elapsedTime);
+    public void update(float tpf) {
+        super.update(tpf);
         /*
          * spin the globe on its axis
          */
-        float angle = spinRate * elapsedTime;
+        float angle = spinRate * tpf;
         Quaternion spin = new Quaternion().fromAngleNormalAxis(angle, spinAxis);
         globe.rotate(spin);
 
         updateFrustum();
 
-        offscreenRootNode.updateLogicalState(elapsedTime);
+        offscreenRootNode.updateLogicalState(tpf);
         offscreenRootNode.updateGeometricState();
     }
     // *************************************************************************
