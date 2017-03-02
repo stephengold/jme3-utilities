@@ -43,8 +43,7 @@ import org.xml.sax.SAXException;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class XmlLoader
-        implements AssetLoader {
+public class XmlLoader implements AssetLoader {
     // *************************************************************************
     // constants
 
@@ -103,8 +102,7 @@ public class XmlLoader
      * @return new DOM document
      */
     @Override
-    public Object load(AssetInfo assetInfo)
-            throws IOException {
+    public Object load(AssetInfo assetInfo) {
         /*
          * Open the asset stream.
          */
