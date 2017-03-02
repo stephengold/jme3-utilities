@@ -115,7 +115,10 @@ public class NamedAppState implements AppState {
             throw new IllegalArgumentException("self-influence not allowed");
         }
         if (appState.isEnabled() != isEnabled()) {
-            logger.warning("influenced state is out-of-synch");
+            logger.log(Level.WARNING, 
+                    "inflenced state {0} out-of-synch with {1}", new Object[]{
+                        appState, this
+                    });
         }
 
         influenceList.add(appState);
