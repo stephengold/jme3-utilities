@@ -82,7 +82,6 @@ public class TestBindScreen extends GuiApplication {
     final private Vector3f yawAxis = new Vector3f(0f, 1f, 0f);
     // *************************************************************************
     // fields
-    
     /**
      * editor for hotkey bindings (set by guiInitializeApplication())
      */
@@ -241,7 +240,7 @@ public class TestBindScreen extends GuiApplication {
         super.onAction(actionString, ongoing, tpf);
     }
     // *************************************************************************
-    // private  methods
+    // private methods
 
     /**
      * Add action strings and hotkey bindings to the default input mode.
@@ -266,7 +265,7 @@ public class TestBindScreen extends GuiApplication {
         mode.addActionName(asYawLeft);
         mode.addActionName(asYawRight);
 
-        mode.setSaveFileName(
+        mode.setConfigPath(
                 "assets/Interface/bindings/TestBindScreen.properties");
         mode.loadBindings();
     }

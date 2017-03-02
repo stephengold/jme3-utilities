@@ -111,10 +111,10 @@ abstract public class InputMode
      */
     final private Set<String> actionNames = new TreeSet<>();
     /**
-     * file name for loading and saving the custom hotkey bindings (or null if
-     * the bindings are not customizable): set by setSaveFileName()
+     * path to configuration file for loading and saving hotkey bindings (or
+     * null if not loadable/savable): set by setSaveFileName()
      */
-    private String customBindingsFileName = null;
+    private String configFilePath = null;
     /**
      * terse name for this mode: set by constructor
      */
@@ -261,6 +261,17 @@ abstract public class InputMode
     }
 
     /**
+     * Read path to the configuration file.
+     *
+     * @return current filesystem path (or null if the bindings are not
+     * loadable/savable)
+     */
+    public String getConfigPath() {
+        String path = configFilePath;
+        return path;
+    }
+
+    /**
      * Read the short-form name for this mode.
      *
      * @return name (not null)
@@ -284,12 +295,13 @@ abstract public class InputMode
      * Load a set of hotkey bindings from the properties file.
      */
     public void loadBindings() {
-        if (customBindingsFileName == null) {
-            logger.log(Level.WARNING, "bindings not loaded: file name not set");
+        if (configFilePath == null) {
+            logger.log(Level.WARNING, 
+                    "bindings not loaded: config path not set");
             return;
         }
 
-        String path = getSavePath();
+        String path = getConfigPath();
         try {
             loadBindings(path);
 
@@ -311,12 +323,13 @@ abstract public class InputMode
     public void saveBindings() {
         assert isInitialized();
 
-        if (customBindingsFileName == null) {
-            logger.log(Level.WARNING, "bindings not saved: file name not set");
+        if (configFilePath == null) {
+            logger.log(Level.WARNING, 
+                    "bindings not saved: config path not set");
             return;
         }
 
-        String path = getSavePath();
+        String path = getConfigPath();
 
         FileOutputStream stream = null;
         try {
@@ -339,6 +352,16 @@ abstract public class InputMode
     }
 
     /**
+     * Alter path to the configuration file.
+     *
+     * @param path desired filesystem path (or null to make the bindings not
+     * loadable/savable)
+     */
+    public void setConfigPath(String path) {
+        configFilePath = path;
+    }
+
+    /**
      * Alter the mouse cursor for this uninitialized mode.
      *
      * @param newCursor new cursor, or null to hide the cursor when enabled
@@ -346,16 +369,6 @@ abstract public class InputMode
     public void setCursor(JmeCursor newCursor) {
         assert !isInitialized();
         cursor = newCursor;
-    }
-
-    /**
-     * Alter the file name for this mode's custom hotkey bindings.
-     *
-     * @param newFileName file name and extension (or null to make the bindings
-     * not loadable or savable)
-     */
-    public void setSaveFileName(String newFileName) {
-        customBindingsFileName = newFileName;
     }
 
     /**
@@ -494,33 +507,23 @@ abstract public class InputMode
     }
 
     /**
-     * Read the filesystem path to the user's customized hotkey bindings.
-     *
-     * @return path string (may be null)
-     */
-    private String getSavePath() {
-        String path = customBindingsFileName;
-        return path;
-    }
-
-    /**
      * Initialize the hotkey bindings.
      */
     private void initializeHotkeyBindings() {
-        if (customBindingsFileName == null) {
+        if (configFilePath == null) {
             defaultBindings();
             return;
         }
         /*
-         * Attempt to load custom hotkey bindings from a file.  If that fails,
+         * Attempt to load custom hotkey bindings from config file.  If that fails,
          * load the default bindings for this mode.
          */
-        String path = getSavePath();
+        String path = getConfigPath();
         try {
             loadBindings(path);
 
         } catch (FileNotFoundException exception) {
-            logger.log(Level.INFO, "Didn''t find any hotkey bindings at {0}.",
+            logger.log(Level.INFO, "Didn''t find hotkey bindings at {0}.",
                     MyString.quote(path));
 
             hotkeyBindings.clear();
@@ -556,7 +559,7 @@ abstract public class InputMode
     }
 
     /**
-     * Load hotkey bindings from a properties file.
+     * Load hotkey bindings from a configuration (properties) file.
      *
      * @param filePath filesystem path (not null)
      */
@@ -565,7 +568,7 @@ abstract public class InputMode
         assert filePath != null;
 
         logger.log(Level.INFO,
-                "Loading hotkey bindings from properties file at {0}.",
+                "Loading hotkey bindings from config file {0}.",
                 MyString.quote(filePath));
 
         FileInputStream stream = null;
@@ -686,7 +689,7 @@ abstract public class InputMode
     }
 
     /**
-     * Save hotkey bindings to a properties file.
+     * Save hotkey bindings to a configuration (properties) file.
      *
      * @param filePath filesystem path (not null)
      */
