@@ -100,9 +100,9 @@ public class TestSkyControlHud
      */
     private float mainMultiplier = 1f;
     /**
-     * vertical relief for terrain (Y-coordinate of peak)
+     * vertical relief for terrain (Y-coordinate of peak, &gt;0)
      */
-    private float relief = 0f;
+    private float relief = 50f;
     /**
      * phase angle for custom moon (radians east of the sun, &le;2*Pi, &ge;0)
      */
@@ -136,6 +136,10 @@ public class TestSkyControlHud
      */
     private String sunAssetPath = "Textures/skies/suns/hazy-disc.png";
     /**
+     * scene management app state (set by initialize)
+     */
+    private TestSkyControlRun run;
+    /**
      * the time of day: initially 4:45 a.m.
      */
     final private TimeOfDay timeOfDay = new TimeOfDay(4.75f);
@@ -143,8 +147,8 @@ public class TestSkyControlHud
     // constructors
 
     /**
-     * Instantiate a disabled display which will be enabled during
-     * initialization.
+     * Instantiate an uninitialized, disabled display which will be enabled
+     * during initialization.
      */
     TestSkyControlHud() {
         super("test-sky-control", "Interface/Nifty/huds/test-sky-control.xml",
@@ -322,9 +326,10 @@ public class TestSkyControlHud
     /**
      * Read the current vertical relief of the terrain.
      *
-     * @return Y-coordinate of peak
+     * @return Y-coordinate of peak (&gt;0)
      */
     float getRelief() {
+        assert relief > 0f : relief;
         return relief;
     }
 
@@ -468,14 +473,13 @@ public class TestSkyControlHud
             return;
         }
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
-        TestSkyControl app = (TestSkyControl) guiApplication;
         switch (actionString) {
             case "look moon":
-                app.lookAtTheMoon();
+                run.lookAtTheMoon();
                 break;
 
             case "look sun":
-                app.lookAtTheSun();
+                run.lookAtTheSun();
                 break;
 
             case "phase":
@@ -550,6 +554,9 @@ public class TestSkyControlHud
 
         setListener(this);
         super.initialize(stateManager, application);
+
+        run = TestSkyControl.run;
+        assert run != null;
         /*
          * Initialize check boxes and radio buttons.
          */
