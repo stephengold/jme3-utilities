@@ -45,6 +45,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
+import jme3utilities.MyAsset;
 import jme3utilities.MyString;
 import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
@@ -154,39 +155,6 @@ public class MakeStarMaps {
      */
     final private static String[] faceName = {
         "right", "left", "top", "bottom", "front", "back"
-    };
-    /**
-     * Direction vector for the center of each cube face.
-     */
-    final private static Vector3f[] faceDirection = {
-        new Vector3f(-1f, 0f, 0f),
-        new Vector3f(1f, 0f, 0f),
-        new Vector3f(0f, 1f, 0f),
-        new Vector3f(0f, -1f, 0f),
-        new Vector3f(0f, 0f, -1f),
-        new Vector3f(0f, 0f, 1f)
-    };
-    /**
-     * Direction vector for 1st (+U) texture coordinate of each cube face.
-     */
-    final private static Vector3f[] uDirection = {
-        new Vector3f(0f, 0f, 1f),
-        new Vector3f(0f, 0f, -1f),
-        new Vector3f(-1f, 0f, 0f),
-        new Vector3f(-1f, 0f, 0f),
-        new Vector3f(-1f, 0f, 0f),
-        new Vector3f(1f, 0f, 0f)
-    };
-    /**
-     * Direction vector for 2nd (+V) texture coordinate of each cube face.
-     */
-    final private static Vector3f[] vDirection = {
-        new Vector3f(0f, -1f, 0f),
-        new Vector3f(0f, -1f, 0f),
-        new Vector3f(0f, 0f, -1f),
-        new Vector3f(0f, 0f, 1f),
-        new Vector3f(0f, -1f, 0f),
-        new Vector3f(0f, -1f, 0f)
     };
     // *************************************************************************
     // fields
@@ -303,7 +271,7 @@ public class MakeStarMaps {
         assert faceIndex >= 0 : faceIndex;
         assert faceIndex < 6 : faceIndex;
 
-        Vector3f faceDir = faceDirection[faceIndex];
+        Vector3f faceDir = MyAsset.copyFaceDirection(faceIndex);
         Vector3f norm = direction.normalize();
         float dot = faceDir.dot(norm);
         if (dot < 0.5f) {
@@ -319,8 +287,8 @@ public class MakeStarMaps {
         /*
          * convert to texture coordinates
          */
-        Vector3f uDir = uDirection[faceIndex];
-        Vector3f vDir = vDirection[faceIndex];
+        Vector3f uDir = MyAsset.copyUDirection(faceIndex);
+        Vector3f vDir = MyAsset.copyVDirection(faceIndex);
         float u = 0.5f * (1f + uDir.dot(norm));
         float v = 0.5f * (1f + vDir.dot(norm));
         Vector2f uv = new Vector2f(u, v);
