@@ -45,7 +45,7 @@ Nifty XML to lay out the screen for the hotkey bindings editor.
             </panel>
             <panel childLayout="horizontal"
                    backgroundColor="#aaaf"
-                   height="320px"
+                   height="400px"
                    padding="3px">
 
                 <panel childLayout="vertical">
@@ -58,7 +58,7 @@ Nifty XML to lay out the screen for the hotkey bindings editor.
                     </panel>
                     <panel childLayout="horizontal">
                         <control name="listBox" id="hotkeyList"
-                                 displayItems="12"
+                                 displayItems="15"
                                  horizontal="optional"/>
                     </panel>
                 </panel>
@@ -84,7 +84,7 @@ Nifty XML to lay out the screen for the hotkey bindings editor.
                     </panel>
                     <panel childLayout="horizontal">
                         <control name="listBox" id="actionList"
-                                 displayItems="12"
+                                 displayItems="15"
                                  horizontal="optional"/>
                     </panel>
                 </panel>
@@ -94,26 +94,35 @@ Nifty XML to lay out the screen for the hotkey bindings editor.
                    backgroundColor="#aaaf"
                    height="40px"
                    padding="10px">
+                <panel/>
                 <control name="button" id="unbindButton"
-                         width="100px">
+                         width="140px">
                     <interact onRelease="perform(unbind)"/>
                 </control>
                 <panel/>
-                <control name="button" id="id30ToAvoidOffendingNifty"
-                         label="Load from file"
-                         width="100px">
+                <control name="button" id="loadConfig"
+                         width="93px">
                     <interact onRelease="perform(load)"/>
                 </control>
-                <control name="button" id="id31ToAvoidOffendingNifty"
-                         label="Save to file"
-                         width="100px">
+                <panel/>
+                <control name="button" id="saveConfig"
+                         width="82px">
                     <interact onRelease="perform(save)"/>
                 </control>
                 <panel/>
                 <control name="button" id="returnButton"
-                         width="200px">
+                         width="40%">
                     <interact onRelease="perform(return)"/>
                 </control>
+                <panel/>
+            </panel>
+            <panel childLayout="horizontal"
+                   backgroundColor="#aaaf"
+                   height="25px">
+                <control name="label" id="configStatus"
+                         color="#000f"
+                         textHAlign="center"
+                         width="*"/>
             </panel>
             <panel/>
         </layer>
