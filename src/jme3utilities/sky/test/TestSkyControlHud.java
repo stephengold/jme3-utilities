@@ -569,18 +569,6 @@ public class TestSkyControlHud
         setCheckBox("skyCheckBox", true);
         setRadioButton("forwardRadioButton");
     }
-
-    /**
-     * Enable or disable this display. Enabling the display disables flyCam, and
-     * disabling the display re-enables flyCam.
-     *
-     * @param newState true to enable the display, false to disable it
-     */
-    @Override
-    public void setEnabled(boolean newState) {
-        super.setEnabled(newState);
-        flyCam.setEnabled(!newState);
-    }
     // *************************************************************************
     // SimpleAppState methods
 
