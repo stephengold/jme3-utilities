@@ -548,7 +548,7 @@ public class SkyControl
         Vector3f moonDirection = updateMoon();
         updateLighting(sunDirection, moonDirection);
         if (starMotionFlag && starCube != null) {
-            sunAndStars.orientExternalSky(starCube, false);
+            sunAndStars.orientEquatorialSky(starCube, false);
         }
     }
 

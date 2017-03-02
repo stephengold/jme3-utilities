@@ -339,7 +339,7 @@ public class TestSkyControlRun
         /*
          * Re-orient the external star map.
          */
-        skyControl.getSunAndStars().orientExternalSky(cubeMap, false);
+        skyControl.getSunAndStars().orientEquatorialSky(cubeMap, false);
     }
     // *************************************************************************
     // ViewPortListener methods
