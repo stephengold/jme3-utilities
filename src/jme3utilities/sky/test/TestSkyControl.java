@@ -76,8 +76,8 @@ public class TestSkyControl extends GuiApplication {
     /**
      * command-line parameters
      */
-    final static TestSkyControlParameters parameters
-            = new TestSkyControlParameters();
+    final static TestSkyControlParameters parameters =
+            new TestSkyControlParameters();
     // *************************************************************************
     // new methods exposed
 

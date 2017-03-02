@@ -327,12 +327,11 @@ public class GlobeRenderer extends SimpleAppState {
      * Initialize this controller prior to its 1st update.
      *
      * @param stateManager (not null)
-     * @param application which application owns this state (not null)
+     * @param application which application owns this renderer (not null)
      */
     @Override
     public void initialize(AppStateManager stateManager,
             Application application) {
-
         super.initialize(stateManager, application);
 
         ViewPort offscreenViewPort = renderManager.createPreView(

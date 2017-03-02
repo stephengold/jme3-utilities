@@ -153,7 +153,6 @@ public class TestSkyControlHud
     TestSkyControlHud() {
         super("test-sky-control", "Interface/Nifty/huds/test-sky-control.xml",
                 true);
-
     }
     // *************************************************************************
     // new methods exposed

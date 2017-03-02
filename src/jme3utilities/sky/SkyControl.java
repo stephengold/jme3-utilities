@@ -339,6 +339,7 @@ public class SkyControl
      * Create a shallow copy of this control.
      *
      * @return a new instance
+     * @throws CloneNotSupportedException if superclass isn't cloneable
      */
     @Override
     public SkyControl clone() throws CloneNotSupportedException {
