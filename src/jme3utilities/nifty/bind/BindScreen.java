@@ -186,7 +186,8 @@ public class BindScreen
         getHotkeyBox().refresh();
         updateButtonLabels();
 
-        String modeStatus = String.format("Edit hotkey bindings for %s mode",
+        String modeStatus = String.format(
+                "Edit hotkey bindings for %s input mode",
                 MyString.quote(subjectMode.getShortName()));
         setStatusText("modeStatus", modeStatus);
         
