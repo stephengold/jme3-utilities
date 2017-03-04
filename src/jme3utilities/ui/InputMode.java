@@ -48,9 +48,9 @@ import jme3utilities.Validate;
 
 /**
  * Simple app state to implement a configurable input mode. At most one mode is
- * enabled at a time.
+ * active at a time.
  * <p>
- * An enabled mode maps hotkeys to actions and controls the appearance of the
+ * An active mode maps hotkeys to actions and controls the appearance of the
  * mouse pointer/cursor. Some hotkeys (such as the shift keys) can be associated
  * with signals, which allow multiple keys to share a common modal function.
  * <p>
@@ -89,13 +89,17 @@ abstract public class InputMode
      */
     final private static ArrayList<InputMode> modes = new ArrayList<>(3);
     /**
-     * true if initialize() should enable this mode
+     * true if the mode is suspended (enabled but temporarily deactivated)
+     */
+    private boolean isSuspended = false;
+    /**
+     * true if initialize() should activate (and enable) this mode
      */
     private boolean startEnabled = false;
     /**
-     * keep track of the currently enabled mode (null means there's none)
+     * keep track of the currently active mode (null means there's none)
      */
-    private static InputMode enabledMode = null;
+    private static InputMode activeMode = null;
     /**
      * appearance of the mouse pointer/cursor in this mode (null means hidden)
      */
@@ -252,12 +256,12 @@ abstract public class InputMode
     }
 
     /**
-     * Access the enabled mode, if any.
+     * Access the active mode, if any.
      *
-     * @return pre-existing instance (or null if none)
+     * @return pre-existing instance (or null if none active)
      */
-    public static InputMode getEnabledMode() {
-        return enabledMode;
+    public static InputMode getActiveMode() {
+        return activeMode;
     }
 
     /**
@@ -318,6 +322,17 @@ abstract public class InputMode
     }
 
     /**
+     * Reactivate this (enabled) mode after a suspension.
+     */
+    public void resume() {
+        assert isEnabled();
+        assert isSuspended;
+
+        activate();
+        isSuspended = false;
+    }
+
+    /**
      * Save all hotkey bindings to the properties file.
      */
     public void saveBindings() {
@@ -364,11 +379,22 @@ abstract public class InputMode
     /**
      * Alter the mouse cursor for this uninitialized mode.
      *
-     * @param newCursor new cursor, or null to hide the cursor when enabled
+     * @param newCursor new cursor, or null to hide the cursor when active
      */
     public void setCursor(JmeCursor newCursor) {
         assert !isInitialized();
         cursor = newCursor;
+    }
+
+    /**
+     * Temporarily deactivate this enabled mode without disabling its app state.
+     */
+    public void suspend() {
+        assert isEnabled();
+        assert !isSuspended;
+
+        deactivate();
+        isSuspended = true;
     }
 
     /**
@@ -397,31 +423,20 @@ abstract public class InputMode
      */
     @Override
     public void setEnabled(boolean newState) {
+        logger.log(Level.INFO, "mode={0} newState={1}", new Object[]{
+            shortName, newState
+        });
+        assert !isSuspended;
         if (!isInitialized()) {
             startEnabled = newState;
             return;
         }
-        logger.log(Level.INFO, "mode={0} newState={1}", new Object[]{
-            shortName, newState
-        });
 
         if (!isEnabled() && newState) {
-            setEnabledMode(this);
-
-            if (cursor == null) {
-                inputManager.setCursorVisible(false);
-            } else {
-                inputManager.setMouseCursor(cursor);
-                inputManager.setCursorVisible(true);
-            }
-            mapBoundHotkeys();
-
+            activate();
         } else if (isEnabled() && !newState) {
-            assert enabledMode == this : enabledMode;
-            setEnabledMode(null);
-
-            inputManager.setCursorVisible(false);
-            unmapBoundHotkeys();
+            assert activeMode == this : activeMode;
+            deactivate();
         }
 
         super.setEnabled(newState);
@@ -462,7 +477,11 @@ abstract public class InputMode
     public String toString() {
         String status;
         if (isInitialized()) {
-            status = isEnabled() ? "enabled" : "disabled";
+            if (isEnabled()) {
+                status = isSuspended ? "suspended" : "active";
+            } else {
+                status = "disabled";
+            }
         } else {
             status = String.format("uninitialized, startEnabled=%s",
                     startEnabled);
@@ -475,12 +494,28 @@ abstract public class InputMode
     // new protected methods
 
     /**
-     * Add the default hotkey bindings. These bindings will be used if no custom
+     * Add the default hotkey bindings. The bindings to be used if no custom
      * bindings are found.
      */
     abstract protected void defaultBindings();
     // *************************************************************************
     // private methods
+
+    /**
+     * Activate this mode.
+     */
+    private void activate() {
+        setActiveMode(this);
+
+        if (cursor == null) {
+            inputManager.setCursorVisible(false);
+        } else {
+            inputManager.setMouseCursor(cursor);
+            inputManager.setCursorVisible(true);
+        }
+
+        mapBoundHotkeys();
+    }
 
     /**
      * Count how many hotkeys are bound to a named action.
@@ -504,6 +539,15 @@ abstract public class InputMode
         }
 
         return count;
+    }
+
+    /**
+     * Deactivate this mode.
+     */
+    private void deactivate() {
+        setActiveMode(null);
+        inputManager.setCursorVisible(false);
+        unmapBoundHotkeys();
     }
 
     /**
@@ -714,21 +758,21 @@ abstract public class InputMode
     }
 
     /**
-     * Alter the reference to the currently-enabled input mode. At most one mode
-     * is enabled at a time.
+     * Alter the static reference to the currently active input mode. At most
+     * one mode is active at a time.
      *
      * @param mode (or null if none)
      */
-    private static void setEnabledMode(InputMode mode) {
-        if (mode != null && enabledMode != null) {
+    private static void setActiveMode(InputMode mode) {
+        if (mode != null && activeMode != null) {
             String message = String.format(
-                    "tried to enable %s input mode while %s mode was active",
+                    "tried to activate %s input mode while %s mode was active",
                     MyString.quote(mode.shortName),
-                    MyString.quote(enabledMode.shortName));
+                    MyString.quote(activeMode.shortName));
             throw new IllegalStateException(message);
         }
 
-        enabledMode = mode;
+        activeMode = mode;
     }
 
     /**

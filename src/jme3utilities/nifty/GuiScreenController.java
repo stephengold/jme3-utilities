@@ -110,13 +110,12 @@ public class GuiScreenController extends BasicScreenController {
         } else {
             /*
              * No parent menu, so disable the menu's input mode and
-             * re-enable the screen's input mode.
+             * resume the screen's input mode.
              */
-            InputMode menuMode = InputMode.getEnabledMode();
+            InputMode menuMode = InputMode.getActiveMode();
             menuMode.setEnabled(false);
             if (savedMode != null) {
-                assert !savedMode.isEnabled();
-                savedMode.setEnabled(true);
+                savedMode.resume();
                 savedMode = null;
             }
         }
@@ -145,13 +144,12 @@ public class GuiScreenController extends BasicScreenController {
         }
         activePopupMenu = null;
         /*
-         * Disable the menu's input mode and re-enable the screen's.
+         * Disable the menu's input mode and resume the screen's input mode.
          */
-        InputMode menuMode = InputMode.getEnabledMode();
+        InputMode menuMode = InputMode.getActiveMode();
         menuMode.setEnabled(false);
         if (savedMode != null) {
-            assert !savedMode.isEnabled();
-            savedMode.setEnabled(true);
+            savedMode.resume();
             savedMode = null;
         }
     }
@@ -210,7 +208,7 @@ public class GuiScreenController extends BasicScreenController {
      *
      * @param actionPrefix common prefix of the menu's action strings (not null,
      * usually the final character will be a blank)
-     * @param itemArray menu items (not null, unaffected)
+     * @param itemArray array of menu items (not null, unaffected)
      */
     public static synchronized void showPopup(String actionPrefix,
             String[] itemArray) {
@@ -253,12 +251,12 @@ public class GuiScreenController extends BasicScreenController {
             activePopupMenu.setEnabled(false);
         } else {
             /*
-             * Save and disable the screen's input mode (if any) and
-             * enable the input mode for menus.
+             * Save and suspend the screen's input mode (if any) and
+             * activate the input mode for menus.
              */
-            savedMode = InputMode.getEnabledMode();
+            savedMode = InputMode.getActiveMode();
             if (savedMode != null) {
-                savedMode.setEnabled(false);
+                savedMode.suspend();
             }
             InputMode menuMode = InputMode.findMode("menu");
             menuMode.setEnabled(true);
@@ -271,7 +269,7 @@ public class GuiScreenController extends BasicScreenController {
      *
      * @param actionPrefixWords common prefix words of the menu's action strings
      * (not null, unaffected)
-     * @param itemArray menu items (not null, unaffected)
+     * @param itemArray array of menu items (not null, unaffected)
      */
     public void showPopup(String[] actionPrefixWords, String[] itemArray) {
         Validate.nonNull(actionPrefixWords, "word array");
@@ -284,6 +282,7 @@ public class GuiScreenController extends BasicScreenController {
         if (wordCount > 0) {
             actionPrefix = MyString.join(actionPrefixWords) + " ";
         }
+
         showPopup(actionPrefix, itemArray);
     }
     // *************************************************************************
