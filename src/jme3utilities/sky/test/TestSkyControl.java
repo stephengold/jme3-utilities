@@ -41,8 +41,8 @@ import jme3utilities.ui.InputMode;
  * GUI application for testing/demonstrating the SkyControl class using a
  * heads-up display (HUD). The application's main entry point is here.
  * <p>
- * Use the 'H' key to toggle HUD visibility.
- * Use the 'F1' key to edit hotkey bindings.
+ * Use the 'H' key to toggle HUD visibility. Use the 'F1' key to edit hotkey
+ * bindings.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -201,7 +201,7 @@ public class TestSkyControl extends GuiApplication {
         if (ongoing) {
             switch (actionString) {
                 case actionStringEdit:
-                    InputMode im = InputMode.getEnabledMode();
+                    InputMode im = InputMode.getActiveMode();
                     bindScreen.activate(im);
                     return;
                 case actionStringToggle:

@@ -210,7 +210,7 @@ public class TestBindScreen extends GuiApplication {
                     messageHud.addLine("Hailing frequencies open.");
                     return;
                 case asHelp:
-                    InputMode thisMode = InputMode.getEnabledMode();
+                    InputMode thisMode = InputMode.getActiveMode();
                     bindScreen.activate(thisMode);
                     return;
                 case asLowerShields:
@@ -247,7 +247,7 @@ public class TestBindScreen extends GuiApplication {
                 case asYawRight:
                     starfield.setRotation(-0.2f, yawAxis);
                     return;
-        }
+            }
         }
         /*
          * Action not yet handled: fall back on ActionApplication's handler.
