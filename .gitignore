@@ -1,9 +1,12 @@
+/assets/Models/TestSkyMaterial.j3o
 /assets/Textures/skies/bsc5.dat
+/assets/testNameGenerator.j3o
 /build/
 /dist/
 /lwjgl.dll
 /lwjgl64.dll
 /master-application.jnlp
+/nbproject/build-impl.xml
 /nbproject/build-impl.xml~
 /nbproject/genfiles.properties
 /nbproject/jme3Data/
