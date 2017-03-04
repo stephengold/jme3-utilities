@@ -27,6 +27,7 @@ package jme3utilities.nifty.test;
 
 import com.jme3.app.StatsAppState;
 import com.jme3.math.Vector3f;
+import com.jme3.system.AppSettings;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
@@ -75,6 +76,10 @@ public class TestBindScreen extends GuiApplication {
     final private static String asYawLeft = "yaw left";
     final private static String asYawRight = "yaw right";
     /**
+     * application name for its window's title bar
+     */
+    final private static String applicationName = "TestBindScreen";
+    /**
      * axes of rotation
      */
     final private Vector3f pitchAxis = new Vector3f(1f, 0f, 0f);
@@ -115,6 +120,12 @@ public class TestBindScreen extends GuiApplication {
         Misc.setLoggingLevels(Level.WARNING);
 
         TestBindScreen application = new TestBindScreen();
+        /*
+         * Customize the window's title bar.
+         */
+        AppSettings settings = new AppSettings(true);
+        settings.setTitle(applicationName);
+        application.setSettings(settings);
         application.start();
         /*
          * ... and onward to TestBindScreen.guiInitializeApplication()!
