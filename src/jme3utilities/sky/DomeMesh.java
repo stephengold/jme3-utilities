@@ -251,6 +251,18 @@ public class DomeMesh extends Mesh {
     }
 
     /**
+     * Read the vertical angle of this dome.
+     *
+     * @return angle (in radians, &lt;Pi, &gt;0)
+     * @see #setVerticalAngle(float)
+     */
+    public float getVerticalAngle() {
+        assert verticalAngle > 0f : verticalAngle;
+        assert verticalAngle < FastMath.PI : verticalAngle;
+        return verticalAngle;
+    }
+
+    /**
      * Regenerate the mesh for a new segment angle: 2*Pi produces a complete
      * dome, and Pi results in a quarter of a dome, and so on.
      *
