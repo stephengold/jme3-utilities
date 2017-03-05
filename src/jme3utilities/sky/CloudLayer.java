@@ -37,12 +37,11 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
- * Component of SkyControl which manages a particular cloud layer.
+ * A component of SkyControl which manages a particular cloud layer.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class CloudLayer
-        implements Savable {
+public class CloudLayer implements Savable {
     // *************************************************************************
     // constants
 
@@ -150,6 +149,15 @@ public class CloudLayer
     }
 
     /**
+     * Read the opacity of this layer.
+     *
+     * @return opacity of the layer (&le;1, &ge;0)
+     */
+    public float getOpacity() {
+        return opacity;
+    }
+
+    /**
      * Alter the color of this layer.
      *
      * @param newColor (not null, unaffected, alpha is ignored)
@@ -183,7 +191,6 @@ public class CloudLayer
      */
     public void setOpacity(float newAlpha) {
         Validate.fraction(newAlpha, "alpha");
-
         opacity = newAlpha;
     }
 
