@@ -146,7 +146,7 @@ public class Misc {
      * @return package name, branch, and revision of this file
      */
     public static String getVersion() {
-        return "jme3-utilities for_jME3.0 $Rev: 469 $";
+        return "jme3-utilities for_jME3.0 $Rev: 470 $";
     }
 
     /**
