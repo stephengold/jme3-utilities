@@ -52,7 +52,6 @@ abstract public class ActionApplication
      */
     final private static Logger logger = Logger.getLogger(
             ActionApplication.class.getName());
-
     /**
      * names of flyCam actions and the signals used to simulate them
      */
@@ -101,6 +100,14 @@ abstract public class ActionApplication
     public Signals getSignals() {
         assert signals != null;
         return signals;
+    }
+
+    /**
+     * Callback invoked immediately after initializing the hotkey bindings of
+     * the default input mode. Meant to be overridden. Can be used to override
+     * those bindings.
+     */
+    public void moreDefaultBindings() {
     }
 
     /**

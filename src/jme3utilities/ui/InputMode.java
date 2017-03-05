@@ -300,7 +300,7 @@ abstract public class InputMode
      */
     public void loadBindings() {
         if (configFilePath == null) {
-            logger.log(Level.WARNING, 
+            logger.log(Level.WARNING,
                     "bindings not loaded: config path not set");
             return;
         }
@@ -339,7 +339,7 @@ abstract public class InputMode
         assert isInitialized();
 
         if (configFilePath == null) {
-            logger.log(Level.WARNING, 
+            logger.log(Level.WARNING,
                     "bindings not saved: config path not set");
             return;
         }
@@ -462,7 +462,15 @@ abstract public class InputMode
          */
         initializeHotkeyBindings();
 
-        assert isInitialized();
+        ActionApplication aa = (ActionApplication) application;
+        if (this == aa.getDefaultInputMode()) {
+            /*
+             * Give the application a chance to override the 
+             * initial hotkey bindings.
+             */
+            aa.moreDefaultBindings();
+        }
+        
         setEnabled(startEnabled);
     }
     // *************************************************************************
