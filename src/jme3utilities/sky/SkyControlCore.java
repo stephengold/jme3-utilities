@@ -67,7 +67,7 @@ import jme3utilities.math.MyColor;
  * this puts them on a translucent "clouds only" dome.
  * <p>
  * To simulate star motion, additional geometries are added: a star cube and an
- * optional "bottom" dome which extends the horizon haze for scenes with a low
+ * optional "bottom" dome, which extends the horizon haze for scenes with a low
  * horizon.
  *
  * @author Stephen Gold sgold@sonic.net
@@ -156,57 +156,17 @@ public class SkyControlCore extends SubtreeControl {
      */
     protected CloudLayer[] cloudLayers;
     /**
-     * mesh of the bottom dome, or null if there's no bottom dome
-     */
-    protected DomeMesh bottomMesh = null;
-    /**
-     * mesh of the dome with clouds
-     */
-    protected DomeMesh cloudsMesh = null;
-    /**
-     * mesh of the dome with sun, moon, and horizon haze
-     */
-    protected DomeMesh topMesh = null;
-    /**
-     * simulation time for cloud layer animations
+     * simulation time for cloud layer animations (initially 0, may be negative)
      */
     private float cloudsAnimationTime = 0f;
     /**
-     * rate of motion for cloud layer animations (1 &rarr; standard)
+     * rate of motion for cloud layer animations (default is 1, may be negative)
      */
     private float cloudsRelativeSpeed = 1f;
     /**
-     * phase angle of the moon: default corresponds to a 100% full moon
+     * phase angle of the moon (0 &rarr; new, Pi &rarr; full, full is default)
      */
     protected float phaseAngle = FastMath.PI;
-    /**
-     * flattened dome for clouds only: set by initialize()
-     */
-    protected Geometry cloudsOnlyDome = null;
-    /**
-     * bottom dome: set by initialize()
-     */
-    protected Geometry bottomDome = null;
-    /**
-     * dome representing the sun, moon, and horizon haze: set by initialize()
-     */
-    protected Geometry topDome = null;
-    /**
-     * material for bottom dome: set by constructor
-     */
-    protected Material bottomMaterial;
-    /**
-     * material of the dome with clouds: set by constructor
-     */
-    protected SkyMaterial cloudsMaterial;
-    /**
-     * material of the top dome: set by constructor
-     */
-    protected SkyMaterial topMaterial;
-    /**
-     * spatial for movable stars (if starMotionFlag is true)
-     */
-    protected Spatial starCube = null;
     // *************************************************************************
     // constructors
 
@@ -220,9 +180,6 @@ public class SkyControlCore extends SubtreeControl {
         starMotionFlag = false;
         camera = null;
         cloudLayers = null;
-        bottomMaterial = null;
-        cloudsMaterial = null;
-        topMaterial = null;
     }
 
     /**
@@ -264,13 +221,15 @@ public class SkyControlCore extends SubtreeControl {
         int topObjects = 2; // a sun and a moon
         boolean cloudDomeFlag = cloudFlattening != 0f;
         int topCloudLayers = cloudDomeFlag ? 0 : numCloudLayers;
-        topMaterial = new SkyMaterial(assetManager, topObjects, topCloudLayers);
+        SkyMaterial topMaterial = new SkyMaterial(assetManager, topObjects,
+                topCloudLayers);
         topMaterial.initialize();
         topMaterial.addHaze();
         if (!starMotionFlag) {
             topMaterial.addStars();
         }
 
+        SkyMaterial cloudsMaterial;
         if (cloudDomeFlag) {
             /*
              * Create and initialize a separate sky material for clouds only.
@@ -293,13 +252,15 @@ public class SkyControlCore extends SubtreeControl {
                     cloudsMaterial, layerIndex);
         }
 
+        Material bottomMaterial;
         if (bottomDomeFlag) {
             bottomMaterial = MyAsset.createUnshadedMaterial(assetManager);
         } else {
             bottomMaterial = null;
         }
 
-        createSpatials(cloudFlattening);
+        createSpatials(cloudFlattening, topMaterial, bottomMaterial,
+                cloudsMaterial);
 
         assert !isEnabled();
     }
@@ -311,11 +272,13 @@ public class SkyControlCore extends SubtreeControl {
      */
     public void clearStarMaps() {
         if (starMotionFlag) {
+            Spatial starCube = MySpatial.findChild(subtree, starCubeName);
             if (starCube != null) {
                 subtree.detachChild(starCube);
                 starCube = null;
             }
         } else {
+            SkyMaterial topMaterial = getTopMaterial();
             topMaterial.removeStars();
         }
     }
@@ -327,7 +290,8 @@ public class SkyControlCore extends SubtreeControl {
      * @return pre-existing instance
      */
     public CloudLayer getCloudLayer(int layerIndex) {
-        Validate.inRange(layerIndex, "cloud layer index", 0, numCloudLayers - 1);
+        Validate.inRange(layerIndex, "cloud layer index",
+                0, numCloudLayers - 1);
         CloudLayer layer = cloudLayers[layerIndex];
 
         assert layer != null;
@@ -374,16 +338,16 @@ public class SkyControlCore extends SubtreeControl {
     }
 
     /**
-     * Alter the speed or direction of cloud motion.
+     * Alter the speed and/or direction of cloud motion.
      *
-     * @param newRate rate relative to the standard (may be negative)
+     * @param newRate multiple of the default rate (may be negative)
      */
     public void setCloudRate(float newRate) {
         cloudsRelativeSpeed = newRate;
     }
 
     /**
-     * Alter the vertical position of the clouds-only dome. When the scene's
+     * Alter the vertical offset of the clouds-only dome. When the scene's
      * horizon lies below the astronomical horizon, it may help to depress the
      * clouds-only dome.
      *
@@ -391,6 +355,7 @@ public class SkyControlCore extends SubtreeControl {
      * height (&lt;1, &ge;0 when flattening&gt;0; 0 when flattening=0)
      */
     public void setCloudYOffset(float newYOffset) {
+        Spatial cloudsOnlyDome = getCloudsOnlyDome();
         if (cloudsOnlyDome == null) {
             if (newYOffset != 0f) {
                 logger.log(Level.SEVERE, "offset={0}", newYOffset);
@@ -418,6 +383,7 @@ public class SkyControlCore extends SubtreeControl {
         Validate.nonNegative(objectIndex, "index");
         Validate.nonNull(newColorMap, "texture");
 
+        SkyMaterial topMaterial = getTopMaterial();
         topMaterial.addObject(objectIndex, newColorMap);
     }
 
@@ -442,14 +408,16 @@ public class SkyControlCore extends SubtreeControl {
         Validate.nonEmpty(assetName, "asset name");
 
         if (starMotionFlag) {
+            Node starCube = getStarCube();
             if (starCube != null) {
                 int index = subtree.detachChild(starCube);
-                assert index == 0;
-                starCube = null;
+                assert index == 0 : index;
             }
             starCube = MyAsset.createStarMapQuads(assetManager, assetName);
+            starCube.setName(starCubeName);
             subtree.attachChildAt(starCube, 0);
         } else {
+            SkyMaterial topMaterial = getTopMaterial();
             topMaterial.addStars(assetName);
         }
     }
@@ -470,15 +438,150 @@ public class SkyControlCore extends SubtreeControl {
                     "angle should be between 0 and 1.785");
         }
 
+        DomeMesh topMesh = getTopMesh();
         topMesh.setVerticalAngle(newAngle);
-        topDome.setMesh(topMesh);
         if (bottomDomeFlag) {
+            DomeMesh bottomMesh = getBottomMesh();
             bottomMesh.setVerticalAngle(FastMath.PI - newAngle);
-            bottomDome.setMesh(bottomMesh);
         }
     }
     // *************************************************************************
     // protected methods
+
+    /**
+     * Access the bottom dome geometry.
+     *
+     * @return the pre-existing geometry (or null if none)
+     */
+    protected Geometry getBottomDome() {
+        Geometry bottomDome = (Geometry) MySpatial.findChild(subtree,
+                bottomName);
+        return bottomDome;
+    }
+
+    /**
+     * Access the bottom dome material.
+     *
+     * @return the pre-existing instance (or null if none)
+     */
+    protected Material getBottomMaterial() {
+        Geometry bottomDome = getBottomDome();
+        if (bottomDome == null) {
+            return null;
+        }
+        Material bottomMaterial = bottomDome.getMaterial();
+
+        return bottomMaterial;
+    }
+
+    /**
+     * Access the bottom dome mesh.
+     *
+     * @return the pre-existing instance (or null if none)
+     */
+    protected DomeMesh getBottomMesh() {
+        Geometry bottomDome = getBottomDome();
+        if (bottomDome == null) {
+            return null;
+        }
+        DomeMesh bottomMesh = (DomeMesh) bottomDome.getMesh();
+
+        return bottomMesh;
+    }
+
+    /**
+     * Access the clouds-only dome geometry.
+     *
+     * @return the pre-existing geometry (or null if none)
+     */
+    protected Geometry getCloudsOnlyDome() {
+        Geometry cloudsOnlyDome = (Geometry) MySpatial.findChild(
+                subtree, cloudsName);
+        return cloudsOnlyDome;
+    }
+
+    /**
+     * Access the clouds material.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    protected SkyMaterial getCloudsMaterial() {
+        Geometry cloudsOnlyDome = getCloudsOnlyDome();
+        SkyMaterial cloudsMaterial;
+        if (cloudsOnlyDome == null) {
+            cloudsMaterial = getTopMaterial();
+        } else {
+            cloudsMaterial = (SkyMaterial) cloudsOnlyDome.getMaterial();
+        }
+
+        assert cloudsMaterial != null;
+        return cloudsMaterial;
+    }
+
+    /**
+     * Access the clouds mesh.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    protected DomeMesh getCloudsMesh() {
+        Geometry cloudsOnlyDome = getCloudsOnlyDome();
+        DomeMesh cloudsMesh;
+        if (cloudsOnlyDome == null) {
+            cloudsMesh = getTopMesh();
+        } else {
+            cloudsMesh = (DomeMesh) cloudsOnlyDome.getMesh();
+        }
+
+        assert cloudsMesh != null;
+        return cloudsMesh;
+    }
+
+    /**
+     * Access the star cube node.
+     *
+     * @return the pre-existing node (or null if none)
+     */
+    protected Node getStarCube() {
+        Node starCube = (Node) MySpatial.findChild(subtree, starCubeName);
+        return starCube;
+    }
+
+    /**
+     * Access the top dome geometry.
+     *
+     * @return the pre-existing geometry (not null)
+     */
+    protected Geometry getTopDome() {
+        Geometry topDome = (Geometry) MySpatial.findChild(subtree, topName);
+        assert topDome != null;
+        return topDome;
+    }
+
+    /**
+     * Access the top dome material.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    protected SkyMaterial getTopMaterial() {
+        Geometry topDome = getTopDome();
+        SkyMaterial topMaterial = (SkyMaterial) topDome.getMaterial();
+
+        assert topMaterial != null;
+        return topMaterial;
+    }
+
+    /**
+     * Access the top dome mesh.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    protected DomeMesh getTopMesh() {
+        Geometry topDome = getTopDome();
+        DomeMesh topMesh = (DomeMesh) topDome.getMesh();
+
+        assert topMesh != null;
+        return topMesh;
+    }
 
     /**
      * Apply a modified version of the base color to each cloud layer.
@@ -569,29 +672,6 @@ public class SkyControlCore extends SubtreeControl {
         cloudsAnimationTime = ic.readFloat("cloudsAnimationTime", 0f);
         cloudsRelativeSpeed = ic.readFloat("cloudsRelativeSpeed", 1f);
         phaseAngle = ic.readFloat("phaseAngle", FastMath.PI);
-        /*
-         * Infer cached references and values from the subtree.
-         */
-        starCube = MySpatial.findChild(subtree, starCubeName);
-        topDome = (Geometry) MySpatial.findChild(subtree, topName);
-        topMaterial = (SkyMaterial) topDome.getMaterial();
-        topMesh = (DomeMesh) topDome.getMesh();
-
-        cloudsOnlyDome = (Geometry) MySpatial.findChild(subtree, cloudsName);
-        if (cloudsOnlyDome == null) {
-            cloudsMaterial = topMaterial;
-            cloudsMesh = topMesh;
-        } else {
-            cloudsMaterial = (SkyMaterial) cloudsOnlyDome.getMaterial();
-            cloudsMesh = (DomeMesh) cloudsOnlyDome.getMesh();
-        }
-
-        bottomDome = (Geometry) MySpatial.findChild(subtree, bottomName);
-        if (bottomDome != null) {
-            bottomDomeFlag = true;
-            bottomMaterial = bottomDome.getMaterial();
-            bottomMesh = (DomeMesh) bottomDome.getMesh();
-        }
     }
 
     /**
@@ -614,12 +694,12 @@ public class SkyControlCore extends SubtreeControl {
         oc.write(phaseAngle, "phaseAngle", FastMath.PI);
     }
     // *************************************************************************
-    // Object methods
+    // SubtreeControl methods
 
     /**
      * Create a shallow copy of this control.
      *
-     * @return a new instance
+     * @return a new control, equivalent to this one
      * @throws CloneNotSupportedException if superclass isn't cloneable
      */
     @Override
@@ -636,8 +716,12 @@ public class SkyControlCore extends SubtreeControl {
      * @param cloudFlattening the oblateness (ellipticity) of the dome with the
      * clouds (&ge; 0, &lt;1, 0 &rarr; no flattening (hemisphere), 1 &rarr;
      * maximum flattening
+     * @param topMaterial (not null)
+     * @param bottomMaterial (may be null)
+     * @param cloudsMaterial (not null)
      */
-    private void createSpatials(float cloudFlattening) {
+    private void createSpatials(float cloudFlattening, Material topMaterial,
+            Material bottomMaterial, Material cloudsMaterial) {
         /*
          * Create a node to parent the dome geometries.
          */
@@ -652,14 +736,14 @@ public class SkyControlCore extends SubtreeControl {
             setStarMaps("equator");
         }
 
-        topMesh = new DomeMesh(rimSamples, quadrantSamples);
-        topDome = new Geometry(topName, topMesh);
+        DomeMesh topMesh = new DomeMesh(rimSamples, quadrantSamples);
+        Geometry topDome = new Geometry(topName, topMesh);
         subtree.attachChild(topDome);
         topDome.setMaterial(topMaterial);
 
         if (bottomDomeFlag) {
-            bottomMesh = new DomeMesh(rimSamples, 2);
-            bottomDome = new Geometry(bottomName, bottomMesh);
+            DomeMesh bottomMesh = new DomeMesh(rimSamples, 2);
+            Geometry bottomDome = new Geometry(bottomName, bottomMesh);
             subtree.attachChild(bottomDome);
 
             Quaternion upsideDown = new Quaternion();
@@ -672,8 +756,8 @@ public class SkyControlCore extends SubtreeControl {
             assert cloudFlattening > 0f : cloudFlattening;
             assert cloudFlattening < 1f : cloudFlattening;
 
-            cloudsMesh = new DomeMesh(rimSamples, quadrantSamples);
-            cloudsOnlyDome = new Geometry(cloudsName, cloudsMesh);
+            DomeMesh cloudsMesh = new DomeMesh(rimSamples, quadrantSamples);
+            Geometry cloudsOnlyDome = new Geometry(cloudsName, cloudsMesh);
             subtree.attachChild(cloudsOnlyDome);
             /*
              * Flatten the clouds-only dome in order to foreshorten clouds
@@ -682,8 +766,6 @@ public class SkyControlCore extends SubtreeControl {
             float yScale = 1f - cloudFlattening;
             cloudsOnlyDome.setLocalScale(1f, yScale, 1f);
             cloudsOnlyDome.setMaterial(cloudsMaterial);
-        } else {
-            cloudsMesh = topMesh;
         }
     }
 

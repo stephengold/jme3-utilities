@@ -30,11 +30,14 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
+import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.texture.Texture;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -67,14 +70,13 @@ import jme3utilities.math.MyMath;
  * adjusted by invoking setCloudsSpeed(). Flatten the clouds for best results;
  * this puts them on a translucent "clouds only" dome.
  * <p>
- * To simulate star motion, several more domes are added: one for northern
- * stars, one for southern stars, and an optional "bottom" dome which extends
- * the horizon haze for scenes with a low horizon.
+ * To simulate star motion, additional geometries are added: a star cube and an
+ * optional "bottom" dome that extends the horizon haze for scenes with a low
+ * horizon.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class SkyControl
-        extends SkyControlCore {
+public class SkyControl extends SkyControlCore {
     // *************************************************************************
     // constants
 
@@ -152,7 +154,7 @@ public class SkyControl
      */
     private GlobeRenderer moonRenderer = null;
     /**
-     * phase of the moon: default is FULL
+     * phase-of-the-moon preset (default is FULL)
      */
     private LunarPhase phase = LunarPhase.FULL;
     /**
@@ -206,7 +208,7 @@ public class SkyControl
     // new methods exposed
 
     /**
-     * Compute the direction to the center of the moon.
+     * Calculate the direction to the center of the moon. TODO rename
      *
      * @return new unit vector in world (horizontal) coordinates
      */
@@ -223,7 +225,7 @@ public class SkyControl
     /**
      * Access the orientations of the sun and stars.
      *
-     * @return pre-existing instance
+     * @return the pre-existing instance (not null)
      */
     public SunAndStars getSunAndStars() {
         assert sunAndStars != null;
@@ -262,6 +264,7 @@ public class SkyControl
                     "diameter should be between 0 and Pi");
         }
 
+        DomeMesh topMesh = getTopMesh();
         moonScale = newDiameter * topMesh.uvScale / FastMath.HALF_PI;
     }
 
@@ -283,6 +286,7 @@ public class SkyControl
         if (newPreset != null) {
             phaseAngle = newPreset.longitudeDifference();
             String assetPath = newPreset.imagePath();
+            SkyMaterial topMaterial = getTopMaterial();
             topMaterial.addObject(moonIndex, assetPath);
         }
     }
@@ -303,6 +307,7 @@ public class SkyControl
         phaseAngle = newAngle;
 
         Texture dynamicTexture = moonRenderer.getTexture();
+        SkyMaterial topMaterial = getTopMaterial();
         topMaterial.addObject(moonIndex, dynamicTexture);
     }
 
@@ -318,6 +323,7 @@ public class SkyControl
                     "diameter should be between 0 and Pi");
         }
 
+        DomeMesh topMesh = getTopMesh();
         sunScale = newDiameter * topMesh.uvScale
                 / (Constants.discDiameter * FastMath.HALF_PI);
     }
@@ -330,6 +336,7 @@ public class SkyControl
     final public void setSunStyle(String assetPath) {
         Validate.nonNull(assetPath, "path");
 
+        SkyMaterial topMaterial = getTopMaterial();
         topMaterial.addObject(sunIndex, assetPath);
     }
     // *************************************************************************
@@ -338,7 +345,7 @@ public class SkyControl
     /**
      * Create a shallow copy of this control.
      *
-     * @return a new instance
+     * @return a new control, equivalent to this one
      * @throws CloneNotSupportedException if superclass isn't cloneable
      */
     @Override
@@ -424,6 +431,7 @@ public class SkyControl
 
         float deltaY;
         float semiMinorAxis;
+        Geometry cloudsOnlyDome = getCloudsOnlyDome();
         if (cloudsOnlyDome == null) {
             deltaY = 0f;
             semiMinorAxis = 1f;
@@ -488,6 +496,7 @@ public class SkyControl
          * of the moon.
          */
         Vector3f north = sunAndStars.convertToWorld(1f, longitude);
+        DomeMesh topMesh = getTopMesh();
         Vector2f uvNorth = topMesh.directionUV(north);
         if (uvNorth != null) {
             Vector2f offset = uvNorth.subtract(uvCenter);
@@ -527,6 +536,7 @@ public class SkyControl
 
         if (moonRenderer.isEnabled()) {
             Texture dynamicTexture = moonRenderer.getTexture();
+            SkyMaterial topMaterial = getTopMaterial();
             topMaterial.addObject(moonIndex, dynamicTexture);
         }
     }
@@ -543,10 +553,12 @@ public class SkyControl
          */
         ColorRGBA clearColor = colorDay.clone();
         clearColor.a = FastMath.saturate(1f + sunDirection.y / limitOfTwilight);
+        SkyMaterial topMaterial = getTopMaterial();
         topMaterial.setClearColor(clearColor);
 
         Vector3f moonDirection = updateMoon();
         updateLighting(sunDirection, moonDirection);
+        Node starCube = getStarCube();
         if (starMotionFlag && starCube != null) {
             sunAndStars.orientEquatorialSky(starCube, false);
         }
@@ -615,7 +627,9 @@ public class SkyControl
             float nightWeight = FastMath.saturate(-sineSolarAltitude / 0.04f);
             baseColor = MyColor.interpolateLinear(nightWeight, twilight, blend);
         }
+        SkyMaterial topMaterial = getTopMaterial();
         topMaterial.setHazeColor(baseColor);
+        Material bottomMaterial = getBottomMaterial();
         if (bottomMaterial != null) {
             bottomMaterial.setColor("Color", baseColor);
         }
@@ -630,7 +644,9 @@ public class SkyControl
              * Modulate light intensity as clouds pass in front.
              */
             Vector3f intersection = intersectCloudDome(mainDirection);
+            DomeMesh cloudsMesh = getCloudsMesh();
             Vector2f texCoord = cloudsMesh.directionUV(intersection);
+            SkyMaterial cloudsMaterial = getCloudsMaterial();
             transmit = cloudsMaterial.getTransmission(texCoord);
 
         } else {
@@ -669,7 +685,7 @@ public class SkyControl
         ColorRGBA ambient = cloudsColor.mult(slack);
         /*
          * Compute the recommended shadow intensity as the fraction of
-         * the total light which is directional.
+         * the total directional light.
          */
         float mainAmount = main.r + main.g + main.b;
         float ambientAmount = ambient.r + ambient.g + ambient.b;
@@ -694,6 +710,7 @@ public class SkyControl
      */
     private Vector3f updateMoon() {
         if (phase == null) {
+            SkyMaterial topMaterial = getTopMaterial();
             topMaterial.hideObject(moonIndex);
             return null;
         }
@@ -711,8 +728,10 @@ public class SkyControl
         celestialLongitude = MyMath.modulo(celestialLongitude, FastMath.TWO_PI);
         Vector3f worldDirection = sunAndStars.convertToWorld(
                 0f, celestialLongitude);
+        DomeMesh topMesh = getTopMesh();
         Vector2f uvCenter = topMesh.directionUV(worldDirection);
 
+        SkyMaterial topMaterial = getTopMaterial();
         if (uvCenter != null) {
             Vector2f rotation = lunarRotation(celestialLongitude, uvCenter);
             /*
@@ -745,6 +764,7 @@ public class SkyControl
         float green = FastMath.saturate(3f * sineSolarAltitude);
         float blue = FastMath.saturate(sineSolarAltitude - 0.1f);
         ColorRGBA sunColor = new ColorRGBA(1f, green, blue, Constants.alphaMax);
+        SkyMaterial topMaterial = getTopMaterial();
         topMaterial.setObjectColor(sunIndex, sunColor);
         topMaterial.setObjectGlow(sunIndex, sunColor);
         /*
@@ -767,7 +787,9 @@ public class SkyControl
          * Compute the UV coordinates of the center of the sun.
          */
         Vector3f worldDirection = sunAndStars.getSunDirection();
+        DomeMesh topMesh = getTopMesh();
         Vector2f uv = topMesh.directionUV(worldDirection);
+        SkyMaterial topMaterial = getTopMaterial();
         if (uv == null) {
             /*
              * The sun is below the horizon, so hide it.
