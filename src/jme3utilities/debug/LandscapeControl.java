@@ -140,10 +140,6 @@ public class LandscapeControl extends SubtreeControl {
      * unscaled diameter of the terrain (in pixels)
      */
     private int terrainDiameter = 0;
-    /**
-     * spatial which represents the terrain: set by constructor
-     */
-    private Spatial terrain;
     // *************************************************************************
     // constructors
 
@@ -154,7 +150,6 @@ public class LandscapeControl extends SubtreeControl {
     public LandscapeControl() {
         super();
         assetManager = null;
-        terrain = null;
     }
 
     /**
@@ -172,7 +167,7 @@ public class LandscapeControl extends SubtreeControl {
          * Generate monument and terrain and attach them to the subtree.
          */
         Spatial monument = createMonument();
-        terrain = createTerrain();
+        TerrainQuad terrain = createTerrain();
 
         subtree = new Node("landscape node");
         subtree.attachChild(monument);
@@ -184,7 +179,7 @@ public class LandscapeControl extends SubtreeControl {
     /**
      * Access a material identical to the one applied to the terrain.
      *
-     * @return new instance
+     * @return a new instance
      */
     final public Material getGrass() {
         return createShadedMaterial(grassColor);
@@ -195,7 +190,7 @@ public class LandscapeControl extends SubtreeControl {
      *
      * @param radius distance from center to edge (&gt;0)
      * @param baseY lowest possible Y-coordinate
-     * @param peakY Y-coordinate of the peak (&gt;baseY)
+     * @param peakY world Y-coordinate of the peak (&gt;baseY)
      */
     public void setTerrainScale(float radius, float baseY, float peakY) {
         Validate.positive(radius, "radius");
@@ -205,6 +200,7 @@ public class LandscapeControl extends SubtreeControl {
             throw new IllegalArgumentException("peak should be above base");
         }
 
+        Spatial terrain = MySpatial.findChild(subtree, "terrain");
         float yScale = (peakY - baseY) / terrainHeight;
         float xzScale = (2f * radius) / terrainDiameter;
         Vector3f scale = new Vector3f(xzScale, yScale, xzScale);
@@ -230,10 +226,6 @@ public class LandscapeControl extends SubtreeControl {
         assetManager = importer.getAssetManager();
         terrainHeight = ic.readFloat("terrainHeight", 0f);
         terrainDiameter = ic.readInt("terrainDiameter", 0);
-        /*
-         * Infer cached reference from the subtree.
-         */
-        terrain = MySpatial.findChild(subtree, "terrain");
     }
 
     /**
@@ -256,7 +248,7 @@ public class LandscapeControl extends SubtreeControl {
     /**
      * Create a shallow copy of this control.
      *
-     * @return a new instance
+     * @return a new control, equivalent to this one
      * @throws CloneNotSupportedException if superclass isn't cloneable
      */
     @Override
