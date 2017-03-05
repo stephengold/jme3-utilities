@@ -179,10 +179,25 @@ public class LandscapeControl extends SubtreeControl {
     /**
      * Access a material identical to the one applied to the terrain.
      *
-     * @return new instance
+     * @return a new instance
      */
     final public Material getGrass() {
         return createShadedMaterial(grassColor);
+    }
+    
+    /**
+     * Calculate the world Y-coordinate of the peak.
+     * 
+     * @return coordinate value (in world units)
+     */
+    public float peakY() {
+        Spatial terrain = MySpatial.findChild(subtree, "terrain");
+        float yScale = terrain.getLocalScale().y;
+        assert yScale > 0f : yScale;
+        float baseY = MySpatial.getWorldLocation(terrain).y;
+        float result = yScale * terrainHeight + baseY;
+        
+        return result;
     }
 
     /**
@@ -190,7 +205,7 @@ public class LandscapeControl extends SubtreeControl {
      *
      * @param radius distance from center to edge (&gt;0)
      * @param baseY lowest possible Y-coordinate
-     * @param peakY Y-coordinate of the peak (&gt;baseY)
+     * @param peakY world Y-coordinate of the peak (&gt;baseY)
      */
     public void setTerrainScale(float radius, float baseY, float peakY) {
         Validate.positive(radius, "radius");
