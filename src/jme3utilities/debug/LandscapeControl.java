@@ -186,6 +186,21 @@ public class LandscapeControl extends SubtreeControl {
     }
 
     /**
+     * Calculate the world Y-coordinate of the peak.
+     * 
+     * @return coordinate value (in world units)
+     */
+    public float peakY() {
+        Spatial terrain = MySpatial.findChild(subtree, "terrain");
+        float yScale = terrain.getLocalScale().y;
+        assert yScale > 0f : yScale;
+        float baseY = MySpatial.getWorldLocation(terrain).y;
+        float result = yScale * terrainHeight + baseY;
+        
+        return result;
+    }
+
+    /**
      * Alter the terrain's radius and vertical relief.
      *
      * @param radius distance from center to edge (&gt;0)
