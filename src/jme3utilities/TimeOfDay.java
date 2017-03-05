@@ -30,13 +30,13 @@ import java.util.logging.Logger;
 import jme3utilities.math.MyMath;
 
 /**
- * Simple app state to simulate the time of day in a game.
+ * Named app state to simulate the time of day in a game.
  * <p>
  * Each instance is enabled at creation.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class TimeOfDay extends SimpleAppState {
+public class TimeOfDay extends NamedAppState {
     // *************************************************************************
     // constants
 
@@ -67,7 +67,6 @@ public class TimeOfDay extends SimpleAppState {
             TimeOfDay.class.getName());
     // *************************************************************************
     // fields
-    
     /**
      * simulated time of day (seconds since midnight, &lt;86400, &ge;0)
      * <p>
@@ -102,7 +101,7 @@ public class TimeOfDay extends SimpleAppState {
     // new methods exposed
 
     /**
-     * Read the simulated time of day in hours.
+     * Calculate the simulated time of day in hours. TODO rename
      *
      * @return hours since midnight (&lt;24, &ge;0)
      */
@@ -118,7 +117,7 @@ public class TimeOfDay extends SimpleAppState {
     }
 
     /**
-     * Read the simulated time of day in seconds.
+     * Calculate the simulated time of day in seconds. TODO rename
      *
      * @return seconds since midnight (&lt;86400, &ge;0)
      */
@@ -131,6 +130,16 @@ public class TimeOfDay extends SimpleAppState {
         assert result >= 0 : result;
         assert result < secondsPerDay : result;
         return result;
+    }
+
+    /**
+     * Alter the simulation time.
+     *
+     * @param newHour hours since midnight (&lt24, &ge;0)
+     */
+    public void setHour(float newHour) {
+        Validate.inRange(newHour, "new hour", 0f, 24f);
+        timeOfDay = secondsPerHour * (double) newHour;
     }
 
     /**
