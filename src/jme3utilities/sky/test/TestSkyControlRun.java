@@ -27,6 +27,8 @@ package jme3utilities.sky.test;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.asset.DesktopAssetManager;
+import com.jme3.export.binary.BinaryExporter;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
@@ -43,15 +45,20 @@ import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyAsset;
 import jme3utilities.MyCamera;
 import jme3utilities.MySpatial;
+import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.ViewPortListener;
 import jme3utilities.WaterProcessor;
 import jme3utilities.debug.LandscapeControl;
+import jme3utilities.debug.Printer;
 import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.sky.CloudLayer;
@@ -87,6 +94,14 @@ public class TestSkyControlRun
      */
     final private static Logger logger = Logger.getLogger(
             TestSkyControlRun.class.getName());
+    /**
+     * name for the cube geometry
+     */
+    final private static String cubeName = "cube";
+    /**
+     * asset path for loading and saving
+     */
+    final private static String savePath = "Models/TestSkyControl.j3o";
     // *************************************************************************
     // fields
 
@@ -95,7 +110,7 @@ public class TestSkyControlRun
      */
     private AmbientLight ambientLight = null;
     /**
-     * show the HUD when this state is enabled
+     * true &rarr; show the HUD when this state is enabled
      */
     private boolean showHud = true;
     /**
@@ -111,9 +126,13 @@ public class TestSkyControlRun
      */
     private LandscapeControl landscapeControl = null;
     /**
-     * node to parent geometries which can appear reflected in water
+     * node to parent geometries that can appear reflected in water
      */
-    final private Node sceneNode = new Node("scene node");
+    private Node sceneNode = new Node("scene node");
+    /**
+     * printer for scene dump
+     */
+    final private Printer printer = new Printer();
     /**
      * control under test
      */
@@ -143,6 +162,64 @@ public class TestSkyControlRun
     // new methods exposed
 
     /**
+     * Load the scene from an asset.
+     */
+    void load() {
+        if (assetManager instanceof DesktopAssetManager) {
+            /*
+             * Clear cache to force loadModel() to read the J3O file.
+             */
+            DesktopAssetManager dam = (DesktopAssetManager) assetManager;
+            dam.clearCache();
+        }
+
+        Spatial loadedScene = assetManager.loadModel(savePath);
+        logger.log(Level.INFO, "Loaded {0} from asset {1}", new Object[]{
+            MyString.quote(loadedScene.getName()),
+            MyString.quote(savePath)
+        });
+        Node loadedNode = (Node) loadedScene;
+        /*
+         * Update cached references to refer to the newly loaded scene.
+         */
+        cubeMap = MySpatial.findChild(loadedNode, cubeName);
+        assert cubeMap != null;
+        floorControl = loadedNode.getControl(FloorControl.class);
+        assert floorControl != null;
+        landscapeControl = loadedNode.getControl(LandscapeControl.class);
+        assert landscapeControl != null;
+
+        Updater oldUpdater = skyControl.getUpdater();
+        skyControl = loadedNode.getControl(SkyControl.class);
+        assert skyControl != null;
+        Updater updater = skyControl.getUpdater();
+        ambientLight = updater.getAmbientLight();
+        assert ambientLight != null;
+        mainLight = updater.getMainLight();
+        assert mainLight != null;
+        /*
+         * Set the cameras, filters, renderers, and viewports for the loaded 
+         * controls.  (These were not serialized.)
+         */
+        floorControl.setCamera(cam);
+        skyControl.setCamera(cam);
+        updater.setFRV(oldUpdater);
+        GlobeRenderer moonRenderer = stateManager.getState(GlobeRenderer.class);
+        skyControl.setMoonRenderer(moonRenderer);
+        /*
+         * Replace the old scene node.
+         */
+        Node parent = sceneNode.getParent();
+        parent.detachChild(sceneNode);
+        parent.attachChild(loadedNode);
+        sceneNode = loadedNode;
+        /*
+         * Set GUI controls in the HUD to match the scene.
+         */
+        hud.matchScene(skyControl, landscapeControl);
+    }
+
+    /**
      * Callback from the HUD to aim the camera at the moon, even if it's below
      * the horizon.
      */
@@ -162,6 +239,38 @@ public class TestSkyControlRun
     }
 
     /**
+     * Dump the scene (as text) to the "standard" output stream.
+     */
+    void print() {
+        printer.printSubtree(sceneNode);
+    }
+
+    /**
+     * Save the current scene to a J3O file.
+     */
+    void save() {
+        String filePath = "assets/" + savePath;
+        File file = new File(filePath);
+        BinaryExporter exporter = BinaryExporter.getInstance();
+
+        try {
+            exporter.save(sceneNode, file);
+        } catch (IOException exception) {
+            logger.log(Level.SEVERE,
+                    "Output exception while saving {0} to file {1}",
+                    new Object[]{
+                MyString.quote(sceneNode.getName()),
+                MyString.quote(filePath)
+            });
+            return;
+        }
+        logger.log(Level.INFO, "Saved {0} to file {1}", new Object[]{
+            MyString.quote(sceneNode.getName()),
+            MyString.quote(filePath)
+        });
+    }
+
+    /**
      * Toggle the visibility of the HUD.
      */
     void toggleHud() {
@@ -176,8 +285,8 @@ public class TestSkyControlRun
     /**
      * Initialize this app state on the 1st update after it gets attached.
      *
-     * @param sm application's state manager (not null)
-     * @param app application which owns this state (not null)
+     * @param sm the application's state manager (not null)
+     * @param app the application that owns this state (not null)
      */
     @Override
     public void initialize(AppStateManager sm, Application app) {
@@ -207,8 +316,6 @@ public class TestSkyControlRun
          * Add bloom filter to the main view port.
          */
         addBloom(viewPort);
-
-        //new jme3utilities.Printer().printSubtree(rootNode);
     }
 
     /**
@@ -491,6 +598,7 @@ public class TestSkyControlRun
          */
         cubeMap = MyAsset.createStarMapQuads(assetManager,
                 "purple-nebula-complex");
+        cubeMap.setName(cubeName);
         sceneNode.attachChild(cubeMap);
         /*
          * Create a SkyControl to animate the sky.
@@ -593,5 +701,4 @@ public class TestSkyControlRun
         ambientLight = new AmbientLight();
         ambientLight.setName("ambient");
     }
-
 }

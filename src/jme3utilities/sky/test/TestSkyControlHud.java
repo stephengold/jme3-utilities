@@ -37,9 +37,13 @@ import java.util.logging.Logger;
 import jme3utilities.MyCamera;
 import jme3utilities.MyString;
 import jme3utilities.TimeOfDay;
+import jme3utilities.debug.LandscapeControl;
 import jme3utilities.math.MyMath;
 import jme3utilities.nifty.GuiScreenController;
 import jme3utilities.sky.LunarPhase;
+import jme3utilities.sky.SkyControl;
+import jme3utilities.sky.SunAndStars;
+import jme3utilities.sky.Updater;
 
 /**
  * GUI screen controller for the heads-up display (HUD) of the TestSkyControl
@@ -112,7 +116,7 @@ public class TestSkyControlHud
      */
     private float solarDiameter = 0.031f;
     /**
-     * sun's longitude (radians east of vernal equinox, &le;2*Pi, &ge;0)
+     * sun's longitude (radians east of the March equinox, &le;2*Pi, &ge;0)
      */
     private float solarLongitude = 0f;
     /**
@@ -147,7 +151,7 @@ public class TestSkyControlHud
     // constructors
 
     /**
-     * Instantiate an uninitialized, disabled display which will be enabled
+     * Instantiate an uninitialized, disabled display that will be enabled
      * during initialization.
      */
     TestSkyControlHud() {
@@ -384,7 +388,7 @@ public class TestSkyControlHud
     /**
      * Read the current solar longitude.
      *
-     * @return angle (radians east of vernal equinox, &le;2*Pi, &ge;0)
+     * @return angle (radians east of March equinox, &le;2*Pi, &ge;0)
      */
     float getSolarLongitude() {
         assert solarLongitude >= 0f : solarLongitude;
@@ -423,7 +427,66 @@ public class TestSkyControlHud
     }
 
     /**
-     * Callback which Nifty invokes after the user selects a radio button.
+     * Alter the HUD controls to match the specified scene controls.
+     *
+     * @param sky sky control (not null)
+     * @param land landscape control (not null)
+     */
+    void matchScene(SkyControl sky, LandscapeControl land) {
+        SunAndStars sunAndStars = sky.getSunAndStars();
+        Updater updater = sky.getUpdater();
+
+        ambientMultiplier = updater.getAmbientMultiplier();
+        setSlider("ambient", ambientMultiplier);
+
+        cloudModulation = sky.getCloudModulation();
+        setCheckBox("modulationCheckBox", cloudModulation);
+        cloudRate = sky.getCloudRate();
+        setSlider("cloudRate", cloudRate);
+        cloudYOffset = sky.getCloudYOffset();
+        setSlider("cloudYOffset", cloudYOffset);
+        cloudiness = sky.getCloudLayer(0).getOpacity();
+        setSlider("cloudiness", cloudiness);
+
+        latitude = sunAndStars.getObserverLatitude();
+        float degrees = MyMath.toDegrees(latitude);
+        setSlider("latitude", degrees);
+
+        lunarDiameter = sky.lunarDiameter();
+        degrees = MyMath.toDegrees(lunarDiameter);
+        float logDegrees = FastMath.log(degrees, 10f);
+        setSlider("lunarDiameter", logDegrees);
+
+        mainMultiplier = updater.getMainMultiplier();
+        setSlider("main", mainMultiplier);
+
+        phase = sky.getPhase();
+        phaseAngle = sky.getPhaseAngle();
+        degrees = MyMath.toDegrees(phaseAngle);
+        setSlider("customLunarPhase", degrees);
+
+        relief = land.peakY();
+        setSlider("relief", relief);
+
+        solarDiameter = sky.solarDiameter();
+        degrees = MyMath.toDegrees(solarDiameter);
+        logDegrees = FastMath.log(degrees, 10f);
+        setSlider("solarDiameter", logDegrees);
+
+        solarLongitude = sunAndStars.getSolarLongitude();
+        degrees = MyMath.toDegrees(solarLongitude);
+        setSlider("solarLongitude", degrees);
+
+        float hour = sunAndStars.getHour();
+        timeOfDay.setHour(hour);
+
+        topVerticalAngle = sky.getTopVerticalAngle();
+        degrees = MyMath.toDegrees(topVerticalAngle);
+        setSlider("topVerticalAngle", degrees);
+    }
+
+    /**
+     * Callback that Nifty invokes after the user selects a radio button.
      * Invoked by means of reflection, so both the class and method must be
      * public.
      *
