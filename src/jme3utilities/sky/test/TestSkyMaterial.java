@@ -63,8 +63,7 @@ import jme3utilities.ui.InputMode;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class TestSkyMaterial
-        extends GuiApplication {
+public class TestSkyMaterial extends GuiApplication {
     // *************************************************************************
     // constants
 
@@ -263,6 +262,24 @@ public class TestSkyMaterial
     }
 
     /**
+     * Callback invoked immediately after initializing the hotkey bindings of
+     * the default input mode.
+     */
+    @Override
+    public void moreDefaultBindings() {
+        /*
+         * Add/override hotkey bindings of the default input mode:
+         *  'H' to toggle HUD visibility
+         *  'L' to load sky geometry from an asset
+         *  'S' to save the current sky geometry to a file
+         */
+        InputMode defaultInputMode = getDefaultInputMode();
+        defaultInputMode.bind(actionStringToggle, KeyInput.KEY_H);
+        defaultInputMode.bind(actionStringLoad, KeyInput.KEY_L);
+        defaultInputMode.bind(actionStringSave, KeyInput.KEY_S);
+    }
+
+    /**
      * Process an action from the GUI or keyboard which was not handled by the
      * default input mode.
      *
@@ -335,16 +352,6 @@ public class TestSkyMaterial
         hud.setMaterial(material);
         success = stateManager.attach(hud);
         assert success;
-        /*
-         * Add hotkey bindings to the default input mode:
-         *  'H' to toggle HUD visibility
-         *  'L' to load sky geometry from an asset
-         *  'S' to save the current sky geometry to a file
-         */
-        InputMode defaultInputMode = getDefaultInputMode();
-        defaultInputMode.bind(actionStringToggle, KeyInput.KEY_H);
-        defaultInputMode.bind(actionStringLoad, KeyInput.KEY_L);
-        defaultInputMode.bind(actionStringSave, KeyInput.KEY_S);
     }
 
     /**

@@ -462,7 +462,15 @@ abstract public class InputMode
          */
         initializeHotkeyBindings();
 
-        assert isInitialized();
+        ActionApplication aa = (ActionApplication) application;
+        if (this == aa.getDefaultInputMode()) {
+            /*
+             * Give the application a chance to override the 
+             * initial hotkey bindings.
+             */
+            aa.moreDefaultBindings();
+        }
+        
         setEnabled(startEnabled);
     }
     // *************************************************************************
