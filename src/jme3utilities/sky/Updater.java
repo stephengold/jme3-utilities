@@ -191,6 +191,16 @@ public class Updater
     }
 
     /**
+     * Read the multiplier for the ambient light intensity.
+     *
+     * @return multiple of the default intensity (&ge;0)
+     */
+    public float getAmbientMultiplier() {
+        assert ambientMultiplier >= 0f : ambientMultiplier;
+        return ambientMultiplier;
+    }
+
+    /**
      * Copy the most recent color for the viewport background.
      *
      * @return new instance (or null if not updated yet)
@@ -242,6 +252,16 @@ public class Updater
      */
     public DirectionalLight getMainLight() {
         return mainLight;
+    }
+
+    /**
+     * Read the multiplier for the main light intensity.
+     *
+     * @return multiple of the default intensity (&ge;0)
+     */
+    public float getMainMultiplier() {
+        assert mainMultiplier >= 0f : mainMultiplier;
+        return mainMultiplier;
     }
 
     /**
