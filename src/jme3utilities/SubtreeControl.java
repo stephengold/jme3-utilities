@@ -44,7 +44,9 @@ import java.util.logging.Logger;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-abstract public class SubtreeControl extends SimpleControl {
+abstract public class SubtreeControl
+        extends SimpleControl
+        implements Cloneable {
     // *************************************************************************
     // constants
 
@@ -209,5 +211,19 @@ abstract public class SubtreeControl extends SimpleControl {
 
         OutputCapsule oc = exporter.getCapsule(this);
         oc.write(subtree, "subtree", null);
+    }
+    // *************************************************************************
+    // Object methods
+
+    /**
+     * Create a shallow copy of this control.
+     *
+     * @return a new control, equivalent to this one
+     * @throws CloneNotSupportedException if superclass isn't cloneable
+     */
+    @Override
+    public SubtreeControl clone() throws CloneNotSupportedException {
+        SubtreeControl clone = (SubtreeControl) super.clone();
+        return clone;
     }
 }
