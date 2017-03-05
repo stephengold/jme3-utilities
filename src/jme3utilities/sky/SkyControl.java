@@ -208,6 +208,15 @@ public class SkyControl extends SkyControlCore {
     // new methods exposed
 
     /**
+     * Test the cloud modulation flag.
+     *
+     * @return true if clouds modulate the main light, false otherwise
+     */
+    public boolean getCloudModulation() {
+        return cloudModulationFlag;
+    }
+
+    /**
      * Calculate the direction to the center of the moon. TODO rename
      *
      * @return new unit vector in world (horizontal) coordinates
@@ -220,6 +229,15 @@ public class SkyControl extends SkyControlCore {
                 0f, celestialLongitude);
 
         return worldDirection;
+    }
+
+    /**
+     * Read the phase-of-the-moon preset.
+     *
+     * @return preset value (may be null)
+     */
+    public LunarPhase getPhase() {
+        return phase;
     }
 
     /**
@@ -240,6 +258,20 @@ public class SkyControl extends SkyControlCore {
     public Updater getUpdater() {
         assert updater != null;
         return updater;
+    }
+
+    /**
+     * Calculate the angular diameter of the moon.
+     *
+     * @return diameter (in radians, &lt;Pi, &gt;0)
+     */
+    public float lunarDiameter() {
+        DomeMesh topMesh = getTopMesh();
+        float result = moonScale * FastMath.HALF_PI / topMesh.uvScale;
+
+        assert result > 0f : result;
+        assert result < FastMath.PI : result;
+        return result;
     }
 
     /**
@@ -338,6 +370,21 @@ public class SkyControl extends SkyControlCore {
 
         SkyMaterial topMaterial = getTopMaterial();
         topMaterial.addObject(sunIndex, assetPath);
+    }
+
+    /**
+     * Calculate the angular diameter of the sun.
+     *
+     * @return diameter (in radians, &lt;Pi, &gt;0)
+     */
+    public float solarDiameter() {
+        DomeMesh topMesh = getTopMesh();
+        float result = moonScale * Constants.discDiameter * FastMath.HALF_PI
+                / topMesh.uvScale;
+
+        assert result > 0f : result;
+        assert result < FastMath.PI : result;
+        return result;
     }
     // *************************************************************************
     // SkyControlCore methods
