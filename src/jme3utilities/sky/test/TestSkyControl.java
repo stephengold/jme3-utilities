@@ -27,7 +27,6 @@ package jme3utilities.sky.test;
 
 import com.beust.jcommander.JCommander;
 import com.jme3.app.state.ScreenshotAppState;
-import com.jme3.input.KeyInput;
 import com.jme3.system.AppSettings;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,21 +55,13 @@ public class TestSkyControl extends GuiApplication {
     final private static Logger logger = Logger.getLogger(
             TestSkyControl.class.getName());
     /**
-     * action string to open hotkey bindings editor
-     */
-    final private static String actionStringEdit = "edit bindings";
-    /**
-     * action string to toggle HUD visibility
-     */
-    final private static String actionStringToggle = "toggle hud";
-    /**
      * application name for its window's title bar and its usage message
      */
     final private static String applicationName = "TestSkyControl";
     /**
      * path to hotkey bindings configuration file
      */
-    final private static String hotkeyBindingsPath = 
+    final private static String hotkeyBindingsPath =
             "assets/Interface/bindings/TestSkyControl.properties";
     // *************************************************************************
     // fields
@@ -109,6 +100,8 @@ public class TestSkyControl extends GuiApplication {
          * Lower the logging level for this class.
          */
         logger.setLevel(Level.INFO);
+        Logger.getLogger(TestSkyControlRun.class.getName())
+                .setLevel(Level.INFO);
 
         TestSkyControl application = new TestSkyControl();
         /*
@@ -187,7 +180,7 @@ public class TestSkyControl extends GuiApplication {
     }
 
     /**
-     * Process an action from the GUI or keyboard which was not handled by the
+     * Process an action (from the GUI or keyboard) which wasn't handled by the
      * default input mode.
      *
      * @param actionString textual description of the action (not null)
@@ -198,16 +191,27 @@ public class TestSkyControl extends GuiApplication {
     public void onAction(String actionString, boolean ongoing, float tpf) {
         if (ongoing) {
             switch (actionString) {
-                case actionStringEdit:
+                case "edit bindings":
                     InputMode im = InputMode.getActiveMode();
                     bindScreen.activate(im);
                     return;
-                case actionStringToggle:
+                case "load scene":
+                    run.load();
+                    return;
+                case "print scene":
+                    run.print();
+                    return;
+                case "save scene":
+                    run.save();
+                    return;
+                case "toggle hud":
                     run.toggleHud();
-            return;
+                    return;
             }
         }
-
+        /*
+         * The action has not yet been handled: forward to superclass.
+         */
         super.onAction(actionString, ongoing, tpf);
     }
 }
