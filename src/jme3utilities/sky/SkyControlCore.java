@@ -299,6 +299,31 @@ public class SkyControlCore extends SubtreeControl {
     }
 
     /**
+     * Read the speed and direction of cloud motion.
+     *
+     * @return multiple of the default rate (may be negative)
+     */
+    public float getCloudRate() {
+        return cloudsRelativeSpeed;
+    }
+
+    /**
+     * Read the vertical offset of the clouds-only dome.
+     *
+     * @return vertical offset as a fraction of the dome height
+     */
+    public float getCloudYOffset() {
+        Spatial cloudsOnlyDome = getCloudsOnlyDome();
+        float result = 0f;
+        if (cloudsOnlyDome != null) {
+            float deltaY = cloudsOnlyDome.getLocalTranslation().y;
+            result = -deltaY / cloudsOnlyDome.getLocalScale().y;
+        }
+
+        return result;
+    }
+
+    /**
      * Compute the contribution of the moon to the nighttime illumination mix
      * using its phase, assuming it is above the horizon.
      *
@@ -312,6 +337,29 @@ public class SkyControlCore extends SubtreeControl {
         assert weight >= 0f : weight;
         assert weight <= 1f : weight;
         return weight;
+    }
+
+    /**
+     * Read the phase of the moon as an angle.
+     *
+     * @return angle in radians (0 &rarr; new, Pi &rarr; full)
+     */
+    public float getPhaseAngle() {
+        return phaseAngle;
+    }
+
+    /**
+     * Read the vertical angle of the top dome.
+     *
+     * @return angle from the zenith to the rim of the top dome (in radians,
+     * &lt;1.785, &gt;0)
+     * @see #setTopVerticalAngle(float)
+     */
+    public float getTopVerticalAngle() {
+        DomeMesh topMesh = getTopMesh();
+        float result = topMesh.getVerticalAngle();
+
+        return result;
     }
 
     /**
