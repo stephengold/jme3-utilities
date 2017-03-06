@@ -37,6 +37,7 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Quad;
@@ -212,6 +213,10 @@ public class TestGlobeRenderer
 
         flyCam.setEnabled(false);
         initializeUserInterface();
+        /**
+         * A background is needed to test transparency.
+         */
+        viewPort.setBackgroundColor(new ColorRGBA(0.1f, 0f, 0f, 1f));
         /*
          * Add a globe renderer for the moon.
          */
