@@ -136,7 +136,7 @@ public class TimeOfDay extends NamedAppState {
     /**
      * Alter the simulation time.
      *
-     * @param newHour hours since midnight (&lt24, &ge;0)
+     * @param newHour hours since midnight (&lt;24, &ge;0)
      */
     public void setHour(float newHour) {
         Validate.inRange(newHour, "new hour", 0f, 24f);
