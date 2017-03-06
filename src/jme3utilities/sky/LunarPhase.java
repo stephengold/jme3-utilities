@@ -42,7 +42,7 @@ public enum LunarPhase {
      */
     FULL,
     /**
-     * 3/4 past full: phase angle = 315 degrees
+     * 65% past full: phase angle = 297 degrees
      */
     WANING_CRESCENT,
     /**
@@ -50,7 +50,7 @@ public enum LunarPhase {
      */
     WANING_GIBBOUS,
     /**
-     * 1/4 past new: phase angle = 45 degrees
+     * 35% past new: phase angle = 63 degrees
      */
     WAXING_CRESCENT,
     /**
@@ -124,8 +124,9 @@ public enum LunarPhase {
             throw new IllegalStateException("custom phase has no color map");
         }
         String description = describe();
-        String assetPath =
-                String.format("Textures/skies/moon/%s.png", description);
+        String assetPath = String.format(
+                "Textures/skies/moon/%s.png", description);
+
         return assetPath;
     }
 
@@ -139,11 +140,11 @@ public enum LunarPhase {
             case FULL:
                 return FastMath.PI;
             case WANING_CRESCENT:
-                return 1.75f * FastMath.PI;
+                return 1.65f * FastMath.PI;
             case WANING_GIBBOUS:
                 return 1.25f * FastMath.PI;
             case WAXING_CRESCENT:
-                return 0.25f * FastMath.PI;
+                return 0.35f * FastMath.PI;
             case WAXING_GIBBOUS:
                 return 0.75f * FastMath.PI;
         }
