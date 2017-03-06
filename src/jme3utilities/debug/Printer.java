@@ -174,16 +174,16 @@ public class Printer {
      * @param spatial spatial being described (not null)
      */
     public void printControls(Spatial spatial) {
-        assert spatial != null;
+        Validate.nonNull(spatial, "spatial");
         /*
-         * List its enabled controls.
+         * List its enabled controls first.
          */
         String description = describeControls(spatial, true);
         if (description.length() > 0) {
             stream.printf(" %s", description);
         }
         /*
-         * List its disabled controls in parentheses.
+         * List its disabled controls last, in parentheses.
          */
         description = describeControls(spatial, false);
         if (description.length() > 0) {
@@ -230,6 +230,7 @@ public class Printer {
      * @param spatial spatial being described (not null)
      */
     public void printLocation(Spatial spatial) {
+        Validate.nonNull(spatial, "spatial");
         Vector3f location = MySpatial.getWorldLocation(spatial);
         if (!MyVector3f.isZero(location)) {
             stream.printf(" loc=[%.3f, %.3f, %.3f]",
@@ -292,7 +293,7 @@ public class Printer {
      * @param indent (not null)
      */
     public void printSubtree(Spatial spatial, String indent) {
-        assert indent != null;
+        Validate.nonNull(indent, "indent");
 
         if (spatial == null) {
             return;
