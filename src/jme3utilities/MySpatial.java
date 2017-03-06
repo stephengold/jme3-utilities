@@ -129,7 +129,7 @@ public class MySpatial extends SimpleApplication {
     }
 
     /**
-     * Find a node's 1st child which is an assignable from the specified class.
+     * Find a node's 1st child that is an assignable from the specified class.
      *
      * @param <T> com.jme3.scene.Geometry or com.jme3.scene.Node
      * @param node node to search (not null)
@@ -409,7 +409,7 @@ public class MySpatial extends SimpleApplication {
 
     /**
      * Construct the inverse of a spatial's world orientation, the quaternion
-     * which undoes its rotation.
+     * that undoes its rotation.
      *
      * @param spatial spatial to analyze (not null)
      * @return new instance

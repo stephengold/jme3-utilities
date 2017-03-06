@@ -1078,7 +1078,7 @@ public class MakeStarMaps {
      * Extract a star's right ascension from a catalog entry.
      *
      * @param line of text read from the catalog (not null)
-     * @return angle east of the vernal equinox (in hours, &lt;24, &ge;0)
+     * @return angle east of the March equinox (in hours, &lt;24, &ge;0)
      */
     private float rightAscensionHours(String line)
             throws InvalidEntryException {

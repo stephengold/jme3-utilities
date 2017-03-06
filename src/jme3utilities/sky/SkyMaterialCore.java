@@ -202,7 +202,7 @@ public class SkyMaterialCore extends Material {
 
     /**
      * Add an astronomical object to this material using the specified color
-     * map.
+     * map.  If the object already exists, its color map is updated.
      *
      * @param objectIndex (&lt;maxObjects, &ge;0)
      * @param colorMap color map to use (not null)
@@ -484,7 +484,9 @@ public class SkyMaterialCore extends Material {
     /**
      * Hide an astronomical object temporarily.
      * <p>
-     * Use #setObjectTransform() to reveal an object which has been hidden.
+     * Use
+     * {@link #setObjectTransform(int, com.jme3.math.Vector2f, float, com.jme3.math.Vector2f)}
+     * to reveal an object that has been hidden.
      *
      * @param objectIndex (&lt;maxObjects, &ge;0)
      */

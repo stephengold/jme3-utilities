@@ -113,12 +113,12 @@ public class SunAndStars
      */
     private float observerLatitude = Constants.defaultLatitude;
     /**
-     * celestial longitude of the sun (radians east of the vernal equinox,
+     * celestial longitude of the sun (radians east of the March equinox,
      * &lt;2*Pi, &ge;0)
      */
     private float solarLongitude = 0f;
     /**
-     * right ascension of the sun (hours east of the vernal equinox, &lt;24,
+     * right ascension of the sun (hours east of the March equinox, &lt;24,
      * &ge;0)
      */
     private float solarRaHours = 0f;
@@ -130,7 +130,7 @@ public class SunAndStars
      *
      * @param latitude celestial latitude (radians north of the ecliptic,
      * &le;Pi/2, &ge;-Pi/2)
-     * @param longitude celestial longitude (radians east of the vernal equinox,
+     * @param longitude celestial longitude (radians east of the March equinox,
      * &le;2*Pi, &ge;0)
      * @return new unit vector in equatorial coordinates
      */
@@ -168,7 +168,7 @@ public class SunAndStars
         Validate.nonNull(ecliptical, "coordinates");
         /*
          * The conversion consists of a rotation about the +X
-         * (vernal equinox) axis.
+         * (March equinox) axis.
          */
         Quaternion rotate = new Quaternion();
         rotate.fromAngleNormalAxis(obliquity, xAxis);
@@ -182,7 +182,7 @@ public class SunAndStars
      *
      * @param latitude celestial latitude (radians north of the ecliptic,
      * &le;Pi/2, &ge;-Pi/2)
-     * @param longitude celestial longitude (radians east of the vernal equinox,
+     * @param longitude celestial longitude (radians east of the March equinox,
      * &le;2*Pi, &ge;0)
      * @return new unit vector in world (horizontal) coordinates
      */
@@ -254,7 +254,7 @@ public class SunAndStars
     /**
      * Read the solar longitude.
      *
-     * @return radians east of the vernal equinox (&le;2*Pi, &ge;0)
+     * @return radians east of the March equinox (&le;2*Pi, &ge;0)
      */
     public float getSolarLongitude() {
         assert solarLongitude <= FastMath.TWO_PI : solarLongitude;
@@ -354,7 +354,7 @@ public class SunAndStars
     /**
      * Alter the sun's celestial longitude directly.
      *
-     * @param longitude radians east of the vernal equinox (&le;2*Pi, &ge;0)
+     * @param longitude radians east of the March equinox (&le;2*Pi, &ge;0)
      */
     public void setSolarLongitude(float longitude) {
         Validate.inRange(longitude, "longitude", 0f, FastMath.TWO_PI);
@@ -375,7 +375,7 @@ public class SunAndStars
      * Set the sun's celestial longitude to approximate a specified day of the
      * year.
      * <p>
-     * This convenience method uses a crude approximation which is accurate
+     * This convenience method uses a crude approximation, which is accurate
      * within a couple degrees of arc. A more accurate formula may be obtained
      * from Steyaert, C. (1991) "Calculating the solar longitude 2000.0", WGN
      * (Journal of the International Meteor Organization) 19-2, pages 31-34,
@@ -406,7 +406,7 @@ public class SunAndStars
     }
 
     /**
-     * Compute the angle between the meridian and the vernal equinox.
+     * Compute the angle between the meridian and the March equinox.
      *
      * @return angle (in radians, &lt;2*Pi, &ge;0)
      */

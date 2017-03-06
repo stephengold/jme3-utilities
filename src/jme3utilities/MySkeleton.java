@@ -68,7 +68,7 @@ public class MySkeleton
     /**
      * Find the index of a named bone in a skeletonized spatial.
      *
-     * @param spatial skeletonized spatial which contains the bone (not null,
+     * @param spatial skeletonized spatial that contains the bone (not null,
      * unaffected)
      * @param boneName name of the bone to find (not null)
      * @return bone index (&ge; 0) or -1 if not found
@@ -86,7 +86,7 @@ public class MySkeleton
     /**
      * Access a named bone in a skeletonized spatial.
      *
-     * @param spatial skeletonized spatial which contains the bone (not null)
+     * @param spatial skeletonized spatial that contains the bone (not null)
      * @param boneName name of the bone to access (not null)
      * @return a pre-existing instance (or null if not found)
      */
@@ -183,7 +183,7 @@ public class MySkeleton
     /**
      * Compute the world location of (the tail of) a named bone.
      *
-     * @param spatial skeletonized spatial which contains the bone (not null)
+     * @param spatial skeletonized spatial that contains the bone (not null)
      * @param boneName (not null)
      * @return new vector in world coordinates
      */
@@ -201,7 +201,7 @@ public class MySkeleton
     /**
      * Compute the world orientation of a bone.
      *
-     * @param spatial skeletonized spatial which contains the bone (not null)
+     * @param spatial skeletonized spatial that contains the bone (not null)
      * @param bone (not null)
      * @return new instance in world coordinates
      */
@@ -219,7 +219,7 @@ public class MySkeleton
     /**
      * Compute the world orientation of a named bone.
      *
-     * @param spatial skeletonized spatial which contains the bone (not null)
+     * @param spatial skeletonized spatial that contains the bone (not null)
      * @param boneName (not null)
      * @return new instance
      */

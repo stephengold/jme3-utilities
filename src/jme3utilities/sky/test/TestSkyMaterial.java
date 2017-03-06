@@ -280,7 +280,7 @@ public class TestSkyMaterial extends GuiApplication {
     }
 
     /**
-     * Process an action from the GUI or keyboard which was not handled by the
+     * Process an action (from the GUI or keyboard) that was not handled by the
      * default input mode.
      *
      * @param actionString textual description of the action (not null)
