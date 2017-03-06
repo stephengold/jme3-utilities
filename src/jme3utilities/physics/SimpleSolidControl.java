@@ -65,8 +65,7 @@ public class SimpleSolidControl
      * @param initialShape collision shape for the object (not null)
      * @param mass object's mass (in kilograms, &gt;0) or zero for a static
      * object
-     * @param physicsSpace physics space which will contain the object (not
-     * null)
+     * @param physicsSpace physics space that will contain the object (not null)
      */
     public SimpleSolidControl(boolean enabled, CollisionShape initialShape,
             float mass, PhysicsSpace physicsSpace) {

@@ -210,7 +210,7 @@ public class FloorControl extends SubtreeControl {
     /**
      * Create a shallow copy of this control.
      *
-     * @return a new instance
+     * @return a new control, equivalent to this one
      * @throws CloneNotSupportedException if superclass isn't cloneable
      */
     @Override

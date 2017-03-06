@@ -36,13 +36,11 @@ import java.util.TreeMap;
 import java.util.logging.Logger;
 
 /**
- * Name generator class which represents a namespace. Used to generate unique
- * name strings for objects (such as jME3 spatials).
+ * A namespace used to generate unique text strings for names.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class NameGenerator
-        implements Savable {
+public class NameGenerator implements Savable {
     // *************************************************************************
     // constants
 
@@ -195,7 +193,7 @@ public class NameGenerator
     }
     // *************************************************************************
     // Object methods
-    
+
     /**
      * Represent this name generator as a text string.
      *

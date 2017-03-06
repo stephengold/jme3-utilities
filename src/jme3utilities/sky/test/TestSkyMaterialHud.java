@@ -106,7 +106,7 @@ public class TestSkyMaterialHud
     // new methods exposed
 
     /**
-     * Callback which Nifty invokes after the user selects a radio button.
+     * Callback that Nifty invokes after the user selects a radio button.
      * Invoked by means of reflection, so both the class and method must be
      * public.
      *
@@ -242,7 +242,7 @@ public class TestSkyMaterialHud
     @Override
     public void onAction(String actionString, boolean ongoing, float ignored) {
         /*
-         * Ignore actions which are not ongoing.
+         * Ignore actions that are not ongoing.
          */
         if (!ongoing) {
             return;
@@ -472,7 +472,7 @@ public class TestSkyMaterialHud
     }
 
     /**
-     * Alter the positions of 4 sliders which control a color.
+     * Alter the positions of 4 sliders that control a color.
      *
      * @param prefix unique id prefix of the bank (not null)
      * @param color values to use (unaffected)
@@ -550,7 +550,7 @@ public class TestSkyMaterialHud
     }
 
     /**
-     * Alter the positions of a pair of sliders which control a set of texture
+     * Alter the positions of a pair of sliders that control a set of texture
      * (UV) coordinates.
      *
      * @param prefix unique id prefix of the bank (not null)
@@ -618,7 +618,7 @@ public class TestSkyMaterialHud
     }
 
     /**
-     * Update a bank of four sliders which control a color.
+     * Update a bank of four sliders that control a color.
      *
      * @param prefix unique id prefix of the bank (not null)
      * @return color indicated by the sliders (new instance)
@@ -636,7 +636,7 @@ public class TestSkyMaterialHud
     }
 
     /**
-     * Update a bank of two sliders which control a set of texture (UV)
+     * Update a bank of 2 sliders that control a set of texture (UV)
      * coordinates.
      *
      * @param prefix unique id prefix of the bank (not null)

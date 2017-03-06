@@ -56,7 +56,7 @@ class Star implements Comparable<Star> {
      */
     final private float declination;
     /**
-     * right ascension (radians east of the vernal equinox, &lt;2*Pi, &ge;0, set
+     * right ascension (radians east of the March equinox, &lt;2*Pi, &ge;0, set
      * by constructor)
      */
     final private float rightAscension;
@@ -66,7 +66,7 @@ class Star implements Comparable<Star> {
     /**
      * Instantiate a star.
      *
-     * @param rightAscension radians east of the vernal equinox (&le;2*Pi,
+     * @param rightAscension radians east of the March equinox (&le;2*Pi,
      * &ge;0)
      * @param declination radians north of the celestial equator (&le;Pi/2,
      * &ge;-Pi/2)

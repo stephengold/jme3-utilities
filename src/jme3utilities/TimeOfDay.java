@@ -67,6 +67,7 @@ public class TimeOfDay extends NamedAppState {
             TimeOfDay.class.getName());
     // *************************************************************************
     // fields
+
     /**
      * simulated time of day (seconds since midnight, &lt;86400, &ge;0)
      * <p>
