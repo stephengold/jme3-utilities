@@ -43,6 +43,7 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.scene.shape.Sphere.TextureMode;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
+import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
 import java.util.logging.Level;
@@ -126,6 +127,10 @@ public class GlobeRenderer extends SimpleAppState {
      */
     private Geometry globe = null;
     /**
+     * image format for off-screen render (set by constructor)
+     */
+    final private Image.Format outputFormat;
+    /**
      * root of the the off-screen scene graph
      */
     final private Node offscreenRootNode = new Node("off-screen root node");
@@ -166,6 +171,7 @@ public class GlobeRenderer extends SimpleAppState {
                 3, Integer.MAX_VALUE);
         Validate.positive(resolution, "resolution");
 
+        this.outputFormat = outputFormat;
         initializeCamera(resolution);
         initializeGlobe(globeMaterial, equatorSamples, meridianSamples);
         initializeLights();
@@ -347,6 +353,7 @@ public class GlobeRenderer extends SimpleAppState {
          * Apply a contrast correction filter to the render.
          */
         FilterPostProcessor fpp = Misc.getFpp(offscreenViewPort, assetManager);
+        fpp.setFrameBufferFormat(outputFormat);
         filter = new GammaCorrectionFilter(initialGamma);
         fpp.addFilter(filter);
     }
