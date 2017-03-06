@@ -498,7 +498,7 @@ public class SunAndStars
         capsule.write(hour, "hour", 0f);
         capsule.write(observerLatitude, "observerLatitude",
                 Constants.defaultLatitude);
-        capsule.write(solarLongitude, "observerLatitude", 0f);
+        capsule.write(solarLongitude, "solarLongitude", 0f);
     }
     // *************************************************************************
     // test cases
