@@ -96,9 +96,19 @@ public class TestSkyControlHud
      */
     private float latitude = 0f;
     /**
+     * longitude difference for custom moon (radians east of the sun, &le;2*Pi,
+     * &ge;0)
+     */
+    private float longitudeDifference = FastMath.PI;
+    /**
      * angular diameter of the moon (radians, &lt;Pi, &gt;0)
      */
     private float lunarDiameter = 0.031f;
+    /**
+     * celestial latitude for custom moon (radians north of the ecliptic,
+     * &le;Pi/2, &ge;-Pi/2)
+     */
+    private float lunarLatitude = 0f;
     /**
      * multiplier for main light (&ge;0)
      */
@@ -107,10 +117,6 @@ public class TestSkyControlHud
      * vertical relief for terrain (Y-coordinate of peak, &gt;0)
      */
     private float relief = 50f;
-    /**
-     * phase angle for custom moon (radians east of the sun, &le;2*Pi, &ge;0)
-     */
-    private float phaseAngle = FastMath.PI;
     /**
      * angular diameter of the sun (radians, &lt;Pi, &gt;0)
      */
@@ -299,6 +305,28 @@ public class TestSkyControlHud
     }
 
     /**
+     * Read the celestial latitude for a custom moon.
+     *
+     * @return radians north of the ecliptic (&le;Pi/2, &ge;-Pi/2)
+     */
+    float getLunarLatitude() {
+        assert lunarLatitude >= -FastMath.HALF_PI : lunarLatitude;
+        assert lunarLatitude <= FastMath.HALF_PI : lunarLatitude;
+        return lunarLatitude;
+    }
+
+    /**
+     * Read the longitude difference for a custom moon.
+     *
+     * @return radians east of the sun (&le;2*Pi, &ge;0)
+     */
+    float getLongitudeDifference() {
+        assert longitudeDifference >= 0f : longitudeDifference;
+        assert longitudeDifference <= FastMath.TWO_PI : longitudeDifference;
+        return longitudeDifference;
+    }
+
+    /**
      * Read the phase of the moon.
      *
      * @return value, or null for no moon
@@ -335,17 +363,6 @@ public class TestSkyControlHud
     float getRelief() {
         assert relief > 0f : relief;
         return relief;
-    }
-
-    /**
-     * Read the phase angle for a custom moon.
-     *
-     * @return angle (radians east of the sun, &le;2*Pi, &ge;0)
-     */
-    float getPhaseAngle() {
-        assert phaseAngle >= 0f : phaseAngle;
-        assert phaseAngle <= FastMath.TWO_PI : phaseAngle;
-        return phaseAngle;
     }
 
     /**
@@ -457,12 +474,16 @@ public class TestSkyControlHud
         float logDegrees = FastMath.log(degrees, 10f);
         setSlider("lunarDiameter", logDegrees);
 
+        lunarLatitude = sky.getLunarLatitude();
+        degrees = MyMath.toDegrees(lunarLatitude);
+        setSlider("lunarLatitude", degrees);
+
         mainMultiplier = updater.getMainMultiplier();
         setSlider("main", mainMultiplier);
 
         phase = sky.getPhase();
-        phaseAngle = sky.getPhaseAngle();
-        degrees = MyMath.toDegrees(phaseAngle);
+        longitudeDifference = sky.getLongitudeDifference();
+        degrees = MyMath.toDegrees(longitudeDifference);
         setSlider("customLunarPhase", degrees);
 
         relief = land.peakY();
@@ -680,8 +701,11 @@ public class TestSkyControlHud
                 "solarDiameter", 10f, " deg");
         solarDiameter = MyMath.toRadians(solarDiameterDegrees);
 
-        float phaseDegrees = updateSlider("customLunarPhase", " deg");
-        phaseAngle = MyMath.toRadians(phaseDegrees);
+        float longitudeDifferenceDegrees = updateSlider(
+                "longitudeDifference", " deg");
+        longitudeDifference = MyMath.toRadians(longitudeDifferenceDegrees);
+        float lunarLatitudeDegrees = updateSlider("lunarLatitude", " deg");
+        lunarLatitude = MyMath.toRadians(lunarLatitudeDegrees);
 
         float solarLongitudeDegrees = updateSlider("solarLongitude", " deg");
         solarLongitude = MyMath.toRadians(solarLongitudeDegrees);

@@ -218,13 +218,23 @@
                         </panel>
 
                         <panel style="statusPanel">
-                            <control name="label" id="customLunarPhaseSliderStatus"/>
+                            <control name="label" id="longitudeDifferenceSliderStatus"/>
                         </panel>
-                        <control name="horizontalSlider" id="customLunarPhaseSlider"
+                        <control name="horizontalSlider" id="longitudeDifferenceSlider"
                                  buttonStepSize="90"
                                  initial="180"
                                  max="360"
                                  min="0"
+                                 stepSize="1"/>
+
+                        <panel style="statusPanel">
+                            <control name="label" id="lunarLatitudeSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider" id="lunarLatitudeSlider"
+                                 buttonStepSize="3"
+                                 initial="0"
+                                 max="90"
+                                 min="-90"
                                  stepSize="1"/>
 
                         <panel style="statusPanel">

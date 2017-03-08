@@ -223,10 +223,10 @@ public class SkyControl extends SkyControlCore {
      */
     public Vector3f getMoonDirection() {
         float solarLongitude = sunAndStars.getSolarLongitude();
-        float celestialLongitude = solarLongitude + phaseAngle;
+        float celestialLongitude = solarLongitude + longitudeDifference;
         celestialLongitude = MyMath.modulo(celestialLongitude, FastMath.TWO_PI);
         Vector3f worldDirection = sunAndStars.convertToWorld(
-                0f, celestialLongitude);
+                lunarLatitude, celestialLongitude);
 
         return worldDirection;
     }
@@ -307,7 +307,7 @@ public class SkyControl extends SkyControlCore {
      */
     final public void setPhase(LunarPhase newPreset) {
         if (newPreset == LunarPhase.CUSTOM) {
-            setPhaseAngle(phaseAngle);
+            setPhase(longitudeDifference, lunarLatitude);
             return;
         }
 
@@ -316,7 +316,7 @@ public class SkyControl extends SkyControlCore {
         }
         phase = newPreset;
         if (newPreset != null) {
-            phaseAngle = newPreset.longitudeDifference();
+            longitudeDifference = newPreset.longitudeDifference();
             String assetPath = newPreset.imagePath();
             SkyMaterial topMaterial = getTopMaterial();
             topMaterial.addObject(moonIndex, assetPath);
@@ -324,19 +324,25 @@ public class SkyControl extends SkyControlCore {
     }
 
     /**
-     * Customize the phase angle of the moon for off-screen rendering.
+     * Customize the phase of the moon for off-screen rendering.
      *
-     * @param newAngle (in radians, &le;2*Pi, &ge;0)
+     * @param longitudeDifference radians east of the sun (&le;2*Pi,
+     * &ge;0)
+     * @param lunarLatitude radians north of the ecliptic (&le;Pi/2, &ge;-Pi/2)
      */
-    public void setPhaseAngle(float newAngle) {
-        Validate.inRange(newAngle, "phase angle", 0f, FastMath.TWO_PI);
+    public void setPhase(float longitudeDifference, float lunarLatitude) {
+        Validate.inRange(longitudeDifference, "longitude difference",
+                0f, FastMath.TWO_PI);
+        Validate.inRange(lunarLatitude, "lunar latitude",
+                -FastMath.HALF_PI, FastMath.HALF_PI);
         if (moonRenderer == null) {
             throw new IllegalStateException("moon renderer not yet added");
         }
 
         moonRenderer.setEnabled(true);
         phase = LunarPhase.CUSTOM;
-        phaseAngle = newAngle;
+        this.longitudeDifference = longitudeDifference;
+        this.lunarLatitude = lunarLatitude;
 
         Texture dynamicTexture = moonRenderer.getTexture();
         SkyMaterial topMaterial = getTopMaterial();
@@ -530,7 +536,8 @@ public class SkyControl extends SkyControlCore {
      * Compute the clockwise (left-handed) rotation of the moon's texture
      * relative to the sky's texture.
      *
-     * @param longitude the moon's celestial longitude (in radians)
+     * @param longitude the moon's celestial longitude (in radians east of the 
+     * March equinox)
      * @param uvCenter texture coordinates of the moon's center (not null)
      * @return new unit vector with its x-component equal to the cosine of the
      * rotation angle and its y-component equal to the sine of the rotation
@@ -542,20 +549,25 @@ public class SkyControl extends SkyControlCore {
          * Compute UV coordinates for 0.01 radians north of the center
          * of the moon.
          */
-        Vector3f north = sunAndStars.convertToWorld(1f, longitude);
         DomeMesh topMesh = getTopMesh();
-        Vector2f uvNorth = topMesh.directionUV(north);
-        if (uvNorth != null) {
-            Vector2f offset = uvNorth.subtract(uvCenter);
-            assert offset.length() > 0f : offset;
-            Vector2f result = offset.normalize();
-            return result;
+        float latitude = lunarLatitude + 0.01f;
+        if (latitude <= FastMath.HALF_PI) {
+            Vector3f north = sunAndStars.convertToWorld(latitude, longitude);
+            Vector2f uvNorth = topMesh.directionUV(north);
+            if (uvNorth != null) {
+                Vector2f offset = uvNorth.subtract(uvCenter);
+                assert offset.length() > 0f : offset;
+                Vector2f result = offset.normalize();
+                return result;
+            }
         }
         /*
          * Compute UV coordinates for 0.01 radians south of the center
          * of the moon.
          */
-        Vector3f south = sunAndStars.convertToWorld(-1f, longitude);
+        latitude = lunarLatitude - 0.01f;
+        assert latitude >= -FastMath.HALF_PI : lunarLatitude;
+        Vector3f south = sunAndStars.convertToWorld(latitude, longitude);
         Vector2f uvSouth = topMesh.directionUV(south);
         if (uvSouth != null) {
             Vector2f offset = uvCenter.subtract(uvSouth);
@@ -763,18 +775,19 @@ public class SkyControl extends SkyControlCore {
         }
         if (phase == LunarPhase.CUSTOM) {
             assert moonRenderer != null;
-            float intensity = 2f + FastMath.abs(phaseAngle - FastMath.PI);
+            float intensity = 2f + 
+                    FastMath.abs(longitudeDifference - FastMath.PI);
             moonRenderer.setLightIntensity(intensity);
-            moonRenderer.setPhase(phaseAngle);
+            moonRenderer.setPhase(longitudeDifference, lunarLatitude);
         }
         /*
          * Compute the UV coordinates of the center of the moon.
          */
         float solarLongitude = sunAndStars.getSolarLongitude();
-        float celestialLongitude = solarLongitude + phaseAngle;
+        float celestialLongitude = solarLongitude + longitudeDifference;
         celestialLongitude = MyMath.modulo(celestialLongitude, FastMath.TWO_PI);
         Vector3f worldDirection = sunAndStars.convertToWorld(
-                0f, celestialLongitude);
+                lunarLatitude, celestialLongitude);
         DomeMesh topMesh = getTopMesh();
         Vector2f uvCenter = topMesh.directionUV(worldDirection);
 

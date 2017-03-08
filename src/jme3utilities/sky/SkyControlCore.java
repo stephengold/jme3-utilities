@@ -164,9 +164,16 @@ public class SkyControlCore extends SubtreeControl {
      */
     private float cloudsRelativeSpeed = 1f;
     /**
-     * phase angle of the moon (0 &rarr; new, Pi &rarr; full, full is default)
+     * the difference in celestial longitude (lambda) between the moon and the
+     * sun (in radians, measured eastward from the sun, default is Pi)
      */
-    protected float phaseAngle = FastMath.PI;
+    protected float longitudeDifference = FastMath.PI;
+    /**
+     * the moon's celestial latitude (beta, in radians, measured north from the
+     * ecliptic, &ge;-Pi/2, &le;Pi/2, default is 0f, realistic range is -0.09 to
+     * 0.09)
+     */
+    protected float lunarLatitude = 0f;
     // *************************************************************************
     // constructors
 
@@ -324,6 +331,25 @@ public class SkyControlCore extends SubtreeControl {
     }
 
     /**
+     * Read the difference in celestial longitude (lambda) between the moon and
+     * the sun.
+     *
+     * @return radians east of the sun
+     */
+    public float getLongitudeDifference() {
+        return longitudeDifference;
+    }
+
+    /**
+     * Read the lunar latitude (beta).
+     *
+     * @return radians north of the ecliptic (&ge;-Pi/2, &le;Pi/2)
+     */
+    public float getLunarLatitude() {
+        return lunarLatitude;
+    }
+
+    /**
      * Compute the contribution of the moon to the nighttime illumination mix
      * using its phase, assuming it is above the horizon.
      *
@@ -331,21 +357,19 @@ public class SkyControlCore extends SubtreeControl {
      * contribution
      */
     public float getMoonIllumination() {
-        float fullAngle = FastMath.abs(phaseAngle - FastMath.PI);
+        float fullAngle = FastMath.abs(longitudeDifference - FastMath.PI);
+        if (lunarLatitude != 0f) {
+            float cos = FastMath.cos(fullAngle) * FastMath.cos(lunarLatitude);
+            fullAngle = FastMath.acos(cos);
+        }
+        assert fullAngle >= 0f : fullAngle;
+        assert fullAngle <= FastMath.PI : fullAngle;
+
         float weight = 1f - FastMath.saturate(fullAngle * 0.6f);
 
         assert weight >= 0f : weight;
         assert weight <= 1f : weight;
         return weight;
-    }
-
-    /**
-     * Read the phase of the moon as an angle.
-     *
-     * @return angle in radians (0 &rarr; new, Pi &rarr; full)
-     */
-    public float getPhaseAngle() {
-        return phaseAngle;
     }
 
     /**
@@ -719,7 +743,8 @@ public class SkyControlCore extends SubtreeControl {
 
         cloudsAnimationTime = ic.readFloat("cloudsAnimationTime", 0f);
         cloudsRelativeSpeed = ic.readFloat("cloudsRelativeSpeed", 1f);
-        phaseAngle = ic.readFloat("phaseAngle", FastMath.PI);
+        lunarLatitude = ic.readFloat("lunarLatitude", 0f);
+        longitudeDifference = ic.readFloat("phaseAngle", FastMath.PI);
     }
 
     /**
@@ -739,7 +764,8 @@ public class SkyControlCore extends SubtreeControl {
         oc.write(cloudLayers, "cloudLayers", null);
         oc.write(cloudsAnimationTime, "cloudsAnimationTime", 0f);
         oc.write(cloudsRelativeSpeed, "cloudsRelativeSpeed", 1f);
-        oc.write(phaseAngle, "phaseAngle", FastMath.PI);
+        oc.write(lunarLatitude, "lunarLatitude", 0f);
+        oc.write(longitudeDifference, "phaseAngle", FastMath.PI);
     }
     // *************************************************************************
     // SubtreeControl methods

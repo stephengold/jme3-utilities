@@ -351,8 +351,9 @@ public class TestSkyControlRun
         LunarPhase lunarPhase = hud.getLunarPhase();
         skyControl.setPhase(lunarPhase);
         if (lunarPhase == LunarPhase.CUSTOM) {
-            float phaseAngle = hud.getPhaseAngle();
-            skyControl.setPhaseAngle(phaseAngle);
+            float longitudeDifference = hud.getLongitudeDifference();
+            float lunarLatitude = hud.getLunarLatitude();
+            skyControl.setPhase(longitudeDifference, lunarLatitude);
         }
         String sunStyle = hud.getSunStyle();
         skyControl.setSunStyle(sunStyle);
