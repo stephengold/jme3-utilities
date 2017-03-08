@@ -237,90 +237,84 @@ public class TestSkyMaterialHud
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored time per frame (in seconds)
+     * @param tpf time interval between render passes (in seconds, &ge;0)
      */
     @Override
-    public void onAction(String actionString, boolean ongoing, float ignored) {
-        /*
-         * Ignore actions that are not ongoing.
-         */
-        if (!ongoing) {
-            return;
-        }
+    public void onAction(String actionString, boolean ongoing, float tpf) {
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
-        switch (actionString) {
-            case "c0Texture":
-            case "c1Texture":
-                showCloudsMenu(actionString + " ");
-                break;
 
-            case "c0Texture clear":
-            case "c0Texture cyclone":
-            case "c0Texture fbm":
-            case "c0Texture overcast":
-            case "c1Texture clear":
-            case "c1Texture cyclone":
-            case "c1Texture fbm":
-            case "c1Texture overcast":
-                String layer = actionString.substring(1, 2);
-                String name = actionString.substring(10);
-                String path = String.format("Textures/skies/clouds/%s.png",
-                        name);
-                setCloudTexture(layer, path);
-                break;
+        if (ongoing) {
+            switch (actionString) {
+                case "c0Texture":
+                case "c1Texture":
+                    showCloudsMenu(actionString + " ");
+                    return;
 
-            case "c0Texture t0neg0d":
-            case "c1Texture t0neg0d":
-                layer = actionString.substring(1, 2);
-                setCloudTexture(layer, "Textures/skies/t0neg0d/Clouds_L.png");
-                break;
+                case "c0Texture clear":
+                case "c0Texture cyclone":
+                case "c0Texture fbm":
+                case "c0Texture overcast":
+                case "c1Texture clear":
+                case "c1Texture cyclone":
+                case "c1Texture fbm":
+                case "c1Texture overcast":
+                    String layer = actionString.substring(1, 2);
+                    String name = actionString.substring(10);
+                    String path = String.format("Textures/skies/clouds/%s.png",
+                            name);
+                    setCloudTexture(layer, path);
+                    return;
 
-            case "phase":
-                showPhaseMenu();
-                break;
+                case "c0Texture t0neg0d":
+                case "c1Texture t0neg0d":
+                    layer = actionString.substring(1, 2);
+                    setCloudTexture(layer, "Textures/skies/t0neg0d/Clouds_L.png");
+                    return;
 
-            case "phase full":
-            case "phase waning-crescent":
-            case "phase waning-gibbous":
-            case "phase waxing-crescent":
-            case "phase waxing-gibbous":
-                name = actionString.substring(6);
-                setPhase(name);
-                break;
+                case "phase":
+                    showPhaseMenu();
+                    return;
 
-            case "stars":
-                showStarsMenu();
-                break;
+                case "phase full":
+                case "phase waning-crescent":
+                case "phase waning-gibbous":
+                case "phase waxing-crescent":
+                case "phase waxing-gibbous":
+                    name = actionString.substring(6);
+                    setPhase(name);
+                    return;
 
-            case "stars 16m/northern":
-            case "stars 16m/southern":
-            case "stars 16m/wiltshire":
-            case "stars none":
-            case "stars northern":
-            case "stars southern":
-            case "stars wiltshire":
-                name = actionString.substring(6);
-                setStars(name);
-                break;
+                case "stars":
+                    showStarsMenu();
+                    return;
 
-            case "style":
-                showStyleMenu();
-                break;
+                case "stars 16m/northern":
+                case "stars 16m/southern":
+                case "stars 16m/wiltshire":
+                case "stars none":
+                case "stars northern":
+                case "stars southern":
+                case "stars wiltshire":
+                    name = actionString.substring(6);
+                    setStars(name);
+                    return;
 
-            case "style chaotic":
-            case "style disc":
-            case "style hazy-disc":
-            case "style rayed":
-            case "style t0neg0d":
-                name = actionString.substring(6);
-                setStyle(name);
-                break;
+                case "style":
+                    showStyleMenu();
+                    return;
 
-            default:
-                logger.log(Level.WARNING, "Action {0} was not handled.",
-                        MyString.quote(actionString));
-                break;
+                case "style chaotic":
+                case "style disc":
+                case "style hazy-disc":
+                case "style rayed":
+                case "style t0neg0d":
+                    name = actionString.substring(6);
+                    setStyle(name);
+                    return;
+            }
         }
+
+        guiApplication.onAction(actionString, ongoing, tpf);
     }
     // *************************************************************************
     // BasicScreenController methods

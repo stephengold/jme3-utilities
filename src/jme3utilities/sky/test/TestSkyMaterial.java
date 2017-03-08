@@ -278,7 +278,7 @@ public class TestSkyMaterial extends GuiApplication {
 
     /**
      * Process an action (from the GUI or keyboard) that was not handled by the
-     * default input mode.
+     * default input mode or the HUD.
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
