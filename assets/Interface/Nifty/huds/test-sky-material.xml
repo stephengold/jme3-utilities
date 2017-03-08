@@ -123,10 +123,13 @@
                                      min="-2"
                                      stepSize="0.01"/>
                             <panel childLayout="vertical"
-                                   width="34">
-                                <control name="label" id="c0USliderStatus"/>
-                                <control name="label" id="c0VSliderStatus"/>
-                                <control name="label" id="c0ScaleSliderStatus"/>
+                                   width="105">
+                                <control name="label" id="c0USliderStatus"
+                                         width="95"/>
+                                <control name="label" id="c0VSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="c0ScaleSliderStatus"
+                                         width="95"/>
                             </panel>
                         </panel>
 
@@ -160,10 +163,13 @@
                                      min="-2"
                                      stepSize="0.01"/>
                             <panel childLayout="vertical"
-                                   width="34">
-                                <control name="label" id="c1USliderStatus"/>
-                                <control name="label" id="c1VSliderStatus"/>
-                                <control name="label" id="c1ScaleSliderStatus"/>
+                                   width="105">
+                                <control name="label" id="c1USliderStatus"
+                                         width="95"/>
+                                <control name="label" id="c1VSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="c1ScaleSliderStatus"
+                                         width="95"/>
                             </panel>
                         </panel>
 
@@ -212,11 +218,15 @@
                                      stepSize="1"/>
                             <panel childLayout="vertical"
                                    height="180"
-                                   width="34">
-                                <control name="label" id="mUSliderStatus"/>
-                                <control name="label" id="mVSliderStatus"/>
-                                <control name="label" id="mScaSliderStatus"/>
-                                <control name="label" id="mRotSliderStatus"/>
+                                   width="105">
+                                <control name="label" id="mUSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="mVSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="mScaSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="mRotSliderStatus"
+                                         width="95"/>
                             </panel>
                         </panel>
 
@@ -254,10 +264,13 @@
                                      stepSize="0.1"/>
                             <panel childLayout="vertical"
                                    height="180"
-                                   width="34">
-                                <control name="label" id="sunUSliderStatus"/>
-                                <control name="label" id="sunVSliderStatus"/>
-                                <control name="label" id="sunScaleSliderStatus"/>
+                                   width="105">
+                                <control name="label" id="sunUSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="sunVSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="sunScaleSliderStatus"
+                                         width="95"/>
                             </panel>
                         </panel>
 
@@ -294,11 +307,15 @@
                                      stepSize="0.01"/>
                             <panel childLayout="vertical"
                                    height="180"
-                                   width="34">
-                                <control name="label" id="bgRSliderStatus"/>
-                                <control name="label" id="bgGSliderStatus"/>
-                                <control name="label" id="bgBSliderStatus"/>
-                                <control name="label" id="bgASliderStatus"/>
+                                   width="105">
+                                <control name="label" id="bgRSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="bgGSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="bgBSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="bgASliderStatus"
+                                         width="95"/>
                             </panel>
                         </panel>
 
@@ -335,11 +352,15 @@
                                      stepSize="0.01"/>
                             <panel childLayout="vertical"
                                    height="180"
-                                   width="34">
-                                <control name="label" id="clearRSliderStatus"/>
-                                <control name="label" id="clearGSliderStatus"/>
-                                <control name="label" id="clearBSliderStatus"/>
-                                <control name="label" id="clearASliderStatus"/>
+                                   width="105">
+                                <control name="label" id="clearRSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="clearGSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="clearBSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="clearASliderStatus"
+                                         width="95"/>
                             </panel>
                         </panel>
 
@@ -376,11 +397,15 @@
                                      stepSize="0.01"/>
                             <panel childLayout="vertical"
                                    height="180"
-                                   width="34">
-                                <control name="label" id="clrGloRSliderStatus"/>
-                                <control name="label" id="clrGloGSliderStatus"/>
-                                <control name="label" id="clrGloBSliderStatus"/>
-                                <control name="label" id="clrGloASliderStatus"/>
+                                   width="105">
+                                <control name="label" id="clrGloRSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="clrGloGSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="clrGloBSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="clrGloASliderStatus"
+                                         width="95"/>
                             </panel>
                         </panel>
 
@@ -417,11 +442,15 @@
                                      stepSize="0.01"/>
                             <panel childLayout="vertical"
                                    height="180"
-                                   width="34">
-                                <control name="label" id="c0RSliderStatus"/>
-                                <control name="label" id="c0GSliderStatus"/>
-                                <control name="label" id="c0BSliderStatus"/>
-                                <control name="label" id="c0ASliderStatus"/>
+                                   width="105">
+                                <control name="label" id="c0RSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="c0GSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="c0BSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="c0ASliderStatus"
+                                         width="95"/>
                             </panel>
                         </panel>
 
@@ -458,11 +487,15 @@
                                      stepSize="0.01"/>
                             <panel childLayout="vertical"
                                    height="180"
-                                   width="34">
-                                <control name="label" id="c0gRSliderStatus"/>
-                                <control name="label" id="c0gGSliderStatus"/>
-                                <control name="label" id="c0gBSliderStatus"/>
-                                <control name="label" id="c0gASliderStatus"/>
+                                   width="105">
+                                <control name="label" id="c0gRSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="c0gGSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="c0gBSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="c0gASliderStatus"
+                                         width="95"/>
                             </panel>
                         </panel>
 
@@ -499,11 +532,15 @@
                                      stepSize="0.01"/>
                             <panel childLayout="vertical"
                                    height="180"
-                                   width="34">
-                                <control name="label" id="c1RSliderStatus"/>
-                                <control name="label" id="c1GSliderStatus"/>
-                                <control name="label" id="c1BSliderStatus"/>
-                                <control name="label" id="c1ASliderStatus"/>
+                                   width="105">
+                                <control name="label" id="c1RSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="c1GSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="c1BSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="c1ASliderStatus"
+                                         width="95"/>
                             </panel>
                         </panel>
 
@@ -540,11 +577,15 @@
                                      stepSize="0.01"/>
                             <panel childLayout="vertical"
                                    height="180"
-                                   width="34">
-                                <control name="label" id="c1gRSliderStatus"/>
-                                <control name="label" id="c1gGSliderStatus"/>
-                                <control name="label" id="c1gBSliderStatus"/>
-                                <control name="label" id="c1gASliderStatus"/>
+                                   width="105">
+                                <control name="label" id="c1gRSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="c1gGSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="c1gBSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="c1gASliderStatus"
+                                         width="95"/>
                             </panel>
                         </panel>
 
@@ -581,11 +622,15 @@
                                      stepSize="0.01"/>
                             <panel childLayout="vertical"
                                    height="180"
-                                   width="34">
-                                <control name="label" id="hazeRSliderStatus"/>
-                                <control name="label" id="hazeGSliderStatus"/>
-                                <control name="label" id="hazeBSliderStatus"/>
-                                <control name="label" id="hazeASliderStatus"/>
+                                   width="105">
+                                <control name="label" id="hazeRSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="hazeGSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="hazeBSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="hazeASliderStatus"
+                                         width="95"/>
                             </panel>
                         </panel>
 
@@ -622,11 +667,15 @@
                                      stepSize="0.01"/>
                             <panel childLayout="vertical"
                                    height="180"
-                                   width="34">
-                                <control name="label" id="moonRSliderStatus"/>
-                                <control name="label" id="moonGSliderStatus"/>
-                                <control name="label" id="moonBSliderStatus"/>
-                                <control name="label" id="moonASliderStatus"/>
+                                   width="105">
+                                <control name="label" id="moonRSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="moonGSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="moonBSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="moonASliderStatus"
+                                         width="95"/>
                             </panel>
                         </panel>
 
@@ -663,11 +712,15 @@
                                      stepSize="0.01"/>
                             <panel childLayout="vertical"
                                    height="180"
-                                   width="34">
-                                <control name="label" id="mGloRSliderStatus"/>
-                                <control name="label" id="mGloGSliderStatus"/>
-                                <control name="label" id="mGloBSliderStatus"/>
-                                <control name="label" id="mGloASliderStatus"/>
+                                   width="105">
+                                <control name="label" id="mGloRSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="mGloGSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="mGloBSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="mGloASliderStatus"
+                                         width="95"/>
                             </panel>
                         </panel>
 
@@ -704,11 +757,15 @@
                                      stepSize="0.01"/>
                             <panel childLayout="vertical"
                                    height="180"
-                                   width="34">
-                                <control name="label" id="sunRSliderStatus"/>
-                                <control name="label" id="sunGSliderStatus"/>
-                                <control name="label" id="sunBSliderStatus"/>
-                                <control name="label" id="sunASliderStatus"/>
+                                   width="105">
+                                <control name="label" id="sunRSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="sunGSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="sunBSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="sunASliderStatus"
+                                         width="95"/>
                             </panel>
                         </panel>
 
@@ -745,11 +802,15 @@
                                      stepSize="0.01"/>
                             <panel childLayout="vertical"
                                    height="180"
-                                   width="34">
-                                <control name="label" id="sGloRSliderStatus"/>
-                                <control name="label" id="sGloGSliderStatus"/>
-                                <control name="label" id="sGloBSliderStatus"/>
-                                <control name="label" id="sGloASliderStatus"/>
+                                   width="105">
+                                <control name="label" id="sGloRSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="sGloGSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="sGloBSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="sGloASliderStatus"
+                                         width="95"/>
                             </panel>
                         </panel>
 
