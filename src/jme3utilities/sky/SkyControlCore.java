@@ -82,13 +82,13 @@ public class SkyControlCore extends SubtreeControl {
     final protected static int numCloudLayers = 6;
     /**
      * number of samples in each longitudinal arc of a major dome, including
-     * both its top and rim (&ge;2) TODO rename
+     * both its top and its rim (&ge;2)
      */
-    final private static int quadrantSamples = 16;
+    final private static int numLongitudinalSamples = 16;
     /**
-     * number of samples around the rim of a major dome (&ge;3)
+     * number of samples around the rim of a dome (&ge;3)
      */
-    final private static int rimSamples = 60;
+    final private static int numRimSamples = 60;
     /**
      * message logger for this class
      */
@@ -809,13 +809,13 @@ public class SkyControlCore extends SubtreeControl {
             setStarMaps("equator");
         }
 
-        DomeMesh topMesh = new DomeMesh(rimSamples, quadrantSamples);
+        DomeMesh topMesh = new DomeMesh(numRimSamples, numLongitudinalSamples);
         Geometry topDome = new Geometry(topName, topMesh);
         subtree.attachChild(topDome);
         topDome.setMaterial(topMaterial);
 
         if (bottomDomeFlag) {
-            DomeMesh bottomMesh = new DomeMesh(rimSamples, 2);
+            DomeMesh bottomMesh = new DomeMesh(numRimSamples, 2);
             Geometry bottomDome = new Geometry(bottomName, bottomMesh);
             subtree.attachChild(bottomDome);
 
@@ -829,7 +829,8 @@ public class SkyControlCore extends SubtreeControl {
             assert cloudFlattening > 0f : cloudFlattening;
             assert cloudFlattening < 1f : cloudFlattening;
 
-            DomeMesh cloudsMesh = new DomeMesh(rimSamples, quadrantSamples);
+            DomeMesh cloudsMesh = new DomeMesh(numRimSamples,
+                    numLongitudinalSamples);
             Geometry cloudsOnlyDome = new Geometry(cloudsName, cloudsMesh);
             subtree.attachChild(cloudsOnlyDome);
             /*
