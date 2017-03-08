@@ -133,7 +133,7 @@ public enum LunarPhase {
     /**
      * Look up the celestial longitude difference for this phase.
      *
-     * @return angle in radians (&lt;2*Pi. &ge;0)
+     * @return radians east of the sun (&lt;2*Pi. &ge;0)
      */
     public float longitudeDifference() {
         switch (this) {

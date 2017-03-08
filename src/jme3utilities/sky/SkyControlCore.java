@@ -81,8 +81,8 @@ public class SkyControlCore extends SubtreeControl {
      */
     final protected static int numCloudLayers = 6;
     /**
-     * number of samples in each longitudinal quadrant of a major dome,
-     * including both its top and rim (&ge;2)
+     * number of samples in each longitudinal arc of a major dome, including
+     * both its top and rim (&ge;2) TODO rename
      */
     final private static int quadrantSamples = 16;
     /**
@@ -133,7 +133,7 @@ public class SkyControlCore extends SubtreeControl {
     /**
      * true to create a material and geometry for the hemisphere below the
      * horizon, false to leave this hemisphere to background color (if
-     * starMotionFlag==false) or stars (if starMotionFlag==true): set by
+     * starMotionFlag==false) or stars only (if starMotionFlag==true): set by
      * constructor
      */
     private boolean bottomDomeFlag;
@@ -282,7 +282,6 @@ public class SkyControlCore extends SubtreeControl {
             Spatial starCube = MySpatial.findChild(subtree, starCubeName);
             if (starCube != null) {
                 subtree.detachChild(starCube);
-                starCube = null;
             }
         } else {
             SkyMaterial topMaterial = getTopMaterial();

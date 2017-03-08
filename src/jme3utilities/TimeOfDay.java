@@ -177,8 +177,7 @@ public class TimeOfDay extends NamedAppState {
      * Callback to update this app state (if enabled) prior to rendering.
      * (Invoked once per frame.)
      *
-     * @param interval time interval since previous frame/update (in seconds,
-     * &ge;0)
+     * @param interval time interval between render passes (in seconds, &ge;0)
      */
     @Override
     public void update(float interval) {

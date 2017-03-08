@@ -632,7 +632,7 @@ public class MakeStarMaps {
         float b = a / stretchFactor;
 
         for (int i = 0; i < ellipseNumPoints; i++) {
-            float theta = FastMath.TWO_PI * i / (float) ellipseNumPoints;
+            float theta = FastMath.TWO_PI * i / ellipseNumPoints;
             float da = a * FastMath.cos(theta);
             float db = b * FastMath.sin(theta);
             float dx = db * xDir + da * yDir;
@@ -677,7 +677,7 @@ public class MakeStarMaps {
 
         Vector3f p = new Vector3f();
         for (int i = 0; i < ellipseNumPoints; i++) {
-            float theta = FastMath.TWO_PI * i / (float) ellipseNumPoints;
+            float theta = FastMath.TWO_PI * i / ellipseNumPoints;
             float rCos = r * FastMath.cos(theta);
             float rSin = r * FastMath.sin(theta);
             p.scaleAdd(rCos, basis2, basis1);
@@ -760,7 +760,7 @@ public class MakeStarMaps {
         /*
          * Convert apparent magnitude to relative luminosity.
          */
-        float resolution = ((float) textureSize) / 2_048f;
+        float resolution = textureSize / 2_048f;
         float luminosity0 = 100f * resolution * resolution;
         float luminosity = luminosity0 * 1.5f
                 * FastMath.pow(pogsonsRatio, -apparentMagnitude);
@@ -863,7 +863,7 @@ public class MakeStarMaps {
         /*
          * Convert apparent magnitude to relative luminosity.
          */
-        float resolution = ((float) textureSize) / 2_048f;
+        float resolution = textureSize / 2_048f;
         float luminosity0 = 37f * resolution * resolution;
         float luminosity = luminosity0
                 * FastMath.pow(pogsonsRatio, -apparentMagnitude);

@@ -265,7 +265,6 @@ public class TestSkyControlHud
 
         assert hour >= 0f : hour;
         assert hour < 24f : hour;
-
         return hour;
     }
 
@@ -329,7 +328,7 @@ public class TestSkyControlHud
     /**
      * Read the phase of the moon.
      *
-     * @return value, or null for no moon
+     * @return preset value, or null for hidden moon
      */
     LunarPhase getLunarPhase() {
         return phase;
@@ -405,7 +404,7 @@ public class TestSkyControlHud
     /**
      * Read the current solar longitude.
      *
-     * @return angle (radians east of March equinox, &le;2*Pi, &ge;0)
+     * @return radians east of March equinox (&le;2*Pi, &ge;0)
      */
     float getSolarLongitude() {
         assert solarLongitude >= 0f : solarLongitude;
@@ -435,7 +434,7 @@ public class TestSkyControlHud
     /**
      * Read the current vertical angle for the top dome.
      *
-     * @return angle (radians from top to rim, &lt;Pi, &gt;0)
+     * @return radians from top to rim (&lt;Pi, &gt;0)
      */
     float getTopVerticalAngle() {
         assert topVerticalAngle > 0f : topVerticalAngle;

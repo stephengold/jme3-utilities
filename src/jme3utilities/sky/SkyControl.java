@@ -219,7 +219,7 @@ public class SkyControl extends SkyControlCore {
     /**
      * Calculate the direction to the center of the moon. TODO rename
      *
-     * @return new unit vector in world (horizontal) coordinates
+     * @return a new unit vector in world (horizontal) coordinates
      */
     public Vector3f getMoonDirection() {
         float solarLongitude = sunAndStars.getSolarLongitude();
