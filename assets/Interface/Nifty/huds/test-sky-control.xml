@@ -349,6 +349,27 @@
                                      text="enable sky"/>
                         </panel>
 
+                        <panel style="buttonPanel">
+                            <control name="button" id="id5ToAvoidNiftyWarning"
+                                     label="Print the scene">
+                                <interact onRelease="perform(print scene)"/>
+                            </control>
+                        </panel>
+
+                        <panel style="buttonPanel">
+                            <control name="button" id="id6ToAvoidNiftyWarning"
+                                     label="Load the saved scene">
+                                <interact onRelease="perform(load scene)"/>
+                            </control>
+                        </panel>
+
+                        <panel style="buttonPanel">
+                            <control name="button" id="id7ToAvoidNiftyWarning"
+                                     label="Save the scene">
+                                <interact onRelease="perform(save scene)"/>
+                            </control>
+                        </panel>
+
                     </panel>
                 </control>
             </panel>

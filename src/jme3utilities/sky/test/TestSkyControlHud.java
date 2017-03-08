@@ -545,39 +545,35 @@ public class TestSkyControlHud
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored time per frame (in seconds)
+     * @param tpf time interval between render passes (in seconds, &ge;0)
      */
     @Override
-    public void onAction(String actionString, boolean ongoing, float ignored) {
-        /*
-         * Ignore actions which are not ongoing.
-         */
-        if (!ongoing) {
-            return;
-        }
+    public void onAction(String actionString, boolean ongoing, float tpf) {
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
+
+        if (ongoing) {
             switch (actionString) {
                 case "look moon":
                     run.lookAtTheMoon();
-                break;
+                    return;
 
                 case "look sun":
                     run.lookAtTheSun();
-                break;
+                    return;
 
                 case "phase":
                     showPhaseMenu();
-                break;
+                    return;
 
                 case "phase none":
                     phase = null;
-                break;
+                    return;
 
                 case "phase waning":
                 case "phase waxing":
                     showPopup(actionString + "-",
                             new String[]{"crescent", "gibbous"});
-                break;
+                    return;
 
                 case "phase custom":
                 case "phase full":
@@ -587,22 +583,22 @@ public class TestSkyControlHud
                 case "phase waxing-gibbous":
                     String name = actionString.substring(6);
                     phase = LunarPhase.fromDescription(name);
-                break;
+                    return;
 
                 case "star-map":
                     showStarMapMenu();
-                break;
+                    return;
 
                 case "star-map 4m":
                 case "star-map 16m":
                 case "star-map nebula":
                     name = actionString.substring(9);
                     setStarMapName(name);
-                break;
+                    return;
 
                 case "style":
                     showStyleMenu();
-                break;
+                    return;
 
                 case "style chaotic":
                 case "style disc":
@@ -611,14 +607,12 @@ public class TestSkyControlHud
                 case "style t0neg0d":
                     name = actionString.substring(6);
                     setStyle(name);
-                break;
-
-            default:
-                logger.log(Level.WARNING, "Action {0} was not handled.",
-                        MyString.quote(actionString));
-                break;
+                    return;
             }
         }
+
+        guiApplication.onAction(actionString, ongoing, tpf);
+    }
     // *************************************************************************
     // GuiScreenController methods
 
