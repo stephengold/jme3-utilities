@@ -259,9 +259,9 @@ public class TestSkyControlRun
             logger.log(Level.SEVERE,
                     "Output exception while saving {0} to file {1}",
                     new Object[]{
-                MyString.quote(sceneNode.getName()),
-                MyString.quote(filePath)
-            });
+                        MyString.quote(sceneNode.getName()),
+                        MyString.quote(filePath)
+                    });
             return;
         }
         logger.log(Level.INFO, "Saved {0} to file {1}", new Object[]{
@@ -351,8 +351,9 @@ public class TestSkyControlRun
         LunarPhase lunarPhase = hud.getLunarPhase();
         skyControl.setPhase(lunarPhase);
         if (lunarPhase == LunarPhase.CUSTOM) {
-            float phaseAngle = hud.getPhaseAngle();
-            skyControl.setPhaseAngle(phaseAngle);
+            float longitudeDifference = hud.getLongitudeDifference();
+            float lunarLatitude = hud.getLunarLatitude();
+            skyControl.setPhase(longitudeDifference, lunarLatitude);
         }
         String sunStyle = hud.getSunStyle();
         skyControl.setSunStyle(sunStyle);

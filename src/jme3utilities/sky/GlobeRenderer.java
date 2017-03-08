@@ -43,7 +43,6 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.scene.shape.Sphere.TextureMode;
 import com.jme3.texture.FrameBuffer;
 import com.jme3.texture.Image;
-import com.jme3.texture.Image.Format;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
 import java.util.logging.Level;
@@ -91,6 +90,10 @@ public class GlobeRenderer extends SimpleAppState {
      * local copy of Vector3f#UNIT_X
      */
     final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
+    /**
+     * local copy of Vector3f#UNIT_Y
+     */
+    final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
     /**
      * local copy of Vector3f#UNIT_Z
      */
@@ -281,15 +284,21 @@ public class GlobeRenderer extends SimpleAppState {
     }
 
     /**
-     * Alter the lighting phase of the globe.
+     * Alter the light direction.
      *
-     * @param newAngle (in radians, &le;2*Pi, &ge;0, 0 &rarr; dark, Pi &rarr;
-     * fully lit)
+     * @param theta 1st polar coordinate (in radians, &le;2*Pi, &ge;0)
+     * @param phi 2nd polar coordinate (in radians, &le;Pi/2, &ge;-Pi/2)
      */
-    final public void setPhase(float newAngle) {
-        Validate.inRange(newAngle, "phase angle", 0f, FastMath.TWO_PI);
+    final public void setPhase(float theta, float phi) {
+        Validate.inRange(theta, "theta", 0f, FastMath.TWO_PI);
+        Validate.inRange(phi, "phi", -FastMath.HALF_PI, FastMath.HALF_PI);
 
-        Quaternion turn = new Quaternion().fromAngles(-newAngle, 0f, 0f);
+        Quaternion xRot = new Quaternion();
+        xRot.fromAngleNormalAxis(-theta, xAxis);
+        Quaternion yRot = new Quaternion();
+        yRot.fromAngleNormalAxis(-phi, yAxis);
+        Quaternion turn = yRot.mult(xRot);
+
         Vector3f lightDirection = turn.mult(zAxis);
         light.setDirection(lightDirection);
     }
@@ -422,7 +431,7 @@ public class GlobeRenderer extends SimpleAppState {
         light = new DirectionalLight();
         offscreenRootNode.addLight(light);
         setLightIntensity(2f);
-        setPhase(FastMath.PI);
+        setPhase(FastMath.PI, 0f); // full phase
     }
 
     /**

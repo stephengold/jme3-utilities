@@ -293,10 +293,10 @@ public class TestGlobeRenderer
      * Update the scene after changing the phase.
      */
     private void updateScene() {
-        float phaseAngle = phase.longitudeDifference();
-        float intensity = 2f + FastMath.abs(phaseAngle - FastMath.PI);
+        float theta = phase.longitudeDifference();
+        float intensity = 2f + FastMath.abs(theta - FastMath.PI);
         moonRenderer.setLightIntensity(intensity);
-        moonRenderer.setPhase(phaseAngle);
+        moonRenderer.setPhase(theta, 0f);
         /*
          * Load the corresponding static texture.
          */
