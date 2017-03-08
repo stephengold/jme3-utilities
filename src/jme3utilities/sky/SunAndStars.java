@@ -264,18 +264,6 @@ public class SunAndStars
     }
 
     /**
-     * Compute the direction to the center of the sun. TODO rename
-     *
-     * @return new unit vector in world (horizontal) coordinates
-     */
-    public Vector3f getSunDirection() {
-        Vector3f result = convertToWorld(0f, solarLongitude);
-
-        assert result.isUnitVector();
-        return result;
-    }
-
-    /**
      * Update the orientation of a sky whose local axes are equatorial, as
      * defined above.
      *
@@ -430,6 +418,18 @@ public class SunAndStars
         siderealHour = MyMath.modulo(siderealHour, Constants.hoursPerDay);
 
         return siderealHour;
+    }
+
+    /**
+     * Calculate the direction to the center of the sun.
+     *
+     * @return a new unit vector in world (horizontal) coordinates
+     */
+    public Vector3f sunDirection() {
+        Vector3f result = convertToWorld(0f, solarLongitude);
+
+        assert result.isUnitVector();
+        return result;
     }
     // *************************************************************************
     // Object methods

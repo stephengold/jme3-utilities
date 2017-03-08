@@ -217,21 +217,6 @@ public class SkyControl extends SkyControlCore {
     }
 
     /**
-     * Calculate the direction to the center of the moon. TODO rename
-     *
-     * @return a new unit vector in world (horizontal) coordinates
-     */
-    public Vector3f getMoonDirection() {
-        float solarLongitude = sunAndStars.getSolarLongitude();
-        float celestialLongitude = solarLongitude + longitudeDifference;
-        celestialLongitude = MyMath.modulo(celestialLongitude, FastMath.TWO_PI);
-        Vector3f worldDirection = sunAndStars.convertToWorld(
-                lunarLatitude, celestialLongitude);
-
-        return worldDirection;
-    }
-
-    /**
      * Read the phase-of-the-moon preset.
      *
      * @return preset value (may be null)
@@ -272,6 +257,21 @@ public class SkyControl extends SkyControlCore {
         assert result > 0f : result;
         assert result < FastMath.PI : result;
         return result;
+    }
+
+    /**
+     * Calculate the direction to the center of the moon.
+     *
+     * @return a new unit vector in world (horizontal) coordinates
+     */
+    public Vector3f moonDirection() {
+        float solarLongitude = sunAndStars.getSolarLongitude();
+        float celestialLongitude = solarLongitude + longitudeDifference;
+        celestialLongitude = MyMath.modulo(celestialLongitude, FastMath.TWO_PI);
+        Vector3f worldDirection = sunAndStars.convertToWorld(
+                lunarLatitude, celestialLongitude);
+
+        return worldDirection;
     }
 
     /**
@@ -844,9 +844,9 @@ public class SkyControl extends SkyControlCore {
      */
     private Vector3f updateSun() {
         /*
-         * Compute the UV coordinates of the center of the sun.
+         * Calculate the UV coordinates of the center of the sun.
          */
-        Vector3f worldDirection = sunAndStars.getSunDirection();
+        Vector3f worldDirection = sunAndStars.sunDirection();
         DomeMesh topMesh = getTopMesh();
         Vector2f uv = topMesh.directionUV(worldDirection);
         SkyMaterial topMaterial = getTopMaterial();
