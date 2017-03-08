@@ -102,23 +102,23 @@ public class GlobeRenderer extends SimpleAppState {
     // fields
 
     /**
-     * camera for off-screen render: set by constructor
+     * camera for off-screen render (set by constructor)
      */
-    private Camera camera = null;
+    private Camera camera;
     /**
-     * light source for the scene: set by constructor
+     * light source for the scene (set by constructor)
      */
-    private DirectionalLight light = null;
+    private DirectionalLight light;
     /**
      * gamma value to set in initialize(): afterwards it's ignored
      */
     private float initialGamma = 2f;
     /**
-     * spin rate (in radians per second) default is 0
+     * spin rate (in radians per second, default is 0)
      */
     private float spinRate = 0f;
     /**
-     * frame buffer for off-screen render: set by constructor
+     * frame buffer for off-screen render (set by constructor)
      */
     final private FrameBuffer frameBuffer;
     /**
@@ -126,9 +126,9 @@ public class GlobeRenderer extends SimpleAppState {
      */
     private GammaCorrectionFilter filter = null;
     /**
-     * geometry for the globe: set by constructor
+     * geometry for the globe (set by constructor)
      */
-    private Geometry globe = null;
+    private Geometry globe;
     /**
      * image format for off-screen render (set by constructor)
      */

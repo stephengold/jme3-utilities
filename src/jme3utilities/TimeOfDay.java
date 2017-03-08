@@ -102,7 +102,7 @@ public class TimeOfDay extends NamedAppState {
     // new methods exposed
 
     /**
-     * Calculate the simulated time of day in hours. TODO rename
+     * Calculate the simulated time of day in hours.
      *
      * @return hours since midnight (&lt;24, &ge;0)
      */

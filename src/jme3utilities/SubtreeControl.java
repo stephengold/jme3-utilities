@@ -102,7 +102,7 @@ abstract public class SubtreeControl
 
         SubtreeControl clone;
         try {
-            clone = (SubtreeControl) clone();
+            clone = clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException("Can't clone control.", e);
         }

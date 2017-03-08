@@ -132,7 +132,7 @@ public class SunAndStars
      * &le;Pi/2, &ge;-Pi/2)
      * @param longitude celestial longitude (radians east of the March equinox,
      * &le;2*Pi, &ge;0)
-     * @return new unit vector in equatorial coordinates
+     * @return a new unit vector in equatorial coordinates
      */
     public static Vector3f convertToEquatorial(float latitude,
             float longitude) {
@@ -162,7 +162,7 @@ public class SunAndStars
      * Convert ecliptical coordinates to equatorial coordinates.
      *
      * @param ecliptical coordinates (not null, unaffected)
-     * @return new vector in equatorial coordinates
+     * @return a new vector in equatorial coordinates
      */
     public static Vector3f convertToEquatorial(Vector3f ecliptical) {
         Validate.nonNull(ecliptical, "coordinates");
@@ -184,7 +184,7 @@ public class SunAndStars
      * &le;Pi/2, &ge;-Pi/2)
      * @param longitude celestial longitude (radians east of the March equinox,
      * &le;2*Pi, &ge;0)
-     * @return new unit vector in world (horizontal) coordinates
+     * @return a new unit vector in world (horizontal) coordinates
      */
     public Vector3f convertToWorld(float latitude, float longitude) {
         Validate.inRange(latitude, "latitude",
@@ -202,7 +202,7 @@ public class SunAndStars
      * Convert equatorial coordinates to world (horizontal) coordinates.
      *
      * @param equatorial coordinates (not null, unaffected)
-     * @return new vector in a world coordinates
+     * @return a new vector in a world coordinates
      */
     public Vector3f convertToWorld(Vector3f equatorial) {
         Validate.nonNull(equatorial, "coordinates");
@@ -398,7 +398,7 @@ public class SunAndStars
         /*
          * Compute the approximate solar longitude (in radians).
          */
-        float daysSinceEquinox = (float) (dayOfYear - 80);
+        float daysSinceEquinox = dayOfYear - 80;
         float longitude = FastMath.TWO_PI * daysSinceEquinox / 366f;
 
         longitude = MyMath.modulo(longitude, FastMath.TWO_PI);

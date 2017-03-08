@@ -353,7 +353,7 @@ public class Updater
 
     /**
      * Set filters, renderers, and viewports based on another updater.
-     * 
+     *
      * @param otherUpdater updater to copy from (not null)
      */
     public void setFRV(Updater otherUpdater) {
@@ -362,7 +362,7 @@ public class Updater
         shadowRenderers = otherUpdater.shadowRenderers;
         viewPorts = otherUpdater.viewPorts;
     }
-    
+
     /**
      * Save a reference to the scene's main directional light. As long as the
      * reference has a non-null value, the control will continuously update the
