@@ -483,7 +483,7 @@ public class TestSkyControlHud
         phase = sky.getPhase();
         longitudeDifference = sky.getLongitudeDifference();
         degrees = MyMath.toDegrees(longitudeDifference);
-        setSlider("customLunarPhase", degrees);
+        setSlider("longitudeDifference", degrees);
 
         relief = land.peakY();
         setSlider("relief", relief);
@@ -556,69 +556,69 @@ public class TestSkyControlHud
             return;
         }
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
-        switch (actionString) {
-            case "look moon":
-                run.lookAtTheMoon();
+            switch (actionString) {
+                case "look moon":
+                    run.lookAtTheMoon();
                 break;
 
-            case "look sun":
-                run.lookAtTheSun();
+                case "look sun":
+                    run.lookAtTheSun();
                 break;
 
-            case "phase":
-                showPhaseMenu();
+                case "phase":
+                    showPhaseMenu();
                 break;
 
-            case "phase none":
-                phase = null;
+                case "phase none":
+                    phase = null;
                 break;
 
-            case "phase waning":
-            case "phase waxing":
-                showPopup(actionString + "-",
-                        new String[]{"crescent", "gibbous"});
+                case "phase waning":
+                case "phase waxing":
+                    showPopup(actionString + "-",
+                            new String[]{"crescent", "gibbous"});
                 break;
 
-            case "phase custom":
-            case "phase full":
-            case "phase waning-crescent":
-            case "phase waning-gibbous":
-            case "phase waxing-crescent":
-            case "phase waxing-gibbous":
-                String name = actionString.substring(6);
-                phase = LunarPhase.fromDescription(name);
+                case "phase custom":
+                case "phase full":
+                case "phase waning-crescent":
+                case "phase waning-gibbous":
+                case "phase waxing-crescent":
+                case "phase waxing-gibbous":
+                    String name = actionString.substring(6);
+                    phase = LunarPhase.fromDescription(name);
                 break;
 
-            case "star-map":
-                showStarMapMenu();
+                case "star-map":
+                    showStarMapMenu();
                 break;
 
-            case "star-map 4m":
-            case "star-map 16m":
-            case "star-map nebula":
-                name = actionString.substring(9);
-                setStarMapName(name);
+                case "star-map 4m":
+                case "star-map 16m":
+                case "star-map nebula":
+                    name = actionString.substring(9);
+                    setStarMapName(name);
                 break;
 
-            case "style":
-                showStyleMenu();
+                case "style":
+                    showStyleMenu();
                 break;
 
-            case "style chaotic":
-            case "style disc":
-            case "style hazy-disc":
-            case "style rayed":
-            case "style t0neg0d":
-                name = actionString.substring(6);
-                setStyle(name);
+                case "style chaotic":
+                case "style disc":
+                case "style hazy-disc":
+                case "style rayed":
+                case "style t0neg0d":
+                    name = actionString.substring(6);
+                    setStyle(name);
                 break;
 
             default:
                 logger.log(Level.WARNING, "Action {0} was not handled.",
                         MyString.quote(actionString));
                 break;
+            }
         }
-    }
     // *************************************************************************
     // GuiScreenController methods
 
