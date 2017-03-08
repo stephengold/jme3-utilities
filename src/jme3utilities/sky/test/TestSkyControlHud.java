@@ -483,7 +483,7 @@ public class TestSkyControlHud
         phase = sky.getPhase();
         longitudeDifference = sky.getLongitudeDifference();
         degrees = MyMath.toDegrees(longitudeDifference);
-        setSlider("customLunarPhase", degrees);
+        setSlider("longitudeDifference", degrees);
 
         relief = land.peakY();
         setSlider("relief", relief);
