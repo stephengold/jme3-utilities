@@ -106,7 +106,7 @@ public class TimeOfDay extends NamedAppState {
      *
      * @return hours since midnight (&lt;24, &ge;0)
      */
-    public float getHour() {
+    public float hour() {
         float result = (float) timeOfDay / secondsPerHour;
         if (result == hoursPerDay) {
             result = 0f;
@@ -118,11 +118,11 @@ public class TimeOfDay extends NamedAppState {
     }
 
     /**
-     * Calculate the simulated time of day in seconds. TODO rename
+     * Calculate the simulated time of day in whole seconds.
      *
      * @return seconds since midnight (&lt;86400, &ge;0)
      */
-    public int getSecond() {
+    public int second() {
         int result = (int) Math.round(timeOfDay);
         if (result == secondsPerDay) {
             result = 0;
@@ -161,7 +161,7 @@ public class TimeOfDay extends NamedAppState {
      */
     @Override
     public String toString() {
-        int second = getSecond();
+        int second = second();
         int ss = second % secondsPerMinute;
         int minute = second / secondsPerMinute;
         int mm = minute % minutesPerHour;
@@ -177,8 +177,7 @@ public class TimeOfDay extends NamedAppState {
      * Callback to update this app state (if enabled) prior to rendering.
      * (Invoked once per frame.)
      *
-     * @param interval time interval since previous frame/update (in seconds,
-     * &ge;0)
+     * @param interval time interval between render passes (in seconds, &ge;0)
      */
     @Override
     public void update(float interval) {

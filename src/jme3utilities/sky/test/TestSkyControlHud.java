@@ -261,7 +261,7 @@ public class TestSkyControlHud
      * @return hours since midnight (&lt;24, &ge;0)
      */
     float getHour() {
-        float hour = timeOfDay.getHour();
+        float hour = timeOfDay.hour();
 
         assert hour >= 0f : hour;
         assert hour < 24f : hour;
