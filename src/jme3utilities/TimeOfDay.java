@@ -67,7 +67,7 @@ public class TimeOfDay extends NamedAppState {
             TimeOfDay.class.getName());
     // *************************************************************************
     // fields
-
+    
     /**
      * simulated time of day (seconds since midnight, &lt;86400, &ge;0)
      * <p>
@@ -102,11 +102,11 @@ public class TimeOfDay extends NamedAppState {
     // new methods exposed
 
     /**
-     * Calculate the simulated time of day in hours. TODO rename
+     * Calculate the simulated time of day in hours.
      *
      * @return hours since midnight (&lt;24, &ge;0)
      */
-    public float getHour() {
+    public float hour() {
         float result = (float) timeOfDay / secondsPerHour;
         if (result == hoursPerDay) {
             result = 0f;
@@ -118,11 +118,11 @@ public class TimeOfDay extends NamedAppState {
     }
 
     /**
-     * Calculate the simulated time of day in seconds. TODO rename
+     * Calculate the simulated time of day in whole seconds.
      *
      * @return seconds since midnight (&lt;86400, &ge;0)
      */
-    public int getSecond() {
+    public int second() {
         int result = (int) Math.round(timeOfDay);
         if (result == secondsPerDay) {
             result = 0;
@@ -161,7 +161,7 @@ public class TimeOfDay extends NamedAppState {
      */
     @Override
     public String toString() {
-        int second = getSecond();
+        int second = second();
         int ss = second % secondsPerMinute;
         int minute = second / secondsPerMinute;
         int mm = minute % minutesPerHour;
