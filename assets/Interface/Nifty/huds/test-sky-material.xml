@@ -845,6 +845,21 @@
                                  min="1"
                                  stepSize="0.2"/>
 
+                        <panel style="buttonPanel">
+                            <control name="button" id="id6ToAvoidNiftyWarning"
+                                     label="Load the saved sky">
+                                <interact onRelease="perform(load sky)"/>
+                            </control>
+                        </panel>
+
+                        <panel style="buttonPanel">
+                            <control name="button" id="id7ToAvoidNiftyWarning"
+                                     label="Save the sky">
+                                <interact onRelease="perform(save sky)"/>
+                            </control>
+                        </panel>
+
+
                     </panel>
                 </control>
             </panel>
