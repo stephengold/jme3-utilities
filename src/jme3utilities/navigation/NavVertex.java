@@ -33,10 +33,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
-import jme3utilities.math.locus.Locus3f;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.math.ReadXZ;
 import jme3utilities.math.VectorXZ;
+import jme3utilities.math.locus.Locus3f;
 
 /**
  * Navigation vertex: represents a reachable region of 3-D space, along with
