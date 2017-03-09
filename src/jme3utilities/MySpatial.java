@@ -130,9 +130,9 @@ public class MySpatial extends SimpleApplication {
     /**
      * Find a node's 1st child that is an assignable from the specified class.
      *
-     * @param <T> com.jme3.scene.Geometry or com.jme3.scene.Node
+     * @param <T> subtype of {@link com.jme3.scene.Spatial}
      * @param node node to search (not null)
-     * @param spatialType subclass of Spatial to search for
+     * @param spatialType type of Spatial to search for (not null)
      * @return a pre-existing instance, or null if none found
      */
     @SuppressWarnings("unchecked")
@@ -172,13 +172,16 @@ public class MySpatial extends SimpleApplication {
     }
 
     /**
-     * Find a spatial's 1st local light that is an assignable from the specified class.
+     * Find a spatial's 1st local light that is an assignable from the specified
+     * class.
      *
+     * @param <T> subtype of {@link com.jme3.light.Light}
      * @param spatial spatial to search (not null)
-     * @param lightClass (not null)
+     * @param lightClass type of Light to search for (not null)
      * @return a pre-existing instance, or null if none found
      */
-    public static <T extends Light> T findLight(Spatial spatial, 
+    @SuppressWarnings("unchecked")
+    public static <T extends Light> T findLight(Spatial spatial,
             Class<T> lightClass) {
         Validate.nonNull(lightClass, "light class");
 
@@ -423,6 +426,25 @@ public class MySpatial extends SimpleApplication {
         float minMax[] = findMinMaxHeights(geometry);
         assert minMax[0] == minMax[1] : minMax[0];
         return minMax[0];
+    }
+
+    /**
+     * Test whether a spatial has a specific light in its local list.
+     *
+     * @param spatial spatial to search (not null)
+     * @param light light to search for (not null)
+     * @return true if found, false if not found
+     */
+    public static boolean hasLight(Spatial spatial, Light light) {
+        Validate.nonNull(light, "light");
+
+        for (Light l : spatial.getLocalLightList()) {
+            if (l == light) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
