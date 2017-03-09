@@ -85,7 +85,7 @@
                         <panel style="buttonPanel"
                                height="60">
                             <control name="button"
-                                     id="id4ToAvoidNiftyWarning"
+                                     id="id1ToAvoidNiftyWarning"
                                      label="Select star map">
                                 <interact onRelease="perform(stars)"/>
                             </control>
@@ -94,7 +94,7 @@
                         <panel style="buttonPanel"
                                height="60">
                             <control name="button"
-                                     id="id0ToAvoidNiftyWarning"
+                                     id="id2ToAvoidNiftyWarning"
                                      label="Select cloud layer 0 texture">
                                 <interact onRelease="perform(c0Texture)"/>
                             </control>
@@ -134,7 +134,7 @@
                         <panel style="buttonPanel"
                                height="60">
                             <control name="button"
-                                     id="id1ToAvoidNiftyWarning"
+                                     id="id3ToAvoidNiftyWarning"
                                      label="Select cloud layer 1 texture">
                                 <interact onRelease="perform(c1Texture)"/>
                             </control>
@@ -178,7 +178,7 @@
                         <panel style="buttonPanel"
                                height="60">
                             <control name="button"
-                                     id="id2ToAvoidNiftyWarning"
+                                     id="id4ToAvoidNiftyWarning"
                                      label="Select lunar phase">
                                 <interact onRelease="perform(phase)"/>
                             </control>
@@ -231,7 +231,7 @@
                         <panel style="buttonPanel"
                                height="60">
                             <control name="button"
-                                     id="id3ToAvoidNiftyWarning"
+                                     id="id5ToAvoidNiftyWarning"
                                      label="Select sun style">
                                 <interact onRelease="perform(style)"/>
                             </control>
