@@ -26,7 +26,7 @@
 -->
 
 <!--
- Layout for the clock screen of the TestStatus application.
+ Nifty XML to lay out the screen for the ClockDemo application.
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
     <screen id="ClockDemo/clockScreen"
