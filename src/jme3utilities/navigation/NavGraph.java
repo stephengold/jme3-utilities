@@ -216,7 +216,7 @@ public class NavGraph {
     public int countReachableFrom(NavVertex start) {
         validateMember(start, "start");
 
-        Set<NavVertex> visited = new HashSet<>();
+        Set<NavVertex> visited = new HashSet<>(100);
         visitReachable(start, visited);
 
         return visited.size();
@@ -468,7 +468,7 @@ public class NavGraph {
 
         NavVertex fromVertex = arc.getFromVertex();
         NavVertex toVertex = arc.getToVertex();
-        Set<NavVertex> visitedVertices = new HashSet<>();
+        Set<NavVertex> visitedVertices = new HashSet<>(100);
         boolean result = existsRouteWithout(
                 arc, fromVertex, toVertex, visitedVertices);
 
