@@ -131,10 +131,10 @@ public class MySpatial extends SimpleApplication {
     /**
      * Find a node's 1st child that is an assignable from the specified class.
      *
-     * @param <T> com.jme3.scene.Geometry or com.jme3.scene.Node
+     * @param <T> subtype of {@link com.jme3.scene.Spatial}
      * @param node node to search (not null)
-     * @param spatialType subclass of Spatial to search for
-     * @return 1st matching child, or null if none found
+     * @param spatialType type of Spatial to search for (not null)
+     * @return a pre-existing instance, or null if none found
      */
     @SuppressWarnings("unchecked")
     public static <T extends Spatial> T findChild(Node node,
@@ -155,7 +155,7 @@ public class MySpatial extends SimpleApplication {
      *
      * @param node node to search (not null)
      * @param childName name to search for (not null)
-     * @return 1st matching child, or null if none found
+     * @return a pre-existing instance, or null if none found
      *
      * @see com.jme3.scene.Node#getChild(java.lang.String)
      */
@@ -173,12 +173,34 @@ public class MySpatial extends SimpleApplication {
     }
 
     /**
-     * Find a local light with a specified name.
+     * Find a spatial's 1st local light that is an assignable from the specified
+     * class.
+     *
+     * @param <T> subtype of {@link com.jme3.light.Light}
+     * @param spatial spatial to search (not null)
+     * @param lightClass type of Light to search for (not null)
+     * @return a pre-existing instance, or null if none found
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Light> T findLight(Spatial spatial,
+            Class<T> lightClass) {
+        Validate.nonNull(lightClass, "light class");
+
+        for (Light light : spatial.getLocalLightList()) {
+            if (lightClass.isAssignableFrom(light.getClass())) {
+                return (T) light;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Find the 1st local light with the specified name.
      *
      * @param spatial spatial to search (not null)
-     * @param lightName (not null)
-     * @return pre-existing instance of the 1st matching light, or null if none
-     * found
+     * @param lightName name to search for (not null)
+     * @return a pre-existing instance, or null if none found
      */
     public static Light findLight(Spatial spatial, String lightName) {
         Validate.nonNull(lightName, "light name");
@@ -405,6 +427,25 @@ public class MySpatial extends SimpleApplication {
         float minMax[] = findMinMaxHeights(geometry);
         assert minMax[0] == minMax[1] : minMax[0];
         return minMax[0];
+    }
+
+    /**
+     * Test whether a spatial has a specific light in its local list.
+     *
+     * @param spatial spatial to search (not null)
+     * @param light light to search for (not null)
+     * @return true if found, false if not found
+     */
+    public static boolean hasLight(Spatial spatial, Light light) {
+        Validate.nonNull(light, "light");
+
+        for (Light l : spatial.getLocalLightList()) {
+            if (l == light) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
