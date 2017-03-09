@@ -275,7 +275,8 @@ final public class MyAsset {
         Node result = new Node("star map");
         result.setQueueBucket(Bucket.Sky);
         for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-            Geometry geometry = new Geometry(name, unitSquare);
+            String faceName = String.format("%s_face%d", name, faceIndex);
+            Geometry geometry = new Geometry(faceName, unitSquare);
             result.attachChild(geometry);
             /*
              * Apply material to quad.
