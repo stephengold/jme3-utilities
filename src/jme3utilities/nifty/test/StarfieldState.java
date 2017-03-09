@@ -264,7 +264,7 @@ public class StarfieldState extends SimpleAppState {
         rootNode.attachChild(objects);
         /*
          * The moving objects are small white spheres, distributed 
-         * pseudo-randomly  throughout a cubical zone centered on the origin
+         * pseudo-randomly throughout a cubical zone centered on the origin
          */
         NameGenerator names = new NameGenerator();
         Material white = MyAsset.createUnshadedMaterial(
