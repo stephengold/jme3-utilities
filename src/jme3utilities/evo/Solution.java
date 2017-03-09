@@ -306,7 +306,7 @@ public class Solution {
      */
     @Override
     public String toString() {
-        StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder(64);
         buffer.append(species);
         buffer.append("[");
         for (int i = 0; i < parameters.length; i++) {

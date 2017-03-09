@@ -246,7 +246,7 @@ public class ScoreDoubles implements Comparable<ScoreDoubles> {
      */
     @Override
     public String toString() {
-        StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder(64);
         buffer.append("[");
         for (int subIndex = 0; subIndex < subscores.length; subIndex++) {
             if (subIndex != 0) {
