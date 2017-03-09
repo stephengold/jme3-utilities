@@ -31,6 +31,7 @@ import com.jme3.asset.DesktopAssetManager;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
+import com.jme3.light.Light;
 import com.jme3.material.Material;
 import com.jme3.math.Plane;
 import com.jme3.math.Vector2f;
@@ -191,12 +192,21 @@ public class TestSkyControlRun
 
         Updater oldUpdater = skyControl.getUpdater();
         skyControl = loadedNode.getControl(SkyControl.class);
-        assert skyControl != null;
         Updater updater = skyControl.getUpdater();
+
         ambientLight = updater.getAmbientLight();
         assert ambientLight != null;
+        Light sceneLight = MySpatial.findLight(loadedNode, AmbientLight.class);
+        if (sceneLight != null) {
+            loadedNode.removeLight(sceneLight);
+        }
+
         mainLight = updater.getMainLight();
         assert mainLight != null;
+        sceneLight = MySpatial.findLight(loadedNode, DirectionalLight.class);
+        if (sceneLight != null) {
+            loadedNode.removeLight(sceneLight);
+        }
         /*
          * Set the cameras, filters, renderers, and viewports for the loaded 
          * controls.  (These were not serialized.)
@@ -404,15 +414,14 @@ public class TestSkyControlRun
         /*
          * Enable or disable lights based on check boxes in the HUD.
          */
-        boolean added;
-        added = MySpatial.findLight(sceneNode, "ambient") == ambientLight;
+        boolean added = MySpatial.hasLight(sceneNode, ambientLight);
         boolean ambientLightOn = hud.getAmbientFlag();
         if (ambientLightOn && !added) {
             sceneNode.addLight(ambientLight);
         } else if (!ambientLightOn && added) {
             sceneNode.removeLight(ambientLight);
         }
-        added = MySpatial.findLight(sceneNode, "main") == mainLight;
+        added = MySpatial.hasLight(sceneNode, mainLight);
         boolean mainLightOn = hud.getMainLightFlag();
         if (mainLightOn && !added) {
             sceneNode.addLight(mainLight);
