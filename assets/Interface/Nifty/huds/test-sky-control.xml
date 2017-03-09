@@ -235,7 +235,7 @@
                                  min="-90"
                                  stepSize="1"/>
 
-                                 <panel style="statusPanel">
+                        <panel style="statusPanel">
                             <control name="label" id="lunarDiameterSliderStatus"/>
                         </panel>
                         <control name="horizontalSlider" id="lunarDiameterSlider"
@@ -345,6 +345,27 @@
                                      width="12"/>
                             <control name="label"
                                      text="enable sky"/>
+                        </panel>
+
+                        <panel style="buttonPanel">
+                            <control name="button" id="id5ToAvoidNiftyWarning"
+                                     label="Print the scene">
+                                <interact onRelease="perform(print scene)"/>
+                            </control>
+                        </panel>
+
+                        <panel style="buttonPanel">
+                            <control name="button" id="id6ToAvoidNiftyWarning"
+                                     label="Load the saved scene">
+                                <interact onRelease="perform(load scene)"/>
+                            </control>
+                        </panel>
+
+                        <panel style="buttonPanel">
+                            <control name="button" id="id7ToAvoidNiftyWarning"
+                                     label="Save the scene">
+                                <interact onRelease="perform(save scene)"/>
+                            </control>
                         </panel>
 
                     </panel>

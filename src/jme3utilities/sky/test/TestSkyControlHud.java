@@ -541,83 +541,77 @@ public class TestSkyControlHud
     // ActionListener methods
 
     /**
-     * Process an action from the GUI or keyboard.
+     * Process an action from the GUI.
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored time per frame (in seconds)
+     * @param tpf time interval between render passes (in seconds, &ge;0)
      */
     @Override
-    public void onAction(String actionString, boolean ongoing, float ignored) {
-        /*
-         * Ignore actions which are not ongoing.
-         */
-        if (!ongoing) {
-            return;
-        }
+    public void onAction(String actionString, boolean ongoing, float tpf) {
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
-        switch (actionString) {
-            case "look moon":
-                run.lookAtTheMoon();
-                break;
 
-            case "look sun":
-                run.lookAtTheSun();
-                break;
+        if (ongoing) {
+            switch (actionString) {
+                case "look moon":
+                    run.lookAtTheMoon();
+                    return;
 
-            case "phase":
-                showPhaseMenu();
-                break;
+                case "look sun":
+                    run.lookAtTheSun();
+                    return;
 
-            case "phase none":
-                phase = null;
-                break;
+                case "phase":
+                    showPhaseMenu();
+                    return;
 
-            case "phase waning":
-            case "phase waxing":
-                showPopup(actionString + "-",
-                        new String[]{"crescent", "gibbous"});
-                break;
+                case "phase none":
+                    phase = null;
+                    return;
 
-            case "phase custom":
-            case "phase full":
-            case "phase waning-crescent":
-            case "phase waning-gibbous":
-            case "phase waxing-crescent":
-            case "phase waxing-gibbous":
-                String name = actionString.substring(6);
-                phase = LunarPhase.fromDescription(name);
-                break;
+                case "phase waning":
+                case "phase waxing":
+                    showPopup(actionString + "-",
+                            new String[]{"crescent", "gibbous"});
+                    return;
 
-            case "star-map":
-                showStarMapMenu();
-                break;
+                case "phase custom":
+                case "phase full":
+                case "phase waning-crescent":
+                case "phase waning-gibbous":
+                case "phase waxing-crescent":
+                case "phase waxing-gibbous":
+                    String name = actionString.substring(6);
+                    phase = LunarPhase.fromDescription(name);
+                    return;
 
-            case "star-map 4m":
-            case "star-map 16m":
-            case "star-map nebula":
-                name = actionString.substring(9);
-                setStarMapName(name);
-                break;
+                case "star-map":
+                    showStarMapMenu();
+                    return;
 
-            case "style":
-                showStyleMenu();
-                break;
+                case "star-map 4m":
+                case "star-map 16m":
+                case "star-map nebula":
+                    name = actionString.substring(9);
+                    setStarMapName(name);
+                    return;
 
-            case "style chaotic":
-            case "style disc":
-            case "style hazy-disc":
-            case "style rayed":
-            case "style t0neg0d":
-                name = actionString.substring(6);
-                setStyle(name);
-                break;
+                case "style":
+                    showStyleMenu();
+                    return;
 
-            default:
-                logger.log(Level.WARNING, "Action {0} was not handled.",
-                        MyString.quote(actionString));
-                break;
+                case "style chaotic":
+                case "style disc":
+                case "style hazy-disc":
+                case "style rayed":
+                case "style t0neg0d":
+                    name = actionString.substring(6);
+                    setStyle(name);
+                    return;
+            }
         }
+
+        guiApplication.onAction(actionString, ongoing, tpf);
     }
     // *************************************************************************
     // GuiScreenController methods
