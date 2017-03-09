@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities project
 
-## Version 0.9.1 released on TBD
+## Version 0.9.1 released on 8 March 2017
 
 Major features added:
  + SkyControl is now serializable.
