@@ -541,7 +541,7 @@ public class TestSkyControlHud
     // ActionListener methods
 
     /**
-     * Process an action from the GUI or keyboard.
+     * Process an action from the GUI.
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
