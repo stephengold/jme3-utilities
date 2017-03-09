@@ -88,7 +88,7 @@ public class MyMath {
     public static float circle(float abscissa) {
         Validate.inRange(abscissa, "abscissa", -1f, 1f);
 
-        double x = (double) abscissa;
+        double x = abscissa;
         float y = (float) circle(x);
 
         assert y >= 0f : y;
@@ -195,7 +195,7 @@ public class MyMath {
     public static float fade(float t) {
         Validate.fraction(t, "t");
 
-        double tt = (double) t;
+        double tt = t;
         double ff = tt * tt * tt * (10.0 + tt * (-15.0 + 6.0 * tt));
         float result = (float) ff;
 
@@ -429,8 +429,8 @@ public class MyMath {
      * @return sum of squares (&ge;0)
      */
     public static double sumOfSquares(float firstValue, float secondValue) {
-        double x = (double) firstValue;
-        double y = (double) secondValue;
+        double x = firstValue;
+        double y = secondValue;
         double result = x * x + y * y;
 
         assert result >= 0.0 : result;

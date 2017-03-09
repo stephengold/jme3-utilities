@@ -269,8 +269,7 @@ public class StarfieldState extends SimpleAppState {
         NameGenerator names = new NameGenerator();
         Material white = MyAsset.createUnshadedMaterial(
                 assetManager, objectColor);
-        float objectRadius = 0.01f * zoneRadius
-                / MyMath.cubeRoot((float) numObjects);
+        float objectRadius = 0.01f * zoneRadius / MyMath.cubeRoot(numObjects);
         Mesh objectMesh = new Sphere(3, 10, objectRadius);
 
         for (int i = 0; i < numObjects; i++) {

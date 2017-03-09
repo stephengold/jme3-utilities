@@ -50,7 +50,7 @@ public class Generator extends Random {
     /**
      * version number for serialization
      */
-    static final long serialVersionUID = 37705297950129619L;
+    static final long serialVersionUID = 37_705_297_950_129_619L;
     // *************************************************************************
     // constructors    
 

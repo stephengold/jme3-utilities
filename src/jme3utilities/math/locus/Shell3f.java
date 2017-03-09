@@ -304,7 +304,7 @@ public class Shell3f implements Locus3f {
             optimalRSquared = Double.POSITIVE_INFINITY;
         } else {
             assert !Float.isInfinite(innerRadius);
-            double optimalRadius = 0.5 * (double) (innerRadius + outerRadius);
+            double optimalRadius = 0.5 * (innerRadius + outerRadius);
             optimalRSquared = optimalRadius * optimalRadius;
         }
         this.outerRadius = outerRadius;
@@ -750,14 +750,14 @@ public class Shell3f implements Locus3f {
         Shell3f hole, shell, solid;
         Vector3f center, location;
 
-        Generator random = new Generator(395782);
+        Generator random = new Generator(395_782);
 
         float[] scales = {0.1f, 1f, 10f, 10000f, 1e10f, 0.0001f, 1e-10f};
 
         for (float centerScale : scales) {
             for (float radiusScale : scales) {
                 for (float locScale : scales) {
-                    for (int i = 0; i < 10000; i++) {
+                    for (int i = 0; i < 10_000; i++) {
                         center = random.nextUnitVector3f();
                         center.multLocal(centerScale);
 
