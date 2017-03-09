@@ -55,7 +55,7 @@ abstract public class ActionApplication
     /**
      * names of flyCam actions and the signals used to simulate them
      */
-    final public static String[] flycamNames = {
+    final static String[] flycamNames = {
         "FLYCAM_Backward",
         "FLYCAM_Forward",
         "FLYCAM_Lower",
