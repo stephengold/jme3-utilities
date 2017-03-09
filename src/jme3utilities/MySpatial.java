@@ -133,7 +133,7 @@ public class MySpatial extends SimpleApplication {
      * @param <T> com.jme3.scene.Geometry or com.jme3.scene.Node
      * @param node node to search (not null)
      * @param spatialType subclass of Spatial to search for
-     * @return 1st matching child, or null if none found
+     * @return a pre-existing instance, or null if none found
      */
     @SuppressWarnings("unchecked")
     public static <T extends Spatial> T findChild(Node node,
@@ -154,7 +154,7 @@ public class MySpatial extends SimpleApplication {
      *
      * @param node node to search (not null)
      * @param childName name to search for (not null)
-     * @return 1st matching child, or null if none found
+     * @return a pre-existing instance, or null if none found
      *
      * @see com.jme3.scene.Node#getChild(java.lang.String)
      */
@@ -172,12 +172,31 @@ public class MySpatial extends SimpleApplication {
     }
 
     /**
-     * Find a local light with a specified name.
+     * Find a spatial's 1st local light that is an assignable from the specified class.
      *
      * @param spatial spatial to search (not null)
-     * @param lightName (not null)
-     * @return pre-existing instance of the 1st matching light, or null if none
-     * found
+     * @param lightClass (not null)
+     * @return a pre-existing instance, or null if none found
+     */
+    public static <T extends Light> T findLight(Spatial spatial, 
+            Class<T> lightClass) {
+        Validate.nonNull(lightClass, "light class");
+
+        for (Light light : spatial.getLocalLightList()) {
+            if (lightClass.isAssignableFrom(light.getClass())) {
+                return (T) light;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Find the 1st local light with the specified name.
+     *
+     * @param spatial spatial to search (not null)
+     * @param lightName name to search for (not null)
+     * @return a pre-existing instance, or null if none found
      */
     public static Light findLight(Spatial spatial, String lightName) {
         Validate.nonNull(lightName, "light name");
