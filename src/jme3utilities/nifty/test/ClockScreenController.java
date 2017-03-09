@@ -99,7 +99,7 @@ public class ClockScreenController
         midnight.set(Calendar.SECOND, 0);
         midnight.set(Calendar.MILLISECOND, 0);
         long mssm = rightNow.getTimeInMillis() - midnight.getTimeInMillis();
-        double ssm = ((double) mssm) / 1000.0;
+        double ssm = mssm / 1000.0;
 
         String text3 = String.format("%.3f", ssm);
         setStatusText("time3", text3);
