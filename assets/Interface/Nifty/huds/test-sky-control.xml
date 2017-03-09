@@ -45,10 +45,14 @@
                            padding="10"
                            width="188">
 
-                        <panel style="statusPanel"
-                               height="40">
+                        <panel style="statusPanel" height="16">
                             <control name="label"
-                                     text="The H key toggles this display."/>
+                                     text="The H key toggles this display"/>
+                        </panel>
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     textHAlign="right"
+                                     text="and F1 edits hotkey bindings."/>
                         </panel>
                         <panel style="statusPanel">
                             <control name="label"
