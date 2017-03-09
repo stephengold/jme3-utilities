@@ -361,7 +361,7 @@ and space.  To achieve this, override the application's simpleUpdate() method:
     public void simpleUpdate(float unused) {
         Spatial starMap = rootNode.getChild("Sky");
         SkyControl sc = rootNode.getControl(SkyControl.class);
-        sc.getSunAndStars().orientExternalSky(starMap);
+        sc.getSunAndStars().orientEquatorialSky(starMap, true);
     }
 
 To simulate the passage of time, we need state and a mechanism to update it.
