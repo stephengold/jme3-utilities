@@ -27,7 +27,9 @@ package jme3utilities.sky.test;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.asset.AssetNotFoundException;
 import com.jme3.asset.DesktopAssetManager;
+import com.jme3.asset.plugins.FileLocator;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -102,7 +104,11 @@ public class TestSkyControlRun
     /**
      * asset path for loading and saving
      */
-    final private static String savePath = "Models/TestSkyControl.j3o";
+    final private static String saveAssetPath = "Models/TestSkyControl.j3o";
+    /**
+     * file path to folder for temporary assets
+     */
+    final private static String tmpAssetDirPath = "temporaryAssets";
     // *************************************************************************
     // fields
 
@@ -174,10 +180,17 @@ public class TestSkyControlRun
             dam.clearCache();
         }
 
-        Spatial loadedScene = assetManager.loadModel(savePath);
+        Spatial loadedScene;
+        try {
+            loadedScene = assetManager.loadModel(saveAssetPath);
+        } catch (AssetNotFoundException e) {
+            logger.log(Level.SEVERE, "Didn''t find asset {0}",
+                    MyString.quote(saveAssetPath));
+            return;
+        }
         logger.log(Level.INFO, "Loaded {0} from asset {1}", new Object[]{
             MyString.quote(loadedScene.getName()),
-            MyString.quote(savePath)
+            MyString.quote(saveAssetPath)
         });
         Node loadedNode = (Node) loadedScene;
         /*
@@ -259,7 +272,8 @@ public class TestSkyControlRun
      * Save the current scene to a J3O file.
      */
     void save() {
-        String filePath = "assets/" + savePath;
+        String filePath = String.format("%s/%s", tmpAssetDirPath,
+                saveAssetPath);
         File file = new File(filePath);
         BinaryExporter exporter = BinaryExporter.getInstance();
 
@@ -302,6 +316,7 @@ public class TestSkyControlRun
     public void initialize(AppStateManager sm, Application app) {
         super.initialize(sm, app);
 
+        assetManager.registerLocator(tmpAssetDirPath, FileLocator.class);
         hud = TestSkyControl.hud;
         assert hud != null;
         showHud = hud.isEnabled();

@@ -1,4 +1,3 @@
-/assets/Models/TestSkyControl.j3o
 /assets/Textures/skies/bsc5.dat
 /build/
 /dist/
@@ -15,3 +14,4 @@
 /release/
 /temporaryAssets/testNameGenerator.j3o
 /temporaryAssets/Models/TestSkyMaterial.j3o
+/temporaryAssets/Models/TestSkyControl.j3o
