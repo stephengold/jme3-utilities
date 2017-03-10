@@ -26,6 +26,7 @@
 package jme3utilities.test;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.plugins.FileLocator;
 import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.binary.BinaryExporter;
@@ -45,13 +46,21 @@ import static jme3utilities.NameGenerator.isFrom;
  */
 public class TestNameGenerator extends SimpleApplication {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
             TestNameGenerator.class.getName());
+    /**
+     * asset path to test import/export
+     */
+    final private static String exportAssetPath = "testNameGenerator.j3o";
+    /**
+     * file path to folder for temporary assets
+     */
+    final private static String tmpAssetDirPath = "temporaryAssets";
     // *************************************************************************
     // new methods exposed
 
@@ -102,10 +111,12 @@ public class TestNameGenerator extends SimpleApplication {
 
         System.out.printf("used = %s%n", example.toString());
 
-        File targetFile = new File("assets/testNameGenerator.j3o");
+        String exportPath = String.format("%s/%s", tmpAssetDirPath, 
+                exportAssetPath);
+        File exportFile = new File(exportPath);
         JmeExporter exporter = BinaryExporter.getInstance();
         try {
-            exporter.save(example, targetFile);
+            exporter.save(example, exportFile);
         } catch (IOException exception) {
             assert false;
         }
@@ -114,8 +125,9 @@ public class TestNameGenerator extends SimpleApplication {
         example.reset();
         System.out.printf("reset = %s%n", example.toString());
 
+        assetManager.registerLocator(tmpAssetDirPath, FileLocator.class);
         NameGenerator imported = (NameGenerator) assetManager.loadAsset(
-                "testNameGenerator.j3o");
+                exportAssetPath);
         System.out.printf("imported = %s%n%n", imported.toString());
 
         System.out.printf("Success.%n");

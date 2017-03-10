@@ -1,7 +1,6 @@
 /assets/Models/TestSkyControl.j3o
 /assets/Models/TestSkyMaterial.j3o
 /assets/Textures/skies/bsc5.dat
-/assets/testNameGenerator.j3o
 /build/
 /dist/
 /lwjgl.dll
@@ -15,3 +14,4 @@
 /OpenAL32.dll
 /OpenAL64.dll
 /release/
+/temporaryAssets/testNameGenerator.j3o
