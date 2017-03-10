@@ -82,7 +82,7 @@ public class TestVectorXZ {
             VectorXZ r2 = new VectorXZ(q1.mult(v3));
 
             Quaternion q2 = new Quaternion();
-            q2.fromAngleNormalAxis(-a, Vector3f(0f, 1f, 0f));
+            q2.fromAngleNormalAxis(-a, new Vector3f(0f, 1f, 0f));
             VectorXZ r3 = new VectorXZ(q2.mult(v3));
 
             System.out.printf("vin=%s  r1=%s, r2=%s, r3=%s%n",
@@ -91,9 +91,5 @@ public class TestVectorXZ {
             System.out.println();
         }
         System.out.println();
-    }
-
-    private static Vector3f Vector3f(float f, float f0, float f1) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
