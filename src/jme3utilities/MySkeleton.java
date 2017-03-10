@@ -28,26 +28,21 @@ package jme3utilities;
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
-import com.jme3.app.SimpleApplication;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.Collection;
 import java.util.TreeSet;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * Utility methods for manipulating skeletonized spatials, skeletons, and bones.
- * Aside from test cases, all methods should be public and static.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class MySkeleton
-        extends SimpleApplication {
+public class MySkeleton {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -232,47 +227,5 @@ public class MySkeleton
         Quaternion result = worldOrientation(spatial, bone);
 
         return result;
-    }
-    // *************************************************************************
-    // test cases
-
-    /**
-     * Simple application to test the MySkeleton class.
-     *
-     * @param ignored command-line arguments
-     */
-    public static void main(String[] ignored) {
-        Misc.setLoggingLevels(Level.SEVERE);
-        MySkeleton application = new MySkeleton();
-        application.setShowSettings(false);
-        application.start();
-    }
-
-    /**
-     * Initialize the application and perform tests.
-     */
-    @Override
-    public void simpleInitApp() {
-        logger.setLevel(Level.INFO);
-        System.out.print("Test results for class MySkeleton:\n\n");
-
-        String modelPath = "Models/Oto/Oto.mesh.xml";
-        Node node = (Node) assetManager.loadModel(modelPath);
-        rootNode.attachChild(node);
-
-        //String bone = "uparm.right";
-        Quaternion orientation = new Quaternion();
-        float[] angles = new float[3];
-        for (int axis = 0; axis < 3; axis++) {
-            angles[axis] = 0.4f;
-        }
-        for (int axis = 0; axis < 3; axis++) {
-            float angle = 0.2f + 0.1f * axis;
-            angles[axis] = angle;
-            orientation.fromAngles(angles);
-            //
-        }
-
-        stop();
     }
 }

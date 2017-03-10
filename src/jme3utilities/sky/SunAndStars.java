@@ -37,7 +37,6 @@ import com.jme3.scene.Spatial;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MySpatial;
 import jme3utilities.Validate;
@@ -73,7 +72,7 @@ import jme3utilities.math.MyMath;
 public class SunAndStars
         implements Cloneable, Savable {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * obliquity of the ecliptic, in radians
@@ -499,56 +498,5 @@ public class SunAndStars
         capsule.write(observerLatitude, "observerLatitude",
                 Constants.defaultLatitude);
         capsule.write(solarLongitude, "solarLongitude", 0f);
-    }
-    // *************************************************************************
-    // test cases
-
-    /**
-     * A console application to test this class.
-     *
-     * @param ignored command-line arguments
-     */
-    public static void main(String[] ignored) {
-        logger.setLevel(Level.INFO);
-        System.out.print("Test results for class SunAndStars:\n\n");
-
-        SunAndStars test = new SunAndStars();
-        System.out.printf("Default value:  %s%n", test.toString());
-
-        test.setSolarLongitude(Calendar.DECEMBER, 31);
-        System.out.printf(" on December 31st:  %s%n", test.toString());
-
-        test.setSolarLongitude(Calendar.JANUARY, 1);
-        System.out.printf(" on January 1st:  %s%n", test.toString());
-
-        test.setSolarLongitude(Calendar.FEBRUARY, 29);
-        System.out.printf(" on February 29th:  %s%n", test.toString());
-
-        test.setSolarLongitude(Calendar.MARCH, 1);
-        System.out.printf(" on March 1st:  %s%n", test.toString());
-
-        SunAndStars copy;
-        try {
-            copy = test.clone();
-        } catch (CloneNotSupportedException exception) {
-            System.out.printf("Clone not supported!%n");
-            return;
-        }
-        System.out.printf("Clone of last value:  %s%n", copy.toString());
-
-        test.setSolarLongitude(Calendar.MARCH, 20);
-        System.out.printf(" on March 20th:  %s%n", test.toString());
-
-        test.setObserverLatitude(FastMath.HALF_PI);
-        System.out.printf(" at the North Pole:  %s%n", test.toString());
-
-        test.setObserverLatitude(-FastMath.HALF_PI);
-        System.out.printf(" at the South Pole:  %s%n", test.toString());
-
-        test.setObserverLatitude(0f);
-        System.out.printf(" at the Equator:  %s%n", test.toString());
-
-        test.setHour(23f + (59f + 59f / 60f) / 60f);
-        System.out.printf(" at 23:59:59 LST:  %s%n", test.toString());
     }
 }

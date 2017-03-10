@@ -34,7 +34,6 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
-import jme3utilities.math.noise.Generator;
 import jme3utilities.math.polygon.SimplePolygon3f;
 import jme3utilities.math.spline.LinearSpline3f;
 import jme3utilities.math.spline.Spline3f;
@@ -58,7 +57,7 @@ import jme3utilities.math.spline.Spline3f;
  */
 public class Shell3f implements Locus3f {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -734,66 +733,5 @@ public class Shell3f implements Locus3f {
 
         assert result >= 0f : result;
         return result;
-    }
-    // *************************************************************************
-    // test cases
-
-    /**
-     * Console application to test the Shell3f class.
-     *
-     * @param ignored command-line arguments
-     */
-    public static void main(String[] ignored) {
-        System.out.print("Test results for class Shell3f:\n\n");
-
-        float r1, r2, r3, x, y, z;
-        Shell3f hole, shell, solid;
-        Vector3f center, location;
-
-        Generator random = new Generator(395_782);
-
-        float[] scales = {0.1f, 1f, 10f, 10000f, 1e10f, 0.0001f, 1e-10f};
-
-        for (float centerScale : scales) {
-            for (float radiusScale : scales) {
-                for (float locScale : scales) {
-                    for (int i = 0; i < 10_000; i++) {
-                        center = random.nextUnitVector3f();
-                        center.multLocal(centerScale);
-
-                        x = random.nextFloat() * locScale;
-                        y = random.nextFloat() * locScale;
-                        z = random.nextFloat() * locScale;
-                        location = new Vector3f(x, y, z);
-                        location.addLocal(center);
-
-                        r1 = random.nextFloat() * radiusScale;
-                        r2 = random.nextFloat() * radiusScale;
-                        r3 = random.nextFloat() * radiusScale;
-                        if (r1 == 0f || r2 == 0f || r3 == 0f) {
-                            continue;
-                        }
-
-                        hole = new Shell3f(center, r1, Float.POSITIVE_INFINITY);
-                        hole.findLocation(location);
-                        hole.findLocation(center);
-
-                        solid = new Shell3f(Metric.EUCLID, center, r1, r2, r3);
-                        solid.findLocation(location);
-                        solid.findLocation(center);
-
-                        float inner = Math.min(r1, r2);
-                        float outer = Math.max(r1, r2);
-                        double cm = Metric.CHEBYSHEV.value(center);
-                        if (outer - inner < cm * 1e-6) {
-                            continue;
-                        }
-                        shell = new Shell3f(center, inner, outer);
-                        shell.findLocation(location);
-                        shell.findLocation(center);
-                    }
-                }
-            }
-        }
     }
 }

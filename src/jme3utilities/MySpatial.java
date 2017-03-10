@@ -25,9 +25,7 @@
  */
 package jme3utilities;
 
-import com.jme3.app.SimpleApplication;
 import com.jme3.audio.AudioNode;
-import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.light.Light;
@@ -40,19 +38,17 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.SkeletonDebugger;
 import com.jme3.terrain.geomipmap.TerrainQuad;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.math.VectorXZ;
 
 /**
- * Utility methods for generic operations on nodes and geometries. Aside from
- * test cases, all methods should be public and static.
+ * Utility methods for manipulating nodes and geometries.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class MySpatial extends SimpleApplication {
+public class MySpatial {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -685,57 +681,5 @@ public class MySpatial extends SimpleApplication {
         assert parentScale != 0f : parentScale;
         float localScale = scale / parentScale;
         spatial.setLocalScale(localScale);
-    }
-    // *************************************************************************
-    // test cases
-
-    /**
-     * Simple application to test the MySpatial class.
-     *
-     * @param ignored command-line arguments
-     */
-    public static void main(String[] ignored) {
-        Misc.setLoggingLevels(Level.WARNING);
-        Logger.getLogger(ALAudioRenderer.class.getName())
-                .setLevel(Level.SEVERE);
-
-        MySpatial application = new MySpatial();
-        application.setShowSettings(false);
-        application.start();
-    }
-
-    /**
-     * Initialize the application and perform tests.
-     */
-    @Override
-    public void simpleInitApp() {
-        logger.setLevel(Level.INFO);
-        System.out.print("Test results for class MySpatial:\n\n");
-
-        Node parent = new Node("parent");
-        rootNode.attachChild(parent);
-        parent.setLocalScale(new Vector3f(6f, 5f, 4f));
-        parent.setLocalRotation(new Quaternion(3f, 5f, 2f, 4f));
-        parent.setLocalTranslation(new Vector3f(-1f, 2f, 3f));
-        Node child = new Node("child");
-        parent.attachChild(child);
-
-        Vector3f loc = new Vector3f(9f, 7f, 8f);
-        System.out.printf("loc = %s%n", loc);
-        setWorldLocation(child, loc);
-        Vector3f loc2 = getWorldLocation(child);
-        System.out.printf("loc2 = %s%n", loc2);
-
-        parent.setLocalScale(new Vector3f(2f, 2f, 2f));
-
-        Quaternion rot = new Quaternion(3f, 1f, 4f, 15f);
-        rot.normalizeLocal();
-        System.out.printf("rot = %s%n", rot);
-        setWorldOrientation(child, rot);
-        Quaternion rot2 = getWorldOrientation(child);
-        rot2.normalizeLocal();
-        System.out.printf("rot2 = %s%n", rot2);
-
-        stop();
     }
 }

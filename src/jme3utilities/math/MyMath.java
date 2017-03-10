@@ -26,19 +26,17 @@
 package jme3utilities.math;
 
 import com.jme3.math.FastMath;
-import java.io.PrintStream;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * Mathematical utility methods. Aside from test cases, all methods should be
- * public and static.
+ * Mathematical utility methods.
  *
  * @author Stephen Gold sgold@sonic.net
  */
 public class MyMath {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * the square root of 1/2
@@ -459,44 +457,5 @@ public class MyMath {
     public static float toRadians(float degrees) {
         float result = degrees * FastMath.DEG_TO_RAD;
         return result;
-    }
-    // *************************************************************************
-    // test cases
-
-    /**
-     * Console application to test the MyMath class.
-     *
-     * @param ignored command-line arguments
-     */
-    public static void main(String[] ignored) {
-        PrintStream console = System.out;
-        console.print("Test results for class MyMath:\n\n");
-
-        float h = hypotenuse(3f, 4f);
-        console.printf("hypot(3,4) = %f%n", h);
-
-        float[] floatCases = new float[]{
-            -3f, 0f, 1f, 8f, Float.MAX_VALUE / 2f, Float.MAX_VALUE, -1f
-        };
-        for (float x : floatCases) {
-            console.println();
-
-            h = hypotenuse(x, x);
-            console.printf("x = %g    hypot(x,x) = %g%n", x, h);
-
-            float c = cube(x);
-            float cr = cubeRoot(x);
-            console.printf("  cube(x)=%g    cubeRoot(x)=%g%n", c, cr);
-
-            float x1 = cube(cr);
-            console.printf("  cube(cubeRoot(x)) = %g%n", x1);
-
-            float x2 = cubeRoot(c);
-            console.printf("  cubeRoot(cube(x)) = %g%n", x2);
-
-            console.printf("  x %% 4 = %f    x mod 4 = %f%n",
-                    x % 4f, modulo(x, 4f));
-        }
-        console.println();
     }
 }

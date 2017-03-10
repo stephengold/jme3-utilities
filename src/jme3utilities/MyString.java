@@ -29,14 +29,13 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 /**
- * Utility methods for Strings. Aside from test cases, all methods should be
- * public and static.
+ * Utility methods for Strings.
  *
  * @author Stephen Gold sgold@sonic.net
  */
 public class MyString {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -187,7 +186,7 @@ public class MyString {
             result[nextIndex] = string;
             nextIndex++;
         }
-        
+
         return result;
     }
 
@@ -252,54 +251,5 @@ public class MyString {
         }
         assert !inEscape;
         return result.toString();
-    }
-    // *************************************************************************
-    // test cases
-
-    /**
-     * Console application to test the MyString class.
-     *
-     * @param ignored command-line arguments
-     */
-    public static void main(String[] ignored) {
-        System.out.print("Test results for class MyString:\n\n");
-
-        String[] stringCases = new String[]{
-            "",
-            "-0",
-            "-900",
-            "-0.000",
-            "54.32100",
-            "0.1234",
-            "hello",
-            "he\\\\no\tgoodbye\n"
-        };
-
-        for (String s : stringCases) {
-            System.out.printf("s = \"%s\"%n", s);
-            String t = trimFloat(s);
-            System.out.printf(" trimFloat(s) = \"%s\"%n", t);
-            String e = escape(s);
-            System.out.printf(" escape(s) = \"%s\"%n", e);
-            String ue = unEscape(e);
-            System.out.printf(" unEscape(escape(s)) = \"%s\"%n", ue);
-            assert (s.equals(ue));
-
-            String[] ss = getLine(s);
-            System.out.printf(" ss0 = \"%s\" ss1 = \"%s\" ss3 = \"%s\"%n",
-                    ss[0], ss[1], ss[2]);
-
-            System.out.println();
-        }
-
-        String[] a1 = {"a", "fistful", "of", "bytes"};
-        String j1 = join(a1);
-        System.out.printf(" j1=\"%s\"%n", j1);
-
-        String[] a2 = {};
-        String j2 = join(a2);
-        System.out.printf(" j2=\"%s\"%n", j2);
-
-        System.out.println();
     }
 }
