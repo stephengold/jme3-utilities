@@ -28,7 +28,6 @@ package jme3utilities.sky.test;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetNotFoundException;
-import com.jme3.asset.DesktopAssetManager;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.light.AmbientLight;
@@ -82,7 +81,7 @@ public class TestSkyControlRun
         extends ActionAppState
         implements ViewPortListener {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * width and height of rendered shadow maps (pixels per side, &gt;0)
@@ -172,17 +171,10 @@ public class TestSkyControlRun
      * Load the scene from an asset.
      */
     void load() {
-        if (assetManager instanceof DesktopAssetManager) {
-            /*
-             * Clear cache to force loadModel() to read the J3O file.
-             */
-            DesktopAssetManager dam = (DesktopAssetManager) assetManager;
-            dam.clearCache();
-        }
-
+        UncachedModelKey key = new UncachedModelKey(saveAssetPath);
         Spatial loadedScene;
         try {
-            loadedScene = assetManager.loadModel(saveAssetPath);
+            loadedScene = assetManager.loadAsset(key);
         } catch (AssetNotFoundException e) {
             logger.log(Level.SEVERE, "Didn''t find asset {0}",
                     MyString.quote(saveAssetPath));

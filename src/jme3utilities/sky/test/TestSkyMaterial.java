@@ -29,7 +29,6 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.asset.AssetNotFoundException;
-import com.jme3.asset.DesktopAssetManager;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.export.binary.BinaryExporter;
@@ -67,7 +66,7 @@ import jme3utilities.ui.InputMode;
  */
 public class TestSkyMaterial extends GuiApplication {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * aspect ratio of the viewport (width/height)
@@ -365,17 +364,10 @@ public class TestSkyMaterial extends GuiApplication {
      * Load sky geometry from an asset.
      */
     private void load() {
-        if (assetManager instanceof DesktopAssetManager) {
-            /*
-             * Clear cache to force loadModel() to read the J3O file.
-             */
-            DesktopAssetManager dam = (DesktopAssetManager) assetManager;
-            dam.clearCache();
-        }
-
+        UncachedModelKey key = new UncachedModelKey(saveAssetPath);
         Geometry loadedDome;
         try {
-            loadedDome = (Geometry) assetManager.loadModel(saveAssetPath);
+            loadedDome = (Geometry) assetManager.loadAsset(key);
         } catch (AssetNotFoundException e) {
             logger.log(Level.SEVERE, "Didn''t find asset {0}",
                     MyString.quote(saveAssetPath));
