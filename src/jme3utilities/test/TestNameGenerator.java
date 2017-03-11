@@ -25,8 +25,6 @@
  */
 package jme3utilities.test;
 
-import com.jme3.app.SimpleApplication;
-import com.jme3.asset.plugins.FileLocator;
 import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.binary.BinaryExporter;
@@ -38,13 +36,14 @@ import jme3utilities.Misc;
 import jme3utilities.NameGenerator;
 import static jme3utilities.NameGenerator.getPrefix;
 import static jme3utilities.NameGenerator.isFrom;
+import jme3utilities.ui.ActionApplication;
 
 /**
  * Simple application to test the NameGenerator class.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class TestNameGenerator extends SimpleApplication {
+public class TestNameGenerator extends ActionApplication {
     // *************************************************************************
     // constants and loggers
 
@@ -57,10 +56,6 @@ public class TestNameGenerator extends SimpleApplication {
      * asset path to test import/export
      */
     final private static String exportAssetPath = "testNameGenerator.j3o";
-    /**
-     * file path to folder for temporary assets
-     */
-    final private static String tmpAssetDirPath = "temporaryAssets";
     // *************************************************************************
     // new methods exposed
 
@@ -83,7 +78,7 @@ public class TestNameGenerator extends SimpleApplication {
      * Initialize the application and perform tests.
      */
     @Override
-    public void simpleInitApp() {
+    public void actionInitializeApplication() {
         System.out.printf("Test results for class NameGenerator:%n%n");
 
         NameGenerator example = new NameGenerator();
@@ -111,8 +106,7 @@ public class TestNameGenerator extends SimpleApplication {
 
         System.out.printf("used = %s%n", example.toString());
 
-        String exportPath = String.format("%s/%s", tmpAssetDirPath, 
-                exportAssetPath);
+        String exportPath = ActionApplication.filePath(exportAssetPath);
         File exportFile = new File(exportPath);
         JmeExporter exporter = BinaryExporter.getInstance();
         try {
@@ -125,7 +119,6 @@ public class TestNameGenerator extends SimpleApplication {
         example.reset();
         System.out.printf("reset = %s%n", example.toString());
 
-        assetManager.registerLocator(tmpAssetDirPath, FileLocator.class);
         NameGenerator imported = (NameGenerator) assetManager.loadAsset(
                 exportAssetPath);
         System.out.printf("imported = %s%n%n", imported.toString());

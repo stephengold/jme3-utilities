@@ -27,11 +27,14 @@ package jme3utilities.ui;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
+import com.jme3.asset.plugins.ClasspathLocator;
+import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.CameraInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.util.BufferUtils;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
@@ -46,7 +49,7 @@ abstract public class ActionApplication
         extends SimpleApplication
         implements ActionListener {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -64,6 +67,10 @@ abstract public class ActionApplication
         CameraInput.FLYCAM_STRAFELEFT,
         CameraInput.FLYCAM_STRAFERIGHT
     };
+    /**
+     * filesystem path to the folder/directory for written assets
+     */
+    final private static String writtenAssetDirPath = "Written Assets";
     // *************************************************************************
     // fields
 
@@ -82,6 +89,18 @@ abstract public class ActionApplication
      * Callback to the user's application startup code.
      */
     abstract public void actionInitializeApplication();
+
+    /**
+     * Convert an asset path to a filesystem path for a writable asset.
+     *
+     * @param assetPath (not null)
+     * @return filesystem path (not null)
+     */
+    public static String filePath(String assetPath) {
+        Validate.nonNull(assetPath, "asset path");
+        String result = String.format("%s/%s", writtenAssetDirPath, assetPath);
+        return result;
+    }
 
     /**
      * Access the default input mode.
@@ -105,8 +124,8 @@ abstract public class ActionApplication
 
     /**
      * Callback invoked immediately after initializing the hotkey bindings of
-     * the default input mode. Meant to be overridden. Can be used to override
-     * those bindings.
+     * the default input mode. Meant to be overridden. Can be used to add action
+     * names and/or override those bindings.
      */
     public void moreDefaultBindings() {
     }
@@ -193,6 +212,17 @@ abstract public class ActionApplication
             throw new IllegalStateException(
                     "app should only be initialized once");
         }
+        /*
+         * Make sure a folder exists for writable assets.
+         */
+        File tmpAssetDir = new File(writtenAssetDirPath);
+        if (!tmpAssetDir.exists()) {
+            tmpAssetDir.mkdirs();
+        }
+        /*
+         * Register a locator for writable assets.
+         */
+        assetManager.registerLocator(writtenAssetDirPath, FileLocator.class);
         /*
          * Initialize hotkeys and a signal tracker for modal hotkeys.
          */

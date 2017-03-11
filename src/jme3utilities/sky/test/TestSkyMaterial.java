@@ -29,7 +29,6 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.asset.AssetNotFoundException;
-import com.jme3.asset.plugins.FileLocator;
 import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.input.KeyInput;
@@ -53,6 +52,7 @@ import jme3utilities.nifty.GuiApplication;
 import jme3utilities.sky.DomeMesh;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyMaterial;
+import jme3utilities.ui.ActionApplication;
 import jme3utilities.ui.InputMode;
 
 /**
@@ -114,10 +114,6 @@ public class TestSkyMaterial extends GuiApplication {
      * asset path for loading and saving
      */
     final private static String saveAssetPath = "Models/TestSkyMaterial.j3o";
-    /**
-     * file path to folder for temporary assets
-     */
-    final private static String tmpAssetDirPath = "temporaryAssets";
     // *************************************************************************
     // fields
 
@@ -209,7 +205,6 @@ public class TestSkyMaterial extends GuiApplication {
         logger.log(Level.INFO, "jME3-utilities version is {0}",
                 MyString.quote(Misc.getVersionShort()));
 
-        assetManager.registerLocator(tmpAssetDirPath, FileLocator.class);
         configureCamera();
         /*
          * Create and attach a dome mesh geometry for the sky.
@@ -392,8 +387,7 @@ public class TestSkyMaterial extends GuiApplication {
      * Save the current sky geometry to a J3O file.
      */
     private void save() {
-        String filePath = String.format("%s/%s", tmpAssetDirPath,
-                saveAssetPath);
+        String filePath = ActionApplication.filePath(saveAssetPath);
         File file = new File(filePath);
         BinaryExporter exporter = BinaryExporter.getInstance();
         Spatial dome = MySpatial.findChild(rootNode, geometryName);

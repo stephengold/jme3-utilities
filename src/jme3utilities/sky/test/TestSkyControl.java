@@ -48,7 +48,7 @@ import jme3utilities.ui.InputMode;
  */
 public class TestSkyControl extends GuiApplication {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -60,10 +60,10 @@ public class TestSkyControl extends GuiApplication {
      */
     final private static String applicationName = "TestSkyControl";
     /**
-     * path to hotkey bindings configuration file
+     * path to hotkey bindings configuration asset
      */
-    final private static String hotkeyBindingsPath = 
-            "assets/Interface/bindings/TestSkyControl.properties";
+    final private static String hotkeyBindingsAssetPath = 
+            "Interface/bindings/TestSkyControl.properties";
     // *************************************************************************
     // fields
 
@@ -176,10 +176,8 @@ public class TestSkyControl extends GuiApplication {
          */
         InputMode dim = getDefaultInputMode();
         dim.influence(run);
-        /*
-         * Load hotkey bindings from file.
-         */
-        dim.setConfigPath(hotkeyBindingsPath);
+
+        dim.setConfigPath(hotkeyBindingsAssetPath);
     }
 
     /**

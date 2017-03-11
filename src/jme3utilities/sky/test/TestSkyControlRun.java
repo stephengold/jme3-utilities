@@ -28,7 +28,6 @@ package jme3utilities.sky.test;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetNotFoundException;
-import com.jme3.asset.plugins.FileLocator;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -71,6 +70,7 @@ import jme3utilities.sky.SkyControl;
 import jme3utilities.sky.SunAndStars;
 import jme3utilities.sky.Updater;
 import jme3utilities.ui.ActionAppState;
+import jme3utilities.ui.ActionApplication;
 
 /**
  * Action app state to manage the scene for the TestSkyControl application.
@@ -104,10 +104,6 @@ public class TestSkyControlRun
      * asset path for loading and saving
      */
     final private static String saveAssetPath = "Models/TestSkyControl.j3o";
-    /**
-     * file path to folder for temporary assets
-     */
-    final private static String tmpAssetDirPath = "temporaryAssets";
     // *************************************************************************
     // fields
 
@@ -264,8 +260,7 @@ public class TestSkyControlRun
      * Save the current scene to a J3O file.
      */
     void save() {
-        String filePath = String.format("%s/%s", tmpAssetDirPath,
-                saveAssetPath);
+        String filePath = ActionApplication.filePath(saveAssetPath);
         File file = new File(filePath);
         BinaryExporter exporter = BinaryExporter.getInstance();
 
@@ -308,7 +303,6 @@ public class TestSkyControlRun
     public void initialize(AppStateManager sm, Application app) {
         super.initialize(sm, app);
 
-        assetManager.registerLocator(tmpAssetDirPath, FileLocator.class);
         hud = TestSkyControl.hud;
         assert hud != null;
         showHud = hud.isEnabled();
