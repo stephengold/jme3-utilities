@@ -220,9 +220,12 @@ abstract public class ActionApplication
             tmpAssetDir.mkdirs();
         }
         /*
-         * Register a locator for writable assets.
+         * Register a locator for writable assets and
+         * make sure it precedes the classpath locator.
          */
         assetManager.registerLocator(writtenAssetDirPath, FileLocator.class);
+        assetManager.unregisterLocator("/", ClasspathLocator.class);
+        assetManager.registerLocator("/", ClasspathLocator.class);
         /*
          * Initialize hotkeys and a signal tracker for modal hotkeys.
          */
