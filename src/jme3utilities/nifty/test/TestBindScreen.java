@@ -46,7 +46,7 @@ import jme3utilities.ui.InputMode;
  */
 public class TestBindScreen extends GuiApplication {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * number of objects to animate (&gt;0)
@@ -147,6 +147,7 @@ public class TestBindScreen extends GuiApplication {
          */
         logger.log(Level.INFO, "jME3-utilities version is {0}",
                 MyString.quote(Misc.getVersionShort()));
+        Logger.getLogger(InputMode.class.getName()).setLevel(Level.INFO);
         /*
          * Disable flyCam and stats display.
          */
@@ -154,10 +155,6 @@ public class TestBindScreen extends GuiApplication {
         StatsAppState sas = stateManager.getState(StatsAppState.class);
         sas.setDisplayFps(false);
         sas.setDisplayStatView(false);
-        /*
-         * Initialize the (default) input mode for playing the game.
-         */
-        initializeBindings();
         /*
          * Create and attach the starfield animation.
          */
@@ -178,12 +175,43 @@ public class TestBindScreen extends GuiApplication {
         InputMode mode = getDefaultInputMode();
         mode.influence(starfield);
         mode.influence(messageHud);
+
+        mode.setConfigPath("Interface/bindings/TestBindScreen.properties");
         /*
          * Attach a screen controller for the hotkey bindings editor.
          */
         bindScreen = new BindScreen();
         success = stateManager.attach(bindScreen);
         assert success;
+    }
+
+    /**
+     * Callback invoked immediately after initializing the hotkey bindings of
+     * the default input mode.
+     */
+    @Override
+    public void moreDefaultBindings() {
+        /* 
+         * Add action names to the default input mode.
+         */
+        InputMode dim = getDefaultInputMode();
+
+        dim.addActionName(asFeels);
+        dim.addActionName(asFire);
+        dim.addActionName(asForward);
+        dim.addActionName(asHail);
+        dim.addActionName(asHelp);
+        dim.addActionName(asLowerShields);
+        dim.addActionName(asPitchDown);
+        dim.addActionName(asPitchUp);
+        dim.addActionName(asRaiseShields);
+        dim.addActionName(asReverse);
+        dim.addActionName(asRollLeft);
+        dim.addActionName(asRollRight);
+        dim.addActionName(asStopAll);
+        dim.addActionName(asStopRotation);
+        dim.addActionName(asYawLeft);
+        dim.addActionName(asYawRight);
     }
 
     /**
@@ -256,34 +284,6 @@ public class TestBindScreen extends GuiApplication {
     }
     // *************************************************************************
     // private methods
-
-    /**
-     * Add action strings and hotkey bindings to the default input mode.
-     */
-    private void initializeBindings() {
-        InputMode mode = getDefaultInputMode();
-
-        mode.addActionName(asFeels);
-        mode.addActionName(asFire);
-        mode.addActionName(asForward);
-        mode.addActionName(asHail);
-        mode.addActionName(asHelp);
-        mode.addActionName(asLowerShields);
-        mode.addActionName(asPitchDown);
-        mode.addActionName(asPitchUp);
-        mode.addActionName(asRaiseShields);
-        mode.addActionName(asReverse);
-        mode.addActionName(asRollLeft);
-        mode.addActionName(asRollRight);
-        mode.addActionName(asStopAll);
-        mode.addActionName(asStopRotation);
-        mode.addActionName(asYawLeft);
-        mode.addActionName(asYawRight);
-
-        mode.setConfigPath(
-                "assets/Interface/bindings/TestBindScreen.properties");
-        mode.loadBindings();
-    }
 
     /**
      * Display a message in the HUD about how fast we're going.

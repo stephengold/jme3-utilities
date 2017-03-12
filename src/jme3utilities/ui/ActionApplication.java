@@ -172,8 +172,8 @@ abstract public class ActionApplication
                         System.out.println("Camera Direction: " + cam.getDirection());
                         System.out.println("cam.setLocation(new Vector3f("
                                 + loc.x + "f, " + loc.y + "f, " + loc.z + "f));");
-                        System.out.println("cam.setRotation(new Quaternion(" + 
-                            rot.getX() + "f, " + rot.getY() + "f, " + rot.getZ() 
+                        System.out.println("cam.setRotation(new Quaternion("
+                                + rot.getX() + "f, " + rot.getY() + "f, " + rot.getZ()
                                 + "f, " + rot.getW() + "f));");
                     }
                     return;
@@ -226,6 +226,10 @@ abstract public class ActionApplication
         assetManager.registerLocator(writtenAssetDirPath, FileLocator.class);
         assetManager.unregisterLocator("/", ClasspathLocator.class);
         assetManager.registerLocator("/", ClasspathLocator.class);
+        /*
+         * Register a loader for Properties assets.
+         */
+        assetManager.registerLoader(PropertiesLoader.class, "properties");
         /*
          * Initialize hotkeys and a signal tracker for modal hotkeys.
          */

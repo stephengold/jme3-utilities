@@ -29,11 +29,10 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.cursors.plugins.JmeCursor;
 import com.jme3.input.controls.ActionListener;
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -74,7 +73,7 @@ abstract public class InputMode
         extends ActionAppState
         implements ActionListener {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -109,16 +108,16 @@ abstract public class InputMode
      * doesn't provide access to its mappings and also so that the hotkey
      * bindings editor can examine hotkey bindings while this mode is disabled
      */
-    final private Properties hotkeyBindings = new Properties();
+    private Properties hotkeyBindings = new Properties();
     /**
      * all known action names, bound and unbound
      */
     final private Set<String> actionNames = new TreeSet<>();
     /**
-     * path to configuration file for loading and saving hotkey bindings (or
-     * null if not loadable/savable): set by setSaveFileName()
+     * path to configuration asset for loading and saving hotkey bindings (or
+     * null if not loadable/savable): set by #setConfigPath()
      */
-    private String configFilePath = null;
+    private String configAssetPath = null;
     /**
      * terse name for this mode: set by constructor
      */
@@ -265,13 +264,13 @@ abstract public class InputMode
     }
 
     /**
-     * Read path to the configuration file.
+     * Read the path to the configuration asset.
      *
-     * @return current filesystem path (or null if the bindings are not
+     * @return current asset path (or null if the bindings are not
      * loadable/savable)
      */
     public String getConfigPath() {
-        String path = configFilePath;
+        String path = configAssetPath;
         return path;
     }
 
@@ -296,27 +295,27 @@ abstract public class InputMode
     }
 
     /**
-     * Load a set of hotkey bindings from the properties file.
+     * Load a set of hotkey bindings from the configuration asset.
      */
     public void loadBindings() {
-        if (configFilePath == null) {
+        String assetPath = getConfigPath();
+        if (assetPath == null) {
             logger.log(Level.WARNING,
                     "bindings not loaded: config path not set");
             return;
         }
 
-        String path = getConfigPath();
         try {
-            loadBindings(path);
+            loadBindings(assetPath);
 
         } catch (FileNotFoundException exception) {
             logger.log(Level.SEVERE, "Didn''t find any hotkey bindings at {0}.",
-                    MyString.quote(path));
+                    MyString.quote(assetPath));
 
         } catch (IOException exception) {
             logger.log(Level.SEVERE,
                     "Input exception while loading hotkey bindings from {0}!",
-                    MyString.quote(path));
+                    MyString.quote(assetPath));
             throw new RuntimeException(exception);
         }
     }
@@ -333,27 +332,26 @@ abstract public class InputMode
     }
 
     /**
-     * Save all hotkey bindings to the properties file.
+     * Save all hotkey bindings to the configuration asset.
      */
     public void saveBindings() {
         assert isInitialized();
 
-        if (configFilePath == null) {
+        String assetPath = getConfigPath();
+        if (assetPath == null) {
             logger.log(Level.WARNING,
                     "bindings not saved: config path not set");
             return;
         }
 
-        String path = getConfigPath();
-
         FileOutputStream stream = null;
         try {
-            saveBindings(path);
+            saveBindings(assetPath);
 
         } catch (IOException exception) {
             logger.log(Level.SEVERE,
                     "Output exception while saving hotkey bindings to {0}!",
-                    MyString.quote(path));
+                    MyString.quote(assetPath));
             throw new RuntimeException(exception);
 
         } finally {
@@ -367,13 +365,13 @@ abstract public class InputMode
     }
 
     /**
-     * Alter path to the configuration file.
+     * Alter the path to the configuration asset.
      *
-     * @param path desired filesystem path (or null to make the bindings not
+     * @param assetPath desired asset path (or null to make the bindings not
      * loadable/savable)
      */
-    public void setConfigPath(String path) {
-        configFilePath = path;
+    public void setConfigPath(String assetPath) {
+        configAssetPath = assetPath;
     }
 
     /**
@@ -423,7 +421,7 @@ abstract public class InputMode
      */
     @Override
     public void setEnabled(boolean newState) {
-        logger.log(Level.INFO, "mode={0} newState={1}", new Object[]{
+        logger.log(Level.FINE, "mode={0} newState={1}", new Object[]{
             shortName, newState
         });
         assert !isSuspended;
@@ -470,7 +468,7 @@ abstract public class InputMode
              */
             aa.moreDefaultBindings();
         }
-        
+
         setEnabled(startEnabled);
     }
     // *************************************************************************
@@ -562,13 +560,13 @@ abstract public class InputMode
      * Initialize the hotkey bindings.
      */
     private void initializeHotkeyBindings() {
-        if (configFilePath == null) {
+        if (configAssetPath == null) {
             defaultBindings();
             return;
         }
         /*
-         * Attempt to load custom hotkey bindings from config file.  If that fails,
-         * load the default bindings for this mode.
+         * Attempt to load custom hotkey bindings from the configuration asset.
+         * If that fails, load the default bindings for this mode.
          */
         String path = getConfigPath();
         try {
@@ -592,46 +590,24 @@ abstract public class InputMode
     }
 
     /**
-     * Load hotkey bindings from an input stream.
+     * Load hotkey bindings from a configuration asset.
      *
-     * @param stream input stream to load from (not null)
+     * @param assetPath asset path (not null)
      */
-    private void loadBindings(InputStream stream)
-            throws IOException {
-        assert stream != null;
+    private void loadBindings(String assetPath)
+            throws FileNotFoundException, IOException {
+        assert assetPath != null;
 
-        hotkeyBindings.clear();
-        hotkeyBindings.loadFromXML(stream);
+        logger.log(Level.INFO, "Loading hotkey bindings from asset {0}.",
+                MyString.quote(assetPath));
+
+        PropertiesKey key = new PropertiesKey(assetPath);
+        hotkeyBindings = assetManager.loadAsset(key);
 
         for (String keyString : hotkeyBindings.stringPropertyNames()) {
             String actionName = hotkeyBindings.getProperty(keyString);
             Hotkey hotkey = Hotkey.getInstance(keyString);
             bind(actionName, hotkey);
-        }
-    }
-
-    /**
-     * Load hotkey bindings from a configuration (properties) file.
-     *
-     * @param filePath filesystem path (not null)
-     */
-    private void loadBindings(String filePath)
-            throws FileNotFoundException, IOException {
-        assert filePath != null;
-
-        logger.log(Level.INFO,
-                "Loading hotkey bindings from config file {0}.",
-                MyString.quote(filePath));
-
-        FileInputStream stream = null;
-        try {
-            stream = new FileInputStream(filePath);
-            loadBindings(stream);
-
-        } finally {
-            if (stream != null) {
-                stream.close();
-            }
         }
     }
 
@@ -741,19 +717,25 @@ abstract public class InputMode
     }
 
     /**
-     * Save hotkey bindings to a configuration (properties) file.
+     * Save hotkey bindings to a configuration asset.
      *
-     * @param filePath filesystem path (not null)
+     * @param assetPath asset path (not null)
      */
-    private void saveBindings(String filePath) throws IOException {
-        assert filePath != null;
+    private void saveBindings(String assetPath) throws IOException {
+        assert assetPath != null;
 
         logger.log(Level.INFO,
-                "Saving hotkey bindings to properties file at {0}.",
-                MyString.quote(filePath));
+                "Saving hotkey bindings to asset {0}.",
+                MyString.quote(assetPath));
 
         FileOutputStream stream = null;
+        String filePath = ActionApplication.filePath(assetPath);
         try {
+            File file = new File(filePath);
+            File parentDirectory = file.getParentFile();
+            if (parentDirectory != null && !parentDirectory.exists()) {
+                parentDirectory.mkdirs();
+            }
             stream = new FileOutputStream(filePath);
             saveBindings(stream);
         } catch (FileNotFoundException exception) {
