@@ -670,13 +670,17 @@ public class MySpatial {
     /**
      * Alter the world scaling of a spatial.
      *
-     * @param spatial spatial to rescale (not null, not orphan)
+     * @param spatial spatial to rescale (not null)
      * @param scale desired world scale (&gt;0)
      */
     public static void setWorldScale(Spatial spatial, float scale) {
         Validate.positive(scale, "scale");
 
         Spatial parent = spatial.getParent();
+        if (parent == null) {
+            spatial.setLocalScale(scale);
+            return;
+        }
         float parentScale = MySpatial.getUniformScale(parent);
         assert parentScale != 0f : parentScale;
         float localScale = scale / parentScale;
