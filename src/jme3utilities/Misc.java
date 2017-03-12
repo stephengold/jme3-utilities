@@ -54,7 +54,7 @@ import javax.imageio.ImageIO;
  */
 public class Misc {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * blend time for animations (in real seconds, &ge;0)
@@ -228,6 +228,14 @@ public class Misc {
 
         File textureFile = new File(filePath);
         try {
+            /*
+             * If a parent directory/folder is needed, create it.
+             */
+            File parentDirectory = textureFile.getParentFile();
+            if (parentDirectory != null && !parentDirectory.exists()) {
+                parentDirectory.mkdirs();
+            }
+
             ImageIO.write(image, "png", textureFile);
             logger.log(Level.INFO, "wrote texture to {0}",
                     MyString.quote(filePath));
