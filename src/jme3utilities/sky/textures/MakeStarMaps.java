@@ -82,7 +82,7 @@ public class MakeStarMaps {
         static final long serialVersionUID = 1L;
     }
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * luminosity of the faintest stars to include
@@ -143,8 +143,8 @@ public class MakeStarMaps {
      */
     final private static String applicationName = "MakeStarMaps";
     /**
-     * file path to the input file, an ASCII version of version 5 of the Yale
-     * Bright Star Catalog, which may be downloaded from
+     * filesystem path to the input file, an ASCII version of version 5 of the
+     * Yale Bright Star Catalog, which may be downloaded from
      * http://tdc-www.harvard.edu/catalogs/bsc5.html
      */
     final private static String catalogFilePath =
@@ -156,6 +156,11 @@ public class MakeStarMaps {
     final private static String[] faceName = {
         "right", "left", "top", "bottom", "front", "back"
     };
+    /**
+     * filesystem path to the output directory/folder
+     */
+    final private static String outputDirPath = 
+            "assets/Textures/skies/star-maps";
     // *************************************************************************
     // fields
 
@@ -452,10 +457,10 @@ public class MakeStarMaps {
                     textureSize);
             assert images.length == 6 : images.length;
             for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-                String filePath = String.format(
-                        "assets/Textures/skies/star-maps/%s/%s_%s%d.png",
-                        preset.textureFileName(), preset.textureFileName(),
-                        faceName[faceIndex], faceIndex + 1);
+                String filePath = String.format("%s/%s/%s_%s%d.png",
+                        outputDirPath, preset.textureFileName(),
+                        preset.textureFileName(), faceName[faceIndex],
+                        faceIndex + 1);
                 try {
                     Misc.writeMap(filePath, images[faceIndex]);
                 } catch (IOException exception) {
@@ -469,8 +474,7 @@ public class MakeStarMaps {
              */
             RenderedImage image = generateDomeMap(latitude, siderealTime,
                     textureSize);
-            String filePath = String.format(
-                    "assets/Textures/skies/star-maps/%s.png",
+            String filePath = String.format("%s/%s.png", outputDirPath,
                     preset.textureFileName());
             try {
                 Misc.writeMap(filePath, image);

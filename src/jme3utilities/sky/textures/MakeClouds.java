@@ -47,7 +47,7 @@ import jme3utilities.math.noise.Perlin2;
  */
 public class MakeClouds {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -58,6 +58,12 @@ public class MakeClouds {
      * application name for the usage message
      */
     final private static String applicationName = "MakeClouds";
+    /**
+     * filesystem path to the output directory/folder
+     */
+    final private static String outputDirPath = 
+            "assets/Textures/skies/clouds";
+
     // *************************************************************************
     // fields
 
@@ -261,8 +267,7 @@ public class MakeClouds {
         assert fileName.length() > 0;
         assert image != null;
 
-        String filePath = String.format("assets/Textures/skies/clouds/%s.png",
-                fileName);
+        String filePath = String.format("%s/%s.png", outputDirPath, fileName);
         Misc.writeMap(filePath, image);
     }
 }

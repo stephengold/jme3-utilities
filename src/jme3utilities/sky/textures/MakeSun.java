@@ -47,7 +47,7 @@ import jme3utilities.sky.Constants;
  */
 public class MakeSun {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * UV radius of a sun's disc
@@ -70,6 +70,11 @@ public class MakeSun {
      * application name for the usage message
      */
     final private static String applicationName = "MakeSun";
+    /**
+     * filesystem path to the output directory/folder
+     */
+    final private static String outputDirPath = 
+            "assets/Textures/skies/suns";
     // *************************************************************************
     // fields
 
@@ -227,8 +232,7 @@ public class MakeSun {
         assert numRays >= -1 : numRays;
 
         RenderedImage image = makeSun(discSharpness, surroundAlpha, numRays);
-        String filePath = String.format("assets/Textures/skies/suns/%s.png",
-                styleName);
+        String filePath = String.format("%s/%s.png", outputDirPath, styleName);
         Misc.writeMap(filePath, image);
     }
 

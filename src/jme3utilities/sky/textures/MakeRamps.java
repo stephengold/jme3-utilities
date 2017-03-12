@@ -46,7 +46,7 @@ import jme3utilities.sky.DomeMesh;
  */
 public class MakeRamps {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * ratio of atmosphere thickness to Earth's radius
@@ -65,6 +65,11 @@ public class MakeRamps {
      * application name for the usage message
      */
     final private static String applicationName = "MakeRamps";
+    /**
+     * filesystem path to the output directory/folder
+     */
+    final private static String outputDirPath = 
+            "assets/Textures/skies/ramps";
     // *************************************************************************
     // fields
 
@@ -181,8 +186,7 @@ public class MakeRamps {
         assert fileName != null;
 
         RenderedImage image = makeRamp(flattening);
-        String filePath = String.format("assets/Textures/skies/ramps/%s.png",
-                fileName);
+        String filePath = String.format("%s/%s.png", outputDirPath, fileName);
         Misc.writeMap(filePath, image);
     }
 
