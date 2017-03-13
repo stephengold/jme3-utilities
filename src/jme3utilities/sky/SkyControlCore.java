@@ -74,7 +74,7 @@ import jme3utilities.math.MyColor;
  */
 public class SkyControlCore extends SubtreeControl {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * maximum number of cloud layers
@@ -711,6 +711,7 @@ public class SkyControlCore extends SubtreeControl {
         float far = camera.getFrustumFar();
         float near = camera.getFrustumNear();
         float radius = (near + far) / 2f;
+        assert subtree.getParent() == spatial;
         MySpatial.setWorldScale(subtree, radius);
 
         if (stabilizeFlag) {
