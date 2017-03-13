@@ -19,6 +19,7 @@
 /SkyControl/src/main/resources/Textures/skies/clouds/
 /SkyControl/src/main/resources/Textures/skies/star-maps/
 /SkyControl/src/main/resources/Textures/skies/suns/
+/textures/build/
 /textures/src/main/java/jme3utilities/Misc.java
 /textures/src/main/java/jme3utilities/MyAsset.java
 /textures/src/main/java/jme3utilities/MyAnimation.java
@@ -42,7 +43,19 @@
 /textures/src/main/java/jme3utilities/math/
 /textures/src/main/java/jme3utilities/navigation/
 /textures/src/main/java/jme3utilities/physics/
-/textures/src/main/java/jme3utilities/sky/
+/textures/src/main/java/jme3utilities/sky/CloudLayer.java
+/textures/src/main/java/jme3utilities/sky/Constants.java
+/textures/src/main/java/jme3utilities/sky/DomeMesh.java
+/textures/src/main/java/jme3utilities/sky/FloorControl.java
+/textures/src/main/java/jme3utilities/sky/GlobeRenderer.java
+/textures/src/main/java/jme3utilities/sky/LunarPhase.java
+/textures/src/main/java/jme3utilities/sky/package-info.java
+/textures/src/main/java/jme3utilities/sky/SkyControl.java
+/textures/src/main/java/jme3utilities/sky/SkyControlCore.java
+/textures/src/main/java/jme3utilities/sky/SkyMaterial.java
+/textures/src/main/java/jme3utilities/sky/SkyMaterialCore.java
+/textures/src/main/java/jme3utilities/sky/SunAndStars.java
+/textures/src/main/java/jme3utilities/sky/Updater.java
 /textures/src/main/java/jme3utilities/xml/
 /textures/src/main/resources/bsc5.dat
 /Written Assets/
