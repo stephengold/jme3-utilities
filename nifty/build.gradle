@@ -1,0 +1,19 @@
+// Note: "common.gradle" in the root project contains additional initialization
+//   for this project. This initialization is applied in the "build.gradle"
+//   of the root project.
+description = 'NiftyGUI utilities for jMonkeyEngine3'
+
+dependencies {
+    compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
+    compile "org.jmonkeyengine:jme3-niftygui:$jmonkeyengineVersion"
+    compile project(':SkyControl')
+    compile project(':ui')
+}
+
+configure(install.repositories.mavenInstaller) {
+    pom.project {
+        groupId = "$group"
+        artifactId = 'jme3-utilities-nifty'
+        version = '0.1'
+    }
+}

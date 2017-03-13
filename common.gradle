@@ -1,0 +1,33 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'jme3utilities'
+sourceCompatibility = '1.7'
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+ext { 
+    jcommanderVersion = '1.48'
+    jmonkeyengineVersion = '3.1.0-stable'
+}
+
+repositories {
+    maven { url "https://jcenter.bintray.com" }
+    maven { url "https://dl.bintray.com/stephengold/org.jmonkeyengine" }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes, description: 'Create a jar of source files.') {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc, description: 'Create a jar of javadoc.') {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}

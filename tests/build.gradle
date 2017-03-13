@@ -1,0 +1,110 @@
+// Note: "common.gradle" in the root project contains additional initialization
+//   for this project. This initialization is applied in the "build.gradle"
+//   of the root project.
+description = 'demos and tests that do not generate reports'
+
+dependencies {
+    compile "com.beust:jcommander:$jcommanderVersion"
+    compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
+    compile "org.jmonkeyengine:jme3-blender:$jmonkeyengineVersion"
+    compile "org.jmonkeyengine:jme3-bullet:$jmonkeyengineVersion"
+    compile "org.jmonkeyengine:jme3-bullet-native:$jmonkeyengineVersion"
+    compile "org.jmonkeyengine:jme3-desktop:$jmonkeyengineVersion"
+    compile "org.jmonkeyengine:jme3-effects:$jmonkeyengineVersion"
+    compile "org.jmonkeyengine:jme3-jogg:$jmonkeyengineVersion"
+    compile "org.jmonkeyengine:jme3-lwjgl:$jmonkeyengineVersion"
+    compile "org.jmonkeyengine:jme3-plugins:$jmonkeyengineVersion"
+    compile "org.jmonkeyengine:jme3-terrain:$jmonkeyengineVersion"
+    compile "org.jmonkeyengine:jme3-testdata:3.1.0-stable"
+    compile project(':SkyControl')
+    compile project(':debug')
+    compile project(':nifty')
+    compile project(':ui')
+    compile project(':x')
+}
+
+task TestPas(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.debug.test.TestPas'
+}
+task TestMyMath(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.math.test.TestMyMath'
+}
+task TestMyVector3f(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.math.test.TestMyVector3f'
+}
+task TestPolygon3f(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.math.test.TestPolygon3f'
+}
+task TestMyShell3f(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.math.test.TestShell3f'
+}
+task TestVectorXZ(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.math.test.TestVectorXZ'
+}
+task ClockDemo(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.nifty.test.ClockDemo'
+}
+task TestBindScreen(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.nifty.test.TestBindScreen'
+}
+task TestMultipleScreens(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.nifty.test.TestMultipleScreens'
+}
+task CubeMapExample(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.sky.test.CubeMapExample'
+}
+task TestSkyControl(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.sky.test.TestSkyControl'
+}
+task TestSkyMaterial(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.sky.test.TestSkyMaterial'
+}
+task TestSunAndStars(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.sky.test.TestSunAndStars'
+}
+task TestMySkeleton(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.test.TestMySkeleton'
+}
+task TestMySpatial(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.test.TestMySpatial'
+}
+task TestMyString(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.test.TestMyString'
+}
+task TestNameGenerator(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.test.TestNameGenerator'
+}

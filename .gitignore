@@ -1,3 +1,6 @@
+/.gradle/
+/.nb-gradle/private/
+/.nb-gradle/profiles/private/aux-config
 /assets/Textures/skies/bsc5.dat
 /build/
 /dist/
@@ -12,4 +15,5 @@
 /OpenAL32.dll
 /OpenAL64.dll
 /release/
+/textures/src/main/resources/bsc5.dat
 /Written Assets/
