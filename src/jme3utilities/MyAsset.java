@@ -154,7 +154,7 @@ final public class MyAsset {
      * @return a new unit vector
      */
     public static Vector3f copyVDirection(int faceIndex) {
-        Vector3f result = uDirection[faceIndex].normalize();
+        Vector3f result = vDirection[faceIndex].normalize();
         return result;
     }
 
