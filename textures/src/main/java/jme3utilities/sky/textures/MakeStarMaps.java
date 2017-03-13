@@ -900,6 +900,7 @@ public class MakeStarMaps {
         } catch (FileNotFoundException exception) {
             logger.log(Level.SEVERE, "unable to open {0}",
                     MyString.quote(catalogFilePath));
+            throw new RuntimeException(exception);
         } catch (IOException exception) {
             logger.log(Level.SEVERE, "unable to read {0}",
                     MyString.quote(catalogFilePath));
