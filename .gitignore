@@ -1,8 +1,9 @@
-/.gradle/
+/.gradle/2.13/
 /.nb-gradle/private/
 /.nb-gradle/profiles/private/aux-config
 /assets/Textures/skies/bsc5.dat
 /build/
+/debug/build/
 /dist/
 /lwjgl.dll
 /lwjgl64.dll
@@ -12,13 +13,16 @@
 /nbproject/genfiles.properties
 /nbproject/jme3Data/
 /nbproject/private/
+/nifty/build/
 /OpenAL32.dll
 /OpenAL64.dll
 /release/
+/SkyControl/build/
 /SkyControl/src/main/resources/Textures/skies/ramps/
 /SkyControl/src/main/resources/Textures/skies/clouds/
 /SkyControl/src/main/resources/Textures/skies/star-maps/
 /SkyControl/src/main/resources/Textures/skies/suns/
+/tests/build/
 /textures/build/
 /textures/src/main/java/jme3utilities/Misc.java
 /textures/src/main/java/jme3utilities/MyAsset.java
@@ -58,4 +62,6 @@
 /textures/src/main/java/jme3utilities/sky/Updater.java
 /textures/src/main/java/jme3utilities/xml/
 /textures/src/main/resources/bsc5.dat
+/ui/build/
 /Written Assets/
+/x/build/
