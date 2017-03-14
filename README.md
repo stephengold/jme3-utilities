@@ -1,4 +1,4 @@
-# jme3-utilities project for jMonkeyEngine 3.1
+# jme3-utilities project
 
 This project contains Java packages and asset packs, developed for sgold's
 jMonkeyEngine games, which might prove useful in similar projects.  It includes
@@ -40,16 +40,21 @@ http://code.google.com/p/jme3-utilities
 ### jMonkeyEngine3 (jME3) Software Development Kit (SDK)
 
 The "master" branch of the jme3-utilities repository targets 
-Version 3.1 of jMonkeyEngine.
+Version 3.1 of jMonkeyEngine.  You are welcome to use the Engine 
+without also using the SDK, but I do, and the following installation 
+instructions assume you will too.
 
 The hardware and software requirements of the SDK are documented at
-http://hub.jmonkeyengine.org/wiki/doku.php/jme3:requirements
+https://jmonkeyengine.github.io/wiki/jme3/requirements.html
 
  1. Download the jMonkeyEngine 3.1 SDK from https://github.com/jMonkeyEngine/sdk/releases
  2. Install the SDK, which includes:
    + the engine itself,
-   + an integrated development environment (IDE) based on NetBeans, and
+   + an integrated development environment (IDE) based on NetBeans, 
+   + various plugins, and
    + the Blender 3D application.
+ 3. To open the project in the SDK (or NetBeans), you will need the "Gradle 
+    Support" plugin.  Download and install it before proceeding.
 
 ### Source files
 
@@ -59,57 +64,42 @@ Clone the jme3-utilities repository using Git:
  2. For "Repository URL:" specify
     "https://github.com/stephengold/jme3-utilities.git" (without the quotes).
  3. Clear the "User:" and "Password:" text boxes.
- 4. Click on the "Next >" button.
- 5. Make sure the "master" remote branch is checked.
- 6. Click on the "Next >" button again.
- 7. For "Parent Directory:" specify a writable folder (on a local filesystem) 
+ 4. For "Clone into:" specify a writable folder (on a local filesystem) 
     which doesn't already contain "jme3-utilities".
+ 5. Click on the "Next >" button.
+ 6. Make sure the "master" remote branch is checked.
+ 7. Click on the "Next >" button again.
  8. Make sure the Checkout Branch is set to "master".
  9. Make sure the "Scan for NetBeans Projects after Clone" box is checked.
 10. Click on the "Finish" button.
-11. When the "Clone Complete" dialog appears, click on the "Open Project" button.
-12. There will be problems due to a missing JAR file.
-    Do not attempt to resolve them yet!
-    Click on the "Close" button.
+11. When the "Clone Complete" dialog appears, click on the "Open Project..." 
+    button.
+12. Expand the root project node to reveal the 7 sub-projects.
+13. To start with, I recommend opening 3 sub-projects:  "SkyControl", "tests", 
+    and "textures".  Select them using control-click, then click on the 
+    "Open" button.
+14. There will be errors in the "textures" sub-project.  However, the build
+    process should resolve them.
 
 ### External files
 
- 1. Download the JCommander version 1.48 JAR file from
-    "https://mvnrepository.com/artifact/com.beust/jcommander/1.48"
-    to the "jars" folder of the new project.
+ 1. Download "bsc5.dat.gz" (the ASCII catalog, version 5 of the Yale Bright Star
+    Catalog) from "http://tdc-www.harvard.edu/catalogs/bsc5.html".
+ 2. Extract the file "bsc5.dat" to the "src/main/resources" folder of the new 
+    "textures" subproject.
 
- 2. If you plan to generate your own star maps, download 
-    the ASCII catalog (version 5 of the Yale Bright Star Catalog) from
-    "http://tdc-www.harvard.edu/catalogs/bsc5.html"
-    and extract the file "bsc5.dat"
-    to the "assets/Textures/skies" folder of the new project.
+### Build the project
 
-### Project configuration and build
-
- 1. (optional) Rename the project:
-  + Right-click on the jme3-utilities project in the "Projects" window.
-  + Select "Rename...".
-  + Type a new name in the text box.
-  + Make sure the "Also Rename Project Folder" box is not checked.
-  + Click on the "Rename" button.
- 2. Make the IDE aware of the JCommander JAR you downloaded:
-  + Right-click on the new project in the "Projects" window.
-  + Select "Properties".
-  + Under "Categories:" select "Libraries".
-  + Click on the "OK" button.
- 3. Build the release:
-  + In the "Projects" window, expand the new project node.
-  + Expand the "Important Files" node.
-  + Expand the "Build File" node.
-  + Right-click on the "a-release" target.
-  + Select "Run Target".
+ 1. In the "Projects" window, right-click on the "tests" sub-project to 
+    select it.
+ 2. Select "Build".
 
 ## How to add SkyControl to an existing game
 
 SkyControl is a reusable sky simulation for jMonkeyEngine games.
 
 Adding it to an existing JME3 project should be a simple six-step process:
- 1. Add the SkyControl JARs to the project.
+ 1. Add the SkyControl JAR to the classpath.
  2. Disable any existing sky which might interfere with SkyControl.
  3. Add a SkyControl instance to some node in the scene graph.
  4. Configure the SkyControl instance.
@@ -140,8 +130,9 @@ Instantiate a BasicGame Project:
 If you're unfamiliar with BasicGame, you may wish to run it (and/or examine
 the source code) to see how it works before modifying it.
 
- 1. To rotate the camera, move the mouse. 
- 2. To exit, press the Esc key. 
+ 1. To rotate the camera, move the mouse.
+ 2. The W/A/S/D/Q/Z keys translate (move) the camera.
+ 3. To exit, press the Esc key. 
 
 #### Add the SkyControl JARs to the project
 
@@ -153,7 +144,9 @@ Open the project's properties in the IDE:
  4. Click on the "Compile" tab.
  5. Add the SkyControl class JAR:
   + Click on the "Add JAR/Folder" button.
-  + Navigate to the jme3-utilities "release" folder.
+  + Navigate to the "jme3-utilities" project folder.
+  + Open the "SkyControl" subproject folder.
+  + Navigate to the "build/libs" folder.
   + Select the "SkyControl.jar" file.
   + Click on the "Open" button.
  6. (optional) Add JARs for javadoc and sources:
