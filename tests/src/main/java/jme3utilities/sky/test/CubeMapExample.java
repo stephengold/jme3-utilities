@@ -49,9 +49,9 @@ import jme3utilities.debug.PerformanceAppState;
  * Peterson's Spacescape tool: http://alexcpeterson.com/spacescape
  * <p>
  * This application is used as an example in the tutorial at
- * https://github.com/stephengold/jme3-utilities/blob/master/README.md
+ * https://github.com/stephengold/jme3-utilities/blob/master/SkyControl/README.md
  * <p>
- * This application also uses assets from the jme3-test-data library.
+ * This application also uses assets from the jme3-testdata library.
  *
  * @author Stephen Gold sgold@sonic.net
  */
