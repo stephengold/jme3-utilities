@@ -78,6 +78,24 @@ task TestSkyControl(type: JavaExec) {
     enableAssertions true
     main 'jme3utilities.sky.test.TestSkyControl'
 }
+task TestSkyControlCyclone(type: JavaExec) {
+    args = ['-c']
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.sky.test.TestSkyControl'
+}
+task TestSkyControlShadowFilter(type: JavaExec) {
+    args = ['-f']
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.sky.test.TestSkyControl'
+}
+task TestSkyControlSingleDome(type: JavaExec) {
+    args = ['-s']
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.sky.test.TestSkyControl'
+}
 task TestSkyMaterial(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
     enableAssertions true
