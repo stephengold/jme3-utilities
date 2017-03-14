@@ -3,6 +3,10 @@
 //   of the root project.
 description = 'demos and tests that do not generate reports'
 
+clean { 
+    dependsOn 'cleanWrittenAssets'
+}
+
 dependencies {
     compile "com.beust:jcommander:$jcommanderVersion"
     compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
@@ -21,6 +25,10 @@ dependencies {
     compile project(':nifty')
     compile project(':ui')
     compile project(':x')
+}
+
+task cleanWrittenAssets(type: Delete) {
+    delete 'Written Assets'
 }
 
 task TestPas(type: JavaExec) {
