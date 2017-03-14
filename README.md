@@ -233,22 +233,23 @@ select "Run File (Shift+F6)".
 
 ### CubeMapExample
 
-Sometimes you'll want to combine SkyControl with other sky elements. The JME3
-Utilities Packages includes CubeMapExample, a slightly more sophisticated
+Sometimes you'll want to combine SkyControl with other sky elements. The 
+jme3-utilities project includes CubeMapExample, a slightly more sophisticated
 application than BasicGame. CubeMapExample includes a cube-mapped sky, lit
 terrain, and multiple light sources. In this section, you'll see how SkyControl
 can be used to add sun, moon, and clouds to CubeMapExample.
 
-In the "Projects" window of the IDE, expand the "jme3-utilities" project node
-and navigate to the "jme3utilities.sky.test"
-source package.  Open the "CubeMapExample.java" file and study the code.
+In the "Projects" window of the IDE, expand the "tests" sub-project node
+and the "jme3utilities.sky.test" source package.  Open the "CubeMapExample.java"
+file to examine the code and run it.
 
  1. To rotate the camera, drag with the left mouse button. 
- 2. To exit, press the Esc key. 
+ 2. The W/A/S/D/Q/Z keys translate (move) the camera.
+ 3. To exit, press the Esc key. 
 
-Since CubeMapExample is part of the JME3 Utilities Package, there are no
-libraries to add.  And since we plan to use the existing cube map, there's
-nothing to remove.
+Since CubeMapExample is part of the jme3-utilities project, there's no need
+to add anything to the classpath.  And since we plan to use the existing cube 
+map, there's nothing to remove.
 
 #### Add a SkyControl instance to the scene graph
 
@@ -379,14 +380,16 @@ The jme3utilities.TimeOfDay appstate fills this need.
  4. Add two lines to simpleUpdate(), right before the invocation of
     orientExternalSky():
 
-        float hour = timeOfDay.getHour();
+        float hour = timeOfDay.hour();
         sc.getSunAndStars().setHour(hour);
 
 ### Next steps
 
 To see how some of the other features of SkyControl 
 can be used, you may wish to study "TestSkyControl.java" in the 
-"jme3utilities.sky.test" package.
+"jme3utilities.sky.test" package.  The easiest way to run the 
+TestSkyControl application is to select the TestSkyControl task
+from the "tests" sub-project menu.
 
 External links:
   + November 2013 SkyControl demo video:
@@ -422,6 +425,7 @@ I therefore acknowledge the following software developers:
   + Davis Rollman
 + the creators of (and contributors to) the following software:
   + Adobe Photoshop Elements
+  + the Ant and Gradle build tools
   + the Blender 3D animation suite
   + the FindBugs source code analyzer
   + Gimp, the GNU Image Manipulation Program
@@ -448,7 +452,7 @@ For this I thank:
   + Jacques Descloitres, MODIS Rapid Response Team, NASA/GSFC
   + Tom Ruen
 
-I am grateful to Google Code and Github for providing free hosting for the
+I am grateful to JFrog, Google, and Github for providing free hosting for the
 jme3-utilities project and many other open-source projects.
 
 I'm also grateful to Amber (for lending me one of her microphones) and finally
