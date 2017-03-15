@@ -59,7 +59,7 @@ public class NameGenerator implements Savable {
             NameGenerator.class.getName());
     // *************************************************************************
     // fields
-    
+
     /**
      * Track which sequence numbers remain available for the prefix strings seen
      * so far.
@@ -193,7 +193,7 @@ public class NameGenerator implements Savable {
     }
     // *************************************************************************
     // Object methods
-    
+
     /**
      * Represent this name generator as a text string.
      *

@@ -65,7 +65,7 @@ public class SkyMaterialCore extends Material {
     final private static Vector2f hidden = new Vector2f(0f, 0f);
     // *************************************************************************
     // fields
-    
+
     /**
      * asset manager used to load textures and material definitions: set by
      * constructor
@@ -202,7 +202,7 @@ public class SkyMaterialCore extends Material {
 
     /**
      * Add an astronomical object to this material using the specified color
-     * map.  If the object already exists, its color map is updated.
+     * map. If the object already exists, its color map is updated.
      *
      * @param objectIndex (&lt;maxObjects, &ge;0)
      * @param colorMap color map to use (not null)

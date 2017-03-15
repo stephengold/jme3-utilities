@@ -115,7 +115,7 @@ public class NamedAppState implements AppState {
             throw new IllegalArgumentException("self-influence not allowed");
         }
         if (appState.isEnabled() != isEnabled()) {
-            logger.log(Level.WARNING, 
+            logger.log(Level.WARNING,
                     "inflenced state {0} out-of-synch with {1}", new Object[]{
                         appState, this
                     });
@@ -183,8 +183,8 @@ public class NamedAppState implements AppState {
     }
 
     /**
-     * Test whether this state is initialized. Declared final here to
-     * prevent subclasses from overriding it.
+     * Test whether this state is initialized. Declared final here to prevent
+     * subclasses from overriding it.
      *
      * @return true if initialized, otherwise false
      */

@@ -131,7 +131,7 @@ public class SkyControl extends SkyControlCore {
             1f, 9f, 1f).normalizeLocal();
     // *************************************************************************
     // fields
-    
+
     /**
      * true if clouds modulate the main light, false for steady light (the
      * default)
@@ -326,8 +326,7 @@ public class SkyControl extends SkyControlCore {
     /**
      * Customize the phase of the moon for off-screen rendering.
      *
-     * @param longitudeDifference radians east of the sun (&le;2*Pi,
-     * &ge;0)
+     * @param longitudeDifference radians east of the sun (&le;2*Pi, &ge;0)
      * @param lunarLatitude radians north of the ecliptic (&le;Pi/2, &ge;-Pi/2)
      */
     public void setPhase(float longitudeDifference, float lunarLatitude) {
@@ -536,7 +535,7 @@ public class SkyControl extends SkyControlCore {
      * Compute the clockwise (left-handed) rotation of the moon's texture
      * relative to the sky's texture.
      *
-     * @param longitude the moon's celestial longitude (in radians east of the 
+     * @param longitude the moon's celestial longitude (in radians east of the
      * March equinox)
      * @param uvCenter texture coordinates of the moon's center (not null)
      * @return new unit vector with its x-component equal to the cosine of the
