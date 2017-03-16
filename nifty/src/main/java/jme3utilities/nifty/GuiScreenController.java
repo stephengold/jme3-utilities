@@ -50,7 +50,7 @@ import jme3utilities.ui.InputMode;
  */
 public class GuiScreenController extends BasicScreenController {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -185,6 +185,34 @@ public class GuiScreenController extends BasicScreenController {
          * If the menu is still active, close it and all of its ancestors.
          */
         closePopup(activePopupMenu);
+    }
+
+    /**
+     * Alter the text of a Nifty element with a text renderer (such as a label).
+     *
+     * @param elementId Nifty element id of the label (not null)
+     * @param newText (not null)
+     */
+    public void setStatusText(String elementId, String newText) {
+        Validate.nonNull(elementId, "element id");
+        Validate.nonNull(newText, "text");
+
+        Element element = getScreen().findElementById(elementId);
+        if (element == null) {
+            logger.log(Level.INFO, "screen {0} lacks element {1}",
+                    new Object[]{
+                        MyString.quote(getScreenId()),
+                        MyString.quote(elementId)
+                    });
+            return;
+        }
+        TextRenderer textRenderer = element.getRenderer(TextRenderer.class);
+        if (textRenderer != null) {
+            textRenderer.setText(newText);
+            return;
+        }
+        logger.log(Level.WARNING, "Nifty element {0} lacks a text renderer",
+                MyString.quote(elementId));
     }
 
     /**
@@ -410,35 +438,6 @@ public class GuiScreenController extends BasicScreenController {
 
         Slider slider = getSlider(namePrefix);
         slider.setValue(newValue);
-    }
-
-    /**
-     * Alter the text of a Nifty label.
-     *
-     * @param elementId Nifty element id of the label (not null)
-     * @param newText (not null)
-     */
-    protected void setStatusText(String elementId, String newText) {
-        Validate.nonNull(elementId, "element id");
-        Validate.nonNull(newText, "text");
-
-        Element element = getScreen().findElementById(elementId);
-        if (element == null) {
-            logger.log(Level.INFO, "screen {0} lacks element {1}",
-                    new Object[]{
-                        MyString.quote(getScreenId()),
-                        MyString.quote(elementId)
-                    });
-            return;
-        }
-        TextRenderer textRenderer = element.getRenderer(TextRenderer.class);
-        if (textRenderer != null) {
-            textRenderer.setText(newText);
-            return;
-        }
-        logger.log(Level.WARNING,
-                "Nifty element {0} lacks a text renderer",
-                MyString.quote(elementId));
     }
 
     /**
