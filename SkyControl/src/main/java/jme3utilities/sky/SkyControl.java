@@ -78,7 +78,7 @@ import jme3utilities.math.MyMath;
  */
 public class SkyControl extends SkyControlCore {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * base color of the daytime sky: pale blue
@@ -407,14 +407,13 @@ public class SkyControl extends SkyControlCore {
     }
 
     /**
-     * Callback invoked when the sky node's geometric state is about to be
-     * updated, once per frame while attached and enabled.
+     * Callback to update this control prior to rendering.
      *
-     * @param updateInterval time interval between updates (in seconds, &ge;0)
+     * @param tpf time interval between render passes (in seconds, &ge;0)
      */
     @Override
-    public void controlUpdate(float updateInterval) {
-        super.controlUpdate(updateInterval);
+    public void controlUpdate(float tpf) {
+        super.controlUpdate(tpf);
         updateAll();
     }
 
@@ -603,12 +602,12 @@ public class SkyControl extends SkyControlCore {
      * Update astronomical objects, sky color, lighting, and stars.
      */
     private void updateAll() {
-        Vector3f sunDirection = updateSun();
         /*
-         * Daytime sky texture is phased in during the twilight periods
+         * Daytime sky color is phased in during the twilight periods
          * before sunrise and after sunset. Update the sky material's
          * clear color accordingly.
          */
+        Vector3f sunDirection = updateSun();
         ColorRGBA clearColor = colorDay.clone();
         clearColor.a = FastMath.saturate(1f + sunDirection.y / limitOfTwilight);
         SkyMaterial topMaterial = getTopMaterial();
@@ -616,6 +615,7 @@ public class SkyControl extends SkyControlCore {
 
         Vector3f moonDirection = updateMoon();
         updateLighting(sunDirection, moonDirection);
+
         Node starCube = getStarCube();
         if (starMotionFlag && starCube != null) {
             sunAndStars.orientEquatorialSky(starCube, false);
