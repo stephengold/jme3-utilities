@@ -19,9 +19,7 @@
 /SkyControl/src/main/resources/Textures/skies/star-maps/
 /SkyControl/src/main/resources/Textures/skies/suns/
 /tests/build/
-/tests/bulletjme.dll
-/tests/lwjgl64.dll
-/tests/OpenAL64.dll
+/tests/*.dll
 /tests/Written Assets/
 /textures/build/
 /textures/src/main/java/jme3utilities/*.java
