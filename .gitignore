@@ -10,6 +10,7 @@
 /SkyControl/src/main/resources/Textures/skies/suns/
 /tests/build/
 /tests/*.dll
+/tests/private/
 /tests/Written Assets/
 /textures/build/
 /textures/src/main/java/jme3utilities/*.java
