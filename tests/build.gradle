@@ -61,6 +61,7 @@ task TestVectorXZ(type: JavaExec) {
     enableAssertions true
     main 'jme3utilities.math.test.TestVectorXZ'
 }
+
 task ClockDemo(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
     enableAssertions true
@@ -76,6 +77,12 @@ task TestMultipleScreens(type: JavaExec) {
     enableAssertions true
     main 'jme3utilities.nifty.test.TestMultipleScreens'
 }
+task TestPopupMenus(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.nifty.test.TestPopupMenus'
+}
+
 task CubeMapExample(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
     enableAssertions true
@@ -114,6 +121,7 @@ task TestSunAndStars(type: JavaExec) {
     enableAssertions true
     main 'jme3utilities.sky.test.TestSunAndStars'
 }
+
 task TestMySkeleton(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
     enableAssertions true
