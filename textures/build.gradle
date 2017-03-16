@@ -21,9 +21,16 @@ dependencies {
 }
 
 task copySource(type: Copy) {
-    from '../SkyControl/src/main/java'
-    from '../x/src/main/java'
-    into 'src/main/java'
+    from('../SkyControl/src/main/java/jme3utilities') {
+        include 'Misc.java', 'MyAsset.java', 'MyString.java', 'Validate.java', \
+                'math/MyMath.java', 'math/MyVector3f.java', \
+                'math/ReadXZ.java', 'math/VectorXZ.java', \
+                'sky/Constants.java', 'sky/DomeMesh.java'
+    }
+    from('../x/src/main/java/jme3utilities') {
+        include 'math/noise/*.java'
+    }
+    into 'src/main/java/jme3utilities'
 }
 task cleanCopySource(type: Delete) {
     delete fileTree(dir: 'src/main/java', exclude: '**/textures/**')
