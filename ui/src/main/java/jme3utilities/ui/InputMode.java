@@ -27,6 +27,7 @@ package jme3utilities.ui;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.asset.AssetNotFoundException;
 import com.jme3.cursors.plugins.JmeCursor;
 import com.jme3.input.controls.ActionListener;
 import java.io.File;
@@ -572,7 +573,7 @@ abstract public class InputMode
         try {
             loadBindings(path);
 
-        } catch (FileNotFoundException exception) {
+        } catch (AssetNotFoundException exception) {
             logger.log(Level.INFO, "Didn''t find hotkey bindings at {0}.",
                     MyString.quote(path));
 
@@ -595,7 +596,7 @@ abstract public class InputMode
      * @param assetPath asset path (not null)
      */
     private void loadBindings(String assetPath)
-            throws FileNotFoundException, IOException {
+            throws AssetNotFoundException, IOException {
         assert assetPath != null;
 
         logger.log(Level.INFO, "Loading hotkey bindings from asset {0}.",
