@@ -47,21 +47,20 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class AxesControl
-        extends SubtreeControl {
+public class AxesControl extends SubtreeControl {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
-     * color of the X-axis when visible.
+     * color of the X-axis
      */
     final private static ColorRGBA xColor = ColorRGBA.Red;
     /**
-     * color of the Y-axis when visible.
+     * color of the Y-axis
      */
     final private static ColorRGBA yColor = ColorRGBA.Green;
     /**
-     * color of the Z-axis when visible
+     * color of the Z-axis
      */
     final private static ColorRGBA zColor = ColorRGBA.Blue;
     /**
@@ -83,13 +82,13 @@ public class AxesControl
     final private static Vector3f zAxis = new Vector3f(0f, 0f, 1f);
     // *************************************************************************
     // fields
-    
+
     /**
-     * length of each axis (in local units, &gt;0): set by constructor
+     * length of each axis (in local units, &gt;0, set by constructor)
      */
     final private float length;
     /**
-     * width of each axis indicator (in pixels, &gt;0): set by constructor
+     * width of each axis indicator (in pixels, &gt;0, set by constructor)
      */
     final private float thickness;
     // *************************************************************************
@@ -141,8 +140,8 @@ public class AxesControl
         Geometry geometry = new Geometry(name, mesh);
         subtree.attachChild(geometry);
 
-        Material wireMaterial
-                = MyAsset.createWireframeMaterial(assetManager, color);
+        Material wireMaterial = MyAsset.createWireframeMaterial(
+                assetManager, color);
         wireMaterial.getAdditionalRenderState().setLineWidth(thickness);
         geometry.setMaterial(wireMaterial);
 
