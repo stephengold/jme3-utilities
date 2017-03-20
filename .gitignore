@@ -1,6 +1,5 @@
 /.gradle/2.13/
-/.nb-gradle/private/
-/.nb-gradle/profiles/private/aux-config
+/.nb-gradle/
 /debug/build/
 /nifty/build/
 /SkyControl/build/
