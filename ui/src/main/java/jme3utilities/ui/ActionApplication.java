@@ -143,8 +143,8 @@ abstract public class ActionApplication
     // ActionListener methods
 
     /**
-     * Process an action from which is not handled by the default input mode.
-     * This method is a placeholder which may be overridden as desired.
+     * Process an action which is not handled by the default input mode. This
+     * method is a placeholder which may be overridden as desired.
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
@@ -153,7 +153,7 @@ abstract public class ActionApplication
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
         /*
-         * Handle actions whose mappings may have been deleted by 
+         * Handle actions whose mappings may have been deleted by
          * DefaultInputMode.initialize().
          */
         if (ongoing) {
@@ -254,7 +254,7 @@ abstract public class ActionApplication
      */
     @Override
     public void simpleUpdate(float tpf) {
-        /* 
+        /*
          * Handle flyCam signals whose mappings may have been deleted by
          * DefaultInputMode.initialize().
          */

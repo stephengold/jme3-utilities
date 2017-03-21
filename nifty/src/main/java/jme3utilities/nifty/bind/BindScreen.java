@@ -53,7 +53,7 @@ public class BindScreen
         extends GuiScreenController
         implements ActionListener {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -105,6 +105,7 @@ public class BindScreen
         Validate.nonNull(mode, "mode");
 
         assert !isEnabled();
+        assert isInitialized();
         assert subjectMode == null : subjectMode;
         assert mode.isEnabled();
 
@@ -190,7 +191,7 @@ public class BindScreen
                 "Edit hotkey bindings for %s input mode",
                 MyString.quote(subjectMode.getShortName()));
         setStatusText("modeStatus", modeStatus);
-        
+
         String configPath = subjectMode.getConfigPath();
         if (configPath == null) {
             setStatusText("configStatus", "");
@@ -381,8 +382,8 @@ public class BindScreen
     private ListBox<HotkeyItem> getHotkeyBox() {
         Screen screen = getScreen();
         @SuppressWarnings("unchecked")
-        ListBox<HotkeyItem> listBox =
-                screen.findNiftyControl("hotkeyList", ListBox.class);
+        ListBox<HotkeyItem> listBox = screen.findNiftyControl(
+                "hotkeyList", ListBox.class);
 
         assert listBox != null;
         return listBox;
@@ -525,7 +526,7 @@ public class BindScreen
             unbindLabel = "Unbind selected hotkey";
         }
         setButtonLabel("unbindButton", unbindLabel);
-        
+
         String loadLabel = "";
         String saveLabel = "";
         if (subjectMode.getConfigPath() != null) {

@@ -41,10 +41,9 @@ import jme3utilities.math.Indices;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class Signals
-        implements ActionListener {
+public class Signals implements ActionListener {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -53,7 +52,7 @@ public class Signals
             Signals.class.getName());
     // *************************************************************************
     // fields
-    
+
     /**
      * map signal names to statuses
      */
@@ -147,7 +146,7 @@ public class Signals
      * inactive
      */
     private void update(String name, int sourceIndex, boolean newState) {
-        Validate.nonNull(name, "signal name");
+        assert name != null;
 
         Indices status = statusMap.get(name);
         if (status == null) {
