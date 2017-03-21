@@ -3,7 +3,7 @@
 //   of the root project.
 description = 'demos and tests that do not generate reports'
 
-clean { 
+clean {
     dependsOn 'cleanWrittenAssets'
 }
 
@@ -31,6 +31,11 @@ task cleanWrittenAssets(type: Delete) {
     delete 'Written Assets'
 }
 
+task PoseDemo(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.debug.test.PoseDemo'
+}
 task TestPas(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
     enableAssertions true

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2017, Stephen Gold
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ * Redistributions of source code must retain the above copyright
+ notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ notice, this list of conditions and the following disclaimer in the
+ documentation and/or other materials provided with the distribution.
+ * Stephen Gold's name may not be used to endorse or promote products
+ derived from this software without specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL STEPHEN GOLD BE LIABLE FOR ANY
+ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!--
+ The heads-up display (HUD) for the PoseDemo application.
+-->
+<nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
+    <screen id="pose-demo" controller="jme3utilities.debug.test.PoseDemoHud">
+        <layer childLayout="horizontal">
+            <panel/>
+            <panel id="hud"
+                   childLayout="vertical"
+                   width="208">
+                <control name="scrollPanel"
+                         style="bats-scroll-panel"
+                         horizontal="false">
+                    <panel childLayout="vertical"
+                           padding="10"
+                           width="188">
+
+                        <panel style="statusPanel" height="16">
+                            <control name="label"
+                                     text="The H key toggles this display"/>
+                        </panel>
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     textHAlign="right"
+                                     text="and F1 edits hotkey bindings."/>
+                        </panel>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="Model:"/>
+                            <control name="label" id="modelStatus"
+                                     textHAlign="right"/>
+                        </panel>
+                        <panel style="buttonPanel">
+                            <control name="button" id="id21ToAvoidOffendingNifty"
+                                     label="Load model">
+                                <interact onRelease="perform(select model)"/>
+                            </control>
+                        </panel>
+                        
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="Camera mode:"/>
+                        </panel>
+                        <control name="radioButtonGroup" id="povGroup"/>
+                        <panel style="indentPanel">
+                            <control name="radioButton" id="orbitingRadioButton"
+                                     group="povGroup"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="orbit the 3D cursor"/>
+                        </panel>
+                        <panel style="indentPanel">
+                            <control name="radioButton" id="flyingRadioButton"
+                                     group="povGroup"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="fly freely"/>
+                        </panel>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="Animation:"/>
+                            <control name="label" id="animationStatus"
+                                     textHAlign="right"/>
+                        </panel>
+                        <panel style="buttonPanel">
+                            <control name="button" id="id22ToAvoidOffendingNifty"
+                                     label="Select animation">
+                                <interact onRelease="perform(select animation)"/>
+                            </control>
+                        </panel>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="Anim time:"/>
+                            <control name="label" id="trackTime"
+                                     textHAlign="right"/>
+                        </panel>
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="Speed:"/>
+                            <control name="label" id="speed"
+                                     textHAlign="right"/>
+                        </panel>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="Bone:"/>
+                            <control name="label" id="boneStatus"
+                                     textHAlign="right"/>
+                        </panel>
+                        <panel style="buttonPanel">
+                            <control name="button" id="id23ToAvoidOffendingNifty"
+                                     label="Select bone">
+                                <interact onRelease="perform(select bone)"/>
+                            </control>
+                        </panel>
+                        
+                        <panel style="buttonPanel">
+                            <control name="button" id="id212ToAvoidOffendingNifty"
+                                     label="Select keyframe">
+                                <interact onRelease="perform(select keyframe)"/>
+                            </control>
+                        </panel>
+
+                        
+                        <panel childLayout="horizontal" padding="10">
+                            <control name="verticalSlider" id="xSlider"
+                                     buttonStepSize="3.14"
+                                     height="160"
+                                     max="3.14"
+                                     min="-3.14"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="ySlider"
+                                     buttonStepSize="3.14"
+                                     height="160"
+                                     max="3.14"
+                                     min="-3.14"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="zSlider"
+                                     buttonStepSize="3.14"
+                                     height="160"
+                                     max="3.14"
+                                     min="-3.14"
+                                     stepSize="0.01"/>
+                            <panel childLayout="vertical"
+                                   height="160"
+                                   width="34">
+                                <control name="label" id="xSliderStatus"/>
+                                <control name="label" id="ySliderStatus"/>
+                                <control name="label" id="zSliderStatus"/>
+                            </panel>
+                        </panel>
+                        
+                        <panel style="buttonPanel">
+                            <control name="button" id="id219ToAvoidOffendingNifty"
+                                     label="Add pose">
+                                <interact onRelease="perform(add pose)"/>
+                            </control>
+                        </panel>
+                        <panel style="buttonPanel">
+                            <control name="button" id="id221ToAvoidOffendingNifty"
+                                     label="Write pose">
+                                <interact onRelease="perform(save pose)"/>
+                            </control>
+                        </panel>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="Indicators:"/>
+                        </panel>
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="3DCursorCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="3-D cursor"/>
+                        </panel>
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="axesCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="axes"/>
+                        </panel>
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="skeletonDebugCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="skeleton debug"/>
+                        </panel>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="Lighting:"/>
+                        </panel>
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="shadowsCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="shadows"/>
+                        </panel>
+
+                    </panel>
+                </control>
+            </panel>
+        </layer>
+    </screen>
+</nifty>
