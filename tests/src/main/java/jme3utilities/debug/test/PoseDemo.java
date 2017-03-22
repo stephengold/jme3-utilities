@@ -45,6 +45,7 @@ import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
+import jme3utilities.MyString;
 import jme3utilities.debug.AxesControl;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.bind.BindScreen;
@@ -62,6 +63,14 @@ public class PoseDemo extends GuiApplication {
     // constants and loggers
 
     /**
+     * diameter of the platform (in world units, &gt;0)
+     */
+    final private static float platformDiameter = 4f;
+    /**
+     * thickness of the platform (in world units, &gt;0)
+     */
+    final private static float platformThickness = 0.1f;
+    /**
      * width and height of rendered shadow maps (pixels per side, &gt;0)
      */
     final private static int shadowMapSize = 4_096;
@@ -77,22 +86,32 @@ public class PoseDemo extends GuiApplication {
     /**
      * path to hotkey bindings configuration asset
      */
-    final private static String hotkeyBindingsAssetPath =
-            "Interface/bindings/PoseDemo.properties";
+    final private static String hotkeyBindingsAssetPath
+            = "Interface/bindings/PoseDemo.properties";
     /**
-     * path to texture asset for the floor
+     * name of the platform geometry
      */
-    final private static String floorTextureAssetPath =
-            "Textures/Terrain/splat/dirt.jpg";
+    final static String platformName = "platform";
+    /**
+     * path to texture asset for the platform
+     */
+    final private static String platformTextureAssetPath
+            = "Textures/Terrain/splat/dirt.jpg";
     // *************************************************************************
     // fields
 
+    /**
+     * scene control to display global axes (set by
+     * {@link #guiInitializeApplication()})
+     */
     static AxesControl axes = null;
     /**
      * Nifty screen for editing hotkey bindings
      */
     static BindScreen bindScreen = new BindScreen();
-
+    /**
+     * shadow filter for the scene
+     */
     static DirectionalLightShadowFilter dlsf = null;
     /**
      * app state to control the camera
@@ -105,6 +124,11 @@ public class PoseDemo extends GuiApplication {
     // *************************************************************************
     // new methods exposed
 
+    /**
+     * Main entry point for the PoseDemo application.
+     *
+     * @param arguments array of command-line arguments (not null)
+     */
     public static void main(String[] arguments) {
         /*
          * Mute the chatty loggers found in some imported packages.
@@ -147,7 +171,7 @@ public class PoseDemo extends GuiApplication {
          * Disable flyCam and attach a custom camera app state.
          */
         flyCam.setEnabled(false);
-        cam.setLocation(new Vector3f(-2, 0.85f, 1.35f));
+        cam.setLocation(new Vector3f(-2.4f, 1f, 1.6f));
         cam.setRotation(new Quaternion(0.006f, 0.86884f, -0.01049f, 0.49493f));
         success = stateManager.attach(cameraState);
         assert success;
@@ -180,20 +204,25 @@ public class PoseDemo extends GuiApplication {
         updater.addShadowFilter(dlsf);
         updater.setMainMultiplier(4f);
         /*
-         * Create a square floor.
+         * Create a square platform.
          */
-        Mesh box = new Box(2f, 0.1f, 2f);
-        Spatial floor = new Geometry("floor", box);
-        Texture dirt = MyAsset.loadTexture(assetManager, floorTextureAssetPath);
+        float radius = platformDiameter / 2f;
+        Mesh platformMesh = new Box(radius, platformThickness, radius);
+        Spatial platform = new Geometry(platformName, platformMesh);
+        Texture dirt = MyAsset.loadTexture(assetManager,
+                platformTextureAssetPath);
         Material mat = MyAsset.createShadedMaterial(assetManager, dirt);
-        floor.setMaterial(mat);
-        floor.setShadowMode(RenderQueue.ShadowMode.Receive);
-        rootNode.attachChild(floor);
-        MySpatial.setWorldLocation(floor, new Vector3f(0f, -0.1001f, 0f));
+        platform.setMaterial(mat);
+        platform.setShadowMode(RenderQueue.ShadowMode.Receive);
+        rootNode.attachChild(platform);
+        float yOffset = -1.001f * platformThickness;
+        MySpatial.setWorldLocation(platform, new Vector3f(0f, yOffset, 0f));
         /*
-         * Indicate the 3 principal axes.
+         * Add visible indicators for 3 global axes.
          */
-        axes = new AxesControl(assetManager, 0.3f, 2f);
+        float length = 2f; //0.3f;
+        float thickness = 4f;
+        axes = new AxesControl(assetManager, length, thickness);
         rootNode.addControl(axes);
         /*
          * Default input mode directly influences the camera state and
@@ -215,6 +244,8 @@ public class PoseDemo extends GuiApplication {
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
+        logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
+
         if (ongoing) {
             switch (actionString) {
                 case "edit bindings":
@@ -224,10 +255,13 @@ public class PoseDemo extends GuiApplication {
                 case "toggle hud":
                     cameraState.toggleHud();
                     return;
+                case "view horizontal":
+                    cameraState.viewHorizontal();
+                    return;
             }
         }
         /*
-         * The action has not yet been handled: forward to superclass.
+         * Forward unhandled action to the superclass.
          */
         super.onAction(actionString, ongoing, tpf);
     }

@@ -91,9 +91,8 @@ public class PoseCameraState
      */
     final private static float frustumYDegrees = 45f;
     /**
-     * Disorientation occurs when the camera looks straight up, so we
-     * limit its elevation angle to just under 90 degrees. (orbit mode only, in
-     * radians)
+     * Disorientation occurs when the camera looks straight up, so we limit its
+     * elevation angle to just under 90 degrees. (orbit mode only, in radians)
      */
     final private static float maxElevationAngle = 1.5f;
     /**
@@ -133,6 +132,14 @@ public class PoseCameraState
      * analog event string to move up
      */
     final private static String moveUpEvent = "pov up";
+    /**
+     * name of signal which rotates the model counter-clockwise around +Y
+     */
+    final public static String modelCCWSignalName = "modelLeft";
+    /**
+     * name of signal which rotates the model clockwise around +Y
+     */
+    final public static String modelCWSignalName = "modelRight";
     /**
      * action string to warp the 3D cursor
      */
@@ -224,9 +231,9 @@ public class PoseCameraState
              * When switching from fly mode to orbit mode, re-aim
              * the camera at the 3D cursor.
              */
+            orbitMode = true;
             aim();
         }
-
         orbitMode = newValue;
     }
 
@@ -241,11 +248,12 @@ public class PoseCameraState
     }
 
     /**
-     * Set camera to a horizontal view.
+     * Move the camera to a horizontal view.
      */
     public void viewHorizontal() {
         if (orbitMode) {
             elevationAngle = 0f;
+            updateOrbit();
         } else {
             Vector3f direction = cam.getDirection().clone();
             direction.y = 0f;
@@ -277,6 +285,10 @@ public class PoseCameraState
         Material white = MyAsset.createUnshadedMaterial(assetManager,
                 new ColorRGBA(1f, 1f, 1f, 1f));
         cursor.setMaterial(white);
+
+        signals.add(cameraSignalName);
+        signals.add(modelCCWSignalName);
+        signals.add(modelCWSignalName);
 
         assert !isEnabled();
         setEnabled(true);
@@ -340,12 +352,21 @@ public class PoseCameraState
          */
         float newScale = cursorSize * range;
         MySpatial.setWorldScale(cursor, newScale);
+        /*
+         * Rotate the model around the Y-axis.
+         */
+        if (signals.test(modelCCWSignalName)) {
+            rotateModel(tpf);
+        }
+        if (signals.test(modelCWSignalName)) {
+            rotateModel(-tpf);
+        }
     }
     // *************************************************************************
     // ActionListener methods
 
     /**
-     * Process an action.
+     * Process a mouse button action.
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
@@ -353,15 +374,12 @@ public class PoseCameraState
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
-        if (ongoing) {
-            switch (actionString) {
-                case "todo":
-                    viewHorizontal();
-                    return;
-                case warpCursorAction:
-                    warpCursor();
-                    aim();
-                    return;
+        logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
+
+        if (ongoing && actionString.equals(warpCursorAction)) {
+            warpCursor();
+            if (isOrbitMode()) {
+                aim();
             }
         }
     }
@@ -373,7 +391,7 @@ public class PoseCameraState
      *
      * @param eventString textual description of the analog event (not null)
      * @param amount amount of the event (&ge;0)
-     * @param ignored
+     * @param ignored time interval between render passes (in seconds, &ge;0)
      */
     @Override
     public void onAnalog(String eventString, float amount, float ignored) {
@@ -407,12 +425,14 @@ public class PoseCameraState
     // private methods
 
     /**
-     * Re-orient the camera to center the 3D cursor in the view port.
+     * In orbit mode, re-orient the camera to center the 3D cursor in the view
+     * port.
      * <p>
-     * The camera may dolly in or out in order to maintain a reasonable distance
+     * This method may dolly the camera in or out in order to clamp its distance
      * from the 3D cursor.
      */
     private void aim() {
+        assert isOrbitMode();
         /*
          * Calculate the camera's offset relative to the 3D cursor.
          */
@@ -432,7 +452,7 @@ public class PoseCameraState
         elevationAngle = FastMath.clamp(elevationAngle, minElevationAngle,
                 maxElevationAngle);
 
-        updateOrbiter();
+        updateOrbit();
     }
 
     /**
@@ -440,10 +460,9 @@ public class PoseCameraState
      * the camera position.
      */
     private void mapButton() {
-        signals.add(cameraSignalName);
         String actionString = String.format("signal %s 0", cameraSignalName);
         MouseButtonTrigger middle = new MouseButtonTrigger(
-                        MouseInput.BUTTON_MIDDLE);
+                MouseInput.BUTTON_MIDDLE);
         inputManager.addMapping(actionString, middle);
         inputManager.addListener(signals, actionString);
         /*
@@ -514,7 +533,7 @@ public class PoseCameraState
             float rate = 1f + dollyInOutRate / 100f;
             float factor = FastMath.pow(rate, amount);
             range = FastMath.clamp(range * factor, minRange, maxRange);
-            updateOrbiter();
+            updateOrbit();
 
         } else {
             Vector3f direction = cam.getDirection();
@@ -543,7 +562,7 @@ public class PoseCameraState
         if (orbitMode) {
             azimuthAngle += 2f * amount;
             azimuthAngle = MyMath.standardizeAngle(azimuthAngle);
-            updateOrbiter();
+            updateOrbit();
 
         } else {
             Quaternion rotate = new Quaternion();
@@ -572,7 +591,7 @@ public class PoseCameraState
             elevationAngle += amount;
             elevationAngle = FastMath.clamp(elevationAngle, minElevationAngle,
                     maxElevationAngle);
-            updateOrbiter();
+            updateOrbit();
 
         } else {
             Quaternion rotate = new Quaternion();
@@ -581,6 +600,16 @@ public class PoseCameraState
             Quaternion newRotation = rotate.mult(oldRotation);
             cam.setRotation(newRotation);
         }
+    }
+
+    /**
+     * Rotate the model around +Y the the specified angle.
+     *
+     * @param angle in radians
+     */
+    private void rotateModel(float angle) {
+        Spatial model = PoseDemo.hud.getModel();
+        model.rotate(0f, angle, 0f);
     }
 
     /**
@@ -608,7 +637,12 @@ public class PoseCameraState
         inputManager.deleteMapping(moveUpEvent);
     }
 
-    private void updateOrbiter() {
+    /**
+     * In orbit mode, move the camera based on azimuth, elevation, and range.
+     */
+    private void updateOrbit() {
+        assert isOrbitMode();
+
         Vector3f direction = MyVector3f.fromAltAz(elevationAngle,
                 azimuthAngle);
         Vector3f offset = direction.mult(range);
@@ -637,15 +671,15 @@ public class PoseCameraState
         /*
          * Trace the ray to the nearest geometry in the model.
          */
-        Spatial model = MySpatial.findChild(rootNode, "model");
-        if (model == null) {
+        Spatial spatial = PoseDemo.hud.getModel();
+        if (spatial == null) {
             /*
-             * If there's no model, go to the floor instead.
+             * If there's no model, trace to the platform instead.
              */
-            model = MySpatial.findChild(rootNode, "floor");
+            spatial = MySpatial.findChild(rootNode, PoseDemo.platformName);
         }
         CollisionResults results = new CollisionResults();
-        model.collideWith(ray, results);
+        spatial.collideWith(ray, results);
         /*
          * Find the first point of contact on a triangle facing the camera.
          *
