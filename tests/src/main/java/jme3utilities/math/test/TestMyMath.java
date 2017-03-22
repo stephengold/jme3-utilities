@@ -25,9 +25,9 @@
  */
 package jme3utilities.math.test;
 
-import jme3utilities.math.*;
 import java.io.PrintStream;
 import java.util.logging.Logger;
+import jme3utilities.math.MyMath;
 
 /**
  * Test cases for the MyMath class.
