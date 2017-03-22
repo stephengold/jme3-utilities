@@ -48,10 +48,9 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-final public class SkeletonDebugControl
-        extends SubtreeControl {
+final public class SkeletonDebugControl extends SubtreeControl {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * color for debug material

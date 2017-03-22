@@ -40,10 +40,9 @@ import jme3utilities.ui.InputMode;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class TestMultipleScreens
-        extends GuiApplication {
+public class TestMultipleScreens extends GuiApplication {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -155,7 +154,7 @@ public class TestMultipleScreens
             }
         }
         /*
-         * The action has not been handled.
+         * The action is not handled: forward it to the superclass.
          */
         super.onAction(actionString, ongoing, ignored);
     }

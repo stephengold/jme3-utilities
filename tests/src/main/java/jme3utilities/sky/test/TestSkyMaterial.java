@@ -306,7 +306,9 @@ public class TestSkyMaterial extends GuiApplication {
                     return;
             }
         }
-
+        /*
+         * The action is not handled: forward it to the superclass.
+         */
         super.onAction(actionString, ongoing, tpf);
     }
     // *************************************************************************

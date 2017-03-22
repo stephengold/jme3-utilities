@@ -191,7 +191,7 @@ public class TestBindScreen extends GuiApplication {
      */
     @Override
     public void moreDefaultBindings() {
-        /* 
+        /*
          * Add action names to the default input mode.
          */
         InputMode dim = getDefaultInputMode();
@@ -278,7 +278,7 @@ public class TestBindScreen extends GuiApplication {
             }
         }
         /*
-         * Action not yet handled: fall back on ActionApplication's handler.
+         * The action is not handled: forward it to the superclass.
          */
         super.onAction(actionString, ongoing, tpf);
     }

@@ -59,7 +59,7 @@ public class TestSkyControlHud
         extends GuiScreenController
         implements ActionListener {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -610,7 +610,9 @@ public class TestSkyControlHud
                     return;
             }
         }
-
+        /*
+         * The action is not handled: forward it to the application class.
+         */
         guiApplication.onAction(actionString, ongoing, tpf);
     }
     // *************************************************************************

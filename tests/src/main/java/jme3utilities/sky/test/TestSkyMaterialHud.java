@@ -59,7 +59,7 @@ public class TestSkyMaterialHud
         extends GuiScreenController
         implements ActionListener {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * object index for the moon
@@ -313,7 +313,9 @@ public class TestSkyMaterialHud
                     return;
             }
         }
-
+        /*
+         * The action is not handled: forward it to the application class.
+         */
         guiApplication.onAction(actionString, ongoing, tpf);
     }
     // *************************************************************************

@@ -305,7 +305,7 @@ public class SkyControlCore extends SubtreeControl {
     }
 
     /**
-     * Read the speed and direction of cloud motion.
+     * Read the speed and direction of cloud motion. TODO rename getCloudsRate
      *
      * @return multiple of the default rate (may be negative)
      */
@@ -314,7 +314,7 @@ public class SkyControlCore extends SubtreeControl {
     }
 
     /**
-     * Read the vertical offset of the clouds-only dome.
+     * Read the vertical offset of the clouds-only dome. TODO rename
      *
      * @return vertical offset as a fraction of the dome height
      */
@@ -409,7 +409,7 @@ public class SkyControlCore extends SubtreeControl {
     }
 
     /**
-     * Alter the speed and/or direction of cloud motion.
+     * Alter the speed and/or direction of cloud motion. TODO rename
      *
      * @param newRate multiple of the default rate (may be negative)
      */
@@ -420,7 +420,7 @@ public class SkyControlCore extends SubtreeControl {
     /**
      * Alter the vertical offset of the clouds-only dome. When the scene's
      * horizon lies below the astronomical horizon, it may help to depress the
-     * clouds-only dome.
+     * clouds-only dome. TODO rename
      *
      * @param newYOffset desired vertical offset as a fraction of the dome
      * height (&lt;1, &ge;0 when flattening&gt;0; 0 when flattening=0)

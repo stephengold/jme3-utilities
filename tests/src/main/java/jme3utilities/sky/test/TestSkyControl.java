@@ -62,7 +62,7 @@ public class TestSkyControl extends GuiApplication {
     /**
      * path to hotkey bindings configuration asset
      */
-    final private static String hotkeyBindingsAssetPath = 
+    final private static String hotkeyBindingsAssetPath =
             "Interface/bindings/TestSkyControl.properties";
     // *************************************************************************
     // fields
@@ -211,7 +211,7 @@ public class TestSkyControl extends GuiApplication {
             }
         }
         /*
-         * The action has not yet been handled: forward to superclass.
+         * The action is not handled: forward it to the superclass.
          */
         super.onAction(actionString, ongoing, tpf);
     }

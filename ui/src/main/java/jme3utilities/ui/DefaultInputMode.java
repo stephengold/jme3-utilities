@@ -44,7 +44,7 @@ import jme3utilities.MyString;
  */
 class DefaultInputMode extends InputMode {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -80,7 +80,7 @@ class DefaultInputMode extends InputMode {
             MyString.quote(actionString), ongoing
         });
         /*
-         * Action not yet handled: fall back on the application's handler.
+         * The action is not handled: forward it  to the application class.
          */
         actionApplication.onAction(actionString, ongoing, tpf);
     }

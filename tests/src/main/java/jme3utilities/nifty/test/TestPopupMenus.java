@@ -57,7 +57,7 @@ public class TestPopupMenus extends GuiApplication {
     final private static String applicationName = "TestPopupMenus";
     // *************************************************************************
     // fields
-    
+
     /**
      * controller for the screen: set in guiInitializeApplication()
      */
@@ -136,7 +136,7 @@ public class TestPopupMenus extends GuiApplication {
             }
         }
         /*
-         * The action has not been handled.
+         * The action is not handled: forward it to the superclass.
          */
         super.onAction(actionString, ongoing, ignored);
     }
