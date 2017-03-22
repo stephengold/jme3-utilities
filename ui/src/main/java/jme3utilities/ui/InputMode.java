@@ -47,7 +47,7 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * Simple app state to implement a configurable input mode. At most one mode is
+ * Action app state to implement a configurable input mode. At most one mode is
  * active at a time.
  * <p>
  * An active mode maps hotkeys to actions and controls the appearance of the
@@ -464,7 +464,7 @@ abstract public class InputMode
         ActionApplication aa = (ActionApplication) application;
         if (this == aa.getDefaultInputMode()) {
             /*
-             * Give the application a chance to override the 
+             * Give the application a chance to override the
              * initial hotkey bindings.
              */
             aa.moreDefaultBindings();
@@ -608,7 +608,16 @@ abstract public class InputMode
         for (String keyString : hotkeyBindings.stringPropertyNames()) {
             String actionName = hotkeyBindings.getProperty(keyString);
             Hotkey hotkey = Hotkey.getInstance(keyString);
-            bind(actionName, hotkey);
+            if (hotkey == null) {
+                logger.log(Level.WARNING, "Skipped unknown hotkey {0} in {1}",
+                        new Object[]{
+                            MyString.quote(keyString),
+                            MyString.quote(assetPath)
+                        });
+                hotkeyBindings.remove(keyString);
+            } else {
+                bind(actionName, hotkey);
+            }
         }
     }
 
