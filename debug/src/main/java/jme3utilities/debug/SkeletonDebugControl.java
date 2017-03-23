@@ -27,11 +27,14 @@ package jme3utilities.debug;
 
 import com.jme3.animation.Skeleton;
 import com.jme3.asset.AssetManager;
+import com.jme3.material.MatParam;
 import com.jme3.material.Material;
+import com.jme3.material.MaterialDef;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.SkeletonDebugger;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.MySkeleton;
@@ -48,14 +51,22 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-final public class SkeletonDebugControl extends SubtreeControl {
+public class SkeletonDebugControl extends SubtreeControl {
     // *************************************************************************
     // constants and loggers
 
     /**
-     * color for debug material
+     * default line width for the wireframe material
      */
-    final private static ColorRGBA color = ColorRGBA.Blue;
+    final private static float defaultLineWidth = 2f;
+    /**
+     * default point size for the wireframe material
+     */
+    final private static float defaultPointSize = 4f;
+    /**
+     * default color for the wireframe material
+     */
+    final private static ColorRGBA defaultColor = ColorRGBA.Blue;
     /**
      * message logger for this class
      */
@@ -65,7 +76,7 @@ final public class SkeletonDebugControl extends SubtreeControl {
     // fields
 
     /*
-     * material for the wire frame: set by constructor
+     * wireframe material (set by constructor)
      */
     final private Material material;
     // *************************************************************************
@@ -80,13 +91,55 @@ final public class SkeletonDebugControl extends SubtreeControl {
         super();
         Validate.nonNull(assetManager, "asset manager");
 
-        material = MyAsset.createWireframeMaterial(assetManager, color);
+        material = MyAsset.createWireframeMaterial(assetManager, defaultColor);
         material.getAdditionalRenderState().setDepthTest(false);
+        setLineWidth(defaultLineWidth);
+        if (supportsPointSize()) {
+            setPointSize(defaultPointSize);
+        }
 
         assert !isEnabled();
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Copy the color of the visualization.
+     *
+     * @return a new instance
+     */
+    public ColorRGBA getColor() {
+        MatParam parameter = material.getParam("Color");
+        ColorRGBA color = (ColorRGBA) parameter.getValue();
+
+        return color.clone();
+    }
+
+    /**
+     * Read the line width of the visualization.
+     *
+     * @return width (in pixels, &ge;1)
+     */
+    public float getLineWidth() {
+        float result = material.getAdditionalRenderState().getLineWidth();
+        assert result >= 1f : result;
+        return result;
+    }
+
+    /**
+     * Read the point size of the visualization.
+     *
+     * @return size (in pixels, &ge;1)
+     */
+    public float getPointSize() {
+        if (!supportsPointSize()) {
+            return 1f;
+        }
+        MatParam parameter = material.getParam("PointSize");
+        float result = (float) parameter.getValue();
+
+        return result;
+    }
 
     /**
      * Test whether a skeletonized spatial has debugging enabled.
@@ -108,6 +161,16 @@ final public class SkeletonDebugControl extends SubtreeControl {
     }
 
     /**
+     * Alter the color of the visualization.
+     *
+     * @param newColor (not null)
+     */
+    public void setColor(ColorRGBA newColor) {
+        Validate.nonNull(newColor, "new color");
+        material.setColor("Color", newColor);
+    }
+
+    /**
      * Alter a skeletonized spatial's debug status. Has no effect if the spatial
      * lacks a SkeletonDebugControl.
      *
@@ -121,6 +184,46 @@ final public class SkeletonDebugControl extends SubtreeControl {
                 SkeletonDebugControl.class);
         if (control != null) {
             control.setEnabled(newState);
+        }
+    }
+
+    /**
+     * Alter the line width of the visualization.
+     *
+     * @param width (in pixels, &ge;1)
+     */
+    final public void setLineWidth(float width) {
+        Validate.inRange(width, "width", 1f, Float.MAX_VALUE);
+        material.getAdditionalRenderState().setLineWidth(width);
+    }
+
+    /**
+     * Alter the point size of the visualization.
+     *
+     * @param size (in pixels, &ge;1)
+     */
+    final public void setPointSize(float size) {
+        Validate.inRange(size, "size", 1f, Float.MAX_VALUE);
+
+        if (supportsPointSize()) {
+            material.setFloat("PointSize", size);
+        } else {
+            logger.log(Level.WARNING, "PointSize not set.");
+        }
+    }
+
+    /**
+     * Test whether the wireframe material supports PointSize. (The PointSize
+     * parameter was missing from Unshaded.j3md in 3.1.0.)
+     *
+     * @return true if supported, false otherwise
+     */
+    final public boolean supportsPointSize() {
+        MaterialDef def = material.getMaterialDef();
+        if (def.getMaterialParam("PointSize") == null) {
+            return false;
+        } else {
+            return true;
         }
     }
     // *************************************************************************
