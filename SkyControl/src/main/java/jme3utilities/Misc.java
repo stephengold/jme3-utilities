@@ -141,12 +141,12 @@ public class Misc {
     }
 
     /**
-     * Read the verbose version string for this package.
+     * Read the verbose version string for this library.
      *
-     * @return package name, branch, and revision of this file
+     * @return project name, library name, branch, and revision of this file
      */
     public static String getVersion() {
-        return "jme3-utilities master $Rev: 0.9.1+6 $";
+        return "jme3-utilities SkyControl master $Rev: 0.9.1+7 $";
     }
 
     /**
@@ -157,9 +157,9 @@ public class Misc {
     public static String getVersionShort() {
         String verbose = getVersion();
         String[] words = verbose.split("\\s+");
-        String result = String.format("%s %s", words[1], words[3]);
+        assert words.length == 6 : words.length;
+        String result = String.format("%s %s", words[2], words[4]);
 
-        assert result != null;
         assert !result.isEmpty();
         return result;
     }
