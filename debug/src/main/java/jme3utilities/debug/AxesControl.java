@@ -27,13 +27,16 @@ package jme3utilities.debug;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Arrow;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
+import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 
@@ -81,40 +84,85 @@ public class AxesControl extends SubtreeControl {
      */
     final private static Vector3f zAxis = new Vector3f(0f, 0f, 1f);
     // *************************************************************************
-    // fields
-
-    /**
-     * length of each axis (in local units, &gt;0, set by constructor)
-     */
-    final private float length;
-    /**
-     * width of each axis indicator (in pixels, &gt;0, set by constructor)
-     */
-    final private float thickness;
-    // *************************************************************************
     // constructors
 
     /**
      * Instantiate a set of hidden coordinate axes.
      *
      * @param assetManager for loading material definitions (not null)
-     * @param length length of each axis (in local units, &gt;0)
-     * @param thickness thickness of each axis indicator (in pixels, &gt;0)
+     * @param axisLength length of each axis (in local units, &gt;0)
+     * @param lineWidth thickness of each axis indicator (in pixels, &ge;1)
      */
-    public AxesControl(AssetManager assetManager, float length,
-            float thickness) {
+    public AxesControl(AssetManager assetManager, float axisLength,
+            float lineWidth) {
         super();
         Validate.nonNull(assetManager, "asset manager");
-        Validate.positive(length, "length");
-        Validate.positive(thickness, "thickness");
-
-        this.length = length;
-        this.thickness = thickness;
+        Validate.positive(axisLength, "axis length");
+        Validate.inRange(lineWidth, "line width", 1f, Float.MAX_VALUE);
 
         subtree = new Node("axes node");
         createAxis(assetManager, xColor, "xAxis", xAxis);
         createAxis(assetManager, yColor, "yAxis", yAxis);
         createAxis(assetManager, zColor, "zAxis", zAxis);
+
+        setAxisLength(axisLength);
+        setLineWidth(lineWidth);
+    }
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Read the length of the axes.
+     *
+     * @return length (in local units, &gt;0)
+     */
+    public float getAxisLength() {
+        Vector3f localScale = spatial.getLocalScale();
+        float result = localScale.x;
+
+        assert result > 0f : result;
+        return result;
+    }
+
+    /**
+     * Read the line width of the visualization.
+     *
+     * @return width (in pixels, &ge;1)
+     */
+    public float getLineWidth() {
+        Geometry axis = (Geometry) subtree.getChild(0);
+        Material material = axis.getMaterial();
+        RenderState state = material.getAdditionalRenderState();
+        float result = state.getLineWidth();
+
+        assert result >= 1f : result;
+        return result;
+    }
+
+    /**
+     * Alter the lengths of the axes.
+     *
+     * @param length (in local units, &gt;0)
+     */
+    final public void setAxisLength(float length) {
+        Validate.positive(length, "length");
+        subtree.setLocalScale(length);
+    }
+
+    /**
+     * Alter the line width of the visualization.
+     *
+     * @param width (in pixels, &ge;1)
+     */
+    final public void setLineWidth(float width) {
+        Validate.inRange(width, "width", 1f, Float.MAX_VALUE);
+
+        for (Spatial child : subtree.getChildren()) {
+            Geometry axis = (Geometry) child;
+            Material material = axis.getMaterial();
+            RenderState state = material.getAdditionalRenderState();
+            state.setLineWidth(width);
+        }
     }
     // *************************************************************************
     // private methods
@@ -135,14 +183,12 @@ public class AxesControl extends SubtreeControl {
         assert direction != null;
         assert direction.isUnitVector() : direction;
 
-        Vector3f extent = direction.mult(length);
-        Arrow mesh = new Arrow(extent);
+        Arrow mesh = new Arrow(direction);
         Geometry geometry = new Geometry(name, mesh);
         subtree.attachChild(geometry);
 
         Material wireMaterial = MyAsset.createWireframeMaterial(
                 assetManager, color);
-        wireMaterial.getAdditionalRenderState().setLineWidth(thickness);
         geometry.setMaterial(wireMaterial);
 
         return geometry;
