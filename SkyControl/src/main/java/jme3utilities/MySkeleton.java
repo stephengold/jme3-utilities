@@ -31,8 +31,9 @@ import com.jme3.animation.SkeletonControl;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
-import java.util.Collection;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -123,18 +124,20 @@ public class MySkeleton {
      * @param spatial skeletonized spatial (not null)
      * @return a new collection in lexicographic order (may be empty)
      */
-    public static Collection<String> listBones(Spatial spatial) {
+    public static List<String> listBones(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
 
         Skeleton skeleton = getSkeleton(spatial);
         int boneCount = skeleton.getBoneCount();
 
-        Collection<String> names = new TreeSet<>();
+        List<String> names = new ArrayList<>();
         for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
             Bone bone = skeleton.getBone(boneIndex);
             String name = bone.getName();
             names.add(name);
         }
+
+        Collections.sort(names);
 
         return names;
     }
