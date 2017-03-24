@@ -26,10 +26,11 @@
 package jme3utilities;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Utility methods for Strings.
+ * Utility methods for Strings and collections of Strings.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -158,6 +159,52 @@ public class MyString {
     }
 
     /**
+     * Find the longest shared prefix in a list of strings.
+     *
+     * @param list (not null)
+     * @return
+     */
+    public static String findLongestPrefix(List<String> list) {
+        int count = list.size();
+
+        String longest = "";
+        int longestLength = 0;
+
+        for (int i = 0; i < count; i++) {
+            String si = list.get(i);
+            for (int j = i + 1; j < count; j++) {
+                String sj = list.get(j);
+                int prefixLength = sharedPrefixLength(si, sj);
+                if (prefixLength > longestLength) {
+                    longestLength = prefixLength;
+                    longest = si.substring(0, prefixLength);
+                }
+            }
+        }
+
+        return longest;
+    }
+
+    /**
+     * Filter a collection of strings, keeping only those with the specified
+     * prefix.
+     *
+     * @param collection (not null, modified)
+     * @param prefix (not null)
+     */
+    public static void matchPrefix(Collection<String> collection,
+            String prefix) {
+        Validate.nonNull(collection, "collection");
+        Validate.nonNull(prefix, "prefix");
+
+        for (String element : toArray(collection)) {
+            if (!element.startsWith(prefix)) {
+                collection.remove(element);
+            }
+        }
+    }
+
+    /**
      * Enclose text in quotation marks.
      *
      * @param text the text to enclose (not null)
@@ -167,6 +214,53 @@ public class MyString {
         Validate.nonNull(text, "text");
 
         return String.format("\"%s\"", text);
+    }
+
+    /**
+     * Reduce a list of strings using common prefixes.
+     *
+     * @param list (not null, modified)
+     * @param targetSize (&gt;0)
+     */
+    public static void reduce(List<String> list, int targetSize) {
+        Validate.positive(targetSize, "target size");
+
+        while (list.size() > targetSize) {
+            String longestPrefix = findLongestPrefix(list);
+            if (longestPrefix.length() == 0) {
+                return;
+            }
+            for (String s : toArray(list)) {
+                if (s.startsWith(longestPrefix)) {
+                    list.remove(s);
+                }
+            }
+            list.add(longestPrefix);
+        }
+    }
+
+    /**
+     * Find the length of the shared prefix of two strings.
+     *
+     * @param s1 1st string (not null)
+     * @param s2 2nd string (not null)
+     * @return number of characters in shared prefix (&ge;0)
+     */
+    public static int sharedPrefixLength(String s1, String s2) {
+        int length1 = s1.length();
+        int length2 = s2.length();
+        int maxPrefixLength = Math.min(length1, length2);
+
+        int spLength;
+        for (spLength = 0; spLength < maxPrefixLength; spLength++) {
+            char c1 = s1.charAt(spLength);
+            char c2 = s2.charAt(spLength);
+            if (c1 != c2) {
+                break;
+            }
+        }
+
+        return spLength;
     }
 
     /**
