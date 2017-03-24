@@ -25,6 +25,7 @@
  */
 package jme3utilities.debug.test;
 
+import com.jme3.app.StatsAppState;
 import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -86,8 +87,8 @@ public class PoseDemo extends GuiApplication {
     /**
      * path to hotkey bindings configuration asset
      */
-    final private static String hotkeyBindingsAssetPath
-            = "Interface/bindings/PoseDemo.properties";
+    final private static String hotkeyBindingsAssetPath =
+            "Interface/bindings/PoseDemo.properties";
     /**
      * name of the platform geometry
      */
@@ -95,16 +96,11 @@ public class PoseDemo extends GuiApplication {
     /**
      * path to texture asset for the platform
      */
-    final private static String platformTextureAssetPath
-            = "Textures/Terrain/splat/dirt.jpg";
+    final private static String platformTextureAssetPath =
+            "Textures/Terrain/splat/dirt.jpg";
     // *************************************************************************
     // fields
 
-    /**
-     * scene control to display global axes (set by
-     * {@link #guiInitializeApplication()})
-     */
-    static AxesControl axes = null;
     /**
      * Nifty screen for editing hotkey bindings
      */
@@ -114,13 +110,17 @@ public class PoseDemo extends GuiApplication {
      */
     static DirectionalLightShadowFilter dlsf = null;
     /**
-     * app state to control the camera
+     * app state to manage the camera
      */
     static PoseCameraState cameraState = new PoseCameraState();
     /**
      * heads-up display (HUD)
      */
-    static PoseDemoHud hud = new PoseDemoHud();
+    static PoseDemoHud hudState = new PoseDemoHud();
+    /**
+     * app state to manage the loaded model
+     */
+    static ModelState modelState = new ModelState();
     // *************************************************************************
     // new methods exposed
 
@@ -161,12 +161,20 @@ public class PoseDemo extends GuiApplication {
     @Override
     public void guiInitializeApplication() {
         /*
-         * Attach screen controllers for the HUD and BindScreen.
+         * Attach screen controllers for the HUD, the scene, and BindScreen.
          */
-        boolean success = stateManager.attach(hud);
+        boolean success = stateManager.attach(modelState);
+        assert success;
+        success = stateManager.attach(hudState);
         assert success;
         success = stateManager.attach(bindScreen);
         assert success;
+        /*
+         * Disable the StatsAppState.  F5 will re-enable it.
+         */
+        StatsAppState sas = stateManager.getState(StatsAppState.class);
+        sas.setDisplayFps(false);
+        sas.setDisplayStatView(false);
         /*
          * Disable flyCam and attach a custom camera app state.
          */
@@ -176,54 +184,18 @@ public class PoseDemo extends GuiApplication {
         success = stateManager.attach(cameraState);
         assert success;
         /*
-         * Light the scene.
+         * Create lights, shadows, and a daytime sky.
          */
-        AmbientLight ambientLight = new AmbientLight();
-        rootNode.addLight(ambientLight);
-        DirectionalLight mainLight = new DirectionalLight();
-        rootNode.addLight(mainLight);
-        /*
-         * Add a shadow filter.
-         */
-        dlsf = new DirectionalLightShadowFilter(assetManager, shadowMapSize,
-                shadowMapSplits);
-        dlsf.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
-        dlsf.setLight(mainLight);
-        Misc.getFpp(viewPort, assetManager).addFilter(dlsf);
-        /*
-         * Create a daytime sky.
-         */
-        SkyControl sky = new SkyControl(assetManager, cam, 0.9f, false, true);
-        rootNode.addControl(sky);
-        sky.setCloudiness(0.5f);
-        sky.getSunAndStars().setHour(11f);
-        sky.setEnabled(true);
-        Updater updater = sky.getUpdater();
-        updater.setAmbientLight(ambientLight);
-        updater.setMainLight(mainLight);
-        updater.addShadowFilter(dlsf);
-        updater.setMainMultiplier(4f);
+        createLightsAndSky();
         /*
          * Create a square platform.
          */
-        float radius = platformDiameter / 2f;
-        Mesh platformMesh = new Box(radius, platformThickness, radius);
-        Spatial platform = new Geometry(platformName, platformMesh);
-        Texture dirt = MyAsset.loadTexture(assetManager,
-                platformTextureAssetPath);
-        Material mat = MyAsset.createShadedMaterial(assetManager, dirt);
-        platform.setMaterial(mat);
-        platform.setShadowMode(RenderQueue.ShadowMode.Receive);
-        rootNode.attachChild(platform);
-        float yOffset = -1.001f * platformThickness;
-        MySpatial.setWorldLocation(platform, new Vector3f(0f, yOffset, 0f));
+        createPlatform();
         /*
          * Add visible indicators for 3 global axes.
          */
-        float length = 2f; //0.3f;
-        float thickness = 4f;
-        axes = new AxesControl(assetManager, length, thickness);
-        rootNode.addControl(axes);
+        AxesControl axesControl = new AxesControl(assetManager, 1f, 1f);
+        rootNode.addControl(axesControl);
         /*
          * Default input mode directly influences the camera state and
          * (indirectly) the HUD.
@@ -264,5 +236,60 @@ public class PoseDemo extends GuiApplication {
          * Forward unhandled action to the superclass.
          */
         super.onAction(actionString, ongoing, tpf);
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Create lights, shadows, and a daytime sky.
+     */
+    private void createLightsAndSky() {
+        /*
+         * Light the scene.
+         */
+        AmbientLight ambientLight = new AmbientLight();
+        rootNode.addLight(ambientLight);
+        DirectionalLight mainLight = new DirectionalLight();
+        rootNode.addLight(mainLight);
+        /*
+         * Add a shadow filter.
+         */
+        dlsf = new DirectionalLightShadowFilter(assetManager, shadowMapSize,
+                shadowMapSplits);
+        dlsf.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
+        dlsf.setLight(mainLight);
+        Misc.getFpp(viewPort, assetManager).addFilter(dlsf);
+        /*
+         * Create a daytime sky.
+         */
+        SkyControl sky = new SkyControl(assetManager, cam, 0.9f, false, true);
+        rootNode.addControl(sky);
+        sky.setCloudiness(0.5f);
+        sky.getSunAndStars().setHour(11f);
+        sky.setEnabled(true);
+        Updater updater = sky.getUpdater();
+        updater.setAmbientLight(ambientLight);
+        updater.setMainLight(mainLight);
+        updater.addShadowFilter(dlsf);
+        updater.setMainMultiplier(4f);
+    }
+
+    /**
+     * Create a square platform for the model to stand on.
+     */
+    private void createPlatform() {
+        float radius = platformDiameter / 2f;
+        Mesh platformMesh = new Box(radius, platformThickness, radius);
+        Spatial platform = new Geometry(platformName, platformMesh);
+
+        Texture dirt = MyAsset.loadTexture(assetManager,
+                platformTextureAssetPath);
+        Material mat = MyAsset.createShadedMaterial(assetManager, dirt);
+        platform.setMaterial(mat);
+
+        platform.setShadowMode(RenderQueue.ShadowMode.Receive);
+        rootNode.attachChild(platform);
+        float yOffset = -1.001f * platformThickness;
+        MySpatial.setWorldLocation(platform, new Vector3f(0f, yOffset, 0f));
     }
 }

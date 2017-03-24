@@ -25,36 +25,26 @@
  */
 package jme3utilities.debug.test;
 
-import com.jme3.animation.AnimChannel;
-import com.jme3.animation.AnimControl;
-import com.jme3.animation.Animation;
-import com.jme3.animation.Bone;
-import com.jme3.animation.BoneTrack;
-import com.jme3.animation.LoopMode;
-import com.jme3.animation.Skeleton;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue;
-import com.jme3.scene.Spatial;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.CheckBox;
 import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
 import de.lessvoid.nifty.controls.Slider;
+import de.lessvoid.nifty.controls.SliderChangedEvent;
 import de.lessvoid.nifty.screen.Screen;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.MyAnimation;
-import jme3utilities.MySkeleton;
-import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.debug.AxesControl;
 import jme3utilities.debug.SkeletonDebugControl;
 import jme3utilities.nifty.GuiScreenController;
 
@@ -81,7 +71,7 @@ public class PoseDemoHud
     /**
      * names of loadable models in the jme3-testdata library
      * <p>
-     * Jaime excluded because its skeleton is backward.
+     * I've excluded Jaime because its skeleton is backward.
      */
     final private static String[] modelNames = {
         "Elephant", "Ninja", "Oto", "Sinbad"
@@ -94,11 +84,15 @@ public class PoseDemoHud
      * dummy animation name used in menus and statuses (but never stored in
      * channel!) to indicate bind pose, that is, no animation selected
      */
-    final private static String bindPoseName = "( bind pose )";
+    final static String bindPoseName = "( bind pose )";
     /**
      * action prefix for the "select bone" popup menu
      */
     final private static String boneMenuPrefix = "select bone ";
+    /**
+     * action prefix for the "select keyframe" popup menu
+     */
+    final private static String keyframeMenuPrefix = "select keyframe ";
     /**
      * action prefix for the "select model" popup menu
      */
@@ -107,33 +101,20 @@ public class PoseDemoHud
      * dummy bone name used in menus and statuses to indicate no bone selection
      * (not null)
      */
-    final private static String noBone = "( no bone )";
+    final static String noBone = "( no bone )";
     // *************************************************************************
     // fields
 
     /**
-     * animation channel (Can be null only if no model selected.
-     * getAnimationName() == null means bind pose is selected.)
-     */
-    private AnimChannel channel = null;
-    /**
      * When true, all three bone-angle sliders should be enabled, along with the
      * user-control flags of all bones in the model's skeleton.
      */
-    private boolean boneAngleSlidersEnabledFlag = false;
+    boolean baSlidersEnabledFlag = false;
     /**
-     * inverse local rotation of each bone in original bind pose, indexed by
-     * boneIndex
+     * references to the bone-angle sliders, set by
+     * {@link #initialize(com.jme3.app.state.AppStateManager, com.jme3.app.Application)}
      */
-    final private List<Quaternion> inverseBindPose = new ArrayList<>(30);
-    /**
-     * reference to the model's skeleton debug control
-     */
-    private SkeletonDebugControl debugControl = null;
-    /**
-     * name of the bone which is selected, or noBone (not null)
-     */
-    private String selectedBoneName = noBone;
+    final private Slider baSliders[] = new Slider[3];
     // *************************************************************************
     // constructors
 
@@ -148,13 +129,45 @@ public class PoseDemoHud
     // new methods exposed
 
     /**
-     * Access the loaded model.
-     *
-     * @return the pre-existing instance, or null if not yet loaded
+     * Disable the 3 bone-angle sliders (and user control).
      */
-    Spatial getModel() {
-        Spatial model = MySpatial.findChild(rootNode, "model");
-        return model;
+    void disableBaSliders() {
+        logger.log(Level.INFO, "Disable the bone-angle sliders.");
+        /*
+         * Disable the sliders.
+         */
+        for (Slider slider : baSliders) {
+            slider.disable();
+        }
+        /*
+         * Give control of the skeleton back to the animations.
+         */
+        PoseDemo.modelState.setUserControl(false);
+        /*
+         * Update the status.
+         */
+        baSlidersEnabledFlag = false;
+    }
+
+    /**
+     * Enable the 3 bone-angle sliders (and user control).
+     */
+    void enableBaSliders() {
+        logger.log(Level.INFO, "Enable the bone-angle sliders.");
+        /*
+         * Enable the sliders.
+         */
+        for (Slider slider : baSliders) {
+            slider.enable();
+        }
+        /*
+         * Take control of the skeleton away from any animations.
+         */
+        PoseDemo.modelState.setUserControl(true);
+        /*
+         * Update the status.
+         */
+        baSlidersEnabledFlag = true;
     }
 
     /**
@@ -182,8 +195,96 @@ public class PoseDemoHud
                 PoseDemo.cameraState.setOrbitMode(true);
                 return;
         }
-        logger.log(Level.WARNING, "unknown radio button: id={0}",
+        logger.log(Level.WARNING, "unknown radio button with id={0}",
                 MyString.quote(buttonId));
+    }
+
+    /**
+     * Callback which Nifty invokes after the user moves a slider.
+     *
+     * @param sliderId Nifty element id of the slider (not null)
+     * @param event details of the event (not null, ignored)
+     */
+    @NiftyEventSubscriber(pattern = ".*Slider")
+    public void onSliderChanged(final String sliderId,
+            final SliderChangedEvent event) {
+        Validate.nonNull(sliderId, "slider id");
+        Validate.nonNull(event, "event");
+
+        switch (sliderId) {
+            case "xSlider":
+            case "ySlider":
+            case "zSlider":
+                baSliderChanged();
+        }
+    }
+
+    /**
+     * Select the named bone or noBone.
+     *
+     * @param name (not null)
+     */
+    void selectBone(String name) {
+        PoseDemo.modelState.selectBone(name);
+
+        String status;
+        if (PoseDemo.modelState.hasTrack()) {
+            status = String.format("+ %s", name); // bone with track
+        } else {
+            status = name;
+        }
+        setStatusText("boneStatus", status);
+
+        updateBaSlidersEnabled();
+        updateBaSlidersToBone(null);
+    }
+
+    /**
+     * Update the enabled/disabled status of the 3 bone-angle sliders (and the
+     * model's user-control flags). Invoke this methods after changes are
+     * made to the model, animation, bone, or speed.
+     */
+    void updateBaSlidersEnabled() {
+        boolean wasEnabled = baSlidersEnabledFlag;
+        boolean enableFlag = PoseDemo.modelState.isBoneSelected()
+                && !PoseDemo.modelState.isAnimationRunning();
+
+        if (enableFlag && !wasEnabled) {
+            enableBaSliders();
+        } else if (wasEnabled && !enableFlag) {
+            disableBaSliders();
+        }
+
+        assert baSlidersEnabledFlag == enableFlag;
+    }
+
+    /**
+     * Update the 3 bone-angle sliders to match the selected bone. If no bone is
+     * selected, zero them.
+     *
+     * @param storeAngles (length=3 if not null)
+     */
+    void updateBaSlidersToBone(float[] storeAngles) {
+        if (storeAngles == null) {
+            storeAngles = new float[3];
+        }
+        assert storeAngles.length == 3 : storeAngles.length;
+
+        if (PoseDemo.modelState.isBoneSelected()) {
+            PoseDemo.modelState.boneAngles(storeAngles);
+            for (int iAxis = 0; iAxis < baSliders.length; iAxis++) {
+                baSliders[iAxis].setValue(storeAngles[iAxis]);
+            }
+
+        } else {
+            /*
+             * No bone selected: zero the sliders.
+             */
+            for (int iAxis = 0; iAxis < baSliders.length; iAxis++) {
+                baSliders[iAxis].setValue(0f);
+                storeAngles[iAxis] = 0f;
+            }
+        }
     }
     // *************************************************************************
     // ActionListener methods
@@ -201,12 +302,29 @@ public class PoseDemoHud
 
         if (ongoing) {
             switch (actionString) {
+                case "add pose":
+                    PoseDemo.modelState.addPoseAnimation("new-animation"); // TODO
+                    selectAnimation("new-animation");
+                    return;
+
                 case "select animation":
-                    showPopup(animationMenuPrefix, listAnimationNames());
+                    Collection<String> animationNames = PoseDemo.modelState.listAnimationNames();
+                    showPopup(animationMenuPrefix, animationNames);
                     return;
 
                 case "select bone":
-                    showPopup(boneMenuPrefix, listBoneNames());
+                    List<String> boneNames = PoseDemo.modelState.listBoneNames();
+                    MyString.reduce(boneNames, 20);
+                    Collections.sort(boneNames);
+                    showPopup(boneMenuPrefix, boneNames);
+                    return;
+
+                case "select keyframe":
+                    List<String> options = PoseDemo.modelState.listKeyframes();
+                    if (options != null) {
+                        MyString.reduce(options, 20);
+                        showPopup(keyframeMenuPrefix, options);
+                    }
                     return;
 
                 case "select model":
@@ -222,7 +340,33 @@ public class PoseDemoHud
             } else if (actionString.startsWith(boneMenuPrefix)) {
                 int namePos = boneMenuPrefix.length();
                 String name = actionString.substring(namePos);
+
+                if (!PoseDemo.modelState.hasBone(name)) {
+                    List<String> boneNames = PoseDemo.modelState.listBoneNames(name);
+                    MyString.reduce(boneNames, 20);
+                    Collections.sort(boneNames);
+                    showPopup(boneMenuPrefix, boneNames);
+                    return;
+                }
+
                 selectBone(name);
+                return;
+
+            } else if (actionString.startsWith(keyframeMenuPrefix)) {
+                int namePos = keyframeMenuPrefix.length();
+                String name = actionString.substring(namePos);
+
+                List<String> options = PoseDemo.modelState.listKeyframes();
+                if (!options.contains(name)) {
+                    MyString.matchPrefix(options, name);
+                    MyString.reduce(options, 20);
+                    showPopup(keyframeMenuPrefix, options);
+                    return;
+                }
+
+                PoseDemo.modelState.selectKeyframe(name);
+                updateBaSlidersToBone(null); // ?
+                updateBaSlidersEnabled();
                 return;
 
             } else if (actionString.startsWith(modelMenuPrefix)) {
@@ -256,11 +400,16 @@ public class PoseDemoHud
         setListener(this);
         super.initialize(stateManager, application);
         /*
-         * Initialize check boxes and labels.
+         * Initialize check boxes.
          */
         setCheckBox("3DCursorCheckBox", true);
         setCheckBox("axesCheckBox", true);
         setCheckBox("skeletonDebugCheckBox", true);
+
+        for (int iAxis = 0; iAxis < axisNames.length; iAxis++) {
+            String axisName = axisNames[iAxis];
+            baSliders[iAxis] = getSlider(axisName);
+        }
 
         loadModel("Elephant");
     }
@@ -287,39 +436,39 @@ public class PoseDemoHud
         boolean enable = box.isChecked();
         PoseDemo.cameraState.cursorSetEnabled(enable);
         /*
-         * Animation and bone
+         * Model status
          */
-        String status;
-        if (findTrack() != null) {
-            status = String.format("+ %s", selectedBoneName); // with a track
+        String status = PoseDemo.modelState.getName();
+        setStatusText("modelStatus", status);
+        /*
+         * Track time
+         */
+        if (PoseDemo.modelState.isBindPoseSelected()) {
+            status = "n/a";
         } else {
-            status = selectedBoneName;
+            float trackTime = PoseDemo.modelState.getTime();
+            float duration = PoseDemo.modelState.getDuration();
+            status = String.format("%.3f / %.3f", trackTime, duration);
         }
-        setStatusText("boneStatus", status);
+        setStatusText("trackTime", status);
         /*
-         * AxesControl
+         * Animation speed
          */
-        box = screen.findNiftyControl("axesCheckBox", CheckBox.class);
-        enable = box.isChecked();
-        PoseDemo.axes.setEnabled(enable);
-        float lineWidth = updateSlider("aLineWidth", " pix");
-        PoseDemo.axes.setLineWidth(lineWidth);
-        float length = updateSlider("aLength", " wu");
-        PoseDemo.axes.setAxisLength(length);
-        /*
-         * SkeletonDebugControl
-         */
-        box = screen.findNiftyControl("skeletonDebugCheckBox", CheckBox.class);
-        enable = box.isChecked();
-        debugControl.setEnabled(enable);
-        ColorRGBA wireColor = updateColorBank("wire");
-        debugControl.setColor(wireColor);
-        lineWidth = updateSlider("sLineWidth", " pix");
-        debugControl.setLineWidth(lineWidth);
-        float pointSize = updateSlider("pointSize", " pix");
-        if (debugControl.supportsPointSize()) {
-            debugControl.setPointSize(pointSize);
+        if (PoseDemo.modelState.isBindPoseSelected()) {
+            status = "n/a";
+        } else {
+            float speed = PoseDemo.modelState.getSpeed();
+            status = String.format("%.3f", speed);
         }
+        setStatusText("speed", status);
+        /*
+         * Bone angle sliders
+         */
+        updateBaSliders();
+        /*
+         * Debugging aids
+         */
+        updateDebugAids();
         /*
          * Lighting options
          */
@@ -331,390 +480,127 @@ public class PoseDemoHud
     // private methods
 
     /**
-     * Disable the 3 bone-angle sliders (and user control).
+     * React to user adjusting a bone angle slider.
      */
-    private void disableBoneAngleSliders() {
-        logger.log(Level.INFO, "Disable the bone-angle sliders.");
-        /*
-         * Disable the sliders.
-         */
-        for (String axisName : axisNames) {
-            Slider slider = getSlider(axisName);
-            slider.disable();
-        }
-        /*
-         * Give control of the skeleton back to the animations.
-         */
-        Spatial model = getModel();
-        MySkeleton.setUserControl(model, false);
-        /*
-         * Update the status.
-         */
-        boneAngleSlidersEnabledFlag = false;
-    }
-
-    /**
-     * Enable the 3 bone-angle sliders (and user control).
-     */
-    private void enableBoneAngleSliders() {
-        logger.log(Level.INFO, "Enable the bone-angle sliders.");
-        /*
-         * Enable the sliders.
-         */
-        for (String axisName : axisNames) {
-            Slider slider = getSlider(axisName);
-            slider.enable();
-        }
-        /*
-         * Take control of the skeleton away from any animations.
-         */
-        Spatial model = getModel();
-        MySkeleton.setUserControl(model, true);
-        /*
-         * Update the status.
-         */
-        boneAngleSlidersEnabledFlag = true;
-    }
-
-    /**
-     * Find a named BoneTrack in the selected animation.
-     *
-     * @parm boneName the name of a bone (not null or noBone)
-     * @return a pre-existing instance, or null if no track is selected
-     */
-    private BoneTrack findTrack() {
-        if (!isBoneSelected()) {
-            return null;
-        }
-        if (channel == null) {
-            return null;
-        }
-        if (isBindPoseSelected()) {
-            return null;
-        }
-
-        Spatial model = getModel();
-        Animation animation = getAnimation();
-        int boneIndex = MySkeleton.findBoneIndex(model, selectedBoneName);
-        BoneTrack track = MyAnimation.findTrack(animation, boneIndex);
-
-        return track;
-    }
-
-    /**
-     * Access the selected animation.
-     *
-     * @return a pre-existing instance, or null if none or in bind pose
-     */
-    private Animation getAnimation() {
-        if (isBindPoseSelected()) {
-            return null;
-        }
-        AnimControl animControl = getAnimControl();
-        if (animControl == null) {
-            return null;
-        }
-        String animationName = channel.getAnimationName();
-        Animation animation = animControl.getAnim(animationName);
-
-        return animation;
-    }
-
-    /**
-     * Access the AnimControl of the loaded model.
-     *
-     * @return the pre-existing instance, or null if none
-     */
-    private AnimControl getAnimControl() {
-        Spatial model = getModel();
-        AnimControl animControl = model.getControl(AnimControl.class);
-        if (animControl == null) {
-            throw new IllegalArgumentException(
-                    "expected the model to have an AnimControl");
-        }
-
-        return animControl;
-    }
-
-    /**
-     * Access the skeleton of the loaded model.
-     *
-     * @return the pre-existing instance (not null)
-     */
-    private Skeleton getSkeleton() {
-        Spatial model = getModel();
-        assert model != null;
-        Skeleton skeleton = MySkeleton.getSkeleton(model);
-
-        assert skeleton != null;
-        return skeleton;
-    }
-
-    /**
-     * Test whether an animation is running.
-     *
-     * @return true if an animation is running, false otherwise
-     */
-    private boolean isAnimationRunning() {
-        if (!isBindPoseSelected() && channel.getSpeed() != 0f) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Test whether the bind pose is selected.
-     *
-     * @return true if it's selected, false if an animation is selected or if no
-     * model is loaded
-     */
-    private boolean isBindPoseSelected() {
-        String animationName = channel.getAnimationName();
-        if (animationName == null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Test whether a bone is selected.
-     *
-     * @return true if one is selected, false if none is selected
-     */
-    private boolean isBoneSelected() {
-        if (selectedBoneName.equals(noBone)) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * List the names of all known animations and poses for the loaded model.
-     *
-     * @return a new collection
-     */
-    private Collection<String> listAnimationNames() {
-        Spatial model = getModel();
-        Collection<String> names = MyAnimation.listAnimations(model);
-        names.add(bindPoseName);
-
-        return names;
-    }
-
-    /**
-     * List the names of all known bones in the loaded model.
-     *
-     * @return a new collection
-     */
-    private Collection<String> listBoneNames() {
-        Spatial model = getModel();
-        Collection<String> boneNames = MySkeleton.listBones(model);
-        boneNames.add(noBone);
-        boneNames.remove("");
-        if (boneNames.size() > 30) {
+    private void baSliderChanged() {
+        if (!baSlidersEnabledFlag) {
             /*
-             * If the list is long, remove some minor bones.
+             * Ignore slider change events caused by running animations.
              */
-            String[] allNames = MyString.toArray(boneNames);
-            for (String name : allNames) {
-                if (name.endsWith("Lip")
-                        || name.startsWith("Brow")
-                        || name.startsWith("Cheek")
-                        || name.startsWith("IndexFinger")
-                        || name.startsWith("Jaw")
-                        || name.startsWith("MiddleFinger")
-                        || name.startsWith("Pinky")
-                        || name.startsWith("RingFinger")
-                        || name.startsWith("Thumb")
-                        || name.startsWith("Tongue")) {
-                    boneNames.remove(name);
-                }
-            }
+            assert PoseDemo.modelState.isAnimationRunning();
+            return;
         }
 
-        return boneNames;
+        float angles[] = new float[3];
+        for (int iAxis = 0; iAxis < baSliders.length; iAxis++) {
+            angles[iAxis] = baSliders[iAxis].getValue();
+        }
+
+        Vector3f translation = new Vector3f(0f, 0f, 0f);
+        Quaternion rotation = new Quaternion();
+        rotation.fromAngles(angles);
+        Vector3f scale = new Vector3f(1f, 1f, 1f);
+        PoseDemo.modelState.setUserTransforms(translation, rotation, scale);
     }
 
     /**
-     * Unload the current model, if any, and load a new one.
+     * Load the named model.
      *
-     * @param modelName name of mode (not null)
+     * @param name (not null)
      */
-    private void loadModel(String modelName) {
-        assert modelName != null;
+    private void loadModel(String name) {
+        assert name != null;
 
-        String assetPath;
-        switch (modelName) {
-            case "Jaime":
-                assetPath = "Models/Jaime/Jaime.j3o";
-                break;
-
-            case "Elephant":
-            case "Ninja":
-            case "Oto":
-            case "Sinbad":
-                assetPath = String.format("Models/%s/%s.mesh.xml",
-                        modelName, modelName);
-                break;
-
-            default:
-                logger.log(Level.SEVERE, "Unknown model {0}",
-                        MyString.quote(modelName));
-                return;
-        }
-        Spatial model = assetManager.loadModel(assetPath);
-        /*
-         * Detach the old model from the scene.
-         */
-        Spatial oldModel = getModel();
-        if (oldModel != null) {
-            rootNode.detachChild(oldModel);
-            channel = null;
-        }
-
-        rootNode.attachChild(model);
-        model.setName("model");
-        model.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        setStatusText("modelStatus", modelName);
+        PoseDemo.modelState.load(name);
         selectAnimation(bindPoseName);
         selectBone(noBone);
-        /*
-         * Scale and translate the model to make it one world unit tall,
-         * with its base resting on the XZ plane.
-         */
-        float maxY = MySpatial.getMaxY(model);
-        float minY = MySpatial.getMinY(model);
-        assert maxY > minY : maxY; // no 2D models!
-        float worldScale = 1f / (maxY - minY);
-        MySpatial.setWorldScale(model, worldScale);
-        Vector3f worldLocation = new Vector3f(0f, -minY * worldScale, 0f);
-        MySpatial.setWorldLocation(model, worldLocation);
-        /*
-         * Add a skeleton debug control to the model.
-         */
-        debugControl = new SkeletonDebugControl(assetManager);
-        model.addControl(debugControl);
+        updateBaSlidersEnabled();
     }
 
     /**
-     * Reset the skeleton of the loaded model to its bind pose.
-     */
-    private void resetSkeleton() {
-        Skeleton skeleton = getSkeleton();
-
-        if (boneAngleSlidersEnabledFlag) {
-            /*
-             * Skeleton.reset() is ineffective with user control enabled.
-             */
-            int boneCount = skeleton.getBoneCount();
-            for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
-                Bone bone = skeleton.getBone(boneIndex);
-                Vector3f translation = new Vector3f(0f, 0f, 0f);
-                Quaternion rotation = new Quaternion();
-                Vector3f scale = new Vector3f(1f, 1f, 1f);
-
-                bone.setUserTransforms(translation, rotation, scale);
-            }
-
-        } else {
-            skeleton.reset();
-        }
-    }
-
-    /**
-     * Load a single-pose animation under user control.
-     */
-    private void poseSkeleton() {
-        Animation animation = getAnimation();
-        /*
-         * Make sure user control is enabled.
-         */
-        boolean savedStatus = boneAngleSlidersEnabledFlag;
-        if (!savedStatus) {
-            enableBoneAngleSliders();
-        }
-        /*
-         * Copy bone rotations from pose to skeleton.
-         */
-        Skeleton skeleton = getSkeleton();
-        int boneCount = skeleton.getBoneCount();
-        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
-            BoneTrack track = MyAnimation.findTrack(animation, boneIndex);
-
-            Vector3f translation = new Vector3f(0f, 0f, 0f);
-            Quaternion rotation;
-            if (track != null) {
-                Quaternion[] rotations = track.getRotations();
-                assert rotations.length == 1;
-                rotation = rotations[0];
-            } else {
-                rotation = new Quaternion();
-            }
-            Vector3f scale = new Vector3f(1f, 1f, 1f);
-
-            Bone bone = skeleton.getBone(boneIndex);
-            bone.setUserTransforms(translation, rotation, scale);
-        }
-        /*
-         * Restore prior user control status.
-         */
-        if (!savedStatus) {
-            disableBoneAngleSliders();
-        }
-    }
-
-    /**
-     * Select the named animation or pose.
+     * Select the named pose or animation.
      *
      * @param name (not null)
      */
     private void selectAnimation(String name) {
+        assert name != null;
+
         setStatusText("animationStatus", name);
-        if (name.equals(bindPoseName)) {
+        if (name.equals(PoseDemoHud.bindPoseName)) {
             /*
-             * Select bind pose.
+             * Load bind pose.
              */
-            if (channel == null) {
-                AnimControl control = getAnimControl();
-                channel = control.createChannel();
-            }
-            channel.reset(false);
-            resetSkeleton();
-            updateSlidersEnabled();
+            PoseDemo.modelState.loadBindPose();
+            updateBaSlidersEnabled();
+            updateBaSlidersToBone(null);
 
         } else {
-            channel.setAnim(name, 0f);
-            if (channel.getAnimMaxTime() == 0f) {
+            if (PoseDemo.modelState.getDuration(name) == 0f) {
                 /*
-                 * The new animation consists of a single pose:
+                 * The animation consists of a single pose:
                  * Set speed to zero and load the pose under user control.
                  */
-                channel.setSpeed(0f);
-                updateSlidersEnabled();
-                poseSkeleton();
+                PoseDemo.modelState.loadAnimation(name, 0f);
+                updateBaSlidersEnabled();
+                PoseDemo.modelState.poseSkeleton();
+                updateBaSlidersToBone(null);
 
             } else {
                 /*
                  * Start the animation looping at normal speed.
                  */
-                channel.setLoopMode(LoopMode.Loop);
-                channel.setSpeed(1f);
-                updateSlidersEnabled();
+                PoseDemo.modelState.loadAnimation(name, 1f);
+                disableBaSliders();
             }
         }
     }
 
     /**
-     * Select the named bone or noBone.
-     *
-     * @param name (not null)
+     * Update the 3 bone-angle sliders and their status labels.
      */
-    private void selectBone(String name) {
-        assert name != null;
-        selectedBoneName = name;
+    private void updateBaSliders() {
+        if (!PoseDemo.modelState.isBoneSelected()) {
+            /*
+             * No bone selected:
+             * Zero the sliders and clear the status labels.
+             */
+            for (int iAxis = 0; iAxis < axisNames.length; iAxis++) {
+                baSliders[iAxis].setValue(0f);
+
+                String axisName = axisNames[iAxis];
+                String statusName = axisName + "SliderStatus";
+                setStatusText(statusName, "");
+            }
+
+        } else {
+            float angles[] = new float[3];
+            if (PoseDemo.modelState.isAnimationRunning()) {
+                /*
+                 * An animation is running:
+                 * Update the sliders to match the bone.
+                 */
+                updateBaSlidersToBone(angles);
+
+            } else {
+                /*
+                 * No animation is running:
+                 * Read the sliders.
+                 */
+                for (int iAxis = 0; iAxis < baSliders.length; iAxis++) {
+                    angles[iAxis] = baSliders[iAxis].getValue();
+                }
+            }
+            /*
+             * Update the status labels to match the sliders.
+             */
+            for (int iAxis = 0; iAxis < axisNames.length; iAxis++) {
+                String axisName = axisNames[iAxis];
+                String statusName = axisName + "SliderStatus";
+                String statusText = String.format(
+                        "%s = %+4.2f", axisName, angles[iAxis]);
+                setStatusText(statusName, statusText);
+            }
+        }
     }
 
     /**
@@ -736,20 +622,35 @@ public class PoseDemoHud
     }
 
     /**
-     * Update the enabled/disabled status of the bone-angle sliders (and the
-     * skeleton's user-control flags). Invoke this methods after changes are
-     * made to the unit model, animation, bone, or speed.
+     * Update the GUI controls for the debugging aids.
      */
-    private void updateSlidersEnabled() {
-        boolean wasEnabled = boneAngleSlidersEnabledFlag;
-        boolean enableFlag = isBoneSelected() && !isAnimationRunning();
-
-        if (enableFlag && !wasEnabled) {
-            enableBoneAngleSliders();
-        } else if (wasEnabled && !enableFlag) {
-            disableBoneAngleSliders();
+    private void updateDebugAids() {
+        /*
+         * AxesControl
+         */
+        Screen screen = getScreen();
+        CheckBox box = screen.findNiftyControl("axesCheckBox", CheckBox.class);
+        boolean enable = box.isChecked();
+        AxesControl axesControl = rootNode.getControl(AxesControl.class);
+        axesControl.setEnabled(enable);
+        float lineWidth = updateSlider("aLineWidth", " pixels");
+        axesControl.setLineWidth(lineWidth);
+        float length = updateSlider("aLength", " wu");
+        axesControl.setAxisLength(length);
+        /*
+         * SkeletonDebugControl
+         */
+        box = screen.findNiftyControl("skeletonDebugCheckBox", CheckBox.class);
+        enable = box.isChecked();
+        SkeletonDebugControl debugControl = PoseDemo.modelState.getSkeletonDebugControl();
+        debugControl.setEnabled(enable);
+        ColorRGBA wireColor = updateColorBank("wire");
+        debugControl.setColor(wireColor);
+        lineWidth = updateSlider("sLineWidth", " pixels");
+        debugControl.setLineWidth(lineWidth);
+        float pointSize = updateSlider("pointSize", " pixels");
+        if (debugControl.supportsPointSize()) {
+            debugControl.setPointSize(pointSize);
         }
-
-        assert boneAngleSlidersEnabledFlag == enableFlag;
     }
 }

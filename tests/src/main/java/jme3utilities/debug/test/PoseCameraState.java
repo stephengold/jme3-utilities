@@ -243,7 +243,7 @@ public class PoseCameraState
     void toggleHud() {
         showHud = !showHud;
         if (isEnabled()) {
-            PoseDemo.hud.setEnabled(showHud);
+            PoseDemo.hudState.setEnabled(showHud);
         }
     }
 
@@ -309,13 +309,13 @@ public class PoseCameraState
             return;
         }
         if (isEnabled() && !newSetting) {
-            PoseDemo.hud.setEnabled(false);
+            PoseDemo.hudState.setEnabled(false);
             unmapButton();
             inputManager.deleteMapping(warpCursorAction);
 
         } else if (!isEnabled() && newSetting) {
             setFrustum();
-            PoseDemo.hud.setEnabled(showHud);
+            PoseDemo.hudState.setEnabled(showHud);
             mapButton();
             /*
              * Clicking the left mouse button warps the 3D cursor.
@@ -356,10 +356,10 @@ public class PoseCameraState
          * Rotate the model around the Y-axis.
          */
         if (signals.test(modelCCWSignalName)) {
-            rotateModel(tpf);
+            PoseDemo.modelState.rotateY(tpf);
         }
         if (signals.test(modelCWSignalName)) {
-            rotateModel(-tpf);
+            PoseDemo.modelState.rotateY(-tpf);
         }
     }
     // *************************************************************************
@@ -560,7 +560,7 @@ public class PoseCameraState
      * cursor), negative to dolly in (forward or toward the 3D cursor)
      */
     private void moveBackward(float amount) {
-        if (PoseDemo.hud.isMouseInsideElement("hud")) {
+        if (PoseDemo.hudState.isMouseInsideElement("hud")) {
             /* not dragging */
             return;
         }
@@ -639,16 +639,6 @@ public class PoseCameraState
     }
 
     /**
-     * Rotate the model around +Y the the specified angle.
-     *
-     * @param angle in radians
-     */
-    private void rotateModel(float angle) {
-        Spatial model = PoseDemo.hud.getModel();
-        model.rotate(0f, angle, 0f);
-    }
-
-    /**
      * Initialize the frustum of the render camera.
      */
     private void setFrustum() {
@@ -707,7 +697,7 @@ public class PoseCameraState
         /*
          * Trace the ray to the nearest geometry in the model.
          */
-        Spatial model = PoseDemo.hud.getModel();
+        Spatial model = PoseDemo.modelState.getSpatial();
         Vector3f contactPoint = findContact(model, ray);
         if (contactPoint != null) {
             MySpatial.setWorldLocation(cursor, contactPoint);
