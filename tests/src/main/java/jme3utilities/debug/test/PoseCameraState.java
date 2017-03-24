@@ -456,6 +456,42 @@ public class PoseCameraState
     }
 
     /**
+     * For the specified camera ray, find the 1st point of contact on a triangle
+     * that faces the camera.
+     *
+     * @param spatial (not null, unaffected)
+     * @param ray (not null, unaffected)
+     * @return a new vector in world coordinates, or null if none found
+     */
+    private Vector3f findContact(Spatial spatial, Ray ray) {
+        CollisionResults results = new CollisionResults();
+        spatial.collideWith(ray, results);
+        /*
+         * Collision results are sorted by increaing distance from the camera,
+         * so the first result is also the nearest one.
+         */
+        Vector3f cameraLocation = cam.getLocation();
+        for (int i = 0; i < results.size(); i++) {
+            /*
+             * Calculate the offset from the camera to the point of contact.
+             */
+            CollisionResult result = results.getCollision(i);
+            Vector3f contactPoint = result.getContactPoint();
+            Vector3f offset = contactPoint.subtract(cameraLocation);
+            /*
+             * If the dot product of the normal with the offset is negative,
+             * then the triangle faces the camera.  Return the point of contact.
+             */
+            Vector3f normal = result.getContactNormal();
+            float dotProduct = offset.dot(normal);
+            if (dotProduct < 0f) {
+                return contactPoint;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Map the middle mouse button (MMB) and mouse wheel, which together control
      * the camera position.
      */
@@ -671,40 +707,19 @@ public class PoseCameraState
         /*
          * Trace the ray to the nearest geometry in the model.
          */
-        Spatial spatial = PoseDemo.hud.getModel();
-        if (spatial == null) {
-            /*
-             * If there's no model, trace to the platform instead.
-             */
-            spatial = MySpatial.findChild(rootNode, PoseDemo.platformName);
+        Spatial model = PoseDemo.hud.getModel();
+        Vector3f contactPoint = findContact(model, ray);
+        if (contactPoint != null) {
+            MySpatial.setWorldLocation(cursor, contactPoint);
+            return;
         }
-        CollisionResults results = new CollisionResults();
-        spatial.collideWith(ray, results);
         /*
-         * Find the first point of contact on a triangle facing the camera.
-         *
-         * Collision results are sorted by increaing distance from the camera,
-         * so the first result is also the nearest one.
+         * The ray missed the model; trace it to the platform instead.
          */
-        Vector3f cameraLocation = cam.getLocation();
-        for (int i = 0; i < results.size(); i++) {
-            /*
-             * Calculate the offset from the camera to the point of contact.
-             */
-            CollisionResult result = results.getCollision(i);
-            Vector3f contactPoint = result.getContactPoint();
-            Vector3f offset = contactPoint.subtract(cameraLocation);
-            /*
-             * If the dot product of the normal with the offset is negative,
-             * then the triangle faces the camera.  Move the 3D cursor
-             * to the point of contact.
-             */
-            Vector3f normal = result.getContactNormal();
-            float dotProduct = offset.dot(normal);
-            if (dotProduct < 0f) {
-                MySpatial.setWorldLocation(cursor, contactPoint);
-                break;
-            }
+        Spatial platform = MySpatial.findChild(rootNode, PoseDemo.platformName);
+        contactPoint = findContact(platform, ray);
+        if (contactPoint != null) {
+            MySpatial.setWorldLocation(cursor, contactPoint);
         }
     }
 }

@@ -35,6 +35,7 @@ import com.jme3.animation.Skeleton;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
@@ -76,14 +77,14 @@ public class PoseDemoHud
     /**
      * names of the coordinate axes
      */
-    final private static String[] axisNames = {
-        "x", "y", "z"
-    };
+    final private static String[] axisNames = {"x", "y", "z"};
     /**
      * names of loadable models in the jme3-testdata library
+     * <p>
+     * Jaime excluded because its skeleton is backward.
      */
     final private static String[] modelNames = {
-        "Elephant", "Jaime", "Ninja", "Oto", "Sinbad"
+        "Elephant", "Ninja", "Oto", "Sinbad"
     };
     /**
      * action prefix for the "select animation" popup menu
@@ -103,8 +104,8 @@ public class PoseDemoHud
      */
     final private static String modelMenuPrefix = "select model ";
     /**
-     * dummy bone name used in menus and statuses to indicate that no bone is
-     * selected (not null, must not contain whitespace)
+     * dummy bone name used in menus and statuses to indicate no bone selection
+     * (not null)
      */
     final private static String noBone = "( no bone )";
     // *************************************************************************
@@ -261,7 +262,7 @@ public class PoseDemoHud
         setCheckBox("axesCheckBox", true);
         setCheckBox("skeletonDebugCheckBox", true);
 
-        loadModel("Jaime");
+        loadModel("Elephant");
     }
 
     /**
@@ -272,37 +273,56 @@ public class PoseDemoHud
      */
     @Override
     public void update(float tpf) {
-        String status;
-        if (findTrack() != null) {
-            status = String.format("+ %s", selectedBoneName); // with track
-        } else {
-            status = selectedBoneName;
-        }
-        setStatusText("boneStatus", status);
-
+        /*
+         * Camera mode
+         */
         if (PoseDemo.cameraState.isOrbitMode()) {
             setRadioButton("orbitingRadioButton");
         } else {
             setRadioButton("flyingRadioButton");
         }
-
         Screen screen = getScreen();
         CheckBox box = screen.findNiftyControl("3DCursorCheckBox",
                 CheckBox.class);
         boolean enable = box.isChecked();
         PoseDemo.cameraState.cursorSetEnabled(enable);
-
+        /*
+         * Animation and bone
+         */
+        String status;
+        if (findTrack() != null) {
+            status = String.format("+ %s", selectedBoneName); // with a track
+        } else {
+            status = selectedBoneName;
+        }
+        setStatusText("boneStatus", status);
+        /*
+         * AxesControl
+         */
         box = screen.findNiftyControl("axesCheckBox", CheckBox.class);
         enable = box.isChecked();
         PoseDemo.axes.setEnabled(enable);
-
-        if (debugControl != null) {
-            box = screen.findNiftyControl("skeletonDebugCheckBox",
-                    CheckBox.class);
-            enable = box.isChecked();
-            debugControl.setEnabled(enable);
+        float lineWidth = updateSlider("aLineWidth", " pix");
+        PoseDemo.axes.setLineWidth(lineWidth);
+        float length = updateSlider("aLength", " wu");
+        PoseDemo.axes.setAxisLength(length);
+        /*
+         * SkeletonDebugControl
+         */
+        box = screen.findNiftyControl("skeletonDebugCheckBox", CheckBox.class);
+        enable = box.isChecked();
+        debugControl.setEnabled(enable);
+        ColorRGBA wireColor = updateColorBank("wire");
+        debugControl.setColor(wireColor);
+        lineWidth = updateSlider("sLineWidth", " pix");
+        debugControl.setLineWidth(lineWidth);
+        float pointSize = updateSlider("pointSize", " pix");
+        if (debugControl.supportsPointSize()) {
+            debugControl.setPointSize(pointSize);
         }
-
+        /*
+         * Lighting options
+         */
         box = screen.findNiftyControl("shadowsCheckBox", CheckBox.class);
         enable = box.isChecked();
         PoseDemo.dlsf.setEnabled(enable);
@@ -478,9 +498,6 @@ public class PoseDemoHud
      */
     private Collection<String> listAnimationNames() {
         Spatial model = getModel();
-        if (model == null) {
-            return new ArrayList<String>();
-        }
         Collection<String> names = MyAnimation.listAnimations(model);
         names.add(bindPoseName);
 
@@ -494,10 +511,6 @@ public class PoseDemoHud
      */
     private Collection<String> listBoneNames() {
         Spatial model = getModel();
-        if (model == null) {
-            return new ArrayList<String>();
-        }
-
         Collection<String> boneNames = MySkeleton.listBones(model);
         boneNames.add(noBone);
         boneNames.remove("");
@@ -695,13 +708,31 @@ public class PoseDemoHud
     }
 
     /**
-     * Select the name bone or noBone.
+     * Select the named bone or noBone.
      *
      * @param name (not null)
      */
     private void selectBone(String name) {
         assert name != null;
         selectedBoneName = name;
+    }
+
+    /**
+     * Update a bank of four sliders that control a color.
+     *
+     * @param prefix unique id prefix of the bank (not null)
+     * @return color indicated by the sliders (new instance)
+     */
+    private ColorRGBA updateColorBank(String prefix) {
+        assert prefix != null;
+
+        float r = updateSlider(prefix + "R", "");
+        float g = updateSlider(prefix + "G", "");
+        float b = updateSlider(prefix + "B", "");
+        float a = updateSlider(prefix + "A", "");
+        ColorRGBA color = new ColorRGBA(r, g, b, a);
+
+        return color;
     }
 
     /**

@@ -34,13 +34,13 @@
             <panel/>
             <panel id="hud"
                    childLayout="vertical"
-                   width="208">
+                   width="212">
                 <control name="scrollPanel"
                          style="bats-scroll-panel"
                          horizontal="false">
                     <panel childLayout="vertical"
                            padding="10"
-                           width="188">
+                           width="192">
 
                         <panel style="statusPanel" height="16">
                             <control name="label"
@@ -54,22 +54,17 @@
 
                         <panel style="statusPanel">
                             <control name="label"
-                                     text="Model:"/>
-                            <control name="label" id="modelStatus"
-                                     textHAlign="right"/>
-                        </panel>
-                        <panel style="buttonPanel">
-                            <control name="button" id="id21ToAvoidOffendingNifty"
-                                     label="Load model">
-                                <interact onRelease="perform(select model)"/>
-                            </control>
-                        </panel>
-                        
-                        <panel style="statusPanel">
-                            <control name="label"
                                      text="Camera mode:"/>
                         </panel>
                         <control name="radioButtonGroup" id="povGroup"/>
+                        <panel style="indentPanel">
+                            <control name="radioButton" id="flyingRadioButton"
+                                     group="povGroup"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="fly freely"/>
+                        </panel>
                         <panel style="indentPanel">
                             <control name="radioButton" id="orbitingRadioButton"
                                      group="povGroup"/>
@@ -79,12 +74,25 @@
                                      text="orbit the 3D cursor"/>
                         </panel>
                         <panel style="indentPanel">
-                            <control name="radioButton" id="flyingRadioButton"
-                                     group="povGroup"/>
+                            <control name="checkbox" id="3DCursorCheckBox"
+                                     width="20"/>
                             <control name="label"
                                      width="12"/>
                             <control name="label"
-                                     text="fly freely"/>
+                                     text="show 3-D cursor"/>
+                        </panel>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="Model:"/>
+                            <control name="label" id="modelStatus"
+                                     textHAlign="right"/>
+                        </panel>
+                        <panel style="buttonPanel">
+                            <control name="button" id="id21ToAvoidOffendingNifty"
+                                     label="Load model">
+                                <interact onRelease="perform(select model)"/>
+                            </control>
                         </panel>
 
                         <panel style="statusPanel">
@@ -125,7 +133,7 @@
                                 <interact onRelease="perform(select bone)"/>
                             </control>
                         </panel>
-                        
+
                         <panel style="buttonPanel">
                             <control name="button" id="id212ToAvoidOffendingNifty"
                                      label="Select keyframe">
@@ -133,7 +141,6 @@
                             </control>
                         </panel>
 
-                        
                         <panel childLayout="horizontal" padding="10">
                             <control name="verticalSlider" id="xSlider"
                                      buttonStepSize="3.14"
@@ -161,7 +168,7 @@
                                 <control name="label" id="zSliderStatus"/>
                             </panel>
                         </panel>
-                        
+
                         <panel style="buttonPanel">
                             <control name="button" id="id219ToAvoidOffendingNifty"
                                      label="Add pose">
@@ -177,15 +184,7 @@
 
                         <panel style="statusPanel">
                             <control name="label"
-                                     text="Indicators:"/>
-                        </panel>
-                        <panel style="indentPanel">
-                            <control name="checkbox" id="3DCursorCheckBox"
-                                     width="20"/>
-                            <control name="label"
-                                     width="12"/>
-                            <control name="label"
-                                     text="3-D cursor"/>
+                                     text="Global Axes Control:"/>
                         </panel>
                         <panel style="indentPanel">
                             <control name="checkbox" id="axesCheckBox"
@@ -193,7 +192,32 @@
                             <control name="label"
                                      width="12"/>
                             <control name="label"
-                                     text="axes"/>
+                                     text="enable the control"/>
+                        </panel>
+                        <panel style="statusPanel">
+                            <control name="label" id="aLineWidthSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider" id="aLineWidthSlider"
+                                 buttonStepSize="1"
+                                 height="40"
+                                 initial="3"
+                                 max="10"
+                                 min="1"
+                                 stepSize="0.1"/>
+                        <panel style="statusPanel">
+                            <control name="label" id="aLengthSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider" id="aLengthSlider"
+                                 buttonStepSize="1"
+                                 height="40"
+                                 initial="1.2"
+                                 max="2.5"
+                                 min="0.2"
+                                 stepSize="0.1"/>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="Skeleton Debug Control:"/>
                         </panel>
                         <panel style="indentPanel">
                             <control name="checkbox" id="skeletonDebugCheckBox"
@@ -201,12 +225,76 @@
                             <control name="label"
                                      width="12"/>
                             <control name="label"
-                                     text="skeleton debug"/>
+                                     text="enable the control"/>
+                        </panel>
+                        <panel style="statusPanel">
+                            <control name="label" id="sLineWidthSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider" id="sLineWidthSlider"
+                                 buttonStepSize="1"
+                                 height="40"
+                                 initial="2"
+                                 max="10"
+                                 min="1"
+                                 stepSize="0.1"/>
+                        <panel style="statusPanel">
+                            <control name="label" id="pointSizeSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider" id="pointSizeSlider"
+                                 buttonStepSize="1"
+                                 height="40"
+                                 initial="4"
+                                 max="10"
+                                 min="1"
+                                 stepSize="0.1"/>
+                        <control name="label"
+                                 text="Wire color:"/>
+                        <panel childLayout="horizontal" padding="10">
+                            <control name="verticalSlider" id="wireRSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="wireGSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="wireBSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="wireASlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <panel childLayout="vertical"
+                                   height="180"
+                                   width="105">
+                                <control name="label" id="wireRSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="wireGSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="wireBSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="wireASliderStatus"
+                                         width="95"/>
+                            </panel>
                         </panel>
 
                         <panel style="statusPanel">
                             <control name="label"
-                                     text="Lighting:"/>
+                                     text="Lighting options:"/>
                         </panel>
                         <panel style="indentPanel">
                             <control name="checkbox" id="shadowsCheckBox"
