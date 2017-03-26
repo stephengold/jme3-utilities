@@ -76,6 +76,11 @@ final public class MyAsset {
     final public static String unshadedMaterialAssetPath = 
             "Common/MatDefs/Misc/Unshaded.j3md";
     /**
+     * asset path to the wireframe material definition
+     */
+    final public static String wireframeMaterialAssetPath =
+            "MatDefs/wireframe/wireframe.j3md";
+    /**
      * default scale
      */
     final private static Vector3f defaultScale = new Vector3f(1f, 1f, 1f);
@@ -373,7 +378,7 @@ final public class MyAsset {
         Validate.nonNull(assetManager, "asset manager");
         Validate.nonNull(color, "color");
 
-        Material material = MyAsset.createUnshadedMaterial(assetManager);
+        Material material = createUnshadedMaterial(assetManager);
         material.setColor("Color", color);
 
         return material;
@@ -427,8 +432,10 @@ final public class MyAsset {
         Validate.nonNull(assetManager, "asset manager");
         Validate.nonNull(color, "color");
 
-        Material material = createUnshadedMaterial(assetManager, color);
+        Material material = new Material(assetManager, 
+                wireframeMaterialAssetPath);
         material.getAdditionalRenderState().setWireframe(true);
+        material.setColor("Color", color);
 
         return material;
     }
