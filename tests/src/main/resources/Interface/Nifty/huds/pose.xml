@@ -274,13 +274,6 @@
                                      max="1"
                                      min="0"
                                      stepSize="0.01"/>
-                            <control name="verticalSlider" id="wireASlider"
-                                     buttonStepSize="1"
-                                     height="160"
-                                     initial="1"
-                                     max="1"
-                                     min="0"
-                                     stepSize="0.01"/>
                             <panel childLayout="vertical"
                                    height="160"
                                    width="105">
@@ -289,8 +282,6 @@
                                 <control name="label" id="wireGSliderStatus"
                                          width="95"/>
                                 <control name="label" id="wireBSliderStatus"
-                                         width="95"/>
-                                <control name="label" id="wireASliderStatus"
                                          width="95"/>
                             </panel>
                         </panel>

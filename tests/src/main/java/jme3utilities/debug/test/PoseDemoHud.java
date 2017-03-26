@@ -604,7 +604,7 @@ public class PoseDemoHud
     }
 
     /**
-     * Update a bank of four sliders that control a color.
+     * Update a bank of 3 sliders that control a color.
      *
      * @param prefix unique id prefix of the bank (not null)
      * @return color indicated by the sliders (new instance)
@@ -615,8 +615,7 @@ public class PoseDemoHud
         float r = updateSlider(prefix + "R", "");
         float g = updateSlider(prefix + "G", "");
         float b = updateSlider(prefix + "B", "");
-        float a = updateSlider(prefix + "A", "");
-        ColorRGBA color = new ColorRGBA(r, g, b, a);
+        ColorRGBA color = new ColorRGBA(r, g, b, 1f);
 
         return color;
     }
