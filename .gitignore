@@ -3,10 +3,7 @@
 /debug/build/
 /nifty/build/
 /SkyControl/build/
-/SkyControl/src/main/resources/Textures/skies/ramps/
-/SkyControl/src/main/resources/Textures/skies/clouds/
-/SkyControl/src/main/resources/Textures/skies/star-maps/
-/SkyControl/src/main/resources/Textures/skies/suns/
+/SkyControl/src/main/resources/Textures/skies/
 /tests/build/
 /tests/*.dll
 /tests/private/
