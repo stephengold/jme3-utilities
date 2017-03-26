@@ -61,7 +61,7 @@ public class MakeClouds {
     /**
      * filesystem path to the output directory/folder
      */
-    final private static String outputDirPath = 
+    final private static String outputDirPath =
             "../SkyControl/src/main/resources/Textures/skies/clouds";
     // *************************************************************************
     // fields
@@ -217,7 +217,7 @@ public class MakeClouds {
                 float alpha = samples[x][y];
                 alpha = (alpha - blackCutoff) / (whiteCutoff - blackCutoff);
                 alpha = FastMath.saturate(alpha);
-                Misc.setGrayPixel(graphics, x, y, alpha);
+                Misc.setGrayPixel(graphics, x, y, alpha, 1f);
             }
         }
 
@@ -246,7 +246,7 @@ public class MakeClouds {
          */
         for (int x = 0; x < textureSize; x++) {
             for (int y = 0; y < textureSize; y++) {
-                Misc.setGrayPixel(graphics, x, y, alpha);
+                Misc.setGrayPixel(graphics, x, y, alpha, 1f);
             }
         }
 

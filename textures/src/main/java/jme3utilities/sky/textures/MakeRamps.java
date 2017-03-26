@@ -68,7 +68,7 @@ public class MakeRamps {
     /**
      * filesystem path to the output directory/folder
      */
-    final private static String outputDirPath = 
+    final private static String outputDirPath =
             "../SkyControl/src/main/resources/Textures/skies/ramps";
     // *************************************************************************
     // fields
@@ -218,7 +218,7 @@ public class MakeRamps {
                     elevationAngle = FastMath.atan(tan);
                 }
                 float alpha = hazeAlpha(elevationAngle);
-                Misc.setGrayPixel(graphics, x, y, alpha);
+                Misc.setGrayPixel(graphics, x, y, alpha, 1f);
             }
         }
 

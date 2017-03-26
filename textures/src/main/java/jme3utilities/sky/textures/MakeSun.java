@@ -73,7 +73,7 @@ public class MakeSun {
     /**
      * filesystem path to the output directory/folder
      */
-    final private static String outputDirPath = 
+    final private static String outputDirPath =
             "../SkyControl/src/main/resources/Textures/skies/suns";
     // *************************************************************************
     // fields
@@ -284,34 +284,10 @@ public class MakeSun {
                     alpha = Math.max(alpha, hazeAlpha);
                 }
                 alpha = FastMath.saturate(alpha);
-
-                int opacity = Math.round(255f * alpha);
-                setWhitePixel(graphics, x, y, opacity);
+                Misc.setGrayPixel(graphics, x, y, 1f, alpha);
             }
         }
 
         return map;
-    }
-
-    /**
-     * Set a particular pixel to the specified brightness.
-     *
-     * @param graphics context (not null)
-     * @param x pixel's 1st coordinate (&lt;textureSize, &ge;0)
-     * @param y pixel's 2nd coordinate (&lt;textureSize, &ge;0)
-     * @param alpha (&le;255, &ge;0)
-     */
-    private void setWhitePixel(Graphics2D graphics, int x, int y, int alpha) {
-        assert graphics != null;
-        assert x >= 0 : x;
-        assert y >= 0 : y;
-        assert x < textureSize : x;
-        assert y < textureSize : y;
-        assert alpha >= 0 : alpha;
-        assert alpha <= 255 : alpha;
-
-        Color color = new Color(255, 255, 255, alpha);
-        graphics.setColor(color);
-        graphics.fillRect(x, y, 1, 1);
     }
 }

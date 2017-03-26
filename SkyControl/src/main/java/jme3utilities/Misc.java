@@ -180,25 +180,24 @@ public class Misc {
     }
 
     /**
-     * Set a specified grayscale pixel to a specified brightness.
+     * Set the specified pixel to the specified brightness and opacity.
      *
      * @param graphics rendering context of the pixel (not null)
      * @param x pixel's 1st coordinate (&lt;width, &ge;0)
      * @param y pixel's 2nd coordinate (&lt;height, &ge;0)
      * @param brightness (&le;1, &ge;0, 0 &rarr; black, 1 &rarr; white)
-     *
+     * @param opacity (&le;1, &ge;0, 0 &rarr; transparent, 1 &rarr; opaque)
      */
     public static void setGrayPixel(Graphics2D graphics, int x, int y,
-            float brightness) {
-        Validate.nonNull(graphics, "rendering context");
-
+            float brightness, float opacity) {
         GraphicsConfiguration configuration = graphics.getDeviceConfiguration();
         Rectangle bounds = configuration.getBounds();
         Validate.inRange(x, "X coordinate", 0, bounds.width - 1);
         Validate.inRange(y, "Y coordinate", 0, bounds.height - 1);
         Validate.fraction(brightness, "brightness");
+        Validate.fraction(opacity, "opacity");
 
-        Color color = new Color(brightness, brightness, brightness);
+        Color color = new Color(brightness, brightness, brightness, opacity);
         graphics.setColor(color);
         graphics.fillRect(x, y, 1, 1);
     }
