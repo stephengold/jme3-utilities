@@ -115,17 +115,18 @@ public enum LunarPhase {
     }
 
     /**
-     * Look up the path to the color map for this phase.
+     * Look up the asset path to the color map for this phase.
      *
+     * @param suffix folder name suffix ("" &rarr; default)
      * @return asset path (not null)
      */
-    public String imagePath() {
+    public String imagePath(String suffix) {
         if (this == CUSTOM) {
             throw new IllegalStateException("custom phase has no color map");
         }
         String description = describe();
         String assetPath = String.format(
-                "Textures/skies/moon/%s.png", description);
+                "Textures/skies/moon%s/%s.png", suffix, description);
 
         return assetPath;
     }

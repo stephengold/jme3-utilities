@@ -495,9 +495,8 @@ public class TestSkyMaterialHud
         }
 
         phase = LunarPhase.fromDescription(name);
-        String imageAssetPath = phase.imagePath();
+        String imageAssetPath = phase.imagePath("");
         material.addObject(moonIndex, imageAssetPath);
-
     }
 
     /**

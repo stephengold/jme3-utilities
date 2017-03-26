@@ -62,7 +62,7 @@ public class TestGlobeRenderer
         extends SimpleApplication
         implements ActionListener {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * number of samples around the globe's middle
@@ -300,7 +300,7 @@ public class TestGlobeRenderer
         /*
          * Load the corresponding static texture.
          */
-        String loadPath = phase.imagePath();
+        String loadPath = phase.imagePath("");
         Texture loadedTexture = MyAsset.loadTexture(assetManager, loadPath);
         loadedMaterial.setTexture("ColorMap", loadedTexture);
     }

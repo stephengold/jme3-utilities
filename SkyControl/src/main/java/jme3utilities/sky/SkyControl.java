@@ -26,6 +26,7 @@
 package jme3utilities.sky;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.asset.AssetNotFoundException;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -317,9 +318,15 @@ public class SkyControl extends SkyControlCore {
         phase = newPreset;
         if (newPreset != null) {
             longitudeDifference = newPreset.longitudeDifference();
-            String assetPath = newPreset.imagePath();
             SkyMaterial topMaterial = getTopMaterial();
-            topMaterial.addObject(moonIndex, assetPath);
+
+            String assetPath = newPreset.imagePath("");
+            try {
+                topMaterial.addObject(moonIndex, assetPath);
+            } catch (AssetNotFoundException e) {
+                assetPath = newPreset.imagePath("-nonviral");
+                topMaterial.addObject(moonIndex, assetPath);
+            }
         }
     }
 

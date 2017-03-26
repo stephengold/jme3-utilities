@@ -6,7 +6,7 @@ description = 'generate texture assets used by SkyControl'
 ext.bsc = 'src/main/resources/bsc5.dat'
 ext.skies = '../SkyControl/src/main/resources/Textures/skies'
 
-clean { 
+clean {
     dependsOn 'cleanCopySource'
     dependsOn 'cleanTextures'
 }
@@ -25,7 +25,7 @@ task copySource(type: Copy) {
         include 'Misc.java', 'MyAsset.java', 'MyString.java', 'Validate.java', \
                 'math/MyMath.java', 'math/MyVector3f.java', \
                 'math/ReadXZ.java', 'math/VectorXZ.java', \
-                'sky/Constants.java', 'sky/DomeMesh.java'
+                'sky/Constants.java', 'sky/DomeMesh.java', 'sky/LunarPhase.java'
     }
     from('../x/src/main/java/jme3utilities') {
         include 'math/noise/*.java'
@@ -37,15 +37,13 @@ task cleanCopySource(type: Delete) {
 }
 
 task textures {
-    dependsOn = ['clouds', 'equator', 'equator16m', 'north', 'north16m', \
-        'ramps', 'south', 'south16m', 'suns', 'wiltshire', 'wiltshire16m']
-    description 'generate the texture assets distributed with SkyControl'
+    dependsOn = ['clouds', 'equator', 'equator16m', 'moons', 'north', \
+        'north16m',  'ramps', 'south', 'south16m', 'suns', 'wiltshire', \
+        'wiltshire16m']
+    description 'generate texture assets distributed with SkyControl'
 }
 task cleanTextures(type:Delete) {
-    delete fileTree(dir: "${skies}", 
-        include: ['clouds/*.png', 'ramps/*', 'star-maps/**', 'suns/*'],
-        exclude: ['clouds/cyclone.png']
-    )
+    delete fileTree(dir: "${skies}")
 }
 
 task clouds(type: JavaExec) {
@@ -79,6 +77,12 @@ task equator16m(type: JavaExec) {
     inputs.files("${bsc}")
     main 'jme3utilities.sky.textures.MakeStarMaps'
     outputs.files(fileTree("${skies}/star-maps/equator16m"))
+}
+task moons(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+    main 'jme3utilities.sky.textures.MakeMoons'
+    outputs.files(fileTree("${skies}/moon-nonviral"))
 }
 task north(type: JavaExec) {
     args = ['-p', 'north']

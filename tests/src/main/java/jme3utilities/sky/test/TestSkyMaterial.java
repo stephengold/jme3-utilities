@@ -245,7 +245,7 @@ public class TestSkyMaterial extends GuiApplication {
         int maxObjects = material.getMaxObjects();
         if (maxObjects > TestSkyMaterialHud.moonIndex) {
             material.addObject(TestSkyMaterialHud.moonIndex,
-                    LunarPhase.FULL.imagePath());
+                    LunarPhase.FULL.imagePath(""));
         }
         if (maxObjects > TestSkyMaterialHud.sunIndex) {
             material.addObject(TestSkyMaterialHud.sunIndex,
