@@ -100,7 +100,7 @@ public class MyVector3f {
         Validate.nonNegative(tolerance2, "tolerance");
         /*
          * Shortcut:
-         * If point1 and point3 coincide, then the three points are collinear. 
+         * If point1 and point3 coincide, then the three points are collinear.
          */
         Vector3f offset3 = point3.subtract(point1);
         double normSquared3 = lengthSquared(offset3);
@@ -110,15 +110,15 @@ public class MyVector3f {
         /*
          * The long way:
          * Calculate the projection of offset2 onto offset3.
-         * 
-         * Don't use Vector3f.project() because (as of jME 3.0.10) it contains 
+         *
+         * Don't use Vector3f.project() because (as of jME 3.0.10) it contains
          * a logic bug.
          */
         Vector3f offset2 = point2.subtract(point1);
         double scaleFactor = dot(offset2, offset3) / normSquared3;
         Vector3f projection = offset3.mult((float) scaleFactor);
         /*
-         * If the projection coincides with offset2, 
+         * If the projection coincides with offset2,
          * then the three points are collinear.
          */
         boolean result = doCoincide(projection, offset2, tolerance2);
@@ -196,7 +196,7 @@ public class MyVector3f {
          */
         Vector3f segOffset = segEnd.subtract(segStart);
         /*
-         * If the segment has zero length, return the squared distance 
+         * If the segment has zero length, return the squared distance
          * to segStart.
          */
         double segLengthSquared = lengthSquared(segOffset);
@@ -208,7 +208,7 @@ public class MyVector3f {
             return result;
         }
         /*
-         * Extend the segment into a straight line and find the 
+         * Extend the segment into a straight line and find the
          * parametric value t at closest approach.
          */
         Vector3f locOffset = location.subtract(segStart);
@@ -217,7 +217,7 @@ public class MyVector3f {
         /*
          * Calculate offset of the closest point on the segment.
          */
-        float tPrime = FastMath.clamp((float) t, 0f, 1f);
+        float tPrime = FastMath.saturate((float) t);
         Vector3f closestOffset = segOffset.mult(tPrime);
         if (storeClosest != null) {
             storeClosest.set(segStart);
@@ -305,7 +305,7 @@ public class MyVector3f {
 
         in1.normalizeLocal();
         /*
-         * Pick a direction that's not parallel (or anti-parallel) to 
+         * Pick a direction that's not parallel (or anti-parallel) to
          * the input direction.
          */
         float x = Math.abs(in1.x);
@@ -365,7 +365,7 @@ public class MyVector3f {
          */
         Vector3f offset1 = end1.subtract(start1);
         /*
-         * If the 1st segment has zero length, test its start for coincidence 
+         * If the 1st segment has zero length, test its start for coincidence
          * with the 2nd segment.
          */
         double ls1 = lengthSquared(offset1);
@@ -383,7 +383,7 @@ public class MyVector3f {
          */
         Vector3f offset2 = end2.subtract(start2);
         /*
-         * If the 2nd segment has zero length, test its start for coincidence 
+         * If the 2nd segment has zero length, test its start for coincidence
          * with the 1st segment.
          */
         double ls2 = lengthSquared(offset1);
@@ -411,8 +411,8 @@ public class MyVector3f {
         }
         /*
          * The segments are not parallel.
-         * Extend them into straight lines and find the 
-         * locations of closest approach (C1 and C2) on each line. 
+         * Extend them into straight lines and find the
+         * locations of closest approach (C1 and C2) on each line.
          * The segment and side intersect if and only if C1 and C2 not only
          * coincide but also lie on their respective segment/side.
          */
@@ -636,15 +636,15 @@ public class MyVector3f {
             Vector3f fm = middle.subtract(first);
             /*
              * Project FM onto FL.
-             * 
-             * Don't use Vector3f.project() because (as of jME 3.0.10) 
+             *
+             * Don't use Vector3f.project() because (as of jME 3.0.10)
              * it contains a logic bug.
              */
             double fm_dot_fl = dot(fm, fl);
             double fraction = fm_dot_fl / normSquaredFL;
             Vector3f projection = fl.mult((float) fraction);
             /*
-             * If the projection coincides with FM, 
+             * If the projection coincides with FM,
              * then consider the 3 corners to be collinear.
              */
             boolean collin = doCoincide(projection, fm, tolerance2);
