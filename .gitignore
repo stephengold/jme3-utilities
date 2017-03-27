@@ -1,5 +1,6 @@
 /.gradle/2.13/
 /.nb-gradle/
+/build/
 /debug/build/
 /nifty/build/
 /SkyControl/build/
