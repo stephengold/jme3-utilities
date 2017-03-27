@@ -84,7 +84,7 @@
 
                         <panel style="statusPanel">
                             <control name="label"
-                                     text="Model:"/>
+                                     text="Loaded model:"/>
                             <control name="label" id="modelStatus"
                                      textHAlign="right"/>
                         </panel>
@@ -102,8 +102,14 @@
                                      textHAlign="right"/>
                         </panel>
                         <panel style="buttonPanel">
+                            <control name="button" id="id6ToAvoidNiftyWarning"
+                                     label="Delete this animation">
+                                <interact onRelease="perform(delete animation)"/>
+                            </control>
+                        </panel>
+                        <panel style="buttonPanel">
                             <control name="button" id="id1ToAvoidNiftyWarning"
-                                     label="Select an animation">
+                                     label="Load an animation">
                                 <interact onRelease="perform(select animation)"/>
                             </control>
                         </panel>
@@ -123,7 +129,7 @@
 
                         <panel style="statusPanel">
                             <control name="label"
-                                     text="Bone:"/>
+                                     text="Selected bone:"/>
                             <control name="label" id="boneStatus"
                                      textHAlign="right"/>
                         </panel>

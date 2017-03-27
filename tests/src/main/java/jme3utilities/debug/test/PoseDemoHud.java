@@ -140,10 +140,6 @@ public class PoseDemoHud
             slider.disable();
         }
         /*
-         * Give control of the skeleton back to the animations.
-         */
-        PoseDemo.modelState.setUserControl(false);
-        /*
          * Update the status.
          */
         baSlidersEnabledFlag = false;
@@ -160,10 +156,6 @@ public class PoseDemoHud
         for (Slider slider : baSliders) {
             slider.enable();
         }
-        /*
-         * Take control of the skeleton away from any animations.
-         */
-        PoseDemo.modelState.setUserControl(true);
         /*
          * Update the status.
          */
@@ -220,35 +212,16 @@ public class PoseDemoHud
     }
 
     /**
-     * Select the named bone or noBone.
-     *
-     * @param name (not null)
-     */
-    void selectBone(String name) {
-        PoseDemo.modelState.selectBone(name);
-
-        String status;
-        if (PoseDemo.modelState.hasTrack()) {
-            status = String.format("+ %s", name); // bone with track
-        } else {
-            status = name;
-        }
-        setStatusText("boneStatus", status);
-
-        updateBaSlidersEnabled();
-        updateBaSlidersToBone(null);
-    }
-
-    /**
      * Update the enabled/disabled status of the 3 bone-angle sliders (and the
-     * model's user-control flags). Invoke this methods after changes are
-     * made to the model, animation, bone, or speed.
+     * model's user-control flags). Invoke this methods after changes are made
+     * to the model, animation, bone, or speed.
      */
     void updateBaSlidersEnabled() {
         boolean wasEnabled = baSlidersEnabledFlag;
         boolean enableFlag = PoseDemo.modelState.isBoneSelected()
                 && !PoseDemo.modelState.isAnimationRunning();
 
+        PoseDemo.modelState.setUserControl(enableFlag);
         if (enableFlag && !wasEnabled) {
             enableBaSliders();
         } else if (wasEnabled && !enableFlag) {
@@ -256,13 +229,14 @@ public class PoseDemoHud
         }
 
         assert baSlidersEnabledFlag == enableFlag;
+        assert PoseDemo.modelState.isUserControl() == enableFlag;
     }
 
     /**
      * Update the 3 bone-angle sliders to match the selected bone. If no bone is
      * selected, zero them.
      *
-     * @param storeAngles (length=3 if not null)
+     * @param storeAngles array to store new angles (length=3 if not null)
      */
     void updateBaSlidersToBone(float[] storeAngles) {
         if (storeAngles == null) {
@@ -307,13 +281,20 @@ public class PoseDemoHud
                     selectAnimation("new-animation");
                     return;
 
+                case "delete animation":
+                    PoseDemo.modelState.deleteAnimation();
+                    selectAnimation(bindPoseName);
+                    return;
+
                 case "select animation":
-                    Collection<String> animationNames = PoseDemo.modelState.listAnimationNames();
+                    Collection<String> animationNames =
+                            PoseDemo.modelState.listAnimationNames();
                     showPopup(animationMenuPrefix, animationNames);
                     return;
 
                 case "select bone":
-                    List<String> boneNames = PoseDemo.modelState.listBoneNames();
+                    List<String> boneNames =
+                            PoseDemo.modelState.listBoneNames();
                     MyString.reduce(boneNames, 20);
                     Collections.sort(boneNames);
                     showPopup(boneMenuPrefix, boneNames);
@@ -342,7 +323,8 @@ public class PoseDemoHud
                 String name = actionString.substring(namePos);
 
                 if (!PoseDemo.modelState.hasBone(name)) {
-                    List<String> boneNames = PoseDemo.modelState.listBoneNames(name);
+                    List<String> boneNames =
+                            PoseDemo.modelState.listBoneNames(name);
                     MyString.reduce(boneNames, 20);
                     Collections.sort(boneNames);
                     showPopup(boneMenuPrefix, boneNames);
@@ -408,7 +390,9 @@ public class PoseDemoHud
 
         for (int iAxis = 0; iAxis < axisNames.length; iAxis++) {
             String axisName = axisNames[iAxis];
+            Slider slider = getSlider(axisName);
             baSliders[iAxis] = getSlider(axisName);
+            slider.enable();
         }
 
         loadModel("Elephant");
@@ -485,9 +469,9 @@ public class PoseDemoHud
     private void baSliderChanged() {
         if (!baSlidersEnabledFlag) {
             /*
-             * Ignore slider change events caused by running animations.
+             * Ignore slider change events when the bone-angle sliders
+             * are not enabled.
              */
-            assert PoseDemo.modelState.isAnimationRunning();
             return;
         }
 
@@ -518,7 +502,7 @@ public class PoseDemoHud
     }
 
     /**
-     * Select the named pose or animation.
+     * Load the named pose or animation. TODO rename
      *
      * @param name (not null)
      */
@@ -550,9 +534,31 @@ public class PoseDemoHud
                  * Start the animation looping at normal speed.
                  */
                 PoseDemo.modelState.loadAnimation(name, 1f);
-                disableBaSliders();
+                updateBaSlidersEnabled();
             }
         }
+        String boneName = PoseDemo.modelState.getBoneName();
+        selectBone(boneName);
+    }
+
+    /**
+     * Select the named bone or noBone.
+     *
+     * @param name (not null)
+     */
+    private void selectBone(String name) {
+        PoseDemo.modelState.selectBone(name);
+
+        String status;
+        if (PoseDemo.modelState.hasTrack()) {
+            status = String.format("+ %s", name); // bone with track
+        } else {
+            status = name;
+        }
+        setStatusText("boneStatus", status);
+
+        updateBaSlidersEnabled();
+        updateBaSlidersToBone(null);
     }
 
     /**
@@ -641,7 +647,8 @@ public class PoseDemoHud
          */
         box = screen.findNiftyControl("skeletonDebugCheckBox", CheckBox.class);
         enable = box.isChecked();
-        SkeletonDebugControl debugControl = PoseDemo.modelState.getSkeletonDebugControl();
+        SkeletonDebugControl debugControl =
+                PoseDemo.modelState.getSkeletonDebugControl();
         debugControl.setEnabled(enable);
         ColorRGBA wireColor = updateColorBank("wire");
         debugControl.setColor(wireColor);

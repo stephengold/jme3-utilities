@@ -74,6 +74,10 @@ public class ModelState extends SimpleAppState {
      */
     private AnimChannel channel = null;
     /**
+     * true if the loaded model has user control enabled, otherwise false
+     */
+    private boolean userControlFlag = false;
+    /**
      * inverse local rotation of each bone in original bind pose, indexed by
      * boneIndex
      */
@@ -133,6 +137,22 @@ public class ModelState extends SimpleAppState {
     }
 
     /**
+     * Delete the loaded animation.
+     */
+    void deleteAnimation() {
+        if (isBindPoseSelected()) {
+            logger.log(Level.WARNING, "Cannot delete bind pose.");
+            return;
+        }
+        AnimControl animControl = getAnimControl();
+        String animationName = channel.getAnimationName();
+        Animation animation = animControl.getAnim(animationName);
+        animControl.removeAnim(animation);
+
+        loadBindPose();
+    }
+
+    /**
      * Calculate the rotation angles of the selected bone.
      *
      * @param storeAngles (&ge;3 elements, modified)
@@ -153,9 +173,6 @@ public class ModelState extends SimpleAppState {
             return null;
         }
         AnimControl animControl = getAnimControl();
-        if (animControl == null) {
-            return null;
-        }
         String animationName = channel.getAnimationName();
         Animation animation = animControl.getAnim(animationName);
 
@@ -183,11 +200,24 @@ public class ModelState extends SimpleAppState {
     AnimControl getAnimControl() {
         AnimControl animControl = spatial.getControl(AnimControl.class);
         if (animControl == null) {
-            throw new IllegalArgumentException(
-                    "expected the model to have an AnimControl");
+            String message = String.format(
+                    "expected model %s to have an AnimControl",
+                    MyString.quote(loadedModelName));
+            throw new IllegalArgumentException(message);
         }
 
         return animControl;
+    }
+
+    /**
+     * Read the name of the selected bone.
+     *
+     * @return the name, or noBone if none selected (not null)
+     */
+    String getBoneName() {
+        String result = selectedBoneName;
+        assert result != null;
+        return result;
     }
 
     /**
@@ -198,6 +228,7 @@ public class ModelState extends SimpleAppState {
     float getDuration() {
         Animation animation = getAnimation();
         float result = animation.getLength();
+
         assert result >= 0f : result;
         return result;
     }
@@ -213,6 +244,7 @@ public class ModelState extends SimpleAppState {
 
         Animation animation = getAnimation(name);
         float result = animation.getLength();
+
         assert result >= 0f : result;
         return result;
     }
@@ -327,10 +359,12 @@ public class ModelState extends SimpleAppState {
     /**
      * Test whether the bind pose is selected.
      *
-     * @return true if it's selected, false if an animation is selected or if no
-     * model is loaded
+     * @return true if it's selected, false if an animation is selected
      */
     boolean isBindPoseSelected() {
+        if (channel == null) {
+            return true;
+        }
         String animationName = channel.getAnimationName();
         if (animationName == null) {
             return true;
@@ -350,6 +384,15 @@ public class ModelState extends SimpleAppState {
         } else {
             return true;
         }
+    }
+
+    /**
+     * Test whether user control is enabled.
+     *
+     * @return true if enabled, false if disabled
+     */
+    boolean isUserControl() {
+        return userControlFlag;
     }
 
     /**
@@ -459,6 +502,8 @@ public class ModelState extends SimpleAppState {
 
         loadedModelName = name;
         spatial = loaded;
+        userControlFlag = false;
+        MySkeleton.setUserControl(spatial, userControlFlag);
         spatial.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         rootNode.attachChild(spatial);
         saveInverseBindPose();
@@ -522,10 +567,8 @@ public class ModelState extends SimpleAppState {
         /*
          * Save user-control status and enable it.
          */
-        boolean savedStatus = PoseDemo.hudState.baSlidersEnabledFlag;
-        if (!savedStatus) {
-            PoseDemo.hudState.enableBaSliders();
-        }
+        boolean savedStatus = userControlFlag;
+        setUserControl(true);
         /*
          * Copy bone rotations from pose to skeleton.
          */
@@ -552,9 +595,7 @@ public class ModelState extends SimpleAppState {
         /*
          * Restore prior user-control status.
          */
-        if (!savedStatus) {
-            PoseDemo.hudState.disableBaSliders();
-        }
+        setUserControl(savedStatus);
     }
 
     /**
@@ -608,7 +649,11 @@ public class ModelState extends SimpleAppState {
      * @param newSetting true &rarr; user transforms, false &rarr; animation
      */
     void setUserControl(boolean newSetting) {
+        if (newSetting == userControlFlag) {
+            return;
+        }
         MySkeleton.setUserControl(spatial, newSetting);
+        userControlFlag = newSetting;
     }
 
     /**
@@ -774,9 +819,9 @@ public class ModelState extends SimpleAppState {
     private void resetSkeleton() {
         Skeleton skeleton = getSkeleton();
 
-        if (PoseDemo.hudState.baSlidersEnabledFlag) {
+        if (userControlFlag) {
             /*
-             * Skeleton.reset() is ineffective with user control enabled,
+             * Skeleton.reset() is ineffective with user mode enabled,
              * so load bind pose under user control.
              */
             int boneCount = skeleton.getBoneCount();
@@ -785,7 +830,6 @@ public class ModelState extends SimpleAppState {
                 Vector3f translation = new Vector3f(0f, 0f, 0f);
                 Quaternion rotation = new Quaternion();
                 Vector3f scale = new Vector3f(1f, 1f, 1f);
-
                 bone.setUserTransforms(translation, rotation, scale);
             }
 
