@@ -48,7 +48,7 @@ abstract public class SubtreeControl
         extends SimpleControl
         implements Cloneable {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

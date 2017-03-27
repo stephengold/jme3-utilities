@@ -52,7 +52,7 @@ import jme3utilities.math.MyMath;
  */
 public class SkyMaterialCore extends Material {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

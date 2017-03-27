@@ -39,10 +39,9 @@ import jme3utilities.debug.PerformanceAppState;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class TestPas
-        extends SimpleApplication {
+public class TestPas extends SimpleApplication {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

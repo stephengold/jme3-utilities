@@ -61,7 +61,7 @@ import jme3utilities.math.MyMath;
  */
 public class DomeMesh extends Mesh {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * number of vertices per triangle

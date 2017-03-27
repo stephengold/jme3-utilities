@@ -63,7 +63,7 @@ import jme3utilities.math.MyMath;
  */
 public class GlobeRenderer extends SimpleAppState {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * aspect ratio of the output texture

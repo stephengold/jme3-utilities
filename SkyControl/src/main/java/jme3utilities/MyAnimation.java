@@ -53,7 +53,7 @@ import static jme3utilities.Misc.blendTime;
  */
 public class MyAnimation {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

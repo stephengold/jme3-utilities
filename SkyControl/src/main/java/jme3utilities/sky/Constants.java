@@ -36,7 +36,7 @@ import jme3utilities.math.MyMath;
  */
 final public class Constants {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * maximum value for any opacity

@@ -41,7 +41,7 @@ import jme3utilities.math.MyVector3f;
  */
 final public class MyCamera {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

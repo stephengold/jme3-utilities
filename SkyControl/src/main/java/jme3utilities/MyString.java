@@ -159,10 +159,10 @@ public class MyString {
     }
 
     /**
-     * Find the longest shared prefix in a list of strings.
+     * Find the longest repeated prefix in a list of strings.
      *
      * @param list (not null)
-     * @return
+     * @return prefix (not null)
      */
     public static String findLongestPrefix(List<String> list) {
         int count = list.size();

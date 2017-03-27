@@ -55,7 +55,7 @@ import jme3utilities.ViewPortListener;
 public class Updater
         implements Savable, ViewPortListener {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

@@ -134,6 +134,8 @@ public class ModelState extends SimpleAppState {
 
     /**
      * Calculate the rotation angles of the selected bone.
+     *
+     * @param storeAngles (&ge;3 elements, modified)
      */
     void boneAngles(float[] storeAngles) {
         int boneIndex = MySkeleton.findBoneIndex(spatial, selectedBoneName);
@@ -376,8 +378,8 @@ public class ModelState extends SimpleAppState {
     }
 
     /**
-     * List all known bones in the loaded model which begin with the specified
-     * prefix.
+     * List all known bones in the loaded model whose names begin with the
+     * specified prefix.
      *
      * @return a new list
      */
@@ -556,7 +558,7 @@ public class ModelState extends SimpleAppState {
     }
 
     /**
-     * Rotate the model around +Y the the specified angle.
+     * Rotate the model around +Y by the specified angle.
      *
      * @param angle in radians
      */

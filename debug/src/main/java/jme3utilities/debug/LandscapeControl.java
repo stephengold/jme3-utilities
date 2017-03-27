@@ -67,7 +67,7 @@ import jme3utilities.Validate;
  */
 public class LandscapeControl extends SubtreeControl {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * color for grass
@@ -119,7 +119,7 @@ public class LandscapeControl extends SubtreeControl {
     /**
      * asset path of the terrain's height map
      */
-    final private static String heightMapAssetPath = 
+    final private static String heightMapAssetPath =
             "Textures/terrain/height/basin.png";
     /**
      * local copy of Vector3f#UNIT_Y
@@ -187,7 +187,7 @@ public class LandscapeControl extends SubtreeControl {
 
     /**
      * Calculate the world Y-coordinate of the peak.
-     * 
+     *
      * @return coordinate value (in world units)
      */
     public float peakY() {
@@ -196,7 +196,7 @@ public class LandscapeControl extends SubtreeControl {
         assert yScale > 0f : yScale;
         float baseY = MySpatial.getWorldLocation(terrain).y;
         float result = yScale * terrainHeight + baseY;
-        
+
         return result;
     }
 

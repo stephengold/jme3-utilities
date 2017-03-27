@@ -50,7 +50,7 @@ import jme3utilities.SimpleAppState;
  */
 public class PerformanceAppState extends SimpleAppState {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

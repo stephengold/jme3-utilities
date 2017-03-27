@@ -49,7 +49,7 @@ import java.util.logging.Logger;
  */
 final public class MyAsset {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -73,7 +73,7 @@ final public class MyAsset {
     /**
      * asset path to the Unshaded material definition
      */
-    final public static String unshadedMaterialAssetPath = 
+    final public static String unshadedMaterialAssetPath =
             "Common/MatDefs/Misc/Unshaded.j3md";
     /**
      * asset path to the wireframe material definition
@@ -432,7 +432,7 @@ final public class MyAsset {
         Validate.nonNull(assetManager, "asset manager");
         Validate.nonNull(color, "color");
 
-        Material material = new Material(assetManager, 
+        Material material = new Material(assetManager,
                 wireframeMaterialAssetPath);
         material.getAdditionalRenderState().setWireframe(true);
         material.setColor("Color", color);

@@ -44,7 +44,7 @@ import java.util.logging.Logger;
  */
 public class MyControl {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

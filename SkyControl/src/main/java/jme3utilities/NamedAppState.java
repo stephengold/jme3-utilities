@@ -46,7 +46,7 @@ import java.util.logging.Logger;
  */
 public class NamedAppState implements AppState {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -288,7 +288,7 @@ public class NamedAppState implements AppState {
         }
     }
     // *************************************************************************
-    // Object methods    
+    // Object methods
 
     /**
      * Represent this state as a text string.

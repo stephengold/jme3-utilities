@@ -37,7 +37,7 @@ import jme3utilities.Validate;
  */
 final public class MyColor {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

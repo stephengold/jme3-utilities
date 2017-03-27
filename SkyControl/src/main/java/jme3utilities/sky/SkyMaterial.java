@@ -57,10 +57,9 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class SkyMaterial
-        extends SkyMaterialCore {
+public class SkyMaterial extends SkyMaterialCore {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * default color of clear sky: pale blue

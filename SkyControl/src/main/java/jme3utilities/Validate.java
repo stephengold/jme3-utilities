@@ -42,7 +42,7 @@ import jme3utilities.math.MyVector3f;
  */
 final public class Validate {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

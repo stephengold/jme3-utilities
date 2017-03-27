@@ -37,10 +37,9 @@ import java.util.logging.Logger;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class WaterProcessor
-        extends SimpleWaterProcessor {
+public class WaterProcessor extends SimpleWaterProcessor {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

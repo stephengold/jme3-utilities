@@ -46,7 +46,7 @@ import java.util.logging.Logger;
  */
 public class SimpleAppState extends NamedAppState {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

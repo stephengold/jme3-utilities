@@ -56,7 +56,7 @@ import jme3utilities.math.MyVector3f;
  */
 public class Printer {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

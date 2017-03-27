@@ -47,7 +47,7 @@ import jme3utilities.Validate;
  */
 public class MyVolume {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

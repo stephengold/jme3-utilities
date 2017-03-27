@@ -42,7 +42,7 @@ import java.util.logging.Logger;
  */
 public class NameGenerator implements Savable {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * Separator character. Prefix strings must not contain this character.

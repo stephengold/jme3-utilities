@@ -38,7 +38,7 @@ import jme3utilities.math.MyMath;
  */
 public class TimeOfDay extends NamedAppState {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * duration of a full day (in hours)

@@ -34,10 +34,9 @@ import java.util.logging.Logger;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class Indices
-        extends TreeSet<Integer> {
+public class Indices extends TreeSet<Integer> {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

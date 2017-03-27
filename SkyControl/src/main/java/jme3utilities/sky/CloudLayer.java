@@ -43,7 +43,7 @@ import jme3utilities.math.MyMath;
  */
 public class CloudLayer implements Savable {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * default UV scaling factor for cloud layers
