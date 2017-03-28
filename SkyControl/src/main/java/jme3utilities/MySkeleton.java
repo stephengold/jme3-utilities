@@ -30,10 +30,16 @@ import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.VertexBuffer;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 /**
@@ -140,6 +146,51 @@ public class MySkeleton {
         Collections.sort(names);
 
         return names;
+    }
+
+    /**
+     * Find the largest weight in the specified mesh for the specified bone.
+     *
+     * @param mesh which mesh (not null, possibly modified)
+     * @param boneIndex which bone (&ge;0)
+     * @return bone weight, or 0f if no influence found
+     */
+    public static float maxWeight(Mesh mesh, int boneIndex) {
+        Validate.nonNegative(boneIndex, "bone index");
+
+        mesh.prepareForAnim(true);
+
+        int maxWeightsPerVert = mesh.getMaxNumWeights();
+        assert maxWeightsPerVert > 0 : maxWeightsPerVert;
+        assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
+
+        VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
+        ByteBuffer boneIndexBuffer = (ByteBuffer) biBuf.getData();
+        boneIndexBuffer.rewind();
+        int numBoneIndices = boneIndexBuffer.remaining();
+        assert numBoneIndices % 4 == 0 : numBoneIndices;
+        int numVertices = boneIndexBuffer.remaining() / 4;
+
+        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
+        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getData();
+        weightBuffer.rewind();
+        int numWeights = weightBuffer.remaining();
+        assert numWeights == numVertices * 4 : numWeights;
+
+        float result = 0f;
+        for (int vIndex = 0; vIndex < numVertices; vIndex++) {
+            for (int wIndex = 0; wIndex < 4; wIndex++) {
+                float weight = weightBuffer.get();
+                float bIndex = boneIndexBuffer.get();
+                if (wIndex < maxWeightsPerVert
+                        && bIndex == boneIndex
+                        && weight > result) {
+                    result = weight;
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
