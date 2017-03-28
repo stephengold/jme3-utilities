@@ -64,7 +64,7 @@ import jme3utilities.ui.ActionAppState;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class PoseCameraState
+class PoseCameraState
         extends ActionAppState
         implements ActionListener, AnalogListener {
     // *************************************************************************
@@ -196,7 +196,7 @@ public class PoseCameraState
      * Instantiate a disabled state which will be enabled for orbit mode during
      * initialization.
      */
-    public PoseCameraState() {
+    PoseCameraState() {
         super(false);
     }
     // *************************************************************************

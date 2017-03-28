@@ -148,8 +148,6 @@ public class SkeletonDebugControl extends SubtreeControl {
      * @return true if enabled, otherwise false
      */
     public static boolean isDebugEnabled(Spatial model) {
-        Validate.nonNull(model, "model");
-
         SkeletonDebugControl control = model.getControl(
                 SkeletonDebugControl.class);
         if (control == null) {
@@ -178,8 +176,6 @@ public class SkeletonDebugControl extends SubtreeControl {
      * @param newState true to enable, false to disable
      */
     public static void setDebugEnabled(Spatial model, boolean newState) {
-        Validate.nonNull(model, "model");
-
         SkeletonDebugControl control = model.getControl(
                 SkeletonDebugControl.class);
         if (control != null) {

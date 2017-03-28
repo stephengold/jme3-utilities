@@ -36,7 +36,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Arrow;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
-import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 
