@@ -60,6 +60,10 @@ public class PoseDemoHud
     // constants and loggers
 
     /**
+     * number of coordinate axes
+     */
+    final private static int numAxes = 3;
+    /**
      * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
@@ -77,12 +81,12 @@ public class PoseDemoHud
         "Elephant", "Ninja", "Oto", "Sinbad"
     };
     /**
-     * action prefix for the "select animation" popup menu
+     * action prefix for the "load animation" popup menu
      */
-    final private static String animationMenuPrefix = "select animation ";
+    final private static String animationMenuPrefix = "load animation ";
     /**
      * dummy animation name used in menus and statuses (but never stored in
-     * channel!) to indicate bind pose, that is, no animation selected
+     * channel!) to indicate bind pose, that is, no animation loaded
      */
     final static String bindPoseName = "( bind pose )";
     /**
@@ -94,11 +98,11 @@ public class PoseDemoHud
      */
     final private static String keyframeMenuPrefix = "select keyframe ";
     /**
-     * action prefix for the "select model" popup menu
+     * action prefix for the "load model" popup menu
      */
-    final private static String modelMenuPrefix = "select model ";
+    final private static String modelMenuPrefix = "load model ";
     /**
-     * dummy bone name used in menus and statuses to indicate no bone selection
+     * dummy bone name used in menus and statuses to indicate no bone selected
      * (not null)
      */
     final static String noBone = "( no bone )";
@@ -106,15 +110,15 @@ public class PoseDemoHud
     // fields
 
     /**
-     * When true, all three bone-angle sliders should be enabled, along with the
-     * user-control flags of all bones in the model's skeleton.
+     * When true, bone controls should be enabled, along with the user-control
+     * flags of all bones in the model's skeleton.
      */
-    boolean baSlidersEnabledFlag = false;
+    private boolean boneControlsEnabledFlag = false;
     /**
      * references to the bone-angle sliders, set by
      * {@link #initialize(com.jme3.app.state.AppStateManager, com.jme3.app.Application)}
      */
-    final private Slider baSliders[] = new Slider[3];
+    final private Slider baSliders[] = new Slider[numAxes];
     // *************************************************************************
     // constructors
 
@@ -127,40 +131,6 @@ public class PoseDemoHud
     }
     // *************************************************************************
     // new methods exposed
-
-    /**
-     * Disable the 3 bone-angle sliders (and user control).
-     */
-    void disableBaSliders() {
-        logger.log(Level.INFO, "Disable the bone-angle sliders.");
-        /*
-         * Disable the sliders.
-         */
-        for (Slider slider : baSliders) {
-            slider.disable();
-        }
-        /*
-         * Update the status.
-         */
-        baSlidersEnabledFlag = false;
-    }
-
-    /**
-     * Enable the 3 bone-angle sliders (and user control).
-     */
-    void enableBaSliders() {
-        logger.log(Level.INFO, "Enable the bone-angle sliders.");
-        /*
-         * Enable the sliders.
-         */
-        for (Slider slider : baSliders) {
-            slider.enable();
-        }
-        /*
-         * Update the status.
-         */
-        baSlidersEnabledFlag = true;
-    }
 
     /**
      * Callback which Nifty invokes after the user selects a radio button.
@@ -212,27 +182,6 @@ public class PoseDemoHud
     }
 
     /**
-     * Update the enabled/disabled status of the 3 bone-angle sliders (and the
-     * model's user-control flags). Invoke this methods after changes are made
-     * to the model, animation, bone, or speed.
-     */
-    void updateBaSlidersEnabled() {
-        boolean wasEnabled = baSlidersEnabledFlag;
-        boolean enableFlag = PoseDemo.modelState.isBoneSelected()
-                && !PoseDemo.modelState.isAnimationRunning();
-
-        PoseDemo.modelState.setUserControl(enableFlag);
-        if (enableFlag && !wasEnabled) {
-            enableBaSliders();
-        } else if (wasEnabled && !enableFlag) {
-            disableBaSliders();
-        }
-
-        assert baSlidersEnabledFlag == enableFlag;
-        assert PoseDemo.modelState.isUserControl() == enableFlag;
-    }
-
-    /**
      * Update the 3 bone-angle sliders to match the selected bone. If no bone is
      * selected, zero them.
      *
@@ -240,13 +189,13 @@ public class PoseDemoHud
      */
     void updateBaSlidersToBone(float[] storeAngles) {
         if (storeAngles == null) {
-            storeAngles = new float[3];
+            storeAngles = new float[numAxes];
         }
-        assert storeAngles.length == 3 : storeAngles.length;
+        assert storeAngles.length == numAxes : storeAngles.length;
 
         if (PoseDemo.modelState.isBoneSelected()) {
             PoseDemo.modelState.boneAngles(storeAngles);
-            for (int iAxis = 0; iAxis < baSliders.length; iAxis++) {
+            for (int iAxis = 0; iAxis < numAxes; iAxis++) {
                 baSliders[iAxis].setValue(storeAngles[iAxis]);
             }
 
@@ -254,7 +203,7 @@ public class PoseDemoHud
             /*
              * No bone selected: zero the sliders.
              */
-            for (int iAxis = 0; iAxis < baSliders.length; iAxis++) {
+            for (int iAxis = 0; iAxis < numAxes; iAxis++) {
                 baSliders[iAxis].setValue(0f);
                 storeAngles[iAxis] = 0f;
             }
@@ -286,10 +235,18 @@ public class PoseDemoHud
                     selectAnimation(bindPoseName);
                     return;
 
-                case "select animation":
+                case "load animation":
                     Collection<String> animationNames =
                             PoseDemo.modelState.listAnimationNames();
                     showPopup(animationMenuPrefix, animationNames);
+                    return;
+
+                case "load model":
+                    showPopup(modelMenuPrefix, modelNames);
+                    return;
+
+                case "reset bone":
+                    resetBone();
                     return;
 
                 case "select bone":
@@ -306,10 +263,6 @@ public class PoseDemoHud
                         MyString.reduce(options, 20);
                         showPopup(keyframeMenuPrefix, options);
                     }
-                    return;
-
-                case "select model":
-                    showPopup(modelMenuPrefix, modelNames);
                     return;
             }
             if (actionString.startsWith(animationMenuPrefix)) {
@@ -348,7 +301,6 @@ public class PoseDemoHud
 
                 PoseDemo.modelState.selectKeyframe(name);
                 updateBaSlidersToBone(null); // ?
-                updateBaSlidersEnabled();
                 return;
 
             } else if (actionString.startsWith(modelMenuPrefix)) {
@@ -388,7 +340,7 @@ public class PoseDemoHud
         setCheckBox("axesCheckBox", true);
         setCheckBox("skeletonDebugCheckBox", true);
 
-        for (int iAxis = 0; iAxis < axisNames.length; iAxis++) {
+        for (int iAxis = 0; iAxis < numAxes; iAxis++) {
             String axisName = axisNames[iAxis];
             Slider slider = getSlider(axisName);
             baSliders[iAxis] = getSlider(axisName);
@@ -425,6 +377,14 @@ public class PoseDemoHud
         String status = PoseDemo.modelState.getName();
         setStatusText("modelStatus", status);
         /*
+         * Delete button
+         */
+        if (PoseDemo.modelState.isBindPoseSelected()) {
+            setButtonLabel("deleteButton", "");
+        } else {
+            setButtonLabel("deleteButton", "Delete this animation");
+        }
+        /*
          * Track time
          */
         if (PoseDemo.modelState.isBindPoseSelected()) {
@@ -436,17 +396,20 @@ public class PoseDemoHud
         }
         setStatusText("trackTime", status);
         /*
-         * Animation speed
+         * Animation speed slider and status
          */
-        if (PoseDemo.modelState.isBindPoseSelected()) {
-            status = "n/a";
-        } else {
-            float speed = PoseDemo.modelState.getSpeed();
-            status = String.format("%.3f", speed);
-        }
-        setStatusText("speed", status);
+        float speed = updateSlider("speed", "x");
+        PoseDemo.modelState.setSpeed(speed);
         /*
-         * Bone angle sliders
+         * Select keyframe button
+         */
+        if (PoseDemo.modelState.hasTrack()) {
+            setButtonLabel("keyframeButton", "Select keyframe");
+        } else {
+            setButtonLabel("keyframeButton", "");
+        }
+        /*
+         * Bone-angle sliders, status, and reset button
          */
         updateBaSliders();
         /*
@@ -464,19 +427,19 @@ public class PoseDemoHud
     // private methods
 
     /**
-     * React to user adjusting a bone angle slider.
+     * React to user adjusting a bone-angle slider.
      */
     private void baSliderChanged() {
-        if (!baSlidersEnabledFlag) {
+        if (!boneControlsEnabledFlag) {
             /*
              * Ignore slider change events when the bone-angle sliders
-             * are not enabled.
+             * are disabled.
              */
             return;
         }
 
-        float angles[] = new float[3];
-        for (int iAxis = 0; iAxis < baSliders.length; iAxis++) {
+        float angles[] = new float[numAxes];
+        for (int iAxis = 0; iAxis < numAxes; iAxis++) {
             angles[iAxis] = baSliders[iAxis].getValue();
         }
 
@@ -485,6 +448,50 @@ public class PoseDemoHud
         rotation.fromAngles(angles);
         Vector3f scale = new Vector3f(1f, 1f, 1f);
         PoseDemo.modelState.setUserTransforms(translation, rotation, scale);
+    }
+
+    /**
+     * Disable the 3 bone-angle sliders, reset button, and user control.
+     */
+    private void disableBoneControls() {
+        PoseDemo.modelState.setUserControl(false);
+        if (!boneControlsEnabledFlag) {
+            return;
+        }
+        logger.log(Level.INFO, "Disable the bone controls.");
+        /*
+         * Disable the sliders and reset button.
+         */
+        for (Slider slider : baSliders) {
+            slider.disable();
+        }
+        setButtonLabel("resetButton", "");
+        /*
+         * Update the status.
+         */
+        boneControlsEnabledFlag = false;
+    }
+
+    /**
+     * Enable the 3 bone-angle sliders, reset button, and user control.
+     */
+    private void enableBoneControls() {
+        PoseDemo.modelState.setUserControl(true);
+        if (boneControlsEnabledFlag) {
+            return;
+        }
+        logger.log(Level.INFO, "Enable the bone-angle sliders.");
+        /*
+         * Enable the sliders.
+         */
+        for (Slider slider : baSliders) {
+            slider.enable();
+        }
+        setButtonLabel("resetButton", "Reset bone");
+        /*
+         * Update the status.
+         */
+        boneControlsEnabledFlag = true;
     }
 
     /**
@@ -498,7 +505,23 @@ public class PoseDemoHud
         PoseDemo.modelState.load(name);
         selectAnimation(bindPoseName);
         selectBone(noBone);
-        updateBaSlidersEnabled();
+    }
+
+    /**
+     * Reset the selected bone.
+     */
+    private void resetBone() {
+        if (!boneControlsEnabledFlag) {
+            /*
+             * Ignore reset events when the bone controls
+             * are disabled.
+             */
+            return;
+        }
+
+        for (int iAxis = 0; iAxis < numAxes; iAxis++) {
+            baSliders[iAxis].setValue(0f);
+        }
     }
 
     /**
@@ -510,12 +533,11 @@ public class PoseDemoHud
         assert name != null;
 
         setStatusText("animationStatus", name);
-        if (name.equals(PoseDemoHud.bindPoseName)) {
+        if (name.equals(bindPoseName)) {
             /*
              * Load bind pose.
              */
             PoseDemo.modelState.loadBindPose();
-            updateBaSlidersEnabled();
             updateBaSlidersToBone(null);
 
         } else {
@@ -525,7 +547,6 @@ public class PoseDemoHud
                  * Set speed to zero and load the pose under user control.
                  */
                 PoseDemo.modelState.loadAnimation(name, 0f);
-                updateBaSlidersEnabled();
                 PoseDemo.modelState.poseSkeleton();
                 updateBaSlidersToBone(null);
 
@@ -534,7 +555,6 @@ public class PoseDemoHud
                  * Start the animation looping at normal speed.
                  */
                 PoseDemo.modelState.loadAnimation(name, 1f);
-                updateBaSlidersEnabled();
             }
         }
         String boneName = PoseDemo.modelState.getBoneName();
@@ -557,49 +577,51 @@ public class PoseDemoHud
         }
         setStatusText("boneStatus", status);
 
-        updateBaSlidersEnabled();
         updateBaSlidersToBone(null);
     }
 
     /**
-     * Update the 3 bone-angle sliders and their status labels.
+     * Update the 3 bone-angle sliders, reset button, and status labels.
      */
     private void updateBaSliders() {
         if (!PoseDemo.modelState.isBoneSelected()) {
             /*
              * No bone selected:
-             * Zero the sliders and clear the status labels.
+             * Zero sliders, clear status labels, and disable controls.
              */
-            for (int iAxis = 0; iAxis < axisNames.length; iAxis++) {
+            for (int iAxis = 0; iAxis < numAxes; iAxis++) {
                 baSliders[iAxis].setValue(0f);
 
                 String axisName = axisNames[iAxis];
                 String statusName = axisName + "SliderStatus";
                 setStatusText(statusName, "");
             }
+            disableBoneControls();
 
         } else {
-            float angles[] = new float[3];
+            float angles[] = new float[numAxes];
             if (PoseDemo.modelState.isAnimationRunning()) {
                 /*
                  * An animation is running:
-                 * Update the sliders to match the bone.
+                 * Update the sliders to match bone, disable controls.
                  */
                 updateBaSlidersToBone(angles);
+                disableBoneControls();
 
             } else {
                 /*
                  * No animation is running:
-                 * Read the sliders.
+                 * Read the sliders, enable controls.
                  */
-                for (int iAxis = 0; iAxis < baSliders.length; iAxis++) {
+                for (int iAxis = 0; iAxis < numAxes; iAxis++) {
                     angles[iAxis] = baSliders[iAxis].getValue();
                 }
+                enableBoneControls();
             }
             /*
              * Update the status labels to match the sliders.
              */
-            for (int iAxis = 0; iAxis < axisNames.length; iAxis++) {
+            for (int iAxis = 0; iAxis < numAxes; iAxis++) {
                 String axisName = axisNames[iAxis];
                 String statusName = axisName + "SliderStatus";
                 String statusText = String.format(

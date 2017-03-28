@@ -91,7 +91,7 @@
                         <panel style="buttonPanel">
                             <control name="button" id="id0ToAvoidNiftyWarning"
                                      label="Load a model">
-                                <interact onRelease="perform(select model)"/>
+                                <interact onRelease="perform(load model)"/>
                             </control>
                         </panel>
 
@@ -102,29 +102,37 @@
                                      textHAlign="right"/>
                         </panel>
                         <panel style="buttonPanel">
-                            <control name="button" id="id6ToAvoidNiftyWarning"
-                                     label="Delete this animation">
-                                <interact onRelease="perform(delete animation)"/>
+                            <control name="button" id="id1ToAvoidNiftyWarning"
+                                     label="Load an animation">
+                                <interact onRelease="perform(load animation)"/>
                             </control>
                         </panel>
                         <panel style="buttonPanel">
-                            <control name="button" id="id1ToAvoidNiftyWarning"
-                                     label="Load an animation">
-                                <interact onRelease="perform(select animation)"/>
+                            <control name="button" id="deleteButton">
+                                <interact onRelease="perform(delete animation)"/>
                             </control>
                         </panel>
 
                         <panel style="statusPanel">
                             <control name="label"
-                                     text="Anim time:"/>
+                                     text="Animation time:"/>
                             <control name="label" id="trackTime"
                                      textHAlign="right"/>
                         </panel>
                         <panel style="statusPanel">
-                            <control name="label"
-                                     text="Anim speed:"/>
-                            <control name="label" id="speed"
+                            <control name="label" id="speedSliderStatus"
                                      textHAlign="right"/>
+                        </panel>
+                        <control name="horizontalSlider" id="speedSlider"
+                                 buttonStepSize="1"
+                                 initial="1"
+                                 max="3"
+                                 min="0"
+                                 stepSize="0.05"/>
+                        <panel style="buttonPanel">
+                            <control name="button" id="keyframeButton">
+                                <interact onRelease="perform(select keyframe)"/>
+                            </control>
                         </panel>
 
                         <panel style="statusPanel">
@@ -137,13 +145,6 @@
                             <control name="button" id="id2ToAvoidNiftyWarning"
                                      label="Select a bone">
                                 <interact onRelease="perform(select bone)"/>
-                            </control>
-                        </panel>
-
-                        <panel style="buttonPanel">
-                            <control name="button" id="id3ToAvoidNiftyWarning"
-                                     label="Select keyframe">
-                                <interact onRelease="perform(select keyframe)"/>
                             </control>
                         </panel>
 
@@ -175,19 +176,22 @@
                                          width="95"/>
                                 <control name="label" id="zSliderStatus"
                                          width="95"/>
+                                <control name="button" id="resetButton">
+                                    <interact onRelease="perform(reset bone)"/>
+                                </control>
                             </panel>
                         </panel>
 
                         <panel style="buttonPanel">
                             <control name="button" id="id4ToAvoidNiftyWarning"
-                                     label="Add pose">
+                                     label="Add new pose">
                                 <interact onRelease="perform(add pose)"/>
                             </control>
                         </panel>
                         <panel style="buttonPanel">
                             <control name="button" id="id5ToAvoidNiftyWarning"
-                                     label="Write pose">
-                                <interact onRelease="perform(write pose)"/>
+                                     label="Save changes">
+                                <interact onRelease="perform(write model)"/>
                             </control>
                         </panel>
 

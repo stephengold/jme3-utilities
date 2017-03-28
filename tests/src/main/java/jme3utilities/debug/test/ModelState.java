@@ -48,7 +48,6 @@ import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.SimpleAppState;
-import jme3utilities.Validate;
 import jme3utilities.debug.SkeletonDebugControl;
 
 /**
@@ -56,7 +55,7 @@ import jme3utilities.debug.SkeletonDebugControl;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class ModelState extends SimpleAppState {
+class ModelState extends SimpleAppState {
     // *************************************************************************
     // constants and loggers
 
@@ -172,9 +171,8 @@ public class ModelState extends SimpleAppState {
         if (isBindPoseSelected()) {
             return null;
         }
-        AnimControl animControl = getAnimControl();
         String animationName = channel.getAnimationName();
-        Animation animation = animControl.getAnim(animationName);
+        Animation animation = getAnimation(animationName);
 
         return animation;
     }
@@ -183,9 +181,11 @@ public class ModelState extends SimpleAppState {
      * Access the named animation.
      *
      * @param name (not null)
-     * @return the pre-existing instance
+     * @return the pre-existing instance, or null if not found
      */
     Animation getAnimation(String name) {
+        assert name != null;
+
         AnimControl animControl = getAnimControl();
         Animation animation = animControl.getAnim(name);
 
@@ -408,7 +408,7 @@ public class ModelState extends SimpleAppState {
     }
 
     /**
-     * List the names of all known bones in the loaded model.
+     * List the names of all bones in the loaded model.
      *
      * @return a new list
      */
@@ -421,8 +421,8 @@ public class ModelState extends SimpleAppState {
     }
 
     /**
-     * List all known bones in the loaded model whose names begin with the
-     * specified prefix.
+     * List all bones in the loaded model whose names begin with the specified
+     * prefix.
      *
      * @return a new list
      */
@@ -438,8 +438,7 @@ public class ModelState extends SimpleAppState {
     }
 
     /**
-     * List keyframes of the selected bone, along with play options for the
-     * loaded animation.
+     * List all keyframes of the selected bone in the loaded animation.
      *
      * @return a new list, or null if no options
      */
@@ -461,9 +460,6 @@ public class ModelState extends SimpleAppState {
         float[] keyframes = track.getTimes();
 
         List<String> result = new ArrayList<>(20);
-        result.add("play");
-        result.add("slow");
-        result.add("pause");
         for (float keyframe : keyframes) {
             String menuItem = String.format("%.3f", keyframe);
             result.add(menuItem);
@@ -561,7 +557,7 @@ public class ModelState extends SimpleAppState {
     }
 
     /**
-     * Load the selected animation pose under user control.
+     * Load an animation pose under user control.
      */
     void poseSkeleton() {
         /*
@@ -578,16 +574,23 @@ public class ModelState extends SimpleAppState {
         for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
             BoneTrack track = MyAnimation.findTrack(animation, boneIndex);
 
-            Vector3f translation = new Vector3f(0f, 0f, 0f);
+            Vector3f translation, scale;
             Quaternion rotation;
             if (track != null) {
+                Vector3f[] translations = track.getTranslations();
+                assert translations.length == 1 : translations.length;
+                translation = translations[0];
                 Quaternion[] rotations = track.getRotations();
-                assert rotations.length == 1;
+                assert rotations.length == 1 : rotations.length;
                 rotation = rotations[0];
+                Vector3f[] scales = track.getScales();
+                assert scales.length == 1 : scales.length;
+                scale = scales[0];
             } else {
+                translation = new Vector3f(0f, 0f, 0f);
                 rotation = new Quaternion();
+                scale = new Vector3f(0f, 0f, 0f);
             }
-            Vector3f scale = new Vector3f(1f, 1f, 1f);
 
             Bone bone = skeleton.getBone(boneIndex);
             bone.setUserTransforms(translation, rotation, scale);
@@ -610,15 +613,15 @@ public class ModelState extends SimpleAppState {
     /**
      * Alter which bone is selected. TODO validate
      *
-     * @param name bone name or noBone
+     * @param name bone name or noBone (not null)
      */
     void selectBone(String name) {
+        assert name != null;
         selectedBoneName = name;
     }
 
     /**
-     * Alter which keyframe is selected in the current bone track. A bone track
-     * must be selected.
+     * Select the named keyframe in the selected bone track.
      *
      * @param name name of the new selection (not null)
      */
@@ -626,20 +629,21 @@ public class ModelState extends SimpleAppState {
         assert isTrackSelected();
         assert name != null;
 
-        switch (name) {
-            case "play":
-                channel.setSpeed(1f);
-                break;
-            case "slow":
-                channel.setSpeed(0.25f);
-                break;
-            case "pause":
-                channel.setSpeed(0f);
-                break;
-            default:
-                float newTime = Float.valueOf(name);
-                channel.setSpeed(0f);
-                channel.setTime(newTime);
+        float newTime = Float.valueOf(name);
+        channel.setTime(newTime);
+    }
+
+    /**
+     * Alter the animation speed. No effect in bind pose or if the loaded
+     * animation has zero duration.
+     *
+     * @param speed relative speed (&ge;0, 1 &rarr; normal)
+     */
+    void setSpeed(float speed) {
+        assert speed >= 0f : speed;
+
+        if (!isBindPoseSelected() && getDuration() > 0f) {
+            channel.setSpeed(speed);
         }
     }
 
@@ -659,15 +663,15 @@ public class ModelState extends SimpleAppState {
     /**
      * Alter the user transforms of the selected bone.
      *
-     * @param translation
-     * @param rotation
-     * @param scale
+     * @param translation (not null)
+     * @param rotation (not null)
+     * @param scale (not null)
      */
     void setUserTransforms(Vector3f translation, Quaternion rotation,
             Vector3f scale) {
-        Validate.nonNull(translation, "translation");
-        Validate.nonNull(rotation, "rotation");
-        Validate.nonNull(scale, "scale");
+        assert translation != null;
+        assert rotation != null;
+        assert scale != null;
 
         Bone bone = getBone();
         bone.setUserTransforms(translation, rotation, scale);
@@ -793,7 +797,7 @@ public class ModelState extends SimpleAppState {
     }
 
     /**
-     * Test whether a track is selected.
+     * Test whether a bone track is selected.
      *
      * @return true if one is selected, false if none is selected
      */
