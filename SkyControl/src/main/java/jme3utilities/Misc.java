@@ -143,10 +143,10 @@ public class Misc {
     /**
      * Read the verbose version string for this library.
      *
-     * @return project name, library name, branch, and revision of this file
+     * @return project name, library name, branch, and revision
      */
     public static String getVersion() {
-        return "jme3-utilities SkyControl master $Rev: 0.9.1+7 $";
+        return "jme3-utilities SkyControl master $Rev: 0.9.1+8 $";
     }
 
     /**
