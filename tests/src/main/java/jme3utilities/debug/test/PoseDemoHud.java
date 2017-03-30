@@ -74,11 +74,9 @@ public class PoseDemoHud
     final private static String[] axisNames = {"x", "y", "z"};
     /**
      * names of loadable models in the jme3-testdata library
-     * <p>
-     * I've excluded Jaime because its skeleton is backward.
      */
     final private static String[] modelNames = {
-        "Elephant", "Ninja", "Oto", "Sinbad"
+        "Elephant", "Jaime", "Ninja", "Oto", "Sinbad"
     };
     /**
      * action prefix for the "load animation" popup menu

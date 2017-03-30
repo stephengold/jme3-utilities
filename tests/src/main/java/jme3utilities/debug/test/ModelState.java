@@ -484,7 +484,12 @@ class ModelState extends SimpleAppState {
         Level save = mlLogger.getLevel();
         mlLogger.setLevel(Level.SEVERE);
 
-        String assetPath = String.format("Models/%s/%s.mesh.xml", name, name);
+        String assetPath;
+        if (name.equals("Jaime")) {
+            assetPath = "Models/Jaime/Jaime.j3o";
+        } else {
+            assetPath = String.format("Models/%s/%s.mesh.xml", name, name);
+        }
         Spatial loaded = assetManager.loadModel(assetPath);
 
         mlLogger.setLevel(save);
