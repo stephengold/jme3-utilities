@@ -48,6 +48,7 @@ import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.debug.AxesControl;
+import jme3utilities.debug.Printer;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.bind.BindScreen;
 import jme3utilities.sky.SkyControl;
@@ -117,6 +118,10 @@ public class PoseDemo extends GuiApplication {
      * heads-up display (HUD)
      */
     static PoseDemoHud hudState = new PoseDemoHud();
+    /**
+     * printer for scene dump
+     */
+    final private Printer printer = new Printer();
     /**
      * app state to manage the loaded model
      */
@@ -223,6 +228,9 @@ public class PoseDemo extends GuiApplication {
                 case "edit bindings":
                     InputMode im = InputMode.getActiveMode();
                     bindScreen.activate(im);
+                    return;
+                case "print scene":
+                    printer.printSubtree(rootNode);
                     return;
                 case "toggle hud":
                     cameraState.toggleHud();

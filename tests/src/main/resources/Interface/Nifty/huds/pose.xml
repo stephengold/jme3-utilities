@@ -296,6 +296,13 @@
                             </panel>
                         </panel>
 
+                        <panel style="buttonPanel">
+                            <control name="button" id="id6ToAvoidNiftyWarning"
+                                     label="Print the scene">
+                                <interact onRelease="perform(print scene)"/>
+                            </control>
+                        </panel>
+
                         <panel style="statusPanel">
                             <control name="label"
                                      text="Lighting options:"/>
