@@ -31,13 +31,17 @@ import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.material.MaterialDef;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Transform;
 import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.SkeletonDebugger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.MySkeleton;
+import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 
@@ -234,8 +238,19 @@ public class SkeletonDebugControl extends SubtreeControl {
     public void setEnabled(boolean newState) {
         if (newState && subtree == null) {
             Skeleton skeleton = MySkeleton.getSkeleton(spatial);
-            String nodeName = spatial.getName() + " skeleton debugger";
+            String nodeName = spatial.getName() + " skeleton";
             subtree = new SkeletonDebugger(nodeName, skeleton);
+            /*
+             * Copy local transform from 1st geometry to the debugger (and hope
+             * any other geometries share the same transform!)
+             */
+            Node controlledNode = (Node) spatial;
+            Geometry firstGeometry = MySpatial.findChild(controlledNode,
+                    Geometry.class);
+            if (firstGeometry != null) {
+                Transform t = firstGeometry.getLocalTransform();
+                subtree.setLocalTransform(t);
+            }
             subtree.setMaterial(material);
             subtree.setShadowMode(RenderQueue.ShadowMode.Off);
         }
