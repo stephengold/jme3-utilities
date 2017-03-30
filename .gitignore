@@ -3,6 +3,7 @@
 /build/
 /debug/build/
 /nifty/build/
+/nifty/private/
 /SkyControl/build/
 /SkyControl/src/main/resources/Textures/skies/
 /tests/build/
