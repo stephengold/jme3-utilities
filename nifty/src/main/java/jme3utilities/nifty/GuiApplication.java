@@ -42,7 +42,7 @@ import jme3utilities.ui.InputMode;
  */
 abstract public class GuiApplication extends ActionApplication {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -71,9 +71,9 @@ abstract public class GuiApplication extends ActionApplication {
     /**
      * Access the screen controller that is currently enabled.
      *
-     * @return pre-existing instance (or null if none)
+     * @return the pre-existing instance (or null if none)
      */
-    public BasicScreenController getEnabledScreen() {
+    public static BasicScreenController getEnabledScreen() {
         return enabledScreen;
     }
 

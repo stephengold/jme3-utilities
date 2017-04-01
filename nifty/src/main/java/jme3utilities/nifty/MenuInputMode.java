@@ -40,10 +40,9 @@ import jme3utilities.ui.InputMode;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-class MenuInputMode
-        extends InputMode {
+class MenuInputMode extends InputMode {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -53,7 +52,7 @@ class MenuInputMode
     /**
      * asset path to the cursor for this mode
      */
-    final private static String assetPath = "Textures/cursors/menu.cur";
+    final private static String cursorAssetPath = "Textures/cursors/menu.cur";
     /**
      * short name for this mode
      */
@@ -89,33 +88,32 @@ class MenuInputMode
             return;
         }
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
-        GuiApplication guiApplication = (GuiApplication) actionApplication;
         GuiScreenController screen =
-                (GuiScreenController) guiApplication.getEnabledScreen();
+                (GuiScreenController) GuiApplication.getEnabledScreen();
+        if (screen == null) {
+            return;
+        }
+        assert GuiScreenController.hasActivePopup();
         if (actionString.equals("close")) {
             /*
-             * Close the popup menu.
+             * Close the current popup menu.
              */
-            if (screen != null) {
-                assert GuiScreenController.hasActivePopup();
-                GuiScreenController.closeActivePopup();
-            }
-            return;
+            GuiScreenController.closeActivePopup();
 
         } else if (actionString.matches("select [1-9]")) {
             /*
-             * Select a menu item based on its index.
+             * Select a menu item based on its position, with "1"
+             * selecting the first item.
              */
-            if (screen != null) {
-                assert GuiScreenController.hasActivePopup();
-                String indexString = actionString.substring("select ".length());
-                int index = Integer.parseInt(indexString);
-                screen.selectMenuItem(index - 1);
-            }
-            return;
+            String positionString = actionString.substring("select ".length());
+            int position = Integer.parseInt(positionString);
+            int index = position - 1;
+            screen.selectMenuItem(index);
+
+        } else {
+            logger.log(Level.WARNING, "Action {0} was not handled.",
+                    MyString.quote(actionString));
         }
-        logger.log(Level.WARNING, "Action {0} was not handled.",
-                MyString.quote(actionString));
     }
     // *************************************************************************
     // InputMode methods
@@ -147,7 +145,7 @@ class MenuInputMode
     public void initialize(AppStateManager stateManager,
             Application application) {
         AssetManager am = application.getAssetManager();
-        JmeCursor cursor = (JmeCursor) am.loadAsset(assetPath);
+        JmeCursor cursor = (JmeCursor) am.loadAsset(cursorAssetPath);
         setCursor(cursor);
 
         super.initialize(stateManager, application);

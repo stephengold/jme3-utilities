@@ -51,7 +51,7 @@ public class BasicScreenController
         extends GuiAppState
         implements ScreenController {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -86,8 +86,8 @@ public class BasicScreenController
     // constructors
 
     /**
-     * Instantiate an uninitialized, disabled screen for the specified screen 
-     * id and layout.
+     * Instantiate an uninitialized, disabled screen for the specified screen id
+     * and layout.
      *
      * @param screenId Nifty id (not null)
      * @param xmlAssetPath path to the Nifty XML layout asset (not null)
@@ -153,15 +153,15 @@ public class BasicScreenController
      */
     public static void perform(String actionString) {
         Validate.nonNull(actionString, "action string");
-
         logger.log(Level.INFO, "actionString={0}",
                 MyString.quote(actionString));
-        boolean isOnGoing = true;
-        float simInterval = 0f;
-        ActionListener actionListener =
-                guiApplication.getEnabledScreen().getListener();
+
+        BasicScreenController screen = GuiApplication.getEnabledScreen();
+        ActionListener actionListener = screen.getListener();
+        boolean isOngoing = true;
+        float tpf = 0f;
         try {
-            actionListener.onAction(actionString, isOnGoing, simInterval);
+            actionListener.onAction(actionString, isOngoing, tpf);
         } catch (Throwable throwable) {
             logger.log(Level.SEVERE, "Caught unexpected throwable:", throwable);
             guiApplication.stop(false);
@@ -197,7 +197,7 @@ public class BasicScreenController
         if (listener == null) {
             throw new IllegalStateException("listener should be set");
         }
-        
+
         if (newSetting && !isEnabled()) {
             enable();
         } else if (!newSetting && isEnabled()) {
@@ -308,7 +308,8 @@ public class BasicScreenController
     private void disable() {
         assert isInitialized();
         assert isEnabled();
-        BasicScreenController enabledScreen = guiApplication.getEnabledScreen();
+
+        BasicScreenController enabledScreen = GuiApplication.getEnabledScreen();
         assert enabledScreen == this : enabledScreen;
         logger.log(Level.INFO, "screenId={0}", MyString.quote(screenId));
         /*
