@@ -93,12 +93,12 @@ class MenuInputMode extends InputMode {
         if (screen == null) {
             return;
         }
-        assert GuiScreenController.hasActivePopup();
+        assert GuiScreenController.hasActivePopupMenu();
         if (actionString.equals("close")) {
             /*
              * Close the current popup menu.
              */
-            GuiScreenController.closeActivePopup();
+            GuiScreenController.closeActivePopupMenu();
 
         } else if (actionString.matches("select [1-9]")) {
             /*

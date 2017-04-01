@@ -61,7 +61,7 @@ public class GuiScreenController extends BasicScreenController {
     // fields
 
     /**
-     * screen's input mode while a popup menu is active
+     * this screen's input mode (while a popup is active)
      */
     private static InputMode savedMode;
     /**
@@ -94,9 +94,9 @@ public class GuiScreenController extends BasicScreenController {
      * without making a selection. Invoked from NiftyMethodInvoker using
      * reflection, so the class and method must both be public.
      */
-    public static synchronized void closeActivePopup() {
+    public static synchronized void closeActivePopupMenu() {
         if (activePopupMenu == null) {
-            throw new IllegalStateException("no active popup");
+            throw new IllegalStateException("no active popup menu");
         }
 
         activePopupMenu.close();
@@ -126,7 +126,7 @@ public class GuiScreenController extends BasicScreenController {
      *
      * @param popupMenu which menu to close (not null)
      */
-    static synchronized void closePopup(PopupMenu popupMenu) {
+    static synchronized void closePopupMenu(PopupMenu popupMenu) {
         Validate.nonNull(popupMenu, "popup menu");
         if (activePopupMenu == null) {
             throw new IllegalStateException("no active popup menu");
@@ -143,7 +143,7 @@ public class GuiScreenController extends BasicScreenController {
         }
         activePopupMenu = null;
         /*
-         * Disable the menu's input mode and resume the screen's input mode.
+         * Disable the popups's input mode and resume the screen's input mode.
          */
         InputMode menuMode = InputMode.getActiveMode();
         menuMode.setEnabled(false);
@@ -154,20 +154,20 @@ public class GuiScreenController extends BasicScreenController {
     }
 
     /**
-     * Test whether there's an active popup element.
+     * Test whether there's an active popup menu.
      *
-     * @return true if there's an active popup element, false if there's none
+     * @return true if there's an active popup menu, false if there's none
      */
-    public static boolean hasActivePopup() {
+    static boolean hasActivePopupMenu() {
         return activePopupMenu != null;
     }
 
     /**
-     * Select a menu item in the active popup.
+     * Select a menu item in the active popup menu.
      *
      * @param index index of the item (&ge;0, 0 &rarr; 1st)
      */
-    public void selectMenuItem(int index) {
+    void selectMenuItem(int index) {
         Validate.nonNegative(index, "index");
         if (activePopupMenu == null) {
             throw new IllegalStateException("no active popup menu");
@@ -185,7 +185,7 @@ public class GuiScreenController extends BasicScreenController {
         /*
          * If the old menu is still active, close it and all its ancestors.
          */
-        closePopup(oldMenu);
+        closePopupMenu(oldMenu);
     }
 
     /**
@@ -259,7 +259,7 @@ public class GuiScreenController extends BasicScreenController {
             String item = itemArray[itemIndex];
             String displayText = item.replace("$", "\\$");
             if (itemIndex < 9) {
-                displayText = String.format("%d] %s", 
+                displayText = String.format("%d] %s",
                         itemIndex + 1, displayText);
             }
             // TODO icon asset path for each item
@@ -297,7 +297,7 @@ public class GuiScreenController extends BasicScreenController {
             InputMode menuMode = InputMode.findMode(MenuInputMode.name);
             menuMode.setEnabled(true);
         }
-        
+
         setActivePopupMenu(popup);
     }
 

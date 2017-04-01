@@ -43,7 +43,7 @@ import org.bushe.swing.event.EventTopicSubscriber;
 public class PopupMenu
         implements EventTopicSubscriber<MenuItemActivatedEvent<String>> {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -74,12 +74,12 @@ public class PopupMenu
     // constructors
 
     /**
-     * Instantiate a record of a popup menu (or submenu).
+     * Instantiate a record of a popup menu or submenu.
      *
-     * @param popupId Nifty id of the popup (not null)
+     * @param popupId Nifty id of the popup element (not null)
      * @param actionPrefix prefix for action strings (not null)
      * @param itemArray items in the popup menu (not null, unaffected)
-     * @param parent parent menu which opened this submenu (or null if not a
+     * @param parent the menu which opened this submenu (or null if not a
      * submenu)
      */
     PopupMenu(String popupId, String actionPrefix, String[] itemArray,
@@ -97,7 +97,7 @@ public class PopupMenu
     // new methods exposed
 
     /**
-     * Close the menu.
+     * Close this menu.
      */
     void close() {
         Nifty nifty = GuiScreenController.getNifty();
@@ -105,36 +105,36 @@ public class PopupMenu
     }
 
     /**
-     * Generate the action string for an indexed item in the menu.
+     * Generate the action string for an indexed item in this menu. TODO rename
      *
      * @param index item to generate for (&ge;0, 0 &rarr; 1st)
-     * @return action string or null for an invalid index
+     * @return action string, or null for an invalid index
      */
     String getActionString(int index) {
         if (index < 0 || index >= itemArray.length) {
             return null;
         }
-        String itemName = itemArray[index];
         /*
          * Generate the action string for the item by appending the item's
-         * name to this popup menu's action prefix.
+         * name to this menu's action prefix.
          */
+        String itemName = itemArray[index];
         String actionString = actionPrefix + itemName;
 
         return actionString;
     }
 
     /**
-     * Access the parent: the popup menu which opened the submenu.
+     * Access the parent: the popup menu which opened this submenu.
      *
-     * @return pre-existing instance, or null if not a submenu
+     * @return the pre-existing instance, or null if not a submenu
      */
     PopupMenu getParent() {
         return parent;
     }
 
     /**
-     * Enable or disable the menu or submenu.
+     * Enable or disable this menu.
      *
      * @param newState true to enable, false to disable
      */
@@ -150,30 +150,28 @@ public class PopupMenu
     // EventTopicSubscriber methods
 
     /**
-     * Callback to deal with the activation of an item in the submenu.
+     * Callback from Nifty when an item in this menu is activated.
      *
-     * @param controlId Nifty id of the menu's control (not null)
+     * @param controlId Nifty id of the menu's control (ignored)
      * @param event details, such as which item got activated (not null)
      */
     @Override
     public void onEvent(String controlId,
             MenuItemActivatedEvent<String> event) {
-        assert controlId != null;
-
-        String itemName = event.getItem();
         /*
          * Generate the action string for the item by appending the item's
-         * name to this popup menu's action prefix.
+         * name to this menu's action prefix.
          */
+        String itemName = event.getItem();
         String actionString = actionPrefix + itemName;
         /*
          * Perform the action described by the action string.
          */
         GuiScreenController.perform(actionString);
         /*
-         * If the menu is still active, close it and all of its ancestors.
+         * If this menu is still active, close it and all its ancestors.
          */
-        GuiScreenController.closePopup(this);
+        GuiScreenController.closePopupMenu(this);
     }
     // *************************************************************************
     // private methods
@@ -181,11 +179,13 @@ public class PopupMenu
     /**
      * Access the Nifty element for this popup menu.
      *
-     * @return pre-existing instance
+     * @return the pre-existing instance (not null)
      */
     private Element getElement() {
         Nifty nifty = GuiScreenController.getNifty();
         Element element = nifty.findPopupByName(popupId);
+
+        assert element != null;
         return element;
     }
 }
