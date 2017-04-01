@@ -45,8 +45,8 @@
            childLayout="absolute-inside">
         <control name="niftyMenu" id="#menu"/>
         <interact
-            onClick="closeActivePopup()"
-            onSecondaryClick="closeActivePopup()"
-            onTertiaryClick="closeActivePopup()"/>
+            onClick="closeActivePopupMenu()"
+            onSecondaryClick="closeActivePopupMenu()"
+            onTertiaryClick="closeActivePopupMenu()"/>
     </popup>
 </nifty>
