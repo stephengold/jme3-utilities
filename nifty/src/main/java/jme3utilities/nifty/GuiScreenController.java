@@ -177,20 +177,22 @@ public class GuiScreenController extends BasicScreenController {
         if (actionString == null) {
             return;
         }
+        PopupMenu oldMenu = activePopupMenu;
         /*
          * Perform the action described by the action string.
          */
         perform(actionString);
         /*
-         * If the menu is still active, close it and all of its ancestors.
+         * If the old menu is still active, close it and all its ancestors.
          */
-        closePopup(activePopupMenu);
+        closePopup(oldMenu);
     }
 
     /**
-     * Alter the text of a Nifty element with a text renderer (such as a label).
+     * Alter the text of a Nifty element (such as a label) that has a text
+     * renderer.
      *
-     * @param elementId Nifty element id of the label (not null)
+     * @param elementId id of the element (not null)
      * @param newText (not null)
      */
     public void setStatusText(String elementId, String newText) {
@@ -222,8 +224,9 @@ public class GuiScreenController extends BasicScreenController {
      * usually the final character will be a blank)
      * @param items collection of menu items (not null, unaffected)
      */
-    public void showPopup(String actionPrefix, Collection<String> items) {
-        Validate.nonNull(actionPrefix, "prefix");
+    public static void showPopup(String actionPrefix,
+            Collection<String> items) {
+        Validate.nonNull(actionPrefix, "action prefix");
         Validate.nonNull(items, "collection");
 
         String[] itemArray = MyString.toArray(items);
@@ -242,24 +245,30 @@ public class GuiScreenController extends BasicScreenController {
         Validate.nonNull(actionPrefix, "prefix");
         Validate.nonNull(itemArray, "item array");
         /*
-         * Create the popup using "popup-menu" as a base.
+         * Create a popup using "popup-menu" as a base.
          * Nifty assigns the popup a new id.
          */
         Element element = nifty.createPopup("popup-menu");
         /*
-         * Add items to the popup's menu.
+         * Add items to the new popup's menu.
          */
         @SuppressWarnings("unchecked")
         Menu<String> menu = element.findNiftyControl("#menu", Menu.class);
         assert menu != null;
-        for (String item : itemArray) {
-            menu.addMenuItem(item, item);
+        for (int itemIndex = 0; itemIndex < itemArray.length; itemIndex++) {
+            String item = itemArray[itemIndex];
+            String displayText = item.replace("$", "\\$");
+            if (itemIndex < 9) {
+                displayText = String.format("%d] %s", 
+                        itemIndex + 1, displayText);
+            }
+            // TODO icon asset path for each item
+            menu.addMenuItem(displayText, item);
         }
         String elementId = element.getId();
         assert elementId != null;
         /*
-         * Create a controller with a subscription to the menu's
-         * item activation events.
+         * Create a subscriber to handle the new menu's events.
          */
         PopupMenu popup = new PopupMenu(elementId, actionPrefix,
                 itemArray, activePopupMenu);
@@ -267,27 +276,28 @@ public class GuiScreenController extends BasicScreenController {
         String controlId = menu.getId();
         nifty.subscribe(screen, controlId, MenuItemActivatedEvent.class, popup);
         /*
-         * Make the popup menu visible.
+         * Make the popup visible without specifying a focus element.
          */
         nifty.showPopup(screen, elementId, null);
 
         if (activePopupMenu != null) {
             /*
-             * Disable the parent menu.
+             * Disable the parent popup menu.
              */
             activePopupMenu.setEnabled(false);
         } else {
             /*
              * Save and suspend the screen's input mode (if any) and
-             * activate the input mode for menus.
+             * activate the input mode for popup menus.
              */
             savedMode = InputMode.getActiveMode();
             if (savedMode != null) {
                 savedMode.suspend();
             }
-            InputMode menuMode = InputMode.findMode("menu");
+            InputMode menuMode = InputMode.findMode(MenuInputMode.name);
             menuMode.setEnabled(true);
         }
+        
         setActivePopupMenu(popup);
     }
 
@@ -298,8 +308,8 @@ public class GuiScreenController extends BasicScreenController {
      * (not null, unaffected)
      * @param itemArray array of menu items (not null, unaffected)
      */
-    public void showPopup(String[] actionPrefixWords, String[] itemArray) {
-        Validate.nonNull(actionPrefixWords, "word array");
+    public static void showPopup(String[] actionPrefixWords,
+            String[] itemArray) {
         Validate.nonNull(itemArray, "item array");
         /*
          * Generate the action prefix for this menu.
@@ -320,7 +330,7 @@ public class GuiScreenController extends BasicScreenController {
      * slider's Nifty id ends with "Slider".
      *
      * @param namePrefix unique name prefix of the slider (not null)
-     * @return pre-existing instance
+     * @return the pre-existing instance
      */
     protected Slider getSlider(String namePrefix) {
         Validate.nonNull(namePrefix, "slider name prefix");
