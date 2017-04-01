@@ -41,12 +41,12 @@
                 <control name="button" id="id91ToAvoidOffendingNifty"
                          label="select a file"
                          width="100px">
-                    <interact onRelease="perform(select /)"/>
+                    <interact onRelease="perform(open /)"/>
                 </control>
                 <panel/>
             </panel>
             <control name="label" id="messageLabel"
-                     color="#ffff" 
+                     color="#ffff"
                      height="*"
                      textHAlign="center"
                      textVAlign="center"

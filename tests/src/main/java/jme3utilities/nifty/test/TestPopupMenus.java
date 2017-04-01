@@ -55,6 +55,10 @@ public class TestPopupMenus extends GuiApplication {
      * application name for its window's title bar
      */
     final private static String applicationName = "TestPopupMenus";
+    /**
+     * action prefix for the "open" popup menu
+     */
+    final private static String openMenuPrefix = "open ";
     // *************************************************************************
     // fields
 
@@ -129,9 +133,9 @@ public class TestPopupMenus extends GuiApplication {
     @Override
     public void onAction(String actionString, boolean ongoing, float ignored) {
         if (ongoing) {
-            if ("select /".equals(actionString.substring(0, 8))) {
-                String path = actionString.substring(7);
-                doSelect(actionString, path);
+            if (actionString.startsWith(openMenuPrefix)) {
+                String path = actionString.substring(openMenuPrefix.length());
+                doOpen(actionString, path);
                 return;
             }
         }
@@ -143,31 +147,39 @@ public class TestPopupMenus extends GuiApplication {
     // *************************************************************************
     // private methods
 
-    private void doSelect(String actionString, String path) {
+    /**
+     * Handle an "open" action from the GUI.
+     *
+     * @param actionString (starts with {@link #openMenuPrefix})
+     * @param path filesystem path so far (starts with "/")
+     */
+    private void doOpen(String actionString, String path) {
+        assert path != null;
+
         File file = new File(path);
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            if (files.length == 0) {
-                String line = String.format("You selected the empty folder %s.",
-                        MyString.quote(path));
-                screen.setStatusText("messageLabel", line);
-            } else {
-                /*
-                 * Open a submenu with the directory/folder's contents.
-                 */
-                String[] names = new String[files.length];
-                for (int i = 0; i < files.length; i++) {
-                    names[i] = files[i].getName();
-                }
-                if (!actionString.endsWith("/")) {
-                    actionString += "/";
-                }
-                GuiScreenController.showPopup(actionString, names);
-            }
-        } else {
-            String line = String.format("You selected the file %s.",
+        File[] files = file.listFiles();
+        if (files == null) {
+            String line = String.format("Selected file %s.",
                     MyString.quote(path));
             screen.setStatusText("messageLabel", line);
+
+        } else if (files.length == 0) {
+            String line = String.format("Selected empty folder %s.",
+                    MyString.quote(path));
+            screen.setStatusText("messageLabel", line);
+
+        } else {
+            /*
+             * Open a submenu with the directory/folder's contents.
+             */
+            String[] names = new String[files.length];
+            for (int i = 0; i < files.length; i++) {
+                names[i] = files[i].getName();
+            }
+            if (!actionString.endsWith("/")) {
+                actionString += "/";
+            }
+            GuiScreenController.showPopup(actionString, names);
         }
     }
 }
