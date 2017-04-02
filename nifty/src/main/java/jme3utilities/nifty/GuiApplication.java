@@ -50,10 +50,15 @@ abstract public class GuiApplication extends ActionApplication {
     final private static Logger logger = Logger.getLogger(
             GuiApplication.class.getName());
     /**
-     * asset path to the Nifty XML for generic popup menus
+     * asset path to Nifty XML for a generic popup menu
      */
     final private static String popupMenuAsssetPath =
             "Interface/Nifty/popup-menu.xml";
+    /**
+     * asset path to Nifty XML for a modal text-entry dialog
+     */
+    final private static String textEntryDialogAssetPath =
+            "Interface/Nifty/dialogs/text-entry.xml";
     // *************************************************************************
     // fields
 
@@ -126,10 +131,13 @@ abstract public class GuiApplication extends ActionApplication {
                     "app should only be initialized once");
         }
         /*
-         * Attach a (disabled) input mode for popup menus.
+         * Attach (disabled) input modes for modal dialogs and popup menus.
          */
+        InputMode dialogMode = new DialogInputMode();
+        boolean success = stateManager.attach(dialogMode);
+        assert success;
         InputMode menuMode = new MenuInputMode();
-        boolean success = stateManager.attach(menuMode);
+        success = stateManager.attach(menuMode);
         assert success;
         /*
          * Start Nifty -- without the batched renderer!
@@ -144,14 +152,15 @@ abstract public class GuiApplication extends ActionApplication {
         logger.log(Level.INFO, "Nifty version is {0}",
                 MyString.quote(niftyVersion));
         /*
-         * Load the Nifty XML for generic popup menus.  For some reason the
-         * asset does not validate, so skip validation for now.
-         * Also, turn off warnings about re-registering styles.
+         * Load the Nifty XML for generic popups.  For some reason the
+         * assets do not validate, so skip validation.
+         * Also, mute the warnings about re-registering styles.
          */
         Logger niftyLogger = Logger.getLogger(Nifty.class.getName());
         Level save = niftyLogger.getLevel();
         niftyLogger.setLevel(Level.SEVERE);
         nifty.fromXmlWithoutStartScreen(popupMenuAsssetPath);
+        nifty.fromXmlWithoutStartScreen(textEntryDialogAssetPath);
         niftyLogger.setLevel(save);
         /*
          * Invoke the startup code of the subclass.

@@ -26,12 +26,14 @@
 package jme3utilities.nifty;
 
 import com.jme3.math.FastMath;
+import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.CheckBox;
 import de.lessvoid.nifty.controls.Menu;
 import de.lessvoid.nifty.controls.MenuItemActivatedEvent;
 import de.lessvoid.nifty.controls.RadioButton;
 import de.lessvoid.nifty.controls.Slider;
+import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
@@ -44,7 +46,7 @@ import jme3utilities.ui.InputMode;
 
 /**
  * Basic screen controller with extra support for Nifty controls such as
- * checkboxes, popup menus, radio buttons, sliders, and dynamic labels.
+ * checkboxes, dialogs, popup menus, radio buttons, sliders, and dynamic labels.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -61,6 +63,10 @@ public class GuiScreenController extends BasicScreenController {
     // fields
 
     /**
+     * Nifty element for the active modal dialog (null means none active)
+     */
+    private static Element dialogElement = null;
+    /**
      * this screen's input mode (while a popup is active)
      */
     private static InputMode savedMode;
@@ -68,6 +74,10 @@ public class GuiScreenController extends BasicScreenController {
      * active popup menu (null means none are active)
      */
     private static PopupMenu activePopupMenu = null;
+    /**
+     * action prefix of the active modal dialog (null means none active)
+     */
+    private static String dialogActionPrefix = null;
     // *************************************************************************
     // constructors
 
@@ -88,6 +98,34 @@ public class GuiScreenController extends BasicScreenController {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Escape from the active modal dialog and return control to the screen
+     * without performing an action.
+     */
+    static void closeActiveDialog() {
+        if (!hasActiveDialog()) {
+            throw new IllegalStateException("no active dialog");
+        }
+
+        Nifty nifty = getNifty();
+        String popupId = dialogElement.getId();
+        nifty.closePopup(popupId);
+        dialogActionPrefix = null;
+        dialogElement = null;
+        /*
+         * Disable the dialog's input mode and
+         * resume the screen's input mode, if any.
+         */
+        InputMode dialogMode = InputMode.getActiveMode();
+        dialogMode.setEnabled(false);
+        if (savedMode != null) {
+            savedMode.resume();
+            savedMode = null;
+        }
+
+        assert !hasActiveDialog();
+    }
 
     /**
      * Escape from the active popup menu and return control to its parent
@@ -154,6 +192,35 @@ public class GuiScreenController extends BasicScreenController {
     }
 
     /**
+     * Perform the dialog entry action, then close the dialog.
+     */
+    static void dialogEntry() {
+        if (!hasActiveDialog()) {
+            throw new IllegalStateException("no active dialog");
+        }
+
+        TextField textField = dialogElement.findNiftyControl("#textfield",
+                TextField.class);
+        String enteredText = textField.getRealText();
+        /*
+         * Convert the text into an action string and perform the action.
+         */
+        String entryActionString = dialogActionPrefix + enteredText;
+        perform(entryActionString);
+
+        closeActiveDialog();
+    }
+
+    /**
+     * Test whether there's an active dialog.
+     *
+     * @return true if there's an active dialog, false if there's none
+     */
+    static boolean hasActiveDialog() {
+        return dialogElement != null;
+    }
+
+    /**
      * Test whether there's an active popup menu.
      *
      * @return true if there's an active popup menu, false if there's none
@@ -163,7 +230,7 @@ public class GuiScreenController extends BasicScreenController {
     }
 
     /**
-     * Select a menu item in the active popup menu.
+     * Select an item from the active popup menu.
      *
      * @param index index of the item (&ge;0, 0 &rarr; 1st)
      */
@@ -175,9 +242,10 @@ public class GuiScreenController extends BasicScreenController {
 
         String actionString = activePopupMenu.getActionString(index);
         if (actionString == null) {
+            /* index out of range */
             return;
         }
-        PopupMenu oldMenu = activePopupMenu;
+        PopupMenu oldPopupMenu = activePopupMenu;
         /*
          * Perform the action described by the action string.
          */
@@ -185,7 +253,7 @@ public class GuiScreenController extends BasicScreenController {
         /*
          * If the old menu is still active, close it and all its ancestors.
          */
-        closePopupMenu(oldMenu);
+        closePopupMenu(oldPopupMenu);
     }
 
     /**
@@ -215,6 +283,55 @@ public class GuiScreenController extends BasicScreenController {
         }
         logger.log(Level.WARNING, "Nifty element {0} lacks a text renderer",
                 MyString.quote(elementId));
+    }
+
+    /**
+     * Create and activate a simple modal dialog.
+     *
+     * @param promptMessage text to display above the textfield (not null)
+     * @param defaultValue default text for the textfield (not null)
+     * @param okLabel label for the "OK" button (not null)
+     * @param actionPrefix action prefix (not null, usually the final character
+     * will be a blank)
+     */
+    public static void showDialog(String promptMessage, String defaultValue,
+            String okLabel, String actionPrefix) {
+        Validate.nonNull(actionPrefix, "action prefix");
+        /*
+         * Create a popup using "dialogs/text-entry" as a base.
+         * Nifty assigns the popup a new id.
+         */
+        dialogElement = nifty.createPopup("dialogs/text-entry");
+        String popupId = dialogElement.getId();
+        assert popupId != null;
+
+        Element prompt = dialogElement.findElementById("#prompt");
+        TextRenderer textRenderer = prompt.getRenderer(TextRenderer.class);
+        textRenderer.setText(promptMessage);
+        TextField textField = dialogElement.findNiftyControl("#textfield",
+                TextField.class);
+        textField.setText(defaultValue);
+        Button okButton = dialogElement.findNiftyControl("#ok",
+                Button.class);
+        okButton.setText(okLabel);
+        /*
+         * Make the popup visible without setting the focus.
+         */
+        Screen screen = nifty.getCurrentScreen();
+        nifty.showPopup(screen, popupId, null);
+        /*
+         * Save and suspend the screen's input mode (if any) and
+         * activate the input mode for modal dialogs.
+         */
+        assert savedMode == null : savedMode;
+        savedMode = InputMode.getActiveMode();
+        if (savedMode != null) {
+            savedMode.suspend();
+        }
+        InputMode dialogMode = InputMode.findMode(DialogInputMode.name);
+        dialogMode.setEnabled(true);
+
+        dialogActionPrefix = actionPrefix;
     }
 
     /**
@@ -290,6 +407,7 @@ public class GuiScreenController extends BasicScreenController {
              * Save and suspend the screen's input mode (if any) and
              * activate the input mode for popup menus.
              */
+            assert savedMode == null : savedMode;
             savedMode = InputMode.getActiveMode();
             if (savedMode != null) {
                 savedMode.suspend();

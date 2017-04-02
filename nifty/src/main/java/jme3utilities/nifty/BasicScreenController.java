@@ -38,6 +38,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.ui.InputMode;
 
 /**
  * GUI app state to control a Nifty screen. A screen is displayed if and only if
@@ -146,8 +147,9 @@ public class BasicScreenController
     }
 
     /**
-     * Perform the action described by an action string. Invoked by means of
-     * reflection, so both the class and method must be public.
+     * Perform the action described by the specified action string using the
+     * screen's listener, even if it's inactive. Invoked by means of reflection,
+     * so both the class and method must be public.
      *
      * @param actionString (not null)
      */
@@ -158,6 +160,29 @@ public class BasicScreenController
 
         BasicScreenController screen = GuiApplication.getEnabledScreen();
         ActionListener actionListener = screen.getListener();
+        boolean isOngoing = true;
+        float tpf = 0f;
+        try {
+            actionListener.onAction(actionString, isOngoing, tpf);
+        } catch (Throwable throwable) {
+            logger.log(Level.SEVERE, "Caught unexpected throwable:", throwable);
+            guiApplication.stop(false);
+        }
+    }
+
+    /**
+     * Perform the action described by the specified action string using the
+     * active input mode. Invoked by means of reflection, so both the class and
+     * method must be public.
+     *
+     * @param actionString (not null)
+     */
+    public static void performActive(String actionString) {
+        Validate.nonNull(actionString, "action string");
+        logger.log(Level.INFO, "actionString={0}",
+                MyString.quote(actionString));
+
+        ActionListener actionListener = InputMode.getActiveMode();
         boolean isOngoing = true;
         float tpf = 0f;
         try {
@@ -345,8 +370,11 @@ public class BasicScreenController
 
     /**
      * Access the listener of this screen.
+     *
+     * @return the pre-existing instance (not null)
      */
     private ActionListener getListener() {
+        assert listener != null;
         return listener;
     }
 
