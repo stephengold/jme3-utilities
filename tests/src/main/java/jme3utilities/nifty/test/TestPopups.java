@@ -37,12 +37,12 @@ import jme3utilities.nifty.GuiScreenController;
 import jme3utilities.ui.InputMode;
 
 /**
- * GUI application for testing/demonstrating modal dialogs and multi-level popup
- * menus. The application's main entry point is here.
+ * GUI application for testing/demonstrating popups, including modal dialogs 
+ * and multi-level popup menus. The application's main entry point is here.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class TestPopupMenus extends GuiApplication {
+public class TestPopups extends GuiApplication {
     // *************************************************************************
     // constants and loggers
 
@@ -50,11 +50,11 @@ public class TestPopupMenus extends GuiApplication {
      * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
-            TestPopupMenus.class.getName());
+            TestPopups.class.getName());
     /**
      * application name for its window's title bar
      */
-    final private static String applicationName = "TestPopupMenus";
+    final private static String applicationName = "TestPopups";
     /**
      * action prefix for the "open" popup menu
      */
@@ -94,7 +94,7 @@ public class TestPopupMenus extends GuiApplication {
          */
         logger.setLevel(Level.INFO);
 
-        TestPopupMenus application = new TestPopupMenus();
+        TestPopups application = new TestPopups();
         /*
          * Customize the window's title bar.
          */
@@ -103,7 +103,7 @@ public class TestPopupMenus extends GuiApplication {
         application.setSettings(settings);
         application.start();
         /*
-         * ... and onward to TestPopupMenus.guiInitializeApplication()!
+         * ... and onward to TestPopups.guiInitializeApplication()!
          */
     }
     // *************************************************************************
@@ -124,8 +124,8 @@ public class TestPopupMenus extends GuiApplication {
         /*
          * Create and attach a screen controller.
          */
-        screen = new GuiScreenController("TestPopupMenus/s1",
-                "Interface/Nifty/screens/TestPopupMenus/s1.xml", true);
+        screen = new GuiScreenController("TestPopups/mainScreen",
+                "Interface/Nifty/screens/TestPopups/mainScreen.xml", true);
         screen.setListener(inputMode);
         boolean success = stateManager.attach(screen);
         assert success;

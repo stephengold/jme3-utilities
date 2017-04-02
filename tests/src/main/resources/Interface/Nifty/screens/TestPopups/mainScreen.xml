@@ -29,7 +29,7 @@
  Screen layout for the TestPopupMenus application.
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
-    <screen id="TestPopupMenus/s1"
+    <screen id="TestPopups/mainScreen"
             controller="jme3utilities.nifty.GuiScreenController">
         <layer childLayout="vertical"
                backgroundColor="#444f">

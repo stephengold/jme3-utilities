@@ -67,8 +67,8 @@ task TestBindScreen(type: JavaExec) {
 task TestMultipleScreens(type: JavaExec) {
     main 'jme3utilities.nifty.test.TestMultipleScreens'
 }
-task TestPopupMenus(type: JavaExec) {
-    main 'jme3utilities.nifty.test.TestPopupMenus'
+task TestPopups(type: JavaExec) {
+    main 'jme3utilities.nifty.test.TestPopups'
 }
 
 task CubeMapExample(type: JavaExec) {
