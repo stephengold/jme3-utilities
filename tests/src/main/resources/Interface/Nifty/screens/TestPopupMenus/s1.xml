@@ -39,9 +39,15 @@
                    padding="10px">
                 <panel/>
                 <control name="button" id="id91ToAvoidOffendingNifty"
-                         label="select a file"
+                         label="Select a file"
                          width="100px">
                     <interact onRelease="perform(open /)"/>
+                </control>
+                <panel/>
+                <control name="button" id="id92ToAvoidOffendingNifty"
+                         label="Set search string"
+                         width="100px">
+                    <interact onRelease="perform(search)"/>
                 </control>
                 <panel/>
             </panel>

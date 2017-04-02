@@ -37,8 +37,8 @@ import jme3utilities.nifty.GuiScreenController;
 import jme3utilities.ui.InputMode;
 
 /**
- * GUI application for testing/demonstrating multi-level popup menus. The
- * application's main entry point is here.
+ * GUI application for testing/demonstrating modal dialogs and multi-level popup
+ * menus. The application's main entry point is here.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -59,6 +59,10 @@ public class TestPopupMenus extends GuiApplication {
      * action prefix for the "open" popup menu
      */
     final private static String openMenuPrefix = "open ";
+    /**
+     * action prefix for the "search string" dialog
+     */
+    final private static String searchDialogPrefix = "set search ";
     // *************************************************************************
     // fields
 
@@ -66,6 +70,10 @@ public class TestPopupMenus extends GuiApplication {
      * controller for the screen: set in guiInitializeApplication()
      */
     private GuiScreenController screen = null;
+    /**
+     * most recent setting for search string (not null)
+     */
+    private String searchString = "";
     // *************************************************************************
     // new methods exposed
 
@@ -133,7 +141,20 @@ public class TestPopupMenus extends GuiApplication {
     @Override
     public void onAction(String actionString, boolean ongoing, float ignored) {
         if (ongoing) {
-            if (actionString.startsWith(openMenuPrefix)) {
+            if (actionString.equals("search")) {
+                GuiScreenController.showDialog("Enter new search string:",
+                        searchString, "Set", searchDialogPrefix);
+                return;
+
+            } else if (actionString.startsWith(searchDialogPrefix)) {
+                searchString = actionString.substring(
+                        searchDialogPrefix.length());
+                String line = String.format("Search string is %s.",
+                        MyString.quote(searchString));
+                updateStatusLine(line);
+                return;
+
+            } else if (actionString.startsWith(openMenuPrefix)) {
                 String path = actionString.substring(openMenuPrefix.length());
                 doOpen(actionString, path);
                 return;
@@ -161,12 +182,12 @@ public class TestPopupMenus extends GuiApplication {
         if (files == null) {
             String line = String.format("Selected file %s.",
                     MyString.quote(path));
-            screen.setStatusText("messageLabel", line);
+            updateStatusLine(line);
 
         } else if (files.length == 0) {
             String line = String.format("Selected empty folder %s.",
                     MyString.quote(path));
-            screen.setStatusText("messageLabel", line);
+            updateStatusLine(line);
 
         } else {
             /*
@@ -181,5 +202,15 @@ public class TestPopupMenus extends GuiApplication {
             }
             GuiScreenController.showPopup(actionString, names);
         }
+    }
+
+    /**
+     * Update the status line in the GUI.
+     *
+     * @param newLine (not null)
+     */
+    private void updateStatusLine(String line) {
+        assert line != null;
+        screen.setStatusText("messageLabel", line);
     }
 }
