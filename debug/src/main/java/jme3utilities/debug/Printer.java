@@ -27,6 +27,7 @@ package jme3utilities.debug;
 
 import com.jme3.light.Light;
 import com.jme3.light.LightList;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
@@ -46,11 +47,8 @@ import jme3utilities.math.MyVector3f;
 /**
  * Dump portions of a jME3 scene graph for debugging.
  * <p>
- * printSubtree() is the usual interface to this class. The level of detail can
- * be configured dynamically.
- * <p>
- * The following forum post may be of interest:
- * http://hub.jmonkeyengine.org/forum/topic/a-simple-node-tree-printer-to-html/
+ * {@link #printSubtree(com.jme3.scene.Spatial)} is the usual interface to this
+ * class. The level of detail can be configured dynamically.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -115,6 +113,7 @@ public class Printer {
      */
     public Printer(PrintStream printStream) {
         Validate.nonNull(printStream, "print stream");
+
         stream = printStream;
     }
     // *************************************************************************
@@ -231,10 +230,25 @@ public class Printer {
      */
     public void printLocation(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
+
         Vector3f location = MySpatial.getWorldLocation(spatial);
         if (!MyVector3f.isZero(location)) {
             stream.printf(" loc=[%.3f, %.3f, %.3f]",
                     location.x, location.y, location.z);
+        }
+    }
+
+    /**
+     * Print the world orientation of a spatial.
+     *
+     * @param spatial spatial being described (not null)
+     */
+    public void printOrientation(Spatial spatial) {
+        Validate.nonNull(spatial, "spatial");
+
+        Quaternion orientation = MySpatial.getWorldOrientation(spatial);
+        if (!orientation.isIdentity()) {
+            stream.printf(" orient=[%s]", orientation.toString());
         }
     }
 
@@ -316,6 +330,7 @@ public class Printer {
         printLights(spatial);
         if (printTransformFlag) {
             printLocation(spatial);
+            printOrientation(spatial);
             printScale(spatial);
         }
         if (printUserFlag) {
