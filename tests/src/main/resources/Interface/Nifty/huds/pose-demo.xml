@@ -108,6 +108,11 @@
                             </control>
                         </panel>
                         <panel style="buttonPanel">
+                            <control name="button" id="renameAnimButton">
+                                <interact onRelease="perform(rename animation)"/>
+                            </control>
+                        </panel>
+                        <panel style="buttonPanel">
                             <control name="button" id="deleteButton">
                                 <interact onRelease="perform(delete animation)"/>
                             </control>
@@ -137,7 +142,7 @@
 
                         <panel style="statusPanel">
                             <control name="label"
-                                     text="Selected bone:"/>
+                                     text="Bone:"/>
                             <control name="label" id="boneStatus"
                                      textHAlign="right"/>
                         </panel>
@@ -145,6 +150,11 @@
                             <control name="button" id="id2ToAvoidNiftyWarning"
                                      label="Select a bone">
                                 <interact onRelease="perform(select bone)"/>
+                            </control>
+                        </panel>
+                        <panel style="buttonPanel">
+                            <control name="button" id="renameBoneButton">
+                                <interact onRelease="perform(rename bone)"/>
                             </control>
                         </panel>
 

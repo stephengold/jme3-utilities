@@ -79,6 +79,10 @@ public class PoseDemoHud
         "Elephant", "Jaime", "Ninja", "Oto", "Sinbad"
     };
     /**
+     * action prefix for the "rename animation" dialog
+     */
+    final private static String animationDialogPrefix = "rename animation ";
+    /**
      * action prefix for the "load animation" popup menu
      */
     final private static String animationMenuPrefix = "load animation ";
@@ -87,6 +91,10 @@ public class PoseDemoHud
      * channel!) to indicate bind pose, that is, no animation loaded
      */
     final static String bindPoseName = "( bind pose )";
+    /*
+     * action prefix for the "rename bone" dialog
+     */
+    final private static String boneDialogPrefix = "rename bone ";
     /**
      * action prefix for the "select bone" popup menu
      */
@@ -243,6 +251,18 @@ public class PoseDemoHud
                     showPopup(modelMenuPrefix, modelNames);
                     return;
 
+                case "rename animation":
+                    String oldAnimName = PoseDemo.modelState.getAnimationName();
+                    showDialog("Enter new name for animation:", oldAnimName,
+                            "Rename", animationDialogPrefix);
+                    return;
+
+                case "rename bone":
+                    String oldBoneName = PoseDemo.modelState.getBoneName();
+                    showDialog("Enter new name for bone:", oldBoneName,
+                            "Rename", boneDialogPrefix);
+                    return;
+
                 case "reset bone":
                     resetBone();
                     return;
@@ -263,10 +283,28 @@ public class PoseDemoHud
                     }
                     return;
             }
-            if (actionString.startsWith(animationMenuPrefix)) {
+            if (actionString.startsWith(animationDialogPrefix)) {
+                int namePos = animationDialogPrefix.length();
+                String newName = actionString.substring(namePos);
+                boolean success = PoseDemo.modelState.renameAnimation(newName);
+                if (success) {
+                    setStatusText("animationStatus", newName);
+                }
+                return;
+
+            } else if (actionString.startsWith(animationMenuPrefix)) {
                 int namePos = animationMenuPrefix.length();
                 String name = actionString.substring(namePos);
                 selectAnimation(name);
+                return;
+
+            } else if (actionString.startsWith(boneDialogPrefix)) {
+                int namePos = boneDialogPrefix.length();
+                String newName = actionString.substring(namePos);
+                boolean success = PoseDemo.modelState.renameBone(newName);
+                if (success) {
+                    selectBone(newName);
+                }
                 return;
 
             } else if (actionString.startsWith(boneMenuPrefix)) {
@@ -375,11 +413,13 @@ public class PoseDemoHud
         String status = PoseDemo.modelState.getName();
         setStatusText("modelStatus", status);
         /*
-         * Delete button
+         * Animation rename and delete buttons
          */
         if (PoseDemo.modelState.isBindPoseSelected()) {
+            setButtonLabel("renameAnimButton", "");
             setButtonLabel("deleteButton", "");
         } else {
+            setButtonLabel("renameAnimButton", "Rename this animation");
             setButtonLabel("deleteButton", "Delete this animation");
         }
         /*
@@ -405,6 +445,14 @@ public class PoseDemoHud
             setButtonLabel("keyframeButton", "Select keyframe");
         } else {
             setButtonLabel("keyframeButton", "");
+        }
+        /*
+         * Bone rename button
+         */
+        if (PoseDemo.modelState.isBoneSelected()) {
+            setButtonLabel("renameBoneButton", "Rename this bone");
+        } else {
+            setButtonLabel("renameBoneButton", "");
         }
         /*
          * Bone-angle sliders, status, and reset button

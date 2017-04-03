@@ -38,6 +38,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.plugins.ogre.MeshLoader;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -190,6 +191,23 @@ class ModelState extends SimpleAppState {
         Animation animation = animControl.getAnim(name);
 
         return animation;
+    }
+
+    /**
+     * Read the name of the loaded animation.
+     *
+     * @return the name, or bindPoseName if in bind pose (not null)
+     */
+    String getAnimationName() {
+        String result;
+        if (isBindPoseSelected()) {
+            result = PoseDemoHud.bindPoseName;
+        } else {
+            result = channel.getAnimationName();
+        }
+
+        assert result != null;
+        return result;
     }
 
     /**
@@ -604,6 +622,96 @@ class ModelState extends SimpleAppState {
          * Restore prior user-control status.
          */
         setUserControl(savedStatus);
+    }
+
+    /**
+     * Rename the loaded animation.
+     *
+     * @param newName new name (not null)
+     * @return true if successful, otherwise false
+     */
+    boolean renameAnimation(String newName) {
+        assert newName != null;
+        if (newName.equals(PoseDemoHud.bindPoseName)
+                || newName.isEmpty()) {
+            logger.log(Level.WARNING, "Rename failed: {0} is a reserved name.",
+                    MyString.quote(newName));
+            return false;
+
+        } else if (getAnimation(newName) != null) {
+            logger.log(Level.WARNING,
+                    "Rename failed: an animation named {0} already exists.",
+                    MyString.quote(newName));
+            return false;
+        }
+        String oldName = getAnimationName();
+        if (oldName.equals(PoseDemoHud.bindPoseName)) {
+            logger.log(Level.WARNING,
+                    "Rename failed: cannot rename bind pose.");
+            return false;
+        }
+
+        Animation oldAnimation = getAnimation();
+        float length = oldAnimation.getLength();
+        Animation newAnimation = new Animation(newName, length);
+        for (Track track : oldAnimation.getTracks()) {
+            newAnimation.addTrack(track);
+        }
+
+        AnimControl animControl = getAnimControl();
+        animControl.removeAnim(oldAnimation);
+        animControl.addAnim(newAnimation);
+
+        channel.setAnim(newName, 0f);
+
+        return true;
+    }
+
+    /**
+     * Rename the selected bone.
+     *
+     * @param newName new name (not null)
+     * @return true if successful, otherwise false
+     */
+    boolean renameBone(String newName) {
+        assert newName != null;
+        if (newName.equals(PoseDemo.hudState.noBone) || newName.isEmpty()) {
+            logger.log(Level.WARNING, "Rename failed: {0} is a reserved name.",
+                    MyString.quote(newName));
+            return false;
+
+        } else if (hasBone(newName)) {
+            logger.log(Level.WARNING,
+                    "Rename failed: a bone named {0} already exists.",
+                    MyString.quote(newName));
+            return false;
+        }
+        String oldName = getBoneName();
+        if (oldName.equals(PoseDemo.hudState.noBone)) {
+            logger.log(Level.WARNING, "Rename failed: no bone selected.",
+                    MyString.quote(newName));
+            return false;
+
+        }
+        /*
+         * The override sequence is A, X, B, and Y.
+         */
+        Bone bone = getBone();
+        Class<?> boneClass = bone.getClass();
+        Field nameField;
+        try {
+            nameField = boneClass.getDeclaredField("name");
+        } catch (NoSuchFieldException e) {
+            return false;
+        }
+        nameField.setAccessible(true);
+        try {
+            nameField.set(bone, newName);
+        } catch (IllegalAccessException e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
