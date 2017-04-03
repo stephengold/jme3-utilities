@@ -27,11 +27,11 @@
 
 <!--
  Nifty XML to create a generic popup menu for a screen controlled by
- SimpleScreenController.
+ a GuiScreenController.
 
  When a popup is activated, the rest of the screen dims by 50%.
- To close an active popup without selecting an item, simply click
- outside the popup.
+ To close an active popup menu without selecting an item, simply click
+ outside the popup or press the Esc key.
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
 

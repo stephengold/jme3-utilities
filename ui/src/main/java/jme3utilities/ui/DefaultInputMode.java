@@ -80,7 +80,7 @@ class DefaultInputMode extends InputMode {
             MyString.quote(actionString), ongoing
         });
         /*
-         * The action is not handled: forward it  to the application class.
+         * The action is not handled: forward it to the application class.
          */
         actionApplication.onAction(actionString, ongoing, tpf);
     }

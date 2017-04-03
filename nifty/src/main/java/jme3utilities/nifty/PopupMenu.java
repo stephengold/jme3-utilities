@@ -108,7 +108,7 @@ public class PopupMenu
      * Generate the action string for an indexed item in this menu. TODO rename
      *
      * @param index item to generate for (&ge;0, 0 &rarr; 1st)
-     * @return action string, or null for an invalid index
+     * @return action string, or null for index out of range
      */
     String getActionString(int index) {
         if (index < 0 || index >= itemArray.length) {

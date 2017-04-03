@@ -464,7 +464,7 @@ abstract public class InputMode
         ActionApplication aa = (ActionApplication) application;
         if (this == aa.getDefaultInputMode()) {
             /*
-             * Give the application a chance to override the
+             * Give the application an opportunity to override the
              * initial hotkey bindings.
              */
             aa.moreDefaultBindings();

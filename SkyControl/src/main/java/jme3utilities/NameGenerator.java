@@ -106,6 +106,7 @@ public class NameGenerator implements Savable {
         int length = name.length();
         String post = name.substring(separatorIndex + 1, length);
         boolean result = post.matches("^\\d+$");
+
         return result;
     }
 

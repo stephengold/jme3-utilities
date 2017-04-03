@@ -36,7 +36,7 @@ import jme3utilities.MyString;
 import jme3utilities.ui.InputMode;
 
 /**
- * Input mode for popup menus.
+ * Input mode for navigating popup menus.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -96,7 +96,7 @@ class MenuInputMode extends InputMode {
         assert GuiScreenController.hasActivePopupMenu();
         if (actionString.equals("close")) {
             /*
-             * Close the current popup menu.
+             * Close the active popup menu.
              */
             GuiScreenController.closeActivePopupMenu();
 
