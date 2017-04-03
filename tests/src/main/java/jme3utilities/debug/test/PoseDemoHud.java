@@ -125,7 +125,7 @@ public class PoseDemoHud
      * during initialization.
      */
     public PoseDemoHud() {
-        super("pose-demo", "Interface/Nifty/huds/pose.xml", true);
+        super("pose-demo", "Interface/Nifty/huds/pose-demo.xml", true);
     }
     // *************************************************************************
     // new methods exposed
