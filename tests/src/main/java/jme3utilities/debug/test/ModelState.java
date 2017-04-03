@@ -675,7 +675,7 @@ class ModelState extends SimpleAppState {
      */
     boolean renameBone(String newName) {
         assert newName != null;
-        if (newName.equals(PoseDemo.hudState.noBone) || newName.isEmpty()) {
+        if (newName.equals(PoseDemoHud.noBone) || newName.isEmpty()) {
             logger.log(Level.WARNING, "Rename failed: {0} is a reserved name.",
                     MyString.quote(newName));
             return false;
@@ -687,7 +687,7 @@ class ModelState extends SimpleAppState {
             return false;
         }
         String oldName = getBoneName();
-        if (oldName.equals(PoseDemo.hudState.noBone)) {
+        if (oldName.equals(PoseDemoHud.noBone)) {
             logger.log(Level.WARNING, "Rename failed: no bone selected.",
                     MyString.quote(newName));
             return false;
@@ -724,12 +724,18 @@ class ModelState extends SimpleAppState {
     }
 
     /**
-     * Alter which bone is selected. TODO validate
+     * Alter which bone is selected.
      *
      * @param name bone name or noBone (not null)
      */
     void selectBone(String name) {
         assert name != null;
+        if (!hasBone(name)) {
+            logger.log(Level.WARNING, "Select failed: no bone named {0}.",
+                    MyString.quote(name));
+            return;
+        }
+
         selectedBoneName = name;
     }
 
