@@ -288,7 +288,7 @@ public class PoseDemoHud
                 String newName = actionString.substring(namePos);
                 boolean success = PoseDemo.modelState.renameAnimation(newName);
                 if (success) {
-                    setStatusText("animationStatus", newName);
+                    selectAnimation(newName);
                 }
                 return;
 
