@@ -75,6 +75,9 @@ task TestPopups(type: JavaExec) {
 task CubeMapExample(type: JavaExec) {
     main 'jme3utilities.sky.test.CubeMapExample'
 }
+task TestGlobeRenderer(type: JavaExec) {
+    main 'jme3utilities.sky.test.TestGlobeRenderer'
+}
 task TestSkyControl(type: JavaExec) {
     main 'jme3utilities.sky.test.TestSkyControl'
 }
