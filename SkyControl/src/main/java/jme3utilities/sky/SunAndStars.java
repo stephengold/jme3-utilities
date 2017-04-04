@@ -81,7 +81,7 @@ public class SunAndStars
     /**
      * Earth's rate of rotation (radians per sidereal hour)
      */
-    final private static float radiansPerHour = 
+    final private static float radiansPerHour =
             FastMath.TWO_PI / Constants.hoursPerDay;
     /**
      * message logger for this class
@@ -89,15 +89,15 @@ public class SunAndStars
     final private static Logger logger = Logger.getLogger(
             SunAndStars.class.getName());
     /**
-     * local copy of Vector3f#UNIT_X
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
     final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
     /**
-     * local copy of Vector3f#UNIT_Y
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_Y}
      */
     final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
     /**
-     * local copy of Vector3f#UNIT_Z
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_Z}
      */
     final private static Vector3f zAxis = new Vector3f(0f, 0f, 1f);
     // *************************************************************************

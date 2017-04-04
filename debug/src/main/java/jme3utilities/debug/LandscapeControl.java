@@ -122,7 +122,7 @@ public class LandscapeControl extends SubtreeControl {
     final private static String heightMapAssetPath =
             "Textures/terrain/height/basin.png";
     /**
-     * local copy of Vector3f#UNIT_Y
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_Y}
      */
     final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
     // *************************************************************************

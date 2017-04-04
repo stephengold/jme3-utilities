@@ -58,7 +58,7 @@ public class VectorXZ
     final private static Logger logger = Logger.getLogger(
             VectorXZ.class.getName());
     /**
-     * local copy of #Vector3f.UNIT_Y
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_Y}
      */
     final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
     /**
@@ -302,7 +302,7 @@ public class VectorXZ
         }
         /*
          * An origin-centered, axis-aligned ellipse in polar coordinates:
-         * r^2 = maxX^2 * maxZ^2 / [ (maxZ * cos(th))^2 + (maxX * sin(th))^2 ]  
+         * r^2 = maxX^2 * maxZ^2 / [ (maxZ * cos(th))^2 + (maxX * sin(th))^2 ]
          */
         float length = length();
         float sineTheta = z / length;
@@ -776,7 +776,7 @@ public class VectorXZ
     public Quaternion toQuaternion() {
         Quaternion result = new Quaternion();
         /*
-         * Vector3f.lookAt() orients the Z-axis, whereas VectorXZ.rotate() 
+         * Vector3f.lookAt() orients the Z-axis, whereas VectorXZ.rotate()
          * orients the X-axis, so a 90-degree tranformation of coordinates is
          * required.
          */
