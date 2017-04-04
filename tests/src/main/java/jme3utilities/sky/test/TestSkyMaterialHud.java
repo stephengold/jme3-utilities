@@ -27,6 +27,7 @@ package jme3utilities.sky.test;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.asset.AssetNotFoundException;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -496,7 +497,12 @@ public class TestSkyMaterialHud
 
         phase = LunarPhase.fromDescription(name);
         String imageAssetPath = phase.imagePath("");
-        material.addObject(moonIndex, imageAssetPath);
+        try {
+            material.addObject(moonIndex, imageAssetPath);
+        } catch (AssetNotFoundException exception) {
+            imageAssetPath = phase.imagePath("-nonviral");
+            material.addObject(moonIndex, imageAssetPath);
+        }
     }
 
     /**

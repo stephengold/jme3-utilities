@@ -244,8 +244,15 @@ public class TestSkyMaterial extends GuiApplication {
         material.addHaze();
         int maxObjects = material.getMaxObjects();
         if (maxObjects > TestSkyMaterialHud.moonIndex) {
-            material.addObject(TestSkyMaterialHud.moonIndex,
-                    LunarPhase.FULL.imagePath(""));
+            String imageAssetPath = LunarPhase.FULL.imagePath("");
+            try {
+                material.addObject(TestSkyMaterialHud.moonIndex,
+                        imageAssetPath);
+            } catch (AssetNotFoundException exception) {
+                imageAssetPath = LunarPhase.FULL.imagePath("-nonviral");
+                material.addObject(TestSkyMaterialHud.moonIndex,
+                        imageAssetPath);
+            }
         }
         if (maxObjects > TestSkyMaterialHud.sunIndex) {
             material.addObject(TestSkyMaterialHud.sunIndex,
