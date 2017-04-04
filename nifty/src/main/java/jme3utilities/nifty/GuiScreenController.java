@@ -444,20 +444,46 @@ public class GuiScreenController extends BasicScreenController {
     // new protected methods
 
     /**
-     * Access a Nifty slider. This assumes a naming convention where the
-     * slider's Nifty id ends with "Slider".
+     * Test whether the identified check box is checked. This assumes a naming
+     * convention where the Nifty id of every check box ends with "CheckBox".
      *
-     * @param namePrefix unique name prefix of the slider (not null)
-     * @return the pre-existing instance
+     * @param idPrefix unique id prefix of the check box (not null)
+     * @return true if checked, otherwise false
      */
-    protected Slider getSlider(String namePrefix) {
-        Validate.nonNull(namePrefix, "slider name prefix");
+    protected boolean isChecked(String idPrefix) {
+        Validate.nonNull(idPrefix, "check box name prefix");
 
-        String sliderName = namePrefix + "Slider";
-        Slider slider = getScreen().findNiftyControl(sliderName, Slider.class);
+        Screen screen = getScreen();
+        String niftyId = idPrefix + "CheckBox";
+        CheckBox box = screen.findNiftyControl(niftyId, CheckBox.class);
+        if (box == null) {
+            logger.log(Level.SEVERE, "missing check box {0} in {1}",
+                    new Object[]{
+                        MyString.quote(niftyId), MyString.quote(getScreenId())
+                    });
+            throw new RuntimeException();
+        }
+        boolean result = box.isChecked();
+
+        return result;
+    }
+
+    /**
+     * Access a Nifty slider. This assumes a naming convention where the Nifty
+     * id of every slider ends with "Slider".
+     *
+     * @param idPrefix unique id prefix of the slider (not null)
+     * @return the pre-existing instance (not null)
+     */
+    protected Slider getSlider(String idPrefix) {
+        Validate.nonNull(idPrefix, "slider name prefix");
+
+        Screen screen = getScreen();
+        String niftyId = idPrefix + "Slider";
+        Slider slider = screen.findNiftyControl(niftyId, Slider.class);
         if (slider == null) {
             logger.log(Level.SEVERE, "missing slider {0} in {1}", new Object[]{
-                MyString.quote(sliderName), getScreenId()
+                MyString.quote(niftyId), MyString.quote(getScreenId())
             });
             throw new RuntimeException();
         }

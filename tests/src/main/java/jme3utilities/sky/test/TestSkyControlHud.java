@@ -30,7 +30,6 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.FastMath;
 import de.lessvoid.nifty.NiftyEventSubscriber;
-import de.lessvoid.nifty.controls.CheckBox;
 import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -173,11 +172,7 @@ public class TestSkyControlHud
      * @return true if the box is checked, otherwise false
      */
     boolean getAmbientFlag() {
-        CheckBox box = getScreen().findNiftyControl(
-                "ambientCheckBox", CheckBox.class);
-        assert box != null;
-        boolean result = box.isChecked();
-
+        boolean result = isChecked("ambient");
         return result;
     }
 
@@ -194,10 +189,7 @@ public class TestSkyControlHud
      * @return true if the box is checked, otherwise false
      */
     boolean getBloomFlag() {
-        CheckBox box = getScreen().findNiftyControl(
-                "bloomCheckBox", CheckBox.class);
-        boolean result = box.isChecked();
-
+        boolean result = isChecked("bloom");
         return result;
     }
 
@@ -248,10 +240,7 @@ public class TestSkyControlHud
      * @return true if the box is checked, otherwise false
      */
     boolean getFloorFlag() {
-        CheckBox box = getScreen().findNiftyControl(
-                "floorCheckBox", CheckBox.class);
-        boolean result = box.isChecked();
-
+        boolean result = isChecked("floor");
         return result;
     }
 
@@ -274,10 +263,7 @@ public class TestSkyControlHud
      * @return true if the box is checked, otherwise false
      */
     boolean getLandscapeFlag() {
-        CheckBox box = getScreen().findNiftyControl(
-                "landscapeCheckBox", CheckBox.class);
-        boolean result = box.isChecked();
-
+        boolean result = isChecked("landscape");
         return result;
     }
 
@@ -340,10 +326,7 @@ public class TestSkyControlHud
      * @return true if the box is checked, otherwise false
      */
     boolean getMainLightFlag() {
-        CheckBox box = getScreen().
-                findNiftyControl("mainLightCheckBox", CheckBox.class);
-        boolean result = box.isChecked();
-
+        boolean result = isChecked("mainLight");
         return result;
     }
 
@@ -370,10 +353,7 @@ public class TestSkyControlHud
      * @return true if the box is checked, otherwise false
      */
     boolean getShadowFiltersFlag() {
-        CheckBox box = getScreen().
-                findNiftyControl("shadowFiltersCheckBox", CheckBox.class);
-        boolean result = box.isChecked();
-
+        boolean result = isChecked("shadowFilters");
         return result;
     }
 
@@ -383,10 +363,7 @@ public class TestSkyControlHud
      * @return true if the box is checked, otherwise false
      */
     boolean getSkyFlag() {
-        CheckBox box = getScreen().findNiftyControl(
-                "skyCheckBox", CheckBox.class);
-        boolean result = box.isChecked();
-
+        boolean result = isChecked("sky");
         return result;
     }
 
@@ -676,15 +653,9 @@ public class TestSkyControlHud
         }
 
         cloudiness = updateSlider("cloudiness", "");
-
-        CheckBox checkBox = getScreen().findNiftyControl("modulationCheckBox",
-                CheckBox.class);
-        assert checkBox != null;
-        cloudModulation = checkBox.isChecked();
-
+        cloudModulation = isChecked("modulation");
         mainMultiplier = updateSlider("main", "x");
         ambientMultiplier = updateSlider("ambient", "x");
-
         cloudRate = updateSlider("cloudRate", "x");
         cloudYOffset = updateSlider("cloudYOffset", "");
 
