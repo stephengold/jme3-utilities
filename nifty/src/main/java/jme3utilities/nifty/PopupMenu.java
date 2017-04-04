@@ -97,20 +97,12 @@ public class PopupMenu
     // new methods exposed
 
     /**
-     * Close this menu.
-     */
-    void close() {
-        Nifty nifty = GuiScreenController.getNifty();
-        nifty.closePopup(popupId);
-    }
-
-    /**
-     * Generate the action string for an indexed item in this menu. TODO rename
+     * Generate the action string for an indexed item in this menu.
      *
      * @param index item to generate for (&ge;0, 0 &rarr; 1st)
      * @return action string, or null for index out of range
      */
-    String getActionString(int index) {
+    String actionString(int index) {
         if (index < 0 || index >= itemArray.length) {
             return null;
         }
@@ -122,6 +114,14 @@ public class PopupMenu
         String actionString = actionPrefix + itemName;
 
         return actionString;
+    }
+
+    /**
+     * Close this menu.
+     */
+    void close() {
+        Nifty nifty = GuiScreenController.getNifty();
+        nifty.closePopup(popupId);
     }
 
     /**

@@ -240,7 +240,7 @@ public class GuiScreenController extends BasicScreenController {
             throw new IllegalStateException("no active popup menu");
         }
 
-        String actionString = activePopupMenu.getActionString(index);
+        String actionString = activePopupMenu.actionString(index);
         if (actionString == null) {
             /* index out of range */
             return;
