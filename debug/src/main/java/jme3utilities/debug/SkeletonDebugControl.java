@@ -68,9 +68,9 @@ public class SkeletonDebugControl extends SubtreeControl {
      */
     final private static float defaultPointSize = 4f;
     /**
-     * default color for the wireframe material
+     * default color for the wireframe material (blue)
      */
-    final private static ColorRGBA defaultColor = ColorRGBA.Blue;
+    final private static ColorRGBA defaultColor = new ColorRGBA(0f, 0f, 1f, 1f);
     /**
      * message logger for this class
      */
@@ -248,8 +248,8 @@ public class SkeletonDebugControl extends SubtreeControl {
             Geometry firstGeometry = MySpatial.findChild(controlledNode,
                     Geometry.class);
             if (firstGeometry != null) {
-                Transform t = firstGeometry.getLocalTransform();
-                subtree.setLocalTransform(t);
+                Transform transform = firstGeometry.getLocalTransform();
+                subtree.setLocalTransform(transform);
             }
             subtree.setMaterial(material);
             subtree.setShadowMode(RenderQueue.ShadowMode.Off);

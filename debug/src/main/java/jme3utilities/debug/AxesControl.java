@@ -55,32 +55,32 @@ public class AxesControl extends SubtreeControl {
     // constants and loggers
 
     /**
-     * color of the X-axis
+     * color of the X-axis (red)
      */
-    final private static ColorRGBA xColor = ColorRGBA.Red;
+    final private static ColorRGBA xColor = new ColorRGBA(1f, 0f, 0f, 1f);
     /**
-     * color of the Y-axis
+     * color of the Y-axis (green)
      */
-    final private static ColorRGBA yColor = ColorRGBA.Green;
+    final private static ColorRGBA yColor = new ColorRGBA(0f, 1f, 0f, 1f);
     /**
-     * color of the Z-axis
+     * color of the Z-axis (blue)
      */
-    final private static ColorRGBA zColor = ColorRGBA.Blue;
+    final private static ColorRGBA zColor = new ColorRGBA(0f, 0f, 1f, 1f);
     /**
      * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
             AxesControl.class.getName());
     /**
-     * local copy of Vector3f#UNIT_X
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
     final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
     /**
-     * local copy of Vector3f#UNIT_Y
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_Y}
      */
     final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
     /**
-     * local copy of Vector3f#UNIT_Z
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_Z}
      */
     final private static Vector3f zAxis = new Vector3f(0f, 0f, 1f);
     // *************************************************************************

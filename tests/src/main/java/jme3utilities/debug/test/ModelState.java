@@ -68,6 +68,14 @@ class ModelState extends SimpleAppState {
      */
     final private static Logger logger = Logger.getLogger(
             ModelState.class.getName());
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_XYZ}
+     */
+    final private static Vector3f nullScale = new Vector3f(1f, 1f, 1f);
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#ZERO}
+     */
+    final private static Vector3f nullTranslation = new Vector3f(0f, 0f, 0f);
     // *************************************************************************
     // fields
 
@@ -202,8 +210,8 @@ class ModelState extends SimpleAppState {
 
     /**
      * Access the AxesControl for the selected bone.
-     * 
-     * @return the pre-existing instance, or null if no bone selected 
+     *
+     * @return the pre-existing instance, or null if no bone selected
      */
     AxesControl getBoneAxesControl() {
         if (attachmentsNode == null) {
@@ -211,7 +219,7 @@ class ModelState extends SimpleAppState {
         }
         AxesControl result = attachmentsNode.getControl(AxesControl.class);
         assert result != null;
- 
+
         return result;
     }
 
@@ -864,9 +872,9 @@ class ModelState extends SimpleAppState {
          */
         int numBones = skeleton.getBoneCount();
         for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
-            Vector3f translation = Vector3f.ZERO; // TODO
+            Vector3f translation = nullTranslation;
             Quaternion rotation = boneRotation(boneIndex);
-            Vector3f scale = Vector3f.UNIT_XYZ; // TODO
+            Vector3f scale = nullScale;
             BoneTrack track = MyAnimation.createTrack(boneIndex, translation,
                     rotation, scale);
             result.addTrack(track);
