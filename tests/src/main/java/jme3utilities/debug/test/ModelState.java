@@ -32,10 +32,12 @@ import com.jme3.animation.Bone;
 import com.jme3.animation.BoneTrack;
 import com.jme3.animation.LoopMode;
 import com.jme3.animation.Skeleton;
+import com.jme3.animation.SkeletonControl;
 import com.jme3.animation.Track;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.plugins.ogre.MeshLoader;
 import java.lang.reflect.Field;
@@ -49,6 +51,7 @@ import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.SimpleAppState;
+import jme3utilities.debug.AxesControl;
 import jme3utilities.debug.SkeletonDebugControl;
 
 /**
@@ -82,6 +85,10 @@ class ModelState extends SimpleAppState {
      * boneIndex
      */
     final private List<Quaternion> inverseBindPose = new ArrayList<>(30);
+    /**
+     * attachments node for the selected bone, or null if none selected
+     */
+    private Node attachmentsNode = null;
     /**
      * the skeleton debug control (set by #load())
      */
@@ -191,6 +198,21 @@ class ModelState extends SimpleAppState {
         Animation animation = animControl.getAnim(name);
 
         return animation;
+    }
+
+    /**
+     * Access the AxesControl for the selected bone.
+     * 
+     * @return the pre-existing instance, or null if no bone selected 
+     */
+    AxesControl getBoneAxesControl() {
+        if (attachmentsNode == null) {
+            return null;
+        }
+        AxesControl result = attachmentsNode.getControl(AxesControl.class);
+        assert result != null;
+ 
+        return result;
     }
 
     /**
@@ -737,6 +759,7 @@ class ModelState extends SimpleAppState {
         }
 
         selectedBoneName = name;
+        updateAttachmentsNode();
     }
 
     /**
@@ -873,6 +896,31 @@ class ModelState extends SimpleAppState {
         BoneTrack track = MyAnimation.findTrack(animation, boneIndex);
 
         return track;
+    }
+
+    /**
+     * Update the attachments node.
+     */
+    private void updateAttachmentsNode() {
+        Node newNode = null;
+        if (isBoneSelected()) {
+            SkeletonControl control = spatial.getControl(SkeletonControl.class);
+            if (control == null) {
+                throw new IllegalArgumentException(
+                        "expected the spatial to have an SkeletonControl");
+            }
+            newNode = control.getAttachmentsNode(selectedBoneName);
+        }
+        if (newNode != attachmentsNode) {
+            if (attachmentsNode != null) {
+                attachmentsNode.removeControl(AxesControl.class);
+            }
+            if (newNode != null) {
+                AxesControl axesControl = new AxesControl(assetManager, 1f, 1f);
+                newNode.addControl(axesControl);
+            }
+            attachmentsNode = newNode;
+        }
     }
 
     /**
