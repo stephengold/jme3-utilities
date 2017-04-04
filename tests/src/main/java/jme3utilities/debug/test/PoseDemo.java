@@ -121,7 +121,7 @@ public class PoseDemo extends GuiApplication {
     /**
      * printer for scene dump
      */
-    final private Printer printer = new Printer();
+    final private static Printer printer = new Printer();
     /**
      * app state to manage the loaded model
      */
@@ -129,6 +129,13 @@ public class PoseDemo extends GuiApplication {
     // *************************************************************************
     // new methods exposed
 
+    /**
+     * Access the scene dump printer. 
+     */
+    static Printer getPrinter() {
+        return printer;
+    }
+    
     /**
      * Main entry point for the PoseDemo application.
      *
