@@ -214,6 +214,20 @@ class ModelState extends SimpleAppState {
     }
 
     /**
+     * Access the selected bone.
+     *
+     * @return the pre-existing instance, or null if none selected
+     */
+    Bone getBone() {
+        if (!isBoneSelected()) {
+            return null;
+        }
+        Bone bone = MySkeleton.getBone(spatial, selectedBoneName);
+
+        return bone;
+    }
+
+    /**
      * Access the AxesControl for the selected bone.
      *
      * @return the pre-existing instance, or null if no bone selected
@@ -945,20 +959,6 @@ class ModelState extends SimpleAppState {
             }
             attachmentsNode = newNode;
         }
-    }
-
-    /**
-     * Access the selected bone.
-     *
-     * @return the pre-existing instance, or null if none selected
-     */
-    private Bone getBone() {
-        if (!isBoneSelected()) {
-            return null;
-        }
-        Bone bone = MySkeleton.getBone(spatial, selectedBoneName);
-
-        return bone;
     }
 
     /**

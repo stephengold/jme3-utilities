@@ -25,6 +25,7 @@
  */
 package jme3utilities.debug.test;
 
+import com.jme3.animation.Bone;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.input.controls.ActionListener;
@@ -437,11 +438,13 @@ public class PoseDemoHud
             setButtonLabel("keyframeButton", "");
         }
         /*
-         * Bone rename button
+         * Bone select and rename
          */
         if (PoseDemo.modelState.isBoneSelected()) {
+            setButtonLabel("selectBoneButton", "Select another bone");
             setButtonLabel("renameBoneButton", "Rename this bone");
         } else {
+            setButtonLabel("selectBoneButton", "Select a bone");
             setButtonLabel("renameBoneButton", "");
         }
         /*
@@ -611,6 +614,35 @@ public class PoseDemoHud
             status = name;
         }
         setStatusText("boneStatus", status);
+
+        String status2 = "";
+        String status3 = "";
+        if (PoseDemo.modelState.isBoneSelected()) {
+            Bone bone = PoseDemo.modelState.getBone();
+
+            Bone parent = bone.getParent();
+            if (parent == null) {
+                status2 = "a root bone";
+            } else {
+                String parentName = parent.getName();
+                status2 = String.format("a child of %s",
+                        MyString.quote(parentName));
+            }
+
+            List<Bone> children = bone.getChildren();
+            int numChildren = children.size();
+            if (numChildren > 1) {
+                status3 = String.format("with %d children", numChildren);
+            } else if (numChildren == 1) {
+                String childName = children.get(0).getName();
+                status3 = String.format("the parent of %s",
+                        MyString.quote(childName));
+            } else {
+                status3 = "with no children";
+            }
+        }
+        setStatusText("boneStatus2", status2);
+        setStatusText("boneStatus3", status3);
 
         updateBaSlidersToBone(null);
     }
