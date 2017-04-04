@@ -433,7 +433,7 @@ public class TestSkyControlHud
         setSlider("ambient", ambientMultiplier);
 
         cloudModulation = sky.getCloudModulation();
-        setCheckBox("modulationCheckBox", cloudModulation);
+        setChecked("modulation", cloudModulation);
         cloudRate = sky.getCloudsRate();
         setSlider("cloudRate", cloudRate);
         cloudYOffset = sky.getCloudsYOffset();
@@ -616,13 +616,13 @@ public class TestSkyControlHud
         /*
          * Initialize check boxes and radio buttons.
          */
-        setCheckBox("ambientCheckBox", true);
-        setCheckBox("bloomCheckBox", true);
-        setCheckBox("floorCheckBox", false);
-        setCheckBox("landscapeCheckBox", true);
-        setCheckBox("mainLightCheckBox", true);
-        setCheckBox("shadowFiltersCheckBox", true);
-        setCheckBox("skyCheckBox", true);
+        setChecked("ambient", true);
+        setChecked("bloom", true);
+        setChecked("floor", false);
+        setChecked("landscape", true);
+        setChecked("mainLight", true);
+        setChecked("shadowFilters", true);
+        setChecked("sky", true);
         setRadioButton("forwardRadioButton");
     }
     // *************************************************************************

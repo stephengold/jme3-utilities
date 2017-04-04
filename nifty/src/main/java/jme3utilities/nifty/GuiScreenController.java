@@ -45,8 +45,8 @@ import jme3utilities.Validate;
 import jme3utilities.ui.InputMode;
 
 /**
- * Basic screen controller with extra support for Nifty controls such as
- * checkboxes, dialogs, popup menus, radio buttons, sliders, and dynamic labels.
+ * Basic screen controller with extra support for Nifty controls such as check
+ * boxes, dialogs, popup menus, radio buttons, sliders, and dynamic labels.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -444,14 +444,14 @@ public class GuiScreenController extends BasicScreenController {
     // new protected methods
 
     /**
-     * Test whether the identified check box is checked. This assumes a naming
-     * convention where the Nifty id of every check box ends with "CheckBox".
+     * Access a Nifty check box. This assumes a naming convention where the
+     * Nifty id of every check box ends with "CheckBox".
      *
      * @param idPrefix unique id prefix of the check box (not null)
-     * @return true if checked, otherwise false
+     * @return the pre-existing instance (not null)
      */
-    protected boolean isChecked(String idPrefix) {
-        Validate.nonNull(idPrefix, "check box name prefix");
+    protected CheckBox getCheckBox(String idPrefix) {
+        Validate.nonNull(idPrefix, "check box id prefix");
 
         Screen screen = getScreen();
         String niftyId = idPrefix + "CheckBox";
@@ -463,9 +463,8 @@ public class GuiScreenController extends BasicScreenController {
                     });
             throw new RuntimeException();
         }
-        boolean result = box.isChecked();
 
-        return result;
+        return box;
     }
 
     /**
@@ -476,7 +475,7 @@ public class GuiScreenController extends BasicScreenController {
      * @return the pre-existing instance (not null)
      */
     protected Slider getSlider(String idPrefix) {
-        Validate.nonNull(idPrefix, "slider name prefix");
+        Validate.nonNull(idPrefix, "slider id prefix");
 
         Screen screen = getScreen();
         String niftyId = idPrefix + "Slider";
@@ -489,6 +488,22 @@ public class GuiScreenController extends BasicScreenController {
         }
 
         return slider;
+    }
+
+    /**
+     * Test whether the identified check box is ticked. This assumes a naming
+     * convention where the Nifty id of every check box ends with "CheckBox".
+     *
+     * @param idPrefix unique id prefix of the check box (not null)
+     * @return true if ticked, otherwise false
+     */
+    protected boolean isChecked(String idPrefix) {
+        Validate.nonNull(idPrefix, "check box id prefix");
+
+        CheckBox checkBox = getCheckBox(idPrefix);
+        boolean result = checkBox.isChecked();
+
+        return result;
     }
 
     /**
@@ -513,24 +528,18 @@ public class GuiScreenController extends BasicScreenController {
     }
 
     /**
-     * Alter the checked status of a Nifty checkbox.
+     * Alter the ticked status of the identified check box. This assumes a
+     * naming convention where the Nifty id of every check box ends with
+     * "CheckBox".
      *
-     * @param elementId Nifty element id of the checkbox (not null)
-     * @param newStatus true to tick the box, false to un-tick it
+     * @param idPrefix unique id prefix of the check box (not null)
+     * @param newStatus true to tick the check box, false to un-tick it
      */
-    protected void setCheckBox(String elementId, boolean newStatus) {
-        Validate.nonNull(elementId, "element id");
+    protected void setChecked(String idPrefix, boolean newStatus) {
+        Validate.nonNull(idPrefix, "check box id prefix");
 
-        CheckBox box = getScreen().findNiftyControl(elementId, CheckBox.class);
-        try {
-            box.setChecked(newStatus);
-        } catch (NullPointerException exception) {
-            logger.log(Level.INFO, "screen {0} lacks checkbox {1}",
-                    new Object[]{
-                        MyString.quote(getScreenId()),
-                        MyString.quote(elementId)
-                    });
-        }
+        CheckBox checkBox = getCheckBox(idPrefix);
+        checkBox.setChecked(newStatus);
     }
 
     /**
