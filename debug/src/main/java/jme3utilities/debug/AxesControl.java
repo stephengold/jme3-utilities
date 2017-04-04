@@ -228,6 +228,7 @@ public class AxesControl extends SubtreeControl {
         wireMaterial.getAdditionalRenderState().setDepthTest(depthTest);
         geometry.setMaterial(wireMaterial);
         geometry.setQueueBucket(RenderQueue.Bucket.Transparent);
+        geometry.setShadowMode(RenderQueue.ShadowMode.Off);
 
         return geometry;
     }
