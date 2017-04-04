@@ -434,9 +434,9 @@ public class TestSkyControlHud
 
         cloudModulation = sky.getCloudModulation();
         setCheckBox("modulationCheckBox", cloudModulation);
-        cloudRate = sky.getCloudRate();
+        cloudRate = sky.getCloudsRate();
         setSlider("cloudRate", cloudRate);
-        cloudYOffset = sky.getCloudYOffset();
+        cloudYOffset = sky.getCloudsYOffset();
         setSlider("cloudYOffset", cloudYOffset);
         cloudiness = sky.getCloudLayer(0).getOpacity();
         setSlider("cloudiness", cloudiness);
@@ -642,7 +642,8 @@ public class TestSkyControlHud
     /**
      * Callback to update this display. (Invoked once per frame.)
      *
-     * @param elapsedTime time since the previous update (in seconds, &ge;0)
+     * @param elapsedTime time interval between render passes (in seconds,
+     * &ge;0)
      */
     @Override
     public void update(float elapsedTime) {

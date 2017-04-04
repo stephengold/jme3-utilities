@@ -209,7 +209,7 @@ public class TestSkyControlRun
             loadedNode.removeLight(sceneLight);
         }
         /*
-         * Set the cameras, filters, renderers, and viewports for the loaded 
+         * Set the cameras, filters, renderers, and viewports for the loaded
          * controls.  (These were not serialized.)
          */
         floorControl.setCamera(cam);
@@ -376,7 +376,7 @@ public class TestSkyControlRun
         skyControl.setCloudModulation(cloudModulation);
 
         float cloudRate = hud.getCloudRate();
-        skyControl.setCloudRate(cloudRate);
+        skyControl.setCloudsRate(cloudRate);
 
         float ambientMultiplier = hud.getAmbientMultiplier();
         skyControl.getUpdater().setAmbientMultiplier(ambientMultiplier);
@@ -385,7 +385,7 @@ public class TestSkyControlRun
 
         if (!parameters.singleDome()) {
             float cloudYOffset = TestSkyControl.hud.getCloudYOffset();
-            skyControl.setCloudYOffset(cloudYOffset);
+            skyControl.setCloudsYOffset(cloudYOffset);
         }
 
         float hour = hud.getHour();

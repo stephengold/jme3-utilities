@@ -162,7 +162,7 @@ public class SkyControlCore extends SubtreeControl {
     /**
      * rate of motion for cloud layer animations (default is 1, may be negative)
      */
-    private float cloudsRelativeSpeed = 1f;
+    private float cloudsRate = 1f;
     /**
      * the difference in celestial longitude (lambda) between the moon and the
      * sun (in radians, measured eastward from the sun, default is Pi)
@@ -305,20 +305,20 @@ public class SkyControlCore extends SubtreeControl {
     }
 
     /**
-     * Read the speed and direction of cloud motion. TODO rename getCloudsRate
+     * Read the speed and direction of cloud motion (all layers).
      *
      * @return multiple of the default rate (may be negative)
      */
-    public float getCloudRate() {
-        return cloudsRelativeSpeed;
+    public float getCloudsRate() {
+        return cloudsRate;
     }
 
     /**
-     * Read the vertical offset of the clouds-only dome. TODO rename
+     * Read the vertical offset of the clouds-only dome.
      *
      * @return vertical offset as a fraction of the dome height
      */
-    public float getCloudYOffset() {
+    public float getCloudsYOffset() {
         Spatial cloudsOnlyDome = getCloudsOnlyDome();
         float result = 0f;
         if (cloudsOnlyDome != null) {
@@ -409,23 +409,23 @@ public class SkyControlCore extends SubtreeControl {
     }
 
     /**
-     * Alter the speed and/or direction of cloud motion. TODO rename
+     * Alter the speed and/or direction of cloud motion (all layers).
      *
      * @param newRate multiple of the default rate (may be negative)
      */
-    public void setCloudRate(float newRate) {
-        cloudsRelativeSpeed = newRate;
+    public void setCloudsRate(float newRate) {
+        cloudsRate = newRate;
     }
 
     /**
      * Alter the vertical offset of the clouds-only dome. When the scene's
      * horizon lies below the astronomical horizon, it may help to depress the
-     * clouds-only dome. TODO rename
+     * clouds-only dome.
      *
      * @param newYOffset desired vertical offset as a fraction of the dome
      * height (&lt;1, &ge;0 when flattening&gt;0; 0 when flattening=0)
      */
-    public void setCloudYOffset(float newYOffset) {
+    public void setCloudsYOffset(float newYOffset) {
         Spatial cloudsOnlyDome = getCloudsOnlyDome();
         if (cloudsOnlyDome == null) {
             if (newYOffset != 0f) {
@@ -692,7 +692,8 @@ public class SkyControlCore extends SubtreeControl {
      * Callback invoked when the sky node's geometric state is about to be
      * updated, once per frame while attached and enabled.
      *
-     * @param elapsedTime time interval between updates (in seconds, &ge;0)
+     * @param elapsedTime time interval between render passes (in seconds,
+     * &ge;0)
      */
     @Override
     public void controlUpdate(float elapsedTime) {
@@ -742,7 +743,7 @@ public class SkyControlCore extends SubtreeControl {
         System.arraycopy(sav, 0, cloudLayers, 0, sav.length);
 
         cloudsAnimationTime = ic.readFloat("cloudsAnimationTime", 0f);
-        cloudsRelativeSpeed = ic.readFloat("cloudsRelativeSpeed", 1f);
+        cloudsRate = ic.readFloat("cloudsRelativeSpeed", 1f);
         lunarLatitude = ic.readFloat("lunarLatitude", 0f);
         longitudeDifference = ic.readFloat("phaseAngle", FastMath.PI);
     }
@@ -763,7 +764,7 @@ public class SkyControlCore extends SubtreeControl {
         /* camera not serialized */
         oc.write(cloudLayers, "cloudLayers", null);
         oc.write(cloudsAnimationTime, "cloudsAnimationTime", 0f);
-        oc.write(cloudsRelativeSpeed, "cloudsRelativeSpeed", 1f);
+        oc.write(cloudsRate, "cloudsRelativeSpeed", 1f);
         oc.write(lunarLatitude, "lunarLatitude", 0f);
         oc.write(longitudeDifference, "phaseAngle", FastMath.PI);
     }
@@ -847,12 +848,13 @@ public class SkyControlCore extends SubtreeControl {
     /**
      * Update the cloud layers. (Invoked once per frame.)
      *
-     * @param elapsedTime since the previous update (in seconds, &ge;0)
+     * @param elapsedTime time interval between render passes (in seconds,
+     * &ge;0)
      */
     private void updateClouds(float elapsedTime) {
         assert elapsedTime >= 0f : elapsedTime;
 
-        cloudsAnimationTime += elapsedTime * cloudsRelativeSpeed;
+        cloudsAnimationTime += elapsedTime * cloudsRate;
         for (int layer = 0; layer < numCloudLayers; layer++) {
             cloudLayers[layer].updateOffset(cloudsAnimationTime);
         }

@@ -297,7 +297,7 @@ However, for the best result, it needs some tuning.
  1. To lower the edge of the cloud dome so that it's hidden by the terrain, add
     the following code:
 
-        sc.setCloudYOffset(0.4f);
+        sc.setCloudsYOffset(0.4f);
 
  2. To see the scene in daylight, add this:
 
