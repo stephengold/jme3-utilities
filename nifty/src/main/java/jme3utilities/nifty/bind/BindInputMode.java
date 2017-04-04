@@ -41,7 +41,7 @@ import jme3utilities.ui.InputMode;
  */
 public class BindInputMode extends InputMode {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -54,7 +54,7 @@ public class BindInputMode extends InputMode {
     final private static String assetPath = "Textures/cursors/default.cur";
     // *************************************************************************
     // fields
-    
+
     /**
      * corresponding screen: set by constructor
      */

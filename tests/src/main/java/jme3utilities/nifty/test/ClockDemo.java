@@ -39,10 +39,9 @@ import jme3utilities.ui.InputMode;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class ClockDemo
-        extends GuiApplication {
+public class ClockDemo extends GuiApplication {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

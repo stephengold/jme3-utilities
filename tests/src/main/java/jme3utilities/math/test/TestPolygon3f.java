@@ -42,7 +42,7 @@ import jme3utilities.math.polygon.SimplePolygon3f;
  */
 public class TestPolygon3f {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

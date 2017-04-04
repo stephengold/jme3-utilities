@@ -40,7 +40,7 @@ import jme3utilities.ui.ActionAppState;
  */
 public class GuiAppState extends ActionAppState {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

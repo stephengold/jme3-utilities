@@ -40,7 +40,7 @@ import jme3utilities.Validate;
  */
 public class MessageDisplay extends GuiScreenController {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -91,7 +91,7 @@ public class MessageDisplay extends GuiScreenController {
         listBox.enable();
         int rows = listBox.getDisplayItemCount();
         /*
-         * Remove lines from the top of the listbox to 
+         * Remove lines from the top of the listbox to
          * make room for the new line.
          */
         while (listBox.itemCount() >= rows) {

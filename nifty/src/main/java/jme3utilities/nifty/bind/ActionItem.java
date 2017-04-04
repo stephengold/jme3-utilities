@@ -37,7 +37,7 @@ import jme3utilities.ui.InputMode;
  */
 class ActionItem {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -46,7 +46,7 @@ class ActionItem {
             ActionItem.class.getName());
     // *************************************************************************
     // fields
-    
+
     /**
      * which input mode (not null, set by constructor)
      */

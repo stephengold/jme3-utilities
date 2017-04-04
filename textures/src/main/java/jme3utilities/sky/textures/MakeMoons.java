@@ -40,7 +40,7 @@ import jme3utilities.math.MyMath;
 import jme3utilities.sky.LunarPhase;
 
 /**
- * Console application to generate sun images for use with SkyMaterial.
+ * Console application to generate moon images for use with SkyMaterial.
  *
  * @author Stephen Gold sgold@sonic.net
  */

@@ -41,7 +41,7 @@ import jme3utilities.Validate;
  */
 public class Hotkey {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * largest valid key code (per com.jme3.input.KeyInput, &ge;minKeyCode)
@@ -82,12 +82,12 @@ public class Hotkey {
     /**
      * Instantiate a hotkey based on its key code and name.
      *
-     * @param keyCode (in the range minKeyCode to maxKeyCode)
+     * @param keyCode (&ge;minKeyCode, &le;maxKeyCode)
      * @param name (not null)
      */
     private Hotkey(int keyCode, String name) {
-        assert keyCode >= minKeyCode;
-        assert keyCode <= maxKeyCode;
+        assert keyCode >= minKeyCode : keyCode;
+        assert keyCode <= maxKeyCode : keyCode;
         assert name != null;
 
         this.keyCode = keyCode;

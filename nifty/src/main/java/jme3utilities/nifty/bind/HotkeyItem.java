@@ -37,7 +37,7 @@ import jme3utilities.ui.InputMode;
  */
 class HotkeyItem {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -46,7 +46,7 @@ class HotkeyItem {
             HotkeyItem.class.getName());
     // *************************************************************************
     // fields
-    
+
     /**
      * which hotkey (not null)
      */
