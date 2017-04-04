@@ -290,6 +290,7 @@
 
                         <panel style="indentPanel">
                             <control name="checkbox" id="ambientCheckBox"
+                                     checked="true"
                                      width="20"/>
                             <control name="label"
                                      width="12"/>
@@ -299,6 +300,7 @@
 
                         <panel style="indentPanel">
                             <control name="checkbox" id="bloomCheckBox"
+                                     checked="true"
                                      width="20"/>
                             <control name="label"
                                      width="12"/>
@@ -308,6 +310,7 @@
 
                         <panel style="indentPanel">
                             <control name="checkbox" id="floorCheckBox"
+                                     checked="false"
                                      width="20"/>
                             <control name="label"
                                      width="12"/>
@@ -317,6 +320,7 @@
 
                         <panel style="indentPanel">
                             <control name="checkbox" id="landscapeCheckBox"
+                                     checked="true"
                                      width="20"/>
                             <control name="label"
                                      width="12"/>
@@ -326,6 +330,7 @@
 
                         <panel style="indentPanel">
                             <control name="checkbox" id="mainLightCheckBox"
+                                     checked="true"
                                      width="20"/>
                             <control name="label"
                                      width="12"/>
@@ -335,6 +340,7 @@
 
                         <panel style="indentPanel">
                             <control name="checkbox" id="shadowFiltersCheckBox"
+                                     checked="true"
                                      width="20"/>
                             <control name="label"
                                      width="12"/>
@@ -344,6 +350,7 @@
 
                         <panel style="indentPanel">
                             <control name="checkbox" id="skyCheckBox"
+                                     checked="true"
                                      width="20"/>
                             <control name="label"
                                      width="12"/>

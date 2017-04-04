@@ -614,15 +614,8 @@ public class TestSkyControlHud
         run = TestSkyControl.run;
         assert run != null;
         /*
-         * Initialize check boxes and radio buttons.
+         * Initialize radio buttons.
          */
-        setChecked("ambient", true);
-        setChecked("bloom", true);
-        setChecked("floor", false);
-        setChecked("landscape", true);
-        setChecked("mainLight", true);
-        setChecked("shadowFilters", true);
-        setChecked("sky", true);
         setRadioButton("forwardRadioButton");
     }
     // *************************************************************************
