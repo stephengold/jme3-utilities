@@ -35,6 +35,7 @@ import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.animation.Track;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
@@ -68,6 +69,10 @@ class ModelState extends SimpleAppState {
      */
     final private static Logger logger = Logger.getLogger(
             ModelState.class.getName());
+    /**
+     * local copy of {@link com.jme3.math.Transform#IDENTITY}
+     */
+    final private static Transform nullTransform = new Transform();
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_XYZ}
      */
@@ -556,6 +561,17 @@ class ModelState extends SimpleAppState {
         spatial.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         rootNode.attachChild(spatial);
         saveInverseBindPose();
+        /*
+         * Apply a null transform to every child spatial of the loaded model.
+         * This hack enables accurate bone attachments on models with
+         * transformed geometries (such as Jaime).
+         */
+        if (spatial instanceof Node) {
+            Node node = (Node) spatial;
+            for (Spatial child : node.getChildren()) {
+                child.setLocalTransform(nullTransform);
+            }
+        }
         /*
          * Scale and translate the model so its bind pose is 1 world-unit
          * tall, with its base resting on the XZ plane.
