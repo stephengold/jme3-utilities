@@ -32,11 +32,9 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import de.lessvoid.nifty.NiftyEventSubscriber;
-import de.lessvoid.nifty.controls.CheckBox;
 import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
 import de.lessvoid.nifty.controls.Slider;
 import de.lessvoid.nifty.controls.SliderChangedEvent;
-import de.lessvoid.nifty.screen.Screen;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -45,6 +43,7 @@ import java.util.logging.Logger;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.debug.AxesControl;
+import jme3utilities.debug.Printer;
 import jme3utilities.debug.SkeletonDebugControl;
 import jme3utilities.nifty.GuiScreenController;
 
@@ -232,7 +231,7 @@ public class PoseDemoHud
         if (ongoing) {
             switch (actionString) {
                 case "add pose":
-                    PoseDemo.modelState.addPoseAnimation("new-animation"); // TODO
+                    PoseDemo.modelState.addPoseAnimation("new-animation");
                     selectAnimation("new-animation");
                     return;
 
@@ -369,12 +368,6 @@ public class PoseDemoHud
 
         setListener(this);
         super.initialize(stateManager, application);
-        /*
-         * Initialize check boxes.
-         */
-        setCheckBox("3DCursorCheckBox", true);
-        setCheckBox("axesCheckBox", true);
-        setCheckBox("skeletonDebugCheckBox", true);
 
         for (int iAxis = 0; iAxis < numAxes; iAxis++) {
             String axisName = axisNames[iAxis];
@@ -402,10 +395,7 @@ public class PoseDemoHud
         } else {
             setRadioButton("flyingRadioButton");
         }
-        Screen screen = getScreen();
-        CheckBox box = screen.findNiftyControl("3DCursorCheckBox",
-                CheckBox.class);
-        boolean enable = box.isChecked();
+        boolean enable = isChecked("3DCursor");
         PoseDemo.cameraState.cursorSetEnabled(enable);
         /*
          * Model status
@@ -465,8 +455,7 @@ public class PoseDemoHud
         /*
          * Lighting options
          */
-        box = screen.findNiftyControl("shadowsCheckBox", CheckBox.class);
-        enable = box.isChecked();
+        enable = isChecked("shadows");
         PoseDemo.dlsf.setEnabled(enable);
     }
     // *************************************************************************
@@ -699,32 +688,60 @@ public class PoseDemoHud
      */
     private void updateDebugAids() {
         /*
-         * AxesControl
+         * Bone AxesControl
          */
-        Screen screen = getScreen();
-        CheckBox box = screen.findNiftyControl("axesCheckBox", CheckBox.class);
-        boolean enable = box.isChecked();
-        AxesControl axesControl = rootNode.getControl(AxesControl.class);
+        AxesControl axesControl = PoseDemo.modelState.getBoneAxesControl();
+        float lineWidth = updateSlider("bacLineWidth", " pixels");
+        float length = updateSlider("bacLength", " bu");
+        if (axesControl != null) {
+            axesControl.setLineWidth(lineWidth);
+            axesControl.setAxisLength(length);
+
+            boolean enable = isChecked("bacEnable");
+            axesControl.setEnabled(enable);
+            enable = isChecked("bacDepthTest");
+            axesControl.setDepthTest(enable);
+        }
+        /*
+         * Global AxesControl
+         */
+        axesControl = rootNode.getControl(AxesControl.class);
+        boolean enable = isChecked("gacEnable");
         axesControl.setEnabled(enable);
-        float lineWidth = updateSlider("aLineWidth", " pixels");
+        enable = isChecked("gacDepthTest");
+        axesControl.setDepthTest(enable);
+        lineWidth = updateSlider("gacLineWidth", " pixels");
         axesControl.setLineWidth(lineWidth);
-        float length = updateSlider("aLength", " wu");
+        length = updateSlider("gacLength", " wu");
         axesControl.setAxisLength(length);
         /*
          * SkeletonDebugControl
          */
-        box = screen.findNiftyControl("skeletonDebugCheckBox", CheckBox.class);
-        enable = box.isChecked();
-        SkeletonDebugControl debugControl =
-                PoseDemo.modelState.getSkeletonDebugControl();
+        SkeletonDebugControl debugControl
+                = PoseDemo.modelState.getSkeletonDebugControl();
+        enable = isChecked("skeletonDebug");
         debugControl.setEnabled(enable);
         ColorRGBA wireColor = updateColorBank("wire");
         debugControl.setColor(wireColor);
-        lineWidth = updateSlider("sLineWidth", " pixels");
+        lineWidth = updateSlider("sdcLineWidth", " pixels");
         debugControl.setLineWidth(lineWidth);
         float pointSize = updateSlider("pointSize", " pixels");
         if (debugControl.supportsPointSize()) {
             debugControl.setPointSize(pointSize);
         }
+        /*
+         * Printer
+         */
+        Printer printer = PoseDemo.getPrinter();
+        enable = isChecked("printTransform");
+        printer.setPrintTransform(enable);
+        enable = isChecked("printUser");
+        printer.setPrintUser(enable);
+        enable = isChecked("printBucket");
+        printer.setPrintBucket(enable);
+        enable = isChecked("printShadow");
+        printer.setPrintShadow(enable);
+        enable = isChecked("printCull");
+        printer.setPrintCull(enable);
     }
 }

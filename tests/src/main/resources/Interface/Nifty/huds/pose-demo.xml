@@ -75,6 +75,7 @@
                         </panel>
                         <panel style="indentPanel">
                             <control name="checkbox" id="3DCursorCheckBox"
+                                     checked="true"
                                      width="20"/>
                             <control name="label"
                                      width="12"/>
@@ -105,6 +106,12 @@
                             <control name="button" id="id1ToAvoidNiftyWarning"
                                      label="Load an animation">
                                 <interact onRelease="perform(load animation)"/>
+                            </control>
+                        </panel>
+                        <panel style="buttonPanel">
+                            <control name="button" id="id4ToAvoidNiftyWarning"
+                                     label="Make new animation">
+                                <interact onRelease="perform(add pose)"/>
                             </control>
                         </panel>
                         <panel style="buttonPanel">
@@ -193,12 +200,6 @@
                         </panel>
 
                         <panel style="buttonPanel">
-                            <control name="button" id="id4ToAvoidNiftyWarning"
-                                     label="Add new pose">
-                                <interact onRelease="perform(add pose)"/>
-                            </control>
-                        </panel>
-                        <panel style="buttonPanel">
                             <control name="button" id="id5ToAvoidNiftyWarning"
                                      label="Save changes">
                                 <interact onRelease="perform(write model)"/>
@@ -207,30 +208,82 @@
 
                         <panel style="statusPanel">
                             <control name="label"
-                                     text="Global Axes Control:"/>
+                                     text="Bone AxesControl:"/>
                         </panel>
                         <panel style="indentPanel">
-                            <control name="checkbox" id="axesCheckBox"
+                            <control name="checkbox" id="bacEnableCheckBox"
+                                     checked="true"
                                      width="20"/>
                             <control name="label"
                                      width="12"/>
                             <control name="label"
                                      text="enable the control"/>
                         </panel>
-                        <panel style="statusPanel">
-                            <control name="label" id="aLineWidthSliderStatus"/>
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="bacDepthTestCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="depth test"/>
                         </panel>
-                        <control name="horizontalSlider" id="aLineWidthSlider"
+                        <panel style="statusPanel">
+                            <control name="label" id="bacLineWidthSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider" id="bacLineWidthSlider"
                                  buttonStepSize="1"
                                  height="40"
-                                 initial="3"
-                                 max="10"
+                                 initial="4"
+                                 max="7"
                                  min="1"
                                  stepSize="0.1"/>
                         <panel style="statusPanel">
-                            <control name="label" id="aLengthSliderStatus"/>
+                            <control name="label" id="bacLengthSliderStatus"/>
                         </panel>
-                        <control name="horizontalSlider" id="aLengthSlider"
+                        <control name="horizontalSlider" id="bacLengthSlider"
+                                 buttonStepSize="4"
+                                 height="40"
+                                 initial="20"
+                                 max="50"
+                                 min="1"
+                                 stepSize="1"/>
+
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="Global AxesControl:"/>
+                        </panel>
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="gacEnableCheckBox"
+                                     checked="true"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="enable the control"/>
+                        </panel>
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="gacDepthTestCheckBox"
+                                     checked="true"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="depth test"/>
+                        </panel>
+                        <panel style="statusPanel">
+                            <control name="label" id="gacLineWidthSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider" id="gacLineWidthSlider"
+                                 buttonStepSize="1"
+                                 height="40"
+                                 initial="4"
+                                 max="7"
+                                 min="1"
+                                 stepSize="0.1"/>
+                        <panel style="statusPanel">
+                            <control name="label" id="gacLengthSliderStatus"/>
+                        </panel>
+                        <control name="horizontalSlider" id="gacLengthSlider"
                                  buttonStepSize="1"
                                  height="40"
                                  initial="1.2"
@@ -240,10 +293,11 @@
 
                         <panel style="statusPanel">
                             <control name="label"
-                                     text="Skeleton Debug Control:"/>
+                                     text="SkeletonDebugControl:"/>
                         </panel>
                         <panel style="indentPanel">
                             <control name="checkbox" id="skeletonDebugCheckBox"
+                                     checked="true"
                                      width="20"/>
                             <control name="label"
                                      width="12"/>
@@ -251,9 +305,9 @@
                                      text="enable the control"/>
                         </panel>
                         <panel style="statusPanel">
-                            <control name="label" id="sLineWidthSliderStatus"/>
+                            <control name="label" id="sdcLineWidthSliderStatus"/>
                         </panel>
-                        <control name="horizontalSlider" id="sLineWidthSlider"
+                        <control name="horizontalSlider" id="sdcLineWidthSlider"
                                  buttonStepSize="1"
                                  height="40"
                                  initial="2"
@@ -306,9 +360,53 @@
                             </panel>
                         </panel>
 
+                        <panel style="statusPanel">
+                            <control name="label"
+                                     text="Printer options:"/>
+                        </panel>
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="printTransformCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="world transforms"/>
+                        </panel>
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="printUserCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="user data"/>
+                        </panel>
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="printBucketCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="render bucket"/>
+                        </panel>
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="printShadowCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="shadow modes"/>
+                        </panel>
+                        <panel style="indentPanel">
+                            <control name="checkbox" id="printCullCheckBox"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="cull hints"/>
+                        </panel>
                         <panel style="buttonPanel">
                             <control name="button" id="id6ToAvoidNiftyWarning"
-                                     label="Print the scene">
+                                     label="Print to console">
                                 <interact onRelease="perform(print scene)"/>
                             </control>
                         </panel>
