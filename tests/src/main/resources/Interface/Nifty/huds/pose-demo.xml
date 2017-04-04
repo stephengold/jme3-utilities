@@ -243,10 +243,10 @@
                         <control name="horizontalSlider" id="bacLengthSlider"
                                  buttonStepSize="4"
                                  height="40"
-                                 initial="20"
-                                 max="50"
-                                 min="1"
-                                 stepSize="1"/>
+                                 initial="1"
+                                 max="2"
+                                 min="-2"
+                                 stepSize="0.05"/>
 
                         <panel style="statusPanel">
                             <control name="label"

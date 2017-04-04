@@ -692,7 +692,7 @@ public class PoseDemoHud
          */
         AxesControl axesControl = PoseDemo.modelState.getBoneAxesControl();
         float lineWidth = updateSlider("bacLineWidth", " pixels");
-        float length = updateSlider("bacLength", " bu");
+        float length = updateLogSlider("bacLength", 10f, " bone units");
         if (axesControl != null) {
             axesControl.setLineWidth(lineWidth);
             axesControl.setAxisLength(length);
@@ -712,7 +712,7 @@ public class PoseDemoHud
         axesControl.setDepthTest(enable);
         lineWidth = updateSlider("gacLineWidth", " pixels");
         axesControl.setLineWidth(lineWidth);
-        length = updateSlider("gacLength", " wu");
+        length = updateSlider("gacLength", " world units");
         axesControl.setAxisLength(length);
         /*
          * SkeletonDebugControl
