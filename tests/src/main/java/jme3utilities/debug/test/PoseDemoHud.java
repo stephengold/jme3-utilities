@@ -232,12 +232,12 @@ public class PoseDemoHud
             switch (actionString) {
                 case "add pose":
                     PoseDemo.modelState.addPoseAnimation("new-animation");
-                    selectAnimation("new-animation");
+                    loadAnimation("new-animation");
                     return;
 
                 case "delete animation":
                     PoseDemo.modelState.deleteAnimation();
-                    selectAnimation(bindPoseName);
+                    loadAnimation(bindPoseName);
                     return;
 
                 case "load animation":
@@ -287,14 +287,14 @@ public class PoseDemoHud
                 String newName = actionString.substring(namePos);
                 boolean success = PoseDemo.modelState.renameAnimation(newName);
                 if (success) {
-                    selectAnimation(newName);
+                    loadAnimation(newName);
                 }
                 return;
 
             } else if (actionString.startsWith(animationMenuPrefix)) {
                 int namePos = animationMenuPrefix.length();
                 String name = actionString.substring(namePos);
-                selectAnimation(name);
+                loadAnimation(name);
                 return;
 
             } else if (actionString.startsWith(boneDialogPrefix)) {
@@ -530,41 +530,11 @@ public class PoseDemoHud
     }
 
     /**
-     * Load the named model.
+     * Load the named pose or animation.
      *
      * @param name (not null)
      */
-    private void loadModel(String name) {
-        assert name != null;
-
-        PoseDemo.modelState.load(name);
-        selectAnimation(bindPoseName);
-        selectBone(noBone);
-    }
-
-    /**
-     * Reset the selected bone.
-     */
-    private void resetBone() {
-        if (!boneControlsEnabledFlag) {
-            /*
-             * Ignore reset events when the bone controls
-             * are disabled.
-             */
-            return;
-        }
-
-        for (int iAxis = 0; iAxis < numAxes; iAxis++) {
-            baSliders[iAxis].setValue(0f);
-        }
-    }
-
-    /**
-     * Load the named pose or animation. TODO rename
-     *
-     * @param name (not null)
-     */
-    private void selectAnimation(String name) {
+    private void loadAnimation(String name) {
         assert name != null;
 
         setStatusText("animationStatus", name);
@@ -594,6 +564,36 @@ public class PoseDemoHud
         }
         String boneName = PoseDemo.modelState.getBoneName();
         selectBone(boneName);
+    }
+
+    /**
+     * Load the named model.
+     *
+     * @param name (not null)
+     */
+    private void loadModel(String name) {
+        assert name != null;
+
+        PoseDemo.modelState.load(name);
+        loadAnimation(bindPoseName);
+        selectBone(noBone);
+    }
+
+    /**
+     * Reset the selected bone.
+     */
+    private void resetBone() {
+        if (!boneControlsEnabledFlag) {
+            /*
+             * Ignore reset events when the bone controls
+             * are disabled.
+             */
+            return;
+        }
+
+        for (int iAxis = 0; iAxis < numAxes; iAxis++) {
+            baSliders[iAxis].setValue(0f);
+        }
     }
 
     /**
