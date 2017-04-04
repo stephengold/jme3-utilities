@@ -80,7 +80,7 @@ public class TestSkyControlHud
     /**
      * rate of motion of clouds (relative to standard rate)
      */
-    private float cloudRate = 0f;
+    private float cloudsRate = 0f;
     /**
      * maximum opacity for clouds (&le;1, &ge;0)
      */
@@ -89,7 +89,7 @@ public class TestSkyControlHud
      * vertical offset of the clouds-only dome (fraction of dome height, &lt;1,
      * &ge;0)
      */
-    private float cloudYOffset = 0f;
+    private float cloudsYOffset = 0f;
     /**
      * observer's latitude (radians north of equator, &le;Pi/2, &ge;-Pi/2)
      */
@@ -219,8 +219,8 @@ public class TestSkyControlHud
      *
      * @return rate relative to the standard rate (negative means reverse)
      */
-    float getCloudRate() {
-        return cloudRate;
+    float getCloudsRate() {
+        return cloudsRate;
     }
 
     /**
@@ -228,10 +228,10 @@ public class TestSkyControlHud
      *
      * @return offset as a fraction of dome height (&lt;1, &ge;0)
      */
-    float getCloudYOffset() {
-        assert cloudYOffset >= 0f : cloudYOffset;
-        assert cloudYOffset < 1f : cloudYOffset;
-        return cloudYOffset;
+    float getCloudsYOffset() {
+        assert cloudsYOffset >= 0f : cloudsYOffset;
+        assert cloudsYOffset < 1f : cloudsYOffset;
+        return cloudsYOffset;
     }
 
     /**
@@ -434,10 +434,10 @@ public class TestSkyControlHud
 
         cloudModulation = sky.getCloudModulation();
         setChecked("modulation", cloudModulation);
-        cloudRate = sky.getCloudsRate();
-        setSlider("cloudRate", cloudRate);
-        cloudYOffset = sky.getCloudsYOffset();
-        setSlider("cloudYOffset", cloudYOffset);
+        cloudsRate = sky.getCloudsRate();
+        setSlider("cloudsRate", cloudsRate);
+        cloudsYOffset = sky.getCloudsYOffset();
+        setSlider("cloudsYOffset", cloudsYOffset);
         cloudiness = sky.getCloudLayer(0).getOpacity();
         setSlider("cloudiness", cloudiness);
 
@@ -657,8 +657,8 @@ public class TestSkyControlHud
         cloudModulation = isChecked("modulation");
         mainMultiplier = updateSlider("main", "x");
         ambientMultiplier = updateSlider("ambient", "x");
-        cloudRate = updateSlider("cloudRate", "x");
-        cloudYOffset = updateSlider("cloudYOffset", "");
+        cloudsRate = updateSlider("cloudsRate", "x");
+        cloudsYOffset = updateSlider("cloudsYOffset", "");
 
         float lunarDiameterDegrees = updateLogSlider(
                 "lunarDiameter", 10f, " deg");

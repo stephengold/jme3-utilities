@@ -121,9 +121,9 @@
                                  stepSize="0.01"/>
 
                         <panel style="statusPanel">
-                            <control name="label" id="cloudRateSliderStatus"/>
+                            <control name="label" id="cloudsRateSliderStatus"/>
                         </panel>
-                        <control name="horizontalSlider" id="cloudRateSlider"
+                        <control name="horizontalSlider" id="cloudsRateSlider"
                                  buttonStepSize="1"
                                  height="30"
                                  initial="1"
@@ -267,9 +267,9 @@
                                  stepSize="0.1"/>
 
                         <panel style="statusPanel">
-                            <control name="label" id="cloudYOffsetSliderStatus"/>
+                            <control name="label" id="cloudsYOffsetSliderStatus"/>
                         </panel>
-                        <control name="horizontalSlider" id="cloudYOffsetSlider"
+                        <control name="horizontalSlider" id="cloudsYOffsetSlider"
                                  buttonStepSize="0.1"
                                  height="40"
                                  initial="0"
@@ -287,7 +287,7 @@
                                  max="250"
                                  min="1"
                                  stepSize="1"/>
-                        
+
                         <panel style="indentPanel">
                             <control name="checkbox" id="ambientCheckBox"
                                      width="20"/>

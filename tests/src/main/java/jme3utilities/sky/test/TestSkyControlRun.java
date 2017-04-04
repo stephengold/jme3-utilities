@@ -375,7 +375,7 @@ public class TestSkyControlRun
         boolean cloudModulation = hud.getCloudModulation();
         skyControl.setCloudModulation(cloudModulation);
 
-        float cloudRate = hud.getCloudRate();
+        float cloudRate = hud.getCloudsRate();
         skyControl.setCloudsRate(cloudRate);
 
         float ambientMultiplier = hud.getAmbientMultiplier();
@@ -384,7 +384,7 @@ public class TestSkyControlRun
         skyControl.getUpdater().setMainMultiplier(mainMultiplier);
 
         if (!parameters.singleDome()) {
-            float cloudYOffset = TestSkyControl.hud.getCloudYOffset();
+            float cloudYOffset = TestSkyControl.hud.getCloudsYOffset();
             skyControl.setCloudsYOffset(cloudYOffset);
         }
 
