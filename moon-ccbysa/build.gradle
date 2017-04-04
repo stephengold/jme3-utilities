@@ -1,0 +1,7 @@
+// Note: "common.gradle" in the root project contains additional initialization
+//   for this project. This initialization is applied in the "build.gradle"
+//   of the root project.
+description = 'detailed moon textures with CC-BY-SA license'
+
+dependencies {
+}
