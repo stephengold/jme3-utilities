@@ -36,10 +36,8 @@ import com.jme3.scene.VertexBuffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 
 /**
@@ -136,7 +134,7 @@ public class MySkeleton {
         Skeleton skeleton = getSkeleton(spatial);
         int boneCount = skeleton.getBoneCount();
 
-        List<String> names = new ArrayList<>();
+        List<String> names = new ArrayList<>(30);
         for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
             Bone bone = skeleton.getBone(boneIndex);
             String name = bone.getName();
@@ -146,6 +144,84 @@ public class MySkeleton {
         Collections.sort(names);
 
         return names;
+    }
+
+    /**
+     * Count vertices in the specified mesh influenced by the specified bone.
+     *
+     * @param mesh which mesh (not null, possibly modified)
+     * @param boneIndex which bone (&ge;0)
+     * @return count (&ge;0)
+     */
+    public static int numInfluenced(Mesh mesh, int boneIndex) {
+        Validate.nonNegative(boneIndex, "bone index");
+
+        mesh.prepareForAnim(true);
+
+        int maxWeightsPerVert = mesh.getMaxNumWeights();
+        assert maxWeightsPerVert > 0 : maxWeightsPerVert;
+        assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
+
+        VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
+        ByteBuffer boneIndexBuffer = (ByteBuffer) biBuf.getData();
+        boneIndexBuffer.rewind();
+        int numBoneIndices = boneIndexBuffer.remaining();
+        assert numBoneIndices % 4 == 0 : numBoneIndices;
+        int numVertices = boneIndexBuffer.remaining() / 4;
+
+        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
+        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getData();
+        weightBuffer.rewind();
+        int numWeights = weightBuffer.remaining();
+        assert numWeights == numVertices * 4 : numWeights;
+
+        int result = 0;
+        for (int vIndex = 0; vIndex < numVertices; vIndex++) {
+            for (int wIndex = 0; wIndex < 4; wIndex++) {
+                float weight = weightBuffer.get();
+                float bIndex = boneIndexBuffer.get();
+                if (wIndex < maxWeightsPerVert
+                        && bIndex == boneIndex
+                        && weight > 0f) {
+                    result++;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Count the number of leaf bones in the specified skeleton.
+     *
+     * @param skeleton (not null)
+     * @return count (&ge;0)
+     */
+    public static int numLeafBones(Skeleton skeleton) {
+        int boneCount = skeleton.getBoneCount();
+        int result = 0;
+        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
+            Bone bone = skeleton.getBone(boneIndex);
+            List<Bone> children = bone.getChildren();
+            if (children.isEmpty()) {
+                ++result;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Count the number of root bones in the specified skeleton.
+     *
+     * @param skeleton (not null)
+     * @return count (&ge;0)
+     */
+    public static int numRootBones(Skeleton skeleton) {
+        Bone[] roots = skeleton.getRoots();
+        int result = roots.length;
+
+        return result;
     }
 
     /**

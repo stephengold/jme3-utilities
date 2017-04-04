@@ -161,6 +161,10 @@
                             <control name="label" id="boneStatus3"
                                      textHAlign="right"/>
                         </panel>
+                        <panel style="statusPanel">
+                            <control name="label" id="boneStatus4"
+                                     textHAlign="right"/>
+                        </panel>
                         <panel style="buttonPanel">
                             <control name="button" id="selectBoneButton">
                                 <interact onRelease="perform(select bone)"/>

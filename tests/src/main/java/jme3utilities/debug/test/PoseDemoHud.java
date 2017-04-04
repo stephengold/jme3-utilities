@@ -26,12 +26,14 @@
 package jme3utilities.debug.test;
 
 import com.jme3.animation.Bone;
+import com.jme3.animation.Skeleton;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Mesh;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
 import de.lessvoid.nifty.controls.Slider;
@@ -41,6 +43,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.MySkeleton;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.debug.AxesControl;
@@ -617,6 +620,9 @@ public class PoseDemoHud
 
         String status2 = "";
         String status3 = "";
+        String status4 = "";
+        Skeleton skeleton = PoseDemo.modelState.getSkeleton();
+        int numBones = skeleton.getBoneCount();
         if (PoseDemo.modelState.isBoneSelected()) {
             Bone bone = PoseDemo.modelState.getBone();
 
@@ -640,9 +646,25 @@ public class PoseDemoHud
             } else {
                 status3 = "with no children";
             }
+
+            int boneIndex = skeleton.getBoneIndex(bone.getName());
+            int numInfluenced = 0;
+            for (Mesh mesh : PoseDemo.modelState.listMeshes()) {
+                numInfluenced += MySkeleton.numInfluenced(mesh, boneIndex);
+            }
+            status4 = String.format("#%d of %d; vertices = %d",
+                    boneIndex + 1, numBones, numInfluenced);
+
+        } else {
+            status2 = String.format("total bones = %d", numBones);
+            int numRootBones = MySkeleton.numRootBones(skeleton);
+            status3 = String.format("root bones = %d", numRootBones);
+            int numLeafBones = MySkeleton.numLeafBones(skeleton);
+            status4 = String.format("leaf bones = %d", numLeafBones);
         }
         setStatusText("boneStatus2", status2);
         setStatusText("boneStatus3", status3);
+        setStatusText("boneStatus4", status4);
 
         updateBaSlidersToBone(null);
     }

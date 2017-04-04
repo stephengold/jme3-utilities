@@ -38,6 +38,8 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.plugins.ogre.MeshLoader;
@@ -327,6 +329,18 @@ class ModelState extends SimpleAppState {
     }
 
     /**
+     * Access the skeleton of the loaded model.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    Skeleton getSkeleton() {
+        Skeleton skeleton = MySkeleton.getSkeleton(spatial);
+
+        assert skeleton != null;
+        return skeleton;
+    }
+
+    /**
      * Access the skeleton debug control.
      *
      * @return the pre-existing instance (not null)
@@ -530,6 +544,26 @@ class ModelState extends SimpleAppState {
         for (float keyframe : keyframes) {
             String menuItem = String.format("%.3f", keyframe);
             result.add(menuItem);
+        }
+
+        return result;
+    }
+
+    /**
+     * List all meshes in the loaded model.
+     *
+     * @return a new list
+     */
+    List<Mesh> listMeshes() {
+        List<Mesh> result = new ArrayList<>(8);
+
+        Node node = (Node) spatial;
+        for (Spatial child : node.getChildren()) {
+            if (child instanceof Geometry) {
+                Geometry geometry = (Geometry) child;
+                Mesh mesh = geometry.getMesh();
+                result.add(mesh);
+            }
         }
 
         return result;
@@ -959,18 +993,6 @@ class ModelState extends SimpleAppState {
             }
             attachmentsNode = newNode;
         }
-    }
-
-    /**
-     * Access the skeleton of the loaded model.
-     *
-     * @return the pre-existing instance (not null)
-     */
-    private Skeleton getSkeleton() {
-        Skeleton skeleton = MySkeleton.getSkeleton(spatial);
-
-        assert skeleton != null;
-        return skeleton;
     }
 
     /**
