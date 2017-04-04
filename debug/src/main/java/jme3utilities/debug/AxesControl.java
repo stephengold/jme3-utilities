@@ -30,6 +30,7 @@ import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -83,6 +84,15 @@ public class AxesControl extends SubtreeControl {
      */
     final private static Vector3f zAxis = new Vector3f(0f, 0f, 1f);
     // *************************************************************************
+    // fields
+
+    /**
+     * true &rarr; enabled, false &rarr; disabled.
+     *
+     * The test provides depth cues, but often hides the axes.
+     */
+    private boolean depthTest = false;
+    // *************************************************************************
     // constructors
 
     /**
@@ -124,6 +134,15 @@ public class AxesControl extends SubtreeControl {
     }
 
     /**
+     * Read the depth test setting.
+     *
+     * @return true if the test is enabled, otherwise false
+     */
+    public boolean getDepthTest() {
+        return depthTest;
+    }
+
+    /**
      * Read the line width of the visualization.
      *
      * @return width (in pixels, &ge;1)
@@ -149,6 +168,24 @@ public class AxesControl extends SubtreeControl {
     }
 
     /**
+     * Alter the depth test setting. The test provides depth cues, but often
+     * hides the axes.
+     *
+     * @param newSetting true to enable test, false to disable it
+     */
+    final public void setDepthTest(boolean newSetting) {
+        if (depthTest != newSetting) {
+            for (Spatial axis : subtree.getChildren()) {
+                Geometry geometry = (Geometry) axis;
+                Material material = geometry.getMaterial();
+                RenderState state = material.getAdditionalRenderState();
+                state.setDepthTest(newSetting);
+            }
+            depthTest = newSetting;
+        }
+    }
+
+    /**
      * Alter the line width of the visualization.
      *
      * @param width (in pixels, &ge;1)
@@ -156,9 +193,9 @@ public class AxesControl extends SubtreeControl {
     final public void setLineWidth(float width) {
         Validate.inRange(width, "width", 1f, Float.MAX_VALUE);
 
-        for (Spatial child : subtree.getChildren()) {
-            Geometry axis = (Geometry) child;
-            Material material = axis.getMaterial();
+        for (Spatial axis : subtree.getChildren()) {
+            Geometry geometry = (Geometry) axis;
+            Material material = geometry.getMaterial();
             RenderState state = material.getAdditionalRenderState();
             state.setLineWidth(width);
         }
@@ -167,10 +204,10 @@ public class AxesControl extends SubtreeControl {
     // private methods
 
     /**
-     * Create an arrow geometry to represent a particular axis.
+     * Create an arrow geometry to represent an axis.
      *
      * @param assetManager for loading material definitions (not null)
-     * @param color for the wireframe (not null)
+     * @param color for the wireframe (not null, unaffected)
      * @param name for the geometry (not null)
      * @param direction for the arrow to point (length=1, unaffected)
      */
@@ -188,7 +225,9 @@ public class AxesControl extends SubtreeControl {
 
         Material wireMaterial = MyAsset.createWireframeMaterial(
                 assetManager, color);
+        wireMaterial.getAdditionalRenderState().setDepthTest(depthTest);
         geometry.setMaterial(wireMaterial);
+        geometry.setQueueBucket(RenderQueue.Bucket.Transparent);
 
         return geometry;
     }
