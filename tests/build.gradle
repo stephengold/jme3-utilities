@@ -4,7 +4,7 @@
 description = 'demos, examples, and tests that do not generate reports'
 
 clean {
-    dependsOn 'cleanWrittenAssets'
+    dependsOn 'cleanDLLs', 'cleanWrittenAssets'
 }
 
 dependencies {
@@ -33,6 +33,9 @@ tasks.withType(JavaExec) {
     enableAssertions true
 }
 
+task cleanDLLs(type: Delete) {
+    delete fileTree(dir: '.', include: '*.dll')
+}
 task cleanWrittenAssets(type: Delete) {
     delete 'Written Assets'
 }
