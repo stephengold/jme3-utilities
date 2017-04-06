@@ -29,6 +29,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.asset.AssetNotFoundException;
+import com.jme3.asset.ModelKey;
 import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.input.KeyInput;
@@ -368,7 +369,12 @@ public class TestSkyMaterial extends GuiApplication {
      * Load sky geometry from an asset.
      */
     private void load() {
-        UncachedModelKey key = new UncachedModelKey(saveAssetPath);
+        /*
+         * Remove any copy from the asset manager's cache.
+         */
+        ModelKey key = new ModelKey(saveAssetPath);
+        assetManager.deleteFromCache(key);
+
         Geometry loadedDome;
         try {
             loadedDome = (Geometry) assetManager.loadAsset(key);
