@@ -37,8 +37,8 @@ import jme3utilities.nifty.GuiScreenController;
 import jme3utilities.ui.InputMode;
 
 /**
- * GUI application for testing/demonstrating popups, including modal dialogs 
- * and multi-level popup menus. The application's main entry point is here.
+ * GUI application for testing/demonstrating popups, including modal dialogs and
+ * multi-level popup menus. The application's main entry point is here.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -197,10 +197,11 @@ public class TestPopups extends GuiApplication {
             for (int i = 0; i < files.length; i++) {
                 names[i] = files[i].getName();
             }
-            if (!actionString.endsWith("/")) {
-                actionString += "/";
+            if (actionString.endsWith("/")) {
+                GuiScreenController.showPopup(actionString, names);
+            } else {
+                GuiScreenController.showPopup(actionString + "/", names);
             }
-            GuiScreenController.showPopup(actionString, names);
         }
     }
 

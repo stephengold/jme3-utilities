@@ -34,6 +34,7 @@ import com.jme3.animation.LoopMode;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.animation.Track;
+import com.jme3.asset.ModelKey;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
@@ -43,7 +44,6 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.plugins.ogre.MeshLoader;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -74,7 +74,7 @@ class ModelState extends SimpleAppState {
     /**
      * local copy of {@link com.jme3.math.Transform#IDENTITY}
      */
-    final private static Transform nullTransform = new Transform();
+    final private static Transform identityTransform = new Transform();
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_XYZ}
      */
@@ -591,7 +591,12 @@ class ModelState extends SimpleAppState {
         } else {
             assetPath = String.format("Models/%s/%s.mesh.xml", name, name);
         }
-        Spatial loaded = assetManager.loadModel(assetPath);
+        /*
+         * Load the model from its asset, bypassing the asset manager's cache.
+         */
+        ModelKey key = new ModelKey(assetPath);
+        assetManager.deleteFromCache(key);
+        Spatial loaded = assetManager.loadModel(key);
 
         mlLogger.setLevel(save);
         /*
@@ -610,14 +615,15 @@ class ModelState extends SimpleAppState {
         rootNode.attachChild(spatial);
         saveInverseBindPose();
         /*
-         * Apply a null transform to every child spatial of the loaded model.
+         * Apply an identity transform to every child spatial of the model.
          * This hack enables accurate bone attachments on models with
-         * transformed geometries (such as Jaime).
+         * locally transformed geometries (such as Jaime).  (The attachments bug
+         * should be fixed in jME 3.2.)
          */
         if (spatial instanceof Node) {
             Node node = (Node) spatial;
             for (Spatial child : node.getChildren()) {
-                child.setLocalTransform(nullTransform);
+                child.setLocalTransform(identityTransform);
             }
         }
         /*
@@ -787,25 +793,11 @@ class ModelState extends SimpleAppState {
             return false;
 
         }
-        /*
-         * The override sequence is A, X, B, and Y.
-         */
-        Bone bone = getBone();
-        Class<?> boneClass = bone.getClass();
-        Field nameField;
-        try {
-            nameField = boneClass.getDeclaredField("name");
-        } catch (NoSuchFieldException e) {
-            return false;
-        }
-        nameField.setAccessible(true);
-        try {
-            nameField.set(bone, newName);
-        } catch (IllegalAccessException e) {
-            return false;
-        }
 
-        return true;
+        Bone bone = getBone();
+        boolean success = MySkeleton.setName(bone, newName);
+
+        return success;
     }
 
     /**
@@ -971,31 +963,6 @@ class ModelState extends SimpleAppState {
     }
 
     /**
-     * Update the attachments node.
-     */
-    private void updateAttachmentsNode() {
-        Node newNode = null;
-        if (isBoneSelected()) {
-            SkeletonControl control = spatial.getControl(SkeletonControl.class);
-            if (control == null) {
-                throw new IllegalArgumentException(
-                        "expected the spatial to have an SkeletonControl");
-            }
-            newNode = control.getAttachmentsNode(selectedBoneName);
-        }
-        if (newNode != attachmentsNode) {
-            if (attachmentsNode != null) {
-                attachmentsNode.removeControl(AxesControl.class);
-            }
-            if (newNode != null) {
-                AxesControl axesControl = new AxesControl(assetManager, 1f, 1f);
-                newNode.addControl(axesControl);
-            }
-            attachmentsNode = newNode;
-        }
-    }
-
-    /**
      * Access the selected BoneTrack.
      *
      * @return the pre-existing instance, or null if no track is selected
@@ -1073,6 +1040,31 @@ class ModelState extends SimpleAppState {
             Quaternion local = bone.getLocalRotation();
             Quaternion inverse = local.inverse();
             inverseBindPose.add(inverse);
+        }
+    }
+
+    /**
+     * Update the attachments node.
+     */
+    private void updateAttachmentsNode() {
+        Node newNode = null;
+        if (isBoneSelected()) {
+            SkeletonControl control = spatial.getControl(SkeletonControl.class);
+            if (control == null) {
+                throw new IllegalArgumentException(
+                        "expected the spatial to have an SkeletonControl");
+            }
+            newNode = control.getAttachmentsNode(selectedBoneName);
+        }
+        if (newNode != attachmentsNode) {
+            if (attachmentsNode != null) {
+                attachmentsNode.removeControl(AxesControl.class);
+            }
+            if (newNode != null) {
+                AxesControl axesControl = new AxesControl(assetManager, 1f, 1f);
+                newNode.addControl(axesControl);
+            }
+            attachmentsNode = newNode;
         }
     }
 }
