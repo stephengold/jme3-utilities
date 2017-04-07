@@ -33,6 +33,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -156,8 +157,6 @@ public class MySkeleton {
     public static int numInfluenced(Mesh mesh, int boneIndex) {
         Validate.nonNegative(boneIndex, "bone index");
 
-        mesh.prepareForAnim(true);
-
         int maxWeightsPerVert = mesh.getMaxNumWeights();
         assert maxWeightsPerVert > 0 : maxWeightsPerVert;
         assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
@@ -176,12 +175,13 @@ public class MySkeleton {
         assert numWeights == numVertices * 4 : numWeights;
 
         int result = 0;
+        byte biByte = (byte) boneIndex;
         for (int vIndex = 0; vIndex < numVertices; vIndex++) {
             for (int wIndex = 0; wIndex < 4; wIndex++) {
                 float weight = weightBuffer.get();
                 float bIndex = boneIndexBuffer.get();
                 if (wIndex < maxWeightsPerVert
-                        && bIndex == boneIndex
+                        && bIndex == biByte
                         && weight > 0f) {
                     result++;
                 }
@@ -234,8 +234,6 @@ public class MySkeleton {
     public static float maxWeight(Mesh mesh, int boneIndex) {
         Validate.nonNegative(boneIndex, "bone index");
 
-        mesh.prepareForAnim(true);
-
         int maxWeightsPerVert = mesh.getMaxNumWeights();
         assert maxWeightsPerVert > 0 : maxWeightsPerVert;
         assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
@@ -254,12 +252,13 @@ public class MySkeleton {
         assert numWeights == numVertices * 4 : numWeights;
 
         float result = 0f;
+        byte biByte = (byte) boneIndex;
         for (int vIndex = 0; vIndex < numVertices; vIndex++) {
             for (int wIndex = 0; wIndex < 4; wIndex++) {
                 float weight = weightBuffer.get();
                 float bIndex = boneIndexBuffer.get();
                 if (wIndex < maxWeightsPerVert
-                        && bIndex == boneIndex
+                        && bIndex == biByte
                         && weight > result) {
                     result = weight;
                 }
@@ -283,9 +282,38 @@ public class MySkeleton {
         Vector3f tail = bone.getModelSpacePosition();
         Vector3f scale = bone.getModelSpaceScale();
         Vector3f result = new Vector3f(x, y, z).multLocal(scale);
+        // rotation??
         result.addLocal(tail);
 
         return result;
+    }
+
+    /**
+     * Alter the name of the specified bone. The caller is responsible for
+     * avoiding duplicate names.
+     *
+     * @param bone bone to change (not null)
+     * @param newName name to apply
+     * @return true if successful, otherwise false
+     */
+    public static boolean setName(Bone bone, String newName) {
+        /*
+         * The override sequence is A, X, B, and Y.
+         */
+        Class<?> boneClass = bone.getClass();
+        Field nameField;
+        try {
+            nameField = boneClass.getDeclaredField("name");
+        } catch (NoSuchFieldException e) {
+            return false;
+        }
+        nameField.setAccessible(true);
+        try {
+            nameField.set(bone, newName);
+        } catch (IllegalAccessException e) {
+            return false;
+        }
+        return true;
     }
 
     /**
