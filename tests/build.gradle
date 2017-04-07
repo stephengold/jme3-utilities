@@ -81,6 +81,11 @@ task CubeMapExample(type: JavaExec) {
 task TestGlobeRenderer(type: JavaExec) {
     main 'jme3utilities.sky.test.TestGlobeRenderer'
 }
+
+task debugTestSkyControl(type: JavaExec) {
+    debug true
+    main 'jme3utilities.sky.test.TestSkyControl'
+}
 task TestSkyControl(type: JavaExec) {
     main 'jme3utilities.sky.test.TestSkyControl'
 }
