@@ -54,7 +54,7 @@ import jme3utilities.math.noise.Noise;
  */
 public class StarfieldState extends SimpleAppState {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -177,7 +177,7 @@ public class StarfieldState extends SimpleAppState {
          */
         cam.setLocation(new Vector3f(0f, 0f, 0f));
         /*
-         * The objects zone extends halfway to the far 
+         * The objects zone extends halfway to the far
          * plane of the view frustrum.
          */
         zoneRadius = 0.5f * cam.getFrustumFar();
@@ -227,7 +227,7 @@ public class StarfieldState extends SimpleAppState {
             /*
              * Create an illusion of forward motion by moving all the
              * objects in the direction opposite where the camera is pointing.
-             * 
+             *
              * Objects which leave the zone wrap around to the other side,
              * giving the illusion of an endless supply of objects.
              */
@@ -263,7 +263,7 @@ public class StarfieldState extends SimpleAppState {
     private void initializeObjects() {
         rootNode.attachChild(objects);
         /*
-         * The moving objects are small white spheres, distributed 
+         * The moving objects are small white spheres, distributed
          * pseudo-randomly throughout a cubical zone centered on the origin
          */
         NameGenerator names = new NameGenerator();

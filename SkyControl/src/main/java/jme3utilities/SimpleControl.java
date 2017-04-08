@@ -34,7 +34,7 @@ import com.jme3.scene.control.AbstractControl;
  * <p>
  * Although this is an abstract class, it defines all required methods in order
  * to simplify the development of subclasses -- unlike AbstractControl. It also
- * validates parameters of its public methods.
+ * validates parameters of its public methods and finalizes isEnabled().
  * <p>
  * Each instance is enabled at creation.
  *

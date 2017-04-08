@@ -35,10 +35,9 @@ import jme3utilities.nifty.GuiScreenController;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class ClockScreenController
-        extends GuiScreenController {
+public class ClockScreenController extends GuiScreenController {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

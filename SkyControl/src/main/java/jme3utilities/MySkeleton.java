@@ -43,6 +43,7 @@ import java.util.logging.Logger;
 
 /**
  * Utility methods for manipulating skeletonized spatials, skeletons, and bones.
+ * All methods should be static.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -226,6 +227,7 @@ public class MySkeleton {
 
     /**
      * Find the largest weight in the specified mesh for the specified bone.
+     * TODO reorder
      *
      * @param mesh which mesh (not null, possibly modified)
      * @param boneIndex which bone (&ge;0)
@@ -334,7 +336,7 @@ public class MySkeleton {
     }
 
     /**
-     * Compute the world location of (the tail of) a named bone.
+     * Calculate the world location of (the tail of) a named bone.
      *
      * @param spatial skeletonized spatial that contains the bone (not null)
      * @param boneName (not null)
@@ -352,7 +354,7 @@ public class MySkeleton {
     }
 
     /**
-     * Compute the world orientation of a bone.
+     * Calculate the world orientation of a bone.
      *
      * @param spatial skeletonized spatial that contains the bone (not null)
      * @param bone (not null)
@@ -370,7 +372,7 @@ public class MySkeleton {
     }
 
     /**
-     * Compute the world orientation of a named bone.
+     * Calculate the world orientation of a named bone.
      *
      * @param spatial skeletonized spatial that contains the bone (not null)
      * @param boneName (not null)

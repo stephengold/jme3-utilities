@@ -46,8 +46,8 @@ import java.util.logging.Logger;
 import static jme3utilities.Misc.blendTime;
 
 /**
- * Utility methods for manipulating skeleton spatials, skeletons, and bones.
- * Aside from test cases, all methods should be public and static.
+ * Utility methods for manipulating animations, channels, and tracks. All
+ * methods should be static.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -72,7 +72,7 @@ public class MyAnimation {
     // new methods exposed
 
     /**
-     * Smoothly transition an animation channel to a named animation.
+     * Smoothly transition an animation channel to the named animation.
      *
      * @param channel animation channel (not null, modified)
      * @param animationName name of animation (or null to reset the channel)

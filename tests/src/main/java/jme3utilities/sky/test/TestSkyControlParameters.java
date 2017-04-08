@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  */
 class TestSkyControlParameters {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

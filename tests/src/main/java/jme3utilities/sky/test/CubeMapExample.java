@@ -57,7 +57,7 @@ import jme3utilities.debug.PerformanceAppState;
  */
 public class CubeMapExample extends SimpleApplication {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
