@@ -3,7 +3,10 @@
 ## Version 0.9.2 released on TBD
 
 Notable changes:
- + switched build from Ant to Gradle
+ + fix a de-serialization bug that affected SkyControl and FloorControl
+ + move all "virally licensed" assets out of the SkyControl library
+ + build using Gradle instead of Ant
+ + rename the {get/set}Cloud{Rate/YOffset} methods in the API
 
 ## Version 0.9.1 released on 8 March 2017
 
