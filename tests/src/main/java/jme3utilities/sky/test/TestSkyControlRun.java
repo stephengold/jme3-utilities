@@ -28,6 +28,7 @@ package jme3utilities.sky.test;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetNotFoundException;
+import com.jme3.asset.ModelKey;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -167,7 +168,12 @@ public class TestSkyControlRun
      * Load the scene from an asset.
      */
     void load() {
-        UncachedModelKey key = new UncachedModelKey(saveAssetPath);
+        /*
+         * Remove any copy from the asset manager's cache.
+         */
+        ModelKey key = new ModelKey(saveAssetPath);
+        assetManager.deleteFromCache(key);
+
         Spatial loadedScene;
         try {
             loadedScene = assetManager.loadAsset(key);
