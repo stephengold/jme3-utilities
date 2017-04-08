@@ -33,6 +33,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.SceneGraphVisitor;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -73,6 +74,15 @@ abstract public class SubtreeControl
     }
     // *************************************************************************
     // new public methods
+
+    /**
+     * Access this control's subtree.
+     *
+     * @return the pre-existing instance, or null if none
+     */
+    public Node getSubtree() {
+        return subtree;
+    }
 
     /**
      * Traverse this control's subtree in depth-1st order.
@@ -127,6 +137,19 @@ abstract public class SubtreeControl
     }
 
     /**
+     * Convert this shallow-cloned control into a deep-cloned one, using the
+     * specified cloner and original to resolve copied fields.
+     *
+     * @param cloner the cloner currently cloning this control
+     * @param original the control from which this control was shallow-cloned
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        subtree = cloner.clone(subtree);
+    }
+
+    /**
      * De-serialize this instance, for example when loading from a J3O file.
      *
      * @param importer (not null)
@@ -137,6 +160,7 @@ abstract public class SubtreeControl
         super.read(importer);
         InputCapsule ic = importer.getCapsule(this);
         subtree = (Node) ic.readSavable("subtree", null);
+        assert subtree.getParent() == (enabled ? spatial : null);
     }
 
     /**
