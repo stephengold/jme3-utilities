@@ -1,11 +1,19 @@
 # jme3-utilities project
 
-This project contains Java packages and asset packs, developed for sgold's
-jMonkeyEngine games, which might prove useful in similar projects.  It includes
-the SkyControl library for sky simulation.
+The jme3-utilities project contains Java packages and asset packs, developed for
+sgold's jMonkeyEngine games, which might prove useful in similar projects.  It
+consists of 8 sub-projects:
+ 1. SkyControl: a library for sky simulation
+ 2. tests: demos, examples, and tests
+ 3. textures: generate textures used by SkyControl
+ 4. moon-ccbysa: an asset pack to enhance SkyControl
+ 5. jme3-utilities-debug: a library of debugging aids
+ 6. jme3-utilities-ui: a library for building user interfaces
+ 7. jme3-utilities-nifty: a library for building NiftyGUI user interfaces
+ 8. jme3-utilities-x: a library of miscellaneous experimental code
 
 Summary of SkyControl features:
- + sun, moon, stars, horizon haze, and up to six cloud layers
+ + sun, moon, stars, horizon haze, and up to 6 cloud layers
  + compatible with static backgrounds such as cube maps
  + high resolution textures are provided -- or customize with your own textures
  + compatible with effects such as SimpleWater, shadows, and bloom
@@ -18,42 +26,53 @@ Summary of SkyControl features:
  + demonstration apps and online tutorial provided
  + complete source code provided under FreeBSD license
 
+### Downloads
+
+Recent releases can be downloaded from GitHub at
+ + https://github.com/stephengold/jme3-utilities/releases
+
+Maven artifacts are available from JFrog Bintray at
+ + https://bintray.com/stephengold/jme3utilities
+
 ### Conventions
 
-All package names in this project begin with "jme3utilities".
-The source code is compatible with JDK 7.
+All package names in jme3-utilities project begin with "jme3utilities".
+The source code is compatible with both JDK 7 and JDK 8.
 World coordinate system:
  + the X axis points toward the northern horizon
  + the Y axis points up (toward the zenith)
- + the Z axis point toward the eastern horizon
+ + the Z axis points toward the eastern horizon
 
 ### History
 
-Since September 2015, this project has been hosted at
+Since September 2015, the jme3-utilities project has been hosted at
 https://github.com/stephengold/jme3-utilities
 
 From November 2013 to September 2015, it was hosted at
 http://code.google.com/p/jme3-utilities
 
+Old (2014) versions of the jme3-utilities project can still be found at
+https://github.com/jMonkeyEngine-Contributions/SkyControl
+
 ## How to install the SDK and the jme3-utilities project
 
 ### jMonkeyEngine3 (jME3) Software Development Kit (SDK)
 
-The "master" branch of the jme3-utilities repository targets 
-Version 3.1 of jMonkeyEngine.  You are welcome to use the Engine 
-without also using the SDK, but I do, and the following installation 
-instructions assume you will too.
+The "master" branch of the jme3-utilities repository targets
+Version 3.1 of jMonkeyEngine.  You are welcome to use the Engine
+without also using the SDK, but I use the SDK, and the following
+installation instructions assume you will too.
 
 The hardware and software requirements of the SDK are documented at
 https://jmonkeyengine.github.io/wiki/jme3/requirements.html
 
- 1. Download the jMonkeyEngine 3.1 SDK from https://github.com/jMonkeyEngine/sdk/releases
+ 1. Download a jMonkeyEngine 3.1 SDK from https://github.com/jMonkeyEngine/sdk/releases
  2. Install the SDK, which includes:
    + the engine itself,
-   + an integrated development environment (IDE) based on NetBeans, 
+   + an integrated development environment (IDE) based on NetBeans,
    + various plugins, and
    + the Blender 3D application.
- 3. To open the project in the SDK (or NetBeans), you will need the "Gradle 
+ 3. To open the project in the SDK (or NetBeans), you will need the "Gradle
     Support" plugin.  Download and install it before proceeding.
 
 ### Source files
@@ -64,7 +83,7 @@ Clone the jme3-utilities repository using Git:
  2. For "Repository URL:" specify
     "https://github.com/stephengold/jme3-utilities.git" (without the quotes).
  3. Clear the "User:" and "Password:" text boxes.
- 4. For "Clone into:" specify a writable folder (on a local filesystem) 
+ 4. For "Clone into:" specify a writable folder (on a local filesystem)
     which doesn't already contain "jme3-utilities".
  5. Click on the "Next >" button.
  6. Make sure the "master" remote branch is checked.
@@ -72,25 +91,25 @@ Clone the jme3-utilities repository using Git:
  8. Make sure the Checkout Branch is set to "master".
  9. Make sure the "Scan for NetBeans Projects after Clone" box is checked.
 10. Click on the "Finish" button.
-11. When the "Clone Complete" dialog appears, click on the "Open Project..." 
+11. When the "Clone Complete" dialog appears, click on the "Open Project..."
     button.
-12. Expand the root project node to reveal the 7 sub-projects.
-13. To start with, I recommend opening 3 sub-projects:  "SkyControl", "tests", 
-    and "textures".  Select them using control-click, then click on the 
+12. Expand the root project node to reveal the 8 sub-projects.
+13. To start with, I recommend opening 3 sub-projects:  "SkyControl", "tests",
+    and "textures".  Select them using control-click, then click on the
     "Open" button.
 14. There will be errors in the "textures" sub-project.  However, the build
-    process should resolve them.
+    task should resolve them.
 
-### External files
+### External file
 
  1. Download "bsc5.dat.gz" (the ASCII catalog, version 5 of the Yale Bright Star
     Catalog) from "http://tdc-www.harvard.edu/catalogs/bsc5.html".
- 2. Extract the file "bsc5.dat" to the "src/main/resources" folder of the new 
-    "textures" subproject.
+ 2. Extract the file "bsc5.dat" to the "src/main/resources" folder of the
+    "textures" sub-project.
 
 ### Build the project
 
- 1. In the "Projects" window, right-click on the "tests" sub-project to 
+ 1. In the "Projects" window, right-click on the "tests" sub-project to
     select it.
  2. Select "Build".
 
@@ -98,7 +117,7 @@ Clone the jme3-utilities repository using Git:
 
 SkyControl is a reusable sky simulation for jMonkeyEngine games.
 
-Adding it to an existing JME3 project should be a simple six-step process:
+Adding it to an existing JME3 project should be a simple 6-step process:
  1. Add the SkyControl JAR to the classpath.
  2. Disable any existing sky which might interfere with SkyControl.
  3. Add a SkyControl instance to some node in the scene graph.
@@ -114,7 +133,7 @@ follow along in your development environment.
 
 You'll need:
  + A development system with the JME3 SDK installed.
- + A clean release of the jme3-utilities JARs, either downloaded from 
+ + A clean release of the jme3-utilities JARs, either downloaded from
    https://github.com/stephengold/jme3-utilities/releases or built yourself.
 
 Instantiate a BasicGame Project:
@@ -123,7 +142,7 @@ Instantiate a BasicGame Project:
  2. Under "Categories:" select "JME3".
  3. Under "Projects:" select "BasicGame".
  4. Click on the "Next >" button.
- 5. For "Project Location:" specify a writable folder (on a local filesystem) 
+ 5. For "Project Location:" specify a writable folder (on a local filesystem)
     which doesn't already contain "BasicGame".
  6. Click on the "Finish" button.
 
@@ -132,7 +151,7 @@ the source code) to see how it works before modifying it.
 
  1. To rotate the camera, move the mouse.
  2. The W/A/S/D/Q/Z keys translate (move) the camera.
- 3. To exit, press the Esc key. 
+ 3. To exit, press the Esc key.
 
 #### Add the SkyControl JARs to the project
 
@@ -145,7 +164,7 @@ Open the project's properties in the IDE:
  5. Add the SkyControl class JAR:
   + Click on the "Add JAR/Folder" button.
   + Navigate to the "jme3-utilities" project folder.
-  + Open the "SkyControl" subproject folder.
+  + Open the "SkyControl" sub-project folder.
   + Navigate to the "build/libs" folder.
   + Select the "SkyControl.jar" file.
   + Click on the "Open" button.
@@ -233,7 +252,7 @@ select "Run File (Shift+F6)".
 
 ### CubeMapExample
 
-Sometimes you'll want to combine SkyControl with other sky elements. The 
+Sometimes you'll want to combine SkyControl with other sky elements. The
 jme3-utilities project includes CubeMapExample, a slightly more sophisticated
 application than BasicGame. CubeMapExample includes a cube-mapped sky, lit
 terrain, and multiple light sources. In this section, you'll see how SkyControl
@@ -243,12 +262,12 @@ In the "Projects" window of the IDE, expand the "tests" sub-project node
 and the "jme3utilities.sky.test" source package.  Open the "CubeMapExample.java"
 file to examine the code and run it.
 
- 1. To rotate the camera, drag with the left mouse button. 
+ 1. To rotate the camera, drag with the left mouse button.
  2. The W/A/S/D/Q/Z keys translate (move) the camera.
- 3. To exit, press the Esc key. 
+ 3. To exit, press the Esc key.
 
 Since CubeMapExample is part of the jme3-utilities project, there's no need
-to add anything to the classpath.  And since we plan to use the existing cube 
+to add anything to the classpath.  And since we plan to use the existing cube
 map, there's nothing to remove.
 
 #### Add a SkyControl instance to the scene graph
@@ -319,7 +338,7 @@ However, for the best result, it needs some tuning.
 
 The uneven shading of the level terrain is due to sunlight coming in at a low
 angle. Since it's noon, the easiest way to raise the sun's elevation is to
-decrease the observer's latitude.  Also, the terrain is too dark.  
+decrease the observer's latitude.  Also, the terrain is too dark.
 Try, for instance:
 
     sc.getSunAndStars().setObserverLatitude(0.2f);
@@ -377,7 +396,7 @@ The jme3utilities.TimeOfDay appstate fills this need.
 
     All that remains is to update the control.
 
- 4. Add two lines to simpleUpdate(), right before the invocation of
+ 4. Add 2 lines to simpleUpdate(), right before the invocation of
     orientExternalSky():
 
         float hour = timeOfDay.hour();
@@ -385,11 +404,10 @@ The jme3utilities.TimeOfDay appstate fills this need.
 
 ### Next steps
 
-To see how some of the other features of SkyControl 
-can be used, you may wish to study "TestSkyControl.java" in the 
-"jme3utilities.sky.test" package.  The easiest way to run the 
-TestSkyControl application is to select the TestSkyControl task
-from the "tests" sub-project menu.
+To see how some of the other features of SkyControl
+can be used, you may wish to study "TestSkyControl.java" in the
+"tests" sub-project.  The easiest way to run TestSkyControl is to right-click
+on the "tests" sub-project and select "Tasks" -> "run" -> "runTestSkyControl".
 
 External links:
   + November 2013 SkyControl demo video:
