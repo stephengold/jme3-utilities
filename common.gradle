@@ -2,7 +2,8 @@ apply plugin: 'java'
 apply plugin: 'maven'
 
 group = 'jme3utilities'
-sourceCompatibility = '1.7'
+//sourceCompatibility = '1.7'
+sourceCompatibility = '1.8'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
@@ -13,7 +14,7 @@ gradle.projectsEvaluated {
 }
 
 ext {
-    jcommanderVersion = '1.66'
+    jcommanderVersion = '1.67'
     jmonkeyengineVersion = '3.1.0-stable'
 }
 
