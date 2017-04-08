@@ -1,17 +1,37 @@
 // Note: "common.gradle" in the root project contains additional initialization
 //   for this project. This initialization is applied in the "build.gradle"
 //   of the root project.
-description = 'experimental library for jMonkeyEngine3'
+
+description = 'experimental library for jMonkeyEngine'
+ext {
+    artifact = 'jme3-utilities-x'
+    version = '0.2'
+    baseName = "${artifact}-${version}"
+}
+
+build { dependsOn 'pom' }
+jar { baseName "${project.ext.baseName}" }
+javadocJar { baseName "${project.ext.baseName}" }
+sourcesJar { baseName "${project.ext.baseName}" }
 
 dependencies {
     compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
     compile project(':SkyControl')
 }
 
-configure(install.repositories.mavenInstaller) {
-    pom.project {
-        groupId = "$group"
-        artifactId = 'jme3-utilities-x'
-        version = '0.1'
+task pom {
+    doLast {
+        pom {
+            project {
+                licenses {
+                    license {
+                        distribution 'repo'
+                        name 'New BSD (3-clause) License'
+                        url 'https://opensource.org/licenses/BSD-3-Clause'
+                    }
+                }
+                version "${project.ext.version}"
+            }
+        }.writeTo("${buildDir}/libs/${project.ext.baseName}.pom")
     }
 }
