@@ -1,11 +1,10 @@
 // Note: "common.gradle" in the root project contains additional initialization
 //   for this project. This initialization is applied in the "build.gradle"
 //   of the root project.
+
 description = 'demos, examples, and tests that do not generate reports'
 
-clean {
-    dependsOn 'cleanDLLs', 'cleanWrittenAssets'
-}
+clean { dependsOn 'cleanDLLs', 'cleanWrittenAssets' }
 
 dependencies {
     compile "com.beust:jcommander:$jcommanderVersion"
@@ -40,7 +39,7 @@ task cleanWrittenAssets(type: Delete) {
     delete 'Written Assets'
 }
 
-task PoseDemo(type: JavaExec) {
+task runPoseDemo(type: JavaExec) {
     main 'jme3utilities.debug.test.PoseDemo'
 }
 task TestPas(type: JavaExec) {
@@ -65,7 +64,7 @@ task TestVectorXZ(type: JavaExec) {
 task ClockDemo(type: JavaExec) {
     main 'jme3utilities.nifty.test.ClockDemo'
 }
-task TestBindScreen(type: JavaExec) {
+task runTestBindScreen(type: JavaExec) {
     main 'jme3utilities.nifty.test.TestBindScreen'
 }
 task TestMultipleScreens(type: JavaExec) {
@@ -75,10 +74,10 @@ task TestPopups(type: JavaExec) {
     main 'jme3utilities.nifty.test.TestPopups'
 }
 
-task CubeMapExample(type: JavaExec) {
+task runCubeMapExample(type: JavaExec) {
     main 'jme3utilities.sky.test.CubeMapExample'
 }
-task TestGlobeRenderer(type: JavaExec) {
+task runTestGlobeRenderer(type: JavaExec) {
     main 'jme3utilities.sky.test.TestGlobeRenderer'
 }
 
@@ -86,22 +85,22 @@ task debugTestSkyControl(type: JavaExec) {
     debug true
     main 'jme3utilities.sky.test.TestSkyControl'
 }
-task TestSkyControl(type: JavaExec) {
+task runTestSkyControl(type: JavaExec) {
     main 'jme3utilities.sky.test.TestSkyControl'
 }
-task TestSkyControlCyclone(type: JavaExec) {
+task runTestSkyControlCyclone(type: JavaExec) {
     args = ['-c']
     main 'jme3utilities.sky.test.TestSkyControl'
 }
-task TestSkyControlShadowFilter(type: JavaExec) {
+task runTestSkyControlShadowFilter(type: JavaExec) {
     args = ['-f']
     main 'jme3utilities.sky.test.TestSkyControl'
 }
-task TestSkyControlSingleDome(type: JavaExec) {
+task runTestSkyControlSingleDome(type: JavaExec) {
     args = ['-s']
     main 'jme3utilities.sky.test.TestSkyControl'
 }
-task TestSkyMaterial(type: JavaExec) {
+task runTestSkyMaterial(type: JavaExec) {
     main 'jme3utilities.sky.test.TestSkyMaterial'
 }
 task TestSunAndStars(type: JavaExec) {
