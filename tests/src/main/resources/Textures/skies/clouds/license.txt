@@ -1,4 +1,4 @@
-Licensing history for files in assets/Textures/skies/clouds
+Licensing history for assets in Textures/skies/clouds
 
 The file "cyclone.jpg" is derived from an image downloaded from
 http://eoimages.gsfc.nasa.gov/images/imagerecords/68000/68479/Isabel.A2003257.1445.250m.jpg
@@ -12,6 +12,18 @@ else credit Visible Earth; the only mandatory credit is NASA."
 
 Stephen Gold makes "cyclone.jpg" available under the Creative Commons
 Attribution-Share Alike 3.0 Unported license -- see
-http://creativecommons.org/licenses/by-sa/3.0/deed.en
+https://creativecommons.org/licenses/by-sa/3.0/
 for details.  When sharing or reusing this file, please attribute it to
-"Stephen Gold's JME3 Utilities Package at https://code.google.com/p/jme3-utilities/"
+"Stephen Gold's jme3-utilities Project at https://github.com/stephengold/jme3-utilities"
+
+It is easier to ask permission than forgiveness.  To request a custom license
+granting rights not included in the CC-BY-SA terms, send an e-mail to
+sgold@sonic.net with "custom license request" in the subject.  Please
+clearly indicate:
+ (1) your legal name
+ (2) which assets you want to license
+ (3) name and brief description of your project, if applicable
+ (4) the licensee (person or organization that will hold the custom license)
+ (5) what rights you are requesting (i.e. "non-exclusive and non-transferable
+     perpetual license to incorporate into proprietary software with worldwide
+     distribution")

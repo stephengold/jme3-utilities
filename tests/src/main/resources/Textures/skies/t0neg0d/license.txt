@@ -1,4 +1,4 @@
-Licensing history for files in assets/Textures/skies/t0neg0d
+Licensing history for assets in Textures/skies/t0neg0d
 
 Note: the file "Sun_L.png" has been cropped since it was downloaded.
 
