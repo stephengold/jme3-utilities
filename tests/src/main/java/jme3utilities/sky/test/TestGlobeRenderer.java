@@ -43,6 +43,7 @@ import com.jme3.math.FastMath;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Quad;
 import com.jme3.system.AppSettings;
+import com.jme3.system.JmeVersion;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import java.util.logging.Level;
@@ -213,9 +214,11 @@ public class TestGlobeRenderer
     @Override
     public void simpleInitApp() {
         /*
-         * Log the jME3-utilities version string.
+         * Log library versions.
          */
-        logger.log(Level.INFO, "jME3-utilities version is {0}",
+        logger.log(Level.INFO, "jme3-core version is {0}",
+                MyString.quote(JmeVersion.FULL_NAME));
+        logger.log(Level.INFO, "SkyControl version is {0}",
                 MyString.quote(Misc.getVersionShort()));
 
         flyCam.setEnabled(false);

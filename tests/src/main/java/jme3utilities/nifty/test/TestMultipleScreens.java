@@ -26,6 +26,7 @@
 package jme3utilities.nifty.test;
 
 import com.jme3.audio.openal.ALAudioRenderer;
+import com.jme3.system.JmeVersion;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
@@ -99,9 +100,11 @@ public class TestMultipleScreens extends GuiApplication {
     @Override
     public void guiInitializeApplication() {
         /*
-         * Log the jME3-utilities version string.
+         * Log library versions.
          */
-        logger.log(Level.INFO, "jME3-utilities version is {0}",
+        logger.log(Level.INFO, "jme3-core version is {0}",
+                MyString.quote(JmeVersion.FULL_NAME));
+        logger.log(Level.INFO, "SkyControl version is {0}",
                 MyString.quote(Misc.getVersionShort()));
 
         InputMode inputMode = getDefaultInputMode();

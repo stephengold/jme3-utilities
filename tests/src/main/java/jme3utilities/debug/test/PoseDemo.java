@@ -40,6 +40,7 @@ import com.jme3.scene.shape.Box;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
+import com.jme3.system.JmeVersion;
 import com.jme3.texture.Texture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -130,12 +131,12 @@ public class PoseDemo extends GuiApplication {
     // new methods exposed
 
     /**
-     * Access the scene dump printer. 
+     * Access the scene dump printer.
      */
     static Printer getPrinter() {
         return printer;
     }
-    
+
     /**
      * Main entry point for the PoseDemo application.
      *
@@ -172,6 +173,13 @@ public class PoseDemo extends GuiApplication {
      */
     @Override
     public void guiInitializeApplication() {
+        /*
+         * Log library versions.
+         */
+        logger.log(Level.INFO, "jme3-core version is {0}",
+                MyString.quote(JmeVersion.FULL_NAME));
+        logger.log(Level.INFO, "SkyControl version is {0}",
+                MyString.quote(Misc.getVersionShort()));
         /*
          * Attach screen controllers for the HUD, the scene, and BindScreen.
          */

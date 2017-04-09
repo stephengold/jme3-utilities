@@ -41,6 +41,7 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
+import com.jme3.system.JmeVersion;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -201,9 +202,11 @@ public class TestSkyMaterial extends GuiApplication {
     @Override
     public void guiInitializeApplication() {
         /*
-         * Log the jME3-utilities version string.
+         * Log library versions.
          */
-        logger.log(Level.INFO, "jME3-utilities version is {0}",
+        logger.log(Level.INFO, "jme3-core version is {0}",
+                MyString.quote(JmeVersion.FULL_NAME));
+        logger.log(Level.INFO, "SkyControl version is {0}",
                 MyString.quote(Misc.getVersionShort()));
 
         configureCamera();
