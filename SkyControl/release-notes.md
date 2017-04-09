@@ -1,6 +1,6 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.2 released on TBD
+## Version 0.9.2 released on 9 April 2017
 
 Notable changes:
  + fix a de-serialization bug that affected SkyControl and FloorControl
