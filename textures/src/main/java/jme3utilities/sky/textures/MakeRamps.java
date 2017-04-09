@@ -117,10 +117,8 @@ public class MakeRamps {
             return;
         }
         /*
-         * Log the jME3-utilities version string and working directory.
+         * Log the working directory.
          */
-        logger.log(Level.INFO, "jME3-utilities version is {0}",
-                MyString.quote(Misc.getVersionShort()));
         String userDir = System.getProperty("user.dir");
         logger.log(Level.INFO, "working directory is {0}",
                 MyString.quote(userDir));

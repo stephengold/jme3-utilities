@@ -231,10 +231,8 @@ public class MakeStarMaps {
             }
         }
         /*
-         * Log the jME3-utilities version string and working directory.
+         * Log the working directory.
          */
-        logger.log(Level.INFO, "jME3-utilities version is {0}",
-                MyString.quote(Misc.getVersionShort()));
         String userDir = System.getProperty("user.dir");
         logger.log(Level.INFO, "working directory is {0}",
                 MyString.quote(userDir));
@@ -1064,7 +1062,7 @@ public class MakeStarMaps {
             throw new InvalidMagnitudeException();
         }
         /*
-         * Compute the star's equatorial coordinates 
+         * Compute the star's equatorial coordinates
          * and convert them to radians.
          */
         float declinationDegrees = declination(textLine);

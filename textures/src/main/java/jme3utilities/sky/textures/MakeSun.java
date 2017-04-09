@@ -28,7 +28,6 @@ package jme3utilities.sky.textures;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.jme3.math.FastMath;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -123,10 +122,8 @@ public class MakeSun {
             return;
         }
         /*
-         * Log the jME3-utilities version string and working directory.
+         * Log the working directory.
          */
-        logger.log(Level.INFO, "jME3-utilities version is {0}",
-                MyString.quote(Misc.getVersionShort()));
         String userDir = System.getProperty("user.dir");
         logger.log(Level.INFO, "working directory is {0}",
                 MyString.quote(userDir));
