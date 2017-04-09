@@ -25,7 +25,7 @@ repositories {
 
 task sourcesJar(type: Jar, dependsOn: classes, description: 'Create a jar of source files.') {
     classifier = 'sources'
-    from sourceSets.main.allSource
+    from sourceSets.main.allJava
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc, description: 'Create a jar of javadoc.') {
