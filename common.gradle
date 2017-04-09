@@ -21,6 +21,7 @@ ext {
 repositories {
     maven { url "https://jcenter.bintray.com" }
     maven { url "https://dl.bintray.com/stephengold/org.jmonkeyengine" }
+    maven { url "https://dl.bintray.com/stephengold/jme3utilities" }
 }
 
 task sourcesJar(type: Jar, dependsOn: classes, description: 'Create a jar of source files.') {
