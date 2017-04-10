@@ -5,7 +5,7 @@
 description = 'user-interface library for jMonkeyEngine'
 ext {
     artifact = 'jme3-utilities-ui'
-    version = '0.5'
+    version = '0.5.0'
     baseName = "${artifact}-${version}"
 }
 
