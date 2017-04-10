@@ -26,6 +26,7 @@ task pom {
     doLast {
         pom {
             project {
+                artifactId "${project.ext.artifact}"
                 licenses {
                     license {
                         distribution 'repo'
