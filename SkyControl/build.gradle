@@ -2,7 +2,7 @@
 //   for this project. This initialization is applied in the "build.gradle"
 //   of the root project.
 
-description = 'sky simulation and core utilities for jMonkeyEngine'
+description = 'sky simulation and core library for jMonkeyEngine'
 ext {
     artifact = 'SkyControl'
     version = '0.9.2'

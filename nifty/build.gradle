@@ -2,7 +2,7 @@
 //   for this project. This initialization is applied in the "build.gradle"
 //   of the root project.
 
-description = 'NiftyGUI utilities for jMonkeyEngine'
+description = 'NiftyGUI library for jMonkeyEngine'
 ext {
     artifact = 'jme3-utilities-nifty'
     version = '0.5'

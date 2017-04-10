@@ -2,7 +2,7 @@
 //   for this project. This initialization is applied in the "build.gradle"
 //   of the root project.
 
-description = 'debugging utilities for jMonkeyEngine'
+description = 'debugging library for jMonkeyEngine'
 ext {
     artifact = 'jme3-utilities-debug'
     version = '0.5.0'

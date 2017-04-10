@@ -2,7 +2,7 @@
 //   for this project. This initialization is applied in the "build.gradle"
 //   of the root project.
 
-description = 'user-interface utilities for jMonkeyEngine'
+description = 'user-interface library for jMonkeyEngine'
 ext {
     artifact = 'jme3-utilities-ui'
     version = '0.5'
