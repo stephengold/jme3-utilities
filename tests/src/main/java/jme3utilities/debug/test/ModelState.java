@@ -712,7 +712,7 @@ class ModelState extends SimpleAppState {
             } else {
                 translation = new Vector3f(0f, 0f, 0f);
                 rotation = new Quaternion();
-                scale = new Vector3f(0f, 0f, 0f);
+                scale = new Vector3f(1f, 1f, 1f);
             }
 
             Bone bone = skeleton.getBone(boneIndex);
