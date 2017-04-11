@@ -161,7 +161,8 @@ public class TestSkyMaterial extends GuiApplication {
         /*
          * Parse the command-line arguments.
          */
-        JCommander jCommander = new JCommander(application, arguments);
+        JCommander jCommander = new JCommander(application);
+        jCommander.parse(arguments);
         jCommander.setProgramName(applicationName);
         if (usageOnly) {
             jCommander.usage();

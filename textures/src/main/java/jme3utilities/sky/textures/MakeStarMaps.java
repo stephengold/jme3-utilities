@@ -103,7 +103,7 @@ public class MakeStarMaps {
     /**
      * Earth's rate of rotation (radians per sidereal hour)
      */
-    final private static float radiansPerHour = 
+    final private static float radiansPerHour =
             FastMath.TWO_PI / Constants.hoursPerDay;
     /**
      * expected id of the last entry in the catalog
@@ -158,7 +158,7 @@ public class MakeStarMaps {
     /**
      * filesystem path to the output directory/folder
      */
-    final private static String outputDirPath = 
+    final private static String outputDirPath =
             "../SkyControl/src/main/resources/Textures/skies/star-maps";
     // *************************************************************************
     // fields
@@ -214,7 +214,8 @@ public class MakeStarMaps {
         /*
          * Parse the command-line arguments.
          */
-        JCommander jCommander = new JCommander(application, arguments);
+        JCommander jCommander = new JCommander(application);
+        jCommander.parse(arguments);
         jCommander.setProgramName(applicationName);
         if (usageOnly) {
             jCommander.usage();

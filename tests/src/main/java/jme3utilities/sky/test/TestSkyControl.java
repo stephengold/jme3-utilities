@@ -111,7 +111,8 @@ public class TestSkyControl extends GuiApplication {
         /*
          * Parse the command-line arguments into parameters.
          */
-        JCommander jCommander = new JCommander(parameters, arguments);
+        JCommander jCommander = new JCommander(parameters);
+        jCommander.parse(arguments);
         jCommander.setProgramName(applicationName);
         if (parameters.usageOnly()) {
             jCommander.usage();

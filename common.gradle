@@ -14,7 +14,7 @@ gradle.projectsEvaluated {
 }
 
 ext {
-    jcommanderVersion = '1.67'
+    jcommanderVersion = '1.68'
     jmonkeyengineVersion = '3.1.0-stable'
 }
 
