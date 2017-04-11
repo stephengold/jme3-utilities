@@ -19,12 +19,23 @@ dependencies {
     compile "org.jmonkeyengine:jme3-plugins:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-terrain:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-testdata:3.1.0-stable"
+
+    //compile "jme3utilities:SkyControl:0.9.2"
     compile project(':SkyControl')
-    compile project(':moon-ccbysa')
+
+    //compile "jme3utilities:jme3-utilities-debug:0.5.0"
     compile project(':debug')
+
+    //compile "jme3utilities:jme3-utilities-nifty:0.5.0"
     compile project(':nifty')
+
+    //compile "jme3utilities:jme3-utilities-ui:0.5.0"
     compile project(':ui')
+
+    //compile "jme3utilities:jme3-utilities-x:0.2.0"
     compile project(':x')
+
+    compile project(':moon-ccbysa')
 }
 
 tasks.withType(JavaExec) {
@@ -100,6 +111,15 @@ task runTestSkyControlSingleDome(type: JavaExec) {
     args = ['-s']
     main 'jme3utilities.sky.test.TestSkyControl'
 }
+task runTestSkyControlUsage(type: JavaExec) {
+    args = ['-u']
+    main 'jme3utilities.sky.test.TestSkyControl'
+}
+task runTestSkyControlWater(type: JavaExec) {
+    args = ['-w']
+    main 'jme3utilities.sky.test.TestSkyControl'
+}
+
 task runTestSkyMaterial(type: JavaExec) {
     main 'jme3utilities.sky.test.TestSkyMaterial'
 }
