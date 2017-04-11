@@ -103,7 +103,7 @@ class PoseCameraState
      * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
-            PoseDemo.class.getName());
+            PoseCameraState.class.getName());
     /**
      * name of the signal which controls camera movement
      */
