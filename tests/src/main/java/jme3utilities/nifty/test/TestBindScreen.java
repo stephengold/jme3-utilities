@@ -35,6 +35,7 @@ import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.nifty.GuiApplication;
+import jme3utilities.nifty.GuiScreenController;
 import jme3utilities.nifty.MessageDisplay;
 import jme3utilities.nifty.bind.BindScreen;
 import jme3utilities.ui.InputMode;
@@ -67,6 +68,7 @@ public class TestBindScreen extends GuiApplication {
     final private static String asHail = "open hailing frequencies";
     final private static String asHelp = "edit bindings";
     final private static String asLowerShields = "shields down";
+    final private static String asMenu = "open popup menu";
     final private static String asPitchDown = "pitch down";
     final private static String asPitchUp = "pitch up";
     final private static String asRaiseShields = "shields up";
@@ -206,6 +208,7 @@ public class TestBindScreen extends GuiApplication {
         dim.addActionName(asHail);
         dim.addActionName(asHelp);
         dim.addActionName(asLowerShields);
+        dim.addActionName(asMenu);
         dim.addActionName(asPitchDown);
         dim.addActionName(asPitchUp);
         dim.addActionName(asRaiseShields);
@@ -242,11 +245,15 @@ public class TestBindScreen extends GuiApplication {
                     messageHud.addLine("Hailing frequencies open.");
                     return;
                 case asHelp:
-                    InputMode thisMode = InputMode.getActiveMode();
+                    InputMode thisMode = InputMode.findMode("default");
                     bindScreen.activate(thisMode);
                     return;
                 case asLowerShields:
                     messageHud.addLine("Shields are down.");
+                    return;
+                case asMenu:
+                    String[] items = {asHelp};
+                    GuiScreenController.showPopup("", items);
                     return;
                 case asPitchDown:
                     starfield.setRotation(0.2f, pitchAxis);

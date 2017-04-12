@@ -109,6 +109,7 @@ public class BindScreen
         assert subjectMode == null : subjectMode;
         assert mode.isEnabled();
 
+        closeAllPopups();
         subjectMode = mode;
         subjectMode.setEnabled(false);
         setEnabled(true);

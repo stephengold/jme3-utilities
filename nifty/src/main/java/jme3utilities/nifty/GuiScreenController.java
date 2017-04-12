@@ -67,7 +67,7 @@ public class GuiScreenController extends BasicScreenController {
      */
     private static Element dialogElement = null;
     /**
-     * this screen's input mode (while a popup is active)
+     * this screen's suspended input mode (while a popup is active) TODO rename
      */
     private static InputMode savedMode;
     /**
@@ -159,6 +159,18 @@ public class GuiScreenController extends BasicScreenController {
     }
 
     /**
+     * Close the active popup and all its ancestors.
+     */
+    public static synchronized void closeAllPopups() {
+        if (hasActiveDialog()) {
+            closeActiveDialog();
+        }
+        if (hasActivePopupMenu()) {
+            closePopupMenu(activePopupMenu);
+        }
+    }
+
+    /**
      * If the specified popup menu is active, close it and all its ancestors.
      * This method is invoked after a menu selection is made.
      *
@@ -166,9 +178,6 @@ public class GuiScreenController extends BasicScreenController {
      */
     static synchronized void closePopupMenu(PopupMenu popupMenu) {
         Validate.nonNull(popupMenu, "popup menu");
-        if (activePopupMenu == null) {
-            throw new IllegalStateException("no active popup menu");
-        }
 
         if (popupMenu != activePopupMenu) {
             return;
@@ -181,7 +190,7 @@ public class GuiScreenController extends BasicScreenController {
         }
         activePopupMenu = null;
         /*
-         * Disable the popups's input mode and resume the screen's input mode.
+         * Disable the menu's input mode and resume the screen's input mode.
          */
         InputMode menuMode = InputMode.getActiveMode();
         menuMode.setEnabled(false);
@@ -465,6 +474,15 @@ public class GuiScreenController extends BasicScreenController {
         }
 
         return box;
+    }
+
+    /**
+     * Access the input mode of this screen while it is suspended by a popup.
+     *
+     * @return the pre-existing mode, or null if none or not suspended
+     */
+    protected InputMode getSuspendedMode() {
+        return savedMode;
     }
 
     /**
