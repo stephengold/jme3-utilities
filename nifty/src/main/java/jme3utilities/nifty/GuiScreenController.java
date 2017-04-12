@@ -67,9 +67,9 @@ public class GuiScreenController extends BasicScreenController {
      */
     private static Element dialogElement = null;
     /**
-     * this screen's suspended input mode (while a popup is active) TODO rename
+     * this screen's suspended input mode (while a popup is active)
      */
-    private static InputMode savedMode;
+    private static InputMode suspendedMode;
     /**
      * active popup menu (null means none are active)
      */
@@ -119,9 +119,9 @@ public class GuiScreenController extends BasicScreenController {
          */
         InputMode dialogMode = InputMode.getActiveMode();
         dialogMode.setEnabled(false);
-        if (savedMode != null) {
-            savedMode.resume();
-            savedMode = null;
+        if (suspendedMode != null) {
+            suspendedMode.resume();
+            suspendedMode = null;
         }
 
         assert !hasActiveDialog();
@@ -151,9 +151,9 @@ public class GuiScreenController extends BasicScreenController {
              */
             InputMode menuMode = InputMode.getActiveMode();
             menuMode.setEnabled(false);
-            if (savedMode != null) {
-                savedMode.resume();
-                savedMode = null;
+            if (suspendedMode != null) {
+                suspendedMode.resume();
+                suspendedMode = null;
             }
         }
     }
@@ -194,9 +194,9 @@ public class GuiScreenController extends BasicScreenController {
          */
         InputMode menuMode = InputMode.getActiveMode();
         menuMode.setEnabled(false);
-        if (savedMode != null) {
-            savedMode.resume();
-            savedMode = null;
+        if (suspendedMode != null) {
+            suspendedMode.resume();
+            suspendedMode = null;
         }
     }
 
@@ -332,10 +332,10 @@ public class GuiScreenController extends BasicScreenController {
          * Save and suspend the screen's input mode (if any) and
          * activate the input mode for modal dialogs.
          */
-        assert savedMode == null : savedMode;
-        savedMode = InputMode.getActiveMode();
-        if (savedMode != null) {
-            savedMode.suspend();
+        assert suspendedMode == null : suspendedMode;
+        suspendedMode = InputMode.getActiveMode();
+        if (suspendedMode != null) {
+            suspendedMode.suspend();
         }
         InputMode dialogMode = InputMode.findMode(DialogInputMode.name);
         dialogMode.setEnabled(true);
@@ -416,10 +416,10 @@ public class GuiScreenController extends BasicScreenController {
              * Save and suspend the screen's input mode (if any) and
              * activate the input mode for popup menus.
              */
-            assert savedMode == null : savedMode;
-            savedMode = InputMode.getActiveMode();
-            if (savedMode != null) {
-                savedMode.suspend();
+            assert suspendedMode == null : suspendedMode;
+            suspendedMode = InputMode.getActiveMode();
+            if (suspendedMode != null) {
+                suspendedMode.suspend();
             }
             InputMode menuMode = InputMode.findMode(MenuInputMode.name);
             menuMode.setEnabled(true);
@@ -482,7 +482,7 @@ public class GuiScreenController extends BasicScreenController {
      * @return the pre-existing mode, or null if none or not suspended
      */
     protected InputMode getSuspendedMode() {
-        return savedMode;
+        return suspendedMode;
     }
 
     /**
