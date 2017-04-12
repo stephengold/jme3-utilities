@@ -30,7 +30,7 @@
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
     <screen id="TestMultipleScreens/s1"
-            controller="jme3utilities.nifty.BasicScreenController">
+            controller="jme3utilities.nifty.GuiScreenController">
         <layer childLayout="vertical"
                backgroundColor="#444f">
             <panel/>
@@ -41,6 +41,12 @@
                    backgroundColor="#aaaf"
                    height="40px"
                    padding="10px">
+                <panel/>
+                <control name="button" id="id90ToAvoidOffendingNifty"
+                         label="open menu"
+                         width="100px">
+                    <interact onRelease="perform(open menu)"/>
+                </control>
                 <panel/>
                 <control name="button" id="id91ToAvoidOffendingNifty"
                          label="go to s2"
