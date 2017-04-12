@@ -5,7 +5,7 @@
 description = 'NiftyGUI library for jMonkeyEngine'
 ext {
     artifact = 'jme3-utilities-nifty'
-    version = '0.5.0'
+    version = '0.5.1'
     baseName = "${artifact}-${version}"
 }
 
