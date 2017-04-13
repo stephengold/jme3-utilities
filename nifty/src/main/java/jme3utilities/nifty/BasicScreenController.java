@@ -42,9 +42,11 @@ import jme3utilities.ui.InputMode;
 
 /**
  * GUI app state to control a Nifty screen. A screen is displayed if and only if
- * its app state is enabled. At most one screen is displayed at a time.
+ * its controller is enabled. No more than one screen can be enabled/displayed
+ * at a time.
  * <p>
- * Each instance is disabled at creation.
+ * Each instance is disabled at creation, with an option for automatic enabling
+ * during initialization.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -110,6 +112,17 @@ public class BasicScreenController
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Access the Nifty Screen instance.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    public Screen getScreen() {
+        Screen screen = nifty.getScreen(screenId);
+        assert screen != null;
+        return screen;
+    }
 
     /**
      * Test whether the mouse cursor is inside the identified element of this
@@ -203,7 +216,7 @@ public class BasicScreenController
         listener = newListener;
     }
     // *************************************************************************
-    // SimpleAppState methods
+    // AppState methods
 
     /**
      * Enable or disable this screen.
@@ -229,8 +242,6 @@ public class BasicScreenController
             disable();
         }
     }
-    // *************************************************************************
-    // GuiAppState methods
 
     /**
      * Initialize this controller prior to its 1st update.
@@ -292,17 +303,6 @@ public class BasicScreenController
     protected static Nifty getNifty() {
         assert nifty != null;
         return nifty;
-    }
-
-    /**
-     * Access the Nifty Screen instance.
-     *
-     * @return pre-existing instance (not null)
-     */
-    protected Screen getScreen() {
-        Screen screen = nifty.getScreen(screenId);
-        assert screen != null;
-        return screen;
     }
 
     /**
