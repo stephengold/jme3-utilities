@@ -5,7 +5,7 @@
 description = 'NiftyGUI library for jMonkeyEngine'
 ext {
     artifact = 'jme3-utilities-nifty'
-    version = '0.5.1'
+    version = "$jme3utilitiesniftyVersion"
     baseName = "${artifact}-${version}"
 }
 
@@ -18,10 +18,10 @@ dependencies {
     compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-niftygui:$jmonkeyengineVersion"
 
-    compile "jme3utilities:SkyControl:0.9.2"
+    compile "jme3utilities:SkyControl:$skycontrolVersion"
     //compile project(':SkyControl')
 
-    compile "jme3utilities:jme3-utilities-ui:0.5.0"
+    compile "jme3utilities:jme3-utilities-ui:$jme3utilitiesuiVersion"
     //compile project(':ui')
 }
 

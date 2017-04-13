@@ -2,6 +2,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 
 group = 'jme3utilities'
+
 //sourceCompatibility = '1.7'
 sourceCompatibility = '1.8'
 
@@ -15,7 +16,10 @@ gradle.projectsEvaluated {
 
 ext {
     jcommanderVersion = '1.68'
+    jme3utilitiesniftyVersion = '0.5.2'
+    jme3utilitiesuiVersion = '0.5.0'
     jmonkeyengineVersion = '3.1.0-stable'
+    skycontrolVersion = '0.9.2'
 }
 
 repositories {
