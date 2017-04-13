@@ -37,6 +37,8 @@ import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
+import de.lessvoid.nifty.tools.SizeValue;
+import de.lessvoid.nifty.tools.SizeValueType;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -381,16 +383,30 @@ public class GuiScreenController extends BasicScreenController {
         @SuppressWarnings("unchecked")
         Menu<String> menu = element.findNiftyControl("#menu", Menu.class);
         assert menu != null;
+        int maxChars = 0;
         for (int itemIndex = 0; itemIndex < itemArray.length; itemIndex++) {
             String item = itemArray[itemIndex];
-            String displayText = item.replace("$", "\\$");
+            String displayText;
             if (itemIndex < 9) {
-                displayText = String.format("%d] %s",
-                        itemIndex + 1, displayText);
+                displayText = String.format("%d] %s", itemIndex + 1, item);
+            } else {
+                displayText = item;
             }
+            int numChars = displayText.length();
+            if (numChars > maxChars) {
+                maxChars = numChars;
+            }
+            displayText = displayText.replace("$", "\\$");
             // TODO icon asset path for each item
             menu.addMenuItem(displayText, item);
         }
+        /*
+         * Size the menu to accommodate the item with the longest display text.
+         */
+        int pixelWidth = 50 + 7 * maxChars; // TODO use font information
+        SizeValue width = new SizeValue(pixelWidth, SizeValueType.Pixel);
+        menu.setWidth(width);
+
         String elementId = element.getId();
         assert elementId != null;
         /*
