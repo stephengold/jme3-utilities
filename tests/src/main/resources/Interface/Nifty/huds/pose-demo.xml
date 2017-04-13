@@ -210,13 +210,6 @@
                             </panel>
                         </panel>
 
-                        <panel style="buttonPanel">
-                            <control name="button" id="id5ToAvoidNiftyWarning"
-                                     label="Save changes">
-                                <interact onRelease="perform(write model)"/>
-                            </control>
-                        </panel>
-
                         <panel style="statusPanel">
                             <control name="label"
                                      text="Bone AxesControl:"/>
