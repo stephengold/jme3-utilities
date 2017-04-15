@@ -47,8 +47,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 /**
- * Miscellaneous utility methods. Aside from test cases, all methods here should
- * be public and static.
+ * Miscellaneous utility methods. All methods should be static.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -150,9 +149,9 @@ public class Misc {
     }
 
     /**
-     * Read the terse version string for this package.
+     * Read the terse version string for this library.
      *
-     * @return branch and revision of this file (not empty)
+     * @return branch and revision (not null, not empty)
      */
     public static String getVersionShort() {
         String verbose = getVersion();

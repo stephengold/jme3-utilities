@@ -245,8 +245,7 @@ public class PoseDemoHud
                     return;
 
                 case "load animation":
-                    Collection<String> animationNames =
-                            PoseDemo.modelState.listAnimationNames();
+                    Collection<String> animationNames = PoseDemo.modelState.listAnimationNames();
                     showPopup(animationMenuPrefix, animationNames);
                     return;
 
@@ -271,8 +270,7 @@ public class PoseDemoHud
                     return;
 
                 case "select bone":
-                    List<String> boneNames =
-                            PoseDemo.modelState.listBoneNames();
+                    List<String> boneNames = PoseDemo.modelState.listBoneNames();
                     MyString.reduce(boneNames, 20);
                     Collections.sort(boneNames);
                     showPopup(boneMenuPrefix, boneNames);
@@ -315,8 +313,7 @@ public class PoseDemoHud
                 String name = actionString.substring(namePos);
 
                 if (!PoseDemo.modelState.hasBone(name)) {
-                    List<String> boneNames =
-                            PoseDemo.modelState.listBoneNames(name);
+                    List<String> boneNames = PoseDemo.modelState.listBoneNames(name);
                     MyString.reduce(boneNames, 20);
                     Collections.sort(boneNames);
                     showPopup(boneMenuPrefix, boneNames);
@@ -355,7 +352,7 @@ public class PoseDemoHud
         guiApplication.onAction(actionString, ongoing, tpf);
     }
     // *************************************************************************
-    // GuiScreenController methods
+    // AppState methods
 
     /**
      * Initialize this controller prior to its 1st update.
