@@ -1,6 +1,11 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.5.2 released TBD
+## Version 0.6.0 released TBD
+
+Added WindowController class and revamped APIs (especially GuiScreenController)
+ making most methods public and non-static.
+
+## Version 0.5.2 released 13 April 2017
 
 Improved sizing of popup menus.
 
