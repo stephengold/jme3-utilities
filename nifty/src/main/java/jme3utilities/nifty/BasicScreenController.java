@@ -65,24 +65,25 @@ public class BasicScreenController
     // fields
 
     /**
-     * action listener for GUI actions from the screen
+     * action listener for GUI actions from the controlled screen
      */
     private ActionListener listener = null;
     /**
-     * if true, enable this screen controller during initialization; if false,
-     * leave it disabled: set by constructor
+     * if true, enable this controller during initialization; if false, leave it
+     * disabled: set by constructor
      */
     private boolean enableDuringInitialization;
     /**
-     * false before this screen controller starts, then true ever after
+     * false before the controlled screen starts, then true ever after
      */
     private boolean hasStarted = false;
     /**
-     * Nifty id of this screen: set by constructor
+     * Nifty id of the controlled screen: set by constructor
      */
     final private String screenId;
     /**
-     * path to the Nifty XML layout asset for this screen: set by constructor
+     * path to the Nifty XML layout asset for the controlled screen: set by
+     * constructor
      */
     final private String xmlAssetPath;
     // *************************************************************************
@@ -114,7 +115,17 @@ public class BasicScreenController
     // new methods exposed
 
     /**
-     * Access the Nifty Screen instance.
+     * Access the Nifty instance.
+     *
+     * @return pre-existing instance (not null)
+     */
+    static Nifty getNifty() {
+        assert nifty != null;
+        return nifty;
+    }
+
+    /**
+     * Access the controlled screen.
      *
      * @return the pre-existing instance (not null)
      */
@@ -122,6 +133,16 @@ public class BasicScreenController
         Screen screen = nifty.getScreen(screenId);
         assert screen != null;
         return screen;
+    }
+
+    /**
+     * Test whether Nifty has started the controlled screen yet. As long as the
+     * screen has not started, events from the screen should be ignored.
+     *
+     * @return true if started, false if not started yet
+     */
+    public boolean hasStarted() {
+        return hasStarted;
     }
 
     /**
@@ -296,16 +317,6 @@ public class BasicScreenController
     // new protected methods
 
     /**
-     * Access the Nifty instance.
-     *
-     * @return pre-existing instance (not null)
-     */
-    protected static Nifty getNifty() {
-        assert nifty != null;
-        return nifty;
-    }
-
-    /**
      * Read the Nifty screen id.
      *
      * @return id string (not null)
@@ -313,16 +324,6 @@ public class BasicScreenController
     protected String getScreenId() {
         assert screenId != null;
         return screenId;
-    }
-
-    /**
-     * Test whether Nifty has started the screen yet. As long as the screen has
-     * not started, Nifty events should be ignored.
-     *
-     * @return true if started, false if not started yet
-     */
-    protected boolean hasStarted() {
-        return hasStarted;
     }
     // *************************************************************************
     // private methods
