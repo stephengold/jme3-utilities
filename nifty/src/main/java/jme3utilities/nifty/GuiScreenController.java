@@ -66,19 +66,19 @@ public class GuiScreenController extends BasicScreenController {
     /**
      * Nifty element for the active modal dialog (null means none active)
      */
-    private static Element dialogElement = null;
+    private Element dialogElement = null;
     /**
-     * this screen's suspended input mode (while a popup is active)
+     * this controller's suspended input mode (while a popup is active)
      */
-    private static InputMode suspendedMode;
+    private InputMode suspendedMode;
     /**
      * active popup menu (null means none are active)
      */
-    private static PopupMenu activePopupMenu = null;
+    private PopupMenu activePopupMenu = null;
     /**
      * action prefix of the active modal dialog (null means none active)
      */
-    private static String dialogActionPrefix = null;
+    private String dialogActionPrefix = null;
     // *************************************************************************
     // constructors
 
@@ -104,7 +104,7 @@ public class GuiScreenController extends BasicScreenController {
      * Escape from the active modal dialog and return control to the screen
      * without performing an action.
      */
-    static void closeActiveDialog() {
+    void closeActiveDialog() {
         if (!hasActiveDialog()) {
             throw new IllegalStateException("no active dialog");
         }
@@ -132,7 +132,7 @@ public class GuiScreenController extends BasicScreenController {
      * without making a selection. Invoked from NiftyMethodInvoker using
      * reflection, so the class and method must both be public.
      */
-    public static synchronized void closeActivePopupMenu() {
+    public synchronized void closeActivePopupMenu() {
         if (activePopupMenu == null) {
             throw new IllegalStateException("no active popup menu");
         }
@@ -161,7 +161,7 @@ public class GuiScreenController extends BasicScreenController {
     /**
      * Close the active popup and its ancestors, if any.
      */
-    public static synchronized void closeAllPopups() {
+    public synchronized void closeAllPopups() {
         if (hasActiveDialog()) {
             closeActiveDialog();
         }
@@ -176,7 +176,7 @@ public class GuiScreenController extends BasicScreenController {
      *
      * @param popupMenu which menu to close (not null)
      */
-    static synchronized void closePopupMenu(PopupMenu popupMenu) {
+    synchronized void closePopupMenu(PopupMenu popupMenu) {
         Validate.nonNull(popupMenu, "popup menu");
 
         if (popupMenu != activePopupMenu) {
@@ -203,7 +203,7 @@ public class GuiScreenController extends BasicScreenController {
     /**
      * Perform the dialog entry action, then close the dialog.
      */
-    static void dialogEntry() {
+    void dialogEntry() {
         if (!hasActiveDialog()) {
             throw new IllegalStateException("no active dialog");
         }
@@ -281,7 +281,7 @@ public class GuiScreenController extends BasicScreenController {
      *
      * @return true if there's an active dialog, false if there's none
      */
-    static boolean hasActiveDialog() {
+    boolean hasActiveDialog() {
         return dialogElement != null;
     }
 
@@ -290,7 +290,7 @@ public class GuiScreenController extends BasicScreenController {
      *
      * @return true if there's an active popup menu, false if there's none
      */
-    static boolean hasActivePopupMenu() {
+    boolean hasActivePopupMenu() {
         return activePopupMenu != null;
     }
 
@@ -488,7 +488,7 @@ public class GuiScreenController extends BasicScreenController {
      * @param actionPrefix action prefix (not null, usually the final character
      * will be a blank)
      */
-    public static void showDialog(String promptMessage, String defaultValue,
+    public void showDialog(String promptMessage, String defaultValue,
             String okLabel, String actionPrefix) {
         Validate.nonNull(actionPrefix, "action prefix");
         /*
@@ -535,7 +535,7 @@ public class GuiScreenController extends BasicScreenController {
      * usually the final character will be a blank)
      * @param items collection of menu items (not null, unaffected)
      */
-    public static void showPopup(String actionPrefix,
+    public void showPopup(String actionPrefix,
             Collection<String> items) {
         Validate.nonNull(actionPrefix, "action prefix");
         Validate.nonNull(items, "collection");
@@ -551,7 +551,7 @@ public class GuiScreenController extends BasicScreenController {
      * usually the final character will be a blank)
      * @param itemArray array of menu items (not null, unaffected)
      */
-    public static synchronized void showPopup(String actionPrefix,
+    public synchronized void showPopup(String actionPrefix,
             String[] itemArray) {
         Validate.nonNull(actionPrefix, "prefix");
         Validate.nonNull(itemArray, "item array");
@@ -595,8 +595,13 @@ public class GuiScreenController extends BasicScreenController {
         /*
          * Create a subscriber to handle the new menu's events.
          */
-        PopupMenu popup = new PopupMenu(elementId, actionPrefix,
-                itemArray, activePopupMenu);
+        PopupMenu popup;
+        if (activePopupMenu == null) {
+            popup = new PopupMenu(elementId, actionPrefix, itemArray, this);
+        } else {
+            popup = new PopupMenu(elementId, actionPrefix,
+                    itemArray, activePopupMenu);
+        }
         Screen screen = nifty.getCurrentScreen();
         String controlId = menu.getId();
         nifty.subscribe(screen, controlId, MenuItemActivatedEvent.class, popup);
@@ -605,12 +610,7 @@ public class GuiScreenController extends BasicScreenController {
          */
         nifty.showPopup(screen, elementId, null);
 
-        if (activePopupMenu != null) {
-            /*
-             * Disable the parent popup menu.
-             */
-            activePopupMenu.setEnabled(false);
-        } else {
+        if (activePopupMenu == null) {
             /*
              * Save and suspend the screen's input mode (if any) and
              * activate the input mode for popup menus.
@@ -622,6 +622,11 @@ public class GuiScreenController extends BasicScreenController {
             }
             InputMode menuMode = InputMode.findMode(MenuInputMode.name);
             menuMode.setEnabled(true);
+        } else {
+            /*
+             * Disable the parent popup menu.
+             */
+            activePopupMenu.setEnabled(false);
         }
 
         setActivePopupMenu(popup);
@@ -634,7 +639,7 @@ public class GuiScreenController extends BasicScreenController {
      * (not null, unaffected)
      * @param itemArray array of menu items (not null, unaffected)
      */
-    public static void showPopup(String[] actionPrefixWords,
+    public void showPopup(String[] actionPrefixWords,
             String[] itemArray) {
         Validate.nonNull(itemArray, "item array");
         /*
@@ -696,9 +701,9 @@ public class GuiScreenController extends BasicScreenController {
     // private methods
 
     /**
-     * Update the static reference to the active Nifty popup menu.
+     * Update the reference to the active Nifty popup menu.
      */
-    private static void setActivePopupMenu(PopupMenu popupMenu) {
+    private void setActivePopupMenu(PopupMenu popupMenu) {
         activePopupMenu = popupMenu;
     }
 

@@ -52,20 +52,18 @@ abstract public class GuiApplication extends ActionApplication {
     /**
      * asset path to Nifty XML for a generic popup menu
      */
-    final private static String popupMenuAsssetPath =
-            "Interface/Nifty/popup-menu.xml";
+    final private static String popupMenuAsssetPath = "Interface/Nifty/popup-menu.xml";
     /**
      * asset path to Nifty XML for a modal text-entry dialog
      */
-    final private static String textEntryDialogAssetPath =
-            "Interface/Nifty/dialogs/text-entry.xml";
+    final private static String textEntryDialogAssetPath = "Interface/Nifty/dialogs/text-entry.xml";
     // *************************************************************************
     // fields
 
     /**
      * currently enabled screen controller (null means there's none)
      */
-    private static BasicScreenController enabledScreen = null;
+    private BasicScreenController enabledScreen = null;
     /**
      * Nifty display: set in {@link #actionInitializeApplication()}
      */
@@ -78,14 +76,14 @@ abstract public class GuiApplication extends ActionApplication {
      *
      * @return the pre-existing instance (or null if none)
      */
-    public static BasicScreenController getEnabledScreen() {
+    public BasicScreenController getEnabledScreen() {
         return enabledScreen;
     }
 
     /**
      * Access the Nifty instance.
      *
-     * @return pre-existing instance (not null)
+     * @return the pre-existing instance (not null)
      */
     public Nifty getNifty() {
         Nifty result = getNiftyDisplay().getNifty();
@@ -113,7 +111,7 @@ abstract public class GuiApplication extends ActionApplication {
      *
      * @param newScreen (or null for none)
      */
-    public static void setEnabledScreen(BasicScreenController newScreen) {
+    public void setEnabledScreen(BasicScreenController newScreen) {
         logger.log(Level.INFO, "newScreen={0}", newScreen);
         assert newScreen == null || enabledScreen == null;
         enabledScreen = newScreen;

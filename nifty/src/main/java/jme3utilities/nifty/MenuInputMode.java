@@ -88,17 +88,18 @@ class MenuInputMode extends InputMode {
             return;
         }
         logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
-        GuiScreenController screen =
-                (GuiScreenController) GuiApplication.getEnabledScreen();
-        if (screen == null) {
+        GuiApplication guiApplication = (GuiApplication) actionApplication;
+        BasicScreenController controller = guiApplication.getEnabledScreen();
+        if (controller == null) {
             return;
         }
-        assert GuiScreenController.hasActivePopupMenu();
+        GuiScreenController gsc = (GuiScreenController) controller;
+        assert gsc.hasActivePopupMenu();
         if (actionString.equals("close")) {
             /*
              * Close the active popup menu.
              */
-            GuiScreenController.closeActivePopupMenu();
+            gsc.closeActivePopupMenu();
 
         } else if (actionString.matches("select [1-9]")) {
             /*
@@ -108,7 +109,7 @@ class MenuInputMode extends InputMode {
             String positionString = actionString.substring("select ".length());
             int position = Integer.parseInt(positionString);
             int index = position - 1;
-            screen.selectMenuItem(index);
+            gsc.selectMenuItem(index);
 
         } else {
             logger.log(Level.WARNING, "Action {0} was not handled.",

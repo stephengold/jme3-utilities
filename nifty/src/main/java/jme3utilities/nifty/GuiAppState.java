@@ -53,11 +53,11 @@ public class GuiAppState extends ActionAppState {
     /**
      * GUI application instance: set by initialize()
      */
-    protected static GuiApplication guiApplication;
+    protected GuiApplication guiApplication;
     /**
      * Nifty instance: set by initialize()
      */
-    protected static Nifty nifty;
+    protected Nifty nifty;
     /**
      * Nifty display: set by initialize()
      */
@@ -90,11 +90,10 @@ public class GuiAppState extends ActionAppState {
         }
 
         super.initialize(sm, app);
-        guiApplication = (GuiApplication) app;
 
+        guiApplication = (GuiApplication) app;
         nifty = guiApplication.getNifty();
         assert nifty != null;
-
         niftyDisplay = guiApplication.getNiftyDisplay();
         assert niftyDisplay != null;
     }

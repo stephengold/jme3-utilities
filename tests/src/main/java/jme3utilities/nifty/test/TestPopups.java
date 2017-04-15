@@ -145,7 +145,9 @@ public class TestPopups extends GuiApplication {
     public void onAction(String actionString, boolean ongoing, float ignored) {
         if (ongoing) {
             if (actionString.equals("search")) {
-                GuiScreenController.showDialog("Enter new search string:",
+                GuiScreenController gsc;
+                gsc = (GuiScreenController) getEnabledScreen();
+                gsc.showDialog("Enter new search string:",
                         searchString, "Set", searchDialogPrefix);
                 return;
 
@@ -200,10 +202,11 @@ public class TestPopups extends GuiApplication {
             for (int i = 0; i < files.length; i++) {
                 names[i] = files[i].getName();
             }
+            GuiScreenController gsc = (GuiScreenController) getEnabledScreen();
             if (actionString.endsWith("/")) {
-                GuiScreenController.showPopup(actionString, names);
+                gsc.showPopup(actionString, names);
             } else {
-                GuiScreenController.showPopup(actionString + "/", names);
+                gsc.showPopup(actionString + "/", names);
             }
         }
     }

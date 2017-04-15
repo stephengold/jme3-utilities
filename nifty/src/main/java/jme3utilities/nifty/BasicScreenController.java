@@ -115,11 +115,11 @@ public class BasicScreenController
     // new methods exposed
 
     /**
-     * Access the Nifty instance.
+     * Access the Nifty instance that owns the controlled screen.
      *
-     * @return pre-existing instance (not null)
+     * @return the pre-existing instance (not null)
      */
-    static Nifty getNifty() {
+    Nifty getNifty() {
         assert nifty != null;
         return nifty;
     }
@@ -187,12 +187,12 @@ public class BasicScreenController
      *
      * @param actionString (not null)
      */
-    public static void perform(String actionString) {
+    public void perform(String actionString) {
         Validate.nonNull(actionString, "action string");
         logger.log(Level.INFO, "actionString={0}",
                 MyString.quote(actionString));
 
-        BasicScreenController screen = GuiApplication.getEnabledScreen();
+        BasicScreenController screen = guiApplication.getEnabledScreen();
         ActionListener actionListener = screen.getListener();
         boolean isOngoing = true;
         float tpf = 0f;
@@ -211,7 +211,7 @@ public class BasicScreenController
      *
      * @param actionString (not null)
      */
-    public static void performActive(String actionString) {
+    public void performActive(String actionString) {
         Validate.nonNull(actionString, "action string");
         logger.log(Level.INFO, "actionString={0}",
                 MyString.quote(actionString));
@@ -295,7 +295,7 @@ public class BasicScreenController
      */
     @Override
     public void bind(Nifty nifty, Screen screen) {
-        assert nifty == BasicScreenController.nifty : nifty;
+        assert nifty == getNifty() : nifty;
         assert screen == getScreen() : screen;
     }
 
@@ -335,7 +335,7 @@ public class BasicScreenController
         assert isInitialized();
         assert isEnabled();
 
-        BasicScreenController enabledScreen = GuiApplication.getEnabledScreen();
+        BasicScreenController enabledScreen = guiApplication.getEnabledScreen();
         assert enabledScreen == this : enabledScreen;
         logger.log(Level.INFO, "screenId={0}", MyString.quote(screenId));
         /*
@@ -345,7 +345,7 @@ public class BasicScreenController
 
         NiftyEventAnnotationProcessor.unprocess(this);
 
-        GuiApplication.setEnabledScreen(null);
+        guiApplication.setEnabledScreen(null);
         super.setEnabled(false);
     }
 
@@ -365,7 +365,7 @@ public class BasicScreenController
         nifty.gotoScreen(screenId);
         NiftyEventAnnotationProcessor.process(this);
 
-        GuiApplication.setEnabledScreen(this);
+        guiApplication.setEnabledScreen(this);
         super.setEnabled(true);
     }
 

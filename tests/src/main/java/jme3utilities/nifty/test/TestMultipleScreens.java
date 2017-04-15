@@ -158,7 +158,9 @@ public class TestMultipleScreens extends GuiApplication {
                 case "open menu":
                     assert s1.isEnabled();
                     String[] items = {"s2", "s3"};
-                    GuiScreenController.showPopup("go ", items);
+                    GuiScreenController gsc;
+                    gsc = (GuiScreenController) getEnabledScreen();
+                    gsc.showPopup("go ", items);
                     return;
             }
         }

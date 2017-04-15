@@ -32,11 +32,12 @@ import java.util.logging.Logger;
 import org.bushe.swing.event.EventTopicSubscriber;
 
 /**
- * Event subscriber for a simple Nifty popup menu (or submenu) whose items are
+ * A controller for a simple Nifty popup menu (or submenu) whose items are
  * Strings.
  * <p>
- * When a menu item is activated, invoke GuiScreenController.perform() with the
- * item appended to the popup menu's action prefix, then close the popup.
+ * When a menu item is activated, the controller invokes
+ * GuiScreenController.perform() with the item appended to the popup menu's
+ * action prefix, then closes the popup.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -54,44 +55,71 @@ public class PopupMenu
     // fields
 
     /**
-     * the parent popup menu which opened the menu, or null if not a submenu:
-     * set by constructor
+     *
+     */
+    final private GuiScreenController guiScreenController;
+    /**
+     * the parent popup menu which opened the menu, or null if not a submenu
      */
     final private PopupMenu parent;
     /**
-     * prefix for the menu's action strings: set by constructor
+     * prefix for the menu's action strings
      */
     final private String actionPrefix;
     /**
-     * items in the menu: set by constructor
+     * items in the menu
      */
     final private String[] itemArray;
     /**
-     * Nifty id of the popup: set by constructor
+     * Nifty id of the popup
      */
     final private String popupId;
     // *************************************************************************
     // constructors
 
     /**
-     * Instantiate a record of a popup menu or submenu.
+     * Instantiate a controller for a popup menu that isn't a sub-menu.
      *
      * @param popupId Nifty id of the popup element (not null)
      * @param actionPrefix prefix for action strings (not null)
-     * @param itemArray items in the popup menu (not null, unaffected)
-     * @param parent the menu which opened this submenu (or null if not a
-     * submenu)
+     * @param itemArray items in the menu (not null, unaffected)
+     * @param guiScreenController the screen controller which opened this popup
+     * (not null)
+     */
+    PopupMenu(String popupId, String actionPrefix, String[] itemArray,
+            GuiScreenController guiScreenController) {
+        assert popupId != null;
+        assert actionPrefix != null;
+        assert itemArray != null;
+        assert guiScreenController != null;
+
+        this.popupId = popupId;
+        this.actionPrefix = actionPrefix;
+        this.itemArray = itemArray.clone();
+        this.parent = null;
+        this.guiScreenController = guiScreenController;
+    }
+
+    /**
+     * Instantiate a controller for a popup sub-menu.
+     *
+     * @param popupId Nifty id of the popup element (not null)
+     * @param actionPrefix prefix for action strings (not null)
+     * @param itemArray items in the menu (not null, unaffected)
+     * @param parent the menu controller which opened this popup (not null)
      */
     PopupMenu(String popupId, String actionPrefix, String[] itemArray,
             PopupMenu parent) {
         assert popupId != null;
         assert actionPrefix != null;
         assert itemArray != null;
+        assert parent != null;
 
         this.popupId = popupId;
         this.actionPrefix = actionPrefix;
         this.itemArray = itemArray.clone();
         this.parent = parent;
+        this.guiScreenController = parent.getGuiScreenController();
     }
     // *************************************************************************
     // new methods exposed
@@ -120,12 +148,21 @@ public class PopupMenu
      * Close this menu.
      */
     void close() {
-        Nifty nifty = GuiScreenController.getNifty();
+        Nifty nifty = guiScreenController.getNifty();
         nifty.closePopup(popupId);
     }
 
     /**
-     * Access the parent: the popup menu which opened this submenu.
+     * Access the screen which owns this menu.
+     *
+     * @return the pre-existing instance
+     */
+    GuiScreenController getGuiScreenController() {
+        return guiScreenController;
+    }
+
+    /**
+     * Access the parent menu: the popup menu which opened this submenu.
      *
      * @return the pre-existing instance, or null if not a submenu
      */
@@ -167,11 +204,11 @@ public class PopupMenu
         /*
          * Perform the action described by the action string.
          */
-        GuiScreenController.perform(actionString);
+        guiScreenController.perform(actionString);
         /*
          * If this menu is still active, close it and all its ancestors.
          */
-        GuiScreenController.closePopupMenu(this);
+        guiScreenController.closePopupMenu(this);
     }
     // *************************************************************************
     // private methods
@@ -182,7 +219,7 @@ public class PopupMenu
      * @return the pre-existing instance (not null)
      */
     private Element getElement() {
-        Nifty nifty = GuiScreenController.getNifty();
+        Nifty nifty = guiScreenController.getNifty();
         Element element = nifty.findPopupByName(popupId);
 
         assert element != null;
