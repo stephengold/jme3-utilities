@@ -28,6 +28,9 @@ package jme3utilities;
 import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Transform;
+import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.SceneProcessor;
 import com.jme3.renderer.ViewPort;
@@ -45,6 +48,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import jme3utilities.math.MyVector3f;
 
 /**
  * Miscellaneous utility methods. All methods should be static.
@@ -145,7 +149,7 @@ public class Misc {
      * @return project name, library name, branch, and revision
      */
     public static String getVersion() {
-        return "jme3-utilities SkyControl master $Rev: 0.9.2+1 $";
+        return "jme3-utilities SkyControl master $Rev: 0.9.2+2 $";
     }
 
     /**
@@ -175,6 +179,40 @@ public class Misc {
         IntMap<VertexBuffer> buffers = mesh.getBuffers();
         int key = Type.TexCoord.ordinal();
         boolean result = buffers.containsKey(key);
+        return result;
+    }
+
+    /**
+     * Test the specified quaternion for exact identity.
+     *
+     * @param quaternion which quaternion to test (not null)
+     * @return true if exactly equal to
+     * {@link com.jme3.math.Quaternion#IDENTITY}, otherwise false
+     */
+    public static boolean isIdentity(Quaternion quaternion) {
+        return quaternion.getW() == 1f && quaternion.getX() == 0f
+                && quaternion.getY() == 0f && quaternion.getZ() == 0f;
+    }
+
+    /**
+     * Test the specified transform for exact identity.
+     *
+     * @param transform which transform to test (not null)
+     * @return true if exactly equal to
+     * {@link com.jme3.math.Transform#IDENTITY}, otherwise false
+     */
+    public static boolean isIdentity(Transform transform) {
+        boolean result = false;
+
+        Vector3f translation = transform.getTranslation();
+        if (MyVector3f.isZero(translation)) {
+            Quaternion rotation = transform.getRotation();
+            if (isIdentity(rotation)) {
+                Vector3f scale = transform.getScale();
+                result = (scale.x == 1f && scale.y == 1f && scale.z == 1f);
+            }
+        }
+
         return result;
     }
 
