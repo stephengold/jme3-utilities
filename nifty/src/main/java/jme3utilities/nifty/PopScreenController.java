@@ -275,7 +275,7 @@ public class PopScreenController extends BasicScreenController {
         if (!hasActiveDialog()) {
             throw new IllegalStateException("no active dialog");
         }
-        
+
         if (dialogActionPrefix != null) {
             TextField textField = dialogElement.findNiftyControl("#textfield",
                     TextField.class);
@@ -399,12 +399,12 @@ public class PopScreenController extends BasicScreenController {
      * usually the final character will be a blank)
      * @param items collection of menu items (not null, unaffected)
      */
-    public void showPopup(String actionPrefix, Collection<String> items) {
+    public void showPopupMenu(String actionPrefix, Collection<String> items) {
         Validate.nonNull(actionPrefix, "action prefix");
         Validate.nonNull(items, "collection");
 
         String[] itemArray = MyString.toArray(items);
-        showPopup(actionPrefix, itemArray);
+        showPopupMenu(actionPrefix, itemArray);
     }
 
     /**
@@ -414,7 +414,7 @@ public class PopScreenController extends BasicScreenController {
      * usually the final character will be a blank)
      * @param itemArray array of menu items (not null, unaffected)
      */
-    public synchronized void showPopup(String actionPrefix,
+    public synchronized void showPopupMenu(String actionPrefix,
             String[] itemArray) {
         Validate.nonNull(actionPrefix, "prefix");
         Validate.nonNull(itemArray, "item array");
@@ -476,7 +476,7 @@ public class PopScreenController extends BasicScreenController {
      * (not null, unaffected)
      * @param itemArray array of menu items (not null, unaffected)
      */
-    public void showPopup(String[] actionPrefixWords,
+    public void showPopupMenu(String[] actionPrefixWords,
             String[] itemArray) {
         Validate.nonNull(itemArray, "item array");
         /*
@@ -488,7 +488,7 @@ public class PopScreenController extends BasicScreenController {
             actionPrefix = MyString.join(actionPrefixWords) + " ";
         }
 
-        showPopup(actionPrefix, itemArray);
+        showPopupMenu(actionPrefix, itemArray);
     }
 
     /**
@@ -526,5 +526,4 @@ public class PopScreenController extends BasicScreenController {
 
         activateDialog(popupId, actionPrefix);
     }
-
 }

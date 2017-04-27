@@ -254,7 +254,7 @@ public class TestBindScreen extends GuiApplication {
                 case asMenu:
                     String[] items = {asHelp};
                     GuiScreenController gsc = (GuiScreenController) getEnabledScreen();
-                    gsc.showPopup("", items);
+                    gsc.showPopupMenu("", items);
                     return;
                 case asPitchDown:
                     starfield.setRotation(0.2f, pitchAxis);

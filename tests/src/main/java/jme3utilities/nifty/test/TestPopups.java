@@ -211,9 +211,9 @@ public class TestPopups extends GuiApplication {
                 names[i] = files[i].getName();
             }
             if (actionString.endsWith("/")) {
-                screen.showPopup(actionString, names);
+                screen.showPopupMenu(actionString, names);
             } else {
-                screen.showPopup(actionString + "/", names);
+                screen.showPopupMenu(actionString + "/", names);
             }
         }
     }

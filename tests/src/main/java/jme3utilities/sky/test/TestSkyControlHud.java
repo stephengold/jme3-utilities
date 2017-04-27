@@ -548,7 +548,7 @@ public class TestSkyControlHud
 
                 case "phase waning":
                 case "phase waxing":
-                    showPopup(actionString + "-",
+                    showPopupMenu(actionString + "-",
                             new String[]{"crescent", "gibbous"});
                     return;
 
@@ -741,7 +741,7 @@ public class TestSkyControlHud
      * Display a menu of lunar phases.
      */
     private void showPhaseMenu() {
-        showPopup("phase ", new String[]{
+        showPopupMenu("phase ", new String[]{
             "custom", "full", "none", "waning", "waxing"
         });
     }
@@ -750,7 +750,7 @@ public class TestSkyControlHud
      * Display a menu of star maps.
      */
     private void showStarMapMenu() {
-        showPopup("star-map ", new String[]{
+        showPopupMenu("star-map ", new String[]{
             "16m", "4m", "nebula"
         });
     }
@@ -759,7 +759,7 @@ public class TestSkyControlHud
      * Display a menu of sun styles.
      */
     private void showStyleMenu() {
-        showPopup("style ", new String[]{
+        showPopupMenu("style ", new String[]{
             "chaotic", "disc", "hazy-disc", "rayed", "t0neg0d"
         });
     }

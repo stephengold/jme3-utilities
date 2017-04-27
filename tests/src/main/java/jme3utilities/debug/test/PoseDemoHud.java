@@ -246,11 +246,11 @@ public class PoseDemoHud
 
                 case "load animation":
                     Collection<String> animationNames = PoseDemo.modelState.listAnimationNames();
-                    showPopup(animationMenuPrefix, animationNames);
+                    showPopupMenu(animationMenuPrefix, animationNames);
                     return;
 
                 case "load model":
-                    showPopup(modelMenuPrefix, modelNames);
+                    showPopupMenu(modelMenuPrefix, modelNames);
                     return;
 
                 case "rename animation":
@@ -273,14 +273,14 @@ public class PoseDemoHud
                     List<String> boneNames = PoseDemo.modelState.listBoneNames();
                     MyString.reduce(boneNames, 20);
                     Collections.sort(boneNames);
-                    showPopup(boneMenuPrefix, boneNames);
+                    showPopupMenu(boneMenuPrefix, boneNames);
                     return;
 
                 case "select keyframe":
                     List<String> options = PoseDemo.modelState.listKeyframes();
                     if (options != null) {
                         MyString.reduce(options, 20);
-                        showPopup(keyframeMenuPrefix, options);
+                        showPopupMenu(keyframeMenuPrefix, options);
                     }
                     return;
             }
@@ -316,7 +316,7 @@ public class PoseDemoHud
                     List<String> boneNames = PoseDemo.modelState.listBoneNames(name);
                     MyString.reduce(boneNames, 20);
                     Collections.sort(boneNames);
-                    showPopup(boneMenuPrefix, boneNames);
+                    showPopupMenu(boneMenuPrefix, boneNames);
                     return;
                 }
 
@@ -331,7 +331,7 @@ public class PoseDemoHud
                 if (!options.contains(name)) {
                     MyString.matchPrefix(options, name);
                     MyString.reduce(options, 20);
-                    showPopup(keyframeMenuPrefix, options);
+                    showPopupMenu(keyframeMenuPrefix, options);
                     return;
                 }
 

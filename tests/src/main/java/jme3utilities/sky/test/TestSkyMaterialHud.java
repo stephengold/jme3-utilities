@@ -576,7 +576,7 @@ public class TestSkyMaterialHud
             return;
         }
 
-        showPopup(actionPrefix, new String[]{
+        showPopupMenu(actionPrefix, new String[]{
             "clear", "cyclone", "fbm", "overcast", "t0neg0d"
         });
     }
@@ -589,7 +589,7 @@ public class TestSkyMaterialHud
             return;
         }
 
-        showPopup("phase ", new String[]{
+        showPopupMenu("phase ", new String[]{
             "full", "waning-crescent", "waning-gibbous",
             "waxing-crescent", "waxing-gibbous"
         });
@@ -599,7 +599,7 @@ public class TestSkyMaterialHud
      * Display a menu of star maps.
      */
     private void showStarsMenu() {
-        showPopup("stars ", new String[]{
+        showPopupMenu("stars ", new String[]{
             "16m/northern", "16m/southern", "16m/wiltshire", "none",
             "northern", "southern", "wiltshire"
         });
@@ -613,7 +613,7 @@ public class TestSkyMaterialHud
             return;
         }
 
-        showPopup("style ", new String[]{
+        showPopupMenu("style ", new String[]{
             "chaotic", "disc", "hazy-disc", "rayed", "t0neg0d"
         });
     }

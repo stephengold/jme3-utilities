@@ -160,7 +160,7 @@ public class TestMultipleScreens extends GuiApplication {
                     String[] items = {"s2", "s3"};
                     PopScreenController psc;
                     psc = (PopScreenController) getEnabledScreen();
-                    psc.showPopup("go ", items);
+                    psc.showPopupMenu("go ", items);
                     return;
             }
         }
