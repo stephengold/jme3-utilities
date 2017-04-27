@@ -112,7 +112,7 @@ public class MySkeleton {
         SkeletonControl control = spatial.getControl(SkeletonControl.class);
         if (control == null) {
             throw new IllegalArgumentException(
-                    "expected the spatial to have an SkeletonControl");
+                    "expected the spatial to have a SkeletonControl");
         }
 
         Skeleton skeleton = control.getSkeleton();
