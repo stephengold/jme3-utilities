@@ -55,7 +55,7 @@ public class PopupMenu
     // fields
 
     /**
-     *
+     * screen controller for this menu
      */
     final private GuiScreenController guiScreenController;
     /**
@@ -150,6 +150,16 @@ public class PopupMenu
     void close() {
         Nifty nifty = guiScreenController.getNifty();
         nifty.closePopup(popupId);
+    }
+
+    /**
+     * Read the Nifty id of the popup element.
+     *
+     * @return the pre-existing instance
+     */
+    String getElementId() {
+        assert popupId != null;
+        return popupId;
     }
 
     /**

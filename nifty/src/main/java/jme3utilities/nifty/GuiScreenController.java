@@ -481,12 +481,12 @@ public class GuiScreenController extends BasicScreenController {
     }
 
     /**
-     * Activate a modal dialog box.
+     * Activate a newly-created modal dialog box. TODO sort methods
      *
      * @param popupId the Nifty id of the popup element (not null)
      * @param actionPrefix action prefix (may be null)
      */
-    public void showDialog(String popupId, String actionPrefix) {
+    public void activateDialog(String popupId, String actionPrefix) {
         Validate.nonNull(popupId, "popup id");
         /*
          * Make the popup visible without setting the focus.
@@ -520,18 +520,18 @@ public class GuiScreenController extends BasicScreenController {
         String[] lines = bodyText.split("\n");
         int numLines = lines.length;
 
-        int maxLength = 0;
+        int maxChars = 0;
         for (int lineIndex = 0; lineIndex < numLines; lineIndex++) {
             String lineText = lines[lineIndex];
             int length = lineText.length();
-            if (length > maxLength) {
-                maxLength = length;
+            if (length > maxChars) {
+                maxChars = length;
             }
         }
         /*
          * Create a popup element for the dialog box. Nifty assigns it a new id.
          */
-        if (numLines > 10 || maxLength > 80) {
+        if (numLines > 10 || maxChars > 80) { // TODO use font information
             dialogElement = nifty.createPopup("dialogs/info43");
         } else {
             dialogElement = nifty.createPopup("dialogs/info10");
@@ -553,7 +553,7 @@ public class GuiScreenController extends BasicScreenController {
             }
         }
 
-        showDialog(popupId, null);
+        activateDialog(popupId, null);
     }
 
     /**
@@ -589,7 +589,7 @@ public class GuiScreenController extends BasicScreenController {
                 Button.class);
         okButton.setText(okLabel);
 
-        showDialog(popupId, actionPrefix);
+        activateDialog(popupId, actionPrefix);
     }
 
     /**
@@ -658,41 +658,15 @@ public class GuiScreenController extends BasicScreenController {
         /*
          * Create a subscriber to handle the new menu's events.
          */
-        PopupMenu popup;
+        PopupMenu popupMenu;
         if (activePopupMenu == null) {
-            popup = new PopupMenu(elementId, actionPrefix, itemArray, this);
+            popupMenu = new PopupMenu(elementId, actionPrefix, itemArray, this);
         } else {
-            popup = new PopupMenu(elementId, actionPrefix,
+            popupMenu = new PopupMenu(elementId, actionPrefix,
                     itemArray, activePopupMenu);
         }
-        Screen screen = nifty.getCurrentScreen();
-        String controlId = menu.getId();
-        nifty.subscribe(screen, controlId, MenuItemActivatedEvent.class, popup);
-        /*
-         * Make the popup visible without specifying a focus element.
-         */
-        nifty.showPopup(screen, elementId, null);
 
-        if (activePopupMenu == null) {
-            /*
-             * Save and suspend the screen's input mode (if any) and
-             * activate the input mode for popup menus.
-             */
-            assert suspendedMode == null : suspendedMode;
-            suspendedMode = InputMode.getActiveMode();
-            if (suspendedMode != null) {
-                suspendedMode.suspend();
-            }
-            InputMode menuMode = InputMode.findMode(MenuInputMode.name);
-            menuMode.setEnabled(true);
-        } else {
-            /*
-             * Disable the parent popup menu.
-             */
-            activePopupMenu.setEnabled(false);
-        }
-
-        setActivePopupMenu(popup);
+        activatePopupMenu(popupMenu, menu);
     }
 
     /**
@@ -715,6 +689,50 @@ public class GuiScreenController extends BasicScreenController {
         }
 
         showPopup(actionPrefix, itemArray);
+    }
+
+    /**
+     * Activate a newly-created popup menu. TODO sort methods
+     *
+     * @param popupMenu (not null)
+     * @param menu (not null)
+     */
+    public void activatePopupMenu(PopupMenu popupMenu, Menu<String> menu) {
+        Validate.nonNull(popupMenu, "popup menu");
+        /*
+         * Subscribe to menu events.
+         */
+        Screen screen = nifty.getCurrentScreen();
+        String controlId = menu.getId();
+        nifty.subscribe(screen, controlId, MenuItemActivatedEvent.class,
+                popupMenu);
+        /*
+         * Make the popup visible without specifying a focus element.
+         */
+        String elementId = popupMenu.getElementId();
+        nifty.showPopup(screen, elementId, null);
+
+        if (activePopupMenu == null) {
+            /*
+             * Save and suspend the screen's input mode (if any) and
+             * activate the input mode for popup menus.
+             */
+            assert suspendedMode == null : suspendedMode;
+            suspendedMode = InputMode.getActiveMode();
+            if (suspendedMode != null) {
+                suspendedMode.suspend();
+            }
+            InputMode menuMode = InputMode.findMode(MenuInputMode.name);
+            menuMode.setEnabled(true);
+
+        } else {
+            /*
+             * Disable the parent popup menu.
+             */
+            activePopupMenu.setEnabled(false);
+        }
+
+        activePopupMenu = popupMenu;
     }
 
     /**
@@ -762,13 +780,6 @@ public class GuiScreenController extends BasicScreenController {
     }
     // *************************************************************************
     // private methods
-
-    /**
-     * Update the reference to the active Nifty popup menu.
-     */
-    private void setActivePopupMenu(PopupMenu popupMenu) {
-        activePopupMenu = popupMenu;
-    }
 
     /**
      * Update the status of a Nifty slider. This assumes a naming convention
