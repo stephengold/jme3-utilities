@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2017, Stephen Gold
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ * Redistributions of source code must retain the above copyright
+ notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ notice, this list of conditions and the following disclaimer in the
+ documentation and/or other materials provided with the distribution.
+ * Stephen Gold's name may not be used to endorse or promote products
+ derived from this software without specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL STEPHEN GOLD BE LIABLE FOR ANY
+ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!--
+ Nifty XML to lay out a 43-line informational dialog box for a screen
+ controlled by a GuiScreenController.
+
+ When a dialog box is active, the rest of the screen dims by 50%.
+-->
+<nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
+
+    <!-- define styles and controls -->
+    <useStyles filename="nifty-default-styles.xml"/>
+    <useStyles filename="Interface/Nifty/styles/bats.xml"/>
+    <useControls filename="nifty-default-controls.xml"/>
+
+    <popup id="dialogs/info43"
+           backgroundColor="#0008"
+           childLayout="vertical">
+        <panel/>
+        <panel childLayout="horizontal"
+               height="300px">
+            <panel/>
+            <panel childLayout="vertical"
+                   backgroundColor="#aaaf"
+                   padding="8px,8px,8px,8px"
+                   width="500px">
+                <control name="label" id="#title"
+                         halign="left"
+                         width="*"/>
+                <panel height="8px"/>
+                <control name="scrollPanel"
+                         height="220px"
+                         pageSizeX="200" pageSizeY="200"
+                         stepSizeX="50" stepSizeY="50"
+                         style="bats-scroll-panel">
+                    <panel childLayout="vertical"
+                           backgroundColor="#acff"
+                           padding="0px,0px,6px,6px"
+                           height="999px" width="999px">
+                        <control name="label" id="#1" halign="left" width="*"/>
+                        <control name="label" id="#2" halign="left" width="*"/>
+                        <control name="label" id="#3" halign="left" width="*"/>
+                        <control name="label" id="#4" halign="left" width="*"/>
+                        <control name="label" id="#5" halign="left" width="*"/>
+                        <control name="label" id="#6" halign="left" width="*"/>
+                        <control name="label" id="#7" halign="left" width="*"/>
+                        <control name="label" id="#8" halign="left" width="*"/>
+                        <control name="label" id="#9" halign="left" width="*"/>
+                        <control name="label" id="#10" halign="left" width="*"/>
+                        <control name="label" id="#11" halign="left" width="*"/>
+                        <control name="label" id="#12" halign="left" width="*"/>
+                        <control name="label" id="#13" halign="left" width="*"/>
+                        <control name="label" id="#14" halign="left" width="*"/>
+                        <control name="label" id="#15" halign="left" width="*"/>
+                        <control name="label" id="#16" halign="left" width="*"/>
+                        <control name="label" id="#17" halign="left" width="*"/>
+                        <control name="label" id="#18" halign="left" width="*"/>
+                        <control name="label" id="#19" halign="left" width="*"/>
+                        <control name="label" id="#20" halign="left" width="*"/>
+                        <control name="label" id="#21" halign="left" width="*"/>
+                        <control name="label" id="#22" halign="left" width="*"/>
+                        <control name="label" id="#23" halign="left" width="*"/>
+                        <control name="label" id="#24" halign="left" width="*"/>
+                        <control name="label" id="#25" halign="left" width="*"/>
+                        <control name="label" id="#26" halign="left" width="*"/>
+                        <control name="label" id="#27" halign="left" width="*"/>
+                        <control name="label" id="#28" halign="left" width="*"/>
+                        <control name="label" id="#29" halign="left" width="*"/>
+                        <control name="label" id="#30" halign="left" width="*"/>
+                        <control name="label" id="#31" halign="left" width="*"/>
+                        <control name="label" id="#32" halign="left" width="*"/>
+                        <control name="label" id="#33" halign="left" width="*"/>
+                        <control name="label" id="#34" halign="left" width="*"/>
+                        <control name="label" id="#35" halign="left" width="*"/>
+                        <control name="label" id="#36" halign="left" width="*"/>
+                        <control name="label" id="#37" halign="left" width="*"/>
+                        <control name="label" id="#38" halign="left" width="*"/>
+                        <control name="label" id="#39" halign="left" width="*"/>
+                        <control name="label" id="#40" halign="left" width="*"/>
+                        <control name="label" id="#41" halign="left" width="*"/>
+                        <control name="label" id="#42" halign="left" width="*"/>
+                        <control name="label" id="#43" halign="left" width="*"/>
+                    </panel>
+                </control>
+                <panel height="8px"/>
+                <panel childLayout="horizontal">
+                    <panel/>
+                    <panel width="10px"/>
+                    <control name="button" id="#dismiss"
+                             label="Dismiss"
+                             width="50px">
+                        <interact onRelease="performActive(cancel)"/>
+                    </control>
+                    <panel/>
+                </panel>
+            </panel>
+            <panel/>
+        </panel>
+        <panel/>
+    </popup>
+</nifty>
