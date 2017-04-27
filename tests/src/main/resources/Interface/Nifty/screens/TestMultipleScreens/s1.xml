@@ -26,11 +26,11 @@
 -->
 
 <!--
- Layout for screen s1 of the TestMultipleScreens application.
+ Nifty XML to lay out screen s1 of the TestMultipleScreens application.
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
     <screen id="TestMultipleScreens/s1"
-            controller="jme3utilities.nifty.GuiScreenController">
+            controller="jme3utilities.nifty.PopScreenController">
         <layer childLayout="vertical"
                backgroundColor="#444f">
             <panel/>

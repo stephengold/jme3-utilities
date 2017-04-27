@@ -33,7 +33,7 @@ import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.nifty.BasicScreenController;
 import jme3utilities.nifty.GuiApplication;
-import jme3utilities.nifty.GuiScreenController;
+import jme3utilities.nifty.PopScreenController;
 import jme3utilities.ui.InputMode;
 
 /**
@@ -57,7 +57,7 @@ public class TestMultipleScreens extends GuiApplication {
     /**
      * controller for screen s1: set in guiInitializeApplication()
      */
-    private GuiScreenController s1 = null;
+    private PopScreenController s1 = null;
     /**
      * controller for screen s2: set in guiInitializeApplication()
      */
@@ -112,7 +112,7 @@ public class TestMultipleScreens extends GuiApplication {
         /*
          * Create and attach a screen controller for each screen.
          */
-        s1 = new GuiScreenController("TestMultipleScreens/s1",
+        s1 = new PopScreenController("TestMultipleScreens/s1",
                 "Interface/Nifty/screens/TestMultipleScreens/s1.xml", true);
         s1.setListener(inputMode);
         boolean success = stateManager.attach(s1);
@@ -158,9 +158,9 @@ public class TestMultipleScreens extends GuiApplication {
                 case "open menu":
                     assert s1.isEnabled();
                     String[] items = {"s2", "s3"};
-                    GuiScreenController gsc;
-                    gsc = (GuiScreenController) getEnabledScreen();
-                    gsc.showPopup("go ", items);
+                    PopScreenController psc;
+                    psc = (PopScreenController) getEnabledScreen();
+                    psc.showPopup("go ", items);
                     return;
             }
         }
