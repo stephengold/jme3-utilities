@@ -519,10 +519,19 @@ public class GuiScreenController extends BasicScreenController {
 
         String[] lines = bodyText.split("\n");
         int numLines = lines.length;
+
+        int maxLength = 0;
+        for (int lineIndex = 0; lineIndex < numLines; lineIndex++) {
+            String lineText = lines[lineIndex];
+            int length = lineText.length();
+            if (length > maxLength) {
+                maxLength = length;
+            }
+        }
         /*
          * Create a popup element for the dialog box. Nifty assigns it a new id.
          */
-        if (numLines > 10) {
+        if (numLines > 10 || maxLength > 80) {
             dialogElement = nifty.createPopup("dialogs/info43");
         } else {
             dialogElement = nifty.createPopup("dialogs/info10");
