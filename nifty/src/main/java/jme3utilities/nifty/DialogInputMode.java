@@ -91,19 +91,23 @@ class DialogInputMode extends InputMode {
 
         GuiApplication guiApplication = (GuiApplication) actionApplication;
         BasicScreenController controller = guiApplication.getEnabledScreen();
-        GuiScreenController gsc = (GuiScreenController) controller;
-        assert gsc.hasActiveDialog();
+        if (controller == null) {
+            return;
+        }
+        PopScreenController psc = (PopScreenController) controller;
+        assert psc.hasActiveDialog();
+
         if (actionString.equals("cancel")) {
             /*
              * Close the dialog without performing any other action.
              */
-            gsc.closeActiveDialog();
+            psc.closeActiveDialog();
 
         } else if (actionString.matches("enter")) {
             /*
-             * Perform the dialog entry action and then close the dialog.
+             * Perform the dialog entry/commit action and then close the dialog.
              */
-            gsc.dialogEntry();
+            psc.dialogEntry();
 
         } else {
             logger.log(Level.WARNING, "Action {0} was not handled.",
