@@ -124,7 +124,7 @@ public class PopScreenController extends BasicScreenController {
     }
 
     /**
-     * Activate a newly-created popup menu. TODO sort methods
+     * Activate a newly-created popup menu.
      *
      * @param popupMenu (not null)
      * @param menu (not null)
@@ -391,7 +391,7 @@ public class PopScreenController extends BasicScreenController {
     }
 
     /**
-     * Create and activate a popup menu. TODO sort methods
+     * Create and activate a popup menu.
      *
      * @param actionPrefix common prefix of the menu's action strings (not null,
      * usually the final character will be a blank)
