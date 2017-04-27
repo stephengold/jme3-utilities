@@ -26,10 +26,10 @@
 -->
 
 <!--
- Nifty XML to create a simple text-entry dialog box for a screen controlled
+ Nifty XML to lay out a simple text-entry dialog box for a screen controlled
  by a GuiScreenController.
 
- When a popup is activated, the rest of the screen dims by 50%.
+ When a dialog box is active, the rest of the screen dims by 50%.
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
 
@@ -72,7 +72,7 @@
                              label="OK"
                              width="50px">
                         <interact onRelease="performActive(enter)"/>
-                    </control>/>
+                    </control>
                     <panel/>
                 </panel>
             </panel>
