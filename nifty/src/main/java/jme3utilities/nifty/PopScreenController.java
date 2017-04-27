@@ -275,15 +275,17 @@ public class PopScreenController extends BasicScreenController {
         if (!hasActiveDialog()) {
             throw new IllegalStateException("no active dialog");
         }
-
-        TextField textField = dialogElement.findNiftyControl("#textfield",
-                TextField.class);
-        String enteredText = textField.getRealText();
-        /*
-         * Convert the text into an action string and perform the action.
-         */
-        String entryActionString = dialogActionPrefix + enteredText;
-        perform(entryActionString);
+        
+        if (dialogActionPrefix != null) {
+            TextField textField = dialogElement.findNiftyControl("#textfield",
+                    TextField.class);
+            String enteredText = textField.getRealText();
+            /*
+             * Convert the text into an action string and perform the action.
+             */
+            String entryActionString = dialogActionPrefix + enteredText;
+            perform(entryActionString);
+        }
 
         closeActiveDialog();
     }
