@@ -57,7 +57,7 @@ public class PopupMenu
     /**
      * screen controller for this menu
      */
-    final private GuiScreenController guiScreenController;
+    final private PopScreenController screenController;
     /**
      * the parent popup menu which opened the menu, or null if not a submenu
      */
@@ -83,21 +83,21 @@ public class PopupMenu
      * @param popupId Nifty id of the popup element (not null)
      * @param actionPrefix prefix for action strings (not null)
      * @param itemArray items in the menu (not null, unaffected)
-     * @param guiScreenController the screen controller which opened this popup
+     * @param screenController the screen controller which opened this popup
      * (not null)
      */
     PopupMenu(String popupId, String actionPrefix, String[] itemArray,
-            GuiScreenController guiScreenController) {
+            PopScreenController screenController) {
         assert popupId != null;
         assert actionPrefix != null;
         assert itemArray != null;
-        assert guiScreenController != null;
+        assert screenController != null;
 
         this.popupId = popupId;
         this.actionPrefix = actionPrefix;
         this.itemArray = itemArray.clone();
         this.parent = null;
-        this.guiScreenController = guiScreenController;
+        this.screenController = screenController;
     }
 
     /**
@@ -119,7 +119,7 @@ public class PopupMenu
         this.actionPrefix = actionPrefix;
         this.itemArray = itemArray.clone();
         this.parent = parent;
-        this.guiScreenController = parent.getGuiScreenController();
+        this.screenController = parent.getScreenController();
     }
     // *************************************************************************
     // new methods exposed
@@ -148,7 +148,7 @@ public class PopupMenu
      * Close this menu.
      */
     void close() {
-        Nifty nifty = guiScreenController.getNifty();
+        Nifty nifty = screenController.getNifty();
         nifty.closePopup(popupId);
     }
 
@@ -167,8 +167,8 @@ public class PopupMenu
      *
      * @return the pre-existing instance
      */
-    GuiScreenController getGuiScreenController() {
-        return guiScreenController;
+    PopScreenController getScreenController() {
+        return screenController;
     }
 
     /**
@@ -214,11 +214,11 @@ public class PopupMenu
         /*
          * Perform the action described by the action string.
          */
-        guiScreenController.perform(actionString);
+        screenController.perform(actionString);
         /*
          * If this menu is still active, close it and all its ancestors.
          */
-        guiScreenController.closePopupMenu(this);
+        screenController.closePopupMenu(this);
     }
     // *************************************************************************
     // private methods
@@ -229,7 +229,7 @@ public class PopupMenu
      * @return the pre-existing instance (not null)
      */
     private Element getElement() {
-        Nifty nifty = guiScreenController.getNifty();
+        Nifty nifty = screenController.getNifty();
         Element element = nifty.findPopupByName(popupId);
 
         assert element != null;
