@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.6.1 released TBD
+## Version 0.6.1 released 27 April 2017
 
 Added informational dialog boxes and changed APIs, renaming showDialog() and
  showPopup() methods.
