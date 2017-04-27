@@ -144,10 +144,19 @@ public class TestPopups extends GuiApplication {
     @Override
     public void onAction(String actionString, boolean ongoing, float ignored) {
         if (ongoing) {
-            if (actionString.equals("search")) {
-                GuiScreenController gsc;
-                gsc = (GuiScreenController) getEnabledScreen();
-                gsc.showDialog("Enter new search string:",
+            GuiScreenController gsc = (GuiScreenController) getEnabledScreen();
+            if (actionString.equals("about")) {
+                String msg = "TestPopups is a GUI application for testing/demon"
+                        + "strating popup elements, including modal dialog boxe"
+                        + "s and multi-level popup menus.\nMumble line 2\n";
+                for (int i = 3; i <= 10; i++) {
+                    msg += String.format("line %d\n", i);
+                }
+                gsc.showInfoDialog("About the TestPopups application", msg);
+                return;
+
+            } else if (actionString.equals("search")) {
+                gsc.showTextEntryDialog("Enter new search string:",
                         searchString, "Set", searchDialogPrefix);
                 return;
 

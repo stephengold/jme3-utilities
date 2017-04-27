@@ -201,7 +201,8 @@ public class GuiScreenController extends BasicScreenController {
     }
 
     /**
-     * Perform the dialog entry action, then close the dialog.
+     * Perform the entry/commit action of the active dialog box, then close the
+     * dialog box.
      */
     void dialogEntry() {
         if (!hasActiveDialog()) {
@@ -480,34 +481,13 @@ public class GuiScreenController extends BasicScreenController {
     }
 
     /**
-     * Create and activate a simple modal dialog.
+     * Activate a modal dialog box.
      *
-     * @param promptMessage text to display above the textfield (not null)
-     * @param defaultValue default text for the textfield (not null)
-     * @param okLabel label for the "OK" button (not null)
-     * @param actionPrefix action prefix (not null, usually the final character
-     * will be a blank)
+     * @param popupId the Nifty id of the popup element (not null)
+     * @param actionPrefix action prefix (may be null)
      */
-    public void showDialog(String promptMessage, String defaultValue,
-            String okLabel, String actionPrefix) {
-        Validate.nonNull(actionPrefix, "action prefix");
-        /*
-         * Create a popup using "dialogs/text-entry" as a base.
-         * Nifty assigns the popup a new id.
-         */
-        dialogElement = nifty.createPopup("dialogs/text-entry");
-        String popupId = dialogElement.getId();
-        assert popupId != null;
-
-        Element prompt = dialogElement.findElementById("#prompt");
-        TextRenderer textRenderer = prompt.getRenderer(TextRenderer.class);
-        textRenderer.setText(promptMessage);
-        TextField textField = dialogElement.findNiftyControl("#textfield",
-                TextField.class);
-        textField.setText(defaultValue);
-        Button okButton = dialogElement.findNiftyControl("#ok",
-                Button.class);
-        okButton.setText(okLabel);
+    public void showDialog(String popupId, String actionPrefix) {
+        Validate.nonNull(popupId, "popup id");
         /*
          * Make the popup visible without setting the focus.
          */
@@ -529,14 +509,88 @@ public class GuiScreenController extends BasicScreenController {
     }
 
     /**
-     * Create and activate a popup menu.
+     * Create, customize, and activate a modal informational dialog box.
+     *
+     * @param titleText text to display above the scrollable area (not null)
+     * @param bodyText text to display in the scrollable area (not null)
+     */
+    public void showInfoDialog(String titleText, String bodyText) {
+        Validate.nonNull(titleText, "title text");
+
+        String[] lines = bodyText.split("\n");
+        int numLines = lines.length;
+        /*
+         * Create a popup element for the dialog box. Nifty assigns it a new id.
+         */
+        if (numLines > 10) {
+            dialogElement = nifty.createPopup("dialogs/info43");
+        } else {
+            dialogElement = nifty.createPopup("dialogs/info10");
+        }
+        String popupId = dialogElement.getId();
+        assert popupId != null;
+
+        Element titleElement = dialogElement.findElementById("#title");
+        TextRenderer renderer = titleElement.getRenderer(TextRenderer.class);
+        renderer.setText(titleText);
+
+        for (int lineIndex = 0; lineIndex < numLines; lineIndex++) {
+            String id = String.format("#%d", lineIndex + 1);
+            Element lineElement = dialogElement.findElementById(id);
+            if (lineElement != null) {
+                renderer = lineElement.getRenderer(TextRenderer.class);
+                String lineText = lines[lineIndex];
+                renderer.setText(lineText);
+            }
+        }
+
+        showDialog(popupId, null);
+    }
+
+    /**
+     * Create, customize, and activate a modal text-entry dialog box.
+     *
+     * @param promptMessage text to display above the textfield (not null)
+     * @param defaultValue default text for the textfield (not null)
+     * @param okLabel text for the enter/commit button label (not null)
+     * @param actionPrefix prefix for the enter/commit action (not null, usually
+     * the final character will be a blank)
+     */
+    public void showTextEntryDialog(String promptMessage, String defaultValue,
+            String okLabel, String actionPrefix) {
+        Validate.nonNull(promptMessage, "prompt message");
+        Validate.nonNull(defaultValue, "default value");
+        Validate.nonNull(okLabel, "commit button label");
+        Validate.nonNull(actionPrefix, "action prefix");
+        /*
+         * Create a popup using the "dialogs/text-entry" layout as a base.
+         * Nifty assigns the popup a new id.
+         */
+        dialogElement = nifty.createPopup("dialogs/text-entry");
+        String popupId = dialogElement.getId();
+        assert popupId != null;
+
+        Element prompt = dialogElement.findElementById("#prompt");
+        TextRenderer textRenderer = prompt.getRenderer(TextRenderer.class);
+        textRenderer.setText(promptMessage);
+        TextField textField = dialogElement.findNiftyControl("#textfield",
+                TextField.class);
+        textField.setText(defaultValue);
+        Button okButton = dialogElement.findNiftyControl("#ok",
+                Button.class);
+        okButton.setText(okLabel);
+
+        showDialog(popupId, actionPrefix);
+    }
+
+    /**
+     * Create and activate a popup menu. TODO sort methods
      *
      * @param actionPrefix common prefix of the menu's action strings (not null,
      * usually the final character will be a blank)
      * @param items collection of menu items (not null, unaffected)
      */
-    public void showPopup(String actionPrefix,
-            Collection<String> items) {
+    public void showPopup(String actionPrefix, Collection<String> items) {
         Validate.nonNull(actionPrefix, "action prefix");
         Validate.nonNull(items, "collection");
 
@@ -719,7 +773,6 @@ public class GuiScreenController extends BasicScreenController {
             String statusSuffix) {
         assert namePrefix != null;
         assert statusSuffix != null;
-
         /*
          * Select output precision based on the magnitude of the value.
          */

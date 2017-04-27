@@ -26,7 +26,7 @@
 -->
 
 <!--
- Screen layout for the TestPopupMenus application.
+ Nifty XML to lay out the main screen for the TestPopups application.
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
     <screen id="TestPopups/mainScreen"
@@ -48,6 +48,12 @@
                          label="Set search string"
                          width="100px">
                     <interact onRelease="perform(search)"/>
+                </control>
+                <panel/>
+                <control name="button" id="id93ToAvoidOffendingNifty"
+                         label="About this app"
+                         width="100px">
+                    <interact onRelease="perform(about)"/>
                 </control>
                 <panel/>
             </panel>
