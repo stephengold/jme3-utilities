@@ -144,7 +144,6 @@ public class TestPopups extends GuiApplication {
     @Override
     public void onAction(String actionString, boolean ongoing, float ignored) {
         if (ongoing) {
-            GuiScreenController gsc = (GuiScreenController) getEnabledScreen();
             if (actionString.equals("about")) {
                 String msg = "TestPopups is a GUI application for testing/demon"
                         + "strating popup elements, including modal dialog boxe"
@@ -152,11 +151,11 @@ public class TestPopups extends GuiApplication {
                 for (int i = 3; i <= 10; i++) {
                     msg += String.format("line %d\n", i);
                 }
-                gsc.showInfoDialog("About the TestPopups application", msg);
+                screen.showInfoDialog("About the TestPopups application", msg);
                 return;
 
             } else if (actionString.equals("search")) {
-                gsc.showTextEntryDialog("Enter new search string:",
+                screen.showTextEntryDialog("Enter new search string:",
                         searchString, "Set", searchDialogPrefix);
                 return;
 
@@ -211,11 +210,10 @@ public class TestPopups extends GuiApplication {
             for (int i = 0; i < files.length; i++) {
                 names[i] = files[i].getName();
             }
-            GuiScreenController gsc = (GuiScreenController) getEnabledScreen();
             if (actionString.endsWith("/")) {
-                gsc.showPopup(actionString, names);
+                screen.showPopup(actionString, names);
             } else {
-                gsc.showPopup(actionString + "/", names);
+                screen.showPopup(actionString + "/", names);
             }
         }
     }
