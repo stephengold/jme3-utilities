@@ -322,8 +322,6 @@ public class GuiScreenController extends PopScreenController {
 
         return value;
     }
-    // *************************************************************************
-    // private methods
 
     /**
      * Update the status of a Nifty slider. This assumes a naming convention
@@ -333,7 +331,7 @@ public class GuiScreenController extends PopScreenController {
      * @param value value of the slider
      * @param statusSuffix suffix to specify a unit of measurement (not null)
      */
-    private void updateSliderStatus(String namePrefix, float value,
+    public void updateSliderStatus(String namePrefix, float value,
             String statusSuffix) {
         assert namePrefix != null;
         assert statusSuffix != null;
