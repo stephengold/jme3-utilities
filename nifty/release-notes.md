@@ -1,5 +1,9 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.6.2 released TBD
+
+Public access to updateSliderStatus() in GuiScreenController class.
+
 ## Version 0.6.1 released 27 April 2017
 
 Added informational dialog boxes and changed APIs, renaming showDialog() and
