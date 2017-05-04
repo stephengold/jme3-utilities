@@ -37,6 +37,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.SkeletonDebugger;
+import com.jme3.util.clone.Cloner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
@@ -79,10 +80,10 @@ public class SkeletonDebugControl extends SubtreeControl {
     // *************************************************************************
     // fields
 
-    /*
+    /**
      * wireframe material (set by constructor)
      */
-    final private Material material;
+    private Material material;
     // *************************************************************************
     // constructors
 
@@ -227,7 +228,7 @@ public class SkeletonDebugControl extends SubtreeControl {
         }
     }
     // *************************************************************************
-    // SubtreeControl methods
+    // AbstractControl methods
 
     /**
      * Alter the visibility of the visualization.
@@ -255,5 +256,34 @@ public class SkeletonDebugControl extends SubtreeControl {
             subtree.setShadowMode(RenderQueue.ShadowMode.Off);
         }
         super.setEnabled(newState);
+    }
+    // *************************************************************************
+    // JmeCloneable methods
+
+    /**
+     * Convert this shallow-cloned control into a deep-cloned one, using the
+     * specified cloner and original to resolve copied fields.
+     *
+     * @param cloner the cloner currently cloning this control
+     * @param original the control from which this control was shallow-cloned
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        material = cloner.clone(material);
+    }
+    // *************************************************************************
+    // Object methods
+
+    /**
+     * Create a shallow copy of this control.
+     *
+     * @return a new control, equivalent to this one
+     * @throws CloneNotSupportedException if superclass isn't cloneable
+     */
+    @Override
+    public SkeletonDebugControl clone() throws CloneNotSupportedException {
+        SkeletonDebugControl clone = (SkeletonDebugControl) super.clone();
+        return clone;
     }
 }

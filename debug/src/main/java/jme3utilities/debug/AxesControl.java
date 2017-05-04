@@ -201,6 +201,20 @@ public class AxesControl extends SubtreeControl {
         }
     }
     // *************************************************************************
+    // Object methods
+
+    /**
+     * Create a shallow copy of this control.
+     *
+     * @return a new control, equivalent to this one
+     * @throws CloneNotSupportedException if superclass isn't cloneable
+     */
+    @Override
+    public AxesControl clone() throws CloneNotSupportedException {
+        AxesControl clone = (AxesControl) super.clone();
+        return clone;
+    }
+    // *************************************************************************
     // private methods
 
     /**
