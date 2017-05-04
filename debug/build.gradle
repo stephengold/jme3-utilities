@@ -5,7 +5,7 @@
 description = 'debugging library for jMonkeyEngine'
 ext {
     artifact = 'jme3-utilities-debug'
-    version = '0.5.0'
+    version = "$jme3utilitiesdebugVersion"
     baseName = "${artifact}-${version}"
 }
 
@@ -16,7 +16,8 @@ sourcesJar { baseName "${project.ext.baseName}" }
 
 dependencies {
     compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
-    compile "jme3utilities:SkyControl:0.9.2"
+    
+    compile "jme3utilities:SkyControl:$skycontrolVersion"
     //compile project(':SkyControl')
 }
 

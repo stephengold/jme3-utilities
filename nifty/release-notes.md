@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.6.2 released TBD
+## Version 0.6.2 released 2 May 2017
 
 Public access to updateSliderStatus() in GuiScreenController class.
 
