@@ -49,12 +49,15 @@ import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.debug.AxesControl;
+import jme3utilities.debug.DebugVersion;
 import jme3utilities.debug.Printer;
 import jme3utilities.nifty.GuiApplication;
+import jme3utilities.nifty.LibraryVersion;
 import jme3utilities.nifty.bind.BindScreen;
 import jme3utilities.sky.SkyControl;
 import jme3utilities.sky.Updater;
 import jme3utilities.ui.InputMode;
+import jme3utilities.ui.UiVersion;
 
 /**
  * GUI application to demonstrate AxesControl and SkeletonDebugControl.
@@ -89,8 +92,7 @@ public class PoseDemo extends GuiApplication {
     /**
      * path to hotkey bindings configuration asset
      */
-    final private static String hotkeyBindingsAssetPath =
-            "Interface/bindings/PoseDemo.properties";
+    final private static String hotkeyBindingsAssetPath = "Interface/bindings/PoseDemo.properties";
     /**
      * name of the platform geometry
      */
@@ -98,8 +100,7 @@ public class PoseDemo extends GuiApplication {
     /**
      * path to texture asset for the platform
      */
-    final private static String platformTextureAssetPath =
-            "Textures/Terrain/splat/dirt.jpg";
+    final private static String platformTextureAssetPath = "Textures/Terrain/splat/dirt.jpg";
     // *************************************************************************
     // fields
 
@@ -112,6 +113,10 @@ public class PoseDemo extends GuiApplication {
      */
     static DirectionalLightShadowFilter dlsf = null;
     /**
+     * app state to manage the loaded model
+     */
+    static ModelState modelState = new ModelState();
+    /**
      * app state to manage the camera
      */
     static PoseCameraState cameraState = new PoseCameraState();
@@ -123,10 +128,6 @@ public class PoseDemo extends GuiApplication {
      * printer for scene dump
      */
     final private static Printer printer = new Printer();
-    /**
-     * app state to manage the loaded model
-     */
-    static ModelState modelState = new ModelState();
     // *************************************************************************
     // new methods exposed
 
@@ -149,6 +150,7 @@ public class PoseDemo extends GuiApplication {
         Misc.setLoggingLevels(Level.WARNING);
         Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
+        logger.setLevel(Level.INFO);
         /*
          * Instantiate the application.
          */
@@ -180,6 +182,12 @@ public class PoseDemo extends GuiApplication {
                 MyString.quote(JmeVersion.FULL_NAME));
         logger.log(Level.INFO, "SkyControl version is {0}",
                 MyString.quote(Misc.getVersionShort()));
+        logger.log(Level.INFO, "jme3-utilities-debug version is {0}",
+                MyString.quote(DebugVersion.getVersionShort()));
+        logger.log(Level.INFO, "jme3-utilities-ui version is {0}",
+                MyString.quote(UiVersion.getVersionShort()));
+        logger.log(Level.INFO, "jme3-utilities-nifty version is {0}",
+                MyString.quote(LibraryVersion.getVersionShort()));
         /*
          * Attach screen controllers for the HUD, the scene, and BindScreen.
          */
