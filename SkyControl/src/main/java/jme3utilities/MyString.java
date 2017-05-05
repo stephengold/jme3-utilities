@@ -27,6 +27,7 @@ package jme3utilities;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -237,6 +238,31 @@ public class MyString {
             }
             list.add(longestPrefix);
         }
+    }
+
+    /**
+     * Extract the remainder of the specified string after removing the
+     * specified prefix.
+     *
+     * @param input input string (not null)
+     * @param prefix prefix string (not null)
+     * @return the remainder of the input (not null)
+     */
+    public static String remainder(String input, String prefix) {
+        Validate.nonNull(input, "input");
+        Validate.nonNull(prefix, "prefix");
+        if (!input.startsWith(prefix)) {
+            logger.log(Level.SEVERE, "input={0}, prefix={1}", new Object[]{
+                MyString.quote(input), MyString.quote(prefix)
+            });
+            throw new IllegalArgumentException("input must start with prefix.");
+        }
+
+        int endPosition = prefix.length();
+        String result = input.substring(endPosition);
+
+        assert result != null;
+        return result;
     }
 
     /**
