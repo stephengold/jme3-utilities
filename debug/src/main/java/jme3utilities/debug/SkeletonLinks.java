@@ -126,4 +126,17 @@ public class SkeletonLinks extends Mesh {
          */
         updateBound();
     }
+    // *************************************************************************
+    // Object methods
+
+    /**
+     * Create a shallow copy of this mesh.
+     *
+     * @return a new control, equivalent to this one
+     */
+    @Override
+    public SkeletonLinks clone() {
+        SkeletonLinks clone = (SkeletonLinks) super.clone();
+        return clone;
+    }
 }

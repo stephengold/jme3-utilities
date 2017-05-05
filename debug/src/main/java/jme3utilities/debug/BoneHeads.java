@@ -101,4 +101,17 @@ public class BoneHeads extends Mesh {
          */
         updateBound();
     }
+    // *************************************************************************
+    // Object methods
+
+    /**
+     * Create a shallow copy of this mesh.
+     *
+     * @return a new control, equivalent to this one
+     */
+    @Override
+    public BoneHeads clone() {
+        BoneHeads clone = (BoneHeads) super.clone();
+        return clone;
+    }
 }
