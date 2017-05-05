@@ -1,6 +1,6 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.3 released on TBD
+## Version 0.9.3 released on 5 May 2017
 
 Notable changes:
  + added utility methods

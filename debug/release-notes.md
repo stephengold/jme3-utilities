@@ -1,6 +1,10 @@
 # release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.5.1 released on TBD
+## Version 0.5.2 released on TBD
+
+SkeletonDebugControl no longer depends on jME3's SkeletonDebug.
+
+## Version 0.5.1 released on 4 May 2017
 
 Made AxesControl and SkeletonDebugControl cloneable.
 
