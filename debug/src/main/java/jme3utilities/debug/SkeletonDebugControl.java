@@ -36,7 +36,6 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.debug.SkeletonDebugger;
 import com.jme3.util.clone.Cloner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,10 +48,10 @@ import jme3utilities.Validate;
 /**
  * Subtree control to visualize the skeleton of a skeletonized node.
  * <p>
- * The controlled spatial must be a Node.
+ * The controlled spatial must be a node.
  * <p>
- * The control is disabled by default. When enabled, it attaches a
- * SkeletonDebugger to the scene graph.
+ * The control is disabled by default. When enabled, it attaches a node and two
+ * geometries to the scene graph.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -60,6 +59,10 @@ public class SkeletonDebugControl extends SubtreeControl {
     // *************************************************************************
     // constants and loggers
 
+    /**
+     * default color for the wireframe material (blue)
+     */
+    final private static ColorRGBA defaultColor = new ColorRGBA(0f, 0f, 1f, 1f);
     /**
      * default line width for the wireframe material
      */
@@ -69,9 +72,13 @@ public class SkeletonDebugControl extends SubtreeControl {
      */
     final private static float defaultPointSize = 4f;
     /**
-     * default color for the wireframe material (blue)
+     * child position of the vertices geometry in the controlled node
      */
-    final private static ColorRGBA defaultColor = new ColorRGBA(0f, 0f, 1f, 1f);
+    final private static int headsChildPosition = 0;
+    /**
+     * child position of the links in geometry in the controlled node
+     */
+    final private static int linksChildPosition = 1;
     /**
      * message logger for this class
      */
@@ -231,6 +238,27 @@ public class SkeletonDebugControl extends SubtreeControl {
     // AbstractControl methods
 
     /**
+     * Callback invoked when the spatial's geometric state is about to be
+     * updated, once per frame while attached and enabled.
+     *
+     * @param updateInterval time interval between updates (in seconds, &ge;0)
+     */
+    @Override
+    protected void controlUpdate(float updateInterval) {
+        super.controlUpdate(updateInterval);
+
+        Skeleton skeleton = MySkeleton.getSkeleton(spatial);
+
+        Geometry heads = (Geometry) subtree.getChild(headsChildPosition);
+        BoneHeads headsMesh = (BoneHeads) heads.getMesh();
+        headsMesh.update(skeleton);
+
+        Geometry links = (Geometry) subtree.getChild(linksChildPosition);
+        SkeletonLinks linksMesh = (SkeletonLinks) links.getMesh();
+        linksMesh.update(skeleton);
+    }
+
+    /**
      * Alter the visibility of the visualization.
      *
      * @param newState if true, reveal the visualization; if false, hide it
@@ -238,9 +266,8 @@ public class SkeletonDebugControl extends SubtreeControl {
     @Override
     public void setEnabled(boolean newState) {
         if (newState && subtree == null) {
-            Skeleton skeleton = MySkeleton.getSkeleton(spatial);
             String nodeName = spatial.getName() + " skeleton";
-            subtree = new SkeletonDebugger(nodeName, skeleton);
+            subtree = new Node(nodeName);
             /*
              * Copy local transform from 1st geometry to the debugger (and hope
              * any other geometries share the same transform!)
@@ -252,9 +279,25 @@ public class SkeletonDebugControl extends SubtreeControl {
                 Transform transform = firstGeometry.getLocalTransform();
                 subtree.setLocalTransform(transform);
             }
+
+            Skeleton skeleton = MySkeleton.getSkeleton(spatial);
+            int numBones = skeleton.getBoneCount();
+
+            BoneHeads headsMesh = new BoneHeads(numBones);
+            String headsName = spatial.getName() + " heads";
+            Geometry heads = new Geometry(headsName, headsMesh);
+            subtree.attachChildAt(heads, headsChildPosition);
+
+            SkeletonLinks linksMesh = new SkeletonLinks(skeleton);
+            String linksName = spatial.getName() + " links";
+            Geometry links = new Geometry(linksName, linksMesh);
+            subtree.attachChildAt(links, linksChildPosition);
+
             subtree.setMaterial(material);
+            subtree.setQueueBucket(RenderQueue.Bucket.Transparent);
             subtree.setShadowMode(RenderQueue.ShadowMode.Off);
         }
+
         super.setEnabled(newState);
     }
     // *************************************************************************
