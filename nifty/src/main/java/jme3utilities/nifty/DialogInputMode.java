@@ -74,10 +74,10 @@ class DialogInputMode extends InputMode {
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored time per frame (in seconds)
+     * @param tpf time interval between render passes (in seconds, &ge;0)
      */
     @Override
-    public void onAction(String actionString, boolean ongoing, float ignored) {
+    public void onAction(String actionString, boolean ongoing, float tpf) {
         if (!isEnabled()) {
             return;
         }
@@ -103,15 +103,17 @@ class DialogInputMode extends InputMode {
              */
             psc.closeActiveDialog();
 
-        } else if (actionString.matches("enter")) {
+        } else if (actionString.equals("enter")) {
             /*
              * Perform the dialog entry/commit action and then close the dialog.
              */
             psc.dialogEntry();
 
         } else {
-            logger.log(Level.WARNING, "Action {0} was not handled.",
-                    MyString.quote(actionString));
+            /*
+             * The action is not handled: forward it to the application class.
+             */
+            guiApplication.onAction(actionString, ongoing, tpf);
         }
     }
     // *************************************************************************
@@ -124,6 +126,7 @@ class DialogInputMode extends InputMode {
     protected void defaultBindings() {
         bind("cancel", KeyInput.KEY_ESCAPE);
         bind("enter", KeyInput.KEY_RETURN);
+        bind("SIMPLEAPP_HideStats", KeyInput.KEY_F5);
     }
 
     /**

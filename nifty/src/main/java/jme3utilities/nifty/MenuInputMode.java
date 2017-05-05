@@ -74,10 +74,10 @@ class MenuInputMode extends InputMode {
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored time per frame (in seconds)
+     * @param tpf time interval between render passes (in seconds, &ge;0)
      */
     @Override
-    public void onAction(String actionString, boolean ongoing, float ignored) {
+    public void onAction(String actionString, boolean ongoing, float tpf) {
         if (!isEnabled()) {
             return;
         }
@@ -113,8 +113,10 @@ class MenuInputMode extends InputMode {
             psc.selectMenuItem(index);
 
         } else {
-            logger.log(Level.WARNING, "Action {0} was not handled.",
-                    MyString.quote(actionString));
+            /*
+             * The action is not handled: forward it to the application class.
+             */
+            guiApplication.onAction(actionString, ongoing, tpf);
         }
     }
     // *************************************************************************
@@ -135,6 +137,7 @@ class MenuInputMode extends InputMode {
         bind("select 7", KeyInput.KEY_7);
         bind("select 8", KeyInput.KEY_8);
         bind("select 9", KeyInput.KEY_9);
+        bind("SIMPLEAPP_HideStats", KeyInput.KEY_F5);
     }
 
     /**
