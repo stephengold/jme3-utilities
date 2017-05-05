@@ -290,8 +290,7 @@ final public class Validate {
     public static void nonEmpty(String string, String description) {
         nonNull(string, description);
 
-        int length = string.length();
-        if (length <= 0) {
+        if (string.isEmpty()) {
             String what;
             if (description == null) {
                 what = "String argument";

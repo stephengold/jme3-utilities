@@ -37,6 +37,7 @@ import com.jme3.util.BufferUtils;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.logging.Logger;
+import jme3utilities.MySkeleton;
 import jme3utilities.Validate;
 
 /**
@@ -71,8 +72,7 @@ public class SkeletonLinks extends Mesh {
         positions.setupData(Usage.Stream, 3, Format.Float, floats);
         setBuffer(positions);
 
-        Bone[] roots = skeleton.getRoots();
-        int numRoots = roots.length;
+        int numRoots = MySkeleton.numRootBones(skeleton);
         int numConnections = boneCount - numRoots;
         ShortBuffer shorts = BufferUtils.createShortBuffer(2 * numConnections);
         VertexBuffer indices = new VertexBuffer(Type.Index);
