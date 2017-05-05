@@ -22,7 +22,7 @@ ext {
     jme3utilitiesniftyVersion = '0.6.2'
     jme3utilitiesuiVersion = '0.5.0'
     jmonkeyengineVersion = '3.1.0-stable'
-    skycontrolVersion = '0.9.2'
+    skycontrolVersion = '0.9.3'
 }
 
 repositories {

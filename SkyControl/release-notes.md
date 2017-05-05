@@ -1,5 +1,12 @@
 # release notes for the SkyControl library and related tests
 
+## Version 0.9.3 released on TBD
+
+Notable changes:
+ + added utility methods
+ + use latest jCommander in tests
+ + exclude assets from sources JAR
+
 ## Version 0.9.2 released on 9 April 2017
 
 Notable changes:
