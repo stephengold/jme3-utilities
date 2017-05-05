@@ -333,8 +333,8 @@ public class GuiScreenController extends PopScreenController {
      */
     public void updateSliderStatus(String namePrefix, float value,
             String statusSuffix) {
-        assert namePrefix != null;
-        assert statusSuffix != null;
+        Validate.nonNull(namePrefix, "prefix");
+        Validate.nonNull(statusSuffix, "suffix");
         /*
          * Select output precision based on the magnitude of the value.
          */
