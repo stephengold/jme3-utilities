@@ -149,6 +149,70 @@ public class MySkeleton {
     }
 
     /**
+     * Find the largest weight in the specified mesh for the specified bone.
+     *
+     * @param mesh which mesh (not null, possibly modified)
+     * @param boneIndex which bone (&ge;0)
+     * @return bone weight, or 0f if no influence found
+     */
+    public static float maxWeight(Mesh mesh, int boneIndex) {
+        Validate.nonNegative(boneIndex, "bone index");
+
+        int maxWeightsPerVert = mesh.getMaxNumWeights();
+        assert maxWeightsPerVert > 0 : maxWeightsPerVert;
+        assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
+
+        VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
+        ByteBuffer boneIndexBuffer = (ByteBuffer) biBuf.getData();
+        boneIndexBuffer.rewind();
+        int numBoneIndices = boneIndexBuffer.remaining();
+        assert numBoneIndices % 4 == 0 : numBoneIndices;
+        int numVertices = boneIndexBuffer.remaining() / 4;
+
+        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
+        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getData();
+        weightBuffer.rewind();
+        int numWeights = weightBuffer.remaining();
+        assert numWeights == numVertices * 4 : numWeights;
+
+        float result = 0f;
+        byte biByte = (byte) boneIndex;
+        for (int vIndex = 0; vIndex < numVertices; vIndex++) {
+            for (int wIndex = 0; wIndex < 4; wIndex++) {
+                float weight = weightBuffer.get();
+                float bIndex = boneIndexBuffer.get();
+                if (wIndex < maxWeightsPerVert
+                        && bIndex == biByte
+                        && weight > result) {
+                    result = weight;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert a location in a bone's local space to a location in model space.
+     *
+     * @param bone (not null)
+     * @param x displacement along the bone's X-axis
+     * @param y displacement along the bone's Y-axis
+     * @param z displacement along the bone's Z-axis
+     * @return a new vector
+     *
+     */
+    public static Vector3f modelLocation(Bone bone, float x, float y, float z) {
+        Vector3f tail = bone.getModelSpacePosition();
+        Vector3f scale = bone.getModelSpaceScale();
+        Vector3f result = new Vector3f(x, y, z).multLocal(scale);
+        // rotation??
+        result.addLocal(tail);
+
+        return result;
+    }
+
+    /**
      * Count vertices in the specified mesh influenced by the specified bone.
      *
      * @param mesh which mesh (not null, possibly modified)
@@ -226,73 +290,8 @@ public class MySkeleton {
     }
 
     /**
-     * Find the largest weight in the specified mesh for the specified bone.
-     * TODO reorder
-     *
-     * @param mesh which mesh (not null, possibly modified)
-     * @param boneIndex which bone (&ge;0)
-     * @return bone weight, or 0f if no influence found
-     */
-    public static float maxWeight(Mesh mesh, int boneIndex) {
-        Validate.nonNegative(boneIndex, "bone index");
-
-        int maxWeightsPerVert = mesh.getMaxNumWeights();
-        assert maxWeightsPerVert > 0 : maxWeightsPerVert;
-        assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
-
-        VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
-        ByteBuffer boneIndexBuffer = (ByteBuffer) biBuf.getData();
-        boneIndexBuffer.rewind();
-        int numBoneIndices = boneIndexBuffer.remaining();
-        assert numBoneIndices % 4 == 0 : numBoneIndices;
-        int numVertices = boneIndexBuffer.remaining() / 4;
-
-        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
-        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getData();
-        weightBuffer.rewind();
-        int numWeights = weightBuffer.remaining();
-        assert numWeights == numVertices * 4 : numWeights;
-
-        float result = 0f;
-        byte biByte = (byte) boneIndex;
-        for (int vIndex = 0; vIndex < numVertices; vIndex++) {
-            for (int wIndex = 0; wIndex < 4; wIndex++) {
-                float weight = weightBuffer.get();
-                float bIndex = boneIndexBuffer.get();
-                if (wIndex < maxWeightsPerVert
-                        && bIndex == biByte
-                        && weight > result) {
-                    result = weight;
-                }
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * Convert a location in a bone's local space to a location in model space.
-     *
-     * @param bone (not null)
-     * @param x displacement along the bone's X-axis
-     * @param y displacement along the bone's Y-axis
-     * @param z displacement along the bone's Z-axis
-     * @return a new vector
-     *
-     */
-    public static Vector3f modelLocation(Bone bone, float x, float y, float z) {
-        Vector3f tail = bone.getModelSpacePosition();
-        Vector3f scale = bone.getModelSpaceScale();
-        Vector3f result = new Vector3f(x, y, z).multLocal(scale);
-        // rotation??
-        result.addLocal(tail);
-
-        return result;
-    }
-
-    /**
      * Alter the name of the specified bone. The caller is responsible for
-     * avoiding duplicate names.
+     * avoiding duplicate names. TODO: rename the attachNode, if any
      *
      * @param bone bone to change (not null)
      * @param newName name to apply
