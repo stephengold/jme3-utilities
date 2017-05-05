@@ -769,7 +769,7 @@ public class SkyControlCore extends SubtreeControl {
         oc.write(longitudeDifference, "phaseAngle", FastMath.PI);
     }
     // *************************************************************************
-    // SubtreeControl methods
+    // Object methods
 
     /**
      * Create a shallow copy of this control.
