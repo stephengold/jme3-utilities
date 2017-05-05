@@ -39,12 +39,15 @@ import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.IntMap;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -78,6 +81,29 @@ public class Misc {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Open the specified web page in a new browser or browser tab.
+     *
+     * @param startUriString URI of the web page (not null)
+     * @return true if successful, otherwise false
+     */
+    public static boolean browseWeb(String startUriString) {
+        Validate.nonNull(startUriString, "start uri");
+
+        boolean success = false;
+        if (Desktop.isDesktopSupported()
+                && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            try {
+                URI startUri = new URI(startUriString);
+                Desktop.getDesktop().browse(startUri);
+                success = true;
+            } catch (IOException | URISyntaxException exception) {
+            }
+        }
+
+        return success;
+    }
 
     /**
      * Detach all app states which are subclasses of a specified class.
@@ -149,7 +175,7 @@ public class Misc {
      * @return project name, library name, branch, and revision
      */
     public static String getVersion() {
-        return "jme3-utilities SkyControl master $Rev: 0.9.2+2 $";
+        return "jme3-utilities SkyControl master $Rev: 0.9.2+3 $";
     }
 
     /**
@@ -183,21 +209,9 @@ public class Misc {
     }
 
     /**
-     * Test the specified quaternion for exact identity.
-     *
-     * @param quaternion which quaternion to test (not null)
-     * @return true if exactly equal to
-     * {@link com.jme3.math.Quaternion#IDENTITY}, otherwise false
-     */
-    public static boolean isIdentity(Quaternion quaternion) {
-        return quaternion.getW() == 1f && quaternion.getX() == 0f
-                && quaternion.getY() == 0f && quaternion.getZ() == 0f;
-    }
-
-    /**
      * Test the specified transform for exact identity.
      *
-     * @param transform which transform to test (not null)
+     * @param transform which transform to test (not null, unaffected)
      * @return true if exactly equal to
      * {@link com.jme3.math.Transform#IDENTITY}, otherwise false
      */
@@ -207,7 +221,7 @@ public class Misc {
         Vector3f translation = transform.getTranslation();
         if (MyVector3f.isZero(translation)) {
             Quaternion rotation = transform.getRotation();
-            if (isIdentity(rotation)) {
+            if (rotation.isIdentity()) {
                 Vector3f scale = transform.getScale();
                 result = (scale.x == 1f && scale.y == 1f && scale.z == 1f);
             }
