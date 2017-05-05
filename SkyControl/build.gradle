@@ -5,7 +5,7 @@
 description = 'sky simulation and core library for jMonkeyEngine'
 ext {
     artifact = 'SkyControl'
-    version = '0.9.2'
+    version = "$skycontrolVersion"
     baseName = "${artifact}-${version}"
 }
 
