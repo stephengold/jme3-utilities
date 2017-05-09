@@ -70,7 +70,7 @@
                     <panel width="10px"/>
                     <control name="button" id="#ok"
                              label="OK"
-                             width="50px">
+                             width="90px">
                         <interact onRelease="performActive(enter)"/>
                     </control>
                     <panel/>
