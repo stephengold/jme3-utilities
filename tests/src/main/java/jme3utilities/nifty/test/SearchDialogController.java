@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 import jme3utilities.nifty.DialogController;
 
 /**
- * Dialog controller used by TestPopups.
+ * A dialog controller used by TestPopups.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -50,7 +50,7 @@ class SearchDialogController implements DialogController {
     // DialogController methods
 
     /**
-     * Test whether "enter" actions are allowed.
+     * Callback to determine whether "commit" actions are allowed.
      *
      * @param dialogElement (not null)
      * @return true if allowed, otherwise false
@@ -79,17 +79,18 @@ class SearchDialogController implements DialogController {
      */
     @Override
     public void update(Element dialogElement, float elapsedTime) {
-        String okLabel, feedbackMessage;
+        String commitLabel, feedbackMessage;
         if (allowCommit(dialogElement)) {
-            okLabel = "Set";
+            commitLabel = "Set";
             feedbackMessage = "";
         } else {
-            okLabel = "";
+            commitLabel = "";
             feedbackMessage = "must contain a vowel";
         }
 
-        Button okButton = dialogElement.findNiftyControl("#ok", Button.class);
-        okButton.setText(okLabel);
+        Button commitButton = dialogElement.findNiftyControl("#commit",
+                Button.class);
+        commitButton.setText(commitLabel);
 
         Element feedbackElement = dialogElement.findElementById("#feedback");
         TextRenderer renderer = feedbackElement.getRenderer(TextRenderer.class);

@@ -36,7 +36,7 @@ import jme3utilities.MyString;
 import jme3utilities.ui.InputMode;
 
 /**
- * Input mode for modal dialogs.
+ * Input mode for modal dialog boxes.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -54,7 +54,7 @@ class DialogInputMode extends InputMode {
      */
     final private static String cursorAssetPath = "Textures/cursors/dialog.cur";
     /**
-     * short name for this mode
+     * short name for this input mode
      */
     final public static String name = "dialog";
     // *************************************************************************
@@ -103,11 +103,11 @@ class DialogInputMode extends InputMode {
              */
             psc.closeActiveDialog();
 
-        } else if (actionString.equals("enter")) {
+        } else if (actionString.equals("commit")) {
             /*
-             * Perform the dialog entry/commit action and then close the dialog.
+             * Perform the dialog "commit" action and then close the dialog.
              */
-            psc.dialogEntry();
+            psc.dialogCommit();
 
         } else {
             /*
@@ -125,12 +125,14 @@ class DialogInputMode extends InputMode {
     @Override
     protected void defaultBindings() {
         bind("cancel", KeyInput.KEY_ESCAPE);
-        bind("enter", KeyInput.KEY_RETURN);
+        bind("commit", KeyInput.KEY_RETURN);
         bind("SIMPLEAPP_HideStats", KeyInput.KEY_F5);
     }
+    // *************************************************************************
+    // AppState methods
 
     /**
-     * Initialize this (disabled) mode prior to its 1st update.
+     * Initialize this (disabled) input mode prior to its 1st update.
      *
      * @param stateManager (not null)
      * @param application (not null)

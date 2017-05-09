@@ -72,7 +72,7 @@
                 <panel childLayout="horizontal">
                     <panel/>
                     <panel width="10px"/>
-                    <control name="button" id="#dismiss"
+                    <control name="button" id="#cancel"
                              label="Dismiss"
                              width="50px">
                         <interact onRelease="performActive(cancel)"/>

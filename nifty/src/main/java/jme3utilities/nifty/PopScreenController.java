@@ -275,10 +275,10 @@ public class PopScreenController extends BasicScreenController {
     }
 
     /**
-     * Perform the commit action of the active dialog box, then close the dialog
-     * box.
+     * If allowed, perform the "commit" action of the active dialog box, then
+     * close the dialog box.
      */
-    void dialogEntry() {
+    void dialogCommit() {
         if (!hasActiveDialog()) {
             throw new IllegalStateException("no active dialog");
         }
@@ -362,14 +362,14 @@ public class PopScreenController extends BasicScreenController {
      * Create, customize, and activate a modal confirmation dialog box.
      *
      * @param promptMessage text to display above the buttons (not null)
-     * @param commitLabel text for the commit button label (not null)
-     * @param actionString the enter/commit action (not null)
+     * @param commitLabel text for the commit-button label (not null)
+     * @param actionString the commit action (not null)
      * @param controller controller for the dialog box, or null for none
      */
     public void showConfirmDialog(String promptMessage, String commitLabel,
             String actionString, DialogController controller) {
         Validate.nonNull(promptMessage, "prompt message");
-        Validate.nonNull(commitLabel, "commit button label");
+        Validate.nonNull(commitLabel, "commit-button label");
         Validate.nonNull(actionString, "action string");
         /*
          * Create a popup using the "dialogs/confirm" layout as a base.
@@ -542,16 +542,16 @@ public class PopScreenController extends BasicScreenController {
      *
      * @param promptMessage text to display above the textfield (not null)
      * @param defaultValue default text for the textfield (not null)
-     * @param okLabel text for the enter/commit button label (not null)
-     * @param actionPrefix prefix for the enter/commit action (not null, usually
-     * the final character will be a blank)
+     * @param commitLabel text for the commit-button label (not null)
+     * @param actionPrefix prefix for the commit action (not null, usually the
+     * final character will be a blank)
      * @param controller controller for the dialog box, or null for none
      */
     public void showTextEntryDialog(String promptMessage, String defaultValue,
-            String okLabel, String actionPrefix, DialogController controller) {
+            String commitLabel, String actionPrefix, DialogController controller) {
         Validate.nonNull(promptMessage, "prompt message");
         Validate.nonNull(defaultValue, "default value");
-        Validate.nonNull(okLabel, "commit button label");
+        Validate.nonNull(commitLabel, "commit-button label");
         Validate.nonNull(actionPrefix, "action prefix");
         /*
          * Create a popup using the "dialogs/text-entry" layout as a base.
@@ -569,8 +569,9 @@ public class PopScreenController extends BasicScreenController {
                 TextField.class);
         textField.setText(defaultValue);
 
-        Button okButton = dialogElement.findNiftyControl("#ok", Button.class);
-        okButton.setText(okLabel);
+        Button commitButton = dialogElement.findNiftyControl("#commit",
+                Button.class);
+        commitButton.setText(commitLabel);
 
         activateDialog(popupId, actionPrefix, controller);
     }

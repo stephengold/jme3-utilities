@@ -76,10 +76,10 @@
                         <interact onRelease="performActive(cancel)"/>
                     </control>
                     <panel width="10px"/>
-                    <control name="button" id="#ok"
+                    <control name="button" id="#commit"
                              label="OK"
                              width="*">
-                        <interact onRelease="performActive(enter)"/>
+                        <interact onRelease="performActive(commit)"/>
                     </control>
                     <panel/>
                 </panel>

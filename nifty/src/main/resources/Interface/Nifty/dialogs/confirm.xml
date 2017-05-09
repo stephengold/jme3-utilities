@@ -67,7 +67,7 @@
                     <control name="button" id="#commit"
                              label="Commit"
                              width="*">
-                        <interact onRelease="performActive(enter)"/>
+                        <interact onRelease="performActive(commit)"/>
                     </control>
                     <panel/>
                 </panel>
