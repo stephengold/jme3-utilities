@@ -25,6 +25,7 @@
  */
 package jme3utilities.nifty.test;
 
+import com.jme3.app.SimpleApplication;
 import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeVersion;
@@ -156,7 +157,8 @@ public class TestPopups extends GuiApplication {
 
             } else if (actionString.equals("search")) {
                 screen.showTextEntryDialog("Enter new search string:",
-                        searchString, "Set", searchDialogPrefix, null);
+                        searchString, "", searchDialogPrefix,
+                        new SearchDialogController());
                 return;
 
             } else if (actionString.startsWith(searchDialogPrefix)) {
@@ -170,6 +172,17 @@ public class TestPopups extends GuiApplication {
             } else if (actionString.startsWith(openMenuPrefix)) {
                 String path = actionString.substring(openMenuPrefix.length());
                 doOpen(actionString, path);
+                return;
+
+            } else if (actionString.equals(
+                    SimpleApplication.INPUT_MAPPING_EXIT)) {
+                screen.showConfirmDialog(
+                        "Close the application? This one?? Are you sure???",
+                        "Close", "really close", null);
+                return;
+
+            } else if (actionString.equals("really close")) {
+                stop();
                 return;
             }
         }

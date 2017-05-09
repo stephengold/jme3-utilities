@@ -26,10 +26,10 @@
 -->
 
 <!--
- Nifty XML to lay out a simple text-entry dialog box for a screen controlled
+ Nifty XML to lay out a simple confirmation dialog box for a screen controlled
  by a GuiScreenController.
 
- When a dialog box is active, the rest of the screen dims by 50%.
+ When a dialog box is active, the rest of the screen dims by 50% and reddens.
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
 
@@ -38,33 +38,21 @@
     <useStyles filename="Interface/Nifty/styles/bats.xml"/>
     <useControls filename="nifty-default-controls.xml"/>
 
-    <popup id="dialogs/text-entry"
-           backgroundColor="#0008"
+    <popup id="dialogs/confirm"
+           backgroundColor="#4008"
            childLayout="vertical">
         <panel/>
         <panel childLayout="horizontal"
-               height="130px">
+               height="80px">
             <panel/>
             <panel childLayout="vertical"
                    backgroundColor="#aaaf"
                    padding="8px,8px,8px,8px"
-                   width="266px">
+                   width="300px">
                 <panel childLayout="horizontal">
                     <control name="label" id="#prompt"
                              color="#000f"
                              textHAlign="left"
-                             width="*"/>
-                </panel>
-                <panel height="8px"/>
-                <panel childLayout="horizontal">
-                    <control name="textfield" id="#textfield"
-                             text="default text"/>
-                </panel>
-                <panel height="8px"/>
-                <panel childLayout="horizontal">
-                    <control name="label" id="#feedback"
-                             color="#800f"
-                             textHAlign="center"
                              width="*"/>
                 </panel>
                 <panel height="8px"/>
@@ -76,8 +64,8 @@
                         <interact onRelease="performActive(cancel)"/>
                     </control>
                     <panel width="10px"/>
-                    <control name="button" id="#ok"
-                             label="OK"
+                    <control name="button" id="#commit"
+                             label="Commit"
                              width="*">
                         <interact onRelease="performActive(enter)"/>
                     </control>

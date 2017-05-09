@@ -109,7 +109,6 @@ public class PopScreenController extends BasicScreenController {
     public void activateDialog(String popupId, String actionPrefix,
             DialogController controller) {
         Validate.nonNull(popupId, "popup id");
-        Validate.nonNull(actionPrefix, "action prefix");
         /*
          * Make the popup visible without setting the focus.
          */
@@ -276,23 +275,30 @@ public class PopScreenController extends BasicScreenController {
     }
 
     /**
-     * Perform the entry/commit action of the active dialog box, then close the
-     * dialog box.
+     * Perform the commit action of the active dialog box, then close the dialog
+     * box.
      */
     void dialogEntry() {
         if (!hasActiveDialog()) {
             throw new IllegalStateException("no active dialog");
         }
 
+        if (dialogController != null
+                && !dialogController.allowCommit(dialogElement)) {
+            return;
+        }
+
         if (dialogActionPrefix != null) {
+            String commitAction;
             TextField textField = dialogElement.findNiftyControl("#textfield",
                     TextField.class);
-            String enteredText = textField.getRealText();
-            /*
-             * Convert the text into an action string and perform the action.
-             */
-            String entryActionString = dialogActionPrefix + enteredText;
-            perform(entryActionString);
+            if (textField == null) { // confirmation dialog
+                commitAction = dialogActionPrefix;
+            } else { // text-entry dialog
+                String enteredText = textField.getRealText();
+                commitAction = dialogActionPrefix + enteredText;
+            }
+            perform(commitAction);
         }
 
         closeActiveDialog();
@@ -350,6 +356,38 @@ public class PopScreenController extends BasicScreenController {
          * If the old menu is still active, close it and all its ancestors.
          */
         closePopupMenu(oldPopupMenu);
+    }
+
+    /**
+     * Create, customize, and activate a modal confirmation dialog box.
+     *
+     * @param promptMessage text to display above the buttons (not null)
+     * @param commitLabel text for the commit button label (not null)
+     * @param actionString the enter/commit action (not null)
+     * @param controller controller for the dialog box, or null for none
+     */
+    public void showConfirmDialog(String promptMessage, String commitLabel,
+            String actionString, DialogController controller) {
+        Validate.nonNull(promptMessage, "prompt message");
+        Validate.nonNull(commitLabel, "commit button label");
+        Validate.nonNull(actionString, "action string");
+        /*
+         * Create a popup using the "dialogs/confirm" layout as a base.
+         * Nifty assigns the popup a new id.
+         */
+        dialogElement = nifty.createPopup("dialogs/confirm");
+        String popupId = dialogElement.getId();
+        assert popupId != null;
+
+        Element prompt = dialogElement.findElementById("#prompt");
+        TextRenderer textRenderer = prompt.getRenderer(TextRenderer.class);
+        textRenderer.setText(promptMessage);
+
+        Button commitButton = dialogElement.findNiftyControl("#commit",
+                Button.class);
+        commitButton.setText(commitLabel);
+
+        activateDialog(popupId, actionString, controller);
     }
 
     /**
@@ -526,11 +564,12 @@ public class PopScreenController extends BasicScreenController {
         Element prompt = dialogElement.findElementById("#prompt");
         TextRenderer textRenderer = prompt.getRenderer(TextRenderer.class);
         textRenderer.setText(promptMessage);
+
         TextField textField = dialogElement.findNiftyControl("#textfield",
                 TextField.class);
         textField.setText(defaultValue);
-        Button okButton = dialogElement.findNiftyControl("#ok",
-                Button.class);
+
+        Button okButton = dialogElement.findNiftyControl("#ok", Button.class);
         okButton.setText(okLabel);
 
         activateDialog(popupId, actionPrefix, controller);

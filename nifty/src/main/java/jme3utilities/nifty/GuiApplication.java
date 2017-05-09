@@ -50,6 +50,10 @@ abstract public class GuiApplication extends ActionApplication {
     final private static Logger logger = Logger.getLogger(
             GuiApplication.class.getName());
     /**
+     * asset path to Nifty XML for a confirmation dialog box
+     */
+    final private static String confirmDialogAssetPath = "Interface/Nifty/dialogs/confirm.xml";
+    /**
      * asset path to Nifty XML for a 43-line informational dialog box
      */
     final private static String infoLargeDialogAssetPath = "Interface/Nifty/dialogs/info43.xml";
@@ -165,6 +169,7 @@ abstract public class GuiApplication extends ActionApplication {
         Logger niftyLogger = Logger.getLogger(Nifty.class.getName());
         Level save = niftyLogger.getLevel();
         niftyLogger.setLevel(Level.SEVERE);
+        nifty.fromXmlWithoutStartScreen(confirmDialogAssetPath);
         nifty.fromXmlWithoutStartScreen(infoLargeDialogAssetPath);
         nifty.fromXmlWithoutStartScreen(infoSmallDialogAssetPath);
         nifty.fromXmlWithoutStartScreen(popupMenuAsssetPath);
