@@ -63,6 +63,10 @@ public class PopScreenController extends BasicScreenController {
      */
     private Element dialogElement = null;
     /**
+     * Controller for the active modal dialog box (null means none active)
+     */
+    private DialogController dialogController = null;
+    /**
      * this controller's suspended input mode (while a modal popup is active)
      */
     private InputMode suspendedMode;
@@ -100,9 +104,12 @@ public class PopScreenController extends BasicScreenController {
      *
      * @param popupId the Nifty id of the popup element (not null)
      * @param actionPrefix action prefix (may be null)
+     * @param controller controller for the dialog box, or null for none
      */
-    public void activateDialog(String popupId, String actionPrefix) {
+    public void activateDialog(String popupId, String actionPrefix,
+            DialogController controller) {
         Validate.nonNull(popupId, "popup id");
+        Validate.nonNull(actionPrefix, "action prefix");
         /*
          * Make the popup visible without setting the focus.
          */
@@ -121,6 +128,7 @@ public class PopScreenController extends BasicScreenController {
         dialogMode.setEnabled(true);
 
         dialogActionPrefix = actionPrefix;
+        dialogController = controller;
     }
 
     /**
@@ -389,7 +397,7 @@ public class PopScreenController extends BasicScreenController {
             }
         }
 
-        activateDialog(popupId, null);
+        activateDialog(popupId, null, null);
     }
 
     /**
@@ -499,9 +507,10 @@ public class PopScreenController extends BasicScreenController {
      * @param okLabel text for the enter/commit button label (not null)
      * @param actionPrefix prefix for the enter/commit action (not null, usually
      * the final character will be a blank)
+     * @param controller controller for the dialog box, or null for none
      */
     public void showTextEntryDialog(String promptMessage, String defaultValue,
-            String okLabel, String actionPrefix) {
+            String okLabel, String actionPrefix, DialogController controller) {
         Validate.nonNull(promptMessage, "prompt message");
         Validate.nonNull(defaultValue, "default value");
         Validate.nonNull(okLabel, "commit button label");
@@ -524,6 +533,24 @@ public class PopScreenController extends BasicScreenController {
                 Button.class);
         okButton.setText(okLabel);
 
-        activateDialog(popupId, actionPrefix);
+        activateDialog(popupId, actionPrefix, controller);
+    }
+    // *************************************************************************
+    // AppState methods
+
+    /**
+     * Callback to update this controller prior to rendering. (Invoked once per
+     * render pass.)
+     *
+     * @param elapsedTime time interval between render passes (in seconds,
+     * &ge;0)
+     */
+    @Override
+    public void update(float elapsedTime) {
+        super.update(elapsedTime);
+
+        if (hasActiveDialog() && dialogController != null) {
+            dialogController.update(dialogElement, elapsedTime);
+        }
     }
 }

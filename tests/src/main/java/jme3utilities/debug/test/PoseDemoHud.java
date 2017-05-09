@@ -255,14 +255,14 @@ public class PoseDemoHud
 
                 case "rename animation":
                     String oldAnimName = PoseDemo.modelState.getAnimationName();
-                    showTextEntryDialog("Enter new name for animation:", oldAnimName,
-                            "Rename", animationDialogPrefix);
+                    showTextEntryDialog("Enter new name for animation:",
+                            oldAnimName, "Rename", animationDialogPrefix, null);
                     return;
 
                 case "rename bone":
                     String oldBoneName = PoseDemo.modelState.getBoneName();
                     showTextEntryDialog("Enter new name for bone:", oldBoneName,
-                            "Rename", boneDialogPrefix);
+                            "Rename", boneDialogPrefix, null);
                     return;
 
                 case "reset bone":
