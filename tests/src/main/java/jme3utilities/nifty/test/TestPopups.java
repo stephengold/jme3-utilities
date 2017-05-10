@@ -220,13 +220,20 @@ public class TestPopups extends GuiApplication {
              * Open a submenu with the directory/folder's contents.
              */
             String[] names = new String[files.length];
+            String[] icons = new String[files.length];
             for (int i = 0; i < files.length; i++) {
-                names[i] = files[i].getName();
+                file = files[i];
+                names[i] = file.getName();
+                if (file.isDirectory()) {
+                    icons[i] = "Textures/icons/directory.png";
+                } else if (names[i].endsWith(".j3o")) {
+                    icons[i] = "Interface/Logo/Monkey.jpg";
+                }
             }
             if (actionString.endsWith("/")) {
-                screen.showPopupMenu(actionString, names);
+                screen.showPopupMenu(actionString, names, icons);
             } else {
-                screen.showPopupMenu(actionString + "/", names);
+                screen.showPopupMenu(actionString + "/", names, icons);
             }
         }
     }
