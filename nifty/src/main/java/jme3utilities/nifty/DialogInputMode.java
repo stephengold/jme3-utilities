@@ -78,38 +78,40 @@ class DialogInputMode extends InputMode {
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
-        if (!isEnabled()) {
-            return;
+        boolean handled = false;
+
+        if (ongoing) {
+            logger.log(Level.INFO, "Got action {0}",
+                    MyString.quote(actionString));
         }
-        /*
-         * Ignore actions which are not ongoing.
-         */
-        if (!ongoing) {
-            return;
-        }
-        logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
 
         GuiApplication guiApplication = (GuiApplication) actionApplication;
         BasicScreenController controller = guiApplication.getEnabledScreen();
-        if (controller == null) {
-            return;
+        if (isEnabled() && ongoing && controller != null) {
+            PopScreenController psc = (PopScreenController) controller;
+            assert psc.hasActiveDialog();
+            /*
+             * Attempt to handle the action.
+             */
+            switch (actionString) {
+                case "cancel":
+                    /*
+                     * Close the dialog without performing any other action.
+                     */
+                    psc.closeActiveDialog();
+                    handled = true;
+                    break;
+
+                case "commit":
+                    /*
+                     * Perform the "commit" action and then close the dialog.
+                     */
+                    psc.dialogCommit();
+                    handled = true;
+            }
         }
-        PopScreenController psc = (PopScreenController) controller;
-        assert psc.hasActiveDialog();
 
-        if (actionString.equals("cancel")) {
-            /*
-             * Close the dialog without performing any other action.
-             */
-            psc.closeActiveDialog();
-
-        } else if (actionString.equals("commit")) {
-            /*
-             * Perform the dialog "commit" action and then close the dialog.
-             */
-            psc.dialogCommit();
-
-        } else {
+        if (!handled) {
             /*
              * The action is not handled: forward it to the application class.
              */
