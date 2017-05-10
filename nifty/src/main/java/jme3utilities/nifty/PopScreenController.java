@@ -104,16 +104,24 @@ public class PopScreenController extends BasicScreenController {
      *
      * @param popupId the Nifty id of the popup element (not null)
      * @param actionPrefix action prefix (may be null)
+     * @param focusElementId the Nifty id of the focus element, or null for
+     * first focusable element
      * @param controller controller for the dialog box, or null for none
      */
     public void activateDialog(String popupId, String actionPrefix,
-            DialogController controller) {
+            String focusElementId, DialogController controller) {
         Validate.nonNull(popupId, "popup id");
         /*
-         * Make the popup visible without setting the focus.
+         * Make the popup visible, setting the keyboard focus.
          */
         Screen screen = nifty.getCurrentScreen();
-        nifty.showPopup(screen, popupId, null);
+        Element focusElement;
+        if (focusElementId == null) {
+            focusElement = null;
+        } else {
+            focusElement = dialogElement.findElementById(focusElementId);
+        }
+        nifty.showPopup(screen, popupId, focusElement);
         /*
          * Save and suspend the screen's input mode (if any) and
          * activate the input mode for modal dialogs.
@@ -387,7 +395,7 @@ public class PopScreenController extends BasicScreenController {
                 Button.class);
         commitButton.setText(commitLabel);
 
-        activateDialog(popupId, actionString, controller);
+        activateDialog(popupId, actionString, "#commit", controller);
     }
 
     /**
@@ -435,7 +443,7 @@ public class PopScreenController extends BasicScreenController {
             }
         }
 
-        activateDialog(popupId, null, null);
+        activateDialog(popupId, null, null, null);
     }
 
     /**
@@ -460,10 +468,29 @@ public class PopScreenController extends BasicScreenController {
      * usually the final character will be a blank)
      * @param itemArray array of menu items (not null, unaffected)
      */
-    public synchronized void showPopupMenu(String actionPrefix,
-            String[] itemArray) {
+    public void showPopupMenu(String actionPrefix, String[] itemArray) {
         Validate.nonNull(actionPrefix, "prefix");
         Validate.nonNull(itemArray, "item array");
+
+        int numItems = itemArray.length;
+        String[] iconArray = new String[numItems];
+        showPopupMenu(actionPrefix, itemArray, iconArray);
+    }
+
+    /**
+     * Create and activate a popup menu.
+     *
+     * @param actionPrefix common prefix of the menu's action strings (not null,
+     * usually the final character will be a blank)
+     * @param itemArray array of menu items (not null, unaffected)
+     * @param iconArray array of icon asset paths (not null, unaffected)
+     */
+    public synchronized void showPopupMenu(String actionPrefix,
+            String[] itemArray, String[] iconArray) {
+        Validate.nonNull(actionPrefix, "prefix");
+        Validate.nonNull(itemArray, "item array");
+        Validate.nonNull(itemArray, "icon array");
+        assert itemArray.length == iconArray.length;
         /*
          * Create a popup using "popup-menu" as a base.
          * Nifty assigns the popup a new id.
@@ -489,8 +516,8 @@ public class PopScreenController extends BasicScreenController {
                 maxChars = numChars;
             }
             displayText = displayText.replace("$", "\\$");
-            // TODO icon asset path for each item
-            menu.addMenuItem(displayText, item);
+            String displayIcon = iconArray[itemIndex];
+            menu.addMenuItem(displayText, displayIcon, item);
         }
         /*
          * Size the menu to accommodate the item with the longest display text.
@@ -573,7 +600,7 @@ public class PopScreenController extends BasicScreenController {
                 Button.class);
         commitButton.setText(commitLabel);
 
-        activateDialog(popupId, actionPrefix, controller);
+        activateDialog(popupId, actionPrefix, "#textfield", controller);
     }
     // *************************************************************************
     // AppState methods
