@@ -115,7 +115,7 @@ class HotkeyItem {
         if (mode == null) {
             return "";
         }
-        String name = hotkey.getDescription();
+        String name = hotkey.getName();
         String result = String.format(" [ %s ]    ... ", name);
         if (isBound()) {
             String action = mode.getActionName(hotkey);

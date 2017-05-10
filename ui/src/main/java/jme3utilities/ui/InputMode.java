@@ -199,7 +199,7 @@ abstract public class InputMode
         Validate.nonNull(actionName, "action name");
         Validate.nonNull(hotkey, "hotkey");
 
-        String description = hotkey.getDescription();
+        String description = hotkey.getName();
         hotkeyBindings.put(description, actionName);
         addActionName(actionName);
     }
@@ -264,7 +264,7 @@ abstract public class InputMode
      * @return hotkey's action name, or null if the hotkey isn't bound
      */
     public String getActionName(Hotkey hotkey) {
-        String keyName = hotkey.getDescription();
+        String keyName = hotkey.getName();
         String actionName = hotkeyBindings.getProperty(keyName);
 
         return actionName;
@@ -419,7 +419,7 @@ abstract public class InputMode
     public void unbind(Hotkey hotkey) {
         assert isInitialized();
 
-        String hotkeyName = hotkey.getDescription();
+        String hotkeyName = hotkey.getName();
         if (hotkeyBindings.containsKey(hotkeyName)) {
             /*
              * Remove the binding.

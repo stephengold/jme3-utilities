@@ -40,7 +40,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * An name, immutable trigger for actions.
+ * A named, immutable, simple trigger for actions.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -79,9 +79,9 @@ public class Hotkey {
      */
     final private static Map<Integer, Hotkey> byUniversalCode = new TreeMap<>();
     /**
-     * textual description for this hotkey (not null, not empty)
+     * descriptive name for this hotkey (not null, not empty)
      */
-    final private String description;
+    final private String name;
     /**
      * trigger for this hotkey (not null)
      */
@@ -90,24 +90,24 @@ public class Hotkey {
     // constructors
 
     /**
-     * Instantiate a hotkey with the specified universal code, description, and
+     * Instantiate a hotkey with the specified universal code, name, and
      * trigger.
      *
      * @param code a universal code: either a key code (from
      * {@link com.jme3.input.KeyInput}) or buttonFirst + a button code (from
      * {@link com.jme3.input.MouseInput})
-     * @param description textual description (not null, not empty)
+     * @param name descriptive name (not null, not empty)
      * @param trigger (not null)
      */
-    private Hotkey(int code, String description, Trigger trigger) {
+    private Hotkey(int code, String name, Trigger trigger) {
         assert code >= 0 : code;
         assert code <= lastButton : code;
-        assert description != null;
-        assert !description.isEmpty();
+        assert name != null;
+        assert !name.isEmpty();
         assert trigger != null;
 
         this.code = code;
-        this.description = description;
+        this.name = name;
         this.trigger = trigger;
     }
     // *************************************************************************
@@ -152,14 +152,14 @@ public class Hotkey {
     }
 
     /**
-     * Find a hotkey by its description.
+     * Find a hotkey by its name.
      *
-     * @param description textual description (not null, not empty)
+     * @param name the descriptive name (not null, not empty)
      * @return the pre-existing instance (or null if none)
      */
-    public static Hotkey find(String description) {
-        Validate.nonEmpty(description, "description");
-        Hotkey result = byName.get(description);
+    public static Hotkey find(String name) {
+        Validate.nonEmpty(name, "name");
+        Hotkey result = byName.get(name);
         return result;
     }
 
@@ -212,14 +212,14 @@ public class Hotkey {
     }
 
     /**
-     * Read the description of this hotkey.
+     * Read the name of this hotkey.
      *
      * @return descriptive name (not null, not empty)
      */
-    public String getDescription() {
-        assert description != null;
-        assert !description.isEmpty();
-        return description;
+    public String getName() {
+        assert name != null;
+        assert !name.isEmpty();
+        return name;
     }
 
     /**
@@ -435,45 +435,45 @@ public class Hotkey {
     /**
      * Add a new hotkey for a mouse button.
      *
-     * @param buttonCode an unused button code (from
+     * @param buttonCode an button code not already in use (from
      * {@link com.jme3.input.MouseInput})
-     * @param description an unused description (not null, not empty)
+     * @param name a descriptive name not already in use (not null, not empty)
      */
-    private static void addButton(int buttonCode, String description) {
+    private static void addButton(int buttonCode, String name) {
         assert buttonCode >= 0 : buttonCode;
         assert buttonCode <= lastButton - firstButton : buttonCode;
-        assert description != null;
-        assert !description.isEmpty();
+        assert name != null;
+        assert !name.isEmpty();
         assert findButton(buttonCode) == null;
-        assert find(description) == null;
+        assert find(name) == null;
 
         int universalCode = buttonCode + firstButton;
         Trigger trigger = new MouseButtonTrigger(buttonCode);
-        Hotkey instance = new Hotkey(universalCode, description, trigger);
+        Hotkey instance = new Hotkey(universalCode, name, trigger);
 
         byUniversalCode.put(universalCode, instance);
-        byName.put(description, instance);
+        byName.put(name, instance);
     }
 
     /**
      * Add a new hotkey for a keyboard key.
      *
      * @param keyCode an unused key code from {@link com.jme3.input.KeyInput}
-     * @param description an unused description (not null, not empty)
+     * @param name a descriptive name not already in use (not null, not empty)
      */
-    private static void addKey(int keyCode, String description) {
+    private static void addKey(int keyCode, String name) {
         assert keyCode >= 0 : keyCode;
         assert keyCode <= KeyInput.KEY_LAST : keyCode;
-        assert description != null;
-        assert !description.isEmpty();
+        assert name != null;
+        assert !name.isEmpty();
         assert findKey(keyCode) == null;
-        assert find(description) == null;
+        assert find(name) == null;
 
         int universalCode = keyCode;
         Trigger trigger = new KeyTrigger(keyCode);
-        Hotkey instance = new Hotkey(universalCode, description, trigger);
+        Hotkey instance = new Hotkey(universalCode, name, trigger);
 
         byUniversalCode.put(universalCode, instance);
-        byName.put(description, instance);
+        byName.put(name, instance);
     }
 }
