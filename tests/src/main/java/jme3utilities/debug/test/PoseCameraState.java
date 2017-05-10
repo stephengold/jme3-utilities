@@ -30,10 +30,8 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.MouseInput;
-import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.MouseAxisTrigger;
-import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -66,7 +64,7 @@ import jme3utilities.ui.ActionAppState;
  */
 class PoseCameraState
         extends ActionAppState
-        implements ActionListener, AnalogListener {
+        implements AnalogListener {
     // *************************************************************************
     // constants and loggers
 
@@ -265,6 +263,16 @@ class PoseCameraState
             MyCamera.look(cam, direction);
         }
     }
+
+    /**
+     * Handle a "warp cursor" action.
+     */
+    void warp() {
+        warpCursor();
+        if (isOrbitMode()) {
+            aim();
+        }
+    }
     // *************************************************************************
     // ActionAppState methods
 
@@ -311,19 +319,11 @@ class PoseCameraState
         if (isEnabled() && !newSetting) {
             PoseDemo.hudState.setEnabled(false);
             unmapButton();
-            inputManager.deleteMapping(warpCursorAction);
 
         } else if (!isEnabled() && newSetting) {
             setFrustum();
             PoseDemo.hudState.setEnabled(showHud);
             mapButton();
-            /*
-             * Clicking the left mouse button warps the 3D cursor.
-             */
-            MouseButtonTrigger left = new MouseButtonTrigger(
-                    MouseInput.BUTTON_LEFT);
-            inputManager.addMapping(warpCursorAction, left);
-            inputManager.addListener(this, warpCursorAction);
         }
 
         super.setEnabled(newSetting);
@@ -360,27 +360,6 @@ class PoseCameraState
         }
         if (signals.test(modelCWSignalName)) {
             PoseDemo.modelState.rotateY(-tpf);
-        }
-    }
-    // *************************************************************************
-    // ActionListener methods
-
-    /**
-     * Process a mouse button action.
-     *
-     * @param actionString textual description of the action (not null)
-     * @param ongoing true if the action is ongoing, otherwise false
-     * @param tpf time interval between render passes (in seconds, &ge;0)
-     */
-    @Override
-    public void onAction(String actionString, boolean ongoing, float tpf) {
-        logger.log(Level.INFO, "Got action {0}", MyString.quote(actionString));
-
-        if (ongoing && actionString.equals(warpCursorAction)) {
-            warpCursor();
-            if (isOrbitMode()) {
-                aim();
-            }
         }
     }
     // *************************************************************************
@@ -496,11 +475,6 @@ class PoseCameraState
      * the camera position.
      */
     private void mapButton() {
-        String actionString = String.format("signal %s 0", cameraSignalName);
-        MouseButtonTrigger middle = new MouseButtonTrigger(
-                MouseInput.BUTTON_MIDDLE);
-        inputManager.addMapping(actionString, middle);
-        inputManager.addListener(signals, actionString);
         /*
          * Turning the mouse wheel up triggers move backward.
          */
@@ -652,9 +626,6 @@ class PoseCameraState
      * control the camera position.
      */
     private void unmapButton() {
-        String actionString = String.format("signal %s 0", cameraSignalName);
-        inputManager.deleteMapping(actionString);
-
         inputManager.deleteMapping(moveForwardEvent);
         inputManager.deleteMapping(moveBackwardEvent);
         inputManager.deleteMapping(moveDownEvent);

@@ -261,6 +261,9 @@ public class PoseDemo extends GuiApplication {
                 case "view horizontal":
                     cameraState.viewHorizontal();
                     return;
+                case "warp cursor":
+                    cameraState.warp();
+                    return;
             }
         }
         /*
