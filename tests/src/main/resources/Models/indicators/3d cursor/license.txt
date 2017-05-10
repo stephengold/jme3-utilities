@@ -1,4 +1,4 @@
-Licensing history for assets in Models/indicator
+Licensing history for assets in Models/indicators/3d cursor
 
 Stephen Gold authored "3d cursor.blend" and makes it available under the 
 Creative Commons Attribution-Share Alike 3.0 Unported license -- see
