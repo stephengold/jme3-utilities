@@ -98,9 +98,9 @@ public class BindInputMode extends InputMode {
             if (BindScreen.isExempt(hotkey)) {
                 continue;
             }
-            int keyCode = hotkey.getKeyCode();
-            String actionString = String.format("select %d", keyCode);
-            bind(actionString, keyCode);
+            int code = hotkey.getCode();
+            String actionString = String.format("select %d", code);
+            bind(actionString, hotkey);
         }
     }
 

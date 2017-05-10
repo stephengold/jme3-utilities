@@ -29,6 +29,7 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetNotFoundException;
 import com.jme3.cursors.plugins.JmeCursor;
+import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -157,42 +158,49 @@ abstract public class InputMode
     }
 
     /**
-     * Bind the named action to a hotkey, but don't map it yet.
-     * <p>
-     * Each hotkey can bind to at most one action, but the same action can be
-     * shared by multiple hotkeys. Signals are used to track the state of mode
-     * keys (such as the shift keys).
+     * Bind the named action to a keyboard key, but don't map it yet. Any
+     * existing binding for the key is removed.
      *
-     * @param actionName name of the action (not null)
-     * @param keyCode the hotkey's keycode
+     * @param actionName the name of the action (not null)
+     * @param keyCode the key code
      */
     public void bind(String actionName, int keyCode) {
-        Validate.nonNull(actionName, "name");
+        Validate.nonNull(actionName, "action name");
+        Validate.inRange(keyCode, "key code", 0, KeyInput.KEY_LAST);
 
-        Hotkey hotkey = Hotkey.find(keyCode);
-        assert hotkey != null : keyCode;
+        Hotkey hotkey = Hotkey.findKey(keyCode);
         bind(actionName, hotkey);
     }
 
     /**
-     * Bind the named action to a hotkey, but don't map it yet.
-     * <p>
-     * Each hotkey can bind to at most one action, but the same action can be
-     * shared by multiple hotkeys. Signals are used to track the state of mode
-     * keys (such as the shift keys).
+     * Bind the named action to the described hotkey, but don't map it yet. Any
+     * existing binding for the hotkey is removed.
+     *
+     * @param actionName the name of the action (not null)
+     * @param description the hotkey's description (not null)
+     */
+    public void bind(String actionName, String description) {
+        Validate.nonNull(actionName, "action name");
+        Validate.nonNull(description, "hotkey description");
+
+        assert Hotkey.find(description) != null;
+        hotkeyBindings.put(description, actionName);
+        addActionName(actionName);
+    }
+
+    /**
+     * Bind the named action to the specified hotkey, but don't map it yet. Any
+     * existing binding for the hotkey is removed.
      *
      * @param actionName name of the action (not null)
-     * @param hotkey hotkey to bind to (not null)
+     * @param hotkey which hotkey to bind (not null)
      */
     public void bind(String actionName, Hotkey hotkey) {
         Validate.nonNull(actionName, "action name");
         Validate.nonNull(hotkey, "hotkey");
 
-        String hotkeyName = hotkey.getName();
-        /*
-         * Add to the bindings.  Remove any old binding of this hotkey.
-         */
-        hotkeyBindings.put(hotkeyName, actionName);
+        String description = hotkey.getDescription();
+        hotkeyBindings.put(description, actionName);
         addActionName(actionName);
     }
 
@@ -256,7 +264,7 @@ abstract public class InputMode
      * @return hotkey's action name, or null if the hotkey isn't bound
      */
     public String getActionName(Hotkey hotkey) {
-        String keyName = hotkey.getName();
+        String keyName = hotkey.getDescription();
         String actionName = hotkeyBindings.getProperty(keyName);
 
         return actionName;
@@ -411,7 +419,7 @@ abstract public class InputMode
     public void unbind(Hotkey hotkey) {
         assert isInitialized();
 
-        String hotkeyName = hotkey.getName();
+        String hotkeyName = hotkey.getDescription();
         if (hotkeyBindings.containsKey(hotkeyName)) {
             /*
              * Remove the binding.
