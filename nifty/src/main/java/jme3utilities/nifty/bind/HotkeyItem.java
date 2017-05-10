@@ -98,7 +98,7 @@ class HotkeyItem {
      * @return true if it corresponds, else false
      */
     boolean isForKeyCode(int keyCode) {
-        int thisCode = hotkey.keyCode();
+        int thisCode = hotkey.getKeyCode();
         boolean result = thisCode == keyCode;
         return result;
     }
@@ -115,7 +115,7 @@ class HotkeyItem {
         if (mode == null) {
             return "";
         }
-        String name = hotkey.name();
+        String name = hotkey.getName();
         String result = String.format(" [ %s ]    ... ", name);
         if (isBound()) {
             String action = mode.getActionName(hotkey);

@@ -28,14 +28,17 @@ package jme3utilities.ui;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.Trigger;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * Hotkey on a desktop system's keyboard.
+ * An immutable representation of a hotkey on a desktop system's keyboard.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -43,14 +46,6 @@ public class Hotkey {
     // *************************************************************************
     // constants and loggers
 
-    /**
-     * largest valid key code (per com.jme3.input.KeyInput, &ge;minKeyCode)
-     */
-    final private static int maxKeyCode = KeyInput.KEY_SLEEP;
-    /**
-     * smallest valid key code (per com.jme3.input.KeyInput, &ge;0)
-     */
-    final private static int minKeyCode = KeyInput.KEY_ESCAPE;
     /**
      * message logger for this class
      */
@@ -60,14 +55,13 @@ public class Hotkey {
     // fields
 
     /**
-     * this hotkey's key code (per com.jme3.input.KeyInput, must be between
-     * minKeyCode and maxKeyCode): set by constructor
+     * this hotkey's key code: set by constructor
      */
     final private int keyCode;
     /**
-     * array to look up a hotkey by its key code
+     * map to look up a hotkey by its key code
      */
-    final private static Hotkey[] instances = new Hotkey[maxKeyCode + 1];
+    final private static Map<Integer, Hotkey> instances = new TreeMap<>();
     /**
      * map to look up a hotkey by its name
      */
@@ -76,66 +70,79 @@ public class Hotkey {
      * descriptive name for this hotkey: set by constructor
      */
     final private String name;
+    /**
+     * trigger for this hotkey: set by constructor
+     */
+    final private Trigger trigger;
     // *************************************************************************
     // constructors
 
     /**
      * Instantiate a hotkey based on its key code and name.
      *
-     * @param keyCode (&ge;minKeyCode, &le;maxKeyCode)
+     * @param keyCode
      * @param name (not null)
      */
     private Hotkey(int keyCode, String name) {
-        assert keyCode >= minKeyCode : keyCode;
-        assert keyCode <= maxKeyCode : keyCode;
         assert name != null;
 
         this.keyCode = keyCode;
         this.name = name;
+        this.trigger = new KeyTrigger(keyCode);
+
     }
     // *************************************************************************
     // new methods exposed
 
     /**
-     * Enumerate all valid hotkeys.
+     * Find a hotkey by key code.
      *
-     * @return new collection
-     */
-    public static Collection<Hotkey> collectAll() {
-        Collection<Hotkey> collection = instancesByName.values();
-        return collection;
-    }
-
-    /**
-     * Look up the hotkey with a specified key code.
-     *
-     * @param keyCode key code of hotkey
+     * @param keyCode key code
      * @return pre-existing instance (or null for an invalid key code)
      */
-    public static Hotkey getInstance(int keyCode) {
-        if (keyCode < minKeyCode || keyCode > maxKeyCode) {
-            return null;
-        }
-        Hotkey result = instances[keyCode];
+    public static Hotkey find(int keyCode) {
+        Hotkey result = instances.get(keyCode);
         return result;
     }
 
     /**
-     * Look up a named hotkey.
+     * Find a hotkey by description.
      *
-     * @param name name of hotkey
-     * @return pre-existing instance (or null for an invalid name)
+     * @param description description of hotkey
+     * @return pre-existing instance (or null for an invalid description)
      */
-    public static Hotkey getInstance(String name) {
-        if (name == null) {
-            return null;
+    public static Hotkey find(String description) {
+        Hotkey result;
+        if (description == null) {
+            result = null;
+        } else {
+            result = instancesByName.get(description);
         }
-        Hotkey result = instancesByName.get(name);
+
         return result;
     }
 
     /**
-     * Instantiate all hotkeys.
+     * Read the key code of a hotkey.
+     *
+     * @return key code from com.jme3.input.KeyInput (&ge;minKeyCode and
+     * &le;maxKeyCode)
+     */
+    public int getKeyCode() {
+        return keyCode;
+    }
+
+    /**
+     * Read the name of a hotkey.
+     *
+     * @return descriptive name (not null)
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Instantiate known hotkeys.
      */
     public static void intialize() {
         /*
@@ -294,13 +301,17 @@ public class Hotkey {
     }
 
     /**
-     * Read the key code of a hotkey.
+     * Enumerate all known hotkeys.
      *
-     * @return key code from com.jme3.input.KeyInput (&ge;minKeyCode and
-     * &le;maxKeyCode)
+     * @return a new list
      */
-    public int keyCode() {
-        return keyCode;
+    public static List<Hotkey> listAll() {
+        Collection<Hotkey> all = instancesByName.values();
+        int numInstances = all.size();
+        List<Hotkey> list = new ArrayList<>(numInstances);
+        list.addAll(all);
+
+        return list;
     }
 
     /**
@@ -314,17 +325,22 @@ public class Hotkey {
         Validate.nonNull(actionString, "action");
         Validate.nonNull(inputManager, "manager");
 
-        KeyTrigger trigger = new KeyTrigger(keyCode);
         inputManager.addMapping(actionString, trigger);
     }
 
     /**
-     * Read the name of a hotkey.
+     * Unmap this hotkey in the specified input manager.
      *
-     * @return descriptive name (not null)
+     * @param actionString action string (not null)
+     * @param inputManager which input manager (not null)
      */
-    public String name() {
-        return name;
+    public void unmap(String actionString, InputManager inputManager) {
+        Validate.nonNull(actionString, "action");
+        Validate.nonNull(inputManager, "manager");
+
+        if (inputManager.hasMapping(actionString)) {
+            inputManager.deleteTrigger(actionString, trigger);
+        }
     }
     // *************************************************************************
     // private methods
@@ -336,15 +352,12 @@ public class Hotkey {
      * @param name unused hotkey name (not null)
      */
     private static void add(int keyCode, String name) {
-        assert keyCode >= minKeyCode;
-        assert keyCode <= maxKeyCode;
-        assert instances[keyCode] == null : keyCode;
         assert name != null;
         assert instancesByName.get(name) == null;
 
         Hotkey instance = new Hotkey(keyCode, name);
 
-        instances[keyCode] = instance;
+        instances.put(keyCode, instance);
         instancesByName.put(name, instance);
     }
 }

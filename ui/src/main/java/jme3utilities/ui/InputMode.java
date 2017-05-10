@@ -50,23 +50,26 @@ import jme3utilities.Validate;
  * Action app state to implement a configurable input mode. At most one mode is
  * active at a time.
  * <p>
- * An active mode maps hotkeys to actions and controls the appearance of the
- * mouse pointer/cursor. Some hotkeys (such as the shift keys) can be associated
- * with signals, which allow multiple keys to share a common modal function.
+ * Modes may be temporarily suspended, in which the case the underlying app
+ * state remains enabled even though the mode is considered inactive.
+ * <p>
+ * The active mode maps hotkeys to actions and controls the appearance of the
+ * mouse pointer/cursor. Hotkeys can be mapped to signal actions, which cause
+ * multiple keys (shift or control keys, for exampled) to share a common modal
+ * function.
  * <p>
  * When a hotkey binding is live in the input manager, the hotkey is said to be
- * "mapped". When an input mode is disabled, its hotkey bindings persist, but
- * its mappings don't, at which time the bindings can be reconfigured, loaded,
- * and saved.
+ * "mapped". When an input mode is inactive, its hotkey bindings persist,
+ * allowing them to be altered, loaded, and saved even though they are unmapped.
  * <p>
  * Hotkeys are bound to action names. The input manager, however, stores "action
  * strings". For non-signal actions, the action string is identical to the
  * action name. For an action which updates a signal, the action name consists
  * of "signal " followed by the name of the signal. In that case, a space and
- * decimal hotkey code are appended to the action name generate a unique action
+ * decimal keycode are appended to the action name generate a unique action
  * string for each signal source.
  * <p>
- * Each instance is disabled at creation.
+ * Input modes are disabled at creation.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -76,6 +79,10 @@ abstract public class InputMode
     // *************************************************************************
     // constants and loggers
 
+    /*
+     * action-string prefix for a signal action
+     */
+    final static String signalActionPrefix = "signal ";
     /**
      * message logger for this class
      */
@@ -162,7 +169,7 @@ abstract public class InputMode
     public void bind(String actionName, int keyCode) {
         Validate.nonNull(actionName, "name");
 
-        Hotkey hotkey = Hotkey.getInstance(keyCode);
+        Hotkey hotkey = Hotkey.find(keyCode);
         assert hotkey != null : keyCode;
         bind(actionName, hotkey);
     }
@@ -181,7 +188,7 @@ abstract public class InputMode
         Validate.nonNull(actionName, "action name");
         Validate.nonNull(hotkey, "hotkey");
 
-        String hotkeyName = hotkey.name();
+        String hotkeyName = hotkey.getName();
         /*
          * Add to the bindings.  Remove any old binding of this hotkey.
          */
@@ -249,7 +256,7 @@ abstract public class InputMode
      * @return hotkey's action name, or null if the hotkey isn't bound
      */
     public String getActionName(Hotkey hotkey) {
-        String keyName = hotkey.name();
+        String keyName = hotkey.getName();
         String actionName = hotkeyBindings.getProperty(keyName);
 
         return actionName;
@@ -404,7 +411,7 @@ abstract public class InputMode
     public void unbind(Hotkey hotkey) {
         assert isInitialized();
 
-        String hotkeyName = hotkey.name();
+        String hotkeyName = hotkey.getName();
         if (hotkeyBindings.containsKey(hotkeyName)) {
             /*
              * Remove the binding.
@@ -607,7 +614,7 @@ abstract public class InputMode
 
         for (String keyString : hotkeyBindings.stringPropertyNames()) {
             String actionName = hotkeyBindings.getProperty(keyString);
-            Hotkey hotkey = Hotkey.getInstance(keyString);
+            Hotkey hotkey = Hotkey.find(keyString);
             if (hotkey == null) {
                 logger.log(Level.WARNING, "Skipped unknown hotkey {0} in {1}",
                         new Object[]{
@@ -631,10 +638,7 @@ abstract public class InputMode
     private void mapActionName(String actionName, Hotkey hotkey) {
         assert hotkey != null;
 
-        String[] words = actionName.split("\\s+");
-        assert words.length > 0 : MyString.quote(actionName);
-        String verb = words[0];
-        if ("signal".equals(verb)) {
+        if (actionName.startsWith(signalActionPrefix)) {
             mapSignalHotkey(actionName, hotkey);
         } else {
             mapNonsignalHotkey(actionName, hotkey);
@@ -659,7 +663,7 @@ abstract public class InputMode
     private void mapBoundHotkeys() {
         for (String keyName : hotkeyBindings.stringPropertyNames()) {
             String actionName = hotkeyBindings.getProperty(keyName);
-            Hotkey hotkey = Hotkey.getInstance(keyName);
+            Hotkey hotkey = Hotkey.find(keyName);
             assert hotkey != null : keyName;
             mapActionName(actionName, hotkey);
         }
@@ -700,7 +704,7 @@ abstract public class InputMode
         String signalName = words[1];
         signals.add(signalName);
         /*
-         * Append the decimal keyCode ensure a unique action string.
+         * Append the decimal keyCode to ensure a unique action string.
          */
         String actionString = signalActionString(actionName, hotkey);
         int count = countBindings(actionString);
@@ -734,8 +738,7 @@ abstract public class InputMode
     private void saveBindings(String assetPath) throws IOException {
         assert assetPath != null;
 
-        logger.log(Level.INFO,
-                "Saving hotkey bindings to asset {0}.",
+        logger.log(Level.INFO, "Saving hotkey bindings to asset {0}.",
                 MyString.quote(assetPath));
 
         FileOutputStream stream = null;
@@ -784,7 +787,7 @@ abstract public class InputMode
     private String signalActionString(String actionName, Hotkey hotkey) {
         assert actionName != null;
 
-        int keyCode = hotkey.keyCode();
+        int keyCode = hotkey.getKeyCode();
         String actionString = String.format("%s %d", actionName, keyCode);
 
         return actionString;
@@ -796,14 +799,14 @@ abstract public class InputMode
     private void unmapBoundHotkeys() {
         for (String keyName : hotkeyBindings.stringPropertyNames()) {
             String actionName = hotkeyBindings.getProperty(keyName);
-            Hotkey hotkey = Hotkey.getInstance(keyName);
+            Hotkey hotkey = Hotkey.find(keyName);
             assert hotkey != null : keyName;
             unmapHotkey(actionName, hotkey);
         }
     }
 
     /**
-     * Delete a hotkey mapping from the input manager.
+     * Delete a hotkey mapping from the input manager (if it exists).
      *
      * @param actionName name of the mapped action (not null)
      * @param hotkey (not null)
@@ -813,20 +816,15 @@ abstract public class InputMode
         /*
          * Reconstruct the action string.
          */
-        String[] words = actionName.split("\\s+");
-        assert words.length > 0 : MyString.quote(actionName);
-        String verb = words[0];
         String actionString;
-        if ("signal".equals(verb)) {
+        if (actionName.startsWith(signalActionPrefix)) {
             actionString = signalActionString(actionName, hotkey);
         } else {
             actionString = actionName;
         }
         /*
-         * Delete the mapping.
+         * Delete the mapping, if it exists.
          */
-        if (inputManager.hasMapping(actionString)) {
-            inputManager.deleteMapping(actionString);
-        }
+        hotkey.unmap(actionString, inputManager);
     }
 }

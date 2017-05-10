@@ -94,11 +94,11 @@ public class BindInputMode extends InputMode {
      */
     @Override
     protected void defaultBindings() {
-        for (Hotkey hotkey : Hotkey.collectAll()) {
+        for (Hotkey hotkey : Hotkey.listAll()) {
             if (BindScreen.isExempt(hotkey)) {
                 continue;
             }
-            int keyCode = hotkey.keyCode();
+            int keyCode = hotkey.getKeyCode();
             String actionString = String.format("select %d", keyCode);
             bind(actionString, keyCode);
         }

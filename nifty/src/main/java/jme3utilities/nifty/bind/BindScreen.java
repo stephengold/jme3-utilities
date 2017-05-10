@@ -137,7 +137,7 @@ public class BindScreen
     static boolean isExempt(Hotkey hotkey) {
         assert hotkey != null;
 
-        int keyCode = hotkey.keyCode();
+        int keyCode = hotkey.getKeyCode();
         /*
          * Windows uses these hotkeys:
          *  KEY_LMETA to open the Windows menu
@@ -471,7 +471,7 @@ public class BindScreen
      */
     private void populateHotkeyBox(boolean boundFlag) {
         ListBox<HotkeyItem> listBox = getHotkeyBox();
-        Collection<Hotkey> allHotkeys = Hotkey.collectAll();
+        Collection<Hotkey> allHotkeys = Hotkey.listAll();
         for (Hotkey hotkey : allHotkeys) {
             if (isExempt(hotkey)) {
                 continue;
