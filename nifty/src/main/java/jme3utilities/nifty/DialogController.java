@@ -33,7 +33,6 @@ import de.lessvoid.nifty.elements.Element;
  * @author Stephen Gold sgold@sonic.net
  */
 public interface DialogController {
-
     /**
      * Test whether "commit" actions are allowed.
      *
