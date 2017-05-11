@@ -68,7 +68,7 @@ class DefaultInputMode extends InputMode {
     // ActionListener methods
 
     /**
-     * Process an action from the GUI or keyboard.
+     * Process an action from the keyboard or mouse.
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
@@ -138,9 +138,9 @@ class DefaultInputMode extends InputMode {
     // private methods
 
     /**
-     * Bind the specified signal to a hotkey, but don't map it yet.
+     * Bind the named signal to a keyboard key, but don't map it yet.
      *
-     * @param signalName name of signal (not null, not empty)
+     * @param signalName which signal (not null, not empty)
      * @param keyCode code for hotkey
      */
     private void bindSignal(String signalName, int keyCode) {
@@ -152,18 +152,19 @@ class DefaultInputMode extends InputMode {
     }
 
     /**
-     * Delete the specified mapping if it exists.
+     * Delete any mapping of the specified action string in the specified input
+     * manager.
      *
-     * @param inputManager input manager (not null)
-     * @param mappingName name of mapping (not null)
+     * @param inputManager which input manager (not null)
+     * @param actionString which action string to unmap (not null)
      */
     private void deleteAnyMapping(InputManager inputManager,
-            String mappingName) {
+            String actionString) {
         assert inputManager != null;
-        assert mappingName != null;
+        assert actionString != null;
 
-        if (inputManager.hasMapping(mappingName)) {
-            inputManager.deleteMapping(mappingName);
+        if (inputManager.hasMapping(actionString)) {
+            inputManager.deleteMapping(actionString);
         }
     }
 }

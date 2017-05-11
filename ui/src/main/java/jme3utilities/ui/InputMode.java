@@ -173,18 +173,18 @@ abstract public class InputMode
     }
 
     /**
-     * Bind the named action to the described hotkey, but don't map it yet. Any
+     * Bind the named action to the named hotkey, but don't map it yet. Any
      * existing binding for the hotkey is removed.
      *
      * @param actionName the name of the action (not null)
-     * @param description the hotkey's description (not null)
+     * @param hotkeyName the hotkey's name (not null)
      */
-    public void bind(String actionName, String description) {
+    public void bind(String actionName, String hotkeyName) {
         Validate.nonNull(actionName, "action name");
-        Validate.nonNull(description, "hotkey description");
+        Validate.nonNull(hotkeyName, "hotkey name");
 
-        assert Hotkey.find(description) != null;
-        hotkeyBindings.put(description, actionName);
+        assert Hotkey.find(hotkeyName) != null;
+        hotkeyBindings.put(hotkeyName, actionName);
         addActionName(actionName);
     }
 
