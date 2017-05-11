@@ -1,11 +1,11 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.6.3 released on TBD
+## Version 0.6.3 released on 10 May 2017
 
 Added a simple confirmation dialog box.
 Added DialogController class for customizing dialog boxes.
 Added a feedback section to text-entry dialog box.
-Bound the F5 key in menu input mode and dialog input modes.
+Bound the F5 key in both menu-input mode and dialog-input mode.
 
 ## Version 0.6.2 released on 2 May 2017
 

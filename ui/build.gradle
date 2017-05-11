@@ -17,8 +17,8 @@ sourcesJar { baseName "${project.ext.baseName}" }
 dependencies {
     compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
 
-    //compile "jme3utilities:SkyControl:0.9.2"
-    compile project(':SkyControl')
+    compile "jme3utilities:SkyControl:$skycontrolVersion"
+    //compile project(':SkyControl')
 }
 
 task pom {

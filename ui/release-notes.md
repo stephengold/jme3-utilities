@@ -1,8 +1,8 @@
 # release notes for the jme3-utilities-ui library and related tests
 
-## Version 0.5.1 released on TBD
+## Version 0.5.1 released on 10 May 2017
 
-Extended the HotKey class to include mouse buttons, redesigned the API.
+Extended the Hotkey class to include mouse buttons, redesigned the API.
 
 ## Version 0.5.0 released on 9 April 2017
 
