@@ -448,7 +448,7 @@ public class Updater
         }
 
         if (mainLight != null) {
-            ColorRGBA color = ambientColor.mult(mainMultiplier);
+            ColorRGBA color = mainColor.mult(mainMultiplier);
             mainLight.setColor(color);
             /*
              * The direction of the main light is the direction in which it
