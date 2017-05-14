@@ -441,6 +441,8 @@ I therefore acknowledge the following software developers:
   + Benjamin D.
   + "Fissll"
   + Davis Rollman
++ users who found and reported bugs in later versions:
+  + Anton Starastsin (aka "Antonystar")
 + the creators of (and contributors to) the following software:
   + Adobe Photoshop Elements
   + the Ant and Gradle build tools
