@@ -1,5 +1,11 @@
 # release notes for the SkyControl library and related tests
 
+
+## Version 0.9.4 released on TBD
+
+Notable changes:
+ + fix a logic bug which set the main light to the wrong color
+
 ## Version 0.9.3 released on 5 May 2017
 
 Notable changes:
