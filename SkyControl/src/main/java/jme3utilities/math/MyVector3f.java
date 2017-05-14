@@ -29,7 +29,9 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -159,6 +161,23 @@ public class MyVector3f {
         }
 
         return result;
+    }
+
+    /**
+     * Count the number of distinct vectors in an array.
+     *
+     * @param array input (not null)
+     * @return count (&ge;0)
+     */
+    public static int countDistinct(Vector3f[] array) {
+        int length = array.length;
+        Set<Vector3f> distinct = new HashSet<>(length);
+        for (Vector3f vector : array) {
+            distinct.add(vector);
+        }
+        int count = distinct.size();
+
+        return count;
     }
 
     /**
