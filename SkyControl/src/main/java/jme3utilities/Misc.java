@@ -175,7 +175,7 @@ public class Misc {
      * @return project name, library name, branch, and revision
      */
     public static String getVersion() {
-        return "jme3-utilities SkyControl master $Rev: 0.9.4 $";
+        return "jme3-utilities SkyControl master $Rev: 0.9.4+1 $";
     }
 
     /**

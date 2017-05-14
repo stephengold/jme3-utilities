@@ -18,11 +18,11 @@ dependencies {
     compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-niftygui:$jmonkeyengineVersion"
 
-    compile "jme3utilities:SkyControl:$skycontrolVersion"
-    //compile project(':SkyControl')
+    //compile "jme3utilities:SkyControl:$skycontrolVersion"
+    compile project(':SkyControl')
 
-    compile "jme3utilities:jme3-utilities-ui:$jme3utilitiesuiVersion"
-    //compile project(':ui')
+    //compile "jme3utilities:jme3-utilities-ui:$jme3utilitiesuiVersion"
+    compile project(':ui')
 }
 
 task pom {
