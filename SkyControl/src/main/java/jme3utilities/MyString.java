@@ -135,7 +135,33 @@ public class MyString {
     }
 
     /**
-     * Join an array of strings using spaces, ignoring any nulls.
+     * Join a list of strings using spaces, ignoring any nulls.
+     *
+     * @param list of strings to join (not null)
+     * @return joined string
+     */
+    public static String join(List<String> list) {
+        Validate.nonNull(list, "list");
+
+        StringBuilder result = new StringBuilder(20);
+        for (String element : list) {
+            if (element != null) {
+                if (result.length() > 0) {
+                    /*
+                     * Append a space as a separator.
+                     */
+                    result.append(' ');
+                }
+                result.append(element);
+            }
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Join an array of strings using spaces, ignoring any nulls. TODO version
+     * for a list of strings
      *
      * @param array of strings to join (not null)
      * @return joined string
