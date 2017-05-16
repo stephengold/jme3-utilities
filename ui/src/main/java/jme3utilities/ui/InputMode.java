@@ -811,6 +811,7 @@ abstract public class InputMode
             assert hotkey != null : keyName;
             unmapHotkey(actionName, hotkey);
         }
+        inputManager.removeListener(this);
     }
 
     /**
