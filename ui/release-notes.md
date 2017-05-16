@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-ui library and related tests
 
-## Version 0.5.2 released on TBD
+## Version 0.5.2 released on 16 May 2017
 
 Bugfix: When disabling an InputMode, remove the listener.
 
