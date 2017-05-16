@@ -20,7 +20,7 @@ ext {
     jcommanderVersion = '1.72'
     jme3utilitiesdebugVersion = '0.5.2'
     jme3utilitiesniftyVersion = '0.6.3'
-    jme3utilitiesuiVersion = '0.5.1'
+    jme3utilitiesuiVersion = '0.5.2'
     jmonkeyengineVersion = '3.1.0-stable'
     skycontrolVersion = '0.9.4'
 }

@@ -1,5 +1,9 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.5.2 released on TBD
+
+Bugfix: When disabling an InputMode, remove the listener.
+
 ## Version 0.5.1 released on 10 May 2017
 
 Extended the Hotkey class to include mouse buttons, redesigned the API.
