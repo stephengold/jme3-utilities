@@ -115,11 +115,21 @@ public class BasicScreenController
     // new methods exposed
 
     /**
+     * Access the listener of this screen.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    public ActionListener getListener() {
+        assert listener != null;
+        return listener;
+    }
+
+    /**
      * Access the Nifty instance that owns the controlled screen.
      *
      * @return the pre-existing instance (not null)
      */
-    Nifty getNifty() {
+    public Nifty getNifty() {
         assert nifty != null;
         return nifty;
     }
@@ -133,6 +143,16 @@ public class BasicScreenController
         Screen screen = nifty.getScreen(screenId);
         assert screen != null;
         return screen;
+    }
+
+    /**
+     * Read the Nifty screen id.
+     *
+     * @return id string (not null)
+     */
+    public String getScreenId() {
+        assert screenId != null;
+        return screenId;
     }
 
     /**
@@ -245,7 +265,7 @@ public class BasicScreenController
      * @param newSetting true &rarr; enable, false &rarr; disable
      */
     @Override
-    public void setEnabled(boolean newSetting) {
+    final public void setEnabled(boolean newSetting) {
         if (!isInitialized()) {
             /*
              * Defer until initialization.
@@ -287,8 +307,8 @@ public class BasicScreenController
     // ScreenController methods
 
     /**
-     * A callback which Nifty invokes when the screen becomes enabled, used for
-     * assertions only.
+     * A callback which Nifty invokes when the screen gets enabled for the first
+     * time, used for assertions only.
      *
      * @param nifty (not null)
      * @param screen (not null)
@@ -307,7 +327,7 @@ public class BasicScreenController
     }
 
     /**
-     * A callback from Nifty, invoked when the screen starts up.
+     * A callback from Nifty, invoked each time the screen starts up.
      */
     @Override
     public void onStartScreen() {
@@ -317,21 +337,9 @@ public class BasicScreenController
     // new protected methods
 
     /**
-     * Read the Nifty screen id.
-     *
-     * @return id string (not null)
-     */
-    protected String getScreenId() {
-        assert screenId != null;
-        return screenId;
-    }
-    // *************************************************************************
-    // private methods
-
-    /**
      * Disable this controller. Assumes it is initialized and enabled.
      */
-    private void disable() {
+    protected void disable() {
         assert isInitialized();
         assert isEnabled();
 
@@ -353,7 +361,7 @@ public class BasicScreenController
      * Enable this controller for a particular listener. Assumes this controller
      * is initialized and disabled.
      */
-    private void enable() {
+    protected void enable() {
         assert isInitialized();
         assert !isEnabled();
         logger.log(Level.INFO, "screenId={0}", MyString.quote(screenId));
@@ -368,16 +376,8 @@ public class BasicScreenController
         guiApplication.setEnabledScreen(this);
         super.setEnabled(true);
     }
-
-    /**
-     * Access the listener of this screen.
-     *
-     * @return the pre-existing instance (not null)
-     */
-    private ActionListener getListener() {
-        assert listener != null;
-        return listener;
-    }
+    // *************************************************************************
+    // private methods
 
     /**
      * Validate and load a Nifty screen layout from an XML asset.
