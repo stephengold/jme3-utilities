@@ -96,6 +96,16 @@ public class WindowController extends GuiAppState {
     // new methods exposed
 
     /**
+     * Access the controller for the screen which owns the window.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    public BasicScreenController getScreenController() {
+        assert screenController != null;
+        return screenController;
+    }
+
+    /**
      * Select the window for maximum prominence: make sure it's displayed and
      * then move it to the front.
      */
@@ -197,16 +207,6 @@ public class WindowController extends GuiAppState {
         Element element = getWindow().getElement();
         assert element != null;
         return element;
-    }
-
-    /**
-     * Access the screen controller.
-     *
-     * @return the pre-existing instance (not null)
-     */
-    private BasicScreenController getScreenController() {
-        assert screenController != null;
-        return screenController;
     }
 
     /**
