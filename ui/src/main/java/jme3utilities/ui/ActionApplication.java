@@ -75,11 +75,11 @@ abstract public class ActionApplication
     // fields
 
     /**
-     * initial input mode: set in #simpleInitApp()
+     * initial input mode: set in {@link #simpleInitApp()}
      */
     private InputMode defaultInputMode = null;
     /**
-     * signal tracker set in #simpleInitApp()
+     * signal tracker set in {@link #simpleInitApp()}
      */
     private Signals signals = null;
     // *************************************************************************
@@ -89,6 +89,19 @@ abstract public class ActionApplication
      * Callback to the user's application startup code.
      */
     abstract public void actionInitializeApplication();
+
+    /**
+     * Callback invoked when an ongoing action isn't handled after running
+     * through the {@link #onAction(java.lang.String, boolean, float)} methods
+     * of both the input mode and the application. Meant to be overridden.
+     *
+     * @param actionString textual description of the action (not null)
+     */
+    public void didntHandle(String actionString) {
+        Validate.nonNull(actionString, "action string");
+        logger.log(Level.WARNING, "Ongoing action {0} was not handled.",
+                MyString.quote(actionString));
+    }
 
     /**
      * Convert an asset path to a filesystem path for a writable asset.
@@ -143,8 +156,7 @@ abstract public class ActionApplication
     // ActionListener methods
 
     /**
-     * Process an action which is not handled by the default input mode. This
-     * method is a placeholder which may be overridden as desired.
+     * Process an action which wasn't handled by the active input mode.
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
@@ -160,7 +172,7 @@ abstract public class ActionApplication
             switch (actionString) {
                 case SimpleApplication.INPUT_MAPPING_EXIT:
                     stop();
-                    return;
+                    break;
 
                 case SimpleApplication.INPUT_MAPPING_CAMERA_POS:
                     if (cam != null) {
@@ -169,30 +181,31 @@ abstract public class ActionApplication
                         System.out.println("Camera Position: ("
                                 + loc.x + ", " + loc.y + ", " + loc.z + ")");
                         System.out.println("Camera Rotation: " + rot);
-                        System.out.println("Camera Direction: " + cam.getDirection());
+                        System.out.println("Camera Direction: "
+                                + cam.getDirection());
                         System.out.println("cam.setLocation(new Vector3f("
-                                + loc.x + "f, " + loc.y + "f, " + loc.z + "f));");
+                                + loc.x + "f, " + loc.y + "f, " + loc.z
+                                + "f));");
                         System.out.println("cam.setRotation(new Quaternion("
-                                + rot.getX() + "f, " + rot.getY() + "f, " + rot.getZ()
-                                + "f, " + rot.getW() + "f));");
+                                + rot.getX() + "f, " + rot.getY() + "f, "
+                                + rot.getZ() + "f, " + rot.getW() + "f));");
                     }
-                    return;
+                    break;
 
                 case SimpleApplication.INPUT_MAPPING_HIDE_STATS:
-                    StatsAppState sas = stateManager.getState(StatsAppState.class);
+                    StatsAppState sas = stateManager.getState(
+                            StatsAppState.class);
                     if (sas != null) {
                         sas.toggleStats();
                     }
-                    return;
+                    break;
 
                 case SimpleApplication.INPUT_MAPPING_MEMORY:
                     BufferUtils.printCurrentDirectMemory(null);
-                    return;
+                    break;
 
                 default:
-                    logger.log(Level.WARNING,
-                            "Ongoing action {0} was not handled.",
-                            MyString.quote(actionString));
+                    didntHandle(actionString);
             }
         }
     }
