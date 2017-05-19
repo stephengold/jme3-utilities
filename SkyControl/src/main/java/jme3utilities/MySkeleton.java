@@ -29,6 +29,7 @@ import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Spatial;
@@ -56,6 +57,10 @@ public class MySkeleton {
      */
     final private static Logger logger = Logger.getLogger(
             MySkeleton.class.getName());
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_XYZ}
+     */
+    final private static Vector3f identityScale = new Vector3f(1f, 1f, 1f);
     // *************************************************************************
     // constructors
 
@@ -66,6 +71,35 @@ public class MySkeleton {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Copy the bind transform of the specified bone.
+     *
+     * @param bone which bone to use (not null, unaffected)
+     * @param storeResult (modified if not null)
+     * @return transform in local coordinates (either storeResult or a new
+     * instance)
+     */
+    public static Transform copyBindTransform(Bone bone,
+            Transform storeResult) {
+        if (storeResult == null) {
+            storeResult = new Transform();
+        }
+
+        Vector3f translation = bone.getBindPosition();
+        storeResult.setTranslation(translation);
+
+        Quaternion rotation = bone.getBindRotation();
+        storeResult.setRotation(rotation);
+
+        Vector3f scale = bone.getBindScale();
+        if (scale == null) {
+            scale = identityScale;
+        }
+        storeResult.setScale(scale);
+
+        return storeResult;
+    }
 
     /**
      * Find the index of a named bone in a skeletonized spatial.
