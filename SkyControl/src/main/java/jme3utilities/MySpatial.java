@@ -36,8 +36,10 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.debug.SkeletonDebugger;
 import com.jme3.terrain.geomipmap.TerrainQuad;
+import java.nio.FloatBuffer;
 import java.util.logging.Logger;
 import jme3utilities.math.VectorXZ;
 
@@ -250,42 +252,40 @@ public class MySpatial {
      * units)
      */
     public static float[] findMinMaxHeights(Geometry geometry) {
-        Vector3f vertexLocal[] = new Vector3f[3];
-        for (int j = 0; j < 3; j++) {
-            vertexLocal[j] = new Vector3f();
-        }
-        Vector3f worldLocation = new Vector3f();
-
-        float minY = Float.MAX_VALUE;
-        float maxY = -Float.MAX_VALUE;
+        float[] minMax = {Float.MAX_VALUE, -Float.MAX_VALUE};
 
         Mesh mesh = geometry.getMesh();
-        assert mesh.getMode() == Mesh.Mode.Triangles : mesh.getMode();
-        int count = mesh.getTriangleCount();
-        for (int triangleIndex = 0; triangleIndex < count; triangleIndex++) {
-            /*
-             * Access the vertex locations for a triangle in the mesh.
-             */
-            mesh.getTriangle(triangleIndex, vertexLocal[0], vertexLocal[1],
-                    vertexLocal[2]);
+        VertexBuffer posBuf = mesh.getBuffer(VertexBuffer.Type.Position);
+        if (posBuf == null) {
+            return minMax;
+        }
+
+        FloatBuffer posBuffer = (FloatBuffer) posBuf.getData();
+        posBuffer.rewind();
+        int numFloats = posBuffer.remaining();
+        int count = mesh.getVertexCount();
+        assert numFloats == 3 * count : numFloats;
+
+        Vector3f vertexLocal = new Vector3f();
+        Vector3f worldLocation = new Vector3f();
+
+        for (int vertexIndex = 0; vertexIndex < count; vertexIndex++) {
+            vertexLocal.x = posBuffer.get();
+            vertexLocal.y = posBuffer.get();
+            vertexLocal.z = posBuffer.get();
+            geometry.localToWorld(vertexLocal, worldLocation);
             /*
              * Compare with lowest and highest world elevations so far.
              */
-            for (int j = 0; j < 3; j++) {
-                geometry.localToWorld(vertexLocal[j], worldLocation);
                 float y = worldLocation.y;
-                if (y < minY) {
-                    minY = y;
+            if (y < minMax[0]) {
+                minMax[0] = y;
                 }
-                if (y > maxY) {
-                    maxY = y;
+            if (y > minMax[1]) {
+                minMax[1] = y;
                 }
             }
-        }
-        /*
-         * Create the result array.
-         */
-        float[] minMax = {minY, maxY};
+
         return minMax;
     }
 
