@@ -225,6 +225,25 @@ public class MyAnimation {
     }
 
     /**
+     * Read the name of the target bone of the specified bone track in the
+     * specified animation control.
+     *
+     * @param boneTrack which bone track (not null, unaffected)
+     * @param animControl the animation control containing that track (not null,
+     * unaffected)
+     * @return the name
+     */
+    public static String getTargetName(BoneTrack boneTrack,
+            AnimControl animControl) {
+        int boneIndex = boneTrack.getTargetBoneIndex();
+        Skeleton skeleton = animControl.getSkeleton();
+        Bone bone = skeleton.getBone(boneIndex);
+        String result = bone.getName();
+
+        return result;
+    }
+
+    /**
      * List all animations in an animated spatial.
      *
      * @param spatial (not null)
@@ -238,6 +257,92 @@ public class MyAnimation {
         }
         Collection<String> animationNames = control.getAnimationNames();
         result.addAll(animationNames);
+
         return result;
+    }
+
+    /**
+     * Remove all repetitious keyframes from a bone track.
+     *
+     * @param boneTrack (not null)
+     * @return true if 1 or more keyframes were removed, otherwise false
+     */
+    public static boolean removeRepeats(BoneTrack boneTrack) {
+        float[] originalTimes = boneTrack.getKeyFrameTimes();
+        /*
+         * Count distinct keyframes.
+         */
+        float prevTime = Float.NEGATIVE_INFINITY;
+        int numDistinct = 0;
+        for (float time : originalTimes) {
+            if (time != prevTime) {
+                ++numDistinct;
+            }
+            prevTime = time;
+        }
+
+        int originalCount = originalTimes.length;
+        if (numDistinct == originalCount) {
+            return false;
+        }
+        Vector3f[] originalTranslations = boneTrack.getTranslations();
+        Quaternion[] originalRotations = boneTrack.getRotations();
+        Vector3f[] originalScales = boneTrack.getScales();
+        /*
+         * Allocate new arrays.
+         */
+        float[] newTimes = new float[numDistinct];
+        Vector3f[] newTranslations = new Vector3f[numDistinct];
+        Quaternion[] newRotations = new Quaternion[numDistinct];
+        Vector3f[] newScales;
+        if (originalScales == null) {
+            newScales = null;
+        } else {
+            newScales = new Vector3f[numDistinct];
+        }
+        /*
+         * Copy all non-repeated keyframes.
+         */
+        prevTime = Float.NEGATIVE_INFINITY;
+        int newIndex = 0;
+        for (int oldIndex = 0; oldIndex < originalCount; oldIndex++) {
+            float time = originalTimes[oldIndex];
+            if (time != prevTime) {
+                newTimes[newIndex] = originalTimes[oldIndex];
+                newTranslations[newIndex] = originalTranslations[oldIndex];
+                newRotations[newIndex] = originalRotations[oldIndex];
+                if (newScales != null) {
+                    newScales[newIndex] = originalScales[oldIndex];
+                }
+                ++newIndex;
+            }
+            prevTime = time;
+        }
+
+        boneTrack.setKeyframes(newTimes, newTranslations, newRotations,
+                newScales);
+        return true;
+    }
+
+    /**
+     * Remove repetitious keyframes from an animation.
+     *
+     * @param animation (not null)
+     * @return number of tracks edited
+     */
+    public static int removeRepeats(Animation animation) {
+        int numTracksEdited = 0;
+        Track[] tracks = animation.getTracks();
+        for (Track track : tracks) {
+            if (track instanceof BoneTrack) {
+                BoneTrack boneTrack = (BoneTrack) track;
+                boolean removed = removeRepeats(boneTrack);
+                if (removed) {
+                    ++numTracksEdited;
+                }
+            } // TODO other track types
+        }
+
+        return numTracksEdited;
     }
 }
