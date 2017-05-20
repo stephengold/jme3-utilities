@@ -28,11 +28,11 @@ package jme3utilities.ui;
 import com.jme3.input.controls.ActionListener;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
-import jme3utilities.math.Indices;
 
 /**
  * Track the active/inactive status of named command signals. A signal may
@@ -56,7 +56,7 @@ public class Signals implements ActionListener {
     /**
      * map signal names to statuses
      */
-    final private Map<String, Indices> statusMap = new TreeMap<>();
+    final private Map<String, TreeSet<Integer>> statusMap = new TreeMap<>();
     // *************************************************************************
     // new methods exposed
 
@@ -69,9 +69,9 @@ public class Signals implements ActionListener {
     public void add(String name) {
         Validate.nonNull(name, "signal name");
 
-        Indices status = statusMap.get(name);
+        TreeSet<Integer> status = statusMap.get(name);
         if (status == null) {
-            status = new Indices();
+            status = new TreeSet<Integer>();
             statusMap.put(name, status);
         }
     }
@@ -85,7 +85,7 @@ public class Signals implements ActionListener {
     public boolean exists(String name) {
         Validate.nonNull(name, "signal name");
 
-        Indices status = statusMap.get(name);
+        TreeSet<Integer> status = statusMap.get(name);
         return status != null;
     }
 
@@ -99,12 +99,12 @@ public class Signals implements ActionListener {
     public boolean test(String name) {
         Validate.nonNull(name, "signal name");
 
-        Indices status = statusMap.get(name);
+        TreeSet<Integer> status = statusMap.get(name);
         if (status == null) {
             logger.log(Level.WARNING,
                     "Testing a signal which has not yet been added: {0}.",
                     MyString.quote(name));
-            status = new Indices();
+            status = new TreeSet<Integer>();
             statusMap.put(name, status);
         }
         boolean result = !status.isEmpty();
@@ -148,7 +148,7 @@ public class Signals implements ActionListener {
     private void update(String name, int sourceIndex, boolean newState) {
         assert name != null;
 
-        Indices status = statusMap.get(name);
+        TreeSet<Integer> status = statusMap.get(name);
         if (status == null) {
             logger.log(Level.WARNING, "Unknown signal: {0}",
                     MyString.quote(name));
@@ -158,6 +158,10 @@ public class Signals implements ActionListener {
             MyString.quote(name), newState
         });
 
-        status.addRemove(sourceIndex, newState);
+        if (newState) {
+            status.add(sourceIndex);
+        } else {
+            status.remove(sourceIndex);
+        }
     }
 }
