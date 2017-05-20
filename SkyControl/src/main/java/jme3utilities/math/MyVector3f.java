@@ -69,6 +69,44 @@ public class MyVector3f {
     // new methods exposed
 
     /**
+     * Accumulate maximum coordinates.
+     *
+     * @param maxima the highest coordinate so far for each axis (not null,
+     * updated)
+     * @param input vector to compare (not null, unaffected)
+     */
+    public static void accumulateMaxima(Vector3f maxima, Vector3f input) {
+        if (input.x > maxima.x) {
+            maxima.x = input.x;
+        }
+        if (input.y > maxima.y) {
+            maxima.y = input.y;
+        }
+        if (input.z > maxima.z) {
+            maxima.z = input.z;
+        }
+    }
+
+    /**
+     * Accumulate minimum coordinates.
+     *
+     * @param minima the lowest coordinate so far for each axis (not null,
+     * updated)
+     * @param input vector to compare (not null, unaffected)
+     */
+    public static void accumulateMinima(Vector3f minima, Vector3f input) {
+        if (input.x < minima.x) {
+            minima.x = input.x;
+        }
+        if (input.y < minima.y) {
+            minima.y = input.y;
+        }
+        if (input.z < minima.z) {
+            minima.z = input.z;
+        }
+    }
+
+    /**
      * Calculate the altitude angle of a non-zero offset.
      *
      * @param offset difference of world coordinates (not null, not zero,
