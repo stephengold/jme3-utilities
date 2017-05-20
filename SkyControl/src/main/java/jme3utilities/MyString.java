@@ -70,14 +70,15 @@ public class MyString {
     }
 
     /**
-     * Escape all tab, newline, and backslash characters in a string.
+     * Escape all tab, quote, newline, and backslash characters in a string.
      *
      * @param unescaped the input string (not null)
      * @return escaped output string
      * @see #unEscape(String)
      */
     public static String escape(String unescaped) {
-        StringBuilder result = new StringBuilder(50);
+        int length = unescaped.length();
+        StringBuilder result = new StringBuilder(length + 10);
         for (char ch : unescaped.toCharArray()) {
             switch (ch) {
                 case '\n':
@@ -85,6 +86,9 @@ public class MyString {
                     break;
                 case '\t':
                     result.append("\\t");
+                    break;
+                case '"':
+                    result.append("\\\"");
                     break;
                 case '\\':
                     result.append("\\\\");
@@ -137,7 +141,7 @@ public class MyString {
     /**
      * Join a list of strings using spaces, ignoring any nulls.
      *
-     * @param list of strings to join (not null)
+     * @param list of strings to join (not null, unaffected)
      * @return joined string
      */
     public static String join(List<String> list) {
@@ -160,10 +164,9 @@ public class MyString {
     }
 
     /**
-     * Join an array of strings using spaces, ignoring any nulls. TODO version
-     * for a list of strings
+     * Join an array of strings using spaces, ignoring any nulls.
      *
-     * @param array of strings to join (not null)
+     * @param array of strings to join (not null, unaffected)
      * @return joined string
      */
     public static String join(String[] array) {
@@ -188,7 +191,7 @@ public class MyString {
     /**
      * Find the longest repeated prefix in a list of strings.
      *
-     * @param list (not null)
+     * @param list (not null, unaffected)
      * @return prefix (not null)
      */
     public static String findLongestPrefix(List<String> list) {
@@ -239,7 +242,6 @@ public class MyString {
      */
     public static String quote(String text) {
         Validate.nonNull(text, "text");
-
         return String.format("\"%s\"", text);
     }
 
@@ -363,22 +365,24 @@ public class MyString {
         if ("-0".equals(result)) {
             result = "0";
         }
+
         return result;
     }
 
     /**
      * Undo character escapes added by escape().
      *
-     * @param escaped the input string
+     * @param escaped the input string (not null)
      * @return unescaped output string
      * @see #escape(String)
      */
     public static String unEscape(String escaped) {
-        StringBuilder result = new StringBuilder(50);
+        int length = escaped.length();
+        StringBuilder result = new StringBuilder(length);
         boolean inEscape = false;
         for (char ch : escaped.toCharArray()) {
             if (inEscape) {
-                if (ch == '\\') {
+                if (ch == '\\' || ch == '"') {
                     result.append(ch);
                 } else if (ch == 'n') {
                     result.append('\n');
