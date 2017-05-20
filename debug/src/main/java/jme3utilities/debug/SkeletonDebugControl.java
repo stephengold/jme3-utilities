@@ -68,19 +68,19 @@ public class SkeletonDebugControl extends SubtreeControl {
      */
     final private static ColorRGBA defaultPointColor = new ColorRGBA(1f, 1f, 1f, 1f);
     /**
-     * default line width for the wireframe material
+     * default width for the lines (in pixels)
      */
     final private static float defaultLineWidth = 2f;
     /**
-     * default point size for the wireframe material
+     * default size for the points (in pixels)
      */
     final private static float defaultPointSize = 4f;
     /**
-     * child position of the vertices geometry in the controlled node
+     * child position of the heads geometry in the subtree node
      */
     final private static int headsChildPosition = 0;
     /**
-     * child position of the links in geometry in the controlled node
+     * child position of the links in geometry in the subtree node
      */
     final private static int linksChildPosition = 1;
     /**
@@ -92,11 +92,11 @@ public class SkeletonDebugControl extends SubtreeControl {
     // fields
 
     /**
-     * wireframe material for lines
+     * material for lines/links
      */
     private Material lineMaterial;
     /**
-     * wireframe material for points
+     * material for points/heads
      */
     private Material pointMaterial;
     // *************************************************************************
@@ -207,26 +207,6 @@ public class SkeletonDebugControl extends SubtreeControl {
     }
 
     /**
-     * Alter the color of the lines.
-     *
-     * @param newColor (not null)
-     */
-    public void setLineColor(ColorRGBA newColor) {
-        Validate.nonNull(newColor, "new color");
-        lineMaterial.setColor("Color", newColor);
-    }
-
-    /**
-     * Alter the color of the points.
-     *
-     * @param newColor (not null)
-     */
-    public void setPointColor(ColorRGBA newColor) {
-        Validate.nonNull(newColor, "new color");
-        pointMaterial.setColor("Color", newColor);
-    }
-
-    /**
      * Alter a skeletonized spatial's debug status. Has no effect if the spatial
      * lacks a SkeletonDebugControl.
      *
@@ -242,6 +222,16 @@ public class SkeletonDebugControl extends SubtreeControl {
     }
 
     /**
+     * Alter the color of the lines.
+     *
+     * @param newColor (not null)
+     */
+    public void setLineColor(ColorRGBA newColor) {
+        Validate.nonNull(newColor, "new color");
+        lineMaterial.setColor("Color", newColor);
+    }
+
+    /**
      * Alter the line width of the visualization.
      *
      * @param width (in pixels, &ge;1)
@@ -249,6 +239,16 @@ public class SkeletonDebugControl extends SubtreeControl {
     final public void setLineWidth(float width) {
         Validate.inRange(width, "width", 1f, Float.MAX_VALUE);
         lineMaterial.getAdditionalRenderState().setLineWidth(width);
+    }
+
+    /**
+     * Alter the color of the points.
+     *
+     * @param newColor (not null)
+     */
+    public void setPointColor(ColorRGBA newColor) {
+        Validate.nonNull(newColor, "new color");
+        pointMaterial.setColor("Color", newColor);
     }
 
     /**
