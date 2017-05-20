@@ -34,6 +34,9 @@ import de.lessvoid.nifty.NiftyEventAnnotationProcessor;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
@@ -86,6 +89,10 @@ public class BasicScreenController
      * constructor
      */
     final private String xmlAssetPath;
+    /**
+     * list of controllers for all initialized windows in the screen
+     */
+    final private List<WindowController> windowControllers = new ArrayList<>(20);
     // *************************************************************************
     // constructors
 
@@ -113,6 +120,15 @@ public class BasicScreenController
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Associate a specified window controller with the screen.
+     *
+     * @param controller (not null)
+     */
+    void addWindowController(WindowController controller) {
+        windowControllers.add(controller);
+    }
 
     /**
      * Access the listener of this screen.
@@ -196,6 +212,19 @@ public class BasicScreenController
         int displayHeight = cam.getHeight();
         int mouseY = displayHeight - Math.round(mouseXY.y);
         boolean result = element.isMouseInsideElement(mouseX, mouseY);
+
+        return result;
+    }
+
+    /**
+     * List the controllers of all initialized windows in the screen.
+     *
+     * @return a new collection
+     */
+    public Collection<WindowController> listWindowControllers() {
+        int numWindows = windowControllers.size();
+        Collection<WindowController> result = new ArrayList<>(numWindows);
+        result.addAll(windowControllers);
 
         return result;
     }
