@@ -20,8 +20,8 @@ dependencies {
     compile "org.jmonkeyengine:jme3-terrain:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-testdata:3.1.0-stable"
 
-    //compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
-    compile project(':heart')
+    compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
+    //compile project(':heart')
 
     //compile "jme3utilities:SkyControl:$skycontrolVersion"
     compile project(':SkyControl')
@@ -35,7 +35,7 @@ dependencies {
     //compile "jme3utilities:jme3-utilities-ui:$jme3utilitiesuiVersion"
     compile project(':ui')
 
-    //compile "jme3utilities:jme3-utilities-x:0.2.0"
+    //compile "jme3utilities:jme3-utilities-x:$jme3utilitiesxVersion"
     compile project(':x')
 
     compile project(':moon-ccbysa')

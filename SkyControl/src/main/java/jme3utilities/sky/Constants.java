@@ -79,8 +79,8 @@ final public class Constants {
      * coefficient used to compute the stretchFactor for objects projected onto
      * a DomeMesh
      */
-    final public static float stretchCoefficient =
-            (FastMath.HALF_PI - uvMax) / (uvScale * uvScale);
+    final public static float stretchCoefficient
+            = (FastMath.HALF_PI - uvMax) / (uvScale * uvScale);
     /**
      * the duration of a full day (in hours)
      */
@@ -106,6 +106,6 @@ final public class Constants {
      * @return branch and revision (not null, not empty)
      */
     public static String getVersionShort() {
-        return "master 0.9.4+1";
+        return "master 0.9.5";
     }
 }
