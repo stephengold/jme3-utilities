@@ -60,9 +60,13 @@ public class SkeletonDebugControl extends SubtreeControl {
     // constants and loggers
 
     /**
-     * default color for the wireframe material (blue)
+     * default color for the lines (blue)
      */
-    final private static ColorRGBA defaultColor = new ColorRGBA(0f, 0f, 1f, 1f);
+    final private static ColorRGBA defaultLineColor = new ColorRGBA(0f, 0f, 1f, 1f);
+    /**
+     * default color for the points (white)
+     */
+    final private static ColorRGBA defaultPointColor = new ColorRGBA(1f, 1f, 1f, 1f);
     /**
      * default line width for the wireframe material
      */
@@ -88,9 +92,13 @@ public class SkeletonDebugControl extends SubtreeControl {
     // fields
 
     /**
-     * wireframe material (set by constructor)
+     * wireframe material for lines
      */
-    private Material material;
+    private Material lineMaterial;
+    /**
+     * wireframe material for points
+     */
+    private Material pointMaterial;
     // *************************************************************************
     // constructors
 
@@ -103,9 +111,14 @@ public class SkeletonDebugControl extends SubtreeControl {
         super();
         Validate.nonNull(assetManager, "asset manager");
 
-        material = MyAsset.createWireframeMaterial(assetManager, defaultColor);
-        material.getAdditionalRenderState().setDepthTest(false);
+        lineMaterial = MyAsset.createWireframeMaterial(
+                assetManager, defaultLineColor);
+        lineMaterial.getAdditionalRenderState().setDepthTest(false);
         setLineWidth(defaultLineWidth);
+
+        pointMaterial = MyAsset.createWireframeMaterial(
+                assetManager, defaultPointColor);
+        pointMaterial.getAdditionalRenderState().setDepthTest(false);
         if (supportsPointSize()) {
             setPointSize(defaultPointSize);
         }
@@ -116,12 +129,24 @@ public class SkeletonDebugControl extends SubtreeControl {
     // new methods exposed
 
     /**
-     * Copy the color of the visualization.
+     * Copy the color of the lines.
      *
      * @return a new instance
      */
-    public ColorRGBA getColor() {
-        MatParam parameter = material.getParam("Color");
+    public ColorRGBA copyLineColor() {
+        MatParam parameter = lineMaterial.getParam("Color");
+        ColorRGBA color = (ColorRGBA) parameter.getValue();
+
+        return color.clone();
+    }
+
+    /**
+     * Copy the color of the points.
+     *
+     * @return a new instance
+     */
+    public ColorRGBA copyPointColor() {
+        MatParam parameter = pointMaterial.getParam("Color");
         ColorRGBA color = (ColorRGBA) parameter.getValue();
 
         return color.clone();
@@ -133,7 +158,7 @@ public class SkeletonDebugControl extends SubtreeControl {
      * @return width (in pixels, &ge;1)
      */
     public float getLineWidth() {
-        float result = material.getAdditionalRenderState().getLineWidth();
+        float result = lineMaterial.getAdditionalRenderState().getLineWidth();
         assert result >= 1f : result;
         return result;
     }
@@ -147,7 +172,7 @@ public class SkeletonDebugControl extends SubtreeControl {
         if (!supportsPointSize()) {
             return 1f;
         }
-        MatParam parameter = material.getParam("PointSize");
+        MatParam parameter = pointMaterial.getParam("PointSize");
         float result = (float) parameter.getValue();
 
         return result;
@@ -171,13 +196,34 @@ public class SkeletonDebugControl extends SubtreeControl {
     }
 
     /**
-     * Alter the color of the visualization.
+     * Alter the color of both the lines and the points.
      *
      * @param newColor (not null)
      */
     public void setColor(ColorRGBA newColor) {
         Validate.nonNull(newColor, "new color");
-        material.setColor("Color", newColor);
+        lineMaterial.setColor("Color", newColor);
+        pointMaterial.setColor("Color", newColor);
+    }
+
+    /**
+     * Alter the color of the lines.
+     *
+     * @param newColor (not null)
+     */
+    public void setLineColor(ColorRGBA newColor) {
+        Validate.nonNull(newColor, "new color");
+        lineMaterial.setColor("Color", newColor);
+    }
+
+    /**
+     * Alter the color of the points.
+     *
+     * @param newColor (not null)
+     */
+    public void setPointColor(ColorRGBA newColor) {
+        Validate.nonNull(newColor, "new color");
+        pointMaterial.setColor("Color", newColor);
     }
 
     /**
@@ -202,7 +248,7 @@ public class SkeletonDebugControl extends SubtreeControl {
      */
     final public void setLineWidth(float width) {
         Validate.inRange(width, "width", 1f, Float.MAX_VALUE);
-        material.getAdditionalRenderState().setLineWidth(width);
+        lineMaterial.getAdditionalRenderState().setLineWidth(width);
     }
 
     /**
@@ -214,20 +260,20 @@ public class SkeletonDebugControl extends SubtreeControl {
         Validate.inRange(size, "size", 1f, Float.MAX_VALUE);
 
         if (supportsPointSize()) {
-            material.setFloat("PointSize", size);
+            pointMaterial.setFloat("PointSize", size);
         } else {
             logger.log(Level.WARNING, "PointSize not set.");
         }
     }
 
     /**
-     * Test whether the wireframe material supports PointSize. (The PointSize
-     * parameter was missing from Unshaded.j3md in 3.1.0.)
+     * Test whether the points material supports PointSize. (The PointSize
+     * parameter was missing from Unshaded.j3md in JME 3.1.0.)
      *
      * @return true if supported, false otherwise
      */
     final public boolean supportsPointSize() {
-        MaterialDef def = material.getMaterialDef();
+        MaterialDef def = pointMaterial.getMaterialDef();
         if (def.getMaterialParam("PointSize") == null) {
             return false;
         } else {
@@ -286,14 +332,15 @@ public class SkeletonDebugControl extends SubtreeControl {
             BoneHeads headsMesh = new BoneHeads(numBones);
             String headsName = spatial.getName() + " heads";
             Geometry heads = new Geometry(headsName, headsMesh);
+            heads.setMaterial(pointMaterial);
             subtree.attachChildAt(heads, headsChildPosition);
 
             SkeletonLinks linksMesh = new SkeletonLinks(skeleton);
             String linksName = spatial.getName() + " links";
             Geometry links = new Geometry(linksName, linksMesh);
+            links.setMaterial(lineMaterial);
             subtree.attachChildAt(links, linksChildPosition);
 
-            subtree.setMaterial(material);
             subtree.setQueueBucket(RenderQueue.Bucket.Transparent);
             subtree.setShadowMode(RenderQueue.ShadowMode.Off);
         }
@@ -313,7 +360,8 @@ public class SkeletonDebugControl extends SubtreeControl {
     @Override
     public void cloneFields(Cloner cloner, Object original) {
         super.cloneFields(cloner, original);
-        material = cloner.clone(material);
+        lineMaterial = cloner.clone(lineMaterial);
+        pointMaterial = cloner.clone(pointMaterial);
     }
     // *************************************************************************
     // Object methods

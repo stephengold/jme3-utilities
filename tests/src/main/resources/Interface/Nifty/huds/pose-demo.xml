@@ -364,6 +364,42 @@
                             </panel>
                         </panel>
 
+                        <control name="label"
+                                 text="Point color:"/>
+                        <panel childLayout="horizontal" padding="10">
+                            <control name="verticalSlider" id="pointRSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="pointGSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <control name="verticalSlider" id="pointBSlider"
+                                     buttonStepSize="1"
+                                     height="160"
+                                     initial="1"
+                                     max="1"
+                                     min="0"
+                                     stepSize="0.01"/>
+                            <panel childLayout="vertical"
+                                   height="160"
+                                   width="105">
+                                <control name="label" id="pointRSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="pointGSliderStatus"
+                                         width="95"/>
+                                <control name="label" id="pointBSliderStatus"
+                                         width="95"/>
+                            </panel>
+                        </panel>
+
                         <panel style="statusPanel">
                             <control name="label"
                                      text="Printer options:"/>

@@ -615,9 +615,7 @@ public class PoseDemoHud
         }
         setStatusText("boneStatus", status);
 
-        String status2 = "";
-        String status3 = "";
-        String status4 = "";
+        String status2, status3, status4;
         Skeleton skeleton = PoseDemo.modelState.getSkeleton();
         int numBones = skeleton.getBoneCount();
         if (PoseDemo.modelState.isBoneSelected()) {
@@ -768,12 +766,14 @@ public class PoseDemoHud
         /*
          * SkeletonDebugControl
          */
-        SkeletonDebugControl debugControl
-                = PoseDemo.modelState.getSkeletonDebugControl();
+        SkeletonDebugControl debugControl;
+        debugControl = PoseDemo.modelState.getSkeletonDebugControl();
         enable = isChecked("skeletonDebug");
         debugControl.setEnabled(enable);
         ColorRGBA wireColor = updateColorBank("wire");
-        debugControl.setColor(wireColor);
+        debugControl.setLineColor(wireColor);
+        ColorRGBA pointColor = updateColorBank("point");
+        debugControl.setPointColor(pointColor);
         lineWidth = updateSlider("sdcLineWidth", " pixels");
         debugControl.setLineWidth(lineWidth);
         float pointSize = updateSlider("pointSize", " pixels");
