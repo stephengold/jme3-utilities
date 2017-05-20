@@ -170,7 +170,7 @@ public class MySkeleton {
         Skeleton skeleton = getSkeleton(spatial);
         int boneCount = skeleton.getBoneCount();
 
-        List<String> names = new ArrayList<>(30);
+        List<String> names = new ArrayList<>(boneCount);
         for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
             Bone bone = skeleton.getBone(boneIndex);
             String name = bone.getName();
