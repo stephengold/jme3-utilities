@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-ui library and related tests
 
-## Version 0.5.3 released on TBD
+## Version 0.5.3 released on 20 May 2017
 
 + The library now depends on jme3-utilities-heart instead of SkyControl.
 + Added didntHandle() callback to the ActionApplication class.

@@ -3,7 +3,7 @@
 ## Version 0.6.4 released on TBD
 
 + The library now depends on jme3-utilities-heart instead of SkyControl.
-+ Register window controllers with the parent screen controller.
++ Register each window controller with its screen controller.
 + Added some methods, raised the visibility of others.
 
 ## Version 0.6.3 released on 10 May 2017
