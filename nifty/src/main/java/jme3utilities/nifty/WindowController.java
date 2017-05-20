@@ -96,7 +96,28 @@ public class WindowController extends GuiAppState {
     // new methods exposed
 
     /**
-     * Access the controller for the screen which owns the window.
+     * Access the window's Nifty element.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    public Element getElement() {
+        Element element = getWindow().getElement();
+        assert element != null;
+        return element;
+    }
+
+    /**
+     * Read the id of the window.
+     *
+     * @return Nifty id string (not null)
+     */
+    public String getId() {
+        assert controlId != null;
+        return controlId;
+    }
+
+    /**
+     * Access the controller for the screen which contains the window.
      *
      * @return the pre-existing instance (not null)
      */
@@ -106,8 +127,21 @@ public class WindowController extends GuiAppState {
     }
 
     /**
-     * Select the window for maximum prominence: make sure it's displayed and
-     * then move it to the front.
+     * Access the Nifty control of the window.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    private Window getWindow() {
+        Screen screen = screenController.getScreen();
+        Window window = screen.findNiftyControl(controlId, Window.class);
+
+        assert window != null;
+        return window;
+    }
+
+    /**
+     * Maximize the window's prominence: make sure it's displayed and then move
+     * it to the front.
      */
     public void select() {
         setEnabled(true);
@@ -126,7 +160,9 @@ public class WindowController extends GuiAppState {
     public void initialize(AppStateManager stateManager,
             Application application) {
         super.initialize(stateManager, application);
+
         assert screenController.isInitialized();
+        screenController.addWindowController(this);
 
         if (!startEnabled) {
             hide();
@@ -196,28 +232,5 @@ public class WindowController extends GuiAppState {
 
         getElement().setVisible(false);
         super.setEnabled(false);
-    }
-
-    /**
-     * Access the Nifty element.
-     *
-     * @return the pre-existing instance (not null)
-     */
-    private Element getElement() {
-        Element element = getWindow().getElement();
-        assert element != null;
-        return element;
-    }
-
-    /**
-     * Access the Nifty control.
-     *
-     * @return the pre-existing instance (not null)
-     */
-    private Window getWindow() {
-        Screen screen = screenController.getScreen();
-        Window window = screen.findNiftyControl(controlId, Window.class);
-        assert window != null;
-        return window;
     }
 }
