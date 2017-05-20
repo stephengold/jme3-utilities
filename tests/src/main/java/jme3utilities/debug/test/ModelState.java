@@ -630,8 +630,9 @@ class ModelState extends SimpleAppState {
          * Scale and translate the model so its bind pose is 1 world-unit
          * tall, with its base resting on the XZ plane.
          */
-        float maxY = MySpatial.getMaxY(spatial);
-        float minY = MySpatial.getMinY(spatial);
+        Vector3f[] minMax = MySpatial.findMinMaxCoords(spatial, true);
+        float maxY = minMax[1].y;
+        float minY = minMax[0].y;
         assert maxY > minY : maxY; // no 2D models!
         float worldScale = 1f / (maxY - minY);
         MySpatial.setWorldScale(spatial, worldScale);

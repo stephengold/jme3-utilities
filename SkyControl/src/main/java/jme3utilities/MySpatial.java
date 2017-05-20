@@ -41,6 +41,7 @@ import com.jme3.scene.debug.SkeletonDebugger;
 import com.jme3.terrain.geomipmap.TerrainQuad;
 import java.nio.FloatBuffer;
 import java.util.logging.Logger;
+import jme3utilities.math.MyVector3f;
 import jme3utilities.math.VectorXZ;
 
 /**
@@ -244,106 +245,88 @@ public class MySpatial {
     }
 
     /**
-     * Compute the minimum and maximum elevations of a mesh geometry.
+     * Find the minimum and maximum coordinates of a mesh geometry.
      *
      * @param geometry mesh geometry to measure (not null)
-     * @return array consisting of array[0]: the lowest world Y-coordinate (in
-     * world units) and array[1]: the highest world Y-coordinate (in world
-     * units)
+     * @param useWorld true &rarr; use world coordinates, false &rarr; use model
+     * coordinates
+     * @return array consisting of array[0]: the lowest coordinate for each axis
+     * and array[1]: the highest coordinate for each axis
      */
-    public static float[] findMinMaxHeights(Geometry geometry) {
-        float[] minMax = {Float.MAX_VALUE, -Float.MAX_VALUE};
+    public static Vector3f[] findMinMaxCoords(Geometry geometry,
+            boolean useWorld) {
+        Vector3f max = new Vector3f(Float.NEGATIVE_INFINITY,
+                Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
+        Vector3f min = new Vector3f(Float.POSITIVE_INFINITY,
+                Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
+        Vector3f[] result = new Vector3f[]{min, max};
 
         Mesh mesh = geometry.getMesh();
         VertexBuffer posBuf = mesh.getBuffer(VertexBuffer.Type.Position);
         if (posBuf == null) {
-            return minMax;
+            return result;
         }
 
         FloatBuffer posBuffer = (FloatBuffer) posBuf.getData();
         posBuffer.rewind();
         int numFloats = posBuffer.remaining();
-        int count = mesh.getVertexCount();
-        assert numFloats == 3 * count : numFloats;
+        int numVertices = mesh.getVertexCount();
+        assert numFloats == 3 * numVertices : numFloats;
 
-        Vector3f vertexLocal = new Vector3f();
-        Vector3f worldLocation = new Vector3f();
+        Vector3f modelLocation = new Vector3f();
+        Vector3f location = new Vector3f();
 
-        for (int vertexIndex = 0; vertexIndex < count; vertexIndex++) {
-            vertexLocal.x = posBuffer.get();
-            vertexLocal.y = posBuffer.get();
-            vertexLocal.z = posBuffer.get();
-            geometry.localToWorld(vertexLocal, worldLocation);
-            /*
-             * Compare with lowest and highest world elevations so far.
-             */
-                float y = worldLocation.y;
-            if (y < minMax[0]) {
-                minMax[0] = y;
-                }
-            if (y > minMax[1]) {
-                minMax[1] = y;
-                }
+        for (int vertexIndex = 0; vertexIndex < numVertices; vertexIndex++) {
+            modelLocation.x = posBuffer.get();
+            modelLocation.y = posBuffer.get();
+            modelLocation.z = posBuffer.get();
+            if (useWorld) {
+                geometry.localToWorld(modelLocation, location);
+            } else {
+                location.set(modelLocation);
             }
-
-        return minMax;
-    }
-
-    /**
-     * Find the maximum elevation in a subtree of the scene graph. Note:
-     * recursive!
-     *
-     * @param spatial root of the subtree (not null)
-     * @return world Y-coordinate
-     */
-    public static float getMaxY(Spatial spatial) {
-        if (spatial instanceof Geometry) {
-            Geometry geometry = (Geometry) spatial;
-            float[] minMax = findMinMaxHeights(geometry);
-            return minMax[1];
-        }
-        if (!(spatial instanceof Node)) {
-            throw new IllegalArgumentException(
-                    "spatial should be a geometry or a node");
+            MyVector3f.accumulateMinima(min, location);
+            MyVector3f.accumulateMaxima(max, location);
         }
 
-        Node node = (Node) spatial;
-        float result = -Float.MAX_VALUE;
-        for (Spatial child : node.getChildren()) {
-            float childMax = getMaxY(child);
-            if (childMax > result) {
-                result = childMax;
-            }
-        }
         return result;
     }
 
     /**
-     * Find the minimum elevation in a subtree of the scene graph. Note:
-     * recursive!
+     * Find the minimum and maximum coordinates in a subtree of the scene graph.
+     * Note: recursive!
      *
-     * @param spatial root of the subtree (not null)
-     * @return world Y-coordinate (in world units)
+     * @param spatial what to measure (not null)
+     * @param useWorld true &rarr; use world coordinates, false &rarr; use model
+     * coordinates
+     * @return array consisting of array[0]: the lowest coordinate for each axis
+     * and array[1]: the highest coordinate for each axis
      */
-    public static float getMinY(Spatial spatial) {
+    public static Vector3f[] findMinMaxCoords(Spatial spatial,
+            boolean useWorld) {
+        Vector3f[] result;
         if (spatial instanceof Geometry) {
             Geometry geometry = (Geometry) spatial;
-            float[] minMax = findMinMaxHeights(geometry);
-            return minMax[0];
-        }
-        if (!(spatial instanceof Node)) {
+            result = findMinMaxCoords(geometry, useWorld);
+
+        } else if (spatial instanceof Node) {
+            Vector3f maxima = new Vector3f(Float.NEGATIVE_INFINITY,
+                    Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
+            Vector3f minima = new Vector3f(Float.POSITIVE_INFINITY,
+                    Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
+            result = new Vector3f[]{minima, maxima};
+            Node node = (Node) spatial;
+            for (Spatial child : node.getChildren()) {
+                Vector3f[] childMm = findMinMaxCoords(child, useWorld);
+                MyVector3f.accumulateMinima(minima, childMm[0]);
+                MyVector3f.accumulateMaxima(maxima, childMm[1]);
+            }
+
+        } else {
             throw new IllegalArgumentException(
                     "spatial should be a geometry or a node");
         }
 
-        Node node = (Node) spatial;
-        float result = Float.MAX_VALUE;
-        for (Spatial child : node.getChildren()) {
-            float childMin = getMinY(child);
-            if (childMin < result) {
-                result = childMin;
-            }
-        }
         return result;
     }
 
@@ -415,14 +398,16 @@ public class MySpatial {
      * Calculate the world elevation of a horizontal surface.
      *
      * @param geometry surface to measure (not null)
-     * @return world elevation of the surface (in world units)
+     * @return elevation of the surface (in world coordinates)
      */
     public static float getYLevel(Geometry geometry) {
         Validate.nonNull(geometry, "geometry");
 
-        float minMax[] = findMinMaxHeights(geometry);
-        assert minMax[0] == minMax[1] : minMax[0];
-        return minMax[0];
+        Vector3f minMax[] = findMinMaxCoords(geometry, true);
+        float result = minMax[0].y;
+
+        assert result == minMax[1].y : minMax[0];
+        return result;
     }
 
     /**
