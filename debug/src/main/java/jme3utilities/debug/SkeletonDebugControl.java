@@ -92,6 +92,10 @@ public class SkeletonDebugControl extends SubtreeControl {
     // fields
 
     /**
+     * current line width (in pixels)
+     */
+    private float lineWidth;
+    /**
      * material for lines/links
      */
     private Material lineMaterial;
@@ -234,11 +238,20 @@ public class SkeletonDebugControl extends SubtreeControl {
     /**
      * Alter the line width of the visualization.
      *
-     * @param width (in pixels, &ge;1)
+     * @param width (in pixels, values &lt;1 hide the lines)
      */
     final public void setLineWidth(float width) {
-        Validate.inRange(width, "width", 1f, Float.MAX_VALUE);
-        lineMaterial.getAdditionalRenderState().setLineWidth(width);
+        lineWidth = width;
+
+        if (subtree != null) {
+            Geometry links = (Geometry) subtree.getChild(linksChildPosition);
+            if (lineWidth < 1f) {
+                links.setCullHint(Spatial.CullHint.Always);
+            } else {
+                links.setCullHint(Spatial.CullHint.Inherit);
+                lineMaterial.getAdditionalRenderState().setLineWidth(lineWidth);
+            }
+        }
     }
 
     /**
@@ -254,10 +267,10 @@ public class SkeletonDebugControl extends SubtreeControl {
     /**
      * Alter the point size of the visualization.
      *
-     * @param size (in pixels, &ge;1)
+     * @param size (in pixels, &ge;0, 0 &rarr; hide the points)
      */
     final public void setPointSize(float size) {
-        Validate.inRange(size, "size", 1f, Float.MAX_VALUE);
+        Validate.inRange(size, "size", 0f, Float.MAX_VALUE);
 
         if (supportsPointSize()) {
             pointMaterial.setFloat("PointSize", size);
@@ -343,6 +356,7 @@ public class SkeletonDebugControl extends SubtreeControl {
 
             subtree.setQueueBucket(RenderQueue.Bucket.Transparent);
             subtree.setShadowMode(RenderQueue.ShadowMode.Off);
+            setLineWidth(lineWidth);
         }
 
         super.setEnabled(newState);
