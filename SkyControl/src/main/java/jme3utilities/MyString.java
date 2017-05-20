@@ -235,14 +235,21 @@ public class MyString {
     }
 
     /**
-     * Enclose text in quotation marks.
+     * Enclose the specified text in quotation marks and escape all tab, quote,
+     * newline, and backslash characters.
      *
-     * @param text the text to enclose (not null)
-     * @return quoted string
+     * @param text input text to quote
+     * @return quoted string, or "null" if the input was null
      */
     public static String quote(String text) {
-        Validate.nonNull(text, "text");
-        return String.format("\"%s\"", text);
+        String result;
+        if (text == null) {
+            result = "null";
+        } else {
+            result = String.format("\"%s\"", escape(text));
+        }
+
+        return result;
     }
 
     /**
