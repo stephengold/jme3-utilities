@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.6.4 released on TBD
+## Version 0.6.4 released on 20 May 2017
 
 + The library now depends on jme3-utilities-heart instead of SkyControl.
 + Register each window controller with its screen controller.
