@@ -54,6 +54,7 @@ public class TestMyString {
         System.out.print("Test results for class MyString:\n\n");
 
         String[] stringCases = new String[]{
+            "\"he\"",
             "",
             "-0",
             "-900",
@@ -65,17 +66,23 @@ public class TestMyString {
         };
 
         for (String s : stringCases) {
-            System.out.printf("s = \"%s\"%n", s);
+            System.out.printf("s = {%s}%n", s);
+
+            String q = MyString.quote(s);
+            System.out.printf(" quote(s) = {%s}%n", q);
+
             String t = MyString.trimFloat(s);
-            System.out.printf(" trimFloat(s) = \"%s\"%n", t);
+            System.out.printf(" trimFloat(s) = {%s}%n", t);
+
             String e = MyString.escape(s);
-            System.out.printf(" escape(s) = \"%s\"%n", e);
+            System.out.printf(" escape(s) = {%s}%n", e);
+
             String ue = MyString.unEscape(e);
-            System.out.printf(" unEscape(escape(s)) = \"%s\"%n", ue);
+            System.out.printf(" unEscape(escape(s)) = {%s}%n", ue);
             assert (s.equals(ue));
 
             String[] ss = MyString.getLine(s);
-            System.out.printf(" ss0 = \"%s\" ss1 = \"%s\" ss3 = \"%s\"%n",
+            System.out.printf(" ss0 = {%s} ss1 = {%s} ss3 = {%s}%n",
                     ss[0], ss[1], ss[2]);
 
             System.out.println();
@@ -83,11 +90,11 @@ public class TestMyString {
 
         String[] a1 = {"a", "fistful", "of", "bytes"};
         String j1 = MyString.join(a1);
-        System.out.printf(" j1=\"%s\"%n", j1);
+        System.out.printf(" j1={%s}%n", j1);
 
         String[] a2 = {};
         String j2 = MyString.join(a2);
-        System.out.printf(" j2=\"%s\"%n", j2);
+        System.out.printf(" j2={%s}%n", j2);
 
         System.out.println();
     }
