@@ -32,9 +32,6 @@ task copySource(type: Copy) {
     from('../SkyControl/src/main/java/jme3utilities') {
         include 'sky/Constants.java', 'sky/DomeMesh.java', 'sky/LunarPhase.java'
     }
-    from('../x/src/main/java/jme3utilities') {
-        include 'math/noise/*.java'
-    }
     into 'src/main/java/jme3utilities'
 }
 task cleanCopySource(type: Delete) {
