@@ -97,4 +97,15 @@ final public class Constants {
      */
     private Constants() {
     }
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Read the terse version string for this library.
+     *
+     * @return branch and revision (not null, not empty)
+     */
+    public static String getVersionShort() {
+        return "master 0.9.4+1";
+    }
 }

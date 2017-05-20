@@ -36,6 +36,7 @@ import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.bind.BindScreen;
+import jme3utilities.sky.Constants;
 import jme3utilities.ui.InputMode;
 
 /**
@@ -63,8 +64,8 @@ public class TestSkyControl extends GuiApplication {
     /**
      * path to hotkey bindings configuration asset
      */
-    final private static String hotkeyBindingsAssetPath =
-            "Interface/bindings/TestSkyControl.properties";
+    final private static String hotkeyBindingsAssetPath
+            = "Interface/bindings/TestSkyControl.properties";
     // *************************************************************************
     // fields
 
@@ -83,8 +84,8 @@ public class TestSkyControl extends GuiApplication {
     /**
      * command-line parameters
      */
-    final static TestSkyControlParameters parameters =
-            new TestSkyControlParameters();
+    final static TestSkyControlParameters parameters
+            = new TestSkyControlParameters();
     // *************************************************************************
     // new methods exposed
 
@@ -150,7 +151,7 @@ public class TestSkyControl extends GuiApplication {
         logger.log(Level.INFO, "jme3-core version is {0}",
                 MyString.quote(JmeVersion.FULL_NAME));
         logger.log(Level.INFO, "SkyControl version is {0}",
-                MyString.quote(Misc.getVersionShort()));
+                MyString.quote(Constants.getVersionShort()));
 
         //Misc.detachAll(stateManager, DebugKeysAppState.class);
         /*

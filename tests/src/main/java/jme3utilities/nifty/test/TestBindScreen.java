@@ -150,7 +150,7 @@ public class TestBindScreen extends GuiApplication {
          */
         logger.log(Level.INFO, "jme3-core version is {0}",
                 MyString.quote(JmeVersion.FULL_NAME));
-        logger.log(Level.INFO, "SkyControl version is {0}",
+        logger.log(Level.INFO, "jme3-utilities-heart version is {0}",
                 MyString.quote(Misc.getVersionShort()));
 
         Logger.getLogger(InputMode.class.getName()).setLevel(Level.INFO);

@@ -18,6 +18,9 @@ dependencies {
     compile "org.jmonkeyengine:jme3-bullet:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-effects:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-terrain:$jmonkeyengineVersion"
+    
+    //compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
+    compile project(':heart')
 }
 
 tasks.withType(JavaExec) {
@@ -27,10 +30,7 @@ tasks.withType(JavaExec) {
 
 task copySource(type: Copy) {
     from('../SkyControl/src/main/java/jme3utilities') {
-        include 'Misc.java', 'MyAsset.java', 'MyString.java', 'Validate.java', \
-                'math/MyMath.java', 'math/MyVector3f.java', \
-                'math/ReadXZ.java', 'math/VectorXZ.java', \
-                'sky/Constants.java', 'sky/DomeMesh.java', 'sky/LunarPhase.java'
+        include 'sky/Constants.java', 'sky/DomeMesh.java', 'sky/LunarPhase.java'
     }
     from('../x/src/main/java/jme3utilities') {
         include 'math/noise/*.java'

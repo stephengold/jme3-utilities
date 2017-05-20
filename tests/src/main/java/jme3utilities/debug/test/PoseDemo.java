@@ -54,6 +54,7 @@ import jme3utilities.debug.Printer;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.LibraryVersion;
 import jme3utilities.nifty.bind.BindScreen;
+import jme3utilities.sky.Constants;
 import jme3utilities.sky.SkyControl;
 import jme3utilities.sky.Updater;
 import jme3utilities.ui.InputMode;
@@ -180,8 +181,10 @@ public class PoseDemo extends GuiApplication {
          */
         logger.log(Level.INFO, "jme3-core version is {0}",
                 MyString.quote(JmeVersion.FULL_NAME));
-        logger.log(Level.INFO, "SkyControl version is {0}",
+        logger.log(Level.INFO, "jme3-utilities-heart version is {0}",
                 MyString.quote(Misc.getVersionShort()));
+        logger.log(Level.INFO, "SkyControl version is {0}",
+                MyString.quote(Constants.getVersionShort()));
         logger.log(Level.INFO, "jme3-utilities-debug version is {0}",
                 MyString.quote(DebugVersion.getVersionShort()));
         logger.log(Level.INFO, "jme3-utilities-ui version is {0}",

@@ -51,6 +51,7 @@ import jme3utilities.MyCamera;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.nifty.GuiApplication;
+import jme3utilities.sky.Constants;
 import jme3utilities.sky.DomeMesh;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyMaterial;
@@ -208,7 +209,7 @@ public class TestSkyMaterial extends GuiApplication {
         logger.log(Level.INFO, "jme3-core version is {0}",
                 MyString.quote(JmeVersion.FULL_NAME));
         logger.log(Level.INFO, "SkyControl version is {0}",
-                MyString.quote(Misc.getVersionShort()));
+                MyString.quote(Constants.getVersionShort()));
 
         configureCamera();
         /*

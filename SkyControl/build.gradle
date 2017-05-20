@@ -2,7 +2,7 @@
 //   for this project. This initialization is applied in the "build.gradle"
 //   of the root project.
 
-description = 'sky simulation and core library for jMonkeyEngine'
+description = 'sky simulation library for jMonkeyEngine'
 ext {
     artifact = 'SkyControl'
     version = "$skycontrolVersion"
@@ -20,6 +20,9 @@ dependencies {
     compile "org.jmonkeyengine:jme3-bullet:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-effects:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-terrain:$jmonkeyengineVersion"
+
+    //compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
+    compile project(':heart')
 }
 
 task pom {

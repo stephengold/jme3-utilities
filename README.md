@@ -2,15 +2,16 @@
 
 The jme3-utilities project contains Java packages and asset packs, developed for
 sgold's jMonkeyEngine games, which might prove useful in similar projects.  It
-consists of 8 sub-projects:
- 1. SkyControl: a library for sky simulation
- 2. tests: demos, examples, and tests
- 3. textures: generate textures used by SkyControl
- 4. moon-ccbysa: an asset pack to enhance SkyControl
- 5. jme3-utilities-debug: a library of debugging aids
- 6. jme3-utilities-ui: a library for building user interfaces
- 7. jme3-utilities-nifty: a library for building NiftyGUI user interfaces
- 8. jme3-utilities-x: a library of miscellaneous experimental code
+consists of 9 sub-projects:
+ 1. heart: the "jme3-utilities-heart" library of core classes
+ 2. SkyControl: the "SkyControl" library for sky simulation
+ 3. tests: demos, examples, and test code
+ 4. textures: generate textures used by SkyControl
+ 5. moon-ccbysa: an asset pack to enhance SkyControl
+ 6. debug: the "jme3-utilities-debug" library of debugging aids
+ 7. ui: the "jme3-utilities-ui" library for building user interfaces
+ 8. nifty: the "jme3-utilities-nifty: a library for building NiftyGUI user interfaces
+ 9. x: the "jme3-utilities-x" library of experimental classes
 
 Summary of SkyControl features:
  + sun, moon, stars, horizon haze, and up to 6 cloud layers
@@ -37,7 +38,9 @@ Maven artifacts are available from JFrog Bintray at
 ### Conventions
 
 All package names in jme3-utilities project begin with "jme3utilities".
+
 The source code is compatible with both JDK 7 and JDK 8.
+
 World coordinate system:
  + the X axis points toward the northern horizon
  + the Y axis points up (toward the zenith)
@@ -93,9 +96,9 @@ Clone the jme3-utilities repository using Git:
 10. Click on the "Finish" button.
 11. When the "Clone Complete" dialog appears, click on the "Open Project..."
     button.
-12. Expand the root project node to reveal the 8 sub-projects.
-13. To start with, I recommend opening 3 sub-projects:  "SkyControl", "tests",
-    and "textures".  Select them using control-click, then click on the
+12. Expand the root project node to reveal the 9 sub-projects.
+13. To start with, I recommend opening 4 sub-projects:  "heart", "SkyControl",
+    "tests", and "textures".  Select them using control-click, then click on the
     "Open" button.
 14. There will be errors in the "textures" sub-project.  However, the build
     task should resolve them.
@@ -118,7 +121,7 @@ Clone the jme3-utilities repository using Git:
 SkyControl is a reusable sky simulation for jMonkeyEngine games.
 
 Adding it to an existing JME3 project should be a simple 6-step process:
- 1. Add the SkyControl JAR to the classpath.
+ 1. Add jme3-utilities JARs to the classpath.
  2. Disable any existing sky which might interfere with SkyControl.
  3. Add a SkyControl instance to some node in the scene graph.
  4. Configure the SkyControl instance.
@@ -155,29 +158,54 @@ the source code) to see how it works before modifying it.
 
 #### Add the SkyControl JARs to the project
 
+In the following instructions, "0.0.0" indicates a version number.
+
 Open the project's properties in the IDE:
  1. Right-click on the BasicGame project (not its assets) in the "Projects"
     window.
  2. Select "Properties to open the "Project Properties" dialog.
  3. Under "Categories:" select "Libraries".
  4. Click on the "Compile" tab.
- 5. Add the SkyControl class JAR:
+ 5. Add the "jme3-utilities-heart" class JAR:
   + Click on the "Add JAR/Folder" button.
   + Navigate to the "jme3-utilities" project folder.
-  + Open the "SkyControl" sub-project folder.
+  + Open the "heart" sub-project folder.
   + Navigate to the "build/libs" folder.
-  + Select the "SkyControl.jar" file.
+  + Select the "jme3-utilities-heart-0.0.0.jar" file.
   + Click on the "Open" button.
  6. (optional) Add JARs for javadoc and sources:
   + Click on the "Edit" button.
   + Click on the "Browse..." button to the right of "Javadoc:"
-  + Select the "SkyControl-javadoc.jar" file.
+  + Select the "jme3-utilities-heart-0.0.0-javadoc.jar" file.
   + Click on the "Open" button.
   + Click on the "Browse..." button to the right of "Sources:"
-  + Select the "SkyControl-sources.jar" file.
+  + Select the "jme3-utilities-heart-0.0.0-sources.jar" file.
   + Click on the "Open" button again.
   + Click on the "OK" button to close the "Edit Jar Reference dialog.
- 7. Click on the "OK" button to exit the "Project Properties" dialog.
+ 7. Add the "SkyControl" class JAR:
+  + Click on the "Add JAR/Folder" button.
+  + Navigate to the "jme3-utilities" project folder.
+  + Open the "SkyControl" sub-project folder.
+  + Navigate to the "build/libs" folder.
+  + Select the "SkyControl-0.0.0.jar" file.
+  + Click on the "Open" button.
+ 8. (optional) Add JARs for javadoc and sources:
+  + Click on the "Edit" button.
+  + Click on the "Browse..." button to the right of "Javadoc:"
+  + Select the "SkyControl-0.0.0-javadoc.jar" file.
+  + Click on the "Open" button.
+  + Click on the "Browse..." button to the right of "Sources:"
+  + Select the "SkyControl-0.0.0-sources.jar" file.
+  + Click on the "Open" button again.
+  + Click on the "OK" button to close the "Edit Jar Reference dialog.
+ 9. (optional) Add the "moon-ccbysa" class JAR:
+  + Click on the "Add JAR/Folder" button.
+  + Navigate to the "jme3-utilities" project folder.
+  + Open the "moon-cc-by-sa" sub-project folder.
+  + Navigate to the "build/libs" folder.
+  + Select the "moon-ccbysa-0.0.0.jar" file.
+  + Click on the "Open" button.
+10. Click on the "OK" button to exit the "Project Properties" dialog.
 
 #### Disable existing sky
 
@@ -342,7 +370,7 @@ decrease the observer's latitude.  Also, the terrain is too dark.
 Try, for instance:
 
     sc.getSunAndStars().setObserverLatitude(0.2f);
-    sc.getUpdater().setMainMultiplier(4f);
+    sc.getUpdater().setMainMultiplier(2f);
 
 The sun looks like a boring white disc in the southern sky.
 For a more dazzling sun, apply a bloom filter to the viewport:
