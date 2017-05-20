@@ -5,7 +5,7 @@
 description = 'experimental library for jMonkeyEngine'
 ext {
     artifact = 'jme3-utilities-x'
-    version = '0.2.0'
+    version = "$jme3utilitiesxVersion"
     baseName = "${artifact}-${version}"
 }
 
@@ -17,8 +17,8 @@ sourcesJar { baseName "${project.ext.baseName}" }
 dependencies {
     compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
 
-    //compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
-    compile project(':heart')
+    compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
+    //compile project(':heart')
 }
 
 task pom {
