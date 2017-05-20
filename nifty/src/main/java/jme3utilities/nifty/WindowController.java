@@ -170,7 +170,7 @@ public class WindowController extends GuiAppState {
 
         boolean isDisplayed = getElement().isVisible();
         if (isDisplayed != isEnabled()) {
-            super.setEnabled(isDisplayed);
+            setEnabled(isDisplayed);
         }
     }
     // *************************************************************************
