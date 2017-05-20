@@ -1,11 +1,17 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.6.4 released on TBD
+
++ The library now depends on jme3-utilities-heart instead of SkyControl.
++ Register window controllers with the parent screen controller.
++ Added some methods, raised the visibility of others.
+
 ## Version 0.6.3 released on 10 May 2017
 
-Added a simple confirmation dialog box.
-Added DialogController class for customizing dialog boxes.
-Added a feedback section to text-entry dialog box.
-Bound the F5 key in both menu-input mode and dialog-input mode.
++ Added a simple confirmation dialog box.
++ Added DialogController class for customizing dialog boxes.
++ Added a feedback section to text-entry dialog box.
++ Bound the F5 key in both menu-input mode and dialog-input mode.
 
 ## Version 0.6.2 released on 2 May 2017
 

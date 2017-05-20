@@ -1,9 +1,9 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.5 releases on TBD
+## Version 0.9.5 released on TBD
 
-Notable changes:
- + split off 2 general-purpose packages to new "jme3-utilites-heart" library
+Moved 2 general-purpose packages to new "jme3-utilites-heart" library, which
+  this library now depends upon.
 
 ## Version 0.9.4 released on 14 May 2017
 

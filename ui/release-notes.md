@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.5.3 released on TBD
+
++ The library now depends on jme3-utilities-heart instead of SkyControl.
++ Added didntHandle() callback to the ActionApplication class.
+
 ## Version 0.5.2 released on 16 May 2017
 
 Bugfix: When disabling an InputMode, remove the listener.

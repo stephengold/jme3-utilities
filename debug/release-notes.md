@@ -1,5 +1,13 @@
 # release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.5.3 released on TBD
+
++ The library now depends on jme3-utilities-heart instead of SkyControl.
++ added capability to hide lines and/or points in SkeletonDebugControl
++ separate colors for lines and points in SkeletonDebugControl (an incompatible
+    change to its API)
++ Corrected lighting in PoseDemo (needed due to a change in SkyControl).
+
 ## Version 0.5.2 released on 5 May 2017
 
 SkeletonDebugControl no longer depends on jME3's SkeletonDebug.
