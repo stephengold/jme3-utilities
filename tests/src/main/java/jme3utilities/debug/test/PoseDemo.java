@@ -305,7 +305,7 @@ public class PoseDemo extends GuiApplication {
         updater.setAmbientLight(ambientLight);
         updater.setMainLight(mainLight);
         updater.addShadowFilter(dlsf);
-        updater.setMainMultiplier(4f);
+        updater.setMainMultiplier(2f);
     }
 
     /**
