@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.5.4 released on TBD
+## Version 0.5.4 released on 22 May 2017
 
 + Bug fix for SkeletonDebugControl: copy the transform of animated
   geometry on every update, in case it changes
