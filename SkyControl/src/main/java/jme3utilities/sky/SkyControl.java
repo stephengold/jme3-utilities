@@ -696,7 +696,7 @@ public class SkyControl extends SkyControlCore {
         topMaterial.setHazeColor(baseColor);
         Material bottomMaterial = getBottomMaterial();
         if (bottomMaterial != null) {
-            bottomMaterial.setColor("Color", baseColor);
+            bottomMaterial.setColor("Color", baseColor.clone());
         }
 
         ColorRGBA cloudsColor = updateCloudsColor(baseColor, sunUp, moonUp);
@@ -781,8 +781,8 @@ public class SkyControl extends SkyControlCore {
         }
         if (phase == LunarPhase.CUSTOM) {
             assert moonRenderer != null;
-            float intensity = 2f + 
-                    FastMath.abs(longitudeDifference - FastMath.PI);
+            float intensity;
+            intensity = 2f + FastMath.abs(longitudeDifference - FastMath.PI);
             moonRenderer.setLightIntensity(intensity);
             moonRenderer.setPhase(longitudeDifference, lunarLatitude);
         }

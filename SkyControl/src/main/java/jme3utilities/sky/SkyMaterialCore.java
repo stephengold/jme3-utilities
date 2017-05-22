@@ -517,7 +517,7 @@ public class SkyMaterialCore extends Material {
      * Alter the color of a cloud layer.
      *
      * @param layerIndex (&lt;maxCloudLayers, &ge;0)
-     * @param newColor (not null)
+     * @param newColor (not null, unaffected)
      */
     public void setCloudsColor(int layerIndex, ColorRGBA newColor) {
         validateLayerIndex(layerIndex);
@@ -527,7 +527,7 @@ public class SkyMaterialCore extends Material {
         }
 
         String parameterName = String.format("Clouds%dColor", layerIndex);
-        setColor(parameterName, newColor);
+        setColor(parameterName, newColor.clone());
         cloudAlphas[layerIndex] = newColor.a;
     }
 
@@ -535,7 +535,7 @@ public class SkyMaterialCore extends Material {
      * Alter the glow color of a cloud layer.
      *
      * @param layerIndex (&lt;maxCloudLayers, &ge;0)
-     * @param newColor (not null)
+     * @param newColor (not null, unaffected)
      */
     public void setCloudsGlow(int layerIndex, ColorRGBA newColor) {
         validateLayerIndex(layerIndex);
@@ -545,7 +545,7 @@ public class SkyMaterialCore extends Material {
         }
 
         String parameterName = String.format("Clouds%dGlow", layerIndex);
-        setColor(parameterName, newColor);
+        setColor(parameterName, newColor.clone());
     }
 
     /**
@@ -592,7 +592,7 @@ public class SkyMaterialCore extends Material {
      * Alter the color of the specified astronomical object.
      *
      * @param objectIndex (&lt;maxObjects, &ge;0)
-     * @param newColor (not null)
+     * @param newColor (not null, unaffected)
      */
     public void setObjectColor(int objectIndex, ColorRGBA newColor) {
         validateObjectIndex(objectIndex);
@@ -602,14 +602,14 @@ public class SkyMaterialCore extends Material {
         }
 
         String parameterName = String.format("Object%dColor", objectIndex);
-        setColor(parameterName, newColor);
+        setColor(parameterName, newColor.clone());
     }
 
     /**
      * Alter the glow color of the specified astronomical object.
      *
      * @param objectIndex (&lt;maxObjects, &ge;0)
-     * @param newColor (not null)
+     * @param newColor (not null, unaffected)
      */
     public void setObjectGlow(int objectIndex, ColorRGBA newColor) {
         validateObjectIndex(objectIndex);
@@ -619,7 +619,7 @@ public class SkyMaterialCore extends Material {
         }
 
         String parameterName = String.format("Object%dGlow", objectIndex);
-        setColor(parameterName, newColor);
+        setColor(parameterName, newColor.clone());
     }
 
     /**
