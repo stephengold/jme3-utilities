@@ -34,14 +34,15 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Transform;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.util.clone.Cloner;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.MySkeleton;
-import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 
@@ -305,6 +306,25 @@ public class SkeletonDebugControl extends SubtreeControl {
     @Override
     protected void controlUpdate(float updateInterval) {
         super.controlUpdate(updateInterval);
+        /*
+         * Copy the world transform from an animated geometry to the debugger
+         * (and hope any other animated geometries share the same transform!)
+         */
+        Geometry ag = findAnimatedGeometry(spatial);
+        if (ag != null) {
+            Spatial loopSpatial = ag;
+            Transform combined = new Transform();
+            /*
+             * Climb the scene graph applying local transforms until the
+             * controlled spatial is reached.
+             */
+            while (loopSpatial != spatial && loopSpatial != null) {
+                Transform localTransform = loopSpatial.getLocalTransform();
+                combined.combineWithParent(localTransform);
+                loopSpatial = loopSpatial.getParent();
+            }
+            subtree.setLocalTransform(combined);
+        }
 
         Skeleton skeleton = MySkeleton.getSkeleton(spatial);
 
@@ -327,17 +347,6 @@ public class SkeletonDebugControl extends SubtreeControl {
         if (newState && subtree == null) {
             String nodeName = spatial.getName() + " skeleton";
             subtree = new Node(nodeName);
-            /*
-             * Copy local transform from 1st geometry to the debugger (and hope
-             * any other geometries share the same transform!)
-             */
-            Node controlledNode = (Node) spatial;
-            Geometry firstGeometry = MySpatial.findChild(controlledNode,
-                    Geometry.class);
-            if (firstGeometry != null) {
-                Transform transform = firstGeometry.getLocalTransform();
-                subtree.setLocalTransform(transform);
-            }
 
             Skeleton skeleton = MySkeleton.getSkeleton(spatial);
             int numBones = skeleton.getBoneCount();
@@ -390,5 +399,34 @@ public class SkeletonDebugControl extends SubtreeControl {
     public SkeletonDebugControl clone() throws CloneNotSupportedException {
         SkeletonDebugControl clone = (SkeletonDebugControl) super.clone();
         return clone;
+    }
+
+    /**
+     * Find an animated geometry in the specified subtree of the scene graph.
+     *
+     * @param subtree where to search (not null)
+     * @return a pre-existing instance, or null if none
+     */
+    private static Geometry findAnimatedGeometry(Spatial subtree) {
+        Geometry result = null;
+        if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
+            Mesh mesh = geometry.getMesh();
+            if (mesh.isAnimated()) {
+                result = geometry;
+            }
+
+        } else {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                result = findAnimatedGeometry(child);
+                if (result != null) {
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 }
