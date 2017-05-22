@@ -63,23 +63,19 @@ final public class MyAsset {
     /**
      * asset path of the Particle material definition
      */
-    final private static String particleMaterialAssetPath =
-            "Common/MatDefs/Misc/Particle.j3md";
+    final private static String particleMaterialAssetPath = "Common/MatDefs/Misc/Particle.j3md";
     /**
      * asset path of the shaded material definition
      */
-    final public static String shadedMaterialAssetPath =
-            "Common/MatDefs/Light/Lighting.j3md";
+    final public static String shadedMaterialAssetPath = "Common/MatDefs/Light/Lighting.j3md";
     /**
      * asset path to the Unshaded material definition
      */
-    final public static String unshadedMaterialAssetPath =
-            "Common/MatDefs/Misc/Unshaded.j3md";
+    final public static String unshadedMaterialAssetPath = "Common/MatDefs/Misc/Unshaded.j3md";
     /**
      * asset path to the wireframe material definition
      */
-    final public static String wireframeMaterialAssetPath =
-            "MatDefs/wireframe/wireframe.j3md";
+    final public static String wireframeMaterialAssetPath = "MatDefs/wireframe/wireframe.j3md";
     /**
      * default scale
      */
@@ -173,7 +169,7 @@ final public class MyAsset {
         Validate.nonNull(assetManager, "asset manager");
 
         Material material = createUnshadedMaterial(assetManager);
-        material.setColor("Color", ColorRGBA.BlackNoAlpha);
+        material.setColor("Color", new ColorRGBA(0f, 0f, 0f, 0f));
         RenderState additional = material.getAdditionalRenderState();
         additional.setBlendMode(RenderState.BlendMode.Alpha);
         additional.setDepthWrite(false);
@@ -221,7 +217,7 @@ final public class MyAsset {
      * Create a shiny lit material with a specified uniform color.
      *
      * @param assetManager (not null)
-     * @param color (not null)
+     * @param color (not null, unaffected)
      * @return new instance
      */
     public static Material createShinyMaterial(AssetManager assetManager,
@@ -231,9 +227,9 @@ final public class MyAsset {
 
         Material material = new Material(assetManager, shadedMaterialAssetPath);
         material.setBoolean("UseMaterialColors", true);
-        material.setColor("Ambient", color);
-        material.setColor("Diffuse", color);
-        material.setColor("Specular", ColorRGBA.White);
+        material.setColor("Ambient", color.clone());
+        material.setColor("Diffuse", color.clone());
+        material.setColor("Specular", new ColorRGBA(1f, 1f, 1f, 1f));
         material.setFloat("Shininess", 1f);
 
         return material;
@@ -379,7 +375,7 @@ final public class MyAsset {
         Validate.nonNull(color, "color");
 
         Material material = createUnshadedMaterial(assetManager);
-        material.setColor("Color", color);
+        material.setColor("Color", color.clone());
 
         return material;
     }
@@ -424,7 +420,7 @@ final public class MyAsset {
      * Create a wireframe material.
      *
      * @param assetManager (not null)
-     * @param color (not null)
+     * @param color (not null, unaffected)
      * @return new instance
      */
     public static Material createWireframeMaterial(AssetManager assetManager,
@@ -435,7 +431,7 @@ final public class MyAsset {
         Material material = new Material(assetManager,
                 wireframeMaterialAssetPath);
         material.getAdditionalRenderState().setWireframe(true);
-        material.setColor("Color", color);
+        material.setColor("Color", color.clone());
 
         return material;
     }
