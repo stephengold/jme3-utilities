@@ -40,6 +40,7 @@ import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.debug.SkeletonDebugger;
 import com.jme3.terrain.geomipmap.TerrainQuad;
 import java.nio.FloatBuffer;
+import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.math.VectorXZ;
@@ -125,6 +126,35 @@ public class MySpatial {
             return 'n';
         }
         return '?';
+    }
+
+    /**
+     * Find an animated geometry in the specified subtree of the scene graph.
+     *
+     * @param subtree where to search (not null)
+     * @return a pre-existing instance, or null if none
+     */
+    public static Geometry findAnimatedGeometry(Spatial subtree) {
+        Geometry result = null;
+        if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
+            Mesh mesh = geometry.getMesh();
+            if (mesh.isAnimated()) {
+                result = geometry;
+            }
+
+        } else {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                result = findAnimatedGeometry(child);
+                if (result != null) {
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
