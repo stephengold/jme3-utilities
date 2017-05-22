@@ -326,7 +326,7 @@ public class LandscapeControl extends SubtreeControl {
     /**
      * Create a shaded material for the specified color.
      *
-     * @param color ambient/diffuse color (not null)
+     * @param color ambient/diffuse color (not null, unaffected)
      * @return new material
      */
     private Material createShadedMaterial(ColorRGBA color) {
@@ -335,8 +335,8 @@ public class LandscapeControl extends SubtreeControl {
         Material material = new Material(assetManager,
                 MyAsset.shadedMaterialAssetPath);
         material.setBoolean("UseMaterialColors", true);
-        material.setColor("Ambient", color);
-        material.setColor("Diffuse", color);
+        material.setColor("Ambient", color.clone());
+        material.setColor("Diffuse", color.clone());
 
         return material;
     }

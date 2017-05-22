@@ -69,13 +69,13 @@ public class PerformanceAppState extends SimpleAppState {
      */
     private BitmapText text = null;
     /**
-     * color of background for statistics text
+     * color of background for statistics text (50% black)
      */
     final private ColorRGBA backgroundColor = new ColorRGBA(0f, 0f, 0f, 0.5f);
     /**
-     * color of statistics text
+     * color of statistics text (white)
      */
-    final private ColorRGBA textColor = ColorRGBA.White;
+    final private ColorRGBA textColor = new ColorRGBA(1f, 1f, 1f, 1f);
     /**
      * time remaining in the current measurement interval (in seconds)
      */
@@ -143,7 +143,7 @@ public class PerformanceAppState extends SimpleAppState {
          */
         Material backgroudMaterial = MyAsset.createUnshadedMaterial(
                 assetManager);
-        backgroudMaterial.setColor("Color", backgroundColor);
+        backgroudMaterial.setColor("Color", backgroundColor.clone());
         RenderState renderState = backgroudMaterial.getAdditionalRenderState();
         renderState.setBlendMode(RenderState.BlendMode.Alpha);
         float backgroundWidth = 250f; // pixels

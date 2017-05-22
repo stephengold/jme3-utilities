@@ -293,31 +293,31 @@ public class SkyMaterial extends SkyMaterialCore {
     /**
      * Alter the color of clear sky.
      *
-     * @param newColor (not null)
+     * @param newColor (not null, unaffected)
      */
     public void setClearColor(ColorRGBA newColor) {
         Validate.nonNull(newColor, "color");
-        setColor("ClearColor", newColor);
+        setColor("ClearColor", newColor.clone());
     }
 
     /**
      * Alter the glow color of clear sky.
      *
-     * @param newColor (not null)
+     * @param newColor (not null, unaffected)
      */
     public void setClearGlow(ColorRGBA newColor) {
         Validate.nonNull(newColor, "color");
-        setColor("ClearGlow", newColor);
+        setColor("ClearGlow", newColor.clone());
     }
 
     /**
      * Alter the color of the horizon haze.
      *
-     * @param newColor (not null)
+     * @param newColor (not null, unaffected)
      */
     public void setHazeColor(ColorRGBA newColor) {
         Validate.nonNull(newColor, "color");
-        setColor("HazeColor", newColor);
+        setColor("HazeColor", newColor.clone());
     }
     // *************************************************************************
     // private methods

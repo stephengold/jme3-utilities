@@ -247,11 +247,11 @@ public class SkeletonDebugControl extends SubtreeControl {
     /**
      * Alter the colors of all lines.
      *
-     * @param newColor (not null)
+     * @param newColor (not null, unaffected)
      */
     public void setLineColor(ColorRGBA newColor) {
         Validate.nonNull(newColor, "new color");
-        lineMaterial.setColor("Color", newColor);
+        lineMaterial.setColor("Color", newColor.clone());
     }
 
     /**
