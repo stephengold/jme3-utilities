@@ -36,6 +36,7 @@ import com.jme3.animation.LoopMode;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SpatialTrack;
 import com.jme3.animation.Track;
+import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
@@ -200,6 +201,27 @@ public class MyAnimation {
     }
 
     /**
+     * Find the keyframe in the specified animation with the latest time.
+     *
+     * @param animation input (not null)
+     * @return track time (in seconds, &ge;0)
+     */
+    public static float findLastKeyframe(Animation animation) {
+        float maxTime = 0f;
+        Track[] loadedTracks = animation.getTracks();
+        for (Track track : loadedTracks) {
+            float[] frameTimes = track.getKeyFrameTimes();
+            for (float time : frameTimes) {
+                if (time > maxTime) {
+                    maxTime = time;
+                }
+            }
+        }
+
+        return maxTime;
+    }
+
+    /**
      * Find a BoneTrack in a specified animation for a specified bone.
      *
      * @param animation which animation (not null, unaffected)
@@ -257,6 +279,50 @@ public class MyAnimation {
         }
         Collection<String> animationNames = control.getAnimationNames();
         result.addAll(animationNames);
+
+        return result;
+    }
+
+    /**
+     * Copy a bone track, reducing the number of keyframes by the specified
+     * factor.
+     *
+     * @param oldTrack (not null, unaffected)
+     * @param factor reduction factor (&ge;2)
+     * @return a new instance
+     */
+    public static BoneTrack reduce(BoneTrack oldTrack, int factor) {
+        Validate.inRange(factor, "factor", 2, Integer.MAX_VALUE);
+
+        Vector3f[] oldTranslations = oldTrack.getTranslations();
+        Quaternion[] oldRotations = oldTrack.getRotations();
+        Vector3f[] oldScales = oldTrack.getScales();
+        float[] oldTimes = oldTrack.getKeyFrameTimes();
+        int oldCount = oldTimes.length;
+        assert oldCount > 0 : oldCount;
+
+        int newCount = 1 + (oldCount - 1) / factor;
+        Vector3f[] newTranslations = new Vector3f[newCount];
+        Quaternion[] newRotations = new Quaternion[newCount];
+        Vector3f[] newScales;
+        if (oldScales == null) {
+            newScales = null;
+        } else {
+            newScales = new Vector3f[newCount];
+        }
+        float[] newTimes = new float[newCount];
+
+        for (int newIndex = 0; newIndex < newCount; newIndex++) {
+            int oldIndex = newIndex * factor;
+            newTranslations[newIndex] = oldTranslations[oldIndex].clone();
+            newRotations[newIndex] = oldRotations[oldIndex].clone();
+            newScales[newIndex] = oldScales[oldIndex].clone();
+            newTimes[newIndex] = oldTimes[oldIndex];
+        }
+
+        int boneIndex = oldTrack.getTargetBoneIndex();
+        BoneTrack result = new BoneTrack(boneIndex, newTimes, newTranslations,
+                newRotations, newScales);
 
         return result;
     }
@@ -344,5 +410,43 @@ public class MyAnimation {
         }
 
         return numTracksEdited;
+    }
+
+    /**
+     * Copy a bone track, altering its duration and adjusting all its keyframes
+     * proportionately.
+     *
+     * @param oldTrack (not null, unaffected)
+     * @param newDuration new duration (in seconds, &ge;0)
+     * @return a new instance
+     */
+    public static BoneTrack setDuration(BoneTrack oldTrack, float newDuration) {
+        Validate.nonNegative(newDuration, "duration");
+
+        BoneTrack result = oldTrack.clone();
+        float[] newTimes = result.getKeyFrameTimes();
+
+        float oldDuration = oldTrack.getLength();
+        float[] oldTimes = oldTrack.getKeyFrameTimes();
+        int numFrames = oldTimes.length;
+        assert numFrames == 1 || oldDuration > 0f : numFrames;
+
+        for (int frameIndex = 0; frameIndex < numFrames; frameIndex++) {
+            float oldTime = oldTimes[frameIndex];
+            assert oldTime <= oldDuration : oldTime;
+
+            float newTime;
+            if (oldDuration == 0f) {
+                assert frameIndex == 0 : frameIndex;
+                assert oldTime == 0f : oldTime;
+                newTime = 0f;
+            } else {
+                newTime = newDuration * oldTime / oldDuration;
+                newTime = FastMath.clamp(newTime, 0f, newDuration);
+            }
+            newTimes[frameIndex] = newTime;
+        }
+
+        return result;
     }
 }
