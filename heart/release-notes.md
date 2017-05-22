@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.6 released on TBD
+## Version 0.9.6 released on 22 May 2017
 
  + Added wireframe shaders and material definitions, partly from SkyControl
  + Added 4 new methods to the MyAnimation class
