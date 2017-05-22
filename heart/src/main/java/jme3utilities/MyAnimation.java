@@ -266,6 +266,32 @@ public class MyAnimation {
     }
 
     /**
+     * Test whether the specified animation includes a bone track for the
+     * indexed bone.
+     *
+     * @param animation which animation to test (not null)
+     * @param boneIndex which bone (&ge;0)
+     * @return true if a track exists, otherwise false
+     */
+    public static boolean hasTrackForBone(Animation animation, int boneIndex) {
+        Validate.nonNegative(boneIndex, "bone index");
+
+        boolean result = false;
+        Track[] tracks = animation.getTracks();
+        for (Track track : tracks) {
+            if (track instanceof BoneTrack) {
+                BoneTrack boneTrack = (BoneTrack) track;
+                int target = boneTrack.getTargetBoneIndex();
+                if (target == boneIndex) {
+                    result = true;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * List all animations in an animated spatial.
      *
      * @param spatial (not null)
