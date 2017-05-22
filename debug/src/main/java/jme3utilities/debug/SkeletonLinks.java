@@ -132,7 +132,7 @@ public class SkeletonLinks extends Mesh {
     /**
      * Create a shallow copy of this mesh.
      *
-     * @return a new control, equivalent to this one
+     * @return a new mesh, equivalent to this one
      */
     @Override
     public SkeletonLinks clone() {
