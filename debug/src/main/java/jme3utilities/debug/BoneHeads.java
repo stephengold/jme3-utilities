@@ -27,6 +27,7 @@ package jme3utilities.debug;
 
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
@@ -64,10 +65,15 @@ public class BoneHeads extends Mesh {
     public BoneHeads(int boneCount) {
         Validate.nonNegative(boneCount, "bone count");
 
-        FloatBuffer floats = BufferUtils.createFloatBuffer(3 * boneCount);
-        VertexBuffer positions = new VertexBuffer(Type.Position);
-        positions.setupData(Usage.Stream, 3, Format.Float, floats);
-        setBuffer(positions);
+        FloatBuffer fPositions = BufferUtils.createFloatBuffer(3 * boneCount);
+        VertexBuffer vPositions = new VertexBuffer(Type.Position);
+        vPositions.setupData(Usage.Stream, 3, Format.Float, fPositions);
+        setBuffer(vPositions);
+
+        FloatBuffer fColors = BufferUtils.createFloatBuffer(4 * boneCount);
+        VertexBuffer vColors = new VertexBuffer(Type.Color);
+        vColors.setupData(Usage.Stream, 4, Format.Float, fColors);
+        setBuffer(vColors);
 
         setMode(Mode.Points);
     }
@@ -82,20 +88,74 @@ public class BoneHeads extends Mesh {
     public void update(Skeleton skeleton) {
         Validate.nonNull(skeleton, "skeleton");
 
-        FloatBuffer floats = getFloatBuffer(Type.Position);
-        floats.clear(); // prepare for writing
+        FloatBuffer fPositions = getFloatBuffer(Type.Position);
+        fPositions.clear(); // prepare for writing
         int boneCount = skeleton.getBoneCount();
         for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
             Bone bone = skeleton.getBone(boneIndex);
             Vector3f location = bone.getModelSpacePosition();
-            floats.put(location.x);
-            floats.put(location.y);
-            floats.put(location.z);
+            fPositions.put(location.x);
+            fPositions.put(location.y);
+            fPositions.put(location.z);
         }
-        floats.flip(); // prepare for reading
+        fPositions.flip(); // prepare for reading
 
-        VertexBuffer positions = getBuffer(Type.Position);
-        positions.updateData(floats);
+        VertexBuffer vPositions = getBuffer(Type.Position);
+        vPositions.updateData(fPositions);
+        /*
+         * Update the bounding volume.
+         */
+        updateBound();
+    }
+
+    /**
+     * Update the color of each vertex in the mesh.
+     *
+     * @param colors color for each bone (not null)
+     */
+    public void updateColors(ColorRGBA[] colors) {
+        Validate.nonNull(colors, "colors");
+
+        FloatBuffer fColors = getFloatBuffer(Type.Color);
+        fColors.clear(); // prepare for writing
+
+        int boneCount = colors.length;
+        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
+            ColorRGBA color = colors[boneIndex];
+            fColors.put(color.r);
+            fColors.put(color.g);
+            fColors.put(color.b);
+            fColors.put(color.a);
+        }
+        fColors.flip(); // prepare for reading
+
+        VertexBuffer vColors = getBuffer(Type.Color);
+        vColors.updateData(fColors);
+    }
+
+    /**
+     * Update the position each vertex in the mesh.
+     *
+     * @param skeleton the skeleton to visualize (not null)
+     */
+    public void updatePositions(Skeleton skeleton) {
+        Validate.nonNull(skeleton, "skeleton");
+
+        FloatBuffer fPositions = getFloatBuffer(Type.Position);
+        fPositions.clear(); // prepare for writing
+
+        int boneCount = skeleton.getBoneCount();
+        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
+            Bone bone = skeleton.getBone(boneIndex);
+            Vector3f location = bone.getModelSpacePosition();
+            fPositions.put(location.x);
+            fPositions.put(location.y);
+            fPositions.put(location.z);
+        }
+        fPositions.flip(); // prepare for reading
+
+        VertexBuffer vPositions = getBuffer(Type.Position);
+        vPositions.updateData(fPositions);
         /*
          * Update the bounding volume.
          */
@@ -107,7 +167,7 @@ public class BoneHeads extends Mesh {
     /**
      * Create a shallow copy of this mesh.
      *
-     * @return a new control, equivalent to this one
+     * @return a new mesh, equivalent to this one
      */
     @Override
     public BoneHeads clone() {

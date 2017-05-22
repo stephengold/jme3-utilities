@@ -39,6 +39,8 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.util.clone.Cloner;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
@@ -61,19 +63,19 @@ public class SkeletonDebugControl extends SubtreeControl {
     // constants and loggers
 
     /**
-     * default color for the lines (blue)
+     * default color for lines (blue)
      */
     final private static ColorRGBA defaultLineColor = new ColorRGBA(0f, 0f, 1f, 1f);
     /**
-     * default color for the points (white)
+     * default color for points (white)
      */
     final private static ColorRGBA defaultPointColor = new ColorRGBA(1f, 1f, 1f, 1f);
     /**
-     * default width for the lines (in pixels)
+     * default width for lines (in pixels)
      */
     final private static float defaultLineWidth = 2f;
     /**
-     * default size for the points (in pixels)
+     * default size for points (in pixels)
      */
     final private static float defaultPointSize = 4f;
     /**
@@ -81,7 +83,7 @@ public class SkeletonDebugControl extends SubtreeControl {
      */
     final private static int headsChildPosition = 0;
     /**
-     * child position of the links in geometry in the subtree node
+     * child position of the links geometry in the subtree node
      */
     final private static int linksChildPosition = 1;
     /**
@@ -93,9 +95,17 @@ public class SkeletonDebugControl extends SubtreeControl {
     // fields
 
     /**
-     * current line width (in pixels)
+     * standard color for bone heads
+     */
+    private ColorRGBA standardPointColor = defaultPointColor.clone();
+    /**
+     * line width (in pixels)
      */
     private float lineWidth;
+    /**
+     * custom color for each bone's head
+     */
+    private Map<Integer, ColorRGBA> pointColors = new TreeMap<>();
     /**
      * material for lines/links
      */
@@ -121,8 +131,9 @@ public class SkeletonDebugControl extends SubtreeControl {
         lineMaterial.getAdditionalRenderState().setDepthTest(false);
         setLineWidth(defaultLineWidth);
 
-        pointMaterial = MyAsset.createWireframeMaterial(
-                assetManager, defaultPointColor);
+        pointMaterial = new Material(assetManager,
+                "MatDefs/wireframe/multicolor.j3md");
+        pointMaterial.getAdditionalRenderState().setWireframe(true);
         pointMaterial.getAdditionalRenderState().setDepthTest(false);
         if (supportsPointSize()) {
             setPointSize(defaultPointSize);
@@ -146,13 +157,18 @@ public class SkeletonDebugControl extends SubtreeControl {
     }
 
     /**
-     * Copy the color of the points.
+     * Copy the point color for the indexed bone.
      *
+     * @param boneIndex which bone (&ge;0)
      * @return a new instance
      */
-    public ColorRGBA copyPointColor() {
-        MatParam parameter = pointMaterial.getParam("Color");
-        ColorRGBA color = (ColorRGBA) parameter.getValue();
+    public ColorRGBA copyPointColor(int boneIndex) {
+        Validate.nonNegative(boneIndex, "bone index");
+
+        ColorRGBA color = pointColors.get(boneIndex);
+        if (color == null) {
+            color = standardPointColor;
+        }
 
         return color.clone();
     }
@@ -174,17 +190,19 @@ public class SkeletonDebugControl extends SubtreeControl {
      * @return size (in pixels, &ge;1)
      */
     public float getPointSize() {
-        if (!supportsPointSize()) {
-            return 1f;
+        float result;
+        if (supportsPointSize()) {
+            MatParam parameter = pointMaterial.getParam("PointSize");
+            result = (float) parameter.getValue();
+        } else {
+            result = 1f;
         }
-        MatParam parameter = pointMaterial.getParam("PointSize");
-        float result = (float) parameter.getValue();
 
         return result;
     }
 
     /**
-     * Test whether a skeletonized spatial has debugging enabled.
+     * Test whether the specified spatial has skeleton debugging enabled.
      *
      * @param model skeletonized spatial (not null)
      * @return true if enabled, otherwise false
@@ -201,14 +219,15 @@ public class SkeletonDebugControl extends SubtreeControl {
     }
 
     /**
-     * Alter the color of both the lines and the points.
+     * Alter the colors of all lines and points.
      *
      * @param newColor (not null)
      */
     public void setColor(ColorRGBA newColor) {
         Validate.nonNull(newColor, "new color");
-        lineMaterial.setColor("Color", newColor);
-        pointMaterial.setColor("Color", newColor);
+
+        setLineColor(newColor);
+        setPointColor(newColor);
     }
 
     /**
@@ -227,7 +246,7 @@ public class SkeletonDebugControl extends SubtreeControl {
     }
 
     /**
-     * Alter the color of the lines.
+     * Alter the colors of all lines.
      *
      * @param newColor (not null)
      */
@@ -256,13 +275,28 @@ public class SkeletonDebugControl extends SubtreeControl {
     }
 
     /**
-     * Alter the color of the points.
+     * Alter the colors of all points.
      *
-     * @param newColor (not null)
+     * @param newColor (not null, unaffected)
      */
     public void setPointColor(ColorRGBA newColor) {
         Validate.nonNull(newColor, "new color");
-        pointMaterial.setColor("Color", newColor);
+
+        standardPointColor.set(newColor);
+        pointColors.clear();
+    }
+
+    /**
+     * Alter the point color for the indexed bone only.
+     *
+     * @param boneIndex which bone (&ge;0)
+     * @param newColor (not null, unaffected)
+     */
+    public void setPointColor(int boneIndex, ColorRGBA newColor) {
+        Validate.nonNegative(boneIndex, "bone index");
+        Validate.nonNull(newColor, "new color");
+
+        pointColors.put(boneIndex, newColor.clone());
     }
 
     /**
@@ -327,10 +361,16 @@ public class SkeletonDebugControl extends SubtreeControl {
         }
 
         Skeleton skeleton = MySkeleton.getSkeleton(spatial);
+        int numBones = skeleton.getBoneCount();
+        ColorRGBA[] colors = new ColorRGBA[numBones];
+        for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
+            colors[boneIndex] = copyPointColor(boneIndex);
+        }
 
         Geometry heads = (Geometry) subtree.getChild(headsChildPosition);
         BoneHeads headsMesh = (BoneHeads) heads.getMesh();
-        headsMesh.update(skeleton);
+        headsMesh.updateColors(colors);
+        headsMesh.updatePositions(skeleton);
 
         Geometry links = (Geometry) subtree.getChild(linksChildPosition);
         SkeletonLinks linksMesh = (SkeletonLinks) links.getMesh();
@@ -385,6 +425,15 @@ public class SkeletonDebugControl extends SubtreeControl {
         super.cloneFields(cloner, original);
         lineMaterial = cloner.clone(lineMaterial);
         pointMaterial = cloner.clone(pointMaterial);
+        standardPointColor = cloner.clone(standardPointColor);
+
+        Map<Integer, ColorRGBA> copyColors = new TreeMap<>();
+        for (Map.Entry<Integer, ColorRGBA> entry : pointColors.entrySet()) {
+            int key = entry.getKey();
+            ColorRGBA value = entry.getValue().clone();
+            copyColors.put(key, value);
+        }
+        pointColors = copyColors;
     }
     // *************************************************************************
     // Object methods
@@ -400,9 +449,12 @@ public class SkeletonDebugControl extends SubtreeControl {
         SkeletonDebugControl clone = (SkeletonDebugControl) super.clone();
         return clone;
     }
+    // *************************************************************************
+    // private methods
 
     /**
      * Find an animated geometry in the specified subtree of the scene graph.
+     * TODO use Util
      *
      * @param subtree where to search (not null)
      * @return a pre-existing instance, or null if none
