@@ -220,7 +220,7 @@ public class SkeletonDebugControl extends SubtreeControl {
     /**
      * Alter the colors of all lines and points.
      *
-     * @param newColor (not null)
+     * @param newColor (not null, unaffected)
      */
     public void setColor(ColorRGBA newColor) {
         Validate.nonNull(newColor, "new color");
