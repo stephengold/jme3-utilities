@@ -33,6 +33,7 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
+import com.jme3.scene.control.Control;
 import java.util.Collection;
 import java.util.logging.Logger;
 
@@ -104,6 +105,29 @@ public class MyControl {
             SkeletonControl sc = (SkeletonControl) control;
             int boneCount = sc.getSkeleton().getBoneCount();
             result += String.format("[%d]", boneCount);
+        }
+
+        return result;
+    }
+
+    /**
+     * Find the index of the specified scene-graph control in the specified
+     * spatial.
+     *
+     * @param sgc scene-graph control to find (not null, unaffected)
+     * @param spatial where the control was added (not null, unaffected)
+     * @return index (&ge;0) or -1 if not found
+     */
+    public static int findIndex(Control sgc, Spatial spatial) {
+        Validate.nonNull(sgc, "control");
+
+        int result = -1;
+        int numControls = spatial.getNumControls();
+        for (int index = 0; index < numControls; index++) {
+            Control control = spatial.getControl(index);
+            if (control == sgc) {
+                result = index;
+            }
         }
 
         return result;
