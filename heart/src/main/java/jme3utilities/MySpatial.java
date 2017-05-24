@@ -106,7 +106,7 @@ public class MySpatial {
     /**
      * Generate a single-character description of a spatial.
      *
-     * @param spatial spatial to describe
+     * @param spatial spatial to describe (unaffected)
      * @return mnemonic character
      */
     public static char describeType(Spatial spatial) {
@@ -131,7 +131,7 @@ public class MySpatial {
     /**
      * Find an animated geometry in the specified subtree of the scene graph.
      *
-     * @param subtree where to search (not null)
+     * @param subtree where to search (not null, unaffected)
      * @return a pre-existing instance, or null if none
      */
     public static Geometry findAnimatedGeometry(Spatial subtree) {
@@ -227,7 +227,7 @@ public class MySpatial {
     /**
      * Find the 1st local light with the specified name.
      *
-     * @param spatial spatial to search (not null)
+     * @param spatial spatial to search (not null, unaffected)
      * @param lightName name to search for (not null)
      * @return a pre-existing instance, or null if none found
      */
@@ -247,7 +247,7 @@ public class MySpatial {
     /**
      * Compute the map (2-D) location of a spatial.
      *
-     * @param spatial spatial to locate (not null)
+     * @param spatial spatial to locate (not null, unaffected)
      * @return new vector
      */
     public static VectorXZ getMapLocation(Spatial spatial) {
@@ -262,7 +262,7 @@ public class MySpatial {
     /**
      * Access an object's mass.
      *
-     * @param spatial object to measure (not null)
+     * @param spatial object to measure (not null, unaffected)
      * @return mass in kilograms (&gt;0) or zero for a static object.
      */
     public static float getMass(Spatial spatial) {
@@ -363,7 +363,7 @@ public class MySpatial {
     /**
      * Calculate the world scale factor for a uniformly scaled spatial.
      *
-     * @param spatial spatial to measure (not null)
+     * @param spatial spatial to measure (not null, unaffected)
      * @return scale factor (&gt;0)
      */
     public static float getUniformScale(Spatial spatial) {
@@ -381,7 +381,7 @@ public class MySpatial {
     /**
      * Calculate the world location of a spatial.
      *
-     * @param spatial spatial to locate (not null)
+     * @param spatial spatial to locate (not null, unaffected)
      * @return new vector
      */
     public static Vector3f getWorldLocation(Spatial spatial) {
@@ -403,7 +403,7 @@ public class MySpatial {
     /**
      * Calculate the world orientation of a spatial.
      *
-     * @param spatial spatial to orient (not null)
+     * @param spatial spatial to orient (not null, unaffected)
      * @return new vector
      */
     public static Quaternion getWorldOrientation(Spatial spatial) {
@@ -443,7 +443,7 @@ public class MySpatial {
     /**
      * Test whether a spatial has a specific light in its local list.
      *
-     * @param spatial spatial to search (not null)
+     * @param spatial spatial to search (not null, unaffected)
      * @param light light to search for (not null)
      * @return true if found, false if not found
      */
@@ -463,7 +463,7 @@ public class MySpatial {
      * Construct the inverse of a spatial's world orientation, the quaternion
      * that undoes its rotation.
      *
-     * @param spatial spatial to analyze (not null)
+     * @param spatial spatial to analyze (not null, unaffected)
      * @return new instance
      */
     public static Quaternion inverseOrientation(Spatial spatial) {
@@ -476,7 +476,7 @@ public class MySpatial {
     /**
      * Test whether a spatial is an orphan (has no parent node).
      *
-     * @param spatial spatial to test (not null)
+     * @param spatial spatial to test (not null, unaffected)
      * @return true if the spatial is an orphan, otherwise false
      */
     public static boolean isOrphan(Spatial spatial) {
@@ -487,7 +487,7 @@ public class MySpatial {
     /**
      * Test whether a spatial is physics-controlled.
      *
-     * @param spatial spatial to test (not null)
+     * @param spatial spatial to test (not null, unaffected)
      * @return true if the spatial is controlled by physics, otherwise false
      */
     public static boolean isPhysical(Spatial spatial) {
