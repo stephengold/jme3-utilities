@@ -136,15 +136,18 @@ public class BoneHeads extends Mesh {
     /**
      * Update the position each vertex in the mesh.
      *
-     * @param skeleton the skeleton to visualize (not null)
+     * @param skeleton the skeleton to visualize (may be null)
      */
     public void updatePositions(Skeleton skeleton) {
-        Validate.nonNull(skeleton, "skeleton");
-
         FloatBuffer fPositions = getFloatBuffer(Type.Position);
         fPositions.clear(); // prepare for writing
 
-        int boneCount = skeleton.getBoneCount();
+        int boneCount;
+        if (skeleton == null) {
+            boneCount = 0;
+        } else {
+            boneCount = skeleton.getBoneCount();
+        }
         for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
             Bone bone = skeleton.getBone(boneIndex);
             Vector3f location = bone.getModelSpacePosition();

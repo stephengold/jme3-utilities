@@ -38,7 +38,6 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.logging.Logger;
 import jme3utilities.MySkeleton;
-import jme3utilities.Validate;
 
 /**
  * A line-mode mesh used to visualize a skeleton. Each vertex corresponds to a
@@ -61,19 +60,24 @@ public class SkeletonLinks extends Mesh {
     /**
      * Instantiate a mesh for the specified skeleton.
      *
-     * @param skeleton the skeleton to visualize (not null)
+     * @param skeleton the skeleton to visualize (may be null)
      */
     public SkeletonLinks(Skeleton skeleton) {
-        Validate.nonNull(skeleton, "skeleton");
+        int boneCount, numConnections;
+        if (skeleton == null) {
+            boneCount = 0;
+            numConnections = 0;
+        } else {
+            boneCount = skeleton.getBoneCount();
+            int numRoots = MySkeleton.numRootBones(skeleton);
+            numConnections = boneCount - numRoots;
+        }
 
-        int boneCount = skeleton.getBoneCount();
         FloatBuffer floats = BufferUtils.createFloatBuffer(3 * boneCount);
         VertexBuffer positions = new VertexBuffer(Type.Position);
         positions.setupData(Usage.Stream, 3, Format.Float, floats);
         setBuffer(positions);
 
-        int numRoots = MySkeleton.numRootBones(skeleton);
-        int numConnections = boneCount - numRoots;
         ShortBuffer shorts = BufferUtils.createShortBuffer(2 * numConnections);
         VertexBuffer indices = new VertexBuffer(Type.Index);
         indices.setupData(Usage.Static, 2, Format.UnsignedShort, shorts);
@@ -102,14 +106,17 @@ public class SkeletonLinks extends Mesh {
     /**
      * Update the position of each vertex in the mesh.
      *
-     * @param skeleton the skeleton to visualize (not null)
+     * @param skeleton the skeleton to visualize (may be null)
      */
     public void update(Skeleton skeleton) {
-        Validate.nonNull(skeleton, "skeleton");
-
         FloatBuffer floats = getFloatBuffer(Type.Position);
         floats.clear(); // prepare for writing
-        int boneCount = skeleton.getBoneCount();
+        int boneCount;
+        if (skeleton == null) {
+            boneCount = 0;
+        } else {
+            boneCount = skeleton.getBoneCount();
+        }
         for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
             Bone bone = skeleton.getBone(boneIndex);
             Vector3f location = bone.getModelSpacePosition();
