@@ -450,7 +450,7 @@ public class MyAnimation {
         Validate.nonNegative(newDuration, "duration");
 
         BoneTrack result = oldTrack.clone();
-        float[] newTimes = result.getKeyFrameTimes();
+        float[] newTimes = result.getKeyFrameTimes(); // an alias
 
         float oldDuration = oldTrack.getLength();
         float[] oldTimes = oldTrack.getKeyFrameTimes();
