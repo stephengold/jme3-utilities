@@ -70,6 +70,42 @@ public class MyString {
     }
 
     /**
+     * De-duplicate a list of strings by appending distinguishing suffixes as
+     * needed. The number of strings and their order remains unchanged.
+     *
+     * @param list input (not null, modified)
+     * @param separator text to separate original name from suffix (not null)
+     */
+    public static void dedup(List<String> list, String separator) {
+        Validate.nonNull(list, "list");
+
+        for (String string : list) {
+            int numInstances = 0;
+            for (String s : list) {
+                if (s.equals(string)) {
+                    ++numInstances;
+                }
+            }
+            if (numInstances > 1) {
+                /*
+                 * Append a disinguishing suffix to each duplicate.
+                 */
+                int numElements = list.size();
+                int nextSuffix = 1;
+                for (int index = 0; index < numElements; index++) {
+                    String originalName = list.get(index);
+                    if (originalName.equals(string)) {
+                        String withSuffix = String.format("%s%s%d",
+                                originalName, separator, nextSuffix);
+                        ++nextSuffix;
+                        list.set(index, withSuffix);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Escape all tab, quote, newline, and backslash characters in a string.
      *
      * @param unescaped the input string (not null)
