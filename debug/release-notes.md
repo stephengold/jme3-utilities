@@ -1,9 +1,9 @@
 # release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.5.5 released on TBD
+## Version 0.5.5 released on 24 May 2017
 
- + Added API to change which skeleton is used by SkeletonDebugControl
- + Fix some aliasing bugs
+ + Added API to change the skeleton used by a SkeletonDebugControl
+ + Fixed some aliasing bugs
 
 ## Version 0.5.4 released on 22 May 2017
 
