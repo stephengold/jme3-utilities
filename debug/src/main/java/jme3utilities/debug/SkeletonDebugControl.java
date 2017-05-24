@@ -113,6 +113,10 @@ public class SkeletonDebugControl extends SubtreeControl {
      * material for points/heads
      */
     private Material pointMaterial;
+    /**
+     * skeleton being visualized, or null for none
+     */
+    private Skeleton skeleton = null;
     // *************************************************************************
     // constructors
 
@@ -314,6 +318,38 @@ public class SkeletonDebugControl extends SubtreeControl {
     }
 
     /**
+     * Alter the skeleton being visualized.
+     *
+     * @param newSkeleton which skeleton to visualize (may be null, alias
+     * created)
+     */
+    public void setSkeleton(Skeleton newSkeleton) {
+        skeleton = newSkeleton;
+
+        if (subtree != null) {
+            subtree.detachAllChildren();
+
+            int numBones;
+            if (newSkeleton == null) {
+                numBones = 0;
+            } else {
+                numBones = skeleton.getBoneCount();
+            }
+            BoneHeads headsMesh = new BoneHeads(numBones);
+            String headsName = spatial.getName() + " heads";
+            Geometry heads = new Geometry(headsName, headsMesh);
+            heads.setMaterial(pointMaterial);
+            subtree.attachChildAt(heads, headsChildPosition);
+
+            SkeletonLinks linksMesh = new SkeletonLinks(skeleton);
+            String linksName = spatial.getName() + " links";
+            Geometry links = new Geometry(linksName, linksMesh);
+            links.setMaterial(lineMaterial);
+            subtree.attachChildAt(links, linksChildPosition);
+        }
+    }
+
+    /**
      * Test whether the points material supports PointSize. (The PointSize
      * parameter was missing from Unshaded.j3md in JME 3.1.0.)
      *
@@ -359,8 +395,12 @@ public class SkeletonDebugControl extends SubtreeControl {
             subtree.setLocalTransform(combined);
         }
 
-        Skeleton skeleton = MySkeleton.getSkeleton(spatial);
-        int numBones = skeleton.getBoneCount();
+        int numBones;
+        if (skeleton == null) {
+            numBones = 0;
+        } else {
+            numBones = skeleton.getBoneCount();
+        }
         ColorRGBA[] colors = new ColorRGBA[numBones];
         for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
             colors[boneIndex] = copyPointColor(boneIndex);
@@ -384,30 +424,33 @@ public class SkeletonDebugControl extends SubtreeControl {
     @Override
     public void setEnabled(boolean newState) {
         if (newState && subtree == null) {
+            /*
+             * Before enabling this control for the first time,
+             * create the subtree.
+             */
             String nodeName = spatial.getName() + " skeleton";
             subtree = new Node(nodeName);
-
-            Skeleton skeleton = MySkeleton.getSkeleton(spatial);
-            int numBones = skeleton.getBoneCount();
-
-            BoneHeads headsMesh = new BoneHeads(numBones);
-            String headsName = spatial.getName() + " heads";
-            Geometry heads = new Geometry(headsName, headsMesh);
-            heads.setMaterial(pointMaterial);
-            subtree.attachChildAt(heads, headsChildPosition);
-
-            SkeletonLinks linksMesh = new SkeletonLinks(skeleton);
-            String linksName = spatial.getName() + " links";
-            Geometry links = new Geometry(linksName, linksMesh);
-            links.setMaterial(lineMaterial);
-            subtree.attachChildAt(links, linksChildPosition);
-
             subtree.setQueueBucket(RenderQueue.Bucket.Transparent);
             subtree.setShadowMode(RenderQueue.ShadowMode.Off);
+
+            setSkeleton(skeleton);
             setLineWidth(lineWidth);
         }
 
         super.setEnabled(newState);
+    }
+
+    /**
+     * Alter which node is controlled.
+     *
+     * @param newSpatial the node to control (or null)
+     */
+    @Override
+    public void setSpatial(Spatial newSpatial) {
+        super.setSpatial(newSpatial);
+
+        Skeleton foundSkeleton = MySkeleton.getSkeleton(newSpatial);
+        setSkeleton(foundSkeleton);
     }
     // *************************************************************************
     // JmeCloneable methods
@@ -422,9 +465,11 @@ public class SkeletonDebugControl extends SubtreeControl {
     @Override
     public void cloneFields(Cloner cloner, Object original) {
         super.cloneFields(cloner, original);
+
         lineMaterial = cloner.clone(lineMaterial);
         pointMaterial = cloner.clone(pointMaterial);
         standardPointColor = cloner.clone(standardPointColor);
+        skeleton = cloner.clone(skeleton);
 
         Map<Integer, ColorRGBA> copyColors = new TreeMap<>();
         for (Map.Entry<Integer, ColorRGBA> entry : pointColors.entrySet()) {
