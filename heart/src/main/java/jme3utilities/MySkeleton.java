@@ -25,6 +25,7 @@
  */
 package jme3utilities;
 
+import com.jme3.animation.AnimControl;
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
@@ -137,22 +138,24 @@ public class MySkeleton {
     }
 
     /**
-     * Access the skeleton of a skeletonized spatial.
+     * Find a skeleton of the specified spatial. TODO rename
      *
-     * @param spatial skeletonized spatial (not null)
-     * @return a pre-existing instance
+     * @param spatial which spatial (not null)
+     * @return a pre-existing instance, or null if none found
      */
     public static Skeleton getSkeleton(Spatial spatial) {
-        SkeletonControl control = spatial.getControl(SkeletonControl.class);
-        if (control == null) {
-            throw new IllegalArgumentException(
-                    "expected the spatial to have a SkeletonControl");
+        Skeleton skeleton = null;
+        AnimControl animControl = spatial.getControl(AnimControl.class);
+        if (animControl != null) {
+            skeleton = animControl.getSkeleton();
         }
 
-        Skeleton skeleton = control.getSkeleton();
         if (skeleton == null) {
-            throw new IllegalArgumentException(
-                    "expected the spatial to have a skeleton");
+            SkeletonControl skeletonControl;
+            skeletonControl = spatial.getControl(SkeletonControl.class);
+            if (skeletonControl != null) {
+                skeleton = skeletonControl.getSkeleton();
+            }
         }
 
         return skeleton;
