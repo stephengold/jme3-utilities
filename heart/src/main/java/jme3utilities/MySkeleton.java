@@ -33,8 +33,10 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
+import com.jme3.scene.control.Control;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -162,27 +164,64 @@ public class MySkeleton {
     }
 
     /**
+     * Enumerate all named bones in the specified skeleton.
+     *
+     * @param skeleton which skeleton (not null, unaffected)
+     * @param addResult (added to if not null)
+     * @return a list of names in arbitrary order, without any duplicates
+     * (either addResult or a new list)
+     */
+    public static List<String> listBones(Skeleton skeleton,
+            List<String> addResult) {
+        int boneCount = skeleton.getBoneCount();
+        if (addResult == null) {
+            addResult = new ArrayList<>(boneCount);
+        }
+
+        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
+            Bone bone = skeleton.getBone(boneIndex);
+            if (bone != null) {
+                String name = bone.getName();
+                if (name != null && !addResult.contains(name)) {
+                    addResult.add(name);
+                }
+            }
+        }
+
+        return addResult;
+    }
+
+    /**
      * List all bones in a skeletonized spatial.
      *
      * @param spatial skeletonized spatial (not null)
-     * @return a new collection in lexicographic order (may be empty)
+     * @return a new list of names in lexicographic order, without any
+     * duplicates (may be empty)
      */
     public static List<String> listBones(Spatial spatial) {
-        Validate.nonNull(spatial, "spatial");
+        List<String> result = new ArrayList<>(80);
 
-        Skeleton skeleton = getSkeleton(spatial);
-        int boneCount = skeleton.getBoneCount();
-
-        List<String> names = new ArrayList<>(boneCount);
-        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
-            Bone bone = skeleton.getBone(boneIndex);
-            String name = bone.getName();
-            names.add(name);
+        int numControls = spatial.getNumControls();
+        for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
+            Control control = spatial.getControl(controlIndex);
+            if (control instanceof AnimControl) {
+                AnimControl animControl = (AnimControl) control;
+                Skeleton skeleton = animControl.getSkeleton();
+                if (skeleton != null) {
+                    listBones(skeleton, result);
+                }
+            } else if (control instanceof SkeletonControl) {
+                SkeletonControl skeletonControl = (SkeletonControl) control;
+                Skeleton skeleton = skeletonControl.getSkeleton();
+                if (skeleton != null) {
+                    listBones(skeleton, result);
+                }
+            }
         }
 
-        Collections.sort(names);
+        Collections.sort(result);
 
-        return names;
+        return result;
     }
 
     /**
@@ -356,19 +395,53 @@ public class MySkeleton {
     }
 
     /**
-     * Alter the userControl flag for an entire skeletonized spatial.
+     * Alter all the user-control flags in the specified skeleton.
      *
-     * @param spatial skeletonized spatial (not null)
-     * @param newValue true to enable, false to disable
+     * @param skeleton skeleton to alter (not null)
+     * @param newSetting true to enable user control, false to disable
      */
-    public static void setUserControl(Spatial spatial, boolean newValue) {
-        Validate.nonNull(spatial, "spatial");
-
-        Skeleton skeleton = getSkeleton(spatial);
+    public static void setUserControl(Skeleton skeleton, boolean newSetting) {
         int boneCount = skeleton.getBoneCount();
         for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
             Bone bone = skeleton.getBone(boneIndex);
-            bone.setUserControl(newValue);
+            bone.setUserControl(newSetting);
+        }
+    }
+
+    /**
+     * Alter all the user-control flags in the specified subtree. Note:
+     * recursive!
+     *
+     * @param subtree subtree to alter (not null)
+     * @param newSetting true to enable user control, false to disable
+     */
+    public static void setUserControl(Spatial subtree, boolean newSetting) {
+        Validate.nonNull(subtree, "spatial");
+
+        int numControls = subtree.getNumControls();
+        for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
+            Control control = subtree.getControl(controlIndex);
+            if (control instanceof AnimControl) {
+                AnimControl animControl = (AnimControl) control;
+                Skeleton skeleton = animControl.getSkeleton();
+                if (skeleton != null) {
+                    setUserControl(skeleton, newSetting);
+                }
+            } else if (control instanceof SkeletonControl) {
+                SkeletonControl skeletonControl = (SkeletonControl) control;
+                Skeleton skeleton = skeletonControl.getSkeleton();
+                if (skeleton != null) {
+                    setUserControl(skeleton, newSetting);
+                }
+            }
+        }
+
+        if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                setUserControl(child, newSetting);
+            }
         }
     }
 
