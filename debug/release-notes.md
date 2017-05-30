@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.5.6 released on TBD
+## Version 0.5.6 released on 30 May 2017
 
  + Handle null spatials in SkeletonDebugControl
 
