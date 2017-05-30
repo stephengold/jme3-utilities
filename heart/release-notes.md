@@ -1,9 +1,9 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.8 released on TBD
+## Version 0.9.8 released on 30 May 2017
 
- + Changed API of MySkeleton for clarity.
- + Better handling of multiple skeletons and missing skeletons in MySkeleton.
+ + Changed API of MySkeleton for clarity
+ + Better handling of multiple skeletons and missing skeletons in MySkeleton
 
 ## Version 0.9.7 released on 24 May 2017
 
