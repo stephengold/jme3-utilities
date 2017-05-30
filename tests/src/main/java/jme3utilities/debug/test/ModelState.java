@@ -224,7 +224,7 @@ class ModelState extends SimpleAppState {
         if (!isBoneSelected()) {
             return null;
         }
-        Bone bone = MySkeleton.getBone(spatial, selectedBoneName);
+        Bone bone = MySkeleton.findBone(spatial, selectedBoneName);
 
         return bone;
     }
@@ -334,7 +334,7 @@ class ModelState extends SimpleAppState {
      * @return the pre-existing instance (not null)
      */
     Skeleton getSkeleton() {
-        Skeleton skeleton = MySkeleton.getSkeleton(spatial);
+        Skeleton skeleton = MySkeleton.findSkeleton(spatial);
 
         assert skeleton != null;
         return skeleton;
@@ -393,7 +393,7 @@ class ModelState extends SimpleAppState {
     }
 
     /**
-     * Test whether the skeleton contains the named bone.
+     * Test whether the loaded model contains the named bone.
      *
      * @param name (not null)
      * @return true if found or noBone, otherwise false
@@ -402,7 +402,7 @@ class ModelState extends SimpleAppState {
         if (name.equals(PoseDemoHud.noBone)) {
             return true;
         }
-        Bone bone = MySkeleton.getBone(spatial, name);
+        Bone bone = MySkeleton.findBone(spatial, name);
         if (bone == null) {
             return false;
         } else {

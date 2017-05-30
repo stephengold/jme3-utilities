@@ -443,13 +443,13 @@ public class SkeletonDebugControl extends SubtreeControl {
     /**
      * Alter which node is controlled.
      *
-     * @param newSpatial the node to control (or null)
+     * @param newNode the node to control (or null)
      */
     @Override
-    public void setSpatial(Spatial newSpatial) {
-        super.setSpatial(newSpatial);
+    public void setSpatial(Spatial newNode) {
+        super.setSpatial(newNode);
 
-        Skeleton foundSkeleton = MySkeleton.getSkeleton(newSpatial);
+        Skeleton foundSkeleton = MySkeleton.findSkeleton(newNode);
         setSkeleton(foundSkeleton);
     }
     // *************************************************************************

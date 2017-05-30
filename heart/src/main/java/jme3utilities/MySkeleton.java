@@ -105,6 +105,23 @@ public class MySkeleton {
     }
 
     /**
+     * Find a named bone in a skeletonized spatial.
+     *
+     * @param spatial skeletonized spatial to search (not null)
+     * @param boneName name of the bone to access (not null)
+     * @return a pre-existing instance (or null if not found)
+     */
+    public static Bone findBone(Spatial spatial, String boneName) {
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(boneName, "bone name");
+
+        Skeleton skeleton = findSkeleton(spatial);
+        Bone result = skeleton.getBone(boneName);
+
+        return result;
+    }
+
+    /**
      * Find the index of a named bone in a skeletonized spatial.
      *
      * @param spatial skeletonized spatial that contains the bone (not null,
@@ -116,36 +133,19 @@ public class MySkeleton {
         Validate.nonNull(spatial, "spatial");
         Validate.nonNull(boneName, "bone name");
 
-        Skeleton skeleton = getSkeleton(spatial);
+        Skeleton skeleton = findSkeleton(spatial);
         int index = skeleton.getBoneIndex(boneName);
 
         return index;
     }
 
     /**
-     * Access a named bone in a skeletonized spatial.
+     * Find a skeleton of the specified spatial.
      *
-     * @param spatial skeletonized spatial that contains the bone (not null)
-     * @param boneName name of the bone to access (not null)
-     * @return a pre-existing instance (or null if not found)
-     */
-    public static Bone getBone(Spatial spatial, String boneName) {
-        Validate.nonNull(spatial, "spatial");
-        Validate.nonNull(boneName, "bone name");
-
-        Skeleton skeleton = getSkeleton(spatial);
-        Bone result = skeleton.getBone(boneName);
-
-        return result;
-    }
-
-    /**
-     * Find a skeleton of the specified spatial. TODO rename
-     *
-     * @param spatial which spatial (not null)
+     * @param spatial which spatial to search (not null)
      * @return a pre-existing instance, or null if none found
      */
-    public static Skeleton getSkeleton(Spatial spatial) {
+    public static Skeleton findSkeleton(Spatial spatial) {
         Skeleton skeleton = null;
         AnimControl animControl = spatial.getControl(AnimControl.class);
         if (animControl != null) {
@@ -456,7 +456,7 @@ public class MySkeleton {
         Validate.nonNull(spatial, "spatial");
         Validate.nonNull(boneName, "bone name");
 
-        Bone bone = getBone(spatial, boneName);
+        Bone bone = findBone(spatial, boneName);
         Vector3f localCoordinates = bone.getModelSpacePosition();
         Vector3f result = spatial.localToWorld(localCoordinates, null);
 
@@ -493,7 +493,7 @@ public class MySkeleton {
         Validate.nonNull(spatial, "spatial");
         Validate.nonNull(boneName, "bone");
 
-        Bone bone = getBone(spatial, boneName);
+        Bone bone = findBone(spatial, boneName);
         Quaternion result = worldOrientation(spatial, bone);
 
         return result;

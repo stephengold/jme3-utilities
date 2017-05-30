@@ -171,7 +171,7 @@ public class MyAnimation {
         if (track instanceof BoneTrack) {
             BoneTrack boneTrack = (BoneTrack) track;
             int boneIndex = boneTrack.getTargetBoneIndex();
-            Skeleton skeleton = MySkeleton.getSkeleton(spatial);
+            Skeleton skeleton = MySkeleton.findSkeleton(spatial);
             Bone bone = skeleton.getBone(boneIndex);
             result = String.format("%c:%s", typeChar, bone.getName());
         } else {
