@@ -44,7 +44,6 @@ import java.util.Collection;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static jme3utilities.Misc.blendTime;
 
 /**
  * Utility methods for manipulating animations, channels, and tracks. All
@@ -56,6 +55,10 @@ public class MyAnimation {
     // *************************************************************************
     // constants and loggers
 
+    /**
+     * blend time for animations (in seconds, &ge;0)
+     */
+    final private static float blendTime = 0.3f;
     /**
      * message logger for this class
      */

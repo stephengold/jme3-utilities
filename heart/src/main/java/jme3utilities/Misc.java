@@ -63,10 +63,6 @@ public class Misc {
     // constants and loggers
 
     /**
-     * blend time for animations (in real seconds, &ge;0)
-     */
-    final public static float blendTime = 0.3f;
-    /**
      * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
