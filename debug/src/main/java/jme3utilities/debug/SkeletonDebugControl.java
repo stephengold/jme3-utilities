@@ -329,6 +329,11 @@ public class SkeletonDebugControl extends SubtreeControl {
         if (subtree != null) {
             subtree.detachAllChildren();
 
+            String namePrefix = "";
+            if (spatial != null) {
+                namePrefix = spatial.getName() + " ";
+            }
+            String headsName = namePrefix + "heads";
             int numBones;
             if (newSkeleton == null) {
                 numBones = 0;
@@ -336,13 +341,12 @@ public class SkeletonDebugControl extends SubtreeControl {
                 numBones = skeleton.getBoneCount();
             }
             BoneHeads headsMesh = new BoneHeads(numBones);
-            String headsName = spatial.getName() + " heads";
             Geometry heads = new Geometry(headsName, headsMesh);
             heads.setMaterial(pointMaterial);
             subtree.attachChildAt(heads, headsChildPosition);
 
+            String linksName = namePrefix + "links";
             SkeletonLinks linksMesh = new SkeletonLinks(skeleton);
-            String linksName = spatial.getName() + " links";
             Geometry links = new Geometry(linksName, linksMesh);
             links.setMaterial(lineMaterial);
             subtree.attachChildAt(links, linksChildPosition);
@@ -449,7 +453,10 @@ public class SkeletonDebugControl extends SubtreeControl {
     public void setSpatial(Spatial newNode) {
         super.setSpatial(newNode);
 
-        Skeleton foundSkeleton = MySkeleton.findSkeleton(newNode);
+        Skeleton foundSkeleton = null;
+        if (newNode != null) {
+            foundSkeleton = MySkeleton.findSkeleton(newNode);
+        }
         setSkeleton(foundSkeleton);
     }
     // *************************************************************************
