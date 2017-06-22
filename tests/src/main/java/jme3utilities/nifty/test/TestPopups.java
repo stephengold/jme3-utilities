@@ -157,7 +157,7 @@ public class TestPopups extends GuiApplication {
 
             } else if (actionString.equals("search")) {
                 screen.showTextEntryDialog("Enter new search string:",
-                        searchString, "", searchDialogPrefix,
+                        searchString, searchDialogPrefix,
                         new SearchDialogController());
                 return;
 
