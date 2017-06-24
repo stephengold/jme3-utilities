@@ -45,8 +45,8 @@ import jme3utilities.Validate;
  * <p>
  * The controlled spatial must be a Node.
  * <p>
- * The control is disabled by default. When enabled, it attaches three
- * geometries (one for each arrow) to the scene graph.
+ * The control is disabled by default. When enabled, it attaches 3 geometries
+ * (one for each arrow) to the scene graph.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -134,7 +134,7 @@ public class AxesControl extends SubtreeControl {
     }
 
     /**
-     * Read the depth test setting.
+     * Read the depth-test setting.
      *
      * @return true if the test is enabled, otherwise false
      */
@@ -168,7 +168,7 @@ public class AxesControl extends SubtreeControl {
     }
 
     /**
-     * Alter the depth test setting. The test provides depth cues, but often
+     * Alter the depth-test setting. The test provides depth cues, but often
      * hides the axes.
      *
      * @param newSetting true to enable test, false to disable it
@@ -200,6 +200,37 @@ public class AxesControl extends SubtreeControl {
             state.setLineWidth(width);
         }
     }
+
+    /**
+     * Calculate the tip location of the indexed axis.
+     *
+     * @param axisIndex which axis in the CGM's AxesControl (&ge;0, &lt;3)
+     * @return a new vector (in world coordinates) or null if not displayed
+     */
+    public Vector3f tipLocation(int axisIndex) {
+        Validate.inRange(axisIndex, "axis index", 0, 2);
+
+        Vector3f result = null;
+        if (isEnabled()) {
+            Vector3f tipLocal;
+            switch (axisIndex) {
+                case 0:
+                    tipLocal = xAxis;
+                    break;
+                case 1:
+                    tipLocal = yAxis;
+                    break;
+                case 2:
+                    tipLocal = zAxis;
+                    break;
+                default:
+                    throw new RuntimeException();
+            }
+            result = subtree.localToWorld(tipLocal, null);
+        }
+
+        return result;
+    }
     // *************************************************************************
     // Object methods
 
@@ -223,7 +254,8 @@ public class AxesControl extends SubtreeControl {
      * @param assetManager for loading material definitions (not null)
      * @param color for the wireframe (not null, unaffected)
      * @param name for the geometry (not null)
-     * @param direction for the arrow to point (length=1, unaffected)
+     * @param direction for the arrow to point (in local coordinates, length=1,
+     * unaffected)
      */
     private Geometry createAxis(AssetManager assetManager, ColorRGBA color,
             String name, Vector3f direction) {
@@ -237,8 +269,8 @@ public class AxesControl extends SubtreeControl {
         Geometry geometry = new Geometry(name, mesh);
         subtree.attachChild(geometry);
 
-        Material wireMaterial = MyAsset.createWireframeMaterial(
-                assetManager, color);
+        Material wireMaterial;
+        wireMaterial = MyAsset.createWireframeMaterial(assetManager, color);
         wireMaterial.getAdditionalRenderState().setDepthTest(depthTest);
         geometry.setMaterial(wireMaterial);
         geometry.setQueueBucket(RenderQueue.Bucket.Transparent);
