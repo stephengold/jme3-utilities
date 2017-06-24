@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.6.0 released on TBD
+
+ + Added a BoundsVisualizer
+ + Bug fix for AxesControl.getAxisLength(): return correct value
+ + Added AxesControl.tipLocation() method
+
 ## Version 0.5.6 released on 30 May 2017
 
  + Handle null spatials in SkeletonDebugControl
