@@ -126,7 +126,7 @@ public class AxesControl extends SubtreeControl {
      * @return length (in local units, &gt;0)
      */
     public float getAxisLength() {
-        Vector3f localScale = spatial.getLocalScale();
+        Vector3f localScale = subtree.getLocalScale();
         float result = localScale.x;
 
         assert result > 0f : result;
