@@ -134,7 +134,7 @@ public class BoneHeads extends Mesh {
     }
 
     /**
-     * Update the position each vertex in the mesh.
+     * Update the position of each vertex in the mesh.
      *
      * @param skeleton the skeleton to visualize (may be null)
      */
