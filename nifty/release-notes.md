@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.6.5 released on TBD
+## Version 0.6.5 released on 24 June 2017
 
 + Added simpler API for PopScreenController.showTextEntryDialog()
 + Add 2 dialog controllers: FloatDialog and IntegerDialog.

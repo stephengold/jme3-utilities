@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.6.0 released on TBD
+## Version 0.6.0 released on 24 June 2017
 
  + Added a BoundsVisualizer
  + Bug fix for AxesControl.getAxisLength(): return correct value
