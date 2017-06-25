@@ -30,6 +30,7 @@ import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * Controller for a text-entry dialog box used to input a single-precision
@@ -72,9 +73,8 @@ public class FloatDialog implements DialogController {
      * @param min minimum value (&lt;max)
      * @param max minimum value (&gt;min)
      */
-    FloatDialog(String description, float min, float max) {
-        assert description != null;
-        assert !description.isEmpty();
+    public FloatDialog(String description, float min, float max) {
+        Validate.nonEmpty(description, "description");
         assert min < max : max;
 
         commitDescription = description;
@@ -92,6 +92,8 @@ public class FloatDialog implements DialogController {
      */
     @Override
     public boolean allowCommit(Element dialogElement) {
+        Validate.nonNull(dialogElement, "dialog element");
+
         String text = getText(dialogElement);
         boolean result;
         try {
@@ -120,6 +122,8 @@ public class FloatDialog implements DialogController {
      */
     @Override
     public void update(Element dialogElement, float elapsedTime) {
+        Validate.nonNull(dialogElement, "dialog element");
+
         String commitLabel = "";
         String feedbackMessage = "";
 
@@ -159,8 +163,6 @@ public class FloatDialog implements DialogController {
      * @return a text string (not null)
      */
     private String getText(Element dialogElement) {
-        assert dialogElement != null;
-
         TextField textField = dialogElement.findNiftyControl("#textfield",
                 TextField.class);
         String text = textField.getRealText();
