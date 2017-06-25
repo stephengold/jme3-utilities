@@ -1,5 +1,9 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.6.6 released on TBD
+
++ Publicize constructors for dialog controllers.
+
 ## Version 0.6.5 released on 24 June 2017
 
 + Added simpler API for PopScreenController.showTextEntryDialog()
