@@ -74,15 +74,15 @@ class ModelState extends SimpleAppState {
     /**
      * local copy of {@link com.jme3.math.Transform#IDENTITY}
      */
-    final private static Transform identityTransform = new Transform();
+    final private static Transform transformIdentity = new Transform();
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_XYZ}
      */
-    final private static Vector3f nullScale = new Vector3f(1f, 1f, 1f);
+    final private static Vector3f scaleIdentity = new Vector3f(1f, 1f, 1f);
     /**
      * local copy of {@link com.jme3.math.Vector3f#ZERO}
      */
-    final private static Vector3f nullTranslation = new Vector3f(0f, 0f, 0f);
+    final private static Vector3f translationIdentity = new Vector3f(0f, 0f, 0f);
     // *************************************************************************
     // fields
 
@@ -623,7 +623,7 @@ class ModelState extends SimpleAppState {
         if (spatial instanceof Node) {
             Node node = (Node) spatial;
             for (Spatial child : node.getChildren()) {
-                child.setLocalTransform(identityTransform);
+                child.setLocalTransform(transformIdentity);
             }
         }
         /*
@@ -929,9 +929,9 @@ class ModelState extends SimpleAppState {
          */
         int numBones = skeleton.getBoneCount();
         for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
-            Vector3f translation = nullTranslation;
+            Vector3f translation = translationIdentity;
             Quaternion rotation = boneRotation(boneIndex);
-            Vector3f scale = nullScale;
+            Vector3f scale = scaleIdentity;
             BoneTrack track = MyAnimation.createTrack(boneIndex, translation,
                     rotation, scale);
             result.addTrack(track);

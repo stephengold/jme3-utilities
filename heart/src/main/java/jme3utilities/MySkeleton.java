@@ -63,7 +63,7 @@ public class MySkeleton {
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_XYZ}
      */
-    final private static Vector3f identityScale = new Vector3f(1f, 1f, 1f);
+    final private static Vector3f scaleIdentity = new Vector3f(1f, 1f, 1f);
     // *************************************************************************
     // constructors
 
@@ -97,7 +97,7 @@ public class MySkeleton {
 
         Vector3f scale = bone.getBindScale();
         if (scale == null) {
-            scale = identityScale;
+            scale = scaleIdentity;
         }
         storeResult.setScale(scale);
 

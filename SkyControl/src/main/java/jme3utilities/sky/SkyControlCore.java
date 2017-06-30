@@ -97,7 +97,7 @@ public class SkyControlCore extends SubtreeControl {
     /**
      * local copy of {@link com.jme3.math.Quaternion#IDENTITY}
      */
-    final private static Quaternion nullRotation = new Quaternion();
+    final private static Quaternion rotationIdentity = new Quaternion();
     /**
      * name for the bottom geometry
      */
@@ -719,7 +719,7 @@ public class SkyControlCore extends SubtreeControl {
             /*
              * Counteract rotation of the controlled node.
              */
-            MySpatial.setWorldOrientation(subtree, nullRotation);
+            MySpatial.setWorldOrientation(subtree, rotationIdentity);
         }
     }
 

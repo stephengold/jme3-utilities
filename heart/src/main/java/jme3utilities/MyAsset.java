@@ -77,9 +77,9 @@ final public class MyAsset {
      */
     final public static String wireframeMaterialAssetPath = "MatDefs/wireframe/wireframe.j3md";
     /**
-     * default scale
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_XYZ}
      */
-    final private static Vector3f defaultScale = new Vector3f(1f, 1f, 1f);
+    final private static Vector3f scaleIdentity = new Vector3f(1f, 1f, 1f);
     /**
      * Direction vector for the center of each cube face.
      */
@@ -344,7 +344,7 @@ final public class MyAsset {
          * Create the sky sphere.
          */
         Spatial starMap = SkyFactory.createSky(assetManager, right, left, back,
-                front, top, bottom, defaultScale, radius);
+                front, top, bottom, scaleIdentity, radius);
 
         return (Geometry) starMap;
     }
