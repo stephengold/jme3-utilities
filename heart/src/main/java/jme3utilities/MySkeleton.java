@@ -289,7 +289,8 @@ public class MySkeleton {
     }
 
     /**
-     * Count vertices in the specified mesh influenced by the specified bone.
+     * Count how many vertices in the specified mesh are directly influenced by
+     * the indexed bone.
      *
      * @param mesh which mesh (not null, possibly modified)
      * @param boneIndex which bone (&ge;0)

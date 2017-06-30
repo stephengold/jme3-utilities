@@ -62,7 +62,7 @@ abstract public class SubtreeControl
     /**
      * subtree managed by this control: set by subclass
      */
-    protected Node subtree = null;
+    protected Node subtree = null;  // TODO could also be a Geometry?
     // *************************************************************************
     // constructors
 

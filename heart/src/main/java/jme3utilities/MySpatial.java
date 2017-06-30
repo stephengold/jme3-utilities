@@ -130,6 +130,7 @@ public class MySpatial {
 
     /**
      * Find an animated geometry in the specified subtree of the scene graph.
+     * Note: recursive!
      *
      * @param subtree where to search (not null, unaffected)
      * @return a pre-existing instance, or null if none

@@ -313,7 +313,7 @@ public class MyString {
 
     /**
      * Extract the remainder of the specified string after removing the
-     * specified prefix.
+     * specified prefix. TODO corresponding methods for specified suffix
      *
      * @param input input string (not null)
      * @param prefix prefix string (not null)
