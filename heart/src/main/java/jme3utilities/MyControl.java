@@ -28,6 +28,7 @@ package jme3utilities;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.Animation;
 import com.jme3.animation.SkeletonControl;
+import com.jme3.app.StatsView;
 import com.jme3.bullet.control.PhysicsControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.effect.ParticleEmitter;
@@ -149,6 +150,8 @@ public class MyControl {
         } else if (control instanceof ParticleEmitter.ParticleEmitterControl) {
             return ((ParticleEmitter.ParticleEmitterControl) control)
                     .isEnabled();
+        } else if (control instanceof StatsView) {
+            return ((StatsView) control).isEnabled();
         } else {
             assert false : control.getClass();
             return false;
