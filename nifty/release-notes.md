@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.6.7 released on TBD
+## Version 0.6.7 released on 3 July 2017
 
 + Render NiftyGUI after JME's guiNode.
 
