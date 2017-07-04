@@ -26,6 +26,8 @@
 package jme3utilities.nifty;
 
 import com.jme3.niftygui.NiftyJmeDisplay;
+import com.jme3.renderer.Camera;
+import com.jme3.renderer.ViewPort;
 import de.lessvoid.nifty.Nifty;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -154,6 +156,14 @@ abstract public class GuiApplication extends ActionApplication {
          */
         niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager,
                 audioRenderer, guiViewPort);
+        /*
+         * Render NiftyGUI after/over guiNode (and rootNode).
+         */
+        int height = cam.getHeight();
+        int width = cam.getWidth();
+        Camera niftyCam = new Camera(width, height);
+        ViewPort niftyView = renderManager.createPostView("NiftyGUI", niftyCam);
+        niftyView.addProcessor(niftyDisplay);
 
         Nifty nifty = getNifty();
         //nifty.setDebugOptionPanelColors(true);
