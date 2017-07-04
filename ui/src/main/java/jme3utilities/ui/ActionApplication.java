@@ -104,14 +104,19 @@ abstract public class ActionApplication
     }
 
     /**
-     * Convert an asset path to a filesystem path for a writable asset.
+     * Convert an asset path to an absolute filesystem path for a writable
+     * asset.
      *
      * @param assetPath (not null)
-     * @return filesystem path (not null)
+     * @return filesystem path (not null, not empty)
      */
     public static String filePath(String assetPath) {
         Validate.nonNull(assetPath, "asset path");
-        String result = String.format("%s/%s", writtenAssetDirPath, assetPath);
+
+        File file = new File(writtenAssetDirPath, assetPath);
+        String result = file.getAbsolutePath();
+        result = result.replaceAll("\\\\", "/");
+
         return result;
     }
 
