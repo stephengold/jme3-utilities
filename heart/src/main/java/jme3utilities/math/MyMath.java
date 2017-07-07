@@ -26,6 +26,11 @@
 package jme3utilities.math;
 
 import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Ray;
+import com.jme3.math.Transform;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.Spatial;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -38,6 +43,10 @@ public class MyMath {
     // *************************************************************************
     // constants and loggers
 
+    /**
+     * Pi/2
+     */
+    final public static double halfPi = Math.PI / 2.0;
     /**
      * the square root of 1/2
      */
@@ -236,6 +245,28 @@ public class MyMath {
     }
 
     /**
+     * Test the specified transform for exact identity.
+     *
+     * @param transform which transform to test (not null, unaffected)
+     * @return true if exactly equal to
+     * {@link com.jme3.math.Transform#IDENTITY}, otherwise false
+     */
+    public static boolean isIdentity(Transform transform) {
+        boolean result = false;
+
+        Vector3f translation = transform.getTranslation();
+        if (MyVector3f.isZero(translation)) {
+            Quaternion rotation = transform.getRotation();
+            if (rotation.isIdentity()) {
+                Vector3f scale = transform.getScale();
+                result = (scale.x == 1f && scale.y == 1f && scale.z == 1f);
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Test whether an integer value is odd.
      *
      * @param iValue input value to be tested
@@ -243,6 +274,40 @@ public class MyMath {
      */
     public static boolean isOdd(int iValue) {
         boolean result = (iValue % 2) != 0;
+        return result;
+    }
+
+    /**
+     * Transform a ray from world coordinates to the local coordinates of the
+     * specified spatial.
+     *
+     * @param worldRay input ray to transform (not null, unaffected)
+     * @param spatial which spatial (not null)
+     * @return a new instance
+     */
+    public static Ray localizeRay(Ray worldRay, Spatial spatial) {
+        Vector3f worldVertex = worldRay.getOrigin();
+        Vector3f worldDirection = worldRay.getDirection();
+        /*
+         * Choose a sample point on the ray.
+         */
+        float t = worldVertex.length();
+        if (t == 0f) {
+            t = 1f;
+        }
+        assert t > 0f : t;
+        Vector3f worldSample = worldDirection.mult(t);
+        worldSample.addLocal(worldVertex);
+        /*
+         * Transform the vertex and the sample point.
+         */
+        Vector3f localVertex = spatial.worldToLocal(worldVertex, null);
+        Vector3f localSample = spatial.worldToLocal(worldSample, null);
+
+        Vector3f localDirection = localSample.subtract(localVertex);
+        localDirection.normalizeLocal();
+        Ray result = new Ray(localVertex, localDirection);
+
         return result;
     }
 
@@ -378,6 +443,21 @@ public class MyMath {
         assert result >= 0.0 : result;
         assert result < modulus : result;
         return result;
+    }
+
+    /**
+     * Round the rotation angle of the indexed axis to the nearest Pi/2 radians.
+     *
+     * @param input (not null, modified)
+     * @param axisIndex which axis (&ge;0, &lt;3)
+     */
+    public static void snapLocal(Quaternion input, int axisIndex) {
+        float[] angles = new float[3];
+        input.toAngles(angles);
+        double angle = angles[axisIndex];
+        angle = halfPi * Math.round(angle / halfPi);
+        angles[axisIndex] = (float) angle;
+        input.fromAngles(angles);
     }
 
     /**
