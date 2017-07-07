@@ -170,7 +170,7 @@ public class MyVector3f {
     /**
      * Generate an axis-aligned vector with the specified length.
      *
-     * @param axisIndex 0&rarr;X, 1&rarrlY, 2&rarr;Z
+     * @param axisIndex 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      * @param length how long (ge;0)
      * @param storeResult (modified if not null)
      * @return vector (either storeResult or a new instance)

@@ -1,5 +1,12 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 0.9.9 released on TBD
+
+ + Fixed logic error in MyCamera.aspectRatio()
+ + Added Rectangle class to generate meshes
+ + Added utility methods to MyCamera, MyMath, MySpatial, and MyVector3f
+ + Handle StatsView case in MyControl.isEnabled()
+
 ## Version 0.9.8 released on 30 May 2017
 
  + Changed API of MySkeleton for clarity
