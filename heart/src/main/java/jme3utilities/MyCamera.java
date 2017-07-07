@@ -74,10 +74,15 @@ final public class MyCamera {
      * @return width divided by height (&gt;0)
      */
     public static float aspectRatio(Camera camera) {
-        float height = camera.getHeight();
+        /* 
+         * Note: camera.getHeight() returns the height of the display,
+         * not the height of the camera!  The display and the camera
+         * often have the same aspect ratio, but not always.
+         */
+        float height = camera.getFrustumTop();
         assert height > 0f : height;
 
-        float width = camera.getWidth();
+        float width = camera.getFrustumRight();
         assert width > 0f : width;
 
         float ratio = width / height;
