@@ -148,7 +148,8 @@ public class Misc {
     }
 
     /**
-     * Generate the filesystem path to a file in the user's home directory.
+     * Generate the filesystem path to a file in the user's home directory. TODO
+     * generate an absolute pathname
      *
      * @param fileName file name to use (not null, not empty)
      * @return generated path (not empty)
@@ -171,7 +172,7 @@ public class Misc {
      * @return project name, library name, branch, and revision
      */
     public static String getVersion() {
-        return "jme3-utilities jme3-utilities-heart master $Rev: 0.9.9 $";
+        return "jme3-utilities jme3-utilities-heart master $Rev: 0.9.9+1 $";
     }
 
     /**

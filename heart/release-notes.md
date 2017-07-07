@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.9 released on TBD
+## Version 0.9.9 released on 7 July 2017
 
  + Fixed logic error in MyCamera.aspectRatio()
  + Added Rectangle class to generate meshes
