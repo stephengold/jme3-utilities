@@ -27,6 +27,7 @@ package jme3utilities.math;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -164,6 +165,37 @@ public class MyVector3f {
         boolean result = doCoincide(projection, offset2, tolerance2);
 
         return result;
+    }
+
+    /**
+     * Generate an axis-aligned vector with the specified length.
+     *
+     * @param axisIndex 0&rarr;X, 1&rarrlY, 2&rarr;Z
+     * @param length how long (ge;0)
+     * @param storeResult (modified if not null)
+     * @return vector (either storeResult or a new instance)
+     */
+    public static Vector3f axisVector(int axisIndex, float length,
+            Vector3f storeResult) {
+        Validate.inRange(axisIndex, "axis index", 0, 2);
+        Validate.nonNegative(length, "length");
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+
+        storeResult.zero();
+        switch (axisIndex) {
+            case 0:
+                storeResult.x = length;
+                break;
+            case 1:
+                storeResult.y = length;
+                break;
+            case 2:
+                storeResult.z = length;
+        }
+
+        return storeResult;
     }
 
     /**
@@ -544,6 +576,63 @@ public class MyVector3f {
         double yy = vector.y;
         double zz = vector.z;
         double result = xx * xx + yy * yy + zz * zz;
+
+        return result;
+    }
+
+    /**
+     * Find the specified intersection between the line containing the specified
+     * ray and an origin-centered sphere. If there's no intersection, find the
+     * point on the sphere closest to the line.
+     *
+     * @param ray which ray to test (not null)
+     * @param radius size of the sphere (&ge;0)
+     * @param farSide which intersection to use: true&rarr;far side of sphere,
+     * false&rarr;near side
+     * @return a new coordinate vector
+     */
+    public static Vector3f lineMeetsSphere(Ray ray, float radius,
+            boolean farSide) {
+        Validate.nonNull(ray, "ray");
+        Validate.nonNegative(radius, "radius");
+
+        Vector3f direction = ray.getDirection();
+        Vector3f vertex = ray.getOrigin();
+        float dDotV = direction.dot(vertex);
+        float normV2 = vertex.lengthSquared();
+        float discriminant = dDotV * dDotV - normV2 + radius * radius;
+
+        Vector3f result;
+        if (discriminant >= 0f) {
+            /*
+             * Calculate the pseudodistance from the ray's vertex
+             * to the intersection.
+             */
+            float t = -dDotV;
+            if (farSide) {
+                t += FastMath.sqrt(discriminant);
+            } else {
+                t -= FastMath.sqrt(discriminant);
+            }
+            /*
+             * Calculate the position of that point on the line.
+             */
+            result = direction.mult(t);
+            result.addLocal(vertex);
+
+        } else {
+            /*
+             * Calculate the line's closest approach to the origin.
+             */
+            Vector3f projection = direction.mult(dDotV);
+            result = vertex.subtract(projection);
+            /*
+             * Scale to the surface of the sphere.
+             */
+            float factor = radius / result.length();
+            assert factor <= 1f : factor;
+            result.multLocal(factor);
+        }
 
         return result;
     }
