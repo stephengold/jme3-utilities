@@ -37,6 +37,7 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
+import com.jme3.scene.control.Control;
 import com.jme3.scene.debug.SkeletonDebugger;
 import com.jme3.terrain.geomipmap.TerrainQuad;
 import java.nio.FloatBuffer;
@@ -541,6 +542,26 @@ public class MySpatial {
             Node node = (Node) spatial;
             for (Spatial child : node.getChildren()) {
                 moveChildWorld(child, offset);
+            }
+        }
+    }
+
+    /**
+     * Remove all controls from the specified subtree of the scene graph. Note:
+     * recursive!
+     *
+     * @param subtree (not null)
+     */
+    public static void removeAllControls(Spatial subtree) {
+        while (subtree.getNumControls() > 0) {
+            Control control = subtree.getControl(0);
+            subtree.removeControl(control);
+        }
+        if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                removeAllControls(child);
             }
         }
     }
