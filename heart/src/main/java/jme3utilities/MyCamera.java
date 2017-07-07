@@ -25,17 +25,21 @@
  */
 package jme3utilities;
 
+import com.jme3.input.InputManager;
 import com.jme3.math.FastMath;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.renderer.ViewPort;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
 
 /**
- * Utility methods that operate on jME3 cameras. Aside from test cases, all
- * methods should be public and static.
+ * Utility methods that operate on jME3 cameras and view ports. All methods
+ * should be public and static.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -74,7 +78,7 @@ final public class MyCamera {
      * @return width divided by height (&gt;0)
      */
     public static float aspectRatio(Camera camera) {
-        /* 
+        /*
          * Note: camera.getHeight() returns the height of the display,
          * not the height of the camera!  The display and the camera
          * often have the same aspect ratio, but not always.
@@ -100,6 +104,37 @@ final public class MyCamera {
         Vector3f direction = camera.getDirection();
         float azimuth = MyVector3f.azimuth(direction);
         return azimuth;
+    }
+
+    /**
+     * Test whether the bounds of the specified view port contain the specified
+     * screen position.
+     *
+     * @param viewPort (not null, unaffected)
+     * @param screenXY (in pixels, not null, unaffected)
+     *
+     * @return true if contained, otherwise false
+     */
+    public static boolean contains(ViewPort viewPort, Vector2f screenXY) {
+        Validate.nonNull(viewPort, "view port");
+        Validate.nonNull(screenXY, "screen xy");
+
+        Camera camera = viewPort.getCamera();
+        float xFraction = screenXY.x / camera.getWidth();
+        float leftX = camera.getViewPortLeft();
+        float rightX = camera.getViewPortRight();
+
+        boolean result = false;
+        if (xFraction > leftX && xFraction < rightX) {
+            float yFraction = screenXY.y / camera.getHeight();
+            float bottomY = camera.getViewPortBottom();
+            float topY = camera.getViewPortTop();
+            if (yFraction > bottomY && yFraction < topY) {
+                result = true;
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -142,6 +177,29 @@ final public class MyCamera {
         } else {
             camera.lookAtDirection(direction, yAxis);
         }
+    }
+
+    /**
+     * Convert the mouse-pointer location into a ray.
+     *
+     * @param camera (not null, unaffected)
+     * @param inputManager (not null)
+     *
+     * @return a new ray in world coordinates
+     */
+    public static Ray mouseRay(Camera camera, InputManager inputManager) {
+        Vector2f screenXY = inputManager.getCursorPosition();
+        /*
+         * Convert screen coordinates to world coordinates.
+         */
+        Vector3f vertex = camera.getWorldCoordinates(screenXY, 0f);
+        Vector3f far = camera.getWorldCoordinates(screenXY, 1f);
+
+        Vector3f direction = far.subtract(vertex);
+        direction.normalizeLocal();
+        Ray ray = new Ray(vertex, direction);
+
+        return ray;
     }
 
     /**
