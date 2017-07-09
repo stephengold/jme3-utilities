@@ -1,5 +1,12 @@
 # release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.7.0 released on TBD
+
+ + Renamed Printer to Dumper and made major changes to its API
+ + Added the capability to dump a ViewPort or RenderManager
+ + Renamed SkeletonDebugControl and made minor changes to its API
+ + Renamed AxesControl to AxesVisualizer
+
 ## Version 0.6.0 released on 24 June 2017
 
  + Added a BoundsVisualizer
