@@ -231,16 +231,6 @@ public class Dumper {
     }
 
     /**
-     * Dump a subtree of the scene graph.
-     *
-     * @param spatial root of the subtree (or null)
-     */
-    public void dump(Spatial spatial) {
-        dump(spatial, "");
-        stream.flush();
-    }
-
-    /**
      * Dump the specified list of scenes.
      *
      * @param sceneList the root nodes of the scenes to dump (not null)
@@ -280,7 +270,7 @@ public class Dumper {
         stream.printf("%nrender manager with %d preView%s, %d mainView%s, and ",
                 numPres, (numPres == 1) ? "" : "s",
                 numMains, (numMains == 1) ? "" : "s");
-        stream.printf("%s postView%s%n", numPosts, (numPosts == 1) ? "" : "s");
+        stream.printf("%d postView%s%n", numPosts, (numPosts == 1) ? "" : "s");
 
         for (int index = 0; index < numPres; index++) {
             stream.printf("preView[%d]:%n", index);
@@ -294,6 +284,16 @@ public class Dumper {
             stream.printf("postView[%d]:%n", index);
             dump(posts.get(index), indentIncrement);
         }
+    }
+
+    /**
+     * Dump a subtree of the scene graph.
+     *
+     * @param spatial root of the subtree (or null)
+     */
+    public void dump(Spatial spatial) {
+        dump(spatial, "");
+        stream.flush();
     }
 
     /**
@@ -661,7 +661,7 @@ public class Dumper {
     // new protected methods
 
     /**
-     * Generate a textual description of a camera.
+     * Generate a textual description of a camera. TODO move to MyCamera
      *
      * @param camera camera to describe (unaffected)
      * @return description (not null, not empty)
