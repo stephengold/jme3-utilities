@@ -205,7 +205,7 @@ public class TestSkyControl extends GuiApplication {
                     run.load();
                     return;
                 case "print scene":
-                    run.print();
+                    run.dump();
                     return;
                 case "save scene":
                     run.save();

@@ -47,7 +47,7 @@ import jme3utilities.MySkeleton;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.debug.AxesControl;
-import jme3utilities.debug.Printer;
+import jme3utilities.debug.Dumper;
 import jme3utilities.debug.SkeletonVisualizer;
 import jme3utilities.nifty.GuiScreenController;
 
@@ -781,18 +781,18 @@ public class PoseDemoHud
             visualizer.setPointSize(pointSize);
         }
         /*
-         * Printer
+         * Dumper
          */
-        Printer printer = PoseDemo.getPrinter();
+        Dumper dumper = PoseDemo.getDumper();
         enable = isChecked("printTransform");
-        printer.setPrintTransform(enable);
+        dumper.setPrintTransform(enable);
         enable = isChecked("printUser");
-        printer.setPrintUser(enable);
+        dumper.setPrintUser(enable);
         enable = isChecked("printBucket");
-        printer.setPrintBucket(enable);
+        dumper.setPrintBucket(enable);
         enable = isChecked("printShadow");
-        printer.setPrintShadow(enable);
+        dumper.setPrintShadow(enable);
         enable = isChecked("printCull");
-        printer.setPrintCull(enable);
+        dumper.setPrintCull(enable);
     }
 }

@@ -59,8 +59,8 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.ViewPortListener;
 import jme3utilities.WaterProcessor;
+import jme3utilities.debug.Dumper;
 import jme3utilities.debug.LandscapeControl;
-import jme3utilities.debug.Printer;
 import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.sky.CloudLayer;
@@ -135,7 +135,7 @@ public class TestSkyControlRun
     /**
      * printer for scene dump
      */
-    final private Printer printer = new Printer();
+    final private Dumper dumper = new Dumper();
     /**
      * control under test
      */
@@ -258,8 +258,8 @@ public class TestSkyControlRun
     /**
      * Dump the scene (as text) to the "standard" output stream.
      */
-    void print() {
-        printer.printSubtree(sceneNode);
+    void dump() {
+        dumper.dump(sceneNode);
     }
 
     /**

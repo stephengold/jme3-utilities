@@ -50,7 +50,7 @@ import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.debug.AxesControl;
 import jme3utilities.debug.DebugVersion;
-import jme3utilities.debug.Printer;
+import jme3utilities.debug.Dumper;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.LibraryVersion;
 import jme3utilities.nifty.bind.BindScreen;
@@ -128,15 +128,15 @@ public class PoseDemo extends GuiApplication {
     /**
      * printer for scene dump
      */
-    final private static Printer printer = new Printer();
+    final private static Dumper dumper = new Dumper();
     // *************************************************************************
     // new methods exposed
 
     /**
-     * Access the scene dump printer.
+     * Access the scene-dump printer.
      */
-    static Printer getPrinter() {
-        return printer;
+    static Dumper getDumper() {
+        return dumper;
     }
 
     /**
@@ -256,7 +256,7 @@ public class PoseDemo extends GuiApplication {
                     bindScreen.activate(im);
                     return;
                 case "print scene":
-                    printer.printSubtree(rootNode);
+                    dumper.dump(rootNode);
                     return;
                 case "toggle hud":
                     cameraState.toggleHud();
