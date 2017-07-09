@@ -582,18 +582,6 @@ public class Dumper {
     }
 
     /**
-     * Configure the control name separator.
-     *
-     * @param newValue (not null)
-     * @return this instance for chaining
-     */
-    public Dumper setControlNameSeparator(String newValue) {
-        Validate.nonNull(newValue, "separator");
-        listSeparator = newValue;
-        return this;
-    }
-
-    /**
      * Configure the indent increment.
      *
      * @param newValue (not null)
@@ -602,6 +590,18 @@ public class Dumper {
     public Dumper setIndentIncrement(String newValue) {
         Validate.nonNull(newValue, "increment");
         indentIncrement = newValue;
+        return this;
+    }
+
+    /**
+     * Configure the list separator.
+     *
+     * @param separator (not null)
+     * @return this instance for chaining
+     */
+    public Dumper setListSeparator(String separator) {
+        Validate.nonNull(separator, "separator");
+        listSeparator = separator;
         return this;
     }
 
