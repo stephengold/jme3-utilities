@@ -373,24 +373,7 @@ public class Dumper {
         String name = viewPort.getName();
         stream.printf("view port %s ", MyString.quote(name));
         if (viewPort.isEnabled()) {
-            stream.println("enabled");
-            stream.print(indent);
-
-            Camera cam = viewPort.getCamera();
-            String desc = cam.toString();
-            desc = desc.replace("\n", " ");
-            desc = desc.replace(", ", " ");
-            stream.println(desc);
-            stream.print(indent);
-
-            float l = cam.getViewPortLeft();
-            float r = cam.getViewPortRight();
-            float b = cam.getViewPortBottom();
-            float t = cam.getViewPortTop();
-            stream.printf("x[%.2f %.2f] y[%.2f %.2f] ", l, r, b, t);
-
-            float aspectRatio = MyCamera.aspectRatio(cam);
-            stream.printf("%.3f:1 ", aspectRatio);
+            stream.print("enabled ");
 
             if (!viewPort.isClearDepth()) {
                 stream.print("NO");
@@ -409,10 +392,17 @@ public class Dumper {
 
             if (viewPort.isClearColor()) {
                 ColorRGBA backColor = viewPort.getBackgroundColor();
-                stream.printf("back%s ", backColor.toString());
+                stream.printf("bg%s ", backColor.toString());
             }
+            stream.printf("procs=(%s)%n", describeProcessors(viewPort));
 
-            stream.printf("procs=(%s) with ", describeProcessors(viewPort));
+            stream.print(indent);
+            stream.print(" ");
+            Camera camera = viewPort.getCamera();
+            String desc = describe(camera);
+            stream.print(desc);
+
+            stream.printf("%n%s with ", indent);
             List<Spatial> scenes = viewPort.getScenes();
             dump(scenes, indent);
 
@@ -661,6 +651,42 @@ public class Dumper {
     }
     // *************************************************************************
     // new protected methods
+
+    /**
+     * Generate a textual description of a camera.
+     *
+     * @param camera camera to describe (unaffected)
+     * @return description (not null, not empty)
+     */
+    protected String describe(Camera camera) {
+        String result;
+        if (camera == null) {
+            result = "null";
+
+        } else {
+            Vector3f location = camera.getLocation();
+            Vector3f direction = camera.getDirection();
+            String project = camera.isParallelProjection() ? "paral" : "persp";
+            float aspect = MyCamera.aspectRatio(camera);
+
+            result = String.format("Camera loc=%s dir=%s %s %.3f:1 ",
+                    location.toString(), direction.toString(), project, aspect);
+
+            float near = camera.getFrustumNear();
+            float far = camera.getFrustumFar();
+            float left = camera.getViewPortLeft();
+            float right = camera.getViewPortRight();
+            float bottom = camera.getViewPortBottom();
+            float top = camera.getViewPortTop();
+            int dispHeight = camera.getHeight();
+            int dispWidth = camera.getWidth();
+            result += String.format(
+                    "fz[%.2f %.2f] vx[%.2f %.2f] vy[%.2f %.2f] %dx%d",
+                    near, far, left, right, bottom, top, dispWidth, dispHeight);
+        }
+
+        return result;
+    }
 
     /**
      * Generate a textual description of a filter.
