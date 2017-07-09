@@ -71,14 +71,14 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**
- * Dump portions of a jME3 scene graph for debugging. TODO rename Dumper.dump()
+ * Dump portions of a jME3 scene graph for debugging.
  * <p>
  * {@link #printSubtree(com.jme3.scene.Spatial)} is the usual interface to this
  * class. The level of detail can be configured dynamically.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class Printer {
+public class Dumper {
     // *************************************************************************
     // constants and loggers
 
@@ -86,7 +86,7 @@ public class Printer {
      * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
-            Printer.class.getName());
+            Dumper.class.getName());
     // *************************************************************************
     // fields
 
@@ -128,16 +128,16 @@ public class Printer {
     /**
      * Instantiate a printer which will use System.out for output.
      */
-    public Printer() {
+    public Dumper() {
         stream = System.out;
     }
 
     /**
      * Instantiate a printer which will use the specified output stream.
      *
-     * @param printStream (not null)
+     * @param printStream output (not null)
      */
-    public Printer(PrintStream printStream) {
+    public Dumper(PrintStream printStream) {
         Validate.nonNull(printStream, "print stream");
 
         stream = printStream;
@@ -587,7 +587,7 @@ public class Printer {
      * @param newValue (not null)
      * @return this instance for chaining
      */
-    public Printer setControlNameSeparator(String newValue) {
+    public Dumper setControlNameSeparator(String newValue) {
         Validate.nonNull(newValue, "separator");
         nameSeparator = newValue;
         return this;
@@ -599,7 +599,7 @@ public class Printer {
      * @param newValue (not null)
      * @return this instance for chaining
      */
-    public Printer setIndentIncrement(String newValue) {
+    public Dumper setIndentIncrement(String newValue) {
         Validate.nonNull(newValue, "increment");
         indentIncrement = newValue;
         return this;
@@ -611,7 +611,7 @@ public class Printer {
      * @param newValue true to enable, false to disable
      * @return this instance for chaining
      */
-    public Printer setPrintBucket(boolean newValue) {
+    public Dumper setPrintBucket(boolean newValue) {
         printBucketFlag = newValue;
         return this;
     }
@@ -622,7 +622,7 @@ public class Printer {
      * @param newValue true to enable, false to disable
      * @return this instance for chaining
      */
-    public Printer setPrintCull(boolean newValue) {
+    public Dumper setPrintCull(boolean newValue) {
         printCullFlag = newValue;
         return this;
     }
@@ -633,7 +633,7 @@ public class Printer {
      * @param newValue true to enable, false to disable
      * @return this instance for chaining
      */
-    public Printer setPrintShadow(boolean newValue) {
+    public Dumper setPrintShadow(boolean newValue) {
         printShadowFlag = newValue;
         return this;
     }
@@ -644,7 +644,7 @@ public class Printer {
      * @param newValue true to enable, false to disable
      * @return this instance for chaining
      */
-    public Printer setPrintTransform(boolean newValue) {
+    public Dumper setPrintTransform(boolean newValue) {
         printTransformFlag = newValue;
         return this;
     }
@@ -655,7 +655,7 @@ public class Printer {
      * @param newValue true to enable, false to disable
      * @return this instance for chaining
      */
-    public Printer setPrintUser(boolean newValue) {
+    public Dumper setPrintUser(boolean newValue) {
         printUserFlag = newValue;
         return this;
     }
