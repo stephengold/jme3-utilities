@@ -375,26 +375,12 @@ public class Dumper {
         if (viewPort.isEnabled()) {
             stream.print("enabled ");
 
-            if (!viewPort.isClearDepth()) {
-                stream.print("NO");
-            }
-            stream.print("clDepth,");
-
-            if (!viewPort.isClearColor()) {
-                stream.print("NO");
-            }
-            stream.print("clColor,");
-
-            if (!viewPort.isClearStencil()) {
-                stream.print("NO");
-            }
-            stream.print("clStencil ");
-
+            dumpFlags(viewPort);
             if (viewPort.isClearColor()) {
                 ColorRGBA backColor = viewPort.getBackgroundColor();
-                stream.printf("bg%s ", backColor.toString());
+                stream.printf(" bg%s", backColor.toString());
             }
-            stream.printf("procs=(%s)%n", describeProcessors(viewPort));
+            stream.printf(" procs=(%s)%n", describeProcessors(viewPort));
 
             stream.print(indent);
             stream.print(" ");
@@ -472,6 +458,28 @@ public class Dumper {
             mode = spatial.getCullHint();
             stream.printf("/%s", mode.toString());
         }
+    }
+
+    /**
+     * Dump the flags associated with a view port.
+     *
+     * @param viewPort view port being dumped (not null)
+     */
+    public void dumpFlags(ViewPort viewPort) {
+        if (!viewPort.isClearDepth()) {
+            stream.print("NO");
+        }
+        stream.print("clDepth,");
+
+        if (!viewPort.isClearColor()) {
+            stream.print("NO");
+        }
+        stream.print("clColor,");
+
+        if (!viewPort.isClearStencil()) {
+            stream.print("NO");
+        }
+        stream.print("clStencil");
     }
 
     /**
