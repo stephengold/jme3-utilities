@@ -48,6 +48,7 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.Spatial.CullHint;
+import com.jme3.scene.control.Control;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.PointLightShadowFilter;
@@ -73,8 +74,8 @@ import jme3utilities.math.MyVector3f;
 /**
  * Dump portions of a jME3 scene graph for debugging.
  * <p>
- * {@link #printSubtree(com.jme3.scene.Spatial)} is the usual interface to this
- * class. The level of detail can be configured dynamically.
+ * {@link #dump(com.jme3.scene.Spatial)} is the usual interface to this class.
+ * The level of detail can be configured dynamically.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -91,25 +92,25 @@ public class Dumper {
     // fields
 
     /**
-     * enable printing of render queue bucket assignments
+     * enable dumping of render queue bucket assignments
      */
-    private boolean printBucketFlag = false;
+    private boolean dumpBucketFlag = false;
     /**
-     * enable printing of cull hints
+     * enable dumping of cull hints
      */
-    private boolean printCullFlag = false;
+    private boolean dumpCullFlag = false;
     /**
-     * enable printing of shadow modes
+     * enable dumping of shadow modes
      */
-    private boolean printShadowFlag = false;
+    private boolean dumpShadowFlag = false;
     /**
-     * enable printing of location and scaling
+     * enable dumping of location and scaling
      */
-    private boolean printTransformFlag = false;
+    private boolean dumpTransformFlag = false;
     /**
-     * enable printing of user data
+     * enable dumping of user data
      */
-    private boolean printUserFlag = true;
+    private boolean dumpUserFlag = true;
     /**
      * stream to use for output: set by constructor
      */
@@ -119,27 +120,26 @@ public class Dumper {
      */
     private String indentIncrement = "  ";
     /**
-     * separator text between names
+     * separator text between items in lists
      */
-    private String nameSeparator = ",";
+    private String listSeparator = ",";
     // *************************************************************************
     // constructors
 
     /**
-     * Instantiate a printer which will use System.out for output.
+     * Instantiate a dumper that will use System.out for output.
      */
     public Dumper() {
         stream = System.out;
     }
 
     /**
-     * Instantiate a printer which will use the specified output stream.
+     * Instantiate a dumper that will use the specified output stream.
      *
-     * @param printStream output (not null)
+     * @param printStream output stream (not null)
      */
     public Dumper(PrintStream printStream) {
         Validate.nonNull(printStream, "print stream");
-
         stream = printStream;
     }
     // *************************************************************************
@@ -158,11 +158,11 @@ public class Dumper {
         boolean addSeparators = false;
         int count = spatial.getNumControls();
         for (int i = 0; i < count; i++) {
-            Object object = spatial.getControl(i);
+            Control object = spatial.getControl(i);
             boolean isEnabled = isControlEnabled(object);
             if (isEnabled == enabled) {
                 if (addSeparators) {
-                    result.append(nameSeparator);
+                    result.append(listSeparator);
                 } else {
                     addSeparators = true;
                 }
@@ -187,7 +187,7 @@ public class Dumper {
         for (int i = 0; i < count; i++) {
             SceneProcessor processor = pList.get(i);
             if (addSeparators) {
-                result.append(nameSeparator);
+                result.append(listSeparator);
             } else {
                 addSeparators = true;
             }
@@ -219,7 +219,7 @@ public class Dumper {
         for (int i = 0; i < count; i++) {
             Filter filter = iterator.next();
             if (addSeparators) {
-                result.append(nameSeparator);
+                result.append(listSeparator);
             } else {
                 addSeparators = true;
             }
@@ -231,12 +231,22 @@ public class Dumper {
     }
 
     /**
+     * Dump a subtree of the scene graph.
+     *
+     * @param spatial root of the subtree (or null)
+     */
+    public void dump(Spatial spatial) {
+        dump(spatial, "");
+        stream.flush();
+    }
+
+    /**
      * Dump the specified list of scenes.
      *
      * @param sceneList the root nodes of the scenes to dump (not null)
      * @param indent (not null)
      */
-    public void print(List<Spatial> sceneList, String indent) {
+    public void dump(List<Spatial> sceneList, String indent) {
         Validate.nonNull(indent, "indent");
 
         int numScenes = sceneList.size();
@@ -250,7 +260,7 @@ public class Dumper {
         stream.println();
 
         for (Spatial scene : sceneList) {
-            printSubtree(scene, indent + indentIncrement);
+            dump(scene, indent + indentIncrement);
         }
     }
 
@@ -259,7 +269,7 @@ public class Dumper {
      *
      * @param renderManager which render manager to dump (not null)
      */
-    public void print(RenderManager renderManager) {
+    public void dump(RenderManager renderManager) {
         List<ViewPort> pres = renderManager.getPreViews();
         int numPres = pres.size();
         List<ViewPort> mains = renderManager.getMainViews();
@@ -274,15 +284,79 @@ public class Dumper {
 
         for (int index = 0; index < numPres; index++) {
             stream.printf("preView[%d]:%n", index);
-            print(pres.get(index), indentIncrement);
+            dump(pres.get(index), indentIncrement);
         }
         for (int index = 0; index < numMains; index++) {
             stream.printf("mainView[%d]:%n", index);
-            print(mains.get(index), indentIncrement);
+            dump(mains.get(index), indentIncrement);
         }
         for (int index = 0; index < numPosts; index++) {
             stream.printf("postView[%d]:%n", index);
-            print(posts.get(index), indentIncrement);
+            dump(posts.get(index), indentIncrement);
+        }
+    }
+
+    /**
+     * Dump a subtree of the scene graph. Note: recursive!
+     *
+     * @param spatial root of the subtree (or null)
+     * @param indent (not null)
+     */
+    public void dump(Spatial spatial, String indent) {
+        Validate.nonNull(indent, "indent");
+
+        if (spatial == null) {
+            return;
+        }
+        stream.print(indent);
+
+        int elementCount = spatial.getTriangleCount();
+        stream.printf("%c[%d] ", describeType(spatial), elementCount);
+
+        String name = spatial.getName();
+        if (name == null) {
+            stream.print("(no name)");
+        } else {
+            stream.print(MyString.quote(spatial.getName()));
+        }
+        /*
+         * Dump the spatial's controls and lights.
+         */
+        dumpControls(spatial);
+        LightList lights = spatial.getLocalLightList();
+        String description = describe(lights);
+        if (!description.isEmpty()) {
+            stream.print(" ");
+            stream.print(description);
+        }
+
+        if (dumpTransformFlag) {
+            dumpLocation(spatial);
+            dumpOrientation(spatial);
+            dumpScale(spatial);
+        }
+        if (dumpUserFlag) {
+            dumpUserData(spatial);
+        }
+        if (dumpBucketFlag) {
+            dumpBucket(spatial);
+        }
+        if (dumpShadowFlag) {
+            dumpShadowModes(spatial);
+        }
+        if (dumpCullFlag) {
+            dumpCullHints(spatial);
+        }
+        stream.println();
+        /*
+         * If the spatial is a node (but not a terrain node),
+         * dump its children with incremented indentation.
+         */
+        if (spatial instanceof Node && !(spatial instanceof TerrainQuad)) {
+            Node node = (Node) spatial;
+            for (Spatial child : node.getChildren()) {
+                dump(child, indent + indentIncrement);
+            }
         }
     }
 
@@ -292,7 +366,7 @@ public class Dumper {
      * @param viewPort the view port to dump (not null)
      * @param indent (not null)
      */
-    public void print(ViewPort viewPort, String indent) {
+    public void dump(ViewPort viewPort, String indent) {
         Validate.nonNull(indent, "indent");
 
         stream.print(indent);
@@ -340,7 +414,7 @@ public class Dumper {
 
             stream.printf("procs=(%s) with ", describeProcessors(viewPort));
             List<Spatial> scenes = viewPort.getScenes();
-            print(scenes, indent);
+            dump(scenes, indent);
 
         } else {
             stream.println("disabled");
@@ -348,19 +422,19 @@ public class Dumper {
     }
 
     /**
-     * Dump the render queue bucket to which a spatial is assigned.
+     * Dump the render-queue bucket to which the specified spatial is assigned.
      *
      * @param spatial spatial being described (not null)
      */
-    public void printBucket(Spatial spatial) {
+    public void dumpBucket(Spatial spatial) {
         /*
-         * Print its local assignment.
+         * Dump its local assignment.
          */
         Bucket bucket = spatial.getLocalQueueBucket();
         stream.printf(" bucket=%s", bucket.toString());
         if (bucket == Bucket.Inherit) {
             /*
-             * Print its effective assignment.
+             * Dump its effective assignment.
              */
             bucket = spatial.getQueueBucket();
             stream.printf("/%s", bucket.toString());
@@ -372,7 +446,7 @@ public class Dumper {
      *
      * @param spatial spatial being described (not null)
      */
-    public void printControls(Spatial spatial) {
+    public void dumpControls(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
         /*
          * List its enabled controls first.
@@ -395,15 +469,15 @@ public class Dumper {
      *
      * @param spatial spatial being described (not null)
      */
-    public void printCullHints(Spatial spatial) {
+    public void dumpCullHints(Spatial spatial) {
         /*
-         * Print its local cull hint.
+         * Dump its local cull hint.
          */
         CullHint mode = spatial.getLocalCullHint();
         stream.printf(" cull=%s", mode.toString());
         if (mode == CullHint.Inherit) {
             /*
-             * Print its effective cull hint.
+             * Dump its effective cull hint.
              */
             mode = spatial.getCullHint();
             stream.printf("/%s", mode.toString());
@@ -411,11 +485,11 @@ public class Dumper {
     }
 
     /**
-     * List the lights associated with a spatial.
+     * Dump the lights associated with a spatial.
      *
      * @param spatial spatial being described (not null)
      */
-    public void printLights(Spatial spatial) {
+    public void dumpLights(Spatial spatial) {
         LightList lights = spatial.getLocalLightList();
         for (Light light : lights) {
             String description = describe(light);
@@ -424,11 +498,11 @@ public class Dumper {
     }
 
     /**
-     * Print the world location of a spatial.
+     * Dump the world location of a spatial.
      *
      * @param spatial spatial being described (not null)
      */
-    public void printLocation(Spatial spatial) {
+    public void dumpLocation(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
 
         Vector3f location = MySpatial.getWorldLocation(spatial);
@@ -439,11 +513,11 @@ public class Dumper {
     }
 
     /**
-     * Print the world orientation of a spatial.
+     * Dump the world orientation of a spatial.
      *
      * @param spatial spatial being described (not null)
      */
-    public void printOrientation(Spatial spatial) {
+    public void dumpOrientation(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
 
         Quaternion orientation = MySpatial.getWorldOrientation(spatial);
@@ -453,11 +527,11 @@ public class Dumper {
     }
 
     /**
-     * Print the world scale of a spatial.
+     * Dump the world scale of a spatial.
      *
      * @param spatial spatial being described (not null)
      */
-    public void printScale(Spatial spatial) {
+    public void dumpScale(Spatial spatial) {
         Vector3f scale = spatial.getWorldScale();
         if (scale.x != scale.y || scale.y != scale.z) {
             stream.printf(" scale=%s", scale.toString());
@@ -471,19 +545,19 @@ public class Dumper {
     }
 
     /**
-     * Print the shadow modes associated with a spatial.
+     * Dump the shadow modes associated with a spatial.
      *
      * @param spatial spatial being described (not null)
      */
-    public void printShadowModes(Spatial spatial) {
+    public void dumpShadowModes(Spatial spatial) {
         /*
-         * Print its local shadow mode.
+         * Dump its local shadow mode.
          */
         ShadowMode mode = spatial.getLocalShadowMode();
         stream.printf(" shad=%s", mode.toString());
         if (mode == ShadowMode.Inherit) {
             /*
-             * Print its effective shadow mode.
+             * Dump its effective shadow mode.
              */
             mode = spatial.getShadowMode();
             stream.printf("/%s", mode.toString());
@@ -491,85 +565,11 @@ public class Dumper {
     }
 
     /**
-     * Dump a subtree of the scene graph.
-     *
-     * @param spatial root of the subtree (or null)
-     */
-    public void printSubtree(Spatial spatial) {
-        printSubtree(spatial, "");
-        stream.flush();
-    }
-
-    /**
-     * Dump a subtree of the scene graph. Note: recursive!
-     *
-     * @param spatial root of the subtree (or null)
-     * @param indent (not null)
-     */
-    public void printSubtree(Spatial spatial, String indent) {
-        Validate.nonNull(indent, "indent");
-
-        if (spatial == null) {
-            return;
-        }
-        stream.print(indent);
-
-        int elementCount = spatial.getTriangleCount();
-        stream.printf("%c[%d] ", describeType(spatial), elementCount);
-
-        String name = spatial.getName();
-        if (name == null) {
-            stream.print("(no name)");
-        } else {
-            stream.print(MyString.quote(spatial.getName()));
-        }
-        /*
-         * Dump the spatial's controls and lights.
-         */
-        printControls(spatial);
-        LightList lights = spatial.getLocalLightList();
-        String description = describe(lights);
-        if (!description.isEmpty()) {
-            stream.print(" ");
-            stream.print(description);
-        }
-
-        if (printTransformFlag) {
-            printLocation(spatial);
-            printOrientation(spatial);
-            printScale(spatial);
-        }
-        if (printUserFlag) {
-            printUserData(spatial);
-        }
-        if (printBucketFlag) {
-            printBucket(spatial);
-        }
-        if (printShadowFlag) {
-            printShadowModes(spatial);
-        }
-        if (printCullFlag) {
-            printCullHints(spatial);
-        }
-        stream.println();
-        /*
-         * If the spatial is a node (but not a terrain node),
-         * print its children with incremented indentation.
-         */
-        if (spatial instanceof Node && !(spatial instanceof TerrainQuad)) {
-            Node node = (Node) spatial;
-            for (Spatial child : node.getChildren()) {
-                printSubtree(child, indent + indentIncrement);
-            }
-        }
-    }
-
-    /**
-     * Print the user data associated with a spatial.
+     * Dump the user data associated with a spatial.
      *
      * @param spatial spatial being described (not null)
      */
-    public void printUserData(Spatial spatial) {
+    public void dumpUserData(Spatial spatial) {
         Collection<String> keys = spatial.getUserDataKeys();
         for (String key : keys) {
             Object value = spatial.getUserData(key);
@@ -589,7 +589,7 @@ public class Dumper {
      */
     public Dumper setControlNameSeparator(String newValue) {
         Validate.nonNull(newValue, "separator");
-        nameSeparator = newValue;
+        listSeparator = newValue;
         return this;
     }
 
@@ -606,57 +606,57 @@ public class Dumper {
     }
 
     /**
-     * Configure printing of render queue bucket assignments.
+     * Configure dumping of render-queue bucket assignments.
      *
      * @param newValue true to enable, false to disable
      * @return this instance for chaining
      */
     public Dumper setPrintBucket(boolean newValue) {
-        printBucketFlag = newValue;
+        dumpBucketFlag = newValue;
         return this;
     }
 
     /**
-     * Configure printing of cull hints.
+     * Configure dumping of cull hints.
      *
      * @param newValue true to enable, false to disable
      * @return this instance for chaining
      */
     public Dumper setPrintCull(boolean newValue) {
-        printCullFlag = newValue;
+        dumpCullFlag = newValue;
         return this;
     }
 
     /**
-     * Configure printing of shadow modes.
+     * Configure dumping of shadow modes.
      *
      * @param newValue true to enable, false to disable
      * @return this instance for chaining
      */
     public Dumper setPrintShadow(boolean newValue) {
-        printShadowFlag = newValue;
+        dumpShadowFlag = newValue;
         return this;
     }
 
     /**
-     * Configure printing of location and scaling.
+     * Configure dumping of location and scaling.
      *
      * @param newValue true to enable, false to disable
      * @return this instance for chaining
      */
     public Dumper setPrintTransform(boolean newValue) {
-        printTransformFlag = newValue;
+        dumpTransformFlag = newValue;
         return this;
     }
 
     /**
-     * Configure printing of user data.
+     * Configure dumping of user data.
      *
      * @param newValue true to enable, false to disable
      * @return this instance for chaining
      */
     public Dumper setPrintUser(boolean newValue) {
-        printUserFlag = newValue;
+        dumpUserFlag = newValue;
         return this;
     }
     // *************************************************************************
@@ -738,7 +738,7 @@ public class Dumper {
         for (int i = 0; i < count; i++) {
             Light light = lightList.get(i);
             if (addSeparators) {
-                result.append(nameSeparator);
+                result.append(listSeparator);
             } else {
                 addSeparators = true;
             }
@@ -795,7 +795,6 @@ public class Dumper {
      */
     protected String describeControl(Object control) {
         Validate.nonNull(control, "control");
-
         String result = MyControl.describe(control);
         return result;
     }
@@ -817,9 +816,8 @@ public class Dumper {
      * @param control control to test (not null)
      * @return true if the control is enabled, otherwise false
      */
-    protected boolean isControlEnabled(Object control) {
+    protected boolean isControlEnabled(Control control) {
         boolean result = MyControl.isEnabled(control);
-
         return result;
     }
 }
