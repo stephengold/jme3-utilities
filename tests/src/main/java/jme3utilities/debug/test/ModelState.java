@@ -55,7 +55,7 @@ import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.SimpleAppState;
 import jme3utilities.debug.AxesControl;
-import jme3utilities.debug.SkeletonDebugControl;
+import jme3utilities.debug.SkeletonVisualizer;
 
 /**
  * Model state for the PoseDemo application.
@@ -105,9 +105,9 @@ class ModelState extends SimpleAppState {
      */
     private Node attachmentsNode = null;
     /**
-     * the skeleton debug control (set by #load())
+     * the skeleton visualizer (set by #load())
      */
-    private SkeletonDebugControl skeletonDebugControl = null;
+    private SkeletonVisualizer skeletonVisualizer = null;
     /**
      * the model's spatial (set by #load())
      */
@@ -345,9 +345,9 @@ class ModelState extends SimpleAppState {
      *
      * @return the pre-existing instance (not null)
      */
-    SkeletonDebugControl getSkeletonDebugControl() {
-        assert skeletonDebugControl != null;
-        return skeletonDebugControl;
+    SkeletonVisualizer getSkeletonVisualizer() {
+        assert skeletonVisualizer != null;
+        return skeletonVisualizer;
     }
 
     /**
@@ -639,10 +639,10 @@ class ModelState extends SimpleAppState {
         Vector3f worldLocation = new Vector3f(0f, -minY * worldScale, 0f);
         MySpatial.setWorldLocation(spatial, worldLocation);
         /*
-         * Add a skeleton debug control to the spatial.
+         * Add a skeleton visualizer to the spatial.
          */
-        skeletonDebugControl = new SkeletonDebugControl(assetManager);
-        spatial.addControl(skeletonDebugControl);
+        skeletonVisualizer = new SkeletonVisualizer(assetManager);
+        spatial.addControl(skeletonVisualizer);
 
         loadBindPose();
         selectBone(PoseDemoHud.noBone);

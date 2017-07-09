@@ -48,7 +48,7 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.debug.AxesControl;
 import jme3utilities.debug.Printer;
-import jme3utilities.debug.SkeletonDebugControl;
+import jme3utilities.debug.SkeletonVisualizer;
 import jme3utilities.nifty.GuiScreenController;
 
 /**
@@ -764,21 +764,21 @@ public class PoseDemoHud
         length = updateSlider("gacLength", " world units");
         axesControl.setAxisLength(length);
         /*
-         * SkeletonDebugControl
+         * skeleton visualizer
          */
-        SkeletonDebugControl debugControl;
-        debugControl = PoseDemo.modelState.getSkeletonDebugControl();
+        SkeletonVisualizer visualizer;
+        visualizer = PoseDemo.modelState.getSkeletonVisualizer();
         enable = isChecked("skeletonDebug");
-        debugControl.setEnabled(enable);
+        visualizer.setEnabled(enable);
         ColorRGBA wireColor = updateColorBank("wire");
-        debugControl.setLineColor(wireColor);
+        visualizer.setLineColor(wireColor);
         ColorRGBA pointColor = updateColorBank("point");
-        debugControl.setPointColor(pointColor);
+        visualizer.setPointColor(pointColor);
         lineWidth = updateSlider("sdcLineWidth", " pixels");
-        debugControl.setLineWidth(lineWidth);
+        visualizer.setLineWidth(lineWidth);
         float pointSize = updateSlider("pointSize", " pixels");
-        if (debugControl.supportsPointSize()) {
-            debugControl.setPointSize(pointSize);
+        if (visualizer.supportsPointSize()) {
+            visualizer.setPointSize(pointSize);
         }
         /*
          * Printer

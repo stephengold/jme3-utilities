@@ -57,7 +57,7 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class SkeletonDebugControl extends SubtreeControl {
+public class SkeletonVisualizer extends SubtreeControl {
     // *************************************************************************
     // constants and loggers
 
@@ -89,7 +89,7 @@ public class SkeletonDebugControl extends SubtreeControl {
      * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
-            SkeletonDebugControl.class.getName());
+            SkeletonVisualizer.class.getName());
     // *************************************************************************
     // fields
 
@@ -125,7 +125,7 @@ public class SkeletonDebugControl extends SubtreeControl {
      *
      * @param assetManager for loading material definitions (not null)
      */
-    public SkeletonDebugControl(AssetManager assetManager) {
+    public SkeletonVisualizer(AssetManager assetManager) {
         super();
         Validate.nonNull(assetManager, "asset manager");
 
@@ -205,14 +205,13 @@ public class SkeletonDebugControl extends SubtreeControl {
     }
 
     /**
-     * Test whether the specified spatial has skeleton debugging enabled.
+     * Test whether the specified spatial has skeleton visualization enabled.
      *
      * @param model skeletonized spatial (not null)
      * @return true if enabled, otherwise false
      */
     public static boolean isDebugEnabled(Spatial model) {
-        SkeletonDebugControl control = model.getControl(
-                SkeletonDebugControl.class);
+        SkeletonVisualizer control = model.getControl(SkeletonVisualizer.class);
         if (control == null) {
             return false;
         }
@@ -234,15 +233,14 @@ public class SkeletonDebugControl extends SubtreeControl {
     }
 
     /**
-     * Alter a skeletonized spatial's debug status. Has no effect if the spatial
-     * lacks a SkeletonDebugControl.
+     * Alter a skeletonized spatial's visualization status. Has no effect if the
+     * spatial lacks a SkeletonVisualizer.
      *
      * @param model skeletonized spatial (not null)
      * @param newState true to enable, false to disable
      */
     public static void setDebugEnabled(Spatial model, boolean newState) {
-        SkeletonDebugControl control = model.getControl(
-                SkeletonDebugControl.class);
+        SkeletonVisualizer control = model.getControl(SkeletonVisualizer.class);
         if (control != null) {
             control.setEnabled(newState);
         }
@@ -380,7 +378,7 @@ public class SkeletonDebugControl extends SubtreeControl {
     protected void controlUpdate(float updateInterval) {
         super.controlUpdate(updateInterval);
         /*
-         * Copy the world transform from an animated geometry to the debugger
+         * Copy the world transform from an animated geometry to the visualizer
          * (and hope any other animated geometries share the same transform!)
          */
         Geometry ag = MySpatial.findAnimatedGeometry(spatial);
@@ -496,8 +494,8 @@ public class SkeletonDebugControl extends SubtreeControl {
      * @throws CloneNotSupportedException if superclass isn't cloneable
      */
     @Override
-    public SkeletonDebugControl clone() throws CloneNotSupportedException {
-        SkeletonDebugControl clone = (SkeletonDebugControl) super.clone();
+    public SkeletonVisualizer clone() throws CloneNotSupportedException {
+        SkeletonVisualizer clone = (SkeletonVisualizer) super.clone();
         return clone;
     }
 }
