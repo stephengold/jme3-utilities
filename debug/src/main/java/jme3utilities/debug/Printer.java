@@ -61,6 +61,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
+import jme3utilities.MyCamera;
 import jme3utilities.MyControl;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
@@ -68,7 +69,7 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**
- * Dump portions of a jME3 scene graph for debugging.
+ * Dump portions of a jME3 scene graph for debugging. TODO rename Dumper.dump()
  * <p>
  * {@link #printSubtree(com.jme3.scene.Spatial)} is the usual interface to this
  * class. The level of detail can be configured dynamically.
@@ -264,29 +265,29 @@ public class Printer {
         List<ViewPort> posts = renderManager.getPostViews();
         int numPosts = posts.size();
 
-        stream.printf("render manager with %d preView%s, %d mainView%s, and ",
+        stream.printf("%nrender manager with %d preView%s, %d mainView%s, and ",
                 numPres, (numPres == 1) ? "" : "s",
                 numMains, (numMains == 1) ? "" : "s");
         stream.printf("%s postView%s%n", numPosts, (numPosts == 1) ? "" : "s");
 
         for (int index = 0; index < numPres; index++) {
             stream.printf("preView[%d]:%n", index);
-            Printer.this.print(pres.get(index), indentIncrement);
+            print(pres.get(index), indentIncrement);
         }
         for (int index = 0; index < numMains; index++) {
             stream.printf("mainView[%d]:%n", index);
-            Printer.this.print(mains.get(index), indentIncrement);
+            print(mains.get(index), indentIncrement);
         }
         for (int index = 0; index < numPosts; index++) {
             stream.printf("postView[%d]:%n", index);
-            Printer.this.print(posts.get(index), indentIncrement);
+            print(posts.get(index), indentIncrement);
         }
     }
 
     /**
      * Dump the specified view port.
      *
-     * @param viewPort the view port to dump
+     * @param viewPort the view port to dump (not null)
      * @param indent (not null)
      */
     public void print(ViewPort viewPort, String indent) {
@@ -311,6 +312,9 @@ public class Printer {
             float b = cam.getViewPortBottom();
             float t = cam.getViewPortTop();
             stream.printf("x[%.2f %.2f] y[%.2f %.2f] ", l, r, b, t);
+
+            float aspectRatio = MyCamera.aspectRatio(cam);
+            stream.printf("%.3f:1 ", aspectRatio);
 
             if (!viewPort.isClearDepth()) {
                 stream.print("NO");
@@ -413,7 +417,7 @@ public class Printer {
         LightList lights = spatial.getLocalLightList();
         for (Light light : lights) {
             String name = light.getName();
-            stream.printf(" L(%s)", name);
+            stream.printf(" L(%s)", name); // TODO quotes not parens
         }
     }
 
