@@ -158,15 +158,15 @@ public class Dumper {
         boolean addSeparators = false;
         int count = spatial.getNumControls();
         for (int i = 0; i < count; i++) {
-            Control object = spatial.getControl(i);
-            boolean isEnabled = isControlEnabled(object);
+            Control control = spatial.getControl(i);
+            boolean isEnabled = isControlEnabled(control);
             if (isEnabled == enabled) {
                 if (addSeparators) {
                     result.append(listSeparator);
                 } else {
                     addSeparators = true;
                 }
-                String description = describeControl(object);
+                String description = describe(control);
                 result.append(description);
             }
         }
@@ -689,6 +689,18 @@ public class Dumper {
     }
 
     /**
+     * Generate a textual description of a scene-graph control.
+     *
+     * @param control (not null)
+     * @return description (not null)
+     */
+    protected String describe(Control control) {
+        Validate.nonNull(control, "control");
+        String result = MyControl.describe(control);
+        return result;
+    }
+
+    /**
      * Generate a textual description of a filter.
      *
      * @param filter filter to describe (unaffected)
@@ -810,18 +822,6 @@ public class Dumper {
             }
         }
 
-        return result;
-    }
-
-    /**
-     * Generate a textual description of a scene-graph control.
-     *
-     * @param control (not null)
-     * @return description (not null)
-     */
-    protected String describeControl(Object control) {
-        Validate.nonNull(control, "control");
-        String result = MyControl.describe(control);
         return result;
     }
 
