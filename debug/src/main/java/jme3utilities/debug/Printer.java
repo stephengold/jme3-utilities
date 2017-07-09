@@ -26,17 +26,19 @@
 package jme3utilities.debug;
 
 import com.jme3.app.state.ScreenshotAppState;
+import com.jme3.light.AmbientLight;
+import com.jme3.light.DirectionalLight;
 import com.jme3.light.Light;
 import com.jme3.light.LightList;
+import com.jme3.light.PointLight;
+import com.jme3.light.SpotLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.post.Filter;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.SceneProcessor;
-import com.jme3.post.filters.BloomFilter;
 import com.jme3.post.filters.DepthOfFieldFilter;
-import com.jme3.post.filters.FogFilter;
 import com.jme3.post.filters.PosterizationFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
@@ -416,8 +418,8 @@ public class Printer {
     public void printLights(Spatial spatial) {
         LightList lights = spatial.getLocalLightList();
         for (Light light : lights) {
-            String name = light.getName();
-            stream.printf(" L(%s)", name); // TODO quotes not parens
+            String description = describe(light);
+            stream.print(description);
         }
     }
 
@@ -522,10 +524,16 @@ public class Printer {
             stream.print(MyString.quote(spatial.getName()));
         }
         /*
-         * Print the spatial's controls and lights
+         * Dump the spatial's controls and lights.
          */
         printControls(spatial);
-        printLights(spatial);
+        LightList lights = spatial.getLocalLightList();
+        String description = describe(lights);
+        if (!description.isEmpty()) {
+            stream.print(" ");
+            stream.print(description);
+        }
+
         if (printTransformFlag) {
             printLocation(spatial);
             printOrientation(spatial);
@@ -662,30 +670,83 @@ public class Printer {
      */
     protected String describe(Filter filter) {
         String result;
-        if (filter instanceof BloomFilter) {
-            result = "Bloom";
-        } else if (filter instanceof DepthOfFieldFilter) {
+        if (filter instanceof DepthOfFieldFilter) {
             result = "DOF";
         } else if (filter instanceof DirectionalLightShadowFilter) {
             result = "DShadow";
-        } else if (filter instanceof FogFilter) {
-            result = "Fog";
         } else if (filter instanceof PointLightShadowFilter) {
             result = "PShadow";
         } else if (filter instanceof PosterizationFilter) {
-            result = "Posterize";
+            result = "Poster";
         } else if (filter instanceof SpotLightShadowFilter) {
             result = "SShadow";
         } else if (filter == null) {
             result = "null";
         } else {
             result = filter.getClass().getSimpleName();
+            result = result.replace("Filter", "");
             if (result.isEmpty()) {
                 result = "?";
             }
         }
 
         return result;
+    }
+
+    /**
+     * Generate a textual description of a light.
+     *
+     * @param light light to describe (unaffected)
+     * @return description (not null, not empty)
+     */
+    protected String describe(Light light) {
+        String result;
+        if (light == null) {
+            result = "null";
+        } else {
+            if (light instanceof AmbientLight) {
+                result = "AL";
+            } else if (light instanceof DirectionalLight) {
+                result = "DL";
+            } else if (light instanceof PointLight) {
+                result = "PL";
+            } else if (light instanceof SpotLight) {
+                result = "SL";
+            } else {
+                result = light.getClass().getSimpleName();
+                if (result.isEmpty()) {
+                    result = "?L";
+                }
+            }
+            String name = light.getName();
+            result += MyString.quote(name);
+        }
+
+        return result;
+    }
+
+    /**
+     * Generate a textual description of a light list.
+     *
+     * @param lightList list to describe (not null, unaffected)
+     * @return description (not null)
+     */
+    protected String describe(LightList lightList) {
+        StringBuilder result = new StringBuilder(50);
+        boolean addSeparators = false;
+        int count = lightList.size();
+        for (int i = 0; i < count; i++) {
+            Light light = lightList.get(i);
+            if (addSeparators) {
+                result.append(nameSeparator);
+            } else {
+                addSeparators = true;
+            }
+            String description = describe(light);
+            result.append(description);
+        }
+
+        return result.toString();
     }
 
     /**
