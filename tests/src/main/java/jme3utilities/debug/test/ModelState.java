@@ -54,7 +54,7 @@ import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.SimpleAppState;
-import jme3utilities.debug.AxesControl;
+import jme3utilities.debug.AxesVisualizer;
 import jme3utilities.debug.SkeletonVisualizer;
 
 /**
@@ -230,15 +230,16 @@ class ModelState extends SimpleAppState {
     }
 
     /**
-     * Access the AxesControl for the selected bone.
+     * Access the axes visualizer for the selected bone.
      *
      * @return the pre-existing instance, or null if no bone selected
      */
-    AxesControl getBoneAxesControl() {
+    AxesVisualizer getBoneAxesVisualizer() {
         if (attachmentsNode == null) {
             return null;
         }
-        AxesControl result = attachmentsNode.getControl(AxesControl.class);
+        AxesVisualizer result = attachmentsNode.getControl(
+                AxesVisualizer.class);
         assert result != null;
 
         return result;
@@ -1059,11 +1060,11 @@ class ModelState extends SimpleAppState {
         }
         if (newNode != attachmentsNode) {
             if (attachmentsNode != null) {
-                attachmentsNode.removeControl(AxesControl.class);
+                attachmentsNode.removeControl(AxesVisualizer.class);
             }
             if (newNode != null) {
-                AxesControl axesControl = new AxesControl(assetManager, 1f, 1f);
-                newNode.addControl(axesControl);
+                AxesVisualizer axes = new AxesVisualizer(assetManager, 1f, 1f);
+                newNode.addControl(axes);
             }
             attachmentsNode = newNode;
         }

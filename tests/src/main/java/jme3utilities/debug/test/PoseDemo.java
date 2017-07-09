@@ -48,7 +48,7 @@ import jme3utilities.Misc;
 import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
-import jme3utilities.debug.AxesControl;
+import jme3utilities.debug.AxesVisualizer;
 import jme3utilities.debug.DebugVersion;
 import jme3utilities.debug.Dumper;
 import jme3utilities.nifty.GuiApplication;
@@ -225,8 +225,8 @@ public class PoseDemo extends GuiApplication {
         /*
          * Add visible indicators for 3 global axes.
          */
-        AxesControl axesControl = new AxesControl(assetManager, 1f, 1f);
-        rootNode.addControl(axesControl);
+        AxesVisualizer visualizer = new AxesVisualizer(assetManager, 1f, 1f);
+        rootNode.addControl(visualizer);
         /*
          * Default input mode directly influences the camera state and
          * (indirectly) the HUD.

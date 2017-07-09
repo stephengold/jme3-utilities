@@ -50,7 +50,7 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class AxesControl extends SubtreeControl {
+public class AxesVisualizer extends SubtreeControl {
     // *************************************************************************
     // constants and loggers
 
@@ -70,7 +70,7 @@ public class AxesControl extends SubtreeControl {
      * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
-            AxesControl.class.getName());
+            AxesVisualizer.class.getName());
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
@@ -102,7 +102,7 @@ public class AxesControl extends SubtreeControl {
      * @param axisLength length of each axis (in local units, &gt;0)
      * @param lineWidth thickness of each axis indicator (in pixels, &ge;1)
      */
-    public AxesControl(AssetManager assetManager, float axisLength,
+    public AxesVisualizer(AssetManager assetManager, float axisLength,
             float lineWidth) {
         super();
         Validate.nonNull(assetManager, "asset manager");
@@ -241,8 +241,8 @@ public class AxesControl extends SubtreeControl {
      * @throws CloneNotSupportedException if superclass isn't cloneable
      */
     @Override
-    public AxesControl clone() throws CloneNotSupportedException {
-        AxesControl clone = (AxesControl) super.clone();
+    public AxesVisualizer clone() throws CloneNotSupportedException {
+        AxesVisualizer clone = (AxesVisualizer) super.clone();
         return clone;
     }
     // *************************************************************************

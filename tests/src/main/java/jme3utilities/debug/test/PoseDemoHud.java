@@ -46,7 +46,7 @@ import java.util.logging.Logger;
 import jme3utilities.MySkeleton;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
-import jme3utilities.debug.AxesControl;
+import jme3utilities.debug.AxesVisualizer;
 import jme3utilities.debug.Dumper;
 import jme3utilities.debug.SkeletonVisualizer;
 import jme3utilities.nifty.GuiScreenController;
@@ -737,32 +737,32 @@ public class PoseDemoHud
      */
     private void updateDebugAids() {
         /*
-         * Bone AxesControl
+         * Bone axes visualizer
          */
-        AxesControl axesControl = PoseDemo.modelState.getBoneAxesControl();
+        AxesVisualizer axes = PoseDemo.modelState.getBoneAxesVisualizer();
         float lineWidth = updateSlider("bacLineWidth", " pixels");
         float length = updateLogSlider("bacLength", 10f, " bone units");
-        if (axesControl != null) {
-            axesControl.setLineWidth(lineWidth);
-            axesControl.setAxisLength(length);
+        if (axes != null) {
+            axes.setLineWidth(lineWidth);
+            axes.setAxisLength(length);
 
             boolean enable = isChecked("bacEnable");
-            axesControl.setEnabled(enable);
+            axes.setEnabled(enable);
             enable = isChecked("bacDepthTest");
-            axesControl.setDepthTest(enable);
+            axes.setDepthTest(enable);
         }
         /*
-         * Global AxesControl
+         * Global axes visualizer
          */
-        axesControl = rootNode.getControl(AxesControl.class);
+        axes = rootNode.getControl(AxesVisualizer.class);
         boolean enable = isChecked("gacEnable");
-        axesControl.setEnabled(enable);
+        axes.setEnabled(enable);
         enable = isChecked("gacDepthTest");
-        axesControl.setDepthTest(enable);
+        axes.setDepthTest(enable);
         lineWidth = updateSlider("gacLineWidth", " pixels");
-        axesControl.setLineWidth(lineWidth);
+        axes.setLineWidth(lineWidth);
         length = updateSlider("gacLength", " world units");
-        axesControl.setAxisLength(length);
+        axes.setAxisLength(length);
         /*
          * skeleton visualizer
          */
