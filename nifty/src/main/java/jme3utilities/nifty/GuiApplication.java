@@ -79,6 +79,12 @@ abstract public class GuiApplication extends ActionApplication {
      */
     private BasicScreenController enabledScreen = null;
     /**
+     * Determine whether NiftyGUI is rendered after/over guiNode. No effect
+     * after initialization. (true &rarr; NiftyGUI over guiNode, false &rarr;
+     * guiNode over NiftyGUI)
+     */
+    private boolean niftyPostViewFlag = false;
+    /**
      * Nifty display: set in {@link #actionInitializeApplication()}
      */
     private NiftyJmeDisplay niftyDisplay = null;
@@ -121,7 +127,7 @@ abstract public class GuiApplication extends ActionApplication {
     abstract public void guiInitializeApplication();
 
     /**
-     * Update which screen controller is enabled.
+     * Alter which screen controller is enabled.
      *
      * @param newScreen (or null for none)
      */
@@ -129,6 +135,17 @@ abstract public class GuiApplication extends ActionApplication {
         logger.log(Level.INFO, "newScreen={0}", newScreen);
         assert newScreen == null || enabledScreen == null;
         enabledScreen = newScreen;
+    }
+
+    /**
+     * Specify that the NiftyGUI should be rendered after/over the guiNode.
+     * Invoke this prior to initialization.
+     */
+    public void setNiftyPostView() {
+        if (niftyDisplay != null) {
+            throw new IllegalStateException("too late - already initialized");
+        }
+        niftyPostViewFlag = true;
     }
     // *************************************************************************
     // ActionApplication methods
@@ -152,18 +169,21 @@ abstract public class GuiApplication extends ActionApplication {
         success = stateManager.attach(menuMode);
         assert success;
         /*
-         * Start Nifty -- without the batched renderer!
+         * Start NiftyGUI -- without the batched renderer!
          */
         niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager,
                 audioRenderer, guiViewPort);
-        /*
-         * Render NiftyGUI after/over guiNode (and rootNode).
-         */
-        int height = cam.getHeight();
-        int width = cam.getWidth();
-        Camera niftyCam = new Camera(width, height);
-        ViewPort niftyView = renderManager.createPostView("NiftyGUI", niftyCam);
-        niftyView.addProcessor(niftyDisplay);
+        if (niftyPostViewFlag) {
+            /*
+             * Render the NiftyGUI after/over the guiNode.
+             */
+            int height = cam.getHeight();
+            int width = cam.getWidth();
+            Camera niftyCam = new Camera(width, height);
+            ViewPort niftyView;
+            niftyView = renderManager.createPostView("NiftyGUI", niftyCam);
+            niftyView.addProcessor(niftyDisplay);
+        }
 
         Nifty nifty = getNifty();
         //nifty.setDebugOptionPanelColors(true);
