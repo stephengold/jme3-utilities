@@ -39,7 +39,7 @@ import java.util.logging.Logger;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class Rectangle extends Mesh {
+public class RectangleMesh extends Mesh {
     // *************************************************************************
     // constants and loggers
 
@@ -47,14 +47,14 @@ public class Rectangle extends Mesh {
      * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
-            Rectangle.class.getName());
+            RectangleMesh.class.getName());
     // *************************************************************************
     // constructors
 
     /**
      * Create a unit square with right-handed normals.
      */
-    public Rectangle() {
+    public RectangleMesh() {
         this(0f, 1f, 0f, 1f, 1f);
     }
 
@@ -68,7 +68,7 @@ public class Rectangle extends Mesh {
      * @param zNorm sign of the Z component of the normal vector (must be +1 or
      * -1)
      */
-    public Rectangle(float x1, float x2, float y1, float y2, float zNorm) {
+    public RectangleMesh(float x1, float x2, float y1, float y2, float zNorm) {
         this(0f, 1f, 0f, 1f, x1, x2, y1, y2, zNorm);
     }
 
@@ -86,8 +86,8 @@ public class Rectangle extends Mesh {
      * @param zNorm sign of the Z component of the normal vector (must be +1 or
      * -1)
      */
-    public Rectangle(float s1, float s2, float t1, float t2, float x1, float x2,
-            float y1, float y2, float zNorm) {
+    public RectangleMesh(float s1, float s2, float t1, float t2,
+            float x1, float x2, float y1, float y2, float zNorm) {
         assert zNorm == -1f || zNorm == 1f : zNorm;
 
         setBuffer(Type.Position, 3, new float[]{
