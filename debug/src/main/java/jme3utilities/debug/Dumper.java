@@ -387,6 +387,10 @@ public class Dumper {
             Camera camera = viewPort.getCamera();
             String desc = describe(camera);
             stream.print(desc);
+            if (camera != null) {
+                String desc2 = describeMore(camera);
+                stream.printf("%n%s  %s", indent, desc2);
+            }
 
             stream.printf("%n%s with ", indent);
             List<Spatial> scenes = viewPort.getScenes();
@@ -665,6 +669,7 @@ public class Dumper {
      *
      * @param camera camera to describe (unaffected)
      * @return description (not null, not empty)
+     * @see #describeMore(com.jme3.renderer.Camera)
      */
     protected String describe(Camera camera) {
         String result;
@@ -672,25 +677,12 @@ public class Dumper {
             result = "null";
 
         } else {
+            String name = camera.getName();
             Vector3f location = camera.getLocation();
             Vector3f direction = camera.getDirection();
-            String project = camera.isParallelProjection() ? "paral" : "persp";
-            float aspect = MyCamera.aspectRatio(camera);
-
-            result = String.format("Camera loc=%s dir=%s %s %.3f:1 ",
-                    location.toString(), direction.toString(), project, aspect);
-
-            float near = camera.getFrustumNear();
-            float far = camera.getFrustumFar();
-            float left = camera.getViewPortLeft();
-            float right = camera.getViewPortRight();
-            float bottom = camera.getViewPortBottom();
-            float top = camera.getViewPortTop();
-            int dispHeight = camera.getHeight();
-            int dispWidth = camera.getWidth();
-            result += String.format(
-                    "fz[%.2f %.2f] vx[%.2f %.2f] vy[%.2f %.2f] %dx%d",
-                    near, far, left, right, bottom, top, dispWidth, dispHeight);
+            result = String.format("camera %s loc=%s dir=%s",
+                    MyString.quote(name), location.toString(),
+                    direction.toString());
         }
 
         return result;
@@ -829,6 +821,34 @@ public class Dumper {
                 result = "?";
             }
         }
+
+        return result;
+    }
+
+    /**
+     * Generate additional textual description of a camera. TODO move to
+     * MyCamera
+     *
+     * @param camera camera to describe (not null, unaffected)
+     * @return description (not null, not empty)
+     */
+    protected String describeMore(Camera camera) {
+        Validate.nonNull(camera, "camera");
+
+        String projection = camera.isParallelProjection() ? "paral" : "persp";
+        float aspect = MyCamera.aspectRatio(camera);
+        float near = camera.getFrustumNear();
+        float far = camera.getFrustumFar();
+        float left = camera.getViewPortLeft();
+        float right = camera.getViewPortRight();
+        float bottom = camera.getViewPortBottom();
+        float top = camera.getViewPortTop();
+        int displayWidth = camera.getWidth();
+        int displayHeight = camera.getHeight();
+        String result = String.format(
+                "%s %.3f:1 fz[%.2f %.2f] vx[%.2f %.2f] vy[%.2f %.2f] %dx%d",
+                projection, aspect, near, far, left, right, bottom, top,
+                displayWidth, displayHeight);
 
         return result;
     }
