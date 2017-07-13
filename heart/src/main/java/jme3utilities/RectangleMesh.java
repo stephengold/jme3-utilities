@@ -44,6 +44,10 @@ public class RectangleMesh extends Mesh {
     // constants and loggers
 
     /**
+     * number of vertices per triangle
+     */
+    final private static int vpt = 3;
+    /**
      * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
@@ -109,11 +113,11 @@ public class RectangleMesh extends Mesh {
             0f, 0f, zNorm});
 
         if ((x2 - x1) * (y2 - y1) * zNorm > 0f) {
-            setBuffer(Type.Index, 3, new short[]{
+            setBuffer(Type.Index, vpt, new short[]{
                 0, 2, 1,
                 0, 3, 2});
         } else {
-            setBuffer(Type.Index, 3, new short[]{
+            setBuffer(Type.Index, vpt, new short[]{
                 0, 1, 2,
                 0, 2, 3});
         }
