@@ -138,6 +138,58 @@ final public class MyCamera {
     }
 
     /**
+     * Generate a textual description of a camera.
+     *
+     * @param camera instance to describe (unaffected)
+     * @return description (not null, not empty)
+     * @see #describeMore(com.jme3.renderer.Camera)
+     */
+    public static String describe(Camera camera) {
+        String result;
+        if (camera == null) {
+            result = "null";
+
+        } else {
+            String name = camera.getName();
+            Vector3f location = camera.getLocation();
+            Vector3f direction = camera.getDirection();
+            result = String.format("camera %s loc=%s dir=%s",
+                    MyString.quote(name), location.toString(),
+                    direction.toString());
+        }
+
+        return result;
+    }
+
+    /**
+     * Generate additional textual description of a camera.
+     *
+     * @param camera camera to describe (not null, unaffected)
+     * @return description (not null, not empty)
+     * @see #describe(com.jme3.renderer.Camera)
+     */
+    public static String describeMore(Camera camera) {
+        Validate.nonNull(camera, "camera");
+
+        String projection = camera.isParallelProjection() ? "paral" : "persp";
+        float aspect = aspectRatio(camera);
+        float near = camera.getFrustumNear();
+        float far = camera.getFrustumFar();
+        float left = camera.getViewPortLeft();
+        float right = camera.getViewPortRight();
+        float bottom = camera.getViewPortBottom();
+        float top = camera.getViewPortTop();
+        int displayWidth = camera.getWidth();
+        int displayHeight = camera.getHeight();
+        String result = String.format(
+                "%s %.3f:1 fz[%.2f %.2f] vx[%.2f %.2f] vy[%.2f %.2f] %dx%d",
+                projection, aspect, near, far, left, right, bottom, top,
+                displayWidth, displayHeight);
+
+        return result;
+    }
+
+    /**
      * Calculate the vertical field-of-view angle of the specified camera.
      *
      * @param camera camera to measure (not null, unaffected)

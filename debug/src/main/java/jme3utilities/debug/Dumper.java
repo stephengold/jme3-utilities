@@ -665,26 +665,14 @@ public class Dumper {
     // new protected methods
 
     /**
-     * Generate a textual description of a camera. TODO move to MyCamera
+     * Generate a textual description of a camera.
      *
      * @param camera camera to describe (unaffected)
      * @return description (not null, not empty)
      * @see #describeMore(com.jme3.renderer.Camera)
      */
     protected String describe(Camera camera) {
-        String result;
-        if (camera == null) {
-            result = "null";
-
-        } else {
-            String name = camera.getName();
-            Vector3f location = camera.getLocation();
-            Vector3f direction = camera.getDirection();
-            result = String.format("camera %s loc=%s dir=%s",
-                    MyString.quote(name), location.toString(),
-                    direction.toString());
-        }
-
+        String result = MyCamera.describe(camera);
         return result;
     }
 
@@ -826,30 +814,15 @@ public class Dumper {
     }
 
     /**
-     * Generate additional textual description of a camera. TODO move to
-     * MyCamera
+     * Generate additional textual description of a camera.
      *
      * @param camera camera to describe (not null, unaffected)
      * @return description (not null, not empty)
+     * @see #describe(com.jme3.renderer.Camera)
      */
     protected String describeMore(Camera camera) {
         Validate.nonNull(camera, "camera");
-
-        String projection = camera.isParallelProjection() ? "paral" : "persp";
-        float aspect = MyCamera.aspectRatio(camera);
-        float near = camera.getFrustumNear();
-        float far = camera.getFrustumFar();
-        float left = camera.getViewPortLeft();
-        float right = camera.getViewPortRight();
-        float bottom = camera.getViewPortBottom();
-        float top = camera.getViewPortTop();
-        int displayWidth = camera.getWidth();
-        int displayHeight = camera.getHeight();
-        String result = String.format(
-                "%s %.3f:1 fz[%.2f %.2f] vx[%.2f %.2f] vy[%.2f %.2f] %dx%d",
-                projection, aspect, near, far, left, right, bottom, top,
-                displayWidth, displayHeight);
-
+        String result = MyCamera.describeMore(camera);
         return result;
     }
 
