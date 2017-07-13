@@ -30,9 +30,12 @@ import com.jme3.scene.VertexBuffer.Type;
 import java.util.logging.Logger;
 
 /**
- * A axis-aligned rectangular mesh in the XY plane, extending in position from
- * (x1,y1,0) to (x2,y2,0) and in texture from (s1,t1) to (s2, t2) with normals
- * set to (0,0,zNorm).
+ * A 2D, static, triangle-mode mesh which renders an axis-aligned rectangle in
+ * the XY plane.
+ * <p>
+ * In local space, the rectangle extends from (x1,y1,0) to (x2,y2,0) with
+ * normals set to (0,0,zNorm). In texture space, it extends extends from (s1,t1)
+ * to (s2, t2).
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -61,10 +64,10 @@ public class Rectangle extends Mesh {
      * @param s2 1st texture coordinate of the 3rd and 4th vertices
      * @param t1 2nd texture coordinate of the 1st and 4th vertices
      * @param t2 2nd texture coordinate of the 2nd and 3rd vertices
-     * @param x1 X coordinate of the 1st and 2nd vertices
-     * @param x2 X coordinate of the 3rd and 4th vertices
-     * @param y1 Y coordinate of the 1st and 4th vertices
-     * @param y2 Y coordinate of the 2nd and 3rd vertices
+     * @param x1 local X coordinate of the 1st and 2nd vertices
+     * @param x2 local X coordinate of the 3rd and 4th vertices
+     * @param y1 local Y coordinate of the 1st and 4th vertices
+     * @param y2 local Y coordinate of the 2nd and 3rd vertices
      * @param zNorm sign of the Z component of the normal vector (must be +1 or
      * -1)
      */
