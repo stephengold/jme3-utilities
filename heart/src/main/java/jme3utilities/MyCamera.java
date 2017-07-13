@@ -72,29 +72,6 @@ final public class MyCamera {
     // new methods exposed
 
     /**
-     * Calculate the aspect ratio of the specified camera.
-     *
-     * @param camera camera to measure (not null, unaffected)
-     * @return width divided by height (&gt;0)
-     */
-    public static float aspectRatio(Camera camera) {
-        /*
-         * Note: camera.getHeight() returns the height of the display,
-         * not the height of the camera!  The display and the camera
-         * often have the same aspect ratio, but not always.
-         */
-        float height = camera.getFrustumTop();
-        assert height > 0f : height;
-
-        float width = camera.getFrustumRight();
-        assert width > 0f : width;
-
-        float ratio = width / height;
-
-        return ratio;
-    }
-
-    /**
      * Calculate the azimuth angle of the specified camera.
      *
      * @param camera camera to measure (not null, unaffected)
@@ -116,9 +93,6 @@ final public class MyCamera {
      * @return true if contained, otherwise false
      */
     public static boolean contains(ViewPort viewPort, Vector2f screenXY) {
-        Validate.nonNull(viewPort, "view port");
-        Validate.nonNull(screenXY, "screen xy");
-
         Camera camera = viewPort.getCamera();
         float xFraction = screenXY.x / camera.getWidth();
         float leftX = camera.getViewPortLeft();
@@ -169,31 +143,55 @@ final public class MyCamera {
      * @see #describe(com.jme3.renderer.Camera)
      */
     public static String describeMore(Camera camera) {
-        Validate.nonNull(camera, "camera");
-
         String projection = camera.isParallelProjection() ? "paral" : "persp";
-        float aspect = aspectRatio(camera);
+        float fAspect = frustumAspectRatio(camera);
+        float vAspect = viewAspectRatio(camera);
+        String result = String.format("%s F%.3f:1 V%.3f:1", projection,
+                fAspect, vAspect);
+
         float near = camera.getFrustumNear();
         float far = camera.getFrustumFar();
         float left = camera.getViewPortLeft();
         float right = camera.getViewPortRight();
         float bottom = camera.getViewPortBottom();
         float top = camera.getViewPortTop();
-        int displayWidth = camera.getWidth();
-        int displayHeight = camera.getHeight();
-        String result = String.format(
-                "%s %.3f:1 fz[%.2f %.2f] vx[%.2f %.2f] vy[%.2f %.2f] %dx%d",
-                projection, aspect, near, far, left, right, bottom, top,
-                displayWidth, displayHeight);
+        int dWidth = camera.getWidth();
+        int dHeight = camera.getHeight();
+        result += String.format(
+                " fz[%.2f %.2f] vx[%.2f %.2f] vy[%.2f %.2f] %dx%d",
+                near, far, left, right, bottom, top, dWidth, dHeight);
 
         return result;
+    }
+
+    /**
+     * Calculate the aspect ratio of the display.
+     *
+     * @param camera camera to use (not null, unaffected)
+     * @return width divided by height (&gt;0)
+     */
+    public static float displayAspectRatio(Camera camera) {
+        /*
+         * Note: camera.getHeight() returns the height of the display,
+         * not the height of the camera!
+         */
+        float height = camera.getHeight();
+        assert height > 0f : height;
+
+        float width = camera.getWidth();
+        assert width > 0f : width;
+
+        float ratio = width / height;
+
+        assert ratio > 0f : ratio;
+        return ratio;
     }
 
     /**
      * Calculate the vertical field-of-view angle of the specified camera.
      *
      * @param camera camera to measure (not null, unaffected)
-     * @return radians from top of frustum to bottom of frustum
+     * @return radians from bottom of frustum to top of frustum (&ge;0)
      */
     public static float fovY(Camera camera) {
         if (camera.isParallelProjection()) {
@@ -208,7 +206,32 @@ final public class MyCamera {
 
         float fovY = 2f * FastMath.atan(top / near);
 
+        assert fovY > 0f : fovY;
         return fovY;
+    }
+
+    /**
+     * Calculate the aspect ratio of the specified camera's frustum.
+     *
+     * @param camera camera to measure (not null, unaffected)
+     * @return width divided by height (&gt;0)
+     */
+    public static float frustumAspectRatio(Camera camera) {
+        /*
+         * Note: camera.getHeight() returns the height of the display,
+         * not the height of the camera!  The display and the camera frustum
+         * often have the same aspect ratio, but not always.
+         */
+        float height = camera.getFrustumTop();
+        assert height > 0f : height;
+
+        float width = camera.getFrustumRight();
+        assert width > 0f : width;
+
+        float ratio = width / height;
+
+        assert ratio > 0f : ratio;
+        return ratio;
     }
 
     /**
@@ -275,10 +298,9 @@ final public class MyCamera {
             camera.setFrustumFar(newFar);
             camera.setFrustumNear(newNear);
         } else {
-            float aspectRatio = aspectRatio(camera);
+            float fAspect = frustumAspectRatio(camera);
             float yDegrees = yDegrees(camera);
-            camera.setFrustumPerspective(yDegrees, aspectRatio, newNear,
-                    newFar);
+            camera.setFrustumPerspective(yDegrees, fAspect, newNear, newFar);
         }
     }
 
@@ -299,13 +321,58 @@ final public class MyCamera {
     }
 
     /**
+     * Calculate the aspect ratio of the specified camera's viewport.
+     *
+     * @param camera camera to measure (not null, unaffected)
+     * @return width divided by height (&gt;0)
+     */
+    public static float viewAspectRatio(Camera camera) {
+        /*
+         * Note: camera.getHeight() returns the height of the display,
+         * not the height of the viewport!  The display and the viewport
+         * often have the same aspect ratio, but not always.
+         */
+        float bottom = camera.getViewPortBottom();
+        assert bottom >= 0f : bottom;
+        assert bottom <= 1f : bottom;
+
+        float top = camera.getViewPortTop();
+        assert top >= 0f : top;
+        assert top <= 1f : top;
+
+        float yFraction = top - bottom;
+        assert yFraction > 0f : yFraction;
+
+        float height = camera.getHeight() * yFraction;
+        assert height > 0f : height;
+
+        float left = camera.getViewPortLeft();
+        assert left >= 0f : left;
+        assert left <= 1f : left;
+
+        float right = camera.getViewPortTop();
+        assert right >= 0f : right;
+        assert right <= 1f : right;
+
+        float xFraction = right - left;
+        assert xFraction > 0f : xFraction;
+
+        float width = camera.getWidth() * xFraction;
+        assert width > 0f : width;
+
+        float ratio = width / height;
+
+        assert ratio > 0f : ratio;
+        return ratio;
+    }
+
+    /**
      * Calculate the vertical field-of-view angle of the specified camera.
      *
      * @param camera camera to measure (not null, unaffected)
      * @return vertical angle in degrees (&gt;0)
      */
     public static float yDegrees(Camera camera) {
-        Validate.nonNull(camera, "camera");
         if (camera.isParallelProjection()) {
             return 0f;
         }
@@ -332,6 +399,7 @@ final public class MyCamera {
 
         float yTangent = top / near;
 
+        assert yTangent > 0f : yTangent;
         return yTangent;
     }
 
