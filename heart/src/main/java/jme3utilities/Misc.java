@@ -206,28 +206,6 @@ public class Misc {
     }
 
     /**
-     * Test the specified transform for exact identity.
-     *
-     * @param transform which transform to test (not null, unaffected)
-     * @return true if exactly equal to
-     * {@link com.jme3.math.Transform#IDENTITY}, otherwise false
-     */
-    public static boolean isIdentity(Transform transform) {
-        boolean result = false;
-
-        Vector3f translation = transform.getTranslation();
-        if (MyVector3f.isZero(translation)) {
-            Quaternion rotation = transform.getRotation();
-            if (rotation.isIdentity()) {
-                Vector3f scale = transform.getScale();
-                result = (scale.x == 1f && scale.y == 1f && scale.z == 1f);
-            }
-        }
-
-        return result;
-    }
-
-    /**
      * Set the specified pixel to the specified brightness and opacity.
      *
      * @param graphics rendering context of the pixel (not null)
