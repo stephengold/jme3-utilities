@@ -616,7 +616,7 @@ class PoseCameraState
      * Initialize the frustum of the render camera.
      */
     private void setFrustum() {
-        float aspectRatio = MyCamera.aspectRatio(cam);
+        float aspectRatio = MyCamera.displayAspectRatio(cam);
         cam.setFrustumPerspective(frustumYDegrees, aspectRatio,
                 frustumNear, frustumFar);
     }

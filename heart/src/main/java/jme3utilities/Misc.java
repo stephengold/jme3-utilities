@@ -118,7 +118,6 @@ public class Misc {
      */
     public static <T extends AppState> void detachAll(
             AppStateManager stateManager, Class<T> whichClass) {
-        Validate.nonNull(stateManager, "state manager");
         Validate.nonNull(whichClass, "class");
 
         AppState state = stateManager.getState(whichClass);
@@ -180,7 +179,7 @@ public class Misc {
      * @return project name, library name, branch, and revision
      */
     public static String getVersion() {
-        return "jme3-utilities jme3-utilities-heart master $Rev: 0.9.9+1 $";
+        return "jme3-utilities jme3-utilities-heart master $Rev: 0.9.10 $";
     }
 
     /**
@@ -205,8 +204,6 @@ public class Misc {
      * @return true if the mesh has texture coordinates, otherwise false
      */
     public static boolean hasUV(Mesh mesh) {
-        Validate.nonNull(mesh, "mesh");
-
         IntMap<VertexBuffer> buffers = mesh.getBuffers();
         int key = Type.TexCoord.ordinal();
         boolean result = buffers.containsKey(key);

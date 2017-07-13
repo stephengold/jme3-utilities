@@ -1,5 +1,15 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 0.9.10 released on TBD
+
+ + Renamed Rectangle to RectangleMesh to avoid confusion
+ + Removed Misc.isIdentity() for being redundant with MyMath.isIdentity()
+ + Replaced MyCamera.aspectRatio() with {display/frustum/view}AspectRatio()
+ + Added utility methods to MyCamera and Misc
+ + Added LoopMesh class
+ + Added simpler constructors for RectangleMesh
+ + Distinguish BitmapText in MySpatial.describeType()
+
 ## Version 0.9.9 released on 7 July 2017
 
  + Fixed logic error in MyCamera.aspectRatio()
