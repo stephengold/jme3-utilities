@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.10 released on TBD
+## Version 0.9.10 released on 13 July 2017
 
  + Renamed Rectangle to RectangleMesh to avoid confusion
  + Removed Misc.isIdentity() for being redundant with MyMath.isIdentity()

@@ -1,5 +1,9 @@
 # release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.7.1 released on TBD
+
+ + When dumping cameras, split description across two lines
+
 ## Version 0.7.0 released on 9 July 2017
 
  + Renamed Printer to Dumper and made major changes to its API

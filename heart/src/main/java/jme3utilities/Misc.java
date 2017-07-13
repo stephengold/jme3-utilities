@@ -179,7 +179,7 @@ public class Misc {
      * @return project name, library name, branch, and revision
      */
     public static String getVersion() {
-        return "jme3-utilities jme3-utilities-heart master $Rev: 0.9.10 $";
+        return "jme3-utilities jme3-utilities-heart master $Rev: 0.9.10+1 $";
     }
 
     /**
@@ -207,6 +207,7 @@ public class Misc {
         IntMap<VertexBuffer> buffers = mesh.getBuffers();
         int key = Type.TexCoord.ordinal();
         boolean result = buffers.containsKey(key);
+
         return result;
     }
 
