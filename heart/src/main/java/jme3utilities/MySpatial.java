@@ -28,6 +28,7 @@ package jme3utilities;
 import com.jme3.audio.AudioNode;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.effect.ParticleEmitter;
+import com.jme3.font.BitmapText;
 import com.jme3.light.Light;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -115,12 +116,14 @@ public class MySpatial {
             return 'a';
         } else if (spatial instanceof BatchNode) {
             return 'b';
+        } else if (spatial instanceof BitmapText) {
+            return 't';
         } else if (spatial instanceof ParticleEmitter) {
             return 'e';
         } else if (spatial instanceof SkeletonDebugger) {
             return 's';
         } else if (spatial instanceof TerrainQuad) {
-            return 't';
+            return 'q';
         } else if (spatial instanceof Geometry) {
             return 'g';
         } else if (spatial instanceof Node) {
@@ -654,6 +657,7 @@ public class MySpatial {
 
         Spatial parent = spatial.getParent();
         Vector3f centerLocal;
+        // TODO check for spatial.isIgnoreTransform()
         if (parent != null) {
             centerLocal = parent.worldToLocal(newLocation, null);
         } else {
