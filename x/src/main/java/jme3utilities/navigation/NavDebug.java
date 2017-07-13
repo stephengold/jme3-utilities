@@ -36,6 +36,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Sphere;
 import java.util.logging.Logger;
+import jme3utilities.LoopMesh;
 import jme3utilities.Validate;
 import jme3utilities.math.polygon.SimplePolygon3f;
 

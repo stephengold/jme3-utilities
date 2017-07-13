@@ -23,7 +23,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.navigation;
+package jme3utilities;
 
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
@@ -39,10 +39,10 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Validate;
 
 /**
- * Custom mesh for a circle or polygon.
+ * A 2D, static, line-mode mesh which renders a circle or polygon in the XY
+ * plane.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -89,7 +89,7 @@ public class LoopMesh extends Mesh {
         this.vertexCount = vertexCount;
         setMode(Mode.Lines);
         updateCoordinates();
-        
+
         updateIndices();
         updateBound();
         setStatic();
@@ -111,7 +111,7 @@ public class LoopMesh extends Mesh {
             Validate.nonNull(cornerArray[index], description);
         }
 
-        setMode(Mode.Lines);
+        setMode(Mode.Lines); // TODO use LineLoop
         Vector3f[] locationArray = new Vector3f[vertexCount];
         System.arraycopy(cornerArray, 0, locationArray, 0, vertexCount);
         /*
@@ -134,8 +134,7 @@ public class LoopMesh extends Mesh {
      * @throws IOException from importer
      */
     @Override
-    public void read(JmeImporter importer)
-            throws IOException {
+    public void read(JmeImporter importer) throws IOException {
         super.read(importer);
 
         InputCapsule capsule = importer.getCapsule(this);
@@ -149,8 +148,7 @@ public class LoopMesh extends Mesh {
      * @throws IOException from exporter
      */
     @Override
-    public void write(JmeExporter exporter)
-            throws IOException {
+    public void write(JmeExporter exporter) throws IOException {
         super.write(exporter);
 
         OutputCapsule capsule = exporter.getCapsule(this);
