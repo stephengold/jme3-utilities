@@ -28,9 +28,6 @@ package jme3utilities;
 import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
-import com.jme3.math.Quaternion;
-import com.jme3.math.Transform;
-import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.SceneProcessor;
 import com.jme3.renderer.ViewPort;
@@ -51,7 +48,6 @@ import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import jme3utilities.math.MyVector3f;
 
 /**
  * Miscellaneous utility methods. All methods should be static.
@@ -77,6 +73,18 @@ public class Misc {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Test whether assertions are enabled.
+     *
+     * @return true if enabled, otherwise false
+     */
+    public static boolean areAssertionsEnabled() {
+        boolean enabled = false;
+        assert enabled = true; // Note: intentional side effect.
+
+        return enabled;
+    }
 
     /**
      * Open the specified web page in a new browser or browser tab.
