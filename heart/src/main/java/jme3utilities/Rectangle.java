@@ -52,9 +52,24 @@ public class Rectangle extends Mesh {
     // constructors
 
     /**
-     * No-argument constructor for serialization purposes only. Do not use!
+     * Create a unit square with right-handed normals.
      */
     public Rectangle() {
+        this(0f, 1f, 0f, 1f, 1f);
+    }
+
+    /**
+     * Create a rectangle with default texture coordinates.
+     *
+     * @param x1 local X coordinate of the 1st and 2nd vertices
+     * @param x2 local X coordinate of the 3rd and 4th vertices
+     * @param y1 local Y coordinate of the 1st and 4th vertices
+     * @param y2 local Y coordinate of the 2nd and 3rd vertices
+     * @param zNorm sign of the Z component of the normal vector (must be +1 or
+     * -1)
+     */
+    public Rectangle(float x1, float x2, float y1, float y2, float zNorm) {
+        this(0f, 1f, 0f, 1f, x1, x2, y1, y2, zNorm);
     }
 
     /**
