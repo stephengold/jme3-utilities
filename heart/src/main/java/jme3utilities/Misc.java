@@ -155,13 +155,13 @@ public class Misc {
     }
 
     /**
-     * Generate the filesystem path to the named file in the user's home
-     * directory. TODO rename homePath()
+     * Generate an absolute filesystem path to the named file in the user's home
+     * directory. TODO sort methods
      *
      * @param fileName file name to use (not null, not empty)
-     * @return generated path (not empty)
+     * @return filesystem path (not null, not empty)
      */
-    public static String getUserPath(String fileName) {
+    public static String homePath(String fileName) {
         Validate.nonEmpty(fileName, "file name");
 
         String homePath = System.getProperty("user.home");
