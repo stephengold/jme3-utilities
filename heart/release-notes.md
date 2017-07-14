@@ -1,5 +1,15 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 0.9.11 released on TBD
+
+ + Fixed logic error in MyCamera.viewAspectRatio()
+ + Moved mesh generators to new jme3utilities.mesh package
+ + Rename Misc.getUserPath() to homePath() and generate absolute pathname
+ + Add class RectangleOutlineMesh
+ + Added methods Misc.getUserPath() and MyString.removeSuffix()
+ + Add option to MyAsset.createWireframeMaterial() to set the point size
+ + Creative use of mesh modes to save indices
+
 ## Version 0.9.10 released on 13 July 2017
 
  + Renamed Rectangle to RectangleMesh to avoid confusion
