@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.7.1 released on TBD
+## Version 0.7.1 released on 13 July 2017
 
  + When dumping cameras, split description across two lines
 
