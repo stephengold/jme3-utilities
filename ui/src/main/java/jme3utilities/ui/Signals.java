@@ -71,7 +71,7 @@ public class Signals implements ActionListener {
 
         TreeSet<Integer> status = statusMap.get(name);
         if (status == null) {
-            status = new TreeSet<Integer>();
+            status = new TreeSet<>();
             statusMap.put(name, status);
         }
     }
@@ -104,7 +104,7 @@ public class Signals implements ActionListener {
             logger.log(Level.WARNING,
                     "Testing a signal which has not yet been added: {0}.",
                     MyString.quote(name));
-            status = new TreeSet<Integer>();
+            status = new TreeSet<>();
             statusMap.put(name, status);
         }
         boolean result = !status.isEmpty();
