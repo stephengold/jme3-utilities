@@ -313,7 +313,7 @@ public class MyString {
 
     /**
      * Extract the remainder of the specified string after removing the
-     * specified prefix. TODO corresponding methods for specified suffix
+     * specified prefix.
      *
      * @param input input string (not null)
      * @param prefix prefix string (not null)
@@ -331,6 +331,31 @@ public class MyString {
 
         int endPosition = prefix.length();
         String result = input.substring(endPosition);
+
+        assert result != null;
+        return result;
+    }
+
+    /**
+     * Extract the remainder of the specified string after removing the
+     * specified suffix.
+     *
+     * @param input input string (not null)
+     * @param suffix prefix string (not null)
+     * @return the remainder of the input (not null)
+     */
+    public static String removeSuffix(String input, String suffix) {
+        Validate.nonNull(input, "input");
+        Validate.nonNull(suffix, "suffix");
+        if (!input.endsWith(suffix)) {
+            logger.log(Level.SEVERE, "input={0}, suffix={1}", new Object[]{
+                MyString.quote(input), MyString.quote(suffix)
+            });
+            throw new IllegalArgumentException("input must end with suffix.");
+        }
+
+        int endPosition = input.length() - suffix.length();
+        String result = input.substring(0, endPosition);
 
         assert result != null;
         return result;

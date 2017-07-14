@@ -73,8 +73,7 @@ public class MyControl {
     public static String describe(Object control) {
         String name = control.getClass().getSimpleName();
         if (name.endsWith("Control")) {
-            int length = name.length() - "Control".length();
-            name = name.substring(0, length);
+            name = MyString.removeSuffix(name, "Control");
         }
 
         String result = name;
