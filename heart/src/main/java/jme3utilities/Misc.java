@@ -155,31 +155,12 @@ public class Misc {
     }
 
     /**
-     * Generate an absolute filesystem path to the named file in the user's home
-     * directory. TODO sort methods
-     *
-     * @param fileName file name to use (not null, not empty)
-     * @return filesystem path (not null, not empty)
-     */
-    public static String homePath(String fileName) {
-        Validate.nonEmpty(fileName, "file name");
-
-        String homePath = System.getProperty("user.home");
-        File file = new File(homePath, fileName);
-        String result = file.getAbsolutePath();
-        result = result.replaceAll("\\\\", "/");
-
-        assert !result.isEmpty();
-        return result;
-    }
-
-    /**
      * Read the verbose version string for this library.
      *
      * @return project name, library name, branch, and revision
      */
     public static String getVersion() {
-        return "jme3-utilities jme3-utilities-heart master $Rev: 0.9.10+1 $";
+        return "jme3-utilities jme3-utilities-heart master $Rev: 0.9.10+2 $";
     }
 
     /**
@@ -208,6 +189,25 @@ public class Misc {
         int key = Type.TexCoord.ordinal();
         boolean result = buffers.containsKey(key);
 
+        return result;
+    }
+
+    /**
+     * Generate an absolute filesystem path to the named file in the user's home
+     * directory.
+     *
+     * @param fileName file name to use (not null, not empty)
+     * @return filesystem path (not null, not empty)
+     */
+    public static String homePath(String fileName) {
+        Validate.nonEmpty(fileName, "file name");
+
+        String homePath = System.getProperty("user.home");
+        File file = new File(homePath, fileName);
+        String result = file.getAbsolutePath();
+        result = result.replaceAll("\\\\", "/");
+
+        assert !result.isEmpty();
         return result;
     }
 
