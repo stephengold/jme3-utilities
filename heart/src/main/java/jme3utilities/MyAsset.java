@@ -163,7 +163,7 @@ final public class MyAsset {
      * Create an invisible material.
      *
      * @param assetManager (not null)
-     * @return new instance
+     * @return a new instance
      */
     public static Material createInvisibleMaterial(AssetManager assetManager) {
         Validate.nonNull(assetManager, "asset manager");
@@ -182,7 +182,7 @@ final public class MyAsset {
      *
      * @param assetManager (not null)
      * @param texture (not null)
-     * @return new instance
+     * @return a new instance
      */
     public static Material createParticleMaterial(AssetManager assetManager,
             Texture texture) {
@@ -201,7 +201,7 @@ final public class MyAsset {
      *
      * @param assetManager (not null)
      * @param texture (not null)
-     * @return new instance
+     * @return a new instance
      */
     public static Material createShadedMaterial(AssetManager assetManager,
             Texture texture) {
@@ -218,7 +218,7 @@ final public class MyAsset {
      *
      * @param assetManager (not null)
      * @param color (not null, unaffected)
-     * @return new instance
+     * @return a new instance
      */
     public static Material createShinyMaterial(AssetManager assetManager,
             ColorRGBA color) {
@@ -353,12 +353,13 @@ final public class MyAsset {
      * Create a default unshaded material.
      *
      * @param assetManager (not null)
-     * @return new instance
+     * @return a new instance
      */
     public static Material createUnshadedMaterial(AssetManager assetManager) {
         Validate.nonNull(assetManager, "asset manager");
-        Material material = new Material(
-                assetManager, unshadedMaterialAssetPath);
+        Material material;
+        material = new Material(assetManager, unshadedMaterialAssetPath);
+
         return material;
     }
 
@@ -367,7 +368,7 @@ final public class MyAsset {
      *
      * @param assetManager (not null)
      * @param color (not null, unaffected)
-     * @return new instance
+     * @return a new instance
      */
     public static Material createUnshadedMaterial(AssetManager assetManager,
             ColorRGBA color) {
@@ -385,7 +386,7 @@ final public class MyAsset {
      *
      * @param assetManager (not null)
      * @param assetPath to the texture asset (not null, not empty)
-     * @return new instance
+     * @return a new instance
      */
     public static Material createUnshadedMaterial(AssetManager assetManager,
             String assetPath) {
@@ -402,8 +403,8 @@ final public class MyAsset {
      * Create an unshaded material for a specified colormap texture.
      *
      * @param assetManager (not null)
-     * @param texture (not null)
-     * @return new instance
+     * @param texture (not null, alias created)
+     * @return a new instance
      */
     public static Material createUnshadedMaterial(AssetManager assetManager,
             Texture texture) {
@@ -417,21 +418,42 @@ final public class MyAsset {
     }
 
     /**
-     * Create a wireframe material.
+     * Create a wireframe material with the default point size.
      *
      * @param assetManager (not null)
      * @param color (not null, unaffected)
-     * @return new instance
+     * @return a new instance
      */
     public static Material createWireframeMaterial(AssetManager assetManager,
             ColorRGBA color) {
         Validate.nonNull(assetManager, "asset manager");
         Validate.nonNull(color, "color");
 
-        Material material = new Material(assetManager,
-                wireframeMaterialAssetPath);
+        Material material = createWireframeMaterial(assetManager, color, 1f);
+
+        return material;
+    }
+
+    /**
+     * Create a wireframe material with specified point size. (Points are
+     * visible only on point-mode mesh.)
+     *
+     * @param assetManager (not null)
+     * @param color (not null, unaffected)
+     * @param pointSize in pixels (&ge;0, whole numbers recommended)
+     * @return a new instance
+     */
+    public static Material createWireframeMaterial(AssetManager assetManager,
+            ColorRGBA color, float pointSize) {
+        Validate.nonNull(assetManager, "asset manager");
+        Validate.nonNull(color, "color");
+        Validate.nonNegative(pointSize, "point size");
+
+        Material material;
+        material = new Material(assetManager, wireframeMaterialAssetPath);
         material.getAdditionalRenderState().setWireframe(true);
         material.setColor("Color", color.clone());
+        material.setFloat("PointSize", pointSize);
 
         return material;
     }
