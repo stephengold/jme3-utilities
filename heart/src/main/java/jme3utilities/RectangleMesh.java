@@ -30,8 +30,8 @@ import com.jme3.scene.VertexBuffer.Type;
 import java.util.logging.Logger;
 
 /**
- * A 2D, static, triangle-mode mesh which renders an axis-aligned rectangle in
- * the XY plane.
+ * A 2D, static, fan-mode mesh which renders an axis-aligned rectangle in the XY
+ * plane.
  * <p>
  * In local space, the rectangle extends from (x1,y1,0) to (x2,y2,0) with
  * normals set to (0,0,zNorm). In texture space, it extends extends from (s1,t1)
@@ -56,14 +56,15 @@ public class RectangleMesh extends Mesh {
     // constructors
 
     /**
-     * Create a unit square with right-handed normals.
+     * Instantiate an axis-aligned unit square with right-handed normals and the
+     * 1st vertex at the local origin.
      */
     public RectangleMesh() {
         this(0f, 1f, 0f, 1f, 1f);
     }
 
     /**
-     * Create a rectangle with default texture coordinates.
+     * Instantiate an axis-aligned rectangle with default texture coordinates.
      *
      * @param x1 local X coordinate of the 1st and 2nd vertices
      * @param x2 local X coordinate of the 3rd and 4th vertices
@@ -77,7 +78,7 @@ public class RectangleMesh extends Mesh {
     }
 
     /**
-     * Create a rectangle with the specified parameters.
+     * Instantiate an axis-aligned rectangle with the specified parameters.
      *
      * @param s1 1st texture coordinate of the 1st and 2nd vertices
      * @param s2 1st texture coordinate of the 3rd and 4th vertices
@@ -92,7 +93,9 @@ public class RectangleMesh extends Mesh {
      */
     public RectangleMesh(float s1, float s2, float t1, float t2,
             float x1, float x2, float y1, float y2, float zNorm) {
-        assert zNorm == -1f || zNorm == 1f : zNorm;
+        assert zNorm == -1f || zNorm == 1f : zNorm; // TODO IllegalArgumentException
+
+        setMode(Mode.TriangleFan);
 
         setBuffer(Type.Position, 3, new float[]{
             x1, y1, 0f,
@@ -113,13 +116,9 @@ public class RectangleMesh extends Mesh {
             0f, 0f, zNorm});
 
         if ((x2 - x1) * (y2 - y1) * zNorm > 0f) {
-            setBuffer(Type.Index, vpt, new short[]{
-                0, 2, 1,
-                0, 3, 2});
+            setBuffer(Type.Index, vpt, new short[]{0, 3, 2, 1});
         } else {
-            setBuffer(Type.Index, vpt, new short[]{
-                0, 1, 2,
-                0, 2, 3});
+            setBuffer(Type.Index, vpt, new short[]{0, 1, 2, 3});
         }
 
         updateBound();
