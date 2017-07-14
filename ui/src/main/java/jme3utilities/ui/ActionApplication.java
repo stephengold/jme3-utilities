@@ -67,13 +67,13 @@ abstract public class ActionApplication
         CameraInput.FLYCAM_STRAFELEFT,
         CameraInput.FLYCAM_STRAFERIGHT
     };
-    /**
-     * filesystem path to the folder/directory for written assets
-     */
-    final private static String writtenAssetDirPath = "Written Assets";
     // *************************************************************************
     // fields
 
+    /**
+     * the folder/directory for written assets
+     */
+    private static File writtenAssetDir = null;
     /**
      * initial input mode: set in {@link #simpleInitApp()}
      */
@@ -113,10 +113,11 @@ abstract public class ActionApplication
     public static String filePath(String assetPath) {
         Validate.nonNull(assetPath, "asset path");
 
-        File file = new File(writtenAssetDirPath, assetPath);
+        File file = new File(writtenAssetDir, assetPath);
         String result = file.getAbsolutePath();
         result = result.replaceAll("\\\\", "/");
 
+        assert !result.isEmpty();
         return result;
     }
 
@@ -138,6 +139,20 @@ abstract public class ActionApplication
     public Signals getSignals() {
         assert signals != null;
         return signals;
+    }
+
+    /**
+     * Read the filesystem path to the folder/directory for written assets.
+     *
+     * @return absolute pathname (not null, not empty)
+     */
+    public static String getWrittenAssetDirPath() {
+        String path = writtenAssetDir.getAbsolutePath();
+        path = path.replaceAll("\\\\", "/");
+
+        assert path != null;
+        assert !path.isEmpty();
+        return path;
     }
 
     /**
@@ -224,24 +239,25 @@ abstract public class ActionApplication
     public void simpleInitApp() {
         if (defaultInputMode != null) {
             throw new IllegalStateException(
-                    "app should only be initialized once");
+                    "application should only be initialized once");
         }
         if (signals != null) {
             throw new IllegalStateException(
-                    "app should only be initialized once");
+                    "application should only be initialized once");
         }
         /*
-         * Make sure a folder exists for writable assets.
+         * Ensure a folder exists for writable assets.
          */
-        File tmpAssetDir = new File(writtenAssetDirPath);
-        if (!tmpAssetDir.exists()) {
-            tmpAssetDir.mkdirs();
+        writtenAssetDir = new File("Written Assets");
+        if (!writtenAssetDir.exists()) {
+            writtenAssetDir.mkdirs();
         }
         /*
          * Register a locator for writable assets and
          * make sure it precedes the classpath locator.
          */
-        assetManager.registerLocator(writtenAssetDirPath, FileLocator.class);
+        String wadp = getWrittenAssetDirPath();
+        assetManager.registerLocator(wadp, FileLocator.class);
         assetManager.unregisterLocator("/", ClasspathLocator.class);
         assetManager.registerLocator("/", ClasspathLocator.class);
         /*
