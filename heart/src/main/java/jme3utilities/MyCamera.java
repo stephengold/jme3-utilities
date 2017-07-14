@@ -350,7 +350,7 @@ final public class MyCamera {
         assert left >= 0f : left;
         assert left <= 1f : left;
 
-        float right = camera.getViewPortTop();
+        float right = camera.getViewPortRight();
         assert right >= 0f : right;
         assert right <= 1f : right;
 
