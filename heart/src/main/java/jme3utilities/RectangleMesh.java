@@ -27,6 +27,7 @@ package jme3utilities;
 
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -70,8 +71,7 @@ public class RectangleMesh extends Mesh {
      * @param x2 local X coordinate of the 3rd and 4th vertices
      * @param y1 local Y coordinate of the 1st and 4th vertices
      * @param y2 local Y coordinate of the 2nd and 3rd vertices
-     * @param zNorm sign of the Z component of the normal vector (must be +1 or
-     * -1)
+     * @param zNorm the Z component of the normal vector (must be +1 or -1)
      */
     public RectangleMesh(float x1, float x2, float y1, float y2, float zNorm) {
         this(0f, 1f, 0f, 1f, x1, x2, y1, y2, zNorm);
@@ -88,12 +88,14 @@ public class RectangleMesh extends Mesh {
      * @param x2 local X coordinate of the 3rd and 4th vertices
      * @param y1 local Y coordinate of the 1st and 4th vertices
      * @param y2 local Y coordinate of the 2nd and 3rd vertices
-     * @param zNorm sign of the Z component of the normal vector (must be +1 or
-     * -1)
+     * @param zNorm the Z component of the normal vector (must be +1 or -1)
      */
     public RectangleMesh(float s1, float s2, float t1, float t2,
             float x1, float x2, float y1, float y2, float zNorm) {
-        assert zNorm == -1f || zNorm == 1f : zNorm; // TODO IllegalArgumentException
+        if (zNorm != -1f && zNorm != 1f) {
+            logger.log(Level.SEVERE, "zNorm={0}", zNorm);
+            throw new IllegalArgumentException("zNorm must be +1 or -1.");
+        }
 
         setMode(Mode.TriangleFan);
 
