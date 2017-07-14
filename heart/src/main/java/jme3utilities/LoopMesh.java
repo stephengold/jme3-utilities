@@ -41,8 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A 2D, static, line-mode mesh which renders a circle or polygon in the XY
- * plane.
+ * A 3D, static, linestrip-mode mesh which renders a circle or polygon.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -78,16 +77,15 @@ public class LoopMesh extends Mesh {
 
     /**
      * Instantiate a regular polygon (or circle) in the XZ plane, centered at
-     * the origin, with radius=1 and the specified number of vertices.
+     * the local origin, with radius=1 and the specified number of vertices.
      *
      * @param vertexCount (&ge;3)
      */
     public LoopMesh(int vertexCount) {
-        Validate.inRange(vertexCount, "number of vertices",
-                3, Integer.MAX_VALUE);
+        Validate.inRange(vertexCount, "vertex count", 3, Integer.MAX_VALUE);
 
         this.vertexCount = vertexCount;
-        setMode(Mode.Lines);
+        setMode(Mode.LineStrip);
         updateCoordinates();
 
         updateIndices();
@@ -96,10 +94,10 @@ public class LoopMesh extends Mesh {
     }
 
     /**
-     * Instantiate a polygon from an array of corners.
+     * Instantiate a polygon from an array of coordinates.
      *
-     * @param cornerArray locations of the corners, in sequence (not null or
-     * containing any nulls, length&ge;3, unaffected)
+     * @param cornerArray local coordinates of the corners, in sequence (not
+     * null or containing any nulls, length&ge;3, unaffected)
      */
     public LoopMesh(Vector3f[] cornerArray) {
         Validate.nonNull(cornerArray, "corner list");
@@ -111,7 +109,7 @@ public class LoopMesh extends Mesh {
             Validate.nonNull(cornerArray[index], description);
         }
 
-        setMode(Mode.Lines); // TODO use LineLoop
+        setMode(Mode.LineStrip);
         Vector3f[] locationArray = new Vector3f[vertexCount];
         System.arraycopy(cornerArray, 0, locationArray, 0, vertexCount);
         /*
@@ -190,15 +188,13 @@ public class LoopMesh extends Mesh {
      */
     private void updateIndices() {
         /*
-         * Allocate an array to hold the two vertex indices of each edge.
+         * Allocate an array to hold the vertex indices.
          */
-        short[] indexArray = new short[vpe * vertexCount];
+        short[] indexArray = new short[vertexCount + 1];
         for (int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-            int nextVertex = (vertexIndex + 1) % vertexCount;
-            logger.log(Level.FINE, "index {0}", vertexIndex);
-            indexArray[vpe * vertexIndex] = (short) vertexIndex;
-            indexArray[vpe * vertexIndex + 1] = (short) nextVertex;
+            indexArray[vertexIndex] = (short) vertexIndex;
         }
+        indexArray[vertexCount] = (short) 0;
         /*
          * Allocate and assign a buffer for indices.
          */
