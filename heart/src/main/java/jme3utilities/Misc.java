@@ -155,8 +155,8 @@ public class Misc {
     }
 
     /**
-     * Generate the filesystem path to a file in the user's home directory. TODO
-     * generate an absolute pathname
+     * Generate the filesystem path to the named file in the user's home
+     * directory. TODO rename homePath()
      *
      * @param fileName file name to use (not null, not empty)
      * @return generated path (not empty)
@@ -165,10 +165,10 @@ public class Misc {
         Validate.nonEmpty(fileName, "file name");
 
         String homePath = System.getProperty("user.home");
-        assert homePath != null;
-        String result = String.format("%s/%s", homePath, fileName);
+        File file = new File(homePath, fileName);
+        String result = file.getAbsolutePath();
+        result = result.replaceAll("\\\\", "/");
 
-        assert result != null;
         assert !result.isEmpty();
         return result;
     }
