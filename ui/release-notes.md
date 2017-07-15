@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.5.4 released on TBD
+
++ Added a Locator class to manage asset locators.
++ Added getWrittenAssetDirPath() to the ActionApplication class.
++ Made ActionApplication.filePath() return an absolute pathname.
+
 ## Version 0.5.3 released on 20 May 2017
 
 + The library now depends on jme3-utilities-heart instead of SkyControl.
