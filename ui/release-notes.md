@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-ui library and related tests
 
-## Version 0.5.4 released on TBD
+## Version 0.5.4 released on 15 July 2017
 
 + Added a Locator class to manage asset locators.
 + Added getWrittenAssetDirPath() to the ActionApplication class.
