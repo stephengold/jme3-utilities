@@ -28,7 +28,6 @@ package jme3utilities.ui;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
 import com.jme3.asset.plugins.ClasspathLocator;
-import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.CameraInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.Quaternion;
@@ -246,20 +245,18 @@ abstract public class ActionApplication
                     "application should only be initialized once");
         }
         /*
-         * Ensure a folder exists for writable assets.
+         * Ensure that a folder exists for writable assets.
          */
         writtenAssetDir = new File("Written Assets");
         if (!writtenAssetDir.exists()) {
             writtenAssetDir.mkdirs();
         }
         /*
-         * Register a locator for writable assets and
-         * make sure it precedes the classpath locator.
+         * Initialize asset locators to the default list.
          */
-        String wadp = getWrittenAssetDirPath();
-        assetManager.registerLocator(wadp, FileLocator.class);
         assetManager.unregisterLocator("/", ClasspathLocator.class);
-        assetManager.registerLocator("/", ClasspathLocator.class);
+        Locators.setAssetManager(assetManager);
+        Locators.useDefault();
         /*
          * Register a loader for Properties assets.
          */
