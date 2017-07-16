@@ -43,19 +43,20 @@
            childLayout="vertical">
         <panel/>
         <panel childLayout="horizontal"
-               height="80px">
+               height="160px">
             <panel/>
             <panel childLayout="vertical"
                    backgroundColor="#aaaf"
                    padding="8px,8px,8px,8px"
-                   width="300px">
+                   width="270px">
+                <panel/>
                 <panel childLayout="horizontal">
                     <control name="label" id="#prompt"
                              color="#000f"
-                             textHAlign="left"
-                             width="*"/>
+                             textHAlign="center"
+                             wrap="true"/>
                 </panel>
-                <panel height="8px"/>
+                <panel height="10px"/>
                 <panel childLayout="horizontal">
                     <panel/>
                     <control name="button" id="#cancel"
@@ -71,6 +72,7 @@
                     </control>
                     <panel/>
                 </panel>
+                <panel/>
             </panel>
             <panel/>
         </panel>
