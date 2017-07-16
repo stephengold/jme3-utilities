@@ -42,7 +42,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * A 3D, static, linestrip-mode mesh which renders a circle or polygon.
+ * A 3D, static, lineloop-mode mesh which renders a circle or polygon.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -86,7 +86,7 @@ public class LoopMesh extends Mesh {
         Validate.inRange(vertexCount, "vertex count", 3, Integer.MAX_VALUE);
 
         this.vertexCount = vertexCount;
-        setMode(Mode.LineStrip);
+        setMode(Mode.LineLoop);
         updateCoordinates();
 
         updateIndices();
@@ -195,7 +195,6 @@ public class LoopMesh extends Mesh {
         for (int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
             indexArray[vertexIndex] = (short) vertexIndex;
         }
-        indexArray[vertexCount] = (short) 0;
         /*
          * Allocate and assign a buffer for indices.
          */

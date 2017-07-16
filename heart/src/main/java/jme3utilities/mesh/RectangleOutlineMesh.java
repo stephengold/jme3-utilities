@@ -30,7 +30,7 @@ import com.jme3.scene.VertexBuffer;
 import java.util.logging.Logger;
 
 /**
- * A 2D, static, linestrip-mode mesh which renders the outline of a rectangle in
+ * A 2D, static, lineloop-mode mesh which renders the outline of a rectangle in
  * the XY plane.
  * <p>
  * In local space, the rectangle extends from (x1,y1,0) to (x2,y2,0).
@@ -66,7 +66,7 @@ public class RectangleOutlineMesh extends Mesh {
      * @param y2 local Y coordinate of the 2nd and 3rd vertices
      */
     public RectangleOutlineMesh(float x1, float x2, float y1, float y2) {
-        setMode(Mode.LineStrip);
+        setMode(Mode.LineLoop);
 
         setBuffer(VertexBuffer.Type.Position, 3, new float[]{
             x1, y1, 0f,
@@ -74,7 +74,7 @@ public class RectangleOutlineMesh extends Mesh {
             x2, y2, 0f,
             x2, y1, 0f});
 
-        setBuffer(VertexBuffer.Type.Index, 2, new short[]{0, 1, 2, 3, 0});
+        setBuffer(VertexBuffer.Type.Index, 2, new short[]{0, 1, 2, 3});
 
         updateBound();
         setStatic();
