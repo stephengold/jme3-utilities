@@ -148,6 +148,22 @@ abstract public class InputMode
     // new methods exposed
 
     /**
+     * Activate this mode.
+     */
+    public void activate() {
+        setActiveMode(this);
+
+        if (cursor == null) {
+            inputManager.setCursorVisible(false);
+        } else {
+            inputManager.setMouseCursor(cursor);
+            inputManager.setCursorVisible(true);
+        }
+
+        mapBoundHotkeys();
+    }
+
+    /**
      * Add the specified action name without binding anything to it.
      *
      * @param name action name (not null)
@@ -215,6 +231,15 @@ abstract public class InputMode
 
         String actionName = getActionName(hotkey);
         return actionName != null;
+    }
+
+    /**
+     * Deactivate this mode.
+     */
+    public void deactivate() {
+        setActiveMode(null);
+        inputManager.setCursorVisible(false);
+        unmapBoundHotkeys();
     }
 
     /**
@@ -524,22 +549,6 @@ abstract public class InputMode
     // private methods
 
     /**
-     * Activate this mode.
-     */
-    private void activate() {
-        setActiveMode(this);
-
-        if (cursor == null) {
-            inputManager.setCursorVisible(false);
-        } else {
-            inputManager.setMouseCursor(cursor);
-            inputManager.setCursorVisible(true);
-        }
-
-        mapBoundHotkeys();
-    }
-
-    /**
      * Count how many hotkeys are bound to a named action.
      *
      * @param actionName (not null)
@@ -561,15 +570,6 @@ abstract public class InputMode
         }
 
         return count;
-    }
-
-    /**
-     * Deactivate this mode.
-     */
-    private void deactivate() {
-        setActiveMode(null);
-        inputManager.setCursorVisible(false);
-        unmapBoundHotkeys();
     }
 
     /**
