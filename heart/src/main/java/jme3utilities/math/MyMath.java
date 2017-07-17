@@ -446,6 +446,47 @@ public class MyMath {
     }
 
     /**
+     * Normalize a dataset to [0, 1]. If min=max, all data will be set to 0.5.
+     *
+     * @param data data to normalize (not null, modified)
+     */
+    public static void normalize(float[] data) {
+        Validate.nonNull(data, "data");
+
+        float min = Float.POSITIVE_INFINITY;
+        float max = Float.NEGATIVE_INFINITY;
+        for (float value : data) {
+            if (value < min) {
+                min = value;
+            }
+            if (value > max) {
+                max = value;
+            }
+        }
+        normalize(data, min, max);
+    }
+
+    /**
+     * Normalize a dataset to [0, 1] using the specified min and max. If
+     * min=max, all data will be set to 0.5.
+     *
+     * @param data data to normalize (not null, modified)
+     * @param min minimum value in dataset
+     * @param max maximum value in dataset
+     */
+    public static void normalize(float[] data, float min, float max) {
+        Validate.nonNull(data, "data");
+
+        for (int i = 0; i < data.length; i++) {
+            if (min == max) {
+                data[i] = 0.5f;
+            } else {
+                data[i] = (data[i] - min) / (max - min);
+            }
+        }
+    }
+
+    /**
      * Round the rotation angle of the indexed axis to the nearest Pi/2 radians.
      *
      * @param input (not null, modified)
