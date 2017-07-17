@@ -48,7 +48,7 @@
             <panel childLayout="vertical"
                    backgroundColor="#aaaf"
                    padding="8px"
-                   width="310px">
+                   width="630px">
                 <control name="label" id="#title"/>
                 <panel height="8px"/>
                 <control name="scrollPanel"
@@ -60,7 +60,7 @@
                     <panel childLayout="vertical"
                            backgroundColor="#acff"
                            padding="0px,6px"
-                           height="999px" width="270px">
+                           height="1600px" width="590px">
                         <control name="label" id="#1" wrap="true"/>
                     </panel>
                 </control>
