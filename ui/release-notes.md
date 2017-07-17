@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-ui library and related tests
 
-## Version 0.5.5 released on TBD
+## Version 0.5.5 released on 16 July 2017
 
 Publicize InputMode.activate() and InputMode.deactivate() so they can be
 overriden.

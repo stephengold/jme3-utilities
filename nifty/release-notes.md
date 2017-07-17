@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.6.8 released on TBD
+
++ Use wrap="true" for labels in dialog boxes and infoboxes.
++ Made the GUI render order an initialization option.
+
 ## Version 0.6.7 released on 3 July 2017
 
 + Render NiftyGUI after JME's guiNode.
@@ -10,7 +15,7 @@
 
 ## Version 0.6.5 released on 24 June 2017
 
-+ Added simpler API for PopScreenController.showTextEntryDialog()
++ Added simpler API for PopScreenController.showTextEntryDialog() method.
 + Add 2 dialog controllers: FloatDialog and IntegerDialog.
 
 ## Version 0.6.4 released on 20 May 2017
