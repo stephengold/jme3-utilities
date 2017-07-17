@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.5.5 released on TBD
+
+Publicize InputMode.activate() and InputMode.deactivate() so they can be
+overriden.
+
 ## Version 0.5.4 released on 15 July 2017
 
 + Added a Locator class to manage asset locators.
