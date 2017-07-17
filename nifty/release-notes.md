@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.6.8 released on TBD
+## Version 0.6.8 released on 16 July 2017
 
 + Use wrap="true" for labels in dialog boxes and infoboxes.
 + Made the GUI render order an initialization option.
