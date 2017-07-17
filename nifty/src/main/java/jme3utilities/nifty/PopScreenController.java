@@ -409,19 +409,11 @@ public class PopScreenController extends BasicScreenController {
 
         String[] lines = bodyText.split("\n");
         int numLines = lines.length;
-
-        int maxChars = 0;
-        for (int lineIndex = 0; lineIndex < numLines; lineIndex++) {
-            String lineText = lines[lineIndex];
-            int length = lineText.length();
-            if (length > maxChars) {
-                maxChars = length;
-            }
-        }
+        int numChars = bodyText.length();
         /*
          * Create a popup element for the dialog box. Nifty assigns it a new id.
          */
-        if (numLines > 10 || maxChars > 80) { // TODO use font information
+        if (numLines > 10 || numChars > 200) { // TODO use font information
             dialogElement = nifty.createPopup("dialogs/info43");
         } else {
             dialogElement = nifty.createPopup("dialogs/info10");
@@ -433,15 +425,9 @@ public class PopScreenController extends BasicScreenController {
         TextRenderer renderer = titleElement.getRenderer(TextRenderer.class);
         renderer.setText(titleText);
 
-        for (int lineIndex = 0; lineIndex < numLines; lineIndex++) {
-            String id = String.format("#%d", lineIndex + 1);
-            Element lineElement = dialogElement.findElementById(id);
-            if (lineElement != null) {
-                renderer = lineElement.getRenderer(TextRenderer.class);
-                String lineText = lines[lineIndex];
-                renderer.setText(lineText);
-            }
-        }
+        Element lineElement = dialogElement.findElementById("#1");
+        renderer = lineElement.getRenderer(TextRenderer.class);
+        renderer.setText(bodyText);
 
         activateDialog(popupId, null, null, null);
     }

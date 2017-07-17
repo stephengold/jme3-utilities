@@ -47,64 +47,21 @@
             <panel/>
             <panel childLayout="vertical"
                    backgroundColor="#aaaf"
-                   padding="8px,8px,8px,8px"
-                   width="500px">
-                <control name="label" id="#title"
-                         halign="left"
-                         width="*"/>
+                   padding="8px"
+                   width="310px">
+                <control name="label" id="#title"/>
                 <panel height="8px"/>
                 <control name="scrollPanel"
                          height="220px"
-                         pageSizeX="200" pageSizeY="200"
-                         stepSizeX="50" stepSizeY="50"
+                         horizontal="false"
+                         pageSizeY="200"
+                         stepSizeY="50"
                          style="bats-scroll-panel">
                     <panel childLayout="vertical"
                            backgroundColor="#acff"
-                           padding="0px,0px,6px,6px"
-                           height="999px" width="999px">
-                        <control name="label" id="#1" halign="left" width="*"/>
-                        <control name="label" id="#2" halign="left" width="*"/>
-                        <control name="label" id="#3" halign="left" width="*"/>
-                        <control name="label" id="#4" halign="left" width="*"/>
-                        <control name="label" id="#5" halign="left" width="*"/>
-                        <control name="label" id="#6" halign="left" width="*"/>
-                        <control name="label" id="#7" halign="left" width="*"/>
-                        <control name="label" id="#8" halign="left" width="*"/>
-                        <control name="label" id="#9" halign="left" width="*"/>
-                        <control name="label" id="#10" halign="left" width="*"/>
-                        <control name="label" id="#11" halign="left" width="*"/>
-                        <control name="label" id="#12" halign="left" width="*"/>
-                        <control name="label" id="#13" halign="left" width="*"/>
-                        <control name="label" id="#14" halign="left" width="*"/>
-                        <control name="label" id="#15" halign="left" width="*"/>
-                        <control name="label" id="#16" halign="left" width="*"/>
-                        <control name="label" id="#17" halign="left" width="*"/>
-                        <control name="label" id="#18" halign="left" width="*"/>
-                        <control name="label" id="#19" halign="left" width="*"/>
-                        <control name="label" id="#20" halign="left" width="*"/>
-                        <control name="label" id="#21" halign="left" width="*"/>
-                        <control name="label" id="#22" halign="left" width="*"/>
-                        <control name="label" id="#23" halign="left" width="*"/>
-                        <control name="label" id="#24" halign="left" width="*"/>
-                        <control name="label" id="#25" halign="left" width="*"/>
-                        <control name="label" id="#26" halign="left" width="*"/>
-                        <control name="label" id="#27" halign="left" width="*"/>
-                        <control name="label" id="#28" halign="left" width="*"/>
-                        <control name="label" id="#29" halign="left" width="*"/>
-                        <control name="label" id="#30" halign="left" width="*"/>
-                        <control name="label" id="#31" halign="left" width="*"/>
-                        <control name="label" id="#32" halign="left" width="*"/>
-                        <control name="label" id="#33" halign="left" width="*"/>
-                        <control name="label" id="#34" halign="left" width="*"/>
-                        <control name="label" id="#35" halign="left" width="*"/>
-                        <control name="label" id="#36" halign="left" width="*"/>
-                        <control name="label" id="#37" halign="left" width="*"/>
-                        <control name="label" id="#38" halign="left" width="*"/>
-                        <control name="label" id="#39" halign="left" width="*"/>
-                        <control name="label" id="#40" halign="left" width="*"/>
-                        <control name="label" id="#41" halign="left" width="*"/>
-                        <control name="label" id="#42" halign="left" width="*"/>
-                        <control name="label" id="#43" halign="left" width="*"/>
+                           padding="0px,6px"
+                           height="999px" width="270px">
+                        <control name="label" id="#1" wrap="true"/>
                     </panel>
                 </control>
                 <panel height="8px"/>

@@ -47,26 +47,15 @@
             <panel/>
             <panel childLayout="vertical"
                    backgroundColor="#aaaf"
-                   padding="8px,8px,8px,8px"
+                   padding="8px"
                    width="500px">
-                <control name="label" id="#title"
-                         halign="left"
-                         width="*"/>
+                <control name="label" id="#title"/>
                 <panel height="8px"/>
                 <panel childLayout="vertical"
                        backgroundColor="#acff"
-                       padding="0px,0px,6px,6px"
-                       height="225px" width="*">
-                    <control name="label" id="#1" halign="left" width="*"/>
-                    <control name="label" id="#2" halign="left" width="*"/>
-                    <control name="label" id="#3" halign="left" width="*"/>
-                    <control name="label" id="#4" halign="left" width="*"/>
-                    <control name="label" id="#5" halign="left" width="*"/>
-                    <control name="label" id="#6" halign="left" width="*"/>
-                    <control name="label" id="#7" halign="left" width="*"/>
-                    <control name="label" id="#8" halign="left" width="*"/>
-                    <control name="label" id="#9" halign="left" width="*"/>
-                    <control name="label" id="#10" halign="left" width="*"/>
+                       padding="0px,6px"
+                       height="200px" width="*">
+                    <control name="label" id="#1" wrap="true"/>
                 </panel>
                 <panel height="8px"/>
                 <panel childLayout="horizontal">
