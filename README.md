@@ -442,9 +442,10 @@ External links:
     https://www.youtube.com/watch?v=FsJRM6tr3oQ
   + January 2014 SkyControl update video:
     https://www.youtube.com/watch?v=gE4wxgBIkaw
-  + A maze game which uses jme3-utilities libraries:
+  + A maze game that uses jme3-utilities libraries:
     https://github.com/stephengold/jme3-maze
-
+  + A flight simulation game that uses SkyControl:
+    https://github.com/ZoltanTheHun/SkyHussars
 
 ## Acknowledgments
 
