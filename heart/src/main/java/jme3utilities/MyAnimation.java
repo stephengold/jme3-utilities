@@ -256,7 +256,7 @@ public class MyAnimation {
      * @param boneTrack which bone track (not null, unaffected)
      * @param animControl the animation control containing that track (not null,
      * unaffected)
-     * @return the name
+     * @return the bone's name
      */
     public static String getTargetName(BoneTrack boneTrack,
             AnimControl animControl) {
