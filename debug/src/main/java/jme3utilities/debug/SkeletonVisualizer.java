@@ -142,7 +142,7 @@ public class SkeletonVisualizer extends SubtreeControl {
         setLineWidth(defaultLineWidth);
 
         pointMaterial = new Material(assetManager,
-                "MatDefs/wireframe/multicolor.j3md");
+                "MatDefs/wireframe/multicolor2.j3md");
         RenderState rs = pointMaterial.getAdditionalRenderState();
         rs.setDepthTest(false);
         rs.setWireframe(true);

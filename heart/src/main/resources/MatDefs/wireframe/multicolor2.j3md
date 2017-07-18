@@ -22,22 +22,24 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// a single-color wireframe/points material for use with SkeletonDebugger
+// a multicolor wireframe/points material with point-size/shape support
+// used by SkeletonVisualizer
 
 MaterialDef wireframe {
     MaterialParameters {
-        Color Color
         Float PointSize : 1.0
         Int NumberOfBones
         Matrix4Array BoneMatrices
+        Texture2D PointShape
     }
 
     Technique {
         Defines {
             NUM_BONES : NumberOfBones
+            POINT_SHAPE : PointShape
         }
-        FragmentShader GLSL110: Shaders/wireframe/wireframe.frag
-        VertexShader GLSL110:   Shaders/wireframe/wireframe.vert
+        FragmentShader GLSL120: Shaders/wireframe/multicolor2.frag
+        VertexShader GLSL120:   Shaders/wireframe/multicolor2.vert
         WorldParameters {
             ViewMatrix
             ViewProjectionMatrix
