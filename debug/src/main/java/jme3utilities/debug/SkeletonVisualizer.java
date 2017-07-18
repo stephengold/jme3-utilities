@@ -30,12 +30,15 @@ import com.jme3.asset.AssetManager;
 import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.material.MaterialDef;
+import com.jme3.material.RenderState;
+import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Transform;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.texture.Texture;
 import com.jme3.util.clone.Cloner;
 import java.util.Map;
 import java.util.TreeMap;
@@ -90,6 +93,10 @@ public class SkeletonVisualizer extends SubtreeControl {
      */
     final private static Logger logger = Logger.getLogger(
             SkeletonVisualizer.class.getName());
+    /**
+     * asset path to default shape for points
+     */
+    final private static String defaultPointShapeAssetPath = "Textures/shapes/solid circle.png";
     // *************************************************************************
     // fields
 
@@ -129,15 +136,24 @@ public class SkeletonVisualizer extends SubtreeControl {
         super();
         Validate.nonNull(assetManager, "asset manager");
 
-        lineMaterial = MyAsset.createWireframeMaterial(
-                assetManager, defaultLineColor);
+        lineMaterial = MyAsset.createWireframeMaterial(assetManager,
+                defaultLineColor);
         lineMaterial.getAdditionalRenderState().setDepthTest(false);
         setLineWidth(defaultLineWidth);
 
         pointMaterial = new Material(assetManager,
                 "MatDefs/wireframe/multicolor.j3md");
-        pointMaterial.getAdditionalRenderState().setWireframe(true);
-        pointMaterial.getAdditionalRenderState().setDepthTest(false);
+        RenderState rs = pointMaterial.getAdditionalRenderState();
+        rs.setDepthTest(false);
+        rs.setWireframe(true);
+
+        if (supportsPointShape()) {
+            rs.setBlendMode(BlendMode.Alpha);
+            Texture pointShape = MyAsset.loadTexture(assetManager,
+                    defaultPointShapeAssetPath);
+            setPointShape(pointShape);
+        }
+
         if (supportsPointSize()) {
             setPointSize(defaultPointSize);
         }
@@ -301,7 +317,22 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Alter the point size of the visualization.
+     * Alter the point shape in the visualization.
+     *
+     * @param shape shape texture (not null)
+     */
+    final public void setPointShape(Texture shape) {
+        Validate.nonNull(shape, "shape");
+
+        if (supportsPointShape()) {
+            pointMaterial.setTexture("PointShape", shape);
+        } else {
+            logger.log(Level.WARNING, "PointShape not set.");
+        }
+    }
+
+    /**
+     * Alter the point size in the visualization.
      *
      * @param size (in pixels, &ge;0, 0 &rarr; hide the points)
      */
@@ -348,6 +379,20 @@ public class SkeletonVisualizer extends SubtreeControl {
             Geometry links = new Geometry(linksName, linksMesh);
             links.setMaterial(lineMaterial);
             subtree.attachChildAt(links, linksChildPosition);
+        }
+    }
+
+    /**
+     * Test whether the points material supports PointShape.
+     *
+     * @return true if supported, false otherwise
+     */
+    final public boolean supportsPointShape() {
+        MaterialDef def = pointMaterial.getMaterialDef();
+        if (def.getMaterialParam("PointShape") == null) {
+            return false;
+        } else {
+            return true;
         }
     }
 
