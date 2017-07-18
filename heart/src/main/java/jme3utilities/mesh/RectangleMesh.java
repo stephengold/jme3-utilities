@@ -25,6 +25,7 @@
  */
 package jme3utilities.mesh;
 
+import com.jme3.font.Rectangle;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
 import java.util.logging.Level;
@@ -62,6 +63,22 @@ public class RectangleMesh extends Mesh {
      */
     public RectangleMesh() {
         this(0f, 1f, 0f, 1f, 1f);
+    }
+
+    /**
+     * Instantiate an axis-aligned rectangle with default texture coordinates.
+     *
+     * @param rect location of 1st vertex and dimensions of the rectangle (not
+     * null)
+     * @param zNorm the Z component of the normal vector (must be +1 or -1)
+     */
+    public RectangleMesh(Rectangle rect, float zNorm) {
+        this(0f, 1f, 0f, 1f,
+                rect.x,
+                rect.y,
+                rect.x + rect.width,
+                rect.y + rect.height,
+                zNorm);
     }
 
     /**
