@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.12 released on TBD
+## Version 0.9.12 released on 18 July 2017
 
  + Added material definition multicolor2 to render point shapes
  + Added DomeMesh and RoundedRectangle classes
