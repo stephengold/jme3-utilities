@@ -31,7 +31,10 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.math.MyMath;
@@ -232,6 +235,44 @@ final public class MyCamera {
 
         assert ratio > 0f : ratio;
         return ratio;
+    }
+
+    /**
+     * Enumerate all view ports that contain the specified screen position.
+     *
+     * @param screenXY (in pixels, not null, unaffected)
+     * @param renderManager (not null)
+     *
+     * @return a new list of pre-existing view ports
+     */
+    public static List<ViewPort> listViewPorts(RenderManager renderManager,
+            Vector2f screenXY) {
+        Validate.nonNull(screenXY, "screen xy");
+
+        List<ViewPort> result = new ArrayList<>(4);
+
+        List<ViewPort> preViews = renderManager.getPreViews();
+        for (ViewPort preView : preViews) {
+            if (contains(preView, screenXY)) {
+                result.add(preView);
+            }
+        }
+
+        List<ViewPort> mainViews = renderManager.getMainViews();
+        for (ViewPort mainView : mainViews) {
+            if (contains(mainView, screenXY)) {
+                result.add(mainView);
+            }
+        }
+
+        List<ViewPort> postViews = renderManager.getPostViews();
+        for (ViewPort postView : postViews) {
+            if (contains(postView, screenXY)) {
+                result.add(postView);
+            }
+        }
+
+        return result;
     }
 
     /**
