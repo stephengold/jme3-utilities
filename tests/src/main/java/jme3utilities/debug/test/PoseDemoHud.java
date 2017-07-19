@@ -785,14 +785,14 @@ public class PoseDemoHud
          */
         Dumper dumper = PoseDemo.getDumper();
         enable = isChecked("printTransform");
-        dumper.setPrintTransform(enable);
+        dumper.setDumpTransform(enable);
         enable = isChecked("printUser");
-        dumper.setPrintUser(enable);
+        dumper.setDumpUser(enable);
         enable = isChecked("printBucket");
-        dumper.setPrintBucket(enable);
+        dumper.setDumpBucket(enable);
         enable = isChecked("printShadow");
-        dumper.setPrintShadow(enable);
+        dumper.setDumpShadow(enable);
         enable = isChecked("printCull");
-        dumper.setPrintCull(enable);
+        dumper.setDumpCull(enable);
     }
 }

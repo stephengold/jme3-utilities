@@ -584,6 +584,61 @@ public class Dumper {
     }
 
     /**
+     * Configure dumping of render-queue bucket assignments.
+     *
+     * @param newValue true to enable, false to disable
+     * @return this instance for chaining
+     */
+    public Dumper setDumpBucket(boolean newValue) {
+        dumpBucketFlag = newValue;
+        return this;
+    }
+
+    /**
+     * Configure dumping of cull hints.
+     *
+     * @param newValue true to enable, false to disable
+     * @return this instance for chaining
+     */
+    public Dumper setDumpCull(boolean newValue) {
+        dumpCullFlag = newValue;
+        return this;
+    }
+
+    /**
+     * Configure dumping of shadow modes.
+     *
+     * @param newValue true to enable, false to disable
+     * @return this instance for chaining
+     */
+    public Dumper setDumpShadow(boolean newValue) {
+        dumpShadowFlag = newValue;
+        return this;
+    }
+
+    /**
+     * Configure dumping of location and scaling.
+     *
+     * @param newValue true to enable, false to disable
+     * @return this instance for chaining
+     */
+    public Dumper setDumpTransform(boolean newValue) {
+        dumpTransformFlag = newValue;
+        return this;
+    }
+
+    /**
+     * Configure dumping of user data.
+     *
+     * @param newValue true to enable, false to disable
+     * @return this instance for chaining
+     */
+    public Dumper setDumpUser(boolean newValue) {
+        dumpUserFlag = newValue;
+        return this;
+    }
+
+    /**
      * Configure the indent increment.
      *
      * @param newValue (not null)
@@ -604,61 +659,6 @@ public class Dumper {
     public Dumper setListSeparator(String separator) {
         Validate.nonNull(separator, "separator");
         listSeparator = separator;
-        return this;
-    }
-
-    /**
-     * Configure dumping of render-queue bucket assignments.
-     *
-     * @param newValue true to enable, false to disable
-     * @return this instance for chaining
-     */
-    public Dumper setPrintBucket(boolean newValue) {
-        dumpBucketFlag = newValue;
-        return this;
-    }
-
-    /**
-     * Configure dumping of cull hints.
-     *
-     * @param newValue true to enable, false to disable
-     * @return this instance for chaining
-     */
-    public Dumper setPrintCull(boolean newValue) {
-        dumpCullFlag = newValue;
-        return this;
-    }
-
-    /**
-     * Configure dumping of shadow modes.
-     *
-     * @param newValue true to enable, false to disable
-     * @return this instance for chaining
-     */
-    public Dumper setPrintShadow(boolean newValue) {
-        dumpShadowFlag = newValue;
-        return this;
-    }
-
-    /**
-     * Configure dumping of location and scaling.
-     *
-     * @param newValue true to enable, false to disable
-     * @return this instance for chaining
-     */
-    public Dumper setPrintTransform(boolean newValue) {
-        dumpTransformFlag = newValue;
-        return this;
-    }
-
-    /**
-     * Configure dumping of user data.
-     *
-     * @param newValue true to enable, false to disable
-     * @return this instance for chaining
-     */
-    public Dumper setPrintUser(boolean newValue) {
-        dumpUserFlag = newValue;
         return this;
     }
     // *************************************************************************
