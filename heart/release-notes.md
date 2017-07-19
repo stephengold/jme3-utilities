@@ -1,5 +1,13 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 0.9.12 released on TBD
+
+ + Added material definition multicolor2 to render point shapes
+ + Added DomeMesh and RoundedRectangle classes
+ + Added another constructor for RectangleMesh
+ + Added method MyMath.normalize()
+ + Use Mesh.Mode.LineLoop (where feasible) when generating meshes
+
 ## Version 0.9.11 released on 14 July 2017
 
  + Fixed logic error in MyCamera.viewAspectRatio()
