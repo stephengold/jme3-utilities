@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * Mathematical utility methods.
+ * Mathematical utility methods. TODO move array methods to a new class
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -214,7 +214,7 @@ public class MyMath {
     /**
      * Find the first true element of the input array.
      *
-     * @param array input (not null)
+     * @param array input (not null, unaffected)
      * @return index (&ge;0, &lt;length) or -1 if no true element found
      */
     public static int first(boolean[] array) {
@@ -224,6 +224,29 @@ public class MyMath {
             }
         }
         return -1;
+    }
+
+    /**
+     * Test whether the specified array contains more than one distinct value.
+     *
+     * @param array input (not null, unaffected)
+     * @return true if multiple values found, otherwise false
+     */
+    public static boolean hasDistinct(float[] array) {
+        Validate.nonNull(array, "array");
+
+        boolean result = false;
+        if (array.length > 1) {
+            float first = array[0];
+            for (float value : array) {
+                if (value != first) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -242,6 +265,26 @@ public class MyMath {
 
         assert result >= 0f : result;
         return result;
+    }
+
+    /**
+     * Test whether b is between a and c.
+     *
+     * @param a 1st input value
+     * @param b 2nd input value
+     * @param c 3rd input value
+     * @return true if b is between a and c (inclusive), otherwise false
+     */
+    public static boolean isBetween(float a, float b, float c) {
+        if (a > c) {
+            return a >= b && b >= c;
+        } else if (a < c) {
+            return a <= b && b <= c;
+        } else if (a == c) {
+            return a == b;
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     /**
@@ -446,16 +489,16 @@ public class MyMath {
     }
 
     /**
-     * Normalize a dataset to [0, 1]. If min=max, all data will be set to 0.5.
+     * Normalize a dataset to [0, 1]. If min=max, all data will be set to 0.5 .
      *
-     * @param data data to normalize (not null, modified)
+     * @param dataset data to normalize (not null, modified)
      */
-    public static void normalize(float[] data) {
-        Validate.nonNull(data, "data");
+    public static void normalize(float[] dataset) {
+        Validate.nonNull(dataset, "dataset");
 
         float min = Float.POSITIVE_INFINITY;
         float max = Float.NEGATIVE_INFINITY;
-        for (float value : data) {
+        for (float value : dataset) {
             if (value < min) {
                 min = value;
             }
@@ -463,25 +506,25 @@ public class MyMath {
                 max = value;
             }
         }
-        normalize(data, min, max);
+        normalize(dataset, min, max);
     }
 
     /**
      * Normalize a dataset to [0, 1] using the specified min and max. If
      * min=max, all data will be set to 0.5.
      *
-     * @param data data to normalize (not null, modified)
-     * @param min minimum value in dataset
-     * @param max maximum value in dataset
+     * @param dataset data to normalize (not null, modified)
+     * @param min value to normalize to 0
+     * @param max value to normalize to 1
      */
-    public static void normalize(float[] data, float min, float max) {
-        Validate.nonNull(data, "data");
+    public static void normalize(float[] dataset, float min, float max) {
+        Validate.nonNull(dataset, "dataset");
 
-        for (int i = 0; i < data.length; i++) {
+        for (int i = 0; i < dataset.length; i++) {
             if (min == max) {
-                data[i] = 0.5f;
+                dataset[i] = 0.5f;
             } else {
-                data[i] = (data[i] - min) / (max - min);
+                dataset[i] = (dataset[i] - min) / (max - min);
             }
         }
     }
