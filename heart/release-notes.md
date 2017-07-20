@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.13 released on TBD
+## Version 0.9.13 released on 20 July 2017
 
  + Fixed NPEs caused by bone tracks without scales
  + Avoid use of == and != on floats, causing semantic changes in some cases
