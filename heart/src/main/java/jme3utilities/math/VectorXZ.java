@@ -191,6 +191,36 @@ public class VectorXZ
     // ReadXZ methods
 
     /**
+     * Test for approximate equality with another vector using a Chebyshev
+     * metric.
+     *
+     * @param otherVector (not null)
+     * @param absoluteTolerance (&ge;0)
+     * @return true if each component differs by tolerance or less, otherwise
+     * false
+     */
+    @Override
+    public boolean aboutEquals(ReadXZ otherVector, float absoluteTolerance) {
+        Validate.nonNull(otherVector, "other vector");
+        Validate.nonNegative(absoluteTolerance, "absolute tolerance");
+
+        boolean result = equals(otherVector);
+        if (!result) {
+            float otherX = otherVector.getX();
+            float dx = Math.abs(x - otherX);
+            if (dx <= absoluteTolerance) {
+                float otherZ = otherVector.getZ();
+                float dz = Math.abs(z - otherZ);
+                if (dz <= absoluteTolerance) {
+                    result = true;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Add to (translate) this vector.
      *
      * @param increment vector to be added to this vector (not null)
@@ -202,10 +232,12 @@ public class VectorXZ
         float sumX = x + increment.getX();
         float sumZ = z + increment.getZ();
 
-        if (sumX == x && sumZ == z) {
-            return this;
+        VectorXZ sum;
+        if (equals(sumX, sumZ)) {
+            sum = this;
+        } else {
+            sum = new VectorXZ(sumX, sumZ);
         }
-        VectorXZ sum = new VectorXZ(sumX, sumZ);
 
         return sum;
     }
@@ -245,10 +277,12 @@ public class VectorXZ
             newZ = FastMath.sign(z);
         }
 
-        if (newX == x && newZ == z) {
-            return this;
+        VectorXZ result;
+        if (equals(newX, newZ)) {
+            result = this;
+        } else {
+            result = new VectorXZ(newX, newZ);
         }
-        VectorXZ result = new VectorXZ(newX, newZ);
 
         return result;
     }
@@ -359,6 +393,26 @@ public class VectorXZ
     }
 
     /**
+     * Compare lexicographically with a hypothetical vector having the specified
+     * components, distinguishing 0 and -0 and giving priority to the X
+     * components.
+     *
+     * @param hX X component of the hypothetical vector
+     * @param hZ Z component of the hypothetical vector
+     * @return 0 if this vector equals the hypothetical; negative if this comes
+     * before the hypothetical; positive if this comes after hypothetical
+     */
+    @Override
+    public int compareTo(float hX, float hZ) {
+        int result = Float.compare(x, hX);
+        if (result == 0) {
+            result = Float.compare(z, hZ);
+        }
+
+        return result;
+    }
+
+    /**
      * Calculate the cosine of the angle between this vector and another. This
      * is used to compare the similarity of direction vectors. Returns a
      * double-precision value for precise comparisons.
@@ -459,7 +513,7 @@ public class VectorXZ
     }
 
     /**
-     * Calculate the dot product of this vector with another.
+     * Calculate the dot (scalar) product of this vector with another.
      *
      * @param otherVector other vector (not null)
      * @return the dot product
@@ -474,6 +528,20 @@ public class VectorXZ
         double product = x1 * x2 + z1 * z2;
 
         return product;
+    }
+
+    /**
+     * Test for equality with a hypothetical vector having the specified
+     * components, distinguishing 0 and -0.
+     *
+     * @param hX X component of the hypothetical vector
+     * @param hZ Z component of the hypothetical vector
+     * @return true if equivalent, otherwise false
+     */
+    @Override
+    public boolean equals(float hX, float hZ) {
+        int compare = compareTo(hX, hZ);
+        return compare == 0;
     }
 
     /**
@@ -529,10 +597,12 @@ public class VectorXZ
         float xBlend = x * thisFraction + otherVector.getX() * otherFraction;
         float zBlend = z * thisFraction + otherVector.getZ() * otherFraction;
 
-        if (x == xBlend && z == zBlend) {
-            return this;
+        VectorXZ blend;
+        if (equals(xBlend, zBlend)) {
+            blend = this;
+        } else {
+            blend = new VectorXZ(xBlend, zBlend);
         }
-        VectorXZ blend = new VectorXZ(xBlend, zBlend);
 
         return blend;
     }
@@ -642,10 +712,12 @@ public class VectorXZ
         float newX = cosine * x - sine * z;
         float newZ = cosine * z + sine * x;
 
-        if (newX == x && newZ == z) {
-            return this;
+        VectorXZ result;
+        if (equals(newX, newZ)) {
+            result = this;
+        } else {
+            result = new VectorXZ(newX, newZ);
         }
-        VectorXZ result = new VectorXZ(newX, newZ);
 
         return result;
     }
@@ -691,10 +763,12 @@ public class VectorXZ
         float newX = x / length;
         float newZ = z / length;
 
-        if (newX == x && newZ == z) {
-            return this;
+        VectorXZ result;
+        if (equals(newX, newZ)) {
+            result = this;
+        } else {
+            result = new VectorXZ(newX, newZ);
         }
-        VectorXZ result = new VectorXZ(newX, newZ);
 
         return result;
     }
@@ -718,10 +792,12 @@ public class VectorXZ
         float newX = cosine * x - sine * z;
         float newZ = cosine * z + sine * x;
 
-        if (newX == x && newZ == z) {
-            return this;
+        VectorXZ result;
+        if (equals(newX, newZ)) {
+            result = this;
+        } else {
+            result = new VectorXZ(newX, newZ);
         }
-        VectorXZ result = new VectorXZ(newX, newZ);
 
         return result;
     }
@@ -738,10 +814,12 @@ public class VectorXZ
         float newX = x * multiplier.getX();
         float newZ = z * multiplier.getZ();
 
-        if (newX == x && newZ == z) {
-            return this;
+        VectorXZ result;
+        if (equals(newX, newZ)) {
+            result = this;
+        } else {
+            result = new VectorXZ(newX, newZ);
         }
-        VectorXZ result = new VectorXZ(newX, newZ);
 
         return result;
     }
@@ -758,10 +836,12 @@ public class VectorXZ
         float newX = x - decrement.getX();
         float newZ = z - decrement.getZ();
 
-        if (newX == x && newZ == z) {
-            return this;
+        VectorXZ result;
+        if (equals(newX, newZ)) {
+            result = this;
+        } else {
+            result = new VectorXZ(newX, newZ);
         }
-        VectorXZ result = new VectorXZ(newX, newZ);
 
         return result;
     }
@@ -821,38 +901,40 @@ public class VectorXZ
      */
     @Override
     public int compareTo(ReadXZ otherVector) {
-        int result;
-        if (x != otherVector.getX()) {
-            result = Float.compare(x, otherVector.getX());
-        } else {
-            result = Float.compare(z, otherVector.getZ());
-        }
-        /*
-         * Verify consistency with equals().
-         */
+        float otherX = otherVector.getX();
+        int result = Float.compare(x, otherX);
         if (result == 0) {
-            assert this.equals(otherVector);
+            float otherZ = otherVector.getZ();
+            result = Float.compare(z, otherZ);
         }
+
         return result;
     }
     // *************************************************************************
     // Object methods
 
     /**
-     * Test for exact equality. TODO: also provide comparison with tolerance
+     * Test for exact equality, distinguishing 0 and -0.
      *
      * @param otherObject (may be null)
      * @return true if the vectors are equal, otherwise false
+     * @see #aboutEquals(jme3utilities.math.ReadXZ, float)
      */
     @Override
     public boolean equals(Object otherObject) {
+        boolean result;
         if (this == otherObject) {
-            return true;
+            result = true;
         } else if (otherObject instanceof ReadXZ) {
             ReadXZ otherVector = (ReadXZ) otherObject;
-            return otherVector.getX() == x && otherVector.getZ() == z;
+            float otherX = otherVector.getX();
+            float otherZ = otherVector.getZ();
+            result = equals(otherX, otherZ);
+        } else {
+            result = false;
         }
-        return false;
+
+        return result;
     }
 
     /**

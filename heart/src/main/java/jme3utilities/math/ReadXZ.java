@@ -39,6 +39,17 @@ import com.jme3.math.Vector3f;
  */
 public interface ReadXZ {
     /**
+     * Test for approximate equality with another vector using a Chebyshev
+     * metric.
+     *
+     * @param otherVector (not null)
+     * @param absoluteTolerance (&ge;0)
+     * @return true if each component differs by tolerance or less, otherwise
+     * false
+     */
+    boolean aboutEquals(ReadXZ otherVector, float absoluteTolerance);
+
+    /**
      * Add to (translate) this vector.
      *
      * @param increment vector to be added to this vector (not null)
@@ -89,6 +100,18 @@ public interface ReadXZ {
      * @see MyMath#clamp(float, float)
      */
     ReadXZ clampLength(float radius);
+
+    /**
+     * Compare lexicographically with a hypothetical vector having the specified
+     * components, distinguishing 0 and -0 and giving priority to the X
+     * components.
+     *
+     * @param hX X component of the hypothetical vector
+     * @param hZ Z component of the hypothetical vector
+     * @return 0 if this vector equals the hypothetical; negative if this comes
+     * before the hypothetical; positive if this comes after hypothetical
+     */
+    int compareTo(float hX, float hZ);
 
     /**
      * Calculate the cosine of the angle between this vector and another. This
@@ -143,6 +166,16 @@ public interface ReadXZ {
     double dot(ReadXZ otherVector);
 
     /**
+     * Test for equality with a hypothetical vector having the specified
+     * components, distinguishing 0 and -0.
+     *
+     * @param hX X component of the hypothetical vector
+     * @param hZ Z component of the hypothetical vector
+     * @return true if equivalent, otherwise false
+     */
+    boolean equals(float hX, float hZ);
+
+    /**
      * Mirror (or reflect) this vector to the 1st quadrant.
      *
      * @return a mirrored vector with the same length, both components &ge;0
@@ -179,6 +212,7 @@ public interface ReadXZ {
      * Test whether this vector is in the 1st quadrant.
      *
      * @return true if both components are &ge;0, false otherwise
+     * @see MyVector3f#isAllNonNegative(com.jme3.math.Vector3f)
      */
     boolean isFirstQuadrant();
 
@@ -264,6 +298,7 @@ public interface ReadXZ {
      *
      * @param radians clockwise (LH) angle of rotation in radians
      * @return a vector with the same length
+     * @see com.jme3.math.Vector2f#rotateAroundOrigin(float, boolean)
      */
     ReadXZ rotate(float radians);
 
