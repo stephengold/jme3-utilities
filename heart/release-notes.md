@@ -1,5 +1,16 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 0.9.13 released on TBD
+
+ + Fixed NPEs caused by bone tracks without scales
+ + Avoid use of == and != on floats, causing semantic changes in some cases
+ + Moved 3 methods from MyMath to new MyArray class
+ + Privatized protected fields in DomeMesh and LoopMesh
+ + Added method MyArray.hasDistinct()
+ + Added method MyCamera.listViewPorts()
+ + Added method MyMath.isBetween()
+ + Added methods aboutEquals(), compareTo(), and equals() to ReadXZ/VectorXZ
+
 ## Version 0.9.12 released on 18 July 2017
 
  + Added material definition multicolor2 to render point shapes
