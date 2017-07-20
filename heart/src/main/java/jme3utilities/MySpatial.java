@@ -148,7 +148,7 @@ public class MySpatial {
                 result = geometry;
             }
 
-        } else {
+        } else if (subtree instanceof Node) {
             Node node = (Node) subtree;
             List<Spatial> children = node.getChildren();
             for (Spatial child : children) {
