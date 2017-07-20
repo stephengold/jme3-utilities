@@ -256,7 +256,7 @@ public class MySkeleton {
         for (int vIndex = 0; vIndex < numVertices; vIndex++) {
             for (int wIndex = 0; wIndex < 4; wIndex++) {
                 float weight = weightBuffer.get();
-                float bIndex = boneIndexBuffer.get();
+                byte bIndex = boneIndexBuffer.get();
                 if (wIndex < maxWeightsPerVert
                         && bIndex == biByte
                         && weight > result) {
@@ -321,7 +321,7 @@ public class MySkeleton {
         for (int vIndex = 0; vIndex < numVertices; vIndex++) {
             for (int wIndex = 0; wIndex < 4; wIndex++) {
                 float weight = weightBuffer.get();
-                float bIndex = boneIndexBuffer.get();
+                byte bIndex = boneIndexBuffer.get();
                 if (wIndex < maxWeightsPerVert
                         && bIndex == biByte
                         && weight > 0f) {
