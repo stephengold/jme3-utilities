@@ -264,7 +264,10 @@ public class Misc {
              */
             File parentDirectory = textureFile.getParentFile();
             if (parentDirectory != null && !parentDirectory.exists()) {
-                parentDirectory.mkdirs();
+                boolean success = parentDirectory.mkdirs();
+                if (!success) {
+                    throw new IOException();
+                }
             }
 
             ImageIO.write(image, "png", textureFile);
