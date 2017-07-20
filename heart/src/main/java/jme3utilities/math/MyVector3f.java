@@ -212,7 +212,7 @@ public class MyVector3f {
 
     /**
      * Compare two vectors lexicographically, with the X-component having
-     * priority.
+     * priority, then the Y-component. For this purpose, 0 and -0 are distinct.
      *
      * @param v1 1st input vector (not null, unaffected)
      * @param v2 2nd input vector (not null, unaffected)
@@ -220,13 +220,11 @@ public class MyVector3f {
      * if v1 comes after v2
      */
     public static int compare(Vector3f v1, Vector3f v2) {
-        int result;
-
-        if (v1.x != v2.x) {
-            result = Float.compare(v1.x, v2.x);
-        } else if (v1.y != v2.y) {
+        int result = Float.compare(v1.x, v2.x);
+        if (result == 0) {
             result = Float.compare(v1.y, v2.y);
-        } else {
+        }
+        if (result == 0) {
             result = Float.compare(v1.z, v2.z);
         }
 

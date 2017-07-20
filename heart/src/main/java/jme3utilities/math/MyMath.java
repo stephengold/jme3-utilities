@@ -228,6 +228,7 @@ public class MyMath {
 
     /**
      * Test whether the specified array contains more than one distinct value.
+     * (0 and -0 are treated as distinct values for this purpose.)
      *
      * @param array input (not null, unaffected)
      * @return true if multiple values found, otherwise false
@@ -239,7 +240,7 @@ public class MyMath {
         if (array.length > 1) {
             float first = array[0];
             for (float value : array) {
-                if (value != first) {
+                if (Float.compare(value, first) != 0) {
                     result = true;
                     break;
                 }
