@@ -65,7 +65,7 @@ public class LoopMesh extends Mesh {
     /**
      * total number of vertices (&ge;3)
      */
-    protected int vertexCount;
+    private int vertexCount;
     // *************************************************************************
     // constructors
 

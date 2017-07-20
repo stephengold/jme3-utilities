@@ -91,48 +91,48 @@ public class DomeMesh extends Mesh {
      * if true, generate a complete dome; if false, generate a pie-cut segment
      * of a dome
      */
-    protected boolean complete;
+    private boolean complete;
     /**
      * if true, vertex normals point inward; if false, they point outward
      */
-    protected boolean inwardFacing;
+    private boolean inwardFacing;
     /**
      * how much of the rim to generate (in radians, &le;2*Pi, &gt;0)
      */
-    protected float segmentAngle;
+    private float segmentAngle;
     /**
      * U-coordinate of the top (&le;1, &ge;0)
      */
-    protected float topU;
+    private float topU;
     /**
      * V-coordinate of the top (&le;1, &ge;0)
      */
-    protected float topV;
+    private float topV;
     /**
      * UV distance from top to equator (&lt;0.5, &gt;0)
      */
-    protected float uvScale;
+    private float uvScale;
     /**
      * angle from top to rim (in radians, &lt;Pi, &gt;0, Pi/2 &rarr; hemisphere)
      */
-    protected float verticalAngle;
+    private float verticalAngle;
     /**
      * number of samples in each longitudinal quadrant of the dome, including
      * both the top and the rim (&ge;2)
      */
-    protected int quadrantSamples;
+    private int quadrantSamples;
     /**
      * number of samples around the dome's rim (&ge;3)
      */
-    protected int rimSamples;
+    private int rimSamples;
     /**
      * number of triangles in the mesh
      */
-    protected int triangleCount;
+    private int triangleCount;
     /**
      * number of vertices in the mesh
      */
-    protected int vertexCount;
+    private int vertexCount;
     // *************************************************************************
     // constructors
 
