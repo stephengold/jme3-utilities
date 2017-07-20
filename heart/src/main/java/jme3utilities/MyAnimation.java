@@ -345,13 +345,21 @@ public class MyAnimation {
             int oldIndex = newIndex * factor;
             newTranslations[newIndex] = oldTranslations[oldIndex].clone();
             newRotations[newIndex] = oldRotations[oldIndex].clone();
-            newScales[newIndex] = oldScales[oldIndex].clone();
+            if (oldScales != null) {
+                newScales[newIndex] = oldScales[oldIndex].clone();
+            }
             newTimes[newIndex] = oldTimes[oldIndex];
         }
 
         int boneIndex = oldTrack.getTargetBoneIndex();
-        BoneTrack result = new BoneTrack(boneIndex, newTimes, newTranslations,
-                newRotations, newScales);
+        BoneTrack result;
+        if (newScales == null) {
+            result = new BoneTrack(boneIndex, newTimes, newTranslations,
+                    newRotations);
+        } else {
+            result = new BoneTrack(boneIndex, newTimes, newTranslations,
+                    newRotations, newScales);
+        }
 
         return result;
     }
