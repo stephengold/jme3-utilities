@@ -45,9 +45,7 @@ import java.util.logging.Logger;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-abstract public class SubtreeControl
-        extends SimpleControl
-        implements Cloneable {
+abstract public class SubtreeControl extends SimpleControl {
     // *************************************************************************
     // constants and loggers
 
