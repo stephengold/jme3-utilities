@@ -422,8 +422,13 @@ public class MyAnimation {
             prevTime = time;
         }
 
-        boneTrack.setKeyframes(newTimes, newTranslations, newRotations,
-                newScales);
+        if (newScales == null) {
+            boneTrack.setKeyframes(newTimes, newTranslations, newRotations);
+        } else {
+            boneTrack.setKeyframes(newTimes, newTranslations, newRotations,
+                    newScales);
+        }
+
         return true;
     }
 
