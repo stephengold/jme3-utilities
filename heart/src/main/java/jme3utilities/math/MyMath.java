@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * Mathematical utility methods. TODO move array methods to a new class
+ * Mathematical utility methods.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -208,45 +208,6 @@ public class MyMath {
 
         assert result >= 0f : result;
         assert result <= 1f : result;
-        return result;
-    }
-
-    /**
-     * Find the first true element of the input array.
-     *
-     * @param array input (not null, unaffected)
-     * @return index (&ge;0, &lt;length) or -1 if no true element found
-     */
-    public static int first(boolean[] array) {
-        for (int i = 0; i < array.length; i++) {
-            if (array[i]) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Test whether the specified array contains more than one distinct value.
-     * (0 and -0 are treated as distinct values for this purpose.)
-     *
-     * @param array input (not null, unaffected)
-     * @return true if multiple values found, otherwise false
-     */
-    public static boolean hasDistinct(float[] array) {
-        Validate.nonNull(array, "array");
-
-        boolean result = false;
-        if (array.length > 1) {
-            float first = array[0];
-            for (float value : array) {
-                if (Float.compare(value, first) != 0) {
-                    result = true;
-                    break;
-                }
-            }
-        }
-
         return result;
     }
 
@@ -487,47 +448,6 @@ public class MyMath {
         assert result >= 0.0 : result;
         assert result < modulus : result;
         return result;
-    }
-
-    /**
-     * Normalize a dataset to [0, 1]. If min=max, all data will be set to 0.5 .
-     *
-     * @param dataset data to normalize (not null, modified)
-     */
-    public static void normalize(float[] dataset) {
-        Validate.nonNull(dataset, "dataset");
-
-        float min = Float.POSITIVE_INFINITY;
-        float max = Float.NEGATIVE_INFINITY;
-        for (float value : dataset) {
-            if (value < min) {
-                min = value;
-            }
-            if (value > max) {
-                max = value;
-            }
-        }
-        normalize(dataset, min, max);
-    }
-
-    /**
-     * Normalize a dataset to [0, 1] using the specified min and max. If
-     * min=max, all data will be set to 0.5.
-     *
-     * @param dataset data to normalize (not null, modified)
-     * @param min value to normalize to 0
-     * @param max value to normalize to 1
-     */
-    public static void normalize(float[] dataset, float min, float max) {
-        Validate.nonNull(dataset, "dataset");
-
-        for (int i = 0; i < dataset.length; i++) {
-            if (min == max) {
-                dataset[i] = 0.5f;
-            } else {
-                dataset[i] = (dataset[i] - min) / (max - min);
-            }
-        }
     }
 
     /**
