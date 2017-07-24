@@ -148,10 +148,8 @@ public class MyAnimation {
         int newCount = oldCount - 1;
         Vector3f[] newTranslations = new Vector3f[newCount];
         Quaternion[] newRotations = new Quaternion[newCount];
-        Vector3f[] newScales;
-        if (oldScales == null) {
-            newScales = null;
-        } else {
+        Vector3f[] newScales = null;
+        if (oldScales != null) {
             newScales = new Vector3f[newCount];
         }
         float[] newTimes = new float[newCount];
@@ -413,10 +411,8 @@ public class MyAnimation {
         int newCount = 1 + (oldCount - 1) / factor;
         Vector3f[] newTranslations = new Vector3f[newCount];
         Quaternion[] newRotations = new Quaternion[newCount];
-        Vector3f[] newScales;
-        if (oldScales == null) {
-            newScales = null;
-        } else {
+        Vector3f[] newScales = null;
+        if (oldScales != null) {
             newScales = new Vector3f[newCount];
         }
         float[] newTimes = new float[newCount];
@@ -471,10 +467,8 @@ public class MyAnimation {
         float[] newTimes = new float[numDistinct];
         Vector3f[] newTranslations = new Vector3f[numDistinct];
         Quaternion[] newRotations = new Quaternion[numDistinct];
-        Vector3f[] newScales;
-        if (originalScales == null) {
-            newScales = null;
-        } else {
+        Vector3f[] newScales = null;
+        if (originalScales != null) {
             newScales = new Vector3f[numDistinct];
         }
         /*
