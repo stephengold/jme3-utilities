@@ -69,8 +69,8 @@ final public class MyArray {
     }
 
     /**
-     * Test whether the specified array contains more than one distinct value.
-     * (0 and -0 are treated as distinct values for this purpose.)
+     * Test whether the specified array contains more than one distinct value,
+     * distinguishing 0 from -0.
      *
      * @param array input (not null, unaffected)
      * @return true if multiple values found, otherwise false
@@ -115,7 +115,7 @@ final public class MyArray {
 
     /**
      * Normalize a dataset to [0, 1] using the specified min and max. If
-     * min=max, all data will be set to 0.5.
+     * min==max, all data will be set to 0.5.
      *
      * @param dataset data to normalize (not null, modified)
      * @param min value to normalize to 0

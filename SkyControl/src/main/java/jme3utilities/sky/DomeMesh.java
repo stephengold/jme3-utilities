@@ -56,6 +56,8 @@ import jme3utilities.math.MyMath;
  * The projection to texture space is an "azimuthal equidistant projection". The
  * dome's equator maps to a circle of radius uvScale centered at (topU,topV).
  * The +X direction maps to +U, and the +Z direction maps to -V.
+ * 
+ * TODO replace with jme3utilites.mesh.DomeMesh
  *
  * @author Stephen Gold sgold@sonic.net
  */

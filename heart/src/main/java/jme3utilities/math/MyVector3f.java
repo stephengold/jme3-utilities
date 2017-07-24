@@ -232,9 +232,10 @@ public class MyVector3f {
     }
 
     /**
-     * Count the number of distinct vectors in an array.
+     * Count the number of distinct vectors in an array, distinguishing 0 from
+     * -0.
      *
-     * @param array input (not null)
+     * @param array input (not null, unaffected)
      * @return count (&ge;0)
      */
     public static int countDistinct(Vector3f[] array) {

@@ -64,11 +64,11 @@ final public class Constants {
      */
     final static float topV = 0.5f;
     /**
-     * maximum value for texture coordinates which do not wrap
+     * maximum value for texture coordinates that do not wrap
      */
     final public static float uvMax = 1f;
     /**
-     * minimum value for texture coordinates which do not wrap
+     * minimum value for texture coordinates that do not wrap
      */
     final public static float uvMin = 0f;
     /**
