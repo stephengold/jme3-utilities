@@ -38,12 +38,14 @@ import com.jme3.animation.SpatialTrack;
 import com.jme3.animation.Track;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.util.Collection;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.math.MyArray;
 
 /**
  * Utility methods for manipulating animations, channels, and tracks. All
@@ -250,6 +252,26 @@ public class MyAnimation {
     }
 
     /**
+     * Find the index of the keyframe at the specified time in the specified
+     * track.
+     *
+     * @param track which track to search (not null, unaffected)
+     * @param time track time (in seconds, &ge;0)
+     * @return keyframe index (&ge;0) or -1 if keyframe not found
+     */
+    public static int findKeyframeIndex(Track track, float time) {
+        Validate.nonNegative(time, "time");
+
+        float[] times = track.getKeyFrameTimes();
+        int result = MyArray.findPreviousIndex(time, times);
+        if (result >= 0 && times[result] != time) {
+            result = -1;
+        }
+
+        return result;
+    }
+
+    /**
      * Find the keyframe in the specified animation with the latest time.
      *
      * @param animation input (not null)
@@ -268,6 +290,24 @@ public class MyAnimation {
         }
 
         return maxTime;
+    }
+
+    /**
+     * Find the index of the keyframe at or before the specified time in the
+     * specified track.
+     *
+     * @param track which track to search (not null, unaffected)
+     * @param time track time (in seconds, &ge;0)
+     * @return keyframe index (&ge;0)
+     */
+    public static int findPreviousKeyframeIndex(Track track, float time) {
+        Validate.nonNegative(time, "time");
+
+        float[] times = track.getKeyFrameTimes();
+        int result = MyArray.findPreviousIndex(time, times);
+
+        assert result >= 0 : result;
+        return result;
     }
 
     /**
@@ -336,6 +376,69 @@ public class MyAnimation {
                 }
             }
         }
+
+        return result;
+    }
+
+    /**
+     * Copy a bone track, inserting a keyframe at the specified time (which
+     * mustn't already have a keyframe).
+     *
+     * @param oldTrack (not null, unaffected)
+     * @param frameTime when to insert (&gt;0)
+     * @param transform user transform to insert (not null, unaffected)
+     * @return a new instance
+     */
+    public static BoneTrack insertKeyframe(BoneTrack oldTrack, float frameTime,
+            Transform transform) {
+        Validate.positive(frameTime, "keyframe time");
+        assert findKeyframeIndex(oldTrack, frameTime) == -1;
+
+        float[] oldTimes = oldTrack.getKeyFrameTimes();
+        Vector3f[] oldTranslations = oldTrack.getTranslations();
+        Quaternion[] oldRotations = oldTrack.getRotations();
+        Vector3f[] oldScales = oldTrack.getScales();
+        int oldCount = oldTimes.length;
+
+        int newCount = oldCount + 1;
+        Vector3f[] translations = new Vector3f[newCount];
+        Quaternion[] rotations = new Quaternion[newCount];
+        Vector3f[] scales = new Vector3f[newCount];
+        float[] newTimes = new float[newCount];
+
+        boolean added = false;
+        for (int oldIndex = 0; oldIndex < oldCount; oldIndex++) {
+            float time = oldTimes[oldIndex];
+            int newIndex = oldIndex;
+            if (time > frameTime) {
+                if (!added) {
+                    translations[newIndex] = transform.getTranslation().clone();
+                    rotations[newIndex] = transform.getRotation().clone();
+                    scales[newIndex] = transform.getScale().clone();
+                    newTimes[newIndex] = frameTime;
+                    added = true;
+                }
+                ++newIndex;
+            }
+            translations[newIndex] = oldTranslations[oldIndex].clone();
+            rotations[newIndex] = oldRotations[oldIndex].clone();
+            if (oldScales != null) {
+                scales[newIndex] = oldScales[oldIndex].clone();
+            } else {
+                scales[newIndex] = new Vector3f(1f, 1f, 1f);
+            }
+            newTimes[newIndex] = oldTimes[oldIndex];
+        }
+        if (!added) {
+            translations[oldCount] = transform.getTranslation().clone();
+            rotations[oldCount] = transform.getRotation().clone();
+            scales[oldCount] = transform.getScale().clone();
+            newTimes[oldCount] = frameTime;
+        }
+
+        int boneIndex = oldTrack.getTargetBoneIndex();
+        BoneTrack result = new BoneTrack(boneIndex, newTimes, translations,
+                rotations, scales);
 
         return result;
     }
@@ -556,6 +659,103 @@ public class MyAnimation {
             }
             newTimes[frameIndex] = newTime;
         }
+
+        return result;
+    }
+
+    /**
+     * Copy a bone track, truncating it at the specified time.
+     *
+     * @param oldTrack (not null, unaffected)
+     * @param endTime cutoff time (&ge;0)
+     * @return a new instance
+     */
+    public static BoneTrack truncate(BoneTrack oldTrack, float endTime) {
+        Validate.positive(endTime, "end time");
+
+        float[] oldTimes = oldTrack.getKeyFrameTimes();
+        Vector3f[] oldTranslations = oldTrack.getTranslations();
+        Quaternion[] oldRotations = oldTrack.getRotations();
+        Vector3f[] oldScales = oldTrack.getScales();
+
+        int newCount = 1 + findPreviousKeyframeIndex(oldTrack, endTime);
+        Vector3f[] translations = new Vector3f[newCount];
+        Quaternion[] rotations = new Quaternion[newCount];
+        Vector3f[] scales = null;
+        if (oldScales != null) {
+            scales = new Vector3f[newCount];
+        }
+        float[] times = new float[newCount];
+
+        for (int frameIndex = 0; frameIndex < newCount; frameIndex++) {
+            translations[frameIndex] = oldTranslations[frameIndex].clone();
+            rotations[frameIndex] = oldRotations[frameIndex].clone();
+            if (oldScales != null) {
+                scales[frameIndex] = oldScales[frameIndex].clone();
+            }
+            times[frameIndex] = oldTimes[frameIndex];
+        }
+
+        int boneIndex = oldTrack.getTargetBoneIndex();
+        BoneTrack result = newBoneTrack(boneIndex, times, translations,
+                rotations, scales);
+
+        return result;
+    }
+
+    /**
+     * Copy a bone track, altering its end-time keyframe to match its 1st
+     * keyframe. If the track doesn't end with a keyframe, append one.
+     *
+     * @param oldTrack (not null, unaffected)
+     * @param endTime when to insert (&gt;0)
+     * @return a new instance
+     */
+    public static BoneTrack wrap(BoneTrack oldTrack, float endTime) {
+        Validate.positive(endTime, "end time");
+
+        float[] oldTimes = oldTrack.getKeyFrameTimes();
+        Vector3f[] oldTranslations = oldTrack.getTranslations();
+        Quaternion[] oldRotations = oldTrack.getRotations();
+        Vector3f[] oldScales = oldTrack.getScales();
+        int oldCount = oldTimes.length;
+
+        int newCount;
+        int endIndex = findKeyframeIndex(oldTrack, endTime);
+        if (endIndex == -1) {
+            endIndex = oldCount;
+            newCount = oldCount + 1;
+        } else {
+            newCount = oldCount;
+        }
+        assert endIndex == newCount - 1;
+        Vector3f[] translations = new Vector3f[newCount];
+        Quaternion[] rotations = new Quaternion[newCount];
+        Vector3f[] scales = null;
+        if (oldScales != null) {
+            scales = new Vector3f[newCount];
+        }
+        float[] newTimes = new float[newCount];
+
+        for (int frameIndex = 0; frameIndex < endIndex; frameIndex++) {
+            translations[frameIndex] = oldTranslations[frameIndex].clone();
+            rotations[frameIndex] = oldRotations[frameIndex].clone();
+            if (oldScales != null) {
+                scales[frameIndex] = oldScales[frameIndex].clone();
+            }
+            newTimes[frameIndex] = oldTimes[frameIndex];
+        }
+
+        translations[endIndex] = oldTranslations[0].clone();
+        rotations[endIndex] = oldRotations[0].clone();
+        if (oldScales != null) {
+            scales[endIndex] = oldScales[0].clone();
+        }
+        newTimes[endIndex] = endTime;
+
+        int boneIndex = oldTrack.getTargetBoneIndex();
+        BoneTrack result = newBoneTrack(boneIndex, newTimes, translations,
+                rotations, scales);
 
         return result;
     }
