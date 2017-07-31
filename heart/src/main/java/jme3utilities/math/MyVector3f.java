@@ -232,8 +232,8 @@ public class MyVector3f {
     }
 
     /**
-     * Count the number of distinct vectors in an array, distinguishing 0 from
-     * -0.
+     * Count the number of distinct vectors in the specified array,
+     * distinguishing 0 from -0.
      *
      * @param array input (not null, unaffected)
      * @return count (&ge;0)
@@ -243,6 +243,25 @@ public class MyVector3f {
         Set<Vector3f> distinct = new HashSet<>(length);
         for (Vector3f vector : array) {
             distinct.add(vector);
+        }
+        int count = distinct.size();
+
+        return count;
+    }
+
+    /**
+     * Count the number of distinct vectors in the specified array, without
+     * distinguishing 0 from -0.
+     *
+     * @param array input (not null, unaffected)
+     * @return count (&ge;0)
+     */
+    public static int countNe(Vector3f[] array) {
+        int length = array.length;
+        Set<Vector3f> distinct = new HashSet<>(length);
+        for (Vector3f vector : array) {
+            Vector3f standard = standardize(vector, null);
+            distinct.add(standard);
         }
         int count = distinct.size();
 
@@ -724,6 +743,27 @@ public class MyVector3f {
     }
 
     /**
+     * Standardize a vector in preparation for hashing.
+     *
+     * @param input (not null, unaffected)
+     * @param storeResult (modified if not null)
+     * @return an equivalent vector without negative zeroes (either storeResult
+     * or a new instance)
+     */
+    public static Vector3f standardize(Vector3f input, Vector3f storeResult) {
+        Validate.nonNull(input, "input vector");
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+
+        storeResult.x = MyMath.standardize(input.x);
+        storeResult.y = MyMath.standardize(input.y);
+        storeResult.z = MyMath.standardize(input.z);
+
+        return storeResult;
+    }
+
+    /**
      * Rotate a vector CLOCKWISE about the +Y axis. Note: Used for applying
      * azimuths, which is why its rotation angle convention is non-standard.
      *
@@ -907,8 +947,8 @@ public class MyVector3f {
         /*
          * All 4 locations are collinear.
          */
-        Vector3f result = intersectCollinearSegments(
-                first, start2, end2, start1, end1);
+        Vector3f result;
+        result = intersectCollinearSegments(first, start2, end2, start1, end1);
 
         return result;
     }
