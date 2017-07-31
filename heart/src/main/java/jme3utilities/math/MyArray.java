@@ -54,6 +54,69 @@ final public class MyArray {
     // new methods exposed
 
     /**
+     * Test whether the first N elements of the specified vector contain &gt;1
+     * distinct values, without distinguishing 0 from -0.
+     *
+     * @param vector input (not null, unaffected)
+     * @param n number of elements to consider
+     * @return true if multiple values found, otherwise false
+     */
+    public static boolean distinct(float[] vector, int n) {
+        Validate.nonNull(vector, "vector");
+        Validate.inRange(n, "length", 0, vector.length);
+
+        boolean result = false;
+        if (n > 1) {
+            float firstValue = vector[0];
+            for (int i = 1; i < n; i++) {
+                float value = vector[i];
+                if (value != firstValue) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Find the index of the last value &le; the specified one in a sorted
+     * array, using binary search.
+     *
+     * @param value value to search for
+     * @param array array to search (not null, strictly monotonic increasing
+     * order, unaffected)
+     * @return array index (&ge;0) or -1 if array is empty or value&le;array[0]
+     */
+    public static int findPreviousIndex(float value, float[] array) {
+        Validate.nonNull(array, "array");
+
+        int lowerBound = -1;
+        int upperBound = array.length - 1;
+        int result;
+        while (true) {
+            if (upperBound == lowerBound) {
+                result = lowerBound;
+                break;
+            }
+            int testIndex = (lowerBound + upperBound + 1) / 2;
+            float testValue = array[testIndex];
+            if (value > testValue) {
+                lowerBound = testIndex;
+            } else if (value < testValue) {
+                upperBound = testIndex - 1;
+            } else if (value == testValue) {
+                result = testIndex;
+                break;
+            }
+        }
+
+        assert result >= -1 : result;
+        return result;
+    }
+
+    /**
      * Find the index of the first true element in the input array.
      *
      * @param array input (not null, unaffected)
