@@ -451,21 +451,6 @@ public class MyMath {
     }
 
     /**
-     * Round the rotation angle of the indexed axis to the nearest Pi/2 radians.
-     *
-     * @param input (not null, modified)
-     * @param axisIndex which axis (&ge;0, &lt;3)
-     */
-    public static void snapLocal(Quaternion input, int axisIndex) {
-        float[] angles = new float[3];
-        input.toAngles(angles);
-        double angle = angles[axisIndex];
-        angle = halfPi * Math.round(angle / halfPi);
-        angles[axisIndex] = (float) angle;
-        input.fromAngles(angles);
-    }
-
-    /**
      * Square the specified double-precision value. Logs a warning in case of
      * overflow.
      *
@@ -483,6 +468,22 @@ public class MyMath {
             logger.warning(message);
         }
         assert result >= 0.0 : result;
+        return result;
+    }
+
+    /**
+     * Standardize a single-precision floating-point value in preparation for
+     * hashing.
+     *
+     * @param fValue input value
+     * @return an equivalent value that's not -0
+     */
+    public static float standardize(float fValue) {
+        float result = fValue;
+        if (Float.compare(fValue, -0f) == 0) {
+            result = 0f;
+        }
+
         return result;
     }
 
