@@ -1,5 +1,15 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 0.9.14 released on TBD
+
+ + Moved snapLocal() from MyMath to new MyQuaternion class
+ + Added method MyMath.standardize()
+ + Added methods countNe() and standardize() to MyVector3f
+ + Added methods ne() and standardize() to MyQuaternion
+ + Added methods distinct() and findPreviousIndex() to MyArray
+ + Added 5 methods to MyAnimation
+ + Added 3 methods to MySpatial
+
 ## Version 0.9.13 released on 20 July 2017
 
  + Fixed NPEs caused by bone tracks without scales
