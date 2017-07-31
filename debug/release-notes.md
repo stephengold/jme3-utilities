@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.7.3 released on TBD
+## Version 0.7.3 released on 31 July 2017
 
  + Made Dumper.isControlEnabled() a static method
  + Added the capability to dump physics objects/spaces
