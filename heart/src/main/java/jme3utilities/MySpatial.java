@@ -26,6 +26,8 @@
 package jme3utilities;
 
 import com.jme3.audio.AudioNode;
+import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.control.PhysicsControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.font.BitmapText;
@@ -130,6 +132,57 @@ public class MySpatial {
             return 'n';
         }
         return '?';
+    }
+
+    /**
+     * Disable all physics controls added to the specified subtree of the scene
+     * graph. Disabling these controls removes any collision objects they may
+     * have added to physics space. Note: recursive!
+     *
+     * @param subtree (not null)
+     */
+    public static void disablePhysicsControls(Spatial subtree) {
+        int numControls = subtree.getNumControls();
+        for (int controlI = 0; controlI < numControls; controlI++) {
+            Control control = subtree.getControl(controlI);
+            if (control instanceof PhysicsControl) {
+                MyControl.setEnabled(control, false);
+            }
+        }
+        if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                disablePhysicsControls(child);
+            }
+        }
+    }
+
+    /**
+     * Enable all physics controls added to the specified subtree of the scene
+     * graph and configure their physics spaces. Note: recursive!
+     *
+     * @param subtree (not null)
+     * @param space physics space to use, or null for none
+     */
+    public static void enablePhysicsControls(Spatial subtree,
+            PhysicsSpace space) {
+        int numControls = subtree.getNumControls();
+        for (int controlI = 0; controlI < numControls; controlI++) {
+            Control control = subtree.getControl(controlI);
+            if (control instanceof PhysicsControl) {
+                PhysicsControl pc = (PhysicsControl) control;
+                pc.setPhysicsSpace(space);
+                pc.setEnabled(true);
+            }
+        }
+        if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                enablePhysicsControls(child, space);
+            }
+        }
     }
 
     /**
@@ -570,6 +623,29 @@ public class MySpatial {
     }
 
     /**
+     * Remove all non-physics controls from the specified subtree of the scene
+     * graph. Note: recursive!
+     *
+     * @param subtree (not null)
+     */
+    public static void removeNonPhysicsControls(Spatial subtree) {
+        int numControls = subtree.getNumControls();
+        for (int controlI = numControls - 1; controlI >= 0; controlI--) {
+            Control control = subtree.getControl(controlI);
+            if (!(control instanceof PhysicsControl)) {
+                subtree.removeControl(control);
+            }
+        }
+        if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                removeNonPhysicsControls(child);
+            }
+        }
+    }
+
+    /**
      * Turn (rotate) a child object around an axis.
      *
      * @param spatial object to rotate (not null)
@@ -722,7 +798,7 @@ public class MySpatial {
             spatial.setLocalScale(scale);
             return;
         }
-        float parentScale = MySpatial.getUniformScale(parent);
+        float parentScale = getUniformScale(parent);
         assert parentScale != 0f : parentScale;
         float localScale = scale / parentScale;
         spatial.setLocalScale(localScale);
