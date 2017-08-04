@@ -52,7 +52,7 @@ public class Generator extends Random {
      */
     static final long serialVersionUID = 37_705_297_950_129_619L;
     // *************************************************************************
-    // constructors    
+    // constructors
 
     /**
      * Instantiate a pseudo-random generator with a seed likely to be unique.
@@ -71,7 +71,7 @@ public class Generator extends Random {
     }
     // *************************************************************************
     // new methods exposed
-    
+
     /**
      * Generate a pseudo-random vector that is uniformly distributed throughout
      * the unit sphere centered on the origin.
@@ -80,7 +80,7 @@ public class Generator extends Random {
      */
     public Vector3f nextVector3f() {
         Vector3f result = new Vector3f();
-        double lengthSquared = 0.0;
+        double lengthSquared = 2.0;
         while (lengthSquared > 1.0) {
             float x = 2f * nextFloat() - 1f;
             float y = 2f * nextFloat() - 1f;
