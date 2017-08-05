@@ -143,6 +143,28 @@ public class MyMath {
     }
 
     /**
+     * Clamp a double-precision value between 2 limits.
+     *
+     * @param dValue input value to be clamped
+     * @param min lower limit of the clamp
+     * @param max upper limit of the clamp
+     * @return the value between min and max inclusive that is closest to fValue
+     * @see com.jme3.math.FastMath#clamp(float,float,float)
+     */
+    public static double clamp(double dValue, double min, double max) {
+        double result;
+        if (dValue < min) {
+            result = min;
+        } else if (dValue > max) {
+            result = max;
+        } else {
+            result = dValue;
+        }
+
+        return result;
+    }
+
+    /**
      * Cube the specified single-precision value. Logs a warning in case of
      * overflow.
      *
@@ -208,6 +230,27 @@ public class MyMath {
 
         assert result >= 0f : result;
         assert result <= 1f : result;
+        return result;
+    }
+
+    /**
+     * Compute sqrt(x^2 + y^2 + z^2).
+     *
+     * @param x 1st input value
+     * @param y 2nd input value
+     * @param z 3nd input value
+     * @return the positive square root of the sum of squares (&ge;0)
+     * @see java.lang.Math#hypot(double, double)
+     */
+    public static double hypotenuse(double x, double y, double z) {
+        Validate.finite(x, "1st input value");
+        Validate.finite(y, "2nd input value");
+        Validate.finite(z, "3rd input value");
+
+        double sum = x * x + y * y + z * z;
+        double result = Math.sqrt(sum);
+
+        assert result >= 0f : result;
         return result;
     }
 
