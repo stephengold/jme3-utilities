@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 0.9.15 released on TBD
+
+ + Fixed a serious logic error in Generator.nextVector3f()
+ + Added 5 methods to MyQuaternion, 2 methods to MyMath, and 1 to Validate
+
 ## Version 0.9.14 released on 31 July 2017
 
  + Moved snapLocal() from MyMath to new MyQuaternion class
