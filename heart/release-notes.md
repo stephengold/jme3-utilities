@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.15 released on TBD
+## Version 0.9.15 released on 6 August 2017
 
  + Fixed a serious logic error in Generator.nextVector3f()
  + Added 5 methods to MyQuaternion, 2 methods to MyMath, and 1 to Validate
