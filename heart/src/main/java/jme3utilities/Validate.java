@@ -280,6 +280,29 @@ final public class Validate {
     }
 
     /**
+     * Validate a non-null, non-empty float array as a method argument.
+     *
+     * @param array array to validate (not null, not empty)
+     * @param description description of the array
+     * @throws NullPointerException if the array is null
+     * @throws IllegalArgumentException if the array has zero length
+     */
+    public static void nonEmpty(float[] array, String description) {
+        nonNull(array, description);
+
+        if (array.length == 0) {
+            String what;
+            if (description == null) {
+                what = "String argument";
+            } else {
+                what = description;
+            }
+            String message = String.format("%s must not be empty.", what);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
      * Validate a non-null, non-empty string as a method argument.
      *
      * @param string string to validate (not null, not empty)
