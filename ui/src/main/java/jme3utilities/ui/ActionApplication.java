@@ -248,8 +248,13 @@ abstract public class ActionApplication
          * Attempt to create a folder for writing assets.
          */
         writtenAssetDir = new File("Written Assets");
-        if (!writtenAssetDir.exists()) {
-            writtenAssetDir.mkdirs();
+        if (!writtenAssetDir.isDirectory()) {
+            boolean success = writtenAssetDir.mkdirs();
+            if (!success) {
+                String wadPath = getWrittenAssetDirPath();
+                logger.log(Level.WARNING, "Unable to create folder {0}.",
+                        MyString.quote(wadPath));
+            }
         }
         /*
          * Initialize asset locators to the default list.
