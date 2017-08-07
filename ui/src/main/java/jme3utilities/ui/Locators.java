@@ -62,11 +62,11 @@ public class Locators {
     /**
      * list of locator types
      */
-    final private static List<Class<? extends AssetLocator>> locatorTypes = new ArrayList<>(2);
+    final private static List<Class<? extends AssetLocator>> locatorTypes = new ArrayList<>(6);
     /**
      * list of locator root paths
      */
-    final private static List<String> rootPaths = new ArrayList<>(2);
+    final private static List<String> rootPaths = new ArrayList<>(6);
     // *************************************************************************
     // constructors
 
@@ -122,6 +122,22 @@ public class Locators {
     }
 
     /**
+     * Register (add) the specified locators in the specified order.
+     *
+     * @param rootPathList a list of root paths in which a null String indicates
+     * the default locators
+     */
+    public static void register(List<String> rootPathList) {
+        for (String rootPath : rootPathList) {
+            if (rootPath == null) {
+                registerDefault();
+            } else {
+                register(rootPath, FileLocator.class);
+            }
+        }
+    }
+
+    /**
      * Register (add) the default locator(s): the "Written Assets" folder (if
      * one exists) and the classpath.
      */
@@ -156,14 +172,15 @@ public class Locators {
     }
 
     /**
-     * Alter the asset manager.
+     * Specify the asset manager.
      *
-     * @param assetManager which manager to use (not null, alias created)
-     *
+     * @param assetManager an empty manager to use (not null, alias created)
      */
     public static void setAssetManager(AssetManager assetManager) {
         Validate.nonNull(assetManager, "asset manager");
         manager = assetManager;
+        locatorTypes.clear();
+        rootPaths.clear();
     }
 
     /**
