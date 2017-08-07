@@ -29,9 +29,12 @@ import com.jme3.asset.AssetLocator;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.plugins.ClasspathLocator;
 import com.jme3.asset.plugins.FileLocator;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
@@ -104,7 +107,7 @@ public class Locators {
     }
 
     /**
-     * Register a locator of the specified type.
+     * Register (add) a locator of the specified type.
      *
      * @param rootPath (not null, not empty)
      * @param locatorType type of locator
@@ -119,9 +122,44 @@ public class Locators {
     }
 
     /**
+     * Register (add) the default locator(s): the "Written Assets" folder (if
+     * one exists) and the classpath.
+     */
+    public static void registerDefault() {
+        String wadPath = ActionApplication.getWrittenAssetDirPath();
+        File wadFile = new File(wadPath);
+        if (wadFile.isDirectory()) {
+            register(wadPath, FileLocator.class);
+        }
+
+        register("/", ClasspathLocator.class);
+    }
+
+    /**
+     * Register (add) a filesystem locator.
+     *
+     * @param rootPath absolute filesystem path to a directory/folder
+     */
+    public static void registerFilesystem(String rootPath) {
+        Validate.nonEmpty(rootPath, "root path");
+
+        File root = new File(rootPath);
+        if (root.isDirectory()) {
+            register(rootPath, FileLocator.class);
+        } else if (!root.exists()) {
+            logger.log(Level.WARNING, "{0} does not exist.",
+                    MyString.quote(rootPath));
+        } else {
+            logger.log(Level.WARNING, "{0} is not a folder.",
+                    MyString.quote(rootPath));
+        }
+    }
+
+    /**
      * Alter the asset manager.
      *
      * @param assetManager which manager to use (not null, alias created)
+     *
      */
     public static void setAssetManager(AssetManager assetManager) {
         Validate.nonNull(assetManager, "asset manager");
@@ -149,21 +187,19 @@ public class Locators {
      */
     public static void useDefault() {
         unregisterAll();
-        String wadp = ActionApplication.getWrittenAssetDirPath();
-        register(wadp, FileLocator.class);
-        register("/", ClasspathLocator.class);
+        registerDefault();
     }
 
     /**
-     * Use only the specified filesystem root path for assets. Any other
-     * locators get unregistered.
+     * Use only the specified filesystem path for assets. Any other locators get
+     * unregistered.
      *
-     * @param rootPath (not null, not empty)
+     * @param rootPath absolute filesystem path to a directory/folder
      */
     public static void useFilesystem(String rootPath) {
         Validate.nonEmpty(rootPath, "root path");
 
         unregisterAll();
-        register(rootPath, FileLocator.class);
+        registerFilesystem(rootPath);
     }
 }
