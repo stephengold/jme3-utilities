@@ -58,7 +58,7 @@ abstract public class ActionApplication
     /**
      * names of flyCam actions and the signals used to simulate them
      */
-    final public static String[] flycamNames = {
+    final static String[] flycamNames = {
         CameraInput.FLYCAM_BACKWARD,
         CameraInput.FLYCAM_FORWARD,
         CameraInput.FLYCAM_LOWER,
@@ -70,7 +70,7 @@ abstract public class ActionApplication
     // fields
 
     /**
-     * the folder/directory for written assets
+     * the folder/directory for writing assets
      */
     private static File writtenAssetDir = null;
     /**
@@ -103,7 +103,7 @@ abstract public class ActionApplication
     }
 
     /**
-     * Convert an asset path to an absolute filesystem path for a writable
+     * Convert an asset path to an absolute filesystem path for writing the
      * asset.
      *
      * @param assetPath (not null)
@@ -141,7 +141,7 @@ abstract public class ActionApplication
     }
 
     /**
-     * Read the filesystem path to the folder/directory for written assets.
+     * Read the filesystem path to the folder/directory for writing assets.
      *
      * @return absolute pathname (not null, not empty)
      */
@@ -238,14 +238,14 @@ abstract public class ActionApplication
     public void simpleInitApp() {
         if (defaultInputMode != null) {
             throw new IllegalStateException(
-                    "application should only be initialized once");
+                    "application should be initialized only once");
         }
         if (signals != null) {
             throw new IllegalStateException(
-                    "application should only be initialized once");
+                    "application should be initialized only once");
         }
         /*
-         * Ensure that a folder exists for writable assets.
+         * Attempt to create a folder for writing assets.
          */
         writtenAssetDir = new File("Written Assets");
         if (!writtenAssetDir.exists()) {
