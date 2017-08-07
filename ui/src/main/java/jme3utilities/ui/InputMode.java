@@ -755,11 +755,19 @@ abstract public class InputMode
             File file = new File(filePath);
             File parentDirectory = file.getParentFile();
             if (parentDirectory != null && !parentDirectory.exists()) {
-                parentDirectory.mkdirs();
+                boolean success = parentDirectory.mkdirs();
+                if (!success) {
+                    String parentPath = parentDirectory.getAbsolutePath();
+                    parentPath = parentPath.replaceAll("\\\\", "/");
+                    String msg = String.format(
+                            "Unable to create folder %s for hotkey bindings",
+                            MyString.quote(parentPath));
+                    throw new IOException(msg);
+                }
             }
             stream = new FileOutputStream(filePath);
             saveBindings(stream);
-        } catch (FileNotFoundException exception) {
+        } catch (IOException exception) {
             throw exception;
         } finally {
             if (stream != null) {
