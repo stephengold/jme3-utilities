@@ -108,6 +108,23 @@ public class MyVector3f {
     }
 
     /**
+     * Accumulate a linear combination of vectors.
+     *
+     * @param total sum of the scaled inputs so far (not null, updated)
+     * @param input the vector to scale and add (not null, unaffected)
+     * @param scale scale factor to apply to the input
+     */
+    public static void accumulateScaled(Vector3f total, Vector3f input,
+            float scale) {
+        Validate.nonNull(total, "total");
+        Validate.nonNull(input, "input");
+
+        total.x += input.x * scale;
+        total.y += input.y * scale;
+        total.z += input.z * scale;
+    }
+
+    /**
      * Calculate the altitude angle of a non-zero offset.
      *
      * @param offset difference of world coordinates (not null, not zero,
