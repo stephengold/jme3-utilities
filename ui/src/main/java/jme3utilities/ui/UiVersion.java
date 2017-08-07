@@ -59,6 +59,6 @@ public class UiVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String getVersionShort() {
-        return "master 0.5.5+1";
+        return "master 0.5.6";
     }
 }

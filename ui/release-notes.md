@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.5.6 released TBD
+
++ Protected flycamNames from external modification.
++ Improved handling of filesystem exceptions.
++ Added several registration methods to the Locators class.
+
 ## Version 0.5.5 released on 16 July 2017
 
 Publicize InputMode.activate() and InputMode.deactivate() so they can be
