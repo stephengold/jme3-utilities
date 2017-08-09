@@ -29,6 +29,7 @@ import com.jme3.asset.AssetLocator;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.plugins.ClasspathLocator;
 import com.jme3.asset.plugins.FileLocator;
+import com.jme3.asset.plugins.ZipLocator;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -139,7 +140,7 @@ public class Locators {
 
     /**
      * Register (add) the default locator(s): the "Written Assets" folder (if
-     * one exists) and the classpath.
+     * one exists) followed by the classpath.
      */
     public static void registerDefault() {
         String wadPath = ActionApplication.getWrittenAssetDirPath();
@@ -152,9 +153,10 @@ public class Locators {
     }
 
     /**
-     * Register (add) a filesystem locator.
+     * Register (add) a file locator or zip locator.
      *
-     * @param rootPath absolute filesystem path to a directory/folder
+     * @param rootPath absolute filesystem path to the directory/folder/JAR/ZIP
+     * (not null, not empty)
      */
     public static void registerFilesystem(String rootPath) {
         Validate.nonEmpty(rootPath, "root path");
@@ -162,11 +164,13 @@ public class Locators {
         File root = new File(rootPath);
         if (root.isDirectory()) {
             register(rootPath, FileLocator.class);
+        } else if (rootPath.endsWith(".jar") || rootPath.endsWith(".zip")) {
+            register(rootPath, ZipLocator.class);
         } else if (!root.exists()) {
             logger.log(Level.WARNING, "{0} does not exist.",
                     MyString.quote(rootPath));
         } else {
-            logger.log(Level.WARNING, "{0} is not a folder.",
+            logger.log(Level.WARNING, "{0} is not a directory/folder/JAR/ZIP.",
                     MyString.quote(rootPath));
         }
     }
@@ -208,10 +212,11 @@ public class Locators {
     }
 
     /**
-     * Use only the specified filesystem path for assets. Any other locators get
-     * unregistered.
+     * Use only the specified file locator or zip locator for assets. Any other
+     * locators get unregistered.
      *
-     * @param rootPath absolute filesystem path to a directory/folder
+     * @param rootPath absolute filesystem path to the directory/folder/JAR/ZIP
+     * (not null, not empty)
      */
     public static void useFilesystem(String rootPath) {
         Validate.nonEmpty(rootPath, "root path");
