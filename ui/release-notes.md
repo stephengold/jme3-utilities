@@ -1,10 +1,10 @@
 # release notes for the jme3-utilities-ui library and related tests
 
-## Version 0.5.7 released TBD
+## Version 0.5.7 released on 9 August 2017
 
  Add support for zip locators.
 
-## Version 0.5.6 released 7 August 2017
+## Version 0.5.6 released on 7 August 2017
 
 + Protected flycamNames from external modification.
 + Improved handling of filesystem exceptions.
