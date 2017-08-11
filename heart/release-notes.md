@@ -1,5 +1,15 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 0.9.16 released on TBD
+
+ + Added driveMap() and listZipEntries() methods to Misc
+ + Added fourthRoot() and lerp() methods to MyMath
+ + Added slerp(), squad(), and squadA() methods to MyQuaternion
+ + Added listSkeletons() method to MySkeleton
+ + Added countControls() and listControls() methods to MySpatial
+ + Added addMatchPrefix() method to MyString
+ + Added accumulateScaled(), eq(), ne(), and lerp() methods to MyVector3f
+
 ## Version 0.9.15 released on 6 August 2017
 
  + Fixed a serious logic error in Generator.nextVector3f()
