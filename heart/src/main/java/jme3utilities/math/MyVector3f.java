@@ -397,6 +397,21 @@ public class MyVector3f {
     }
 
     /**
+     * Test whether two vectors are distinct, without distinguishing 0 from -0.
+     *
+     * @param v1 1st input vector (not null, unaffected)
+     * @param v2 2nd input vector (not null, unaffected)
+     * @return true if equal, otherwise false
+     */
+    public static boolean eq(Vector3f v1, Vector3f v2) {
+        Validate.nonNull(v1, "1st input vector");
+        Validate.nonNull(v2, "2nd input vector");
+
+        boolean result = v1.x == v2.x && v1.y == v2.y && v1.z == v2.z;
+        return result;
+    }
+
+    /**
      * Generate a direction from altitude and azimuth angles.
      *
      * @param altitude angle above the X-Z plane (radians toward +Y)
@@ -616,6 +631,33 @@ public class MyVector3f {
     }
 
     /**
+     * Interpolate between (or extrapolate from) 2 vectors using linear (Lerp)
+     * *polation. Unlike
+     * {@link com.jme3.math.FastMath#interpolateLinear(float, com.jme3.math.Vector3f, com.jme3.math.Vector3f, com.jme3.math.Vector3f)},
+     * no rounding error is introduced when v1==v2.
+     *
+     * @param t descaled parameter value (0&rarr;v0, 1&rarr;v1)
+     * @param v0 function value at t=0 (not null, unaffected, norm=1)
+     * @param v1 function value at t=1 (not null, unaffected, norm=1)
+     * @param storeResult (modified if not null)
+     * @return an interpolated vector (either storeResult or a new instance)
+     */
+    public static Vector3f lerp(float t, Vector3f v0, Vector3f v1,
+            Vector3f storeResult) {
+        Validate.nonNull(v0, "v0");
+        Validate.nonNull(v1, "v1");
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+
+        storeResult.x = MyMath.lerp(t, v0.x, v1.x);
+        storeResult.y = MyMath.lerp(t, v0.y, v1.y);
+        storeResult.z = MyMath.lerp(t, v0.z, v1.z);
+
+        return storeResult;
+    }
+
+    /**
      * Find the specified intersection between the line containing the specified
      * ray and an origin-centered sphere. If there's no intersection, find the
      * point on the sphere closest to the line.
@@ -718,6 +760,21 @@ public class MyVector3f {
             }
         }
 
+        return result;
+    }
+
+    /**
+     * Test whether two vectors are distinct, without distinguishing 0 from -0.
+     *
+     * @param v1 1st input vector (not null, unaffected)
+     * @param v2 2nd input vector (not null, unaffected)
+     * @return true if distinct, otherwise false
+     */
+    public static boolean ne(Vector3f v1, Vector3f v2) {
+        Validate.nonNull(v1, "1st input vector");
+        Validate.nonNull(v2, "2nd input vector");
+
+        boolean result = v1.x != v2.x || v1.y != v2.y || v1.z != v2.z;
         return result;
     }
 
