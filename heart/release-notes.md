@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.16 released on TBD
+## Version 0.9.16 released on 11 August 2017
 
  + Added driveMap() and listZipEntries() methods to Misc
  + Added fourthRoot() and lerp() methods to MyMath
