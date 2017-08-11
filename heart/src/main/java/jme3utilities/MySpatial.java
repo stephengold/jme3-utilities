@@ -44,6 +44,7 @@ import com.jme3.scene.control.Control;
 import com.jme3.scene.debug.SkeletonDebugger;
 import com.jme3.terrain.geomipmap.TerrainQuad;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.math.MyVector3f;
@@ -105,6 +106,38 @@ public class MySpatial {
         }
 
         assert child.getParent() == newParent : newParent;
+    }
+
+    /**
+     * Count all controls of the specified type in the specified subtree of a
+     * scene graph. Note: recursive!
+     *
+     * @param <T> superclass of Control
+     * @param subtree (not null)
+     * @param controlType superclass of Control to search for
+     * @return count (&ge;0)
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Control> int countControls(Spatial subtree,
+            Class<T> controlType) {
+        int result = 0;
+        int numControls = subtree.getNumControls();
+        for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
+            Control control = subtree.getControl(controlIndex);
+            if (controlType.isAssignableFrom(control.getClass())) {
+                ++result;
+            }
+        }
+
+        if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                result += countControls(child, controlType);
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -384,26 +417,26 @@ public class MySpatial {
      * Find the minimum and maximum coordinates in a subtree of the scene graph.
      * Note: recursive!
      *
-     * @param spatial what to measure (not null)
+     * @param subtree what to measure (not null)
      * @param useWorld true &rarr; use world coordinates, false &rarr; use model
      * coordinates
      * @return array consisting of array[0]: the lowest coordinate for each axis
      * and array[1]: the highest coordinate for each axis
      */
-    public static Vector3f[] findMinMaxCoords(Spatial spatial,
+    public static Vector3f[] findMinMaxCoords(Spatial subtree,
             boolean useWorld) {
         Vector3f[] result;
-        if (spatial instanceof Geometry) {
-            Geometry geometry = (Geometry) spatial;
+        if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
             result = findMinMaxCoords(geometry, useWorld);
 
-        } else if (spatial instanceof Node) {
+        } else if (subtree instanceof Node) {
             Vector3f maxima = new Vector3f(Float.NEGATIVE_INFINITY,
                     Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
             Vector3f minima = new Vector3f(Float.POSITIVE_INFINITY,
                     Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
             result = new Vector3f[]{minima, maxima};
-            Node node = (Node) spatial;
+            Node node = (Node) subtree;
             for (Spatial child : node.getChildren()) {
                 Vector3f[] childMm = findMinMaxCoords(child, useWorld);
                 MyVector3f.accumulateMinima(minima, childMm[0]);
@@ -553,6 +586,44 @@ public class MySpatial {
         boolean result = rigidBodyControl != null;
 
         return result;
+    }
+
+    /**
+     * Enumerate all controls of the specified type in the specified subtree of
+     * a scene graph. Note: recursive!
+     *
+     * @param <T> superclass of Control
+     * @param subtree (not null)
+     * @param controlType superclass of Control to search for
+     * @param storeResult (added to if not null)
+     * @return an expanded list (either storeResult or a new instance)
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Control> List<T> listControls(Spatial subtree,
+            Class<T> controlType, List<T> storeResult) {
+        Validate.nonNull(subtree, "subtree");
+        if (storeResult == null) {
+            storeResult = new ArrayList<>(4);
+        }
+
+        int numControls = subtree.getNumControls();
+        for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
+            Control control = subtree.getControl(controlIndex);
+            if (controlType.isAssignableFrom(control.getClass())
+                    && !storeResult.contains(control)) {
+                storeResult.add((T) control);
+            }
+        }
+
+        if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                listControls(child, controlType, storeResult);
+            }
+        }
+
+        return storeResult;
     }
 
     /**
