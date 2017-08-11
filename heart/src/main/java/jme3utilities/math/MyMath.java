@@ -234,6 +234,24 @@ public class MyMath {
     }
 
     /**
+     * Extract the 4th root of a double-precision value. This method is faster
+     * than Math.pow(d, 0.25).
+     *
+     * @param dValue input 4th power to be extracted (&ge;0)
+     * @return the positive 4th root of dValue (&ge;0)
+     * @see java.lang.Math#cbrt(double)
+     */
+    public static double fourthRoot(double dValue) {
+        Validate.nonNegative(dValue, "dValue");
+
+        double sqrt = Math.sqrt(dValue);
+        double result = Math.sqrt(sqrt);
+
+        assert result >= 0.0 : result;
+        return result;
+    }
+
+    /**
      * Compute sqrt(x^2 + y^2 + z^2).
      *
      * @param x 1st input value
@@ -323,6 +341,29 @@ public class MyMath {
     public static boolean isOdd(int iValue) {
         boolean result = (iValue % 2) != 0;
         return result;
+    }
+
+    /**
+     * Interpolate between (or extrapolate from) 2 single-precision values using
+     * linear (Lerp) *polation. Unlike
+     * {@link com.jme3.math.FastMath#interpolateLinear(float, float, float)}, no
+     * rounding error is introduced when y1==y2.
+     *
+     * @param t descaled parameter value (0&rarr;v0, 1&rarr;v1)
+     * @param y1 function value at t=0
+     * @param y2 function value at t=1
+     * @return an interpolated function value
+     */
+    public static float lerp(float t, float y1, float y2) {
+        float lerp;
+        if (y1 == y2) {
+            lerp = y1;
+        } else {
+            float u = 1f - t;
+            lerp = u * y1 + t * y2;
+        }
+
+        return lerp;
     }
 
     /**
