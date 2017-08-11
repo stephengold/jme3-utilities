@@ -225,6 +225,50 @@ public class MySkeleton {
     }
 
     /**
+     * Enumerate all skeleton instances in the specified subtree of a scene
+     * graph. Note: recursive!
+     *
+     * @param subtree (not null)
+     * @param storeResult (added to if not null)
+     * @return an expanded list (either storeResult or a new instance)
+     */
+    public static List<Skeleton> listSkeletons(Spatial subtree,
+            List<Skeleton> storeResult) {
+        Validate.nonNull(subtree, "subtree");
+        if (storeResult == null) {
+            storeResult = new ArrayList<>(4);
+        }
+
+        int numControls = subtree.getNumControls();
+        for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
+            Control control = subtree.getControl(controlIndex);
+            if (control instanceof AnimControl) {
+                AnimControl animControl = (AnimControl) control;
+                Skeleton skeleton = animControl.getSkeleton();
+                if (skeleton != null && !storeResult.contains(skeleton)) {
+                    storeResult.add(skeleton);
+                }
+            } else if (control instanceof SkeletonControl) {
+                SkeletonControl skeletonControl = (SkeletonControl) control;
+                Skeleton skeleton = skeletonControl.getSkeleton();
+                if (skeleton != null && !storeResult.contains(skeleton)) {
+                    storeResult.add(skeleton);
+                }
+            }
+        }
+
+        if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                listSkeletons(child, storeResult);
+            }
+        }
+
+        return storeResult;
+    }
+
+    /**
      * Find the largest weight in the specified mesh for the specified bone.
      *
      * @param mesh which mesh (not null, possibly modified)
