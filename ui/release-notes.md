@@ -1,13 +1,13 @@
 # release notes for the jme3-utilities-ui library and related tests
 
-## Version 0.5.8 released on TBD
+## Version 0.5.8 released on 11 August 2017
 
- + Refine the API of Locators.
- + Implement save/restore for Locators.
+ + Refined the API of Locators class.
+ + Implemented save/restore for Locators.
 
 ## Version 0.5.7 released on 9 August 2017
 
- Add support for zip locators.
+ Added support for zip locators.
 
 ## Version 0.5.6 released on 7 August 2017
 
@@ -17,7 +17,7 @@
 
 ## Version 0.5.5 released on 16 July 2017
 
-Publicize InputMode.activate() and InputMode.deactivate() so they can be
+Publicized InputMode.activate() and InputMode.deactivate() so they can be
 overriden.
 
 ## Version 0.5.4 released on 15 July 2017
