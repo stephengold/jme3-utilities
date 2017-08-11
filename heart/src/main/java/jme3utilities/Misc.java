@@ -42,11 +42,18 @@ import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import javax.imageio.ImageIO;
 
 /**
@@ -125,6 +132,26 @@ public class Misc {
             stateManager.detach(state);
             state = stateManager.getState(whichClass);
         }
+    }
+
+    /**
+     * Construct a map from drive paths (roots) to file objects.
+     *
+     * @return a new map of absolute filesystem paths to files
+     */
+    public static Map<String, File> driveMap() {
+        Map<String, File> result = new TreeMap<>();
+        File[] roots = File.listRoots();
+        for (File root : roots) {
+            if (root.isDirectory()) {
+                String absoluteDirPath = root.getAbsolutePath();
+                absoluteDirPath = absoluteDirPath.replaceAll("\\\\", "/");
+                File oldFile = result.put(absoluteDirPath, root);
+                assert oldFile == null : oldFile;
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -208,6 +235,37 @@ public class Misc {
         result = result.replaceAll("\\\\", "/");
 
         assert !result.isEmpty();
+        return result;
+    }
+
+    /**
+     * Enumerate all entries (in the specified JAR or ZIP) whose names begin
+     * with the specified prefix.
+     *
+     * @param zipPath filesystem path to the JAR or ZIP (not null, not empty)
+     * @param namePrefix (not null)
+     * @return a new list of entry names
+     */
+    public static List<String> listZipEntries(String zipPath,
+            String namePrefix) {
+        Validate.nonEmpty(zipPath, "zip path");
+        Validate.nonNull(namePrefix, "name prefix");
+
+        List<String> result = new ArrayList<>(90);
+        try (FileInputStream fileIn = new FileInputStream(zipPath);
+                ZipInputStream zipIn = new ZipInputStream(fileIn)) {
+            for (ZipEntry entry = zipIn.getNextEntry();
+                    entry != null;
+                    entry = zipIn.getNextEntry()) {
+                String entryName = "/" + entry.getName();
+                if (entryName.startsWith(namePrefix)) {
+                    result.add(entryName);
+                }
+            }
+        } catch (IOException e) {
+            // quit reading entries
+        }
+
         return result;
     }
 
