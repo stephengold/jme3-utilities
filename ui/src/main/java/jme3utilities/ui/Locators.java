@@ -39,8 +39,7 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * Utility class to manage the registered asset locators of an
- * ActionApplication's asset manager.
+ * Manage the registered locators in the AssetManager of an ActionApplication.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -57,45 +56,26 @@ public class Locators {
     // fields
 
     /**
-     * the asset manager
+     * the application's asset manager
      */
     private static AssetManager manager = null;
     /**
-     * list of locator types
+     * list of locator types (1st element is tried first, parallel with
+     * {@link #rootPaths})
      */
-    final private static List<Class<? extends AssetLocator>> locatorTypes = new ArrayList<>(6);
+    final private List<Class<? extends AssetLocator>> locatorTypes = new ArrayList<>(6);
     /**
-     * list of locator root paths
+     * stack of configurations for save/restore (the last element is the current
+     * configuration)
      */
-    final private static List<String> rootPaths = new ArrayList<>(6);
-    // *************************************************************************
-    // constructors
-
+    final private static List<Locators> stack = new ArrayList<>(3);
     /**
-     * A private constructor to inhibit instantiation of this class.
+     * list of locator root paths (1st element is tried first, parallel with
+     * {@link #locatorTypes})
      */
-    private Locators() {
-    }
+    final private List<String> rootPaths = new ArrayList<>(6);
     // *************************************************************************
     // new methods exposed
-
-    /**
-     * Read the filesystem root path of the asset folder.
-     *
-     * @return filesystem path, or "" if there isn't exactly 1 locator or if the
-     * locator isn't a FileLocator
-     */
-    public static String getAssetFolder() {
-        String result = "";
-        if (locatorTypes.size() == 1) {
-            String name = locatorTypes.get(0).toString();
-            if (name.equals("class com.jme3.asset.plugins.FileLocator")) {
-                result = rootPaths.get(0);
-            }
-        }
-
-        return result;
-    }
 
     /**
      * Access the asset manager.
@@ -108,7 +88,22 @@ public class Locators {
     }
 
     /**
-     * Register (add) a locator of the specified type.
+     * Read the root path of the sole locator in the current configuration.
+     *
+     * @return root path, or "" if there isn't exactly one locator or if the
+     * locator isn't a FileLocator/ZipLocator
+     */
+    public static String getRootPath() {
+        int lastIndex = stack.size() - 1;
+        Locators current = stack.get(lastIndex);
+        String result = current.configurationGetRootPath();
+
+        return result;
+    }
+
+    /**
+     * Register (add) a locator of the specified type to the current
+     * configuration.
      *
      * @param rootPath (not null, not empty)
      * @param locatorType type of locator
@@ -117,13 +112,14 @@ public class Locators {
             Class<? extends AssetLocator> locatorType) {
         Validate.nonEmpty(rootPath, "root path");
 
-        manager.registerLocator(rootPath, locatorType);
-        locatorTypes.add(locatorType);
-        rootPaths.add(rootPath);
+        int lastIndex = stack.size() - 1;
+        Locators current = stack.get(lastIndex);
+        current.configurationRegister(rootPath, locatorType);
     }
 
     /**
-     * Register (add) the specified locators in the specified order.
+     * Register (add) the specified locators to the current configuration in the
+     * specified order.
      *
      * @param rootPathList a list of root paths in which a null String indicates
      * the default locators
@@ -139,21 +135,18 @@ public class Locators {
     }
 
     /**
-     * Register (add) the default locator(s): the "Written Assets" folder (if
-     * one exists) followed by the classpath.
+     * Register (add) the default locator(s) to the current configuration: the
+     * "Written Assets" folder (if one exists) followed by the classpath.
      */
     public static void registerDefault() {
-        String wadPath = ActionApplication.getWrittenAssetDirPath();
-        File wadFile = new File(wadPath);
-        if (wadFile.isDirectory()) {
-            register(wadPath, FileLocator.class);
-        }
-
-        register("/", ClasspathLocator.class);
+        int lastIndex = stack.size() - 1;
+        Locators current = stack.get(lastIndex);
+        current.configurationRegisterDefault();
     }
 
     /**
-     * Register (add) a file locator or zip locator.
+     * Register (add) a file locator or zip locator to the current
+     * configuration.
      *
      * @param rootPath absolute filesystem path to the directory/folder/JAR/ZIP
      * (not null, not empty)
@@ -161,11 +154,155 @@ public class Locators {
     public static void registerFilesystem(String rootPath) {
         Validate.nonEmpty(rootPath, "root path");
 
+        int lastIndex = stack.size() - 1;
+        Locators current = stack.get(lastIndex);
+        current.configurationRegisterFilesystem(rootPath);
+    }
+
+    /**
+     * Restore an old configuration.
+     */
+    public static void restore() {
+        int lastIndex = stack.size() - 1;
+        assert lastIndex >= 1 : lastIndex;
+        Locators oldTop = stack.get(lastIndex);
+        oldTop.justUnregisterAll();
+
+        stack.remove(lastIndex); // pop
+
+        Locators newTop = stack.get(lastIndex - 1);
+        newTop.justRegisterAll();
+    }
+
+    /**
+     * Save a copy of the current configuration for later restoration.
+     */
+    public static void save() {
+        int lastIndex = stack.size() - 1;
+        Locators old = stack.get(lastIndex);
+
+        Locators add = new Locators();
+        add.locatorTypes.addAll(old.locatorTypes);
+        add.rootPaths.addAll(old.rootPaths);
+
+        stack.add(add); // push
+    }
+
+    /**
+     * Specify the asset manager and reset the save/restore stack.
+     *
+     * @param assetManager an empty manager to use (not null, alias created)
+     */
+    static void setAssetManager(AssetManager assetManager) {
+        Validate.nonNull(assetManager, "asset manager");
+
+        manager = assetManager;
+        stack.clear();
+        Locators newConfig = new Locators();
+        stack.add(newConfig);
+    }
+
+    /**
+     * Unregister all locators from the current configuration.
+     */
+    public static void unregisterAll() {
+        int lastIndex = stack.size() - 1;
+        Locators current = stack.get(lastIndex);
+        current.configurationUnregisterAll();
+    }
+
+    /**
+     * Set the current configuration to use only the default locator(s). Any
+     * other locators get unregistered.
+     */
+    public static void useDefault() {
+        int lastIndex = stack.size() - 1;
+        Locators current = stack.get(lastIndex);
+        current.configurationUnregisterAll();
+        current.configurationRegisterDefault();
+    }
+
+    /**
+     * Set the current configuration to use only the specified file locator or
+     * zip locator for assets. Any other locators get unregistered.
+     *
+     * @param rootPath absolute filesystem path to the directory/folder/JAR/ZIP
+     * (not null, not empty)
+     */
+    public static void useFilesystem(String rootPath) {
+        Validate.nonEmpty(rootPath, "root path");
+
+        int lastIndex = stack.size() - 1;
+        Locators current = stack.get(lastIndex);
+        current.configurationUnregisterAll();
+        current.configurationRegisterFilesystem(rootPath);
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Read the root path of the sole locator in this configuration.
+     *
+     * @return root path, or "" if there isn't exactly one locator or if the
+     * locator isn't a FileLocator/ZipLocator
+     */
+    private String configurationGetRootPath() {
+        String result = "";
+        if (locatorTypes.size() == 1) {
+            String name = locatorTypes.get(0).toString();
+            switch (name) {
+                case "class com.jme3.asset.plugins.FileLocator":
+                case "class com.jme3.asset.plugins.ZipLocator":
+                    result = rootPaths.get(0);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Register (add) a locator of the specified type to this configuration.
+     *
+     * @param rootPath (not null, not empty)
+     * @param locatorType type of locator
+     */
+    private void configurationRegister(String rootPath,
+            Class<? extends AssetLocator> locatorType) {
+        Validate.nonEmpty(rootPath, "root path");
+
+        manager.registerLocator(rootPath, locatorType);
+        locatorTypes.add(locatorType);
+        rootPaths.add(rootPath);
+    }
+
+    /**
+     * Register (add) the default locator(s) to this configuration, namely: the
+     * "Written Assets" folder (if one exists) followed by the classpath.
+     */
+    private void configurationRegisterDefault() {
+        String wadPath = ActionApplication.getWrittenAssetDirPath();
+        File wadFile = new File(wadPath);
+        if (wadFile.isDirectory()) {
+            configurationRegister(wadPath, FileLocator.class);
+        }
+
+        configurationRegister("/", ClasspathLocator.class);
+    }
+
+    /**
+     * Register (add) a file locator or zip locator to this configuration.
+     *
+     * @param rootPath absolute filesystem path to the directory/folder/JAR/ZIP
+     * (not null, not empty)
+     */
+    private void configurationRegisterFilesystem(String rootPath) {
+        Validate.nonEmpty(rootPath, "root path");
+
         File root = new File(rootPath);
         if (root.isDirectory()) {
-            register(rootPath, FileLocator.class);
+            configurationRegister(rootPath, FileLocator.class);
         } else if (rootPath.endsWith(".jar") || rootPath.endsWith(".zip")) {
-            register(rootPath, ZipLocator.class);
+            configurationRegister(rootPath, ZipLocator.class);
         } else if (!root.exists()) {
             logger.log(Level.WARNING, "{0} does not exist.",
                     MyString.quote(rootPath));
@@ -176,52 +313,39 @@ public class Locators {
     }
 
     /**
-     * Specify the asset manager.
-     *
-     * @param assetManager an empty manager to use (not null, alias created)
+     * Unregister all locators from this configuration.
      */
-    public static void setAssetManager(AssetManager assetManager) {
-        Validate.nonNull(assetManager, "asset manager");
-        manager = assetManager;
+    private void configurationUnregisterAll() {
+        justUnregisterAll();
         locatorTypes.clear();
         rootPaths.clear();
     }
 
     /**
-     * Unregister all locators.
+     * Register (add) all locators in this configuration with the asset manager,
+     * without updating this configuration.
      */
-    public static void unregisterAll() {
+    private void justRegisterAll() {
+        int numLocators = locatorTypes.size();
+        assert rootPaths.size() == numLocators : numLocators;
+        for (int i = 0; i < numLocators; i++) {
+            Class<? extends AssetLocator> locatorType = locatorTypes.get(i);
+            String rootPath = rootPaths.get(i);
+            manager.registerLocator(rootPath, locatorType);
+        }
+    }
+
+    /**
+     * Unregister all locators in this configuration from the asset manager,
+     * without updating this configuration.
+     */
+    private void justUnregisterAll() {
         int numLocators = locatorTypes.size();
         assert rootPaths.size() == numLocators : numLocators;
         for (int i = 0; i < numLocators; i++) {
             Class<? extends AssetLocator> locatorType = locatorTypes.get(i);
             String rootPath = rootPaths.get(i);
             manager.unregisterLocator(rootPath, locatorType);
-        }
-        locatorTypes.clear();
-        rootPaths.clear();
     }
-
-    /**
-     * Use only the default locators for assets. Any other locators get
-     * unregistered.
-     */
-    public static void useDefault() {
-        unregisterAll();
-        registerDefault();
-    }
-
-    /**
-     * Use only the specified file locator or zip locator for assets. Any other
-     * locators get unregistered.
-     *
-     * @param rootPath absolute filesystem path to the directory/folder/JAR/ZIP
-     * (not null, not empty)
-     */
-    public static void useFilesystem(String rootPath) {
-        Validate.nonEmpty(rootPath, "root path");
-
-        unregisterAll();
-        registerFilesystem(rootPath);
     }
 }
