@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.5.8 released on TBD
+
+ + Refine the API of Locators.
+ + Implement save/restore for Locators.
+
 ## Version 0.5.7 released on 9 August 2017
 
  Add support for zip locators.
@@ -17,7 +22,7 @@ overriden.
 
 ## Version 0.5.4 released on 15 July 2017
 
-+ Added a Locator class to manage asset locators.
++ Added a Locators class to manage asset locators.
 + Added getWrittenAssetDirPath() to the ActionApplication class.
 + Made ActionApplication.filePath() return an absolute pathname.
 

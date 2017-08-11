@@ -11,7 +11,7 @@ sourceCompatibility = '1.8'
 gradle.projectsEvaluated {
     tasks.withType(JavaCompile) {
         // javac options
-        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
     }
 }
 
@@ -21,16 +21,16 @@ ext {
     jme3utilitiesdebugVersion = '0.7.3'
     jme3utilitiesheartVersion = '0.9.16'
     jme3utilitiesniftyVersion = '0.6.8'
-    jme3utilitiesuiVersion = '0.5.7'
+    jme3utilitiesuiVersion = '0.5.8'
     jme3utilitiesxVersion = '0.2.1'
     jmonkeyengineVersion = '3.1.0-stable'
     skycontrolVersion = '0.9.5'
 }
 
 repositories {
-    maven { url "https://jcenter.bintray.com" }
-    maven { url "https://dl.bintray.com/stephengold/org.jmonkeyengine" }
-    maven { url "https://dl.bintray.com/stephengold/jme3utilities" }
+    maven { url 'https://jcenter.bintray.com' }
+    maven { url 'https://dl.bintray.com/stephengold/org.jmonkeyengine' }
+    maven { url 'https://dl.bintray.com/stephengold/jme3utilities' }
 }
 
 task sourcesJar(type: Jar, dependsOn: classes, description: 'Create a jar of source files.') {
