@@ -25,6 +25,7 @@
  */
 package jme3utilities;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
@@ -54,6 +55,33 @@ public class MyString {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Find all strings in the input collection that begin with the specified
+     * prefix and add them to the result.
+     *
+     * @param collection input collection (not null, unaffected)
+     * @param prefix (not null)
+     * @param addResult (added to if not null)
+     * @return an expanded list (either addResult or a new instance)
+     */
+    public static List<String> addMatchPrefix(Collection<String> collection,
+            String prefix, List<String> addResult) {
+        Validate.nonNull(collection, "input collection");
+        Validate.nonNull(prefix, "prefix");
+        if (addResult == null) {
+            int size = collection.size();
+            addResult = new ArrayList<>(size);
+        }
+
+        for (String string : collection) {
+            if (string.startsWith(prefix)) {
+                addResult.add(string);
+            }
+        }
+
+        return addResult;
+    }
 
     /**
      * Test two strings for lexicographic order.
@@ -252,10 +280,10 @@ public class MyString {
     }
 
     /**
-     * Filter a collection of strings, keeping only those with the specified
-     * prefix.
+     * Filter a collection of strings, keeping only those that begin with the
+     * specified prefix.
      *
-     * @param collection (not null, modified)
+     * @param collection collection to filter (not null, modified)
      * @param prefix (not null)
      */
     public static void matchPrefix(Collection<String> collection,
