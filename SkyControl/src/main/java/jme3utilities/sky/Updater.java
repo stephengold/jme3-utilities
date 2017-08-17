@@ -38,6 +38,8 @@ import com.jme3.post.filters.BloomFilter;
 import com.jme3.renderer.ViewPort;
 import com.jme3.shadow.AbstractShadowFilter;
 import com.jme3.shadow.AbstractShadowRenderer;
+import com.jme3.util.clone.Cloner;
+import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -53,7 +55,7 @@ import jme3utilities.ViewPortListener;
  * @author Stephen Gold sgold@sonic.net
  */
 public class Updater
-        implements Savable, ViewPortListener {
+        implements JmeCloneable, Savable, ViewPortListener {
     // *************************************************************************
     // constants and loggers
 
@@ -74,14 +76,12 @@ public class Updater
      * synchronized
      */
     @SuppressWarnings("rawtypes")
-    private ArrayList<AbstractShadowFilter> shadowFilters =
-            new ArrayList<>(1);
+    private ArrayList<AbstractShadowFilter> shadowFilters = new ArrayList<>(1);
     /**
      * shadow renderers whose intensities are updated by the control - not
      * synchronized
      */
-    private ArrayList<AbstractShadowRenderer> shadowRenderers =
-            new ArrayList<>(1);
+    private ArrayList<AbstractShadowRenderer> shadowRenderers = new ArrayList<>(1);
     /**
      * bloom filters whose intensities are updated by the control - not
      * synchronized
@@ -474,6 +474,44 @@ public class Updater
         }
         for (ViewPort viewPort : viewPorts) {
             viewPort.setBackgroundColor(backgroundColor);
+        }
+    }
+    // *************************************************************************
+    // JmeCloneable methods
+
+    /**
+     * Convert this shallow-cloned control into a deep-cloned one, using the
+     * specified cloner and original to resolve copied fields.
+     *
+     * @param cloner the cloner currently cloning this control
+     * @param original the control from which this control was shallow-cloned
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        ambientLight = cloner.clone(ambientLight);
+        shadowFilters = cloner.clone(shadowFilters);
+        shadowRenderers = cloner.clone(shadowRenderers);
+        bloomFilters = cloner.clone(bloomFilters);
+        viewPorts = cloner.clone(viewPorts);
+        ambientColor = cloner.clone(ambientColor);
+        backgroundColor = cloner.clone(backgroundColor);
+        mainColor = cloner.clone(mainColor);
+        mainLight = cloner.clone(mainLight);
+        direction = cloner.clone(direction);
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public Updater jmeClone() {
+        try {
+            Updater clone = (Updater) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
         }
     }
     // *************************************************************************

@@ -31,6 +31,8 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
 import com.jme3.math.ColorRGBA;
+import com.jme3.util.clone.Cloner;
+import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
@@ -41,7 +43,8 @@ import jme3utilities.math.MyMath;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class CloudLayer implements Savable {
+public class CloudLayer
+        implements JmeCloneable, Savable {
     // *************************************************************************
     // constants and loggers
 
@@ -217,6 +220,35 @@ public class CloudLayer implements Savable {
         float u = u0 + time * uRate;
         float v = v0 + time * vRate;
         material.setCloudsOffset(layerIndex, u, v);
+    }
+    // *************************************************************************
+    // JmeCloneable methods
+
+    /**
+     * Convert this shallow-cloned control into a deep-cloned one, using the
+     * specified cloner and original to resolve copied fields.
+     *
+     * @param cloner the cloner currently cloning this control
+     * @param original the control from which this control was shallow-cloned
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        material = cloner.clone(material);
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public CloudLayer jmeClone() {
+        try {
+            CloudLayer clone = (CloudLayer) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
     }
     // *************************************************************************
     // Savable methods

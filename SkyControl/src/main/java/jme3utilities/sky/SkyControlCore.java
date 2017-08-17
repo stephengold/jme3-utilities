@@ -43,6 +43,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,7 +62,7 @@ import jme3utilities.math.MyColor;
  * The "top" dome is oriented so that its rim is parallel to the horizon. The
  * top dome implements the sun, moon, clear sky color, and horizon haze.
  * <p>
- * This control simulates up to six layers of clouds. The cloud density may be
+ * This control simulates up to 6 layers of clouds. The cloud density may be
  * adjusted by invoking setCloudiness(). The rate of cloud motion may be
  * adjusted by invoking setCloudsRate(). Flatten the clouds for best results;
  * this puts them on a translucent "clouds only" dome.
@@ -687,6 +688,21 @@ public class SkyControlCore extends SubtreeControl {
     }
     // *************************************************************************
     // SimpleControl methods
+
+    /**
+     * Convert this shallow-cloned control into a deep-cloned one, using the
+     * specified cloner and original to resolve copied fields.
+     *
+     * @param cloner the cloner currently cloning this control
+     * @param original the control from which this control was shallow-cloned
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+
+        camera = cloner.clone(camera);
+        cloudLayers = cloner.clone(cloudLayers);
+    }
 
     /**
      * Callback invoked when the sky node's geometric state is about to be

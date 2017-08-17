@@ -40,6 +40,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.texture.Texture;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -414,6 +415,22 @@ public class SkyControl extends SkyControlCore {
     }
 
     /**
+     * Convert this shallow-cloned control into a deep-cloned one, using the
+     * specified cloner and original to resolve copied fields.
+     *
+     * @param cloner the cloner currently cloning this control
+     * @param original the control from which this control was shallow-cloned
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+
+        moonRenderer = cloner.clone(moonRenderer);
+        sunAndStars = cloner.clone(sunAndStars);
+        updater = cloner.clone(updater);
+    }
+
+    /**
      * Callback to update this control prior to rendering.
      *
      * @param tpf time interval between render passes (in seconds, &ge;0)
@@ -585,7 +602,7 @@ public class SkyControl extends SkyControlCore {
     }
 
     /**
-     * Specify a globe renderer for the moon.
+     * Specify a globe renderer for the moon. TODO reorder methods
      *
      * @param newRenderer (not null)
      */
