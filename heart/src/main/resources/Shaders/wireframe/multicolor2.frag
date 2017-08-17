@@ -25,7 +25,7 @@
  */
 
 /*
- * fragment shader used by multicolor.j3md
+ * fragment shader used by multicolor2.j3md
  */
 
 #import "Common/ShaderLib/GLSLCompat.glsllib"

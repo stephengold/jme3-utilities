@@ -25,7 +25,7 @@
  */
 
 /*
- * vertex shader used by multicolor.j3md
+ * vertex shader used by multicolor2.j3md
  */
 
 #import "Common/ShaderLib/GLSLCompat.glsllib"
