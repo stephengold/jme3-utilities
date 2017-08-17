@@ -25,14 +25,12 @@
  */
 package jme3utilities;
 
-import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.Animation;
 import com.jme3.animation.AudioTrack;
 import com.jme3.animation.Bone;
 import com.jme3.animation.BoneTrack;
 import com.jme3.animation.EffectTrack;
-import com.jme3.animation.LoopMode;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SpatialTrack;
 import com.jme3.animation.Track;
@@ -43,7 +41,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.util.Collection;
 import java.util.TreeSet;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.math.MyArray;
 
@@ -57,10 +54,6 @@ public class MyAnimation {
     // *************************************************************************
     // constants and loggers
 
-    /**
-     * blend time for animations (in seconds, &ge;0)
-     */
-    final private static float blendTime = 0.3f;
     /**
      * message logger for this class
      */
@@ -78,26 +71,59 @@ public class MyAnimation {
     // new methods exposed
 
     /**
-     * Smoothly transition an animation channel to the named animation.
+     * Copy a bone track, deleting everything before the specified time, and
+     * making that the start of the animation.
      *
-     * @param channel animation channel (not null, modified)
-     * @param animationName name of animation (or null to reset the channel)
+     * @param oldTrack (not null, unaffected)
+     * @param neckTime cutoff time (in seconds, &gt;0)
+     * @param neckTransform user transform of bone at the neck time (not null,
+     * unaffected)
+     * @param oldDuration (in seconds, &ge;neckTime)
+     * @return a new instance
      */
-    public static void blendTo(AnimChannel channel, String animationName) {
-        if (animationName == null) {
-            channel.reset(true);
-            return;
+    public static BoneTrack behead(BoneTrack oldTrack, float neckTime,
+            Transform neckTransform, float oldDuration) {
+        Validate.positive(neckTime, "neck time");
+
+        float[] oldTimes = oldTrack.getKeyFrameTimes();
+        Vector3f[] oldTranslations = oldTrack.getTranslations();
+        Quaternion[] oldRotations = oldTrack.getRotations();
+        Vector3f[] oldScales = oldTrack.getScales();
+        int oldCount = oldTimes.length;
+
+        int neckIndex;
+        neckIndex = findPreviousKeyframeIndex(oldTrack, neckTime);
+        int newCount = oldCount - neckIndex;
+        Vector3f[] translations = new Vector3f[newCount];
+        Quaternion[] rotations = new Quaternion[newCount];
+        Vector3f[] scales = null;
+        if (oldScales != null) {
+            scales = new Vector3f[newCount];
         }
-        String oldAnimationName = channel.getAnimationName();
-        if (animationName.equals(oldAnimationName)) {
-            return;
+        float[] times = new float[newCount];
+
+        Transform user = neckTransform.clone();
+        translations[0] = user.getTranslation();
+        rotations[0] = user.getRotation();
+        if (scales != null) {
+            scales[0] = user.getScale();
         }
-        /*
-         * new animation
-         */
-        logger.log(Level.INFO, "new animation={0}", animationName);
-        channel.setAnim(animationName, blendTime);
-        channel.setLoopMode(LoopMode.Loop);
+        times[0] = 0f;
+        for (int newIndex = 1; newIndex < newCount; newIndex++) {
+            int oldIndex = newIndex + neckIndex;
+            translations[newIndex] = oldTranslations[oldIndex].clone();
+            rotations[newIndex] = oldRotations[oldIndex].clone();
+            if (scales != null) {
+                scales[newIndex] = oldScales[oldIndex].clone();
+            }
+            times[newIndex] = oldTimes[oldIndex] - neckTime;
+        }
+
+        int boneIndex = oldTrack.getTargetBoneIndex();
+        BoneTrack result = new BoneTrack(boneIndex, times, translations,
+                rotations, scales);
+
+        return result;
     }
 
     /**
@@ -758,5 +784,25 @@ public class MyAnimation {
                 rotations, scales);
 
         return result;
+    }
+
+    /**
+     * Repair all tracks in which the 1st keyframe isn't at time=0.
+     *
+     * @param animation (not null)
+     * @return number of tracks edited (&ge;0)
+     */
+    public static int zeroFirst(Animation animation) {
+        int numTracksEdited = 0;
+        Track[] tracks = animation.getTracks();
+        for (Track track : tracks) {
+            float[] times = track.getKeyFrameTimes();
+            if (times[0] != 0f) {
+                times[0] = 0f;
+                ++numTracksEdited;
+            }
+        }
+
+        return numTracksEdited;
     }
 }
