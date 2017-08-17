@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.MyMesh;
 import jme3utilities.MySkeleton;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
@@ -645,7 +646,7 @@ public class PoseDemoHud
             int boneIndex = skeleton.getBoneIndex(bone.getName());
             int numInfluenced = 0;
             for (Mesh mesh : PoseDemo.modelState.listMeshes()) {
-                numInfluenced += MySkeleton.numInfluenced(mesh, boneIndex);
+                numInfluenced += MyMesh.numInfluenced(mesh, boneIndex);
             }
             status4 = String.format("#%d of %d; vertices = %d",
                     boneIndex + 1, numBones, numInfluenced);

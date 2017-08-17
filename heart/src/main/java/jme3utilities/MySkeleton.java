@@ -32,14 +32,10 @@ import com.jme3.animation.SkeletonControl;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.control.Control;
 import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -269,50 +265,6 @@ public class MySkeleton {
     }
 
     /**
-     * Find the largest weight in the specified mesh for the specified bone.
-     *
-     * @param mesh which mesh (not null, possibly modified)
-     * @param boneIndex which bone (&ge;0)
-     * @return bone weight, or 0f if no influence found
-     */
-    public static float maxWeight(Mesh mesh, int boneIndex) {
-        Validate.nonNegative(boneIndex, "bone index");
-
-        int maxWeightsPerVert = mesh.getMaxNumWeights();
-        assert maxWeightsPerVert > 0 : maxWeightsPerVert;
-        assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
-
-        VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
-        ByteBuffer boneIndexBuffer = (ByteBuffer) biBuf.getData();
-        boneIndexBuffer.rewind();
-        int numBoneIndices = boneIndexBuffer.remaining();
-        assert numBoneIndices % 4 == 0 : numBoneIndices;
-        int numVertices = boneIndexBuffer.remaining() / 4;
-
-        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
-        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getData();
-        weightBuffer.rewind();
-        int numWeights = weightBuffer.remaining();
-        assert numWeights == numVertices * 4 : numWeights;
-
-        float result = 0f;
-        byte biByte = (byte) boneIndex;
-        for (int vIndex = 0; vIndex < numVertices; vIndex++) {
-            for (int wIndex = 0; wIndex < 4; wIndex++) {
-                float weight = weightBuffer.get();
-                byte bIndex = boneIndexBuffer.get();
-                if (wIndex < maxWeightsPerVert
-                        && bIndex == biByte
-                        && weight > result) {
-                    result = weight;
-                }
-            }
-        }
-
-        return result;
-    }
-
-    /**
      * Convert a location in a bone's local space to a location in model space.
      *
      * @param bone (not null)
@@ -328,51 +280,6 @@ public class MySkeleton {
         Vector3f result = new Vector3f(x, y, z).multLocal(scale);
         // rotation??
         result.addLocal(tail);
-
-        return result;
-    }
-
-    /**
-     * Count how many vertices in the specified mesh are directly influenced by
-     * the indexed bone.
-     *
-     * @param mesh which mesh (not null, possibly modified)
-     * @param boneIndex which bone (&ge;0)
-     * @return count (&ge;0)
-     */
-    public static int numInfluenced(Mesh mesh, int boneIndex) {
-        Validate.nonNegative(boneIndex, "bone index");
-
-        int maxWeightsPerVert = mesh.getMaxNumWeights();
-        assert maxWeightsPerVert > 0 : maxWeightsPerVert;
-        assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
-
-        VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
-        ByteBuffer boneIndexBuffer = (ByteBuffer) biBuf.getData();
-        boneIndexBuffer.rewind();
-        int numBoneIndices = boneIndexBuffer.remaining();
-        assert numBoneIndices % 4 == 0 : numBoneIndices;
-        int numVertices = boneIndexBuffer.remaining() / 4;
-
-        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
-        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getData();
-        weightBuffer.rewind();
-        int numWeights = weightBuffer.remaining();
-        assert numWeights == numVertices * 4 : numWeights;
-
-        int result = 0;
-        byte biByte = (byte) boneIndex;
-        for (int vIndex = 0; vIndex < numVertices; vIndex++) {
-            for (int wIndex = 0; wIndex < 4; wIndex++) {
-                float weight = weightBuffer.get();
-                byte bIndex = boneIndexBuffer.get();
-                if (wIndex < maxWeightsPerVert
-                        && bIndex == biByte
-                        && weight > 0f) {
-                    result++;
-                }
-            }
-        }
 
         return result;
     }
