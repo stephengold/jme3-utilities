@@ -35,14 +35,20 @@
 attribute vec4 inColor;
 attribute vec3 inPosition;
 uniform float m_PointSize;
-varying vec4 vColor;
+#ifdef VERTEX_COLOR
+        varying vec4 vertexColor;
+#endif
 
 void main(){
-        vColor = inColor;
+        #ifdef VERTEX_COLOR
+                vertexColor = inColor;
+        #endif
+
         vec4 modelSpacePos = vec4(inPosition, 1.0);
         #ifdef NUM_BONES
                 Skinning_Compute(modelSpacePos);
         #endif
-        gl_PointSize = m_PointSize;
         gl_Position = TransformWorldViewProjection(modelSpacePos);
+
+        gl_PointSize = m_PointSize;
 }

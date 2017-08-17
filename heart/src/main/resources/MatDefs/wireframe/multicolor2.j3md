@@ -27,6 +27,9 @@
 
 MaterialDef wireframe {
     MaterialParameters {
+        Boolean UseVertexColor
+        Color Color
+        Float AlphaDiscardThreshold
         Float PointSize : 1.0
         Int NumberOfBones
         Matrix4Array BoneMatrices
@@ -35,8 +38,11 @@ MaterialDef wireframe {
 
     Technique {
         Defines {
+            DISCARD_ALPHA : AlphaDiscardThreshold
+            MATERIAL_COLOR : Color
             NUM_BONES : NumberOfBones
             POINT_SHAPE : PointShape
+            VERTEX_COLOR : UseVertexColor
         }
         FragmentShader GLSL120: Shaders/wireframe/multicolor2.frag
         VertexShader GLSL120:   Shaders/wireframe/multicolor2.vert

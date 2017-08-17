@@ -36,6 +36,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Transform;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh.Mode;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
@@ -55,7 +56,7 @@ import jme3utilities.Validate;
  * <p>
  * The controlled spatial must be a node.
  * <p>
- * The control is disabled by default. When enabled, it attaches a node and two
+ * The control is disabled by default. When enabled, it attaches a node and 2
  * geometries to the scene graph.
  *
  * @author Stephen Gold sgold@sonic.net
@@ -137,16 +138,19 @@ public class SkeletonVisualizer extends SubtreeControl {
         Validate.nonNull(assetManager, "asset manager");
 
         lineMaterial = new Material(assetManager,
-                "MatDefs/wireframe/wire_and.j3md");
+                "MatDefs/wireframe/multicolor2.j3md");
+        lineMaterial.setBoolean("UseVertexColor", true);
+        lineMaterial.setFloat("AlphaDiscardThreshold", 0.9999f);
         RenderState rs2 = lineMaterial.getAdditionalRenderState();
         rs2.setBlendMode(BlendMode.Alpha);
         rs2.setDepthTest(false);
         rs2.setWireframe(true);
-        lineMaterial.setColor("Color", defaultLineColor.clone());
+        setLineColor(defaultLineColor);
         setLineWidth(defaultLineWidth);
 
         pointMaterial = new Material(assetManager,
                 "MatDefs/wireframe/multicolor2.j3md");
+        pointMaterial.setBoolean("UseVertexColor", true);
         RenderState rs = pointMaterial.getAdditionalRenderState();
         rs.setBlendMode(BlendMode.Alpha);
         rs.setDepthTest(false);
@@ -227,7 +231,7 @@ public class SkeletonVisualizer extends SubtreeControl {
     /**
      * Test whether the specified spatial has skeleton visualization enabled.
      *
-     * @param model skeletonized spatial (not null)
+     * @param model spatial (not null)
      * @return true if enabled, otherwise false
      */
     public static boolean isDebugEnabled(Spatial model) {
@@ -253,8 +257,8 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Alter a skeletonized spatial's visualization status. Has no effect if the
-     * spatial lacks a SkeletonVisualizer.
+     * Alter a spatial's visualization status. Has no effect if the spatial
+     * lacks a SkeletonVisualizer.
      *
      * @param model skeletonized spatial (not null)
      * @param newState true to enable, false to disable
@@ -271,7 +275,7 @@ public class SkeletonVisualizer extends SubtreeControl {
      *
      * @param newColor (not null, unaffected)
      */
-    public void setLineColor(ColorRGBA newColor) {
+    final public void setLineColor(ColorRGBA newColor) {
         Validate.nonNull(newColor, "new color");
         lineMaterial.setColor("Color", newColor.clone());
     }
@@ -366,23 +370,18 @@ public class SkeletonVisualizer extends SubtreeControl {
             if (spatial != null) {
                 namePrefix = spatial.getName() + " ";
             }
+
             String headsName = namePrefix + "heads";
-            int numBones;
-            if (newSkeleton == null) {
-                numBones = 0;
-            } else {
-                numBones = skeleton.getBoneCount();
-            }
-            BoneHeads headsMesh = new BoneHeads(numBones);
-            Geometry heads = new Geometry(headsName, headsMesh);
-            heads.setMaterial(pointMaterial);
-            subtree.attachChildAt(heads, headsChildPosition);
+            SkeletonMesh headsMesh = new SkeletonMesh(skeleton, Mode.Points);
+            Geometry headsGeometry = new Geometry(headsName, headsMesh);
+            headsGeometry.setMaterial(pointMaterial);
+            subtree.attachChildAt(headsGeometry, headsChildPosition);
 
             String linksName = namePrefix + "links";
-            SkeletonLinks linksMesh = new SkeletonLinks(skeleton);
-            Geometry links = new Geometry(linksName, linksMesh);
-            links.setMaterial(lineMaterial);
-            subtree.attachChildAt(links, linksChildPosition);
+            SkeletonMesh linksMesh = new SkeletonMesh(skeleton, Mode.Lines);
+            Geometry linksGeometry = new Geometry(linksName, linksMesh);
+            linksGeometry.setMaterial(lineMaterial);
+            subtree.attachChildAt(linksGeometry, linksChildPosition);
         }
     }
 
@@ -457,13 +456,13 @@ public class SkeletonVisualizer extends SubtreeControl {
             colors[boneIndex] = copyPointColor(boneIndex);
         }
 
-        Geometry heads = (Geometry) subtree.getChild(headsChildPosition);
-        BoneHeads headsMesh = (BoneHeads) heads.getMesh();
+        Geometry headsGeom = (Geometry) subtree.getChild(headsChildPosition);
+        SkeletonMesh headsMesh = (SkeletonMesh) headsGeom.getMesh();
         headsMesh.updateColors(colors);
         headsMesh.updatePositions(skeleton);
 
-        Geometry links = (Geometry) subtree.getChild(linksChildPosition);
-        SkeletonLinks linksMesh = (SkeletonLinks) links.getMesh();
+        Geometry linksGeom = (Geometry) subtree.getChild(linksChildPosition);
+        SkeletonMesh linksMesh = (SkeletonMesh) linksGeom.getMesh();
         linksMesh.updateColors(colors);
         linksMesh.updatePositions(skeleton);
     }

@@ -30,16 +30,40 @@
 
 #import "Common/ShaderLib/GLSLCompat.glsllib"
 
+#ifdef DISCARD_ALPHA
+        uniform float m_AlphaDiscardThreshold;
+#endif
+#ifdef MATERIAL_COLOR
+        uniform vec4 m_Color;
+#endif
 #ifdef POINT_SHAPE
         uniform sampler2D m_PointShape;
 #endif
-varying vec4 vColor;
+#ifdef VERTEX_COLOR
+        varying vec4 vertexColor;
+#endif
 
 void main(){
+        #ifdef VERTEX_COLOR
+                vec4 color = vertexColor;
+        #else
+                vec4 color = vec4(1.0);
+        #endif
+
+        #if defined(DISCARD_ALPHA)
+                if(color.a < m_AlphaDiscardThreshold){
+                        discard;
+                }
+        #endif
+
+        #ifdef MATERIAL_COLOR
+                color = m_Color;
+        #endif
+
         #ifdef POINT_SHAPE
                 vec4 sample = texture2D(m_PointShape, gl_PointCoord);
-                gl_FragColor = vColor * sample;
-        #else
-                gl_FragColor = vColor;
+                color *= sample;
         #endif
+
+        gl_FragColor = color;
 }
