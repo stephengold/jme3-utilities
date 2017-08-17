@@ -303,6 +303,27 @@ public class SkyControl extends SkyControlCore {
     }
 
     /**
+     * Specify a globe renderer for the moon.
+     *
+     * @param newRenderer (not null)
+     */
+    public void setMoonRenderer(GlobeRenderer newRenderer) {
+        Validate.nonNull(newRenderer, "renderer");
+
+        if (moonRenderer != null) {
+            boolean enabledFlag = moonRenderer.isEnabled();
+            newRenderer.setEnabled(enabledFlag);
+        }
+        moonRenderer = newRenderer;
+
+        if (moonRenderer.isEnabled()) {
+            Texture dynamicTexture = moonRenderer.getTexture();
+            SkyMaterial topMaterial = getTopMaterial();
+            topMaterial.addObject(moonIndex, dynamicTexture);
+        }
+    }
+
+    /**
      * Alter the phase of the moon to a pre-set value.
      *
      * @param newPreset (or null to hide the moon)
@@ -599,27 +620,6 @@ public class SkyControl extends SkyControlCore {
         }
         assert false : south;
         return null;
-    }
-
-    /**
-     * Specify a globe renderer for the moon. TODO reorder methods
-     *
-     * @param newRenderer (not null)
-     */
-    public void setMoonRenderer(GlobeRenderer newRenderer) {
-        Validate.nonNull(newRenderer, "renderer");
-
-        if (moonRenderer != null) {
-            boolean enabledFlag = moonRenderer.isEnabled();
-            newRenderer.setEnabled(enabledFlag);
-        }
-        moonRenderer = newRenderer;
-
-        if (moonRenderer.isEnabled()) {
-            Texture dynamicTexture = moonRenderer.getTexture();
-            SkyMaterial topMaterial = getTopMaterial();
-            topMaterial.addObject(moonIndex, dynamicTexture);
-        }
     }
 
     /**

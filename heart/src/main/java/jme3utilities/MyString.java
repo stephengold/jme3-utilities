@@ -166,6 +166,33 @@ public class MyString {
     }
 
     /**
+     * Find the longest repeated prefix in a list of strings.
+     *
+     * @param list (not null, unaffected)
+     * @return prefix (not null)
+     */
+    public static String findLongestPrefix(List<String> list) {
+        int count = list.size();
+
+        String longest = "";
+        int longestLength = 0;
+
+        for (int i = 0; i < count; i++) {
+            String si = list.get(i);
+            for (int j = i + 1; j < count; j++) {
+                String sj = list.get(j);
+                int prefixLength = sharedPrefixLength(si, sj);
+                if (prefixLength > longestLength) {
+                    longestLength = prefixLength;
+                    longest = si.substring(0, prefixLength);
+                }
+            }
+        }
+
+        return longest;
+    }
+
+    /**
      * Parse a line of two fields from a string.
      *
      * @param input the input string
@@ -250,33 +277,6 @@ public class MyString {
         }
 
         return result.toString();
-    }
-
-    /**
-     * Find the longest repeated prefix in a list of strings.
-     *
-     * @param list (not null, unaffected)
-     * @return prefix (not null)
-     */
-    public static String findLongestPrefix(List<String> list) {
-        int count = list.size();
-
-        String longest = "";
-        int longestLength = 0;
-
-        for (int i = 0; i < count; i++) {
-            String si = list.get(i);
-            for (int j = i + 1; j < count; j++) {
-                String sj = list.get(j);
-                int prefixLength = sharedPrefixLength(si, sj);
-                if (prefixLength > longestLength) {
-                    longestLength = prefixLength;
-                    longest = si.substring(0, prefixLength);
-                }
-            }
-        }
-
-        return longest;
     }
 
     /**
