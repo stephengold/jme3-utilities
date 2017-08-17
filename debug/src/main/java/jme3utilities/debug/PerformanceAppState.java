@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyAsset;
 import jme3utilities.SimpleAppState;
+import jme3utilities.Validate;
 
 /**
  * App state which implements a performance monitor for jME3. Each second it
@@ -101,6 +102,28 @@ public class PerformanceAppState extends SimpleAppState {
      */
     public PerformanceAppState() {
         super(true);
+    }
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Read the update interval.
+     *
+     * @return interval (in seconds, &gt;0)
+     */
+    public float getUpdateInterval() {
+        assert updateInterval > 0f : updateInterval;
+        return updateInterval;
+    }
+
+    /**
+     * Alter the update interval.
+     *
+     * @param interval (in seconds, &gt;0)
+     */
+    public void setUpdateInterval(float interval) {
+        Validate.positive(interval, "interval");
+        updateInterval = interval;
     }
     // *************************************************************************
     // SimpleAppState methods
