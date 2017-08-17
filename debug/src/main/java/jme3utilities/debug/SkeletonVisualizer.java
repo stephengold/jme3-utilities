@@ -136,19 +136,23 @@ public class SkeletonVisualizer extends SubtreeControl {
         super();
         Validate.nonNull(assetManager, "asset manager");
 
-        lineMaterial = MyAsset.createWireframeMaterial(assetManager,
-                defaultLineColor);
-        lineMaterial.getAdditionalRenderState().setDepthTest(false);
+        lineMaterial = new Material(assetManager,
+                "MatDefs/wireframe/wire_and.j3md");
+        RenderState rs2 = lineMaterial.getAdditionalRenderState();
+        rs2.setBlendMode(BlendMode.Alpha);
+        rs2.setDepthTest(false);
+        rs2.setWireframe(true);
+        lineMaterial.setColor("Color", defaultLineColor.clone());
         setLineWidth(defaultLineWidth);
 
         pointMaterial = new Material(assetManager,
                 "MatDefs/wireframe/multicolor2.j3md");
         RenderState rs = pointMaterial.getAdditionalRenderState();
+        rs.setBlendMode(BlendMode.Alpha);
         rs.setDepthTest(false);
         rs.setWireframe(true);
 
         if (supportsPointShape()) {
-            rs.setBlendMode(BlendMode.Alpha);
             Texture pointShape = MyAsset.loadTexture(assetManager,
                     defaultPointShapeAssetPath);
             setPointShape(pointShape);
@@ -327,7 +331,7 @@ public class SkeletonVisualizer extends SubtreeControl {
         if (supportsPointShape()) {
             pointMaterial.setTexture("PointShape", shape);
         } else {
-            logger.log(Level.WARNING, "PointShape not set.");
+            logger.log(Level.WARNING, "Cannot set point shape.");
         }
     }
 
@@ -342,7 +346,7 @@ public class SkeletonVisualizer extends SubtreeControl {
         if (supportsPointSize()) {
             pointMaterial.setFloat("PointSize", size);
         } else {
-            logger.log(Level.WARNING, "PointSize not set.");
+            logger.log(Level.WARNING, "Cannot set point size.");
         }
     }
 
@@ -460,7 +464,8 @@ public class SkeletonVisualizer extends SubtreeControl {
 
         Geometry links = (Geometry) subtree.getChild(linksChildPosition);
         SkeletonLinks linksMesh = (SkeletonLinks) links.getMesh();
-        linksMesh.update(skeleton);
+        linksMesh.updateColors(colors);
+        linksMesh.updatePositions(skeleton);
     }
 
     /**

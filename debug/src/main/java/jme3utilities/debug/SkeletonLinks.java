@@ -27,6 +27,7 @@ package jme3utilities.debug;
 
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
@@ -38,6 +39,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.logging.Logger;
 import jme3utilities.MySkeleton;
+import jme3utilities.Validate;
 
 /**
  * A line-mode mesh used to visualize a skeleton. Each vertex corresponds to a
@@ -78,6 +80,11 @@ class SkeletonLinks extends Mesh {
         positions.setupData(Usage.Stream, 3, Format.Float, floats);
         setBuffer(positions);
 
+        FloatBuffer fColors = BufferUtils.createFloatBuffer(4 * boneCount);
+        VertexBuffer vColors = new VertexBuffer(Type.Color);
+        vColors.setupData(Usage.Stream, 4, Format.Float, fColors);
+        setBuffer(vColors);
+
         ShortBuffer shorts = BufferUtils.createShortBuffer(2 * numConnections);
         VertexBuffer indices = new VertexBuffer(Type.Index);
         indices.setupData(Usage.Static, 2, Format.UnsignedShort, shorts);
@@ -104,11 +111,36 @@ class SkeletonLinks extends Mesh {
     // new methods exposed
 
     /**
+     * Update the color of each vertex in the mesh.
+     *
+     * @param colors color for each bone (not null)
+     */
+    void updateColors(ColorRGBA[] colors) {
+        Validate.nonNull(colors, "colors");
+
+        FloatBuffer fColors = getFloatBuffer(Type.Color);
+        fColors.clear(); // prepare for writing
+
+        int boneCount = colors.length;
+        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
+            ColorRGBA color = colors[boneIndex];
+            fColors.put(color.r);
+            fColors.put(color.g);
+            fColors.put(color.b);
+            fColors.put(color.a);
+        }
+        fColors.flip(); // prepare for reading
+
+        VertexBuffer vColors = getBuffer(Type.Color);
+        vColors.updateData(fColors);
+    }
+
+    /**
      * Update the position of each vertex in the mesh.
      *
      * @param skeleton the skeleton to visualize (may be null)
      */
-    void update(Skeleton skeleton) {
+    void updatePositions(Skeleton skeleton) {
         FloatBuffer floats = getFloatBuffer(Type.Position);
         floats.clear(); // prepare for writing
         int boneCount;
