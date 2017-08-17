@@ -45,7 +45,7 @@ import jme3utilities.MySkeleton;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class SkeletonLinks extends Mesh {
+class SkeletonLinks extends Mesh {
     // *************************************************************************
     // constants and loggers
 
@@ -62,7 +62,7 @@ public class SkeletonLinks extends Mesh {
      *
      * @param skeleton the skeleton to visualize (may be null)
      */
-    public SkeletonLinks(Skeleton skeleton) {
+    SkeletonLinks(Skeleton skeleton) {
         int boneCount, numConnections;
         if (skeleton == null) {
             boneCount = 0;
@@ -108,7 +108,7 @@ public class SkeletonLinks extends Mesh {
      *
      * @param skeleton the skeleton to visualize (may be null)
      */
-    public void update(Skeleton skeleton) {
+    void update(Skeleton skeleton) {
         FloatBuffer floats = getFloatBuffer(Type.Position);
         floats.clear(); // prepare for writing
         int boneCount;

@@ -45,7 +45,7 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class BoneHeads extends Mesh {
+class BoneHeads extends Mesh {
     // *************************************************************************
     // constants and loggers
 
@@ -62,7 +62,7 @@ public class BoneHeads extends Mesh {
      *
      * @param boneCount number of bones to visualize (&ge;0)
      */
-    public BoneHeads(int boneCount) {
+    BoneHeads(int boneCount) {
         Validate.nonNegative(boneCount, "bone count");
 
         FloatBuffer fPositions = BufferUtils.createFloatBuffer(3 * boneCount);
@@ -85,7 +85,7 @@ public class BoneHeads extends Mesh {
      *
      * @param skeleton the skeleton to visualize (not null)
      */
-    public void update(Skeleton skeleton) {
+    void update(Skeleton skeleton) {
         Validate.nonNull(skeleton, "skeleton");
 
         FloatBuffer fPositions = getFloatBuffer(Type.Position);
@@ -113,7 +113,7 @@ public class BoneHeads extends Mesh {
      *
      * @param colors color for each bone (not null)
      */
-    public void updateColors(ColorRGBA[] colors) {
+    void updateColors(ColorRGBA[] colors) {
         Validate.nonNull(colors, "colors");
 
         FloatBuffer fColors = getFloatBuffer(Type.Color);
@@ -138,7 +138,7 @@ public class BoneHeads extends Mesh {
      *
      * @param skeleton the skeleton to visualize (may be null)
      */
-    public void updatePositions(Skeleton skeleton) {
+    void updatePositions(Skeleton skeleton) {
         FloatBuffer fPositions = getFloatBuffer(Type.Position);
         fPositions.clear(); // prepare for writing
 
