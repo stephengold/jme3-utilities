@@ -1,5 +1,13 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 0.9.17 released on TBD
+
+ + Removed MyAnimation.blendTo() method
+ + Split MyMesh utility class off from MySkeleton class
+ + Added behead() and zeroFirst() methods to MyAnimation class
+ + Added AlphaDiscardThreshold, Color, and UseVertexColor parameters to the
+    multicolor2 material definitions
+
 ## Version 0.9.16 released on 11 August 2017
 
  + Added driveMap() and listZipEntries() methods to Misc
