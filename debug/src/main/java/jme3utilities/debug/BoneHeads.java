@@ -81,34 +81,6 @@ class BoneHeads extends Mesh {
     // new methods exposed
 
     /**
-     * Update the position of each vertex in the mesh.
-     *
-     * @param skeleton the skeleton to visualize (not null)
-     */
-    void update(Skeleton skeleton) {
-        Validate.nonNull(skeleton, "skeleton");
-
-        FloatBuffer fPositions = getFloatBuffer(Type.Position);
-        fPositions.clear(); // prepare for writing
-        int boneCount = skeleton.getBoneCount();
-        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
-            Bone bone = skeleton.getBone(boneIndex);
-            Vector3f location = bone.getModelSpacePosition();
-            fPositions.put(location.x);
-            fPositions.put(location.y);
-            fPositions.put(location.z);
-        }
-        fPositions.flip(); // prepare for reading
-
-        VertexBuffer vPositions = getBuffer(Type.Position);
-        vPositions.updateData(fPositions);
-        /*
-         * Update the bounding volume.
-         */
-        updateBound();
-    }
-
-    /**
      * Update the color of each vertex in the mesh.
      *
      * @param colors color for each bone (not null)
