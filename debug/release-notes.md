@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.7.4 released on TBD
+
+ + Split Describer off from the Dumper class
+ + Redesigned SkeletonVisualizer to support hiding specific bones
+ + Added accessors for the update interval of PerformanceAppState
+
 ## Version 0.7.3 released on 31 July 2017
 
  + Made Dumper.isControlEnabled() a static method
