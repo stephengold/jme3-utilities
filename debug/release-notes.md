@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.7.4 released on TBD
+## Version 0.7.4 released on 17 August 2017
 
  + Split Describer off from the Dumper class
  + Redesigned SkeletonVisualizer to support hiding specific bones
