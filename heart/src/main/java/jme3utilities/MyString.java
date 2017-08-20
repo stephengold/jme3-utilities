@@ -230,7 +230,9 @@ public class MyString {
     }
 
     /**
-     * Join a list of strings using spaces, ignoring any nulls.
+     * Join a list of strings using spaces, ignoring any nulls. Note that Java 8
+     * provides
+     * {@link java.lang.String#join(java.lang.CharSequence, java.lang.Iterable)}.
      *
      * @param list of strings to join (not null, unaffected)
      * @return joined string
