@@ -25,6 +25,7 @@
  */
 package jme3utilities;
 
+import com.jme3.app.StatsView;
 import com.jme3.audio.AudioNode;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.PhysicsControl;
@@ -34,15 +35,23 @@ import com.jme3.font.BitmapText;
 import com.jme3.light.Light;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.AssetLinkNode;
 import com.jme3.scene.BatchNode;
+import com.jme3.scene.CameraNode;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.GeometryGroupNode;
+import com.jme3.scene.LightNode;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
+import com.jme3.scene.SimpleBatchNode;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.control.Control;
 import com.jme3.scene.debug.SkeletonDebugger;
+import com.jme3.scene.instancing.InstancedGeometry;
+import com.jme3.scene.instancing.InstancedNode;
 import com.jme3.terrain.geomipmap.TerrainQuad;
+import com.jme3.ui.Picture;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -147,16 +156,34 @@ public class MySpatial {
      * @return mnemonic character
      */
     public static char describeType(Spatial spatial) {
-        if (spatial instanceof AudioNode) {
+        if (spatial instanceof AssetLinkNode) {
+            return 'A';
+        } else if (spatial instanceof AudioNode) {
             return 'a';
         } else if (spatial instanceof BatchNode) {
             return 'b';
         } else if (spatial instanceof BitmapText) {
             return 't';
+        } else if (spatial instanceof CameraNode) {
+            return 'c';
+        } else if (spatial instanceof GeometryGroupNode) {
+            return 'G';
+        } else if (spatial instanceof InstancedGeometry) {
+            return 'i';
+        } else if (spatial instanceof InstancedNode) {
+            return 'N';
+        } else if (spatial instanceof LightNode) {
+            return 'L';
         } else if (spatial instanceof ParticleEmitter) {
             return 'e';
+        } else if (spatial instanceof Picture) {
+            return 'p';
+        } else if (spatial instanceof SimpleBatchNode) {
+            return 'B';
         } else if (spatial instanceof SkeletonDebugger) {
             return 's';
+        } else if (spatial instanceof StatsView) {
+            return 'S';
         } else if (spatial instanceof TerrainQuad) {
             return 'q';
         } else if (spatial instanceof Geometry) {
