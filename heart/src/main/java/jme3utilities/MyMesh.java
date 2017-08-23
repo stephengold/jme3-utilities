@@ -27,6 +27,7 @@ package jme3utilities;
 
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
+import com.jme3.util.IntMap;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.logging.Logger;
@@ -55,6 +56,20 @@ public class MyMesh {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Test whether a mesh has texture (U-V) coordinates.
+     *
+     * @param mesh mesh to test (not null)
+     * @return true if the mesh has texture coordinates, otherwise false
+     */
+    public static boolean hasUV(Mesh mesh) {
+        IntMap<VertexBuffer> buffers = mesh.getBuffers();
+        int key = VertexBuffer.Type.TexCoord.ordinal();
+        boolean result = buffers.containsKey(key);
+
+        return result;
+    }
 
     /**
      * Find the largest weight in the specified mesh for the specified bone.

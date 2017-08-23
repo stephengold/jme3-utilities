@@ -31,10 +31,6 @@ import com.jme3.asset.AssetManager;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.SceneProcessor;
 import com.jme3.renderer.ViewPort;
-import com.jme3.scene.Mesh;
-import com.jme3.scene.VertexBuffer;
-import com.jme3.scene.VertexBuffer.Type;
-import com.jme3.util.IntMap;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Graphics2D;
@@ -202,20 +198,6 @@ public class Misc {
         String result = String.format("%s %s", words[2], words[4]);
 
         assert !result.isEmpty();
-        return result;
-    }
-
-    /**
-     * Test whether a mesh has texture (U-V) coordinates.
-     *
-     * @param mesh mesh to test (not null)
-     * @return true if the mesh has texture coordinates, otherwise false
-     */
-    public static boolean hasUV(Mesh mesh) {
-        IntMap<VertexBuffer> buffers = mesh.getBuffers();
-        int key = Type.TexCoord.ordinal();
-        boolean result = buffers.containsKey(key);
-
         return result;
     }
 
