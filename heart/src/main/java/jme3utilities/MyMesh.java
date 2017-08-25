@@ -86,14 +86,14 @@ public class MyMesh {
         assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
 
         VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
-        ByteBuffer boneIndexBuffer = (ByteBuffer) biBuf.getData();
+        ByteBuffer boneIndexBuffer = (ByteBuffer) biBuf.getDataReadOnly();
         boneIndexBuffer.rewind();
         int numBoneIndices = boneIndexBuffer.remaining();
         assert numBoneIndices % 4 == 0 : numBoneIndices;
         int numVertices = boneIndexBuffer.remaining() / 4;
 
         VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
-        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getData();
+        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
         weightBuffer.rewind();
         int numWeights = weightBuffer.remaining();
         assert numWeights == numVertices * 4 : numWeights;
@@ -131,14 +131,14 @@ public class MyMesh {
         assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
 
         VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
-        ByteBuffer boneIndexBuffer = (ByteBuffer) biBuf.getData();
+        ByteBuffer boneIndexBuffer = (ByteBuffer) biBuf.getDataReadOnly();
         boneIndexBuffer.rewind();
         int numBoneIndices = boneIndexBuffer.remaining();
         assert numBoneIndices % 4 == 0 : numBoneIndices;
         int numVertices = boneIndexBuffer.remaining() / 4;
 
         VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
-        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getData();
+        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
         weightBuffer.rewind();
         int numWeights = weightBuffer.remaining();
         assert numWeights == numVertices * 4 : numWeights;
