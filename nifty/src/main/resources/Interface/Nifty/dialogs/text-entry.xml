@@ -48,7 +48,7 @@
             <panel childLayout="vertical"
                    backgroundColor="#aaaf"
                    padding="8px,8px,8px,8px"
-                   width="266px">
+                   width="366px">
                 <panel childLayout="horizontal">
                     <control name="label" id="#prompt"
                              color="#000f"
