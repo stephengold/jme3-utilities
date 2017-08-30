@@ -282,6 +282,35 @@ public class MyString {
     }
 
     /**
+     * Join a list of texts using separators, ignoring any nulls. Note that Java
+     * 8 provides
+     * {@link java.lang.String#join(java.lang.CharSequence, java.lang.Iterable)}.
+     *
+     * @param list texts to join (not null, unaffected, may contain nulls)
+     * @param separator string (not null)
+     * @return joined string
+     */
+    public static String join(CharSequence separator, Iterable<String> list) {
+        Validate.nonNull(separator, "separator");
+        Validate.nonNull(list, "list");
+
+        StringBuilder result = new StringBuilder(80);
+        for (String item : list) {
+            if (item != null) {
+                if (result.length() > 0) {
+                    /*
+                     * Append a separator.
+                     */
+                    result.append(separator);
+                }
+                result.append(item);
+            }
+        }
+
+        return result.toString();
+    }
+
+    /**
      * Filter a collection of strings, keeping only those that begin with the
      * specified prefix.
      *
