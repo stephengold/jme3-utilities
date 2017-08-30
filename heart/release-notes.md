@@ -1,5 +1,14 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 0.9.18 released on TBD
+
+ + Moved the hasUV() method from Misc to MyMesh
+ + Fixed NPE during MyAnimation.behead()
+ + Added vertex{World}Location() and vertexVector3() methods to MyMesh
+ + Added count{Spatial/UserData/Vertices}() methods to MySpatial
+ + Added join() method for lists of strings (not needed in Java8)
+ + Added more cases to MySpatial.describeType()
+
 ## Version 0.9.17 released on 17 August 2017
 
  + Removed MyAnimation.blendTo() method
