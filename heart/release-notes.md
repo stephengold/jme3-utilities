@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.18 released on TBD
+## Version 0.9.18 released on 30 August 2017
 
  + Moved the hasUV() method from Misc to MyMesh
  + Fixed NPE during MyAnimation.behead()
