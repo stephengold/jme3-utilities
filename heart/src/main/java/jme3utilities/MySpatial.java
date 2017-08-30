@@ -363,36 +363,6 @@ public class MySpatial {
     }
 
     /**
-     * Compute the map (2-D) location of a spatial.
-     *
-     * @param spatial spatial to locate (not null, unaffected)
-     * @return new vector
-     */
-    public static VectorXZ getMapLocation(Spatial spatial) {
-        Validate.nonNull(spatial, "spatial");
-
-        Vector3f worldLocation = getWorldLocation(spatial);
-        VectorXZ result = new VectorXZ(worldLocation);
-
-        return result;
-    }
-
-    /**
-     * Access an object's mass.
-     *
-     * @param spatial object to measure (not null, unaffected)
-     * @return mass in kilograms (&gt;0) or zero for a static object.
-     */
-    public static float getMass(Spatial spatial) {
-        RigidBodyControl rigidBodyControl = spatial.getControl(
-                RigidBodyControl.class);
-        float mass = rigidBodyControl.getMass();
-
-        assert mass >= 0f : mass;
-        return mass;
-    }
-
-    /**
      * Find the minimum and maximum coordinates of a mesh geometry.
      *
      * @param geometry mesh geometry to measure (not null)
@@ -415,6 +385,7 @@ public class MySpatial {
             return result;
         }
 
+        // TODO create a MyMesh method for this part?
         FloatBuffer posBuffer = (FloatBuffer) posBuf.getData();
         posBuffer.rewind();
         int numFloats = posBuffer.remaining();
@@ -476,6 +447,36 @@ public class MySpatial {
         }
 
         return result;
+    }
+
+    /**
+     * Compute the map (2-D) location of a spatial.
+     *
+     * @param spatial spatial to locate (not null, unaffected)
+     * @return new vector
+     */
+    public static VectorXZ getMapLocation(Spatial spatial) {
+        Validate.nonNull(spatial, "spatial");
+
+        Vector3f worldLocation = getWorldLocation(spatial);
+        VectorXZ result = new VectorXZ(worldLocation);
+
+        return result;
+    }
+
+    /**
+     * Access an object's mass.
+     *
+     * @param spatial object to measure (not null, unaffected)
+     * @return mass in kilograms (&gt;0) or zero for a static object.
+     */
+    public static float getMass(Spatial spatial) {
+        RigidBodyControl rigidBodyControl = spatial.getControl(
+                RigidBodyControl.class);
+        float mass = rigidBodyControl.getMass();
+
+        assert mass >= 0f : mass;
+        return mass;
     }
 
     /**
