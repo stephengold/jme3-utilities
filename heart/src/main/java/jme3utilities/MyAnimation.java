@@ -120,7 +120,7 @@ public class MyAnimation {
         }
 
         int boneIndex = oldTrack.getTargetBoneIndex();
-        BoneTrack result = new BoneTrack(boneIndex, times, translations,
+        BoneTrack result = newBoneTrack(boneIndex, times, translations,
                 rotations, scales);
 
         return result;
@@ -150,7 +150,7 @@ public class MyAnimation {
         Vector3f[] translations = {copyTranslation};
         Quaternion[] rotations = {copyRotation};
         Vector3f[] scales = {copyScale};
-        BoneTrack result = new BoneTrack(boneIndex, times, translations,
+        BoneTrack result = newBoneTrack(boneIndex, times, translations,
                 rotations, scales);
 
         return result;
@@ -463,7 +463,7 @@ public class MyAnimation {
         }
 
         int boneIndex = oldTrack.getTargetBoneIndex();
-        BoneTrack result = new BoneTrack(boneIndex, newTimes, translations,
+        BoneTrack result = newBoneTrack(boneIndex, newTimes, translations,
                 rotations, scales);
 
         return result;
