@@ -25,6 +25,8 @@
  */
 package jme3utilities;
 
+import com.jme3.math.Matrix4f;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.util.IntMap;
@@ -158,5 +160,88 @@ public class MyMesh {
         }
 
         return result;
+    }
+
+    /**
+     * Calculate the location of the indexed vertex in mesh space using the
+     * skinning matrices provided.
+     *
+     * @param mesh subject mesh (not null)
+     * @param vertexIndex index into the mesh's vertices (&ge;0)
+     * @param skinningMatrices (not null, unaffected)
+     * @param storeResult (modified if not null)
+     * @return mesh coordinates (either storeResult or a new instance)
+     */
+    public static Vector3f vertexLocation(Mesh mesh, int vertexIndex,
+            Matrix4f[] skinningMatrices, Vector3f storeResult) {
+        Validate.nonNull(mesh, "mesh");
+        Validate.nonNegative(vertexIndex, "vertex index");
+        Validate.nonNull(skinningMatrices, "skinning matrices");
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+
+        Vector3f b = vertexVector3f(mesh,
+                VertexBuffer.Type.BindPosePosition, vertexIndex, null);
+
+        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
+        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
+        weightBuffer.position(4 * vertexIndex);
+
+        VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
+        ByteBuffer boneIndexBuffer = (ByteBuffer) biBuf.getDataReadOnly();
+        boneIndexBuffer.position(4 * vertexIndex);
+
+        storeResult.zero();
+        int maxWeightsPerVertex = mesh.getMaxNumWeights();
+        for (int wIndex = 0; wIndex < maxWeightsPerVertex; wIndex++) {
+            float weight = weightBuffer.get();
+            int boneIndex = 0xff & boneIndexBuffer.get();
+            if (weight != 0f) {
+                Matrix4f s = skinningMatrices[boneIndex];
+                storeResult.x += weight
+                        * (s.m00 * b.x + s.m01 * b.y + s.m02 * b.z + s.m03);
+                storeResult.y += weight
+                        * (s.m10 * b.x + s.m11 * b.y + s.m12 * b.z + s.m13);
+                storeResult.z += weight
+                        * (s.m20 * b.x + s.m21 * b.y + s.m22 * b.z + s.m23);
+            }
+        }
+
+        return storeResult;
+    }
+
+    /**
+     * Read a data vector for the indexed vertex in a mesh.
+     *
+     * @param mesh subject mesh (not null)
+     * @param bufferType which buffer to read (6 legal values)
+     * @param vertexIndex index into the mesh's vertices (&ge;0)
+     * @param storeResult (modified if not null)
+     * @return mesh coordinates (either storeResult or a new instance)
+     */
+    public static Vector3f vertexVector3f(Mesh mesh,
+            VertexBuffer.Type bufferType, int vertexIndex,
+            Vector3f storeResult) {
+        Validate.nonNull(mesh, "mesh");
+        assert bufferType == VertexBuffer.Type.BindPoseNormal
+                || bufferType == VertexBuffer.Type.BindPosePosition
+                || bufferType == VertexBuffer.Type.BindPoseTangent
+                || bufferType == VertexBuffer.Type.Normal
+                || bufferType == VertexBuffer.Type.Position
+                || bufferType == VertexBuffer.Type.Tangent : bufferType;
+        Validate.nonNegative(vertexIndex, "vertex index");
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+
+        VertexBuffer vertexBuffer = mesh.getBuffer(bufferType);
+        FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
+        floatBuffer.position(3 * vertexIndex);
+        storeResult.x = floatBuffer.get();
+        storeResult.y = floatBuffer.get();
+        storeResult.z = floatBuffer.get();
+
+        return storeResult;
     }
 }
