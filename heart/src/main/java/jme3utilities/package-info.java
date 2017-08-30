@@ -24,6 +24,6 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /**
- * Miscellaneous reusable classes and interfaces for use with jMonkeyEngine3.
+ * Miscellaneous reusable classes for use with jMonkeyEngine3.
  */
 package jme3utilities;
