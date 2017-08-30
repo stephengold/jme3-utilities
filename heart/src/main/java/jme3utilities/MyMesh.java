@@ -27,6 +27,7 @@ package jme3utilities;
 
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.util.IntMap;
@@ -35,7 +36,7 @@ import java.nio.FloatBuffer;
 import java.util.logging.Logger;
 
 /**
- * Utility methods for analyzing meshes. All methods should be static.
+ * Utility methods for meshes and mesh vertices. All methods should be static.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -241,6 +242,31 @@ public class MyMesh {
         storeResult.x = floatBuffer.get();
         storeResult.y = floatBuffer.get();
         storeResult.z = floatBuffer.get();
+
+        return storeResult;
+    }
+
+    /**
+     * Calculate the location of the indexed vertex in world space using the
+     * skinning matrices provided.
+     *
+     * @param geometry geometry containing the subject mesh (not null)
+     * @param vertexIndex index into the geometry's vertices (&ge;0)
+     * @param skinningMatrices (not null, unaffected)
+     * @param storeResult (modified if not null)
+     * @return world coordinates (either storeResult or a new instance)
+     */
+    public static Vector3f vertexWorldLocation(Geometry geometry,
+            int vertexIndex, Matrix4f[] skinningMatrices,
+            Vector3f storeResult) {
+        Validate.nonNull(geometry, "geometry");
+        Validate.nonNegative(vertexIndex, "vertex index");
+        Validate.nonNull(skinningMatrices, "skinning matrices");
+
+        Mesh mesh = geometry.getMesh();
+        Vector3f meshLocation = vertexLocation(mesh, vertexIndex,
+                skinningMatrices, null);
+        storeResult = geometry.localToWorld(meshLocation, storeResult);
 
         return storeResult;
     }
