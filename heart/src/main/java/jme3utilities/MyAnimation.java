@@ -127,7 +127,7 @@ public class MyAnimation {
     }
 
     /**
-     * Create a BoneTrack consisting of a single bone with a fixed transform.
+     * Create a BoneTrack consisting of a single keyframe at t=0.
      *
      * @param boneIndex which bone (&ge;0)
      * @param translation relative to bind pose (not null, unaffected)
@@ -491,7 +491,7 @@ public class MyAnimation {
      * Create a new bone track, with or without scales.
      *
      * @param boneIndex (&ge;0)
-     * @param times (not null)
+     * @param times (not null, alias created)
      * @param translations (not null, same length as times)
      * @param rotations (not null, same length as times)
      * @param scales (either null or same length as times)
