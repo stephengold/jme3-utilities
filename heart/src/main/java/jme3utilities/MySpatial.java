@@ -54,6 +54,7 @@ import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.ui.Picture;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.math.MyVector3f;
@@ -122,19 +123,21 @@ public class MySpatial {
      * scene graph. Note: recursive!
      *
      * @param <T> superclass of Control
-     * @param subtree (not null)
+     * @param subtree subtree to traverse (may be null)
      * @param controlType superclass of Control to search for
-     * @return count (&ge;0)
+     * @return number of scene-graph controls (&ge;0)
      */
-    @SuppressWarnings("unchecked")
     public static <T extends Control> int countControls(Spatial subtree,
             Class<T> controlType) {
         int result = 0;
-        int numControls = subtree.getNumControls();
-        for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
-            Control control = subtree.getControl(controlIndex);
-            if (controlType.isAssignableFrom(control.getClass())) {
-                ++result;
+
+        if (subtree != null) {
+            int numControls = subtree.getNumControls();
+            for (int controlI = 0; controlI < numControls; controlI++) {
+                Control control = subtree.getControl(controlI);
+                if (controlType.isAssignableFrom(control.getClass())) {
+                    ++result;
+                }
             }
         }
 
@@ -146,6 +149,88 @@ public class MySpatial {
             }
         }
 
+        assert result >= 0 : result;
+        return result;
+    }
+
+    /**
+     * Count all spatials of the specified type in the specified subtree of a
+     * scene graph. Note: recursive!
+     *
+     * @param <T> superclass of Spatial
+     * @param subtree subtree to traverse (may be null)
+     * @param spatialType superclass of Spatial to search for
+     * @return number of spatials (&ge;0)
+     */
+    public static <T extends Spatial> int countSpatials(Spatial subtree,
+            Class<T> spatialType) {
+        int result = 0;
+
+        if (subtree != null
+                && spatialType.isAssignableFrom(subtree.getClass())) {
+            ++result;
+        }
+
+        if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                result += countSpatials(child, spatialType);
+            }
+        }
+
+        assert result >= 0 : result;
+        return result;
+    }
+
+    /**
+     * Count all user data in the specified subtree of a scene graph. Note:
+     * recursive!
+     *
+     * @param subtree subtree to traverse (may be null)
+     * @return number of user data (&ge;0)
+     */
+    public static int countUserData(Spatial subtree) {
+        int result = 0;
+        if (subtree != null) {
+            Collection<String> keys = subtree.getUserDataKeys();
+            result += keys.size();
+        }
+        if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                result += countUserData(child);
+            }
+        }
+
+        assert result >= 0 : result;
+        return result;
+    }
+
+    /**
+     * Count how many mesh vertices are contained in the specified subtree of a
+     * scene graph. Note: recursive!
+     *
+     * @param subtree subtree to traverse (may be null)
+     * @return number of vertices (&ge;0)
+     */
+    public static int countVertices(Spatial subtree) {
+        int result = 0;
+        if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
+            Mesh mesh = geometry.getMesh();
+            result = mesh.getVertexCount();
+
+        } else if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            Collection<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                result += countVertices(child);
+            }
+        }
+
+        assert result >= 0 : result;
         return result;
     }
 
@@ -697,6 +782,28 @@ public class MySpatial {
             Node node = (Node) spatial;
             for (Spatial child : node.getChildren()) {
                 moveChildWorld(child, offset);
+            }
+        }
+    }
+
+    /**
+     * Clear all cached collision data from the specified subtree of the scene
+     * graph and force a bound refresh. Note: recursive!
+     *
+     * @param subtree where to search (may be null)
+     */
+    public static void prepareForCollide(Spatial subtree) {
+        if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
+            geometry.updateModelBound();
+            Mesh mesh = geometry.getMesh();
+            mesh.clearCollisionData();
+
+        } else if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                prepareForCollide(child);
             }
         }
     }
