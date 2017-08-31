@@ -161,7 +161,7 @@ public class MyAnimation {
      * 1st).
      *
      * @param oldTrack (not null, unaffected)
-     * @param frameIndex which keyframe (&gt;0)
+     * @param frameIndex which keyframe (&gt;0, &lt;numFrames)
      * @return a new instance
      */
     public static BoneTrack deleteKeyframe(BoneTrack oldTrack, int frameIndex) {
