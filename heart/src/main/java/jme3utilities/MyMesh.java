@@ -182,31 +182,37 @@ public class MyMesh {
             storeResult = new Vector3f();
         }
 
-        Vector3f b = vertexVector3f(mesh,
-                VertexBuffer.Type.BindPosePosition, vertexIndex, null);
+        if (mesh.isAnimated()) {
+            Vector3f b = vertexVector3f(mesh,
+                    VertexBuffer.Type.BindPosePosition, vertexIndex, null);
 
-        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
-        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
-        weightBuffer.position(4 * vertexIndex);
+            VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
+            FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
+            weightBuffer.position(4 * vertexIndex);
 
-        VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
-        ByteBuffer boneIndexBuffer = (ByteBuffer) biBuf.getDataReadOnly();
-        boneIndexBuffer.position(4 * vertexIndex);
+            VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
+            ByteBuffer boneIndexBuffer = (ByteBuffer) biBuf.getDataReadOnly();
+            boneIndexBuffer.position(4 * vertexIndex);
 
-        storeResult.zero();
-        int maxWeightsPerVertex = mesh.getMaxNumWeights();
-        for (int wIndex = 0; wIndex < maxWeightsPerVertex; wIndex++) {
-            float weight = weightBuffer.get();
-            int boneIndex = 0xff & boneIndexBuffer.get();
-            if (weight != 0f) {
-                Matrix4f s = skinningMatrices[boneIndex];
-                storeResult.x += weight
-                        * (s.m00 * b.x + s.m01 * b.y + s.m02 * b.z + s.m03);
-                storeResult.y += weight
-                        * (s.m10 * b.x + s.m11 * b.y + s.m12 * b.z + s.m13);
-                storeResult.z += weight
-                        * (s.m20 * b.x + s.m21 * b.y + s.m22 * b.z + s.m23);
+            storeResult.zero();
+            int maxWeightsPerVertex = mesh.getMaxNumWeights();
+            for (int wIndex = 0; wIndex < maxWeightsPerVertex; wIndex++) {
+                float weight = weightBuffer.get();
+                int boneIndex = 0xff & boneIndexBuffer.get();
+                if (weight != 0f) {
+                    Matrix4f s = skinningMatrices[boneIndex];
+                    storeResult.x += weight
+                            * (s.m00 * b.x + s.m01 * b.y + s.m02 * b.z + s.m03);
+                    storeResult.y += weight
+                            * (s.m10 * b.x + s.m11 * b.y + s.m12 * b.z + s.m13);
+                    storeResult.z += weight
+                            * (s.m20 * b.x + s.m21 * b.y + s.m22 * b.z + s.m23);
+                }
             }
+
+        } else { // not an animated mesh
+            vertexVector3f(mesh, VertexBuffer.Type.Position, vertexIndex,
+                    storeResult);
         }
 
         return storeResult;
@@ -237,6 +243,9 @@ public class MyMesh {
         }
 
         VertexBuffer vertexBuffer = mesh.getBuffer(bufferType);
+        if (vertexBuffer == null) {
+            System.out.print("");
+        }
         FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
         floatBuffer.position(3 * vertexIndex);
         storeResult.x = floatBuffer.get();
