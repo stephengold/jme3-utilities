@@ -57,6 +57,25 @@ public class MyQuaternion {
     // new methods exposed
 
     /**
+     * Accumulate a linear combination of quaternions.
+     *
+     * @param total sum of the scaled inputs so far (not null, updated)
+     * @param input the quaternion to scale and add (not null, unaffected)
+     * @param scale scale factor to apply to the input
+     */
+    public static void accumulateScaled(Quaternion total, Quaternion input,
+            float scale) {
+        Validate.nonNull(total, "total");
+        Validate.nonNull(input, "input");
+
+        float x = total.getX() + input.getX() * scale;
+        float y = total.getY() + input.getY() * scale;
+        float z = total.getZ() + input.getZ() * scale;
+        float w = total.getW() + input.getW() * scale;
+        total.set(x, y, z, w);
+    }
+
+    /**
      * Calculate the conjugate of a quaternion. For unit quaternions, the
      * conjugate is a faster way to calculate the inverse.
      *
