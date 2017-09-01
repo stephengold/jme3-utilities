@@ -933,7 +933,7 @@ class ModelState extends SimpleAppState {
             Vector3f translation = translationIdentity;
             Quaternion rotation = boneRotation(boneIndex);
             Vector3f scale = scaleIdentity;
-            BoneTrack track = MyAnimation.createTrack(boneIndex, translation,
+            BoneTrack track = MyAnimation.newBoneTrack(boneIndex, translation,
                     rotation, scale);
             result.addTrack(track);
         }
