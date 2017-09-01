@@ -1,11 +1,11 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.19 released on TBD
+## Version 0.9.19 released on 31 August 2017
 
  + Remove 10 editing methods from MyAnimation
  + Rename MyAnimation.createTrack()
  + Fixed NPE while applying MyMesh.vertexLocation() to non-animated model
- + Added add accumulateScaled() method to MyQuaternion
+ + Added accumulateScaled() method to MyQuaternion
 
 ## Version 0.9.18 released on 30 August 2017
 
