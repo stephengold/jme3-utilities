@@ -102,13 +102,13 @@ class MenuInputMode extends InputMode {
              */
             psc.closeActivePopupMenu();
 
-        } else if (actionString.matches("select [1-9]")) {
+        } else if (actionString.startsWith("select ")) {
             /*
              * Select a menu item based on its position, with "1"
-             * selecting the first item.
+             * selecting the 1st item.
              */
-            String positionString = actionString.substring("select ".length());
-            int position = Integer.parseInt(positionString);
+            String arg =  MyString.remainder(actionString, "select ");
+            int position = Integer.parseInt(arg);
             int index = position - 1;
             psc.selectMenuItem(index);
 
@@ -137,6 +137,7 @@ class MenuInputMode extends InputMode {
         bind("select 7", KeyInput.KEY_7);
         bind("select 8", KeyInput.KEY_8);
         bind("select 9", KeyInput.KEY_9);
+        bind("select 10", KeyInput.KEY_0);
         bind("SIMPLEAPP_HideStats", KeyInput.KEY_F5);
     }
 

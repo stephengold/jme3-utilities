@@ -494,6 +494,8 @@ public class PopScreenController extends BasicScreenController {
             String displayText;
             if (itemIndex < 9) {
                 displayText = String.format("%d] %s", itemIndex + 1, item);
+            } else if (itemIndex == 9) {
+                displayText = String.format("0] %s", item);
             } else {
                 displayText = item;
             }
@@ -501,7 +503,7 @@ public class PopScreenController extends BasicScreenController {
             if (numChars > maxChars) {
                 maxChars = numChars;
             }
-            displayText = displayText.replace("$", "\\$");
+            displayText = displayText.replace("$", "\\$"); //escape any $
             String displayIcon = iconArray[itemIndex];
             menu.addMenuItem(displayText, displayIcon, item);
         }
