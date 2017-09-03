@@ -1,5 +1,12 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.6.9 released on TBD
+
+ + Added 2 more dialog controllers: LongDialog and TextEntryDialog.
+ + Widened text-entry dialog boxes by 100 pixels.
+ + In popup menus, use the main "0" key to select the 10th item.
+ + Reduced display darkening for popup menus, from 50% to 37%.
+
 ## Version 0.6.8 released on 16 July 2017
 
 + Use wrap="true" for labels in dialog boxes and infoboxes.
