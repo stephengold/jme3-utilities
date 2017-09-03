@@ -41,7 +41,7 @@
     <useControls filename="nifty-default-controls.xml"/>
 
     <popup id="popup-menu"
-           backgroundColor="#0008"
+           backgroundColor="#000a"
            childLayout="absolute-inside">
         <control name="niftyMenu" id="#menu"/>
         <interact
