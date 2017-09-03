@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.6.9 released on TBD
+## Version 0.6.9 released on 3 September 2017
 
  + Added 2 more dialog controllers: LongDialog and TextEntryDialog.
  + Widened text-entry dialog boxes by 100 pixels.
