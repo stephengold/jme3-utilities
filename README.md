@@ -1,17 +1,18 @@
-# jme3-utilities project
+# Jme3-utilities Project
 
-The jme3-utilities project contains Java packages and asset packs, developed for
-sgold's jMonkeyEngine games, which might prove useful in similar projects.  It
-consists of 9 sub-projects:
+The Jme3-utilities Project contains Java packages and assets, developed for
+sgold's jMonkeyEngine projects, which might prove useful in similar projects.
+It consists of 10 sub-projects:
  1. heart: the "jme3-utilities-heart" library of core classes
  2. SkyControl: the "SkyControl" library for sky simulation
- 3. tests: demos, examples, and test code
+ 3. tests: demos, examples, and test software
  4. textures: generate textures used by SkyControl
  5. moon-ccbysa: an asset pack to enhance SkyControl
  6. debug: the "jme3-utilities-debug" library of debugging aids
  7. ui: the "jme3-utilities-ui" library for building user interfaces
  8. nifty: the "jme3-utilities-nifty: a library for building NiftyGUI user interfaces
- 9. x: the "jme3-utilities-x" library of experimental classes
+ 9. wes: the "Wes" library for animation editing and retargeting
+ 10. x: the "jme3-utilities-x" library of experimental classes
 
 Summary of SkyControl features:
  + sun, moon, stars, horizon haze, and up to 6 cloud layers
@@ -37,7 +38,7 @@ Maven artifacts are available from JFrog Bintray at
 
 ### Conventions
 
-All package names in jme3-utilities project begin with "jme3utilities".
+Package names generally begin with "jme3utilities".
 
 The source code is compatible with both JDK 7 and JDK 8.
 
@@ -48,16 +49,16 @@ World coordinate system:
 
 ### History
 
-Since September 2015, the jme3-utilities project has been hosted at
+Since September 2015, the Jme3-utilities Project has been hosted at
 https://github.com/stephengold/jme3-utilities
 
 From November 2013 to September 2015, it was hosted at
 http://code.google.com/p/jme3-utilities
 
-Old (2014) versions of the jme3-utilities project can still be found at
+Old (2014) versions of the Jme3-utilities Project can still be found at
 https://github.com/jMonkeyEngine-Contributions/SkyControl
 
-## How to install the SDK and the jme3-utilities project
+## How to install the SDK and the Jme3-utilities Project
 
 ### jMonkeyEngine3 (jME3) Software Development Kit (SDK)
 
@@ -449,7 +450,7 @@ External links:
 
 ## Acknowledgments
 
-Like most projects, the jme3-utilities project builds on the work of many who
+Like most projects, the Jme3-utilities Project builds on the work of many who
 have gone before.
 
 I therefore acknowledge the following software developers:
@@ -457,6 +458,9 @@ I therefore acknowledge the following software developers:
   and a starting point for SkyControl) and also for encouraging me to run with
   it ... thank you yet again!
 + Paul Speed, for helpful insights which got me unstuck during debugging
++ Rémy Bouquet (aka "nehon") for creating the BVH Retarget Project (parts of
+  which are incorporated into the Wes library)
+  and also for many helpful insights
 + the brave souls who volunteered to be alpha testers for SkyControl, including:
   + Davis Rollman
   + "Lockhead"
@@ -476,19 +480,20 @@ I therefore acknowledge the following software developers:
   + Adobe Photoshop Elements
   + the Ant and Gradle build tools
   + the Blender 3D animation suite
-  + the FindBugs source code analyzer
+  + the FindBugs source-code analyzer
   + Gimp, the GNU Image Manipulation Program
-  + the Git and Subversion revision control systems
+  + the Git and Subversion revision-control systems
   + the Google Chrome web browser
   + Guava core libraries for Java
   + the Java compiler, standard doclet, and runtime environment
   + the JCommander Java framework
   + jMonkeyEngine and the jME3 Software Development Kit
   + LWJGL, the Lightweight Java Game Library
+  + the Markdown document conversion tool
   + Microsoft Windows
   + the NetBeans integrated development environment
-  + the Nifty GUI
-  + Open Broadcaster Software
+  + the Nifty graphical user interface library
+  + Open Broadcaster Software Studio
   + the PMD source code analyzer
   + the RealWorld Cursor Editor
   + Alex Peterson's Spacescape tool
@@ -502,10 +507,10 @@ For this I thank:
   + Tom Ruen
 
 I am grateful to JFrog, Google, and Github for providing free hosting for the
-jme3-utilities project and many other open-source projects.
+Jme3-utilities Project and many other open-source projects.
 
-I'm also grateful to Amber (for lending me one of her microphones) and finally
+I'm also grateful to Quinn (for lending me one of their microphones) and finally
 my dear Holly, for keeping me sane.
 
 If I've misattributed anything or left anyone out, please let me know so I can
-correct the situation.
+correct the situation: sgold@sonic.net
