@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.6.10 released TBD
+
+ + Align infobox body text with the top of its panel.
+ + Accommodate infobox body text up to 400 lines long.
+
 ## Version 0.6.9 released on 3 September 2017
 
  + Added 2 more dialog controllers: LongDialog and TextEntryDialog.

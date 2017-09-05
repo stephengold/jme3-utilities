@@ -59,6 +59,6 @@ public class LibraryVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String getVersionShort() {
-        return "master 0.6.9+1";
+        return "master 0.6.10";
     }
 }
