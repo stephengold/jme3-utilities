@@ -19,7 +19,7 @@ ext {
     // current versions of the libraries
     jcommanderVersion = '1.72'
     jme3utilitiesdebugVersion = '0.7.4'
-    jme3utilitiesheartVersion = '0.9.19'
+    jme3utilitiesheartVersion = '0.9.20'
     jme3utilitiesniftyVersion = '0.6.10'
     jme3utilitiesuiVersion = '0.5.8'
     jme3utilitieswesVersion = '0.2.1'

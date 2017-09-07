@@ -1,9 +1,17 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 0.9.20 released on TBD
+
+ + Renamed MyAnimation.findTrack() to findBoneTrack()
+ + Added MyAnimation.countTracks()
+ + Added MyAnimation.get{Rotations/Scales/Translations}()
+ + Added class StringLoader
+ + Standardized the BSD license texts
+
 ## Version 0.9.19 released on 31 August 2017
 
- + Remove 10 editing methods from MyAnimation
- + Rename MyAnimation.createTrack()
+ + Removed 10 editing methods from MyAnimation
+ + Renamed MyAnimation.createTrack()
  + Fixed NPE while applying MyMesh.vertexLocation() to non-animated model
  + Added accumulateScaled() method to MyQuaternion
 
