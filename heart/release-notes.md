@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.20 released on TBD
+## Version 0.9.20 released on 7 September 2017
 
  + Renamed MyAnimation.findTrack() to findBoneTrack()
  + Added MyAnimation.countTracks()
