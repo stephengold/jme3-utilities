@@ -69,57 +69,6 @@ public class TweenTransforms implements Cloneable {
     // new methods exposed
 
     /**
-     * Calculate the transform for the specified bone/spatial track and time
-     * using these techniques. TODO sort methods
-     *
-     * @param track input bone/spatial track (not null, unaffected)
-     * @param time animation time input (in seconds)
-     * @param duration (in seconds)
-     * @param storeResult (modified if not null)
-     * @return a transform (either storeResult or a new instance)
-     */
-    public Transform transform(Track track, float time, float duration,
-            Transform storeResult) {
-        assert track instanceof BoneTrack || track instanceof SpatialTrack;
-        if (storeResult == null) {
-            storeResult = new Transform();
-        }
-
-        float[] times = track.getKeyFrameTimes();
-        int lastFrame = times.length - 1;
-        assert lastFrame >= 0 : lastFrame;
-
-        Vector3f[] translations = MyAnimation.getTranslations(track);
-        Quaternion[] rotations = MyAnimation.getRotations(track);
-        Vector3f[] scales = MyAnimation.getScales(track);
-
-        if (time <= 0f || lastFrame == 0) {
-            /*
-             * Copy the transform of the first frame.
-             */
-            storeResult.loadIdentity();
-            if (translations != null) {
-                storeResult.setTranslation(translations[0]);
-            }
-            if (rotations != null) {
-                storeResult.setRotation(rotations[0]);
-            }
-            if (scales != null) {
-                storeResult.setScale(scales[0]);
-            }
-
-        } else {
-            /*
-             * Interpolate between frames.
-             */
-            interpolate(time, times, duration, translations, rotations, scales,
-                    storeResult);
-        }
-
-        return storeResult;
-    }
-
-    /**
      * Read the technique for rotations.
      *
      * @return enum (not null)
@@ -354,6 +303,57 @@ public class TweenTransforms implements Cloneable {
     public void setTweenTranslations(TweenVectors newTechnique) {
         Validate.nonNull(newTechnique, "new technique");
         tweenTranslations = newTechnique;
+    }
+
+    /**
+     * Calculate the transform for the specified time and bone/spatial track
+     * using these techniques.
+     *
+     * @param track input bone/spatial track (not null, unaffected)
+     * @param time animation time input (in seconds)
+     * @param duration (in seconds)
+     * @param storeResult (modified if not null)
+     * @return a transform (either storeResult or a new instance)
+     */
+    public Transform transform(Track track, float time, float duration,
+            Transform storeResult) {
+        assert track instanceof BoneTrack || track instanceof SpatialTrack;
+        if (storeResult == null) {
+            storeResult = new Transform();
+        }
+
+        float[] times = track.getKeyFrameTimes();
+        int lastFrame = times.length - 1;
+        assert lastFrame >= 0 : lastFrame;
+
+        Vector3f[] translations = MyAnimation.getTranslations(track);
+        Quaternion[] rotations = MyAnimation.getRotations(track);
+        Vector3f[] scales = MyAnimation.getScales(track);
+
+        if (time <= 0f || lastFrame == 0) {
+            /*
+             * Copy the transform of the first frame.
+             */
+            storeResult.loadIdentity();
+            if (translations != null) {
+                storeResult.setTranslation(translations[0]);
+            }
+            if (rotations != null) {
+                storeResult.setRotation(rotations[0]);
+            }
+            if (scales != null) {
+                storeResult.setScale(scales[0]);
+            }
+
+        } else {
+            /*
+             * Interpolate between frames.
+             */
+            interpolate(time, times, duration, translations, rotations, scales,
+                    storeResult);
+        }
+
+        return storeResult;
     }
     // *************************************************************************
     // Object methods
