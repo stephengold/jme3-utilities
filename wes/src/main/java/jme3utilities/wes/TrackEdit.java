@@ -30,6 +30,7 @@ import com.jme3.animation.Animation;
 import com.jme3.animation.Bone;
 import com.jme3.animation.BoneTrack;
 import com.jme3.animation.Skeleton;
+import com.jme3.animation.SpatialTrack;
 import com.jme3.animation.Track;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
@@ -69,72 +70,87 @@ public class TrackEdit {
     // new methods exposed
 
     /**
-     * Copy a bone track, deleting everything before the specified time, and
-     * making that the start of the animation.
+     * Copy a bone/spatial track, deleting everything before the specified time
+     * and making that the start of the track.
      *
-     * @param oldTrack (not null, unaffected)
+     * @param oldTrack input bone/spatial track (not null, unaffected)
      * @param neckTime cutoff time (in seconds, &gt;0)
-     * @param neckTransform user transform of bone at the neck time (not null,
-     * unaffected)
+     * @param neckTransform transform of bone/spatial at the neck time (not
+     * null, unaffected)
      * @param oldDuration (in seconds, &ge;neckTime)
      * @return a new instance
      */
-    public static BoneTrack behead(BoneTrack oldTrack, float neckTime,
+    public static Track behead(Track oldTrack, float neckTime,
             Transform neckTransform, float oldDuration) {
+        assert oldTrack instanceof BoneTrack
+                || oldTrack instanceof SpatialTrack;
         Validate.positive(neckTime, "neck time");
 
         float[] oldTimes = oldTrack.getKeyFrameTimes();
-        Vector3f[] oldTranslations = oldTrack.getTranslations();
-        Quaternion[] oldRotations = oldTrack.getRotations();
-        Vector3f[] oldScales = oldTrack.getScales();
-        int oldCount = oldTimes.length;
+        Vector3f[] oldTranslations = MyAnimation.getTranslations(oldTrack);
+        Quaternion[] oldRotations = MyAnimation.getRotations(oldTrack);
+        Vector3f[] oldScales = MyAnimation.getScales(oldTrack);
 
+        int oldCount = oldTimes.length;
         int neckIndex;
         neckIndex = MyAnimation.findPreviousKeyframeIndex(oldTrack, neckTime);
         int newCount = oldCount - neckIndex;
-        Vector3f[] translations = new Vector3f[newCount];
-        Quaternion[] rotations = new Quaternion[newCount];
-        Vector3f[] scales = null;
+        assert newCount > 0 : newCount;
+        /*
+         * Allocate new arrays.
+         */
+        float[] newTimes = new float[newCount];
+        newTimes[0] = 0f;
+        Vector3f[] newTranslations = null;
+        if (oldTranslations != null) {
+            newTranslations = new Vector3f[newCount];
+            newTranslations[0] = neckTransform.getTranslation().clone();
+        }
+        Quaternion[] newRotations = null;
+        if (oldRotations != null) {
+            newRotations = new Quaternion[newCount];
+            newRotations[0] = neckTransform.getRotation().clone();
+        }
+        Vector3f[] newScales = null;
         if (oldScales != null) {
-            scales = new Vector3f[newCount];
+            newScales = new Vector3f[newCount];
+            newScales[0] = neckTransform.getScale().clone();
         }
-        float[] times = new float[newCount];
 
-        Transform user = neckTransform.clone();
-        translations[0] = user.getTranslation();
-        rotations[0] = user.getRotation();
-        if (scales != null) {
-            scales[0] = user.getScale();
-        }
-        times[0] = 0f;
         for (int newIndex = 1; newIndex < newCount; newIndex++) {
             int oldIndex = newIndex + neckIndex;
-            translations[newIndex] = oldTranslations[oldIndex].clone();
-            rotations[newIndex] = oldRotations[oldIndex].clone();
-            if (scales != null) {
-                scales[newIndex] = oldScales[oldIndex].clone();
+
+            newTimes[newIndex] = oldTimes[oldIndex] - neckTime;
+            if (newTranslations != null) {
+                newTranslations[newIndex] = oldTranslations[oldIndex].clone();
             }
-            times[newIndex] = oldTimes[oldIndex] - neckTime;
+            if (newRotations != null) {
+                newRotations[newIndex] = oldRotations[oldIndex].clone();
+            }
+            if (newScales != null) {
+                newScales[newIndex] = oldScales[oldIndex].clone();
+            }
         }
 
-        int boneIndex = oldTrack.getTargetBoneIndex();
-        BoneTrack result = MyAnimation.newBoneTrack(boneIndex, times,
-                translations, rotations, scales);
+        Track result = newTrack(oldTrack, newTimes, newTranslations,
+                newRotations, newScales);
 
         return result;
     }
 
     /**
-     * Copy a bone track, deleting the indexed range of keyframes (which mustn't
-     * include the 1st keyframe).
+     * Copy a bone/spatial track, deleting the indexed range of keyframes (which
+     * mustn't include the 1st keyframe).
      *
-     * @param oldTrack (not null, unaffected)
+     * @param oldTrack input bone/spatial track (not null, unaffected)
      * @param startIndex 1st keyframe to delete (&gt;0, &le;lastIndex)
      * @param deleteCount number of keyframes to delete (&gt;0, &lt;lastIndex)
      * @return a new instance
      */
-    public static BoneTrack deleteRange(BoneTrack oldTrack, int startIndex,
+    public static Track deleteRange(Track oldTrack, int startIndex,
             int deleteCount) {
+        assert oldTrack instanceof BoneTrack
+                || oldTrack instanceof SpatialTrack;
         float[] oldTimes = oldTrack.getKeyFrameTimes();
         int oldCount = oldTimes.length;
         int lastIndex = oldCount - 1;
@@ -143,18 +159,27 @@ public class TrackEdit {
         float endIndex = startIndex + deleteCount - 1;
         Validate.inRange(endIndex, "end index", 1, lastIndex);
 
-        Vector3f[] oldTranslations = oldTrack.getTranslations();
-        Quaternion[] oldRotations = oldTrack.getRotations();
-        Vector3f[] oldScales = oldTrack.getScales();
+        Vector3f[] oldTranslations = MyAnimation.getTranslations(oldTrack);
+        Quaternion[] oldRotations = MyAnimation.getRotations(oldTrack);
+        Vector3f[] oldScales = MyAnimation.getScales(oldTrack);
 
         int newCount = oldCount - deleteCount;
-        Vector3f[] newTranslations = new Vector3f[newCount];
-        Quaternion[] newRotations = new Quaternion[newCount];
+        /*
+         * Allocate new arrays.
+         */
+        float[] newTimes = new float[newCount];
+        Vector3f[] newTranslations = null;
+        if (oldTranslations != null) {
+            newTranslations = new Vector3f[newCount];
+        }
+        Quaternion[] newRotations = null;
+        if (oldRotations != null) {
+            newRotations = new Quaternion[newCount];
+        }
         Vector3f[] newScales = null;
         if (oldScales != null) {
             newScales = new Vector3f[newCount];
         }
-        float[] newTimes = new float[newCount];
 
         for (int newIndex = 0; newIndex < newCount; newIndex++) {
             int oldIndex;
@@ -163,46 +188,55 @@ public class TrackEdit {
             } else {
                 oldIndex = newIndex + deleteCount;
             }
-            newTranslations[newIndex] = oldTranslations[oldIndex].clone();
-            newRotations[newIndex] = oldRotations[oldIndex].clone();
-            if (oldScales != null) {
+
+            newTimes[newIndex] = oldTimes[oldIndex];
+            if (newTranslations != null) {
+                newTranslations[newIndex] = oldTranslations[oldIndex].clone();
+            }
+            if (newRotations != null) {
+                newRotations[newIndex] = oldRotations[oldIndex].clone();
+            }
+            if (newScales != null) {
                 newScales[newIndex] = oldScales[oldIndex].clone();
             }
-            newTimes[newIndex] = oldTimes[oldIndex];
         }
 
-        int boneIndex = oldTrack.getTargetBoneIndex();
-        BoneTrack result = MyAnimation.newBoneTrack(boneIndex, newTimes,
-                newTranslations, newRotations, newScales);
+        Track result = newTrack(oldTrack, newTimes, newTranslations,
+                newRotations, newScales);
 
         return result;
     }
 
     /**
-     * Copy a bone track, inserting a keyframe at the specified time (which
-     * mustn't already have a keyframe).
+     * Copy a bone/spatial track, inserting a keyframe at the specified time
+     * (which mustn't already have a keyframe).
      *
-     * @param oldTrack (not null, unaffected)
+     * @param oldTrack input bone/spatial track (not null, unaffected)
      * @param frameTime when to insert (&gt;0)
-     * @param transform user transform to insert (not null, unaffected)
+     * @param transform transform to insert (not null, unaffected)
      * @return a new instance
      */
-    public static BoneTrack insertKeyframe(BoneTrack oldTrack, float frameTime,
+    public static Track insertKeyframe(Track oldTrack, float frameTime,
             Transform transform) {
+        assert oldTrack instanceof BoneTrack
+                || oldTrack instanceof SpatialTrack;
         Validate.positive(frameTime, "keyframe time");
         assert MyAnimation.findKeyframeIndex(oldTrack, frameTime) == -1;
 
         float[] oldTimes = oldTrack.getKeyFrameTimes();
-        Vector3f[] oldTranslations = oldTrack.getTranslations();
-        Quaternion[] oldRotations = oldTrack.getRotations();
-        Vector3f[] oldScales = oldTrack.getScales();
-        int oldCount = oldTimes.length;
+        Vector3f[] oldTranslations = MyAnimation.getTranslations(oldTrack);
+        Quaternion[] oldRotations = MyAnimation.getRotations(oldTrack);
+        Vector3f[] oldScales = MyAnimation.getScales(oldTrack);
 
+        int oldCount = oldTimes.length;
         int newCount = oldCount + 1;
-        Vector3f[] translations = new Vector3f[newCount];
-        Quaternion[] rotations = new Quaternion[newCount];
-        Vector3f[] scales = new Vector3f[newCount];
+        /*
+         * Allocate new arrays.
+         */
         float[] newTimes = new float[newCount];
+        Vector3f[] newTranslations = new Vector3f[newCount];
+        Quaternion[] newRotations = new Quaternion[newCount];
+        Vector3f[] newScales = new Vector3f[newCount];
 
         boolean added = false;
         for (int oldIndex = 0; oldIndex < oldCount; oldIndex++) {
@@ -210,76 +244,139 @@ public class TrackEdit {
             int newIndex = oldIndex;
             if (time > frameTime) {
                 if (!added) {
-                    translations[newIndex] = transform.getTranslation().clone();
-                    rotations[newIndex] = transform.getRotation().clone();
-                    scales[newIndex] = transform.getScale().clone();
                     newTimes[newIndex] = frameTime;
+                    newTranslations[newIndex] = transform.getTranslation().clone();
+                    newRotations[newIndex] = transform.getRotation().clone();
+                    newScales[newIndex] = transform.getScale().clone();
                     added = true;
                 }
                 ++newIndex;
             }
-            translations[newIndex] = oldTranslations[oldIndex].clone();
-            rotations[newIndex] = oldRotations[oldIndex].clone();
-            if (oldScales != null) {
-                scales[newIndex] = oldScales[oldIndex].clone();
-            } else {
-                scales[newIndex] = new Vector3f(1f, 1f, 1f);
-            }
+
             newTimes[newIndex] = oldTimes[oldIndex];
+            if (oldTranslations == null) {
+                newTranslations[newIndex] = new Vector3f();
+            } else {
+                newTranslations[newIndex] = oldTranslations[oldIndex].clone();
+            }
+            if (oldRotations == null) {
+                newRotations[newIndex] = new Quaternion();
+            } else {
+                newRotations[newIndex] = oldRotations[oldIndex].clone();
+            }
+            if (oldScales == null) {
+                newScales[newIndex] = new Vector3f(1f, 1f, 1f);
+            } else {
+                newScales[newIndex] = oldScales[oldIndex].clone();
+            }
         }
         if (!added) {
-            translations[oldCount] = transform.getTranslation().clone();
-            rotations[oldCount] = transform.getRotation().clone();
-            scales[oldCount] = transform.getScale().clone();
             newTimes[oldCount] = frameTime;
+            newTranslations[oldCount] = transform.getTranslation().clone();
+            newRotations[oldCount] = transform.getRotation().clone();
+            newScales[oldCount] = transform.getScale().clone();
         }
 
-        int boneIndex = oldTrack.getTargetBoneIndex();
-        BoneTrack result = MyAnimation.newBoneTrack(boneIndex, newTimes, translations,
-                rotations, scales);
+        Track result = newTrack(oldTrack, newTimes, newTranslations,
+                newRotations, newScales);
 
         return result;
     }
 
     /**
-     * Copy a bone track, reducing the number of keyframes by the specified
-     * factor.
+     * Create a new bone/spatial track.
      *
-     * @param oldTrack (not null, unaffected)
+     * @param oldTrack to identify the track type and target bone/spatial (not
+     * null)
+     * @param times (not null, alias created)
+     * @param translations (either null or same length as times)
+     * @param rotations (either null or same length as times)
+     * @param scales (either null or same length as times)
+     * @return a new instance of the same type as oldTrack
+     */
+    public static Track newTrack(Track oldTrack, float[] times,
+            Vector3f[] translations, Quaternion[] rotations,
+            Vector3f[] scales) {
+        Validate.nonNull(times, "times");
+        int numKeyframes = times.length;
+        assert translations == null || translations.length == numKeyframes;
+        assert rotations == null || rotations.length == numKeyframes;
+        assert scales == null || scales.length == numKeyframes;
+
+        Track result;
+        if (oldTrack instanceof BoneTrack) {
+            BoneTrack boneTrack = (BoneTrack) oldTrack;
+            int boneIndex = boneTrack.getTargetBoneIndex();
+            result = MyAnimation.newBoneTrack(boneIndex, times, translations,
+                    rotations, scales);
+
+        } else if (oldTrack instanceof SpatialTrack) {
+            //SpatialTrack spatialTrack = (SpatialTrack) oldTrack; TODO JME 3.2
+            //Spatial spatial = oldTrack.getTrackSpatial();
+            result = new SpatialTrack(times, translations, rotations, scales);
+            //result.setTrackSpatial(spatial);
+
+        } else {
+            throw new IllegalArgumentException();
+        }
+
+        return result;
+    }
+
+    /**
+     * Copy a bone/spatial track, uniformly reducing the number of keyframes by
+     * the specified factor.
+     *
+     * @param oldTrack input bone/spatial track (not null, unaffected)
      * @param factor reduction factor (&ge;2)
      * @return a new instance
      */
-    public static BoneTrack reduce(BoneTrack oldTrack, int factor) {
+    public static Track reduce(Track oldTrack, int factor) {
+        assert oldTrack instanceof BoneTrack
+                || oldTrack instanceof SpatialTrack;
         Validate.inRange(factor, "factor", 2, Integer.MAX_VALUE);
 
-        Vector3f[] oldTranslations = oldTrack.getTranslations();
-        Quaternion[] oldRotations = oldTrack.getRotations();
-        Vector3f[] oldScales = oldTrack.getScales();
         float[] oldTimes = oldTrack.getKeyFrameTimes();
+        Vector3f[] oldTranslations = MyAnimation.getTranslations(oldTrack);
+        Quaternion[] oldRotations = MyAnimation.getRotations(oldTrack);
+        Vector3f[] oldScales = MyAnimation.getScales(oldTrack);
+
         int oldCount = oldTimes.length;
         assert oldCount > 0 : oldCount;
-
         int newCount = 1 + (oldCount - 1) / factor;
-        Vector3f[] newTranslations = new Vector3f[newCount];
-        Quaternion[] newRotations = new Quaternion[newCount];
+        /*
+         * Allocate new arrays.
+         */
+        float[] newTimes = new float[newCount];
+        Vector3f[] newTranslations = null;
+        if (oldTranslations != null) {
+            newTranslations = new Vector3f[newCount];
+        }
+        Quaternion[] newRotations = null;
+        if (oldRotations != null) {
+            newRotations = new Quaternion[newCount];
+        }
         Vector3f[] newScales = null;
         if (oldScales != null) {
             newScales = new Vector3f[newCount];
         }
-        float[] newTimes = new float[newCount];
 
         for (int newIndex = 0; newIndex < newCount; newIndex++) {
             int oldIndex = newIndex * factor;
-            newTranslations[newIndex] = oldTranslations[oldIndex].clone();
-            newRotations[newIndex] = oldRotations[oldIndex].clone();
-            if (oldScales != null) {
+
+            newTimes[newIndex] = oldTimes[oldIndex];
+            if (newTranslations != null) {
+                newTranslations[newIndex] = oldTranslations[oldIndex].clone();
+            }
+            if (newRotations != null) {
+                newRotations[newIndex] = oldRotations[oldIndex].clone();
+            }
+            if (newScales != null) {
                 newScales[newIndex] = oldScales[oldIndex].clone();
             }
-            newTimes[newIndex] = oldTimes[oldIndex];
         }
 
-        int boneIndex = oldTrack.getTargetBoneIndex();
-        BoneTrack result = MyAnimation.newBoneTrack(boneIndex, newTimes, newTranslations,
+        Track result = newTrack(oldTrack, newTimes, newTranslations,
                 newRotations, newScales);
 
         return result;
@@ -288,16 +385,15 @@ public class TrackEdit {
     /**
      * Remove repetitious keyframes from an animation.
      *
-     * @param animation (not null)
+     * @param animation (not null, modified)
      * @return number of tracks edited
      */
     public static int removeRepeats(Animation animation) {
         int numTracksEdited = 0;
         Track[] tracks = animation.getTracks();
         for (Track track : tracks) {
-            if (track instanceof BoneTrack) {
-                BoneTrack boneTrack = (BoneTrack) track;
-                boolean removed = removeRepeats(boneTrack);
+            if (track instanceof BoneTrack || track instanceof SpatialTrack) {
+                boolean removed = removeRepeats(track);
                 if (removed) {
                     ++numTracksEdited;
                 }
@@ -308,105 +404,124 @@ public class TrackEdit {
     }
 
     /**
-     * Remove all repetitious keyframes from a bone track.
+     * Remove all repetitious keyframes from a bone/spatial track.
      *
-     * @param boneTrack (not null)
+     * @param track input bone/spatial track (not null, modified)
      * @return true if 1 or more keyframes were removed, otherwise false
      */
-    public static boolean removeRepeats(BoneTrack boneTrack) {
-        float[] originalTimes = boneTrack.getKeyFrameTimes();
+    public static boolean removeRepeats(Track track) {
+        assert track instanceof BoneTrack || track instanceof SpatialTrack;
+
+        float[] oldTimes = track.getKeyFrameTimes();
         /*
          * Count distinct keyframes.
          */
         float prevTime = Float.NEGATIVE_INFINITY;
-        int numDistinct = 0;
-        for (float time : originalTimes) {
+        int newCount = 0;
+        for (float time : oldTimes) {
             if (time != prevTime) {
-                ++numDistinct;
+                ++newCount;
             }
             prevTime = time;
         }
 
-        int originalCount = originalTimes.length;
-        if (numDistinct == originalCount) {
+        int oldCount = oldTimes.length;
+        if (newCount == oldCount) {
             return false;
         }
-        Vector3f[] originalTranslations = boneTrack.getTranslations();
-        Quaternion[] originalRotations = boneTrack.getRotations();
-        Vector3f[] originalScales = boneTrack.getScales();
+
+        Vector3f[] oldTranslations = MyAnimation.getTranslations(track);
+        Quaternion[] oldRotations = MyAnimation.getRotations(track);
+        Vector3f[] oldScales = MyAnimation.getScales(track);
         /*
          * Allocate new arrays.
          */
-        float[] newTimes = new float[numDistinct];
-        Vector3f[] newTranslations = new Vector3f[numDistinct];
-        Quaternion[] newRotations = new Quaternion[numDistinct];
+        float[] newTimes = new float[newCount];
+        Vector3f[] newTranslations = null;
+        if (oldTranslations != null) {
+            newTranslations = new Vector3f[newCount];
+        }
+        Quaternion[] newRotations = null;
+        if (oldRotations != null) {
+            newRotations = new Quaternion[newCount];
+        }
         Vector3f[] newScales = null;
-        if (originalScales != null) {
-            newScales = new Vector3f[numDistinct];
+        if (oldScales != null) {
+            newScales = new Vector3f[newCount];
         }
         /*
          * Copy all non-repeated keyframes.
          */
         prevTime = Float.NEGATIVE_INFINITY;
         int newIndex = 0;
-        for (int oldIndex = 0; oldIndex < originalCount; oldIndex++) {
-            float time = originalTimes[oldIndex];
+        for (int oldIndex = 0; oldIndex < oldCount; oldIndex++) {
+            float time = oldTimes[oldIndex];
             if (time != prevTime) {
-                newTimes[newIndex] = originalTimes[oldIndex];
-                newTranslations[newIndex] = originalTranslations[oldIndex];
-                newRotations[newIndex] = originalRotations[oldIndex];
+                newTimes[newIndex] = oldTimes[oldIndex];
+                if (newTranslations != null) {
+                    newTranslations[newIndex] = oldTranslations[oldIndex];
+                }
+                if (newRotations != null) {
+                    newRotations[newIndex] = oldRotations[oldIndex];
+                }
                 if (newScales != null) {
-                    newScales[newIndex] = originalScales[oldIndex];
+                    newScales[newIndex] = oldScales[oldIndex];
                 }
                 ++newIndex;
             }
             prevTime = time;
         }
 
-        if (newScales == null) {
-            boneTrack.setKeyframes(newTimes, newTranslations, newRotations);
-        } else {
-            boneTrack.setKeyframes(newTimes, newTranslations, newRotations,
-                    newScales);
-        }
-
+        setKeyframes(track, newTimes, newTranslations, newRotations, newScales);
         return true;
     }
 
     /**
-     * Copy a bone track, setting the indexed keyframe to the specified
+     * Copy a bone/spatial track, setting the indexed keyframe to the specified
      * transform.
      *
-     * @param oldTrack (not null, unaffected)
+     * @param oldTrack input bone/spatial track (not null, unaffected)
      * @param frameIndex which keyframe (&ge;0, &lt;numFrames)
-     * @param transform user transform (not null, unaffected?)
+     * @param transform transform to apply (not null, unaffected)
      * @return a new instance
      */
-    public static BoneTrack replaceKeyframe(BoneTrack oldTrack, int frameIndex,
+    public static Track replaceKeyframe(Track oldTrack, int frameIndex,
             Transform transform) {
+        assert oldTrack instanceof BoneTrack
+                || oldTrack instanceof SpatialTrack;
         float[] oldTimes = oldTrack.getKeyFrameTimes();
         int frameCount = oldTimes.length;
         Validate.inRange(frameIndex, "keyframe index", 0, frameCount - 1);
         Validate.nonNull(transform, "transform");
 
-        Vector3f[] oldTranslations = oldTrack.getTranslations();
-        Quaternion[] oldRotations = oldTrack.getRotations();
-        Vector3f[] oldScales = oldTrack.getScales();
-
+        Vector3f[] oldTranslations = MyAnimation.getTranslations(oldTrack);
+        Quaternion[] oldRotations = MyAnimation.getRotations(oldTrack);
+        Vector3f[] oldScales = MyAnimation.getScales(oldTrack);
+        /*
+         * Allocate new arrays.
+         */
+        float[] newTimes = new float[frameCount];
         Vector3f[] newTranslations = new Vector3f[frameCount];
         Quaternion[] newRotations = new Quaternion[frameCount];
         Vector3f[] newScales = new Vector3f[frameCount];
-        float[] newTimes = new float[frameCount];
 
         for (int frameI = 0; frameI < frameCount; frameI++) {
             newTimes[frameI] = oldTimes[frameI];
             if (frameI == frameIndex) {
-                newTranslations[frameI] = transform.getTranslation();
-                newRotations[frameI] = transform.getRotation();
-                newScales[frameI] = transform.getScale();
+                newTranslations[frameI] = transform.getTranslation().clone();
+                newRotations[frameI] = transform.getRotation().clone();
+                newScales[frameI] = transform.getScale().clone();
             } else {
-                newTranslations[frameI] = oldTranslations[frameI].clone();
-                newRotations[frameI] = oldRotations[frameI].clone();
+                if (oldTranslations == null) {
+                    newTranslations[frameI] = new Vector3f();
+                } else {
+                    newTranslations[frameI] = oldTranslations[frameI].clone();
+                }
+                if (oldRotations == null) {
+                    newRotations[frameI] = new Quaternion();
+                } else {
+                    newRotations[frameI] = oldRotations[frameI].clone();
+                }
                 if (oldScales == null) {
                     newScales[frameI] = new Vector3f(1f, 1f, 1f);
                 } else {
@@ -415,9 +530,8 @@ public class TrackEdit {
             }
         }
 
-        int boneIndex = oldTrack.getTargetBoneIndex();
-        BoneTrack result = MyAnimation.newBoneTrack(boneIndex, newTimes,
-                newTranslations, newRotations, newScales);
+        Track result = newTrack(oldTrack, newTimes, newTranslations,
+                newRotations, newScales);
 
         return result;
     }
@@ -467,6 +581,16 @@ public class TrackEdit {
                         sourceSkeleton, targetSkeleton, iTarget, map,
                         techniques, cache);
                 result.addTrack(track);
+            }
+        }
+        /*
+         * Copy any non-bone tracks.
+         */
+        Track[] tracks = sourceAnimation.getTracks();
+        for (Track track : tracks) {
+            if (!(track instanceof BoneTrack)) {
+                Track clone = track.clone();
+                result.addTrack(clone);
             }
         }
 
@@ -536,23 +660,23 @@ public class TrackEdit {
     }
 
     /**
-     * Copy a bone track, altering its duration and adjusting all its keyframes
+     * Copy a track, altering its duration and adjusting all its keyframe times
      * proportionately.
      *
-     * @param oldTrack (not null, unaffected)
+     * @param oldTrack input track (not null, unaffected)
      * @param newDuration new duration (in seconds, &ge;0)
      * @return a new instance
      */
-    public static BoneTrack setDuration(BoneTrack oldTrack, float newDuration) {
+    public static Track setDuration(Track oldTrack, float newDuration) {
         Validate.nonNegative(newDuration, "duration");
-
-        BoneTrack result = oldTrack.clone();
-        float[] newTimes = result.getKeyFrameTimes(); // an alias
 
         float oldDuration = oldTrack.getLength();
         float[] oldTimes = oldTrack.getKeyFrameTimes();
         int numFrames = oldTimes.length;
         assert numFrames == 1 || oldDuration > 0f : numFrames;
+
+        Track result = oldTrack.clone();
+        float[] newTimes = result.getKeyFrameTimes(); // an alias
 
         for (int frameIndex = 0; frameIndex < numFrames; frameIndex++) {
             float oldTime = oldTimes[frameIndex];
@@ -574,9 +698,44 @@ public class TrackEdit {
     }
 
     /**
-     * Copy a bone track, smoothing it using the specified techniques.
+     * Alter the keyframes in a bone/spatial track.
      *
-     * @param oldTrack (not null, unaffected)
+     * @param track (not null, modified)
+     * @param times (not null, alias created)
+     * @param translations (either null or same length as times)
+     * @param rotations (either null or same length as times)
+     * @param scales (either null or same length as times)
+     */
+    public static void setKeyframes(Track track, float[] times,
+            Vector3f[] translations, Quaternion[] rotations,
+            Vector3f[] scales) {
+        Validate.nonNull(times, "times");
+        int numKeyframes = times.length;
+        assert translations == null || translations.length == numKeyframes;
+        assert rotations == null || rotations.length == numKeyframes;
+        assert scales == null || scales.length == numKeyframes;
+
+        if (track instanceof BoneTrack) {
+            BoneTrack boneTrack = (BoneTrack) track;
+            if (scales == null) {
+                boneTrack.setKeyframes(times, translations, rotations);
+            } else {
+                boneTrack.setKeyframes(times, translations, rotations, scales);
+            }
+
+        } else if (track instanceof SpatialTrack) {
+            SpatialTrack spatialTrack = (SpatialTrack) track;
+            spatialTrack.setKeyframes(times, translations, rotations, scales);
+
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Copy a bone/spatial track, smoothing it using the specified techniques.
+     *
+     * @param oldTrack input bone/spatial track (not null, unaffected)
      * @param width width of time window (&ge;0, &le;duration)
      * @param smoothTranslations technique for translations (not null)
      * @param smoothRotations technique for translations (not null)
@@ -584,16 +743,18 @@ public class TrackEdit {
      * @param duration animation duration (in seconds, &ge;0)
      * @return a new instance
      */
-    public static BoneTrack smooth(BoneTrack oldTrack, float width,
+    public static Track smooth(Track oldTrack, float width,
             SmoothVectors smoothTranslations, SmoothRotations smoothRotations,
             SmoothVectors smoothScales, float duration) {
+        assert oldTrack instanceof BoneTrack
+                || oldTrack instanceof SpatialTrack;
         Validate.inRange(width, "width", 0f, duration);
         Validate.nonNegative(duration, "duration");
 
         float[] oldTimes = oldTrack.getKeyFrameTimes();
-        Vector3f[] oldTranslations = oldTrack.getTranslations();
-        Quaternion[] oldRotations = oldTrack.getRotations();
-        Vector3f[] oldScales = oldTrack.getScales();
+        Vector3f[] oldTranslations = MyAnimation.getTranslations(oldTrack);
+        Quaternion[] oldRotations = MyAnimation.getRotations(oldTrack);
+        Vector3f[] oldScales = MyAnimation.getScales(oldTrack);
 
         int numFrames = oldTimes.length;
         float[] newTimes = new float[numFrames];
@@ -601,86 +762,104 @@ public class TrackEdit {
             newTimes[i] = oldTimes[i];
         }
 
-        Vector3f[] newTranslations = new Vector3f[numFrames];
-        smoothTranslations.smooth(oldTimes, duration, oldTranslations, width,
-                newTranslations);
+        Vector3f[] newTranslations = null;
+        if (oldTranslations != null) {
+            newTranslations = smoothTranslations.smooth(oldTimes, duration,
+                    oldTranslations, width, null);
+        }
 
-        Quaternion[] newRotations = new Quaternion[numFrames];
-        smoothRotations.smooth(oldTimes, duration, oldRotations, width,
-                newRotations);
+        Quaternion[] newRotations = null;
+        if (oldRotations != null) {
+            newRotations = smoothRotations.smooth(oldTimes, duration,
+                    oldRotations, width, null);
+        }
 
         Vector3f[] newScales = null;
         if (oldScales != null) {
-            newScales = new Vector3f[numFrames];
-            smoothScales.smooth(oldTimes, duration, oldScales, width,
-                    newScales);
+            newScales = smoothScales.smooth(oldTimes, duration, oldScales,
+                    width, null);
         }
 
-        int boneIndex = oldTrack.getTargetBoneIndex();
-        BoneTrack result = MyAnimation.newBoneTrack(boneIndex, newTimes,
-                newTranslations, newRotations, newScales);
+        Track result = newTrack(oldTrack, newTimes, newTranslations,
+                newRotations, newScales);
 
         return result;
     }
 
     /**
-     * Copy a bone track, truncating it at the specified time.
+     * Copy a bone/spatial track, truncating it at the specified time.
      *
-     * @param oldTrack (not null, unaffected)
+     * @param oldTrack input bone/spatial track (not null, unaffected)
      * @param endTime cutoff time (&ge;0)
      * @return a new instance
      */
-    public static BoneTrack truncate(BoneTrack oldTrack, float endTime) {
+    public static Track truncate(Track oldTrack, float endTime) {
+        assert oldTrack instanceof BoneTrack
+                || oldTrack instanceof SpatialTrack;
         Validate.positive(endTime, "end time");
 
         float[] oldTimes = oldTrack.getKeyFrameTimes();
-        Vector3f[] oldTranslations = oldTrack.getTranslations();
-        Quaternion[] oldRotations = oldTrack.getRotations();
-        Vector3f[] oldScales = oldTrack.getScales();
+        Vector3f[] oldTranslations = MyAnimation.getTranslations(oldTrack);
+        Quaternion[] oldRotations = MyAnimation.getRotations(oldTrack);
+        Vector3f[] oldScales = MyAnimation.getScales(oldTrack);
 
         int newCount;
         newCount = 1 + MyAnimation.findPreviousKeyframeIndex(oldTrack, endTime);
-        Vector3f[] translations = new Vector3f[newCount];
-        Quaternion[] rotations = new Quaternion[newCount];
-        Vector3f[] scales = null;
-        if (oldScales != null) {
-            scales = new Vector3f[newCount];
+        /*
+         * Allocate new arrays.
+         */
+        float[] newTimes = new float[newCount];
+        Vector3f[] newTranslations = null;
+        if (oldTranslations != null) {
+            newTranslations = new Vector3f[newCount];
         }
-        float[] times = new float[newCount];
+        Quaternion[] newRotations = null;
+        if (oldRotations != null) {
+            newRotations = new Quaternion[newCount];
+        }
+        Vector3f[] newScales = null;
+        if (oldScales != null) {
+            newScales = new Vector3f[newCount];
+        }
 
         for (int frameIndex = 0; frameIndex < newCount; frameIndex++) {
-            translations[frameIndex] = oldTranslations[frameIndex].clone();
-            rotations[frameIndex] = oldRotations[frameIndex].clone();
-            if (oldScales != null) {
-                scales[frameIndex] = oldScales[frameIndex].clone();
+            newTimes[frameIndex] = oldTimes[frameIndex];
+            if (newTranslations != null) {
+                newTranslations[frameIndex] = oldTranslations[frameIndex].clone();
             }
-            times[frameIndex] = oldTimes[frameIndex];
+            if (newRotations != null) {
+                newRotations[frameIndex] = oldRotations[frameIndex].clone();
+            }
+            if (newScales != null) {
+                newScales[frameIndex] = oldScales[frameIndex].clone();
+            }
         }
 
-        int boneIndex = oldTrack.getTargetBoneIndex();
-        BoneTrack result = MyAnimation.newBoneTrack(boneIndex, times, translations,
-                rotations, scales);
+        Track result = newTrack(oldTrack, newTimes, newTranslations,
+                newRotations, newScales);
 
         return result;
     }
 
     /**
-     * Copy a bone track, altering its end-time keyframe to match its 1st
-     * keyframe. If the track doesn't end with a keyframe, append one.
+     * Copy a bone/spatial track, altering its end-time keyframe to match its
+     * 1st keyframe. If the track doesn't end with a keyframe, append one.
      *
-     * @param oldTrack (not null, unaffected)
+     * @param oldTrack input bone/spatial track (not null, unaffected)
      * @param endTime when to insert (&gt;0)
      * @return a new instance
      */
-    public static BoneTrack wrap(BoneTrack oldTrack, float endTime) {
+    public static Track wrap(Track oldTrack, float endTime) {
+        assert oldTrack instanceof BoneTrack
+                || oldTrack instanceof SpatialTrack;
         Validate.positive(endTime, "end time");
 
         float[] oldTimes = oldTrack.getKeyFrameTimes();
-        Vector3f[] oldTranslations = oldTrack.getTranslations();
-        Quaternion[] oldRotations = oldTrack.getRotations();
-        Vector3f[] oldScales = oldTrack.getScales();
-        int oldCount = oldTimes.length;
+        Vector3f[] oldTranslations = MyAnimation.getTranslations(oldTrack);
+        Quaternion[] oldRotations = MyAnimation.getRotations(oldTrack);
+        Vector3f[] oldScales = MyAnimation.getScales(oldTrack);
 
+        int oldCount = oldTimes.length;
         int newCount;
         int endIndex = MyAnimation.findKeyframeIndex(oldTrack, endTime);
         if (endIndex == -1) {
@@ -690,33 +869,42 @@ public class TrackEdit {
             newCount = oldCount;
         }
         assert endIndex == newCount - 1;
-        Vector3f[] translations = new Vector3f[newCount];
-        Quaternion[] rotations = new Quaternion[newCount];
-        Vector3f[] scales = null;
-        if (oldScales != null) {
-            scales = new Vector3f[newCount];
-        }
+        /*
+         * Allocate new arrays.
+         */
         float[] newTimes = new float[newCount];
+        newTimes[endIndex] = endTime;
+        Vector3f[] newTranslations = null;
+        if (oldTranslations != null) {
+            newTranslations = new Vector3f[newCount];
+            newTranslations[endIndex] = oldTranslations[0].clone();
+        }
+        Quaternion[] newRotations = null;
+        if (oldRotations != null) {
+            newRotations = new Quaternion[newCount];
+            newRotations[endIndex] = oldRotations[0].clone();
+        }
+        Vector3f[] newScales = null;
+        if (oldScales != null) {
+            newScales = new Vector3f[newCount];
+            newScales[endIndex] = oldScales[0].clone();
+        }
 
         for (int frameIndex = 0; frameIndex < endIndex; frameIndex++) {
-            translations[frameIndex] = oldTranslations[frameIndex].clone();
-            rotations[frameIndex] = oldRotations[frameIndex].clone();
-            if (oldScales != null) {
-                scales[frameIndex] = oldScales[frameIndex].clone();
-            }
             newTimes[frameIndex] = oldTimes[frameIndex];
+            if (newTranslations != null) {
+                newTranslations[frameIndex] = oldTranslations[frameIndex].clone();
+            }
+            if (newRotations != null) {
+                newRotations[frameIndex] = oldRotations[frameIndex].clone();
+            }
+            if (newScales != null) {
+                newScales[frameIndex] = oldScales[frameIndex].clone();
+            }
         }
 
-        translations[endIndex] = oldTranslations[0].clone();
-        rotations[endIndex] = oldRotations[0].clone();
-        if (oldScales != null) {
-            scales[endIndex] = oldScales[0].clone();
-        }
-        newTimes[endIndex] = endTime;
-
-        int boneIndex = oldTrack.getTargetBoneIndex();
-        BoneTrack result = MyAnimation.newBoneTrack(boneIndex, newTimes, translations,
-                rotations, scales);
+        Track result = newTrack(oldTrack, newTimes, newTranslations,
+                newRotations, newScales);
 
         return result;
     }
@@ -731,7 +919,7 @@ public class TrackEdit {
         int numTracksEdited = 0;
         Track[] tracks = animation.getTracks();
         for (Track track : tracks) {
-            float[] times = track.getKeyFrameTimes();
+            float[] times = track.getKeyFrameTimes(); // an alias
             if (times[0] != 0f) {
                 times[0] = 0f;
                 ++numTracksEdited;
