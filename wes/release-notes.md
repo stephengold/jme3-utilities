@@ -1,6 +1,6 @@
 # release notes for the Wes library and related tests
 
-## Version 0.2.2 released TBD
+## Version 0.2.2 released 7 September 2017
 
  + Generalized BoneTrack methods to also work for SpatialTracks. (This involved
    some API changes.)
