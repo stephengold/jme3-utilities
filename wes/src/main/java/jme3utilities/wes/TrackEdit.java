@@ -575,8 +575,8 @@ public class TrackEdit {
             if (boneMapping != null) {
                 String sourceName = boneMapping.getSourceName();
                 int iSource = sourceSkeleton.getBoneIndex(sourceName);
-                BoneTrack sourceTrack;
-                sourceTrack = MyAnimation.findTrack(sourceAnimation, iSource);
+                BoneTrack sourceTrack = MyAnimation.findBoneTrack(
+                        sourceAnimation, iSource);
                 BoneTrack track = retargetTrack(sourceAnimation, sourceTrack,
                         sourceSkeleton, targetSkeleton, iTarget, map,
                         techniques, cache);

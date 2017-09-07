@@ -230,13 +230,14 @@ public class MyAnimation {
     }
 
     /**
-     * Find a BoneTrack in a specified animation for a specified bone.
+     * Find a BoneTrack in a specified animation for a specified bone. TODO sort
+     * methods
      *
      * @param animation which animation (not null, unaffected)
      * @param boneIndex which bone (&ge;0)
      * @return the pre-existing instance, or null if not found
      */
-    public static BoneTrack findTrack(Animation animation, int boneIndex) {
+    public static BoneTrack findBoneTrack(Animation animation, int boneIndex) {
         Validate.nonNull(animation, "animation");
         Validate.nonNegative(boneIndex, "bone index");
 
