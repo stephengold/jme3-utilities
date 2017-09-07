@@ -27,6 +27,8 @@
 package jme3utilities.wes;
 
 import com.jme3.animation.BoneTrack;
+import com.jme3.animation.SpatialTrack;
+import com.jme3.animation.Track;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
@@ -48,10 +50,6 @@ public class TweenTransforms implements Cloneable {
      */
     final private static Logger logger = Logger.getLogger(
             TweenTransforms.class.getName());
-    /**
-     * local copy of {@link com.jme3.math.Vector3f#UNIT_XYZ}
-     */
-    final private static Vector3f scaleIdentity = new Vector3f(1f, 1f, 1f);
     // *************************************************************************
     // fields
 
@@ -71,37 +69,42 @@ public class TweenTransforms implements Cloneable {
     // new methods exposed
 
     /**
-     * Calculate the bone transform for the specified track and time using these
-     * techniques.
+     * Calculate the transform for the specified bone/spatial track and time
+     * using these techniques. TODO sort methods
      *
-     * @param track input (not null, unaffected)
+     * @param track input bone/spatial track (not null, unaffected)
      * @param time animation time input (in seconds)
      * @param duration (in seconds)
      * @param storeResult (modified if not null)
      * @return a transform (either storeResult or a new instance)
      */
-    public Transform boneTransform(BoneTrack track, float time,
-            float duration, Transform storeResult) {
+    public Transform transform(Track track, float time, float duration,
+            Transform storeResult) {
+        assert track instanceof BoneTrack || track instanceof SpatialTrack;
         if (storeResult == null) {
             storeResult = new Transform();
         }
+
         float[] times = track.getKeyFrameTimes();
         int lastFrame = times.length - 1;
         assert lastFrame >= 0 : lastFrame;
 
-        Vector3f[] translations = track.getTranslations();
-        Quaternion[] rotations = track.getRotations();
-        Vector3f[] scales = track.getScales();
+        Vector3f[] translations = MyAnimation.getTranslations(track);
+        Quaternion[] rotations = MyAnimation.getRotations(track);
+        Vector3f[] scales = MyAnimation.getScales(track);
 
         if (time <= 0f || lastFrame == 0) {
             /*
              * Copy the transform of the first frame.
              */
-            storeResult.setTranslation(translations[0]);
-            storeResult.setRotation(rotations[0]);
-            if (scales == null) {
-                storeResult.setScale(scaleIdentity);
-            } else {
+            storeResult.loadIdentity();
+            if (translations != null) {
+                storeResult.setTranslation(translations[0]);
+            }
+            if (rotations != null) {
+                storeResult.setRotation(rotations[0]);
+            }
+            if (scales != null) {
                 storeResult.setScale(scales[0]);
             }
 
@@ -144,22 +147,25 @@ public class TweenTransforms implements Cloneable {
     }
 
     /**
-     * Interpolate between keyframes in a bone track using these techniques.
+     * Interpolate between keyframes in a bone/spatial track using these
+     * techniques.
      *
      * @param time (in seconds, &ge;0, &le;duration)
-     * @param boneTrack (not null, unaffected)
+     * @param track input bone/spatial track (not null, unaffected)
      * @param duration animation duration (in seconds, &gt;0)
      * @param storeResult (modified if not null)
      * @return transform (either storeResult or a new instance)
      */
-    public Transform interpolate(float time, BoneTrack boneTrack,
-            float duration, Transform storeResult) {
+    public Transform interpolate(float time, Track track, float duration,
+            Transform storeResult) {
         Validate.inRange(time, "time", 0f, duration);
+        assert track instanceof BoneTrack || track instanceof SpatialTrack;
 
-        float[] times = boneTrack.getKeyFrameTimes();
-        Vector3f[] translations = boneTrack.getTranslations();
-        Quaternion[] rotations = boneTrack.getRotations();
-        Vector3f[] scales = boneTrack.getScales();
+        float[] times = track.getKeyFrameTimes();
+        Vector3f[] translations = MyAnimation.getTranslations(track);
+        Quaternion[] rotations = MyAnimation.getRotations(track);
+        Vector3f[] scales = MyAnimation.getScales(track);
+
         storeResult = interpolate(time, times, duration, translations,
                 rotations, scales, storeResult);
 
@@ -167,13 +173,13 @@ public class TweenTransforms implements Cloneable {
     }
 
     /**
-     * Interpolate between keyframes in a bone track using these techniques.
+     * Interpolate between keyframes using these techniques.
      *
      * @param time (in seconds, &ge;0, &le;duration)
      * @param times keyframe times (in seconds, not null, unaffected)
      * @param duration animation duration (in seconds, &gt;0)
-     * @param translations (not null, unaffected, same length as times)
-     * @param rotations (not null, unaffected, same length as times)
+     * @param translations (may be null, unaffected, same length as times)
+     * @param rotations (may be null, unaffected, same length as times)
      * @param scales (may be null, unaffected, same length as times)
      * @param storeResult (modified if not null)
      * @return transform (either storeResult or a new instance)
@@ -183,20 +189,20 @@ public class TweenTransforms implements Cloneable {
             Transform storeResult) {
         Validate.inRange(time, "time", 0f, duration);
         Validate.nonNull(times, "times");
-        Validate.nonNull(translations, "translations");
-        Validate.nonNull(rotations, "rotations");
         if (storeResult == null) {
             storeResult = new Transform();
         }
 
-        tweenTranslations.interpolate(time, times, duration, translations,
-                storeResult.getTranslation());
-        tweenRotations.interpolate(time, times, duration, rotations,
-                storeResult.getRotation());
-
-        if (scales == null) {
-            storeResult.setScale(scaleIdentity);
-        } else {
+        storeResult.loadIdentity();
+        if (translations != null) {
+            tweenTranslations.interpolate(time, times, duration, translations,
+                    storeResult.getTranslation());
+        }
+        if (rotations != null) {
+            tweenRotations.interpolate(time, times, duration, rotations,
+                    storeResult.getRotation());
+        }
+        if (scales != null) {
             tweenScales.interpolate(time, times, duration, scales,
                     storeResult.getScale());
         }
@@ -205,56 +211,73 @@ public class TweenTransforms implements Cloneable {
     }
 
     /**
-     * Copy a bone track, resampling at the specified times using these
+     * Copy a bone/spatial track, resampling at the specified times using these
      * techniques.
      *
-     * @param oldTrack (not null, unaffected)
+     * @param oldTrack input bone/spatial track (not null, unaffected)
      * @param newTimes sample times (not null, alias created)
      * @param duration animation duration (in seconds, &ge;0)
      * @return a new instance
      */
-    public BoneTrack resample(BoneTrack oldTrack, float[] newTimes,
-            float duration) {
+    public Track resample(Track oldTrack, float[] newTimes, float duration) {
+        assert oldTrack instanceof BoneTrack
+                || oldTrack instanceof SpatialTrack;
         Validate.nonNegative(duration, "duration");
 
-        int boneIndex = oldTrack.getTargetBoneIndex();
         int numSamples = newTimes.length;
-        Vector3f[] newTranslations = new Vector3f[numSamples];
-        Quaternion[] newRotations = new Quaternion[numSamples];
+        Vector3f[] oldTranslations = MyAnimation.getTranslations(oldTrack);
+        Quaternion[] oldRotations = MyAnimation.getRotations(oldTrack);
+        Vector3f[] oldScales = MyAnimation.getScales(oldTrack);
+        /*
+         * Allocate new arrays.
+         */
+        Vector3f[] newTranslations = null;
+        if (oldTranslations != null) {
+            newTranslations = new Vector3f[numSamples];
+        }
+        Quaternion[] newRotations = null;
+        if (oldRotations != null) {
+            newRotations = new Quaternion[numSamples];
+        }
         Vector3f[] newScales = null;
-        Vector3f[] oldScales = oldTrack.getScales();
         if (oldScales != null) {
             newScales = new Vector3f[numSamples];
         }
 
         for (int frameIndex = 0; frameIndex < numSamples; frameIndex++) {
             float time = newTimes[frameIndex];
-            Transform boneTransform;
-            boneTransform = boneTransform(oldTrack, time, duration, null);
-            newTranslations[frameIndex] = boneTransform.getTranslation();
-            newRotations[frameIndex] = boneTransform.getRotation();
-            if (oldScales != null) {
-                newScales[frameIndex] = boneTransform.getScale();
+            Transform transform = transform(oldTrack, time, duration, null);
+
+            if (newTranslations != null) {
+                newTranslations[frameIndex] = transform.getTranslation();
+            }
+            if (newRotations != null) {
+                newRotations[frameIndex] = transform.getRotation();
+            }
+            if (newScales != null) {
+                newScales[frameIndex] = transform.getScale();
             }
         }
 
-        BoneTrack result = MyAnimation.newBoneTrack(boneIndex, newTimes,
-                newTranslations, newRotations, newScales);
+        Track result = TrackEdit.newTrack(oldTrack, newTimes, newTranslations,
+                newRotations, newScales);
 
         return result;
     }
 
     /**
-     * Copy a bone track, resampling it at the specified rate using these
-     * techniques.
+     * Copy a bone/spatial track, resampling it at the specified rate using
+     * these techniques.
      *
-     * @param oldTrack (not null, unaffected)
+     * @param oldTrack input bone/spatial track (not null, unaffected)
      * @param sampleRate sample rate (in frames per second, &gt;0)
      * @param duration animation duration (in seconds, &ge;0)
      * @return a new instance
      */
-    public BoneTrack resampleAtRate(BoneTrack oldTrack, float sampleRate,
+    public Track resampleAtRate(Track oldTrack, float sampleRate,
             float duration) {
+        assert oldTrack instanceof BoneTrack
+                || oldTrack instanceof SpatialTrack;
         Validate.positive(sampleRate, "sample rate");
         Validate.nonNegative(duration, "duration");
 
@@ -267,22 +290,24 @@ public class TweenTransforms implements Cloneable {
             }
             newTimes[frameIndex] = time;
         }
-        BoneTrack result = resample(oldTrack, newTimes, duration);
+        Track result = resample(oldTrack, newTimes, duration);
 
         return result;
     }
 
     /**
-     * Copy a bone track, resampling to the specified number of samples using
-     * these techniques.
+     * Copy a bone/spatial track, resampling to the specified number of samples
+     * using these techniques.
      *
-     * @param oldTrack (not null, unaffected)
+     * @param oldTrack input bone/spatial track (not null, unaffected)
      * @param numSamples number of samples (&ge;2)
      * @param duration animation duration (in seconds, &gt;0)
      * @return a new instance
      */
-    public BoneTrack resampleToNumber(BoneTrack oldTrack, int numSamples,
+    public Track resampleToNumber(Track oldTrack, int numSamples,
             float duration) {
+        assert oldTrack instanceof BoneTrack
+                || oldTrack instanceof SpatialTrack;
         Validate.inRange(numSamples, "number of samples", 2, Integer.MAX_VALUE);
         Validate.positive(duration, "duration");
 
@@ -296,7 +321,7 @@ public class TweenTransforms implements Cloneable {
             }
             newTimes[frameIndex] = time;
         }
-        BoneTrack result = resample(oldTrack, newTimes, duration);
+        Track result = resample(oldTrack, newTimes, duration);
 
         return result;
     }
