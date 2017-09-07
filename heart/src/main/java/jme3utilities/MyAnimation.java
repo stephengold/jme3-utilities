@@ -70,6 +70,31 @@ public class MyAnimation {
     // new methods exposed
 
     /**
+     * Count all tracks of the specified type in the specified animation.
+     *
+     * @param <T> superclass of Track
+     * @param animation animation to search (may be null, unaffected)
+     * @param trackType superclass of Track to search for
+     * @return number of tracks (&ge;0)
+     */
+    public static <T extends Track> int countTracks(Animation animation,
+            Class<T> trackType) {
+        int result = 0;
+
+        if (animation != null) {
+            Track[] tracks = animation.getTracks();
+            for (Track track : tracks) {
+                if (trackType.isAssignableFrom(track.getClass())) {
+                    ++result;
+                }
+            }
+        }
+
+        assert result >= 0 : result;
+        return result;
+    }
+
+    /**
      * Describe an animation.
      *
      * @param animation animation to describe (not null)
@@ -248,6 +273,77 @@ public class MyAnimation {
     }
 
     /**
+     * Access the keyframe rotations for the specified bone/spatial track.
+     *
+     * @param track which track (not null, unaffected)
+     * @return the pre-existing instance (may be null)
+     */
+    public static Quaternion[] getRotations(Track track) {
+        Quaternion[] result;
+        if (track instanceof BoneTrack) {
+            BoneTrack boneTrack = (BoneTrack) track;
+            result = boneTrack.getRotations();
+
+        } else if (track instanceof SpatialTrack) {
+            SpatialTrack spatialTrack = (SpatialTrack) track;
+            result = spatialTrack.getRotations();
+
+        } else {
+            throw new IllegalArgumentException();
+        }
+
+        return result;
+    }
+
+    /**
+     * Access the keyframe scales for the specified bone/spatial track.
+     *
+     * @param track which track (not null, unaffected)
+     * @return the pre-existing instance (not null)
+     */
+    public static Vector3f[] getScales(Track track) {
+        Vector3f[] result;
+        if (track instanceof BoneTrack) {
+            BoneTrack boneTrack = (BoneTrack) track;
+            result = boneTrack.getScales();
+
+        } else if (track instanceof SpatialTrack) {
+            SpatialTrack spatialTrack = (SpatialTrack) track;
+            result = spatialTrack.getScales();
+
+        } else {
+            throw new IllegalArgumentException();
+        }
+
+        assert result != null;
+        return result;
+    }
+
+    /**
+     * Access the translations for the specified bone/spatial track.
+     *
+     * @param track which track (not null, unaffected)
+     * @return the pre-existing instance (not null)
+     */
+    public static Vector3f[] getTranslations(Track track) {
+        Vector3f[] result;
+        if (track instanceof BoneTrack) {
+            BoneTrack boneTrack = (BoneTrack) track;
+            result = boneTrack.getTranslations();
+
+        } else if (track instanceof SpatialTrack) {
+            SpatialTrack spatialTrack = (SpatialTrack) track;
+            result = spatialTrack.getTranslations();
+
+        } else {
+            throw new IllegalArgumentException();
+        }
+
+        assert result != null;
+        return result;
+    }
+
+    /**
      * Test whether the specified animation includes a bone track for the
      * indexed bone.
      *
@@ -312,8 +408,8 @@ public class MyAnimation {
         Vector3f[] translations = {copyTranslation};
         Quaternion[] rotations = {copyRotation};
         Vector3f[] scales = {copyScale};
-        BoneTrack result = MyAnimation.newBoneTrack(boneIndex, times,
-                translations, rotations, scales);
+        BoneTrack result = newBoneTrack(boneIndex, times, translations,
+                rotations, scales);
 
         return result;
     }
@@ -375,8 +471,8 @@ public class MyAnimation {
             rotations[frameIndex] = transform.getRotation();
             scales[frameIndex] = transform.getScale();
         }
-        BoneTrack result = MyAnimation.newBoneTrack(boneIndex, times,
-                translations, rotations, scales);
+        BoneTrack result = newBoneTrack(boneIndex, times, translations,
+                rotations, scales);
 
         return result;
     }
