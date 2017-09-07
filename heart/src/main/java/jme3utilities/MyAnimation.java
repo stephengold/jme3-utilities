@@ -171,6 +171,31 @@ public class MyAnimation {
     }
 
     /**
+     * Find a BoneTrack in a specified animation for a specified bone.
+     *
+     * @param animation which animation (not null, unaffected)
+     * @param boneIndex which bone (&ge;0)
+     * @return the pre-existing instance, or null if not found
+     */
+    public static BoneTrack findBoneTrack(Animation animation, int boneIndex) {
+        Validate.nonNull(animation, "animation");
+        Validate.nonNegative(boneIndex, "bone index");
+
+        Track[] tracks = animation.getTracks();
+        for (Track track : tracks) {
+            if (track instanceof BoneTrack) {
+                BoneTrack boneTrack = (BoneTrack) track;
+                int trackBoneIndex = boneTrack.getTargetBoneIndex();
+                if (boneIndex == trackBoneIndex) {
+                    return boneTrack;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Find the index of the keyframe at the specified time in the specified
      * track.
      *
@@ -227,32 +252,6 @@ public class MyAnimation {
 
         assert result >= 0 : result;
         return result;
-    }
-
-    /**
-     * Find a BoneTrack in a specified animation for a specified bone. TODO sort
-     * methods
-     *
-     * @param animation which animation (not null, unaffected)
-     * @param boneIndex which bone (&ge;0)
-     * @return the pre-existing instance, or null if not found
-     */
-    public static BoneTrack findBoneTrack(Animation animation, int boneIndex) {
-        Validate.nonNull(animation, "animation");
-        Validate.nonNegative(boneIndex, "bone index");
-
-        Track[] tracks = animation.getTracks();
-        for (Track track : tracks) {
-            if (track instanceof BoneTrack) {
-                BoneTrack boneTrack = (BoneTrack) track;
-                int trackBoneIndex = boneTrack.getTargetBoneIndex();
-                if (boneIndex == trackBoneIndex) {
-                    return boneTrack;
-                }
-            }
-        }
-
-        return null;
     }
 
     /**
