@@ -123,7 +123,7 @@ public class MySpatial {
      * scene graph. Note: recursive!
      *
      * @param <T> superclass of Control
-     * @param subtree subtree to traverse (may be null)
+     * @param subtree subtree to traverse (may be null, unaffected)
      * @param controlType superclass of Control to search for
      * @return number of scene-graph controls (&ge;0)
      */
@@ -158,7 +158,7 @@ public class MySpatial {
      * scene graph. Note: recursive!
      *
      * @param <T> superclass of Spatial
-     * @param subtree subtree to traverse (may be null)
+     * @param subtree subtree to traverse (may be null, unaffected)
      * @param spatialType superclass of Spatial to search for
      * @return number of spatials (&ge;0)
      */
@@ -187,7 +187,7 @@ public class MySpatial {
      * Count all user data in the specified subtree of a scene graph. Note:
      * recursive!
      *
-     * @param subtree subtree to traverse (may be null)
+     * @param subtree subtree to traverse (may be null, unaffected)
      * @return number of user data (&ge;0)
      */
     public static int countUserData(Spatial subtree) {
@@ -212,7 +212,7 @@ public class MySpatial {
      * Count how many mesh vertices are contained in the specified subtree of a
      * scene graph. Note: recursive!
      *
-     * @param subtree subtree to traverse (may be null)
+     * @param subtree subtree to traverse (may be null, unaffected)
      * @return number of vertices (&ge;0)
      */
     public static int countVertices(Spatial subtree) {
