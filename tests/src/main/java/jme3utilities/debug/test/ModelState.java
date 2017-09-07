@@ -697,7 +697,7 @@ class ModelState extends SimpleAppState {
         Skeleton skeleton = getSkeleton();
         int boneCount = skeleton.getBoneCount();
         for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
-            BoneTrack track = MyAnimation.findTrack(animation, boneIndex);
+            BoneTrack track = MyAnimation.findBoneTrack(animation, boneIndex);
 
             Vector3f translation, scale;
             Quaternion rotation;
@@ -959,7 +959,7 @@ class ModelState extends SimpleAppState {
 
         int boneIndex = MySkeleton.findBoneIndex(spatial, selectedBoneName);
         Animation animation = getAnimation();
-        BoneTrack track = MyAnimation.findTrack(animation, boneIndex);
+        BoneTrack track = MyAnimation.findBoneTrack(animation, boneIndex);
 
         return track;
     }
