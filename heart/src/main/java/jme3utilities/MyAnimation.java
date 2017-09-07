@@ -277,7 +277,7 @@ public class MyAnimation {
      * Access the keyframe rotations for the specified bone/spatial track.
      *
      * @param track which track (not null, unaffected)
-     * @return the pre-existing instance (may be null)
+     * @return the pre-existing instance or null
      */
     public static Quaternion[] getRotations(Track track) {
         Quaternion[] result;
@@ -300,7 +300,7 @@ public class MyAnimation {
      * Access the keyframe scales for the specified bone/spatial track.
      *
      * @param track which track (not null, unaffected)
-     * @return the pre-existing instance (not null)
+     * @return the pre-existing instance or null
      */
     public static Vector3f[] getScales(Track track) {
         Vector3f[] result;
@@ -316,7 +316,6 @@ public class MyAnimation {
             throw new IllegalArgumentException();
         }
 
-        assert result != null;
         return result;
     }
 
@@ -324,7 +323,7 @@ public class MyAnimation {
      * Access the translations for the specified bone/spatial track.
      *
      * @param track which track (not null, unaffected)
-     * @return the pre-existing instance (not null)
+     * @return the pre-existing instance or null
      */
     public static Vector3f[] getTranslations(Track track) {
         Vector3f[] result;
@@ -340,7 +339,6 @@ public class MyAnimation {
             throw new IllegalArgumentException();
         }
 
-        assert result != null;
         return result;
     }
 
