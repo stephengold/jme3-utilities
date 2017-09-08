@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.21 released on TBD
+## Version 0.9.21 released on 8 September 2017
 
  + Handle bone-index buffers containing shorts instead of bytes
  + Added MyAnimation.findSpatialTrack()
