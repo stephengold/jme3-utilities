@@ -32,8 +32,10 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.util.IntMap;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.logging.Logger;
 
 /**
@@ -90,7 +92,7 @@ public class MyMesh {
         assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
 
         VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
-        ByteBuffer boneIndexBuffer = (ByteBuffer) biBuf.getDataReadOnly();
+        Buffer boneIndexBuffer = biBuf.getDataReadOnly();
         boneIndexBuffer.rewind();
         int numBoneIndices = boneIndexBuffer.remaining();
         assert numBoneIndices % 4 == 0 : numBoneIndices;
@@ -103,13 +105,12 @@ public class MyMesh {
         assert numWeights == numVertices * 4 : numWeights;
 
         float result = 0f;
-        byte biByte = (byte) boneIndex;
         for (int vIndex = 0; vIndex < numVertices; vIndex++) {
             for (int wIndex = 0; wIndex < 4; wIndex++) {
                 float weight = weightBuffer.get();
-                byte bIndex = boneIndexBuffer.get();
+                int bIndex = readIndex(boneIndexBuffer);
                 if (wIndex < maxWeightsPerVert
-                        && bIndex == biByte
+                        && bIndex == boneIndex
                         && weight > result) {
                     result = weight;
                 }
@@ -135,7 +136,7 @@ public class MyMesh {
         assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
 
         VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
-        ByteBuffer boneIndexBuffer = (ByteBuffer) biBuf.getDataReadOnly();
+        Buffer boneIndexBuffer = biBuf.getDataReadOnly();
         boneIndexBuffer.rewind();
         int numBoneIndices = boneIndexBuffer.remaining();
         assert numBoneIndices % 4 == 0 : numBoneIndices;
@@ -148,19 +149,42 @@ public class MyMesh {
         assert numWeights == numVertices * 4 : numWeights;
 
         int result = 0;
-        byte biByte = (byte) boneIndex;
         for (int vIndex = 0; vIndex < numVertices; vIndex++) {
             for (int wIndex = 0; wIndex < 4; wIndex++) {
                 float weight = weightBuffer.get();
-                byte bIndex = boneIndexBuffer.get();
+                int bIndex = readIndex(boneIndexBuffer);
                 if (wIndex < maxWeightsPerVert
-                        && bIndex == biByte
+                        && bIndex == boneIndex
                         && weight > 0f) {
                     result++;
                 }
             }
         }
 
+        return result;
+    }
+
+    /**
+     * Read an index from a buffer.
+     *
+     * @param buffer a buffer of bytes or shorts (not null)
+     * @return index (&ge;0)
+     */
+    public static int readIndex(Buffer buffer) {
+        int result;
+        if (buffer instanceof ByteBuffer) {
+            ByteBuffer byteBuffer = (ByteBuffer) buffer;
+            byte b = byteBuffer.get();
+            result = 0xff & b;
+        } else if (buffer instanceof ShortBuffer) {
+            ShortBuffer shortBuffer = (ShortBuffer) buffer;
+            short s = shortBuffer.get();
+            result = 0xffff & s;
+        } else {
+            throw new IllegalArgumentException();
+        }
+
+        assert result >= 0 : result;
         return result;
     }
 
@@ -184,6 +208,7 @@ public class MyMesh {
         }
 
         if (mesh.isAnimated()) {
+            assert skinningMatrices.length != 0;
             Vector3f b = vertexVector3f(mesh,
                     VertexBuffer.Type.BindPosePosition, vertexIndex, null);
 
@@ -192,14 +217,14 @@ public class MyMesh {
             weightBuffer.position(4 * vertexIndex);
 
             VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
-            ByteBuffer boneIndexBuffer = (ByteBuffer) biBuf.getDataReadOnly();
+            Buffer boneIndexBuffer = biBuf.getDataReadOnly();
             boneIndexBuffer.position(4 * vertexIndex);
 
             storeResult.zero();
             int maxWeightsPerVertex = mesh.getMaxNumWeights();
             for (int wIndex = 0; wIndex < maxWeightsPerVertex; wIndex++) {
                 float weight = weightBuffer.get();
-                int boneIndex = 0xff & boneIndexBuffer.get();
+                int boneIndex = readIndex(boneIndexBuffer);
                 if (weight != 0f) {
                     Matrix4f s = skinningMatrices[boneIndex];
                     storeResult.x += weight
@@ -244,9 +269,6 @@ public class MyMesh {
         }
 
         VertexBuffer vertexBuffer = mesh.getBuffer(bufferType);
-        if (vertexBuffer == null) {
-            System.out.print("");
-        }
         FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
         floatBuffer.position(3 * vertexIndex);
         storeResult.x = floatBuffer.get();
