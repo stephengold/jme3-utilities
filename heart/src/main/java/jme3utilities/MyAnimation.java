@@ -178,7 +178,6 @@ public class MyAnimation {
      * @return the pre-existing instance, or null if not found
      */
     public static BoneTrack findBoneTrack(Animation animation, int boneIndex) {
-        Validate.nonNull(animation, "animation");
         Validate.nonNegative(boneIndex, "bone index");
 
         Track[] tracks = animation.getTracks();
@@ -252,6 +251,34 @@ public class MyAnimation {
 
         assert result >= 0 : result;
         return result;
+    }
+
+    /**
+     * Find a SpatialTrack in the specified animation for the specified spatial.
+     *
+     * @param animControl anim control containing the animation (not null,
+     * unaffected)
+     * @param animation which animation to search (not null, unaffected)
+     * @param spatial which spatial to find (unaffected)
+     * @return the pre-existing instance, or null if not found
+     */
+    public static SpatialTrack findSpatialTrack(AnimControl animControl,
+            Animation animation, Spatial spatial) {
+        Track[] tracks = animation.getTracks();
+        for (Track track : tracks) {
+            if (track instanceof SpatialTrack) {
+                SpatialTrack spatialTrack = (SpatialTrack) track;
+                Spatial //target = spatialTrack.getTrackSpatial(); TODO JME 3.2
+                        //if (target == null) {
+                        target = animControl.getSpatial();
+                //}
+                if (target == spatial) {
+                    return spatialTrack;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -346,7 +373,7 @@ public class MyAnimation {
      * Test whether the specified animation includes a bone track for the
      * indexed bone.
      *
-     * @param animation which animation to test (not null)
+     * @param animation which animation to test (not null, unaffected)
      * @param boneIndex which bone (&ge;0)
      * @return true if a track exists, otherwise false
      */
