@@ -1,6 +1,6 @@
 # release notes for the Wes library and related tests
 
-## Version 0.2.3 released TBD
+## Version 0.2.3 released 8 September 2017
 
  + Add fallback transforms to the interpolate() and transform() methods in
    TweenTransforms, for tracks that don't include all 3 transform components.
