@@ -102,11 +102,13 @@ public class TweenTransforms implements Cloneable {
      * @param time (in seconds, &ge;0, &le;duration)
      * @param track input bone/spatial track (not null, unaffected)
      * @param duration animation duration (in seconds, &gt;0)
+     * @param fallback values to use for missing track data (may be null,
+     * unaffected)
      * @param storeResult (modified if not null)
      * @return transform (either storeResult or a new instance)
      */
     public Transform interpolate(float time, Track track, float duration,
-            Transform storeResult) {
+            Transform fallback, Transform storeResult) {
         Validate.inRange(time, "time", 0f, duration);
         assert track instanceof BoneTrack || track instanceof SpatialTrack;
 
@@ -116,7 +118,7 @@ public class TweenTransforms implements Cloneable {
         Vector3f[] scales = MyAnimation.getScales(track);
 
         storeResult = interpolate(time, times, duration, translations,
-                rotations, scales, storeResult);
+                rotations, scales, fallback, storeResult);
 
         return storeResult;
     }
@@ -130,19 +132,26 @@ public class TweenTransforms implements Cloneable {
      * @param translations (may be null, unaffected, same length as times)
      * @param rotations (may be null, unaffected, same length as times)
      * @param scales (may be null, unaffected, same length as times)
+     * @param fallback values to use for missing track data (may be null,
+     * unaffected)
      * @param storeResult (modified if not null)
      * @return transform (either storeResult or a new instance)
      */
     public Transform interpolate(float time, float[] times, float duration,
             Vector3f[] translations, Quaternion[] rotations, Vector3f[] scales,
-            Transform storeResult) {
+            Transform fallback, Transform storeResult) {
         Validate.inRange(time, "time", 0f, duration);
         Validate.nonNull(times, "times");
         if (storeResult == null) {
             storeResult = new Transform();
         }
 
-        storeResult.loadIdentity();
+        if (fallback == null) {
+            storeResult.loadIdentity();
+        } else {
+            storeResult.set(fallback);
+        }
+
         if (translations != null) {
             tweenTranslations.interpolate(time, times, duration, translations,
                     storeResult.getTranslation());
@@ -195,7 +204,8 @@ public class TweenTransforms implements Cloneable {
 
         for (int frameIndex = 0; frameIndex < numSamples; frameIndex++) {
             float time = newTimes[frameIndex];
-            Transform transform = transform(oldTrack, time, duration, null);
+            Transform transform;
+            transform = transform(oldTrack, time, duration, null, null);
 
             if (newTranslations != null) {
                 newTranslations[frameIndex] = transform.getTranslation();
@@ -312,11 +322,13 @@ public class TweenTransforms implements Cloneable {
      * @param track input bone/spatial track (not null, unaffected)
      * @param time animation time input (in seconds)
      * @param duration (in seconds)
+     * @param fallback values to use for missing track data (may be null,
+     * unaffected)
      * @param storeResult (modified if not null)
      * @return a transform (either storeResult or a new instance)
      */
     public Transform transform(Track track, float time, float duration,
-            Transform storeResult) {
+            Transform fallback, Transform storeResult) {
         assert track instanceof BoneTrack || track instanceof SpatialTrack;
         if (storeResult == null) {
             storeResult = new Transform();
@@ -350,7 +362,7 @@ public class TweenTransforms implements Cloneable {
              * Interpolate between frames.
              */
             interpolate(time, times, duration, translations, rotations, scales,
-                    storeResult);
+                    fallback, storeResult);
         }
 
         return storeResult;
