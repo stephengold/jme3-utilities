@@ -392,9 +392,14 @@ public class Pose implements JmeCloneable {
      * @return a new array of indices
      */
     public int[] rootBoneIndices() {
-        Bone[] roots = skeleton.getRoots();
-        int numRootBones = roots.length;
+        int numRootBones = 0;
+        Bone[] roots = null;
+        if (skeleton == null) {
+            roots = skeleton.getRoots();
+            numRootBones = roots.length;
+        }
         int[] result = new int[numRootBones];
+
         for (int rootIndex = 0; rootIndex < numRootBones; rootIndex++) {
             Bone root = roots[rootIndex];
             int boneIndex = skeleton.getBoneIndex(root);
@@ -547,7 +552,7 @@ public class Pose implements JmeCloneable {
             modelTransform(boneIndex, msTransform);
             /*
              * Calculate the skinning transform for the bone.
-             * (Compare with Bone.getOffsetTransform().)
+             * Compare with Bone.getOffsetTransform()
              */
             Vector3f mbiScale = bone.getModelBindInverseScale();
             msScale.mult(mbiScale, skScale);
