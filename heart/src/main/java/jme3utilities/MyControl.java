@@ -68,6 +68,24 @@ public class MyControl {
     // new methods exposed
 
     /**
+     * Check whether a scene-graph control implements isEnabled() and
+     * setEnabled().
+     *
+     * @param sgc control to test (may be null, unaffected)
+     * @return true if it's implemented, otherwise false
+     */
+    public static boolean canDisable(Control sgc) {
+        boolean result = sgc instanceof AbstractControl
+                || sgc instanceof ChaseCamera
+                || sgc instanceof MotionEvent
+                || sgc instanceof ParticleEmitter.ParticleEmitterControl
+                || sgc instanceof PhysicsControl
+                || sgc instanceof StatsView;
+
+        return result;
+    }
+
+    /**
      * Generate a textual description of a scene-graph control.
      *
      * @param control instance to describe (not null, unaffected)
@@ -175,24 +193,6 @@ public class MyControl {
             throw new IllegalArgumentException();
 
         }
-
-        return result;
-    }
-
-    /**
-     * Check whether a scene-graph control implements isEnabled() and
-     * setEnabled(). TODO rename canDisable
-     *
-     * @param sgc control to validate (may be null, unaffected)
-     * @return true if it's supported, otherwise false
-     */
-    public static boolean isValid(Control sgc) {
-        boolean result = sgc instanceof AbstractControl
-                || sgc instanceof ChaseCamera
-                || sgc instanceof MotionEvent
-                || sgc instanceof ParticleEmitter.ParticleEmitterControl
-                || sgc instanceof PhysicsControl
-                || sgc instanceof StatsView;
 
         return result;
     }
