@@ -32,7 +32,9 @@ import com.jme3.animation.SkeletonControl;
 import com.jme3.app.StatsView;
 import com.jme3.bullet.control.PhysicsControl;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.effect.ParticleEmitter;
+import com.jme3.input.ChaseCamera;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
@@ -137,56 +139,98 @@ public class MyControl {
     /**
      * Test whether a scene-graph control is enabled.
      *
-     * @param control control to test (not null)
+     * @param sgc control to test (not null, unaffected)
      * @return true if the control is enabled, otherwise false
      */
-    public static boolean isEnabled(Object control) {
-        Validate.nonNull(control, "control");
+    public static boolean isEnabled(Control sgc) {
+        Validate.nonNull(sgc, "control");
 
-        if (control instanceof AbstractControl) {
-            return ((AbstractControl) control).isEnabled();
-        } else if (control instanceof PhysicsControl) {
-            return ((PhysicsControl) control).isEnabled();
-        } else if (control instanceof ParticleEmitter.ParticleEmitterControl) {
-            return ((ParticleEmitter.ParticleEmitterControl) control)
-                    .isEnabled();
-        } else if (control instanceof StatsView) {
-            return ((StatsView) control).isEnabled();
+        boolean result;
+        if (sgc instanceof AbstractControl) {
+            AbstractControl abstractControl = (AbstractControl) sgc;
+            result = abstractControl.isEnabled();
+
+        } else if (sgc instanceof ChaseCamera) {
+            ChaseCamera chaseCamera = (ChaseCamera) sgc;
+            result = chaseCamera.isEnabled();
+
+        } else if (sgc instanceof MotionEvent) {
+            MotionEvent motionEvent = (MotionEvent) sgc;
+            result = motionEvent.isEnabled();
+
+        } else if (sgc instanceof ParticleEmitter.ParticleEmitterControl) {
+            ParticleEmitter.ParticleEmitterControl pec
+                    = (ParticleEmitter.ParticleEmitterControl) sgc;
+            result = pec.isEnabled();
+
+        } else if (sgc instanceof PhysicsControl) {
+            PhysicsControl physicsControl = (PhysicsControl) sgc;
+            result = physicsControl.isEnabled();
+
+        } else if (sgc instanceof StatsView) {
+            StatsView statsView = (StatsView) sgc;
+            result = statsView.isEnabled();
+
         } else {
-            assert false : control.getClass();
-            return false;
+            throw new IllegalArgumentException();
+
         }
+
+        return result;
     }
 
     /**
      * Check whether a scene-graph control implements isEnabled() and
-     * setEnabled().
+     * setEnabled(). TODO rename canDisable
      *
-     * @param control control to validate (may be null)
-     * @return true if it's compatible, otherwise false
+     * @param sgc control to validate (may be null, unaffected)
+     * @return true if it's supported, otherwise false
      */
-    public static boolean isValid(Object control) {
-        return control instanceof AbstractControl
-                || control instanceof PhysicsControl
-                || control instanceof ParticleEmitter.ParticleEmitterControl;
+    public static boolean isValid(Control sgc) {
+        boolean result = sgc instanceof AbstractControl
+                || sgc instanceof ChaseCamera
+                || sgc instanceof MotionEvent
+                || sgc instanceof ParticleEmitter.ParticleEmitterControl
+                || sgc instanceof PhysicsControl
+                || sgc instanceof StatsView;
+
+        return result;
     }
 
     /**
      * Alter the enabled state of a scene-graph control.
      *
-     * @param control control to alter
+     * @param sgc control to alter (not null)
      * @param newState true means enable the control, false means disable it
      */
-    public static void setEnabled(Object control, boolean newState) {
-        if (control instanceof AbstractControl) {
-            ((AbstractControl) control).setEnabled(newState);
-        } else if (control instanceof PhysicsControl) {
-            ((PhysicsControl) control).setEnabled(newState);
-        } else if (control instanceof ParticleEmitter.ParticleEmitterControl) {
-            ((ParticleEmitter.ParticleEmitterControl) control)
-                    .setEnabled(newState);
+    public static void setEnabled(Control sgc, boolean newState) {
+        if (sgc instanceof AbstractControl) {
+            AbstractControl abstractControl = (AbstractControl) sgc;
+            abstractControl.setEnabled(newState);
+
+        } else if (sgc instanceof ChaseCamera) {
+            ChaseCamera chaseCamera = (ChaseCamera) sgc;
+            chaseCamera.setEnabled(newState);
+
+        } else if (sgc instanceof MotionEvent) {
+            MotionEvent motionEvent = (MotionEvent) sgc;
+            motionEvent.setEnabled(newState);
+
+        } else if (sgc instanceof ParticleEmitter.ParticleEmitterControl) {
+            ParticleEmitter.ParticleEmitterControl pec
+                    = (ParticleEmitter.ParticleEmitterControl) sgc;
+            pec.setEnabled(newState);
+
+        } else if (sgc instanceof PhysicsControl) {
+            PhysicsControl physicsControl = (PhysicsControl) sgc;
+            physicsControl.setEnabled(newState);
+
+        } else if (sgc instanceof StatsView) {
+            StatsView statsView = (StatsView) sgc;
+            statsView.setEnabled(newState);
+
         } else {
-            assert false : control.getClass();
+            throw new IllegalArgumentException();
         }
     }
 }
