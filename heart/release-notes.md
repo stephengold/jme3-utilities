@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.22 released on TBD
+## Version 0.9.22 released on 11 September 2017
 
  + Renamed MyControl.isValid() to canDisable()
  + Changed some asserts to exceptions in MyControl class
