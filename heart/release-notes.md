@@ -1,5 +1,13 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 0.9.22 released on TBD
+
+ + Renamed MyControl.isValid() to canDisable()
+ + Changed some asserts to exceptions in MyControl class
+ + Added canApplyPhysicsLocal(), isApplyPhysicsLocal(), objectName(), and
+   setApplyPhysicsLocal() to MyControl
+ + Handle ChaseCamera and MotionEvent in MyControl
+
 ## Version 0.9.21 released on 8 September 2017
 
  + Handle bone-index buffers containing shorts instead of bytes
