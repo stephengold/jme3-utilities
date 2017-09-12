@@ -158,7 +158,7 @@ public class DelayControl
      * @return true if enableSlave() can enable the control, false otherwise
      */
     protected boolean isValidSlave(Control slave) {
-        boolean result = MyControl.isValid(slave);
+        boolean result = MyControl.canDisable(slave);
         return result;
     }
 }
