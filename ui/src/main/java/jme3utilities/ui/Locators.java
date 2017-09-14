@@ -98,6 +98,7 @@ public class Locators {
         Locators current = stack.get(lastIndex);
         String result = current.configurationGetRootPath();
 
+        assert result != null;
         return result;
     }
 
@@ -118,8 +119,8 @@ public class Locators {
     }
 
     /**
-     * Register (add) the specified locators to the current configuration in the
-     * specified order.
+     * Register (add) the specified locators to the current configuration, in
+     * the specified order.
      *
      * @param rootPathList a list of root paths in which a null String indicates
      * the default locators
@@ -216,10 +217,8 @@ public class Locators {
      * other locators get unregistered.
      */
     public static void useDefault() {
-        int lastIndex = stack.size() - 1;
-        Locators current = stack.get(lastIndex);
-        current.configurationUnregisterAll();
-        current.configurationRegisterDefault();
+        unregisterAll();
+        registerDefault();
     }
 
     /**
@@ -232,13 +231,34 @@ public class Locators {
     public static void useFilesystem(String rootPath) {
         Validate.nonEmpty(rootPath, "root path");
 
-        int lastIndex = stack.size() - 1;
-        Locators current = stack.get(lastIndex);
-        current.configurationUnregisterAll();
-        current.configurationRegisterFilesystem(rootPath);
+        unregisterAll();
+        registerFilesystem(rootPath);
     }
     // *************************************************************************
     // private methods
+
+    /**
+     * Find a locator of the specified type with the specified root path.
+     *
+     * @param rootPath (not null, not empty)
+     * @param locatorType type of locator (not null)
+     * @return index, or -1 if not found
+     */
+    private int configurationFind(String rootPath,
+            Class<? extends AssetLocator> locatorType) {
+        Validate.nonEmpty(rootPath, "root path");
+
+        int result = -1;
+        for (int index = 0; index < rootPaths.size(); index++) {
+            if (locatorTypes.get(index).equals(locatorType)
+                    && rootPaths.get(index).equals(rootPath)) {
+                result = index;
+                break;
+            }
+        }
+
+        return result;
+    }
 
     /**
      * Read the root path of the sole locator in this configuration.
@@ -257,11 +277,12 @@ public class Locators {
             }
         }
 
+        assert result != null;
         return result;
     }
 
     /**
-     * Register (add) a locator of the specified type to this configuration.
+     * Register (add) the specified locator(s) to this configuration.
      *
      * @param rootPath (not null, not empty)
      * @param locatorType type of locator
@@ -270,9 +291,12 @@ public class Locators {
             Class<? extends AssetLocator> locatorType) {
         Validate.nonEmpty(rootPath, "root path");
 
-        manager.registerLocator(rootPath, locatorType);
-        locatorTypes.add(locatorType);
-        rootPaths.add(rootPath);
+        int index = configurationFind(rootPath, locatorType);
+        if (index == -1) {
+            manager.registerLocator(rootPath, locatorType);
+            locatorTypes.add(locatorType);
+            rootPaths.add(rootPath);
+        }
     }
 
     /**
@@ -346,6 +370,6 @@ public class Locators {
             Class<? extends AssetLocator> locatorType = locatorTypes.get(i);
             String rootPath = rootPaths.get(i);
             manager.unregisterLocator(rootPath, locatorType);
-    }
+        }
     }
 }
