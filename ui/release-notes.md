@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-ui library and related tests
 
-## Version 0.5.9 released on TBD
+## Version 0.5.9 released on 13 September 2017
 
  + Changed semantics of the Locators.register(List) method.
  + Tried to avoid registering duplicate locators.
