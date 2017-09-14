@@ -1,5 +1,12 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.5.9 released on TBD
+
+ + Changed semantics of the Locators.register(List) method.
+ + Tried to avoid registering duplicate locators.
+ + Added support for HttpZip and Url locators.
+ + Standardized the BSD license texts.
+
 ## Version 0.5.8 released on 11 August 2017
 
  + Refined the API of Locators class.
@@ -7,7 +14,7 @@
 
 ## Version 0.5.7 released on 9 August 2017
 
- Added support for zip locators.
+ Added support for Zip locators.
 
 ## Version 0.5.6 released on 7 August 2017
 

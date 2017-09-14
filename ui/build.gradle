@@ -2,11 +2,11 @@
 //   for this project. This initialization is applied in the "build.gradle"
 //   of the root project.
 
-description = 'user-interface library for jMonkeyEngine'
+description = 'a user-interface library for jMonkeyEngine'
 ext {
     artifact = 'jme3-utilities-ui'
     version = "$jme3utilitiesuiVersion"
-    baseName = "${artifact}-${version}"
+    baseName = "$artifact-$version"
 }
 
 build { dependsOn 'pom' }
@@ -17,8 +17,8 @@ sourcesJar { baseName "${project.ext.baseName}" }
 dependencies {
     compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
 
-    //compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
-    compile project(':heart')
+    compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
+    //compile project(':heart')
 }
 
 task pom {
