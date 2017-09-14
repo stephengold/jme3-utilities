@@ -29,6 +29,8 @@ import com.jme3.asset.AssetLocator;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.plugins.ClasspathLocator;
 import com.jme3.asset.plugins.FileLocator;
+import com.jme3.asset.plugins.HttpZipLocator;
+import com.jme3.asset.plugins.UrlLocator;
 import com.jme3.asset.plugins.ZipLocator;
 import java.io.File;
 import java.util.ArrayList;
@@ -103,6 +105,17 @@ public class Locators {
     }
 
     /**
+     * Register (add) the specified locator to the current configuration.
+     *
+     * @param spec URL specification (null specifies the default locators)
+     */
+    public static void register(String spec) {
+        int lastIndex = stack.size() - 1;
+        Locators current = stack.get(lastIndex);
+        current.configurationRegister(spec);
+    }
+
+    /**
      * Register (add) a locator of the specified type to the current
      * configuration.
      *
@@ -122,16 +135,13 @@ public class Locators {
      * Register (add) the specified locators to the current configuration, in
      * the specified order.
      *
-     * @param rootPathList a list of root paths in which a null String indicates
-     * the default locators
+     * @param specList a list of URL specifications (not null, unaffected)
      */
-    public static void register(List<String> rootPathList) {
-        for (String rootPath : rootPathList) {
-            if (rootPath == null) {
-                registerDefault();
-            } else {
-                register(rootPath, FileLocator.class);
-            }
+    public static void register(List<String> specList) {
+        Validate.nonNull(specList, "spec list");
+        
+        for (String specifier : specList) {
+            register(specifier);
         }
     }
 
@@ -283,6 +293,28 @@ public class Locators {
 
     /**
      * Register (add) the specified locator(s) to this configuration.
+     *
+     * @param spec URL specification, or null for the default locators
+     */
+    private void configurationRegister(String spec) {
+        if (spec == null) {
+            configurationRegisterDefault();
+
+        } else if (spec.startsWith("file:///")) {
+            String rootPath = MyString.remainder(spec, "file:///");
+            configurationRegisterFilesystem(rootPath);
+
+        } else if (spec.endsWith(".jar") || spec.endsWith(".zip")) {
+            configurationRegister(spec, HttpZipLocator.class);
+
+        } else {
+            configurationRegister(spec, UrlLocator.class);
+        }
+    }
+
+    /**
+     * Register (add) a locator of the specified type to this configuration, if
+     * it isn't already registered.
      *
      * @param rootPath (not null, not empty)
      * @param locatorType type of locator
