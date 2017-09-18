@@ -55,8 +55,8 @@ public class MySkeleton {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MySkeleton.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MySkeleton.class.getName());
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_XYZ}
      */
@@ -104,7 +104,7 @@ public class MySkeleton {
     /**
      * Find a named bone in a skeletonized spatial.
      *
-     * @param spatial skeletonized spatial to search (not null)
+     * @param spatial skeletonized spatial to search (not null, alias created)
      * @param boneName name of the bone to access (not null)
      * @return a pre-existing instance (or null if not found)
      */
@@ -112,34 +112,16 @@ public class MySkeleton {
         Validate.nonNull(spatial, "spatial");
         Validate.nonNull(boneName, "bone name");
 
-        Skeleton skeleton = findSkeleton(spatial);
+        Skeleton skeleton = findSkeleton(spatial); // TODO multiple skeletons
         Bone result = skeleton.getBone(boneName);
 
         return result;
     }
 
     /**
-     * Find the index of a named bone in a skeletonized spatial.
-     *
-     * @param spatial skeletonized spatial that contains the bone (not null,
-     * unaffected)
-     * @param boneName name of the bone to find (not null)
-     * @return bone index (&ge; 0) or -1 if not found
-     */
-    public static int findBoneIndex(Spatial spatial, String boneName) {
-        Validate.nonNull(spatial, "spatial");
-        Validate.nonNull(boneName, "bone name");
-
-        Skeleton skeleton = findSkeleton(spatial);
-        int index = skeleton.getBoneIndex(boneName);
-
-        return index;
-    }
-
-    /**
      * Find a skeleton of the specified spatial.
      *
-     * @param spatial which spatial to search (not null)
+     * @param spatial which spatial to search (not null, alias created)
      * @return a pre-existing instance, or null if none found
      */
     public static Skeleton findSkeleton(Spatial spatial) {
@@ -191,7 +173,7 @@ public class MySkeleton {
     /**
      * List all bones in a skeletonized spatial.
      *
-     * @param spatial skeletonized spatial (not null)
+     * @param spatial skeletonized spatial (not null, unaffected)
      * @return a new list of names in lexicographic order, without any
      * duplicates (may be empty)
      */
@@ -225,15 +207,15 @@ public class MySkeleton {
      * Enumerate all skeleton instances in the specified subtree of a scene
      * graph. Note: recursive!
      *
-     * @param subtree (not null)
-     * @param storeResult (added to if not null)
+     * @param subtree (not null, aliases created)
+     * @param addResult (added to if not null)
      * @return an expanded list (either storeResult or a new instance)
      */
     public static List<Skeleton> listSkeletons(Spatial subtree,
-            List<Skeleton> storeResult) {
+            List<Skeleton> addResult) {
         Validate.nonNull(subtree, "subtree");
-        if (storeResult == null) {
-            storeResult = new ArrayList<>(4);
+        if (addResult == null) {
+            addResult = new ArrayList<>(4);
         }
 
         int numControls = subtree.getNumControls();
@@ -242,14 +224,14 @@ public class MySkeleton {
             if (control instanceof AnimControl) {
                 AnimControl animControl = (AnimControl) control;
                 Skeleton skeleton = animControl.getSkeleton();
-                if (skeleton != null && !storeResult.contains(skeleton)) {
-                    storeResult.add(skeleton);
+                if (skeleton != null && !addResult.contains(skeleton)) {
+                    addResult.add(skeleton);
                 }
             } else if (control instanceof SkeletonControl) {
                 SkeletonControl skeletonControl = (SkeletonControl) control;
                 Skeleton skeleton = skeletonControl.getSkeleton();
-                if (skeleton != null && !storeResult.contains(skeleton)) {
-                    storeResult.add(skeleton);
+                if (skeleton != null && !addResult.contains(skeleton)) {
+                    addResult.add(skeleton);
                 }
             }
         }
@@ -258,17 +240,18 @@ public class MySkeleton {
             Node node = (Node) subtree;
             List<Spatial> children = node.getChildren();
             for (Spatial child : children) {
-                listSkeletons(child, storeResult);
+                listSkeletons(child, addResult);
             }
         }
 
-        return storeResult;
+        return addResult;
     }
 
     /**
      * Convert a location in a bone's local space to a location in model space.
+     * TODO storeResult
      *
-     * @param bone (not null)
+     * @param bone (not null, unaffected)
      * @param x displacement along the bone's X-axis
      * @param y displacement along the bone's Y-axis
      * @param z displacement along the bone's Z-axis
@@ -279,7 +262,7 @@ public class MySkeleton {
         Vector3f tail = bone.getModelSpacePosition();
         Vector3f scale = bone.getModelSpaceScale();
         Vector3f result = new Vector3f(x, y, z).multLocal(scale);
-        // rotation??
+        // TODO rotation??
         result.addLocal(tail);
 
         return result;
@@ -288,7 +271,7 @@ public class MySkeleton {
     /**
      * Count the number of leaf bones in the specified skeleton.
      *
-     * @param skeleton (not null)
+     * @param skeleton (not null, unaffected)
      * @return count (&ge;0)
      */
     public static int numLeafBones(Skeleton skeleton) {
@@ -308,7 +291,7 @@ public class MySkeleton {
     /**
      * Count the number of root bones in the specified skeleton.
      *
-     * @param skeleton (not null)
+     * @param skeleton (not null, unaffected)
      * @return count (&ge;0)
      */
     public static int numRootBones(Skeleton skeleton) {
@@ -322,7 +305,7 @@ public class MySkeleton {
      * Alter the name of the specified bone. The caller is responsible for
      * avoiding duplicate names. TODO: rename the attachNode, if any
      *
-     * @param bone bone to change (not null)
+     * @param bone bone to change (not null, modified)
      * @param newName name to apply
      * @return true if successful, otherwise false
      */
@@ -350,7 +333,7 @@ public class MySkeleton {
     /**
      * Alter all the user-control flags in the specified skeleton.
      *
-     * @param skeleton skeleton to alter (not null)
+     * @param skeleton skeleton to alter (not null, modified)
      * @param newSetting true to enable user control, false to disable
      */
     public static void setUserControl(Skeleton skeleton, boolean newSetting) {
@@ -399,9 +382,11 @@ public class MySkeleton {
     }
 
     /**
-     * Calculate the world location of (the tail of) a named bone.
+     * Calculate the world location of (the tail of) a named bone. TODO
+     * storeResult
      *
-     * @param spatial skeletonized spatial that contains the bone (not null)
+     * @param spatial skeletonized spatial that contains the bone (not null,
+     * unaffected)
      * @param boneName (not null)
      * @return new vector in world coordinates
      */
@@ -417,10 +402,11 @@ public class MySkeleton {
     }
 
     /**
-     * Calculate the world orientation of a bone.
+     * Calculate the world orientation of a bone. TODO storeResult
      *
-     * @param spatial skeletonized spatial that contains the bone (not null)
-     * @param bone (not null)
+     * @param spatial skeletonized spatial that contains the bone (not null,
+     * unaffected)
+     * @param bone (not null, unaffected)
      * @return new instance in world coordinates
      */
     public static Quaternion worldOrientation(Spatial spatial, Bone bone) {
@@ -435,7 +421,7 @@ public class MySkeleton {
     }
 
     /**
-     * Calculate the world orientation of a named bone.
+     * Calculate the world orientation of a named bone. TODO storeResult
      *
      * @param spatial skeletonized spatial that contains the bone (not null)
      * @param boneName (not null)
