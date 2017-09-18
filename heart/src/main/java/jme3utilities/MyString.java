@@ -33,7 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Utility methods for Strings and collections of Strings.
+ * Utility methods for char sequences, strings, and collections of strings.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -44,8 +44,8 @@ public class MyString {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MyString.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MyString.class.getName());
     // *************************************************************************
     // constructors
 
@@ -194,80 +194,31 @@ public class MyString {
     }
 
     /**
-     * Parse a line of two fields from a string.
-     *
-     * @param input the input string
-     * @return either an array of three Strings, each containing a substring of
-     * the input, or else null:<ul>
-     * <li>result[0] is the portion before the 1st '\t'.
-     * <li>result[1] is the portion after the '\t' but before the 1st '\n'.
-     * <li>result[2] is the remainder of the string.
-     * </ul>
-     */
-    public static String[] getLine(String input) {
-        String[] results = new String[3];
-        results[0] = "";
-        results[1] = "";
-        results[2] = "";
-        boolean foundNewline = false;
-        boolean foundTab = false;
-        for (char ch : input.toCharArray()) {
-            if (foundNewline) {
-                results[2] += ch;
-            } else if (foundTab) {
-                if (ch == '\n') {
-                    foundNewline = true;
-                } else {
-                    results[1] += ch;
-                }
-            } else if (ch == '\t') {
-                foundTab = true;
-            } else {
-                results[0] += ch;
-            }
-        }
-
-        return results;
-    }
-
-    /**
-     * Join a list of strings using spaces, ignoring any nulls. Note that Java 8
-     * provides
+     * Join a collection of objects into a text string using spaces for
+     * separators and ignoring any empties/nulls. Note that Java 8 provides
      * {@link java.lang.String#join(java.lang.CharSequence, java.lang.Iterable)}.
      *
-     * @param list of strings to join (not null, unaffected)
-     * @return joined string
+     * @param objects objects to join (not null, unaffected, may contain nulls)
+     * @return joined string (not null)
      */
-    public static String join(List<String> list) {
-        Validate.nonNull(list, "list");
-
-        StringBuilder result = new StringBuilder(20);
-        for (String element : list) {
-            if (element != null) {
-                if (result.length() > 0) {
-                    /*
-                     * Append a space as a separator.
-                     */
-                    result.append(' ');
-                }
-                result.append(element);
-            }
-        }
-
-        return result.toString();
+    public static String join(Iterable objects) {
+        Validate.nonNull(objects, "objects");
+        String result = join(" ", objects);
+        return result;
     }
 
     /**
-     * Join an array of strings using spaces, ignoring any nulls.
+     * Join an array of objects into a text string using spaces for separators
+     * and ignoring any empties/nulls.
      *
-     * @param array of strings to join (not null, unaffected)
-     * @return joined string
+     * @param array objects to join (not null, unaffected, may contain nulls)
+     * @return joined string (not null)
      */
-    public static String join(String[] array) {
+    public static String join(Object[] array) {
         Validate.nonNull(array, "array");
 
-        StringBuilder result = new StringBuilder(20);
-        for (String element : array) {
+        StringBuilder result = new StringBuilder(80);
+        for (Object element : array) {
             if (element != null) {
                 if (result.length() > 0) {
                     /*
@@ -283,20 +234,20 @@ public class MyString {
     }
 
     /**
-     * Join a list of texts using separators, ignoring any nulls. Note that Java
-     * 8 provides
+     * Join a collection of objects into a text string using the specified
+     * separator, ignoring any empties/nulls. Note that Java 8 provides
      * {@link java.lang.String#join(java.lang.CharSequence, java.lang.Iterable)}.
      *
-     * @param list texts to join (not null, unaffected, may contain nulls)
-     * @param separator string (not null)
-     * @return joined string
+     * @param objects objects to join (not null, unaffected, may contain nulls)
+     * @param separator text string (not null)
+     * @return joined string (not null)
      */
-    public static String join(CharSequence separator, Iterable<String> list) {
+    public static String join(CharSequence separator, Iterable objects) {
         Validate.nonNull(separator, "separator");
-        Validate.nonNull(list, "list");
+        Validate.nonNull(objects, "list");
 
         StringBuilder result = new StringBuilder(80);
-        for (String item : list) {
+        for (Object item : objects) {
             if (item != null) {
                 if (result.length() > 0) {
                     /*
@@ -428,7 +379,7 @@ public class MyString {
      * @param s2 2nd string (not null)
      * @return number of characters in shared prefix (&ge;0)
      */
-    public static int sharedPrefixLength(String s1, String s2) {
+    public static int sharedPrefixLength(CharSequence s1, CharSequence s2) {
         int length1 = s1.length();
         int length2 = s2.length();
         int maxPrefixLength = Math.min(length1, length2);
