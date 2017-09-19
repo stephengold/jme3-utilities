@@ -115,18 +115,8 @@ public class MySkeleton {
         Bone result = null;
         int numControls = spatial.getNumControls();
         for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
-            Skeleton skeleton = null;
-
             Control control = spatial.getControl(controlIndex);
-            if (control instanceof AnimControl) {
-                AnimControl animControl = (AnimControl) control;
-                skeleton = animControl.getSkeleton();
-
-            } else if (control instanceof SkeletonControl) {
-                SkeletonControl skeletonControl = (SkeletonControl) control;
-                skeleton = skeletonControl.getSkeleton();
-            }
-
+            Skeleton skeleton = MyControl.findSkeleton(control);
             if (skeleton != null) {
                 result = skeleton.getBone(boneName);
                 break;
@@ -189,7 +179,7 @@ public class MySkeleton {
     }
 
     /**
-     * List all bones in a skeletonized spatial.
+     * Enumerate the names of all bones in a skeletonized spatial.
      *
      * @param spatial skeletonized spatial (not null, unaffected)
      * @return a new list of names in lexicographic order, without any
@@ -201,18 +191,9 @@ public class MySkeleton {
         int numControls = spatial.getNumControls();
         for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
             Control control = spatial.getControl(controlIndex);
-            if (control instanceof AnimControl) {
-                AnimControl animControl = (AnimControl) control;
-                Skeleton skeleton = animControl.getSkeleton();
-                if (skeleton != null) {
-                    listBones(skeleton, result);
-                }
-            } else if (control instanceof SkeletonControl) {
-                SkeletonControl skeletonControl = (SkeletonControl) control;
-                Skeleton skeleton = skeletonControl.getSkeleton();
-                if (skeleton != null) {
-                    listBones(skeleton, result);
-                }
+            Skeleton skeleton = MyControl.findSkeleton(control);
+            if (skeleton != null) {
+                listBones(skeleton, result);
             }
         }
 
@@ -239,18 +220,9 @@ public class MySkeleton {
         int numControls = subtree.getNumControls();
         for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
             Control control = subtree.getControl(controlIndex);
-            if (control instanceof AnimControl) {
-                AnimControl animControl = (AnimControl) control;
-                Skeleton skeleton = animControl.getSkeleton();
-                if (skeleton != null && !addResult.contains(skeleton)) {
-                    addResult.add(skeleton);
-                }
-            } else if (control instanceof SkeletonControl) {
-                SkeletonControl skeletonControl = (SkeletonControl) control;
-                Skeleton skeleton = skeletonControl.getSkeleton();
-                if (skeleton != null && !addResult.contains(skeleton)) {
-                    addResult.add(skeleton);
-                }
+            Skeleton skeleton = MyControl.findSkeleton(control);
+            if (skeleton != null && !addResult.contains(skeleton)) {
+                addResult.add(skeleton);
             }
         }
 
@@ -363,8 +335,7 @@ public class MySkeleton {
     }
 
     /**
-     * Alter all the user-control flags in the specified subtree. Note:
-     * recursive!
+     * Alter all the user-control flags in the specified subtree.
      *
      * @param subtree subtree to alter (not null)
      * @param newSetting true to enable user control, false to disable
@@ -372,30 +343,9 @@ public class MySkeleton {
     public static void setUserControl(Spatial subtree, boolean newSetting) {
         Validate.nonNull(subtree, "spatial");
 
-        int numControls = subtree.getNumControls();
-        for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
-            Control control = subtree.getControl(controlIndex);
-            if (control instanceof AnimControl) {
-                AnimControl animControl = (AnimControl) control;
-                Skeleton skeleton = animControl.getSkeleton();
-                if (skeleton != null) {
-                    setUserControl(skeleton, newSetting);
-                }
-            } else if (control instanceof SkeletonControl) {
-                SkeletonControl skeletonControl = (SkeletonControl) control;
-                Skeleton skeleton = skeletonControl.getSkeleton();
-                if (skeleton != null) {
-                    setUserControl(skeleton, newSetting);
-                }
-            }
-        }
-
-        if (subtree instanceof Node) {
-            Node node = (Node) subtree;
-            List<Spatial> children = node.getChildren();
-            for (Spatial child : children) {
-                setUserControl(child, newSetting);
-            }
+        List<Skeleton> skeletons = listSkeletons(subtree, null);
+        for (Skeleton skeleton : skeletons) {
+            setUserControl(skeleton, newSetting);
         }
     }
 
