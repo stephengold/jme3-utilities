@@ -81,10 +81,6 @@ public class TestMyString {
             System.out.printf(" unEscape(escape(s)) = {%s}%n", ue);
             assert (s.equals(ue));
 
-            String[] ss = MyString.getLine(s);
-            System.out.printf(" ss0 = {%s} ss1 = {%s} ss3 = {%s}%n",
-                    ss[0], ss[1], ss[2]);
-
             System.out.println();
         }
 
