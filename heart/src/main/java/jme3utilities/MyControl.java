@@ -28,6 +28,7 @@ package jme3utilities;
 
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.Animation;
+import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.app.StatsView;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
@@ -173,6 +174,26 @@ public class MyControl {
             if (control == sgc) {
                 result = index;
             }
+        }
+
+        return result;
+    }
+
+    /**
+     * Access the skeleton (if any) in the specified scene-graph control.
+     *
+     * @param sgc which scene-graph control (may be null, unaffected)
+     * @return the pre-existing instance, or null if none found
+     */
+    public static Skeleton findSkeleton(Control sgc) {
+        Skeleton result = null;
+        if (sgc instanceof AnimControl) {
+            AnimControl animControl = (AnimControl) sgc;
+            result = animControl.getSkeleton();
+
+        } else if (sgc instanceof SkeletonControl) {
+            SkeletonControl skeletonControl = (SkeletonControl) sgc;
+            result = skeletonControl.getSkeleton();
         }
 
         return result;
