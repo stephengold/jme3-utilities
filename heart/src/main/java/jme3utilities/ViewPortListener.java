@@ -34,7 +34,6 @@ import com.jme3.renderer.ViewPort;
  * @author Stephen Gold sgold@sonic.net
  */
 public interface ViewPortListener {
-
     /**
      * Notify the listener that a viewport has been created.
      *
