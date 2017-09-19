@@ -112,8 +112,26 @@ public class MySkeleton {
         Validate.nonNull(spatial, "spatial");
         Validate.nonNull(boneName, "bone name");
 
-        Skeleton skeleton = findSkeleton(spatial); // TODO multiple skeletons
-        Bone result = skeleton.getBone(boneName);
+        Bone result = null;
+        int numControls = spatial.getNumControls();
+        for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
+            Skeleton skeleton = null;
+
+            Control control = spatial.getControl(controlIndex);
+            if (control instanceof AnimControl) {
+                AnimControl animControl = (AnimControl) control;
+                skeleton = animControl.getSkeleton();
+
+            } else if (control instanceof SkeletonControl) {
+                SkeletonControl skeletonControl = (SkeletonControl) control;
+                skeleton = skeletonControl.getSkeleton();
+            }
+
+            if (skeleton != null) {
+                result = skeleton.getBone(boneName);
+                break;
+            }
+        }
 
         return result;
     }
