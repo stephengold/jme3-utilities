@@ -263,6 +263,17 @@ public class DomeMesh extends Mesh {
     }
 
     /**
+     * Read the U-V scale of this dome.
+     *
+     * @return UV distance from top to equator (&lt;0.5, &gt;0)
+     */
+    public float getUVScale() {
+        assert uvScale > 0f : uvScale;
+        assert uvScale < 0.5f : uvScale;
+        return uvScale;
+    }
+
+    /**
      * Read the vertical angle of this dome.
      *
      * @return angle (in radians, &lt;Pi, &gt;0)
