@@ -300,8 +300,8 @@ public class PopScreenController extends BasicScreenController {
 
         if (dialogActionPrefix != null) {
             @SuppressWarnings("unchecked")
-            ListBox<String> listBox;
-            listBox = dialogElement.findNiftyControl("#box", ListBox.class);
+            ListBox<String> listBox = dialogElement.findNiftyControl("#box",
+                    ListBox.class);
             TextField textField = dialogElement.findNiftyControl("#textfield",
                     TextField.class);
 
