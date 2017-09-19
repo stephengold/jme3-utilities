@@ -39,6 +39,7 @@ import com.jme3.light.Light;
 import com.jme3.light.LightList;
 import com.jme3.light.PointLight;
 import com.jme3.light.SpotLight;
+import com.jme3.material.Material;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.post.Filter;
@@ -48,6 +49,7 @@ import com.jme3.post.filters.DepthOfFieldFilter;
 import com.jme3.post.filters.PosterizationFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
 import com.jme3.shadow.DirectionalLightShadowFilter;
@@ -80,8 +82,8 @@ public class Describer {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            Describer.class.getName());
+    final private static Logger logger 
+            = Logger.getLogger(Describer.class.getName());
     /**
      * separator between items in lists
      */
@@ -92,7 +94,7 @@ public class Describer {
     /**
      * Generate a textual description of a collision shape.
      *
-     * @param shape (not null)
+     * @param shape (not null, unaffected)
      * @return description (not null)
      */
     public String describe(CollisionShape shape) {
@@ -132,6 +134,30 @@ public class Describer {
         }
 
         return result;
+    }
+
+    /**
+     * Generate a textual description of a material.
+     *
+     * @param material material to be described (may be null, unaffected)
+     * @return description (not null)
+     */
+    public String describe(Material material) {
+        StringBuilder result = new StringBuilder(20);
+        // TODO
+        return result.toString();
+    }
+
+    /**
+     * Generate a textual description of a mesh.
+     *
+     * @param mesh mesh to be described (may be null, unaffected)
+     * @return description (not null)
+     */
+    public String describe(Mesh mesh) {
+        StringBuilder result = new StringBuilder(20);
+        // TODO
+        return result.toString();
     }
 
     /**
@@ -362,7 +388,7 @@ public class Describer {
     }
 
     /**
-     * Generate a textual description of a light.
+     * Generate a brief textual description of a light.
      *
      * @param light light to describe (unaffected)
      * @return description (not null, not empty)

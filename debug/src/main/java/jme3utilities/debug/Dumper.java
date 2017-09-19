@@ -34,6 +34,7 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.objects.PhysicsVehicle;
 import com.jme3.light.Light;
 import com.jme3.light.LightList;
+import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -42,6 +43,8 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.Spatial.CullHint;
@@ -364,14 +367,26 @@ public class Dumper {
         LightList lights = spatial.getLocalLightList();
         String description = describer.describe(lights);
         if (!description.isEmpty()) {
-            stream.print(" ");
-            stream.print(description);
+            stream.printf(" %s", description);
         }
 
         if (dumpTransformFlag) {
             dumpLocation(spatial);
             dumpOrientation(spatial);
             dumpScale(spatial);
+        }
+        if (spatial instanceof Geometry) {
+            Geometry geometry = (Geometry) spatial;
+            Material material = geometry.getMaterial();
+            description = describer.describe(material);
+            if (!description.isEmpty()) {
+                stream.printf(" mat=%s", description);
+            }
+            Mesh mesh = geometry.getMesh();
+            description = describer.describe(mesh);
+            if (!description.isEmpty()) {
+                stream.printf(" mesh=%s", description);
+            }
         }
         if (dumpUserFlag) {
             dumpUserData(spatial);
