@@ -63,8 +63,8 @@ public class Updater
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            Updater.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(Updater.class.getName());
     // *************************************************************************
     // fields
 
@@ -154,7 +154,6 @@ public class Updater
     @SuppressWarnings("rawtypes")
     public void addShadowFilter(AbstractShadowFilter filter) {
         Validate.nonNull(filter, "filter");
-
         shadowFilters.add(filter);
     }
 
