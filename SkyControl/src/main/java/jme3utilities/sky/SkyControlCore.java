@@ -53,6 +53,7 @@ import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 import jme3utilities.math.MyColor;
+import jme3utilities.mesh.DomeMesh;
 
 /**
  * Core fields and methods of a subtree control to simulate a dynamic sky.
@@ -94,8 +95,8 @@ public class SkyControlCore extends SubtreeControl {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            SkyControlCore.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(SkyControlCore.class.getName());
     /**
      * local copy of {@link com.jme3.math.Quaternion#IDENTITY}
      */
@@ -828,13 +829,15 @@ public class SkyControlCore extends SubtreeControl {
             setStarMaps("equator");
         }
 
-        DomeMesh topMesh = new DomeMesh(numRimSamples, numLongitudinalSamples);
+        DomeMesh topMesh = new DomeMesh(numRimSamples, numLongitudinalSamples,
+                Constants.topU, Constants.topV, Constants.uvScale, true);
         Geometry topDome = new Geometry(topName, topMesh);
         subtree.attachChild(topDome);
         topDome.setMaterial(topMaterial);
 
         if (bottomDomeFlag) {
-            DomeMesh bottomMesh = new DomeMesh(numRimSamples, 2);
+            DomeMesh bottomMesh = new DomeMesh(numRimSamples, 2, Constants.topU,
+                    Constants.topV, Constants.uvScale, true);
             Geometry bottomDome = new Geometry(bottomName, bottomMesh);
             subtree.attachChild(bottomDome);
 
@@ -849,7 +852,8 @@ public class SkyControlCore extends SubtreeControl {
             assert cloudFlattening < 1f : cloudFlattening;
 
             DomeMesh cloudsMesh = new DomeMesh(numRimSamples,
-                    numLongitudinalSamples);
+                    numLongitudinalSamples, Constants.topU, Constants.topV,
+                    Constants.uvScale, true);
             Geometry cloudsOnlyDome = new Geometry(cloudsName, cloudsMesh);
             subtree.attachChild(cloudsOnlyDome);
             /*

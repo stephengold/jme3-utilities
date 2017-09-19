@@ -50,9 +50,9 @@ import jme3utilities.Misc;
 import jme3utilities.MyCamera;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
+import jme3utilities.mesh.DomeMesh;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.sky.Constants;
-import jme3utilities.sky.DomeMesh;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyMaterial;
 import jme3utilities.ui.ActionApplication;
@@ -91,8 +91,8 @@ public class TestSkyMaterial extends GuiApplication {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            TestSkyMaterial.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(TestSkyMaterial.class.getName());
     /**
      * action string to load sky geometry from an asset
      */

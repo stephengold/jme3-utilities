@@ -48,6 +48,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.MyColor;
 import jme3utilities.math.MyMath;
+import jme3utilities.mesh.DomeMesh;
 
 /**
  * Simple control to simulate a dynamic sky using assets and techniques derived
@@ -124,8 +125,8 @@ public class SkyControl extends SkyControlCore {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            SkyControl.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(SkyControl.class.getName());
     /**
      * light direction for starlight: don't make this perfectly vertical because
      * that might cause shadow map aliasing
@@ -254,8 +255,7 @@ public class SkyControl extends SkyControlCore {
      * @return diameter (in radians, &lt;Pi, &gt;0)
      */
     public float lunarDiameter() {
-        DomeMesh topMesh = getTopMesh();
-        float result = moonScale * FastMath.HALF_PI / topMesh.uvScale;
+        float result = moonScale * FastMath.HALF_PI / Constants.uvScale;
 
         assert result > 0f : result;
         assert result < FastMath.PI : result;
@@ -299,8 +299,7 @@ public class SkyControl extends SkyControlCore {
                     "diameter should be between 0 and Pi");
         }
 
-        DomeMesh topMesh = getTopMesh();
-        moonScale = newDiameter * topMesh.uvScale / FastMath.HALF_PI;
+        moonScale = newDiameter * Constants.uvScale / FastMath.HALF_PI;
     }
 
     /**
@@ -390,8 +389,7 @@ public class SkyControl extends SkyControlCore {
                     "diameter should be between 0 and Pi");
         }
 
-        DomeMesh topMesh = getTopMesh();
-        sunScale = newDiameter * topMesh.uvScale
+        sunScale = newDiameter * Constants.uvScale
                 / (Constants.discDiameter * FastMath.HALF_PI);
     }
 
@@ -413,9 +411,8 @@ public class SkyControl extends SkyControlCore {
      * @return diameter (in radians, &lt;Pi, &gt;0)
      */
     public float solarDiameter() {
-        DomeMesh topMesh = getTopMesh();
         float result = moonScale * Constants.discDiameter * FastMath.HALF_PI
-                / topMesh.uvScale;
+                / Constants.uvScale;
 
         assert result > 0f : result;
         assert result < FastMath.PI : result;
