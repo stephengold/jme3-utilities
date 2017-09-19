@@ -483,12 +483,13 @@ class ModelState extends SimpleAppState {
      *
      * @return a new collection
      */
-    Collection<String> listAnimationNames() {
+    List<String> listAnimationNames() {
         AnimControl animControl = spatial.getControl(AnimControl.class);
         Collection<String> names = animControl.getAnimationNames();
-        names.add(PoseDemoHud.bindPoseName);
+        List<String> result = new ArrayList<>(names);
+        result.add(PoseDemoHud.bindPoseName);
 
-        return names;
+        return result;
     }
 
     /**

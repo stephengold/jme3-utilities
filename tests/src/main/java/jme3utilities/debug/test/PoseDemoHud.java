@@ -38,7 +38,6 @@ import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
 import de.lessvoid.nifty.controls.Slider;
 import de.lessvoid.nifty.controls.SliderChangedEvent;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -70,8 +69,8 @@ public class PoseDemoHud
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            PoseDemoHud.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(PoseDemoHud.class.getName());
     /**
      * names of the coordinate axes
      */
@@ -246,7 +245,8 @@ public class PoseDemoHud
                     return;
 
                 case "load animation":
-                    Collection<String> animationNames = PoseDemo.modelState.listAnimationNames();
+                    List<String> animationNames;
+                    animationNames = PoseDemo.modelState.listAnimationNames();
                     showPopupMenu(animationMenuPrefix, animationNames);
                     return;
 

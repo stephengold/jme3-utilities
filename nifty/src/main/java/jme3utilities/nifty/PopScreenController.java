@@ -26,6 +26,7 @@
 package jme3utilities.nifty;
 
 import de.lessvoid.nifty.controls.Button;
+import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.Menu;
 import de.lessvoid.nifty.controls.MenuItemActivatedEvent;
 import de.lessvoid.nifty.controls.TextField;
@@ -34,7 +35,7 @@ import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.nifty.tools.SizeValueType;
-import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
@@ -53,8 +54,8 @@ public class PopScreenController extends BasicScreenController {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            PopScreenController.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(PopScreenController.class.getName());
     // *************************************************************************
     // fields
 
@@ -297,14 +298,23 @@ public class PopScreenController extends BasicScreenController {
         }
 
         if (dialogActionPrefix != null) {
-            String commitAction;
+            @SuppressWarnings("unchecked")
+            ListBox<String> listBox;
+            listBox = dialogElement.findNiftyControl("#box", ListBox.class);
             TextField textField = dialogElement.findNiftyControl("#textfield",
                     TextField.class);
-            if (textField == null) { // confirmation dialog
-                commitAction = dialogActionPrefix;
-            } else { // text-entry dialog
+
+            String commitAction;
+            if (textField != null) { // text-entry dialog
                 String enteredText = textField.getRealText();
                 commitAction = dialogActionPrefix + enteredText;
+
+            } else if (listBox != null) { // multi-select dialog
+                List indices = listBox.getSelectedIndices();
+                commitAction = dialogActionPrefix + MyString.join(indices);
+
+            } else { // confirmation dialog
+                commitAction = dialogActionPrefix;
             }
             perform(commitAction);
         }
@@ -433,17 +443,62 @@ public class PopScreenController extends BasicScreenController {
     }
 
     /**
+     * Create, customize, and activate a modal multi-selection dialog box.
+     *
+     * @param promptMessage text to display above the listbox (not null)
+     * @param itemList list of items (not null, unaffected)
+     * @param commitLabel text for the commit-button label (not null)
+     * @param actionPrefix prefix for the commit action (not null, usually the
+     * final character will be a space)
+     * @param controller controller for the dialog box, or null for none
+     */
+    public void showMultiSelectDialog(String promptMessage,
+            List<String> itemList, String commitLabel, String actionPrefix,
+            DialogController controller) {
+        Validate.nonNull(promptMessage, "prompt message");
+        Validate.nonNull(itemList, "item list");
+        Validate.nonNull(commitLabel, "commit label");
+        Validate.nonNull(actionPrefix, "action prefix");
+        /*
+         * Create a popup using the "dialogs/multiSelect" layout as a base.
+         * Nifty assigns the popup a new id.
+         */
+        dialogElement = nifty.createPopup("dialogs/multiSelect");
+        String popupId = dialogElement.getId();
+        assert popupId != null;
+
+        Element titleElement = dialogElement.findElementById("#prompt");
+        TextRenderer renderer = titleElement.getRenderer(TextRenderer.class);
+        renderer.setText(promptMessage);
+
+        @SuppressWarnings("unchecked")
+        ListBox<String> listBox
+                = dialogElement.findNiftyControl("#box", ListBox.class);
+        listBox.addAllItems(itemList);
+
+        Element feedback = dialogElement.findElementById("#feedback"); // TODO
+        TextRenderer tr = feedback.getRenderer(TextRenderer.class);
+        tr.setText("Test test test.");
+
+        Button commitButton
+                = dialogElement.findNiftyControl("#commit", Button.class);
+        commitButton.setText(commitLabel);
+
+        activateDialog(popupId, actionPrefix, "#commit", controller);
+    }
+
+    /**
      * Create and activate a popup menu.
      *
      * @param actionPrefix common prefix of the menu's action strings (not null,
-     * usually the final character will be a blank)
-     * @param items collection of menu items (not null, unaffected)
+     * usually the final character will be a space)
+     * @param itemList list of menu items (not null, unaffected)
      */
-    public void showPopupMenu(String actionPrefix, Collection<String> items) {
+    public void showPopupMenu(String actionPrefix, List<String> itemList) {
         Validate.nonNull(actionPrefix, "action prefix");
-        Validate.nonNull(items, "collection");
+        Validate.nonNull(itemList, "item list");
 
-        String[] itemArray = MyString.toArray(items);
+        String[] itemArray = MyString.toArray(itemList);
         showPopupMenu(actionPrefix, itemArray);
     }
 
@@ -451,11 +506,11 @@ public class PopScreenController extends BasicScreenController {
      * Create and activate a popup menu.
      *
      * @param actionPrefix common prefix of the menu's action strings (not null,
-     * usually the final character will be a blank)
+     * usually the final character will be a space)
      * @param itemArray array of menu items (not null, unaffected)
      */
     public void showPopupMenu(String actionPrefix, String[] itemArray) {
-        Validate.nonNull(actionPrefix, "prefix");
+        Validate.nonNull(actionPrefix, "action prefix");
         Validate.nonNull(itemArray, "item array");
 
         int numItems = itemArray.length;
@@ -467,7 +522,7 @@ public class PopScreenController extends BasicScreenController {
      * Create and activate a popup menu.
      *
      * @param actionPrefix common prefix of the menu's action strings (not null,
-     * usually the final character will be a blank)
+     * usually the final character will be a space)
      * @param itemArray array of menu items (not null, unaffected)
      * @param iconArray array of icon asset paths (not null, unaffected)
      */
@@ -558,7 +613,7 @@ public class PopScreenController extends BasicScreenController {
      * @param promptMessage text to display above the textfield (not null)
      * @param defaultValue default text for the textfield (not null)
      * @param actionPrefix prefix for the commit action (not null, usually the
-     * final character will be a blank)
+     * final character will be a space)
      * @param controller controller for the dialog box (not null)
      */
     public void showTextEntryDialog(String promptMessage, String defaultValue,
@@ -579,7 +634,7 @@ public class PopScreenController extends BasicScreenController {
      * @param defaultValue default text for the textfield (not null)
      * @param commitLabel text for the commit-button label (not null)
      * @param actionPrefix prefix for the commit action (not null, usually the
-     * final character will be a blank)
+     * final character will be a space)
      * @param controller controller for the dialog box, or null for none
      */
     public void showTextEntryDialog(String promptMessage, String defaultValue,
