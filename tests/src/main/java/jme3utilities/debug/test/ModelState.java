@@ -180,7 +180,8 @@ class ModelState extends SimpleAppState {
      * @param storeAngles (&ge;3 elements, modified)
      */
     void boneAngles(float[] storeAngles) {
-        int boneIndex = MySkeleton.findBoneIndex(spatial, selectedBoneName);
+        Skeleton skeleton = MySkeleton.findSkeleton(spatial);
+        int boneIndex = skeleton.getBoneIndex(selectedBoneName);
         Quaternion rotation = boneRotation(boneIndex);
         rotation.toAngles(storeAngles);
     }
@@ -958,7 +959,8 @@ class ModelState extends SimpleAppState {
             return null;
         }
 
-        int boneIndex = MySkeleton.findBoneIndex(spatial, selectedBoneName);
+        Skeleton skeleton = MySkeleton.findSkeleton(spatial);
+        int boneIndex = skeleton.getBoneIndex(selectedBoneName);
         Animation animation = getAnimation();
         BoneTrack track = MyAnimation.findBoneTrack(animation, boneIndex);
 
