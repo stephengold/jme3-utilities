@@ -39,8 +39,6 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
-import java.util.Collection;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 import jme3utilities.math.MyArray;
 
@@ -57,8 +55,8 @@ public class MyAnimation {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MyAnimation.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MyAnimation.class.getName());
     // *************************************************************************
     // constructors
 
@@ -98,28 +96,31 @@ public class MyAnimation {
     /**
      * Describe an animation.
      *
-     * @param animation animation to describe (not null)
-     * @param spatial animated spatial (not null)
-     * @return textual description (not null)
+     * @param animation animation to describe (not null, unaffected)
+     * @param animControl control that contains the animation (not null,
+     * unaffected)
+     * @return textual description (not null, not empty)
      */
-    public static String describe(Animation animation, Spatial spatial) {
-        Validate.nonNull(spatial, "spatial");
+    public static String describe(Animation animation,
+            AnimControl animControl) {
+        Validate.nonNull(animControl, "anim control");
 
-        Track[] tracks = animation.getTracks();
-        int numTracks = tracks.length;
         String name = animation.getName();
-        if (numTracks > 2) {
-            String result = String.format("%s[%d]", name, numTracks);
-            return result;
-        }
+        Track[] tracks = animation.getTracks();
 
-        String[] trackDescriptions = new String[numTracks];
-        for (int iTrack = 0; iTrack < numTracks; iTrack++) {
-            Track track = tracks[iTrack];
-            trackDescriptions[iTrack] = describe(track, spatial);
+        String result;
+        int numTracks = tracks.length;
+        if (numTracks > 2) {
+            result = String.format("%s[%d]", name, numTracks);
+        } else {
+            String[] trackDescriptions = new String[numTracks];
+            for (int trackIndex = 0; trackIndex < numTracks; trackIndex++) {
+                Track track = tracks[trackIndex];
+                trackDescriptions[trackIndex] = describe(track, animControl);
+            }
+            String joined = MyString.join(trackDescriptions);
+            result = String.format("%s(%s)", name, joined);
         }
-        String joined = MyString.join(trackDescriptions);
-        String result = String.format("%s(%s)", name, joined);
 
         return result;
     }
@@ -127,37 +128,46 @@ public class MyAnimation {
     /**
      * Describe an animation track.
      *
-     * @param track (not null)
-     * @param spatial animated spatial (not null)
+     * @param track track to describe (not null, unaffected)
+     * @param animControl control that contains the track (not null, unaffected)
      * @return textual description (not null)
      */
-    public static String describe(Track track, Spatial spatial) {
+    public static String describe(Track track, AnimControl animControl) {
         Validate.nonNull(track, "track");
-        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(animControl, "anim control");
 
-        char typeChar = describeTrack(track);
-        float length = track.getLength();
-        String result;
-        if (track instanceof BoneTrack) {
-            BoneTrack boneTrack = (BoneTrack) track;
-            int boneIndex = boneTrack.getTargetBoneIndex();
-            Skeleton skeleton = MySkeleton.findSkeleton(spatial);
-            Bone bone = skeleton.getBone(boneIndex);
-            result = String.format("%c:%s", typeChar, bone.getName());
-        } else {
-            result = String.format("%c[%.1f]", typeChar, length);
+        StringBuilder builder = new StringBuilder(20);
+
+        char typeChar = describeTrackType(track);
+        builder.append(typeChar);
+
+        if (track instanceof BoneTrack || track instanceof SpatialTrack) {
+            String targetName = getTargetName(track, animControl);
+            targetName = MyString.quote(targetName);
+            builder.append(targetName);
+
+            if (getTranslations(track) != null) {
+                builder.append("T");
+            }
+            if (getRotations(track) != null) {
+                builder.append("R");
+            }
+            if (getScales(track) != null) {
+                builder.append("S");
+            }
         }
 
+        String result = builder.toString();
         return result;
     }
 
     /**
-     * Describe a track.
+     * Describe a track's type with a single character.
      *
-     * @param track track to describe
+     * @param track track to describe (may be null)
      * @return mnemonic character
      */
-    public static char describeTrack(Track track) {
+    public static char describeTrackType(Track track) {
         if (track instanceof AudioTrack) {
             return 'a';
         } else if (track instanceof BoneTrack) {
@@ -282,20 +292,35 @@ public class MyAnimation {
     }
 
     /**
-     * Read the name of the target bone of the specified bone track in the
+     * Read the name of the target of the specified bone/spatial track in the
      * specified animation control.
      *
-     * @param boneTrack which bone track (not null, unaffected)
-     * @param animControl the animation control containing that track (not null,
-     * unaffected)
-     * @return the bone's name
+     * @param track the bone/spatial track (not null, unaffected)
+     * @param animControl control that contains the track (not null, unaffected)
+     * @return the name of target bone/spatial
      */
-    public static String getTargetName(BoneTrack boneTrack,
-            AnimControl animControl) {
-        int boneIndex = boneTrack.getTargetBoneIndex();
-        Skeleton skeleton = animControl.getSkeleton();
-        Bone bone = skeleton.getBone(boneIndex);
-        String result = bone.getName();
+    public static String getTargetName(Track track, AnimControl animControl) {
+        Validate.nonNull(track, "track");
+
+        String result;
+        if (track instanceof BoneTrack) {
+            BoneTrack boneTrack = (BoneTrack) track;
+            int boneIndex = boneTrack.getTargetBoneIndex();
+            Skeleton skeleton = animControl.getSkeleton();
+            Bone bone = skeleton.getBone(boneIndex);
+            result = bone.getName();
+
+        } else if (track instanceof SpatialTrack) {
+            //SpatialTrack spatialTrack = (SpatialTrack) track;
+            Spatial //spatial = spatialTrack.getTrackSpatial(); //TODO JME 3.2
+                    //if (spatial == null) {
+                    spatial = animControl.getSpatial();
+            //}
+            result = spatial.getName();
+
+        } else {
+            throw new IllegalArgumentException();
+        }
 
         return result;
     }
@@ -391,24 +416,6 @@ public class MyAnimation {
                 }
             }
         }
-
-        return result;
-    }
-
-    /**
-     * List all animations in an animated spatial.
-     *
-     * @param spatial (not null)
-     * @return new collection in lexicographic order
-     */
-    public static Collection<String> listAnimations(Spatial spatial) {
-        AnimControl control = spatial.getControl(AnimControl.class);
-        Collection<String> result = new TreeSet<>();
-        if (control == null) {
-            return result;
-        }
-        Collection<String> animationNames = control.getAnimationNames();
-        result.addAll(animationNames);
 
         return result;
     }

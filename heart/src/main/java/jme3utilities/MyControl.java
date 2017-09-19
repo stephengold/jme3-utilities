@@ -63,8 +63,8 @@ public class MyControl {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MyControl.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MyControl.class.getName());
     // *************************************************************************
     // constructors
 
@@ -116,7 +116,7 @@ public class MyControl {
      * @param control instance to describe (not null, unaffected)
      * @return description (not null, not empty)
      */
-    public static String describe(Object control) {
+    public static String describe(Control control) {
         String name = control.getClass().getSimpleName();
         if (name.endsWith("Control")) {
             name = MyString.removeSuffix(name, "Control");
@@ -124,32 +124,31 @@ public class MyControl {
 
         String result = name;
         if (control instanceof RigidBodyControl) {
-            RigidBodyControl rbc = (RigidBodyControl) control;
-            float mass = rbc.getMass();
+            RigidBodyControl rigidBodyControl = (RigidBodyControl) control;
+            float mass = rigidBodyControl.getMass();
             if (mass == 0f) {
-                result += "[static]";
-            } else if (rbc.isKinematic()) {
-                result += "[kinematic]";
+                result += "[sta]";
+            } else if (rigidBodyControl.isKinematic()) {
+                result += "[kin]";
             } else {
-                result += String.format("[%.2f kg]", mass);
+                result += String.format("[dyn %.2f kg]", mass);
             }
 
         } else if (control instanceof AnimControl) {
             AnimControl ac = (AnimControl) control;
-            Spatial spatial = ac.getSpatial();
             Collection<String> nameCollection = ac.getAnimationNames();
             String[] array = MyString.toArray(nameCollection);
             for (int iAnimation = 0; iAnimation < array.length; iAnimation++) {
                 String animationName = array[iAnimation];
                 Animation animation = ac.getAnim(animationName);
-                array[iAnimation] = MyAnimation.describe(animation, spatial);
+                array[iAnimation] = MyAnimation.describe(animation, ac);
             }
             String names = MyString.join(array);
             result += String.format("[%s]", names);
 
         } else if (control instanceof SkeletonControl) {
-            SkeletonControl sc = (SkeletonControl) control;
-            int boneCount = sc.getSkeleton().getBoneCount();
+            SkeletonControl skeletonControl = (SkeletonControl) control;
+            int boneCount = skeletonControl.getSkeleton().getBoneCount();
             result += String.format("[%d]", boneCount);
         }
 

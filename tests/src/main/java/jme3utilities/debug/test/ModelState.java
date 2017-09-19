@@ -69,8 +69,8 @@ class ModelState extends SimpleAppState {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            ModelState.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(ModelState.class.getName());
     /**
      * local copy of {@link com.jme3.math.Transform#IDENTITY}
      */
@@ -483,7 +483,8 @@ class ModelState extends SimpleAppState {
      * @return a new collection
      */
     Collection<String> listAnimationNames() {
-        Collection<String> names = MyAnimation.listAnimations(spatial);
+        AnimControl animControl = spatial.getControl(AnimControl.class);
+        Collection<String> names = animControl.getAnimationNames();
         names.add(PoseDemoHud.bindPoseName);
 
         return names;
