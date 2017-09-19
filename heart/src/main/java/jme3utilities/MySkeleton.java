@@ -293,16 +293,13 @@ public class MySkeleton {
 
     /**
      * Alter the name of the specified bone. The caller is responsible for
-     * avoiding duplicate names. TODO: rename the attachNode, if any
+     * avoiding duplicate names.
      *
      * @param bone bone to change (not null, modified)
      * @param newName name to apply
      * @return true if successful, otherwise false
      */
     public static boolean setName(Bone bone, String newName) {
-        /*
-         * The override sequence is A, X, B, and Y.
-         */
         Class<?> boneClass = bone.getClass();
         Field nameField;
         try {
@@ -312,9 +309,35 @@ public class MySkeleton {
         }
         nameField.setAccessible(true);
         try {
+            /*
+             * Rename the bone.
+             */
             nameField.set(bone, newName);
         } catch (IllegalAccessException e) {
             return false;
+        }
+        /*
+         * Find the attach node, if any.
+         */
+        Field attachNodeField;
+        try {
+            attachNodeField = boneClass.getDeclaredField("attachNode");
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException();
+        }
+        attachNodeField.setAccessible(true);
+        Node attachNode;
+        try {
+            attachNode = (Node) attachNodeField.get(bone);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException();
+        }
+        if (attachNode != null) {
+            /*
+             * Also rename the attach node.
+             */
+            String newNodeName = newName + "_attachnode";
+            attachNode.setName(newNodeName);
         }
 
         return true;
