@@ -27,7 +27,7 @@
 
 <!--
  Nifty XML to lay out a large (roughly 400-line) informational dialog box for
- a screen controlled by a GuiScreenController.
+ a screen controlled by a PopScreenController.
 
  While a dialog box is active, the rest of the screen dims by 50%.
 -->
@@ -61,8 +61,8 @@
                            backgroundColor="#acff"
                            padding="0px,6px"
                            height="6000px" width="590px">
-                        <control name="label" id="#1" 
-                                 textVAlign="top" 
+                        <control name="label" id="#1"
+                                 textVAlign="top"
                                  wrap="true"/>
                     </panel>
                 </control>

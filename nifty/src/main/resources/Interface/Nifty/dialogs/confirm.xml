@@ -27,7 +27,7 @@
 
 <!--
  Nifty XML to lay out a simple confirmation dialog box for a screen controlled
- by a GuiScreenController.
+ by a PopScreenController.
 
  When a dialog box is active, the rest of the screen dims by 50% and reddens.
 -->
