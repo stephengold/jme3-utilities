@@ -1,10 +1,10 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.7.0 released TBD
+## Version 0.7.0 released 19 September 2017
 
  + Require a list or array to invoke PopScreenController.showPopupMenu().
  + Add multiSelect dialog box.
- + Standardized the BSD license texts
+ + Standardized the BSD license texts.
 
 ## Version 0.6.10 released 5 September 2017
 

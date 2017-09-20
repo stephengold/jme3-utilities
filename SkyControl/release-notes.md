@@ -1,6 +1,6 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.6 released TBD
+## Version 0.9.6 released 19 September 2017
 
  + use the DomeMesh class from the heart library
  + move wireframe material to heart library

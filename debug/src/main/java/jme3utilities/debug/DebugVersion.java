@@ -60,6 +60,6 @@ public class DebugVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String getVersionShort() {
-        return "master 0.7.5";
+        return "master 0.7.5+1";
     }
 }
