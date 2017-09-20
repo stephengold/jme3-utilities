@@ -1,5 +1,22 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 0.9.23 released on TBD
+
+ + Removed the MyAnimation.listAnimations(), MySkeleton.findBoneIndex(), and
+   MyString.getLine() methods
+ + Renamed MyAnimation.describe(Track) to describeTrackType
+ + Require an anim control to invoke MyAnimation.describe(Animation,...) or
+   MyAnimation.describe(Track,...)
+ + Require a control to invoke MyControl.describe()
+ + Changed the MyString.join() methods to handle items of any type
+ + Changed MyString.sharedPrefixLength() to handle char sequences of any type
+ + Added methods DomeMesh.getUVScale(), MyBone.descendsFrom(), and 
+   MyControl.findSkeleton() methods
+ + Improved support for multiple skeletons in MySkeleton.findBone()
+ + Improved support for SpatialTrack in MyAnimation.describe(Track,...) and
+   also in MyAnimation.getTargetName()
+ + Improved support for attach nodes in MySkeleton.setName()
+
 ## Version 0.9.22 released on 11 September 2017
 
  + Renamed MyControl.isValid() to canDisable()

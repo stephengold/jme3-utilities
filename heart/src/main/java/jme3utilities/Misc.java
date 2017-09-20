@@ -65,8 +65,8 @@ public class Misc {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            Misc.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(Misc.class.getName());
     // *************************************************************************
     // constructors
 
@@ -184,7 +184,7 @@ public class Misc {
      * @return project name, library name, branch, and revision
      */
     public static String getVersion() {
-        return "jme3-utilities jme3-utilities-heart master $Rev: 0.9.22+1 $";
+        return "jme3-utilities jme3-utilities-heart master $Rev: 0.9.23 $";
     }
 
     /**
