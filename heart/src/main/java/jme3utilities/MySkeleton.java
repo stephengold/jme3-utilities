@@ -102,6 +102,32 @@ public class MySkeleton {
     }
 
     /**
+     * Test whether the indexed bone descends from the indexed ancestor in the
+     * specified skeleton.
+     *
+     * @param boneIndex index of bone to test (&ge;0)
+     * @param ancestorIndex index of ancestor bone (&ge;0)
+     * @param skeleton (not null, unaffected)
+     * @return true if descended from the parent, otherwise false
+     */
+    public static boolean descendsFrom(int boneIndex, int ancestorIndex,
+            Skeleton skeleton) {
+        Validate.nonNegative(boneIndex, "bone index");
+        Validate.nonNegative(ancestorIndex, "ancestor index");
+
+        Bone bone = skeleton.getBone(boneIndex);
+        Bone ancestor = skeleton.getBone(ancestorIndex);
+        while (bone != null) {
+            bone = bone.getParent();
+            if (bone == ancestor) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Find a named bone in a skeletonized spatial.
      *
      * @param spatial skeletonized spatial to search (not null, alias created)
