@@ -117,6 +117,9 @@ public class PopScreenController extends BasicScreenController {
          * Make the popup visible, setting the keyboard focus.
          */
         Screen screen = nifty.getCurrentScreen();
+        if (screen == null) {
+            throw new NullPointerException();
+        }
         Element focusElement;
         if (focusElementId == null) {
             focusElement = null;
@@ -302,9 +305,8 @@ public class PopScreenController extends BasicScreenController {
             closeActiveDialog();
 
         } else {
-            @SuppressWarnings("unchecked")
-            ListBox<String> listBox
-                    = dialogElement.findNiftyControl("#box", ListBox.class);
+            ListBox listBox;
+            listBox = dialogElement.findNiftyControl("#box", ListBox.class);
             TextField textField = dialogElement.findNiftyControl("#textfield",
                     TextField.class);
 
