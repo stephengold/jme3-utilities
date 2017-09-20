@@ -298,10 +298,13 @@ public class PopScreenController extends BasicScreenController {
             return;
         }
 
-        if (dialogActionPrefix != null) {
+        if (dialogActionPrefix == null) {
+            closeActiveDialog();
+
+        } else {
             @SuppressWarnings("unchecked")
-            ListBox<String> listBox = dialogElement.findNiftyControl("#box",
-                    ListBox.class);
+            ListBox<String> listBox
+                    = dialogElement.findNiftyControl("#box", ListBox.class);
             TextField textField = dialogElement.findNiftyControl("#textfield",
                     TextField.class);
 
@@ -317,10 +320,9 @@ public class PopScreenController extends BasicScreenController {
             } else { // confirmation dialog
                 commitAction = dialogActionPrefix;
             }
+            closeActiveDialog();
             perform(commitAction);
         }
-
-        closeActiveDialog();
     }
 
     /**
