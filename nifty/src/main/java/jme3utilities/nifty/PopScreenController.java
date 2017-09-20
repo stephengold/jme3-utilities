@@ -479,12 +479,8 @@ public class PopScreenController extends BasicScreenController {
                 = dialogElement.findNiftyControl("#box", ListBox.class);
         listBox.addAllItems(itemList);
 
-        Element feedback = dialogElement.findElementById("#feedback"); // TODO
-        TextRenderer tr = feedback.getRenderer(TextRenderer.class);
-        tr.setText("Test test test.");
-
-        Button commitButton
-                = dialogElement.findNiftyControl("#commit", Button.class);
+        Button commitButton;
+        commitButton = dialogElement.findNiftyControl("#commit", Button.class);
         commitButton.setText(commitLabel);
 
         activateDialog(popupId, actionPrefix, "#commit", controller);
