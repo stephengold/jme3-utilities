@@ -49,8 +49,8 @@ import jme3utilities.MyAsset;
 import jme3utilities.MyString;
 import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
+import jme3utilities.mesh.DomeMesh;
 import jme3utilities.sky.Constants;
-import jme3utilities.sky.DomeMesh;
 
 /**
  * Console application to generate starry sky texture maps for use with
@@ -103,8 +103,8 @@ public class MakeStarMaps {
     /**
      * Earth's rate of rotation (radians per sidereal hour)
      */
-    final private static float radiansPerHour =
-            FastMath.TWO_PI / Constants.hoursPerDay;
+    final private static float radiansPerHour
+            = FastMath.TWO_PI / Constants.hoursPerDay;
     /**
      * expected id of the last entry in the catalog
      */
@@ -136,8 +136,8 @@ public class MakeStarMaps {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MakeStarMaps.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MakeStarMaps.class.getName());
     /**
      * application name for the usage message
      */
@@ -158,8 +158,8 @@ public class MakeStarMaps {
     /**
      * filesystem path to the output directory/folder
      */
-    final private static String outputDirPath =
-            "../SkyControl/src/main/resources/Textures/skies/star-maps";
+    final private static String outputDirPath
+            = "../SkyControl/src/main/resources/Textures/skies/star-maps";
     // *************************************************************************
     // fields
 

@@ -36,7 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
-import jme3utilities.sky.DomeMesh;
+import jme3utilities.mesh.DomeMesh;
 
 /**
  * Console application to generate ramping alpha maps for use with SkyMaterial
@@ -59,8 +59,8 @@ public class MakeRamps {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MakeRamps.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MakeRamps.class.getName());
     /**
      * application name for the usage message
      */
@@ -68,8 +68,8 @@ public class MakeRamps {
     /**
      * filesystem path to the output directory/folder
      */
-    final private static String outputDirPath =
-            "../SkyControl/src/main/resources/Textures/skies/ramps";
+    final private static String outputDirPath
+            = "../SkyControl/src/main/resources/Textures/skies/ramps";
     // *************************************************************************
     // fields
 
