@@ -315,7 +315,7 @@ public class PopScreenController extends BasicScreenController {
 
             } else if (listBox != null) { // multi-select dialog
                 List indices = listBox.getSelectedIndices();
-                commitAction = dialogActionPrefix + MyString.join(indices);
+                commitAction = dialogActionPrefix + MyString.join(",", indices);
 
             } else { // confirmation dialog
                 commitAction = dialogActionPrefix;
