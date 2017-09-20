@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.7.1 released TBD
+## Version 0.7.1 released 20 September 2017
 
  + Use commas to join indices selected by a multi-select dialog box.
  + Remove test message from PopScreenController.showMultiSelectDialog().
