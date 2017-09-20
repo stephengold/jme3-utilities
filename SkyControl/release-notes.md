@@ -1,5 +1,13 @@
 # release notes for the SkyControl library and related tests
 
+## Version 0.9.6 released TBD
+
+ + use the DomeMesh class from the heart library
+ + move wireframe material to heart library
+ + make SkyControl JmeCloneable
+ + fix some potential aliasing bugs related to Material.setColor()
+ + standardize the BSD license texts
+
 ## Version 0.9.5 released on 20 May 2017
 
 Moved 2 general-purpose packages to new "jme3-utilites-heart" library, which

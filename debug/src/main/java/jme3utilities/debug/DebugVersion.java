@@ -41,8 +41,8 @@ public class DebugVersion {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            DebugVersion.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(DebugVersion.class.getName());
     // *************************************************************************
     // constructors
 
@@ -60,6 +60,6 @@ public class DebugVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String getVersionShort() {
-        return "master 0.7.4+1";
+        return "master 0.7.5";
     }
 }

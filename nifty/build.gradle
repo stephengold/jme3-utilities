@@ -6,7 +6,7 @@ description = 'NiftyGUI library for jMonkeyEngine'
 ext {
     artifact = 'jme3-utilities-nifty'
     version = "$jme3utilitiesniftyVersion"
-    baseName = "${artifact}-${version}"
+    baseName = "$artifact-$version"
 }
 
 build { dependsOn 'pom' }
@@ -18,11 +18,11 @@ dependencies {
     compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-niftygui:$jmonkeyengineVersion"
 
-    //compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
-    compile project(':heart')
+    compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
+    //compile project(':heart')
 
-    //compile "jme3utilities:jme3-utilities-ui:$jme3utilitiesuiVersion"
-    compile project(':ui')
+    compile "jme3utilities:jme3-utilities-ui:$jme3utilitiesuiVersion"
+    //compile project(':ui')
 }
 
 task pom {

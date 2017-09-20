@@ -41,8 +41,8 @@ public class LibraryVersion {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            LibraryVersion.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(LibraryVersion.class.getName());
     // *************************************************************************
     // constructors
 
@@ -60,6 +60,6 @@ public class LibraryVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String getVersionShort() {
-        return "master 0.6.10+1";
+        return "master 0.7.0";
     }
 }
