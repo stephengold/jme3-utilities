@@ -43,8 +43,8 @@ public class RotationCurve {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            RotationCurve.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(RotationCurve.class.getName());
     // *************************************************************************
     // fields
 
@@ -176,7 +176,7 @@ public class RotationCurve {
      *
      * @return the pre-existing instance (not null)
      */
-    Quaternion[] getQuaternions() {
+    Quaternion[] getSamples() {
         assert startValues != null;
         return startValues;
     }

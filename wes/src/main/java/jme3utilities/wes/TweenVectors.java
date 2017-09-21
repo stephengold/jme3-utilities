@@ -84,24 +84,24 @@ public enum TweenVectors {
      * @param time (&ge;times[0])
      * @param times (not null, unaffected, length&gt;0, in strictly ascending
      * order)
-     * @param vectors function values (not null, unaffected, same length as
+     * @param samples function values (not null, unaffected, same length as
      * times)
      * @param storeResult (modified if not null)
      * @return an interpolated vector (either storeResult or a new instance)
      */
     public Vector3f cubicSpline(float time, float[] times,
-            Vector3f[] vectors, Vector3f storeResult) {
+            Vector3f[] samples, Vector3f storeResult) {
         Validate.nonNull(times, "times");
         assert times.length > 0;
         assert time >= times[0] : time;
-        Validate.nonNull(vectors, "vectors");
-        assert times.length == vectors.length;
+        Validate.nonNull(samples, "samples");
+        assert times.length == samples.length;
         if (storeResult == null) {
             storeResult = new Vector3f();
         }
 
         int index1 = MyArray.findPreviousIndex(time, times);
-        Vector3f v1 = vectors[index1];
+        Vector3f v1 = samples[index1];
         int last = times.length - 1;
         if (index1 == last) {
             storeResult.set(v1);
@@ -109,7 +109,7 @@ public enum TweenVectors {
         }
 
         int index2 = index1 + 1;
-        Vector3f v2 = vectors[index2];
+        Vector3f v2 = samples[index2];
         float inter12 = times[index2] - times[index1];
         float t = (time - times[index1]) / inter12;
         switch (this) {
@@ -125,7 +125,7 @@ public enum TweenVectors {
                     m1 = slope(inter12, v1, v2, null);
                 } else {
                     int index0 = index1 - 1;
-                    Vector3f v0 = vectors[index0];
+                    Vector3f v0 = samples[index0];
                     float inter01 = times[index1] - times[index0];
                     m1 = slope(inter01, inter12, v0, v1, v2, null);
                 }
@@ -134,7 +134,7 @@ public enum TweenVectors {
                     m2 = slope(inter12, v1, v2, null);
                 } else {
                     int index3 = index2 + 1;
-                    Vector3f v3 = vectors[index3];
+                    Vector3f v3 = samples[index3];
                     float inter23 = times[index3] - times[index2];
                     m2 = slope(inter12, inter23, v1, v2, v3, null);
                 }
@@ -146,7 +146,7 @@ public enum TweenVectors {
             case LoopCentripetalSpline:
                 int index0;
                 for (index0 = index1 - 1; index0 >= 0; index0--) {
-                    if (MyVector3f.ne(vectors[index0], v1)) {
+                    if (MyVector3f.ne(samples[index0], v1)) {
                         break;
                     }
                 }
@@ -155,11 +155,11 @@ public enum TweenVectors {
                     v0 = v1.mult(2f);
                     v0.subtractLocal(v2);
                 } else {
-                    v0 = vectors[index0];
+                    v0 = samples[index0];
                 }
                 int index3;
                 for (index3 = index2 + 1; index3 <= last; index3++) {
-                    if (MyVector3f.ne(vectors[index3], v2)) {
+                    if (MyVector3f.ne(samples[index3], v2)) {
                         break;
                     }
                 }
@@ -168,7 +168,7 @@ public enum TweenVectors {
                     v3 = v2.mult(2f);
                     v3.subtractLocal(v1);
                 } else {
-                    v3 = vectors[index3];
+                    v3 = samples[index3];
                 }
 
                 centripetal(t, v0, v1, v2, v3, storeResult);
@@ -188,16 +188,16 @@ public enum TweenVectors {
      * @param times (not null, unaffected, length&gt;0, in strictly ascending
      * order)
      * @param cycleTime end time for looping (&ge;times[last])
-     * @param vectors function values (not null, unaffected, same length as
+     * @param samples function values (not null, unaffected, same length as
      * times)
      * @param storeResult (modified if not null)
      * @return an interpolated vector (either storeResult or a new instance)
      */
     public Vector3f interpolate(float time, float[] times, float cycleTime,
-            Vector3f[] vectors, Vector3f storeResult) {
+            Vector3f[] samples, Vector3f storeResult) {
         Validate.nonNull(times, "times");
         assert times.length > 0;
-        assert times.length == vectors.length;
+        assert times.length == samples.length;
         int last = times.length - 1;
         assert cycleTime >= times[last] : cycleTime;
         if (storeResult == null) {
@@ -205,7 +205,7 @@ public enum TweenVectors {
         }
 
         if (last == 0 || time < times[0]) {
-            storeResult.set(vectors[0]);
+            storeResult.set(samples[0]);
             return storeResult;
         }
 
@@ -213,11 +213,11 @@ public enum TweenVectors {
             case CentripetalSpline:
             case CatmullRomSpline:
             case FdcSpline:
-                cubicSpline(time, times, vectors, storeResult);
+                cubicSpline(time, times, samples, storeResult);
                 break;
 
             case Lerp:
-                lerp(time, times, vectors, storeResult);
+                lerp(time, times, samples, storeResult);
                 break;
 
             case LoopCentripetalSpline:
@@ -226,12 +226,12 @@ public enum TweenVectors {
                 if (times[last] == cycleTime) {
                     if (last > 1) { // ignore the final point
                         loopCubicSpline(time, last - 1, times, cycleTime,
-                                vectors, storeResult);
+                                samples, storeResult);
                     } else { // fall back on acyclic
-                        cubicSpline(time, times, vectors, storeResult);
+                        cubicSpline(time, times, samples, storeResult);
                     }
                 } else {
-                    loopCubicSpline(time, last, times, cycleTime, vectors,
+                    loopCubicSpline(time, last, times, cycleTime, samples,
                             storeResult);
                 }
                 break;
@@ -239,13 +239,13 @@ public enum TweenVectors {
             case LoopLerp:
                 if (times[last] == cycleTime) {
                     if (last > 1) { // ignore the final point
-                        loopLerp(time, last - 1, times, cycleTime, vectors,
+                        loopLerp(time, last - 1, times, cycleTime, samples,
                                 storeResult);
                     } else { // fall back on acyclic
-                        lerp(time, times, vectors, storeResult);
+                        lerp(time, times, samples, storeResult);
                     }
                 } else {
-                    loopLerp(time, last, times, cycleTime, vectors,
+                    loopLerp(time, last, times, cycleTime, samples,
                             storeResult);
                 }
                 break;
@@ -287,8 +287,8 @@ public enum TweenVectors {
             case LoopLerp:
                 float[] times = curve.getTimes();
                 float cycleTime = curve.getCycleTime();
-                Vector3f[] vectors = curve.getValues();
-                interpolate(time, times, cycleTime, vectors, storeResult);
+                Vector3f[] samples = curve.getSamples();
+                interpolate(time, times, cycleTime, samples, storeResult);
                 break;
 
             default:
@@ -306,33 +306,33 @@ public enum TweenVectors {
      * @param time parameter value (&ge;times[0])
      * @param times (not null, unaffected, length&gt;0, in strictly ascending
      * order)
-     * @param vectors function values (not null, unaffected, same length as
+     * @param samples function values (not null, unaffected, same length as
      * times, each not null)
      * @param storeResult (modified if not null)
      * @return an interpolated vector (either storeResult or a new instance)
      */
-    public static Vector3f lerp(float time, float[] times, Vector3f[] vectors,
+    public static Vector3f lerp(float time, float[] times, Vector3f[] samples,
             Vector3f storeResult) {
         Validate.nonNull(times, "times");
         assert times.length > 0;
         assert time >= times[0] : time;
-        Validate.nonNull(vectors, "vectors");
-        assert times.length == vectors.length;
+        Validate.nonNull(samples, "samples");
+        assert times.length == samples.length;
         if (storeResult == null) {
             storeResult = new Vector3f();
         }
 
         int index1 = MyArray.findPreviousIndex(time, times);
-        Vector3f v1 = vectors[index1];
+        Vector3f v1 = samples[index1];
 
         if (index1 >= times.length - 1) { // the last point
-            storeResult.set(vectors[index1]);
+            storeResult.set(samples[index1]);
         } else {
             int index2 = index1 + 1;
             float inter12 = times[index2] - times[index1];
             assert inter12 > 0f : inter12;
             float t = (time - times[index1]) / inter12;
-            Vector3f v2 = vectors[index2];
+            Vector3f v2 = samples[index2];
             MyVector3f.lerp(t, v1, v2, storeResult);
         }
 
@@ -348,18 +348,18 @@ public enum TweenVectors {
      * @param times (not null, unaffected, in strictly ascending order,
      * times[0]==0)
      * @param cycleTime cycle time (&gt;times[last])
-     * @param vectors function values (not null, unaffected)
+     * @param samples function values (not null, unaffected)
      * @param storeResult (modified if not null)
      * @return an interpolated vector (either storeResult or a new instance)
      */
     public Vector3f loopCubicSpline(float time, int last, float[] times,
-            float cycleTime, Vector3f[] vectors, Vector3f storeResult) {
+            float cycleTime, Vector3f[] samples, Vector3f storeResult) {
         Validate.inRange(time, "time", 0f, cycleTime);
         Validate.positive(last, "last");
         Validate.nonNull(times, "times");
-        Validate.nonNull(vectors, "vectors");
+        Validate.nonNull(samples, "samples");
         assert times.length > last : times.length;
-        assert vectors.length > last : vectors.length;
+        assert samples.length > last : samples.length;
         assert cycleTime > times[last] : cycleTime;
         /*
          * Find 4 nearby points and calculate the 3 intervals.
@@ -377,8 +377,8 @@ public enum TweenVectors {
         }
         assert inter12 > 0f : inter12;
 
-        Vector3f v1 = vectors[index1];
-        Vector3f v2 = vectors[index2];
+        Vector3f v1 = samples[index1];
+        Vector3f v2 = samples[index2];
         Vector3f v0, v3;
         int index0, index3;
         float t = (time - times[index1]) / inter12;
@@ -409,8 +409,8 @@ public enum TweenVectors {
                 }
                 assert inter23 > 0f : inter23;
 
-                v0 = vectors[index0];
-                v3 = vectors[index3];
+                v0 = samples[index0];
+                v3 = samples[index3];
                 Vector3f m1 = slope(inter01, inter12, v0, v1, v2, null);
                 Vector3f m2 = slope(inter12, inter23, v1, v2, v3, null);
 
@@ -419,24 +419,24 @@ public enum TweenVectors {
                 break;
 
             case LoopCentripetalSpline:
-                int numVectors = last + 1;
-                for (index0 = MyMath.modulo(index1 - 1, numVectors);
+                int numSamples = last + 1;
+                for (index0 = MyMath.modulo(index1 - 1, numSamples);
                         index0 != index1;
-                        index0 = MyMath.modulo(index0 - 1, numVectors)) {
-                    if (MyVector3f.ne(vectors[index0], v1)) {
+                        index0 = MyMath.modulo(index0 - 1, numSamples)) {
+                    if (MyVector3f.ne(samples[index0], v1)) {
                         break;
                     }
                 }
-                for (index3 = MyMath.modulo(index2 + 1, numVectors);
+                for (index3 = MyMath.modulo(index2 + 1, numSamples);
                         index3 != index2;
-                        index3 = MyMath.modulo(index3 + 1, numVectors)) {
-                    if (MyVector3f.ne(vectors[index3], v2)) {
+                        index3 = MyMath.modulo(index3 + 1, numSamples)) {
+                    if (MyVector3f.ne(samples[index3], v2)) {
                         break;
                     }
                 }
 
-                v0 = vectors[index0];
-                v3 = vectors[index3];
+                v0 = samples[index0];
+                v3 = samples[index3];
                 storeResult = centripetal(t, v0, v1, v2, v3, storeResult);
                 break;
 
@@ -456,18 +456,18 @@ public enum TweenVectors {
      * @param times (not null, unaffected, in strictly ascending order,
      * times[0]==0)
      * @param cycleTime cycle time (&gt;times[last])
-     * @param vectors function values (not null, unaffected, each not null)
+     * @param samples function values (not null, unaffected, each not null)
      * @param storeResult (modified if not null)
      * @return an interpolated vector (either storeResult or a new instance)
      */
     public static Vector3f loopLerp(float time, int last, float[] times,
-            float cycleTime, Vector3f[] vectors, Vector3f storeResult) {
+            float cycleTime, Vector3f[] samples, Vector3f storeResult) {
         Validate.inRange(time, "time", 0f, cycleTime);
         Validate.positive(last, "last");
         Validate.nonNull(times, "times");
-        Validate.nonNull(vectors, "vectors");
+        Validate.nonNull(samples, "samples");
         assert times.length > last : times.length;
-        assert vectors.length > last : vectors.length;
+        assert samples.length > last : samples.length;
         assert cycleTime > times[last] : cycleTime;
         if (storeResult == null) {
             storeResult = new Vector3f();
@@ -486,8 +486,8 @@ public enum TweenVectors {
         assert interval > 0f : interval;
 
         float t = (time - times[index1]) / interval;
-        Vector3f v1 = vectors[index1];
-        Vector3f v2 = vectors[index2];
+        Vector3f v1 = samples[index1];
+        Vector3f v2 = samples[index2];
         MyVector3f.lerp(t, v1, v2, storeResult);
 
         return storeResult;
@@ -499,19 +499,19 @@ public enum TweenVectors {
      * @param times (not null, unaffected, length&gt;0, in strictly ascending
      * order)
      * @param cycleTime end time of loop (&ge;times[lastIndex])
-     * @param vectors function values (not null, unaffected, same length as
+     * @param samples function values (not null, unaffected, same length as
      * times, each norm==1)
      * @return a new instance
      */
     public VectorCurve precompute(float[] times, float cycleTime,
-            Vector3f[] vectors) {
+            Vector3f[] samples) {
         Validate.nonNull(times, "times");
         assert times.length > 0;
-        assert times.length == vectors.length;
+        assert times.length == samples.length;
         int lastIndex = times.length - 1;
         assert cycleTime >= times[lastIndex] : cycleTime;
 
-        VectorCurve result = new VectorCurve(times, cycleTime, vectors);
+        VectorCurve result = new VectorCurve(times, cycleTime, samples);
         switch (this) {
             case CatmullRomSpline:
             case CentripetalSpline:
@@ -688,7 +688,7 @@ public enum TweenVectors {
 
         float[] times = curve.getTimes();
         float cycleTime = curve.getCycleTime();
-        Vector3f[] vectors = curve.getValues();
+        Vector3f[] samples = curve.getSamples();
 
         for (int index1 = 0; index1 <= lastIndex; index1++) {
             float inter12;
@@ -702,8 +702,8 @@ public enum TweenVectors {
             }
             assert inter12 > 0f : inter12;
 
-            Vector3f v1 = vectors[index1];
-            Vector3f v2 = vectors[index2];
+            Vector3f v1 = samples[index1];
+            Vector3f v2 = samples[index2];
             curve.setParameters(index1, v2, inter12);
 
             Vector3f v0, v3;
@@ -734,31 +734,31 @@ public enum TweenVectors {
                         inter23 = cycleTime - times[lastIndex];
                     }
                     assert inter23 > 0f : inter23;
-                    v0 = vectors[index0];
-                    v3 = vectors[index3];
+                    v0 = samples[index0];
+                    v3 = samples[index3];
                     Vector3f m1 = slope(inter01, inter12, v0, v1, v2, null);
                     Vector3f m2 = slope(inter12, inter23, v1, v2, v3, null);
                     curve.setAuxPoints(index1, m1, m2);
                     break;
 
                 case LoopCentripetalSpline:
-                    int numVectors = lastIndex + 1;
-                    for (index0 = MyMath.modulo(index1 - 1, numVectors);
+                    int numSamples = lastIndex + 1;
+                    for (index0 = MyMath.modulo(index1 - 1, numSamples);
                             index0 != index1;
-                            index0 = MyMath.modulo(index0 - 1, numVectors)) {
-                        if (MyVector3f.ne(vectors[index0], v1)) {
+                            index0 = MyMath.modulo(index0 - 1, numSamples)) {
+                        if (MyVector3f.ne(samples[index0], v1)) {
                             break;
                         }
                     }
-                    for (index3 = MyMath.modulo(index2 + 1, numVectors);
+                    for (index3 = MyMath.modulo(index2 + 1, numSamples);
                             index3 != index2;
-                            index3 = MyMath.modulo(index3 + 1, numVectors)) {
-                        if (MyVector3f.ne(vectors[index3], v2)) {
+                            index3 = MyMath.modulo(index3 + 1, numSamples)) {
+                        if (MyVector3f.ne(samples[index3], v2)) {
                             break;
                         }
                     }
-                    v0 = vectors[index0];
-                    v3 = vectors[index3];
+                    v0 = samples[index0];
+                    v3 = samples[index3];
                     curve.setAuxPoints(index1, v0, v3);
 
                     double ds12 = MyVector3f.distanceSquared(v1, v2);
@@ -790,13 +790,13 @@ public enum TweenVectors {
      * @param curve (not null, modified)
      */
     private void precomputeSpline(VectorCurve curve) {
-        Vector3f[] vectors = curve.getValues();
-        int lastIndex = vectors.length - 1;
+        Vector3f[] samples = curve.getSamples();
+        int lastIndex = samples.length - 1;
         setLastIndex(curve, lastIndex);
         float[] times = curve.getTimes();
 
         for (int index1 = 0; index1 <= lastIndex; index1++) {
-            Vector3f v1 = vectors[index1];
+            Vector3f v1 = samples[index1];
             int index2;
             float inter12;
             if (index1 == lastIndex) {
@@ -806,7 +806,7 @@ public enum TweenVectors {
                 index2 = index1 + 1;
                 inter12 = times[index2] - times[index1];
             }
-            Vector3f v2 = vectors[index2];
+            Vector3f v2 = samples[index2];
             curve.setParameters(index1, v2, inter12);
 
             switch (this) {
@@ -822,7 +822,7 @@ public enum TweenVectors {
                         m1 = slope(inter12, v1, v2, null);
                     } else {
                         int index0 = index1 - 1;
-                        Vector3f v0 = vectors[index0];
+                        Vector3f v0 = samples[index0];
                         float inter01 = times[index1] - times[index0];
                         m1 = slope(inter01, inter12, v0, v1, v2, null);
                     }
@@ -831,7 +831,7 @@ public enum TweenVectors {
                         m2 = slope(inter12, v1, v2, null);
                     } else {
                         int index3 = index2 + 1;
-                        Vector3f v3 = vectors[index3];
+                        Vector3f v3 = samples[index3];
                         float inter23 = times[index3] - times[index2];
                         m2 = slope(inter12, inter23, v1, v2, v3, null);
                     }
@@ -842,7 +842,7 @@ public enum TweenVectors {
                 case LoopCentripetalSpline:
                     int index0;
                     for (index0 = index1 - 1; index0 >= 0; index0--) {
-                        if (MyVector3f.ne(vectors[index0], v1)) {
+                        if (MyVector3f.ne(samples[index0], v1)) {
                             break;
                         }
                     }
@@ -851,11 +851,11 @@ public enum TweenVectors {
                         v0 = v1.mult(2f);
                         v0.subtractLocal(v2);
                     } else {
-                        v0 = vectors[index0];
+                        v0 = samples[index0];
                     }
                     int index3;
                     for (index3 = index2 + 1; index3 <= lastIndex; index3++) {
-                        if (MyVector3f.ne(vectors[index3], v2)) {
+                        if (MyVector3f.ne(samples[index3], v2)) {
                             break;
                         }
                     }
@@ -864,7 +864,7 @@ public enum TweenVectors {
                         v3 = v2.mult(2f);
                         v3.subtractLocal(v1);
                     } else {
-                        v3 = vectors[index3];
+                        v3 = samples[index3];
                     }
                     curve.setAuxPoints(index1, v0, v3);
 

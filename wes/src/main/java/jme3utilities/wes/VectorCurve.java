@@ -43,8 +43,8 @@ public class VectorCurve {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            VectorCurve.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(VectorCurve.class.getName());
     // *************************************************************************
     // fields
 
@@ -231,6 +231,16 @@ public class VectorCurve {
     }
 
     /**
+     * Access the function values for all sample times.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    Vector3f[] getSamples() {
+        assert startValues != null;
+        return startValues;
+    }
+
+    /**
      * Access the starting function value of the indexed interval.
      *
      * @return the pre-existing instance (not null)
@@ -249,16 +259,6 @@ public class VectorCurve {
     float[] getTimes() {
         assert times != null;
         return times;
-    }
-
-    /**
-     * Access the function values for all sample times.
-     *
-     * @return the pre-existing instance (not null)
-     */
-    Vector3f[] getValues() {
-        assert startValues != null;
-        return startValues;
     }
 
     /**
