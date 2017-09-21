@@ -311,10 +311,12 @@ public class TrackEdit {
                     rotations, scales);
 
         } else if (oldTrack instanceof SpatialTrack) {
-            //SpatialTrack spatialTrack = (SpatialTrack) oldTrack; TODO JME 3.2
-            //Spatial spatial = oldTrack.getTrackSpatial();
-            result = new SpatialTrack(times, translations, rotations, scales);
-            //result.setTrackSpatial(spatial);
+            //SpatialTrack spatialTrack = (SpatialTrack) oldTrack; // TODO JME 3.2
+            //Spatial spatial = spatialTrack.getTrackSpatial();
+            SpatialTrack newSpatialTrack = new SpatialTrack(times, translations,
+                    rotations, scales);
+            //newSpatialTrack.setTrackSpatial(spatial);
+            result = newSpatialTrack;
 
         } else {
             throw new IllegalArgumentException();

@@ -278,7 +278,7 @@ public class MyAnimation {
         for (Track track : tracks) {
             if (track instanceof SpatialTrack) {
                 SpatialTrack spatialTrack = (SpatialTrack) track;
-                Spatial //target = spatialTrack.getTrackSpatial(); TODO JME 3.2
+                Spatial //target = spatialTrack.getTrackSpatial(); // TODO JME 3.2
                         //if (target == null) {
                         target = animControl.getSpatial();
                 //}
