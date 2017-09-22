@@ -50,8 +50,8 @@ public class MyMesh {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MyMesh.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MyMesh.class.getName());
     // *************************************************************************
     // constructors
 
@@ -294,11 +294,18 @@ public class MyMesh {
         Validate.nonNull(geometry, "geometry");
         Validate.nonNegative(vertexIndex, "vertex index");
         Validate.nonNull(skinningMatrices, "skinning matrices");
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
 
         Mesh mesh = geometry.getMesh();
-        Vector3f meshLocation = vertexLocation(mesh, vertexIndex,
-                skinningMatrices, null);
-        storeResult = geometry.localToWorld(meshLocation, storeResult);
+        Vector3f meshLocation
+                = vertexLocation(mesh, vertexIndex, skinningMatrices, null);
+        if (geometry.isIgnoreTransform()) { // TODO JME 3.2
+            storeResult.set(meshLocation);
+        } else {
+            geometry.localToWorld(meshLocation, storeResult);
+        }
 
         return storeResult;
     }
