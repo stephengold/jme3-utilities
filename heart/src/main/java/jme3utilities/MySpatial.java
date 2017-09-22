@@ -35,6 +35,7 @@ import com.jme3.effect.ParticleEmitter;
 import com.jme3.font.BitmapText;
 import com.jme3.light.Light;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.AssetLinkNode;
 import com.jme3.scene.BatchNode;
@@ -73,8 +74,8 @@ public class MySpatial {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MySpatial.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MySpatial.class.getName());
     /**
      * direction of the negative Y-axis
      */
@@ -554,9 +555,12 @@ public class MySpatial {
      * Access an object's mass.
      *
      * @param spatial object to measure (not null, unaffected)
-     * @return mass in kilograms (&gt;0) or zero for a static object.
+     * @return mass (&gt;0) or zero for a static object.
      */
     public static float getMass(Spatial spatial) {
+        /*
+         * Access the rigid body, if any.
+         */
         RigidBodyControl rigidBodyControl = spatial.getControl(
                 RigidBodyControl.class);
         float mass = rigidBodyControl.getMass();
@@ -566,7 +570,7 @@ public class MySpatial {
     }
 
     /**
-     * Calculate the world scale factor for a uniformly scaled spatial.
+     * Calculate the world scale factor of a uniformly scaled spatial.
      *
      * @param spatial spatial to measure (not null, unaffected)
      * @return scale factor (&gt;0)
@@ -584,7 +588,7 @@ public class MySpatial {
     }
 
     /**
-     * Calculate the world location of a spatial.
+     * Calculate the world location of a spatial's center.
      *
      * @param spatial spatial to locate (not null, unaffected)
      * @return new vector
@@ -630,7 +634,7 @@ public class MySpatial {
     }
 
     /**
-     * Calculate the world elevation of a horizontal surface.
+     * Calculate the world elevation of a perfectly horizontal surface.
      *
      * @param geometry surface to measure (not null)
      * @return elevation of the surface (in world coordinates)
@@ -666,7 +670,7 @@ public class MySpatial {
 
     /**
      * Construct the inverse of a spatial's world orientation, the quaternion
-     * that undoes its rotation.
+     * that undoes all its rotations.
      *
      * @param spatial spatial to analyze (not null, unaffected)
      * @return new instance
@@ -674,6 +678,26 @@ public class MySpatial {
     public static Quaternion inverseOrientation(Spatial spatial) {
         Quaternion forward = spatial.getWorldRotation();
         Quaternion result = forward.inverse();
+
+        return result;
+    }
+
+    /**
+     * Test whether a spatial is an geometry with ignoreTransform=true.
+     *
+     * @param spatial spatial to test (not null, unaffected)
+     * @return true if the spatial ignores transforms, otherwise false
+     */
+    public static boolean isIgnoringTransforms(Spatial spatial) {
+        Validate.nonNull(spatial, "spatial");
+
+        boolean result = false;
+        if (spatial instanceof Geometry) {
+            Geometry geometry = (Geometry) spatial;
+            if (geometry.isIgnoreTransform()) {
+                result = true;
+            }
+        }
 
         return result;
     }
@@ -722,10 +746,10 @@ public class MySpatial {
 
         int numControls = subtree.getNumControls();
         for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
-            Control control = subtree.getControl(controlIndex);
+            T control = (T) subtree.getControl(controlIndex);
             if (controlType.isAssignableFrom(control.getClass())
                     && !storeResult.contains(control)) {
-                storeResult.add((T) control);
+                storeResult.add(control);
             }
         }
 
@@ -930,7 +954,7 @@ public class MySpatial {
     }
 
     /**
-     * Alter the world location of a spatial.
+     * Alter the world location of a spatial's center.
      *
      * @param spatial spatial to relocate (not null)
      * @param newLocation desired world location (not null, unaffected)
@@ -947,7 +971,7 @@ public class MySpatial {
             centerLocal = newLocation.clone();
         }
         /*
-         * Apply to the spatial.
+         * Apply to the physics object, if any.
          */
         spatial.setLocalTranslation(centerLocal);
         /*
@@ -982,7 +1006,7 @@ public class MySpatial {
          */
         spatial.setLocalRotation(localRotation);
         /*
-         * Apply to the physical object, if any.
+         * Apply to the physics object, if any.
          */
         RigidBodyControl rigidBodyControl = spatial.getControl(
                 RigidBodyControl.class);
@@ -992,7 +1016,7 @@ public class MySpatial {
     }
 
     /**
-     * Alter the world scaling of a spatial.
+     * Alter the (uniform) world scaling of a spatial.
      *
      * @param spatial spatial to rescale (not null)
      * @param scale desired world scale (&gt;0)
@@ -1009,5 +1033,55 @@ public class MySpatial {
         assert parentScale != 0f : parentScale;
         float localScale = scale / parentScale;
         spatial.setLocalScale(localScale);
+    }
+
+    /**
+     * Alter the world transform of a spatial.
+     *
+     * @param spatial spatial to alter (not null)
+     * @param worldTransform desired world transform (not null, unaffected)
+     * @throws IllegalArgumentException if the spatial is a geometry with
+     * ignoreTransform=true OR the spatial's parent has a zero in its world
+     * scale OR the parent's world rotation is not invertible
+     */
+    public static void setWorldTransform(Spatial spatial,
+            Transform worldTransform) {
+        Validate.nonNull(worldTransform, "world transform");
+        if (isIgnoringTransforms(spatial)) {
+            throw new IllegalArgumentException("transform ignored");
+        }
+
+        Node parent = spatial.getParent();
+        if (parent == null) {
+            spatial.setLocalTransform(worldTransform);
+        } else {
+            Transform transform = worldTransform.clone();
+            Vector3f translation = transform.getTranslation();
+            Quaternion rotation = transform.getRotation();
+            Vector3f scale = transform.getScale();
+
+            Transform parentTransform = parent.getWorldTransform();
+            Vector3f parentTranslation = parentTransform.getTranslation();
+            Quaternion parentRotation = parentTransform.getRotation();
+            Vector3f parentScale = parentTransform.getScale();
+            if (parentScale.x == 0f || parentScale.y == 0f
+                    || parentScale.z == 0f) {
+                throw new IllegalArgumentException("zero in scale");
+            }
+            /*
+             * Undo the operations of Transform.combineWithParent()
+             */
+            Quaternion parentInvRotation = parentRotation.inverse();
+            if (parentInvRotation == null) {
+                throw new IllegalArgumentException("rotation not invertible");
+            }
+            scale.divideLocal(parentScale);
+            parentInvRotation.mult(rotation, rotation);
+            translation.subtractLocal(parentTranslation);
+            parentInvRotation.multLocal(translation);
+            translation.divideLocal(parentScale);
+
+            spatial.setLocalTransform(transform);
+        }
     }
 }
