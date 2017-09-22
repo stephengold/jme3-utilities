@@ -605,7 +605,7 @@ public class MyVector3f {
      *
      * @param vector input (not null, unaffected)
      * @return true if the vector equals
-     * {@link com.jme3.math.Vector3f#UNIT_XYZ)}, false otherwise
+     * {@link com.jme3.math.Vector3f#UNIT_XYZ}, false otherwise
      */
     public static boolean isScaleIdentity(Vector3f vector) {
         if (vector.x == 1f && vector.y == 1f && vector.z == 1f) {
@@ -619,7 +619,7 @@ public class MyVector3f {
      * Test for a zero vector or translation identity.
      *
      * @param vector input (not null, unaffected)
-     * @return true if the vector equals {@link com.jme3.math.Vector3f#ZERO)},
+     * @return true if the vector equals {@link com.jme3.math.Vector3f#ZERO},
      * false otherwise
      */
     public static boolean isZero(Vector3f vector) {
