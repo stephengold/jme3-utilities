@@ -44,8 +44,8 @@ public class MyQuaternion {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MyQuaternion.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MyQuaternion.class.getName());
     // *************************************************************************
     // constructors
 
@@ -127,6 +127,28 @@ public class MyQuaternion {
         }
 
         return storeResult;
+    }
+
+    /**
+     * Test whether the specified quaternion represents an identity rotation.
+     * This test is weaker than that implemented by
+     * {@link com.jme3.math.Quaternion#isIdentity()} because it accepts any
+     * non-zero value for w.
+     *
+     * @param q input value (not null, unaffected)
+     * @return true for a rotation identity, otherwise false
+     */
+    public static boolean isRotationIdentity(Quaternion q) {
+        float qx = q.getX();
+        float qy = q.getY();
+        float qz = q.getZ();
+        float qw = q.getW();
+
+        if (qx == 0f && qy == 0f && qz == 0f && qw != 0f) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

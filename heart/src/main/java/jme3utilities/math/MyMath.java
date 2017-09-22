@@ -55,8 +55,8 @@ public class MyMath {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MyMath.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MyMath.class.getName());
     // *************************************************************************
     // constructors
 
@@ -315,18 +315,16 @@ public class MyMath {
      * Test the specified transform for exact identity.
      *
      * @param transform which transform to test (not null, unaffected)
-     * @return true if exactly equal to
-     * {@link com.jme3.math.Transform#IDENTITY}, otherwise false
+     * @return true if exact identity, otherwise false
      */
     public static boolean isIdentity(Transform transform) {
         boolean result = false;
-
         Vector3f translation = transform.getTranslation();
         if (MyVector3f.isZero(translation)) {
             Quaternion rotation = transform.getRotation();
-            if (rotation.isIdentity()) {
+            if (MyQuaternion.isRotationIdentity(rotation)) {
                 Vector3f scale = transform.getScale();
-                result = (scale.x == 1f && scale.y == 1f && scale.z == 1f);
+                result = MyVector3f.isScaleIdentity(scale);
             }
         }
 
