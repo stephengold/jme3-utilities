@@ -99,8 +99,13 @@ public class MySpatial {
      *
      * @param newParent (not null)
      * @param child spatial to re-parent (not null, not orphan)
+     * @throws IllegalArgumentException if the child is a geometry with
+     * ignoreTransform=true
      */
     public static void adopt(Node newParent, Spatial child) {
+        if (isIgnoringTransforms(child)) {
+            throw new IllegalArgumentException("transform ignored");
+        }
         Validate.nonNull(newParent, "new parent");
         Node oldParent = child.getParent();
         if (oldParent == null) {
@@ -775,9 +780,13 @@ public class MySpatial {
      *
      * @param spatial object to move (not null)
      * @param offset world translation (in world units, not null)
+     * @throws IllegalArgumentException if the spatial is a geometry with
+     * ignoreTransform=true
      */
     public static void moveWorld(Spatial spatial, Vector3f offset) {
-        Validate.nonNull(spatial, "spatial");
+        if (isIgnoringTransforms(spatial)) {
+            throw new IllegalArgumentException("transform ignored");
+        }
         Validate.nonNull(offset, "offset");
 
         Vector3f location = getWorldLocation(spatial);
@@ -798,9 +807,13 @@ public class MySpatial {
      *
      * @param spatial object to move (not null)
      * @param offset world translation (in world units, not null)
+     * @throws IllegalArgumentException if the spatial is a geometry with
+     * ignoreTransform=true
      */
     public static void moveChildWorld(Spatial spatial, Vector3f offset) {
-        Validate.nonNull(spatial, "spatial");
+        if (isIgnoringTransforms(spatial)) {
+            throw new IllegalArgumentException("transform ignored");
+        }
         Validate.nonNull(offset, "offset");
 
         if (isPhysical(spatial)) {
@@ -888,10 +901,14 @@ public class MySpatial {
      * @param spatial object to rotate (not null)
      * @param center world coordinates of the point to rotate around (not null)
      * @param rotation (not null)
+     * @throws IllegalArgumentException if the spatial is a geometry with
+     * ignoreTransform=true
      */
     public static void rotateChild(Spatial spatial, Vector3f center,
             Quaternion rotation) {
-        Validate.nonNull(spatial, "spatial");
+        if (isIgnoringTransforms(spatial)) {
+            throw new IllegalArgumentException("transform ignored");
+        }
         Validate.nonNull(center, "vector");
         Validate.nonNull(rotation, "rotaion");
 
@@ -920,10 +937,14 @@ public class MySpatial {
      * @param spatial object to rotate (not null)
      * @param center world coordinates of the point to rotate around (not null)
      * @param rotation (not null)
+     * @throws IllegalArgumentException if the spatial is a geometry with
+     * ignoreTransform=true
      */
     public static void rotateObject(Spatial spatial, Vector3f center,
             Quaternion rotation) {
-        Validate.nonNull(spatial, "spatial");
+        if (isIgnoringTransforms(spatial)) {
+            throw new IllegalArgumentException("transform ignored");
+        }
         Validate.nonNull(center, "center");
 
         Vector3f location = getWorldLocation(spatial);
@@ -949,9 +970,13 @@ public class MySpatial {
      *
      * @param spatial object to rotate (not null)
      * @param angle clockwise rotation angle (in radians)
+     * @throws IllegalArgumentException if the spatial is a geometry with
+     * ignoreTransform=true
      */
     public static void rotateY(Spatial spatial, float angle) {
-        Validate.nonNull(spatial, "spatial");
+        if (isIgnoringTransforms(spatial)) {
+            throw new IllegalArgumentException("transform ignored");
+        }
 
         Quaternion rotation = new Quaternion();
         rotation.fromAngleNormalAxis(angle, negativeYAxis);
@@ -964,13 +989,17 @@ public class MySpatial {
      *
      * @param spatial spatial to relocate (not null)
      * @param newLocation desired world location (not null, unaffected)
+     * @throws IllegalArgumentException if the spatial is a geometry with
+     * ignoreTransform=true
      */
     public static void setWorldLocation(Spatial spatial, Vector3f newLocation) {
         Validate.nonNull(newLocation, "location");
+        if (isIgnoringTransforms(spatial)) {
+            throw new IllegalArgumentException("transform ignored");
+        }
 
         Spatial parent = spatial.getParent();
         Vector3f centerLocal;
-        // TODO check for spatial.isIgnoreTransform()
         if (parent != null) {
             centerLocal = parent.worldToLocal(newLocation, null);
         } else {
@@ -995,9 +1024,15 @@ public class MySpatial {
      *
      * @param spatial spatial to reorient (not null)
      * @param newOrientation desired world orientation (not null, unaffected)
+     * @throws IllegalArgumentException if the spatial is a geometry with
+     * ignoreTransform=true
      */
     public static void setWorldOrientation(Spatial spatial,
             Quaternion newOrientation) {
+        if (isIgnoringTransforms(spatial)) {
+            throw new IllegalArgumentException("transform ignored");
+        }
+
         Spatial parent = spatial.getParent();
         Quaternion localRotation;
         if (parent != null) {
@@ -1026,9 +1061,14 @@ public class MySpatial {
      *
      * @param spatial spatial to rescale (not null)
      * @param scale desired world scale (&gt;0)
+     * @throws IllegalArgumentException if the spatial is a geometry with
+     * ignoreTransform=true
      */
     public static void setWorldScale(Spatial spatial, float scale) {
         Validate.positive(scale, "scale");
+        if (isIgnoringTransforms(spatial)) {
+            throw new IllegalArgumentException("transform ignored");
+        }
 
         Spatial parent = spatial.getParent();
         if (parent == null) {
