@@ -573,18 +573,24 @@ public class MySpatial {
      * Calculate the world scale factor of a uniformly scaled spatial.
      *
      * @param spatial spatial to measure (not null, unaffected)
-     * @return scale factor (&gt;0)
+     * @return scale factor
+     * @throws IllegalArgumentException if the spatial is scaled non-uniformly
      */
     public static float getUniformScale(Spatial spatial) {
-        Vector3f worldScale = spatial.getWorldScale();
+        Validate.nonNull(spatial, "spatial");
 
-        assert worldScale.x > 0f : worldScale.x;
-        assert worldScale.y > 0f : worldScale.y;
-        assert worldScale.z > 0f : worldScale.z;
-        assert worldScale.x == worldScale.y;
-        assert worldScale.x == worldScale.z;
+        float result;
+        if (isIgnoringTransforms(spatial)) {
+            result = 1f;
+        } else {
+            Vector3f worldScale = spatial.getWorldScale();
+            if (worldScale.x != worldScale.y || worldScale.y != worldScale.z) {
+                throw new IllegalArgumentException("non-uniform scaling");
+            }
+            result = worldScale.y;
+        }
 
-        return worldScale.x;
+        return result;
     }
 
     /**
