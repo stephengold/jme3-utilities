@@ -60,7 +60,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.math.MyVector3f;
-import jme3utilities.math.VectorXZ;
 
 /**
  * Utility methods for manipulating nodes and geometries.
@@ -542,21 +541,6 @@ public class MySpatial {
     }
 
     /**
-     * Compute the map (2-D) location of a spatial.
-     *
-     * @param spatial spatial to locate (not null, unaffected)
-     * @return new vector
-     */
-    public static VectorXZ getMapLocation(Spatial spatial) {
-        Validate.nonNull(spatial, "spatial");
-
-        Vector3f worldLocation = getWorldLocation(spatial);
-        VectorXZ result = new VectorXZ(worldLocation);
-
-        return result;
-    }
-
-    /**
      * Access an object's mass.
      *
      * @param spatial object to measure (not null, unaffected)
@@ -776,61 +760,6 @@ public class MySpatial {
     }
 
     /**
-     * Move (translate) an object in the world coordinate system.
-     *
-     * @param spatial object to move (not null)
-     * @param offset world translation (in world units, not null)
-     * @throws IllegalArgumentException if the spatial is a geometry with
-     * ignoreTransform=true
-     */
-    public static void moveWorld(Spatial spatial, Vector3f offset) {
-        if (isIgnoringTransforms(spatial)) {
-            throw new IllegalArgumentException("transform ignored");
-        }
-        Validate.nonNull(offset, "offset");
-
-        Vector3f location = getWorldLocation(spatial);
-        location.addLocal(offset);
-        setWorldLocation(spatial, location);
-
-        if (spatial instanceof Node) {
-            Node node = (Node) spatial;
-            for (Spatial child : node.getChildren()) {
-                moveChildWorld(child, offset);
-            }
-        }
-    }
-
-    /**
-     * Move (translate) a object's child in the world coordinate system. NOTE
-     * recursive
-     *
-     * @param spatial object to move (not null)
-     * @param offset world translation (in world units, not null)
-     * @throws IllegalArgumentException if the spatial is a geometry with
-     * ignoreTransform=true
-     */
-    public static void moveChildWorld(Spatial spatial, Vector3f offset) {
-        if (isIgnoringTransforms(spatial)) {
-            throw new IllegalArgumentException("transform ignored");
-        }
-        Validate.nonNull(offset, "offset");
-
-        if (isPhysical(spatial)) {
-            Vector3f location = getWorldLocation(spatial);
-            location.addLocal(offset);
-            setWorldLocation(spatial, location);
-        }
-
-        if (spatial instanceof Node) {
-            Node node = (Node) spatial;
-            for (Spatial child : node.getChildren()) {
-                moveChildWorld(child, offset);
-            }
-        }
-    }
-
-    /**
      * Clear all cached collision data from the specified subtree of the scene
      * graph and force a bound refresh. Note: recursive!
      *
@@ -893,95 +822,6 @@ public class MySpatial {
                 removeNonPhysicsControls(child);
             }
         }
-    }
-
-    /**
-     * Turn (rotate) a child object around an axis.
-     *
-     * @param spatial object to rotate (not null)
-     * @param center world coordinates of the point to rotate around (not null)
-     * @param rotation (not null)
-     * @throws IllegalArgumentException if the spatial is a geometry with
-     * ignoreTransform=true
-     */
-    public static void rotateChild(Spatial spatial, Vector3f center,
-            Quaternion rotation) {
-        if (isIgnoringTransforms(spatial)) {
-            throw new IllegalArgumentException("transform ignored");
-        }
-        Validate.nonNull(center, "vector");
-        Validate.nonNull(rotation, "rotaion");
-
-        if (isPhysical(spatial)) {
-            Vector3f location = getWorldLocation(spatial);
-            Vector3f offset = location.subtract(center);
-            offset = rotation.mult(offset);
-            location = center.add(offset);
-            setWorldLocation(spatial, location);
-
-            Quaternion orientation = getWorldOrientation(spatial);
-            orientation = rotation.mult(orientation);
-            setWorldOrientation(spatial, orientation);
-        }
-        if (spatial instanceof Node) {
-            Node node = (Node) spatial;
-            for (Spatial child : node.getChildren()) {
-                rotateChild(child, center, rotation);
-            }
-        }
-    }
-
-    /**
-     * Turn (rotate) a physical object around an axis.
-     *
-     * @param spatial object to rotate (not null)
-     * @param center world coordinates of the point to rotate around (not null)
-     * @param rotation (not null)
-     * @throws IllegalArgumentException if the spatial is a geometry with
-     * ignoreTransform=true
-     */
-    public static void rotateObject(Spatial spatial, Vector3f center,
-            Quaternion rotation) {
-        if (isIgnoringTransforms(spatial)) {
-            throw new IllegalArgumentException("transform ignored");
-        }
-        Validate.nonNull(center, "center");
-
-        Vector3f location = getWorldLocation(spatial);
-        Vector3f offset = location.subtract(center);
-        offset = rotation.mult(offset);
-        location = center.add(offset);
-        setWorldLocation(spatial, location);
-
-        Quaternion orientation = getWorldOrientation(spatial);
-        orientation = rotation.mult(orientation);
-        setWorldOrientation(spatial, orientation);
-
-        if (spatial instanceof Node) {
-            Node node = (Node) spatial;
-            for (Spatial child : node.getChildren()) {
-                rotateChild(child, center, rotation);
-            }
-        }
-    }
-
-    /**
-     * Turn (rotate) a physical object around its world Y-axis.
-     *
-     * @param spatial object to rotate (not null)
-     * @param angle clockwise rotation angle (in radians)
-     * @throws IllegalArgumentException if the spatial is a geometry with
-     * ignoreTransform=true
-     */
-    public static void rotateY(Spatial spatial, float angle) {
-        if (isIgnoringTransforms(spatial)) {
-            throw new IllegalArgumentException("transform ignored");
-        }
-
-        Quaternion rotation = new Quaternion();
-        rotation.fromAngleNormalAxis(angle, negativeYAxis);
-        Vector3f center = getWorldLocation(spatial);
-        rotateObject(spatial, center, rotation);
     }
 
     /**
