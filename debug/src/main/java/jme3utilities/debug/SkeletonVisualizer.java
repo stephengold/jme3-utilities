@@ -69,11 +69,13 @@ public class SkeletonVisualizer extends SubtreeControl {
     /**
      * default color for lines (blue)
      */
-    final private static ColorRGBA defaultLineColor = new ColorRGBA(0f, 0f, 1f, 1f);
+    final private static ColorRGBA defaultLineColor
+            = new ColorRGBA(0f, 0f, 1f, 1f);
     /**
      * default color for points (white)
      */
-    final private static ColorRGBA defaultPointColor = new ColorRGBA(1f, 1f, 1f, 1f);
+    final private static ColorRGBA defaultPointColor
+            = new ColorRGBA(1f, 1f, 1f, 1f);
     /**
      * default width for lines (in pixels)
      */
@@ -93,12 +95,17 @@ public class SkeletonVisualizer extends SubtreeControl {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            SkeletonVisualizer.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(SkeletonVisualizer.class.getName());
     /**
      * asset path to default shape for points
      */
-    final private static String defaultPointShapeAssetPath = "Textures/shapes/solid circle.png";
+    final private static String defaultPointShapeAssetPath
+            = "Textures/shapes/solid circle.png";
+    /**
+     * local copy of {@link com.jme3.math.Transform#IDENTITY}
+     */
+    final private static Transform transformIdentity = new Transform();
     // *************************************************************************
     // fields
 
@@ -432,18 +439,13 @@ public class SkeletonVisualizer extends SubtreeControl {
          */
         Geometry ag = MySpatial.findAnimatedGeometry(spatial);
         if (ag != null) {
-            Spatial loopSpatial = ag;
-            Transform combined = new Transform();
-            /*
-             * Climb the scene graph applying local transforms until the
-             * controlled spatial is reached.
-             */
-            while (loopSpatial != spatial && loopSpatial != null) {
-                Transform localTransform = loopSpatial.getLocalTransform();
-                combined.combineWithParent(localTransform);
-                loopSpatial = loopSpatial.getParent();
+            Transform worldTransform;
+            if (ag.isIgnoreTransform()) {
+                worldTransform = transformIdentity;
+            } else {
+                worldTransform = ag.getWorldTransform();
             }
-            subtree.setLocalTransform(combined);
+            MySpatial.setWorldTransform(subtree, worldTransform);
         }
 
         int numBones;
