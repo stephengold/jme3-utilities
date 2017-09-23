@@ -57,6 +57,7 @@ import java.util.logging.Logger;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.math.MyQuaternion;
 import jme3utilities.math.MyVector3f;
 
 /**
@@ -74,8 +75,8 @@ public class Dumper {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            Dumper.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(Dumper.class.getName());
     // *************************************************************************
     // fields
 
@@ -578,7 +579,7 @@ public class Dumper {
         Validate.nonNull(spatial, "spatial");
 
         Quaternion orientation = MySpatial.getWorldOrientation(spatial);
-        if (!orientation.isIdentity()) {
+        if (!MyQuaternion.isRotationIdentity(orientation)) {
             stream.printf(" orient=%s", orientation.toString());
         }
     }
