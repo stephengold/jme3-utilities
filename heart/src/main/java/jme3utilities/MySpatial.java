@@ -642,7 +642,10 @@ public class MySpatial {
         Vector3f minMax[] = findMinMaxCoords(geometry, true);
         float result = minMax[0].y;
 
-        assert result == minMax[1].y : minMax[0];
+        if (minMax[0].y != minMax[1].y) {
+            throw new IllegalArgumentException("not perfectly horizontal");
+        }
+
         return result;
     }
 
