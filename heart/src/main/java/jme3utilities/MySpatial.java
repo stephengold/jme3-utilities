@@ -988,12 +988,13 @@ public class MySpatial {
      * Alter the world location of a spatial's center.
      *
      * @param spatial spatial to relocate (not null)
-     * @param newLocation desired world location (not null, unaffected)
+     * @param worldLocation desired world location (not null, unaffected)
      * @throws IllegalArgumentException if the spatial is a geometry with
      * ignoreTransform=true
      */
-    public static void setWorldLocation(Spatial spatial, Vector3f newLocation) {
-        Validate.nonNull(newLocation, "location");
+    public static void setWorldLocation(Spatial spatial,
+            Vector3f worldLocation) {
+        Validate.nonNull(worldLocation, "world location");
         if (isIgnoringTransforms(spatial)) {
             throw new IllegalArgumentException("transform ignored");
         }
@@ -1001,9 +1002,9 @@ public class MySpatial {
         Spatial parent = spatial.getParent();
         Vector3f centerLocal;
         if (parent != null) {
-            centerLocal = parent.worldToLocal(newLocation, null);
+            centerLocal = parent.worldToLocal(worldLocation, null);
         } else {
-            centerLocal = newLocation.clone();
+            centerLocal = worldLocation.clone();
         }
         /*
          * Apply to the physics object, if any.
@@ -1015,7 +1016,7 @@ public class MySpatial {
         RigidBodyControl rigidBodyControl = spatial.getControl(
                 RigidBodyControl.class);
         if (rigidBodyControl != null) {
-            rigidBodyControl.setPhysicsLocation(newLocation.clone());
+            rigidBodyControl.setPhysicsLocation(worldLocation.clone());
         }
     }
 
@@ -1023,12 +1024,12 @@ public class MySpatial {
      * Alter the world orientation of a spatial.
      *
      * @param spatial spatial to reorient (not null)
-     * @param newOrientation desired world orientation (not null, unaffected)
+     * @param worldOrientation desired world orientation (not null, unaffected)
      * @throws IllegalArgumentException if the spatial is a geometry with
      * ignoreTransform=true
      */
     public static void setWorldOrientation(Spatial spatial,
-            Quaternion newOrientation) {
+            Quaternion worldOrientation) {
         if (isIgnoringTransforms(spatial)) {
             throw new IllegalArgumentException("transform ignored");
         }
@@ -1037,10 +1038,10 @@ public class MySpatial {
         Quaternion localRotation;
         if (parent != null) {
             localRotation = inverseOrientation(parent);
-            localRotation.multLocal(newOrientation);
+            localRotation.multLocal(worldOrientation);
             localRotation.normalizeLocal();
         } else {
-            localRotation = newOrientation;
+            localRotation = worldOrientation;
         }
         /*
          * Apply to the spatial.
@@ -1052,7 +1053,7 @@ public class MySpatial {
         RigidBodyControl rigidBodyControl = spatial.getControl(
                 RigidBodyControl.class);
         if (rigidBodyControl != null) {
-            rigidBodyControl.setPhysicsRotation(newOrientation);
+            rigidBodyControl.setPhysicsRotation(worldOrientation);
         }
     }
 
@@ -1060,24 +1061,24 @@ public class MySpatial {
      * Alter the (uniform) world scaling of a spatial.
      *
      * @param spatial spatial to rescale (not null)
-     * @param scale desired world scale (&gt;0)
+     * @param worldScale desired world scale (&gt;0)
      * @throws IllegalArgumentException if the spatial is a geometry with
      * ignoreTransform=true
      */
-    public static void setWorldScale(Spatial spatial, float scale) {
-        Validate.positive(scale, "scale");
+    public static void setWorldScale(Spatial spatial, float worldScale) {
+        Validate.positive(worldScale, "world scale");
         if (isIgnoringTransforms(spatial)) {
             throw new IllegalArgumentException("transform ignored");
         }
 
         Spatial parent = spatial.getParent();
         if (parent == null) {
-            spatial.setLocalScale(scale);
+            spatial.setLocalScale(worldScale);
             return;
         }
         float parentScale = getUniformScale(parent);
         assert parentScale != 0f : parentScale;
-        float localScale = scale / parentScale;
+        float localScale = worldScale / parentScale;
         spatial.setLocalScale(localScale);
     }
 
