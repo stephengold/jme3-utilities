@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.24 released TBD
+## Version 0.9.24 released 22 September 2017
 
  + Removed getMapLocation(), moveWorld(), moveChildWorld(), rotateChild(),
    rotateObject(), and rotateY() methods from the MySpatial class
