@@ -503,6 +503,29 @@ public class MySpatial {
     }
 
     /**
+     * Access the 1st enabled RigidBodyControl of a spatial.
+     *
+     * @param spatial spatial to search (not null, unaffected)
+     * @return the pre-existing control, or null if none found
+     */
+    public static RigidBodyControl findObject(Spatial spatial) {
+        RigidBodyControl result = null;
+        int numControls = spatial.getNumControls();
+        for (int controlI = 0; controlI < numControls; controlI++) {
+            Control control = spatial.getControl(controlI);
+            if (control instanceof RigidBodyControl) {
+                RigidBodyControl rbc = (RigidBodyControl) control;
+                if (rbc.isEnabled()) {
+                    result = rbc;
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Find the minimum and maximum coordinates in a subtree of the scene graph.
      * Note: recursive!
      *
@@ -541,17 +564,15 @@ public class MySpatial {
     }
 
     /**
-     * Access an object's mass.
+     * Read an object's mass.
      *
      * @param spatial object to measure (not null, unaffected)
-     * @return mass (&gt;0) or zero for a static object.
+     * @return mass (&gt;0) or zero for a static object
      */
     public static float getMass(Spatial spatial) {
-        /*
-         * Access the rigid body, if any.
-         */
-        RigidBodyControl rigidBodyControl = spatial.getControl(
-                RigidBodyControl.class);
+        Validate.nonNull(spatial, "spatial");
+
+        RigidBodyControl rigidBodyControl = findObject(spatial);
         float mass = rigidBodyControl.getMass();
 
         assert mass >= 0f : mass;
@@ -589,12 +610,12 @@ public class MySpatial {
      * @return new vector
      */
     public static Vector3f getWorldLocation(Spatial spatial) {
+        Validate.nonNull(spatial, "spatial");
         /*
          * Access the rigid body, if any.
          */
-        RigidBodyControl rigidBodyControl = spatial.getControl(
-                RigidBodyControl.class);
         Vector3f location;
+        RigidBodyControl rigidBodyControl = findObject(spatial);
         if (rigidBodyControl != null) {
             location = rigidBodyControl.getPhysicsLocation().clone();
         } else if (isIgnoringTransforms(spatial)) { // TODO JME 3.2
@@ -613,12 +634,12 @@ public class MySpatial {
      * @return new vector
      */
     public static Quaternion getWorldOrientation(Spatial spatial) {
-        Quaternion orientation;
+        Validate.nonNull(spatial, "spatial");
         /*
          * Access the rigid body, if any.
          */
-        RigidBodyControl rigidBodyControl = spatial.getControl(
-                RigidBodyControl.class);
+        Quaternion orientation;
+        RigidBodyControl rigidBodyControl = findObject(spatial);
         if (rigidBodyControl != null) {
             orientation = rigidBodyControl.getPhysicsRotation().clone();
         } else if (isIgnoringTransforms(spatial)) { // TODO JME 3.2
@@ -653,7 +674,7 @@ public class MySpatial {
      * Test whether a spatial has a specific light in its local list.
      *
      * @param spatial spatial to search (not null, unaffected)
-     * @param light light to search for (not null)
+     * @param light light to search for (not null, unaffected)
      * @return true if found, false if not found
      */
     public static boolean hasLight(Spatial spatial, Light light) {
@@ -851,18 +872,16 @@ public class MySpatial {
         }
 
         Spatial parent = spatial.getParent();
-        Vector3f centerLocal;
-        if (parent != null) {
-            centerLocal = parent.worldToLocal(worldLocation, null);
+        if (parent == null) {
+            spatial.setLocalTranslation(worldLocation);
         } else {
-            centerLocal = worldLocation.clone();
+            Vector3f translation = parent.worldToLocal(worldLocation, null);
+            spatial.setLocalTranslation(translation);
         }
-        spatial.setLocalTranslation(centerLocal);
         /*
          * Apply to the physics object, if any.
          */
-        RigidBodyControl rigidBodyControl = spatial.getControl(
-                RigidBodyControl.class);
+        RigidBodyControl rigidBodyControl = findObject(spatial);
         if (rigidBodyControl != null) {
             rigidBodyControl.setPhysicsLocation(worldLocation.clone());
         }
@@ -884,22 +903,19 @@ public class MySpatial {
         }
 
         Spatial parent = spatial.getParent();
-        Quaternion localRotation;
-        if (parent != null) {
-            localRotation = inverseOrientation(parent);
-            localRotation.multLocal(worldOrientation);
-            localRotation.normalizeLocal();
+        if (parent == null) {
+            spatial.setLocalRotation(worldOrientation);
         } else {
-            localRotation = worldOrientation;
+            Quaternion rotation = inverseOrientation(parent);
+            rotation.multLocal(worldOrientation);
+            spatial.setLocalRotation(rotation);
         }
-        spatial.setLocalRotation(localRotation);
         /*
          * Apply to the physics object, if any.
          */
-        RigidBodyControl rigidBodyControl = spatial.getControl(
-                RigidBodyControl.class);
+        RigidBodyControl rigidBodyControl = findObject(spatial);
         if (rigidBodyControl != null) {
-            rigidBodyControl.setPhysicsRotation(worldOrientation);
+            rigidBodyControl.setPhysicsRotation(worldOrientation.clone());
         }
     }
 
@@ -972,8 +988,7 @@ public class MySpatial {
              */
             Quaternion parentInvRotation = parentRotation.inverse();
             if (parentInvRotation == null) {
-                throw new IllegalArgumentException(
-                        "orientation not invertible");
+                throw new IllegalArgumentException("rotation not invertible");
             }
             scale.divideLocal(parentScale);
             parentInvRotation.mult(rotation, rotation);
