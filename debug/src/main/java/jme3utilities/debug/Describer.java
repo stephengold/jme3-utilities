@@ -70,6 +70,7 @@ import jme3utilities.MyControl;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.math.MyQuaternion;
 
 /**
  * Generate compact textual descriptions of jME3 objects.
@@ -216,7 +217,7 @@ public class Describer {
 
             Quaternion rotation = new Quaternion();
             rotation.fromRotationMatrix(child.rotation);
-            if (!rotation.isIdentity()) {
+            if (!MyQuaternion.isRotationIdentity(rotation)) {
                 result.append("rot");
                 desc = rotation.toString();
                 result.append(desc);
