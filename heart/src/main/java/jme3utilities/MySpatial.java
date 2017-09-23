@@ -674,10 +674,16 @@ public class MySpatial {
      *
      * @param spatial spatial to analyze (not null, unaffected)
      * @return new instance
+     * @throws IllegalArgumentException if the spatial's world orientation is
+     * not invertible
+     *
      */
     public static Quaternion inverseOrientation(Spatial spatial) {
         Quaternion forward = spatial.getWorldRotation();
         Quaternion result = forward.inverse();
+        if (result == null) {
+            throw new IllegalArgumentException("orientation not invertible");
+        }
 
         return result;
     }
@@ -868,10 +874,11 @@ public class MySpatial {
      * @param spatial spatial to reorient (not null)
      * @param worldOrientation desired world orientation (not null, unaffected)
      * @throws IllegalArgumentException if the spatial is a geometry with
-     * ignoreTransform=true
+     * ignoreTransform=true OR the parent's world orientation is not invertible
      */
     public static void setWorldOrientation(Spatial spatial,
             Quaternion worldOrientation) {
+        Validate.nonNull(worldOrientation, "world orientation");
         if (isIgnoringTransforms(spatial)) {
             throw new IllegalArgumentException("transform ignored");
         }
@@ -934,7 +941,7 @@ public class MySpatial {
      * @param worldTransform desired world transform (not null, unaffected)
      * @throws IllegalArgumentException if the spatial is a geometry with
      * ignoreTransform=true OR the spatial's parent has a zero in its world
-     * scale OR the parent's world rotation is not invertible
+     * scale OR the parent's world orientation is not invertible
      */
     public static void setWorldTransform(Spatial spatial,
             Transform worldTransform) {
@@ -965,7 +972,8 @@ public class MySpatial {
              */
             Quaternion parentInvRotation = parentRotation.inverse();
             if (parentInvRotation == null) {
-                throw new IllegalArgumentException("rotation not invertible");
+                throw new IllegalArgumentException(
+                        "orientation not invertible");
             }
             scale.divideLocal(parentScale);
             parentInvRotation.mult(rotation, rotation);
