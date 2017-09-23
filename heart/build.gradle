@@ -6,7 +6,7 @@ description = 'core utilities library for jMonkeyEngine'
 ext {
     artifact = 'jme3-utilities-heart'
     version = "$jme3utilitiesheartVersion"
-    baseName = "${artifact}-${version}"
+    baseName = "$artifact-$version"
 }
 
 build { dependsOn 'pom' }

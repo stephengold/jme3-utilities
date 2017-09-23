@@ -1,5 +1,16 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 0.9.24 released TBD
+
+ + Removed getMapLocation(), moveWorld(), moveChildWorld(), rotateChild(),
+   rotateObject(), and rotateY() methods from the MySpatial class
+ + Added checks for ignoreTransform
+ + Improved handling of non-uniform scaling and disabled RigidBodyContols
+ + Added findObject(), isIgnoringTransforms(), and setWorldTransform() methods
+   to the MySpatial class
+ + Added MyQuaternion.isRotationIdentity() and MyVector3f.isScaleIdentity()
+ + Replaced asserts with IllegalArgumentExceptions
+
 ## Version 0.9.23 released on 19 September 2017
 
  + Removed the MyAnimation.listAnimations(), MySkeleton.findBoneIndex(), and
