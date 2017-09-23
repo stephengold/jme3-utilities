@@ -569,7 +569,7 @@ public class MySpatial {
         Validate.nonNull(spatial, "spatial");
 
         float result;
-        if (isIgnoringTransforms(spatial)) {
+        if (isIgnoringTransforms(spatial)) { // TODO JME 3.2
             result = 1f;
         } else {
             Vector3f worldScale = spatial.getWorldScale();
@@ -596,12 +596,14 @@ public class MySpatial {
                 RigidBodyControl.class);
         Vector3f location;
         if (rigidBodyControl != null) {
-            location = rigidBodyControl.getPhysicsLocation();
+            location = rigidBodyControl.getPhysicsLocation().clone();
+        } else if (isIgnoringTransforms(spatial)) { // TODO JME 3.2
+            location = new Vector3f();
         } else {
-            location = spatial.getWorldTranslation();
+            location = spatial.getWorldTranslation().clone();
         }
 
-        return location.clone();
+        return location;
     }
 
     /**
@@ -611,21 +613,21 @@ public class MySpatial {
      * @return new vector
      */
     public static Quaternion getWorldOrientation(Spatial spatial) {
+        Quaternion orientation;
         /*
          * Access the rigid body, if any.
          */
         RigidBodyControl rigidBodyControl = spatial.getControl(
                 RigidBodyControl.class);
-        Quaternion orientation;
         if (rigidBodyControl != null) {
-            orientation = rigidBodyControl.getPhysicsRotation();
+            orientation = rigidBodyControl.getPhysicsRotation().clone();
+        } else if (isIgnoringTransforms(spatial)) { // TODO JME 3.2
+            orientation = new Quaternion();
         } else {
-            orientation = spatial.getWorldRotation();
+            orientation = spatial.getWorldRotation().clone();
         }
-        Quaternion result = orientation.clone();
-        result.normalizeLocal();
 
-        return result;
+        return orientation;
     }
 
     /**
