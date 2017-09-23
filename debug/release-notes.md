@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.7.6 released TBD
+## Version 0.7.6 released 22 September 2017
 
  + Use setWorldTransform() to address the ignoreTransform issue in
    SkeletonVisualizer
