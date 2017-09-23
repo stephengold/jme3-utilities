@@ -851,12 +851,9 @@ public class MySpatial {
         } else {
             centerLocal = worldLocation.clone();
         }
-        /*
-         * Apply to the physics object, if any.
-         */
         spatial.setLocalTranslation(centerLocal);
         /*
-         * Apply to the physical object, if any.
+         * Apply to the physics object, if any.
          */
         RigidBodyControl rigidBodyControl = spatial.getControl(
                 RigidBodyControl.class);
@@ -888,9 +885,6 @@ public class MySpatial {
         } else {
             localRotation = worldOrientation;
         }
-        /*
-         * Apply to the spatial.
-         */
         spatial.setLocalRotation(localRotation);
         /*
          * Apply to the physics object, if any.
@@ -908,7 +902,8 @@ public class MySpatial {
      * @param spatial spatial to rescale (not null)
      * @param worldScale desired world scale (&gt;0)
      * @throws IllegalArgumentException if the spatial is a geometry with
-     * ignoreTransform=true
+     * ignoreTransform=true OR the spatial's parent has a zero in its world
+     * scale
      */
     public static void setWorldScale(Spatial spatial, float worldScale) {
         Validate.positive(worldScale, "world scale");
@@ -919,12 +914,17 @@ public class MySpatial {
         Spatial parent = spatial.getParent();
         if (parent == null) {
             spatial.setLocalScale(worldScale);
-            return;
+        } else {
+            Vector3f parentScale = parent.getWorldScale();
+            if (parentScale.x == 0f
+                    || parentScale.y == 0f
+                    || parentScale.z == 0f) {
+                throw new IllegalArgumentException();
+            }
+            Vector3f scale = new Vector3f(worldScale, worldScale, worldScale);
+            scale.divideLocal(parentScale);
+            spatial.setLocalScale(scale);
         }
-        float parentScale = getUniformScale(parent);
-        assert parentScale != 0f : parentScale;
-        float localScale = worldScale / parentScale;
-        spatial.setLocalScale(localScale);
     }
 
     /**
