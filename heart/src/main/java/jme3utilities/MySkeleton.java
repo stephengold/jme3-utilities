@@ -413,7 +413,13 @@ public class MySkeleton {
 
         Bone bone = findBone(spatial, boneName);
         Vector3f localCoordinates = bone.getModelSpacePosition();
-        Vector3f result = spatial.localToWorld(localCoordinates, null);
+
+        Vector3f result;
+        if (MySpatial.isIgnoringTransforms(spatial)) { // TODO JME 3.2
+            result = localCoordinates.clone();
+        } else {
+            result = spatial.localToWorld(localCoordinates, null);
+        }
 
         return result;
     }
