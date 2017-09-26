@@ -54,7 +54,6 @@ import com.jme3.scene.instancing.InstancedGeometry;
 import com.jme3.scene.instancing.InstancedNode;
 import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.ui.Picture;
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -454,10 +453,10 @@ public class MySpatial {
     }
 
     /**
-     * Find the minimum and maximum coordinates of a mesh geometry.
+     * Find the minimum and maximum coordinates of a geometry.
      *
      * @param geometry mesh geometry to measure (not null)
-     * @param useWorld true &rarr; use world coordinates, false &rarr; use model
+     * @param useWorld true &rarr; use world coordinates, false &rarr; use mesh
      * coordinates
      * @return array consisting of array[0]: the lowest coordinate for each axis
      * and array[1]: the highest coordinate for each axis
@@ -470,31 +469,21 @@ public class MySpatial {
                 Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
         Vector3f[] result = new Vector3f[]{min, max};
 
-        Mesh mesh = geometry.getMesh();
-        VertexBuffer posBuf = mesh.getBuffer(VertexBuffer.Type.Position);
-        if (posBuf == null) {
-            return result;
-        }
-
-        // TODO create a MyMesh method for this part?
-        FloatBuffer posBuffer = (FloatBuffer) posBuf.getData();
-        posBuffer.rewind();
-        int numFloats = posBuffer.remaining();
-        int numVertices = mesh.getVertexCount();
-        assert numFloats == 3 * numVertices : numFloats;
-
-        Vector3f modelLocation = new Vector3f();
+        Vector3f meshLocation = new Vector3f();
         Vector3f location = new Vector3f();
 
+        Mesh mesh = geometry.getMesh();
+        int numVertices = mesh.getVertexCount();
         for (int vertexIndex = 0; vertexIndex < numVertices; vertexIndex++) {
-            modelLocation.x = posBuffer.get();
-            modelLocation.y = posBuffer.get();
-            modelLocation.z = posBuffer.get();
-            if (useWorld) {
-                geometry.localToWorld(modelLocation, location);
+            MyMesh.vertexVector3f(mesh, VertexBuffer.Type.Position, vertexIndex,
+                    meshLocation);
+
+            if (useWorld && !geometry.isIgnoreTransform()) { // TODO JME 3.2
+                geometry.localToWorld(meshLocation, location);
             } else {
-                location.set(modelLocation);
+                location.set(meshLocation);
             }
+
             MyVector3f.accumulateMinima(min, location);
             MyVector3f.accumulateMaxima(max, location);
         }
