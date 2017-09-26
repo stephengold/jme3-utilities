@@ -52,6 +52,10 @@ public class MyMesh {
      */
     final private static Logger logger
             = Logger.getLogger(MyMesh.class.getName());
+    /**
+     * local copy of {@link com.jme3.math.Matrix4f#IDENTITY}
+     */
+    final private static Matrix4f matrixIdentity = new Matrix4f();
     // *************************************************************************
     // constructors
 
@@ -208,7 +212,6 @@ public class MyMesh {
         }
 
         if (mesh.isAnimated()) {
-            assert skinningMatrices.length != 0;
             Vector3f b = vertexVector3f(mesh,
                     VertexBuffer.Type.BindPosePosition, vertexIndex, null);
 
@@ -226,7 +229,12 @@ public class MyMesh {
                 float weight = weightBuffer.get();
                 int boneIndex = readIndex(boneIndexBuffer);
                 if (weight != 0f) {
-                    Matrix4f s = skinningMatrices[boneIndex];
+                    Matrix4f s;
+                    if (boneIndex < skinningMatrices.length) {
+                        s = skinningMatrices[boneIndex];
+                    } else {
+                        s = matrixIdentity;
+                    }
                     storeResult.x += weight
                             * (s.m00 * b.x + s.m01 * b.y + s.m02 * b.z + s.m03);
                     storeResult.y += weight
