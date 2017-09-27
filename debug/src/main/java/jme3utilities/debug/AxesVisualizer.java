@@ -38,6 +38,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Arrow;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
+import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 
@@ -70,8 +71,8 @@ public class AxesVisualizer extends SubtreeControl {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            AxesVisualizer.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(AxesVisualizer.class.getName());
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
@@ -227,7 +228,11 @@ public class AxesVisualizer extends SubtreeControl {
                 default:
                     throw new RuntimeException();
             }
-            result = subtree.localToWorld(tipLocal, null);
+            if (MySpatial.isIgnoringTransforms(subtree)) { // TODO JME 3.2
+                result = tipLocal.clone();
+            } else {
+                result = subtree.localToWorld(tipLocal, null);
+            }
         }
 
         return result;
