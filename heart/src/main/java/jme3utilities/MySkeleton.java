@@ -33,6 +33,7 @@ import com.jme3.animation.SkeletonControl;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
@@ -264,27 +265,6 @@ public class MySkeleton {
     }
 
     /**
-     * Convert a location in a bone's local space to a location in model space.
-     * TODO storeResult
-     *
-     * @param bone (not null, unaffected)
-     * @param x displacement along the bone's X-axis
-     * @param y displacement along the bone's Y-axis
-     * @param z displacement along the bone's Z-axis
-     * @return a new vector
-     *
-     */
-    public static Vector3f modelLocation(Bone bone, float x, float y, float z) {
-        Vector3f tail = bone.getModelSpacePosition();
-        Vector3f scale = bone.getModelSpaceScale();
-        Vector3f result = new Vector3f(x, y, z).multLocal(scale);
-        // TODO rotation??
-        result.addLocal(tail);
-
-        return result;
-    }
-
-    /**
      * Count the number of leaf bones in the specified skeleton.
      *
      * @param skeleton (not null, unaffected)
@@ -399,65 +379,31 @@ public class MySkeleton {
     }
 
     /**
-     * Calculate the world location of (the tail of) a named bone. TODO
-     * storeResult
+     * Calculate the world location of (the tail of) a named bone.
      *
      * @param spatial skeletonized spatial that contains the bone (not null,
      * unaffected)
      * @param boneName (not null)
-     * @return new vector in world coordinates
+     * @param storeResult (modified if not null)
+     * @return world coordinates (either storeResult or a new instance)
      */
-    public static Vector3f worldLocation(Spatial spatial, String boneName) {
+    public static Vector3f worldLocation(Spatial spatial, String boneName,
+            Vector3f storeResult) {
         Validate.nonNull(spatial, "spatial");
         Validate.nonNull(boneName, "bone name");
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
 
         Bone bone = findBone(spatial, boneName);
         Vector3f localCoordinates = bone.getModelSpacePosition();
-
-        Vector3f result;
-        if (MySpatial.isIgnoringTransforms(spatial)) { // TODO JME 3.2
-            result = localCoordinates.clone();
+        Geometry animatedGeometry = MySpatial.findAnimatedGeometry(spatial);
+        if (animatedGeometry.isIgnoreTransform()) { // TODO JME 3.2
+            storeResult.set(localCoordinates);
         } else {
-            result = spatial.localToWorld(localCoordinates, null);
+            animatedGeometry.localToWorld(localCoordinates, storeResult);
         }
 
-        return result;
-    }
-
-    /**
-     * Calculate the world orientation of a bone. TODO storeResult
-     *
-     * @param spatial skeletonized spatial that contains the bone (not null,
-     * unaffected)
-     * @param bone (not null, unaffected)
-     * @return new instance in world coordinates
-     */
-    public static Quaternion worldOrientation(Spatial spatial, Bone bone) {
-        Validate.nonNull(spatial, "spatial");
-        Validate.nonNull(bone, "bone");
-
-        Quaternion boneInModel = bone.getModelSpaceRotation();
-        Quaternion modelInWorld = spatial.getWorldRotation();
-        Quaternion result = modelInWorld.mult(boneInModel);
-
-        return result;
-    }
-
-    /**
-     * Calculate the world orientation of a named bone. TODO storeResult
-     *
-     * @param spatial skeletonized spatial that contains the bone (not null)
-     * @param boneName (not null)
-     * @return new instance
-     */
-    public static Quaternion worldOrientation(Spatial spatial,
-            String boneName) {
-        Validate.nonNull(spatial, "spatial");
-        Validate.nonNull(boneName, "bone");
-
-        Bone bone = findBone(spatial, boneName);
-        Quaternion result = worldOrientation(spatial, bone);
-
-        return result;
+        return storeResult;
     }
 }
