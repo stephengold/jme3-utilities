@@ -1,12 +1,12 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.25 released TBD
+## Version 0.9.25 released 26 September 2017
 
  + Added caller-provided storage and used the transform of an animated geometry
    in MySkeleton.worldLocation()
  + Removed modelLocation() and 2 worldOrientation() methods from MySkeleton
  + Added more tests for ignoreTransform
- + Added support for more bones than skinnning matrices in
+ + Added support for more bones than skinning matrices in
    MyMesh.vertexLocation()
  + Made use of MyMesh.vertexVector3f() in MySpatial.findMinMaxCoords()
 
