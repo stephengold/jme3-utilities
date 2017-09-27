@@ -860,7 +860,7 @@ public class MySpatial {
             throw new IllegalArgumentException("transform ignored");
         }
 
-        Spatial parent = spatial.getParent();
+        Node parent = spatial.getParent();
         if (parent == null) {
             spatial.setLocalTranslation(worldLocation);
         } else {
