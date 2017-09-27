@@ -33,6 +33,7 @@ import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.util.logging.Logger;
+import jme3utilities.MySpatial;
 import jme3utilities.Validate;
 
 /**
@@ -389,8 +390,14 @@ public class MyMath {
         /*
          * Transform the vertex and the sample point.
          */
-        Vector3f localVertex = spatial.worldToLocal(worldVertex, null);
-        Vector3f localSample = spatial.worldToLocal(worldSample, null);
+        Vector3f localSample, localVertex;
+        if (MySpatial.isIgnoringTransforms(spatial)) { // TODO JME 3.2
+            localSample = worldSample;
+            localVertex = worldVertex;
+        } else {
+            localSample = spatial.worldToLocal(worldSample, null);
+            localVertex = spatial.worldToLocal(worldVertex, null);
+        }
 
         Vector3f localDirection = localSample.subtract(localVertex);
         localDirection.normalizeLocal();
