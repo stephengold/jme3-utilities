@@ -382,27 +382,17 @@ abstract public class InputMode
         String assetPath = getConfigPath();
         if (assetPath == null) {
             logger.log(Level.WARNING,
-                    "bindings not saved: config path not set");
+                    "Hotkey bindings not saved: config path not set");
             return;
         }
 
-        FileOutputStream stream = null;
         try {
             saveBindings(assetPath);
-
         } catch (IOException exception) {
             logger.log(Level.SEVERE,
                     "Output exception while saving hotkey bindings to {0}!",
                     MyString.quote(assetPath));
             throw new RuntimeException(exception);
-
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                }
-            }
         }
     }
 
