@@ -54,7 +54,8 @@ import java.util.zip.ZipInputStream;
 import javax.imageio.ImageIO;
 
 /**
- * Miscellaneous utility methods. All methods should be static.
+ * Miscellaneous utility methods in the jme3-utilities-heart library. All
+ * methods should be static.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -184,7 +185,7 @@ public class Misc {
      * @return project name, library name, branch, and revision
      */
     public static String getVersion() {
-        return "jme3-utilities jme3-utilities-heart master $Rev: 0.9.26 $";
+        return "jme3-utilities jme3-utilities-heart master $Rev: 0.9.26+1 $";
     }
 
     /**
