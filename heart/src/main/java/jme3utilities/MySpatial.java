@@ -111,8 +111,8 @@ public class MySpatial {
         }
 
         if (newParent != oldParent) {
-            float scaleFactor = oldParent.getWorldScale().x
-                    / newParent.getWorldScale().x;
+            float scaleFactor
+                    = oldParent.getWorldScale().x / newParent.getWorldScale().x;
             Vector3f localScale = child.getLocalScale();
             localScale.multLocal(scaleFactor);
             child.setLocalScale(localScale);
@@ -781,6 +781,39 @@ public class MySpatial {
     }
 
     /**
+     * Enumerate all animated meshes in the specified subtree of a scene graph.
+     * Note: recursive!
+     *
+     * @param subtree (not null, unaffected)
+     * @param storeResult (added to if not null)
+     * @return an expanded list (either storeResult or a new instance)
+     */
+    public static List<Mesh> listAnimatedMeshes(Spatial subtree,
+            List<Mesh> storeResult) {
+        Validate.nonNull(subtree, "subtree");
+        if (storeResult == null) {
+            storeResult = new ArrayList<>(10);
+        }
+
+        if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
+            Mesh mesh = geometry.getMesh();
+            if (mesh.isAnimated()) {
+                storeResult.add(mesh);
+            }
+
+        } else if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                listAnimatedMeshes(child, storeResult);
+            }
+        }
+
+        return storeResult;
+    }
+
+    /**
      * Clear all cached collision data from the specified subtree of the scene
      * graph and force a bound refresh. Note: recursive!
      *
@@ -987,5 +1020,38 @@ public class MySpatial {
 
             spatial.setLocalTransform(transform);
         }
+    }
+
+    /**
+     * Test whether the specified subtree of a scene graph contains any of the
+     * collected spatials.
+     *
+     * @param subtree subtree to traverse (may be null, unaffected)
+     * @param collection spatials to find (not null, unaffected)
+     * @return true if one of the collected spatials was found, otherwise false
+     */
+    public static boolean subtreeContainsAny(Spatial subtree,
+            Collection<Spatial> collection) {
+        boolean result;
+        if (subtree == null) {
+            result = false;
+        } else if (collection.isEmpty()) {
+            result = false;
+        } else if (collection.contains(subtree)) {
+            result = true;
+        } else if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            result = false;
+            for (Spatial spatial : collection) {
+                result = spatial.hasAncestor(node);
+                if (result) {
+                    break;
+                }
+            }
+        } else {
+            result = false;
+        }
+
+        return result;
     }
 }
