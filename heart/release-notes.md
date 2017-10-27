@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 0.9.26 released TBD
+
+ + Added listAnimatedMeshes() and subtreeContainsAny() to MySpatial class
+ + Added {cancel/get/map}Attachments() methods to MySkeleton class
+ + Added UncachedKey class
+
 ## Version 0.9.25 released 26 September 2017
 
  + Added caller-provided storage and used the transform of an animated geometry
