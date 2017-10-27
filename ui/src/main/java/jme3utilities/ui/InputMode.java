@@ -46,6 +46,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
+import jme3utilities.UncachedKey;
 import jme3utilities.Validate;
 
 /**
@@ -88,8 +89,8 @@ abstract public class InputMode
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            InputMode.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(InputMode.class.getName());
     // *************************************************************************
     // fields
 
@@ -608,8 +609,8 @@ abstract public class InputMode
         logger.log(Level.INFO, "Loading hotkey bindings from asset {0}.",
                 MyString.quote(assetPath));
 
-        PropertiesKey key = new PropertiesKey(assetPath);
-        hotkeyBindings = assetManager.loadAsset(key);
+        UncachedKey key = new UncachedKey(assetPath);
+        hotkeyBindings = (Properties) assetManager.loadAsset(key);
 
         for (String keyString : hotkeyBindings.stringPropertyNames()) {
             String actionName = hotkeyBindings.getProperty(keyString);
