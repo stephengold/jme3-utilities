@@ -56,8 +56,8 @@ public class VectorXZ
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            VectorXZ.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(VectorXZ.class.getName());
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_Y}
      */

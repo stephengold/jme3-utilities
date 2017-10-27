@@ -53,8 +53,8 @@ public class RectangleMesh extends Mesh {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            RectangleMesh.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(RectangleMesh.class.getName());
     // *************************************************************************
     // constructors
 

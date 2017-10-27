@@ -83,8 +83,8 @@ public class DomeMesh extends Mesh {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            DomeMesh.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(DomeMesh.class.getName());
     // *************************************************************************
     // fields
 

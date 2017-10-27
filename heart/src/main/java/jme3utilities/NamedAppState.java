@@ -52,8 +52,8 @@ public class NamedAppState implements AppState {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            NamedAppState.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(NamedAppState.class.getName());
     // *************************************************************************
     // fields
 

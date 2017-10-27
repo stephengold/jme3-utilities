@@ -45,8 +45,8 @@ public class WaterProcessor extends SimpleWaterProcessor {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            WaterProcessor.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(WaterProcessor.class.getName());
     // *************************************************************************
     // fields
 

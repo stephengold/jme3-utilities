@@ -49,8 +49,8 @@ public class MyVector3f {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MyVector3f.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MyVector3f.class.getName());
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */

@@ -53,8 +53,8 @@ abstract public class SubtreeControl extends SimpleControl {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            SubtreeControl.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(SubtreeControl.class.getName());
     // *************************************************************************
     // fields
 

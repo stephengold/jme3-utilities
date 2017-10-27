@@ -56,8 +56,8 @@ public class NameGenerator implements Savable {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            NameGenerator.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(NameGenerator.class.getName());
     // *************************************************************************
     // fields
 

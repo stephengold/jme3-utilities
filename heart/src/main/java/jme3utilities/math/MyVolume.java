@@ -53,8 +53,8 @@ public class MyVolume {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MyVolume.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MyVolume.class.getName());
     // *************************************************************************
     // constructors
 
@@ -114,8 +114,8 @@ public class MyVolume {
         Validate.nonNegative(radius, "radius");
         Validate.nonNegative(height, "height");
 
-        float volume =
-                FastMath.PI * FastMath.ONE_THIRD * radius * radius * height;
+        float volume
+                = FastMath.PI * FastMath.ONE_THIRD * radius * radius * height;
         return volume;
     }
 
@@ -134,8 +134,8 @@ public class MyVolume {
                     "half-extents should all be non-negative");
         }
 
-        float volume =
-                FastMath.TWO_PI * halfExtents.x * halfExtents.y * halfExtents.z;
+        float volume = FastMath.TWO_PI
+                * halfExtents.x * halfExtents.y * halfExtents.z;
         return volume;
     }
 
@@ -148,8 +148,8 @@ public class MyVolume {
     public static float sphereVolume(float radius) {
         Validate.nonNegative(radius, "radius");
 
-        float volume =
-                4f * FastMath.ONE_THIRD * FastMath.PI * MyMath.cube(radius);
+        float volume
+                = 4f * FastMath.ONE_THIRD * FastMath.PI * MyMath.cube(radius);
         return volume;
     }
 

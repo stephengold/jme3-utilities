@@ -46,8 +46,8 @@ public class Generator extends Random {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            Generator.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(Generator.class.getName());
     /**
      * version number for serialization
      */

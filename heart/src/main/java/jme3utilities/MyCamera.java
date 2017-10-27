@@ -54,8 +54,8 @@ final public class MyCamera {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MyCamera.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MyCamera.class.getName());
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
@@ -84,6 +84,7 @@ final public class MyCamera {
     public static float azimuth(Camera camera) {
         Vector3f direction = camera.getDirection();
         float azimuth = MyVector3f.azimuth(direction);
+
         return azimuth;
     }
 

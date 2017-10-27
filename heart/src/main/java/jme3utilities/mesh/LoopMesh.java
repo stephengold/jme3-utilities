@@ -58,8 +58,8 @@ public class LoopMesh extends Mesh {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            LoopMesh.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(LoopMesh.class.getName());
     // *************************************************************************
     // fields
 

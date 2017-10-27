@@ -45,8 +45,8 @@ public class RectangleOutlineMesh extends Mesh {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            RectangleOutlineMesh.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(RectangleOutlineMesh.class.getName());
     // *************************************************************************
     // constructors
 

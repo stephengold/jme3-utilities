@@ -55,8 +55,8 @@ final public class MyAsset {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MyAsset.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MyAsset.class.getName());
     /**
      * reusable unit-square mesh
      */
@@ -64,19 +64,23 @@ final public class MyAsset {
     /**
      * asset path of the Particle material definition
      */
-    final private static String particleMaterialAssetPath = "Common/MatDefs/Misc/Particle.j3md";
+    final private static String particleMaterialAssetPath
+            = "Common/MatDefs/Misc/Particle.j3md";
     /**
      * asset path of the shaded material definition
      */
-    final public static String shadedMaterialAssetPath = "Common/MatDefs/Light/Lighting.j3md";
+    final public static String shadedMaterialAssetPath
+            = "Common/MatDefs/Light/Lighting.j3md";
     /**
      * asset path to the Unshaded material definition
      */
-    final public static String unshadedMaterialAssetPath = "Common/MatDefs/Misc/Unshaded.j3md";
+    final public static String unshadedMaterialAssetPath
+            = "Common/MatDefs/Misc/Unshaded.j3md";
     /**
      * asset path to the wireframe material definition
      */
-    final public static String wireframeMaterialAssetPath = "MatDefs/wireframe/wireframe.j3md";
+    final public static String wireframeMaterialAssetPath
+            = "MatDefs/wireframe/wireframe.j3md";
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_XYZ}
      */

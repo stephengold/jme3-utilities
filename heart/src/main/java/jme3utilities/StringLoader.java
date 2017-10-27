@@ -46,8 +46,8 @@ public class StringLoader implements AssetLoader {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            StringLoader.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(StringLoader.class.getName());
     // *************************************************************************
     // AssetLoader methods
 

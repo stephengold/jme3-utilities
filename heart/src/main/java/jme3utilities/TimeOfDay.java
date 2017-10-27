@@ -64,8 +64,8 @@ public class TimeOfDay extends NamedAppState {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            TimeOfDay.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(TimeOfDay.class.getName());
     // *************************************************************************
     // fields
 

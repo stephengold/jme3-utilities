@@ -41,8 +41,8 @@ final public class MyArray {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MyArray.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MyArray.class.getName());
     // *************************************************************************
     // constructors
 
