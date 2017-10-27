@@ -40,7 +40,9 @@ import com.jme3.scene.control.Control;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -72,6 +74,28 @@ public class MySkeleton {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Cancel the attachments node (if any) of the specified bone. The invoker
+     * is responsible for removing the node from the scene graph.
+     *
+     * @param bone which bone (not null, modified)
+     */
+    public static void cancelAttachments(Bone bone) {
+        Class<?> boneClass = bone.getClass();
+        Field attachNodeField;
+        try {
+            attachNodeField = boneClass.getDeclaredField("attachNode");
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException();
+        }
+        attachNodeField.setAccessible(true);
+        try {
+            attachNodeField.set(bone, null);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException();
+        }
+    }
 
     /**
      * Copy the bind transform of the specified bone.
@@ -178,6 +202,31 @@ public class MySkeleton {
     }
 
     /**
+     * Access the attachments node of the specified bone.
+     *
+     * @param bone which bone (not null, unaffected)
+     * @return the pre-existing instance, or null if none
+     */
+    public static Node getAttachments(Bone bone) {
+        Class<?> boneClass = bone.getClass();
+        Field attachNodeField;
+        try {
+            attachNodeField = boneClass.getDeclaredField("attachNode");
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException();
+        }
+        attachNodeField.setAccessible(true);
+        Node result;
+        try {
+            result = (Node) attachNodeField.get(bone);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException();
+        }
+
+        return result;
+    }
+
+    /**
      * Enumerate all named bones in the specified skeleton.
      *
      * @param skeleton which skeleton (not null, unaffected)
@@ -265,6 +314,63 @@ public class MySkeleton {
     }
 
     /**
+     * Map all attachments in the specified skeleton.
+     *
+     * @param skeleton (not null, unaffected)
+     * @param storeResult (added to if not null)
+     * @return an expanded map (either storeResult or a new instance)
+     */
+    public static Map<Bone, Spatial> mapAttachments(Skeleton skeleton,
+            Map<Bone, Spatial> storeResult) {
+        Validate.nonNull(skeleton, "skeleton");
+        if (storeResult == null) {
+            storeResult = new HashMap<>(4);
+        }
+
+        int numBones = skeleton.getBoneCount();
+        for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
+            Bone bone = skeleton.getBone(boneIndex);
+            Node attachmentsNode = getAttachments(bone);
+            if (attachmentsNode != null) {
+                if (storeResult.containsKey(bone)) {
+                    if (storeResult.get(bone) != attachmentsNode) {
+                        throw new IllegalStateException();
+                    }
+                } else {
+                    storeResult.put(bone, attachmentsNode);
+                }
+            }
+
+        }
+
+        return storeResult;
+    }
+
+    /**
+     * Map all attachments nodes in the specified subtree of a scene graph.
+     *
+     * @param subtree (not null, unaffected)
+     * @param storeResult (added to if not null)
+     * @return an expanded map (either storeResult or a new instance)
+     */
+    public static Map<Bone, Spatial> mapAttachments(Spatial subtree,
+            Map<Bone, Spatial> storeResult) {
+        Validate.nonNull(subtree, "subtree");
+        if (storeResult == null) {
+            storeResult = new HashMap<>(4);
+        }
+
+        List<SkeletonControl> list
+                = MySpatial.listControls(subtree, SkeletonControl.class, null);
+        for (SkeletonControl control : list) {
+            Skeleton skeleton = control.getSkeleton();
+            mapAttachments(skeleton, storeResult);
+        }
+
+        return storeResult;
+    }
+
+    /**
      * Count the number of leaf bones in the specified skeleton.
      *
      * @param skeleton (not null, unaffected)
@@ -298,8 +404,8 @@ public class MySkeleton {
     }
 
     /**
-     * Alter the name of the specified bone. The caller is responsible for
-     * avoiding duplicate names.
+     * Rename of the specified bone. The caller is responsible for avoiding
+     * duplicate names.
      *
      * @param bone bone to change (not null, modified)
      * @param newName name to apply
@@ -323,27 +429,15 @@ public class MySkeleton {
             return false;
         }
         /*
-         * Find the attach node, if any.
+         * Find the attachments node, if any.
          */
-        Field attachNodeField;
-        try {
-            attachNodeField = boneClass.getDeclaredField("attachNode");
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException();
-        }
-        attachNodeField.setAccessible(true);
-        Node attachNode;
-        try {
-            attachNode = (Node) attachNodeField.get(bone);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException();
-        }
-        if (attachNode != null) {
+        Node attachmentsNode = getAttachments(bone);
+        if (attachmentsNode != null) {
             /*
              * Also rename the attach node.
              */
             String newNodeName = newName + "_attachnode";
-            attachNode.setName(newNodeName);
+            attachmentsNode.setName(newNodeName);
         }
 
         return true;
