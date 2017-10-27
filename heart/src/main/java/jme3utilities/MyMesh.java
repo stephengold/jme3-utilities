@@ -235,12 +235,12 @@ public class MyMesh {
                     } else {
                         s = matrixIdentity;
                     }
-                    storeResult.x += weight
-                            * (s.m00 * b.x + s.m01 * b.y + s.m02 * b.z + s.m03);
-                    storeResult.y += weight
-                            * (s.m10 * b.x + s.m11 * b.y + s.m12 * b.z + s.m13);
-                    storeResult.z += weight
-                            * (s.m20 * b.x + s.m21 * b.y + s.m22 * b.z + s.m23);
+                    float xOf = s.m00 * b.x + s.m01 * b.y + s.m02 * b.z + s.m03;
+                    float yOf = s.m10 * b.x + s.m11 * b.y + s.m12 * b.z + s.m13;
+                    float zOf = s.m20 * b.x + s.m21 * b.y + s.m22 * b.z + s.m23;
+                    storeResult.x += weight * xOf;
+                    storeResult.y += weight * yOf;
+                    storeResult.z += weight * zOf;
                 }
             }
 
