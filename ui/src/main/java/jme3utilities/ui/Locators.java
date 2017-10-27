@@ -53,8 +53,8 @@ public class Locators {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            Locators.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(Locators.class.getName());
     // *************************************************************************
     // fields
 
@@ -66,7 +66,8 @@ public class Locators {
      * list of locator types (1st element is tried first, parallel with
      * {@link #rootPaths})
      */
-    final private List<Class<? extends AssetLocator>> locatorTypes = new ArrayList<>(6);
+    final private List<Class<? extends AssetLocator>> locatorTypes
+            = new ArrayList<>(6);
     /**
      * stack of configurations for save/restore (the last element is the current
      * configuration)
@@ -140,7 +141,7 @@ public class Locators {
      */
     public static void register(List<String> specList) {
         Validate.nonNull(specList, "spec list");
-        
+
         for (String specifier : specList) {
             register(specifier);
         }

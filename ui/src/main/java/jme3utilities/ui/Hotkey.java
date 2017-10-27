@@ -60,8 +60,8 @@ public class Hotkey {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            Hotkey.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(Hotkey.class.getName());
     // *************************************************************************
     // fields
 

@@ -49,8 +49,8 @@ public class Signals implements ActionListener {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            Signals.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(Signals.class.getName());
     // *************************************************************************
     // fields
 

@@ -45,8 +45,8 @@ public class PropertiesLoader implements AssetLoader {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            PropertiesLoader.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(PropertiesLoader.class.getName());
     // *************************************************************************
     // AssetLoader methods
 

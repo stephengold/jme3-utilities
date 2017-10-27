@@ -44,8 +44,8 @@ public class ActionAppState extends SimpleAppState {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            ActionAppState.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(ActionAppState.class.getName());
     // *************************************************************************
     // fields
 
@@ -59,10 +59,10 @@ public class ActionAppState extends SimpleAppState {
     protected Signals signals = null;
     // *************************************************************************
     // constructor
-    
+
     /**
      * Instantiate an uninitialized state.
-     * 
+     *
      * @param enabled true &rarr; enabled, false &rarr; disabled
      */
     public ActionAppState(boolean enabled) {

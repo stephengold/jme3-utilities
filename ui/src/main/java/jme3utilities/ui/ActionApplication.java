@@ -54,8 +54,8 @@ abstract public class ActionApplication
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            ActionApplication.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(ActionApplication.class.getName());
     /**
      * names of flyCam actions and the signals used to simulate them
      */

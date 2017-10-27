@@ -41,8 +41,8 @@ public class UiVersion {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            UiVersion.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(UiVersion.class.getName());
     // *************************************************************************
     // constructors
 
