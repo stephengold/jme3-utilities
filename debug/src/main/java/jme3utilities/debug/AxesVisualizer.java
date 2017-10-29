@@ -27,6 +27,7 @@
 package jme3utilities.debug;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
@@ -206,7 +207,7 @@ public class AxesVisualizer extends SubtreeControl {
     /**
      * Calculate the tip location of the indexed axis.
      *
-     * @param axisIndex which axis in the CGM's AxesControl (&ge;0, &lt;3)
+     * @param axisIndex which axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      * @return a new vector (in world coordinates) or null if not displayed
      */
     public Vector3f tipLocation(int axisIndex) {
@@ -216,13 +217,13 @@ public class AxesVisualizer extends SubtreeControl {
         if (isEnabled()) {
             Vector3f tipLocal;
             switch (axisIndex) {
-                case 0:
+                case PhysicsSpace.AXIS_X:
                     tipLocal = xAxis;
                     break;
-                case 1:
+                case PhysicsSpace.AXIS_Y:
                     tipLocal = yAxis;
                     break;
-                case 2:
+                case PhysicsSpace.AXIS_Z:
                     tipLocal = zAxis;
                     break;
                 default:
