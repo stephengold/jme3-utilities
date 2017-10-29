@@ -40,7 +40,6 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.logging.Logger;
 import jme3utilities.MySkeleton;
-import jme3utilities.Validate;
 
 /**
  * A mesh used to visualize a skeleton. Each vertex corresponds to a bone in the
@@ -56,15 +55,15 @@ class SkeletonMesh extends Mesh {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            SkeletonMesh.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(SkeletonMesh.class.getName());
     // *************************************************************************
     // constructors
 
     /**
      * Instantiate a mesh for the specified skeleton.
      *
-     * @param skeleton the skeleton to visualize (may be null)
+     * @param skeleton the skeleton to visualize (may be null, unaffected)
      * @param mode mode for the mesh (Mode.Lines or Mode.Points)
      */
     SkeletonMesh(Skeleton skeleton, Mode mode) {
@@ -99,7 +98,7 @@ class SkeletonMesh extends Mesh {
              */
             shorts.clear(); // prepare for writing
             for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
-                Bone child = skeleton.getBone(boneIndex);
+                Bone child = skeleton.getBone(boneIndex); // skeleton != null
                 Bone parent = child.getParent();
                 if (parent != null) {
                     short parentIndex = (short) skeleton.getBoneIndex(parent);
@@ -119,11 +118,9 @@ class SkeletonMesh extends Mesh {
     /**
      * Update the color of each vertex in the mesh.
      *
-     * @param colors color for each bone (not null)
+     * @param colors color for each bone (not null, unaffected)
      */
     void updateColors(ColorRGBA[] colors) {
-        Validate.nonNull(colors, "colors");
-
         FloatBuffer fColors = getFloatBuffer(Type.Color);
         fColors.clear(); // prepare for writing
 
@@ -144,7 +141,7 @@ class SkeletonMesh extends Mesh {
     /**
      * Update the position of each vertex in the mesh.
      *
-     * @param skeleton the skeleton to visualize (may be null)
+     * @param skeleton the skeleton to visualize (may be null, unaffected)
      */
     void updatePositions(Skeleton skeleton) {
         FloatBuffer floats = getFloatBuffer(Type.Position);
@@ -156,7 +153,7 @@ class SkeletonMesh extends Mesh {
             boneCount = skeleton.getBoneCount();
         }
         for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
-            Bone bone = skeleton.getBone(boneIndex);
+            Bone bone = skeleton.getBone(boneIndex); // skeleton != null
             Vector3f location = bone.getModelSpacePosition();
             floats.put(location.x);
             floats.put(location.y);
