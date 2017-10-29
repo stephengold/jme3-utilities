@@ -57,8 +57,8 @@ public class PerformanceAppState extends SimpleAppState {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            PerformanceAppState.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(PerformanceAppState.class.getName());
     /**
      * asset path to the default font
      */
@@ -165,8 +165,8 @@ public class PerformanceAppState extends SimpleAppState {
         /*
          * Create and attach a colored background for the display.
          */
-        Material backgroudMaterial = MyAsset.createUnshadedMaterial(
-                assetManager);
+        Material backgroudMaterial
+                = MyAsset.createUnshadedMaterial(assetManager);
         backgroudMaterial.setColor("Color", backgroundColor.clone());
         RenderState renderState = backgroudMaterial.getAdditionalRenderState();
         renderState.setBlendMode(RenderState.BlendMode.Alpha);

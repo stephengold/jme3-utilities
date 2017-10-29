@@ -73,13 +73,13 @@ public class LandscapeControl extends SubtreeControl {
     /**
      * color for grass
      */
-    final private static ColorRGBA grassColor = new ColorRGBA(
-            0.65f, 0.8f, 0.2f, 1f);
+    final private static ColorRGBA grassColor
+            = new ColorRGBA(0.65f, 0.8f, 0.2f, 1f);
     /**
      * color for stone
      */
-    final private static ColorRGBA stoneColor = new ColorRGBA(
-            0.8f, 0.8f, 0.6f, 1f);
+    final private static ColorRGBA stoneColor
+            = new ColorRGBA(0.8f, 0.8f, 0.6f, 1f);
     /**
      * length of the lintel stones in the monument
      */
@@ -115,8 +115,8 @@ public class LandscapeControl extends SubtreeControl {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            LandscapeControl.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(LandscapeControl.class.getName());
     /**
      * asset path of the terrain's height map
      */
@@ -282,8 +282,8 @@ public class LandscapeControl extends SubtreeControl {
         Material stoneMaterial = createShadedMaterial(stoneColor);
         Node node = new Node("monument");
         float ringRadius = ringDiameter / 2f;
-        Box uprightMesh = new Box(uprightWidth / 2f, uprightHeight / 2f,
-                ringDepth / 2);
+        Box uprightMesh
+                = new Box(uprightWidth / 2f, uprightHeight / 2f, ringDepth / 2);
         for (int index = 0; index < numUprights; index++) {
             String name = "upright" + index;
             Geometry upright = new Geometry(name, uprightMesh);
@@ -333,8 +333,8 @@ public class LandscapeControl extends SubtreeControl {
     private Material createShadedMaterial(ColorRGBA color) {
         assert color != null;
 
-        Material material = new Material(assetManager,
-                MyAsset.shadedMaterialAssetPath);
+        Material material
+                = new Material(assetManager, MyAsset.shadedMaterialAssetPath);
         material.setBoolean("UseMaterialColors", true);
         material.setColor("Ambient", color.clone());
         material.setColor("Diffuse", color.clone());
@@ -354,8 +354,8 @@ public class LandscapeControl extends SubtreeControl {
 
         int mapSize = terrainDiameter + 1; // number of samples on a side
         float[] heightArray = heightMap.getHeightMap();
-        TerrainQuad quad = new TerrainQuad(
-                "terrain", patchSize, mapSize, heightArray);
+        TerrainQuad quad
+                = new TerrainQuad("terrain", patchSize, mapSize, heightArray);
         Material grass = getGrass();
         quad.setMaterial(grass);
         quad.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
@@ -373,12 +373,12 @@ public class LandscapeControl extends SubtreeControl {
      * @return new instance
      */
     private AbstractHeightMap loadHeightMap() {
-        Texture heightTexture = MyAsset.loadTexture(
-                assetManager, heightMapAssetPath);
+        Texture heightTexture
+                = MyAsset.loadTexture(assetManager, heightMapAssetPath);
         Image heightImage = heightTexture.getImage();
         float heightScale = 1f;
-        AbstractHeightMap heightMap = new ImageBasedHeightMap(
-                heightImage, heightScale);
+        AbstractHeightMap heightMap
+                = new ImageBasedHeightMap(heightImage, heightScale);
         heightMap.load();
 
         return heightMap;
