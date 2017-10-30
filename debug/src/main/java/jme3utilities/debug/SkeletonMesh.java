@@ -169,7 +169,7 @@ class SkeletonMesh extends Mesh {
         updateBound();
     }
     // *************************************************************************
-    // Object methods
+    // Mesh methods
 
     /**
      * Create a shallow copy of this mesh.

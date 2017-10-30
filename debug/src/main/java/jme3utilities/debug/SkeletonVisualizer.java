@@ -422,7 +422,44 @@ public class SkeletonVisualizer extends SubtreeControl {
         }
     }
     // *************************************************************************
-    // AbstractControl methods
+    // SubtreeControl methods
+
+    /**
+     * Create a shallow copy of this control.
+     *
+     * @return a new control, equivalent to this one
+     * @throws CloneNotSupportedException if superclass isn't cloneable
+     */
+    @Override
+    public SkeletonVisualizer clone() throws CloneNotSupportedException {
+        SkeletonVisualizer clone = (SkeletonVisualizer) super.clone();
+        return clone;
+    }
+
+    /**
+     * Convert this shallow-cloned control into a deep-cloned one, using the
+     * specified cloner and original to resolve copied fields.
+     *
+     * @param cloner the cloner currently cloning this control
+     * @param original the control from which this control was shallow-cloned
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+
+        lineMaterial = cloner.clone(lineMaterial);
+        pointMaterial = cloner.clone(pointMaterial);
+        standardPointColor = cloner.clone(standardPointColor);
+        skeleton = cloner.clone(skeleton);
+
+        Map<Integer, ColorRGBA> copyColors = new TreeMap<>();
+        for (Map.Entry<Integer, ColorRGBA> entry : pointColors.entrySet()) {
+            int key = entry.getKey();
+            ColorRGBA value = entry.getValue().clone();
+            copyColors.put(key, value);
+        }
+        pointColors = copyColors;
+    }
 
     /**
      * Callback invoked when the spatial's geometric state is about to be
@@ -508,46 +545,5 @@ public class SkeletonVisualizer extends SubtreeControl {
             foundSkeleton = MySkeleton.findSkeleton(newNode);
         }
         setSkeleton(foundSkeleton);
-    }
-    // *************************************************************************
-    // JmeCloneable methods
-
-    /**
-     * Convert this shallow-cloned control into a deep-cloned one, using the
-     * specified cloner and original to resolve copied fields.
-     *
-     * @param cloner the cloner currently cloning this control
-     * @param original the control from which this control was shallow-cloned
-     */
-    @Override
-    public void cloneFields(Cloner cloner, Object original) {
-        super.cloneFields(cloner, original);
-
-        lineMaterial = cloner.clone(lineMaterial);
-        pointMaterial = cloner.clone(pointMaterial);
-        standardPointColor = cloner.clone(standardPointColor);
-        skeleton = cloner.clone(skeleton);
-
-        Map<Integer, ColorRGBA> copyColors = new TreeMap<>();
-        for (Map.Entry<Integer, ColorRGBA> entry : pointColors.entrySet()) {
-            int key = entry.getKey();
-            ColorRGBA value = entry.getValue().clone();
-            copyColors.put(key, value);
-        }
-        pointColors = copyColors;
-    }
-    // *************************************************************************
-    // Object methods
-
-    /**
-     * Create a shallow copy of this control.
-     *
-     * @return a new control, equivalent to this one
-     * @throws CloneNotSupportedException if superclass isn't cloneable
-     */
-    @Override
-    public SkeletonVisualizer clone() throws CloneNotSupportedException {
-        SkeletonVisualizer clone = (SkeletonVisualizer) super.clone();
-        return clone;
     }
 }

@@ -229,6 +229,18 @@ public class LandscapeControl extends SubtreeControl {
     // SubtreeControl methods
 
     /**
+     * Create a shallow copy of this control.
+     *
+     * @return a new control, equivalent to this one
+     * @throws CloneNotSupportedException if superclass isn't cloneable
+     */
+    @Override
+    public LandscapeControl clone() throws CloneNotSupportedException {
+        LandscapeControl clone = (LandscapeControl) super.clone();
+        return clone;
+    }
+
+    /**
      * De-serialize this instance, for example when loading from a J3O file.
      *
      * @param importer (not null)
@@ -257,20 +269,6 @@ public class LandscapeControl extends SubtreeControl {
 
         oc.write(terrainHeight, "terrainHeight", 0f);
         oc.write(terrainDiameter, "terrainDiameter", 0);
-    }
-    // *************************************************************************
-    // Object methods
-
-    /**
-     * Create a shallow copy of this control.
-     *
-     * @return a new control, equivalent to this one
-     * @throws CloneNotSupportedException if superclass isn't cloneable
-     */
-    @Override
-    public LandscapeControl clone() throws CloneNotSupportedException {
-        LandscapeControl clone = (LandscapeControl) super.clone();
-        return clone;
     }
     // *************************************************************************
     // private methods

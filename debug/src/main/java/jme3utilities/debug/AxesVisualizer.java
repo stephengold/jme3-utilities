@@ -239,7 +239,7 @@ public class AxesVisualizer extends SubtreeControl {
         return result;
     }
     // *************************************************************************
-    // Object methods
+    // SubtreeControl methods
 
     /**
      * Create a shallow copy of this control.
