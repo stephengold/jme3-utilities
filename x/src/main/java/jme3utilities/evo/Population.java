@@ -44,7 +44,7 @@ import jme3utilities.math.noise.Generator;
  * implement Comparable interface
  * @param <Element> type of elements collected (such as Solution)
  *
- * @author Stephen Gold
+ * @author Stephen Gold sgold@sonic.net
  */
 public class Population<Fitness extends Comparable<Fitness>, Element> {
     // *************************************************************************
@@ -53,8 +53,8 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            Population.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(Population.class.getName());
     // *************************************************************************
     // fields
 
@@ -70,8 +70,8 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
     /**
      * map fitness scores to elements (not null)
      */
-    final protected TreeMap<Fitness, List<Element>> elementsByFitness =
-            new TreeMap<>();
+    final protected TreeMap<Fitness, List<Element>> elementsByFitness
+            = new TreeMap<>();
     // *************************************************************************
     // constructors
 
@@ -172,8 +172,8 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
      * @see #worstScore()
      */
     public Fitness bestScore() {
-        Map.Entry<Fitness, List<Element>> bestEntry =
-                elementsByFitness.lastEntry();
+        Map.Entry<Fitness, List<Element>> bestEntry
+                = elementsByFitness.lastEntry();
         if (bestEntry == null) {
             return null;
         }
@@ -219,8 +219,8 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
      * @return the pre-existing instance or null if none
      */
     public Element fittest() {
-        Map.Entry<Fitness, List<Element>> bestEntry =
-                elementsByFitness.lastEntry();
+        Map.Entry<Fitness, List<Element>> bestEntry
+                = elementsByFitness.lastEntry();
         if (bestEntry == null) {
             return null;
         }
@@ -405,8 +405,8 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
      * @see #bestScore()
      */
     public Fitness worstScore() {
-        Map.Entry<Fitness, List<Element>> worstEntry =
-                elementsByFitness.firstEntry();
+        Map.Entry<Fitness, List<Element>> worstEntry
+                = elementsByFitness.firstEntry();
         if (worstEntry == null) {
             return null;
         }

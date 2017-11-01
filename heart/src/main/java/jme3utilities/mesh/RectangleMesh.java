@@ -33,8 +33,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A 2D, static, fan-mode mesh which renders an axis-aligned rectangle in the XY
- * plane.
+ * A 2-D, static, fan-mode mesh which renders an axis-aligned rectangle in the
+ * X-Y plane.
  * <p>
  * In local space, the rectangle extends from (x1,y1,0) to (x2,y2,0) with
  * normals set to (0,0,zNorm). In texture space, it extends extends from (s1,t1)
@@ -75,10 +75,8 @@ public class RectangleMesh extends Mesh {
      */
     public RectangleMesh(Rectangle rect, float zNorm) {
         this(0f, 1f, 0f, 1f,
-                rect.x,
-                rect.y,
-                rect.x + rect.width,
-                rect.y + rect.height,
+                rect.x, rect.y,
+                rect.x + rect.width, rect.y + rect.height,
                 zNorm);
     }
 

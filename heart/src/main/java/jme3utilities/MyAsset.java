@@ -194,8 +194,8 @@ final public class MyAsset {
         Validate.nonNull(assetManager, "asset manager");
         Validate.nonNull(texture, "texture");
 
-        Material material = new Material(
-                assetManager, particleMaterialAssetPath);
+        Material material
+                = new Material(assetManager, particleMaterialAssetPath);
         material.setTexture("Texture", texture);
 
         return material;
@@ -215,6 +215,7 @@ final public class MyAsset {
 
         Material material = new Material(assetManager, shadedMaterialAssetPath);
         material.setTexture("DiffuseMap", texture);
+
         return material;
     }
 
@@ -362,9 +363,8 @@ final public class MyAsset {
      */
     public static Material createUnshadedMaterial(AssetManager assetManager) {
         Validate.nonNull(assetManager, "asset manager");
-        Material material;
-        material = new Material(assetManager, unshadedMaterialAssetPath);
-
+        Material material
+                = new Material(assetManager, unshadedMaterialAssetPath);
         return material;
     }
 
@@ -454,8 +454,8 @@ final public class MyAsset {
         Validate.nonNull(color, "color");
         Validate.nonNegative(pointSize, "point size");
 
-        Material material;
-        material = new Material(assetManager, wireframeMaterialAssetPath);
+        Material material
+                = new Material(assetManager, wireframeMaterialAssetPath);
         material.getAdditionalRenderState().setWireframe(true);
         material.setColor("Color", color.clone());
         material.setFloat("PointSize", pointSize);
