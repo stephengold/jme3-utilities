@@ -26,6 +26,6 @@
  */
 /**
  * Reusable classes for implementing graphical user interfaces, for use with
- * jMonkeyEngine3 and Nifty.
+ * jMonkeyEngine3 and Nifty GUI.
  */
 package jme3utilities.nifty;

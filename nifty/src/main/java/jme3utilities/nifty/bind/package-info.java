@@ -25,7 +25,7 @@
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /**
- * Reusable classes which implement a hotkey bindings editor using
- * jMonkeyEngine3 and Nifty.
+ * Reusable classes which implement an editor screen for hotkey bindings using
+ * jMonkeyEngine3 and Nifty GUI.
  */
 package jme3utilities.nifty.bind;
