@@ -26,6 +26,7 @@
  */
 package jme3utilities.math;
 
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
@@ -203,13 +204,13 @@ public class MyVector3f {
 
         storeResult.zero();
         switch (axisIndex) {
-            case 0:
+            case PhysicsSpace.AXIS_X:
                 storeResult.x = length;
                 break;
-            case 1:
+            case PhysicsSpace.AXIS_Y:
                 storeResult.y = length;
                 break;
-            case 2:
+            case PhysicsSpace.AXIS_Z:
                 storeResult.z = length;
         }
 
@@ -1038,8 +1039,8 @@ public class MyVector3f {
         /*
          * All 4 locations are collinear.
          */
-        Vector3f result;
-        result = intersectCollinearSegments(first, start2, end2, start1, end1);
+        Vector3f result
+                = intersectCollinearSegments(first, start2, end2, start1, end1);
 
         return result;
     }
