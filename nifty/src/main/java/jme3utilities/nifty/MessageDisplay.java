@@ -46,8 +46,8 @@ public class MessageDisplay extends GuiScreenController {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MessageDisplay.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MessageDisplay.class.getName());
     // *************************************************************************
     // fieldss
 
@@ -87,8 +87,8 @@ public class MessageDisplay extends GuiScreenController {
 
         setEnabled(true);
         @SuppressWarnings("unchecked")
-        ListBox<String> listBox = getScreen().findNiftyControl(
-                "messages", ListBox.class);
+        ListBox<String> listBox
+                = getScreen().findNiftyControl("messages", ListBox.class);
         listBox.enable();
         int rows = listBox.getDisplayItemCount();
         /*

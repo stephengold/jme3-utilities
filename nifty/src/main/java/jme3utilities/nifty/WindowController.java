@@ -50,8 +50,8 @@ public class WindowController extends GuiAppState {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            WindowController.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(WindowController.class.getName());
     // *************************************************************************
     // fields
 

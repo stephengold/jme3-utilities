@@ -43,8 +43,8 @@ class HotkeyItem {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            HotkeyItem.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(HotkeyItem.class.getName());
     // *************************************************************************
     // fields
 
@@ -101,6 +101,7 @@ class HotkeyItem {
     boolean isForKeyCode(int keyCode) {
         int thisCode = hotkey.getKeyCode();
         boolean result = thisCode == keyCode;
+
         return result;
     }
     // *************************************************************************
@@ -124,6 +125,7 @@ class HotkeyItem {
         } else {
             result += "not bound";
         }
+
         return result;
     }
 }

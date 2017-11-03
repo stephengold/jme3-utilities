@@ -41,8 +41,8 @@ public class TextEntryDialog implements DialogController {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            TextEntryDialog.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(TextEntryDialog.class.getName());
     // *************************************************************************
     // DialogController methods
 

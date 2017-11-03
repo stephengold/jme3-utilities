@@ -47,8 +47,8 @@ public class BindInputMode extends InputMode {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            BindInputMode.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(BindInputMode.class.getName());
     /**
      * asset path to the cursor for this mode
      */

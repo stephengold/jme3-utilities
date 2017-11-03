@@ -305,8 +305,8 @@ public class PopScreenController extends BasicScreenController {
             closeActiveDialog();
 
         } else {
-            ListBox listBox;
-            listBox = dialogElement.findNiftyControl("#box", ListBox.class);
+            ListBox listBox
+                    = dialogElement.findNiftyControl("#box", ListBox.class);
             TextField textField = dialogElement.findNiftyControl("#textfield",
                     TextField.class);
 
@@ -406,8 +406,8 @@ public class PopScreenController extends BasicScreenController {
         TextRenderer textRenderer = prompt.getRenderer(TextRenderer.class);
         textRenderer.setText(promptMessage);
 
-        Button commitButton;
-        commitButton = dialogElement.findNiftyControl("#commit", Button.class);
+        Button commitButton = dialogElement.findNiftyControl("#commit",
+                Button.class);
         commitButton.setText(commitLabel);
 
         activateDialog(popupId, actionString, "#commit", controller);
@@ -481,8 +481,8 @@ public class PopScreenController extends BasicScreenController {
                 = dialogElement.findNiftyControl("#box", ListBox.class);
         listBox.addAllItems(itemList);
 
-        Button commitButton;
-        commitButton = dialogElement.findNiftyControl("#commit", Button.class);
+        Button commitButton
+                = dialogElement.findNiftyControl("#commit", Button.class);
         commitButton.setText(commitLabel);
 
         activateDialog(popupId, actionPrefix, "#commit", controller);
@@ -657,12 +657,12 @@ public class PopScreenController extends BasicScreenController {
         TextRenderer textRenderer = prompt.getRenderer(TextRenderer.class);
         textRenderer.setText(promptMessage);
 
-        TextField textField = dialogElement.findNiftyControl("#textfield",
-                TextField.class);
+        TextField textField
+                = dialogElement.findNiftyControl("#textfield", TextField.class);
         textField.setText(defaultValue);
 
-        Button commitButton;
-        commitButton = dialogElement.findNiftyControl("#commit", Button.class);
+        Button commitButton
+                = dialogElement.findNiftyControl("#commit", Button.class);
         commitButton.setText(commitLabel);
 
         activateDialog(popupId, actionPrefix, "#textfield", controller);

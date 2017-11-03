@@ -50,8 +50,8 @@ public class PopupMenu
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            PopupMenu.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(PopupMenu.class.getName());
     // *************************************************************************
     // fields
 

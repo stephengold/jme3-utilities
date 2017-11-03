@@ -46,8 +46,8 @@ public class FloatDialog implements DialogController {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            FloatDialog.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(FloatDialog.class.getName());
     // *************************************************************************
     // fields
 
@@ -164,8 +164,8 @@ public class FloatDialog implements DialogController {
      * @return a text string (not null)
      */
     private String getText(Element dialogElement) {
-        TextField textField = dialogElement.findNiftyControl("#textfield",
-                TextField.class);
+        TextField textField
+                = dialogElement.findNiftyControl("#textfield", TextField.class);
         String text = textField.getRealText();
 
         assert text != null;

@@ -43,8 +43,8 @@ class ActionItem {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            ActionItem.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(ActionItem.class.getName());
     // *************************************************************************
     // fields
 

@@ -45,8 +45,8 @@ public class LongDialog implements DialogController {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            LongDialog.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(LongDialog.class.getName());
     // *************************************************************************
     // fields
 
@@ -139,8 +139,8 @@ public class LongDialog implements DialogController {
             feedbackMessage = "must be a number";
         }
 
-        Button commitButton = dialogElement.findNiftyControl("#commit",
-                Button.class);
+        Button commitButton
+                = dialogElement.findNiftyControl("#commit", Button.class);
         commitButton.setText(commitLabel);
 
         Element feedbackElement = dialogElement.findElementById("#feedback");
@@ -157,8 +157,8 @@ public class LongDialog implements DialogController {
      * @return a text string (not null)
      */
     private String getText(Element dialogElement) {
-        TextField textField = dialogElement.findNiftyControl("#textfield",
-                TextField.class);
+        TextField textField
+                = dialogElement.findNiftyControl("#textfield", TextField.class);
         String text = textField.getRealText();
 
         assert text != null;

@@ -48,8 +48,8 @@ class DialogInputMode extends InputMode {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            DialogInputMode.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(DialogInputMode.class.getName());
     /**
      * asset path to the cursor for this mode
      */

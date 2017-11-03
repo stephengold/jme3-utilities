@@ -55,27 +55,33 @@ abstract public class GuiApplication extends ActionApplication {
     /**
      * asset path to Nifty XML for a confirmation dialog box
      */
-    final private static String confirmDialogAssetPath = "Interface/Nifty/dialogs/confirm.xml";
+    final private static String confirmDialogAssetPath
+            = "Interface/Nifty/dialogs/confirm.xml";
     /**
      * asset path to Nifty XML for a 43-line informational dialog box
      */
-    final private static String infoLargeDialogAssetPath = "Interface/Nifty/dialogs/info43.xml";
+    final private static String infoLargeDialogAssetPath
+            = "Interface/Nifty/dialogs/info43.xml";
     /**
      * asset path to Nifty XML for a 10-line informational dialog box
      */
-    final private static String infoSmallDialogAssetPath = "Interface/Nifty/dialogs/info10.xml";
+    final private static String infoSmallDialogAssetPath
+            = "Interface/Nifty/dialogs/info10.xml";
     /**
      * asset path to Nifty XML for a multi-select dialog box
      */
-    final private static String multiSelectDialogAssetPath = "Interface/Nifty/dialogs/multiSelect.xml";
+    final private static String multiSelectDialogAssetPath
+            = "Interface/Nifty/dialogs/multiSelect.xml";
     /**
      * asset path to Nifty XML for a generic popup menu
      */
-    final private static String popupMenuAsssetPath = "Interface/Nifty/popup-menu.xml";
+    final private static String popupMenuAsssetPath
+            = "Interface/Nifty/popup-menu.xml";
     /**
      * asset path to Nifty XML for a text-entry dialog box
      */
-    final private static String textEntryDialogAssetPath = "Interface/Nifty/dialogs/text-entry.xml";
+    final private static String textEntryDialogAssetPath
+            = "Interface/Nifty/dialogs/text-entry.xml";
     // *************************************************************************
     // fields
 
@@ -185,8 +191,8 @@ abstract public class GuiApplication extends ActionApplication {
             int height = cam.getHeight();
             int width = cam.getWidth();
             Camera niftyCam = new Camera(width, height);
-            ViewPort niftyView;
-            niftyView = renderManager.createPostView("NiftyGUI", niftyCam);
+            ViewPort niftyView
+                    = renderManager.createPostView("NiftyGUI", niftyCam);
             niftyView.addProcessor(niftyDisplay);
         }
 

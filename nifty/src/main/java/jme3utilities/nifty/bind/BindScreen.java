@@ -59,8 +59,8 @@ public class BindScreen
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            BindScreen.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(BindScreen.class.getName());
     /**
      * the short name for this mode
      */
@@ -358,6 +358,7 @@ public class BindScreen
                 return item;
             }
         }
+
         return null;
     }
 
@@ -369,8 +370,8 @@ public class BindScreen
     private ListBox<ActionItem> getActionBox() {
         Screen screen = getScreen();
         @SuppressWarnings("unchecked")
-        ListBox<ActionItem> listBox = screen.findNiftyControl(
-                "actionList", ListBox.class);
+        ListBox<ActionItem> listBox
+                = screen.findNiftyControl("actionList", ListBox.class);
 
         assert listBox != null;
         return listBox;
@@ -384,8 +385,8 @@ public class BindScreen
     private ListBox<HotkeyItem> getHotkeyBox() {
         Screen screen = getScreen();
         @SuppressWarnings("unchecked")
-        ListBox<HotkeyItem> listBox = screen.findNiftyControl(
-                "hotkeyList", ListBox.class);
+        ListBox<HotkeyItem> listBox
+                = screen.findNiftyControl("hotkeyList", ListBox.class);
 
         assert listBox != null;
         return listBox;
@@ -404,6 +405,7 @@ public class BindScreen
         }
         ActionItem item = selection.get(0);
         String actionName = item.getActionName();
+
         return actionName;
     }
 
@@ -420,6 +422,7 @@ public class BindScreen
         }
         HotkeyItem item = selection.get(0);
         Hotkey hotkey = item.getHotkey();
+
         return hotkey;
     }
 
@@ -431,6 +434,7 @@ public class BindScreen
     private boolean isActionSelected() {
         ListBox<ActionItem> listBox = getActionBox();
         List<ActionItem> selection = listBox.getSelection();
+
         boolean result = !selection.isEmpty();
         return result;
     }
@@ -449,6 +453,7 @@ public class BindScreen
                 return true;
             }
         }
+
         return false;
     }
 
@@ -461,6 +466,7 @@ public class BindScreen
         ListBox<HotkeyItem> listBox = getHotkeyBox();
         List<HotkeyItem> selection = listBox.getSelection();
         boolean result = !selection.isEmpty();
+
         return result;
     }
 

@@ -63,8 +63,8 @@ public class BasicScreenController
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            BasicScreenController.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(BasicScreenController.class.getName());
     // *************************************************************************
     // fields
 
@@ -93,7 +93,8 @@ public class BasicScreenController
     /**
      * list of controllers for all initialized windows in the screen
      */
-    final private List<WindowController> windowControllers = new ArrayList<>(20);
+    final private List<WindowController> windowControllers
+            = new ArrayList<>(20);
     // *************************************************************************
     // constructors
 
