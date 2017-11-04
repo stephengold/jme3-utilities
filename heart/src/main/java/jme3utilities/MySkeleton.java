@@ -82,14 +82,14 @@ public class MySkeleton {
      * @param bone which bone (not null, modified)
      */
     public static void cancelAttachments(Bone bone) {
-        Class<?> boneClass = bone.getClass();
         Field attachNodeField;
         try {
-            attachNodeField = boneClass.getDeclaredField("attachNode");
+            attachNodeField = Bone.class.getDeclaredField("attachNode");
         } catch (NoSuchFieldException e) {
             throw new RuntimeException();
         }
         attachNodeField.setAccessible(true);
+
         try {
             attachNodeField.set(bone, null);
         } catch (IllegalAccessException e) {
@@ -208,14 +208,14 @@ public class MySkeleton {
      * @return the pre-existing instance, or null if none
      */
     public static Node getAttachments(Bone bone) {
-        Class<?> boneClass = bone.getClass();
         Field attachNodeField;
         try {
-            attachNodeField = boneClass.getDeclaredField("attachNode");
+            attachNodeField = Bone.class.getDeclaredField("attachNode");
         } catch (NoSuchFieldException e) {
             throw new RuntimeException();
         }
         attachNodeField.setAccessible(true);
+
         Node result;
         try {
             result = (Node) attachNodeField.get(bone);
@@ -412,14 +412,14 @@ public class MySkeleton {
      * @return true if successful, otherwise false
      */
     public static boolean setName(Bone bone, String newName) {
-        Class<?> boneClass = bone.getClass();
         Field nameField;
         try {
-            nameField = boneClass.getDeclaredField("name");
+            nameField = Bone.class.getDeclaredField("name");
         } catch (NoSuchFieldException e) {
             return false;
         }
         nameField.setAccessible(true);
+
         try {
             /*
              * Rename the bone.
