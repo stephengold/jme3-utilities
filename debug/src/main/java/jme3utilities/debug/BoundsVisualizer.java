@@ -34,12 +34,15 @@ import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.WireBox;
+import com.jme3.scene.debug.WireSphere;
 import com.jme3.util.clone.Cloner;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
@@ -48,13 +51,13 @@ import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 
 /**
- * Subtree control to visualize the bounds of a spatial.
+ * Subtree control to visualize the world bound of a subject spatial.
  * <p>
  * The controlled spatial must be a node, but the subject (visualized spatial)
  * may be a geometry.
  * <p>
- * The control is disabled by default. When enabled, it attaches a node and a
- * geometry to the controlled node.
+ * The control is disabled by default. When enabled, it attaches a geometry to
+ * the controlled node. TODO rename BoundVisualizer
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -63,39 +66,48 @@ public class BoundsVisualizer extends SubtreeControl {
     // constants and loggers
 
     /**
-     * true &rarr; enabled, false &rarr; disabled.
-     *
-     * The test provides depth cues, but might hide portions of the
-     * visualization.
+     * default depth-test setting (disabled)
      */
-    private boolean depthTest = false;
+    final private static boolean defaultDepthTest = false;
     /**
      * default color for lines (blue)
      */
-    final private static ColorRGBA defaultLineColor = new ColorRGBA(
-            0f, 0f, 1f, 1f);
+    final private static ColorRGBA defaultLineColor
+            = new ColorRGBA(0f, 0f, 1f, 1f);
     /**
      * default width for lines (in pixels)
      */
     final private static float defaultLineWidth = 2f;
     /**
+     * child position of the lines geometry in the subtree node
+     */
+    final private static int linesChildPosition = 0;
+    /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            BoundsVisualizer.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(BoundsVisualizer.class.getName());
+    /**
+     * name for the lines geometry
+     */
+    final private static String linesName = "bound lines";
+    /**
+     * name for the subtree node
+     */
+    final private static String subtreeName = "bound node";
     // *************************************************************************
     // fields
 
     /**
-     * line width (in pixels)
+     * effective line width (in pixels, &ge;0, values &lt;1 hide the lines)
      */
-    private float lineWidth;
+    private float effectiveLineWidth = defaultLineWidth;
     /**
-     * material for lines/box
+     * wireframe material for lines (color and depth-test are stored here)
      */
     private Material lineMaterial;
     /**
-     * the spatial whose bounds are being visualized, or null for none
+     * the spatial whose world bound is being visualized, or null for none
      */
     private Spatial subject = null;
     // *************************************************************************
@@ -110,10 +122,10 @@ public class BoundsVisualizer extends SubtreeControl {
         super();
         Validate.nonNull(assetManager, "asset manager");
 
-        lineMaterial = MyAsset.createWireframeMaterial(
-                assetManager, defaultLineColor);
-        lineMaterial.getAdditionalRenderState().setDepthTest(false);
-        setLineWidth(defaultLineWidth);
+        lineMaterial = MyAsset.createWireframeMaterial(assetManager,
+                defaultLineColor);
+        RenderState rs = lineMaterial.getAdditionalRenderState();
+        rs.setDepthTest(defaultDepthTest);
 
         assert !isEnabled();
     }
@@ -133,23 +145,28 @@ public class BoundsVisualizer extends SubtreeControl {
     }
 
     /**
-     * Read the depth test setting.
+     * Read the depth-test setting.
+     * <p>
+     * The test provides depth cues, but might hide portions of the
+     * visualization.
      *
      * @return true if the test is enabled, otherwise false
      */
     public boolean getDepthTest() {
-        return depthTest;
+        RenderState rs = lineMaterial.getAdditionalRenderState();
+        boolean result = rs.isDepthTest();
+
+        return result;
     }
 
     /**
-     * Read the line width of the visualization.
+     * Read the effective line width of the visualization.
      *
-     * @return width (in pixels, &ge;1)
+     * @return width (in pixels, &ge;0)
      */
     public float getLineWidth() {
-        float result = lineMaterial.getAdditionalRenderState().getLineWidth();
-        assert result >= 1f : result;
-        return result;
+        assert effectiveLineWidth >= 0f : effectiveLineWidth;
+        return effectiveLineWidth;
     }
 
     /**
@@ -158,8 +175,8 @@ public class BoundsVisualizer extends SubtreeControl {
      * @param newColor (not null, unaffected)
      */
     public void setColor(ColorRGBA newColor) {
-        Validate.nonNull(newColor, "new color");
-        lineMaterial.setColor("Color", newColor.clone());
+        ColorRGBA colorClone = newColor.clone();
+        lineMaterial.setColor("Color", colorClone);
     }
 
     /**
@@ -168,150 +185,44 @@ public class BoundsVisualizer extends SubtreeControl {
      *
      * @param newSetting true to enable test, false to disable it
      */
-    final public void setDepthTest(boolean newSetting) {
-        if (depthTest != newSetting) {
-            Geometry box = (Geometry) subtree.getChild(0);
-            Material material = box.getMaterial();
-            RenderState state = material.getAdditionalRenderState();
-            state.setDepthTest(newSetting);
-
-            depthTest = newSetting;
-        }
+    public void setDepthTest(boolean newSetting) {
+        RenderState rs = lineMaterial.getAdditionalRenderState();
+        rs.setDepthTest(newSetting);
     }
 
     /**
-     * Alter the line width of the visualization.
+     * Alter the effective line width of the visualization.
      *
-     * @param width (in pixels, values &lt;1 hide the lines)
+     * @param newWidth (in pixels, &ge;0, values &lt;1 hide the lines)
      */
-    final public void setLineWidth(float width) {
-        lineWidth = width;
+    public void setLineWidth(float newWidth) {
+        Validate.nonNegative(newWidth, "new width");
+        effectiveLineWidth = newWidth;
 
-        if (subtree != null) {
-            Geometry box = (Geometry) subtree.getChild(0);
-            if (lineWidth < 1f) {
-                box.setCullHint(Spatial.CullHint.Always);
-            } else {
-                box.setCullHint(Spatial.CullHint.Inherit);
-                lineMaterial.getAdditionalRenderState().setLineWidth(lineWidth);
-            }
-        }
     }
 
     /**
-     * Alter the spatial being visualized.
+     * Alter which spatial is visualized.
      *
      * @param newSubject which spatial to visualize (may be null, alias created)
      */
     public void setSubject(Spatial newSubject) {
         subject = newSubject;
-
-        if (subtree != null) {
-            String namePrefix = "";
-            if (subject != null) {
-                namePrefix = subject.getName() + " ";
-            }
-            String nodeName = namePrefix + "bounds";
-            subtree.setName(nodeName);
-
-            String boxName = namePrefix + "box";
-            if (subtree.getChildren().isEmpty()) {
-                /*
-                 * Create mesh.
-                 */
-                WireBox boxMesh = new WireBox();
-                Geometry box = new Geometry(boxName, boxMesh);
-                box.setMaterial(lineMaterial);
-                subtree.attachChild(box);
-            } else {
-                /*
-                 * Rename mesh.
-                 */
-                Geometry box = (Geometry) subtree.getChild(0);
-                box.setName(boxName);
-            }
-        }
     }
     // *************************************************************************
-    // AbstractControl methods
+    // SubtreeControl methods
 
     /**
-     * Callback invoked when the controlled spatial's geometric state is about
-     * to be updated, once per frame while attached and enabled.
+     * Create a shallow copy of this control.
      *
-     * @param updateInterval time interval between updates (in seconds, &ge;0)
+     * @return a new control, equivalent to this one
+     * @throws CloneNotSupportedException if superclass isn't cloneable
      */
     @Override
-    protected void controlUpdate(float updateInterval) {
-        super.controlUpdate(updateInterval);
-
-        if (subject != null) {
-            BoundingVolume bound = subject.getWorldBound();
-            if (bound instanceof BoundingBox) {
-                BoundingBox boundingBox = (BoundingBox) bound;
-
-                Vector3f center = boundingBox.getCenter();
-                Geometry box = (Geometry) subtree.getChild(0);
-                MySpatial.setWorldLocation(box, center);
-
-                float xExtent = boundingBox.getXExtent();
-                float yExtent = boundingBox.getYExtent();
-                float zExtent = boundingBox.getZExtent();
-                WireBox boxMesh = (WireBox) box.getMesh();
-                boxMesh.updatePositions(xExtent, yExtent, zExtent);
-
-            } else if (bound instanceof BoundingSphere) {
-                BoundingSphere boundingSphere = (BoundingSphere) bound;
-                Vector3f center = boundingSphere.getCenter();
-                float radius = boundingSphere.getRadius();
-                // TODO visualize the sphere
-                assert radius >= 0f : radius;
-                assert center != null;
-                throw new UnsupportedOperationException();
-            }
-        }
+    public BoundsVisualizer clone() throws CloneNotSupportedException {
+        BoundsVisualizer clone = (BoundsVisualizer) super.clone();
+        return clone;
     }
-
-    /**
-     * Alter the visibility of the visualization.
-     *
-     * @param newState if true, reveal the visualization; if false, hide it
-     */
-    @Override
-    public void setEnabled(boolean newState) {
-        if (newState && subtree == null) {
-            /*
-             * Before enabling this control for the first time,
-             * create the subtree.
-             */
-            String namePrefix = "";
-            if (subject != null) {
-                namePrefix = subject.getName() + " ";
-            }
-            String nodeName = namePrefix + "bounds";
-            subtree = new Node(nodeName);
-            subtree.setQueueBucket(RenderQueue.Bucket.Transparent);
-            subtree.setShadowMode(RenderQueue.ShadowMode.Off);
-
-            setSubject(null);
-            setLineWidth(lineWidth);
-        }
-
-        super.setEnabled(newState);
-    }
-
-    /**
-     * Alter which node is controlled.
-     *
-     * @param newNode the node to control (or null)
-     */
-    @Override
-    public void setSpatial(Spatial newNode) {
-        super.setSpatial(newNode);
-        setSubject(null);
-    }
-    // *************************************************************************
-    // JmeCloneable methods
 
     /**
      * Convert this shallow-cloned control into a deep-cloned one, using the
@@ -327,18 +238,150 @@ public class BoundsVisualizer extends SubtreeControl {
         lineMaterial = cloner.clone(lineMaterial);
         subject = cloner.clone(subject);
     }
-    // *************************************************************************
-    // Object methods
 
     /**
-     * Create a shallow copy of this control.
+     * Callback invoked when the controlled spatial's geometric state is about
+     * to be updated, once per frame while attached and enabled.
      *
-     * @return a new control, equivalent to this one
-     * @throws CloneNotSupportedException if superclass isn't cloneable
+     * @param updateInterval time interval between updates (in seconds, &ge;0)
      */
     @Override
-    public BoundsVisualizer clone() throws CloneNotSupportedException {
-        BoundsVisualizer clone = (BoundsVisualizer) super.clone();
-        return clone;
+    protected void controlUpdate(float updateInterval) {
+        super.controlUpdate(updateInterval);
+
+        if (subject == null || effectiveLineWidth < 1f) {
+            subtree.detachAllChildren();
+
+        } else if (subtree.getChildren().isEmpty()) {
+            addLines();
+
+        } else {
+            Geometry lines = (Geometry) subtree.getChild(linesChildPosition);
+            BoundingVolume bound = subject.getWorldBound();
+            Mesh mesh = lines.getMesh();
+            if (bound instanceof BoundingBox && mesh instanceof WireBox) {
+                updateBox();
+            } else if (bound instanceof BoundingSphere
+                    && mesh instanceof WireSphere) {
+                updateSphere();
+            } else { // wrong type of mesh
+                subtree.detachAllChildren();
+                addLines();
+            }
+        }
+    }
+
+    /**
+     * Alter the visibility of the visualization.
+     *
+     * @param newState if true, reveal the visualization; if false, hide it
+     */
+    @Override
+    public void setEnabled(boolean newState) {
+        if (newState && subtree == null) {
+            /*
+             * Before enabling this control for the 1st time,
+             * create the subtree.
+             */
+            subtree = new Node(subtreeName);
+            subtree.setQueueBucket(RenderQueue.Bucket.Transparent);
+            subtree.setShadowMode(RenderQueue.ShadowMode.Off);
+        }
+
+        super.setEnabled(newState);
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Create a lines geometry and attach it to the empty subtree.
+     */
+    private void addLines() {
+        assert subtree.getChildren().isEmpty();
+
+        Mesh mesh;
+        BoundingVolume bound = subject.getWorldBound();
+        if (bound instanceof BoundingBox) {
+            mesh = new WireBox();
+        } else if (bound instanceof BoundingSphere) {
+            mesh = new WireSphere();
+        } else {
+            throw new IllegalStateException();
+        }
+
+        Geometry lines = new Geometry(linesName, mesh);
+        lines.setMaterial(lineMaterial);
+        subtree.attachChildAt(lines, linesChildPosition);
+
+        if (bound instanceof BoundingBox) {
+            updateBox();
+        } else if (bound instanceof BoundingSphere) {
+            updateSphere();
+        }
+    }
+
+    /**
+     * Update existing WireBox lines based on the subject's world bound.
+     */
+    private void updateBox() {
+        BoundingVolume bound = subject.getWorldBound();
+        BoundingBox boundingBox = (BoundingBox) bound;
+        Geometry lines = (Geometry) subtree.getChild(linesChildPosition);
+        WireBox boxMesh = (WireBox) lines.getMesh();
+        /*
+         * Update the mesh extents.
+         */
+        float xExtent = boundingBox.getXExtent();
+        float yExtent = boundingBox.getYExtent();
+        float zExtent = boundingBox.getZExtent();
+        assert xExtent >= 0f : xExtent;
+        assert yExtent >= 0f : yExtent;
+        assert zExtent >= 0f : zExtent;
+        boxMesh.updatePositions(xExtent, yExtent, zExtent);
+        /*
+         * Update the transform.
+         */
+        Transform transform = new Transform();
+        Vector3f center = boundingBox.getCenter();
+        transform.setTranslation(center);
+        MySpatial.setWorldTransform(lines, transform);
+
+        updateLineWidth();
+    }
+
+    /**
+     * Update the line width.
+     */
+    private void updateLineWidth() {
+        Geometry lines = (Geometry) subtree.getChild(linesChildPosition);
+        assert effectiveLineWidth >= 1f : effectiveLineWidth;
+        assert lineMaterial == lines.getMaterial();
+        RenderState rs = lineMaterial.getAdditionalRenderState();
+        rs.setLineWidth(effectiveLineWidth);
+    }
+
+    /**
+     * Update existing WireSphere lines based on the subject's world bound.
+     */
+    private void updateSphere() {
+        BoundingVolume bound = subject.getWorldBound();
+        BoundingSphere boundingSphere = (BoundingSphere) bound;
+        Geometry lines = (Geometry) subtree.getChild(linesChildPosition);
+        WireSphere sphereMesh = (WireSphere) lines.getMesh();
+        /*
+         * Update the mesh radius.
+         */
+        float radius = boundingSphere.getRadius();
+        assert radius >= 0f : radius;
+        sphereMesh.updatePositions(radius);
+        /*
+         * Update the transform.
+         */
+        Transform transform = new Transform();
+        Vector3f center = boundingSphere.getCenter();
+        transform.setTranslation(center);
+        MySpatial.setWorldTransform(lines, transform);
+
+        updateLineWidth();
     }
 }
