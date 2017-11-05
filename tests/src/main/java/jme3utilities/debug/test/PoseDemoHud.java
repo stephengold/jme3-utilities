@@ -245,8 +245,8 @@ public class PoseDemoHud
                     return;
 
                 case "load animation":
-                    List<String> animationNames;
-                    animationNames = PoseDemo.modelState.listAnimationNames();
+                    List<String> animationNames
+                            = PoseDemo.modelState.listAnimationNames();
                     showPopupMenu(animationMenuPrefix, animationNames);
                     return;
 
@@ -314,7 +314,8 @@ public class PoseDemoHud
                 String name = actionString.substring(namePos);
 
                 if (!PoseDemo.modelState.hasBone(name)) {
-                    List<String> boneNames = PoseDemo.modelState.listBoneNames(name);
+                    List<String> boneNames
+                            = PoseDemo.modelState.listBoneNames(name);
                     MyString.reduce(boneNames, 20);
                     Collections.sort(boneNames);
                     showPopupMenu(boneMenuPrefix, boneNames);
@@ -709,8 +710,8 @@ public class PoseDemoHud
             for (int iAxis = 0; iAxis < numAxes; iAxis++) {
                 String axisName = axisNames[iAxis];
                 String statusName = axisName + "SliderStatus";
-                String statusText = String.format(
-                        "%s = %+4.2f", axisName, angles[iAxis]);
+                String statusText
+                        = String.format("%s = %+4.2f", axisName, angles[iAxis]);
                 setStatusText(statusName, statusText);
             }
         }
@@ -767,8 +768,8 @@ public class PoseDemoHud
         /*
          * skeleton visualizer
          */
-        SkeletonVisualizer visualizer;
-        visualizer = PoseDemo.modelState.getSkeletonVisualizer();
+        SkeletonVisualizer visualizer
+                = PoseDemo.modelState.getSkeletonVisualizer();
         enable = isChecked("skeletonDebug");
         visualizer.setEnabled(enable);
         ColorRGBA wireColor = updateColorBank("wire");
@@ -778,9 +779,7 @@ public class PoseDemoHud
         lineWidth = updateSlider("sdcLineWidth", " pixels");
         visualizer.setLineWidth(lineWidth);
         float pointSize = updateSlider("pointSize", " pixels");
-        if (visualizer.supportsPointSize()) {
-            visualizer.setPointSize(pointSize);
-        }
+        visualizer.setPointSize(pointSize);
         /*
          * Dumper
          */

@@ -82,7 +82,8 @@ class ModelState extends SimpleAppState {
     /**
      * local copy of {@link com.jme3.math.Vector3f#ZERO}
      */
-    final private static Vector3f translationIdentity = new Vector3f(0f, 0f, 0f);
+    final private static Vector3f translationIdentity
+            = new Vector3f(0f, 0f, 0f);
     // *************************************************************************
     // fields
 
@@ -239,8 +240,8 @@ class ModelState extends SimpleAppState {
         if (attachmentsNode == null) {
             return null;
         }
-        AxesVisualizer result = attachmentsNode.getControl(
-                AxesVisualizer.class);
+        AxesVisualizer result
+                = attachmentsNode.getControl(AxesVisualizer.class);
         assert result != null;
 
         return result;
@@ -647,6 +648,8 @@ class ModelState extends SimpleAppState {
          */
         skeletonVisualizer = new SkeletonVisualizer(assetManager);
         spatial.addControl(skeletonVisualizer);
+        SkeletonControl sc = spatial.getControl(SkeletonControl.class);
+        skeletonVisualizer.setSubject(sc);
 
         loadBindPose();
         selectBone(PoseDemoHud.noBone);
