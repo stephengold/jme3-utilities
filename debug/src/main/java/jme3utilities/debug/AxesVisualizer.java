@@ -27,13 +27,14 @@
 package jme3utilities.debug;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Arrow;
@@ -42,14 +43,15 @@ import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
+import jme3utilities.math.MyVector3f;
 
 /**
  * Subtree control to visualize the coordinate axes of a Node.
  * <p>
  * The controlled spatial must be a Node.
  * <p>
- * The control is disabled by default. When enabled, it attaches 3 geometries
- * (one for each arrow) to the scene graph.
+ * The control is disabled by default. When enabled, it attaches 3 geometries to
+ * the subtree, one for each axis.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -57,6 +59,10 @@ public class AxesVisualizer extends SubtreeControl {
     // *************************************************************************
     // constants and loggers
 
+    /**
+     * default depth-test setting (disabled)
+     */
+    final private static boolean defaultDepthTest = false;
     /**
      * color of the X-axis (red)
      */
@@ -75,6 +81,15 @@ public class AxesVisualizer extends SubtreeControl {
     final private static Logger logger
             = Logger.getLogger(AxesVisualizer.class.getName());
     /**
+     * asset path to the solid arrow model
+     */
+    final private static String modelAssetPath
+            = "Models/indicators/arrow/arrow.j3o";
+    /**
+     * name for the subtree node
+     */
+    final private static String subtreeName = "axes node";
+    /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
     final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
@@ -90,35 +105,58 @@ public class AxesVisualizer extends SubtreeControl {
     // fields
 
     /**
+     * asset manager to use (not null)
+     */
+    final private AssetManager assetManager;
+    /**
      * true &rarr; enabled, false &rarr; disabled.
      *
      * The test provides depth cues, but often hides the axes.
      */
-    private boolean depthTest = false;
+    private boolean depthTest = defaultDepthTest;
+    /**
+     * axis length (in local units, &gt;0)
+     */
+    private float axisLength;
+    /**
+     * line width for wireframe arrows (in pixels, &ge;1) or 0 for solid arrows
+     */
+    private float lineWidth;
     // *************************************************************************
     // constructors
 
     /**
-     * Instantiate a set of hidden coordinate axes.
+     * Instantiate a set of hidden solid coordinate axes.
      *
-     * @param assetManager for loading material definitions (not null)
-     * @param axisLength length of each axis (in local units, &gt;0)
-     * @param lineWidth thickness of each axis indicator (in pixels, &ge;1)
+     * @param manager for loading assets (not null)
+     * @param length length of each arrow (in local units, &gt;0)
      */
-    public AxesVisualizer(AssetManager assetManager, float axisLength,
-            float lineWidth) {
+    public AxesVisualizer(AssetManager manager, float length) {
         super();
-        Validate.nonNull(assetManager, "asset manager");
-        Validate.positive(axisLength, "axis length");
-        Validate.inRange(lineWidth, "line width", 1f, Float.MAX_VALUE);
+        Validate.nonNull(manager, "asset manager");
+        Validate.positive(length, "axis length");
 
-        subtree = new Node("axes node");
-        createAxis(assetManager, xColor, "xAxis", xAxis);
-        createAxis(assetManager, yColor, "yAxis", yAxis);
-        createAxis(assetManager, zColor, "zAxis", zAxis);
+        assetManager = manager;
+        axisLength = length;
+        lineWidth = 0f;
+    }
 
-        setAxisLength(axisLength);
-        setLineWidth(lineWidth);
+    /**
+     * Instantiate a set of hidden wireframe coordinate axes.
+     *
+     * @param manager for loading material definitions (not null)
+     * @param length length of each arrow (in local units, &gt;0)
+     * @param width thickness of each arrow (in pixels, &ge;1)
+     */
+    public AxesVisualizer(AssetManager manager, float length, float width) {
+        super();
+        Validate.nonNull(manager, "asset manager");
+        Validate.positive(length, "axis length");
+        Validate.inRange(width, "line width", 1f, Float.MAX_VALUE);
+
+        assetManager = manager;
+        axisLength = length;
+        lineWidth = width;
     }
     // *************************************************************************
     // new methods exposed
@@ -129,11 +167,8 @@ public class AxesVisualizer extends SubtreeControl {
      * @return length (in local units, &gt;0)
      */
     public float getAxisLength() {
-        Vector3f localScale = subtree.getLocalScale();
-        float result = localScale.x;
-
-        assert result > 0f : result;
-        return result;
+        assert axisLength > 0f : axisLength;
+        return axisLength;
     }
 
     /**
@@ -146,18 +181,13 @@ public class AxesVisualizer extends SubtreeControl {
     }
 
     /**
-     * Read the line width of the visualization.
+     * Read the line width of the arrows.
      *
-     * @return width (in pixels, &ge;1)
+     * @return width (in pixels, &ge;1) or 0 for solid arrows
      */
     public float getLineWidth() {
-        Geometry axis = (Geometry) subtree.getChild(0);
-        Material material = axis.getMaterial();
-        RenderState state = material.getAdditionalRenderState();
-        float result = state.getLineWidth();
-
-        assert result >= 1f : result;
-        return result;
+        assert lineWidth >= 0f : lineWidth;
+        return lineWidth;
     }
 
     /**
@@ -165,9 +195,9 @@ public class AxesVisualizer extends SubtreeControl {
      *
      * @param length (in local units, &gt;0)
      */
-    final public void setAxisLength(float length) {
+    public void setAxisLength(float length) {
         Validate.positive(length, "length");
-        subtree.setLocalScale(length);
+        axisLength = length;
     }
 
     /**
@@ -176,32 +206,18 @@ public class AxesVisualizer extends SubtreeControl {
      *
      * @param newSetting true to enable test, false to disable it
      */
-    final public void setDepthTest(boolean newSetting) {
-        if (depthTest != newSetting) {
-            for (Spatial axis : subtree.getChildren()) {
-                Geometry geometry = (Geometry) axis;
-                Material material = geometry.getMaterial();
-                RenderState state = material.getAdditionalRenderState();
-                state.setDepthTest(newSetting);
-            }
-            depthTest = newSetting;
-        }
+    public void setDepthTest(boolean newSetting) {
+        depthTest = newSetting;
     }
 
     /**
-     * Alter the line width of the visualization.
+     * Alter the line width.
      *
-     * @param width (in pixels, &ge;1)
+     * @param width (in pixels, &ge;1) or 0 for solid arrows
      */
-    final public void setLineWidth(float width) {
-        Validate.inRange(width, "width", 1f, Float.MAX_VALUE);
-
-        for (Spatial axis : subtree.getChildren()) {
-            Geometry geometry = (Geometry) axis;
-            Material material = geometry.getMaterial();
-            RenderState state = material.getAdditionalRenderState();
-            state.setLineWidth(width);
-        }
+    public void setLineWidth(float width) {
+        Validate.inRange(width, "width", 0f, Float.MAX_VALUE);
+        lineWidth = width;
     }
 
     /**
@@ -215,22 +231,9 @@ public class AxesVisualizer extends SubtreeControl {
 
         Vector3f result = null;
         if (isEnabled()) {
-            Vector3f tipLocal;
-            switch (axisIndex) {
-                case PhysicsSpace.AXIS_X:
-                    tipLocal = xAxis;
-                    break;
-                case PhysicsSpace.AXIS_Y:
-                    tipLocal = yAxis;
-                    break;
-                case PhysicsSpace.AXIS_Z:
-                    tipLocal = zAxis;
-                    break;
-                default:
-                    throw new RuntimeException();
-            }
+            Vector3f tipLocal = MyVector3f.axisVector(axisIndex, 1f, null);
             if (MySpatial.isIgnoringTransforms(subtree)) { // TODO JME 3.2
-                result = tipLocal.clone();
+                result = tipLocal;
             } else {
                 result = subtree.localToWorld(tipLocal, null);
             }
@@ -252,20 +255,122 @@ public class AxesVisualizer extends SubtreeControl {
         AxesVisualizer clone = (AxesVisualizer) super.clone();
         return clone;
     }
+
+    /**
+     * Callback invoked when the spatial's geometric state is about to be
+     * updated, once per frame while attached and enabled.
+     *
+     * @param updateInterval time interval between updates (in seconds, &ge;0)
+     */
+    @Override
+    protected void controlUpdate(float updateInterval) {
+        super.controlUpdate(updateInterval);
+
+        if (subtree.getChildren().isEmpty()) {
+            addArrows();
+
+        } else {
+            Geometry xArrow = (Geometry) subtree.getChild(0);
+            Mesh xMesh = xArrow.getMesh();
+            boolean arrowMesh = xMesh instanceof Arrow;
+
+            if (lineWidth >= 1f && arrowMesh) {
+                updateArrows();
+            } else if (lineWidth < 1f && !arrowMesh) {
+                updateArrows();
+            } else {
+                subtree.detachAllChildren();
+                addArrows();
+            }
+        }
+    }
+
+    /**
+     * Alter the visibility of the visualization.
+     *
+     * @param newState if true, reveal the visualization; if false, hide it
+     */
+    @Override
+    public void setEnabled(boolean newState) {
+        if (newState && subtree == null) {
+            /*
+             * Before enabling this control for the 1st time,
+             * create the subtree.
+             */
+            subtree = new Node(subtreeName);
+            subtree.setQueueBucket(RenderQueue.Bucket.Transparent);
+            subtree.setShadowMode(RenderQueue.ShadowMode.Off);
+        }
+
+        super.setEnabled(newState);
+    }
     // *************************************************************************
     // private methods
 
     /**
-     * Create an arrow geometry to represent an axis.
+     * Create 3 arrow geometries and add them to the subtree.
+     */
+    private void addArrows() {
+        assert subtree.getChildren().isEmpty();
+        if (lineWidth >= 1f) {
+            addWireArrow(xColor, "xAxis", xAxis);
+            addWireArrow(yColor, "yAxis", yAxis);
+            addWireArrow(zColor, "zAxis", zAxis);
+        } else {
+            addSolidArrow(xColor, "xAxis", xAxis);
+            addSolidArrow(yColor, "yAxis", yAxis);
+            addSolidArrow(zColor, "zAxis", zAxis);
+        }
+
+        updateArrows();
+    }
+
+    /**
+     * Create and attach a solid arrow geometry to represent an axis.
      *
-     * @param assetManager for loading material definitions (not null)
+     * @param color for the arrow (not null, unaffected)
+     * @param name for the geometry (not null)
+     * @param direction for the arrow to point (in local coordinates, length=1,
+     * unaffected)
+     */
+    private void addSolidArrow(ColorRGBA color, String name,
+            Vector3f direction) {
+        assert assetManager != null;
+        assert color != null;
+        assert name != null;
+        assert direction != null;
+        assert direction.isUnitVector() : direction;
+
+        Node node = (Node) assetManager.loadModel(modelAssetPath);
+        Node node2 = (Node) node.getChild(0);
+        Node node3 = (Node) node2.getChild(0);
+        Geometry geometry = (Geometry) node3.getChild(0);
+
+        Vector3f xDir = direction.clone();
+        Vector3f yDir = new Vector3f();
+        Vector3f zDir = new Vector3f();
+        MyVector3f.generateBasis(xDir, yDir, zDir);
+        Quaternion orientation = new Quaternion();
+        orientation.fromAxes(xDir, yDir, zDir);
+        geometry.setLocalRotation(orientation);
+
+        Material material = MyAsset.createUnshadedMaterial(assetManager, color);
+        material.getAdditionalRenderState().setDepthTest(depthTest);
+        geometry.setMaterial(material);
+
+        subtree.attachChild(geometry);
+    }
+
+    /**
+     * Create and attach a wireframe arrow geometry to represent an axis.
+     *
      * @param color for the wireframe (not null, unaffected)
      * @param name for the geometry (not null)
      * @param direction for the arrow to point (in local coordinates, length=1,
      * unaffected)
      */
-    private Geometry createAxis(AssetManager assetManager, ColorRGBA color,
-            String name, Vector3f direction) {
+    private void addWireArrow(ColorRGBA color, String name,
+            Vector3f direction) {
         assert assetManager != null;
         assert color != null;
         assert name != null;
@@ -274,15 +379,29 @@ public class AxesVisualizer extends SubtreeControl {
 
         Arrow mesh = new Arrow(direction);
         Geometry geometry = new Geometry(name, mesh);
+
+        Material material
+                = MyAsset.createWireframeMaterial(assetManager, color);
+        material.getAdditionalRenderState().setDepthTest(depthTest);
+        geometry.setMaterial(material);
         subtree.attachChild(geometry);
+    }
 
-        Material wireMaterial;
-        wireMaterial = MyAsset.createWireframeMaterial(assetManager, color);
-        wireMaterial.getAdditionalRenderState().setDepthTest(depthTest);
-        geometry.setMaterial(wireMaterial);
-        geometry.setQueueBucket(RenderQueue.Bucket.Transparent);
-        geometry.setShadowMode(RenderQueue.ShadowMode.Off);
+    /**
+     * Update the existing arrows.
+     */
+    private void updateArrows() {
+        subtree.setLocalScale(axisLength);
 
-        return geometry;
+        for (Spatial axis : subtree.getChildren()) {
+            Geometry geometry = (Geometry) axis;
+            Material material = geometry.getMaterial();
+            RenderState state = material.getAdditionalRenderState();
+
+            state.setDepthTest(depthTest);
+            if (lineWidth >= 1f) {
+                state.setLineWidth(lineWidth);
+            }
+        }
     }
 }
