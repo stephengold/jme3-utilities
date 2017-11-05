@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.8.0 released TBD
+## Version 0.8.0 released 5 November 2017
 
  + Removed 4 public methods from the SkeletonVisualizer class
  + Added capability for SkeletonVisualizer to visualize a skeleton unrelated
