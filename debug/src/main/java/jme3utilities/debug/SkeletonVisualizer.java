@@ -27,38 +27,36 @@
 package jme3utilities.debug;
 
 import com.jme3.animation.Skeleton;
+import com.jme3.animation.SkeletonControl;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.MatParam;
 import com.jme3.material.Material;
-import com.jme3.material.MaterialDef;
 import com.jme3.material.RenderState;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Transform;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh.Mode;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
 import com.jme3.util.clone.Cloner;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
-import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 
 /**
- * Subtree control to visualize the skeleton of a skeletonized node.
+ * Subtree control to visualize the subject skeleton.
  * <p>
  * The controlled spatial must be a node.
  * <p>
- * The control is disabled by default. When enabled, it attaches a node and 2
- * geometries to the scene graph.
+ * The control is disabled by default. When enabled, it attaches 2 geometries to
+ * the controlled node.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -67,21 +65,21 @@ public class SkeletonVisualizer extends SubtreeControl {
     // constants and loggers
 
     /**
-     * default color for lines (blue)
+     * default color for bone heads (white)
+     */
+    final private static ColorRGBA defaultHeadColor
+            = new ColorRGBA(1f, 1f, 1f, 1f);
+    /**
+     * default color for link lines (blue)
      */
     final private static ColorRGBA defaultLineColor
             = new ColorRGBA(0f, 0f, 1f, 1f);
     /**
-     * default color for points (white)
-     */
-    final private static ColorRGBA defaultPointColor
-            = new ColorRGBA(1f, 1f, 1f, 1f);
-    /**
-     * default width for lines (in pixels)
+     * default line width for links (in pixels)
      */
     final private static float defaultLineWidth = 2f;
     /**
-     * default size for points (in pixels)
+     * default point size for bone heads (in pixels)
      */
     final private static float defaultPointSize = 4f;
     /**
@@ -98,10 +96,27 @@ public class SkeletonVisualizer extends SubtreeControl {
     final private static Logger logger
             = Logger.getLogger(SkeletonVisualizer.class.getName());
     /**
-     * asset path to default shape for points
+     * asset path to the default shape for bone heads
      */
-    final private static String defaultPointShapeAssetPath
+    final private static String defaultShapeAssetPath
             = "Textures/shapes/solid circle.png";
+    /**
+     * asset path to the skeleton material definition
+     */
+    final private static String matDefsAssetPath
+            = "MatDefs/wireframe/multicolor2.j3md";
+    /**
+     * name for the heads geometry
+     */
+    final private static String headsName = "skeleton heads";
+    /**
+     * name for the links geometry
+     */
+    final private static String linksName = "skeleton links";
+    /**
+     * name for the subtree node
+     */
+    final private static String subtreeName = "skeleton node";
     /**
      * local copy of {@link com.jme3.math.Transform#IDENTITY}
      */
@@ -110,29 +125,29 @@ public class SkeletonVisualizer extends SubtreeControl {
     // fields
 
     /**
-     * standard color for bone heads
+     * effective line width (in pixels, &ge;0, values &lt;1 hide the lines)
      */
-    private ColorRGBA standardPointColor = defaultPointColor.clone();
+    private float effectiveLineWidth = defaultLineWidth;
     /**
-     * line width (in pixels)
+     * custom colors for specific bones
      */
-    private float lineWidth;
+    private Map<Integer, ColorRGBA> customColors = new TreeMap<>();
     /**
-     * custom color for each bone's head
+     * material for bone heads (shape, size, and standard color are stored here)
      */
-    private Map<Integer, ColorRGBA> pointColors = new TreeMap<>();
+    private Material headMaterial;
     /**
-     * material for lines/links
+     * material for link lines (standard color is stored here)
      */
     private Material lineMaterial;
-    /**
-     * material for points/heads
-     */
-    private Material pointMaterial;
     /**
      * skeleton being visualized, or null for none
      */
     private Skeleton skeleton = null;
+    /**
+     * spatial to provide the world transform, or null for none
+     */
+    private Spatial transformSpatial = null;
     // *************************************************************************
     // constructors
 
@@ -145,34 +160,28 @@ public class SkeletonVisualizer extends SubtreeControl {
         super();
         Validate.nonNull(assetManager, "asset manager");
 
-        lineMaterial = new Material(assetManager,
-                "MatDefs/wireframe/multicolor2.j3md");
+        lineMaterial = new Material(assetManager, matDefsAssetPath);
         lineMaterial.setBoolean("UseVertexColor", true);
+        lineMaterial.setColor("Color", defaultLineColor.clone());
         lineMaterial.setFloat("AlphaDiscardThreshold", 0.9999f);
-        RenderState rs2 = lineMaterial.getAdditionalRenderState();
-        rs2.setBlendMode(BlendMode.Alpha);
-        rs2.setDepthTest(false);
-        rs2.setWireframe(true);
-        setLineColor(defaultLineColor);
-        setLineWidth(defaultLineWidth);
+        RenderState lineState = lineMaterial.getAdditionalRenderState();
+        lineState.setBlendMode(BlendMode.Alpha);
+        lineState.setDepthTest(false);
+        lineState.setWireframe(true);
 
-        pointMaterial = new Material(assetManager,
-                "MatDefs/wireframe/multicolor2.j3md");
-        pointMaterial.setBoolean("UseVertexColor", true);
-        RenderState rs = pointMaterial.getAdditionalRenderState();
-        rs.setBlendMode(BlendMode.Alpha);
-        rs.setDepthTest(false);
-        rs.setWireframe(true);
+        Texture pointShape
+                = MyAsset.loadTexture(assetManager, defaultShapeAssetPath);
 
-        if (supportsPointShape()) {
-            Texture pointShape = MyAsset.loadTexture(assetManager,
-                    defaultPointShapeAssetPath);
-            setPointShape(pointShape);
-        }
-
-        if (supportsPointSize()) {
-            setPointSize(defaultPointSize);
-        }
+        headMaterial = new Material(assetManager, matDefsAssetPath);
+        headMaterial.setBoolean("UseVertexColor", true);
+        headMaterial.setColor("Color", defaultHeadColor.clone());
+        headMaterial.setFloat("AlphaDiscardThreshold", 0.0001f);
+        headMaterial.setFloat("PointSize", defaultPointSize);
+        headMaterial.setTexture("PointShape", pointShape);
+        RenderState headState = headMaterial.getAdditionalRenderState();
+        headState.setBlendMode(BlendMode.Alpha);
+        headState.setDepthTest(false);
+        headState.setWireframe(true);
 
         assert !isEnabled();
     }
@@ -180,7 +189,7 @@ public class SkeletonVisualizer extends SubtreeControl {
     // new methods exposed
 
     /**
-     * Copy the color of the lines.
+     * Copy the color for link lines.
      *
      * @return a new instance
      */
@@ -192,7 +201,7 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Copy the point color for the indexed bone.
+     * Copy the point color for the head of the indexed bone.
      *
      * @param boneIndex which bone (&ge;0)
      * @return a new instance
@@ -200,60 +209,40 @@ public class SkeletonVisualizer extends SubtreeControl {
     public ColorRGBA copyPointColor(int boneIndex) {
         Validate.nonNegative(boneIndex, "bone index");
 
-        ColorRGBA color = pointColors.get(boneIndex);
+        ColorRGBA color = customColors.get(boneIndex);
         if (color == null) {
-            color = standardPointColor;
+            MatParam parameter = headMaterial.getParam("Color");
+            color = (ColorRGBA) parameter.getValue();
         }
 
         return color.clone();
     }
 
     /**
-     * Read the line width of the visualization.
+     * Read the effective line width for links.
      *
-     * @return width (in pixels, &ge;1)
+     * @return width (in pixels, &ge;0)
      */
     public float getLineWidth() {
-        float result = lineMaterial.getAdditionalRenderState().getLineWidth();
+        assert effectiveLineWidth >= 0f : effectiveLineWidth;
+        return effectiveLineWidth;
+    }
+
+    /**
+     * Read the point size for bone heads (in pixels)
+     *
+     * @return size (in pixels, &ge;1)
+     */
+    public float getPointSize() {
+        MatParam parameter = headMaterial.getParam("PointSize");
+        float result = (float) parameter.getValue();
+
         assert result >= 1f : result;
         return result;
     }
 
     /**
-     * Read the point size of the visualization.
-     *
-     * @return size (in pixels, &ge;1)
-     */
-    public float getPointSize() {
-        float result;
-        if (supportsPointSize()) {
-            MatParam parameter = pointMaterial.getParam("PointSize");
-            result = (float) parameter.getValue();
-        } else {
-            result = 1f;
-        }
-
-        return result;
-    }
-
-    /**
-     * Test whether the specified spatial has skeleton visualization enabled.
-     *
-     * @param model spatial (not null)
-     * @return true if enabled, otherwise false
-     */
-    public static boolean isDebugEnabled(Spatial model) {
-        SkeletonVisualizer control = model.getControl(SkeletonVisualizer.class);
-        if (control == null) {
-            return false;
-        }
-        boolean result = control.isEnabled();
-
-        return result;
-    }
-
-    /**
-     * Alter the colors of all lines and points.
+     * Alter the colors of all link lines and bone heads.
      *
      * @param newColor (not null, unaffected)
      */
@@ -265,62 +254,39 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Alter a spatial's visualization status. Has no effect if the spatial
-     * lacks a SkeletonVisualizer.
-     *
-     * @param model skeletonized spatial (not null)
-     * @param newState true to enable, false to disable
-     */
-    public static void setDebugEnabled(Spatial model, boolean newState) {
-        SkeletonVisualizer control = model.getControl(SkeletonVisualizer.class);
-        if (control != null) {
-            control.setEnabled(newState);
-        }
-    }
-
-    /**
-     * Alter the colors of all lines.
+     * Alter the colors of all link lines.
      *
      * @param newColor (not null, unaffected)
      */
-    final public void setLineColor(ColorRGBA newColor) {
+    public void setLineColor(ColorRGBA newColor) {
         Validate.nonNull(newColor, "new color");
         lineMaterial.setColor("Color", newColor.clone());
     }
 
     /**
-     * Alter the line width of the visualization.
+     * Alter the effective line width for links.
      *
-     * @param width (in pixels, values &lt;1 hide the lines)
+     * @param width (in pixels, &ge;0, values &lt;1 hide the lines)
      */
-    final public void setLineWidth(float width) {
-        lineWidth = width;
-
-        if (subtree != null) {
-            Geometry links = (Geometry) subtree.getChild(linksChildPosition);
-            if (lineWidth < 1f) {
-                links.setCullHint(Spatial.CullHint.Always);
-            } else {
-                links.setCullHint(Spatial.CullHint.Inherit);
-                lineMaterial.getAdditionalRenderState().setLineWidth(lineWidth);
-            }
-        }
+    public void setLineWidth(float width) {
+        Validate.nonNegative(width, "width");
+        effectiveLineWidth = width;
     }
 
     /**
-     * Alter the colors of all points.
+     * Alter the colors of all bone heads.
      *
      * @param newColor (not null, unaffected)
      */
     public void setPointColor(ColorRGBA newColor) {
         Validate.nonNull(newColor, "new color");
 
-        standardPointColor.set(newColor);
-        pointColors.clear();
+        headMaterial.setColor("Color", newColor.clone());
+        customColors.clear();
     }
 
     /**
-     * Alter the point color for the indexed bone only.
+     * Alter the color of the indexed bone's head.
      *
      * @param boneIndex which bone (&ge;0)
      * @param newColor (not null, unaffected)
@@ -329,97 +295,67 @@ public class SkeletonVisualizer extends SubtreeControl {
         Validate.nonNegative(boneIndex, "bone index");
         Validate.nonNull(newColor, "new color");
 
-        pointColors.put(boneIndex, newColor.clone());
+        customColors.put(boneIndex, newColor.clone());
     }
 
     /**
-     * Alter the point shape in the visualization.
+     * Alter the shape used to visualize bone heads.
      *
      * @param shape shape texture (not null)
      */
-    final public void setPointShape(Texture shape) {
+    public void setPointShape(Texture shape) {
         Validate.nonNull(shape, "shape");
-
-        if (supportsPointShape()) {
-            pointMaterial.setTexture("PointShape", shape);
-        } else {
-            logger.log(Level.WARNING, "Cannot set point shape.");
-        }
+        headMaterial.setTexture("PointShape", shape);
     }
 
     /**
-     * Alter the point size in the visualization.
+     * Alter the point size for bone heads.
      *
      * @param size (in pixels, &ge;0, 0 &rarr; hide the points)
      */
-    final public void setPointSize(float size) {
+    public void setPointSize(float size) {
         Validate.inRange(size, "size", 0f, Float.MAX_VALUE);
-
-        if (supportsPointSize()) {
-            pointMaterial.setFloat("PointSize", size);
-        } else {
-            logger.log(Level.WARNING, "Cannot set point size.");
-        }
+        headMaterial.setFloat("PointSize", size);
     }
 
     /**
-     * Alter the skeleton being visualized.
+     * Alter which skeleton is visualized.
      *
      * @param newSkeleton which skeleton to visualize (may be null, alias
      * created)
      */
     public void setSkeleton(Skeleton newSkeleton) {
-        skeleton = newSkeleton;
-
-        if (subtree != null) {
-            subtree.detachAllChildren();
-
-            String namePrefix = "";
-            if (spatial != null) {
-                namePrefix = spatial.getName() + " ";
+        if (skeleton != newSkeleton) {
+            if (subtree != null) {
+                subtree.detachAllChildren();
             }
-
-            String headsName = namePrefix + "heads";
-            SkeletonMesh headsMesh = new SkeletonMesh(skeleton, Mode.Points);
-            Geometry headsGeometry = new Geometry(headsName, headsMesh);
-            headsGeometry.setMaterial(pointMaterial);
-            subtree.attachChildAt(headsGeometry, headsChildPosition);
-
-            String linksName = namePrefix + "links";
-            SkeletonMesh linksMesh = new SkeletonMesh(skeleton, Mode.Lines);
-            Geometry linksGeometry = new Geometry(linksName, linksMesh);
-            linksGeometry.setMaterial(lineMaterial);
-            subtree.attachChildAt(linksGeometry, linksChildPosition);
+            skeleton = newSkeleton;
         }
     }
 
     /**
-     * Test whether the points material supports PointShape.
+     * Configure the skeleton and transform spatial from a skeleton control.
      *
-     * @return true if supported, false otherwise
+     * @param subject which skeleton control to use (may be null)
      */
-    final public boolean supportsPointShape() {
-        MaterialDef def = pointMaterial.getMaterialDef();
-        if (def.getMaterialParam("PointShape") == null) {
-            return false;
+    public void setSubject(SkeletonControl subject) {
+        if (subject == null) {
+            skeleton = null;
+            transformSpatial = null;
         } else {
-            return true;
+            skeleton = subject.getSkeleton();
+            Spatial tree = subject.getSpatial();
+            transformSpatial = MySpatial.findAnimatedGeometry(tree);
         }
     }
 
     /**
-     * Test whether the points material supports PointSize. (The PointSize
-     * parameter was missing from Unshaded.j3md in JME 3.1.0.)
+     * Alter which spatial provides the world transform
      *
-     * @return true if supported, false otherwise
+     * @param spatial which spatial to use (may be null, alias created)
      */
-    final public boolean supportsPointSize() {
-        MaterialDef def = pointMaterial.getMaterialDef();
-        if (def.getMaterialParam("PointSize") == null) {
-            return false;
-        } else {
-            return true;
-        }
+    public void setTransformSpatial(Spatial spatial) {
+        transformSpatial = spatial;
     }
     // *************************************************************************
     // SubtreeControl methods
@@ -448,17 +384,17 @@ public class SkeletonVisualizer extends SubtreeControl {
         super.cloneFields(cloner, original);
 
         lineMaterial = cloner.clone(lineMaterial);
-        pointMaterial = cloner.clone(pointMaterial);
-        standardPointColor = cloner.clone(standardPointColor);
+        headMaterial = cloner.clone(headMaterial);
         skeleton = cloner.clone(skeleton);
+        transformSpatial = cloner.clone(transformSpatial);
 
         Map<Integer, ColorRGBA> copyColors = new TreeMap<>();
-        for (Map.Entry<Integer, ColorRGBA> entry : pointColors.entrySet()) {
+        for (Map.Entry<Integer, ColorRGBA> entry : customColors.entrySet()) {
             int key = entry.getKey();
             ColorRGBA value = entry.getValue().clone();
             copyColors.put(key, value);
         }
-        pointColors = copyColors;
+        customColors = copyColors;
     }
 
     /**
@@ -470,41 +406,14 @@ public class SkeletonVisualizer extends SubtreeControl {
     @Override
     protected void controlUpdate(float updateInterval) {
         super.controlUpdate(updateInterval);
-        /*
-         * Copy the world transform from an animated geometry to the visualizer
-         * (and hope any other animated geometries share the same transform!)
-         */
-        Geometry ag = MySpatial.findAnimatedGeometry(spatial);
-        if (ag != null) {
-            Transform worldTransform;
-            if (ag.isIgnoreTransform()) {
-                worldTransform = transformIdentity;
-            } else {
-                worldTransform = ag.getWorldTransform();
-            }
-            MySpatial.setWorldTransform(subtree, worldTransform);
-        }
 
-        int numBones;
-        if (skeleton == null) {
-            numBones = 0;
+        if (skeleton == null || skeleton.getBoneCount() == 0) {
+            subtree.detachAllChildren();
+        } else if (subtree.getChildren().isEmpty()) {
+            addGeometries();
         } else {
-            numBones = skeleton.getBoneCount();
+            updateGeometries();
         }
-        ColorRGBA[] colors = new ColorRGBA[numBones];
-        for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
-            colors[boneIndex] = copyPointColor(boneIndex);
-        }
-
-        Geometry headsGeom = (Geometry) subtree.getChild(headsChildPosition);
-        SkeletonMesh headsMesh = (SkeletonMesh) headsGeom.getMesh();
-        headsMesh.updateColors(colors);
-        headsMesh.updatePositions(skeleton);
-
-        Geometry linksGeom = (Geometry) subtree.getChild(linksChildPosition);
-        SkeletonMesh linksMesh = (SkeletonMesh) linksGeom.getMesh();
-        linksMesh.updateColors(colors);
-        linksMesh.updatePositions(skeleton);
     }
 
     /**
@@ -516,34 +425,78 @@ public class SkeletonVisualizer extends SubtreeControl {
     public void setEnabled(boolean newState) {
         if (newState && subtree == null) {
             /*
-             * Before enabling this control for the first time,
+             * Before enabling this control for the 1st time,
              * create the subtree.
              */
-            String nodeName = spatial.getName() + " skeleton";
-            subtree = new Node(nodeName);
+            subtree = new Node(subtreeName);
             subtree.setQueueBucket(RenderQueue.Bucket.Transparent);
             subtree.setShadowMode(RenderQueue.ShadowMode.Off);
-
-            setSkeleton(skeleton);
-            setLineWidth(lineWidth);
         }
 
         super.setEnabled(newState);
     }
+    // *************************************************************************
+    // private methods
 
     /**
-     * Alter which node is controlled.
-     *
-     * @param newNode the node to control (or null)
+     * Create a heads geometry and a links geometry and attach them to the empty
+     * subtree.
      */
-    @Override
-    public void setSpatial(Spatial newNode) {
-        super.setSpatial(newNode);
+    private void addGeometries() {
+        assert subtree.getChildren().isEmpty();
 
-        Skeleton foundSkeleton = null;
-        if (newNode != null) {
-            foundSkeleton = MySkeleton.findSkeleton(newNode);
+        SkeletonMesh headsMesh = new SkeletonMesh(skeleton, Mesh.Mode.Points);
+        Geometry headsGeometry = new Geometry(headsName, headsMesh);
+        headsGeometry.setMaterial(headMaterial);
+        subtree.attachChildAt(headsGeometry, headsChildPosition);
+
+        SkeletonMesh linksMesh = new SkeletonMesh(skeleton, Mesh.Mode.Lines);
+        Geometry linksGeometry = new Geometry(linksName, linksMesh);
+        linksGeometry.setMaterial(lineMaterial);
+        subtree.attachChildAt(linksGeometry, linksChildPosition);
+
+        updateGeometries();
+    }
+
+    /**
+     * Update existing geometries based on the skeleton and the transform
+     * spatial.
+     */
+    private void updateGeometries() {
+        Transform worldTransform;
+        if (transformSpatial == null
+                || MySpatial.isIgnoringTransforms(transformSpatial)) {
+            worldTransform = transformIdentity;
+        } else {
+            worldTransform = transformSpatial.getWorldTransform();
         }
-        setSkeleton(foundSkeleton);
+        MySpatial.setWorldTransform(subtree, worldTransform);
+
+        int numBones = skeleton.getBoneCount();
+        ColorRGBA[] colors = new ColorRGBA[numBones];
+        for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
+            colors[boneIndex] = copyPointColor(boneIndex);
+        }
+
+        Geometry headsGeometry
+                = (Geometry) subtree.getChild(headsChildPosition);
+        SkeletonMesh headsMesh = (SkeletonMesh) headsGeometry.getMesh();
+        headsMesh.updateColors(colors);
+        headsMesh.updatePositions(skeleton);
+
+        Geometry linksGeometry
+                = (Geometry) subtree.getChild(linksChildPosition);
+        SkeletonMesh linksMesh = (SkeletonMesh) linksGeometry.getMesh();
+        linksMesh.updateColors(colors);
+        linksMesh.updatePositions(skeleton);
+
+        if (effectiveLineWidth >= 1f) {
+            assert lineMaterial == linksGeometry.getMaterial();
+            RenderState rs = lineMaterial.getAdditionalRenderState();
+            rs.setLineWidth(effectiveLineWidth);
+            linksGeometry.setCullHint(Spatial.CullHint.Inherit);
+        } else {
+            linksGeometry.setCullHint(Spatial.CullHint.Always);
+        }
     }
 }
