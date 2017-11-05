@@ -56,7 +56,7 @@ import jme3utilities.Validate;
  * The controlled spatial must be a node.
  * <p>
  * The control is disabled by default. When enabled, it attaches 2 geometries to
- * the controlled node.
+ * the subtree.
  *
  * @author Stephen Gold sgold@sonic.net
  */

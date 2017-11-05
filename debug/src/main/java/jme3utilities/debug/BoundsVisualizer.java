@@ -57,7 +57,7 @@ import jme3utilities.Validate;
  * may be a geometry.
  * <p>
  * The control is disabled by default. When enabled, it attaches a geometry to
- * the controlled node. TODO rename BoundVisualizer
+ * the subtree. TODO rename BoundVisualizer
  *
  * @author Stephen Gold sgold@sonic.net
  */

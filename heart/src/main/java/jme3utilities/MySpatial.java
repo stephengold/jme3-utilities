@@ -366,7 +366,7 @@ public class MySpatial {
     }
 
     /**
-     * Find a node's 1st child that is an assignable from the specified class.
+     * Find a node's 1st child that is assignable from the specified class.
      *
      * @param <T> subtype of {@link com.jme3.scene.Spatial}
      * @param node node to search (not null)
@@ -410,7 +410,7 @@ public class MySpatial {
     }
 
     /**
-     * Find a spatial's 1st local light that is an assignable from the specified
+     * Find a spatial's 1st local light that is assignable from the specified
      * class.
      *
      * @param <T> subtype of {@link com.jme3.light.Light}
@@ -699,7 +699,7 @@ public class MySpatial {
     }
 
     /**
-     * Test whether a spatial is an geometry with ignoreTransform=true.
+     * Test whether a spatial is a geometry with ignoreTransform=true.
      *
      * @param spatial spatial to test (not null, unaffected)
      * @return true if the spatial ignores transforms, otherwise false
