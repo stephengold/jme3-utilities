@@ -1,12 +1,13 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.7.2 released TBD
+## Version 0.7.2 released 7 November 2017
 
-  API changes to GuiScreenController:
-    + Add SliderTransform arguments to readSlider() and setSlider() methods.
-    + Remove updateSlider() and updateLogSlider() methods.
-    + Add readVectorBank() method.
-  Move dialog controllers to new package 'jme3utilities.nifty.dialog'.
+API changes to GuiScreenController:
++ Add SliderTransform arguments to readSlider() and setSlider() methods.
++ Remove updateSlider() and updateLogSlider() methods.
++ Add readVectorBank() method.
+
+Move dialog controllers to new package 'jme3utilities.nifty.dialog'.
 
 ## Version 0.7.1 released 20 September 2017
 
