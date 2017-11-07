@@ -28,6 +28,7 @@ package jme3utilities.math;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
@@ -46,6 +47,17 @@ public class MyQuaternion {
      */
     final private static Logger logger
             = Logger.getLogger(MyQuaternion.class.getName());
+    /**
+     * array of cardinal axes
+     */
+    final private static Vector3f cardinalAxes[] = {
+        new Vector3f(1f, 0f, 0f),
+        new Vector3f(0f, 1f, 0f),
+        new Vector3f(0f, 0f, 1f),
+        new Vector3f(-1f, 0f, 0f),
+        new Vector3f(0f, -1f, 0f),
+        new Vector3f(0f, 0f, -1f)
+    };
     // *************************************************************************
     // constructors
 
@@ -74,6 +86,46 @@ public class MyQuaternion {
         float z = total.getZ() + input.getZ() * scale;
         float w = total.getW() + input.getW() * scale;
         total.set(x, y, z, w);
+    }
+
+    /**
+     * Find the cardinal rotation most similar to the specified input. A
+     * cardinal rotation is one for which the rotation angles on all 3 axes are
+     * integer multiples of Pi/2 radians.
+     *
+     * @param input (not null, modified)
+     */
+    public static void cardinalizeLocal(Quaternion input) {
+        Validate.nonNull(input, "input");
+
+        input.normalizeLocal();
+        /*
+         * Generate each of the 24 cardinal rotations.
+         */
+        Quaternion cardinalRotation = new Quaternion();
+        Quaternion bestCardinalRotation = new Quaternion();
+        Vector3f z = new Vector3f();
+        float bestAbsDot = -1f;
+        for (Vector3f x : cardinalAxes) {
+            for (Vector3f y : cardinalAxes) {
+                x.cross(y, z);
+                if (z.isUnitVector()) {
+                    cardinalRotation.fromAxes(x, y, z);
+                    /*
+                     * Measure the similarity of the 2 rotations
+                     * using the absolute value of their dot product.
+                     */
+                    float dot = cardinalRotation.dot(input);
+                    float absDot = FastMath.abs(dot);
+                    if (absDot > bestAbsDot) {
+                        bestAbsDot = absDot;
+                        bestCardinalRotation.set(cardinalRotation);
+                    }
+                }
+            }
+        }
+
+        input.set(bestCardinalRotation);
     }
 
     /**
