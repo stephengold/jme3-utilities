@@ -24,31 +24,8 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.nifty;
-
-import de.lessvoid.nifty.elements.Element;
-
 /**
- * Generic controller interface for dialog boxes.
- *
- * @author Stephen Gold sgold@sonic.net
+ * Reusable classes for dialog controllers, for use with
+ * jMonkeyEngine3 and Nifty GUI.
  */
-public interface DialogController {
-    /**
-     * Test whether "commit" actions are allowed.
-     *
-     * @param dialogElement (not null)
-     * @return true if allowed, otherwise false
-     */
-    boolean allowCommit(Element dialogElement);
-
-    /**
-     * Callback to update the dialog box prior to rendering. (Invoked once per
-     * render pass.)
-     *
-     * @param dialogElement (not null)
-     * @param elapsedTime time interval between render passes (in seconds,
-     * &ge;0)
-     */
-    void update(Element dialogElement, float elapsedTime);
-}
+package jme3utilities.nifty.dialog;

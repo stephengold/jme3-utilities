@@ -30,7 +30,7 @@ import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import java.util.logging.Logger;
-import jme3utilities.nifty.DialogController;
+import jme3utilities.nifty.dialog.DialogController;
 
 /**
  * A dialog controller used by TestPopups.
@@ -44,8 +44,8 @@ class SearchDialogController implements DialogController {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            SearchDialogController.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(SearchDialogController.class.getName());
     // *************************************************************************
     // DialogController methods
 
@@ -57,8 +57,8 @@ class SearchDialogController implements DialogController {
      */
     @Override
     public boolean allowCommit(Element dialogElement) {
-        TextField textField = dialogElement.findNiftyControl("#textfield",
-                TextField.class);
+        TextField textField
+                = dialogElement.findNiftyControl("#textfield", TextField.class);
         String enteredText = textField.getRealText();
         String lc = enteredText.toLowerCase();
         if (lc.contains("a") || lc.contains("e") || lc.contains("i")
@@ -88,8 +88,8 @@ class SearchDialogController implements DialogController {
             feedbackMessage = "must contain a vowel";
         }
 
-        Button commitButton = dialogElement.findNiftyControl("#commit",
-                Button.class);
+        Button commitButton
+                = dialogElement.findNiftyControl("#commit", Button.class);
         commitButton.setText(commitLabel);
 
         Element feedbackElement = dialogElement.findElementById("#feedback");
