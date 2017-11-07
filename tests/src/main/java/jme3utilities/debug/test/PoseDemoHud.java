@@ -50,6 +50,7 @@ import jme3utilities.debug.AxesVisualizer;
 import jme3utilities.debug.Dumper;
 import jme3utilities.debug.SkeletonVisualizer;
 import jme3utilities.nifty.GuiScreenController;
+import jme3utilities.nifty.SliderTransform;
 
 /**
  * Controller for the HUD for the PoseDemo application.
@@ -271,7 +272,8 @@ public class PoseDemoHud
                     return;
 
                 case "select bone":
-                    List<String> boneNames = PoseDemo.modelState.listBoneNames();
+                    List<String> boneNames
+                            = PoseDemo.modelState.listBoneNames();
                     MyString.reduce(boneNames, 20);
                     Collections.sort(boneNames);
                     showPopupMenu(boneMenuPrefix, boneNames);
@@ -794,5 +796,48 @@ public class PoseDemoHud
         dumper.setDumpShadow(enable);
         enable = isChecked("printCull");
         dumper.setDumpCull(enable);
+    }
+
+    /**
+     * Read the value of a logarithmic Nifty slider and update its status label.
+     * This assumes a naming convention where (a) the slider's Nifty id ends in
+     * "Slider" and (b) the Nifty id of the corresponding label consists of the
+     * same prefix followed by "SliderStatus".
+     *
+     * @param namePrefix unique id prefix of the slider (not null)
+     * @param logBase logarithm base of the slider (2 or 10)
+     * @param statusSuffix to specify a unit of measurement (not null)
+     * @return scaled value of the slider
+     */
+    private float updateLogSlider(String namePrefix, float logBase,
+            String statusSuffix) {
+        float scaledValue;
+        if (logBase == 10f) {
+            scaledValue = readSlider(namePrefix, SliderTransform.Log10);
+        } else if (logBase == 2f) {
+            scaledValue = readSlider(namePrefix, SliderTransform.Log2);
+        } else {
+            throw new IllegalArgumentException();
+        }
+        updateSliderStatus(namePrefix, scaledValue, statusSuffix);
+
+        return scaledValue;
+    }
+
+    /**
+     * Read the value of a linear Nifty slider and update its status label. This
+     * assumes a naming convention where (a) the slider's Nifty id ends in
+     * "Slider" and (b) the Nifty id of the corresponding label consists of the
+     * same prefix followed by "SliderStatus".
+     *
+     * @param name unique id prefix of the slider (not null)
+     * @param statusSuffix suffix to specify a unit of measurement (not null)
+     * @return value of the slider
+     */
+    private float updateSlider(String name, String statusSuffix) {
+        float value = readSlider(name, SliderTransform.None);
+        updateSliderStatus(name, value, statusSuffix);
+
+        return value;
     }
 }

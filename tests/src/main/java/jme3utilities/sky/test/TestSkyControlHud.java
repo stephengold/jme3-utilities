@@ -39,6 +39,7 @@ import jme3utilities.TimeOfDay;
 import jme3utilities.debug.LandscapeControl;
 import jme3utilities.math.MyMath;
 import jme3utilities.nifty.GuiScreenController;
+import jme3utilities.nifty.SliderTransform;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
 import jme3utilities.sky.SunAndStars;
@@ -63,8 +64,8 @@ public class TestSkyControlHud
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            TestSkyControlHud.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(TestSkyControlHud.class.getName());
     // *************************************************************************
     // fields
 
@@ -430,56 +431,54 @@ public class TestSkyControlHud
         Updater updater = sky.getUpdater();
 
         ambientMultiplier = updater.getAmbientMultiplier();
-        setSlider("ambient", ambientMultiplier);
+        setSlider("ambient", SliderTransform.None, ambientMultiplier);
 
         cloudModulation = sky.getCloudModulation();
         setChecked("modulation", cloudModulation);
         cloudsRate = sky.getCloudsRate();
-        setSlider("cloudsRate", cloudsRate);
+        setSlider("cloudsRate", SliderTransform.None, cloudsRate);
         cloudsYOffset = sky.getCloudsYOffset();
-        setSlider("cloudsYOffset", cloudsYOffset);
+        setSlider("cloudsYOffset", SliderTransform.None, cloudsYOffset);
         cloudiness = sky.getCloudLayer(0).getOpacity();
-        setSlider("cloudiness", cloudiness);
+        setSlider("cloudiness", SliderTransform.None, cloudiness);
 
         latitude = sunAndStars.getObserverLatitude();
         float degrees = MyMath.toDegrees(latitude);
-        setSlider("latitude", degrees);
+        setSlider("latitude", SliderTransform.None, degrees);
 
         lunarDiameter = sky.lunarDiameter();
         degrees = MyMath.toDegrees(lunarDiameter);
-        float logDegrees = FastMath.log(degrees, 10f);
-        setSlider("lunarDiameter", logDegrees);
+        setSlider("lunarDiameter", SliderTransform.Log10, degrees);
 
         lunarLatitude = sky.getLunarLatitude();
         degrees = MyMath.toDegrees(lunarLatitude);
-        setSlider("lunarLatitude", degrees);
+        setSlider("lunarLatitude", SliderTransform.None, degrees);
 
         mainMultiplier = updater.getMainMultiplier();
-        setSlider("main", mainMultiplier);
+        setSlider("main", SliderTransform.None, mainMultiplier);
 
         phase = sky.getPhase();
         longitudeDifference = sky.getLongitudeDifference();
         degrees = MyMath.toDegrees(longitudeDifference);
-        setSlider("longitudeDifference", degrees);
+        setSlider("longitudeDifference", SliderTransform.None, degrees);
 
         relief = land.peakY();
-        setSlider("relief", relief);
+        setSlider("relief", SliderTransform.None, relief);
 
         solarDiameter = sky.solarDiameter();
         degrees = MyMath.toDegrees(solarDiameter);
-        logDegrees = FastMath.log(degrees, 10f);
-        setSlider("solarDiameter", logDegrees);
+        setSlider("solarDiameter", SliderTransform.Log10, degrees);
 
         solarLongitude = sunAndStars.getSolarLongitude();
         degrees = MyMath.toDegrees(solarLongitude);
-        setSlider("solarLongitude", degrees);
+        setSlider("solarLongitude", SliderTransform.None, degrees);
 
         float hour = sunAndStars.getHour();
         timeOfDay.setHour(hour);
 
         topVerticalAngle = sky.getTopVerticalAngle();
         degrees = MyMath.toDegrees(topVerticalAngle);
-        setSlider("topVerticalAngle", degrees);
+        setSlider("topVerticalAngle", SliderTransform.None, degrees);
     }
 
     /**
@@ -653,16 +652,16 @@ public class TestSkyControlHud
         cloudsRate = updateSlider("cloudsRate", "x");
         cloudsYOffset = updateSlider("cloudsYOffset", "");
 
-        float lunarDiameterDegrees = updateLogSlider(
-                "lunarDiameter", 10f, " deg");
+        float lunarDiameterDegrees
+                = updateLogSlider("lunarDiameter", 10f, " deg");
         lunarDiameter = MyMath.toRadians(lunarDiameterDegrees);
 
-        float solarDiameterDegrees = updateLogSlider(
-                "solarDiameter", 10f, " deg");
+        float solarDiameterDegrees
+                = updateLogSlider("solarDiameter", 10f, " deg");
         solarDiameter = MyMath.toRadians(solarDiameterDegrees);
 
-        float longitudeDifferenceDegrees = updateSlider(
-                "longitudeDifference", " deg");
+        float longitudeDifferenceDegrees
+                = updateSlider("longitudeDifference", " deg");
         longitudeDifference = MyMath.toRadians(longitudeDifferenceDegrees);
         float lunarLatitudeDegrees = updateSlider("lunarLatitude", " deg");
         lunarLatitude = MyMath.toRadians(lunarLatitudeDegrees);
@@ -762,5 +761,48 @@ public class TestSkyControlHud
         showPopupMenu("style ", new String[]{
             "chaotic", "disc", "hazy-disc", "rayed", "t0neg0d"
         });
+    }
+
+    /**
+     * Read the value of a logarithmic Nifty slider and update its status label.
+     * This assumes a naming convention where (a) the slider's Nifty id ends in
+     * "Slider" and (b) the Nifty id of the corresponding label consists of the
+     * same prefix followed by "SliderStatus".
+     *
+     * @param namePrefix unique id prefix of the slider (not null)
+     * @param logBase logarithm base of the slider (2 or 10)
+     * @param statusSuffix to specify a unit of measurement (not null)
+     * @return scaled value of the slider
+     */
+    private float updateLogSlider(String namePrefix, float logBase,
+            String statusSuffix) {
+        float scaledValue;
+        if (logBase == 10f) {
+            scaledValue = readSlider(namePrefix, SliderTransform.Log10);
+        } else if (logBase == 2f) {
+            scaledValue = readSlider(namePrefix, SliderTransform.Log2);
+        } else {
+            throw new IllegalArgumentException();
+        }
+        updateSliderStatus(namePrefix, scaledValue, statusSuffix);
+
+        return scaledValue;
+    }
+
+    /**
+     * Read the value of a linear Nifty slider and update its status label. This
+     * assumes a naming convention where (a) the slider's Nifty id ends in
+     * "Slider" and (b) the Nifty id of the corresponding label consists of the
+     * same prefix followed by "SliderStatus".
+     *
+     * @param name unique id prefix of the slider (not null)
+     * @param statusSuffix suffix to specify a unit of measurement (not null)
+     * @return value of the slider
+     */
+    private float updateSlider(String name, String statusSuffix) {
+        float value = readSlider(name, SliderTransform.None);
+        updateSliderStatus(name, value, statusSuffix);
+
+        return value;
     }
 }

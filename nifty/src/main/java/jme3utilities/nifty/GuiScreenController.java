@@ -27,6 +27,7 @@
 package jme3utilities.nifty;
 
 import com.jme3.math.FastMath;
+import com.jme3.math.Vector3f;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.CheckBox;
 import de.lessvoid.nifty.controls.RadioButton;
@@ -139,19 +140,39 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Read the linear value of a Nifty slider. This assumes a naming convention
-     * where he Nifty id of every slider ends with "Slider".
+     * Read the transformed value of the named Nifty slider.
      *
-     * @param idPrefix unique id prefix of the slider (not null)
-     * @return value of the slider
+     * @param name unique id prefix of the slider to read (not null)
+     * @param transform how to transform the raw reading (not null)
+     * @return transformed reading
      */
-    public float readSlider(String idPrefix) {
-        Validate.nonNull(idPrefix, "id prefix");
+    public float readSlider(String name, SliderTransform transform) {
+        Validate.nonNull(name, "name");
+        Validate.nonNull(transform, "transform");
 
-        Slider slider = getSlider(idPrefix);
-        float value = slider.getValue();
+        Slider slider = getSlider(name);
+        float result = readSlider(slider, transform);
 
-        return value;
+        return result;
+    }
+
+    /**
+     * Read a bank of 3 sliders that control a vector.
+     *
+     * @param name unique id infix of the bank to read (not null)
+     * @param transform how to transform the raw readings (not null)
+     * @return vector indicated by the sliders (new instance)
+     */
+    public Vector3f readVectorBank(String name, SliderTransform transform) {
+        Validate.nonNull(name, "name");
+        Validate.nonNull(transform, "transform");
+
+        float x = readSlider("x" + name, transform);
+        float y = readSlider("y" + name, transform);
+        float z = readSlider("z" + name, transform);
+        Vector3f vector = new Vector3f(x, y, z);
+
+        return vector;
     }
 
     /**
@@ -238,17 +259,19 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Alter the linear value of a Nifty slider. This assumes a naming
-     * convention where the slider's Nifty id ends with "Slider".
+     * Set the named Nifty slider based on a transformed value.
      *
-     * @param namePrefix unique name prefix of the slider (not null)
-     * @param newValue new value for the slider
+     * @param name unique id prefix of the slider to set (not null)
+     * @param transform how the value has been transformed (not null)
+     * @param inputValue input value
      */
-    public void setSlider(String namePrefix, float newValue) {
-        Validate.nonNull(namePrefix, "slider name prefix");
+    public void setSlider(String name, SliderTransform transform,
+            float inputValue) {
+        Validate.nonNull(name, "name");
+        Validate.nonNull(transform, "transform");
 
-        Slider slider = getSlider(namePrefix);
-        slider.setValue(newValue);
+        Slider slider = getSlider(name);
+        setSlider(slider, transform, inputValue);
     }
 
     /**
@@ -281,52 +304,8 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Read the value of a logarithmic Nifty slider and update its status label.
-     * This assumes a naming convention where (a) the slider's Nifty id ends in
-     * "Slider" and (b) the Nifty id of the corresponding label consists of the
-     * same prefix followed by "SliderStatus".
-     *
-     * @param namePrefix unique id prefix of the slider (not null)
-     * @param logBase logarithm base of the slider (&gt;0)
-     * @param statusSuffix to specify a unit of measurement (not null)
-     * @return scaled value of the slider
-     */
-    public float updateLogSlider(String namePrefix, float logBase,
-            String statusSuffix) {
-        Validate.nonNull(namePrefix, "prefix");
-        Validate.positive(logBase, "base");
-        Validate.nonNull(statusSuffix, "suffix");
-
-        float value = readSlider(namePrefix);
-        float scaledValue = FastMath.pow(logBase, value);
-        updateSliderStatus(namePrefix, scaledValue, statusSuffix);
-
-        return scaledValue;
-    }
-
-    /**
-     * Read the value of a linear Nifty slider and update its status label. This
-     * assumes a naming convention where (a) the slider's Nifty id ends in
-     * "Slider" and (b) the Nifty id of the corresponding label consists of the
-     * same prefix followed by "SliderStatus".
-     *
-     * @param namePrefix unique name prefix of the slider (not null)
-     * @param statusSuffix suffix to specify a unit of measurement (not null)
-     * @return value of the slider
-     */
-    public float updateSlider(String namePrefix, String statusSuffix) {
-        Validate.nonNull(namePrefix, "prefix");
-        Validate.nonNull(statusSuffix, "suffix");
-
-        float value = readSlider(namePrefix);
-        updateSliderStatus(namePrefix, value, statusSuffix);
-
-        return value;
-    }
-
-    /**
-     * Update the status of a Nifty slider. This assumes a naming convention
-     * where the label's Nifty id ends with "SliderStatus".
+     * Update the status label of a Nifty slider. This assumes a naming
+     * convention where the label's Nifty id ends with "SliderStatus".
      *
      * @param namePrefix unique id prefix of the slider (not null)
      * @param value value of the slider
@@ -356,5 +335,90 @@ public class GuiScreenController extends PopScreenController {
 
         String statusName = namePrefix + "SliderStatus";
         setStatusText(statusName, statusText);
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Read the transformed value of a Nifty slider.
+     *
+     * @param slider slider to read (not null, unaffected)
+     * @param transform how to transform the raw reading (not null)
+     * @return transformed reading
+     */
+    private static float readSlider(Slider slider, SliderTransform transform) {
+        Validate.nonNull(transform, "transform");
+
+        float max = slider.getMax();
+        float min = slider.getMin();
+        float raw = slider.getValue();
+        float reversed = min + max - raw;
+
+        float transformed;
+        switch (transform) {
+            case None:
+                transformed = raw;
+                break;
+            case Reversed:
+                transformed = reversed;
+                break;
+            case Log10:
+                transformed = FastMath.pow(10f, raw);
+                break;
+            case Log2:
+                transformed = FastMath.pow(2f, raw);
+                break;
+            case ReversedLog10:
+                transformed = FastMath.pow(10f, reversed);
+                break;
+            case ReversedLog2:
+                transformed = FastMath.pow(2f, reversed);
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+
+        return transformed;
+    }
+
+    /**
+     * Set a Nifty slider based on a transformed value.
+     *
+     * @param slider slider to set (not null)
+     * @param transform how the value has been transformed (not null)
+     * @param inputValue input value
+     */
+    private static void setSlider(Slider slider, SliderTransform transform,
+            float inputValue) {
+        Validate.nonNull(transform, "transform");
+
+        float max = slider.getMax();
+        float min = slider.getMin();
+
+        float raw;
+        switch (transform) {
+            case None:
+                raw = inputValue;
+                break;
+            case Reversed:
+                raw = min + max - inputValue;
+                break;
+            case Log10:
+                raw = FastMath.log(inputValue, 10f);
+                break;
+            case Log2:
+                raw = FastMath.log(inputValue, 2f);
+                break;
+            case ReversedLog10:
+                raw = min + max - FastMath.log(inputValue, 10f);
+                break;
+            case ReversedLog2:
+                raw = min + max - FastMath.log(inputValue, 2f);
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+
+        slider.setValue(raw);
     }
 }

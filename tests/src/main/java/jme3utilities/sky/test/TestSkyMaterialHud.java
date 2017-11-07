@@ -43,6 +43,7 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 import jme3utilities.nifty.GuiScreenController;
+import jme3utilities.nifty.SliderTransform;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyMaterial;
 
@@ -73,8 +74,8 @@ public class TestSkyMaterialHud
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            TestSkyMaterialHud.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(TestSkyMaterialHud.class.getName());
     // *************************************************************************
     // fields
 
@@ -173,8 +174,7 @@ public class TestSkyMaterialHud
             setUVBank("c0", c0Offset);
 
             float c0Scale = material.getCloudsScale(0);
-            float logC0Scale = FastMath.log(c0Scale, 2f);
-            setSlider("c0Scale", logC0Scale);
+            setSlider("c0Scale", SliderTransform.Log2, c0Scale);
         }
 
         if (maxCloudLayers > 1) {
@@ -187,8 +187,7 @@ public class TestSkyMaterialHud
             setUVBank("c1", c1Offset);
 
             float c1Scale = material.getCloudsScale(1);
-            float logC1Scale = FastMath.log(c1Scale, 2f);
-            setSlider("c1Scale", logC1Scale);
+            setSlider("c1Scale", SliderTransform.Log2, c1Scale);
         }
 
         ColorRGBA hazeColor = material.copyHazeColor();
@@ -206,13 +205,12 @@ public class TestSkyMaterialHud
             setUVBank("m", moonOffset);
 
             float moonScale = material.getObjectScale(moonIndex);
-            float logMoonScale = FastMath.log(moonScale, 10f);
-            setSlider("mSca", logMoonScale);
+            setSlider("mSca", SliderTransform.Log10, moonScale);
 
             Vector2f moonRotation = material.copyObjectRotation(moonIndex);
             float radians = moonRotation.getAngle();
             float degrees = MyMath.toDegrees(radians);
-            setSlider("mRot", degrees);
+            setSlider("mRot", SliderTransform.None, degrees);
         }
 
         if (maxObjects > sunIndex) {
@@ -226,8 +224,7 @@ public class TestSkyMaterialHud
             setUVBank("sun", sunOffset);
 
             float sunScale = material.getObjectScale(sunIndex);
-            float logSunScale = FastMath.log(sunScale, 10f);
-            setSlider("sunScale", logSunScale);
+            setSlider("sunScale", SliderTransform.Log10, sunScale);
         }
     }
     // *************************************************************************
@@ -269,7 +266,8 @@ public class TestSkyMaterialHud
                 case "c0Texture t0neg0d":
                 case "c1Texture t0neg0d":
                     layer = actionString.substring(1, 2);
-                    setCloudTexture(layer, "Textures/skies/t0neg0d/Clouds_L.png");
+                    setCloudTexture(layer,
+                            "Textures/skies/t0neg0d/Clouds_L.png");
                     return;
 
                 case "phase":
@@ -477,10 +475,10 @@ public class TestSkyMaterialHud
     private void setColorBank(String prefix, ColorRGBA color) {
         assert prefix != null;
 
-        setSlider(prefix + "R", color.r);
-        setSlider(prefix + "G", color.g);
-        setSlider(prefix + "B", color.b);
-        setSlider(prefix + "A", color.a);
+        setSlider(prefix + "R", SliderTransform.None, color.r);
+        setSlider(prefix + "G", SliderTransform.None, color.g);
+        setSlider(prefix + "B", SliderTransform.None, color.b);
+        setSlider(prefix + "A", SliderTransform.None, color.a);
     }
 
     /**
@@ -519,8 +517,8 @@ public class TestSkyMaterialHud
                 break;
 
             default:
-                String assetPath = String.format(
-                        "Textures/skies/star-maps/%s.png", name);
+                String assetPath
+                        = String.format("Textures/skies/star-maps/%s.png", name);
                 material.addStars(assetPath);
         }
     }
@@ -544,8 +542,8 @@ public class TestSkyMaterialHud
                 break;
 
             default:
-                String assetPath = String.format(
-                        "Textures/skies/suns/%s.png", name);
+                String assetPath
+                        = String.format("Textures/skies/suns/%s.png", name);
                 material.addObject(sunIndex, assetPath);
         }
     }
@@ -560,8 +558,8 @@ public class TestSkyMaterialHud
     private void setUVBank(String prefix, Vector2f uv) {
         assert prefix != null;
 
-        setSlider(prefix + "U", uv.x);
-        setSlider(prefix + "V", uv.y);
+        setSlider(prefix + "U", SliderTransform.None, uv.x);
+        setSlider(prefix + "V", SliderTransform.None, uv.y);
     }
 
     /**
@@ -634,6 +632,49 @@ public class TestSkyMaterialHud
         ColorRGBA color = new ColorRGBA(r, g, b, a);
 
         return color;
+    }
+
+    /**
+     * Read the value of a logarithmic Nifty slider and update its status label.
+     * This assumes a naming convention where (a) the slider's Nifty id ends in
+     * "Slider" and (b) the Nifty id of the corresponding label consists of the
+     * same prefix followed by "SliderStatus".
+     *
+     * @param namePrefix unique id prefix of the slider (not null)
+     * @param logBase logarithm base of the slider (2 or 10)
+     * @param statusSuffix to specify a unit of measurement (not null)
+     * @return scaled value of the slider
+     */
+    private float updateLogSlider(String namePrefix, float logBase,
+            String statusSuffix) {
+        float scaledValue;
+        if (logBase == 10f) {
+            scaledValue = readSlider(namePrefix, SliderTransform.Log10);
+        } else if (logBase == 2f) {
+            scaledValue = readSlider(namePrefix, SliderTransform.Log2);
+        } else {
+            throw new IllegalArgumentException();
+        }
+        updateSliderStatus(namePrefix, scaledValue, statusSuffix);
+
+        return scaledValue;
+    }
+
+    /**
+     * Read the value of a linear Nifty slider and update its status label. This
+     * assumes a naming convention where (a) the slider's Nifty id ends in
+     * "Slider" and (b) the Nifty id of the corresponding label consists of the
+     * same prefix followed by "SliderStatus".
+     *
+     * @param name unique id prefix of the slider (not null)
+     * @param statusSuffix suffix to specify a unit of measurement (not null)
+     * @return value of the slider
+     */
+    private float updateSlider(String name, String statusSuffix) {
+        float value = readSlider(name, SliderTransform.None);
+        updateSliderStatus(name, value, statusSuffix);
+
+        return value;
     }
 
     /**
