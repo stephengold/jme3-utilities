@@ -52,8 +52,8 @@ public class MakeClouds {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MakeClouds.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MakeClouds.class.getName());
     /**
      * application name for the usage message
      */
@@ -61,8 +61,8 @@ public class MakeClouds {
     /**
      * filesystem path to the output directory/folder
      */
-    final private static String outputDirPath =
-            "../SkyControl/src/main/resources/Textures/skies/clouds";
+    final private static String outputDirPath
+            = "../SkyControl/src/main/resources/Textures/skies/clouds";
     // *************************************************************************
     // fields
 

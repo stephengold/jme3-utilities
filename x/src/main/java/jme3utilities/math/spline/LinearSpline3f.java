@@ -46,11 +46,11 @@ public class LinearSpline3f implements Spline3f {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            LinearSpline3f.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(LinearSpline3f.class.getName());
     // *************************************************************************
     // fields
-    
+
     /**
      * location of each control point (size&gt;0)
      */
@@ -310,7 +310,7 @@ public class LinearSpline3f implements Spline3f {
         }
         buffer.append("]");
         String result = buffer.toString();
-        
+
         return result;
     }
     // *************************************************************************

@@ -40,8 +40,8 @@ class TestSkyControlParameters {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            TestSkyControlParameters.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(TestSkyControlParameters.class.getName());
     // *************************************************************************
     // fields
 
@@ -73,8 +73,7 @@ class TestSkyControlParameters {
     /**
      * true means scene with water; false means no water
      */
-    @Parameter(names = {"-w", "--water"},
-            description = "scene with water")
+    @Parameter(names = {"-w", "--water"}, description = "scene with water")
     private boolean water = false;
     // *************************************************************************
     // new methods exposed

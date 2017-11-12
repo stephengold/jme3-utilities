@@ -51,8 +51,8 @@ public class TestPopups extends GuiApplication {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            TestPopups.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(TestPopups.class.getName());
     /**
      * application name for its window's title bar
      */
@@ -162,8 +162,8 @@ public class TestPopups extends GuiApplication {
                 return;
 
             } else if (actionString.startsWith(searchDialogPrefix)) {
-                searchString = actionString.substring(
-                        searchDialogPrefix.length());
+                searchString
+                        = actionString.substring(searchDialogPrefix.length());
                 String line = String.format("Search string is %s.",
                         MyString.quote(searchString));
                 updateStatusLine(line);
@@ -206,8 +206,8 @@ public class TestPopups extends GuiApplication {
         File file = new File(path);
         File[] files = file.listFiles();
         if (files == null) {
-            String line = String.format("Selected file %s.",
-                    MyString.quote(path));
+            String line
+                    = String.format("Selected file %s.", MyString.quote(path));
             updateStatusLine(line);
 
         } else if (files.length == 0) {

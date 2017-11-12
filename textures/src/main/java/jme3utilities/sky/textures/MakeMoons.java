@@ -63,8 +63,8 @@ public class MakeMoons {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            MakeMoons.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(MakeMoons.class.getName());
     /**
      * application name for the usage message
      */
@@ -72,8 +72,8 @@ public class MakeMoons {
     /**
      * filesystem path to the asset directory/folder for output
      */
-    final private static String assetDirPath =
-            "../SkyControl/src/main/resources";
+    final private static String assetDirPath
+            = "../SkyControl/src/main/resources";
     // *************************************************************************
     // fields
 

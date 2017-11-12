@@ -43,16 +43,15 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class DelayControl
-        extends SimpleControl {
+public class DelayControl extends SimpleControl {
     // *************************************************************************
     // constants
 
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            DelayControl.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(DelayControl.class.getName());
     // *************************************************************************
     // fields
 

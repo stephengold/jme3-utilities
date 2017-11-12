@@ -46,8 +46,8 @@ public class TestPas extends SimpleApplication {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            TestPas.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(TestPas.class.getName());
     /**
      * application name, displayed on its window's title bar
      */

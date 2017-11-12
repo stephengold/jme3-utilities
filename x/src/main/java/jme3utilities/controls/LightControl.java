@@ -48,16 +48,15 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class LightControl
-        extends SimpleControl {
+public class LightControl extends SimpleControl {
     // *************************************************************************
     // constants
 
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            LightControl.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(LightControl.class.getName());
     // *************************************************************************
     // fields
 

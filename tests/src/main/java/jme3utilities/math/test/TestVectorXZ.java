@@ -44,8 +44,8 @@ public class TestVectorXZ {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            TestVectorXZ.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(TestVectorXZ.class.getName());
     // *************************************************************************
     // new methods exposed
 

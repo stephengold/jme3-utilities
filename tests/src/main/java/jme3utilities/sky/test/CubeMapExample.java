@@ -62,8 +62,8 @@ public class CubeMapExample extends SimpleApplication {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            CubeMapExample.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(CubeMapExample.class.getName());
     // *************************************************************************
     // new methods exposed
 

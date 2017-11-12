@@ -65,13 +65,13 @@ public class SkyMaterial extends SkyMaterialCore {
     /**
      * default color of clear sky: pale blue
      */
-    final private static ColorRGBA defaultClearColor = new ColorRGBA(
-            0.4f, 0.6f, 1f, Constants.alphaMax);
+    final private static ColorRGBA defaultClearColor
+            = new ColorRGBA(0.4f, 0.6f, 1f, Constants.alphaMax);
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            SkyMaterial.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(SkyMaterial.class.getName());
     /**
      * asset path to the default cloud layer alpha map
      */
@@ -83,8 +83,8 @@ public class SkyMaterial extends SkyMaterialCore {
     /**
      * asset path to the default starry night sky color map
      */
-    final private static String starsMapPath =
-            "Textures/skies/star-maps/wiltshire.png";
+    final private static String starsMapPath
+            = "Textures/skies/star-maps/wiltshire.png";
     /**
      * asset path to the default color map for the sun
      */

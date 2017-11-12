@@ -39,8 +39,7 @@ import jme3utilities.math.MyMath;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class Perlin2
-        implements Noise2 {
+public class Perlin2 implements Noise2 {
     // *************************************************************************
     // constants
 

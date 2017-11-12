@@ -88,8 +88,8 @@ public class TestGlobeRenderer
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            TestGlobeRenderer.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(TestGlobeRenderer.class.getName());
     /**
      * application name for the title bar and usage message
      */
@@ -254,8 +254,8 @@ public class TestGlobeRenderer
          * Create an unshaded material for each texture.
          */
         Texture dynamicTexture = moonRenderer.getTexture();
-        dynamicMaterial = MyAsset.createUnshadedMaterial(
-                assetManager, dynamicTexture);
+        dynamicMaterial
+                = MyAsset.createUnshadedMaterial(assetManager, dynamicTexture);
         RenderState additional = dynamicMaterial.getAdditionalRenderState();
         additional.setBlendMode(RenderState.BlendMode.Alpha);
         additional.setDepthWrite(false);

@@ -48,8 +48,8 @@ public class TweenTransforms implements Cloneable {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            TweenTransforms.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(TweenTransforms.class.getName());
     // *************************************************************************
     // fields
 

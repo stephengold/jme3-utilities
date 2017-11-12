@@ -82,13 +82,13 @@ public class SunAndStars
     /**
      * Earth's rate of rotation (radians per sidereal hour)
      */
-    final private static float radiansPerHour =
-            FastMath.TWO_PI / Constants.hoursPerDay;
+    final private static float radiansPerHour
+            = FastMath.TWO_PI / Constants.hoursPerDay;
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            SunAndStars.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(SunAndStars.class.getName());
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
@@ -353,8 +353,8 @@ public class SunAndStars
          */
         Vector3f equatorial = convertToEquatorial(0f, longitude);
         float ra = -FastMath.atan2(equatorial.y, equatorial.x);
-        solarRaHours = MyMath.modulo(
-                ra / radiansPerHour, Constants.hoursPerDay);
+        solarRaHours
+                = MyMath.modulo(ra / radiansPerHour, Constants.hoursPerDay);
         assert solarRaHours >= 0f : solarRaHours;
         assert solarRaHours < Constants.hoursPerDay : solarRaHours;
     }

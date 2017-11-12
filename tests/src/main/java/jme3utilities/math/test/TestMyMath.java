@@ -41,8 +41,8 @@ public class TestMyMath {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            TestMyMath.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(TestMyMath.class.getName());
     // *************************************************************************
     // new methods exposed
 

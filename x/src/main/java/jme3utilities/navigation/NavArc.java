@@ -39,16 +39,15 @@ import jme3utilities.math.VectorXZ;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class NavArc
-        implements Comparable<NavArc> {
+public class NavArc implements Comparable<NavArc> {
     // *************************************************************************
     // constants
 
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            NavArc.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(NavArc.class.getName());
     // *************************************************************************
     // fields
 

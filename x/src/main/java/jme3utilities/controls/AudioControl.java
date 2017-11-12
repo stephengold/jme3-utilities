@@ -35,16 +35,15 @@ import jme3utilities.SimpleControl;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class AudioControl
-        extends SimpleControl {
+public class AudioControl extends SimpleControl {
     // *************************************************************************
     // constants
 
     /**
      * message logger for this control
      */
-    final private static Logger logger = Logger.getLogger(
-            AudioControl.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(AudioControl.class.getName());
     // *************************************************************************
     // fields
 

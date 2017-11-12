@@ -40,8 +40,7 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class CameraControl
-        extends SimpleControl {
+public class CameraControl extends SimpleControl {
     // *************************************************************************
     // constants
 
@@ -52,7 +51,7 @@ public class CameraControl
             CameraControl.class.getName());
     // *************************************************************************
     // fields
-    
+
     /**
      * camera managed by this control: set by constructor
      */
@@ -101,7 +100,8 @@ public class CameraControl
     /**
      * Alter the camera's look direction.
      *
-     * @param newDirection direction in local coordinates (length&gt;0, unaffected)
+     * @param newDirection direction in local coordinates (length&gt;0,
+     * unaffected)
      */
     public void setLookDirection(Vector3f newDirection) {
         Validate.nonZero(newDirection, "direction");

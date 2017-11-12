@@ -56,8 +56,8 @@ public class CloudLayer
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            CloudLayer.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(CloudLayer.class.getName());
     // *************************************************************************
     // fields
 

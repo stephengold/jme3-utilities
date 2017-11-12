@@ -49,8 +49,8 @@ public class TestMultipleScreens extends GuiApplication {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            TestMultipleScreens.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(TestMultipleScreens.class.getName());
     // *************************************************************************
     // fields
 

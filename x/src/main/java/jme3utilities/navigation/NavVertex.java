@@ -39,13 +39,12 @@ import jme3utilities.math.VectorXZ;
 import jme3utilities.math.locus.Locus3f;
 
 /**
- * Navigation vertex: represents a reachable region of 3-D space, along with
- * its connections to other such regions.
+ * Navigation vertex: represents a reachable region of 3-D space, along with its
+ * connections to other such regions.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class NavVertex
-        implements Comparable<NavVertex> {
+public class NavVertex implements Comparable<NavVertex> {
     // *************************************************************************
     // constants
 

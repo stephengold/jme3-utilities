@@ -47,11 +47,11 @@ public class Segment3f implements Locus3f {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            Segment3f.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(Segment3f.class.getName());
     // *************************************************************************
     // fields
-    
+
     /**
      * maximum distance for points to coincide (&ge;0, set by constructor)
      */
@@ -287,7 +287,7 @@ public class Segment3f implements Locus3f {
         Vector3f corner1 = cornerLocations[1];
         Vector3f segmentOffset = corner1.subtract(corner0);
         /*
-         * If the segment has zero length, return the squared 
+         * If the segment has zero length, return the squared
          * distance to corner0.
          */
         double segmentDS = MyVector3f.lengthSquared(segmentOffset);

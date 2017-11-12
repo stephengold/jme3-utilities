@@ -28,8 +28,8 @@ public class SkeletonMapping implements Cloneable, Savable {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            SkeletonMapping.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(SkeletonMapping.class.getName());
     // *************************************************************************
     // fields
 
@@ -202,8 +202,8 @@ public class SkeletonMapping implements Cloneable, Savable {
      */
     public BoneMapping map(String targetBone, String sourceBone,
             float twistAngle, Vector3f twistAxis) {
-        BoneMapping mapping = new BoneMapping(targetBone, sourceBone,
-                twistAngle, twistAxis);
+        BoneMapping mapping
+                = new BoneMapping(targetBone, sourceBone, twistAngle, twistAxis);
         mappings.put(targetBone, mapping);
 
         return mapping;

@@ -100,8 +100,8 @@ class PoseCameraState
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            PoseCameraState.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(PoseCameraState.class.getName());
     /**
      * name of the signal which controls camera movement
      */
@@ -479,48 +479,48 @@ class PoseCameraState
          * Turning the mouse wheel up triggers move backward.
          */
         boolean wheelUp = true;
-        MouseAxisTrigger backwardTrigger = new MouseAxisTrigger(
-                MouseInput.AXIS_WHEEL, wheelUp);
+        MouseAxisTrigger backwardTrigger
+                = new MouseAxisTrigger(MouseInput.AXIS_WHEEL, wheelUp);
         inputManager.addMapping(moveBackwardEvent, backwardTrigger);
         inputManager.addListener(this, moveBackwardEvent);
         /*
          * Turning the mouse wheel down triggers move forward.
          */
         boolean wheelDown = false;
-        MouseAxisTrigger forwardTrigger = new MouseAxisTrigger(
-                MouseInput.AXIS_WHEEL, wheelDown);
+        MouseAxisTrigger forwardTrigger
+                = new MouseAxisTrigger(MouseInput.AXIS_WHEEL, wheelDown);
         inputManager.addMapping(moveForwardEvent, forwardTrigger);
         inputManager.addListener(this, moveForwardEvent);
         /*
          * Dragging up with MMB triggers move down.
          */
         boolean up = false;
-        MouseAxisTrigger downTrigger = new MouseAxisTrigger(
-                MouseInput.AXIS_Y, up);
+        MouseAxisTrigger downTrigger
+                = new MouseAxisTrigger(MouseInput.AXIS_Y, up);
         inputManager.addMapping(moveDownEvent, downTrigger);
         inputManager.addListener(this, moveDownEvent);
         /*
          * Dragging left with MMB triggers move right.
          */
         boolean left = true;
-        MouseAxisTrigger leftTrigger = new MouseAxisTrigger(
-                MouseInput.AXIS_X, left);
+        MouseAxisTrigger leftTrigger
+                = new MouseAxisTrigger(MouseInput.AXIS_X, left);
         inputManager.addMapping(moveRightEvent, leftTrigger);
         inputManager.addListener(this, moveRightEvent);
         /*
          * Dragging right with MMB triggers move left.
          */
         boolean right = false;
-        MouseAxisTrigger rightTrigger = new MouseAxisTrigger(
-                MouseInput.AXIS_X, right);
+        MouseAxisTrigger rightTrigger
+                = new MouseAxisTrigger(MouseInput.AXIS_X, right);
         inputManager.addMapping(moveLeftEvent, rightTrigger);
         inputManager.addListener(this, moveLeftEvent);
         /*
          * Dragging down with MMB triggers move up.
          */
         boolean down = true;
-        MouseAxisTrigger upTrigger = new MouseAxisTrigger(
-                MouseInput.AXIS_Y, down);
+        MouseAxisTrigger upTrigger
+                = new MouseAxisTrigger(MouseInput.AXIS_Y, down);
         inputManager.addMapping(moveUpEvent, upTrigger);
         inputManager.addListener(this, moveUpEvent);
     }
@@ -640,8 +640,8 @@ class PoseCameraState
     private void updateOrbit() {
         assert isOrbitMode();
 
-        Vector3f direction = MyVector3f.fromAltAz(elevationAngle,
-                azimuthAngle);
+        Vector3f direction
+                = MyVector3f.fromAltAz(elevationAngle, azimuthAngle);
         Vector3f offset = direction.mult(range);
         Vector3f cursorLocation = cursor.getWorldTranslation();
         Vector3f newLocation = cursorLocation.add(offset);

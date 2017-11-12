@@ -58,8 +58,8 @@ public class SkyMaterialCore extends Material {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            SkyMaterialCore.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(SkyMaterialCore.class.getName());
     /**
      * special texture coordinates for hidden objects
      */
@@ -497,8 +497,8 @@ public class SkyMaterialCore extends Material {
             throw new IllegalStateException("object not yet added");
         }
 
-        String objectParameterName = String.format(
-                "Object%dCenter", objectIndex);
+        String objectParameterName
+                = String.format("Object%dCenter", objectIndex);
         setVector2(objectParameterName, hidden);
         objectCenters[objectIndex].set(hidden);
 
@@ -506,11 +506,11 @@ public class SkyMaterialCore extends Material {
          * Scale down the object to occupy only a few pixels in texture space.
          */
         float scale = 1000f;
-        String transformUParameterName = String.format(
-                "Object%dTransformU", objectIndex);
+        String transformUParameterName
+                = String.format("Object%dTransformU", objectIndex);
         setVector2(transformUParameterName, new Vector2f(scale, scale));
-        String transformVParameterName = String.format(
-                "Object%dTransformV", objectIndex);
+        String transformVParameterName
+                = String.format("Object%dTransformV", objectIndex);
         setVector2(transformVParameterName, new Vector2f(scale, scale));
     }
 
@@ -656,8 +656,8 @@ public class SkyMaterialCore extends Material {
         }
         objectScales[objectIndex] = newScale;
 
-        String objectParameterName = String.format(
-                "Object%dCenter", objectIndex);
+        String objectParameterName
+                = String.format("Object%dCenter", objectIndex);
         setVector2(objectParameterName, centerUV);
 
         Vector2f offset = centerUV.subtract(Constants.topUV);
@@ -722,12 +722,12 @@ public class SkyMaterialCore extends Material {
         transformU.divideLocal(newScale);
         transformV.divideLocal(newScale);
 
-        String transformUParameterName = String.format(
-                "Object%dTransformU", objectIndex);
+        String transformUParameterName
+                = String.format("Object%dTransformU", objectIndex);
         setVector2(transformUParameterName, transformU);
 
-        String transformVParameterName = String.format(
-                "Object%dTransformV", objectIndex);
+        String transformVParameterName
+                = String.format("Object%dTransformV", objectIndex);
         setVector2(transformVParameterName, transformV);
     }
     // *************************************************************************

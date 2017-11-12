@@ -55,8 +55,8 @@ public class TestSkyControl extends GuiApplication {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            TestSkyControl.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(TestSkyControl.class.getName());
     /**
      * application name for its window's title bar and its usage message
      */

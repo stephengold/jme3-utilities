@@ -38,16 +38,15 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class RotationControl
-        extends SimpleControl {
+public class RotationControl extends SimpleControl {
     // *************************************************************************
     // constants
 
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            RotationControl.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(RotationControl.class.getName());
     // *************************************************************************
     // fields
 

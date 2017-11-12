@@ -78,8 +78,8 @@ public class GlobeRenderer extends SimpleAppState {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            GlobeRenderer.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(GlobeRenderer.class.getName());
     /**
      * location of the globe's center (in world coordinates)
      */
