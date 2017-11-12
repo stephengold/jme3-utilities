@@ -394,7 +394,7 @@ public class Pose implements JmeCloneable {
     public int[] rootBoneIndices() {
         int numRootBones = 0;
         Bone[] roots = null;
-        if (skeleton == null) {
+        if (skeleton != null) {
             roots = skeleton.getRoots();
             numRootBones = roots.length;
         }
