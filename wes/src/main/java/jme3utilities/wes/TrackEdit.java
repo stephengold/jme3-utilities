@@ -45,7 +45,7 @@ import jme3utilities.MyAnimation;
 import jme3utilities.Validate;
 
 /**
- * Utility methods for track/animation editing. All methods should be static.
+ * Utility methods for track/animation editing.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -56,8 +56,8 @@ public class TrackEdit {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            TrackEdit.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(TrackEdit.class.getName());
     // *************************************************************************
     // constructors
 
@@ -245,7 +245,8 @@ public class TrackEdit {
             if (time > frameTime) {
                 if (!added) {
                     newTimes[newIndex] = frameTime;
-                    newTranslations[newIndex] = transform.getTranslation().clone();
+                    newTranslations[newIndex]
+                            = transform.getTranslation().clone();
                     newRotations[newIndex] = transform.getRotation().clone();
                     newScales[newIndex] = transform.getScale().clone();
                     added = true;
@@ -313,8 +314,8 @@ public class TrackEdit {
         } else if (oldTrack instanceof SpatialTrack) {
             //SpatialTrack spatialTrack = (SpatialTrack) oldTrack; // TODO JME 3.2
             //Spatial spatial = spatialTrack.getTrackSpatial();
-            SpatialTrack newSpatialTrack = new SpatialTrack(times, translations,
-                    rotations, scales);
+            SpatialTrack newSpatialTrack
+                    = new SpatialTrack(times, translations, rotations, scales);
             //newSpatialTrack.setTrackSpatial(spatial);
             result = newSpatialTrack;
 
@@ -577,8 +578,8 @@ public class TrackEdit {
             if (boneMapping != null) {
                 String sourceName = boneMapping.getSourceName();
                 int iSource = sourceSkeleton.getBoneIndex(sourceName);
-                BoneTrack sourceTrack = MyAnimation.findBoneTrack(
-                        sourceAnimation, iSource);
+                BoneTrack sourceTrack
+                        = MyAnimation.findBoneTrack(sourceAnimation, iSource);
                 BoneTrack track = retargetTrack(sourceAnimation, sourceTrack,
                         sourceSkeleton, targetSkeleton, iTarget, map,
                         techniques, cache);
@@ -760,9 +761,7 @@ public class TrackEdit {
 
         int numFrames = oldTimes.length;
         float[] newTimes = new float[numFrames];
-        for (int i = 0; i < numFrames; i++) {
-            newTimes[i] = oldTimes[i];
-        }
+        System.arraycopy(oldTimes, 0, newTimes, 0, numFrames);
 
         Vector3f[] newTranslations = null;
         if (oldTranslations != null) {
@@ -895,7 +894,8 @@ public class TrackEdit {
         for (int frameIndex = 0; frameIndex < endIndex; frameIndex++) {
             newTimes[frameIndex] = oldTimes[frameIndex];
             if (newTranslations != null) {
-                newTranslations[frameIndex] = oldTranslations[frameIndex].clone();
+                newTranslations[frameIndex]
+                        = oldTranslations[frameIndex].clone();
             }
             if (newRotations != null) {
                 newRotations[frameIndex] = oldRotations[frameIndex].clone();
