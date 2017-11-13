@@ -29,7 +29,7 @@ package jme3utilities.wes;
 import java.util.logging.Logger;
 
 /**
- * Version strings for the Wes library. All methods should be static.
+ * Version strings for the Wes library.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -40,8 +40,8 @@ public class WesVersion {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            WesVersion.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(WesVersion.class.getName());
     // *************************************************************************
     // constructors
 
@@ -59,6 +59,6 @@ public class WesVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String getVersionShort() {
-        return "master 0.2.3+1";
+        return "master 0.2.4";
     }
 }
