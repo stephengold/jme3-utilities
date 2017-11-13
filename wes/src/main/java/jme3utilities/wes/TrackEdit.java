@@ -43,6 +43,8 @@ import java.util.TreeMap;
 import java.util.logging.Logger;
 import jme3utilities.MyAnimation;
 import jme3utilities.Validate;
+import jme3utilities.math.MyQuaternion;
+import jme3utilities.math.MyVector3f;
 
 /**
  * Utility methods for track/animation editing.
@@ -843,17 +845,21 @@ public class TrackEdit {
     }
 
     /**
-     * Copy a bone/spatial track, altering its end-time keyframe to match its
-     * 1st keyframe. If the track doesn't end with a keyframe, append one.
+     * Copy a bone/spatial track, altering the track's 1st keyframe and end-time
+     * keyframe so that they precisely match. If the track doesn't end with a
+     * keyframe, append one.
      *
      * @param oldTrack input bone/spatial track (not null, unaffected)
-     * @param endTime when to insert (&gt;0)
+     * @param duration duration of the animation (in seconds, &gt;0)
+     * @param endWeight how much weight to give to the pre-existing end-time
+     * keyframe, if one exists (&ge;0, &le;1)
      * @return a new instance
      */
-    public static Track wrap(Track oldTrack, float endTime) {
+    public static Track wrap(Track oldTrack, float duration, float endWeight) {
         assert oldTrack instanceof BoneTrack
                 || oldTrack instanceof SpatialTrack;
-        Validate.positive(endTime, "end time");
+        Validate.positive(duration, "duration");
+        Validate.fraction(endWeight, "end weight");
 
         float[] oldTimes = oldTrack.getKeyFrameTimes();
         Vector3f[] oldTranslations = MyAnimation.getTranslations(oldTrack);
@@ -862,36 +868,64 @@ public class TrackEdit {
 
         int oldCount = oldTimes.length;
         int newCount;
-        int endIndex = MyAnimation.findKeyframeIndex(oldTrack, endTime);
-        if (endIndex == -1) {
+        Vector3f wrapTranslation = new Vector3f();
+        Quaternion wrapRotation = new Quaternion();
+        Vector3f wrapScale = new Vector3f();
+        int endIndex = MyAnimation.findKeyframeIndex(oldTrack, duration);
+        if (endIndex == -1) { // doesn't end with a keyframe, ignore endWeight
             endIndex = oldCount;
             newCount = oldCount + 1;
+            if (oldTranslations != null) {
+                wrapTranslation.set(oldTranslations[0]);
+            }
+            if (oldRotations != null) {
+                wrapRotation.set(oldRotations[0]);
+            }
+            if (oldScales != null) {
+                wrapScale.set(oldScales[0]);
+            }
         } else {
             newCount = oldCount;
+            if (oldTranslations != null) {
+                MyVector3f.lerp(endWeight, oldTranslations[0],
+                        oldTranslations[endIndex], wrapTranslation);
+            }
+            if (oldRotations != null) {
+                MyQuaternion.slerp(endWeight, oldRotations[0],
+                        oldRotations[endIndex], wrapRotation);
+            }
+            if (oldScales != null) {
+                MyVector3f.lerp(endWeight, oldScales[0], oldScales[endIndex],
+                        wrapScale);
+            }
         }
         assert endIndex == newCount - 1;
         /*
          * Allocate new arrays.
          */
         float[] newTimes = new float[newCount];
-        newTimes[endIndex] = endTime;
+        newTimes[0] = 0f;
+        newTimes[endIndex] = duration;
         Vector3f[] newTranslations = null;
         if (oldTranslations != null) {
             newTranslations = new Vector3f[newCount];
-            newTranslations[endIndex] = oldTranslations[0].clone();
+            newTranslations[0] = wrapTranslation.clone();
+            newTranslations[endIndex] = wrapTranslation.clone();
         }
         Quaternion[] newRotations = null;
         if (oldRotations != null) {
             newRotations = new Quaternion[newCount];
-            newRotations[endIndex] = oldRotations[0].clone();
+            newRotations[0] = wrapRotation.clone();
+            newRotations[endIndex] = wrapRotation.clone();
         }
         Vector3f[] newScales = null;
         if (oldScales != null) {
             newScales = new Vector3f[newCount];
-            newScales[endIndex] = oldScales[0].clone();
+            newScales[0] = wrapScale.clone();
+            newScales[endIndex] = wrapScale.clone();
         }
 
-        for (int frameIndex = 0; frameIndex < endIndex; frameIndex++) {
+        for (int frameIndex = 1; frameIndex < endIndex; frameIndex++) {
             newTimes[frameIndex] = oldTimes[frameIndex];
             if (newTranslations != null) {
                 newTranslations[frameIndex]
