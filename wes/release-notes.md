@@ -1,6 +1,6 @@
 # release notes for the Wes library and related tests
 
-## Version 0.2.4 released TBD
+## Version 0.2.4 released 12 November 2017
 
  + Add an "endWeight" argument to the TrackEdit.wrap() method: an API change.
  + Handle null skeleton in Pose.rootBoneIndices().
