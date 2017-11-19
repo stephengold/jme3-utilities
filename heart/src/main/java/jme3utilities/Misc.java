@@ -54,8 +54,7 @@ import java.util.zip.ZipInputStream;
 import javax.imageio.ImageIO;
 
 /**
- * Miscellaneous utility methods in the jme3-utilities-heart library. All
- * methods should be static.
+ * Miscellaneous utility methods in the jme3-utilities-heart library.
  *
  * @author Stephen Gold sgold@sonic.net
  */

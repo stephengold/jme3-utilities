@@ -33,8 +33,7 @@ import java.util.logging.Logger;
 import jme3utilities.math.MyVector3f;
 
 /**
- * Utility methods to throw exceptions for invalid method arguments. Aside from
- * test cases, all methods should be public and static.
+ * Utility methods to throw exceptions for invalid method arguments.
  * <p>
  * These methods are intended for checking the arguments of public/protected
  * methods. For private/package methods, use assertions instead.

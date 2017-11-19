@@ -47,7 +47,6 @@ import java.util.logging.Logger;
 
 /**
  * Utility methods for manipulating skeletonized spatials, skeletons, and bones.
- * All methods should be static.
  *
  * @author Stephen Gold sgold@sonic.net
  */

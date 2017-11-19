@@ -39,7 +39,7 @@ import java.nio.ShortBuffer;
 import java.util.logging.Logger;
 
 /**
- * Utility methods for meshes and mesh vertices. All methods should be static.
+ * Utility methods for meshes and mesh vertices.
  *
  * @author Stephen Gold sgold@sonic.net
  */
