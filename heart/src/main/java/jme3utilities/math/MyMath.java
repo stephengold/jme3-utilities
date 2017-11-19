@@ -372,7 +372,7 @@ public class MyMath {
      *
      * @param worldRay input ray to transform (not null, unaffected)
      * @param spatial which spatial (not null)
-     * @return a new instance
+     * @return a new instance, or null if error
      */
     public static Ray localizeRay(Ray worldRay, Spatial spatial) {
         Vector3f worldVertex = worldRay.getOrigin();
@@ -400,8 +400,13 @@ public class MyMath {
         }
 
         Vector3f localDirection = localSample.subtract(localVertex);
-        localDirection.normalizeLocal();
-        Ray result = new Ray(localVertex, localDirection);
+        double lengthSquared = MyVector3f.lengthSquared(localDirection);
+        double scaleFactor = 1.0 / Math.sqrt(lengthSquared);
+        localDirection.multLocal((float) scaleFactor);
+        Ray result = null;
+        if (localDirection.isUnitVector()) {
+            result = new Ray(localVertex, localDirection);
+        }
 
         return result;
     }
