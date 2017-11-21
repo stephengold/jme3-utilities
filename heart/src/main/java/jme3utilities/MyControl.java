@@ -52,8 +52,7 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 /**
- * Utility methods that operate on jME3 scene-graph controls in general. Aside
- * from test cases, all methods here should be public and static.
+ * Utility methods that operate on jME3 scene-graph controls in general.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -118,12 +117,8 @@ public class MyControl {
      * @return description (not null, not empty)
      */
     public static String describe(Control control) {
-        String name = control.getClass().getSimpleName();
-        if (name.endsWith("Control")) {
-            name = MyString.removeSuffix(name, "Control");
-        }
+        String result = describeType(control);
 
-        String result = name;
         if (control instanceof RigidBodyControl) {
             RigidBodyControl rigidBodyControl = (RigidBodyControl) control;
             float mass = rigidBodyControl.getMass();
@@ -154,6 +149,21 @@ public class MyControl {
         }
 
         return result;
+    }
+
+    /**
+     * Describe the type of a scene-graph control.
+     *
+     * @param control instance to describe (not null, unaffected)
+     * @return description (not null)
+     */
+    public static String describeType(Control control) {
+        String description = control.getClass().getSimpleName();
+        if (description.endsWith("Control")) {
+            description = MyString.removeSuffix(description, "Control");
+        }
+
+        return description;
     }
 
     /**
