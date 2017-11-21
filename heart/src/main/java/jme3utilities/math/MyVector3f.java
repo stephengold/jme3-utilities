@@ -839,11 +839,12 @@ public class MyVector3f {
     public static float scalarProjection(Vector3f vector1, Vector3f vector2) {
         Validate.nonZero(vector2, "vector2");
 
-        float dot = vector1.dot(vector2);
-        float norm = vector2.length();
-        float projection = dot / norm;
+        double dot = dot(vector1, vector2);
+        double lengthSquared = lengthSquared(vector2);
+        double length = Math.sqrt(lengthSquared);
+        double projection = dot / length;
 
-        return projection;
+        return (float) projection;
     }
 
     /**
