@@ -48,6 +48,18 @@ public class MyVector3f {
     // constants and loggers
 
     /**
+     * index of the first (X) axis
+     */
+    final public static int firstAxis = 0;
+    /**
+     * number of axes in the coordinate system
+     */
+    final public static int numAxes = 3;
+    /**
+     * index of the final (Z) axis
+     */
+    final public static int lastAxis = numAxes - 1;
+    /**
      * message logger for this class
      */
     final private static Logger logger
@@ -196,7 +208,7 @@ public class MyVector3f {
      */
     public static Vector3f axisVector(int axisIndex, float length,
             Vector3f storeResult) {
-        Validate.inRange(axisIndex, "axis index", 0, 2);
+        Validate.inRange(axisIndex, "axis index", firstAxis, lastAxis);
         Validate.nonNegative(length, "length");
         if (storeResult == null) {
             storeResult = new Vector3f();
