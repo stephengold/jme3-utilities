@@ -115,7 +115,7 @@ public class AxesVisualizer extends SubtreeControl {
      */
     private boolean depthTest = defaultDepthTest;
     /**
-     * axis length (in local units, &gt;0)
+     * axis arrow length (in local units, &gt;0)
      */
     private float axisLength;
     /**
@@ -162,7 +162,7 @@ public class AxesVisualizer extends SubtreeControl {
     // new methods exposed
 
     /**
-     * Read the length of the axes.
+     * Read the length of the arrows.
      *
      * @return length (in local units, &gt;0)
      */
@@ -191,7 +191,7 @@ public class AxesVisualizer extends SubtreeControl {
     }
 
     /**
-     * Alter the lengths of the axes.
+     * Alter the lengths of the arrows.
      *
      * @param length (in local units, &gt;0)
      */
@@ -231,12 +231,8 @@ public class AxesVisualizer extends SubtreeControl {
 
         Vector3f result = null;
         if (isEnabled()) {
-            Vector3f tipLocal = MyVector3f.axisVector(axisIndex, 1f, null);
-            if (MySpatial.isIgnoringTransforms(subtree)) { // TODO JME 3.2
-                result = tipLocal;
-            } else {
-                result = subtree.localToWorld(tipLocal, null);
-            }
+            Geometry arrow = (Geometry) subtree.getChild(axisIndex);
+            result = arrow.localToWorld(xAxis, null);
         }
 
         return result;
