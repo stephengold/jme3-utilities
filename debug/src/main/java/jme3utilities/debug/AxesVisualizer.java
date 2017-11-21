@@ -115,7 +115,7 @@ public class AxesVisualizer extends SubtreeControl {
      */
     private boolean depthTest = defaultDepthTest;
     /**
-     * axis arrow length (in local units, &gt;0)
+     * axis arrow length (in world units, &gt;0)
      */
     private float axisLength;
     /**
@@ -129,7 +129,7 @@ public class AxesVisualizer extends SubtreeControl {
      * Instantiate a set of hidden solid coordinate axes.
      *
      * @param manager for loading assets (not null)
-     * @param length length of each arrow (in local units, &gt;0)
+     * @param length length of each arrow (in world units, &gt;0)
      */
     public AxesVisualizer(AssetManager manager, float length) {
         super();
@@ -145,7 +145,7 @@ public class AxesVisualizer extends SubtreeControl {
      * Instantiate a set of hidden wireframe coordinate axes.
      *
      * @param manager for loading material definitions (not null)
-     * @param length length of each arrow (in local units, &gt;0)
+     * @param length length of each arrow (in world units, &gt;0)
      * @param width thickness of each arrow (in pixels, &ge;1)
      */
     public AxesVisualizer(AssetManager manager, float length, float width) {
@@ -164,7 +164,7 @@ public class AxesVisualizer extends SubtreeControl {
     /**
      * Read the length of the arrows.
      *
-     * @return length (in local units, &gt;0)
+     * @return length (in world units, &gt;0)
      */
     public float getAxisLength() {
         assert axisLength > 0f : axisLength;
@@ -193,7 +193,7 @@ public class AxesVisualizer extends SubtreeControl {
     /**
      * Alter the lengths of the arrows.
      *
-     * @param length (in local units, &gt;0)
+     * @param length (in world units, &gt;0)
      */
     public void setAxisLength(float length) {
         Validate.positive(length, "length");
@@ -231,6 +231,7 @@ public class AxesVisualizer extends SubtreeControl {
 
         Vector3f result = null;
         if (isEnabled()) {
+            MySpatial.setWorldScale(spatial, axisLength);
             Geometry arrow = (Geometry) subtree.getChild(axisIndex);
             result = arrow.localToWorld(xAxis, null);
         }
@@ -387,7 +388,7 @@ public class AxesVisualizer extends SubtreeControl {
      * Update the existing arrows.
      */
     private void updateArrows() {
-        subtree.setLocalScale(axisLength);
+        MySpatial.setWorldScale(spatial, axisLength);
 
         for (Spatial axis : subtree.getChildren()) {
             Geometry geometry = (Geometry) axis;
