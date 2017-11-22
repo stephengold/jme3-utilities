@@ -458,7 +458,7 @@ public class MyVector3f {
         Validate.nonNull(store2, "2nd basis vector");
         Validate.nonNull(store3, "3nd basis vector");
 
-        in1.normalizeLocal();
+        normalizeLocal(in1);
         /*
          * Pick a direction that's not parallel (or anti-parallel) to
          * the input direction.
@@ -478,9 +478,9 @@ public class MyVector3f {
          * to the input vector.
          */
         in1.cross(store3, store2);
-        store2.normalizeLocal();
+        normalizeLocal(store2);
         in1.cross(store2, store3);
-        store3.normalizeLocal();
+        normalizeLocal(store3);
     }
 
     /**
@@ -872,6 +872,23 @@ public class MyVector3f {
 
         boolean result = v1.x != v2.x || v1.y != v2.y || v1.z != v2.z;
         return result;
+    }
+
+    /**
+     * Normalize the specified vector in place. This method is less vulnerable
+     * to overflow than {@link com.jme3.math.Vector3f#normalizeLocal()}.
+     *
+     * @param input (not null, modified)
+     */
+    public static void normalizeLocal(Vector3f input) {
+        Validate.nonNull(input, "input");
+
+        double lengthSquared = MyVector3f.lengthSquared(input);
+        double dScale = Math.sqrt(lengthSquared);
+        float fScale = (float) dScale;
+        if (fScale != 0f && fScale != 1f) {
+            input.divideLocal(fScale);
+        }
     }
 
     /**

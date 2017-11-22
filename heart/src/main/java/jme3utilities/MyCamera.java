@@ -337,7 +337,7 @@ final public class MyCamera {
         Vector3f far = camera.getWorldCoordinates(screenXY, 1f);
 
         Vector3f direction = far.subtract(vertex);
-        direction.normalizeLocal();
+        MyVector3f.normalizeLocal(direction);
         Ray ray = new Ray(vertex, direction);
 
         return ray;
