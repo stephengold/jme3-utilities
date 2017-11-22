@@ -53,6 +53,10 @@ class SkeletonMesh extends Mesh {
     // constants and loggers
 
     /**
+     * number of axes in the coordinate system
+     */
+    final private static int numAxes = 3;
+    /**
      * message logger for this class
      */
     final private static Logger logger
@@ -77,9 +81,9 @@ class SkeletonMesh extends Mesh {
             numConnections = boneCount - numRoots;
         }
 
-        FloatBuffer floats = BufferUtils.createFloatBuffer(3 * boneCount);
+        FloatBuffer floats = BufferUtils.createFloatBuffer(numAxes * boneCount);
         VertexBuffer positions = new VertexBuffer(Type.Position);
-        positions.setupData(Usage.Stream, 3, Format.Float, floats);
+        positions.setupData(Usage.Stream, numAxes, Format.Float, floats);
         setBuffer(positions);
 
         FloatBuffer fColors = BufferUtils.createFloatBuffer(4 * boneCount);

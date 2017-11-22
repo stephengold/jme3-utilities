@@ -227,7 +227,8 @@ public class AxesVisualizer extends SubtreeControl {
      * @return a new vector (in world coordinates) or null if not displayed
      */
     public Vector3f tipLocation(int axisIndex) {
-        Validate.inRange(axisIndex, "axis index", 0, 2);
+        Validate.inRange(axisIndex, "axis index", MyVector3f.firstAxis,
+                MyVector3f.lastAxis);
 
         Vector3f result = null;
         if (isEnabled()) {
