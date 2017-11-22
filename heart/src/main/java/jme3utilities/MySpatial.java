@@ -48,6 +48,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.SimpleBatchNode;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
+import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
 import com.jme3.scene.debug.SkeletonDebugger;
 import com.jme3.scene.instancing.InstancedGeometry;
@@ -74,10 +75,6 @@ public class MySpatial {
      */
     final private static Logger logger
             = Logger.getLogger(MySpatial.class.getName());
-    /**
-     * direction of the negative Y-axis
-     */
-    final private static Vector3f negativeYAxis = new Vector3f(0f, -1f, 0f);
     // *************************************************************************
     // constructors
 
@@ -151,6 +148,34 @@ public class MySpatial {
             List<Spatial> children = node.getChildren();
             for (Spatial child : children) {
                 result += countControls(child, controlType);
+            }
+        }
+
+        assert result >= 0 : result;
+        return result;
+    }
+
+    /**
+     * Estimate the number of bones in the specified subtree by reading its mesh
+     * index buffers.
+     *
+     * @param subtree (may be null)
+     * @return estimated number (&ge;0)
+     */
+    public static int countMeshBones(Spatial subtree) {
+        int result = 0;
+        if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
+            Mesh mesh = geometry.getMesh();
+            result = MyMesh.countBones(mesh);
+        } else if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                int childBones = countMeshBones(child);
+                if (childBones > result) {
+                    result = childBones;
+                }
             }
         }
 
@@ -407,6 +432,42 @@ public class MySpatial {
         }
 
         return null;
+    }
+
+    /**
+     * Find a spatial controlled by the specified S-G control in the specified
+     * subtree of the scene graph. Note: recursive!
+     *
+     * @param sgc which scene-graph control (not null, unaffected)
+     * @param subtree which subtree (not null, unaffected)
+     * @return the pre-existing controlled spatial, or null if none found
+     */
+    public static Spatial findControlledSpatial(Control sgc, Spatial subtree) {
+        Validate.nonNull(sgc, "control");
+        Validate.nonNull(subtree, "subtree");
+
+        Spatial result = null;
+        if (sgc instanceof AbstractControl) {
+            AbstractControl abstractControl = (AbstractControl) sgc;
+            result = abstractControl.getSpatial();
+        }
+        if (result == null) {
+            int sgcIndex = MyControl.findIndex(sgc, subtree);
+            if (sgcIndex != -1) {
+                result = subtree;
+            } else if (subtree instanceof Node) {
+                Node node = (Node) subtree;
+                List<Spatial> children = node.getChildren();
+                for (Spatial child : children) {
+                    result = findControlledSpatial(sgc, child);
+                    if (result != null) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
