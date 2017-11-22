@@ -28,8 +28,8 @@ package jme3utilities.math;
 
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.math.FastMath;
+import com.jme3.math.Line;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -688,31 +688,34 @@ public class MyVector3f {
     }
 
     /**
-     * Find the specified intersection between the line containing the specified
-     * ray and an origin-centered sphere. If there's no intersection, find the
-     * point on the sphere closest to the line.
+     * Find the specified intersection between a specified line and a specified
+     * sphere. If there's no intersection, find the point on the sphere closest
+     * to the line.
      *
-     * @param ray which ray to test (not null)
+     * @param line the line (not null, unaffected)
+     * @param center center of the sphere (not null, unaffected)
      * @param radius size of the sphere (&ge;0)
      * @param farSide which intersection to use: true&rarr;far side of sphere,
      * false&rarr;near side
      * @return a new coordinate vector
      */
-    public static Vector3f lineMeetsSphere(Ray ray, float radius,
-            boolean farSide) {
-        Validate.nonNull(ray, "ray");
+    public static Vector3f lineMeetsSphere(Line line, Vector3f center,
+            float radius, boolean farSide) {
+        Validate.nonNull(line, "line");
+        Validate.nonNull(center, "center");
         Validate.nonNegative(radius, "radius");
 
-        Vector3f direction = ray.getDirection();
-        Vector3f vertex = ray.getOrigin();
-        float dDotV = direction.dot(vertex);
-        float normV2 = vertex.lengthSquared();
+        Vector3f direction = line.getDirection().normalize();
+        Vector3f lineOrigin = line.getOrigin();
+        Vector3f offset = lineOrigin.subtract(center);
+        float dDotV = direction.dot(offset);
+        float normV2 = offset.lengthSquared();
         float discriminant = dDotV * dDotV - normV2 + radius * radius;
 
         Vector3f result;
         if (discriminant >= 0f) {
             /*
-             * Calculate the pseudodistance from the ray's vertex
+             * Calculate the pseudodistance from the line's origin
              * to the intersection.
              */
             float t = -dDotV;
@@ -725,20 +728,21 @@ public class MyVector3f {
              * Calculate the position of that point on the line.
              */
             result = direction.mult(t);
-            result.addLocal(vertex);
+            result.addLocal(lineOrigin);
 
         } else {
             /*
-             * Calculate the line's closest approach to the origin.
+             * Calculate the line's closest approach to the center.
              */
             Vector3f projection = direction.mult(dDotV);
-            result = vertex.subtract(projection);
+            result = offset.subtract(projection);
             /*
-             * Scale to the surface of the sphere.
+             * Scale and translate to the surface of the sphere.
              */
             float factor = radius / result.length();
             assert factor <= 1f : factor;
             result.multLocal(factor);
+            result.addLocal(center);
         }
 
         return result;
