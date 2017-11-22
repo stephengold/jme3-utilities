@@ -37,6 +37,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.logging.Logger;
+import jme3utilities.math.MyVector3f;
 
 /**
  * Utility methods for meshes and mesh vertices.
@@ -278,7 +279,7 @@ public class MyMesh {
 
         VertexBuffer vertexBuffer = mesh.getBuffer(bufferType);
         FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
-        floatBuffer.position(3 * vertexIndex);
+        floatBuffer.position(MyVector3f.numAxes * vertexIndex);
         storeResult.x = floatBuffer.get();
         storeResult.y = floatBuffer.get();
         storeResult.z = floatBuffer.get();

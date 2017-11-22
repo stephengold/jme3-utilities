@@ -77,6 +77,10 @@ public class DomeMesh extends Mesh {
      */
     final public static float defaultUvScale = 0.44f;
     /**
+     * number of axes in a vector
+     */
+    final private static int numAxes = 3;
+    /**
      * number of vertices per triangle
      */
     final private static int vpt = 3;
@@ -454,7 +458,7 @@ public class DomeMesh extends Mesh {
          * Allocate and assign buffers for locations and texture coordinates.
          */
         FloatBuffer locBuffer = BufferUtils.createFloatBuffer(locationArray);
-        setBuffer(VertexBuffer.Type.Position, 3, locBuffer);
+        setBuffer(VertexBuffer.Type.Position, numAxes, locBuffer);
         FloatBuffer tcBuffer = BufferUtils.createFloatBuffer(texCoordArray);
         setBuffer(VertexBuffer.Type.TexCoord, 2, tcBuffer);
     }
@@ -599,9 +603,9 @@ public class DomeMesh extends Mesh {
          */
         FloatBuffer locationBuffer = getFloatBuffer(VertexBuffer.Type.Position);
         locationBuffer.rewind();
-        float[] vertex = new float[3];
+        float[] vertex = new float[numAxes];
         for (int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-            locationBuffer.get(vertex, 0, 3);
+            locationBuffer.get(vertex, 0, numAxes);
             Vector3f normal = new Vector3f(vertex[0], vertex[1], vertex[2]);
             assert normal.isUnitVector() : normal;
             if (inwardFacing) {
@@ -615,6 +619,6 @@ public class DomeMesh extends Mesh {
          * Allocate and assign a buffer for normals.
          */
         FloatBuffer nomalBuffer = BufferUtils.createFloatBuffer(normalArray);
-        setBuffer(VertexBuffer.Type.Normal, 3, nomalBuffer);
+        setBuffer(VertexBuffer.Type.Normal, numAxes, nomalBuffer);
     }
 }

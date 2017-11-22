@@ -337,7 +337,10 @@ public class MyQuaternion {
      * @param axisIndex which axis (&ge;0, &lt;3)
      */
     public static void snapLocal(Quaternion input, int axisIndex) {
-        float[] angles = new float[3];
+        Validate.inRange(axisIndex, "axis index", MyVector3f.firstAxis,
+                MyVector3f.lastAxis);
+
+        float[] angles = new float[MyVector3f.numAxes];
         input.toAngles(angles);
         double angle = angles[axisIndex];
         angle = MyMath.halfPi * Math.round(angle / MyMath.halfPi);

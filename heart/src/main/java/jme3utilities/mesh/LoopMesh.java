@@ -52,6 +52,10 @@ public class LoopMesh extends Mesh {
     // constants
 
     /**
+     * number of axes in a vector
+     */
+    final private static int numAxes = 3;
+    /**
      * number of vertices per edge
      */
     final private static int vpe = 2;
@@ -118,7 +122,7 @@ public class LoopMesh extends Mesh {
          * Allocate and assign a buffer.
          */
         FloatBuffer locBuffer = BufferUtils.createFloatBuffer(locationArray);
-        setBuffer(VertexBuffer.Type.Position, 3, locBuffer);
+        setBuffer(VertexBuffer.Type.Position, numAxes, locBuffer);
 
         updateIndices();
         updateBound();
@@ -182,7 +186,7 @@ public class LoopMesh extends Mesh {
          * Allocate and assign a buffer.
          */
         FloatBuffer locBuffer = BufferUtils.createFloatBuffer(locationArray);
-        setBuffer(VertexBuffer.Type.Position, 3, locBuffer);
+        setBuffer(VertexBuffer.Type.Position, numAxes, locBuffer);
     }
 
     /**
