@@ -187,7 +187,8 @@ public class MyMath {
 
     /**
      * Extract the cube root of a single-precision value. Unlike
-     * com.jme3.math.FastMath#pow(), this method works on negative values.
+     * {@link com.jme3.math.FastMath#pow(float,float)}, this method works on
+     * negative values.
      *
      * @param fValue input cube to be extracted (may be negative)
      * @return cube root of fValue
