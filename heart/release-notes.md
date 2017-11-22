@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.27 released on TBD
+## Version 0.9.27 released on 21 November 2017
 
  + Modified API of MyVector3f.lineMeetsSphere() to use Line and center
  + Fixed assertion failure during MyMath.localizeRay()
