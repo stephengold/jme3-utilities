@@ -28,6 +28,7 @@ package jme3utilities;
 
 import com.jme3.input.InputManager;
 import com.jme3.math.FastMath;
+import com.jme3.math.Line;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -295,6 +296,28 @@ final public class MyCamera {
         } else {
             camera.lookAtDirection(direction, yAxis);
         }
+    }
+
+    /**
+     * Convert the mouse-pointer location into a line.
+     *
+     * @param camera (not null, unaffected)
+     * @param inputManager (not null)
+     *
+     * @return a new line in world coordinates
+     */
+    public static Line mouseLine(Camera camera, InputManager inputManager) {
+        Vector2f screenXY = inputManager.getCursorPosition();
+        /*
+         * Convert screen coordinates to world coordinates.
+         */
+        Vector3f vertex = camera.getWorldCoordinates(screenXY, 0f);
+        Vector3f far = camera.getWorldCoordinates(screenXY, 1f);
+
+        Vector3f direction = far.subtract(vertex);
+        Line line = new Line(vertex, direction);
+
+        return line;
     }
 
     /**
