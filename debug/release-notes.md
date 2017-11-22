@@ -1,6 +1,13 @@
 # release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.8.0 released 5 November 2017
+## Version 0.8.1 released on TBD
+
+ + Modified API of AxesVisualizer to specify arrow lengths in world units
+   instead of local ones
+ + Fixed AxesVisualizer.tipLocation() to return correct location when the
+   controlled node has non-uniform scaling
+
+## Version 0.8.0 released on 5 November 2017
 
  + Removed 4 public methods from the SkeletonVisualizer class
  + Added capability for SkeletonVisualizer to visualize a skeleton unrelated
@@ -9,13 +16,13 @@
  + Handled the case of spherical bounds in BoundsVisualizer
  + Added check for ignoreTransform in AxesVisualizer.tipLocation()
 
-## Version 0.7.6 released 22 September 2017
+## Version 0.7.6 released on 22 September 2017
 
  + Used setWorldTransform() to address the ignoreTransform issue in
    SkeletonVisualizer
  + Recognized w=-1 quaternion as a rotation identity
 
-## Version 0.7.5 released 19 September 2017
+## Version 0.7.5 released on 19 September 2017
 
  + Added hooks for describing materials and meshes
  + Standardized the BSD license texts
