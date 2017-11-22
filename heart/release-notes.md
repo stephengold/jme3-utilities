@@ -1,12 +1,26 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 0.9.26 released 27 October 2017
+## Version 0.9.27 released on TBD
+
+ + Modified API of MyVector3f.lineMeetsSphere() to use Line and center
+ + Fixed assertion failure during MyMath.localizeRay()
+ + Added ViewPortAppState class
+ + Added mouseLine() method to MyCamera class
+ + Added describeType() method to MyControl class
+ + Added countBones() method to MyMesh class
+ + Added cardinalizeLocal() method MyQuaternion class
+ + Added countMeshBones() and findControlledSpatial() methods to MySpatial class
+ + Added firstAxis, lastAxis, and numAxes public constants to MyVector3f class
+ + Added lineMeetsLine(), localizeDirection(), and normalizeLocal()
+   methods to MyVector3f class
+
+## Version 0.9.26 released on 27 October 2017
 
  + Added listAnimatedMeshes() and subtreeContainsAny() to MySpatial class
  + Added {cancel/get/map}Attachments() methods to MySkeleton class
  + Added UncachedKey class
 
-## Version 0.9.25 released 26 September 2017
+## Version 0.9.25 released on 26 September 2017
 
  + Added caller-provided storage and used the transform of an animated geometry
    in MySkeleton.worldLocation()
@@ -16,7 +30,7 @@
    MyMesh.vertexLocation()
  + Made use of MyMesh.vertexVector3f() in MySpatial.findMinMaxCoords()
 
-## Version 0.9.24 released 22 September 2017
+## Version 0.9.24 released on 22 September 2017
 
  + Removed getMapLocation(), moveWorld(), moveChildWorld(), rotateChild(),
    rotateObject(), and rotateY() methods from the MySpatial class
