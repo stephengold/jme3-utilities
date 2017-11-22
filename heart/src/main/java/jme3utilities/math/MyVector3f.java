@@ -31,11 +31,13 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Line;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import jme3utilities.MySpatial;
 import jme3utilities.Validate;
 
 /**
@@ -688,6 +690,35 @@ public class MyVector3f {
     }
 
     /**
+     * Find the point on line1 closest to line2.
+     *
+     * @param line1 line1 (not null, unaffected)
+     * @param line2 line2 (not null, unaffected)
+     * @return a new coordinate vector, or null if the lines are parallel
+     */
+    public static Vector3f lineMeetsLine(Line line1, Line line2) {
+        Validate.nonNull(line1, "line1");
+        Validate.nonNull(line2, "line2");
+
+        Vector3f d1 = line1.getDirection();
+        Vector3f d2 = line2.getDirection();
+        Vector3f p1 = line1.getOrigin();
+        Vector3f p2 = line2.getOrigin();
+        Vector3f n = d1.cross(d2);
+        Vector3f n2 = d2.cross(n);
+
+        Vector3f result = null;
+        float denom = d1.dot(n2);
+        if (denom != 0f) {
+            float numer = p2.dot(n2) - p1.dot(n2);
+            result = d1.mult(numer / denom);
+            result.addLocal(p1);
+        }
+
+        return result;
+    }
+
+    /**
      * Find the specified intersection between a specified line and a specified
      * sphere. If there's no intersection, find the point on the sphere closest
      * to the line.
@@ -746,6 +777,37 @@ public class MyVector3f {
         }
 
         return result;
+    }
+
+    /**
+     * Transform a direction vector from world coordinates to the local
+     * coordinates of the specified spatial.
+     *
+     * @param worldDirection input direction to transform (not null, unaffected,
+     * length&gt;0)
+     * @param spatial which spatial (not null)
+     * @param storeResult (modified if not null)
+     * @return a unit vector (either storeResult or a new instance)
+     */
+    public static Vector3f localizeDirection(Vector3f worldDirection,
+            Spatial spatial, Vector3f storeResult) {
+        Validate.nonZero(worldDirection, "direction");
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+
+        if (MySpatial.isIgnoringTransforms(spatial)) { // TODO JME 3.2
+            storeResult.set(worldDirection);
+        } else {
+            spatial.worldToLocal(worldDirection, storeResult);
+        }
+
+        double lengthSquared = MyVector3f.lengthSquared(storeResult);
+        double scaleFactor = 1.0 / Math.sqrt(lengthSquared);
+        storeResult.multLocal((float) scaleFactor);
+
+        assert storeResult.isUnitVector();
+        return storeResult;
     }
 
     /**
