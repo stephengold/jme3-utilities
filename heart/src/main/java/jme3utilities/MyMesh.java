@@ -69,6 +69,47 @@ public class MyMesh {
     // new methods exposed
 
     /**
+     * Estimate the number of bones in the specified mesh by reading its index
+     * buffers.
+     *
+     * @param mesh mesh to examine (not null)
+     * @return estimated number of bones (&ge;0)
+     */
+    public static int countBones(Mesh mesh) {
+        int maxWeightsPerVert = mesh.getMaxNumWeights();
+        assert maxWeightsPerVert > 0 : maxWeightsPerVert;
+        assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
+
+        VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
+        Buffer boneIndexBuffer = biBuf.getDataReadOnly();
+        boneIndexBuffer.rewind();
+        int numBoneIndices = boneIndexBuffer.remaining();
+        assert numBoneIndices % 4 == 0 : numBoneIndices;
+        int numVertices = boneIndexBuffer.remaining() / 4;
+
+        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
+        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
+        weightBuffer.rewind();
+        int numWeights = weightBuffer.remaining();
+        assert numWeights == numVertices * 4 : numWeights;
+
+        int result = 0;
+        for (int vIndex = 0; vIndex < numVertices; vIndex++) {
+            for (int wIndex = 0; wIndex < 4; wIndex++) {
+                float weight = weightBuffer.get();
+                int bIndex = readIndex(boneIndexBuffer);
+                if (wIndex < maxWeightsPerVert && weight > 0f
+                        && bIndex >= result) {
+                    result = bIndex + 1;
+                }
+            }
+        }
+
+        assert result >= 0 : result;
+        return result;
+    }
+
+    /**
      * Test whether a mesh has texture (U-V) coordinates.
      *
      * @param mesh mesh to test (not null)
