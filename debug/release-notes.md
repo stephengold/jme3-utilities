@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.8.1 released on TBD
+## Version 0.8.1 released on 21 November 2017
 
  + Modified API of AxesVisualizer to specify arrow lengths in world units
    instead of local ones
