@@ -579,18 +579,15 @@ public class MySpatial {
      * Find the minimum and maximum coordinates in a subtree of the scene graph.
      * Note: recursive!
      *
-     * @param subtree what to measure (not null)
-     * @param useWorld true &rarr; use world coordinates, false &rarr; use model
-     * coordinates
+     * @param subtree subtree to measure (not null)
      * @return array consisting of array[0]: the lowest coordinate for each axis
      * and array[1]: the highest coordinate for each axis
      */
-    public static Vector3f[] findMinMaxCoords(Spatial subtree,
-            boolean useWorld) {
+    public static Vector3f[] findMinMaxCoords(Spatial subtree) {
         Vector3f[] result;
         if (subtree instanceof Geometry) {
             Geometry geometry = (Geometry) subtree;
-            result = findMinMaxCoords(geometry, useWorld);
+            result = findMinMaxCoords(geometry, true);
 
         } else if (subtree instanceof Node) {
             Vector3f maxima = new Vector3f(Float.NEGATIVE_INFINITY,
@@ -600,7 +597,7 @@ public class MySpatial {
             result = new Vector3f[]{minima, maxima};
             Node node = (Node) subtree;
             for (Spatial child : node.getChildren()) {
-                Vector3f[] childMm = findMinMaxCoords(child, useWorld);
+                Vector3f[] childMm = findMinMaxCoords(child);
                 MyVector3f.accumulateMinima(minima, childMm[0]);
                 MyVector3f.accumulateMaxima(maxima, childMm[1]);
             }
