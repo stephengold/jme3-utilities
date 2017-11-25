@@ -471,6 +471,29 @@ public class MySpatial {
     }
 
     /**
+     * Access the 1st enabled RigidBodyControl of a spatial.
+     *
+     * @param spatial spatial to search (not null, unaffected)
+     * @return the pre-existing control, or null if none found
+     */
+    public static RigidBodyControl findEnabledRbc(Spatial spatial) {
+        RigidBodyControl result = null;
+        int numControls = spatial.getNumControls();
+        for (int controlI = 0; controlI < numControls; controlI++) {
+            Control control = spatial.getControl(controlI);
+            if (control instanceof RigidBodyControl) {
+                RigidBodyControl rbc = (RigidBodyControl) control;
+                if (rbc.isEnabled()) {
+                    result = rbc;
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Find a spatial's 1st local light that is assignable from the specified
      * class.
      *
@@ -553,29 +576,6 @@ public class MySpatial {
     }
 
     /**
-     * Access the 1st enabled RigidBodyControl of a spatial.
-     *
-     * @param spatial spatial to search (not null, unaffected)
-     * @return the pre-existing control, or null if none found
-     */
-    public static RigidBodyControl findObject(Spatial spatial) {
-        RigidBodyControl result = null;
-        int numControls = spatial.getNumControls();
-        for (int controlI = 0; controlI < numControls; controlI++) {
-            Control control = spatial.getControl(controlI);
-            if (control instanceof RigidBodyControl) {
-                RigidBodyControl rbc = (RigidBodyControl) control;
-                if (rbc.isEnabled()) {
-                    result = rbc;
-                    break;
-                }
-            }
-        }
-
-        return result;
-    }
-
-    /**
      * Find the minimum and maximum coordinates in a subtree of the scene graph.
      * Note: recursive!
      *
@@ -622,7 +622,7 @@ public class MySpatial {
     public static float getMass(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
 
-        RigidBodyControl rigidBodyControl = findObject(spatial);
+        RigidBodyControl rigidBodyControl = findEnabledRbc(spatial);
         float mass = rigidBodyControl.getMass();
 
         assert mass >= 0f : mass;
@@ -665,7 +665,7 @@ public class MySpatial {
          * Access the rigid body, if any.
          */
         Vector3f location;
-        RigidBodyControl rigidBodyControl = findObject(spatial);
+        RigidBodyControl rigidBodyControl = findEnabledRbc(spatial);
         if (rigidBodyControl != null) {
             location = rigidBodyControl.getPhysicsLocation().clone();
         } else if (isIgnoringTransforms(spatial)) { // TODO JME 3.2
@@ -689,7 +689,7 @@ public class MySpatial {
          * Access the rigid body, if any.
          */
         Quaternion orientation;
-        RigidBodyControl rigidBodyControl = findObject(spatial);
+        RigidBodyControl rigidBodyControl = findEnabledRbc(spatial);
         if (rigidBodyControl != null) {
             orientation = rigidBodyControl.getPhysicsRotation().clone();
         } else if (isIgnoringTransforms(spatial)) { // TODO JME 3.2
@@ -964,7 +964,7 @@ public class MySpatial {
         /*
          * Apply to the physics object, if any.
          */
-        RigidBodyControl rigidBodyControl = findObject(spatial);
+        RigidBodyControl rigidBodyControl = findEnabledRbc(spatial);
         if (rigidBodyControl != null) {
             rigidBodyControl.setPhysicsLocation(worldLocation.clone());
         }
@@ -996,7 +996,7 @@ public class MySpatial {
         /*
          * Apply to the physics object, if any.
          */
-        RigidBodyControl rigidBodyControl = findObject(spatial);
+        RigidBodyControl rigidBodyControl = findEnabledRbc(spatial);
         if (rigidBodyControl != null) {
             rigidBodyControl.setPhysicsRotation(worldOrientation.clone());
         }
