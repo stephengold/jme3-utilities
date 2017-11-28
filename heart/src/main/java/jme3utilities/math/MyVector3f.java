@@ -26,7 +26,6 @@
  */
 package jme3utilities.math;
 
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.math.FastMath;
 import com.jme3.math.Line;
 import com.jme3.math.Quaternion;
@@ -57,6 +56,18 @@ public class MyVector3f {
      * number of axes in the coordinate system
      */
     final public static int numAxes = 3;
+    /**
+     * index of the X axis
+     */
+    final public static int xAxis = 0;
+    /**
+     * index of the Y axis
+     */
+    final public static int yAxis = 1;
+    /**
+     * index of the Z axis
+     */
+    final public static int zAxis = 2;
     /**
      * index of the final (Z) axis
      */
@@ -218,13 +229,13 @@ public class MyVector3f {
 
         storeResult.zero();
         switch (axisIndex) {
-            case PhysicsSpace.AXIS_X:
+            case xAxis:
                 storeResult.x = length;
                 break;
-            case PhysicsSpace.AXIS_Y:
+            case yAxis:
                 storeResult.y = length;
                 break;
-            case PhysicsSpace.AXIS_Z:
+            case zAxis:
                 storeResult.z = length;
         }
 
