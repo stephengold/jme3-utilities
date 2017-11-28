@@ -613,16 +613,16 @@ public class MyVector3f {
 
     /**
      * Test whether all components of a vector are all non-negative: in other
-     * words, whether it's in the first octant or on its boundaries.
+     * words, whether it's in the first octant or the boundaries thereof.
      *
      * @param vector input (not null, unaffected)
      * @return true if all components are non-negative, false otherwise
      */
     public static boolean isAllNonNegative(Vector3f vector) {
-        if (vector.x < 0f || vector.y < 0f || vector.z < 0f) {
-            return false;
-        } else {
+        if (vector.x >= 0f && vector.y >= 0f && vector.z >= 0f) {
             return true;
+        } else {
+            return false;
         }
     }
 
@@ -634,7 +634,7 @@ public class MyVector3f {
      * @return true if all components are positive, false otherwise
      */
     public static boolean isAllPositive(Vector3f vector) {
-        if (vector.x > 0f || vector.y > 0f || vector.z > 0f) {
+        if (vector.x > 0f && vector.y > 0f && vector.z > 0f) {
             return true;
         } else {
             return false;
