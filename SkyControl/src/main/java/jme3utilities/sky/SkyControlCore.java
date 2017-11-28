@@ -120,11 +120,11 @@ public class SkyControlCore extends SubtreeControl {
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
-    final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
+    final private static Vector3f unitX = new Vector3f(1f, 0f, 0f);
     /**
      * negative Y-axis
      */
-    final private static Vector3f negativeYAxis = new Vector3f(0f, -1f, 0f);
+    final private static Vector3f negativeUnitY = new Vector3f(0f, -1f, 0f);
     // *************************************************************************
     // fields
 
@@ -842,7 +842,7 @@ public class SkyControlCore extends SubtreeControl {
             subtree.attachChild(bottomDome);
 
             Quaternion upsideDown = new Quaternion();
-            upsideDown.lookAt(xAxis, negativeYAxis);
+            upsideDown.lookAt(unitX, negativeUnitY);
             bottomDome.setLocalRotation(upsideDown);
             bottomDome.setMaterial(bottomMaterial);
         }

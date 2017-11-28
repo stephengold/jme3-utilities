@@ -125,7 +125,7 @@ public class LandscapeControl extends SubtreeControl {
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_Y}
      */
-    final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
+    final private static Vector3f unitY = new Vector3f(0f, 1f, 0f);
     // *************************************************************************
     // fields
 
@@ -295,7 +295,7 @@ public class LandscapeControl extends SubtreeControl {
             Vector3f location = new Vector3f(x, uprightHeight / 2f, z);
             MySpatial.setWorldLocation(upright, location);
             Quaternion rotation = new Quaternion();
-            rotation.fromAngleNormalAxis(theta, yAxis);
+            rotation.fromAngleNormalAxis(theta, unitY);
             MySpatial.setWorldOrientation(upright, rotation);
         }
 
@@ -315,7 +315,7 @@ public class LandscapeControl extends SubtreeControl {
             Vector3f location = new Vector3f(x, y, z);
             MySpatial.setWorldLocation(lintel, location);
             Quaternion rotation = new Quaternion();
-            rotation.fromAngleNormalAxis(theta, yAxis);
+            rotation.fromAngleNormalAxis(theta, unitY);
             MySpatial.setWorldOrientation(lintel, rotation);
         }
 

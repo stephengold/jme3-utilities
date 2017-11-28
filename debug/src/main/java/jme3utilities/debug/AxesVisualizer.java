@@ -92,15 +92,15 @@ public class AxesVisualizer extends SubtreeControl {
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
-    final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
+    final private static Vector3f unitX = new Vector3f(1f, 0f, 0f);
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_Y}
      */
-    final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
+    final private static Vector3f unitY = new Vector3f(0f, 1f, 0f);
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_Z}
      */
-    final private static Vector3f zAxis = new Vector3f(0f, 0f, 1f);
+    final private static Vector3f unitZ = new Vector3f(0f, 0f, 1f);
     // *************************************************************************
     // fields
 
@@ -234,7 +234,7 @@ public class AxesVisualizer extends SubtreeControl {
         if (isEnabled()) {
             MySpatial.setWorldScale(spatial, axisLength);
             Geometry arrow = (Geometry) subtree.getChild(axisIndex);
-            result = arrow.localToWorld(xAxis, null);
+            result = arrow.localToWorld(unitX, null);
         }
 
         return result;
@@ -311,13 +311,13 @@ public class AxesVisualizer extends SubtreeControl {
     private void addArrows() {
         assert subtree.getChildren().isEmpty();
         if (lineWidth >= 1f) {
-            addWireArrow(xColor, "xAxis", xAxis);
-            addWireArrow(yColor, "yAxis", yAxis);
-            addWireArrow(zColor, "zAxis", zAxis);
+            addWireArrow(xColor, "xAxis", unitX);
+            addWireArrow(yColor, "yAxis", unitY);
+            addWireArrow(zColor, "zAxis", unitZ);
         } else {
-            addSolidArrow(xColor, "xAxis", xAxis);
-            addSolidArrow(yColor, "yAxis", yAxis);
-            addSolidArrow(zColor, "zAxis", zAxis);
+            addSolidArrow(xColor, "xAxis", unitX);
+            addSolidArrow(yColor, "yAxis", unitY);
+            addSolidArrow(zColor, "zAxis", unitZ);
         }
 
         updateArrows();

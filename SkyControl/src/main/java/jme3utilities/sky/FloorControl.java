@@ -82,7 +82,7 @@ public class FloorControl extends SubtreeControl {
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
-    final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
+    final private static Vector3f unitX = new Vector3f(1f, 0f, 0f);
     // *************************************************************************
     // fields
 
@@ -246,7 +246,7 @@ public class FloorControl extends SubtreeControl {
         floor.setMaterial(material);
 
         Quaternion rotation = new Quaternion();
-        rotation.fromAngleNormalAxis(-FastMath.HALF_PI, xAxis);
+        rotation.fromAngleNormalAxis(-FastMath.HALF_PI, unitX);
         floor.setLocalRotation(rotation); // rotate from X-Y plane to X-Z plane
         float radius = camera.getFrustumFar();
         floor.setLocalScale(2f * radius);

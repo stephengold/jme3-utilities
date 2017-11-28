@@ -84,7 +84,7 @@ public class NavDebug {
     /**
      * local copy of Vector3f#UNIT_Y
      */
-    final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
+    final private static Vector3f unitY = new Vector3f(0f, 1f, 0f);
     // *************************************************************************
     // constructors
 
@@ -246,7 +246,7 @@ public class NavDebug {
         float zScale = offset.length();
         Vector3f scale = new Vector3f(radius, radius, zScale);
         Quaternion orientation = new Quaternion();
-        orientation.lookAt(offset, yAxis);
+        orientation.lookAt(offset, unitY);
 
         Geometry stick = new Geometry(arc.toString(), stickMesh);
         stick.setLocalRotation(orientation);

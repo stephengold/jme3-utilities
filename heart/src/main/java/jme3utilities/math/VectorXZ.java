@@ -61,7 +61,7 @@ public class VectorXZ
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_Y}
      */
-    final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
+    final private static Vector3f unitY = new Vector3f(0f, 1f, 0f);
     /**
      * backward direction
      */
@@ -862,7 +862,7 @@ public class VectorXZ
          * required.
          */
         Vector3f direction = new Vector3f(-z, 0f, x);
-        result.lookAt(direction, yAxis);
+        result.lookAt(direction, unitY);
 
         return result;
     }

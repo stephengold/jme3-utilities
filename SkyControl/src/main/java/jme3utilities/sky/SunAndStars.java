@@ -92,15 +92,15 @@ public class SunAndStars
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
-    final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
+    final private static Vector3f unitX = new Vector3f(1f, 0f, 0f);
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_Y}
      */
-    final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
+    final private static Vector3f unitY = new Vector3f(0f, 1f, 0f);
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_Z}
      */
-    final private static Vector3f zAxis = new Vector3f(0f, 0f, 1f);
+    final private static Vector3f unitZ = new Vector3f(0f, 0f, 1f);
     // *************************************************************************
     // fields
 
@@ -171,7 +171,7 @@ public class SunAndStars
          * (March equinox) axis.
          */
         Quaternion rotate = new Quaternion();
-        rotate.fromAngleNormalAxis(obliquity, xAxis);
+        rotate.fromAngleNormalAxis(obliquity, unitX);
         Vector3f equatorial = rotate.mult(ecliptical);
 
         return equatorial;
@@ -214,12 +214,12 @@ public class SunAndStars
          * about the Y (east) axis followed by a permutation of the axes.
          */
         Quaternion zRotation = new Quaternion();
-        zRotation.fromAngleNormalAxis(-siderealAngle, zAxis);
+        zRotation.fromAngleNormalAxis(-siderealAngle, unitZ);
         Vector3f rotated = zRotation.mult(equatorial);
 
         float coLatitude = FastMath.HALF_PI - observerLatitude;
         Quaternion yRotation = new Quaternion();
-        yRotation.fromAngleNormalAxis(-coLatitude, yAxis);
+        yRotation.fromAngleNormalAxis(-coLatitude, unitY);
         rotated = yRotation.mult(rotated);
 
         Vector3f world = new Vector3f(-rotated.x, rotated.z, rotated.y);
@@ -276,9 +276,9 @@ public class SunAndStars
 
         float siderealAngle = siderealAngle();
         Quaternion xRotation = new Quaternion();
-        xRotation.fromAngleNormalAxis(-siderealAngle, xAxis);
+        xRotation.fromAngleNormalAxis(-siderealAngle, unitX);
         Quaternion zRotation = new Quaternion();
-        zRotation.fromAngleNormalAxis(observerLatitude, zAxis);
+        zRotation.fromAngleNormalAxis(observerLatitude, unitZ);
         Quaternion orientation = zRotation.mult(xRotation);
         if (invertRotation) {
             orientation.inverseLocal();
@@ -300,9 +300,9 @@ public class SunAndStars
             /*
              * Orient the north dome.
              */
-            yRotation.fromAngleNormalAxis(-siderealAngle, yAxis);
+            yRotation.fromAngleNormalAxis(-siderealAngle, unitY);
             float coLatitude = FastMath.HALF_PI - observerLatitude;
-            zRotation.fromAngleNormalAxis(-coLatitude, zAxis);
+            zRotation.fromAngleNormalAxis(-coLatitude, unitZ);
             Quaternion orientation = zRotation.mult(yRotation);
             MySpatial.setWorldOrientation(northDome, orientation);
         }
@@ -310,9 +310,9 @@ public class SunAndStars
             /*
              * Orient the south dome.
              */
-            yRotation.fromAngleNormalAxis(siderealAngle, yAxis);
+            yRotation.fromAngleNormalAxis(siderealAngle, unitY);
             float angle = FastMath.HALF_PI + observerLatitude;
-            zRotation.fromAngleNormalAxis(angle, zAxis);
+            zRotation.fromAngleNormalAxis(angle, unitZ);
             Quaternion orientation = zRotation.mult(yRotation);
             MySpatial.setWorldOrientation(southDome, orientation);
         }

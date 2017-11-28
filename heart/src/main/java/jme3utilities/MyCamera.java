@@ -60,11 +60,11 @@ final public class MyCamera {
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
-    final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
+    final private static Vector3f unitX = new Vector3f(1f, 0f, 0f);
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_Y}
      */
-    final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
+    final private static Vector3f unitY = new Vector3f(0f, 1f, 0f);
     // *************************************************************************
     // constructors
 
@@ -292,9 +292,9 @@ final public class MyCamera {
             /*
              * When looking straight up or down, use +X as the up direction.
              */
-            camera.lookAtDirection(direction, xAxis);
+            camera.lookAtDirection(direction, unitX);
         } else {
-            camera.lookAtDirection(direction, yAxis);
+            camera.lookAtDirection(direction, unitY);
         }
     }
 

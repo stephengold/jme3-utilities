@@ -87,15 +87,15 @@ public class GlobeRenderer extends SimpleAppState {
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
-    final private static Vector3f xAxis = new Vector3f(1f, 0f, 0f);
+    final private static Vector3f unitX = new Vector3f(1f, 0f, 0f);
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_Y}
      */
-    final private static Vector3f yAxis = new Vector3f(0f, 1f, 0f);
+    final private static Vector3f unitY = new Vector3f(0f, 1f, 0f);
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_Z}
      */
-    final private static Vector3f zAxis = new Vector3f(0f, 0f, 1f);
+    final private static Vector3f unitZ = new Vector3f(0f, 0f, 1f);
     // *************************************************************************
     // fields
 
@@ -292,12 +292,12 @@ public class GlobeRenderer extends SimpleAppState {
         Validate.inRange(phi, "phi", -FastMath.HALF_PI, FastMath.HALF_PI);
 
         Quaternion xRot = new Quaternion();
-        xRot.fromAngleNormalAxis(-theta, xAxis);
+        xRot.fromAngleNormalAxis(-theta, unitX);
         Quaternion yRot = new Quaternion();
-        yRot.fromAngleNormalAxis(-phi, yAxis);
+        yRot.fromAngleNormalAxis(-phi, unitY);
         Quaternion turn = yRot.mult(xRot);
 
-        Vector3f lightDirection = turn.mult(zAxis);
+        Vector3f lightDirection = turn.mult(unitZ);
         light.setDirection(lightDirection);
     }
 
@@ -396,7 +396,7 @@ public class GlobeRenderer extends SimpleAppState {
 
         camera = new Camera(resolution, resolution);
         Vector3f location = new Vector3f(0f, 0f, initialCameraDistance);
-        Vector3f upDirection = xAxis;
+        Vector3f upDirection = unitX;
         moveCamera(location, upDirection);
     }
 
