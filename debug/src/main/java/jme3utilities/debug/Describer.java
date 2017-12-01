@@ -27,10 +27,10 @@
 package jme3utilities.debug;
 
 import com.jme3.app.state.ScreenshotAppState;
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
+import com.jme3.bullet.collision.shapes.ConeCollisionShape;
 import com.jme3.bullet.collision.shapes.CylinderCollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
@@ -71,6 +71,7 @@ import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.math.MyQuaternion;
+import jme3utilities.math.MyVector3f;
 
 /**
  * Generate compact textual descriptions of jME3 objects.
@@ -114,6 +115,14 @@ public class Describer {
             result += describeAxis(axis);
             float height = capsule.getHeight();
             float radius = capsule.getRadius();
+            result += String.format("[h=%f,r=%f]", height, radius);
+
+        } else if (shape instanceof ConeCollisionShape) {
+            ConeCollisionShape cone = (ConeCollisionShape) shape;
+            //int axis = cone.getAxis(); TODO
+            //result += describeAxis(axis);
+            float height = cone.getHeight();
+            float radius = cone.getRadius();
             result += String.format("[h=%f,r=%f]", height, radius);
 
         } else if (shape instanceof CompoundCollisionShape) {
@@ -163,23 +172,24 @@ public class Describer {
     }
 
     /**
-     * Generate a textual description of a Bullet axis.
+     * Generate a textual description of an axisIndex.
      *
-     * @param axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
+     * @param axisIndex (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
      * @return description (not null)
      */
-    public String describeAxis(int axis) {
-        Validate.inRange(axis, "axis", 0, 2);
+    public String describeAxis(int axisIndex) {
+        Validate.inRange(axisIndex, "axis index", MyVector3f.firstAxis,
+                MyVector3f.lastAxis);
 
         String result;
-        switch (axis) {
-            case PhysicsSpace.AXIS_X:
+        switch (axisIndex) {
+            case MyVector3f.xAxis:
                 result = "X";
                 break;
-            case PhysicsSpace.AXIS_Y:
+            case MyVector3f.yAxis:
                 result = "Y";
                 break;
-            case PhysicsSpace.AXIS_Z:
+            case MyVector3f.zAxis:
                 result = "Z";
                 break;
             default:
@@ -514,6 +524,8 @@ public class Describer {
      * @return true if the control is enabled, otherwise false
      */
     protected static boolean isControlEnabled(Control control) {
+        Validate.nonNull(control, "control");
+
         boolean result = MyControl.isEnabled(control);
         return result;
     }
