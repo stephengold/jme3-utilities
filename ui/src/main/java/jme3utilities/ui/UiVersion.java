@@ -60,6 +60,6 @@ public class UiVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String getVersionShort() {
-        return "for_jME3.1 0.6.0for31";
+        return "for_jME3.1 0.6.0for31+1";
     }
 }

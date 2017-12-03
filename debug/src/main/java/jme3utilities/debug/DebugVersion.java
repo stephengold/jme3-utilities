@@ -60,6 +60,6 @@ public class DebugVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String getVersionShort() {
-        return "for_jME3.1 0.8.2for31";
+        return "for_jME3.1 0.8.2for31+1";
     }
 }

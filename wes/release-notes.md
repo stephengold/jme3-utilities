@@ -1,6 +1,6 @@
 # release notes for the Wes library and related tests
 
-## Version 0.3.0for31 released on TBD
+## Version 0.3.0for31 released on 3 December 2017
 
  + New repository branch for JME3.1 compatibility.
 

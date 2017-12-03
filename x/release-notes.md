@@ -2,7 +2,7 @@
 
 ## Version 0.2.2for31 released on TBD
 
- + Moved the LoopMesh class to the jme3-utilities-heart library.
+ + Move the LoopMesh class to the jme3-utilities-heart library.
  + Accommodate other changes in the jme3-utilities-heart library.
  + Rename private field in NavDebug class.
  + New repository branch for JME3.1 compatibility.

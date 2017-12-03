@@ -1,6 +1,6 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.7for31 released on TBD
+## Version 0.9.7for31 released on 3 December 2017
 
  + rename private fields
  + new repository branch for JME3.1 compatibility
