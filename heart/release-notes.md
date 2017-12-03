@@ -1,5 +1,12 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 1.0.0for31 released on 3 December 2017
+
+ + Forced MySpatial.findMinMaxCoords(Spatial) to use world coordinates
+ + Renamed MySpatial.findObject() to findEnabledRbc()
+ + Added isAllPositive() method to MyVector3f class
+ + Added axis-index constants to MyVector3f class
+
 ## Version 0.9.27 released on 21 November 2017
 
  + Modified API of MyVector3f.lineMeetsSphere() to use Line and center
@@ -8,7 +15,7 @@
  + Added mouseLine() method to MyCamera class
  + Added describeType() method to MyControl class
  + Added countBones() method to MyMesh class
- + Added cardinalizeLocal() method MyQuaternion class
+ + Added cardinalizeLocal() method to MyQuaternion class
  + Added countMeshBones() and findControlledSpatial() methods to MySpatial class
  + Added firstAxis, lastAxis, and numAxes public constants to MyVector3f class
  + Added lineMeetsLine(), localizeDirection(), and normalizeLocal()
