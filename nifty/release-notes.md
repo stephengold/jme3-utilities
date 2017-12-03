@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.7.3for31 released TBD
+## Version 0.7.3for31 released 3 December 2017
 
  + New repository branch for JME3.1 compatibility.
 
