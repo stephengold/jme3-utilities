@@ -424,16 +424,16 @@ public class CornerSet3f {
             Vector3f fm = middle.subtract(first);
             /*
              * Project FM onto FL.
-             * 
-             * Don't use Vector3f.project() because (as of jME 3.0.10) 
-             * it contains a logic bug.
+             *
+             * Don't use Vector3f.project() because (as of jME 3.0.10)
+             * it contained a logic bug.
              */
             double fm_dot_fl = MyVector3f.dot(fm, fl);
             double normSquaredFL = squaredDistance(cornerIndex1, cornerIndex2);
             double fraction = fm_dot_fl / normSquaredFL;
             Vector3f projection = fl.mult((float) fraction);
             /*
-             * If the projection coincides with FM, 
+             * If the projection coincides with FM,
              * then consider the 3 corners to be collinear.
              */
             boolean collin = MyVector3f.doCoincide(projection, fm, tolerance2);
@@ -628,7 +628,7 @@ public class CornerSet3f {
             return;
         }
         /*
-         * Shortcut #2: if all corners have the same y-coordinate, 
+         * Shortcut #2: if all corners have the same y-coordinate,
          * then the corner set is planar.
          */
         boolean sameY = true;
@@ -680,7 +680,7 @@ public class CornerSet3f {
         Vector3f planeNormal = crossProduct.divide(crossLength);
         float planeConstant = -planeNormal.dot(a);
         /*
-         * If all the corners lie in that plane, 
+         * If all the corners lie in that plane,
          * then the corner set is planar, otherwise it isn't.
          */
         for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {

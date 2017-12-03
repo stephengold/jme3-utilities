@@ -196,7 +196,7 @@ public class MyVector3f {
          * The long way:
          * Calculate the projection of offset2 onto offset3.
          *
-         * Don't use Vector3f.project() because (as of jME 3.0.10) it contains
+         * Don't use Vector3f.project() because (as of jME 3.0.10) it contained
          * a logic bug.
          */
         Vector3f offset2 = point2.subtract(point1);
@@ -822,7 +822,7 @@ public class MyVector3f {
             storeResult = new Vector3f();
         }
 
-        if (MySpatial.isIgnoringTransforms(spatial)) { // TODO JME 3.2
+        if (MySpatial.isIgnoringTransforms(spatial)) {
             storeResult.set(worldDirection);
         } else {
             spatial.worldToLocal(worldDirection, storeResult);
@@ -920,7 +920,7 @@ public class MyVector3f {
     /**
      * Project vector1 onto vector2. Don't use
      * {@link com.jme3.math.Vector3f#project(Vector3f)} for this because (as of
-     * jME 3.0.10) it contains a logic bug which gives the wrong magnitude when
+     * jME 3.0.10) it contained a logic bug which gives the wrong magnitude when
      * vector2 has length != 1.
      *
      * @param vector1 1st input vector (not null, unaffected)
@@ -1037,7 +1037,7 @@ public class MyVector3f {
              * Project FM onto FL.
              *
              * Don't use Vector3f.project() because (as of jME 3.0.10)
-             * it contains a logic bug.
+             * it contained a logic bug.
              */
             double fm_dot_fl = dot(fm, fl);
             double fraction = fm_dot_fl / normSquaredFL;

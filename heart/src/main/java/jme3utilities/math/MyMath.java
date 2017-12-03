@@ -392,7 +392,7 @@ public class MyMath {
          * Transform the vertex and the sample point.
          */
         Vector3f localSample, localVertex;
-        if (MySpatial.isIgnoringTransforms(spatial)) { // TODO JME 3.2
+        if (MySpatial.isIgnoringTransforms(spatial)) {
             localSample = worldSample;
             localVertex = worldVertex;
         } else {

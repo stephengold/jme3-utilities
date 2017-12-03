@@ -491,7 +491,7 @@ public class MySkeleton {
         Bone bone = findBone(spatial, boneName);
         Vector3f localCoordinates = bone.getModelSpacePosition();
         Geometry animatedGeometry = MySpatial.findAnimatedGeometry(spatial);
-        if (animatedGeometry.isIgnoreTransform()) { // TODO JME 3.2
+        if (animatedGeometry.isIgnoreTransform()) {
             storeResult.set(localCoordinates);
         } else {
             animatedGeometry.localToWorld(localCoordinates, storeResult);

@@ -59,7 +59,7 @@ final public class MyColor {
     /**
      * Interpolate linearly between two colors (with no side effect).
      * <p>
-     * Use instead of ColorRGBA.interpolate(), which gets renamed in jME 3.1.
+     * Use instead of ColorRGBA.interpolate(), which got renamed in JME 3.1.
      *
      * @param fraction (&le;1, &ge;0)
      * @param start 1st input color (not null, unaffected)

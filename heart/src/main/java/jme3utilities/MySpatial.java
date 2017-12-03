@@ -562,7 +562,7 @@ public class MySpatial {
             MyMesh.vertexVector3f(mesh, VertexBuffer.Type.Position, vertexIndex,
                     meshLocation);
 
-            if (useWorld && !geometry.isIgnoreTransform()) { // TODO JME 3.2
+            if (useWorld && !geometry.isIgnoreTransform()) {
                 geometry.localToWorld(meshLocation, location);
             } else {
                 location.set(meshLocation);
@@ -637,7 +637,7 @@ public class MySpatial {
         Validate.nonNull(spatial, "spatial");
 
         float result;
-        if (isIgnoringTransforms(spatial)) { // TODO JME 3.2
+        if (isIgnoringTransforms(spatial)) {
             result = 1f;
         } else {
             Vector3f worldScale = spatial.getWorldScale();
@@ -665,7 +665,7 @@ public class MySpatial {
         RigidBodyControl rigidBodyControl = findEnabledRbc(spatial);
         if (rigidBodyControl != null) {
             location = rigidBodyControl.getPhysicsLocation().clone();
-        } else if (isIgnoringTransforms(spatial)) { // TODO JME 3.2
+        } else if (isIgnoringTransforms(spatial)) {
             location = new Vector3f();
         } else {
             location = spatial.getWorldTranslation().clone();
@@ -689,7 +689,7 @@ public class MySpatial {
         RigidBodyControl rigidBodyControl = findEnabledRbc(spatial);
         if (rigidBodyControl != null) {
             orientation = rigidBodyControl.getPhysicsRotation().clone();
-        } else if (isIgnoringTransforms(spatial)) { // TODO JME 3.2
+        } else if (isIgnoringTransforms(spatial)) {
             orientation = new Quaternion();
         } else {
             orientation = spatial.getWorldRotation().clone();

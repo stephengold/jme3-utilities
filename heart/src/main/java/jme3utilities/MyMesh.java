@@ -351,7 +351,7 @@ public class MyMesh {
         Mesh mesh = geometry.getMesh();
         Vector3f meshLocation
                 = vertexLocation(mesh, vertexIndex, skinningMatrices, null);
-        if (geometry.isIgnoreTransform()) { // TODO JME 3.2
+        if (geometry.isIgnoreTransform()) {
             storeResult.set(meshLocation);
         } else {
             geometry.localToWorld(meshLocation, storeResult);
