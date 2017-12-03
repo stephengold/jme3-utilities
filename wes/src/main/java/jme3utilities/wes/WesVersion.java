@@ -59,6 +59,6 @@ public class WesVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String getVersionShort() {
-        return "master 0.2.4+1";
+        return "for_jME3.1 0.3.0for31";
     }
 }

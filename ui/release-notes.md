@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.6.0for31 released on TBD
+
+ + Replace PropertiesKey with UncachedKey.
+ + Simplify InputMode by removing the unused "stream" variable.
+ + New repository branch for JME3.1 compatibility.
+
 ## Version 0.5.9 released on 13 September 2017
 
  + Changed semantics of the Locators.register(List) method.

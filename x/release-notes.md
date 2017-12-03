@@ -1,5 +1,12 @@
 # release notes for the jme3-utilities-x library and related tests
 
+## Version 0.2.2for31 released on TBD
+
+ + Moved the LoopMesh class to the jme3-utilities-heart library.
+ + Accommodate other changes in the jme3-utilities-heart library.
+ + Rename private field in NavDebug class.
+ + New repository branch for JME3.1 compatibility.
+
 ## Version 0.2.1 released on 20 May 2017
 
 Moved jme3utilities.math.noise package to the new jme3-utilities-heart library.

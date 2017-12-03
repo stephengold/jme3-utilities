@@ -1,5 +1,10 @@
 # release notes for the SkyControl library and related tests
 
+## Version 0.9.7for31 released on TBD
+
+ + rename private fields
+ + new repository branch for JME3.1 compatibility
+
 ## Version 0.9.6 released 19 September 2017
 
  + use the DomeMesh class from the heart library
