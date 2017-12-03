@@ -1,5 +1,9 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.7.3for31 released TBD
+
+ + New repository branch for JME3.1 compatibility.
+
 ## Version 0.7.2 released 7 November 2017
 
 API changes to GuiScreenController:
