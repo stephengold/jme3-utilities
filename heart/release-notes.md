@@ -1,13 +1,13 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 1.0.0for32 released on TBD
+## Version 1.0.0for32 released on 5 December 2017
 
  + 1st release to target JME 3.2
  + Forced MySpatial.findMinMaxCoords(Spatial) to use world coordinates
  + Renamed MySpatial.findObject() to findEnabledRbc()
  + Added isAllPositive() method to MyVector3f class
  + Added axis-index constants to MyVector3f class
- + Added ContrastAdjustmentFilter
+ + Added ContrastAdjustmentFilter class
 
 ## Version 0.9.27 released on 21 November 2017
 
