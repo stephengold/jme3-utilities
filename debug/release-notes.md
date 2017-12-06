@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.8.2for32 released on TBD
+## Version 0.8.2for32 released on 5 December 2017
 
  + 1st release to target JME 3.2
  + Describe cone collision shapes

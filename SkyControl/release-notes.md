@@ -1,6 +1,6 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.7for32 released on TBD
+## Version 0.9.7for32 released on 5 December 2017
 
  + 1st release to target JME 3.2
  + Utilize contrast-adjustment filter in GlobeRenderer

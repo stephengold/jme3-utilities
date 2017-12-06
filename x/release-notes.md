@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-x library and related tests
 
-## Version 0.2.2for32 released on TBD
+## Version 0.2.2for32 released on 5 December 2017
 
  + 1st release to target JME 3.2
  + Moved the LoopMesh class to the jme3-utilities-heart library.

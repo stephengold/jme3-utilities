@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-ui library and related tests
 
-## Version 0.6.0for32 released on TBD
+## Version 0.6.0for32 released on 5 December 2017
 
  + 1st release to target JME 3.2
  + Replace PropertiesKey with UncachedKey.

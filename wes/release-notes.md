@@ -1,8 +1,9 @@
 # release notes for the Wes library and related tests
 
-## Version 0.3.0for32 released on TBD
+## Version 0.3.0for32 released on 5 December 2017
 
  + 1st release to target JME 3.2
+ + Utilize setTrackSpatial() with spatial tracks
 
 ## Version 0.2.4 released on 12 November 2017
 
