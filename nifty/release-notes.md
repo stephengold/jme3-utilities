@@ -1,15 +1,15 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.7.3for32 released on TBD
+## Version 0.7.3for32 released on 5 December 2017
 
  + 1st release to target JME 3.2
 
 ## Version 0.7.2 released on 7 November 2017
 
 API changes to GuiScreenController:
-+ Add SliderTransform arguments to readSlider() and setSlider() methods.
-+ Remove updateSlider() and updateLogSlider() methods.
-+ Add readVectorBank() method.
+ + Add SliderTransform arguments to readSlider() and setSlider() methods.
+ + Remove updateSlider() and updateLogSlider() methods.
+ + Add readVectorBank() method.
 
 Move dialog controllers to new package 'jme3utilities.nifty.dialog'.
 
