@@ -36,6 +36,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.plugins.bvh.BoneMapping;
 import com.jme3.scene.plugins.bvh.SkeletonMapping;
 import java.util.Map;
@@ -94,8 +95,8 @@ public class TrackEdit {
         Vector3f[] oldScales = MyAnimation.getScales(oldTrack);
 
         int oldCount = oldTimes.length;
-        int neckIndex;
-        neckIndex = MyAnimation.findPreviousKeyframeIndex(oldTrack, neckTime);
+        int neckIndex
+                = MyAnimation.findPreviousKeyframeIndex(oldTrack, neckTime);
         int newCount = oldCount - neckIndex;
         assert newCount > 0 : newCount;
         /*
@@ -314,11 +315,11 @@ public class TrackEdit {
                     rotations, scales);
 
         } else if (oldTrack instanceof SpatialTrack) {
-            //SpatialTrack spatialTrack = (SpatialTrack) oldTrack; // TODO JME 3.2
-            //Spatial spatial = spatialTrack.getTrackSpatial();
+            SpatialTrack spatialTrack = (SpatialTrack) oldTrack;
+            Spatial spatial = spatialTrack.getTrackSpatial();
             SpatialTrack newSpatialTrack
                     = new SpatialTrack(times, translations, rotations, scales);
-            //newSpatialTrack.setTrackSpatial(spatial);
+            newSpatialTrack.setTrackSpatial(spatial);
             result = newSpatialTrack;
 
         } else {
