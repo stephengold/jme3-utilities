@@ -32,7 +32,6 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.GammaCorrectionFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
@@ -45,6 +44,7 @@ import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.ContrastAdjustmentFilter;
 import jme3utilities.Misc;
 import jme3utilities.MySpatial;
 import jme3utilities.SimpleAppState;
@@ -104,13 +104,17 @@ public class GlobeRenderer extends SimpleAppState {
      */
     private Camera camera;
     /**
+     * filter to adjust the contrast: set by initialize()
+     */
+    private ContrastAdjustmentFilter filter = null;
+    /**
      * light source for the scene (set by constructor)
      */
     private DirectionalLight light;
     /**
-     * gamma value to set in initialize(): afterwards it's ignored
+     * exponent to set in initialize(): afterwards it's ignored
      */
-    private float initialGamma = 2f;
+    private float initialExponent = 0.5f;
     /**
      * spin rate (in radians per second, default is 0)
      */
@@ -119,10 +123,6 @@ public class GlobeRenderer extends SimpleAppState {
      * frame buffer for off-screen render (set by constructor)
      */
     final private FrameBuffer frameBuffer;
-    /**
-     * filter to adjust the contrast: set by initialize()
-     */
-    private GammaCorrectionFilter filter = null;
     /**
      * geometry for the globe (set by constructor)
      */
@@ -251,10 +251,10 @@ public class GlobeRenderer extends SimpleAppState {
         Validate.positive(newGamma, "gamma");
 
         if (isInitialized()) {
-            filter.setGamma(newGamma);
+            filter.setExponent(newGamma);
         } else {
             assert filter == null : filter;
-            initialGamma = newGamma;
+            initialExponent = newGamma;
         }
     }
 
@@ -361,7 +361,7 @@ public class GlobeRenderer extends SimpleAppState {
          */
         FilterPostProcessor fpp = Misc.getFpp(offscreenViewPort, assetManager);
         fpp.setFrameBufferFormat(outputFormat);
-        filter = new GammaCorrectionFilter(initialGamma);
+        filter = new ContrastAdjustmentFilter(initialExponent);
         fpp.addFilter(filter);
     }
 
