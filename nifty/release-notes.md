@@ -1,6 +1,10 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.7.2 released 7 November 2017
+## Version 0.7.3for32 released on TBD
+
+ + 1st release to target JME 3.2
+
+## Version 0.7.2 released on 7 November 2017
 
 API changes to GuiScreenController:
 + Add SliderTransform arguments to readSlider() and setSlider() methods.
@@ -9,19 +13,19 @@ API changes to GuiScreenController:
 
 Move dialog controllers to new package 'jme3utilities.nifty.dialog'.
 
-## Version 0.7.1 released 20 September 2017
+## Version 0.7.1 released on 20 September 2017
 
  + Use commas to join indices selected by a multi-select dialog box.
  + Remove test message from PopScreenController.showMultiSelectDialog().
  + Allow a dialog box to display another dialog box.
 
-## Version 0.7.0 released 19 September 2017
+## Version 0.7.0 released on 19 September 2017
 
  + Require a list or array to invoke PopScreenController.showPopupMenu().
  + Add multi-select dialog box.
  + Standardized the BSD license texts.
 
-## Version 0.6.10 released 5 September 2017
+## Version 0.6.10 released on 5 September 2017
 
  + Align infobox body text with the top of its panel.
  + Accommodate infobox body text up to 400 lines long.
