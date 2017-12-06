@@ -1,6 +1,12 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.6 released 19 September 2017
+## Version 0.9.7for32 released on TBD
+
+ + 1st release to target JME 3.2
+ + Utilize contrast-adjustment filter in GlobeRenderer
+ + rename private fields
+
+## Version 0.9.6 released on 19 September 2017
 
  + use the DomeMesh class from the heart library
  + move wireframe material to heart library

@@ -1,17 +1,21 @@
 # release notes for the Wes library and related tests
 
-## Version 0.2.4 released 12 November 2017
+## Version 0.3.0for32 released on TBD
+
+ + 1st release to target JME 3.2
+
+## Version 0.2.4 released on 12 November 2017
 
  + Add an "endWeight" argument to the TrackEdit.wrap() method: an API change.
  + Handle null skeleton in Pose.rootBoneIndices().
 
-## Version 0.2.3 released 8 September 2017
+## Version 0.2.3 released on 8 September 2017
 
  + Add fallback transforms to the interpolate() and transform() methods in
    TweenTransforms, for tracks that don't include all 3 transform components.
    These are API changes.
 
-## Version 0.2.2 released 7 September 2017
+## Version 0.2.2 released on 7 September 2017
 
  + Generalized BoneTrack methods to also work for SpatialTracks. (This involved
    some API changes.)

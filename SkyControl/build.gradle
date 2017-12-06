@@ -21,8 +21,8 @@ dependencies {
     compile "org.jmonkeyengine:jme3-effects:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-terrain:$jmonkeyengineVersion"
 
-    //compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
-    compile project(':heart')
+    compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
+    //compile project(':heart')
 }
 
 task pom {
