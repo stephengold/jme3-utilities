@@ -6,13 +6,13 @@ description = 'detailed moon textures with CC-BY-SA license'
 ext {
     artifact = 'moon-ccbysa'
     version = '0.9.2'
-    baseName = "${artifact}-${version}"
+    baseName = "$artifact-$version"
 }
 
 build { dependsOn 'pom' }
-jar { baseName "${project.ext.baseName}" }
-javadocJar { baseName "${project.ext.baseName}" }
-sourcesJar { baseName "${project.ext.baseName}" }
+jar { baseName project.ext.baseName }
+javadocJar { baseName project.ext.baseName }
+sourcesJar { baseName project.ext.baseName }
 
 task pom {
     doLast {
@@ -25,7 +25,7 @@ task pom {
                         url 'https://creativecommons.org/licenses/by-sa/3.0/'
                     }
                 }
-                version "${project.ext.version}"
+                version project.ext.version
             }
         }.writeTo("${buildDir}/libs/${project.ext.baseName}.pom")
     }

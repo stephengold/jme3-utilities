@@ -18,7 +18,7 @@ dependencies {
     compile "org.jmonkeyengine:jme3-lwjgl:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-plugins:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-terrain:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-testdata:3.1.0-stable"
+    compile 'org.jmonkeyengine:jme3-testdata:3.1.0-stable'
 
     //compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
     compile project(':heart')

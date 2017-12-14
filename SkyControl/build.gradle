@@ -5,15 +5,15 @@
 description = 'sky simulation library for jMonkeyEngine'
 ext {
     artifact = 'SkyControl'
-    version = "$skycontrolVersion"
+    version = skycontrolVersion
     baseName = "$artifact-$version"
 }
 
 build { dependsOn 'pom' }
-jar { baseName "${project.ext.baseName}" }
-javadocJar { baseName "${project.ext.baseName}" }
+jar { baseName project.ext.baseName }
+javadocJar { baseName project.ext.baseName }
 processResources { dependsOn ':textures:textures' }
-sourcesJar { baseName "${project.ext.baseName}" }
+sourcesJar { baseName project.ext.baseName }
 
 dependencies {
     compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
@@ -29,7 +29,7 @@ task pom {
     doLast {
         pom {
             project {
-                artifactId "${project.ext.artifact}"
+                artifactId project.ext.artifact
                 licenses {
                     license {
                         distribution 'repo'
@@ -37,7 +37,7 @@ task pom {
                         url 'https://opensource.org/licenses/BSD-3-Clause'
                     }
                 }
-                version "${project.ext.version}"
+                version project.ext.version
             }
         }.writeTo("${buildDir}/libs/${project.ext.baseName}.pom")
     }
