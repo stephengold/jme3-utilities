@@ -523,17 +523,17 @@ public class BindScreen
                 && !isBoundHotkeySelected()) {
             bindLabel = "Bind";
         }
-        setButtonLabel("bindButton", bindLabel);
+        setButtonText("bind", bindLabel);
 
         String returnLabel = String.format("Return to %s mode",
                 MyString.quote(subjectMode.getShortName()));
-        setButtonLabel("returnButton", returnLabel);
+        setButtonText("return", returnLabel);
 
         String unbindLabel = "";
         if (isBoundHotkeySelected()) {
             unbindLabel = "Unbind selected hotkey";
         }
-        setButtonLabel("unbindButton", unbindLabel);
+        setButtonText("unbind", unbindLabel);
 
         String loadLabel = "";
         String saveLabel = "";
@@ -541,7 +541,7 @@ public class BindScreen
             loadLabel = "Load from file";
             saveLabel = "Save to file";
         }
-        setButtonLabel("loadConfig", loadLabel);
-        setButtonLabel("saveConfig", saveLabel);
+        setButtonText("loadConfig", loadLabel);
+        setButtonText("saveConfig", saveLabel);
     }
 }

@@ -77,17 +77,41 @@ public class GuiScreenController extends PopScreenController {
     // new methods exposed
 
     /**
-     * Access a Nifty check box. This assumes a naming convention where the
-     * Nifty id of every check box ends with "CheckBox".
+     * Access the named Nifty button. This assumes a naming convention where the
+     * Nifty id of every button ends with "Button".
      *
-     * @param idPrefix unique id prefix of the check box (not null)
+     * @param name the name (unique id prefix) of the button (not null)
      * @return the pre-existing instance (not null)
      */
-    public CheckBox getCheckBox(String idPrefix) {
-        Validate.nonNull(idPrefix, "check box id prefix");
+    public Button getButton(String name) {
+        Validate.nonNull(name, "button name");
 
         Screen screen = getScreen();
-        String niftyId = idPrefix + "CheckBox";
+        String niftyId = name + "Button";
+        Button button = screen.findNiftyControl(niftyId, Button.class);
+        if (button == null) {
+            logger.log(Level.SEVERE, "missing button {0} in {1}",
+                    new Object[]{
+                        MyString.quote(niftyId), MyString.quote(getScreenId())
+                    });
+            throw new RuntimeException();
+        }
+
+        return button;
+    }
+
+    /**
+     * Access the named Nifty check box. This assumes a naming convention where
+     * the Nifty id of every check box ends with "CheckBox".
+     *
+     * @param name the name (unique id prefix) of the check box (not null)
+     * @return the pre-existing instance (not null)
+     */
+    public CheckBox getCheckBox(String name) {
+        Validate.nonNull(name, "check-box name");
+
+        Screen screen = getScreen();
+        String niftyId = name + "CheckBox";
         CheckBox box = screen.findNiftyControl(niftyId, CheckBox.class);
         if (box == null) {
             logger.log(Level.SEVERE, "missing check box {0} in {1}",
@@ -101,17 +125,17 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Access a Nifty slider. This assumes a naming convention where the Nifty
-     * id of every slider ends with "Slider".
+     * Access the named Nifty slider. This assumes a naming convention where the
+     * Nifty id of every slider ends with "Slider".
      *
-     * @param idPrefix unique id prefix of the slider (not null)
+     * @param name the name (unique id prefix) of the slider (not null)
      * @return the pre-existing instance (not null)
      */
-    public Slider getSlider(String idPrefix) {
-        Validate.nonNull(idPrefix, "slider id prefix");
+    public Slider getSlider(String name) {
+        Validate.nonNull(name, "slider name");
 
         Screen screen = getScreen();
-        String niftyId = idPrefix + "Slider";
+        String niftyId = name + "Slider";
         Slider slider = screen.findNiftyControl(niftyId, Slider.class);
         if (slider == null) {
             logger.log(Level.SEVERE, "missing slider {0} in {1}", new Object[]{
@@ -124,30 +148,31 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Test whether the identified check box is ticked. This assumes a naming
+     * Test whether the named check box is ticked. This assumes a naming
      * convention where the Nifty id of every check box ends with "CheckBox".
      *
-     * @param idPrefix unique id prefix of the check box (not null)
+     * @param name the name (unique id prefix) of the check box (not null)
      * @return true if ticked, otherwise false
      */
-    public boolean isChecked(String idPrefix) {
-        Validate.nonNull(idPrefix, "id prefix");
+    public boolean isChecked(String name) {
+        Validate.nonNull(name, "check-box name");
 
-        CheckBox checkBox = getCheckBox(idPrefix);
+        CheckBox checkBox = getCheckBox(name);
         boolean result = checkBox.isChecked();
 
         return result;
     }
 
     /**
-     * Read the transformed value of the named Nifty slider.
+     * Read the transformed value of the named Nifty slider. This assumes a
+     * naming convention where the Nifty id of every slider ends with "Slider".
      *
-     * @param name unique id prefix of the slider to read (not null)
+     * @param name the name (unique id prefix) of the slider to read (not null)
      * @param transform how to transform the raw reading (not null)
      * @return transformed reading
      */
     public float readSlider(String name, SliderTransform transform) {
-        Validate.nonNull(name, "name");
+        Validate.nonNull(name, "slider name");
         Validate.nonNull(transform, "transform");
 
         Slider slider = getSlider(name);
@@ -157,9 +182,9 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Read a bank of 3 sliders that control a vector.
+     * Read the named bank of 3 sliders to produce a vector.
      *
-     * @param name unique id infix of the bank to read (not null)
+     * @param name the name (unique id infix) of the bank to read (not null)
      * @param transform how to transform the raw readings (not null)
      * @return vector indicated by the sliders (new instance)
      */
@@ -176,43 +201,36 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Alter the label of a Nifty button.
+     * Alter the text of the named Nifty button. This assumes a naming
+     * convention where the Nifty id of every button ends with "Button".
      *
-     * @param elementId Nifty element id of the button (not null)
+     * @param name unique id prefix of the button (not null)
      * @param newText new text for the label (not null)
      */
-    public void setButtonLabel(String elementId, String newText) {
-        Validate.nonNull(elementId, "element id");
-        Validate.nonNull(newText, "text");
+    public void setButtonText(String name, String newText) {
+        Validate.nonNull(name, "button name");
+        Validate.nonNull(newText, "new text");
 
-        Button button = getScreen().findNiftyControl(elementId, Button.class);
-        try {
-            button.setText(newText);
-        } catch (NullPointerException exception) {
-            logger.log(Level.INFO, "screen {0} lacks button {1}", new Object[]{
-                MyString.quote(getScreenId()),
-                MyString.quote(elementId)
-            });
-        }
+        Button button = getButton(name);
+        button.setText(newText);
     }
 
     /**
-     * Alter the ticked status of the identified check box. This assumes a
-     * naming convention where the Nifty id of every check box ends with
-     * "CheckBox".
+     * Alter the ticked status of the named check box. This assumes a naming
+     * convention where the Nifty id of every check box ends with "CheckBox".
      *
-     * @param idPrefix unique id prefix of the check box (not null)
+     * @param name the name (unique id prefix) of the check box (not null)
      * @param newStatus true to tick the check box, false to un-tick it
      */
-    public void setChecked(String idPrefix, boolean newStatus) {
-        Validate.nonNull(idPrefix, "check box id prefix");
+    public void setChecked(String name, boolean newStatus) {
+        Validate.nonNull(name, "check-box name");
 
-        CheckBox checkBox = getCheckBox(idPrefix);
+        CheckBox checkBox = getCheckBox(name);
         checkBox.setChecked(newStatus);
     }
 
     /**
-     * Select a Nifty radio button.
+     * Select the identified Nifty radio button.
      *
      * @param elementId Nifty element id of the radio button (not null)
      */
@@ -233,7 +251,7 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Enable or disable a Nifty radio button.
+     * Enable or disable the identified Nifty radio button.
      *
      * @param elementId Nifty element id of the radio button (not null)
      * @param newState true to enable the button, false to disable it
@@ -275,8 +293,8 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Alter the text of a Nifty element (such as a label) that has a text
-     * renderer.
+     * Alter the text of the identified Nifty element (such as a label) with a
+     * text renderer.
      *
      * @param elementId id of the element (not null)
      * @param newText (not null)
@@ -304,17 +322,17 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Update the status label of a Nifty slider. This assumes a naming
+     * Update the status label of the named Nifty slider. This assumes a naming
      * convention where the label's Nifty id ends with "SliderStatus".
      *
-     * @param namePrefix unique id prefix of the slider (not null)
+     * @param name the name (unique id prefix) of the slider (not null)
      * @param value value of the slider
      * @param statusSuffix suffix to specify a unit of measurement (not null)
      */
-    public void updateSliderStatus(String namePrefix, float value,
+    public void updateSliderStatus(String name, float value,
             String statusSuffix) {
-        Validate.nonNull(namePrefix, "prefix");
-        Validate.nonNull(statusSuffix, "suffix");
+        Validate.nonNull(name, "name");
+        Validate.nonNull(statusSuffix, "status suffix");
         /*
          * Select output precision based on the magnitude of the value.
          */
@@ -331,9 +349,9 @@ public class GuiScreenController extends PopScreenController {
         String valueString = String.format(format, value);
         valueString = MyString.trimFloat(valueString);
         String statusText = String.format("%s = %s%s",
-                namePrefix, valueString, statusSuffix);
+                name, valueString, statusSuffix);
 
-        String statusName = namePrefix + "SliderStatus";
+        String statusName = name + "SliderStatus";
         setStatusText(statusName, statusText);
     }
     // *************************************************************************

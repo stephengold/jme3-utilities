@@ -188,6 +188,7 @@ public class PoseDemoHud
             case "ySlider":
             case "zSlider":
                 baSliderChanged();
+            default:
         }
     }
 
@@ -411,11 +412,11 @@ public class PoseDemoHud
          * Animation rename and delete buttons
          */
         if (PoseDemo.modelState.isBindPoseSelected()) {
-            setButtonLabel("renameAnimButton", "");
-            setButtonLabel("deleteButton", "");
+            setButtonText("renameAnim", "");
+            setButtonText("delete", "");
         } else {
-            setButtonLabel("renameAnimButton", "Rename this animation");
-            setButtonLabel("deleteButton", "Delete this animation");
+            setButtonText("renameAnim", "Rename this animation");
+            setButtonText("delete", "Delete this animation");
         }
         /*
          * Track time
@@ -437,19 +438,19 @@ public class PoseDemoHud
          * Select keyframe button
          */
         if (PoseDemo.modelState.hasTrack()) {
-            setButtonLabel("keyframeButton", "Select keyframe");
+            setButtonText("keyframe", "Select keyframe");
         } else {
-            setButtonLabel("keyframeButton", "");
+            setButtonText("keyframe", "");
         }
         /*
          * Bone select and rename
          */
         if (PoseDemo.modelState.isBoneSelected()) {
-            setButtonLabel("selectBoneButton", "Select another bone");
-            setButtonLabel("renameBoneButton", "Rename this bone");
+            setButtonText("selectBone", "Select another bone");
+            setButtonText("renameBone", "Rename this bone");
         } else {
-            setButtonLabel("selectBoneButton", "Select a bone");
-            setButtonLabel("renameBoneButton", "");
+            setButtonText("selectBone", "Select a bone");
+            setButtonText("renameBone", "");
         }
         /*
          * Bone-angle sliders, status, and reset button
@@ -507,7 +508,7 @@ public class PoseDemoHud
         for (Slider slider : baSliders) {
             slider.disable();
         }
-        setButtonLabel("resetButton", "");
+        setButtonText("reset", "");
         /*
          * Update the status.
          */
@@ -529,7 +530,7 @@ public class PoseDemoHud
         for (Slider slider : baSliders) {
             slider.enable();
         }
-        setButtonLabel("resetButton", "Reset bone");
+        setButtonText("reset", "Reset bone");
         /*
          * Update the status.
          */

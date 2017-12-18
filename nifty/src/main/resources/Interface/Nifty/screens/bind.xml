@@ -99,12 +99,12 @@ Nifty XML to lay out the screen for the hotkey bindings editor.
                     <interact onRelease="perform(unbind)"/>
                 </control>
                 <panel/>
-                <control name="button" id="loadConfig"
+                <control name="button" id="loadConfigButton"
                          width="93px">
                     <interact onRelease="perform(load)"/>
                 </control>
                 <panel/>
-                <control name="button" id="saveConfig"
+                <control name="button" id="saveConfigButton"
                          width="82px">
                     <interact onRelease="perform(save)"/>
                 </control>
