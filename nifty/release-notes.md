@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.7.4 released on TBD
+
+ + Replace GuiScreenController.setButtonLabel() with setButtonText(), with
+   new semantics.
+
 ## Version 0.7.3for32 released on 5 December 2017
 
  + 1st release to target JME 3.2
