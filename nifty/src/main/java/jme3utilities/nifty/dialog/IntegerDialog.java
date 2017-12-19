@@ -129,9 +129,9 @@ public class IntegerDialog implements DialogController {
         try {
             int inputValue = Integer.parseInt(text);
             if (inputValue < minValue) {
-                feedbackMessage = String.format("must not be <%d", minValue);
+                feedbackMessage = String.format("must not be < %d", minValue);
             } else if (inputValue > maxValue) {
-                feedbackMessage = String.format("must not be >%d", maxValue);
+                feedbackMessage = String.format("must not be > %d", maxValue);
             } else {
                 commitLabel = commitDescription;
             }

@@ -133,10 +133,10 @@ public class FloatDialog implements DialogController {
             float inputValue = Float.parseFloat(text);
             if (inputValue < minValue) {
                 String minText = Float.toString(minValue);
-                feedbackMessage = String.format("must not be <%s", minText);
+                feedbackMessage = String.format("must not be < %s", minText);
             } else if (inputValue > maxValue) {
                 String maxText = Float.toString(maxValue);
-                feedbackMessage = String.format("must not be >%s", maxText);
+                feedbackMessage = String.format("must not be > %s", maxText);
             } else if (Float.isNaN(maxValue)) {
                 feedbackMessage = "must be a number";
             } else {
@@ -146,8 +146,8 @@ public class FloatDialog implements DialogController {
             feedbackMessage = "must be a number";
         }
 
-        Button commitButton = dialogElement.findNiftyControl("#commit",
-                Button.class);
+        Button commitButton
+                = dialogElement.findNiftyControl("#commit", Button.class);
         commitButton.setText(commitLabel);
 
         Element feedbackElement = dialogElement.findElementById("#feedback");
