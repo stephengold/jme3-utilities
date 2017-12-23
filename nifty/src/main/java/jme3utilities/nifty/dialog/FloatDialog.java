@@ -30,7 +30,10 @@ import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
+import java.util.Locale;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import jme3utilities.Validate;
 
 /**
@@ -48,9 +51,18 @@ public class FloatDialog implements DialogController {
      */
     final private static Logger logger
             = Logger.getLogger(FloatDialog.class.getName());
+    /**
+     * pattern for matching the word "null"
+     */
+    final private static Pattern nullPattern
+            = Pattern.compile("\\s*null\\s*");
     // *************************************************************************
     // fields
 
+    /**
+     * if true, "null" is an allowed value, otherwise it is disallowed
+     */
+    final private boolean allowNull;
     /**
      * maximum value to commit
      */
@@ -73,14 +85,17 @@ public class FloatDialog implements DialogController {
      * @param description commit description (not null, not empty)
      * @param min minimum value (&lt;max)
      * @param max minimum value (&gt;min)
+     * @param allowNull if true, "null" will be an allowed value
      */
-    public FloatDialog(String description, float min, float max) {
+    public FloatDialog(String description, float min, float max,
+            boolean allowNull) {
         Validate.nonEmpty(description, "description");
         assert min < max : max;
 
         commitDescription = description;
         minValue = min;
         maxValue = max;
+        this.allowNull = allowNull;
     }
     // *************************************************************************
     // DialogController methods
@@ -108,6 +123,10 @@ public class FloatDialog implements DialogController {
             }
         } catch (NumberFormatException e) {
             result = false;
+        }
+        String lcText = text.toLowerCase(Locale.ROOT);
+        if (!result && allowNull && matchesNull(lcText)) {
+            result = true;
         }
 
         return result;
@@ -138,12 +157,17 @@ public class FloatDialog implements DialogController {
                 String maxText = Float.toString(maxValue);
                 feedbackMessage = String.format("must not be > %s", maxText);
             } else if (Float.isNaN(inputValue)) {
-                feedbackMessage = "must be a number";
+                feedbackMessage = notANumber();
             } else {
                 commitLabel = commitDescription;
             }
         } catch (NumberFormatException e) {
-            feedbackMessage = "must be a number";
+            feedbackMessage = notANumber();
+        }
+        String lcText = text.toLowerCase(Locale.ROOT);
+        if (allowNull && matchesNull(lcText)) {
+            feedbackMessage = "";
+            commitLabel = commitDescription;
         }
 
         Button commitButton
@@ -170,5 +194,33 @@ public class FloatDialog implements DialogController {
 
         assert text != null;
         return text;
+    }
+
+    /**
+     * Test whether the specified string matches nullPattern.
+     *
+     * @param lcText text string (not null, assumed to be in lower case)
+     * @return true for match, otherwise false
+     */
+    private boolean matchesNull(String lcText) {
+        assert lcText != null;
+
+        Matcher matcher = nullPattern.matcher(lcText);
+        boolean result = matcher.matches();
+
+        return result;
+    }
+
+    /**
+     * Generate a feedback message when the text does not represent a number.
+     *
+     * @return message text (not null, not empty)
+     */
+    private String notANumber() {
+        if (allowNull) {
+            return "must be a number or null";
+        } else {
+            return "must be a number";
+        }
     }
 }
