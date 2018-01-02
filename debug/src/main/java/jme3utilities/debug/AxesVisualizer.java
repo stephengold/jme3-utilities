@@ -50,8 +50,8 @@ import jme3utilities.math.MyVector3f;
  * <p>
  * The controlled spatial must be a Node.
  * <p>
- * The control is disabled by default. When enabled, it attaches 3 geometries to
- * the subtree, one for each axis.
+ * The control is disabled by default. When enabled, it attaches up to 3 arrow
+ * geometries to the subtree, each of which represents an axis.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -64,15 +64,15 @@ public class AxesVisualizer extends SubtreeControl {
      */
     final private static boolean defaultDepthTest = false;
     /**
-     * color of the X-axis (red)
+     * color of the X-axis arrow (red)
      */
     final private static ColorRGBA xColor = new ColorRGBA(1f, 0f, 0f, 1f);
     /**
-     * color of the Y-axis (green)
+     * color of the Y-axis arrow (green)
      */
     final private static ColorRGBA yColor = new ColorRGBA(0f, 1f, 0f, 1f);
     /**
-     * color of the Z-axis (blue)
+     * color of the Z-axis arrow (blue)
      */
     final private static ColorRGBA zColor = new ColorRGBA(0f, 0f, 1f, 1f);
     /**
@@ -115,13 +115,17 @@ public class AxesVisualizer extends SubtreeControl {
      */
     private boolean depthTest = defaultDepthTest;
     /**
-     * axis arrow length (in world units, &gt;0)
+     * length of each axis arrow (in world units, &gt;0)
      */
     private float axisLength;
     /**
      * line width for wireframe arrows (in pixels, &ge;1) or 0 for solid arrows
      */
     private float lineWidth;
+    /**
+     * number of axis arrows (&ge;1, &le;3, defaults to 3)
+     */
+    private int numAxes = MyVector3f.numAxes;
     // *************************************************************************
     // constructors
 
@@ -129,7 +133,7 @@ public class AxesVisualizer extends SubtreeControl {
      * Instantiate a set of hidden solid coordinate axes.
      *
      * @param manager for loading assets (not null)
-     * @param length length of each arrow (in world units, &gt;0)
+     * @param length length of each axis arrow (in world units, &gt;0)
      */
     public AxesVisualizer(AssetManager manager, float length) {
         super();
@@ -145,8 +149,8 @@ public class AxesVisualizer extends SubtreeControl {
      * Instantiate a set of hidden wireframe coordinate axes.
      *
      * @param manager for loading material definitions (not null)
-     * @param length length of each arrow (in world units, &gt;0)
-     * @param width thickness of each arrow (in pixels, &ge;1)
+     * @param length length of each axis arrow (in world units, &gt;0)
+     * @param width thickness of each axis arrow (in pixels, &ge;1)
      */
     public AxesVisualizer(AssetManager manager, float length, float width) {
         super();
@@ -162,7 +166,7 @@ public class AxesVisualizer extends SubtreeControl {
     // new methods exposed
 
     /**
-     * Read the length of the arrows.
+     * Read the length of the axis arrows.
      *
      * @return length (in world units, &gt;0)
      */
@@ -181,7 +185,7 @@ public class AxesVisualizer extends SubtreeControl {
     }
 
     /**
-     * Read the line width of the arrows.
+     * Read the line width of the axis arrows.
      *
      * @return width (in pixels, &ge;1) or 0 for solid arrows
      */
@@ -191,13 +195,35 @@ public class AxesVisualizer extends SubtreeControl {
     }
 
     /**
-     * Alter the lengths of the arrows.
+     * Read the number of axis arrows.
+     *
+     * @return count (&ge;1, &le;3)
+     */
+    public int getNumAxes() {
+        assert numAxes >= 1 : numAxes;
+        assert numAxes <= MyVector3f.numAxes : numAxes;
+
+        return numAxes;
+    }
+
+    /**
+     * Alter the length of the axis arrows.
      *
      * @param length (in world units, &gt;0)
      */
     public void setAxisLength(float length) {
         Validate.positive(length, "length");
         axisLength = length;
+    }
+
+    /**
+     * Alter the number of axis arrows.
+     *
+     * @param newNumber (&ge;1, &le;3)
+     */
+    public void setNumAxes(int newNumber) {
+        Validate.inRange(newNumber, "new number", 1, MyVector3f.numAxes);
+        numAxes = newNumber;
     }
 
     /**
@@ -221,7 +247,7 @@ public class AxesVisualizer extends SubtreeControl {
     }
 
     /**
-     * Calculate the tip location of the indexed axis.
+     * Calculate the tip location of the indexed axis arrow.
      *
      * @param axisIndex which axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      * @return a new vector (in world coordinates) or null if not displayed
@@ -231,7 +257,7 @@ public class AxesVisualizer extends SubtreeControl {
                 MyVector3f.lastAxis);
 
         Vector3f result = null;
-        if (isEnabled()) {
+        if (isEnabled() && axisIndex < numAxes) {
             MySpatial.setWorldScale(spatial, axisLength);
             Geometry arrow = (Geometry) subtree.getChild(axisIndex);
             result = arrow.localToWorld(unitX, null);
@@ -264,7 +290,9 @@ public class AxesVisualizer extends SubtreeControl {
     protected void controlUpdate(float updateInterval) {
         super.controlUpdate(updateInterval);
 
-        if (subtree.getChildren().isEmpty()) {
+        int numChildren = subtree.getChildren().size();
+        if (numChildren != numAxes) {
+            subtree.detachAllChildren();
             addArrows();
 
         } else {
@@ -306,18 +334,27 @@ public class AxesVisualizer extends SubtreeControl {
     // private methods
 
     /**
-     * Create 3 arrow geometries and add them to the subtree.
+     * Create up to 3 arrow geometries and add them to the subtree.
      */
     private void addArrows() {
         assert subtree.getChildren().isEmpty();
         if (lineWidth >= 1f) {
             addWireArrow(xColor, "xAxis", unitX);
-            addWireArrow(yColor, "yAxis", unitY);
-            addWireArrow(zColor, "zAxis", unitZ);
+            if (numAxes > MyVector3f.yAxis) {
+                addWireArrow(yColor, "yAxis", unitY);
+                if (numAxes > MyVector3f.zAxis) {
+                    addWireArrow(zColor, "zAxis", unitZ);
+                }
+            }
+
         } else {
             addSolidArrow(xColor, "xAxis", unitX);
-            addSolidArrow(yColor, "yAxis", unitY);
-            addSolidArrow(zColor, "zAxis", unitZ);
+            if (numAxes > MyVector3f.yAxis) {
+                addSolidArrow(yColor, "yAxis", unitY);
+                if (numAxes > MyVector3f.zAxis) {
+                    addSolidArrow(zColor, "zAxis", unitZ);
+                }
+            }
         }
 
         updateArrows();
@@ -386,7 +423,7 @@ public class AxesVisualizer extends SubtreeControl {
     }
 
     /**
-     * Update the existing arrows.
+     * Update the existing axis arrows.
      */
     private void updateArrows() {
         MySpatial.setWorldScale(spatial, axisLength);
