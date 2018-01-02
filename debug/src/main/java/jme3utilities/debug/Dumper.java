@@ -377,19 +377,6 @@ public class Dumper {
             dumpOrientation(spatial);
             dumpScale(spatial);
         }
-        if (spatial instanceof Geometry) {
-            Geometry geometry = (Geometry) spatial;
-            Material material = geometry.getMaterial();
-            description = describer.describe(material);
-            if (!description.isEmpty()) {
-                stream.printf(" mat=%s", description);
-            }
-            Mesh mesh = geometry.getMesh();
-            description = describer.describe(mesh);
-            if (!description.isEmpty()) {
-                stream.printf(" mesh=%s", description);
-            }
-        }
         if (dumpUserFlag) {
             dumpUserData(spatial);
         }
@@ -401,6 +388,23 @@ public class Dumper {
         }
         if (dumpCullFlag) {
             dumpCullHints(spatial);
+        }
+        if (spatial instanceof Geometry) {
+            Geometry geometry = (Geometry) spatial;
+            Material material = geometry.getMaterial();
+            description = describer.describe(material);
+            if (!description.isEmpty()) {
+                stream.println();
+                stream.print(indent);
+                stream.printf(" material %s", description);
+            }
+            Mesh mesh = geometry.getMesh();
+            description = describer.describe(mesh);
+            if (!description.isEmpty()) {
+                stream.println();
+                stream.print(indent);
+                stream.printf(" mesh %s", description);
+            }
         }
         stream.println();
         /*

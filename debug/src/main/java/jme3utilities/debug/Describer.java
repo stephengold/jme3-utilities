@@ -40,7 +40,10 @@ import com.jme3.light.Light;
 import com.jme3.light.LightList;
 import com.jme3.light.PointLight;
 import com.jme3.light.SpotLight;
+import com.jme3.material.MatParam;
 import com.jme3.material.Material;
+import com.jme3.material.MaterialDef;
+import com.jme3.material.RenderState;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.post.Filter;
@@ -62,6 +65,7 @@ import com.jme3.shadow.SpotLightShadowRenderer;
 import com.jme3.water.ReflectionProcessor;
 import com.jme3.water.SimpleWaterProcessor;
 import com.jme3.water.SimpleWaterProcessor.RefractionProcessor;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -154,8 +158,39 @@ public class Describer {
      * @return description (not null)
      */
     public String describe(Material material) {
+        if (material == null) {
+            return "";
+        }
         StringBuilder result = new StringBuilder(20);
-        // TODO
+
+        String name = material.getName();
+        if (name == null) {
+            result.append("(no name)");
+        } else {
+            result.append(MyString.quote(name));
+        }
+
+        MaterialDef def = material.getMaterialDef();
+        String defName = def == null ? null : def.getName();
+        String description = String.format(" def=%s", MyString.quote(defName));
+        result.append(description);
+
+        RenderState state = material.getAdditionalRenderState();
+        if (state.isDepthTest()) {
+            result.append(" depthTest");
+        }
+        if (state.isWireframe()) {
+            result.append(" wireframe");
+        }
+
+        Collection<MatParam> params = material.getParams();
+        for (MatParam param : params) {
+            String paramName = param.getName();
+            String value = param.getValueAsString();
+            description = String.format(" %s=%s", paramName, value);
+            result.append(description);
+        }
+
         return result.toString();
     }
 
