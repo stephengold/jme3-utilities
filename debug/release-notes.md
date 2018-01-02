@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.8.3 released on TBD
+## Version 0.8.3 released on 2 January 2018
 
  + Add the capability to set the number of arrows in an AxesVisualizer.
  + When dumping spatials, describe their materials.
