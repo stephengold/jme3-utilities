@@ -114,106 +114,6 @@ public class PopScreenController extends BasicScreenController {
     // new methods exposed
 
     /**
-     * Activate a newly-created modal dialog box.
-     *
-     * @param popupId the Nifty id of the popup element (not null)
-     * @param actionPrefix action prefix (may be null)
-     * @param focusElementId the Nifty id of the focus element, or null for
-     * first focusable element
-     * @param controller controller for the dialog box, or null for none
-     */
-    public void activateDialog(String popupId, String actionPrefix,
-            String focusElementId, DialogController controller) {
-        Validate.nonNull(popupId, "popup id");
-        /*
-         * Make the popup visible, setting the keyboard focus.
-         */
-        Screen screen = nifty.getCurrentScreen();
-        if (screen == null) {
-            throw new NullPointerException();
-        }
-        Element focusElement;
-        if (focusElementId == null) {
-            focusElement = null;
-        } else {
-            focusElement = dialogElement.findElementById(focusElementId);
-        }
-        nifty.showPopup(screen, popupId, focusElement);
-        /*
-         * Save and suspend the screen's input mode (if any) and
-         * activate the input mode for modal dialogs.
-         */
-        assert suspendedMode == null : suspendedMode;
-        suspendedMode = InputMode.getActiveMode();
-        if (suspendedMode != null) {
-            suspendedMode.suspend();
-        }
-        InputMode dialogMode = InputMode.findMode(DialogInputMode.name);
-        dialogMode.setEnabled(true);
-
-        dialogActionPrefix = actionPrefix;
-        dialogController = controller;
-    }
-
-    /**
-     * Activate a newly-created popup menu.
-     *
-     * @param popupMenu (not null)
-     * @param menu (not null)
-     */
-    public void activatePopupMenu(PopupMenu popupMenu, Menu<String> menu) {
-        Validate.nonNull(popupMenu, "popup menu");
-        /*
-         * Subscribe to menu events.
-         */
-        Screen screen = nifty.getCurrentScreen();
-        String controlId = menu.getId();
-        nifty.subscribe(screen, controlId, MenuItemActivatedEvent.class,
-                popupMenu);
-        /*
-         * The menu will appear at the mouse pointer.  For a submenu,
-         * warp the pointer based on the location of the parent menu.
-         * Warping counteracts the tendency of deeply nested menus
-         * to drift downward and the right.
-         */
-        if (activePopupMenu != null) {
-            String cid = activePopupMenu.getElementId() + "#menu";
-            Element parentMenu = screen.findElementById(cid);
-            NiftyMouse mouse = nifty.getNiftyMouse();
-            int x = warpX ? parentMenu.getX() : mouse.getX();
-            int y = warpY ? parentMenu.getY() : mouse.getY();
-            mouse.setMousePosition(x, y);
-        }
-        /*
-         * Make the popup visible without specifying a focus element.
-         */
-        String elementId = popupMenu.getElementId();
-        nifty.showPopup(screen, elementId, null);
-
-        if (activePopupMenu == null) {
-            /*
-             * Save and suspend the screen's input mode (if any) and
-             * activate the input mode for popup menus.
-             */
-            assert suspendedMode == null : suspendedMode;
-            suspendedMode = InputMode.getActiveMode();
-            if (suspendedMode != null) {
-                suspendedMode.suspend();
-            }
-            InputMode menuMode = InputMode.findMode(MenuInputMode.name);
-            menuMode.setEnabled(true);
-
-        } else {
-            /*
-             * Disable the parent popup menu.
-             */
-            activePopupMenu.setEnabled(false);
-        }
-
-        activePopupMenu = popupMenu;
-    }
-
-    /**
      * Escape from the active modal dialog and return control to the screen
      * without performing an action.
      */
@@ -700,5 +600,107 @@ public class PopScreenController extends BasicScreenController {
         if (hasActiveDialog() && dialogController != null) {
             dialogController.update(dialogElement, elapsedTime);
         }
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Activate a newly-created modal dialog box.
+     *
+     * @param popupId the Nifty id of the popup element (not null)
+     * @param actionPrefix action prefix (may be null)
+     * @param focusElementId the Nifty id of the focus element, or null for
+     * first focusable element
+     * @param controller controller for the dialog box, or null for none
+     */
+    private void activateDialog(String popupId, String actionPrefix,
+            String focusElementId, DialogController controller) {
+        Validate.nonNull(popupId, "popup id");
+        /*
+         * Make the popup visible, setting the keyboard focus.
+         */
+        Screen screen = nifty.getCurrentScreen();
+        if (screen == null) {
+            throw new NullPointerException();
+        }
+        Element focusElement;
+        if (focusElementId == null) {
+            focusElement = null;
+        } else {
+            focusElement = dialogElement.findElementById(focusElementId);
+        }
+        nifty.showPopup(screen, popupId, focusElement);
+        /*
+         * Save and suspend the screen's input mode (if any) and
+         * activate the input mode for modal dialogs.
+         */
+        assert suspendedMode == null : suspendedMode;
+        suspendedMode = InputMode.getActiveMode();
+        if (suspendedMode != null) {
+            suspendedMode.suspend();
+        }
+        InputMode dialogMode = InputMode.findMode(DialogInputMode.name);
+        dialogMode.setEnabled(true);
+
+        dialogActionPrefix = actionPrefix;
+        dialogController = controller;
+    }
+
+    /**
+     * Activate a newly-created popup menu.
+     *
+     * @param popupMenu the popup's controller (not null)
+     * @param menu the menu to display in the popup (not null)
+     */
+    private void activatePopupMenu(PopupMenu popupMenu, Menu<String> menu) {
+        Validate.nonNull(popupMenu, "popup menu");
+        /*
+         * Subscribe to menu events.
+         */
+        Screen screen = nifty.getCurrentScreen();
+        String controlId = menu.getId();
+        nifty.subscribe(screen, controlId, MenuItemActivatedEvent.class,
+                popupMenu);
+        /*
+         * The menu will appear at the mouse pointer.  For a submenu,
+         * warp the pointer based on the location of the parent menu.
+         * Warping counteracts the tendency of deeply nested menus
+         * to drift downward and the right.
+         */
+        if (activePopupMenu != null) {
+            String cid = activePopupMenu.getElementId() + "#menu";
+            Element parentMenu = screen.findElementById(cid);
+            NiftyMouse mouse = nifty.getNiftyMouse();
+            int x = warpX ? parentMenu.getX() : mouse.getX();
+            int y = warpY ? parentMenu.getY() : mouse.getY();
+            mouse.setMousePosition(x, y);
+        }
+        /*
+         * Make the popup visible without specifying a focus element.
+         */
+        String elementId = popupMenu.getElementId();
+        nifty.showPopup(screen, elementId, null);
+
+        if (activePopupMenu == null) {
+            /*
+             * Save and suspend the screen's input mode (if any) and
+             * activate the input mode for popup menus.
+             */
+            assert suspendedMode == null : suspendedMode;
+            suspendedMode = InputMode.getActiveMode();
+            if (suspendedMode != null) {
+                suspendedMode.suspend();
+            }
+            InputMode menuMode = InputMode.findMode(MenuInputMode.name);
+            menuMode.setEnabled(true);
+
+        } else {
+            /*
+             * Disable the parent popup menu.
+             */
+            activePopupMenu.setEnabled(false);
+        }
+
+        activePopupMenu = popupMenu;
     }
 }
