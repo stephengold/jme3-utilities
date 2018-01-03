@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -490,7 +490,7 @@ public class PopScreenController extends BasicScreenController {
     }
 
     /**
-     * Create and activate a popup menu.
+     * Create and activate a popup menu without icons.
      *
      * @param actionPrefix common prefix of the menu's action strings (not null,
      * usually the final character will be a space)
@@ -505,7 +505,7 @@ public class PopScreenController extends BasicScreenController {
     }
 
     /**
-     * Create and activate a popup menu.
+     * Create and activate a popup menu without icons.
      *
      * @param actionPrefix common prefix of the menu's action strings (not null,
      * usually the final character will be a space)
@@ -521,7 +521,7 @@ public class PopScreenController extends BasicScreenController {
     }
 
     /**
-     * Create and activate a popup menu.
+     * Create and activate a popup menu with icons.
      *
      * @param actionPrefix common prefix of the menu's action strings (not null,
      * usually the final character will be a space)
@@ -588,34 +588,13 @@ public class PopScreenController extends BasicScreenController {
     }
 
     /**
-     * Create and activate a popup menu.
-     *
-     * @param actionPrefixWords common prefix words of the menu's action strings
-     * (not null, unaffected)
-     * @param itemArray array of menu items (not null, unaffected)
-     */
-    public void showPopupMenu(String[] actionPrefixWords, String[] itemArray) {
-        Validate.nonNull(itemArray, "item array");
-        /*
-         * Generate the action prefix for this menu.
-         */
-        String actionPrefix = "";
-        int wordCount = actionPrefixWords.length;
-        if (wordCount > 0) {
-            actionPrefix = MyString.join(actionPrefixWords) + " ";
-        }
-
-        showPopupMenu(actionPrefix, itemArray);
-    }
-
-    /**
      * Create, customize, and activate a modal text-entry dialog box: simplified
      * interface where the controller labels the commit button.
      *
      * @param promptMessage text to display above the textfield (not null)
      * @param defaultValue default text for the textfield (not null)
-     * @param actionPrefix prefix for the commit action (not null, usually the
-     * final character will be a space)
+     * @param actionPrefix prefix for generating the commit action (not null,
+     * usually the final character will be a space)
      * @param controller controller for the dialog box (not null)
      */
     public void showTextEntryDialog(String promptMessage, String defaultValue,
@@ -669,7 +648,7 @@ public class PopScreenController extends BasicScreenController {
         activateDialog(popupId, actionPrefix, "#textfield", controller);
     }
     // *************************************************************************
-    // AppState methods
+    // BasicScreenController methods
 
     /**
      * Callback to update this controller prior to rendering. (Invoked once per
