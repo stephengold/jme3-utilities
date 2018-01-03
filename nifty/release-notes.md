@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.7.5 released on TBD
+## Version 0.7.5 released on 3 January 2018
 
  + Remove one of the PopScreenController.showPopupMenu() methods.
  + Add allowNull option to float/integer/long dialog controllers.
