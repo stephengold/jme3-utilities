@@ -1,5 +1,17 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.7.5 released on TBD
+
+ + Remove one of the PopScreenController.showPopupMenu() methods.
+ + Add allowNull option to float/integer/long dialog controllers.
+ + Privatize activateDialog() and activatePopupMenu() in PopScreenController.
+ + Fix the logic error that caused FloatDialog to accept "NaN" as input.
+ + Add the GuiWindowController class.
+ + Add dialog controllers for booleans, doubles, and vectors.
+ + Add enable/disable methods for named sliders to GuiScreenController.
+ + Implement positioning policies for submenus.
+ + Setting a button's text to "" will now hide the button.
+
 ## Version 0.7.4 released on 19 December 2017
 
  + Replace GuiScreenController.setButtonLabel() with setButtonText(), with
