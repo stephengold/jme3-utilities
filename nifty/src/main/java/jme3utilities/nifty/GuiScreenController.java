@@ -225,8 +225,9 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Alter the text of the named Nifty button. This assumes a naming
-     * convention where the Nifty id of every button ends with "Button".
+     * Alter the text of the named Nifty button. Setting the text to "" hides
+     * the button. This assumes a naming convention where the Nifty id of every
+     * button ends with "Button".
      *
      * @param name unique id prefix of the button (not null)
      * @param newText new text for the label (not null)
@@ -236,7 +237,12 @@ public class GuiScreenController extends PopScreenController {
         Validate.nonNull(newText, "new text");
 
         Button button = getButton(name);
-        button.setText(newText);
+        if (newText.isEmpty()) {
+            button.getElement().hide();
+        } else {
+            button.setText(newText);
+            button.getElement().show();
+        }
     }
 
     /**
