@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,8 @@ import jme3utilities.Validate;
 
 /**
  * GUI app state to control a Nifty window. The window is displayed if and only
- * if its controller is enabled. Multiple windows can be displayed at once.
+ * if its controller is enabled. Multiple overlapping windows can be displayed
+ * at the same time.
  * <p>
  * Each instance is enabled at creation, with an option for automatic disabling
  * during initialization.
@@ -75,7 +76,7 @@ public class WindowController extends GuiAppState {
      * Instantiate an uninitialized controller.
      *
      * @param screenController the controller of the screen containing the
-     * window (not null)
+     * window (not null, alias created)
      * @param controlId the Nifty id of the window control
      * @param startEnabled if false, disable this controller during
      * initialization; if true, leave it enabled
@@ -125,19 +126,6 @@ public class WindowController extends GuiAppState {
     public BasicScreenController getScreenController() {
         assert screenController != null;
         return screenController;
-    }
-
-    /**
-     * Access the Nifty control of the window.
-     *
-     * @return the pre-existing instance (not null)
-     */
-    private Window getWindow() {
-        Screen screen = screenController.getScreen();
-        Window window = screen.findNiftyControl(controlId, Window.class);
-
-        assert window != null;
-        return window;
     }
 
     /**
@@ -222,6 +210,19 @@ public class WindowController extends GuiAppState {
 
         getElement().setVisible(true);
         super.setEnabled(true);
+    }
+
+    /**
+     * Access the Nifty control of the window.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    private Window getWindow() {
+        Screen screen = screenController.getScreen();
+        Window window = screen.findNiftyControl(controlId, Window.class);
+
+        assert window != null;
+        return window;
     }
 
     /**
