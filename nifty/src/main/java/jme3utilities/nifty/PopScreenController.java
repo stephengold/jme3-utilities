@@ -26,6 +26,7 @@
  */
 package jme3utilities.nifty;
 
+import de.lessvoid.nifty.NiftyMouse;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.Menu;
@@ -61,6 +62,16 @@ public class PopScreenController extends BasicScreenController {
     // *************************************************************************
     // fields
 
+    /**
+     * policy for X position of a submenu (true&rarr;based on parent,
+     * false&rarr;based on mouse pointer)
+     */
+    private boolean warpX = false;
+    /**
+     * policy for Y position of a submenu (true&rarr;based on parent,
+     * false&rarr;based on mouse pointer)
+     */
+    private boolean warpY = false;
     /**
      * Nifty element for the active modal dialog box (null means none active)
      */
@@ -159,6 +170,20 @@ public class PopScreenController extends BasicScreenController {
         String controlId = menu.getId();
         nifty.subscribe(screen, controlId, MenuItemActivatedEvent.class,
                 popupMenu);
+        /*
+         * The menu will appear at the mouse pointer.  For a submenu,
+         * warp the pointer based on the location of the parent menu.
+         * Warping counteracts the tendency of deeply nested menus
+         * to drift downward and the right.
+         */
+        if (activePopupMenu != null) {
+            String cid = activePopupMenu.getElementId() + "#menu";
+            Element parentMenu = screen.findElementById(cid);
+            NiftyMouse mouse = nifty.getNiftyMouse();
+            int x = warpX ? parentMenu.getX() : mouse.getX();
+            int y = warpY ? parentMenu.getY() : mouse.getY();
+            mouse.setMousePosition(x, y);
+        }
         /*
          * Make the popup visible without specifying a focus element.
          */
@@ -380,6 +405,17 @@ public class PopScreenController extends BasicScreenController {
          * If the old menu is still active, close it and all its ancestors.
          */
         closePopupMenu(oldPopupMenu);
+    }
+
+    /**
+     * Alter the positioning policies for submenus.
+     *
+     * @param warpX true&rarr;based on parent, false&rarr;based on mouse pointer
+     * @param warpY true&rarr;based on parent, false&rarr;based on mouse pointer
+     */
+    public void setSubmenuWarp(boolean warpX, boolean warpY) {
+        this.warpX = warpX;
+        this.warpY = warpY;
     }
 
     /**
