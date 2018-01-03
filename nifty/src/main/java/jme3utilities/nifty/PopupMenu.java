@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@ import org.bushe.swing.event.EventTopicSubscriber;
  * Strings.
  * <p>
  * When a menu item is activated, the controller invokes
- * GuiScreenController.perform() with the item appended to the popup menu's
+ * BasicScreenController.perform() with the item appended to the popup menu's
  * action prefix, then closes the popup.
  *
  * @author Stephen Gold sgold@sonic.net
@@ -85,7 +85,7 @@ public class PopupMenu
      * @param actionPrefix prefix for action strings (not null)
      * @param itemArray items in the menu (not null, unaffected)
      * @param screenController the screen controller which opened this popup
-     * (not null)
+     * (not null, alias created)
      */
     PopupMenu(String popupId, String actionPrefix, String[] itemArray,
             PopScreenController screenController) {
@@ -107,7 +107,8 @@ public class PopupMenu
      * @param popupId Nifty id of the popup element (not null)
      * @param actionPrefix prefix for action strings (not null)
      * @param itemArray items in the menu (not null, unaffected)
-     * @param parent the menu controller which opened this popup (not null)
+     * @param parent the menu controller which opened this popup (not null,
+     * alias created)
      */
     PopupMenu(String popupId, String actionPrefix, String[] itemArray,
             PopupMenu parent) {
@@ -164,21 +165,21 @@ public class PopupMenu
     }
 
     /**
-     * Access the screen which owns this menu.
-     *
-     * @return the pre-existing instance
-     */
-    PopScreenController getScreenController() {
-        return screenController;
-    }
-
-    /**
      * Access the parent menu: the popup menu which opened this submenu.
      *
      * @return the pre-existing instance, or null if not a submenu
      */
     PopupMenu getParent() {
         return parent;
+    }
+
+    /**
+     * Access the screen which owns this menu.
+     *
+     * @return the pre-existing instance
+     */
+    PopScreenController getScreenController() {
+        return screenController;
     }
 
     /**
