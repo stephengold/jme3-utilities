@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -75,6 +75,30 @@ public class GuiScreenController extends PopScreenController {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Disable the named Nifty slider.
+     *
+     * @param name unique id prefix of the slider to disable (not null)
+     */
+    public void disableSlider(String name) {
+        Validate.nonNull(name, "name");
+
+        Slider slider = getSlider(name);
+        slider.disable();
+    }
+
+    /**
+     * Enable the named Nifty slider.
+     *
+     * @param name unique id prefix of the slider to enable (not null)
+     */
+    public void enableSlider(String name) {
+        Validate.nonNull(name, "name");
+
+        Slider slider = getSlider(name);
+        slider.enable();
+    }
 
     /**
      * Access the named Nifty button. This assumes a naming convention where the
@@ -290,6 +314,23 @@ public class GuiScreenController extends PopScreenController {
 
         Slider slider = getSlider(name);
         setSlider(slider, transform, inputValue);
+    }
+
+    /**
+     * Enable or disable the named Nifty slider.
+     *
+     * @param name unique id prefix of the slider (not null)
+     * @param newState true to enable the slider, false to disable it
+     */
+    public void setSliderEnabled(String name, boolean newState) {
+        Validate.nonNull(name, "name");
+
+        Slider slider = getSlider(name);
+        if (newState) {
+            slider.enable();
+        } else {
+            slider.disable();
+        }
     }
 
     /**
