@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,7 @@
  Nifty XML to lay out a large (roughly 400-line) informational dialog box for
  a screen controlled by a PopScreenController.
 
- While a dialog box is active, the rest of the screen dims by 50%.
+ While the dialog box is active, the rest of the screen dims by 50%.
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
 
@@ -41,46 +41,39 @@
 
     <popup id="dialogs/info43"
            backgroundColor="#0008"
-           childLayout="vertical">
-        <panel/>
-        <panel childLayout="horizontal"
-               height="300px">
-            <panel/>
-            <panel childLayout="vertical"
-                   backgroundColor="#aaaf"
-                   padding="8px"
-                   width="630px">
-                <control name="label" id="#title"/>
-                <panel height="8px"/>
-                <control name="scrollPanel"
-                         height="220px"
-                         horizontal="false"
-                         pageSizeY="200"
-                         stepSizeY="50"
-                         style="bats-scroll-panel">
-                    <panel childLayout="vertical"
-                           backgroundColor="#acff"
-                           padding="0px,6px"
-                           height="6000px" width="590px">
-                        <control name="label" id="#1"
-                                 textVAlign="top"
-                                 wrap="true"/>
-                    </panel>
-                </control>
-                <panel height="8px"/>
-                <panel childLayout="horizontal">
-                    <panel/>
-                    <panel width="10px"/>
-                    <control name="button" id="#cancel"
-                             label="Dismiss"
-                             width="50px">
-                        <interact onRelease="performActive(cancel)"/>
-                    </control>
-                    <panel/>
+           childLayout="center">
+        <panel childLayout="vertical"
+               backgroundColor="#aaaf"
+               padding="8px"
+               height="300px"
+               width="630px">
+            <control name="label" id="#title"/>
+            <panel height="8px"/>
+            <control name="scrollPanel"
+                     height="220px"
+                     horizontal="false"
+                     pageSizeY="200"
+                     stepSizeY="50"
+                     style="bats-scroll-panel">
+                <panel childLayout="vertical"
+                       backgroundColor="#acff"
+                       padding="0px,6px"
+                       height="6000px" width="590px">
+                    <control name="label" id="#1"
+                             textVAlign="top"
+                             wrap="true"/>
                 </panel>
+            </control>
+            <panel height="8px"/>
+            <panel childLayout="horizontal">
+                <panel/>
+                <control name="button" id="#cancel"
+                         label="Dismiss"
+                         width="50px">
+                    <interact onRelease="performActive(cancel)"/>
+                </control>
+                <panel/>
             </panel>
-            <panel/>
         </panel>
-        <panel/>
     </popup>
 </nifty>

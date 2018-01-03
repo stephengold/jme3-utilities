@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,8 @@
  Nifty XML to lay out a simple confirmation dialog box for a screen controlled
  by a PopScreenController.
 
- When a dialog box is active, the rest of the screen dims by 50% and reddens.
+ While the confirmation dialog box is active, the rest of the screen
+ dims by 50% and reddens.
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
 
@@ -41,42 +42,36 @@
 
     <popup id="dialogs/confirm"
            backgroundColor="#4008"
-           childLayout="vertical">
-        <panel/>
-        <panel childLayout="horizontal"
-               height="160px">
+           childLayout="center">
+        <panel childLayout="vertical"
+               backgroundColor="#aaaf"
+               padding="8px"
+               height="160px"
+               width="270px">
             <panel/>
-            <panel childLayout="vertical"
-                   backgroundColor="#aaaf"
-                   padding="8px,8px,8px,8px"
-                   width="270px">
+            <panel childLayout="horizontal">
+                <control name="label" id="#prompt"
+                         color="#000f"
+                         textHAlign="center"
+                         wrap="true"/>
+            </panel>
+            <panel height="10px"/>
+            <panel childLayout="horizontal">
                 <panel/>
-                <panel childLayout="horizontal">
-                    <control name="label" id="#prompt"
-                             color="#000f"
-                             textHAlign="center"
-                             wrap="true"/>
-                </panel>
-                <panel height="10px"/>
-                <panel childLayout="horizontal">
-                    <panel/>
-                    <control name="button" id="#cancel"
-                             label="Cancel"
-                             width="50px">
-                        <interact onRelease="performActive(cancel)"/>
-                    </control>
-                    <panel width="10px"/>
-                    <control name="button" id="#commit"
-                             label="Commit"
-                             width="*">
-                        <interact onRelease="performActive(commit)"/>
-                    </control>
-                    <panel/>
-                </panel>
+                <control name="button" id="#cancel"
+                         label="Cancel"
+                         width="50px">
+                    <interact onRelease="performActive(cancel)"/>
+                </control>
+                <panel width="10px"/>
+                <control name="button" id="#commit"
+                         label="Commit"
+                         width="*">
+                    <interact onRelease="performActive(commit)"/>
+                </control>
                 <panel/>
             </panel>
             <panel/>
         </panel>
-        <panel/>
     </popup>
 </nifty>
