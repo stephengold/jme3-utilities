@@ -348,14 +348,14 @@ public class BindScreen
     /**
      * Find the list-box item for the specified universal code.
      *
-     * @param keyCode universal code (&ge;0) TODO rename
+     * @param code universal code (&ge;0)
      * @return the pre-existing item, or null if none found
      */
-    private HotkeyItem findHotkeyItem(int keyCode) {
+    private HotkeyItem findHotkeyItem(int code) {
         ListBox<HotkeyItem> listBox = getHotkeyBox();
         List<HotkeyItem> list = listBox.getItems();
         for (HotkeyItem item : list) {
-            if (item.isForKeyCode(keyCode)) {
+            if (item.isForCode(code)) {
                 return item;
             }
         }
@@ -494,10 +494,10 @@ public class BindScreen
     /**
      * Select the hotkey with the specified code.
      *
-     * @param keyCode universal code of the hotkey to select (&ge;0) TODO rename
+     * @param code universal code of the hotkey to select (&ge;0)
      */
-    private void selectHotkey(int keyCode) {
-        HotkeyItem item = findHotkeyItem(keyCode);
+    private void selectHotkey(int code) {
+        HotkeyItem item = findHotkeyItem(code);
         assert item != null;
 
         ListBox<HotkeyItem> listBox = getHotkeyBox();

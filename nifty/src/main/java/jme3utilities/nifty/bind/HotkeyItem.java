@@ -98,7 +98,7 @@ class HotkeyItem {
      * @param code universal code (&ge;0)
      * @return true if it corresponds, else false
      */
-    boolean isForKeyCode(int code) { // TODO rename
+    boolean isForCode(int code) {
         int thisCode = hotkey.getCode();
         if (thisCode == code) {
             return true;
@@ -110,7 +110,8 @@ class HotkeyItem {
     // Object methods
 
     /**
-     * Represent this item as a text string so Nifty can display it in the list box.
+     * Represent this item as a text string so Nifty can display it in the list
+     * box.
      *
      * @return a descriptive string of text (not null)
      */
