@@ -26,6 +26,7 @@
  */
 package jme3utilities.nifty;
 
+import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -82,6 +83,22 @@ public class GuiWindowController extends WindowController {
 
         float result = getScreenController().readSlider(name, transform);
         return result;
+    }
+
+    /**
+     * Read the named bank of 3 sliders to produce a vector.
+     *
+     * @param bankName the name (unique id infix) of the bank to read (not null)
+     * @param transform how to transform the raw readings (not null)
+     * @return vector indicated by the sliders (new instance)
+     */
+    public Vector3f readVectorBank(String bankName, SliderTransform transform) {
+        Validate.nonNull(bankName, "bank name");
+        Validate.nonNull(transform, "transform");
+
+        Vector3f vector
+                = getScreenController().readVectorBank(bankName, transform);
+        return vector;
     }
 
     /**
