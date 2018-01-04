@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -62,15 +62,14 @@ public class BindScreen
     final private static Logger logger
             = Logger.getLogger(BindScreen.class.getName());
     /**
-     * the short name for this mode
+     * short name for this screen
      */
     final public static String name = "bind";
     // *************************************************************************
     // fields
 
     /**
-     * which input mode to edit: set by
-     * {@link #activate(jme3utilities.ui.InputMode)}
+     * input mode to edit: set by {@link #activate(jme3utilities.ui.InputMode)}
      */
     private InputMode subjectMode = null;
     /**
@@ -100,7 +99,7 @@ public class BindScreen
     /**
      * Activate this screen to edit the specified input mode.
      *
-     * @param mode which input mode (not null)
+     * @param mode which input mode (not null, alias created)
      */
     public void activate(InputMode mode) {
         Validate.nonNull(mode, "mode");
@@ -117,7 +116,7 @@ public class BindScreen
     }
 
     /**
-     * Deactivate this screen and go to the mode that was just edited.
+     * Deactivate this screen and enable the input mode that was just edited.
      */
     void deactivate() {
         assert isEnabled();
@@ -165,12 +164,14 @@ public class BindScreen
         return false;
     }
     // *************************************************************************
-    // AbstractAppState methods
+    // GuiScreenController methods TODO sort
 
     /**
-     * Update this screen.
+     * Callback to update this screen prior to rendering. (Invoked once per
+     * render pass.)
      *
-     * @param simInterval seconds since previous update (&ge;0)
+     * @param simInterval time interval between render passes (in seconds,
+     * &ge;0)
      */
     @Override
     public void update(float simInterval) {
@@ -207,16 +208,16 @@ public class BindScreen
     // ActionListener methods
 
     /**
-     * Process an action from the mouse or keyboard.
+     * Process an action from the GUI or keyboard.
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored elapsed time
+     * @param ignored time interval between render passes (in seconds, &ge;0)
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float ignored) {
         /*
-         * Ignore actions which are not ongoing.
+         * Ignore actions that are not ongoing.
          */
         if (!ongoing) {
             return;
@@ -296,7 +297,7 @@ public class BindScreen
         assert screen != null;
         super.bind(nifty, screen);
         /*
-         * Populate the action listbox.
+         * Populate the action list box.
          */
         ListBox<ActionItem> actionBox = getActionBox();
         actionBox.clear();
@@ -307,7 +308,7 @@ public class BindScreen
             actionBox.addItem(item);
         }
         /*
-         * Populate the hotkey listbox, putting bound keys before unbound ones.
+         * Populate the hotkey list box, putting bound keys before unbound ones.
          */
         ListBox<HotkeyItem> hotkeyBox = getHotkeyBox();
         hotkeyBox.clear();
@@ -345,10 +346,10 @@ public class BindScreen
     }
 
     /**
-     * Find the list box item for a specified hotkey.
+     * Find the list-box item for the specified universal code.
      *
-     * @param keyCode which hotkey
-     * @return the pre-existing instance, or null if item not found
+     * @param keyCode universal code (&ge;0) TODO rename
+     * @return the pre-existing item, or null if none found
      */
     private HotkeyItem findHotkeyItem(int keyCode) {
         ListBox<HotkeyItem> listBox = getHotkeyBox();
@@ -393,9 +394,9 @@ public class BindScreen
     }
 
     /**
-     * Access the selected action.
+     * Read the selected action.
      *
-     * @return the name of the selected action (or null if none selected)
+     * @return the name of the action, or null if none selected
      */
     private String getSelectedAction() {
         ListBox<ActionItem> listBox = getActionBox();
@@ -412,7 +413,7 @@ public class BindScreen
     /**
      * Access the selected hotkey.
      *
-     * @return the selected hotkey (or null if none selected)
+     * @return the selected hotkey, or null if none selected
      */
     private Hotkey getSelectedHotkey() {
         ListBox<HotkeyItem> listBox = getHotkeyBox();
@@ -429,7 +430,7 @@ public class BindScreen
     /**
      * Test whether an action is selected.
      *
-     * @return true if an action is selected, false if none are selected
+     * @return true if an action is selected, false if none is selected
      */
     private boolean isActionSelected() {
         ListBox<ActionItem> listBox = getActionBox();
@@ -471,7 +472,7 @@ public class BindScreen
     }
 
     /**
-     * Add hotkeys to the appropriate list box.
+     * Populate the hotkey list box.
      *
      * @param boundFlag if true, add bound hotkeys only; otherwise add unbound
      * hotkeys only
@@ -491,9 +492,9 @@ public class BindScreen
     }
 
     /**
-     * Alter the hotkey selection.
+     * Select the hotkey with the specified code.
      *
-     * @param keyCode
+     * @param keyCode universal code of the hotkey to select (&ge;0) TODO rename
      */
     private void selectHotkey(int keyCode) {
         HotkeyItem item = findHotkeyItem(keyCode);
@@ -514,7 +515,7 @@ public class BindScreen
     }
 
     /**
-     * Update the button labels in this screen.
+     * Update the labels of the Nifty buttons.
      */
     private void updateButtonLabels() {
         String bindLabel = "";

@@ -49,21 +49,21 @@ class HotkeyItem {
     // fields
 
     /**
-     * which hotkey (not null)
+     * hotkey represented by this item (not null)
      */
     final private Hotkey hotkey;
     /**
-     * which input mode (not null)
+     * input mode for binding (not null)
      */
     final private InputMode mode;
     // *************************************************************************
     // constructors
 
     /**
-     * Instantiate an item based on its hotkey and an input mode.
+     * Instantiate an item for the specified hotkey and input mode.
      *
-     * @param hotkey (not null, set by constructor)
-     * @param mode (not null, set by constructor)
+     * @param hotkey which hotkey (not null, alias created)
+     * @param mode input mode for binding (not null, alias created)
      */
     HotkeyItem(Hotkey hotkey, InputMode mode) {
         assert hotkey != null;
@@ -83,7 +83,7 @@ class HotkeyItem {
     }
 
     /**
-     * Test whether the hotkey is bound.
+     * Test whether the hotkey is bound in the input mode being edited.
      *
      * @return true if the hotkey is bound, else false
      */
@@ -98,7 +98,7 @@ class HotkeyItem {
      * @param code universal code (&ge;0)
      * @return true if it corresponds, else false
      */
-    boolean isForKeyCode(int code) {
+    boolean isForKeyCode(int code) { // TODO rename
         int thisCode = hotkey.getCode();
         if (thisCode == code) {
             return true;
@@ -110,9 +110,9 @@ class HotkeyItem {
     // Object methods
 
     /**
-     * Convert the item to a string so the listbox can display it.
+     * Represent this item as a text string so Nifty can display it in the list box.
      *
-     * @return display string for the item (not null)
+     * @return a descriptive string of text (not null)
      */
     @Override
     public String toString() {
