@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -93,16 +93,18 @@ class HotkeyItem {
     }
 
     /**
-     * Test whether this item corresponds to the specified key code.
+     * Test whether this item corresponds to the specified universal code.
      *
-     * @param keyCode
+     * @param code universal code (&ge;0)
      * @return true if it corresponds, else false
      */
-    boolean isForKeyCode(int keyCode) {
-        int thisCode = hotkey.getKeyCode();
-        boolean result = thisCode == keyCode;
-
-        return result;
+    boolean isForKeyCode(int code) {
+        int thisCode = hotkey.getCode();
+        if (thisCode == code) {
+            return true;
+        } else {
+            return false;
+        }
     }
     // *************************************************************************
     // Object methods
