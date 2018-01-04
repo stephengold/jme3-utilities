@@ -1,5 +1,13 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.7.6 released on TBD
+
+ + Remove disableSlider() and enableSlider() methods from GuiSceneControl.
+ + Fix assertion error caused by clicking a mouse button in "bind" mode.
+ + In "bind" screen, selecting a bound hotkey using a keypress will now select
+   its action as well.
+ + Add a readVectorBank() method to the GuiWindowController class.
+
 ## Version 0.7.5 released on 3 January 2018
 
  + Remove one of the PopScreenController.showPopupMenu() methods.

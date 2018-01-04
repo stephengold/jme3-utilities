@@ -20,7 +20,7 @@ ext {
     jcommanderVersion = '1.72'
     jme3utilitiesdebugVersion = '0.8.3'
     jme3utilitiesheartVersion = '1.0.0for32'
-    jme3utilitiesniftyVersion = '0.7.5'
+    jme3utilitiesniftyVersion = '0.7.6'
     jme3utilitiesuiVersion = '0.6.0for32'
     jme3utilitieswesVersion = '0.3.0for32'
     jme3utilitiesxVersion = '0.2.2for32'
