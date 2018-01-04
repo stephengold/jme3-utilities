@@ -164,47 +164,6 @@ public class BindScreen
         return false;
     }
     // *************************************************************************
-    // GuiScreenController methods TODO sort
-
-    /**
-     * Callback to update this screen prior to rendering. (Invoked once per
-     * render pass.)
-     *
-     * @param simInterval time interval between render passes (in seconds,
-     * &ge;0)
-     */
-    @Override
-    public void update(float simInterval) {
-        assert isEnabled();
-        super.update(simInterval);
-
-        Screen screen = getScreen();
-        if (!screen.isBound()) {
-            /*
-             * Avoid Nifty exceptions and warnings regarding unbound controls.
-             */
-            return;
-        }
-
-        getActionBox().refresh();
-        getHotkeyBox().refresh();
-        updateButtonLabels();
-
-        String modeStatus = String.format(
-                "Edit hotkey bindings for %s input mode",
-                MyString.quote(subjectMode.getShortName()));
-        setStatusText("modeStatus", modeStatus);
-
-        String configPath = subjectMode.getConfigPath();
-        if (configPath == null) {
-            setStatusText("configStatus", "");
-        } else {
-            String configStatus = String.format("Path for load/save is %s",
-                    MyString.quote(configPath));
-            setStatusText("configStatus", configStatus);
-        }
-    }
-    // *************************************************************************
     // ActionListener methods
 
     /**
@@ -330,6 +289,45 @@ public class BindScreen
 
         inputMode.initialize(stateManager, application);
         super.initialize(stateManager, application);
+    }
+
+    /**
+     * Callback to update this screen prior to rendering. (Invoked once per
+     * render pass.)
+     *
+     * @param simInterval time interval between render passes (in seconds,
+     * &ge;0)
+     */
+    @Override
+    public void update(float simInterval) {
+        assert isEnabled();
+        super.update(simInterval);
+
+        Screen screen = getScreen();
+        if (!screen.isBound()) {
+            /*
+             * Avoid Nifty exceptions and warnings regarding unbound controls.
+             */
+            return;
+        }
+
+        getActionBox().refresh();
+        getHotkeyBox().refresh();
+        updateButtonLabels();
+
+        String modeStatus = String.format(
+                "Edit hotkey bindings for %s input mode",
+                MyString.quote(subjectMode.getShortName()));
+        setStatusText("modeStatus", modeStatus);
+
+        String configPath = subjectMode.getConfigPath();
+        if (configPath == null) {
+            setStatusText("configStatus", "");
+        } else {
+            String configStatus = String.format("Path for load/save is %s",
+                    MyString.quote(configPath));
+            setStatusText("configStatus", configStatus);
+        }
     }
     // *************************************************************************
     // private methods
