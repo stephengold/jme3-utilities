@@ -77,30 +77,6 @@ public class GuiScreenController extends PopScreenController {
     // new methods exposed
 
     /**
-     * Disable the named Nifty slider.
-     *
-     * @param name unique id prefix of the slider to disable (not null)
-     */
-    public void disableSlider(String name) {
-        Validate.nonNull(name, "name");
-
-        Slider slider = getSlider(name);
-        slider.disable();
-    }
-
-    /**
-     * Enable the named Nifty slider.
-     *
-     * @param name unique id prefix of the slider to enable (not null)
-     */
-    public void enableSlider(String name) {
-        Validate.nonNull(name, "name");
-
-        Slider slider = getSlider(name);
-        slider.enable();
-    }
-
-    /**
      * Access the named Nifty button. This assumes a naming convention where the
      * Nifty id of every button ends with "Button".
      *
