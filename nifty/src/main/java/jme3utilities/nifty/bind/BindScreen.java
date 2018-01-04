@@ -344,7 +344,28 @@ public class BindScreen
     }
 
     /**
-     * Find the list-box item for the specified universal code.
+     * Find the list-box item for the specified action.
+     *
+     * @param actionName the name of the action to find (not null)
+     * @return the pre-existing item, or null if none found
+     */
+    private ActionItem findActionItem(String actionName) {
+        assert actionName != null;
+
+        ListBox<ActionItem> actionBox = getActionBox();
+        List<ActionItem> list = actionBox.getItems();
+        for (ActionItem item : list) {
+            String name = item.getActionName();
+            if (actionName.equals(name)) {
+                return item;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Find the hotkey list-box item for the specified universal code.
      *
      * @param code universal code (&ge;0)
      * @return the pre-existing item, or null if none found
@@ -490,7 +511,8 @@ public class BindScreen
     }
 
     /**
-     * Select the hotkey with the specified code.
+     * Select the hotkey with the specified code. If the hotkey is bound, also
+     * select the action it's bound to.
      *
      * @param code universal code of the hotkey to select (&ge;0)
      */
@@ -501,6 +523,14 @@ public class BindScreen
         ListBox<HotkeyItem> listBox = getHotkeyBox();
         listBox.setFocusItem(item);
         listBox.selectItem(item);
+
+        Hotkey hotkey = item.getHotkey();
+        if (subjectMode.binds(hotkey)) {
+            String actionName = subjectMode.getActionName(hotkey);
+            ActionItem actionItem = findActionItem(actionName);
+            ListBox<ActionItem> actionBox = getActionBox();
+            actionBox.selectItem(actionItem);
+        }
     }
 
     /**
