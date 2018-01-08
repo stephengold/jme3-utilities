@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -152,10 +152,10 @@ public class Misc {
     }
 
     /**
-     * Access the existing filter post-processor for a viewport, or if it has
-     * none add a new one and access that.
+     * Access the pre-existing filter post processor of the specified viewport,
+     * or if it has none, add a new FPP and use that.
      *
-     * @param viewPort (not null)
+     * @param viewPort which view port (not null)
      * @param assetManager (not null)
      * @return not null
      */
@@ -163,6 +163,27 @@ public class Misc {
             AssetManager assetManager) {
         Validate.nonNull(viewPort, "viewport");
         Validate.nonNull(assetManager, "asset manager");
+
+        FilterPostProcessor fpp = getFpp(viewPort, assetManager, 0);
+
+        return fpp;
+    }
+
+    /**
+     * Access the pre-existing filter post processor of the specified view port,
+     * or if it has none, add a new FPP and use that.
+     *
+     * @param viewPort which view port (not null)
+     * @param assetManager (not null)
+     * @param numSamples number of samples for anti-aliasing (&ge;1, &le;16) or
+     * 0 for the FPP default
+     * @return not null
+     */
+    public static FilterPostProcessor getFpp(ViewPort viewPort,
+            AssetManager assetManager, int numSamples) {
+        Validate.nonNull(viewPort, "viewport");
+        Validate.nonNull(assetManager, "asset manager");
+        Validate.inRange(numSamples, "number of samples", 0, 16);
 
         for (SceneProcessor processor : viewPort.getProcessors()) {
             if (processor instanceof FilterPostProcessor) {
@@ -173,6 +194,9 @@ public class Misc {
          * Add a new filter post-processor.
          */
         FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+        if (numSamples > 0) {
+            fpp.setNumSamples(numSamples);
+        }
         viewPort.addProcessor(fpp);
 
         return fpp;
@@ -184,7 +208,7 @@ public class Misc {
      * @return project name, library name, branch, and revision
      */
     public static String getVersion() {
-        return "jme3-utilities jme3-utilities-heart master $Rev: 1.0.0for32+1 $";
+        return "jme3-utilities jme3-utilities-heart master $Rev: 1.0.0for32+2 $";
     }
 
     /**
