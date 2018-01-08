@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -228,10 +228,10 @@ final public class MyCamera {
          * not the height of the camera!  The display and the camera frustum
          * often have the same aspect ratio, but not always.
          */
-        float height = camera.getFrustumTop();
+        float height = camera.getFrustumTop() - camera.getFrustumBottom();
         assert height > 0f : height;
 
-        float width = camera.getFrustumRight();
+        float width = camera.getFrustumRight() - camera.getFrustumLeft();
         assert width > 0f : width;
 
         float ratio = width / height;
