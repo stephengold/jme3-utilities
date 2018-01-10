@@ -6,12 +6,11 @@ group = 'jme3utilities'
 //sourceCompatibility = '1.7'
 sourceCompatibility = '1.8'
 
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
 gradle.projectsEvaluated {
     tasks.withType(JavaCompile) {
-        // javac options
-        options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
+        options.compilerArgs << '-Xlint:unchecked'
+        options.deprecation = true
+        options.encoding = 'UTF-8'
     }
 }
 
