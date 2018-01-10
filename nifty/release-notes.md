@@ -1,9 +1,9 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.7.7 released on TBD
+## Version 0.7.7 released on 10 January 2018
 
- + Add disableCheckBox() methods to the GuiScreenController and
-   GuiWindowController classes.
+Add disableCheckBox() methods to the GuiScreenController and
+ GuiWindowController classes.
 
 ## Version 0.7.6 released on 4 January 2018
 
@@ -27,12 +27,12 @@
 
 ## Version 0.7.4 released on 19 December 2017
 
- + Replace GuiScreenController.setButtonLabel() with setButtonText(), with
-   new semantics.
+Replace GuiScreenController.setButtonLabel() with setButtonText(), with
+ new semantics.
 
 ## Version 0.7.3for32 released on 5 December 2017
 
- + 1st release to target JME 3.2
+1st release to target JME 3.2
 
 ## Version 0.7.2 released on 7 November 2017
 
@@ -74,11 +74,11 @@ Move dialog controllers to new package 'jme3utilities.nifty.dialog'.
 
 ## Version 0.6.7 released on 3 July 2017
 
-+ Render NiftyGUI after JME's guiNode.
+Render NiftyGUI after JME's guiNode.
 
 ## Version 0.6.6 released on 25 June 2017
 
-+ Publicize constructors for dialog controllers.
+Publicize constructors for dialog controllers.
 
 ## Version 0.6.5 released on 24 June 2017
 
