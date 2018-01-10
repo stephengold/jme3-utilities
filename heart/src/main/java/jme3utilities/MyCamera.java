@@ -105,11 +105,11 @@ final public class MyCamera {
         float rightX = camera.getViewPortRight();
 
         boolean result = false;
-        if (xFraction > leftX && xFraction < rightX) {
+        if (xFraction >= leftX && xFraction < rightX) {
             float yFraction = screenXY.y / camera.getHeight();
             float bottomY = camera.getViewPortBottom();
             float topY = camera.getViewPortTop();
-            if (yFraction > bottomY && yFraction < topY) {
+            if (yFraction >= bottomY && yFraction < topY) {
                 result = true;
             }
         }
