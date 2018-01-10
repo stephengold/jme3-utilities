@@ -70,6 +70,17 @@ public class GuiWindowController extends WindowController {
     // new methods exposed
 
     /**
+     * Disable the named check box. This assumes a naming convention where the
+     * Nifty id of every check box ends with "CheckBox".
+     *
+     * @param name the name (unique id prefix) of the check box (not null)
+     */
+    public void disableCheckBox(String name) {
+        Validate.nonNull(name, "check-box name");
+        getScreenController().disableCheckBox(name);
+    }
+
+    /**
      * Read the transformed value of the named Nifty slider. This assumes a
      * naming convention where the Nifty id of every slider ends with "Slider".
      *
@@ -117,8 +128,9 @@ public class GuiWindowController extends WindowController {
     }
 
     /**
-     * Alter the ticked status of the named check box. This assumes a naming
-     * convention where the Nifty id of every check box ends with "CheckBox".
+     * Alter the ticked status of the named check box and enable it. This
+     * assumes a naming convention where the Nifty id of every check box ends
+     * with "CheckBox".
      *
      * @param name the name (unique id prefix) of the check box (not null)
      * @param newStatus true to tick the check box, false to un-tick it

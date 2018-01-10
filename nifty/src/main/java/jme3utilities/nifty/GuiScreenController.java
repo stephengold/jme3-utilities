@@ -77,6 +77,19 @@ public class GuiScreenController extends PopScreenController {
     // new methods exposed
 
     /**
+     * Disable the named check box. This assumes a naming convention where the
+     * Nifty id of every check box ends with "CheckBox".
+     *
+     * @param name the name (unique id prefix) of the check box (not null)
+     */
+    public void disableCheckBox(String name) {
+        Validate.nonNull(name, "check-box name");
+
+        CheckBox checkBox = getCheckBox(name);
+        checkBox.disable();
+    }
+
+    /**
      * Access the named Nifty button. This assumes a naming convention where the
      * Nifty id of every button ends with "Button".
      *
@@ -222,8 +235,9 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Alter the ticked status of the named check box. This assumes a naming
-     * convention where the Nifty id of every check box ends with "CheckBox".
+     * Alter the ticked status of the named check box and enable it. This
+     * assumes a naming convention where the Nifty id of every check box ends
+     * with "CheckBox".
      *
      * @param name the name (unique id prefix) of the check box (not null)
      * @param newStatus true to tick the check box, false to un-tick it
@@ -233,6 +247,7 @@ public class GuiScreenController extends PopScreenController {
 
         CheckBox checkBox = getCheckBox(name);
         checkBox.setChecked(newStatus);
+        checkBox.enable();
     }
 
     /**
