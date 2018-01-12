@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -295,6 +295,25 @@ public class MyMath {
 
     /**
      * Test whether b is between a and c.
+     *
+     * @param a 1st input value
+     * @param b 2nd input value
+     * @param c 3rd input value
+     * @return true if b is between a and c (inclusive), otherwise false
+     */
+    public static boolean isBetween(int a, int b, int c) {
+        if (a > c) {
+            return a >= b && b >= c;
+        } else if (a < c) {
+            return a <= b && b <= c;
+        } else {
+            assert a == c;
+            return a == b;
+        }
+    }
+
+    /**
+     * Test whether b is between a and c. TODO add double version
      *
      * @param a 1st input value
      * @param b 2nd input value
