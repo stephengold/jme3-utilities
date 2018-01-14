@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -149,7 +149,7 @@ public class Updater
      * Add a shadow filter to the list of filters whose intensities are updated
      * by the control. Note that the list is not serialized.
      *
-     * @param filter (not null)
+     * @param filter (not null, alias created)
      */
     @SuppressWarnings("rawtypes")
     public void addShadowFilter(AbstractShadowFilter filter) {
@@ -161,11 +161,10 @@ public class Updater
      * Add a shadow renderer to the list of renderers whose intensities are
      * updated by the control. Note that the list is not serialized.
      *
-     * @param renderer (not null)
+     * @param renderer (not null, alias created)
      */
     public void addShadowRenderer(AbstractShadowRenderer renderer) {
         Validate.nonNull(renderer, "renderer");
-
         shadowRenderers.add(renderer);
     }
 
@@ -324,7 +323,8 @@ public class Updater
      * has a non-null value, the control will continuously update the light's
      * color and intensity.
      *
-     * @param ambientLight the scene's ambient light (or null for none)
+     * @param ambientLight the scene's ambient light (or null for none, alias
+     * created if not null)
      */
     public void setAmbientLight(AmbientLight ambientLight) {
         this.ambientLight = ambientLight;
@@ -368,7 +368,8 @@ public class Updater
      * reference has a non-null value, the control will continuously update the
      * light's color, direction, and intensity.
      *
-     * @param mainLight the scene's main directional light (or null for none)
+     * @param mainLight the scene's main directional light (or null for none,
+     * alias created if not null)
      */
     public void setMainLight(DirectionalLight mainLight) {
         this.mainLight = mainLight;

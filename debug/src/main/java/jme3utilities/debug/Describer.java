@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -435,7 +435,8 @@ public class Describer {
     }
 
     /**
-     * Generate a brief textual description of a light.
+     * Generate a brief textual description of a light. TODO describe color,
+     * direction, etcetera
      *
      * @param light light to describe (unaffected)
      * @return description (not null, not empty)

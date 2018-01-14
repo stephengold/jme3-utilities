@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -363,7 +363,7 @@ public class Dumper {
             stream.print(MyString.quote(spatial.getName()));
         }
         /*
-         * Dump the spatial's controls and lights.
+         * Dump the spatial's controls and local lights.
          */
         dumpControls(spatial);
         LightList lights = spatial.getLocalLightList();
