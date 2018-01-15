@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 1.1.0 released on TBD
+## Version 1.1.0 released on 14 January 2018
 
  + Reduced the likelihood of MyCamera.listViewPorts() coming up empty
  + Accounted for bottom and left in MyCamera.frustumAspectRatio() calculations
