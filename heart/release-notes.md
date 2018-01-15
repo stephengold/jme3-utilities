@@ -1,5 +1,13 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 1.1.0 released on TBD
+
+ + Reduced the likelihood of MyCamera.listViewPorts() coming up empty
+ + Accounted for bottom and left in MyCamera.frustumAspectRatio() calculations
+ + Added a version of Misc.getFpp() that sets numSamples
+ + Added MyLight class
+ + Added MyMath.isBetween(int, int, int) method
+
 ## Version 1.0.0for32 released on 5 December 2017
 
  + 1st release to target JME 3.2
