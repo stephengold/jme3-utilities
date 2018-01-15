@@ -1,13 +1,21 @@
 # release notes for the SkyControl library and related tests
 
+## Version 0.9.8 released on TBD
+
+Notable changes:
+ + fix a bug in Updater which caused an IllegalArgumentException while cloning
+ + standardize the BSD license texts for tests
+
 ## Version 0.9.7for32 released on 5 December 2017
 
+Notable changes:
  + 1st release to target JME 3.2
- + Utilize contrast-adjustment filter in GlobeRenderer
+ + use a contrast-adjustment filter in GlobeRenderer
  + rename private fields
 
 ## Version 0.9.6 released on 19 September 2017
 
+Notable changes:
  + use the DomeMesh class from the heart library
  + move wireframe material to heart library
  + make SkyControl JmeCloneable

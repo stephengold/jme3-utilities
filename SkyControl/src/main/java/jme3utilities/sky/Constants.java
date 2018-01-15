@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -107,6 +107,6 @@ final public class Constants {
      * @return branch and revision (not null, not empty)
      */
     public static String getVersionShort() {
-        return "master 0.9.7for32+1";
+        return "master 0.9.8";
     }
 }
