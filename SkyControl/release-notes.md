@@ -3,7 +3,7 @@
 ## Version 0.9.8 released on 14 January 2018
 
 Notable changes:
- + fix a bug in Updater which caused an IllegalArgumentException while cloning
+ + fix a bug in Updater that caused an IllegalArgumentException while cloning
  + standardize the BSD license texts for tests
 
 ## Version 0.9.7for32 released on 5 December 2017
