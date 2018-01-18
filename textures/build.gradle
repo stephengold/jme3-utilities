@@ -16,10 +16,6 @@ compileJava { dependsOn 'copySource' }
 
 dependencies {
     compile "com.beust:jcommander:$jcommanderVersion"
-    compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-bullet:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-effects:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-terrain:$jmonkeyengineVersion"
 
     //compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
     compile project(':heart')
