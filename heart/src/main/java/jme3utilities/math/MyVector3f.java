@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -695,9 +695,11 @@ public class MyVector3f {
      * no rounding error is introduced when v1==v2.
      *
      * @param t descaled parameter value (0&rarr;v0, 1&rarr;v1)
-     * @param v0 function value at t=0 (not null, unaffected, norm=1)
-     * @param v1 function value at t=1 (not null, unaffected, norm=1)
-     * @param storeResult (modified if not null)
+     * @param v0 function value at t=0 (not null, unaffected unless it's also
+     * storeResult)
+     * @param v1 function value at t=1 (not null, unaffected unless it's also
+     * storeResult)
+     * @param storeResult (modified if not null, may be v0 or v1)
      * @return an interpolated vector (either storeResult or a new instance)
      */
     public static Vector3f lerp(float t, Vector3f v0, Vector3f v1,
