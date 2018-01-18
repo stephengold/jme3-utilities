@@ -8,17 +8,13 @@ clean { dependsOn 'cleanDLLs', 'cleanWrittenAssets' }
 
 dependencies {
     compile "com.beust:jcommander:$jcommanderVersion"
-    compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-blender:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-bullet:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-bullet-native:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-desktop:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-effects:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-jogg:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-lwjgl:$jmonkeyengineVersion"
+    runtime "org.jmonkeyengine:jme3-blender:$jmonkeyengineVersion"
+    runtime "org.jmonkeyengine:jme3-bullet-native:$jmonkeyengineVersion"
+    runtime "org.jmonkeyengine:jme3-desktop:$jmonkeyengineVersion"
+    runtime "org.jmonkeyengine:jme3-jogg:$jmonkeyengineVersion"
+    runtime "org.jmonkeyengine:jme3-lwjgl:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-plugins:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-terrain:$jmonkeyengineVersion"
-    compile 'org.jmonkeyengine:jme3-testdata:3.1.0-stable'
+    runtime 'org.jmonkeyengine:jme3-testdata:3.1.0-stable'
 
     //compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
     compile project(':heart')
@@ -38,7 +34,7 @@ dependencies {
     //compile "jme3utilities:jme3-utilities-x:$jme3utilitiesxVersion"
     compile project(':x')
 
-    compile project(':moon-ccbysa')
+    runtime project(':moon-ccbysa')
 }
 
 tasks.withType(JavaExec) {
