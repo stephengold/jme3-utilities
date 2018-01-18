@@ -12,7 +12,6 @@ ext {
 build { dependsOn 'pom' }
 jar { baseName project.ext.baseName }
 javadocJar { baseName project.ext.baseName }
-processResources { dependsOn ':textures:textures' }
 sourcesJar { baseName project.ext.baseName }
 
 dependencies {
