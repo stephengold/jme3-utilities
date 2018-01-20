@@ -79,9 +79,9 @@ public class SkeletonVisualizer extends SubtreeControl {
      */
     final private static float defaultLineWidth = 2f;
     /**
-     * default point size for bone heads (in pixels)
+     * default size for bone heads (in pixels)
      */
-    final private static float defaultPointSize = 4f;
+    final private static float defaultHeadSize = 4f;
     /**
      * child position of the heads geometry in the subtree node
      */
@@ -173,14 +173,14 @@ public class SkeletonVisualizer extends SubtreeControl {
         lineState.setDepthTest(false);
         lineState.setWireframe(true);
 
-        Texture pointShape
+        Texture headShape
                 = MyAsset.loadTexture(assetManager, defaultShapeAssetPath);
 
         headMaterial = new Material(assetManager, matDefsAssetPath);
         headMaterial.setBoolean("UseVertexColor", true);
         headMaterial.setFloat("AlphaDiscardThreshold", 0.0001f);
-        headMaterial.setFloat("PointSize", defaultPointSize);
-        headMaterial.setTexture("PointShape", pointShape);
+        headMaterial.setFloat("PointSize", defaultHeadSize);
+        headMaterial.setTexture("PointShape", headShape);
         RenderState headState = headMaterial.getAdditionalRenderState();
         headState.setBlendMode(BlendMode.Alpha);
         headState.setDepthTest(false);
@@ -210,14 +210,13 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Determine the point color for the head of the indexed bone. TODO sort
-     * methods
+     * Determine the color for the head of the indexed bone. TODO sort methods
      *
      * @param boneIndex which bone (&ge;0)
      * @param storeResult (modified if not null)
      * @return the color (either storeResult or a new instance)
      */
-    public ColorRGBA pointColor(int boneIndex, ColorRGBA storeResult) {
+    public ColorRGBA headColor(int boneIndex, ColorRGBA storeResult) {
         Validate.nonNegative(boneIndex, "bone index");
         if (storeResult == null) {
             storeResult = new ColorRGBA();
@@ -243,11 +242,11 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Read the point size for bone heads (in pixels)
+     * Read the size for bone heads (in pixels) TODO sort methods
      *
      * @return size (in pixels, &ge;1)
      */
-    public float getPointSize() {
+    public float getHeadSize() {
         MatParam parameter = headMaterial.getParam("PointSize");
         float result = (float) parameter.getValue();
 
@@ -264,7 +263,7 @@ public class SkeletonVisualizer extends SubtreeControl {
         Validate.nonNull(newColor, "new color");
 
         setLineColor(newColor);
-        setPointColor(newColor);
+        SkeletonVisualizer.this.setHeadColor(newColor);
     }
 
     /**
@@ -292,7 +291,7 @@ public class SkeletonVisualizer extends SubtreeControl {
      *
      * @param newColor (not null, unaffected)
      */
-    public void setPointColor(ColorRGBA newColor) {
+    public void setHeadColor(ColorRGBA newColor) {
         Validate.nonNull(newColor, "new color");
 
         headColor.set(newColor);
@@ -305,7 +304,7 @@ public class SkeletonVisualizer extends SubtreeControl {
      * @param boneIndex which bone (&ge;0)
      * @param newColor (not null, unaffected)
      */
-    public void setPointColor(int boneIndex, ColorRGBA newColor) {
+    public void setHeadColor(int boneIndex, ColorRGBA newColor) {
         Validate.nonNegative(boneIndex, "bone index");
         Validate.nonNull(newColor, "new color");
 
@@ -315,19 +314,19 @@ public class SkeletonVisualizer extends SubtreeControl {
     /**
      * Alter the shape used to visualize bone heads.
      *
-     * @param shape shape texture (not null)
+     * @param shape shape texture (not null, alias created)
      */
-    public void setPointShape(Texture shape) {
+    public void setHeadShape(Texture shape) {
         Validate.nonNull(shape, "shape");
         headMaterial.setTexture("PointShape", shape);
     }
 
     /**
-     * Alter the point size for bone heads.
+     * Alter the size of bone heads.
      *
-     * @param size (in pixels, &ge;0, 0 &rarr; hide the points)
+     * @param size (in pixels, &ge;0, 0 &rarr; hide the heads)
      */
-    public void setPointSize(float size) {
+    public void setHeadSize(float size) {
         Validate.inRange(size, "size", 0f, Float.MAX_VALUE);
         headMaterial.setFloat("PointSize", size);
     }
@@ -490,7 +489,7 @@ public class SkeletonVisualizer extends SubtreeControl {
         int numBones = skeleton.getBoneCount();
         ColorRGBA[] colors = new ColorRGBA[numBones]; // TODO re-use the array
         for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
-            colors[boneIndex] = pointColor(boneIndex, null);
+            colors[boneIndex] = headColor(boneIndex, null);
         }
 
         Geometry headsGeometry

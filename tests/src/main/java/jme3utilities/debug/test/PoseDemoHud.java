@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -779,11 +779,11 @@ public class PoseDemoHud
         ColorRGBA wireColor = updateColorBank("wire");
         visualizer.setLineColor(wireColor);
         ColorRGBA pointColor = updateColorBank("point");
-        visualizer.setPointColor(pointColor);
+        visualizer.setHeadColor(pointColor);
         lineWidth = updateSlider("sdcLineWidth", " pixels");
         visualizer.setLineWidth(lineWidth);
         float pointSize = updateSlider("pointSize", " pixels");
-        visualizer.setPointSize(pointSize);
+        visualizer.setHeadSize(pointSize);
         /*
          * Dumper
          */
