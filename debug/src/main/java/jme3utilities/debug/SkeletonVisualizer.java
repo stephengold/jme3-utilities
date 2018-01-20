@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -125,11 +125,15 @@ public class SkeletonVisualizer extends SubtreeControl {
     // fields
 
     /**
+     * general color for bone heads
+     */
+    private ColorRGBA headColor = defaultHeadColor.clone();
+    /**
      * effective line width (in pixels, &ge;0, values &lt;1 hide the lines)
      */
     private float effectiveLineWidth = defaultLineWidth;
     /**
-     * custom colors for specific bones
+     * custom colors for the heads of specific bones
      */
     private Map<Integer, ColorRGBA> customColors = new TreeMap<>();
     /**
@@ -174,7 +178,6 @@ public class SkeletonVisualizer extends SubtreeControl {
 
         headMaterial = new Material(assetManager, matDefsAssetPath);
         headMaterial.setBoolean("UseVertexColor", true);
-        headMaterial.setColor("Color", defaultHeadColor.clone());
         headMaterial.setFloat("AlphaDiscardThreshold", 0.0001f);
         headMaterial.setFloat("PointSize", defaultPointSize);
         headMaterial.setTexture("PointShape", pointShape);
@@ -201,7 +204,7 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Copy the point color for the head of the indexed bone.
+     * Copy the point color for the head of the indexed bone. TODO storeResult
      *
      * @param boneIndex which bone (&ge;0)
      * @return a new instance
@@ -211,8 +214,7 @@ public class SkeletonVisualizer extends SubtreeControl {
 
         ColorRGBA color = customColors.get(boneIndex);
         if (color == null) {
-            MatParam parameter = headMaterial.getParam("Color");
-            color = (ColorRGBA) parameter.getValue();
+            color = headColor;
         }
 
         return color.clone();
@@ -281,7 +283,7 @@ public class SkeletonVisualizer extends SubtreeControl {
     public void setPointColor(ColorRGBA newColor) {
         Validate.nonNull(newColor, "new color");
 
-        headMaterial.setColor("Color", newColor.clone());
+        headColor.set(newColor);
         customColors.clear();
     }
 
@@ -383,12 +385,13 @@ public class SkeletonVisualizer extends SubtreeControl {
     public void cloneFields(Cloner cloner, Object original) {
         super.cloneFields(cloner, original);
 
-        lineMaterial = cloner.clone(lineMaterial);
+        headColor = cloner.clone(headColor);
         headMaterial = cloner.clone(headMaterial);
+        lineMaterial = cloner.clone(lineMaterial);
         skeleton = cloner.clone(skeleton);
         transformSpatial = cloner.clone(transformSpatial);
 
-        Map<Integer, ColorRGBA> copyColors = new TreeMap<>();
+        Map<Integer, ColorRGBA> copyColors = new TreeMap<>(); // TODO use copy constructor
         for (Map.Entry<Integer, ColorRGBA> entry : customColors.entrySet()) {
             int key = entry.getKey();
             ColorRGBA value = entry.getValue().clone();
@@ -473,7 +476,7 @@ public class SkeletonVisualizer extends SubtreeControl {
         MySpatial.setWorldTransform(subtree, worldTransform);
 
         int numBones = skeleton.getBoneCount();
-        ColorRGBA[] colors = new ColorRGBA[numBones];
+        ColorRGBA[] colors = new ColorRGBA[numBones]; // TODO re-use the array
         for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
             colors[boneIndex] = copyPointColor(boneIndex);
         }
