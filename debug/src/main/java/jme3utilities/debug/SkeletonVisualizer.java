@@ -194,30 +194,42 @@ public class SkeletonVisualizer extends SubtreeControl {
     /**
      * Copy the color for link lines.
      *
-     * @return a new instance
+     * @param storeResult (modified if not null)
+     * @return the color (either storeResult or a new instance)
      */
-    public ColorRGBA copyLineColor() {
+    public ColorRGBA lineColor(ColorRGBA storeResult) {
+        if (storeResult == null) {
+            storeResult = new ColorRGBA();
+        }
+
         MatParam parameter = lineMaterial.getParam("Color");
         ColorRGBA color = (ColorRGBA) parameter.getValue();
+        storeResult.set(color);
 
-        return color.clone();
+        return storeResult;
     }
 
     /**
-     * Copy the point color for the head of the indexed bone. TODO storeResult
+     * Determine the point color for the head of the indexed bone. TODO sort
+     * methods
      *
      * @param boneIndex which bone (&ge;0)
-     * @return a new instance
+     * @param storeResult (modified if not null)
+     * @return the color (either storeResult or a new instance)
      */
-    public ColorRGBA copyPointColor(int boneIndex) {
+    public ColorRGBA pointColor(int boneIndex, ColorRGBA storeResult) {
         Validate.nonNegative(boneIndex, "bone index");
+        if (storeResult == null) {
+            storeResult = new ColorRGBA();
+        }
 
         ColorRGBA color = customColors.get(boneIndex);
         if (color == null) {
             color = headColor;
         }
+        storeResult.set(color);
 
-        return color.clone();
+        return storeResult;
     }
 
     /**
@@ -478,7 +490,7 @@ public class SkeletonVisualizer extends SubtreeControl {
         int numBones = skeleton.getBoneCount();
         ColorRGBA[] colors = new ColorRGBA[numBones]; // TODO re-use the array
         for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
-            colors[boneIndex] = copyPointColor(boneIndex);
+            colors[boneIndex] = pointColor(boneIndex, null);
         }
 
         Geometry headsGeometry
