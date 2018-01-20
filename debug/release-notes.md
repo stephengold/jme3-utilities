@@ -1,4 +1,10 @@
-# release notes for the jme3-utilities-debug library and related tests
+# Release notes for the jme3-utilities-debug library and related tests
+
+## Version 0.8.4 released on TBD
+
+ + Changed API of SkeletonVisualizer.
+ + Bugfix: SkeletonVisualizer didn't apply custom colors to bone heads.
+ + Describe color/intensity of lights.
 
 ## Version 0.8.3 released on 2 January 2018
 
