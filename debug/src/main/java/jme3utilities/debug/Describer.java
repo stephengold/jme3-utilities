@@ -44,6 +44,7 @@ import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.material.MaterialDef;
 import com.jme3.material.RenderState;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.post.Filter;
@@ -435,8 +436,8 @@ public class Describer {
     }
 
     /**
-     * Generate a brief textual description of a light. TODO describe color,
-     * direction, etcetera
+     * Generate a brief textual description of a light. TODO describe direction,
+     * etcetera
      *
      * @param light light to describe (unaffected)
      * @return description (not null, not empty)
@@ -446,22 +447,29 @@ public class Describer {
         if (light == null) {
             result = "null";
         } else {
+            String name = MyString.quote(light.getName());
+            ColorRGBA color = light.getColor();
+            String rgb;
+            if (color.r == color.g && color.g == color.b) {
+                rgb = String.format("rgb=%.2f", color.r);
+            } else {
+                rgb = String.format("r=%.2f g=%.2f b=%.2f",
+                        color.r, color.g, color.b);
+            }
             if (light instanceof AmbientLight) {
-                result = "AL";
+                result = String.format("AL%s(%s)", name, rgb);
             } else if (light instanceof DirectionalLight) {
-                result = "DL";
+                result = String.format("DL%s(%s)", name, rgb);
             } else if (light instanceof PointLight) {
-                result = "PL";
+                result = String.format("PL%s(%s)", name, rgb);
             } else if (light instanceof SpotLight) {
-                result = "SL";
+                result = String.format("SL%s(%s)", name, rgb);
             } else {
                 result = light.getClass().getSimpleName();
                 if (result.isEmpty()) {
-                    result = "?L";
+                    result = String.format("?L%s(%s)", name, rgb);
                 }
             }
-            String name = light.getName();
-            result += MyString.quote(name);
         }
 
         return result;
