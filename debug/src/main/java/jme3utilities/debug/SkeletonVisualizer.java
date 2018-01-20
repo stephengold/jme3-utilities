@@ -75,13 +75,13 @@ public class SkeletonVisualizer extends SubtreeControl {
     final private static ColorRGBA defaultLineColor
             = new ColorRGBA(0f, 0f, 1f, 1f);
     /**
-     * default line width for links (in pixels)
-     */
-    final private static float defaultLineWidth = 2f;
-    /**
      * default size for bone heads (in pixels)
      */
     final private static float defaultHeadSize = 4f;
+    /**
+     * default width for link lines (in pixels)
+     */
+    final private static float defaultLineWidth = 2f;
     /**
      * child position of the heads geometry in the subtree node
      */
@@ -101,11 +101,6 @@ public class SkeletonVisualizer extends SubtreeControl {
     final private static String defaultShapeAssetPath
             = "Textures/shapes/solid circle.png";
     /**
-     * asset path to the skeleton material definition
-     */
-    final private static String matDefsAssetPath
-            = "MatDefs/wireframe/multicolor2.j3md";
-    /**
      * name for the heads geometry
      */
     final private static String headsName = "skeleton heads";
@@ -113,6 +108,11 @@ public class SkeletonVisualizer extends SubtreeControl {
      * name for the links geometry
      */
     final private static String linksName = "skeleton links";
+    /**
+     * asset path to the skeleton material definition
+     */
+    final private static String matDefsAssetPath
+            = "MatDefs/wireframe/multicolor2.j3md";
     /**
      * name for the subtree node
      */
@@ -192,25 +192,30 @@ public class SkeletonVisualizer extends SubtreeControl {
     // new methods exposed
 
     /**
-     * Copy the color for link lines.
+     * Read the effective line width for links.
      *
-     * @param storeResult (modified if not null)
-     * @return the color (either storeResult or a new instance)
+     * @return width (in pixels, &ge;0)
      */
-    public ColorRGBA lineColor(ColorRGBA storeResult) {
-        if (storeResult == null) {
-            storeResult = new ColorRGBA();
-        }
-
-        MatParam parameter = lineMaterial.getParam("Color");
-        ColorRGBA color = (ColorRGBA) parameter.getValue();
-        storeResult.set(color);
-
-        return storeResult;
+    public float getLineWidth() {
+        assert effectiveLineWidth >= 0f : effectiveLineWidth;
+        return effectiveLineWidth;
     }
 
     /**
-     * Determine the color for the head of the indexed bone. TODO sort methods
+     * Read the size for bone heads (in pixels)
+     *
+     * @return size (in pixels, &ge;1)
+     */
+    public float getHeadSize() {
+        MatParam parameter = headMaterial.getParam("PointSize");
+        float result = (float) parameter.getValue();
+
+        assert result >= 1f : result;
+        return result;
+    }
+
+    /**
+     * Determine the color for the head of the indexed bone.
      *
      * @param boneIndex which bone (&ge;0)
      * @param storeResult (modified if not null)
@@ -232,26 +237,21 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Read the effective line width for links.
+     * Copy the color for link lines.
      *
-     * @return width (in pixels, &ge;0)
+     * @param storeResult (modified if not null)
+     * @return the color (either storeResult or a new instance)
      */
-    public float getLineWidth() {
-        assert effectiveLineWidth >= 0f : effectiveLineWidth;
-        return effectiveLineWidth;
-    }
+    public ColorRGBA lineColor(ColorRGBA storeResult) {
+        if (storeResult == null) {
+            storeResult = new ColorRGBA();
+        }
 
-    /**
-     * Read the size for bone heads (in pixels) TODO sort methods
-     *
-     * @return size (in pixels, &ge;1)
-     */
-    public float getHeadSize() {
-        MatParam parameter = headMaterial.getParam("PointSize");
-        float result = (float) parameter.getValue();
+        MatParam parameter = lineMaterial.getParam("Color");
+        ColorRGBA color = (ColorRGBA) parameter.getValue();
+        storeResult.set(color);
 
-        assert result >= 1f : result;
-        return result;
+        return storeResult;
     }
 
     /**
@@ -264,26 +264,6 @@ public class SkeletonVisualizer extends SubtreeControl {
 
         setLineColor(newColor);
         SkeletonVisualizer.this.setHeadColor(newColor);
-    }
-
-    /**
-     * Alter the colors of all link lines.
-     *
-     * @param newColor (not null, unaffected)
-     */
-    public void setLineColor(ColorRGBA newColor) {
-        Validate.nonNull(newColor, "new color");
-        lineMaterial.setColor("Color", newColor.clone());
-    }
-
-    /**
-     * Alter the effective line width for links.
-     *
-     * @param width (in pixels, &ge;0, values &lt;1 hide the lines)
-     */
-    public void setLineWidth(float width) {
-        Validate.nonNegative(width, "width");
-        effectiveLineWidth = width;
     }
 
     /**
@@ -329,6 +309,26 @@ public class SkeletonVisualizer extends SubtreeControl {
     public void setHeadSize(float size) {
         Validate.inRange(size, "size", 0f, Float.MAX_VALUE);
         headMaterial.setFloat("PointSize", size);
+    }
+
+    /**
+     * Alter the colors of all link lines.
+     *
+     * @param newColor (not null, unaffected)
+     */
+    public void setLineColor(ColorRGBA newColor) {
+        Validate.nonNull(newColor, "new color");
+        lineMaterial.setColor("Color", newColor.clone());
+    }
+
+    /**
+     * Alter the effective line width for links.
+     *
+     * @param width (in pixels, &ge;0, values &lt;1 hide the lines)
+     */
+    public void setLineWidth(float width) {
+        Validate.nonNegative(width, "width");
+        effectiveLineWidth = width;
     }
 
     /**
