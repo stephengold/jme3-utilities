@@ -396,19 +396,12 @@ public class SkeletonVisualizer extends SubtreeControl {
     public void cloneFields(Cloner cloner, Object original) {
         super.cloneFields(cloner, original);
 
+        customColors = cloner.clone(customColors);
         headColor = cloner.clone(headColor);
         headMaterial = cloner.clone(headMaterial);
         lineMaterial = cloner.clone(lineMaterial);
         skeleton = cloner.clone(skeleton);
         transformSpatial = cloner.clone(transformSpatial);
-
-        Map<Integer, ColorRGBA> copyColors = new TreeMap<>(); // TODO use copy constructor
-        for (Map.Entry<Integer, ColorRGBA> entry : customColors.entrySet()) {
-            int key = entry.getKey();
-            ColorRGBA value = entry.getValue().clone();
-            copyColors.put(key, value);
-        }
-        customColors = copyColors;
     }
 
     /**
