@@ -493,7 +493,7 @@ public class Updater
         shadowFilters = cloner.clone(shadowFilters);
         shadowRenderers = cloner.clone(shadowRenderers);
         bloomFilters = cloner.clone(bloomFilters);
-        // can't clone viewPorts
+        viewPorts = new ArrayList<>(viewPorts);
         ambientColor = cloner.clone(ambientColor);
         backgroundColor = cloner.clone(backgroundColor);
         mainColor = cloner.clone(mainColor);
