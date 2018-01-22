@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 1.1.1 released on TBD
+## Version 1.1.1 released on 22 January 2018
 
  + Added MyCamera.isFullWidth() method.
  + Target JME v3.2.1
