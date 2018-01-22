@@ -241,6 +241,20 @@ final public class MyCamera {
     }
 
     /**
+     * Test whether the specified camera has a full-width view port.
+     *
+     * @param camera which camera to test (not null, unaffected)
+     * @return true if full width, otherwise false
+     */
+    public static boolean isFullWidth(Camera camera) {
+        float leftEdge = camera.getViewPortLeft();
+        float rightEdge = camera.getViewPortRight();
+        boolean result = (leftEdge <= 0f && rightEdge >= 1f);
+
+        return result;
+    }
+
+    /**
      * Enumerate all view ports that contain the specified screen position.
      *
      * @param screenXY (in pixels, not null, unaffected)
