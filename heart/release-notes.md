@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 1.1.1 released on TBD
+
+ + Added MyCamera.isFullWidth() method.
+ + Target JME v3.2.1
+
 ## Version 1.1.0 released on 14 January 2018
 
  + Reduced the likelihood of MyCamera.listViewPorts() coming up empty
@@ -10,7 +15,7 @@
 
 ## Version 1.0.0for32 released on 5 December 2017
 
- + 1st release to target JME 3.2
+ + 1st release to target JME v3.2
  + Forced MySpatial.findMinMaxCoords(Spatial) to use world coordinates
  + Renamed MySpatial.findObject() to findEnabledRbc()
  + Added isAllPositive() method to MyVector3f class
