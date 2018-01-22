@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@ import jme3utilities.math.MyQuaternion;
 import jme3utilities.math.MyVector3f;
 
 /**
- * Utility methods for track/animation editing.
+ * Utility methods for editing JME animations and animation tracks.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -132,6 +132,203 @@ public class TrackEdit {
             }
             if (newScales != null) {
                 newScales[newIndex] = oldScales[oldIndex].clone();
+            }
+        }
+
+        Track result = newTrack(oldTrack, newTimes, newTranslations,
+                newRotations, newScales);
+
+        return result;
+    }
+
+    /**
+     * Chain 2 bone/spatial tracks together to create a new track.
+     *
+     * @param track1 base track (not null, unaffected)
+     * @param track2 track to append (not null, unaffected)
+     * @param startTime2 start time for track2 in the result (in seconds, &ge;0,
+     * &le;newDuration)
+     * @param newDuration duration of the result (in seconds, &ge;start2)
+     * @return a new instance
+     */
+    public static Track chain(Track track1, Track track2, float startTime2,
+            float newDuration) {
+        assert (track1 instanceof BoneTrack && track2 instanceof BoneTrack)
+                || (track1 instanceof SpatialTrack
+                && track2 instanceof SpatialTrack);
+        Validate.inRange(startTime2, "start time for track2", 0f, newDuration);
+
+        float[] times1 = track1.getKeyFrameTimes();
+        Vector3f[] tras1 = MyAnimation.getTranslations(track1);
+        Quaternion[] rots1 = MyAnimation.getRotations(track1);
+        Vector3f[] scales1 = MyAnimation.getScales(track1);
+
+        float[] times2 = track2.getKeyFrameTimes();
+        Vector3f[] tras2 = MyAnimation.getTranslations(track2);
+        Quaternion[] rots2 = MyAnimation.getRotations(track2);
+        Vector3f[] scales2 = MyAnimation.getScales(track2);
+        /*
+         * Calculate the index of the last keyframe to include from each track.
+         */
+        int last1 = MyAnimation.findPreviousKeyframeIndex(track1, newDuration);
+        assert last1 >= 0 : last1;
+        float newDuration2 = newDuration - startTime2;
+        int last2 = MyAnimation.findPreviousKeyframeIndex(track2, newDuration2);
+        assert last2 >= 0 : last2;
+        /*
+         * Calculate the number of keyframes in the result.
+         */
+        float lastTime1 = times1[last1];
+        int numCopy1, numBlend, numCopy2;
+        if (lastTime1 < startTime2) {
+            numCopy1 = last1 + 1;
+            numBlend = 0;
+            numCopy2 = last2 + 1;
+        } else if (lastTime1 == startTime2) {
+            numCopy1 = last1;
+            numBlend = 1;
+            numCopy2 = last2;
+        } else {
+            throw new IllegalArgumentException("overlapping tracks");
+        }
+        int newCount = numCopy1 + numBlend + numCopy2;
+        /*
+         * Allocate new arrays.
+         */
+        float[] newTimes = new float[newCount];
+        Vector3f[] newTranslations = null;
+        if (tras1 != null || tras2 != null) {
+            newTranslations = new Vector3f[newCount];
+        }
+        Quaternion[] newRotations = null;
+        if (rots1 != null || rots2 != null) {
+            newRotations = new Quaternion[newCount];
+        }
+        Vector3f[] newScales = null;
+        if (scales1 != null || scales2 != null) {
+            newScales = new Vector3f[newCount];
+        }
+        /*
+         * Fill the new arrays.
+         */
+        for (int frameIndex = 0; frameIndex < newCount; frameIndex++) {
+            Quaternion rot1, rot2;
+            Vector3f tra1, tra2, scale1, scale2;
+            if (frameIndex < numCopy1) { // Copy from track1[frameIndex].
+                newTimes[frameIndex] = times1[frameIndex];
+                tra1 = (tras1 == null) ? null : tras1[frameIndex];
+                rot1 = (rots1 == null) ? null : rots1[frameIndex];
+                scale1 = (scales1 == null) ? null : scales1[frameIndex];
+                tra2 = null;
+                rot2 = null;
+                scale2 = null;
+
+            } else if (frameIndex > last1) { // Copy from track2[index2].
+                int index2 = frameIndex - numCopy1;
+                newTimes[frameIndex] = times2[index2] + startTime2;
+                tra1 = null;
+                rot1 = null;
+                scale1 = null;
+                tra2 = (tras2 == null) ? null : tras2[index2];
+                rot2 = (rots2 == null) ? null : rots2[index2];
+                scale2 = (scales2 == null) ? null : scales2[index2];
+
+            } else { // Blend track1[last1] and track2[0].
+                assert numBlend == 1 : numBlend;
+                assert frameIndex == last1;
+                assert lastTime1 == startTime2;
+                newTimes[frameIndex] = startTime2;
+                tra1 = (tras1 == null) ? null : tras1[frameIndex];
+                rot1 = (rots1 == null) ? null : rots1[frameIndex];
+                scale1 = (scales1 == null) ? null : scales1[frameIndex];
+                tra2 = (tras2 == null) ? null : tras2[0];
+                rot2 = (rots2 == null) ? null : rots2[0];
+                scale2 = (scales2 == null) ? null : scales2[0];
+            }
+
+            if (newTranslations != null) {
+                newTranslations[frameIndex]
+                        = blendTranslations(0.5f, tra1, tra2);
+            }
+            if (newRotations != null) {
+                newRotations[frameIndex] = blendRotations(0.5f, rot1, rot2);
+            }
+            if (newScales != null) {
+                newScales[frameIndex] = blendScales(0.5f, scale1, scale2);
+            }
+        }
+
+        Track result = newTrack(track1, newTimes, newTranslations,
+                newRotations, newScales);
+
+        return result;
+    }
+
+    /**
+     * Copy a track, delaying all its keyframes by the specified amount.
+     *
+     * @param oldTrack base track (not null, unaffected)
+     * @param delayAmount delay interval (in seconds, &ge;0, &le;newDuration)
+     * @param newDuration duration of the result (in seconds, &ge;delayAmount)
+     * @return a new instance
+     */
+    public static Track delayAll(Track oldTrack, float delayAmount,
+            float newDuration) {
+        Validate.inRange(delayAmount, "delay amount", 0f, newDuration);
+
+        float[] oldTimes = oldTrack.getKeyFrameTimes();
+        Vector3f[] oldTranslations = MyAnimation.getTranslations(oldTrack);
+        Quaternion[] oldRotations = MyAnimation.getRotations(oldTrack);
+        Vector3f[] oldScales = MyAnimation.getScales(oldTrack);
+        /*
+         * Calculate the old index of the last keyframe to include.
+         */
+        float oldDuration = newDuration - delayAmount;
+        assert oldDuration < newDuration;
+        int lastIndex = MyAnimation.findPreviousKeyframeIndex(oldTrack,
+                oldDuration);
+        int addFrames;
+        if (delayAmount > 0f) {
+            addFrames = 1;
+        } else {
+            addFrames = 0;
+        }
+        int newCount = addFrames + lastIndex + 1;
+        /*
+         * Allocate new arrays.
+         */
+        float[] newTimes = new float[newCount];
+        newTimes[0] = 0f;
+        Vector3f[] newTranslations = null;
+        if (oldTranslations != null) {
+            newTranslations = new Vector3f[newCount];
+            newTranslations[0] = new Vector3f();
+        }
+        Quaternion[] newRotations = null;
+        if (oldRotations != null) {
+            newRotations = new Quaternion[newCount];
+            newRotations[0] = new Quaternion(); // identity
+        }
+        Vector3f[] newScales = null;
+        if (oldScales != null) {
+            newScales = new Vector3f[newCount];
+            newScales[0] = new Vector3f(1f, 1f, 1f);
+        }
+        /*
+         * Fill the new arrays.
+         */
+        for (int oldIndex = 0; oldIndex <= lastIndex; oldIndex++) {
+            int frameIndex = oldIndex + addFrames;
+            newTimes[frameIndex] = oldTimes[oldIndex] + delayAmount;
+
+            if (newTranslations != null) {
+                newTranslations[frameIndex] = oldTranslations[oldIndex].clone();
+            }
+            if (newRotations != null) {
+                newRotations[frameIndex] = oldRotations[oldIndex].clone();
+            }
+            if (newScales != null) {
+                newScales[frameIndex] = oldScales[oldIndex].clone();
             }
         }
 
@@ -291,7 +488,7 @@ public class TrackEdit {
      * Create a new bone/spatial track.
      *
      * @param oldTrack to identify the track type and target bone/spatial (not
-     * null)
+     * null, unaffected)
      * @param times (not null, alias created)
      * @param translations (either null or same length as times)
      * @param rotations (either null or same length as times)
@@ -807,8 +1004,8 @@ public class TrackEdit {
         Quaternion[] oldRotations = MyAnimation.getRotations(oldTrack);
         Vector3f[] oldScales = MyAnimation.getScales(oldTrack);
 
-        int newCount;
-        newCount = 1 + MyAnimation.findPreviousKeyframeIndex(oldTrack, endTime);
+        int newCount
+                = 1 + MyAnimation.findPreviousKeyframeIndex(oldTrack, endTime);
         /*
          * Allocate new arrays.
          */
@@ -829,7 +1026,8 @@ public class TrackEdit {
         for (int frameIndex = 0; frameIndex < newCount; frameIndex++) {
             newTimes[frameIndex] = oldTimes[frameIndex];
             if (newTranslations != null) {
-                newTranslations[frameIndex] = oldTranslations[frameIndex].clone();
+                newTranslations[frameIndex]
+                        = oldTranslations[frameIndex].clone();
             }
             if (newRotations != null) {
                 newRotations[frameIndex] = oldRotations[frameIndex].clone();
@@ -964,5 +1162,88 @@ public class TrackEdit {
         }
 
         return numTracksEdited;
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Blend 2 rotations, skipping any nulls.
+     *
+     * @param weight2 how much weight to give to rot2, if neither rot1 nor rot2
+     * is null (&ge;0, &le;1)
+     * @param rot1 1st input rotation (may be null, unaffected)
+     * @param rot2 2nd input rotation (may be null, unaffected)
+     * @return a new quaternion
+     */
+    private static Quaternion blendRotations(float weight2, Quaternion rot1,
+            Quaternion rot2) {
+        Quaternion result;
+        if (rot1 == null) {
+            if (rot2 == null) {
+                result = new Quaternion(); // identity
+            } else {
+                result = rot2.clone();
+            }
+        } else if (rot2 == null) {
+            result = rot1.clone();
+        } else {
+            result = MyQuaternion.slerp(weight2, rot1, rot2, null);
+        }
+
+        return result;
+    }
+
+    /**
+     * Blend 2 scale vectors, skipping any nulls.
+     *
+     * @param weight2 how much weight to give to scale2, if neither scale1 nor
+     * scale2 is null (&ge;0, &le;1)
+     * @param scale1 1st input vector (may be null, unaffected)
+     * @param scale2 2nd input vector (may be null, unaffected)
+     * @return a new vector
+     */
+    private static Vector3f blendScales(float weight2, Vector3f scale1,
+            Vector3f scale2) {
+        Vector3f result;
+        if (scale1 == null) {
+            if (scale2 == null) {
+                result = new Vector3f(1f, 1f, 1f);
+            } else {
+                result = scale2.clone();
+            }
+        } else if (scale2 == null) {
+            result = scale1.clone();
+        } else {
+            result = MyVector3f.lerp(weight2, scale1, scale2, null);
+        }
+
+        return result;
+    }
+
+    /**
+     * Blend 2 translation vectors, skipping any nulls.
+     *
+     * @param weight2 how much weight to give to tra2, if neither tra1 nor tra2
+     * is null (&ge;0, &le;1)
+     * @param tra1 1st input vector (may be null, unaffected)
+     * @param tra2 2nd input vector (may be null, unaffected)
+     * @return a new vector
+     */
+    private static Vector3f blendTranslations(float weight2, Vector3f tra1,
+            Vector3f tra2) {
+        Vector3f result;
+        if (tra1 == null) {
+            if (tra2 == null) {
+                result = new Vector3f();
+            } else {
+                result = tra2.clone();
+            }
+        } else if (tra2 == null) {
+            result = tra1.clone();
+        } else {
+            result = MyVector3f.lerp(weight2, tra1, tra2, null);
+        }
+
+        return result;
     }
 }
