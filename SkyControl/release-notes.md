@@ -1,10 +1,10 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.9 released on TBD
+## Version 0.9.9 released on 22 January 2019
 
 Notable changes:
  + target JME v3.2.1
- + give each Updater its own list of view ports.
+ + give each Updater its own list of view ports
 
 ## Version 0.9.8 released on 14 January 2018
 

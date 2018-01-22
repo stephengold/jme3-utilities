@@ -1,6 +1,6 @@
 # release notes for the Wes library and related tests
 
-## Version 0.3.1 released on TBD
+## Version 0.3.1 released on 22 January 2018
 
  + Add chain() and delayAll() methods to the TrackEdit class.
  + Target JME v3.2.1
