@@ -1,8 +1,13 @@
 # release notes for the Wes library and related tests
 
+## Version 0.3.1 released on TBD
+
+ + Add chain() and delayAll() methods to the TrackEdit class.
+ + Target JME v3.2.1
+
 ## Version 0.3.0for32 released on 5 December 2017
 
- + 1st release to target JME 3.2
+ + 1st release to target JME v3.2
  + Utilize setTrackSpatial() with spatial tracks
 
 ## Version 0.2.4 released on 12 November 2017

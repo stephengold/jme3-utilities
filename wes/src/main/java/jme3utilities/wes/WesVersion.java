@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -59,6 +59,6 @@ public class WesVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String getVersionShort() {
-        return "master 0.3.0for32+1";
+        return "master 0.3.1";
     }
 }
