@@ -27,17 +27,15 @@
 package jme3utilities.sky;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.export.InputCapsule;
-import com.jme3.export.JmeExporter;
-import com.jme3.export.JmeImporter;
-import com.jme3.export.OutputCapsule;
-import com.jme3.export.Savable;
+import com.jme3.export.*;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
@@ -45,15 +43,16 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
 import com.jme3.util.clone.Cloner;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 import jme3utilities.math.MyColor;
 import jme3utilities.mesh.DomeMesh;
+
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Core fields and methods of a subtree control to simulate a dynamic sky.
@@ -706,6 +705,14 @@ public class SkyControlCore extends SubtreeControl {
         cloudLayers = cloner.clone(cloudLayers);
     }
 
+    @Override
+    public void render(final RenderManager rm, final ViewPort vp) {
+        super.render(rm, vp);
+        if (camera == null) {
+            camera = vp.getCamera();
+        }
+    }
+
     /**
      * Callback invoked when the sky node's geometric state is about to be
      * updated, once per frame while attached and enabled.
@@ -716,6 +723,10 @@ public class SkyControlCore extends SubtreeControl {
     @Override
     public void controlUpdate(float elapsedTime) {
         super.controlUpdate(elapsedTime);
+
+        if (camera == null) {
+            return;
+        }
 
         updateClouds(elapsedTime);
         /*
