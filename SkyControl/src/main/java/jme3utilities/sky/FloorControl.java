@@ -36,10 +36,13 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.MySpatial;
@@ -51,7 +54,7 @@ import jme3utilities.Validate;
  * typically be textured to look like an extension of the terrain.
  * <p>
  * The control is disabled at creation. When enabled, it attaches a floor node
- * to the controlled spatial, which must also be a node.
+ * to the controlled spatial, which must be a scene-graph node.
  * <p>
  * For best results, the control should be enabled <em>after</em> all sky
  * geometries have been attached.
@@ -163,6 +166,19 @@ public class FloorControl extends SubtreeControl {
     }
 
     /**
+     * Convert this shallow-cloned control into a deep-cloned one, using the
+     * specified cloner and original to resolve copied fields.
+     *
+     * @param cloner the cloner currently cloning this control
+     * @param original the control from which this control was shallow-cloned
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        camera = cloner.clone(camera);
+    }
+
+    /**
      * Callback invoked when the controlled spatial's geometric state is about
      * to be updated, once per frame while attached and enabled.
      *
@@ -171,6 +187,10 @@ public class FloorControl extends SubtreeControl {
     @Override
     public void controlUpdate(float updateInterval) {
         super.controlUpdate(updateInterval);
+
+        if (camera == null) {
+            return;
+        }
         /*
          * Translate the floor to center it below the camera.
          */
@@ -199,6 +219,20 @@ public class FloorControl extends SubtreeControl {
         InputCapsule ic = importer.getCapsule(this);
         stabilizeFlag = ic.readBoolean("stabilizeFlag", false);
         /* camera not serialized */
+    }
+
+    /**
+     * Callback invoked when the controlled spatial is about to be rendered to a
+     * viewport.
+     *
+     * @param renderManager (not null)
+     * @param viewPort viewport where the spatial will be rendered (not null)
+     */
+    @Override
+    public void render(final RenderManager renderManager,
+            final ViewPort viewPort) {
+        super.render(renderManager, viewPort);
+        camera = viewPort.getCamera();
     }
 
     /**
