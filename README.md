@@ -471,6 +471,8 @@ have gone before.  I therefore acknowledge the following software developers:
 + Rémy Bouquet (aka "nehon") for creating the BVH Retarget Project (parts of
   which are incorporated into the Wes library)
   and also for many helpful insights
++ Alexandr Brui (aka "javasabr") for a solving a problem with the
+  de-serialization of SkyControl
 + the brave souls who volunteered to be alpha testers for SkyControl, including:
     + Davis Rollman
     + "Lockhead"
@@ -504,7 +506,7 @@ have gone before.  I therefore acknowledge the following software developers:
     + the NetBeans integrated development environment
     + the Nifty graphical user interface library
     + Open Broadcaster Software Studio
-    + the PMD source code analyzer
+    + the PMD source-code analyzer
     + the RealWorld Cursor Editor
     + Alex Peterson's Spacescape tool
     + the WinMerge differencing and merging tool
