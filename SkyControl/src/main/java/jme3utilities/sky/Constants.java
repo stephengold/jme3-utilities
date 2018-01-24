@@ -102,11 +102,11 @@ final public class Constants {
     // new methods exposed
 
     /**
-     * Read the terse version string for this library.
+     * Read the terse version string for the SkyControl library.
      *
      * @return branch and revision (not null, not empty)
      */
     public static String getVersionShort() {
-        return "master 0.9.9+1";
+        return "master 0.9.10";
     }
 }

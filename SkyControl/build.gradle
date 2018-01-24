@@ -17,8 +17,8 @@ sourcesJar { baseName project.ext.baseName }
 processResources { dependsOn ':textures:textures' }
 
 dependencies {
-    //compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
-    compile project(':heart')
+    compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
+    //compile project(':heart')
 }
 
 task pom {

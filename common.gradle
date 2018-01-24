@@ -24,7 +24,7 @@ ext {
     jme3utilitieswesVersion = '0.3.1'
     jme3utilitiesxVersion = '0.2.2for32'
     jmonkeyengineVersion = '3.2.1-stable'
-    skycontrolVersion = '0.9.9'
+    skycontrolVersion = '0.9.10'
 }
 
 repositories {
