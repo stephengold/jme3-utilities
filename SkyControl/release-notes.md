@@ -1,6 +1,6 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.10 released on TBD
+## Version 0.9.10 released on 23 January 2018
 
 Notable changes:
  + Update SkyControl and FloorControl cameras from the RenderManager
