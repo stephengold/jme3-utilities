@@ -724,18 +724,17 @@ public class SkyControlCore extends SubtreeControl {
      * Callback invoked when the sky node's geometric state is about to be
      * updated, once per frame while attached and enabled.
      *
-     * @param elapsedTime time interval between render passes (in seconds,
-     * &ge;0)
+     * @param updateInterval time interval between updates (in seconds, &ge;0)
      */
     @Override
-    public void controlUpdate(float elapsedTime) {
-        super.controlUpdate(elapsedTime);
+    public void controlUpdate(float updateInterval) {
+        super.controlUpdate(updateInterval);
 
         if (camera == null) {
             return;
         }
 
-        updateClouds(elapsedTime);
+        updateClouds(updateInterval);
         /*
          * Translate the sky node to center the sky on the camera.
          */
@@ -889,13 +888,12 @@ public class SkyControlCore extends SubtreeControl {
     /**
      * Update the cloud layers. (Invoked once per frame.)
      *
-     * @param elapsedTime time interval between render passes (in seconds,
-     * &ge;0)
+     * @param updateInterval time interval between updates (in seconds, &ge;0)
      */
-    private void updateClouds(float elapsedTime) {
-        assert elapsedTime >= 0f : elapsedTime;
+    private void updateClouds(float updateInterval) {
+        assert updateInterval >= 0f : updateInterval;
 
-        cloudsAnimationTime += elapsedTime * cloudsRate;
+        cloudsAnimationTime += updateInterval * cloudsRate;
         for (int layer = 0; layer < numCloudLayers; layer++) {
             cloudLayers[layer].updateOffset(cloudsAnimationTime);
         }
