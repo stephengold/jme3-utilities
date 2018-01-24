@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -216,11 +216,9 @@ public class TestSkyControlRun
             loadedNode.removeLight(sceneLight);
         }
         /*
-         * Set the cameras, filters, renderers, and viewports for the loaded
+         * Set the filters, renderers, and viewports for the loaded
          * controls.  (These were not serialized.)
          */
-        floorControl.setCamera(cam);
-        skyControl.setCamera(cam);
         updater.setFRV(oldUpdater);
         GlobeRenderer moonRenderer = stateManager.getState(GlobeRenderer.class);
         skyControl.setMoonRenderer(moonRenderer);
