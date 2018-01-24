@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,11 @@
 package jme3utilities.sky;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.export.*;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -43,16 +47,15 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
 import com.jme3.util.clone.Cloner;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 import jme3utilities.math.MyColor;
 import jme3utilities.mesh.DomeMesh;
-
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Core fields and methods of a subtree control to simulate a dynamic sky.
@@ -688,7 +691,19 @@ public class SkyControlCore extends SubtreeControl {
         return cloudsColor;
     }
     // *************************************************************************
-    // SimpleControl methods
+    // SubtreeControl methods
+
+    /**
+     * Create a shallow copy of this control.
+     *
+     * @return a new control, equivalent to this one
+     * @throws CloneNotSupportedException if superclass isn't cloneable
+     */
+    @Override
+    public SkyControlCore clone() throws CloneNotSupportedException {
+        SkyControlCore clone = (SkyControlCore) super.clone();
+        return clone;
+    }
 
     /**
      * Convert this shallow-cloned control into a deep-cloned one, using the
@@ -703,14 +718,6 @@ public class SkyControlCore extends SubtreeControl {
 
         camera = cloner.clone(camera);
         cloudLayers = cloner.clone(cloudLayers);
-    }
-
-    @Override
-    public void render(final RenderManager rm, final ViewPort vp) {
-        super.render(rm, vp);
-        if (camera == null) {
-            camera = vp.getCamera();
-        }
     }
 
     /**
@@ -778,6 +785,22 @@ public class SkyControlCore extends SubtreeControl {
     }
 
     /**
+     * Callback invoked when the controlled spatial is about to be rendered to a
+     * viewport.
+     *
+     * @param renderManager (not null)
+     * @param viewPort viewport where the spatial will be rendered (not null)
+     */
+    @Override
+    public void render(final RenderManager renderManager,
+            final ViewPort viewPort) {
+        super.render(renderManager, viewPort);
+        if (camera == null) {
+            camera = viewPort.getCamera();
+        }
+    }
+
+    /**
      * Serialize this instance, for example when saving to a J3O file.
      *
      * @param exporter (not null)
@@ -796,20 +819,6 @@ public class SkyControlCore extends SubtreeControl {
         oc.write(cloudsRate, "cloudsRelativeSpeed", 1f);
         oc.write(lunarLatitude, "lunarLatitude", 0f);
         oc.write(longitudeDifference, "phaseAngle", FastMath.PI);
-    }
-    // *************************************************************************
-    // Object methods
-
-    /**
-     * Create a shallow copy of this control.
-     *
-     * @return a new control, equivalent to this one
-     * @throws CloneNotSupportedException if superclass isn't cloneable
-     */
-    @Override
-    public SkyControlCore clone() throws CloneNotSupportedException {
-        SkyControlCore clone = (SkyControlCore) super.clone();
-        return clone;
     }
     // *************************************************************************
     // private methods
