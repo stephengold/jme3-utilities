@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -148,11 +148,23 @@ public class FloorControl extends SubtreeControl {
         stabilizeFlag = newState;
     }
     // *************************************************************************
-    // SimpleControl methods
+    // SubtreeControl methods
 
     /**
-     * Callback invoked when the spatial's geometric state is about to be
-     * updated, once per frame while attached and enabled.
+     * Create a shallow copy of this control.
+     *
+     * @return a new control, equivalent to this one
+     * @throws CloneNotSupportedException if superclass isn't cloneable
+     */
+    @Override
+    public FloorControl clone() throws CloneNotSupportedException {
+        FloorControl clone = (FloorControl) super.clone();
+        return clone;
+    }
+
+    /**
+     * Callback invoked when the controlled spatial's geometric state is about
+     * to be updated, once per frame while attached and enabled.
      *
      * @param updateInterval time interval between updates (in seconds, &ge;0)
      */
@@ -173,8 +185,6 @@ public class FloorControl extends SubtreeControl {
             MySpatial.setWorldOrientation(subtree, rotationIdentity);
         }
     }
-    // *************************************************************************
-    // SubtreeControl methods
 
     /**
      * De-serialize this instance, for example when loading from a J3O file.
@@ -204,20 +214,6 @@ public class FloorControl extends SubtreeControl {
         OutputCapsule oc = exporter.getCapsule(this);
         oc.write(stabilizeFlag, "stabilizeFlag", false);
         /* camera not serialized */
-    }
-    // *************************************************************************
-    // Object methods
-
-    /**
-     * Create a shallow copy of this control.
-     *
-     * @return a new control, equivalent to this one
-     * @throws CloneNotSupportedException if superclass isn't cloneable
-     */
-    @Override
-    public FloorControl clone() throws CloneNotSupportedException {
-        FloorControl clone = (FloorControl) super.clone();
-        return clone;
     }
     // *************************************************************************
     // private methods
