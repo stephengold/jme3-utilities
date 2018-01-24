@@ -68,14 +68,14 @@ https://github.com/jMonkeyEngine-Contributions/SkyControl
 ### jMonkeyEngine3 (jME3) Software Development Kit (SDK)
 
 The "master" branch of the jme3-utilities repository targets
-Version 3.1 of jMonkeyEngine.  You are welcome to use the Engine
+Version 3.2 of jMonkeyEngine.  You are welcome to use the Engine
 without also using the SDK, but I use the SDK, and the following
 installation instructions assume you will too.
 
 The hardware and software requirements of the SDK are documented at
 https://jmonkeyengine.github.io/wiki/jme3/requirements.html
 
- 1. Download a jMonkeyEngine 3.1 SDK from https://github.com/jMonkeyEngine/sdk/releases
+ 1. Download a jMonkeyEngine 3.2 SDK from https://github.com/jMonkeyEngine/sdk/releases
  2. Install the SDK, which includes:
     + the engine itself,
     + an integrated development environment (IDE) based on NetBeans,
