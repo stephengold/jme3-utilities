@@ -44,7 +44,7 @@ Maven artifacts are available from JFrog Bintray at
 
 Package names generally begin with "jme3utilities".
 
-The source code is compatible with both JDK 7 and JDK 8.
+The source code is compatible with JDK 7.
 
 World coordinate system:
 
@@ -103,7 +103,7 @@ Clone the jme3-utilities repository using Git:
 10. Click on the "Finish" button.
 11. When the "Clone Complete" dialog appears, click on the "Open Project..."
     button.
-12. Expand the root project node to reveal the 9 sub-projects.
+12. Expand the root project node to reveal the 10 sub-projects.
 13. To start with, I recommend opening 4 sub-projects:  "heart", "SkyControl",
     "tests", and "textures".  Select them using control-click, then click on the
     "Open" button.
