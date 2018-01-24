@@ -3,6 +3,7 @@
 The Jme3-utilities Project contains Java packages and assets, developed for
 sgold's jMonkeyEngine projects, which might prove useful in similar projects.
 It consists of 10 sub-projects:
+
  1. heart: the "jme3-utilities-heart" library of core classes
  2. SkyControl: the "SkyControl" library for sky simulation
  3. tests: demos, examples, and test software
@@ -15,6 +16,7 @@ It consists of 10 sub-projects:
  10. x: the "jme3-utilities-x" library of experimental classes
 
 Summary of SkyControl features:
+
  + sun, moon, stars, horizon haze, and up to 6 cloud layers
  + compatible with static backgrounds such as cube maps
  + high resolution textures are provided -- or customize with your own textures
@@ -31,9 +33,11 @@ Summary of SkyControl features:
 ### Downloads
 
 Recent releases can be downloaded from GitHub at
+
  + https://github.com/stephengold/jme3-utilities/releases
 
 Maven artifacts are available from JFrog Bintray at
+
  + https://bintray.com/stephengold/jme3utilities
 
 ### Conventions
@@ -43,6 +47,7 @@ Package names generally begin with "jme3utilities".
 The source code is compatible with both JDK 7 and JDK 8.
 
 World coordinate system:
+
  + the X axis points toward the northern horizon
  + the Y axis points up (toward the zenith)
  + the Z axis points toward the eastern horizon
@@ -72,18 +77,19 @@ https://jmonkeyengine.github.io/wiki/jme3/requirements.html
 
  1. Download a jMonkeyEngine 3.1 SDK from https://github.com/jMonkeyEngine/sdk/releases
  2. Install the SDK, which includes:
-   + the engine itself,
-   + an integrated development environment (IDE) based on NetBeans,
-   + various plugins, and
-   + the Blender 3D application.
+    + the engine itself,
+    + an integrated development environment (IDE) based on NetBeans,
+    + various plugins, and
+    + the Blender 3D application.
  3. To open the project in the SDK (or NetBeans), you will need the "Gradle
     Support" plugin.  Download and install it before proceeding.
 
 ### Source files
 
 Clone the jme3-utilities repository using Git:
+
  1. Open the Clone wizard in the IDE:
-   + Menu bar -> "Team" -> "Remote" -> "Clone..."
+     + Menu bar -> "Team" -> "Remote" -> "Clone..."
  2. For "Repository URL:" specify
     "https://github.com/stephengold/jme3-utilities.git" (without the quotes).
  3. Clear the "User:" and "Password:" text boxes.
@@ -122,6 +128,7 @@ Clone the jme3-utilities repository using Git:
 SkyControl is a reusable sky simulation for jMonkeyEngine games.
 
 Adding it to an existing JME3 project should be a simple 6-step process:
+
  1. Add jme3-utilities JARs to the classpath.
  2. Disable any existing sky which might interfere with SkyControl.
  3. Add a SkyControl instance to some node in the scene graph.
@@ -136,13 +143,15 @@ follow along in your development environment.
 ### BasicGame example
 
 You'll need:
+
  + A development system with the JME3 SDK installed.
  + A clean release of the jme3-utilities JARs, either downloaded from
    https://github.com/stephengold/jme3-utilities/releases or built yourself.
 
 Instantiate a BasicGame Project:
+
  1. Open the "New Project" wizard in the IDE:
-  + Menu bar -> "File" -> "New Project..."
+    + Menu bar -> "File" -> "New Project..."
  2. Under "Categories:" select "JME3".
  3. Under "Projects:" select "BasicGame".
  4. Click on the "Next >" button.
@@ -162,50 +171,51 @@ the source code) to see how it works before modifying it.
 In the following instructions, "0.0.0" indicates a version number.
 
 Open the project's properties in the IDE:
+
  1. Right-click on the BasicGame project (not its assets) in the "Projects"
     window.
  2. Select "Properties to open the "Project Properties" dialog.
  3. Under "Categories:" select "Libraries".
  4. Click on the "Compile" tab.
  5. Add the "jme3-utilities-heart" class JAR:
-  + Click on the "Add JAR/Folder" button.
-  + Navigate to the "jme3-utilities" project folder.
-  + Open the "heart" sub-project folder.
-  + Navigate to the "build/libs" folder.
-  + Select the "jme3-utilities-heart-0.0.0.jar" file.
-  + Click on the "Open" button.
+    + Click on the "Add JAR/Folder" button.
+    + Navigate to the "jme3-utilities" project folder.
+    + Open the "heart" sub-project folder.
+    + Navigate to the "build/libs" folder.
+    + Select the "jme3-utilities-heart-0.0.0.jar" file.
+    + Click on the "Open" button.
  6. (optional) Add JARs for javadoc and sources:
-  + Click on the "Edit" button.
-  + Click on the "Browse..." button to the right of "Javadoc:"
-  + Select the "jme3-utilities-heart-0.0.0-javadoc.jar" file.
-  + Click on the "Open" button.
-  + Click on the "Browse..." button to the right of "Sources:"
-  + Select the "jme3-utilities-heart-0.0.0-sources.jar" file.
-  + Click on the "Open" button again.
-  + Click on the "OK" button to close the "Edit Jar Reference dialog.
+    + Click on the "Edit" button.
+    + Click on the "Browse..." button to the right of "Javadoc:"
+    + Select the "jme3-utilities-heart-0.0.0-javadoc.jar" file.
+    + Click on the "Open" button.
+    + Click on the "Browse..." button to the right of "Sources:"
+    + Select the "jme3-utilities-heart-0.0.0-sources.jar" file.
+    + Click on the "Open" button again.
+    + Click on the "OK" button to close the "Edit Jar Reference dialog.
  7. Add the "SkyControl" class JAR:
-  + Click on the "Add JAR/Folder" button.
-  + Navigate to the "jme3-utilities" project folder.
-  + Open the "SkyControl" sub-project folder.
-  + Navigate to the "build/libs" folder.
-  + Select the "SkyControl-0.0.0.jar" file.
-  + Click on the "Open" button.
+    + Click on the "Add JAR/Folder" button.
+    + Navigate to the "jme3-utilities" project folder.
+    + Open the "SkyControl" sub-project folder.
+    + Navigate to the "build/libs" folder.
+    + Select the "SkyControl-0.0.0.jar" file.
+    + Click on the "Open" button.
  8. (optional) Add JARs for javadoc and sources:
-  + Click on the "Edit" button.
-  + Click on the "Browse..." button to the right of "Javadoc:"
-  + Select the "SkyControl-0.0.0-javadoc.jar" file.
-  + Click on the "Open" button.
-  + Click on the "Browse..." button to the right of "Sources:"
-  + Select the "SkyControl-0.0.0-sources.jar" file.
-  + Click on the "Open" button again.
-  + Click on the "OK" button to close the "Edit Jar Reference dialog.
+    + Click on the "Edit" button.
+    + Click on the "Browse..." button to the right of "Javadoc:"
+    + Select the "SkyControl-0.0.0-javadoc.jar" file.
+    + Click on the "Open" button.
+    + Click on the "Browse..." button to the right of "Sources:"
+    + Select the "SkyControl-0.0.0-sources.jar" file.
+    + Click on the "Open" button again.
+    + Click on the "OK" button to close the "Edit Jar Reference dialog.
  9. (optional) Add the "moon-ccbysa" class JAR:
-  + Click on the "Add JAR/Folder" button.
-  + Navigate to the "jme3-utilities" project folder.
-  + Open the "moon-cc-by-sa" sub-project folder.
-  + Navigate to the "build/libs" folder.
-  + Select the "moon-ccbysa-0.0.0.jar" file.
-  + Click on the "Open" button.
+    + Click on the "Add JAR/Folder" button.
+    + Navigate to the "jme3-utilities" project folder.
+    + Open the "moon-cc-by-sa" sub-project folder.
+    + Navigate to the "build/libs" folder.
+    + Select the "moon-ccbysa-0.0.0.jar" file.
+    + Click on the "Open" button.
 10. Click on the "OK" button to exit the "Project Properties" dialog.
 
 #### Disable existing sky
@@ -219,11 +229,11 @@ The scene graph of BasicGame has only one node, the root node. The root node is
 typically a good place to add SkyControl.
 
  1. Open the "Main.java" source file in the IDE:
-   + In the "Projects" window, expand the BasicGame project node.
-   + Expand the "Source Packages" node under the BasicGame project.
-   + Expand the "mygame" package under "Source Packages".
-   + Select "Main.java" file under the "mygame" package.
-   + Double-click to open the file.
+    + In the "Projects" window, expand the BasicGame project node.
+    + Expand the "Source Packages" node under the BasicGame project.
+    + Expand the "mygame" package under "Source Packages".
+    + Select "Main.java" file under the "mygame" package.
+    + Double-click to open the file.
 
  2. In the import section of "Main.java", add the following code:
 
@@ -439,6 +449,7 @@ can be used, you may wish to study "TestSkyControl.java" in the
 on the "tests" sub-project and select "Tasks" -> "run" -> "runTestSkyControl".
 
 External links:
+
   + November 2013 SkyControl demo video:
     https://www.youtube.com/watch?v=FsJRM6tr3oQ
   + January 2014 SkyControl update video:
@@ -451,9 +462,8 @@ External links:
 ## Acknowledgments
 
 Like most projects, the Jme3-utilities Project builds on the work of many who
-have gone before.
+have gone before.  I therefore acknowledge the following software developers:
 
-I therefore acknowledge the following software developers:
 + Cris (aka "t0neg0d") for creating SkyDome (which provided both an inspiration
   and a starting point for SkyControl) and also for encouraging me to run with
   it ... thank you yet again!
@@ -462,49 +472,50 @@ I therefore acknowledge the following software developers:
   which are incorporated into the Wes library)
   and also for many helpful insights
 + the brave souls who volunteered to be alpha testers for SkyControl, including:
-  + Davis Rollman
-  + "Lockhead"
-  + Jonatan Dahl
-  + Mindaugas (aka "eraslt")
-  + Thomas Kluge
-  + "pixelapp"
-  + Roger (aka "stenb")
+    + Davis Rollman
+    + "Lockhead"
+    + Jonatan Dahl
+    + Mindaugas (aka "eraslt")
+    + Thomas Kluge
+    + "pixelapp"
+    + Roger (aka "stenb")
 + the beta testers for SkyControl, including:
-  + "madjack"
-  + Benjamin D.
-  + "Fissll"
-  + Davis Rollman
+    + "madjack"
+    + Benjamin D.
+    + "Fissll"
+    + Davis Rollman
 + users who found and reported bugs in later versions:
-  + Anton Starastsin (aka "Antonystar")
+    + Anton Starastsin (aka "Antonystar")
 + the creators of (and contributors to) the following software:
-  + Adobe Photoshop Elements
-  + the Ant and Gradle build tools
-  + the Blender 3D animation suite
-  + the FindBugs source-code analyzer
-  + Gimp, the GNU Image Manipulation Program
-  + the Git and Subversion revision-control systems
-  + the Google Chrome web browser
-  + Guava core libraries for Java
-  + the Java compiler, standard doclet, and runtime environment
-  + the JCommander Java framework
-  + jMonkeyEngine and the jME3 Software Development Kit
-  + LWJGL, the Lightweight Java Game Library
-  + the Markdown document conversion tool
-  + Microsoft Windows
-  + the NetBeans integrated development environment
-  + the Nifty graphical user interface library
-  + Open Broadcaster Software Studio
-  + the PMD source code analyzer
-  + the RealWorld Cursor Editor
-  + Alex Peterson's Spacescape tool
-  + the WinMerge differencing and merging tool
+    + Adobe Photoshop Elements
+    + the Ant and Gradle build tools
+    + the Blender 3D animation suite
+    + the FindBugs source-code analyzer
+    + Gimp, the GNU Image Manipulation Program
+    + the Git and Subversion revision-control systems
+    + the Google Chrome web browser
+    + Guava core libraries for Java
+    + the Java compiler, standard doclet, and runtime environment
+    + the JCommander Java framework
+    + jMonkeyEngine and the jME3 Software Development Kit
+    + LWJGL, the Lightweight Java Game Library
+    + the Markdown document conversion tool
+    + Microsoft Windows
+    + the NetBeans integrated development environment
+    + the Nifty graphical user interface library
+    + Open Broadcaster Software Studio
+    + the PMD source code analyzer
+    + the RealWorld Cursor Editor
+    + Alex Peterson's Spacescape tool
+    + the WinMerge differencing and merging tool
 
 Many of SkyControl's assets were based on the works of others who licensed their
 works under liberal terms or contributed them to the public domain.
 For this I thank:
-  + Cris (aka "t0neg0d")
-  + Jacques Descloitres, MODIS Rapid Response Team, NASA/GSFC
-  + Tom Ruen
+
++ Cris (aka "t0neg0d")
++ Jacques Descloitres, MODIS Rapid Response Team, NASA/GSFC
++ Tom Ruen
 
 I am grateful to JFrog, Google, and Github for providing free hosting for the
 Jme3-utilities Project and many other open-source projects.
