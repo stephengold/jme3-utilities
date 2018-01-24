@@ -794,9 +794,7 @@ public class SkyControlCore extends SubtreeControl {
     public void render(final RenderManager renderManager,
             final ViewPort viewPort) {
         super.render(renderManager, viewPort);
-        if (camera == null) {
-            camera = viewPort.getCamera();
-        }
+        camera = viewPort.getCamera();
     }
 
     /**
