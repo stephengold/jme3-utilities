@@ -1,6 +1,6 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.11 released on TBD
+## Version 0.9.11 released on 25 January 2018
 
 Notable changes:
  + base on heart library v2.0 to make this library physics-independent

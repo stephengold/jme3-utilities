@@ -1,6 +1,6 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.8.5 released on TBD
+## Version 0.8.5 released on 25 January 2018
 
  + Removed all Bullet dependencies.
  + Targeted JME 3.2.1 .

@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-x library and related tests
 
-## Version 0.2.3 released on TBD
+## Version 0.2.3 released on 25 January 2018
 
  + Removed all Bullet dependencies.
  + Targeted JME v3.2.1 .
