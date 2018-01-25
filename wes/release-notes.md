@@ -1,9 +1,13 @@
 # release notes for the Wes library and related tests
 
+## Version 0.3.2 released on TBD
+
+ + Base on heart library v2.0 to make this library physics-independent.
+
 ## Version 0.3.1 released on 22 January 2018
 
  + Add chain() and delayAll() methods to the TrackEdit class.
- + Target JME v3.2.1
+ + Target JME v3.2.1 .
 
 ## Version 0.3.0for32 released on 5 December 2017
 

@@ -1,20 +1,25 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.8.5 released on TBD
+
+ + Removed all Bullet dependencies.
+ + Targeted JME 3.2.1 .
+
 ## Version 0.8.4 released on 20 January 2018
 
  + Changed API of SkeletonVisualizer.
  + Bugfix: SkeletonVisualizer didn't apply custom colors to bone heads.
- + Describe color/intensity of lights.
+ + Described color/intensity of lights.
 
 ## Version 0.8.3 released on 2 January 2018
 
- + Add the capability to set the number of arrows in an AxesVisualizer.
+ + Added the capability to set the number of arrows in an AxesVisualizer.
  + When dumping spatials, describe their materials.
 
 ## Version 0.8.2for32 released on 5 December 2017
 
  + 1st release to target JME 3.2
- + Describe cone collision shapes
+ + Described cone collision shapes
 
 ## Version 0.8.1 released on 21 November 2017
 

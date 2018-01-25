@@ -1,10 +1,14 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.6.1 released on TBD
+
+ + Based on heart library v2.0 to make this library physics-independent.
+
 ## Version 0.6.0for32 released on 5 December 2017
 
  + 1st release to target JME 3.2
- + Replace PropertiesKey with UncachedKey.
- + Simplify InputMode by removing the unused "stream" variable.
+ + Replaced PropertiesKey with UncachedKey.
+ + Simplified InputMode by removing the unused "stream" variable.
 
 ## Version 0.5.9 released on 13 September 2017
 

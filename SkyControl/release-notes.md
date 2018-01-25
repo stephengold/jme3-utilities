@@ -1,9 +1,14 @@
 # release notes for the SkyControl library and related tests
 
+## Version 0.9.11 released on TBD
+
+Notable changes:
+ + base on heart library v2.0 to make this library physics-independent
+
 ## Version 0.9.10 released on 23 January 2018
 
 Notable changes:
- + Update SkyControl and FloorControl cameras from the RenderManager
+ + update SkyControl and FloorControl cameras from the RenderManager
 
 ## Version 0.9.9 released on 22 January 2018
 
