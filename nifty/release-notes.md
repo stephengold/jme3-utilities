@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.7.3 released on TBD
+## Version 0.7.3 released on 25 January 2018
 
  + Bypass the jme3-niftygui library to avoid its dependency on
    nifty-style-black.
