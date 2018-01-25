@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -296,7 +296,8 @@ public class PoseDemo extends GuiApplication {
                 shadowMapSplits);
         dlsf.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
         dlsf.setLight(mainLight);
-        Misc.getFpp(viewPort, assetManager).addFilter(dlsf);
+        int numSamples = settings.getSamples();
+        Misc.getFpp(viewPort, assetManager, numSamples).addFilter(dlsf);
         /*
          * Create a daytime sky.
          */

@@ -362,7 +362,8 @@ public class GlobeRenderer extends SimpleAppState {
         /*
          * Apply a contrast correction filter to the render.
          */
-        FilterPostProcessor fpp = Misc.getFpp(offscreenViewPort, assetManager);
+        FilterPostProcessor fpp
+                = Misc.getFpp(offscreenViewPort, assetManager, 1);
         fpp.setFrameBufferFormat(outputFormat);
         filter = new ContrastAdjustmentFilter(initialExponent);
         fpp.addFilter(filter);

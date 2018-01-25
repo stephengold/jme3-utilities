@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -75,6 +75,10 @@ public class TestSkyControl extends GuiApplication {
      */
     static BindScreen bindScreen = new BindScreen();
     /**
+     * anti-aliasing factor in effect (samples per pixel, &ge;0, &le;16)
+     */
+    static int numSamples = 0;
+    /**
      * heads-up display (HUD)
      */
     static TestSkyControlHud hud = new TestSkyControlHud();
@@ -146,6 +150,7 @@ public class TestSkyControl extends GuiApplication {
      */
     @Override
     public void guiInitializeApplication() {
+        numSamples = settings.getSamples();
         /*
          * Log library versions.
          */

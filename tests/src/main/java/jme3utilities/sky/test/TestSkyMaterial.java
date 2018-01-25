@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -270,7 +270,9 @@ public class TestSkyMaterial extends GuiApplication {
          * Create and apply a bloom filter to the viewport.
          */
         BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
-        FilterPostProcessor fpp = Misc.getFpp(viewPort, assetManager);
+        int numSamples = settings.getSamples();
+        FilterPostProcessor fpp
+                = Misc.getFpp(viewPort, assetManager, numSamples);
         fpp.addFilter(bloom);
 
         initializeUserInterface(material, bloom);

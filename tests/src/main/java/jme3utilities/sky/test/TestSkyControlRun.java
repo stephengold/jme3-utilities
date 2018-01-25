@@ -536,7 +536,8 @@ public class TestSkyControlRun
         bloom.setBloomIntensity(1.7f);
         bloom.setBlurScale(2.5f);
         bloom.setExposurePower(1f);
-        Misc.getFpp(viewPort, assetManager).addFilter(bloom);
+        int numSamples = TestSkyControl.numSamples;
+        Misc.getFpp(viewPort, assetManager, numSamples).addFilter(bloom);
         skyControl.getUpdater().addBloomFilter(bloom);
     }
 
@@ -550,18 +551,19 @@ public class TestSkyControlRun
 
         Updater updater = skyControl.getUpdater();
         if (parameters.shadowFilter()) {
-            DirectionalLightShadowFilter dlsf;
-            dlsf = new DirectionalLightShadowFilter(assetManager,
-                    shadowMapSize, shadowMapSplits);
+            DirectionalLightShadowFilter dlsf
+                    = new DirectionalLightShadowFilter(assetManager,
+                            shadowMapSize, shadowMapSplits);
             dlsf.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
             dlsf.setLight(mainLight);
-            Misc.getFpp(viewPort, assetManager).addFilter(dlsf);
+            int numSamples = TestSkyControl.numSamples;
+            Misc.getFpp(viewPort, assetManager, numSamples).addFilter(dlsf);
             updater.addShadowFilter(dlsf);
 
         } else {
-            DirectionalLightShadowRenderer dlsr;
-            dlsr = new DirectionalLightShadowRenderer(assetManager,
-                    shadowMapSize, shadowMapSplits);
+            DirectionalLightShadowRenderer dlsr
+                    = new DirectionalLightShadowRenderer(assetManager,
+                            shadowMapSize, shadowMapSplits);
             dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
             dlsr.setLight(mainLight);
             updater.addShadowRenderer(dlsr);

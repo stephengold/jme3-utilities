@@ -158,7 +158,10 @@ public class Misc {
      * @param viewPort which view port (not null)
      * @param assetManager (not null)
      * @return not null
+     * @deprecated use
+     * {@link #getFpp(com.jme3.renderer.ViewPort, com.jme3.asset.AssetManager, int)}
      */
+    @Deprecated
     public static FilterPostProcessor getFpp(ViewPort viewPort,
             AssetManager assetManager) {
         Validate.nonNull(viewPort, "viewport");
