@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.7.3 released on TBD
+
+ + Bypass the jme3-niftygui library to avoid its dependency on
+   nifty-style-black.
+ + Base on heart library v2.0 to avoid its dependency on jme3-bullet.
+
 ## Version 0.7.7 released on 10 January 2018
 
 Add disableCheckBox() methods to the GuiScreenController and
