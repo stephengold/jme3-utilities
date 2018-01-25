@@ -1,9 +1,8 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.0.0 released on TBD
+## Version 2.0.0 released on 24 January 2018
 
- + Move all Bullet dependencies out of the debug/heart/x libraries and into the
-   new Minnie library.
+ + Move all Bullet dependencies out of the heart library.
  + Move all jme3-effects dependencies out of the heart library.
  + Deprecate the old Misc.getFpp() method.
 
