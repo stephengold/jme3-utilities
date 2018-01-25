@@ -59,7 +59,6 @@ import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.ViewPortListener;
-import jme3utilities.WaterProcessor;
 import jme3utilities.debug.Dumper;
 import jme3utilities.debug.LandscapeControl;
 import jme3utilities.math.MyMath;
@@ -71,6 +70,7 @@ import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
 import jme3utilities.sky.SunAndStars;
 import jme3utilities.sky.Updater;
+import jme3utilities.sky.WaterProcessor;
 import jme3utilities.ui.ActionAppState;
 import jme3utilities.ui.ActionApplication;
 

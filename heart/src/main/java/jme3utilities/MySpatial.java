@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -28,9 +28,6 @@ package jme3utilities;
 
 import com.jme3.app.StatsView;
 import com.jme3.audio.AudioNode;
-import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.control.PhysicsControl;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.font.BitmapText;
 import com.jme3.light.Light;
@@ -53,7 +50,6 @@ import com.jme3.scene.control.Control;
 import com.jme3.scene.debug.SkeletonDebugger;
 import com.jme3.scene.instancing.InstancedGeometry;
 import com.jme3.scene.instancing.InstancedNode;
-import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.ui.Picture;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -299,65 +295,12 @@ public class MySpatial {
             return 's';
         } else if (spatial instanceof StatsView) {
             return 'S';
-        } else if (spatial instanceof TerrainQuad) {
-            return 'q';
         } else if (spatial instanceof Geometry) {
             return 'g';
         } else if (spatial instanceof Node) {
             return 'n';
         }
         return '?';
-    }
-
-    /**
-     * Disable all physics controls added to the specified subtree of the scene
-     * graph. Disabling these controls removes any collision objects they may
-     * have added to physics space. Note: recursive!
-     *
-     * @param subtree (not null)
-     */
-    public static void disablePhysicsControls(Spatial subtree) {
-        int numControls = subtree.getNumControls();
-        for (int controlI = 0; controlI < numControls; controlI++) {
-            Control control = subtree.getControl(controlI);
-            if (control instanceof PhysicsControl) {
-                MyControl.setEnabled(control, false);
-            }
-        }
-        if (subtree instanceof Node) {
-            Node node = (Node) subtree;
-            List<Spatial> children = node.getChildren();
-            for (Spatial child : children) {
-                disablePhysicsControls(child);
-            }
-        }
-    }
-
-    /**
-     * Enable all physics controls added to the specified subtree of the scene
-     * graph and configure their physics spaces. Note: recursive!
-     *
-     * @param subtree (not null)
-     * @param space physics space to use, or null for none
-     */
-    public static void enablePhysicsControls(Spatial subtree,
-            PhysicsSpace space) {
-        int numControls = subtree.getNumControls();
-        for (int controlI = 0; controlI < numControls; controlI++) {
-            Control control = subtree.getControl(controlI);
-            if (control instanceof PhysicsControl) {
-                PhysicsControl pc = (PhysicsControl) control;
-                pc.setPhysicsSpace(space);
-                pc.setEnabled(true);
-            }
-        }
-        if (subtree instanceof Node) {
-            Node node = (Node) subtree;
-            List<Spatial> children = node.getChildren();
-            for (Spatial child : children) {
-                enablePhysicsControls(child, space);
-            }
-        }
     }
 
     /**
@@ -463,29 +406,6 @@ public class MySpatial {
                     if (result != null) {
                         break;
                     }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * Access the 1st enabled RigidBodyControl of a spatial.
-     *
-     * @param spatial spatial to search (not null, unaffected)
-     * @return the pre-existing control, or null if none found
-     */
-    public static RigidBodyControl findEnabledRbc(Spatial spatial) {
-        RigidBodyControl result = null;
-        int numControls = spatial.getNumControls();
-        for (int controlI = 0; controlI < numControls; controlI++) {
-            Control control = spatial.getControl(controlI);
-            if (control instanceof RigidBodyControl) {
-                RigidBodyControl rbc = (RigidBodyControl) control;
-                if (rbc.isEnabled()) {
-                    result = rbc;
-                    break;
                 }
             }
         }
@@ -611,22 +531,6 @@ public class MySpatial {
     }
 
     /**
-     * Read an object's mass.
-     *
-     * @param spatial object to measure (not null, unaffected)
-     * @return mass (&gt;0) or zero for a static object
-     */
-    public static float getMass(Spatial spatial) {
-        Validate.nonNull(spatial, "spatial");
-
-        RigidBodyControl rigidBodyControl = findEnabledRbc(spatial);
-        float mass = rigidBodyControl.getMass();
-
-        assert mass >= 0f : mass;
-        return mass;
-    }
-
-    /**
      * Calculate the world scale factor of a uniformly scaled spatial.
      *
      * @param spatial spatial to measure (not null, unaffected)
@@ -662,10 +566,7 @@ public class MySpatial {
          * Access the rigid body, if any.
          */
         Vector3f location;
-        RigidBodyControl rigidBodyControl = findEnabledRbc(spatial);
-        if (rigidBodyControl != null) {
-            location = rigidBodyControl.getPhysicsLocation().clone();
-        } else if (isIgnoringTransforms(spatial)) {
+        if (isIgnoringTransforms(spatial)) {
             location = new Vector3f();
         } else {
             location = spatial.getWorldTranslation().clone();
@@ -686,10 +587,7 @@ public class MySpatial {
          * Access the rigid body, if any.
          */
         Quaternion orientation;
-        RigidBodyControl rigidBodyControl = findEnabledRbc(spatial);
-        if (rigidBodyControl != null) {
-            orientation = rigidBodyControl.getPhysicsRotation().clone();
-        } else if (isIgnoringTransforms(spatial)) {
+        if (isIgnoringTransforms(spatial)) {
             orientation = new Quaternion();
         } else {
             orientation = spatial.getWorldRotation().clone();
@@ -785,19 +683,6 @@ public class MySpatial {
     public static boolean isOrphan(Spatial spatial) {
         Node parent = spatial.getParent();
         return parent == null;
-    }
-
-    /**
-     * Test whether a spatial is physics-controlled.
-     *
-     * @param spatial spatial to test (not null, unaffected)
-     * @return true if the spatial is controlled by physics, otherwise false
-     */
-    public static boolean isPhysical(Spatial spatial) {
-        Object rigidBodyControl = spatial.getControl(RigidBodyControl.class);
-        boolean result = rigidBodyControl != null;
-
-        return result;
     }
 
     /**
@@ -914,29 +799,6 @@ public class MySpatial {
     }
 
     /**
-     * Remove all non-physics controls from the specified subtree of the scene
-     * graph. Note: recursive!
-     *
-     * @param subtree (not null)
-     */
-    public static void removeNonPhysicsControls(Spatial subtree) {
-        int numControls = subtree.getNumControls();
-        for (int controlI = numControls - 1; controlI >= 0; controlI--) {
-            Control control = subtree.getControl(controlI);
-            if (!(control instanceof PhysicsControl)) {
-                subtree.removeControl(control);
-            }
-        }
-        if (subtree instanceof Node) {
-            Node node = (Node) subtree;
-            List<Spatial> children = node.getChildren();
-            for (Spatial child : children) {
-                removeNonPhysicsControls(child);
-            }
-        }
-    }
-
-    /**
      * Alter the world location of a spatial's center.
      *
      * @param spatial spatial to relocate (not null)
@@ -957,13 +819,6 @@ public class MySpatial {
         } else {
             Vector3f translation = parent.worldToLocal(worldLocation, null);
             spatial.setLocalTranslation(translation);
-        }
-        /*
-         * Apply to the physics object, if any.
-         */
-        RigidBodyControl rigidBodyControl = findEnabledRbc(spatial);
-        if (rigidBodyControl != null) {
-            rigidBodyControl.setPhysicsLocation(worldLocation.clone());
         }
     }
 
@@ -989,13 +844,6 @@ public class MySpatial {
             Quaternion rotation = inverseOrientation(parent);
             rotation.multLocal(worldOrientation);
             spatial.setLocalRotation(rotation);
-        }
-        /*
-         * Apply to the physics object, if any.
-         */
-        RigidBodyControl rigidBodyControl = findEnabledRbc(spatial);
-        if (rigidBodyControl != null) {
-            rigidBodyControl.setPhysicsRotation(worldOrientation.clone());
         }
     }
 

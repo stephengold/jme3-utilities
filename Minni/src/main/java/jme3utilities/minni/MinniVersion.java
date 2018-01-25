@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -24,28 +24,41 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.physics;
+package jme3utilities.minni;
 
-import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.math.Vector3f;
-import com.jme3.scene.Spatial;
+import java.util.logging.Logger;
 
 /**
- * Callback interface for notifying physics controls when they physically
- * overlap with an unrelated PhysicsRigidBody.
+ * Version strings for the Minni library.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public interface OverlapListener {
+public class MinniVersion {
+    // *************************************************************************
+    // constants and loggers
+
     /**
-     * Callback to handle an overlapping rigid body.
-     *
-     * @param overlappingBody rigid body (not null)
-     * @param overlappingSpatial spatial of the rigid body (not null)
-     * @param localPoint location of the overlap in the collision shape (rotated
-     * and translated to the this control's spatial, but at world scale, not
-     * null)
+     * message logger for this class
      */
-    void onOverlap(PhysicsRigidBody overlappingBody, Spatial overlappingSpatial,
-            Vector3f localPoint);
+    final private static Logger logger
+            = Logger.getLogger(MinniVersion.class.getName());
+    // *************************************************************************
+    // constructors
+
+    /**
+     * A private constructor to inhibit instantiation of this class.
+     */
+    private MinniVersion() {
+    }
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Read the terse version string for this library.
+     *
+     * @return branch and revision (not null, not empty)
+     */
+    public static String getVersionShort() {
+        return "master 0.1.0";
+    }
 }

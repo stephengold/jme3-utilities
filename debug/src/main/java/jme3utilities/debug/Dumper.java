@@ -26,13 +26,6 @@
  */
 package jme3utilities.debug;
 
-import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.joints.PhysicsJoint;
-import com.jme3.bullet.objects.PhysicsCharacter;
-import com.jme3.bullet.objects.PhysicsGhostObject;
-import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.bullet.objects.PhysicsVehicle;
 import com.jme3.light.Light;
 import com.jme3.light.LightList;
 import com.jme3.material.Material;
@@ -107,7 +100,7 @@ public class Dumper {
     /**
      * stream to use for output: set by constructor
      */
-    final private PrintStream stream;
+    final protected PrintStream stream;
     /**
      * indentation for each level of a dump
      */
@@ -159,142 +152,6 @@ public class Dumper {
         for (Spatial scene : sceneList) {
             dump(scene, indent + indentIncrement);
         }
-    }
-
-    /**
-     * Dump the specified physics character.
-     *
-     * @param character the character to dump (not null)
-     */
-    public void dump(PhysicsCharacter character) {
-        long objectId = character.getObjectId();
-        stream.printf("  character #%s ", Long.toHexString(objectId));
-
-        Vector3f location = character.getPhysicsLocation();
-        stream.printf("loc=[%.3f, %.3f, %.3f]",
-                location.x, location.y, location.z);
-
-        stream.println();
-
-    }
-
-    /**
-     * Dump the specified ghost object.
-     *
-     * @param ghost the ghost object to dump (not null)
-     */
-    public void dump(PhysicsGhostObject ghost) {
-        long objectId = ghost.getObjectId();
-        stream.printf("  ghost #%s ", Long.toHexString(objectId));
-
-        Vector3f location = ghost.getPhysicsLocation();
-        stream.printf("loc=[%.3f, %.3f, %.3f]",
-                location.x, location.y, location.z);
-
-        stream.println();
-    }
-
-    /**
-     * Dump the specified joint.
-     *
-     * @param joint the joint to dump (not null)
-     */
-    public void dump(PhysicsJoint joint) {
-        long objectId = joint.getObjectId();
-        long aId = joint.getBodyA().getObjectId();
-        long bId = joint.getBodyB().getObjectId();
-        stream.printf("  joint #%s a=%s,b=%s", Long.toHexString(objectId),
-                Long.toHexString(aId), Long.toHexString(bId));
-
-        stream.println();
-    }
-
-    /**
-     * Dump the specified rigid body.
-     *
-     * @param body the rigid body to dump (not null)
-     */
-    public void dump(PhysicsRigidBody body) {
-        long objectId = body.getObjectId();
-        float mass = body.getMass();
-        stream.printf("  rigid body #%s mass=%f",
-                Long.toHexString(objectId), mass);
-
-        Vector3f location = body.getPhysicsLocation();
-        stream.printf(" loc=[%.3f, %.3f, %.3f]",
-                location.x, location.y, location.z);
-
-        CollisionShape shape = body.getCollisionShape();
-        String desc = describer.describe(shape);
-        stream.printf(" shape=%s", desc);
-
-        Vector3f scale = shape.getScale();
-        if (scale.x != 1f || scale.y != 1f || scale.z != 1f) {
-            stream.printf(" sca=[%.3f, %.3f, %.3f]", scale.x, scale.y, scale.z);
-        }
-
-        stream.println();
-    }
-
-    /**
-     * Dump the specified physics space.
-     *
-     * @param space the physics space to dump (not null)
-     */
-    public void dump(PhysicsSpace space) {
-        Collection<PhysicsCharacter> characters = space.getCharacterList();
-        Collection<PhysicsGhostObject> ghosts = space.getGhostObjectList();
-        Collection<PhysicsJoint> joints = space.getJointList();
-        Collection<PhysicsRigidBody> rigidBodies = space.getRigidBodyList();
-        Collection<PhysicsVehicle> vehicles = space.getVehicleList();
-
-        int numCharacters = characters.size();
-        int numGhosts = ghosts.size();
-        int numJoints = joints.size();
-        int numBodies = rigidBodies.size();
-        int numVehicles = vehicles.size();
-
-        stream.printf("%nphysics space with %d character%s, %d ghost%s, ",
-                numCharacters, (numCharacters == 1) ? "" : "s",
-                numGhosts, (numGhosts == 1) ? "" : "s");
-        stream.printf("%d joint%s, %d rigid bod%s, and %d vehicle%s%n",
-                numJoints, (numJoints == 1) ? "" : "s",
-                numBodies, (numBodies == 1) ? "y" : "ies",
-                numJoints, (numVehicles == 1) ? "" : "s");
-
-        for (PhysicsCharacter character : characters) {
-            dump(character);
-        }
-        for (PhysicsGhostObject ghost : ghosts) {
-            dump(ghost);
-        }
-        for (PhysicsJoint joint : joints) {
-            dump(joint);
-        }
-        for (PhysicsRigidBody rigid : rigidBodies) {
-            dump(rigid);
-        }
-        for (PhysicsVehicle vehicle : vehicles) {
-            dump(vehicle);
-        }
-    }
-
-    /**
-     * Dump the specified vehicle.
-     *
-     * @param vehicle the vehicle to dump (not null)
-     */
-    public void dump(PhysicsVehicle vehicle) {
-        long objectId = vehicle.getObjectId();
-        float mass = vehicle.getMass();
-        stream.printf("  vehicle #%s mass=%f", Long.toHexString(objectId),
-                mass);
-
-        Vector3f location = vehicle.getPhysicsLocation();
-        stream.printf(" loc=[%.3f, %.3f, %.3f]",
-                location.x, location.y, location.z);
-
-        stream.println();
     }
 
     /**
@@ -641,6 +498,16 @@ public class Dumper {
             }
             stream.printf(" %s=%s", key, valueString);
         }
+    }
+
+    /**
+     * Access the describer used by this dumper.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    public Describer getDescriber() {
+        assert describer != null;
+        return describer;
     }
 
     /**

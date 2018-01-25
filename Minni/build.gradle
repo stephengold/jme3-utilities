@@ -2,10 +2,10 @@
 //   for this project. This initialization is applied in the "build.gradle"
 //   of the root project.
 
-description = 'core utilities library for jMonkeyEngine'
+description = 'the Minni physics support library for jMonkeyEngine'
 ext {
-    artifact = 'jme3-utilities-heart'
-    version = jme3utilitiesheartVersion
+    artifact = 'Minni'
+    version = minniVersion
     baseName = "$artifact-$version"
 }
 
@@ -15,7 +15,10 @@ javadocJar { baseName project.ext.baseName }
 sourcesJar { baseName project.ext.baseName }
 
 dependencies {
-    compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
+    compile "org.jmonkeyengine:jme3-bullet:$jmonkeyengineVersion"
+
+    //compile "jme3utilities:jme3-utilities-debug:$jme3utilitiesdebugVersion"
+    compile project(':debug')
 }
 
 task pom {

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -24,8 +24,29 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package jme3utilities.minni;
+
+import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.Spatial;
+
 /**
- * Reusable classes and interfaces connected with physics simulation, for use
- * with jMonkeyEngine3.
+ * Callback interface for notifying physics controls when they physically
+ * overlap with an unrelated PhysicsRigidBody.
+ *
+ * @author Stephen Gold sgold@sonic.net
  */
-package jme3utilities.physics;
+public interface OverlapListener {
+
+    /**
+     * Callback to handle an overlapping rigid body.
+     *
+     * @param overlappingBody rigid body (not null)
+     * @param overlappingSpatial spatial of the rigid body (not null)
+     * @param localPoint location of the overlap in the collision shape (rotated
+     * and translated to the this control's spatial, but at world scale, not
+     * null)
+     */
+    void onOverlap(PhysicsRigidBody overlappingBody, Spatial overlappingSpatial,
+            Vector3f localPoint);
+}

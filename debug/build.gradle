@@ -15,6 +15,9 @@ javadocJar { baseName project.ext.baseName }
 sourcesJar { baseName project.ext.baseName }
 
 dependencies {
+    compile "org.jmonkeyengine:jme3-effects:$jmonkeyengineVersion"
+    compile "org.jmonkeyengine:jme3-terrain:$jmonkeyengineVersion"
+
     //compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
     compile project(':heart')
 }

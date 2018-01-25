@@ -27,13 +27,6 @@
 package jme3utilities.debug;
 
 import com.jme3.app.state.ScreenshotAppState;
-import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
-import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
-import com.jme3.bullet.collision.shapes.ConeCollisionShape;
-import com.jme3.bullet.collision.shapes.CylinderCollisionShape;
-import com.jme3.bullet.collision.shapes.SphereCollisionShape;
-import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.light.Light;
@@ -45,8 +38,6 @@ import com.jme3.material.Material;
 import com.jme3.material.MaterialDef;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Quaternion;
-import com.jme3.math.Vector3f;
 import com.jme3.post.Filter;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.SceneProcessor;
@@ -63,6 +54,7 @@ import com.jme3.shadow.PointLightShadowFilter;
 import com.jme3.shadow.PointLightShadowRenderer;
 import com.jme3.shadow.SpotLightShadowFilter;
 import com.jme3.shadow.SpotLightShadowRenderer;
+import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.water.ReflectionProcessor;
 import com.jme3.water.SimpleWaterProcessor;
 import com.jme3.water.SimpleWaterProcessor.RefractionProcessor;
@@ -75,7 +67,6 @@ import jme3utilities.MyControl;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
-import jme3utilities.math.MyQuaternion;
 import jme3utilities.math.MyVector3f;
 
 /**
@@ -98,59 +89,6 @@ public class Describer {
     private String listSeparator = ",";
     // *************************************************************************
     // new methods exposed
-
-    /**
-     * Generate a textual description of a collision shape.
-     *
-     * @param shape (not null, unaffected)
-     * @return description (not null)
-     */
-    public String describe(CollisionShape shape) {
-        Validate.nonNull(shape, "shape");
-
-        String name = shape.getClass().getSimpleName();
-        if (name.endsWith("CollisionShape")) {
-            name = MyString.removeSuffix(name, "CollisionShape");
-        }
-
-        String result = name;
-        if (shape instanceof CapsuleCollisionShape) {
-            CapsuleCollisionShape capsule = (CapsuleCollisionShape) shape;
-            int axis = capsule.getAxis();
-            result += describeAxis(axis);
-            float height = capsule.getHeight();
-            float radius = capsule.getRadius();
-            result += String.format("[h=%f,r=%f]", height, radius);
-
-        } else if (shape instanceof ConeCollisionShape) {
-            ConeCollisionShape cone = (ConeCollisionShape) shape;
-            //int axis = cone.getAxis(); TODO
-            //result += describeAxis(axis);
-            float height = cone.getHeight();
-            float radius = cone.getRadius();
-            result += String.format("[h=%f,r=%f]", height, radius);
-
-        } else if (shape instanceof CompoundCollisionShape) {
-            CompoundCollisionShape compound = (CompoundCollisionShape) shape;
-            String desc = describeChildShapes(compound);
-            result += String.format("[%s]", desc);
-
-        } else if (shape instanceof CylinderCollisionShape) {
-            CylinderCollisionShape cylinder = (CylinderCollisionShape) shape;
-            int axis = cylinder.getAxis();
-            result += describeAxis(axis);
-            Vector3f halfExtents = cylinder.getHalfExtents();
-            result += String.format("[hx=%f,hy=%f,hz=%f]",
-                    halfExtents.x, halfExtents.y, halfExtents.z);
-
-        } else if (shape instanceof SphereCollisionShape) {
-            SphereCollisionShape sphere = (SphereCollisionShape) shape;
-            float radius = sphere.getRadius();
-            result += String.format("[r=%f]", radius);
-        }
-
-        return result;
-    }
 
     /**
      * Generate a textual description of a material.
@@ -233,44 +171,6 @@ public class Describer {
         }
 
         return result;
-    }
-
-    /**
-     * Generate a textual description of a compound shape's children.
-     *
-     * @param compound shape being described (not null)
-     * @return description (not null)
-     */
-    public String describeChildShapes(CompoundCollisionShape compound) {
-        StringBuilder result = new StringBuilder(20);
-        boolean addSeparators = false;
-        List<ChildCollisionShape> children = compound.getChildren();
-        int count = children.size();
-        for (int i = 0; i < count; i++) {
-            ChildCollisionShape child = children.get(i);
-            if (addSeparators) {
-                result.append("  ");
-            } else {
-                addSeparators = true;
-            }
-            String desc = describe(child.shape);
-            result.append(desc);
-
-            Vector3f location = child.location;
-            desc = String.format("@[%.3f, %.3f, %.3f]",
-                    location.x, location.y, location.z);
-            result.append(desc);
-
-            Quaternion rotation = new Quaternion();
-            rotation.fromRotationMatrix(child.rotation);
-            if (!MyQuaternion.isRotationIdentity(rotation)) {
-                result.append("rot");
-                desc = rotation.toString();
-                result.append(desc);
-            }
-        }
-
-        return result.toString();
     }
 
     /**
@@ -557,7 +457,13 @@ public class Describer {
      * @return mnemonic character
      */
     protected char describeType(Spatial spatial) {
-        char result = MySpatial.describeType(spatial);
+        char result;
+        if (spatial instanceof TerrainQuad) {
+            result = 'q';
+        } else {
+            result = MySpatial.describeType(spatial);
+        }
+
         return result;
     }
 
@@ -567,7 +473,7 @@ public class Describer {
      * @param control control to test (not null)
      * @return true if the control is enabled, otherwise false
      */
-    protected static boolean isControlEnabled(Control control) {
+    protected boolean isControlEnabled(Control control) {
         Validate.nonNull(control, "control");
 
         boolean result = MyControl.isEnabled(control);

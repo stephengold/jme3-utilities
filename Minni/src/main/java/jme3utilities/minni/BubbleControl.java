@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.physics;
+package jme3utilities.minni;
 
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
@@ -35,7 +35,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.MyControl;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 
@@ -152,7 +151,7 @@ public class BubbleControl
      */
     protected void enableSuccessor(Control successor) {
         Validate.nonNull(successor, "successor control");
-        MyControl.setEnabled(successor, true);
+        MyControlP.setEnabled(successor, true);
     }
 
     /**
