@@ -24,7 +24,41 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package jme3utilities.minie;
+
+import java.util.logging.Logger;
+
 /**
- * Bullet physics support for jMonkeyEngine3.
+ * Version strings for the Minie library.
+ *
+ * @author Stephen Gold sgold@sonic.net
  */
-package jme3utilities.minni;
+public class MinieVersion {
+    // *************************************************************************
+    // constants and loggers
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(MinieVersion.class.getName());
+    // *************************************************************************
+    // constructors
+
+    /**
+     * A private constructor to inhibit instantiation of this class.
+     */
+    private MinieVersion() {
+    }
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Read the terse version string for this library.
+     *
+     * @return branch and revision (not null, not empty)
+     */
+    public static String getVersionShort() {
+        return "master 0.1.1";
+    }
+}

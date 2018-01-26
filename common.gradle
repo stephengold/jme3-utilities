@@ -24,7 +24,7 @@ ext {
     jme3utilitieswesVersion = '0.3.2' // TODO wesVersion
     jme3utilitiesxVersion = '0.2.3'
     jmonkeyengineVersion = '3.2.1-stable'
-    minniVersion = '0.1.0'
+    minieVersion = '0.1.1'
     skycontrolVersion = '0.9.11'
 }
 

@@ -1,6 +1,6 @@
-# release notes for the Minni library and related tests
+# release notes for the Minie library and related tests
 
-## Version 0.1.0 released on 25 January 2018
+## Version 0.1.1 released on TBD
 
 This was the initial baseline release, based largely on code formerly
 included in the jme3-utilities-heart, jme3-utilities-debug, and

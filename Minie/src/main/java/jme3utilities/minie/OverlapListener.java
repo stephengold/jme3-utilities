@@ -24,7 +24,7 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.minni;
+package jme3utilities.minie;
 
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Vector3f;
@@ -37,7 +37,6 @@ import com.jme3.scene.Spatial;
  * @author Stephen Gold sgold@sonic.net
  */
 public interface OverlapListener {
-
     /**
      * Callback to handle an overlapping rigid body.
      *
