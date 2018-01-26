@@ -5,7 +5,7 @@
 description = 'the Wes animation editing/retargeting library for jMonkeyEngine'
 ext {
     artifact = 'Wes'
-    version = jme3utilitieswesVersion
+    version = wesVersion
     baseName = "$artifact-$version"
 }
 

@@ -21,11 +21,11 @@ ext {
     jme3utilitiesheartVersion = '2.0.0'
     jme3utilitiesniftyVersion = '0.7.8'
     jme3utilitiesuiVersion = '0.6.1'
-    jme3utilitieswesVersion = '0.3.2' // TODO wesVersion
     jme3utilitiesxVersion = '0.2.3'
     jmonkeyengineVersion = '3.2.1-stable'
     minieVersion = '0.1.2'
     skycontrolVersion = '0.9.11'
+    wesVersion = '0.3.2'
 }
 
 repositories {
