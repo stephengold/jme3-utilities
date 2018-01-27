@@ -1,14 +1,17 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+ + Added vertexBoneIndices(), vertexBoneWeights(), vertexColor(), vertexSize(),
+   vertexVector2f(), and vertexVector4f methods to MyMesh class
+
 ## Version 2.0.0 released on 24 January 2018
 
- + Move all Bullet dependencies out of the heart library.
- + Move all jme3-effects dependencies out of the heart library.
- + Deprecate the old Misc.getFpp() method.
+ + Moved all Bullet dependencies out of the heart library
+ + Moved all jme3-effects dependencies out of the heart library
+ + Deprecated the old Misc.getFpp() method
 
 ## Version 1.1.1 released on 22 January 2018
 
- + Added MyCamera.isFullWidth() method.
+ + Added MyCamera.isFullWidth() method
  + Target JME v3.2.1
 
 ## Version 1.1.0 released on 14 January 2018

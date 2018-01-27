@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -26,12 +26,14 @@
  */
 package jme3utilities;
 
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix4f;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.math.Vector4f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
-import com.jme3.util.IntMap;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -48,6 +50,10 @@ public class MyMesh {
     // *************************************************************************
     // constants and loggers
 
+    /**
+     * maximum number of bones that can influence any one vertex
+     */
+    final private static int maxWeights = 4;
     /**
      * message logger for this class
      */
@@ -69,8 +75,8 @@ public class MyMesh {
     // new methods exposed
 
     /**
-     * Estimate the number of bones in the specified mesh by reading its index
-     * buffers.
+     * Estimate the number of bones in the specified mesh by reading its
+     * bone-index buffers.
      *
      * @param mesh mesh to examine (not null)
      * @return estimated number of bones (&ge;0)
@@ -78,24 +84,24 @@ public class MyMesh {
     public static int countBones(Mesh mesh) {
         int maxWeightsPerVert = mesh.getMaxNumWeights();
         assert maxWeightsPerVert > 0 : maxWeightsPerVert;
-        assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
+        assert maxWeightsPerVert <= maxWeights : maxWeightsPerVert;
 
         VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
         Buffer boneIndexBuffer = biBuf.getDataReadOnly();
         boneIndexBuffer.rewind();
         int numBoneIndices = boneIndexBuffer.remaining();
-        assert numBoneIndices % 4 == 0 : numBoneIndices;
-        int numVertices = boneIndexBuffer.remaining() / 4;
+        assert numBoneIndices % maxWeights == 0 : numBoneIndices;
+        int numVertices = boneIndexBuffer.remaining() / maxWeights;
 
         VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
         FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
         weightBuffer.rewind();
         int numWeights = weightBuffer.remaining();
-        assert numWeights == numVertices * 4 : numWeights;
+        assert numWeights == numVertices * maxWeights : numWeights;
 
         int result = 0;
         for (int vIndex = 0; vIndex < numVertices; vIndex++) {
-            for (int wIndex = 0; wIndex < 4; wIndex++) {
+            for (int wIndex = 0; wIndex < maxWeights; wIndex++) {
                 float weight = weightBuffer.get();
                 int bIndex = readIndex(boneIndexBuffer);
                 if (wIndex < maxWeightsPerVert && weight > 0f
@@ -116,15 +122,16 @@ public class MyMesh {
      * @return true if the mesh has texture coordinates, otherwise false
      */
     public static boolean hasUV(Mesh mesh) {
-        IntMap<VertexBuffer> buffers = mesh.getBuffers();
-        int key = VertexBuffer.Type.TexCoord.ordinal();
-        boolean result = buffers.containsKey(key);
-
-        return result;
+        VertexBuffer buffer = mesh.getBuffer(VertexBuffer.Type.TexCoord);
+        if (buffer == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
-     * Find the largest weight in the specified mesh for the specified bone.
+     * Find the largest weight in the specified mesh for the indexed bone.
      *
      * @param mesh which mesh (not null, possibly modified)
      * @param boneIndex which bone (&ge;0)
@@ -135,24 +142,24 @@ public class MyMesh {
 
         int maxWeightsPerVert = mesh.getMaxNumWeights();
         assert maxWeightsPerVert > 0 : maxWeightsPerVert;
-        assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
+        assert maxWeightsPerVert <= maxWeights : maxWeightsPerVert;
 
         VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
         Buffer boneIndexBuffer = biBuf.getDataReadOnly();
         boneIndexBuffer.rewind();
         int numBoneIndices = boneIndexBuffer.remaining();
-        assert numBoneIndices % 4 == 0 : numBoneIndices;
-        int numVertices = boneIndexBuffer.remaining() / 4;
+        assert numBoneIndices % maxWeights == 0 : numBoneIndices;
+        int numVertices = boneIndexBuffer.remaining() / maxWeights;
 
         VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
         FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
         weightBuffer.rewind();
         int numWeights = weightBuffer.remaining();
-        assert numWeights == numVertices * 4 : numWeights;
+        assert numWeights == numVertices * maxWeights : numWeights;
 
         float result = 0f;
         for (int vIndex = 0; vIndex < numVertices; vIndex++) {
-            for (int wIndex = 0; wIndex < 4; wIndex++) {
+            for (int wIndex = 0; wIndex < maxWeights; wIndex++) {
                 float weight = weightBuffer.get();
                 int bIndex = readIndex(boneIndexBuffer);
                 if (wIndex < maxWeightsPerVert
@@ -179,24 +186,24 @@ public class MyMesh {
 
         int maxWeightsPerVert = mesh.getMaxNumWeights();
         assert maxWeightsPerVert > 0 : maxWeightsPerVert;
-        assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
+        assert maxWeightsPerVert <= maxWeights : maxWeightsPerVert;
 
         VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
         Buffer boneIndexBuffer = biBuf.getDataReadOnly();
         boneIndexBuffer.rewind();
         int numBoneIndices = boneIndexBuffer.remaining();
-        assert numBoneIndices % 4 == 0 : numBoneIndices;
-        int numVertices = boneIndexBuffer.remaining() / 4;
+        assert numBoneIndices % maxWeights == 0 : numBoneIndices;
+        int numVertices = boneIndexBuffer.remaining() / maxWeights;
 
         VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
         FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
         weightBuffer.rewind();
         int numWeights = weightBuffer.remaining();
-        assert numWeights == numVertices * 4 : numWeights;
+        assert numWeights == numVertices * maxWeights : numWeights;
 
         int result = 0;
         for (int vIndex = 0; vIndex < numVertices; vIndex++) {
-            for (int wIndex = 0; wIndex < 4; wIndex++) {
+            for (int wIndex = 0; wIndex < maxWeights; wIndex++) {
                 float weight = weightBuffer.get();
                 int bIndex = readIndex(boneIndexBuffer);
                 if (wIndex < maxWeightsPerVert
@@ -235,6 +242,114 @@ public class MyMesh {
     }
 
     /**
+     * Copy the bone indices for the indexed vertex.
+     *
+     * @param mesh subject mesh (not null)
+     * @param vertexIndex index into the mesh's vertices (&ge;0)
+     * @param storeResult (modified if not null)
+     * @return the data vector (either storeResult or a new instance)
+     */
+    public static int[] vertexBoneIndices(Mesh mesh,
+            int vertexIndex, int[] storeResult) {
+        Validate.nonNull(mesh, "mesh");
+        Validate.nonNegative(vertexIndex, "vertex index");
+        if (storeResult == null) {
+            storeResult = new int[maxWeights];
+        } else {
+            assert storeResult.length >= maxWeights : storeResult.length;
+        }
+
+        int maxWeightsPerVert = mesh.getMaxNumWeights();
+        if (maxWeightsPerVert <= 0) {
+            maxWeightsPerVert = 1;
+        }
+
+        VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
+        Buffer boneIndexBuffer = biBuf.getDataReadOnly();
+        boneIndexBuffer.position(maxWeights * vertexIndex);
+        for (int wIndex = 0; wIndex < maxWeightsPerVert; wIndex++) {
+            int boneIndex = MyMesh.readIndex(boneIndexBuffer);
+            storeResult[wIndex] = boneIndex;
+        }
+        /*
+         * Fill with -1.
+         */
+        int length = storeResult.length;
+        for (int wIndex = maxWeightsPerVert; wIndex < length; wIndex++) {
+            storeResult[wIndex] = -1;
+        }
+
+        return storeResult;
+    }
+
+    /**
+     * Copy the bone weights for the indexed vertex.
+     *
+     * @param mesh subject mesh (not null)
+     * @param vertexIndex index into the mesh's vertices (&ge;0)
+     * @param storeResult (modified if not null)
+     * @return the data vector (either storeResult or a new instance)
+     */
+    public static float[] vertexBoneWeights(Mesh mesh,
+            int vertexIndex, float[] storeResult) {
+        Validate.nonNull(mesh, "mesh");
+        Validate.nonNegative(vertexIndex, "vertex index");
+        if (storeResult == null) {
+            storeResult = new float[maxWeights];
+        } else {
+            assert storeResult.length >= maxWeights : storeResult.length;
+        }
+
+        int maxWeightsPerVert = mesh.getMaxNumWeights();
+        if (maxWeightsPerVert <= 0) {
+            maxWeightsPerVert = 1;
+        }
+
+        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
+        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
+        weightBuffer.position(maxWeights * vertexIndex);
+        for (int wIndex = 0; wIndex < maxWeightsPerVert; wIndex++) {
+            storeResult[wIndex] = weightBuffer.get();
+        }
+        /*
+         * Fill with 0.
+         */
+        int length = storeResult.length;
+        for (int wIndex = maxWeightsPerVert; wIndex < length; wIndex++) {
+            storeResult[wIndex] = 0f;
+        }
+
+        return storeResult;
+    }
+
+    /**
+     * Copy the color of the indexed vertex from the color buffer.
+     *
+     * @param mesh subject mesh (not null)
+     * @param vertexIndex index into the mesh's vertices (&ge;0)
+     * @param storeResult (modified if not null)
+     * @return the color (either storeResult or a new instance)
+     */
+    public static ColorRGBA vertexColor(Mesh mesh, int vertexIndex,
+            ColorRGBA storeResult) {
+        Validate.nonNull(mesh, "mesh");
+        Validate.nonNegative(vertexIndex, "vertex index");
+        if (storeResult == null) {
+            storeResult = new ColorRGBA();
+        }
+
+        VertexBuffer vertexBuffer = mesh.getBuffer(VertexBuffer.Type.Color);
+        FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
+        floatBuffer.position(4 * vertexIndex);
+        storeResult.r = floatBuffer.get();
+        storeResult.g = floatBuffer.get();
+        storeResult.b = floatBuffer.get();
+        storeResult.a = floatBuffer.get();
+
+        return storeResult;
+    }
+
+    /**
      * Calculate the location of the indexed vertex in mesh space using the
      * skinning matrices provided.
      *
@@ -259,11 +374,11 @@ public class MyMesh {
 
             VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
             FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
-            weightBuffer.position(4 * vertexIndex);
+            weightBuffer.position(maxWeights * vertexIndex);
 
             VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
             Buffer boneIndexBuffer = biBuf.getDataReadOnly();
-            boneIndexBuffer.position(4 * vertexIndex);
+            boneIndexBuffer.position(maxWeights * vertexIndex);
 
             storeResult.zero();
             int maxWeightsPerVertex = mesh.getMaxNumWeights();
@@ -295,13 +410,69 @@ public class MyMesh {
     }
 
     /**
-     * Read a data vector for the indexed vertex in a mesh.
+     * Read the size of the indexed vertex from the size buffer.
      *
      * @param mesh subject mesh (not null)
-     * @param bufferType which buffer to read (6 legal values)
+     * @param vertexIndex index into the mesh's vertices (&ge;0)
+     * @return the size (in pixels)
+     */
+    public static float vertexSize(Mesh mesh, int vertexIndex) {
+        Validate.nonNull(mesh, "mesh");
+        Validate.nonNegative(vertexIndex, "vertex index");
+
+        VertexBuffer vertexBuffer = mesh.getBuffer(VertexBuffer.Type.Size);
+        FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
+        floatBuffer.position(vertexIndex);
+        float result = floatBuffer.get();
+
+        return result;
+    }
+
+    /**
+     * Copy texture coordinates of the indexed vertex from the specified vertex
+     * buffer.
+     *
+     * @param mesh subject mesh (not null)
+     * @param bufferType which buffer to read (8 legal values)
      * @param vertexIndex index into the mesh's vertices (&ge;0)
      * @param storeResult (modified if not null)
-     * @return mesh coordinates (either storeResult or a new instance)
+     * @return the texture coordinates (either storeResult or a new instance)
+     */
+    public static Vector2f vertexVector2f(Mesh mesh,
+            VertexBuffer.Type bufferType, int vertexIndex,
+            Vector2f storeResult) {
+        Validate.nonNull(mesh, "mesh");
+        assert bufferType == VertexBuffer.Type.TexCoord
+                || bufferType == VertexBuffer.Type.TexCoord2
+                || bufferType == VertexBuffer.Type.TexCoord3
+                || bufferType == VertexBuffer.Type.TexCoord4
+                || bufferType == VertexBuffer.Type.TexCoord5
+                || bufferType == VertexBuffer.Type.TexCoord6
+                || bufferType == VertexBuffer.Type.TexCoord7
+                || bufferType == VertexBuffer.Type.TexCoord8 : bufferType;
+        Validate.nonNegative(vertexIndex, "vertex index");
+        if (storeResult == null) {
+            storeResult = new Vector2f();
+        }
+
+        VertexBuffer vertexBuffer = mesh.getBuffer(bufferType);
+        FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
+        floatBuffer.position(2 * vertexIndex);
+        storeResult.x = floatBuffer.get();
+        storeResult.y = floatBuffer.get();
+
+        return storeResult;
+    }
+
+    /**
+     * Copy Vector3f data for the indexed vertex from the specified vertex
+     * buffer.
+     *
+     * @param mesh subject mesh (not null)
+     * @param bufferType which buffer to read (5 legal values)
+     * @param vertexIndex index into the mesh's vertices (&ge;0)
+     * @param storeResult (modified if not null)
+     * @return the data vector (either storeResult or a new instance)
      */
     public static Vector3f vertexVector3f(Mesh mesh,
             VertexBuffer.Type bufferType, int vertexIndex,
@@ -309,10 +480,9 @@ public class MyMesh {
         Validate.nonNull(mesh, "mesh");
         assert bufferType == VertexBuffer.Type.BindPoseNormal
                 || bufferType == VertexBuffer.Type.BindPosePosition
-                || bufferType == VertexBuffer.Type.BindPoseTangent
+                || bufferType == VertexBuffer.Type.Binormal
                 || bufferType == VertexBuffer.Type.Normal
-                || bufferType == VertexBuffer.Type.Position
-                || bufferType == VertexBuffer.Type.Tangent : bufferType;
+                || bufferType == VertexBuffer.Type.Position : bufferType;
         Validate.nonNegative(vertexIndex, "vertex index");
         if (storeResult == null) {
             storeResult = new Vector3f();
@@ -324,6 +494,41 @@ public class MyMesh {
         storeResult.x = floatBuffer.get();
         storeResult.y = floatBuffer.get();
         storeResult.z = floatBuffer.get();
+
+        return storeResult;
+    }
+
+    /**
+     * Copy Vector4f data for the indexed vertex from the specified vertex
+     * buffer.
+     *
+     * @param mesh subject mesh (not null)
+     * @param bufferType which buffer to read (5 legal values)
+     * @param vertexIndex index into the mesh's vertices (&ge;0)
+     * @param storeResult (modified if not null)
+     * @return the data vector (either storeResult or a new instance)
+     */
+    public static Vector4f vertexVector4f(Mesh mesh,
+            VertexBuffer.Type bufferType, int vertexIndex,
+            Vector4f storeResult) {
+        Validate.nonNull(mesh, "mesh");
+        assert bufferType == VertexBuffer.Type.BindPoseTangent
+                || bufferType == VertexBuffer.Type.BoneWeight
+                || bufferType == VertexBuffer.Type.Color
+                || bufferType == VertexBuffer.Type.HWBoneWeight
+                || bufferType == VertexBuffer.Type.Tangent : bufferType;
+        Validate.nonNegative(vertexIndex, "vertex index");
+        if (storeResult == null) {
+            storeResult = new Vector4f();
+        }
+
+        VertexBuffer vertexBuffer = mesh.getBuffer(bufferType);
+        FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
+        floatBuffer.position(4 * vertexIndex);
+        storeResult.x = floatBuffer.get();
+        storeResult.y = floatBuffer.get();
+        storeResult.z = floatBuffer.get();
+        storeResult.w = floatBuffer.get();
 
         return storeResult;
     }
