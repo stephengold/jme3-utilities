@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.math.MyMath;
 import jme3utilities.nifty.dialog.DialogController;
 import jme3utilities.ui.InputMode;
 
@@ -63,15 +64,15 @@ public class PopScreenController extends BasicScreenController {
     // fields
 
     /**
-     * policy for X position of a submenu (true&rarr;based on parent,
-     * false&rarr;based on mouse pointer)
+     * policy for a submenu's X-coordinate (0&rarr;based 100% on mouse pointer,
+     * 1&rarr;based 100% on parent)
      */
-    private boolean warpX = false;
+    private float warpX = 0f;
     /**
-     * policy for Y position of a submenu (true&rarr;based on parent,
-     * false&rarr;based on mouse pointer)
+     * policy for a submenu's Y-coordinate (0&rarr;based 100% on mouse pointer,
+     * 1&rarr;based 100% on parent)
      */
-    private boolean warpY = false;
+    private float warpY = 0f;
     /**
      * Nifty element for the active modal dialog box (null means none active)
      */
@@ -310,12 +311,14 @@ public class PopScreenController extends BasicScreenController {
     /**
      * Alter the positioning policies for submenus.
      *
-     * @param warpX true&rarr;based on parent, false&rarr;based on mouse pointer
-     * @param warpY true&rarr;based on parent, false&rarr;based on mouse pointer
+     * @param newWarpX the policy for a submenu's X-coordinate (0&rarr;based
+     * 100% on mouse pointer, 1&rarr;based 100% on parent)
+     * @param newWarpY the policy for a submenu's Y-coordinate (0&rarr;based
+     * 100% on mouse pointer, 1&rarr;based 100% on parent)
      */
-    public void setSubmenuWarp(boolean warpX, boolean warpY) {
-        this.warpX = warpX;
-        this.warpY = warpY;
+    public void setSubmenuWarp(float newWarpX, float newWarpY) {
+        warpX = newWarpX;
+        warpY = newWarpY;
     }
 
     /**
@@ -590,15 +593,14 @@ public class PopScreenController extends BasicScreenController {
      * Callback to update this controller prior to rendering. (Invoked once per
      * render pass.)
      *
-     * @param elapsedTime time interval between render passes (in seconds,
-     * &ge;0)
+     * @param updateInterval time interval between updates (in seconds, &ge;0)
      */
     @Override
-    public void update(float elapsedTime) {
-        super.update(elapsedTime);
+    public void update(float updateInterval) {
+        super.update(updateInterval);
 
         if (hasActiveDialog() && dialogController != null) {
-            dialogController.update(dialogElement, elapsedTime);
+            dialogController.update(dialogElement, updateInterval);
         }
     }
     // *************************************************************************
@@ -668,12 +670,17 @@ public class PopScreenController extends BasicScreenController {
          * to drift downward and the right.
          */
         if (activePopupMenu != null) {
-            String cid = activePopupMenu.getElementId() + "#menu";
-            Element parentMenu = screen.findElementById(cid);
             NiftyMouse mouse = nifty.getNiftyMouse();
-            int x = warpX ? parentMenu.getX() : mouse.getX();
-            int y = warpY ? parentMenu.getY() : mouse.getY();
-            mouse.setMousePosition(x, y);
+            float floatX = mouse.getX();
+            float floatY = mouse.getY();
+
+            String parentMenuId = activePopupMenu.getElementId() + "#menu";
+            Element parentMenu = screen.findElementById(parentMenuId);
+            floatX = MyMath.lerp(warpX, floatX, parentMenu.getX());
+            floatY = MyMath.lerp(warpY, floatY, parentMenu.getY());
+            int intX = Math.round(floatX);
+            int intY = Math.round(floatY);
+            mouse.setMousePosition(intX, intY);
         }
         /*
          * Make the popup visible without specifying a focus element.
@@ -693,7 +700,6 @@ public class PopScreenController extends BasicScreenController {
             }
             InputMode menuMode = InputMode.findMode(MenuInputMode.name);
             menuMode.setEnabled(true);
-
         } else {
             /*
              * Disable the parent popup menu.
