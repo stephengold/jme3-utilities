@@ -313,7 +313,7 @@ public class MyMath {
     }
 
     /**
-     * Test whether b is between a and c. TODO add double version
+     * Test whether b is between a and c.
      *
      * @param a 1st input value
      * @param b 2nd input value
@@ -321,6 +321,26 @@ public class MyMath {
      * @return true if b is between a and c (inclusive), otherwise false
      */
     public static boolean isBetween(float a, float b, float c) {
+        if (a > c) {
+            return a >= b && b >= c;
+        } else if (a < c) {
+            return a <= b && b <= c;
+        } else if (a == c) {
+            return a == b;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Test whether b is between a and c.
+     *
+     * @param a 1st input value
+     * @param b 2nd input value
+     * @param c 3rd input value
+     * @return true if b is between a and c (inclusive), otherwise false
+     */
+    public static boolean isBetween(double a, double b, double c) {
         if (a > c) {
             return a >= b && b >= c;
         } else if (a < c) {
