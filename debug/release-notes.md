@@ -1,6 +1,6 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.8.6 released on TBD
+## Version 0.8.6 released on 27 January 2018
 
  + Removed interlock between PerformanceAppState and StatsAppState.
  + Added enable/disable methods to PerformanceAppState.
