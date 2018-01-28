@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,6 @@
 package jme3utilities.debug;
 
 import com.jme3.app.Application;
-import com.jme3.app.StatsAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
@@ -35,16 +34,17 @@ import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
 import jme3utilities.MyAsset;
 import jme3utilities.SimpleAppState;
 import jme3utilities.Validate;
 
 /**
- * App state which implements a performance monitor for jME3. Each second it
- * displays the duration of the longest update during the previous second.
+ * App state which implements a latency-oriented performance monitor for
+ * jMonkeyEngine3. It displays the duration of the longest update during the
+ * preceding measurement interval.
  * <p>
  * Each instance is enabled at creation.
  *
@@ -54,6 +54,10 @@ public class PerformanceAppState extends SimpleAppState {
     // *************************************************************************
     // constants and loggers
 
+    /**
+     * width of the background rectangle (in pixels)
+     */
+    final private static float backgroundWidth = 250f;
     /**
      * message logger for this class
      */
@@ -81,16 +85,16 @@ public class PerformanceAppState extends SimpleAppState {
     /**
      * time remaining in the current measurement interval (in seconds)
      */
-    private double secondsToNextUpdate = 0f;
+    private double secondsRemaining = 0f;
     /**
      * largest time per frame observed during the current measurement interval
      * (in seconds)
      */
     private float maxTPF = 0f;
     /**
-     * duration of the upcoming measurement interval (in seconds)
+     * minimum duration of a measurement interval (in seconds)
      */
-    private float updateInterval = 1f;
+    private float measurementInterval = 1f;
     /*
      * background for statistics text: set by initialize()
      */
@@ -108,23 +112,23 @@ public class PerformanceAppState extends SimpleAppState {
     // new methods exposed
 
     /**
-     * Read the update interval.
+     * Read the measurement interval.
      *
      * @return interval (in seconds, &gt;0)
      */
     public float getUpdateInterval() {
-        assert updateInterval > 0f : updateInterval;
-        return updateInterval;
+        assert measurementInterval > 0f : measurementInterval;
+        return measurementInterval;
     }
 
     /**
-     * Alter the update interval.
+     * Alter the measurement interval.
      *
-     * @param interval (in seconds, &gt;0)
+     * @param newInterval (in seconds, &gt;0)
      */
-    public void setUpdateInterval(float interval) {
-        Validate.positive(interval, "interval");
-        updateInterval = interval;
+    public void setUpdateInterval(float newInterval) {
+        Validate.positive(newInterval, "new interval");
+        measurementInterval = newInterval;
     }
     // *************************************************************************
     // SimpleAppState methods
@@ -150,8 +154,6 @@ public class PerformanceAppState extends SimpleAppState {
     public void initialize(AppStateManager stateManager,
             Application application) {
         super.initialize(stateManager, application);
-
-        secondsToNextUpdate = updateInterval;
         /*
          * Create and attach a GUI text object to display statistics.
          */
@@ -159,8 +161,8 @@ public class PerformanceAppState extends SimpleAppState {
         text = new BitmapText(font);
         float lineHeight = text.getLineHeight();
         text.setColor(textColor);
+        text.setCullHint(Spatial.CullHint.Never);
         text.setLocalTranslation(0f, lineHeight, 0f);
-        text.setText("(awaiting update)");
         guiNode.attachChild(text);
         /*
          * Create and attach a colored background for the display.
@@ -170,38 +172,77 @@ public class PerformanceAppState extends SimpleAppState {
         backgroudMaterial.setColor("Color", backgroundColor.clone());
         RenderState renderState = backgroudMaterial.getAdditionalRenderState();
         renderState.setBlendMode(RenderState.BlendMode.Alpha);
-        float backgroundWidth = 250f; // pixels
         Quad quad = new Quad(backgroundWidth, lineHeight);
         background = new Geometry("perf stats background", quad);
-        background.setMaterial(backgroudMaterial);
+        background.setCullHint(Spatial.CullHint.Never);
         background.setLocalTranslation(0f, 0f, -1f);
+        background.setMaterial(backgroudMaterial);
         guiNode.attachChild(background);
-        /*
-         * Detach any JME stats app state(s).
-         */
-        Misc.detachAll(stateManager, StatsAppState.class);
+
+        reset();
+    }
+
+    /**
+     * Enable or disable this performance monitor.
+     *
+     * @param newSetting true &rarr; enable, false &rarr; disable
+     */
+    @Override
+    public void setEnabled(boolean newSetting) {
+        boolean oldSetting = isEnabled();
+        super.setEnabled(newSetting);
+
+        if (oldSetting != newSetting) {
+            Spatial.CullHint cull;
+            if (newSetting) {
+                reset();
+                cull = Spatial.CullHint.Never;
+            } else {
+                cull = Spatial.CullHint.Always;
+            }
+            background.setCullHint(cull);
+            text.setCullHint(cull);
+        }
     }
 
     /**
      * Update the performance statistics.
      *
-     * @param elapsedTime since previous frame/update (in seconds, &ge;0)
+     * @param timePerFrame time interval between updates (in seconds, &ge;0)
      */
     @Override
-    public void update(float elapsedTime) {
-        super.update(elapsedTime);
+    public void update(float timePerFrame) {
+        super.update(timePerFrame);
 
-        maxTPF = Math.max(maxTPF, elapsedTime);
+        maxTPF = Math.max(maxTPF, timePerFrame);
 
-        secondsToNextUpdate -= elapsedTime;
-        if (secondsToNextUpdate < 0.0) {
-            float milliseconds = 1000f * maxTPF;
-            String message = String.format("Max time per frame = %.1f msec",
-                    milliseconds);
-            text.setText(message);
-
+        secondsRemaining -= timePerFrame;
+        if (secondsRemaining < 0.0) {
+            updateText();
             maxTPF = 0f;
-            secondsToNextUpdate = updateInterval;
+            secondsRemaining = measurementInterval;
         }
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Reset the counters and the display after enabling this performance
+     * monitor.
+     */
+    private void reset() {
+        maxTPF = 0f;
+        secondsRemaining = measurementInterval;
+        text.setText("(awaiting update)");
+    }
+
+    /**
+     * Update the text at the end of a measurement interval.
+     */
+    private void updateText() {
+        float milliseconds = 1000f * maxTPF;
+        String message = String.format("Max time per frame = %.1f msec",
+                milliseconds);
+        text.setText(message);
     }
 }

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,7 @@
 package jme3utilities.sky.test;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.StatsAppState;
 import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -101,6 +102,10 @@ public class CubeMapExample extends SimpleApplication {
         initializeSky();
 
         stateManager.attach(new PerformanceAppState());
+        /*
+         * Detach any JME stats app state(s).
+         */
+        Misc.detachAll(stateManager, StatsAppState.class);
     }
     // *************************************************************************
     // private methods

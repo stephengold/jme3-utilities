@@ -1,5 +1,8 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
+ + Removed interlock between PerformanceAppState and StatsAppState.
+ + Added enable/disable methods to PerformanceAppState.
+
 ## Version 0.8.5 released on 25 January 2018
 
  + Removed all Bullet dependencies.
