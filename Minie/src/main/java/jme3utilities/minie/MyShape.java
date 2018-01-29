@@ -26,6 +26,7 @@
  */
 package jme3utilities.minie;
 
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
@@ -35,14 +36,14 @@ import com.jme3.bullet.collision.shapes.CylinderCollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
 import com.jme3.math.Vector3f;
+import java.lang.reflect.Field;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.MyString;
+import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
-import static jme3utilities.math.MyVolume.boxVolume;
-import static jme3utilities.math.MyVolume.capsuleVolume;
-import static jme3utilities.math.MyVolume.coneVolume;
-import static jme3utilities.math.MyVolume.cylinderVolume;
-import static jme3utilities.math.MyVolume.sphereVolume;
+import jme3utilities.math.MyVolume;
 
 /**
  * Utility methods for physics collision shapes. All methods should be static.
@@ -70,6 +71,423 @@ public class MyShape {
     // new methods exposed
 
     /**
+     * Determine the main axis of the specified shape, provided it's a capsule,
+     * cone, or cylinder.
+     *
+     * @param shape (may be null, unaffected)
+     * @return 0&rarr;X, 1&rarr;Y, 2&rarr;Z, -1&rarr;doesn't have an axis
+     */
+    public static int axisIndex(CollisionShape shape) {
+        int result = -1;
+        if (shape instanceof CapsuleCollisionShape) {
+            CapsuleCollisionShape capsule = (CapsuleCollisionShape) shape;
+            result = capsule.getAxis();
+
+        } else if (shape instanceof ConeCollisionShape) {
+            ConeCollisionShape cone = (ConeCollisionShape) shape;
+            Field axisField;
+            try {
+                axisField = ConeCollisionShape.class.getDeclaredField("axis");
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException();
+            }
+            axisField.setAccessible(true);
+
+            try {
+                result = (Integer) axisField.get(cone);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException();
+            }
+
+        } else if (shape instanceof CylinderCollisionShape) {
+            CylinderCollisionShape cylinder = (CylinderCollisionShape) shape;
+            result = cylinder.getAxis();
+        }
+
+        return result;
+    }
+
+    /**
+     * Generate a brief textual description of a shape, consisting of its type
+     * and id.
+     *
+     * @param shape instance to describe (not null, unaffected)
+     * @return description (not null, not empty)
+     */
+    public static String describe(CollisionShape shape) {
+        Validate.nonNull(shape, "shape");
+
+        String type = describeType(shape);
+        type = type.toLowerCase(Locale.ROOT);
+        long id = shape.getObjectId();
+        String result = String.format("%s:%x", type, id);
+
+        return result;
+    }
+
+    /**
+     * Describe the type of a shape.
+     *
+     * @param shape instance to describe (not null, unaffected)
+     * @return description (not null)
+     */
+    public static String describeType(CollisionShape shape) {
+        String description = shape.getClass().getSimpleName();
+        if (description.endsWith("CollisionShape")) {
+            description = MyString.removeSuffix(description, "CollisionShape");
+        }
+
+        return description;
+    }
+
+    /**
+     * Calculate the un-scaled half extents of the specified shape, which must
+     * be a box, capsule, cone, cylinder, or sphere.
+     *
+     * @param shape (not null, unaffected)
+     * @param storeResult (modified if not null)
+     * @return a vector with all components non-negative (either storeResult or
+     * a new instance)
+     */
+    public static Vector3f halfExtents(CollisionShape shape,
+            Vector3f storeResult) {
+        Validate.nonNull(shape, "shape");
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+
+        if (shape instanceof BoxCollisionShape) {
+            BoxCollisionShape box = (BoxCollisionShape) shape;
+            Vector3f halfExtents = box.getHalfExtents();
+            storeResult.set(halfExtents);
+
+        } else if (shape instanceof CapsuleCollisionShape) {
+            CapsuleCollisionShape capsule = (CapsuleCollisionShape) shape;
+            float height = capsule.getHeight();
+            float radius = capsule.getRadius();
+            float axisHalfExtent = height / 2f + radius;
+            int axisIndex = axisIndex(shape);
+            switch (axisIndex) {
+                case PhysicsSpace.AXIS_X:
+                    storeResult.set(axisHalfExtent, radius, radius);
+                    break;
+                case PhysicsSpace.AXIS_Y:
+                    storeResult.set(radius, axisHalfExtent, radius);
+                    break;
+                case PhysicsSpace.AXIS_Z:
+                    storeResult.set(radius, radius, axisHalfExtent);
+                    break;
+                default:
+                    throw new IllegalStateException();
+            }
+
+        } else if (shape instanceof ConeCollisionShape) {
+            ConeCollisionShape cone = (ConeCollisionShape) shape;
+            float height = cone.getHeight();
+            float radius = cone.getRadius();
+            float axisHalfExtent = height / 2f;
+            int axisIndex = axisIndex(shape);
+            switch (axisIndex) {
+                case PhysicsSpace.AXIS_X:
+                    storeResult.set(axisHalfExtent, radius, radius);
+                    break;
+                case PhysicsSpace.AXIS_Y:
+                    storeResult.set(radius, axisHalfExtent, radius);
+                    break;
+                case PhysicsSpace.AXIS_Z:
+                    storeResult.set(radius, radius, axisHalfExtent);
+                    break;
+                default:
+                    throw new IllegalStateException();
+            }
+
+        } else if (shape instanceof CylinderCollisionShape) {
+            CylinderCollisionShape cylinder = (CylinderCollisionShape) shape;
+            Vector3f halfExtents = cylinder.getHalfExtents();
+            storeResult.set(halfExtents);
+
+        } else if (shape instanceof SphereCollisionShape) {
+            SphereCollisionShape sphere = (SphereCollisionShape) shape;
+            float radius = sphere.getRadius();
+            storeResult.set(radius, radius, radius);
+
+        } else {
+            throw new IllegalArgumentException();
+        }
+
+        assert MyVector3f.isAllNonNegative(storeResult) : storeResult;
+
+        return storeResult;
+    }
+
+    /**
+     * Calculate the un-scaled height of the specified shape.
+     *
+     * @param shape (not null, unaffected)
+     * @return un-scaled height &ge;0) or NaN if the shape is not a capsule,
+     * cone, cylinder, or sphere
+     */
+    public static float height(CollisionShape shape) {
+        Validate.nonNull(shape, "shape");
+
+        float result = Float.NaN;
+        if (shape instanceof CapsuleCollisionShape) {
+            CapsuleCollisionShape capsule = (CapsuleCollisionShape) shape;
+            result = capsule.getHeight();
+
+        } else if (shape instanceof ConeCollisionShape) {
+            ConeCollisionShape cone = (ConeCollisionShape) shape;
+            result = cone.getHeight();
+
+        } else if (shape instanceof CylinderCollisionShape) {
+            Vector3f halfExtents = halfExtents(shape, null);
+            int axisIndex = axisIndex(shape);
+            switch (axisIndex) {
+                case PhysicsSpace.AXIS_X:
+                    result = halfExtents.x;
+                    break;
+                case PhysicsSpace.AXIS_Y:
+                    result = halfExtents.y;
+                    break;
+                case PhysicsSpace.AXIS_Z:
+                    result = halfExtents.z;
+                    break;
+                default:
+                    throw new IllegalArgumentException();
+            }
+
+        } else if (shape instanceof SphereCollisionShape) {
+            SphereCollisionShape sphere = (SphereCollisionShape) shape;
+            result = 2f * sphere.getRadius();
+        }
+
+        assert Float.isNaN(result) || result >= 0f : result;
+        return result;
+    }
+
+    /**
+     * Calculate the un-scaled radius of the specified shape.
+     *
+     * @param shape (not null, unaffected)
+     * @return un-scaled radius (&ge;0) or NaN if the shape is not a capsule,
+     * cone, or sphere
+     */
+    public static float radius(CollisionShape shape) {
+        Validate.nonNull(shape, "shape");
+
+        float result = Float.NaN;
+        if (shape instanceof CapsuleCollisionShape) {
+            CapsuleCollisionShape capsule = (CapsuleCollisionShape) shape;
+            result = capsule.getRadius();
+
+        } else if (shape instanceof ConeCollisionShape) {
+            ConeCollisionShape cone = (ConeCollisionShape) shape;
+            result = cone.getRadius();
+
+        } else if (shape instanceof SphereCollisionShape) {
+            SphereCollisionShape sphere = (SphereCollisionShape) shape;
+            result = sphere.getRadius();
+        }
+
+        assert Float.isNaN(result) || result >= 0f : result;
+        return result;
+    }
+
+    /**
+     * Copy a shape, altering only its half extents.
+     *
+     * @param oldShape input shape (not null, unaffected)
+     * @param newHalfExtents (not null, all non-negative, unaffected)
+     * @return a new shape, or null if not possible
+     */
+    public static CollisionShape setHalfExtents(CollisionShape oldShape,
+            Vector3f newHalfExtents) {
+        Validate.nonNull(oldShape, "old shape");
+        Validate.nonNull(newHalfExtents, "new half extents");
+        assert MyVector3f.isAllNonNegative(newHalfExtents);
+
+        CollisionShape result;
+        if (oldShape instanceof BoxCollisionShape) {
+            result = new BoxCollisionShape(newHalfExtents);
+
+        } else if (oldShape instanceof CapsuleCollisionShape
+                || oldShape instanceof ConeCollisionShape) {
+            int axisIndex = axisIndex(oldShape);
+            float axisHalfExtent, radius1, radius2;
+            switch (axisIndex) {
+                case PhysicsSpace.AXIS_X:
+                    axisHalfExtent = newHalfExtents.x;
+                    radius1 = newHalfExtents.y;
+                    radius2 = newHalfExtents.z;
+                    break;
+                case PhysicsSpace.AXIS_Y:
+                    axisHalfExtent = newHalfExtents.y;
+                    radius1 = newHalfExtents.x;
+                    radius2 = newHalfExtents.z;
+                    break;
+                case PhysicsSpace.AXIS_Z:
+                    axisHalfExtent = newHalfExtents.z;
+                    radius1 = newHalfExtents.x;
+                    radius2 = newHalfExtents.y;
+                    break;
+                default:
+                    throw new IllegalStateException();
+            }
+            if (radius1 != radius2) {
+                result = null;
+            } else if (oldShape instanceof CapsuleCollisionShape) {
+                float height = 2f * (axisHalfExtent - radius1);
+                result = new CapsuleCollisionShape(radius1, height, axisIndex);
+            } else {
+                assert oldShape instanceof ConeCollisionShape;
+                float height = 2f * axisHalfExtent;
+                result = new ConeCollisionShape(radius1, height, axisIndex);
+            }
+
+        } else if (oldShape instanceof CylinderCollisionShape) {
+            int axisIndex = axisIndex(oldShape);
+            result = new CylinderCollisionShape(newHalfExtents, axisIndex);
+
+        } else if (oldShape instanceof SphereCollisionShape) {
+            if (newHalfExtents.x != newHalfExtents.y
+                    || newHalfExtents.y != newHalfExtents.z) {
+                result = null;
+            } else {
+                result = new SphereCollisionShape(newHalfExtents.x);
+            }
+
+        } else {
+            throw new IllegalArgumentException();
+        }
+
+        if (result != null) {
+            float margin = oldShape.getMargin();
+            result.setMargin(margin);
+        }
+
+        return result;
+    }
+
+    /**
+     * Copy a shape, altering only its height.
+     *
+     * @param oldShape input shape (not null, unaffected)
+     * @param newHeight un-scaled height (&ge;0)
+     * @return a new shape
+     */
+    public static CollisionShape setHeight(CollisionShape oldShape,
+            float newHeight) {
+        Validate.nonNull(oldShape, "old shape");
+        Validate.nonNegative(newHeight, "new height");
+
+        CollisionShape result;
+        if (oldShape instanceof BoxCollisionShape) {
+            result = setRadius(oldShape, newHeight / 2f);
+
+        } else if (oldShape instanceof CapsuleCollisionShape) {
+            float radius = radius(oldShape);
+            int axisIndex = axisIndex(oldShape);
+            result = new CapsuleCollisionShape(radius, newHeight, axisIndex);
+
+        } else if (oldShape instanceof ConeCollisionShape) {
+            float radius = radius(oldShape);
+            int axisIndex = axisIndex(oldShape);
+            result = new ConeCollisionShape(radius, newHeight, axisIndex);
+
+        } else if (oldShape instanceof CylinderCollisionShape) {
+            Vector3f halfExtents = halfExtents(oldShape, null);
+            int axisIndex = axisIndex(oldShape);
+            switch (axisIndex) {
+                case PhysicsSpace.AXIS_X:
+                    halfExtents.x = newHeight;
+                    break;
+                case PhysicsSpace.AXIS_Y:
+                    halfExtents.y = newHeight;
+                    break;
+                case PhysicsSpace.AXIS_Z:
+                    halfExtents.z = newHeight;
+                    break;
+                default:
+                    throw new IllegalArgumentException();
+            }
+            result = new CylinderCollisionShape(halfExtents, axisIndex);
+
+        } else if (oldShape instanceof SphereCollisionShape) {
+            result = setHeight(oldShape, newHeight / 2f);
+
+        } else {
+            throw new IllegalArgumentException();
+        }
+
+        float margin = oldShape.getMargin();
+        result.setMargin(margin);
+
+        return result;
+    }
+
+    /**
+     * Copy a shape, altering only its radius.
+     *
+     * @param oldShape input shape (not null, unaffected)
+     * @param newRadius un-scaled radius (&ge;0)
+     * @return a new shape
+     */
+    public static CollisionShape setRadius(CollisionShape oldShape,
+            float newRadius) {
+        Validate.nonNull(oldShape, "old shape");
+        Validate.nonNegative(newRadius, "new radius");
+
+        CollisionShape result;
+        if (oldShape instanceof BoxCollisionShape) {
+            Vector3f halfExtents
+                    = new Vector3f(newRadius, newRadius, newRadius);
+            result = new BoxCollisionShape(halfExtents);
+
+        } else if (oldShape instanceof CapsuleCollisionShape) {
+            int axisIndex = axisIndex(oldShape);
+            float height = height(oldShape);
+            result = new CapsuleCollisionShape(newRadius, height, axisIndex);
+
+        } else if (oldShape instanceof ConeCollisionShape) {
+            int axisIndex = axisIndex(oldShape);
+            float height = height(oldShape);
+            result = new ConeCollisionShape(newRadius, height, axisIndex);
+
+        } else if (oldShape instanceof CylinderCollisionShape) {
+            Vector3f halfExtents = halfExtents(oldShape, null);
+            int axisIndex = axisIndex(oldShape);
+            switch (axisIndex) {
+                case PhysicsSpace.AXIS_X:
+                    halfExtents.y = newRadius;
+                    halfExtents.z = newRadius;
+                    break;
+                case PhysicsSpace.AXIS_Y:
+                    halfExtents.x = newRadius;
+                    halfExtents.z = newRadius;
+                    break;
+                case PhysicsSpace.AXIS_Z:
+                    halfExtents.x = newRadius;
+                    halfExtents.y = newRadius;
+                    break;
+                default:
+                    throw new IllegalArgumentException();
+            }
+            result = new CylinderCollisionShape(halfExtents, axisIndex);
+
+        } else if (oldShape instanceof SphereCollisionShape) {
+            result = new SphereCollisionShape(newRadius);
+
+        } else {
+            throw new IllegalArgumentException();
+        }
+
+        float margin = oldShape.getMargin();
+        result.setMargin(margin);
+
+        return result;
+    }
+
+    /**
      * Compute the volume of a closed collision shape.
      *
      * @param shape (not null, unaffected)
@@ -87,7 +505,7 @@ public class MyShape {
         if (shape instanceof BoxCollisionShape) {
             BoxCollisionShape box = (BoxCollisionShape) shape;
             Vector3f halfExtents = box.getHalfExtents();
-            volume *= boxVolume(halfExtents);
+            volume *= MyVolume.boxVolume(halfExtents);
 
         } else if (shape instanceof CapsuleCollisionShape) {
             /*
@@ -96,7 +514,7 @@ public class MyShape {
             CapsuleCollisionShape capsule = (CapsuleCollisionShape) shape;
             float height = capsule.getHeight();
             float radius = capsule.getRadius();
-            volume = capsuleVolume(radius, height);
+            volume = MyVolume.capsuleVolume(radius, height);
 
         } else if (shape instanceof CompoundCollisionShape) {
             /*
@@ -114,17 +532,17 @@ public class MyShape {
             ConeCollisionShape cone = (ConeCollisionShape) shape;
             float radius = cone.getRadius();
             float height = cone.getHeight();
-            volume *= coneVolume(radius, height);
+            volume *= MyVolume.coneVolume(radius, height);
 
         } else if (shape instanceof CylinderCollisionShape) {
             CylinderCollisionShape cylinder = (CylinderCollisionShape) shape;
             Vector3f halfExtents = cylinder.getHalfExtents();
-            volume *= cylinderVolume(halfExtents);
+            volume *= MyVolume.cylinderVolume(halfExtents);
 
         } else if (shape instanceof SphereCollisionShape) {
             SphereCollisionShape sphere = (SphereCollisionShape) shape;
             float radius = sphere.getRadius();
-            volume *= sphereVolume(radius);
+            volume *= MyVolume.sphereVolume(radius);
 
         } else {
             logger.log(Level.SEVERE, "shape={0}", shape.getClass());
