@@ -26,6 +26,7 @@
  */
 package jme3utilities.nifty;
 
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import de.lessvoid.nifty.controls.Button;
@@ -177,6 +178,34 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
+     * Read a color from the named bank of 3 sliders.
+     *
+     * @param name the name (unique id prefix) of the bank to read (not null)
+     * @param transform how to transform the raw readings (not null)
+     * @param storeResult (modified if not null)
+     * @return the color indicated by the sliders (either storeResult or a new
+     * instance)
+     */
+    public ColorRGBA readColorBank(String name, SliderTransform transform,
+            ColorRGBA storeResult) {
+        Validate.nonNull(name, "name");
+        Validate.nonNull(transform, "transform");
+        ColorRGBA color;
+        if (storeResult == null) {
+            color = new ColorRGBA();
+        } else {
+            color = storeResult;
+        }
+
+        float r = readSlider(name + "R", transform);
+        float g = readSlider(name + "G", transform);
+        float b = readSlider(name + "B", transform);
+        color.set(r, g, b, 1f);
+
+        return color;
+    }
+
+    /**
      * Read the transformed value of the named Nifty slider. This assumes a
      * naming convention where the Nifty id of every slider ends with "Slider".
      *
@@ -195,7 +224,7 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Read the named bank of 3 sliders to produce a vector.
+     * Read a vector from the named bank of 3 sliders. TODO storeResult
      *
      * @param name the name (unique id infix) of the bank to read (not null)
      * @param transform how to transform the raw readings (not null)

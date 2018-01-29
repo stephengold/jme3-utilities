@@ -26,6 +26,7 @@
  */
 package jme3utilities.nifty;
 
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
@@ -81,6 +82,27 @@ public class GuiWindowController extends WindowController {
     }
 
     /**
+     * Read a color from the named bank of 3 sliders.
+     *
+     * @param bankName the name (unique id prefix) of the bank to read (not
+     * null)
+     * @param transform how to transform the raw readings (not null)
+     * @param storeResult (modified if not null)
+     * @return the color indicated by the sliders (either storeResult or a new
+     * instance)
+     */
+    public ColorRGBA readColorBank(String bankName, SliderTransform transform,
+            ColorRGBA storeResult) {
+        Validate.nonNull(bankName, "bank name");
+        Validate.nonNull(transform, "transform");
+
+        GuiScreenController gsc = getScreenController();
+        ColorRGBA color = gsc.readColorBank(bankName, transform, storeResult);
+
+        return color;
+    }
+
+    /**
      * Read the transformed value of the named Nifty slider. This assumes a
      * naming convention where the Nifty id of every slider ends with "Slider".
      *
@@ -97,18 +119,19 @@ public class GuiWindowController extends WindowController {
     }
 
     /**
-     * Read the named bank of 3 sliders to produce a vector.
+     * Read a vector from the named bank of 3 sliders. TODO storeResult
      *
      * @param bankName the name (unique id infix) of the bank to read (not null)
      * @param transform how to transform the raw readings (not null)
-     * @return vector indicated by the sliders (new instance)
+     * @return the vector indicated by the sliders (new instance)
      */
     public Vector3f readVectorBank(String bankName, SliderTransform transform) {
         Validate.nonNull(bankName, "bank name");
         Validate.nonNull(transform, "transform");
 
-        Vector3f vector
-                = getScreenController().readVectorBank(bankName, transform);
+        GuiScreenController gsc = getScreenController();
+        Vector3f vector = gsc.readVectorBank(bankName, transform);
+
         return vector;
     }
 
