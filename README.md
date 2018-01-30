@@ -12,7 +12,7 @@ It consists of 11 sub-projects:
  6. debug: the "jme3-utilities-debug" library of debugging aids
  7. ui: the "jme3-utilities-ui" library for building user interfaces
  8. Minie: the "Minie" library for using Bullet Physics with jMonkeyEngine
- 8. nifty: the "jme3-utilities-nifty: a library for building NiftyGUI user interfaces
+ 8. nifty: the "jme3-utilities-nifty" library for building NiftyGUI user interfaces
  9. wes: the "Wes" library for animation editing and retargeting
  10. x: the "jme3-utilities-x" library of experimental classes
 
@@ -104,7 +104,7 @@ Clone the jme3-utilities repository using Git:
 10. Click on the "Finish" button.
 11. When the "Clone Complete" dialog appears, click on the "Open Project..."
     button.
-12. Expand the root project node to reveal the 10 sub-projects.
+12. Expand the root project node to reveal the 11 sub-projects.
 13. To start with, I recommend opening 4 sub-projects:  "heart", "SkyControl",
     "tests", and "textures".  Select them using control-click, then click on the
     "Open" button.
