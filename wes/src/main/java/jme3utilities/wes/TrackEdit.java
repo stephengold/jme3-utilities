@@ -81,7 +81,7 @@ public class TrackEdit {
      * @param neckTransform transform of bone/spatial at the neck time (not
      * null, unaffected)
      * @param oldDuration (in seconds, &ge;neckTime)
-     * @return a new instance
+     * @return a new track of the same type as oldTrack
      */
     public static Track behead(Track oldTrack, float neckTime,
             Transform neckTransform, float oldDuration) {
@@ -149,7 +149,7 @@ public class TrackEdit {
      * @param startTime2 start time for track2 in the result (in seconds, &ge;0,
      * &le;newDuration)
      * @param newDuration duration of the result (in seconds, &ge;start2)
-     * @return a new instance
+     * @return a new track of the same type
      */
     public static Track chain(Track track1, Track track2, float startTime2,
             float newDuration) {
@@ -270,7 +270,7 @@ public class TrackEdit {
      * @param oldTrack base track (not null, unaffected)
      * @param delayAmount delay interval (in seconds, &ge;0, &le;newDuration)
      * @param newDuration duration of the result (in seconds, &ge;delayAmount)
-     * @return a new instance
+     * @return a new track of the same type as oldTrack
      */
     public static Track delayAll(Track oldTrack, float delayAmount,
             float newDuration) {
@@ -345,7 +345,7 @@ public class TrackEdit {
      * @param oldTrack input bone/spatial track (not null, unaffected)
      * @param startIndex 1st keyframe to delete (&gt;0, &le;lastIndex)
      * @param deleteCount number of keyframes to delete (&gt;0, &lt;lastIndex)
-     * @return a new instance
+     * @return a new track of the same type as oldTrack
      */
     public static Track deleteRange(Track oldTrack, int startIndex,
             int deleteCount) {
@@ -414,7 +414,7 @@ public class TrackEdit {
      * @param oldTrack input bone/spatial track (not null, unaffected)
      * @param frameTime when to insert (&gt;0)
      * @param transform transform to insert (not null, unaffected)
-     * @return a new instance
+     * @return a new track of the same type
      */
     public static Track insertKeyframe(Track oldTrack, float frameTime,
             Transform transform) {
@@ -493,7 +493,7 @@ public class TrackEdit {
      * @param translations (either null or same length as times)
      * @param rotations (either null or same length as times)
      * @param scales (either null or same length as times)
-     * @return a new instance of the same type as oldTrack
+     * @return a new track of the same type as oldTrack
      */
     public static Track newTrack(Track oldTrack, float[] times,
             Vector3f[] translations, Quaternion[] rotations,
@@ -532,7 +532,7 @@ public class TrackEdit {
      *
      * @param oldTrack input bone/spatial track (not null, unaffected)
      * @param factor reduction factor (&ge;2)
-     * @return a new instance
+     * @return a new track of the same type as oldTrack
      */
     public static Track reduce(Track oldTrack, int factor) {
         assert oldTrack instanceof BoneTrack
@@ -686,7 +686,7 @@ public class TrackEdit {
      * @param oldTrack input bone/spatial track (not null, unaffected)
      * @param frameIndex which keyframe (&ge;0, &lt;numFrames)
      * @param transform transform to apply (not null, unaffected)
-     * @return a new instance
+     * @return a new track of the same type as oldTrack
      */
     public static Track replaceKeyframe(Track oldTrack, int frameIndex,
             Transform transform) {
@@ -868,7 +868,7 @@ public class TrackEdit {
      *
      * @param oldTrack input track (not null, unaffected)
      * @param newDuration new duration (in seconds, &ge;0)
-     * @return a new instance
+     * @return a new track of the same type as oldTrack
      */
     public static Track setDuration(Track oldTrack, float newDuration) {
         Validate.nonNegative(newDuration, "duration");
@@ -944,7 +944,7 @@ public class TrackEdit {
      * @param smoothRotations technique for translations (not null)
      * @param smoothScales technique for scales (not null)
      * @param duration animation duration (in seconds, &ge;0)
-     * @return a new instance
+     * @return a new track of the same type as oldTrack
      */
     public static Track smooth(Track oldTrack, float width,
             SmoothVectors smoothTranslations, SmoothRotations smoothRotations,
@@ -992,7 +992,7 @@ public class TrackEdit {
      *
      * @param oldTrack input bone/spatial track (not null, unaffected)
      * @param endTime cutoff time (&ge;0)
-     * @return a new instance
+     * @return a new track of the same type as oldTrack
      */
     public static Track truncate(Track oldTrack, float endTime) {
         assert oldTrack instanceof BoneTrack
@@ -1052,7 +1052,7 @@ public class TrackEdit {
      * @param duration duration of the animation (in seconds, &gt;0)
      * @param endWeight how much weight to give to the pre-existing end-time
      * keyframe, if one exists (&ge;0, &le;1)
-     * @return a new instance
+     * @return a new track of the same type as oldTrack
      */
     public static Track wrap(Track oldTrack, float duration, float endWeight) {
         assert oldTrack instanceof BoneTrack
