@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -202,21 +202,18 @@ abstract public class GuiApplication extends ActionApplication {
         String niftyVersion = nifty.getVersion();
         logger.log(Level.INFO, "Nifty version is {0}",
                 MyString.quote(niftyVersion));
+        nifty.loadControlFile("nifty-default-controls.xml");
+        nifty.loadStyleFile("/Interface/Nifty/nifty-default-styles.xml");
         /*
          * Load the Nifty XML for generic popups.  For some reason the
          * assets do not validate, so skip validation.
-         * Also, mute the warnings about re-registering styles.
          */
-        Logger niftyLogger = Logger.getLogger(Nifty.class.getName());
-        Level save = niftyLogger.getLevel();
-        niftyLogger.setLevel(Level.SEVERE);
         nifty.fromXmlWithoutStartScreen(confirmDialogAssetPath);
         nifty.fromXmlWithoutStartScreen(infoLargeDialogAssetPath);
         nifty.fromXmlWithoutStartScreen(infoSmallDialogAssetPath);
         nifty.fromXmlWithoutStartScreen(multiSelectDialogAssetPath);
         nifty.fromXmlWithoutStartScreen(popupMenuAsssetPath);
         nifty.fromXmlWithoutStartScreen(textEntryDialogAssetPath);
-        niftyLogger.setLevel(save);
         /*
          * Invoke the startup code of the subclass.
          */

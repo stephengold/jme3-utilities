@@ -35,12 +35,6 @@
  outside the menu or press the Esc key.
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
-
-    <!-- define styles and controls -->
-    <useStyles filename="nifty-default-styles.xml"/>
-    <useStyles filename="Interface/Nifty/styles/bats.xml"/>
-    <useControls filename="nifty-default-controls.xml"/>
-
     <popup id="popup-menu"
            backgroundColor="#000a"
            childLayout="absolute-inside">

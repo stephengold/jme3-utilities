@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,8 @@
  The heads-up display (HUD) for the TestSkyMaterial application.
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
+    <useStyles filename="Interface/Nifty/styles/bats.xml"/>
+
     <screen id="test-sky-material"
             controller="jme3utilities.sky.test.TestSkyMaterialHud">
         <layer childLayout="horizontal">
@@ -121,8 +123,7 @@
                                      max="1"
                                      min="-2"
                                      stepSize="0.01"/>
-                            <panel childLayout="vertical" 
-                                   width="105">
+                            <panel childLayout="vertical" width="105">
                                 <control name="label" id="c0USliderStatus"
                                          width="95"/>
                                 <control name="label" id="c0VSliderStatus"

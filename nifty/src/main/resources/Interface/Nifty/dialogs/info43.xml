@@ -33,12 +33,6 @@
  While the dialog box is active, the rest of the screen dims by 50%.
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
-
-    <!-- define styles and controls -->
-    <useStyles filename="nifty-default-styles.xml"/>
-    <useStyles filename="Interface/Nifty/styles/bats.xml"/>
-    <useControls filename="nifty-default-controls.xml"/>
-
     <popup id="dialogs/info43"
            backgroundColor="#0008"
            childLayout="center">

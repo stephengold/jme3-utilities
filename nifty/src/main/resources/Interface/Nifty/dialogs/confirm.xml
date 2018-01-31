@@ -34,12 +34,6 @@
  dims by 50% and reddens.
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
-
-    <!-- define styles and controls -->
-    <useStyles filename="nifty-default-styles.xml"/>
-    <useStyles filename="Interface/Nifty/styles/bats.xml"/>
-    <useControls filename="nifty-default-controls.xml"/>
-
     <popup id="dialogs/confirm"
            backgroundColor="#4008"
            childLayout="center">
