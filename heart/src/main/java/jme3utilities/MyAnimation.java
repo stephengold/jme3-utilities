@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -181,7 +181,7 @@ public class MyAnimation {
     }
 
     /**
-     * Find a BoneTrack in a specified animation for a specified bone.
+     * Find a BoneTrack in a specified animation for the indexed bone.
      *
      * @param animation which animation (not null, unaffected)
      * @param boneIndex which bone (&ge;0)
@@ -225,7 +225,8 @@ public class MyAnimation {
     }
 
     /**
-     * Find the keyframe in the specified animation with the latest time.
+     * Find the time of the keyframe in the specified animation with the latest
+     * time.
      *
      * @param animation input (not null)
      * @return track time (in seconds, &ge;0)
@@ -427,7 +428,7 @@ public class MyAnimation {
      * @param translation relative to bind pose (not null, unaffected)
      * @param rotation relative to bind pose (not null, unaffected)
      * @param scale relative to bind pose (not null, unaffected)
-     * @return a new instance
+     * @return a new bone track
      */
     public static BoneTrack newBoneTrack(int boneIndex, Vector3f translation,
             Quaternion rotation, Vector3f scale) {
@@ -455,7 +456,7 @@ public class MyAnimation {
      * @param translations (not null, same length as times)
      * @param rotations (not null, same length as times)
      * @param scales (either null or same length as times)
-     * @return a new instance
+     * @return a new bone track
      */
     public static BoneTrack newBoneTrack(int boneIndex, float[] times,
             Vector3f[] translations, Quaternion[] rotations,
@@ -485,7 +486,7 @@ public class MyAnimation {
      * @param boneIndex which bone (&ge;0)
      * @param frameTimes (not null, unaffected)
      * @param transform (not null, unaffected)
-     * @return a new instance
+     * @return a new bone track
      */
     public static BoneTrack newBoneTrack(int boneIndex, float[] frameTimes,
             Transform transform) {
