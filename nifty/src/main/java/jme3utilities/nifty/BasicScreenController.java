@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -416,19 +416,15 @@ public class BasicScreenController
     private void validateAndLoad() {
         assert xmlAssetPath != null;
         /*
-         * Read and validate the interface XML.
+         * Read and validate the screen's interface XML and build the interface.
+
+         * Warnings from Nifty's logger are disabled in case the screen
+         * wants to override registered styles.
          */
-        try {
-            nifty.validateXml(xmlAssetPath);
-        } catch (Exception exception) {
-            logger.log(Level.WARNING, "Nifty validation of "
-                    + MyString.quote(xmlAssetPath)
-                    + " failed with exception:",
-                    exception);
-        }
-        /*
-         * Re-read the XML and build the interface.
-         */
+        Logger niftyLogger = Logger.getLogger(Nifty.class.getName());
+        Level save = niftyLogger.getLevel();
+        niftyLogger.setLevel(Level.SEVERE);
         nifty.addXml(xmlAssetPath);
+        niftyLogger.setLevel(save);
     }
 }
