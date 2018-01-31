@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -497,8 +497,8 @@ public enum TweenRotations {
     private Quaternion lerp(float t, Quaternion q0, Quaternion q1,
             Quaternion storeResult) {
         Validate.inRange(t, "t", 0f, 1f);
-        MyQuaternion.validateUnit(q0, "q0", 0.0001f);
-        MyQuaternion.validateUnit(q1, "q1", 0.0001f);
+        MyQuaternion.validateUnit(q0, "q0", 0.0005f);
+        MyQuaternion.validateUnit(q1, "q1", 0.0005f);
         if (storeResult == null) {
             storeResult = new Quaternion();
         }
