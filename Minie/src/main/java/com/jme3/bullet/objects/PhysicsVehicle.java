@@ -535,6 +535,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
         tuning = new VehicleTuning();

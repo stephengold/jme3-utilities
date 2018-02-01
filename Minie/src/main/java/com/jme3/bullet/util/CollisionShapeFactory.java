@@ -273,7 +273,7 @@ public class CollisionShapeFactory {
      * @param vector
      */
     public static void shiftCompoundShapeContents(CompoundCollisionShape compoundShape, Vector3f vector) {
-        for (Iterator<ChildCollisionShape> it = new LinkedList(compoundShape.getChildren()).iterator(); it.hasNext();) {
+        for (Iterator<ChildCollisionShape> it = new LinkedList<ChildCollisionShape>(compoundShape.getChildren()).iterator(); it.hasNext();) {
             ChildCollisionShape childCollisionShape = it.next();
             CollisionShape child = childCollisionShape.shape;
             Vector3f location = childCollisionShape.location;

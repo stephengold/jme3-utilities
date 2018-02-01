@@ -790,7 +790,7 @@ public class PhysicsSpace {
      * Performs a ray collision test and returns the results as a list of
      * PhysicsRayTestResults ordered by it hitFraction (lower to higher)
      */
-    public List rayTest(Vector3f from, Vector3f to) {
+    public List<PhysicsRayTestResult> rayTest(Vector3f from, Vector3f to) {
         List<PhysicsRayTestResult> results = new ArrayList<PhysicsRayTestResult>();
         rayTest(from, to, results);
 
@@ -886,9 +886,9 @@ public class PhysicsSpace {
      * object and is moving AWAY from its center.
      */
     public List<PhysicsSweepTestResult> sweepTest(CollisionShape shape, Transform start, Transform end) {
-        List results = new LinkedList();
+        List<PhysicsSweepTestResult> results = new LinkedList<PhysicsSweepTestResult>();
         sweepTest(shape, start, end, results);
-        return (List<PhysicsSweepTestResult>) results;
+        return results;
     }
 
     public List<PhysicsSweepTestResult> sweepTest(CollisionShape shape, Transform start, Transform end, List<PhysicsSweepTestResult> results) {
