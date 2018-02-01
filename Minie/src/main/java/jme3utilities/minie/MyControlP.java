@@ -28,7 +28,6 @@ package jme3utilities.minie;
 
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.AbstractPhysicsControl;
-import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.PhysicsControl;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -77,7 +76,6 @@ public class MyControlP {
      */
     public static boolean canApplyPhysicsLocal(Control sgc) {
         boolean result = sgc instanceof AbstractPhysicsControl
-                || sgc instanceof CharacterControl
                 || sgc instanceof GhostControl
                 || sgc instanceof RigidBodyControl
                 || sgc instanceof VehicleControl;
@@ -230,10 +228,6 @@ public class MyControlP {
             AbstractPhysicsControl apc = (AbstractPhysicsControl) sgc;
             result = apc.isApplyPhysicsLocal();
 
-        } else if (sgc instanceof CharacterControl) {
-            CharacterControl cc = (CharacterControl) sgc;
-            result = cc.isApplyPhysicsLocal();
-
         } else if (sgc instanceof GhostControl) {
             GhostControl gc = (GhostControl) sgc;
             result = gc.isApplyPhysicsLocal();
@@ -320,10 +314,6 @@ public class MyControlP {
         if (sgc instanceof AbstractPhysicsControl) {
             AbstractPhysicsControl apc = (AbstractPhysicsControl) sgc;
             apc.setApplyPhysicsLocal(newSetting);
-
-        } else if (sgc instanceof CharacterControl) {
-            CharacterControl cc = (CharacterControl) sgc;
-            cc.setApplyPhysicsLocal(newSetting);
 
         } else if (sgc instanceof GhostControl) {
             GhostControl gc = (GhostControl) sgc;
