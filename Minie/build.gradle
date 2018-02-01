@@ -15,8 +15,6 @@ javadocJar { baseName project.ext.baseName }
 sourcesJar { baseName project.ext.baseName }
 
 dependencies {
-    compile "org.jmonkeyengine:jme3-bullet:$jmonkeyengineVersion"
-
     //compile "jme3utilities:jme3-utilities-debug:$jme3utilitiesdebugVersion"
     compile project(':debug')
 }
