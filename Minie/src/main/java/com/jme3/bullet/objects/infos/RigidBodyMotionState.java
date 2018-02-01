@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,11 +40,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * stores transform info of a PhysicsNode in a threadsafe manner to
- * allow multithreaded access from the jme scenegraph and the bullet physicsspace
+ * stores transform info of a PhysicsNode in a threadsafe manner to allow
+ * multithreaded access from the jme scenegraph and the bullet physicsspace
+ *
  * @author normenhansen
  */
 public class RigidBodyMotionState {
+
     long motionStateId = 0;
     private Vector3f worldLocation = new Vector3f();
     private Matrix3f worldRotation = new Matrix3f();
@@ -62,7 +64,9 @@ public class RigidBodyMotionState {
     private native long createMotionState();
 
     /**
-     * applies the current transform to the given jme Node if the location has been updated on the physics side
+     * applies the current transform to the given jme Node if the location has
+     * been updated on the physics side
+     *
      * @param spatial
      */
     public boolean applyTransform(Spatial spatial) {
@@ -140,8 +144,8 @@ public class RigidBodyMotionState {
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         this.applyPhysicsLocal = applyPhysicsLocal;
     }
-    
-    public long getObjectId(){
+
+    public long getObjectId() {
         return motionStateId;
     }
 //    public void addMotionStateListener(PhysicsMotionStateListener listener){

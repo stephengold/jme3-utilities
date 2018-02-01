@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,8 +43,8 @@ import java.nio.FloatBuffer;
  * @author normenhansen
  */
 public class NativeMeshUtil {
-    
-    public static long getTriangleIndexVertexArray(Mesh mesh){
+
+    public static long getTriangleIndexVertexArray(Mesh mesh) {
         ByteBuffer triangleIndexBase = BufferUtils.createByteBuffer(mesh.getTriangleCount() * 3 * 4);
         ByteBuffer vertexBase = BufferUtils.createByteBuffer(mesh.getVertexCount() * 3 * 4);
         int numVertices = mesh.getVertexCount();
@@ -71,7 +71,7 @@ public class NativeMeshUtil {
 
         return createTriangleIndexVertexArray(triangleIndexBase, vertexBase, numTriangles, numVertices, vertexStride, triangleIndexStride);
     }
-    
+
     public static native long createTriangleIndexVertexArray(ByteBuffer triangleIndexBase, ByteBuffer vertexBase, int numTraingles, int numVertices, int vertextStride, int triangleIndexStride);
-    
+
 }

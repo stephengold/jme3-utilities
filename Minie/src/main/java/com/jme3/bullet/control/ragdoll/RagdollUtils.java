@@ -65,7 +65,6 @@ public class RagdollUtils {
 
     public static Map<Integer, List<Float>> buildPointMap(Spatial model) {
 
-
         Map<Integer, List<Float>> map = new HashMap<Integer, List<Float>>();
         if (model instanceof Geometry) {
             Geometry g = (Geometry) model;
@@ -98,7 +97,6 @@ public class RagdollUtils {
 
         for (int i = 0; i < vertexComponents; i += 3) {
 
-
             start = i / 3 * 4;
             index = 0;
             maxWeight = -1;
@@ -122,14 +120,14 @@ public class RagdollUtils {
     }
 
     /**
-     * Create a hull collision shape from linked vertices to this bone.
-     * Vertices have to be previoulsly gathered in a map using buildPointMap method
-     * 
+     * Create a hull collision shape from linked vertices to this bone. Vertices
+     * have to be previoulsly gathered in a map using buildPointMap method
+     *
      * @param pointsMap
      * @param boneIndices
      * @param initialScale
      * @param initialPosition
-     * @return 
+     * @return
      */
     public static HullCollisionShape makeShapeFromPointMap(Map<Integer, List<Float>> pointsMap, List<Integer> boneIndices, Vector3f initialScale, Vector3f initialPosition) {
 
@@ -156,7 +154,6 @@ public class RagdollUtils {
             p[i] = points.get(i);
         }
 
-
         return new HullCollisionShape(p);
     }
 
@@ -178,13 +175,13 @@ public class RagdollUtils {
 
     /**
      * Create a hull collision shape from linked vertices to this bone.
-     * 
+     *
      * @param model
      * @param boneIndices
      * @param initialScale
      * @param initialPosition
      * @param weightThreshold
-     * @return 
+     * @return
      */
     public static HullCollisionShape makeShapeFromVerticeWeights(Spatial model, List<Integer> boneIndices, Vector3f initialScale, Vector3f initialPosition, float weightThreshold) {
 
@@ -211,17 +208,17 @@ public class RagdollUtils {
             p[i] = points.get(i);
         }
 
-
         return new HullCollisionShape(p);
     }
 
     /**
      * returns a list of points for the given bone
+     *
      * @param mesh
      * @param boneIndex
      * @param offset
      * @param link
-     * @return 
+     * @return
      */
     private static List<Float> getPoints(Mesh mesh, int boneIndex, Vector3f initialScale, Vector3f offset, float weightThreshold) {
 
@@ -265,9 +262,10 @@ public class RagdollUtils {
     }
 
     /**
-     * Updates a bone position and rotation.
-     * if the child bones are not in the bone list this means, they are not associated with a physics shape.
-     * So they have to be updated
+     * Updates a bone position and rotation. if the child bones are not in the
+     * bone list this means, they are not associated with a physics shape. So
+     * they have to be updated
+     *
      * @param bone the bone
      * @param pos the position
      * @param rot the rotation

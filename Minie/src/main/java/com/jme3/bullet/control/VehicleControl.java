@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,6 +67,7 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl, Jm
 
     /**
      * Creates a new PhysicsNode with the supplied collision shape
+     *
      * @param shape
      */
     public VehicleControl(CollisionShape shape) {
@@ -84,6 +85,7 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl, Jm
     /**
      * When set to true, the physics coordinates will be applied to the local
      * translation of the Spatial
+     *
      * @param applyPhysicsLocal
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
@@ -94,15 +96,15 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl, Jm
         }
     }
 
-    private Vector3f getSpatialTranslation(){
-        if(motionState.isApplyPhysicsLocal()){
+    private Vector3f getSpatialTranslation() {
+        if (motionState.isApplyPhysicsLocal()) {
             return spatial.getLocalTranslation();
         }
         return spatial.getWorldTranslation();
     }
 
-    private Quaternion getSpatialRotation(){
-        if(motionState.isApplyPhysicsLocal()){
+    private Quaternion getSpatialRotation() {
+        if (motionState.isApplyPhysicsLocal()) {
             return spatial.getLocalRotation();
         }
         return spatial.getWorldRotation();
@@ -158,7 +160,7 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl, Jm
         return control;
     }
 
-    @Override   
+    @Override
     public Object jmeClone() {
         VehicleControl control = new VehicleControl(collisionShape, mass);
         control.setAngularFactor(getAngularFactor());
@@ -184,7 +186,7 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl, Jm
         control.setSuspensionCompression(tuning.suspensionCompression);
         control.setSuspensionDamping(tuning.suspensionDamping);
         control.setMaxSuspensionForce(getMaxSuspensionForce());
-    
+
         for (Iterator<VehicleWheel> it = wheels.iterator(); it.hasNext();) {
             VehicleWheel wheel = it.next();
             VehicleWheel newWheel = control.addWheel(wheel.getLocation(), wheel.getDirection(), wheel.getAxle(), wheel.getRestLength(), wheel.getRadius(), wheel.isFrontWheel());
@@ -201,21 +203,21 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl, Jm
         }
         control.setApplyPhysicsLocal(isApplyPhysicsLocal());
         control.setEnabled(isEnabled());
-        
+
         control.spatial = spatial;
         return control;
-    }     
+    }
 
-    @Override   
-    public void cloneFields( Cloner cloner, Object original ) {
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
         this.spatial = cloner.clone(spatial);
-         
-        for( VehicleWheel wheel : wheels ) {
+
+        for (VehicleWheel wheel : wheels) {
             Spatial spatial = cloner.clone(wheel.getWheelSpatial());
             wheel.setWheelSpatial(spatial);
-        }        
+        }
     }
-         
+
     public void setSpatial(Spatial spatial) {
         this.spatial = spatial;
         setUserObject(spatial);
@@ -230,7 +232,7 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl, Jm
         this.enabled = enabled;
         if (space != null) {
             if (enabled && !added) {
-                if(spatial!=null){
+                if (spatial != null) {
                     setPhysicsLocation(getSpatialTranslation());
                     setPhysicsRotation(getSpatialRotation());
                 }
@@ -269,7 +271,9 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl, Jm
                 added = false;
             }
         } else {
-            if(this.space == space) return;
+            if (this.space == space) {
+                return;
+            }
             // if this object isn't enabled, it will be added when it will be enabled.
             if (isEnabled()) {
                 space.addCollisionObject(this);

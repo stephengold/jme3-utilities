@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * <p>PhysicsJoint - Basic Phyiscs Joint</p>
+ * <p>
+ * PhysicsJoint - Basic Phyiscs Joint</p>
+ *
  * @author normenhansen
  */
 public abstract class PhysicsJoint implements Savable {
@@ -90,7 +92,9 @@ public abstract class PhysicsJoint implements Savable {
     /**
      * toggles collisions between linked bodys<br>
      * joint has to be removed from and added to PhyiscsSpace to apply this.
-     * @param collisionBetweenLinkedBodys set to false to have no collisions between linked bodys
+     *
+     * @param collisionBetweenLinkedBodys set to false to have no collisions
+     * between linked bodys
      */
     public void setCollisionBetweenLinkedBodys(boolean collisionBetweenLinkedBodys) {
         this.collisionBetweenLinkedBodys = collisionBetweenLinkedBodys;
@@ -113,7 +117,8 @@ public abstract class PhysicsJoint implements Savable {
     }
 
     /**
-     * destroys this joint and removes it from its connected PhysicsRigidBodys joint lists
+     * destroys this joint and removes it from its connected PhysicsRigidBodys
+     * joint lists
      */
     public void destroy() {
         getBodyA().removeJoint(this);

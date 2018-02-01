@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,9 +38,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This Object holds information about a jbullet CollisionShape to be able to reuse
- * CollisionShapes (as suggested in bullet manuals)
- * TODO: add static methods to create shapes from nodes (like jbullet-jme constructor)
+ * This Object holds information about a jbullet CollisionShape to be able to
+ * reuse CollisionShapes (as suggested in bullet manuals) TODO: add static
+ * methods to create shapes from nodes (like jbullet-jme constructor)
+ *
  * @author normenhansen
  */
 public abstract class CollisionShape implements Savable {
@@ -66,9 +67,8 @@ public abstract class CollisionShape implements Savable {
 ////            objectId.calculateLocalInertia(mass, vector);
 ////        }
 //    }
-//    
+//
 //    private native void calculateLocalInertia(long objectId, long shapeId, float mass);
-
     /**
      * used internally
      */
@@ -87,7 +87,7 @@ public abstract class CollisionShape implements Savable {
         this.scale.set(scale);
         setLocalScaling(objectId, scale);
     }
-    
+
     public Vector3f getScale() {
         return scale;
     }
@@ -95,16 +95,16 @@ public abstract class CollisionShape implements Savable {
     public float getMargin() {
         return getMargin(objectId);
     }
-    
+
     private native float getMargin(long objectId);
 
     public void setMargin(float margin) {
         setMargin(objectId, margin);
         this.margin = margin;
     }
-    
+
     private native void setLocalScaling(long obectId, Vector3f scale);
-    
+
     private native void setMargin(long objectId, float margin);
 
     public void write(JmeExporter ex) throws IOException {

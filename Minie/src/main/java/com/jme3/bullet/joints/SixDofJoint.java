@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,13 +48,15 @@ import java.util.logging.Logger;
 
 /**
  * <i>From bullet manual:</i><br>
- * This generic constraint can emulate a variety of standard constraints,
- * by configuring each of the 6 degrees of freedom (dof).
- * The first 3 dof axis are linear axis, which represent translation of rigidbodies,
- * and the latter 3 dof axis represent the angular motion. Each axis can be either locked,
- * free or limited. On construction of a new btGeneric6DofConstraint, all axis are locked.
- * Afterwards the axis can be reconfigured. Note that several combinations that
- * include free and/or limited angular degrees of freedom are undefined.
+ * This generic constraint can emulate a variety of standard constraints, by
+ * configuring each of the 6 degrees of freedom (dof). The first 3 dof axis are
+ * linear axis, which represent translation of rigidbodies, and the latter 3 dof
+ * axis represent the angular motion. Each axis can be either locked, free or
+ * limited. On construction of a new btGeneric6DofConstraint, all axis are
+ * locked. Afterwards the axis can be reconfigured. Note that several
+ * combinations that include free and/or limited angular degrees of freedom are
+ * undefined.
+ *
  * @author normenhansen
  */
 public class SixDofJoint extends PhysicsJoint {
@@ -116,6 +118,7 @@ public class SixDofJoint extends PhysicsJoint {
     /**
      * returns the TranslationalLimitMotor of this 6DofJoint which allows
      * manipulating the translational axis
+     *
      * @return the TranslationalLimitMotor
      */
     public TranslationalLimitMotor getTranslationalLimitMotor() {
@@ -125,6 +128,7 @@ public class SixDofJoint extends PhysicsJoint {
     /**
      * returns one of the three RotationalLimitMotors of this 6DofJoint which
      * allow manipulating the rotational axes
+     *
      * @param index the index of the RotationalLimitMotor
      * @return the RotationalLimitMotor at the given index
      */

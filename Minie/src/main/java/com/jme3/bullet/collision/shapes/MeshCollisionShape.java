@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,8 +72,8 @@ public class MeshCollisionShape extends CollisionShape {
     }
 
     /**
-     * Creates a collision shape from the given Mesh. 
-     * Default behavior, more optimized for memory usage.
+     * Creates a collision shape from the given Mesh. Default behavior, more
+     * optimized for memory usage.
      *
      * @param mesh
      */
@@ -83,19 +83,17 @@ public class MeshCollisionShape extends CollisionShape {
 
     /**
      * Creates a collision shape from the given Mesh.
-     * <code>memoryOptimized</code> determines if optimized instead of 
-     * quantized BVH will be used.
-     * Internally, <code>memoryOptimized</code> BVH is slower to calculate (~4x) 
-     * but also smaller (~0.5x). 
-     * It is preferable to use the memory optimized version and then serialize
-     * the resulting MeshCollisionshape as this will also save the
-     * generated BVH. 
-     * An exception can be procedurally / generated collision shapes, where
-     * the generation time is more of a concern
+     * <code>memoryOptimized</code> determines if optimized instead of quantized
+     * BVH will be used. Internally, <code>memoryOptimized</code> BVH is slower
+     * to calculate (~4x) but also smaller (~0.5x). It is preferable to use the
+     * memory optimized version and then serialize the resulting
+     * MeshCollisionshape as this will also save the generated BVH. An exception
+     * can be procedurally / generated collision shapes, where the generation
+     * time is more of a concern
      *
      * @param mesh the Mesh to use
-     * @param memoryOptimized True to generate a memory optimized BVH,
-     * false to generate quantized BVH.
+     * @param memoryOptimized True to generate a memory optimized BVH, false to
+     * generate quantized BVH.
      */
     public MeshCollisionShape(final Mesh mesh, final boolean memoryOptimized) {
         this.memoryOptimized = memoryOptimized;
@@ -124,7 +122,7 @@ public class MeshCollisionShape extends CollisionShape {
         this.memoryOptimized = memoryOptimized;
         this.createShape(null);
     }
-    
+
     private void createCollisionMesh(Mesh mesh) {
         this.triangleIndexBase = BufferUtils.createByteBuffer(mesh.getTriangleCount() * 3 * 4);
         this.vertexBase = BufferUtils.createByteBuffer(mesh.getVertexCount() * 3 * 4);
@@ -191,19 +189,21 @@ public class MeshCollisionShape extends CollisionShape {
         this.vertexBase = BufferUtils.createByteBuffer(capsule.readByteArray(MeshCollisionShape.VERTEX_BASE, null));
 
         byte[] nativeBvh = capsule.readByteArray(MeshCollisionShape.NATIVE_BVH, null);
-        memoryOptimized=nativeBvh != null;
+        memoryOptimized = nativeBvh != null;
         createShape(nativeBvh);
     }
 
     private void createShape(byte bvh[]) {
-        boolean buildBvh=bvh==null||bvh.length==0;
+        boolean buildBvh = bvh == null || bvh.length == 0;
         this.meshId = NativeMeshUtil.createTriangleIndexVertexArray(this.triangleIndexBase, this.vertexBase, this.numTriangles, this.numVertices, this.vertexStride, this.triangleIndexStride);
         Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Mesh {0}", Long.toHexString(this.meshId));
         this.objectId = createShape(memoryOptimized, buildBvh, this.meshId);
         Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Shape {0}", Long.toHexString(this.objectId));
-        if(!buildBvh)   nativeBVHBuffer = setBVH(bvh, this.objectId);                
+        if (!buildBvh) {
+            nativeBVHBuffer = setBVH(bvh, this.objectId);
+        }
         this.setScale(this.scale);
-        this.setMargin(this.margin);        
+        this.setMargin(this.margin);
     }
 
     /**
@@ -211,9 +211,9 @@ public class MeshCollisionShape extends CollisionShape {
      * de-serialized shape, must be freed when not used anymore!
      */
     private native long setBVH(byte[] buffer, long objectid);
-    
+
     private native byte[] saveBVH(long objectId);
-    
+
     private native long createShape(boolean memoryOptimized, boolean buildBvt, long meshId);
 
     @Override

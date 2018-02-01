@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@ import com.jme3.animation.Bone;
  * @author Nehon
  */
 public interface RagdollCollisionListener {
-    
+
     public void collide(Bone bone, PhysicsCollisionObject object, PhysicsCollisionEvent event);
-    
+
 }

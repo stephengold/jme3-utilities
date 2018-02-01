@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -162,13 +162,13 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
         }
 
     }
-    
-    @Override   
-    public void cloneFields( Cloner cloner, Object original ) { 
+
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
         this.spatial = cloner.clone(spatial);
         createSpatialData(this.spatial);
     }
-         
+
     public void setSpatial(Spatial spatial) {
         if (this.spatial != null && this.spatial != spatial) {
             removeSpatialData(this.spatial);

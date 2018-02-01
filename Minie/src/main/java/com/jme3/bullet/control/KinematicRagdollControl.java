@@ -73,23 +73,27 @@ import java.util.logging.Logger;
  * use this control you need a model with an AnimControl and a
  * SkeletonControl.<br> This should be the case if you imported an animated
  * model from Ogre or blender.<br> Note enabling/disabling the control
- * add/removes it from the physics space<br> <p> This control creates collision
- * shapes for each bones of the skeleton when you call
- * spatial.addControl(ragdollControl). <ul> <li>The shape is HullCollision shape
- * based on the vertices associated with each bone and based on a tweakable
- * weight threshold (see setWeightThreshold)</li> <li>If you don't want each
- * bone to be a collision shape, you can specify what bone to use by using the
- * addBoneName method<br> By using this method, bone that are not used to create
- * a shape, are "merged" to their parent to create the collision shape. </li>
- * </ul> <p> There are 2 modes for this control : <ul> <li><strong>The
- * kinematic modes :</strong><br> this is the default behavior, this means that
- * the collision shapes of the body are able to interact with physics enabled
- * objects. in this mode physics shapes follow the motion of the animated
- * skeleton (for example animated by a key framed animation) this mode is
- * enabled by calling setKinematicMode(); </li> <li><strong>The ragdoll modes
- * :</strong><br> To enable this behavior, you need to call setRagdollMode()
- * method. In this mode the character is entirely controlled by physics, so it
- * will fall under the gravity and move if any force is applied to it. </li>
+ * add/removes it from the physics space<br>
+ * <p>
+ * This control creates collision shapes for each bones of the skeleton when you
+ * call spatial.addControl(ragdollControl). <ul> <li>The shape is HullCollision
+ * shape based on the vertices associated with each bone and based on a
+ * tweakable weight threshold (see setWeightThreshold)</li> <li>If you don't
+ * want each bone to be a collision shape, you can specify what bone to use by
+ * using the addBoneName method<br> By using this method, bone that are not used
+ * to create a shape, are "merged" to their parent to create the collision
+ * shape. </li>
+ * </ul>
+ * <p>
+ * There are 2 modes for this control : <ul> <li><strong>The kinematic modes
+ * :</strong><br> this is the default behavior, this means that the collision
+ * shapes of the body are able to interact with physics enabled objects. in this
+ * mode physics shapes follow the motion of the animated skeleton (for example
+ * animated by a key framed animation) this mode is enabled by calling
+ * setKinematicMode(); </li> <li><strong>The ragdoll modes :</strong><br> To
+ * enable this behavior, you need to call setRagdollMode() method. In this mode
+ * the character is entirely controlled by physics, so it will fall under the
+ * gravity and move if any force is applied to it. </li>
  * </ul>
  *
  * @author Normen Hansen and Rémy Bouquet (Nehon)
@@ -122,6 +126,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     private float limbDampening = 0.6f;
 
     private float IKThreshold = 0.1f;
+
     public static enum Mode {
 
         Kinematic,
@@ -198,7 +203,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         if (!enabled) {
             return;
         }
-        if(mode == Mode.IK){
+        if (mode == Mode.IK) {
             ikUpdate(tpf);
         } else if (mode == mode.Ragdoll && targetModel.getLocalTranslation().equals(modelPosition)) {
             //if the ragdoll has the control of the skeleton, we update each bone with its position in physics world space.
@@ -225,7 +230,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
             //retrieving bone rotation in physics world space
             Quaternion q = link.rigidBody.getMotionState().getWorldRotationQuat();
 
-            //multiplying this rotation by the initialWorld rotation of the bone, 
+            //multiplying this rotation by the initialWorld rotation of the bone,
             //then transforming it with the inverse world rotation of the model
             tmpRot1.set(q).multLocal(link.initalWorldRotation);
             tmpRot2.set(targetModel.getWorldRotation()).inverseLocal().mult(tmpRot1, tmpRot1);
@@ -238,7 +243,6 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
                 modelPosition.set(p).subtractLocal(link.bone.getBindPosition());
                 targetModel.getParent().getWorldTransform().transformInverseVector(modelPosition, modelPosition);
                 modelRotation.set(q).multLocal(tmpRot2.set(link.bone.getBindRotation()).inverseLocal());
-
 
                 //applying transforms to the model
                 targetModel.setLocalTranslation(modelPosition);
@@ -273,7 +277,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
 //            if(link.usedbyIK){
 //                continue;
 //            }
-            //if blended control this means, keyframed animation is updating the skeleton, 
+            //if blended control this means, keyframed animation is updating the skeleton,
             //but to allow smooth transition, we blend this transformation with the saved position of the ragdoll
             if (blendedControl) {
                 Vector3f position2 = vars.vect2;
@@ -313,7 +317,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         }
         vars.release();
     }
-    private void ikUpdate(float tpf){
+
+    private void ikUpdate(float tpf) {
         TempVars vars = TempVars.get();
 
         Quaternion tmpRot1 = vars.quat1;
@@ -324,7 +329,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         Bone bone;
         String boneName;
         while (it.hasNext()) {
-            
+
             boneName = it.next();
             bone = (Bone) boneLinks.get(boneName).bone;
             if (!bone.hasUserControl()) {
@@ -341,21 +346,21 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
             updateBone(boneLinks.get(bone.getName()), tpf * (float) FastMath.sqrt(distance), vars, tmpRot1, tmpRot2, bone, ikTargets.get(boneName), depth, maxDepth);
 
             Vector3f position = vars.vect1;
-            
+
             for (PhysicsBoneLink link : boneLinks.values()) {
                 matchPhysicObjectToBone(link, position, tmpRot1);
             }
         }
         vars.release();
     }
-    
+
     public void updateBone(PhysicsBoneLink link, float tpf, TempVars vars, Quaternion tmpRot1, Quaternion[] tmpRot2, Bone tipBone, Vector3f target, int depth, int maxDepth) {
         if (link == null || link.bone.getParent() == null) {
             return;
         }
         Quaternion preQuat = link.bone.getLocalRotation();
         Vector3f vectorAxis;
-        
+
         float[] measureDist = new float[]{Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY};
         for (int dirIndex = 0; dirIndex < 3; dirIndex++) {
             if (dirIndex == 0) {
@@ -372,13 +377,12 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
                 rot = FastMath.clamp(rot, link.joint.getRotationalLimitMotor(dirIndex).getLoLimit(), link.joint.getRotationalLimitMotor(dirIndex).getHiLimit());
                 tmpRot1.fromAngleAxis(rot, vectorAxis);
 //                tmpRot1.fromAngleAxis(rotSpeed * tpf / (link.rigidBody.getMass() * 2), vectorAxis);
-                
-                
+
                 tmpRot2[posOrNeg] = link.bone.getLocalRotation().mult(tmpRot1);
                 tmpRot2[posOrNeg].normalizeLocal();
 
                 ikRotSpeed = -ikRotSpeed;
-               
+
                 link.bone.setLocalRotation(tmpRot2[posOrNeg]);
                 link.bone.update();
                 measureDist[posOrNeg] = tipBone.getModelSpacePosition().distance(target);
@@ -397,7 +401,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         link.bone.update();
 //        link.usedbyIK = true;
         if (link.bone.getParent() != null && depth < maxDepth) {
-            
+
             updateBone(boneLinks.get(link.bone.getParent().getName()), tpf * limbDampening, vars, tmpRot1, tmpRot2, tipBone, target, depth + 1, maxDepth);
         }
     }
@@ -443,7 +447,6 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         targetModel = model;
         Node parent = model.getParent();
 
-
         Vector3f initPosition = model.getLocalTranslation().clone();
         Quaternion initRotation = model.getLocalRotation().clone();
         initScale = model.getLocalScale().clone();
@@ -456,7 +459,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         //I remove the skeletonControl and readd it to the spatial to make sure it's after the ragdollControl in the stack
         //Find a proper way to order the controls.
         SkeletonControl sc = model.getControl(SkeletonControl.class);
-        if(sc == null){
+        if (sc == null) {
             throw new IllegalArgumentException("The root node of the model should have a SkeletonControl. Make sure the control is there and that it's not on a sub node.");
         }
         model.removeControl(sc);
@@ -465,7 +468,6 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         // put into bind pose and compute bone transforms in model space
         // maybe dont reset to ragdoll out of animations?
         scanSpatial(model);
-
 
         if (parent != null) {
             parent.attachChild(model);
@@ -524,7 +526,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
             PhysicsBoneLink link = new PhysicsBoneLink();
             link.bone = bone;
 
-            //creating the collision shape 
+            //creating the collision shape
             HullCollisionShape shape = null;
             if (pointsMap != null) {
                 //build a shape for the bone, using the vertices that are most influenced by this bone
@@ -719,28 +721,28 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         animControl.setEnabled(mode == Mode.Kinematic);
 
         baseRigidBody.setKinematic(mode == Mode.Kinematic);
-		if (mode != Mode.IK) {
-			TempVars vars = TempVars.get();
+        if (mode != Mode.IK) {
+            TempVars vars = TempVars.get();
 
-			for (PhysicsBoneLink link : boneLinks.values()) {
-				link.rigidBody.setKinematic(mode == Mode.Kinematic);
-				if (mode == Mode.Ragdoll) {
-					Quaternion tmpRot1 = vars.quat1;
-					Vector3f position = vars.vect1;
-					//making sure that the ragdoll is at the correct place.
-					matchPhysicObjectToBone(link, position, tmpRot1);
-				}
+            for (PhysicsBoneLink link : boneLinks.values()) {
+                link.rigidBody.setKinematic(mode == Mode.Kinematic);
+                if (mode == Mode.Ragdoll) {
+                    Quaternion tmpRot1 = vars.quat1;
+                    Vector3f position = vars.vect1;
+                    //making sure that the ragdoll is at the correct place.
+                    matchPhysicObjectToBone(link, position, tmpRot1);
+                }
 
-			}
-			vars.release();
-		}
+            }
+            vars.release();
+        }
 
-        if(mode != Mode.IK){
+        if (mode != Mode.IK) {
             for (Bone bone : skeleton.getRoots()) {
                 RagdollUtils.setUserControl(bone, mode == Mode.Ragdoll);
             }
         }
-        
+
     }
 
     /**
@@ -758,7 +760,6 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         mode = Mode.Kinematic;
         AnimControl animControl = targetModel.getControl(AnimControl.class);
         animControl.setEnabled(true);
-
 
         TempVars vars = TempVars.get();
         for (PhysicsBoneLink link : boneLinks.values()) {
@@ -810,15 +811,15 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     }
 
     /**
-     * Sets the control into Inverse Kinematics mode. The affected bones are affected by IK.
-     * physics.
+     * Sets the control into Inverse Kinematics mode. The affected bones are
+     * affected by IK. physics.
      */
     public void setIKMode() {
         if (mode != Mode.IK) {
             setMode(Mode.IK);
         }
     }
-    
+
     /**
      * returns the mode of this control
      *
@@ -921,31 +922,30 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         control.setApplyPhysicsLocal(applyLocal);
         return control;
     }
-   
-    @Override   
+
+    @Override
     public Object jmeClone() {
-        KinematicRagdollControl control = new KinematicRagdollControl(preset, weightThreshold);        
+        KinematicRagdollControl control = new KinematicRagdollControl(preset, weightThreshold);
         control.setMode(mode);
         control.setRootMass(rootMass);
         control.setWeightThreshold(weightThreshold);
         control.setApplyPhysicsLocal(applyLocal);
         control.spatial = this.spatial;
         return control;
-    }     
+    }
 
     public Vector3f setIKTarget(Bone bone, Vector3f worldPos, int chainLength) {
         Vector3f target = worldPos.subtract(targetModel.getWorldTranslation());
         ikTargets.put(bone.getName(), target);
         ikChainDepth.put(bone.getName(), chainLength);
         int i = 0;
-        while (i < chainLength+2 && bone.getParent() != null) {
+        while (i < chainLength + 2 && bone.getParent() != null) {
             if (!bone.hasUserControl()) {
                 bone.setUserControl(true);
             }
             bone = bone.getParent();
             i++;
         }
-
 
 //        setIKMode();
         return target;
@@ -954,7 +954,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     public void removeIKTarget(Bone bone) {
         int depth = ikChainDepth.remove(bone.getName());
         int i = 0;
-        while (i < depth+2 && bone.getParent() != null) {
+        while (i < depth + 2 && bone.getParent() != null) {
             if (bone.hasUserControl()) {
 //                matchPhysicObjectToBone(boneLinks.get(bone.getName()), position, tmpRot1);
                 bone.setUserControl(false);
@@ -963,12 +963,13 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
             i++;
         }
     }
-    
-    public void removeAllIKTargets(){
+
+    public void removeAllIKTargets() {
         ikTargets.clear();
         ikChainDepth.clear();
         applyUserControl();
     }
+
     public void applyUserControl() {
         for (Bone bone : skeleton.getRoots()) {
             RagdollUtils.setUserControl(bone, false);
@@ -995,6 +996,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
             vars.release();
         }
     }
+
     public float getIkRotSpeed() {
         return ikRotSpeed;
     }
@@ -1011,7 +1013,6 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         this.IKThreshold = IKThreshold;
     }
 
-    
     public float getLimbDampening() {
         return limbDampening;
     }
@@ -1019,10 +1020,11 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     public void setLimbDampening(float limbDampening) {
         this.limbDampening = limbDampening;
     }
-    
-    public Bone getBone(String name){
+
+    public Bone getBone(String name) {
         return skeleton.getBone(name);
     }
+
     /**
      * serialize this control
      *

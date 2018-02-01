@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,8 @@ import java.util.logging.Logger;
  *
  * @author normenhansen
  */
-public class PlaneCollisionShape extends CollisionShape{
+public class PlaneCollisionShape extends CollisionShape {
+
     private Plane plane;
 
     public PlaneCollisionShape() {
@@ -53,6 +54,7 @@ public class PlaneCollisionShape extends CollisionShape{
 
     /**
      * Creates a plane Collision shape
+     *
      * @param plane the plane that defines the shape
      */
     public PlaneCollisionShape(Plane plane) {
@@ -86,7 +88,7 @@ public class PlaneCollisionShape extends CollisionShape{
         setScale(scale);
         setMargin(margin);
     }
-    
+
     private native long createShape(Vector3f normal, float constant);
 
 }

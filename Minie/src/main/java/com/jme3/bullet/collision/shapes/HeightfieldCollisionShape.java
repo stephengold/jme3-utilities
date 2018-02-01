@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,13 +46,12 @@ import java.util.logging.Logger;
 
 /**
  * Uses Bullet Physics Heightfield terrain collision system. This is MUCH faster
- * than using a regular mesh.
- * There are a couple tricks though:
- *	-No rotation or translation is supported.
- *	-The collision bbox must be centered around 0,0,0 with the height above and below the y-axis being
- *	equal on either side. If not, the whole collision box is shifted vertically and things don't collide
- *	as they should.
- * 
+ * than using a regular mesh. There are a couple tricks though: -No rotation or
+ * translation is supported. -The collision bbox must be centered around 0,0,0
+ * with the height above and below the y-axis being equal on either side. If
+ * not, the whole collision box is shifted vertically and things don't collide
+ * as they should.
+ *
  * @author Brent Owens
  */
 public class HeightfieldCollisionShape extends CollisionShape {
@@ -116,12 +115,11 @@ public class HeightfieldCollisionShape extends CollisionShape {
         heightStickWidth = (int) FastMath.sqrt(heightfieldData.length);
         heightStickLength = heightStickWidth;
 
-
         createShape();
     }
 
     protected void createShape() {
-        bbuf = BufferUtils.createByteBuffer(heightfieldData.length * 4); 
+        bbuf = BufferUtils.createByteBuffer(heightfieldData.length * 4);
 //        fbuf = bbuf.asFloatBuffer();//FloatBuffer.wrap(heightfieldData);
 //        fbuf.rewind();
 //        fbuf.put(heightfieldData);

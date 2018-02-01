@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,8 +49,9 @@ import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 
 /**
- * A GhostControl moves with the spatial it is attached to and can be used to check
- * overlaps with other physics objects (e.g. aggro radius).
+ * A GhostControl moves with the spatial it is attached to and can be used to
+ * check overlaps with other physics objects (e.g. aggro radius).
+ *
  * @author normenhansen
  */
 public class GhostControl extends PhysicsGhostObject implements PhysicsControl, JmeCloneable {
@@ -75,6 +76,7 @@ public class GhostControl extends PhysicsGhostObject implements PhysicsControl, 
     /**
      * When set to true, the physics coordinates will be applied to the local
      * translation of the Spatial
+     *
      * @param applyPhysicsLocal
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
@@ -108,7 +110,7 @@ public class GhostControl extends PhysicsGhostObject implements PhysicsControl, 
         return control;
     }
 
-    @Override   
+    @Override
     public Object jmeClone() {
         GhostControl control = new GhostControl(collisionShape);
         control.setCcdMotionThreshold(getCcdMotionThreshold());
@@ -120,13 +122,13 @@ public class GhostControl extends PhysicsGhostObject implements PhysicsControl, 
         control.setApplyPhysicsLocal(isApplyPhysicsLocal());
         control.spatial = this.spatial;
         return control;
-    }     
+    }
 
-    @Override   
-    public void cloneFields( Cloner cloner, Object original ) { 
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
         this.spatial = cloner.clone(spatial);
     }
-         
+
     public void setSpatial(Spatial spatial) {
         this.spatial = spatial;
         setUserObject(spatial);

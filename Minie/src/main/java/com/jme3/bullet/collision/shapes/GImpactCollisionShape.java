@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,6 +48,7 @@ import java.util.logging.Logger;
 
 /**
  * Basic mesh collision shape
+ *
  * @author normenhansen
  */
 public class GImpactCollisionShape extends CollisionShape {
@@ -63,6 +64,7 @@ public class GImpactCollisionShape extends CollisionShape {
 
     /**
      * creates a collision shape from the given Mesh
+     *
      * @param mesh the Mesh to use
      */
     public GImpactCollisionShape(Mesh mesh) {
@@ -71,7 +73,7 @@ public class GImpactCollisionShape extends CollisionShape {
 
     private void createCollisionMesh(Mesh mesh) {
         triangleIndexBase = BufferUtils.createByteBuffer(mesh.getTriangleCount() * 3 * 4);
-        vertexBase = BufferUtils.createByteBuffer(mesh.getVertexCount() * 3 * 4); 
+        vertexBase = BufferUtils.createByteBuffer(mesh.getVertexCount() * 3 * 4);
 //        triangleIndexBase = ByteBuffer.allocate(mesh.getTriangleCount() * 3 * 4);
 //        vertexBase = ByteBuffer.allocate(mesh.getVertexCount() * 3 * 4);
         numVertices = mesh.getVertexCount();

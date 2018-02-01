@@ -51,7 +51,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * <p>PhysicsRigidBody - Basic physics object</p>
+ * <p>
+ * PhysicsRigidBody - Basic physics object</p>
+ *
  * @author normenhansen
  */
 public class PhysicsRigidBody extends PhysicsCollisionObject {
@@ -66,6 +68,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Creates a new PhysicsRigidBody with the supplied collision shape
+     *
      * @param shape
      */
     public PhysicsRigidBody(CollisionShape shape) {
@@ -133,6 +136,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Sets the physics object location
+     *
      * @param location the location of the actual physics object
      */
     public void setPhysicsLocation(Vector3f location) {
@@ -143,6 +147,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Sets the physics object rotation
+     *
      * @param rotation the rotation of the actual physics object
      */
     public void setPhysicsRotation(Matrix3f rotation) {
@@ -153,6 +158,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Sets the physics object rotation
+     *
      * @param rotation the rotation of the actual physics object
      */
     public void setPhysicsRotation(Quaternion rotation) {
@@ -184,12 +190,13 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         getPhysicsRotation(objectId, rot);
         return rot;
     }
-    
+
     public void setInverseInertiaLocal(Vector3f gravity) {
-    	setInverseInertiaLocal(objectId, gravity);
+        setInverseInertiaLocal(objectId, gravity);
     }
+
     private native void setInverseInertiaLocal(long objectId, Vector3f gravity);
-    
+
     public Vector3f getInverseInertiaLocal(Vector3f trans) {
         if (trans == null) {
             trans = new Vector3f();
@@ -197,7 +204,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         getInverseInertiaLocal(objectId, trans);
         return trans;
     }
-    
+
     private native void getInverseInertiaLocal(long objectId, Vector3f vector);
 
     private native void getPhysicsRotation(long objectId, Quaternion rot);
@@ -263,9 +270,10 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 //        return Converter.convert(tempTrans.basis, rotation);
 //    }
     /**
-     * Sets the node to kinematic mode. in this mode the node is not affected by physics
-     * but affects other physics objects. Iits kinetic force is calculated by the amount
-     * of movement it is exposed to and its weight.
+     * Sets the node to kinematic mode. in this mode the node is not affected by
+     * physics but affects other physics objects. Iits kinetic force is
+     * calculated by the amount of movement it is exposed to and its weight.
+     *
      * @param kinematic
      */
     public void setKinematic(boolean kinematic) {
@@ -286,9 +294,12 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void setCcdSweptSphereRadius(long objectId, float radius);
 
     /**
-     * Sets the amount of motion that has to happen in one physics tick to trigger the continuous motion detection
-     * 
-     * This avoids the problem of fast objects moving through other objects, set to zero to disable (default)
+     * Sets the amount of motion that has to happen in one physics tick to
+     * trigger the continuous motion detection
+     *
+     * This avoids the problem of fast objects moving through other objects, set
+     * to zero to disable (default)
+     *
      * @param threshold
      */
     public void setCcdMotionThreshold(float threshold) {
@@ -321,6 +332,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Sets the mass of this PhysicsRigidBody, objects with mass=0 are static.
+     *
      * @param mass
      */
     public void setMass(float mass) {
@@ -360,14 +372,16 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Set the local gravity of this PhysicsRigidBody
-     * 
-     * Set this after adding the node to the PhysicsSpace,
-     * the PhysicsSpace assigns its current gravity to the physics node when its added.
+     *
+     * Set this after adding the node to the PhysicsSpace, the PhysicsSpace
+     * assigns its current gravity to the physics node when its added.
+     *
      * @param gravity the gravity vector to set
      */
     public void setGravity(Vector3f gravity) {
         setGravity(objectId, gravity);
     }
+
     private native void setGravity(long objectId, Vector3f gravity);
 
     public float getFriction() {
@@ -378,6 +392,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Sets the friction of this physics object
+     *
      * @param friction the friction of this physics object
      */
     public void setFriction(float friction) {
@@ -404,10 +419,11 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     public void setLinearDamping(float linearDamping) {
         setDamping(objectId, linearDamping, getAngularDamping());
     }
-    
+
     public void setAngularDamping(float angularDamping) {
         setAngularDamping(objectId, angularDamping);
     }
+
     private native void setAngularDamping(long objectId, float factor);
 
     public float getLinearDamping() {
@@ -429,7 +445,9 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native float getRestitution(long objectId);
 
     /**
-     * The "bouncyness" of the PhysicsRigidBody, best performance if restitution=0
+     * The "bouncyness" of the PhysicsRigidBody, best performance if
+     * restitution=0
+     *
      * @param restitution
      */
     public void setRestitution(float restitution) {
@@ -440,6 +458,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Get the current angular velocity of this PhysicsRigidBody
+     *
      * @return the current linear velocity
      */
     public Vector3f getAngularVelocity() {
@@ -452,6 +471,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Get the current angular velocity of this PhysicsRigidBody
+     *
      * @param vec the vector to store the velocity in
      */
     public void getAngularVelocity(Vector3f vec) {
@@ -460,6 +480,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Sets the angular velocity of this PhysicsRigidBody
+     *
      * @param vec the angular velocity of this PhysicsRigidBody
      */
     public void setAngularVelocity(Vector3f vec) {
@@ -471,6 +492,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Get the current linear velocity of this PhysicsRigidBody
+     *
      * @return the current linear velocity
      */
     public Vector3f getLinearVelocity() {
@@ -483,6 +505,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Get the current linear velocity of this PhysicsRigidBody
+     *
      * @param vec the vector to store the velocity in
      */
     public void getLinearVelocity(Vector3f vec) {
@@ -491,6 +514,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Sets the linear velocity of this PhysicsRigidBody
+     *
      * @param vec the linear velocity of this PhysicsRigidBody
      */
     public void setLinearVelocity(Vector3f vec) {
@@ -501,9 +525,11 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void setLinearVelocity(long objectId, Vector3f vec);
 
     /**
-     * Apply a force to the PhysicsRigidBody, only applies force if the next physics update call
-     * updates the physics space.<br>
-     * To apply an impulse, use applyImpulse, use applyContinuousForce to apply continuous force.
+     * Apply a force to the PhysicsRigidBody, only applies force if the next
+     * physics update call updates the physics space.<br>
+     * To apply an impulse, use applyImpulse, use applyContinuousForce to apply
+     * continuous force.
+     *
      * @param force the force
      * @param location the location of the force
      */
@@ -515,10 +541,10 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void applyForce(long objectId, Vector3f force, Vector3f location);
 
     /**
-     * Apply a force to the PhysicsRigidBody, only applies force if the next physics update call
-     * updates the physics space.<br>
+     * Apply a force to the PhysicsRigidBody, only applies force if the next
+     * physics update call updates the physics space.<br>
      * To apply an impulse, use applyImpulse.
-     * 
+     *
      * @param force the force
      */
     public void applyCentralForce(Vector3f force) {
@@ -529,10 +555,10 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void applyCentralForce(long objectId, Vector3f force);
 
     /**
-     * Apply a force to the PhysicsRigidBody, only applies force if the next physics update call
-     * updates the physics space.<br>
+     * Apply a force to the PhysicsRigidBody, only applies force if the next
+     * physics update call updates the physics space.<br>
      * To apply an impulse, use applyImpulse.
-     * 
+     *
      * @param torque the torque
      */
     public void applyTorque(Vector3f torque) {
@@ -544,6 +570,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Apply an impulse to the PhysicsRigidBody in the next physics update.
+     *
      * @param impulse applied impulse
      * @param rel_pos location relative to object
      */
@@ -555,7 +582,9 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void applyImpulse(long objectId, Vector3f impulse, Vector3f rel_pos);
 
     /**
-     * Apply a torque impulse to the PhysicsRigidBody in the next physics update.
+     * Apply a torque impulse to the PhysicsRigidBody in the next physics
+     * update.
+     *
      * @param vec
      */
     public void applyTorqueImpulse(Vector3f vec) {
@@ -567,7 +596,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Clear all forces from the PhysicsRigidBody
-     * 
+     *
      */
     public void clearForces() {
         clearForces(objectId);
@@ -591,7 +620,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void setCollisionShape(long objectId, long collisionShapeId);
 
     /**
-     * reactivates this PhysicsRigidBody when it has been deactivated because it was not moving
+     * reactivates this PhysicsRigidBody when it has been deactivated because it
+     * was not moving
      */
     public void activate() {
         activate(objectId);
@@ -606,8 +636,10 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native boolean isActive(long objectId);
 
     /**
-     * sets the sleeping thresholds, these define when the object gets deactivated
-     * to save ressources. Low values keep the object active when it barely moves
+     * sets the sleeping thresholds, these define when the object gets
+     * deactivated to save ressources. Low values keep the object active when it
+     * barely moves
+     *
      * @param linear the linear sleeping threshold
      * @param angular the angular sleeping threshold
      */
@@ -661,25 +693,24 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     public void setAngularFactor(Vector3f factor) {
-	setAngularFactor(objectId, factor);
+        setAngularFactor(objectId, factor);
     }
 
     private native void setAngularFactor(long objectId, Vector3f factor);
 
     public Vector3f getLinearFactor() {
         Vector3f vec = new Vector3f();
-	getLinearFactor(objectId, vec);
+        getLinearFactor(objectId, vec);
         return vec;
     }
 
     private native void getLinearFactor(long objectId, Vector3f vec);
 
     public void setLinearFactor(Vector3f factor) {
-	setLinearFactor(objectId, factor);
+        setLinearFactor(objectId, factor);
     }
 
     private native void setLinearFactor(long objectId, Vector3f factor);
-
 
     /**
      * do not use manually, joints are added automatically
@@ -691,15 +722,17 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
-     * 
+     *
      */
     public void removeJoint(PhysicsJoint joint) {
         joints.remove(joint);
     }
 
     /**
-     * Returns a list of connected joints. This list is only filled when
-     * the PhysicsRigidBody is actually added to the physics space or loaded from disk.
+     * Returns a list of connected joints. This list is only filled when the
+     * PhysicsRigidBody is actually added to the physics space or loaded from
+     * disk.
+     *
      * @return list of active joints connected to this PhysicsRigidBody
      */
     public List<PhysicsJoint> getJoints() {
@@ -753,7 +786,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
         setRestitution(capsule.readFloat("restitution", 0));
         Vector3f angularFactor = (Vector3f) capsule.readSavable("angularFactor", null);
-        if(angularFactor == null) {
+        if (angularFactor == null) {
             setAngularFactor(capsule.readFloat("angularFactor", 1));
         } else {
             setAngularFactor(angularFactor);

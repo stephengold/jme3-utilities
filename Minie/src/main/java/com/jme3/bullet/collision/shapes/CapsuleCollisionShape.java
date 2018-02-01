@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,10 +42,12 @@ import java.util.logging.Logger;
 
 /**
  * Basic capsule collision shape
+ *
  * @author normenhansen
  */
-public class CapsuleCollisionShape extends CollisionShape{
-    protected float radius,height;
+public class CapsuleCollisionShape extends CollisionShape {
+
+    protected float radius, height;
     protected int axis;
 
     public CapsuleCollisionShape() {
@@ -53,26 +55,28 @@ public class CapsuleCollisionShape extends CollisionShape{
 
     /**
      * creates a new CapsuleCollisionShape with the given radius and height
+     *
      * @param radius the radius of the capsule
      * @param height the height of the capsule
      */
     public CapsuleCollisionShape(float radius, float height) {
-        this.radius=radius;
-        this.height=height;
-        this.axis=1;
+        this.radius = radius;
+        this.height = height;
+        this.axis = 1;
         createShape();
     }
 
     /**
      * creates a capsule shape around the given axis (0=X,1=Y,2=Z)
+     *
      * @param radius
      * @param height
      * @param axis
      */
     public CapsuleCollisionShape(float radius, float height, int axis) {
-        this.radius=radius;
-        this.height=height;
-        this.axis=axis;
+        this.radius = radius;
+        this.height = height;
+        this.axis = axis;
         createShape();
     }
 
@@ -115,7 +119,7 @@ public class CapsuleCollisionShape extends CollisionShape{
         createShape();
     }
 
-    protected void createShape(){
+    protected void createShape() {
         objectId = createShape(axis, radius, height);
         Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
         setScale(scale);
@@ -134,7 +138,7 @@ public class CapsuleCollisionShape extends CollisionShape{
 //        objectId.setLocalScaling(Converter.convert(getScale()));
 //        objectId.setMargin(margin);
     }
-    
+
     private native long createShape(int axis, float radius, float height);
 
 }

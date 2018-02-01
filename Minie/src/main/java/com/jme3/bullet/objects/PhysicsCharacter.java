@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,7 @@ import java.util.logging.Logger;
 
 /**
  * Basic Bullet Character
+ *
  * @author normenhansen
  */
 public class PhysicsCharacter extends PhysicsCollisionObject {
@@ -99,6 +100,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
 
     /**
      * Sets the location of this physics character
+     *
      * @param location
      */
     public void warp(Vector3f location) {
@@ -108,10 +110,11 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     private native void warp(long characterId, Vector3f location);
 
     /**
-     * Set the walk direction, works continuously.
-     * This should probably be called setPositionIncrementPerSimulatorStep.
-     * This is neither a direction nor a velocity, but the amount to
-     * increment the position each physics tick. So vector length = accuracy*speed in m/s
+     * Set the walk direction, works continuously. This should probably be
+     * called setPositionIncrementPerSimulatorStep. This is neither a direction
+     * nor a velocity, but the amount to increment the position each physics
+     * tick. So vector length = accuracy*speed in m/s
+     *
      * @param vec the walk direction to set
      */
     public void setWalkDirection(Vector3f vec) {
@@ -127,65 +130,66 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     public Vector3f getWalkDirection() {
         return walkDirection;
     }
-    
+
     /**
      * @deprecated Deprecated in bullet 2.86.1 use setUp(Vector3f) instead
      */
     @Deprecated
-	public void setUpAxis(int axis) {
-		if(axis<0) axis=0;
-		else if(axis>2) axis=2;
-		switch(axis){
-			case 0:
-				setUp(Vector3f.UNIT_X);
-				break;
-			case 1:
-				setUp(Vector3f.UNIT_Y);
-				break;
-			case 2:
-				setUp(Vector3f.UNIT_Z);
-		}
-	}
-    
+    public void setUpAxis(int axis) {
+        if (axis < 0) {
+            axis = 0;
+        } else if (axis > 2) {
+            axis = 2;
+        }
+        switch (axis) {
+            case 0:
+                setUp(Vector3f.UNIT_X);
+                break;
+            case 1:
+                setUp(Vector3f.UNIT_Y);
+                break;
+            case 2:
+                setUp(Vector3f.UNIT_Z);
+        }
+    }
+
     public void setUp(Vector3f axis) {
         setUp(characterId, axis);
     }
 
-
     private native void setUp(long characterId, Vector3f axis);
 
-    
-    public void setAngularVelocity(Vector3f v){
-    	setAngularVelocity(characterId,v);
+    public void setAngularVelocity(Vector3f v) {
+        setAngularVelocity(characterId, v);
     }
-        
+
     private native void setAngularVelocity(long characterId, Vector3f v);
 
-
-    public Vector3f getAngularVelocity(Vector3f out){
-    	if(out==null)out=new Vector3f();
-    	getAngularVelocity(characterId,out);
-    	return out;
+    public Vector3f getAngularVelocity(Vector3f out) {
+        if (out == null) {
+            out = new Vector3f();
+        }
+        getAngularVelocity(characterId, out);
+        return out;
     }
-    
+
     private native void getAngularVelocity(long characterId, Vector3f out);
-    
 
-    public void setLinearVelocity(Vector3f v){
-    	setLinearVelocity(characterId,v);
+    public void setLinearVelocity(Vector3f v) {
+        setLinearVelocity(characterId, v);
     }
-        
+
     private native void setLinearVelocity(long characterId, Vector3f v);
 
-
-    public Vector3f getLinearVelocity(Vector3f out){
-    	if(out==null)out=new Vector3f();
-    	getLinearVelocity(characterId,out);
-    	return out;
+    public Vector3f getLinearVelocity(Vector3f out) {
+        if (out == null) {
+            out = new Vector3f();
+        }
+        getLinearVelocity(characterId, out);
+        return out;
     }
-    
+
     private native void getLinearVelocity(long characterId, Vector3f out);
-        
 
     public int getUpAxis() {
         return upAxis;
@@ -214,13 +218,14 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     }
 
     /**
-     * @deprecated Deprecated in bullet 2.86.1. Use setGravity(Vector3f) instead.
+     * @deprecated Deprecated in bullet 2.86.1. Use setGravity(Vector3f)
+     * instead.
      */
     @Deprecated
     public void setGravity(float value) {
-    	setGravity(new Vector3f(0,value,0));
+        setGravity(new Vector3f(0, value, 0));
     }
-    
+
     public void setGravity(Vector3f value) {
         setGravity(characterId, value);
     }
@@ -228,7 +233,8 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     private native void setGravity(long characterId, Vector3f gravity);
 
     /**
-     * @deprecated Deprecated in bullet 2.86.1. Use getGravity(Vector3f) instead.
+     * @deprecated Deprecated in bullet 2.86.1. Use getGravity(Vector3f)
+     * instead.
      */
     @Deprecated
     public float getGravity() {
@@ -236,73 +242,63 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     }
 
     public Vector3f getGravity(Vector3f out) {
-    	if(out==null)out=new Vector3f();
-    	getGravity(characterId,out);
-    	return out;
+        if (out == null) {
+            out = new Vector3f();
+        }
+        getGravity(characterId, out);
+        return out;
     }
 
-    private native void getGravity(long characterId,Vector3f out);
+    private native void getGravity(long characterId, Vector3f out);
 
-        
-    public float getLinearDamping(){
-    	return getLinearDamping(characterId);
+    public float getLinearDamping() {
+        return getLinearDamping(characterId);
     }
-    
+
     private native float getLinearDamping(long characterId);
-    
-        
-    public void setLinearDamping(float v ){
-    	setLinearDamping(characterId,v );
-    }
-    
-    private native void setLinearDamping(long characterId,float v);
-    
-    
-    public float getAngularDamping(){
-    	return getAngularDamping(characterId);
-    }
-    
-    private native float getAngularDamping(long characterId);
-    
-        
-    public void setAngularDamping(float v ){
-    	setAngularDamping(characterId,v );
-    }
-    
-    private native void setAngularDamping(long characterId,float v);
-    
-    
-    public float getStepHeight(){
-    	return getStepHeight(characterId);
-    }
-    
-    private native float getStepHeight(long characterId);
-    
-        
-    public void setStepHeight(float v ){
-    	setStepHeight(characterId,v );
-    }
-    
-    private native void setStepHeight(long characterId,float v);
-    
-    
-    public float getMaxPenetrationDepth(){
-    	return getMaxPenetrationDepth(characterId);
-    }
-    
-    private native float getMaxPenetrationDepth(long characterId);
-    
-        
-    public void setMaxPenetrationDepth(float v ){
-    	setMaxPenetrationDepth(characterId,v );
-    }
-    
-    private native void setMaxPenetrationDepth(long characterId,float v);
-    
 
-    
-    
-    
+    public void setLinearDamping(float v) {
+        setLinearDamping(characterId, v);
+    }
+
+    private native void setLinearDamping(long characterId, float v);
+
+    public float getAngularDamping() {
+        return getAngularDamping(characterId);
+    }
+
+    private native float getAngularDamping(long characterId);
+
+    public void setAngularDamping(float v) {
+        setAngularDamping(characterId, v);
+    }
+
+    private native void setAngularDamping(long characterId, float v);
+
+    public float getStepHeight() {
+        return getStepHeight(characterId);
+    }
+
+    private native float getStepHeight(long characterId);
+
+    public void setStepHeight(float v) {
+        setStepHeight(characterId, v);
+    }
+
+    private native void setStepHeight(long characterId, float v);
+
+    public float getMaxPenetrationDepth() {
+        return getMaxPenetrationDepth(characterId);
+    }
+
+    private native float getMaxPenetrationDepth(long characterId);
+
+    public void setMaxPenetrationDepth(float v) {
+        setMaxPenetrationDepth(characterId, v);
+    }
+
+    private native void setMaxPenetrationDepth(long characterId, float v);
+
     public void setMaxSlope(float slopeRadians) {
         setMaxSlope(characterId, slopeRadians);
     }
@@ -326,15 +322,14 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
      */
     @Deprecated
     public void jump() {
-    	jump(Vector3f.UNIT_Y);
+        jump(Vector3f.UNIT_Y);
     }
-    
-    
+
     public void jump(Vector3f dir) {
-    	jump(characterId,dir);
+        jump(characterId, dir);
     }
-    
-    private native void jump(long characterId,Vector3f v);
+
+    private native void jump(long characterId, Vector3f v);
 
     @Override
     public void setCollisionShape(CollisionShape collisionShape) {
@@ -351,6 +346,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
 
     /**
      * Set the physics location (same as warp())
+     *
      * @param location the location of the actual physics object
      */
     public void setPhysicsLocation(Vector3f location) {

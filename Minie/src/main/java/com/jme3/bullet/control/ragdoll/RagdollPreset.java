@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,15 +63,15 @@ public abstract class RagdollPreset {
         int resultScore = 0;
 
         for (String key : lexicon.keySet()) {
-        
-            int score = lexicon.get(key).getScore(boneName);        
+
+            int score = lexicon.get(key).getScore(boneName);
             if (score > resultScore) {
                 resultScore = score;
                 resultName = key;
             }
-            
+
         }
-        
+
         JointPreset preset = boneMap.get(resultName);
 
         if (preset != null && resultScore >= 50) {

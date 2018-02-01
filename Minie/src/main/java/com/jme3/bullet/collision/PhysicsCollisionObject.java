@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 
 /**
  * Base class for collision objects (PhysicsRigidBody, PhysicsGhostObject)
+ *
  * @author normenhansen
  */
 public abstract class PhysicsCollisionObject implements Savable {
@@ -68,8 +69,9 @@ public abstract class PhysicsCollisionObject implements Savable {
 
     /**
      * Sets a CollisionShape to this physics object, note that the object should
-     * not be in the physics space when adding a new collision shape as it is rebuilt
-     * on the physics side.
+     * not be in the physics space when adding a new collision shape as it is
+     * rebuilt on the physics side.
+     *
      * @param collisionShape the CollisionShape to set
      */
     public void setCollisionShape(CollisionShape collisionShape) {
@@ -77,8 +79,8 @@ public abstract class PhysicsCollisionObject implements Savable {
     }
 
     /**
-     * @return the CollisionShape of this PhysicsNode, to be able to reuse it with
-     * other physics nodes (increases performance)
+     * @return the CollisionShape of this PhysicsNode, to be able to reuse it
+     * with other physics nodes (increases performance)
      */
     public CollisionShape getCollisionShape() {
         return collisionShape;
@@ -86,6 +88,7 @@ public abstract class PhysicsCollisionObject implements Savable {
 
     /**
      * Returns the collision group for this collision shape
+     *
      * @return The collision group
      */
     public int getCollisionGroup() {
@@ -94,10 +97,12 @@ public abstract class PhysicsCollisionObject implements Savable {
 
     /**
      * Sets the collision group number for this physics object. <br>
-     * The groups are integer bit masks and some pre-made variables are available in CollisionObject.
-     * All physics objects are by default in COLLISION_GROUP_01.<br>
+     * The groups are integer bit masks and some pre-made variables are
+     * available in CollisionObject. All physics objects are by default in
+     * COLLISION_GROUP_01.<br>
      * Two object will collide when <b>one</b> of the partys has the
      * collisionGroup of the other in its collideWithGroups set.
+     *
      * @param collisionGroup the collisionGroup to set
      */
     public void setCollisionGroup(int collisionGroup) {
@@ -111,6 +116,7 @@ public abstract class PhysicsCollisionObject implements Savable {
      * Add a group that this object will collide with.<br>
      * Two object will collide when <b>one</b> of the partys has the
      * collisionGroup of the other in its collideWithGroups set.<br>
+     *
      * @param collisionGroup
      */
     public void addCollideWithGroup(int collisionGroup) {
@@ -122,6 +128,7 @@ public abstract class PhysicsCollisionObject implements Savable {
 
     /**
      * Remove a group from the list this object collides with.
+     *
      * @param collisionGroup
      */
     public void removeCollideWithGroup(int collisionGroup) {
@@ -132,7 +139,9 @@ public abstract class PhysicsCollisionObject implements Savable {
     }
 
     /**
-     * Directly set the bitmask for collision groups that this object collides with.
+     * Directly set the bitmask for collision groups that this object collides
+     * with.
+     *
      * @param collisionGroups
      */
     public void setCollideWithGroups(int collisionGroups) {
@@ -144,6 +153,7 @@ public abstract class PhysicsCollisionObject implements Savable {
 
     /**
      * Gets the bitmask of collision groups that this object collides with.
+     *
      * @return Collision groups mask
      */
     public int getCollideWithGroups() {
@@ -154,6 +164,7 @@ public abstract class PhysicsCollisionObject implements Savable {
         Logger.getLogger(this.getClass().getName()).log(Level.FINE, "initUserPointer() objectId = {0}", Long.toHexString(objectId));
         initUserPointer(objectId, collisionGroup, collisionGroupsMask);
     }
+
     native void initUserPointer(long objectId, int group, int groups);
 
     /**
@@ -169,13 +180,15 @@ public abstract class PhysicsCollisionObject implements Savable {
     public void setUserObject(Object userObject) {
         this.userObject = userObject;
     }
-    
-    public long getObjectId(){
+
+    public long getObjectId() {
         return objectId;
     }
-    
+
     protected native void attachCollisionShape(long objectId, long collisionShapeId);
+
     native void setCollisionGroup(long objectId, int collisionGroup);
+
     native void setCollideWithGroups(long objectId, int collisionGroups);
 
     @Override

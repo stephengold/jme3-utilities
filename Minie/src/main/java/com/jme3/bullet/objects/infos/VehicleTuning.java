@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,10 +32,11 @@
 package com.jme3.bullet.objects.infos;
 
 /**
- * 
+ *
  * @author normenhansen
  */
 public class VehicleTuning {
+
     public float suspensionStiffness = 5.88f;
     public float suspensionCompression = 0.83f;
     public float suspensionDamping = 0.88f;

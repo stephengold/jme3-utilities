@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,7 @@ import java.util.logging.Logger;
 
 /**
  * Basic cylinder collision shape
+ *
  * @author normenhansen
  */
 public class CylinderCollisionShape extends CollisionShape {
@@ -54,6 +55,7 @@ public class CylinderCollisionShape extends CollisionShape {
 
     /**
      * creates a cylinder shape from the given halfextents
+     *
      * @param halfExtents the halfextents to use
      */
     public CylinderCollisionShape(Vector3f halfExtents) {
@@ -64,6 +66,7 @@ public class CylinderCollisionShape extends CollisionShape {
 
     /**
      * Creates a cylinder shape around the given axis from the given halfextents
+     *
      * @param halfExtents the halfextents to use
      * @param axis (0=X,1=Y,2=Z)
      */
@@ -86,9 +89,9 @@ public class CylinderCollisionShape extends CollisionShape {
      */
     @Override
     public void setScale(Vector3f scale) {
-    	 if (!scale.equals(Vector3f.UNIT_XYZ)) {
-    		 Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "CylinderCollisionShape cannot be scaled");
-    	 }
+        if (!scale.equals(Vector3f.UNIT_XYZ)) {
+            Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "CylinderCollisionShape cannot be scaled");
+        }
     }
 
     public void write(JmeExporter ex) throws IOException {
@@ -125,7 +128,7 @@ public class CylinderCollisionShape extends CollisionShape {
         setScale(scale);
         setMargin(margin);
     }
-    
+
     private native long createShape(int axis, Vector3f halfExtents);
 
 }

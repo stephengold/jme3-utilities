@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -97,7 +97,7 @@ public class HullCollisionShape extends CollisionShape {
 //        objectId = new ConvexHullShape(pointList);
 //        objectId.setLocalScaling(Converter.convert(getScale()));
 //        objectId.setMargin(margin);
-        ByteBuffer bbuf=BufferUtils.createByteBuffer(points.length * 4); 
+        ByteBuffer bbuf = BufferUtils.createByteBuffer(points.length * 4);
 //        fbuf = bbuf.asFloatBuffer();
 //        fbuf.rewind();
 //        fbuf.put(points);

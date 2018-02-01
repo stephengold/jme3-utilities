@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,7 @@ public class HumanoidRagdollPreset extends RagdollPreset {
 
         boneMap.put("torso", new JointPreset(FastMath.QUARTER_PI, -FastMath.QUARTER_PI, 0, 0, FastMath.QUARTER_PI, -FastMath.QUARTER_PI));
 
-        boneMap.put("upperleg", new JointPreset(FastMath.PI, -FastMath.QUARTER_PI, FastMath.QUARTER_PI/2, -FastMath.QUARTER_PI/2, FastMath.QUARTER_PI, -FastMath.QUARTER_PI));
+        boneMap.put("upperleg", new JointPreset(FastMath.PI, -FastMath.QUARTER_PI, FastMath.QUARTER_PI / 2, -FastMath.QUARTER_PI / 2, FastMath.QUARTER_PI, -FastMath.QUARTER_PI));
 
         boneMap.put("lowerleg", new JointPreset(0, -FastMath.PI, 0, 0, 0, 0));
 
@@ -62,7 +62,7 @@ public class HumanoidRagdollPreset extends RagdollPreset {
     @Override
     protected void initLexicon() {
         LexiconEntry entry = new LexiconEntry();
-        entry.addSynonym("head", 100);        
+        entry.addSynonym("head", 100);
         lexicon.put("head", entry);
 
         entry = new LexiconEntry();
@@ -91,16 +91,15 @@ public class HumanoidRagdollPreset extends RagdollPreset {
         entry.addSynonym("low", 10);
         entry.addSynonym("lower", 10);
         lexicon.put("lowerleg", entry);
-        
+
         entry = new LexiconEntry();
         entry.addSynonym("foot", 100);
-        entry.addSynonym("ankle", 75);   
+        entry.addSynonym("ankle", 75);
         lexicon.put("foot", entry);
-        
-        
+
         entry = new LexiconEntry();
         entry.addSynonym("upperarm", 100);
-        entry.addSynonym("humerus", 100); 
+        entry.addSynonym("humerus", 100);
         entry.addSynonym("shoulder", 50);
         entry.addSynonym("arm", 40);
         entry.addSynonym("high", 10);
@@ -116,11 +115,11 @@ public class HumanoidRagdollPreset extends RagdollPreset {
         entry.addSynonym("low", 10);
         entry.addSynonym("lower", 10);
         lexicon.put("lowerarm", entry);
-        
+
         entry = new LexiconEntry();
         entry.addSynonym("hand", 100);
-        entry.addSynonym("fist", 100);   
-        entry.addSynonym("wrist", 75);           
+        entry.addSynonym("fist", 100);
+        entry.addSynonym("wrist", 75);
         lexicon.put("hand", entry);
 
     }

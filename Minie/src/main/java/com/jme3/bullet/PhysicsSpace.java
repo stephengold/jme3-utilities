@@ -63,7 +63,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * <p>PhysicsSpace - The central jbullet-jme physics space</p>
+ * <p>
+ * PhysicsSpace - The central jbullet-jme physics space</p>
  *
  * @author normenhansen
  */
@@ -74,13 +75,13 @@ public class PhysicsSpace {
     public static final int AXIS_Y = 1;
     public static final int AXIS_Z = 2;
     private long physicsSpaceId = 0;
-    private static ThreadLocal<ConcurrentLinkedQueue<AppTask<?>>> pQueueTL =
-            new ThreadLocal<ConcurrentLinkedQueue<AppTask<?>>>() {
-                @Override
-                protected ConcurrentLinkedQueue<AppTask<?>> initialValue() {
-                    return new ConcurrentLinkedQueue<AppTask<?>>();
-                }
-            };
+    private static ThreadLocal<ConcurrentLinkedQueue<AppTask<?>>> pQueueTL
+            = new ThreadLocal<ConcurrentLinkedQueue<AppTask<?>>>() {
+        @Override
+        protected ConcurrentLinkedQueue<AppTask<?>> initialValue() {
+            return new ConcurrentLinkedQueue<AppTask<?>>();
+        }
+    };
     private ConcurrentLinkedQueue<AppTask<?>> pQueue = new ConcurrentLinkedQueue<AppTask<?>>();
     private static ThreadLocal<PhysicsSpace> physicsSpaceTL = new ThreadLocal<PhysicsSpace>();
     private BroadphaseType broadphaseType = BroadphaseType.DBVT;
@@ -337,19 +338,19 @@ public class PhysicsSpace {
 //        System.out.println("addCollisionEvent:"+node.getObjectId()+" "+ node1.getObjectId());
         collisionEvents.add(eventFactory.getEvent(PhysicsCollisionEvent.TYPE_PROCESSED, node, node1, manifoldPointObjectId));
     }
-    
-    private boolean notifyCollisionGroupListeners_native(PhysicsCollisionObject node, PhysicsCollisionObject node1){
+
+    private boolean notifyCollisionGroupListeners_native(PhysicsCollisionObject node, PhysicsCollisionObject node1) {
         PhysicsCollisionGroupListener listener = collisionGroupListeners.get(node.getCollisionGroup());
         PhysicsCollisionGroupListener listener1 = collisionGroupListeners.get(node1.getCollisionGroup());
         boolean result = true;
-        
-        if(listener != null){
+
+        if (listener != null) {
             result = listener.collide(node, node1);
         }
-        if(listener1 != null && node.getCollisionGroup() != node1.getCollisionGroup()){
+        if (listener1 != null && node.getCollisionGroup() != node1.getCollisionGroup()) {
             result = listener1.collide(node, node1) && result;
         }
-        
+
         return result;
     }
 
@@ -381,9 +382,9 @@ public class PhysicsSpace {
     public void distributeEvents() {
         //add collision callbacks
         int clistsize = collisionListeners.size();
-        while( collisionEvents.isEmpty() == false ) {
+        while (collisionEvents.isEmpty() == false) {
             PhysicsCollisionEvent physicsCollisionEvent = collisionEvents.pop();
-            for(int i=0;i<clistsize;i++) {
+            for (int i = 0; i < clistsize; i++) {
                 collisionListeners.get(i).collision(physicsCollisionEvent);
             }
             //recycle events
@@ -454,7 +455,9 @@ public class PhysicsSpace {
      * @param obj the PhysicsControl or Spatial with PhysicsControl to remove
      */
     public void remove(Object obj) {
-        if (obj == null) return;
+        if (obj == null) {
+            return;
+        }
         if (obj instanceof PhysicsControl) {
             ((PhysicsControl) obj).setPhysicsSpace(null);
         } else if (obj instanceof Spatial) {
@@ -484,8 +487,9 @@ public class PhysicsSpace {
     }
 
     /**
-     * adds all physics controls and joints in the given spatial node to the physics space
-     * (e.g. after loading from disk) - recursive if node
+     * adds all physics controls and joints in the given spatial node to the
+     * physics space (e.g. after loading from disk) - recursive if node
+     *
      * @param spatial the rootnode containing the physics objects
      */
     public void addAll(Spatial spatial) {
@@ -514,8 +518,9 @@ public class PhysicsSpace {
     }
 
     /**
-     * Removes all physics controls and joints in the given spatial from the physics space
-     * (e.g. before saving to disk) - recursive if node
+     * Removes all physics controls and joints in the given spatial from the
+     * physics space (e.g. before saving to disk) - recursive if node
+     *
      * @param spatial the rootnode containing the physics objects
      */
     public void removeAll(Spatial spatial) {
@@ -531,7 +536,7 @@ public class PhysicsSpace {
                 }
             }
         }
-            
+
         remove(spatial);
         //recursion
         if (spatial instanceof Node) {
@@ -713,7 +718,8 @@ public class PhysicsSpace {
     private native void setGravity(long spaceId, Vector3f gravity);
 
     //TODO: getGravity
-    private final Vector3f gravity = new Vector3f(0,-9.81f,0);
+    private final Vector3f gravity = new Vector3f(0, -9.81f, 0);
+
     public Vector3f getGravity(Vector3f gravity) {
         return gravity.set(this.gravity);
     }
@@ -780,7 +786,7 @@ public class PhysicsSpace {
     public void removeCollisionGroupListener(int collisionGroup) {
         collisionGroupListeners.remove(collisionGroup);
     }
-    
+
     /**
      * Performs a ray collision test and returns the results as a list of
      * PhysicsRayTestResults ordered by it hitFraction (lower to higher)
@@ -788,10 +794,10 @@ public class PhysicsSpace {
     public List rayTest(Vector3f from, Vector3f to) {
         List<PhysicsRayTestResult> results = new ArrayList<PhysicsRayTestResult>();
         rayTest(from, to, results);
-        
+
         return results;
     }
-    
+
     /**
      * Performs a ray collision test and returns the results as a list of
      * PhysicsRayTestResults without performing any sort operation
@@ -799,12 +805,13 @@ public class PhysicsSpace {
     public List rayTestRaw(Vector3f from, Vector3f to) {
         List<PhysicsRayTestResult> results = new ArrayList<PhysicsRayTestResult>();
         rayTestRaw(from, to, results);
-        
+
         return results;
     }
 
     /**
-     * Sets m_flags for raytest, see https://code.google.com/p/bullet/source/browse/trunk/src/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h
+     * Sets m_flags for raytest, see
+     * https://code.google.com/p/bullet/source/browse/trunk/src/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h
      * for possible options. Defaults to using the faster, approximate raytest.
      */
     public void SetRayTestFlags(int flags) {
@@ -812,8 +819,10 @@ public class PhysicsSpace {
     }
 
     /**
-     * Gets m_flags for raytest, see https://code.google.com/p/bullet/source/browse/trunk/src/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h
+     * Gets m_flags for raytest, see
+     * https://code.google.com/p/bullet/source/browse/trunk/src/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h
      * for possible options.
+     *
      * @return rayTestFlags
      */
     public int GetRayTestFlags() {
@@ -827,7 +836,7 @@ public class PhysicsSpace {
             return comp > 0 ? 1 : -1;
         }
     };
-    
+
     /**
      * Performs a ray collision test and returns the results as a list of
      * PhysicsRayTestResults ordered by it hitFraction (lower to higher)
@@ -835,11 +844,11 @@ public class PhysicsSpace {
     public List<PhysicsRayTestResult> rayTest(Vector3f from, Vector3f to, List<PhysicsRayTestResult> results) {
         results.clear();
         rayTest_native(from, to, physicsSpaceId, results, rayTestFlags);
-        
+
         Collections.sort(results, hitFractionComparator);
         return results;
     }
-    
+
     /**
      * Performs a ray collision test and returns the results as a list of
      * PhysicsRayTestResults without performing any sort operation
@@ -869,20 +878,17 @@ public class PhysicsSpace {
 //    }
 //
 //
-
-
     /**
      * Performs a sweep collision test and returns the results as a list of
      * PhysicsSweepTestResults
-     * 
-     * You have to use different Transforms for
-     * start and end (at least distance &gt; 0.4f). SweepTest will not see a
-     * collision if it starts INSIDE an object and is moving AWAY from its
-     * center.
+     *
+     * You have to use different Transforms for start and end (at least distance
+     * &gt; 0.4f). SweepTest will not see a collision if it starts INSIDE an
+     * object and is moving AWAY from its center.
      */
     public List<PhysicsSweepTestResult> sweepTest(CollisionShape shape, Transform start, Transform end) {
         List results = new LinkedList();
-        sweepTest(shape, start, end , results);
+        sweepTest(shape, start, end, results);
         return (List<PhysicsSweepTestResult>) results;
     }
 
@@ -891,22 +897,22 @@ public class PhysicsSpace {
     }
 
     public native void sweepTest_native(long shape, Transform from, Transform to, long physicsSpaceId, List<PhysicsSweepTestResult> results, float allowedCcdPenetration);
+
     /**
      * Performs a sweep collision test and returns the results as a list of
      * PhysicsSweepTestResults
-     * 
-     * You have to use different Transforms for
-     * start and end (at least distance &gt; allowedCcdPenetration). SweepTest will not see a
-     * collision if it starts INSIDE an object and is moving AWAY from its
-     * center.
+     *
+     * You have to use different Transforms for start and end (at least distance
+     * &gt; allowedCcdPenetration). SweepTest will not see a collision if it
+     * starts INSIDE an object and is moving AWAY from its center.
      */
-    public List<PhysicsSweepTestResult> sweepTest(CollisionShape shape, Transform start, Transform end, List<PhysicsSweepTestResult> results, float allowedCcdPenetration ) {
+    public List<PhysicsSweepTestResult> sweepTest(CollisionShape shape, Transform start, Transform end, List<PhysicsSweepTestResult> results, float allowedCcdPenetration) {
         results.clear();
         sweepTest_native(shape.getObjectId(), start, end, physicsSpaceId, results, allowedCcdPenetration);
         return results;
     }
 
-/*    private class InternalSweepListener extends CollisionWorld.ConvexResultCallback {
+    /*    private class InternalSweepListener extends CollisionWorld.ConvexResultCallback {
 
         private List<PhysicsSweepTestResult> results;
 
@@ -922,8 +928,7 @@ public class PhysicsSpace {
         }
     }
 
-    */
-    
+     */
     /**
      * destroys the current PhysicsSpace so that a new one can be created
      */
@@ -1012,27 +1017,29 @@ public class PhysicsSpace {
 
     /**
      * Set the number of iterations used by the contact solver.
-     * 
+     *
      * The default is 10. Use 4 for low quality, 20 for high quality.
-     * 
-     * @param numIterations The number of iterations used by the contact and constraint solver.
+     *
+     * @param numIterations The number of iterations used by the contact and
+     * constraint solver.
      */
     public void setSolverNumIterations(int numIterations) {
         this.solverNumIterations = numIterations;
         setSolverNumIterations(physicsSpaceId, numIterations);
     }
-    
+
     /**
      * Get the number of iterations used by the contact solver.
-     * 
-     * @return The number of iterations used by the contact and constraint solver.
+     *
+     * @return The number of iterations used by the contact and constraint
+     * solver.
      */
     public int getSolverNumIterations() {
         return solverNumIterations;
     }
-    
+
     private native void setSolverNumIterations(long physicsSpaceId, int numIterations);
-    
+
     public static native void initNativePhysics();
 
     /**

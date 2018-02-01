@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,9 @@ import java.util.logging.Logger;
 
 /**
  * <i>From bullet manual:</i><br>
- * The slider constraint allows the body to rotate around one axis and translate along this axis.
+ * The slider constraint allows the body to rotate around one axis and translate
+ * along this axis.
+ *
  * @author normenhansen
  */
 public class SliderJoint extends PhysicsJoint {

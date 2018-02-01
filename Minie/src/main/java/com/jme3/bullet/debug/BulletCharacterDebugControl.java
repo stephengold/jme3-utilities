@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -75,7 +75,7 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
 
     @Override
     protected void controlUpdate(float tpf) {
-        if(myShape != body.getCollisionShape()){
+        if (myShape != body.getCollisionShape()) {
             Node node = (Node) this.spatial;
             node.detachChild(geom);
             geom = DebugShapeFactory.getDebugShape(body.getCollisionShape());

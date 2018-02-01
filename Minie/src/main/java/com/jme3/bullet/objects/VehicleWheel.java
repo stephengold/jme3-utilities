@@ -41,6 +41,7 @@ import java.io.IOException;
 
 /**
  * Stores info about one wheel of a PhysicsVehicle
+ *
  * @author normenhansen
  */
 public class VehicleWheel implements Savable {
@@ -154,7 +155,9 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * the stiffness constant for the suspension.  10.0 - Offroad buggy, 50.0 - Sports car, 200.0 - F1 Car
+     * the stiffness constant for the suspension. 10.0 - Offroad buggy, 50.0 -
+     * Sports car, 200.0 - F1 Car
+     *
      * @param suspensionStiffness
      */
     public void setSuspensionStiffness(float suspensionStiffness) {
@@ -167,8 +170,9 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * the damping coefficient for when the suspension is expanding.
-     * See the comments for setWheelsDampingCompression for how to set k.
+     * the damping coefficient for when the suspension is expanding. See the
+     * comments for setWheelsDampingCompression for how to set k.
+     *
      * @param wheelsDampingRelaxation
      */
     public void setWheelsDampingRelaxation(float wheelsDampingRelaxation) {
@@ -181,10 +185,12 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * the damping coefficient for when the suspension is compressed.
-     * Set to k * 2.0 * FastMath.sqrt(m_suspensionStiffness) so k is proportional to critical damping.<br>
+     * the damping coefficient for when the suspension is compressed. Set to k *
+     * 2.0 * FastMath.sqrt(m_suspensionStiffness) so k is proportional to
+     * critical damping.<br>
      * k = 0.0 undamped and bouncy, k = 1.0 critical damping<br>
      * 0.1 to 0.3 are good values
+     *
      * @param wheelsDampingCompression
      */
     public void setWheelsDampingCompression(float wheelsDampingCompression) {
@@ -197,9 +203,10 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * the coefficient of friction between the tyre and the ground.
-     * Should be about 0.8 for realistic cars, but can increased for better handling.
-     * Set large (10000.0) for kart racers
+     * the coefficient of friction between the tyre and the ground. Should be
+     * about 0.8 for realistic cars, but can increased for better handling. Set
+     * large (10000.0) for kart racers
+     *
      * @param frictionSlip
      */
     public void setFrictionSlip(float frictionSlip) {
@@ -212,10 +219,12 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * reduces the rolling torque applied from the wheels that cause the vehicle to roll over.
-     * This is a bit of a hack, but it's quite effective. 0.0 = no roll, 1.0 = physical behaviour.
-     * If m_frictionSlip is too high, you'll need to reduce this to stop the vehicle rolling over.
-     * You should also try lowering the vehicle's centre of mass
+     * reduces the rolling torque applied from the wheels that cause the vehicle
+     * to roll over. This is a bit of a hack, but it's quite effective. 0.0 = no
+     * roll, 1.0 = physical behaviour. If m_frictionSlip is too high, you'll
+     * need to reduce this to stop the vehicle rolling over. You should also try
+     * lowering the vehicle's centre of mass
+     *
      * @param rollInfluence the rollInfluence to set
      */
     public void setRollInfluence(float rollInfluence) {
@@ -229,6 +238,7 @@ public class VehicleWheel implements Savable {
 
     /**
      * the maximum distance the suspension can be compressed (centimetres)
+     *
      * @param maxSuspensionTravelCm
      */
     public void setMaxSuspensionTravelCm(float maxSuspensionTravelCm) {
@@ -241,8 +251,9 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * The maximum suspension force, raise this above the default 6000 if your suspension cannot
-     * handle the weight of your vehicle.
+     * The maximum suspension force, raise this above the default 6000 if your
+     * suspension cannot handle the weight of your vehicle.
+     *
      * @param maxSuspensionForce
      */
     public void setMaxSuspensionForce(float maxSuspensionForce) {
@@ -289,6 +300,7 @@ public class VehicleWheel implements Savable {
 
     /**
      * returns the object this wheel is in contact with or null if no contact
+     *
      * @return the PhysicsCollisionObject (PhysicsRigidBody, PhysicsGhostObject)
      */
     public PhysicsCollisionObject getGroundObject() {
@@ -303,7 +315,8 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * returns the location where the wheel collides with the ground (world space)
+     * returns the location where the wheel collides with the ground (world
+     * space)
      */
     public Vector3f getCollisionLocation(Vector3f vec) {
         getCollisionLocation(wheelId, wheelIndex, vec);
@@ -313,7 +326,8 @@ public class VehicleWheel implements Savable {
     private native void getCollisionLocation(long wheelId, int wheelIndex, Vector3f vec);
 
     /**
-     * returns the location where the wheel collides with the ground (world space)
+     * returns the location where the wheel collides with the ground (world
+     * space)
      */
     public Vector3f getCollisionLocation() {
         Vector3f vec = new Vector3f();
@@ -341,7 +355,8 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * returns how much the wheel skids on the ground (for skid sounds/smoke etc.)<br>
+     * returns how much the wheel skids on the ground (for skid sounds/smoke
+     * etc.)<br>
      * 0.0 = wheels are sliding, 1.0 = wheels have traction.
      */
     public float getSkidInfo() {
@@ -349,7 +364,7 @@ public class VehicleWheel implements Savable {
     }
 
     public native float getSkidInfo(long wheelId, int wheelIndex);
-    
+
     /**
      * returns how many degrees the wheel has turned since the last physics
      * step.
@@ -357,7 +372,7 @@ public class VehicleWheel implements Savable {
     public float getDeltaRotation() {
         return getDeltaRotation(wheelId, wheelIndex);
     }
-    
+
     public native float getDeltaRotation(long wheelId, int wheelIndex);
 
     @Override
@@ -421,19 +436,19 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-    * write the content of the wheelWorldRotation into the store
-    * 
-    * @param store
-    */
+     * write the content of the wheelWorldRotation into the store
+     *
+     * @param store
+     */
     public void getWheelWorldRotation(final Quaternion store) {
         store.set(this.wheelWorldRotation);
     }
 
     /**
-    * write the content of the wheelWorldLocation into the store
-    * 
-    * @param store
-    */
+     * write the content of the wheelWorldLocation into the store
+     *
+     * @param store
+     */
     public void getWheelWorldLocation(final Vector3f store) {
         store.set(this.wheelWorldLocation);
     }

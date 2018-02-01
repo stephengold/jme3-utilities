@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,9 +72,12 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
     }
 
     /**
-     * When using this constructor, the CollisionShape for the RigidBody is generated
-     * automatically when the Control is added to a Spatial.
-     * @param mass When not 0, a HullCollisionShape is generated, otherwise a MeshCollisionShape is used. For geometries with box or sphere meshes the proper box or sphere collision shape is used.
+     * When using this constructor, the CollisionShape for the RigidBody is
+     * generated automatically when the Control is added to a Spatial.
+     *
+     * @param mass When not 0, a HullCollisionShape is generated, otherwise a
+     * MeshCollisionShape is used. For geometries with box or sphere meshes the
+     * proper box or sphere collision shape is used.
      */
     public RigidBodyControl(float mass) {
         this.mass = mass;
@@ -82,6 +85,7 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
 
     /**
      * Creates a new PhysicsNode with the supplied collision shape and mass 1
+     *
      * @param shape
      */
     public RigidBodyControl(CollisionShape shape) {
@@ -119,7 +123,7 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
         return control;
     }
 
-    @Override   
+    @Override
     public Object jmeClone() {
         RigidBodyControl control = new RigidBodyControl(collisionShape, mass);
         control.setAngularFactor(getAngularFactor());
@@ -147,13 +151,13 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
         control.setEnabled(isEnabled());
 
         return control;
-    }     
+    }
 
-    @Override   
-    public void cloneFields( Cloner cloner, Object original ) { 
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
         this.spatial = cloner.clone(spatial);
     }
-         
+
     public void setSpatial(Spatial spatial) {
         this.spatial = spatial;
         setUserObject(spatial);
@@ -213,15 +217,19 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
 
     /**
      * Checks if this control is in kinematic spatial mode.
-     * @return true if the spatial location is applied to this kinematic rigidbody
+     *
+     * @return true if the spatial location is applied to this kinematic
+     * rigidbody
      */
     public boolean isKinematicSpatial() {
         return kinematicSpatial;
     }
 
     /**
-     * Sets this control to kinematic spatial mode so that the spatials transform will
-     * be applied to the rigidbody in kinematic mode, defaults to true.
+     * Sets this control to kinematic spatial mode so that the spatials
+     * transform will be applied to the rigidbody in kinematic mode, defaults to
+     * true.
+     *
      * @param kinematicSpatial
      */
     public void setKinematicSpatial(boolean kinematicSpatial) {
@@ -235,21 +243,22 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
     /**
      * When set to true, the physics coordinates will be applied to the local
      * translation of the Spatial instead of the world translation.
+     *
      * @param applyPhysicsLocal
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         motionState.setApplyPhysicsLocal(applyPhysicsLocal);
     }
 
-    private Vector3f getSpatialTranslation(){
-        if(motionState.isApplyPhysicsLocal()){
+    private Vector3f getSpatialTranslation() {
+        if (motionState.isApplyPhysicsLocal()) {
             return spatial.getLocalTranslation();
         }
         return spatial.getWorldTranslation();
     }
 
-    private Quaternion getSpatialRotation(){
-        if(motionState.isApplyPhysicsLocal()){
+    private Quaternion getSpatialRotation() {
+        if (motionState.isApplyPhysicsLocal()) {
             return spatial.getLocalRotation();
         }
         return spatial.getWorldRotation();
@@ -276,7 +285,9 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
                 added = false;
             }
         } else {
-            if (this.space == space) return;
+            if (this.space == space) {
+                return;
+            }
             // if this object isn't enabled, it will be added when it will be enabled.
             if (isEnabled()) {
                 space.addCollisionObject(this);

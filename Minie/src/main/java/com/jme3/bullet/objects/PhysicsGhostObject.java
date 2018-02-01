@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,10 +49,10 @@ import java.util.logging.Logger;
 
 /**
  * <i>From Bullet manual:</i><br>
- * GhostObject can keep track of all objects that are overlapping.
- * By default, this overlap is based on the AABB.
- * This is useful for creating a character controller,
- * collision sensors/triggers, explosions etc.<br>
+ * GhostObject can keep track of all objects that are overlapping. By default,
+ * this overlap is based on the AABB. This is useful for creating a character
+ * controller, collision sensors/triggers, explosions etc.<br>
+ *
  * @author normenhansen
  */
 public class PhysicsGhostObject extends PhysicsCollisionObject {
@@ -105,6 +105,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
 
     /**
      * Sets the physics object location
+     *
      * @param location the location of the actual physics object
      */
     public void setPhysicsLocation(Vector3f location) {
@@ -115,6 +116,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
 
     /**
      * Sets the physics object rotation
+     *
      * @param rotation the rotation of the actual physics object
      */
     public void setPhysicsRotation(Matrix3f rotation) {
@@ -125,6 +127,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
 
     /**
      * Sets the physics object rotation
+     *
      * @param rotation the rotation of the actual physics object
      */
     public void setPhysicsRotation(Quaternion rotation) {
@@ -209,9 +212,10 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     }
 
     /**
-     * Another Object is overlapping with this GhostNode,
-     * if and if only there CollisionShapes overlaps.
-     * They could be both regular PhysicsRigidBodys or PhysicsGhostObjects.
+     * Another Object is overlapping with this GhostNode, if and if only there
+     * CollisionShapes overlaps. They could be both regular PhysicsRigidBodys or
+     * PhysicsGhostObjects.
+     *
      * @return All CollisionObjects overlapping with this GhostNode.
      */
     public List<PhysicsCollisionObject> getOverlappingObjects() {
@@ -231,7 +235,8 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
 
     /**
      *
-     * @return With how many other CollisionObjects this GhostNode is currently overlapping.
+     * @return With how many other CollisionObjects this GhostNode is currently
+     * overlapping.
      */
     public int getOverlappingCount() {
         return getOverlappingCount(objectId);

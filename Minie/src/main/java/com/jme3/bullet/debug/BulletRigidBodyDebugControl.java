@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -76,15 +76,15 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
 
     @Override
     protected void controlUpdate(float tpf) {
-        if(myShape != body.getCollisionShape()){
+        if (myShape != body.getCollisionShape()) {
             Node node = (Node) this.spatial;
             node.detachChild(geom);
             geom = DebugShapeFactory.getDebugShape(body.getCollisionShape());
             node.attachChild(geom);
         }
-        if(body.isActive()){
+        if (body.isActive()) {
             geom.setMaterial(debugAppState.DEBUG_MAGENTA);
-        }else{
+        } else {
             geom.setMaterial(debugAppState.DEBUG_BLUE);
         }
         applyPhysicsTransform(body.getPhysicsLocation(location), body.getPhysicsRotation(rotation));

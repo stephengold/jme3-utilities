@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2017 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,14 +51,22 @@ import java.util.List;
  */
 public class DebugShapeFactory {
 
-    /** The maximum corner for the aabb used for triangles to include in ConcaveShape processing.*/
-//    private static final Vector3f aabbMax = new Vector3f(1e30f, 1e30f, 1e30f);
-    /** The minimum corner for the aabb used for triangles to include in ConcaveShape processing.*/
-//    private static final Vector3f aabbMin = new Vector3f(-1e30f, -1e30f, -1e30f);
-
     /**
-     * Creates a debug shape from the given collision shape. This is mostly used internally.<br>
-     * To attach a debug shape to a physics object, call <code>attachDebugShape(AssetManager manager);</code> on it.
+     * The maximum corner for the aabb used for triangles to include in
+     * ConcaveShape processing.
+     */
+//    private static final Vector3f aabbMax = new Vector3f(1e30f, 1e30f, 1e30f);
+    /**
+     * The minimum corner for the aabb used for triangles to include in
+     * ConcaveShape processing.
+     */
+//    private static final Vector3f aabbMin = new Vector3f(-1e30f, -1e30f, -1e30f);
+    /**
+     * Creates a debug shape from the given collision shape. This is mostly used
+     * internally.<br>
+     * To attach a debug shape to a physics object, call
+     * <code>attachDebugShape(AssetManager manager);</code> on it.
+     *
      * @param collisionShape
      * @return
      */
@@ -80,7 +88,7 @@ public class DebugShapeFactory {
                 geometry.setLocalTranslation(childCollisionShape.location);
 
                 // apply rotation
-                TempVars vars = TempVars.get();                
+                TempVars vars = TempVars.get();
                 Matrix3f tempRot = vars.tempMat3;
 
                 tempRot.set(geometry.getLocalRotation());

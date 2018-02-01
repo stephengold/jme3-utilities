@@ -46,17 +46,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * <p>PhysicsVehicleNode - Special PhysicsNode that implements vehicle functions</p>
+ * <p>
+ * PhysicsVehicleNode - Special PhysicsNode that implements vehicle
+ * functions</p>
  * <p>
  * <i>From bullet manual:</i><br>
  * For most vehicle simulations, it is recommended to use the simplified Bullet
- * vehicle model as provided in btRaycastVehicle. Instead of simulation each wheel
- * and chassis as separate rigid bodies, connected by constraints, it uses a simplified model.
- * This simplified model has many benefits, and is widely used in commercial driving games.<br>
- * The entire vehicle is represented as a single rigidbody, the chassis.
- * The collision detection of the wheels is approximated by ray casts,
- * and the tire friction is a basic anisotropic friction model.
+ * vehicle model as provided in btRaycastVehicle. Instead of simulation each
+ * wheel and chassis as separate rigid bodies, connected by constraints, it uses
+ * a simplified model. This simplified model has many benefits, and is widely
+ * used in commercial driving games.<br>
+ * The entire vehicle is represented as a single rigidbody, the chassis. The
+ * collision detection of the wheels is approximated by ray casts, and the tire
+ * friction is a basic anisotropic friction model.
  * </p>
+ *
  * @author normenhansen
  */
 public class PhysicsVehicle extends PhysicsRigidBody {
@@ -111,7 +115,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     }
 
     /**
-     * Used internally, creates the actual vehicle constraint when vehicle is added to phyicsspace
+     * Used internally, creates the actual vehicle constraint when vehicle is
+     * added to phyicsspace
      */
     public void createVehicle(PhysicsSpace space) {
         physicsSpace = space;
@@ -146,9 +151,13 @@ public class PhysicsVehicle extends PhysicsRigidBody {
 
     /**
      * Add a wheel to this vehicle
-     * @param connectionPoint The starting point of the ray, where the suspension connects to the chassis (chassis space)
-     * @param direction the direction of the wheel (should be -Y / 0,-1,0 for a normal car)
-     * @param axle The axis of the wheel, pointing right in vehicle direction (should be -X / -1,0,0 for a normal car)
+     *
+     * @param connectionPoint The starting point of the ray, where the
+     * suspension connects to the chassis (chassis space)
+     * @param direction the direction of the wheel (should be -Y / 0,-1,0 for a
+     * normal car)
+     * @param axle The axis of the wheel, pointing right in vehicle direction
+     * (should be -X / -1,0,0 for a normal car)
      * @param suspensionRestLength The current length of the suspension (metres)
      * @param wheelRadius the wheel radius
      * @param isFrontWheel sets if this wheel is a front wheel (steering)
@@ -160,10 +169,14 @@ public class PhysicsVehicle extends PhysicsRigidBody {
 
     /**
      * Add a wheel to this vehicle
+     *
      * @param spat the wheel Geometry
-     * @param connectionPoint The starting point of the ray, where the suspension connects to the chassis (chassis space)
-     * @param direction the direction of the wheel (should be -Y / 0,-1,0 for a normal car)
-     * @param axle The axis of the wheel, pointing right in vehicle direction (should be -X / -1,0,0 for a normal car)
+     * @param connectionPoint The starting point of the ray, where the
+     * suspension connects to the chassis (chassis space)
+     * @param direction the direction of the wheel (should be -Y / 0,-1,0 for a
+     * normal car)
+     * @param axle The axis of the wheel, pointing right in vehicle direction
+     * (should be -X / -1,0,0 for a normal car)
      * @param suspensionRestLength The current length of the suspension (metres)
      * @param wheelRadius the wheel radius
      * @param isFrontWheel sets if this wheel is a front wheel (steering)
@@ -191,6 +204,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
 
     /**
      * This rebuilds the vehicle as there is no way in bullet to remove a wheel.
+     *
      * @param wheel
      */
     public void removeWheel(int wheel) {
@@ -201,6 +215,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
 
     /**
      * You can get access to the single wheels via this method.
+     *
      * @param wheel the wheel index
      * @return the WheelInfo of the selected wheel
      */
@@ -222,9 +237,10 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     /**
      * Use before adding wheels, this is the default used when adding wheels.
      * After adding the wheel, use direct wheel access.<br>
-     * The coefficient of friction between the tyre and the ground.
-     * Should be about 0.8 for realistic cars, but can increased for better handling.
-     * Set large (10000.0) for kart racers
+     * The coefficient of friction between the tyre and the ground. Should be
+     * about 0.8 for realistic cars, but can increased for better handling. Set
+     * large (10000.0) for kart racers
+     *
      * @param frictionSlip the frictionSlip to set
      */
     public void setFrictionSlip(float frictionSlip) {
@@ -232,9 +248,10 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     }
 
     /**
-     * The coefficient of friction between the tyre and the ground.
-     * Should be about 0.8 for realistic cars, but can increased for better handling.
-     * Set large (10000.0) for kart racers
+     * The coefficient of friction between the tyre and the ground. Should be
+     * about 0.8 for realistic cars, but can increased for better handling. Set
+     * large (10000.0) for kart racers
+     *
      * @param wheel
      * @param frictionSlip
      */
@@ -243,10 +260,11 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     }
 
     /**
-     * Reduces the rolling torque applied from the wheels that cause the vehicle to roll over.
-     * This is a bit of a hack, but it's quite effective. 0.0 = no roll, 1.0 = physical behaviour.
-     * If m_frictionSlip is too high, you'll need to reduce this to stop the vehicle rolling over.
-     * You should also try lowering the vehicle's centre of mass
+     * Reduces the rolling torque applied from the wheels that cause the vehicle
+     * to roll over. This is a bit of a hack, but it's quite effective. 0.0 = no
+     * roll, 1.0 = physical behaviour. If m_frictionSlip is too high, you'll
+     * need to reduce this to stop the vehicle rolling over. You should also try
+     * lowering the vehicle's centre of mass
      */
     public void setRollInfluence(int wheel, float rollInfluence) {
         wheels.get(wheel).setRollInfluence(rollInfluence);
@@ -263,6 +281,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * Use before adding wheels, this is the default used when adding wheels.
      * After adding the wheel, use direct wheel access.<br>
      * The maximum distance the suspension can be compressed (centimetres)
+     *
      * @param maxSuspensionTravelCm the maxSuspensionTravelCm to set
      */
     public void setMaxSuspensionTravelCm(float maxSuspensionTravelCm) {
@@ -271,6 +290,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
 
     /**
      * The maximum distance the suspension can be compressed (centimetres)
+     *
      * @param wheel
      * @param maxSuspensionTravelCm
      */
@@ -283,8 +303,9 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     }
 
     /**
-     * This value caps the maximum suspension force, raise this above the default 6000 if your suspension cannot
-     * handle the weight of your vehicle.
+     * This value caps the maximum suspension force, raise this above the
+     * default 6000 if your suspension cannot handle the weight of your vehicle.
+     *
      * @param maxSuspensionForce
      */
     public void setMaxSuspensionForce(float maxSuspensionForce) {
@@ -292,8 +313,9 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     }
 
     /**
-     * This value caps the maximum suspension force, raise this above the default 6000 if your suspension cannot
-     * handle the weight of your vehicle.
+     * This value caps the maximum suspension force, raise this above the
+     * default 6000 if your suspension cannot handle the weight of your vehicle.
+     *
      * @param wheel
      * @param maxSuspensionForce
      */
@@ -311,10 +333,12 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     /**
      * Use before adding wheels, this is the default used when adding wheels.
      * After adding the wheel, use direct wheel access.<br>
-     * The damping coefficient for when the suspension is compressed.
-     * Set to k * 2.0 * FastMath.sqrt(m_suspensionStiffness) so k is proportional to critical damping.<br>
+     * The damping coefficient for when the suspension is compressed. Set to k *
+     * 2.0 * FastMath.sqrt(m_suspensionStiffness) so k is proportional to
+     * critical damping.<br>
      * k = 0.0 undamped and bouncy, k = 1.0 critical damping<br>
      * 0.1 to 0.3 are good values
+     *
      * @param suspensionCompression the suspensionCompression to set
      */
     public void setSuspensionCompression(float suspensionCompression) {
@@ -322,10 +346,12 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     }
 
     /**
-     * The damping coefficient for when the suspension is compressed.
-     * Set to k * 2.0 * FastMath.sqrt(m_suspensionStiffness) so k is proportional to critical damping.<br>
+     * The damping coefficient for when the suspension is compressed. Set to k *
+     * 2.0 * FastMath.sqrt(m_suspensionStiffness) so k is proportional to
+     * critical damping.<br>
      * k = 0.0 undamped and bouncy, k = 1.0 critical damping<br>
      * 0.1 to 0.3 are good values
+     *
      * @param wheel
      * @param suspensionCompression
      */
@@ -343,8 +369,9 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     /**
      * Use before adding wheels, this is the default used when adding wheels.
      * After adding the wheel, use direct wheel access.<br>
-     * The damping coefficient for when the suspension is expanding.
-     * See the comments for setSuspensionCompression for how to set k.
+     * The damping coefficient for when the suspension is expanding. See the
+     * comments for setSuspensionCompression for how to set k.
+     *
      * @param suspensionDamping the suspensionDamping to set
      */
     public void setSuspensionDamping(float suspensionDamping) {
@@ -352,8 +379,9 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     }
 
     /**
-     * The damping coefficient for when the suspension is expanding.
-     * See the comments for setSuspensionCompression for how to set k.
+     * The damping coefficient for when the suspension is expanding. See the
+     * comments for setSuspensionCompression for how to set k.
+     *
      * @param wheel
      * @param suspensionDamping
      */
@@ -371,15 +399,19 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     /**
      * Use before adding wheels, this is the default used when adding wheels.
      * After adding the wheel, use direct wheel access.<br>
-     * The stiffness constant for the suspension.  10.0 - Offroad buggy, 50.0 - Sports car, 200.0 - F1 Car
-     * @param suspensionStiffness 
+     * The stiffness constant for the suspension. 10.0 - Offroad buggy, 50.0 -
+     * Sports car, 200.0 - F1 Car
+     *
+     * @param suspensionStiffness
      */
     public void setSuspensionStiffness(float suspensionStiffness) {
         tuning.suspensionStiffness = suspensionStiffness;
     }
 
     /**
-     * The stiffness constant for the suspension.  10.0 - Offroad buggy, 50.0 - Sports car, 200.0 - F1 Car
+     * The stiffness constant for the suspension. 10.0 - Offroad buggy, 50.0 -
+     * Sports car, 200.0 - F1 Car
+     *
      * @param wheel
      * @param suspensionStiffness
      */
@@ -398,6 +430,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
 
     /**
      * Apply the given engine force to all wheels, works continuously
+     *
      * @param force the force
      */
     public void accelerate(float force) {
@@ -408,6 +441,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
 
     /**
      * Apply the given engine force, works continuously
+     *
      * @param wheel the wheel to apply the force on
      * @param force the force
      */
@@ -420,6 +454,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
 
     /**
      * Set the given steering value to all front wheels (0 = forward)
+     *
      * @param value the steering angle of the front wheels (Pi = 360deg)
      */
     public void steer(float value) {
@@ -432,6 +467,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
 
     /**
      * Set the given steering value to the given wheel (0 = forward)
+     *
      * @param wheel the wheel to set the steering on
      * @param value the steering angle of the front wheels (Pi = 360deg)
      */
@@ -443,6 +479,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
 
     /**
      * Apply the given brake force to all wheels, works continuously
+     *
      * @param force the force
      */
     public void brake(float force) {
@@ -453,6 +490,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
 
     /**
      * Apply the given brake force, works continuously
+     *
      * @param wheel the wheel to apply the force on
      * @param force the force
      */
@@ -464,6 +502,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
 
     /**
      * Get the current speed of the vehicle in km/h
+     *
      * @return
      */
     public float getCurrentVehicleSpeedKmHour() {
@@ -474,6 +513,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
 
     /**
      * Get the current forward vector of the vehicle in world coordinates
+     *
      * @param vector
      * @return
      */

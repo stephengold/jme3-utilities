@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,7 @@ import java.util.logging.Logger;
 
 /**
  * Basic sphere collision shape
+ *
  * @author normenhansen
  */
 public class SphereCollisionShape extends CollisionShape {
@@ -53,6 +54,7 @@ public class SphereCollisionShape extends CollisionShape {
 
     /**
      * creates a SphereCollisionShape with the given radius
+     *
      * @param radius
      */
     public SphereCollisionShape(float radius) {
@@ -96,7 +98,7 @@ public class SphereCollisionShape extends CollisionShape {
         setScale(scale); // Set the scale to 1
         setMargin(margin);
     }
-    
+
     private native long createShape(float radius);
 
 }

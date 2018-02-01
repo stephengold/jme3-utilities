@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -168,7 +168,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     public void stopPhysics() {
-        if(!initialized){
+        if (!initialized) {
             return;
         }
         if (executor != null) {
@@ -331,7 +331,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
         /**
          * Parallel threaded mode; physics update and rendering are executed in
          * parallel, update order is kept.
-         * 
+         *
          * Multiple BulletAppStates will execute in parallel in this mode.
          */
         PARALLEL,

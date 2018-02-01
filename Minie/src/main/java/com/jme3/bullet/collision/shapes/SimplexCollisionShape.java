@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A simple point, line, triangle or quad collisionShape based on one to four points-
+ * A simple point, line, triangle or quad collisionShape based on one to four
+ * points-
+ *
  * @author normenhansen
  */
 public class SimplexCollisionShape extends CollisionShape {
@@ -116,11 +118,11 @@ public class SimplexCollisionShape extends CollisionShape {
         setScale(scale);
         setMargin(margin);
     }
-    
+
     private native long createShape(Vector3f vector1);
-    
+
     private native long createShape(Vector3f vector1, Vector3f vector2);
-    
+
     private native long createShape(Vector3f vector1, Vector3f vector2, Vector3f vector3);
 
     private native long createShape(Vector3f vector1, Vector3f vector2, Vector3f vector3, Vector3f vector4);

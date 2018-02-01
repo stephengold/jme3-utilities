@@ -43,10 +43,11 @@ import java.util.logging.Logger;
 
 /**
  * <i>From bullet manual:</i><br>
- * Hinge constraint, or revolute joint restricts two additional angular degrees of freedom,
- * so the body can only rotate around one axis, the hinge axis.
- * This can be useful to represent doors or wheels rotating around one axis.
- * The user can specify limits and motor for the hinge.
+ * Hinge constraint, or revolute joint restricts two additional angular degrees
+ * of freedom, so the body can only rotate around one axis, the hinge axis. This
+ * can be useful to represent doors or wheels rotating around one axis. The user
+ * can specify limits and motor for the hinge.
+ *
  * @author normenhansen
  */
 public class HingeJoint extends PhysicsJoint {
@@ -63,6 +64,7 @@ public class HingeJoint extends PhysicsJoint {
 
     /**
      * Creates a new HingeJoint
+     *
      * @param pivotA local translation of the joint connection point in node A
      * @param pivotB local translation of the joint connection point in node B
      */
@@ -75,6 +77,7 @@ public class HingeJoint extends PhysicsJoint {
 
     /**
      * Enables the motor.
+     *
      * @param enable if true, motor is enabled.
      * @param targetVelocity the target velocity of the rotation.
      * @param maxMotorImpulse the max force applied to the hinge to rotate it.
@@ -105,6 +108,7 @@ public class HingeJoint extends PhysicsJoint {
 
     /**
      * Sets the limits of this joint.
+     *
      * @param low the low limit in radians.
      * @param high the high limit in radians.
      */
@@ -115,13 +119,20 @@ public class HingeJoint extends PhysicsJoint {
     private native void setLimit(long objectId, float low, float high);
 
     /**
-     * Sets the limits of this joint.
-     * If you're above the softness, velocities that would shoot through the actual limit are slowed down. The bias be in the range of 0.2 - 0.5.
+     * Sets the limits of this joint. If you're above the softness, velocities
+     * that would shoot through the actual limit are slowed down. The bias be in
+     * the range of 0.2 - 0.5.
+     *
      * @param low the low limit in radians.
      * @param high the high limit in radians.
-     * @param _softness the factor at which the velocity error correction starts operating,i.e a softness of 0.9 means that the vel. corr starts at 90% of the limit range.
-     * @param _biasFactor the magnitude of the position correction. It tells you how strictly the position error (drift ) is corrected.
-     * @param _relaxationFactor the rate at which velocity errors are corrected. This can be seen as the strength of the limits. A low value will make the limits more spongy.
+     * @param _softness the factor at which the velocity error correction starts
+     * operating,i.e a softness of 0.9 means that the vel. corr starts at 90% of
+     * the limit range.
+     * @param _biasFactor the magnitude of the position correction. It tells you
+     * how strictly the position error (drift ) is corrected.
+     * @param _relaxationFactor the rate at which velocity errors are corrected.
+     * This can be seen as the strength of the limits. A low value will make the
+     * limits more spongy.
      */
     public void setLimit(float low, float high, float _softness, float _biasFactor, float _relaxationFactor) {
         biasFactor = _biasFactor;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,8 +50,9 @@ import java.util.LinkedList;
 public class CollisionShapeFactory {
 
     /**
-     * returns the correct transform for a collisionshape in relation
-     * to the ancestor for which the collisionshape is generated
+     * returns the correct transform for a collisionshape in relation to the
+     * ancestor for which the collisionshape is generated
+     *
      * @param spat
      * @param parent
      * @return
@@ -135,17 +136,20 @@ public class CollisionShapeFactory {
     }
 
     /**
-     * This type of collision shape is mesh-accurate and meant for immovable "world objects".
-     * Examples include terrain, houses or whole shooter levels.<br>
-     * Objects with "mesh" type collision shape will not collide with each other.
+     * This type of collision shape is mesh-accurate and meant for immovable
+     * "world objects". Examples include terrain, houses or whole shooter
+     * levels.<br>
+     * Objects with "mesh" type collision shape will not collide with each
+     * other.
      */
     private static CompoundCollisionShape createMeshCompoundShape(Node rootNode) {
         return createCompoundShape(rootNode, new CompoundCollisionShape(), true);
     }
 
     /**
-     * This type of collision shape creates a CompoundShape made out of boxes that
-     * are based on the bounds of the Geometries  in the tree.
+     * This type of collision shape creates a CompoundShape made out of boxes
+     * that are based on the bounds of the Geometries in the tree.
+     *
      * @param rootNode
      * @return
      */
@@ -154,13 +158,19 @@ public class CollisionShapeFactory {
     }
 
     /**
-     * This type of collision shape is mesh-accurate and meant for immovable "world objects".
-     * Examples include terrain, houses or whole shooter levels.
-     * 
-     * Objects with "mesh" type collision shape will not collide with each other.
-     * 
-     * Creates a HeightfieldCollisionShape if the supplied spatial is a TerrainQuad.
-     * @return A MeshCollisionShape or a CompoundCollisionShape with MeshCollisionShapes as children if the supplied spatial is a Node. A HeightieldCollisionShape if a TerrainQuad was supplied.
+     * This type of collision shape is mesh-accurate and meant for immovable
+     * "world objects". Examples include terrain, houses or whole shooter
+     * levels.
+     *
+     * Objects with "mesh" type collision shape will not collide with each
+     * other.
+     *
+     * Creates a HeightfieldCollisionShape if the supplied spatial is a
+     * TerrainQuad.
+     *
+     * @return A MeshCollisionShape or a CompoundCollisionShape with
+     * MeshCollisionShapes as children if the supplied spatial is a Node. A
+     * HeightieldCollisionShape if a TerrainQuad was supplied.
      */
     public static CollisionShape createMeshShape(Spatial spatial) {
         if (spatial instanceof TerrainQuad) {
@@ -180,8 +190,12 @@ public class CollisionShapeFactory {
 
     /**
      * This method creates a hull shape for the given Spatial.<br>
-     * If you want to have mesh-accurate dynamic shapes (CPU intense!!!) use GImpact shapes, its probably best to do so with a low-poly version of your model.
-     * @return A HullCollisionShape or a CompoundCollisionShape with HullCollisionShapes as children if the supplied spatial is a Node.
+     * If you want to have mesh-accurate dynamic shapes (CPU intense!!!) use
+     * GImpact shapes, its probably best to do so with a low-poly version of
+     * your model.
+     *
+     * @return A HullCollisionShape or a CompoundCollisionShape with
+     * HullCollisionShapes as children if the supplied spatial is a Node.
      */
     public static CollisionShape createDynamicMeshShape(Spatial spatial) {
         if (spatial instanceof Geometry) {
@@ -205,9 +219,11 @@ public class CollisionShapeFactory {
     }
 
     /**
-     * This type of collision shape is mesh-accurate and meant for immovable "world objects".
-     * Examples include terrain, houses or whole shooter levels.<br>
-     * Objects with "mesh" type collision shape will not collide with each other.
+     * This type of collision shape is mesh-accurate and meant for immovable
+     * "world objects". Examples include terrain, houses or whole shooter
+     * levels.<br>
+     * Objects with "mesh" type collision shape will not collide with each
+     * other.
      */
     private static MeshCollisionShape createSingleMeshShape(Geometry geom, Spatial parent) {
         Mesh mesh = geom.getMesh();
@@ -222,7 +238,9 @@ public class CollisionShapeFactory {
     }
 
     /**
-     * Uses the bounding box of the supplied spatial to create a BoxCollisionShape
+     * Uses the bounding box of the supplied spatial to create a
+     * BoxCollisionShape
+     *
      * @param spatial
      * @return BoxCollisionShape with the size of the spatials BoundingBox
      */
@@ -249,7 +267,9 @@ public class CollisionShapeFactory {
     }
 
     /**
-     * This method moves each child shape of a compound shape by the given vector
+     * This method moves each child shape of a compound shape by the given
+     * vector
+     *
      * @param vector
      */
     public static void shiftCompoundShapeContents(CompoundCollisionShape compoundShape, Vector3f vector) {

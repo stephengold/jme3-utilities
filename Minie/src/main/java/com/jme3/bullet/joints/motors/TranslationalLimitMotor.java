@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -62,7 +62,7 @@ public class TranslationalLimitMotor {
     }
 
     private native void setLowerLimit(long motorId, Vector3f vector);
-    
+
     public Vector3f getUpperLimit() {
         Vector3f vec = new Vector3f();
         getUpperLimit(motorId, vec);
@@ -84,7 +84,7 @@ public class TranslationalLimitMotor {
     }
 
     private native void getAccumulatedImpulse(long motorId, Vector3f vector);
-    
+
     public void setAccumulatedImpulse(Vector3f accumulatedImpulse) {
         setAccumulatedImpulse(motorId, accumulatedImpulse);
     }
@@ -94,13 +94,13 @@ public class TranslationalLimitMotor {
     public float getLimitSoftness() {
         return getLimitSoftness(motorId);
     }
-    
+
     private native float getLimitSoftness(long motorId);
 
     public void setLimitSoftness(float limitSoftness) {
         setLimitSoftness(motorId, limitSoftness);
     }
-    
+
     private native void setLimitSoftness(long motorId, float limitSoftness);
 
     public float getDamping() {
@@ -108,17 +108,17 @@ public class TranslationalLimitMotor {
     }
 
     private native float getDamping(long motorId);
-    
+
     public void setDamping(float damping) {
         setDamping(motorId, damping);
     }
 
     private native void setDamping(long motorId, float damping);
-    
+
     public float getRestitution() {
         return getRestitution(motorId);
     }
-    
+
     private native float getRestitution(long motorId);
 
     public void setRestitution(float restitution) {

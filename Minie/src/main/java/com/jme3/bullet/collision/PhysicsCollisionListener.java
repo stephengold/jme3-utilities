@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,15 +32,20 @@
 package com.jme3.bullet.collision;
 
 /**
- * Interface for Objects that want to be informed about collision events in the physics space
+ * Interface for Objects that want to be informed about collision events in the
+ * physics space
+ *
  * @author normenhansen
  */
 public interface PhysicsCollisionListener {
 
     /**
-     * Called when a collision happened in the PhysicsSpace, <i>called from render thread</i>.
-     * 
-     * Do not store the event object as it will be cleared after the method has finished.
+     * Called when a collision happened in the PhysicsSpace, <i>called from
+     * render thread</i>.
+     *
+     * Do not store the event object as it will be cleared after the method has
+     * finished.
+     *
      * @param event the CollisionEvent
      */
     public void collision(PhysicsCollisionEvent event);

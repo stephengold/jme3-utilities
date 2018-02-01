@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -174,7 +174,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
         TempVars vars = TempVars.get();
 
         Vector3f currentVelocity = vars.vect2.set(velocity);
-        
+
         // dampen existing x/z forces
         float existingLeftVelocity = velocity.dot(localLeft);
         float existingForwardVelocity = velocity.dot(localForward);
@@ -198,7 +198,9 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
             //add resulting vector to existing velocity
             velocity.addLocal(localWalkDirection);
         }
-        if(currentVelocity.distance(velocity) > FastMath.ZERO_TOLERANCE) rigidBody.setLinearVelocity(velocity);
+        if (currentVelocity.distance(velocity) > FastMath.ZERO_TOLERANCE) {
+            rigidBody.setLinearVelocity(velocity);
+        }
         if (jump) {
             //TODO: precalculate jump force
             Vector3f rotatedJumpForce = vars.vect1;
@@ -434,7 +436,9 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
     /**
      * Sets how much the physics forces in the local x/z plane should be
      * dampened.
-     * @param physicsDamping The dampening value, 0 = no dampening, 1 = no external force, default = 0.9
+     *
+     * @param physicsDamping The dampening value, 0 = no dampening, 1 = no
+     * external force, default = 0.9
      */
     public void setPhysicsDamping(float physicsDamping) {
         this.physicsDamping = physicsDamping;
@@ -677,7 +681,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
         control.setJumpForce(jumpForce);
         control.spatial = this.spatial;
         return control;
-    }     
+    }
 
     @Override
     public void write(JmeExporter ex) throws IOException {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,8 +35,9 @@ import com.jme3.math.Vector3f;
 
 /**
  * Contains the results of a PhysicsSpace rayTest
- *  bulletAppState.getPhysicsSpace().rayTest(new Vector3f(0,1000,0),new Vector3f(0,-1000,0));
-    javap -s java.util.List
+ * bulletAppState.getPhysicsSpace().rayTest(new Vector3f(0,1000,0),new
+ * Vector3f(0,-1000,0)); javap -s java.util.List
+ *
  * @author Empire-Phoenix,normenhansen
  */
 public class PhysicsRayTestResult {

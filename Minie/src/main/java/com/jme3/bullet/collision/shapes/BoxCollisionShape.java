@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,7 @@ import java.util.logging.Logger;
 
 /**
  * Basic box collision shape
+ *
  * @author normenhansen
  */
 public class BoxCollisionShape extends CollisionShape {
@@ -53,6 +54,7 @@ public class BoxCollisionShape extends CollisionShape {
 
     /**
      * creates a collision box from the given halfExtents
+     *
      * @param halfExtents the halfExtents of the CollisionBox
      */
     public BoxCollisionShape(Vector3f halfExtents) {
@@ -63,7 +65,7 @@ public class BoxCollisionShape extends CollisionShape {
     public final Vector3f getHalfExtents() {
         return halfExtents;
     }
-    
+
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
@@ -85,7 +87,7 @@ public class BoxCollisionShape extends CollisionShape {
         setScale(scale);
         setMargin(margin);
     }
-    
+
     private native long createShape(Vector3f halfExtents);
 
 }

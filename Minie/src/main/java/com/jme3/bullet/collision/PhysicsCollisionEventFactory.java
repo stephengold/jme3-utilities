@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,7 @@ public class PhysicsCollisionEventFactory {
         PhysicsCollisionEvent event = eventBuffer.poll();
         if (event == null) {
             event = new PhysicsCollisionEvent(type, source, nodeB, manifoldPointObjectId);
-        }else{
+        } else {
             event.refactor(type, source, nodeB, manifoldPointObjectId);
         }
         return event;

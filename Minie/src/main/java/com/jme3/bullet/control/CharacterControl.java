@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,6 +50,7 @@ import java.io.IOException;
 
 /**
  * You might want to try <code>BetterCharacterControl</code> as well.
+ *
  * @author normenhansen
  */
 public class CharacterControl extends PhysicsCharacter implements PhysicsControl, JmeCloneable {
@@ -76,6 +77,7 @@ public class CharacterControl extends PhysicsCharacter implements PhysicsControl
     /**
      * When set to true, the physics coordinates will be applied to the local
      * translation of the Spatial
+     *
      * @param applyPhysicsLocal
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
@@ -123,13 +125,13 @@ public class CharacterControl extends PhysicsCharacter implements PhysicsControl
         control.spatial = this.spatial;
         control.setEnabled(isEnabled());
         return control;
-    }     
+    }
 
     @Override
-    public void cloneFields( Cloner cloner, Object original ) { 
+    public void cloneFields(Cloner cloner, Object original) {
         this.spatial = cloner.clone(spatial);
     }
-         
+
     public void setSpatial(Spatial spatial) {
         this.spatial = spatial;
         setUserObject(spatial);
@@ -208,7 +210,9 @@ public class CharacterControl extends PhysicsCharacter implements PhysicsControl
                 added = false;
             }
         } else {
-            if(this.space == space) return;
+            if (this.space == space) {
+                return;
+            }
             // if this object isn't enabled, it will be added when it will be enabled.
             if (isEnabled()) {
                 space.addCollisionObject(this);
