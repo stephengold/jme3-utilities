@@ -42,7 +42,7 @@ public interface PhysicsCollisionGroupListener {
      * collide, <i>called from physics thread</i>.<br>
      * This is only called when the collision will happen based on the
      * collisionGroup and collideWithGroups settings in the
-     * PhysicsCollisionObject. That is the case when <b>one</b> of the partys
+     * PhysicsCollisionObject. That is the case when <b>one</b> of the parties
      * has the collisionGroup of the other in its collideWithGroups set.<br>
      *
      * @param nodeA CollisionObject #1

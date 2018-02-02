@@ -994,7 +994,7 @@ public class PhysicsSpace {
      * determinism in physics. For example a maximum number of 2 can compensate
      * for framerates as low as 30fps when the physics has the default accuracy
      * of 60 fps. Note that setting this value too high can make the physics
-     * drive down its own fps in case its overloaded.
+     * drive down its own fps in case it's overloaded.
      *
      * @param steps The maximum number of extra steps, default is 4.
      */
