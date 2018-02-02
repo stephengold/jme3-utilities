@@ -59,8 +59,14 @@ public class SixDofSpringJoint extends SixDofJoint {
     }
 
     /**
+     * @param nodeA the 1st body connected by the joint
+     * @param nodeB the 2nd body connected by the joint
      * @param pivotA local translation of the joint connection point in node A
      * @param pivotB local translation of the joint connection point in node B
+     * @param rotA the local orientation of the connection to node A
+     * @param rotB the local orientation of the connection to node B
+     * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
+     * B
      */
     public SixDofSpringJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB, boolean useLinearReferenceFrameA) {
         super(nodeA, nodeB, pivotA, pivotB, rotA, rotB, useLinearReferenceFrameA);

@@ -55,7 +55,7 @@ public class SphereCollisionShape extends CollisionShape {
     /**
      * creates a SphereCollisionShape with the given radius
      *
-     * @param radius
+     * @param radius the desired radius
      */
     public SphereCollisionShape(float radius) {
         this.radius = radius;

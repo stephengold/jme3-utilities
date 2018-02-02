@@ -123,11 +123,12 @@ public class RagdollUtils {
      * Create a hull collision shape from linked vertices to this bone. Vertices
      * have to be previoulsly gathered in a map using buildPointMap method
      *
-     * @param pointsMap
-     * @param boneIndices
-     * @param initialScale
-     * @param initialPosition
-     * @return
+     * @param pointsMap map from bone indices to coordinates (not null,
+     * unaffected)
+     * @param boneIndices (not null, unaffected)
+     * @param initialScale scale factors (not null, unaffected)
+     * @param initialPosition location (not null, unaffected)
+     * @return a new shape
      */
     public static HullCollisionShape makeShapeFromPointMap(Map<Integer, List<Float>> pointsMap, List<Integer> boneIndices, Vector3f initialScale, Vector3f initialPosition) {
 
@@ -176,12 +177,12 @@ public class RagdollUtils {
     /**
      * Create a hull collision shape from linked vertices to this bone.
      *
-     * @param model
-     * @param boneIndices
-     * @param initialScale
-     * @param initialPosition
-     * @param weightThreshold
-     * @return
+     * @param model the model on which to base the shape
+     * @param boneIndices indices of relevant bones (not null, unaffected)
+     * @param initialScale scale factors
+     * @param initialPosition location
+     * @param weightThreshold minimum weight for inclusion
+     * @return a new shape
      */
     public static HullCollisionShape makeShapeFromVerticeWeights(Spatial model, List<Integer> boneIndices, Vector3f initialScale, Vector3f initialPosition, float weightThreshold) {
 
@@ -269,6 +270,9 @@ public class RagdollUtils {
      * @param bone the bone
      * @param pos the position
      * @param rot the rotation
+     * @param restoreBoneControl true &rarr; user-control flag should be set
+     * @param boneList the names of all bones without collision shapes (not
+     * null, unaffected)
      */
     public static void setTransform(Bone bone, Vector3f pos, Quaternion rot, boolean restoreBoneControl, Set<String> boneList) {
         //we ensure that we have the control

@@ -67,7 +67,8 @@ public class RigidBodyMotionState {
      * applies the current transform to the given jme Node if the location has
      * been updated on the physics side
      *
-     * @param spatial
+     * @param spatial where to apply the physics transform (not null)
+     * @return true if changed
      */
     public boolean applyTransform(Spatial spatial) {
         Vector3f localLocation = spatial.getLocalTranslation();

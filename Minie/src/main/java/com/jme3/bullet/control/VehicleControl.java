@@ -68,7 +68,7 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl, Jm
     /**
      * Creates a new PhysicsNode with the supplied collision shape
      *
-     * @param shape
+     * @param shape the desired shape
      */
     public VehicleControl(CollisionShape shape) {
         super(shape);
@@ -86,7 +86,8 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl, Jm
      * When set to true, the physics coordinates will be applied to the local
      * translation of the Spatial
      *
-     * @param applyPhysicsLocal
+     * @param applyPhysicsLocal true&rarr;apply to local coordinates,
+     * false&rarr;apply to world coordinates
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         motionState.setApplyPhysicsLocal(applyPhysicsLocal);

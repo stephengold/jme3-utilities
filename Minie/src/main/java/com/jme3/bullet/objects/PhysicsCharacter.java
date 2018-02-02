@@ -101,7 +101,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Sets the location of this physics character
      *
-     * @param location
+     * @param location the desired physics location
      */
     public void warp(Vector3f location) {
         warp(characterId, location);
@@ -133,6 +133,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
 
     /**
      * @deprecated Deprecated in bullet 2.86.1 use setUp(Vector3f) instead
+     * @param axis which axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     @Deprecated
     public void setUpAxis(int axis) {
@@ -220,6 +221,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * @deprecated Deprecated in bullet 2.86.1. Use setGravity(Vector3f)
      * instead.
+     * @param value acceleration
      */
     @Deprecated
     public void setGravity(float value) {
@@ -235,6 +237,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * @deprecated Deprecated in bullet 2.86.1. Use getGravity(Vector3f)
      * instead.
+     * @return acceleration
      */
     @Deprecated
     public float getGravity() {
@@ -354,6 +357,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     }
 
     /**
+     * @param trans a vector to store the result in (modified if not null)
      * @return the physicsLocation
      */
     public Vector3f getPhysicsLocation(Vector3f trans) {
@@ -405,6 +409,8 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
 
     /**
      * used internally
+     *
+     * @return the Bullet id
      */
     public long getControllerId() {
         return characterId;

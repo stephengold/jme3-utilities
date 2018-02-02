@@ -288,6 +288,8 @@ public class BulletAppState implements AppState, PhysicsTickListener {
 
     /**
      * Use before attaching state
+     *
+     * @param broadphaseType an enum value
      */
     public void setBroadphaseType(BroadphaseType broadphaseType) {
         this.broadphaseType = broadphaseType;
@@ -295,6 +297,8 @@ public class BulletAppState implements AppState, PhysicsTickListener {
 
     /**
      * Use before attaching state
+     *
+     * @param worldMin the desired minimum coordinate values
      */
     public void setWorldMin(Vector3f worldMin) {
         this.worldMin = worldMin;
@@ -302,6 +306,8 @@ public class BulletAppState implements AppState, PhysicsTickListener {
 
     /**
      * Use before attaching state
+     *
+     * @param worldMax the desired maximum coordinate values
      */
     public void setWorldMax(Vector3f worldMax) {
         this.worldMax = worldMax;

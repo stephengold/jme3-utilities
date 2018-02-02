@@ -71,6 +71,8 @@ public abstract class CollisionShape implements Savable {
 //    private native void calculateLocalInertia(long objectId, long shapeId, float mass);
     /**
      * used internally
+     *
+     * @return the Bullet id
      */
     public long getObjectId() {
         return objectId;
@@ -78,6 +80,8 @@ public abstract class CollisionShape implements Savable {
 
     /**
      * used internally
+     *
+     * @param id the desired id value
      */
     public void setObjectId(long id) {
         this.objectId = id;

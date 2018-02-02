@@ -80,7 +80,7 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
      * Called when the physics object is supposed to move to the spatial
      * position.
      *
-     * @param vec
+     * @param vec spatial location coordinates
      */
     protected abstract void setPhysicsLocation(Vector3f vec);
 
@@ -88,7 +88,7 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
      * Called when the physics object is supposed to move to the spatial
      * rotation.
      *
-     * @param quat
+     * @param quat spatial orientation
      */
     protected abstract void setPhysicsRotation(Quaternion quat);
 
@@ -96,7 +96,7 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
      * Called when the physics object is supposed to add all objects it needs to
      * manage to the physics space.
      *
-     * @param space
+     * @param space which physics space
      */
     protected abstract void addPhysics(PhysicsSpace space);
 
@@ -104,7 +104,7 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
      * Called when the physics object is supposed to remove all objects added to
      * the physics space.
      *
-     * @param space
+     * @param space which physics space
      */
     protected abstract void removePhysics(PhysicsSpace space);
 
@@ -116,7 +116,7 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
      * When set to true, the physics coordinates will be applied to the local
      * translation of the Spatial
      *
-     * @param applyPhysicsLocal
+     * @param applyPhysicsLocal true&rarr;apply to local position
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         applyLocal = applyPhysicsLocal;
@@ -139,8 +139,8 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
     /**
      * Applies a physics transform to the spatial
      *
-     * @param worldLocation
-     * @param worldRotation
+     * @param worldLocation physics location (not null)
+     * @param worldRotation physics orientation (not null)
      */
     protected void applyPhysicsTransform(Vector3f worldLocation, Quaternion worldRotation) {
         if (enabled && spatial != null) {

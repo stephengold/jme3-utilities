@@ -117,6 +117,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     /**
      * Used internally, creates the actual vehicle constraint when vehicle is
      * added to phyicsspace
+     *
+     * @param space which physics space
      */
     public void createVehicle(PhysicsSpace space) {
         physicsSpace = space;
@@ -205,7 +207,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     /**
      * This rebuilds the vehicle as there is no way in bullet to remove a wheel.
      *
-     * @param wheel
+     * @param wheel the index of the wheel to remove
      */
     public void removeWheel(int wheel) {
         wheels.remove(wheel);
@@ -216,7 +218,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     /**
      * You can get access to the single wheels via this method.
      *
-     * @param wheel the wheel index
+     * @param wheel the index of the wheel to access
      * @return the WheelInfo of the selected wheel
      */
     public VehicleWheel getWheel(int wheel) {
@@ -252,8 +254,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * about 0.8 for realistic cars, but can increased for better handling. Set
      * large (10000.0) for kart racers
      *
-     * @param wheel
-     * @param frictionSlip
+     * @param wheel the index of the wheel to modify
+     * @param frictionSlip the desired coefficient of friction
      */
     public void setFrictionSlip(int wheel, float frictionSlip) {
         wheels.get(wheel).setFrictionSlip(frictionSlip);
@@ -265,6 +267,9 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * roll, 1.0 = physical behaviour. If m_frictionSlip is too high, you'll
      * need to reduce this to stop the vehicle rolling over. You should also try
      * lowering the vehicle's centre of mass
+     *
+     * @param wheel the index of the wheel to modify
+     * @param rollInfluence the value to use
      */
     public void setRollInfluence(int wheel, float rollInfluence) {
         wheels.get(wheel).setRollInfluence(rollInfluence);
@@ -291,8 +296,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     /**
      * The maximum distance the suspension can be compressed (centimetres)
      *
-     * @param wheel
-     * @param maxSuspensionTravelCm
+     * @param wheel the index of the wheel to modify
+     * @param maxSuspensionTravelCm the distance to use (in centimetres)
      */
     public void setMaxSuspensionTravelCm(int wheel, float maxSuspensionTravelCm) {
         wheels.get(wheel).setMaxSuspensionTravelCm(maxSuspensionTravelCm);
@@ -306,7 +311,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * This value caps the maximum suspension force, raise this above the
      * default 6000 if your suspension cannot handle the weight of your vehicle.
      *
-     * @param maxSuspensionForce
+     * @param maxSuspensionForce the desired limit
      */
     public void setMaxSuspensionForce(float maxSuspensionForce) {
         tuning.maxSuspensionForce = maxSuspensionForce;
@@ -316,8 +321,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * This value caps the maximum suspension force, raise this above the
      * default 6000 if your suspension cannot handle the weight of your vehicle.
      *
-     * @param wheel
-     * @param maxSuspensionForce
+     * @param wheel the index of the wheel to modify
+     * @param maxSuspensionForce the desired limit
      */
     public void setMaxSuspensionForce(int wheel, float maxSuspensionForce) {
         wheels.get(wheel).setMaxSuspensionForce(maxSuspensionForce);
@@ -352,8 +357,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * k = 0.0 undamped and bouncy, k = 1.0 critical damping<br>
      * 0.1 to 0.3 are good values
      *
-     * @param wheel
-     * @param suspensionCompression
+     * @param wheel the index of the wheel to modify
+     * @param suspensionCompression the desired damping coefficient
      */
     public void setSuspensionCompression(int wheel, float suspensionCompression) {
         wheels.get(wheel).setWheelsDampingCompression(suspensionCompression);
@@ -382,8 +387,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * The damping coefficient for when the suspension is expanding. See the
      * comments for setSuspensionCompression for how to set k.
      *
-     * @param wheel
-     * @param suspensionDamping
+     * @param wheel the index of the wheel to modify
+     * @param suspensionDamping the desired damping coefficient
      */
     public void setSuspensionDamping(int wheel, float suspensionDamping) {
         wheels.get(wheel).setWheelsDampingRelaxation(suspensionDamping);
@@ -402,7 +407,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * The stiffness constant for the suspension. 10.0 - Offroad buggy, 50.0 -
      * Sports car, 200.0 - F1 Car
      *
-     * @param suspensionStiffness
+     * @param suspensionStiffness the desired stiffness coefficient
      */
     public void setSuspensionStiffness(float suspensionStiffness) {
         tuning.suspensionStiffness = suspensionStiffness;
@@ -412,8 +417,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * The stiffness constant for the suspension. 10.0 - Offroad buggy, 50.0 -
      * Sports car, 200.0 - F1 Car
      *
-     * @param wheel
-     * @param suspensionStiffness
+     * @param wheel the index of the wheel to modify
+     * @param suspensionStiffness the desired stiffness coefficient
      */
     public void setSuspensionStiffness(int wheel, float suspensionStiffness) {
         wheels.get(wheel).setSuspensionStiffness(suspensionStiffness);
@@ -503,7 +508,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     /**
      * Get the current speed of the vehicle in km/h
      *
-     * @return
+     * @return speed (in kilometers per hour)
      */
     public float getCurrentVehicleSpeedKmHour() {
         return getCurrentVehicleSpeedKmHour(vehicleId);
@@ -514,8 +519,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     /**
      * Get the current forward vector of the vehicle in world coordinates
      *
-     * @param vector
-     * @return
+     * @param vector a vector to store the result in (modified if not null)
+     * @return the vector (either vector or a new vector)
      */
     public Vector3f getForwardVector(Vector3f vector) {
         if (vector == null) {
@@ -529,6 +534,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
 
     /**
      * used internally
+     *
+     * @return the Bullet id
      */
     public long getVehicleId() {
         return vehicleId;

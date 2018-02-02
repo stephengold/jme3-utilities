@@ -85,7 +85,7 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
     /**
      * Creates a new PhysicsNode with the supplied collision shape and mass 1
      *
-     * @param shape
+     * @param shape the desired shape
      */
     public RigidBodyControl(CollisionShape shape) {
         super(shape);
@@ -229,7 +229,7 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
      * transform will be applied to the rigidbody in kinematic mode, defaults to
      * true.
      *
-     * @param kinematicSpatial
+     * @param kinematicSpatial true&rarr;kinematic, false&rarr;dynamic or static
      */
     public void setKinematicSpatial(boolean kinematicSpatial) {
         this.kinematicSpatial = kinematicSpatial;
@@ -243,7 +243,8 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
      * When set to true, the physics coordinates will be applied to the local
      * translation of the Spatial instead of the world translation.
      *
-     * @param applyPhysicsLocal
+     * @param applyPhysicsLocal true&rarr;apply locally, false&rarr;apply in
+     * world
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         motionState.setApplyPhysicsLocal(applyPhysicsLocal);

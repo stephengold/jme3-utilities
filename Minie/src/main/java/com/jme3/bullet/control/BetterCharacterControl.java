@@ -131,9 +131,9 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * issues the final height when ducking should be larger than 2x radius. The
      * jumpForce will be set to an upwards force of 5x mass.
      *
-     * @param radius
-     * @param height
-     * @param mass
+     * @param radius the radius of the character's collision shape
+     * @param height the height of the character's collision shape
+     * @param mass the mass of the character
      */
     public BetterCharacterControl(float radius, float height, float mass) {
         this.radius = radius;
@@ -160,8 +160,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
     /**
      * Used internally, don't call manually
      *
-     * @param space
-     * @param tpf
+     * @param space unused
+     * @param tpf unused
      */
     public void prePhysicsTick(PhysicsSpace space, float tpf) {
         checkOnGround();
@@ -213,8 +213,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
     /**
      * Used internally, don't call manually
      *
-     * @param space
-     * @param tpf
+     * @param space unused
+     * @param tpf unused
      */
     public void physicsTick(PhysicsSpace space, float tpf) {
         rigidBody.getLinearVelocity(velocity);
@@ -256,7 +256,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * Gets the current jump force. The default is 5 * character mass in y
      * direction.
      *
-     * @return
+     * @return the pre-existing vector
      */
     public Vector3f getJumpForce() {
         return jumpForce;
@@ -267,7 +267,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * in the center of the character and might return false even if the
      * character is not falling yet.
      *
-     * @return
+     * @return true if on the ground, otherwise false
      */
     public boolean isOnGround() {
         return onGround;
@@ -280,7 +280,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * can in fact unduck and only do so when its possible. You can check the
      * state of the unducking by checking isDucked().
      *
-     * @param enabled
+     * @param enabled true&rarr;duck, false&rarr;unduck
      */
     public void setDucked(boolean enabled) {
         if (enabled) {
@@ -301,7 +301,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * Check if the character is ducking, either due to user input or due to
      * unducking being impossible at the moment (obstacle above).
      *
-     * @return
+     * @return true if ducking, otherwise false
      */
     public boolean isDucked() {
         return ducked;
@@ -320,7 +320,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
     /**
      * Gets the height multiplication factor for ducking.
      *
-     * @return
+     * @return the factor
      */
     public float getDuckedFactor() {
         return duckedFactor;
@@ -341,7 +341,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * Gets the current walk direction and speed of the character. The length of
      * the vector defines the speed.
      *
-     * @return
+     * @return the pre-existing vector
      */
     public Vector3f getWalkDirection() {
         return walkDirection;
@@ -351,7 +351,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * Sets the view direction for the character. Note this only defines the
      * rotation of the spatial in the local x/z plane of the character.
      *
-     * @param vec
+     * @param vec a direction vector (not null, unaffected)
      */
     public void setViewDirection(Vector3f vec) {
         viewDirection.set(vec);
@@ -362,7 +362,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * Gets the current view direction, note this doesn't need to correspond
      * with the spatials forward direction.
      *
-     * @return
+     * @return the pre-existing vector
      */
     public Vector3f getViewDirection() {
         return viewDirection;
@@ -405,7 +405,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * gravity direction are possible while maintaining a sensible control over
      * the character.
      *
-     * @param gravity
+     * @param gravity an acceleration vector (not null, unaffected)
      */
     public void setGravity(Vector3f gravity) {
         rigidBody.setGravity(gravity);
@@ -416,7 +416,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
     /**
      * Get the current gravity of the character.
      *
-     * @return
+     * @return a new acceleration vector
      */
     public Vector3f getGravity() {
         return rigidBody.getGravity();
@@ -426,7 +426,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * Get the current gravity of the character.
      *
      * @param store The vector to store the result in
-     * @return
+     * @return either store or a new instance
      */
     public Vector3f getGravity(Vector3f store) {
         return rigidBody.getGravity(store);
@@ -446,6 +446,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
     /**
      * Gets how much the physics forces in the local x/z plane should be
      * dampened.
+     *
+     * @return the damping factor
      */
     public float getPhysicsDamping() {
         return physicsDamping;
@@ -455,7 +457,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * This actually sets a new collision shape to the character to change the
      * height of the capsule.
      *
-     * @param percent
+     * @param percent factor to apply
      */
     protected void setHeightPercent(float percent) {
         scale.setY(percent);
@@ -486,6 +488,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
     /**
      * This checks if the character can go from ducked to unducked state by
      * doing a ray test.
+     *
+     * @return true if able to unduck, otherwise false
      */
     protected boolean checkCanUnDuck() {
         TempVars vars = TempVars.get();
@@ -509,7 +513,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * compound collision shape with an offset to set the object center at the
      * bottom of the capsule.
      *
-     * @return
+     * @return a new compound shape
      */
     protected CollisionShape getShape() {
         //TODO: cleanup size mess..
@@ -523,7 +527,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
     /**
      * Gets the scaled height.
      *
-     * @return
+     * @return the height
      */
     protected float getFinalHeight() {
         return height * scale.getY();
@@ -532,7 +536,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
     /**
      * Gets the scaled radius.
      *
-     * @return
+     * @return the radius
      */
     protected float getFinalRadius() {
         return radius * scale.getZ();
@@ -607,7 +611,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * This is implemented from AbstractPhysicsControl and called when the
      * spatial is attached for example.
      *
-     * @param vec
+     * @param vec the desired location (not null)
      */
     @Override
     protected void setPhysicsLocation(Vector3f vec) {
@@ -621,7 +625,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * but the view rotation here. It might actually be altered by the
      * calculateNewForward method.
      *
-     * @param quat
+     * @param quat the desired orientation (not null, unaffected)
      */
     @Override
     protected void setPhysicsRotation(Quaternion quat) {
@@ -634,7 +638,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * This is implemented from AbstractPhysicsControl and called when the
      * control is supposed to add all objects to the physics space.
      *
-     * @param space
+     * @param space the physics space to add to (not null)
      */
     @Override
     protected void addPhysics(PhysicsSpace space) {
@@ -649,7 +653,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * This is implemented from AbstractPhysicsControl and called when the
      * control is supposed to remove all objects from the physics space.
      *
-     * @param space
+     * @param space the physics space to remove from (not null)
      */
     @Override
     protected void removePhysics(PhysicsSpace space) {

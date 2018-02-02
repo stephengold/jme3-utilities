@@ -67,8 +67,8 @@ public class DebugShapeFactory {
      * To attach a debug shape to a physics object, call
      * <code>attachDebugShape(AssetManager manager);</code> on it.
      *
-     * @param collisionShape
-     * @return
+     * @param collisionShape the collision shape to visualize
+     * @return a new tree of geometries, or null if none
      */
     public static Spatial getDebugShape(CollisionShape collisionShape) {
         if (collisionShape == null) {

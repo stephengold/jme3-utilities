@@ -57,6 +57,8 @@ public abstract class PhysicsJoint implements Savable {
     }
 
     /**
+     * @param nodeA the 1st body connected by the joint
+     * @param nodeB the 2nd body connected by the joint
      * @param pivotA local translation of the joint connection point in node A
      * @param pivotB local translation of the joint connection point in node B
      */

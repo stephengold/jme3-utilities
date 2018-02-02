@@ -69,7 +69,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * Creates a new PhysicsRigidBody with the supplied collision shape
      *
-     * @param shape
+     * @param shape the shape to use
      */
     public PhysicsRigidBody(CollisionShape shape) {
         collisionShape = shape;
@@ -168,7 +168,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void setPhysicsRotation(long objectId, Quaternion rotation);
 
     /**
-     * @return the physicsLocation
+     * @param trans a vector to store the result in (modified if not null)
+     * @return the physics location
      */
     public Vector3f getPhysicsLocation(Vector3f trans) {
         if (trans == null) {
@@ -181,7 +182,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void getPhysicsLocation(long objectId, Vector3f vector);
 
     /**
-     * @return the physicsLocation
+     * @param rot a quaternion to store the result in (modified if not null)
+     * @return the physics orientation
      */
     public Quaternion getPhysicsRotation(Quaternion rot) {
         if (rot == null) {
@@ -210,7 +212,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void getPhysicsRotation(long objectId, Quaternion rot);
 
     /**
-     * @return the physicsLocation
+     * @param rot a matrix to store the result in (modified if not null)
+     * @return the physics orientation
      */
     public Matrix3f getPhysicsRotationMatrix(Matrix3f rot) {
         if (rot == null) {
@@ -223,7 +226,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void getPhysicsRotationMatrix(long objectId, Matrix3f rot);
 
     /**
-     * @return the physicsLocation
+     * @return the physics location
      */
     public Vector3f getPhysicsLocation() {
         Vector3f vec = new Vector3f();
@@ -274,7 +277,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * physics but affects other physics objects. Iits kinetic force is
      * calculated by the amount of movement it is exposed to and its weight.
      *
-     * @param kinematic
+     * @param kinematic true&rarr;set kinematic mode, false&rarr;set
+     * dynamic/static mode
      */
     public void setKinematic(boolean kinematic) {
         this.kinematic = kinematic;
@@ -300,7 +304,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * This avoids the problem of fast objects moving through other objects, set
      * to zero to disable (default)
      *
-     * @param threshold
+     * @param threshold the desired threshold value
      */
     public void setCcdMotionThreshold(float threshold) {
         setCcdMotionThreshold(objectId, threshold);
@@ -333,7 +337,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * Sets the mass of this PhysicsRigidBody, objects with mass=0 are static.
      *
-     * @param mass
+     * @param mass the desired mass
      */
     public void setMass(float mass) {
         this.mass = mass;
@@ -448,7 +452,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * The "bouncyness" of the PhysicsRigidBody, best performance if
      * restitution=0
      *
-     * @param restitution
+     * @param restitution the desired restitution
      */
     public void setRestitution(float restitution) {
         setRestitution(objectId, restitution);
@@ -585,7 +589,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * Apply a torque impulse to the PhysicsRigidBody in the next physics
      * update.
      *
-     * @param vec
+     * @param vec the torque to apply
      */
     public void applyTorqueImpulse(Vector3f vec) {
         applyTorqueImpulse(objectId, vec);
@@ -714,6 +718,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * do not use manually, joints are added automatically
+     *
+     * @param joint the joint to add
      */
     public void addJoint(PhysicsJoint joint) {
         if (!joints.contains(joint)) {
@@ -722,7 +728,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
-     *
+     * @param joint the joint to remove
      */
     public void removeJoint(PhysicsJoint joint) {
         joints.remove(joint);

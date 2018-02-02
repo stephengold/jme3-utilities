@@ -158,7 +158,7 @@ public class VehicleWheel implements Savable {
      * the stiffness constant for the suspension. 10.0 - Offroad buggy, 50.0 -
      * Sports car, 200.0 - F1 Car
      *
-     * @param suspensionStiffness
+     * @param suspensionStiffness the desired stiffness coefficient
      */
     public void setSuspensionStiffness(float suspensionStiffness) {
         this.suspensionStiffness = suspensionStiffness;
@@ -173,7 +173,7 @@ public class VehicleWheel implements Savable {
      * the damping coefficient for when the suspension is expanding. See the
      * comments for setWheelsDampingCompression for how to set k.
      *
-     * @param wheelsDampingRelaxation
+     * @param wheelsDampingRelaxation the desired damping coefficient
      */
     public void setWheelsDampingRelaxation(float wheelsDampingRelaxation) {
         this.wheelsDampingRelaxation = wheelsDampingRelaxation;
@@ -191,7 +191,7 @@ public class VehicleWheel implements Savable {
      * k = 0.0 undamped and bouncy, k = 1.0 critical damping<br>
      * 0.1 to 0.3 are good values
      *
-     * @param wheelsDampingCompression
+     * @param wheelsDampingCompression the desired damping coefficient
      */
     public void setWheelsDampingCompression(float wheelsDampingCompression) {
         this.wheelsDampingCompression = wheelsDampingCompression;
@@ -207,7 +207,7 @@ public class VehicleWheel implements Savable {
      * about 0.8 for realistic cars, but can increased for better handling. Set
      * large (10000.0) for kart racers
      *
-     * @param frictionSlip
+     * @param frictionSlip the desired coefficient of friction
      */
     public void setFrictionSlip(float frictionSlip) {
         this.frictionSlip = frictionSlip;
@@ -239,7 +239,7 @@ public class VehicleWheel implements Savable {
     /**
      * the maximum distance the suspension can be compressed (centimetres)
      *
-     * @param maxSuspensionTravelCm
+     * @param maxSuspensionTravelCm the desired distance (in centimeters)
      */
     public void setMaxSuspensionTravelCm(float maxSuspensionTravelCm) {
         this.maxSuspensionTravelCm = maxSuspensionTravelCm;
@@ -254,7 +254,7 @@ public class VehicleWheel implements Savable {
      * The maximum suspension force, raise this above the default 6000 if your
      * suspension cannot handle the weight of your vehicle.
      *
-     * @param maxSuspensionForce
+     * @param maxSuspensionForce the desired limit
      */
     public void setMaxSuspensionForce(float maxSuspensionForce) {
         this.maxSuspensionForce = maxSuspensionForce;
@@ -317,6 +317,9 @@ public class VehicleWheel implements Savable {
     /**
      * returns the location where the wheel collides with the ground (world
      * space)
+     *
+     * @param vec a vector to store the result in (modified)
+     * @return vec
      */
     public Vector3f getCollisionLocation(Vector3f vec) {
         getCollisionLocation(wheelId, wheelIndex, vec);
@@ -328,6 +331,8 @@ public class VehicleWheel implements Savable {
     /**
      * returns the location where the wheel collides with the ground (world
      * space)
+     *
+     * @return a new coordinate vector
      */
     public Vector3f getCollisionLocation() {
         Vector3f vec = new Vector3f();
@@ -337,6 +342,9 @@ public class VehicleWheel implements Savable {
 
     /**
      * returns the normal where the wheel collides with the ground (world space)
+     *
+     * @param vec a vector to store the result in (modified)
+     * @return vec
      */
     public Vector3f getCollisionNormal(Vector3f vec) {
         getCollisionNormal(wheelId, wheelIndex, vec);
@@ -347,6 +355,8 @@ public class VehicleWheel implements Savable {
 
     /**
      * returns the normal where the wheel collides with the ground (world space)
+     *
+     * @return a new direction vector
      */
     public Vector3f getCollisionNormal() {
         Vector3f vec = new Vector3f();
@@ -358,6 +368,8 @@ public class VehicleWheel implements Savable {
      * returns how much the wheel skids on the ground (for skid sounds/smoke
      * etc.)<br>
      * 0.0 = wheels are sliding, 1.0 = wheels have traction.
+     *
+     * @return relative amount of traction
      */
     public float getSkidInfo() {
         return getSkidInfo(wheelId, wheelIndex);
@@ -368,6 +380,8 @@ public class VehicleWheel implements Savable {
     /**
      * returns how many degrees the wheel has turned since the last physics
      * step.
+     *
+     * @return the rotation angle
      */
     public float getDeltaRotation() {
         return getDeltaRotation(wheelId, wheelIndex);
@@ -438,7 +452,7 @@ public class VehicleWheel implements Savable {
     /**
      * write the content of the wheelWorldRotation into the store
      *
-     * @param store
+     * @param store a quaternion to store the result in (modified)
      */
     public void getWheelWorldRotation(final Quaternion store) {
         store.set(this.wheelWorldRotation);
@@ -447,7 +461,7 @@ public class VehicleWheel implements Savable {
     /**
      * write the content of the wheelWorldLocation into the store
      *
-     * @param store
+     * @param store a vector to store the result in (modified)
      */
     public void getWheelWorldLocation(final Vector3f store) {
         store.set(this.wheelWorldLocation);

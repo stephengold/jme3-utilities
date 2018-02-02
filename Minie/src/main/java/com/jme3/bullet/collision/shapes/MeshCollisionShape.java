@@ -73,7 +73,7 @@ public class MeshCollisionShape extends CollisionShape {
      * Creates a collision shape from the given Mesh. Default behavior, more
      * optimized for memory usage.
      *
-     * @param mesh
+     * @param mesh the mesh on which to base the shape
      */
     public MeshCollisionShape(Mesh mesh) {
         this(mesh, true);

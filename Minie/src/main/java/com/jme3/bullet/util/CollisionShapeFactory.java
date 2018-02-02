@@ -168,6 +168,7 @@ public class CollisionShapeFactory {
      * Creates a HeightfieldCollisionShape if the supplied spatial is a
      * TerrainQuad.
      *
+     * @param spatial the spatial on which to base the shape (not null)
      * @return A MeshCollisionShape or a CompoundCollisionShape with
      * MeshCollisionShapes as children if the supplied spatial is a Node. A
      * HeightieldCollisionShape if a TerrainQuad was supplied.
@@ -194,6 +195,7 @@ public class CollisionShapeFactory {
      * GImpact shapes, its probably best to do so with a low-poly version of
      * your model.
      *
+     * @param spatial the spatial on which to base the shape (not null)
      * @return A HullCollisionShape or a CompoundCollisionShape with
      * HullCollisionShapes as children if the supplied spatial is a Node.
      */
@@ -270,7 +272,8 @@ public class CollisionShapeFactory {
      * This method moves each child shape of a compound shape by the given
      * vector
      *
-     * @param vector
+     * @param compoundShape the shape to modify (not null)
+     * @param vector the offset (not null, unaffected)
      */
     public static void shiftCompoundShapeContents(CompoundCollisionShape compoundShape, Vector3f vector) {
         for (Iterator<ChildCollisionShape> it = new LinkedList<ChildCollisionShape>(compoundShape.getChildren()).iterator(); it.hasNext();) {

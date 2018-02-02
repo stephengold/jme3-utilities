@@ -69,9 +69,9 @@ public class CapsuleCollisionShape extends CollisionShape {
     /**
      * creates a capsule shape around the given axis (0=X,1=Y,2=Z)
      *
-     * @param radius
-     * @param height
-     * @param axis
+     * @param radius the radius of the capsule
+     * @param height the height of the capsule
+     * @param axis which axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public CapsuleCollisionShape(float radius, float height, int axis) {
         this.radius = radius;

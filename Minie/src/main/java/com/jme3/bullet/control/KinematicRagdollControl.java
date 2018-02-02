@@ -494,7 +494,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
      * Add a bone name to this control Using this method you can specify which
      * bones of the skeleton will be used to build the collision shapes.
      *
-     * @param name
+     * @param name the name of the bone to add
      */
     public void addBoneName(String name) {
         boneList.add(name);
@@ -657,7 +657,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     /**
      * For internal use only callback for collisionevent
      *
-     * @param event
+     * @param event (not null)
      */
     public void collision(PhysicsCollisionEvent event) {
         PhysicsCollisionObject objA = event.getObjectA();
@@ -712,7 +712,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
      * be animated by the keyframe animation, but will be able to physically
      * interact with its physics environment
      *
-     * @param mode
+     * @param mode an enum value
      */
     protected void setMode(Mode mode) {
         this.mode = mode;
@@ -822,7 +822,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     /**
      * returns the mode of this control
      *
-     * @return
+     * @return an enum value
      */
     public Mode getMode() {
         return mode;
@@ -831,7 +831,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     /**
      * add a
      *
-     * @param listener
+     * @param listener (alias created)
      */
     public void addCollisionListener(RagdollCollisionListener listener) {
         if (listeners == null) {
@@ -868,7 +868,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
      * Set the CcdMotionThreshold of all the bone's rigidBodies of the ragdoll
      *
      * @see PhysicsRigidBody#setCcdMotionThreshold(float)
-     * @param value
+     * @param value the desired minimum squared velocity for continuous
+     * collision detection
      */
     public void setCcdMotionThreshold(float value) {
         for (PhysicsBoneLink link : boneLinks.values()) {
@@ -880,7 +881,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
      * Set the CcdSweptSphereRadius of all the bone's rigidBodies of the ragdoll
      *
      * @see PhysicsRigidBody#setCcdSweptSphereRadius(float)
-     * @param value
+     * @param value the desired radius of the sphere used for continuous
+     * collision detection
      */
     public void setCcdSweptSphereRadius(float value) {
         for (PhysicsBoneLink link : boneLinks.values()) {
@@ -905,8 +907,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     /**
      * For internal use only specific render for the ragdoll (if debugging)
      *
-     * @param rm
-     * @param vp
+     * @param rm unused
+     * @param vp unused
      */
     @Override
     public void render(RenderManager rm, ViewPort vp) {
@@ -1027,8 +1029,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     /**
      * serialize this control
      *
-     * @param ex
-     * @throws IOException
+     * @param ex an exporter (not null)
+     * @throws IOException from the exporter
      */
     @Override
     public void write(JmeExporter ex) throws IOException {
@@ -1057,8 +1059,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     /**
      * de-serialize this control
      *
-     * @param im
-     * @throws IOException
+     * @param im an importer (not null)
+     * @throws IOException from the importer
      */
     @Override
     public void read(JmeImporter im) throws IOException {

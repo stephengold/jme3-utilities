@@ -43,7 +43,7 @@ public interface PhysicsControl extends Control {
     /**
      * Only used internally, do not call.
      *
-     * @param space
+     * @param space physics space to use
      */
     public void setPhysicsSpace(PhysicsSpace space);
 
@@ -55,7 +55,7 @@ public interface PhysicsControl extends Control {
      * to the current location of the spatial and then added to the physics
      * space. This allows disabling/enabling physics to move the spatial freely.
      *
-     * @param state
+     * @param state true&rarr;enable the control, false&rarr;disable it
      */
     public void setEnabled(boolean state);
 

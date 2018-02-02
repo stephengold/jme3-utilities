@@ -77,7 +77,8 @@ public class GhostControl extends PhysicsGhostObject implements PhysicsControl, 
      * When set to true, the physics coordinates will be applied to the local
      * translation of the Spatial
      *
-     * @param applyPhysicsLocal
+     * @param applyPhysicsLocal true&rarr;apply to local, false&rarr;apply to
+     * world
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         applyLocal = applyPhysicsLocal;

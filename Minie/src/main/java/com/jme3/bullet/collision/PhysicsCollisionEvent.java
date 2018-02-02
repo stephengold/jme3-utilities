@@ -74,6 +74,11 @@ public class PhysicsCollisionEvent extends EventObject {
 
     /**
      * used by event factory, called when event reused
+     *
+     * @param type event type (added/processed/destroyed)
+     * @param source 1st involved object (alias created)
+     * @param nodeB 2nd involved object (alias created)
+     * @param manifoldPointObjectId object id
      */
     public void refactor(int type, PhysicsCollisionObject source, PhysicsCollisionObject nodeB, long manifoldPointObjectId) {
         this.source = source;

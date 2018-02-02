@@ -137,7 +137,8 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     private native void setPhysicsRotation(long objectId, Quaternion rotation);
 
     /**
-     * @return the physicsLocation
+     * @param trans a vector to store the result in (modified if not null)
+     * @return the location (either trans or a new vector)
      */
     public Vector3f getPhysicsLocation(Vector3f trans) {
         if (trans == null) {
@@ -150,7 +151,8 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     private native void getPhysicsLocation(long objectId, Vector3f vector);
 
     /**
-     * @return the physicsLocation
+     * @param rot a quaternion to store the result in (modified if not null)
+     * @return the orientation (either rot or a new vector)
      */
     public Quaternion getPhysicsRotation(Quaternion rot) {
         if (rot == null) {
@@ -163,7 +165,8 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     private native void getPhysicsRotation(long objectId, Quaternion rot);
 
     /**
-     * @return the physicsLocation
+     * @param rot a matrix to store the result in (modified if not null)
+     * @return the orientation (either rot or a new matrix)
      */
     public Matrix3f getPhysicsRotationMatrix(Matrix3f rot) {
         if (rot == null) {
@@ -185,7 +188,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     }
 
     /**
-     * @return the physicsLocation
+     * @return the orientation (a new quaternion)
      */
     public Quaternion getPhysicsRotation() {
         Quaternion quat = new Quaternion();

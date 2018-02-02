@@ -117,7 +117,7 @@ public abstract class PhysicsCollisionObject implements Savable {
      * Two object will collide when <b>one</b> of the partys has the
      * collisionGroup of the other in its collideWithGroups set.<br>
      *
-     * @param collisionGroup
+     * @param collisionGroup id of group to add
      */
     public void addCollideWithGroup(int collisionGroup) {
         this.collisionGroupsMask = this.collisionGroupsMask | collisionGroup;
@@ -129,7 +129,7 @@ public abstract class PhysicsCollisionObject implements Savable {
     /**
      * Remove a group from the list this object collides with.
      *
-     * @param collisionGroup
+     * @param collisionGroup id of group to remove
      */
     public void removeCollideWithGroup(int collisionGroup) {
         this.collisionGroupsMask = this.collisionGroupsMask & ~collisionGroup;
@@ -142,7 +142,7 @@ public abstract class PhysicsCollisionObject implements Savable {
      * Directly set the bitmask for collision groups that this object collides
      * with.
      *
-     * @param collisionGroups
+     * @param collisionGroups the group ids, ORed together
      */
     public void setCollideWithGroups(int collisionGroups) {
         this.collisionGroupsMask = collisionGroups;
