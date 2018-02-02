@@ -64,7 +64,7 @@ public class BubbleControl
      * successor control to be enabled when the collision shape is touched, or
      * null for none
      */
-    private Control successor;
+    final private Control successor;
     // *************************************************************************
     // constructors
 

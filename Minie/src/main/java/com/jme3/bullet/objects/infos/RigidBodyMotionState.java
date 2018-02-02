@@ -48,10 +48,10 @@ import java.util.logging.Logger;
 public class RigidBodyMotionState {
 
     long motionStateId = 0;
-    private Vector3f worldLocation = new Vector3f();
-    private Matrix3f worldRotation = new Matrix3f();
-    private Quaternion worldRotationQuat = new Quaternion();
-    private Quaternion tmp_inverseWorldRotation = new Quaternion();
+    final private Vector3f worldLocation = new Vector3f();
+    final private Matrix3f worldRotation = new Matrix3f();
+    final private Quaternion worldRotationQuat = new Quaternion();
+    final private Quaternion tmp_inverseWorldRotation = new Quaternion();
     private PhysicsVehicle vehicle;
     private boolean applyPhysicsLocal = false;
 //    protected LinkedList<PhysicsMotionStateListener> listeners = new LinkedList<PhysicsMotionStateListener>();

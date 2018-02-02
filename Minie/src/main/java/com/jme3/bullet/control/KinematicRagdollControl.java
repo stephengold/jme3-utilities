@@ -119,8 +119,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     protected float eventDispatchImpulseThreshold = 10;
     protected float rootMass = 15;
     protected float totalMass = 0;
-    private Map<String, Vector3f> ikTargets = new HashMap<>();
-    private Map<String, Integer> ikChainDepth = new HashMap<>();
+    final private Map<String, Vector3f> ikTargets = new HashMap<>();
+    final private Map<String, Integer> ikChainDepth = new HashMap<>();
     private float ikRotSpeed = 7f;
     private float limbDampening = 0.6f;
 

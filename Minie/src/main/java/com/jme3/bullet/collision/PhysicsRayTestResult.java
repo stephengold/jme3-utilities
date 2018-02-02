@@ -45,7 +45,7 @@ public class PhysicsRayTestResult {
     private PhysicsCollisionObject collisionObject;
     private Vector3f hitNormalLocal;
     private float hitFraction;
-    private boolean normalInWorldSpace = true;
+    final private boolean normalInWorldSpace = true;
 
     /**
      * allocated by native code only

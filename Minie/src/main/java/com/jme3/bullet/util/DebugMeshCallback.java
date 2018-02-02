@@ -42,7 +42,7 @@ import java.util.ArrayList;
  */
 public class DebugMeshCallback {
 
-    private ArrayList<Vector3f> list = new ArrayList<>();
+    final private ArrayList<Vector3f> list = new ArrayList<>();
 
     public void addVector(float x, float y, float z, int part, int index) {
         list.add(new Vector3f(x, y, z));
