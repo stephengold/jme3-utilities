@@ -1,6 +1,17 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.7.3 released on 25 January 2018
+## Version 0.7.9 released on TBD
+
+ + More flexible policies for the placement of submenus.
+ + Disable warnings while loading the screen layout in BasicScreenController.
+ + Don't pre-validate the screen layout in BasicScreenController.
+ + Add readColorBank() methods to the GuiScreenController and
+   GuiWindowController classes.
+ + Incorporate the fix for Nifty issue #384.
+ + Remove the useControls and useStyles directives from the layouts for
+   simple popups.
+
+## Version 0.7.8 released on 25 January 2018
 
  + Bypass the jme3-niftygui library to avoid its dependency on
    nifty-style-black.

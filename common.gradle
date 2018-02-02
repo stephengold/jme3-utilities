@@ -19,11 +19,11 @@ ext {
     jcommanderVersion = '1.72'
     jme3utilitiesdebugVersion = '0.8.7'
     jme3utilitiesheartVersion = '2.2.0'
-    jme3utilitiesniftyVersion = '0.7.8'
+    jme3utilitiesniftyVersion = '0.7.9'
     jme3utilitiesuiVersion = '0.6.2'
     jme3utilitiesxVersion = '0.2.3'
     jmonkeyengineVersion = '3.2.1-stable'
-    minieVersion = '0.1.2'
+    minieVersion = '0.2.0'
     skycontrolVersion = '0.9.11'
     wesVersion = '0.3.3'
 }
