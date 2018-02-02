@@ -1,9 +1,13 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.2.0 released on TBD
+
+ + Added vertexNormal() and vertexTangent() methods to the MyMesh class.
+
 ## Version 2.1.0 released on 27 January 2018
 
  + Added vertexBoneIndices(), vertexBoneWeights(), vertexColor(), vertexSize(),
-   vertexVector2f(), and vertexVector4f methods to MyMesh class
+   vertexVector2f(), and vertexVector4f methods to the MyMesh class
  + Added MyMath.isBetween(double, double, double) method
 
 ## Version 2.0.0 released on 24 January 2018
