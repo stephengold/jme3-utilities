@@ -1,6 +1,6 @@
 # release notes for the Minie library and related tests
 
-## Version 0.2.0 released on TBD
+## Version 0.2.0 released on 2 February 2018
 
 + Added axisIndex(), describe(), describeType(), halfExtents(), height(),
   radius(), setHalfExtents(), setHeight(), and setRadius() methods to the

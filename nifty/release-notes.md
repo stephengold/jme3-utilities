@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.7.9 released on TBD
+## Version 0.7.9 released on 2 February 2018
 
  + More flexible policies for the placement of submenus.
  + Disable warnings while loading the screen layout in BasicScreenController.
