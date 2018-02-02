@@ -936,6 +936,84 @@ public class TrackEdit {
     }
 
     /**
+     * Copy a bone/spatial track, deleting any optional components that consist
+     * entirely of identities.
+     *
+     * @param oldTrack input bone/spatial track (not null, unaffected)
+     * @return a new track, or null if all track components in the input consist
+     * entirely of identities
+     */
+    public static Track simplify(Track oldTrack) {
+        assert oldTrack instanceof BoneTrack
+                || oldTrack instanceof SpatialTrack;
+
+        boolean keepTranslations = false;
+        boolean keepRotations = false;
+        boolean keepScales = false;
+
+        Vector3f[] oldTranslations = MyAnimation.getTranslations(oldTrack);
+        Quaternion[] oldRotations = MyAnimation.getRotations(oldTrack);
+        Vector3f[] oldScales = MyAnimation.getScales(oldTrack);
+
+        float[] oldTimes = oldTrack.getKeyFrameTimes();
+        int numFrames = oldTimes.length;
+        for (int index = 0; index < numFrames; index++) {
+            if (oldTranslations != null) {
+                Vector3f translation = oldTranslations[index];
+                if (!MyVector3f.isZero(translation)) {
+                    keepTranslations = true;
+                }
+            }
+            if (oldRotations != null) {
+                Quaternion rotation = oldRotations[index];
+                if (!MyQuaternion.isRotationIdentity(rotation)) {
+                    keepRotations = true;
+                }
+            }
+            if (oldScales != null) {
+                Vector3f scale = oldScales[index];
+                if (!MyVector3f.isScaleIdentity(scale)) {
+                    keepScales = true;
+                }
+            }
+        }
+
+        Track result = null;
+        if (keepTranslations || keepRotations || keepScales) {
+            if (oldTrack instanceof BoneTrack) {
+                /*
+                 * A bone track requires both translations and rotations.
+                 */
+                keepTranslations = true;
+                keepRotations = true;
+            }
+            float[] newTimes = new float[numFrames];
+            Vector3f[] newTranslations = keepTranslations
+                    ? new Vector3f[numFrames] : null;
+            Quaternion[] newRotations = keepRotations
+                    ? new Quaternion[numFrames] : null;
+            Vector3f[] newScales = keepScales ? new Vector3f[numFrames] : null;
+
+            for (int index = 0; index < numFrames; index++) {
+                newTimes[index] = oldTimes[index];
+                if (keepTranslations) {
+                    newTranslations[index] = oldTranslations[index].clone();
+                }
+                if (keepRotations) {
+                    newRotations[index] = oldRotations[index].clone();
+                }
+                if (keepScales) {
+                    newScales[index] = oldScales[index].clone();
+                }
+            }
+            result = TrackEdit.newTrack(oldTrack, newTimes, newTranslations,
+                    newRotations, newScales);
+        }
+
+        return result;
+    }
+
+    /**
      * Copy a bone/spatial track, smoothing it using the specified techniques.
      *
      * @param oldTrack input bone/spatial track (not null, unaffected)
