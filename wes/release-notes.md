@@ -1,5 +1,10 @@
 # release notes for the Wes library and related tests
 
+## Version 0.3.3 released on TBD
+
+ + Add a simplify() method to the TrackEdit class.
+ + Relax a validation constraint in TweenRotations.lerp() .
+
 ## Version 0.3.2 released on 25 January 2018
 
  + Base on heart library v2.0 to make this library physics-independent.
