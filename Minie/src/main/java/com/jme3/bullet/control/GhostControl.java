@@ -130,6 +130,7 @@ public class GhostControl extends PhysicsGhostObject implements PhysicsControl, 
         this.spatial = cloner.clone(spatial);
     }
 
+    @Override
     public void setSpatial(Spatial spatial) {
         this.spatial = spatial;
         setUserObject(spatial);
@@ -140,6 +141,7 @@ public class GhostControl extends PhysicsGhostObject implements PhysicsControl, 
         setPhysicsRotation(getSpatialRotation());
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
         if (space != null) {
@@ -157,10 +159,12 @@ public class GhostControl extends PhysicsGhostObject implements PhysicsControl, 
         }
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
 
+    @Override
     public void update(float tpf) {
         if (!enabled) {
             return;
@@ -169,9 +173,11 @@ public class GhostControl extends PhysicsGhostObject implements PhysicsControl, 
         setPhysicsRotation(getSpatialRotation());
     }
 
+    @Override
     public void render(RenderManager rm, ViewPort vp) {
     }
 
+    @Override
     public void setPhysicsSpace(PhysicsSpace space) {
         if (space == null) {
             if (this.space != null) {
@@ -188,6 +194,7 @@ public class GhostControl extends PhysicsGhostObject implements PhysicsControl, 
         this.space = space;
     }
 
+    @Override
     public PhysicsSpace getPhysicsSpace() {
         return space;
     }

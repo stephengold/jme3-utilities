@@ -157,6 +157,7 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
         this.spatial = cloner.clone(spatial);
     }
 
+    @Override
     public void setSpatial(Spatial spatial) {
         this.spatial = spatial;
         setUserObject(spatial);
@@ -193,6 +194,7 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
         }
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
         if (space != null) {
@@ -210,6 +212,7 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
         }
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -264,6 +267,7 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
         return spatial.getWorldRotation();
     }
 
+    @Override
     public void update(float tpf) {
         if (enabled && spatial != null) {
             if (isKinematic() && kinematicSpatial) {
@@ -275,9 +279,11 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
         }
     }
 
+    @Override
     public void render(RenderManager rm, ViewPort vp) {
     }
 
+    @Override
     public void setPhysicsSpace(PhysicsSpace space) {
         if (space == null) {
             if (this.space != null) {
@@ -297,6 +303,7 @@ public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl
         this.space = space;
     }
 
+    @Override
     public PhysicsSpace getPhysicsSpace() {
         return space;
     }

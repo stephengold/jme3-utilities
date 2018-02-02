@@ -66,12 +66,14 @@ public class SphereCollisionShape extends CollisionShape {
         return radius;
     }
 
+    @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(radius, "radius", 0.5f);
     }
 
+    @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);

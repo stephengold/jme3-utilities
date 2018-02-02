@@ -163,6 +163,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * @param space unused
      * @param tpf unused
      */
+    @Override
     public void prePhysicsTick(PhysicsSpace space, float tpf) {
         checkOnGround();
         if (wantToUnDuck && checkCanUnDuck()) {
@@ -216,6 +217,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * @param space unused
      * @param tpf unused
      */
+    @Override
     public void physicsTick(PhysicsSpace space, float tpf) {
         rigidBody.getLinearVelocity(velocity);
     }

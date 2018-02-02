@@ -169,6 +169,7 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
         createSpatialData(this.spatial);
     }
 
+    @Override
     public void setSpatial(Spatial spatial) {
         if (this.spatial != null && this.spatial != spatial) {
             removeSpatialData(this.spatial);
@@ -184,6 +185,7 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
         setPhysicsRotation(getSpatialRotation());
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
         if (space != null) {
@@ -201,16 +203,20 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
         }
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
 
+    @Override
     public void update(float tpf) {
     }
 
+    @Override
     public void render(RenderManager rm, ViewPort vp) {
     }
 
+    @Override
     public void setPhysicsSpace(PhysicsSpace space) {
         if (space == null) {
             if (this.space != null) {
@@ -229,6 +235,7 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
         this.space = space;
     }
 
+    @Override
     public PhysicsSpace getPhysicsSpace() {
         return space;
     }

@@ -75,6 +75,7 @@ public class ConeCollisionShape extends CollisionShape {
         return height;
     }
 
+    @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
@@ -83,6 +84,7 @@ public class ConeCollisionShape extends CollisionShape {
         capsule.write(axis, "axis", PhysicsSpace.AXIS_Y);
     }
 
+    @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);

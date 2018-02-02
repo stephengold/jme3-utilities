@@ -219,6 +219,7 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl, Jm
         }
     }
 
+    @Override
     public void setSpatial(Spatial spatial) {
         this.spatial = spatial;
         setUserObject(spatial);
@@ -229,6 +230,7 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl, Jm
         setPhysicsRotation(getSpatialRotation());
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
         if (space != null) {
@@ -246,10 +248,12 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl, Jm
         }
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
 
+    @Override
     public void update(float tpf) {
         if (enabled && spatial != null) {
             if (getMotionState().applyTransform(spatial)) {
@@ -261,9 +265,11 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl, Jm
         }
     }
 
+    @Override
     public void render(RenderManager rm, ViewPort vp) {
     }
 
+    @Override
     public void setPhysicsSpace(PhysicsSpace space) {
         createVehicle(space);
         if (space == null) {
@@ -284,6 +290,7 @@ public class VehicleControl extends PhysicsVehicle implements PhysicsControl, Jm
         this.space = space;
     }
 
+    @Override
     public PhysicsSpace getPhysicsSpace() {
         return space;
     }

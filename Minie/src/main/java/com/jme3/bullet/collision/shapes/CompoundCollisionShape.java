@@ -130,12 +130,14 @@ public class CompoundCollisionShape extends CollisionShape {
 
     private native long removeChildShape(long objectId, long childId);
 
+    @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.writeSavableArrayList(children, "children", new ArrayList<ChildCollisionShape>());
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void read(JmeImporter im) throws IOException {
         super.read(im);

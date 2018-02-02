@@ -608,6 +608,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     private native void clearForces(long objectId);
 
+    @Override
     public void setCollisionShape(CollisionShape collisionShape) {
         super.setCollisionShape(collisionShape);
         if (collisionShape instanceof MeshCollisionShape && mass != 0) {

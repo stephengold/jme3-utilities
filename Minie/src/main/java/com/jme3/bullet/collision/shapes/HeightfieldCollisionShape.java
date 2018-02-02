@@ -141,6 +141,7 @@ public class HeightfieldCollisionShape extends CollisionShape {
         return null;
     }
 
+    @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
@@ -154,6 +155,7 @@ public class HeightfieldCollisionShape extends CollisionShape {
         capsule.write(flipQuadEdges, "flipQuadEdges", false);
     }
 
+    @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);

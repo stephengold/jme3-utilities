@@ -172,6 +172,7 @@ public class HingeJoint extends PhysicsJoint {
 
     private native float getHingeAngle(long objectId);
 
+    @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
@@ -192,6 +193,7 @@ public class HingeJoint extends PhysicsJoint {
         capsule.write(getMaxMotorImpulse(), "maxMotorImpulse", 0.0f);
     }
 
+    @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,6 +57,7 @@ public class ChildCollisionShape implements Savable {
         this.shape = shape;
     }
 
+    @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(location, "location", new Vector3f());
@@ -64,6 +65,7 @@ public class ChildCollisionShape implements Savable {
         capsule.write(shape, "shape", new BoxCollisionShape(new Vector3f(1, 1, 1)));
     }
 
+    @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
         location = (Vector3f) capsule.readSavable("location", new Vector3f());

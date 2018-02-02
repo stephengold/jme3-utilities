@@ -107,6 +107,7 @@ public class GImpactCollisionShape extends CollisionShape {
 //    public Mesh createJmeMesh() {
 //        return Converter.convert(bulletMesh);
 //    }
+    @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
@@ -120,6 +121,7 @@ public class GImpactCollisionShape extends CollisionShape {
         capsule.write(vertexBase.array(), "vertexBase", new byte[0]);
     }
 
+    @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);

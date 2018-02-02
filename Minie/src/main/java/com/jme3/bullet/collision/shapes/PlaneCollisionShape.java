@@ -66,12 +66,14 @@ public class PlaneCollisionShape extends CollisionShape {
         return plane;
     }
 
+    @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(plane, "collisionPlane", new Plane());
     }
 
+    @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);

@@ -153,6 +153,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
             return rigidBody;
         }
 
+        @Override
         public void write(JmeExporter ex) throws IOException {
             OutputCapsule oc = ex.getCapsule(this);
             oc.write(rigidBody, "rigidBody", null);
@@ -163,6 +164,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
             oc.write(startBlendingPos, "startBlendingPos", new Vector3f());
         }
 
+        @Override
         public void read(JmeImporter im) throws IOException {
             InputCapsule ic = im.getCapsule(this);
             rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
@@ -198,6 +200,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         this.preset = preset;
     }
 
+    @Override
     public void update(float tpf) {
         if (!enabled) {
             return;
@@ -659,6 +662,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
      *
      * @param event (not null)
      */
+    @Override
     public void collision(PhysicsCollisionEvent event) {
         PhysicsCollisionObject objA = event.getObjectA();
         PhysicsCollisionObject objB = event.getObjectB();
