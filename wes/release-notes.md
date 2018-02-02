@@ -1,6 +1,6 @@
 # release notes for the Wes library and related tests
 
-## Version 0.3.3 released on TBD
+## Version 0.3.3 released on 2 February 2018
 
  + Add a simplify() method to the TrackEdit class.
  + Relax a validation constraint in TweenRotations.lerp() .
