@@ -123,16 +123,20 @@ public class GuiWindowController extends WindowController {
      *
      * @param bankName the name (unique id infix) of the bank to read (not null)
      * @param transform how to transform the raw readings (not null)
-     * @return the vector indicated by the sliders (new instance)
+     * @param storeResult (modified if not null)
+     * @return the vector indicated by the sliders (either storeResult or a new
+     * instance)
      */
-    public Vector3f readVectorBank(String bankName, SliderTransform transform) {
+    public Vector3f readVectorBank(String bankName, SliderTransform transform,
+            Vector3f storeResult) {
         Validate.nonNull(bankName, "bank name");
         Validate.nonNull(transform, "transform");
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
 
         GuiScreenController gsc = getScreenController();
-        Vector3f vector = gsc.readVectorBank(bankName, transform);
+        gsc.readVectorBank(bankName, transform, result);
 
-        return vector;
+        return result;
     }
 
     /**
@@ -161,6 +165,23 @@ public class GuiWindowController extends WindowController {
     public void setChecked(String name, boolean newStatus) {
         Validate.nonNull(name, "check-box name");
         getScreenController().setChecked(name, newStatus);
+    }
+
+    /**
+     * Set a bank of 3 sliders that control a color and update their status
+     * labels.
+     *
+     * @param name unique id prefix of the bank (not null)
+     * @param transform how each component has been transformed (not null)
+     * @param color (not null, unaffected)
+     */
+    public void setColorBank(String name, SliderTransform transform,
+            ColorRGBA color) {
+        Validate.nonNull(name, "name");
+        Validate.nonNull(transform, "transform");
+        Validate.nonNull(color, "color");
+
+        getScreenController().setColorBank(name, transform, color);
     }
 
     /**

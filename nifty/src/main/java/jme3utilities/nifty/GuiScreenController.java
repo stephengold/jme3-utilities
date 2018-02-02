@@ -190,12 +190,7 @@ public class GuiScreenController extends PopScreenController {
             ColorRGBA storeResult) {
         Validate.nonNull(name, "name");
         Validate.nonNull(transform, "transform");
-        ColorRGBA color;
-        if (storeResult == null) {
-            color = new ColorRGBA();
-        } else {
-            color = storeResult;
-        }
+        ColorRGBA color = (storeResult == null) ? new ColorRGBA() : storeResult;
 
         float r = readSlider(name + "R", transform);
         float g = readSlider(name + "G", transform);
@@ -224,20 +219,24 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Read a vector from the named bank of 3 sliders. TODO storeResult
+     * Read a vector from the named bank of 3 sliders.
      *
      * @param name the name (unique id infix) of the bank to read (not null)
      * @param transform how to transform the raw readings (not null)
-     * @return vector indicated by the sliders (new instance)
+     * @param storeResult (modified if not null)
+     * @return vector indicated by the sliders (either storeResult or a new
+     * instance)
      */
-    public Vector3f readVectorBank(String name, SliderTransform transform) {
+    public Vector3f readVectorBank(String name, SliderTransform transform,
+            Vector3f storeResult) {
         Validate.nonNull(name, "name");
         Validate.nonNull(transform, "transform");
+        Vector3f vector = (storeResult == null) ? new Vector3f() : storeResult;
 
         float x = readSlider("x" + name, transform);
         float y = readSlider("y" + name, transform);
         float z = readSlider("z" + name, transform);
-        Vector3f vector = new Vector3f(x, y, z);
+        vector.set(x, y, z);
 
         return vector;
     }
@@ -277,6 +276,29 @@ public class GuiScreenController extends PopScreenController {
         CheckBox checkBox = getCheckBox(name);
         checkBox.setChecked(newStatus);
         checkBox.enable();
+    }
+
+    /**
+     * Set a bank of 3 sliders that control a color and update their status
+     * labels.
+     *
+     * @param name unique id prefix of the bank (not null)
+     * @param transform how each component has been transformed (not null)
+     * @param color (not null, unaffected)
+     */
+    public void setColorBank(String name, SliderTransform transform,
+            ColorRGBA color) {
+        Validate.nonNull(name, "name");
+        Validate.nonNull(transform, "transform");
+
+        setSlider(name + "R", transform, color.r);
+        updateSliderStatus(name + "R", color.r, "");
+
+        setSlider(name + "G", transform, color.g);
+        updateSliderStatus(name + "G", color.g, "");
+
+        setSlider(name + "B", transform, color.b);
+        updateSliderStatus(name + "B", color.b, "");
     }
 
     /**
