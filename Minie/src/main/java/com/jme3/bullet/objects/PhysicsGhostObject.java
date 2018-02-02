@@ -59,7 +59,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
 
     protected boolean locationDirty = false;
     protected final Quaternion tmp_inverseWorldRotation = new Quaternion();
-    private List<PhysicsCollisionObject> overlappingObjects = new LinkedList<PhysicsCollisionObject>();
+    private List<PhysicsCollisionObject> overlappingObjects = new LinkedList<>();
 
     public PhysicsGhostObject() {
     }

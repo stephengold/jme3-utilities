@@ -63,7 +63,7 @@ public class SixDofJoint extends PhysicsJoint {
 
     Matrix3f rotA, rotB;
     boolean useLinearReferenceFrameA;
-    LinkedList<RotationalLimitMotor> rotationalMotors = new LinkedList<RotationalLimitMotor>();
+    LinkedList<RotationalLimitMotor> rotationalMotors = new LinkedList<>();
     TranslationalLimitMotor translationalMotor;
     Vector3f angularUpperLimit = new Vector3f(Vector3f.POSITIVE_INFINITY);
     Vector3f angularLowerLimit = new Vector3f(Vector3f.NEGATIVE_INFINITY);

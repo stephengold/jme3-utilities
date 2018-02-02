@@ -78,10 +78,10 @@ public class PhysicsSpace {
             = new ThreadLocal<ConcurrentLinkedQueue<AppTask<?>>>() {
         @Override
         protected ConcurrentLinkedQueue<AppTask<?>> initialValue() {
-            return new ConcurrentLinkedQueue<AppTask<?>>();
+            return new ConcurrentLinkedQueue<>();
         }
     };
-    private ConcurrentLinkedQueue<AppTask<?>> pQueue = new ConcurrentLinkedQueue<AppTask<?>>();
+    private ConcurrentLinkedQueue<AppTask<?>> pQueue = new ConcurrentLinkedQueue<>();
     private static ThreadLocal<PhysicsSpace> physicsSpaceTL = new ThreadLocal<PhysicsSpace>();
     private BroadphaseType broadphaseType = BroadphaseType.DBVT;
 //    private DiscreteDynamicsWorld dynamicsWorld = null;
@@ -90,15 +90,15 @@ public class PhysicsSpace {
 //    private ConstraintSolver solver;
 //    private DefaultCollisionConfiguration collisionConfiguration;
 //    private Map<GhostObject, PhysicsGhostObject> physicsGhostNodes = new ConcurrentHashMap<GhostObject, PhysicsGhostObject>();
-    private Map<Long, PhysicsGhostObject> physicsGhostObjects = new ConcurrentHashMap<Long, PhysicsGhostObject>();
-    private Map<Long, PhysicsCharacter> physicsCharacters = new ConcurrentHashMap<Long, PhysicsCharacter>();
-    private Map<Long, PhysicsRigidBody> physicsBodies = new ConcurrentHashMap<Long, PhysicsRigidBody>();
-    private Map<Long, PhysicsJoint> physicsJoints = new ConcurrentHashMap<Long, PhysicsJoint>();
-    private Map<Long, PhysicsVehicle> physicsVehicles = new ConcurrentHashMap<Long, PhysicsVehicle>();
-    private ArrayList<PhysicsCollisionListener> collisionListeners = new ArrayList<PhysicsCollisionListener>();
-    private ArrayDeque<PhysicsCollisionEvent> collisionEvents = new ArrayDeque<PhysicsCollisionEvent>();
-    private Map<Integer, PhysicsCollisionGroupListener> collisionGroupListeners = new ConcurrentHashMap<Integer, PhysicsCollisionGroupListener>();
-    private ConcurrentLinkedQueue<PhysicsTickListener> tickListeners = new ConcurrentLinkedQueue<PhysicsTickListener>();
+    private Map<Long, PhysicsGhostObject> physicsGhostObjects = new ConcurrentHashMap<>();
+    private Map<Long, PhysicsCharacter> physicsCharacters = new ConcurrentHashMap<>();
+    private Map<Long, PhysicsRigidBody> physicsBodies = new ConcurrentHashMap<>();
+    private Map<Long, PhysicsJoint> physicsJoints = new ConcurrentHashMap<>();
+    private Map<Long, PhysicsVehicle> physicsVehicles = new ConcurrentHashMap<>();
+    private ArrayList<PhysicsCollisionListener> collisionListeners = new ArrayList<>();
+    private ArrayDeque<PhysicsCollisionEvent> collisionEvents = new ArrayDeque<>();
+    private Map<Integer, PhysicsCollisionGroupListener> collisionGroupListeners = new ConcurrentHashMap<>();
+    private ConcurrentLinkedQueue<PhysicsTickListener> tickListeners = new ConcurrentLinkedQueue<>();
     private PhysicsCollisionEventFactory eventFactory = new PhysicsCollisionEventFactory();
     private Vector3f worldMin = new Vector3f(-10000f, -10000f, -10000f);
     private Vector3f worldMax = new Vector3f(10000f, 10000f, 10000f);
@@ -392,7 +392,7 @@ public class PhysicsSpace {
     }
 
     public static <V> Future<V> enqueueOnThisThread(Callable<V> callable) {
-        AppTask<V> task = new AppTask<V>(callable);
+        AppTask<V> task = new AppTask<>(callable);
         System.out.println("created apptask");
         pQueueTL.get().add(task);
         return task;
@@ -407,7 +407,7 @@ public class PhysicsSpace {
      * @return Future object
      */
     public <V> Future<V> enqueue(Callable<V> callable) {
-        AppTask<V> task = new AppTask<V>(callable);
+        AppTask<V> task = new AppTask<>(callable);
         pQueue.add(task);
         return task;
     }
@@ -685,23 +685,23 @@ public class PhysicsSpace {
     }
 
     public Collection<PhysicsRigidBody> getRigidBodyList() {
-        return new LinkedList<PhysicsRigidBody>(physicsBodies.values());
+        return new LinkedList<>(physicsBodies.values());
     }
 
     public Collection<PhysicsGhostObject> getGhostObjectList() {
-        return new LinkedList<PhysicsGhostObject>(physicsGhostObjects.values());
+        return new LinkedList<>(physicsGhostObjects.values());
     }
 
     public Collection<PhysicsCharacter> getCharacterList() {
-        return new LinkedList<PhysicsCharacter>(physicsCharacters.values());
+        return new LinkedList<>(physicsCharacters.values());
     }
 
     public Collection<PhysicsJoint> getJointList() {
-        return new LinkedList<PhysicsJoint>(physicsJoints.values());
+        return new LinkedList<>(physicsJoints.values());
     }
 
     public Collection<PhysicsVehicle> getVehicleList() {
-        return new LinkedList<PhysicsVehicle>(physicsVehicles.values());
+        return new LinkedList<>(physicsVehicles.values());
     }
 
     /**
@@ -795,7 +795,7 @@ public class PhysicsSpace {
      * @return a new list of results
      */
     public List<PhysicsRayTestResult> rayTest(Vector3f from, Vector3f to) {
-        List<PhysicsRayTestResult> results = new ArrayList<PhysicsRayTestResult>();
+        List<PhysicsRayTestResult> results = new ArrayList<>();
         rayTest(from, to, results);
 
         return results;
@@ -810,7 +810,7 @@ public class PhysicsSpace {
      * @return a new list of results
      */
     public List rayTestRaw(Vector3f from, Vector3f to) {
-        List<PhysicsRayTestResult> results = new ArrayList<PhysicsRayTestResult>();
+        List<PhysicsRayTestResult> results = new ArrayList<>();
         rayTestRaw(from, to, results);
 
         return results;
@@ -911,7 +911,7 @@ public class PhysicsSpace {
      * @return a new list of results
      */
     public List<PhysicsSweepTestResult> sweepTest(CollisionShape shape, Transform start, Transform end) {
-        List<PhysicsSweepTestResult> results = new LinkedList<PhysicsSweepTestResult>();
+        List<PhysicsSweepTestResult> results = new LinkedList<>();
         sweepTest(shape, start, end, results);
         return results;
     }

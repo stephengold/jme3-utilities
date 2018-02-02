@@ -65,7 +65,7 @@ public class RagdollUtils {
 
     public static Map<Integer, List<Float>> buildPointMap(Spatial model) {
 
-        Map<Integer, List<Float>> map = new HashMap<Integer, List<Float>>();
+        Map<Integer, List<Float>> map = new HashMap<>();
         if (model instanceof Geometry) {
             Geometry g = (Geometry) model;
             buildPointMapForMesh(g.getMesh(), map);
@@ -109,7 +109,7 @@ public class RagdollUtils {
             }
             List<Float> points = map.get(index);
             if (points == null) {
-                points = new ArrayList<Float>();
+                points = new ArrayList<>();
                 map.put(index, points);
             }
             points.add(vertices.get(i));
@@ -132,7 +132,7 @@ public class RagdollUtils {
      */
     public static HullCollisionShape makeShapeFromPointMap(Map<Integer, List<Float>> pointsMap, List<Integer> boneIndices, Vector3f initialScale, Vector3f initialPosition) {
 
-        ArrayList<Float> points = new ArrayList<Float>();
+        ArrayList<Float> points = new ArrayList<>();
         for (Integer index : boneIndices) {
             List<Float> l = pointsMap.get(index);
             if (l != null) {
@@ -160,7 +160,7 @@ public class RagdollUtils {
 
     //returns the list of bone indices of the given bone and its child (if they are not in the boneList)
     public static List<Integer> getBoneIndices(Bone bone, Skeleton skeleton, Set<String> boneList) {
-        List<Integer> list = new LinkedList<Integer>();
+        List<Integer> list = new LinkedList<>();
         if (boneList.isEmpty()) {
             list.add(skeleton.getBoneIndex(bone));
         } else {
@@ -186,7 +186,7 @@ public class RagdollUtils {
      */
     public static HullCollisionShape makeShapeFromVerticeWeights(Spatial model, List<Integer> boneIndices, Vector3f initialScale, Vector3f initialPosition, float weightThreshold) {
 
-        ArrayList<Float> points = new ArrayList<Float>();
+        ArrayList<Float> points = new ArrayList<>();
         if (model instanceof Geometry) {
             Geometry g = (Geometry) model;
             for (Integer index : boneIndices) {
@@ -231,7 +231,7 @@ public class RagdollUtils {
         boneIndices.rewind();
         boneWeight.rewind();
 
-        ArrayList<Float> results = new ArrayList<Float>();
+        ArrayList<Float> results = new ArrayList<>();
 
         int vertexComponents = mesh.getVertexCount() * 3;
 

@@ -74,11 +74,11 @@ public class BulletDebugAppState extends AbstractAppState {
     public Material DEBUG_YELLOW;
     public Material DEBUG_MAGENTA;
     public Material DEBUG_PINK;
-    protected HashMap<PhysicsRigidBody, Spatial> bodies = new HashMap<PhysicsRigidBody, Spatial>();
-    protected HashMap<PhysicsJoint, Spatial> joints = new HashMap<PhysicsJoint, Spatial>();
-    protected HashMap<PhysicsGhostObject, Spatial> ghosts = new HashMap<PhysicsGhostObject, Spatial>();
-    protected HashMap<PhysicsCharacter, Spatial> characters = new HashMap<PhysicsCharacter, Spatial>();
-    protected HashMap<PhysicsVehicle, Spatial> vehicles = new HashMap<PhysicsVehicle, Spatial>();
+    protected HashMap<PhysicsRigidBody, Spatial> bodies = new HashMap<>();
+    protected HashMap<PhysicsJoint, Spatial> joints = new HashMap<>();
+    protected HashMap<PhysicsGhostObject, Spatial> ghosts = new HashMap<>();
+    protected HashMap<PhysicsCharacter, Spatial> characters = new HashMap<>();
+    protected HashMap<PhysicsVehicle, Spatial> vehicles = new HashMap<>();
 
     public BulletDebugAppState(PhysicsSpace space) {
         this.space = space;
@@ -157,7 +157,7 @@ public class BulletDebugAppState extends AbstractAppState {
 
     private void updateRigidBodies() {
         HashMap<PhysicsRigidBody, Spatial> oldObjects = bodies;
-        bodies = new HashMap<PhysicsRigidBody, Spatial>();
+        bodies = new HashMap<>();
         Collection<PhysicsRigidBody> current = space.getRigidBodyList();
         //create new map
         for (Iterator<PhysicsRigidBody> it = current.iterator(); it.hasNext();) {
@@ -188,7 +188,7 @@ public class BulletDebugAppState extends AbstractAppState {
 
     private void updateJoints() {
         HashMap<PhysicsJoint, Spatial> oldObjects = joints;
-        joints = new HashMap<PhysicsJoint, Spatial>();
+        joints = new HashMap<>();
         Collection<PhysicsJoint> current = space.getJointList();
         //create new map
         for (Iterator<PhysicsJoint> it = current.iterator(); it.hasNext();) {
@@ -219,7 +219,7 @@ public class BulletDebugAppState extends AbstractAppState {
 
     private void updateGhosts() {
         HashMap<PhysicsGhostObject, Spatial> oldObjects = ghosts;
-        ghosts = new HashMap<PhysicsGhostObject, Spatial>();
+        ghosts = new HashMap<>();
         Collection<PhysicsGhostObject> current = space.getGhostObjectList();
         //create new map
         for (Iterator<PhysicsGhostObject> it = current.iterator(); it.hasNext();) {
@@ -250,7 +250,7 @@ public class BulletDebugAppState extends AbstractAppState {
 
     private void updateCharacters() {
         HashMap<PhysicsCharacter, Spatial> oldObjects = characters;
-        characters = new HashMap<PhysicsCharacter, Spatial>();
+        characters = new HashMap<>();
         Collection<PhysicsCharacter> current = space.getCharacterList();
         //create new map
         for (Iterator<PhysicsCharacter> it = current.iterator(); it.hasNext();) {
@@ -281,7 +281,7 @@ public class BulletDebugAppState extends AbstractAppState {
 
     private void updateVehicles() {
         HashMap<PhysicsVehicle, Spatial> oldObjects = vehicles;
-        vehicles = new HashMap<PhysicsVehicle, Spatial>();
+        vehicles = new HashMap<>();
         Collection<PhysicsVehicle> current = space.getVehicleList();
         //create new map
         for (Iterator<PhysicsVehicle> it = current.iterator(); it.hasNext();) {

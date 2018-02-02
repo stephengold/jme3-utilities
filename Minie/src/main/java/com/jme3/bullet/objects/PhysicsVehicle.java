@@ -68,7 +68,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     protected long vehicleId = 0;
     protected long rayCasterId = 0;
     protected VehicleTuning tuning = new VehicleTuning();
-    protected ArrayList<VehicleWheel> wheels = new ArrayList<VehicleWheel>();
+    protected ArrayList<VehicleWheel> wheels = new ArrayList<>();
     protected PhysicsSpace physicsSpace;
 
     public PhysicsVehicle() {

@@ -101,8 +101,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
 
     protected static final Logger logger = Logger.getLogger(KinematicRagdollControl.class.getName());
     protected List<RagdollCollisionListener> listeners;
-    protected final Set<String> boneList = new TreeSet<String>();
-    protected final Map<String, PhysicsBoneLink> boneLinks = new HashMap<String, PhysicsBoneLink>();
+    protected final Set<String> boneList = new TreeSet<>();
+    protected final Map<String, PhysicsBoneLink> boneLinks = new HashMap<>();
     protected final Vector3f modelPosition = new Vector3f();
     protected final Quaternion modelRotation = new Quaternion();
     protected final PhysicsRigidBody baseRigidBody;
@@ -119,8 +119,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     protected float eventDispatchImpulseThreshold = 10;
     protected float rootMass = 15;
     protected float totalMass = 0;
-    private Map<String, Vector3f> ikTargets = new HashMap<String, Vector3f>();
-    private Map<String, Integer> ikChainDepth = new HashMap<String, Integer>();
+    private Map<String, Vector3f> ikTargets = new HashMap<>();
+    private Map<String, Integer> ikChainDepth = new HashMap<>();
     private float ikRotSpeed = 7f;
     private float limbDampening = 0.6f;
 
@@ -839,7 +839,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
      */
     public void addCollisionListener(RagdollCollisionListener listener) {
         if (listeners == null) {
-            listeners = new ArrayList<RagdollCollisionListener>();
+            listeners = new ArrayList<>();
         }
         listeners.add(listener);
     }
