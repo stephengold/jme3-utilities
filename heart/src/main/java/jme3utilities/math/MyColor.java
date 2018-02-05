@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,6 @@
 package jme3utilities.math;
 
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -72,10 +71,10 @@ final public class MyColor {
         Validate.nonNull(start, "start");
         Validate.nonNull(end, "end");
 
-        float r = FastMath.interpolateLinear(fraction, start.r, end.r);
-        float g = FastMath.interpolateLinear(fraction, start.g, end.g);
-        float b = FastMath.interpolateLinear(fraction, start.b, end.b);
-        float a = FastMath.interpolateLinear(fraction, start.a, end.a);
+        float r = MyMath.lerp(fraction, start.r, end.r);
+        float g = MyMath.lerp(fraction, start.g, end.g);
+        float b = MyMath.lerp(fraction, start.b, end.b);
+        float a = MyMath.lerp(fraction, start.a, end.a);
         ColorRGBA result = new ColorRGBA(r, g, b, a);
 
         return result;
