@@ -863,6 +863,62 @@ public class TrackEdit {
     }
 
     /**
+     * Copy the specified bone/spatial track, reversing the sequence of its
+     * frames.
+     *
+     * @param oldTrack input bone/spatial track (not null, unaffected)
+     * @return a new track of the same type as oldTrack
+     */
+    public static Track reverse(Track oldTrack) {
+        assert oldTrack instanceof BoneTrack
+                || oldTrack instanceof SpatialTrack;
+
+        float[] oldTimes = oldTrack.getKeyFrameTimes();
+        Vector3f[] oldTranslations = MyAnimation.getTranslations(oldTrack);
+        Quaternion[] oldRotations = MyAnimation.getRotations(oldTrack);
+        Vector3f[] oldScales = MyAnimation.getScales(oldTrack);
+
+        int numFrames = oldTimes.length;
+        float lastFrameTime = oldTimes[numFrames - 1];
+        /*
+         * Allocate new arrays.
+         */
+        float[] newTimes = new float[numFrames];
+        Vector3f[] newTranslations = null;
+        if (oldTranslations != null) {
+            newTranslations = new Vector3f[numFrames];
+        }
+        Quaternion[] newRotations = null;
+        if (oldRotations != null) {
+            newRotations = new Quaternion[numFrames];
+        }
+        Vector3f[] newScales = null;
+        if (oldScales != null) {
+            newScales = new Vector3f[numFrames];
+        }
+
+        for (int newIndex = 0; newIndex < numFrames; newIndex++) {
+            int oldIndex = numFrames - newIndex - 1;
+
+            newTimes[newIndex] = lastFrameTime - oldTimes[oldIndex];
+            if (newTranslations != null) {
+                newTranslations[newIndex] = oldTranslations[oldIndex].clone();
+            }
+            if (newRotations != null) {
+                newRotations[newIndex] = oldRotations[oldIndex].clone();
+            }
+            if (newScales != null) {
+                newScales[newIndex] = oldScales[oldIndex].clone();
+            }
+        }
+
+        Track result = newTrack(oldTrack, newTimes, newTranslations,
+                newRotations, newScales);
+
+        return result;
+    }
+
+    /**
      * Copy a track, altering its duration and adjusting all its keyframe times
      * proportionately.
      *
