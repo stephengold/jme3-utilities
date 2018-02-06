@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ import jme3utilities.Validate;
 
 /**
  * A 2-D, static, fan-mode mesh which renders an axis-aligned rounded rectangle
- * in the XY plane.
+ * in the X-Y plane.
  * <p>
  * In local space, X extends from x1 to x2 and Y extends from y1 to y2, with
  * normals set to (0,0,zNorm). In texture space, X and Y extend from 0 to 1.
@@ -154,10 +154,10 @@ public class RoundedRectangle extends Mesh {
 
         for (int vi = 0; vi < numVertices; vi++) {
             indices[vi] = (short) vi;
-            normals[3 * vi] = 0f;
-            normals[3 * vi + 1] = 0f;
-            normals[3 * vi + 2] = zNorm;
-            positions[3 * vi + 2] = 0f;
+            normals[numAxes * vi] = 0f;
+            normals[numAxes * vi + 1] = 0f;
+            normals[numAxes * vi + 2] = zNorm;
+            positions[numAxes * vi + 2] = 0f;
             float x = positions[numAxes * vi];
             float y = positions[numAxes * vi + 1];
             texCoords[2 * vi] = (x - x1) / (x2 - x1);
