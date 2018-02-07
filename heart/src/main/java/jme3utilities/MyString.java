@@ -172,30 +172,30 @@ public class MyString {
     }
 
     /**
-     * Find the longest repeated prefix in a list of strings.
+     * Find the longest repeated prefix in a collection of strings.
      *
-     * @param list (not null, unaffected)
+     * @param collection (not null, unaffected)
      * @return prefix (not null)
      */
-    public static String findLongestPrefix(List<String> list) {
-        int count = list.size();
-
-        String longest = "";
+    public static String findLongestPrefix(Collection<String> collection) {
+        CharSequence longest = "";
         int longestLength = 0;
 
+        String[] array = toArray(collection);
+        int count = array.length;
         for (int i = 0; i < count; i++) {
-            String si = list.get(i);
+            String si = array[i];
             for (int j = i + 1; j < count; j++) {
-                String sj = list.get(j);
+                String sj = array[j];
                 int prefixLength = sharedPrefixLength(si, sj);
                 if (prefixLength > longestLength) {
                     longestLength = prefixLength;
-                    longest = si.substring(0, prefixLength);
+                    longest = si.subSequence(0, prefixLength);
                 }
             }
         }
 
-        return longest;
+        return longest.toString();
     }
 
     /**
@@ -305,25 +305,25 @@ public class MyString {
     }
 
     /**
-     * Reduce a list of strings using common prefixes.
+     * Reduce a collection of strings using common prefixes.
      *
-     * @param list (not null, modified)
-     * @param targetSize (&gt;0)
+     * @param collection (not null, modified)
+     * @param sizeGoal (&gt;0)
      */
-    public static void reduce(List<String> list, int targetSize) {
-        Validate.positive(targetSize, "target size");
+    public static void reduce(Collection<String> collection, int sizeGoal) {
+        Validate.positive(sizeGoal, "size goal");
 
-        while (list.size() > targetSize) {
-            String longestPrefix = findLongestPrefix(list);
+        while (collection.size() > sizeGoal) {
+            String longestPrefix = findLongestPrefix(collection);
             if (longestPrefix.length() == 0) {
                 return;
             }
-            for (String s : toArray(list)) {
-                if (s.startsWith(longestPrefix)) {
-                    list.remove(s);
+            for (String string : toArray(collection)) {
+                if (string.startsWith(longestPrefix)) {
+                    collection.remove(string);
                 }
             }
-            list.add(longestPrefix);
+            collection.add(longestPrefix);
         }
     }
 
@@ -408,16 +408,11 @@ public class MyString {
      * @return a new array containing the same strings in the same order
      */
     public static String[] toArray(Collection<String> collection) {
-        int itemCount = collection.size();
-        String[] result = new String[itemCount];
+        int count = collection.size();
+        String[] array = new String[count];
+        collection.toArray(array);
 
-        int nextIndex = 0;
-        for (String string : collection) {
-            result[nextIndex] = string;
-            nextIndex++;
-        }
-
-        return result;
+        return array;
     }
 
     /**
