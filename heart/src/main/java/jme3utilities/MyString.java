@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -138,7 +138,7 @@ public class MyString {
      * Escape all tab, quote, newline, and backslash characters in a string.
      *
      * @param unescaped the input string (not null)
-     * @return escaped output string
+     * @return an escaped string (not null)
      * @see #unEscape(String)
      */
     public static String escape(String unescaped) {
@@ -149,20 +149,25 @@ public class MyString {
                 case '\n':
                     result.append("\\n");
                     break;
+
                 case '\t':
                     result.append("\\t");
                     break;
+
                 case '"':
                     result.append("\\\"");
                     break;
+
                 case '\\':
                     result.append("\\\\");
                     break;
+
                 default:
                     result.append(ch);
                     break;
             }
         }
+
         return result.toString();
     }
 
@@ -326,12 +331,11 @@ public class MyString {
      * Extract the remainder of the specified string after removing the
      * specified prefix.
      *
-     * @param input input string (not null)
-     * @param prefix prefix string (not null)
+     * @param input the input string (not null)
+     * @param prefix the prefix string (not null)
      * @return the remainder of the input (not null)
      */
     public static String remainder(String input, String prefix) {
-        Validate.nonNull(input, "input");
         Validate.nonNull(prefix, "prefix");
         if (!input.startsWith(prefix)) {
             logger.log(Level.SEVERE, "input={0}, prefix={1}", new Object[]{
@@ -356,7 +360,6 @@ public class MyString {
      * @return the remainder of the input (not null)
      */
     public static String removeSuffix(String input, String suffix) {
-        Validate.nonNull(input, "input");
         Validate.nonNull(suffix, "suffix");
         if (!input.endsWith(suffix)) {
             logger.log(Level.SEVERE, "input={0}, suffix={1}", new Object[]{
@@ -401,8 +404,8 @@ public class MyString {
      * than Collection.toArray() because the elements of the resulting array
      * will all be strings.
      *
-     * @param collection to convert (not null)
-     * @return new array containing the same strings in the same order
+     * @param collection the collection to convert (not null)
+     * @return a new array containing the same strings in the same order
      */
     public static String[] toArray(Collection<String> collection) {
         int itemCount = collection.size();
@@ -421,8 +424,8 @@ public class MyString {
      * Trim any trailing zeroes and one trailing decimal point from a string
      * representation of a float. Also remove sign from zero.
      *
-     * @param input the input string (not null)
-     * @return trimmed string
+     * @param input the string to trim (not null)
+     * @return a trimmed string (not null)
      */
     public static String trimFloat(String input) {
         String result;
@@ -452,7 +455,7 @@ public class MyString {
      * Undo character escapes added by escape().
      *
      * @param escaped the input string (not null)
-     * @return unescaped output string
+     * @return an unescaped string (not null)
      * @see #escape(String)
      */
     public static String unEscape(String escaped) {
