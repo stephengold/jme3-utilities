@@ -1,5 +1,11 @@
 # release notes for the Wes library and related tests
 
+## Version 0.3.4 released on TBD
+
+ + Fix a validation bug in TrackEdit.truncate() .
+ + Add extractAnimation(), reverse(), and setFrameTime() methods to the
+   TrackEdit class.
+
 ## Version 0.3.3 released on 2 February 2018
 
  + Add a simplify() method to the TrackEdit class.
@@ -32,10 +38,10 @@
 
 ## Version 0.2.2 released on 7 September 2017
 
- + Generalized BoneTrack methods to also work for SpatialTracks. (This involved
+ + Generalize BoneTrack methods to also work for SpatialTracks. (This involved
    some API changes.)
- + Renamed TweenTransforms.boneTransform() to transform().
- + Added newTrack() and setKeyframes() methods to TrackEdit class.
+ + Rename TweenTransforms.boneTransform() to transform().
+ + Add newTrack() and setKeyframes() methods to TrackEdit class.
 
 ## Version 0.2.1 released on 4 September 2017
 
