@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.3.0 released on TBD
+## Version 2.3.0 released on 7 February 2018
 
  + Added PointMesh class
  + Added LoopMeshTest application
