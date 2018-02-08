@@ -36,6 +36,7 @@ import com.jme3.scene.Mesh;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
+import jme3utilities.MyAsset;
 import jme3utilities.mesh.LoopMesh;
 
 /**
@@ -86,10 +87,8 @@ public class LoopMeshTest extends SimpleApplication {
         cam.setLocation(Vector3f.UNIT_Y.mult(10f));
         cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z.clone());
 
-        Material material = new Material(assetManager,
-                "MatDefs/wireframe/wireframe.j3md");
-        material.setColor("Color", ColorRGBA.Yellow.clone());
-        material.setFloat("PointSize", 8f);
+        Material material = MyAsset.createWireframeMaterial(assetManager,
+                ColorRGBA.Yellow, 8f);
 
         LoopMesh loopMesh = new LoopMesh(4);
         Geometry loopGeometry = new Geometry("loop", loopMesh);
