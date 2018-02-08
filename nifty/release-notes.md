@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.7.10 released on TBD
+## Version 0.7.10 released on 8 February 2018
 
  + Add setColorBank() methods to the GuiScreenController and
    GuiWindowController classes.
