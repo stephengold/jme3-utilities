@@ -1,6 +1,6 @@
 # release notes for the Wes library and related tests
 
-## Version 0.3.4 released on TBD
+## Version 0.3.4 released on 7 February 2018
 
  + Fix a validation bug in TrackEdit.truncate() .
  + Add extractAnimation(), reverse(), and setFrameTime() methods to the
