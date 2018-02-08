@@ -1,8 +1,15 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.2.0 released on 1 Feburary 2018
+## Version 2.3.0 released on TBD
 
- + Added vertexNormal() and vertexTangent() methods to the MyMesh class.
+ + Added PointMesh class
+ + Added LoopMeshTest application
+ + Extended MyString.findLongestPrefix() and MyString.reduce() to operate
+   on collections
+
+## Version 2.2.0 released on 1 February 2018
+
+ + Added vertexNormal() and vertexTangent() methods to the MyMesh class
 
 ## Version 2.1.0 released on 27 January 2018
 
