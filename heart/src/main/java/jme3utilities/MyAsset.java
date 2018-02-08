@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -440,8 +440,8 @@ final public class MyAsset {
     }
 
     /**
-     * Create a wireframe material with specified point size. (Points are
-     * visible only on point-mode mesh.)
+     * Create a wireframe material with the specified point size. (Points are
+     * visible only with a point-mode mesh.)
      *
      * @param assetManager (not null)
      * @param color (not null, unaffected)

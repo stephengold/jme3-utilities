@@ -128,9 +128,10 @@ public class MyAnimation {
     /**
      * Describe an animation track.
      *
-     * @param track track to describe (not null, unaffected)
-     * @param animControl control that contains the track (not null, unaffected)
-     * @return textual description (not null)
+     * @param track the track to describe (not null, unaffected)
+     * @param animControl an anim control that contains the track (not null,
+     * unaffected)
+     * @return a textual description (not null, not empty)
      */
     public static String describe(Track track, AnimControl animControl) {
         Validate.nonNull(track, "track");
@@ -164,8 +165,8 @@ public class MyAnimation {
     /**
      * Describe a track's type with a single character.
      *
-     * @param track track to describe (may be null)
-     * @return mnemonic character
+     * @param track the track to describe (may be null, unaffected)
+     * @return a mnemonic character
      */
     public static char describeTrackType(Track track) {
         if (track instanceof AudioTrack) {
@@ -205,12 +206,12 @@ public class MyAnimation {
     }
 
     /**
-     * Find the index of the keyframe at the specified time in the specified
-     * track.
+     * Find the index of the keyframe (if any) at the specified time in the
+     * specified track.
      *
      * @param track which track to search (not null, unaffected)
-     * @param time track time (in seconds, &ge;0)
-     * @return keyframe index (&ge;0) or -1 if keyframe not found
+     * @param time the track time (in seconds, &ge;0)
+     * @return the keyframe's index (&ge;0) or -1 if no keyframe at that time
      */
     public static int findKeyframeIndex(Track track, float time) {
         Validate.nonNegative(time, "time");
@@ -228,8 +229,8 @@ public class MyAnimation {
      * Find the time of the keyframe in the specified animation with the latest
      * time.
      *
-     * @param animation input (not null)
-     * @return track time (in seconds, &ge;0)
+     * @param animation input (not null, unaffected)
+     * @return the track time (in seconds, &ge;0)
      */
     public static float findLastKeyframe(Animation animation) {
         float maxTime = 0f;
@@ -247,12 +248,12 @@ public class MyAnimation {
     }
 
     /**
-     * Find the index of the keyframe at or before the specified time in the
-     * specified track.
+     * Find the index of the last keyframe at or before the specified time in
+     * the specified track.
      *
      * @param track which track to search (not null, unaffected)
-     * @param time track time (in seconds, &ge;0)
-     * @return keyframe index (&ge;0)
+     * @param time the track time (in seconds, &ge;0)
+     * @return the keyframe's index (&ge;0)
      */
     public static int findPreviousKeyframeIndex(Track track, float time) {
         Validate.nonNegative(time, "time");
