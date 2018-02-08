@@ -27,11 +27,17 @@
 package jme3utilities.nifty;
 
 import de.lessvoid.nifty.NiftyMouse;
+import de.lessvoid.nifty.builder.ElementBuilder;
+import de.lessvoid.nifty.builder.PanelBuilder;
+import de.lessvoid.nifty.builder.PopupBuilder;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.Menu;
 import de.lessvoid.nifty.controls.MenuItemActivatedEvent;
 import de.lessvoid.nifty.controls.TextField;
+import de.lessvoid.nifty.controls.button.builder.ButtonBuilder;
+import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
+import de.lessvoid.nifty.controls.scrollpanel.builder.ScrollPanelBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
@@ -90,7 +96,7 @@ public class PopScreenController extends BasicScreenController {
      */
     private PopupMenu activePopupMenu = null;
     /**
-     * action prefix of the active modal dialog box (null means none active)
+     * action prefix of the active modal dialog box (null means none are active)
      */
     private String dialogActionPrefix = null;
     // *************************************************************************
@@ -369,7 +375,8 @@ public class PopScreenController extends BasicScreenController {
          * Create a popup element for the dialog box. Nifty assigns it a new id.
          */
         if (numLines > 10 || numChars > 200) { // TODO use font information
-            dialogElement = nifty.createPopup("dialogs/info43");
+            String masterId = registerInfoScrollDialog(numLines + 2);
+            dialogElement = nifty.createPopup(masterId);
         } else {
             dialogElement = nifty.createPopup("dialogs/info10");
         }
@@ -708,5 +715,94 @@ public class PopScreenController extends BasicScreenController {
         }
 
         activePopupMenu = popupMenu;
+    }
+
+    /**
+     * Register a scrolling informational dialog box with the specified
+     * capacity.
+     *
+     * @param capacity number of lines of text (&gt;0)
+     */
+    private String registerInfoScrollDialog(int capacity) {
+        Validate.positive(capacity, "number of lines");
+
+        int pixelHeight = 16 * capacity; // TODO use font information
+        final String heightText = Integer.toString(pixelHeight) + "px";
+
+        final ElementBuilder.VAlign top = ElementBuilder.VAlign.Top;
+        String masterId = "dialogs/infoScroll" + Integer.toString(capacity);
+        new PopupBuilder(masterId) {
+            {
+                backgroundColor("#000a");
+                childLayoutCenter();
+
+                panel(new PanelBuilder() {
+                    {
+                        childLayoutVertical();
+                        backgroundColor("#aaaf");
+                        padding("8px");
+                        height("300px");
+                        width("630px");
+
+                        control(new LabelBuilder("#title"));
+                        panel(new PanelBuilder() {
+                            {
+                                height("8px");
+                            }
+                        });
+                        control(new ScrollPanelBuilder("") {
+                            {
+                                height("220px");
+                                parameter("horizontal", "false");
+                                parameter("pageSizeY", "200");
+                                parameter("stepSizeY", "50");
+                                style("bats-scroll-panel");
+
+                                panel(new PanelBuilder() {
+                                    {
+                                        childLayoutVertical();
+                                        backgroundColor("#acff");
+                                        padding("0px,6px");
+                                        height(heightText);
+                                        width("590px");
+
+                                        control(new LabelBuilder("#1") {
+                                            {
+                                                color("#000f");
+                                                textVAlign(top);
+                                                wrap(true);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                        panel(new PanelBuilder() {
+                            {
+                                height("8px");
+                            }
+                        });
+                        panel(new PanelBuilder() {
+                            {
+                                childLayoutHorizontal();
+
+                                panel(new PanelBuilder());
+                                control(new ButtonBuilder("#cancel") {
+                                    {
+                                        label("Dismiss");
+                                        width("50px");
+                                        interactOnRelease(
+                                                "performActive(cancel)");
+                                    }
+                                });
+                                panel(new PanelBuilder());
+                            }
+                        });
+                    }
+                });
+            }
+        }.registerPopup(nifty);
+
+        return masterId;
     }
 }
