@@ -1166,7 +1166,7 @@ public class TrackEdit {
     public static Track truncate(Track oldTrack, float endTime) {
         assert oldTrack instanceof BoneTrack
                 || oldTrack instanceof SpatialTrack;
-        Validate.positive(endTime, "end time");
+        Validate.nonNegative(endTime, "end time");
 
         float[] oldTimes = oldTrack.getKeyFrameTimes();
         Vector3f[] oldTranslations = MyAnimation.getTranslations(oldTrack);
