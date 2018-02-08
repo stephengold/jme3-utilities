@@ -48,7 +48,8 @@ import jme3utilities.math.MyQuaternion;
 import jme3utilities.math.MyVector3f;
 
 /**
- * Utility methods for editing JME animations and animation tracks.
+ * Utility methods for editing JME animations and animation tracks. TODO split
+ * off animation editing methods to a new class
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -403,6 +404,52 @@ public class TrackEdit {
 
         Track result = newTrack(oldTrack, newTimes, newTranslations,
                 newRotations, newScales);
+
+        return result;
+    }
+
+    /**
+     * Extract a range from the specified animation.
+     *
+     * @param sourceAnimation the animation to extract from (not null,
+     * unaffected)
+     * @param startTime the start of the range (in seconds, &gt;0, &le;endTime)
+     * @param endTime the end of the range (in seconds, &ge;startTime)
+     * @param techniques tweening techniques to use (unaffected)
+     * @param newAnimationName a name for the resulting animation (not null)
+     * @return a new animation
+     */
+    public static Animation extractAnimation(Animation sourceAnimation,
+            float startTime, float endTime, TweenTransforms techniques,
+            String newAnimationName) {
+        Validate.nonNull(sourceAnimation, "source animation");
+        Validate.inRange(startTime, "start time", 0f, endTime);
+        Validate.inRange(endTime, "end time", startTime, Float.MAX_VALUE);
+        Validate.nonNull(newAnimationName, "new animation name");
+        /*
+         * Start with an empty animation.
+         */
+        float newDuration = endTime - startTime;
+        Animation result = new Animation(newAnimationName, newDuration);
+
+        float sourceDuration = sourceAnimation.getLength();
+        Track[] sourceTracks = sourceAnimation.getTracks();
+        for (Track sourceTrack : sourceTracks) {
+            Track newTrack;
+            if (sourceTrack instanceof BoneTrack
+                    || sourceTrack instanceof SpatialTrack) {
+                newTrack = truncate(sourceTrack, endTime);
+                if (startTime > 0f) {
+                    Transform startTransform = techniques.interpolate(startTime,
+                            sourceTrack, sourceDuration, null, null);
+                    newTrack = behead(newTrack, startTime, startTransform,
+                            endTime);
+                }
+            } else {
+                newTrack = sourceTrack.clone(); // TODO other track types
+            }
+            result.addTrack(newTrack);
+        }
 
         return result;
     }
