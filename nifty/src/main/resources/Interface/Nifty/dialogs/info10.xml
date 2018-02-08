@@ -48,6 +48,7 @@
                    padding="0px,6px"
                    height="200px" width="*">
                 <control name="label" id="#1"
+                         color="#000f"
                          textVAlign="top"
                          wrap="true"/>
             </panel>
