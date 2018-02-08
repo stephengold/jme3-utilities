@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.7.10 released on TBD
+
+ + Add setColorBank() methods to the GuiScreenController and
+   GuiWindowController classes.
+ + Add storeResult arguments to the readVectorBank() methods.
+
 ## Version 0.7.9 released on 2 February 2018
 
  + More flexible policies for the placement of submenus.
