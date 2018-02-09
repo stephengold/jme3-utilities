@@ -1,8 +1,8 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.7.11 released on TBD
+## Version 0.7.11 released on 9 February 2018
 
- + Generate layouts for large infoboxes.
+ + Dynamically generate layouts for large infoboxes.
  + Specify a text color for small infoboxes.
 
 ## Version 0.7.10 released on 8 February 2018
