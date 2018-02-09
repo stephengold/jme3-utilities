@@ -4,8 +4,6 @@
 
 description = 'demos, examples, and tests that do not generate reports'
 
-clean { dependsOn 'cleanDLLs', 'cleanWrittenAssets' }
-
 dependencies {
     compile "com.beust:jcommander:$jcommanderVersion"
     runtime 'com.github.nifty-gui:nifty-style-black:1.4.2'
@@ -43,6 +41,8 @@ tasks.withType(JavaExec) {
     enableAssertions true
 }
 
+// cleanup tasks
+clean { dependsOn 'cleanDLLs', 'cleanWrittenAssets' }
 task cleanDLLs(type: Delete) {
     delete fileTree(dir: '.', include: '*.dll')
 }
