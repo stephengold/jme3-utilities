@@ -58,11 +58,6 @@ abstract public class GuiApplication extends ActionApplication {
     final private static String confirmDialogAssetPath
             = "Interface/Nifty/dialogs/confirm.xml";
     /**
-     * asset path to Nifty XML for a 43-line informational dialog box
-     */
-    final private static String infoLargeDialogAssetPath
-            = "Interface/Nifty/dialogs/info43.xml";
-    /**
      * asset path to Nifty XML for a 10-line informational dialog box
      */
     final private static String infoSmallDialogAssetPath
@@ -209,7 +204,6 @@ abstract public class GuiApplication extends ActionApplication {
          * assets do not validate, so skip validation.
          */
         nifty.fromXmlWithoutStartScreen(confirmDialogAssetPath);
-        nifty.fromXmlWithoutStartScreen(infoLargeDialogAssetPath);
         nifty.fromXmlWithoutStartScreen(infoSmallDialogAssetPath);
         nifty.fromXmlWithoutStartScreen(multiSelectDialogAssetPath);
         nifty.fromXmlWithoutStartScreen(popupMenuAsssetPath);
