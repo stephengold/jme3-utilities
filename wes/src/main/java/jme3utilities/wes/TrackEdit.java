@@ -1004,7 +1004,8 @@ public class TrackEdit {
     }
 
     /**
-     * Copy the specified track, adjusting the time of the indexed frame.
+     * Copy the specified track, adjusting the animation time of the indexed
+     * frame.
      *
      * @param oldTrack the track to copy (not null, unaffected)
      * @param frameIndex the index of the frame to adjust (&gt;0)
@@ -1023,10 +1024,6 @@ public class TrackEdit {
         }
         if (frameIndex < numFrames - 1) {
             if (newTime >= oldTimes[frameIndex + 1]) {
-                return null;
-            }
-        } else {
-            if (newTime > oldTrack.getLength()) {
                 return null;
             }
         }
