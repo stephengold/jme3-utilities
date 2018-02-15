@@ -1,8 +1,9 @@
 # release notes for the Wes library and related tests
 
-## Version 0.3.5 released on TBD
+## Version 0.3.5 released on 14 February 2018
 
- + Remove an irrelevant test against track length in TrackEdit.setFrameTime() .
+ + Remove an irrelevant test against track length from
+   TrackEdit.setFrameTime() .
 
 ## Version 0.3.4 released on 7 February 2018
 
