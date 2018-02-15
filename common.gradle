@@ -26,7 +26,7 @@ ext {
     jmonkeyengineVersion = '3.2.1-stable'
     minieVersion = '0.2.0'
     skycontrolVersion = '0.9.11'
-    wesVersion = '0.3.4'
+    wesVersion = '0.3.5'
 }
 
 repositories {
