@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -204,8 +204,8 @@ public class TweenTransforms implements Cloneable {
 
         for (int frameIndex = 0; frameIndex < numSamples; frameIndex++) {
             float time = newTimes[frameIndex];
-            Transform transform;
-            transform = transform(oldTrack, time, duration, null, null);
+            Transform transform
+                    = transform(oldTrack, time, duration, null, null);
 
             if (newTranslations != null) {
                 newTranslations[frameIndex] = transform.getTranslation();
