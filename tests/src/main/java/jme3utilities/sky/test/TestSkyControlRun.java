@@ -146,6 +146,10 @@ public class TestSkyControlRun
      */
     private Spatial cubeMap = null;
     /**
+     * star-map setting as of the previous update (not null)
+     */
+    private String lastStarMapName = "";
+    /**
      * heads-up display (HUD) (set by initialize)
      */
     private TestSkyControlHud hud;
@@ -453,7 +457,10 @@ public class TestSkyControlRun
         skyControl.getUpdater().setShadowFiltersEnabled(shadowFiltersFlag);
 
         String starMapName = hud.getStarMapName();
-        updateStarMap(starMapName);
+        if (!starMapName.equals(lastStarMapName)) {
+            updateStarMap(starMapName);
+            lastStarMapName = starMapName;
+        }
         /*
          * Translate the external star map to center it on the camera.
          */
