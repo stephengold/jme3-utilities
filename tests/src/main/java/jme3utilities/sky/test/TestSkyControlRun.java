@@ -453,32 +453,7 @@ public class TestSkyControlRun
         skyControl.getUpdater().setShadowFiltersEnabled(shadowFiltersFlag);
 
         String starMapName = hud.getStarMapName();
-        switch (starMapName) {
-            case "4m":
-                if (parameters.singleDome()) {
-                    starMapName = "Textures/skies/star-maps/wiltshire.png";
-                } else {
-                    starMapName = "equator";
-                }
-                skyControl.setStarMaps(starMapName);
-                break;
-            case "16m":
-                if (parameters.singleDome()) {
-                    starMapName = "Textures/skies/star-maps/16m/wiltshire.png";
-                } else {
-                    starMapName = "equator16m";
-                }
-                skyControl.setStarMaps(starMapName);
-                break;
-            case "nebula":
-                /*
-                 * Turn off SkyControl's star maps to reveal the external sky.
-                 */
-                skyControl.clearStarMaps();
-                break;
-            default:
-                throw new IllegalStateException("unknown star map name");
-        }
+        updateStarMap(starMapName);
         /*
          * Translate the external star map to center it on the camera.
          */
@@ -718,5 +693,42 @@ public class TestSkyControlRun
         updater.addViewPort(viewPort);
         updater.setAmbientLight(ambientLight);
         updater.setMainLight(mainLight);
+    }
+
+    /**
+     * Update SkyControl's star map.
+     *
+     * @param starMapName (not null)
+     */
+    private void updateStarMap(String starMapName) {
+        switch (starMapName) {
+            case "4m":
+                if (parameters.singleDome()) {
+                    starMapName = "Textures/skies/star-maps/wiltshire.png";
+                } else {
+                    starMapName = "equator";
+                }
+                skyControl.setStarMaps(starMapName);
+                break;
+
+            case "16m":
+                if (parameters.singleDome()) {
+                    starMapName = "Textures/skies/star-maps/16m/wiltshire.png";
+                } else {
+                    starMapName = "equator16m";
+                }
+                skyControl.setStarMaps(starMapName);
+                break;
+
+            case "nebula":
+                /*
+                 * Turn off SkyControl's star maps to reveal the external sky.
+                 */
+                skyControl.clearStarMaps();
+                break;
+
+            default:
+                throw new IllegalStateException("unknown star map name");
+        }
     }
 }
