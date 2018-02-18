@@ -637,9 +637,9 @@ public class SkyControl extends SkyControlCore {
         Vector3f moonDirection = updateMoon();
         updateLighting(sunDirection, moonDirection);
 
-        Node starCube = getStarCube();
-        if (starMotionFlag && starCube != null) {
-            sunAndStars.orientEquatorialSky(starCube, false);
+        Node starsNode = getStarsNode();
+        if (starsNode != null) {
+            sunAndStars.orientEquatorialSky(starsNode, false);
         }
     }
 

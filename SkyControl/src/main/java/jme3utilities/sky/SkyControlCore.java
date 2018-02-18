@@ -118,9 +118,9 @@ public class SkyControlCore extends SubtreeControl {
      */
     final private static String cloudsName = "clouds";
     /**
-     * name for the star cube spatial
+     * name for the stars node
      */
-    final private static String starCubeName = "star cube";
+    final private static String starsNodeName = "stars node";
     /**
      * name for the top geometry
      */
@@ -291,9 +291,9 @@ public class SkyControlCore extends SubtreeControl {
      */
     public void clearStarMaps() {
         if (starMotionFlag) {
-            Spatial starCube = MySpatial.findChild(subtree, starCubeName);
-            if (starCube != null) {
-                subtree.detachChild(starCube);
+            Spatial starsNode = MySpatial.findChild(subtree, starsNodeName);
+            if (starsNode != null) {
+                subtree.detachChild(starsNode);
             }
         } else {
             SkyMaterial topMaterial = getTopMaterial();
@@ -491,14 +491,14 @@ public class SkyControlCore extends SubtreeControl {
         Validate.nonEmpty(assetName, "asset name");
 
         if (starMotionFlag) {
-            Node starCube = getStarCube();
-            if (starCube != null) {
-                int index = subtree.detachChild(starCube);
+            Node starsNode = getStarsNode();
+            if (starsNode != null) {
+                int index = subtree.detachChild(starsNode);
                 assert index == 0 : index;
             }
-            starCube = MyAsset.createStarMapQuads(assetManager, assetName);
-            starCube.setName(starCubeName);
-            subtree.attachChildAt(starCube, 0);
+            starsNode = MyAsset.createStarMapQuads(assetManager, assetName);
+            starsNode.setName(starsNodeName);
+            subtree.attachChildAt(starsNode, 0);
         } else {
             SkyMaterial topMaterial = getTopMaterial();
             topMaterial.addStars(assetName);
@@ -620,13 +620,14 @@ public class SkyControlCore extends SubtreeControl {
     }
 
     /**
-     * Access the star-cube node.
+     * Access the stars node. For starMotion==true, this is the node that
+     * parents the star geometries.
      *
      * @return the pre-existing node (or null if none)
      */
-    protected Node getStarCube() {
-        Node starCube = (Node) MySpatial.findChild(subtree, starCubeName);
-        return starCube;
+    protected Node getStarsNode() {
+        Node starsNode = (Node) MySpatial.findChild(subtree, starsNodeName);
+        return starsNode;
     }
 
     /**
