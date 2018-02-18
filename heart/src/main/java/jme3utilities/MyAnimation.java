@@ -126,7 +126,7 @@ public class MyAnimation {
     }
 
     /**
-     * Describe an animation track.
+     * Describe an animation track in the context of its animation.
      *
      * @param track the track to describe (not null, unaffected)
      * @param animControl an anim control that contains the track (not null,
