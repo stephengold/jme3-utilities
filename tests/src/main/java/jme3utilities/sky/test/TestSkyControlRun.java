@@ -68,6 +68,7 @@ import jme3utilities.sky.FloorControl;
 import jme3utilities.sky.GlobeRenderer;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
+import jme3utilities.sky.StarsOption;
 import jme3utilities.sky.SunAndStars;
 import jme3utilities.sky.Updater;
 import jme3utilities.sky.WaterProcessor;
@@ -643,7 +644,7 @@ public class TestSkyControlRun
     }
 
     /**
-     * Add SkyControl to the scene and enable it.
+     * Add SkyControl and the external star map to the scene.
      */
     private void initializeSky() {
         /*
@@ -656,19 +657,20 @@ public class TestSkyControlRun
         /*
          * Create a SkyControl to animate the sky.
          */
+        boolean bottomDome;
         float cloudFlattening;
-        boolean bottomDome, starMotion;
+        StarsOption starsOption;
         if (parameters.singleDome()) {
             cloudFlattening = 0f; // single dome implies clouds on top dome
-            starMotion = false; // single dome implies non-moving stars
+            starsOption = StarsOption.TopDome;  // stars on top dome
             bottomDome = false; // single dome implies exposed background
         } else {
             cloudFlattening = 0.9f; // overhead clouds 10x closer than horizon
-            starMotion = true; // allow stars to move
-            bottomDome = true; // helpful in case the scene has a low horizon
+            starsOption = StarsOption.Cube; // allows stars to move
+            bottomDome = true; // helpful when the scene has a low horizon
         }
         skyControl = new SkyControl(assetManager, cam, cloudFlattening,
-                starMotion, bottomDome);
+                starsOption, bottomDome);
         sceneNode.addControl(skyControl);
 
         if (parameters.cyclone()) {

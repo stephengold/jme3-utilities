@@ -57,6 +57,7 @@ import jme3utilities.nifty.LibraryVersion;
 import jme3utilities.nifty.bind.BindScreen;
 import jme3utilities.sky.Constants;
 import jme3utilities.sky.SkyControl;
+import jme3utilities.sky.StarsOption;
 import jme3utilities.sky.Updater;
 import jme3utilities.ui.InputMode;
 import jme3utilities.ui.UiVersion;
@@ -301,7 +302,8 @@ public class PoseDemo extends GuiApplication {
         /*
          * Create a daytime sky.
          */
-        SkyControl sky = new SkyControl(assetManager, cam, 0.9f, false, true);
+        SkyControl sky = new SkyControl(assetManager, cam, 0.9f,
+                StarsOption.TopDome, true);
         rootNode.addControl(sky);
         sky.setCloudiness(0.5f);
         sky.getSunAndStars().setHour(11f);
