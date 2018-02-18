@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -59,7 +59,7 @@ class TestSkyControlParameters {
             description = "use a shadow filter")
     private boolean shadowFilter = false;
     /**
-     * true means use just a single dome; false means use all five domes
+     * true means use just a single dome; false means use multiple domes
      */
     @Parameter(names = {"-s", "--single"},
             description = "use just a single dome")
@@ -94,7 +94,7 @@ class TestSkyControlParameters {
     }
 
     /**
-     * Test whether the single dome option was specified.
+     * Test whether the single-dome option was specified.
      */
     boolean singleDome() {
         return singleDome;
