@@ -257,11 +257,9 @@ public class Dumper {
             }
             Mesh mesh = geometry.getMesh();
             description = describer.describe(mesh);
-            if (!description.isEmpty()) {
-                stream.println();
-                stream.print(indent);
-                stream.printf(" mesh %s", description);
-            }
+            stream.println();
+            stream.print(indent);
+            stream.printf(" %s", description);
         }
         stream.println();
         /*

@@ -47,6 +47,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.control.Control;
 import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
@@ -55,6 +56,7 @@ import com.jme3.shadow.PointLightShadowRenderer;
 import com.jme3.shadow.SpotLightShadowFilter;
 import com.jme3.shadow.SpotLightShadowRenderer;
 import com.jme3.terrain.geomipmap.TerrainQuad;
+import com.jme3.util.IntMap;
 import com.jme3.water.ReflectionProcessor;
 import com.jme3.water.SimpleWaterProcessor;
 import com.jme3.water.SimpleWaterProcessor.RefractionProcessor;
@@ -141,7 +143,30 @@ public class Describer {
      */
     public String describe(Mesh mesh) {
         StringBuilder result = new StringBuilder(20);
-        // TODO
+        boolean addSeparators = false;
+
+        String name = mesh.getClass().getSimpleName();
+        result.append(name);
+
+        Mesh.Mode mode = mesh.getMode();
+        String modeDescription = mode.toString();
+        result.append(" mode=");
+        result.append(modeDescription);
+        result.append(" buffers=");
+
+        IntMap<VertexBuffer> buffers = mesh.getBuffers();
+        for (IntMap.Entry<VertexBuffer> bufferEntry : buffers) {
+            VertexBuffer buffer = bufferEntry.getValue();
+            VertexBuffer.Type type = buffer.getBufferType();
+            String description = type.toString();
+            if (addSeparators) {
+                result.append(',');
+            } else {
+                addSeparators = true;
+            }
+            result.append(description);
+        }
+
         return result.toString();
     }
 
