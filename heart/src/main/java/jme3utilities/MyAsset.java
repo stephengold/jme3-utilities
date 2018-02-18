@@ -35,12 +35,13 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
 import java.util.logging.Logger;
+import jme3utilities.mesh.RectangleMesh;
 
 /**
  * Utility methods for loading assets. Aside from test cases, all methods here
@@ -58,9 +59,10 @@ final public class MyAsset {
     final private static Logger logger
             = Logger.getLogger(MyAsset.class.getName());
     /**
-     * reusable unit-square mesh
+     * reusable square mesh, each side 2 mesh units in length
      */
-    final private static Quad unitSquare = new Quad(1f, 1f);
+    final private static Mesh squareMesh
+            = new RectangleMesh(-1f, 1f, -1f, 1f, 1f);
     /**
      * asset path of the Particle material definition
      */
@@ -242,16 +244,15 @@ final public class MyAsset {
     }
 
     /**
-     * Load a cube-mapped star map onto a cube formed by 6 quads, each 2 world
-     * units on a side.
+     * Load a cube-mapped star map onto a cube formed by squares.
      * <p>
      * This method uses Unshaded.j3md materials, which can be translated,
      * rotated, and scaled in the usual fashion.
      * <p>
      * For the sky to be visible, its surface must lie between the near and far
      * planes of the camera's frustum. This can usually be achieved by scaling
-     * the Node. Prior to scaling, the sky's surface ranges from 1.0 to 1.732
-     * world units from the center.
+     * the Node. The sky's surface ranges from 1.0 to 1.732 local units from the
+     * center.
      * <p>
      * To avoid distortion, the camera must remain at the center of the sky.
      * This can usually be achieved by translating the Node to the camera's
@@ -277,40 +278,34 @@ final public class MyAsset {
         faceTexture[4] = loadFace(assetManager, name, "front5", false);
         faceTexture[5] = loadFace(assetManager, name, "back6", false);
         /*
-         * Create the quads.
+         * Create square faces.
          */
         Node result = new Node("star map");
         result.setQueueBucket(Bucket.Sky);
         for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-            String faceName = String.format("%s_face%d", name, faceIndex);
-            Geometry geometry = new Geometry(faceName, unitSquare);
+            String faceName = String.format("%s_face%d", name, faceIndex + 1);
+            Geometry geometry = new Geometry(faceName, squareMesh);
             result.attachChild(geometry);
             /*
-             * Apply material to quad.
+             * Create a material for the face and apply it.
              */
             Texture texture = faceTexture[faceIndex];
             Material material = createUnshadedMaterial(assetManager, texture);
             geometry.setMaterial(material);
             /*
-             * Set location of quad.
+             * Set the location of the face.
+             */
+            Vector3f offset = faceDirection[faceIndex].clone();
+            geometry.setLocalTranslation(offset);
+            /*
+             * Orient the face.
              */
             Vector3f u = uDirection[faceIndex];
             Vector3f v = vDirection[faceIndex];
-            Vector3f offset = faceDirection[faceIndex].clone();
-            offset.subtractLocal(u);
-            offset.subtractLocal(v);
-            geometry.setLocalTranslation(offset);
-            /*
-             * Set orientation of quad.
-             */
             Vector3f w = faceDirection[faceIndex].negate();
             Quaternion orientation = new Quaternion();
             orientation.fromAxes(u, v, w);
             geometry.setLocalRotation(orientation);
-            /*
-             * Set scale of quad.
-             */
-            geometry.setLocalScale(2f);
         }
 
         return result;
