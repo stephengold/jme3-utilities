@@ -107,6 +107,10 @@ task runTestSkyControlShadowFilter(type: JavaExec) {
     args = ['-f']
     main 'jme3utilities.sky.test.TestSkyControl'
 }
+task runTestSkyControlNoCubes(type: JavaExec) {
+    args = ['-n']
+    main 'jme3utilities.sky.test.TestSkyControl'
+}
 task runTestSkyControlSingleDome(type: JavaExec) {
     args = ['-s']
     main 'jme3utilities.sky.test.TestSkyControl'

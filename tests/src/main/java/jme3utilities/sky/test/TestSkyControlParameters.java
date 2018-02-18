@@ -53,6 +53,14 @@ class TestSkyControlParameters {
             description = "use cyclone cloud map")
     private boolean cyclone = false;
     /**
+     * true means use a star cube; false means use star domes instead
+     * <p>
+     * This setting is ignored when singleDome is true.
+     */
+    @Parameter(names = {"-n", "--nocubes"},
+            description = "don't use star cubes")
+    private boolean noCubes = false;
+    /**
      * true means use a shadow filter; false means use a shadow renderer
      */
     @Parameter(names = {"-f", "--filter"},
@@ -78,6 +86,13 @@ class TestSkyControlParameters {
     private boolean water = false;
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Test whether star cubes are allowed.
+     */
+    boolean cubes() {
+        return !noCubes;
+    }
 
     /**
      * Test whether the cyclone option was specified.

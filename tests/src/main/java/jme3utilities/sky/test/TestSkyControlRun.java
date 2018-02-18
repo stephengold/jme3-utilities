@@ -462,24 +462,27 @@ public class TestSkyControlRun
             updateStarMap(starMapName);
             lastStarMapName = starMapName;
         }
-        /*
-         * Translate the external star map to center it on the camera.
-         */
-        Vector3f cameraLocation = cam.getLocation();
-        MySpatial.setWorldLocation(cubeMap, cameraLocation);
-        /*
-         * Scale the external star map so that its geometries lie
-         * between the near and far planes of the view frustum.
-         */
-        float far = cam.getFrustumFar();
-        float near = cam.getFrustumNear();
-        float cubeRadius = (near + far) / 2f;
-        assert cubeRadius > near : cubeRadius;
-        MySpatial.setWorldScale(cubeMap, cubeRadius);
-        /*
-         * Re-orient the external star map.
-         */
-        skyControl.getSunAndStars().orientEquatorialSky(cubeMap, false);
+
+        if (cubeMap != null) {
+            /*
+             * Translate the external star map to center it on the camera.
+             */
+            Vector3f cameraLocation = cam.getLocation();
+            MySpatial.setWorldLocation(cubeMap, cameraLocation);
+            /*
+             * Scale the external star map so that its geometries lie
+             * between the near and far planes of the view frustum.
+             */
+            float far = cam.getFrustumFar();
+            float near = cam.getFrustumNear();
+            float cubeRadius = (near + far) / 2f;
+            assert cubeRadius > near : cubeRadius;
+            MySpatial.setWorldScale(cubeMap, cubeRadius);
+            /*
+             * Re-orient the external star map.
+             */
+            skyControl.getSunAndStars().orientEquatorialSky(cubeMap, false);
+        }
     }
     // *************************************************************************
     // ViewPortListener methods
@@ -647,13 +650,15 @@ public class TestSkyControlRun
      * Add SkyControl and the external star map to the scene.
      */
     private void initializeSky() {
-        /*
-         * Load and attach the external star map.
-         */
-        cubeMap = MyAsset.createStarMapQuads(assetManager,
-                "purple-nebula-complex");
-        cubeMap.setName(cubeName);
-        sceneNode.attachChild(cubeMap);
+        if (parameters.cubes()) {
+            /*
+             * Load and attach the external star map.
+             */
+            cubeMap = MyAsset.createStarMapQuads(assetManager,
+                    "purple-nebula-complex");
+            cubeMap.setName(cubeName);
+            sceneNode.attachChild(cubeMap);
+        }
         /*
          * Create a SkyControl to animate the sky.
          */
@@ -664,9 +669,13 @@ public class TestSkyControlRun
             cloudFlattening = 0f; // single dome implies clouds on top dome
             starsOption = StarsOption.TopDome;  // stars on top dome
             bottomDome = false; // single dome implies exposed background
-        } else {
+        } else if (parameters.cubes()) {
             cloudFlattening = 0.9f; // overhead clouds 10x closer than horizon
             starsOption = StarsOption.Cube; // allows stars to move
+            bottomDome = true; // helpful when the scene has a low horizon
+        } else {
+            cloudFlattening = 0.9f; // overhead clouds 10x closer than horizon
+            starsOption = StarsOption.TwoDomes; // allows stars to move
             bottomDome = true; // helpful when the scene has a low horizon
         }
         skyControl = new SkyControl(assetManager, cam, cloudFlattening,
@@ -714,8 +723,10 @@ public class TestSkyControlRun
             case "4m":
                 if (parameters.singleDome()) {
                     starMapName = "Textures/skies/star-maps/wiltshire.png";
-                } else {
+                } else if (parameters.cubes()) {
                     starMapName = "equator";
+                } else {
+                    starMapName = "Textures/skies/star-maps";
                 }
                 skyControl.setStarMaps(starMapName);
                 break;
@@ -723,15 +734,18 @@ public class TestSkyControlRun
             case "16m":
                 if (parameters.singleDome()) {
                     starMapName = "Textures/skies/star-maps/16m/wiltshire.png";
-                } else {
+                } else if (parameters.cubes()) {
                     starMapName = "equator16m";
+                } else {
+                    starMapName = "Textures/skies/star-maps/16m";
                 }
                 skyControl.setStarMaps(starMapName);
                 break;
 
             case "nebula":
                 /*
-                 * Turn off SkyControl's star maps to reveal the external sky.
+                 * Turn off SkyControl's star maps to reveal the external
+                 * sky (or the background, if star cubes are disallowed).
                  */
                 skyControl.clearStarMaps();
                 break;
