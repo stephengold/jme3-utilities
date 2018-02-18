@@ -531,6 +531,33 @@ public class MySpatial {
     }
 
     /**
+     * Find a named spatial in the specified subtree of the scene graph. Note:
+     * recursive!
+     *
+     * @param subtree where to search (not null, unaffected)
+     * @param name (not null)
+     * @return a pre-existing instance, or null if none
+     */
+    public static Spatial findNamed(Spatial subtree, String name) {
+        Spatial result = null;
+        String spatialName = subtree.getName();
+        if (name.equals(spatialName)) {
+            result = subtree;
+        } else if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                result = findNamed(child, name);
+                if (result != null) {
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Calculate the world scale factor of a uniformly scaled spatial.
      *
      * @param spatial spatial to measure (not null, unaffected)
