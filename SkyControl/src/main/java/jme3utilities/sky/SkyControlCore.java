@@ -71,7 +71,8 @@ import jme3utilities.mesh.DomeMesh;
  * adjusted by invoking setCloudsRate(). Flatten the clouds for best results;
  * this puts them on a translucent "clouds only" dome.
  * <p>
- * To simulate star motion, additional geometries are added: a star cube.
+ * To simulate star motion, additional geometries are added: either 2 domes or a
+ * cube.
  * <p>
  * For scenes with low horizons, an optional "bottom" dome can also be added.
  *
@@ -129,6 +130,10 @@ public class SkyControlCore extends SubtreeControl {
      * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
     final private static Vector3f unitX = new Vector3f(1f, 0f, 0f);
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_Z)
+     */
+    final private static Vector3f unitZ = new Vector3f(0f, 0f, 1f);
     /**
      * negative Y-axis
      */
@@ -318,6 +323,7 @@ public class SkyControlCore extends SubtreeControl {
     public void clearStarMaps() {
         switch (starsOption) {
             case Cube:
+            case TwoDomes:
                 removeStarsNode();
                 break;
 
@@ -515,7 +521,9 @@ public class SkyControlCore extends SubtreeControl {
      *
      * @param assetName if starsOption==Cube: name of a cube-map folder in
      * Textures/skies/star-maps (not null, not empty)<br>
-     * if starsOption==TopDome: path to texture asset (not null, not empty)
+     * if starsOption==TopDome: path to texture asset (not null, not empty)<br>
+     * if starsOption==TwoDomes: path to an asset folder containing northern.png
+     * and southern.png (not null, not empty)
      */
     final public void setStarMaps(String assetName) {
         Validate.nonEmpty(assetName, "asset name");
@@ -532,6 +540,12 @@ public class SkyControlCore extends SubtreeControl {
             case TopDome:
                 SkyMaterial topMaterial = getTopMaterial();
                 topMaterial.addStars(assetName);
+                break;
+
+            case TwoDomes:
+                removeStarsNode();
+                starNode = createStarMapDomes(assetName);
+                subtree.attachChildAt(starNode, 0);
                 break;
 
             default:
@@ -654,8 +668,8 @@ public class SkyControlCore extends SubtreeControl {
     }
 
     /**
-     * Access the stars node. For starsOption==Cube, this is the node that
-     * parents the star geometries.
+     * Access the stars node. For starsOption==Cube or TwoDomes, this is the
+     * node that parents the star geometries.
      *
      * @return the pre-existing node (or null if none)
      */
@@ -888,8 +902,14 @@ public class SkyControlCore extends SubtreeControl {
          * Attach geometries to the sky node from the outside in
          * because they'll be rendered in that order.
          */
-        if (starsOption == StarsOption.Cube) {
-            setStarMaps("equator");
+        switch (starsOption) {
+            case Cube:
+                setStarMaps("equator");
+                break;
+
+            case TwoDomes:
+                setStarMaps("Textures/skies/star-maps");
+                break;
         }
         Geometry topDome = new Geometry(topName, hemisphereMesh.clone());
         subtree.attachChild(topDome);
@@ -924,7 +944,46 @@ public class SkyControlCore extends SubtreeControl {
     }
 
     /**
-     * Remove the stars node (if one exists) from the scene graph.
+     * Load a star map onto a sphere formed by 2 domes, one for the northern
+     * hemisphere and one for the southern hemisphere.
+     *
+     * @param assetPath path to an asset folder containing northern.png and
+     * southern.png (not null)
+     * @return a new, orphan node
+     */
+    private Node createStarMapDomes(String assetPath) {
+        assert assetPath != null;
+
+        Node starNode = new Node(starsNodeName);
+
+        Geometry northGeometry = new Geometry("northern stars", hemisphereMesh);
+        starNode.attachChild(northGeometry);
+        String northAssetPath = assetPath + "/northern.png";
+        Material northMaterial
+                = MyAsset.createUnshadedMaterial(assetManager, northAssetPath);
+        northGeometry.setMaterial(northMaterial);
+
+        Quaternion orientNorth = new Quaternion();
+        orientNorth.fromAngleAxis(-FastMath.HALF_PI, unitZ);
+        northGeometry.setLocalRotation(orientNorth);
+
+        Geometry southGeometry
+                = new Geometry("southern stars", hemisphereMesh);
+        starNode.attachChild(southGeometry);
+        String southAssetPath = assetPath + "/southern.png";
+        Material southMaterial
+                = MyAsset.createUnshadedMaterial(assetManager, southAssetPath);
+        southGeometry.setMaterial(southMaterial);
+
+        Quaternion orientSouth = new Quaternion();
+        orientSouth.fromAngleAxis(FastMath.HALF_PI, unitZ);
+        southGeometry.setLocalRotation(orientSouth);
+
+        return starNode;
+    }
+
+    /**
+     * Remove the stars node (if it exists) from the scene graph.
      */
     private void removeStarsNode() {
         Node starsNode = getStarsNode();

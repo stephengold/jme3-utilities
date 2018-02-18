@@ -74,7 +74,8 @@ import jme3utilities.mesh.DomeMesh;
  * adjusted by invoking setCloudsSpeed(). Flatten the clouds for best results;
  * this puts them on a translucent "clouds only" dome.
  * <p>
- * To simulate star motion, additional geometries are added: a star cube.
+ * To simulate star motion, additional geometries are added: either 2 domes or a
+ * cube.
  * <p>
  * For scenes with low horizons, an optional "bottom" dome can also be added.
  *

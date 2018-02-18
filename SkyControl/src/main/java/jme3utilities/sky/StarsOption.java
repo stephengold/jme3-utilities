@@ -41,5 +41,11 @@ public enum StarsOption {
      * Render stars on the top dome. This uses the fewest triangles, but star
      * motion will be disabled. A fine option for daytime use.
      */
-    TopDome;
+    TopDome,
+    /**
+     * Render stars on 2 separate domes, one for the northern hemisphere and one
+     * for the southern hemisphere. Use this option when combining star motion
+     * with an edge filter.
+     */
+    TwoDomes;
 }
