@@ -5,7 +5,7 @@
 + Added axisIndex(), describe(), describeType(), halfExtents(), height(),
   radius(), setHalfExtents(), setHeight(), and setRadius() methods to the
   MyShape utility class.
-+ Copied source files from jme3-bullet library and correcting many minor issues.
++ Copied source files from jme3-bullet library and corrected many minor issues.
 
 ## Version 0.1.2 released on 26 January 2018
 
