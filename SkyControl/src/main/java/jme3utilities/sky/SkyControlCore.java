@@ -100,6 +100,12 @@ public class SkyControlCore extends SubtreeControl {
     final private static Logger logger
             = Logger.getLogger(SkyControlCore.class.getName());
     /**
+     * reusable mesh for smooth, inward-facing domes
+     */
+    final private static DomeMesh hemisphereMesh = new DomeMesh(numRimSamples,
+            numLongitudinalSamples, Constants.topU, Constants.topV,
+            Constants.uvScale, true);
+    /**
      * local copy of {@link com.jme3.math.Quaternion#IDENTITY}
      */
     final private static Quaternion rotationIdentity = new Quaternion();
@@ -846,10 +852,7 @@ public class SkyControlCore extends SubtreeControl {
         if (starMotionFlag) {
             setStarMaps("equator");
         }
-
-        DomeMesh topMesh = new DomeMesh(numRimSamples, numLongitudinalSamples,
-                Constants.topU, Constants.topV, Constants.uvScale, true);
-        Geometry topDome = new Geometry(topName, topMesh);
+        Geometry topDome = new Geometry(topName, hemisphereMesh.clone());
         subtree.attachChild(topDome);
         topDome.setMaterial(topMaterial);
 
@@ -869,10 +872,7 @@ public class SkyControlCore extends SubtreeControl {
             assert cloudFlattening > 0f : cloudFlattening;
             assert cloudFlattening < 1f : cloudFlattening;
 
-            DomeMesh cloudsMesh = new DomeMesh(numRimSamples,
-                    numLongitudinalSamples, Constants.topU, Constants.topV,
-                    Constants.uvScale, true);
-            Geometry cloudsOnlyDome = new Geometry(cloudsName, cloudsMesh);
+            Geometry cloudsOnlyDome = new Geometry(cloudsName, hemisphereMesh);
             subtree.attachChild(cloudsOnlyDome);
             /*
              * Flatten the clouds-only dome in order to foreshorten clouds
