@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -192,6 +192,16 @@ public class TestSkyControlHud
      */
     boolean getBloomFlag() {
         boolean result = isChecked("bloom");
+        return result;
+    }
+
+    /**
+     * Read the status of the "enable cartoon" check box.
+     *
+     * @return true if the box is checked, otherwise false
+     */
+    boolean getCartoonFlag() {
+        boolean result = isChecked("cartoon");
         return result;
     }
 

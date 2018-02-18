@@ -312,6 +312,16 @@
                         </panel>
 
                         <panel style="indentPanel">
+                            <control name="checkbox" id="cartoonCheckBox"
+                                     checked="false"
+                                     width="20"/>
+                            <control name="label"
+                                     width="12"/>
+                            <control name="label"
+                                     text="enable cartoon filter"/>
+                        </panel>
+
+                        <panel style="indentPanel">
                             <control name="checkbox" id="floorCheckBox"
                                      checked="false"
                                      width="20"/>

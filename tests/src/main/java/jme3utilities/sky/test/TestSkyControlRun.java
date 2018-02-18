@@ -39,6 +39,7 @@ import com.jme3.math.Plane;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.filters.BloomFilter;
+import com.jme3.post.filters.CartoonEdgeFilter;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -118,6 +119,10 @@ public class TestSkyControlRun
      * true &rarr; show the HUD when this state is enabled
      */
     private boolean showHud = true;
+    /**
+     * cartoon-style edge-detection filter
+     */
+    private CartoonEdgeFilter cartoonEdgeFilter = null;
     /**
      * main light-source in the scene, which represents the sun or moon
      */
@@ -334,9 +339,10 @@ public class TestSkyControlRun
             addWater();
         }
         /*
-         * Add bloom filter to the main view port.
+         * Add other filters to the main view port.
          */
         addBloom(viewPort);
+        addCartoonEdges(viewPort);
     }
 
     /**
@@ -454,6 +460,8 @@ public class TestSkyControlRun
          */
         boolean bloomFlag = hud.getBloomFlag();
         skyControl.getUpdater().setBloomEnabled(bloomFlag);
+        boolean cartoonFlag = hud.getCartoonFlag();
+        cartoonEdgeFilter.setEnabled(cartoonFlag);
         boolean shadowFiltersFlag = hud.getShadowFiltersFlag();
         skyControl.getUpdater().setShadowFiltersEnabled(shadowFiltersFlag);
 
@@ -525,6 +533,20 @@ public class TestSkyControlRun
         int numSamples = TestSkyControl.numSamples;
         Misc.getFpp(viewPort, assetManager, numSamples).addFilter(bloom);
         skyControl.getUpdater().addBloomFilter(bloom);
+    }
+
+    /**
+     * Add a cartoon-edge filter to a specified view port.
+     *
+     * @param viewPort (not null)
+     */
+    private void addCartoonEdges(ViewPort viewPort) {
+        assert viewPort != null;
+
+        cartoonEdgeFilter = new CartoonEdgeFilter();
+        int numSamples = TestSkyControl.numSamples;
+        Misc.getFpp(viewPort, assetManager, numSamples)
+                .addFilter(cartoonEdgeFilter);
     }
 
     /**
