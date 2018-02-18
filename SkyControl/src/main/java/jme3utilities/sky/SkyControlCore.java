@@ -291,10 +291,7 @@ public class SkyControlCore extends SubtreeControl {
      */
     public void clearStarMaps() {
         if (starMotionFlag) {
-            Spatial starsNode = MySpatial.findChild(subtree, starsNodeName);
-            if (starsNode != null) {
-                subtree.detachChild(starsNode);
-            }
+            removeStarsNode();
         } else {
             SkyMaterial topMaterial = getTopMaterial();
             topMaterial.removeStars();
@@ -491,12 +488,9 @@ public class SkyControlCore extends SubtreeControl {
         Validate.nonEmpty(assetName, "asset name");
 
         if (starMotionFlag) {
-            Node starsNode = getStarsNode();
-            if (starsNode != null) {
-                int index = subtree.detachChild(starsNode);
-                assert index == 0 : index;
-            }
-            starsNode = MyAsset.createStarMapQuads(assetManager, assetName);
+            removeStarsNode();
+            Node starsNode
+                    = MyAsset.createStarMapQuads(assetManager, assetName);
             starsNode.setName(starsNodeName);
             subtree.attachChildAt(starsNode, 0);
         } else {
@@ -882,6 +876,17 @@ public class SkyControlCore extends SubtreeControl {
             float yScale = 1f - cloudFlattening;
             cloudsOnlyDome.setLocalScale(1f, yScale, 1f);
             cloudsOnlyDome.setMaterial(cloudsMaterial);
+        }
+    }
+
+    /**
+     * Remove the stars node (if one exists) from the scene graph.
+     */
+    private void removeStarsNode() {
+        Node starsNode = getStarsNode();
+        if (starsNode != null) {
+            int index = subtree.detachChild(starsNode);
+            assert index == 0 : index;
         }
     }
 
