@@ -21,7 +21,7 @@ Summary of SkyControl features:
  + sun, moon, stars, horizon haze, and up to 6 cloud layers
  + compatible with static backgrounds such as cube maps
  + high resolution textures are provided -- or customize with your own textures
- + compatible with effects such as SimpleWater, shadows, and bloom
+ + compatible with effects such as SimpleWater, shadows, bloom, and cartoon edges
  + continuous and reversible motion and blending of cloud layers
  + option to foreshorten clouds near the horizon
  + continuous and reversible motion of sun, moon, and stars based on time of day
@@ -239,11 +239,12 @@ typically a good place to add SkyControl.
  2. In the import section of "Main.java", add the following code:
 
         import jme3utilities.sky.SkyControl;
+        import jme3utilities.sky.StarsOption;
 
  3. Scroll down to the simpleInitApp() method and insert the following code just
     before the final close-brace:
 
-        SkyControl sc = new SkyControl(assetManager, cam, 0.9f, true, true);
+        SkyControl sc = new SkyControl(assetManager, cam, 0.9f, StarsOption.Cube, true);
         rootNode.addControl(sc);
 
 The parameters of the constructor are documented in the Javadoc for the
@@ -320,11 +321,12 @@ after the sky cube in the scene graph.
  1. In the import section of "CubeMapExample.java", add the following code:
 
         import jme3utilities.sky.SkyControl;
+        import jme3utilities.sky.StarsOption;
 
  2. Scroll down to the initializeSky() method and insert the following code just
     before the final close-brace:
 
-        SkyControl sc = new SkyControl(assetManager, cam, 0.8f, false, true);
+        SkyControl sc = new SkyControl(assetManager, cam, 0.8f, StarsOption.TopDome, true);
         rootNode.addControl(sc);
 
 For now, we've turned star motion off, since that simplifies things. The lower
@@ -394,7 +396,8 @@ For a more dazzling sun, apply a bloom filter to the viewport:
     BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
     bloom.setBlurScale(2.5f);
     bloom.setExposurePower(1f);
-    Misc.getFpp(viewPort, assetManager).addFilter(bloom);
+    int numSamples = settings.getSamples();
+    Misc.getFpp(viewPort, assetManager, numSamples).addFilter(bloom);
     sc.getUpdater().addBloomFilter(bloom);
 
 #### Adding star motion
@@ -402,10 +405,10 @@ For a more dazzling sun, apply a bloom filter to the viewport:
 To add star motion, it's not sufficient simply to change the control's
 constructor from
 
-    SkyControl sc = new SkyControl(assetManager, cam, 0.8f, false, true);
+    SkyControl sc = new SkyControl(assetManager, cam, 0.8f, StarsOption.TopDome, true);
 to
 
-    SkyControl sc = new SkyControl(assetManager, cam, 0.8f, true, true);
+    SkyControl sc = new SkyControl(assetManager, cam, 0.8f, StarsOption.Cube, true);
 
 It's also necessary to rotate the cube map to match SkyControl's notions of time
 and space.  To achieve this, override the application's simpleUpdate() method:
