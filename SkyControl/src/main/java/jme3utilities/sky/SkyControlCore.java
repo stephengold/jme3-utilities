@@ -71,9 +71,9 @@ import jme3utilities.mesh.DomeMesh;
  * adjusted by invoking setCloudsRate(). Flatten the clouds for best results;
  * this puts them on a translucent "clouds only" dome.
  * <p>
- * To simulate star motion, additional geometries are added: a star cube and an
- * optional "bottom" dome, which extends the horizon haze for scenes with a low
- * horizon.
+ * To simulate star motion, additional geometries are added: a star cube.
+ * <p>
+ * For scenes with low horizons, an optional "bottom" dome can also be added.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -137,7 +137,7 @@ public class SkyControlCore extends SubtreeControl {
     private AssetManager assetManager;
     /**
      * true to create a material and geometry for the hemisphere below the
-     * horizon, false to leave this hemisphere to background color (if
+     * horizon, false to leave this region to background color (if
      * starMotionFlag==false) or stars only (if starMotionFlag==true): set by
      * constructor
      */
@@ -153,7 +153,8 @@ public class SkyControlCore extends SubtreeControl {
     protected boolean starMotionFlag;
     /**
      * which camera to track: set by constructor or
-     * {@link #setCamera(com.jme3.renderer.Camera)}
+     * {@link #setCamera(com.jme3.renderer.Camera)} or
+     * {@link #render(com.jme3.renderer.RenderManager, com.jme3.renderer.ViewPort)}
      */
     private Camera camera;
     /**
@@ -476,7 +477,7 @@ public class SkyControlCore extends SubtreeControl {
     /**
      * Alter the star map.
      *
-     * @param assetName if starMotion is true: name of a cube map folder in
+     * @param assetName if starMotion is true: name of a cube-map folder in
      * Textures/skies/star-maps (not null, not empty)<br>
      * if starMotion is false: path to texture asset (not null, not empty)
      */
@@ -613,7 +614,7 @@ public class SkyControlCore extends SubtreeControl {
     }
 
     /**
-     * Access the star cube node.
+     * Access the star-cube node.
      *
      * @return the pre-existing node (or null if none)
      */

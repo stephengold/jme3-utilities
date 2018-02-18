@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -74,9 +74,9 @@ import jme3utilities.mesh.DomeMesh;
  * adjusted by invoking setCloudsSpeed(). Flatten the clouds for best results;
  * this puts them on a translucent "clouds only" dome.
  * <p>
- * To simulate star motion, additional geometries are added: a star cube and an
- * optional "bottom" dome that extends the horizon haze for scenes with a low
- * horizon.
+ * To simulate star motion, additional geometries are added: a star cube.
+ * <p>
+ * For scenes with low horizons, an optional "bottom" dome can also be added.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -192,10 +192,9 @@ public class SkyControl extends SkyControlCore {
      * @param cloudFlattening the oblateness (ellipticity) of the dome with the
      * clouds: 0 &rarr; no flattening (hemisphere), 1 &rarr; maximum flattening
      * @param starMotion true to simulate moving stars, false for fixed stars
-     * @param bottomDome true to create a material and geometry for the
-     * hemisphere below the horizon, false to leave this hemisphere to
-     * background color (if starMotionFlag=false) or stars (if
-     * starMotionFlag=true)
+     * @param bottomDome true to create a material and geometry for the region
+     * below the top dome, false to leave this region to background color (if
+     * starMotionFlag=false) or stars (if starMotionFlag=true)
      */
     public SkyControl(AssetManager assetManager, Camera camera,
             float cloudFlattening, boolean starMotion, boolean bottomDome) {
