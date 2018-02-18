@@ -191,14 +191,15 @@ public class SkyControl extends SkyControlCore {
      * @param camera the application's camera (not null)
      * @param cloudFlattening the oblateness (ellipticity) of the dome with the
      * clouds: 0 &rarr; no flattening (hemisphere), 1 &rarr; maximum flattening
-     * @param starMotion true to simulate moving stars, false for fixed stars
-     * @param bottomDome true to create a material and geometry for the region
-     * below the top dome, false to leave this region to background color (if
-     * starMotionFlag=false) or stars (if starMotionFlag=true)
+     * @param starsOption how stars are rendered (not null)
+     * @param bottomDome true to create a material and geometry for the
+     * hemisphere below the horizon, false to leave this region to background
+     * color (if starsOption==TopDome) or stars (if starsOption!=TopDome)
      */
     public SkyControl(AssetManager assetManager, Camera camera,
-            float cloudFlattening, boolean starMotion, boolean bottomDome) {
-        super(assetManager, camera, cloudFlattening, starMotion, bottomDome);
+            float cloudFlattening, StarsOption starsOption,
+            boolean bottomDome) {
+        super(assetManager, camera, cloudFlattening, starsOption, bottomDome);
 
         sunAndStars = new SunAndStars();
         updater = new Updater();
@@ -206,6 +207,29 @@ public class SkyControl extends SkyControlCore {
         setSunStyle("Textures/skies/suns/hazy-disc.png");
 
         assert !isEnabled();
+    }
+
+    /**
+     * Instantiate a disabled control for no clouds, full moon, no cloud
+     * modulation, no lights, no shadows, and no viewports. For a visible sky,
+     * the control must be (1) added to a node of the scene graph and (2)
+     * enabled.
+     *
+     * @param assetManager for loading textures and material definitions (not
+     * null)
+     * @param camera the application's camera (not null)
+     * @param cloudFlattening the oblateness (ellipticity) of the dome with the
+     * clouds: 0 &rarr; no flattening (hemisphere), 1 &rarr; maximum flattening
+     * @param starMotion true to simulate moving stars, false for fixed stars
+     * @param bottomDome true to create a material and geometry for the region
+     * below the top dome, false to leave this region to background color (if
+     * starMotionFlag==false) or stars (if starMotionFlag==true)
+     */
+    public SkyControl(AssetManager assetManager, Camera camera,
+            float cloudFlattening, boolean starMotion, boolean bottomDome) {
+        this(assetManager, camera, cloudFlattening,
+                starMotion ? StarsOption.Cube : StarsOption.TopDome,
+                bottomDome);
     }
     // *************************************************************************
     // new methods exposed

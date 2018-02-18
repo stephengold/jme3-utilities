@@ -144,7 +144,7 @@ public class SkyControlCore extends SubtreeControl {
     /**
      * true to create a material and geometry for the hemisphere below the
      * horizon, false to leave this region to background color (if
-     * starMotionFlag==false) or stars only (if starMotionFlag==true): set by
+     * starsOption==TopDome) or stars only (if starsOption!=TopDome): set by
      * constructor
      */
     private boolean bottomDomeFlag;
@@ -153,10 +153,6 @@ public class SkyControlCore extends SubtreeControl {
      * rotation
      */
     private boolean stabilizeFlag = false;
-    /**
-     * true to simulate moving stars, false for fixed stars: set by constructor
-     */
-    protected boolean starMotionFlag;
     /**
      * which camera to track: set by constructor or
      * {@link #setCamera(com.jme3.renderer.Camera)} or
@@ -186,6 +182,10 @@ public class SkyControlCore extends SubtreeControl {
      * 0.09)
      */
     protected float lunarLatitude = 0f;
+    /**
+     * how stars are rendered: set by constructor
+     */
+    protected StarsOption starsOption;
     // *************************************************************************
     // constructors
 
@@ -196,7 +196,7 @@ public class SkyControlCore extends SubtreeControl {
     public SkyControlCore() {
         assetManager = null;
         bottomDomeFlag = false;
-        starMotionFlag = false;
+        starsOption = StarsOption.TopDome;
         camera = null;
         cloudLayers = null;
     }
@@ -211,16 +211,15 @@ public class SkyControlCore extends SubtreeControl {
      * null)
      * @param camera the application's camera (not null)
      * @param cloudFlattening the oblateness (ellipticity) of the dome with the
-     * clouds (&ge; 0, &lt;1, 0 &rarr; no flattening (hemisphere), 1 &rarr;
+     * clouds (&ge;0, &lt;1, 0 &rarr; no flattening (hemisphere), 1 &rarr;
      * maximum flattening
-     * @param starMotionFlag true to simulate moving stars, false for fixed
-     * stars
+     * @param starsOption how stars are rendered (not null)
      * @param bottomDomeFlag true to create a bottom dome, false to leave this
-     * region to background color (if starMotionFlag=false) or stars (if
-     * starMotionFlag=true)
+     * region to background color (if starsOption==TopDome) or stars (if
+     * starsOption!=TopDome)
      */
     public SkyControlCore(AssetManager assetManager, Camera camera,
-            float cloudFlattening, boolean starMotionFlag,
+            float cloudFlattening, StarsOption starsOption,
             boolean bottomDomeFlag) {
         Validate.nonNull(assetManager, "asset manager");
         Validate.nonNull(camera, "camera");
@@ -229,10 +228,11 @@ public class SkyControlCore extends SubtreeControl {
             throw new IllegalArgumentException(
                     "flattening should be between 0 and 1");
         }
+        Validate.nonNull(starsOption, "stars option");
 
         this.assetManager = assetManager;
         this.camera = camera;
-        this.starMotionFlag = starMotionFlag;
+        this.starsOption = starsOption;
         this.bottomDomeFlag = bottomDomeFlag;
         /*
          * Create and initialize the sky material for sun, moon, and haze.
@@ -244,7 +244,7 @@ public class SkyControlCore extends SubtreeControl {
                 topCloudLayers);
         topMaterial.initialize();
         topMaterial.addHaze();
-        if (!starMotionFlag) {
+        if (starsOption == StarsOption.TopDome) {
             topMaterial.addStars();
         }
 
@@ -283,6 +283,32 @@ public class SkyControlCore extends SubtreeControl {
 
         assert !isEnabled();
     }
+
+    /**
+     * Instantiate a disabled control for no clouds, full moon, no cloud
+     * modulation, no lights, no shadows, and no viewports. For a visible sky,
+     * the control must be (1) added to a node of the scene graph and (2)
+     * enabled.
+     *
+     * @param assetManager for loading textures and material definitions (not
+     * null)
+     * @param camera the application's camera (not null)
+     * @param cloudFlattening the oblateness (ellipticity) of the dome with the
+     * clouds (&ge;0, &lt;1, 0 &rarr; no flattening (hemisphere), 1 &rarr;
+     * maximum flattening
+     * @param starMotionFlag true to simulate moving stars, false for fixed
+     * stars
+     * @param bottomDomeFlag true to create a bottom dome, false to leave this
+     * region to background color (if starMotionFlag=false) or stars (if
+     * starMotionFlag=true)
+     */
+    public SkyControlCore(AssetManager assetManager, Camera camera,
+            float cloudFlattening, boolean starMotionFlag,
+            boolean bottomDomeFlag) {
+        this(assetManager, camera, cloudFlattening,
+                starMotionFlag ? StarsOption.Cube : StarsOption.TopDome,
+                bottomDomeFlag);
+    }
     // *************************************************************************
     // new methods exposed
 
@@ -290,11 +316,18 @@ public class SkyControlCore extends SubtreeControl {
      * Clear the star maps.
      */
     public void clearStarMaps() {
-        if (starMotionFlag) {
-            removeStarsNode();
-        } else {
-            SkyMaterial topMaterial = getTopMaterial();
-            topMaterial.removeStars();
+        switch (starsOption) {
+            case Cube:
+                removeStarsNode();
+                break;
+
+            case TopDome:
+                SkyMaterial topMaterial = getTopMaterial();
+                topMaterial.removeStars();
+                break;
+
+            default:
+                throw new IllegalStateException();
         }
     }
 
@@ -480,22 +513,29 @@ public class SkyControlCore extends SubtreeControl {
     /**
      * Alter the star map.
      *
-     * @param assetName if starMotion is true: name of a cube-map folder in
+     * @param assetName if starsOption==Cube: name of a cube-map folder in
      * Textures/skies/star-maps (not null, not empty)<br>
-     * if starMotion is false: path to texture asset (not null, not empty)
+     * if starsOption==TopDome: path to texture asset (not null, not empty)
      */
     final public void setStarMaps(String assetName) {
         Validate.nonEmpty(assetName, "asset name");
 
-        if (starMotionFlag) {
-            removeStarsNode();
-            Node starsNode
-                    = MyAsset.createStarMapQuads(assetManager, assetName);
-            starsNode.setName(starsNodeName);
-            subtree.attachChildAt(starsNode, 0);
-        } else {
-            SkyMaterial topMaterial = getTopMaterial();
-            topMaterial.addStars(assetName);
+        Node starNode;
+        switch (starsOption) {
+            case Cube:
+                removeStarsNode();
+                starNode = MyAsset.createStarMapQuads(assetManager, assetName);
+                starNode.setName(starsNodeName);
+                subtree.attachChildAt(starNode, 0);
+                break;
+
+            case TopDome:
+                SkyMaterial topMaterial = getTopMaterial();
+                topMaterial.addStars(assetName);
+                break;
+
+            default:
+                throw new IllegalStateException();
         }
     }
 
@@ -614,7 +654,7 @@ public class SkyControlCore extends SubtreeControl {
     }
 
     /**
-     * Access the stars node. For starMotion==true, this is the node that
+     * Access the stars node. For starsOption==Cube, this is the node that
      * parents the star geometries.
      *
      * @return the pre-existing node (or null if none)
@@ -773,7 +813,11 @@ public class SkyControlCore extends SubtreeControl {
 
         assetManager = importer.getAssetManager();
         stabilizeFlag = ic.readBoolean("stabilizeFlag", false);
-        starMotionFlag = ic.readBoolean("starMotionFlag", false);
+        /* for backward compatibility with version 0.9.11 and earlier: */
+        boolean starMotionFlag = ic.readBoolean("starMotionFlag", false);
+        starsOption = starMotionFlag ? StarsOption.Cube : StarsOption.TopDome;
+        starsOption = ic.readEnum("starsOption", StarsOption.class,
+                starsOption);
         /* camera not serialized */
         Savable[] sav = ic.readSavableArray("cloudLayers", null);
         cloudLayers = new CloudLayer[sav.length];
@@ -811,7 +855,7 @@ public class SkyControlCore extends SubtreeControl {
         OutputCapsule oc = exporter.getCapsule(this);
 
         oc.write(stabilizeFlag, "stabilizeFlag", false);
-        oc.write(starMotionFlag, "starMotionFlag", false);
+        oc.write(starsOption, "starsOption", StarsOption.TopDome);
         /* camera not serialized */
         oc.write(cloudLayers, "cloudLayers", null);
         oc.write(cloudsAnimationTime, "cloudsAnimationTime", 0f);
@@ -844,7 +888,7 @@ public class SkyControlCore extends SubtreeControl {
          * Attach geometries to the sky node from the outside in
          * because they'll be rendered in that order.
          */
-        if (starMotionFlag) {
+        if (starsOption == StarsOption.Cube) {
             setStarMaps("equator");
         }
         Geometry topDome = new Geometry(topName, hemisphereMesh.clone());
