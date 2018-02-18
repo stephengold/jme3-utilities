@@ -122,6 +122,10 @@ public class TestSkyControlRun
      */
     private DirectionalLight mainLight = null;
     /**
+     * dumper for scene dump
+     */
+    final private Dumper dumper = new Dumper();
+    /**
      * floor control
      */
     private FloorControl floorControl = null;
@@ -134,15 +138,11 @@ public class TestSkyControlRun
      */
     private Node sceneNode = new Node("scene node");
     /**
-     * printer for scene dump
-     */
-    final private Dumper dumper = new Dumper();
-    /**
      * control under test
      */
     private SkyControl skyControl = null;
     /**
-     * star map background (external to SkyControl)
+     * star-map background (external to SkyControl)
      */
     private Spatial cubeMap = null;
     /**
@@ -164,6 +164,13 @@ public class TestSkyControlRun
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Dump the scene (as text) to the "standard" output stream.
+     */
+    void dump() {
+        dumper.dump(sceneNode);
+    }
 
     /**
      * Load the scene from an asset.
@@ -252,13 +259,6 @@ public class TestSkyControlRun
         SunAndStars sunAndStars = skyControl.getSunAndStars();
         Vector3f sunDirection = sunAndStars.sunDirection();
         MyCamera.look(cam, sunDirection);
-    }
-
-    /**
-     * Dump the scene (as text) to the "standard" output stream.
-     */
-    void dump() {
-        dumper.dump(sceneNode);
     }
 
     /**
@@ -608,6 +608,59 @@ public class TestSkyControlRun
     }
 
     /**
+     * Configure the camera, including flyCam.
+     */
+    private void initializeCamera() {
+        /*
+         * Point the camera 10 degrees north of west, tilted down 1 degree.
+         * The downward tilt is to work around a bug in SimpleWaterProcessor
+         * which was fixed at r10899.
+         */
+        cam.setLocation(new Vector3f(6.5f, 13f, 50f));
+        float altitudeAngle = MyMath.toRadians(-1f);
+        float azimuthAngle = MyMath.toRadians(280f);
+        Vector3f direction = MyVector3f.fromAltAz(altitudeAngle, azimuthAngle);
+        MyCamera.look(cam, direction);
+
+        flyCam.setDragToRotate(true);
+        flyCam.setRotationSpeed(2f);
+        flyCam.setMoveSpeed(20f);
+        flyCam.setUpVector(Vector3f.UNIT_Y);
+        flyCam.setZoomSpeed(20f);
+    }
+
+    /**
+     * Create a floor for the scene. Do this after the landscape is created and
+     * after the sky in attached.
+     */
+    private void initializeFloor() {
+        Material grass = landscapeControl.getGrass();
+        float textureScale = 10f;
+        floorControl = new FloorControl(cam, grass, textureScale);
+        sceneNode.addControl(floorControl);
+    }
+
+    /**
+     * Create, configure, and add the landscape/terrain.
+     */
+    private void initializeLandscape() {
+        rootNode.attachChild(sceneNode);
+        landscapeControl = new LandscapeControl(assetManager);
+        sceneNode.addControl(landscapeControl);
+    }
+
+    /**
+     * Create light sources for the scene.
+     */
+    private void initializeLights() {
+        mainLight = new DirectionalLight();
+        mainLight.setName("main");
+
+        ambientLight = new AmbientLight();
+        ambientLight.setName("ambient");
+    }
+
+    /**
      * Add SkyControl to the scene and enable it.
      */
     private void initializeSky() {
@@ -665,58 +718,5 @@ public class TestSkyControlRun
         updater.addViewPort(viewPort);
         updater.setAmbientLight(ambientLight);
         updater.setMainLight(mainLight);
-    }
-
-    /**
-     * Configure the camera, including flyCam.
-     */
-    private void initializeCamera() {
-        /*
-         * Point the camera 10 degrees north of west, tilted down 1 degree.
-         * The downward tilt is to work around a bug in SimpleWaterProcessor
-         * which was fixed at r10899.
-         */
-        cam.setLocation(new Vector3f(6.5f, 13f, 50f));
-        float altitudeAngle = MyMath.toRadians(-1f);
-        float azimuthAngle = MyMath.toRadians(280f);
-        Vector3f direction = MyVector3f.fromAltAz(altitudeAngle, azimuthAngle);
-        MyCamera.look(cam, direction);
-
-        flyCam.setDragToRotate(true);
-        flyCam.setRotationSpeed(2f);
-        flyCam.setMoveSpeed(20f);
-        flyCam.setUpVector(Vector3f.UNIT_Y);
-        flyCam.setZoomSpeed(20f);
-    }
-
-    /**
-     * Create a floor for the scene. Do this after the landscape is created and
-     * after the sky in attached.
-     */
-    private void initializeFloor() {
-        Material grass = landscapeControl.getGrass();
-        float textureScale = 10f;
-        floorControl = new FloorControl(cam, grass, textureScale);
-        sceneNode.addControl(floorControl);
-    }
-
-    /**
-     * Create, configure, and add the landscape/terrain.
-     */
-    private void initializeLandscape() {
-        rootNode.attachChild(sceneNode);
-        landscapeControl = new LandscapeControl(assetManager);
-        sceneNode.addControl(landscapeControl);
-    }
-
-    /**
-     * Create light sources for the scene.
-     */
-    private void initializeLights() {
-        mainLight = new DirectionalLight();
-        mainLight.setName("main");
-
-        ambientLight = new AmbientLight();
-        ambientLight.setName("ambient");
     }
 }
