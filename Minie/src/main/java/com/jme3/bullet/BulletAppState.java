@@ -38,6 +38,7 @@ import com.jme3.bullet.PhysicsSpace.BroadphaseType;
 import com.jme3.bullet.debug.BulletDebugAppState;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.ViewPort;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,6 +65,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     protected BulletDebugAppState debugAppState;
     protected float tpf;
     protected Future physicsFuture;
+    protected ViewPort[] debugViewPorts;
 
     /**
      * Creates a new BulletAppState running a PhysicsSpace for physics
@@ -209,6 +211,17 @@ public class BulletAppState implements AppState, PhysicsTickListener {
         this.debugEnabled = debugEnabled;
     }
 
+    public void setDebugViewPorts(ViewPort[] viewPorts) {
+        debugViewPorts = viewPorts;
+        if (debugEnabled) {
+            if (debugAppState != null) {
+                stateManager.detach(debugAppState);
+            }
+            debugAppState = new BulletDebugAppState(pSpace, debugViewPorts);
+            stateManager.attach(debugAppState);
+        }
+    }
+
     public boolean isDebugEnabled() {
         return debugEnabled;
     }
@@ -222,7 +235,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
             PhysicsSpace.setLocalThreadPhysicsSpace(pSpace);
         }
         if (debugEnabled) {
-            debugAppState = new BulletDebugAppState(pSpace);
+            debugAppState = new BulletDebugAppState(pSpace, debugViewPorts);
             stateManager.attach(debugAppState);
         }
     }
@@ -234,7 +247,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     @Override
     public void update(float tpf) {
         if (debugEnabled && debugAppState == null && pSpace != null) {
-            debugAppState = new BulletDebugAppState(pSpace);
+            debugAppState = new BulletDebugAppState(pSpace, debugViewPorts);
             stateManager.attach(debugAppState);
         } else if (!debugEnabled && debugAppState != null) {
             stateManager.detach(debugAppState);

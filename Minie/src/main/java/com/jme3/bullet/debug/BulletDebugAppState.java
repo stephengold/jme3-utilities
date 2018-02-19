@@ -66,7 +66,7 @@ public class BulletDebugAppState extends AbstractAppState {
     protected AssetManager assetManager;
     protected final PhysicsSpace space;
     protected final Node physicsDebugRootNode = new Node("Physics Debug Root Node");
-    protected ViewPort viewPort;
+    protected ViewPort[] viewPorts;
     protected RenderManager rm;
     public Material DEBUG_BLUE;
     public Material DEBUG_RED;
@@ -80,8 +80,9 @@ public class BulletDebugAppState extends AbstractAppState {
     protected HashMap<PhysicsCharacter, Spatial> characters = new HashMap<>();
     protected HashMap<PhysicsVehicle, Spatial> vehicles = new HashMap<>();
 
-    public BulletDebugAppState(PhysicsSpace space) {
+    public BulletDebugAppState(PhysicsSpace space, ViewPort[] viewPorts) {
         this.space = space;
+        this.viewPorts = viewPorts;
     }
 
     public DebugTools getNewDebugTools() {
@@ -100,14 +101,16 @@ public class BulletDebugAppState extends AbstractAppState {
         this.assetManager = app.getAssetManager();
         setupMaterials(app);
         physicsDebugRootNode.setCullHint(Spatial.CullHint.Never);
-        viewPort = rm.createMainView("Physics Debug Overlay", app.getCamera());
-        viewPort.setClearFlags(false, true, false);
-        viewPort.attachScene(physicsDebugRootNode);
+        for (ViewPort viewPort : viewPorts) {
+            viewPort.attachScene(physicsDebugRootNode);
+        }
     }
 
     @Override
     public void cleanup() {
-        rm.removeMainView(viewPort);
+        for (ViewPort viewPort : viewPorts) {
+            viewPort.detachScene(physicsDebugRootNode);
+        }
         super.cleanup();
     }
 
@@ -128,7 +131,7 @@ public class BulletDebugAppState extends AbstractAppState {
     @Override
     public void render(RenderManager rm) {
         super.render(rm);
-        if (viewPort != null) {
+        for (ViewPort viewPort : viewPorts) {
             rm.renderScene(physicsDebugRootNode, viewPort);
         }
     }
