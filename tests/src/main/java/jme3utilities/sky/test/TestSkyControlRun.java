@@ -209,7 +209,6 @@ public class TestSkyControlRun
          * Update cached references to refer to the newly loaded scene.
          */
         cubeMap = MySpatial.findChild(loadedNode, cubeName);
-        assert cubeMap != null;
         floorControl = loadedNode.getControl(FloorControl.class);
         assert floorControl != null;
         landscapeControl = loadedNode.getControl(LandscapeControl.class);
