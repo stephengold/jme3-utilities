@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.4.0 released on TBD
+## Version 2.4.0 released on 18 February 2018
 
  + Added a findNamed() method to the MySpatial class
  + Simplified MyAsset.createStarMapQuads() by using RectangleMesh
