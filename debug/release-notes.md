@@ -1,6 +1,6 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.8.8 released on TBD
+## Version 0.8.8 released on 18 February 2018
 
  + Added mesh descriptions when dumping a scene graph.
 

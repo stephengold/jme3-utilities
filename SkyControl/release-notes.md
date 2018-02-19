@@ -1,6 +1,6 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.12 released on TBD
+## Version 0.9.12 released on 18 February 2018
 
 Notable changes:
  + add new constructors and a TwoDomes stars option, for use with edge filters
