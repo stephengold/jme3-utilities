@@ -82,12 +82,17 @@ public class SphereCollisionShape extends CollisionShape {
     }
 
     /**
-     * WARNING - CompoundCollisionShape scaling has no effect.
+     * WARNING - non-uniform scaling has no effect.
+     *
+     * @param scale desired scale factor for each local axis (not null)
      */
     @Override
     public void setScale(Vector3f scale) {
-        if (!scale.equals(Vector3f.UNIT_XYZ)) {
-            Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "SphereCollisionShape cannot be scaled");
+        if (scale.x != scale.y || scale.y != scale.z) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
+                    "SphereCollisionShape cannot be scaled non-uniformly.");
+        } else {
+            super.setScale(scale);
         }
     }
 
