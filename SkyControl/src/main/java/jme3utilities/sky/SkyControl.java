@@ -225,7 +225,10 @@ public class SkyControl extends SkyControlCore {
      * @param bottomDome true to create a material and geometry for the region
      * below the top dome, false to leave this region to background color (if
      * starMotionFlag==false) or stars (if starMotionFlag==true)
+     * @deprecated Use
+     * {@link #SkyControl(com.jme3.asset.AssetManager, com.jme3.renderer.Camera, float, jme3utilities.sky.StarsOption, boolean)}
      */
+    @Deprecated
     public SkyControl(AssetManager assetManager, Camera camera,
             float cloudFlattening, boolean starMotion, boolean bottomDome) {
         this(assetManager, camera, cloudFlattening,

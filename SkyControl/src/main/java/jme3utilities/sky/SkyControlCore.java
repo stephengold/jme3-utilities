@@ -306,7 +306,10 @@ public class SkyControlCore extends SubtreeControl {
      * @param bottomDomeFlag true to create a bottom dome, false to leave this
      * region to background color (if starMotionFlag=false) or stars (if
      * starMotionFlag=true)
+     * @deprecated Use
+     * {@link #SkyControlCore(com.jme3.asset.AssetManager, com.jme3.renderer.Camera, float, jme3utilities.sky.StarsOption, boolean)}
      */
+    @Deprecated
     public SkyControlCore(AssetManager assetManager, Camera camera,
             float cloudFlattening, boolean starMotionFlag,
             boolean bottomDomeFlag) {
