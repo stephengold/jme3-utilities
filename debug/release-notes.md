@@ -1,8 +1,12 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.8.8 released on TBD
+
+ + Added mesh descriptions when dumping a scene graph.
+
 ## Version 0.8.7 released on 2 February 2018
 
- + Based on heart library v2.2
+ + Based on heart library v2.2 .
 
 ## Version 0.8.6 released on 27 January 2018
 

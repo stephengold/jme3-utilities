@@ -1,5 +1,12 @@
 # release notes for the SkyControl library and related tests
 
+## Version 0.9.12 released on TBD
+
+Notable changes:
+ + add new constructors and a TwoDomes stars option, for use with edge filters
+ + add a --nocubes command-line parameter to TestSkyControl
+ + add a cartoon-edge filter to TestSkyControl
+
 ## Version 0.9.11 released on 25 January 2018
 
 Notable changes:
