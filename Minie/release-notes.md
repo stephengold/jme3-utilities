@@ -1,5 +1,12 @@
 # release notes for the Minie library and related tests
 
+## Version 0.2.1 released on TBD
+
++ Changed BulletDebugAppState to accept an array of viewports to add scenes to,
+  instead of creating its own viewport.
++ Added getAxis() method to the ConeCollisionShape class.
++ Allow uniform scaling of capsule, cylinder, and sphere shapes.
+
 ## Version 0.2.0 released on 2 February 2018
 
 + Added axisIndex(), describe(), describeType(), halfExtents(), height(),
