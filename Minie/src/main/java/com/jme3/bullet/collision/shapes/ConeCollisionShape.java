@@ -67,6 +67,15 @@ public class ConeCollisionShape extends CollisionShape {
         createShape();
     }
 
+    /**
+     * Determine the main axis of the shape.
+     *
+     * @return 0&rarr;X, 1&rarr;Y, 2&rarr;Z
+     */
+    public int getAxis() {
+        return axis;
+    }
+
     public float getRadius() {
         return radius;
     }

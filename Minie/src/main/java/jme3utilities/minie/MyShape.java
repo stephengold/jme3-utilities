@@ -36,7 +36,6 @@ import com.jme3.bullet.collision.shapes.CylinderCollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
 import com.jme3.math.Vector3f;
-import java.lang.reflect.Field;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -85,19 +84,7 @@ public class MyShape {
 
         } else if (shape instanceof ConeCollisionShape) {
             ConeCollisionShape cone = (ConeCollisionShape) shape;
-            Field axisField;
-            try {
-                axisField = ConeCollisionShape.class.getDeclaredField("axis");
-            } catch (NoSuchFieldException e) {
-                throw new RuntimeException();
-            }
-            axisField.setAccessible(true);
-
-            try {
-                result = (Integer) axisField.get(cone);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException();
-            }
+            result = cone.getAxis();
 
         } else if (shape instanceof CylinderCollisionShape) {
             CylinderCollisionShape cylinder = (CylinderCollisionShape) shape;
