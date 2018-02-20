@@ -1,6 +1,6 @@
 # release notes for the Minie library and related tests
 
-## Version 0.2.1 released on TBD
+## Version 0.2.1 released on 19 February 2018
 
 + Changed BulletDebugAppState to accept an array of viewports to add scenes to,
   instead of creating its own viewport.
