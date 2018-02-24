@@ -294,6 +294,28 @@ public class MyAnimation {
     }
 
     /**
+     * Find the specified track in the specified animation.
+     *
+     * @param animation the animation containing the track (not null,
+     * unaffected)
+     * @param track which track to find (unaffected)
+     * @return the track index (&ge;0) or -1 if not found
+     */
+    public static int findTrackIndex(Animation animation, Track track) {
+        int result = -1;
+        Track[] tracks = animation.getTracks();
+        int numTracks = tracks.length;
+        for (int index = 0; index < numTracks; index++) {
+            if (track == tracks[index]) {
+                result = index;
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Read the name of the target of the specified bone/spatial track in the
      * specified animation control.
      *
