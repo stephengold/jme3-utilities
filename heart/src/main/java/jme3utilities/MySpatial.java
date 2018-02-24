@@ -713,6 +713,39 @@ public class MySpatial {
     }
 
     /**
+     * Enumerate all animated meshes in the specified subtree of a scene graph.
+     * Note: recursive!
+     *
+     * @param subtree (not null, unaffected)
+     * @param storeResult (added to if not null)
+     * @return an expanded list (either storeResult or a new instance)
+     */
+    public static List<Mesh> listAnimatedMeshes(Spatial subtree,
+            List<Mesh> storeResult) {
+        Validate.nonNull(subtree, "subtree");
+        if (storeResult == null) {
+            storeResult = new ArrayList<>(10);
+        }
+
+        if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
+            Mesh mesh = geometry.getMesh();
+            if (mesh.isAnimated()) {
+                storeResult.add(mesh);
+            }
+
+        } else if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                listAnimatedMeshes(child, storeResult);
+            }
+        }
+
+        return storeResult;
+    }
+
+    /**
      * Enumerate all controls of the specified type in the specified subtree of
      * a scene graph. Note: recursive!
      *
@@ -744,39 +777,6 @@ public class MySpatial {
             List<Spatial> children = node.getChildren();
             for (Spatial child : children) {
                 listControls(child, controlType, storeResult);
-            }
-        }
-
-        return storeResult;
-    }
-
-    /**
-     * Enumerate all animated meshes in the specified subtree of a scene graph.
-     * Note: recursive!
-     *
-     * @param subtree (not null, unaffected)
-     * @param storeResult (added to if not null)
-     * @return an expanded list (either storeResult or a new instance)
-     */
-    public static List<Mesh> listAnimatedMeshes(Spatial subtree,
-            List<Mesh> storeResult) {
-        Validate.nonNull(subtree, "subtree");
-        if (storeResult == null) {
-            storeResult = new ArrayList<>(10);
-        }
-
-        if (subtree instanceof Geometry) {
-            Geometry geometry = (Geometry) subtree;
-            Mesh mesh = geometry.getMesh();
-            if (mesh.isAnimated()) {
-                storeResult.add(mesh);
-            }
-
-        } else if (subtree instanceof Node) {
-            Node node = (Node) subtree;
-            List<Spatial> children = node.getChildren();
-            for (Spatial child : children) {
-                listAnimatedMeshes(child, storeResult);
             }
         }
 
