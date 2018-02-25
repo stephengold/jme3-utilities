@@ -58,7 +58,7 @@ import java.util.logging.Logger;
 import jme3utilities.math.MyVector3f;
 
 /**
- * Utility methods for manipulating nodes and geometries.
+ * Utility methods for manipulating scene graphs, nodes, and geometries.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -781,6 +781,40 @@ public class MySpatial {
         }
 
         return storeResult;
+    }
+
+    /**
+     * Enumerate all spatials of the specified type in the specified subtree of
+     * a scene graph. Note: recursive!
+     *
+     * @param <T> superclass of Spatial
+     * @param subtree (not null, aliases created)
+     * @param spatialType superclass of Spatial to search for
+     * @param addResult (added to if not null)
+     * @return an expanded list (either storeResult or a new instance)
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Spatial> List<T> listSpatials(Spatial subtree,
+            Class<T> spatialType, List<T> addResult) {
+        Validate.nonNull(subtree, "subtree");
+        List<T> result = (addResult == null) ? new ArrayList<>(50) : addResult;
+
+        if (spatialType.isAssignableFrom(subtree.getClass())) {
+            T spatial = (T) subtree;
+            if (!result.contains(spatial)) {
+                result.add(spatial);
+            }
+        }
+
+        if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                listSpatials(child, spatialType, result);
+            }
+        }
+
+        return result;
     }
 
     /**
