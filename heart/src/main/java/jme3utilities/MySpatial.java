@@ -797,7 +797,7 @@ public class MySpatial {
     public static <T extends Spatial> List<T> listSpatials(Spatial subtree,
             Class<T> spatialType, List<T> addResult) {
         Validate.nonNull(subtree, "subtree");
-        List<T> result = (addResult == null) ? new ArrayList<>(50) : addResult;
+        List<T> result = (addResult == null) ? new ArrayList<T>(50) : addResult;
 
         if (spatialType.isAssignableFrom(subtree.getClass())) {
             T spatial = (T) subtree;
