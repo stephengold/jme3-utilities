@@ -25,7 +25,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 // a single-color material for use in wireframes or with JME's SkeletonDebugger
-// TODO add PointShape and rename this for version 3.0 of the library
 
 MaterialDef wireframe {
     MaterialParameters {
@@ -40,6 +39,9 @@ MaterialDef wireframe {
             NUM_BONES : NumberOfBones
         }
         FragmentShader GLSL110: Shaders/wireframe/wireframe.frag
+        RenderState {
+            Wireframe true
+        }
         VertexShader GLSL110:   Shaders/wireframe/wireframe.vert
         WorldParameters {
             ViewMatrix

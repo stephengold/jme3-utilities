@@ -451,7 +451,6 @@ final public class MyAsset {
 
         Material material
                 = new Material(assetManager, wireframeMaterialAssetPath);
-        material.getAdditionalRenderState().setWireframe(true);
         material.setColor("Color", color.clone());
         material.setFloat("PointSize", pointSize);
 

@@ -171,7 +171,6 @@ public class SkeletonVisualizer extends SubtreeControl {
         RenderState lineState = lineMaterial.getAdditionalRenderState();
         lineState.setBlendMode(BlendMode.Alpha);
         lineState.setDepthTest(false);
-        lineState.setWireframe(true);
 
         Texture headShape
                 = MyAsset.loadTexture(assetManager, defaultShapeAssetPath);
@@ -184,7 +183,6 @@ public class SkeletonVisualizer extends SubtreeControl {
         RenderState headState = headMaterial.getAdditionalRenderState();
         headState.setBlendMode(BlendMode.Alpha);
         headState.setDepthTest(false);
-        headState.setWireframe(true);
 
         assert !isEnabled();
     }
