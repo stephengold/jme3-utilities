@@ -200,19 +200,11 @@ final public class MyCamera {
      * @return radians from bottom of frustum to top of frustum (&ge;0)
      */
     public static float fovY(Camera camera) {
-        if (camera.isParallelProjection()) {
-            return 0f;
-        }
+        Validate.nonNull(camera, "camera");
 
-        float near = camera.getFrustumNear();
-        assert near > 0f : near;
+        float yTangent = yTangent(camera);
+        float fovY = 2f * FastMath.atan(yTangent);
 
-        float top = camera.getFrustumTop();
-        assert top > 0f : top;
-
-        float fovY = 2f * FastMath.atan(top / near);
-
-        assert fovY > 0f : fovY;
         return fovY;
     }
 
@@ -468,18 +460,23 @@ final public class MyCamera {
      * Calculate the vertical field-of-view tangent of the specified camera.
      *
      * @param camera camera to measure (not null, unaffected)
-     * @return tangent of the vertical field-of-view half-angle (&gt;0)
+     * @return tangent of the vertical field-of-view half-angle (&ge;0)
      */
     public static float yTangent(Camera camera) {
-        float near = camera.getFrustumNear();
-        assert near > 0f : near;
+        float yTangent;
+        if (camera.isParallelProjection()) {
+            yTangent = 0f;
+        } else {
+            float near = camera.getFrustumNear();
+            assert near > 0f : near;
 
-        float top = camera.getFrustumTop();
-        assert top > 0f : top;
+            float height = camera.getFrustumTop() - camera.getFrustumBottom();
+            assert height > 0f : height;
+            float halfHeight = height / 2f;
+            yTangent = halfHeight / near;
+            assert yTangent > 0f : yTangent;
+        }
 
-        float yTangent = top / near;
-
-        assert yTangent > 0f : yTangent;
         return yTangent;
     }
 
