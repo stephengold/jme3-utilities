@@ -716,7 +716,6 @@ public class PhysicsSpace {
 
     private native void setGravity(long spaceId, Vector3f gravity);
 
-    //TODO: getGravity
     private final Vector3f gravity = new Vector3f(0, -9.81f, 0);
 
     public Vector3f getGravity(Vector3f gravity) {

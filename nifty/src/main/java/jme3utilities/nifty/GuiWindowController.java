@@ -119,7 +119,7 @@ public class GuiWindowController extends WindowController {
     }
 
     /**
-     * Read a vector from the named bank of 3 sliders. TODO storeResult
+     * Read a vector from the named bank of 3 sliders.
      *
      * @param bankName the name (unique id infix) of the bank to read (not null)
      * @param transform how to transform the raw readings (not null)
