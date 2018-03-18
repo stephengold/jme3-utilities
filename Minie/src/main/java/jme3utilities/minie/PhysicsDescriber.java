@@ -85,8 +85,8 @@ public class PhysicsDescriber extends Describer {
 
         } else if (shape instanceof ConeCollisionShape) {
             ConeCollisionShape cone = (ConeCollisionShape) shape;
-            //int axis = cone.getAxis(); TODO
-            //result += describeAxis(axis);
+            int axis = cone.getAxis();
+            result += describeAxis(axis);
             float height = cone.getHeight();
             float radius = cone.getRadius();
             result += String.format("[h=%f,r=%f]", height, radius);
