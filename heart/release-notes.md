@@ -1,5 +1,12 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.5.0 released on TBD
+
+ + Set the Wireframe render-state flag in 3 material definitions
+ + Added a findTrackIndex() to the MyAnimation class
+ + Added a listSpatials() method to the MySpatial class
+ + Extended MyCamera.yTangent() to handle parallel projection
+
 ## Version 2.4.0 released on 18 February 2018
 
  + Added a findNamed() method to the MySpatial class
