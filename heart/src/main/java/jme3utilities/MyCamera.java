@@ -379,13 +379,17 @@ final public class MyCamera {
     /**
      * Alter a camera's field-of-view tangents.
      *
-     * @param camera camera to alter (not null)
+     * @param camera camera to alter (not null, perspective projection)
      * @param newTangent tangent of the vertical field-of-view half-angle
      * (&gt;0)
      */
     public static void setYTangent(Camera camera, float newTangent) {
         Validate.nonNull(camera, "camera");
         Validate.positive(newTangent, "tangent");
+        if (camera.isParallelProjection()) {
+            throw new IllegalArgumentException(
+                    "camera must have perspective enabled");
+        }
 
         float yTangent = yTangent(camera);
         float factor = newTangent / yTangent;
