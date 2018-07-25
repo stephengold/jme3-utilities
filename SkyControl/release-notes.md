@@ -1,6 +1,6 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.13 released on TBD
+## Version 0.9.13 released on 24 July 2018
 
  + deprecate the old constructors for SkyControl and SkyControlCore
  + rm bogus assert from TestSkyControlRun
