@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.7.12 released on TBD
+
+ + Based on version 2.5 of the jme3-utilities-heart library.
+ + Remove an obsolete TODO comment.
+ + Correct a typographical error in a comment.
+
 ## Version 0.7.11 released on 9 February 2018
 
  + Dynamically generate layouts for large infoboxes.

@@ -1,5 +1,11 @@
 # release notes for the Minie library and related tests
 
+## Version 0.2.2 released on TBD
+
++ Enhanced PhysicsDescriber to describe axes of cone shapes.
++ Based on version 2.5 of the jme3-utilities-heart library.
++ Remove an obsolete TODO comment.
+
 ## Version 0.2.1 released on 19 February 2018
 
 + Changed BulletDebugAppState to accept an array of viewports to add scenes to,
