@@ -1,5 +1,9 @@
 # release notes for the jme3-utilities-x library and related tests
 
+## Version 0.2.4 released on TBD
+
+ + Based on version 2.5 of heart library.
+
 ## Version 0.2.3 released on 25 January 2018
 
  + Removed all Bullet dependencies.

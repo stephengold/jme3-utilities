@@ -1,5 +1,9 @@
 # release notes for the Wes library and related tests
 
+## Version 0.3.6 released on TBD
+
+ + Based on version 2.5 of heart library.
+
 ## Version 0.3.5 released on 14 February 2018
 
  + Remove an irrelevant test against track length from

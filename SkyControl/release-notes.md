@@ -1,5 +1,11 @@
 # release notes for the SkyControl library and related tests
 
+## Version 0.9.13 released on TBD
+
+ + deprecate the old constructors for SkyControl and SkyControlCore
+ + rm bogus assert from TestSkyControlRun
+ + base on version 2.5 of heart library
+
 ## Version 0.9.12 released on 18 February 2018
 
 Notable changes:
