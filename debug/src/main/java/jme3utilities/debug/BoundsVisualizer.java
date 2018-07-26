@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -252,7 +252,7 @@ public class BoundsVisualizer extends SubtreeControl {
         if (subject == null || effectiveLineWidth < 1f) {
             subtree.detachAllChildren();
 
-        } else if (subtree.getChildren().isEmpty()) {
+        } else if (subtree.getQuantity() == 0) {
             addLines();
 
         } else {
@@ -297,7 +297,7 @@ public class BoundsVisualizer extends SubtreeControl {
      * Create a lines geometry and attach it to the empty subtree.
      */
     private void addLines() {
-        assert subtree.getChildren().isEmpty();
+        assert subtree.getQuantity() == 0;
 
         Mesh mesh;
         BoundingVolume bound = subject.getWorldBound();

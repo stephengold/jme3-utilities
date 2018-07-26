@@ -414,7 +414,7 @@ public class SkeletonVisualizer extends SubtreeControl {
 
         if (skeleton == null || skeleton.getBoneCount() == 0) {
             subtree.detachAllChildren();
-        } else if (subtree.getChildren().isEmpty()) {
+        } else if (subtree.getQuantity() == 0) {
             addGeometries();
         } else {
             updateGeometries();
@@ -448,7 +448,7 @@ public class SkeletonVisualizer extends SubtreeControl {
      * subtree.
      */
     private void addGeometries() {
-        assert subtree.getChildren().isEmpty();
+        assert subtree.getQuantity() == 0;
 
         SkeletonMesh headsMesh = new SkeletonMesh(skeleton, Mesh.Mode.Points);
         Geometry headsGeometry = new Geometry(headsName, headsMesh);

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -290,7 +290,7 @@ public class AxesVisualizer extends SubtreeControl {
     protected void controlUpdate(float updateInterval) {
         super.controlUpdate(updateInterval);
 
-        int numChildren = subtree.getChildren().size();
+        int numChildren = subtree.getQuantity();
         if (numChildren != numAxes) {
             subtree.detachAllChildren();
             addArrows();
@@ -337,7 +337,7 @@ public class AxesVisualizer extends SubtreeControl {
      * Create up to 3 arrow geometries and add them to the subtree.
      */
     private void addArrows() {
-        assert subtree.getChildren().isEmpty();
+        assert subtree.getQuantity() == 0;
         if (lineWidth >= 1f) {
             addWireArrow(xColor, "xAxis", unitX);
             if (numAxes > MyVector3f.yAxis) {
