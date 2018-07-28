@@ -28,6 +28,8 @@ package jme3utilities.math;
 
 import com.jme3.math.ColorRGBA;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import jme3utilities.Validate;
 
 /**
@@ -44,6 +46,11 @@ final public class MyColor {
      */
     final private static Logger logger
             = Logger.getLogger(MyColor.class.getName());
+    /**
+     * pattern for matching a color
+     */
+    final private static Pattern colorPattern = Pattern.compile(
+            "Color\\[\\s*([^,]+),\\s*([^,]+),\\s*([^,]+),\\s*(\\S+)\\s*]");
     // *************************************************************************
     // constructors
 
@@ -76,6 +83,33 @@ final public class MyColor {
         float b = MyMath.lerp(fraction, start.b, end.b);
         float a = MyMath.lerp(fraction, start.a, end.a);
         ColorRGBA result = new ColorRGBA(r, g, b, a);
+
+        return result;
+    }
+
+    /**
+     * Parse a color from the specified text string.
+     *
+     * @param textString input text (not null, not empty)
+     * @return a new color instance, or null if text is invalid
+     */
+    public static ColorRGBA parseColor(String textString) {
+        Validate.nonEmpty(textString, "text string");
+
+        ColorRGBA result = null;
+        Matcher matcher = colorPattern.matcher(textString);
+        boolean valid = matcher.matches();
+        if (valid) {
+            String rText = matcher.group(1);
+            float r = Float.parseFloat(rText);
+            String gText = matcher.group(2);
+            float g = Float.parseFloat(gText);
+            String bText = matcher.group(3);
+            float b = Float.parseFloat(bText);
+            String aText = matcher.group(4);
+            float a = Float.parseFloat(aText);
+            result = new ColorRGBA(r, g, b, a);
+        }
 
         return result;
     }
