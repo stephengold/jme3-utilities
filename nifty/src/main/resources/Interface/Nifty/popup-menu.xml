@@ -30,13 +30,13 @@
  Nifty XML to create a generic popup menu for a screen controlled by
  a PopScreenController.
 
- When a popup menu is activated, the rest of the screen dims by 37.5%.
+ When a popup menu is activated, the rest of the screen dims by 25%.
  To close an active popup menu without selecting an item, simply click
  outside the menu or press the Esc key.
 -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
     <popup id="popup-menu"
-           backgroundColor="#000a"
+           backgroundColor="#0004"
            childLayout="absolute-inside">
         <control name="niftyMenu" id="#menu"/>
         <interact
