@@ -26,7 +26,7 @@
 // a multicolor wireframe/points material with point-size/shape support
 // used by SkeletonVisualizer
 
-MaterialDef wireframe {
+MaterialDef multicolor2 {
     MaterialParameters {
         Boolean UseVertexColor
         Color Color

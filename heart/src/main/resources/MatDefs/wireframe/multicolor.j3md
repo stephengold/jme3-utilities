@@ -25,7 +25,7 @@
 
 // a multicolor wireframe/points material with point-size support
 
-MaterialDef wireframe {
+MaterialDef multicolor {
     MaterialParameters {
         Float PointSize : 1.0
         Int NumberOfBones
