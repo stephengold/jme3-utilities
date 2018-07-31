@@ -36,6 +36,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import jme3utilities.MySpatial;
 import jme3utilities.Validate;
 
@@ -77,6 +79,11 @@ public class MyVector3f {
      */
     final private static Logger logger
             = Logger.getLogger(MyVector3f.class.getName());
+    /**
+     * pattern for matching a Vector3f
+     */
+    final private static Pattern pattern = Pattern.compile(
+            "\\(\\s*([^,]+),\\s+([^,]+),\\s+(\\S+)\\s*\\)");
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
@@ -917,6 +924,31 @@ public class MyVector3f {
         if (fScale != 0f && fScale != 1f) {
             input.divideLocal(fScale);
         }
+    }
+
+    /**
+     * Parse a Vector3f from the specified text string.
+     *
+     * @param textString input text (not null, not empty)
+     * @return a new vector, or null if the text is invalid
+     */
+    public static Vector3f parse(String textString) {
+        Validate.nonEmpty(textString, "text string");
+
+        Vector3f result = null;
+        Matcher matcher = pattern.matcher(textString);
+        boolean valid = matcher.matches();
+        if (valid) {
+            String xText = matcher.group(1);
+            float x = Float.parseFloat(xText);
+            String yText = matcher.group(2);
+            float y = Float.parseFloat(yText);
+            String zText = matcher.group(3);
+            float z = Float.parseFloat(zText);
+            result = new Vector3f(x, y, z);
+        }
+
+        return result;
     }
 
     /**
