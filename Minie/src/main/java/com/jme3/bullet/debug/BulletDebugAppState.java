@@ -183,7 +183,6 @@ public class BulletDebugAppState extends AbstractAppState {
         }
         //remove leftover spatials
         for (Map.Entry<PhysicsRigidBody, Spatial> entry : oldObjects.entrySet()) {
-            PhysicsRigidBody object = entry.getKey();
             Spatial spatial = entry.getValue();
             spatial.removeFromParent();
         }
@@ -214,7 +213,6 @@ public class BulletDebugAppState extends AbstractAppState {
         }
         //remove leftover spatials
         for (Map.Entry<PhysicsJoint, Spatial> entry : oldObjects.entrySet()) {
-            PhysicsJoint object = entry.getKey();
             Spatial spatial = entry.getValue();
             spatial.removeFromParent();
         }
@@ -245,7 +243,6 @@ public class BulletDebugAppState extends AbstractAppState {
         }
         //remove leftover spatials
         for (Map.Entry<PhysicsGhostObject, Spatial> entry : oldObjects.entrySet()) {
-            PhysicsGhostObject object = entry.getKey();
             Spatial spatial = entry.getValue();
             spatial.removeFromParent();
         }
@@ -276,7 +273,6 @@ public class BulletDebugAppState extends AbstractAppState {
         }
         //remove leftover spatials
         for (Map.Entry<PhysicsCharacter, Spatial> entry : oldObjects.entrySet()) {
-            PhysicsCharacter object = entry.getKey();
             Spatial spatial = entry.getValue();
             spatial.removeFromParent();
         }
@@ -307,7 +303,6 @@ public class BulletDebugAppState extends AbstractAppState {
         }
         //remove leftover spatials
         for (Map.Entry<PhysicsVehicle, Spatial> entry : oldObjects.entrySet()) {
-            PhysicsVehicle object = entry.getKey();
             Spatial spatial = entry.getValue();
             spatial.removeFromParent();
         }
