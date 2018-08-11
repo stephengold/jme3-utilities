@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -321,6 +321,49 @@ public class TestPolygon3f {
         }
     }
 
+    private static void testPoint(Vector3f point, String name, Polygon3f poly) {
+        assert point != null;
+        assert name != null;
+        assert poly != null;
+
+        System.out.printf(" For %s at %s:%n", name, point.toString());
+        if (poly instanceof SimplePolygon3f) {
+            SimplePolygon3f simple = (SimplePolygon3f) poly;
+            System.out.printf("  %s in the plane,",
+                    simple.inPlane(point) ? "IS" : "is NOT");
+            System.out.printf(" %s inside the polygon.%n",
+                    simple.contains(point) ? "IS" : "is NOT");
+        }
+
+        System.out.print("  Its closest corner is ");
+        int cornerIndex = poly.findCorner(point);
+        if (cornerIndex == -1) {
+            System.out.print("n/a.");
+        } else {
+            double sd = poly.squaredDistanceToCorner(point, cornerIndex);
+            System.out.printf("C%d, %f wu away.", cornerIndex, Math.sqrt(sd));
+        }
+        System.out.println();
+
+        System.out.print("  Its closest side is ");
+        Vector3f storage = new Vector3f(Float.NaN, Float.NaN, Float.NaN);
+        int sideIndex = poly.findSide(point, storage);
+        if (sideIndex == -1) {
+            System.out.print("n/a.");
+        } else {
+            System.out.printf("S%d at ", sideIndex);
+            int corner = poly.onCorner(storage);
+            if (corner == -1) {
+                System.out.print(storage.toString());
+            } else {
+                System.out.printf("C%d", corner);
+            }
+            float distance = point.distance(storage);
+            System.out.printf(", %f wu away.", distance);
+        }
+        System.out.println();
+    }
+
     /**
      * Run all tests on a specific case.
      *
@@ -448,48 +491,5 @@ public class TestPolygon3f {
             testPolygon(sub);
             System.out.println();
         }
-    }
-
-    private static void testPoint(Vector3f point, String name, Polygon3f poly) {
-        assert point != null;
-        assert name != null;
-        assert poly != null;
-
-        System.out.printf(" For %s at %s:%n", name, point.toString());
-        if (poly instanceof SimplePolygon3f) {
-            SimplePolygon3f simple = (SimplePolygon3f) poly;
-            System.out.printf("  %s in the plane,",
-                    simple.inPlane(point) ? "IS" : "is NOT");
-            System.out.printf(" %s inside the polygon.%n",
-                    simple.contains(point) ? "IS" : "is NOT");
-        }
-
-        System.out.print("  Its closest corner is ");
-        int cornerIndex = poly.findCorner(point);
-        if (cornerIndex == -1) {
-            System.out.print("n/a.");
-        } else {
-            double sd = poly.squaredDistanceToCorner(point, cornerIndex);
-            System.out.printf("C%d, %f wu away.", cornerIndex, Math.sqrt(sd));
-        }
-        System.out.println();
-
-        System.out.print("  Its closest side is ");
-        Vector3f storage = new Vector3f(Float.NaN, Float.NaN, Float.NaN);
-        int sideIndex = poly.findSide(point, storage);
-        if (sideIndex == -1) {
-            System.out.print("n/a.");
-        } else {
-            System.out.printf("S%d at ", sideIndex);
-            int corner = poly.onCorner(storage);
-            if (corner == -1) {
-                System.out.print(storage.toString());
-            } else {
-                System.out.printf("C%d", corner);
-            }
-            float distance = point.distance(storage);
-            System.out.printf(", %f wu away.", distance);
-        }
-        System.out.println();
     }
 }

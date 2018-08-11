@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -236,49 +236,6 @@ public class NavGraph {
     }
 
     /**
-     * Find a member vertex which contains the specified point.
-     *
-     * @param point (not null, unaffected)
-     * @return a pre-existing member vertex, or null if none found
-     */
-    public NavVertex findContains(Vector3f point) {
-        Validate.nonNull(point, "point");
-        /*
-         * Test the closest vertex first.
-         */
-        Collection<NavVertex> allVertices = vertices.values();
-        NavVertex result = findNearest(allVertices, point);
-        if (result == null || result.getLocus().contains(point)) {
-            return result;
-        }
-        /*
-         * Test the next closest, and so on.  TODO sort
-         */
-        Collection<NavVertex> remainingVertices;
-        remainingVertices = new HashSet<>(vertices.size());
-        for (NavVertex v : vertices.values()) {
-            remainingVertices.add(v);
-        }
-        boolean success = remainingVertices.remove(result);
-        assert success;
-
-        while (!remainingVertices.isEmpty()) {
-            result = findNearest(remainingVertices, point);
-            assert result != null;
-            assert remainingVertices.contains(result);
-
-            if (result.getLocus().contains(point)) {
-                return result;
-            }
-
-            success = remainingVertices.remove(result);
-            assert success;
-        }
-
-        return null;
-    }
-
-    /**
      * Enumerate all member vertices which are exactly a specified number of
      * hops from a specified vertex.
      *
@@ -325,6 +282,49 @@ public class NavGraph {
         }
 
         return result;
+    }
+
+    /**
+     * Find a member vertex which contains the specified point.
+     *
+     * @param point (not null, unaffected)
+     * @return a pre-existing member vertex, or null if none found
+     */
+    public NavVertex findContains(Vector3f point) {
+        Validate.nonNull(point, "point");
+        /*
+         * Test the closest vertex first.
+         */
+        Collection<NavVertex> allVertices = vertices.values();
+        NavVertex result = findNearest(allVertices, point);
+        if (result == null || result.getLocus().contains(point)) {
+            return result;
+        }
+        /*
+         * Test the next closest, and so on.  TODO sort
+         */
+        Collection<NavVertex> remainingVertices;
+        remainingVertices = new HashSet<>(vertices.size());
+        for (NavVertex v : vertices.values()) {
+            remainingVertices.add(v);
+        }
+        boolean success = remainingVertices.remove(result);
+        assert success;
+
+        while (!remainingVertices.isEmpty()) {
+            result = findNearest(remainingVertices, point);
+            assert result != null;
+            assert remainingVertices.contains(result);
+
+            if (result.getLocus().contains(point)) {
+                return result;
+            }
+
+            success = remainingVertices.remove(result);
+            assert success;
+        }
+
+        return null;
     }
 
     /**

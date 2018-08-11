@@ -190,16 +190,6 @@ public class SkeletonVisualizer extends SubtreeControl {
     // new methods exposed
 
     /**
-     * Read the effective line width for links.
-     *
-     * @return width (in pixels, &ge;0)
-     */
-    public float getLineWidth() {
-        assert effectiveLineWidth >= 0f : effectiveLineWidth;
-        return effectiveLineWidth;
-    }
-
-    /**
      * Read the size for bone heads (in pixels)
      *
      * @return size (in pixels, &ge;1)
@@ -210,6 +200,16 @@ public class SkeletonVisualizer extends SubtreeControl {
 
         assert result >= 1f : result;
         return result;
+    }
+
+    /**
+     * Read the effective line width for links.
+     *
+     * @return width (in pixels, &ge;0)
+     */
+    public float getLineWidth() {
+        assert effectiveLineWidth >= 0f : effectiveLineWidth;
+        return effectiveLineWidth;
     }
 
     /**

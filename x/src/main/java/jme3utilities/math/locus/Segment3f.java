@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -253,25 +253,6 @@ public class Segment3f implements Locus3f {
     }
 
     /**
-     * Calculate the squared distance from a point to a specific corner of this
-     * segment.
-     *
-     * @param point coordinates of the point (not null, unaffected)
-     * @param cornerIndex index of the corner (0 or 1)
-     * @return squared distance from point to corner (&ge;0)
-     */
-    public double squaredDistanceToCorner(Vector3f point, int cornerIndex) {
-        Validate.nonNull(point, "point");
-        validateIndex(cornerIndex, "corner index");
-
-        Vector3f corner = cornerLocations[cornerIndex];
-        double result = MyVector3f.distanceSquared(corner, point);
-
-        assert result >= 0.0 : result;
-        return result;
-    }
-
-    /**
      * Calculate the squared distance from a point to this segment.
      *
      * @param point coordinates of the input (not null, unaffected)
@@ -315,6 +296,25 @@ public class Segment3f implements Locus3f {
             storeClosestPoint.addLocal(closestOffset);
         }
         double result = MyVector3f.distanceSquared(closestOffset, pointOffset);
+
+        assert result >= 0.0 : result;
+        return result;
+    }
+
+    /**
+     * Calculate the squared distance from a point to a specific corner of this
+     * segment.
+     *
+     * @param point coordinates of the point (not null, unaffected)
+     * @param cornerIndex index of the corner (0 or 1)
+     * @return squared distance from point to corner (&ge;0)
+     */
+    public double squaredDistanceToCorner(Vector3f point, int cornerIndex) {
+        Validate.nonNull(point, "point");
+        validateIndex(cornerIndex, "corner index");
+
+        Vector3f corner = cornerLocations[cornerIndex];
+        double result = MyVector3f.distanceSquared(corner, point);
 
         assert result >= 0.0 : result;
         return result;

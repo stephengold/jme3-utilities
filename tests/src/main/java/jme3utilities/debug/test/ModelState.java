@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -161,6 +161,18 @@ class ModelState extends SimpleAppState {
     }
 
     /**
+     * Calculate the rotation angles of the selected bone.
+     *
+     * @param storeAngles (&ge;3 elements, modified)
+     */
+    void boneAngles(float[] storeAngles) {
+        Skeleton skeleton = MySkeleton.findSkeleton(spatial);
+        int boneIndex = skeleton.getBoneIndex(selectedBoneName);
+        Quaternion rotation = boneRotation(boneIndex);
+        rotation.toAngles(storeAngles);
+    }
+
+    /**
      * Delete the loaded animation.
      */
     void deleteAnimation() {
@@ -174,18 +186,6 @@ class ModelState extends SimpleAppState {
         animControl.removeAnim(animation);
 
         loadBindPose();
-    }
-
-    /**
-     * Calculate the rotation angles of the selected bone.
-     *
-     * @param storeAngles (&ge;3 elements, modified)
-     */
-    void boneAngles(float[] storeAngles) {
-        Skeleton skeleton = MySkeleton.findSkeleton(spatial);
-        int boneIndex = skeleton.getBoneIndex(selectedBoneName);
-        Quaternion rotation = boneRotation(boneIndex);
-        rotation.toAngles(storeAngles);
     }
 
     /**
@@ -216,36 +216,6 @@ class ModelState extends SimpleAppState {
         Animation animation = animControl.getAnim(name);
 
         return animation;
-    }
-
-    /**
-     * Access the selected bone.
-     *
-     * @return the pre-existing instance, or null if none selected
-     */
-    Bone getBone() {
-        if (!isBoneSelected()) {
-            return null;
-        }
-        Bone bone = MySkeleton.findBone(spatial, selectedBoneName);
-
-        return bone;
-    }
-
-    /**
-     * Access the axes visualizer for the selected bone.
-     *
-     * @return the pre-existing instance, or null if no bone selected
-     */
-    AxesVisualizer getBoneAxesVisualizer() {
-        if (attachmentsNode == null) {
-            return null;
-        }
-        AxesVisualizer result
-                = attachmentsNode.getControl(AxesVisualizer.class);
-        assert result != null;
-
-        return result;
     }
 
     /**
@@ -280,6 +250,36 @@ class ModelState extends SimpleAppState {
         }
 
         return animControl;
+    }
+
+    /**
+     * Access the selected bone.
+     *
+     * @return the pre-existing instance, or null if none selected
+     */
+    Bone getBone() {
+        if (!isBoneSelected()) {
+            return null;
+        }
+        Bone bone = MySkeleton.findBone(spatial, selectedBoneName);
+
+        return bone;
+    }
+
+    /**
+     * Access the axes visualizer for the selected bone.
+     *
+     * @return the pre-existing instance, or null if no bone selected
+     */
+    AxesVisualizer getBoneAxesVisualizer() {
+        if (attachmentsNode == null) {
+            return null;
+        }
+        AxesVisualizer result
+                = attachmentsNode.getControl(AxesVisualizer.class);
+        assert result != null;
+
+        return result;
     }
 
     /**

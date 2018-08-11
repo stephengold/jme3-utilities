@@ -316,40 +316,6 @@ public class MyAnimation {
     }
 
     /**
-     * Read the name of the target of the specified bone/spatial track in the
-     * specified animation control.
-     *
-     * @param track the bone/spatial track (not null, unaffected)
-     * @param animControl control that contains the track (not null, unaffected)
-     * @return the name of target bone/spatial
-     */
-    public static String getTargetName(Track track, AnimControl animControl) {
-        Validate.nonNull(track, "track");
-
-        String result;
-        if (track instanceof BoneTrack) {
-            BoneTrack boneTrack = (BoneTrack) track;
-            int boneIndex = boneTrack.getTargetBoneIndex();
-            Skeleton skeleton = animControl.getSkeleton();
-            Bone bone = skeleton.getBone(boneIndex);
-            result = bone.getName();
-
-        } else if (track instanceof SpatialTrack) {
-            SpatialTrack spatialTrack = (SpatialTrack) track;
-            Spatial spatial = spatialTrack.getTrackSpatial();
-            if (spatial == null) {
-                spatial = animControl.getSpatial();
-            }
-            result = spatial.getName();
-
-        } else {
-            throw new IllegalArgumentException();
-        }
-
-        return result;
-    }
-
-    /**
      * Access the keyframe rotations for the specified bone/spatial track.
      *
      * @param track which track (not null, unaffected)
@@ -387,6 +353,40 @@ public class MyAnimation {
         } else if (track instanceof SpatialTrack) {
             SpatialTrack spatialTrack = (SpatialTrack) track;
             result = spatialTrack.getScales();
+
+        } else {
+            throw new IllegalArgumentException();
+        }
+
+        return result;
+    }
+
+    /**
+     * Read the name of the target of the specified bone/spatial track in the
+     * specified animation control.
+     *
+     * @param track the bone/spatial track (not null, unaffected)
+     * @param animControl control that contains the track (not null, unaffected)
+     * @return the name of target bone/spatial
+     */
+    public static String getTargetName(Track track, AnimControl animControl) {
+        Validate.nonNull(track, "track");
+
+        String result;
+        if (track instanceof BoneTrack) {
+            BoneTrack boneTrack = (BoneTrack) track;
+            int boneIndex = boneTrack.getTargetBoneIndex();
+            Skeleton skeleton = animControl.getSkeleton();
+            Bone bone = skeleton.getBone(boneIndex);
+            result = bone.getName();
+
+        } else if (track instanceof SpatialTrack) {
+            SpatialTrack spatialTrack = (SpatialTrack) track;
+            Spatial spatial = spatialTrack.getTrackSpatial();
+            if (spatial == null) {
+                spatial = animControl.getSpatial();
+            }
+            result = spatial.getName();
 
         } else {
             throw new IllegalArgumentException();

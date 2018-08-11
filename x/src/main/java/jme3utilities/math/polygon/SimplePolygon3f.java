@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -228,20 +228,6 @@ public class SimplePolygon3f
     }
 
     /**
-     * Calculate a normal vector of the plane containing this polygon.
-     *
-     * @return a new unit vector
-     */
-    public Vector3f planeNormal() {
-        if (planeNormal == null) {
-            setPlane();
-        }
-        Vector3f result = planeNormal.clone();
-
-        return result;
-    }
-
-    /**
      * Calculate (or look up) the planar offset of the specified corner.
      *
      * @param cornerIndex which corner (&ge;0, &lt;numCorners)
@@ -256,6 +242,20 @@ public class SimplePolygon3f
         VectorXZ result = planarOffsets[cornerIndex];
 
         assert result != null;
+        return result;
+    }
+
+    /**
+     * Calculate a normal vector of the plane containing this polygon.
+     *
+     * @return a new unit vector
+     */
+    public Vector3f planeNormal() {
+        if (planeNormal == null) {
+            setPlane();
+        }
+        Vector3f result = planeNormal.clone();
+
         return result;
     }
 

@@ -217,16 +217,6 @@ public class AxesVisualizer extends SubtreeControl {
     }
 
     /**
-     * Alter the number of axis arrows.
-     *
-     * @param newNumber (&ge;1, &le;3)
-     */
-    public void setNumAxes(int newNumber) {
-        Validate.inRange(newNumber, "new number", 1, MyVector3f.numAxes);
-        numAxes = newNumber;
-    }
-
-    /**
      * Alter the depth-test setting. The test provides depth cues, but often
      * hides the axes.
      *
@@ -234,6 +224,16 @@ public class AxesVisualizer extends SubtreeControl {
      */
     public void setDepthTest(boolean newSetting) {
         depthTest = newSetting;
+    }
+
+    /**
+     * Alter the number of axis arrows.
+     *
+     * @param newNumber (&ge;1, &le;3)
+     */
+    public void setNumAxes(int newNumber) {
+        Validate.inRange(newNumber, "new number", 1, MyVector3f.numAxes);
+        numAxes = newNumber;
     }
 
     /**

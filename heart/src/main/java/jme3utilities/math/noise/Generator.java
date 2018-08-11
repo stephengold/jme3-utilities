@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -74,26 +74,6 @@ public class Generator extends Random {
     // new methods exposed
 
     /**
-     * Generate a pseudo-random vector that is uniformly distributed throughout
-     * the unit sphere centered on the origin.
-     *
-     * @return a new unit vector
-     */
-    public Vector3f nextVector3f() {
-        Vector3f result = new Vector3f();
-        double lengthSquared = 2.0;
-        while (lengthSquared > 1.0) {
-            float x = 2f * nextFloat() - 1f;
-            float y = 2f * nextFloat() - 1f;
-            float z = 2f * nextFloat() - 1f;
-            result.set(x, y, z);
-            lengthSquared = MyVector3f.lengthSquared(result);
-        }
-
-        return result;
-    }
-
-    /**
      * Generate a uniformly distributed, pseudo-random unit vector.
      *
      * @return a new unit vector
@@ -112,6 +92,26 @@ public class Generator extends Random {
         result.multLocal((float) scaleFactor);
 
         assert result.isUnitVector();
+        return result;
+    }
+
+    /**
+     * Generate a pseudo-random vector that is uniformly distributed throughout
+     * the unit sphere centered on the origin.
+     *
+     * @return a new unit vector
+     */
+    public Vector3f nextVector3f() {
+        Vector3f result = new Vector3f();
+        double lengthSquared = 2.0;
+        while (lengthSquared > 1.0) {
+            float x = 2f * nextFloat() - 1f;
+            float y = 2f * nextFloat() - 1f;
+            float z = 2f * nextFloat() - 1f;
+            result.set(x, y, z);
+            lengthSquared = MyVector3f.lengthSquared(result);
+        }
+
         return result;
     }
 

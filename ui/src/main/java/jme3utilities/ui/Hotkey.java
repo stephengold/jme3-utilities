@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -129,6 +129,18 @@ public class Hotkey {
     }
 
     /**
+     * Find a hotkey by its name.
+     *
+     * @param name the descriptive name (not null, not empty)
+     * @return the pre-existing instance (or null if none)
+     */
+    public static Hotkey find(String name) {
+        Validate.nonEmpty(name, "name");
+        Hotkey result = byName.get(name);
+        return result;
+    }
+
+    /**
      * Find a hotkey by its button code.
      *
      * @param buttonCode a button code from {@link com.jme3.input.MouseInput}
@@ -149,18 +161,6 @@ public class Hotkey {
     public static Hotkey findKey(int keyCode) {
         Validate.inRange(keyCode, "key code", 0, KeyInput.KEY_LAST);
         Hotkey result = find(keyCode);
-        return result;
-    }
-
-    /**
-     * Find a hotkey by its name.
-     *
-     * @param name the descriptive name (not null, not empty)
-     * @return the pre-existing instance (or null if none)
-     */
-    public static Hotkey find(String name) {
-        Validate.nonEmpty(name, "name");
-        Hotkey result = byName.get(name);
         return result;
     }
 

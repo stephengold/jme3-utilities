@@ -228,33 +228,7 @@ public class Describer {
     }
 
     /**
-     * Generate a textual description of a viewport's scene processors.
-     *
-     * @param viewPort view port being described (not null)
-     * @return description (not null)
-     */
-    public String describeProcessors(ViewPort viewPort) {
-        StringBuilder result = new StringBuilder(20);
-        boolean addSeparators = false;
-        List<SceneProcessor> pList = viewPort.getProcessors();
-        int count = pList.size();
-        for (int i = 0; i < count; i++) {
-            SceneProcessor processor = pList.get(i);
-            if (addSeparators) {
-                result.append(listSeparator);
-            } else {
-                addSeparators = true;
-            }
-            String description = describe(processor);
-            result.append(description);
-        }
-
-        return result.toString();
-    }
-
-    /**
-     * Generate a textual description of a filter post-processor's filters. TODO
-     * reorder methods
+     * Generate a textual description of a filter post-processor's filters.
      *
      * @param fpp processor being described (not null)
      * @return description (not null)
@@ -279,6 +253,31 @@ public class Describer {
                 addSeparators = true;
             }
             String description = describe(filter);
+            result.append(description);
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Generate a textual description of a viewport's scene processors.
+     *
+     * @param viewPort view port being described (not null)
+     * @return description (not null)
+     */
+    public String describeProcessors(ViewPort viewPort) {
+        StringBuilder result = new StringBuilder(20);
+        boolean addSeparators = false;
+        List<SceneProcessor> pList = viewPort.getProcessors();
+        int count = pList.size();
+        for (int i = 0; i < count; i++) {
+            SceneProcessor processor = pList.get(i);
+            if (addSeparators) {
+                result.append(listSeparator);
+            } else {
+                addSeparators = true;
+            }
+            String description = describe(processor);
             result.append(description);
         }
 

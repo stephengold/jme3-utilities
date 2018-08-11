@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -278,6 +278,15 @@ public class NavVertex implements Comparable<NavVertex> {
     }
 
     /**
+     * Access the region currently represented by this vertex.
+     *
+     * @return the pre-existing locus, or null if none
+     */
+    public Locus3f getLocus() {
+        return locus;
+    }
+
+    /**
      * Read the name of this vertex.
      *
      * @return textual name (not null)
@@ -285,15 +294,6 @@ public class NavVertex implements Comparable<NavVertex> {
     public String getName() {
         assert name != null;
         return name;
-    }
-
-    /**
-     * Access the region currently represented by this vertex.
-     *
-     * @return the pre-existing locus, or null if none
-     */
-    public Locus3f getLocus() {
-        return locus;
     }
 
     /**
