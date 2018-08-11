@@ -38,6 +38,7 @@ import com.jme3.material.Material;
 import com.jme3.material.MaterialDef;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
 import com.jme3.post.Filter;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.SceneProcessor;
@@ -252,7 +253,8 @@ public class Describer {
     }
 
     /**
-     * Generate a textual description of a filter post-processor's filters.
+     * Generate a textual description of a filter post-processor's filters. TODO
+     * reorder methods
      *
      * @param fpp processor being described (not null)
      * @return description (not null)
@@ -361,8 +363,7 @@ public class Describer {
     }
 
     /**
-     * Generate a brief textual description of a light. TODO describe direction,
-     * etcetera
+     * Generate a brief textual description of a light.
      *
      * @param light light to describe (unaffected)
      * @return description (not null, not empty)
@@ -383,12 +384,29 @@ public class Describer {
             }
             if (light instanceof AmbientLight) {
                 result = String.format("AL%s(%s)", name, rgb);
+
             } else if (light instanceof DirectionalLight) {
-                result = String.format("DL%s(%s)", name, rgb);
+                Vector3f direction = ((DirectionalLight) light).getDirection();
+                String dir = String.format("dx=%.2f dy=%.2f dz=%.2f",
+                        direction.x, direction.y, direction.z);
+                result = String.format("DL%s(%s, %s)", name, rgb, dir);
+
             } else if (light instanceof PointLight) {
-                result = String.format("PL%s(%s)", name, rgb);
+                Vector3f location = ((PointLight) light).getPosition();
+                String loc = String.format("x=%.2f y=%.2f z=%.2f",
+                        location.x, location.y, location.z);
+                result = String.format("PL%s(%s, %s)", name, rgb, loc);
+
             } else if (light instanceof SpotLight) {
-                result = String.format("SL%s(%s)", name, rgb);
+                SpotLight spotLight = (SpotLight) light;
+                Vector3f location = spotLight.getPosition();
+                String loc = String.format("x=%.2f y=%.2f z=%.2f",
+                        location.x, location.y, location.z);
+                Vector3f direction = spotLight.getDirection();
+                String dir = String.format("dx=%.2f dy=%.2f dz=%.2f",
+                        direction.x, direction.y, direction.z);
+                result = String.format("SL%s(%s, %s, %s)", name, rgb, loc, dir);
+
             } else {
                 result = light.getClass().getSimpleName();
                 if (result.isEmpty()) {
