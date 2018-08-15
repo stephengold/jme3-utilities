@@ -36,6 +36,7 @@ import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.control.Control;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
@@ -123,9 +124,7 @@ public class PhysicsDescriber extends Describer {
         StringBuilder result = new StringBuilder(20);
         boolean addSeparators = false;
         List<ChildCollisionShape> children = compound.getChildren();
-        int count = children.size();
-        for (int i = 0; i < count; i++) {
-            ChildCollisionShape child = children.get(i);
+        for (ChildCollisionShape child : children) {
             if (addSeparators) {
                 result.append("  ");
             } else {
@@ -146,6 +145,45 @@ public class PhysicsDescriber extends Describer {
                 desc = rotation.toString();
                 result.append(desc);
             }
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Generate a textual description of ray-test flags.
+     *
+     * @param flags
+     * @return description (not null)
+     */
+    String describeRayTestFlags(int flags) {
+        List<String> flagList = new ArrayList<>(4);
+        if ((flags & 0x1) != 0) {
+            flagList.add("FilterBackfaces");
+            /*
+             * prevent returned face normal getting flipped when a
+             * ray hits a back-facing triangle
+             */
+        }
+        if ((flags & 0x2) != 0) {
+            flagList.add("KeepUnflippedNormal");
+        }
+        if ((flags & 0x4) != 0) {
+            flagList.add("SubSimplexConvexCast");
+        }
+        if ((flags & 0x8) != 0) {
+            flagList.add("GjkConvexCast");
+        }
+
+        StringBuilder result = new StringBuilder(40);
+        boolean addSeparators = false;
+        for (String flagName : flagList) {
+            if (addSeparators) {
+                result.append(",");
+            } else {
+                addSeparators = true;
+            }
+            result.append(flagName);
         }
 
         return result.toString();

@@ -146,8 +146,8 @@ public class PhysicsDumper extends Dumper {
                 location.x, location.y, location.z);
 
         CollisionShape shape = body.getCollisionShape();
-        PhysicsDescriber physicsDescriber = getDescriber();
-        String desc = physicsDescriber.describe(shape);
+        PhysicsDescriber describer = getDescriber();
+        String desc = describer.describe(shape);
         stream.printf(" shape=%s", desc);
 
         Vector3f scale = shape.getScale();
@@ -183,6 +183,23 @@ public class PhysicsDumper extends Dumper {
                 numJoints, (numJoints == 1) ? "" : "s",
                 numBodies, (numBodies == 1) ? "y" : "ies",
                 numJoints, (numVehicles == 1) ? "" : "s");
+
+        float accuracy = space.getAccuracy();
+        PhysicsSpace.BroadphaseType broadphaseType = space.getBroadphaseType();
+        Vector3f gravity = space.getGravity(new Vector3f());
+        int maxSubSteps = space.maxSubSteps();
+
+        stream.printf(" accu=%f, bphase=%s, grav=%s, maxStep=%d%n",
+                accuracy, broadphaseType, gravity, maxSubSteps);
+
+        int numIterations = space.getSolverNumIterations();
+        int rayTestFlags = space.getRayTestFlags();
+        PhysicsDescriber describer = getDescriber();
+        String rtText = describer.describeRayTestFlags(rayTestFlags);
+        Vector3f worldMax = space.getWorldMax();
+        Vector3f worldMin = space.getWorldMin();
+        stream.printf(" iters=%d, rayTest=(%s), wMin=%s, wMax=%s%n",
+                numIterations, rtText, worldMin, worldMax);
 
         for (PhysicsCharacter character : characters) {
             dump(character);
