@@ -822,7 +822,7 @@ public class PhysicsSpace {
      *
      * @param flags which flags to set
      */
-    public void SetRayTestFlags(int flags) {
+    public void setRayTestFlags(int flags) {
         rayTestFlags = flags;
     }
 
@@ -833,7 +833,7 @@ public class PhysicsSpace {
      *
      * @return rayTestFlags
      */
-    public int GetRayTestFlags() {
+    public int getRayTestFlags() {
         return rayTestFlags;
     }
 
@@ -988,12 +988,21 @@ public class PhysicsSpace {
     }
 
     /**
-     * Sets the maximum amount of extra steps that will be used to step the
-     * physics when the fps is below the physics fps. Doing this maintains
-     * determinism in physics. For example a maximum number of 2 can compensate
-     * for framerates as low as 30fps when the physics has the default accuracy
-     * of 60 fps. Note that setting this value too high can make the physics
-     * drive down its own fps in case it's overloaded.
+     * Read the maximum number of extra steps.
+     *
+     * @return number of steps
+     */
+    public int maxSubSteps() {
+        return maxSubSteps;
+    }
+
+    /**
+     * Sets the maximum number of extra steps that will be used when the render
+     * fps is below the physics fps. Doing this maintains determinism in
+     * physics. For example a maximum number of 2 can compensate for framerates
+     * as low as 30fps when the physics has the default accuracy of 60 fps. Note
+     * that setting this value too high can cause the physics to drive down its
+     * own fps in case it's overloaded.
      *
      * @param steps The maximum number of extra steps, default is 4.
      */
