@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -35,8 +35,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.NameGenerator;
-import static jme3utilities.NameGenerator.getPrefix;
-import static jme3utilities.NameGenerator.isFrom;
 import jme3utilities.ui.ActionApplication;
 
 /**
@@ -86,23 +84,23 @@ public class TestNameGenerator extends ActionApplication {
         System.out.printf("pristine = %s%n", example.toString());
 
         String apple1 = example.unique("apple");
-        assert isFrom(apple1, "apple");
-        assert getPrefix(apple1).equals("apple");
+        assert NameGenerator.isFrom(apple1, "apple");
+        assert NameGenerator.getPrefix(apple1).equals("apple");
 
         String apple2 = example.unique("apple");
-        assert isFrom(apple2, "apple");
-        assert getPrefix(apple2).equals("apple");
+        assert NameGenerator.isFrom(apple2, "apple");
+        assert NameGenerator.getPrefix(apple2).equals("apple");
         assert !apple1.equals(apple2);
 
         String pear1 = example.unique("pear");
-        assert isFrom(pear1, "pear");
-        assert getPrefix(pear1).equals("pear");
+        assert NameGenerator.isFrom(pear1, "pear");
+        assert NameGenerator.getPrefix(pear1).equals("pear");
         assert !apple1.equals(pear1);
         assert !apple2.equals(pear1);
 
         String apple3 = example.unique("apple");
-        assert isFrom(apple3, "apple");
-        assert getPrefix(apple3).equals("apple");
+        assert NameGenerator.isFrom(apple3, "apple");
+        assert NameGenerator.getPrefix(apple3).equals("apple");
         assert !apple2.equals(apple3);
 
         System.out.printf("used = %s%n", example.toString());
@@ -120,8 +118,8 @@ public class TestNameGenerator extends ActionApplication {
         example.reset();
         System.out.printf("reset = %s%n", example.toString());
 
-        NameGenerator imported = (NameGenerator) assetManager.loadAsset(
-                exportAssetPath);
+        NameGenerator imported
+                = (NameGenerator) assetManager.loadAsset(exportAssetPath);
         System.out.printf("imported = %s%n%n", imported.toString());
 
         System.out.printf("Success.%n");
