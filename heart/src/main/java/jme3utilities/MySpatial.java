@@ -31,6 +31,7 @@ import com.jme3.audio.AudioNode;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.font.BitmapText;
 import com.jme3.light.Light;
+import com.jme3.material.Material;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
@@ -232,6 +233,35 @@ public class MySpatial {
 
         assert result >= 0 : result;
         return result;
+    }
+
+    /**
+     * Count all uses of the specified material in the specified subtree of a
+     * scene graph. Note: recursive!
+     *
+     * @param subtree (may be null, unaffected)
+     * @param material (unaffected)
+     * @return the use count (&ge;0)
+     */
+    public static int countUses(Spatial subtree, Material material) {
+        int count = 0;
+
+        if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
+            Material mat = geometry.getMaterial();
+            if (mat == material) {
+                ++count;
+            }
+
+        } else if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                count += countUses(child, material);
+            }
+        }
+
+        return count;
     }
 
     /**
@@ -773,6 +803,38 @@ public class MySpatial {
             List<Spatial> children = node.getChildren();
             for (Spatial child : children) {
                 listControls(child, controlType, storeResult);
+            }
+        }
+
+        return storeResult;
+    }
+
+    /**
+     * Enumerate all materials in the specified subtree of a scene graph. Note:
+     * recursive!
+     *
+     * @param subtree (may be null, aliases created)
+     * @param storeResult (added to if not null)
+     * @return an expanded list (either storeResult or a new instance)
+     */
+    public static List<Material> listMaterials(Spatial subtree,
+            List<Material> storeResult) {
+        if (storeResult == null) {
+            storeResult = new ArrayList<>(10);
+        }
+
+        if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
+            Material material = geometry.getMaterial();
+            if (!storeResult.contains(material)) {
+                storeResult.add(material);
+            }
+
+        } else if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                listMaterials(child, storeResult);
             }
         }
 
