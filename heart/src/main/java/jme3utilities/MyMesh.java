@@ -33,11 +33,15 @@ import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.math.MyVector3f;
 
@@ -128,6 +132,38 @@ public class MyMesh {
         } else {
             return true;
         }
+    }
+
+    /**
+     * Enumerate all meshes in the specified subtree of a scene graph. Note:
+     * recursive!
+     *
+     * @param subtree (may be null, aliases created)
+     * @param storeResult (added to if not null)
+     * @return an expanded list (either storeResult or a new instance)
+     */
+    public static List<Mesh> listMeshes(Spatial subtree,
+            List<Mesh> storeResult) {
+        if (storeResult == null) {
+            storeResult = new ArrayList<>(10);
+        }
+
+        if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
+            Mesh mesh = geometry.getMesh();
+            if (!storeResult.contains(mesh)) {
+                storeResult.add(mesh);
+            }
+
+        } else if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                listMeshes(child, storeResult);
+            }
+        }
+
+        return storeResult;
     }
 
     /**
