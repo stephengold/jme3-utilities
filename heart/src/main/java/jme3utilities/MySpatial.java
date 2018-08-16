@@ -730,7 +730,7 @@ public class MySpatial {
         if (subtree instanceof Geometry) {
             Geometry geometry = (Geometry) subtree;
             Mesh mesh = geometry.getMesh();
-            if (mesh.isAnimated()) {
+            if (mesh.isAnimated() && !storeResult.contains(mesh)) {
                 storeResult.add(mesh);
             }
 
