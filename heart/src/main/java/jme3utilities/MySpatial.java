@@ -684,12 +684,10 @@ public class MySpatial {
     /**
      * Test whether a spatial is a geometry with ignoreTransform=true.
      *
-     * @param spatial spatial to test (not null, unaffected)
+     * @param spatial spatial to test (unaffected)
      * @return true if the spatial ignores transforms, otherwise false
      */
     public static boolean isIgnoringTransforms(Spatial spatial) {
-        Validate.nonNull(spatial, "spatial");
-
         boolean result = false;
         if (spatial instanceof Geometry) {
             Geometry geometry = (Geometry) spatial;
@@ -716,13 +714,12 @@ public class MySpatial {
      * Enumerate all animated meshes in the specified subtree of a scene graph.
      * Note: recursive!
      *
-     * @param subtree (not null, unaffected)
+     * @param subtree which subtree (aliases created)
      * @param storeResult (added to if not null)
      * @return an expanded list (either storeResult or a new instance)
      */
     public static List<Mesh> listAnimatedMeshes(Spatial subtree,
             List<Mesh> storeResult) {
-        Validate.nonNull(subtree, "subtree");
         if (storeResult == null) {
             storeResult = new ArrayList<>(10);
         }
@@ -750,7 +747,7 @@ public class MySpatial {
      * a scene graph. Note: recursive!
      *
      * @param <T> superclass of Control
-     * @param subtree (not null)
+     * @param subtree which subtree (not null, aliases created)
      * @param controlType superclass of Control to search for
      * @param storeResult (added to if not null)
      * @return an expanded list (either storeResult or a new instance)
@@ -758,7 +755,6 @@ public class MySpatial {
     @SuppressWarnings("unchecked")
     public static <T extends Control> List<T> listControls(Spatial subtree,
             Class<T> controlType, List<T> storeResult) {
-        Validate.nonNull(subtree, "subtree");
         if (storeResult == null) {
             storeResult = new ArrayList<>(4);
         }
