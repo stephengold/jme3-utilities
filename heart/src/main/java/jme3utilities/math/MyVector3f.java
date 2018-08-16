@@ -279,8 +279,6 @@ public class MyVector3f {
      * @param input (not null, modified)
      */
     public static void cardinalizeLocal(Vector3f input) {
-        Validate.nonNull(input, "input");
-
         input.normalizeLocal();
         /*
          * Generate each of the 6 cardinal directions.
@@ -570,7 +568,6 @@ public class MyVector3f {
     public static Vector3f intersectSegments(Vector3f start1, Vector3f end1,
             Vector3f start2, Vector3f end2, float tolerance2) {
         Validate.nonNull(start1, "start of 1st segment");
-        Validate.nonNull(end1, "end of 1st segment");
         Validate.nonNull(start2, "start of 2nd segment");
         Validate.nonNull(end2, "end of 2nd segment");
         Validate.nonNegative(tolerance2, "tolerance2");
@@ -773,9 +770,6 @@ public class MyVector3f {
      * @return a new coordinate vector, or null if the lines are parallel
      */
     public static Vector3f lineMeetsLine(Line line1, Line line2) {
-        Validate.nonNull(line1, "line1");
-        Validate.nonNull(line2, "line2");
-
         Vector3f d1 = line1.getDirection();
         Vector3f d2 = line2.getDirection();
         Vector3f p1 = line1.getOrigin();
@@ -808,7 +802,6 @@ public class MyVector3f {
      */
     public static Vector3f lineMeetsSphere(Line line, Vector3f center,
             float radius, boolean farSide) {
-        Validate.nonNull(line, "line");
         Validate.nonNull(center, "center");
         Validate.nonNegative(radius, "radius");
 
@@ -1087,7 +1080,6 @@ public class MyVector3f {
     private static boolean allCollinear(Vector3f first, Vector3f last,
             List<Vector3f> list, float tolerance2) {
         Validate.nonNull(first, "first location");
-        Validate.nonNull(last, "last location");
         Validate.nonNull(list, "list");
         Validate.nonNegative(tolerance2, "tolerance2");
 
