@@ -1,6 +1,6 @@
 # release notes for the Minie library and related tests
 
-## Version 0.2.3 released on TBD
+## Version 0.2.3 released on 17 August 2018
 
 + Renamed ray-test flag accessors in PhysicsSpace class.
 + Added maxSubSteps() method to the PhysicsSpace class.
