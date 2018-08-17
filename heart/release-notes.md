@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.6.0 released on TBD
+## Version 2.6.0 released on 17 August 2018
 
  + Added a deepClone() method to the Misc class
  + Added a parseColor() method to the MyColor class
