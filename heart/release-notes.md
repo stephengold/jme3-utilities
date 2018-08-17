@@ -1,9 +1,21 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.6.0 released on TBD
+
+ + Added a deepClone() method to the Misc class
+ + Added a parseColor() method to the MyColor class
+ + Added a listMeshes() method to the MyMesh class
+ + Added countUses() and listMaterials() methods to the MySpatial class
+ + Added cardinalizeLocal() and parse() methods to the MyVector3f class
+ + Verify projection mode in MyCamera.setYTangent()
+ + Allow null subtrees in listAnimatedMeshes() and isIgnoringTransforms()
+ + Omit duplicates in MySpatial.listAnimatedMeshes()
+ + Corrected names in 2 material-definition files
+
 ## Version 2.5.0 released on 17 March 2018
 
  + Set the Wireframe render-state flag in 3 material definitions
- + Added a findTrackIndex() to the MyAnimation class
+ + Added a findTrackIndex() method to the MyAnimation class
  + Added a listSpatials() method to the MySpatial class
  + Extended MyCamera.yTangent() to handle parallel projection
 
