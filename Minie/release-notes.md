@@ -1,5 +1,12 @@
 # release notes for the Minie library and related tests
 
+## Version 0.2.3 released on TBD
+
++ Renamed ray-test flag accessors in PhysicsSpace class.
++ Added maxSubSteps() method to the PhysicsSpace class.
++ Include more detail when dumping a physics space.
++ Based on version 2.6 of the jme3-utilities-heart library.
+
 ## Version 0.2.2 released on 24 July 2018
 
 + Enhanced PhysicsDescriber to describe axes of cone shapes.

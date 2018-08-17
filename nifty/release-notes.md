@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.7.13 released on TBD
+
+ + Add a commit description to TextEntryDialog class.
+ + Dim the screen by 25% for each popup menu.
+
 ## Version 0.7.12 released on 24 July 2018
 
  + Based on version 2.5 of the jme3-utilities-heart library.
