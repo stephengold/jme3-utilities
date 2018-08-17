@@ -19,10 +19,10 @@ gradle.projectsEvaluated {
 ext {
     // current versions of the libraries
     jcommanderVersion = '1.74'
-    jme3utilitiesdebugVersion = '0.8.9'
+    jme3utilitiesdebugVersion = '0.8.10'
     jme3utilitiesheartVersion = '2.6.0'
     jme3utilitiesniftyVersion = '0.7.12'
-    jme3utilitiesuiVersion = '0.6.3'
+    jme3utilitiesuiVersion = '0.6.4'
     jme3utilitiesxVersion = '0.2.4'
     jmonkeyengineVersion = '3.2.1-stable'
     minieVersion = '0.2.2'

@@ -1,5 +1,11 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.8.10 released on TBD
+
+ + Describe locations and directions of lights.
+ + Added capability to describe and dump material-parameter overrides.
+ + Based on version 2.6 of heart library.
+
 ## Version 0.8.9 released on 24 July 2018
 
  + Based on version 2.5 of heart library.
