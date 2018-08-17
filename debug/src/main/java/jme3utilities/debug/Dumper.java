@@ -28,6 +28,7 @@ package jme3utilities.debug;
 
 import com.jme3.light.Light;
 import com.jme3.light.LightList;
+import com.jme3.material.MatParamOverride;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
@@ -74,7 +75,7 @@ public class Dumper {
     // fields
 
     /**
-     * enable dumping of render queue bucket assignments
+     * enable dumping of render-queue bucket assignments
      */
     private boolean dumpBucketFlag = false;
     /**
@@ -82,11 +83,15 @@ public class Dumper {
      */
     private boolean dumpCullFlag = false;
     /**
+     * enable dumping of material-parameter overrides
+     */
+    private boolean dumpOverrideFlag = false;
+    /**
      * enable dumping of shadow modes
      */
     private boolean dumpShadowFlag = false;
     /**
-     * enable dumping of location and scaling
+     * enable dumping of location, rotation, and scaling
      */
     private boolean dumpTransformFlag = false;
     /**
@@ -133,7 +138,8 @@ public class Dumper {
     /**
      * Dump the specified list of scenes.
      *
-     * @param sceneList the root nodes of the scenes to dump (not null)
+     * @param sceneList the root nodes of the scenes to dump (not null,
+     * unaffected)
      * @param indent (not null)
      */
     public void dump(List<Spatial> sceneList, String indent) {
@@ -157,7 +163,7 @@ public class Dumper {
     /**
      * Dump the specified render manager.
      *
-     * @param renderManager which render manager to dump (not null)
+     * @param renderManager which render manager to dump (not null, unaffected)
      */
     public void dump(RenderManager renderManager) {
         List<ViewPort> pres = renderManager.getPreViews();
@@ -189,7 +195,7 @@ public class Dumper {
     /**
      * Dump a subtree of the scene graph.
      *
-     * @param spatial root of the subtree (or null)
+     * @param spatial root of the subtree (may be null, unaffected)
      */
     public void dump(Spatial spatial) {
         dump(spatial, "");
@@ -199,7 +205,7 @@ public class Dumper {
     /**
      * Dump a subtree of the scene graph. Note: recursive!
      *
-     * @param spatial root of the subtree (or null)
+     * @param spatial root of the subtree (may be null, unaffected)
      * @param indent (not null)
      */
     public void dump(Spatial spatial, String indent) {
@@ -246,6 +252,9 @@ public class Dumper {
         if (dumpCullFlag) {
             dumpCullHints(spatial);
         }
+        if (dumpOverrideFlag) {
+            dumpOverrides(spatial);
+        }
         if (spatial instanceof Geometry) {
             Geometry geometry = (Geometry) spatial;
             Material material = geometry.getMaterial();
@@ -277,7 +286,7 @@ public class Dumper {
     /**
      * Dump the specified view port.
      *
-     * @param viewPort the view port to dump (not null)
+     * @param viewPort the view port to dump (not null, unaffected)
      * @param indent (not null)
      */
     public void dump(ViewPort viewPort, String indent) {
@@ -319,7 +328,7 @@ public class Dumper {
     /**
      * Dump the render-queue bucket to which the specified spatial is assigned.
      *
-     * @param spatial spatial being described (not null)
+     * @param spatial spatial being described (not null, unaffected)
      */
     public void dumpBucket(Spatial spatial) {
         /*
@@ -339,7 +348,7 @@ public class Dumper {
     /**
      * List the controls associated with a spatial.
      *
-     * @param spatial spatial being described (not null)
+     * @param spatial spatial being described (not null, unaffected)
      */
     public void dumpControls(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
@@ -362,7 +371,7 @@ public class Dumper {
     /**
      * Dump the view frustum culling hints associated with a spatial.
      *
-     * @param spatial spatial being described (not null)
+     * @param spatial spatial being described (not null, unaffected)
      */
     public void dumpCullHints(Spatial spatial) {
         /*
@@ -382,7 +391,7 @@ public class Dumper {
     /**
      * Dump the flags associated with a view port.
      *
-     * @param viewPort view port being dumped (not null)
+     * @param viewPort view port being dumped (not null, unaffected)
      */
     public void dumpFlags(ViewPort viewPort) {
         if (!viewPort.isClearDepth()) {
@@ -404,7 +413,7 @@ public class Dumper {
     /**
      * Dump the lights associated with a spatial.
      *
-     * @param spatial spatial being described (not null)
+     * @param spatial spatial being described (not null, unaffected)
      */
     public void dumpLights(Spatial spatial) {
         LightList lights = spatial.getLocalLightList();
@@ -417,7 +426,7 @@ public class Dumper {
     /**
      * Dump the world location of a spatial.
      *
-     * @param spatial spatial being described (not null)
+     * @param spatial spatial being described (not null, unaffected)
      */
     public void dumpLocation(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
@@ -432,7 +441,7 @@ public class Dumper {
     /**
      * Dump the world orientation of a spatial.
      *
-     * @param spatial spatial being described (not null)
+     * @param spatial spatial being described (not null, unaffected)
      */
     public void dumpOrientation(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
@@ -444,9 +453,34 @@ public class Dumper {
     }
 
     /**
+     * Dump the material-parameter overrides of a spatial.
+     *
+     * @param spatial spatial being described (not null, unaffected)
+     */
+    public void dumpOverrides(Spatial spatial) {
+        Validate.nonNull(spatial, "spatial");
+
+        stream.print(" mpo=(");
+        boolean addSeparators = false;
+        String listSeparator = describer.getListSeparator();
+
+        List<MatParamOverride> list = spatial.getLocalMatParamOverrides();
+        for (MatParamOverride override : list) {
+            if (addSeparators) {
+                stream.print(listSeparator);
+            } else {
+                addSeparators = true;
+            }
+            String description = describer.describe(override);
+            stream.print(description);
+        }
+        stream.print(")");
+    }
+
+    /**
      * Dump the world scale of a spatial.
      *
-     * @param spatial spatial being described (not null)
+     * @param spatial spatial being described (not null, unaffected)
      */
     public void dumpScale(Spatial spatial) {
         Vector3f scale = spatial.getWorldScale();
@@ -464,7 +498,7 @@ public class Dumper {
     /**
      * Dump the shadow modes associated with a spatial.
      *
-     * @param spatial spatial being described (not null)
+     * @param spatial spatial being described (not null, unaffected)
      */
     public void dumpShadowModes(Spatial spatial) {
         /*
@@ -484,7 +518,7 @@ public class Dumper {
     /**
      * Dump the user data associated with a spatial.
      *
-     * @param spatial spatial being described (not null)
+     * @param spatial spatial being described (not null, unaffected)
      */
     public void dumpUserData(Spatial spatial) {
         Collection<String> keys = spatial.getUserDataKeys();
@@ -511,7 +545,7 @@ public class Dumper {
     /**
      * Alter which describer to use.
      *
-     * @param newDescriber (not null)
+     * @param newDescriber (not null, alias created)
      * @return this instance for chaining
      */
     public Dumper setDescriber(Describer newDescriber) {
@@ -539,6 +573,17 @@ public class Dumper {
      */
     public Dumper setDumpCull(boolean newValue) {
         dumpCullFlag = newValue;
+        return this;
+    }
+
+    /**
+     * Configure dumping of material-parameter overrides.
+     *
+     * @param newValue true to enable, false to disable
+     * @return this instance for chaining
+     */
+    public Dumper setDumpOverride(boolean newValue) {
+        dumpOverrideFlag = newValue;
         return this;
     }
 

@@ -34,6 +34,7 @@ import com.jme3.light.LightList;
 import com.jme3.light.PointLight;
 import com.jme3.light.SpotLight;
 import com.jme3.material.MatParam;
+import com.jme3.material.MatParamOverride;
 import com.jme3.material.Material;
 import com.jme3.material.MaterialDef;
 import com.jme3.material.RenderState;
@@ -62,7 +63,6 @@ import com.jme3.water.ReflectionProcessor;
 import com.jme3.water.SimpleWaterProcessor;
 import com.jme3.water.SimpleWaterProcessor.RefractionProcessor;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.MyCamera;
@@ -202,7 +202,7 @@ public class Describer {
     /**
      * Generate a textual description of a spatial's controls.
      *
-     * @param spatial spatial being described (not null)
+     * @param spatial spatial being described (not null, unaffected)
      * @param enabled if true, describe only the enabled controls; if false,
      * describe only the disabled controls
      * @return description (not null)
@@ -230,23 +230,15 @@ public class Describer {
     /**
      * Generate a textual description of a filter post-processor's filters.
      *
-     * @param fpp processor being described (not null)
+     * @param fpp processor being described (not null, unaffected)
      * @return description (not null)
      */
     public String describeFilters(FilterPostProcessor fpp) {
         StringBuilder result = new StringBuilder(20);
         boolean addSeparators = false;
 
-        Iterator<Filter> iterator = fpp.getFilterIterator();
-        int count = 0;
-        while (iterator.hasNext()) {
-            iterator.next();
-            count++;
-        }
-
-        iterator = fpp.getFilterIterator();
-        for (int i = 0; i < count; i++) {
-            Filter filter = iterator.next();
+        List<Filter> list = fpp.getFilterList();
+        for (Filter filter : list) {
             if (addSeparators) {
                 result.append(listSeparator);
             } else {
@@ -262,16 +254,14 @@ public class Describer {
     /**
      * Generate a textual description of a viewport's scene processors.
      *
-     * @param viewPort view port being described (not null)
+     * @param viewPort view port being described (not null, unaffected)
      * @return description (not null)
      */
     public String describeProcessors(ViewPort viewPort) {
         StringBuilder result = new StringBuilder(20);
         boolean addSeparators = false;
         List<SceneProcessor> pList = viewPort.getProcessors();
-        int count = pList.size();
-        for (int i = 0; i < count; i++) {
-            SceneProcessor processor = pList.get(i);
+        for (SceneProcessor processor : pList) {
             if (addSeparators) {
                 result.append(listSeparator);
             } else {
@@ -426,9 +416,7 @@ public class Describer {
     protected String describe(LightList lightList) {
         StringBuilder result = new StringBuilder(50);
         boolean addSeparators = false;
-        int count = lightList.size();
-        for (int i = 0; i < count; i++) {
-            Light light = lightList.get(i);
+        for (Light light : lightList) {
             if (addSeparators) {
                 result.append(listSeparator);
             } else {
@@ -442,9 +430,30 @@ public class Describer {
     }
 
     /**
+     * Generate a textual description of a material-parameter override.
+     *
+     * @param override override to describe (not null, unaffected)
+     * @return description (not null, not empty)
+     */
+    protected String describe(MatParamOverride override) {
+        String result = override.getName();
+        Object value = override.getValue();
+        if (value == null) {
+            result += "=null";
+        } else {
+            String valueString = value.toString();
+            if (valueString.length() <= 8) {
+                result += String.format("=%s", valueString);
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Generate a textual description of a scene processor.
      *
-     * @param processor processor to describe (unaffected)
+     * @param processor processor to describe (may be null, unaffected)
      * @return description (not null, not empty)
      */
     protected String describe(SceneProcessor processor) {
