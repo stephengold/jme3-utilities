@@ -1,6 +1,6 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.8.10 released on TBD
+## Version 0.8.10 released on 17 August 2018
 
  + Describe locations and directions of lights.
  + Added capability to describe and dump material-parameter overrides.
