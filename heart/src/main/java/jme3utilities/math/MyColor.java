@@ -88,7 +88,7 @@ final public class MyColor {
     }
 
     /**
-     * Parse a color from the specified text string.
+     * Parse a color from the specified text string. TODO rename parse()
      *
      * @param textString input text (not null, not empty)
      * @return a new color instance, or null if text is invalid
@@ -128,6 +128,7 @@ final public class MyColor {
             return new ColorRGBA(1f, 1f, 1f, baseColor.a);
         }
         ColorRGBA result = baseColor.mult(1f / max);
+
         return result;
     }
 }
