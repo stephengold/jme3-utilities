@@ -115,15 +115,25 @@ public class Misc {
     }
 
     /**
-     * Create a deep copy of the specified object.
+     * Create a deep copy of the specified object. This works around JME issue
+     * #879.
      *
-     * @param object input (unaffected)
-     * @return a new object, equivalent to the input
+     * @param object input (alias may be created)
+     * @return an object equivalent to the input
      */
     public static Object deepClone(Object object) {
         Object clone;
-        if (object instanceof Boolean || object instanceof Enum) {
+        if (object instanceof Boolean
+                || object instanceof Byte
+                || object instanceof Character
+                || object instanceof Enum) {
+            // a unique instance for every possible value
             clone = object;
+
+        } else if (object instanceof String) {
+            // instances are immutable, so return an alias
+            clone = object;
+
         } else if (object instanceof Double) {
             clone = (double) object;
         } else if (object instanceof Float) {
@@ -134,6 +144,7 @@ public class Misc {
             clone = (long) object;
         } else if (object instanceof Short) {
             clone = (short) object;
+
         } else {
             clone = Cloner.deepClone(object);
         }
