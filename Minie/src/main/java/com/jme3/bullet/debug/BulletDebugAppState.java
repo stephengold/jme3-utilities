@@ -53,6 +53,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.MyAsset;
 
 /**
  *
@@ -137,25 +138,13 @@ public class BulletDebugAppState extends AbstractAppState {
     }
 
     private void setupMaterials(Application app) {
-        AssetManager manager = app.getAssetManager();
-        DEBUG_BLUE = new Material(manager, "Common/MatDefs/Misc/Unshaded.j3md");
-        DEBUG_BLUE.getAdditionalRenderState().setWireframe(true);
-        DEBUG_BLUE.setColor("Color", ColorRGBA.Blue);
-        DEBUG_GREEN = new Material(manager, "Common/MatDefs/Misc/Unshaded.j3md");
-        DEBUG_GREEN.getAdditionalRenderState().setWireframe(true);
-        DEBUG_GREEN.setColor("Color", ColorRGBA.Green);
-        DEBUG_RED = new Material(manager, "Common/MatDefs/Misc/Unshaded.j3md");
-        DEBUG_RED.getAdditionalRenderState().setWireframe(true);
-        DEBUG_RED.setColor("Color", ColorRGBA.Red);
-        DEBUG_YELLOW = new Material(manager, "Common/MatDefs/Misc/Unshaded.j3md");
-        DEBUG_YELLOW.getAdditionalRenderState().setWireframe(true);
-        DEBUG_YELLOW.setColor("Color", ColorRGBA.Yellow);
-        DEBUG_MAGENTA = new Material(manager, "Common/MatDefs/Misc/Unshaded.j3md");
-        DEBUG_MAGENTA.getAdditionalRenderState().setWireframe(true);
-        DEBUG_MAGENTA.setColor("Color", ColorRGBA.Magenta);
-        DEBUG_PINK = new Material(manager, "Common/MatDefs/Misc/Unshaded.j3md");
-        DEBUG_PINK.getAdditionalRenderState().setWireframe(true);
-        DEBUG_PINK.setColor("Color", ColorRGBA.Pink);
+        AssetManager am = app.getAssetManager();
+        DEBUG_BLUE = MyAsset.createWireframeMaterial(am, ColorRGBA.Blue);
+        DEBUG_GREEN = MyAsset.createWireframeMaterial(am, ColorRGBA.Green);
+        DEBUG_RED = MyAsset.createWireframeMaterial(am, ColorRGBA.Red);
+        DEBUG_YELLOW = MyAsset.createWireframeMaterial(am, ColorRGBA.Yellow);
+        DEBUG_MAGENTA = MyAsset.createWireframeMaterial(am, ColorRGBA.Magenta);
+        DEBUG_PINK = MyAsset.createWireframeMaterial(am, ColorRGBA.Pink);
     }
 
     private void updateRigidBodies() {
