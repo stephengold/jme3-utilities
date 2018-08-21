@@ -199,6 +199,33 @@ public class Describer {
     }
 
     /**
+     * Describe the render-queue bucket to which the specified spatial is
+     * assigned.
+     *
+     * @param spatial spatial being described (not null, unaffected)
+     * @return description (not null, not empty)
+     */
+    public String describeBucket(Spatial spatial) {
+        StringBuilder result = new StringBuilder(20);
+        /*
+         * Describe its local assignment.
+         */
+        result.append("bucket=");
+        RenderQueue.Bucket bucket = spatial.getLocalQueueBucket();
+        result.append(bucket);
+        if (bucket == RenderQueue.Bucket.Inherit) {
+            /*
+             * Describe its effective assignment.
+             */
+            result.append('/');
+            bucket = spatial.getQueueBucket();
+            result.append(bucket);
+        }
+
+        return result.toString();
+    }
+
+    /**
      * Generate a textual description for all of a spatial's controls.
      *
      * @param spatial spatial being described (not null, unaffected)
@@ -223,37 +250,6 @@ public class Describer {
             result.append('(');
             result.append(disabled);
             result.append(')');
-        }
-
-        return result.toString();
-    }
-
-    /**
-     * Generate a textual description for some of a spatial's controls. TODO
-     * sort methods
-     *
-     * @param spatial spatial being described (not null, unaffected)
-     * @param enabled if true, describe only the enabled controls; if false,
-     * describe only the disabled controls
-     * @return description (not null)
-     */
-    protected String describeControls(Spatial spatial, boolean enabled) {
-        StringBuilder result = new StringBuilder(20);
-        boolean addSeparators = false;
-
-        int count = spatial.getNumControls();
-        for (int i = 0; i < count; i++) {
-            Control control = spatial.getControl(i);
-            boolean isEnabled = isControlEnabled(control);
-            if (isEnabled == enabled) {
-                if (addSeparators) {
-                    result.append(listSeparator);
-                } else {
-                    addSeparators = true;
-                }
-                String description = describe(control);
-                result.append(description);
-            }
         }
 
         return result.toString();
@@ -665,27 +661,30 @@ public class Describer {
     }
 
     /**
-     * Describe the render-queue bucket to which the specified spatial is
-     * assigned. TODO sort methods
+     * Generate a textual description for some of a spatial's controls.
      *
      * @param spatial spatial being described (not null, unaffected)
-     * @return description (not null, not empty)
+     * @param enabled if true, describe only the enabled controls; if false,
+     * describe only the disabled controls
+     * @return description (not null)
      */
-    public String describeBucket(Spatial spatial) {
+    protected String describeControls(Spatial spatial, boolean enabled) {
         StringBuilder result = new StringBuilder(20);
-        /*
-         * Describe its local assignment.
-         */
-        result.append("bucket=");
-        RenderQueue.Bucket bucket = spatial.getLocalQueueBucket();
-        result.append(bucket);
-        if (bucket == RenderQueue.Bucket.Inherit) {
-            /*
-             * Describe its effective assignment.
-             */
-            result.append('/');
-            bucket = spatial.getQueueBucket();
-            result.append(bucket);
+        boolean addSeparators = false;
+
+        int count = spatial.getNumControls();
+        for (int i = 0; i < count; i++) {
+            Control control = spatial.getControl(i);
+            boolean isEnabled = isControlEnabled(control);
+            if (isEnabled == enabled) {
+                if (addSeparators) {
+                    result.append(listSeparator);
+                } else {
+                    addSeparators = true;
+                }
+                String description = describe(control);
+                result.append(description);
+            }
         }
 
         return result.toString();
