@@ -112,16 +112,6 @@ public class PerformanceAppState extends SimpleAppState {
     // new methods exposed
 
     /**
-     * Read the measurement interval.
-     *
-     * @return interval (in seconds, &gt;0)
-     */
-    public float getUpdateInterval() {
-        assert measurementInterval > 0f : measurementInterval;
-        return measurementInterval;
-    }
-
-    /**
      * Alter the measurement interval.
      *
      * @param newInterval (in seconds, &gt;0)
@@ -129,6 +119,16 @@ public class PerformanceAppState extends SimpleAppState {
     public void setUpdateInterval(float newInterval) {
         Validate.positive(newInterval, "new interval");
         measurementInterval = newInterval;
+    }
+
+    /**
+     * Read the measurement interval.
+     *
+     * @return interval (in seconds, &gt;0)
+     */
+    public float updateInterval() {
+        assert measurementInterval > 0f : measurementInterval;
+        return measurementInterval;
     }
     // *************************************************************************
     // SimpleAppState methods
