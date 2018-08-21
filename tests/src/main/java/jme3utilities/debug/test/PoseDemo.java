@@ -188,7 +188,7 @@ public class PoseDemo extends GuiApplication {
         logger.log(Level.INFO, "SkyControl version is {0}",
                 MyString.quote(Constants.getVersionShort()));
         logger.log(Level.INFO, "jme3-utilities-debug version is {0}",
-                MyString.quote(DebugVersion.getVersionShort()));
+                MyString.quote(DebugVersion.versionShort()));
         logger.log(Level.INFO, "jme3-utilities-ui version is {0}",
                 MyString.quote(UiVersion.getVersionShort()));
         logger.log(Level.INFO, "jme3-utilities-nifty version is {0}",
