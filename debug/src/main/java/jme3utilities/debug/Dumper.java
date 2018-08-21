@@ -348,7 +348,7 @@ public class Dumper {
 
         stream.print(" mpo=(");
         boolean addSeparators = false;
-        String listSeparator = describer.getListSeparator();
+        String listSeparator = describer.listSeparator();
 
         List<MatParamOverride> list = spatial.getLocalMatParamOverrides();
         for (MatParamOverride override : list) {

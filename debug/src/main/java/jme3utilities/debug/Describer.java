@@ -90,7 +90,7 @@ public class Describer {
     final private static Logger logger
             = Logger.getLogger(Describer.class.getName());
     /**
-     * separator between items in lists
+     * separator between items in lists (not null, may be empty)
      */
     private String listSeparator = ",";
     // *************************************************************************
@@ -160,7 +160,7 @@ public class Describer {
         IntMap<VertexBuffer> buffers = mesh.getBuffers();
         for (IntMap.Entry<VertexBuffer> bufferEntry : buffers) {
             if (addSeparators) {
-                result.append(',');
+                result.append(listSeparator);
             } else {
                 addSeparators = true;
             }
@@ -489,7 +489,7 @@ public class Describer {
      *
      * @return separator text string (not null, may be empty)
      */
-    public String getListSeparator() {
+    public String listSeparator() {
         assert listSeparator != null;
         return listSeparator;
     }
