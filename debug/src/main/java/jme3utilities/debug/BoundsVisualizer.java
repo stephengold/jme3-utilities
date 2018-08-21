@@ -152,7 +152,7 @@ public class BoundsVisualizer extends SubtreeControl {
      *
      * @return true if the test is enabled, otherwise false
      */
-    public boolean getDepthTest() {
+    public boolean isDepthTest() {
         RenderState rs = lineMaterial.getAdditionalRenderState();
         boolean result = rs.isDepthTest();
 
@@ -164,7 +164,7 @@ public class BoundsVisualizer extends SubtreeControl {
      *
      * @return width (in pixels, &ge;0)
      */
-    public float getLineWidth() {
+    public float lineWidth() {
         assert effectiveLineWidth >= 0f : effectiveLineWidth;
         return effectiveLineWidth;
     }
