@@ -112,9 +112,10 @@ public class Describer {
             result.append(MyString.quote(name));
         }
 
+        result.append(" def=");
         MaterialDef def = material.getMaterialDef();
-        String defName = def == null ? null : def.getName();
-        String description = String.format(" def=%s", MyString.quote(defName));
+        String defName = (def == null) ? null : def.getName();
+        String description = MyString.quote(defName);
         result.append(description);
 
         RenderState state = material.getAdditionalRenderState();
@@ -127,10 +128,12 @@ public class Describer {
 
         Collection<MatParam> params = material.getParams();
         for (MatParam param : params) {
+            result.append(' ');
             String paramName = param.getName();
+            result.append(paramName);
+            result.append('=');
             String value = param.getValueAsString();
-            description = String.format(" %s=%s", paramName, value);
-            result.append(description);
+            result.append(value);
         }
 
         return result.toString();
@@ -149,23 +152,21 @@ public class Describer {
         String name = mesh.getClass().getSimpleName();
         result.append(name);
 
-        Mesh.Mode mode = mesh.getMode();
-        String modeDescription = mode.toString();
         result.append(" mode=");
-        result.append(modeDescription);
+        Mesh.Mode mode = mesh.getMode();
+        result.append(mode);
         result.append(" buffers=");
 
         IntMap<VertexBuffer> buffers = mesh.getBuffers();
         for (IntMap.Entry<VertexBuffer> bufferEntry : buffers) {
-            VertexBuffer buffer = bufferEntry.getValue();
-            VertexBuffer.Type type = buffer.getBufferType();
-            String description = type.toString();
             if (addSeparators) {
                 result.append(',');
             } else {
                 addSeparators = true;
             }
-            result.append(description);
+            VertexBuffer buffer = bufferEntry.getValue();
+            VertexBuffer.Type type = buffer.getBufferType();
+            result.append(type);
         }
 
         return result.toString();
@@ -210,6 +211,7 @@ public class Describer {
     public String describeControls(Spatial spatial, boolean enabled) {
         StringBuilder result = new StringBuilder(20);
         boolean addSeparators = false;
+
         int count = spatial.getNumControls();
         for (int i = 0; i < count; i++) {
             Control control = spatial.getControl(i);
@@ -224,6 +226,7 @@ public class Describer {
                 result.append(description);
             }
         }
+
         return result.toString();
     }
 
@@ -260,6 +263,7 @@ public class Describer {
     public String describeProcessors(ViewPort viewPort) {
         StringBuilder result = new StringBuilder(20);
         boolean addSeparators = false;
+
         List<SceneProcessor> pList = viewPort.getProcessors();
         for (SceneProcessor processor : pList) {
             if (addSeparators) {
@@ -416,6 +420,7 @@ public class Describer {
     protected String describe(LightList lightList) {
         StringBuilder result = new StringBuilder(50);
         boolean addSeparators = false;
+
         for (Light light : lightList) {
             if (addSeparators) {
                 result.append(listSeparator);
@@ -436,18 +441,21 @@ public class Describer {
      * @return description (not null, not empty)
      */
     protected String describe(MatParamOverride override) {
-        String result = override.getName();
+        StringBuilder result = new StringBuilder(50);
+        String name = override.getName();
+        result.append(name);
         Object value = override.getValue();
         if (value == null) {
-            result += "=null";
+            result.append("=null");
         } else {
             String valueString = value.toString();
             if (valueString.length() <= 8) {
-                result += String.format("=%s", valueString);
+                result.append('=');
+                result.append(valueString);
             }
         }
 
-        return result;
+        return result.toString();
     }
 
     /**
@@ -526,7 +534,6 @@ public class Describer {
      */
     protected boolean isControlEnabled(Control control) {
         Validate.nonNull(control, "control");
-
         boolean result = MyControl.isEnabled(control);
         return result;
     }
