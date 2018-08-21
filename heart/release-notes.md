@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.6.1 released on TBD
+
+ + Fixed errors in 3 material definitions
+ + Added support for Byte, Character, and String in Misc.deepClone()
+
 ## Version 2.6.0 released on 17 August 2018
 
  + Added a deepClone() method to the Misc class
