@@ -37,6 +37,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyAsset;
+import jme3utilities.debug.Dumper;
 import jme3utilities.mesh.LoopMesh;
 
 /**
@@ -100,5 +101,9 @@ public class LoopMeshTest extends SimpleApplication {
         Geometry pointsGeometry = new Geometry("points", pointsMesh);
         pointsGeometry.setMaterial(material);
         rootNode.attachChild(pointsGeometry);
+
+        Dumper d = new Dumper();
+        d.setDumpTransform(true);
+        d.dump(renderManager);
     }
 }
