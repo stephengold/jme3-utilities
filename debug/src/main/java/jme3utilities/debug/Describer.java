@@ -39,6 +39,7 @@ import com.jme3.material.Material;
 import com.jme3.material.MaterialDef;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.post.Filter;
 import com.jme3.post.FilterPostProcessor;
@@ -71,6 +72,7 @@ import jme3utilities.MyControl;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.math.MyQuaternion;
 import jme3utilities.math.MyVector3f;
 
 /**
@@ -97,8 +99,8 @@ public class Describer {
     /**
      * Generate a textual description of a material.
      *
-     * @param material material to be described (may be null, unaffected)
-     * @return description (not null)
+     * @param material material to describe (may be null, unaffected)
+     * @return a description (not null, may be empty)
      */
     public String describe(Material material) {
         if (material == null) {
@@ -140,8 +142,8 @@ public class Describer {
     /**
      * Generate a textual description of a mesh.
      *
-     * @param mesh mesh to be described (may be null, unaffected)
-     * @return description (not null)
+     * @param mesh the mesh to describe (may be null, unaffected)
+     * @return a description (not null, not empty)
      */
     public String describe(Mesh mesh) {
         StringBuilder result = new StringBuilder(20);
@@ -174,7 +176,7 @@ public class Describer {
      * Generate a textual description of an axisIndex.
      *
      * @param axisIndex (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
-     * @return description (not null)
+     * @return a description (not null, not empty)
      */
     public String describeAxis(int axisIndex) {
         Validate.inRange(axisIndex, "axis index", MyVector3f.firstAxis,
@@ -202,8 +204,8 @@ public class Describer {
      * Describe the render-queue bucket to which the specified spatial is
      * assigned.
      *
-     * @param spatial spatial being described (not null, unaffected)
-     * @return description (not null, not empty)
+     * @param spatial the spatial to describe (not null, unaffected)
+     * @return a description (not null, not empty)
      */
     public String describeBucket(Spatial spatial) {
         StringBuilder result = new StringBuilder(20);
@@ -226,10 +228,11 @@ public class Describer {
     }
 
     /**
-     * Generate a textual description for all of a spatial's controls.
+     * Generate a textual description for all controls added to the specified
+     * spatial.
      *
-     * @param spatial spatial being described (not null, unaffected)
-     * @return description (not null)
+     * @param spatial the spatial to describe (not null, unaffected)
+     * @return a description (not null, may be empty)
      */
     public String describeControls(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
@@ -259,8 +262,8 @@ public class Describer {
      * Generate a textual description of the view-frustum culling hints
      * associated with the specified spatial.
      *
-     * @param spatial spatial being described (not null, unaffected)
-     * @return description (not null, not empty)
+     * @param spatial the spatial describe (not null, unaffected)
+     * @return a description (not null, not empty)
      */
     public String describeCull(Spatial spatial) {
         StringBuilder result = new StringBuilder(20);
@@ -285,8 +288,8 @@ public class Describer {
     /**
      * Generate a textual description of a filter post-processor's filters.
      *
-     * @param fpp processor being described (not null, unaffected)
-     * @return description (not null)
+     * @param fpp the processor to describe (not null, unaffected)
+     * @return a description (not null, may be empty)
      */
     public String describeFilters(FilterPostProcessor fpp) {
         StringBuilder result = new StringBuilder(20);
@@ -309,8 +312,8 @@ public class Describer {
     /**
      * Generate a textual description the flags associated with a view port.
      *
-     * @param viewPort view port being described (not null, unaffected)
-     * @return description (not null, not empty)
+     * @param viewPort the view port to describe (not null, unaffected)
+     * @return a description (not null, not empty)
      */
     public String describeFlags(ViewPort viewPort) {
         StringBuilder result = new StringBuilder(20);
@@ -334,10 +337,50 @@ public class Describer {
     }
 
     /**
+     * Generate a textual description of the world location of the specified
+     * spatial.
+     *
+     * @param spatial the spatial to describe (not null, unaffected)
+     * @return a description (not null, may be empty)
+     */
+    public String describeLocation(Spatial spatial) {
+        Validate.nonNull(spatial, "spatial");
+        StringBuilder result = new StringBuilder(30);
+
+        Vector3f location = MySpatial.getWorldLocation(spatial);
+        if (!MyVector3f.isZero(location)) {
+            result.append("loc=");
+            result.append(location);
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Generate a textual description of the the world orientation of the
+     * specified spatial.
+     *
+     * @param spatial the spatial to describe (not null, unaffected)
+     * @return a description (not null, may be empty)
+     */
+    public String describeOrientation(Spatial spatial) {
+        Validate.nonNull(spatial, "spatial");
+        StringBuilder result = new StringBuilder(30);
+
+        Quaternion orientation = MySpatial.getWorldOrientation(spatial);
+        if (!MyQuaternion.isRotationIdentity(orientation)) {
+            result.append("orient=");
+            result.append(orientation);
+        }
+
+        return result.toString();
+    }
+
+    /**
      * Generate a textual description of a viewport's scene processors.
      *
-     * @param viewPort view port being described (not null, unaffected)
-     * @return description (not null)
+     * @param viewPort the view port to describe (not null, unaffected)
+     * @return a description (not null, may be empty)
      */
     public String describeProcessors(ViewPort viewPort) {
         StringBuilder result = new StringBuilder(20);
@@ -358,11 +401,37 @@ public class Describer {
     }
 
     /**
-     * Generate a textual description of the shadow modes associated with a
+     * Generate a textual description of the world scale of the specified
      * spatial.
      *
-     * @param spatial spatial being described (not null, unaffected)
-     * @return description (not null, not empty)
+     * @param spatial the spatial to describe (not null, unaffected)
+     * @return a description (not null, may be empty)
+     */
+    public String describeScale(Spatial spatial) {
+        Validate.nonNull(spatial, "spatial");
+        StringBuilder result = new StringBuilder(30);
+
+        Vector3f scale = MySpatial.getWorldScale(spatial);
+        if (scale.x != scale.y || scale.y != scale.z) {
+            result.append("scale=");
+            result.append(scale);
+        } else if (scale.x != 1f) {
+            /*
+             * uniform scaling
+             */
+            result.append("scale=");
+            result.append(scale.x);
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Generate a textual description of the shadow modes associated with the
+     * specified spatial.
+     *
+     * @param spatial the spatial to describe (not null, unaffected)
+     * @return a description (not null, not empty)
      */
     public String describeShadow(Spatial spatial) {
         StringBuilder result = new StringBuilder(20);
@@ -388,8 +457,8 @@ public class Describer {
      * Generate a textual description of the user data associated with a
      * spatial.
      *
-     * @param spatial spatial being described (not null, unaffected)
-     * @return description (not null)
+     * @param spatial the spatial to describe (not null, unaffected)
+     * @return a description (not null, may be empty)
      */
     public String describeUserData(Spatial spatial) {
         StringBuilder result = new StringBuilder(50);
@@ -418,7 +487,7 @@ public class Describer {
     /**
      * Read the list separator.
      *
-     * @return separator text string (not null)
+     * @return separator text string (not null, may be empty)
      */
     public String getListSeparator() {
         assert listSeparator != null;
@@ -428,7 +497,7 @@ public class Describer {
     /**
      * Alter the list separator.
      *
-     * @param newSeparator (not null)
+     * @param newSeparator (not null, may be empty)
      */
     public void setListSeparator(String newSeparator) {
         Validate.nonNull(newSeparator, "new separator");
@@ -440,8 +509,8 @@ public class Describer {
     /**
      * Generate a textual description of a camera.
      *
-     * @param camera camera to describe (unaffected)
-     * @return description (not null, not empty)
+     * @param camera the camera to describe (may be null, unaffected)
+     * @return a description (not null, not empty)
      * @see #describeMore(com.jme3.renderer.Camera)
      */
     protected String describe(Camera camera) {
@@ -452,8 +521,8 @@ public class Describer {
     /**
      * Generate a textual description of a scene-graph control.
      *
-     * @param control (not null)
-     * @return description (not null)
+     * @param control the control to describe (not null, unaffected)
+     * @return a description (not null, may be empty)
      */
     protected String describe(Control control) {
         Validate.nonNull(control, "control");
@@ -464,8 +533,8 @@ public class Describer {
     /**
      * Generate a textual description of a filter.
      *
-     * @param filter filter to describe (unaffected)
-     * @return description (not null, not empty)
+     * @param filter the filter to describe (unaffected)
+     * @return a description (not null, not empty)
      */
     protected String describe(Filter filter) {
         String result;
@@ -495,8 +564,8 @@ public class Describer {
     /**
      * Generate a brief textual description of a light.
      *
-     * @param light light to describe (unaffected)
-     * @return description (not null, not empty)
+     * @param light the light to describe (unaffected)
+     * @return a description (not null, not empty)
      */
     protected String describe(Light light) {
         String result;
@@ -551,8 +620,8 @@ public class Describer {
     /**
      * Generate a textual description of a light list.
      *
-     * @param lightList list to describe (not null, unaffected)
-     * @return description (not null)
+     * @param lightList the list to describe (not null, unaffected)
+     * @return a description (not null, may be empty)
      */
     protected String describe(LightList lightList) {
         StringBuilder result = new StringBuilder(50);
@@ -574,8 +643,8 @@ public class Describer {
     /**
      * Generate a textual description of a material-parameter override.
      *
-     * @param override override to describe (not null, unaffected)
-     * @return description (not null, not empty)
+     * @param override the override to describe (not null, unaffected)
+     * @return a description (not null, not empty)
      */
     protected String describe(MatParamOverride override) {
         StringBuilder result = new StringBuilder(50);
@@ -598,8 +667,8 @@ public class Describer {
     /**
      * Generate a textual description of a render state.
      *
-     * @param state view port being described (not null, unaffected)
-     * @return description (not null, not empty)
+     * @param state the view port to describe (not null, unaffected)
+     * @return a description (not null, not empty)
      */
     protected String describe(RenderState state) {
         StringBuilder result = new StringBuilder(20);
@@ -625,8 +694,8 @@ public class Describer {
     /**
      * Generate a textual description of a scene processor.
      *
-     * @param processor processor to describe (may be null, unaffected)
-     * @return description (not null, not empty)
+     * @param processor the processor to describe (may be null, unaffected)
+     * @return a description (not null, not empty)
      */
     protected String describe(SceneProcessor processor) {
         String result;
@@ -661,12 +730,13 @@ public class Describer {
     }
 
     /**
-     * Generate a textual description for some of a spatial's controls.
+     * Generate a textual description for a subset of the controls added to the
+     * specified spatial.
      *
-     * @param spatial spatial being described (not null, unaffected)
+     * @param spatial the spatial to describe (not null, unaffected)
      * @param enabled if true, describe only the enabled controls; if false,
      * describe only the disabled controls
-     * @return description (not null)
+     * @return a description (not null, may be empty)
      */
     protected String describeControls(Spatial spatial, boolean enabled) {
         StringBuilder result = new StringBuilder(20);
@@ -693,8 +763,8 @@ public class Describer {
     /**
      * Generate additional textual description of a camera.
      *
-     * @param camera camera to describe (not null, unaffected)
-     * @return description (not null, not empty)
+     * @param camera the camera to describe (not null, unaffected)
+     * @return a description (not null, not empty)
      * @see #describe(com.jme3.renderer.Camera)
      */
     protected String describeMore(Camera camera) {
@@ -706,8 +776,8 @@ public class Describer {
     /**
      * Generate a single-character description of a spatial.
      *
-     * @param spatial spatial being described
-     * @return mnemonic character
+     * @param spatial the spatial to describe (unaffected, may be null)
+     * @return a mnemonic character
      */
     protected char describeType(Spatial spatial) {
         char result;
@@ -721,9 +791,9 @@ public class Describer {
     }
 
     /**
-     * Test whether a scene-graph control is enabled.
+     * Test whether the specified scene-graph control is enabled.
      *
-     * @param control control to test (not null)
+     * @param control the control to test (not null, unaffected)
      * @return true if the control is enabled, otherwise false
      */
     protected boolean isControlEnabled(Control control) {

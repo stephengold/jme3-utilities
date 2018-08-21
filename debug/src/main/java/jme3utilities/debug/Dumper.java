@@ -30,8 +30,6 @@ import com.jme3.light.LightList;
 import com.jme3.material.MatParamOverride;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Quaternion;
-import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -43,11 +41,8 @@ import com.jme3.terrain.geomipmap.TerrainQuad;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.logging.Logger;
-import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
-import jme3utilities.math.MyQuaternion;
-import jme3utilities.math.MyVector3f;
 
 /**
  * Dump portions of a jME3 scene graph for debugging.
@@ -233,9 +228,20 @@ public class Dumper {
         }
 
         if (dumpTransformFlag) {
-            dumpLocation(spatial);
-            dumpOrientation(spatial);
-            dumpScale(spatial);
+            description = describer.describeLocation(spatial);
+            if (!description.isEmpty()) {
+                stream.printf(" %s", description);
+            }
+
+            description = describer.describeOrientation(spatial);
+            if (!description.isEmpty()) {
+                stream.printf(" %s", description);
+            }
+
+            description = describer.describeScale(spatial);
+            if (!description.isEmpty()) {
+                stream.printf(" %s", description);
+            }
         }
 
         if (dumpUserFlag) {
@@ -333,35 +339,6 @@ public class Dumper {
     }
 
     /**
-     * Dump the world location of a spatial.
-     *
-     * @param spatial spatial being described (not null, unaffected)
-     */
-    public void dumpLocation(Spatial spatial) {
-        Validate.nonNull(spatial, "spatial");
-
-        Vector3f location = MySpatial.getWorldLocation(spatial);
-        if (!MyVector3f.isZero(location)) {
-            stream.printf(" loc=[%.3f, %.3f, %.3f]",
-                    location.x, location.y, location.z);
-        }
-    }
-
-    /**
-     * Dump the world orientation of a spatial.
-     *
-     * @param spatial spatial being described (not null, unaffected)
-     */
-    public void dumpOrientation(Spatial spatial) {
-        Validate.nonNull(spatial, "spatial");
-
-        Quaternion orientation = MySpatial.getWorldOrientation(spatial);
-        if (!MyQuaternion.isRotationIdentity(orientation)) {
-            stream.printf(" orient=%s", orientation.toString());
-        }
-    }
-
-    /**
      * Dump the material-parameter overrides of a spatial.
      *
      * @param spatial spatial being described (not null, unaffected)
@@ -384,24 +361,6 @@ public class Dumper {
             stream.print(description);
         }
         stream.print(")");
-    }
-
-    /**
-     * Dump the world scale of a spatial.
-     *
-     * @param spatial spatial being described (not null, unaffected)
-     */
-    public void dumpScale(Spatial spatial) {
-        Vector3f scale = spatial.getWorldScale();
-        if (scale.x != scale.y || scale.y != scale.z) {
-            stream.printf(" scale=%s", scale.toString());
-        } else if (scale.x != 1f) {
-            /*
-             * uniform scaling
-             */
-            String valueString = Float.toString(scale.x);
-            stream.printf(" scale=%s", valueString);
-        }
     }
 
     /**
