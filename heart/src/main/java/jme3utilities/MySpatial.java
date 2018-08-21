@@ -106,7 +106,7 @@ public class MySpatial {
 
         if (newParent != oldParent) {
             float scaleFactor
-                    = oldParent.getWorldScale().x / newParent.getWorldScale().x;
+                    = getWorldScale(oldParent).x / getWorldScale(newParent).x;
             Vector3f localScale = child.getLocalScale();
             localScale.multLocal(scaleFactor);
             child.setLocalScale(localScale);
@@ -215,7 +215,7 @@ public class MySpatial {
      * recursive!
      *
      * @param subtree subtree to traverse (may be null, unaffected)
-     * @return number of user data (&ge;0)
+     * @return the number of user data (&ge;0)
      */
     public static int countUserData(Spatial subtree) {
         int result = 0;
@@ -269,7 +269,7 @@ public class MySpatial {
      * scene graph. Note: recursive!
      *
      * @param subtree subtree to traverse (may be null, unaffected)
-     * @return number of vertices (&ge;0)
+     * @return the number of vertices (&ge;0)
      */
     public static int countVertices(Spatial subtree) {
         int result = 0;
@@ -294,7 +294,7 @@ public class MySpatial {
      * Generate a single-character description of a spatial.
      *
      * @param spatial spatial to describe (unaffected)
-     * @return mnemonic character
+     * @return a mnemonic character
      */
     public static char describeType(Spatial spatial) {
         if (spatial instanceof AssetLinkNode) {
@@ -615,13 +615,11 @@ public class MySpatial {
      * Calculate the world location of a spatial's center.
      *
      * @param spatial spatial to locate (not null, unaffected)
-     * @return new vector
+     * @return a new vector
      */
     public static Vector3f getWorldLocation(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
-        /*
-         * Access the rigid body, if any.
-         */
+
         Vector3f location;
         if (isIgnoringTransforms(spatial)) {
             location = new Vector3f();
@@ -636,13 +634,11 @@ public class MySpatial {
      * Calculate the world orientation of a spatial.
      *
      * @param spatial spatial to orient (not null, unaffected)
-     * @return new vector
+     * @return a new vector
      */
     public static Quaternion getWorldOrientation(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
-        /*
-         * Access the rigid body, if any.
-         */
+
         Quaternion orientation;
         if (isIgnoringTransforms(spatial)) {
             orientation = new Quaternion();
@@ -651,6 +647,25 @@ public class MySpatial {
         }
 
         return orientation;
+    }
+
+    /**
+     * Calculate the world scale of a spatial.
+     *
+     * @param spatial which spatial (not null, unaffected)
+     * @return a new vector
+     */
+    public static Vector3f getWorldScale(Spatial spatial) {
+        Validate.nonNull(spatial, "spatial");
+
+        Vector3f scale;
+        if (isIgnoringTransforms(spatial)) {
+            scale = new Vector3f(1f, 1f, 1f);
+        } else {
+            scale = spatial.getWorldScale().clone();
+        }
+
+        return scale;
     }
 
     /**
