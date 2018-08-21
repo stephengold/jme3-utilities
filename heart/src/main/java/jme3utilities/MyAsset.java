@@ -418,7 +418,7 @@ final public class MyAsset {
     }
 
     /**
-     * Create a wireframe material with the default point size.
+     * Create a wireframe material with a point size of 1.
      *
      * @param assetManager (not null)
      * @param color (not null, unaffected)
@@ -430,7 +430,6 @@ final public class MyAsset {
         Validate.nonNull(color, "color");
 
         Material material = createWireframeMaterial(assetManager, color, 1f);
-
         return material;
     }
 
