@@ -133,7 +133,9 @@ public class BulletDebugAppState extends AbstractAppState {
     public void render(RenderManager rm) {
         super.render(rm);
         for (ViewPort viewPort : viewPorts) {
-            rm.renderScene(physicsDebugRootNode, viewPort);
+            if (viewPort.isEnabled()) {
+                rm.renderScene(physicsDebugRootNode, viewPort);
+            }
         }
     }
 
