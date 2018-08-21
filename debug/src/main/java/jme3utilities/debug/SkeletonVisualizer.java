@@ -190,36 +190,13 @@ public class SkeletonVisualizer extends SubtreeControl {
     // new methods exposed
 
     /**
-     * Read the size for bone heads (in pixels)
-     *
-     * @return size (in pixels, &ge;1)
-     */
-    public float getHeadSize() {
-        MatParam parameter = headMaterial.getParam("PointSize");
-        float result = (float) parameter.getValue();
-
-        assert result >= 1f : result;
-        return result;
-    }
-
-    /**
-     * Read the effective line width for links.
-     *
-     * @return width (in pixels, &ge;0)
-     */
-    public float getLineWidth() {
-        assert effectiveLineWidth >= 0f : effectiveLineWidth;
-        return effectiveLineWidth;
-    }
-
-    /**
-     * Determine the color for the head of the indexed bone.
+     * Copy the color for the head of the indexed bone.
      *
      * @param boneIndex which bone (&ge;0)
      * @param storeResult (modified if not null)
      * @return the color (either storeResult or a new instance)
      */
-    public ColorRGBA headColor(int boneIndex, ColorRGBA storeResult) {
+    public ColorRGBA copyHeadColor(int boneIndex, ColorRGBA storeResult) {
         Validate.nonNegative(boneIndex, "bone index");
         if (storeResult == null) {
             storeResult = new ColorRGBA();
@@ -240,7 +217,7 @@ public class SkeletonVisualizer extends SubtreeControl {
      * @param storeResult (modified if not null)
      * @return the color (either storeResult or a new instance)
      */
-    public ColorRGBA lineColor(ColorRGBA storeResult) {
+    public ColorRGBA copyLineColor(ColorRGBA storeResult) {
         if (storeResult == null) {
             storeResult = new ColorRGBA();
         }
@@ -250,6 +227,29 @@ public class SkeletonVisualizer extends SubtreeControl {
         storeResult.set(color);
 
         return storeResult;
+    }
+
+    /**
+     * Read the size for bone heads (in pixels).
+     *
+     * @return size (in pixels, &ge;1)
+     */
+    public float headSize() {
+        MatParam parameter = headMaterial.getParam("PointSize");
+        float result = (float) parameter.getValue();
+
+        assert result >= 1f : result;
+        return result;
+    }
+
+    /**
+     * Read the effective line width for links.
+     *
+     * @return width (in pixels, &ge;0)
+     */
+    public float lineWidth() {
+        assert effectiveLineWidth >= 0f : effectiveLineWidth;
+        return effectiveLineWidth;
     }
 
     /**
@@ -480,7 +480,7 @@ public class SkeletonVisualizer extends SubtreeControl {
         int numBones = skeleton.getBoneCount();
         ColorRGBA[] colors = new ColorRGBA[numBones]; // TODO re-use the array
         for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
-            colors[boneIndex] = headColor(boneIndex, null);
+            colors[boneIndex] = copyHeadColor(boneIndex, null);
         }
 
         Geometry headsGeometry
