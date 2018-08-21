@@ -47,6 +47,7 @@ import com.jme3.post.filters.DepthOfFieldFilter;
 import com.jme3.post.filters.PosterizationFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
@@ -121,6 +122,9 @@ public class Describer {
         RenderState state = material.getAdditionalRenderState();
         if (state.isDepthTest()) {
             result.append(" depthTest");
+        }
+        if (state.isDepthWrite()) {
+            result.append(" depthWrite");
         }
         if (state.isWireframe()) {
             result.append(" wireframe");
@@ -494,6 +498,33 @@ public class Describer {
         }
 
         return result;
+    }
+
+    /**
+     * Describe the render-queue bucket to which the specified spatial is
+     * assigned.
+     *
+     * @param spatial spatial being described (not null, unaffected)
+     * @return description (not null, not empty)
+     */
+    public String describeBucket(Spatial spatial) {
+        StringBuilder result = new StringBuilder(20);
+        /*
+         * Describe its local assignment.
+         */
+        result.append("bucket=");
+        RenderQueue.Bucket bucket = spatial.getLocalQueueBucket();
+        result.append(bucket);
+        if (bucket == RenderQueue.Bucket.Inherit) {
+            /*
+             * Describe its effective assignment.
+             */
+            result.append('/');
+            bucket = spatial.getQueueBucket();
+            result.append(bucket);
+        }
+
+        return result.toString();
     }
 
     /**
