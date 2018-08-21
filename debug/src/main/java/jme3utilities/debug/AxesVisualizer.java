@@ -170,7 +170,7 @@ public class AxesVisualizer extends SubtreeControl {
      *
      * @return length (in world units, &gt;0)
      */
-    public float getAxisLength() {
+    public float axisLength() {
         assert axisLength > 0f : axisLength;
         return axisLength;
     }
@@ -180,7 +180,7 @@ public class AxesVisualizer extends SubtreeControl {
      *
      * @return true if the test is enabled, otherwise false
      */
-    public boolean getDepthTest() {
+    public boolean isDepthTest() {
         return depthTest;
     }
 
@@ -189,7 +189,7 @@ public class AxesVisualizer extends SubtreeControl {
      *
      * @return width (in pixels, &ge;1) or 0 for solid arrows
      */
-    public float getLineWidth() {
+    public float lineWidth() {
         assert lineWidth >= 0f : lineWidth;
         return lineWidth;
     }
@@ -199,7 +199,7 @@ public class AxesVisualizer extends SubtreeControl {
      *
      * @return count (&ge;1, &le;3)
      */
-    public int getNumAxes() {
+    public int numAxes() {
         assert numAxes >= 1 : numAxes;
         assert numAxes <= MyVector3f.numAxes : numAxes;
 
