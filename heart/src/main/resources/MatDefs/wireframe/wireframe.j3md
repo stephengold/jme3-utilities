@@ -40,7 +40,7 @@ MaterialDef wireframe {
         }
         FragmentShader GLSL110: Shaders/wireframe/wireframe.frag
         RenderState {
-            Wireframe true
+            Wireframe On
         }
         VertexShader GLSL110:   Shaders/wireframe/wireframe.vert
         WorldParameters {

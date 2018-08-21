@@ -38,7 +38,7 @@ MaterialDef multicolor {
         }
         FragmentShader GLSL110: Shaders/wireframe/multicolor.frag
         RenderState {
-            Wireframe true
+            Wireframe On
         }
         VertexShader GLSL110:   Shaders/wireframe/multicolor.vert
         WorldParameters {
