@@ -2,6 +2,7 @@
 /.nb-gradle/
 /build/
 /debug/build/
+/heart/build/
 /Minie/build/
 /moon-ccbysa/build/
 /nifty/build/
@@ -9,8 +10,9 @@
 /private/
 /SkyControl/build/
 /SkyControl/src/main/resources/Textures/skies/
-/tests/build/
 /tests/*.dll
+/tests/*.so
+/tests/build/
 /tests/private/
 /tests/Written Assets/
 /textures/build/
@@ -24,8 +26,5 @@
 /textures/src/main/java/jme3utilities/xml/
 /textures/src/main/resources/bsc5.dat
 /ui/build/
-/x/build/
-/heart/build/
-/TestSetColor/nbproject/private/
-/TestSetColor/build/
 /wes/build/
+/x/build/
