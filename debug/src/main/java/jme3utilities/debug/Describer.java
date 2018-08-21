@@ -119,16 +119,10 @@ public class Describer {
         String description = MyString.quote(defName);
         result.append(description);
 
+        result.append(' ');
         RenderState state = material.getAdditionalRenderState();
-        if (state.isDepthTest()) {
-            result.append(" depthTest");
-        }
-        if (state.isDepthWrite()) {
-            result.append(" depthWrite");
-        }
-        if (state.isWireframe()) {
-            result.append(" wireframe");
-        }
+        description = describe(state);
+        result.append(description);
 
         Collection<MatParam> params = material.getParams();
         for (MatParam param : params) {
@@ -205,14 +199,45 @@ public class Describer {
     }
 
     /**
-     * Generate a textual description of a spatial's controls.
+     * Generate a textual description for all of a spatial's controls.
+     *
+     * @param spatial spatial being described (not null, unaffected)
+     * @return description (not null)
+     */
+    public String describeControls(Spatial spatial) {
+        Validate.nonNull(spatial, "spatial");
+        StringBuilder result = new StringBuilder(50);
+        /*
+         * List enabled controls first.
+         */
+        String enabled = describeControls(spatial, true);
+        result.append(enabled);
+        /*
+         * List disabled controls last, in parentheses.
+         */
+        String disabled = describeControls(spatial, false);
+        if (enabled.length() > 0 && disabled.length() > 0) {
+            result.append(' ');
+        }
+        if (disabled.length() > 0) {
+            result.append('(');
+            result.append(disabled);
+            result.append(')');
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Generate a textual description for some of a spatial's controls. TODO
+     * sort methods
      *
      * @param spatial spatial being described (not null, unaffected)
      * @param enabled if true, describe only the enabled controls; if false,
      * describe only the disabled controls
      * @return description (not null)
      */
-    public String describeControls(Spatial spatial, boolean enabled) {
+    protected String describeControls(Spatial spatial, boolean enabled) {
         StringBuilder result = new StringBuilder(20);
         boolean addSeparators = false;
 
@@ -229,6 +254,33 @@ public class Describer {
                 String description = describe(control);
                 result.append(description);
             }
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Generate a textual description of the view-frustum culling hints
+     * associated with the specified spatial.
+     *
+     * @param spatial spatial being described (not null, unaffected)
+     * @return description (not null, not empty)
+     */
+    public String describeCull(Spatial spatial) {
+        StringBuilder result = new StringBuilder(20);
+        /*
+         * Describe its local cull hint.
+         */
+        result.append("cull=");
+        Spatial.CullHint mode = spatial.getLocalCullHint();
+        result.append(mode);
+        if (mode == Spatial.CullHint.Inherit) {
+            /*
+             * Describe its effective cull hint.
+             */
+            result.append('/');
+            mode = spatial.getCullHint();
+            result.append(mode);
         }
 
         return result.toString();
@@ -259,6 +311,33 @@ public class Describer {
     }
 
     /**
+     * Generate a textual description the flags associated with a view port.
+     *
+     * @param viewPort view port being described (not null, unaffected)
+     * @return description (not null, not empty)
+     */
+    public String describeFlags(ViewPort viewPort) {
+        StringBuilder result = new StringBuilder(20);
+
+        if (!viewPort.isClearColor()) {
+            result.append("NO");
+        }
+        result.append("clColor,");
+
+        if (!viewPort.isClearDepth()) {
+            result.append("NO");
+        }
+        result.append("clDepth,");
+
+        if (!viewPort.isClearStencil()) {
+            result.append("NO");
+        }
+        result.append("clStencil");
+
+        return result.toString();
+    }
+
+    /**
      * Generate a textual description of a viewport's scene processors.
      *
      * @param viewPort view port being described (not null, unaffected)
@@ -277,6 +356,64 @@ public class Describer {
             }
             String description = describe(processor);
             result.append(description);
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Generate a textual description of the shadow modes associated with a
+     * spatial.
+     *
+     * @param spatial spatial being described (not null, unaffected)
+     * @return description (not null, not empty)
+     */
+    public String describeShadow(Spatial spatial) {
+        StringBuilder result = new StringBuilder(20);
+        /*
+         * Describe its local shadow mode.
+         */
+        result.append("shadow=");
+        RenderQueue.ShadowMode mode = spatial.getLocalShadowMode();
+        result.append(mode);
+        if (mode == RenderQueue.ShadowMode.Inherit) {
+            /*
+             * Describe its effective shadow mode.
+             */
+            result.append('/');
+            mode = spatial.getShadowMode();
+            result.append(mode);
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Generate a textual description of the user data associated with a
+     * spatial.
+     *
+     * @param spatial spatial being described (not null, unaffected)
+     * @return description (not null)
+     */
+    public String describeUserData(Spatial spatial) {
+        StringBuilder result = new StringBuilder(50);
+        boolean addSeparators = false;
+
+        Collection<String> keys = spatial.getUserDataKeys();
+        for (String key : keys) {
+            if (addSeparators) {
+                result.append(' ');
+            } else {
+                addSeparators = true;
+            }
+            result.append(key);
+            result.append('=');
+            Object value = spatial.getUserData(key);
+            String valueString = MyString.escape(value.toString());
+            if (value instanceof String) {
+                valueString = MyString.quote(valueString);
+            }
+            result.append(valueString);
         }
 
         return result.toString();
@@ -463,6 +600,33 @@ public class Describer {
     }
 
     /**
+     * Generate a textual description of a render state.
+     *
+     * @param state view port being described (not null, unaffected)
+     * @return description (not null, not empty)
+     */
+    protected String describe(RenderState state) {
+        StringBuilder result = new StringBuilder(20);
+
+        if (state.isDepthTest()) {
+            result.append("NO");
+        }
+        result.append("dTest,");
+
+        if (state.isDepthWrite()) {
+            result.append("NO");
+        }
+        result.append("dWrite,");
+
+        if (state.isWireframe()) {
+            result.append("NO");
+        }
+        result.append("wireframe");
+
+        return result.toString();
+    }
+
+    /**
      * Generate a textual description of a scene processor.
      *
      * @param processor processor to describe (may be null, unaffected)
@@ -502,7 +666,7 @@ public class Describer {
 
     /**
      * Describe the render-queue bucket to which the specified spatial is
-     * assigned.
+     * assigned. TODO sort methods
      *
      * @param spatial spatial being described (not null, unaffected)
      * @return description (not null, not empty)

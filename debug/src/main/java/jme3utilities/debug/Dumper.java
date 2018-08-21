@@ -26,7 +26,6 @@
  */
 package jme3utilities.debug;
 
-import com.jme3.light.Light;
 import com.jme3.light.LightList;
 import com.jme3.material.MatParamOverride;
 import com.jme3.material.Material;
@@ -36,16 +35,12 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
-import com.jme3.renderer.queue.RenderQueue.Bucket;
-import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.Spatial.CullHint;
 import com.jme3.terrain.geomipmap.TerrainQuad;
 import java.io.PrintStream;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.MySpatial;
@@ -225,12 +220,14 @@ public class Dumper {
         } else {
             stream.print(MyString.quote(spatial.getName()));
         }
-        /*
-         * Dump the spatial's controls and local lights.
-         */
-        dumpControls(spatial);
+
+        String description = describer.describeControls(spatial);
+        if (!description.isEmpty()) {
+            stream.printf(" %s", description);
+        }
+
         LightList lights = spatial.getLocalLightList();
-        String description = describer.describe(lights);
+        description = describer.describe(lights);
         if (!description.isEmpty()) {
             stream.printf(" %s", description);
         }
@@ -240,21 +237,30 @@ public class Dumper {
             dumpOrientation(spatial);
             dumpScale(spatial);
         }
+
         if (dumpUserFlag) {
-            dumpUserData(spatial);
+            description = describer.describeUserData(spatial);
+            if (!description.isEmpty()) {
+                stream.printf(" %s", description);
+            }
         }
+
         if (dumpBucketFlag) {
-            dumpBucket(spatial);
+            description = describer.describeBucket(spatial);
+            stream.printf(" %s", description);
         }
         if (dumpShadowFlag) {
-            dumpShadowModes(spatial);
+            description = describer.describeShadow(spatial);
+            stream.printf(" %s", description);
         }
         if (dumpCullFlag) {
-            dumpCullHints(spatial);
+            description = describer.describeCull(spatial);
+            stream.printf(" %s", description);
         }
         if (dumpOverrideFlag) {
             dumpOverrides(spatial);
         }
+
         if (spatial instanceof Geometry) {
             Geometry geometry = (Geometry) spatial;
             Material material = geometry.getMaterial();
@@ -298,7 +304,8 @@ public class Dumper {
         if (viewPort.isEnabled()) {
             stream.print("enabled ");
 
-            dumpFlags(viewPort);
+            String desc = describer.describeFlags(viewPort);
+            stream.print(desc);
             if (viewPort.isClearColor()) {
                 ColorRGBA backColor = viewPort.getBackgroundColor();
                 stream.printf(" bg%s", backColor.toString());
@@ -309,7 +316,7 @@ public class Dumper {
             stream.print(indent);
             stream.print(" ");
             Camera camera = viewPort.getCamera();
-            String desc = describer.describe(camera);
+            desc = describer.describe(camera);
             stream.print(desc);
             if (camera != null) {
                 String desc2 = describer.describeMore(camera);
@@ -322,104 +329,6 @@ public class Dumper {
 
         } else {
             stream.println("disabled");
-        }
-    }
-
-    /**
-     * Dump the render-queue bucket to which the specified spatial is assigned.
-     *
-     * @param spatial spatial being described (not null, unaffected)
-     */
-    public void dumpBucket(Spatial spatial) {
-        /*
-         * Dump its local assignment.
-         */
-        Bucket bucket = spatial.getLocalQueueBucket();
-        stream.printf(" bucket=%s", bucket.toString());
-        if (bucket == Bucket.Inherit) {
-            /*
-             * Dump its effective assignment.
-             */
-            bucket = spatial.getQueueBucket();
-            stream.printf("/%s", bucket.toString());
-        }
-    }
-
-    /**
-     * List the controls associated with a spatial.
-     *
-     * @param spatial spatial being described (not null, unaffected)
-     */
-    public void dumpControls(Spatial spatial) {
-        Validate.nonNull(spatial, "spatial");
-        /*
-         * List its enabled controls first.
-         */
-        String description = describer.describeControls(spatial, true);
-        if (description.length() > 0) {
-            stream.printf(" %s", description);
-        }
-        /*
-         * List its disabled controls last, in parentheses.
-         */
-        description = describer.describeControls(spatial, false);
-        if (description.length() > 0) {
-            stream.printf(" (%s)", description);
-        }
-    }
-
-    /**
-     * Dump the view frustum culling hints associated with a spatial.
-     *
-     * @param spatial spatial being described (not null, unaffected)
-     */
-    public void dumpCullHints(Spatial spatial) {
-        /*
-         * Dump its local cull hint.
-         */
-        CullHint mode = spatial.getLocalCullHint();
-        stream.printf(" cull=%s", mode.toString());
-        if (mode == CullHint.Inherit) {
-            /*
-             * Dump its effective cull hint.
-             */
-            mode = spatial.getCullHint();
-            stream.printf("/%s", mode.toString());
-        }
-    }
-
-    /**
-     * Dump the flags associated with a view port.
-     *
-     * @param viewPort view port being dumped (not null, unaffected)
-     */
-    public void dumpFlags(ViewPort viewPort) {
-        if (!viewPort.isClearDepth()) {
-            stream.print("NO");
-        }
-        stream.print("clDepth,");
-
-        if (!viewPort.isClearColor()) {
-            stream.print("NO");
-        }
-        stream.print("clColor,");
-
-        if (!viewPort.isClearStencil()) {
-            stream.print("NO");
-        }
-        stream.print("clStencil");
-    }
-
-    /**
-     * Dump the lights associated with a spatial.
-     *
-     * @param spatial spatial being described (not null, unaffected)
-     */
-    public void dumpLights(Spatial spatial) {
-        LightList lights = spatial.getLocalLightList();
-        for (Light light : lights) {
-            String description = describer.describe(light);
-            stream.print(description);
         }
     }
 
@@ -492,43 +401,6 @@ public class Dumper {
              */
             String valueString = Float.toString(scale.x);
             stream.printf(" scale=%s", valueString);
-        }
-    }
-
-    /**
-     * Dump the shadow modes associated with a spatial.
-     *
-     * @param spatial spatial being described (not null, unaffected)
-     */
-    public void dumpShadowModes(Spatial spatial) {
-        /*
-         * Dump its local shadow mode.
-         */
-        ShadowMode mode = spatial.getLocalShadowMode();
-        stream.printf(" shad=%s", mode.toString());
-        if (mode == ShadowMode.Inherit) {
-            /*
-             * Dump its effective shadow mode.
-             */
-            mode = spatial.getShadowMode();
-            stream.printf("/%s", mode.toString());
-        }
-    }
-
-    /**
-     * Dump the user data associated with a spatial.
-     *
-     * @param spatial spatial being described (not null, unaffected)
-     */
-    public void dumpUserData(Spatial spatial) {
-        Collection<String> keys = spatial.getUserDataKeys();
-        for (String key : keys) {
-            Object value = spatial.getUserData(key);
-            String valueString = MyString.escape(value.toString());
-            if (value instanceof String) {
-                valueString = MyString.quote(valueString);
-            }
-            stream.printf(" %s=%s", key, valueString);
         }
     }
 
