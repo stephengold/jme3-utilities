@@ -1,7 +1,8 @@
 # release notes for the Minie library and related tests
 
-## Version 0.2.4 released TBD
+## Version 0.2.4 released 22 August 2018
 
+ + Rename MinieVersion.getVersionShort() to versionShort().
  + Use MyAsset to create debug materials.
  + In BulletDebugAppState, only render viewports that are enabled.
  + Based on version 2.7 of the jme3-utilities-heart library.
