@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.7.0 released on TBD
+
+ + Added getWorldScale() method to the MySpatial class
+ + Added support for VectorXZ in Misc.deepClone()
+
 ## Version 2.6.1 released on 21 August 2018
 
  + Fixed errors in 3 material definitions

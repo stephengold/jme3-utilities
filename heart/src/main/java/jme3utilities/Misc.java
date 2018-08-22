@@ -247,16 +247,16 @@ public class Misc {
     }
 
     /**
-     * Read the verbose version string for this library.
+     * Read the verbose version string for this library. TODO rename version
      *
      * @return project name, library name, branch, and revision
      */
     public static String getVersion() {
-        return "jme3-utilities jme3-utilities-heart master $Rev: 2.6.1+1 $";
+        return "jme3-utilities jme3-utilities-heart master $Rev: 2.7.0 $";
     }
 
     /**
-     * Read the terse version string for this library.
+     * Read the terse version string for this library. TODO rename versionShort
      *
      * @return branch and revision (not null, not empty)
      */
