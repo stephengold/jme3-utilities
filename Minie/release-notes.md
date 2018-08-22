@@ -1,8 +1,14 @@
 # release notes for the Minie library and related tests
 
+## Version 0.2.4 released TBD
+
+ + Use MyAsset to create debug materials.
+ + In BulletDebugAppState, only render viewports that are enabled.
+ + Based on version 2.7 of the jme3-utilities-heart library.
+
 ## Version 0.2.3 released on 17 August 2018
 
-+ Renamed ray-test flag accessors in PhysicsSpace class.
++ Renamed ray-test flag accessors in PhysicsSpace class. (API change)
 + Added maxSubSteps() method to the PhysicsSpace class.
 + Include more detail when dumping a physics space.
 + Based on version 2.6 of the jme3-utilities-heart library.
