@@ -135,7 +135,7 @@ public class GlobeRenderer extends SimpleAppState {
      */
     final private Image.Format outputFormat;
     /**
-     * root of the the off-screen scene graph
+     * root of the off-screen scene graph
      */
     final private Node offscreenRootNode = new Node("off-screen root node");
     /**

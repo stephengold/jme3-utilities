@@ -573,7 +573,7 @@ public class MyMesh {
                 }
             }
             result.normalizeLocal();
-            result.w = b.w; // copy the the binormal parity
+            result.w = b.w; // copy the binormal parity
 
         } else { // not an animated mesh
             vertexVector4f(mesh, VertexBuffer.Type.Tangent, vertexIndex,
