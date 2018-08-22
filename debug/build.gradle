@@ -14,6 +14,8 @@ jar { baseName project.ext.baseName }
 javadocJar { baseName project.ext.baseName }
 sourcesJar { baseName project.ext.baseName }
 
+processResources { dependsOn ':textures:shapeTextures' }
+
 dependencies {
     compile "org.jmonkeyengine:jme3-effects:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-terrain:$jmonkeyengineVersion"
