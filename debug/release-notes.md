@@ -1,6 +1,6 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.9.0 released on TBD
+## Version 0.9.0 released on 22 August 2018
 
  + Replaced Dumper methods with Describer methods. (API change)
  + Renamed DebugVersion.getVersionShort() to versionShort(). (API change)
@@ -13,7 +13,7 @@
    (API change)
  + Added capability to describe depthWrite flag.
  + Generate shape textures programmatically.
- + Based on version 2.6 of heart library.
+ + Based on version 2.7 of heart library.
 
 ## Version 0.8.10 released on 17 August 2018
 
