@@ -1,5 +1,20 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.9.0 released on TBD
+
+ + Replaced Dumper methods with Describer methods. (API change)
+ + Renamed DebugVersion.getVersionShort() to versionShort(). (API change)
+ + Renamed 4 "get" methods in AxesVisualizer. (API change)
+ + Renamed 2 "get" methods in BoundsVisualizer. (API change)
+ + Renamed Describer.getListSeparator() to listSeparator. (API change)
+ + Renamed getHeadSize(), getLineWidth(), headColor(), and lineColor()
+   in SkeletonVisualizer. (API change)
+ + Renamed PerformanceAppState.getUpdateInterval() to updateInterval().
+   (API change)
+ + Added capability to describe depthWrite flag.
+ + Generate shape textures programmatically.
+ + Based on version 2.6 of heart library.
+
 ## Version 0.8.10 released on 17 August 2018
 
  + Describe locations and directions of lights.
