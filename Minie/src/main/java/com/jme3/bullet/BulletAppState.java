@@ -122,10 +122,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
         };
         try {
             return executor.submit(call).get();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(BulletAppState.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        } catch (ExecutionException ex) {
+        } catch (InterruptedException | ExecutionException ex) {
             Logger.getLogger(BulletAppState.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
@@ -279,9 +276,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
             try {
                 physicsFuture.get();
                 physicsFuture = null;
-            } catch (InterruptedException ex) {
-                Logger.getLogger(BulletAppState.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ExecutionException ex) {
+            } catch (InterruptedException | ExecutionException ex) {
                 Logger.getLogger(BulletAppState.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
