@@ -36,7 +36,6 @@ package com.jme3.bullet.collision;
  * @author normenhansen
  */
 public interface PhysicsCollisionGroupListener {
-
     /**
      * Called when two physics objects of the registered group are about to
      * collide, <i>called from physics thread</i>.<br>
@@ -49,6 +48,5 @@ public interface PhysicsCollisionGroupListener {
      * @param nodeB CollisionObject #2
      * @return true if the collision should happen, false otherwise
      */
-    public boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB);
-
+    boolean collide(PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB);
 }

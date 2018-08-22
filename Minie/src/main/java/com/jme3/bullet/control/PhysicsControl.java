@@ -39,15 +39,14 @@ import com.jme3.scene.control.Control;
  * @author normenhansen
  */
 public interface PhysicsControl extends Control {
-
     /**
      * Only used internally, do not call.
      *
      * @param space physics space to use
      */
-    public void setPhysicsSpace(PhysicsSpace space);
+    void setPhysicsSpace(PhysicsSpace space);
 
-    public PhysicsSpace getPhysicsSpace();
+    PhysicsSpace getPhysicsSpace();
 
     /**
      * The physics object is removed from the physics space when the control is
@@ -57,12 +56,12 @@ public interface PhysicsControl extends Control {
      *
      * @param state true&rarr;enable the control, false&rarr;disable it
      */
-    public void setEnabled(boolean state);
+    void setEnabled(boolean state);
 
     /**
      * Returns the current enabled state of the physics control
      *
      * @return current enabled state
      */
-    public boolean isEnabled();
+    boolean isEnabled();
 }

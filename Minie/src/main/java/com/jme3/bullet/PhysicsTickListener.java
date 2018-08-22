@@ -44,7 +44,7 @@ public interface PhysicsTickListener {
      * @param space the physics space
      * @param tpf the time per frame in seconds
      */
-    public void prePhysicsTick(PhysicsSpace space, float tpf);
+    void prePhysicsTick(PhysicsSpace space, float tpf);
 
     /**
      * Called after the physics has been stepped, use to check for forces etc.
@@ -52,6 +52,5 @@ public interface PhysicsTickListener {
      * @param space the physics space
      * @param tpf the time per frame in seconds
      */
-    public void physicsTick(PhysicsSpace space, float tpf);
-
+    void physicsTick(PhysicsSpace space, float tpf);
 }

@@ -38,7 +38,5 @@ import com.jme3.animation.Bone;
  * @author Nehon
  */
 public interface RagdollCollisionListener {
-
-    public void collide(Bone bone, PhysicsCollisionObject object, PhysicsCollisionEvent event);
-
+    void collide(Bone bone, PhysicsCollisionObject object, PhysicsCollisionEvent event);
 }

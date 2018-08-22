@@ -38,7 +38,6 @@ package com.jme3.bullet.collision;
  * @author normenhansen
  */
 public interface PhysicsCollisionListener {
-
     /**
      * Called when a collision happened in the PhysicsSpace, <i>called from
      * render thread</i>.
@@ -48,6 +47,5 @@ public interface PhysicsCollisionListener {
      *
      * @param event the CollisionEvent
      */
-    public void collision(PhysicsCollisionEvent event);
-
+    void collision(PhysicsCollisionEvent event);
 }

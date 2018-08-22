@@ -127,7 +127,7 @@ public class BulletDebugAppState extends AbstractAppState {
         //update our debug root node
         physicsDebugRootNode.updateLogicalState(tpf);
         physicsDebugRootNode.updateGeometricState();
-    }
+}
 
     @Override
     public void render(RenderManager rm) {
@@ -303,13 +303,12 @@ public class BulletDebugAppState extends AbstractAppState {
      * Interface that allows filtering out objects from the debug display
      */
     public static interface DebugAppStateFilter {
-
         /**
          * Queries an object to be displayed
          *
          * @param obj The object to be displayed
          * @return return true if the object should be displayed, false if not
          */
-        public boolean displayObject(Object obj);
+        boolean displayObject(Object obj);
     }
 }
