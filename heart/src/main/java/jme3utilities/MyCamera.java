@@ -120,7 +120,7 @@ final public class MyCamera {
     /**
      * Generate a textual description of a camera.
      *
-     * @param camera instance to describe (unaffected)
+     * @param camera instance to describe (may be null, unaffected)
      * @return description (not null, not empty)
      * @see #describeMore(com.jme3.renderer.Camera)
      */

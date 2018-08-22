@@ -173,9 +173,9 @@ public class MyControl {
     }
 
     /**
-     * Test whether a scene-graph control is enabled.
+     * Test whether the specified scene-graph control is enabled.
      *
-     * @param sgc control to test (not null, unaffected)
+     * @param sgc the control to test (not null, unaffected)
      * @return true if the control is enabled, otherwise false
      */
     public static boolean isEnabled(Control sgc) {

@@ -293,7 +293,7 @@ public class MySpatial {
     /**
      * Generate a single-character description of a spatial.
      *
-     * @param spatial spatial to describe (unaffected)
+     * @param spatial the spatial to describe (unaffected, may be null)
      * @return a mnemonic character
      */
     public static char describeType(Spatial spatial) {
