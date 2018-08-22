@@ -255,6 +255,9 @@ public class MyVector3f {
                 break;
             case zAxis:
                 storeResult.z = length;
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
 
         return storeResult;
