@@ -357,8 +357,8 @@ public class Describer {
     }
 
     /**
-     * Generate a textual description of the the world orientation of the
-     * specified spatial.
+     * Generate a textual description of the world orientation of the specified
+     * spatial.
      *
      * @param spatial the spatial to describe (not null, unaffected)
      * @return a description (not null, may be empty)
@@ -372,6 +372,35 @@ public class Describer {
             result.append("orient=");
             result.append(orientation);
         }
+
+        return result.toString();
+    }
+
+    /**
+     * Generate a textual description of the material-parameter overrides of the
+     * specified spatial.
+     *
+     * @param spatial the spatial to describe (not null, unaffected)
+     * @return a description (not null, not empty)
+     */
+    public String describeOverrides(Spatial spatial) {
+        Validate.nonNull(spatial, "spatial");
+        StringBuilder result = new StringBuilder(20);
+
+        result.append("mpo=(");
+        boolean addSeparators = false;
+
+        List<MatParamOverride> list = spatial.getLocalMatParamOverrides();
+        for (MatParamOverride override : list) {
+            if (addSeparators) {
+                result.append(listSeparator);
+            } else {
+                addSeparators = true;
+            }
+            String description = describe(override);
+            result.append(description);
+        }
+        result.append(')');
 
         return result.toString();
     }

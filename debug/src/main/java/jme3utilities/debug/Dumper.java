@@ -27,7 +27,6 @@
 package jme3utilities.debug;
 
 import com.jme3.light.LightList;
-import com.jme3.material.MatParamOverride;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.Camera;
@@ -264,7 +263,8 @@ public class Dumper {
             stream.printf(" %s", description);
         }
         if (dumpOverrideFlag) {
-            dumpOverrides(spatial);
+            description = describer.describeOverrides(spatial);
+            stream.printf(" %s", description);
         }
 
         if (spatial instanceof Geometry) {
@@ -336,31 +336,6 @@ public class Dumper {
         } else {
             stream.println("disabled");
         }
-    }
-
-    /**
-     * Dump the material-parameter overrides of a spatial.
-     *
-     * @param spatial spatial being described (not null, unaffected)
-     */
-    public void dumpOverrides(Spatial spatial) {
-        Validate.nonNull(spatial, "spatial");
-
-        stream.print(" mpo=(");
-        boolean addSeparators = false;
-        String listSeparator = describer.listSeparator();
-
-        List<MatParamOverride> list = spatial.getLocalMatParamOverrides();
-        for (MatParamOverride override : list) {
-            if (addSeparators) {
-                stream.print(listSeparator);
-            } else {
-                addSeparators = true;
-            }
-            String description = describer.describe(override);
-            stream.print(description);
-        }
-        stream.print(")");
     }
 
     /**
