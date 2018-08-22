@@ -53,6 +53,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.imageio.ImageIO;
+import jme3utilities.math.VectorXZ;
 
 /**
  * Miscellaneous utility methods in the jme3-utilities-heart library.
@@ -115,8 +116,8 @@ public class Misc {
     }
 
     /**
-     * Create a deep copy of the specified object. This works around JME issue
-     * #879.
+     * Return a deep copy of the specified object. This works around JME issue
+     * #879. TODO rename - doesn't clone if immutable
      *
      * @param object input (alias may be created)
      * @return an object equivalent to the input
@@ -130,7 +131,8 @@ public class Misc {
             // a unique instance for every possible value
             clone = object;
 
-        } else if (object instanceof String) {
+        } else if (object instanceof String
+                || object instanceof VectorXZ) {
             // instances are immutable, so return an alias
             clone = object;
 
