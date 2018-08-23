@@ -62,6 +62,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     protected float speed = 1;
     protected boolean active = true;
     protected boolean debugEnabled = false;
+    protected boolean isAttached = false;
     protected BulletDebugAppState debugAppState;
     protected float tpf;
     protected Future physicsFuture;
@@ -235,6 +236,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
             debugAppState = new BulletDebugAppState(pSpace, debugViewPorts);
             stateManager.attach(debugAppState);
         }
+        isAttached = true;
     }
 
     @Override
@@ -308,11 +310,22 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
-     * Use before attaching state
+     * Read the broadphase type.
      *
-     * @param broadphaseType an enum value
+     * @return enum value
+     */
+    public BroadphaseType getBroadphaseType() {
+        return broadphaseType;
+    }
+
+    /**
+     * Alter the broadphase type. Not allowed after attaching the app state.
+     *
+     * @param broadphaseType an enum value (not null)
      */
     public void setBroadphaseType(BroadphaseType broadphaseType) {
+        assert broadphaseType != null;
+        assert !isAttached;
         this.broadphaseType = broadphaseType;
     }
 
