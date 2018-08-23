@@ -112,9 +112,8 @@ public class PhysicsSpace {
     }
 
     /**
-     * Get the current PhysicsSpace <b>running on this thread</b>
-     * For parallel physics, this can also be called from the OpenGL thread to
-     * receive the PhysicsSpace
+     * Access the PhysicsSpace <b>running on this thread</b>. For parallel
+     * physics, this can be called from the OpenGL thread.
      *
      * @return the PhysicsSpace running on this thread
      */

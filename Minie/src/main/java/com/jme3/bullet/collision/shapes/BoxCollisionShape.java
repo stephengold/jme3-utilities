@@ -49,19 +49,29 @@ public class BoxCollisionShape extends CollisionShape {
 
     private Vector3f halfExtents;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public BoxCollisionShape() {
     }
 
     /**
-     * creates a collision box from the given halfExtents
+     * Create a collision box with the specified half extents.
      *
-     * @param halfExtents the halfExtents of the CollisionBox
+     * @param halfExtents the half extents of the shape (not null, alias
+     * created)
      */
     public BoxCollisionShape(Vector3f halfExtents) {
         this.halfExtents = halfExtents;
         createShape();
     }
 
+    /**
+     * Create a collision box with the specified half extents.
+     *
+     * @return the pre-existing instance
+     */
     public final Vector3f getHalfExtents() {
         return halfExtents;
     }
@@ -85,11 +95,9 @@ public class BoxCollisionShape extends CollisionShape {
     protected void createShape() {
         objectId = createShape(halfExtents);
         Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
-//        cShape = new BoxShape(Converter.convert(halfExtents));
         setScale(scale);
         setMargin(margin);
     }
 
     private native long createShape(Vector3f halfExtents);
-
 }

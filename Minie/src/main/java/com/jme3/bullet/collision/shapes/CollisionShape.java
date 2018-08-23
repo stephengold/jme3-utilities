@@ -47,32 +47,20 @@ import java.util.logging.Logger;
 public abstract class CollisionShape implements Savable {
 
     protected long objectId = 0;
-    protected Vector3f scale = new Vector3f(1, 1, 1);
-    protected float margin = 0.0f;
+    protected Vector3f scale = new Vector3f(1f, 1f, 1f);
+    protected float margin = 0f;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public CollisionShape() {
     }
 
-//    /**
-//     * used internally, not safe
-//     */
-//    public void calculateLocalInertia(long objectId, float mass) {
-//        if (this.objectId == 0) {
-//            return;
-//        }
-////        if (this instanceof MeshCollisionShape) {
-////            vector.set(0, 0, 0);
-////        } else {
-//        calculateLocalInertia(objectId, this.objectId, mass);
-////            objectId.calculateLocalInertia(mass, vector);
-////        }
-//    }
-//
-//    private native void calculateLocalInertia(long objectId, long shapeId, float mass);
     /**
-     * used internally
+     * Read the Bullet object id.
      *
-     * @return the Bullet id
+     * @return the id
      */
     public long getObjectId() {
         return objectId;
