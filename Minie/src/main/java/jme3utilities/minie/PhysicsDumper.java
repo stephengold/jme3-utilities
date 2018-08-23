@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.debug.Describer;
 import jme3utilities.debug.Dumper;
+import jme3utilities.math.MyQuaternion;
+import jme3utilities.math.MyVector3f;
 
 /**
  * Dump portions of a jME3 scene graph for debugging.
@@ -181,7 +183,9 @@ public class PhysicsDumper extends Dumper {
                 location.x, location.y, location.z);
 
         Quaternion orientation = body.getPhysicsRotation();
-        stream.printf(" orient=%s", orientation);
+        if (!MyQuaternion.isRotationIdentity(orientation)) {
+            stream.printf(" orient=%s", orientation);
+        }
 
         CollisionShape shape = body.getCollisionShape();
         PhysicsDescriber describer = getDescriber();
@@ -189,7 +193,7 @@ public class PhysicsDumper extends Dumper {
         stream.printf("%n   shape=%s", desc);
 
         Vector3f scale = shape.getScale();
-        if (scale.x != 1f || scale.y != 1f || scale.z != 1f) {
+        if (!MyVector3f.isScaleIdentity(scale)) {
             stream.printf(" sca=[%.3f, %.3f, %.3f]", scale.x, scale.y, scale.z);
         }
 
@@ -231,7 +235,7 @@ public class PhysicsDumper extends Dumper {
         int numBodies = rigidBodies.size();
         int numVehicles = vehicles.size();
 
-        stream.printf("%nPhysicsSpace %s with %d character%s, %d ghost%s, ",
+        stream.printf("%nSpace #%s with %d character%s, %d ghost%s, ",
                 Long.toHexString(spaceId),
                 numCharacters, (numCharacters == 1) ? "" : "s",
                 numGhosts, (numGhosts == 1) ? "" : "s");
