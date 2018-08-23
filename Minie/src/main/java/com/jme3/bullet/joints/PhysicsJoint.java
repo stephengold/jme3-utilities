@@ -39,8 +39,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * <p>
- * PhysicsJoint - Basic Phyiscs Joint</p>
+ * An abstract physics joint
  *
  * @author normenhansen
  */
@@ -51,16 +50,25 @@ public abstract class PhysicsJoint implements Savable {
     protected PhysicsRigidBody nodeB;
     protected Vector3f pivotA;
     protected Vector3f pivotB;
-    protected boolean collisionBetweenLinkedBodys = true;
+    protected boolean collisionBetweenLinkedBodies = true;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public PhysicsJoint() {
     }
 
     /**
-     * @param nodeA the 1st body connected by the joint
-     * @param nodeB the 2nd body connected by the joint
-     * @param pivotA local translation of the joint connection point in node A
-     * @param pivotB local translation of the joint connection point in node B
+     * Create a new PhysicsJoint. To be effective, the joint must be added to a
+     * physics space.
+     *
+     * @param nodeA the 1st body connected by the joint (alias created)
+     * @param nodeB the 2nd body connected by the joint (alias created)
+     * @param pivotA local offset of the joint connection point in node A (alias
+     * created)
+     * @param pivotB local offset of the joint connection point in node B (alias
+     * created)
      */
     public PhysicsJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB) {
         this.nodeA = nodeA;
@@ -78,49 +86,70 @@ public abstract class PhysicsJoint implements Savable {
     private native float getAppliedImpulse(long objectId);
 
     /**
-     * @return the constraint
+     * @return unique constraint id
      */
     public long getObjectId() {
         return objectId;
     }
 
     /**
-     * @return the collisionBetweenLinkedBodys
+     * Test whether collisions are allowed between the linked bodies.
+     *
+     * @return true if collision are allowed, otherwise false
      */
     public boolean isCollisionBetweenLinkedBodys() {
-        return collisionBetweenLinkedBodys;
+        return collisionBetweenLinkedBodies;
     }
 
     /**
-     * toggles collisions between linked bodys<br>
-     * joint has to be removed from and added to PhyiscsSpace to apply this.
+     * Enable or disable collisions between the linked bodies. The joint must be
+     * removed from and added to PhysicsSpace for this to be effective.
      *
-     * @param collisionBetweenLinkedBodys set to false to have no collisions
-     * between linked bodys
+     * @param enable true &rarr; allow collisions, false &rarr; prevent them
      */
-    public void setCollisionBetweenLinkedBodys(boolean collisionBetweenLinkedBodys) {
-        this.collisionBetweenLinkedBodys = collisionBetweenLinkedBodys;
+    public void setCollisionBetweenLinkedBodys(boolean enable) {
+        this.collisionBetweenLinkedBodies = enable;
     }
 
+    /**
+     * Access the 1st body specified in during construction.
+     *
+     * @return the pre-existing body
+     */
     public PhysicsRigidBody getBodyA() {
         return nodeA;
     }
 
+    /**
+     * Access the 2nd body specified in during construction.
+     *
+     * @return the pre-existing body
+     */
     public PhysicsRigidBody getBodyB() {
         return nodeB;
     }
 
+    /**
+     * Access the local offset of the joint connection point in node A.
+     *
+     * @return the pre-existing vector
+     */
     public Vector3f getPivotA() {
         return pivotA;
     }
 
+    /**
+     * Access the local offset of the joint connection point in node A.
+     *
+     * @return the pre-existing vector
+     */
     public Vector3f getPivotB() {
         return pivotB;
     }
 
     /**
-     * destroys this joint and removes it from its connected PhysicsRigidBodys
-     * joint lists
+     * Destroy this joint and remove it from the joint lists of its connected
+     * bodies.
      */
     public void destroy() {
         getBodyA().removeJoint(this);
@@ -139,7 +168,7 @@ public abstract class PhysicsJoint implements Savable {
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
-        this.nodeA = ((PhysicsRigidBody) capsule.readSavable("nodeA", new PhysicsRigidBody()));
+        this.nodeA = (PhysicsRigidBody) capsule.readSavable("nodeA", new PhysicsRigidBody());
         this.nodeB = (PhysicsRigidBody) capsule.readSavable("nodeB", new PhysicsRigidBody());
         this.pivotA = (Vector3f) capsule.readSavable("pivotA", new Vector3f());
         this.pivotB = (Vector3f) capsule.readSavable("pivotB", new Vector3f());
