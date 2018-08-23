@@ -182,7 +182,7 @@ public class PhysicsDumper extends Dumper {
         stream.printf("%d joint%s, %d rigid bod%s, and %d vehicle%s%n",
                 numJoints, (numJoints == 1) ? "" : "s",
                 numBodies, (numBodies == 1) ? "y" : "ies",
-                numJoints, (numVehicles == 1) ? "" : "s");
+                numVehicles, (numVehicles == 1) ? "" : "s");
 
         float accuracy = space.getAccuracy();
         PhysicsSpace.BroadphaseType broadphaseType = space.getBroadphaseType();
