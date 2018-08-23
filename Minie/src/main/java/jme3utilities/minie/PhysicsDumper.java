@@ -26,6 +26,7 @@
  */
 package jme3utilities.minie;
 
+import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.joints.PhysicsJoint;
@@ -33,6 +34,7 @@ import com.jme3.bullet.objects.PhysicsCharacter;
 import com.jme3.bullet.objects.PhysicsGhostObject;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.objects.PhysicsVehicle;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.io.PrintStream;
 import java.util.Collection;
@@ -84,13 +86,40 @@ public class PhysicsDumper extends Dumper {
     // new methods exposed
 
     /**
+     * Dump the specified Bullet app state.
+     *
+     * @param appState the app state to dump (not null)
+     */
+    public void dump(BulletAppState appState) {
+        stream.printf("%nBulletAppState ");
+        if (appState.isEnabled()) {
+            stream.print("enabled ");
+            if (!appState.isDebugEnabled()) {
+                stream.print("NO");
+            }
+            stream.print("debug ");
+            float speed = appState.getSpeed();
+            stream.printf("speed=%f", speed);
+
+            PhysicsSpace.BroadphaseType broadphaseType
+                    = appState.getBroadphaseType();
+            stream.printf(" bphase=%s", broadphaseType);
+
+            PhysicsSpace space = appState.getPhysicsSpace();
+            dump(space);
+        } else {
+            stream.printf("disabled");
+        }
+    }
+
+    /**
      * Dump the specified physics character.
      *
      * @param character the character to dump (not null)
      */
     public void dump(PhysicsCharacter character) {
         long objectId = character.getObjectId();
-        stream.printf("  character #%s ", Long.toHexString(objectId));
+        stream.printf("  Character #%s ", Long.toHexString(objectId));
 
         Vector3f location = character.getPhysicsLocation();
         stream.printf("loc=[%.3f, %.3f, %.3f]",
@@ -107,7 +136,7 @@ public class PhysicsDumper extends Dumper {
      */
     public void dump(PhysicsGhostObject ghost) {
         long objectId = ghost.getObjectId();
-        stream.printf("  ghost #%s ", Long.toHexString(objectId));
+        stream.printf("  Ghost #%s ", Long.toHexString(objectId));
 
         Vector3f location = ghost.getPhysicsLocation();
         stream.printf("loc=[%.3f, %.3f, %.3f]",
@@ -125,7 +154,7 @@ public class PhysicsDumper extends Dumper {
         long objectId = joint.getObjectId();
         long aId = joint.getBodyA().getObjectId();
         long bId = joint.getBodyB().getObjectId();
-        stream.printf("  joint #%s a=%s,b=%s", Long.toHexString(objectId),
+        stream.printf("  Joint #%s a=%s,b=%s", Long.toHexString(objectId),
                 Long.toHexString(aId), Long.toHexString(bId));
 
         stream.println();
@@ -138,18 +167,26 @@ public class PhysicsDumper extends Dumper {
      */
     public void dump(PhysicsRigidBody body) {
         long objectId = body.getObjectId();
+        stream.printf("  Body #%s", Long.toHexString(objectId));
+
         float mass = body.getMass();
-        stream.printf("  rigid body #%s mass=%f",
-                Long.toHexString(objectId), mass);
+        if (mass == 0f) {
+            stream.print(" static");
+        } else {
+            stream.printf(" mass=%f", mass);
+        }
 
         Vector3f location = body.getPhysicsLocation();
         stream.printf(" loc=[%.3f, %.3f, %.3f]",
                 location.x, location.y, location.z);
 
+        Quaternion orientation = body.getPhysicsRotation();
+        stream.printf(" orient=%s", orientation);
+
         CollisionShape shape = body.getCollisionShape();
         PhysicsDescriber describer = getDescriber();
         String desc = describer.describe(shape);
-        stream.printf(" shape=%s", desc);
+        stream.printf("%n   shape=%s", desc);
 
         Vector3f scale = shape.getScale();
         if (scale.x != 1f || scale.y != 1f || scale.z != 1f) {
@@ -158,7 +195,7 @@ public class PhysicsDumper extends Dumper {
 
         List<PhysicsJoint> joints = body.getJoints();
         if (!joints.isEmpty()) {
-            stream.printf(" joints=(");
+            stream.print(" joints=(");
             boolean addSeparators = false;
             for (PhysicsJoint joint : joints) {
                 if (addSeparators) {
@@ -169,7 +206,7 @@ public class PhysicsDumper extends Dumper {
                 long jointId = joint.getObjectId();
                 stream.printf("#%s", Long.toHexString(jointId));
             }
-            stream.printf(")");
+            stream.print(")");
         }
 
         stream.println();
@@ -187,13 +224,15 @@ public class PhysicsDumper extends Dumper {
         Collection<PhysicsRigidBody> rigidBodies = space.getRigidBodyList();
         Collection<PhysicsVehicle> vehicles = space.getVehicleList();
 
+        long spaceId = space.getSpaceId();
         int numCharacters = characters.size();
         int numGhosts = ghosts.size();
         int numJoints = joints.size();
         int numBodies = rigidBodies.size();
         int numVehicles = vehicles.size();
 
-        stream.printf("%nphysics space with %d character%s, %d ghost%s, ",
+        stream.printf("%nPhysicsSpace %s with %d character%s, %d ghost%s, ",
+                Long.toHexString(spaceId),
                 numCharacters, (numCharacters == 1) ? "" : "s",
                 numGhosts, (numGhosts == 1) ? "" : "s");
         stream.printf("%d joint%s, %d rigid bod%s, and %d vehicle%s%n",
@@ -243,7 +282,7 @@ public class PhysicsDumper extends Dumper {
     public void dump(PhysicsVehicle vehicle) {
         long objectId = vehicle.getObjectId();
         float mass = vehicle.getMass();
-        stream.printf("  vehicle #%s mass=%f", Long.toHexString(objectId),
+        stream.printf("  Vehicle #%s mass=%f", Long.toHexString(objectId),
                 mass);
 
         Vector3f location = vehicle.getPhysicsLocation();
