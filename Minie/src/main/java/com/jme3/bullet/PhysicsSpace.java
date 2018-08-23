@@ -192,26 +192,35 @@ public class PhysicsSpace {
 
     private native long createPhysicsSpace(float minX, float minY, float minZ, float maxX, float maxY, float maxZ, int broadphaseType, boolean threading);
 
+    /**
+     * This method is invoked from native code.
+     *
+     * @param f
+     */
     private void preTick_native(float f) {
-        AppTask task = pQueue.poll();
-        task = pQueue.poll();
-        while (task != null) {
-            while (task.isCancelled()) {
-                task = pQueue.poll();
+        AppTask task;
+        while ((task = pQueue.poll()) != null) {
+            if (task.isCancelled()) {
+                continue;
             }
             try {
                 task.invoke();
             } catch (Exception ex) {
                 logger.log(Level.SEVERE, null, ex);
             }
-            task = pQueue.poll();
         }
+
         for (Iterator<PhysicsTickListener> it = tickListeners.iterator(); it.hasNext();) {
             PhysicsTickListener physicsTickCallback = it.next();
             physicsTickCallback.prePhysicsTick(this, f);
         }
     }
 
+    /**
+     * This method is invoked from native code.
+     *
+     * @param f
+     */
     private void postTick_native(float f) {
         for (Iterator<PhysicsTickListener> it = tickListeners.iterator(); it.hasNext();) {
             PhysicsTickListener physicsTickCallback = it.next();
