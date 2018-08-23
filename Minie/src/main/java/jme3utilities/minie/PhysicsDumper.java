@@ -36,6 +36,7 @@ import com.jme3.bullet.objects.PhysicsVehicle;
 import com.jme3.math.Vector3f;
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.debug.Describer;
 import jme3utilities.debug.Dumper;
@@ -153,6 +154,22 @@ public class PhysicsDumper extends Dumper {
         Vector3f scale = shape.getScale();
         if (scale.x != 1f || scale.y != 1f || scale.z != 1f) {
             stream.printf(" sca=[%.3f, %.3f, %.3f]", scale.x, scale.y, scale.z);
+        }
+
+        List<PhysicsJoint> joints = body.getJoints();
+        if (!joints.isEmpty()) {
+            stream.printf(" joints=(");
+            boolean addSeparators = false;
+            for (PhysicsJoint joint : joints) {
+                if (addSeparators) {
+                    stream.print(",");
+                } else {
+                    addSeparators = true;
+                }
+                long jointId = joint.getObjectId();
+                stream.printf("#%s", Long.toHexString(jointId));
+            }
+            stream.printf(")");
         }
 
         stream.println();
