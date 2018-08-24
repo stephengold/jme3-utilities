@@ -143,18 +143,6 @@ public class PhysicsSpace {
         physicsSpaceTL.set(space);
     }
 
-    public PhysicsSpace() { // TODO remove
-        this(new Vector3f(-10000f, -10000f, -10000f), new Vector3f(10000f, 10000f, 10000f), BroadphaseType.DBVT);
-    }
-
-    public PhysicsSpace(BroadphaseType broadphaseType) { // TODO remove
-        this(new Vector3f(-10000f, -10000f, -10000f), new Vector3f(10000f, 10000f, 10000f), broadphaseType);
-    }
-
-    public PhysicsSpace(Vector3f worldMin, Vector3f worldMax) { // TODO remove
-        this(worldMin, worldMax, BroadphaseType.AXIS_SWEEP_3);
-    }
-
     /**
      * Create a new PhysicsSpace. Must be called from the designated physics
      * thread.
