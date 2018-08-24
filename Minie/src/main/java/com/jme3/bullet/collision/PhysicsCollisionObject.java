@@ -71,7 +71,7 @@ public abstract class PhysicsCollisionObject implements Savable {
     public static final int COLLISION_GROUP_16 = 0x00008000;
 
     private int collisionGroup = COLLISION_GROUP_01;
-    private int collisionGroupsMask = COLLISION_GROUP_01; // TODO rename collideWithGroups
+    private int collideWithGroups = COLLISION_GROUP_01;
     private Object userObject;
 
     /**
@@ -135,9 +135,9 @@ public abstract class PhysicsCollisionObject implements Savable {
      * @param collisionGroup groups to add (bit mask)
      */
     public void addCollideWithGroup(int collisionGroup) {
-        this.collisionGroupsMask = this.collisionGroupsMask | collisionGroup;
+        this.collideWithGroups = this.collideWithGroups | collisionGroup;
         if (objectId != 0) {
-            setCollideWithGroups(objectId, this.collisionGroupsMask);
+            setCollideWithGroups(objectId, this.collideWithGroups);
         }
     }
 
@@ -147,9 +147,9 @@ public abstract class PhysicsCollisionObject implements Savable {
      * @param collisionGroup groups to remove, ORed together (bit mask)
      */
     public void removeCollideWithGroup(int collisionGroup) {
-        this.collisionGroupsMask = this.collisionGroupsMask & ~collisionGroup;
+        this.collideWithGroups = this.collideWithGroups & ~collisionGroup;
         if (objectId != 0) {
-            setCollideWithGroups(this.collisionGroupsMask);
+            setCollideWithGroups(this.collideWithGroups);
         }
     }
 
@@ -159,9 +159,9 @@ public abstract class PhysicsCollisionObject implements Savable {
      * @param collisionGroups desired groups, ORed together (bit mask)
      */
     public void setCollideWithGroups(int collisionGroups) {
-        this.collisionGroupsMask = collisionGroups;
+        this.collideWithGroups = collisionGroups;
         if (objectId != 0) {
-            setCollideWithGroups(objectId, this.collisionGroupsMask);
+            setCollideWithGroups(objectId, this.collideWithGroups);
         }
     }
 
@@ -171,13 +171,13 @@ public abstract class PhysicsCollisionObject implements Savable {
      * @return bit mask
      */
     public int getCollideWithGroups() {
-        return collisionGroupsMask;
+        return collideWithGroups;
     }
 
     protected void initUserPointer() {
         Logger.getLogger(this.getClass().getName()).log(Level.FINE,
                 "initUserPointer() objectId = {0}", Long.toHexString(objectId));
-        initUserPointer(objectId, collisionGroup, collisionGroupsMask);
+        initUserPointer(objectId, collisionGroup, collideWithGroups);
     }
 
     native void initUserPointer(long objectId, int group, int groups);
@@ -220,7 +220,7 @@ public abstract class PhysicsCollisionObject implements Savable {
     public void write(JmeExporter e) throws IOException {
         OutputCapsule capsule = e.getCapsule(this);
         capsule.write(collisionGroup, "collisionGroup", COLLISION_GROUP_01);
-        capsule.write(collisionGroupsMask, "collisionGroupsMask",
+        capsule.write(collideWithGroups, "collisionGroupsMask",
                 COLLISION_GROUP_01);
         capsule.write(collisionShape, "collisionShape", null);
     }
@@ -229,7 +229,7 @@ public abstract class PhysicsCollisionObject implements Savable {
     public void read(JmeImporter e) throws IOException {
         InputCapsule capsule = e.getCapsule(this);
         collisionGroup = capsule.readInt("collisionGroup", COLLISION_GROUP_01);
-        collisionGroupsMask = capsule.readInt("collisionGroupsMask",
+        collideWithGroups = capsule.readInt("collisionGroupsMask",
                 COLLISION_GROUP_01);
         CollisionShape shape = (CollisionShape) capsule.readSavable("collisionShape", null);
         collisionShape = shape;
