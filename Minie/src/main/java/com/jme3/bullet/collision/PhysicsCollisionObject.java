@@ -36,6 +36,7 @@ import com.jme3.export.*;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * Base class for collision objects based on btCollisionObject, including
@@ -82,6 +83,7 @@ public abstract class PhysicsCollisionObject implements Savable {
      * @param collisionShape the CollisionShape to set (not null, alias created)
      */
     public void setCollisionShape(CollisionShape collisionShape) {
+        Validate.nonNull(collisionShape, "collision shape");
         this.collisionShape = collisionShape;
     }
 
@@ -118,7 +120,7 @@ public abstract class PhysicsCollisionObject implements Savable {
      * 1 bit set)
      */
     public void setCollisionGroup(int collisionGroup) {
-        //TODO assert Integer.bitCount(collisionGroup) == 1 : collisionGroup;
+        assert Integer.bitCount(collisionGroup) == 1 : collisionGroup;
 
         this.collisionGroup = collisionGroup;
         if (objectId != 0) {
