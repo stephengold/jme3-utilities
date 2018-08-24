@@ -1,9 +1,21 @@
 # release notes for the Minie library and related tests
 
-## Version 0.2.4 released 22 August 2018
+## Version 0.2.5 released on TBD
 
- + Rename MinieVersion.getVersionShort() to versionShort().
- + Use MyAsset to create debug materials.
+ + Bugfix: PhysicsDumper prints incorrect number of vehicles.
+ + Bugfix for JME issue #867 contributed by Riccardo Balbo.
+ + Privatized numerous protected fields.
+ + Removed 3 PhysicsSpace constructors.
+ + Enhanced PhysicsDumper to handle app states and print the joint list and
+   (non-identity) orientation for each rigid body.
+ + Added BulletAppState.getBroadphaseType().
+ + Added validation of method arguments.
+ + Changed BulletAppState.setWorldMax() and .setWorldMin() to avoid aliasing.
+
+## Version 0.2.4 released on 22 August 2018
+
+ + Renamed MinieVersion.getVersionShort() to versionShort().
+ + Used MyAsset to create debug materials.
  + In BulletDebugAppState, only render viewports that are enabled.
  + Based on version 2.7 of the jme3-utilities-heart library.
 
