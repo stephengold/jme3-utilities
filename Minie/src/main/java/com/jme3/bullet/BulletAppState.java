@@ -50,26 +50,26 @@ import java.util.logging.Logger;
  */
 public class BulletAppState implements AppState, PhysicsTickListener {
 
-    protected boolean initialized = false;
-    protected Application app;
-    protected AppStateManager stateManager;
-    protected ScheduledThreadPoolExecutor executor;
-    protected PhysicsSpace pSpace; // TODO make private
-    protected ThreadingType threadingType = ThreadingType.SEQUENTIAL;
-    protected BroadphaseType broadphaseType = BroadphaseType.DBVT;
-    protected Vector3f worldMin = new Vector3f(-10000f, -10000f, -10000f);
-    protected Vector3f worldMax = new Vector3f(10000f, 10000f, 10000f);
-    protected float speed = 1f; // TODO make private
-    protected boolean active = true;
-    protected boolean debugEnabled = false;
-    protected boolean isAttached = false;
-    protected BulletDebugAppState debugAppState;
-    protected float tpf;
-    protected Future physicsFuture;
+    private boolean initialized = false;
+    private Application app; // TODO delete
+    private AppStateManager stateManager;
+    private ScheduledThreadPoolExecutor executor;
+    private PhysicsSpace pSpace;
+    private ThreadingType threadingType = ThreadingType.SEQUENTIAL;
+    private BroadphaseType broadphaseType = BroadphaseType.DBVT;
+    private Vector3f worldMin = new Vector3f(-10000f, -10000f, -10000f);
+    private Vector3f worldMax = new Vector3f(10000f, 10000f, 10000f);
+    private float speed = 1f;
+    private boolean active = true;
+    private boolean debugEnabled = false;
+    private boolean isAttached = false;
+    private BulletDebugAppState debugAppState;
+    private float tpf;
+    private Future physicsFuture;
     /**
      * View ports in which to render debug visualization.
      */
-    protected ViewPort[] debugViewPorts;
+    private ViewPort[] debugViewPorts;
 
     /**
      * Create a new app state to manage a PhysicsSpace with DBVT collision
