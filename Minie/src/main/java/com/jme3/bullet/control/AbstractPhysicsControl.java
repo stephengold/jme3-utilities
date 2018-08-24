@@ -57,8 +57,8 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
     protected Spatial spatial;
     protected boolean enabled = true;
     protected boolean added = false;
-    protected PhysicsSpace space = null;
-    protected boolean applyLocal = false;
+    private PhysicsSpace space = null;
+    private boolean applyLocal = false;
 
     /**
      * Called when the control is added to a new spatial, create any

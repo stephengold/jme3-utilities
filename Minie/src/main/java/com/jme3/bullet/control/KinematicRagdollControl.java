@@ -480,7 +480,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         model.setLocalScale(initScale);
 
         if (added) {
-            addPhysics(space);
+            addPhysics(getPhysicsSpace());
         }
         logger.log(Level.FINE, "Created physics ragdoll for skeleton {0}", skeleton);
     }
@@ -488,7 +488,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     @Override
     protected void removeSpatialData(Spatial spat) {
         if (added) {
-            removePhysics(space);
+            removePhysics(getPhysicsSpace());
         }
         boneLinks.clear();
     }
@@ -924,7 +924,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         control.setMode(mode);
         control.setRootMass(rootMass);
         control.setWeightThreshold(weightThreshold);
-        control.setApplyPhysicsLocal(applyLocal);
+        control.setApplyPhysicsLocal(isApplyPhysicsLocal());
         return control;
     }
 
@@ -934,7 +934,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         control.setMode(mode);
         control.setRootMass(rootMass);
         control.setWeightThreshold(weightThreshold);
-        control.setApplyPhysicsLocal(applyLocal);
+        control.setApplyPhysicsLocal(isApplyPhysicsLocal());
         control.spatial = this.spatial;
         return control;
     }

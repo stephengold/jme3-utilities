@@ -476,7 +476,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
         float height = getFinalHeight();
         location.set(localUp).multLocal(height).addLocal(this.location);
         rayVector.set(localUp).multLocal(-height - 0.1f).addLocal(location);
-        List<PhysicsRayTestResult> results = space.rayTest(location, rayVector);
+        List<PhysicsRayTestResult> results
+                = getPhysicsSpace().rayTest(location, rayVector);
         vars.release();
         for (PhysicsRayTestResult physicsRayTestResult : results) {
             if (!physicsRayTestResult.getCollisionObject().equals(rigidBody)) {
@@ -499,7 +500,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
         Vector3f rayVector = vars.vect2;
         location.set(localUp).multLocal(FastMath.ZERO_TOLERANCE).addLocal(this.location);
         rayVector.set(localUp).multLocal(height + FastMath.ZERO_TOLERANCE).addLocal(location);
-        List<PhysicsRayTestResult> results = space.rayTest(location, rayVector);
+        List<PhysicsRayTestResult> results
+                = getPhysicsSpace().rayTest(location, rayVector);
         vars.release();
         for (PhysicsRayTestResult physicsRayTestResult : results) {
             if (!physicsRayTestResult.getCollisionObject().equals(rigidBody)) {
