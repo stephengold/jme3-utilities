@@ -1,6 +1,6 @@
 # release notes for the Minie library and related tests
 
-## Version 0.2.5 released on TBD
+## Version 0.2.5 released on 24 August 2018
 
  + Bugfix: PhysicsDumper prints incorrect number of vehicles.
  + Bugfix for JME issue #867 contributed by Riccardo Balbo.
