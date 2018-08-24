@@ -70,9 +70,11 @@ import java.util.logging.Logger;
 public class PhysicsSpace {
 
     private static final Logger logger = Logger.getLogger(PhysicsSpace.class.getName());
+
     public static final int AXIS_X = 0;
     public static final int AXIS_Y = 1;
     public static final int AXIS_Z = 2;
+
     private long physicsSpaceId = 0;
     private static ThreadLocal<ConcurrentLinkedQueue<AppTask<?>>> pQueueTL
             = new ThreadLocal<ConcurrentLinkedQueue<AppTask<?>>>() {
@@ -81,35 +83,46 @@ public class PhysicsSpace {
             return new ConcurrentLinkedQueue<>();
         }
     };
-    final private ConcurrentLinkedQueue<AppTask<?>> pQueue = new ConcurrentLinkedQueue<>();
-    private static ThreadLocal<PhysicsSpace> physicsSpaceTL = new ThreadLocal<PhysicsSpace>();
+    final private ConcurrentLinkedQueue<AppTask<?>> pQueue
+            = new ConcurrentLinkedQueue<>();
+    private static ThreadLocal<PhysicsSpace> physicsSpaceTL
+            = new ThreadLocal<PhysicsSpace>();
     private BroadphaseType broadphaseType = BroadphaseType.DBVT;
-//    private DiscreteDynamicsWorld dynamicsWorld = null;
-//    private BroadphaseInterface broadphase;
-//    private CollisionDispatcher dispatcher;
-//    private ConstraintSolver solver;
-//    private DefaultCollisionConfiguration collisionConfiguration;
-//    private Map<GhostObject, PhysicsGhostObject> physicsGhostNodes = new ConcurrentHashMap<GhostObject, PhysicsGhostObject>();
-    final private Map<Long, PhysicsGhostObject> physicsGhostObjects = new ConcurrentHashMap<>();
-    final private Map<Long, PhysicsCharacter> physicsCharacters = new ConcurrentHashMap<>();
-    final private Map<Long, PhysicsRigidBody> physicsBodies = new ConcurrentHashMap<>();
-    final private Map<Long, PhysicsJoint> physicsJoints = new ConcurrentHashMap<>();
-    final private Map<Long, PhysicsVehicle> physicsVehicles = new ConcurrentHashMap<>();
-    final private ArrayList<PhysicsCollisionListener> collisionListeners = new ArrayList<>();
-    final private ArrayDeque<PhysicsCollisionEvent> collisionEvents = new ArrayDeque<>();
-    final private Map<Integer, PhysicsCollisionGroupListener> collisionGroupListeners = new ConcurrentHashMap<>();
-    final private ConcurrentLinkedQueue<PhysicsTickListener> tickListeners = new ConcurrentLinkedQueue<>();
-    final private PhysicsCollisionEventFactory eventFactory = new PhysicsCollisionEventFactory();
+    final private Map<Long, PhysicsGhostObject> physicsGhostObjects
+            = new ConcurrentHashMap<>();
+    final private Map<Long, PhysicsCharacter> physicsCharacters
+            = new ConcurrentHashMap<>();
+    final private Map<Long, PhysicsRigidBody> physicsBodies
+            = new ConcurrentHashMap<>();
+    final private Map<Long, PhysicsJoint> physicsJoints
+            = new ConcurrentHashMap<>();
+    final private Map<Long, PhysicsVehicle> physicsVehicles
+            = new ConcurrentHashMap<>();
+    final private ArrayList<PhysicsCollisionListener> collisionListeners
+            = new ArrayList<>();
+    final private ArrayDeque<PhysicsCollisionEvent> collisionEvents
+            = new ArrayDeque<>();
+    final private Map<Integer, PhysicsCollisionGroupListener> collisionGroupListeners
+            = new ConcurrentHashMap<>();
+    final private ConcurrentLinkedQueue<PhysicsTickListener> tickListeners
+            = new ConcurrentLinkedQueue<>();
+    final private PhysicsCollisionEventFactory eventFactory
+            = new PhysicsCollisionEventFactory();
+    /**
+     * minimum coordinate values when using AXIS_SWEEP broadphase algorithms
+     */
     final private Vector3f worldMin = new Vector3f(-10000f, -10000f, -10000f);
+    /**
+     * maximum coordinate values when using AXIS_SWEEP broadphase algorithms
+     */
     final private Vector3f worldMax = new Vector3f(10000f, 10000f, 10000f);
     private float accuracy = 1f / 60f;
     private int maxSubSteps = 4, rayTestFlags = 1 << 2;
+    /**
+     * number of iterations used by the contact-and-constraint solver
+     * (default=10)
+     */
     private int solverNumIterations = 10;
-
-    static {
-//        System.loadLibrary("bulletjme");
-//        initNativePhysics();
-    }
 
     /**
      * Access the PhysicsSpace <b>running on this thread</b>. For parallel
@@ -130,19 +143,35 @@ public class PhysicsSpace {
         physicsSpaceTL.set(space);
     }
 
-    public PhysicsSpace() {
+    public PhysicsSpace() { // TODO remove
         this(new Vector3f(-10000f, -10000f, -10000f), new Vector3f(10000f, 10000f, 10000f), BroadphaseType.DBVT);
     }
 
-    public PhysicsSpace(BroadphaseType broadphaseType) {
+    public PhysicsSpace(BroadphaseType broadphaseType) { // TODO remove
         this(new Vector3f(-10000f, -10000f, -10000f), new Vector3f(10000f, 10000f, 10000f), broadphaseType);
     }
 
-    public PhysicsSpace(Vector3f worldMin, Vector3f worldMax) {
+    public PhysicsSpace(Vector3f worldMin, Vector3f worldMax) { // TODO remove
         this(worldMin, worldMax, BroadphaseType.AXIS_SWEEP_3);
     }
 
-    public PhysicsSpace(Vector3f worldMin, Vector3f worldMax, BroadphaseType broadphaseType) {
+    /**
+     * Create a new PhysicsSpace. Must be called from the designated physics
+     * thread.
+     *
+     * @param worldMin the desired minimum coordinates values (not null,
+     * unaffected)
+     * @param worldMax the desired minimum coordinates values (not null,
+     * unaffected)
+     * @param broadphaseType which broadphase collision-detection algorithm to
+     * use (not null)
+     */
+    public PhysicsSpace(Vector3f worldMin, Vector3f worldMax,
+            BroadphaseType broadphaseType) {
+        //Validate.nonNull(worldMin, "world min");
+        //Validate.nonNull(worldMax, "world max");
+        //Validate.nonNull(broadphaseType, "broadphase type");
+
         this.worldMin.set(worldMin);
         this.worldMax.set(worldMax);
         this.broadphaseType = broadphaseType;
@@ -150,46 +179,19 @@ public class PhysicsSpace {
     }
 
     /**
-     * Has to be called from the (designated) physics thread
+     * Must be called from the designated physics thread
      */
     public void create() {
-        physicsSpaceId = createPhysicsSpace(worldMin.x, worldMin.y, worldMin.z, worldMax.x, worldMax.y, worldMax.z, broadphaseType.ordinal(), false);
+        physicsSpaceId = createPhysicsSpace(worldMin.x, worldMin.y, worldMin.z,
+                worldMax.x, worldMax.y, worldMax.z, broadphaseType.ordinal(),
+                false);
         pQueueTL.set(pQueue);
         physicsSpaceTL.set(this);
-
-//        collisionConfiguration = new DefaultCollisionConfiguration();
-//        dispatcher = new CollisionDispatcher(collisionConfiguration);
-//        switch (broadphaseType) {
-//            case SIMPLE:
-//                broadphase = new SimpleBroadphase();
-//                break;
-//            case AXIS_SWEEP_3:
-//                broadphase = new AxisSweep3(Converter.convert(worldMin), Converter.convert(worldMax));
-//                break;
-//            case AXIS_SWEEP_3_32:
-//                broadphase = new AxisSweep3_32(Converter.convert(worldMin), Converter.convert(worldMax));
-//                break;
-//            case DBVT:
-//                broadphase = new DbvtBroadphase();
-//                break;
-//        }
-//
-//        solver = new SequentialImpulseConstraintSolver();
-//
-//        dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-//        dynamicsWorld.setGravity(new javax.vecmath.Vector3f(0, -9.81f, 0));
-//
-//        broadphase.getOverlappingPairCache().setInternalGhostPairCallback(new GhostPairCallback());
-//        GImpactCollisionAlgorithm.registerAlgorithm(dispatcher);
-//
-//        //register filter callback for tick / collision
-//        setTickCallback();
-//        setContactCallbacks();
-//        //register filter callback for collision groups
-//        setOverlapFilterCallback();
     }
 
-    private native long createPhysicsSpace(float minX, float minY, float minZ, float maxX, float maxY, float maxZ, int broadphaseType, boolean threading);
+    private native long createPhysicsSpace(float minX, float minY, float minZ,
+            float maxX, float maxY, float maxZ, int broadphaseType,
+            boolean threading);
 
     /**
      * This method is invoked from native code.
@@ -230,125 +232,22 @@ public class PhysicsSpace {
     private void addCollision_native() {
     }
 
-    private boolean needCollision_native(PhysicsCollisionObject objectA, PhysicsCollisionObject objectB) {
+    private boolean needCollision_native(PhysicsCollisionObject objectA,
+            PhysicsCollisionObject objectB) {
         return false;
     }
 
-//    private void setOverlapFilterCallback() {
-//        OverlapFilterCallback callback = new OverlapFilterCallback() {
-//
-//            public boolean needBroadphaseCollision(BroadphaseProxy bp, BroadphaseProxy bp1) {
-//                boolean collides = (bp.collisionFilterGroup & bp1.collisionFilterMask) != 0;
-//                if (collides) {
-//                    collides = (bp1.collisionFilterGroup & bp.collisionFilterMask) != 0;
-//                }
-//                if (collides) {
-//                    assert (bp.clientObject instanceof com.bulletphysics.collision.dispatch.CollisionObject && bp1.clientObject instanceof com.bulletphysics.collision.dispatch.CollisionObject);
-//                    com.bulletphysics.collision.dispatch.CollisionObject colOb = (com.bulletphysics.collision.dispatch.CollisionObject) bp.clientObject;
-//                    com.bulletphysics.collision.dispatch.CollisionObject colOb1 = (com.bulletphysics.collision.dispatch.CollisionObject) bp1.clientObject;
-//                    assert (colOb.getUserPointer() != null && colOb1.getUserPointer() != null);
-//                    PhysicsCollisionObject collisionObject = (PhysicsCollisionObject) colOb.getUserPointer();
-//                    PhysicsCollisionObject collisionObject1 = (PhysicsCollisionObject) colOb1.getUserPointer();
-//                    if ((collisionObject.getCollideWithGroups() & collisionObject1.getCollisionGroup()) > 0
-//                            || (collisionObject1.getCollideWithGroups() & collisionObject.getCollisionGroup()) > 0) {
-//                        PhysicsCollisionGroupListener listener = collisionGroupListeners.get(collisionObject.getCollisionGroup());
-//                        PhysicsCollisionGroupListener listener1 = collisionGroupListeners.get(collisionObject1.getCollisionGroup());
-//                        if (listener != null) {
-//                            return listener.collide(collisionObject, collisionObject1);
-//                        } else if (listener1 != null) {
-//                            return listener1.collide(collisionObject, collisionObject1);
-//                        }
-//                        return true;
-//                    } else {
-//                        return false;
-//                    }
-//                }
-//                return collides;
-//            }
-//        };
-//        dynamicsWorld.getPairCache().setOverlapFilterCallback(callback);
-//    }
-//    private void setTickCallback() {
-//        final PhysicsSpace space = this;
-//        InternalTickCallback callback2 = new InternalTickCallback() {
-//
-//            @Override
-//            public void internalTick(DynamicsWorld dw, float f) {
-//                //execute task list
-//                AppTask task = pQueue.poll();
-//                task = pQueue.poll();
-//                while (task != null) {
-//                    while (task.isCancelled()) {
-//                        task = pQueue.poll();
-//                    }
-//                    try {
-//                        task.invoke();
-//                    } catch (Exception ex) {
-//                        logger.log(Level.SEVERE, null, ex);
-//                    }
-//                    task = pQueue.poll();
-//                }
-//                for (Iterator<PhysicsTickListener> it = tickListeners.iterator(); it.hasNext();) {
-//                    PhysicsTickListener physicsTickCallback = it.next();
-//                    physicsTickCallback.prePhysicsTick(space, f);
-//                }
-//            }
-//        };
-//        dynamicsWorld.setPreTickCallback(callback2);
-//        InternalTickCallback callback = new InternalTickCallback() {
-//
-//            @Override
-//            public void internalTick(DynamicsWorld dw, float f) {
-//                for (Iterator<PhysicsTickListener> it = tickListeners.iterator(); it.hasNext();) {
-//                    PhysicsTickListener physicsTickCallback = it.next();
-//                    physicsTickCallback.physicsTick(space, f);
-//                }
-//            }
-//        };
-//        dynamicsWorld.setInternalTickCallback(callback, this);
-//    }
-//    private void setContactCallbacks() {
-//        BulletGlobals.setContactAddedCallback(new ContactAddedCallback() {
-//
-//            public boolean contactAdded(ManifoldPoint cp, com.bulletphysics.collision.dispatch.CollisionObject colObj0,
-//                    int partId0, int index0, com.bulletphysics.collision.dispatch.CollisionObject colObj1, int partId1,
-//                    int index1) {
-//                System.out.println("contact added");
-//                return true;
-//            }
-//        });
-//
-//        BulletGlobals.setContactProcessedCallback(new ContactProcessedCallback() {
-//
-//            public boolean contactProcessed(ManifoldPoint cp, Object body0, Object body1) {
-//                if (body0 instanceof CollisionObject && body1 instanceof CollisionObject) {
-//                    PhysicsCollisionObject node = null, node1 = null;
-//                    CollisionObject rBody0 = (CollisionObject) body0;
-//                    CollisionObject rBody1 = (CollisionObject) body1;
-//                    node = (PhysicsCollisionObject) rBody0.getUserPointer();
-//                    node1 = (PhysicsCollisionObject) rBody1.getUserPointer();
-//                    collisionEvents.add(eventFactory.getEvent(PhysicsCollisionEvent.TYPE_PROCESSED, node, node1, cp));
-//                }
-//                return true;
-//            }
-//        });
-//
-//        BulletGlobals.setContactDestroyedCallback(new ContactDestroyedCallback() {
-//
-//            public boolean contactDestroyed(Object userPersistentData) {
-//                System.out.println("contact destroyed");
-//                return true;
-//            }
-//        });
-//    }
     private void addCollisionEvent_native(PhysicsCollisionObject node, PhysicsCollisionObject node1, long manifoldPointObjectId) {
 //        System.out.println("addCollisionEvent:"+node.getObjectId()+" "+ node1.getObjectId());
         collisionEvents.add(eventFactory.getEvent(PhysicsCollisionEvent.TYPE_PROCESSED, node, node1, manifoldPointObjectId));
     }
 
-    private boolean notifyCollisionGroupListeners_native(PhysicsCollisionObject node, PhysicsCollisionObject node1) {
-        PhysicsCollisionGroupListener listener = collisionGroupListeners.get(node.getCollisionGroup());
-        PhysicsCollisionGroupListener listener1 = collisionGroupListeners.get(node1.getCollisionGroup());
+    private boolean notifyCollisionGroupListeners_native(
+            PhysicsCollisionObject node, PhysicsCollisionObject node1) {
+        PhysicsCollisionGroupListener listener
+                = collisionGroupListeners.get(node.getCollisionGroup());
+        PhysicsCollisionGroupListener listener1
+                = collisionGroupListeners.get(node1.getCollisionGroup());
         boolean result = true;
 
         if (listener != null) {
@@ -440,7 +339,8 @@ public class PhysicsSpace {
         } else if (obj instanceof PhysicsJoint) {
             addJoint((PhysicsJoint) obj);
         } else {
-            throw (new UnsupportedOperationException("Cannot add this kind of object to the physics space."));
+            throw (new UnsupportedOperationException(
+                    "Cannot add this kind of object to the physics space."));
         }
     }
 
@@ -479,7 +379,8 @@ public class PhysicsSpace {
         } else if (obj instanceof PhysicsJoint) {
             removeJoint((PhysicsJoint) obj);
         } else {
-            throw (new UnsupportedOperationException("Cannot remove this kind of object from the physics space."));
+            throw (new UnsupportedOperationException(
+                    "Cannot remove this kind of object from the physics space."));
         }
     }
 
@@ -497,7 +398,7 @@ public class PhysicsSpace {
      * adds all physics controls and joints in the given spatial node to the
      * physics space (e.g. after loading from disk) - recursive if node
      *
-     * @param spatial the rootnode containing the physics objects
+     * @param spatial the root node containing the physics objects
      */
     public void addAll(Spatial spatial) {
         add(spatial);
@@ -944,9 +845,12 @@ public class PhysicsSpace {
      * @param allowedCcdPenetration true&rarr;allow, false&rarr;disallow
      * @return results
      */
-    public List<PhysicsSweepTestResult> sweepTest(CollisionShape shape, Transform start, Transform end, List<PhysicsSweepTestResult> results, float allowedCcdPenetration) {
+    public List<PhysicsSweepTestResult> sweepTest(CollisionShape shape,
+            Transform start, Transform end,
+            List<PhysicsSweepTestResult> results, float allowedCcdPenetration) {
         results.clear();
-        sweepTest_native(shape.getObjectId(), start, end, physicsSpaceId, results, allowedCcdPenetration);
+        sweepTest_native(shape.getObjectId(), start, end, physicsSpaceId,
+                results, allowedCcdPenetration);
         return results;
     }
 
@@ -1076,38 +980,37 @@ public class PhysicsSpace {
     }
 
     /**
-     * Get the number of iterations used by the contact solver.
+     * Read the number of iterations used by the contact-and-constraint solver.
      *
-     * @return The number of iterations used by the contact and constraint
-     * solver.
+     * @return the number of iterations used
      */
     public int getSolverNumIterations() {
         return solverNumIterations;
     }
 
-    private native void setSolverNumIterations(long physicsSpaceId, int numIterations);
+    private native void setSolverNumIterations(long physicsSpaceId,
+            int numIterations);
 
     public static native void initNativePhysics();
 
     /**
-     * interface with Broadphase types
+     * Enumerate Broadphase collision-detection algorithms.
      */
     public enum BroadphaseType {
-
         /**
-         * basic Broadphase
+         * the basic algorithm
          */
         SIMPLE,
         /**
-         * better Broadphase, needs worldBounds , max Object number = 16384
+         * better algorithm, needs world bounds, max of 16384 objects
          */
         AXIS_SWEEP_3,
         /**
-         * better Broadphase, needs worldBounds , max Object number = 65536
+         * better algorithm, needs world bounds, max of 65536 objects
          */
         AXIS_SWEEP_3_32,
         /**
-         * Broadphase allowing quicker adding/removing of physics objects
+         * algorithm allowing quicker addition/removal of physics objects
          */
         DBVT;
     }
@@ -1115,7 +1018,8 @@ public class PhysicsSpace {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Finalizing PhysicsSpace {0}", Long.toHexString(physicsSpaceId));
+        Logger.getLogger(this.getClass().getName()).log(Level.FINE,
+                "Finalizing PhysicsSpace {0}", Long.toHexString(physicsSpaceId));
         finalizeNative(physicsSpaceId);
     }
 

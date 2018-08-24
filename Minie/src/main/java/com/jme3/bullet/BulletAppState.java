@@ -58,11 +58,13 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     private ThreadingType threadingType = ThreadingType.SEQUENTIAL;
     private BroadphaseType broadphaseType = BroadphaseType.DBVT;
     /**
-     * minimum coordinate values for the physics space
+     * minimum coordinate values for the physics space when using AXIS_SWEEP
+     * broadphase algorithms
      */
     final private Vector3f worldMin = new Vector3f(-10000f, -10000f, -10000f);
     /**
-     * minimum coordinate values for the physics space
+     * maximum coordinate values for the physics space when using AXIS_SWEEP
+     * broadphase algorithms
      */
     final private Vector3f worldMax = new Vector3f(10000f, 10000f, 10000f);
     /**
@@ -97,7 +99,8 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      *
      * Use getStateManager().addState(bulletAppState) to enable physics.
      *
-     * @param broadphaseType type of broadphase collision detection (not null)
+     * @param broadphaseType which broadphase collision-detection algorithm to
+     * use (not null)
      */
     public BulletAppState(BroadphaseType broadphaseType) {
         this(new Vector3f(-10000f, -10000f, -10000f),
@@ -129,7 +132,8 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      * unaffected)
      * @param worldMax the desired minimum coordinates values (not null,
      * unaffected)
-     * @param broadphaseType type of broadphase collision detection (not null)
+     * @param broadphaseType which broadphase collision-detection algorithm to
+     * use (not null)
      */
     public BulletAppState(Vector3f worldMin, Vector3f worldMax,
             BroadphaseType broadphaseType) {
@@ -377,7 +381,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
-     * Read which type of broadphase collision detection this app state uses.
+     * Read which broadphase collision-detection algorithm this app state uses.
      *
      * @return enum value (not null)
      */
@@ -400,8 +404,8 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     /**
      * Alter the coordinate range. Not allowed after attaching the app state.
      *
-     * @param worldMin the desired minimum coordinate values (not null,
-     * unaffected)
+     * @param worldMin the desired minimum coordinate values when using
+     * AXIS_SWEEP broadphase algorithms (not null, unaffected)
      */
     public void setWorldMin(Vector3f worldMin) {
         Validate.nonNull(worldMin, "world min");
@@ -413,8 +417,8 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     /**
      * Alter the coordinate range. Not allowed after attaching the app state.
      *
-     * @param worldMax the desired maximum coordinate values (not null,
-     * unaffected)
+     * @param worldMax the desired maximum coordinate values when using
+     * AXIS_SWEEP broadphase algorithms (not null, unaffected)
      */
     public void setWorldMax(Vector3f worldMax) {
         Validate.nonNull(worldMin, "world max");
