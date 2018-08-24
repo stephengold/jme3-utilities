@@ -60,10 +60,15 @@ public class MeshCollisionShape extends CollisionShape {
     private static final String NUM_TRIANGLES = "numTriangles";
     private static final String NUM_VERTICES = "numVertices";
     private static final String NATIVE_BVH = "nativeBvh";
-    protected int numVertices, numTriangles, vertexStride, triangleIndexStride;
-    protected ByteBuffer triangleIndexBase, vertexBase;
-    protected long meshId = 0;
-    protected long nativeBVHBuffer = 0;
+
+    private int numTriangles;
+    private int numVertices;
+    private int triangleIndexStride;
+    private int vertexStride;
+    private ByteBuffer triangleIndexBase;
+    private ByteBuffer vertexBase;
+    private long meshId = 0;
+    private long nativeBVHBuffer = 0;
     private boolean memoryOptimized;
 
     /**

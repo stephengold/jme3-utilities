@@ -54,9 +54,13 @@ import java.util.logging.Logger;
 public class GImpactCollisionShape extends CollisionShape {
 
 //    protected Vector3f worldScale;
-    protected int numVertices, numTriangles, vertexStride, triangleIndexStride;
-    protected ByteBuffer triangleIndexBase, vertexBase;
-    protected long meshId = 0;
+    private int numTriangles;
+    private int numVertices;
+    private int triangleIndexStride;
+    private int vertexStride;
+    private ByteBuffer triangleIndexBase;
+    private ByteBuffer vertexBase;
+    private long meshId = 0;
 //    protected IndexedMesh bulletMesh;
 
     /**

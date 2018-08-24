@@ -52,25 +52,25 @@ import java.util.logging.Logger;
  */
 public class HingeJoint extends PhysicsJoint {
 
-    protected Vector3f axisA;
-    protected Vector3f axisB;
+    private Vector3f axisA;
+    private Vector3f axisB;
 
     /**
      * Cached copy of the angular-only flag.
      */
-    protected boolean angularOnly = false;
+    private boolean angularOnly = false;
     /**
      * Cached copy of the limit's bias factor.
      */
-    protected float biasFactor = 0.3f;
+    private float biasFactor = 0.3f;
     /**
      * Cached copy of the limit's relaxation factor.
      */
-    protected float relaxationFactor = 1f;
+    private float relaxationFactor = 1f;
     /**
      * Cached copy of the limit's softness.
      */
-    protected float limitSoftness = 0.9f;
+    private float limitSoftness = 0.9f;
 
     /**
      * No-argument constructor for serialization purposes only. Do not invoke

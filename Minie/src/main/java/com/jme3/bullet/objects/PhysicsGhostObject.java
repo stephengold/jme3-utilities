@@ -57,8 +57,8 @@ import java.util.logging.Logger;
  */
 public class PhysicsGhostObject extends PhysicsCollisionObject {
 
-    protected boolean locationDirty = false;
-    protected final Quaternion tmp_inverseWorldRotation = new Quaternion();
+    private boolean locationDirty = false;
+    private final Quaternion tmp_inverseWorldRotation = new Quaternion();
     final private List<PhysicsCollisionObject> overlappingObjects = new LinkedList<>();
 
     /**

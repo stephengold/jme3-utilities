@@ -52,11 +52,12 @@ import java.util.logging.Logger;
  */
 public class ConeJoint extends PhysicsJoint {
 
-    protected Matrix3f rotA, rotB;
-    protected float swingSpan1 = 1e30f;
-    protected float swingSpan2 = 1e30f;
-    protected float twistSpan = 1e30f;
-    protected boolean angularOnly = false;
+    private Matrix3f rotA;
+    private Matrix3f rotB;
+    private float swingSpan1 = 1e30f;
+    private float swingSpan2 = 1e30f;
+    private float twistSpan = 1e30f;
+    private boolean angularOnly = false;
 
     /**
      * No-argument constructor for serialization purposes only. Do not invoke

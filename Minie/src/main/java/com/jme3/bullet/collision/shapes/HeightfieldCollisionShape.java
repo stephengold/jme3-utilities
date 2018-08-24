@@ -56,15 +56,15 @@ import java.util.logging.Logger;
  */
 public class HeightfieldCollisionShape extends CollisionShape {
 
-    protected int heightStickWidth;
-    protected int heightStickLength;
-    protected float[] heightfieldData;
-    protected float heightScale;
-    protected float minHeight;
-    protected float maxHeight;
-    protected int upAxis;
-    protected boolean flipQuadEdges;
-    protected ByteBuffer bbuf;
+    private int heightStickWidth;
+    private int heightStickLength;
+    private float[] heightfieldData;
+    private float heightScale;
+    private float minHeight;
+    private float maxHeight;
+    private int upAxis;
+    private boolean flipQuadEdges;
+    private ByteBuffer bbuf;
 //    protected FloatBuffer fbuf;
 
     public HeightfieldCollisionShape() {

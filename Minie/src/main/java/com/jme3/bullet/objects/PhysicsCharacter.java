@@ -50,15 +50,15 @@ import java.util.logging.Logger;
  */
 public class PhysicsCharacter extends PhysicsCollisionObject {
 
-    protected long characterId = 0;
-    protected float stepHeight;
-    protected Vector3f walkDirection = new Vector3f();
-    protected float fallSpeed = 55.0f;
-    protected float jumpSpeed = 10.0f;
-    protected int upAxis = 1;
-    protected boolean locationDirty = false;
+    private long characterId = 0;
+    private float stepHeight;
+    private Vector3f walkDirection = new Vector3f();
+    private float fallSpeed = 55.0f;
+    private float jumpSpeed = 10.0f;
+    private int upAxis = 1;
+    private boolean locationDirty = false;
     //TEMP VARIABLES
-    protected final Quaternion tmp_inverseWorldRotation = new Quaternion();
+    private final Quaternion tmp_inverseWorldRotation = new Quaternion();
 
     /**
      * No-argument constructor for serialization purposes only. Do not invoke

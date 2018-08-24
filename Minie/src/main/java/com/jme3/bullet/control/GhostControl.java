@@ -54,13 +54,14 @@ import java.io.IOException;
  *
  * @author normenhansen
  */
-public class GhostControl extends PhysicsGhostObject implements PhysicsControl, JmeCloneable {
+public class GhostControl extends PhysicsGhostObject 
+        implements PhysicsControl, JmeCloneable {
 
     protected Spatial spatial;
     protected boolean enabled = true;
     protected boolean added = false;
     protected PhysicsSpace space = null;
-    protected boolean applyLocal = false;
+    private boolean applyLocal = false;
 
     public GhostControl() {
     }

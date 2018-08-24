@@ -51,8 +51,9 @@ import java.util.logging.Logger;
  */
 public class SliderJoint extends PhysicsJoint {
 
-    protected Matrix3f rotA, rotB;
-    protected boolean useLinearReferenceFrameA;
+    private Matrix3f rotA;
+    private Matrix3f rotB;
+    private boolean useLinearReferenceFrameA;
 
     /**
      * No-argument constructor for serialization purposes only. Do not invoke

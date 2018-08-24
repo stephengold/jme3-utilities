@@ -50,7 +50,7 @@ public abstract class PhysicsJoint implements Savable {
     protected PhysicsRigidBody nodeB;
     protected Vector3f pivotA;
     protected Vector3f pivotB;
-    protected boolean collisionBetweenLinkedBodies = true;
+    private boolean collisionBetweenLinkedBodies = true;
 
     /**
      * No-argument constructor for serialization purposes only. Do not invoke

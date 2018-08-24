@@ -60,7 +60,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     protected RigidBodyMotionState motionState = new RigidBodyMotionState();
     protected float mass = 1.0f;
-    protected boolean kinematic = false;
+    private boolean kinematic = false;
     protected ArrayList<PhysicsJoint> joints = new ArrayList<>();
 
     /**

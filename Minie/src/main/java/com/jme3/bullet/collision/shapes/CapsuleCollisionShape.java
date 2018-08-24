@@ -47,8 +47,9 @@ import java.util.logging.Logger;
  */
 public class CapsuleCollisionShape extends CollisionShape {
 
-    protected float radius, height;
-    protected int axis;
+    private float height;
+    private float radius;
+    private int axis;
 
     /**
      * No-argument constructor for serialization purposes only. Do not invoke

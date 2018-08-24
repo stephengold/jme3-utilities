@@ -61,25 +61,25 @@ import jme3utilities.MyAsset;
  */
 public class BulletDebugAppState extends AbstractAppState {
 
-    protected static final Logger logger = Logger.getLogger(BulletDebugAppState.class.getName());
-    protected DebugAppStateFilter filter;
-    protected Application app;
-    protected AssetManager assetManager;
-    protected final PhysicsSpace space;
-    protected final Node physicsDebugRootNode = new Node("Physics Debug Root Node");
-    protected ViewPort[] viewPorts;
-    protected RenderManager rm;
+    private static final Logger logger = Logger.getLogger(BulletDebugAppState.class.getName());
+    private DebugAppStateFilter filter;
+    private Application app;
+    private AssetManager assetManager;
+    private final PhysicsSpace space;
+    private final Node physicsDebugRootNode = new Node("Physics Debug Root Node");
+    private ViewPort[] viewPorts;
+    private RenderManager rm;
     public Material DEBUG_BLUE;
     public Material DEBUG_RED;
     public Material DEBUG_GREEN;
     public Material DEBUG_YELLOW;
     public Material DEBUG_MAGENTA;
     public Material DEBUG_PINK;
-    protected HashMap<PhysicsRigidBody, Spatial> bodies = new HashMap<>();
-    protected HashMap<PhysicsJoint, Spatial> joints = new HashMap<>();
-    protected HashMap<PhysicsGhostObject, Spatial> ghosts = new HashMap<>();
-    protected HashMap<PhysicsCharacter, Spatial> characters = new HashMap<>();
-    protected HashMap<PhysicsVehicle, Spatial> vehicles = new HashMap<>();
+    private HashMap<PhysicsRigidBody, Spatial> bodies = new HashMap<>();
+    private HashMap<PhysicsJoint, Spatial> joints = new HashMap<>();
+    private HashMap<PhysicsGhostObject, Spatial> ghosts = new HashMap<>();
+    private HashMap<PhysicsCharacter, Spatial> characters = new HashMap<>();
+    private HashMap<PhysicsVehicle, Spatial> vehicles = new HashMap<>();
 
     public BulletDebugAppState(PhysicsSpace space, ViewPort[] viewPorts) {
         this.space = space;
@@ -127,7 +127,7 @@ public class BulletDebugAppState extends AbstractAppState {
         //update our debug root node
         physicsDebugRootNode.updateLogicalState(tpf);
         physicsDebugRootNode.updateGeometricState();
-}
+    }
 
     @Override
     public void render(RenderManager rm) {

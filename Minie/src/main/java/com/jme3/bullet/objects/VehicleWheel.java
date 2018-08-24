@@ -46,26 +46,26 @@ import java.io.IOException;
  */
 public class VehicleWheel implements Savable {
 
-    protected long wheelId = 0;
-    protected int wheelIndex = 0;
-    protected boolean frontWheel;
-    protected Vector3f location = new Vector3f();
-    protected Vector3f direction = new Vector3f();
-    protected Vector3f axle = new Vector3f();
-    protected float suspensionStiffness = 20.0f;
-    protected float wheelsDampingRelaxation = 2.3f;
-    protected float wheelsDampingCompression = 4.4f;
-    protected float frictionSlip = 10.5f;
-    protected float rollInfluence = 1.0f;
-    protected float maxSuspensionTravelCm = 500f;
-    protected float maxSuspensionForce = 6000f;
-    protected float radius = 0.5f;
-    protected float restLength = 1f;
-    protected Vector3f wheelWorldLocation = new Vector3f();
-    protected Quaternion wheelWorldRotation = new Quaternion();
-    protected Spatial wheelSpatial;
-    protected Matrix3f tmp_Matrix = new com.jme3.math.Matrix3f();
-    protected final Quaternion tmp_inverseWorldRotation = new Quaternion();
+    private long wheelId = 0;
+    private int wheelIndex = 0;
+    private boolean frontWheel;
+    private Vector3f location = new Vector3f();
+    private Vector3f direction = new Vector3f();
+    private Vector3f axle = new Vector3f();
+    private float suspensionStiffness = 20.0f;
+    private float wheelsDampingRelaxation = 2.3f;
+    private float wheelsDampingCompression = 4.4f;
+    private float frictionSlip = 10.5f;
+    private float rollInfluence = 1.0f;
+    private float maxSuspensionTravelCm = 500f;
+    private float maxSuspensionForce = 6000f;
+    private float radius = 0.5f;
+    private float restLength = 1f;
+    private Vector3f wheelWorldLocation = new Vector3f();
+    private Quaternion wheelWorldRotation = new Quaternion();
+    private Spatial wheelSpatial;
+    private Matrix3f tmp_Matrix = new com.jme3.math.Matrix3f();
+    private final Quaternion tmp_inverseWorldRotation = new Quaternion();
     private boolean applyLocal = false;
 
     public VehicleWheel() {

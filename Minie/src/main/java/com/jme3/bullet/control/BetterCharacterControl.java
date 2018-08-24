@@ -71,53 +71,53 @@ import java.util.logging.Logger;
  */
 public class BetterCharacterControl extends AbstractPhysicsControl implements PhysicsTickListener, JmeCloneable {
 
-    protected static final Logger logger = Logger.getLogger(BetterCharacterControl.class.getName());
-    protected PhysicsRigidBody rigidBody;
-    protected float radius;
-    protected float height;
-    protected float mass;
-    protected float duckedFactor = 0.6f;
+    private static final Logger logger = Logger.getLogger(BetterCharacterControl.class.getName());
+    private PhysicsRigidBody rigidBody;
+    private float radius;
+    private float height;
+    private float mass;
+    private float duckedFactor = 0.6f;
     /**
      * Local up direction, derived from gravity.
      */
-    protected final Vector3f localUp = new Vector3f(0, 1, 0);
+    private final Vector3f localUp = new Vector3f(0, 1, 0);
     /**
      * Local absolute z-forward direction, derived from gravity and UNIT_Z,
      * updated continuously when gravity changes.
      */
-    protected final Vector3f localForward = new Vector3f(0, 0, 1);
+    private final Vector3f localForward = new Vector3f(0, 0, 1);
     /**
      * Local left direction, derived from up and forward.
      */
-    protected final Vector3f localLeft = new Vector3f(1, 0, 0);
+    private final Vector3f localLeft = new Vector3f(1, 0, 0);
     /**
      * Local z-forward quaternion for the "local absolute" z-forward direction.
      */
-    protected final Quaternion localForwardRotation = new Quaternion(Quaternion.DIRECTION_Z);
+    private final Quaternion localForwardRotation = new Quaternion(Quaternion.DIRECTION_Z);
     /**
      * Is a z-forward vector based on the view direction and the current local
      * x/z plane.
      */
-    protected final Vector3f viewDirection = new Vector3f(0, 0, 1);
+    private final Vector3f viewDirection = new Vector3f(0, 0, 1);
     /**
      * Stores final spatial location, corresponds to RigidBody location.
      */
-    protected final Vector3f location = new Vector3f();
+    private final Vector3f location = new Vector3f();
     /**
      * Stores final spatial rotation, is a z-forward rotation based on the view
      * direction and the current local x/z plane. See also rotatedViewDirection.
      */
-    protected final Quaternion rotation = new Quaternion(Quaternion.DIRECTION_Z);
-    protected final Vector3f rotatedViewDirection = new Vector3f(0, 0, 1);
-    protected final Vector3f walkDirection = new Vector3f();
-    protected final Vector3f jumpForce;
-    protected float physicsDamping = 0.9f;
-    protected final Vector3f scale = new Vector3f(1, 1, 1);
-    protected final Vector3f velocity = new Vector3f();
-    protected boolean jump = false;
-    protected boolean onGround = false;
-    protected boolean ducked = false;
-    protected boolean wantToUnDuck = false;
+    private final Quaternion rotation = new Quaternion(Quaternion.DIRECTION_Z);
+    private final Vector3f rotatedViewDirection = new Vector3f(0, 0, 1);
+    private final Vector3f walkDirection = new Vector3f();
+    private final Vector3f jumpForce;
+    private float physicsDamping = 0.9f;
+    private final Vector3f scale = new Vector3f(1, 1, 1);
+    private final Vector3f velocity = new Vector3f();
+    private boolean jump = false;
+    private boolean onGround = false;
+    private boolean ducked = false;
+    private boolean wantToUnDuck = false;
 
     /**
      * Only used for serialization, do not use this constructor.

@@ -46,9 +46,9 @@ import java.util.logging.Logger;
  */
 public class ConeCollisionShape extends CollisionShape {
 
-    protected float radius;
-    protected float height;
-    protected int axis;
+    private float radius;
+    private float height;
+    private int axis;
 
     /**
      * No-argument constructor for serialization purposes only. Do not invoke

@@ -56,7 +56,7 @@ import java.util.logging.Logger;
  * wheel and chassis as separate rigid bodies, connected by constraints, it uses
  * a simplified model. This simplified model has many benefits, and is widely
  * used in commercial driving games.<br>
- * The entire vehicle is represented as a single rigidbody, the chassis. The
+ * The entire vehicle is represented as a single rigid body, the chassis. The
  * collision detection of the wheels is approximated by ray casts, and the tire
  * friction is a basic anisotropic friction model.
  * </p>
@@ -65,11 +65,11 @@ import java.util.logging.Logger;
  */
 public class PhysicsVehicle extends PhysicsRigidBody {
 
-    protected long vehicleId = 0;
-    protected long rayCasterId = 0;
+    private long vehicleId = 0;
+    private long rayCasterId = 0;
     protected VehicleTuning tuning = new VehicleTuning();
     protected ArrayList<VehicleWheel> wheels = new ArrayList<>();
-    protected PhysicsSpace physicsSpace;
+    private PhysicsSpace physicsSpace;
 
     /**
      * No-argument constructor for serialization purposes only. Do not invoke
