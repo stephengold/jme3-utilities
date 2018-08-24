@@ -42,7 +42,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * <i>From bullet manual:</i><br>
+ * <i>From the Bullet manual:</i><br>
  * Hinge constraint, or revolute joint restricts two additional angular degrees
  * of freedom, so the body can only rotate around one axis, the hinge axis. This
  * can be useful to represent doors or wheels rotating around one axis. The user
@@ -54,43 +54,73 @@ public class HingeJoint extends PhysicsJoint {
 
     protected Vector3f axisA;
     protected Vector3f axisB;
+
+    /**
+     * Cached copy of the angular-only flag.
+     */
     protected boolean angularOnly = false;
+    /**
+     * Cached copy of the limit's bias factor.
+     */
     protected float biasFactor = 0.3f;
-    protected float relaxationFactor = 1.0f;
+    /**
+     * Cached copy of the limit's relaxation factor.
+     */
+    protected float relaxationFactor = 1f;
+    /**
+     * Cached copy of the limit's softness.
+     */
     protected float limitSoftness = 0.9f;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public HingeJoint() {
     }
 
     /**
-     * Creates a new HingeJoint
+     * Create a new HingeJoint. To be effective, the joint must be added to a
+     * physics space.
      *
-     * @param nodeA the 1st body connected by the joint
-     * @param nodeB the 2nd body connected by the joint
-     * @param pivotA local translation of the joint connection point in node A
-     * @param pivotB local translation of the joint connection point in node B
-     * @param axisA local axis of the connection to node A
-     * @param axisB local axis of the connection to node B
+     * @param nodeA the 1st body connected by the joint (alias created)
+     * @param nodeB the 2nd body connected by the joint (alias created)
+     * @param pivotA local offset of the joint connection point in node A (alias
+     * created)
+     * @param pivotB local offset of the joint connection point in node B (alias
+     * created)
+     * @param axisA local axis of the connection to node A (alias created)
+     * @param axisB local axis of the connection to node B (alias created)
      */
-    public HingeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, Vector3f axisA, Vector3f axisB) {
+    public HingeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
+            Vector3f pivotA, Vector3f pivotB, Vector3f axisA, Vector3f axisB) {
         super(nodeA, nodeB, pivotA, pivotB);
         this.axisA = axisA;
         this.axisB = axisB;
         createJoint();
+        /*
+         * Apply the cached values to synchronize with the Bullet constraint.
+         */
+        setAngularOnly(objectId, angularOnly);
+        float low = getLowerLimit();
+        float high = getUpperLimit();
+        setLimit(objectId, low, high, limitSoftness, biasFactor, relaxationFactor);
     }
 
     /**
-     * Enables the motor.
+     * Enable or disable the motor.
      *
-     * @param enable if true, motor is enabled.
-     * @param targetVelocity the target velocity of the rotation.
-     * @param maxMotorImpulse the max force applied to the hinge to rotate it.
+     * @param enable true to enable, false to disable
+     * @param targetVelocity the target velocity of the rotation
+     * @param maxMotorImpulse the max force applied to the hinge to rotate it
      */
-    public void enableMotor(boolean enable, float targetVelocity, float maxMotorImpulse) {
+    public void enableMotor(boolean enable, float targetVelocity,
+            float maxMotorImpulse) {
         enableMotor(objectId, enable, targetVelocity, maxMotorImpulse);
     }
 
-    private native void enableMotor(long objectId, boolean enable, float targetVelocity, float maxMotorImpulse);
+    private native void enableMotor(long objectId, boolean enable,
+            float targetVelocity, float maxMotorImpulse);
 
     public boolean getEnableMotor() {
         return getEnableAngularMotor(objectId);
@@ -124,28 +154,30 @@ public class HingeJoint extends PhysicsJoint {
 
     /**
      * Sets the limits of this joint. If you're above the softness, velocities
-     * that would shoot through the actual limit are slowed down. The bias be in
-     * the range of 0.2 - 0.5.
+     * that would shoot through the actual limit are slowed down. The bias
+     * should be in the range of 0.2 - 0.5.
      *
      * @param low the low limit in radians.
      * @param high the high limit in radians.
      * @param _softness the factor at which the velocity error correction starts
-     * operating,i.e a softness of 0.9 means that the vel. corr starts at 90% of
-     * the limit range.
+     * operating, i.e a softness of 0.9 means that the correction starts at 90%
+     * of the limit range.
      * @param _biasFactor the magnitude of the position correction. It tells you
-     * how strictly the position error (drift ) is corrected.
+     * how strictly the position error (drift) is corrected.
      * @param _relaxationFactor the rate at which velocity errors are corrected.
      * This can be seen as the strength of the limits. A low value will make the
      * limits more spongy.
      */
-    public void setLimit(float low, float high, float _softness, float _biasFactor, float _relaxationFactor) {
+    public void setLimit(float low, float high, float _softness,
+            float _biasFactor, float _relaxationFactor) {
         biasFactor = _biasFactor;
         relaxationFactor = _relaxationFactor;
         limitSoftness = _softness;
         setLimit(objectId, low, high, _softness, _biasFactor, _relaxationFactor);
     }
 
-    private native void setLimit(long objectId, float low, float high, float _softness, float _biasFactor, float _relaxationFactor);
+    private native void setLimit(long objectId, float low, float high,
+            float _softness, float _biasFactor, float _relaxationFactor);
 
     public float getUpperLimit() {
         return getUpperLimit(objectId);
@@ -189,8 +221,8 @@ public class HingeJoint extends PhysicsJoint {
         capsule.write(limitSoftness, "limitSoftness", 0.9f);
 
         capsule.write(getEnableMotor(), "enableAngularMotor", false);
-        capsule.write(getMotorTargetVelocity(), "targetVelocity", 0.0f);
-        capsule.write(getMaxMotorImpulse(), "maxMotorImpulse", 0.0f);
+        capsule.write(getMotorTargetVelocity(), "targetVelocity", 0f);
+        capsule.write(getMaxMotorImpulse(), "maxMotorImpulse", 0f);
     }
 
     @Override
@@ -208,19 +240,24 @@ public class HingeJoint extends PhysicsJoint {
         this.relaxationFactor = capsule.readFloat("relaxationFactor", 1f);
         this.limitSoftness = capsule.readFloat("limitSoftness", 0.9f);
 
-        boolean enableAngularMotor = capsule.readBoolean("enableAngularMotor", false);
-        float targetVelocity = capsule.readFloat("targetVelocity", 0.0f);
-        float maxMotorImpulse = capsule.readFloat("maxMotorImpulse", 0.0f);
+        boolean enableAngularMotor
+                = capsule.readBoolean("enableAngularMotor", false);
+        float targetVelocity = capsule.readFloat("targetVelocity", 0f);
+        float maxMotorImpulse = capsule.readFloat("maxMotorImpulse", 0f);
 
         createJoint();
         enableMotor(enableAngularMotor, targetVelocity, maxMotorImpulse);
-        setLimit(lowerLimit, upperLimit, limitSoftness, biasFactor, relaxationFactor);
+        setLimit(lowerLimit, upperLimit, limitSoftness, biasFactor,
+                relaxationFactor);
     }
 
     protected void createJoint() {
-        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA, axisA, pivotB, axisB);
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
+        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(),
+                pivotA, axisA, pivotB, axisB);
+        Logger.getLogger(this.getClass().getName()).log(Level.FINE,
+                "Created Joint {0}", Long.toHexString(objectId));
     }
 
-    private native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA, Vector3f axisA, Vector3f pivotB, Vector3f axisB);
+    private native long createJoint(long objectIdA, long objectIdB,
+            Vector3f pivotA, Vector3f axisA, Vector3f pivotB, Vector3f axisB);
 }
