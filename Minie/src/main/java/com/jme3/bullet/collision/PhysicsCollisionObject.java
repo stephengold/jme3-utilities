@@ -69,8 +69,9 @@ public abstract class PhysicsCollisionObject implements Savable {
     public static final int COLLISION_GROUP_14 = 0x00002000;
     public static final int COLLISION_GROUP_15 = 0x00004000;
     public static final int COLLISION_GROUP_16 = 0x00008000;
-    protected int collisionGroup = COLLISION_GROUP_01; // TODO private
-    protected int collisionGroupsMask = COLLISION_GROUP_01; // TODO private rename collideWithGroups
+
+    private int collisionGroup = COLLISION_GROUP_01;
+    private int collisionGroupsMask = COLLISION_GROUP_01; // TODO rename collideWithGroups
     private Object userObject;
 
     /**
@@ -87,8 +88,8 @@ public abstract class PhysicsCollisionObject implements Savable {
     /**
      * Access the shape of this physics object.
      *
-     * @return the shape, which can then be applied to other physics objects
-     * (increases performance)
+     * @return the pre-existing instance, which can then be applied to other
+     * physics objects (increases performance)
      */
     public CollisionShape getCollisionShape() {
         return collisionShape;
