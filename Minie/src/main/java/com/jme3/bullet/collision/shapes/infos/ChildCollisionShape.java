@@ -48,6 +48,10 @@ public class ChildCollisionShape implements Savable {
     public Matrix3f rotation;
     public CollisionShape shape;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public ChildCollisionShape() {
     }
 

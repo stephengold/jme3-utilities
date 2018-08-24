@@ -54,6 +54,10 @@ public class SliderJoint extends PhysicsJoint {
     protected Matrix3f rotA, rotB;
     protected boolean useLinearReferenceFrameA;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public SliderJoint() {
     }
 

@@ -50,6 +50,10 @@ public class CylinderCollisionShape extends CollisionShape {
     protected Vector3f halfExtents;
     protected int axis;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public CylinderCollisionShape() {
     }
 

@@ -38,14 +38,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Base class for collision objects (PhysicsRigidBody, PhysicsGhostObject)
+ * Base class for collision objects based on btCollisionObject, including
+ * PhysicsCharacter, PhysicsRigidBody, and PhysicsGhostObject.
  *
  * @author normenhansen
  */
 public abstract class PhysicsCollisionObject implements Savable {
 
+    /**
+     * Bullet id of the object. Constructors are expected to set this to a
+     * non-zero value. The id might change if the object gets rebuilt.
+     */
     protected long objectId = 0;
     protected CollisionShape collisionShape;
+
     public static final int COLLISION_GROUP_NONE = 0x00000000;
     public static final int COLLISION_GROUP_01 = 0x00000001;
     public static final int COLLISION_GROUP_02 = 0x00000002;
@@ -63,49 +69,56 @@ public abstract class PhysicsCollisionObject implements Savable {
     public static final int COLLISION_GROUP_14 = 0x00002000;
     public static final int COLLISION_GROUP_15 = 0x00004000;
     public static final int COLLISION_GROUP_16 = 0x00008000;
-    protected int collisionGroup = 0x00000001;
-    protected int collisionGroupsMask = 0x00000001;
+    protected int collisionGroup = COLLISION_GROUP_01; // TODO private
+    protected int collisionGroupsMask = COLLISION_GROUP_01; // TODO private rename collideWithGroups
     private Object userObject;
 
     /**
-     * Sets a CollisionShape to this physics object, note that the object should
-     * not be in the physics space when adding a new collision shape as it is
-     * rebuilt on the physics side.
+     * Apply a CollisionShape to this physics object. Note that the object
+     * should not be in the physics space when adding a new collision shape as
+     * it is rebuilt on the physics side.
      *
-     * @param collisionShape the CollisionShape to set
+     * @param collisionShape the CollisionShape to set (not null, alias created)
      */
     public void setCollisionShape(CollisionShape collisionShape) {
         this.collisionShape = collisionShape;
     }
 
     /**
-     * @return the CollisionShape of this PhysicsNode, to be able to reuse it
-     * with other physics nodes (increases performance)
+     * Access the shape of this physics object.
+     *
+     * @return the shape, which can then be applied to other physics objects
+     * (increases performance)
      */
     public CollisionShape getCollisionShape() {
         return collisionShape;
     }
 
     /**
-     * Returns the collision group for this collision shape
+     * Read the collision group for this physics object.
      *
-     * @return The collision group
+     * @return the collision group (bit mask with exactly one bit set)
      */
     public int getCollisionGroup() {
         return collisionGroup;
     }
 
     /**
-     * Sets the collision group number for this physics object. <br>
-     * The groups are integer bit masks and some pre-made variables are
-     * available in CollisionObject. All physics objects are by default in
-     * COLLISION_GROUP_01.<br>
-     * Two object will collide when <b>one</b> of the parties has the
-     * collisionGroup of the other in its collideWithGroups set.
+     * Alter the collision group for this physics object.
      *
-     * @param collisionGroup the collisionGroup to set
+     * Groups are represented by integer bit masks with exactly 1 bit set.
+     * Pre-made variables are available in PhysicsCollisionObject. By default,
+     * physics objects are in COLLISION_GROUP_01.
+     *
+     * Two objects can collide only if one of them has the collisionGroup of the
+     * other in its collideWithGroups set.
+     *
+     * @param collisionGroup the collisionGroup to apply (bit mask with exactly
+     * 1 bit set)
      */
     public void setCollisionGroup(int collisionGroup) {
+        //TODO assert Integer.bitCount(collisionGroup) == 1 : collisionGroup;
+
         this.collisionGroup = collisionGroup;
         if (objectId != 0) {
             setCollisionGroup(objectId, collisionGroup);
@@ -113,11 +126,12 @@ public abstract class PhysicsCollisionObject implements Savable {
     }
 
     /**
-     * Add a group that this object will collide with.<br>
-     * Two object will collide when <b>one</b> of the parties has the
-     * collisionGroup of the other in its collideWithGroups set.<br>
+     * Add collision groups to the set with which this object can collide.
      *
-     * @param collisionGroup id of group to add
+     * Two objects can collide only if one of them has the collisionGroup of the
+     * other in its collideWithGroups set.
+     *
+     * @param collisionGroup groups to add (bit mask)
      */
     public void addCollideWithGroup(int collisionGroup) {
         this.collisionGroupsMask = this.collisionGroupsMask | collisionGroup;
@@ -127,9 +141,9 @@ public abstract class PhysicsCollisionObject implements Savable {
     }
 
     /**
-     * Remove a group from the list this object collides with.
+     * Remove collision groups from the set with which this object can collide.
      *
-     * @param collisionGroup id of group to remove
+     * @param collisionGroup groups to remove, ORed together (bit mask)
      */
     public void removeCollideWithGroup(int collisionGroup) {
         this.collisionGroupsMask = this.collisionGroupsMask & ~collisionGroup;
@@ -139,10 +153,9 @@ public abstract class PhysicsCollisionObject implements Savable {
     }
 
     /**
-     * Directly set the bitmask for collision groups that this object collides
-     * with.
+     * Directly alter the collision groups with which this object can collide.
      *
-     * @param collisionGroups the group ids, ORed together
+     * @param collisionGroups desired groups, ORed together (bit mask)
      */
     public void setCollideWithGroups(int collisionGroups) {
         this.collisionGroupsMask = collisionGroups;
@@ -152,35 +165,46 @@ public abstract class PhysicsCollisionObject implements Savable {
     }
 
     /**
-     * Gets the bitmask of collision groups that this object collides with.
+     * Read the set of collision groups with which this object can collide.
      *
-     * @return Collision groups mask
+     * @return bit mask
      */
     public int getCollideWithGroups() {
         return collisionGroupsMask;
     }
 
     protected void initUserPointer() {
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "initUserPointer() objectId = {0}", Long.toHexString(objectId));
+        Logger.getLogger(this.getClass().getName()).log(Level.FINE,
+                "initUserPointer() objectId = {0}", Long.toHexString(objectId));
         initUserPointer(objectId, collisionGroup, collisionGroupsMask);
     }
 
     native void initUserPointer(long objectId, int group, int groups);
 
     /**
-     * @return the userObject
+     * Access the user object associated with this collision object.
+     *
+     * @return the pre-existing instance, or null if none
      */
     public Object getUserObject() {
         return userObject;
     }
 
     /**
-     * @param userObject the userObject to set
+     * Associate a user object (such as a Spatial) with this collision object.
+     *
+     * @param userObject the object to associate with this collision object
+     * (alias created, may be null)
      */
     public void setUserObject(Object userObject) {
         this.userObject = userObject;
     }
 
+    /**
+     * Read the id of the corresponding btCollisionObject.
+     *
+     * @return the id, or 0 if none
+     */
     public long getObjectId() {
         return objectId;
     }
@@ -194,16 +218,18 @@ public abstract class PhysicsCollisionObject implements Savable {
     @Override
     public void write(JmeExporter e) throws IOException {
         OutputCapsule capsule = e.getCapsule(this);
-        capsule.write(collisionGroup, "collisionGroup", 0x00000001);
-        capsule.write(collisionGroupsMask, "collisionGroupsMask", 0x00000001);
+        capsule.write(collisionGroup, "collisionGroup", COLLISION_GROUP_01);
+        capsule.write(collisionGroupsMask, "collisionGroupsMask",
+                COLLISION_GROUP_01);
         capsule.write(collisionShape, "collisionShape", null);
     }
 
     @Override
     public void read(JmeImporter e) throws IOException {
         InputCapsule capsule = e.getCapsule(this);
-        collisionGroup = capsule.readInt("collisionGroup", 0x00000001);
-        collisionGroupsMask = capsule.readInt("collisionGroupsMask", 0x00000001);
+        collisionGroup = capsule.readInt("collisionGroup", COLLISION_GROUP_01);
+        collisionGroupsMask = capsule.readInt("collisionGroupsMask",
+                COLLISION_GROUP_01);
         CollisionShape shape = (CollisionShape) capsule.readSavable("collisionShape", null);
         collisionShape = shape;
     }
@@ -211,7 +237,8 @@ public abstract class PhysicsCollisionObject implements Savable {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Finalizing CollisionObject {0}", Long.toHexString(objectId));
+        Logger.getLogger(this.getClass().getName()).log(Level.FINE,
+                "Finalizing CollisionObject {0}", Long.toHexString(objectId));
         finalizeNative(objectId);
     }
 

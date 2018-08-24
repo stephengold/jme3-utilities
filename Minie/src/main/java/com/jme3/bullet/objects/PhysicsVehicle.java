@@ -71,6 +71,10 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     protected ArrayList<VehicleWheel> wheels = new ArrayList<>();
     protected PhysicsSpace physicsSpace;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public PhysicsVehicle() {
     }
 

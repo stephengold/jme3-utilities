@@ -49,6 +49,10 @@ public class SphereCollisionShape extends CollisionShape {
 
     protected float radius;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public SphereCollisionShape() {
     }
 

@@ -49,6 +49,10 @@ public class PlaneCollisionShape extends CollisionShape {
 
     private Plane plane;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public PlaneCollisionShape() {
     }
 

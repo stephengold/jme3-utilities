@@ -42,7 +42,7 @@ import java.util.logging.Logger;
 
 /**
  * A simple point, line, triangle or quad collisionShape based on one to four
- * points-
+ * points.
  *
  * @author normenhansen
  */
@@ -50,6 +50,10 @@ public class SimplexCollisionShape extends CollisionShape {
 
     private Vector3f vector1, vector2, vector3, vector4;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public SimplexCollisionShape() {
     }
 

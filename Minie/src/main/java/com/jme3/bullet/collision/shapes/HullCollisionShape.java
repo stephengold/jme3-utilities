@@ -49,6 +49,10 @@ public class HullCollisionShape extends CollisionShape {
     private float[] points;
 //    protected FloatBuffer fbuf;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public HullCollisionShape() {
     }
 

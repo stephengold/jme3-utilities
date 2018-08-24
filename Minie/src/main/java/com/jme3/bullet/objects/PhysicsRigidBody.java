@@ -63,19 +63,30 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     protected boolean kinematic = false;
     protected ArrayList<PhysicsJoint> joints = new ArrayList<>();
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public PhysicsRigidBody() {
     }
 
     /**
-     * Creates a new PhysicsRigidBody with the supplied collision shape
+     * Create a dynamic body with the specified collision shape and mass=1.
      *
-     * @param shape the shape to use
+     * @param shape the shape to use (not null, alias created)
      */
     public PhysicsRigidBody(CollisionShape shape) {
         collisionShape = shape;
         rebuildRigidBody();
     }
 
+    /**
+     * Create a body with the specified collision shape and mass.
+     *
+     * @param shape the shape to use (not null, alias created)
+     * @param mass if zero, a static body is created; otherwise a dynamic body
+     * is created
+     */
     public PhysicsRigidBody(CollisionShape shape, float mass) {
         collisionShape = shape;
         this.mass = mass;
@@ -83,35 +94,44 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
-     * Builds/rebuilds the phyiscs body when parameters have changed
+     * Build/rebuild the body after parameters have changed.
      */
     protected void rebuildRigidBody() {
         boolean removed = false;
         if (collisionShape instanceof MeshCollisionShape && mass != 0) {
-            throw new IllegalStateException("Dynamic rigidbody can not have mesh collision shape!");
+            throw new IllegalStateException("Dynamic rigidbody cannot have mesh collision shape!");
         }
         if (objectId != 0) {
             if (isInWorld(objectId)) {
                 PhysicsSpace.getPhysicsSpace().remove(this);
                 removed = true;
             }
-            Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Clearing RigidBody {0}", Long.toHexString(objectId));
+            Logger.getLogger(this.getClass().getName()).log(Level.FINE,
+                    "Clearing RigidBody {0}", Long.toHexString(objectId));
             finalizeNative(objectId);
         }
         preRebuild();
         objectId = createRigidBody(mass, motionState.getObjectId(), collisionShape.getObjectId());
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created RigidBody {0}", Long.toHexString(objectId));
+        Logger.getLogger(this.getClass().getName()).log(Level.FINE,
+                "Created RigidBody {0}", Long.toHexString(objectId));
         postRebuild();
         if (removed) {
             PhysicsSpace.getPhysicsSpace().add(this);
         }
     }
 
+    /**
+     * Callback for use by subclasses.
+     */
     protected void preRebuild() {
     }
 
-    private native long createRigidBody(float mass, long motionStateId, long collisionShapeId);
+    private native long createRigidBody(float mass, long motionStateId,
+            long collisionShapeId);
 
+    /**
+     * Callback for use by subclasses.
+     */
     protected void postRebuild() {
         if (mass == 0.0f) {
             setStatic(objectId, true);
@@ -135,9 +155,9 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native boolean isInWorld(long objectId);
 
     /**
-     * Sets the physics object location
+     * Directly alter the location of this body's center of mass.
      *
-     * @param location the location of the actual physics object
+     * @param location the desired location
      */
     public void setPhysicsLocation(Vector3f location) {
         setPhysicsLocation(objectId, location);
@@ -146,9 +166,9 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void setPhysicsLocation(long objectId, Vector3f location);
 
     /**
-     * Sets the physics object rotation
+     * Directly alter the orientation of this body.
      *
-     * @param rotation the rotation of the actual physics object
+     * @param rotation the desired orientation (rotation matrix)
      */
     public void setPhysicsRotation(Matrix3f rotation) {
         setPhysicsRotation(objectId, rotation);
@@ -157,9 +177,9 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void setPhysicsRotation(long objectId, Matrix3f rotation);
 
     /**
-     * Sets the physics object rotation
+     * Directly alter the orientation of this body.
      *
-     * @param rotation the rotation of the actual physics object
+     * @param rotation the desired orientation (quaternion)
      */
     public void setPhysicsRotation(Quaternion rotation) {
         setPhysicsRotation(objectId, rotation);
@@ -168,8 +188,10 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void setPhysicsRotation(long objectId, Quaternion rotation);
 
     /**
+     * Copy the location of this body's center of mass.
+     *
      * @param trans a vector to store the result in (modified if not null)
-     * @return the physics location
+     * @return the physics location (not null)
      */
     public Vector3f getPhysicsLocation(Vector3f trans) {
         if (trans == null) {

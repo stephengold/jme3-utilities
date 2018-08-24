@@ -51,6 +51,10 @@ import java.util.logging.Logger;
  */
 public class Point2PointJoint extends PhysicsJoint {
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public Point2PointJoint() {
     }
 

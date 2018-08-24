@@ -50,6 +50,10 @@ public class ConeCollisionShape extends CollisionShape {
     protected float height;
     protected int axis;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public ConeCollisionShape() {
     }
 

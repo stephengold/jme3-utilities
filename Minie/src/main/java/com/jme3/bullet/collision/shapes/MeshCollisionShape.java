@@ -66,6 +66,10 @@ public class MeshCollisionShape extends CollisionShape {
     protected long nativeBVHBuffer = 0;
     private boolean memoryOptimized;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public MeshCollisionShape() {
     }
 

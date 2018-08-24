@@ -55,6 +55,10 @@ public class SixDofSpringJoint extends SixDofJoint {
     final float springStiffness[] = new float[6];
     final float springDamping[] = new float[6]; // between 0 and 1 (1 == no damping)
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public SixDofSpringJoint() {
     }
 

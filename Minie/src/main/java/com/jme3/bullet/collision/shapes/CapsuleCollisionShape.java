@@ -50,6 +50,10 @@ public class CapsuleCollisionShape extends CollisionShape {
     protected float radius, height;
     protected int axis;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public CapsuleCollisionShape() {
     }
 

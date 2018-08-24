@@ -58,6 +58,10 @@ public class ConeJoint extends PhysicsJoint {
     protected float twistSpan = 1e30f;
     protected boolean angularOnly = false;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public ConeJoint() {
     }
 

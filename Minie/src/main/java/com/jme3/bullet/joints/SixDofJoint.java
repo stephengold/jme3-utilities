@@ -70,6 +70,10 @@ public class SixDofJoint extends PhysicsJoint {
     Vector3f linearUpperLimit = new Vector3f(Vector3f.POSITIVE_INFINITY);
     Vector3f linearLowerLimit = new Vector3f(Vector3f.NEGATIVE_INFINITY);
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public SixDofJoint() {
     }
 

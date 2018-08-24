@@ -59,6 +59,10 @@ public class GImpactCollisionShape extends CollisionShape {
     protected long meshId = 0;
 //    protected IndexedMesh bulletMesh;
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public GImpactCollisionShape() {
     }
 

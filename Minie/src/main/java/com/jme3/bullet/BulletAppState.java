@@ -54,53 +54,73 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     protected Application app;
     protected AppStateManager stateManager;
     protected ScheduledThreadPoolExecutor executor;
-    protected PhysicsSpace pSpace;
+    protected PhysicsSpace pSpace; // TODO make private
     protected ThreadingType threadingType = ThreadingType.SEQUENTIAL;
     protected BroadphaseType broadphaseType = BroadphaseType.DBVT;
     protected Vector3f worldMin = new Vector3f(-10000f, -10000f, -10000f);
     protected Vector3f worldMax = new Vector3f(10000f, 10000f, 10000f);
-    protected float speed = 1;
+    protected float speed = 1f; // TODO make private
     protected boolean active = true;
     protected boolean debugEnabled = false;
     protected boolean isAttached = false;
     protected BulletDebugAppState debugAppState;
     protected float tpf;
     protected Future physicsFuture;
+    /**
+     * View ports in which to render debug visualization.
+     */
     protected ViewPort[] debugViewPorts;
 
     /**
-     * Creates a new BulletAppState running a PhysicsSpace for physics
-     * simulation, use getStateManager().addState(bulletAppState) to enable
-     * physics for an Application.
+     * Create a new app state to manage a PhysicsSpace with DBVT collision
+     * detection.
+     *
+     * Use getStateManager().addState(bulletAppState) to enable physics.
      */
     public BulletAppState() {
     }
 
     /**
-     * Creates a new BulletAppState running a PhysicsSpace for physics
-     * simulation, use getStateManager().addState(bulletAppState) to enable
-     * physics for an Application.
+     * Create a new app state to manage a PhysicsSpace.
      *
-     * @param broadphaseType The type of broadphase collision detection,
-     * BroadphaseType.DVBT is the default
+     * Use getStateManager().addState(bulletAppState) to enable physics.
+     *
+     * @param broadphaseType type of broadphase collision detection (not null)
      */
     public BulletAppState(BroadphaseType broadphaseType) {
-        this(new Vector3f(-10000f, -10000f, -10000f), new Vector3f(10000f, 10000f, 10000f), broadphaseType);
+        this(new Vector3f(-10000f, -10000f, -10000f),
+                new Vector3f(10000f, 10000f, 10000f),
+                broadphaseType);
     }
 
     /**
-     * Creates a new BulletAppState running a PhysicsSpace for physics
-     * simulation, use getStateManager().addState(bulletAppState) to enable
-     * physics for an Application. An AxisSweep broadphase is used.
+     * Create a new app state to manage a PhysicsSpace with AXIS_SWEEP_3
+     * collision detection.
      *
-     * @param worldMin The minimum world extent
-     * @param worldMax The maximum world extent
+     * Use getStateManager().addState(bulletAppState) to enable physics.
+     *
+     * @param worldMin the desired minimum coordinates values (not null,
+     * unaffected)
+     * @param worldMax the desired minimum coordinates values (not null,
+     * unaffected)
      */
     public BulletAppState(Vector3f worldMin, Vector3f worldMax) {
         this(worldMin, worldMax, BroadphaseType.AXIS_SWEEP_3);
     }
 
-    public BulletAppState(Vector3f worldMin, Vector3f worldMax, BroadphaseType broadphaseType) {
+    /**
+     * Create a new app state to manage a PhysicsSpace.
+     *
+     * Use getStateManager().addState(bulletAppState) to enable physics.
+     *
+     * @param worldMin the desired minimum coordinates values (not null,
+     * unaffected)
+     * @param worldMax the desired minimum coordinates values (not null,
+     * unaffected)
+     * @param broadphaseType type of broadphase collision detection (not null)
+     */
+    public BulletAppState(Vector3f worldMin, Vector3f worldMax,
+            BroadphaseType broadphaseType) {
         this.worldMin.set(worldMin);
         this.worldMax.set(worldMax);
         this.broadphaseType = broadphaseType;
@@ -143,11 +163,19 @@ public class BulletAppState implements AppState, PhysicsTickListener {
             pSpace.distributeEvents();
             long update = System.currentTimeMillis() - detachedPhysicsLastUpdate;
             detachedPhysicsLastUpdate = System.currentTimeMillis();
-            executor.schedule(detachedPhysicsUpdate, Math.round(getPhysicsSpace().getAccuracy() * 1000000.0f) - (update * 1000), TimeUnit.MICROSECONDS);
+            executor.schedule(detachedPhysicsUpdate,
+                    Math.round(getPhysicsSpace().getAccuracy() * 1000000.0f) - (update * 1000),
+                    TimeUnit.MICROSECONDS);
             return true;
         }
     };
 
+    /**
+     * Access the PhysicsSpace managed by this app state. Normally this is null
+     * until the state is attached.
+     *
+     * @return the pre-existing instance, or null if none
+     */
     public PhysicsSpace getPhysicsSpace() {
         return pSpace;
     }
@@ -205,10 +233,21 @@ public class BulletAppState implements AppState, PhysicsTickListener {
         return active;
     }
 
+    /**
+     * Alter whether debug visualization is enabled for this app state.
+     *
+     * @param debugEnabled true to enable, false to disable
+     */
     public void setDebugEnabled(boolean debugEnabled) {
         this.debugEnabled = debugEnabled;
     }
 
+    /**
+     * Alter which view ports will render the debug visualization for this app
+     * state.
+     *
+     * @param viewPorts (not null, alias created)
+     */
     public void setDebugViewPorts(ViewPort[] viewPorts) {
         debugViewPorts = viewPorts;
         if (debugEnabled) {
@@ -220,6 +259,11 @@ public class BulletAppState implements AppState, PhysicsTickListener {
         }
     }
 
+    /**
+     * Test whether debug visualization is enabled for this app state.
+     *
+     * @return true if enabled, otherwise false
+     */
     public boolean isDebugEnabled() {
         return debugEnabled;
     }
@@ -294,6 +338,8 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
+     * Read which type of threading this app state uses.
+     *
      * @return the threadingType
      */
     public ThreadingType getThreadingType() {
@@ -301,18 +347,20 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
-     * Use before attaching state
+     * Alter which type of threading this app state uses. Not allowed after
+     * attaching the app state.
      *
-     * @param threadingType the threadingType to set
+     * @param threadingType the desired type (not null)
      */
     public void setThreadingType(ThreadingType threadingType) {
+        //assert !isAttached;
         this.threadingType = threadingType;
     }
 
     /**
-     * Read the broadphase type.
+     * Read which type of broadphase collision detection this app state uses.
      *
-     * @return enum value
+     * @return enum value (not null)
      */
     public BroadphaseType getBroadphaseType() {
         return broadphaseType;
@@ -330,27 +378,41 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
-     * Use before attaching state
+     * Alter the world coordinate range. Not allowed after attaching the app
+     * state.
      *
-     * @param worldMin the desired minimum coordinate values
+     * @param worldMin the desired minimum coordinates values
      */
     public void setWorldMin(Vector3f worldMin) {
-        this.worldMin = worldMin;
+        //assert !isAttached;
+        this.worldMin = worldMin; // TODO copy
     }
 
     /**
-     * Use before attaching state
+     * Alter the world coordinate range. Not allowed after attaching the app
+     * state.
      *
-     * @param worldMax the desired maximum coordinate values
+     * @param worldMax the desired maximum coordinates values
      */
     public void setWorldMax(Vector3f worldMax) {
-        this.worldMax = worldMax;
+        //assert !isAttached;
+        this.worldMax = worldMax; // TODO copy
     }
 
+    /**
+     * Read the simulation speed.
+     *
+     * @return speed (default=1)
+     */
     public float getSpeed() {
         return speed;
     }
 
+    /**
+     * Alter the simulation speed.
+     *
+     * @param speed (default=1)
+     */
     public void setSpeed(float speed) {
         this.speed = speed;
     }
@@ -364,7 +426,6 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     public enum ThreadingType {
-
         /**
          * Default mode; user update, physics update and rendering happen
          * sequentially (single threaded)

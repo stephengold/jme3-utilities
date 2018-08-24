@@ -60,6 +60,10 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     //TEMP VARIABLES
     protected final Quaternion tmp_inverseWorldRotation = new Quaternion();
 
+    /**
+     * No-argument constructor for serialization purposes only. Do not invoke
+     * directly!
+     */
     public PhysicsCharacter() {
     }
 
