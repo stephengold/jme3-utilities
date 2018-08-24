@@ -57,17 +57,29 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     private PhysicsSpace pSpace;
     private ThreadingType threadingType = ThreadingType.SEQUENTIAL;
     private BroadphaseType broadphaseType = BroadphaseType.DBVT;
-    private Vector3f worldMin = new Vector3f(-10000f, -10000f, -10000f);
-    private Vector3f worldMax = new Vector3f(10000f, 10000f, 10000f);
+    /**
+     * minimum coordinate values for the physics space
+     */
+    final private Vector3f worldMin = new Vector3f(-10000f, -10000f, -10000f);
+    /**
+     * minimum coordinate values for the physics space
+     */
+    final private Vector3f worldMax = new Vector3f(10000f, 10000f, 10000f);
+    /**
+     * simulation speed (default=1)
+     */
     private float speed = 1f;
     private boolean active = true;
     private boolean debugEnabled = false;
     private boolean isAttached = false;
     private BulletDebugAppState debugAppState;
+    /**
+     * time-per-frame from the most recent update()
+     */
     private float tpf;
     private Future physicsFuture;
     /**
-     * View ports in which to render debug visualization.
+     * view ports in which to render debug visualization
      */
     private ViewPort[] debugViewPorts;
 
@@ -378,25 +390,25 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
-     * Alter the world coordinate range. Not allowed after attaching the app
-     * state.
+     * Alter the coordinate range. Not allowed after attaching the app state.
      *
-     * @param worldMin the desired minimum coordinates values
+     * @param worldMin the desired minimum coordinate values (not null,
+     * unaffected)
      */
     public void setWorldMin(Vector3f worldMin) {
         //assert !isAttached;
-        this.worldMin = worldMin; // TODO copy
+        this.worldMin.set(worldMin);
     }
 
     /**
-     * Alter the world coordinate range. Not allowed after attaching the app
-     * state.
+     * Alter the coordinate range. Not allowed after attaching the app state.
      *
-     * @param worldMax the desired maximum coordinates values
+     * @param worldMax the desired maximum coordinate values (not null,
+     * unaffected)
      */
     public void setWorldMax(Vector3f worldMax) {
         //assert !isAttached;
-        this.worldMax = worldMax; // TODO copy
+        this.worldMax.set(worldMax);
     }
 
     /**
@@ -427,15 +439,15 @@ public class BulletAppState implements AppState, PhysicsTickListener {
 
     public enum ThreadingType {
         /**
-         * Default mode; user update, physics update and rendering happen
-         * sequentially (single threaded)
+         * Default mode: user update, physics update, and rendering happen
+         * sequentially. (single threaded)
          */
         SEQUENTIAL,
         /**
-         * Parallel threaded mode; physics update and rendering are executed in
-         * parallel, update order is kept.
+         * Parallel threaded mode: physics update and rendering are executed in
+         * parallel, update order is maintained.
          *
-         * Multiple BulletAppStates will execute in parallel in this mode.
+         * In this mode, multiple BulletAppStates will execute in parallel.
          */
         PARALLEL,
     }
