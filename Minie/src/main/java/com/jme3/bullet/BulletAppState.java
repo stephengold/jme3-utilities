@@ -42,9 +42,10 @@ import com.jme3.renderer.ViewPort;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
- * <code>BulletAppState</code> allows using bullet physics in an Application.
+ * <code>BulletAppState</code> manages Bullet physics in an Application.
  *
  * @author normenhansen
  */
@@ -132,6 +133,10 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      */
     public BulletAppState(Vector3f worldMin, Vector3f worldMax,
             BroadphaseType broadphaseType) {
+        Validate.nonNull(worldMin, "world min");
+        Validate.nonNull(worldMax, "world max");
+        Validate.nonNull(broadphaseType, "broadphase type");
+
         this.worldMin.set(worldMin);
         this.worldMax.set(worldMax);
         this.broadphaseType = broadphaseType;
@@ -155,7 +160,8 @@ public class BulletAppState implements AppState, PhysicsTickListener {
         try {
             return executor.submit(call).get();
         } catch (InterruptedException | ExecutionException ex) {
-            Logger.getLogger(BulletAppState.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BulletAppState.class
+                    .getName()).log(Level.SEVERE, null, ex);
             return false;
         }
     }
@@ -259,6 +265,8 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      * @param viewPorts (not null, alias created)
      */
     public void setDebugViewPorts(ViewPort[] viewPorts) {
+        Validate.nonNull(viewPorts, "view ports");
+
         debugViewPorts = viewPorts;
         if (debugEnabled) {
             if (debugAppState != null) {
@@ -333,7 +341,8 @@ public class BulletAppState implements AppState, PhysicsTickListener {
                 physicsFuture.get();
                 physicsFuture = null;
             } catch (InterruptedException | ExecutionException ex) {
-                Logger.getLogger(BulletAppState.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(BulletAppState.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -363,7 +372,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      * @param threadingType the desired type (not null)
      */
     public void setThreadingType(ThreadingType threadingType) {
-        //assert !isAttached;
+        assert !isAttached;
         this.threadingType = threadingType;
     }
 
@@ -382,8 +391,9 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      * @param broadphaseType an enum value (not null)
      */
     public void setBroadphaseType(BroadphaseType broadphaseType) {
-        assert broadphaseType != null;
+        Validate.nonNull(broadphaseType, "broadphase type");
         assert !isAttached;
+
         this.broadphaseType = broadphaseType;
     }
 
@@ -394,7 +404,9 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      * unaffected)
      */
     public void setWorldMin(Vector3f worldMin) {
-        //assert !isAttached;
+        Validate.nonNull(worldMin, "world min");
+        assert !isAttached;
+
         this.worldMin.set(worldMin);
     }
 
@@ -405,14 +417,16 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      * unaffected)
      */
     public void setWorldMax(Vector3f worldMax) {
-        //assert !isAttached;
+        Validate.nonNull(worldMin, "world max");
+        assert !isAttached;
+
         this.worldMax.set(worldMax);
     }
 
     /**
      * Read the simulation speed.
      *
-     * @return speed (default=1)
+     * @return speed (&ge;0, default=1)
      */
     public float getSpeed() {
         return speed;
@@ -421,9 +435,10 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     /**
      * Alter the simulation speed.
      *
-     * @param speed (default=1)
+     * @param speed (&ge;0, default=1)
      */
     public void setSpeed(float speed) {
+        Validate.nonNegative(speed, "speed");
         this.speed = speed;
     }
 
