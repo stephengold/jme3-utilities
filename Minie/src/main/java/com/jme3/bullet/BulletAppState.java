@@ -51,7 +51,6 @@ import java.util.logging.Logger;
 public class BulletAppState implements AppState, PhysicsTickListener {
 
     private boolean initialized = false;
-    private Application app; // TODO delete
     private AppStateManager stateManager;
     private ScheduledThreadPoolExecutor executor;
     private PhysicsSpace pSpace;
@@ -225,7 +224,6 @@ public class BulletAppState implements AppState, PhysicsTickListener {
 
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
-        this.app = app;
         this.stateManager = stateManager;
         startPhysics();
     }
