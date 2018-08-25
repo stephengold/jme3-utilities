@@ -61,6 +61,9 @@ import jme3utilities.MyAsset;
  */
 public class BulletDebugAppState extends AbstractAppState {
 
+    /**
+     * message logger for this class
+     */
     private static final Logger logger = Logger.getLogger(BulletDebugAppState.class.getName());
     private DebugAppStateFilter filter;
     private Application app;

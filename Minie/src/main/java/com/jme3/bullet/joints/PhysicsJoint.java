@@ -39,17 +39,37 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * An abstract physics joint
+ * The abstract base class for physics joints (such as ConeJoint, HingeJoint,
+ * and SixDofJoint) used to connect two rigid bodies in the same physics space.
  *
  * @author normenhansen
  */
 public abstract class PhysicsJoint implements Savable {
 
+    /**
+     * Identifier of the Bullet constraint. Constructors are expected to set
+     * this to a non-zero value.
+     */
     protected long objectId = 0;
+    /**
+     * one of the connected rigid bodies
+     */
     protected PhysicsRigidBody nodeA;
+    /**
+     * the other connected rigid body
+     */
     protected PhysicsRigidBody nodeB;
+    /**
+     * local offset of this joint's connection point in node A
+     */
     protected Vector3f pivotA;
+    /**
+     * local offset of this joint's connection point in node B
+     */
     protected Vector3f pivotB;
+    /**
+     * cached flag
+     */
     private boolean collisionBetweenLinkedBodies = true;
 
     /**
@@ -63,12 +83,14 @@ public abstract class PhysicsJoint implements Savable {
      * Create a new PhysicsJoint. To be effective, the joint must be added to a
      * physics space.
      *
-     * @param nodeA the 1st body connected by the joint (alias created)
-     * @param nodeB the 2nd body connected by the joint (alias created)
-     * @param pivotA local offset of the joint connection point in node A (alias
+     * @param nodeA the 1st body connected by the joint (not null, alias
      * created)
-     * @param pivotB local offset of the joint connection point in node B (alias
+     * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
+     * @param pivotA local offset of the joint connection point in node A (not
+     * null, alias created)
+     * @param pivotB local offset of the joint connection point in node B (not
+     * null, alias created)
      */
     public PhysicsJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB) {
         this.nodeA = nodeA;

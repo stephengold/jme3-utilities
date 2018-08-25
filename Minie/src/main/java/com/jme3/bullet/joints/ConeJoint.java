@@ -43,9 +43,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * <i>From bullet manual:</i><br>
+ * A cone joint based on Bullet's btConeTwistConstraint.
+ *
+ * <i>From the Bullet manual:</i><br>
  * To create ragdolls, the cone twist constraint is very useful for limbs like
- * the upper arm. It is a special point to point constraint that adds cone and
+ * the upper arm. It is a special point-to-point constraint that adds cone and
  * twist axis limits. The x-axis serves as twist axis.
  *
  * @author normenhansen
@@ -67,10 +69,17 @@ public class ConeJoint extends PhysicsJoint {
     }
 
     /**
-     * @param nodeA the 1st body connected by the joint
-     * @param nodeB the 2nd body connected by the joint
-     * @param pivotA local translation of the joint connection point in node A
-     * @param pivotB local translation of the joint connection point in node B
+     * Create a new ConeJoint. To be effective, the joint must be added to a
+     * physics space.
+     *
+     * @param nodeA the 1st body connected by the joint (not null, alias
+     * created)
+     * @param nodeB the 2nd body connected by the joint (not null, alias
+     * created)
+     * @param pivotA the local offset of the connection point in node A (not
+     * null, alias created)
+     * @param pivotB the local offset of the connection point in node B (not
+     * null, alias created)
      */
     public ConeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB) {
         super(nodeA, nodeB, pivotA, pivotB);

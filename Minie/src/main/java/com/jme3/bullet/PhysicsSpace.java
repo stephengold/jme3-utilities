@@ -69,10 +69,22 @@ import java.util.logging.Logger;
  */
 public class PhysicsSpace {
 
-    private static final Logger logger = Logger.getLogger(PhysicsSpace.class.getName());
-
+    /**
+     * message logger for this class
+     */
+    private static final Logger logger
+            = Logger.getLogger(PhysicsSpace.class.getName());
+    /**
+     * index of the X axis
+     */
     public static final int AXIS_X = 0;
+    /**
+     * index of the Y axis
+     */
     public static final int AXIS_Y = 1;
+    /**
+     * index of the Z axis
+     */
     public static final int AXIS_Z = 2;
 
     private long physicsSpaceId = 0;
@@ -254,6 +266,7 @@ public class PhysicsSpace {
      * @param time time-per-frame times speed (in seconds, &ge;0)
      */
     public void update(float time) {
+        //Validate.nonNegative(time, "time");
         update(time, maxSubSteps);
     }
 
@@ -265,6 +278,9 @@ public class PhysicsSpace {
      * @param maxSteps maximum number of steps to simulate (&ge;0)
      */
     public void update(float time, int maxSteps) {
+        //assert time >= 0f : time;
+        //assert maxSteps >= 0 : maxSteps;
+
         stepSimulation(physicsSpaceId, time, maxSteps, accuracy);
     }
 
@@ -389,6 +405,8 @@ public class PhysicsSpace {
             removeRigidBody((PhysicsRigidBody) obj);
         } else if (obj instanceof PhysicsCharacter) {
             removeCharacter((PhysicsCharacter) obj);
+            //} else {
+            //throw (new IllegalArgumentException("Unknown type of collision object."));
         }
     }
 
@@ -482,38 +500,45 @@ public class PhysicsSpace {
 
     private void addGhostObject(PhysicsGhostObject node) {
         if (physicsGhostObjects.containsKey(node.getObjectId())) {
-            logger.log(Level.WARNING, "GhostObject {0} already exists in PhysicsSpace, cannot add.", node);
+            logger.log(Level.WARNING,
+                    "GhostObject {0} already exists in PhysicsSpace, cannot add.", node);
             return;
         }
         physicsGhostObjects.put(node.getObjectId(), node);
-        logger.log(Level.FINE, "Adding ghost object {0} to physics space.", Long.toHexString(node.getObjectId()));
+        logger.log(Level.FINE, "Adding ghost object {0} to physics space.",
+                Long.toHexString(node.getObjectId()));
         addCollisionObject(physicsSpaceId, node.getObjectId());
     }
 
     private void removeGhostObject(PhysicsGhostObject node) {
         if (!physicsGhostObjects.containsKey(node.getObjectId())) {
-            logger.log(Level.WARNING, "GhostObject {0} does not exist in PhysicsSpace, cannot remove.", node);
+            logger.log(Level.WARNING,
+                    "GhostObject {0} does not exist in PhysicsSpace, cannot remove.", node);
             return;
         }
         physicsGhostObjects.remove(node.getObjectId());
-        logger.log(Level.FINE, "Removing ghost object {0} from physics space.", Long.toHexString(node.getObjectId()));
+        logger.log(Level.FINE,
+                "Removing ghost object {0} from physics space.", Long.toHexString(node.getObjectId()));
         removeCollisionObject(physicsSpaceId, node.getObjectId());
     }
 
     private void addCharacter(PhysicsCharacter node) {
         if (physicsCharacters.containsKey(node.getObjectId())) {
-            logger.log(Level.WARNING, "Character {0} already exists in PhysicsSpace, cannot add.", node);
+            logger.log(Level.WARNING,
+                    "Character {0} already exists in PhysicsSpace, cannot add.", node);
             return;
         }
         physicsCharacters.put(node.getObjectId(), node);
-        logger.log(Level.FINE, "Adding character {0} to physics space.", Long.toHexString(node.getObjectId()));
+        logger.log(Level.FINE, "Adding character {0} to physics space.",
+                Long.toHexString(node.getObjectId()));
         addCharacterObject(physicsSpaceId, node.getObjectId());
         addAction(physicsSpaceId, node.getControllerId());
     }
 
     private void removeCharacter(PhysicsCharacter node) {
         if (!physicsCharacters.containsKey(node.getObjectId())) {
-            logger.log(Level.WARNING, "Character {0} does not exist in PhysicsSpace, cannot remove.", node);
+            logger.log(Level.WARNING,
+                    "Character {0} does not exist in PhysicsSpace, cannot remove.", node);
             return;
         }
         physicsCharacters.remove(node.getObjectId());
@@ -719,9 +744,13 @@ public class PhysicsSpace {
      * #addCollisionGroupListener(com.jme3.bullet.collision.PhysicsCollisionGroupListener,
      * int)
      *
-     * @param listener the listener to remove (not null)
+     * @param collisionGroup the group of the listener to de-register (bit mask
+     * with exactly one bit set)
      */
     public void removeCollisionGroupListener(int collisionGroup) {
+        //assert collisionGroupListeners.get(collisionGroup) != null;
+        //assert Integer.bitCount(collisionGroup) == 1 : collisionGroup;
+
         collisionGroupListeners.remove(collisionGroup);
     }
 
@@ -794,7 +823,8 @@ public class PhysicsSpace {
      * @param results the list to hold results (not null, modified)
      * @return results
      */
-    public List<PhysicsRayTestResult> rayTest(Vector3f from, Vector3f to, List<PhysicsRayTestResult> results) {
+    public List<PhysicsRayTestResult> rayTest(Vector3f from, Vector3f to,
+            List<PhysicsRayTestResult> results) {
         results.clear();
         rayTest_native(from, to, physicsSpaceId, results, rayTestFlags);
 
@@ -811,13 +841,15 @@ public class PhysicsSpace {
      * @param results the list to hold results (not null, modified)
      * @return results
      */
-    public List<PhysicsRayTestResult> rayTestRaw(Vector3f from, Vector3f to, List<PhysicsRayTestResult> results) {
+    public List<PhysicsRayTestResult> rayTestRaw(Vector3f from, Vector3f to,
+            List<PhysicsRayTestResult> results) {
         results.clear();
         rayTest_native(from, to, physicsSpaceId, results, rayTestFlags);
         return results;
     }
 
-    public native void rayTest_native(Vector3f from, Vector3f to, long physicsSpaceId, List<PhysicsRayTestResult> results, int flags);
+    public native void rayTest_native(Vector3f from, Vector3f to,
+            long physicsSpaceId, List<PhysicsRayTestResult> results, int flags);
 
 //    private class InternalRayListener extends CollisionWorld.RayResultCallback {
 //
@@ -849,17 +881,22 @@ public class PhysicsSpace {
      * @param end the ending transform
      * @return a new list of results
      */
-    public List<PhysicsSweepTestResult> sweepTest(CollisionShape shape, Transform start, Transform end) {
+    public List<PhysicsSweepTestResult> sweepTest(CollisionShape shape,
+            Transform start, Transform end) {
         List<PhysicsSweepTestResult> results = new LinkedList<>();
         sweepTest(shape, start, end, results);
         return results;
     }
 
-    public List<PhysicsSweepTestResult> sweepTest(CollisionShape shape, Transform start, Transform end, List<PhysicsSweepTestResult> results) {
+    public List<PhysicsSweepTestResult> sweepTest(CollisionShape shape,
+            Transform start, Transform end,
+            List<PhysicsSweepTestResult> results) {
         return sweepTest(shape, start, end, results, 0.0f);
     }
 
-    public native void sweepTest_native(long shape, Transform from, Transform to, long physicsSpaceId, List<PhysicsSweepTestResult> results, float allowedCcdPenetration);
+    public native void sweepTest_native(long shape, Transform from,
+            Transform to, long physicsSpaceId,
+            List<PhysicsSweepTestResult> results, float allowedCcdPenetration);
 
     /**
      * Performs a sweep collision test and returns the results as a list of
@@ -951,44 +988,61 @@ public class PhysicsSpace {
     }
 
     /**
-     * get the current accuracy of the physics computation
+     * Read the current accuracy of the physics simulation.
      *
-     * @return the current accuracy
+     * @return the current value (in seconds)
      */
     public float getAccuracy() {
         return accuracy;
     }
 
     /**
-     * sets the accuracy of the physics computation, default=1/60s<br>
+     * Alter the accuracy (time step) of the physics simulation. In general, the
+     * smaller the time step, the more accurate (and compute-intensive) the
+     * simulation will be.
      *
-     * @param accuracy (in seconds)
+     * @param accuracy (in seconds, &gt;0, default=1/60)
      */
     public void setAccuracy(float accuracy) {
+        //Validate.positive(accuracy, "accuracy");
         this.accuracy = accuracy;
     }
 
+    /**
+     * Access the minimum coordinate values for this space.
+     *
+     * @return the pre-existing vector
+     */
     public Vector3f getWorldMin() {
         return worldMin;
     }
 
     /**
-     * only applies for AXIS_SWEEP broadphase
+     * Alter the minimum coordinate values for this space. (only affects
+     * AXIS_SWEEP broadphase algorithms)
      *
-     * @param worldMin the desired minimum coordinate values
+     * @param worldMin the desired minimum coordinate values (not null,
+     * unaffected)
      */
     public void setWorldMin(Vector3f worldMin) {
         this.worldMin.set(worldMin);
     }
 
+    /**
+     * Access the maximum coordinate values for this space.
+     *
+     * @return the pre-existing vector
+     */
     public Vector3f getWorldMax() {
         return worldMax;
     }
 
     /**
-     * only applies for AXIS_SWEEP broadphase
+     * Alter the maximum coordinate values for this space. (only affects
+     * AXIS_SWEEP broadphase algorithms)
      *
-     * @param worldMax the desired maximum coordinate values
+     * @param worldMax the desired maximum coordinate values (not null,
+     * unaffected)
      */
     public void setWorldMax(Vector3f worldMax) {
         this.worldMax.set(worldMax);
@@ -999,10 +1053,11 @@ public class PhysicsSpace {
      *
      * The default is 10. Use 4 for low quality, 20 for high quality.
      *
-     * @param numIterations The number of iterations used by the contact and
-     * constraint solver.
+     * @param numIterations the number of iterations (&ge;1)
      */
     public void setSolverNumIterations(int numIterations) {
+        //Validate.positive(numIterations, "number of iterations");
+
         this.solverNumIterations = numIterations;
         setSolverNumIterations(physicsSpaceId, numIterations);
     }

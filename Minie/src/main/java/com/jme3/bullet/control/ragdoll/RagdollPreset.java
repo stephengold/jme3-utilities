@@ -43,6 +43,9 @@ import java.util.logging.Logger;
  */
 public abstract class RagdollPreset {
 
+    /**
+     * message logger for this class
+     */
     private static final Logger logger = Logger.getLogger(RagdollPreset.class.getName());
     protected Map<String, JointPreset> boneMap = new HashMap<>();
     protected Map<String, LexiconEntry> lexicon = new HashMap<>();

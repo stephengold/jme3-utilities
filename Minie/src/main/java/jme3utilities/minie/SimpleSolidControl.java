@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * Simplified rigid body control for a solid object.
+ * Simplified rigid-body control for a solid object.
  * <p>
  * Implements key methods in order to simplify the development of subclasses.
  * <p>
@@ -48,10 +48,10 @@ public class SimpleSolidControl
         extends RigidBodyControl
         implements PhysicsTickListener {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
-     * message logger for this control
+     * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
             SimpleSolidControl.class.getName());

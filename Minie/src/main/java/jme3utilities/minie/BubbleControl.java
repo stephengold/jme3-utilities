@@ -50,7 +50,7 @@ public class BubbleControl
         extends SimpleGhostControl
         implements OverlapListener {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

@@ -42,8 +42,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * A hinge joint based on btHingeConstraint.
+ *
  * <i>From the Bullet manual:</i><br>
- * Hinge constraint, or revolute joint restricts two additional angular degrees
+ * Hinge constraint, or revolute joint, restricts two additional angular degrees
  * of freedom, so the body can only rotate around one axis, the hinge axis. This
  * can be useful to represent doors or wheels rotating around one axis. The user
  * can specify limits and motor for the hinge.
@@ -83,14 +85,16 @@ public class HingeJoint extends PhysicsJoint {
      * Create a new HingeJoint. To be effective, the joint must be added to a
      * physics space.
      *
-     * @param nodeA the 1st body connected by the joint (alias created)
-     * @param nodeB the 2nd body connected by the joint (alias created)
-     * @param pivotA local offset of the joint connection point in node A (alias
+     * @param nodeA the 1st body connected by the joint (not null, alias
      * created)
-     * @param pivotB local offset of the joint connection point in node B (alias
+     * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
-     * @param axisA local axis of the connection to node A (alias created)
-     * @param axisB local axis of the connection to node B (alias created)
+     * @param pivotA the local offset of the connection point in node A (not
+     * null, alias created)
+     * @param pivotB the local offset of the connection point in node B (not
+     * null, alias created)
+     * @param axisA the local axis of the connection to node A (alias created)
+     * @param axisB the local axis of the connection to node B (alias created)
      */
     public HingeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB, Vector3f axisA, Vector3f axisB) {

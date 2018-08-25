@@ -47,7 +47,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * <i>From bullet manual:</i><br>
+ * A 6 degree-of-freedom joint based on Bullet's btGeneric6DofConstraint.
+ *
+ * <i>From the Bullet manual:</i><br>
  * This generic constraint can emulate a variety of standard constraints, by
  * configuring each of the 6 degrees of freedom (dof). The first 3 dof axis are
  * linear axis, which represent translation of rigidbodies, and the latter 3 dof
@@ -78,10 +80,17 @@ public class SixDofJoint extends PhysicsJoint {
     }
 
     /**
-     * @param nodeA the 1st body connected by the joint
-     * @param nodeB the 2nd body connected by the joint
-     * @param pivotA local translation of the joint connection point in node A
-     * @param pivotB local translation of the joint connection point in node B
+     * Create a new SixDofJoint. To be effective, the joint must be added to a
+     * physics space.
+     *
+     * @param nodeA the 1st body connected by the joint (not null, alias
+     * created)
+     * @param nodeB the 2nd body connected by the joint (not null, alias
+     * created)
+     * @param pivotA the local offset of the connection point in node A (not
+     * null, alias created)
+     * @param pivotB the local offset of the connection point in node B (not
+     * null, alias created)
      * @param rotA the local orientation of the connection to node A
      * @param rotB the local orientation of the connection to node B
      * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node

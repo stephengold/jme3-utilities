@@ -42,8 +42,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * <i>From bullet manual:</i><br>
- * Point to point constraint, also known as ball socket joint limits the
+ * A point-to-point joint based on Bullet's btPoint2PointConstraint.
+ *
+ * <i>From the Bullet manual:</i><br>
+ * Point-to-point constraint, also known as ball socket joint, limits the
  * translation so that the local pivot points of 2 rigidbodies match in
  * worldspace. A chain of rigidbodies can be connected using this constraint.
  *
@@ -59,10 +61,17 @@ public class Point2PointJoint extends PhysicsJoint {
     }
 
     /**
-     * @param nodeA the 1st body connected by the joint
-     * @param nodeB the 2nd body connected by the joint
-     * @param pivotA local translation of the joint connection point in node A
-     * @param pivotB local translation of the joint connection point in node B
+     * Create a new Point2PointJoint. To be effective, the joint must be added
+     * to a physics space.
+     *
+     * @param nodeA the 1st body connected by the joint (not null, alias
+     * created)
+     * @param nodeB the 2nd body connected by the joint (not null, alias
+     * created)
+     * @param pivotA the local offset of the connection point in node A (not
+     * null, alias created)
+     * @param pivotB the local offset of the connection point in node B (not
+     * null, alias created)
      */
     public Point2PointJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB) {
         super(nodeA, nodeB, pivotA, pivotB);

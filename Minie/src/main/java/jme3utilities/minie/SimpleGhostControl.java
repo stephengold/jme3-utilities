@@ -47,10 +47,10 @@ public class SimpleGhostControl
         extends GhostControl
         implements PhysicsTickListener {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
-     * message logger for this control
+     * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
             SimpleGhostControl.class.getName());
