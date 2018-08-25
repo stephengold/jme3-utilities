@@ -38,6 +38,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * Stores info about one wheel of a PhysicsVehicle
@@ -45,6 +46,12 @@ import java.io.IOException;
  * @author normenhansen
  */
 public class VehicleWheel implements Savable {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(VehicleWheel.class.getName());
 
     private long wheelId = 0;
     private int wheelIndex = 0;

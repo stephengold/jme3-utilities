@@ -35,12 +35,19 @@ import com.jme3.math.Vector3f;
 import com.jme3.util.BufferUtils;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  *
  * @author normenhansen
  */
 public class DebugMeshCallback {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(DebugMeshCallback.class.getName());
 
     final private ArrayList<Vector3f> list = new ArrayList<>();
 

@@ -46,6 +46,12 @@ import java.util.logging.Logger;
  */
 public class ConeCollisionShape extends CollisionShape {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(ConeCollisionShape.class.getName());
+
     private float radius;
     private float height;
     private int axis;
@@ -109,7 +115,7 @@ public class ConeCollisionShape extends CollisionShape {
 
     protected void createShape() {
         objectId = createShape(axis, radius, height);
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
 //        if (axis == PhysicsSpace.AXIS_X) {
 //            objectId = new ConeShapeX(radius, height);
 //        } else if (axis == PhysicsSpace.AXIS_Y) {

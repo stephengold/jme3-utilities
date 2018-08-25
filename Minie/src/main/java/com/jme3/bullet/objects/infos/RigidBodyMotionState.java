@@ -47,6 +47,12 @@ import java.util.logging.Logger;
  */
 public class RigidBodyMotionState {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(RigidBodyMotionState.class.getName());
+
     long motionStateId = 0;
     final private Vector3f worldLocation = new Vector3f();
     final private Matrix3f worldRotation = new Matrix3f();
@@ -58,7 +64,8 @@ public class RigidBodyMotionState {
 
     public RigidBodyMotionState() {
         this.motionStateId = createMotionState();
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created MotionState {0}", Long.toHexString(motionStateId));
+        logger.log(Level.FINE, "Created MotionState {0}",
+                Long.toHexString(motionStateId));
     }
 
     private native long createMotionState();
@@ -160,7 +167,8 @@ public class RigidBodyMotionState {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Finalizing MotionState {0}", Long.toHexString(motionStateId));
+        logger.log(Level.FINE, "Finalizing MotionState {0}",
+                Long.toHexString(motionStateId));
         finalizeNative(motionStateId);
     }
 

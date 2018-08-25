@@ -56,6 +56,12 @@ import java.util.logging.Logger;
  */
 public class HeightfieldCollisionShape extends CollisionShape {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(HeightfieldCollisionShape.class.getName());
+
     private int heightStickWidth;
     private int heightStickLength;
     private float[] heightfieldData;
@@ -129,7 +135,7 @@ public class HeightfieldCollisionShape extends CollisionShape {
         }
 //        fbuf.rewind();
         objectId = createShape(heightStickWidth, heightStickLength, bbuf, heightScale, minHeight, maxHeight, upAxis, flipQuadEdges);
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
         setScale(scale);
         setMargin(margin);
     }

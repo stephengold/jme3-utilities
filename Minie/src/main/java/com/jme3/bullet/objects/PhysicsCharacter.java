@@ -50,6 +50,12 @@ import java.util.logging.Logger;
  */
 public class PhysicsCharacter extends PhysicsCollisionObject {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(PhysicsCharacter.class.getName());
+
     private long characterId = 0;
     private float stepHeight;
     private Vector3f walkDirection = new Vector3f();
@@ -83,17 +89,17 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     protected void buildObject() {
         if (objectId == 0) {
             objectId = createGhostObject();
-            Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Creating GhostObject {0}", Long.toHexString(objectId));
+            logger.log(Level.FINE, "Creating GhostObject {0}", Long.toHexString(objectId));
             initUserPointer();
         }
         setCharacterFlags(objectId);
         attachCollisionShape(objectId, collisionShape.getObjectId());
         if (characterId != 0) {
-            Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Clearing Character {0}", Long.toHexString(objectId));
+            logger.log(Level.FINE, "Clearing Character {0}", Long.toHexString(objectId));
             finalizeNativeCharacter(characterId);
         }
         characterId = createCharacterObject(objectId, collisionShape.getObjectId(), stepHeight);
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Creating Character {0}", Long.toHexString(characterId));
+        logger.log(Level.FINE, "Creating Character {0}", Long.toHexString(characterId));
     }
 
     private native long createGhostObject();

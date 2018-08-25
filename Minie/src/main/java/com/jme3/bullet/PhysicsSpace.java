@@ -73,7 +73,7 @@ public class PhysicsSpace {
     /**
      * message logger for this class
      */
-    private static final Logger logger
+    final private static Logger logger
             = Logger.getLogger(PhysicsSpace.class.getName());
     /**
      * index of the X axis
@@ -1103,8 +1103,8 @@ public class PhysicsSpace {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE,
-                "Finalizing PhysicsSpace {0}", Long.toHexString(physicsSpaceId));
+        logger.log(Level.FINE, "Finalizing PhysicsSpace {0}",
+                Long.toHexString(physicsSpaceId));
         finalizeNative(physicsSpaceId);
     }
 

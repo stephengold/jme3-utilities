@@ -54,6 +54,12 @@ import java.util.logging.Logger;
  */
 public class ConeJoint extends PhysicsJoint {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(ConeJoint.class.getName());
+
     private Matrix3f rotA;
     private Matrix3f rotB;
     private float swingSpan1 = 1e30f;
@@ -148,7 +154,7 @@ public class ConeJoint extends PhysicsJoint {
 
     protected void createJoint() {
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA, rotA, pivotB, rotB);
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
         setLimit(objectId, swingSpan1, swingSpan2, twistSpan);
         setAngularOnly(objectId, angularOnly);
     }

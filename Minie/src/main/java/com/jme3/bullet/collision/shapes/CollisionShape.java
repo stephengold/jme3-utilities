@@ -46,6 +46,12 @@ import java.util.logging.Logger;
  */
 public abstract class CollisionShape implements Savable {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(CollisionShape.class.getName());
+
     protected long objectId = 0;
     protected Vector3f scale = new Vector3f(1f, 1f, 1f);
     protected float margin = 0f;
@@ -116,7 +122,8 @@ public abstract class CollisionShape implements Savable {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Finalizing CollisionShape {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Finalizing CollisionShape {0}",
+                Long.toHexString(objectId));
         finalizeNative(objectId);
     }
 

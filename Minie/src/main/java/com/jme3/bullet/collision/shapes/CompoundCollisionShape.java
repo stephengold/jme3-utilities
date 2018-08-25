@@ -53,11 +53,17 @@ import java.util.logging.Logger;
  */
 public class CompoundCollisionShape extends CollisionShape {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(CompoundCollisionShape.class.getName());
+
     private ArrayList<ChildCollisionShape> children = new ArrayList<>();
 
     public CompoundCollisionShape() {
         objectId = createShape();//new CompoundShape();
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
     }
 
     /**

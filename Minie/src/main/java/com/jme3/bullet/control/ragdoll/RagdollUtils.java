@@ -46,12 +46,19 @@ import com.jme3.scene.VertexBuffer.Type;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Nehon
  */
 public class RagdollUtils {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(RagdollUtils.class.getName());
 
     public static void setJointLimit(SixDofJoint joint, float maxX, float minX, float maxY, float minY, float maxZ, float minZ) {
 

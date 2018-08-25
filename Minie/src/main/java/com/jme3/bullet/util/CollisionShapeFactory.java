@@ -42,12 +42,19 @@ import com.jme3.terrain.geomipmap.TerrainPatch;
 import com.jme3.terrain.geomipmap.TerrainQuad;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 /**
  *
  * @author normenhansen, tim8dev
  */
 public class CollisionShapeFactory {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(CollisionShapeFactory.class.getName());
 
     /**
      * returns the correct transform for a collisionshape in relation to the

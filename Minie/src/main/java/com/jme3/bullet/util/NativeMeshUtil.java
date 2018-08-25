@@ -37,12 +37,19 @@ import com.jme3.scene.mesh.IndexBuffer;
 import com.jme3.util.BufferUtils;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.logging.Logger;
 
 /**
  *
  * @author normenhansen
  */
 public class NativeMeshUtil {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(NativeMeshUtil.class.getName());
 
     public static long getTriangleIndexVertexArray(Mesh mesh) {
         ByteBuffer triangleIndexBase = BufferUtils.createByteBuffer(mesh.getTriangleCount() * 3 * 4);

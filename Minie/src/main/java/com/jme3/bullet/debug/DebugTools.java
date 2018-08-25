@@ -40,12 +40,19 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.debug.Arrow;
+import java.util.logging.Logger;
 
 /**
  *
  * @author normenhansen
  */
 public class DebugTools {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(DebugTools.class.getName());
 
     protected final AssetManager manager;
     public Material DEBUG_BLUE;

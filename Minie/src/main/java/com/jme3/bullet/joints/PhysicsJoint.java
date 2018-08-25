@@ -47,6 +47,12 @@ import java.util.logging.Logger;
 public abstract class PhysicsJoint implements Savable {
 
     /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(PhysicsJoint.class.getName());
+
+    /**
      * Identifier of the Bullet constraint. Constructors are expected to set
      * this to a non-zero value.
      */
@@ -199,7 +205,7 @@ public abstract class PhysicsJoint implements Savable {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Finalizing Joint {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Finalizing Joint {0}", Long.toHexString(objectId));
         finalizeNative(objectId);
     }
 

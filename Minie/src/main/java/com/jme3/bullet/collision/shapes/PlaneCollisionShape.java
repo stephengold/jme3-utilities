@@ -47,6 +47,12 @@ import java.util.logging.Logger;
  */
 public class PlaneCollisionShape extends CollisionShape {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(PlaneCollisionShape.class.getName());
+
     private Plane plane;
 
     /**
@@ -87,7 +93,7 @@ public class PlaneCollisionShape extends CollisionShape {
 
     protected void createShape() {
         objectId = createShape(plane.getNormal(), plane.getConstant());
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
 //        objectId = new StaticPlaneShape(Converter.convert(plane.getNormal()),plane.getConstant());
 //        objectId.setLocalScaling(Converter.convert(getScale()));
 //        objectId.setMargin(margin);

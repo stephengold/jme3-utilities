@@ -46,6 +46,12 @@ import java.util.logging.Logger;
 
 public class HullCollisionShape extends CollisionShape {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(HullCollisionShape.class.getName());
+
     private float[] points;
 //    protected FloatBuffer fbuf;
 
@@ -111,7 +117,7 @@ public class HullCollisionShape extends CollisionShape {
         }
         bbuf.rewind();
         objectId = createShape(bbuf);
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
         setScale(scale);
         setMargin(margin);
     }

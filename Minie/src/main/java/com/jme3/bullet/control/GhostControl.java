@@ -47,6 +47,7 @@ import com.jme3.scene.control.Control;
 import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * A GhostControl moves with the spatial it is attached to and can be used to
@@ -54,8 +55,14 @@ import java.io.IOException;
  *
  * @author normenhansen
  */
-public class GhostControl extends PhysicsGhostObject 
+public class GhostControl extends PhysicsGhostObject
         implements PhysicsControl, JmeCloneable {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(GhostControl.class.getName());
 
     protected Spatial spatial;
     protected boolean enabled = true;

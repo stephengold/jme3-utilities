@@ -45,11 +45,17 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * Manage a Bullet physics space in an Application.
+ * An app state to manage a Bullet physics space in an Application.
  *
  * @author normenhansen
  */
 public class BulletAppState implements AppState, PhysicsTickListener {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(BulletAppState.class.getName());
 
     private boolean initialized = false;
     private AppStateManager stateManager;
@@ -170,8 +176,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
         try {
             return executor.submit(call).get();
         } catch (InterruptedException | ExecutionException ex) {
-            Logger.getLogger(BulletAppState.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             return false;
         }
     }
@@ -351,8 +356,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
                 physicsFuture.get();
                 physicsFuture = null;
             } catch (InterruptedException | ExecutionException ex) {
-                Logger.getLogger(BulletAppState.class
-                        .getName()).log(Level.SEVERE, null, ex);
+                logger.log(Level.SEVERE, null, ex);
             }
         }
     }

@@ -32,6 +32,7 @@
 package com.jme3.bullet.collision;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Logger;
 
 /**
  *
@@ -39,12 +40,22 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class PhysicsCollisionEventFactory {
 
-    final private ConcurrentLinkedQueue<PhysicsCollisionEvent> eventBuffer = new ConcurrentLinkedQueue<>();
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(PhysicsCollisionEventFactory.class.getName());
 
-    public PhysicsCollisionEvent getEvent(int type, PhysicsCollisionObject source, PhysicsCollisionObject nodeB, long manifoldPointObjectId) {
+    final private ConcurrentLinkedQueue<PhysicsCollisionEvent> eventBuffer
+            = new ConcurrentLinkedQueue<>();
+
+    public PhysicsCollisionEvent getEvent(int type,
+            PhysicsCollisionObject source, PhysicsCollisionObject nodeB,
+            long manifoldPointObjectId) {
         PhysicsCollisionEvent event = eventBuffer.poll();
         if (event == null) {
-            event = new PhysicsCollisionEvent(type, source, nodeB, manifoldPointObjectId);
+            event = new PhysicsCollisionEvent(type, source, nodeB,
+                    manifoldPointObjectId);
         } else {
             event.refactor(type, source, nodeB, manifoldPointObjectId);
         }

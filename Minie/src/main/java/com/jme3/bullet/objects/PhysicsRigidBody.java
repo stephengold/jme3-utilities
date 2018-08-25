@@ -58,6 +58,12 @@ import java.util.logging.Logger;
  */
 public class PhysicsRigidBody extends PhysicsCollisionObject {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(PhysicsRigidBody.class.getName());
+
     protected RigidBodyMotionState motionState = new RigidBodyMotionState();
     protected float mass = 1.0f;
     private boolean kinematic = false;
@@ -106,14 +112,14 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
                 PhysicsSpace.getPhysicsSpace().remove(this);
                 removed = true;
             }
-            Logger.getLogger(this.getClass().getName()).log(Level.FINE,
-                    "Clearing RigidBody {0}", Long.toHexString(objectId));
+            logger.log(Level.FINE, "Clearing RigidBody {0}", 
+                    Long.toHexString(objectId));
             finalizeNative(objectId);
         }
         preRebuild();
         objectId = createRigidBody(mass, motionState.getObjectId(), collisionShape.getObjectId());
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE,
-                "Created RigidBody {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created RigidBody {0}", 
+                Long.toHexString(objectId));
         postRebuild();
         if (removed) {
             PhysicsSpace.getPhysicsSpace().add(this);

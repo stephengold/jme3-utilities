@@ -55,8 +55,8 @@ public class BubbleControl
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            BubbleControl.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(BubbleControl.class.getName());
     // *************************************************************************
     // fields
 

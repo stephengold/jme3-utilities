@@ -50,12 +50,20 @@ import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 /**
  *
  * @author normenhansen
  */
-public class VehicleControl extends PhysicsVehicle implements PhysicsControl, JmeCloneable {
+public class VehicleControl extends PhysicsVehicle
+        implements PhysicsControl, JmeCloneable {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(VehicleControl.class.getName());
 
     protected Spatial spatial;
     protected boolean enabled = true;

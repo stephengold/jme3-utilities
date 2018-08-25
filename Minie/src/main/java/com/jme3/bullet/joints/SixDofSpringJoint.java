@@ -34,6 +34,7 @@ package com.jme3.bullet.joints;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
+import java.util.logging.Logger;
 
 /**
  * <i>From bullet manual:</i><br>
@@ -49,6 +50,12 @@ import com.jme3.math.Vector3f;
  * @author normenhansen
  */
 public class SixDofSpringJoint extends SixDofJoint {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(SixDofSpringJoint.class.getName());
 
     final boolean springEnabled[] = new boolean[6];
     final float equilibriumPoint[] = new float[6];

@@ -44,12 +44,19 @@ import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.TempVars;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  *
  * @author CJ Hare, normenhansen
  */
 public class DebugShapeFactory {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(DebugShapeFactory.class.getName());
 
     /**
      * The maximum corner for the aabb used for triangles to include in

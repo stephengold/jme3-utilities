@@ -54,12 +54,20 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  *
  * @author normenhansen
  */
-public class RigidBodyControl extends PhysicsRigidBody implements PhysicsControl, JmeCloneable {
+public class RigidBodyControl extends PhysicsRigidBody
+        implements PhysicsControl, JmeCloneable {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(RigidBodyControl.class.getName());
 
     protected Spatial spatial;
     protected boolean enabled = true;

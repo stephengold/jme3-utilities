@@ -64,7 +64,9 @@ public class BulletDebugAppState extends AbstractAppState {
     /**
      * message logger for this class
      */
-    private static final Logger logger = Logger.getLogger(BulletDebugAppState.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(BulletDebugAppState.class.getName());
+
     private DebugAppStateFilter filter;
     private Application app;
     private AssetManager assetManager;

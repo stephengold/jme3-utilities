@@ -50,6 +50,11 @@ import jme3utilities.Validate;
 public abstract class PhysicsCollisionObject implements Savable {
 
     /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(PhysicsCollisionObject.class.getName());
+    /**
      * Bullet id of the object. Constructors are expected to set this to a
      * non-zero value. The id might change if the object gets rebuilt.
      */
@@ -233,8 +238,8 @@ public abstract class PhysicsCollisionObject implements Savable {
     }
 
     protected void initUserPointer() {
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE,
-                "initUserPointer() objectId = {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "initUserPointer() objectId = {0}",
+                Long.toHexString(objectId));
         initUserPointer(objectId, collisionGroup, collideWithGroups);
     }
 
@@ -296,8 +301,8 @@ public abstract class PhysicsCollisionObject implements Savable {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE,
-                "Finalizing CollisionObject {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Finalizing CollisionObject {0}",
+                Long.toHexString(objectId));
         finalizeNative(objectId);
     }
 

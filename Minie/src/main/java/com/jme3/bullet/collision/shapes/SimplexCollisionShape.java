@@ -48,6 +48,12 @@ import java.util.logging.Logger;
  */
 public class SimplexCollisionShape extends CollisionShape {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(SimplexCollisionShape.class.getName());
+
     private Vector3f vector1, vector2, vector3, vector4;
 
     /**
@@ -118,7 +124,7 @@ public class SimplexCollisionShape extends CollisionShape {
             objectId = createShape(vector1);
 //            objectId = new BU_Simplex1to4(Converter.convert(vector1));
         }
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
 //        objectId.setLocalScaling(Converter.convert(getScale()));
 //        objectId.setMargin(margin);
         setScale(scale);

@@ -32,12 +32,19 @@
 package com.jme3.bullet.control.ragdoll;
 
 import com.jme3.math.FastMath;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Nehon
  */
 public class HumanoidRagdollPreset extends RagdollPreset {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(HumanoidRagdollPreset.class.getName());
 
     @Override
     protected void initBoneMap() {

@@ -31,11 +31,19 @@
  */
 package com.jme3.bullet.objects.infos;
 
+import java.util.logging.Logger;
+
 /**
  *
  * @author normenhansen
  */
 public class VehicleTuning {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(VehicleTuning.class.getName());
 
     public float suspensionStiffness = 5.88f;
     public float suspensionCompression = 0.83f;

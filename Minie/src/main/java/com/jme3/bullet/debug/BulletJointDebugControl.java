@@ -41,12 +41,19 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Arrow;
+import java.util.logging.Logger;
 
 /**
  *
  * @author normenhansen
  */
 public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(BulletJointDebugControl.class.getName());
 
     protected final PhysicsJoint body;
     protected final Geometry geomA;

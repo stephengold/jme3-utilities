@@ -47,6 +47,12 @@ import java.util.logging.Logger;
  */
 public class SphereCollisionShape extends CollisionShape {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(SphereCollisionShape.class.getName());
+
     private float radius;
 
     /**
@@ -93,7 +99,7 @@ public class SphereCollisionShape extends CollisionShape {
     @Override
     public void setScale(Vector3f scale) {
         if (scale.x != scale.y || scale.y != scale.z) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
+            logger.log(Level.SEVERE,
                     "SphereCollisionShape cannot be scaled non-uniformly.");
         } else {
             super.setScale(scale);
@@ -102,7 +108,7 @@ public class SphereCollisionShape extends CollisionShape {
 
     protected void createShape() {
         objectId = createShape(radius);
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
 //        new SphereShape(radius);
 //        objectId.setLocalScaling(Converter.convert(getScale()));
 //        objectId.setMargin(margin);

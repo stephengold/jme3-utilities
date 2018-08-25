@@ -40,12 +40,19 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import java.util.logging.Logger;
 
 /**
  *
  * @author normenhansen
  */
 public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(BulletGhostObjectDebugControl.class.getName());
 
     protected final PhysicsGhostObject body;
     protected final Vector3f location = new Vector3f();

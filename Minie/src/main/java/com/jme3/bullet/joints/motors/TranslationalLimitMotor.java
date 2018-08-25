@@ -32,12 +32,19 @@
 package com.jme3.bullet.joints.motors;
 
 import com.jme3.math.Vector3f;
+import java.util.logging.Logger;
 
 /**
  *
  * @author normenhansen
  */
 public class TranslationalLimitMotor {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(TranslationalLimitMotor.class.getName());
 
     private long motorId = 0;
 

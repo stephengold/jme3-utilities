@@ -47,6 +47,12 @@ import java.util.logging.Logger;
  */
 public class BoxCollisionShape extends CollisionShape {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(BoxCollisionShape.class.getName());
+
     private Vector3f halfExtents;
 
     /**
@@ -94,7 +100,7 @@ public class BoxCollisionShape extends CollisionShape {
 
     protected void createShape() {
         objectId = createShape(halfExtents);
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
         setScale(scale);
         setMargin(margin);
     }

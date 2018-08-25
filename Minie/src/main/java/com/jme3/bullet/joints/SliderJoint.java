@@ -53,6 +53,12 @@ import java.util.logging.Logger;
  */
 public class SliderJoint extends PhysicsJoint {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(SliderJoint.class.getName());
+
     private Matrix3f rotA;
     private Matrix3f rotB;
     private boolean useLinearReferenceFrameA;
@@ -556,7 +562,7 @@ public class SliderJoint extends PhysicsJoint {
 
     protected void createJoint() {
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA, rotA, pivotB, rotB, useLinearReferenceFrameA);
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
         // = new SliderConstraint(nodeA.getObjectId(), nodeB.getObjectId(), transA, transB, useLinearReferenceFrameA);
     }
 

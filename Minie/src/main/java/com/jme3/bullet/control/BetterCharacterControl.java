@@ -71,7 +71,11 @@ import java.util.logging.Logger;
  */
 public class BetterCharacterControl extends AbstractPhysicsControl implements PhysicsTickListener, JmeCloneable {
 
-    private static final Logger logger = Logger.getLogger(BetterCharacterControl.class.getName());
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(BetterCharacterControl.class.getName());
     private PhysicsRigidBody rigidBody;
     private float radius;
     private float height;

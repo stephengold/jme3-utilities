@@ -63,6 +63,12 @@ import java.util.logging.Logger;
  */
 public class SixDofJoint extends PhysicsJoint {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(SixDofJoint.class.getName());
+
     Matrix3f rotA, rotB;
     boolean useLinearReferenceFrameA;
     LinkedList<RotationalLimitMotor> rotationalMotors = new LinkedList<>();
@@ -103,7 +109,7 @@ public class SixDofJoint extends PhysicsJoint {
         this.rotB = rotB;
 
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA, rotA, pivotB, rotB, useLinearReferenceFrameA);
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
         gatherMotors();
     }
 
@@ -122,7 +128,7 @@ public class SixDofJoint extends PhysicsJoint {
         rotB = new Matrix3f();
 
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA, rotA, pivotB, rotB, useLinearReferenceFrameA);
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
         gatherMotors();
     }
 
@@ -195,7 +201,7 @@ public class SixDofJoint extends PhysicsJoint {
         InputCapsule capsule = im.getCapsule(this);
 
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA, rotA, pivotB, rotB, useLinearReferenceFrameA);
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
         gatherMotors();
 
         setAngularUpperLimit((Vector3f) capsule.readSavable("angularUpperLimit", new Vector3f(Vector3f.POSITIVE_INFINITY)));

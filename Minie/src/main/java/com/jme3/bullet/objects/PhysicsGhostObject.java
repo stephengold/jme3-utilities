@@ -57,6 +57,12 @@ import java.util.logging.Logger;
  */
 public class PhysicsGhostObject extends PhysicsCollisionObject {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(PhysicsGhostObject.class.getName());
+
     private boolean locationDirty = false;
     private final Quaternion tmp_inverseWorldRotation = new Quaternion();
     final private List<PhysicsCollisionObject> overlappingObjects = new LinkedList<>();
@@ -82,7 +88,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         if (objectId == 0) {
 //            gObject = new PairCachingGhostObject();
             objectId = createGhostObject();
-            Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Ghost Object {0}", Long.toHexString(objectId));
+            logger.log(Level.FINE, "Created Ghost Object {0}", Long.toHexString(objectId));
             setGhostFlags(objectId);
             initUserPointer();
         }

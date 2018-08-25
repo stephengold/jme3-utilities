@@ -47,6 +47,12 @@ import java.util.logging.Logger;
  */
 public class CylinderCollisionShape extends CollisionShape {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(CylinderCollisionShape.class.getName());
+
     private Vector3f halfExtents;
     private int axis;
 
@@ -96,7 +102,7 @@ public class CylinderCollisionShape extends CollisionShape {
     @Override
     public void setScale(Vector3f scale) {
         if (scale.x != scale.y || scale.y != scale.z) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
+            logger.log(Level.SEVERE,
                     "CylinderCollisionShape cannot be scaled non-uniformly.");
         } else {
             super.setScale(scale);
@@ -122,7 +128,7 @@ public class CylinderCollisionShape extends CollisionShape {
 
     protected void createShape() {
         objectId = createShape(axis, halfExtents);
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
 //        switch (axis) {
 //            case 0:
 //                objectId = new CylinderShapeX(Converter.convert(halfExtents));

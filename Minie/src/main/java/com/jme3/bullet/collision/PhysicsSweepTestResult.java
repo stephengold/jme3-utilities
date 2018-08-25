@@ -32,6 +32,7 @@
 package com.jme3.bullet.collision;
 
 import com.jme3.math.Vector3f;
+import java.util.logging.Logger;
 
 /**
  * Contains the results of a PhysicsSpace rayTest
@@ -39,6 +40,12 @@ import com.jme3.math.Vector3f;
  * @author normenhansen
  */
 public class PhysicsSweepTestResult {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(PhysicsSweepTestResult.class.getName());
 
     private PhysicsCollisionObject collisionObject;
     private Vector3f hitNormalLocal;

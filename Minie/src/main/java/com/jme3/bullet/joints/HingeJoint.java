@@ -54,6 +54,12 @@ import java.util.logging.Logger;
  */
 public class HingeJoint extends PhysicsJoint {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(HingeJoint.class.getName());
+
     private Vector3f axisA;
     private Vector3f axisB;
 
@@ -258,8 +264,7 @@ public class HingeJoint extends PhysicsJoint {
     protected void createJoint() {
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(),
                 pivotA, axisA, pivotB, axisB);
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE,
-                "Created Joint {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
     }
 
     private native long createJoint(long objectIdA, long objectIdB,

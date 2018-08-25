@@ -47,6 +47,12 @@ import java.util.logging.Logger;
  */
 public class CapsuleCollisionShape extends CollisionShape {
 
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(CapsuleCollisionShape.class.getName());
+
     private float height;
     private float radius;
     private int axis;
@@ -105,7 +111,7 @@ public class CapsuleCollisionShape extends CollisionShape {
     @Override
     public void setScale(Vector3f scale) {
         if (scale.x != scale.y || scale.y != scale.z) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
+            logger.log(Level.SEVERE,
                     "CapsuleCollisionShape cannot be scaled non-uniformly.");
         } else {
             super.setScale(scale);
@@ -133,7 +139,7 @@ public class CapsuleCollisionShape extends CollisionShape {
 
     protected void createShape() {
         objectId = createShape(axis, radius, height);
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
         setScale(scale);
         setMargin(margin);
 //        switch(axis){

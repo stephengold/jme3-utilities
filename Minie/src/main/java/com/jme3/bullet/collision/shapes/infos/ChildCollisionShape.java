@@ -37,12 +37,19 @@ import com.jme3.export.*;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  *
  * @author normenhansen
  */
 public class ChildCollisionShape implements Savable {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(ChildCollisionShape.class.getName());
 
     public Vector3f location;
     public Matrix3f rotation;

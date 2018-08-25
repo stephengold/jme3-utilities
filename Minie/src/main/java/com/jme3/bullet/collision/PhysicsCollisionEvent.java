@@ -34,6 +34,7 @@ package com.jme3.bullet.collision;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.util.EventObject;
+import java.util.logging.Logger;
 
 /**
  * A CollisionEvent stores all information about a collision in the
@@ -44,6 +45,12 @@ import java.util.EventObject;
  * @author normenhansen
  */
 public class PhysicsCollisionEvent extends EventObject {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(PhysicsCollisionEvent.class.getName());
 
     public static final int TYPE_ADDED = 0;
     public static final int TYPE_PROCESSED = 1;

@@ -99,7 +99,12 @@ import java.util.logging.Logger;
  */
 public class KinematicRagdollControl extends AbstractPhysicsControl implements PhysicsCollisionListener, JmeCloneable {
 
-    final private static Logger logger = Logger.getLogger(KinematicRagdollControl.class.getName());
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(KinematicRagdollControl.class.getName());
+
     private List<RagdollCollisionListener> listeners;
     private final Set<String> boneList = new TreeSet<>();
     private final Map<String, PhysicsBoneLink> boneLinks = new HashMap<>();
@@ -335,12 +340,12 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
             boneName = it.next();
             bone = (Bone) boneLinks.get(boneName).bone;
             if (!bone.hasUserControl()) {
-                Logger.getLogger(KinematicRagdollControl.class.getSimpleName()).log(Level.FINE, "{0} doesn't have user control", boneName);
+                logger.log(Level.FINE, "{0} doesn't have user control", boneName);
                 continue;
             }
             distance = bone.getModelSpacePosition().distance(ikTargets.get(boneName));
             if (distance < IKThreshold) {
-                Logger.getLogger(KinematicRagdollControl.class.getSimpleName()).log(Level.FINE, "Distance is close enough");
+                logger.log(Level.FINE, "Distance is close enough");
                 continue;
             }
             int depth = 0;
