@@ -45,7 +45,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * <code>BulletAppState</code> manages Bullet physics in an Application.
+ * Manage a Bullet physics space in an Application.
  *
  * @author normenhansen
  */
@@ -55,7 +55,13 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     private AppStateManager stateManager;
     private ScheduledThreadPoolExecutor executor;
     private PhysicsSpace pSpace;
+    /**
+     * which threading mode to use (not null)
+     */
     private ThreadingType threadingType = ThreadingType.SEQUENTIAL;
+    /**
+     * which broadphase collision-detection algorithm to use (not null)
+     */
     private BroadphaseType broadphaseType = BroadphaseType.DBVT;
     /**
      * minimum coordinate values for the physics space when using AXIS_SWEEP
@@ -454,6 +460,9 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     public void physicsTick(PhysicsSpace space, float f) {
     }
 
+    /**
+     * Enumerate threading modes.
+     */
     public enum ThreadingType {
         /**
          * Default mode: user update, physics update, and rendering happen

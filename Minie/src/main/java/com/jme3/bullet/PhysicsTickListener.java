@@ -32,25 +32,24 @@
 package com.jme3.bullet;
 
 /**
- * Implement this interface to be called from the physics thread on a physics
- * update.
+ * Callback interface from the physics thread, used to apply forces.
  *
  * @author normenhansen
  */
 public interface PhysicsTickListener {
     /**
-     * Called before the physics is actually stepped, use to apply forces etc.
+     * Invoked before the physics is stepped. A good time to apply forces.
      *
-     * @param space the physics space
-     * @param tpf the time per frame in seconds
+     * @param space the space that is about to be stepped (not null)
+     * @param tpf the time per frame (in seconds, &ge;0)
      */
     void prePhysicsTick(PhysicsSpace space, float tpf);
 
     /**
-     * Called after the physics has been stepped, use to check for forces etc.
+     * Invoked after the physics has been stepped, use to check for forces etc.
      *
-     * @param space the physics space
-     * @param tpf the time per frame in seconds
+     * @param space the space that was just stepped (not null)
+     * @param tpf the time per frame (in seconds, &ge;0)
      */
     void physicsTick(PhysicsSpace space, float tpf);
 }

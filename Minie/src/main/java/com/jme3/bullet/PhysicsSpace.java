@@ -249,25 +249,22 @@ public class PhysicsSpace {
     }
 
     /**
-     * updates the physics space
+     * Update this space.
      *
-     * @param time the current time value
+     * @param time time-per-frame times speed (in seconds, &ge;0)
      */
     public void update(float time) {
         update(time, maxSubSteps);
     }
 
     /**
-     * updates the physics space, uses maxSteps<br>
+     * Update this space, simulating at most the specified number of steps. TODO
+     * make private
      *
-     * @param time the current time value
-     * @param maxSteps the maximum number of steps to simulate
+     * @param time time-per-frame times speed (in seconds, &ge;0)
+     * @param maxSteps maximum number of steps to simulate (&ge;0)
      */
     public void update(float time, int maxSteps) {
-//        if (getDynamicsWorld() == null) {
-//            return;
-//        }
-        //step simulation
         stepSimulation(physicsSpaceId, time, maxSteps, accuracy);
     }
 
@@ -308,9 +305,10 @@ public class PhysicsSpace {
     }
 
     /**
-     * adds an object to the physics space
+     * Add the specified object to this space.
      *
-     * @param obj the PhysicsControl or Spatial with PhysicsControl to add
+     * @param obj the PhysicsControl, Spatial-with-PhysicsControl,
+     * PhysicsCollisionObject, or PhysicsJoint to add (not null, modified)
      */
     public void add(Object obj) {
         if (obj instanceof PhysicsControl) {
@@ -332,6 +330,11 @@ public class PhysicsSpace {
         }
     }
 
+    /**
+     * Add the specified collision object to this space.
+     *
+     * @param obj the PhysicsCollisionObject to add (not null, modified)
+     */
     public void addCollisionObject(PhysicsCollisionObject obj) {
         if (obj instanceof PhysicsGhostObject) {
             addGhostObject((PhysicsGhostObject) obj);
@@ -341,13 +344,15 @@ public class PhysicsSpace {
             addRigidBody((PhysicsVehicle) obj);
         } else if (obj instanceof PhysicsCharacter) {
             addCharacter((PhysicsCharacter) obj);
+//} else {
+//    throw (new IllegalArgumentException("Unknown type of collision object."));
         }
     }
 
     /**
-     * removes an object from the physics space
+     * Remove the specified object from this space.
      *
-     * @param obj the PhysicsControl or Spatial with PhysicsControl to remove
+     * @param obj the PhysicsCollisionObject to add, or null (modified)
      */
     public void remove(Object obj) {
         if (obj == null) {
@@ -372,6 +377,11 @@ public class PhysicsSpace {
         }
     }
 
+    /**
+     * Remove the specified collision object from this space.
+     *
+     * @param obj the PhysicsControl or Spatial with PhysicsControl to remove
+     */
     public void removeCollisionObject(PhysicsCollisionObject obj) {
         if (obj instanceof PhysicsGhostObject) {
             removeGhostObject((PhysicsGhostObject) obj);
@@ -499,8 +509,6 @@ public class PhysicsSpace {
         logger.log(Level.FINE, "Adding character {0} to physics space.", Long.toHexString(node.getObjectId()));
         addCharacterObject(physicsSpaceId, node.getObjectId());
         addAction(physicsSpaceId, node.getControllerId());
-//        dynamicsWorld.addCollisionObject(node.getObjectId(), CollisionFilterGroups.CHARACTER_FILTER, (short) (CollisionFilterGroups.STATIC_FILTER | CollisionFilterGroups.DEFAULT_FILTER));
-//        dynamicsWorld.addAction(node.getControllerId());
     }
 
     private void removeCharacter(PhysicsCharacter node) {
@@ -512,8 +520,6 @@ public class PhysicsSpace {
         logger.log(Level.FINE, "Removing character {0} from physics space.", Long.toHexString(node.getObjectId()));
         removeAction(physicsSpaceId, node.getControllerId());
         removeCharacterObject(physicsSpaceId, node.getObjectId());
-//        dynamicsWorld.removeAction(node.getControllerId());
-//        dynamicsWorld.removeCollisionObject(node.getObjectId());
     }
 
     private void addRigidBody(PhysicsRigidBody node) {
@@ -567,7 +573,6 @@ public class PhysicsSpace {
         logger.log(Level.FINE, "Adding Joint {0} to physics space.", Long.toHexString(joint.getObjectId()));
         physicsJoints.put(joint.getObjectId(), joint);
         addConstraintC(physicsSpaceId, joint.getObjectId(), !joint.isCollisionBetweenLinkedBodys());
-//        dynamicsWorld.addConstraint(joint.getObjectId(), !joint.isCollisionBetweenLinkedBodys());
     }
 
     private void removeJoint(PhysicsJoint joint) {
@@ -578,7 +583,6 @@ public class PhysicsSpace {
         logger.log(Level.FINE, "Removing Joint {0} from physics space.", Long.toHexString(joint.getObjectId()));
         physicsJoints.remove(joint.getObjectId());
         removeConstraint(physicsSpaceId, joint.getObjectId());
-//        dynamicsWorld.removeConstraint(joint.getObjectId());
     }
 
     public Collection<PhysicsRigidBody> getRigidBodyList() {
@@ -602,9 +606,13 @@ public class PhysicsSpace {
     }
 
     /**
-     * Sets the gravity of the PhysicsSpace, set before adding physics objects!
+     * Alter the gravity-acceleration vector of this space.
      *
-     * @param gravity the desired acceleration vector (not null)
+     * Whenever a rigid body is added to a space, the body's gravity gets set to
+     * that of the space. Thus it makes sense to set space's vector before
+     * adding any bodies to the space.
+     *
+     * @param gravity the desired acceleration vector (not null, unaffected)
      */
     public void setGravity(Vector3f gravity) {
         this.gravity.set(gravity);
@@ -613,71 +621,106 @@ public class PhysicsSpace {
 
     private native void setGravity(long spaceId, Vector3f gravity);
 
+    /**
+     * gravity-acceleration vector (default is 9.81 in the -Y direction,
+     * corresponding to Earth-normal in MKS units)
+     */
     private final Vector3f gravity = new Vector3f(0, -9.81f, 0);
 
     public Vector3f getGravity(Vector3f gravity) {
         return gravity.set(this.gravity);
     }
 
-//    /**
-//     * applies gravity value to all objects
-//     */
-//    public void applyGravity() {
-////        dynamicsWorld.applyGravity();
-//    }
-//
-//    /**
-//     * clears forces of all objects
-//     */
-//    public void clearForces() {
-////        dynamicsWorld.clearForces();
-//    }
-//
     /**
-     * Adds the specified listener to the physics tick listeners. The listeners
-     * are called on each physics step, which is not necessarily each frame but
-     * is determined by the accuracy of the physics space.
+     * Register the specified tick listener with this space.
      *
-     * @param listener the listener to add
+     * Tick listeners are notified before and after each physics step. A physics
+     * step is not necessarily the same as a frame; it is more influenced by the
+     * accuracy of the physics space.
+     *
+     * @see #setAccuracy(float)
+     *
+     * @param listener the listener to register (not null)
      */
     public void addTickListener(PhysicsTickListener listener) {
+        //Validate.nonNull(listener, "listener");
+        //assert !tickListeners.contains(listener);
+
         tickListeners.add(listener);
     }
 
+    /**
+     * De-register the specified tick listener.
+     *
+     * @see #addTickListener(com.jme3.bullet.PhysicsTickListener)
+     *
+     * @param listener the listener to de-register (not null)
+     */
     public void removeTickListener(PhysicsTickListener listener) {
+        //Validate.nonNull(listener, "listener");
+        //assert tickListeners.contains(listener);
+
         tickListeners.remove(listener);
     }
 
     /**
-     * Adds a CollisionListener that will be informed about collision events
+     * Register the specified collision listener with this space.
      *
-     * @param listener the CollisionListener to add
+     * Collision listeners are notified when collisions occur in the space.
+     *
+     * @param listener the listener to register (not null, alias created)
      */
     public void addCollisionListener(PhysicsCollisionListener listener) {
+        //Validate.nonNull(listener, "listener");
+        //assert !collisionListeners.contains(listener);
+
         collisionListeners.add(listener);
     }
 
     /**
-     * Removes a CollisionListener from the list
+     * De-register the specified collision listener.
      *
-     * @param listener the CollisionListener to remove
+     * @see
+     * #addCollisionListener(com.jme3.bullet.collision.PhysicsCollisionListener)
+     *
+     * @param listener the listener to de-register (not null)
      */
     public void removeCollisionListener(PhysicsCollisionListener listener) {
+        //Validate.nonNull(listener, "listener");
+        //assert collisionListeners.contains(listener);
+
         collisionListeners.remove(listener);
     }
 
     /**
-     * Adds a listener for a specific collision group, such a listener can
-     * disable collisions when they happen.<br> There can be only one listener
-     * per collision group.
+     * Register the specified collision-group listener with the specified
+     * collision group of this space.
      *
-     * @param listener the listener to add
-     * @param collisionGroup the group it should listen for
+     * Such a listener can disable collisions when they occur. There can be only
+     * one listener per collision group per space.
+     *
+     * @param listener the listener to register (not null)
+     * @param collisionGroup which group it should listen for (bit mask with
+     * exactly one bit set)
      */
-    public void addCollisionGroupListener(PhysicsCollisionGroupListener listener, int collisionGroup) {
+    public void addCollisionGroupListener(
+            PhysicsCollisionGroupListener listener, int collisionGroup) {
+        //Validate.nonNull(listener, "listener");
+        //assert collisionGroupListeners.get(collisionGroup) == null;
+        //assert Integer.bitCount(collisionGroup) == 1 : collisionGroup;
+
         collisionGroupListeners.put(collisionGroup, listener);
     }
 
+    /**
+     * De-register the specified collision-group listener.
+     *
+     * @see
+     * #addCollisionGroupListener(com.jme3.bullet.collision.PhysicsCollisionGroupListener,
+     * int)
+     *
+     * @param listener the listener to remove (not null)
+     */
     public void removeCollisionGroupListener(int collisionGroup) {
         collisionGroupListeners.remove(collisionGroup);
     }
@@ -865,9 +908,6 @@ public class PhysicsSpace {
     public void destroy() {
         physicsBodies.clear();
         physicsJoints.clear();
-
-//        dynamicsWorld.destroy();
-//        dynamicsWorld = null;
     }
 
     /**
