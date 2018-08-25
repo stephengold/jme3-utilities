@@ -60,6 +60,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * <p>
@@ -168,9 +169,9 @@ public class PhysicsSpace {
      */
     public PhysicsSpace(Vector3f worldMin, Vector3f worldMax,
             BroadphaseType broadphaseType) {
-        //Validate.nonNull(worldMin, "world min");
-        //Validate.nonNull(worldMax, "world max");
-        //Validate.nonNull(broadphaseType, "broadphase type");
+        Validate.nonNull(worldMin, "world min");
+        Validate.nonNull(worldMax, "world max");
+        Validate.nonNull(broadphaseType, "broadphase type");
 
         this.worldMin.set(worldMin);
         this.worldMax.set(worldMax);
@@ -266,7 +267,7 @@ public class PhysicsSpace {
      * @param time time-per-frame times speed (in seconds, &ge;0)
      */
     public void update(float time) {
-        //Validate.nonNegative(time, "time");
+        Validate.nonNegative(time, "time");
         update(time, maxSubSteps);
     }
 
@@ -278,8 +279,8 @@ public class PhysicsSpace {
      * @param maxSteps maximum number of steps to simulate (&ge;0)
      */
     public void update(float time, int maxSteps) {
-        //assert time >= 0f : time;
-        //assert maxSteps >= 0 : maxSteps;
+        assert time >= 0f : time;
+        assert maxSteps >= 0 : maxSteps;
 
         stepSimulation(physicsSpaceId, time, maxSteps, accuracy);
     }
@@ -341,7 +342,7 @@ public class PhysicsSpace {
         } else if (obj instanceof PhysicsJoint) {
             addJoint((PhysicsJoint) obj);
         } else {
-            throw (new UnsupportedOperationException(
+            throw (new IllegalArgumentException(
                     "Cannot add this kind of object to the physics space."));
         }
     }
@@ -360,8 +361,8 @@ public class PhysicsSpace {
             addRigidBody((PhysicsVehicle) obj);
         } else if (obj instanceof PhysicsCharacter) {
             addCharacter((PhysicsCharacter) obj);
-//} else {
-//    throw (new IllegalArgumentException("Unknown type of collision object."));
+        } else {
+            throw (new IllegalArgumentException("Unknown type of collision object."));
         }
     }
 
@@ -388,7 +389,7 @@ public class PhysicsSpace {
         } else if (obj instanceof PhysicsJoint) {
             removeJoint((PhysicsJoint) obj);
         } else {
-            throw (new UnsupportedOperationException(
+            throw (new IllegalArgumentException(
                     "Cannot remove this kind of object from the physics space."));
         }
     }
@@ -405,8 +406,9 @@ public class PhysicsSpace {
             removeRigidBody((PhysicsRigidBody) obj);
         } else if (obj instanceof PhysicsCharacter) {
             removeCharacter((PhysicsCharacter) obj);
-            //} else {
-            //throw (new IllegalArgumentException("Unknown type of collision object."));
+        } else {
+            throw (new IllegalArgumentException(
+                    "Unknown type of collision object."));
         }
     }
 
@@ -668,8 +670,8 @@ public class PhysicsSpace {
      * @param listener the listener to register (not null)
      */
     public void addTickListener(PhysicsTickListener listener) {
-        //Validate.nonNull(listener, "listener");
-        //assert !tickListeners.contains(listener);
+        Validate.nonNull(listener, "listener");
+        assert !tickListeners.contains(listener);
 
         tickListeners.add(listener);
     }
@@ -682,8 +684,8 @@ public class PhysicsSpace {
      * @param listener the listener to de-register (not null)
      */
     public void removeTickListener(PhysicsTickListener listener) {
-        //Validate.nonNull(listener, "listener");
-        //assert tickListeners.contains(listener);
+        Validate.nonNull(listener, "listener");
+        assert tickListeners.contains(listener);
 
         tickListeners.remove(listener);
     }
@@ -696,8 +698,8 @@ public class PhysicsSpace {
      * @param listener the listener to register (not null, alias created)
      */
     public void addCollisionListener(PhysicsCollisionListener listener) {
-        //Validate.nonNull(listener, "listener");
-        //assert !collisionListeners.contains(listener);
+        Validate.nonNull(listener, "listener");
+        assert !collisionListeners.contains(listener);
 
         collisionListeners.add(listener);
     }
@@ -711,8 +713,8 @@ public class PhysicsSpace {
      * @param listener the listener to de-register (not null)
      */
     public void removeCollisionListener(PhysicsCollisionListener listener) {
-        //Validate.nonNull(listener, "listener");
-        //assert collisionListeners.contains(listener);
+        Validate.nonNull(listener, "listener");
+        assert collisionListeners.contains(listener);
 
         collisionListeners.remove(listener);
     }
@@ -730,9 +732,9 @@ public class PhysicsSpace {
      */
     public void addCollisionGroupListener(
             PhysicsCollisionGroupListener listener, int collisionGroup) {
-        //Validate.nonNull(listener, "listener");
-        //assert collisionGroupListeners.get(collisionGroup) == null;
-        //assert Integer.bitCount(collisionGroup) == 1 : collisionGroup;
+        Validate.nonNull(listener, "listener");
+        assert collisionGroupListeners.get(collisionGroup) == null;
+        assert Integer.bitCount(collisionGroup) == 1 : collisionGroup;
 
         collisionGroupListeners.put(collisionGroup, listener);
     }
@@ -748,8 +750,8 @@ public class PhysicsSpace {
      * with exactly one bit set)
      */
     public void removeCollisionGroupListener(int collisionGroup) {
-        //assert collisionGroupListeners.get(collisionGroup) != null;
-        //assert Integer.bitCount(collisionGroup) == 1 : collisionGroup;
+        assert collisionGroupListeners.get(collisionGroup) != null;
+        assert Integer.bitCount(collisionGroup) == 1 : collisionGroup;
 
         collisionGroupListeners.remove(collisionGroup);
     }
@@ -1004,7 +1006,7 @@ public class PhysicsSpace {
      * @param accuracy (in seconds, &gt;0, default=1/60)
      */
     public void setAccuracy(float accuracy) {
-        //Validate.positive(accuracy, "accuracy");
+        Validate.positive(accuracy, "accuracy");
         this.accuracy = accuracy;
     }
 
@@ -1056,7 +1058,7 @@ public class PhysicsSpace {
      * @param numIterations the number of iterations (&ge;1)
      */
     public void setSolverNumIterations(int numIterations) {
-        //Validate.positive(numIterations, "number of iterations");
+        Validate.positive(numIterations, "number of iterations");
 
         this.solverNumIterations = numIterations;
         setSolverNumIterations(physicsSpaceId, numIterations);
