@@ -262,30 +262,30 @@ public class PhysicsSpace {
     }
 
     /**
-     * Update this space.
+     * Update this space. Invoked (by the app state) once per render pass.
      *
-     * @param time time-per-frame times speed (in seconds, &ge;0)
+     * @param time time-per-frame multiplied by speed (in seconds, &ge;0)
      */
-    public void update(float time) {
-        Validate.nonNegative(time, "time");
+    void update(float time) {
+        assert time >= 0f : time;
         update(time, maxSubSteps);
     }
 
     /**
-     * Update this space, simulating at most the specified number of steps. TODO
-     * make private
+     * Update this space, simulating at most the specified number of steps.
      *
-     * @param time time-per-frame times speed (in seconds, &ge;0)
+     * @param time time-per-frame multiplied by speed (in seconds, &ge;0)
      * @param maxSteps maximum number of steps to simulate (&ge;0)
      */
-    public void update(float time, int maxSteps) {
+    private void update(float time, int maxSteps) {
         assert time >= 0f : time;
         assert maxSteps >= 0 : maxSteps;
 
         stepSimulation(physicsSpaceId, time, maxSteps, accuracy);
     }
 
-    private native void stepSimulation(long space, float time, int maxSteps, float accuracy);
+    private native void stepSimulation(long space, float time, int maxSteps,
+            float accuracy);
 
     public void distributeEvents() {
         //add collision callbacks
