@@ -51,8 +51,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * <p>
- * PhysicsRigidBody - Basic physics object</p>
+ * A collision object for rigid bodies, based on Bullet's btRigidBody.
  *
  * @author normenhansen
  */
@@ -112,13 +111,13 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
                 PhysicsSpace.getPhysicsSpace().remove(this);
                 removed = true;
             }
-            logger.log(Level.FINE, "Clearing RigidBody {0}", 
+            logger.log(Level.FINE, "Clearing RigidBody {0}",
                     Long.toHexString(objectId));
             finalizeNative(objectId);
         }
         preRebuild();
         objectId = createRigidBody(mass, motionState.getObjectId(), collisionShape.getObjectId());
-        logger.log(Level.FINE, "Created RigidBody {0}", 
+        logger.log(Level.FINE, "Created RigidBody {0}",
                 Long.toHexString(objectId));
         postRebuild();
         if (removed) {
@@ -392,6 +391,12 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         return getGravity(null);
     }
 
+    /**
+     * Copy the gravitational acceleration acting on this body.
+     *
+     * @param gravity (modified if not null)
+     * @return an acceleration vector (either storeResult or a new instance)
+     */
     public Vector3f getGravity(Vector3f gravity) {
         if (gravity == null) {
             gravity = new Vector3f();
@@ -403,12 +408,12 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void getGravity(long objectId, Vector3f gravity);
 
     /**
-     * Set the local gravity of this PhysicsRigidBody
+     * Alter the gravitational acceleration acting on this body.
      *
-     * Set this after adding the node to the PhysicsSpace, the PhysicsSpace
-     * assigns its current gravity to the physics node when its added.
+     * Invoke this after adding the body to a PhysicsSpace. PhysicsSpace alters
+     * the body's gravity when it is added.
      *
-     * @param gravity the gravity vector to set
+     * @param gravity the new acceleration vector (not null)
      */
     public void setGravity(Vector3f gravity) {
         setGravity(objectId, gravity);
@@ -489,9 +494,9 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void setRestitution(long objectId, float factor);
 
     /**
-     * Get the current angular velocity of this PhysicsRigidBody
+     * Read the angular velocity of this body.
      *
-     * @return the current linear velocity
+     * @return a new velocity vector (not null)
      */
     public Vector3f getAngularVelocity() {
         Vector3f vec = new Vector3f();
@@ -502,18 +507,18 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void getAngularVelocity(long objectId, Vector3f vec);
 
     /**
-     * Get the current angular velocity of this PhysicsRigidBody
+     * Copy the angular velocity of this body.
      *
-     * @param vec the vector to store the velocity in
+     * @param vec storage for the result (not null, modified)
      */
     public void getAngularVelocity(Vector3f vec) {
         getAngularVelocity(objectId, vec);
     }
 
     /**
-     * Sets the angular velocity of this PhysicsRigidBody
+     * Alter the angular velocity of this body.
      *
-     * @param vec the angular velocity of this PhysicsRigidBody
+     * @param vec the new angular velocity vector (not null)
      */
     public void setAngularVelocity(Vector3f vec) {
         setAngularVelocity(objectId, vec);
@@ -523,9 +528,9 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void setAngularVelocity(long objectId, Vector3f vec);
 
     /**
-     * Get the current linear velocity of this PhysicsRigidBody
+     * Read the linear velocity of this body.
      *
-     * @return the current linear velocity
+     * @return a new velocity vector (not null)
      */
     public Vector3f getLinearVelocity() {
         Vector3f vec = new Vector3f();
@@ -536,18 +541,18 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void getLinearVelocity(long objectId, Vector3f vec);
 
     /**
-     * Get the current linear velocity of this PhysicsRigidBody
+     * Copy the linear velocity of this body.
      *
-     * @param vec the vector to store the velocity in
+     * @param vec storage for the result (not null, modified)
      */
     public void getLinearVelocity(Vector3f vec) {
         getLinearVelocity(objectId, vec);
     }
 
     /**
-     * Sets the linear velocity of this PhysicsRigidBody
+     * Alter the linear velocity of this body.
      *
-     * @param vec the linear velocity of this PhysicsRigidBody
+     * @param vec the new velocity vector
      */
     public void setLinearVelocity(Vector3f vec) {
         setLinearVelocity(objectId, vec);
@@ -557,8 +562,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void setLinearVelocity(long objectId, Vector3f vec);
 
     /**
-     * Apply a force to the PhysicsRigidBody, only applies force if the next
-     * physics update call updates the physics space.<br>
+     * Apply a force to the PhysicsRigidBody. Effective only if the next physics
+     * update call updates the physics space.<br>
      * To apply an impulse, use applyImpulse, use applyContinuousForce to apply
      * continuous force.
      *
@@ -573,8 +578,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void applyForce(long objectId, Vector3f force, Vector3f location);
 
     /**
-     * Apply a force to the PhysicsRigidBody, only applies force if the next
-     * physics update call updates the physics space.<br>
+     * Apply a force to the PhysicsRigidBody. Effective only if the next physics
+     * update call updates the physics space.<br>
      * To apply an impulse, use applyImpulse.
      *
      * @param force the force
@@ -587,8 +592,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void applyCentralForce(long objectId, Vector3f force);
 
     /**
-     * Apply a force to the PhysicsRigidBody, only applies force if the next
-     * physics update call updates the physics space.<br>
+     * Apply a force to the PhysicsRigidBody. Effective only if the next physics
+     * update call updates the physics space.<br>
      * To apply an impulse, use applyImpulse.
      *
      * @param torque the torque
@@ -627,8 +632,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void applyTorqueImpulse(long objectId, Vector3f vec);
 
     /**
-     * Clear all forces from the PhysicsRigidBody
-     *
+     * Clear all forces acting on this body.
      */
     public void clearForces() {
         clearForces(objectId);
@@ -636,6 +640,13 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     private native void clearForces(long objectId);
 
+    /**
+     * Apply the specified CollisionShape to this rigid body. Note that the body
+     * should not be in any physics space while changing shape; the body gets
+     * rebuilt on the physics side.
+     *
+     * @param collisionShape the shape to apply (not null, alias created)
+     */
     @Override
     public void setCollisionShape(CollisionShape collisionShape) {
         super.setCollisionShape(collisionShape);
@@ -653,8 +664,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void setCollisionShape(long objectId, long collisionShapeId);
 
     /**
-     * reactivates this PhysicsRigidBody when it has been deactivated because it
-     * was not moving
+     * Reactivates this body if it has been deactivated due to lack of motion.
      */
     public void activate() {
         activate(objectId);
@@ -662,6 +672,11 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     private native void activate(long objectId);
 
+    /**
+     * Test whether this body has been deactivated due to lack of motion.
+     *
+     * @return true if still active, false if deactivated
+     */
     public boolean isActive() {
         return isActive(objectId);
     }
@@ -669,12 +684,12 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native boolean isActive(long objectId);
 
     /**
-     * sets the sleeping thresholds, these define when the object gets
-     * deactivated to save ressources. Low values keep the object active when it
+     * Alter the sleeping thresholds. These determine when the object can be
+     * deactivated to save resources. Low values keep the object active when it
      * barely moves
      *
-     * @param linear the linear sleeping threshold
-     * @param angular the angular sleeping threshold
+     * @param linear the new linear sleeping threshold (&ge;0)
+     * @param angular the new angular sleeping threshold (&ge;0)
      */
     public void setSleepingThresholds(float linear, float angular) {
         setSleepingThresholds(objectId, linear, angular);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,7 @@ import com.jme3.scene.debug.Arrow;
 import java.util.logging.Logger;
 
 /**
+ * A physics-debug control used to visualize a PhysicsJoint.
  *
  * @author normenhansen
  */

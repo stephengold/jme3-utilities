@@ -56,17 +56,26 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      */
     final private static Logger logger
             = Logger.getLogger(BulletAppState.class.getName());
-
+    /**
+     * true if-and-only-if the physics simulation is running (started but not
+     * yet stopped)
+     */
     private boolean initialized = false;
+    /**
+     * app-state manager that manages this state
+     */
     private AppStateManager stateManager;
     private ScheduledThreadPoolExecutor executor;
+    /**
+     * physics space managed by this state
+     */
     private PhysicsSpace pSpace;
     /**
-     * which threading mode to use (not null)
+     * threading mode to use (not null)
      */
     private ThreadingType threadingType = ThreadingType.SEQUENTIAL;
     /**
-     * which broadphase collision-detection algorithm to use (not null)
+     * broadphase collision-detection algorithm to use (not null)
      */
     private BroadphaseType broadphaseType = BroadphaseType.DBVT;
     /**
@@ -80,10 +89,16 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      */
     final private Vector3f worldMax = new Vector3f(10000f, 10000f, 10000f);
     /**
-     * simulation speed (default=1)
+     * simulation speed multiplier (default=1, paused=0)
      */
     private float speed = 1f;
+    /**
+     * true if-and-only-if this state is enabled
+     */
     private boolean active = true;
+    /**
+     * true if-and-only-if a debug visualization is enabled for this state
+     */
     private boolean debugEnabled = false;
     private boolean isAttached = false;
     private BulletDebugAppState debugAppState;
@@ -101,7 +116,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      * Create a new app state to manage a PhysicsSpace with DBVT collision
      * detection.
      *
-     * Use getStateManager().addState(bulletAppState) to enable physics.
+     * Use getStateManager().addState(bulletAppState) to start physics.
      */
     public BulletAppState() {
     }
@@ -109,7 +124,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     /**
      * Create a new app state to manage a PhysicsSpace.
      *
-     * Use getStateManager().addState(bulletAppState) to enable physics.
+     * Use getStateManager().addState(bulletAppState) to start physics.
      *
      * @param broadphaseType which broadphase collision-detection algorithm to
      * use (not null)
@@ -124,7 +139,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      * Create a new app state to manage a PhysicsSpace with AXIS_SWEEP_3
      * collision detection.
      *
-     * Use getStateManager().addState(bulletAppState) to enable physics.
+     * Use getStateManager().addState(bulletAppState) to start physics.
      *
      * @param worldMin the desired minimum coordinates values (not null,
      * unaffected)
@@ -203,17 +218,17 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     };
 
     /**
-     * Access the PhysicsSpace managed by this app state. Normally this is null
+     * Access the PhysicsSpace managed by this app state. Normally there is none
      * until the state is attached.
      *
-     * @return the pre-existing instance, or null if none
+     * @return the pre-existing instance, or null if no simulation running
      */
     public PhysicsSpace getPhysicsSpace() {
         return pSpace;
     }
 
     /**
-     * The physics system is started automatically on attaching, if you want to
+     * The physics system is started automatically on attaching. If you want to
      * start it before for some reason, you can use this method.
      */
     public void startPhysics() {
@@ -230,6 +245,10 @@ public class BulletAppState implements AppState, PhysicsTickListener {
         initialized = true;
     }
 
+    /**
+     * The physics system is stopped automatically during the cleanup that takes
+     * place after it is detached. TODO privatize
+     */
     public void stopPhysics() {
         if (!initialized) {
             return;
@@ -249,16 +268,32 @@ public class BulletAppState implements AppState, PhysicsTickListener {
         startPhysics();
     }
 
+    /**
+     * Test whether the physics simulation is running (started but not yet
+     * stopped).
+     *
+     * @return true if running, otherwise false
+     */
     @Override
     public boolean isInitialized() {
         return initialized;
     }
 
+    /**
+     * Enable or disable this state.
+     *
+     * @param enabled true &rarr; enable, false &rarr; disable
+     */
     @Override
     public void setEnabled(boolean enabled) {
         this.active = enabled;
     }
 
+    /**
+     * Test whether this state is enabled.
+     *
+     * @return true if enabled, otherwise false
+     */
     @Override
     public boolean isEnabled() {
         return active;
@@ -267,7 +302,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     /**
      * Alter whether debug visualization is enabled for this app state.
      *
-     * @param debugEnabled true to enable, false to disable
+     * @param debugEnabled true &rarr; enable, false &rarr; disable
      */
     public void setDebugEnabled(boolean debugEnabled) {
         this.debugEnabled = debugEnabled;

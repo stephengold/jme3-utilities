@@ -47,7 +47,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A 6 degree-of-freedom joint based on Bullet's btGeneric6DofConstraint.
+ * A joint based on Bullet's btGeneric6DofConstraint.
  *
  * <i>From the Bullet manual:</i><br>
  * This generic constraint can emulate a variety of standard constraints, by
@@ -70,12 +70,29 @@ public class SixDofJoint extends PhysicsJoint {
             = Logger.getLogger(SixDofJoint.class.getName());
 
     Matrix3f rotA, rotB;
+    /**
+     * true&rarr;limits give the allowable range of movement of frameB in frameA
+     * space, false&rarr;limits give the allowable range of movement of frameA
+     * in frameB space TODO privatize
+     */
     boolean useLinearReferenceFrameA;
     LinkedList<RotationalLimitMotor> rotationalMotors = new LinkedList<>();
     TranslationalLimitMotor translationalMotor;
+    /**
+     * upper limit for rotation of each axis TODO privatize
+     */
     Vector3f angularUpperLimit = new Vector3f(Vector3f.POSITIVE_INFINITY);
+    /**
+     * lower limit for rotation of each axis TODO privatize
+     */
     Vector3f angularLowerLimit = new Vector3f(Vector3f.NEGATIVE_INFINITY);
+    /**
+     * upper limit for translation of each axis TODO privatize
+     */
     Vector3f linearUpperLimit = new Vector3f(Vector3f.POSITIVE_INFINITY);
+    /**
+     * lower limit for translation of each axis TODO privatize
+     */
     Vector3f linearLowerLimit = new Vector3f(Vector3f.NEGATIVE_INFINITY);
 
     /**
@@ -102,42 +119,56 @@ public class SixDofJoint extends PhysicsJoint {
      * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
      * B
      */
-    public SixDofJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB, boolean useLinearReferenceFrameA) {
+    public SixDofJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
+            Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB,
+            boolean useLinearReferenceFrameA) {
         super(nodeA, nodeB, pivotA, pivotB);
         this.useLinearReferenceFrameA = useLinearReferenceFrameA;
         this.rotA = rotA;
         this.rotB = rotB;
 
-        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA, rotA, pivotB, rotB, useLinearReferenceFrameA);
+        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA,
+                rotA, pivotB, rotB, useLinearReferenceFrameA);
         logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
         gatherMotors();
     }
 
     /**
-     * @param nodeA the 1st body connected by the joint
-     * @param nodeB the 2nd body connected by the joint
-     * @param pivotA local translation of the joint connection point in node A
-     * @param pivotB local translation of the joint connection point in node B
+     * Create a new SixDofJoint. To be effective, the joint must be added to a
+     * physics space.
+     *
+     * @param nodeA the 1st body connected by the joint (not null, alias
+     * created)
+     * @param nodeB the 2nd body connected by the joint (not null, alias
+     * created)
+     * @param pivotA the local offset of the connection point in node A (not
+     * null, alias created)
+     * @param pivotB the local offset of the connection point in node B (not
+     * null, alias created)
      * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
      * B
      */
-    public SixDofJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, boolean useLinearReferenceFrameA) {
+    public SixDofJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
+            Vector3f pivotA, Vector3f pivotB, boolean useLinearReferenceFrameA) {
         super(nodeA, nodeB, pivotA, pivotB);
         this.useLinearReferenceFrameA = useLinearReferenceFrameA;
         rotA = new Matrix3f();
         rotB = new Matrix3f();
 
-        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA, rotA, pivotB, rotB, useLinearReferenceFrameA);
+        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA,
+                rotA, pivotB, rotB, useLinearReferenceFrameA);
         logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
         gatherMotors();
     }
 
     private void gatherMotors() {
         for (int i = 0; i < 3; i++) {
-            RotationalLimitMotor rmot = new RotationalLimitMotor(getRotationalLimitMotor(objectId, i));
+            RotationalLimitMotor rmot = new RotationalLimitMotor(
+                    getRotationalLimitMotor(objectId, i));
             rotationalMotors.add(rmot);
         }
-        translationalMotor = new TranslationalLimitMotor(getTranslationalLimitMotor(objectId));
+        translationalMotor = new TranslationalLimitMotor(
+                getTranslationalLimitMotor(objectId));
     }
 
     private native long getRotationalLimitMotor(long objectId, int index);
@@ -145,21 +176,21 @@ public class SixDofJoint extends PhysicsJoint {
     private native long getTranslationalLimitMotor(long objectId);
 
     /**
-     * returns the TranslationalLimitMotor of this 6DofJoint which allows
-     * manipulating the translational axis
+     * Access the TranslationalLimitMotor of this joint, the motor which
+     * influences translation on all 3 axes.
      *
-     * @return the TranslationalLimitMotor
+     * @return the pre-existing instance
      */
     public TranslationalLimitMotor getTranslationalLimitMotor() {
         return translationalMotor;
     }
 
     /**
-     * returns one of the three RotationalLimitMotors of this 6DofJoint which
-     * allow manipulating the rotational axes
+     * Access the indexed RotationalLimitMotor of this joint, the motor which
+     * influences rotation around one axis.
      *
-     * @param index the index of the RotationalLimitMotor
-     * @return the RotationalLimitMotor at the given index
+     * @param index the axis index of the desired motor (&ge;0, &le;3)
+     * @return the pre-existing instance
      */
     public RotationalLimitMotor getRotationalLimitMotor(int index) {
         return rotationalMotors.get(index);

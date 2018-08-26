@@ -43,11 +43,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A slider joint joint based on Bullet's btSliderConstraint.
+ * A joint joint based on Bullet's btSliderConstraint.
  *
  * <i>From the Bullet manual:</i><br>
  * The slider constraint allows the body to rotate around one axis and translate
- * along this axis.
+ * along that same axis.
  *
  * @author normenhansen
  */

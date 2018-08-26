@@ -35,6 +35,8 @@ import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 
 /**
+ * A motor based on Bullet's btTranslationalLimitMotor. Motors are used to drive
+ * joints.
  *
  * @author normenhansen
  */
@@ -45,7 +47,10 @@ public class TranslationalLimitMotor {
      */
     final private static Logger logger
             = Logger.getLogger(TranslationalLimitMotor.class.getName());
-
+    /**
+     * Identifier of the Bullet motor. The constructor sets this to a non-zero
+     * value.
+     */
     private long motorId = 0;
 
     public TranslationalLimitMotor(long motor) {

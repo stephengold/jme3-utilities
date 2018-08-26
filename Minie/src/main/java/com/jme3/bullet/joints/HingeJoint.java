@@ -42,7 +42,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A hinge joint based on btHingeConstraint.
+ * A joint based on Bullet's btHingeConstraint.
  *
  * <i>From the Bullet manual:</i><br>
  * Hinge constraint, or revolute joint, restricts two additional angular degrees

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,8 @@ package com.jme3.bullet.joints.motors;
 import java.util.logging.Logger;
 
 /**
+ * A motor based on Bullet's btRotationalLimitMotor. Motors are used to drive
+ * joints.
  *
  * @author normenhansen
  */
@@ -45,6 +47,10 @@ public class RotationalLimitMotor {
     final private static Logger logger
             = Logger.getLogger(RotationalLimitMotor.class.getName());
 
+    /**
+     * Identifier of the Bullet motor. The constructor sets this to a non-zero
+     * value.
+     */
     private long motorId = 0;
 
     public RotationalLimitMotor(long motor) {

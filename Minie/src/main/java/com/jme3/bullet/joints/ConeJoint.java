@@ -43,7 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A cone joint based on Bullet's btConeTwistConstraint.
+ * A joint based on Bullet's btConeTwistConstraint.
  *
  * <i>From the Bullet manual:</i><br>
  * To create ragdolls, the cone twist constraint is very useful for limbs like

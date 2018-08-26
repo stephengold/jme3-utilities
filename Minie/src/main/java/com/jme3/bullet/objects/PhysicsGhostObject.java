@@ -48,6 +48,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * A collision object for intangibles, based on Bullet's
+ * btPairCachingGhostObject.
  * <i>From Bullet manual:</i><br>
  * GhostObject can keep track of all objects that are overlapping. By default,
  * this overlap is based on the AABB. This is useful for creating a character
@@ -63,8 +65,8 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     final private static Logger logger
             = Logger.getLogger(PhysicsGhostObject.class.getName());
 
-    private boolean locationDirty = false;
-    private final Quaternion tmp_inverseWorldRotation = new Quaternion();
+    private boolean locationDirty = false; // TODO final
+    private final Quaternion tmp_inverseWorldRotation = new Quaternion(); // TODO remove
     final private List<PhysicsCollisionObject> overlappingObjects = new LinkedList<>();
 
     /**
@@ -103,6 +105,13 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
 
     private native void setGhostFlags(long objectId);
 
+    /**
+     * Apply the specified CollisionShape to this object. Note that the object
+     * should not be in any physics space while changing shape; the object gets
+     * rebuilt on the physics side.
+     *
+     * @param collisionShape the shape to apply (not null, alias created)
+     */
     @Override
     public void setCollisionShape(CollisionShape collisionShape) {
         super.setCollisionShape(collisionShape);

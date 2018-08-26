@@ -137,11 +137,11 @@ public abstract class PhysicsCollisionObject implements Savable {
     private Object userObject;
 
     /**
-     * Apply a CollisionShape to this physics object. Note that the object
-     * should not be in the physics space when adding a new collision shape as
-     * it is rebuilt on the physics side.
+     * Apply the specified CollisionShape to this object. Note that the object
+     * should not be in any physics space while changing shape; the object gets
+     * rebuilt on the physics side.
      *
-     * @param collisionShape the CollisionShape to set (not null, alias created)
+     * @param collisionShape the shape to apply (not null, alias created)
      */
     public void setCollisionShape(CollisionShape collisionShape) {
         Validate.nonNull(collisionShape, "collision shape");

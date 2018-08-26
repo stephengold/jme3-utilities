@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 jMonkeyEngine
+ * Copyright (c) 2009-2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,9 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 
 /**
+ * The abstract base class for physics-debug controls (such as
+ * BulletRigidBodyDebugControl) used to visualize individual collision objects
+ * and joints.
  *
  * @author normenhansen
  */
@@ -50,7 +53,9 @@ public abstract class AbstractPhysicsDebugControl extends AbstractControl {
     }
 
     /**
-     * This is called on the physics thread for debug controls
+     * This is invoked on the physics thread.
+     *
+     * @param tpf (in seconds, &ge;0)
      */
     @Override
     protected abstract void controlUpdate(float tpf);

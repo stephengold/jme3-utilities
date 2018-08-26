@@ -46,11 +46,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * <p>
- * PhysicsVehicleNode - Special PhysicsNode that implements vehicle
- * functions</p>
- * <p>
- * <i>From bullet manual:</i><br>
+ * A collision object for simplified vehicle simulation based on Bullet's
+ * btRaycastVehicle.
+ *
+ * <i>From Bullet manual:</i><br>
  * For most vehicle simulations, it is recommended to use the simplified Bullet
  * vehicle model as provided in btRaycastVehicle. Instead of simulation each
  * wheel and chassis as separate rigid bodies, connected by constraints, it uses
@@ -59,7 +58,6 @@ import java.util.logging.Logger;
  * The entire vehicle is represented as a single rigid body, the chassis. The
  * collision detection of the wheels is approximated by ray casts, and the tire
  * friction is a basic anisotropic friction model.
- * </p>
  *
  * @author normenhansen
  */

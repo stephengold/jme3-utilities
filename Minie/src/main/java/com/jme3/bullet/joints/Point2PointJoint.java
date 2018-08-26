@@ -42,7 +42,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A point-to-point joint based on Bullet's btPoint2PointConstraint.
+ * A joint based on Bullet's btPoint2PointConstraint.
  *
  * <i>From the Bullet manual:</i><br>
  * Point-to-point constraint, also known as ball socket joint, limits the

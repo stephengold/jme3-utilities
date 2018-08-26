@@ -180,7 +180,7 @@ public class PhysicsSpace {
     }
 
     /**
-     * Must be called from the designated physics thread
+     * Must be invoked from the designated physics thread. TODO privatize
      */
     public void create() {
         physicsSpaceId = createPhysicsSpace(worldMin.x, worldMin.y, worldMin.z,
