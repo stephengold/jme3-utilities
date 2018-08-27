@@ -41,7 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Basic box collision shape
+ * A rectangular-solid collision shape based on Bullet's btBoxShape.
  *
  * @author normenhansen
  */
@@ -56,7 +56,7 @@ public class BoxCollisionShape extends CollisionShape {
     private Vector3f halfExtents;
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public BoxCollisionShape() {
@@ -82,6 +82,12 @@ public class BoxCollisionShape extends CollisionShape {
         return halfExtents;
     }
 
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
@@ -89,6 +95,12 @@ public class BoxCollisionShape extends CollisionShape {
         capsule.write(halfExtents, "halfExtents", new Vector3f(1, 1, 1));
     }
 
+    /**
+     * De-serialize this shape, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);

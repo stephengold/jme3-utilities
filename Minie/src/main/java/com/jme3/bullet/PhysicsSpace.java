@@ -157,8 +157,7 @@ public class PhysicsSpace {
     }
 
     /**
-     * Create a new PhysicsSpace. Must be called from the designated physics
-     * thread.
+     * Create a PhysicsSpace. Must be called from the designated physics thread.
      *
      * @param worldMin the desired minimum coordinates values (not null,
      * unaffected)
@@ -413,8 +412,8 @@ public class PhysicsSpace {
     }
 
     /**
-     * adds all physics controls and joints in the given spatial node to the
-     * physics space (e.g. after loading from disk) - recursive if node
+     * Add all physics controls and joints in the specified subtree of the scene
+     * graph to this space (e.g. after loading from disk). Note: recursive!
      *
      * @param spatial the root node containing the physics objects
      */
@@ -425,6 +424,7 @@ public class PhysicsSpace {
             RigidBodyControl physicsNode = spatial.getControl(RigidBodyControl.class);
             //add joints with physicsNode as BodyA
             List<PhysicsJoint> joints = physicsNode.getJoints();
+            // TODO enhanced for loop
             for (Iterator<PhysicsJoint> it1 = joints.iterator(); it1.hasNext();) {
                 PhysicsJoint physicsJoint = it1.next();
                 if (physicsNode.equals(physicsJoint.getBodyA())) {
@@ -436,6 +436,7 @@ public class PhysicsSpace {
         //recursion
         if (spatial instanceof Node) {
             List<Spatial> children = ((Node) spatial).getChildren();
+            // TODO enhanced for loop
             for (Iterator<Spatial> it = children.iterator(); it.hasNext();) {
                 Spatial spat = it.next();
                 addAll(spat);
@@ -444,8 +445,9 @@ public class PhysicsSpace {
     }
 
     /**
-     * Removes all physics controls and joints in the given spatial from the
-     * physics space (e.g. before saving to disk) - recursive if node
+     * Remove all physics controls and joints in the specified subtree of the
+     * scene graph from the physics space (e.g. before saving to disk) Note:
+     * recursive!
      *
      * @param spatial the rootnode containing the physics objects
      */
@@ -467,6 +469,7 @@ public class PhysicsSpace {
         //recursion
         if (spatial instanceof Node) {
             List<Spatial> children = ((Node) spatial).getChildren();
+            // TODO enhance for loop
             for (Iterator<Spatial> it = children.iterator(); it.hasNext();) {
                 Spatial spat = it.next();
                 removeAll(spat);
@@ -549,6 +552,12 @@ public class PhysicsSpace {
         removeCharacterObject(physicsSpaceId, node.getObjectId());
     }
 
+    /**
+     * NOTE: When a rigid body is added, its gravity gets set to that of the
+     * physics space.
+     *
+     * @param node the body to add (not null, not already in the space)
+     */
     private void addRigidBody(PhysicsRigidBody node) {
         if (physicsBodies.containsKey(node.getObjectId())) {
             logger.log(Level.WARNING, "RigidBody {0} already exists in PhysicsSpace, cannot add.", node);
@@ -633,8 +642,8 @@ public class PhysicsSpace {
     }
 
     /**
-     * Alter the gravity-acceleration vector of this space.
-     *
+     * Alter the gravitational acceleration acting on newly-added bodies.
+     * <p>
      * Whenever a rigid body is added to a space, the body's gravity gets set to
      * that of the space. Thus it makes sense to set space's vector before
      * adding any bodies to the space.
@@ -654,13 +663,19 @@ public class PhysicsSpace {
      */
     private final Vector3f gravity = new Vector3f(0, -9.81f, 0);
 
+    /**
+     * Copy the gravitational acceleration acting on newly-added bodies.
+     *
+     * @param gravity storage for the result (not null, modified)
+     * @return acceleration (in the vector provided)
+     */
     public Vector3f getGravity(Vector3f gravity) {
         return gravity.set(this.gravity);
     }
 
     /**
      * Register the specified tick listener with this space.
-     *
+     * <p>
      * Tick listeners are notified before and after each physics step. A physics
      * step is not necessarily the same as a frame; it is more influenced by the
      * accuracy of the physics space.
@@ -680,7 +695,6 @@ public class PhysicsSpace {
      * De-register the specified tick listener.
      *
      * @see #addTickListener(com.jme3.bullet.PhysicsTickListener)
-     *
      * @param listener the listener to de-register (not null)
      */
     public void removeTickListener(PhysicsTickListener listener) {
@@ -692,7 +706,7 @@ public class PhysicsSpace {
 
     /**
      * Register the specified collision listener with this space.
-     *
+     * <p>
      * Collision listeners are notified when collisions occur in the space.
      *
      * @param listener the listener to register (not null, alias created)
@@ -709,7 +723,6 @@ public class PhysicsSpace {
      *
      * @see
      * #addCollisionListener(com.jme3.bullet.collision.PhysicsCollisionListener)
-     *
      * @param listener the listener to de-register (not null)
      */
     public void removeCollisionListener(PhysicsCollisionListener listener) {
@@ -722,7 +735,7 @@ public class PhysicsSpace {
     /**
      * Register the specified collision-group listener with the specified
      * collision group of this space.
-     *
+     * <p>
      * Such a listener can disable collisions when they occur. There can be only
      * one listener per collision group per space.
      *
@@ -745,7 +758,6 @@ public class PhysicsSpace {
      * @see
      * #addCollisionGroupListener(com.jme3.bullet.collision.PhysicsCollisionGroupListener,
      * int)
-     *
      * @param collisionGroup the group of the listener to de-register (bit mask
      * with exactly one bit set)
      */
@@ -853,23 +865,6 @@ public class PhysicsSpace {
     public native void rayTest_native(Vector3f from, Vector3f to,
             long physicsSpaceId, List<PhysicsRayTestResult> results, int flags);
 
-//    private class InternalRayListener extends CollisionWorld.RayResultCallback {
-//
-//        private List<PhysicsRayTestResult> results;
-//
-//        public InternalRayListener(List<PhysicsRayTestResult> results) {
-//            this.results = results;
-//        }
-//
-//        @Override
-//        public float addSingleResult(LocalRayResult lrr, boolean bln) {
-//            PhysicsCollisionObject obj = (PhysicsCollisionObject) lrr.collisionObject.getUserPointer();
-//            results.add(new PhysicsRayTestResult(obj, Converter.convert(lrr.hitNormalLocal), lrr.hitFraction, bln));
-//            return lrr.hitFraction;
-//        }
-//    }
-//
-//
     /**
      * Performs a sweep collision test and returns the results as a list of
      * PhysicsSweepTestResults
@@ -903,7 +898,7 @@ public class PhysicsSpace {
     /**
      * Performs a sweep collision test and returns the results as a list of
      * PhysicsSweepTestResults
-     *
+     * <p>
      * You have to use different Transforms for start and end (at least distance
      * &gt; allowedCcdPenetration). SweepTest will not see a collision if it
      * starts INSIDE an object and is moving AWAY from its center.
@@ -924,25 +919,8 @@ public class PhysicsSpace {
         return results;
     }
 
-    /*    private class InternalSweepListener extends CollisionWorld.ConvexResultCallback {
-
-        private List<PhysicsSweepTestResult> results;
-
-        public InternalSweepListener(List<PhysicsSweepTestResult> results) {
-            this.results = results;
-        }
-
-        @Override
-        public float addSingleResult(LocalConvexResult lcr, boolean bln) {
-            PhysicsCollisionObject obj = (PhysicsCollisionObject) lcr.hitCollisionObject.getUserPointer();
-            results.add(new PhysicsSweepTestResult(obj, Converter.convert(lcr.hitNormalLocal), lcr.hitFraction, bln));
-            return lcr.hitFraction;
-        }
-    }
-
-     */
     /**
-     * destroys the current PhysicsSpace so that a new one can be created
+     * Destroy the current PhysicsSpace so that a new one can be created.
      */
     public void destroy() {
         physicsBodies.clear();
@@ -976,7 +954,7 @@ public class PhysicsSpace {
     }
 
     /**
-     * Sets the maximum number of extra steps that will be used when the render
+     * Set the maximum number of extra steps that will be used when the render
      * fps is below the physics fps. Doing this maintains determinism in
      * physics. For example a maximum number of 2 can compensate for framerates
      * as low as 30fps when the physics has the default accuracy of 60 fps. Note
@@ -1052,7 +1030,7 @@ public class PhysicsSpace {
 
     /**
      * Set the number of iterations used by the contact solver.
-     *
+     * <p>
      * The default is 10. Use 4 for low quality, 20 for high quality.
      *
      * @param numIterations the number of iterations (&ge;1)

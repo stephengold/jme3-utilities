@@ -37,10 +37,9 @@ import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 
 /**
- *
  * A 6 degree-of-freedom joint based on Bullet's btGeneric6DofSpringConstraint.
- *
- * <i>From bullet manual:</i><br>
+ * <p>
+ * <i>From the Bullet manual:</i><br>
  * This generic constraint can emulate a variety of standard constraints, by
  * configuring each of the 6 degrees of freedom (DoF). The first 3-DoF axis are
  * linear axis, which represent translation of rigidbodies, and the latter 3-DoF
@@ -66,15 +65,15 @@ public class SixDofSpringJoint extends SixDofJoint {
     final float springDamping[] = new float[6]; // between 0 and 1 (1 == no damping)
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public SixDofSpringJoint() {
     }
 
     /**
-     * Create a new SixDofSpringJoint. To be effective, the joint must be added
-     * to a physics space.
+     * Create a SixDofSpringJoint. To be effective, the joint must be added to a
+     * physics space.
      *
      * @param nodeA the 1st body connected by the joint (not null, alias
      * created)
@@ -89,8 +88,8 @@ public class SixDofSpringJoint extends SixDofJoint {
      * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
      * B
      */
-    public SixDofSpringJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, 
-            Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB, 
+    public SixDofSpringJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
+            Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB,
             boolean useLinearReferenceFrameA) {
         super(nodeA, nodeB, pivotA, pivotB, rotA, rotB, useLinearReferenceFrameA);
     }

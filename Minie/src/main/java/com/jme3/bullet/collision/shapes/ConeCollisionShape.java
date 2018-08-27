@@ -41,6 +41,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * A cone collision shape based on Bullet's btConeShapeX, btConeShape, or
+ * btConeShapeZ.
  *
  * @author normenhansen
  */
@@ -54,10 +56,13 @@ public class ConeCollisionShape extends CollisionShape {
 
     private float radius;
     private float height;
+    /**
+     * height axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
+     */
     private int axis;
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public ConeCollisionShape() {
@@ -94,6 +99,12 @@ public class ConeCollisionShape extends CollisionShape {
         return height;
     }
 
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
@@ -103,6 +114,12 @@ public class ConeCollisionShape extends CollisionShape {
         capsule.write(axis, "axis", PhysicsSpace.AXIS_Y);
     }
 
+    /**
+     * De-serialize this shape, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);

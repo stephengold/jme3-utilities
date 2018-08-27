@@ -50,10 +50,11 @@ import java.util.logging.Logger;
 /**
  * A collision object for intangibles, based on Bullet's
  * btPairCachingGhostObject.
+ * <p>
  * <i>From Bullet manual:</i><br>
  * GhostObject can keep track of all objects that are overlapping. By default,
  * this overlap is based on the AABB. This is useful for creating a character
- * controller, collision sensors/triggers, explosions etc.<br>
+ * controller, collision sensors/triggers, explosions etc.
  *
  * @author normenhansen
  */
@@ -70,7 +71,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     final private List<PhysicsCollisionObject> overlappingObjects = new LinkedList<>();
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public PhysicsGhostObject() {
@@ -222,23 +223,18 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     }
 
     /**
-     * used internally
-     */
-//    public PairCachingGhostObject getObjectId() {
-//        return gObject;
-//    }
-    /**
-     * destroys this PhysicsGhostNode and removes it from memory
+     * Destroy this object and remove it from memory. (Has no effect.)
      */
     public void destroy() {
     }
 
     /**
-     * Another Object is overlapping with this GhostNode, if and if only there
-     * CollisionShapes overlaps. They could be both regular PhysicsRigidBodys or
-     * PhysicsGhostObjects.
+     * Access a list of overlapping objects.
+     * <p>
+     * Another object overlaps with this one if and if only their
+     * CollisionShapes overlap.
      *
-     * @return All CollisionObjects overlapping with this GhostNode.
+     * @return an internal list which may get reused (not null)
      */
     public List<PhysicsCollisionObject> getOverlappingObjects() {
         overlappingObjects.clear();
@@ -256,9 +252,9 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     }
 
     /**
+     * Count how many CollisionObjects this object is currently overlapping.
      *
-     * @return With how many other CollisionObjects this GhostNode is currently
-     * overlapping.
+     * @return count (&ge;0)
      */
     public int getOverlappingCount() {
         return getOverlappingCount(objectId);
@@ -267,44 +263,83 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     private native int getOverlappingCount(long objectId);
 
     /**
+     * Access an overlapping collision object by its position in the list.
      *
-     * @param index The index of the overlapping Node to retrieve.
-     * @return The Overlapping CollisionObject at the given index.
+     * @param index which list position (&ge;0, &lt;count)
+     * @return the pre-existing object
      */
     public PhysicsCollisionObject getOverlapping(int index) {
         return overlappingObjects.get(index);
     }
 
+    /**
+     * Alter the continuous collision detection (CCD) swept sphere radius for
+     * this object.
+     *
+     * @param radius (&ge;0)
+     */
     public void setCcdSweptSphereRadius(float radius) {
         setCcdSweptSphereRadius(objectId, radius);
     }
 
     private native void setCcdSweptSphereRadius(long objectId, float radius);
 
+    /**
+     * Sets the amount of motion that has to happen in one physics tick to
+     * trigger the continuous collision detection (CCD).
+     * <p>
+     * This addresses the problem of fast objects moving through other objects.
+     *
+     * @param threshold the desired threshold value (&gt;0) or zero to disable
+     * CCD (default=0)
+     */
     public void setCcdMotionThreshold(float threshold) {
         setCcdMotionThreshold(objectId, threshold);
     }
 
     private native void setCcdMotionThreshold(long objectId, float threshold);
 
+    /**
+     * Read the radius of the sphere used for continuous collision detection
+     * (CCD).
+     *
+     * @return radius (&ge;0)
+     */
     public float getCcdSweptSphereRadius() {
         return getCcdSweptSphereRadius(objectId);
     }
 
     private native float getCcdSweptSphereRadius(long objectId);
 
+    /**
+     * Read the continuous collision detection (CCD) motion threshold for this
+     * object.
+     *
+     * @return threshold value (&ge;0)
+     */
     public float getCcdMotionThreshold() {
         return getCcdMotionThreshold(objectId);
     }
 
     private native float getCcdMotionThreshold(long objectId);
 
+    /**
+     * Read the CCD square motion threshold for this object.
+     *
+     * @return threshold value (&ge;0)
+     */
     public float getCcdSquareMotionThreshold() {
         return getCcdSquareMotionThreshold(objectId);
     }
 
     private native float getCcdSquareMotionThreshold(long objectId);
 
+    /**
+     * Serialize this object, for example when saving to a J3O file.
+     *
+     * @param e exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter e) throws IOException {
         super.write(e);
@@ -315,6 +350,13 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         capsule.write(getCcdSweptSphereRadius(), "ccdSweptSphereRadius", 0);
     }
 
+    /**
+     * De-serialize this object from the specified importer, for example when
+     * loading from a J3O file.
+     *
+     * @param e importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter e) throws IOException {
         super.read(e);

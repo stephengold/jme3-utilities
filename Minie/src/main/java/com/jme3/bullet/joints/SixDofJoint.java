@@ -48,7 +48,7 @@ import java.util.logging.Logger;
 
 /**
  * A joint based on Bullet's btGeneric6DofConstraint.
- *
+ * <p>
  * <i>From the Bullet manual:</i><br>
  * This generic constraint can emulate a variety of standard constraints, by
  * configuring each of the 6 degrees of freedom (dof). The first 3 dof axis are
@@ -96,14 +96,14 @@ public class SixDofJoint extends PhysicsJoint {
     Vector3f linearLowerLimit = new Vector3f(Vector3f.NEGATIVE_INFINITY);
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public SixDofJoint() {
     }
 
     /**
-     * Create a new SixDofJoint. To be effective, the joint must be added to a
+     * Create a SixDofJoint. To be effective, the joint must be added to a
      * physics space.
      *
      * @param nodeA the 1st body connected by the joint (not null, alias
@@ -134,7 +134,7 @@ public class SixDofJoint extends PhysicsJoint {
     }
 
     /**
-     * Create a new SixDofJoint. To be effective, the joint must be added to a
+     * Create a SixDofJoint. To be effective, the joint must be added to a
      * physics space.
      *
      * @param nodeA the 1st body connected by the joint (not null, alias
@@ -224,8 +224,16 @@ public class SixDofJoint extends PhysicsJoint {
 
     private native void setAngularLowerLimit(long objctId, Vector3f vector);
 
-    native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA, Matrix3f rotA, Vector3f pivotB, Matrix3f rotB, boolean useLinearReferenceFrameA);
+    native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA,
+            Matrix3f rotA, Vector3f pivotB, Matrix3f rotB,
+            boolean useLinearReferenceFrameA);
 
+    /**
+     * De-serialize this joint, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);
@@ -261,6 +269,12 @@ public class SixDofJoint extends PhysicsJoint {
         getTranslationalLimitMotor().setUpperLimit((Vector3f) capsule.readSavable("transMotor_UpperLimit", Vector3f.ZERO));
     }
 
+    /**
+     * Serialize this joint, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);

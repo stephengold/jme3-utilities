@@ -44,7 +44,7 @@ import java.util.logging.Logger;
 
 /**
  * A joint joint based on Bullet's btSliderConstraint.
- *
+ * <p>
  * <i>From the Bullet manual:</i><br>
  * The slider constraint allows the body to rotate around one axis and translate
  * along that same axis.
@@ -64,14 +64,14 @@ public class SliderJoint extends PhysicsJoint {
     private boolean useLinearReferenceFrameA;
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public SliderJoint() {
     }
 
     /**
-     * Create a new SliderJoint. To be effective, the joint must be added to a
+     * Create a SliderJoint. To be effective, the joint must be added to a
      * physics space.
      *
      * @param nodeA the 1st body connected by the joint (not null, alias
@@ -447,6 +447,12 @@ public class SliderJoint extends PhysicsJoint {
 
     private native void setMaxAngMotorForce(long objectId, float value);
 
+    /**
+     * Serialize this joint, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
@@ -487,6 +493,12 @@ public class SliderJoint extends PhysicsJoint {
         capsule.write(useLinearReferenceFrameA, "useLinearReferenceFrameA", false);
     }
 
+    /**
+     * De-serialize this joint, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);

@@ -40,6 +40,8 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
+ * An element of a CompoundCollisionShape, consisting of a (non-compound) child
+ * shape, offset and rotated with respect to its parent.
  *
  * @author normenhansen
  */
@@ -56,18 +58,25 @@ public class ChildCollisionShape implements Savable {
     public CollisionShape shape;
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public ChildCollisionShape() {
     }
 
-    public ChildCollisionShape(Vector3f location, Matrix3f rotation, CollisionShape shape) {
+    public ChildCollisionShape(Vector3f location, Matrix3f rotation,
+            CollisionShape shape) {
         this.location = location;
         this.rotation = rotation;
         this.shape = shape;
     }
 
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);
@@ -76,6 +85,12 @@ public class ChildCollisionShape implements Savable {
         capsule.write(shape, "shape", new BoxCollisionShape(new Vector3f(1, 1, 1)));
     }
 
+    /**
+     * De-serialize this shape, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);

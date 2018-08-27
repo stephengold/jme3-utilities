@@ -45,12 +45,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Uses Bullet Physics Heightfield terrain collision system. This is MUCH faster
- * than using a regular mesh. There are a couple tricks though: -No rotation or
- * translation is supported. -The collision bbox must be centered around 0,0,0
- * with the height above and below the y-axis being equal on either side. If
- * not, the whole collision box is shifted vertically and things don't collide
- * as they should.
+ * A terrain collision shape based on Bullet's btHeightfieldTerrainShape.
+ * <p>
+ * This is much more efficient than a regular mesh, but it has a couple
+ * limitations:
+ * <ul>
+ * <li>No rotation or translation.</li>
+ * <li>The collision bounding box must be centered on (0,0,0) with the height
+ * above and below the XZ-plane being equal on either side. If not, the whole
+ * collision box is shifted vertically and objects won't collide properly.</li>
+ * </ul>
  *
  * @author Brent Owens
  */
@@ -147,6 +151,12 @@ public class HeightfieldCollisionShape extends CollisionShape {
         return null;
     }
 
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
@@ -161,6 +171,12 @@ public class HeightfieldCollisionShape extends CollisionShape {
         capsule.write(flipQuadEdges, "flipQuadEdges", false);
     }
 
+    /**
+     * De-serialize this shape, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);

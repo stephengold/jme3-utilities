@@ -38,7 +38,7 @@ package com.jme3.bullet.collision;
 public interface PhysicsCollisionGroupListener {
     /**
      * Called when two physics objects of the registered group are about to
-     * collide, <i>called from physics thread</i>.<br>
+     * collide, <i>invoked on the physics thread</i>.<br>
      * This is only called when the collision will happen based on the
      * collisionGroup and collideWithGroups settings in the
      * PhysicsCollisionObject. That is the case when <b>one</b> of the parties

@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 
 /**
  * A joint based on Bullet's btPoint2PointConstraint.
- *
+ * <p>
  * <i>From the Bullet manual:</i><br>
  * Point-to-point constraint, also known as ball socket joint, limits the
  * translation so that the local pivot points of 2 rigidbodies match in
@@ -60,15 +60,15 @@ public class Point2PointJoint extends PhysicsJoint {
             = Logger.getLogger(Point2PointJoint.class.getName());
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public Point2PointJoint() {
     }
 
     /**
-     * Create a new Point2PointJoint. To be effective, the joint must be added
-     * to a physics space.
+     * Create a Point2PointJoint. To be effective, the joint must be added to a
+     * physics space.
      *
      * @param nodeA the 1st body connected by the joint (not null, alias
      * created)
@@ -120,6 +120,12 @@ public class Point2PointJoint extends PhysicsJoint {
 
     private native float getTau(long objectId);
 
+    /**
+     * Serialize this joint, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
@@ -129,6 +135,12 @@ public class Point2PointJoint extends PhysicsJoint {
         cap.write(getImpulseClamp(), "impulseClamp", 0f);
     }
 
+    /**
+     * De-serialize this joint, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);

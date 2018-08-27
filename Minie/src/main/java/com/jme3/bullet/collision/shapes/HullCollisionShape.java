@@ -44,6 +44,9 @@ import java.nio.FloatBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * A convex hull collision shape based on Bullet's btConvexHullShape.
+ */
 public class HullCollisionShape extends CollisionShape {
 
     /**
@@ -56,7 +59,7 @@ public class HullCollisionShape extends CollisionShape {
 //    protected FloatBuffer fbuf;
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public HullCollisionShape() {
@@ -72,6 +75,12 @@ public class HullCollisionShape extends CollisionShape {
         createShape();
     }
 
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
@@ -80,6 +89,12 @@ public class HullCollisionShape extends CollisionShape {
         capsule.write(points, "points", null);
     }
 
+    /**
+     * De-serialize this shape, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);

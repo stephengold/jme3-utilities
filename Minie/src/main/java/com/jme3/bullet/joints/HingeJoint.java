@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 
 /**
  * A joint based on Bullet's btHingeConstraint.
- *
+ * <p>
  * <i>From the Bullet manual:</i><br>
  * Hinge constraint, or revolute joint, restricts two additional angular degrees
  * of freedom, so the body can only rotate around one axis, the hinge axis. This
@@ -81,14 +81,14 @@ public class HingeJoint extends PhysicsJoint {
     private float limitSoftness = 0.9f;
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public HingeJoint() {
     }
 
     /**
-     * Create a new HingeJoint. To be effective, the joint must be added to a
+     * Create a HingeJoint. To be effective, the joint must be added to a
      * physics space.
      *
      * @param nodeA the 1st body connected by the joint (not null, alias
@@ -214,6 +214,12 @@ public class HingeJoint extends PhysicsJoint {
 
     private native float getHingeAngle(long objectId);
 
+    /**
+     * Serialize this joint, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
@@ -235,6 +241,12 @@ public class HingeJoint extends PhysicsJoint {
         capsule.write(getMaxMotorImpulse(), "maxMotorImpulse", 0f);
     }
 
+    /**
+     * De-serialize this joint, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);

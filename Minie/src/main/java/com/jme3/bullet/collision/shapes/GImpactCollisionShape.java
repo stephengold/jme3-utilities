@@ -47,7 +47,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Basic mesh collision shape
+ * A mesh collision shape based on Bullet's btGImpactMeshShape.
  *
  * @author normenhansen
  */
@@ -67,17 +67,16 @@ public class GImpactCollisionShape extends CollisionShape {
     private ByteBuffer triangleIndexBase;
     private ByteBuffer vertexBase;
     private long meshId = 0;
-//    protected IndexedMesh bulletMesh;
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public GImpactCollisionShape() {
     }
 
     /**
-     * creates a collision shape from the given Mesh
+     * Create a collision shape based on the specified JME mesh.
      *
      * @param mesh the Mesh to use
      */
@@ -115,12 +114,12 @@ public class GImpactCollisionShape extends CollisionShape {
         createShape();
     }
 
-//    /**
-//     * creates a jme mesh from the collision shape, only needed for debugging
-//     */
-//    public Mesh createJmeMesh() {
-//        return Converter.convert(bulletMesh);
-//    }
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
@@ -135,6 +134,12 @@ public class GImpactCollisionShape extends CollisionShape {
         capsule.write(vertexBase.array(), "vertexBase", new byte[0]);
     }
 
+    /**
+     * De-serialize this shape, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);
@@ -151,20 +156,6 @@ public class GImpactCollisionShape extends CollisionShape {
     }
 
     protected void createShape() {
-//        bulletMesh = new IndexedMesh();
-//        bulletMesh.numVertices = numVertices;
-//        bulletMesh.numTriangles = numTriangles;
-//        bulletMesh.vertexStride = vertexStride;
-//        bulletMesh.triangleIndexStride = triangleIndexStride;
-//        bulletMesh.triangleIndexBase = triangleIndexBase;
-//        bulletMesh.vertexBase = vertexBase;
-//        bulletMesh.triangleIndexBase = triangleIndexBase;
-//        TriangleIndexVertexArray tiv = new TriangleIndexVertexArray(numTriangles, triangleIndexBase, triangleIndexStride, numVertices, vertexBase, vertexStride);
-//        objectId = new GImpactMeshShape(tiv);
-//        objectId.setLocalScaling(Converter.convert(worldScale));
-//        ((GImpactMeshShape)objectId).updateBound();
-//        objectId.setLocalScaling(Converter.convert(getScale()));
-//        objectId.setMargin(margin);
         meshId = NativeMeshUtil.createTriangleIndexVertexArray(triangleIndexBase, vertexBase, numTriangles, numVertices, vertexStride, triangleIndexStride);
         logger.log(Level.FINE, "Created Mesh {0}", Long.toHexString(meshId));
         objectId = createShape(meshId);

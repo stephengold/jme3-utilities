@@ -68,10 +68,10 @@ public class VehicleWheel implements Savable {
     private float maxSuspensionForce = 6000f;
     private float radius = 0.5f;
     private float restLength = 1f;
-    private Vector3f wheelWorldLocation = new Vector3f();
-    private Quaternion wheelWorldRotation = new Quaternion();
+    private Vector3f wheelWorldLocation = new Vector3f(); // TODO final
+    private Quaternion wheelWorldRotation = new Quaternion(); // TODO final
     private Spatial wheelSpatial;
-    private Matrix3f tmp_Matrix = new com.jme3.math.Matrix3f();
+    private Matrix3f tmp_Matrix = new com.jme3.math.Matrix3f(); // TODO final
     private final Quaternion tmp_inverseWorldRotation = new Quaternion();
     private boolean applyLocal = false;
 
@@ -272,7 +272,10 @@ public class VehicleWheel implements Savable {
         if (wheelId == 0) {
             return;
         }
-        applyInfo(wheelId, wheelIndex, suspensionStiffness, wheelsDampingRelaxation, wheelsDampingCompression, frictionSlip, rollInfluence, maxSuspensionTravelCm, maxSuspensionForce, radius, frontWheel, restLength);
+        applyInfo(wheelId, wheelIndex, suspensionStiffness,
+                wheelsDampingRelaxation, wheelsDampingCompression, frictionSlip,
+                rollInfluence, maxSuspensionTravelCm, maxSuspensionForce,
+                radius, frontWheel, restLength);
     }
 
     private native void applyInfo(long wheelId, int wheelIndex,
@@ -385,10 +388,9 @@ public class VehicleWheel implements Savable {
     public native float getSkidInfo(long wheelId, int wheelIndex);
 
     /**
-     * returns how many degrees the wheel has turned since the last physics
-     * step.
+     * Calculate how much the wheel has turned since the last physics step.
      *
-     * @return the rotation angle
+     * @return the rotation angle (in degrees)
      */
     public float getDeltaRotation() {
         return getDeltaRotation(wheelId, wheelIndex);
@@ -396,6 +398,12 @@ public class VehicleWheel implements Savable {
 
     public native float getDeltaRotation(long wheelId, int wheelIndex);
 
+    /**
+     * De-serialize this wheel, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
@@ -415,6 +423,12 @@ public class VehicleWheel implements Savable {
         restLength = capsule.readFloat("restLength", 1f);
     }
 
+    /**
+     * Serialize this wheel, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);

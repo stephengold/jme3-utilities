@@ -44,7 +44,7 @@ import java.util.logging.Logger;
 
 /**
  * A joint based on Bullet's btConeTwistConstraint.
- *
+ * <p>
  * <i>From the Bullet manual:</i><br>
  * To create ragdolls, the cone twist constraint is very useful for limbs like
  * the upper arm. It is a special point-to-point constraint that adds cone and
@@ -68,15 +68,15 @@ public class ConeJoint extends PhysicsJoint {
     private boolean angularOnly = false;
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public ConeJoint() {
     }
 
     /**
-     * Create a new ConeJoint. To be effective, the joint must be added to a
-     * physics space.
+     * Create a ConeJoint. To be effective, the joint must be added to a physics
+     * space.
      *
      * @param nodeA the 1st body connected by the joint (not null, alias
      * created)
@@ -125,6 +125,12 @@ public class ConeJoint extends PhysicsJoint {
 
     private native void setAngularOnly(long objectId, boolean value);
 
+    /**
+     * Serialize this joint, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
@@ -138,6 +144,12 @@ public class ConeJoint extends PhysicsJoint {
         capsule.write(twistSpan, "twistSpan", 1e30f);
     }
 
+    /**
+     * De-serialize this joint, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);

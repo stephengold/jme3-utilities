@@ -42,6 +42,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * A planar collision shape based on Bullet's btStaticPlaneShape.
  *
  * @author normenhansen
  */
@@ -56,7 +57,7 @@ public class PlaneCollisionShape extends CollisionShape {
     private Plane plane;
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public PlaneCollisionShape() {
@@ -65,7 +66,7 @@ public class PlaneCollisionShape extends CollisionShape {
     /**
      * Creates a plane Collision shape
      *
-     * @param plane the plane that defines the shape
+     * @param plane the plane that defines the shape (not null, alias created)
      */
     public PlaneCollisionShape(Plane plane) {
         this.plane = plane;
@@ -76,6 +77,12 @@ public class PlaneCollisionShape extends CollisionShape {
         return plane;
     }
 
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
@@ -83,6 +90,12 @@ public class PlaneCollisionShape extends CollisionShape {
         capsule.write(plane, "collisionPlane", new Plane());
     }
 
+    /**
+     * De-serialize this shape, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);

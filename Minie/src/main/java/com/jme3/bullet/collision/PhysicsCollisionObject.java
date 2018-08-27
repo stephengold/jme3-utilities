@@ -41,7 +41,7 @@ import jme3utilities.Validate;
 /**
  * The abstract base class for collision objects based on Bullet's
  * btCollisionObject.
- *
+ * <p>
  * Collision objects include PhysicsCharacter, PhysicsRigidBody, and
  * PhysicsGhostObject.
  *
@@ -279,6 +279,12 @@ public abstract class PhysicsCollisionObject implements Savable {
 
     native void setCollideWithGroups(long objectId, int collisionGroups);
 
+    /**
+     * Serialize this object, for example when saving to a J3O file.
+     *
+     * @param e exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter e) throws IOException {
         OutputCapsule capsule = e.getCapsule(this);
@@ -288,6 +294,12 @@ public abstract class PhysicsCollisionObject implements Savable {
         capsule.write(collisionShape, "collisionShape", null);
     }
 
+    /**
+     * De-serialize this object, for example when loading from a J3O file.
+     *
+     * @param e importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter e) throws IOException {
         InputCapsule capsule = e.getCapsule(this);

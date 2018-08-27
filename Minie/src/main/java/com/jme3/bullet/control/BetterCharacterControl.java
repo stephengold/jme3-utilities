@@ -60,10 +60,10 @@ import java.util.logging.Logger;
  * This is intended to be a replacement for the internal bullet character class.
  * A RigidBody with cylinder collision shape is used and its velocity is set
  * continuously, a ray test is used to check if the character is on the ground.
- *
+ * <p>
  * The character keeps his own local coordinate system which adapts based on the
  * gravity working on the character so the character will always stand upright.
- *
+ * <p>
  * Forces in the local x/z plane are dampened while those in the local y
  * direction are applied fully (e.g. jumping, falling).
  *
@@ -76,6 +76,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      */
     final private static Logger logger
             = Logger.getLogger(BetterCharacterControl.class.getName());
+
     private PhysicsRigidBody rigidBody;
     private float radius;
     private float height;
@@ -124,7 +125,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
     private boolean wantToUnDuck = false;
 
     /**
-     * Only used for serialization, do not use this constructor.
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
+     * directly!
      */
     public BetterCharacterControl() {
         jumpForce = new Vector3f();
@@ -230,7 +232,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * Move the character somewhere. Note the character also takes the location
      * of any spatial its being attached to in the moment it is attached.
      *
-     * @param vec The new character location.
+     * @param vec the desired character location (not null)
      */
     public void warp(Vector3f vec) {
         setPhysicsLocation(vec);
@@ -252,7 +254,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * characters coordinate system, which normally is always z-forward (in
      * world coordinates, parent coordinates when set to applyLocalPhysics)
      *
-     * @param jumpForce The new jump force
+     * @param jumpForce the desired jump force
      */
     public void setJumpForce(Vector3f jumpForce) {
         this.jumpForce.set(jumpForce);
@@ -694,6 +696,12 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
         return control;
     }
 
+    /**
+     * Serialize this control, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
@@ -705,6 +713,12 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
         oc.write(physicsDamping, "physicsDamping", 0.9f);
     }
 
+    /**
+     * De-serialize this shape, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);

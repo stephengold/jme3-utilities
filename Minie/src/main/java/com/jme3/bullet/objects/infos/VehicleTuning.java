@@ -45,10 +45,16 @@ public class VehicleTuning {
     final private static Logger logger
             = Logger.getLogger(VehicleTuning.class.getName());
 
+    // TODO privatize all fields
     public float suspensionStiffness = 5.88f;
     public float suspensionCompression = 0.83f;
     public float suspensionDamping = 0.88f;
     public float maxSuspensionTravelCm = 500f;
     public float maxSuspensionForce = 6000f;
+    /**
+     * The coefficient of friction between a tire and the ground. Should be
+     * about 0.8 for realistic cars, but can increased for better handling. Use
+     * 10000 for kart racers.
+     */
     public float frictionSlip = 10.5f;
 }

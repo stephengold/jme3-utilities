@@ -65,10 +65,10 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     private int upAxis = 1; // TODO make final
     private boolean locationDirty = false; // TODO make final
     //TEMP VARIABLES
-    private final Quaternion tmp_inverseWorldRotation = new Quaternion();
+    private final Quaternion tmp_inverseWorldRotation = new Quaternion(); // TODO remove
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public PhysicsCharacter() {
@@ -110,9 +110,9 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     private native long createCharacterObject(long objectId, long shapeId, float stepHeight);
 
     /**
-     * Sets the location of this physics character
+     * Directly alter the location of this character.
      *
-     * @param location the desired physics location
+     * @param location the desired physics location (not null)
      */
     public void warp(Vector3f location) {
         warp(characterId, location);
@@ -359,17 +359,20 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     }
 
     /**
-     * Set the physics location (same as warp())
+     * Directly alter the location of this character. (Same as
+     * {@link #warp(com.jme3.math.Vector3f)}).)
      *
-     * @param location the location of the actual physics object
+     * @param location the desired location (not null)
      */
     public void setPhysicsLocation(Vector3f location) {
         warp(location);
     }
 
     /**
+     * Copy the location of this character.
+     *
      * @param trans a vector to store the result in (modified if not null)
-     * @return the physicsLocation
+     * @return the location (either trans or a new vector)
      */
     public Vector3f getPhysicsLocation(Vector3f trans) {
         if (trans == null) {
@@ -382,7 +385,9 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     private native void getPhysicsLocation(long objectId, Vector3f vec);
 
     /**
-     * @return the physicsLocation
+     * Copy the location of this character.
+     *
+     * @return a new location vector (not null)
      */
     public Vector3f getPhysicsLocation() {
         return getPhysicsLocation(null);
@@ -400,18 +405,35 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
 
     private native void setCcdMotionThreshold(long objectId, float threshold);
 
+    /**
+     * Read the radius of the sphere used for continuous collision detection
+     * (CCD).
+     *
+     * @return radius (&ge;0)
+     */
     public float getCcdSweptSphereRadius() {
         return getCcdSweptSphereRadius(objectId);
     }
 
     private native float getCcdSweptSphereRadius(long objectId);
 
+    /**
+     * Read the continuous collision detection (CCD) motion threshold for this
+     * character.
+     *
+     * @return threshold value (&ge;0)
+     */
     public float getCcdMotionThreshold() {
         return getCcdMotionThreshold(objectId);
     }
 
     private native float getCcdMotionThreshold(long objectId);
 
+    /**
+     * Read the CCD square motion threshold for this character.
+     *
+     * @return threshold value (&ge;0)
+     */
     public float getCcdSquareMotionThreshold() {
         return getCcdSquareMotionThreshold(objectId);
     }
@@ -445,6 +467,13 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         capsule.write(getPhysicsLocation(new Vector3f()), "physicsLocation", new Vector3f());
     }
 
+    /**
+     * De-serialize this character from the specified importer, for example when
+     * loading from a J3O file.
+     *
+     * @param e importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter e) throws IOException {
         super.read(e);

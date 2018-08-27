@@ -45,7 +45,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * An app state to manage a Bullet physics space in an Application.
+ * An app state to manage a single Bullet physics space.
  *
  * @author normenhansen
  */
@@ -65,6 +65,9 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      * app-state manager that manages this state
      */
     private AppStateManager stateManager;
+    /**
+     * executor service for delayed physics tasks
+     */
     private ScheduledThreadPoolExecutor executor;
     /**
      * physics space managed by this state
@@ -97,33 +100,40 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      */
     private boolean active = true;
     /**
-     * true if-and-only-if a debug visualization is enabled for this state
+     * true if-and-only-if debug visualization is enabled
      */
     private boolean debugEnabled = false;
+    /**
+     * true if-and-only-if this state has been attached at least once
+     */
     private boolean isAttached = false;
+    /**
+     * app state to manage the debug visualization
+     */
     private BulletDebugAppState debugAppState;
     /**
-     * time-per-frame from the most recent update()
+     * time-per-frame from the most recent update() (in seconds)
      */
     private float tpf;
     private Future physicsFuture;
     /**
-     * view ports in which to render debug visualization
+     * view ports in which to render the debug visualization TODO initialize to
+     * default
      */
     private ViewPort[] debugViewPorts;
 
     /**
-     * Create a new app state to manage a PhysicsSpace with DBVT collision
+     * Create an app state to manage a new PhysicsSpace with DBVT collision
      * detection.
-     *
+     * <p>
      * Use getStateManager().addState(bulletAppState) to start physics.
      */
     public BulletAppState() {
     }
 
     /**
-     * Create a new app state to manage a PhysicsSpace.
-     *
+     * Create an app state to manage a new PhysicsSpace.
+     * <p>
      * Use getStateManager().addState(bulletAppState) to start physics.
      *
      * @param broadphaseType which broadphase collision-detection algorithm to
@@ -136,9 +146,9 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
-     * Create a new app state to manage a PhysicsSpace with AXIS_SWEEP_3
+     * Create an app state to manage a new PhysicsSpace with AXIS_SWEEP_3
      * collision detection.
-     *
+     * <p>
      * Use getStateManager().addState(bulletAppState) to start physics.
      *
      * @param worldMin the desired minimum coordinates values (not null,
@@ -151,8 +161,8 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
-     * Create a new app state to manage a PhysicsSpace.
-     *
+     * Create an app state to manage a new PhysicsSpace.
+     * <p>
      * Use getStateManager().addState(bulletAppState) to enable physics.
      *
      * @param worldMin the desired minimum coordinates values (not null,
@@ -262,6 +272,13 @@ public class BulletAppState implements AppState, PhysicsTickListener {
         initialized = false;
     }
 
+    /**
+     * Initialize this state prior to its 1st update. Should be invoked only by
+     * a subclass or by the AppStateManager.
+     *
+     * @param stateManager the manager for this state (not null)
+     * @param app the application which owns this state (not null)
+     */
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         this.stateManager = stateManager;
@@ -300,7 +317,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
-     * Alter whether debug visualization is enabled for this app state.
+     * Alter whether debug visualization is enabled.
      *
      * @param debugEnabled true &rarr; enable, false &rarr; disable
      */
@@ -309,8 +326,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
-     * Alter which view ports will render the debug visualization for this app
-     * state.
+     * Alter which view ports will render the debug visualization.
      *
      * @param viewPorts (not null, alias created)
      */
@@ -328,7 +344,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
-     * Test whether debug visualization is enabled for this app state.
+     * Test whether debug visualization is enabled.
      *
      * @return true if enabled, otherwise false
      */
@@ -380,7 +396,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
             physicsFuture = executor.submit(parallelPhysicsUpdate);
         } else if (threadingType == ThreadingType.SEQUENTIAL) {
             pSpace.update(active ? tpf * speed : 0);
-        } else {
+        } else { // TODO remove
         }
     }
 

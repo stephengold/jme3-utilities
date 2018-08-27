@@ -47,7 +47,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Basic mesh collision shape
+ * A mesh collision shape based on Bullet's btBvhTriangleMeshShape.
  *
  * @author normenhansen
  */
@@ -78,7 +78,7 @@ public class MeshCollisionShape extends CollisionShape {
     private boolean memoryOptimized;
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public MeshCollisionShape() {
@@ -164,6 +164,12 @@ public class MeshCollisionShape extends CollisionShape {
         this.createShape(null);
     }
 
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(final JmeExporter ex) throws IOException {
         super.write(ex);
@@ -189,6 +195,12 @@ public class MeshCollisionShape extends CollisionShape {
         }
     }
 
+    /**
+     * De-serialize this shape, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(final JmeImporter im) throws IOException {
         super.read(im);

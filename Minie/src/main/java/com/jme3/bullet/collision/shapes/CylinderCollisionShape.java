@@ -41,7 +41,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Basic cylinder collision shape
+ * A cylindrical collision shape based on Bullet's btCylinderShapeX, new
+ * btCylinderShape, or btCylinderShapeZ.
  *
  * @author normenhansen
  */
@@ -54,10 +55,13 @@ public class CylinderCollisionShape extends CollisionShape {
             = Logger.getLogger(CylinderCollisionShape.class.getName());
 
     private Vector3f halfExtents;
+    /**
+     * height axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
+     */
     private int axis;
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public CylinderCollisionShape() {
@@ -109,6 +113,12 @@ public class CylinderCollisionShape extends CollisionShape {
         }
     }
 
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
@@ -117,6 +127,12 @@ public class CylinderCollisionShape extends CollisionShape {
         capsule.write(axis, "axis", 1);
     }
 
+    /**
+     * De-serialize this shape, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);
@@ -147,5 +163,4 @@ public class CylinderCollisionShape extends CollisionShape {
     }
 
     private native long createShape(int axis, Vector3f halfExtents);
-
 }

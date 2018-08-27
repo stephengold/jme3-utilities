@@ -56,6 +56,7 @@ import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 
 /**
+ * An app state to manage a debug visualization of a physics space.
  *
  * @author normenhansen
  */
@@ -68,12 +69,12 @@ public class BulletDebugAppState extends AbstractAppState {
             = Logger.getLogger(BulletDebugAppState.class.getName());
 
     private DebugAppStateFilter filter;
-    private Application app;
+    private Application app; // TODO remove
     private AssetManager assetManager;
     private final PhysicsSpace space;
     private final Node physicsDebugRootNode = new Node("Physics Debug Root Node");
-    private ViewPort[] viewPorts;
-    private RenderManager rm;
+    private ViewPort[] viewPorts; // TODO make final
+    private RenderManager rm; // TODO remove
     public Material DEBUG_BLUE;
     public Material DEBUG_RED;
     public Material DEBUG_GREEN;
@@ -99,6 +100,13 @@ public class BulletDebugAppState extends AbstractAppState {
         this.filter = filter;
     }
 
+    /**
+     * Initialize this state prior to its 1st update. Should be invoked only by
+     * a subclass or by the AppStateManager.
+     *
+     * @param stateManager the manager for this state (not null)
+     * @param app the application which owns this state (not null)
+     */
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);

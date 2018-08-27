@@ -70,18 +70,28 @@ public class VehicleControl extends PhysicsVehicle
     protected PhysicsSpace space = null;
     protected boolean added = false;
 
+    /**
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
+     * directly!
+     */
     public VehicleControl() {
     }
 
     /**
-     * Creates a new PhysicsNode with the supplied collision shape
+     * Create a control with the specified collision shape and mass=1.
      *
-     * @param shape the desired shape
+     * @param shape the desired shape (not null, alias created)
      */
     public VehicleControl(CollisionShape shape) {
         super(shape);
     }
 
+    /**
+     * Create a control with the specified collision shape and mass.
+     *
+     * @param shape the desired shape (not null, alias created)
+     * @param mass (&gt;0)
+     */
     public VehicleControl(CollisionShape shape, float mass) {
         super(shape, mass);
     }

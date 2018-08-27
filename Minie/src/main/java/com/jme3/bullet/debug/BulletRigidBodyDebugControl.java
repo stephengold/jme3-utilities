@@ -43,6 +43,7 @@ import com.jme3.scene.Spatial;
 import java.util.logging.Logger;
 
 /**
+ * A physics-debug control used to visualize a PhysicsRigidBody.
  *
  * @author normenhansen
  */
@@ -60,7 +61,8 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
     protected CollisionShape myShape;
     protected Spatial geom;
 
-    public BulletRigidBodyDebugControl(BulletDebugAppState debugAppState, PhysicsRigidBody body) {
+    public BulletRigidBodyDebugControl(BulletDebugAppState debugAppState,
+            PhysicsRigidBody body) {
         super(debugAppState);
         this.body = body;
         myShape = body.getCollisionShape();

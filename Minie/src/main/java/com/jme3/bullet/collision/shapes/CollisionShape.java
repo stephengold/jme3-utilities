@@ -38,9 +38,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This Object holds information about a jbullet CollisionShape to be able to
- * reuse CollisionShapes (as suggested in bullet manuals) TODO: add static
- * methods to create shapes from nodes (like jbullet-jme constructor)
+ * The abstract base class for collision shapes (such as BoxCollisionShape and
+ * CapsuleCollisionShape). As suggested in the Bullet manual, collision shapes
+ * can be reused.
  *
  * @author normenhansen
  */
@@ -53,11 +53,14 @@ public abstract class CollisionShape implements Savable {
             = Logger.getLogger(CollisionShape.class.getName());
 
     protected long objectId = 0;
+    /**
+     * scaling factors: one for each local axis
+     */
     protected Vector3f scale = new Vector3f(1f, 1f, 1f);
     protected float margin = 0f;
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public CollisionShape() {
@@ -73,7 +76,7 @@ public abstract class CollisionShape implements Savable {
     }
 
     /**
-     * used internally
+     * unused TODO remove
      *
      * @param id the desired id value
      */
@@ -81,11 +84,21 @@ public abstract class CollisionShape implements Savable {
         this.objectId = id;
     }
 
+    /**
+     * Alter the scaling factors.
+     *
+     * @param scale the desired scaling factors (not null, unaffected)
+     */
     public void setScale(Vector3f scale) {
         this.scale.set(scale);
         setLocalScaling(objectId, scale);
     }
 
+    /**
+     * Access the scaling factors.
+     *
+     * @return the pre-existing instance (not null)
+     */
     public Vector3f getScale() {
         return scale;
     }
@@ -105,6 +118,12 @@ public abstract class CollisionShape implements Savable {
 
     private native void setMargin(long objectId, float margin);
 
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);
@@ -112,6 +131,12 @@ public abstract class CollisionShape implements Savable {
         capsule.write(getMargin(), "margin", 0.0f);
     }
 
+    /**
+     * De-serialize this shape, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);

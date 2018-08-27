@@ -79,14 +79,14 @@ public abstract class PhysicsJoint implements Savable {
     private boolean collisionBetweenLinkedBodies = true;
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public PhysicsJoint() {
     }
 
     /**
-     * Create a new PhysicsJoint. To be effective, the joint must be added to a
+     * Create a PhysicsJoint. To be effective, the joint must be added to a
      * physics space.
      *
      * @param nodeA the 1st body connected by the joint (not null, alias
@@ -98,7 +98,8 @@ public abstract class PhysicsJoint implements Savable {
      * @param pivotB local offset of the joint connection point in node B (not
      * null, alias created)
      */
-    public PhysicsJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB) {
+    public PhysicsJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
+            Vector3f pivotA, Vector3f pivotB) {
         this.nodeA = nodeA;
         this.nodeB = nodeB;
         this.pivotA = pivotA;
@@ -184,6 +185,12 @@ public abstract class PhysicsJoint implements Savable {
         getBodyB().removeJoint(this);
     }
 
+    /**
+     * Serialize this joint, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);
@@ -193,6 +200,12 @@ public abstract class PhysicsJoint implements Savable {
         capsule.write(pivotB, "pivotB", null);
     }
 
+    /**
+     * De-serialize this joint, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);

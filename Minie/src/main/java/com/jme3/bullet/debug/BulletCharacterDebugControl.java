@@ -43,6 +43,7 @@ import com.jme3.scene.Spatial;
 import java.util.logging.Logger;
 
 /**
+ * A physics-debug control used to visualize a PhysicsCharacter.
  *
  * @author normenhansen
  */

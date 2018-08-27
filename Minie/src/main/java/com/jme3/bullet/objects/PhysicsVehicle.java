@@ -48,7 +48,7 @@ import java.util.logging.Logger;
 /**
  * A collision object for simplified vehicle simulation based on Bullet's
  * btRaycastVehicle.
- *
+ * <p>
  * <i>From Bullet manual:</i><br>
  * For most vehicle simulations, it is recommended to use the simplified Bullet
  * vehicle model as provided in btRaycastVehicle. Instead of simulation each
@@ -76,16 +76,27 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     private PhysicsSpace physicsSpace;
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public PhysicsVehicle() {
     }
 
+    /**
+     * Create a vehicle with the specified collision shape and mass=1.
+     *
+     * @param shape the desired shape (not null, alias created)
+     */
     public PhysicsVehicle(CollisionShape shape) {
         super(shape);
     }
 
+    /**
+     * Create a vehicle with the specified collision shape and mass.
+     *
+     * @param shape the desired shape (not null, alias created)
+     * @param mass (&gt;0)
+     */
     public PhysicsVehicle(CollisionShape shape, float mass) {
         super(shape, mass);
     }
@@ -228,28 +239,35 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     }
 
     /**
-     * You can get access to the single wheels via this method.
+     * Access the indexed wheel of this vehicle.
      *
-     * @param wheel the index of the wheel to access
-     * @return the WheelInfo of the selected wheel
+     * @param wheel the index of the wheel to access (&ge;0, &lt;count)
+     * @return the pre-existing instance
      */
     public VehicleWheel getWheel(int wheel) {
         return wheels.get(wheel);
     }
 
+    /**
+     * Read the number of wheels on this vehicle.
+     *
+     * @return count (&ge;0)
+     */
     public int getNumWheels() {
         return wheels.size();
     }
 
     /**
-     * @return the frictionSlip
+     * Read the friction-slip tuning parameter of this vehicle.
+     *
+     * @return the value
      */
     public float getFrictionSlip() {
         return tuning.frictionSlip;
     }
 
     /**
-     * Use before adding wheels, this is the default used when adding wheels.
+     * Use before adding wheels. This sets the value applied when adding wheels.
      * After adding the wheel, use direct wheel access.<br>
      * The coefficient of friction between the tyre and the ground. Should be
      * about 0.8 for realistic cars, but can increased for better handling. Set
@@ -553,6 +571,12 @@ public class PhysicsVehicle extends PhysicsRigidBody {
         return vehicleId;
     }
 
+    /**
+     * De-serialize this vehicle, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     @SuppressWarnings("unchecked")
     public void read(JmeImporter im) throws IOException {
@@ -569,6 +593,12 @@ public class PhysicsVehicle extends PhysicsRigidBody {
         super.read(im);
     }
 
+    /**
+     * Serialize this vehicle, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);

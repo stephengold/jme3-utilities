@@ -41,8 +41,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A simple point, line, triangle or quad collisionShape based on one to four
- * points.
+ * A simple point, line-segment, triangle, or tetrahedron collision shape based
+ * on Bullet's btBU_Simplex1to4.
  *
  * @author normenhansen
  */
@@ -53,11 +53,13 @@ public class SimplexCollisionShape extends CollisionShape {
      */
     final private static Logger logger
             = Logger.getLogger(SimplexCollisionShape.class.getName());
-
+    /**
+     * vertex positions
+     */
     private Vector3f vector1, vector2, vector3, vector4;
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public SimplexCollisionShape() {
@@ -89,6 +91,12 @@ public class SimplexCollisionShape extends CollisionShape {
         createShape();
     }
 
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
@@ -99,6 +107,12 @@ public class SimplexCollisionShape extends CollisionShape {
         capsule.write(vector4, "simplexPoint4", null);
     }
 
+    /**
+     * De-serialize this shape, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);

@@ -41,7 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Basic sphere collision shape
+ * A spherical collision shape based on Bullet's btSphereShape.
  *
  * @author normenhansen
  */
@@ -53,29 +53,43 @@ public class SphereCollisionShape extends CollisionShape {
     final private static Logger logger
             = Logger.getLogger(SphereCollisionShape.class.getName());
 
+    /**
+     * radius of the sphere (&ge;0)
+     */
     private float radius;
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public SphereCollisionShape() {
     }
 
     /**
-     * creates a SphereCollisionShape with the given radius
+     * Create a SphereCollisionShape with the specified radius.
      *
-     * @param radius the desired radius
+     * @param radius the desired radius (&ge;0)
      */
     public SphereCollisionShape(float radius) {
         this.radius = radius;
         createShape();
     }
 
+    /**
+     * Read the radius of this shape.
+     *
+     * @return the radius (&ge;0)
+     */
     public float getRadius() {
         return radius;
     }
 
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
@@ -83,6 +97,12 @@ public class SphereCollisionShape extends CollisionShape {
         capsule.write(radius, "radius", 0.5f);
     }
 
+    /**
+     * De-serialize this shape, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);
@@ -117,5 +137,4 @@ public class SphereCollisionShape extends CollisionShape {
     }
 
     private native long createShape(float radius);
-
 }
