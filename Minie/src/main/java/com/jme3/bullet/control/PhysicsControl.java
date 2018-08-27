@@ -35,12 +35,16 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.scene.control.Control;
 
 /**
+ * An interface for a scene-graph control that links a physics object to a
+ * Spatial.
+ * <p>
+ * This interface is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */
 public interface PhysicsControl extends Control {
     /**
-     * Only used internally, do not call.
+     * Add this control to a physics space.
      *
      * @param space physics space to use
      */
@@ -59,9 +63,9 @@ public interface PhysicsControl extends Control {
     void setEnabled(boolean state);
 
     /**
-     * Returns the current enabled state of the physics control
+     * Return the enabled/disabled status of the control.
      *
-     * @return current enabled state
+     * @return true&rarr;enabled, false&rarr;disabled
      */
     boolean isEnabled();
 }

@@ -149,7 +149,9 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
-     * @return the motionState
+     * Access the motion state of this body.
+     *
+     * @return the pre-existing instance
      */
     public RigidBodyMotionState getMotionState() {
         return motionState;

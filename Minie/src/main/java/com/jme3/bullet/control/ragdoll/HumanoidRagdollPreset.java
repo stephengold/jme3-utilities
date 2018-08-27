@@ -35,6 +35,9 @@ import com.jme3.math.FastMath;
 import java.util.logging.Logger;
 
 /**
+ * Example ragdoll presets for a typical humanoid skeleton.
+ * <p>
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author Nehon
  */

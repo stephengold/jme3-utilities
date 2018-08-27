@@ -40,6 +40,8 @@ import com.jme3.scene.control.AbstractControl;
  * The abstract base class for physics-debug controls (such as
  * BulletRigidBodyDebugControl) used to visualize individual collision objects
  * and joints.
+ * <p>
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */
@@ -53,9 +55,9 @@ public abstract class AbstractPhysicsDebugControl extends AbstractControl {
     }
 
     /**
-     * This is invoked on the physics thread.
+     * This method is invoked on the physics thread.
      *
-     * @param tpf (in seconds, &ge;0)
+     * @param tpf time per frame (in seconds, &ge;0)
      */
     @Override
     protected abstract void controlUpdate(float tpf);

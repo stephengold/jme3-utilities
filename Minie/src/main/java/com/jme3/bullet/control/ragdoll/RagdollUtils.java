@@ -49,6 +49,9 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
+ * Utility methods used by KinematicRagdollControl.
+ * <p>
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author Nehon
  */
@@ -60,7 +63,8 @@ public class RagdollUtils {
     final private static Logger logger
             = Logger.getLogger(RagdollUtils.class.getName());
 
-    public static void setJointLimit(SixDofJoint joint, float maxX, float minX, float maxY, float minY, float maxZ, float minZ) {
+    public static void setJointLimit(SixDofJoint joint, float maxX, float minX,
+            float maxY, float minY, float maxZ, float minZ) {
 
         joint.getRotationalLimitMotor(0).setHiLimit(maxX);
         joint.getRotationalLimitMotor(0).setLoLimit(minX);

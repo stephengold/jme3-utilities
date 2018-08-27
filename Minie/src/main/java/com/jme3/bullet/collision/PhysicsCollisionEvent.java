@@ -37,10 +37,10 @@ import java.util.EventObject;
 import java.util.logging.Logger;
 
 /**
- * A CollisionEvent stores all information about a collision in the
- * PhysicsWorld. Do not store this Object, as it will be reused after the
- * collision() method has been called. Get/reference all data you need in the
- * collide method.
+ * An event that describes a collision in the physics world.
+ * <p>
+ * Do not retain this Object, as it will be reused after the collision() method
+ * returns. Copy any data you need during the collide() method.
  *
  * @author normenhansen
  */
@@ -60,7 +60,8 @@ public class PhysicsCollisionEvent extends EventObject {
     private PhysicsCollisionObject nodeB;
     private long manifoldPointObjectId = 0;
 
-    public PhysicsCollisionEvent(int type, PhysicsCollisionObject nodeA, PhysicsCollisionObject nodeB, long manifoldPointObjectId) {
+    public PhysicsCollisionEvent(int type, PhysicsCollisionObject nodeA,
+            PhysicsCollisionObject nodeB, long manifoldPointObjectId) {
         super(nodeA);
         this.type = type;
         this.nodeA = nodeA;
@@ -100,8 +101,9 @@ public class PhysicsCollisionEvent extends EventObject {
     }
 
     /**
-     * @return A Spatial if the UserObject of the PhysicsCollisionObject is a
-     * Spatial
+     * Access the user object of collision object A, provided it is a Spatial.
+     *
+     * @return the pre-existing Spatial, or null if none
      */
     public Spatial getNodeA() {
         if (nodeA.getUserObject() instanceof Spatial) {
@@ -111,8 +113,9 @@ public class PhysicsCollisionEvent extends EventObject {
     }
 
     /**
-     * @return A Spatial if the UserObject of the PhysicsCollisionObject is a
-     * Spatial
+     * Access the user object of collision object B, provided it is a Spatial.
+     *
+     * @return the pre-existing Spatial, or null if none
      */
     public Spatial getNodeB() {
         if (nodeB.getUserObject() instanceof Spatial) {
@@ -121,10 +124,20 @@ public class PhysicsCollisionEvent extends EventObject {
         return null;
     }
 
+    /**
+     * Access collision object A.
+     *
+     * @return the pre-existing object (not null)
+     */
     public PhysicsCollisionObject getObjectA() {
         return nodeA;
     }
 
+    /**
+     * Access collision object B.
+     *
+     * @return the pre-existing object (not null)
+     */
     public PhysicsCollisionObject getObjectB() {
         return nodeB;
     }

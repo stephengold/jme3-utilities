@@ -42,6 +42,8 @@ import java.util.logging.Logger;
 /**
  * An element of a CompoundCollisionShape, consisting of a (non-compound) child
  * shape, offset and rotated with respect to its parent.
+ * <p>
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */

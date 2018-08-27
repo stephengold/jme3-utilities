@@ -32,20 +32,23 @@
 package com.jme3.bullet.collision;
 
 /**
- * Interface for Objects that want to be informed about collision events in the
- * physics space
+ * Interface to receive notifications whenever an object in a particular physics
+ * space collides.
+ * <p>
+ * This interface is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */
 public interface PhysicsCollisionListener {
     /**
-     * Called when a collision happened in the PhysicsSpace, <i>called from
-     * render thread</i>.
+     * Invoked when a collision happened in the PhysicsSpace. <i>Invoked on the
+     * render thread.</i>
+     * <p>
+     * Do not retain the event object, as it will be reused after the
+     * collision() method returns. Copy any data you need during the collide()
+     * method.
      *
-     * Do not store the event object as it will be cleared after the method has
-     * finished.
-     *
-     * @param event the CollisionEvent
+     * @param event the event that occurred (not null, reusable)
      */
     void collision(PhysicsCollisionEvent event);
 }

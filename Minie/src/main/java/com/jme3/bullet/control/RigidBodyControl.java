@@ -57,6 +57,9 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
+ * A physics control used to link a PhysicsRigidBody to a Spatial.
+ * <p>
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */

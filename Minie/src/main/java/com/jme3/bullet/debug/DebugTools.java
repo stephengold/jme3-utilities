@@ -43,6 +43,9 @@ import com.jme3.scene.debug.Arrow;
 import java.util.logging.Logger;
 
 /**
+ * Debugging aids.
+ * <p>
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */
@@ -74,10 +77,25 @@ public class DebugTools {
     public Geometry arrowYellowGeom = new Geometry("Yellow Arrow", arrowYellow);
     public Arrow arrowPink = new Arrow(Vector3f.ZERO);
     public Geometry arrowPinkGeom = new Geometry("Pink Arrow", arrowPink);
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
+     */
     protected static final Vector3f UNIT_X_CHECK = new Vector3f(1, 0, 0);
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_Y}
+     */
     protected static final Vector3f UNIT_Y_CHECK = new Vector3f(0, 1, 0);
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_Z}
+     */
     protected static final Vector3f UNIT_Z_CHECK = new Vector3f(0, 0, 1);
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_XYZ}
+     */
     protected static final Vector3f UNIT_XYZ_CHECK = new Vector3f(1, 1, 1);
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#ZERO}
+     */
     protected static final Vector3f ZERO_CHECK = new Vector3f(0, 0, 0);
 
     public DebugTools(AssetManager manager) {

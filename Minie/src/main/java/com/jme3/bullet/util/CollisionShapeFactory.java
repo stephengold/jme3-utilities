@@ -41,6 +41,7 @@ import com.jme3.terrain.geomipmap.TerrainQuad;
 import java.util.logging.Logger;
 
 /**
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen, tim8dev
  */
@@ -164,10 +165,10 @@ public class CollisionShapeFactory {
      * This type of collision shape is mesh-accurate and meant for immovable
      * "world objects". Examples include terrain, houses or whole shooter
      * levels.
-     *
+     * <p>
      * Objects with "mesh" type collision shape will not collide with each
      * other.
-     *
+     * <p>
      * Creates a HeightfieldCollisionShape if the supplied spatial is a
      * TerrainQuad.
      *

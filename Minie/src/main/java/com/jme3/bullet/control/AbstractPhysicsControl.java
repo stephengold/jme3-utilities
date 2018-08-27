@@ -47,7 +47,9 @@ import java.io.IOException;
 
 /**
  * AbstractPhysicsControl manages the lifecycle of a physics object that is
- * attached to a spatial in the SceneGraph.
+ * attached to a spatial in the scene graph.
+ * <p>
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */

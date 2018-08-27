@@ -50,8 +50,12 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
- * A GhostControl moves with the spatial it is attached to and can be used to
- * check overlaps with other physics objects (e.g. aggro radius).
+ * A physics control used to link a PhysicsGhostObject to a Spatial.
+ * <p>
+ * The ghost object moves with the spatial it is attached to and can be used to
+ * detect overlaps with other physics objects (e.g. aggro radius).
+ * <p>
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */
