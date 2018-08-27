@@ -44,6 +44,8 @@ import java.util.logging.Logger;
 
 /**
  * A physics-debug control used to visualize a PhysicsRigidBody.
+ * <p>
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */
@@ -55,11 +57,11 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
     final private static Logger logger
             = Logger.getLogger(BulletRigidBodyDebugControl.class.getName());
 
-    protected final PhysicsRigidBody body;
-    protected final Vector3f location = new Vector3f();
-    protected final Quaternion rotation = new Quaternion();
-    protected CollisionShape myShape;
-    protected Spatial geom;
+    final private PhysicsRigidBody body;
+    final private Vector3f location = new Vector3f();
+    final private Quaternion rotation = new Quaternion();
+    final private CollisionShape myShape;
+    private Spatial geom;
 
     public BulletRigidBodyDebugControl(BulletDebugAppState debugAppState,
             PhysicsRigidBody body) {

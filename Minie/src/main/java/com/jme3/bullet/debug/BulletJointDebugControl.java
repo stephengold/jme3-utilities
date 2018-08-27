@@ -32,7 +32,6 @@
 package com.jme3.bullet.debug;
 
 import com.jme3.bullet.joints.PhysicsJoint;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -45,6 +44,8 @@ import java.util.logging.Logger;
 
 /**
  * A physics-debug control used to visualize a PhysicsJoint.
+ * <p>
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */
@@ -56,15 +57,15 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
     final private static Logger logger
             = Logger.getLogger(BulletJointDebugControl.class.getName());
 
-    protected final PhysicsJoint body;
-    protected final Geometry geomA;
-    protected final Arrow arrowA;
-    protected final Geometry geomB;
-    protected final Arrow arrowB;
-    protected final Transform a = new Transform(new Vector3f(), new Quaternion());
-    protected final Transform b = new Transform(new Vector3f(), new Quaternion());
-    protected final Vector3f offA = new Vector3f();
-    protected final Vector3f offB = new Vector3f();
+    final private PhysicsJoint body;
+    final private Geometry geomA;
+    final private Arrow arrowA;
+    final private Geometry geomB;
+    final private Arrow arrowB;
+    final private Transform a = new Transform();
+    final private Transform b = new Transform();
+    final private Vector3f offA = new Vector3f();
+    final private Vector3f offB = new Vector3f();
 
     public BulletJointDebugControl(BulletDebugAppState debugAppState, PhysicsJoint body) {
         super(debugAppState);

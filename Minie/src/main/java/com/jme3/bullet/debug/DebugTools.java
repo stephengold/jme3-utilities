@@ -57,7 +57,7 @@ public class DebugTools {
     final private static Logger logger
             = Logger.getLogger(DebugTools.class.getName());
 
-    protected final AssetManager manager;
+    final private AssetManager manager;
     public Material DEBUG_BLUE;
     public Material DEBUG_RED;
     public Material DEBUG_GREEN;
@@ -80,23 +80,23 @@ public class DebugTools {
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
-    protected static final Vector3f UNIT_X_CHECK = new Vector3f(1, 0, 0);
+    final private static Vector3f UNIT_X_CHECK = new Vector3f(1f, 0f, 0f);
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_Y}
      */
-    protected static final Vector3f UNIT_Y_CHECK = new Vector3f(0, 1, 0);
+    final private static Vector3f UNIT_Y_CHECK = new Vector3f(0f, 1f, 0f);
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_Z}
      */
-    protected static final Vector3f UNIT_Z_CHECK = new Vector3f(0, 0, 1);
+    final private static Vector3f UNIT_Z_CHECK = new Vector3f(0f, 0f, 1f);
     /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_XYZ}
      */
-    protected static final Vector3f UNIT_XYZ_CHECK = new Vector3f(1, 1, 1);
+    final private static Vector3f UNIT_XYZ_CHECK = new Vector3f(1f, 1f, 1f);
     /**
      * local copy of {@link com.jme3.math.Vector3f#ZERO}
      */
-    protected static final Vector3f ZERO_CHECK = new Vector3f(0, 0, 0);
+    final private static Vector3f ZERO_CHECK = new Vector3f(0f, 0f, 0f);
 
     public DebugTools(AssetManager manager) {
         this.manager = manager;

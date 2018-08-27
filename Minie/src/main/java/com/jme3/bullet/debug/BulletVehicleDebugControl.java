@@ -45,6 +45,8 @@ import java.util.logging.Logger;
 
 /**
  * A physics-debug control used to visualize a PhysicsVehicle.
+ * <p>
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */
@@ -56,10 +58,10 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
     final private static Logger logger
             = Logger.getLogger(BulletVehicleDebugControl.class.getName());
 
-    protected final PhysicsVehicle body;
-    protected final Node suspensionNode;
-    protected final Vector3f location = new Vector3f();
-    protected final Quaternion rotation = new Quaternion();
+    final private PhysicsVehicle body;
+    final private Node suspensionNode;
+    final private Vector3f location = new Vector3f();
+    final private Quaternion rotation = new Quaternion();
 
     public BulletVehicleDebugControl(BulletDebugAppState debugAppState, PhysicsVehicle body) {
         super(debugAppState);

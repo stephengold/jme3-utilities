@@ -44,6 +44,8 @@ import java.util.logging.Logger;
 
 /**
  * A physics-debug control used to visualize a PhysicsCharacter.
+ * <p>
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */
@@ -55,11 +57,10 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
     final private static Logger logger
             = Logger.getLogger(BulletCharacterDebugControl.class.getName());
 
-    protected final PhysicsCharacter body;
-    protected final Vector3f location = new Vector3f();
-    protected final Quaternion rotation = new Quaternion();
-    protected CollisionShape myShape;
-    protected Spatial geom;
+    final private PhysicsCharacter body;
+    final private Vector3f location = new Vector3f();
+    final private CollisionShape myShape;
+    private Spatial geom;
 
     public BulletCharacterDebugControl(BulletDebugAppState debugAppState, PhysicsCharacter body) {
         super(debugAppState);

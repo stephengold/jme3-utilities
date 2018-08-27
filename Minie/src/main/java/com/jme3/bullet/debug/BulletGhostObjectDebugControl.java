@@ -44,6 +44,8 @@ import java.util.logging.Logger;
 
 /**
  * A physics-debug control used to visualize a PhysicsGhostObject.
+ * <p>
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */
@@ -55,11 +57,11 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
     final private static Logger logger
             = Logger.getLogger(BulletGhostObjectDebugControl.class.getName());
 
-    protected final PhysicsGhostObject body;
-    protected final Vector3f location = new Vector3f();
-    protected final Quaternion rotation = new Quaternion();
-    protected CollisionShape myShape;
-    protected Spatial geom;
+    private final PhysicsGhostObject body;
+    private final Vector3f location = new Vector3f();
+    private final Quaternion rotation = new Quaternion();
+    private CollisionShape myShape;
+    private Spatial geom;
 
     public BulletGhostObjectDebugControl(BulletDebugAppState debugAppState, PhysicsGhostObject body) {
         super(debugAppState);
