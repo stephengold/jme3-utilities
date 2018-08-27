@@ -55,8 +55,8 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
- * Simple app state to generate a dynamic texture for an object by rendering an
- * off-screen globe. Each instance has its own camera and root node.
+ * A simple app state to generate a dynamic texture for an object by rendering
+ * an off-screen globe. Each instance has its own camera and root node.
  * <p>
  * Each instance is enabled at creation.
  *
@@ -328,7 +328,8 @@ public class GlobeRenderer extends SimpleAppState {
     // SimpleAppState methods
 
     /**
-     * Callback when this state gets detached.
+     * Clean up this renderer after it has been detached. Should be invoked only
+     * by a subclass or by the AppStateManager.
      */
     @Override
     public void cleanup() {
@@ -340,7 +341,8 @@ public class GlobeRenderer extends SimpleAppState {
     }
 
     /**
-     * Initialize this controller prior to its 1st update.
+     * Initialize this controller prior to its 1st update. Should be invoked
+     * only by a subclass or by the AppStateManager.
      *
      * @param stateManager (not null)
      * @param application which application owns this renderer (not null)

@@ -174,7 +174,7 @@ public class SkyControl extends SkyControlCore {
     // constructors
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public SkyControl() {

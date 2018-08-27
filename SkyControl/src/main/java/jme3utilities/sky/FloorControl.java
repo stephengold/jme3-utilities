@@ -103,7 +103,7 @@ public class FloorControl extends SubtreeControl {
     // constructors
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public FloorControl() {

@@ -96,7 +96,7 @@ public class CloudLayer
     // constructors
 
     /**
-     * No-argument constructor for serialization purposes only. Do not invoke
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public CloudLayer() {
