@@ -76,15 +76,6 @@ public abstract class CollisionShape implements Savable {
     }
 
     /**
-     * unused TODO remove
-     *
-     * @param id the desired id value
-     */
-    public void setObjectId(long id) {
-        this.objectId = id;
-    }
-
-    /**
      * Alter the scaling factors.
      *
      * @param scale the desired scaling factors (not null, unaffected)

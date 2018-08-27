@@ -69,12 +69,10 @@ public class BulletDebugAppState extends AbstractAppState {
             = Logger.getLogger(BulletDebugAppState.class.getName());
 
     private DebugAppStateFilter filter;
-    private Application app; // TODO remove
     private AssetManager assetManager;
-    private final PhysicsSpace space;
-    private final Node physicsDebugRootNode = new Node("Physics Debug Root Node");
-    private ViewPort[] viewPorts; // TODO make final
-    private RenderManager rm; // TODO remove
+    final private PhysicsSpace space;
+    final private Node physicsDebugRootNode = new Node("Physics Debug Root Node");
+    final private ViewPort[] viewPorts;
     public Material DEBUG_BLUE;
     public Material DEBUG_RED;
     public Material DEBUG_GREEN;
@@ -110,8 +108,6 @@ public class BulletDebugAppState extends AbstractAppState {
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
-        this.app = app;
-        this.rm = app.getRenderManager();
         this.assetManager = app.getAssetManager();
         setupMaterials(app);
         physicsDebugRootNode.setCullHint(Spatial.CullHint.Never);

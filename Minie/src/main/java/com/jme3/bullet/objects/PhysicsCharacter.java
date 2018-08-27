@@ -37,7 +37,6 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -59,13 +58,10 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
 
     private long characterId = 0;
     private float stepHeight;
-    private Vector3f walkDirection = new Vector3f(); // TODO make final
+    final private Vector3f walkDirection = new Vector3f();
     private float fallSpeed = 55.0f;
     private float jumpSpeed = 10.0f;
-    private int upAxis = 1; // TODO make final
-    private boolean locationDirty = false; // TODO make final
-    //TEMP VARIABLES
-    private final Quaternion tmp_inverseWorldRotation = new Quaternion(); // TODO remove
+    final private int upAxis = 1;
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke

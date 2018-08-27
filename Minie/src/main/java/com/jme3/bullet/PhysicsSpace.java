@@ -179,9 +179,9 @@ public class PhysicsSpace {
     }
 
     /**
-     * Must be invoked from the designated physics thread. TODO privatize
+     * Must be invoked from the designated physics thread.
      */
-    public void create() {
+    private void create() {
         physicsSpaceId = createPhysicsSpace(worldMin.x, worldMin.y, worldMin.z,
                 worldMax.x, worldMax.y, worldMax.z, broadphaseType.ordinal(),
                 false);

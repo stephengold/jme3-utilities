@@ -212,7 +212,8 @@ public class BulletAppState implements AppState, PhysicsTickListener {
             return true;
         }
     };
-    long detachedPhysicsLastUpdate = 0;
+
+    private long detachedPhysicsLastUpdate = 0;
     private Callable<Boolean> detachedPhysicsUpdate = new Callable<Boolean>() {
         @Override
         public Boolean call() throws Exception {
@@ -257,9 +258,9 @@ public class BulletAppState implements AppState, PhysicsTickListener {
 
     /**
      * The physics system is stopped automatically during the cleanup that takes
-     * place after it is detached. TODO privatize
+     * place after it is detached.
      */
-    public void stopPhysics() {
+    private void stopPhysics() {
         if (!initialized) {
             return;
         }
@@ -396,7 +397,6 @@ public class BulletAppState implements AppState, PhysicsTickListener {
             physicsFuture = executor.submit(parallelPhysicsUpdate);
         } else if (threadingType == ThreadingType.SEQUENTIAL) {
             pSpace.update(active ? tpf * speed : 0);
-        } else { // TODO remove
         }
     }
 

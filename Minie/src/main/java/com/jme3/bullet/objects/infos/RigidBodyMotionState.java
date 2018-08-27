@@ -53,7 +53,7 @@ public class RigidBodyMotionState {
     final private static Logger logger
             = Logger.getLogger(RigidBodyMotionState.class.getName());
 
-    long motionStateId = 0;
+    private long motionStateId = 0;
     final private Vector3f worldLocation = new Vector3f();
     final private Matrix3f worldRotation = new Matrix3f();
     final private Quaternion worldRotationQuat = new Quaternion();

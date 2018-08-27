@@ -132,7 +132,6 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     private float IKThreshold = 0.1f;
 
     public static enum Mode {
-
         Kinematic,
         Ragdoll,
         IK
@@ -140,12 +139,12 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
 
     public class PhysicsBoneLink implements Savable {
 
-        protected PhysicsRigidBody rigidBody;
-        protected Bone bone;
-        protected SixDofJoint joint;
-        protected Quaternion initalWorldRotation;
-        protected Quaternion startBlendingRot = new Quaternion();
-        protected Vector3f startBlendingPos = new Vector3f();
+        private PhysicsRigidBody rigidBody;
+        private Bone bone;
+        private SixDofJoint joint;
+        private Quaternion initalWorldRotation;
+        private Quaternion startBlendingRot = new Quaternion();
+        private Vector3f startBlendingPos = new Vector3f();
 
         public PhysicsBoneLink() {
         }

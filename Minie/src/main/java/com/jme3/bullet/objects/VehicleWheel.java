@@ -68,10 +68,10 @@ public class VehicleWheel implements Savable {
     private float maxSuspensionForce = 6000f;
     private float radius = 0.5f;
     private float restLength = 1f;
-    private Vector3f wheelWorldLocation = new Vector3f(); // TODO final
-    private Quaternion wheelWorldRotation = new Quaternion(); // TODO final
+    final private Vector3f wheelWorldLocation = new Vector3f();
+    final private Quaternion wheelWorldRotation = new Quaternion();
     private Spatial wheelSpatial;
-    private Matrix3f tmp_Matrix = new com.jme3.math.Matrix3f(); // TODO final
+    final private Matrix3f tmp_Matrix = new com.jme3.math.Matrix3f();
     private final Quaternion tmp_inverseWorldRotation = new Quaternion();
     private boolean applyLocal = false;
 

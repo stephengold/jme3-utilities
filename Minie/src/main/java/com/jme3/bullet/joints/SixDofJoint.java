@@ -69,31 +69,31 @@ public class SixDofJoint extends PhysicsJoint {
     final private static Logger logger
             = Logger.getLogger(SixDofJoint.class.getName());
 
-    Matrix3f rotA, rotB;
+    private Matrix3f rotA, rotB;
     /**
      * true&rarr;limits give the allowable range of movement of frameB in frameA
      * space, false&rarr;limits give the allowable range of movement of frameA
-     * in frameB space TODO privatize
+     * in frameB space
      */
-    boolean useLinearReferenceFrameA;
-    LinkedList<RotationalLimitMotor> rotationalMotors = new LinkedList<>();
-    TranslationalLimitMotor translationalMotor;
+    private boolean useLinearReferenceFrameA;
+    private LinkedList<RotationalLimitMotor> rotationalMotors = new LinkedList<>();
+    private TranslationalLimitMotor translationalMotor;
     /**
-     * upper limit for rotation of each axis TODO privatize
+     * upper limit for rotation of each axis
      */
-    Vector3f angularUpperLimit = new Vector3f(Vector3f.POSITIVE_INFINITY);
+    private Vector3f angularUpperLimit = new Vector3f(Vector3f.POSITIVE_INFINITY);
     /**
-     * lower limit for rotation of each axis TODO privatize
+     * lower limit for rotation of each axis
      */
-    Vector3f angularLowerLimit = new Vector3f(Vector3f.NEGATIVE_INFINITY);
+    private Vector3f angularLowerLimit = new Vector3f(Vector3f.NEGATIVE_INFINITY);
     /**
-     * upper limit for translation of each axis TODO privatize
+     * upper limit for translation of each axis
      */
-    Vector3f linearUpperLimit = new Vector3f(Vector3f.POSITIVE_INFINITY);
+    private Vector3f linearUpperLimit = new Vector3f(Vector3f.POSITIVE_INFINITY);
     /**
-     * lower limit for translation of each axis TODO privatize
+     * lower limit for translation of each axis
      */
-    Vector3f linearLowerLimit = new Vector3f(Vector3f.NEGATIVE_INFINITY);
+    private Vector3f linearLowerLimit = new Vector3f(Vector3f.NEGATIVE_INFINITY);
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
