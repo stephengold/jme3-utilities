@@ -119,10 +119,9 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     private float tpf;
     private Future physicsFuture;
     /**
-     * view ports in which to render the debug visualization TODO initialize to
-     * default
+     * view ports in which to render the debug visualization
      */
-    private ViewPort[] debugViewPorts;
+    private ViewPort[] debugViewPorts = null;
 
     /**
      * Create an app state to manage a new PhysicsSpace with DBVT collision
@@ -285,6 +284,10 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         this.stateManager = stateManager;
+        if (debugViewPorts == null) {
+            debugViewPorts = new ViewPort[1];
+            debugViewPorts[0] = app.getViewPort();
+        }
         startPhysics();
     }
 
@@ -341,8 +344,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
             if (debugAppState != null) {
                 stateManager.detach(debugAppState);
             }
-            debugAppState = new BulletDebugAppState(pSpace, debugViewPorts);
-            stateManager.attach(debugAppState);
+            startDebug();
         }
     }
 
@@ -364,8 +366,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
             PhysicsSpace.setLocalThreadPhysicsSpace(pSpace);
         }
         if (debugEnabled) {
-            debugAppState = new BulletDebugAppState(pSpace, debugViewPorts);
-            stateManager.attach(debugAppState);
+            startDebug();
         }
         isAttached = true;
     }
@@ -377,6 +378,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     @Override
     public void update(float tpf) {
         if (debugEnabled && debugAppState == null && pSpace != null) {
+            startDebug();
             debugAppState = new BulletDebugAppState(pSpace, debugViewPorts);
             stateManager.attach(debugAppState);
         } else if (!debugEnabled && debugAppState != null) {
@@ -509,12 +511,37 @@ public class BulletAppState implements AppState, PhysicsTickListener {
         this.speed = speed;
     }
 
+    /**
+     * Create the debug app state and attach it.
+     */
+    private void startDebug() {
+        assert debugEnabled;
+        debugAppState = new BulletDebugAppState(pSpace, debugViewPorts);
+        stateManager.attach(debugAppState);
+    }
+    // *************************************************************************
+    // PhysicsTickListener methods
+
+    /**
+     * Callback invoked before the physics is stepped. A good time to
+     * clear/apply forces.
+     *
+     * @param space the space that is about to be stepped (not null)
+     * @param timeStep the time per physics step (in seconds, &ge;0)
+     */
     @Override
-    public void prePhysicsTick(PhysicsSpace space, float f) {
+    public void prePhysicsTick(PhysicsSpace space, float timeStep) {
     }
 
+    /**
+     * Callback invoked after the physics has been stepped, use to check for
+     * forces etc.
+     *
+     * @param space the space that was just stepped (not null)
+     * @param timeStep the time per physics step (in seconds, &ge;0)
+     */
     @Override
-    public void physicsTick(PhysicsSpace space, float f) {
+    public void physicsTick(PhysicsSpace space, float timeStep) {
     }
 
     /**
