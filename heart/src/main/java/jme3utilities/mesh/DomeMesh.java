@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -142,7 +142,8 @@ public class DomeMesh extends Mesh {
     // constructors
 
     /**
-     * No-argument constructor for serialization purposes only. Do not use!
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
+     * directly!
      */
     public DomeMesh() {
     }

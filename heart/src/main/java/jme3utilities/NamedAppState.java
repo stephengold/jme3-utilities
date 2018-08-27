@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -37,10 +37,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * An AppState with a unique name, able to influence other AppStates. Enabling a
- * disabled state causes all the states influenced by it to get enabled.
- * Likewise, disabling an enabled state disables any states it influences.
- * Influence may be mutual or one-way.
+ * An AppState with a unique name, able to influence other AppStates.
+ * <p>
+ * Enabling a disabled state causes all the states influenced by it to get
+ * enabled. Likewise, disabling an enabled state disables any states it
+ * influences. Influence may be mutual or one-way.
  *
  * @author Stephen Gold sgold@sonic.net
  * @see com.jme3.app.state.AbstractAppState
@@ -97,7 +98,7 @@ public class NamedAppState implements AppState {
     /**
      * Test whether this state influences the specified state.
      *
-     * @param appState state to test
+     * @param appState the state to test
      * @return true if influenced, false if not influenced
      */
     public boolean hasInfluenceOver(AppState appState) {
@@ -137,7 +138,8 @@ public class NamedAppState implements AppState {
     // AppState methods
 
     /**
-     * Clean up this state on the 1st update after it gets detached.
+     * Clean up this state on the 1st update after it gets detached. Should be
+     * invoked only by a subclass or by the AppStateManager.
      */
     @Override
     public void cleanup() {
@@ -149,10 +151,11 @@ public class NamedAppState implements AppState {
     }
 
     /**
-     * Initialize this state on the 1st update after it gets attached.
+     * Initialize this state on the 1st update after it gets attached. Should be
+     * invoked only by a subclass or by the AppStateManager.
      *
-     * @param sm application's state manager (not null)
-     * @param app application which owns this state (not null)
+     * @param sm the application's state manager (not null)
+     * @param app the application which owns this state (not null)
      */
     @Override
     public void initialize(AppStateManager sm, Application app) {
@@ -210,7 +213,7 @@ public class NamedAppState implements AppState {
     /**
      * Callback to perform rendering for this state during each render pass.
      *
-     * @param rm application's render manager (not null)
+     * @param rm the application's render manager (not null)
      */
     @Override
     public void render(RenderManager rm) {
@@ -252,7 +255,7 @@ public class NamedAppState implements AppState {
     /**
      * Callback when this state gets attached.
      *
-     * @param sm application's state manager (not null)
+     * @param sm the application's state manager (not null)
      */
     @Override
     public void stateAttached(AppStateManager sm) {
@@ -263,7 +266,7 @@ public class NamedAppState implements AppState {
     /**
      * Callback when this state gets detached.
      *
-     * @param sm application's state manager (not null)
+     * @param sm the application's state manager (not null)
      */
     @Override
     public void stateDetached(AppStateManager sm) {
@@ -275,7 +278,7 @@ public class NamedAppState implements AppState {
      * Callback to update this state prior to rendering. (Invoked once per
      * render pass.)
      *
-     * @param elapsedTime time interval between render passes (in seconds,
+     * @param elapsedTime the time interval between render passes (in seconds,
      * &ge;0)
      */
     @Override

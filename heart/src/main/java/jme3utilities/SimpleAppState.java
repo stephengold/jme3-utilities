@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -82,7 +82,7 @@ public class SimpleAppState extends NamedAppState {
      */
     protected Node guiNode;
     /**
-     * root node of 3-D scene graph: set by initialize()
+     * root node of main scene graph: set by initialize()
      */
     protected Node rootNode;
     /**
@@ -153,10 +153,11 @@ public class SimpleAppState extends NamedAppState {
     // NamedAppState methods
 
     /**
-     * Initialize this state on the 1st update after it gets attached.
+     * Initialize this state on the 1st update after it gets attached. Should be
+     * invoked only by a subclass or by the AppStateManager.
      *
-     * @param sm application's state manager (not null)
-     * @param app application which owns this state (not null)
+     * @param sm the manager for this state (not null)
+     * @param app the application which owns this state (not null)
      */
     @Override
     public void initialize(AppStateManager sm, Application app) {
@@ -174,8 +175,9 @@ public class SimpleAppState extends NamedAppState {
 
     /**
      * Callback to perform rendering for this state during each render pass.
+     * Should be invoked only by a subclass or by the AppStateManager.
      *
-     * @param rm application's render manager (not null)
+     * @param rm the application's render manager (not null)
      */
     @Override
     public void render(RenderManager rm) {
@@ -186,9 +188,14 @@ public class SimpleAppState extends NamedAppState {
     }
 
     /**
-     * Callback when this state gets detached.
+     * Immediate callback when this state gets detached. Should be invoked only
+     * by a subclass or by the AppStateManager.
+     * <p>
+     * Without knowing which thread invoked detatch(), it is unsafe to modify
+     * the scene graph in this method. Instead, scene-graph modifications should
+     * occur in {@link #cleanup()}.
      *
-     * @param sm application's state manager (not null)
+     * @param sm the application's state manager (not null)
      */
     @Override
     public void stateDetached(AppStateManager sm) {

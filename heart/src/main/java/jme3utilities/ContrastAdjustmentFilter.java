@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
- * Filter to adjust the contrast of a rendered scene using a power-law function.
+ * A filter to adjust the contrast of a rendered scene using a power-law function.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -69,11 +69,6 @@ public class ContrastAdjustmentFilter extends Filter {
     // *************************************************************************
     // constructors
 
-    /**
-     * No-argument constructor for serialization purposes only. Do not use!
-     */
-    //public ContrastAdjustmentFilter() {
-    //}
     /**
      * Instantiate a filter with the specified exponent.
      *
@@ -149,7 +144,7 @@ public class ContrastAdjustmentFilter extends Filter {
     }
 
     /**
-     * De-serialize the filter, for example when loading from a J3O file.
+     * De-serialize this filter, for example when loading from a J3O file.
      *
      * @param importer (not null)
      * @throws IOException from importer
@@ -162,7 +157,7 @@ public class ContrastAdjustmentFilter extends Filter {
     }
 
     /**
-     * Serialize the filter, for example when saving to a J3O file.
+     * Serialize this filter, for example when saving to a J3O file.
      *
      * @param exporter (not null)
      * @throws IOException from exporter
