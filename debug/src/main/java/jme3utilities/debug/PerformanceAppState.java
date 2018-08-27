@@ -134,7 +134,8 @@ public class PerformanceAppState extends SimpleAppState {
     // SimpleAppState methods
 
     /**
-     * Clean up this performance monitor on detach.
+     * Clean up this performance monitor after it has been detached. Should be
+     * invoked only by a subclass or by the AppStateManager.
      */
     @Override
     public void cleanup() {
@@ -145,9 +146,10 @@ public class PerformanceAppState extends SimpleAppState {
     }
 
     /**
-     * Initialize this performance monitor prior to its 1st update.
+     * Initialize this performance monitor prior to its 1st update. Should be
+     * invoked only by a subclass or by the AppStateManager.
      *
-     * @param stateManager (not null)
+     * @param stateManager the manager for this state (not null)
      * @param application (not null)
      */
     @Override
