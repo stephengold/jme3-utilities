@@ -33,15 +33,11 @@ package com.jme3.bullet.util;
 
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.shapes.*;
-import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
-import com.jme3.math.Matrix3f;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.*;
 import com.jme3.terrain.geomipmap.TerrainPatch;
 import com.jme3.terrain.geomipmap.TerrainQuad;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.logging.Logger;
 
 /**
@@ -272,24 +268,6 @@ public class CollisionShapeFactory {
             return dynamicShape;
         } else {
             return null;
-        }
-    }
-
-    /**
-     * This method moves each child shape of a compound shape by the given
-     * vector
-     *
-     * @param compoundShape the shape to modify (not null)
-     * @param vector the offset (not null, unaffected)
-     */
-    public static void shiftCompoundShapeContents(CompoundCollisionShape compoundShape, Vector3f vector) {
-        for (Iterator<ChildCollisionShape> it = new LinkedList<>(compoundShape.getChildren()).iterator(); it.hasNext();) {
-            ChildCollisionShape childCollisionShape = it.next();
-            CollisionShape child = childCollisionShape.shape;
-            Vector3f location = childCollisionShape.location;
-            Matrix3f rotation = childCollisionShape.rotation;
-            compoundShape.removeChildShape(child);
-            compoundShape.addChildShape(child, location.add(vector), rotation);
         }
     }
 }
