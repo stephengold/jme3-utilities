@@ -89,11 +89,13 @@ import java.util.logging.Logger;
  * shapes of the body are able to interact with physics enabled objects. in this
  * mode physics shapes follow the motion of the animated skeleton (for example
  * animated by a key framed animation) this mode is enabled by calling
- * setKinematicMode(); </li> <li><strong>The ragdoll modes :</strong><br> To
+ * setKinematicMode(); </li> <li><strong>The ragdoll modes:</strong><br> To
  * enable this behavior, you need to call setRagdollMode() method. In this mode
  * the character is entirely controlled by physics, so it will fall under the
- * gravity and move if any force is applied to it. </li>
+ * gravity and move if any force is applied to it.</li>
  * </ul>
+ * <p>
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author Normen Hansen and Rémy Bouquet (Nehon)
  */
@@ -516,10 +518,10 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
 
         skeleton = animControl.getSkeleton();
         skeleton.resetAndUpdate();
-        for (int i = 0; i < skeleton.getRoots().length; i++) {
-            Bone childBone = skeleton.getRoots()[i];
+        for (Bone childBone : skeleton.getRoots()) {
             if (childBone.getParent() == null) {
-                logger.log(Level.FINE, "Found root bone in skeleton {0}", skeleton);
+                logger.log(Level.FINE, "Found root bone in skeleton {0}",
+                        skeleton);
                 boneRecursion(model, childBone, baseRigidBody, 1, pointsMap);
             }
         }
@@ -568,9 +570,9 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
             parentShape = shapeNode;
         }
 
-        for (Iterator<Bone> it = bone.getChildren().iterator(); it.hasNext();) {
-            Bone childBone = it.next();
-            boneRecursion(model, childBone, parentShape, reccount + 1, pointsMap);
+        for (Bone childBone : bone.getChildren()) {
+            boneRecursion(model, childBone, parentShape, reccount + 1,
+                    pointsMap);
         }
     }
 
@@ -631,13 +633,11 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         if (baseRigidBody != null) {
             space.add(baseRigidBody);
         }
-        for (Iterator<PhysicsBoneLink> it = boneLinks.values().iterator(); it.hasNext();) {
-            PhysicsBoneLink physicsBoneLink = it.next();
+        for (PhysicsBoneLink physicsBoneLink : boneLinks.values()) {
             if (physicsBoneLink.rigidBody != null) {
                 space.add(physicsBoneLink.rigidBody);
                 if (physicsBoneLink.joint != null) {
                     space.add(physicsBoneLink.joint);
-
                 }
             }
         }
@@ -649,8 +649,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         if (baseRigidBody != null) {
             space.remove(baseRigidBody);
         }
-        for (Iterator<PhysicsBoneLink> it = boneLinks.values().iterator(); it.hasNext();) {
-            PhysicsBoneLink physicsBoneLink = it.next();
+        for (PhysicsBoneLink physicsBoneLink : boneLinks.values()) {
             if (physicsBoneLink.joint != null) {
                 space.remove(physicsBoneLink.joint);
                 if (physicsBoneLink.rigidBody != null) {

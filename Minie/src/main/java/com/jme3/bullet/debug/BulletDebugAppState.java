@@ -49,7 +49,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,6 +56,8 @@ import jme3utilities.MyAsset;
 
 /**
  * An app state to manage a debug visualization of a physics space.
+ * <p>
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */
@@ -163,8 +164,7 @@ public class BulletDebugAppState extends AbstractAppState {
         bodies = new HashMap<>();
         Collection<PhysicsRigidBody> current = space.getRigidBodyList();
         //create new map
-        for (Iterator<PhysicsRigidBody> it = current.iterator(); it.hasNext();) {
-            PhysicsRigidBody physicsObject = it.next();
+        for (PhysicsRigidBody physicsObject : current) {
             //copy existing spatials
             if (oldObjects.containsKey(physicsObject)) {
                 Spatial spat = oldObjects.get(physicsObject);
@@ -193,8 +193,7 @@ public class BulletDebugAppState extends AbstractAppState {
         joints = new HashMap<>();
         Collection<PhysicsJoint> current = space.getJointList();
         //create new map
-        for (Iterator<PhysicsJoint> it = current.iterator(); it.hasNext();) {
-            PhysicsJoint physicsObject = it.next();
+        for (PhysicsJoint physicsObject : current) {
             //copy existing spatials
             if (oldObjects.containsKey(physicsObject)) {
                 Spatial spat = oldObjects.get(physicsObject);
@@ -223,8 +222,7 @@ public class BulletDebugAppState extends AbstractAppState {
         ghosts = new HashMap<>();
         Collection<PhysicsGhostObject> current = space.getGhostObjectList();
         //create new map
-        for (Iterator<PhysicsGhostObject> it = current.iterator(); it.hasNext();) {
-            PhysicsGhostObject physicsObject = it.next();
+        for (PhysicsGhostObject physicsObject : current) {
             //copy existing spatials
             if (oldObjects.containsKey(physicsObject)) {
                 Spatial spat = oldObjects.get(physicsObject);
@@ -253,8 +251,7 @@ public class BulletDebugAppState extends AbstractAppState {
         characters = new HashMap<>();
         Collection<PhysicsCharacter> current = space.getCharacterList();
         //create new map
-        for (Iterator<PhysicsCharacter> it = current.iterator(); it.hasNext();) {
-            PhysicsCharacter physicsObject = it.next();
+        for (PhysicsCharacter physicsObject : current) {
             //copy existing spatials
             if (oldObjects.containsKey(physicsObject)) {
                 Spatial spat = oldObjects.get(physicsObject);
@@ -283,8 +280,7 @@ public class BulletDebugAppState extends AbstractAppState {
         vehicles = new HashMap<>();
         Collection<PhysicsVehicle> current = space.getVehicleList();
         //create new map
-        for (Iterator<PhysicsVehicle> it = current.iterator(); it.hasNext();) {
-            PhysicsVehicle physicsObject = it.next();
+        for (PhysicsVehicle physicsObject : current) {
             //copy existing spatials
             if (oldObjects.containsKey(physicsObject)) {
                 Spatial spat = oldObjects.get(physicsObject);

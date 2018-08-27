@@ -49,10 +49,12 @@ import com.jme3.scene.control.Control;
 import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.logging.Logger;
 
 /**
+ * A physics control used to link a PhysicsVehicle to a Spatial.
+ * <p>
+ * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */
@@ -109,8 +111,7 @@ public class VehicleControl extends PhysicsVehicle
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         motionState.setApplyPhysicsLocal(applyPhysicsLocal);
-        for (Iterator<VehicleWheel> it = wheels.iterator(); it.hasNext();) {
-            VehicleWheel vehicleWheel = it.next();
+        for (VehicleWheel vehicleWheel : wheels) {
             vehicleWheel.setApplyLocal(applyPhysicsLocal);
         }
     }
@@ -156,9 +157,10 @@ public class VehicleControl extends PhysicsVehicle
         control.setSuspensionDamping(tuning.suspensionDamping);
         control.setMaxSuspensionForce(getMaxSuspensionForce());
 
-        for (Iterator<VehicleWheel> it = wheels.iterator(); it.hasNext();) {
-            VehicleWheel wheel = it.next();
-            VehicleWheel newWheel = control.addWheel(wheel.getLocation(), wheel.getDirection(), wheel.getAxle(), wheel.getRestLength(), wheel.getRadius(), wheel.isFrontWheel());
+        for (VehicleWheel wheel : wheels) {
+            VehicleWheel newWheel = control.addWheel(wheel.getLocation(),
+                    wheel.getDirection(), wheel.getAxle(),
+                    wheel.getRestLength(), wheel.getRadius(), wheel.isFrontWheel());
             newWheel.setFrictionSlip(wheel.getFrictionSlip());
             newWheel.setMaxSuspensionTravelCm(wheel.getMaxSuspensionTravelCm());
             newWheel.setSuspensionStiffness(wheel.getSuspensionStiffness());
@@ -206,9 +208,11 @@ public class VehicleControl extends PhysicsVehicle
         control.setSuspensionDamping(tuning.suspensionDamping);
         control.setMaxSuspensionForce(getMaxSuspensionForce());
 
-        for (Iterator<VehicleWheel> it = wheels.iterator(); it.hasNext();) {
-            VehicleWheel wheel = it.next();
-            VehicleWheel newWheel = control.addWheel(wheel.getLocation(), wheel.getDirection(), wheel.getAxle(), wheel.getRestLength(), wheel.getRadius(), wheel.isFrontWheel());
+        for (VehicleWheel wheel : wheels) {
+            VehicleWheel newWheel = control.addWheel(wheel.getLocation(),
+                    wheel.getDirection(), wheel.getAxle(),
+                    wheel.getRestLength(), wheel.getRadius(),
+                    wheel.isFrontWheel());
             newWheel.setFrictionSlip(wheel.getFrictionSlip());
             newWheel.setMaxSuspensionTravelCm(wheel.getMaxSuspensionTravelCm());
             newWheel.setSuspensionStiffness(wheel.getSuspensionStiffness());

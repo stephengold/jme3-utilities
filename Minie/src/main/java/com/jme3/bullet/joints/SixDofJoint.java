@@ -41,7 +41,6 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -284,8 +283,7 @@ public class SixDofJoint extends PhysicsJoint {
         capsule.write(linearUpperLimit, "linearUpperLimit", new Vector3f(Vector3f.POSITIVE_INFINITY));
         capsule.write(linearLowerLimit, "linearLowerLimit", new Vector3f(Vector3f.NEGATIVE_INFINITY));
         int i = 0;
-        for (Iterator<RotationalLimitMotor> it = rotationalMotors.iterator(); it.hasNext();) {
-            RotationalLimitMotor rotationalLimitMotor = it.next();
+        for (RotationalLimitMotor rotationalLimitMotor : rotationalMotors) {
             capsule.write(rotationalLimitMotor.getBounce(), "rotMotor" + i + "_Bounce", 0.0f);
             capsule.write(rotationalLimitMotor.getDamping(), "rotMotor" + i + "_Damping", 1.0f);
             capsule.write(rotationalLimitMotor.getERP(), "rotMotor" + i + "_ERP", 0.5f);

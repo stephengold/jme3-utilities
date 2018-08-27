@@ -42,7 +42,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.TempVars;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -59,23 +58,13 @@ public class DebugShapeFactory {
             = Logger.getLogger(DebugShapeFactory.class.getName());
 
     /**
-     * The maximum corner for the aabb used for triangles to include in
-     * ConcaveShape processing.
-     */
-//    private static final Vector3f aabbMax = new Vector3f(1e30f, 1e30f, 1e30f);
-    /**
-     * The minimum corner for the aabb used for triangles to include in
-     * ConcaveShape processing.
-     */
-//    private static final Vector3f aabbMin = new Vector3f(-1e30f, -1e30f, -1e30f);
-    /**
      * Creates a debug shape from the given collision shape. This is mostly used
      * internally.<br>
      * To attach a debug shape to a physics object, call
      * <code>attachDebugShape(AssetManager manager);</code> on it.
      *
      * @param collisionShape the collision shape to visualize
-     * @return a new tree of geometries, or null if none
+     * @return a new tree of geometries, or null
      */
     public static Spatial getDebugShape(CollisionShape collisionShape) {
         if (collisionShape == null) {
@@ -86,8 +75,7 @@ public class DebugShapeFactory {
             CompoundCollisionShape shape = (CompoundCollisionShape) collisionShape;
             List<ChildCollisionShape> children = shape.getChildren();
             Node node = new Node("DebugShapeNode");
-            for (Iterator<ChildCollisionShape> it = children.iterator(); it.hasNext();) {
-                ChildCollisionShape childCollisionShape = it.next();
+            for (ChildCollisionShape childCollisionShape : children) {
                 CollisionShape ccollisionShape = childCollisionShape.shape;
                 Geometry geometry = createDebugShape(ccollisionShape);
 
@@ -114,6 +102,7 @@ public class DebugShapeFactory {
             return null;
         }
         debugShape.updateGeometricState();
+
         return debugShape;
     }
 

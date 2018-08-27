@@ -196,9 +196,9 @@ public class PhysicsSpace {
     /**
      * This method is invoked from native code.
      *
-     * @param f
+     * @param timeStep the time per physics step (in seconds, &ge;0)
      */
-    private void preTick_native(float f) {
+    private void preTick_native(float timeStep) {
         AppTask task;
         while ((task = pQueue.poll()) != null) {
             if (task.isCancelled()) {
@@ -211,21 +211,19 @@ public class PhysicsSpace {
             }
         }
 
-        for (Iterator<PhysicsTickListener> it = tickListeners.iterator(); it.hasNext();) {
-            PhysicsTickListener physicsTickCallback = it.next();
-            physicsTickCallback.prePhysicsTick(this, f);
+        for (PhysicsTickListener listener : tickListeners) {
+            listener.prePhysicsTick(this, timeStep);
         }
     }
 
     /**
      * This method is invoked from native code.
      *
-     * @param f
+     * @param timeStep the time per physics step (in seconds, &ge;0)
      */
-    private void postTick_native(float f) {
-        for (Iterator<PhysicsTickListener> it = tickListeners.iterator(); it.hasNext();) {
-            PhysicsTickListener physicsTickCallback = it.next();
-            physicsTickCallback.physicsTick(this, f);
+    private void postTick_native(float timeStep) {
+        for (PhysicsTickListener listener : tickListeners) {
+            listener.physicsTick(this, timeStep);
         }
     }
 
@@ -415,30 +413,27 @@ public class PhysicsSpace {
      * Add all physics controls and joints in the specified subtree of the scene
      * graph to this space (e.g. after loading from disk). Note: recursive!
      *
-     * @param spatial the root node containing the physics objects
+     * @param spatial the root of the subtree (not null)
      */
     public void addAll(Spatial spatial) {
         add(spatial);
 
         if (spatial.getControl(RigidBodyControl.class) != null) {
-            RigidBodyControl physicsNode = spatial.getControl(RigidBodyControl.class);
-            //add joints with physicsNode as BodyA
-            List<PhysicsJoint> joints = physicsNode.getJoints();
-            // TODO enhanced for loop
-            for (Iterator<PhysicsJoint> it1 = joints.iterator(); it1.hasNext();) {
-                PhysicsJoint physicsJoint = it1.next();
-                if (physicsNode.equals(physicsJoint.getBodyA())) {
-                    //add(physicsJoint.getBodyB());
+            RigidBodyControl control
+                    = spatial.getControl(RigidBodyControl.class);
+            // Add only the joints with the RigidBodyControl as BodyA.
+            List<PhysicsJoint> joints = control.getJoints();
+            for (PhysicsJoint physicsJoint : joints) {
+                if (control == physicsJoint.getBodyA()) {
                     add(physicsJoint);
                 }
             }
+            // TODO multiple controls per spatial?
         }
         //recursion
         if (spatial instanceof Node) {
             List<Spatial> children = ((Node) spatial).getChildren();
-            // TODO enhanced for loop
-            for (Iterator<Spatial> it = children.iterator(); it.hasNext();) {
-                Spatial spat = it.next();
+            for (Spatial spat : children) {
                 addAll(spat);
             }
         }
@@ -449,29 +444,28 @@ public class PhysicsSpace {
      * scene graph from the physics space (e.g. before saving to disk) Note:
      * recursive!
      *
-     * @param spatial the rootnode containing the physics objects
+     * @param spatial the root of the subtree (not null)
      */
     public void removeAll(Spatial spatial) {
-        if (spatial.getControl(RigidBodyControl.class) != null) {
-            RigidBodyControl physicsNode = spatial.getControl(RigidBodyControl.class);
-            //remove joints with physicsNode as BodyA
-            List<PhysicsJoint> joints = physicsNode.getJoints();
+        RigidBodyControl control
+                = spatial.getControl(RigidBodyControl.class);
+        if (control != null) {
+            // Remove only the joints with the RigidBodyControl as BodyA.
+            List<PhysicsJoint> joints = control.getJoints();
             for (Iterator<PhysicsJoint> it1 = joints.iterator(); it1.hasNext();) {
                 PhysicsJoint physicsJoint = it1.next();
-                if (physicsNode.equals(physicsJoint.getBodyA())) {
+                if (control.equals(physicsJoint.getBodyA())) {
                     removeJoint(physicsJoint);
-                    //remove(physicsJoint.getBodyB());
                 }
             }
+            // TODO multiple controls per spatial?
         }
 
         remove(spatial);
         //recursion
         if (spatial instanceof Node) {
             List<Spatial> children = ((Node) spatial).getChildren();
-            // TODO enhance for loop
-            for (Iterator<Spatial> it = children.iterator(); it.hasNext();) {
-                Spatial spat = it.next();
+            for (Spatial spat : children) {
                 removeAll(spat);
             }
         }

@@ -188,9 +188,7 @@ public class CompoundCollisionShape extends CollisionShape {
     }
 
     private void loadChildren() {
-        // TODO use enhanced for-loop
-        for (Iterator<ChildCollisionShape> it = children.iterator(); it.hasNext();) {
-            ChildCollisionShape child = it.next();
+        for (ChildCollisionShape child : children) {
             addChildShapeDirect(child.shape, child.location, child.rotation);
         }
     }
