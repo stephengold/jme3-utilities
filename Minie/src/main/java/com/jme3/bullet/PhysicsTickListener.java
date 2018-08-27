@@ -32,7 +32,7 @@
 package com.jme3.bullet;
 
 /**
- * Callback interface from the physics thread, used to apply forces.
+ * Callback interface from the physics thread, used to clear/apply forces.
  * <p>
  * This interface is shared between JBullet and Native Bullet.
  *
@@ -40,18 +40,20 @@ package com.jme3.bullet;
  */
 public interface PhysicsTickListener {
     /**
-     * Invoked before the physics is stepped. A good time to apply forces.
+     * Callback invoked before the physics is stepped. A good time to
+     * clear/apply forces.
      *
      * @param space the space that is about to be stepped (not null)
-     * @param tpf the time per frame (in seconds, &ge;0)
+     * @param timeStep the time per physics step (in seconds, &ge;0)
      */
-    void prePhysicsTick(PhysicsSpace space, float tpf);
+    void prePhysicsTick(PhysicsSpace space, float timeStep);
 
     /**
-     * Invoked after the physics has been stepped, use to check for forces etc.
+     * Callback invoked after the physics has been stepped, use to check for
+     * forces etc.
      *
      * @param space the space that was just stepped (not null)
-     * @param tpf the time per frame (in seconds, &ge;0)
+     * @param timeStep the time per physics step (in seconds, &ge;0)
      */
-    void physicsTick(PhysicsSpace space, float tpf);
+    void physicsTick(PhysicsSpace space, float timeStep);
 }
