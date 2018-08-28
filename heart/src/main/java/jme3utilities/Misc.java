@@ -117,9 +117,10 @@ public class Misc {
 
     /**
      * Return a deep copy of the specified object. This works around JME issue
-     * #879. TODO rename - doesn't clone if immutable
+     * #879, but still doesn't handle all classes. TODO rename - doesn't clone
+     * immutable objects.
      *
-     * @param object input (alias may be created)
+     * @param object input (unaffected)
      * @return an object equivalent to the input
      */
     public static Object deepClone(Object object) {
@@ -127,26 +128,15 @@ public class Misc {
         if (object instanceof Boolean
                 || object instanceof Byte
                 || object instanceof Character
-                || object instanceof Enum) {
-            // a unique instance for every possible value
-            clone = object;
-
-        } else if (object instanceof String
+                || object instanceof Double
+                || object instanceof Enum
+                || object instanceof Float
+                || object instanceof Integer
+                || object instanceof Long
+                || object instanceof Short
+                || object instanceof String
                 || object instanceof VectorXZ) {
-            // instances are immutable, so return an alias
             clone = object;
-
-        } else if (object instanceof Double) {
-            clone = (double) object;
-        } else if (object instanceof Float) {
-            clone = (float) object;
-        } else if (object instanceof Integer) {
-            clone = (int) object;
-        } else if (object instanceof Long) {
-            clone = (long) object;
-        } else if (object instanceof Short) {
-            clone = (short) object;
-
         } else {
             clone = Cloner.deepClone(object);
         }
