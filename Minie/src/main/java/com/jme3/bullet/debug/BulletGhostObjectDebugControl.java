@@ -60,7 +60,7 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
     private final PhysicsGhostObject body;
     private final Vector3f location = new Vector3f();
     private final Quaternion rotation = new Quaternion();
-    private CollisionShape myShape;
+    final private CollisionShape myShape;
     private Spatial geom;
 
     public BulletGhostObjectDebugControl(BulletDebugAppState debugAppState, PhysicsGhostObject body) {
