@@ -41,6 +41,7 @@ import com.jme3.bullet.objects.PhysicsCharacter;
 import com.jme3.bullet.objects.PhysicsGhostObject;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.objects.PhysicsVehicle;
+import com.jme3.export.Savable;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.RenderManager;
@@ -53,6 +54,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
+import jme3utilities.Validate;
 
 /**
  * An app state to manage a debug visualization of a physics space.
@@ -68,33 +70,84 @@ public class BulletDebugAppState extends AbstractAppState {
      */
     final private static Logger logger
             = Logger.getLogger(BulletDebugAppState.class.getName());
-
+    /**
+     * limit which objects are visualized, or null for visualize all objects
+     */
     private DebugAppStateFilter filter;
-    private AssetManager assetManager;
+    /**
+     * physics space to visualize (not null)
+     */
     final private PhysicsSpace space;
-    final private Node physicsDebugRootNode = new Node("Physics Debug Root Node");
+    /**
+     * scene-graph node to parent the geometries
+     */
+    final private Node physicsDebugRootNode
+            = new Node("Physics Debug Root Node");
+    /**
+     * view ports in which to render (not null)
+     */
     final private ViewPort[] viewPorts;
+    /**
+     * material for inactive rigid bodies
+     */
     public Material DEBUG_BLUE;
-    public Material DEBUG_RED;
+    /**
+     * material for joints
+     */
     public Material DEBUG_GREEN;
+    /**
+     * material for ghosts
+     */
     public Material DEBUG_YELLOW;
+    /**
+     * material for vehicles and active rigid bodies
+     */
     public Material DEBUG_MAGENTA;
+    /**
+     * material for physics characters
+     */
     public Material DEBUG_PINK;
+    /**
+     * map rigid bodies to visualizations
+     */
     private HashMap<PhysicsRigidBody, Spatial> bodies = new HashMap<>();
+    /**
+     * map joints to visualizations
+     */
     private HashMap<PhysicsJoint, Spatial> joints = new HashMap<>();
+    /**
+     * map ghosts to visualizations
+     */
     private HashMap<PhysicsGhostObject, Spatial> ghosts = new HashMap<>();
+    /**
+     * map physics characters to visualizations
+     */
     private HashMap<PhysicsCharacter, Spatial> characters = new HashMap<>();
+    /**
+     * map vehicles to visualizations
+     */
     private HashMap<PhysicsVehicle, Spatial> vehicles = new HashMap<>();
 
+    /**
+     * Create an app state to visualize the specified space using the specified
+     * view ports. Should be invoked only by BulletAppState.
+     *
+     * @param space physics space to visualize (not null, unaffected)
+     * @param viewPorts view ports in which to render (not null)
+     */
     public BulletDebugAppState(PhysicsSpace space, ViewPort[] viewPorts) {
+        Validate.nonNull(space, "space");
+        Validate.nonNull(viewPorts, "view ports");
+
         this.space = space;
         this.viewPorts = viewPorts;
     }
 
-    public DebugTools getNewDebugTools() {
-        return new DebugTools(assetManager);
-    }
-
+    /**
+     * Alter which which objects are visualized.
+     *
+     * @param filter new filter or or null to visualize all objects
+     */
     public void setFilter(DebugAppStateFilter filter) {
         this.filter = filter;
     }
@@ -109,7 +162,7 @@ public class BulletDebugAppState extends AbstractAppState {
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
-        this.assetManager = app.getAssetManager();
+
         setupMaterials(app);
         physicsDebugRootNode.setCullHint(Spatial.CullHint.Never);
         for (ViewPort viewPort : viewPorts) {
@@ -117,6 +170,12 @@ public class BulletDebugAppState extends AbstractAppState {
         }
     }
 
+    /**
+     * Transition this state from terminating to detached. Should be invoked
+     * only by a subclass or by the AppStateManager. Invoked once for each time
+     * {@link #initialize(com.jme3.app.state.AppStateManager, com.jme3.app.Application)}
+     * is invoked.
+     */
     @Override
     public void cleanup() {
         for (ViewPort viewPort : viewPorts) {
@@ -125,20 +184,36 @@ public class BulletDebugAppState extends AbstractAppState {
         super.cleanup();
     }
 
+    /**
+     * Update this state prior to rendering. Should be invoked only by a
+     * subclass or by the AppStateManager. Invoked once per render pass,
+     * provided the state is attached and enabled.
+     *
+     * @param tpf the time interval between render passes (in seconds, &ge;0)
+     */
     @Override
     public void update(float tpf) {
         super.update(tpf);
-        //update all object links
+
+        // Update all object links.
         updateRigidBodies();
         updateGhosts();
         updateCharacters();
         updateJoints();
         updateVehicles();
-        //update our debug root node
+
+        // Update the debug root node.
         physicsDebugRootNode.updateLogicalState(tpf);
         physicsDebugRootNode.updateGeometricState();
     }
 
+    /**
+     * Render this state. Should be invoked only by a subclass or by the
+     * AppStateManager. Invoked once per render pass, provided the state is
+     * attached and enabled.
+     *
+     * @param rm the render manager (not null)
+     */
     @Override
     public void render(RenderManager rm) {
         super.render(rm);
@@ -149,11 +224,15 @@ public class BulletDebugAppState extends AbstractAppState {
         }
     }
 
+    /**
+     * Initialize the materials.
+     *
+     * @param app the application which owns this state (not null)
+     */
     private void setupMaterials(Application app) {
         AssetManager am = app.getAssetManager();
         DEBUG_BLUE = MyAsset.createWireframeMaterial(am, ColorRGBA.Blue);
         DEBUG_GREEN = MyAsset.createWireframeMaterial(am, ColorRGBA.Green);
-        DEBUG_RED = MyAsset.createWireframeMaterial(am, ColorRGBA.Red);
         DEBUG_YELLOW = MyAsset.createWireframeMaterial(am, ColorRGBA.Yellow);
         DEBUG_MAGENTA = MyAsset.createWireframeMaterial(am, ColorRGBA.Magenta);
         DEBUG_PINK = MyAsset.createWireframeMaterial(am, ColorRGBA.Pink);
@@ -305,15 +384,15 @@ public class BulletDebugAppState extends AbstractAppState {
     }
 
     /**
-     * Interface that allows filtering out objects from the debug display
+     * Interface to limit which physics objects are visualized.
      */
     public static interface DebugAppStateFilter {
         /**
-         * Queries an object to be displayed
+         * Test whether the specified physics object should be displayed.
          *
-         * @param obj The object to be displayed
+         * @param obj the joint or collision object to test (unaffected)
          * @return return true if the object should be displayed, false if not
          */
-        boolean displayObject(Object obj);
+        boolean displayObject(Savable obj);
     }
 }
