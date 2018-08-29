@@ -64,8 +64,6 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
     final private Arrow arrowB;
     final private Transform a = new Transform();
     final private Transform b = new Transform();
-    final private Vector3f offA = new Vector3f();
-    final private Vector3f offB = new Vector3f();
 
     public BulletJointDebugControl(BulletDebugAppState debugAppState, PhysicsJoint body) {
         super(debugAppState);
