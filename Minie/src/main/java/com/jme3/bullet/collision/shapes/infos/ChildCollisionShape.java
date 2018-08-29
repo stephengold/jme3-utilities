@@ -55,9 +55,9 @@ public class ChildCollisionShape implements Savable {
     final private static Logger logger
             = Logger.getLogger(ChildCollisionShape.class.getName());
 
-    public Vector3f location;
-    public Matrix3f rotation;
-    public CollisionShape shape;
+    public Vector3f location; // TODO privatize
+    public Matrix3f rotation; // TODO privatize
+    public CollisionShape shape; // TODO privatize
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -84,7 +84,8 @@ public class ChildCollisionShape implements Savable {
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(location, "location", new Vector3f());
         capsule.write(rotation, "rotation", new Matrix3f());
-        capsule.write(shape, "shape", new BoxCollisionShape(new Vector3f(1, 1, 1)));
+        capsule.write(shape, "shape",
+                new BoxCollisionShape(new Vector3f(1f, 1f, 1f)));
     }
 
     /**
@@ -98,6 +99,7 @@ public class ChildCollisionShape implements Savable {
         InputCapsule capsule = im.getCapsule(this);
         location = (Vector3f) capsule.readSavable("location", new Vector3f());
         rotation = (Matrix3f) capsule.readSavable("rotation", new Matrix3f());
-        shape = (CollisionShape) capsule.readSavable("shape", new BoxCollisionShape(new Vector3f(1, 1, 1)));
+        shape = (CollisionShape) capsule.readSavable("shape",
+                new BoxCollisionShape(new Vector3f(1f, 1f, 1f)));
     }
 }

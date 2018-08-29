@@ -44,28 +44,36 @@ import com.jme3.scene.control.Control;
  */
 public interface PhysicsControl extends Control {
     /**
-     * Add this control to a physics space.
+     * Add this control's physics object to the specified physics space, or
+     * remove it from the space it's currently in.
      *
-     * @param space physics space to use
+     * @param space where to add, or null to remove
      */
     void setPhysicsSpace(PhysicsSpace space);
 
+    /**
+     * Access the physics space containing this control's physics object.
+     *
+     * @return the pre-existing space, or null for none
+     */
     PhysicsSpace getPhysicsSpace();
 
     /**
-     * The physics object is removed from the physics space when the control is
-     * disabled. When the control is enabled again the physics object is moved
+     * Enable or disable this control.
+     * <p>
+     * The physics object is removed from its physics space when the control is
+     * disabled. When the control is enabled again, the physics object is moved
      * to the current location of the spatial and then added to the physics
-     * space. This allows disabling/enabling physics to move the spatial freely.
+     * space.
      *
      * @param state true&rarr;enable the control, false&rarr;disable it
      */
     void setEnabled(boolean state);
 
     /**
-     * Return the enabled/disabled status of the control.
+     * Test whether this control is enabled.
      *
-     * @return true&rarr;enabled, false&rarr;disabled
+     * @return true if enabled, otherwise false
      */
     boolean isEnabled();
 }

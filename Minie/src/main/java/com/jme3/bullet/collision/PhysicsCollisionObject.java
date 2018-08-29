@@ -55,8 +55,8 @@ public abstract class PhysicsCollisionObject implements Savable {
     final private static Logger logger
             = Logger.getLogger(PhysicsCollisionObject.class.getName());
     /**
-     * Bullet id of the object. Constructors are expected to set this to a
-     * non-zero value. The id might change if the object gets rebuilt.
+     * Bullet id for this object. Constructors are responsible for setting this
+     * to a non-zero value. The id might change if the object gets rebuilt.
      */
     protected long objectId = 0;
     /**

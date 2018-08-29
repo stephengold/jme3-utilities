@@ -98,6 +98,9 @@ public class PhysicsSpace {
     };
     final private ConcurrentLinkedQueue<AppTask<?>> pQueue
             = new ConcurrentLinkedQueue<>();
+    /**
+     * physics space for each thread
+     */
     private static ThreadLocal<PhysicsSpace> physicsSpaceTL
             = new ThreadLocal<PhysicsSpace>();
     private BroadphaseType broadphaseType = BroadphaseType.DBVT;
