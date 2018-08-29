@@ -90,23 +90,23 @@ public class BulletDebugAppState extends AbstractAppState {
     /**
      * material for inactive rigid bodies
      */
-    public Material DEBUG_BLUE;
+    Material DEBUG_BLUE;
     /**
      * material for joints
      */
-    public Material DEBUG_GREEN;
+    Material DEBUG_GREEN;
     /**
      * material for ghosts
      */
-    public Material DEBUG_YELLOW;
+    Material DEBUG_YELLOW;
     /**
      * material for vehicles and active rigid bodies
      */
-    public Material DEBUG_MAGENTA;
+    Material DEBUG_MAGENTA;
     /**
      * material for physics characters
      */
-    public Material DEBUG_PINK;
+    Material DEBUG_PINK;
     /**
      * map rigid bodies to visualizations
      */

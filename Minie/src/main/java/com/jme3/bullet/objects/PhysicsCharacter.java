@@ -55,8 +55,13 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
      */
     final private static Logger logger
             = Logger.getLogger(PhysicsCharacter.class.getName());
-
+    /**
+     * Bullet id for this character (as opposed to its collision object, which
+     * is a ghost). Constructors are responsible for setting this to a non-zero
+     * value. The id might change if the character gets rebuilt.
+     */
     private long characterId = 0;
+
     private float stepHeight;
     final private Vector3f walkDirection = new Vector3f();
     private float fallSpeed = 55.0f;
@@ -71,19 +76,18 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     }
 
     /**
-     * @param shape The CollisionShape (no Mesh or CompoundCollisionShapes)
-     * @param stepHeight The quantization size for vertical movement
+     * Create a character with the specified collision shape and step height.
+     *
+     * @param shape the desired shape (not null, alias created)
+     * @param stepHeight the quantization size for vertical movement
      */
     public PhysicsCharacter(CollisionShape shape, float stepHeight) {
         this.collisionShape = shape;
-//        if (shape instanceof MeshCollisionShape || shape instanceof CompoundCollisionShape) {
-//            throw (new UnsupportedOperationException("Kinematic character nodes cannot have mesh or compound collision shapes"));
-//        }
         this.stepHeight = stepHeight;
         buildObject();
     }
 
-    protected void buildObject() {
+    private void buildObject() {
         if (objectId == 0) {
             objectId = createGhostObject();
             logger.log(Level.FINE, "Creating GhostObject {0}", Long.toHexString(objectId));
@@ -343,9 +347,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
 
     @Override
     public void setCollisionShape(CollisionShape collisionShape) {
-//        if (!(collisionShape.getObjectId() instanceof ConvexShape)) {
-//            throw (new UnsupportedOperationException("Kinematic character nodes cannot have mesh collision shapes"));
-//        }
         super.setCollisionShape(collisionShape);
         if (objectId == 0) {
             buildObject();
@@ -365,7 +366,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     }
 
     /**
-     * Copy the location of this character.
+     * Copy the location of this character's center of mass.
      *
      * @param trans a vector to store the result in (modified if not null)
      * @return the location (either trans or a new vector)
@@ -381,7 +382,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     private native void getPhysicsLocation(long objectId, Vector3f vec);
 
     /**
-     * Copy the location of this character.
+     * Copy the location of this character's center of mass.
      *
      * @return a new location vector (not null)
      */
