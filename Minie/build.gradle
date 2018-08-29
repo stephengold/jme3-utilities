@@ -17,6 +17,14 @@ sourcesJar { baseName project.ext.baseName }
 dependencies {
     //compile "jme3utilities:jme3-utilities-debug:$jme3utilitiesdebugVersion"
     compile project(':debug')
+
+    // The following dependencies are for testing and should be commented
+    // out when building a release.
+    //runtime "org.jmonkeyengine:jme3-bullet-native:$jmonkeyengineVersion"
+    //runtime "org.jmonkeyengine:jme3-desktop:$jmonkeyengineVersion"
+    //runtime "org.jmonkeyengine:jme3-lwjgl:$jmonkeyengineVersion"
+    //compile "org.jmonkeyengine:jme3-plugins:$jmonkeyengineVersion"
+    //runtime 'org.jmonkeyengine:jme3-testdata:3.1.0-stable'
 }
 
 task pom {
@@ -35,4 +43,18 @@ task pom {
             }
         }.writeTo("${buildDir}/libs/${project.ext.baseName}.pom")
     }
+}
+
+tasks.withType(JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    enableAssertions true
+}
+
+// cleanup tasks
+clean { dependsOn 'cleanDLLs', 'cleanSOs' }
+task cleanDLLs(type: Delete) {
+    delete fileTree(dir: '.', include: '*.dll')
+}
+task cleanSOs(type: Delete) {
+    delete fileTree(dir: '.', include: '*.so')
 }
