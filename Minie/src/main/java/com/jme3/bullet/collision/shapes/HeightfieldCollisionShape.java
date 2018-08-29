@@ -89,7 +89,7 @@ public class HeightfieldCollisionShape extends CollisionShape {
     }
 
     protected void createCollisionHeightfield(float[] heightmap, Vector3f worldScale) {
-        this.scale = worldScale;
+        this.scale.set(worldScale);
         this.heightScale = 1;//don't change away from 1, we use worldScale instead to scale
 
         this.heightfieldData = heightmap;

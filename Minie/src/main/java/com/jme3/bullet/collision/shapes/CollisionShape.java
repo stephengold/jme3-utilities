@@ -52,11 +52,18 @@ public abstract class CollisionShape implements Savable {
     final private static Logger logger
             = Logger.getLogger(CollisionShape.class.getName());
 
+    /**
+     * Bullet id for this shape. Constructors are responsible for setting this
+     * to a non-zero value. The id never changes.
+     */
     protected long objectId = 0;
     /**
-     * scaling factors: one for each local axis
+     * scaling factors: one for each local axis (default=1,1,1)
      */
-    protected Vector3f scale = new Vector3f(1f, 1f, 1f);
+    final protected Vector3f scale = new Vector3f(1f, 1f, 1f);
+    /**
+     * collision margin (in world units, &ge;0, default=0)
+     */
     protected float margin = 0f;
 
     /**
@@ -67,7 +74,7 @@ public abstract class CollisionShape implements Savable {
     }
 
     /**
-     * Read the Bullet object id.
+     * Read the Bullet object id of this shape.
      *
      * @return the id
      */
@@ -94,12 +101,23 @@ public abstract class CollisionShape implements Savable {
         return scale;
     }
 
+    /**
+     * Read the collision margin for this shape.
+     *
+     * @return margin distance (in world units, &ge;0, default=0)
+     */
     public float getMargin() {
         return getMargin(objectId);
     }
 
     private native float getMargin(long objectId);
 
+    /**
+     * Alter the collision margin for this shape. Increasing the margin doesn't
+     * make the shape larger, but does off its corners.
+     *
+     * @param margin new value (in world units, &ge;0, default=0)
+     */
     public void setMargin(float margin) {
         setMargin(objectId, margin);
         this.margin = margin;
@@ -118,8 +136,8 @@ public abstract class CollisionShape implements Savable {
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(scale, "scale", new Vector3f(1, 1, 1));
-        capsule.write(getMargin(), "margin", 0.0f);
+        capsule.write(scale, "scale", new Vector3f(1f, 1f, 1f));
+        capsule.write(getMargin(), "margin", 0f);
     }
 
     /**
@@ -131,10 +149,17 @@ public abstract class CollisionShape implements Savable {
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
-        this.scale = (Vector3f) capsule.readSavable("scale", new Vector3f(1, 1, 1));
-        this.margin = capsule.readFloat("margin", 0.0f);
+        Object s = capsule.readSavable("scale", new Vector3f(1f, 1f, 1f));
+        this.scale.set((Vector3f) s);
+        this.margin = capsule.readFloat("margin", 0f);
     }
 
+    /**
+     * Finalize this shape just before it is destroyed. Should be invoked only
+     * by a subclass or by the garbage collector.
+     *
+     * @throws Throwable
+     */
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
