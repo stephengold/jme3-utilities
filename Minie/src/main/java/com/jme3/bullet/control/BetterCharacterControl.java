@@ -73,7 +73,8 @@ import java.util.logging.Logger;
  *
  * @author normenhansen
  */
-public class BetterCharacterControl extends AbstractPhysicsControl implements PhysicsTickListener, JmeCloneable {
+public class BetterCharacterControl extends AbstractPhysicsControl
+        implements PhysicsTickListener, JmeCloneable {
 
     /**
      * message logger for this class
@@ -89,25 +90,26 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
     /**
      * Local up direction, derived from gravity.
      */
-    private final Vector3f localUp = new Vector3f(0, 1, 0);
+    private final Vector3f localUp = new Vector3f(0f, 1f, 0f);
     /**
      * Local absolute z-forward direction, derived from gravity and UNIT_Z,
      * updated continuously when gravity changes.
      */
-    private final Vector3f localForward = new Vector3f(0, 0, 1);
+    private final Vector3f localForward = new Vector3f(0f, 0f, 1f);
     /**
      * Local left direction, derived from up and forward.
      */
-    private final Vector3f localLeft = new Vector3f(1, 0, 0);
+    private final Vector3f localLeft = new Vector3f(1f, 0f, 0f);
     /**
      * Local z-forward quaternion for the "local absolute" z-forward direction.
      */
-    private final Quaternion localForwardRotation = new Quaternion(Quaternion.DIRECTION_Z);
+    private final Quaternion localForwardRotation
+            = new Quaternion(Quaternion.DIRECTION_Z);
     /**
      * Is a z-forward vector based on the view direction and the current local
      * x/z plane.
      */
-    private final Vector3f viewDirection = new Vector3f(0, 0, 1);
+    private final Vector3f viewDirection = new Vector3f(0f, 0f, 1f);
     /**
      * Stores final spatial location, corresponds to RigidBody location.
      */
@@ -117,11 +119,11 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
      * direction and the current local x/z plane. See also rotatedViewDirection.
      */
     private final Quaternion rotation = new Quaternion(Quaternion.DIRECTION_Z);
-    private final Vector3f rotatedViewDirection = new Vector3f(0, 0, 1);
+    private final Vector3f rotatedViewDirection = new Vector3f(0f, 0f, 1f);
     private final Vector3f walkDirection = new Vector3f();
     private final Vector3f jumpForce;
     private float physicsDamping = 0.9f;
-    private final Vector3f scale = new Vector3f(1, 1, 1);
+    private final Vector3f scale = new Vector3f(1f, 1f, 1f);
     private final Vector3f velocity = new Vector3f();
     private boolean jump = false;
     private boolean onGround = false;
@@ -156,7 +158,6 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
 
     @Override
     public void update(float tpf) {
-        super.update(tpf);
         rigidBody.getPhysicsLocation(location);
         //rotation has been set through viewDirection
         applyPhysicsTransform(location, rotation);
@@ -164,7 +165,6 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
 
     @Override
     public void render(RenderManager rm, ViewPort vp) {
-        super.render(rm, vp);
     }
 
     /**
@@ -215,7 +215,9 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
             //TODO: precalculate jump force
             Vector3f rotatedJumpForce = vars.vect1;
             rotatedJumpForce.set(jumpForce);
-            rigidBody.applyImpulse(localForwardRotation.multLocal(rotatedJumpForce), Vector3f.ZERO);
+            rigidBody.applyImpulse(
+                    localForwardRotation.multLocal(rotatedJumpForce),
+                    Vector3f.ZERO);
             jump = false;
         }
         vars.release();
@@ -687,14 +689,16 @@ public class BetterCharacterControl extends AbstractPhysicsControl implements Ph
 
     @Override
     public Control cloneForSpatial(Spatial spatial) {
-        BetterCharacterControl control = new BetterCharacterControl(radius, height, mass);
+        BetterCharacterControl control
+                = new BetterCharacterControl(radius, height, mass);
         control.setJumpForce(jumpForce);
         return control;
     }
 
     @Override
     public Object jmeClone() {
-        BetterCharacterControl control = new BetterCharacterControl(radius, height, mass);
+        BetterCharacterControl control
+                = new BetterCharacterControl(radius, height, mass);
         control.setJumpForce(jumpForce);
         control.spatial = this.spatial;
         return control;

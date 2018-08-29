@@ -38,12 +38,12 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
 import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
+import java.util.logging.Logger;
+import jme3utilities.MySpatial;
 
 /**
  * AbstractPhysicsControl manages the lifecycle of a physics object that is
@@ -53,13 +53,32 @@ import java.io.IOException;
  *
  * @author normenhansen
  */
-public abstract class AbstractPhysicsControl implements PhysicsControl, JmeCloneable {
+public abstract class AbstractPhysicsControl
+        implements PhysicsControl, JmeCloneable {
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(AbstractPhysicsControl.class.getName());
+    /**
+     * local copy of {@link com.jme3.math.Quaternion#IDENTITY}
+     */
+    final private static Quaternion rotateIdentity = new Quaternion();
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#ZERO}
+     */
+    final private static Vector3f translateIdentity = new Vector3f(0f, 0f, 0f);
 
     private final Quaternion tmp_inverseWorldRotation = new Quaternion();
     protected Spatial spatial;
-    protected boolean enabled = true;
+    protected boolean enabled = true; // TODO privatize
     protected boolean added = false;
     private PhysicsSpace space = null;
+    /**
+     * true&rarr;match local transform to physics transform, false&rarr;match
+     * world transform to physics transform
+     */
     private boolean applyLocal = false;
 
     /**
@@ -110,36 +129,60 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
      */
     protected abstract void removePhysics(PhysicsSpace space);
 
+    /**
+     * Test whether physics coordinates should match the local transform of the
+     * Spatial.
+     *
+     * @return true if matching local transform, false if matching world
+     * transform
+     */
     public boolean isApplyPhysicsLocal() {
         return applyLocal;
     }
 
     /**
-     * When set to true, the physics coordinates will be applied to the local
-     * translation of the Spatial
+     * Alter whether physics coordinates should match the local transform of the
+     * Spatial
      *
-     * @param applyPhysicsLocal true&rarr;apply to local position
+     * @param applyPhysicsLocal true&rarr;match local transform,
+     * false&rarr;match world transform
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         applyLocal = applyPhysicsLocal;
     }
 
+    /**
+     * Access whichever Spatial translation corresponds to the physics location.
+     *
+     * @return the pre-existing vector (not null)
+     */
     protected Vector3f getSpatialTranslation() {
-        if (applyLocal) {
+        if (MySpatial.isIgnoringTransforms(spatial)) {
+            return translateIdentity;
+        } else if (applyLocal) {
             return spatial.getLocalTranslation();
+        } else {
+            return spatial.getWorldTranslation();
         }
-        return spatial.getWorldTranslation();
-    }
-
-    protected Quaternion getSpatialRotation() {
-        if (applyLocal) {
-            return spatial.getLocalRotation();
-        }
-        return spatial.getWorldRotation();
     }
 
     /**
-     * Applies a physics transform to the spatial
+     * Access whichever Spatial rotation is relevant to the physics rotation.
+     *
+     * @return the pre-existing quaternion (not null)
+     */
+    protected Quaternion getSpatialRotation() {
+        if (MySpatial.isIgnoringTransforms(spatial)) {
+            return rotateIdentity;
+        } else if (applyLocal) {
+            return spatial.getLocalRotation();
+        } else {
+            return spatial.getWorldRotation();
+        }
+    }
+
+    /**
+     * Apply a physics transform to the spatial
      *
      * @param worldLocation physics location (not null)
      * @param worldRotation physics orientation (not null)
@@ -171,6 +214,11 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
         createSpatialData(this.spatial);
     }
 
+    /**
+     * Alter which spatial is controlled.
+     *
+     * @param newSpatial spatial to control (or null)
+     */
     @Override
     public void setSpatial(Spatial spatial) {
         if (this.spatial != null && this.spatial != spatial) {
@@ -187,6 +235,16 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
         setPhysicsRotation(getSpatialRotation());
     }
 
+    /**
+     * Enable or disable this control.
+     * <p>
+     * The physics object is removed from its physics space when the control is
+     * disabled. When the control is enabled again, the physics object is moved
+     * to the current location of the spatial and then added to the physics
+     * space.
+     *
+     * @param enabled true&rarr;enable the control, false&rarr;disable it
+     */
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
@@ -205,19 +263,22 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
         }
     }
 
+    /**
+     * Test whether this control is enabled.
+     *
+     * @return true if enabled, otherwise false
+     */
     @Override
     public boolean isEnabled() {
         return enabled;
     }
 
-    @Override
-    public void update(float tpf) {
-    }
-
-    @Override
-    public void render(RenderManager rm, ViewPort vp) {
-    }
-
+    /**
+     * Add this control's physics object to the specified physics space and
+     * remove it from the space it's currently in.
+     *
+     * @param space where to add, or null to simply remove
+     */
     @Override
     public void setPhysicsSpace(PhysicsSpace space) {
         if (space == null) {
@@ -237,11 +298,22 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
         this.space = space;
     }
 
+    /**
+     * Access the physics space containing this control's physics object.
+     *
+     * @return the pre-existing space, or null for none
+     */
     @Override
     public PhysicsSpace getPhysicsSpace() {
         return space;
     }
 
+    /**
+     * Serialize this object, for example when saving to a J3O file.
+     *
+     * @param e exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule oc = ex.getCapsule(this);
@@ -250,6 +322,13 @@ public abstract class AbstractPhysicsControl implements PhysicsControl, JmeClone
         oc.write(spatial, "spatial", null);
     }
 
+    /**
+     * De-serialize this control from the specified importer, for example when
+     * loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule ic = im.getCapsule(this);
