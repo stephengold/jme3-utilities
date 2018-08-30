@@ -68,7 +68,7 @@ public class CylinderCollisionShape extends CollisionShape {
     }
 
     /**
-     * creates a cylinder shape from the given halfextents
+     * Create a cylinder shape from the given halfextents.
      *
      * @param halfExtents the halfextents to use
      */
@@ -79,7 +79,7 @@ public class CylinderCollisionShape extends CollisionShape {
     }
 
     /**
-     * Creates a cylinder shape around the given axis from the given halfextents
+     * Create a cylinder shape around the given axis from the given halfextents
      *
      * @param halfExtents the halfextents to use
      * @param axis (0=X,1=Y,2=Z)
@@ -142,7 +142,7 @@ public class CylinderCollisionShape extends CollisionShape {
         createShape();
     }
 
-    protected void createShape() {
+    private void createShape() {
         objectId = createShape(axis, halfExtents);
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
 //        switch (axis) {
