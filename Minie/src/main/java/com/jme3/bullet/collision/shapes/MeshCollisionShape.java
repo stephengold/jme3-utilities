@@ -239,12 +239,20 @@ public class MeshCollisionShape extends CollisionShape {
 
     private native byte[] saveBVH(long objectId);
 
-    private native long createShape(boolean memoryOptimized, boolean buildBvt, long meshId);
+    private native long createShape(boolean memoryOptimized, boolean buildBvt,
+            long meshId);
 
+    /**
+     * Finalize this shape just before it is destroyed. Should be invoked only
+     * by a subclass or by the garbage collector.
+     *
+     * @throws Throwable
+     */
     @Override
-    public void finalize() throws Throwable {
+    protected void finalize() throws Throwable {
         super.finalize();
-        logger.log(Level.FINE, "Finalizing Mesh {0}", Long.toHexString(this.meshId));
+        logger.log(Level.FINE, "Finalizing Mesh {0}",
+                Long.toHexString(this.meshId));
         if (this.meshId > 0) {
             this.finalizeNative(this.meshId, this.nativeBVHBuffer);
         }
