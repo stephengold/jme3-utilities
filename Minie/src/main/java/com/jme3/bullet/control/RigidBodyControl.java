@@ -78,6 +78,10 @@ public class RigidBodyControl extends PhysicsRigidBody
     protected PhysicsSpace space = null;
     protected boolean kinematicSpatial = true;
 
+    /**
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
+     * directly!
+     */
     public RigidBodyControl() {
     }
 
@@ -229,16 +233,21 @@ public class RigidBodyControl extends PhysicsRigidBody
         }
     }
 
+    /**
+     * Test whether this control is enabled.
+     *
+     * @return true if enabled, otherwise false
+     */
     @Override
     public boolean isEnabled() {
         return enabled;
     }
 
     /**
-     * Checks if this control is in kinematic spatial mode.
+     * Test whether this control is in kinematic mode.
      *
-     * @return true if the spatial location is applied to this kinematic
-     * rigidbody
+     * @return true if the spatial location and rotation are applied to the
+     * rigid body, otherwise false
      */
     public boolean isKinematicSpatial() {
         return kinematicSpatial;
@@ -255,16 +264,23 @@ public class RigidBodyControl extends PhysicsRigidBody
         this.kinematicSpatial = kinematicSpatial;
     }
 
+    /**
+     * Test whether physics coordinates should match the local transform of the
+     * Spatial.
+     *
+     * @return true if matching local transform, false if matching world
+     * transform
+     */
     public boolean isApplyPhysicsLocal() {
         return motionState.isApplyPhysicsLocal();
     }
 
     /**
-     * When set to true, the physics coordinates will be applied to the local
-     * translation of the Spatial instead of the world translation.
+     * Alter whether physics coordinates should match the local transform of the
+     * Spatial.
      *
-     * @param applyPhysicsLocal true&rarr;apply locally, false&rarr;apply in
-     * world
+     * @param applyPhysicsLocal true&rarr;match local transform,
+     * false&rarr;match world transform (default is false)
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         motionState.setApplyPhysicsLocal(applyPhysicsLocal);

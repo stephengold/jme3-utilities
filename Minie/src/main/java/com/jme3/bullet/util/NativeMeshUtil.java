@@ -40,6 +40,7 @@ import java.nio.FloatBuffer;
 import java.util.logging.Logger;
 
 /**
+ * Utility class for interfacing with native Bullet.
  *
  * @author normenhansen
  */
@@ -51,9 +52,17 @@ public class NativeMeshUtil {
     final private static Logger logger
             = Logger.getLogger(NativeMeshUtil.class.getName());
 
+    /**
+     * A utility method to pass a mesh to native Bullet.
+     *
+     * @param mesh (not null)
+     * @return the Bullet id of the new btTriangleIndexVertexArray
+     */
     public static long getTriangleIndexVertexArray(Mesh mesh) {
-        ByteBuffer triangleIndexBase = BufferUtils.createByteBuffer(mesh.getTriangleCount() * 3 * 4);
-        ByteBuffer vertexBase = BufferUtils.createByteBuffer(mesh.getVertexCount() * 3 * 4);
+        ByteBuffer triangleIndexBase
+                = BufferUtils.createByteBuffer(mesh.getTriangleCount() * 3 * 4);
+        ByteBuffer vertexBase
+                = BufferUtils.createByteBuffer(mesh.getVertexCount() * 3 * 4);
         int numVertices = mesh.getVertexCount();
         int vertexStride = 12; //3 verts * 4 bytes per.
         int numTriangles = mesh.getTriangleCount();
@@ -76,9 +85,12 @@ public class NativeMeshUtil {
         vertices.rewind();
         vertices.clear();
 
-        return createTriangleIndexVertexArray(triangleIndexBase, vertexBase, numTriangles, numVertices, vertexStride, triangleIndexStride);
+        return createTriangleIndexVertexArray(triangleIndexBase, vertexBase,
+                numTriangles, numVertices, vertexStride, triangleIndexStride);
     }
 
-    public static native long createTriangleIndexVertexArray(ByteBuffer triangleIndexBase, ByteBuffer vertexBase, int numTraingles, int numVertices, int vertextStride, int triangleIndexStride);
-
+    public static native long createTriangleIndexVertexArray(
+            ByteBuffer triangleIndexBase, ByteBuffer vertexBase,
+            int numTraingles, int numVertices, int vertextStride,
+            int triangleIndexStride);
 }

@@ -63,7 +63,8 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
     final private CollisionShape myShape;
     private Spatial geom;
 
-    public BulletGhostObjectDebugControl(BulletDebugAppState debugAppState, PhysicsGhostObject body) {
+    public BulletGhostObjectDebugControl(BulletDebugAppState debugAppState,
+            PhysicsGhostObject body) {
         super(debugAppState);
         this.body = body;
         myShape = body.getCollisionShape();

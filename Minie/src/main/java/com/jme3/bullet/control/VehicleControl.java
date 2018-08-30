@@ -80,7 +80,7 @@ public class VehicleControl extends PhysicsVehicle
     }
 
     /**
-     * Create a control with the specified collision shape and mass=1.
+     * Create a control with mass=1 and the specified collision shape.
      *
      * @param shape the desired shape (not null, alias created)
      */
@@ -98,16 +98,23 @@ public class VehicleControl extends PhysicsVehicle
         super(shape, mass);
     }
 
+    /**
+     * Test whether physics coordinates should match the local transform of the
+     * Spatial.
+     *
+     * @return true if matching local transform, false if matching world
+     * transform
+     */
     public boolean isApplyPhysicsLocal() {
         return motionState.isApplyPhysicsLocal();
     }
 
     /**
-     * When set to true, the physics coordinates will be applied to the local
-     * translation of the Spatial
+     * Alter whether physics coordinates should match the local transform of the
+     * Spatial.
      *
-     * @param applyPhysicsLocal true&rarr;apply to local coordinates,
-     * false&rarr;apply to world coordinates
+     * @param applyPhysicsLocal true&rarr;match local transform,
+     * false&rarr;match world transform (default is false)
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         motionState.setApplyPhysicsLocal(applyPhysicsLocal);
@@ -241,6 +248,11 @@ public class VehicleControl extends PhysicsVehicle
         }
     }
 
+    /**
+     * Alter which spatial is controlled.
+     *
+     * @param spatial spatial to control (or null)
+     */
     @Override
     public void setSpatial(Spatial spatial) {
         this.spatial = spatial;
@@ -252,6 +264,16 @@ public class VehicleControl extends PhysicsVehicle
         setPhysicsRotation(getSpatialRotation());
     }
 
+    /**
+     * Enable or disable this control.
+     * <p>
+     * The physics object is removed from its physics space when the control is
+     * disabled. When the control is enabled again, the physics object is moved
+     * to the current location of the spatial and then added to the physics
+     * space.
+     *
+     * @param enabled true&rarr;enable the control, false&rarr;disable it
+     */
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
@@ -270,11 +292,21 @@ public class VehicleControl extends PhysicsVehicle
         }
     }
 
+    /**
+     * Test whether this control is enabled.
+     *
+     * @return true if enabled, otherwise false
+     */
     @Override
     public boolean isEnabled() {
         return enabled;
     }
 
+    /**
+     * Update this control. (Invoked once per frame.)
+     *
+     * @param tpf the time interval between render passes (in seconds, &ge;0)
+     */
     @Override
     public void update(float tpf) {
         if (enabled && spatial != null) {

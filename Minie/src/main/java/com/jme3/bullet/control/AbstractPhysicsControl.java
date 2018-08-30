@@ -142,10 +142,10 @@ public abstract class AbstractPhysicsControl
 
     /**
      * Alter whether physics coordinates should match the local transform of the
-     * Spatial
+     * Spatial.
      *
      * @param applyPhysicsLocal true&rarr;match local transform,
-     * false&rarr;match world transform
+     * false&rarr;match world transform (default is false)
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         applyLocal = applyPhysicsLocal;
@@ -217,7 +217,7 @@ public abstract class AbstractPhysicsControl
     /**
      * Alter which spatial is controlled.
      *
-     * @param newSpatial spatial to control (or null)
+     * @param spatial spatial to control (or null)
      */
     @Override
     public void setSpatial(Spatial spatial) {
@@ -311,7 +311,7 @@ public abstract class AbstractPhysicsControl
     /**
      * Serialize this object, for example when saving to a J3O file.
      *
-     * @param e exporter (not null)
+     * @param ex exporter (not null)
      * @throws IOException from exporter
      */
     @Override

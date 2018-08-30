@@ -131,5 +131,6 @@ public class DebugShapeFactory {
         return mesh;
     }
 
-    private static native void getVertices(long shapeId, DebugMeshCallback buffer);
+    private static native void getVertices(long shapeId, 
+            DebugMeshCallback buffer);
 }

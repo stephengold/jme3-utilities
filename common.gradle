@@ -1,3 +1,5 @@
+// Gradle settings and tasks common to all subprojects
+
 apply plugin: 'java'
 apply plugin: 'maven'
 

@@ -159,6 +159,12 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
             return rigidBody;
         }
 
+        /**
+         * Serialize this bone link, for example when saving to a J3O file.
+         *
+         * @param ex exporter (not null)
+         * @throws IOException from exporter
+         */
         @Override
         public void write(JmeExporter ex) throws IOException {
             OutputCapsule oc = ex.getCapsule(this);
@@ -170,6 +176,13 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
             oc.write(startBlendingPos, "startBlendingPos", new Vector3f());
         }
 
+        /**
+         * De-serialize this bone link, for example when loading from a J3O
+         * file.
+         *
+         * @param im importer (not null)
+         * @throws IOException from importer
+         */
         @Override
         public void read(JmeImporter im) throws IOException {
             InputCapsule ic = im.getCapsule(this);
@@ -183,7 +196,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     }
 
     /**
-     * contruct a KinematicRagdollControl
+     * construct a KinematicRagdollControl
      */
     public KinematicRagdollControl() {
         baseRigidBody = new PhysicsRigidBody(new BoxCollisionShape(Vector3f.UNIT_XYZ.mult(0.1f)), 1);
@@ -578,7 +591,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
 
     /**
      * Set the joint limits for the joint between the given bone and its parent.
-     * This method can't work before attaching the control to a spatial
+     * Can only be invoked after attaching the control to a spatial.
      *
      * @param boneName the name of the bone
      * @param maxX the maximum rotation on the x axis (in radians)
@@ -588,12 +601,15 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
      * @param maxZ the maximum rotation on the z axis (in radians)
      * @param minZ the minimum rotation on the z axis (in radians)
      */
-    public void setJointLimit(String boneName, float maxX, float minX, float maxY, float minY, float maxZ, float minZ) {
+    public void setJointLimit(String boneName, float maxX, float minX,
+            float maxY, float minY, float maxZ, float minZ) {
         PhysicsBoneLink link = boneLinks.get(boneName);
         if (link != null) {
-            RagdollUtils.setJointLimit(link.joint, maxX, minX, maxY, minY, maxZ, minZ);
+            RagdollUtils.setJointLimit(link.joint,
+                    maxX, minX, maxY, minY, maxZ, minZ);
         } else {
-            logger.log(Level.WARNING, "Not joint was found for bone {0}. make sure you call spatial.addControl(ragdoll) before setting joints limit", boneName);
+            logger.log(Level.WARNING,
+                    "Not joint was found for bone {0}. make sure you call spatial.addControl(ragdoll) before setting joints limit", boneName);
         }
     }
 
@@ -609,7 +625,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         if (link != null) {
             return link.joint;
         } else {
-            logger.log(Level.WARNING, "Not joint was found for bone {0}. make sure you call spatial.addControl(ragdoll) before setting joints limit", boneName);
+            logger.log(Level.WARNING,
+                    "Not joint was found for bone {0}. make sure you call spatial.addControl(ragdoll) before setting joints limit", boneName);
             return null;
         }
     }
@@ -661,7 +678,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     }
 
     /**
-     * For internal use only callback for collisionevent
+     * For internal use only: callback for collision event
      *
      * @param event (not null)
      */
@@ -719,7 +736,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
      * be animated by the keyframe animation, but will be able to physically
      * interact with its physics environment
      *
-     * @param mode an enum value
+     * @param mode an enum value (not null)
      */
     protected void setMode(Mode mode) {
         this.mode = mode;

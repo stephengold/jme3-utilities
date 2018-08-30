@@ -74,6 +74,10 @@ public class GhostControl extends PhysicsGhostObject
     protected PhysicsSpace space = null;
     private boolean applyLocal = false;
 
+    /**
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
+     * directly!
+     */
     public GhostControl() {
     }
 
@@ -81,16 +85,23 @@ public class GhostControl extends PhysicsGhostObject
         super(shape);
     }
 
+    /**
+     * Test whether physics coordinates should match the local transform of the
+     * Spatial.
+     *
+     * @return true if matching local transform, false if matching world
+     * transform
+     */
     public boolean isApplyPhysicsLocal() {
         return applyLocal;
     }
 
     /**
-     * When set to true, the physics coordinates will be applied to the local
-     * translation of the Spatial
+     * Alter whether physics coordinates should match the local transform of the
+     * Spatial.
      *
-     * @param applyPhysicsLocal true&rarr;apply to local, false&rarr;apply to
-     * world
+     * @param applyPhysicsLocal true&rarr;match local transform,
+     * false&rarr;match world transform (default is false)
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         applyLocal = applyPhysicsLocal;

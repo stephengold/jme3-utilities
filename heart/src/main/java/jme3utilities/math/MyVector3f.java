@@ -276,8 +276,7 @@ public class MyVector3f {
     }
 
     /**
-     * Find the cardinal direction most similar to the specified input. TODO use
-     * heart library
+     * Find the cardinal direction most similar to the specified input.
      *
      * @param input (not null, modified)
      */

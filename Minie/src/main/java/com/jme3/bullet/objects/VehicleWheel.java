@@ -462,10 +462,24 @@ public class VehicleWheel implements Savable {
         this.wheelSpatial = wheelSpatial;
     }
 
+    /**
+     * Test whether physics coordinates should match the local transform of the
+     * Spatial.
+     *
+     * @return true if matching local transform, false if matching world
+     * transform
+     */
     public boolean isApplyLocal() {
         return applyLocal;
     }
 
+    /**
+     * Alter whether physics coordinates should match the local transform of the
+     * Spatial.
+     *
+     * @param applyLocal true&rarr;match local transform, false&rarr;match world
+     * transform (default is false)
+     */
     public void setApplyLocal(boolean applyLocal) {
         this.applyLocal = applyLocal;
     }
@@ -487,5 +501,4 @@ public class VehicleWheel implements Savable {
     public void getWheelWorldLocation(final Vector3f store) {
         store.set(this.wheelWorldLocation);
     }
-
 }
