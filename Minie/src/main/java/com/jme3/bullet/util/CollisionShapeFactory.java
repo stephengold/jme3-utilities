@@ -97,7 +97,7 @@ public class CollisionShapeFactory {
         for (Spatial spatial : rootNode.getChildren()) {
             if (spatial instanceof TerrainQuad) {
                 Boolean bool = spatial.getUserData(UserData.JME_PHYSICSIGNORE);
-                if (bool != null && bool.booleanValue()) {
+                if (bool != null && bool) {
                     continue; // go to the next child in the loop
                 }
                 TerrainQuad terrain = (TerrainQuad) spatial;
@@ -112,7 +112,7 @@ public class CollisionShapeFactory {
                         meshAccurate, dynamic);
             } else if (spatial instanceof TerrainPatch) {
                 Boolean bool = spatial.getUserData(UserData.JME_PHYSICSIGNORE);
-                if (bool != null && bool.booleanValue()) {
+                if (bool != null && bool) {
                     continue; // go to the next child in the loop
                 }
                 TerrainPatch terrain = (TerrainPatch) spatial;
@@ -124,7 +124,7 @@ public class CollisionShapeFactory {
                         trans.getRotation().toRotationMatrix());
             } else if (spatial instanceof Geometry) {
                 Boolean bool = spatial.getUserData(UserData.JME_PHYSICSIGNORE);
-                if (bool != null && bool.booleanValue()) {
+                if (bool != null && bool) {
                     continue; // go to the next child in the loop
                 }
 
@@ -160,7 +160,8 @@ public class CollisionShapeFactory {
     /**
      * This type of collision shape is mesh-accurate and meant for immovable
      * "world objects". Examples include terrain, houses or whole shooter
-     * levels.<br>
+     * levels.
+     * <p>
      * Objects with "mesh" type collision shape will not collide with each
      * other.
      *
