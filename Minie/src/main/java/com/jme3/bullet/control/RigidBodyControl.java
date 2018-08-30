@@ -94,14 +94,20 @@ public class RigidBodyControl extends PhysicsRigidBody
     }
 
     /**
-     * Creates a new PhysicsNode with the supplied collision shape and mass 1
+     * Create a new control with mass=1 and the specified collision shape.
      *
-     * @param shape the desired shape
+     * @param shape the desired shape (not null, alias created)
      */
     public RigidBodyControl(CollisionShape shape) {
         super(shape);
     }
 
+    /**
+     * Create a new control with the specified collision shape and mass.
+     *
+     * @param shape the desired shape (not null, alias created)
+     * @param mass the desired mass (&ge;0)
+     */
     public RigidBodyControl(CollisionShape shape, float mass) {
         super(shape, mass);
     }
@@ -314,11 +320,22 @@ public class RigidBodyControl extends PhysicsRigidBody
         this.space = space;
     }
 
+    /**
+     * Access the physics space containing this control's physics object.
+     *
+     * @return the pre-existing space, or null for none
+     */
     @Override
     public PhysicsSpace getPhysicsSpace() {
         return space;
     }
 
+    /**
+     * Serialize this control, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
@@ -329,6 +346,12 @@ public class RigidBodyControl extends PhysicsRigidBody
         oc.write(spatial, "spatial", null);
     }
 
+    /**
+     * De-serialize this control, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);

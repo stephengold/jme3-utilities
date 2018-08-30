@@ -64,7 +64,7 @@ public class PlaneCollisionShape extends CollisionShape {
     }
 
     /**
-     * Creates a plane Collision shape
+     * Create a plane collision shape.
      *
      * @param plane the plane that defines the shape (not null, alias created)
      */

@@ -69,7 +69,7 @@ public class CapsuleCollisionShape extends CollisionShape {
     }
 
     /**
-     * creates a new CapsuleCollisionShape with the given radius and height
+     * Create a new CapsuleCollisionShape with the given radius and height
      *
      * @param radius the radius of the capsule
      * @param height the height of the capsule

@@ -449,6 +449,12 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     public void destroy() {
     }
 
+    /**
+     * Serialize this object, for example when saving to a J3O file.
+     *
+     * @param e exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter e) throws IOException {
         super.write(e);

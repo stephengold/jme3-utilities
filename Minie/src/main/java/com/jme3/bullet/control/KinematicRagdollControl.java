@@ -1034,10 +1034,10 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     }
 
     /**
-     * serialize this control
+     * Serialize this control, for example when saving to a J3O file.
      *
-     * @param ex an exporter (not null)
-     * @throws IOException from the exporter
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
      */
     @Override
     public void write(JmeExporter ex) throws IOException {
@@ -1064,10 +1064,10 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     }
 
     /**
-     * de-serialize this control
+     * De-serialize this control, for example when loading from a J3O file.
      *
-     * @param im an importer (not null)
-     * @throws IOException from the importer
+     * @param im importer (not null)
+     * @throws IOException from importer
      */
     @Override
     public void read(JmeImporter im) throws IOException {

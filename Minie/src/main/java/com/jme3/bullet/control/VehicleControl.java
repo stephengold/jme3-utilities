@@ -312,11 +312,22 @@ public class VehicleControl extends PhysicsVehicle
         this.space = space;
     }
 
+    /**
+     * Access the physics space containing this control's physics object.
+     *
+     * @return the pre-existing space, or null for none
+     */
     @Override
     public PhysicsSpace getPhysicsSpace() {
         return space;
     }
 
+    /**
+     * Serialize this control, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
@@ -326,6 +337,12 @@ public class VehicleControl extends PhysicsVehicle
         oc.write(spatial, "spatial", null);
     }
 
+    /**
+     * De-serialize this control, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);

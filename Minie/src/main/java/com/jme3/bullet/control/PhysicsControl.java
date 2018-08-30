@@ -44,10 +44,10 @@ import com.jme3.scene.control.Control;
  */
 public interface PhysicsControl extends Control {
     /**
-     * Add this control's physics object to the specified physics space, or
+     * Add this control's physics object to the specified physics space and
      * remove it from the space it's currently in.
      *
-     * @param space where to add, or null to remove
+     * @param space where to add, or null to simply remove
      */
     void setPhysicsSpace(PhysicsSpace space);
 

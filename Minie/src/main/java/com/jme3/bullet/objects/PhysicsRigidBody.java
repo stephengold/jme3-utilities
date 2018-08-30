@@ -76,7 +76,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
-     * Create a dynamic body with the specified collision shape and mass=1.
+     * Create a dynamic body with mass=1 and the specified collision shape.
      *
      * @param shape the desired shape (not null, alias created)
      */

@@ -85,7 +85,7 @@ public class MeshCollisionShape extends CollisionShape {
     }
 
     /**
-     * Creates a collision shape from the given Mesh. Default behavior, more
+     * Create a collision shape from the given Mesh. Default behavior, more
      * optimized for memory usage.
      *
      * @param mesh the mesh on which to base the shape
@@ -95,7 +95,7 @@ public class MeshCollisionShape extends CollisionShape {
     }
 
     /**
-     * Creates a collision shape from the given Mesh.
+     * Create a collision shape from the given Mesh.
      * <code>memoryOptimized</code> determines if optimized instead of quantized
      * BVH will be used. Internally, <code>memoryOptimized</code> BVH is slower
      * to calculate (~4x) but also smaller (~0.5x). It is preferable to use the

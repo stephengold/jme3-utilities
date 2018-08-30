@@ -139,7 +139,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Creates a new character with the given properties. Note that to avoid
+     * Create a new character with the specified properties. Note that to avoid
      * issues the final height when ducking should be larger than 2x radius. The
      * jumpForce will be set to an upwards force of 5x mass.
      *
@@ -722,7 +722,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * De-serialize this shape, for example when loading from a J3O file.
+     * De-serialize this control, for example when loading from a J3O file.
      *
      * @param im importer (not null)
      * @throws IOException from importer
