@@ -480,6 +480,12 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         createSpatialData(spatial);
     }
 
+    /**
+     * Create spatial-dependent data. Invoked when this control is added to a
+     * spatial.
+     *
+     * @param model the controlled spatial (not null)
+     */
     @Override
     protected void createSpatialData(Spatial model) {
         targetModel = model;
@@ -498,7 +504,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         //Find a proper way to order the controls.
         SkeletonControl sc = model.getControl(SkeletonControl.class);
         if (sc == null) {
-            throw new IllegalArgumentException("The root node of the model should have a SkeletonControl. Make sure the control is there and that it's not on a sub node.");
+            throw new IllegalArgumentException(
+                    "The root node of the model should have a SkeletonControl. Make sure the control is there and that it's not on a sub node.");
         }
         model.removeControl(sc);
         model.addControl(sc);
@@ -521,6 +528,12 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         logger.log(Level.FINE, "Created physics ragdoll for skeleton {0}", skeleton);
     }
 
+    /**
+     * Destroy spatial-dependent data. Invoked when this control is removed from
+     * a spatial.
+     *
+     * @param spat the previously controlled spatial (not null)
+     */
     @Override
     protected void removeSpatialData(Spatial spat) {
         if (added) {
@@ -530,12 +543,15 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     }
 
     /**
-     * Add a bone name to this control Using this method you can specify which
-     * bones of the skeleton will be used to build the collision shapes.
+     * Add a bone name to this control. Repeated invocations of this method can
+     * be used to specify which bones to use when generating collision shapes.
+     *
+     * Not allowed after attaching the control.
      *
      * @param name the name of the bone to add
      */
     public void addBoneName(String name) {
+        assert targetModel == null;
         boneList.add(name);
     }
 
@@ -557,7 +573,9 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         }
     }
 
-    protected void boneRecursion(Spatial model, Bone bone, PhysicsRigidBody parent, int reccount, Map<Integer, List<Float>> pointsMap) {
+    protected void boneRecursion(Spatial model, Bone bone,
+            PhysicsRigidBody parent, int reccount,
+            Map<Integer, List<Float>> pointsMap) {
         PhysicsRigidBody parentShape = parent;
         if (boneList.isEmpty() || boneList.contains(bone.getName())) {
 
@@ -568,7 +586,9 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
             HullCollisionShape shape = null;
             if (pointsMap != null) {
                 //build a shape for the bone, using the vertices that are most influenced by this bone
-                shape = RagdollUtils.makeShapeFromPointMap(pointsMap, RagdollUtils.getBoneIndices(link.bone, skeleton, boneList), initScale, link.bone.getModelSpacePosition());
+                shape = RagdollUtils.makeShapeFromPointMap(pointsMap,
+                        RagdollUtils.getBoneIndices(link.bone, skeleton, boneList),
+                        initScale, link.bone.getModelSpacePosition());
             } else {
                 //build a shape for the bone, using the vertices associated with this bone with a weight above the threshold
                 shape = RagdollUtils.makeShapeFromVerticeWeights(model, RagdollUtils.getBoneIndices(link.bone, skeleton, boneList), initScale, link.bone.getModelSpacePosition(), weightThreshold);
