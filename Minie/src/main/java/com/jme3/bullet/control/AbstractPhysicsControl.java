@@ -72,7 +72,7 @@ public abstract class AbstractPhysicsControl
 
     private final Quaternion tmp_inverseWorldRotation = new Quaternion();
     protected Spatial spatial;
-    protected boolean enabled = true; // TODO privatize
+    private boolean enabled = true;
     protected boolean added = false;
     private PhysicsSpace space = null;
     /**

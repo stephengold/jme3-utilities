@@ -123,9 +123,9 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     private float weightThreshold = -1.0f;
     private float blendStart = 0.0f;
     private float blendTime = 1.0f;
-    private float eventDispatchImpulseThreshold = 10;
-    private float rootMass = 15;
-    private float totalMass = 0;
+    private float eventDispatchImpulseThreshold = 10f;
+    private float rootMass = 15f;
+    private float totalMass = 0f;
     final private Map<String, Vector3f> ikTargets = new HashMap<>();
     final private Map<String, Integer> ikChainDepth = new HashMap<>();
     private float ikRotSpeed = 7f;
@@ -221,12 +221,13 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
 
     @Override
     public void update(float tpf) {
-        if (!enabled) {
+        if (!isEnabled()) {
             return;
         }
         if (mode == Mode.IK) {
             ikUpdate(tpf);
-        } else if (mode == mode.Ragdoll && targetModel.getLocalTranslation().equals(modelPosition)) {
+        } else if (mode == mode.Ragdoll
+                && targetModel.getLocalTranslation().equals(modelPosition)) {
             //if the ragdoll has the control of the skeleton, we update each bone with its position in physics world space.
             ragDollUpdate(tpf);
         } else {
@@ -307,8 +308,11 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
                 tmpRot1.set(link.startBlendingRot);
 
                 //interpolating between ragdoll position/rotation and keyframed position/rotation
-                tmpRot2.set(tmpRot1).nlerp(link.bone.getModelSpaceRotation(), blendStart / blendTime);
-                position2.set(position).interpolateLocal(link.bone.getModelSpacePosition(), blendStart / blendTime);
+                tmpRot2.set(tmpRot1).nlerp(link.bone.getModelSpaceRotation(),
+                        blendStart / blendTime);
+                position2.set(position).interpolateLocal(
+                        link.bone.getModelSpacePosition(),
+                        blendStart / blendTime);
                 tmpRot1.set(tmpRot2);
                 position.set(position2);
 
@@ -320,7 +324,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
                     //we give control back to the key framed animation.
                     link.bone.setUserControl(false);
                 } else {
-                    RagdollUtils.setTransform(link.bone, position, tmpRot1, true, boneList);
+                    RagdollUtils.setTransform(link.bone, position, tmpRot1,
+                            true, boneList);
                 }
 
             }
@@ -354,17 +359,21 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
             boneName = it.next();
             bone = (Bone) boneLinks.get(boneName).bone;
             if (!bone.hasUserControl()) {
-                logger.log(Level.FINE, "{0} doesn't have user control", boneName);
+                logger.log(Level.FINE, "{0} doesn't have user control",
+                        boneName);
                 continue;
             }
-            distance = bone.getModelSpacePosition().distance(ikTargets.get(boneName));
+            distance = bone.getModelSpacePosition().distance(
+                    ikTargets.get(boneName));
             if (distance < IKThreshold) {
                 logger.log(Level.FINE, "Distance is close enough");
                 continue;
             }
             int depth = 0;
             int maxDepth = ikChainDepth.get(bone.getName());
-            updateBone(boneLinks.get(bone.getName()), tpf * (float) FastMath.sqrt(distance), vars, tmpRot1, tmpRot2, bone, ikTargets.get(boneName), depth, maxDepth);
+            updateBone(boneLinks.get(bone.getName()),
+                    tpf * (float) FastMath.sqrt(distance), vars, tmpRot1,
+                    tmpRot2, bone, ikTargets.get(boneName), depth, maxDepth);
 
             Vector3f position = vars.vect1;
 
@@ -375,14 +384,17 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         vars.release();
     }
 
-    public void updateBone(PhysicsBoneLink link, float tpf, TempVars vars, Quaternion tmpRot1, Quaternion[] tmpRot2, Bone tipBone, Vector3f target, int depth, int maxDepth) {
+    public void updateBone(PhysicsBoneLink link, float tpf, TempVars vars,
+            Quaternion tmpRot1, Quaternion[] tmpRot2, Bone tipBone,
+            Vector3f target, int depth, int maxDepth) {
         if (link == null || link.bone.getParent() == null) {
             return;
         }
         Quaternion preQuat = link.bone.getLocalRotation();
         Vector3f vectorAxis;
 
-        float[] measureDist = new float[]{Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY};
+        float[] measureDist = new float[]{Float.POSITIVE_INFINITY,
+            Float.POSITIVE_INFINITY};
         for (int dirIndex = 0; dirIndex < 3; dirIndex++) {
             if (dirIndex == 0) {
                 vectorAxis = Vector3f.UNIT_Z;
@@ -423,7 +435,9 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
 //        link.usedbyIK = true;
         if (link.bone.getParent() != null && depth < maxDepth) {
 
-            updateBone(boneLinks.get(link.bone.getParent().getName()), tpf * limbDampening, vars, tmpRot1, tmpRot2, tipBone, target, depth + 1, maxDepth);
+            updateBone(boneLinks.get(link.bone.getParent().getName()),
+                    tpf * limbDampening, vars, tmpRot1, tmpRot2, tipBone,
+                    target, depth + 1, maxDepth);
         }
     }
 
@@ -436,12 +450,15 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
      * @param position just a temp vector for position
      * @param tmpRot1 just a temp quaternion for rotation
      */
-    protected void matchPhysicObjectToBone(PhysicsBoneLink link, Vector3f position, Quaternion tmpRot1) {
+    protected void matchPhysicObjectToBone(PhysicsBoneLink link,
+            Vector3f position, Quaternion tmpRot1) {
         //computing position from rotation and scale
-        targetModel.getWorldTransform().transformVector(link.bone.getModelSpacePosition(), position);
+        targetModel.getWorldTransform().transformVector(
+                link.bone.getModelSpacePosition(), position);
 
         //computing rotation
-        tmpRot1.set(link.bone.getModelSpaceRotation()).multLocal(link.bone.getModelBindInverseRotation());
+        tmpRot1.set(link.bone.getModelSpaceRotation()).multLocal(
+                link.bone.getModelBindInverseRotation());
         targetModel.getWorldRotation().mult(tmpRot1, tmpRot1);
         tmpRot1.normalizeLocal();
 
