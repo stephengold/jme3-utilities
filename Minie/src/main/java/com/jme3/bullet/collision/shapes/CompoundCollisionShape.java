@@ -133,7 +133,7 @@ public class CompoundCollisionShape extends CollisionShape {
 //        ((CompoundShape) objectId).removeChildShape(shape.getObjectId());
         for (Iterator<ChildCollisionShape> it = children.iterator(); it.hasNext();) {
             ChildCollisionShape childCollisionShape = it.next();
-            if (childCollisionShape.shape == shape) {
+            if (childCollisionShape.getShape() == shape) {
                 it.remove();
             }
         }
@@ -189,7 +189,8 @@ public class CompoundCollisionShape extends CollisionShape {
 
     private void loadChildren() {
         for (ChildCollisionShape child : children) {
-            addChildShapeDirect(child.shape, child.location, child.rotation);
+            addChildShapeDirect(child.getShape(), child.getLocation(),
+                    child.getRotation());
         }
     }
 

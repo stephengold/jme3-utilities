@@ -33,11 +33,13 @@ package com.jme3.bullet.collision.shapes.infos;
 
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.export.*;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * An element of a CompoundCollisionShape, consisting of a (non-compound) child
@@ -55,9 +57,18 @@ public class ChildCollisionShape implements Savable {
     final private static Logger logger
             = Logger.getLogger(ChildCollisionShape.class.getName());
 
-    public Vector3f location; // TODO privatize
-    public Matrix3f rotation; // TODO privatize
-    public CollisionShape shape; // TODO privatize
+    /**
+     * translation relative to parent shape (not null)
+     */
+    private Vector3f location;
+    /**
+     * rotation relative to parent shape (not null)
+     */
+    private Matrix3f rotation;
+    /**
+     * base shape (not null, not a compound shape)
+     */
+    private CollisionShape shape;
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -66,11 +77,54 @@ public class ChildCollisionShape implements Savable {
     public ChildCollisionShape() {
     }
 
+    /**
+     * Create a child shape.
+     *
+     * @param location translation relative to the parent (not null)
+     * @param rotation rotation relative to the parent (not null)
+     * @param shape the base shape (not null, not a compound shape)
+     *
+     */
     public ChildCollisionShape(Vector3f location, Matrix3f rotation,
             CollisionShape shape) {
+        Validate.nonNull(location, "location");
+        Validate.nonNull(rotation, "rotation");
+        Validate.nonNull(shape, "shape");
+        if (shape instanceof CompoundCollisionShape) {
+            throw new IllegalArgumentException(
+                    "CompoundCollisionShapes cannot be child shapes!");
+        }
+
         this.location = location;
         this.rotation = rotation;
         this.shape = shape;
+    }
+
+    /**
+     * Access the translation relative to the parent shape.
+     *
+     * @return the pre-existing vector (not null)
+     */
+    public Vector3f getLocation() {
+        return location;
+    }
+
+    /**
+     * Access the rotation relative to the parent shape.
+     *
+     * @return the pre-existing matrix (not null)
+     */
+    public Matrix3f getRotation() {
+        return rotation;
+    }
+
+    /**
+     * Access the base shape.
+     *
+     * @return the pre-existing matrix (not null)
+     */
+    public CollisionShape getShape() {
+        return shape;
     }
 
     /**

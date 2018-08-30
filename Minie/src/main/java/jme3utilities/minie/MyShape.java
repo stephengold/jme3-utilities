@@ -511,7 +511,7 @@ public class MyShape {
             CompoundCollisionShape compound = (CompoundCollisionShape) shape;
             volume = 0f;
             for (ChildCollisionShape child : compound.getChildren()) {
-                float childVolume = volume(child.shape);
+                float childVolume = volume(child.getShape());
                 volume += childVolume;
             }
 
