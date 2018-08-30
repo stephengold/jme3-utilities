@@ -53,6 +53,12 @@ public class NativeMeshUtil {
             = Logger.getLogger(NativeMeshUtil.class.getName());
 
     /**
+     * A private constructor to inhibit instantiation of this class.
+     */
+    private NativeMeshUtil() {
+    }
+
+    /**
      * A utility method to pass a mesh to native Bullet.
      *
      * @param mesh (not null)

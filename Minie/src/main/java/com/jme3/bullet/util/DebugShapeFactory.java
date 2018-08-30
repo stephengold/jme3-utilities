@@ -46,7 +46,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- *
+ * A utility class for generating debug Spatials from Bullet collision shapes.
+ * 
  * @author CJ Hare, normenhansen
  */
 public class DebugShapeFactory {
@@ -56,6 +57,12 @@ public class DebugShapeFactory {
      */
     final private static Logger logger
             = Logger.getLogger(DebugShapeFactory.class.getName());
+
+    /**
+     * A private constructor to inhibit instantiation of this class.
+     */
+    private DebugShapeFactory() {
+    }
 
     /**
      * Creates a debug shape from the given collision shape. This is mostly used
@@ -131,6 +138,6 @@ public class DebugShapeFactory {
         return mesh;
     }
 
-    private static native void getVertices(long shapeId, 
+    private static native void getVertices(long shapeId,
             DebugMeshCallback buffer);
 }

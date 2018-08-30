@@ -63,6 +63,12 @@ public class RagdollUtils {
     final private static Logger logger
             = Logger.getLogger(RagdollUtils.class.getName());
 
+    /**
+     * A private constructor to inhibit instantiation of this class.
+     */
+    private RagdollUtils() {
+    }
+
     public static void setJointLimit(SixDofJoint joint, float maxX, float minX,
             float maxY, float minY, float maxZ, float minZ) {
 

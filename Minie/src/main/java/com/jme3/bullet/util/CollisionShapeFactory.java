@@ -56,6 +56,12 @@ public class CollisionShapeFactory {
             = Logger.getLogger(CollisionShapeFactory.class.getName());
 
     /**
+     * A private constructor to inhibit instantiation of this class.
+     */
+    private CollisionShapeFactory() {
+    }
+
+    /**
      * Calculate the correct transform for a collision shape relative to the
      * ancestor for which the shape was generated.
      *
