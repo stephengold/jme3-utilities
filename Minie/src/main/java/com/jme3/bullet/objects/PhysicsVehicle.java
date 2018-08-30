@@ -582,13 +582,20 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
         tuning = new VehicleTuning();
-        tuning.frictionSlip = capsule.readFloat("frictionSlip", 10.5f);
-        tuning.maxSuspensionTravelCm = capsule.readFloat("maxSuspensionTravelCm", 500f);
-        tuning.maxSuspensionForce = capsule.readFloat("maxSuspensionForce", 6000f);
-        tuning.suspensionCompression = capsule.readFloat("suspensionCompression", 0.83f);
-        tuning.suspensionDamping = capsule.readFloat("suspensionDamping", 0.88f);
-        tuning.suspensionStiffness = capsule.readFloat("suspensionStiffness", 5.88f);
-        wheels = capsule.readSavableArrayList("wheelsList", new ArrayList<VehicleWheel>());
+        tuning.frictionSlip = capsule.readFloat(
+                "frictionSlip", 10.5f);
+        tuning.maxSuspensionTravelCm = capsule.readFloat(
+                "maxSuspensionTravelCm", 500f);
+        tuning.maxSuspensionForce = capsule.readFloat(
+                "maxSuspensionForce", 6000f);
+        tuning.suspensionCompression = capsule.readFloat(
+                "suspensionCompression", 0.83f);
+        tuning.suspensionDamping = capsule.readFloat(
+                "suspensionDamping", 0.88f);
+        tuning.suspensionStiffness = capsule.readFloat(
+                "suspensionStiffness", 5.88f);
+        wheels = capsule.readSavableArrayList(
+                "wheelsList", new ArrayList<VehicleWheel>());
         motionState.setVehicle(this);
         super.read(im);
     }
@@ -603,15 +610,24 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(tuning.frictionSlip, "frictionSlip", 10.5f);
-        capsule.write(tuning.maxSuspensionTravelCm, "maxSuspensionTravelCm", 500f);
+        capsule.write(tuning.maxSuspensionTravelCm,
+                "maxSuspensionTravelCm", 500f);
         capsule.write(tuning.maxSuspensionForce, "maxSuspensionForce", 6000f);
-        capsule.write(tuning.suspensionCompression, "suspensionCompression", 0.83f);
+        capsule.write(tuning.suspensionCompression,
+                "suspensionCompression", 0.83f);
         capsule.write(tuning.suspensionDamping, "suspensionDamping", 0.88f);
         capsule.write(tuning.suspensionStiffness, "suspensionStiffness", 5.88f);
-        capsule.writeSavableArrayList(wheels, "wheelsList", new ArrayList<VehicleWheel>());
+        capsule.writeSavableArrayList(wheels,
+                "wheelsList", new ArrayList<VehicleWheel>());
         super.write(ex);
     }
 
+    /**
+     * Finalize this vehicle just before it is destroyed. Should be invoked only
+     * by a subclass or by the garbage collector.
+     *
+     * @throws Throwable
+     */
     @Override
     protected void finalize() throws Throwable {
         super.finalize();

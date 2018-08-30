@@ -1075,6 +1075,12 @@ public class PhysicsSpace {
         DBVT;
     }
 
+    /**
+     * Finalize this physics space just before it is destroyed. Should be
+     * invoked only by a subclass or by the garbage collector.
+     *
+     * @throws Throwable
+     */
     @Override
     protected void finalize() throws Throwable {
         super.finalize();

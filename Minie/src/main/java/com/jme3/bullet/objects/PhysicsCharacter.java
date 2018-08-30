@@ -493,6 +493,12 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         setPhysicsLocation((Vector3f) capsule.readSavable("physicsLocation", new Vector3f()));
     }
 
+    /**
+     * Finalize this physics character just before it is destroyed. Should be
+     * invoked only by a subclass or by the garbage collector.
+     *
+     * @throws Throwable
+     */
     @Override
     protected void finalize() throws Throwable {
         super.finalize();

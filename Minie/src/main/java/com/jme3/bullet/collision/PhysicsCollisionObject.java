@@ -306,10 +306,17 @@ public abstract class PhysicsCollisionObject implements Savable {
         collisionGroup = capsule.readInt("collisionGroup", COLLISION_GROUP_01);
         collideWithGroups = capsule.readInt("collisionGroupsMask",
                 COLLISION_GROUP_01);
-        CollisionShape shape = (CollisionShape) capsule.readSavable("collisionShape", null);
+        CollisionShape shape
+                = (CollisionShape) capsule.readSavable("collisionShape", null);
         collisionShape = shape;
     }
 
+    /**
+     * Finalize this collision object just before it is destroyed. Should be
+     * invoked only by a subclass or by the garbage collector.
+     *
+     * @throws Throwable
+     */
     @Override
     protected void finalize() throws Throwable {
         super.finalize();

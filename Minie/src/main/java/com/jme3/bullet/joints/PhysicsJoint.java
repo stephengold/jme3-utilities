@@ -209,16 +209,25 @@ public abstract class PhysicsJoint implements Savable {
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
-        this.nodeA = (PhysicsRigidBody) capsule.readSavable("nodeA", new PhysicsRigidBody());
-        this.nodeB = (PhysicsRigidBody) capsule.readSavable("nodeB", new PhysicsRigidBody());
+        this.nodeA = (PhysicsRigidBody) capsule.readSavable("nodeA",
+                new PhysicsRigidBody());
+        this.nodeB = (PhysicsRigidBody) capsule.readSavable("nodeB",
+                new PhysicsRigidBody());
         this.pivotA = (Vector3f) capsule.readSavable("pivotA", new Vector3f());
         this.pivotB = (Vector3f) capsule.readSavable("pivotB", new Vector3f());
     }
 
+    /**
+     * Finalize this physics joint just before it is destroyed. Should be
+     * invoked only by a subclass or by the garbage collector.
+     *
+     * @throws Throwable
+     */
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        logger.log(Level.FINE, "Finalizing Joint {0}", Long.toHexString(objectId));
+        logger.log(Level.FINE, "Finalizing Joint {0}",
+                Long.toHexString(objectId));
         finalizeNative(objectId);
     }
 

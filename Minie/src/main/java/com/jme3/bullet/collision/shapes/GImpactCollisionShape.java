@@ -166,6 +166,12 @@ public class GImpactCollisionShape extends CollisionShape {
 
     private native long createShape(long meshId);
 
+    /**
+     * Finalize this shape just before it is destroyed. Should be invoked only
+     * by a subclass or by the garbage collector.
+     *
+     * @throws Throwable
+     */
     @Override
     protected void finalize() throws Throwable {
         super.finalize();

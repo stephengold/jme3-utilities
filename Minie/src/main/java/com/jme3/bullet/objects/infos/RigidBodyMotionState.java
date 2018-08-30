@@ -156,14 +156,13 @@ public class RigidBodyMotionState {
     public long getObjectId() {
         return motionStateId;
     }
-//    public void addMotionStateListener(PhysicsMotionStateListener listener){
-//        listeners.add(listener);
-//    }
-//
-//    public void removeMotionStateListener(PhysicsMotionStateListener listener){
-//        listeners.remove(listener);
-//    }
 
+    /**
+     * Finalize this motion state just before it is destroyed. Should be invoked
+     * only by a subclass or by the garbage collector.
+     *
+     * @throws Throwable
+     */
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
