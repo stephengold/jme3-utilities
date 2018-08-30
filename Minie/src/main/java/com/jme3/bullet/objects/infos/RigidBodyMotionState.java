@@ -40,8 +40,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * stores transform info of a PhysicsNode in a threadsafe manner to allow
- * multithreaded access from the jme scenegraph and the bullet physicsspace
+ * The motion state (transform) of a rigid body, with thread-safe access.
  *
  * @author normenhansen
  */
@@ -53,7 +52,7 @@ public class RigidBodyMotionState {
     final private static Logger logger
             = Logger.getLogger(RigidBodyMotionState.class.getName());
 
-    private long motionStateId = 0;
+    final private long motionStateId;
     final private Vector3f worldLocation = new Vector3f();
     final private Matrix3f worldRotation = new Matrix3f();
     final private Quaternion worldRotationQuat = new Quaternion();
@@ -62,6 +61,9 @@ public class RigidBodyMotionState {
     private boolean applyPhysicsLocal = false;
 //    protected LinkedList<PhysicsMotionStateListener> listeners = new LinkedList<PhysicsMotionStateListener>();
 
+    /**
+     * Create a motion state.
+     */
     public RigidBodyMotionState() {
         this.motionStateId = createMotionState();
         logger.log(Level.FINE, "Created MotionState {0}",
@@ -71,7 +73,7 @@ public class RigidBodyMotionState {
     private native long createMotionState();
 
     /**
-     * applies the current transform to the given jme Node if the location has
+     * Apply the current transform to the given jme Node if the location has
      * been updated on the physics side
      *
      * @param spatial where to apply the physics transform (not null)
@@ -80,7 +82,8 @@ public class RigidBodyMotionState {
     public boolean applyTransform(Spatial spatial) {
         Vector3f localLocation = spatial.getLocalTranslation();
         Quaternion localRotationQuat = spatial.getLocalRotation();
-        boolean physicsLocationDirty = applyTransform(motionStateId, localLocation, localRotationQuat);
+        boolean physicsLocationDirty = applyTransform(motionStateId,
+                localLocation, localRotationQuat);
         if (!physicsLocationDirty) {
             return false;
         }
@@ -106,7 +109,8 @@ public class RigidBodyMotionState {
         return true;
     }
 
-    private native boolean applyTransform(long stateId, Vector3f location, Quaternion rotation);
+    private native boolean applyTransform(long stateId, Vector3f location,
+            Quaternion rotation);
 
     /**
      * @return the worldLocation
@@ -145,14 +149,33 @@ public class RigidBodyMotionState {
         this.vehicle = vehicle;
     }
 
+    /**
+     * Test whether physics coordinates should match the local transform of the
+     * Spatial.
+     *
+     * @return true if matching local transform, false if matching world
+     * transform
+     */
     public boolean isApplyPhysicsLocal() {
         return applyPhysicsLocal;
     }
 
+    /**
+     * Alter whether physics coordinates should match the local transform of the
+     * Spatial.
+     *
+     * @param applyPhysicsLocal true&rarr;match local transform,
+     * false&rarr;match world transform (default is false)
+     */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         this.applyPhysicsLocal = applyPhysicsLocal;
     }
 
+    /**
+     * Read the native id of this motion state.
+     *
+     * @return id (not zero)
+     */
     public long getObjectId() {
         return motionStateId;
     }
