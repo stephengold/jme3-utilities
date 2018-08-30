@@ -230,19 +230,20 @@ public class PhysicsSpace {
         }
     }
 
-    private void addCollision_native() {
-    }
-
-    private boolean needCollision_native(PhysicsCollisionObject objectA,
-            PhysicsCollisionObject objectB) {
-        return false;
-    }
-
-    private void addCollisionEvent_native(PhysicsCollisionObject node, PhysicsCollisionObject node1, long manifoldPointObjectId) {
+    /**
+     * This method is invoked from native code.
+     */
+    private void addCollisionEvent_native(PhysicsCollisionObject node,
+            PhysicsCollisionObject node1, long manifoldPointObjectId) {
 //        System.out.println("addCollisionEvent:"+node.getObjectId()+" "+ node1.getObjectId());
-        collisionEvents.add(eventFactory.getEvent(PhysicsCollisionEvent.TYPE_PROCESSED, node, node1, manifoldPointObjectId));
+        collisionEvents.add(
+                eventFactory.getEvent(PhysicsCollisionEvent.TYPE_PROCESSED,
+                        node, node1, manifoldPointObjectId));
     }
 
+    /**
+     * This method is invoked from native code.
+     */
     private boolean notifyCollisionGroupListeners_native(
             PhysicsCollisionObject node, PhysicsCollisionObject node1) {
         PhysicsCollisionGroupListener listener
@@ -254,7 +255,8 @@ public class PhysicsSpace {
         if (listener != null) {
             result = listener.collide(node, node1);
         }
-        if (listener1 != null && node.getCollisionGroup() != node1.getCollisionGroup()) {
+        if (listener1 != null
+                && node.getCollisionGroup() != node1.getCollisionGroup()) {
             result = listener1.collide(node, node1) && result;
         }
 
