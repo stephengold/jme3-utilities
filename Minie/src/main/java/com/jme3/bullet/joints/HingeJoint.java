@@ -273,7 +273,10 @@ public class HingeJoint extends PhysicsJoint {
                 relaxationFactor);
     }
 
-    protected void createJoint() {
+    /**
+     * Create the configured joint in Bullet.
+     */
+    private void createJoint() {
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(),
                 pivotA, axisA, pivotB, axisB);
         logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
