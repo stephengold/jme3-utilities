@@ -56,9 +56,9 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     final private static Logger logger
             = Logger.getLogger(PhysicsCharacter.class.getName());
     /**
-     * Bullet id for this character (as opposed to its collision object, which
-     * is a ghost). Constructors are responsible for setting this to a non-zero
-     * value. The id might change if the character gets rebuilt.
+     * Bullet identifier for this character (as opposed to its collision object,
+     * which is a ghost). Constructors are responsible for setting this to a
+     * non-zero value. The id might change if the character gets rebuilt.
      */
     private long characterId = 0;
 
@@ -497,7 +497,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
      * Finalize this physics character just before it is destroyed. Should be
      * invoked only by a subclass or by the garbage collector.
      *
-     * @throws Throwable
+     * @throws Throwable ignored by the garbage collector
      */
     @Override
     protected void finalize() throws Throwable {

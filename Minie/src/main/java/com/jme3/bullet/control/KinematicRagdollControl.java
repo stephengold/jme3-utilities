@@ -219,6 +219,11 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         this.preset = preset;
     }
 
+    /**
+     * Update this control. (Invoked once per frame.)
+     *
+     * @param tpf the time interval between render passes (in seconds, &ge;0)
+     */
     @Override
     public void update(float tpf) {
         if (!isEnabled()) {

@@ -69,6 +69,10 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     final private static Logger logger
             = Logger.getLogger(PhysicsVehicle.class.getName());
 
+    /**
+     * Bullet identifier of the btRaycastVehicle. The constructor sets this to a
+     * non-zero value.
+     */
     private long vehicleId = 0;
     private long rayCasterId = 0;
     protected VehicleTuning tuning = new VehicleTuning();
@@ -135,7 +139,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
 
     /**
      * Used internally, creates the actual vehicle constraint when vehicle is
-     * added to phyicsspace
+     * added to physics space.
      *
      * @param space which physics space
      */
@@ -626,7 +630,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * Finalize this vehicle just before it is destroyed. Should be invoked only
      * by a subclass or by the garbage collector.
      *
-     * @throws Throwable
+     * @throws Throwable ignored by the garbage collector
      */
     @Override
     protected void finalize() throws Throwable {

@@ -87,8 +87,12 @@ public class PhysicsSpace {
      * index of the Z axis
      */
     public static final int AXIS_Z = 2;
-
+    /**
+     * Bullet identifier of the physics space. The constructor sets this to a
+     * non-zero value.
+     */
     private long physicsSpaceId = 0;
+
     private static ThreadLocal<ConcurrentLinkedQueue<AppTask<?>>> pQueueTL
             = new ThreadLocal<ConcurrentLinkedQueue<AppTask<?>>>() {
         @Override
@@ -132,6 +136,9 @@ public class PhysicsSpace {
      * maximum coordinate values when using AXIS_SWEEP broadphase algorithms
      */
     final private Vector3f worldMax = new Vector3f(10000f, 10000f, 10000f);
+    /**
+     * goal for the physics time step (in seconds, &gt;0)
+     */
     private float accuracy = 1f / 60f;
     private int maxSubSteps = 4, rayTestFlags = 1 << 2;
     /**
@@ -976,9 +983,10 @@ public class PhysicsSpace {
     }
 
     /**
-     * Alter the accuracy (time step) of the physics simulation. In general, the
-     * smaller the time step, the more accurate (and compute-intensive) the
-     * simulation will be.
+     * Alter the accuracy (time step) of the physics simulation.
+     * <p>
+     * In general, the smaller the time step, the more accurate (and
+     * compute-intensive) the simulation will be.
      *
      * @param accuracy (in seconds, &gt;0, default=1/60)
      */
@@ -1081,7 +1089,7 @@ public class PhysicsSpace {
      * Finalize this physics space just before it is destroyed. Should be
      * invoked only by a subclass or by the garbage collector.
      *
-     * @throws Throwable
+     * @throws Throwable ignored by the garbage collector
      */
     @Override
     protected void finalize() throws Throwable {

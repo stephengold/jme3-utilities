@@ -291,8 +291,8 @@ public class CollisionShapeFactory {
      *
      * @param spatial the spatial on which to base the shape (not null)
      * @param parent unused TODO
-     * @return a BoxCollisionShape with the dimensions of the spatial's bounding
-     * box
+     * @return a new shape with the dimensions of the spatial's bounding box
+     * (not null)
      */
     private static BoxCollisionShape createSingleBoxShape(Spatial spatial,
             Spatial parent) {

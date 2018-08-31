@@ -46,8 +46,8 @@ import java.util.logging.Logger;
 import jme3utilities.MySpatial;
 
 /**
- * AbstractPhysicsControl manages the lifecycle of a physics object that is
- * attached to a spatial in the scene graph.
+ * AbstractPhysicsControl manages the lifecycle of a physics object attached to
+ * a spatial in the scene graph.
  * <p>
  * This class is shared between JBullet and Native Bullet.
  *
@@ -69,44 +69,49 @@ public abstract class AbstractPhysicsControl
      * local copy of {@link com.jme3.math.Vector3f#ZERO}
      */
     final private static Vector3f translateIdentity = new Vector3f(0f, 0f, 0f);
-
+    /**
+     * temporary storage during calculations
+     */
     private final Quaternion tmp_inverseWorldRotation = new Quaternion();
+    /**
+     * the Spatial to which this control has been added, or null if none
+     */
     protected Spatial spatial;
     private boolean enabled = true;
     protected boolean added = false;
     private PhysicsSpace space = null;
     /**
-     * true&rarr;match local transform to physics transform, false&rarr;match
-     * world transform to physics transform
+     * true &rarr; physics coordinates match local transform, false &rarr;
+     * physics coordinates match world transform
      */
     private boolean applyLocal = false;
 
     /**
-     * Called when the control is added to a new spatial, create any
-     * spatial-dependent data here.
+     * Create spatial-dependent data. Invoked when this control is added to a
+     * spatial.
      *
-     * @param spat The new spatial, guaranteed not to be null
+     * @param spat the controlled spatial (not null)
      */
     protected abstract void createSpatialData(Spatial spat);
 
     /**
-     * Called when the control is removed from a spatial, remove any
-     * spatial-dependent data here.
+     * Destroy spatial-dependent data. Invoked when this control is removed from
+     * a spatial.
      *
-     * @param spat The old spatial, guaranteed not to be null
+     * @param spat the previously controlled spatial (not null)
      */
     protected abstract void removeSpatialData(Spatial spat);
 
     /**
-     * Called when the physics object is supposed to move to the spatial
+     * Invoked when the physics object is supposed to move to the spatial
      * position.
      *
-     * @param vec spatial location coordinates
+     * @param vec spatial location coordinates (not null)
      */
     protected abstract void setPhysicsLocation(Vector3f vec);
 
     /**
-     * Called when the physics object is supposed to move to the spatial
+     * Invoked when the physics object is supposed to move to the spatial
      * rotation.
      *
      * @param quat spatial orientation
@@ -114,16 +119,16 @@ public abstract class AbstractPhysicsControl
     protected abstract void setPhysicsRotation(Quaternion quat);
 
     /**
-     * Called when the physics object is supposed to add all objects it needs to
-     * manage to the physics space.
+     * Invoked when the physics object is supposed to add all objects it needs
+     * to manage to the physics space.
      *
      * @param space which physics space
      */
     protected abstract void addPhysics(PhysicsSpace space);
 
     /**
-     * Called when the physics object is supposed to remove all objects added to
-     * the physics space.
+     * Invoked when the physics object is supposed to remove all objects added
+     * to the physics space.
      *
      * @param space which physics space
      */
@@ -167,7 +172,7 @@ public abstract class AbstractPhysicsControl
     }
 
     /**
-     * Access whichever Spatial rotation is relevant to the physics rotation.
+     * Access whichever Spatial rotation corresponds to the physics rotation.
      *
      * @return the pre-existing quaternion (not null)
      */
@@ -187,7 +192,8 @@ public abstract class AbstractPhysicsControl
      * @param worldLocation physics location (not null)
      * @param worldRotation physics orientation (not null)
      */
-    protected void applyPhysicsTransform(Vector3f worldLocation, Quaternion worldRotation) {
+    protected void applyPhysicsTransform(Vector3f worldLocation,
+            Quaternion worldRotation) {
         if (enabled && spatial != null) {
             Vector3f localLocation = spatial.getLocalTranslation();
             Quaternion localRotationQuat = spatial.getLocalRotation();

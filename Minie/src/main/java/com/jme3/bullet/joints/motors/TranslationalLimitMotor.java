@@ -35,8 +35,8 @@ import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 
 /**
- * A motor based on Bullet's btTranslationalLimitMotor. Motors are used to drive
- * joints.
+ * Configure a motor based on Bullet's btTranslationalLimitMotor. Motors are
+ * used to drive joints.
  *
  * @author normenhansen
  */
@@ -48,41 +48,73 @@ public class TranslationalLimitMotor {
     final private static Logger logger
             = Logger.getLogger(TranslationalLimitMotor.class.getName());
     /**
-     * Identifier of the Bullet motor. The constructor sets this to a non-zero
-     * value.
+     * Bullet identifier of the btTranslationalLimitMotor. The constructor sets
+     * this to a non-zero value.
      */
     private long motorId = 0;
 
+    /**
+     * Create an instance with the specified identifier.
+     *
+     * @param motor the identifier of the btTranslationalLimitMotor (not zero)
+     */
     public TranslationalLimitMotor(long motor) {
         this.motorId = motor;
     }
 
+    /**
+     * Read the Bullet identifier.
+     *
+     * @return the identifier of the btTranslationalLimitMotor (not zero)
+     */
     public long getMotor() {
         return motorId;
     }
 
+    /**
+     * Copy this motor's constraint lower limit.
+     *
+     * @return a new vector (not null)
+     */
     public Vector3f getLowerLimit() {
         Vector3f vec = new Vector3f();
         getLowerLimit(motorId, vec);
+
         return vec;
     }
 
     private native void getLowerLimit(long motorId, Vector3f vector);
 
+    /**
+     * Alter the constraint lower limit.
+     *
+     * @param lowerLimit (unaffected, not null)
+     */
     public void setLowerLimit(Vector3f lowerLimit) {
         setLowerLimit(motorId, lowerLimit);
     }
 
     private native void setLowerLimit(long motorId, Vector3f vector);
 
+    /**
+     * Copy this motor's constraint upper limit.
+     *
+     * @return a new vector (not null)
+     */
     public Vector3f getUpperLimit() {
         Vector3f vec = new Vector3f();
         getUpperLimit(motorId, vec);
+
         return vec;
     }
 
     private native void getUpperLimit(long motorId, Vector3f vector);
 
+    /**
+     * Alter the constraint upper limit.
+     *
+     * @param upperLimit (unaffected, not null)
+     */
     public void setUpperLimit(Vector3f upperLimit) {
         setUpperLimit(motorId, upperLimit);
     }
@@ -92,6 +124,7 @@ public class TranslationalLimitMotor {
     public Vector3f getAccumulatedImpulse() {
         Vector3f vec = new Vector3f();
         getAccumulatedImpulse(motorId, vec);
+
         return vec;
     }
 
@@ -103,36 +136,66 @@ public class TranslationalLimitMotor {
 
     private native void setAccumulatedImpulse(long motorId, Vector3f vector);
 
+    /**
+     * Read this motor's limit softness.
+     *
+     * @return the softness
+     */
     public float getLimitSoftness() {
         return getLimitSoftness(motorId);
     }
 
     private native float getLimitSoftness(long motorId);
 
+    /**
+     * Alter the limit softness.
+     *
+     * @param limitSoftness new value (default=0.5)
+     */
     public void setLimitSoftness(float limitSoftness) {
         setLimitSoftness(motorId, limitSoftness);
     }
 
     private native void setLimitSoftness(long motorId, float limitSoftness);
 
+    /**
+     * Read this motor's damping coefficient.
+     *
+     * @return the viscous damping coefficient
+     */
     public float getDamping() {
         return getDamping(motorId);
     }
 
     private native float getDamping(long motorId);
 
+    /**
+     * Alter the damping coefficient.
+     *
+     * @param damping new value (default=1)
+     */
     public void setDamping(float damping) {
         setDamping(motorId, damping);
     }
 
     private native void setDamping(long motorId, float damping);
 
+    /**
+     * Read this motor's restitution.
+     *
+     * @return restitution
+     */
     public float getRestitution() {
         return getRestitution(motorId);
     }
 
     private native float getRestitution(long motorId);
 
+    /**
+     * Alter the restitution.
+     *
+     * @param restitution new value
+     */
     public void setRestitution(float restitution) {
         setRestitution(motorId, restitution);
     }

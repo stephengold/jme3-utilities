@@ -164,6 +164,16 @@ public class GhostControl extends PhysicsGhostObject
         setPhysicsRotation(getSpatialRotation());
     }
 
+    /**
+     * Enable or disable this control.
+     * <p>
+     * The physics object is removed from its physics space when the control is
+     * disabled. When the control is enabled again, the physics object is moved
+     * to the current location of the spatial and then added to the physics
+     * space.
+     *
+     * @param enabled true&rarr;enable the control, false&rarr;disable it
+     */
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
@@ -182,11 +192,21 @@ public class GhostControl extends PhysicsGhostObject
         }
     }
 
+    /**
+     * Test whether this control is enabled.
+     *
+     * @return true if enabled, otherwise false
+     */
     @Override
     public boolean isEnabled() {
         return enabled;
     }
 
+    /**
+     * Update this control. (Invoked once per frame.)
+     *
+     * @param tpf the time interval between render passes (in seconds, &ge;0)
+     */
     @Override
     public void update(float tpf) {
         if (!enabled) {

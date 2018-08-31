@@ -245,6 +245,11 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
 
     protected native void getOverlappingObjects(long objectId);
 
+    /**
+     * This method is invoked from native code.
+     *
+     * @param co the collision object to add
+     */
     private void addOverlappingObject_native(PhysicsCollisionObject co) {
         overlappingObjects.add(co);
     }

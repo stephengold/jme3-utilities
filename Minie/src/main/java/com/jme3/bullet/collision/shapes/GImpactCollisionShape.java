@@ -66,6 +66,10 @@ public class GImpactCollisionShape extends CollisionShape {
     private int vertexStride;
     private ByteBuffer triangleIndexBase;
     private ByteBuffer vertexBase;
+    /**
+     * Bullet identifier of the mesh. The constructor sets this to a non-zero
+     * value.
+     */
     private long meshId = 0;
 
     /**
@@ -156,7 +160,9 @@ public class GImpactCollisionShape extends CollisionShape {
     }
 
     protected void createShape() {
-        meshId = NativeMeshUtil.createTriangleIndexVertexArray(triangleIndexBase, vertexBase, numTriangles, numVertices, vertexStride, triangleIndexStride);
+        meshId = NativeMeshUtil.createTriangleIndexVertexArray(
+                triangleIndexBase, vertexBase, numTriangles, numVertices,
+                vertexStride, triangleIndexStride);
         logger.log(Level.FINE, "Created Mesh {0}", Long.toHexString(meshId));
         objectId = createShape(meshId);
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
@@ -170,7 +176,7 @@ public class GImpactCollisionShape extends CollisionShape {
      * Finalize this shape just before it is destroyed. Should be invoked only
      * by a subclass or by the garbage collector.
      *
-     * @throws Throwable
+     * @throws Throwable ignored by the garbage collector
      */
     @Override
     protected void finalize() throws Throwable {

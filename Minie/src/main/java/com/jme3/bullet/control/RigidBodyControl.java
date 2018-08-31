@@ -254,9 +254,8 @@ public class RigidBodyControl extends PhysicsRigidBody
     }
 
     /**
-     * Sets this control to kinematic spatial mode so that the spatials
-     * transform will be applied to the rigidbody in kinematic mode, defaults to
-     * true.
+     * Enable or disable kinematic mode. In kinematic mode, the spatial's
+     * location and rotation will be applied to the rigid body.
      *
      * @param kinematicSpatial true&rarr;kinematic, false&rarr;dynamic or static
      */
@@ -265,8 +264,8 @@ public class RigidBodyControl extends PhysicsRigidBody
     }
 
     /**
-     * Test whether physics coordinates should match the local transform of the
-     * Spatial.
+     * Test whether physics location and rotation should match the spatial's
+     * local transform.
      *
      * @return true if matching local transform, false if matching world
      * transform
@@ -276,8 +275,8 @@ public class RigidBodyControl extends PhysicsRigidBody
     }
 
     /**
-     * Alter whether physics coordinates should match the local transform of the
-     * Spatial.
+     * Alter whether physics location and rotation should match the spatial's
+     * local transform.
      *
      * @param applyPhysicsLocal true&rarr;match local transform,
      * false&rarr;match world transform (default is false)
@@ -300,6 +299,11 @@ public class RigidBodyControl extends PhysicsRigidBody
         return spatial.getWorldRotation();
     }
 
+    /**
+     * Update this control. (Invoked once per frame.)
+     *
+     * @param tpf the time interval between render passes (in seconds, &ge;0)
+     */
     @Override
     public void update(float tpf) {
         if (enabled && spatial != null) {

@@ -480,7 +480,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     /**
      * Read which type of threading this app state uses.
      *
-     * @return the threadingType
+     * @return the threadingType (not null)
      */
     public ThreadingType getThreadingType() {
         return threadingType;

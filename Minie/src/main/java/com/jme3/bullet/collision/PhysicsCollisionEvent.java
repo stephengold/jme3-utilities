@@ -56,10 +56,19 @@ public class PhysicsCollisionEvent extends EventObject {
     public static final int TYPE_PROCESSED = 1;
     public static final int TYPE_DESTROYED = 2;
     private int type;
+
     private PhysicsCollisionObject nodeA;
     private PhysicsCollisionObject nodeB;
     private long manifoldPointObjectId = 0;
 
+    /**
+     * Create a collision event.
+     *
+     * @param type event type (added/processed/destroyed)
+     * @param nodeA 1st involved object (alias created)
+     * @param nodeB 2nd involved object (alias created)
+     * @param manifoldPointObjectId Bullet identifier
+     */
     public PhysicsCollisionEvent(int type, PhysicsCollisionObject nodeA,
             PhysicsCollisionObject nodeB, long manifoldPointObjectId) {
         super(nodeA);
@@ -70,7 +79,7 @@ public class PhysicsCollisionEvent extends EventObject {
     }
 
     /**
-     * used by event factory, called when event is destroyed
+     * Destroy this event.
      */
     public void clean() {
         source = null;
@@ -81,14 +90,15 @@ public class PhysicsCollisionEvent extends EventObject {
     }
 
     /**
-     * used by event factory, called when event reused
+     * Reuse this event.
      *
      * @param type event type (added/processed/destroyed)
      * @param source 1st involved object (alias created)
      * @param nodeB 2nd involved object (alias created)
-     * @param manifoldPointObjectId object id
+     * @param manifoldPointObjectId Bullet identifier
      */
-    public void refactor(int type, PhysicsCollisionObject source, PhysicsCollisionObject nodeB, long manifoldPointObjectId) {
+    public void refactor(int type, PhysicsCollisionObject source,
+            PhysicsCollisionObject nodeB, long manifoldPointObjectId) {
         this.source = source;
         this.type = type;
         this.nodeA = source;
@@ -96,6 +106,11 @@ public class PhysicsCollisionEvent extends EventObject {
         this.manifoldPointObjectId = manifoldPointObjectId;
     }
 
+    /**
+     * Read the type of event.
+     *
+     * @return added/processed/destroyed
+     */
     public int getType() {
         return type;
     }

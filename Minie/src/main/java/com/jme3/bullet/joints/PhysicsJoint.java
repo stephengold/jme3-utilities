@@ -221,7 +221,7 @@ public abstract class PhysicsJoint implements Savable {
      * Finalize this physics joint just before it is destroyed. Should be
      * invoked only by a subclass or by the garbage collector.
      *
-     * @throws Throwable
+     * @throws Throwable ignored by the garbage collector
      */
     @Override
     protected void finalize() throws Throwable {

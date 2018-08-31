@@ -156,6 +156,11 @@ public class BetterCharacterControl extends AbstractPhysicsControl
         rigidBody.setAngularFactor(0);
     }
 
+    /**
+     * Update this control. (Invoked once per frame.)
+     *
+     * @param tpf the time interval between render passes (in seconds, &ge;0)
+     */
     @Override
     public void update(float tpf) {
         rigidBody.getPhysicsLocation(location);
@@ -677,11 +682,23 @@ public class BetterCharacterControl extends AbstractPhysicsControl
         space.removeTickListener(this);
     }
 
+    /**
+     * Create spatial-dependent data. Invoked when this control is added to a
+     * spatial.
+     *
+     * @param spat the controlled spatial (not null)
+     */
     @Override
     protected void createSpatialData(Spatial spat) {
         rigidBody.setUserObject(spatial);
     }
 
+    /**
+     * Destroy spatial-dependent data. Invoked when this control is removed from
+     * a spatial.
+     *
+     * @param spat the previously controlled spatial (not null)
+     */
     @Override
     protected void removeSpatialData(Spatial spat) {
         rigidBody.setUserObject(null);

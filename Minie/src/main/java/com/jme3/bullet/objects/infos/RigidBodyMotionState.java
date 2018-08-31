@@ -58,8 +58,11 @@ public class RigidBodyMotionState {
     final private Quaternion worldRotationQuat = new Quaternion();
     final private Quaternion tmp_inverseWorldRotation = new Quaternion();
     private PhysicsVehicle vehicle;
+    /**
+     * true &rarr; physics coordinates match local transform, false &rarr;
+     * physics coordinates match world transform
+     */
     private boolean applyPhysicsLocal = false;
-//    protected LinkedList<PhysicsMotionStateListener> listeners = new LinkedList<PhysicsMotionStateListener>();
 
     /**
      * Create a motion state.
@@ -73,8 +76,8 @@ public class RigidBodyMotionState {
     private native long createMotionState();
 
     /**
-     * Apply the current transform to the given jme Node if the location has
-     * been updated on the physics side
+     * Apply the current transform to the given Spatial if the location has been
+     * updated on the physics side
      *
      * @param spatial where to apply the physics transform (not null)
      * @return true if changed
@@ -113,7 +116,9 @@ public class RigidBodyMotionState {
             Quaternion rotation);
 
     /**
-     * @return the worldLocation
+     * Read the location for this motion state.
+     *
+     * @return the pre-existing vector
      */
     public Vector3f getWorldLocation() {
         getWorldLocation(motionStateId, worldLocation);
@@ -123,7 +128,9 @@ public class RigidBodyMotionState {
     private native void getWorldLocation(long stateId, Vector3f vec);
 
     /**
-     * @return the worldRotation
+     * Read the rotation for this motion state (as a matrix).
+     *
+     * @return the pre-existing matrix
      */
     public Matrix3f getWorldRotation() {
         getWorldRotation(motionStateId, worldRotation);
@@ -133,7 +140,9 @@ public class RigidBodyMotionState {
     private native void getWorldRotation(long stateId, Matrix3f vec);
 
     /**
-     * @return the worldRotationQuat
+     * Read the rotation for this motion state (as a quaternion).
+     *
+     * @return the pre-existing instance
      */
     public Quaternion getWorldRotationQuat() {
         getWorldRotationQuat(motionStateId, worldRotationQuat);
@@ -184,7 +193,7 @@ public class RigidBodyMotionState {
      * Finalize this motion state just before it is destroyed. Should be invoked
      * only by a subclass or by the garbage collector.
      *
-     * @throws Throwable
+     * @throws Throwable ignored by the garbage collector
      */
     @Override
     protected void finalize() throws Throwable {

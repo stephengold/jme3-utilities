@@ -53,6 +53,11 @@ public class RotationalLimitMotor {
      */
     private long motorId = 0;
 
+    /**
+     * Create a motor with the specified id.
+     *
+     * @param motor Bullet identified (not zero)
+     */
     public RotationalLimitMotor(long motor) {
         this.motorId = motor;
     }
@@ -169,12 +174,22 @@ public class RotationalLimitMotor {
 
     private native void setBounce(long motorId, float limitSoftness);
 
+    /**
+     * Test whether this motor is enabled.
+     *
+     * @return true if enabled, otherwise false
+     */
     public boolean isEnableMotor() {
         return isEnableMotor(motorId);
     }
 
     private native boolean isEnableMotor(long motorId);
 
+    /**
+     * Enable or disable this motor.
+     *
+     * @param enableMotor true&rarr;enable, false&rarr;disable
+     */
     public void setEnableMotor(boolean enableMotor) {
         setEnableMotor(motorId, enableMotor);
     }

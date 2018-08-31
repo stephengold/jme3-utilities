@@ -315,7 +315,7 @@ public abstract class PhysicsCollisionObject implements Savable {
      * Finalize this collision object just before it is destroyed. Should be
      * invoked only by a subclass or by the garbage collector.
      *
-     * @throws Throwable
+     * @throws Throwable ignored by the garbage collector
      */
     @Override
     protected void finalize() throws Throwable {
