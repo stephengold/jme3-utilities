@@ -73,6 +73,10 @@ public class MeshCollisionShape extends CollisionShape {
     private int vertexStride;
     private ByteBuffer triangleIndexBase;
     private ByteBuffer vertexBase;
+    /**
+     * Bullet identifier of the mesh. The constructor sets this to a non-zero
+     * value.
+     */
     private long meshId = 0;
     private long nativeBVHBuffer = 0;
     private boolean memoryOptimized;
@@ -227,8 +231,8 @@ public class MeshCollisionShape extends CollisionShape {
         if (!buildBvh) {
             nativeBVHBuffer = setBVH(bvh, this.objectId);
         }
-        this.setScale(this.scale);
-        this.setMargin(this.margin);
+        setScale(this.scale);
+        setMargin(this.margin);
     }
 
     /**
@@ -246,7 +250,7 @@ public class MeshCollisionShape extends CollisionShape {
      * Finalize this shape just before it is destroyed. Should be invoked only
      * by a subclass or by the garbage collector.
      *
-     * @throws Throwable
+     * @throws Throwable ignored by the garbage collector
      */
     @Override
     protected void finalize() throws Throwable {
@@ -254,7 +258,7 @@ public class MeshCollisionShape extends CollisionShape {
         logger.log(Level.FINE, "Finalizing Mesh {0}",
                 Long.toHexString(this.meshId));
         if (this.meshId > 0) {
-            this.finalizeNative(this.meshId, this.nativeBVHBuffer);
+            finalizeNative(this.meshId, this.nativeBVHBuffer);
         }
     }
 
