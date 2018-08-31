@@ -54,6 +54,9 @@ public class PlaneCollisionShape extends CollisionShape {
     final private static Logger logger
             = Logger.getLogger(PlaneCollisionShape.class.getName());
 
+    /**
+     * description of the plane
+     */
     private Plane plane;
 
     /**
@@ -64,15 +67,20 @@ public class PlaneCollisionShape extends CollisionShape {
     }
 
     /**
-     * Create a plane collision shape.
+     * Instantiate a plane shape defined by the specified plane.
      *
-     * @param plane the plane that defines the shape (not null, alias created)
+     * @param plane the plane to use (not null, alias created) TODO
      */
     public PlaneCollisionShape(Plane plane) {
         this.plane = plane;
         createShape();
     }
 
+    /**
+     * Access the defining plane.
+     *
+     * @return the pre-existing instance (not null) TODO
+     */
     public final Plane getPlane() {
         return plane;
     }
@@ -104,16 +112,15 @@ public class PlaneCollisionShape extends CollisionShape {
         createShape();
     }
 
-    protected void createShape() {
+    /**
+     * Create the configured shape in Bullet.
+     */
+    private void createShape() {
         objectId = createShape(plane.getNormal(), plane.getConstant());
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
-//        objectId = new StaticPlaneShape(Converter.convert(plane.getNormal()),plane.getConstant());
-//        objectId.setLocalScaling(Converter.convert(getScale()));
-//        objectId.setMargin(margin);
         setScale(scale);
         setMargin(margin);
     }
 
     private native long createShape(Vector3f normal, float constant);
-
 }
