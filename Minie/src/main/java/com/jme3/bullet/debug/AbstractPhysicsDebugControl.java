@@ -50,23 +50,35 @@ public abstract class AbstractPhysicsDebugControl extends AbstractControl {
     private final Quaternion tmp_inverseWorldRotation = new Quaternion();
     protected final BulletDebugAppState debugAppState;
 
+    /**
+     * Instantiate a control to serve the specified debug app state.
+     *
+     * @param debugAppState which app state (not null)
+     */
     public AbstractPhysicsDebugControl(BulletDebugAppState debugAppState) {
         this.debugAppState = debugAppState;
     }
 
     /**
-     * This method is invoked on the physics thread.
+     * Apply the specified location and orientation to the controlled spatial.
      *
-     * @param tpf time per frame (in seconds, &ge;0)
+     * @param worldLocation the location vector (in world coordinates, not null)
+     * @param worldRotation the orientation (in world coordinates, not null)
      */
-    @Override
-    protected abstract void controlUpdate(float tpf);
-
-    protected void applyPhysicsTransform(Vector3f worldLocation, Quaternion worldRotation) {
+    protected void applyPhysicsTransform(Vector3f worldLocation,
+            Quaternion worldRotation) {
         applyPhysicsTransform(worldLocation, worldRotation, this.spatial);
     }
 
-    protected void applyPhysicsTransform(Vector3f worldLocation, Quaternion worldRotation, Spatial spatial) {
+    /**
+     * Apply the specified location and orientation to the specified spatial.
+     *
+     * @param worldLocation the location vector (in world coordinates, not null)
+     * @param worldRotation the orientation (in world coordinates, not null)
+     * @param spatial where to apply (may be null)
+     */
+    private void applyPhysicsTransform(Vector3f worldLocation,
+            Quaternion worldRotation, Spatial spatial) {
         if (spatial != null) {
             Vector3f localLocation = spatial.getLocalTranslation();
             Quaternion localRotationQuat = spatial.getLocalRotation();
@@ -83,6 +95,5 @@ public abstract class AbstractPhysicsDebugControl extends AbstractControl {
                 spatial.setLocalRotation(worldRotation);
             }
         }
-
     }
 }
