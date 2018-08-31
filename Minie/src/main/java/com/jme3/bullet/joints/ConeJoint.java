@@ -48,7 +48,7 @@ import java.util.logging.Logger;
  * <i>From the Bullet manual:</i><br>
  * To create ragdolls, the cone twist constraint is very useful for limbs like
  * the upper arm. It is a special point-to-point constraint that adds cone and
- * twist axis limits. The x-axis serves as twist axis.
+ * twist axis limits. The X-axis is the twist axis.
  *
  * @author normenhansen
  */
@@ -75,19 +75,20 @@ public class ConeJoint extends PhysicsJoint {
     }
 
     /**
-     * Create a ConeJoint. To be effective, the joint must be added to a physics
-     * space.
+     * Instantiate a ConeJoint. To be effective, the joint must be added to a
+     * physics space.
      *
      * @param nodeA the 1st body connected by the joint (not null, alias
      * created)
      * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
      * @param pivotA the local offset of the connection point in node A (not
-     * null, alias created)
+     * null, alias created) TODO
      * @param pivotB the local offset of the connection point in node B (not
-     * null, alias created)
+     * null, alias created) TODO
      */
-    public ConeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB) {
+    public ConeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
+            Vector3f pivotA, Vector3f pivotB) {
         super(nodeA, nodeB, pivotA, pivotB);
         this.rotA = new Matrix3f();
         this.rotB = new Matrix3f();
@@ -95,14 +96,24 @@ public class ConeJoint extends PhysicsJoint {
     }
 
     /**
-     * @param nodeA the 1st body connected by the joint
-     * @param nodeB the 2nd body connected by the joint
+     * Instantiate a ConeJoint. To be effective, the joint must be added to a
+     * physics space.
+     *
+     * @param nodeA the 1st body connected by the joint (not null, alias
+     * created)
+     * @param nodeB the 2nd body connected by the joint (not null, alias
+     * created)
      * @param pivotA local translation of the joint connection point in node A
+     * (not null, alias created)
      * @param pivotB local translation of the joint connection point in node B
-     * @param rotA the local orientation of the connection to node A
-     * @param rotB the local orientation of the connection to node B
+     * (not null, alias created)
+     * @param rotA the local orientation of the connection to node A (not null,
+     * alias created)
+     * @param rotB the local orientation of the connection to node B (not null,
+     * alias created)
      */
-    public ConeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB) {
+    public ConeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
+            Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB) {
         super(nodeA, nodeB, pivotA, pivotB);
         this.rotA = rotA;
         this.rotB = rotB;
@@ -116,7 +127,8 @@ public class ConeJoint extends PhysicsJoint {
         setLimit(objectId, swingSpan1, swingSpan2, twistSpan);
     }
 
-    private native void setLimit(long objectId, float swingSpan1, float swingSpan2, float twistSpan);
+    private native void setLimit(long objectId, float swingSpan1,
+            float swingSpan2, float twistSpan);
 
     public void setAngularOnly(boolean value) {
         angularOnly = value;
@@ -164,12 +176,17 @@ public class ConeJoint extends PhysicsJoint {
         createJoint();
     }
 
-    protected void createJoint() {
-        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA, rotA, pivotB, rotB);
+    /**
+     * Create the configured joint in Bullet.
+     */
+    private void createJoint() {
+        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(),
+                pivotA, rotA, pivotB, rotB);
         logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
         setLimit(objectId, swingSpan1, swingSpan2, twistSpan);
         setAngularOnly(objectId, angularOnly);
     }
 
-    private native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA, Matrix3f rotA, Vector3f pivotB, Matrix3f rotB);
+    private native long createJoint(long objectIdA, long objectIdB,
+            Vector3f pivotA, Matrix3f rotA, Vector3f pivotB, Matrix3f rotB);
 }
