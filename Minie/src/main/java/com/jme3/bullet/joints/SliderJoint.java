@@ -572,10 +572,13 @@ public class SliderJoint extends PhysicsJoint {
         setUpperLinLimit(upperLinLimit);
     }
 
-    protected void createJoint() {
-        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA, rotA, pivotB, rotB, useLinearReferenceFrameA);
+    /**
+     * Create the configured joint in Bullet.
+     */
+    private void createJoint() {
+        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA,
+                rotA, pivotB, rotB, useLinearReferenceFrameA);
         logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
-        // = new SliderConstraint(nodeA.getObjectId(), nodeB.getObjectId(), transA, transB, useLinearReferenceFrameA);
     }
 
     private native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA, Matrix3f rotA, Vector3f pivotB, Matrix3f rotB, boolean useLinearReferenceFrameA);
