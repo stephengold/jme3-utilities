@@ -54,10 +54,16 @@ public class CapsuleCollisionShape extends CollisionShape {
     final private static Logger logger
             = Logger.getLogger(CapsuleCollisionShape.class.getName());
 
+    /**
+     * height of the cylindrical section (&ge;0)
+     */
     private float height;
+    /**
+     * radius (&ge;0)
+     */
     private float radius;
     /**
-     * height axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
+     * main (height) axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
      */
     private int axis;
 
@@ -69,7 +75,7 @@ public class CapsuleCollisionShape extends CollisionShape {
     }
 
     /**
-     * Create a new CapsuleCollisionShape with the given radius and height
+     * Instantiate a capsule shape with the given radius and height.
      *
      * @param radius the radius of the capsule
      * @param height the height of the capsule
@@ -82,11 +88,11 @@ public class CapsuleCollisionShape extends CollisionShape {
     }
 
     /**
-     * creates a capsule shape around the given axis (0=X,1=Y,2=Z)
+     * Instantiate a capsule shape with the specified main (height) axis.
      *
      * @param radius the radius of the capsule
      * @param height the height of the capsule
-     * @param axis which axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
+     * @param axis which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public CapsuleCollisionShape(float radius, float height, int axis) {
         this.radius = radius;
@@ -95,14 +101,29 @@ public class CapsuleCollisionShape extends CollisionShape {
         createShape();
     }
 
+    /**
+     * Read the radius of the capsule.
+     *
+     * @return radius (&ge;0)
+     */
     public float getRadius() {
         return radius;
     }
 
+    /**
+     * Read the height (of the cylindrical section) of the capsule.
+     *
+     * @return height (&ge;0)
+     */
     public float getHeight() {
         return height;
     }
 
+    /**
+     * Read the main (height) axis of the capsule.
+     *
+     * @return 0 for local X, 1 for local Y, or 2 for local Z
+     */
     public int getAxis() {
         return axis;
     }
@@ -153,26 +174,12 @@ public class CapsuleCollisionShape extends CollisionShape {
         createShape();
     }
 
-    protected void createShape() {
+    private void createShape() {
         objectId = createShape(axis, radius, height);
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
         setScale(scale);
         setMargin(margin);
-//        switch(axis){
-//            case 0:
-//                objectId=new CapsuleShapeX(radius,height);
-//            break;
-//            case 1:
-//                objectId=new CapsuleShape(radius,height);
-//            break;
-//            case 2:
-//                objectId=new CapsuleShapeZ(radius,height);
-//            break;
-//        }
-//        objectId.setLocalScaling(Converter.convert(getScale()));
-//        objectId.setMargin(margin);
     }
 
     private native long createShape(int axis, float radius, float height);
-
 }
