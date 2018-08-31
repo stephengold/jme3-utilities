@@ -53,6 +53,9 @@ public class BoxCollisionShape extends CollisionShape {
     final private static Logger logger
             = Logger.getLogger(BoxCollisionShape.class.getName());
 
+    /**
+     * half-extents of the box on each local axis
+     */
     private Vector3f halfExtents;
 
     /**
@@ -63,7 +66,7 @@ public class BoxCollisionShape extends CollisionShape {
     }
 
     /**
-     * Create a collision box with the specified half extents.
+     * Instantiate a collision box with the specified half extents.
      *
      * @param halfExtents the half extents of the shape (not null, alias
      * created)
@@ -74,7 +77,7 @@ public class BoxCollisionShape extends CollisionShape {
     }
 
     /**
-     * Create a collision box with the specified half extents.
+     * Access the half extents.
      *
      * @return the pre-existing instance
      */
@@ -105,12 +108,13 @@ public class BoxCollisionShape extends CollisionShape {
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
-        Vector3f halfExtents = (Vector3f) capsule.readSavable("halfExtents", new Vector3f(1, 1, 1));
-        this.halfExtents = halfExtents;
+        Vector3f he = (Vector3f) capsule.readSavable("halfExtents",
+                new Vector3f(1f, 1f, 1f));
+        this.halfExtents = he;
         createShape();
     }
 
-    protected void createShape() {
+    private void createShape() {
         objectId = createShape(halfExtents);
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
         setScale(scale);
