@@ -41,7 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A cone collision shape based on Bullet's btConeShapeX, btConeShape, or
+ * A conical collision shape based on Bullet's btConeShapeX, btConeShape, or
  * btConeShapeZ.
  *
  * @author normenhansen
@@ -54,10 +54,16 @@ public class ConeCollisionShape extends CollisionShape {
     final private static Logger logger
             = Logger.getLogger(ConeCollisionShape.class.getName());
 
+    /**
+     * radius (&ge;0)
+     */
     private float radius;
+    /**
+     * height (&ge;0)
+     */
     private float height;
     /**
-     * height axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
+     * main (height) axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
      */
     private int axis;
 
@@ -68,6 +74,13 @@ public class ConeCollisionShape extends CollisionShape {
     public ConeCollisionShape() {
     }
 
+    /**
+     * Instantiate a cone shape around the specified main (height) axis.
+     *
+     * @param radius the radius to use (&ge;0)
+     * @param height the height to use (&ge;0)
+     * @param axis which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
+     */
     public ConeCollisionShape(float radius, float height, int axis) {
         this.radius = radius;
         this.height = height;
@@ -75,6 +88,12 @@ public class ConeCollisionShape extends CollisionShape {
         createShape();
     }
 
+    /**
+     * Instantiate a cone shape around the Y axis.
+     *
+     * @param radius the radius to use (&ge;0)
+     * @param height the height to use (&ge;0)
+     */
     public ConeCollisionShape(float radius, float height) {
         this.radius = radius;
         this.height = height;
@@ -83,7 +102,7 @@ public class ConeCollisionShape extends CollisionShape {
     }
 
     /**
-     * Determine the main axis of the shape.
+     * Determine the main (height) axis of the cone.
      *
      * @return 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
@@ -91,10 +110,20 @@ public class ConeCollisionShape extends CollisionShape {
         return axis;
     }
 
+    /**
+     * Read the radius of the cone.
+     *
+     * @return radius (&ge;0)
+     */
     public float getRadius() {
         return radius;
     }
 
+    /**
+     * Read the height of the cone.
+     *
+     * @return height (&ge;0)
+     */
     public float getHeight() {
         return height;
     }
@@ -130,18 +159,12 @@ public class ConeCollisionShape extends CollisionShape {
         createShape();
     }
 
-    protected void createShape() {
+    /**
+     * Create the configured shape.
+     */
+    private void createShape() {
         objectId = createShape(axis, radius, height);
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
-//        if (axis == PhysicsSpace.AXIS_X) {
-//            objectId = new ConeShapeX(radius, height);
-//        } else if (axis == PhysicsSpace.AXIS_Y) {
-//            objectId = new ConeShape(radius, height);
-//        } else if (axis == PhysicsSpace.AXIS_Z) {
-//            objectId = new ConeShapeZ(radius, height);
-//        }
-//        objectId.setLocalScaling(Converter.convert(getScale()));
-//        objectId.setMargin(margin);
         setScale(scale);
         setMargin(margin);
     }
