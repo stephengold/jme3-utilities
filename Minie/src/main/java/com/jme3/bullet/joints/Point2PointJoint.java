@@ -45,9 +45,9 @@ import java.util.logging.Logger;
  * A joint based on Bullet's btPoint2PointConstraint.
  * <p>
  * <i>From the Bullet manual:</i><br>
- * Point-to-point constraint, also known as ball socket joint, limits the
- * translation so that the local pivot points of 2 rigidbodies match in
- * worldspace. A chain of rigidbodies can be connected using this constraint.
+ * Point-to-point constraint, also known as ball-socket joint, limits the
+ * translation so that the local pivot points of 2 rigid bodies match in world
+ * space. A chain of rigid bodies can be connected using this constraint.
  *
  * @author normenhansen
  */
@@ -79,7 +79,8 @@ public class Point2PointJoint extends PhysicsJoint {
      * @param pivotB the local offset of the connection point in node B (not
      * null, alias created)
      */
-    public Point2PointJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB, Vector3f pivotA, Vector3f pivotB) {
+    public Point2PointJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
+            Vector3f pivotA, Vector3f pivotB) {
         super(nodeA, nodeB, pivotA, pivotB);
         createJoint();
     }
@@ -151,10 +152,15 @@ public class Point2PointJoint extends PhysicsJoint {
         setDamping(cap.readFloat("impulseClamp", 0f));
     }
 
-    protected void createJoint() {
-        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA, pivotB);
+    /**
+     * Create the configured joint in Bullet.
+     */
+    private void createJoint() {
+        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA,
+                pivotB);
         logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
     }
 
-    private native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA, Vector3f pivotB);
+    private native long createJoint(long objectIdA, long objectIdB,
+            Vector3f pivotA, Vector3f pivotB);
 }
