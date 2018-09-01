@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * A collision object for rigid bodies, based on Bullet's btRigidBody.
@@ -686,11 +687,14 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      */
     @Override
     public void setCollisionShape(CollisionShape collisionShape) {
-        super.setCollisionShape(collisionShape);
-        if (collisionShape instanceof MeshCollisionShape && mass != 0) {
+        Validate.nonNull(collisionShape, "collision shape");
+        if (collisionShape instanceof MeshCollisionShape && mass != 0f) {
             throw new IllegalStateException(
                     "Dynamic rigidbody can not have mesh collision shape!");
         }
+
+        super.setCollisionShape(collisionShape);
+
         if (objectId == 0) {
             rebuildRigidBody();
         } else {
