@@ -130,13 +130,18 @@ public class CapsuleCollisionShape extends CollisionShape {
     }
 
     /**
-     * WARNING - non-uniform scaling has no effect.
+     * Alter the scaling factors of this shape. Non-uniform scaling is disabled
+     * for capsule shapes.
+     * <p>
+     * Note that if the shape is shared (between collision objects and/or
+     * compound shapes) changes can have unexpected consequences.
      *
-     * @param scale desired scale factor for each local axis (not null)
+     * @param scale the desired scaling factor for each local axis (not null,
+     * unaffected, default=1,1,1)
      */
     @Override
     public void setScale(Vector3f scale) {
-        if (scale.x != scale.y || scale.y != scale.z) {
+        if (scale.x != scale.y || scale.y != scale.z) { // TODO MyVector3f
             logger.log(Level.SEVERE,
                     "CapsuleCollisionShape cannot be scaled non-uniformly.");
         } else {

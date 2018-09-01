@@ -84,9 +84,12 @@ public abstract class CollisionShape implements Savable {
 
     /**
      * Alter the scaling factors of this shape.
+     * <p>
+     * Note that if the shape is shared (between collision objects and/or
+     * compound shapes) changes can have unexpected consequences.
      *
-     * @param scale the desired scaling factors (not null, unaffected,
-     * default=1,1,1)
+     * @param scale the desired scaling factor for each local axis (not null,
+     * unaffected, default=1,1,1)
      */
     public void setScale(Vector3f scale) {
         this.scale.set(scale);

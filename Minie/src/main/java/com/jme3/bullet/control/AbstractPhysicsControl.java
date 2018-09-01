@@ -157,7 +157,7 @@ public abstract class AbstractPhysicsControl
     }
 
     /**
-     * Access whichever Spatial translation corresponds to the physics location.
+     * Access whichever spatial translation corresponds to the physics location.
      *
      * @return the pre-existing vector (not null)
      */
@@ -172,7 +172,7 @@ public abstract class AbstractPhysicsControl
     }
 
     /**
-     * Access whichever Spatial rotation corresponds to the physics rotation.
+     * Access whichever spatial rotation corresponds to the physics rotation.
      *
      * @return the pre-existing quaternion (not null)
      */

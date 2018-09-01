@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * A utility class for generating debug Spatials from Bullet collision shapes.
+ * A utility class for generating debug spatials from Bullet collision shapes.
  *
  * @author CJ Hare, normenhansen
  */
@@ -64,12 +64,12 @@ public class DebugShapeFactory {
     }
 
     /**
-     * Creates a debug shape from the given collision shape. This is mostly used
+     * Creates a debug spatial from the given collision shape. This is mostly used
      * internally.<br>
      * To attach a debug shape to a physics object, call
      * <code>attachDebugShape(AssetManager manager);</code> on it.
      *
-     * @param collisionShape the collision shape to visualize
+     * @param collisionShape the collision shape to visualize (unaffected)
      * @return a new tree of geometries, or null
      */
     public static Spatial getDebugShape(CollisionShape collisionShape) {

@@ -65,7 +65,8 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
     final private Transform a = new Transform();
     final private Transform b = new Transform();
 
-    public BulletJointDebugControl(BulletDebugAppState debugAppState, PhysicsJoint body) {
+    public BulletJointDebugControl(BulletDebugAppState debugAppState,
+            PhysicsJoint body) {
         super(debugAppState);
         this.body = body;
         this.geomA = new Geometry(body.toString());

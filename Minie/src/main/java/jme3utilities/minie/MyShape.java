@@ -337,7 +337,7 @@ public class MyShape {
 
         } else if (oldShape instanceof SphereCollisionShape) {
             if (newHalfExtents.x != newHalfExtents.y
-                    || newHalfExtents.y != newHalfExtents.z) {
+                    || newHalfExtents.y != newHalfExtents.z) {// TODO MyVector3f
                 result = null;
             } else {
                 result = new SphereCollisionShape(newHalfExtents.x);
