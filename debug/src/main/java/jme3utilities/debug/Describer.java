@@ -441,10 +441,10 @@ public class Describer {
         StringBuilder result = new StringBuilder(30);
 
         Vector3f scale = MySpatial.getWorldScale(spatial);
-        if (scale.x != scale.y || scale.y != scale.z) {
+        if (scale.x != scale.y || scale.y != scale.z) { // TODO MyVector3f
             result.append("scale=");
             result.append(scale);
-        } else if (scale.x != 1f) {
+        } else if (!MyVector3f.isScaleIdentity(scale)) {
             /*
              * uniform scaling
              */
