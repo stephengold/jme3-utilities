@@ -55,6 +55,7 @@ import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Logger;
+import jme3utilities.MySpatial;
 
 /**
  * A physics control to link a PhysicsRigidBody to a spatial.
@@ -71,6 +72,14 @@ public class RigidBodyControl extends PhysicsRigidBody
      */
     final private static Logger logger
             = Logger.getLogger(RigidBodyControl.class.getName());
+    /**
+     * local copy of {@link com.jme3.math.Quaternion#IDENTITY}
+     */
+    final private static Quaternion rotateIdentity = new Quaternion();
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#ZERO}
+     */
+    final private static Vector3f translateIdentity = new Vector3f(0f, 0f, 0f);
 
     protected Spatial spatial;
     protected boolean enabled = true;
@@ -285,18 +294,34 @@ public class RigidBodyControl extends PhysicsRigidBody
         motionState.setApplyPhysicsLocal(applyPhysicsLocal);
     }
 
+    /**
+     * Access whichever spatial translation corresponds to the physics location.
+     *
+     * @return the pre-existing vector (not null)
+     */
     private Vector3f getSpatialTranslation() {
-        if (motionState.isApplyPhysicsLocal()) {
+        if (MySpatial.isIgnoringTransforms(spatial)) {
+            return translateIdentity;
+        } else if (motionState.isApplyPhysicsLocal()) {
             return spatial.getLocalTranslation();
+        } else {
+            return spatial.getWorldTranslation();
         }
-        return spatial.getWorldTranslation();
     }
 
+    /**
+     * Access whichever spatial rotation corresponds to the physics rotation.
+     *
+     * @return the pre-existing quaternion (not null)
+     */
     private Quaternion getSpatialRotation() {
-        if (motionState.isApplyPhysicsLocal()) {
+        if (MySpatial.isIgnoringTransforms(spatial)) {
+            return rotateIdentity;
+        } else if (motionState.isApplyPhysicsLocal()) {
             return spatial.getLocalRotation();
+        } else {
+            return spatial.getWorldRotation();
         }
-        return spatial.getWorldRotation();
     }
 
     /**
@@ -329,6 +354,12 @@ public class RigidBodyControl extends PhysicsRigidBody
     public void render(RenderManager rm, ViewPort vp) {
     }
 
+    /**
+     * Add this control's body to the specified physics space and remove it from
+     * any space it's currently in.
+     *
+     * @param space where to add, or null to simply remove
+     */
     @Override
     public void setPhysicsSpace(PhysicsSpace space) {
         if (space == null) {

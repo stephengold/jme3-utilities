@@ -48,6 +48,7 @@ import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Logger;
+import jme3utilities.MySpatial;
 
 /**
  * A physics control to link a PhysicsGhostObject to a spatial.
@@ -67,6 +68,14 @@ public class GhostControl extends PhysicsGhostObject
      */
     final private static Logger logger
             = Logger.getLogger(GhostControl.class.getName());
+    /**
+     * local copy of {@link com.jme3.math.Quaternion#IDENTITY}
+     */
+    final private static Quaternion rotateIdentity = new Quaternion();
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#ZERO}
+     */
+    final private static Vector3f translateIdentity = new Vector3f(0f, 0f, 0f);
 
     protected Spatial spatial;
     protected boolean enabled = true;
@@ -107,18 +116,34 @@ public class GhostControl extends PhysicsGhostObject
         applyLocal = applyPhysicsLocal;
     }
 
-    private Vector3f getSpatialTranslation() {
-        if (applyLocal) {
+    /**
+     * Access whichever spatial translation corresponds to the physics location.
+     *
+     * @return the pre-existing vector (not null)
+     */
+    protected Vector3f getSpatialTranslation() {
+        if (MySpatial.isIgnoringTransforms(spatial)) {
+            return translateIdentity;
+        } else if (applyLocal) {
             return spatial.getLocalTranslation();
+        } else {
+            return spatial.getWorldTranslation();
         }
-        return spatial.getWorldTranslation();
     }
 
-    private Quaternion getSpatialRotation() {
-        if (applyLocal) {
+    /**
+     * Access whichever spatial rotation corresponds to the physics rotation.
+     *
+     * @return the pre-existing quaternion (not null)
+     */
+    protected Quaternion getSpatialRotation() {
+        if (MySpatial.isIgnoringTransforms(spatial)) {
+            return rotateIdentity;
+        } else if (applyLocal) {
             return spatial.getLocalRotation();
+        } else {
+            return spatial.getWorldRotation();
         }
-        return spatial.getWorldRotation();
     }
 
     @Override
@@ -167,10 +192,9 @@ public class GhostControl extends PhysicsGhostObject
     /**
      * Enable or disable this control.
      * <p>
-     * The physics object is removed from its physics space when the control is
-     * disabled. When the control is enabled again, the physics object is moved
-     * to the current location of the spatial and then added to the physics
-     * space.
+     * The ghost object is removed from its physics space when the control is
+     * disabled. When the control is enabled again, the object is moved to the
+     * current location of the spatial and then added to the physics space.
      *
      * @param enabled true&rarr;enable the control, false&rarr;disable it
      */
@@ -230,6 +254,12 @@ public class GhostControl extends PhysicsGhostObject
     public void render(RenderManager rm, ViewPort vp) {
     }
 
+    /**
+     * Add this control's ghost object to the specified physics space and remove
+     * it from any space it's currently in.
+     *
+     * @param space where to add, or null to simply remove
+     */
     @Override
     public void setPhysicsSpace(PhysicsSpace space) {
         if (space == null) {
@@ -248,7 +278,7 @@ public class GhostControl extends PhysicsGhostObject
     }
 
     /**
-     * Access the physics space containing this control's physics object.
+     * Access the physics space containing this control's ghost object.
      *
      * @return the pre-existing space, or null for none
      */
