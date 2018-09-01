@@ -704,6 +704,20 @@ public class MyVector3f {
     }
 
     /**
+     * Test for a uniform scaling vector.
+     *
+     * @param vector input (not null, unaffected)
+     * @return true if all 3 components are equal, false otherwise
+     */
+    public static boolean isScaleUniform(Vector3f vector) {
+        if (vector.x == vector.y && vector.y == vector.z) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Test for a zero vector or translation identity.
      *
      * @param vector input (not null, unaffected)
