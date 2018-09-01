@@ -31,6 +31,7 @@
  */
 package com.jme3.bullet.collision.shapes;
 
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -54,9 +55,12 @@ public class CylinderCollisionShape extends CollisionShape {
     final private static Logger logger
             = Logger.getLogger(CylinderCollisionShape.class.getName());
 
+    /**
+     * half-extents of the cylinder on each local axis
+     */
     private Vector3f halfExtents;
     /**
-     * height axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
+     * main (height) axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
      */
     private int axis;
 
@@ -68,21 +72,21 @@ public class CylinderCollisionShape extends CollisionShape {
     }
 
     /**
-     * Create a cylinder shape from the given halfextents.
+     * Instantiate a Z-axis cylinder shape with the specified half extents.
      *
-     * @param halfExtents the halfextents to use
+     * @param halfExtents the half extents to use (not null, alias created) TODO
      */
     public CylinderCollisionShape(Vector3f halfExtents) {
         this.halfExtents = halfExtents;
-        this.axis = 2;
+        this.axis = PhysicsSpace.AXIS_Z;
         createShape();
     }
 
     /**
-     * Create a cylinder shape around the given axis from the given halfextents
+     * Instantiate a cylinder shape around the specified axis.
      *
-     * @param halfExtents the halfextents to use
-     * @param axis (0=X,1=Y,2=Z)
+     * @param halfExtents the half extents to use
+     * @param axis which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public CylinderCollisionShape(Vector3f halfExtents, int axis) {
         this.halfExtents = halfExtents;
@@ -90,10 +94,20 @@ public class CylinderCollisionShape extends CollisionShape {
         createShape();
     }
 
+    /**
+     * Access the half extents of the cylinder.
+     *
+     * @return the pre-existing vector TODO
+     */
     public final Vector3f getHalfExtents() {
         return halfExtents;
     }
 
+    /**
+     * Determine the main axis of the cylinder.
+     *
+     * @return 0&rarr;X, 1&rarr;Y, 2&rarr;Z
+     */
     public int getAxis() {
         return axis;
     }
@@ -123,8 +137,9 @@ public class CylinderCollisionShape extends CollisionShape {
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(halfExtents, "halfExtents", new Vector3f(0.5f, 0.5f, 0.5f));
-        capsule.write(axis, "axis", 1);
+        capsule.write(halfExtents, "halfExtents",
+                new Vector3f(0.5f, 0.5f, 0.5f));
+        capsule.write(axis, "axis", PhysicsSpace.AXIS_Y);
     }
 
     /**
@@ -137,27 +152,18 @@ public class CylinderCollisionShape extends CollisionShape {
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
-        halfExtents = (Vector3f) capsule.readSavable("halfExtents", new Vector3f(0.5f, 0.5f, 0.5f));
-        axis = capsule.readInt("axis", 1);
+        halfExtents = (Vector3f) capsule.readSavable("halfExtents",
+                new Vector3f(0.5f, 0.5f, 0.5f));
+        axis = capsule.readInt("axis", PhysicsSpace.AXIS_Y);
         createShape();
     }
 
+    /**
+     * Create the configured shape in Bullet.
+     */
     private void createShape() {
         objectId = createShape(axis, halfExtents);
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
-//        switch (axis) {
-//            case 0:
-//                objectId = new CylinderShapeX(Converter.convert(halfExtents));
-//                break;
-//            case 1:
-//                objectId = new CylinderShape(Converter.convert(halfExtents));
-//                break;
-//            case 2:
-//                objectId = new CylinderShapeZ(Converter.convert(halfExtents));
-//                break;
-//        }
-//        objectId.setLocalScaling(Converter.convert(getScale()));
-//        objectId.setMargin(margin);
         setScale(scale);
         setMargin(margin);
     }

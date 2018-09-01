@@ -31,6 +31,7 @@
  */
 package com.jme3.bullet.collision.shapes;
 
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -55,7 +56,7 @@ public class CapsuleCollisionShape extends CollisionShape {
             = Logger.getLogger(CapsuleCollisionShape.class.getName());
 
     /**
-     * height of the cylindrical section (&ge;0)
+     * height of the cylindrical portion (&ge;0)
      */
     private float height;
     /**
@@ -75,23 +76,23 @@ public class CapsuleCollisionShape extends CollisionShape {
     }
 
     /**
-     * Instantiate a capsule shape with the given radius and height.
+     * Instantiate a Y-axis capsule shape with the specified radius and height.
      *
-     * @param radius the radius of the capsule
-     * @param height the height of the capsule
+     * @param radius the radius to use (&ge;0)
+     * @param height the height (of the cylindrical portion) to use (&ge;0)
      */
     public CapsuleCollisionShape(float radius, float height) {
         this.radius = radius;
         this.height = height;
-        this.axis = 1;
+        this.axis = PhysicsSpace.AXIS_Y;
         createShape();
     }
 
     /**
-     * Instantiate a capsule shape with the specified main (height) axis.
+     * Instantiate a capsule shape around the specified main (height) axis.
      *
-     * @param radius the radius of the capsule
-     * @param height the height of the capsule
+     * @param radius the radius to use (&ge;0)
+     * @param height the height (of the cylindrical portion) to use (&ge;0)
      * @param axis which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public CapsuleCollisionShape(float radius, float height, int axis) {
@@ -111,7 +112,7 @@ public class CapsuleCollisionShape extends CollisionShape {
     }
 
     /**
-     * Read the height (of the cylindrical section) of the capsule.
+     * Read the height (of the cylindrical portion) of the capsule.
      *
      * @return height (&ge;0)
      */
@@ -120,7 +121,7 @@ public class CapsuleCollisionShape extends CollisionShape {
     }
 
     /**
-     * Read the main (height) axis of the capsule.
+     * Determine the main (height) axis of the capsule.
      *
      * @return 0 for local X, 1 for local Y, or 2 for local Z
      */
@@ -154,8 +155,8 @@ public class CapsuleCollisionShape extends CollisionShape {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(radius, "radius", 0.5f);
-        capsule.write(height, "height", 1);
-        capsule.write(axis, "axis", 1);
+        capsule.write(height, "height", 1f);
+        capsule.write(axis, "axis", PhysicsSpace.AXIS_Y);
     }
 
     /**
@@ -170,10 +171,13 @@ public class CapsuleCollisionShape extends CollisionShape {
         InputCapsule capsule = im.getCapsule(this);
         radius = capsule.readFloat("radius", 0.5f);
         height = capsule.readFloat("height", 0.5f);
-        axis = capsule.readInt("axis", 1);
+        axis = capsule.readInt("axis", PhysicsSpace.AXIS_Y);
         createShape();
     }
 
+    /**
+     * Create the configured shape in Bullet.
+     */
     private void createShape() {
         objectId = createShape(axis, radius, height);
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
