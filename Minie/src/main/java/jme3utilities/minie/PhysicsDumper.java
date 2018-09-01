@@ -194,8 +194,15 @@ public class PhysicsDumper extends Dumper {
         stream.printf("%n   shape=%s", desc);
 
         Vector3f scale = shape.getScale();
-        if (!MyVector3f.isScaleIdentity(scale)) {
-            stream.printf(" sca=[%.3f, %.3f, %.3f]", scale.x, scale.y, scale.z);
+        if (scale.x != scale.y || scale.y != scale.z) { // TODO MyVector3f
+            stream.print(" scale=");
+            stream.print(scale);
+        } else if (!MyVector3f.isScaleIdentity(scale)) {
+            /*
+             * uniform scaling
+             */
+            stream.print(" scale=");
+            stream.print(scale.x);
         }
 
         List<PhysicsJoint> joints = body.getJoints();
