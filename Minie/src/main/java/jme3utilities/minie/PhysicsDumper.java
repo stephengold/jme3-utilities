@@ -173,10 +173,11 @@ public class PhysicsDumper extends Dumper {
 
         float mass = body.getMass();
         if (mass == 0f) {
-            stream.print(" static");
+            stream.print(" sta");
         } else {
-            stream.printf(" mass=%f", mass);
+            stream.printf(" dyn %f kg", mass);
         }
+        // compare with MyControlP.describe(Control)
 
         Vector3f location = body.getPhysicsLocation();
         stream.printf(" loc=[%.3f, %.3f, %.3f]",

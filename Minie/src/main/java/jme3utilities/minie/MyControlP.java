@@ -114,8 +114,9 @@ public class MyControlP {
             } else if (rigidBodyControl.isKinematic()) {
                 result += "[kin]";
             } else {
-                result += String.format("[dyn %.2f kg]", mass);
+                result += String.format("[dyn %f kg]", mass);
             }
+            // compare with PhysicsDumper.dump(PhysicsRigidBody)
         } else {
             result = MyControl.describe(sgc);
         }
