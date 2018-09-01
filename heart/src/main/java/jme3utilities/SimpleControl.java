@@ -55,9 +55,9 @@ abstract public class SimpleControl extends AbstractControl {
     // AbstractControl methods
 
     /**
-     * Callback invoked when the spatial is about to be rendered to a viewport.
+     * Render this control.  Invoked when the spatial is about to be rendered to a viewport.
      * <p>
-     * Only performs checks. Meant to be overridden.
+     * This implementation only performs checks and is meant to be overridden.
      *
      * @param renderManager renderer which is rendering the spatial (not null)
      * @param viewPort viewport where the spatial will be rendered (not null)
@@ -74,12 +74,14 @@ abstract public class SimpleControl extends AbstractControl {
     }
 
     /**
-     * Callback invoked when the spatial's geometric state is about to be
-     * updated, once per frame while attached and enabled.
+     * Update this control. Invoked once per frame during the logical-state
+     * update, provided the control is enabled and added to a spatial. Should
+     * not be invoked directly from user code.
      * <p>
-     * Only performs checks. Meant to be overridden.
+     * This implementation only performs checks and is meant to be overridden.
      *
-     * @param updateInterval time interval between updates (in seconds, &ge;0)
+     * @param updateInterval the time interval between updates (in seconds,
+     * &ge;0)
      */
     @Override
     protected void controlUpdate(float updateInterval) {
