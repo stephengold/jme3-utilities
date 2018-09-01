@@ -52,6 +52,7 @@ import jme3utilities.Validate;
  * @author normenhansen
  */
 public class BulletAppState implements AppState, PhysicsTickListener {
+    // TODO no need to implement PhysicsTickListener
 
     /**
      * message logger for this class
@@ -112,7 +113,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      */
     private BulletDebugAppState debugAppState;
     /**
-     * time per frame (in seconds) from the most recent update
+     * time interval between updates (in seconds) from the most recent update
      */
     private float tpf;
     /**
@@ -125,7 +126,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     private ViewPort[] debugViewPorts = null;
 
     /**
-     * Create an app state to manage a new PhysicsSpace with DBVT collision
+     * Instantiate an app state to manage a new PhysicsSpace with DBVT collision
      * detection.
      * <p>
      * Use getStateManager().addState(bulletAppState) to start physics.
@@ -134,7 +135,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
-     * Create an app state to manage a new PhysicsSpace.
+     * Instantiate an app state to manage a new PhysicsSpace.
      * <p>
      * Use getStateManager().addState(bulletAppState) to start physics.
      *
@@ -148,7 +149,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
-     * Create an app state to manage a new PhysicsSpace with AXIS_SWEEP_3
+     * Instantiate an app state to manage a new PhysicsSpace with AXIS_SWEEP_3
      * collision detection.
      * <p>
      * Use getStateManager().addState(bulletAppState) to start physics.
@@ -163,7 +164,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
-     * Create an app state to manage a new PhysicsSpace.
+     * Instantiate an app state to manage a new PhysicsSpace.
      * <p>
      * Use getStateManager().addState(bulletAppState) to enable physics.
      *
@@ -237,7 +238,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     };
 
     /**
-     * Access the PhysicsSpace managed by this app state. Normally there is none
+     * Access the PhysicsSpace managed by this state. Normally there is none
      * until the state is attached.
      *
      * @return the pre-existing instance, or null if no simulation running
@@ -402,10 +403,10 @@ public class BulletAppState implements AppState, PhysicsTickListener {
 
     /**
      * Update this state prior to rendering. Should be invoked only by a
-     * subclass or by the AppStateManager. Invoked once per render pass,
-     * provided the state is attached and enabled.
+     * subclass or by the AppStateManager. Invoked once per frame, provided the
+     * state is attached and enabled.
      *
-     * @param tpf the time interval between render passes (in seconds, &ge;0)
+     * @param tpf the time interval between updates (in seconds, &ge;0)
      */
     @Override
     public void update(float tpf) {
@@ -421,23 +422,18 @@ public class BulletAppState implements AppState, PhysicsTickListener {
             debugAppState = null;
         }
 
-        if (isEnabled) {
-            pSpace.distributeEvents();
-        }
+        pSpace.distributeEvents();
     }
 
     /**
      * Render this state. Should be invoked only by a subclass or by the
-     * AppStateManager. Invoked once per render pass, provided the state is
-     * attached and enabled.
+     * AppStateManager. Invoked once per frame, provided the state is attached
+     * and enabled.
      *
      * @param rm the render manager (not null)
      */
     @Override
     public void render(RenderManager rm) {
-        if (!isEnabled) {
-            return;
-        }
         if (threadingType == ThreadingType.PARALLEL) {
             physicsFuture = executor.submit(parallelPhysicsUpdate);
         } else if (threadingType == ThreadingType.SEQUENTIAL) {
@@ -448,7 +444,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     /**
      * Update this state after all rendering commands are flushed. Should be
      * invoked only by a subclass or by the AppStateManager. Invoked once per
-     * render pass, provided the state is attached and enabled.
+     * frame, provided the state is attached and enabled.
      */
     @Override
     public void postRender() {
@@ -568,8 +564,8 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     // PhysicsTickListener methods
 
     /**
-     * Callback invoked before the physics is stepped. A good time to
-     * clear/apply forces.
+     * Callback from Bullet, invoked just before the physics is stepped. A good
+     * time to clear/apply forces.
      *
      * @param space the space that is about to be stepped (not null)
      * @param timeStep the time per physics step (in seconds, &ge;0)
@@ -579,10 +575,10 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
-     * Callback invoked after the physics has been stepped, use to check for
-     * forces etc.
+     * Callback from Bullet, invoked just before the physics is stepped. A good
+     * time to clear/apply forces.
      *
-     * @param space the space that was just stepped (not null)
+     * @param space the space that is about to be stepped (not null)
      * @param timeStep the time per physics step (in seconds, &ge;0)
      */
     @Override
