@@ -1,5 +1,14 @@
 # release notes for the Minie library and related tests
 
+## Version 0.2.7 released on TBD
+
+ + Don't setLocalScale() on spatials controlled by debug controls; this is
+   related to JME issue #887.
+ + Handle ignoreTransforms in GhostControl and RigidBodyControl.
+ + Describe rigid bodies and RigidBodyControls similarly.
+ + Describe shape scaling and spatial scaling similarly.
+ + Describe the half extents of box shapes.
+
 ## Version 0.2.6 released on 31 August 2018
 
  + Fixed JME issues 883 and 887.
