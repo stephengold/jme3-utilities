@@ -61,7 +61,7 @@ public class NativeMeshUtil {
     /**
      * Pass a mesh to Native Bullet.
      *
-     * @param the JME mesh to pass (not null)
+     * @param mesh the JME mesh to pass (not null)
      * @return the Bullet id of the new btTriangleIndexVertexArray
      */
     public static long getTriangleIndexVertexArray(Mesh mesh) {
