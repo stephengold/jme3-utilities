@@ -111,8 +111,8 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
         } else {
             geom.setMaterial(debugAppState.DEBUG_BLUE);
         }
-        applyPhysicsTransform(body.getPhysicsLocation(location), body.getPhysicsRotation(rotation));
-        geom.setLocalScale(body.getCollisionShape().getScale());
+        applyPhysicsTransform(body.getPhysicsLocation(location),
+                body.getPhysicsRotation(rotation));
     }
 
     /**

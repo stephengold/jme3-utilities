@@ -110,7 +110,6 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
         }
         applyPhysicsTransform(body.getPhysicsLocation(location),
                 body.getPhysicsRotation(rotation));
-        geom.setLocalScale(body.getCollisionShape().getScale());
     }
 
     /**
