@@ -26,6 +26,7 @@
  */
 package jme3utilities.minie;
 
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
@@ -76,7 +77,12 @@ public class PhysicsDescriber extends Describer {
         }
 
         String result = name;
-        if (shape instanceof CapsuleCollisionShape) {
+        if (shape instanceof BoxCollisionShape) {
+            BoxCollisionShape box = (BoxCollisionShape) shape;
+            Vector3f he = box.getHalfExtents();
+            result += String.format("[hx=%f,hy=%f,hz=%f]", he.x, he.y, he.z);
+
+        } else if (shape instanceof CapsuleCollisionShape) {
             CapsuleCollisionShape capsule = (CapsuleCollisionShape) shape;
             int axis = capsule.getAxis();
             result += describeAxis(axis);
