@@ -1,5 +1,19 @@
 # release notes for the Minie library and related tests
 
+## Version 0.2.6 released on TBD
+
+ + Fixed JME issues 883 and 887.
+ + Ensured that debugViewPorts[] gets initialized in BulletAppState.
+ + Changed AbstractPhysicsControl to handle ignoreTransform.
+ + Changed DebugAppStateFilter interface to consider only Savable objects.
+ + Added validation of method arguments, plus some assertions.
+ + Reduced the scope of many fields and methods.
+ + Finalized some fields.
+ + Removed some unused fields and methods.
+ + Added jme3-bullet-native runtime dependency to POM.
+ + Replaced iterators with enhanced loops (for readability).
+ + Standardized logging.
+
 ## Version 0.2.5 released on 24 August 2018
 
  + Bugfix: PhysicsDumper prints incorrect number of vehicles.
