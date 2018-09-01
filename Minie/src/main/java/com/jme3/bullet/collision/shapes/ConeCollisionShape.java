@@ -160,7 +160,7 @@ public class ConeCollisionShape extends CollisionShape {
     }
 
     /**
-     * Create the configured shape.
+     * Create the configured shape in Bullet.
      */
     private void createShape() {
         objectId = createShape(axis, radius, height);

@@ -78,11 +78,14 @@ public class ChildCollisionShape implements Savable {
     }
 
     /**
-     * Create a child shape.
+     * Instantiate a child shape for use in a compound shape.
      *
-     * @param location translation relative to the parent (not null)
-     * @param rotation rotation relative to the parent (not null)
-     * @param shape the base shape (not null, not a compound shape)
+     * @param location translation relative to the parent (not null, alias
+     * created) TODO
+     * @param rotation rotation relative to the parent (not null, alias created)
+     * TODO
+     * @param shape the base shape (not null, not a compound shape, alias
+     * created)
      *
      */
     public ChildCollisionShape(Vector3f location, Matrix3f rotation,

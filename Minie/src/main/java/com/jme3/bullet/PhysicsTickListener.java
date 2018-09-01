@@ -40,8 +40,8 @@ package com.jme3.bullet;
  */
 public interface PhysicsTickListener {
     /**
-     * Callback invoked before the physics is stepped. A good time to
-     * clear/apply forces.
+     * Callback from Bullet, invoked just before the physics is stepped. A good
+     * time to clear/apply forces.
      *
      * @param space the space that is about to be stepped (not null)
      * @param timeStep the time per physics step (in seconds, &ge;0)
@@ -49,8 +49,8 @@ public interface PhysicsTickListener {
     void prePhysicsTick(PhysicsSpace space, float timeStep);
 
     /**
-     * Callback invoked after the physics has been stepped, use to check for
-     * forces etc.
+     * Callback from Bullet, invoked just after the physics has been stepped,
+     * use to check for forces etc.
      *
      * @param space the space that was just stepped (not null)
      * @param timeStep the time per physics step (in seconds, &ge;0)

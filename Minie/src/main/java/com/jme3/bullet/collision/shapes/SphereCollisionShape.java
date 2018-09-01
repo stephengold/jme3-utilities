@@ -66,7 +66,7 @@ public class SphereCollisionShape extends CollisionShape {
     }
 
     /**
-     * Create a SphereCollisionShape with the specified radius.
+     * Instantiate a sphere shape with the specified radius.
      *
      * @param radius the desired radius (&ge;0)
      */
@@ -126,12 +126,12 @@ public class SphereCollisionShape extends CollisionShape {
         }
     }
 
-    protected void createShape() {
+    /**
+     * Create the configured shape in Bullet.
+     */
+    private void createShape() {
         objectId = createShape(radius);
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
-//        new SphereShape(radius);
-//        objectId.setLocalScaling(Converter.convert(getScale()));
-//        objectId.setMargin(margin);
         setScale(scale); // Set the scale to 1
         setMargin(margin);
     }

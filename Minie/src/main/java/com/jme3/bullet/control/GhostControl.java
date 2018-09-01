@@ -50,7 +50,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
- * A physics control used to link a PhysicsGhostObject to a Spatial.
+ * A physics control to link a PhysicsGhostObject to a spatial.
  * <p>
  * The ghost object moves with the spatial it is attached to and can be used to
  * detect overlaps with other physics objects (e.g. aggro radius).
@@ -203,9 +203,11 @@ public class GhostControl extends PhysicsGhostObject
     }
 
     /**
-     * Update this control. (Invoked once per frame.)
+     * Update this control. Invoked once per frame during the logical-state
+     * update, provided the control is added to a scene. Do not invoke directly
+     * from user code.
      *
-     * @param tpf the time interval between render passes (in seconds, &ge;0)
+     * @param tpf the time interval between updates (in seconds, &ge;0)
      */
     @Override
     public void update(float tpf) {
@@ -216,6 +218,14 @@ public class GhostControl extends PhysicsGhostObject
         setPhysicsRotation(getSpatialRotation());
     }
 
+    /**
+     * Render this control. Invoked once per view port per frame, provided the
+     * control is added to a scene. Should be invoked only by a subclass or by
+     * the RenderManager.
+     *
+     * @param rm the render manager (not null)
+     * @param vp the view port to render (not null)
+     */
     @Override
     public void render(RenderManager rm, ViewPort vp) {
     }

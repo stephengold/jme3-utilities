@@ -63,6 +63,12 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
     final private CollisionShape myShape;
     private Spatial geom;
 
+    /**
+     * Instantiate a control to visualize the specified object.
+     *
+     * @param debugAppState which app state (not null)
+     * @param body which object to visualize (not null)
+     */
     public BulletGhostObjectDebugControl(BulletDebugAppState debugAppState,
             PhysicsGhostObject body) {
         super(debugAppState);
@@ -86,6 +92,13 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
         super.setSpatial(spatial);
     }
 
+    /**
+     * Update this control. Invoked once per frame during the logical-state
+     * update, provided the control is enabled and added to a scene. Should be
+     * invoked only by a subclass or by AbstractControl.
+     *
+     * @param tpf the time interval between updates (in seconds, &ge;0)
+     */
     @Override
     protected void controlUpdate(float tpf) {
         if (myShape != body.getCollisionShape()) {
@@ -95,10 +108,19 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
             geom.setMaterial(debugAppState.DEBUG_YELLOW);
             node.attachChild(geom);
         }
-        applyPhysicsTransform(body.getPhysicsLocation(location), body.getPhysicsRotation(rotation));
+        applyPhysicsTransform(body.getPhysicsLocation(location),
+                body.getPhysicsRotation(rotation));
         geom.setLocalScale(body.getCollisionShape().getScale());
     }
 
+    /**
+     * Render this control. Invoked once per view port per frame, provided the
+     * control is enabled and added to a scene. Should be invoked only by a
+     * subclass or by AbstractControl.
+     *
+     * @param rm the render manager (not null)
+     * @param vp the view port to render (not null)
+     */
     @Override
     protected void controlRender(RenderManager rm, ViewPort vp) {
     }

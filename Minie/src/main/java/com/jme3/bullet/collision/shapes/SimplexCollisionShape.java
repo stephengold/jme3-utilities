@@ -124,6 +124,9 @@ public class SimplexCollisionShape extends CollisionShape {
         createShape();
     }
 
+    /**
+     * Create the configured shape in Bullet.
+     */
     protected void createShape() {
         if (vector4 != null) {
             objectId = createShape(vector1, vector2, vector3, vector4);

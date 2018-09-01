@@ -71,13 +71,9 @@ public class CompoundCollisionShape extends CollisionShape {
      *
      * @param shape the child shape to add (not null, not a compound shape,
      * alias created)
-     * @param location the local location of the child shape
+     * @param location the local location of the child shape (not null)
      */
     public void addChildShape(CollisionShape shape, Vector3f location) {
-//        Transform transA = new Transform(Converter.convert(new Matrix3f()));
-//        Converter.convert(location, transA.origin);
-//        children.add(new ChildCollisionShape(location.clone(), new Matrix3f(), shape));
-//        ((CompoundShape) objectId).addChildShape(transA, shape.getObjectId());
         addChildShape(shape, location, new Matrix3f());
     }
 
@@ -86,20 +82,17 @@ public class CompoundCollisionShape extends CollisionShape {
      *
      * @param shape the child shape to add (not null, not a compound shape,
      * alias created)
-     * @param location the local location of the child shape
-     * @param rotation the local orientation of the child shape
+     * @param location the local location of the child shape (not null)
+     * @param rotation the local orientation of the child shape (not null)
      */
-    public void addChildShape(CollisionShape shape, Vector3f location, Matrix3f rotation) {
+    public void addChildShape(CollisionShape shape, Vector3f location,
+            Matrix3f rotation) {
         if (shape instanceof CompoundCollisionShape) {
             throw new IllegalStateException(
                     "CompoundCollisionShapes cannot have CompoundCollisionShapes as children!");
         }
-//        Transform transA = new Transform(Converter.convert(rotation));
-//        Converter.convert(location, transA.origin);
-//        Converter.convert(rotation, transA.basis);
         children.add(new ChildCollisionShape(location.clone(), rotation.clone(), shape));
         addChildShape(objectId, shape.getObjectId(), location, rotation);
-//        ((CompoundShape) objectId).addChildShape(transA, shape.getObjectId());
     }
 
     /**
@@ -107,8 +100,8 @@ public class CompoundCollisionShape extends CollisionShape {
      *
      * @param shape the child shape to add (not null, not a compound shape,
      * alias created)
-     * @param location the local location of the child shape
-     * @param rotation the local orientation of the child shape
+     * @param location the local location of the child shape (not null)
+     * @param rotation the local orientation of the child shape (not null)
      */
     private void addChildShapeDirect(CollisionShape shape, Vector3f location,
             Matrix3f rotation) {

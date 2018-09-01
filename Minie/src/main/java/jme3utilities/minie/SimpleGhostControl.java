@@ -134,12 +134,11 @@ public class SimpleGhostControl
     // PhysicsTickListener methods
 
     /**
-     * Callback invoked after each physics tick.
-     * <p>
+     * Callback from Bullet, invoked just after the physics has been stepped.
      * Only performs checks. Meant to be overridden.
      *
-     * @param physicsSpace (not null)
-     * @param elapsedTime (in seconds, &ge;0)
+     * @param physicsSpace the space that was just stepped (not null)
+     * @param elapsedTime the time per physics step (in seconds, &ge;0)
      */
     @Override
     public void physicsTick(PhysicsSpace physicsSpace, float elapsedTime) {
@@ -148,12 +147,11 @@ public class SimpleGhostControl
     }
 
     /**
-     * Callback invoked before each physics tick.
-     * <p>
-     * Only performs checks. Meant to be overridden.
+     * Callback from Bullet, invoked just before the physics is stepped. Only
+     * performs checks. Meant to be overridden.
      *
-     * @param physicsSpace (not null)
-     * @param elapsedTime (in seconds, &ge;0)
+     * @param physicsSpace the space that is about to be stepped (not null)
+     * @param elapsedTime the time per physics step (in seconds, &ge;0)
      */
     @Override
     public void prePhysicsTick(PhysicsSpace physicsSpace, float elapsedTime) {

@@ -121,10 +121,10 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     private native void warp(long characterId, Vector3f location);
 
     /**
-     * Set the walk direction, works continuously. This should probably be
-     * called setPositionIncrementPerSimulatorStep. This is neither a direction
-     * nor a velocity, but the amount to increment the position each physics
-     * tick. So vector length = accuracy*speed in m/s
+     * Set the walk direction, works continuously. This should probably be named
+     * setPositionIncrementPerSimulatorStep. This is neither a direction nor a
+     * velocity, but the amount to increment the position each physics tick. So
+     * vector length = accuracy*speed in m/s
      *
      * @param vec the walk direction to set
      */

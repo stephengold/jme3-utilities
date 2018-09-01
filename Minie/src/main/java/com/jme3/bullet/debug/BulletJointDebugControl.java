@@ -92,6 +92,13 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
         super.setSpatial(spatial);
     }
 
+    /**
+     * Update this control. Invoked once per frame during the logical-state
+     * update, provided the control is enabled and added to a scene. Should be
+     * invoked only by a subclass or by AbstractControl.
+     *
+     * @param tpf the time interval between updates (in seconds, &ge;0)
+     */
     @Override
     protected void controlUpdate(float tpf) {
         body.getBodyA().getPhysicsLocation(a.getTranslation());
@@ -107,6 +114,14 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
         arrowB.setArrowExtent(body.getPivotB());
     }
 
+    /**
+     * Render this control. Invoked once per view port per frame, provided the
+     * control is enabled and added to a scene. Should be invoked only by a
+     * subclass or by AbstractControl.
+     *
+     * @param rm the render manager (not null)
+     * @param vp the view port to render (not null)
+     */
     @Override
     protected void controlRender(RenderManager rm, ViewPort vp) {
     }

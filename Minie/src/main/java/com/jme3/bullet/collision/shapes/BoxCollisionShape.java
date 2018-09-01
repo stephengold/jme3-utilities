@@ -66,10 +66,9 @@ public class BoxCollisionShape extends CollisionShape {
     }
 
     /**
-     * Instantiate a collision box with the specified half extents.
+     * Instantiate a box shape with the specified half extents.
      *
-     * @param halfExtents the half extents of the shape (not null, alias
-     * created)
+     * @param halfExtents the half extents to use (not null, alias created) TODO
      */
     public BoxCollisionShape(Vector3f halfExtents) {
         this.halfExtents = halfExtents;
@@ -79,7 +78,7 @@ public class BoxCollisionShape extends CollisionShape {
     /**
      * Access the half extents.
      *
-     * @return the pre-existing instance
+     * @return the pre-existing instance (not null) TODO
      */
     public final Vector3f getHalfExtents() {
         return halfExtents;
@@ -95,7 +94,7 @@ public class BoxCollisionShape extends CollisionShape {
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(halfExtents, "halfExtents", new Vector3f(1, 1, 1));
+        capsule.write(halfExtents, "halfExtents", new Vector3f(1f, 1f, 1f));
     }
 
     /**
@@ -114,6 +113,9 @@ public class BoxCollisionShape extends CollisionShape {
         createShape();
     }
 
+    /**
+     * Create the configured shape in Bullet.
+     */
     private void createShape() {
         objectId = createShape(halfExtents);
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));

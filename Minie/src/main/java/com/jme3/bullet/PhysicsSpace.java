@@ -149,7 +149,7 @@ public class PhysicsSpace {
 
     /**
      * Access the PhysicsSpace <b>running on this thread</b>. For parallel
-     * physics, this can be called from the OpenGL thread.
+     * physics, this can be invoked from the OpenGL thread.
      *
      * @return the PhysicsSpace running on this thread
      */
@@ -160,14 +160,15 @@ public class PhysicsSpace {
     /**
      * Used internally
      *
-     * @param space which physics space to simulate
+     * @param space which physics space to simulate on this thread
      */
     public static void setLocalThreadPhysicsSpace(PhysicsSpace space) {
         physicsSpaceTL.set(space);
     }
 
     /**
-     * Create a PhysicsSpace. Must be called from the designated physics thread.
+     * Instantiate a PhysicsSpace. Must be invoked on the designated physics
+     * thread.
      *
      * @param worldMin the desired minimum coordinates values (not null,
      * unaffected)
@@ -189,7 +190,7 @@ public class PhysicsSpace {
     }
 
     /**
-     * Must be invoked from the designated physics thread.
+     * Must be invoked on the designated physics thread.
      */
     private void create() {
         physicsSpaceId = createPhysicsSpace(worldMin.x, worldMin.y, worldMin.z,
@@ -204,6 +205,8 @@ public class PhysicsSpace {
             boolean threading);
 
     /**
+     * Callback invoked just before the physics is stepped.
+     * <p>
      * This method is invoked from native code.
      *
      * @param timeStep the time per physics step (in seconds, &ge;0)
@@ -227,6 +230,8 @@ public class PhysicsSpace {
     }
 
     /**
+     * Callback invoked just after the physics is stepped.
+     * <p>
      * This method is invoked from native code.
      *
      * @param timeStep the time per physics step (in seconds, &ge;0)
@@ -271,7 +276,8 @@ public class PhysicsSpace {
     }
 
     /**
-     * Update this space. Invoked (by the app state) once per render pass.
+     * Update this space. Invoked (by the Bullet app state) once per frame while
+     * the app state is state is attached and enabled.
      *
      * @param time time-per-frame multiplied by speed (in seconds, &ge;0)
      */
@@ -371,7 +377,8 @@ public class PhysicsSpace {
         } else if (obj instanceof PhysicsCharacter) {
             addCharacter((PhysicsCharacter) obj);
         } else {
-            throw (new IllegalArgumentException("Unknown type of collision object."));
+            throw (new IllegalArgumentException(
+                    "Unknown type of collision object."));
         }
     }
 
@@ -926,7 +933,7 @@ public class PhysicsSpace {
     }
 
     /**
-     * Destroy the current PhysicsSpace so that a new one can be created.
+     * Destroy this space so that a new one can be instantiated.
      */
     public void destroy() {
         physicsBodies.clear();

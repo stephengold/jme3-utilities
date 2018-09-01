@@ -598,7 +598,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Apply a force to the PhysicsRigidBody. Effective only if the next physics
-     * update call updates the physics space.<br>
+     * update steps the physics space.<br>
      * To apply an impulse, use applyImpulse, use applyContinuousForce to apply
      * continuous force.
      *
@@ -614,8 +614,9 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Apply a force to the PhysicsRigidBody. Effective only if the next physics
-     * update call updates the physics space.<br>
-     * To apply an impulse, use applyImpulse.
+     * update steps the physics space.<br>
+     * To apply an impulse, use
+     * {@link #applyImpulse(com.jme3.math.Vector3f, com.jme3.math.Vector3f)}.
      *
      * @param force the force
      */
@@ -628,8 +629,9 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Apply a force to the PhysicsRigidBody. Effective only if the next physics
-     * update call updates the physics space.<br>
-     * To apply an impulse, use applyImpulse.
+     * update steps the physics space.<br>
+     * To apply an impulse, use
+     * {@link #applyImpulse(com.jme3.math.Vector3f, com.jme3.math.Vector3f)}.
      *
      * @param torque the torque
      */
@@ -641,7 +643,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void applyTorque(long objectId, Vector3f vec);
 
     /**
-     * Apply an impulse to the PhysicsRigidBody in the next physics update.
+     * Apply an impulse to the body the next physics update.
      *
      * @param impulse applied impulse
      * @param rel_pos location relative to object
@@ -654,8 +656,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void applyImpulse(long objectId, Vector3f impulse, Vector3f rel_pos);
 
     /**
-     * Apply a torque impulse to the PhysicsRigidBody in the next physics
-     * update.
+     * Apply a torque impulse to the body in the next physics update.
      *
      * @param vec the torque to apply
      */
@@ -676,7 +677,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void clearForces(long objectId);
 
     /**
-     * Apply the specified CollisionShape to this rigid body.
+     * Apply the specified CollisionShape to this body.
      * <p>
      * Note that the body should not be in any physics space while changing
      * shape; the body gets rebuilt on the physics side.
@@ -721,7 +722,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native boolean isActive(long objectId);
 
     /**
-     * Alter the body's sleeping thresholds.
+     * Alter this body's sleeping thresholds.
      * <p>
      * These thresholds determine when the body can be deactivated to save
      * resources. Low values keep the body active when it barely moves.
@@ -737,7 +738,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
             float angular);
 
     /**
-     * Alter the body's linear sleeping threshold.
+     * Alter this body's linear sleeping threshold.
      *
      * @param linearSleepingThreshold the desired threshold (&ge;0)
      */
@@ -749,7 +750,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
             float linearSleepingThreshold);
 
     /**
-     * Alter the body's angular sleeping threshold.
+     * Alter this body's angular sleeping threshold.
      *
      * @param angularSleepingThreshold the desired threshold (&ge;0)
      */
@@ -761,7 +762,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
             float angularSleepingThreshold);
 
     /**
-     * Read the body's linear sleeping threshold.
+     * Read this body's linear sleeping threshold.
      *
      * @return the linear sleeping threshold (&ge;0)
      */
@@ -772,7 +773,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native float getLinearSleepingThreshold(long objectId);
 
     /**
-     * Read the body's angular sleeping threshold.
+     * Read this body's angular sleeping threshold.
      *
      * @return the angular sleeping threshold (&ge;0)
      */

@@ -80,7 +80,7 @@ public class GImpactCollisionShape extends CollisionShape {
     }
 
     /**
-     * Create a collision shape based on the specified JME mesh.
+     * Instantiate a shape based on the specified JME mesh.
      *
      * @param mesh the Mesh to use
      */
@@ -159,6 +159,9 @@ public class GImpactCollisionShape extends CollisionShape {
         createShape();
     }
 
+    /**
+     * Create the configured shape in Bullet.
+     */
     protected void createShape() {
         meshId = NativeMeshUtil.createTriangleIndexVertexArray(
                 triangleIndexBase, vertexBase, numTriangles, numVertices,

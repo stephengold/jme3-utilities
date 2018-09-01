@@ -52,7 +52,7 @@ public interface PhysicsControl extends Control {
     void setPhysicsSpace(PhysicsSpace space);
 
     /**
-     * Access the physics space containing this control's physics object.
+     * Access the physics space to which the object is added.
      *
      * @return the pre-existing space, or null for none
      */

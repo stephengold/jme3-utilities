@@ -108,24 +108,14 @@ public class HullCollisionShape extends CollisionShape {
             this.points = capsule.readFloatArray("points", null);
 
         }
-//        fbuf = ByteBuffer.allocateDirect(points.length * 4).asFloatBuffer();
-//        fbuf.put(points);
-//        fbuf = FloatBuffer.wrap(points).order(ByteOrder.nativeOrder()).asFloatBuffer();
         createShape();
     }
 
+    /**
+     * Create the configured shape in Bullet.
+     */
     protected void createShape() {
-//        ObjectArrayList<Vector3f> pointList = new ObjectArrayList<Vector3f>();
-//        for (int i = 0; i < points.length; i += 3) {
-//            pointList.add(new Vector3f(points[i], points[i + 1], points[i + 2]));
-//        }
-//        objectId = new ConvexHullShape(pointList);
-//        objectId.setLocalScaling(Converter.convert(getScale()));
-//        objectId.setMargin(margin);
         ByteBuffer bbuf = BufferUtils.createByteBuffer(points.length * 4);
-//        fbuf = bbuf.asFloatBuffer();
-//        fbuf.rewind();
-//        fbuf.put(points);
         for (int i = 0; i < points.length; i++) {
             float f = points[i];
             bbuf.putFloat(f);

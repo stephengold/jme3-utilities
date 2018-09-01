@@ -57,7 +57,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
- * A physics control used to link a PhysicsRigidBody to a Spatial.
+ * A physics control to link a PhysicsRigidBody to a spatial.
  * <p>
  * This class is shared between JBullet and Native Bullet.
  *
@@ -87,7 +87,7 @@ public class RigidBodyControl extends PhysicsRigidBody
 
     /**
      * When using this constructor, the CollisionShape for the RigidBody is
-     * generated automatically when the Control is added to a Spatial.
+     * generated automatically when the control is added to a spatial.
      *
      * @param mass When not 0, a HullCollisionShape is generated, otherwise a
      * MeshCollisionShape is used. For geometries with box or sphere meshes the
@@ -300,9 +300,10 @@ public class RigidBodyControl extends PhysicsRigidBody
     }
 
     /**
-     * Update this control. (Invoked once per frame.)
+     * Update this control. Invoked once per frame, during the logical-state
+     * update, provided the control is added to a scene.
      *
-     * @param tpf the time interval between render passes (in seconds, &ge;0)
+     * @param tpf the time interval between updates (in seconds, &ge;0)
      */
     @Override
     public void update(float tpf) {
@@ -316,6 +317,14 @@ public class RigidBodyControl extends PhysicsRigidBody
         }
     }
 
+    /**
+     * Render this control. Invoked once per view port per frame, provided the
+     * control is added to a scene. Should be invoked only by a subclass or by
+     * the RenderManager.
+     *
+     * @param rm the render manager (not null)
+     * @param vp the view port to render (not null)
+     */
     @Override
     public void render(RenderManager rm, ViewPort vp) {
     }
@@ -341,7 +350,7 @@ public class RigidBodyControl extends PhysicsRigidBody
     }
 
     /**
-     * Access the physics space containing this control's physics object.
+     * Access the physics space to which the body is added.
      *
      * @return the pre-existing space, or null for none
      */

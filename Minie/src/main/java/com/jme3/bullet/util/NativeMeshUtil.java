@@ -40,7 +40,7 @@ import java.nio.FloatBuffer;
 import java.util.logging.Logger;
 
 /**
- * Utility class for interfacing with native Bullet.
+ * A utility class for interfacing with Native Bullet.
  *
  * @author normenhansen
  */
@@ -59,9 +59,9 @@ public class NativeMeshUtil {
     }
 
     /**
-     * A utility method to pass a mesh to native Bullet.
+     * Pass a mesh to Native Bullet.
      *
-     * @param mesh (not null)
+     * @param the JME mesh to pass (not null)
      * @return the Bullet id of the new btTriangleIndexVertexArray
      */
     public static long getTriangleIndexVertexArray(Mesh mesh) {
@@ -70,9 +70,9 @@ public class NativeMeshUtil {
         ByteBuffer vertexBase
                 = BufferUtils.createByteBuffer(mesh.getVertexCount() * 3 * 4);
         int numVertices = mesh.getVertexCount();
-        int vertexStride = 12; //3 verts * 4 bytes per.
+        int vertexStride = 12; //3 verts * 4 bytes each
         int numTriangles = mesh.getTriangleCount();
-        int triangleIndexStride = 12; //3 index entries * 4 bytes each.
+        int triangleIndexStride = 12; //3 index entries * 4 bytes each
 
         IndexBuffer indices = mesh.getIndicesAsList();
         FloatBuffer vertices = mesh.getFloatBuffer(Type.Position);

@@ -186,10 +186,10 @@ public class BulletDebugAppState extends AbstractAppState {
 
     /**
      * Update this state prior to rendering. Should be invoked only by a
-     * subclass or by the AppStateManager. Invoked once per render pass,
-     * provided the state is attached and enabled.
+     * subclass or by the AppStateManager. Invoked once per frame, provided the
+     * state is attached and enabled.
      *
-     * @param tpf the time interval between render passes (in seconds, &ge;0)
+     * @param tpf the time interval between updates (in seconds, &ge;0)
      */
     @Override
     public void update(float tpf) {
@@ -209,8 +209,8 @@ public class BulletDebugAppState extends AbstractAppState {
 
     /**
      * Render this state. Should be invoked only by a subclass or by the
-     * AppStateManager. Invoked once per render pass, provided the state is
-     * attached and enabled.
+     * AppStateManager. Invoked once per frame, provided the state is attached
+     * and enabled.
      *
      * @param rm the render manager (not null)
      */

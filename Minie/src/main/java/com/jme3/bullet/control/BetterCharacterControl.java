@@ -157,9 +157,11 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Update this control. (Invoked once per frame.)
+     * Update this control. Invoked once per frame during the logical-state
+     * update, provided the control is added to a scene graph. Do not invoke
+     * directly from user code.
      *
-     * @param tpf the time interval between render passes (in seconds, &ge;0)
+     * @param tpf the time interval between updates (in seconds, &ge;0)
      */
     @Override
     public void update(float tpf) {
@@ -168,15 +170,23 @@ public class BetterCharacterControl extends AbstractPhysicsControl
         applyPhysicsTransform(location, rotation);
     }
 
+    /**
+     * Render this control. Invoked once per view port per frame, provided the
+     * control is added to a scene. Should be invoked only by a subclass or by
+     * the RenderManager.
+     *
+     * @param rm the render manager (not null)
+     * @param vp the view port to render (not null)
+     */
     @Override
     public void render(RenderManager rm, ViewPort vp) {
     }
 
     /**
-     * Used internally, don't call manually
+     * Callback from Bullet, invoked just before the physics is stepped.
      *
-     * @param space unused
-     * @param tpf unused
+     * @param space the space that is about to be stepped (not null)
+     * @param tpf the time per physics step (in seconds, &ge;0)
      */
     @Override
     public void prePhysicsTick(PhysicsSpace space, float tpf) {
@@ -229,10 +239,10 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Used internally, don't call manually
+     * Callback from Bullet, invoked just after the physics has been stepped.
      *
-     * @param space unused
-     * @param tpf unused
+     * @param space the space that was just stepped (not null)
+     * @param tpf the time per physics step (in seconds, &ge;0)
      */
     @Override
     public void physicsTick(PhysicsSpace space, float tpf) {
@@ -240,8 +250,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Move the character somewhere. Note the character also takes the location
-     * of any spatial its being attached to in the moment it is attached.
+     * Move the character somewhere. Note the character also warps to the
+     * location of the spatial when the control is added.
      *
      * @param vec the desired character location (not null)
      */
@@ -390,11 +400,11 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     /**
      * Realign the local forward vector to given direction vector, if null is
      * supplied Vector3f.UNIT_Z is used. Input vector has to be perpendicular to
-     * current gravity vector. This normally only needs to be called when the
+     * current gravity vector. This normally only needs to be invoked when the
      * gravity direction changed continuously and the local forward vector is
      * off due to drift. E.g. after walking around on a sphere "planet" for a
      * while and then going back to a y-up coordinate system the local z-forward
-     * might not be 100% alinged with Z axis.
+     * might not be 100% aligned with Z axis.
      *
      * @param vec The new forward vector, has to be perpendicular to the current
      * gravity vector!
@@ -629,7 +639,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * This is implemented from AbstractPhysicsControl and called when the
+     * This is implemented from AbstractPhysicsControl and invoked when the
      * spatial is attached for example.
      *
      * @param vec the desired location (not null)
@@ -641,7 +651,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * This is implemented from AbstractPhysicsControl and called when the
+     * This is implemented from AbstractPhysicsControl and invoked when the
      * spatial is attached for example. We don't set the actual physics rotation
      * but the view rotation here. It might actually be altered by the
      * calculateNewForward method.
@@ -656,7 +666,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * This is implemented from AbstractPhysicsControl and called when the
+     * This is implemented from AbstractPhysicsControl and invoked when the
      * control is supposed to add all objects to the physics space.
      *
      * @param space the physics space to add to (not null)
@@ -671,7 +681,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * This is implemented from AbstractPhysicsControl and called when the
+     * This is implemented from AbstractPhysicsControl and invoked when the
      * control is supposed to remove all objects from the physics space.
      *
      * @param space the physics space to remove from (not null)

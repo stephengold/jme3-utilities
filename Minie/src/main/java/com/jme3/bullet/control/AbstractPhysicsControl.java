@@ -46,8 +46,8 @@ import java.util.logging.Logger;
 import jme3utilities.MySpatial;
 
 /**
- * AbstractPhysicsControl manages the lifecycle of a physics object attached to
- * a spatial in the scene graph.
+ * Manage the lifecycle of a physics object linked to a spatial in a scene
+ * graph.
  * <p>
  * This class is shared between JBullet and Native Bullet.
  *
@@ -187,7 +187,7 @@ public abstract class AbstractPhysicsControl
     }
 
     /**
-     * Apply a physics transform to the spatial
+     * Apply a physics transform to the spatial. TODO use MySpatial
      *
      * @param worldLocation physics location (not null)
      * @param worldRotation physics orientation (not null)
@@ -305,7 +305,7 @@ public abstract class AbstractPhysicsControl
     }
 
     /**
-     * Access the physics space containing this control's physics object.
+     * Access the physics space to which the object is added.
      *
      * @return the pre-existing space, or null for none
      */

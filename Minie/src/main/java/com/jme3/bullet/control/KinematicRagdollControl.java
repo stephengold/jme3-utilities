@@ -75,13 +75,13 @@ import java.util.logging.Logger;
  * add/removes it from the physics space<br>
  * <p>
  * This control creates collision shapes for each bones of the skeleton when you
- * call spatial.addControl(ragdollControl). <ul> <li>The shape is HullCollision
- * shape based on the vertices associated with each bone and based on a
- * tweakable weight threshold (see setWeightThreshold)</li> <li>If you don't
- * want each bone to be a collision shape, you can specify what bone to use by
- * using the addBoneName method<br> By using this method, bone that are not used
- * to create a shape, are "merged" to their parent to create the collision
- * shape. </li>
+ * invoke spatial.addControl(ragdollControl). <ul> <li>The shape is
+ * HullCollision shape based on the vertices associated with each bone and based
+ * on a tweakable weight threshold (see setWeightThreshold)</li> <li>If you
+ * don't want each bone to be a collision shape, you can specify what bone to
+ * use by using the addBoneName method<br> By using this method, bone that are
+ * not used to create a shape, are "merged" to their parent to create the
+ * collision shape. </li>
  * </ul>
  * <p>
  * There are 2 modes for this control : <ul> <li><strong>The kinematic modes
@@ -90,16 +90,17 @@ import java.util.logging.Logger;
  * mode physics shapes follow the motion of the animated skeleton (for example
  * animated by a key framed animation) this mode is enabled by calling
  * setKinematicMode(); </li> <li><strong>The ragdoll modes:</strong><br> To
- * enable this behavior, you need to call setRagdollMode() method. In this mode
- * the character is entirely controlled by physics, so it will fall under the
- * gravity and move if any force is applied to it.</li>
+ * enable this behavior, you need to invoke the setRagdollMode() method. In this
+ * mode the character is entirely controlled by physics, so it will fall under
+ * the gravity and move if any force is applied to it.</li>
  * </ul>
  * <p>
  * This class is shared between JBullet and Native Bullet.
  *
  * @author Normen Hansen and Rémy Bouquet (Nehon)
  */
-public class KinematicRagdollControl extends AbstractPhysicsControl implements PhysicsCollisionListener, JmeCloneable {
+public class KinematicRagdollControl extends AbstractPhysicsControl
+        implements PhysicsCollisionListener, JmeCloneable {
 
     /**
      * message logger for this class
@@ -220,9 +221,11 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     }
 
     /**
-     * Update this control. (Invoked once per frame.)
+     * Update this control. Invoked once per frame during the logical-state
+     * update, provided the control is added to a scene. Do not invoke directly
+     * from user code.
      *
-     * @param tpf the time interval between render passes (in seconds, &ge;0)
+     * @param tpf the time interval between updates (in seconds, &ge;0)
      */
     @Override
     public void update(float tpf) {
@@ -487,7 +490,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
 
     /**
      * Create spatial-dependent data. Invoked when this control is added to a
-     * spatial.
+     * scene.
      *
      * @param model the controlled spatial (not null)
      */
@@ -633,7 +636,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
 
     /**
      * Set the joint limits for the joint between the given bone and its parent.
-     * Can only be invoked after attaching the control to a spatial.
+     * Can only be invoked after adding the control to a spatial.
      *
      * @param boneName the name of the bone
      * @param maxX the maximum rotation on the x axis (in radians)
@@ -656,8 +659,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     }
 
     /**
-     * Return the joint between the given bone and its parent. This return null
-     * if it's called before attaching the control to a spatial
+     * Return the joint between the specified bone and its parent. This return
+     * null if it's invoked before adding the control to a spatial
      *
      * @param boneName the name of the bone
      * @return the joint between the given bone and its parent
@@ -895,7 +898,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     }
 
     /**
-     * add a
+     * Add a collision listener to this control.
      *
      * @param listener (alias created)
      */
@@ -906,10 +909,20 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
         listeners.add(listener);
     }
 
+    /**
+     * Alter the root mass of the rag doll.
+     *
+     * @param rootMass new mass (&ge;0)
+     */
     public void setRootMass(float rootMass) {
         this.rootMass = rootMass;
     }
 
+    /**
+     * Read the total mass of the rag doll.
+     *
+     * @return mass (&ge;0)
+     */
     public float getTotalMass() {
         return totalMass;
     }
@@ -971,10 +984,12 @@ public class KinematicRagdollControl extends AbstractPhysicsControl implements P
     }
 
     /**
-     * For internal use only specific render for the ragdoll (if debugging)
+     * Render this control. Invoked once per view port per frame, provided the
+     * control is added to a scene. Should be invoked only by a subclass or by
+     * the RenderManager.
      *
-     * @param rm unused
-     * @param vp unused
+     * @param rm the render manager (not null)
+     * @param vp the view port to render (not null)
      */
     @Override
     public void render(RenderManager rm, ViewPort vp) {

@@ -40,7 +40,7 @@ import java.util.logging.Logger;
 /**
  * The abstract base class for collision shapes (such as BoxCollisionShape and
  * CapsuleCollisionShape). As suggested in the Bullet manual, collision shapes
- * can be reused.
+ * can be shared between collision objects.
  *
  * @author normenhansen
  */
@@ -54,7 +54,7 @@ public abstract class CollisionShape implements Savable {
 
     /**
      * Bullet id for this shape. Constructors are responsible for setting this
-     * to a non-zero value. The id never changes.
+     * to a non-zero value. After that, the id never changes.
      */
     protected long objectId = 0;
     /**
@@ -74,18 +74,19 @@ public abstract class CollisionShape implements Savable {
     }
 
     /**
-     * Read the Bullet object id of this shape.
+     * Read the Bullet id of this shape.
      *
-     * @return the id
+     * @return the id (not zero)
      */
     public long getObjectId() {
         return objectId;
     }
 
     /**
-     * Alter the scaling factors.
+     * Alter the scaling factors of this shape.
      *
-     * @param scale the desired scaling factors (not null, unaffected)
+     * @param scale the desired scaling factors (not null, unaffected,
+     * default=1,1,1)
      */
     public void setScale(Vector3f scale) {
         this.scale.set(scale);
@@ -104,7 +105,7 @@ public abstract class CollisionShape implements Savable {
     /**
      * Read the collision margin for this shape.
      *
-     * @return margin distance (in world units, &ge;0, default=0)
+     * @return margin distance (in world units, &ge;0)
      */
     public float getMargin() {
         return getMargin(objectId);
@@ -158,7 +159,7 @@ public abstract class CollisionShape implements Savable {
      * Finalize this shape just before it is destroyed. Should be invoked only
      * by a subclass or by the garbage collector.
      *
-     * @throws Throwable
+     * @throws Throwable ignored by the garbage collector
      */
     @Override
     protected void finalize() throws Throwable {

@@ -89,17 +89,18 @@ public class MeshCollisionShape extends CollisionShape {
     }
 
     /**
-     * Create a collision shape from the given Mesh. Default behavior, more
-     * optimized for memory usage.
+     * Instantiate a collision shape based on the specified JME mesh, optimized
+     * for memory usage.
      *
-     * @param mesh the mesh on which to base the shape
+     * @param mesh the mesh on which to base the shape (not null)
      */
     public MeshCollisionShape(Mesh mesh) {
         this(mesh, true);
     }
 
     /**
-     * Create a collision shape from the given Mesh.
+     * Instantiate a collision shape based on the specified JME mesh.
+     * <p>
      * <code>memoryOptimized</code> determines if optimized instead of quantized
      * BVH will be used. Internally, <code>memoryOptimized</code> BVH is slower
      * to calculate (~4x) but also smaller (~0.5x). It is preferable to use the
@@ -108,9 +109,9 @@ public class MeshCollisionShape extends CollisionShape {
      * can be procedurally / generated collision shapes, where the generation
      * time is more of a concern
      *
-     * @param mesh the Mesh to use
-     * @param memoryOptimized True to generate a memory optimized BVH, false to
-     * generate quantized BVH.
+     * @param mesh the mesh on which to base the shape (not null)
+     * @param memoryOptimized true to generate a memory-optimized BVH, false to
+     * generate quantized BVH
      */
     public MeshCollisionShape(final Mesh mesh, final boolean memoryOptimized) {
         this.memoryOptimized = memoryOptimized;
@@ -118,18 +119,18 @@ public class MeshCollisionShape extends CollisionShape {
     }
 
     /**
-     * Advanced constructor, usually you don’t want to use this, but the Mesh
-     * based one. Passing false values can lead to a crash, use at own risk
-     *
+     * An advanced constructor. Passing false values can lead to a crash.
+     * Usually you don’t want to use this. Use at own risk.
+     * <p>
      * This constructor bypasses all copy logic normally used, this allows for
-     * faster bullet shape generation when using procedurally generated Meshes.
-     *
+     * faster Bullet shape generation when using procedurally generated Meshes.
      *
      * @param indices the raw index buffer
      * @param vertices the raw vertex buffer
-     * @param memoryOptimized use quantisize BVH, uses less memory, but slower
+     * @param memoryOptimized use quantized BVH, uses less memory, but slower
      */
-    public MeshCollisionShape(ByteBuffer indices, ByteBuffer vertices, boolean memoryOptimized) {
+    public MeshCollisionShape(ByteBuffer indices, ByteBuffer vertices,
+            boolean memoryOptimized) {
         this.triangleIndexBase = indices;
         this.vertexBase = vertices;
         this.numVertices = vertices.limit() / 4 / 3;
@@ -214,17 +215,24 @@ public class MeshCollisionShape extends CollisionShape {
         this.vertexStride = capsule.readInt(MeshCollisionShape.VERTEX_STRIDE, 0);
         this.triangleIndexStride = capsule.readInt(MeshCollisionShape.TRIANGLE_INDEX_STRIDE, 0);
 
-        this.triangleIndexBase = BufferUtils.createByteBuffer(capsule.readByteArray(MeshCollisionShape.TRIANGLE_INDEX_BASE, null));
-        this.vertexBase = BufferUtils.createByteBuffer(capsule.readByteArray(MeshCollisionShape.VERTEX_BASE, null));
+        this.triangleIndexBase = BufferUtils.createByteBuffer(
+                capsule.readByteArray(MeshCollisionShape.TRIANGLE_INDEX_BASE, null));
+        this.vertexBase = BufferUtils.createByteBuffer(
+                capsule.readByteArray(MeshCollisionShape.VERTEX_BASE, null));
 
         byte[] nativeBvh = capsule.readByteArray(MeshCollisionShape.NATIVE_BVH, null);
         memoryOptimized = nativeBvh != null;
         createShape(nativeBvh);
     }
 
+    /**
+     * Create the configured shape in Bullet.
+     */
     private void createShape(byte bvh[]) {
         boolean buildBvh = bvh == null || bvh.length == 0;
-        this.meshId = NativeMeshUtil.createTriangleIndexVertexArray(this.triangleIndexBase, this.vertexBase, this.numTriangles, this.numVertices, this.vertexStride, this.triangleIndexStride);
+        this.meshId = NativeMeshUtil.createTriangleIndexVertexArray(
+                this.triangleIndexBase, this.vertexBase, this.numTriangles,
+                this.numVertices, this.vertexStride, this.triangleIndexStride);
         logger.log(Level.FINE, "Created Mesh {0}", Long.toHexString(this.meshId));
         this.objectId = createShape(memoryOptimized, buildBvh, this.meshId);
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(this.objectId));

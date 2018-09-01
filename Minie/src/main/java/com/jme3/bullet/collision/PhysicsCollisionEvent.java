@@ -62,7 +62,7 @@ public class PhysicsCollisionEvent extends EventObject {
     private long manifoldPointObjectId = 0;
 
     /**
-     * Create a collision event.
+     * Instantiate a collision event.
      *
      * @param type event type (added/processed/destroyed)
      * @param nodeA 1st involved object (alias created)
