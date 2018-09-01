@@ -1,6 +1,6 @@
 # release notes for the Minie library and related tests
 
-## Version 0.2.6 released on TBD
+## Version 0.2.6 released on 31 August 2018
 
  + Fixed JME issues 883 and 887.
  + Ensured that debugViewPorts[] gets initialized in BulletAppState.
