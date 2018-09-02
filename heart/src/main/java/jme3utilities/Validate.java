@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -240,7 +240,8 @@ final public class Validate {
     }
 
     /**
-     * Validate a single-precision number as a method argument.
+     * Validate a single-precision number as a method argument. TODO rename
+     * number
      *
      * @param fValue value to validate (number)
      * @param description description of the value
@@ -260,7 +261,8 @@ final public class Validate {
     }
 
     /**
-     * Validate a double-precision number as a method argument.
+     * Validate a double-precision number as a method argument. TODO rename
+     * number
      *
      * @param dValue value to validate (number)
      * @param description description of the value
@@ -410,6 +412,46 @@ final public class Validate {
             }
             String message = String.format("%s must not be null.", what);
             throw new NullPointerException(message);
+        }
+    }
+
+    /**
+     * Validate a non-zero integer value as a method argument.
+     *
+     * @param iValue value to validate (&ne;0)
+     * @param description description of the value
+     * @throws IllegalArgumentException if the value is zero
+     */
+    public static void nonZero(int iValue, String description) {
+        if (iValue == 0) {
+            String what;
+            if (description == null) {
+                what = "int argument";
+            } else {
+                what = description;
+            }
+            String message = String.format("%s must not be zero.", what);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Validate a non-zero long value as a method argument.
+     *
+     * @param lValue value to validate (&ne;0)
+     * @param description description of the value
+     * @throws IllegalArgumentException if the value is zero
+     */
+    public static void nonZero(long lValue, String description) {
+        if (lValue == 0L) {
+            String what;
+            if (description == null) {
+                what = "long argument";
+            } else {
+                what = description;
+            }
+            String message = String.format("%s must not be zero.", what);
+            throw new IllegalArgumentException(message);
         }
     }
 
