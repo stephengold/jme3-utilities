@@ -1,6 +1,6 @@
 # release notes for the Minie library and related tests
 
-## Version 0.2.7 released on TBD
+## Version 0.2.7 released on 1 September 2018
 
  + Don't setLocalScale() on spatials controlled by debug controls; this is
    related to JME issue #887.
