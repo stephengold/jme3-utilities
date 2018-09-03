@@ -28,7 +28,6 @@ package jme3utilities.math;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -65,13 +64,7 @@ public class MyVolume {
      * @return volume (ge;0)
      */
     public static float boxVolume(Vector3f halfExtents) {
-        Validate.nonNull(halfExtents, "half-extents");
-        if (!MyVector3f.isAllNonNegative(halfExtents)) {
-            logger.log(Level.SEVERE, "halfExtents={0}", halfExtents);
-            throw new IllegalArgumentException(
-                    "half-extents should all be non-negative");
-        }
-
+        Validate.nonNegative(halfExtents, "half extents");
         float volume = 8f * halfExtents.x * halfExtents.y * halfExtents.z;
         return volume;
     }
@@ -119,13 +112,7 @@ public class MyVolume {
      * @return volume (&ge;0)
      */
     public static float cylinderVolume(Vector3f halfExtents) {
-        Validate.nonNull(halfExtents, "half-extents");
-        if (!MyVector3f.isAllNonNegative(halfExtents)) {
-            logger.log(Level.SEVERE, "halfExtents={0}", halfExtents);
-            throw new IllegalArgumentException(
-                    "half-extents should all be non-negative");
-        }
-
+        Validate.nonNegative(halfExtents, "half extents");
         float volume = FastMath.TWO_PI
                 * halfExtents.x * halfExtents.y * halfExtents.z;
         return volume;
@@ -139,7 +126,6 @@ public class MyVolume {
      */
     public static float sphereVolume(float radius) {
         Validate.nonNegative(radius, "radius");
-
         float volume
                 = 4f * FastMath.ONE_THIRD * FastMath.PI * MyMath.cube(radius);
         return volume;

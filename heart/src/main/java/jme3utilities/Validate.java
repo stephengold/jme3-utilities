@@ -391,6 +391,30 @@ final public class Validate {
     }
 
     /**
+     * Validate a non-negative Vector3f as a method argument.
+     *
+     * @param vector vector to validate (not null, all components non-negative)
+     * @param description description of the vector
+     * @throws IllegalArgumentException if the vector has a negative component
+     * @throws NullPointerException if the vector is null
+     */
+    public static void nonNegative(Vector3f vector, String description) {
+        nonNull(vector, description);
+
+        if (MyVector3f.isAllNonNegative(vector)) {
+            String what;
+            if (description == null) {
+                what = "Vector3f argument";
+            } else {
+                what = description;
+            }
+            String message = String.format(
+                    "%s must not have a negative component.", what);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
      * Validate a non-null reference. In many methods, validation can be omitted
      * because the object in question is about to be dereferenced.
      * <p>
@@ -480,7 +504,7 @@ final public class Validate {
      *
      * @param vector vector to validate (not null, non-zero)
      * @param description description of the vector
-     * @throws IllegalArgumentException if the vector has zero length
+     * @throws IllegalArgumentException if the vector equals (0,0)
      * @throws NullPointerException if the vector is null
      */
     public static void nonZero(Vector2f vector, String description) {
@@ -503,7 +527,7 @@ final public class Validate {
      *
      * @param vector vector to validate (not null, non-zero)
      * @param description description of the vector
-     * @throws IllegalArgumentException if the vector has zero length
+     * @throws IllegalArgumentException if the vector equals (0,0,0)
      * @throws NullPointerException if the vector is null
      */
     public static void nonZero(Vector3f vector, String description) {

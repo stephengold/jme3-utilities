@@ -290,8 +290,7 @@ public class MyShape {
     public static CollisionShape setHalfExtents(CollisionShape oldShape,
             Vector3f newHalfExtents) {
         Validate.nonNull(oldShape, "old shape");
-        Validate.nonNull(newHalfExtents, "new half extents");
-        assert MyVector3f.isAllNonNegative(newHalfExtents);
+        Validate.nonNegative(newHalfExtents, "new half extents");
 
         CollisionShape result;
         if (oldShape instanceof BoxCollisionShape) {
@@ -482,11 +481,8 @@ public class MyShape {
      */
     public static float volume(CollisionShape shape) {
         Vector3f scale = shape.getScale();
-        if (!MyVector3f.isAllNonNegative(scale)) {
-            logger.log(Level.SEVERE, "scale={0}", scale);
-            throw new IllegalArgumentException(
-                    "scale factors should all be non-negative");
-        }
+        Validate.nonNegative(scale, "scale");
+
         float volume = scale.x * scale.y * scale.z;
 
         if (shape instanceof BoxCollisionShape) {
