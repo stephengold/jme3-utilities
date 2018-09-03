@@ -44,7 +44,7 @@ import java.util.logging.Logger;
 
 /**
  * A collision object for simplified character simulation based on Bullet's
- * btKinematicCharacterController.
+ * btKinematicCharacterController. TODO deprecate?
  *
  * @author normenhansen
  */
@@ -56,11 +56,12 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     final private static Logger logger
             = Logger.getLogger(PhysicsCharacter.class.getName());
     /**
-     * Bullet identifier for this character (as opposed to its collision object,
-     * which is a ghost). Constructors are responsible for setting this to a
-     * non-zero value. The id might change if the character gets rebuilt.
+     * Unique identifier of btKinematicCharacterController (as opposed to its
+     * collision object, which is a ghost). Constructors are responsible for
+     * setting this to a non-zero value. The id might change if the character
+     * gets rebuilt.
      */
-    private long characterId = 0;
+    private long characterId = 0L;
 
     private float stepHeight;
     final private Vector3f walkDirection = new Vector3f();
@@ -165,6 +166,11 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         }
     }
 
+    /**
+     * Alter the "up" direction for this character.
+     *
+     * @param axis desired direction (not null)
+     */
     public void setUp(Vector3f axis) {
         setUp(characterId, axis);
     }
@@ -225,6 +231,11 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
 
     private native void setJumpSpeed(long characterId, float jumpSpeed);
 
+    /**
+     * Read the jump speed of this character.
+     *
+     * @return speed
+     */
     public float getJumpSpeed() {
         return jumpSpeed;
     }
@@ -236,9 +247,14 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
      */
     @Deprecated
     public void setGravity(float value) {
-        setGravity(new Vector3f(0, value, 0));
+        setGravity(new Vector3f(0f, value, 0f));
     }
 
+    /**
+     * Alter the gravitational acceleration acting on this character.
+     *
+     * @param value the desired acceleration vector (not null)
+     */
     public void setGravity(Vector3f value) {
         setGravity(characterId, value);
     }
@@ -248,41 +264,68 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * @deprecated Deprecated in bullet 2.86.1. Use getGravity(Vector3f)
      * instead.
-     * @return acceleration
+     * @return the upward component of the acceleration (typically negative)
      */
     @Deprecated
     public float getGravity() {
         return getGravity(null).y;
     }
 
+    /**
+     * Copy the gravitational acceleration acting on this character.
+     *
+     * @param out storage for the result (modified if not null)
+     * @return gravity the acceleration vector (either out or a new vector)
+     */
     public Vector3f getGravity(Vector3f out) {
         if (out == null) {
             out = new Vector3f();
         }
         getGravity(characterId, out);
+
         return out;
     }
 
     private native void getGravity(long characterId, Vector3f out);
 
+    /**
+     * Read the linear damping coefficient for this character.
+     *
+     * @return the coefficient
+     */
     public float getLinearDamping() {
         return getLinearDamping(characterId);
     }
 
     private native float getLinearDamping(long characterId);
 
+    /**
+     * Alter the linear damping coefficient for this character.
+     *
+     * @param v the desired coefficient
+     */
     public void setLinearDamping(float v) {
         setLinearDamping(characterId, v);
     }
 
     private native void setLinearDamping(long characterId, float v);
 
+    /**
+     * Read the angular damping coefficient for this character.
+     *
+     * @return the coefficient
+     */
     public float getAngularDamping() {
         return getAngularDamping(characterId);
     }
 
     private native float getAngularDamping(long characterId);
 
+    /**
+     * Alter the angular damping coefficient for this character.
+     *
+     * @param v the desired coefficient
+     */
     public void setAngularDamping(float v) {
         setAngularDamping(characterId, v);
     }

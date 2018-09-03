@@ -46,7 +46,7 @@ import java.util.logging.Logger;
 import jme3utilities.MySpatial;
 
 /**
- * Manage the lifecycle of a physics object linked to a spatial in a scene
+ * Manage the life cycle of a physics object linked to a spatial in a scene
  * graph.
  * <p>
  * This class is shared between JBullet and Native Bullet.
@@ -74,11 +74,20 @@ public abstract class AbstractPhysicsControl
      */
     private final Quaternion tmp_inverseWorldRotation = new Quaternion();
     /**
-     * the Spatial to which this control has been added, or null if none
+     * spatial to which this control is added, or null if none
      */
     protected Spatial spatial;
+    /**
+     * true&rarr;control is enabled, false&rarr;control is disabled
+     */
     private boolean enabled = true;
+    /**
+     * true&rarr;body is added to the physics space, false&rarr;not added
+     */
     protected boolean added = false;
+    /**
+     * space to which the physics object is added, or will be added when enabled
+     */
     private PhysicsSpace space = null;
     /**
      * true &rarr; physics coordinates match local transform, false &rarr;
@@ -214,6 +223,15 @@ public abstract class AbstractPhysicsControl
 
     }
 
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned control into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner currently cloning this control (not null)
+     * @param original the control from which this control was shallow-cloned
+     * (unused)
+     */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
         this.spatial = cloner.clone(spatial);
@@ -280,8 +298,9 @@ public abstract class AbstractPhysicsControl
     }
 
     /**
-     * Add this control's physics object to the specified physics space and
-     * remove it from the space it's currently in.
+     * If enabled, add this control's physics object to the specified physics
+     * space. In not enabled, alter where the object will be added. The object
+     * is removed from any other space it's currently in.
      *
      * @param space where to add, or null to simply remove
      */
@@ -298,6 +317,7 @@ public abstract class AbstractPhysicsControl
             } else if (this.space != null) {
                 removePhysics(this.space);
             }
+            // TODO issue #889
             addPhysics(space);
             added = true;
         }
@@ -305,7 +325,7 @@ public abstract class AbstractPhysicsControl
     }
 
     /**
-     * Access the physics space to which the object is added.
+     * Access the physics space to which the object is (or will be) added.
      *
      * @return the pre-existing space, or null for none
      */

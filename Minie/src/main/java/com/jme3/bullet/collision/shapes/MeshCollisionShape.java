@@ -74,11 +74,11 @@ public class MeshCollisionShape extends CollisionShape {
     private ByteBuffer triangleIndexBase;
     private ByteBuffer vertexBase;
     /**
-     * Bullet identifier of the mesh. The constructor sets this to a non-zero
-     * value.
+     * Unique identifier of the Bullet mesh. The constructor sets this to a
+     * non-zero value.
      */
-    private long meshId = 0;
-    private long nativeBVHBuffer = 0;
+    private long meshId = 0L;
+    private long nativeBVHBuffer = 0L;
     private boolean memoryOptimized;
 
     /**

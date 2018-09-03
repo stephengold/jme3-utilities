@@ -540,18 +540,23 @@ public class BetterCharacterControl extends AbstractPhysicsControl
 
     /**
      * Gets a new collision shape based on the current scale parameter. The
-     * created collisionshape is a capsule collision shape that is attached to a
-     * compound collision shape with an offset to set the object center at the
+     * created collision shape is a capsule collision shape that is attached to
+     * a compound collision shape with an offset to set the object center at the
      * bottom of the capsule.
      *
      * @return a new compound shape
      */
     protected CollisionShape getShape() {
         //TODO: cleanup size mess..
-        CapsuleCollisionShape capsuleCollisionShape = new CapsuleCollisionShape(getFinalRadius(), (getFinalHeight() - (2 * getFinalRadius())));
-        CompoundCollisionShape compoundCollisionShape = new CompoundCollisionShape();
-        Vector3f addLocation = new Vector3f(0, (getFinalHeight() / 2.0f), 0);
-        compoundCollisionShape.addChildShape(capsuleCollisionShape, addLocation);
+        CapsuleCollisionShape capsuleCollisionShape
+                = new CapsuleCollisionShape(getFinalRadius(),
+                        (getFinalHeight() - (2f * getFinalRadius())));
+        CompoundCollisionShape compoundCollisionShape
+                = new CompoundCollisionShape();
+        Vector3f addLocation = new Vector3f(0f, (getFinalHeight() / 2f), 0f);
+        compoundCollisionShape.addChildShape(
+                capsuleCollisionShape, addLocation);
+
         return compoundCollisionShape;
     }
 
@@ -741,9 +746,9 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule oc = ex.getCapsule(this);
-        oc.write(radius, "radius", 1);
-        oc.write(height, "height", 1);
-        oc.write(mass, "mass", 1);
+        oc.write(radius, "radius", 1f);
+        oc.write(height, "height", 1f);
+        oc.write(mass, "mass", 1f);
         oc.write(jumpForce, "jumpForce", new Vector3f(0, mass * 5, 0));
         oc.write(physicsDamping, "physicsDamping", 0.9f);
     }
@@ -758,13 +763,14 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule in = im.getCapsule(this);
-        this.radius = in.readFloat("radius", 1);
-        this.height = in.readFloat("height", 2);
-        this.mass = in.readFloat("mass", 80);
+        this.radius = in.readFloat("radius", 1f);
+        this.height = in.readFloat("height", 2f);
+        this.mass = in.readFloat("mass", 80f);
         this.physicsDamping = in.readFloat("physicsDamping", 0.9f);
-        this.jumpForce.set((Vector3f) in.readSavable("jumpForce", new Vector3f(0, mass * 5, 0)));
+        this.jumpForce.set((Vector3f) in.readSavable("jumpForce",
+                new Vector3f(0f, mass * 5f, 0f)));
         rigidBody = new PhysicsRigidBody(getShape(), mass);
-        jumpForce.set(new Vector3f(0, mass * 5, 0));
-        rigidBody.setAngularFactor(0);
+        jumpForce.set(new Vector3f(0f, mass * 5f, 0f)); // TODO?
+        rigidBody.setAngularFactor(0f);
     }
 }

@@ -222,7 +222,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
         }
     };
 
-    private long detachedPhysicsLastUpdate = 0;
+    private long detachedPhysicsLastUpdate = 0L;
     private Callable<Boolean> detachedPhysicsUpdate = new Callable<Boolean>() {
         @Override
         public Boolean call() throws Exception {
@@ -233,6 +233,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
             executor.schedule(detachedPhysicsUpdate,
                     Math.round(getPhysicsSpace().getAccuracy() * 1000000.0f) - (update * 1000),
                     TimeUnit.MICROSECONDS);
+
             return true;
         }
     };

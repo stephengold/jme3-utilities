@@ -66,10 +66,22 @@ public class VehicleControl extends PhysicsVehicle
      */
     final private static Logger logger
             = Logger.getLogger(VehicleControl.class.getName());
-
+    /**
+     * spatial to which this control is added, or null if none
+     */
     protected Spatial spatial;
+    /**
+     * true&rarr;control is enabled, false&rarr;control is disabled
+     */
     protected boolean enabled = true;
+    /**
+     * space to which the physics vehicle is added, or will be added when
+     * enabled
+     */
     protected PhysicsSpace space = null;
+    /**
+     * true&rarr;body is added to the physics space, false&rarr;not added
+     */
     protected boolean added = false;
 
     /**
@@ -238,13 +250,22 @@ public class VehicleControl extends PhysicsVehicle
         return control;
     }
 
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned control into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner currently cloning this control (not null)
+     * @param original the control from which this control was shallow-cloned
+     * (unused)
+     */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
         this.spatial = cloner.clone(spatial);
 
         for (VehicleWheel wheel : wheels) {
-            Spatial spatial = cloner.clone(wheel.getWheelSpatial());
-            wheel.setWheelSpatial(spatial);
+            Spatial ws = cloner.clone(wheel.getWheelSpatial());
+            wheel.setWheelSpatial(ws);
         }
     }
 
@@ -257,11 +278,10 @@ public class VehicleControl extends PhysicsVehicle
     public void setSpatial(Spatial spatial) {
         this.spatial = spatial;
         setUserObject(spatial);
-        if (spatial == null) {
-            return;
+        if (spatial != null) {
+            setPhysicsLocation(getSpatialTranslation());
+            setPhysicsRotation(getSpatialRotation());
         }
-        setPhysicsLocation(getSpatialTranslation());
-        setPhysicsRotation(getSpatialRotation());
     }
 
     /**
@@ -332,6 +352,13 @@ public class VehicleControl extends PhysicsVehicle
     public void render(RenderManager rm, ViewPort vp) {
     }
 
+    /**
+     * If enabled, add this control's physics object to the specified physics
+     * space. In not enabled, alter where the object will be added. The object
+     * is removed from any other space it's currently in.
+     *
+     * @param space where to add, or null to simply remove
+     */
     @Override
     public void setPhysicsSpace(PhysicsSpace space) {
         createVehicle(space);
@@ -344,7 +371,8 @@ public class VehicleControl extends PhysicsVehicle
             if (this.space == space) {
                 return;
             }
-            // if this object isn't enabled, it will be added when it will be enabled.
+            // If the control isn't enabled, its object will be
+            // added when it gets enabled.
             if (isEnabled()) {
                 space.addCollisionObject(this);
                 added = true;
@@ -354,7 +382,7 @@ public class VehicleControl extends PhysicsVehicle
     }
 
     /**
-     * Access the physics space to which the vehicle is added.
+     * Access the physics space to which the vehicle is (or will be) added.
      *
      * @return the pre-existing space, or null for none
      */

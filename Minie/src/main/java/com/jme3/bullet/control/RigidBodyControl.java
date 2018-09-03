@@ -80,10 +80,21 @@ public class RigidBodyControl extends PhysicsRigidBody
      * local copy of {@link com.jme3.math.Vector3f#ZERO}
      */
     final private static Vector3f translateIdentity = new Vector3f(0f, 0f, 0f);
-
+    /**
+     * spatial to which this control is added, or null if none
+     */
     protected Spatial spatial;
+    /**
+     * true&rarr;control is enabled, false&rarr;control is disabled
+     */
     protected boolean enabled = true;
+    /**
+     * true&rarr;body is added to the physics space, false&rarr;not added
+     */
     protected boolean added = false;
+    /**
+     * space to which the body is added, or will be added when enabled
+     */
     protected PhysicsSpace space = null;
     protected boolean kinematicSpatial = true;
 
@@ -182,6 +193,15 @@ public class RigidBodyControl extends PhysicsRigidBody
         return control;
     }
 
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned control into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner currently cloning this control (not null)
+     * @param original the control from which this control was shallow-cloned
+     * (unused)
+     */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
         this.spatial = cloner.clone(spatial);
@@ -210,15 +230,20 @@ public class RigidBodyControl extends PhysicsRigidBody
             Geometry geom = (Geometry) spatial;
             Mesh mesh = geom.getMesh();
             if (mesh instanceof Sphere) {
-                collisionShape = new SphereCollisionShape(((Sphere) mesh).getRadius());
+                collisionShape = new SphereCollisionShape(
+                        ((Sphere) mesh).getRadius());
                 return;
             } else if (mesh instanceof Box) {
-                collisionShape = new BoxCollisionShape(new Vector3f(((Box) mesh).getXExtent(), ((Box) mesh).getYExtent(), ((Box) mesh).getZExtent()));
+                collisionShape = new BoxCollisionShape(
+                        new Vector3f(((Box) mesh).getXExtent(),
+                                ((Box) mesh).getYExtent(),
+                                ((Box) mesh).getZExtent()));
                 return;
             }
         }
         if (mass > 0) {
-            collisionShape = CollisionShapeFactory.createDynamicMeshShape(spatial);
+            collisionShape
+                    = CollisionShapeFactory.createDynamicMeshShape(spatial);
         } else {
             collisionShape = CollisionShapeFactory.createMeshShape(spatial);
         }
@@ -238,6 +263,7 @@ public class RigidBodyControl extends PhysicsRigidBody
             } else if (!enabled && added) {
                 space.removeCollisionObject(this);
                 added = false;
+                // TODO also remove all joints
             }
         }
     }
@@ -355,8 +381,9 @@ public class RigidBodyControl extends PhysicsRigidBody
     }
 
     /**
-     * Add this control's body to the specified physics space and remove it from
-     * any space it's currently in.
+     * If enabled, add this control's physics object to the specified physics
+     * space. In not enabled, alter where the object will be added. The object
+     * is removed from any other space it's currently in.
      *
      * @param space where to add, or null to simply remove
      */
@@ -371,7 +398,8 @@ public class RigidBodyControl extends PhysicsRigidBody
             if (this.space == space) {
                 return;
             }
-            // if this object isn't enabled, it will be added when it will be enabled.
+            // If the control isn't enabled, its body will be
+            // added when it gets enabled. TODO may be in another space?
             if (isEnabled()) {
                 space.addCollisionObject(this);
                 added = true;
@@ -381,7 +409,7 @@ public class RigidBodyControl extends PhysicsRigidBody
     }
 
     /**
-     * Access the physics space to which the body is added.
+     * Access the physics space to which the body is (or will be) added.
      *
      * @return the pre-existing space, or null for none
      */

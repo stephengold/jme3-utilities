@@ -106,7 +106,7 @@ public class ChildCollisionShape implements Savable {
     /**
      * Access the translation relative to the parent shape.
      *
-     * @return the pre-existing vector (not null)
+     * @return the pre-existing vector (not null) TODO
      */
     public Vector3f getLocation() {
         return location;
@@ -115,7 +115,7 @@ public class ChildCollisionShape implements Savable {
     /**
      * Access the rotation relative to the parent shape.
      *
-     * @return the pre-existing matrix (not null)
+     * @return the pre-existing matrix (not null) TODO
      */
     public Matrix3f getRotation() {
         return rotation;
@@ -124,7 +124,7 @@ public class ChildCollisionShape implements Savable {
     /**
      * Access the base shape.
      *
-     * @return the pre-existing matrix (not null)
+     * @return the pre-existing shape (not null)
      */
     public CollisionShape getShape() {
         return shape;

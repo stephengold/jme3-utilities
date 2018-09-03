@@ -44,15 +44,16 @@ import com.jme3.scene.control.Control;
  */
 public interface PhysicsControl extends Control {
     /**
-     * Add this control's physics object to the specified physics space and
-     * remove it from the space it's currently in.
+     * If enabled, add this control's physics object to the specified physics
+     * space. In not enabled, alter where the object will be added. The object
+     * is removed from any other space it's currently in.
      *
      * @param space where to add, or null to simply remove
      */
     void setPhysicsSpace(PhysicsSpace space);
 
     /**
-     * Access the physics space to which the object is added.
+     * Access the physics space to which the object is (or will be) added.
      *
      * @return the pre-existing space, or null for none
      */

@@ -76,11 +76,26 @@ public class GhostControl extends PhysicsGhostObject
      * local copy of {@link com.jme3.math.Vector3f#ZERO}
      */
     final private static Vector3f translateIdentity = new Vector3f(0f, 0f, 0f);
-
+    /**
+     * spatial to which this control is added, or null if none
+     */
     protected Spatial spatial;
+    /**
+     * true&rarr;control is enabled, false&rarr;control is disabled
+     */
     protected boolean enabled = true;
+    /**
+     * true&rarr;body is added to the physics space, false&rarr;not added
+     */
     protected boolean added = false;
+    /**
+     * space to which the ghost object is added, or will be added when enabled
+     */
     protected PhysicsSpace space = null;
+    /**
+     * true &rarr; physics coordinates match local transform, false &rarr;
+     * physics coordinates match world transform
+     */
     private boolean applyLocal = false;
 
     /**
@@ -90,6 +105,11 @@ public class GhostControl extends PhysicsGhostObject
     public GhostControl() {
     }
 
+    /**
+     * Instantiate an enabled control with the specified shape.
+     *
+     * @param shape (not null)
+     */
     public GhostControl(CollisionShape shape) {
         super(shape);
     }
@@ -173,6 +193,15 @@ public class GhostControl extends PhysicsGhostObject
         return control;
     }
 
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned control into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner currently cloning this control (not null)
+     * @param original the control from which this control was shallow-cloned
+     * (unused)
+     */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
         this.spatial = cloner.clone(spatial);
@@ -255,8 +284,9 @@ public class GhostControl extends PhysicsGhostObject
     }
 
     /**
-     * Add this control's ghost object to the specified physics space and remove
-     * it from any space it's currently in.
+     * If enabled, add this control's physics object to the specified physics
+     * space. In not enabled, alter where the object will be added. The object
+     * is removed from any other space it's currently in.
      *
      * @param space where to add, or null to simply remove
      */
@@ -271,6 +301,7 @@ public class GhostControl extends PhysicsGhostObject
             if (this.space == space) {
                 return;
             }
+            // TODO issue #889
             space.addCollisionObject(this);
             added = true;
         }
@@ -278,7 +309,7 @@ public class GhostControl extends PhysicsGhostObject
     }
 
     /**
-     * Access the physics space containing this control's ghost object.
+     * Access the physics space to which the ghost object is (or will be) added.
      *
      * @return the pre-existing space, or null for none
      */

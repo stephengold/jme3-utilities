@@ -56,18 +56,26 @@ public class PhysicsCollisionEvent extends EventObject {
     public static final int TYPE_PROCESSED = 1;
     public static final int TYPE_DESTROYED = 2;
     private int type;
-
+    /**
+     * 1st involved object
+     */
     private PhysicsCollisionObject nodeA;
+    /**
+     * 2nd involved object
+     */
     private PhysicsCollisionObject nodeB;
-    private long manifoldPointObjectId = 0;
+    /**
+     * Bullet identifier of the btManifoldPoint
+     */
+    private long manifoldPointObjectId = 0L;
 
     /**
      * Instantiate a collision event.
      *
-     * @param type event type (added/processed/destroyed)
+     * @param type event type (0=added/1=processed/2=destroyed)
      * @param nodeA 1st involved object (alias created)
      * @param nodeB 2nd involved object (alias created)
-     * @param manifoldPointObjectId Bullet identifier
+     * @param manifoldPointObjectId Bullet identifier of the btManifoldPoint
      */
     public PhysicsCollisionEvent(int type, PhysicsCollisionObject nodeA,
             PhysicsCollisionObject nodeB, long manifoldPointObjectId) {
@@ -157,24 +165,44 @@ public class PhysicsCollisionEvent extends EventObject {
         return nodeB;
     }
 
+    /**
+     * Read the applied impulse of this event.
+     *
+     * @return impulse
+     */
     public float getAppliedImpulse() {
         return getAppliedImpulse(manifoldPointObjectId);
     }
 
     private native float getAppliedImpulse(long manifoldPointObjectId);
 
+    /**
+     * Read the applied lateral impulse #1 of this event.
+     *
+     * @return impulse
+     */
     public float getAppliedImpulseLateral1() {
         return getAppliedImpulseLateral1(manifoldPointObjectId);
     }
 
     private native float getAppliedImpulseLateral1(long manifoldPointObjectId);
 
+    /**
+     * Read the applied lateral impulse #2 of this event.
+     *
+     * @return impulse
+     */
     public float getAppliedImpulseLateral2() {
         return getAppliedImpulseLateral2(manifoldPointObjectId);
     }
 
     private native float getAppliedImpulseLateral2(long manifoldPointObjectId);
 
+    /**
+     * Read the combined friction of this event.
+     *
+     * @return friction
+     */
     public float getCombinedFriction() {
         return getCombinedFriction(manifoldPointObjectId);
     }

@@ -67,10 +67,10 @@ public class GImpactCollisionShape extends CollisionShape {
     private ByteBuffer triangleIndexBase;
     private ByteBuffer vertexBase;
     /**
-     * Bullet identifier of the mesh. The constructor sets this to a non-zero
-     * value.
+     * Unique identifier of the Bullet mesh. The constructor sets this to a
+     * non-zero value.
      */
-    private long meshId = 0;
+    private long meshId = 0L;
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke

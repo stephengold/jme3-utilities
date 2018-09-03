@@ -70,11 +70,12 @@ public class PhysicsVehicle extends PhysicsRigidBody {
             = Logger.getLogger(PhysicsVehicle.class.getName());
 
     /**
-     * Bullet identifier of the btRaycastVehicle. The constructor sets this to a
+     * Unique identifier of the btRaycastVehicle. The constructor sets this to a
      * non-zero value.
      */
-    private long vehicleId = 0;
-    private long rayCasterId = 0;
+    private long vehicleId = 0L;
+
+    private long rayCasterId = 0L;
     protected VehicleTuning tuning = new VehicleTuning();
     protected ArrayList<VehicleWheel> wheels = new ArrayList<>();
     private PhysicsSpace physicsSpace;
@@ -166,7 +167,10 @@ public class PhysicsVehicle extends PhysicsRigidBody {
                 Long.toHexString(vehicleId));
         setCoordinateSystem(vehicleId, 0, 1, 2);
         for (VehicleWheel wheel : wheels) {
-            wheel.setVehicleId(vehicleId, addWheel(vehicleId, wheel.getLocation(), wheel.getDirection(), wheel.getAxle(), wheel.getRestLength(), wheel.getRadius(), tuning, wheel.isFrontWheel()));
+            wheel.setVehicleId(vehicleId, addWheel(vehicleId,
+                    wheel.getLocation(), wheel.getDirection(), wheel.getAxle(),
+                    wheel.getRestLength(), wheel.getRadius(), tuning,
+                    wheel.isFrontWheel()));
         }
     }
 
@@ -176,7 +180,9 @@ public class PhysicsVehicle extends PhysicsRigidBody {
 
     private native void setCoordinateSystem(long objectId, int a, int b, int c);
 
-    private native int addWheel(long objectId, Vector3f location, Vector3f direction, Vector3f axle, float restLength, float radius, VehicleTuning tuning, boolean frontWheel);
+    private native int addWheel(long objectId, Vector3f location,
+            Vector3f direction, Vector3f axle, float restLength, float radius,
+            VehicleTuning tuning, boolean frontWheel);
 
     /**
      * Add a wheel to this vehicle
@@ -192,8 +198,11 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * @param isFrontWheel sets if this wheel is a front wheel (steering)
      * @return the PhysicsVehicleWheel object to get/set infos on the wheel
      */
-    public VehicleWheel addWheel(Vector3f connectionPoint, Vector3f direction, Vector3f axle, float suspensionRestLength, float wheelRadius, boolean isFrontWheel) {
-        return addWheel(null, connectionPoint, direction, axle, suspensionRestLength, wheelRadius, isFrontWheel);
+    public VehicleWheel addWheel(Vector3f connectionPoint, Vector3f direction,
+            Vector3f axle, float suspensionRestLength, float wheelRadius,
+            boolean isFrontWheel) {
+        return addWheel(null, connectionPoint, direction, axle,
+                suspensionRestLength, wheelRadius, isFrontWheel);
     }
 
     /**
@@ -211,12 +220,16 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * @param isFrontWheel sets if this wheel is a front wheel (steering)
      * @return the PhysicsVehicleWheel object to get/set infos on the wheel
      */
-    public VehicleWheel addWheel(Spatial spat, Vector3f connectionPoint, Vector3f direction, Vector3f axle, float suspensionRestLength, float wheelRadius, boolean isFrontWheel) {
+    public VehicleWheel addWheel(Spatial spat, Vector3f connectionPoint,
+            Vector3f direction, Vector3f axle, float suspensionRestLength,
+            float wheelRadius, boolean isFrontWheel) {
         VehicleWheel wheel = null;
         if (spat == null) {
-            wheel = new VehicleWheel(connectionPoint, direction, axle, suspensionRestLength, wheelRadius, isFrontWheel);
+            wheel = new VehicleWheel(connectionPoint, direction, axle,
+                    suspensionRestLength, wheelRadius, isFrontWheel);
         } else {
-            wheel = new VehicleWheel(spat, connectionPoint, direction, axle, suspensionRestLength, wheelRadius, isFrontWheel);
+            wheel = new VehicleWheel(spat, connectionPoint, direction, axle,
+                    suspensionRestLength, wheelRadius, isFrontWheel);
         }
         wheel.setFrictionSlip(tuning.frictionSlip);
         wheel.setMaxSuspensionTravelCm(tuning.maxSuspensionTravelCm);
@@ -226,7 +239,10 @@ public class PhysicsVehicle extends PhysicsRigidBody {
         wheel.setMaxSuspensionForce(tuning.maxSuspensionForce);
         wheels.add(wheel);
         if (vehicleId != 0) {
-            wheel.setVehicleId(vehicleId, addWheel(vehicleId, wheel.getLocation(), wheel.getDirection(), wheel.getAxle(), wheel.getRestLength(), wheel.getRadius(), tuning, wheel.isFrontWheel()));
+            wheel.setVehicleId(vehicleId, addWheel(vehicleId,
+                    wheel.getLocation(), wheel.getDirection(), wheel.getAxle(),
+                    wheel.getRestLength(), wheel.getRadius(), tuning,
+                    wheel.isFrontWheel()));
         }
         return wheel;
     }
@@ -333,7 +349,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * @param wheel the index of the wheel to modify
      * @param maxSuspensionTravelCm the distance to use (in centimetres)
      */
-    public void setMaxSuspensionTravelCm(int wheel, float maxSuspensionTravelCm) {
+    public void setMaxSuspensionTravelCm(int wheel,
+            float maxSuspensionTravelCm) {
         wheels.get(wheel).setMaxSuspensionTravelCm(maxSuspensionTravelCm);
     }
 
@@ -394,7 +411,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * @param wheel the index of the wheel to modify
      * @param suspensionCompression the desired damping coefficient
      */
-    public void setSuspensionCompression(int wheel, float suspensionCompression) {
+    public void setSuspensionCompression(int wheel,
+            float suspensionCompression) {
         wheels.get(wheel).setWheelsDampingCompression(suspensionCompression);
     }
 
@@ -479,14 +497,13 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     }
 
     /**
-     * Apply the given engine force, works continuously
+     * Apply the given engine force. Works continuously.
      *
      * @param wheel the wheel to apply the force on
      * @param force the force
      */
     public void accelerate(int wheel, float force) {
         applyEngineForce(vehicleId, wheel, force);
-
     }
 
     private native void applyEngineForce(long vehicleId, int wheel, float force);

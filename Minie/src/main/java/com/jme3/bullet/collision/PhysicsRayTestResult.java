@@ -52,7 +52,7 @@ public class PhysicsRayTestResult {
      */
     private PhysicsCollisionObject collisionObject;
     /**
-     * normal vector
+     * normal vector at the point of contact
      */
     private Vector3f hitNormalLocal;
     /**
