@@ -602,7 +602,7 @@ public class MySpatial {
             result = 1f;
         } else {
             Vector3f worldScale = spatial.getWorldScale();
-            if (worldScale.x != worldScale.y || worldScale.y != worldScale.z) { // TODO MyVector3f
+            if (!MyVector3f.isScaleUniform(worldScale)) {
                 throw new IllegalArgumentException("non-uniform scaling");
             }
             result = worldScale.y;

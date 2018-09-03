@@ -40,6 +40,7 @@ import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.math.MyVector3f;
 
 /**
  * A capsule collision shape based on Bullet's btCapsuleShapeX, btCapsuleShape,
@@ -141,11 +142,11 @@ public class CapsuleCollisionShape extends CollisionShape {
      */
     @Override
     public void setScale(Vector3f scale) {
-        if (scale.x != scale.y || scale.y != scale.z) { // TODO MyVector3f
+        if (MyVector3f.isScaleUniform(scale)) {
+            super.setScale(scale);
+        } else {
             logger.log(Level.SEVERE,
                     "CapsuleCollisionShape cannot be scaled non-uniformly.");
-        } else {
-            super.setScale(scale);
         }
     }
 

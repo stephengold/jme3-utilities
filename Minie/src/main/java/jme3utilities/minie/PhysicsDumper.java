@@ -194,7 +194,7 @@ public class PhysicsDumper extends Dumper {
         stream.printf("%n   shape=%s", desc);
 
         Vector3f scale = shape.getScale();
-        if (scale.x != scale.y || scale.y != scale.z) { // TODO MyVector3f
+        if (!MyVector3f.isScaleUniform(scale)) {
             stream.print(" scale=");
             stream.print(scale);
         } else if (!MyVector3f.isScaleIdentity(scale)) {

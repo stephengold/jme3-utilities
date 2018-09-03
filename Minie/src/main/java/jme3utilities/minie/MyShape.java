@@ -335,8 +335,7 @@ public class MyShape {
             result = new CylinderCollisionShape(newHalfExtents, axisIndex);
 
         } else if (oldShape instanceof SphereCollisionShape) {
-            if (newHalfExtents.x != newHalfExtents.y
-                    || newHalfExtents.y != newHalfExtents.z) {// TODO MyVector3f
+            if (!MyVector3f.isScaleUniform(newHalfExtents)) {
                 result = null;
             } else {
                 result = new SphereCollisionShape(newHalfExtents.x);
