@@ -1,6 +1,6 @@
 # release notes for the Minie library and related tests
 
-## Version 0.2.8 released on TBD
+## Version 0.2.8 released on 3 September 2018
 
  + Removed some unnecessary methods.
  + Reduced the scope of many methods.

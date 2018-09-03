@@ -17,8 +17,8 @@ sourcesJar { baseName project.ext.baseName }
 dependencies {
     runtime "org.jmonkeyengine:jme3-bullet-native:$jmonkeyengineVersion"
 
-    compile "jme3utilities:jme3-utilities-debug:$jme3utilitiesdebugVersion"
-    //compile project(':debug')
+    //compile "jme3utilities:jme3-utilities-debug:$jme3utilitiesdebugVersion"
+    compile project(':debug')
 
     // The following dependencies are for testing and should be commented
     // out when building a release.
