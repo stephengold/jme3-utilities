@@ -721,8 +721,7 @@ public class MyVector3f {
      * Test for a zero vector or translation identity.
      *
      * @param vector input (not null, unaffected)
-     * @return true if the vector equals {@link com.jme3.math.Vector3f#ZERO},
-     * false otherwise
+     * @return true if the vector equals (0,0,0), false otherwise
      */
     public static boolean isZero(Vector3f vector) {
         if (vector.x == 0f && vector.y == 0f && vector.z == 0f) {
