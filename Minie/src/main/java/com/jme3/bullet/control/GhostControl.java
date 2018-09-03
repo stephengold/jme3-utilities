@@ -89,7 +89,7 @@ public class GhostControl extends PhysicsGhostObject
      */
     protected boolean added = false;
     /**
-     * space to which the ghost object is added, or will be added when enabled
+     * space to which the ghost object is (or would be) added
      */
     protected PhysicsSpace space = null;
     /**
@@ -285,7 +285,7 @@ public class GhostControl extends PhysicsGhostObject
 
     /**
      * If enabled, add this control's physics object to the specified physics
-     * space. In not enabled, alter where the object will be added. The object
+     * space. In not enabled, alter where the object would be added. The object
      * is removed from any other space it's currently in.
      *
      * @param space where to add, or null to simply remove
@@ -300,16 +300,23 @@ public class GhostControl extends PhysicsGhostObject
         } else {
             if (this.space == space) {
                 return;
+            } else if (this.space != null) {
+                this.space.removeCollisionObject(this);
+                added = false;
             }
-            // TODO issue #889
-            space.addCollisionObject(this);
-            added = true;
+            // If the control isn't enabled, its object will be
+            // added when it gets enabled.
+            if (isEnabled()) {
+                space.addCollisionObject(this);
+                added = true;
+            }
         }
         this.space = space;
     }
 
     /**
-     * Access the physics space to which the ghost object is (or will be) added.
+     * Access the physics space to which the ghost object is (or would be)
+     * added.
      *
      * @return the pre-existing space, or null for none
      */

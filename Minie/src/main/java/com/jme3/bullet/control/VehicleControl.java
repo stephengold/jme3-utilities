@@ -75,8 +75,7 @@ public class VehicleControl extends PhysicsVehicle
      */
     protected boolean enabled = true;
     /**
-     * space to which the physics vehicle is added, or will be added when
-     * enabled
+     * space to which the physics vehicle is (or would be) added
      */
     protected PhysicsSpace space = null;
     /**
@@ -354,7 +353,7 @@ public class VehicleControl extends PhysicsVehicle
 
     /**
      * If enabled, add this control's physics object to the specified physics
-     * space. In not enabled, alter where the object will be added. The object
+     * space. In not enabled, alter where the object would be added. The object
      * is removed from any other space it's currently in.
      *
      * @param space where to add, or null to simply remove
@@ -370,6 +369,9 @@ public class VehicleControl extends PhysicsVehicle
         } else {
             if (this.space == space) {
                 return;
+            } else if (this.space != null) {
+                this.space.removeCollisionObject(this);
+                added = false;
             }
             // If the control isn't enabled, its object will be
             // added when it gets enabled.
@@ -382,7 +384,7 @@ public class VehicleControl extends PhysicsVehicle
     }
 
     /**
-     * Access the physics space to which the vehicle is (or will be) added.
+     * Access the physics space to which the vehicle is (or would be) added.
      *
      * @return the pre-existing space, or null for none
      */

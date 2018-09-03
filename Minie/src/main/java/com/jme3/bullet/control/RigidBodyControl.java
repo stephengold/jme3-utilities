@@ -93,7 +93,7 @@ public class RigidBodyControl extends PhysicsRigidBody
      */
     protected boolean added = false;
     /**
-     * space to which the body is added, or will be added when enabled
+     * space to which the body is (or would be) added
      */
     protected PhysicsSpace space = null;
     protected boolean kinematicSpatial = true;
@@ -381,9 +381,9 @@ public class RigidBodyControl extends PhysicsRigidBody
     }
 
     /**
-     * If enabled, add this control's physics object to the specified physics
-     * space. In not enabled, alter where the object will be added. The object
-     * is removed from any other space it's currently in.
+     * If enabled, add this control's body to the specified physics space. In
+     * not enabled, alter where the body would be added. The body is removed
+     * from any other space it's currently in.
      *
      * @param space where to add, or null to simply remove
      */
@@ -397,9 +397,12 @@ public class RigidBodyControl extends PhysicsRigidBody
         } else {
             if (this.space == space) {
                 return;
+            } else if (this.space != null) {
+                this.space.removeCollisionObject(this);
+                added = false;
             }
             // If the control isn't enabled, its body will be
-            // added when it gets enabled. TODO may be in another space?
+            // added when it gets enabled.
             if (isEnabled()) {
                 space.addCollisionObject(this);
                 added = true;
@@ -409,7 +412,7 @@ public class RigidBodyControl extends PhysicsRigidBody
     }
 
     /**
-     * Access the physics space to which the body is (or will be) added.
+     * Access the physics space to which the body is (or would be) added.
      *
      * @return the pre-existing space, or null for none
      */

@@ -86,7 +86,7 @@ public abstract class AbstractPhysicsControl
      */
     protected boolean added = false;
     /**
-     * space to which the physics object is added, or will be added when enabled
+     * space to which the physics object is (or would be) added
      */
     private PhysicsSpace space = null;
     /**
@@ -128,16 +128,16 @@ public abstract class AbstractPhysicsControl
     protected abstract void setPhysicsRotation(Quaternion quat);
 
     /**
-     * Invoked when the physics object is supposed to add all objects it needs
-     * to manage to the physics space.
+     * Invoked when the physics object is supposed to add all the objects it
+     * manages to the physics space.
      *
      * @param space which physics space
      */
     protected abstract void addPhysics(PhysicsSpace space);
 
     /**
-     * Invoked when the physics object is supposed to remove all objects added
-     * to the physics space.
+     * Invoked when the physics object is supposed to remove all the objects it
+     * manages from the physics space.
      *
      * @param space which physics space
      */
@@ -299,7 +299,7 @@ public abstract class AbstractPhysicsControl
 
     /**
      * If enabled, add this control's physics object to the specified physics
-     * space. In not enabled, alter where the object will be added. The object
+     * space. If not enabled, alter where the object would be added. The object
      * is removed from any other space it's currently in.
      *
      * @param space where to add, or null to simply remove
@@ -316,16 +316,20 @@ public abstract class AbstractPhysicsControl
                 return;
             } else if (this.space != null) {
                 removePhysics(this.space);
+                added = false;
             }
-            // TODO issue #889
-            addPhysics(space);
-            added = true;
+            // If the control isn't enabled, its object will be
+            // added when it gets enabled.
+            if (isEnabled()) {
+                addPhysics(space);
+                added = true;
+            }
         }
         this.space = space;
     }
 
     /**
-     * Access the physics space to which the object is (or will be) added.
+     * Access the physics space to which the object is (or would be) added.
      *
      * @return the pre-existing space, or null for none
      */
