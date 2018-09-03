@@ -1,5 +1,14 @@
 # release notes for the Minie library and related tests
 
+## Version 0.2.8 released on TBD
+
+ + Removed some unnecessary methods.
+ + Reduced the scope of many methods.
+ + Renamed getMass() to mass() in MyControlP.
+ + Fixed JME issue #889.
+ + Added validation of method arguments, plus some assertions.
+ + Based on version 2.8 of the jme3-utilities-heart library.
+
 ## Version 0.2.7 released on 1 September 2018
 
  + Don't setLocalScale() on spatials controlled by debug controls; this is
