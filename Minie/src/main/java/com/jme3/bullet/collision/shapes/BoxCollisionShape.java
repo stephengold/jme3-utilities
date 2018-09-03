@@ -39,6 +39,8 @@ import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
+import jme3utilities.math.MyVector3f;
 
 /**
  * A rectangular-solid collision shape based on Bullet's btBoxShape.
@@ -54,7 +56,8 @@ public class BoxCollisionShape extends CollisionShape {
             = Logger.getLogger(BoxCollisionShape.class.getName());
 
     /**
-     * half-extents of the box on each local axis
+     * half-extents of the box on each local axis (not null, no negative
+     * component)
      */
     private Vector3f halfExtents;
 
@@ -68,9 +71,12 @@ public class BoxCollisionShape extends CollisionShape {
     /**
      * Instantiate a box shape with the specified half extents.
      *
-     * @param halfExtents the half extents to use (not null, alias created) TODO
+     * @param halfExtents the half extents to use (not null, no negative
+     * component, alias created) TODO
      */
     public BoxCollisionShape(Vector3f halfExtents) {
+        Validate.nonNegative(halfExtents, "half extents");
+
         this.halfExtents = halfExtents;
         createShape();
     }
@@ -78,9 +84,10 @@ public class BoxCollisionShape extends CollisionShape {
     /**
      * Access the half extents.
      *
-     * @return the pre-existing instance (not null) TODO
+     * @return the pre-existing instance (not null, no negative component) TODO
      */
     public final Vector3f getHalfExtents() {
+        assert MyVector3f.isAllNonNegative(halfExtents) : halfExtents;
         return halfExtents;
     }
 
@@ -117,7 +124,10 @@ public class BoxCollisionShape extends CollisionShape {
      * Create the configured shape in Bullet.
      */
     private void createShape() {
+        assert MyVector3f.isAllNonNegative(halfExtents) : halfExtents;
+
         objectId = createShape(halfExtents);
+        assert objectId != 0L;
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
         setScale(scale);
         setMargin(margin);

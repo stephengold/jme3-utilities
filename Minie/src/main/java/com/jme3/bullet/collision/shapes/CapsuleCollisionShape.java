@@ -40,6 +40,7 @@ import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**
@@ -83,6 +84,9 @@ public class CapsuleCollisionShape extends CollisionShape {
      * @param height the height (of the cylindrical portion) to use (&ge;0)
      */
     public CapsuleCollisionShape(float radius, float height) {
+        Validate.nonNegative(radius, "radius");
+        Validate.nonNegative(height, "height");
+
         this.radius = radius;
         this.height = height;
         this.axis = PhysicsSpace.AXIS_Y;
@@ -97,6 +101,10 @@ public class CapsuleCollisionShape extends CollisionShape {
      * @param axis which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public CapsuleCollisionShape(float radius, float height, int axis) {
+        Validate.nonNegative(radius, "radius");
+        Validate.nonNegative(height, "height");
+        Validate.inRange(axis, "axis", 0, 2);
+
         this.radius = radius;
         this.height = height;
         this.axis = axis;
@@ -109,6 +117,7 @@ public class CapsuleCollisionShape extends CollisionShape {
      * @return radius (&ge;0)
      */
     public float getRadius() {
+        assert radius >= 0f : radius;
         return radius;
     }
 
@@ -118,6 +127,7 @@ public class CapsuleCollisionShape extends CollisionShape {
      * @return height (&ge;0)
      */
     public float getHeight() {
+        assert height >= 0f : height;
         return height;
     }
 
@@ -127,6 +137,7 @@ public class CapsuleCollisionShape extends CollisionShape {
      * @return 0 for local X, 1 for local Y, or 2 for local Z
      */
     public int getAxis() {
+        assert axis == 0 || axis == 1 || axis == 2 : axis;
         return axis;
     }
 
@@ -137,11 +148,13 @@ public class CapsuleCollisionShape extends CollisionShape {
      * Note that if the shape is shared (between collision objects and/or
      * compound shapes) changes can have unexpected consequences.
      *
-     * @param scale the desired scaling factor for each local axis (not null,
-     * unaffected, default=1,1,1)
+     * @param scale the desired scaling factor for each local axis (not null, no
+     * negative component, unaffected, default=1,1,1)
      */
     @Override
     public void setScale(Vector3f scale) {
+        Validate.nonNegative(scale, "scale");
+
         if (MyVector3f.isScaleUniform(scale)) {
             super.setScale(scale);
         } else {
@@ -185,7 +198,12 @@ public class CapsuleCollisionShape extends CollisionShape {
      * Create the configured shape in Bullet.
      */
     private void createShape() {
+        assert axis == 0 || axis == 1 || axis == 2 : axis;
+        assert radius >= 0f : radius;
+        assert height >= 0f : height;
+
         objectId = createShape(axis, radius, height);
+        assert objectId != 0L;
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
         setScale(scale);
         setMargin(margin);

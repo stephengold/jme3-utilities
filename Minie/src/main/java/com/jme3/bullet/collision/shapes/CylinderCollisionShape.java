@@ -40,6 +40,7 @@ import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**
@@ -57,7 +58,8 @@ public class CylinderCollisionShape extends CollisionShape {
             = Logger.getLogger(CylinderCollisionShape.class.getName());
 
     /**
-     * half-extents of the cylinder on each local axis
+     * half-extents of the cylinder on each local axis (not null, no negative
+     * component)
      */
     private Vector3f halfExtents;
     /**
@@ -75,9 +77,12 @@ public class CylinderCollisionShape extends CollisionShape {
     /**
      * Instantiate a Z-axis cylinder shape with the specified half extents.
      *
-     * @param halfExtents the half extents to use (not null, alias created) TODO
+     * @param halfExtents the half extents to use (not null, no negative
+     * component, alias created) TODO
      */
     public CylinderCollisionShape(Vector3f halfExtents) {
+        Validate.nonNegative(halfExtents, "half extents");
+
         this.halfExtents = halfExtents;
         this.axis = PhysicsSpace.AXIS_Z;
         createShape();
@@ -86,10 +91,14 @@ public class CylinderCollisionShape extends CollisionShape {
     /**
      * Instantiate a cylinder shape around the specified axis.
      *
-     * @param halfExtents the half extents to use
+     * @param halfExtents the half extents to use (not null, no negative
+     * component, alias created) TODO
      * @param axis which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public CylinderCollisionShape(Vector3f halfExtents, int axis) {
+        Validate.nonNegative(halfExtents, "half extents");
+        Validate.inRange(axis, "axis", 0, 2);
+
         this.halfExtents = halfExtents;
         this.axis = axis;
         createShape();
@@ -98,9 +107,10 @@ public class CylinderCollisionShape extends CollisionShape {
     /**
      * Access the half extents of the cylinder.
      *
-     * @return the pre-existing vector TODO
+     * @return the pre-existing vector (not null, no negative component) TODO
      */
     public final Vector3f getHalfExtents() {
+        assert MyVector3f.isAllNonNegative(halfExtents) : halfExtents;
         return halfExtents;
     }
 
@@ -110,6 +120,7 @@ public class CylinderCollisionShape extends CollisionShape {
      * @return 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public int getAxis() {
+        assert axis == 0 || axis == 1 || axis == 2 : axis;
         return axis;
     }
 
@@ -120,11 +131,13 @@ public class CylinderCollisionShape extends CollisionShape {
      * Note that if the shape is shared (between collision objects and/or
      * compound shapes) changes can have unexpected consequences.
      *
-     * @param scale the desired scaling factor for each local axis (not null,
-     * unaffected, default=1,1,1)
+     * @param scale the desired scaling factor for each local axis (not null, no
+     * negative component, unaffected, default=1,1,1)
      */
     @Override
     public void setScale(Vector3f scale) {
+        Validate.nonNegative(halfExtents, "half extents");
+
         if (MyVector3f.isScaleUniform(scale)) {
             super.setScale(scale);
         } else {
@@ -168,7 +181,11 @@ public class CylinderCollisionShape extends CollisionShape {
      * Create the configured shape in Bullet.
      */
     private void createShape() {
+        assert axis == 0 || axis == 1 || axis == 2 : axis;
+        assert MyVector3f.isAllNonNegative(halfExtents) : halfExtents;
+
         objectId = createShape(axis, halfExtents);
+        assert objectId != 0L;
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
         setScale(scale);
         setMargin(margin);

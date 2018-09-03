@@ -39,6 +39,7 @@ import com.jme3.export.OutputCapsule;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * A conical collision shape based on Bullet's btConeShapeX, btConeShape, or
@@ -82,6 +83,10 @@ public class ConeCollisionShape extends CollisionShape {
      * @param axis which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public ConeCollisionShape(float radius, float height, int axis) {
+        Validate.nonNegative(radius, "radius");
+        Validate.nonNegative(height, "height");
+        Validate.inRange(axis, "axis", 0, 2);
+
         this.radius = radius;
         this.height = height;
         this.axis = axis;
@@ -95,6 +100,9 @@ public class ConeCollisionShape extends CollisionShape {
      * @param height the height to use (&ge;0)
      */
     public ConeCollisionShape(float radius, float height) {
+        Validate.nonNegative(radius, "radius");
+        Validate.nonNegative(height, "height");
+
         this.radius = radius;
         this.height = height;
         this.axis = PhysicsSpace.AXIS_Y;
@@ -107,6 +115,7 @@ public class ConeCollisionShape extends CollisionShape {
      * @return 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public int getAxis() {
+        assert axis == 0 || axis == 1 || axis == 2 : axis;
         return axis;
     }
 
@@ -116,6 +125,7 @@ public class ConeCollisionShape extends CollisionShape {
      * @return radius (&ge;0)
      */
     public float getRadius() {
+        assert radius >= 0f : radius;
         return radius;
     }
 
@@ -125,6 +135,7 @@ public class ConeCollisionShape extends CollisionShape {
      * @return height (&ge;0)
      */
     public float getHeight() {
+        assert height >= 0f : height;
         return height;
     }
 
@@ -163,7 +174,12 @@ public class ConeCollisionShape extends CollisionShape {
      * Create the configured shape in Bullet.
      */
     private void createShape() {
+        assert axis == 0 || axis == 1 || axis == 2 : axis;
+        assert radius >= 0f : radius;
+        assert height >= 0f : height;
+
         objectId = createShape(axis, radius, height);
+        assert objectId != 0L;
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
         setScale(scale);
         setMargin(margin);

@@ -39,6 +39,7 @@ import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**
@@ -119,11 +120,13 @@ public class SphereCollisionShape extends CollisionShape {
      * Note that if the shape is shared (between collision objects and/or
      * compound shapes) changes can have unexpected consequences.
      *
-     * @param scale the desired scaling factor for each local axis (not null,
-     * unaffected, default=1,1,1)
+     * @param scale the desired scaling factor for each local axis (not null, no
+     * negative component, unaffected, default=1,1,1)
      */
     @Override
     public void setScale(Vector3f scale) {
+        Validate.nonNegative(scale, "scale");
+
         if (MyVector3f.isScaleUniform(scale)) {
             super.setScale(scale);
         } else {

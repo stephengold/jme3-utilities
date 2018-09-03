@@ -36,6 +36,7 @@ import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * The abstract base class for collision shapes (such as BoxCollisionShape and
@@ -90,10 +91,12 @@ public abstract class CollisionShape implements Savable {
      * Note that if the shape is shared (between collision objects and/or
      * compound shapes) changes can have unintended consequences.
      *
-     * @param scale the desired scaling factor for each local axis (not null,
-     * unaffected, default=1,1,1)
+     * @param scale the desired scaling factor for each local axis (not null, no
+     * negative component, unaffected, default=1,1,1)
      */
     public void setScale(Vector3f scale) {
+        Validate.nonNegative(scale, "scale");
+
         this.scale.set(scale);
         setLocalScaling(objectId, scale);
     }
