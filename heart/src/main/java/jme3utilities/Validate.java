@@ -401,7 +401,7 @@ final public class Validate {
     public static void nonNegative(Vector3f vector, String description) {
         nonNull(vector, description);
 
-        if (MyVector3f.isAllNonNegative(vector)) {
+        if (!MyVector3f.isAllNonNegative(vector)) {
             String what;
             if (description == null) {
                 what = "Vector3f argument";
