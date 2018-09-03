@@ -91,8 +91,10 @@ public class PhysicsSpace {
      * Bullet identifier of the physics space. The constructor sets this to a
      * non-zero value.
      */
-    private long physicsSpaceId = 0;
-
+    private long physicsSpaceId = 0L;
+    /**
+     * first-in/first-out (FIFO) queue of physics tasks for each thread
+     */
     private static ThreadLocal<ConcurrentLinkedQueue<AppTask<?>>> pQueueTL
             = new ThreadLocal<ConcurrentLinkedQueue<AppTask<?>>>() {
         @Override
@@ -100,6 +102,9 @@ public class PhysicsSpace {
             return new ConcurrentLinkedQueue<>();
         }
     };
+    /**
+     * first-in/first-out (FIFO) queue of physics tasks
+     */
     final private ConcurrentLinkedQueue<AppTask<?>> pQueue
             = new ConcurrentLinkedQueue<>();
     /**
@@ -137,10 +142,17 @@ public class PhysicsSpace {
      */
     final private Vector3f worldMax = new Vector3f(10000f, 10000f, 10000f);
     /**
-     * goal for the physics time step (in seconds, &gt;0)
+     * physics time step (in seconds, &gt;0)
      */
     private float accuracy = 1f / 60f;
-    private int maxSubSteps = 4, rayTestFlags = 1 << 2;
+    /**
+     * maximum number of extra steps per frame (&ge;0)
+     */
+    private int maxSubSteps = 4;
+    /**
+     * flags used in ray tests
+     */
+    private int rayTestFlags = 1 << 2;
     /**
      * number of iterations used by the contact-and-constraint solver
      * (default=10)
@@ -302,15 +314,15 @@ public class PhysicsSpace {
     private native void stepSimulation(long space, float time, int maxSteps,
             float accuracy);
 
-    public void distributeEvents() {
-        //add collision callbacks
-        int clistsize = collisionListeners.size();
+    /**
+     * Distribute each collision event to all listeners.
+     */
+    void distributeEvents() {
         while (collisionEvents.isEmpty() == false) {
             PhysicsCollisionEvent physicsCollisionEvent = collisionEvents.pop();
-            for (int i = 0; i < clistsize; i++) {
-                collisionListeners.get(i).collision(physicsCollisionEvent);
+            for (PhysicsCollisionListener listener : collisionListeners) {
+                listener.collision(physicsCollisionEvent);
             }
-            //recycle events
             eventFactory.recycle(physicsCollisionEvent);
         }
     }
@@ -319,20 +331,22 @@ public class PhysicsSpace {
         AppTask<V> task = new AppTask<>(callable);
         System.out.println("created apptask");
         pQueueTL.get().add(task);
+
         return task;
     }
 
     /**
-     * calls the callable on the next physics tick (ensuring e.g. force
-     * applying)
+     * Invoke the specified callable during the next physics tick. This is
+     * useful for applying forces.
      *
-     * @param <V> the type of result returned by the callable
+     * @param <V> the return type of the callable
      * @param callable which callable to invoke
      * @return Future object
      */
     public <V> Future<V> enqueue(Callable<V> callable) {
         AppTask<V> task = new AppTask<>(callable);
         pQueue.add(task);
+
         return task;
     }
 
@@ -461,7 +475,7 @@ public class PhysicsSpace {
     /**
      * Remove all physics controls and joints in the specified subtree of the
      * scene graph from the physics space (e.g. before saving to disk) Note:
-     * recursive!
+     * recursive! TODO delete this method?
      *
      * @param spatial the root of the subtree (not null)
      */
@@ -519,7 +533,8 @@ public class PhysicsSpace {
     private void addGhostObject(PhysicsGhostObject node) {
         if (physicsGhostObjects.containsKey(node.getObjectId())) {
             logger.log(Level.WARNING,
-                    "GhostObject {0} already exists in PhysicsSpace, cannot add.", node);
+                    "GhostObject {0} already exists in PhysicsSpace, cannot add.",
+                    node);
             return;
         }
         physicsGhostObjects.put(node.getObjectId(), node);
@@ -531,19 +546,22 @@ public class PhysicsSpace {
     private void removeGhostObject(PhysicsGhostObject node) {
         if (!physicsGhostObjects.containsKey(node.getObjectId())) {
             logger.log(Level.WARNING,
-                    "GhostObject {0} does not exist in PhysicsSpace, cannot remove.", node);
+                    "GhostObject {0} does not exist in PhysicsSpace, cannot remove.",
+                    node);
             return;
         }
         physicsGhostObjects.remove(node.getObjectId());
         logger.log(Level.FINE,
-                "Removing ghost object {0} from physics space.", Long.toHexString(node.getObjectId()));
+                "Removing ghost object {0} from physics space.",
+                Long.toHexString(node.getObjectId()));
         removeCollisionObject(physicsSpaceId, node.getObjectId());
     }
 
     private void addCharacter(PhysicsCharacter node) {
         if (physicsCharacters.containsKey(node.getObjectId())) {
             logger.log(Level.WARNING,
-                    "Character {0} already exists in PhysicsSpace, cannot add.", node);
+                    "Character {0} already exists in PhysicsSpace, cannot add.",
+                    node);
             return;
         }
         physicsCharacters.put(node.getObjectId(), node);
@@ -556,11 +574,13 @@ public class PhysicsSpace {
     private void removeCharacter(PhysicsCharacter node) {
         if (!physicsCharacters.containsKey(node.getObjectId())) {
             logger.log(Level.WARNING,
-                    "Character {0} does not exist in PhysicsSpace, cannot remove.", node);
+                    "Character {0} does not exist in PhysicsSpace, cannot remove.",
+                    node);
             return;
         }
         physicsCharacters.remove(node.getObjectId());
-        logger.log(Level.FINE, "Removing character {0} from physics space.", Long.toHexString(node.getObjectId()));
+        logger.log(Level.FINE, "Removing character {0} from physics space.",
+                Long.toHexString(node.getObjectId()));
         removeAction(physicsSpaceId, node.getControllerId());
         removeCharacterObject(physicsSpaceId, node.getObjectId());
     }
@@ -573,7 +593,9 @@ public class PhysicsSpace {
      */
     private void addRigidBody(PhysicsRigidBody node) {
         if (physicsBodies.containsKey(node.getObjectId())) {
-            logger.log(Level.WARNING, "RigidBody {0} already exists in PhysicsSpace, cannot add.", node);
+            logger.log(Level.WARNING,
+                    "RigidBody {0} already exists in PhysicsSpace, cannot add.",
+                    node);
             return;
         }
         physicsBodies.put(node.getObjectId(), node);
@@ -591,9 +613,11 @@ public class PhysicsSpace {
             node.setKinematic(true);
         }
 
-        logger.log(Level.FINE, "Adding RigidBody {0} to physics space.", node.getObjectId());
+        logger.log(Level.FINE, "Adding RigidBody {0} to physics space.",
+                node.getObjectId());
         if (node instanceof PhysicsVehicle) {
-            logger.log(Level.FINE, "Adding vehicle constraint {0} to physics space.", Long.toHexString(((PhysicsVehicle) node).getVehicleId()));
+            logger.log(Level.FINE, "Adding vehicle constraint {0} to physics space.",
+                    Long.toHexString(((PhysicsVehicle) node).getVehicleId()));
             physicsVehicles.put(((PhysicsVehicle) node).getVehicleId(), (PhysicsVehicle) node);
             addVehicle(physicsSpaceId, ((PhysicsVehicle) node).getVehicleId());
         }
@@ -601,15 +625,19 @@ public class PhysicsSpace {
 
     private void removeRigidBody(PhysicsRigidBody node) {
         if (!physicsBodies.containsKey(node.getObjectId())) {
-            logger.log(Level.WARNING, "RigidBody {0} does not exist in PhysicsSpace, cannot remove.", node);
+            logger.log(Level.WARNING,
+                    "RigidBody {0} does not exist in PhysicsSpace, cannot remove.", node);
             return;
         }
         if (node instanceof PhysicsVehicle) {
-            logger.log(Level.FINE, "Removing vehicle constraint {0} from physics space.", Long.toHexString(((PhysicsVehicle) node).getVehicleId()));
+            logger.log(Level.FINE,
+                    "Removing vehicle constraint {0} from physics space.",
+                    Long.toHexString(((PhysicsVehicle) node).getVehicleId()));
             physicsVehicles.remove(((PhysicsVehicle) node).getVehicleId());
             removeVehicle(physicsSpaceId, ((PhysicsVehicle) node).getVehicleId());
         }
-        logger.log(Level.FINE, "Removing RigidBody {0} from physics space.", Long.toHexString(node.getObjectId()));
+        logger.log(Level.FINE, "Removing RigidBody {0} from physics space.",
+                Long.toHexString(node.getObjectId()));
         physicsBodies.remove(node.getObjectId());
         removeRigidBody(physicsSpaceId, node.getObjectId());
     }
@@ -619,37 +647,71 @@ public class PhysicsSpace {
             logger.log(Level.WARNING, "Joint {0} already exists in PhysicsSpace, cannot add.", joint);
             return;
         }
-        logger.log(Level.FINE, "Adding Joint {0} to physics space.", Long.toHexString(joint.getObjectId()));
+        logger.log(Level.FINE, "Adding Joint {0} to physics space.",
+                Long.toHexString(joint.getObjectId()));
         physicsJoints.put(joint.getObjectId(), joint);
         addConstraintC(physicsSpaceId, joint.getObjectId(), !joint.isCollisionBetweenLinkedBodys());
     }
 
     private void removeJoint(PhysicsJoint joint) {
         if (!physicsJoints.containsKey(joint.getObjectId())) {
-            logger.log(Level.WARNING, "Joint {0} does not exist in PhysicsSpace, cannot remove.", joint);
+            logger.log(Level.WARNING,
+                    "Joint {0} does not exist in PhysicsSpace, cannot remove.",
+                    joint);
             return;
         }
-        logger.log(Level.FINE, "Removing Joint {0} from physics space.", Long.toHexString(joint.getObjectId()));
+        logger.log(Level.FINE, "Removing Joint {0} from physics space.",
+                Long.toHexString(joint.getObjectId()));
         physicsJoints.remove(joint.getObjectId());
         removeConstraint(physicsSpaceId, joint.getObjectId());
     }
 
+    /**
+     * Copy the list of rigid bodies that have been added to this space and not
+     * yet removed.
+     *
+     * @return a new list (not null)
+     */
     public Collection<PhysicsRigidBody> getRigidBodyList() {
         return new LinkedList<>(physicsBodies.values());
     }
 
+    /**
+     * Copy the list of ghost objects that have been added to this space and not
+     * yet removed.
+     *
+     * @return a new list (not null)
+     */
     public Collection<PhysicsGhostObject> getGhostObjectList() {
         return new LinkedList<>(physicsGhostObjects.values());
     }
 
+    /**
+     * Copy the list of physics characters that have been added to this space
+     * and not yet removed.
+     *
+     * @return a new list (not null)
+     */
     public Collection<PhysicsCharacter> getCharacterList() {
         return new LinkedList<>(physicsCharacters.values());
     }
 
+    /**
+     * Copy the list of physics joints that have been added to this space and
+     * not yet removed.
+     *
+     * @return a new list (not null)
+     */
     public Collection<PhysicsJoint> getJointList() {
         return new LinkedList<>(physicsJoints.values());
     }
 
+    /**
+     * Copy the list of physics vehicles that have been added to this space and
+     * not yet removed.
+     *
+     * @return a new list (not null)
+     */
     public Collection<PhysicsVehicle> getVehicleList() {
         return new LinkedList<>(physicsVehicles.values());
     }
@@ -812,22 +874,22 @@ public class PhysicsSpace {
     }
 
     /**
-     * Sets m_flags for raytest, see
+     * Alters the m_flags used in ray tests. see
      * https://code.google.com/p/bullet/source/browse/trunk/src/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h
      * for possible options. Defaults to using the faster, approximate raytest.
      *
-     * @param flags which flags to set
+     * @param flags which flags to use (default=0x4)
      */
     public void setRayTestFlags(int flags) {
         rayTestFlags = flags;
     }
 
     /**
-     * Gets m_flags for raytest, see
+     * Reads m_flags used in ray tests. see
      * https://code.google.com/p/bullet/source/browse/trunk/src/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h
      * for possible options.
      *
-     * @return rayTestFlags
+     * @return which flags are used
      */
     public int getRayTestFlags() {
         return rayTestFlags;
@@ -872,6 +934,7 @@ public class PhysicsSpace {
             List<PhysicsRayTestResult> results) {
         results.clear();
         rayTest_native(from, to, physicsSpaceId, results, rayTestFlags);
+
         return results;
     }
 
@@ -879,16 +942,16 @@ public class PhysicsSpace {
             long physicsSpaceId, List<PhysicsRayTestResult> results, int flags);
 
     /**
-     * Performs a sweep collision test and returns the results as a list of
-     * PhysicsSweepTestResults
+     * Perform a sweep-collision test and return the results as a new list.
+     * <p>
+     * The start and end must be at least 0.4f units apart.
+     * <p>
+     * A sweep test will miss a collision if it starts inside an object and
+     * sweeps away from the object's center.
      *
-     * You have to use different Transforms for start and end (at least distance
-     * &gt; 0.4f). SweepTest will not see a collision if it starts INSIDE an
-     * object and is moving AWAY from its center.
-     *
-     * @param shape the shape to use
-     * @param start the starting transform
-     * @param end the ending transform
+     * @param shape the shape to use (not null)
+     * @param start the starting transform (not null)
+     * @param end the ending transform (not null)
      * @return a new list of results
      */
     public List<PhysicsSweepTestResult> sweepTest(CollisionShape shape,
@@ -898,6 +961,20 @@ public class PhysicsSpace {
         return results;
     }
 
+    /**
+     * Perform a sweep-collision test and store the results in an existing list.
+     * <p>
+     * The start and end must be at least 0.4f units apart.
+     * <p>
+     * A sweep test will miss a collision if it starts inside an object and
+     * sweeps away from the object's center.
+     *
+     * @param shape the shape to use (not null)
+     * @param start the starting transform (not null)
+     * @param end the ending transform (not null)
+     * @param results the list to hold results (not null, modified)
+     * @return results
+     */
     public List<PhysicsSweepTestResult> sweepTest(CollisionShape shape,
             Transform start, Transform end,
             List<PhysicsSweepTestResult> results) {
@@ -909,16 +986,16 @@ public class PhysicsSpace {
             List<PhysicsSweepTestResult> results, float allowedCcdPenetration);
 
     /**
-     * Performs a sweep collision test and returns the results as a list of
-     * PhysicsSweepTestResults
+     * Perform a sweep-collision test and store the results in an existing list.
      * <p>
-     * You have to use different Transforms for start and end (at least distance
-     * &gt; allowedCcdPenetration). SweepTest will not see a collision if it
-     * starts INSIDE an object and is moving AWAY from its center.
+     * The start and end must be at least 0.4f units apart.
+     * <p>
+     * A sweep test will miss a collision if it starts inside an object and
+     * sweeps away from the object's center.
      *
-     * @param shape the shape to use
-     * @param start the starting transform
-     * @param end the ending transform
+     * @param shape the shape to use (not null)
+     * @param start the starting transform (not null)
+     * @param end the ending transform (not null)
      * @param results the list to hold results (not null, modified)
      * @param allowedCcdPenetration true&rarr;allow, false&rarr;disallow
      * @return results
@@ -929,6 +1006,7 @@ public class PhysicsSpace {
         results.clear();
         sweepTest_native(shape.getObjectId(), start, end, physicsSpaceId,
                 results, allowedCcdPenetration);
+
         return results;
     }
 
@@ -949,12 +1027,13 @@ public class PhysicsSpace {
         return physicsSpaceId;
     }
 
+    /**
+     * Read the broadphase collision-detection algorithm that is in use.
+     *
+     * @return an enum value (not null)
+     */
     public BroadphaseType getBroadphaseType() {
         return broadphaseType;
-    }
-
-    public void setBroadphaseType(BroadphaseType broadphaseType) {
-        this.broadphaseType = broadphaseType;
     }
 
     /**
@@ -974,7 +1053,7 @@ public class PhysicsSpace {
      * that setting this value too high can cause the physics to drive down its
      * own fps in case it's overloaded.
      *
-     * @param steps The maximum number of extra steps, default is 4.
+     * @param steps the maximum number of extra steps (default=4)
      */
     public void setMaxSubSteps(int steps) {
         maxSubSteps = steps;
@@ -1071,7 +1150,7 @@ public class PhysicsSpace {
     public static native void initNativePhysics();
 
     /**
-     * Enumerate Broadphase collision-detection algorithms.
+     * Enumerate broadphase collision-detection algorithms.
      */
     public enum BroadphaseType {
         /**
