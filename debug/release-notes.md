@@ -1,6 +1,6 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.9.1 released on TBD
+## Version 0.9.1 released on 3 September 2018
 
  + Added a describeScale(Vector3f) method to the Describer class.
  + Based on version 2.8 of the heart library.
