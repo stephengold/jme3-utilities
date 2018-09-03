@@ -66,6 +66,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * <strong>This control is still a WIP, use it at your own risk</strong><br> To
@@ -197,24 +198,46 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     }
 
     /**
-     * construct a KinematicRagdollControl
+     * Instantiate an enabled control.
      */
     public KinematicRagdollControl() {
-        baseRigidBody = new PhysicsRigidBody(new BoxCollisionShape(Vector3f.UNIT_XYZ.mult(0.1f)), 1);
+        baseRigidBody = new PhysicsRigidBody(
+                new BoxCollisionShape(Vector3f.UNIT_XYZ.mult(0.1f)), 1f);
         baseRigidBody.setKinematic(mode == Mode.Kinematic);
     }
 
+    /**
+     * Instantiate an enabled control with the specified weight threshold.
+     *
+     * @param weightThreshold (&gt;0, &lt;1)
+     */
     public KinematicRagdollControl(float weightThreshold) {
         this();
+        Validate.fraction(weightThreshold, "weight threshold");
         this.weightThreshold = weightThreshold;
     }
 
-    public KinematicRagdollControl(RagdollPreset preset, float weightThreshold) {
+    /**
+     * Instantiate an enabled control with the specified preset and weight
+     * threshold.
+     *
+     * @param preset (not null)
+     * @param weightThreshold (&gt;0, &lt;1)
+     */
+    public KinematicRagdollControl(RagdollPreset preset,
+            float weightThreshold) {
         this();
+        Validate.fraction(weightThreshold, "weight threshold");
+        
         this.preset = preset;
         this.weightThreshold = weightThreshold;
     }
 
+    /**
+     * Instantiate an enabled control with the specified preset.
+     *
+     * @param preset (not null)
+     */
     public KinematicRagdollControl(RagdollPreset preset) {
         this();
         this.preset = preset;

@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * This class replaces the deprecated CharacterControl class.
@@ -139,21 +140,27 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Create a new character with the specified properties. Note that to avoid
-     * issues the final height when ducking should be larger than 2x radius. The
-     * jumpForce will be set to an upwards force of 5x mass.
+     * Instantiate an enabled control with the specified properties.
+     * <p>
+     * The final height when ducking must be larger than 2x radius. The
+     * jumpForce will be set to an upward force of 5x mass.
      *
-     * @param radius the radius of the character's collision shape
+     * @param radius the radius of the character's collision shape (&gt;0)
      * @param height the height of the character's collision shape
-     * @param mass the mass of the character
+     * (&gt;2*radius)
+     * @param mass the mass of the character (&ge;0)
      */
     public BetterCharacterControl(float radius, float height, float mass) {
+        Validate.positive(radius, "radius");
+        assert height > 2f * radius : height;
+        Validate.positive(mass, "mass");
+
         this.radius = radius;
         this.height = height;
         this.mass = mass;
         rigidBody = new PhysicsRigidBody(getShape(), mass);
-        jumpForce = new Vector3f(0, mass * 5, 0);
-        rigidBody.setAngularFactor(0);
+        jumpForce = new Vector3f(0f, mass * 5f, 0f);
+        rigidBody.setAngularFactor(0f);
     }
 
     /**
@@ -614,7 +621,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl
      * @param worldUpVector The up vector to use, the result direction will be
      * perpendicular to this
      */
-    protected final void calculateNewForward(Quaternion rotation, Vector3f direction, Vector3f worldUpVector) {
+    protected final void calculateNewForward(Quaternion rotation,
+            Vector3f direction, Vector3f worldUpVector) {
         if (direction == null) {
             return;
         }
@@ -629,13 +637,15 @@ public class BetterCharacterControl extends AbstractPhysicsControl
             } else {
                 newLeft.set(0f, direction.z, -direction.y).normalizeLocal();
             }
-            logger.log(Level.INFO, "Zero left for direction {0}, up {1}", new Object[]{direction, worldUpVector});
+            logger.log(Level.INFO, "Zero left for direction {0}, up {1}",
+                    new Object[]{direction, worldUpVector});
         }
         newLeftNegate.set(newLeft).negateLocal();
         direction.set(worldUpVector).crossLocal(newLeftNegate).normalizeLocal();
         if (direction.equals(Vector3f.ZERO)) {
             direction.set(Vector3f.UNIT_Z);
-            logger.log(Level.INFO, "Zero left for left {0}, up {1}", new Object[]{newLeft, worldUpVector});
+            logger.log(Level.INFO, "Zero left for left {0}, up {1}",
+                    new Object[]{newLeft, worldUpVector});
         }
         if (rotation != null) {
             rotation.fromAxes(newLeft, worldUpVector, direction);
