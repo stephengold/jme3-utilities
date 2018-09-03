@@ -146,7 +146,7 @@ public class PhysicsSpace {
      */
     private float accuracy = 1f / 60f;
     /**
-     * maximum number of extra steps per frame (&ge;0)
+     * maximum number of physics steps per frame (&ge;0)
      */
     private int maxSubSteps = 4;
     /**
@@ -299,14 +299,16 @@ public class PhysicsSpace {
     }
 
     /**
-     * Update this space, simulating at most the specified number of steps.
+     * Simulate for the specified time interval, using no more than the
+     * specified number of steps.
      *
-     * @param time time-per-frame multiplied by speed (in seconds, &ge;0)
-     * @param maxSteps maximum number of steps to simulate (&ge;0)
+     * @param time the time interval (in seconds, &ge;0)
+     * @param maxSteps the maximum number of steps (&ge;1)
      */
     private void update(float time, int maxSteps) {
         assert time >= 0f : time;
-        assert maxSteps >= 0 : maxSteps;
+        assert maxSteps >= 1 : maxSteps;
+        assert accuracy > 0f : accuracy;
 
         stepSimulation(physicsSpaceId, time, maxSteps, accuracy);
     }
@@ -1037,25 +1039,28 @@ public class PhysicsSpace {
     }
 
     /**
-     * Read the maximum number of extra steps.
+     * Read the maximum number of steps per frame.
      *
-     * @return number of steps
+     * @return number of steps (&ge;1)
      */
     public int maxSubSteps() {
+        assert maxSubSteps >= 1 : maxSubSteps;
         return maxSubSteps;
     }
 
     /**
-     * Set the maximum number of extra steps that will be used when the render
-     * fps is below the physics fps. Doing this maintains determinism in
-     * physics. For example a maximum number of 2 can compensate for framerates
-     * as low as 30fps when the physics has the default accuracy of 60 fps. Note
-     * that setting this value too high can cause the physics to drive down its
-     * own fps in case it's overloaded.
+     * Alter the maximum number of physics steps per frame.
+     * <p>
+     * Extra physics steps help maintain determinism when the render fps drops
+     * below 1/accuracy. For example a value of 2 can compensate for frame rates
+     * as low as 30fps, assuming the physics has an accuracy of 1/60 sec.
+     * <p>
+     * Setting this value too high depress the frame rate.
      *
-     * @param steps the maximum number of extra steps (default=4)
+     * @param steps the maximum number of steps per frame (&ge;1, default=4)
      */
     public void setMaxSubSteps(int steps) {
+        Validate.positive(steps, "steps");
         maxSubSteps = steps;
     }
 
