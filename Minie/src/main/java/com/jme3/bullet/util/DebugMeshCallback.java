@@ -51,11 +51,22 @@ public class DebugMeshCallback {
 
     final private ArrayList<Vector3f> list = new ArrayList<>();
 
-    public void addVector(float x, float y, float z, int part, int index) {
+    /**
+     * Add a vertex to the mesh under construction.
+     * <p>
+     * This method is invoked from native code.
+     *
+     * @param x local X coordinate of new vertex
+     * @param y local Y coordinate of new vertex
+     * @param z local Z coordinate of new vertex
+     * @param part ignored
+     * @param index ignored
+     */
+    private void addVector(float x, float y, float z, int part, int index) {
         list.add(new Vector3f(x, y, z));
     }
 
-    public FloatBuffer getVertices() {
+    FloatBuffer getVertices() {
         FloatBuffer buf = BufferUtils.createFloatBuffer(list.size() * 3);
         for (int i = 0; i < list.size(); i++) {
             Vector3f vector3f = list.get(i);
@@ -63,6 +74,7 @@ public class DebugMeshCallback {
             buf.put(vector3f.y);
             buf.put(vector3f.z);
         }
+
         return buf;
     }
 }

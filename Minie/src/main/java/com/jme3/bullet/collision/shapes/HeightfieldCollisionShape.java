@@ -31,6 +31,7 @@
  */
 package com.jme3.bullet.collision.shapes;
 
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -77,6 +78,10 @@ public class HeightfieldCollisionShape extends CollisionShape {
     private ByteBuffer bbuf;
 //    protected FloatBuffer fbuf;
 
+    /**
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
+     * directly!
+     */
     public HeightfieldCollisionShape() {
     }
 
@@ -88,9 +93,10 @@ public class HeightfieldCollisionShape extends CollisionShape {
         createCollisionHeightfield(heightmap, scale);
     }
 
-    protected void createCollisionHeightfield(float[] heightmap, Vector3f worldScale) {
+    private void createCollisionHeightfield(float[] heightmap,
+            Vector3f worldScale) {
         this.scale.set(worldScale);
-        this.heightScale = 1;//don't change away from 1, we use worldScale instead to scale
+        this.heightScale = 1f; //keep at 1; we use worldScale instead to scale
 
         this.heightfieldData = heightmap;
 
@@ -119,7 +125,7 @@ public class HeightfieldCollisionShape extends CollisionShape {
         this.minHeight = min;
         this.maxHeight = max;
 
-        this.upAxis = 1;
+        this.upAxis = PhysicsSpace.AXIS_Y;
         this.flipQuadEdges = false;
 
         heightStickWidth = (int) FastMath.sqrt(heightfieldData.length);
@@ -141,13 +147,16 @@ public class HeightfieldCollisionShape extends CollisionShape {
             bbuf.putFloat(f);
         }
 //        fbuf.rewind();
-        objectId = createShape(heightStickWidth, heightStickLength, bbuf, heightScale, minHeight, maxHeight, upAxis, flipQuadEdges);
+        objectId = createShape(heightStickWidth, heightStickLength, bbuf,
+                heightScale, minHeight, maxHeight, upAxis, flipQuadEdges);
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
         setScale(scale);
         setMargin(margin);
     }
 
-    private native long createShape(int heightStickWidth, int heightStickLength, ByteBuffer heightfieldData, float heightScale, float minHeight, float maxHeight, int upAxis, boolean flipQuadEdges);
+    private native long createShape(int heightStickWidth, int heightStickLength,
+            ByteBuffer heightfieldData, float heightScale, float minHeight,
+            float maxHeight, int upAxis, boolean flipQuadEdges);
 
     public Mesh createJmeMesh() {
         //TODO return Converter.convert(bulletMesh);
@@ -190,7 +199,8 @@ public class HeightfieldCollisionShape extends CollisionShape {
         minHeight = capsule.readFloat("minHeight", 0);
         maxHeight = capsule.readFloat("maxHeight", 0);
         upAxis = capsule.readInt("upAxis", 1);
-        heightfieldData = capsule.readFloatArray("heightfieldData", new float[0]);
+        heightfieldData = capsule.readFloatArray("heightfieldData",
+                new float[0]);
         flipQuadEdges = capsule.readBoolean("flipQuadEdges", false);
         createShape();
     }

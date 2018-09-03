@@ -40,7 +40,8 @@ import java.util.logging.Logger;
 
 /**
  * The abstract base class for physics joints (such as ConeJoint, HingeJoint,
- * and SixDofJoint) used to connect two rigid bodies in the same physics space.
+ * and SixDofJoint) used to connect two dynamic rigid bodies in the same physics
+ * space.
  *
  * @author normenhansen
  */
@@ -53,10 +54,10 @@ public abstract class PhysicsJoint implements Savable {
             = Logger.getLogger(PhysicsJoint.class.getName());
 
     /**
-     * Identifier of the Bullet constraint. Constructors are expected to set
-     * this to a non-zero value.
+     * Unique identifier of the Bullet constraint. Constructors are responsible
+     * for setting this to a non-zero value. After that, the id never changes.
      */
-    protected long objectId = 0;
+    protected long objectId = 0L;
     /**
      * one of the connected rigid bodies
      */
@@ -86,20 +87,25 @@ public abstract class PhysicsJoint implements Savable {
     }
 
     /**
-     * Create a PhysicsJoint. To be effective, the joint must be added to a
-     * physics space.
+     * Create a PhysicsJoint. To be effective, the joint must be added to the
+     * physics space of the two bodies. Also, the bodies must be dynamic and
+     * distinct.
      *
-     * @param nodeA the 1st body connected by the joint (not null, alias
-     * created)
-     * @param nodeB the 2nd body connected by the joint (not null, alias
-     * created)
+     * @param nodeA the 1st body connected by the joint (not null, mass&gt;0,
+     * alias created)
+     * @param nodeB the 2nd body connected by the joint (not null, mass&gt;0,
+     * alias created)
      * @param pivotA local offset of the joint connection point in node A (not
      * null, alias created)
      * @param pivotB local offset of the joint connection point in node B (not
      * null, alias created)
      */
-    public PhysicsJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
+    protected PhysicsJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB) {
+        assert nodeA != nodeB;
+        assert nodeA.getMass() > 0f;
+        assert nodeB.getMass() > 0f;
+
         this.nodeA = nodeA;
         this.nodeB = nodeB;
         this.pivotA = pivotA;
@@ -115,9 +121,12 @@ public abstract class PhysicsJoint implements Savable {
     private native float getAppliedImpulse(long objectId);
 
     /**
-     * @return unique constraint id
+     * Read the id of the Bullet constraint.
+     *
+     * @return the unique identifier (not zero)
      */
     public long getObjectId() {
+        assert objectId != 0L;
         return objectId;
     }
 

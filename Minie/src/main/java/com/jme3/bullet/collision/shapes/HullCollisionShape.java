@@ -106,7 +106,6 @@ public class HullCollisionShape extends CollisionShape {
             this.points = getPoints(mesh);
         } else {
             this.points = capsule.readFloatArray("points", null);
-
         }
         createShape();
     }
@@ -114,7 +113,7 @@ public class HullCollisionShape extends CollisionShape {
     /**
      * Create the configured shape in Bullet.
      */
-    protected void createShape() {
+    private void createShape() {
         ByteBuffer bbuf = BufferUtils.createByteBuffer(points.length * 4);
         for (int i = 0; i < points.length; i++) {
             float f = points[i];
@@ -139,6 +138,7 @@ public class HullCollisionShape extends CollisionShape {
             pointsArray[i + 1] = vertices.get();
             pointsArray[i + 2] = vertices.get();
         }
+
         return pointsArray;
     }
 }
