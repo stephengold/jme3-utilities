@@ -91,10 +91,10 @@ public abstract class PhysicsJoint implements Savable {
      * physics space of the two bodies. Also, the bodies must be dynamic and
      * distinct.
      *
-     * @param nodeA the 1st body connected by the joint (not null, mass&gt;0,
-     * alias created)
-     * @param nodeB the 2nd body connected by the joint (not null, mass&gt;0,
-     * alias created)
+     * @param nodeA the 1st body connected by the joint (not null, alias
+     * created)
+     * @param nodeB the 2nd body connected by the joint (not null, alias
+     * created)
      * @param pivotA local offset of the joint connection point in node A (not
      * null, alias created)
      * @param pivotB local offset of the joint connection point in node B (not
@@ -103,8 +103,6 @@ public abstract class PhysicsJoint implements Savable {
     protected PhysicsJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB) {
         assert nodeA != nodeB;
-        assert nodeA.getMass() > 0f;
-        assert nodeB.getMass() > 0f;
 
         this.nodeA = nodeA;
         this.nodeB = nodeB;
