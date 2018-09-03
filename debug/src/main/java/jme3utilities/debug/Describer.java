@@ -438,18 +438,32 @@ public class Describer {
      */
     public String describeScale(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
+
+        Vector3f worldScale = MySpatial.getWorldScale(spatial);
+        String result = describeScale(worldScale);
+
+        return result;
+    }
+
+    /**
+     * Generate a textual description of the specified scale vector.
+     *
+     * @param vector the vector to describe (not null, unaffected)
+     * @return a description (not null, may be empty)
+     */
+    public String describeScale(Vector3f vector) {
+        Validate.nonNull(vector, "vector");
         StringBuilder result = new StringBuilder(30);
 
-        Vector3f scale = MySpatial.getWorldScale(spatial);
-        if (!MyVector3f.isScaleUniform(scale)) {
+        if (!MyVector3f.isScaleUniform(vector)) {
             result.append("scale=");
-            result.append(scale);
-        } else if (!MyVector3f.isScaleIdentity(scale)) {
+            result.append(vector);
+        } else if (!MyVector3f.isScaleIdentity(vector)) {
             /*
              * uniform scaling
              */
             result.append("scale=");
-            result.append(scale.x);
+            result.append(vector.x);
         }
 
         return result.toString();

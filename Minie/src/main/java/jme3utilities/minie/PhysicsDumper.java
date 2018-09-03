@@ -43,7 +43,6 @@ import java.util.logging.Logger;
 import jme3utilities.debug.Describer;
 import jme3utilities.debug.Dumper;
 import jme3utilities.math.MyQuaternion;
-import jme3utilities.math.MyVector3f;
 
 /**
  * Dump portions of a jME3 scene graph for debugging.
@@ -194,15 +193,9 @@ public class PhysicsDumper extends Dumper {
         stream.printf("%n   shape=%s", desc);
 
         Vector3f scale = shape.getScale();
-        if (!MyVector3f.isScaleUniform(scale)) {
-            stream.print(" scale=");
-            stream.print(scale);
-        } else if (!MyVector3f.isScaleIdentity(scale)) {
-            /*
-             * uniform scaling
-             */
-            stream.print(" scale=");
-            stream.print(scale.x);
+        desc = describer.describeScale(scale);
+        if (!desc.isEmpty()) {
+            stream.print(" " + desc);
         }
 
         List<PhysicsJoint> joints = body.getJoints();
