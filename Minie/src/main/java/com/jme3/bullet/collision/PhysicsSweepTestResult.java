@@ -47,53 +47,63 @@ public class PhysicsSweepTestResult {
     final private static Logger logger
             = Logger.getLogger(PhysicsSweepTestResult.class.getName());
 
+    /**
+     * collision object that was hit
+     */
     private PhysicsCollisionObject collisionObject;
+    /**
+     * normal vector at the point of contact
+     */
     private Vector3f hitNormalLocal;
+    /**
+     * fraction of the way between the transforms (from=0, to=1, &ge;0, &le;1)
+     */
     private float hitFraction;
+    /**
+     * true&rarr;need to transform normal into world space
+     */
     private boolean normalInWorldSpace;
 
-    public PhysicsSweepTestResult() {
-    }
-
-    public PhysicsSweepTestResult(PhysicsCollisionObject collisionObject, Vector3f hitNormalLocal, float hitFraction, boolean normalInWorldSpace) {
-        this.collisionObject = collisionObject;
-        this.hitNormalLocal = hitNormalLocal;
-        this.hitFraction = hitFraction;
-        this.normalInWorldSpace = normalInWorldSpace;
+    /**
+     * A private constructor to inhibit instantiation of this class by Java.
+     * These results are instantiated exclusively by native code.
+     */
+    private PhysicsSweepTestResult() {
     }
 
     /**
-     * @return the collisionObject
+     * Access the collision object that was hit.
+     *
+     * @return the pre-existing instance
      */
     public PhysicsCollisionObject getCollisionObject() {
         return collisionObject;
     }
 
     /**
-     * @return the hitNormalLocal
+     * Access the normal vector at the point of contact.
+     *
+     * @return the pre-existing vector
      */
     public Vector3f getHitNormalLocal() {
         return hitNormalLocal;
     }
 
     /**
-     * @return the hitFraction
+     * Read the hit fraction.
+     *
+     * @return fraction (from=0, to=1, &ge;0, &le;1)
      */
     public float getHitFraction() {
         return hitFraction;
     }
 
     /**
-     * @return the normalInWorldSpace
+     * Test whether the normal is in world space.
+     *
+     * @return true if in world space, otherwise false
      */
     public boolean isNormalInWorldSpace() {
         return normalInWorldSpace;
-    }
-
-    public void fill(PhysicsCollisionObject collisionObject, Vector3f hitNormalLocal, float hitFraction, boolean normalInWorldSpace) {
-        this.collisionObject = collisionObject;
-        this.hitNormalLocal = hitNormalLocal;
-        this.hitFraction = hitFraction;
-        this.normalInWorldSpace = normalInWorldSpace;
     }
 }
