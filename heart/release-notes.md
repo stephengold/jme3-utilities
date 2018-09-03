@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.8.0 released on TBD
+## Version 2.8.0 released on 3 September 2018
 
  + Added an isScaleUniform() method to the MyVector3f class
  + Added 2 nonZero() methods and a nonNegative() method to the Validate class
