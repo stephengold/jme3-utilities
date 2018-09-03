@@ -199,22 +199,6 @@ public class MyControlP {
     }
 
     /**
-     * Read a spatial's mass.
-     *
-     * @param spatial which spatial to measure (not null, unaffected)
-     * @return mass (&gt;0) or zero for a static object
-     */
-    public static float getMass(Spatial spatial) {
-        Validate.nonNull(spatial, "spatial");
-
-        RigidBodyControl rigidBodyControl = findEnabledRbc(spatial);
-        float mass = rigidBodyControl.getMass();
-
-        assert mass >= 0f : mass;
-        return mass;
-    }
-
-    /**
      * Test whether the specified SGC applies physics coordinates to its
      * spatial's local translation.
      *
@@ -279,6 +263,22 @@ public class MyControlP {
         boolean result = rigidBodyControl != null;
 
         return result;
+    }
+
+    /**
+     * Read a spatial's mass.
+     *
+     * @param spatial which spatial to measure (not null, unaffected)
+     * @return mass (&gt;0) or zero for a static object
+     */
+    public static float mass(Spatial spatial) {
+        Validate.nonNull(spatial, "spatial");
+
+        RigidBodyControl rigidBodyControl = findEnabledRbc(spatial);
+        float mass = rigidBodyControl.getMass();
+
+        assert mass >= 0f : mass;
+        return mass;
     }
 
     /**
