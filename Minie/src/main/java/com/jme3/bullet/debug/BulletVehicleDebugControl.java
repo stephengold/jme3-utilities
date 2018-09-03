@@ -58,16 +58,16 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
     final private static Logger logger
             = Logger.getLogger(BulletVehicleDebugControl.class.getName());
 
-    final private PhysicsVehicle body;
+    final private PhysicsVehicle body; // TODO rename
     final private Node suspensionNode;
     final private Vector3f location = new Vector3f();
     final private Quaternion rotation = new Quaternion();
 
     /**
-     * Instantiate a control to visualize the specified vehicle.
+     * Instantiate an enabled control to visualize the specified vehicle.
      *
      * @param debugAppState which app state (not null)
-     * @param body which vehicle to visualize (not null)
+     * @param body which vehicle to visualize (not null, alias created)
      */
     public BulletVehicleDebugControl(BulletDebugAppState debugAppState,
             PhysicsVehicle body) {

@@ -64,10 +64,10 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
     private Spatial geom;
 
     /**
-     * Instantiate a control to visualize the specified body.
+     * Instantiate an enabled control to visualize the specified body.
      *
      * @param debugAppState which app state (not null)
-     * @param body which body to visualize (not null)
+     * @param body which body to visualize (not null, alias created)
      */
     public BulletRigidBodyDebugControl(BulletDebugAppState debugAppState,
             PhysicsRigidBody body) {

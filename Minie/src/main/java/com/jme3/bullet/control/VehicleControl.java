@@ -91,7 +91,8 @@ public class VehicleControl extends PhysicsVehicle
     }
 
     /**
-     * Create a control with mass=1 and the specified collision shape.
+     * Instantiate an enabled control with mass=1 and the specified collision
+     * shape.
      *
      * @param shape the desired shape (not null, alias created)
      */
@@ -100,7 +101,7 @@ public class VehicleControl extends PhysicsVehicle
     }
 
     /**
-     * Create a control with the specified collision shape and mass.
+     * Instantiate an enabled with the specified collision shape and mass.
      *
      * @param shape the desired shape (not null, alias created)
      * @param mass (&gt;0)

@@ -57,17 +57,17 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
     final private static Logger logger
             = Logger.getLogger(BulletGhostObjectDebugControl.class.getName());
 
-    private final PhysicsGhostObject body;
+    private final PhysicsGhostObject body; // TODO rename
     private final Vector3f location = new Vector3f();
     private final Quaternion rotation = new Quaternion();
     final private CollisionShape myShape;
     private Spatial geom;
 
     /**
-     * Instantiate a control to visualize the specified object.
+     * Instantiate an enabled control to visualize the specified object.
      *
      * @param debugAppState which app state (not null)
-     * @param body which object to visualize (not null)
+     * @param body the object to visualize (not null, alias created)
      */
     public BulletGhostObjectDebugControl(BulletDebugAppState debugAppState,
             PhysicsGhostObject body) {

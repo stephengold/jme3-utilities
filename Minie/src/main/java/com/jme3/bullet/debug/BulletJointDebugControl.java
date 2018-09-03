@@ -57,7 +57,7 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
     final private static Logger logger
             = Logger.getLogger(BulletJointDebugControl.class.getName());
 
-    final private PhysicsJoint body;
+    final private PhysicsJoint body; // TODO rename
     final private Geometry geomA;
     final private Arrow arrowA;
     final private Geometry geomB;
@@ -65,6 +65,12 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
     final private Transform a = new Transform();
     final private Transform b = new Transform();
 
+    /**
+     * Instantiate an enabled control to visualize the specified joint.
+     *
+     * @param debugAppState which app state (not null)
+     * @param body the joint to visualize (not null, alias created)
+     */
     public BulletJointDebugControl(BulletDebugAppState debugAppState,
             PhysicsJoint body) {
         super(debugAppState);

@@ -51,7 +51,7 @@ public abstract class AbstractPhysicsDebugControl extends AbstractControl {
     protected final BulletDebugAppState debugAppState;
 
     /**
-     * Instantiate a control to serve the specified debug app state.
+     * Instantiate an enabled control to serve the specified debug app state.
      *
      * @param debugAppState which app state (not null)
      */

@@ -57,12 +57,19 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
     final private static Logger logger
             = Logger.getLogger(BulletCharacterDebugControl.class.getName());
 
-    final private PhysicsCharacter body;
+    final private PhysicsCharacter body; // TODO rename
     final private Vector3f location = new Vector3f();
     final private CollisionShape myShape;
     private Spatial geom;
 
-    public BulletCharacterDebugControl(BulletDebugAppState debugAppState, PhysicsCharacter body) {
+    /**
+     * Instantiate an enabled control to visualize the specified character.
+     *
+     * @param debugAppState which app state (not null)
+     * @param body the character to visualize (not null, alias created)
+     */
+    public BulletCharacterDebugControl(BulletDebugAppState debugAppState,
+            PhysicsCharacter body) {
         super(debugAppState);
         this.body = body;
         myShape = body.getCollisionShape();

@@ -118,7 +118,8 @@ public class RigidBodyControl extends PhysicsRigidBody
     }
 
     /**
-     * Create a new control with mass=1 and the specified collision shape.
+     * Instantiate an enabled control with mass=1 and the specified collision
+     * shape.
      *
      * @param shape the desired shape (not null, alias created)
      */
@@ -127,7 +128,8 @@ public class RigidBodyControl extends PhysicsRigidBody
     }
 
     /**
-     * Create a new control with the specified collision shape and mass.
+     * Instantiate an enabled control with the specified collision shape and
+     * mass.
      *
      * @param shape the desired shape (not null, alias created)
      * @param mass the desired mass (&ge;0)
@@ -182,7 +184,7 @@ public class RigidBodyControl extends PhysicsRigidBody
         control.setPhysicsRotation(getPhysicsRotationMatrix(null));
         control.setRestitution(getRestitution());
 
-        if (mass > 0) {
+        if (mass > 0f) {
             control.setAngularVelocity(getAngularVelocity());
             control.setLinearVelocity(getLinearVelocity());
         }
