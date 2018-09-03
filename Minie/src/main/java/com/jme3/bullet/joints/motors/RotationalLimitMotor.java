@@ -48,42 +48,69 @@ public class RotationalLimitMotor {
             = Logger.getLogger(RotationalLimitMotor.class.getName());
 
     /**
-     * Identifier of the Bullet motor. The constructor sets this to a non-zero
-     * value.
+     * Unique identifier of the btRotationalLimitMotor. The constructor sets
+     * this to a non-zero value.
      */
-    private long motorId = 0;
+    private long motorId = 0L;
 
     /**
-     * Create a motor with the specified id.
+     * Create a motor for the identified btRotationalLimitMotor.
      *
-     * @param motor Bullet identified (not zero)
+     * @param motor the unique identifier (not zero)
      */
     public RotationalLimitMotor(long motor) {
+        assert motor != 0L;
         this.motorId = motor;
     }
 
+    /**
+     * Read the id of the btRotationalLimitMotor.
+     *
+     * @return the identifier of the btRotationalLimitMotor (not zero)
+     */
     public long getMotor() {
+        assert motorId != 0L;
         return motorId;
     }
 
+    /**
+     * Read this motor's constraint lower limit.
+     *
+     * @return the limit value
+     */
     public float getLoLimit() {
         return getLoLimit(motorId);
     }
 
     private native float getLoLimit(long motorId);
 
+    /**
+     * Alter the constraint lower limit.
+     *
+     * @param loLimit new limit value
+     */
     public void setLoLimit(float loLimit) {
         setLoLimit(motorId, loLimit);
     }
 
     private native void setLoLimit(long motorId, float loLimit);
 
+    /**
+     * Read this motor's constraint upper limit.
+     *
+     * @return the limit value
+     */
     public float getHiLimit() {
         return getHiLimit(motorId);
     }
 
     private native float getHiLimit(long motorId);
 
+    /**
+     * Alter the constraint upper limit.
+     *
+     * @param hiLimit new limit value
+     */
     public void setHiLimit(float hiLimit) {
         setHiLimit(motorId, hiLimit);
     }

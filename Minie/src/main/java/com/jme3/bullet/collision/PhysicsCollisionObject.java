@@ -55,10 +55,11 @@ public abstract class PhysicsCollisionObject implements Savable {
     final private static Logger logger
             = Logger.getLogger(PhysicsCollisionObject.class.getName());
     /**
-     * Bullet id for this object. Constructors are responsible for setting this
-     * to a non-zero value. The id might change if the object gets rebuilt.
+     * Unique identifier of the btCollisionObject. Constructors are responsible
+     * for setting this to a non-zero value. The id might change if the object
+     * gets rebuilt.
      */
-    protected long objectId = 0;
+    protected long objectId = 0L;
     /**
      * shape associated with this object (not null)
      */
@@ -237,6 +238,10 @@ public abstract class PhysicsCollisionObject implements Savable {
         return collideWithGroups;
     }
 
+    /**
+     * Store collision-group information in the btCollisionObject when building
+     * or rebuilding this object.
+     */
     protected void initUserPointer() {
         logger.log(Level.FINE, "initUserPointer() objectId = {0}",
                 Long.toHexString(objectId));
@@ -265,11 +270,12 @@ public abstract class PhysicsCollisionObject implements Savable {
     }
 
     /**
-     * Read the id of the corresponding btCollisionObject.
+     * Read the id of the btCollisionObject.
      *
-     * @return the id, or 0 if none
+     * @return the unique identifier (not zero)
      */
     public long getObjectId() {
+        assert objectId != 0L;
         return objectId;
     }
 

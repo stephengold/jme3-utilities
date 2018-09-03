@@ -53,10 +53,10 @@ public abstract class CollisionShape implements Savable {
             = Logger.getLogger(CollisionShape.class.getName());
 
     /**
-     * Bullet id for this shape. Constructors are responsible for setting this
-     * to a non-zero value. After that, the id never changes.
+     * Unique identifier of the Bullet shape. Constructors are responsible for
+     * setting this to a non-zero value. After that, the id never changes.
      */
-    protected long objectId = 0;
+    protected long objectId = 0L;
     /**
      * scaling factors: one for each local axis (default=1,1,1)
      */
@@ -74,19 +74,21 @@ public abstract class CollisionShape implements Savable {
     }
 
     /**
-     * Read the Bullet id of this shape.
+     * Read the id of the Bullet shape.
      *
-     * @return the id (not zero)
+     * @return the unique identifier (not zero)
      */
     public long getObjectId() {
+        assert objectId != 0L;
         return objectId;
     }
 
     /**
-     * Alter the scaling factors of this shape.
+     * Alter the scaling factors of this shape. CAUTION: Not all shapes can be
+     * scaled arbitrarily.
      * <p>
      * Note that if the shape is shared (between collision objects and/or
-     * compound shapes) changes can have unexpected consequences.
+     * compound shapes) changes can have unintended consequences.
      *
      * @param scale the desired scaling factor for each local axis (not null,
      * unaffected, default=1,1,1)
@@ -99,7 +101,7 @@ public abstract class CollisionShape implements Savable {
     /**
      * Access the scaling factors.
      *
-     * @return the pre-existing instance (not null)
+     * @return the pre-existing instance (not null) TODO
      */
     public Vector3f getScale() {
         return scale;
@@ -118,7 +120,10 @@ public abstract class CollisionShape implements Savable {
 
     /**
      * Alter the collision margin for this shape. Increasing the margin doesn't
-     * make the shape larger, but does off its corners.
+     * make the shape larger, but does round off its corners.
+     * <p>
+     * Note that if the shape is shared (between collision objects and/or
+     * compound shapes) changes can have unintended consequences.
      *
      * @param margin new value (in world units, &ge;0, default=0)
      */

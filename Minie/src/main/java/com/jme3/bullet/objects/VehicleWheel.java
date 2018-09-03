@@ -53,7 +53,7 @@ public class VehicleWheel implements Savable {
     final private static Logger logger
             = Logger.getLogger(VehicleWheel.class.getName());
 
-    private long wheelId = 0;
+    private long wheelId = 0L;
     private int wheelIndex = 0;
     private boolean frontWheel;
     private Vector3f location = new Vector3f();
@@ -73,6 +73,10 @@ public class VehicleWheel implements Savable {
     private Spatial wheelSpatial;
     final private Matrix3f tmp_Matrix = new com.jme3.math.Matrix3f();
     private final Quaternion tmp_inverseWorldRotation = new Quaternion();
+    /**
+     * true &rarr; physics coordinates match local transform, false &rarr;
+     * physics coordinates match world transform
+     */
     private boolean applyLocal = false;
 
     public VehicleWheel() {
@@ -126,7 +130,13 @@ public class VehicleWheel implements Savable {
         }
     }
 
+    /**
+     * Read the id of the btRaycastVehicle.
+     *
+     * @return the unique identifier (not zero)
+     */
     public long getWheelId() {
+        assert wheelId != 0L;
         return wheelId;
     }
 

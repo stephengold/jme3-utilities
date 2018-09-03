@@ -48,26 +48,28 @@ public class TranslationalLimitMotor {
     final private static Logger logger
             = Logger.getLogger(TranslationalLimitMotor.class.getName());
     /**
-     * Bullet identifier of the btTranslationalLimitMotor. The constructor sets
-     * this to a non-zero value.
+     * Unique identifier of the btTranslationalLimitMotor. The constructor sets
+     * this to a non-zero value. After that, the id never changes.
      */
-    private long motorId = 0;
+    private long motorId = 0L;
 
     /**
-     * Create an instance with the specified identifier.
+     * Create a motor for the identified btTranslationalLimitMotor.
      *
-     * @param motor the identifier of the btTranslationalLimitMotor (not zero)
+     * @param motor the unique identifier (not zero)
      */
     public TranslationalLimitMotor(long motor) {
+        assert motor != 0L;
         this.motorId = motor;
     }
 
     /**
-     * Read the Bullet identifier.
+     * Read the id of the btTranslationalLimitMotor.
      *
-     * @return the identifier of the btTranslationalLimitMotor (not zero)
+     * @return the unique identifier (not zero)
      */
     public long getMotor() {
+        assert motorId != 0L;
         return motorId;
     }
 
