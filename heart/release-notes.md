@@ -1,13 +1,18 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.8.0 released on TBD
+
+ + Added an isScaleUniform() method to the MyVector3f class
+ + Added 2 nonZero() methods and a nonNegative() method to the Validate class
+
 ## Version 2.7.0 released on 22 August 2018
 
- + Added getWorldScale() method to the MySpatial class
+ + Added a getWorldScale() method to the MySpatial class
  + Added support for VectorXZ in Misc.deepClone()
 
 ## Version 2.6.1 released on 21 August 2018
 
- + Fixed errors in 3 material definitions
+ + Fixed logic errors in 3 material definitions
  + Added support for Byte, Character, and String in Misc.deepClone()
 
 ## Version 2.6.0 released on 17 August 2018
