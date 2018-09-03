@@ -1,5 +1,10 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.9.1 released on TBD
+
+ + Added a describeScale(Vector3f) method to the Describer class.
+ + Based on version 2.8 of the heart library.
+
 ## Version 0.9.0 released on 22 August 2018
 
  + Replaced Dumper methods with Describer methods. (API change)
@@ -13,17 +18,17 @@
    (API change)
  + Added capability to describe depthWrite flag.
  + Generate shape textures programmatically.
- + Based on version 2.7 of heart library.
+ + Based on version 2.7 of the heart library.
 
 ## Version 0.8.10 released on 17 August 2018
 
  + Describe locations and directions of lights.
  + Added capability to describe and dump material-parameter overrides.
- + Based on version 2.6 of heart library.
+ + Based on version 2.6 of the heart library.
 
 ## Version 0.8.9 released on 24 July 2018
 
- + Based on version 2.5 of heart library.
+ + Based on version 2.5 of the heart library.
  + No longer need to setWireframe flag in visualizer render state.
 
 ## Version 0.8.8 released on 18 February 2018
@@ -32,7 +37,7 @@
 
 ## Version 0.8.7 released on 2 February 2018
 
- + Based on version 2.2 of heart library.
+ + Based on version 2.2 of the heart library.
 
 ## Version 0.8.6 released on 27 January 2018
 
