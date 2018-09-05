@@ -248,7 +248,7 @@ public abstract class PhysicsCollisionObject implements Savable {
         initUserPointer(objectId, collisionGroup, collideWithGroups);
     }
 
-    native void initUserPointer(long objectId, int group, int groups);
+    native private void initUserPointer(long objectId, int group, int groups);
 
     /**
      * Access the user object associated with this collision object.
@@ -279,11 +279,13 @@ public abstract class PhysicsCollisionObject implements Savable {
         return objectId;
     }
 
-    protected native void attachCollisionShape(long objectId, long collisionShapeId);
+    native protected void attachCollisionShape(long objectId,
+            long collisionShapeId);
 
-    native void setCollisionGroup(long objectId, int collisionGroup);
+    native private void setCollisionGroup(long objectId, int collisionGroup);
 
-    native void setCollideWithGroups(long objectId, int collisionGroups);
+    native private void setCollideWithGroups(long objectId,
+            int collisionGroups);
 
     /**
      * Serialize this object, for example when saving to a J3O file.
