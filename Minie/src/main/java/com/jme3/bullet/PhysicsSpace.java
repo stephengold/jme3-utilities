@@ -329,6 +329,13 @@ public class PhysicsSpace {
         }
     }
 
+    /**
+     * Enqueue a callable on the currently executing thread.
+     *
+     * @param <V>
+     * @param callable
+     * @return a new task (not null)
+     */
     public static <V> Future<V> enqueueOnThisThread(Callable<V> callable) {
         AppTask<V> task = new AppTask<>(callable);
         System.out.println("created apptask");

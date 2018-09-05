@@ -51,11 +51,23 @@ public class PhysicsCollisionEvent extends EventObject {
      */
     final private static Logger logger
             = Logger.getLogger(PhysicsCollisionEvent.class.getName());
-
+    /**
+     * type value to indicate a new event
+     */
     public static final int TYPE_ADDED = 0;
+    /**
+     * type value to indicate an event that has been added to a PhysicsSpace
+     * queue
+     */
     public static final int TYPE_PROCESSED = 1;
+    /**
+     * type value to indicate a cleaned/destroyed event
+     */
     public static final int TYPE_DESTROYED = 2;
-    private int type;
+    /**
+     * type value that indicates the event's status
+     */
+    private int type = TYPE_ADDED;
     /**
      * 1st involved object
      */
@@ -87,18 +99,18 @@ public class PhysicsCollisionEvent extends EventObject {
     }
 
     /**
-     * Destroy this event.
+     * Destroy this event. TODO remove
      */
     public void clean() {
         source = null;
-        this.type = 0;
+        this.type = TYPE_ADDED;
         this.nodeA = null;
         this.nodeB = null;
         this.manifoldPointObjectId = 0;
     }
 
     /**
-     * Reuse this event.
+     * Reuse this event. TODO unused - remove
      *
      * @param type event type (added/processed/destroyed)
      * @param source 1st involved object (alias created)
@@ -242,7 +254,8 @@ public class PhysicsCollisionEvent extends EventObject {
         return lateralFrictionDir1;
     }
 
-    private native void getLateralFrictionDir1(long manifoldPointObjectId, Vector3f lateralFrictionDir1);
+    private native void getLateralFrictionDir1(long manifoldPointObjectId,
+            Vector3f lateralFrictionDir1);
 
     public Vector3f getLateralFrictionDir2() {
         return getLateralFrictionDir2(new Vector3f());
@@ -253,13 +266,15 @@ public class PhysicsCollisionEvent extends EventObject {
         return lateralFrictionDir2;
     }
 
-    private native void getLateralFrictionDir2(long manifoldPointObjectId, Vector3f lateralFrictionDir2);
+    private native void getLateralFrictionDir2(long manifoldPointObjectId,
+            Vector3f lateralFrictionDir2);
 
     public boolean isLateralFrictionInitialized() {
         return isLateralFrictionInitialized(manifoldPointObjectId);
     }
 
-    private native boolean isLateralFrictionInitialized(long manifoldPointObjectId);
+    private native boolean isLateralFrictionInitialized(
+            long manifoldPointObjectId);
 
     public int getLifeTime() {
         return getLifeTime(manifoldPointObjectId);
@@ -332,9 +347,7 @@ public class PhysicsCollisionEvent extends EventObject {
         return positionWorldOnB;
     }
 
-    private native void getPositionWorldOnB(long manifoldPointObjectId, Vector3f positionWorldOnB);
+    private native void getPositionWorldOnB(long manifoldPointObjectId,
+            Vector3f positionWorldOnB);
 
-//    public Object getUserPersistentData() {
-//        return userPersistentData;
-//    }
 }

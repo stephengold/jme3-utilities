@@ -31,6 +31,7 @@
  */
 package com.jme3.bullet.objects;
 
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.export.InputCapsule;
@@ -91,17 +92,21 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     private void buildObject() {
         if (objectId == 0) {
             objectId = createGhostObject();
-            logger.log(Level.FINE, "Creating GhostObject {0}", Long.toHexString(objectId));
+            logger.log(Level.FINE, "Creating GhostObject {0}",
+                    Long.toHexString(objectId));
             initUserPointer();
         }
         setCharacterFlags(objectId);
         attachCollisionShape(objectId, collisionShape.getObjectId());
         if (characterId != 0) {
-            logger.log(Level.FINE, "Clearing Character {0}", Long.toHexString(objectId));
+            logger.log(Level.FINE, "Clearing Character {0}",
+                    Long.toHexString(objectId));
             finalizeNativeCharacter(characterId);
         }
-        characterId = createCharacterObject(objectId, collisionShape.getObjectId(), stepHeight);
-        logger.log(Level.FINE, "Creating Character {0}", Long.toHexString(characterId));
+        characterId = createCharacterObject(objectId,
+                collisionShape.getObjectId(), stepHeight);
+        logger.log(Level.FINE, "Creating Character {0}",
+                Long.toHexString(characterId));
     }
 
     private native long createGhostObject();
@@ -137,7 +142,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     private native void setWalkDirection(long characterId, Vector3f vec);
 
     /**
-     * @return the currently set walkDirection
+     * @return the pre-existing instance TODO
      */
     public Vector3f getWalkDirection() {
         return walkDirection;
@@ -150,18 +155,18 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     @Deprecated
     public void setUpAxis(int axis) {
         if (axis < 0) {
-            axis = 0;
+            axis = PhysicsSpace.AXIS_X;
         } else if (axis > 2) {
-            axis = 2;
+            axis = PhysicsSpace.AXIS_Z;
         }
         switch (axis) {
-            case 0:
+            case PhysicsSpace.AXIS_X:
                 setUp(Vector3f.UNIT_X);
                 break;
-            case 1:
+            case PhysicsSpace.AXIS_Y:
                 setUp(Vector3f.UNIT_Y);
                 break;
-            case 2:
+            case PhysicsSpace.AXIS_Z:
                 setUp(Vector3f.UNIT_Z);
         }
     }
@@ -169,7 +174,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Alter the "up" direction for this character.
      *
-     * @param axis desired direction (not null)
+     * @param axis desired direction (not null, not zero)
      */
     public void setUp(Vector3f axis) {
         setUp(characterId, axis);
