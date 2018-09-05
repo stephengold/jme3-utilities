@@ -37,7 +37,6 @@ import de.lessvoid.nifty.spi.render.RenderFont;
 
 public class RenderFontJme implements RenderFont {
 
-    private NiftyJmeDisplay display;
     private BitmapFont font;
     private BitmapText text;
     private float actualSize;
@@ -45,10 +44,9 @@ public class RenderFontJme implements RenderFont {
     /**
      * Initialize the font.
      * @param name font filename
-     * @param display which display to use (not null)
+     * @param display unused
      */
     public RenderFontJme(String name, NiftyJmeDisplay display) {
-        this.display = display;
         font = display.getAssetManager().loadFont(name);
         text = new BitmapText(font);
         actualSize = font.getPreferredSize();
