@@ -35,12 +35,14 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.util.EventObject;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * An event that describes a collision in the physics world.
  * <p>
  * Do not retain this Object, as it will be reused after the collision() method
- * returns. Copy any data you need during the collide() method.
+ * returns. Copy any data you need during the collide() method. TODO obviate
+ * this warning
  *
  * @author normenhansen
  */
@@ -92,6 +94,7 @@ public class PhysicsCollisionEvent extends EventObject {
     public PhysicsCollisionEvent(int type, PhysicsCollisionObject nodeA,
             PhysicsCollisionObject nodeB, long manifoldPointObjectId) {
         super(nodeA);
+
         this.type = type;
         this.nodeA = nodeA;
         this.nodeB = nodeB;
@@ -136,7 +139,7 @@ public class PhysicsCollisionEvent extends EventObject {
     }
 
     /**
-     * Access the user object of collision object A, provided it is a Spatial.
+     * Access the user object of collision object A, provided it's a Spatial.
      *
      * @return the pre-existing Spatial, or null if none
      */
@@ -148,7 +151,7 @@ public class PhysicsCollisionEvent extends EventObject {
     }
 
     /**
-     * Access the user object of collision object B, provided it is a Spatial.
+     * Access the user object of collision object B, provided it's a Spatial.
      *
      * @return the pre-existing Spatial, or null if none
      */
@@ -178,7 +181,7 @@ public class PhysicsCollisionEvent extends EventObject {
     }
 
     /**
-     * Read the applied impulse of this event.
+     * Read the collision's applied impulse.
      *
      * @return impulse
      */
@@ -189,7 +192,7 @@ public class PhysicsCollisionEvent extends EventObject {
     private native float getAppliedImpulse(long manifoldPointObjectId);
 
     /**
-     * Read the applied lateral impulse #1 of this event.
+     * Read the collision's applied lateral impulse #1.
      *
      * @return impulse
      */
@@ -200,7 +203,7 @@ public class PhysicsCollisionEvent extends EventObject {
     private native float getAppliedImpulseLateral1(long manifoldPointObjectId);
 
     /**
-     * Read the applied lateral impulse #2 of this event.
+     * Read the collision's applied lateral impulse #2.
      *
      * @return impulse
      */
@@ -211,7 +214,7 @@ public class PhysicsCollisionEvent extends EventObject {
     private native float getAppliedImpulseLateral2(long manifoldPointObjectId);
 
     /**
-     * Read the combined friction of this event.
+     * Read the collision's combined friction.
      *
      * @return friction
      */
@@ -221,54 +224,103 @@ public class PhysicsCollisionEvent extends EventObject {
 
     private native float getCombinedFriction(long manifoldPointObjectId);
 
+    /**
+     * Read the collision's combined restitution.
+     *
+     * @return restitution
+     */
     public float getCombinedRestitution() {
         return getCombinedRestitution(manifoldPointObjectId);
     }
 
     private native float getCombinedRestitution(long manifoldPointObjectId);
 
+    /**
+     * Read the collision's distance #1.
+     *
+     * @return distance
+     */
     public float getDistance1() {
         return getDistance1(manifoldPointObjectId);
     }
 
     private native float getDistance1(long manifoldPointObjectId);
 
+    /**
+     * Read the collision's index 0.
+     *
+     * @return index
+     */
     public int getIndex0() {
         return getIndex0(manifoldPointObjectId);
     }
 
     private native int getIndex0(long manifoldPointObjectId);
 
+    /**
+     * Read the collision's index 1.
+     *
+     * @return index
+     */
     public int getIndex1() {
         return getIndex1(manifoldPointObjectId);
     }
 
     private native int getIndex1(long manifoldPointObjectId);
 
+    /**
+     * Copy the collision's lateral friction direction #1.
+     *
+     * @return a new vector (not null)
+     */
     public Vector3f getLateralFrictionDir1() {
         return getLateralFrictionDir1(new Vector3f());
     }
 
-    public Vector3f getLateralFrictionDir1(Vector3f lateralFrictionDir1) {
-        getLateralFrictionDir1(manifoldPointObjectId, lateralFrictionDir1);
-        return lateralFrictionDir1;
+    /**
+     * Copy the collision's lateral friction direction #1.
+     *
+     * @param storeResult storage for the result (not null, modified)
+     * @return direction vector (not null)
+     */
+    public Vector3f getLateralFrictionDir1(Vector3f storeResult) {
+        Validate.nonNull(storeResult, "store result");
+        getLateralFrictionDir1(manifoldPointObjectId, storeResult);
+        return storeResult;
     }
 
     private native void getLateralFrictionDir1(long manifoldPointObjectId,
             Vector3f lateralFrictionDir1);
 
+    /**
+     * Copy the collision's lateral friction direction #2.
+     *
+     * @return a new vector
+     */
     public Vector3f getLateralFrictionDir2() {
         return getLateralFrictionDir2(new Vector3f());
     }
 
-    public Vector3f getLateralFrictionDir2(Vector3f lateralFrictionDir2) {
-        getLateralFrictionDir2(manifoldPointObjectId, lateralFrictionDir2);
-        return lateralFrictionDir2;
+    /**
+     * Copy the collision's lateral friction direction #2.
+     *
+     * @param storeResult storage for the result (not null, modified)
+     * @return direction vector (not null)
+     */
+    public Vector3f getLateralFrictionDir2(Vector3f storeResult) {
+        Validate.nonNull(storeResult, "store result");
+        getLateralFrictionDir2(manifoldPointObjectId, storeResult);
+        return storeResult;
     }
 
     private native void getLateralFrictionDir2(long manifoldPointObjectId,
             Vector3f lateralFrictionDir2);
 
+    /**
+     * Test whether the collision's lateral friction is initialized.
+     *
+     * @return true if initialized, otherwise false
+     */
     public boolean isLateralFrictionInitialized() {
         return isLateralFrictionInitialized(manifoldPointObjectId);
     }
@@ -276,78 +328,156 @@ public class PhysicsCollisionEvent extends EventObject {
     private native boolean isLateralFrictionInitialized(
             long manifoldPointObjectId);
 
+    /**
+     * Read the collision's lifetime.
+     *
+     * @return lifetime
+     */
     public int getLifeTime() {
         return getLifeTime(manifoldPointObjectId);
     }
 
     private native int getLifeTime(long manifoldPointObjectId);
 
+    /**
+     * Copy the collision's location in the local coordinates of object A.
+     *
+     * @return a new vector (not null)
+     */
     public Vector3f getLocalPointA() {
         return getLocalPointA(new Vector3f());
     }
 
-    public Vector3f getLocalPointA(Vector3f localPointA) {
-        getLocalPointA(manifoldPointObjectId, localPointA);
-        return localPointA;
+    /**
+     * Copy the collision's location in the local coordinates of object A.
+     *
+     * @param storeResult storage for the result (not null, modified)
+     * @return location vector in local coordinates (not null)
+     */
+    public Vector3f getLocalPointA(Vector3f storeResult) {
+        Validate.nonNull(storeResult, "store result");
+        getLocalPointA(manifoldPointObjectId, storeResult);
+        return storeResult;
     }
 
-    private native void getLocalPointA(long manifoldPointObjectId, Vector3f localPointA);
+    private native void getLocalPointA(long manifoldPointObjectId,
+            Vector3f localPointA);
 
+    /**
+     * Copy the collision's location in the local coordinates of object B.
+     *
+     * @return a new vector (not null)
+     */
     public Vector3f getLocalPointB() {
         return getLocalPointB(new Vector3f());
     }
 
-    public Vector3f getLocalPointB(Vector3f localPointB) {
-        getLocalPointB(manifoldPointObjectId, localPointB);
-        return localPointB;
+    /**
+     * Copy the collision's location in the local coordinates of object B.
+     *
+     * @param storeResult storage for the result (not null, modified)
+     * @return location vector in local coordinates (not null)
+     */
+    public Vector3f getLocalPointB(Vector3f storeResult) {
+        Validate.nonNull(storeResult, "store result");
+        getLocalPointB(manifoldPointObjectId, storeResult);
+        return storeResult;
     }
 
-    private native void getLocalPointB(long manifoldPointObjectId, Vector3f localPointB);
+    private native void getLocalPointB(long manifoldPointObjectId,
+            Vector3f localPointB);
 
+    /**
+     * Copy the collision's normal on object B.
+     *
+     * @return a new vector in world coordinates (not null)
+     */
     public Vector3f getNormalWorldOnB() {
         return getNormalWorldOnB(new Vector3f());
     }
 
-    public Vector3f getNormalWorldOnB(Vector3f normalWorldOnB) {
-        getNormalWorldOnB(manifoldPointObjectId, normalWorldOnB);
-        return normalWorldOnB;
+    /**
+     * Copy the collision's normal on object B.
+     *
+     * @param storeResult storage for the result (not null, modified)
+     * @return normal vector in world coordinates (not null)
+     */
+    public Vector3f getNormalWorldOnB(Vector3f storeResult) {
+        Validate.nonNull(storeResult, "store result");
+        getNormalWorldOnB(manifoldPointObjectId, storeResult);
+        return storeResult;
     }
 
-    private native void getNormalWorldOnB(long manifoldPointObjectId, Vector3f normalWorldOnB);
+    private native void getNormalWorldOnB(long manifoldPointObjectId,
+            Vector3f normalWorldOnB);
 
+    /**
+     * Read part identifier 0.
+     *
+     * @return identifier
+     */
     public int getPartId0() {
         return getPartId0(manifoldPointObjectId);
     }
 
     private native int getPartId0(long manifoldPointObjectId);
 
+    /**
+     * Read part identifier 1.
+     *
+     * @return identifier
+     */
     public int getPartId1() {
         return getPartId1(manifoldPointObjectId);
     }
 
     private native int getPartId1(long manifoldPointObjectId);
 
+    /**
+     * Copy the collision's location in world coordinates.
+     *
+     * @return a new vector in world coordinates (not null)
+     */
     public Vector3f getPositionWorldOnA() {
         return getPositionWorldOnA(new Vector3f());
     }
 
-    public Vector3f getPositionWorldOnA(Vector3f positionWorldOnA) {
-        getPositionWorldOnA(manifoldPointObjectId, positionWorldOnA);
-        return positionWorldOnA;
+    /**
+     * Copy the collision's location in world coordinates.
+     *
+     * @param storeResult storage for the result (not null, modified)
+     * @return location vector in world coordinates (not null)
+     */
+    public Vector3f getPositionWorldOnA(Vector3f storeResult) {
+        Validate.nonNull(storeResult, "store result");
+        getPositionWorldOnA(manifoldPointObjectId, storeResult);
+        return storeResult;
     }
 
-    private native void getPositionWorldOnA(long manifoldPointObjectId, Vector3f positionWorldOnA);
+    private native void getPositionWorldOnA(long manifoldPointObjectId,
+            Vector3f positionWorldOnA);
 
+    /**
+     * Copy the collision's location in world coordinates.
+     *
+     * @return a new vector in world coordinates (not null)
+     */
     public Vector3f getPositionWorldOnB() {
         return getPositionWorldOnB(new Vector3f());
     }
 
-    public Vector3f getPositionWorldOnB(Vector3f positionWorldOnB) {
-        getPositionWorldOnB(manifoldPointObjectId, positionWorldOnB);
-        return positionWorldOnB;
+    /**
+     * Copy the collision's location in world coordinates.
+     *
+     * @param storeResult storage for the result (not null, modified)
+     * @return location vector in world coordinates (not null)
+     */
+    public Vector3f getPositionWorldOnB(Vector3f storeResult) {
+        Validate.nonNull(storeResult, "store result");
+        getPositionWorldOnB(manifoldPointObjectId, storeResult);
+        return storeResult;
     }
 
     private native void getPositionWorldOnB(long manifoldPointObjectId,
             Vector3f positionWorldOnB);
-
 }
