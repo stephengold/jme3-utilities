@@ -131,8 +131,6 @@ public class PhysicsSpace {
             = new ConcurrentHashMap<>();
     final private ConcurrentLinkedQueue<PhysicsTickListener> tickListeners
             = new ConcurrentLinkedQueue<>();
-    final private PhysicsCollisionEventFactory eventFactory
-            = new PhysicsCollisionEventFactory();
     /**
      * minimum coordinate values when using AXIS_SWEEP broadphase algorithms
      */
@@ -261,7 +259,7 @@ public class PhysicsSpace {
             PhysicsCollisionObject node1, long manifoldPointObjectId) {
 //        System.out.println("addCollisionEvent:"+node.getObjectId()+" "+ node1.getObjectId());
         collisionEvents.add(
-                eventFactory.getEvent(PhysicsCollisionEvent.TYPE_PROCESSED,
+                new PhysicsCollisionEvent(PhysicsCollisionEvent.TYPE_PROCESSED,
                         node, node1, manifoldPointObjectId));
     }
 
@@ -325,15 +323,16 @@ public class PhysicsSpace {
             for (PhysicsCollisionListener listener : collisionListeners) {
                 listener.collision(physicsCollisionEvent);
             }
-            eventFactory.recycle(physicsCollisionEvent);
+
+            physicsCollisionEvent.clean();
         }
     }
 
     /**
      * Enqueue a callable on the currently executing thread.
      *
-     * @param <V>
-     * @param callable
+     * @param <V> the task's result type
+     * @param callable the task to be executed
      * @return a new task (not null)
      */
     public static <V> Future<V> enqueueOnThisThread(Callable<V> callable) {
