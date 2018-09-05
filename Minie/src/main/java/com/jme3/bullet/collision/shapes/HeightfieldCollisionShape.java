@@ -38,7 +38,6 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Mesh;
 import com.jme3.util.BufferUtils;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -85,10 +84,21 @@ public class HeightfieldCollisionShape extends CollisionShape {
     public HeightfieldCollisionShape() {
     }
 
+    /**
+     * Instantiate a new shape, based on a height map.
+     *
+     * @param heightmap (not null)
+     */
     public HeightfieldCollisionShape(float[] heightmap) {
         createCollisionHeightfield(heightmap, Vector3f.UNIT_XYZ);
     }
 
+    /**
+     * Instantiate a new shape, based on a height map and scale vector.
+     *
+     * @param heightmap (not null)
+     * @param scale (not null)
+     */
     public HeightfieldCollisionShape(float[] heightmap, Vector3f scale) {
         createCollisionHeightfield(heightmap, scale);
     }
@@ -157,11 +167,6 @@ public class HeightfieldCollisionShape extends CollisionShape {
     private native long createShape(int heightStickWidth, int heightStickLength,
             ByteBuffer heightfieldData, float heightScale, float minHeight,
             float maxHeight, int upAxis, boolean flipQuadEdges);
-
-    public Mesh createJmeMesh() {
-        //TODO return Converter.convert(bulletMesh);
-        return null;
-    }
 
     /**
      * Serialize this shape, for example when saving to a J3O file.
