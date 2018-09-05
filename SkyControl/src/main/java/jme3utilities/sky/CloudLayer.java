@@ -240,7 +240,7 @@ public class CloudLayer
     /**
      * Create a shallow clone for the JME cloner.
      *
-     * @return a new instance
+     * @return a new instance (not null)
      */
     @Override
     public CloudLayer jmeClone() {

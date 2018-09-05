@@ -434,7 +434,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      *
      * @param gravity storage for the result (modified if not null)
      * @return an acceleration vector (either the provided storage or a new
-     * instance)
+     * instance, not null)
      */
     public Vector3f getGravity(Vector3f gravity) {
         if (gravity == null) {
@@ -487,7 +487,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         setDamping(objectId, linearDamping, angularDamping);
     }
 
-    private native void setDamping(long objectId, float linearDamping, float angularDamping);
+    private native void setDamping(long objectId, float linearDamping,
+            float angularDamping);
 
     public void setLinearDamping(float linearDamping) {
         setDamping(objectId, linearDamping, getAngularDamping());
@@ -537,6 +538,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     public Vector3f getAngularVelocity() {
         Vector3f vec = new Vector3f();
         getAngularVelocity(objectId, vec);
+
         return vec;
     }
 
@@ -571,6 +573,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     public Vector3f getLinearVelocity() {
         Vector3f vec = new Vector3f();
         getLinearVelocity(objectId, vec);
+
         return vec;
     }
 
@@ -654,7 +657,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         activate();
     }
 
-    private native void applyImpulse(long objectId, Vector3f impulse, Vector3f rel_pos);
+    private native void applyImpulse(long objectId, Vector3f impulse,
+            Vector3f rel_pos);
 
     /**
      * Apply a torque impulse to the body in the next physics update.

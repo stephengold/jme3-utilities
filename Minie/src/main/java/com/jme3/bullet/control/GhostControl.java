@@ -166,6 +166,12 @@ public class GhostControl extends PhysicsGhostObject
         }
     }
 
+    /**
+     * Clone this control for a different spatial. No longer used as of JME 3.1.
+     *
+     * @param spatial the spatial for the clone to control (or null)
+     * @return a new control (not null)
+     */
     @Override
     public Control cloneForSpatial(Spatial spatial) {
         GhostControl control = new GhostControl(collisionShape);
@@ -176,9 +182,15 @@ public class GhostControl extends PhysicsGhostObject
         control.setPhysicsLocation(getPhysicsLocation());
         control.setPhysicsRotation(getPhysicsRotationMatrix());
         control.setApplyPhysicsLocal(isApplyPhysicsLocal());
+
         return control;
     }
 
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new control (not null)
+     */
     @Override
     public Object jmeClone() {
         GhostControl control = new GhostControl(collisionShape);
@@ -190,6 +202,7 @@ public class GhostControl extends PhysicsGhostObject
         control.setPhysicsRotation(getPhysicsRotationMatrix());
         control.setApplyPhysicsLocal(isApplyPhysicsLocal());
         control.spatial = this.spatial;
+
         return control;
     }
 

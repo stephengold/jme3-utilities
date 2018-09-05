@@ -97,10 +97,10 @@ abstract public class SubtreeControl extends SimpleControl {
     // AbstractControl methods
 
     /**
-     * Clone this control for a different node.
+     * Clone this control for a different node. No longer used as of JME 3.1.
      *
-     * @param cloneSpatial node for clone to control (or null)
-     * @return a new instance
+     * @param cloneSpatial the node for the clone to control (or null)
+     * @return a new control (not null)
      */
     @Override
     public Control cloneForSpatial(Spatial cloneSpatial) {

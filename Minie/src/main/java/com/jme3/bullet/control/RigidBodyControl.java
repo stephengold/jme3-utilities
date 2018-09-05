@@ -138,6 +138,12 @@ public class RigidBodyControl extends PhysicsRigidBody
         super(shape, mass);
     }
 
+    /**
+     * Clone this control for a different spatial. No longer used as of JME 3.1.
+     *
+     * @param spatial the spatial for the clone to control (or null)
+     * @return a new control (not null)
+     */
     @Override
     public Control cloneForSpatial(Spatial spatial) {
         RigidBodyControl control = new RigidBodyControl(collisionShape, mass);
@@ -162,9 +168,15 @@ public class RigidBodyControl extends PhysicsRigidBody
             control.setLinearVelocity(getLinearVelocity());
         }
         control.setApplyPhysicsLocal(isApplyPhysicsLocal());
+
         return control;
     }
 
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new control (not null)
+     */
     @Override
     public Object jmeClone() {
         RigidBodyControl control = new RigidBodyControl(collisionShape, mass);

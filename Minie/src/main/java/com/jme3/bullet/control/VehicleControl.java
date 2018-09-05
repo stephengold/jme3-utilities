@@ -149,6 +149,12 @@ public class VehicleControl extends PhysicsVehicle
         return spatial.getWorldRotation();
     }
 
+    /**
+     * Clone this control for a different spatial. No longer used as of JME 3.1.
+     *
+     * @param spatial the spatial for the clone to control (or null)
+     * @return a new control (not null)
+     */
     @Override
     public Control cloneForSpatial(Spatial spatial) {
         VehicleControl control = new VehicleControl(collisionShape, mass);
@@ -179,27 +185,37 @@ public class VehicleControl extends PhysicsVehicle
         for (VehicleWheel wheel : wheels) {
             VehicleWheel newWheel = control.addWheel(wheel.getLocation(),
                     wheel.getDirection(), wheel.getAxle(),
-                    wheel.getRestLength(), wheel.getRadius(), wheel.isFrontWheel());
+                    wheel.getRestLength(), wheel.getRadius(),
+                    wheel.isFrontWheel());
             newWheel.setFrictionSlip(wheel.getFrictionSlip());
             newWheel.setMaxSuspensionTravelCm(wheel.getMaxSuspensionTravelCm());
             newWheel.setSuspensionStiffness(wheel.getSuspensionStiffness());
-            newWheel.setWheelsDampingCompression(wheel.getWheelsDampingCompression());
-            newWheel.setWheelsDampingRelaxation(wheel.getWheelsDampingRelaxation());
+            newWheel.setWheelsDampingCompression(
+                    wheel.getWheelsDampingCompression());
+            newWheel.setWheelsDampingRelaxation(
+                    wheel.getWheelsDampingRelaxation());
             newWheel.setMaxSuspensionForce(wheel.getMaxSuspensionForce());
 
             //TODO: bad way finding children!
             if (spatial instanceof Node) {
                 Node node = (Node) spatial;
-                Spatial wheelSpat = node.getChild(wheel.getWheelSpatial().getName());
+                Spatial wheelSpat
+                        = node.getChild(wheel.getWheelSpatial().getName());
                 if (wheelSpat != null) {
                     newWheel.setWheelSpatial(wheelSpat);
                 }
             }
         }
         control.setApplyPhysicsLocal(isApplyPhysicsLocal());
+
         return control;
     }
 
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new control (not null)
+     */
     @Override
     public Object jmeClone() {
         VehicleControl control = new VehicleControl(collisionShape, mass);

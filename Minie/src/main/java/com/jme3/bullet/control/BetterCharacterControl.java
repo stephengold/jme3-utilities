@@ -461,16 +461,17 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     /**
      * Get the current gravity of the character.
      *
-     * @param store The vector to store the result in
-     * @return either store or a new instance
+     * @param store storage for the result (modified if not null)
+     * @return an acceleration vector (either the provided storage or a new
+     * instance, not null)
      */
     public Vector3f getGravity(Vector3f store) {
         return rigidBody.getGravity(store);
     }
 
     /**
-     * Sets how much the physics forces in the local x/z plane should be
-     * dampened.
+     * Alter by what factor physics forces in the local x/z plane should be
+     * damped.
      *
      * @param physicsDamping The dampening value, 0 = no dampening, 1 = no
      * external force, default = 0.9
@@ -480,8 +481,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Gets how much the physics forces in the local x/z plane should be
-     * dampened.
+     * Read by what factor physics forces in the local x/z plane should be
+     * damped.
      *
      * @return the damping factor
      */
@@ -490,8 +491,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * This actually sets a new collision shape to the character to change the
-     * height of the capsule.
+     * Apply a new collision shape to the character to alter the height of the
+     * capsule.
      *
      * @param percent factor to apply
      */
@@ -729,20 +730,33 @@ public class BetterCharacterControl extends AbstractPhysicsControl
         rigidBody.setUserObject(null);
     }
 
+    /**
+     * Clone this control for a different spatial. No longer used as of JME 3.1.
+     *
+     * @param spatial the spatial for the clone to control (or null)
+     * @return a new control (not null)
+     */
     @Override
     public Control cloneForSpatial(Spatial spatial) {
         BetterCharacterControl control
                 = new BetterCharacterControl(radius, height, mass);
         control.setJumpForce(jumpForce);
+
         return control;
     }
 
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new control (not null)
+     */
     @Override
     public Object jmeClone() {
         BetterCharacterControl control
                 = new BetterCharacterControl(radius, height, mass);
         control.setJumpForce(jumpForce);
         control.spatial = this.spatial;
+
         return control;
     }
 

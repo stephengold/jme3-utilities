@@ -228,7 +228,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
             float weightThreshold) {
         this();
         Validate.fraction(weightThreshold, "weight threshold");
-        
+
         this.preset = preset;
         this.weightThreshold = weightThreshold;
     }
@@ -1018,24 +1018,39 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     public void render(RenderManager rm, ViewPort vp) {
     }
 
+    /**
+     * Clone this control for a different spatial. No longer used as of JME 3.1.
+     *
+     * @param spatial the spatial for the clone to control (or null)
+     * @return a new control (not null)
+     */
     @Override
     public Control cloneForSpatial(Spatial spatial) {
-        KinematicRagdollControl control = new KinematicRagdollControl(preset, weightThreshold);
+        KinematicRagdollControl control
+                = new KinematicRagdollControl(preset, weightThreshold);
         control.setMode(mode);
         control.setRootMass(rootMass);
         control.setWeightThreshold(weightThreshold);
         control.setApplyPhysicsLocal(isApplyPhysicsLocal());
+
         return control;
     }
 
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new control (not null)
+     */
     @Override
     public Object jmeClone() {
-        KinematicRagdollControl control = new KinematicRagdollControl(preset, weightThreshold);
+        KinematicRagdollControl control = new KinematicRagdollControl(preset,
+                weightThreshold);
         control.setMode(mode);
         control.setRootMass(rootMass);
         control.setWeightThreshold(weightThreshold);
         control.setApplyPhysicsLocal(isApplyPhysicsLocal());
         control.spatial = this.spatial;
+
         return control;
     }
 
