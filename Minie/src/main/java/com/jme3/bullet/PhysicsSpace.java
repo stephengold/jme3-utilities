@@ -946,7 +946,7 @@ public class PhysicsSpace {
         return results;
     }
 
-    public native void rayTest_native(Vector3f from, Vector3f to,
+    private native void rayTest_native(Vector3f from, Vector3f to,
             long physicsSpaceId, List<PhysicsRayTestResult> results, int flags);
 
     /**
@@ -989,7 +989,7 @@ public class PhysicsSpace {
         return sweepTest(shape, start, end, results, 0.0f);
     }
 
-    public native void sweepTest_native(long shape, Transform from,
+    native private void sweepTest_native(long shape, Transform from,
             Transform to, long physicsSpaceId,
             List<PhysicsSweepTestResult> results, float allowedCcdPenetration);
 
@@ -1158,7 +1158,7 @@ public class PhysicsSpace {
     private native void setSolverNumIterations(long physicsSpaceId,
             int numIterations);
 
-    public static native void initNativePhysics();
+    native private static void initNativePhysics();
 
     /**
      * Enumerate broadphase collision-detection algorithms.
