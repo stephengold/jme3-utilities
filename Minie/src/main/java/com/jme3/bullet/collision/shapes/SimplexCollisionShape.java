@@ -65,7 +65,8 @@ public class SimplexCollisionShape extends CollisionShape {
     public SimplexCollisionShape() {
     }
 
-    public SimplexCollisionShape(Vector3f point1, Vector3f point2, Vector3f point3, Vector3f point4) {
+    public SimplexCollisionShape(Vector3f point1, Vector3f point2, 
+            Vector3f point3, Vector3f point4) {
         vector1 = point1;
         vector2 = point2;
         vector3 = point3;
@@ -73,7 +74,8 @@ public class SimplexCollisionShape extends CollisionShape {
         createShape();
     }
 
-    public SimplexCollisionShape(Vector3f point1, Vector3f point2, Vector3f point3) {
+    public SimplexCollisionShape(Vector3f point1, Vector3f point2, 
+            Vector3f point3) {
         vector1 = point1;
         vector2 = point2;
         vector3 = point3;
@@ -127,23 +129,17 @@ public class SimplexCollisionShape extends CollisionShape {
     /**
      * Create the configured shape in Bullet.
      */
-    protected void createShape() {
+    private void createShape() {
         if (vector4 != null) {
             objectId = createShape(vector1, vector2, vector3, vector4);
-//            objectId = new BU_Simplex1to4(Converter.convert(vector1), Converter.convert(vector2), Converter.convert(vector3), Converter.convert(vector4));
         } else if (vector3 != null) {
             objectId = createShape(vector1, vector2, vector3);
-//            objectId = new BU_Simplex1to4(Converter.convert(vector1), Converter.convert(vector2), Converter.convert(vector3));
         } else if (vector2 != null) {
             objectId = createShape(vector1, vector2);
-//            objectId = new BU_Simplex1to4(Converter.convert(vector1), Converter.convert(vector2));
         } else {
             objectId = createShape(vector1);
-//            objectId = new BU_Simplex1to4(Converter.convert(vector1));
         }
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
-//        objectId.setLocalScaling(Converter.convert(getScale()));
-//        objectId.setMargin(margin);
         setScale(scale);
         setMargin(margin);
     }
