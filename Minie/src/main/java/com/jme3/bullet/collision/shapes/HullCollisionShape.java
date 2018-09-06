@@ -56,7 +56,6 @@ public class HullCollisionShape extends CollisionShape {
             = Logger.getLogger(HullCollisionShape.class.getName());
 
     private float[] points;
-//    protected FloatBuffer fbuf;
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -65,11 +64,22 @@ public class HullCollisionShape extends CollisionShape {
     public HullCollisionShape() {
     }
 
+    /**
+     * Instantiate a collision shape based on the specified JME mesh.
+     *
+     * @param mesh a mesh on which to base the shape (not null)
+     */
     public HullCollisionShape(Mesh mesh) {
         this.points = getPoints(mesh);
         createShape();
     }
 
+    /**
+     * Instantiate a collision shape based on the specified JME mesh.
+     *
+     * @param points an array of coordinates on which to base the shape (not
+     * null, length a multiple of 3)
+     */
     public HullCollisionShape(float[] points) {
         this.points = points;
         createShape();
@@ -128,7 +138,13 @@ public class HullCollisionShape extends CollisionShape {
 
     private native long createShape(ByteBuffer points);
 
-    protected float[] getPoints(Mesh mesh) {
+    /**
+     * Copy the vertex positions from a JME mesh.
+     *
+     * @param mesh the mesh to read (not null)
+     * @return a new array (not null, length a multiple of 3)
+     */
+    private float[] getPoints(Mesh mesh) {
         FloatBuffer vertices = mesh.getFloatBuffer(Type.Position);
         vertices.rewind();
         int components = mesh.getVertexCount() * 3;
