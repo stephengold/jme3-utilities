@@ -201,7 +201,9 @@ abstract public class SubtreeControl extends SimpleControl {
     }
 
     /**
-     * Alter which node is controlled.
+     * Alter which spatial is controlled. Invoked when the control is added to
+     * or removed from a spatial. Should be invoked only by a subclass or from
+     * Spatial. Do not invoke directly from user code.
      *
      * @param newSpatial node to control (or null)
      */
@@ -219,7 +221,7 @@ abstract public class SubtreeControl extends SimpleControl {
                 newNode.attachChild(subtree);
             }
         }
-        spatial = newSpatial;
+        super.setSpatial(spatial);
     }
 
     /**
