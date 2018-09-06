@@ -39,7 +39,7 @@ import com.jme3.scene.control.AbstractControl;
 /**
  * The abstract base class for physics-debug controls (such as
  * BulletRigidBodyDebugControl) used to visualize individual collision objects
- * and joints.
+ * and joints. TODO implement setSpatial()
  * <p>
  * This class is shared between JBullet and Native Bullet.
  *
@@ -83,11 +83,17 @@ public abstract class AbstractPhysicsDebugControl extends AbstractControl {
             Vector3f localLocation = spatial.getLocalTranslation();
             Quaternion localRotationQuat = spatial.getLocalRotation();
             if (spatial.getParent() != null) {
-                localLocation.set(worldLocation).subtractLocal(spatial.getParent().getWorldTranslation());
+                localLocation.set(worldLocation).subtractLocal(
+                        spatial.getParent().getWorldTranslation());
                 localLocation.divideLocal(spatial.getParent().getWorldScale());
-                tmp_inverseWorldRotation.set(spatial.getParent().getWorldRotation()).inverseLocal().multLocal(localLocation);
+                tmp_inverseWorldRotation.set(
+                        spatial.getParent().getWorldRotation())
+                        .inverseLocal().multLocal(localLocation);
                 localRotationQuat.set(worldRotation);
-                tmp_inverseWorldRotation.set(spatial.getParent().getWorldRotation()).inverseLocal().mult(localRotationQuat, localRotationQuat);
+                tmp_inverseWorldRotation.set(
+                        spatial.getParent().getWorldRotation())
+                        .inverseLocal().mult(localRotationQuat,
+                                localRotationQuat);
                 spatial.setLocalTranslation(localLocation);
                 spatial.setLocalRotation(localRotationQuat);
             } else {

@@ -42,6 +42,13 @@ import com.jme3.animation.Bone;
  * @author Nehon
  */
 public interface RagdollCollisionListener {
+    /**
+     * Invoked when a collision involving a KinematicRagdollControl occurs.
+     *
+     * @param bone the ragdoll bone that collided (not null)
+     * @param object the collision object that collided with the bone (not null)
+     * @param event other event details (not null)
+     */
     void collide(Bone bone, PhysicsCollisionObject object,
             PhysicsCollisionEvent event);
 }

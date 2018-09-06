@@ -96,6 +96,9 @@ public class RigidBodyControl extends PhysicsRigidBody
      * space to which the body is (or would be) added
      */
     protected PhysicsSpace space = null;
+    /**
+     * true&rarr;body is kinematic, false&rarr;body is static or dynamic
+     */
     protected boolean kinematicSpatial = true;
 
     /**
@@ -221,19 +224,26 @@ public class RigidBodyControl extends PhysicsRigidBody
         this.spatial = cloner.clone(spatial);
     }
 
+    /**
+     * Alter which spatial is controlled. Invoked when the control is added to
+     * or removed from a spatial. Should be invoked only by a subclass or from
+     * Spatial. Do not invoke directly from user code.
+     *
+     * @param spatial the spatial to control (or null)
+     */
     @Override
     public void setSpatial(Spatial spatial) {
         this.spatial = spatial;
         setUserObject(spatial);
-        if (spatial == null) {
-            return;
+
+        if (spatial != null) {
+            if (collisionShape == null) {
+                createCollisionShape();
+                rebuildRigidBody();
+            }
+            setPhysicsLocation(getSpatialTranslation());
+            setPhysicsRotation(getSpatialRotation());
         }
-        if (collisionShape == null) {
-            createCollisionShape();
-            rebuildRigidBody();
-        }
-        setPhysicsLocation(getSpatialTranslation());
-        setPhysicsRotation(getSpatialRotation());
     }
 
     protected void createCollisionShape() {

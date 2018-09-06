@@ -39,9 +39,12 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * The abstract base class for collision shapes (such as BoxCollisionShape and
- * CapsuleCollisionShape). As suggested in the Bullet manual, collision shapes
- * can be shared between collision objects.
+ * The abstract base class for collision shapes based on Bullet's
+ * btCollisionShape.
+ * <p>
+ * Collision shapes include BoxCollisionShape and CapsuleCollisionShape. As
+ * suggested in the Bullet manual, collision shapes can be shared between
+ * collision objects.
  *
  * @author normenhansen
  */
@@ -54,7 +57,7 @@ public abstract class CollisionShape implements Savable {
             = Logger.getLogger(CollisionShape.class.getName());
 
     /**
-     * Unique identifier of the Bullet shape. Constructors are responsible for
+     * unique identifier of the Bullet shape. Constructors are responsible for
      * setting this to a non-zero value. After that, the id never changes.
      */
     protected long objectId = 0L;

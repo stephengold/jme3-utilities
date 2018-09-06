@@ -279,6 +279,14 @@ public abstract class PhysicsCollisionObject implements Savable {
         return objectId;
     }
 
+    /**
+     * Attach the identified btCollisionShape to the identified
+     * btCollisionObject. Native method.
+     *
+     * @param objectId the unique identifier of the btCollisionObject (not zero)
+     * @param collisionShapeId the unique identifier of the btCollisionShape
+     * (not zero)
+     */
     native protected void attachCollisionShape(long objectId,
             long collisionShapeId);
 
@@ -333,5 +341,10 @@ public abstract class PhysicsCollisionObject implements Savable {
         finalizeNative(objectId);
     }
 
+    /**
+     * Finalize the identified btCollisionObject. Native method.
+     *
+     * @param objectId the unique identifier of the btCollisionObject (not zero)
+     */
     protected native void finalizeNative(long objectId);
 }

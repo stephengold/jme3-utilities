@@ -239,9 +239,11 @@ public abstract class AbstractPhysicsControl
     }
 
     /**
-     * Alter which spatial is controlled.
+     * Alter which spatial is controlled. Invoked when the control is added to
+     * or removed from a spatial. Should be invoked only by a subclass or from
+     * Spatial. Do not invoke directly from user code.
      *
-     * @param spatial spatial to control (or null)
+     * @param spatial the spatial to control (or null)
      */
     @Override
     public void setSpatial(Spatial spatial) {
@@ -251,12 +253,12 @@ public abstract class AbstractPhysicsControl
             return;
         }
         this.spatial = spatial;
-        if (spatial == null) {
-            return;
+
+        if (spatial != null) {
+            createSpatialData(this.spatial);
+            setPhysicsLocation(getSpatialTranslation());
+            setPhysicsRotation(getSpatialRotation());
         }
-        createSpatialData(this.spatial);
-        setPhysicsLocation(getSpatialTranslation());
-        setPhysicsRotation(getSpatialRotation());
     }
 
     /**

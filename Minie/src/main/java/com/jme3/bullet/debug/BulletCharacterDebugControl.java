@@ -77,6 +77,13 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
         geom.setMaterial(debugAppState.DEBUG_PINK);
     }
 
+    /**
+     * Alter which spatial is controlled. Invoked when the control is added to
+     * or removed from a spatial. Should be invoked only by a subclass or from
+     * Spatial. Do not invoke directly from user code.
+     *
+     * @param spatial the spatial to control (or null)
+     */
     @Override
     public void setSpatial(Spatial spatial) {
         if (spatial != null && spatial instanceof Node) {

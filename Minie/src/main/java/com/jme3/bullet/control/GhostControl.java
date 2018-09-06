@@ -220,15 +220,22 @@ public class GhostControl extends PhysicsGhostObject
         this.spatial = cloner.clone(spatial);
     }
 
+    /**
+     * Alter which spatial is controlled. Invoked when the control is added to
+     * or removed from a spatial. Should be invoked only by a subclass or from
+     * Spatial. Do not invoke directly from user code.
+     *
+     * @param spatial the spatial to control (or null)
+     */
     @Override
     public void setSpatial(Spatial spatial) {
         this.spatial = spatial;
         setUserObject(spatial);
-        if (spatial == null) {
-            return;
+        
+        if (spatial != null) {
+            setPhysicsLocation(getSpatialTranslation());
+            setPhysicsRotation(getSpatialRotation());
         }
-        setPhysicsLocation(getSpatialTranslation());
-        setPhysicsRotation(getSpatialRotation());
     }
 
     /**
