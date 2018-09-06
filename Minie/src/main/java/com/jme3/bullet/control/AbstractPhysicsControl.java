@@ -304,30 +304,26 @@ public abstract class AbstractPhysicsControl
      * space. If not enabled, alter where the object would be added. The object
      * is removed from any other space it's currently in.
      *
-     * @param space where to add, or null to simply remove
+     * @param newSpace where to add, or null to simply remove
      */
     @Override
-    public void setPhysicsSpace(PhysicsSpace space) {
-        if (space == null) {
-            if (this.space != null) {
-                removePhysics(this.space);
-                added = false;
-            }
-        } else {
-            if (this.space == space) {
-                return;
-            } else if (this.space != null) {
-                removePhysics(this.space);
-                added = false;
-            }
-            // If the control isn't enabled, its object will be
-            // added when it gets enabled.
-            if (isEnabled()) {
-                addPhysics(space);
-                added = true;
-            }
+    public void setPhysicsSpace(PhysicsSpace newSpace) {
+        if (space == newSpace) {
+            return;
         }
-        this.space = space;
+        if (added) {
+            removePhysics(space);
+            added = false;
+        }
+        if (newSpace != null && isEnabled()) {
+            addPhysics(newSpace);
+            added = true;
+        }
+        /*
+         * If this control isn't enabled, its physics object will be
+         * added to the new space when the control becomes enabled.
+         */
+        space = newSpace;
     }
 
     /**
