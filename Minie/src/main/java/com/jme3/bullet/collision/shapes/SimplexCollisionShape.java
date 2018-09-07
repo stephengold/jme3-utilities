@@ -65,7 +65,19 @@ public class SimplexCollisionShape extends CollisionShape {
     public SimplexCollisionShape() {
     }
 
-    public SimplexCollisionShape(Vector3f point1, Vector3f point2, 
+    /**
+     * Instantiate a tetrahedral collision shape based on the specified points.
+     *
+     * @param point1 the world coordinates of 1st point (not null, alias
+     * created) TODO
+     * @param point2 the world coordinates of 2nd point (not null, alias
+     * created) TODO
+     * @param point3 the world coordinates of 3rd point (not null, alias
+     * created) TODO
+     * @param point4 the world coordinates of 4th point (not null, alias
+     * created) TODO
+     */
+    public SimplexCollisionShape(Vector3f point1, Vector3f point2,
             Vector3f point3, Vector3f point4) {
         vector1 = point1;
         vector2 = point2;
@@ -74,7 +86,17 @@ public class SimplexCollisionShape extends CollisionShape {
         createShape();
     }
 
-    public SimplexCollisionShape(Vector3f point1, Vector3f point2, 
+    /**
+     * Instantiate a triangular collision shape based on the specified points.
+     *
+     * @param point1 the world coordinates of 1st point (not null, alias
+     * created) TODO
+     * @param point2 the world coordinates of 2nd point (not null, alias
+     * created) TODO
+     * @param point3 the world coordinates of 3rd point (not null, alias
+     * created) TODO
+     */
+    public SimplexCollisionShape(Vector3f point1, Vector3f point2,
             Vector3f point3) {
         vector1 = point1;
         vector2 = point2;
@@ -82,12 +104,26 @@ public class SimplexCollisionShape extends CollisionShape {
         createShape();
     }
 
+    /**
+     * Instantiate a line-segment collision shape based on the specified points.
+     *
+     * @param point1 the world coordinates of 1st point (not null, alias
+     * created) TODO
+     * @param point2 the world coordinates of 2nd point (not null, alias
+     * created) TODO
+     */
     public SimplexCollisionShape(Vector3f point1, Vector3f point2) {
         vector1 = point1;
         vector2 = point2;
         createShape();
     }
 
+    /**
+     * Instantiate a point collision shape based on the specified points.
+     *
+     * @param point1 the world coordinates of point (not null, alias created)
+     * TODO
+     */
     public SimplexCollisionShape(Vector3f point1) {
         vector1 = point1;
         createShape();
@@ -148,7 +184,9 @@ public class SimplexCollisionShape extends CollisionShape {
 
     private native long createShape(Vector3f vector1, Vector3f vector2);
 
-    private native long createShape(Vector3f vector1, Vector3f vector2, Vector3f vector3);
+    private native long createShape(Vector3f vector1, Vector3f vector2,
+            Vector3f vector3);
 
-    private native long createShape(Vector3f vector1, Vector3f vector2, Vector3f vector3, Vector3f vector4);
+    private native long createShape(Vector3f vector1, Vector3f vector2,
+            Vector3f vector3, Vector3f vector4);
 }

@@ -49,26 +49,49 @@ public class HumanoidRagdollPreset extends RagdollPreset {
     final private static Logger logger
             = Logger.getLogger(HumanoidRagdollPreset.class.getName());
 
+    /**
+     * Initialize the map from bone names to joint presets.
+     */
     @Override
     protected void initBoneMap() {
-        boneMap.put("head", new JointPreset(FastMath.QUARTER_PI, -FastMath.QUARTER_PI, FastMath.QUARTER_PI, -FastMath.QUARTER_PI, FastMath.QUARTER_PI, -FastMath.QUARTER_PI));
+        boneMap.put("head",
+                new JointPreset(FastMath.QUARTER_PI, -FastMath.QUARTER_PI,
+                        FastMath.QUARTER_PI, -FastMath.QUARTER_PI,
+                        FastMath.QUARTER_PI, -FastMath.QUARTER_PI));
 
-        boneMap.put("torso", new JointPreset(FastMath.QUARTER_PI, -FastMath.QUARTER_PI, 0, 0, FastMath.QUARTER_PI, -FastMath.QUARTER_PI));
+        boneMap.put("torso",
+                new JointPreset(FastMath.QUARTER_PI, -FastMath.QUARTER_PI, 0f,
+                        0f, FastMath.QUARTER_PI, -FastMath.QUARTER_PI));
 
-        boneMap.put("upperleg", new JointPreset(FastMath.PI, -FastMath.QUARTER_PI, FastMath.QUARTER_PI / 2, -FastMath.QUARTER_PI / 2, FastMath.QUARTER_PI, -FastMath.QUARTER_PI));
+        boneMap.put("upperleg",
+                new JointPreset(FastMath.PI, -FastMath.QUARTER_PI,
+                        FastMath.QUARTER_PI / 2f, -FastMath.QUARTER_PI / 2f,
+                        FastMath.QUARTER_PI, -FastMath.QUARTER_PI));
 
-        boneMap.put("lowerleg", new JointPreset(0, -FastMath.PI, 0, 0, 0, 0));
+        boneMap.put("lowerleg",
+                new JointPreset(0, -FastMath.PI, 0f, 0f, 0f, 0f));
 
-        boneMap.put("foot", new JointPreset(0, -FastMath.QUARTER_PI, FastMath.QUARTER_PI, -FastMath.QUARTER_PI, FastMath.QUARTER_PI, -FastMath.QUARTER_PI));
+        boneMap.put("foot",
+                new JointPreset(0, -FastMath.QUARTER_PI, FastMath.QUARTER_PI,
+                        -FastMath.QUARTER_PI, FastMath.QUARTER_PI,
+                        -FastMath.QUARTER_PI));
 
-        boneMap.put("upperarm", new JointPreset(FastMath.HALF_PI, -FastMath.QUARTER_PI, 0, 0, FastMath.HALF_PI, -FastMath.QUARTER_PI));
+        boneMap.put("upperarm",
+                new JointPreset(FastMath.HALF_PI, -FastMath.QUARTER_PI, 0f, 0f,
+                        FastMath.HALF_PI, -FastMath.QUARTER_PI));
 
-        boneMap.put("lowerarm", new JointPreset(FastMath.HALF_PI, 0, 0, 0, 0, 0));
+        boneMap.put("lowerarm",
+                new JointPreset(FastMath.HALF_PI, 0f, 0f, 0f, 0f, 0f));
 
-        boneMap.put("hand", new JointPreset(FastMath.QUARTER_PI, -FastMath.QUARTER_PI, FastMath.QUARTER_PI, -FastMath.QUARTER_PI, FastMath.QUARTER_PI, -FastMath.QUARTER_PI));
-
+        boneMap.put("hand",
+                new JointPreset(FastMath.QUARTER_PI, -FastMath.QUARTER_PI,
+                        FastMath.QUARTER_PI, -FastMath.QUARTER_PI,
+                        FastMath.QUARTER_PI, -FastMath.QUARTER_PI));
     }
 
+    /**
+     * Initialize the lexicon.
+     */
     @Override
     protected void initLexicon() {
         LexiconEntry entry = new LexiconEntry();
@@ -131,6 +154,5 @@ public class HumanoidRagdollPreset extends RagdollPreset {
         entry.addSynonym("fist", 100);
         entry.addSynonym("wrist", 75);
         lexicon.put("hand", entry);
-
     }
 }

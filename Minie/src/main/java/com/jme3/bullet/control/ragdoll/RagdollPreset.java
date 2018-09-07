@@ -53,8 +53,14 @@ public abstract class RagdollPreset {
     protected Map<String, JointPreset> boneMap = new HashMap<>();
     protected Map<String, LexiconEntry> lexicon = new HashMap<>();
 
+    /**
+     * Initialize the map from bone names to joint presets.
+     */
     protected abstract void initBoneMap();
 
+    /**
+     * Initialize the lexicon.
+     */
     protected abstract void initLexicon();
 
     public void setupJointForBone(String boneName, SixDofJoint joint) {

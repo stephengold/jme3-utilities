@@ -168,6 +168,7 @@ public class GhostControl extends PhysicsGhostObject
 
     /**
      * Clone this control for a different spatial. No longer used as of JME 3.1.
+     * TODO eviscerate
      *
      * @param spatial the spatial for the clone to control (or null)
      * @return a new control (not null)
@@ -231,7 +232,7 @@ public class GhostControl extends PhysicsGhostObject
     public void setSpatial(Spatial spatial) {
         this.spatial = spatial;
         setUserObject(spatial);
-        
+
         if (spatial != null) {
             setPhysicsLocation(getSpatialTranslation());
             setPhysicsRotation(getSpatialRotation());

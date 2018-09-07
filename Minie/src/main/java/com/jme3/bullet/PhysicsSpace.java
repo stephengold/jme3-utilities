@@ -1133,11 +1133,11 @@ public class PhysicsSpace {
     }
 
     /**
-     * Set the number of iterations used by the contact solver.
+     * Alter the number of iterations used by the contact solver.
      * <p>
      * The default is 10. Use 4 for low quality, 20 for high quality.
      *
-     * @param numIterations the number of iterations (&ge;1)
+     * @param numIterations the number of iterations (&ge;1, default=10)
      */
     public void setSolverNumIterations(int numIterations) {
         Validate.positive(numIterations, "number of iterations");

@@ -62,7 +62,8 @@ public class NativeMeshUtil {
      * Pass a mesh to Native Bullet.
      *
      * @param mesh the JME mesh to pass (not null)
-     * @return the Bullet id of the new btTriangleIndexVertexArray
+     * @return the unique identifier of the resulting btTriangleIndexVertexArray
+     * (not 0)
      */
     public static long getTriangleIndexVertexArray(Mesh mesh) {
         ByteBuffer triangleIndexBase
@@ -95,8 +96,20 @@ public class NativeMeshUtil {
                 numTriangles, numVertices, vertexStride, triangleIndexStride);
     }
 
+    /**
+     * Create a btTriangleIndexVertexArray. Native method.
+     *
+     * @param triangleIndexBase
+     * @param vertexBase
+     * @param numTriangles the number of triangles in the mesh (&ge;0)
+     * @param numVertices the number of vertices in the mesh (&ge;0)
+     * @param vertexStride (in bytes, &gt;0)
+     * @param triangleIndexStride (in bytes, &gt;0)
+     * @return the unique identifier of the resulting btTriangleIndexVertexArray
+     * (not 0)
+     */
     public static native long createTriangleIndexVertexArray(
             ByteBuffer triangleIndexBase, ByteBuffer vertexBase,
-            int numTraingles, int numVertices, int vertextStride,
+            int numTriangles, int numVertices, int vertexStride,
             int triangleIndexStride);
 }

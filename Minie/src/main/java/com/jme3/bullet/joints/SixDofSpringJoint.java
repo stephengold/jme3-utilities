@@ -131,7 +131,7 @@ public class SixDofSpringJoint extends SixDofJoint {
     native void setDamping(long objctId, int index, float damping);
 
     /**
-     * Set the equilibrium points for all degrees of freedom based on the
+     * Alter the equilibrium points for all degrees of freedom, based on the
      * current constraint position/orientation.
      */
     public void setEquilibriumPoint() {
@@ -141,8 +141,8 @@ public class SixDofSpringJoint extends SixDofJoint {
     native void setEquilibriumPoint(long objctId);
 
     /**
-     * Set the equilibrium point for the indexed degree of freedom based on the
-     * current constraint position/orientation.
+     * Alter the equilibrium point of the indexed degree of freedom, based on
+     * the current constraint position/orientation.
      *
      * @param index which degree of freedom (&ge;0, &lt;6)
      */

@@ -74,10 +74,21 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * non-zero value.
      */
     private long vehicleId = 0L;
-
+    /**
+     * Unique identifier of the ray caster.
+     */
     private long rayCasterId = 0L;
+    /**
+     * tuning parameters
+     */
     protected VehicleTuning tuning = new VehicleTuning();
+    /**
+     * list of wheels
+     */
     protected ArrayList<VehicleWheel> wheels = new ArrayList<>();
+    /**
+     * physics space where this vehicle is added, or null if none
+     */
     private PhysicsSpace physicsSpace;
 
     /**
@@ -149,10 +160,10 @@ public class PhysicsVehicle extends PhysicsRigidBody {
         if (space == null) {
             return;
         }
-        if (space.getSpaceId() == 0) {
+        if (space.getSpaceId() == 0L) {
             throw new IllegalStateException("Physics space is not initialized!");
         }
-        if (rayCasterId != 0) {
+        if (rayCasterId != 0L) {
             logger.log(Level.FINE, "Clearing RayCaster {0}",
                     Long.toHexString(rayCasterId));
             logger.log(Level.FINE, "Clearing Vehicle {0}",
@@ -174,7 +185,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
         }
     }
 
-    private native long createVehicleRaycaster(long objectId, long physicsSpaceId);
+    private native long createVehicleRaycaster(long objectId,
+            long physicsSpaceId);
 
     private native long createRaycastVehicle(long objectId, long rayCasterId);
 
@@ -354,15 +366,20 @@ public class PhysicsVehicle extends PhysicsRigidBody {
         wheels.get(wheel).setMaxSuspensionTravelCm(maxSuspensionTravelCm);
     }
 
+    /**
+     * Read the maximum suspension force.
+     *
+     * @return the force limit
+     */
     public float getMaxSuspensionForce() {
         return tuning.maxSuspensionForce;
     }
 
     /**
-     * This value caps the maximum suspension force, raise this above the
-     * default 6000 if your suspension cannot handle the weight of your vehicle.
+     * Alter the maximum suspension force. If the suspension cannot handle the
+     * weight of the vehicle, increase this.
      *
-     * @param maxSuspensionForce the desired limit
+     * @param maxSuspensionForce the desired force limit (default=6000)
      */
     public void setMaxSuspensionForce(float maxSuspensionForce) {
         tuning.maxSuspensionForce = maxSuspensionForce;
@@ -509,9 +526,9 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     private native void applyEngineForce(long vehicleId, int wheel, float force);
 
     /**
-     * Set the given steering value to all front wheels (0 = forward)
+     * Alter the steering angle of all front wheels.
      *
-     * @param value the steering angle of the front wheels (Pi = 360deg)
+     * @param value the desired steering angle (in radians, 0=straight)
      */
     public void steer(float value) {
         for (int i = 0; i < wheels.size(); i++) {
@@ -522,10 +539,10 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     }
 
     /**
-     * Set the given steering value to the given wheel (0 = forward)
+     * Alter the steering angle of the indexed wheel.
      *
-     * @param wheel the wheel to set the steering on
-     * @param value the steering angle of the front wheels (Pi = 360deg)
+     * @param wheel the index of the wheel to steer (&ge;0)
+     * @param value the desired steering angle (in radians, 0=straight)
      */
     public void steer(int wheel, float value) {
         steer(vehicleId, wheel, value);
@@ -570,8 +587,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     /**
      * Get the current forward vector of the vehicle in world coordinates
      *
-     * @param vector a vector to store the result in (modified if not null)
-     * @return the vector (either vector or a new vector)
+     * @param vector storage for the result (modified if not null)
+     * @return the vector (either the provided storage or a new vector)
      */
     public Vector3f getForwardVector(Vector3f vector) {
         if (vector == null) {

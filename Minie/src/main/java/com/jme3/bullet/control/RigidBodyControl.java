@@ -143,6 +143,7 @@ public class RigidBodyControl extends PhysicsRigidBody
 
     /**
      * Clone this control for a different spatial. No longer used as of JME 3.1.
+     * TODO eviscerate
      *
      * @param spatial the spatial for the clone to control (or null)
      * @return a new control (not null)
@@ -246,6 +247,10 @@ public class RigidBodyControl extends PhysicsRigidBody
         }
     }
 
+    /**
+     * Set the collision shape based on the controlled spatial and its
+     * descendents.
+     */
     protected void createCollisionShape() {
         if (spatial == null) {
             return;
@@ -273,6 +278,15 @@ public class RigidBodyControl extends PhysicsRigidBody
         }
     }
 
+    /**
+     * Enable or disable this control.
+     * <p>
+     * The body is removed from its physics space when the control is disabled.
+     * When the control is enabled again, the body is moved to the current
+     * location of the spatial and then added to the physics space.
+     *
+     * @param enabled true&rarr;enable the control, false&rarr;disable it
+     */
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;

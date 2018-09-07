@@ -123,6 +123,11 @@ public class TranslationalLimitMotor {
 
     private native void setUpperLimit(long motorId, Vector3f vector);
 
+    /**
+     * Copy the accumulated impulse.
+     *
+     * @return a new vector (not null)
+     */
     public Vector3f getAccumulatedImpulse() {
         Vector3f vec = new Vector3f();
         getAccumulatedImpulse(motorId, vec);
@@ -132,6 +137,11 @@ public class TranslationalLimitMotor {
 
     private native void getAccumulatedImpulse(long motorId, Vector3f vector);
 
+    /**
+     * Alter the accumulated impulse.
+     *
+     * @param accumulatedImpulse the desired vector (not null, unaffected)
+     */
     public void setAccumulatedImpulse(Vector3f accumulatedImpulse) {
         setAccumulatedImpulse(motorId, accumulatedImpulse);
     }

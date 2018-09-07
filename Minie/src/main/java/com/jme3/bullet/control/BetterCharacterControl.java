@@ -148,7 +148,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
      * @param radius the radius of the character's collision shape (&gt;0)
      * @param height the height of the character's collision shape
      * (&gt;2*radius)
-     * @param mass the mass of the character (&ge;0)
+     * @param mass the character's mass (&ge;0)
      */
     public BetterCharacterControl(float radius, float height, float mass) {
         Validate.positive(radius, "radius");
@@ -278,21 +278,20 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Set the jump force as a Vector3f. The jump force is local to the
-     * characters coordinate system, which normally is always z-forward (in
-     * world coordinates, parent coordinates when set to applyLocalPhysics)
+     * Alter the jump force. The jump force is local to the characters
+     * coordinate system, which normally is always z-forward (in world
+     * coordinates, parent coordinates when set to applyLocalPhysics)
      *
-     * @param jumpForce the desired jump force
+     * @param jumpForce the desired jump force (not null)
      */
     public void setJumpForce(Vector3f jumpForce) {
         this.jumpForce.set(jumpForce);
     }
 
     /**
-     * Gets the current jump force. The default is 5 * character mass in y
-     * direction.
+     * Access the jump force. The default is 5 * character mass in y direction.
      *
-     * @return the pre-existing vector
+     * @return the pre-existing vector (not null) TODO
      */
     public Vector3f getJumpForce() {
         return jumpForce;
@@ -344,26 +343,26 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Sets the height multiplication factor for ducking.
+     * Alter the height multiplication factor for ducking.
      *
-     * @param factor The factor by which the height should be multiplied when
-     * ducking
+     * @param factor the factor by which the height should be multiplied when
+     * ducking (&ge;0, &le;1)
      */
     public void setDuckedFactor(float factor) {
         duckedFactor = factor;
     }
 
     /**
-     * Gets the height multiplication factor for ducking.
+     * Read the height multiplication factor for ducking.
      *
-     * @return the factor
+     * @return the factor (&ge;0, &le;1)
      */
     public float getDuckedFactor() {
         return duckedFactor;
     }
 
     /**
-     * Sets the walk direction of the character. This parameter is framerate
+     * Alter the character's the walk direction. This parameter is framerate
      * independent and the character will move continuously in the direction
      * given by the vector with the speed given by the vector length in m/s.
      *
@@ -374,18 +373,18 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Gets the current walk direction and speed of the character. The length of
-     * the vector defines the speed.
+     * Read the current walk velocity. The length of the vector defines the
+     * speed.
      *
-     * @return the pre-existing vector
+     * @return the pre-existing vector TODO
      */
     public Vector3f getWalkDirection() {
         return walkDirection;
     }
 
     /**
-     * Sets the view direction for the character. Note this only defines the
-     * rotation of the spatial in the local x/z plane of the character.
+     * Alter the character's view direction. Note this only defines the
+     * orientation in the local x/z plane.
      *
      * @param vec a direction vector (not null, unaffected)
      */
@@ -436,10 +435,10 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Set the gravity for this character. Note that this also realigns the
-     * local coordinate system of the character so that continuous changes in
-     * gravity direction are possible while maintaining a sensible control over
-     * the character.
+     * Alter the gravity acting on this character. Note that this also realigns
+     * the local coordinate system of the character so that continuous changes
+     * in gravity direction are possible while maintaining a sensible control
+     * over the character.
      *
      * @param gravity an acceleration vector (not null, unaffected)
      */
@@ -450,20 +449,20 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Get the current gravity of the character.
+     * Copy the character's gravity vector.
      *
-     * @return a new acceleration vector
+     * @return a new acceleration vector (not null)
      */
     public Vector3f getGravity() {
         return rigidBody.getGravity();
     }
 
     /**
-     * Get the current gravity of the character.
+     * Copy the character's gravity vector.
      *
      * @param store storage for the result (modified if not null)
      * @return an acceleration vector (either the provided storage or a new
-     * instance, not null)
+     * vector, not null)
      */
     public Vector3f getGravity(Vector3f store) {
         return rigidBody.getGravity(store);
@@ -569,7 +568,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Gets the scaled height.
+     * Calculate the scaled height.
      *
      * @return the height
      */
@@ -578,7 +577,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Gets the scaled radius.
+     * Calculate the scaled radius.
      *
      * @return the radius
      */
@@ -732,6 +731,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
 
     /**
      * Clone this control for a different spatial. No longer used as of JME 3.1.
+     * TODO eviscerate
      *
      * @param spatial the spatial for the clone to control (or null)
      * @return a new control (not null)

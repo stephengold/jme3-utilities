@@ -127,20 +127,46 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     private float blendTime = 1.0f;
     private float eventDispatchImpulseThreshold = 10f;
     private float rootMass = 15f;
+    /**
+     * accumulate total mass of ragdoll
+     */
     private float totalMass = 0f;
     final private Map<String, Vector3f> ikTargets = new HashMap<>();
     final private Map<String, Integer> ikChainDepth = new HashMap<>();
+    /**
+     * rotational speed for inverse kinematics
+     */
     private float ikRotSpeed = 7f;
+    /**
+     * limb-damping factor
+     */
     private float limbDampening = 0.6f;
-
+    /**
+     * distance threshold for inverse kinematics
+     */
     private float IKThreshold = 0.1f;
 
+    /**
+     * Enumerate joint-control modes for this control.
+     */
     public static enum Mode {
+        /**
+         * collision shapes follow the movements of bones in the skeleton
+         */
         Kinematic,
+        /**
+         * skeleton is controlled by Bullet physics (gravity and collisions)
+         */
         Ragdoll,
+        /**
+         * skeleton is controlled by inverse-kinematic targets
+         */
         IK
     }
 
+    /**
+     * Link a bone to a jointed rigid body. TODO separate file with accessors
+     */
     public class PhysicsBoneLink implements Savable {
 
         private PhysicsRigidBody rigidBody;
@@ -150,13 +176,26 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         private Quaternion startBlendingRot = new Quaternion();
         private Vector3f startBlendingPos = new Vector3f();
 
+        /**
+         * Instantiate an uninitialized link.
+         */
         public PhysicsBoneLink() {
         }
 
+        /**
+         * Access the linked bone.
+         *
+         * @return the pre-existing instance or null
+         */
         public Bone getBone() {
             return bone;
         }
 
+        /**
+         * Access the linked body.
+         *
+         * @return the pre-existing instance or null
+         */
         public PhysicsRigidBody getRigidBody() {
             return rigidBody;
         }
@@ -191,9 +230,12 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
             rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
             bone = (Bone) ic.readSavable("bone", null);
             joint = (SixDofJoint) ic.readSavable("joint", null);
-            initalWorldRotation = (Quaternion) ic.readSavable("initalWorldRotation", null);
-            startBlendingRot = (Quaternion) ic.readSavable("startBlendingRot", null);
-            startBlendingPos = (Vector3f) ic.readSavable("startBlendingPos", null);
+            initalWorldRotation
+                    = (Quaternion) ic.readSavable("initalWorldRotation", null);
+            startBlendingRot
+                    = (Quaternion) ic.readSavable("startBlendingRot", null);
+            startBlendingPos
+                    = (Vector3f) ic.readSavable("startBlendingPos", null);
         }
     }
 
@@ -266,6 +308,11 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         }
     }
 
+    /**
+     * Update this control in Ragdoll mode, based on Bullet physics.
+     *
+     * @param tpf the time interval between updates (in seconds, &ge;0)
+     */
     protected void ragDollUpdate(float tpf) {
         TempVars vars = TempVars.get();
         Quaternion tmpRot1 = vars.quat1;
@@ -320,6 +367,11 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         vars.release();
     }
 
+    /**
+     * Update this control in Kinematic mode, based on bone animation tracks.
+     *
+     * @param tpf the time interval between updates (in seconds, &ge;0)
+     */
     protected void kinematicUpdate(float tpf) {
         //the ragdoll does not have control, so the keyframed animation updates the physics position of the physics bonces
         TempVars vars = TempVars.get();
@@ -375,6 +427,11 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         vars.release();
     }
 
+    /**
+     * Update this control in IK mode, based on IK targets.
+     *
+     * @param tpf the time interval between updates (in seconds, &ge;0)
+     */
     private void ikUpdate(float tpf) {
         TempVars vars = TempVars.get();
 
@@ -415,6 +472,19 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         vars.release();
     }
 
+    /**
+     * Update a bone and its ancestors in IK mode. Note: recursive!
+     *
+     * @param link the bone link for the affected bone (may be null)
+     * @param tpf the time interval between updates (in seconds, &ge;0)
+     * @param vars unused TODO
+     * @param tmpRot1 temporary storage used in calculations (not null)
+     * @param tmpRot2 temporary storage used in calculations (not null)
+     * @param tipBone (not null)
+     * @param target the location target in model space (not null, unaffected)
+     * @param depth depth of the recursion (&ge;0)
+     * @param maxDepth recursion limit (&ge;0)
+     */
     public void updateBone(PhysicsBoneLink link, float tpf, TempVars vars,
             Quaternion tmpRot1, Quaternion[] tmpRot2, Bone tipBone,
             Vector3f target, int depth, int maxDepth) {
@@ -438,7 +508,9 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
             for (int posOrNeg = 0; posOrNeg < 2; posOrNeg++) {
                 float rot = ikRotSpeed * tpf / (link.rigidBody.getMass() * 2);
 
-                rot = FastMath.clamp(rot, link.joint.getRotationalLimitMotor(dirIndex).getLoLimit(), link.joint.getRotationalLimitMotor(dirIndex).getHiLimit());
+                rot = FastMath.clamp(rot,
+                        link.joint.getRotationalLimitMotor(dirIndex).getLoLimit(),
+                        link.joint.getRotationalLimitMotor(dirIndex).getHiLimit());
                 tmpRot1.fromAngleAxis(rot, vectorAxis);
 //                tmpRot1.fromAngleAxis(rotSpeed * tpf / (link.rigidBody.getMass() * 2), vectorAxis);
 
@@ -449,7 +521,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
 
                 link.bone.setLocalRotation(tmpRot2[posOrNeg]);
                 link.bone.update();
-                measureDist[posOrNeg] = tipBone.getModelSpacePosition().distance(target);
+                measureDist[posOrNeg]
+                        = tipBone.getModelSpacePosition().distance(target);
                 link.bone.setLocalRotation(preQuat);
             }
 
@@ -473,13 +546,12 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     }
 
     /**
-     * Set the transforms of a rigidBody to match the transforms of a bone. this
-     * is used to make the ragdoll follow the skeleton motion while in Kinematic
-     * mode
+     * Alter the transforms of a rigidBody to match the transforms of a bone.
+     * This is used to make the ragdoll follow animated motion in Kinematic mode
      *
-     * @param link the link containing the bone and the rigidBody
-     * @param position just a temp vector for position
-     * @param tmpRot1 just a temp quaternion for rotation
+     * @param link the bone link connecting the bone and the rigidBody
+     * @param position temporary storage used in calculations (not null)
+     * @param tmpRot1 temporary storage used in calculations (not null)
      */
     protected void matchPhysicObjectToBone(PhysicsBoneLink link,
             Vector3f position, Quaternion tmpRot1) {
@@ -500,8 +572,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     }
 
     /**
-     * rebuild the ragdoll this is useful if you applied scale on the ragdoll
-     * after it's been initialized, same as reattaching.
+     * Rebuild the ragdoll. This is useful if you applied scale on the ragdoll
+     * after it was initialized. Same as re-attaching.
      */
     public void reBuild() {
         if (spatial == null) {
@@ -556,7 +628,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         if (added) {
             addPhysics(getPhysicsSpace());
         }
-        logger.log(Level.FINE, "Created physics ragdoll for skeleton {0}", skeleton);
+        logger.log(Level.FINE, "Created physics ragdoll for skeleton {0}",
+                skeleton);
     }
 
     /**
@@ -576,7 +649,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     /**
      * Add a bone name to this control. Repeated invocations of this method can
      * be used to specify which bones to use when generating collision shapes.
-     *
+     * <p>
      * Not allowed after attaching the control.
      *
      * @param name the name of the bone to add
@@ -586,6 +659,11 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         boneList.add(name);
     }
 
+    /**
+     * Generate physics shapes and bone links for the skeleton.
+     *
+     * @param model the spatial with the model's SkeletonControl (not null)
+     */
     protected void scanSpatial(Spatial model) {
         AnimControl animControl = model.getControl(AnimControl.class);
         Map<Integer, List<Float>> pointsMap = null;
@@ -596,7 +674,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         skeleton = animControl.getSkeleton();
         skeleton.resetAndUpdate();
         for (Bone childBone : skeleton.getRoots()) {
-            if (childBone.getParent() == null) {
+            if (childBone.getParent() == null) { // TODO assert
                 logger.log(Level.FINE, "Found root bone in skeleton {0}",
                         skeleton);
                 boneRecursion(model, childBone, baseRigidBody, 1, pointsMap);
@@ -604,6 +682,16 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         }
     }
 
+    /**
+     * Generate a physics shape and bone links for the specified bone. Note:
+     * recursive!
+     *
+     * @param model the spatial with the model's SkeletonControl (not null)
+     * @param bone the bone to be linked (not null)
+     * @param parent the body linked to the parent bone (not null)
+     * @param reccount depth of the recursion (&ge;1)
+     * @param pointsMap (not null)
+     */
     protected void boneRecursion(Spatial model, Bone bone,
             PhysicsRigidBody parent, int reccount,
             Map<Integer, List<Float>> pointsMap) {
@@ -613,8 +701,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
             PhysicsBoneLink link = new PhysicsBoneLink();
             link.bone = bone;
 
-            //creating the collision shape
-            HullCollisionShape shape = null;
+            //create the collision shape
+            HullCollisionShape shape;
             if (pointsMap != null) {
                 //build a shape for the bone, using the vertices that are most influenced by this bone
                 shape = RagdollUtils.makeShapeFromPointMap(pointsMap,
@@ -622,10 +710,14 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
                         initScale, link.bone.getModelSpacePosition());
             } else {
                 //build a shape for the bone, using the vertices associated with this bone with a weight above the threshold
-                shape = RagdollUtils.makeShapeFromVerticeWeights(model, RagdollUtils.getBoneIndices(link.bone, skeleton, boneList), initScale, link.bone.getModelSpacePosition(), weightThreshold);
+                shape = RagdollUtils.makeShapeFromVerticeWeights(model,
+                        RagdollUtils.getBoneIndices(link.bone, skeleton, boneList),
+                        initScale, link.bone.getModelSpacePosition(),
+                        weightThreshold);
             }
 
-            PhysicsRigidBody shapeNode = new PhysicsRigidBody(shape, rootMass / (float) reccount);
+            PhysicsRigidBody shapeNode
+                    = new PhysicsRigidBody(shape, rootMass / (float) reccount);
 
             shapeNode.setKinematic(mode == Mode.Kinematic);
             totalMass += rootMass / (float) reccount;
@@ -640,7 +732,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
                     bone.getModelSpacePosition().subtract(bone.getParent().getModelSpacePosition(), posToParent).multLocal(initScale);
                 }
 
-                SixDofJoint joint = new SixDofJoint(parent, shapeNode, posToParent, new Vector3f(0, 0, 0f), true);
+                SixDofJoint joint = new SixDofJoint(parent, shapeNode,
+                        posToParent, new Vector3f(0f, 0f, 0f), true);
                 preset.setupJointForBone(bone.getName(), joint);
 
                 link.joint = joint;
@@ -658,16 +751,16 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     }
 
     /**
-     * Set the joint limits for the joint between the given bone and its parent.
-     * Can only be invoked after adding the control to a spatial.
+     * Alter the limits of the joint connecting the specified bone to its
+     * parent. Can only be invoked after adding the control to a spatial.
      *
      * @param boneName the name of the bone
-     * @param maxX the maximum rotation on the x axis (in radians)
-     * @param minX the minimum rotation on the x axis (in radians)
-     * @param maxY the maximum rotation on the y axis (in radians)
-     * @param minY the minimum rotation on the z axis (in radians)
-     * @param maxZ the maximum rotation on the z axis (in radians)
-     * @param minZ the minimum rotation on the z axis (in radians)
+     * @param maxX the maximum rotation on the X axis (in radians)
+     * @param minX the minimum rotation on the X axis (in radians)
+     * @param maxY the maximum rotation on the Y axis (in radians)
+     * @param minY the minimum rotation on the Y axis (in radians)
+     * @param maxZ the maximum rotation on the Z axis (in radians)
+     * @param minZ the minimum rotation on the Z axis (in radians)
      */
     public void setJointLimit(String boneName, float maxX, float minX,
             float maxY, float minY, float maxZ, float minZ) {
@@ -755,7 +848,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         PhysicsCollisionObject objA = event.getObjectA();
         PhysicsCollisionObject objB = event.getObjectB();
 
-        //excluding collisions that involve 2 parts of the ragdoll
+        //TODO Ignore collisions that involve 2 parts of the same ragdoll.
         if (event.getNodeA() == null && event.getNodeB() == null) {
             return;
         }
@@ -795,7 +888,6 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
                 listener.collide(hitBone, hitObject, event);
             }
         }
-
     }
 
     /**
@@ -881,9 +973,9 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     }
 
     /**
-     * Set the control into Kinematic mode In this mode, the collision shapes
-     * follow the movements of the skeleton, and can interact with physical
-     * environment
+     * Put the control into Kinematic mode. In this mode, the collision shapes
+     * follow the movements of the skeleton while interacting with the physics
+     * environment.
      */
     public void setKinematicMode() {
         if (mode != Mode.Kinematic) {
@@ -933,16 +1025,16 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     }
 
     /**
-     * Alter the root mass of the rag doll.
+     * Alter the ragdoll's root mass.
      *
-     * @param rootMass new mass (&ge;0)
+     * @param rootMass the desired mass (&ge;0)
      */
     public void setRootMass(float rootMass) {
         this.rootMass = rootMass;
     }
 
     /**
-     * Read the total mass of the rag doll.
+     * Read the ragdoll's total mass.
      *
      * @return mass (&ge;0)
      */
@@ -950,28 +1042,49 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         return totalMass;
     }
 
+    /**
+     * Read the ragdoll's weight threshold.
+     *
+     * @return threshold
+     */
     public float getWeightThreshold() {
         return weightThreshold;
     }
 
+    /**
+     * Alter the ragdoll's weight threshold.
+     *
+     * @param weightThreshold the desired threshold
+     */
     public void setWeightThreshold(float weightThreshold) {
         this.weightThreshold = weightThreshold;
     }
 
+    /**
+     * Read the ragdoll's event-dispatch impulse threshold.
+     *
+     * @return threshold
+     */
     public float getEventDispatchImpulseThreshold() {
         return eventDispatchImpulseThreshold;
     }
 
-    public void setEventDispatchImpulseThreshold(float eventDispatchImpulseThreshold) {
+    /**
+     * Alter the ragdoll's event-dispatch impulse threshold.
+     *
+     * @param eventDispatchImpulseThreshold desired threshold
+     */
+    public void setEventDispatchImpulseThreshold(
+            float eventDispatchImpulseThreshold) {
         this.eventDispatchImpulseThreshold = eventDispatchImpulseThreshold;
     }
 
     /**
-     * Set the CcdMotionThreshold of all the bone's rigidBodies of the ragdoll
+     * Alter the CcdMotionThreshold of all rigid bodies in the ragdoll.
      *
      * @see PhysicsRigidBody#setCcdMotionThreshold(float)
-     * @param value the desired minimum squared velocity for continuous
-     * collision detection
+     * @param value the desired threshold value (velocity, &gt;0) or zero to
+     * disable CCD (default=0)
      */
     public void setCcdMotionThreshold(float value) {
         for (PhysicsBoneLink link : boneLinks.values()) {
@@ -980,11 +1093,11 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     }
 
     /**
-     * Set the CcdSweptSphereRadius of all the bone's rigidBodies of the ragdoll
+     * Alter the CcdSweptSphereRadius of all rigid bodies in the ragdoll.
      *
      * @see PhysicsRigidBody#setCcdSweptSphereRadius(float)
      * @param value the desired radius of the sphere used for continuous
-     * collision detection
+     * collision detection (&ge;0)
      */
     public void setCcdSweptSphereRadius(float value) {
         for (PhysicsBoneLink link : boneLinks.values()) {
@@ -993,7 +1106,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     }
 
     /**
-     * return the rigidBody associated to the given bone
+     * Access the rigidBody associated with the named bone.
      *
      * @param boneName the name of the bone
      * @return the associated rigidBody.
@@ -1020,6 +1133,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
 
     /**
      * Clone this control for a different spatial. No longer used as of JME 3.1.
+     * TODO eviscerate
      *
      * @param spatial the spatial for the clone to control (or null)
      * @return a new control (not null)
@@ -1054,6 +1168,14 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         return control;
     }
 
+    /**
+     * Add a target for inverse kinematics.
+     *
+     * @param bone which bone the IK applies to (not null)
+     * @param worldPos the world coordinates of the goal (not null)
+     * @param chainLength
+     * @return a new instance (not null, already added to ikTargets)
+     */
     public Vector3f setIKTarget(Bone bone, Vector3f worldPos, int chainLength) {
         Vector3f target = worldPos.subtract(targetModel.getWorldTranslation());
         ikTargets.put(bone.getName(), target);
@@ -1067,16 +1189,19 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
             i++;
         }
 
-//        setIKMode();
         return target;
     }
 
+    /**
+     * Remove the inverse-kinematics target for the specified bone.
+     *
+     * @param bone which bone has the target (not null, modified)
+     */
     public void removeIKTarget(Bone bone) {
         int depth = ikChainDepth.remove(bone.getName());
         int i = 0;
         while (i < depth + 2 && bone.getParent() != null) {
             if (bone.hasUserControl()) {
-//                matchPhysicObjectToBone(boneLinks.get(bone.getName()), position, tmpRot1);
                 bone.setUserControl(false);
             }
             bone = bone.getParent();
@@ -1084,12 +1209,19 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         }
     }
 
+    /**
+     * Remove all inverse-kinematics targets.
+     */
     public void removeAllIKTargets() {
         ikTargets.clear();
         ikChainDepth.clear();
         applyUserControl();
     }
 
+    /**
+     * Ensure that user control is enabled for any bones used by inverse
+     * kinematics and disabled for any other bones.
+     */
     public void applyUserControl() {
         for (Bone bone : skeleton.getRoots()) {
             RagdollUtils.setUserControl(bone, false);
@@ -1105,10 +1237,10 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
             while (iterator.hasNext()) {
                 Bone bone = (Bone) iterator.next();
                 while (bone.getParent() != null) {
-
                     Quaternion tmpRot1 = vars.quat1;
                     Vector3f position = vars.vect1;
-                    matchPhysicObjectToBone(boneLinks.get(bone.getName()), position, tmpRot1);
+                    matchPhysicObjectToBone(boneLinks.get(bone.getName()),
+                            position, tmpRot1);
                     bone.setUserControl(true);
                     bone = bone.getParent();
                 }
@@ -1117,30 +1249,66 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         }
     }
 
+    /**
+     * Read the rotation speed for inverse kinematics.
+     *
+     * @return speed (&ge;0)
+     */
     public float getIkRotSpeed() {
         return ikRotSpeed;
     }
 
+    /**
+     * Alter the rotation speed for inverse kinematics.
+     *
+     * @param ikRotSpeed the desired speed (&ge;0, default=7)
+     */
     public void setIkRotSpeed(float ikRotSpeed) {
         this.ikRotSpeed = ikRotSpeed;
     }
 
+    /**
+     * Read the distance threshold for inverse kinematics.
+     *
+     * @return distance threshold
+     */
     public float getIKThreshold() {
         return IKThreshold;
     }
 
+    /**
+     * Alter the distance threshold for inverse kinematics.
+     *
+     * @param IKThreshold the desired distance threshold (default=0.1)
+     */
     public void setIKThreshold(float IKThreshold) {
         this.IKThreshold = IKThreshold;
     }
 
+    /**
+     * Read the limb-damping coefficient.
+     *
+     * @return damping coefficient
+     */
     public float getLimbDampening() {
         return limbDampening;
     }
 
+    /**
+     * Alter the limb-damping coefficient.
+     *
+     * @param limbDampening the desired coefficient (default=0.6)
+     */
     public void setLimbDampening(float limbDampening) {
         this.limbDampening = limbDampening;
     }
 
+    /**
+     * Access the named bone.
+     *
+     * @param name which bone to access
+     * @return the pre-existing instance, or null if not found
+     */
     public Bone getBone(String name) {
         return skeleton.getBone(name);
     }
@@ -1155,8 +1323,11 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule oc = ex.getCapsule(this);
-        oc.write(boneList.toArray(new String[boneList.size()]), "boneList", new String[0]);
-        oc.write(boneLinks.values().toArray(new PhysicsBoneLink[boneLinks.size()]), "boneLinks", new PhysicsBoneLink[0]);
+        oc.write(boneList.toArray(new String[boneList.size()]), "boneList",
+                new String[0]);
+        oc.write(boneLinks.values().toArray(
+                new PhysicsBoneLink[boneLinks.size()]),
+                "boneLinks", new PhysicsBoneLink[0]);
         oc.write(modelPosition, "modelPosition", new Vector3f());
         oc.write(modelRotation, "modelRotation", new Quaternion());
         oc.write(targetModel, "targetModel", null);
@@ -1165,12 +1336,13 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         oc.write(initScale, "initScale", null);
         oc.write(mode, "mode", null);
         oc.write(blendedControl, "blendedControl", false);
-        oc.write(weightThreshold, "weightThreshold", -1.0f);
-        oc.write(blendStart, "blendStart", 0.0f);
-        oc.write(blendTime, "blendTime", 1.0f);
-        oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold", 10);
-        oc.write(rootMass, "rootMass", 15);
-        oc.write(totalMass, "totalMass", 0);
+        oc.write(weightThreshold, "weightThreshold", -1f);
+        oc.write(blendStart, "blendStart", 0f);
+        oc.write(blendTime, "blendTime", 1f);
+        oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
+                10);
+        oc.write(rootMass, "rootMass", 15f);
+        oc.write(totalMass, "totalMass", 0f);
         oc.write(ikRotSpeed, "rotSpeed", 7f);
         oc.write(limbDampening, "limbDampening", 0.6f);
     }
@@ -1199,11 +1371,12 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         initScale = (Vector3f) ic.readSavable("initScale", null);
         mode = ic.readEnum("mode", Mode.class, Mode.Kinematic);
         blendedControl = ic.readBoolean("blendedControl", false);
-        weightThreshold = ic.readFloat("weightThreshold", -1.0f);
-        blendStart = ic.readFloat("blendStart", 0.0f);
-        blendTime = ic.readFloat("blendTime", 1.0f);
-        eventDispatchImpulseThreshold = ic.readFloat("eventDispatchImpulseThreshold", 10);
-        rootMass = ic.readFloat("rootMass", 15);
-        totalMass = ic.readFloat("totalMass", 0);
+        weightThreshold = ic.readFloat("weightThreshold", -1f);
+        blendStart = ic.readFloat("blendStart", 0f);
+        blendTime = ic.readFloat("blendTime", 1f);
+        eventDispatchImpulseThreshold
+                = ic.readFloat("eventDispatchImpulseThreshold", 10f);
+        rootMass = ic.readFloat("rootMass", 15f);
+        totalMass = ic.readFloat("totalMass", 0f);
     }
 }

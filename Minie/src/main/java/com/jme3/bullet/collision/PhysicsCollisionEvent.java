@@ -109,7 +109,7 @@ public class PhysicsCollisionEvent extends EventObject {
         this.type = TYPE_ADDED;
         this.nodeA = null;
         this.nodeB = null;
-        this.manifoldPointObjectId = 0;
+        this.manifoldPointObjectId = 0L;
     }
 
     /**

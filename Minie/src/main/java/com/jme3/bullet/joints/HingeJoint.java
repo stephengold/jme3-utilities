@@ -132,18 +132,33 @@ public class HingeJoint extends PhysicsJoint {
     private native void enableMotor(long objectId, boolean enable,
             float targetVelocity, float maxMotorImpulse);
 
+    /**
+     * Test whether the motor is enabled.
+     *
+     * @return true if enabled, otherwise false
+     */
     public boolean getEnableMotor() {
         return getEnableAngularMotor(objectId);
     }
 
     private native boolean getEnableAngularMotor(long objectId);
 
+    /**
+     * Read the motor's target velocity.
+     *
+     * @return velocity
+     */
     public float getMotorTargetVelocity() {
         return getMotorTargetVelocity(objectId);
     }
 
     private native float getMotorTargetVelocity(long objectId);
 
+    /**
+     * Read the motor's maximum impulse.
+     *
+     * @return impulse
+     */
     public float getMaxMotorImpulse() {
         return getMaxMotorImpulse(objectId);
     }
@@ -151,10 +166,10 @@ public class HingeJoint extends PhysicsJoint {
     private native float getMaxMotorImpulse(long objectId);
 
     /**
-     * Sets the limits of this joint.
+     * Alter this joint's limits.
      *
-     * @param low the low limit in radians.
-     * @param high the high limit in radians.
+     * @param low the low limit angle (in radians)
+     * @param high the high limit angle (in radians)
      */
     public void setLimit(float low, float high) {
         setLimit(objectId, low, high);
@@ -163,9 +178,9 @@ public class HingeJoint extends PhysicsJoint {
     private native void setLimit(long objectId, float low, float high);
 
     /**
-     * Sets the limits of this joint. If you're above the softness, velocities
-     * that would shoot through the actual limit are slowed down. The bias
-     * should be in the range of 0.2 - 0.5.
+     * Alter this joint's limits. If you're above the softness, velocities that
+     * would shoot through the actual limit are slowed down. The bias should be
+     * in the range of 0.2 - 0.5.
      *
      * @param low the low limit in radians.
      * @param high the high limit in radians.
