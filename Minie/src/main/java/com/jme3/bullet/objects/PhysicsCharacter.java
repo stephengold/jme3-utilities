@@ -65,10 +65,10 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     private long characterId = 0L;
 
     private float stepHeight;
-    final private Vector3f walkDirection = new Vector3f();
+    final private Vector3f walkOffset = new Vector3f();
     private float fallSpeed = 55f;
     private float jumpSpeed = 10f;
-    private int upAxis = PhysicsSpace.AXIS_Y;
+    private int upAxis = PhysicsSpace.AXIS_Y; // TODO remove
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -133,17 +133,17 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
 
     /**
      * Alter the walk offset. The offset will continue to be applied until
-     * altered.
+     * altered again.
      *
-     * @param vec the desired position increment for each physics tick (not
+     * @param offset the desired position increment for each physics tick (not
      * null, unaffected)
      */
-    public void setWalkDirection(Vector3f vec) {
-        walkDirection.set(vec);
-        setWalkDirection(characterId, vec);
+    public void setWalkDirection(Vector3f offset) {
+        walkOffset.set(offset);
+        setWalkDirection(characterId, offset);
     }
 
-    private native void setWalkDirection(long characterId, Vector3f vec);
+    private native void setWalkDirection(long characterId, Vector3f direction);
 
     /**
      * Access the walk offset.
@@ -151,7 +151,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
      * @return the pre-existing instance TODO
      */
     public Vector3f getWalkDirection() {
-        return walkDirection;
+        return walkOffset;
     }
 
     /**
@@ -181,13 +181,13 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Alter this character's "up" direction.
      *
-     * @param axis the desired direction (not null, not zero, unaffected)
+     * @param direction the desired direction (not null, not zero, unaffected)
      */
-    public void setUp(Vector3f axis) {
-        setUp(characterId, axis);
+    public void setUp(Vector3f direction) {
+        setUp(characterId, direction);
     }
 
-    private native void setUp(long characterId, Vector3f axis);
+    private native void setUp(long characterId, Vector3f direction);
 
     /**
      * Alter this character's angular velocity.
@@ -203,19 +203,21 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Copy this character's angular velocity.
      *
-     * @param out storage for the result (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the velocity vector (either the provided storage or a new vector,
      * not null)
      */
-    public Vector3f getAngularVelocity(Vector3f out) {
-        if (out == null) {
-            out = new Vector3f();
+    public Vector3f getAngularVelocity(Vector3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Vector3f();
         }
-        getAngularVelocity(characterId, out);
-        return out;
+        getAngularVelocity(characterId, storeResult);
+
+        return storeResult;
     }
 
-    private native void getAngularVelocity(long characterId, Vector3f out);
+    private native void getAngularVelocity(long characterId,
+            Vector3f storeResult);
 
     /**
      * Alter the linear velocity of this character's center of mass.
@@ -231,15 +233,16 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Copy the linear velocity of this character's center of mass.
      *
-     * @param out storage for the result (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return a vector (either the provided storage or a new vector, not null)
      */
-    public Vector3f getLinearVelocity(Vector3f out) {
-        if (out == null) {
-            out = new Vector3f();
+    public Vector3f getLinearVelocity(Vector3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Vector3f();
         }
-        getLinearVelocity(characterId, out);
-        return out;
+        getLinearVelocity(characterId, storeResult);
+
+        return storeResult;
     }
 
     private native void getLinearVelocity(long characterId, Vector3f out);
@@ -309,10 +312,10 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Alter this character's gravitational acceleration.
      *
-     * @param value the desired acceleration vector (not null, unaffected)
+     * @param gravity the desired acceleration vector (not null, unaffected)
      */
-    public void setGravity(Vector3f value) {
-        setGravity(characterId, value);
+    public void setGravity(Vector3f gravity) {
+        setGravity(characterId, gravity);
     }
 
     private native void setGravity(long characterId, Vector3f gravity);
@@ -330,20 +333,20 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Copy this character's gravitational acceleration.
      *
-     * @param out storage for the result (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the acceleration vector (either the provided storage or a new
      * vector, not null)
      */
-    public Vector3f getGravity(Vector3f out) {
-        if (out == null) {
-            out = new Vector3f();
+    public Vector3f getGravity(Vector3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Vector3f();
         }
-        getGravity(characterId, out);
+        getGravity(characterId, storeResult);
 
-        return out;
+        return storeResult;
     }
 
-    private native void getGravity(long characterId, Vector3f out);
+    private native void getGravity(long characterId, Vector3f storeResult);
 
     /**
      * Read this character's linear damping coefficient.
@@ -359,13 +362,13 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Alter this character's linear damping coefficient.
      *
-     * @param v the desired coefficient
+     * @param damping the desired coefficient
      */
-    public void setLinearDamping(float v) {
-        setLinearDamping(characterId, v);
+    public void setLinearDamping(float damping) {
+        setLinearDamping(characterId, damping);
     }
 
-    private native void setLinearDamping(long characterId, float v);
+    private native void setLinearDamping(long characterId, float damping);
 
     /**
      * Read this character's angular damping coefficient.
@@ -381,13 +384,13 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Alter this character's angular damping coefficient.
      *
-     * @param v the desired coefficient (default=0)
+     * @param damping the desired coefficient (default=0)
      */
-    public void setAngularDamping(float v) {
-        setAngularDamping(characterId, v);
+    public void setAngularDamping(float damping) {
+        setAngularDamping(characterId, damping);
     }
 
-    private native void setAngularDamping(long characterId, float v);
+    private native void setAngularDamping(long characterId, float damping);
 
     /**
      * Read this character's step height.
@@ -403,13 +406,13 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Alter this character's step height.
      *
-     * @param v the desired height
+     * @param height the desired height
      */
-    public void setStepHeight(float v) {
-        setStepHeight(characterId, v);
+    public void setStepHeight(float height) {
+        setStepHeight(characterId, height);
     }
 
-    private native void setStepHeight(long characterId, float v);
+    private native void setStepHeight(long characterId, float height);
 
     /**
      * Read this character's maximum penetration depth.
@@ -425,13 +428,13 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Alter this character's maximum penetration depth.
      *
-     * @param v the desired depth
+     * @param depth the desired depth
      */
-    public void setMaxPenetrationDepth(float v) {
-        setMaxPenetrationDepth(characterId, v);
+    public void setMaxPenetrationDepth(float depth) {
+        setMaxPenetrationDepth(characterId, depth);
     }
 
-    private native void setMaxPenetrationDepth(long characterId, float v);
+    private native void setMaxPenetrationDepth(long characterId, float depth);
 
     /**
      * Alter this character's maximum slope angle.
@@ -621,13 +624,13 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Serialize this character, for example when saving to a J3O file.
      *
-     * @param e exporter (not null)
+     * @param ex exporter (not null)
      * @throws IOException from exporter
      */
     @Override
-    public void write(JmeExporter e) throws IOException {
-        super.write(e);
-        OutputCapsule capsule = e.getCapsule(this);
+    public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
+        OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(stepHeight, "stepHeight", 1f);
         capsule.write(getGravity(), "gravity", 9.8f * 3); // TODO vector
         capsule.write(getMaxSlope(), "maxSlope", 1f);
@@ -644,13 +647,13 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
      * De-serialize this character from the specified importer, for example when
      * loading from a J3O file.
      *
-     * @param e importer (not null)
+     * @param im importer (not null)
      * @throws IOException from importer
      */
     @Override
-    public void read(JmeImporter e) throws IOException {
-        super.read(e);
-        InputCapsule capsule = e.getCapsule(this);
+    public void read(JmeImporter im) throws IOException {
+        super.read(im);
+        InputCapsule capsule = im.getCapsule(this);
         stepHeight = capsule.readFloat("stepHeight", 1f);
         buildObject();
         setGravity(capsule.readFloat("gravity", 9.8f * 3)); // TODO vector
