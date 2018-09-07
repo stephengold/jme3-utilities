@@ -40,7 +40,6 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Spatial;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -66,7 +65,8 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     final private static Logger logger
             = Logger.getLogger(PhysicsGhostObject.class.getName());
 
-    final private List<PhysicsCollisionObject> overlappingObjects = new LinkedList<>();
+    final private List<PhysicsCollisionObject> overlappingObjects
+            = new LinkedList<>();
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -75,28 +75,27 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     public PhysicsGhostObject() {
     }
 
+    /**
+     * Instantiate an object with the specified collision shape.
+     *
+     * @param shape the desired shape (not null, alias created)
+     */
     public PhysicsGhostObject(CollisionShape shape) {
         collisionShape = shape;
         buildObject();
     }
 
-    public PhysicsGhostObject(Spatial child, CollisionShape shape) {
-        collisionShape = shape;
-        buildObject();
-    }
-
-    protected void buildObject() {
-        if (objectId == 0) {
-//            gObject = new PairCachingGhostObject();
+    /**
+     * Create the configured object in Bullet.
+     */
+    private void buildObject() {
+        if (objectId == 0L) {
             objectId = createGhostObject();
-            logger.log(Level.FINE, "Created Ghost Object {0}", Long.toHexString(objectId));
+            logger.log(Level.FINE, "Created Ghost Object {0}",
+                    Long.toHexString(objectId));
             setGhostFlags(objectId);
             initUserPointer();
         }
-//        if (gObject == null) {
-//            gObject = new PairCachingGhostObject();
-//            gObject.setCollisionFlags(gObject.getCollisionFlags() | CollisionFlags.NO_CONTACT_RESPONSE);
-//        }
         attachCollisionShape(objectId, collisionShape.getObjectId());
     }
 
@@ -122,9 +121,9 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     }
 
     /**
-     * Sets the physics object location
+     * Directly alter the location of this object's center.
      *
-     * @param location the location of the actual physics object
+     * @param location the desired location (not null, unaffected)
      */
     public void setPhysicsLocation(Vector3f location) {
         setPhysicsLocation(objectId, location);
@@ -133,9 +132,10 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     private native void setPhysicsLocation(long objectId, Vector3f location);
 
     /**
-     * Sets the physics object rotation
+     * Directly alter this object's orientation.
      *
-     * @param rotation the rotation of the actual physics object
+     * @param rotation the desired orientation (rotation matrix, not null,
+     * unaffected)
      */
     public void setPhysicsRotation(Matrix3f rotation) {
         setPhysicsRotation(objectId, rotation);
@@ -144,9 +144,10 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     private native void setPhysicsRotation(long objectId, Matrix3f rotation);
 
     /**
-     * Sets the physics object rotation
+     * Directly alter this object's orientation.
      *
-     * @param rotation the rotation of the actual physics object
+     * @param rotation the desired orientation (quaternion, not null,
+     * unaffected)
      */
     public void setPhysicsRotation(Quaternion rotation) {
         setPhysicsRotation(objectId, rotation);
@@ -155,8 +156,11 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     private native void setPhysicsRotation(long objectId, Quaternion rotation);
 
     /**
-     * @param trans a vector to store the result in (modified if not null)
-     * @return the location (either trans or a new vector)
+     * Copy the location of this object's center.
+     *
+     * @param trans storage for the result (modified if not null)
+     * @return the physics location (either the provided storage or a new
+     * vector, not null)
      */
     public Vector3f getPhysicsLocation(Vector3f trans) {
         if (trans == null) {
@@ -169,8 +173,11 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     private native void getPhysicsLocation(long objectId, Vector3f vector);
 
     /**
-     * @param rot a quaternion to store the result in (modified if not null)
-     * @return the orientation (either rot or a new vector)
+     * Copy this object's orientation to a quaternion.
+     *
+     * @param rot storage for the result (modified if not null)
+     * @return the physics orientation (either the provided storage or a new
+     * quaternion, not null)
      */
     public Quaternion getPhysicsRotation(Quaternion rot) {
         if (rot == null) {
@@ -183,8 +190,11 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     private native void getPhysicsRotation(long objectId, Quaternion rot);
 
     /**
-     * @param rot a matrix to store the result in (modified if not null)
-     * @return the orientation (either rot or a new matrix)
+     * Copy this object's orientation to a matrix.
+     *
+     * @param rot storage for the result (modified if not null)
+     * @return the orientation (either the provided storage or a new matrix, not
+     * null)
      */
     public Matrix3f getPhysicsRotationMatrix(Matrix3f rot) {
         if (rot == null) {
@@ -197,31 +207,44 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     private native void getPhysicsRotationMatrix(long objectId, Matrix3f rot);
 
     /**
-     * @return the physicsLocation
+     * Copy the location of this object's center.
+     *
+     * @return a new location vector (not null)
      */
     public Vector3f getPhysicsLocation() {
         Vector3f vec = new Vector3f();
         getPhysicsLocation(objectId, vec);
+
         return vec;
     }
 
     /**
-     * @return the orientation (a new quaternion)
+     * Copy this object's orientation to a quaternion.
+     *
+     * @return a new quaternion (not null)
      */
     public Quaternion getPhysicsRotation() {
         Quaternion quat = new Quaternion();
         getPhysicsRotation(objectId, quat);
+
         return quat;
     }
 
+    /**
+     * Copy this object's orientation to a matrix.
+     *
+     * @return a new matrix (not null)
+     */
     public Matrix3f getPhysicsRotationMatrix() {
         Matrix3f mtx = new Matrix3f();
         getPhysicsRotationMatrix(objectId, mtx);
+
         return mtx;
     }
 
     /**
-     * Destroy this object and remove it from memory. (Has no effect.)
+     * Destroy this object and remove it from memory. (Has no effect.) TODO
+     * remove
      */
     public void destroy() {
     }
@@ -243,7 +266,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         return overlappingObjects;
     }
 
-    protected native void getOverlappingObjects(long objectId);
+    native private void getOverlappingObjects(long objectId);
 
     /**
      * This method is invoked from native code.
@@ -288,13 +311,14 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     private native void setCcdSweptSphereRadius(long objectId, float radius);
 
     /**
-     * Sets the amount of motion that has to happen in one physics tick to
-     * trigger the continuous collision detection (CCD).
+     * Alter the amount of motion required to trigger continuous collision
+     * detection (CCD).
      * <p>
-     * This addresses the problem of fast objects moving through other objects.
+     * This addresses the issue of fast objects passing through other objects
+     * with no collision detected.
      *
-     * @param threshold the desired threshold value (&gt;0) or zero to disable
-     * CCD (default=0)
+     * @param threshold the desired threshold value (squared velocity, &gt;0) or
+     * zero to disable CCD (default=0)
      */
     public void setCcdMotionThreshold(float threshold) {
         setCcdMotionThreshold(objectId, threshold);
@@ -318,7 +342,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      * Read the continuous collision detection (CCD) motion threshold for this
      * object.
      *
-     * @return threshold value (&ge;0)
+     * @return threshold value (squared velocity, &ge;0)
      */
     public float getCcdMotionThreshold() {
         return getCcdMotionThreshold(objectId);
@@ -347,10 +371,12 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     public void write(JmeExporter e) throws IOException {
         super.write(e);
         OutputCapsule capsule = e.getCapsule(this);
-        capsule.write(getPhysicsLocation(new Vector3f()), "physicsLocation", new Vector3f());
-        capsule.write(getPhysicsRotationMatrix(new Matrix3f()), "physicsRotation", new Matrix3f());
-        capsule.write(getCcdMotionThreshold(), "ccdMotionThreshold", 0);
-        capsule.write(getCcdSweptSphereRadius(), "ccdSweptSphereRadius", 0);
+        capsule.write(getPhysicsLocation(new Vector3f()),
+                "physicsLocation", new Vector3f());
+        capsule.write(getPhysicsRotationMatrix(new Matrix3f()),
+                "physicsRotation", new Matrix3f());
+        capsule.write(getCcdMotionThreshold(), "ccdMotionThreshold", 0f);
+        capsule.write(getCcdSweptSphereRadius(), "ccdSweptSphereRadius", 0f);
     }
 
     /**
@@ -365,9 +391,11 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         super.read(e);
         InputCapsule capsule = e.getCapsule(this);
         buildObject();
-        setPhysicsLocation((Vector3f) capsule.readSavable("physicsLocation", new Vector3f()));
-        setPhysicsRotation(((Matrix3f) capsule.readSavable("physicsRotation", new Matrix3f())));
-        setCcdMotionThreshold(capsule.readFloat("ccdMotionThreshold", 0));
-        setCcdSweptSphereRadius(capsule.readFloat("ccdSweptSphereRadius", 0));
+        setPhysicsLocation((Vector3f) capsule.readSavable("physicsLocation",
+                new Vector3f()));
+        setPhysicsRotation(((Matrix3f) capsule.readSavable("physicsRotation",
+                new Matrix3f())));
+        setCcdMotionThreshold(capsule.readFloat("ccdMotionThreshold", 0f));
+        setCcdSweptSphereRadius(capsule.readFloat("ccdSweptSphereRadius", 0f));
     }
 }
