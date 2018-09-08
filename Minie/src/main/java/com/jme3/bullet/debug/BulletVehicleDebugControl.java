@@ -58,7 +58,7 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
     final private static Logger logger
             = Logger.getLogger(BulletVehicleDebugControl.class.getName());
 
-    final private PhysicsVehicle body; // TODO rename
+    final private PhysicsVehicle vehicle;
     final private Node suspensionNode;
     final private Vector3f location = new Vector3f();
     final private Quaternion rotation = new Quaternion();
@@ -67,12 +67,12 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
      * Instantiate an enabled control to visualize the specified vehicle.
      *
      * @param debugAppState which app state (not null)
-     * @param body which vehicle to visualize (not null, alias created)
+     * @param ve which vehicle to visualize (not null, alias created)
      */
     public BulletVehicleDebugControl(BulletDebugAppState debugAppState,
-            PhysicsVehicle body) {
+            PhysicsVehicle ve) {
         super(debugAppState);
-        this.body = body;
+        vehicle = ve;
         suspensionNode = new Node("Suspension");
         createVehicle();
     }
@@ -98,20 +98,21 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
 
     private void createVehicle() {
         suspensionNode.detachAllChildren();
-        for (int i = 0; i < body.getNumWheels(); i++) {
-            VehicleWheel physicsVehicleWheel = body.getWheel(i);
-            Vector3f location = physicsVehicleWheel.getLocation().clone();
-            Vector3f direction = physicsVehicleWheel.getDirection().clone();
+        for (int i = 0; i < vehicle.getNumWheels(); i++) {
+            VehicleWheel physicsVehicleWheel = vehicle.getWheel(i);
+            Vector3f wLocation = physicsVehicleWheel.getLocation().clone();
+            Vector3f wDirection = physicsVehicleWheel.getDirection().clone();
             Vector3f axle = physicsVehicleWheel.getAxle().clone();
             float restLength = physicsVehicleWheel.getRestLength();
             float radius = physicsVehicleWheel.getRadius();
 
-            Arrow locArrow = new Arrow(location);
+            Arrow locArrow = new Arrow(wLocation);
             Arrow axleArrow = new Arrow(axle.normalizeLocal().multLocal(0.3f));
             Arrow wheelArrow = new Arrow(
-                    direction.normalizeLocal().multLocal(radius));
+                    wDirection.normalizeLocal().multLocal(radius));
             Arrow dirArrow = new Arrow(
-                    direction.normalizeLocal().multLocal(restLength));
+                    wDirection.normalizeLocal().multLocal(restLength));
+
             Geometry locGeom = new Geometry("WheelLocationDebugShape" + i,
                     locArrow);
             Geometry dirGeom = new Geometry("WheelDirectionDebugShape" + i,
@@ -120,13 +121,16 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
                     axleArrow);
             Geometry wheelGeom = new Geometry("WheelRadiusDebugShape" + i,
                     wheelArrow);
-            dirGeom.setLocalTranslation(location);
-            axleGeom.setLocalTranslation(location.add(direction));
-            wheelGeom.setLocalTranslation(location.add(direction));
+
+            dirGeom.setLocalTranslation(wLocation);
+            axleGeom.setLocalTranslation(wLocation.add(wDirection));
+            wheelGeom.setLocalTranslation(wLocation.add(wDirection));
+
             locGeom.setMaterial(debugAppState.DEBUG_MAGENTA);
             dirGeom.setMaterial(debugAppState.DEBUG_MAGENTA);
             axleGeom.setMaterial(debugAppState.DEBUG_MAGENTA);
             wheelGeom.setMaterial(debugAppState.DEBUG_MAGENTA);
+
             suspensionNode.attachChild(locGeom);
             suspensionNode.attachChild(dirGeom);
             suspensionNode.attachChild(axleGeom);
@@ -139,14 +143,14 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
      * update, provided the control is enabled and added to a scene. Should be
      * invoked only by a subclass or by AbstractControl.
      *
-     * @param tpf the time interval between updates (in seconds, &ge;0)
+     * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     @Override
     protected void controlUpdate(float tpf) {
-        for (int i = 0; i < body.getNumWheels(); i++) {
-            VehicleWheel physicsVehicleWheel = body.getWheel(i);
-            Vector3f location = physicsVehicleWheel.getLocation().clone();
-            Vector3f direction = physicsVehicleWheel.getDirection().clone();
+        for (int i = 0; i < vehicle.getNumWheels(); i++) {
+            VehicleWheel physicsVehicleWheel = vehicle.getWheel(i);
+            Vector3f wLocation = physicsVehicleWheel.getLocation().clone();
+            Vector3f wDirection = physicsVehicleWheel.getDirection().clone();
             Vector3f axle = physicsVehicleWheel.getAxle().clone();
             float restLength = physicsVehicleWheel.getRestLength();
             float radius = physicsVehicleWheel.getRadius();
@@ -161,24 +165,24 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
                     "WheelRadiusDebugShape" + i);
 
             Arrow locArrow = (Arrow) locGeom.getMesh();
-            locArrow.setArrowExtent(location);
+            locArrow.setArrowExtent(wLocation);
             Arrow axleArrow = (Arrow) axleGeom.getMesh();
             axleArrow.setArrowExtent(
                     axle.normalizeLocal().multLocal(0.3f));
             Arrow wheelArrow = (Arrow) wheelGeom.getMesh();
             wheelArrow.setArrowExtent(
-                    direction.normalizeLocal().multLocal(radius));
+                    wDirection.normalizeLocal().multLocal(radius));
             Arrow dirArrow = (Arrow) dirGeom.getMesh();
             dirArrow.setArrowExtent(
-                    direction.normalizeLocal().multLocal(restLength));
+                    wDirection.normalizeLocal().multLocal(restLength));
 
-            dirGeom.setLocalTranslation(location);
-            axleGeom.setLocalTranslation(location.addLocal(direction));
-            wheelGeom.setLocalTranslation(location);
+            dirGeom.setLocalTranslation(wLocation);
+            axleGeom.setLocalTranslation(wLocation.addLocal(wDirection));
+            wheelGeom.setLocalTranslation(wLocation);
             i++;
         }
-        applyPhysicsTransform(body.getPhysicsLocation(location),
-                body.getPhysicsRotation(rotation));
+        applyPhysicsTransform(vehicle.getPhysicsLocation(location),
+                vehicle.getPhysicsRotation(rotation));
     }
 
     /**
