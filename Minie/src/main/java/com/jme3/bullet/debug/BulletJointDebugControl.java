@@ -57,7 +57,7 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
     final private static Logger logger
             = Logger.getLogger(BulletJointDebugControl.class.getName());
 
-    final private PhysicsJoint body; // TODO rename
+    final private PhysicsJoint joint;
     final private Geometry geomA;
     final private Arrow arrowA;
     final private Geometry geomB;
@@ -69,17 +69,17 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
      * Instantiate an enabled control to visualize the specified joint.
      *
      * @param debugAppState which app state (not null)
-     * @param body the joint to visualize (not null, alias created)
+     * @param jo the joint to visualize (not null, alias created)
      */
     public BulletJointDebugControl(BulletDebugAppState debugAppState,
-            PhysicsJoint body) {
+            PhysicsJoint jo) {
         super(debugAppState);
-        this.body = body;
-        this.geomA = new Geometry(body.toString());
+        joint = jo;
+        geomA = new Geometry(jo.toString());
         arrowA = new Arrow(Vector3f.ZERO);
         geomA.setMesh(arrowA);
         geomA.setMaterial(debugAppState.DEBUG_GREEN);
-        this.geomB = new Geometry(body.toString());
+        geomB = new Geometry(jo.toString());
         arrowB = new Arrow(Vector3f.ZERO);
         geomB.setMesh(arrowB);
         geomB.setMaterial(debugAppState.DEBUG_GREEN);
@@ -111,21 +111,21 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
      * update, provided the control is enabled and added to a scene. Should be
      * invoked only by a subclass or by AbstractControl.
      *
-     * @param tpf the time interval between updates (in seconds, &ge;0)
+     * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     @Override
     protected void controlUpdate(float tpf) {
-        body.getBodyA().getPhysicsLocation(a.getTranslation());
-        body.getBodyA().getPhysicsRotation(a.getRotation());
+        joint.getBodyA().getPhysicsLocation(a.getTranslation());
+        joint.getBodyA().getPhysicsRotation(a.getRotation());
 
-        body.getBodyB().getPhysicsLocation(b.getTranslation());
-        body.getBodyB().getPhysicsRotation(b.getRotation());
+        joint.getBodyB().getPhysicsLocation(b.getTranslation());
+        joint.getBodyB().getPhysicsRotation(b.getRotation());
 
         geomA.setLocalTransform(a);
         geomB.setLocalTransform(b);
 
-        arrowA.setArrowExtent(body.getPivotA());
-        arrowB.setArrowExtent(body.getPivotB());
+        arrowA.setArrowExtent(joint.getPivotA());
+        arrowB.setArrowExtent(joint.getPivotB());
     }
 
     /**
