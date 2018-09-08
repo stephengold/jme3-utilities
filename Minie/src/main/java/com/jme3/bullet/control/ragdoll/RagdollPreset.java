@@ -87,12 +87,16 @@ public abstract class RagdollPreset {
         JointPreset preset = boneMap.get(resultName);
 
         if (preset != null && resultScore >= 50) {
-            logger.log(Level.FINE, "Found matching joint for bone {0} : {1} with score {2}", new Object[]{boneName, resultName, resultScore});
+            logger.log(Level.FINE,
+                    "Found matching joint for bone {0} : {1} with score {2}",
+                    new Object[]{boneName, resultName, resultScore});
             preset.setupJoint(joint);
         } else {
-            logger.log(Level.FINE, "No joint match found for bone {0}", boneName);
+            logger.log(Level.FINE, "No joint match found for bone {0}",
+                    boneName);
             if (resultScore > 0) {
-                logger.log(Level.FINE, "Best match found is {0} with score {1}", new Object[]{resultName, resultScore});
+                logger.log(Level.FINE, "Best match found is {0} with score {1}",
+                        new Object[]{resultName, resultScore});
             }
             new JointPreset().setupJoint(joint);
         }
@@ -106,7 +110,18 @@ public abstract class RagdollPreset {
         public JointPreset() {
         }
 
-        public JointPreset(float maxX, float minX, float maxY, float minY, float maxZ, float minZ) {
+        /**
+         * Instantiate a new preset.
+         *
+         * @param maxX the maximum rotation on the X axis (in radians)
+         * @param minX the minimum rotation on the X axis (in radians)
+         * @param maxY the maximum rotation on the Y axis (in radians)
+         * @param minY the minimum rotation on the Y axis (in radians)
+         * @param maxZ the maximum rotation on the Z axis (in radians)
+         * @param minZ the minimum rotation on the Z axis (in radians)
+         */
+        public JointPreset(float maxX, float minX, float maxY, float minY,
+                float maxZ, float minZ) {
             this.maxX = maxX;
             this.minX = minX;
             this.maxY = maxY;
@@ -115,6 +130,11 @@ public abstract class RagdollPreset {
             this.minZ = minZ;
         }
 
+        /**
+         * Apply this preset to the specified joint.
+         *
+         * @param joint where to apply (not null, modified)
+         */
         public void setupJoint(SixDofJoint joint) {
             joint.getRotationalLimitMotor(0).setHiLimit(maxX);
             joint.getRotationalLimitMotor(0).setLoLimit(minX);
@@ -135,10 +155,11 @@ public abstract class RagdollPreset {
             int score = 0;
             String searchWord = word.toLowerCase();
             for (String key : this.keySet()) {
-                if (searchWord.indexOf(key) >= 0) {
+                if (searchWord.contains(key)) {
                     score += get(key);
                 }
             }
+
             return score;
         }
     }
