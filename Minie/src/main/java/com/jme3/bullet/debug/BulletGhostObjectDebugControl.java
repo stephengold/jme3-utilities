@@ -57,9 +57,9 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
     final private static Logger logger
             = Logger.getLogger(BulletGhostObjectDebugControl.class.getName());
 
-    private final PhysicsGhostObject body; // TODO rename
-    private final Vector3f location = new Vector3f();
-    private final Quaternion rotation = new Quaternion();
+    final private PhysicsGhostObject ghost;
+    final private Vector3f location = new Vector3f();
+    final private Quaternion rotation = new Quaternion();
     final private CollisionShape myShape;
     private Spatial geom;
 
@@ -67,16 +67,15 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
      * Instantiate an enabled control to visualize the specified object.
      *
      * @param debugAppState which app state (not null)
-     * @param body the object to visualize (not null, alias created)
+     * @param gh which object to visualize (not null, alias created)
      */
     public BulletGhostObjectDebugControl(BulletDebugAppState debugAppState,
-            PhysicsGhostObject body) {
+            PhysicsGhostObject gh) {
         super(debugAppState);
-        this.body = body;
-        myShape = body.getCollisionShape();
-        this.geom = DebugShapeFactory.getDebugShape(body.getCollisionShape());
-        this.geom.setName(body.toString());
-        this.geom.setName(body.toString());
+        ghost = gh;
+        myShape = gh.getCollisionShape();
+        geom = DebugShapeFactory.getDebugShape(gh.getCollisionShape());
+        geom.setName(gh.toString());
         geom.setMaterial(debugAppState.DEBUG_YELLOW);
     }
 
@@ -104,19 +103,19 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
      * update, provided the control is enabled and added to a scene. Should be
      * invoked only by a subclass or by AbstractControl.
      *
-     * @param tpf the time interval between updates (in seconds, &ge;0)
+     * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     @Override
     protected void controlUpdate(float tpf) {
-        if (myShape != body.getCollisionShape()) {
+        if (myShape != ghost.getCollisionShape()) {
             Node node = (Node) this.spatial;
             node.detachChild(geom);
-            geom = DebugShapeFactory.getDebugShape(body.getCollisionShape());
+            geom = DebugShapeFactory.getDebugShape(ghost.getCollisionShape());
             geom.setMaterial(debugAppState.DEBUG_YELLOW);
             node.attachChild(geom);
         }
-        applyPhysicsTransform(body.getPhysicsLocation(location),
-                body.getPhysicsRotation(rotation));
+        applyPhysicsTransform(ghost.getPhysicsLocation(location),
+                ghost.getPhysicsRotation(rotation));
     }
 
     /**
