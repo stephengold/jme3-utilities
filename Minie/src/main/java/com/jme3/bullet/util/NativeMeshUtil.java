@@ -97,10 +97,10 @@ public class NativeMeshUtil {
     }
 
     /**
-     * Create a btTriangleIndexVertexArray. Native method.
+     * Instantiate a btTriangleIndexVertexArray. Native method.
      *
-     * @param triangleIndexBase
-     * @param vertexBase
+     * @param triangleIndexBase index buffer (not null)
+     * @param vertexBase vertex buffer (not null)
      * @param numTriangles the number of triangles in the mesh (&ge;0)
      * @param numVertices the number of vertices in the mesh (&ge;0)
      * @param vertexStride (in bytes, &gt;0)

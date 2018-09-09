@@ -40,9 +40,8 @@ import jme3utilities.Validate;
 /**
  * An event that describes a collision in the physics world.
  * <p>
- * Do not retain this Object, as it will be reused after the collision() method
- * returns. Copy any data you need during the collide() method. TODO obviate
- * this warning
+ * Do not retain this object, as it will be reused after the collision() method
+ * returns. Copy any data you need during the collide() method.
  *
  * @author normenhansen
  */
@@ -342,7 +341,7 @@ public class PhysicsCollisionEvent extends EventObject {
     /**
      * Copy the collision's location in the local coordinates of object A.
      *
-     * @return a new vector (not null)
+     * @return a new location vector (in local coordinates, not null)
      */
     public Vector3f getLocalPointA() {
         return getLocalPointA(new Vector3f());
@@ -352,7 +351,7 @@ public class PhysicsCollisionEvent extends EventObject {
      * Copy the collision's location in the local coordinates of object A.
      *
      * @param storeResult storage for the result (not null, modified)
-     * @return location vector in local coordinates (not null)
+     * @return a location vector (in local coordinates, not null)
      */
     public Vector3f getLocalPointA(Vector3f storeResult) {
         Validate.nonNull(storeResult, "store result");
@@ -366,7 +365,7 @@ public class PhysicsCollisionEvent extends EventObject {
     /**
      * Copy the collision's location in the local coordinates of object B.
      *
-     * @return a new vector (not null)
+     * @return a new location vector (in local coordinates, not null)
      */
     public Vector3f getLocalPointB() {
         return getLocalPointB(new Vector3f());
@@ -376,7 +375,7 @@ public class PhysicsCollisionEvent extends EventObject {
      * Copy the collision's location in the local coordinates of object B.
      *
      * @param storeResult storage for the result (not null, modified)
-     * @return location vector in local coordinates (not null)
+     * @return a location vector (in local coordinates, not null)
      */
     public Vector3f getLocalPointB(Vector3f storeResult) {
         Validate.nonNull(storeResult, "store result");
@@ -390,7 +389,7 @@ public class PhysicsCollisionEvent extends EventObject {
     /**
      * Copy the collision's normal on object B.
      *
-     * @return a new vector in world coordinates (not null)
+     * @return a new normal vector (in physics-space coordinates, not null)
      */
     public Vector3f getNormalWorldOnB() {
         return getNormalWorldOnB(new Vector3f());
@@ -400,7 +399,7 @@ public class PhysicsCollisionEvent extends EventObject {
      * Copy the collision's normal on object B.
      *
      * @param storeResult storage for the result (not null, modified)
-     * @return normal vector in world coordinates (not null)
+     * @return a normal vector (in physics-space coordinates, not null)
      */
     public Vector3f getNormalWorldOnB(Vector3f storeResult) {
         Validate.nonNull(storeResult, "store result");
@@ -434,19 +433,19 @@ public class PhysicsCollisionEvent extends EventObject {
     private native int getPartId1(long manifoldPointObjectId);
 
     /**
-     * Copy the collision's location in world coordinates.
+     * Copy the collision's location.
      *
-     * @return a new vector in world coordinates (not null)
+     * @return a new vector (in physics-space coordinates, not null)
      */
     public Vector3f getPositionWorldOnA() {
         return getPositionWorldOnA(new Vector3f());
     }
 
     /**
-     * Copy the collision's location in world coordinates.
+     * Copy the collision's location.
      *
      * @param storeResult storage for the result (not null, modified)
-     * @return location vector in world coordinates (not null)
+     * @return a location vector (in physics-space coordinates, not null)
      */
     public Vector3f getPositionWorldOnA(Vector3f storeResult) {
         Validate.nonNull(storeResult, "store result");
@@ -458,19 +457,19 @@ public class PhysicsCollisionEvent extends EventObject {
             Vector3f positionWorldOnA);
 
     /**
-     * Copy the collision's location in world coordinates.
+     * Copy the collision's location.
      *
-     * @return a new vector in world coordinates (not null)
+     * @return a new location vector (in physics-space coordinates, not null)
      */
     public Vector3f getPositionWorldOnB() {
         return getPositionWorldOnB(new Vector3f());
     }
 
     /**
-     * Copy the collision's location in world coordinates.
+     * Copy the collision's location.
      *
      * @param storeResult storage for the result (not null, modified)
-     * @return location vector in world coordinates (not null)
+     * @return a location vector (in physics-space coordinates, not null)
      */
     public Vector3f getPositionWorldOnB(Vector3f storeResult) {
         Validate.nonNull(storeResult, "store result");

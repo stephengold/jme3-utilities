@@ -112,12 +112,12 @@ public class BetterCharacterControl extends AbstractPhysicsControl
      */
     private final Vector3f viewDirection = new Vector3f(0f, 0f, 1f);
     /**
-     * Stores final spatial location, corresponds to RigidBody location.
+     * spatial location, corresponds to RigidBody location.
      */
     private final Vector3f location = new Vector3f();
     /**
-     * Stores final spatial rotation, is a z-forward rotation based on the view
-     * direction and the current local x/z plane. See also rotatedViewDirection.
+     * spatial rotation, is a z-forward rotation based on the view direction and
+     * the current local X-Z plane. See also rotatedViewDirection.
      */
     private final Quaternion rotation = new Quaternion(Quaternion.DIRECTION_Z);
     private final Vector3f rotatedViewDirection = new Vector3f(0f, 0f, 1f);
@@ -168,7 +168,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
      * update, provided the control is added to a scene graph. Do not invoke
      * directly from user code.
      *
-     * @param tpf the time interval between updates (in seconds, &ge;0)
+     * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void update(float tpf) {
@@ -384,7 +384,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
 
     /**
      * Alter the character's view direction. Note this only defines the
-     * orientation in the local x/z plane.
+     * orientation in the local X-Z plane.
      *
      * @param vec a direction vector (not null, unaffected)
      */
@@ -469,31 +469,28 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Alter by what factor physics forces in the local x/z plane should be
-     * damped.
+     * Alter how much motion in the local X-Z plane is damped.
      *
-     * @param physicsDamping The dampening value, 0 = no dampening, 1 = no
-     * external force, default = 0.9
+     * @param physicsDamping the desired damping factor (0&rarr;no damping,
+     * 1&rarr;no external force, default=0.9)
      */
     public void setPhysicsDamping(float physicsDamping) {
         this.physicsDamping = physicsDamping;
     }
 
     /**
-     * Read by what factor physics forces in the local x/z plane should be
-     * damped.
+     * Read how much motion in the local X-Z plane is damped.
      *
-     * @return the damping factor
+     * @return the damping factor (0&rarr;no damping, 1&rarr;no external force)
      */
     public float getPhysicsDamping() {
         return physicsDamping;
     }
 
     /**
-     * Apply a new collision shape to the character to alter the height of the
-     * capsule.
+     * Alter the height of collision shape.
      *
-     * @param percent factor to apply
+     * @param percent the desired height, as a percentage of the full height
      */
     protected void setHeightPercent(float percent) {
         scale.setY(percent);
@@ -501,7 +498,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * This checks if the character is on the ground by doing a ray test.
+     * Test whether the character is on the ground, by means of a ray test.
      */
     protected void checkOnGround() {
         TempVars vars = TempVars.get();
@@ -568,7 +565,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Calculate the scaled height.
+     * Calculate the character's scaled height.
      *
      * @return the height
      */
@@ -577,7 +574,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Calculate the scaled radius.
+     * Calculate the character's scaled radius.
      *
      * @return the radius
      */
@@ -588,7 +585,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     /**
      * Updates the local coordinate system from the localForward and localUp
      * vectors, adapts localForward, sets localForwardRotation quaternion to
-     * local z-forward rotation.
+     * local Z-forward rotation.
      */
     protected void updateLocalCoordinateSystem() {
         //gravity vector has possibly changed, calculate new world forward (UNIT_Z)
@@ -599,8 +596,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Updates the local x/z-flattened view direction and the corresponding
-     * rotation quaternion for the spatial.
+     * Updates the local X-Z view direction and the corresponding rotation
+     * quaternion for the spatial.
      */
     protected void updateLocalViewDirection() {
         //update local rotation quaternion to use for view rotation
@@ -654,10 +651,9 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * This is implemented from AbstractPhysicsControl and invoked when the
-     * spatial is attached for example.
+     * Translate the character to the specified location.
      *
-     * @param vec the desired location (not null)
+     * @param vec desired location (not null, unaffected)
      */
     @Override
     protected void setPhysicsLocation(Vector3f vec) {
@@ -666,12 +662,12 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * This is implemented from AbstractPhysicsControl and invoked when the
-     * spatial is attached for example. We don't set the actual physics rotation
-     * but the view rotation here. It might actually be altered by the
-     * calculateNewForward method.
+     * Rotate the physics object to the specified orientation.
+     * <p>
+     * We don't set the actual physics rotation but the view rotation here. It
+     * might actually be altered by the calculateNewForward method.
      *
-     * @param quat the desired orientation (not null, unaffected)
+     * @param quat desired orientation (not null, unaffected)
      */
     @Override
     protected void setPhysicsRotation(Quaternion quat) {
@@ -681,10 +677,9 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * This is implemented from AbstractPhysicsControl and invoked when the
-     * control is supposed to add all objects to the physics space.
+     * Add all managed physics objects to the specified space.
      *
-     * @param space the physics space to add to (not null)
+     * @param space which physics space to add to (not null)
      */
     @Override
     protected void addPhysics(PhysicsSpace space) {
@@ -696,10 +691,9 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * This is implemented from AbstractPhysicsControl and invoked when the
-     * control is supposed to remove all objects from the physics space.
+     * Remove all managed physics objects from the specified space.
      *
-     * @param space the physics space to remove from (not null)
+     * @param space which physics space to remove from (not null)
      */
     @Override
     protected void removePhysics(PhysicsSpace space) {
@@ -711,7 +705,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
      * Create spatial-dependent data. Invoked when this control is added to a
      * spatial.
      *
-     * @param spat the controlled spatial (not null)
+     * @param spat the controlled spatial (not null, alias created)
      */
     @Override
     protected void createSpatialData(Spatial spat) {

@@ -88,7 +88,7 @@ public class HingeJoint extends PhysicsJoint {
     }
 
     /**
-     * Create a HingeJoint. To be effective, the joint must be added to a
+     * Instantiate a HingeJoint. To be effective, the joint must be added to a
      * physics space.
      *
      * @param nodeA the 1st body connected by the joint (not null, alias
@@ -168,8 +168,8 @@ public class HingeJoint extends PhysicsJoint {
     /**
      * Alter this joint's limits.
      *
-     * @param low the low limit angle (in radians)
-     * @param high the high limit angle (in radians)
+     * @param low the lower limit of the hinge angle (in radians)
+     * @param high the upper limit of the joint angle (in radians)
      */
     public void setLimit(float low, float high) {
         setLimit(objectId, low, high);
@@ -182,8 +182,8 @@ public class HingeJoint extends PhysicsJoint {
      * would shoot through the actual limit are slowed down. The bias should be
      * in the range of 0.2 - 0.5.
      *
-     * @param low the low limit in radians.
-     * @param high the high limit in radians.
+     * @param low the lower limit of the hinge angle (in radians)
+     * @param high the upper limit of the joint angle (in radians)
      * @param _softness the factor at which the velocity error correction starts
      * operating, i.e a softness of 0.9 means that the correction starts at 90%
      * of the limit range.
@@ -204,18 +204,33 @@ public class HingeJoint extends PhysicsJoint {
     private native void setLimit(long objectId, float low, float high,
             float _softness, float _biasFactor, float _relaxationFactor);
 
+    /**
+     * Read the upper limit of the hinge angle.
+     *
+     * @return angle (in radians)
+     */
     public float getUpperLimit() {
         return getUpperLimit(objectId);
     }
 
     private native float getUpperLimit(long objectId);
 
+    /**
+     * Read the lower limit of the hinge angle.
+     *
+     * @return the angle (in radians)
+     */
     public float getLowerLimit() {
         return getLowerLimit(objectId);
     }
 
     private native float getLowerLimit(long objectId);
 
+    /**
+     * Alter the hinge translation flag.
+     *
+     * @param angularOnly true&rarr;rotate only, false&rarr;rotate and translate
+     */
     public void setAngularOnly(boolean angularOnly) {
         this.angularOnly = angularOnly;
         setAngularOnly(objectId, angularOnly);
@@ -223,6 +238,11 @@ public class HingeJoint extends PhysicsJoint {
 
     private native void setAngularOnly(long objectId, boolean angularOnly);
 
+    /**
+     * Read the hinge angle.
+     *
+     * @return the angle (in radians)
+     */
     public float getHingeAngle() {
         return getHingeAngle(objectId);
     }

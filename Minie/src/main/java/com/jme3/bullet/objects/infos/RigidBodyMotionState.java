@@ -65,7 +65,7 @@ public class RigidBodyMotionState {
     private boolean applyPhysicsLocal = false;
 
     /**
-     * Create a motion state.
+     * Instantiate a motion state.
      */
     public RigidBodyMotionState() {
         this.motionStateId = createMotionState();
@@ -116,9 +116,10 @@ public class RigidBodyMotionState {
             Quaternion rotation);
 
     /**
-     * Read the location for this motion state.
+     * Copy the location of this motion state.
      *
-     * @return the pre-existing vector
+     * @return the pre-existing location vector (in physics-space coordinates,
+     * not null)
      */
     public Vector3f getWorldLocation() {
         getWorldLocation(motionStateId, worldLocation);
@@ -128,9 +129,10 @@ public class RigidBodyMotionState {
     private native void getWorldLocation(long stateId, Vector3f vec);
 
     /**
-     * Read the rotation for this motion state (as a matrix).
+     * Read the rotation of this motion state (as a matrix).
      *
-     * @return the pre-existing matrix
+     * @return the pre-existing rotation matrix (in physics-space coordinates,
+     * not null)
      */
     public Matrix3f getWorldRotation() {
         getWorldRotation(motionStateId, worldRotation);
@@ -140,9 +142,10 @@ public class RigidBodyMotionState {
     private native void getWorldRotation(long stateId, Matrix3f vec);
 
     /**
-     * Read the rotation for this motion state (as a quaternion).
+     * Read the rotation of this motion state (as a quaternion).
      *
-     * @return the pre-existing instance
+     * @return the pre-existing instance (in physics-space coordinates, not
+     * null)
      */
     public Quaternion getWorldRotationQuat() {
         getWorldRotationQuat(motionStateId, worldRotationQuat);
@@ -152,36 +155,36 @@ public class RigidBodyMotionState {
     private native void getWorldRotationQuat(long stateId, Quaternion vec);
 
     /**
-     * @param vehicle the vehicle to set
+     * @param vehicle which vehicle will use this motion state
      */
     public void setVehicle(PhysicsVehicle vehicle) {
         this.vehicle = vehicle;
     }
 
     /**
-     * Test whether physics coordinates should match the local transform of the
-     * Spatial.
+     * Test whether physics-space coordinates should match the spatial's local
+     * coordinates.
      *
-     * @return true if matching local transform, false if matching world
-     * transform
+     * @return true if matching local coordinates, false if matching world
+     * coordinates
      */
     public boolean isApplyPhysicsLocal() {
         return applyPhysicsLocal;
     }
 
     /**
-     * Alter whether physics coordinates should match the local transform of the
-     * Spatial.
+     * Alter whether physics-space coordinates should match the spatial's local
+     * coordinates.
      *
-     * @param applyPhysicsLocal true&rarr;match local transform,
-     * false&rarr;match world transform (default is false)
+     * @param applyPhysicsLocal true&rarr;match local coordinates,
+     * false&rarr;match world coordinates (default is false)
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         this.applyPhysicsLocal = applyPhysicsLocal;
     }
 
     /**
-     * Read the native id of this motion state.
+     * Read the unique id of the native object.
      *
      * @return id (not zero)
      */

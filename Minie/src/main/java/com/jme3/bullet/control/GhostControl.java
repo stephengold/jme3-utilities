@@ -115,22 +115,22 @@ public class GhostControl extends PhysicsGhostObject
     }
 
     /**
-     * Test whether physics coordinates should match the local transform of the
-     * Spatial.
+     * Test whether physics-space coordinates should match the spatial's local
+     * coordinates.
      *
-     * @return true if matching local transform, false if matching world
-     * transform
+     * @return true if matching local coordinates, false if matching world
+     * coordinates
      */
     public boolean isApplyPhysicsLocal() {
         return applyLocal;
     }
 
     /**
-     * Alter whether physics coordinates should match the local transform of the
-     * Spatial.
+     * Alter whether physics-space coordinates should match the spatial's local
+     * coordinates.
      *
-     * @param applyPhysicsLocal true&rarr;match local transform,
-     * false&rarr;match world transform (default is false)
+     * @param applyPhysicsLocal true&rarr;match local coordinates,
+     * false&rarr;match world coordinates (default is false)
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         applyLocal = applyPhysicsLocal;
@@ -242,8 +242,8 @@ public class GhostControl extends PhysicsGhostObject
     /**
      * Enable or disable this control.
      * <p>
-     * The ghost object is removed from its physics space when the control is
-     * disabled. When the control is enabled again, the object is moved to the
+     * When the control is disabled, the ghost object is removed from physics
+     * space. When the control is enabled again, the object is moved to the
      * current location of the spatial and then added to the physics space.
      *
      * @param enabled true&rarr;enable the control, false&rarr;disable it
@@ -281,7 +281,7 @@ public class GhostControl extends PhysicsGhostObject
      * update, provided the control is added to a scene. Do not invoke directly
      * from user code.
      *
-     * @param tpf the time interval between updates (in seconds, &ge;0)
+     * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void update(float tpf) {

@@ -112,54 +112,50 @@ public abstract class AbstractPhysicsControl
     protected abstract void removeSpatialData(Spatial spat);
 
     /**
-     * Invoked when the physics object is supposed to move to the spatial
-     * position.
+     * Translate the physics object to the specified location.
      *
-     * @param vec spatial location coordinates (not null)
+     * @param vec desired location (not null, unaffected)
      */
     protected abstract void setPhysicsLocation(Vector3f vec);
 
     /**
-     * Invoked when the physics object is supposed to move to the spatial
-     * rotation.
+     * Rotate the physics object to the specified orientation.
      *
-     * @param quat spatial orientation
+     * @param quat desired orientation (not null, unaffected)
      */
     protected abstract void setPhysicsRotation(Quaternion quat);
 
     /**
-     * Invoked when the physics object is supposed to add all the objects it
-     * manages to the physics space.
+     * Add all managed physics objects to the specified space.
      *
-     * @param space which physics space
+     * @param space which physics space to add to (not null)
      */
     protected abstract void addPhysics(PhysicsSpace space);
 
     /**
-     * Invoked when the physics object is supposed to remove all the objects it
-     * manages from the physics space.
+     * Remove all managed physics objects from the specified space.
      *
-     * @param space which physics space
+     * @param space which physics space to remove from (not null)
      */
     protected abstract void removePhysics(PhysicsSpace space);
 
     /**
-     * Test whether physics coordinates should match the local transform of the
-     * Spatial.
+     * Test whether physics-space coordinates should match the spatial's local
+     * coordinates.
      *
-     * @return true if matching local transform, false if matching world
-     * transform
+     * @return true if matching local coordinates, false if matching world
+     * coordinates
      */
     public boolean isApplyPhysicsLocal() {
         return applyLocal;
     }
 
     /**
-     * Alter whether physics coordinates should match the local transform of the
-     * Spatial.
+     * Alter whether physics-space coordinates should match the spatial's local
+     * coordinates.
      *
-     * @param applyPhysicsLocal true&rarr;match local transform,
-     * false&rarr;match world transform (default is false)
+     * @param applyPhysicsLocal true&rarr;match local coordinates,
+     * false&rarr;match world coordinates (default is false)
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         applyLocal = applyPhysicsLocal;
@@ -168,7 +164,7 @@ public abstract class AbstractPhysicsControl
     /**
      * Access whichever spatial translation corresponds to the physics location.
      *
-     * @return the pre-existing vector (not null)
+     * @return the pre-existing coordinate vector (not null) TODO
      */
     protected Vector3f getSpatialTranslation() {
         if (MySpatial.isIgnoringTransforms(spatial)) {
@@ -198,8 +194,10 @@ public abstract class AbstractPhysicsControl
     /**
      * Apply a physics transform to the spatial. TODO use MySpatial
      *
-     * @param worldLocation physics location (not null)
-     * @param worldRotation physics orientation (not null)
+     * @param worldLocation location vector (in physics-space coordinates, not
+     * null, unaffected)
+     * @param worldRotation orientation (in physics-space coordinates, not null,
+     * unaffected)
      */
     protected void applyPhysicsTransform(Vector3f worldLocation,
             Quaternion worldRotation) {
@@ -264,10 +262,9 @@ public abstract class AbstractPhysicsControl
     /**
      * Enable or disable this control.
      * <p>
-     * The physics object is removed from its physics space when the control is
-     * disabled. When the control is enabled again, the physics object is moved
-     * to the current location of the spatial and then added to the physics
-     * space.
+     * When the control is disabled, the physics object is removed from physics
+     * space. When the control is enabled again, the physics object is moved to
+     * the current location of the spatial and then added to the physics space.
      *
      * @param enabled true&rarr;enable the control, false&rarr;disable it
      */

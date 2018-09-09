@@ -99,7 +99,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     }
 
     /**
-     * Create a vehicle with the specified collision shape and mass=1.
+     * Instantiate a vehicle with the specified collision shape and mass=1.
      *
      * @param shape the desired shape (not null, alias created)
      */
@@ -108,7 +108,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     }
 
     /**
-     * Create a vehicle with the specified collision shape and mass.
+     * Instantiate a vehicle with the specified collision shape and mass.
      *
      * @param shape the desired shape (not null, alias created)
      * @param mass (&gt;0)

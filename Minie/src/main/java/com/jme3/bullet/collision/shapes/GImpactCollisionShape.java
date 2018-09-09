@@ -160,7 +160,7 @@ public class GImpactCollisionShape extends CollisionShape {
     }
 
     /**
-     * Create the configured shape in Bullet.
+     * Instantiate the configured shape in Bullet.
      */
     protected void createShape() {
         meshId = NativeMeshUtil.createTriangleIndexVertexArray(

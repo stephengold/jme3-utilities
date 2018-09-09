@@ -171,7 +171,7 @@ public class ConeCollisionShape extends CollisionShape {
     }
 
     /**
-     * Create the configured shape in Bullet.
+     * Instantiate the configured shape in Bullet.
      */
     private void createShape() {
         assert axis == 0 || axis == 1 || axis == 2 : axis;
@@ -181,6 +181,7 @@ public class ConeCollisionShape extends CollisionShape {
         objectId = createShape(axis, radius, height);
         assert objectId != 0L;
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+
         setScale(scale);
         setMargin(margin);
     }

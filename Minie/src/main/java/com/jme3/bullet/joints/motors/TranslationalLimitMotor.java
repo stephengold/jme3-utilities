@@ -54,7 +54,7 @@ public class TranslationalLimitMotor {
     private long motorId = 0L;
 
     /**
-     * Create a motor for the identified btTranslationalLimitMotor.
+     * Instantiate a motor for the identified btTranslationalLimitMotor.
      *
      * @param motor the unique identifier (not zero)
      */

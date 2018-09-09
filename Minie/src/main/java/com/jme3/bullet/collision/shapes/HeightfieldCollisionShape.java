@@ -145,7 +145,7 @@ public class HeightfieldCollisionShape extends CollisionShape {
     }
 
     /**
-     * Create the configured shape in Bullet.
+     * Instantiate the configured shape in Bullet.
      */
     protected void createShape() {
         bbuf = BufferUtils.createByteBuffer(heightfieldData.length * 4);

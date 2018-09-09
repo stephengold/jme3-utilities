@@ -87,8 +87,8 @@ public abstract class PhysicsJoint implements Savable {
     }
 
     /**
-     * Create a PhysicsJoint. To be effective, the joint must be added to the
-     * physics space of the two bodies. Also, the bodies must be dynamic and
+     * Instantiate a PhysicsJoint. To be effective, the joint must be added to
+     * the physics space of the two bodies. Also, the bodies must be dynamic and
      * distinct.
      *
      * @param nodeA the 1st body connected by the joint (not null, alias
@@ -112,6 +112,11 @@ public abstract class PhysicsJoint implements Savable {
         nodeB.addJoint(this);
     }
 
+    /**
+     * Read the magnitude of the applied impulse.
+     *
+     * @return impulse
+     */
     public float getAppliedImpulse() {
         return getAppliedImpulse(objectId);
     }
@@ -139,7 +144,7 @@ public abstract class PhysicsJoint implements Savable {
 
     /**
      * Enable or disable collisions between the linked bodies. The joint must be
-     * removed from and added to PhysicsSpace for this to be effective.
+     * removed from and added to PhysicsSpace for this change to be effective.
      *
      * @param enable true &rarr; allow collisions, false &rarr; prevent them
      */

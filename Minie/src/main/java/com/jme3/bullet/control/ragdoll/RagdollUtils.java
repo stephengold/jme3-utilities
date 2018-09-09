@@ -69,6 +69,17 @@ public class RagdollUtils {
     private RagdollUtils() {
     }
 
+    /**
+     * Alter the limits of the specified 6-DOF joint.
+     *
+     * @param joint which joint to alter (not null)
+     * @param maxX the maximum rotation on the X axis (in radians)
+     * @param minX the minimum rotation on the X axis (in radians)
+     * @param maxY the maximum rotation on the Y axis (in radians)
+     * @param minY the minimum rotation on the Y axis (in radians)
+     * @param maxZ the maximum rotation on the Z axis (in radians)
+     * @param minZ the minimum rotation on the Z axis (in radians)
+     */
     public static void setJointLimit(SixDofJoint joint, float maxX, float minX,
             float maxY, float minY, float maxZ, float minZ) {
 
@@ -80,8 +91,13 @@ public class RagdollUtils {
         joint.getRotationalLimitMotor(2).setLoLimit(minZ);
     }
 
+    /**
+     * Build a map of mesh vertices in a subtree of the scene graph.
+     *
+     * @param model the root of the subtree (may be null)
+     * @return a new map (not null)
+     */
     public static Map<Integer, List<Float>> buildPointMap(Spatial model) {
-
         Map<Integer, List<Float>> map = new HashMap<>();
         if (model instanceof Geometry) {
             Geometry g = (Geometry) model;
@@ -95,11 +111,12 @@ public class RagdollUtils {
                 }
             }
         }
+
         return map;
     }
 
-    private static Map<Integer, List<Float>> buildPointMapForMesh(Mesh mesh, Map<Integer, List<Float>> map) {
-
+    private static Map<Integer, List<Float>> buildPointMapForMesh(Mesh mesh,
+            Map<Integer, List<Float>> map) {
         FloatBuffer vertices = mesh.getFloatBuffer(Type.Position);
         ByteBuffer boneIndices = (ByteBuffer) mesh.getBuffer(Type.BoneIndex).getData();
         FloatBuffer boneWeight = (FloatBuffer) mesh.getBuffer(Type.BoneWeight).getData();
@@ -113,7 +130,6 @@ public class RagdollUtils {
         float maxWeight = 0;
 
         for (int i = 0; i < vertexComponents; i += 3) {
-
             start = i / 3 * 4;
             index = 0;
             maxWeight = -1;
@@ -133,6 +149,7 @@ public class RagdollUtils {
             points.add(vertices.get(i + 1));
             points.add(vertices.get(i + 2));
         }
+
         return map;
     }
 
@@ -145,9 +162,11 @@ public class RagdollUtils {
      * @param boneIndices (not null, unaffected)
      * @param initialScale scale factors (not null, unaffected)
      * @param initialPosition location (not null, unaffected)
-     * @return a new shape
+     * @return a new shape (not null)
      */
-    public static HullCollisionShape makeShapeFromPointMap(Map<Integer, List<Float>> pointsMap, List<Integer> boneIndices, Vector3f initialScale, Vector3f initialPosition) {
+    public static HullCollisionShape makeShapeFromPointMap(
+            Map<Integer, List<Float>> pointsMap, List<Integer> boneIndices,
+            Vector3f initialScale, Vector3f initialPosition) {
 
         ArrayList<Float> points = new ArrayList<>();
         for (Integer index : boneIndices) {
@@ -175,8 +194,17 @@ public class RagdollUtils {
         return new HullCollisionShape(p);
     }
 
-    //returns the list of bone indices of the given bone and its child (if they are not in the boneList)
-    public static List<Integer> getBoneIndices(Bone bone, Skeleton skeleton, Set<String> boneList) {
+    /**
+     * Enumerate the bone indices of the specified bone and all its descendents.
+     *
+     * @param bone the input bone (not null)
+     * @param skeleton the skeleton containing the bone (not null)
+     * @param boneList a set of bone names (not null, unaffected)
+     *
+     * @return a new list (not null)
+     */
+    public static List<Integer> getBoneIndices(Bone bone, Skeleton skeleton,
+            Set<String> boneList) {
         List<Integer> list = new LinkedList<>();
         if (boneList.isEmpty()) {
             list.add(skeleton.getBoneIndex(bone));
@@ -188,6 +216,7 @@ public class RagdollUtils {
                 }
             }
         }
+
         return list;
     }
 
@@ -230,19 +259,27 @@ public class RagdollUtils {
     }
 
     /**
-     * returns a list of points for the given bone
+     * Enumerate vertices that meet the weight threshold for the indexed bone.
      *
-     * @param mesh
-     * @param boneIndex
-     * @param offset
-     * @param link
-     * @return
+     * @param mesh the mesh to analyze (not null)
+     * @param boneIndex the index of the bone to use (&ge;0)
+     * @param initialScale a scale applied to vertex positions (not null,
+     * unaffected)
+     * @param offset an offset subtracted from vertex positions (not null,
+     * unaffected)
+     * @param weightThreshold the minimum bone weight for inclusion in the
+     * result (&ge;0, &le;1)
+     * @return a new list of vertex coordinates (not null, length a multiple of
+     * 3)
      */
-    private static List<Float> getPoints(Mesh mesh, int boneIndex, Vector3f initialScale, Vector3f offset, float weightThreshold) {
+    private static List<Float> getPoints(Mesh mesh, int boneIndex,
+            Vector3f initialScale, Vector3f offset, float weightThreshold) {
 
         FloatBuffer vertices = mesh.getFloatBuffer(Type.Position);
-        ByteBuffer boneIndices = (ByteBuffer) mesh.getBuffer(Type.BoneIndex).getData();
-        FloatBuffer boneWeight = (FloatBuffer) mesh.getBuffer(Type.BoneWeight).getData();
+        ByteBuffer boneIndices
+                = (ByteBuffer) mesh.getBuffer(Type.BoneIndex).getData();
+        FloatBuffer boneWeight
+                = (FloatBuffer) mesh.getBuffer(Type.BoneWeight).getData();
 
         vertices.rewind();
         boneIndices.rewind();
@@ -251,20 +288,18 @@ public class RagdollUtils {
         ArrayList<Float> results = new ArrayList<>();
 
         int vertexComponents = mesh.getVertexCount() * 3;
-
         for (int i = 0; i < vertexComponents; i += 3) {
-            int k;
             boolean add = false;
             int start = i / 3 * 4;
-            for (k = start; k < start + 4; k++) {
-                if (boneIndices.get(k) == boneIndex && boneWeight.get(k) >= weightThreshold) {
+            for (int k = start; k < start + 4; k++) {
+                if (boneIndices.get(k) == boneIndex
+                        && boneWeight.get(k) >= weightThreshold) {
                     add = true;
                     break;
                 }
             }
             if (add) {
-
-                Vector3f pos = new Vector3f();
+                Vector3f pos = new Vector3f(); // TODO garbage
                 pos.x = vertices.get(i);
                 pos.y = vertices.get(i + 1);
                 pos.z = vertices.get(i + 2);
@@ -272,7 +307,6 @@ public class RagdollUtils {
                 results.add(pos.x);
                 results.add(pos.y);
                 results.add(pos.z);
-
             }
         }
 
@@ -291,7 +325,8 @@ public class RagdollUtils {
      * @param boneList the names of all bones without collision shapes (not
      * null, unaffected)
      */
-    public static void setTransform(Bone bone, Vector3f pos, Quaternion rot, boolean restoreBoneControl, Set<String> boneList) {
+    public static void setTransform(Bone bone, Vector3f pos, Quaternion rot,
+            boolean restoreBoneControl, Set<String> boneList) {
         //we ensure that we have the control
         if (restoreBoneControl) {
             bone.setUserControl(true);
@@ -302,7 +337,8 @@ public class RagdollUtils {
             //each child bone that is not in the list is updated
             if (!boneList.contains(childBone.getName())) {
                 Transform t = childBone.getCombinedTransform(pos, rot);
-                setTransform(childBone, t.getTranslation(), t.getRotation(), restoreBoneControl, boneList);
+                setTransform(childBone, t.getTranslation(), t.getRotation(),
+                        restoreBoneControl, boneList);
             }
         }
         //we give back the control to the keyframed animation
@@ -311,6 +347,12 @@ public class RagdollUtils {
         }
     }
 
+    /**
+     * Alter the user-control flags of a bone and all its descendents.
+     *
+     * @param bone the ancestor bone (not null, modified)
+     * @param bool true to enable user control, false to disable
+     */
     public static void setUserControl(Bone bone, boolean bool) {
         bone.setUserControl(bool);
         for (Bone child : bone.getChildren()) {

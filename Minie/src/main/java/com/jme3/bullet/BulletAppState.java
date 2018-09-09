@@ -113,7 +113,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      */
     private BulletDebugAppState debugAppState;
     /**
-     * time interval between updates (in seconds) from the most recent update
+     * time interval between frames (in seconds) from the most recent update
      */
     private float tpf;
     /**
@@ -265,10 +265,12 @@ public class BulletAppState implements AppState, PhysicsTickListener {
                 assert success;
                 assert pSpace != null;
                 break;
+
             case SEQUENTIAL:
                 pSpace = new PhysicsSpace(worldMin, worldMax, broadphaseType);
                 pSpace.addTickListener(this);
                 break;
+
             default:
                 throw new IllegalStateException(threadingType.toString());
         }
@@ -407,7 +409,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      * subclass or by the AppStateManager. Invoked once per frame, provided the
      * state is attached and enabled.
      *
-     * @param tpf the time interval between updates (in seconds, &ge;0)
+     * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void update(float tpf) {

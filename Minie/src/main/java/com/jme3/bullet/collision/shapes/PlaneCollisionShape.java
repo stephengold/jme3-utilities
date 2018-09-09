@@ -113,7 +113,7 @@ public class PlaneCollisionShape extends CollisionShape {
     }
 
     /**
-     * Create the configured shape in Bullet.
+     * Instantiate the configured shape in Bullet.
      */
     private void createShape() {
         objectId = createShape(plane.getNormal(), plane.getConstant());

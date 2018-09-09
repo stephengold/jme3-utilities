@@ -129,8 +129,9 @@ public class BulletDebugAppState extends AbstractAppState {
     private HashMap<PhysicsVehicle, Spatial> vehicles = new HashMap<>();
 
     /**
-     * Create an app state to visualize the specified space using the specified
-     * view ports. Should be invoked only by BulletAppState.
+     * Instantiate an app state to visualize the specified space using the
+     * specified view ports. This constructor should be invoked only by
+     * BulletAppState.
      *
      * @param space physics space to visualize (not null, unaffected)
      * @param viewPorts view ports in which to render (not null)
@@ -189,7 +190,7 @@ public class BulletDebugAppState extends AbstractAppState {
      * subclass or by the AppStateManager. Invoked once per frame, provided the
      * state is attached and enabled.
      *
-     * @param tpf the time interval between updates (in seconds, &ge;0)
+     * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void update(float tpf) {

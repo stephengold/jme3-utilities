@@ -67,8 +67,8 @@ public class Point2PointJoint extends PhysicsJoint {
     }
 
     /**
-     * Create a Point2PointJoint. To be effective, the joint must be added to a
-     * physics space.
+     * Instantiate a Point2PointJoint. To be effective, the joint must be added
+     * to a physics space.
      *
      * @param nodeA the 1st body connected by the joint (not null, alias
      * created)
@@ -85,36 +85,66 @@ public class Point2PointJoint extends PhysicsJoint {
         createJoint();
     }
 
+    /**
+     * Alter the joint's damping.
+     *
+     * @param value the desired damping value (default=1)
+     */
     public void setDamping(float value) {
         setDamping(objectId, value);
     }
 
     private native void setDamping(long objectId, float value);
 
+    /**
+     * Alter the joint's impulse clamp.
+     *
+     * @param value the desired impulse clamp value (default=0)
+     */
     public void setImpulseClamp(float value) {
         setImpulseClamp(objectId, value);
     }
 
     private native void setImpulseClamp(long objectId, float value);
 
+    /**
+     * Alter the joint's tau value.
+     *
+     * @param value the desired tau value (default=0.3)
+     */
     public void setTau(float value) {
         setTau(objectId, value);
     }
 
     private native void setTau(long objectId, float value);
 
+    /**
+     * Read the joint's damping value.
+     *
+     * @return the damping value
+     */
     public float getDamping() {
         return getDamping(objectId);
     }
 
     private native float getDamping(long objectId);
 
+    /**
+     * Read the joint's impulse clamp.
+     *
+     * @return the clamp value
+     */
     public float getImpulseClamp() {
         return getImpulseClamp(objectId);
     }
 
     private native float getImpulseClamp(long objectId);
 
+    /**
+     * Read the joint's tau value.
+     *
+     * @return the tau value
+     */
     public float getTau() {
         return getTau(objectId);
     }
@@ -147,7 +177,7 @@ public class Point2PointJoint extends PhysicsJoint {
         super.read(im);
         createJoint();
         InputCapsule cap = im.getCapsule(this);
-        setDamping(cap.readFloat("damping", 1.0f));
+        setDamping(cap.readFloat("damping", 1f));
         setDamping(cap.readFloat("tau", 0.3f));
         setDamping(cap.readFloat("impulseClamp", 0f));
     }

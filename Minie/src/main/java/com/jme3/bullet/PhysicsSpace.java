@@ -852,12 +852,14 @@ public class PhysicsSpace {
     }
 
     /**
-     * Performs a ray collision test and returns the results as a list of
-     * PhysicsRayTestResults ordered by it hitFraction (lower to higher)
+     * Perform a ray-collision test and return the results as a list of
+     * PhysicsRayTestResults sorted by ascending hitFraction.
      *
-     * @param from the starting location
-     * @param to the ending location
-     * @return a new list of results
+     * @param from coordinates of the starting location (in physics-space, not
+     * null, unaffected)
+     * @param to coordinates of the ending location (in physics-space, not null,
+     * unaffected)
+     * @return a new list of results (not null)
      */
     public List<PhysicsRayTestResult> rayTest(Vector3f from, Vector3f to) {
         List<PhysicsRayTestResult> results = new ArrayList<>();
@@ -867,12 +869,14 @@ public class PhysicsSpace {
     }
 
     /**
-     * Performs a ray collision test and returns the results as a list of
-     * PhysicsRayTestResults without performing any sort operation
+     * Perform a ray-collision test and return the results as a list of
+     * PhysicsRayTestResults in arbitrary order.
      *
-     * @param from the starting location
-     * @param to the ending location
-     * @return a new list of results
+     * @param from coordinates of the starting location (in physics-space, not
+     * null, unaffected)
+     * @param to coordinates of the ending location (in physics-space, not null,
+     * unaffected)
+     * @return a new list of results (not null)
      */
     public List rayTestRaw(Vector3f from, Vector3f to) {
         List<PhysicsRayTestResult> results = new ArrayList<>();
@@ -903,7 +907,8 @@ public class PhysicsSpace {
         return rayTestFlags;
     }
 
-    private static Comparator<PhysicsRayTestResult> hitFractionComparator = new Comparator<PhysicsRayTestResult>() {
+    private static Comparator<PhysicsRayTestResult> hitFractionComparator
+            = new Comparator<PhysicsRayTestResult>() {
         @Override
         public int compare(PhysicsRayTestResult r1, PhysicsRayTestResult r2) {
             float comp = r1.getHitFraction() - r2.getHitFraction();
@@ -912,11 +917,13 @@ public class PhysicsSpace {
     };
 
     /**
-     * Performs a ray collision test and returns the results as a list of
-     * PhysicsRayTestResults ordered by it hitFraction (lower to higher)
+     * Perform a ray-collision test and return the results as a list of
+     * PhysicsRayTestResults sorted by ascending hitFraction.
      *
-     * @param from the starting location
-     * @param to the ending location
+     * @param from coordinates of the starting location (in physics-space, not
+     * null, unaffected)
+     * @param to coordinates of the ending location (in physics-space, not null,
+     * unaffected)
      * @param results the list to hold results (not null, modified)
      * @return results
      */
@@ -930,11 +937,13 @@ public class PhysicsSpace {
     }
 
     /**
-     * Performs a ray collision test and returns the results as a list of
-     * PhysicsRayTestResults without performing any sort operation
+     * Perform a ray-collision test and return the results as a list of
+     * PhysicsRayTestResults in arbitrary order.
      *
-     * @param from the starting location
-     * @param to the ending location
+     * @param from coordinates of the starting location (in physics-space, not
+     * null, unaffected)
+     * @param to coordinates of the ending location (in physics-space, not null,
+     * unaffected)
      * @param results the list to hold results (not null, modified)
      * @return results
      */

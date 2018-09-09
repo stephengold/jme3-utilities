@@ -178,7 +178,7 @@ public class CylinderCollisionShape extends CollisionShape {
     }
 
     /**
-     * Create the configured shape in Bullet.
+     * Instantiate the configured shape in Bullet.
      */
     private void createShape() {
         assert axis == 0 || axis == 1 || axis == 2 : axis;

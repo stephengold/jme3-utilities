@@ -109,26 +109,38 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     final private static Logger logger
             = Logger.getLogger(KinematicRagdollControl.class.getName());
 
+    /**
+     * list of registered collision listeners
+     */
     private List<RagdollCollisionListener> listeners;
     private final Set<String> boneList = new TreeSet<>();
     private final Map<String, PhysicsBoneLink> boneLinks = new HashMap<>();
     private final Vector3f modelPosition = new Vector3f();
     private final Quaternion modelRotation = new Quaternion();
     private final PhysicsRigidBody baseRigidBody;
+    /**
+     * model being controlled
+     */
     private Spatial targetModel;
+    /**
+     * skeleton being controlled
+     */
     private Skeleton skeleton;
     private RagdollPreset preset = new HumanoidRagdollPreset();
     private Vector3f initScale;
     private Mode mode = Mode.Kinematic;
     private boolean debug = false;
     private boolean blendedControl = false;
-    private float weightThreshold = -1.0f;
-    private float blendStart = 0.0f;
-    private float blendTime = 1.0f;
+    private float weightThreshold = -1f;
+    private float blendStart = 0f;
+    /**
+     * blending interval for animations (in seconds, &ge;0)
+     */
+    private float blendTime = 1f;
     private float eventDispatchImpulseThreshold = 10f;
     private float rootMass = 15f;
     /**
-     * accumulate total mass of ragdoll
+     * accumulate total mass of ragdoll when control is added to a scene
      */
     private float totalMass = 0f;
     final private Map<String, Vector3f> ikTargets = new HashMap<>();
@@ -138,7 +150,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
      */
     private float ikRotSpeed = 7f;
     /**
-     * limb-damping factor
+     * limb-damping factor (0&rarr;no damping, 1&rarr;no external force)
      */
     private float limbDampening = 0.6f;
     /**
@@ -290,7 +302,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
      * update, provided the control is added to a scene. Do not invoke directly
      * from user code.
      *
-     * @param tpf the time interval between updates (in seconds, &ge;0)
+     * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void update(float tpf) {
@@ -311,7 +323,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     /**
      * Update this control in Ragdoll mode, based on Bullet physics.
      *
-     * @param tpf the time interval between updates (in seconds, &ge;0)
+     * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     protected void ragDollUpdate(float tpf) {
         TempVars vars = TempVars.get();
@@ -370,7 +382,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     /**
      * Update this control in Kinematic mode, based on bone animation tracks.
      *
-     * @param tpf the time interval between updates (in seconds, &ge;0)
+     * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     protected void kinematicUpdate(float tpf) {
         //the ragdoll does not have control, so the keyframed animation updates the physics position of the physics bonces
@@ -430,7 +442,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     /**
      * Update this control in IK mode, based on IK targets.
      *
-     * @param tpf the time interval between updates (in seconds, &ge;0)
+     * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     private void ikUpdate(float tpf) {
         TempVars vars = TempVars.get();
@@ -476,7 +488,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
      * Update a bone and its ancestors in IK mode. Note: recursive!
      *
      * @param link the bone link for the affected bone (may be null)
-     * @param tpf the time interval between updates (in seconds, &ge;0)
+     * @param tpf the time interval between frames (in seconds, &ge;0)
      * @param vars unused TODO
      * @param tmpRot1 temporary storage used in calculations (not null)
      * @param tmpRot2 temporary storage used in calculations (not null)
@@ -614,7 +626,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         model.addControl(sc);
 
         // put into bind pose and compute bone transforms in model space
-        // maybe dont reset to ragdoll out of animations?
+        // maybe don't reset to ragdoll out of animations?
         scanSpatial(model);
 
         if (parent != null) {
@@ -1157,8 +1169,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
      */
     @Override
     public Object jmeClone() {
-        KinematicRagdollControl control = new KinematicRagdollControl(preset,
-                weightThreshold);
+        KinematicRagdollControl control
+                = new KinematicRagdollControl(preset, weightThreshold);
         control.setMode(mode);
         control.setRootMass(rootMass);
         control.setWeightThreshold(weightThreshold);
@@ -1173,7 +1185,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
      *
      * @param bone which bone the IK applies to (not null)
      * @param worldPos the world coordinates of the goal (not null)
-     * @param chainLength
+     * @param chainLength number of bones in the chain
      * @return a new instance (not null, already added to ikTargets)
      */
     public Vector3f setIKTarget(Bone bone, Vector3f worldPos, int chainLength) {
@@ -1297,7 +1309,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     /**
      * Alter the limb-damping coefficient.
      *
-     * @param limbDampening the desired coefficient (default=0.6)
+     * @param limbDampening the desired damping coefficient (0&rarr;no damping,
+     * 1&rarr;no external force, default=0.6)
      */
     public void setLimbDampening(float limbDampening) {
         this.limbDampening = limbDampening;
@@ -1359,12 +1372,16 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         InputCapsule ic = im.getCapsule(this);
         String[] loadedBoneList = ic.readStringArray("boneList", new String[0]);
         boneList.addAll(Arrays.asList(loadedBoneList));
-        PhysicsBoneLink[] loadedBoneLinks = (PhysicsBoneLink[]) ic.readSavableArray("boneList", new PhysicsBoneLink[0]);
+        PhysicsBoneLink[] loadedBoneLinks
+                = (PhysicsBoneLink[]) ic.readSavableArray("boneList",
+                        new PhysicsBoneLink[0]);
         for (PhysicsBoneLink physicsBoneLink : loadedBoneLinks) {
             boneLinks.put(physicsBoneLink.bone.getName(), physicsBoneLink);
         }
-        modelPosition.set((Vector3f) ic.readSavable("modelPosition", new Vector3f()));
-        modelRotation.set((Quaternion) ic.readSavable("modelRotation", new Quaternion()));
+        modelPosition.set((Vector3f) ic.readSavable("modelPosition",
+                new Vector3f()));
+        modelRotation.set((Quaternion) ic.readSavable("modelRotation",
+                new Quaternion()));
         targetModel = (Spatial) ic.readSavable("targetModel", null);
         skeleton = (Skeleton) ic.readSavable("skeleton", null);
 //        preset //TODO

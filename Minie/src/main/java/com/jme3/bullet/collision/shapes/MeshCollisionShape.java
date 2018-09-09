@@ -211,31 +211,39 @@ public class MeshCollisionShape extends CollisionShape {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
         this.numVertices = capsule.readInt(MeshCollisionShape.NUM_VERTICES, 0);
-        this.numTriangles = capsule.readInt(MeshCollisionShape.NUM_TRIANGLES, 0);
-        this.vertexStride = capsule.readInt(MeshCollisionShape.VERTEX_STRIDE, 0);
-        this.triangleIndexStride = capsule.readInt(MeshCollisionShape.TRIANGLE_INDEX_STRIDE, 0);
+        this.numTriangles
+                = capsule.readInt(MeshCollisionShape.NUM_TRIANGLES, 0);
+        this.vertexStride
+                = capsule.readInt(MeshCollisionShape.VERTEX_STRIDE, 0);
+        this.triangleIndexStride
+                = capsule.readInt(MeshCollisionShape.TRIANGLE_INDEX_STRIDE, 0);
 
         this.triangleIndexBase = BufferUtils.createByteBuffer(
-                capsule.readByteArray(MeshCollisionShape.TRIANGLE_INDEX_BASE, null));
+                capsule.readByteArray(MeshCollisionShape.TRIANGLE_INDEX_BASE,
+                        null));
         this.vertexBase = BufferUtils.createByteBuffer(
                 capsule.readByteArray(MeshCollisionShape.VERTEX_BASE, null));
 
-        byte[] nativeBvh = capsule.readByteArray(MeshCollisionShape.NATIVE_BVH, null);
+        byte[] nativeBvh
+                = capsule.readByteArray(MeshCollisionShape.NATIVE_BVH, null);
         memoryOptimized = nativeBvh != null;
         createShape(nativeBvh);
     }
 
     /**
-     * Create the configured shape in Bullet.
+     * Instantiate the configured shape in Bullet.
      */
     private void createShape(byte bvh[]) {
         boolean buildBvh = bvh == null || bvh.length == 0;
         this.meshId = NativeMeshUtil.createTriangleIndexVertexArray(
                 this.triangleIndexBase, this.vertexBase, this.numTriangles,
                 this.numVertices, this.vertexStride, this.triangleIndexStride);
-        logger.log(Level.FINE, "Created Mesh {0}", Long.toHexString(this.meshId));
+        logger.log(Level.FINE, "Created Mesh {0}",
+                Long.toHexString(this.meshId));
+
         this.objectId = createShape(memoryOptimized, buildBvh, this.meshId);
-        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(this.objectId));
+        logger.log(Level.FINE, "Created Shape {0}",
+                Long.toHexString(this.objectId));
         if (!buildBvh) {
             nativeBVHBuffer = setBVH(bvh, this.objectId);
         }

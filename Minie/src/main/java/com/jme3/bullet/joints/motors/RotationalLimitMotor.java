@@ -54,7 +54,7 @@ public class RotationalLimitMotor {
     private long motorId = 0L;
 
     /**
-     * Create a motor for the identified btRotationalLimitMotor.
+     * Instantiate a motor for the identified btRotationalLimitMotor.
      *
      * @param motor the unique identifier (not zero)
      */

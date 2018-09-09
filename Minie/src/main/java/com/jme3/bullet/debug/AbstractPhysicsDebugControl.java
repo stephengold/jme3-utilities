@@ -39,7 +39,7 @@ import com.jme3.scene.control.AbstractControl;
 /**
  * The abstract base class for physics-debug controls (such as
  * BulletRigidBodyDebugControl) used to visualize individual collision objects
- * and joints. TODO implement setSpatial()
+ * and joints. TODO implement controlRender() and setSpatial()
  * <p>
  * This class is shared between JBullet and Native Bullet.
  *
@@ -48,12 +48,15 @@ import com.jme3.scene.control.AbstractControl;
 public abstract class AbstractPhysicsDebugControl extends AbstractControl {
 
     private final Quaternion tmp_inverseWorldRotation = new Quaternion();
+    /**
+     * app state that this control serves
+     */
     protected final BulletDebugAppState debugAppState;
 
     /**
      * Instantiate an enabled control to serve the specified debug app state.
      *
-     * @param debugAppState which app state (not null)
+     * @param debugAppState which app state (not null, alias created)
      */
     public AbstractPhysicsDebugControl(BulletDebugAppState debugAppState) {
         this.debugAppState = debugAppState;
@@ -62,19 +65,23 @@ public abstract class AbstractPhysicsDebugControl extends AbstractControl {
     /**
      * Apply the specified location and orientation to the controlled spatial.
      *
-     * @param worldLocation the location vector (in world coordinates, not null)
-     * @param worldRotation the orientation (in world coordinates, not null)
+     * @param worldLocation location vector (in physics-space coordinates, not
+     * null, unaffected)
+     * @param worldRotation orientation (in physics-space coordinates, not null,
+     * unaffected)
      */
     protected void applyPhysicsTransform(Vector3f worldLocation,
             Quaternion worldRotation) {
-        applyPhysicsTransform(worldLocation, worldRotation, this.spatial);
+        applyPhysicsTransform(worldLocation, worldRotation, spatial);
     }
 
     /**
      * Apply the specified location and orientation to the specified spatial.
      *
-     * @param worldLocation the location vector (in world coordinates, not null)
-     * @param worldRotation the orientation (in world coordinates, not null)
+     * @param worldLocation location vector (in physics-space coordinates, not
+     * null, unaffected)
+     * @param worldRotation orientation (in physics-space coordinates, not null,
+     * unaffected)
      * @param spatial where to apply (may be null)
      */
     private void applyPhysicsTransform(Vector3f worldLocation,

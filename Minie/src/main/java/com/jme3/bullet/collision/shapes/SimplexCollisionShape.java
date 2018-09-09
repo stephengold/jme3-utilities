@@ -163,7 +163,7 @@ public class SimplexCollisionShape extends CollisionShape {
     }
 
     /**
-     * Create the configured shape in Bullet.
+     * Instantiate the configured shape in Bullet.
      */
     private void createShape() {
         if (vector4 != null) {

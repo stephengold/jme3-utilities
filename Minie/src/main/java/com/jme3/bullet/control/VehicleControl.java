@@ -111,22 +111,22 @@ public class VehicleControl extends PhysicsVehicle
     }
 
     /**
-     * Test whether physics coordinates should match the local transform of the
-     * Spatial.
+     * Test whether physics-space coordinates should match the spatial's local
+     * coordinates.
      *
-     * @return true if matching local transform, false if matching world
-     * transform
+     * @return true if matching local coordinates, false if matching world
+     * coordinates
      */
     public boolean isApplyPhysicsLocal() {
         return motionState.isApplyPhysicsLocal();
     }
 
     /**
-     * Alter whether physics coordinates should match the local transform of the
-     * Spatial.
+     * Alter whether physics-space coordinates should match the spatial's local
+     * coordinates.
      *
-     * @param applyPhysicsLocal true&rarr;match local transform,
-     * false&rarr;match world transform (default is false)
+     * @param applyPhysicsLocal true&rarr;match local coordinates,
+     * false&rarr;match world coordinates (default is false)
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         motionState.setApplyPhysicsLocal(applyPhysicsLocal);
@@ -304,10 +304,9 @@ public class VehicleControl extends PhysicsVehicle
     /**
      * Enable or disable this control.
      * <p>
-     * The physics object is removed from its physics space when the control is
-     * disabled. When the control is enabled again, the physics object is moved
-     * to the current location of the spatial and then added to the physics
-     * space.
+     * When the control is disabled, the vehicle is removed from physics space.
+     * When the control is enabled again, the physics object is moved to the
+     * current location of the spatial and then added to the physics space.
      *
      * @param enabled true&rarr;enable the control, false&rarr;disable it
      */
@@ -343,7 +342,7 @@ public class VehicleControl extends PhysicsVehicle
      * Update this control. Invoked once per frame, during the logical-state
      * update, provided the control is added to a scene.
      *
-     * @param tpf the time interval between updates (in seconds, &ge;0)
+     * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void update(float tpf) {

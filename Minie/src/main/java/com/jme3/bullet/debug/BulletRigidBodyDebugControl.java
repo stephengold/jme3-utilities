@@ -74,8 +74,8 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
         super(debugAppState);
         this.body = body;
         myShape = body.getCollisionShape();
-        this.geom = DebugShapeFactory.getDebugShape(body.getCollisionShape());
-        this.geom.setName(body.toString());
+        geom = DebugShapeFactory.getDebugShape(body.getCollisionShape());
+        geom.setName(body.toString());
         geom.setMaterial(debugAppState.DEBUG_BLUE);
     }
 
@@ -103,10 +103,11 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
      * update, provided the control is enabled and added to a scene. Should be
      * invoked only by a subclass or by AbstractControl.
      *
-     * @param tpf the time interval between updates (in seconds, &ge;0)
+     * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     @Override
     protected void controlUpdate(float tpf) {
+        // TODO check whether the shape's scales changed
         if (myShape != body.getCollisionShape()) {
             Node node = (Node) this.spatial;
             node.detachChild(geom);
