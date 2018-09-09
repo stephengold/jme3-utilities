@@ -138,7 +138,7 @@ public abstract class CollisionShape implements Savable {
         this.margin = margin;
     }
 
-    private native void setLocalScaling(long obectId, Vector3f scale);
+    private native void setLocalScaling(long objectId, Vector3f scale);
 
     private native void setMargin(long objectId, float margin);
 

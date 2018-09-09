@@ -49,8 +49,13 @@ public abstract class RagdollPreset {
      */
     final private static Logger logger
             = Logger.getLogger(RagdollPreset.class.getName());
-
+    /**
+     * map bone names to joint presets
+     */
     protected Map<String, JointPreset> boneMap = new HashMap<>();
+    /**
+     * lexicon to map bone names to entries
+     */
     protected Map<String, LexiconEntry> lexicon = new HashMap<>();
 
     /**
@@ -63,8 +68,13 @@ public abstract class RagdollPreset {
      */
     protected abstract void initLexicon();
 
+    /**
+     * Apply the preset for the named bone to the specified joint.
+     *
+     * @param boneName name
+     * @param joint where to apply the preset (not null, modified)
+     */
     public void setupJointForBone(String boneName, SixDofJoint joint) {
-
         if (boneMap.isEmpty()) {
             initBoneMap();
         }
@@ -75,17 +85,14 @@ public abstract class RagdollPreset {
         int resultScore = 0;
 
         for (String key : lexicon.keySet()) {
-
             int score = lexicon.get(key).getScore(boneName);
             if (score > resultScore) {
                 resultScore = score;
                 resultName = key;
             }
-
         }
 
         JointPreset preset = boneMap.get(resultName);
-
         if (preset != null && resultScore >= 50) {
             logger.log(Level.FINE,
                     "Found matching joint for bone {0} : {1} with score {2}",
@@ -100,18 +107,23 @@ public abstract class RagdollPreset {
             }
             new JointPreset().setupJoint(joint);
         }
-
     }
 
+    /**
+     * Range of motion for a joint.
+     */
     protected class JointPreset {
 
         private float maxX, minX, maxY, minY, maxZ, minZ;
 
+        /**
+         * Instantiate a preset with no motion allowed.
+         */
         public JointPreset() {
         }
 
         /**
-         * Instantiate a new preset.
+         * Instantiate a preset with the specified range of motion.
          *
          * @param maxX the maximum rotation on the X axis (in radians)
          * @param minX the minimum rotation on the X axis (in radians)
@@ -145,15 +157,30 @@ public abstract class RagdollPreset {
         }
     }
 
+    /**
+     * One entry in a bone lexicon.
+     */
     protected class LexiconEntry extends HashMap<String, Integer> {
 
+        /**
+         * Add a synonym with the specified score.
+         *
+         * @param word a substring that might occur in a bone name (not null)
+         * @param score larger value means more likely to correspond
+         */
         public void addSynonym(String word, int score) {
             put(word.toLowerCase(), score);
         }
 
-        public int getScore(String word) {
+        /**
+         * Calculate a total score for the specified bone name.
+         *
+         * @param name the name of a bone (not null)
+         * @return total score: larger value means more likely to correspond
+         */
+        public int getScore(String name) {
             int score = 0;
-            String searchWord = word.toLowerCase();
+            String searchWord = name.toLowerCase();
             for (String key : this.keySet()) {
                 if (searchWord.contains(key)) {
                     score += get(key);

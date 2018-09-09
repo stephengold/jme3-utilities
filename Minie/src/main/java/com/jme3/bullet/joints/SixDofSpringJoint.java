@@ -41,13 +41,13 @@ import java.util.logging.Logger;
  * <p>
  * <i>From the Bullet manual:</i><br>
  * This generic constraint can emulate a variety of standard constraints, by
- * configuring each of the 6 degrees of freedom (DoF). The first 3-DoF axis are
- * linear axis, which represent translation of rigidbodies, and the latter 3-DoF
- * axis represent the angular motion. Each axis can be either locked, free or
- * limited. On construction of a new btGeneric6DofConstraint, all axis are
- * locked. Afterwards the axis can be reconfigured. Note that several
- * combinations that include free and/or limited angular degrees of freedom are
- * undefined.
+ * configuring each of the 6 degrees of freedom (DoF). The first 3 DoFs are
+ * translations of the rigid bodies, and the last 3 DoFs are rotations.
+ * <p>
+ * Each DoF can be locked, free, or limited. On construction of a new
+ * btGeneric6DofConstraint, all axes are locked. After that, the axes can be
+ * reconfigured. However, some combinations that include free and/or limited
+ * angular degrees of freedom are undefined.
  *
  * @author normenhansen
  */
@@ -72,8 +72,8 @@ public class SixDofSpringJoint extends SixDofJoint {
     }
 
     /**
-     * Create a SixDofSpringJoint. To be effective, the joint must be added to a
-     * physics space.
+     * Instantiate a SixDofSpringJoint. To be effective, the joint must be added
+     * to a physics space.
      *
      * @param nodeA the 1st body connected by the joint (not null, alias
      * created)
@@ -91,7 +91,8 @@ public class SixDofSpringJoint extends SixDofJoint {
     public SixDofSpringJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB,
             boolean useLinearReferenceFrameA) {
-        super(nodeA, nodeB, pivotA, pivotB, rotA, rotB, useLinearReferenceFrameA);
+        super(nodeA, nodeB, pivotA, pivotB, rotA, rotB,
+                useLinearReferenceFrameA);
     }
 
     /**
@@ -104,7 +105,7 @@ public class SixDofSpringJoint extends SixDofJoint {
         enableSpring(objectId, index, onOff);
     }
 
-    native void enableSpring(long objctId, int index, boolean onOff);
+    native void enableSpring(long objectId, int index, boolean onOff);
 
     /**
      * Alter the spring stiffness for the indexed degree of freedom.
@@ -116,7 +117,7 @@ public class SixDofSpringJoint extends SixDofJoint {
         setStiffness(objectId, index, stiffness);
     }
 
-    native void setStiffness(long objctId, int index, float stiffness);
+    native void setStiffness(long objectId, int index, float stiffness);
 
     /**
      * Alter the damping for the indexed degree of freedom.
@@ -128,7 +129,7 @@ public class SixDofSpringJoint extends SixDofJoint {
         setDamping(objectId, index, damping);
     }
 
-    native void setDamping(long objctId, int index, float damping);
+    native void setDamping(long objectId, int index, float damping);
 
     /**
      * Alter the equilibrium points for all degrees of freedom, based on the
@@ -138,7 +139,7 @@ public class SixDofSpringJoint extends SixDofJoint {
         setEquilibriumPoint(objectId);
     }
 
-    native void setEquilibriumPoint(long objctId);
+    native void setEquilibriumPoint(long objectId);
 
     /**
      * Alter the equilibrium point of the indexed degree of freedom, based on
@@ -150,7 +151,7 @@ public class SixDofSpringJoint extends SixDofJoint {
         setEquilibriumPoint(objectId, index);
     }
 
-    native void setEquilibriumPoint(long objctId, int index);
+    native void setEquilibriumPoint(long objectId, int index);
 
     @Override
     native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA,
