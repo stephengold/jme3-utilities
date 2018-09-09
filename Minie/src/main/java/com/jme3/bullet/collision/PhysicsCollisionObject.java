@@ -313,12 +313,12 @@ public abstract class PhysicsCollisionObject implements Savable {
     /**
      * De-serialize this object, for example when loading from a J3O file.
      *
-     * @param e importer (not null)
+     * @param im importer (not null)
      * @throws IOException from importer
      */
     @Override
-    public void read(JmeImporter e) throws IOException {
-        InputCapsule capsule = e.getCapsule(this);
+    public void read(JmeImporter im) throws IOException {
+        InputCapsule capsule = im.getCapsule(this);
         collisionGroup = capsule.readInt("collisionGroup", COLLISION_GROUP_01);
         collideWithGroups = capsule.readInt("collisionGroupsMask",
                 COLLISION_GROUP_01);

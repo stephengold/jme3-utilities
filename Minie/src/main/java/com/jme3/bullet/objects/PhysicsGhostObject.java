@@ -383,13 +383,13 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      * De-serialize this object from the specified importer, for example when
      * loading from a J3O file.
      *
-     * @param e importer (not null)
+     * @param im importer (not null)
      * @throws IOException from importer
      */
     @Override
-    public void read(JmeImporter e) throws IOException {
-        super.read(e);
-        InputCapsule capsule = e.getCapsule(this);
+    public void read(JmeImporter im) throws IOException {
+        super.read(im);
+        InputCapsule capsule = im.getCapsule(this);
         buildObject();
         setPhysicsLocation((Vector3f) capsule.readSavable("physicsLocation",
                 new Vector3f()));
