@@ -31,11 +31,14 @@
  */
 package com.jme3.bullet.debug;
 
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.util.clone.Cloner;
+import java.io.IOException;
 
 /**
  * The abstract base class for physics-debug controls (such as
@@ -48,9 +51,9 @@ import com.jme3.util.clone.Cloner;
  */
 public abstract class AbstractPhysicsDebugControl extends AbstractControl {
 
-    private Quaternion tmp_inverseWorldRotation = new Quaternion();
+    final private Quaternion tmp_inverseWorldRotation = new Quaternion();
     /**
-     * app state that this control serves
+     * the app state that this control serves
      */
     protected final BulletDebugAppState debugAppState;
 
@@ -116,13 +119,45 @@ public abstract class AbstractPhysicsDebugControl extends AbstractControl {
      * shallow-cloned control into a deep-cloned one, using the specified cloner
      * and original to resolve copied fields.
      *
-     * @param cloner the cloner currently cloning this control (not null)
+     * @param cloner the cloner currently cloning this control (unused)
      * @param original the control from which this control was shallow-cloned
      * (unused)
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
-        super.cloneFields(cloner, original);
-        tmp_inverseWorldRotation = cloner.clone(tmp_inverseWorldRotation);
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new control (unused)
+     */
+    @Override
+    public Object jmeClone() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * De-serialize this control from the specified importer, for example when
+     * loading from a J3O file.
+     *
+     * @param im importer (unused)
+     * @throws IOException never
+     */
+    @Override
+    public void read(JmeImporter im) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Serialize this object, for example when saving to a J3O file.
+     *
+     * @param ex exporter (unused)
+     * @throws IOException never
+     */
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+        throw new UnsupportedOperationException();
     }
 }
