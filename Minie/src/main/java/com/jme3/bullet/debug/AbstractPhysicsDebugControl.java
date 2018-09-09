@@ -35,6 +35,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
+import com.jme3.util.clone.Cloner;
 
 /**
  * The abstract base class for physics-debug controls (such as
@@ -47,7 +48,7 @@ import com.jme3.scene.control.AbstractControl;
  */
 public abstract class AbstractPhysicsDebugControl extends AbstractControl {
 
-    private final Quaternion tmp_inverseWorldRotation = new Quaternion();
+    private Quaternion tmp_inverseWorldRotation = new Quaternion();
     /**
      * app state that this control serves
      */
@@ -108,5 +109,20 @@ public abstract class AbstractPhysicsDebugControl extends AbstractControl {
                 spatial.setLocalRotation(worldRotation);
             }
         }
+    }
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned control into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner currently cloning this control (not null)
+     * @param original the control from which this control was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        tmp_inverseWorldRotation = cloner.clone(tmp_inverseWorldRotation);
     }
 }
