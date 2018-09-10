@@ -164,7 +164,8 @@ public abstract class AbstractPhysicsControl
     /**
      * Access whichever spatial translation corresponds to the physics location.
      *
-     * @return the pre-existing coordinate vector (not null) TODO
+     * @return the pre-existing location vector (in physics-space coordinates,
+     * not null) TODO
      */
     protected Vector3f getSpatialTranslation() {
         if (MySpatial.isIgnoringTransforms(spatial)) {
@@ -179,7 +180,8 @@ public abstract class AbstractPhysicsControl
     /**
      * Access whichever spatial rotation corresponds to the physics rotation.
      *
-     * @return the pre-existing quaternion (not null)
+     * @return the pre-existing quaternion (in physics-space coordinates, not
+     * null)
      */
     protected Quaternion getSpatialRotation() {
         if (MySpatial.isIgnoringTransforms(spatial)) {

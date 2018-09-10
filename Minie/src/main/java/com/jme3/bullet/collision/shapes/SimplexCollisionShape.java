@@ -68,14 +68,10 @@ public class SimplexCollisionShape extends CollisionShape {
     /**
      * Instantiate a tetrahedral collision shape based on the specified points.
      *
-     * @param point1 the world coordinates of 1st point (not null, alias
-     * created) TODO
-     * @param point2 the world coordinates of 2nd point (not null, alias
-     * created) TODO
-     * @param point3 the world coordinates of 3rd point (not null, alias
-     * created) TODO
-     * @param point4 the world coordinates of 4th point (not null, alias
-     * created) TODO
+     * @param point1 the coordinates of 1st point (not null, alias created) TODO
+     * @param point2 the coordinates of 2nd point (not null, alias created) TODO
+     * @param point3 the coordinates of 3rd point (not null, alias created) TODO
+     * @param point4 the coordinates of 4th point (not null, alias created) TODO
      */
     public SimplexCollisionShape(Vector3f point1, Vector3f point2,
             Vector3f point3, Vector3f point4) {
@@ -89,12 +85,9 @@ public class SimplexCollisionShape extends CollisionShape {
     /**
      * Instantiate a triangular collision shape based on the specified points.
      *
-     * @param point1 the world coordinates of 1st point (not null, alias
-     * created) TODO
-     * @param point2 the world coordinates of 2nd point (not null, alias
-     * created) TODO
-     * @param point3 the world coordinates of 3rd point (not null, alias
-     * created) TODO
+     * @param point1 the coordinates of 1st point (not null, alias created) TODO
+     * @param point2 the coordinates of 2nd point (not null, alias created) TODO
+     * @param point3 the coordinates of 3rd point (not null, alias created) TODO
      */
     public SimplexCollisionShape(Vector3f point1, Vector3f point2,
             Vector3f point3) {
@@ -107,10 +100,8 @@ public class SimplexCollisionShape extends CollisionShape {
     /**
      * Instantiate a line-segment collision shape based on the specified points.
      *
-     * @param point1 the world coordinates of 1st point (not null, alias
-     * created) TODO
-     * @param point2 the world coordinates of 2nd point (not null, alias
-     * created) TODO
+     * @param point1 the coordinates of 1st point (not null, alias created) TODO
+     * @param point2 the coordinates of 2nd point (not null, alias created) TODO
      */
     public SimplexCollisionShape(Vector3f point1, Vector3f point2) {
         vector1 = point1;
@@ -121,8 +112,7 @@ public class SimplexCollisionShape extends CollisionShape {
     /**
      * Instantiate a point collision shape based on the specified points.
      *
-     * @param point1 the world coordinates of point (not null, alias created)
-     * TODO
+     * @param point1 the coordinates of point (not null, alias created) TODO
      */
     public SimplexCollisionShape(Vector3f point1) {
         vector1 = point1;
