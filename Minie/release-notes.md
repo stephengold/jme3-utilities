@@ -1,5 +1,20 @@
 # release notes for the Minie library and related tests
 
+## Version 0.2.9 released on TBD
+
+ + Removed PhysicsCollisionEventFactory.
+ + Removed HeightfieldCollisionShape.createJmeMesh(),
+   VehicleWheel.getGroundObject(), and a constructor for PhysicsGhostObject.
+ + Privatized various methods.
+ + Fixed JME issue #894.
+ + Implemented a cleaner fix for JME issue #889.
+ + Deal with scale changes in physics-debug controls.
+ + Decided that physics-debug controls should implement neither JmeCloneable
+   nor Savable.
+ + Added validation of method arguments.
+ + Finalized various fields.
+ + Created the jme3utilities.minie.test package.
+
 ## Version 0.2.8 released on 3 September 2018
 
  + Removed some unnecessary methods.
