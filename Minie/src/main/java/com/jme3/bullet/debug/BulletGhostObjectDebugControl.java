@@ -57,14 +57,33 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
     final private static Logger logger
             = Logger.getLogger(BulletGhostObjectDebugControl.class.getName());
 
+    /**
+     * ghost object to visualize (not null)
+     */
     final private PhysicsGhostObject ghost;
+    /**
+     * temporary storage for physics location
+     */
     final private Vector3f location = new Vector3f();
+    /**
+     * temporary storage for physics rotation
+     */
     final private Quaternion rotation = new Quaternion();
-    final private CollisionShape myShape;
+    /**
+     * shape for which geom was generated (not null)
+     */
+    private CollisionShape myShape;
+    /**
+     * geometry for visualization (not null)
+     */
     private Spatial geom;
+    /**
+     * physics scale for which geom was generated
+     */
+    final private Vector3f oldScale = new Vector3f();
 
     /**
-     * Instantiate an enabled control to visualize the specified object.
+     * Instantiate an enabled control to visualize the specified ghost object.
      *
      * @param debugAppState which app state (not null)
      * @param gh which object to visualize (not null, alias created)
@@ -73,10 +92,12 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
             PhysicsGhostObject gh) {
         super(debugAppState);
         ghost = gh;
-        myShape = gh.getCollisionShape();
-        geom = DebugShapeFactory.getDebugShape(gh.getCollisionShape());
-        geom.setName(gh.toString());
+        myShape = ghost.getCollisionShape();
+        Vector3f scale = myShape.getScale();
+        oldScale.set(scale);
+        geom = DebugShapeFactory.getDebugShape(myShape);
         geom.setMaterial(debugAppState.DEBUG_YELLOW);
+        geom.setName(ghost.toString());
     }
 
     /**
@@ -107,15 +128,25 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
      */
     @Override
     protected void controlUpdate(float tpf) {
-        if (myShape != ghost.getCollisionShape()) {
+        CollisionShape newShape = ghost.getCollisionShape();
+        Vector3f newScale = newShape.getScale();
+        if (myShape != newShape || !oldScale.equals(newScale)) {
+            myShape = newShape;
+            oldScale.set(newScale);
+
             Node node = (Node) this.spatial;
             node.detachChild(geom);
-            geom = DebugShapeFactory.getDebugShape(ghost.getCollisionShape());
+
+            geom = DebugShapeFactory.getDebugShape(myShape);
             geom.setMaterial(debugAppState.DEBUG_YELLOW);
+            geom.setName(ghost.toString());
+
             node.attachChild(geom);
         }
-        applyPhysicsTransform(ghost.getPhysicsLocation(location),
-                ghost.getPhysicsRotation(rotation));
+
+        ghost.getPhysicsLocation(location);
+        ghost.getPhysicsRotation(rotation);
+        applyPhysicsTransform(location, rotation);
     }
 
     /**

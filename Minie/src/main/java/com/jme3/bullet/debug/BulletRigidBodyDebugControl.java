@@ -57,11 +57,30 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
     final private static Logger logger
             = Logger.getLogger(BulletRigidBodyDebugControl.class.getName());
 
+    /**
+     * rigid body to visualize (not null)
+     */
     final private PhysicsRigidBody body;
+    /**
+     * temporary storage for physics location
+     */
     final private Vector3f location = new Vector3f();
+    /**
+     * temporary storage for physics rotation
+     */
     final private Quaternion rotation = new Quaternion();
-    final private CollisionShape myShape;
+    /**
+     * shape for which geom was generated (not null)
+     */
+    private CollisionShape myShape;
+    /**
+     * geometry for visualization (not null)
+     */
     private Spatial geom;
+    /**
+     * physics scale for which geom was generated
+     */
+    final private Vector3f oldScale = new Vector3f();
 
     /**
      * Instantiate an enabled control to visualize the specified body.
@@ -74,9 +93,11 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
         super(debugAppState);
         this.body = body;
         myShape = body.getCollisionShape();
-        geom = DebugShapeFactory.getDebugShape(body.getCollisionShape());
-        geom.setName(body.toString());
+        Vector3f scale = myShape.getScale();
+        oldScale.set(scale);
+        geom = DebugShapeFactory.getDebugShape(myShape);
         geom.setMaterial(debugAppState.DEBUG_BLUE);
+        geom.setName(body.toString());
     }
 
     /**
@@ -107,20 +128,29 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
      */
     @Override
     protected void controlUpdate(float tpf) {
-        // TODO check whether the shape's scales changed
-        if (myShape != body.getCollisionShape()) {
+        CollisionShape newShape = body.getCollisionShape();
+        Vector3f newScale = newShape.getScale();
+        if (myShape != newShape || !oldScale.equals(newScale)) {
+            myShape = newShape;
+            oldScale.set(newScale);
+
             Node node = (Node) this.spatial;
             node.detachChild(geom);
-            geom = DebugShapeFactory.getDebugShape(body.getCollisionShape());
+
+            geom = DebugShapeFactory.getDebugShape(myShape);
+            geom.setName(body.toString());
+
             node.attachChild(geom);
         }
+
         if (body.isActive()) {
             geom.setMaterial(debugAppState.DEBUG_MAGENTA);
         } else {
             geom.setMaterial(debugAppState.DEBUG_BLUE);
         }
-        applyPhysicsTransform(body.getPhysicsLocation(location),
-                body.getPhysicsRotation(rotation));
+        body.getPhysicsLocation(location);
+        body.getPhysicsRotation(rotation);
+        applyPhysicsTransform(location, rotation);
     }
 
     /**

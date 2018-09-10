@@ -57,10 +57,26 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
     final private static Logger logger
             = Logger.getLogger(BulletCharacterDebugControl.class.getName());
 
+    /**
+     * character to visualize (not null)
+     */
     final private PhysicsCharacter character;
+    /**
+     * temporary storage for physics location
+     */
     final private Vector3f location = new Vector3f();
-    final private CollisionShape myShape;
+    /**
+     * shape for which geom was generated
+     */
+    private CollisionShape myShape;
+    /**
+     * geometry for visualization (not null)
+     */
     private Spatial geom;
+    /**
+     * physics scale for which geom was generated
+     */
+    final private Vector3f oldScale = new Vector3f();
 
     /**
      * Instantiate an enabled control to visualize the specified character.
@@ -72,10 +88,12 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
             PhysicsCharacter ch) {
         super(debugAppState);
         character = ch;
-        myShape = ch.getCollisionShape();
-        geom = DebugShapeFactory.getDebugShape(ch.getCollisionShape());
-        geom.setName(ch.toString());
+        myShape = character.getCollisionShape();
+        Vector3f scale = myShape.getScale();
+        oldScale.set(scale);
+        geom = DebugShapeFactory.getDebugShape(myShape);
         geom.setMaterial(debugAppState.DEBUG_PINK);
+        geom.setName(ch.toString());
     }
 
     /**
@@ -106,16 +124,24 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
      */
     @Override
     protected void controlUpdate(float tpf) {
-        if (myShape != character.getCollisionShape()) {
+        CollisionShape newShape = character.getCollisionShape();
+        Vector3f newScale = newShape.getScale();
+        if (myShape != newShape || !oldScale.equals(newScale)) {
+            myShape = newShape;
+            oldScale.set(newScale);
+
             Node node = (Node) this.spatial;
             node.detachChild(geom);
-            geom = DebugShapeFactory.getDebugShape(
-                    character.getCollisionShape());
+
+            geom = DebugShapeFactory.getDebugShape(myShape);
             geom.setMaterial(debugAppState.DEBUG_PINK);
+            geom.setName(character.toString());
+
             node.attachChild(geom);
         }
-        applyPhysicsTransform(character.getPhysicsLocation(location),
-                Quaternion.IDENTITY);
+
+        character.getPhysicsLocation(location);
+        applyPhysicsTransform(location, Quaternion.IDENTITY);
     }
 
     /**
