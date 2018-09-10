@@ -35,8 +35,8 @@ import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 
 /**
- * Configure a motor based on Bullet's btTranslationalLimitMotor. Motors are
- * used to drive joints.
+ * A motor based on Bullet's btTranslationalLimitMotor. Motors are used to drive
+ * joints.
  *
  * @author normenhansen
  */
@@ -74,7 +74,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Copy this motor's constraint lower limit.
+     * Copy this motor's constraint lower limits.
      *
      * @return a new vector (not null)
      */
@@ -88,7 +88,7 @@ public class TranslationalLimitMotor {
     private native void getLowerLimit(long motorId, Vector3f vector);
 
     /**
-     * Alter the constraint lower limit.
+     * Alter the constraint lower limits.
      *
      * @param lowerLimit (unaffected, not null)
      */
@@ -99,7 +99,7 @@ public class TranslationalLimitMotor {
     private native void setLowerLimit(long motorId, Vector3f vector);
 
     /**
-     * Copy this motor's constraint upper limit.
+     * Copy this motor's constraint upper limits.
      *
      * @return a new vector (not null)
      */
@@ -113,7 +113,7 @@ public class TranslationalLimitMotor {
     private native void getUpperLimit(long motorId, Vector3f vector);
 
     /**
-     * Alter the constraint upper limit.
+     * Alter the constraint upper limits.
      *
      * @param upperLimit (unaffected, not null)
      */
@@ -162,7 +162,7 @@ public class TranslationalLimitMotor {
     /**
      * Alter the limit softness.
      *
-     * @param limitSoftness new value (default=0.5)
+     * @param limitSoftness the desired limit softness (default=0.5)
      */
     public void setLimitSoftness(float limitSoftness) {
         setLimitSoftness(motorId, limitSoftness);
@@ -173,7 +173,8 @@ public class TranslationalLimitMotor {
     /**
      * Read this motor's damping coefficient.
      *
-     * @return the viscous damping coefficient
+     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
+     * external force)
      */
     public float getDamping() {
         return getDamping(motorId);
@@ -184,7 +185,8 @@ public class TranslationalLimitMotor {
     /**
      * Alter the damping coefficient.
      *
-     * @param damping new value (default=1)
+     * @param damping the desired viscous damping coefficient (0&rarr;no
+     * damping, 1&rarr;no external force, default=1)
      */
     public void setDamping(float damping) {
         setDamping(motorId, damping);
@@ -195,7 +197,7 @@ public class TranslationalLimitMotor {
     /**
      * Read this motor's restitution.
      *
-     * @return restitution
+     * @return the restitution (bounce) factor
      */
     public float getRestitution() {
         return getRestitution(motorId);
@@ -206,7 +208,7 @@ public class TranslationalLimitMotor {
     /**
      * Alter the restitution.
      *
-     * @param restitution new value
+     * @param restitution the desired restitution (bounce) factor
      */
     public void setRestitution(float restitution) {
         setRestitution(motorId, restitution);

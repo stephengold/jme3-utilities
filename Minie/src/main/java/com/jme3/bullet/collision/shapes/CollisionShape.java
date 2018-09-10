@@ -66,7 +66,7 @@ public abstract class CollisionShape implements Savable {
      */
     final protected Vector3f scale = new Vector3f(1f, 1f, 1f);
     /**
-     * collision margin (in world units, &ge;0, default=0)
+     * collision margin (in physics-world units, &ge;0, default=0)
      */
     protected float margin = 0f;
 
@@ -116,7 +116,7 @@ public abstract class CollisionShape implements Savable {
     /**
      * Read the collision margin for this shape.
      *
-     * @return margin distance (in world units, &ge;0)
+     * @return the margin distance (in physics-world units, &ge;0)
      */
     public float getMargin() {
         return getMargin(objectId);
@@ -131,7 +131,8 @@ public abstract class CollisionShape implements Savable {
      * Note that if the shape is shared (between collision objects and/or
      * compound shapes) changes can have unintended consequences.
      *
-     * @param margin new value (in world units, &ge;0, default=0)
+     * @param margin the desired margin distance (in physics-world units, &ge;0,
+     * default=0)
      */
     public void setMargin(float margin) {
         setMargin(objectId, margin);

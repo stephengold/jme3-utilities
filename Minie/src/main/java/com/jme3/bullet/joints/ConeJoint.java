@@ -123,9 +123,9 @@ public class ConeJoint extends PhysicsJoint {
     /**
      * Alter the angular limits for this joint.
      *
-     * @param swingSpan1 (in radians)
-     * @param swingSpan2 (in radians)
-     * @param twistSpan (in radians)
+     * @param swingSpan1 angle (in radians)
+     * @param swingSpan2 angle (in radians)
+     * @param twistSpan angle (in radians)
      */
     public void setLimit(float swingSpan1, float swingSpan2, float twistSpan) {
         this.swingSpan1 = swingSpan1;

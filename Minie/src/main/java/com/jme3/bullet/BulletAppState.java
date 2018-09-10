@@ -52,7 +52,6 @@ import jme3utilities.Validate;
  * @author normenhansen
  */
 public class BulletAppState implements AppState, PhysicsTickListener {
-    // TODO no need to implement PhysicsTickListener
 
     /**
      * message logger for this class

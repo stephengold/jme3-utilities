@@ -87,7 +87,7 @@ public class RotationalLimitMotor {
     /**
      * Alter the constraint lower limit.
      *
-     * @param loLimit new limit value
+     * @param loLimit the desired limit value
      */
     public void setLoLimit(float loLimit) {
         setLoLimit(motorId, loLimit);
@@ -107,9 +107,9 @@ public class RotationalLimitMotor {
     private native float getHiLimit(long motorId);
 
     /**
-     * Alter the constraint upper limit.
+     * Alter this motor's constraint upper limit.
      *
-     * @param hiLimit new limit value
+     * @param hiLimit the desired limit value
      */
     public void setHiLimit(float hiLimit) {
         setHiLimit(motorId, hiLimit);
@@ -117,84 +117,156 @@ public class RotationalLimitMotor {
 
     private native void setHiLimit(long motorId, float hiLimit);
 
+    /**
+     * Read this motor's target velocity.
+     *
+     * @return the target velocity (in radians per second)
+     */
     public float getTargetVelocity() {
         return getTargetVelocity(motorId);
     }
 
     private native float getTargetVelocity(long motorId);
 
+    /**
+     * Alter this motor's target velocity.
+     *
+     * @param targetVelocity the desired target velocity (in radians per second)
+     */
     public void setTargetVelocity(float targetVelocity) {
         setTargetVelocity(motorId, targetVelocity);
     }
 
     private native void setTargetVelocity(long motorId, float targetVelocity);
 
+    /**
+     * Read this motor's maximum force.
+     *
+     * @return the maximum force
+     */
     public float getMaxMotorForce() {
         return getMaxMotorForce(motorId);
     }
 
     private native float getMaxMotorForce(long motorId);
 
+    /**
+     * Alter this motor's maximum force.
+     *
+     * @param maxMotorForce the desired maximum force on the motor
+     */
     public void setMaxMotorForce(float maxMotorForce) {
         setMaxMotorForce(motorId, maxMotorForce);
     }
 
     private native void setMaxMotorForce(long motorId, float maxMotorForce);
 
+    /**
+     * Read the limit's maximum force.
+     *
+     * @return the maximum force on the limit
+     */
     public float getMaxLimitForce() {
         return getMaxLimitForce(motorId);
     }
 
     private native float getMaxLimitForce(long motorId);
 
+    /**
+     * Alter the limit's maximum force.
+     *
+     * @param maxLimitForce the desired maximum force on the limit
+     */
     public void setMaxLimitForce(float maxLimitForce) {
         setMaxLimitForce(motorId, maxLimitForce);
     }
 
     private native void setMaxLimitForce(long motorId, float maxLimitForce);
 
+    /**
+     * Read this motor's damping value.
+     *
+     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
+     * external force)
+     */
     public float getDamping() {
         return getDamping(motorId);
     }
 
     private native float getDamping(long motorId);
 
+    /**
+     * Alter this motor's damping.
+     *
+     * @param damping the desired viscous damping coefficient (0&rarr;no
+     * damping, 1&rarr;no external force, default=1)
+     */
     public void setDamping(float damping) {
         setDamping(motorId, damping);
     }
 
     private native void setDamping(long motorId, float damping);
 
+    /**
+     * Read this motor's limit softness.
+     *
+     * @return the limit softness
+     */
     public float getLimitSoftness() {
         return getLimitSoftness(motorId);
     }
 
     private native float getLimitSoftness(long motorId);
 
+    /**
+     * Alter this motor's limit softness.
+     *
+     * @param limitSoftness the desired limit softness
+     */
     public void setLimitSoftness(float limitSoftness) {
         setLimitSoftness(motorId, limitSoftness);
     }
 
     private native void setLimitSoftness(long motorId, float limitSoftness);
 
+    /**
+     * Read this motor's error tolerance at limits.
+     *
+     * @return the error tolerance (&gt;0)
+     */
     public float getERP() {
         return getERP(motorId);
     }
 
     private native float getERP(long motorId);
 
+    /**
+     * Alter this motor's error tolerance at limits.
+     *
+     * @param ERP the desired error tolerance (&gt;0)
+     */
     public void setERP(float ERP) {
         setERP(motorId, ERP);
     }
 
     private native void setERP(long motorId, float ERP);
 
+    /**
+     * Read this motor's bounce.
+     *
+     * @return the bounce (restitution factor)
+     */
     public float getBounce() {
         return getBounce(motorId);
     }
 
     private native float getBounce(long motorId);
 
+    /**
+     * Alter this motor's bounce.
+     *
+     * @param bounce the desired bounce (restitution factor)
+     */
     public void setBounce(float bounce) {
         setBounce(motorId, bounce);
     }

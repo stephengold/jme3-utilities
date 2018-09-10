@@ -88,7 +88,8 @@ public class Point2PointJoint extends PhysicsJoint {
     /**
      * Alter the joint's damping.
      *
-     * @param value the desired damping value (default=1)
+     * @param value the desired viscous damping coefficient (0&rarr;no damping,
+     * 1&rarr;no external force, default=1)
      */
     public void setDamping(float value) {
         setDamping(objectId, value);
@@ -121,7 +122,8 @@ public class Point2PointJoint extends PhysicsJoint {
     /**
      * Read the joint's damping value.
      *
-     * @return the damping value
+     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
+     * external force)
      */
     public float getDamping() {
         return getDamping(objectId);

@@ -111,7 +111,7 @@ public class SixDofSpringJoint extends SixDofJoint {
      * Alter the spring stiffness for the indexed degree of freedom.
      *
      * @param index which degree of freedom (&ge;0, &lt;6)
-     * @param stiffness new value
+     * @param stiffness the desired stiffness
      */
     public void setStiffness(int index, float stiffness) {
         setStiffness(objectId, index, stiffness);
@@ -123,7 +123,8 @@ public class SixDofSpringJoint extends SixDofJoint {
      * Alter the damping for the indexed degree of freedom.
      *
      * @param index which degree of freedom (&ge;0, &lt;6)
-     * @param damping new value
+     * @param damping the desired viscous damping coefficient (0&rarr;no
+     * damping, 1&rarr;no external force, default=1)
      */
     public void setDamping(int index, float damping) {
         setDamping(objectId, index, damping);

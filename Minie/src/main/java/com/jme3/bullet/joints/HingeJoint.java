@@ -64,19 +64,19 @@ public class HingeJoint extends PhysicsJoint {
     private Vector3f axisB;
 
     /**
-     * Cached copy of the angular-only flag.
+     * cached copy of the angular-only flag
      */
     private boolean angularOnly = false;
     /**
-     * Cached copy of the limit's bias factor.
+     * cached copy of the limit's bias factor
      */
     private float biasFactor = 0.3f;
     /**
-     * Cached copy of the limit's relaxation factor.
+     * cached copy of the limit's relaxation factor
      */
     private float relaxationFactor = 1f;
     /**
-     * Cached copy of the limit's softness.
+     * cached copy of the limit's softness
      */
     private float limitSoftness = 0.9f;
 
@@ -121,8 +121,8 @@ public class HingeJoint extends PhysicsJoint {
      * Enable or disable the motor.
      *
      * @param enable true to enable, false to disable
-     * @param targetVelocity the target velocity of the rotation
-     * @param maxMotorImpulse the max force applied to the hinge to rotate it
+     * @param targetVelocity the desired target velocity
+     * @param maxMotorImpulse the desired maximum rotational force
      */
     public void enableMotor(boolean enable, float targetVelocity,
             float maxMotorImpulse) {
@@ -168,8 +168,8 @@ public class HingeJoint extends PhysicsJoint {
     /**
      * Alter this joint's limits.
      *
-     * @param low the lower limit of the hinge angle (in radians)
-     * @param high the upper limit of the joint angle (in radians)
+     * @param low the desired lower limit of the hinge angle (in radians)
+     * @param high the desired upper limit of the joint angle (in radians)
      */
     public void setLimit(float low, float high) {
         setLimit(objectId, low, high);
@@ -182,8 +182,8 @@ public class HingeJoint extends PhysicsJoint {
      * would shoot through the actual limit are slowed down. The bias should be
      * in the range of 0.2 - 0.5.
      *
-     * @param low the lower limit of the hinge angle (in radians)
-     * @param high the upper limit of the joint angle (in radians)
+     * @param low the desired lower limit of the hinge angle (in radians)
+     * @param high the desired upper limit of the joint angle (in radians)
      * @param _softness the factor at which the velocity error correction starts
      * operating, i.e a softness of 0.9 means that the correction starts at 90%
      * of the limit range.

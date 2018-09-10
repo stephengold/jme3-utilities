@@ -237,7 +237,7 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's restitution for on-axis translation between the limits.
      *
-     * @return the restitution
+     * @return the restitution (bounce) factor
      */
     public float getRestitutionDirLin() {
         return getRestitutionDirLin(objectId);
@@ -248,7 +248,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's restitution for on-axis translation between the limits.
      *
-     * @param restitutionDirLin the desired restitution (default=0.7)
+     * @param restitutionDirLin the desired restitution (bounce) factor
+     * (default=0.7)
      */
     public void setRestitutionDirLin(float restitutionDirLin) {
         setRestitutionDirLin(objectId, restitutionDirLin);
@@ -259,7 +260,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's damping for on-axis translation between the limits.
      *
-     * @return the damping factor (0&rarr;no damping, 1&rarr;no external force)
+     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
+     * external force)
      */
     public float getDampingDirLin() {
         return getDampingDirLin(objectId);
@@ -270,8 +272,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's damping for on-axis translation between the limits.
      *
-     * @param dampingDirLin the desired damping factor (0&rarr;no damping,
-     * 1&rarr;no external force, default=0)
+     * @param dampingDirLin the desired viscous damping coefficient (0&rarr;no
+     * damping, 1&rarr;no external force, default=0)
      */
     public void setDampingDirLin(float dampingDirLin) {
         setDampingDirLin(objectId, dampingDirLin);
@@ -304,7 +306,7 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's restitution for on-axis rotation between the limits.
      *
-     * @return the restitution
+     * @return the restitution (bounce) factor
      */
     public float getRestitutionDirAng() {
         return getRestitutionDirAng(objectId);
@@ -315,7 +317,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's restitution for on-axis rotation between the limits.
      *
-     * @param restitutionDirAng the desired restitution (default=0.7)
+     * @param restitutionDirAng the desired restitution (bounce) factor
+     * (default=0.7)
      */
     public void setRestitutionDirAng(float restitutionDirAng) {
         setRestitutionDirAng(objectId, restitutionDirAng);
@@ -326,7 +329,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's damping for on-axis rotation between the limits.
      *
-     * @return the damping factor (0&rarr;no damping, 1&rarr;no external force)
+     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
+     * external force)
      */
     public float getDampingDirAng() {
         return getDampingDirAng(objectId);
@@ -337,8 +341,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's damping for on-axis rotation between the limits.
      *
-     * @param dampingDirAng the desired damping factor (0&rarr;no damping,
-     * 1&rarr;no external force, default=0)
+     * @param dampingDirAng the desired viscous damping coefficient (0&rarr;no
+     * damping, 1&rarr;no external force, default=0)
      */
     public void setDampingDirAng(float dampingDirAng) {
         setDampingDirAng(objectId, dampingDirAng);
@@ -371,7 +375,7 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's restitution for on-axis translation hitting the limits.
      *
-     * @return the restitution
+     * @return the restitution (bounce) factor
      */
     public float getRestitutionLimLin() {
         return getRestitutionLimLin(objectId);
@@ -382,7 +386,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's restitution for on-axis translation hitting the limits.
      *
-     * @param restitutionLimLin the desired restitution (default=0.7)
+     * @param restitutionLimLin the desired restitution (bounce) factor
+     * (default=0.7)
      */
     public void setRestitutionLimLin(float restitutionLimLin) {
         setRestitutionLimLin(objectId, restitutionLimLin);
@@ -393,7 +398,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's damping for on-axis translation hitting the limits.
      *
-     * @return the damping factor (0&rarr;no damping, 1&rarr;no external force)
+     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
+     * external force)
      */
     public float getDampingLimLin() {
         return getDampingLimLin(objectId);
@@ -404,8 +410,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's damping for on-axis translation hitting the limits.
      *
-     * @param dampingLimLin the desired damping factor (0&rarr;no damping,
-     * 1&rarr;no external force, default=1)
+     * @param dampingLimLin the desired viscous damping coefficient (0&rarr;no
+     * damping, 1&rarr;no external force, default=1)
      */
     public void setDampingLimLin(float dampingLimLin) {
         setDampingLimLin(objectId, dampingLimLin);
@@ -438,7 +444,7 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's restitution for on-axis rotation hitting the limits.
      *
-     * @return the restitution
+     * @return the restitution (bounce) factor
      */
     public float getRestitutionLimAng() {
         return getRestitutionLimAng(objectId);
@@ -449,7 +455,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's restitution for on-axis rotation hitting the limits.
      *
-     * @param restitutionLimAng the desired restitution (default=0.7)
+     * @param restitutionLimAng the desired restitution (bounce) factor
+     * (default=0.7)
      */
     public void setRestitutionLimAng(float restitutionLimAng) {
         setRestitutionLimAng(objectId, restitutionLimAng);
@@ -460,7 +467,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's damping for on-axis rotation hitting the limits.
      *
-     * @return the damping factor (0&rarr;no damping, 1&rarr;no external force)
+     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
+     * external force)
      */
     public float getDampingLimAng() {
         return getDampingLimAng(objectId);
@@ -471,8 +479,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's damping for on-axis rotation hitting the limits.
      *
-     * @param dampingLimAng the desired damping factor (0&rarr;no damping,
-     * 1&rarr;no external force, default=1)
+     * @param dampingLimAng the desired viscous damping coefficient (0&rarr;no
+     * damping, 1&rarr;no external force, default=1)
      */
     public void setDampingLimAng(float dampingLimAng) {
         setDampingLimAng(objectId, dampingLimAng);
@@ -505,7 +513,7 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's restitution for off-axis translation.
      *
-     * @return the restitution
+     * @return the restitution (bounce) factor
      */
     public float getRestitutionOrthoLin() {
         return getRestitutionOrthoLin(objectId);
@@ -516,7 +524,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's restitution for off-axis translation.
      *
-     * @param restitutionOrthoLin the desired restitution (default=0.7)
+     * @param restitutionOrthoLin the desired restitution (bounce) factor
+     * (default=0.7)
      */
     public void setRestitutionOrthoLin(float restitutionOrthoLin) {
         setRestitutionOrthoLin(objectId, restitutionOrthoLin);
@@ -527,7 +536,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's damping for off-axis translation.
      *
-     * @return the damping factor (0&rarr;no damping, 1&rarr;no external force)
+     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
+     * external force)
      */
     public float getDampingOrthoLin() {
         return getDampingOrthoLin(objectId);
@@ -538,8 +548,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's damping for off-axis translation.
      *
-     * @param dampingOrthoLin the desired damping factor (0&rarr;no damping,
-     * 1&rarr;no external force, default=1)
+     * @param dampingOrthoLin the desired viscous damping coefficient (0&rarr;no
+     * damping, 1&rarr;no external force, default=1)
      */
     public void setDampingOrthoLin(float dampingOrthoLin) {
         setDampingOrthoLin(objectId, dampingOrthoLin);
@@ -572,7 +582,7 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's restitution for off-axis rotation.
      *
-     * @return the restitution
+     * @return the restitution (bounce) factor
      */
     public float getRestitutionOrthoAng() {
         return getRestitutionOrthoAng(objectId);
@@ -583,7 +593,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's restitution for off-axis rotation.
      *
-     * @param restitutionOrthoAng the desired restitution (default=0.7)
+     * @param restitutionOrthoAng the desired restitution (bounce) factor
+     * (default=0.7)
      */
     public void setRestitutionOrthoAng(float restitutionOrthoAng) {
         setRestitutionOrthoAng(objectId, restitutionOrthoAng);
@@ -594,7 +605,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's damping for off-axis rotation.
      *
-     * @return the damping factor (0&rarr;no damping, 1&rarr;no external force)
+     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
+     * external force)
      */
     public float getDampingOrthoAng() {
         return getDampingOrthoAng(objectId);
@@ -605,8 +617,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's damping for off-axis rotation.
      *
-     * @param dampingOrthoAng the desired damping factor (0&rarr;no damping,
-     * 1&rarr;no external force, default=1)
+     * @param dampingOrthoAng the desired viscous damping coefficient (0&rarr;no
+     * damping, 1&rarr;no external force, default=1)
      */
     public void setDampingOrthoAng(float dampingOrthoAng) {
         setDampingOrthoAng(objectId, dampingOrthoAng);
