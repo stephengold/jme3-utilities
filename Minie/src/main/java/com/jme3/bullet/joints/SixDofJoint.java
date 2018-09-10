@@ -75,24 +75,24 @@ public class SixDofJoint extends PhysicsJoint {
      * in frameB space
      */
     private boolean useLinearReferenceFrameA;
-    private LinkedList<RotationalLimitMotor> rotationalMotors = new LinkedList<>();
+    final private LinkedList<RotationalLimitMotor> rotationalMotors = new LinkedList<>();
     private TranslationalLimitMotor translationalMotor;
     /**
-     * upper limit for rotation of each axis
+     * upper limit for rotation of all 3 axes
      */
-    private Vector3f angularUpperLimit = new Vector3f(Vector3f.POSITIVE_INFINITY);
+    final private Vector3f angularUpperLimit = new Vector3f(Vector3f.POSITIVE_INFINITY);
     /**
-     * lower limit for rotation of each axis
+     * lower limit for rotation of all 3 axes
      */
-    private Vector3f angularLowerLimit = new Vector3f(Vector3f.NEGATIVE_INFINITY);
+    final private Vector3f angularLowerLimit = new Vector3f(Vector3f.NEGATIVE_INFINITY);
     /**
-     * upper limit for translation of each axis
+     * upper limit for translation of all 3 axes
      */
-    private Vector3f linearUpperLimit = new Vector3f(Vector3f.POSITIVE_INFINITY);
+    final private Vector3f linearUpperLimit = new Vector3f(Vector3f.POSITIVE_INFINITY);
     /**
-     * lower limit for translation of each axis
+     * lower limits for translation of all 3 axes
      */
-    private Vector3f linearLowerLimit = new Vector3f(Vector3f.NEGATIVE_INFINITY);
+    final private Vector3f linearLowerLimit = new Vector3f(Vector3f.NEGATIVE_INFINITY);
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -102,7 +102,7 @@ public class SixDofJoint extends PhysicsJoint {
     }
 
     /**
-     * Create a SixDofJoint. To be effective, the joint must be added to a
+     * Instantiate a SixDofJoint. To be effective, the joint must be added to a
      * physics space.
      *
      * @param nodeA the 1st body connected by the joint (not null, alias
@@ -113,8 +113,10 @@ public class SixDofJoint extends PhysicsJoint {
      * null, alias created)
      * @param pivotB the local offset of the connection point in node B (not
      * null, alias created)
-     * @param rotA the local orientation of the connection to node A
-     * @param rotB the local orientation of the connection to node B
+     * @param rotA the local orientation of the connection to node A (not null,
+     * alias created)
+     * @param rotB the local orientation of the connection to node B (not null,
+     * alias created)
      * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
      * B
      */
@@ -133,7 +135,7 @@ public class SixDofJoint extends PhysicsJoint {
     }
 
     /**
-     * Create a SixDofJoint. To be effective, the joint must be added to a
+     * Instantiate a SixDofJoint. To be effective, the joint must be added to a
      * physics space.
      *
      * @param nodeA the 1st body connected by the joint (not null, alias
@@ -195,33 +197,53 @@ public class SixDofJoint extends PhysicsJoint {
         return rotationalMotors.get(index);
     }
 
+    /**
+     * Alter the joint's upper limits for translation of all 3 axes.
+     *
+     * @param vector the desired upper limits (not null, unaffected)
+     */
     public void setLinearUpperLimit(Vector3f vector) {
         linearUpperLimit.set(vector);
         setLinearUpperLimit(objectId, vector);
     }
 
-    private native void setLinearUpperLimit(long objctId, Vector3f vector);
+    private native void setLinearUpperLimit(long objectId, Vector3f vector);
 
+    /**
+     * Alter the joint's lower limits for translation of all 3 axes.
+     *
+     * @param vector the desired lower limits (not null, unaffected)
+     */
     public void setLinearLowerLimit(Vector3f vector) {
         linearLowerLimit.set(vector);
         setLinearLowerLimit(objectId, vector);
     }
 
-    private native void setLinearLowerLimit(long objctId, Vector3f vector);
+    private native void setLinearLowerLimit(long objectId, Vector3f vector);
 
+    /**
+     * Alter the joint's upper limits for rotation of all 3 axes.
+     *
+     * @param vector the desired upper limits (in radians, not null, unaffected)
+     */
     public void setAngularUpperLimit(Vector3f vector) {
         angularUpperLimit.set(vector);
         setAngularUpperLimit(objectId, vector);
     }
 
-    private native void setAngularUpperLimit(long objctId, Vector3f vector);
+    private native void setAngularUpperLimit(long objectId, Vector3f vector);
 
+    /**
+     * Alter the joint's lower limits for rotation of all 3 axes.
+     *
+     * @param vector the desired lower limits (in radians, not null, unaffected)
+     */
     public void setAngularLowerLimit(Vector3f vector) {
         angularLowerLimit.set(vector);
         setAngularLowerLimit(objectId, vector);
     }
 
-    private native void setAngularLowerLimit(long objctId, Vector3f vector);
+    private native void setAngularLowerLimit(long objectId, Vector3f vector);
 
     native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA,
             Matrix3f rotA, Vector3f pivotB, Matrix3f rotB,
