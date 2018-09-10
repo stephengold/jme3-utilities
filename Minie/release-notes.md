@@ -1,6 +1,6 @@
 # release notes for the Minie library and related tests
 
-## Version 0.2.9 released on TBD
+## Version 0.2.9 released on 9 September 2018
 
  + Removed PhysicsCollisionEventFactory.
  + Removed HeightfieldCollisionShape.createJmeMesh(),
