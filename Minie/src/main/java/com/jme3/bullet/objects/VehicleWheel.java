@@ -31,7 +31,6 @@
  */
 package com.jme3.bullet.objects;
 
-import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.export.*;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
@@ -79,15 +78,40 @@ public class VehicleWheel implements Savable {
      */
     private boolean applyLocal = false;
 
+    /**
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
+     * directly!
+     */
     public VehicleWheel() {
     }
 
+    /**
+     * Instantiate a wheel.
+     *
+     * @param spat the associated spatial, if any (may be null)
+     * @param location the wheel's location vector (not null, unaffected)
+     * @param direction the wheel's direction vector (not null, unaffected)
+     * @param axle the axle's direction vector (not null, unaffected)
+     * @param restLength the rest length (in physics-space units)
+     * @param radius the wheel's radius (in physics-space units, &ge;0)
+     * @param frontWheel true&rarr;front wheel, false&rarr;non-front wheel
+     */
     public VehicleWheel(Spatial spat, Vector3f location, Vector3f direction, Vector3f axle,
             float restLength, float radius, boolean frontWheel) {
         this(location, direction, axle, restLength, radius, frontWheel);
         wheelSpatial = spat;
     }
 
+    /**
+     * Instantiate a wheel without an associated spatial.
+     *
+     * @param location the wheel's location vector (not null, unaffected)
+     * @param direction the wheel's direction vector (not null, unaffected)
+     * @param axle the axle's direction vector (not null, unaffected)
+     * @param restLength the rest length
+     * @param radius the wheel's radius (in physics-space units, &ge;0)
+     * @param frontWheel true&rarr;front wheel, false&rarr;non-front wheel
+     */
     public VehicleWheel(Vector3f location, Vector3f direction, Vector3f axle,
             float restLength, float radius, boolean frontWheel) {
         this.location.set(location);
@@ -98,6 +122,9 @@ public class VehicleWheel implements Savable {
         this.radius = radius;
     }
 
+    /**
+     * Update this wheel's physics location and rotation.
+     */
     public void updatePhysicsState() {
         getWheelLocation(wheelId, wheelIndex, wheelWorldLocation);
         getWheelRotation(wheelId, wheelIndex, tmp_Matrix);
@@ -108,6 +135,10 @@ public class VehicleWheel implements Savable {
 
     private native void getWheelRotation(long vehicleId, int wheelId, Matrix3f location);
 
+    /**
+     * Apply this wheel's physics location and rotation to its associated
+     * spatial, if any.
+     */
     public void applyWheelTransform() {
         if (wheelSpatial == null) {
             return;
@@ -140,138 +171,218 @@ public class VehicleWheel implements Savable {
         return wheelId;
     }
 
+    /**
+     * Assign this wheel to a vehicle.
+     *
+     * @param vehicleId the vehicle's unique identifier (not zero)
+     * @param wheelIndex index among the vehicle's wheels (&ge;0)
+     */
     public void setVehicleId(long vehicleId, int wheelIndex) {
         this.wheelId = vehicleId;
         this.wheelIndex = wheelIndex;
         applyInfo();
     }
 
+    /**
+     * Test whether this wheel is a front wheel.
+     *
+     * @return true if front wheel, otherwise false
+     */
     public boolean isFrontWheel() {
         return frontWheel;
     }
 
+    /**
+     * Alter whether this wheel is a front wheel.
+     *
+     * @param frontWheel true&rarr;front wheel, false&rarr;non-front wheel
+     */
     public void setFrontWheel(boolean frontWheel) {
         this.frontWheel = frontWheel;
         applyInfo();
     }
 
+    /**
+     * Access this wheel's location.
+     *
+     * @return the pre-existing location vector (not null) TODO
+     */
     public Vector3f getLocation() {
         return location;
     }
 
+    /**
+     * Access this wheel's direction.
+     *
+     * @return the pre-existing direction vector (not null) TODO
+     */
     public Vector3f getDirection() {
         return direction;
     }
 
+    /**
+     * Access this wheel's axle direction.
+     *
+     * @return the pre-existing direction vector (not null) TODO
+     */
     public Vector3f getAxle() {
         return axle;
     }
 
+    /**
+     * Read the stiffness constant for this wheel's suspension.
+     *
+     * @return the stiffness constant
+     */
     public float getSuspensionStiffness() {
         return suspensionStiffness;
     }
 
     /**
-     * the stiffness constant for the suspension. 10.0 - Offroad buggy, 50.0 -
-     * Sports car, 200.0 - F1 Car
+     * Alter the stiffness constant for this wheel's suspension.
      *
-     * @param suspensionStiffness the desired stiffness coefficient
+     * @param suspensionStiffness the desired stiffness constant
+     * (10&rarr;off-road buggy, 50&rarr;sports car, 200&rarr;Formula-1 race car,
+     * default=20)
      */
     public void setSuspensionStiffness(float suspensionStiffness) {
         this.suspensionStiffness = suspensionStiffness;
         applyInfo();
     }
 
+    /**
+     * Read this wheel's damping when the suspension is expanding.
+     *
+     * @return the damping coefficient
+     */
     public float getWheelsDampingRelaxation() {
         return wheelsDampingRelaxation;
     }
 
     /**
-     * the damping coefficient for when the suspension is expanding. See the
-     * comments for setWheelsDampingCompression for how to set k.
+     * Alter this wheel's damping when the suspension is expanding.
      *
      * @param wheelsDampingRelaxation the desired damping coefficient
+     * (default=2.3)
      */
     public void setWheelsDampingRelaxation(float wheelsDampingRelaxation) {
         this.wheelsDampingRelaxation = wheelsDampingRelaxation;
         applyInfo();
     }
 
+    /**
+     * Read this wheel's damping when the suspension is compressing.
+     *
+     * @return the damping coefficient
+     */
     public float getWheelsDampingCompression() {
         return wheelsDampingCompression;
     }
 
     /**
-     * the damping coefficient for when the suspension is compressed. Set to k *
-     * 2.0 * FastMath.sqrt(m_suspensionStiffness) so k is proportional to
-     * critical damping.<br>
-     * k = 0.0 undamped and bouncy, k = 1.0 critical damping<br>
+     * Alter this wheel's damping when the suspension is compressing.
+     * <p>
+     * Set to k * 2.0 * FastMath.sqrt(m_suspensionStiffness) so k is
+     * proportional to critical damping.
+     * <p>
+     * k = 0.0 undamped and bouncy, k = 1.0 critical damping
+     * <p>
      * 0.1 to 0.3 are good values
      *
      * @param wheelsDampingCompression the desired damping coefficient
+     * (default=4.4)
      */
     public void setWheelsDampingCompression(float wheelsDampingCompression) {
         this.wheelsDampingCompression = wheelsDampingCompression;
         applyInfo();
     }
 
+    /**
+     * Read the friction between this wheel's tyre and the ground.
+     *
+     * @return the coefficient of friction
+     */
     public float getFrictionSlip() {
         return frictionSlip;
     }
 
     /**
-     * the coefficient of friction between the tyre and the ground. Should be
-     * about 0.8 for realistic cars, but can increased for better handling. Set
-     * large (10000.0) for kart racers
+     * Alter the friction between this wheel's tyre and the ground.
+     * <p>
+     * Should be about 0.8 for realistic cars, but can increased for better
+     * handling. Set large (10000.0) for kart racers.
      *
-     * @param frictionSlip the desired coefficient of friction
+     * @param frictionSlip the desired coefficient of friction (default=10.5)
      */
     public void setFrictionSlip(float frictionSlip) {
         this.frictionSlip = frictionSlip;
         applyInfo();
     }
 
+    /**
+     * Read this wheel's roll influence.
+     *
+     * @return the roll influence factor
+     */
     public float getRollInfluence() {
         return rollInfluence;
     }
 
     /**
-     * reduces the rolling torque applied from the wheels that cause the vehicle
-     * to roll over. This is a bit of a hack, but it's quite effective. 0.0 = no
-     * roll, 1.0 = physical behaviour. If m_frictionSlip is too high, you'll
-     * need to reduce this to stop the vehicle rolling over. You should also try
-     * lowering the vehicle's centre of mass
+     * Alter this wheel's roll influence.
+     * <p>
+     * The roll influence factor reduces (or magnifies) the torque contributed
+     * by this wheel that tends to cause the vehicle to roll over. This is a bit
+     * of a hack, but it's quite effective.
+     * <p>
+     * If the friction between the tyres and the ground is too high, you may
+     * reduce this factor to prevent the vehicle from rolling over. You should
+     * also try lowering the vehicle's centre of mass.
      *
-     * @param rollInfluence the rollInfluence to set
+     * @param rollInfluence the desired roll influence factor (0&rarr;no roll
+     * torque, 1&rarr;realistic behaviour, default=1)
      */
     public void setRollInfluence(float rollInfluence) {
         this.rollInfluence = rollInfluence;
         applyInfo();
     }
 
+    /**
+     * Read the travel distance for this wheel's suspension.
+     *
+     * @return the maximum compression distance (in centimetres)
+     */
     public float getMaxSuspensionTravelCm() {
         return maxSuspensionTravelCm;
     }
 
     /**
-     * the maximum distance the suspension can be compressed (centimetres)
+     * Alter the travel distance for this wheel's suspension.
      *
-     * @param maxSuspensionTravelCm the desired distance (in centimeters)
+     * @param maxSuspensionTravelCm the desired maximum compression distance (in
+     * centimetres, default=500)
      */
     public void setMaxSuspensionTravelCm(float maxSuspensionTravelCm) {
         this.maxSuspensionTravelCm = maxSuspensionTravelCm;
         applyInfo();
     }
 
+    /**
+     * Read the maximum force exerted by this wheel's suspension.
+     *
+     * @return the maximum force
+     */
     public float getMaxSuspensionForce() {
         return maxSuspensionForce;
     }
 
     /**
-     * The maximum suspension force, raise this above the default 6000 if your
-     * suspension cannot handle the weight of your vehicle.
+     * Alter the maximum force exerted by this wheel's suspension.
+     * <p>
+     * Increase this if your suspension cannot handle the weight of your
+     * vehicle.
      *
-     * @param maxSuspensionForce the desired limit
+     * @param maxSuspensionForce the desired maximum force (default=6000)
      */
     public void setMaxSuspensionForce(float maxSuspensionForce) {
         this.maxSuspensionForce = maxSuspensionForce;
@@ -300,46 +411,50 @@ public class VehicleWheel implements Savable {
             boolean frontWheel,
             float suspensionRestLength);
 
+    /**
+     * Read the radius of this wheel.
+     *
+     * @return the radius (in physics-space units, &ge;0)
+     */
     public float getRadius() {
         return radius;
     }
 
+    /**
+     * Alter the radius of this wheel.
+     *
+     * @param radius the desired radius (in physics-space units, &ge;0,
+     * default=0.5)
+     */
     public void setRadius(float radius) {
         this.radius = radius;
         applyInfo();
     }
 
+    /**
+     * Read the rest length of this wheel.
+     *
+     * @return the length (in world units)
+     */
     public float getRestLength() {
         return restLength;
     }
 
+    /**
+     * Alter the rest length of this wheel.
+     *
+     * @param restLength the desired length (in world units)
+     */
     public void setRestLength(float restLength) {
         this.restLength = restLength;
         applyInfo();
     }
 
     /**
-     * returns the object this wheel is in contact with or null if no contact
+     * Copy the location where the wheel collides with the ground.
      *
-     * @return the PhysicsCollisionObject (PhysicsRigidBody, PhysicsGhostObject)
-     */
-    public PhysicsCollisionObject getGroundObject() {
-//        if (wheelInfo.raycastInfo.groundObject == null) {
-//            return null;
-//        } else if (wheelInfo.raycastInfo.groundObject instanceof RigidBody) {
-//            System.out.println("RigidBody");
-//            return (PhysicsRigidBody) ((RigidBody) wheelInfo.raycastInfo.groundObject).getUserPointer();
-//        } else {
-        return null;
-//        }
-    }
-
-    /**
-     * returns the location where the wheel collides with the ground (world
-     * space)
-     *
-     * @param vec a vector to store the result in (modified)
-     * @return vec
+     * @param vec storage for the result (not null, modified)
+     * @return a location vector (in physics-space coordinates, not null)
      */
     public Vector3f getCollisionLocation(Vector3f vec) {
         getCollisionLocation(wheelId, wheelIndex, vec);
@@ -349,10 +464,9 @@ public class VehicleWheel implements Savable {
     private native void getCollisionLocation(long wheelId, int wheelIndex, Vector3f vec);
 
     /**
-     * returns the location where the wheel collides with the ground (world
-     * space)
+     * Copy the location where the wheel collides with the ground.
      *
-     * @return a new coordinate vector
+     * @return a new location vector (in physics-space coordinates)
      */
     public Vector3f getCollisionLocation() {
         Vector3f vec = new Vector3f();
@@ -361,10 +475,10 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * returns the normal where the wheel collides with the ground (world space)
+     * Copy the normal where the wheel collides with the ground.
      *
-     * @param vec a vector to store the result in (modified)
-     * @return vec
+     * @param vec a vector to store the result in (modified if not null)
+     * @return a unit vector (in physics-space coordinates)
      */
     public Vector3f getCollisionNormal(Vector3f vec) {
         getCollisionNormal(wheelId, wheelIndex, vec);
@@ -374,9 +488,9 @@ public class VehicleWheel implements Savable {
     private native void getCollisionNormal(long wheelId, int wheelIndex, Vector3f vec);
 
     /**
-     * returns the normal where the wheel collides with the ground (world space)
+     * Copy the normal where the wheel collides with the ground.
      *
-     * @return a new direction vector
+     * @return a new unit vector (in physics-space coordinates)
      */
     public Vector3f getCollisionNormal() {
         Vector3f vec = new Vector3f();
@@ -385,28 +499,28 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * returns how much the wheel skids on the ground (for skid sounds/smoke
-     * etc.)<br>
-     * 0.0 = wheels are sliding, 1.0 = wheels have traction.
+     * Calculate to what extent the wheel is skidding (for skid sounds/smoke
+     * etc.)
      *
-     * @return relative amount of traction
+     * @return the relative amount of traction (0&rarr;wheel is sliding,
+     * 1&rarr;wheel has traction)
      */
     public float getSkidInfo() {
         return getSkidInfo(wheelId, wheelIndex);
     }
 
-    public native float getSkidInfo(long wheelId, int wheelIndex);
+    native private float getSkidInfo(long wheelId, int wheelIndex);
 
     /**
-     * Calculate how much the wheel has turned since the last physics step.
+     * Calculate how much this wheel has turned since the last physics step.
      *
-     * @return the rotation angle (in degrees)
+     * @return the rotation angle (in radians)
      */
     public float getDeltaRotation() {
         return getDeltaRotation(wheelId, wheelIndex);
     }
 
-    public native float getDeltaRotation(long wheelId, int wheelIndex);
+    native private float getDeltaRotation(long wheelId, int wheelIndex);
 
     /**
      * De-serialize this wheel, for example when loading from a J3O file.
@@ -459,7 +573,9 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * @return the wheelSpatial
+     * Access the spatial associated with this wheel.
+     *
+     * @return the pre-existing instance, or null
      */
     public Spatial getWheelSpatial() {
         return wheelSpatial;
