@@ -71,14 +71,14 @@ public class LandscapeControl extends SubtreeControl {
     // constants and loggers
 
     /**
-     * color for grass
+     * default color for grass
      */
-    final private static ColorRGBA grassColor
+    final private static ColorRGBA defaultGrassColor
             = new ColorRGBA(0.65f, 0.8f, 0.2f, 1f);
     /**
-     * color for stone
+     * default color for stone
      */
-    final private static ColorRGBA stoneColor
+    final private static ColorRGBA defaultStoneColor
             = new ColorRGBA(0.8f, 0.8f, 0.6f, 1f);
     /**
      * length of the lintel stones in the monument
@@ -141,6 +141,10 @@ public class LandscapeControl extends SubtreeControl {
      * unscaled diameter of the terrain (in pixels)
      */
     private int terrainDiameter = 0;
+    /**
+     * material applied to the terrain
+     */
+    private Material terrainMaterial = null;
     // *************************************************************************
     // constructors
 
@@ -178,12 +182,15 @@ public class LandscapeControl extends SubtreeControl {
     // new methods exposed
 
     /**
-     * Access a material identical to the one applied to the terrain.
+     * Access the material applied to the terrain.
      *
-     * @return a new instance
+     * @return the material
      */
     final public Material getGrass() {
-        return createShadedMaterial(grassColor);
+        if (terrainMaterial == null) {
+            terrainMaterial = createShadedMaterial(defaultGrassColor);
+        }
+        return terrainMaterial;
     }
 
     /**
@@ -199,6 +206,19 @@ public class LandscapeControl extends SubtreeControl {
         float result = baseY + localYScale * terrainHeight;
 
         return result;
+    }
+
+    /**
+     * Alter the material applied to the terrain.
+     *
+     * @param material the desired material (not null, alias created)
+     */
+    final public void setGrass(Material material) {
+        Validate.nonNull(material, "material");
+
+        terrainMaterial = material;
+        Spatial terrain = MySpatial.findChild(subtree, "terrain");
+        terrain.setMaterial(material);
     }
 
     /**
@@ -291,7 +311,7 @@ public class LandscapeControl extends SubtreeControl {
      * Create a circular monument that vaguely resembles Stonehenge.
      */
     private Node createMonument() {
-        Material stoneMaterial = createShadedMaterial(stoneColor);
+        Material stoneMaterial = createShadedMaterial(defaultStoneColor);
         Node node = new Node("monument");
         float ringRadius = ringDiameter / 2f;
         Box uprightMesh
@@ -337,7 +357,7 @@ public class LandscapeControl extends SubtreeControl {
     }
 
     /**
-     * Create a shaded material for the specified color.
+     * Create a shaded material for the specified color. TODO move to MyAsset
      *
      * @param color ambient/diffuse color (not null, unaffected)
      * @return new material
@@ -382,7 +402,7 @@ public class LandscapeControl extends SubtreeControl {
     /**
      * Load a height map asset.
      *
-     * @return new instance
+     * @return a new instance (not null)
      */
     private AbstractHeightMap loadHeightMap() {
         Texture heightTexture
