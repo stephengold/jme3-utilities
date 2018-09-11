@@ -146,15 +146,16 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     final private Map<String, Vector3f> ikTargets = new HashMap<>();
     final private Map<String, Integer> ikChainDepth = new HashMap<>();
     /**
-     * rotational speed for inverse kinematics
+     * rotational speed for inverse kinematics (radians per second, default=7)
      */
     private float ikRotSpeed = 7f;
     /**
-     * limb-damping factor (0&rarr;no damping, 1&rarr;no external force)
+     * viscous limb-damping ratio (0&rarr;no damping, 1&rarr;critically damped,
+     * default=0.6)
      */
     private float limbDampening = 0.6f;
     /**
-     * distance threshold for inverse kinematics
+     * distance threshold for inverse kinematics (default=0.1)
      */
     private float IKThreshold = 0.1f;
 
@@ -1298,19 +1299,20 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     }
 
     /**
-     * Read the limb-damping coefficient.
+     * Read the limb damping. TODO rename getLimbDamping
      *
-     * @return damping coefficient
+     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
+     * damped)
      */
     public float getLimbDampening() {
         return limbDampening;
     }
 
     /**
-     * Alter the limb-damping coefficient.
+     * Alter the limb damping. TODO rename setLimbDamping
      *
-     * @param limbDampening the desired damping coefficient (0&rarr;no damping,
-     * 1&rarr;no external force, default=0.6)
+     * @param limbDampening the desired viscous damping ratio (0&rarr;no
+     * damping, 1&rarr;critically damped, default=0.6)
      */
     public void setLimbDampening(float limbDampening) {
         this.limbDampening = limbDampening;

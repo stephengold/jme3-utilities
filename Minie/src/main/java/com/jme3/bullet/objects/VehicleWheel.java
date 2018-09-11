@@ -253,7 +253,7 @@ public class VehicleWheel implements Savable {
     /**
      * Read this wheel's damping when the suspension is expanding.
      *
-     * @return the damping coefficient
+     * @return the damping
      */
     public float getWheelsDampingRelaxation() {
         return wheelsDampingRelaxation;
@@ -262,8 +262,7 @@ public class VehicleWheel implements Savable {
     /**
      * Alter this wheel's damping when the suspension is expanding.
      *
-     * @param wheelsDampingRelaxation the desired damping coefficient
-     * (default=2.3)
+     * @param wheelsDampingRelaxation the desired damping (default=2.3)
      */
     public void setWheelsDampingRelaxation(float wheelsDampingRelaxation) {
         this.wheelsDampingRelaxation = wheelsDampingRelaxation;
@@ -273,7 +272,7 @@ public class VehicleWheel implements Savable {
     /**
      * Read this wheel's damping when the suspension is compressing.
      *
-     * @return the damping coefficient
+     * @return the damping
      */
     public float getWheelsDampingCompression() {
         return wheelsDampingCompression;
@@ -282,15 +281,13 @@ public class VehicleWheel implements Savable {
     /**
      * Alter this wheel's damping when the suspension is compressing.
      * <p>
-     * Set to k * 2.0 * FastMath.sqrt(m_suspensionStiffness) so k is
-     * proportional to critical damping.
+     * Set to k * 2 * FastMath.sqrt(m_suspensionStiffness) where k is
+     * proportional to critical damping:
      * <p>
-     * k = 0.0 undamped and bouncy, k = 1.0 critical damping
-     * <p>
-     * 0.1 to 0.3 are good values
+     * k = 0.0 undamped and bouncy, k = 1.0 critical damping, k between 0.1 and
+     * 0.3 are good values
      *
-     * @param wheelsDampingCompression the desired damping coefficient
-     * (default=4.4)
+     * @param wheelsDampingCompression the desired damping (default=4.4)
      */
     public void setWheelsDampingCompression(float wheelsDampingCompression) {
         this.wheelsDampingCompression = wheelsDampingCompression;
@@ -350,7 +347,7 @@ public class VehicleWheel implements Savable {
     /**
      * Read the travel distance for this wheel's suspension.
      *
-     * @return the maximum compression distance (in centimetres)
+     * @return the maximum travel distance (in centimeters)
      */
     public float getMaxSuspensionTravelCm() {
         return maxSuspensionTravelCm;
@@ -359,7 +356,7 @@ public class VehicleWheel implements Savable {
     /**
      * Alter the travel distance for this wheel's suspension.
      *
-     * @param maxSuspensionTravelCm the desired maximum compression distance (in
+     * @param maxSuspensionTravelCm the desired maximum travel distance (in
      * centimetres, default=500)
      */
     public void setMaxSuspensionTravelCm(float maxSuspensionTravelCm) {
@@ -390,7 +387,7 @@ public class VehicleWheel implements Savable {
     }
 
     private void applyInfo() {
-        if (wheelId == 0) {
+        if (wheelId == 0L) {
             return;
         }
         applyInfo(wheelId, wheelIndex, suspensionStiffness,

@@ -349,9 +349,10 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     private native void getGravity(long characterId, Vector3f storeResult);
 
     /**
-     * Read this character's linear damping coefficient.
+     * Read this character's linear damping.
      *
-     * @return the coefficient
+     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
+     * damped)
      */
     public float getLinearDamping() {
         return getLinearDamping(characterId);
@@ -360,9 +361,10 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     private native float getLinearDamping(long characterId);
 
     /**
-     * Alter this character's linear damping coefficient.
+     * Alter this character's linear damping.
      *
-     * @param damping the desired coefficient
+     * @param damping the desired viscous damping ratio (0&rarr;no damping,
+     * 1&rarr;critically damped)
      */
     public void setLinearDamping(float damping) {
         setLinearDamping(characterId, damping);
@@ -371,9 +373,10 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     private native void setLinearDamping(long characterId, float damping);
 
     /**
-     * Read this character's angular damping coefficient.
+     * Read this character's angular damping.
      *
-     * @return the coefficient
+     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
+     * damped)
      */
     public float getAngularDamping() {
         return getAngularDamping(characterId);
@@ -382,9 +385,10 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     private native float getAngularDamping(long characterId);
 
     /**
-     * Alter this character's angular damping coefficient.
+     * Alter this character's angular damping.
      *
-     * @param damping the desired coefficient (default=0)
+     * @param damping the desired viscous damping ratio (0&rarr;no damping,
+     * 1&rarr;critically damped, default=0)
      */
     public void setAngularDamping(float damping) {
         setAngularDamping(characterId, damping);
@@ -395,7 +399,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Read this character's step height.
      *
-     * @return the height
+     * @return the height (in physics-space units)
      */
     public float getStepHeight() {
         return getStepHeight(characterId);
@@ -406,7 +410,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Alter this character's step height.
      *
-     * @param height the desired height
+     * @param height the desired height (in physics-space units)
      */
     public void setStepHeight(float height) {
         setStepHeight(characterId, height);
@@ -417,7 +421,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Read this character's maximum penetration depth.
      *
-     * @return the depth
+     * @return the depth (in physics-space units)
      */
     public float getMaxPenetrationDepth() {
         return getMaxPenetrationDepth(characterId);
@@ -428,7 +432,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Alter this character's maximum penetration depth.
      *
-     * @param depth the desired depth
+     * @param depth the desired depth (in physics-space units)
      */
     public void setMaxPenetrationDepth(float depth) {
         setMaxPenetrationDepth(characterId, depth);

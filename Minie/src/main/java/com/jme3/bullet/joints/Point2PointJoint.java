@@ -88,8 +88,8 @@ public class Point2PointJoint extends PhysicsJoint {
     /**
      * Alter the joint's damping.
      *
-     * @param value the desired viscous damping coefficient (0&rarr;no damping,
-     * 1&rarr;no external force, default=1)
+     * @param value the desired viscous damping ratio (0&rarr;no damping,
+     * 1&rarr;critically damped, default=1)
      */
     public void setDamping(float value) {
         setDamping(objectId, value);
@@ -120,10 +120,10 @@ public class Point2PointJoint extends PhysicsJoint {
     private native void setTau(long objectId, float value);
 
     /**
-     * Read the joint's damping value.
+     * Read the joint's damping ratio.
      *
-     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
-     * external force)
+     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
+     * damped)
      */
     public float getDamping() {
         return getDamping(objectId);
@@ -163,7 +163,7 @@ public class Point2PointJoint extends PhysicsJoint {
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule cap = ex.getCapsule(this);
-        cap.write(getDamping(), "damping", 1.0f);
+        cap.write(getDamping(), "damping", 1f);
         cap.write(getTau(), "tau", 0.3f);
         cap.write(getImpulseClamp(), "impulseClamp", 0f);
     }

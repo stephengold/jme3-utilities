@@ -171,10 +171,10 @@ public class TranslationalLimitMotor {
     private native void setLimitSoftness(long motorId, float limitSoftness);
 
     /**
-     * Read this motor's damping coefficient.
+     * Read this motor's damping.
      *
-     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
-     * external force)
+     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
+     * damped)
      */
     public float getDamping() {
         return getDamping(motorId);
@@ -183,10 +183,10 @@ public class TranslationalLimitMotor {
     private native float getDamping(long motorId);
 
     /**
-     * Alter the damping coefficient.
+     * Alter this motor's damping.
      *
-     * @param damping the desired viscous damping coefficient (0&rarr;no
-     * damping, 1&rarr;no external force, default=1)
+     * @param damping the desired viscous damping ratio (0&rarr;no damping,
+     * 1&rarr;critically damped, default=1)
      */
     public void setDamping(float damping) {
         setDamping(motorId, damping);
@@ -206,7 +206,7 @@ public class TranslationalLimitMotor {
     private native float getRestitution(long motorId);
 
     /**
-     * Alter the restitution.
+     * Alter this motor's restitution.
      *
      * @param restitution the desired restitution (bounce) factor
      */

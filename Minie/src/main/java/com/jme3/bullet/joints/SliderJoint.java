@@ -260,8 +260,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's damping for on-axis translation between the limits.
      *
-     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
-     * external force)
+     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
+     * damped)
      */
     public float getDampingDirLin() {
         return getDampingDirLin(objectId);
@@ -272,8 +272,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's damping for on-axis translation between the limits.
      *
-     * @param dampingDirLin the desired viscous damping coefficient (0&rarr;no
-     * damping, 1&rarr;no external force, default=0)
+     * @param dampingDirLin the desired viscous damping ratio (0&rarr;no
+     * damping, 1&rarr;critically damped, default=0)
      */
     public void setDampingDirLin(float dampingDirLin) {
         setDampingDirLin(objectId, dampingDirLin);
@@ -329,8 +329,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's damping for on-axis rotation between the limits.
      *
-     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
-     * external force)
+     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
+     * damped)
      */
     public float getDampingDirAng() {
         return getDampingDirAng(objectId);
@@ -341,8 +341,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's damping for on-axis rotation between the limits.
      *
-     * @param dampingDirAng the desired viscous damping coefficient (0&rarr;no
-     * damping, 1&rarr;no external force, default=0)
+     * @param dampingDirAng the desired viscous damping ratio (0&rarr;no
+     * damping, 1&rarr;critically damped, default=0)
      */
     public void setDampingDirAng(float dampingDirAng) {
         setDampingDirAng(objectId, dampingDirAng);
@@ -398,8 +398,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's damping for on-axis translation hitting the limits.
      *
-     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
-     * external force)
+     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
+     * damped)
      */
     public float getDampingLimLin() {
         return getDampingLimLin(objectId);
@@ -410,8 +410,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's damping for on-axis translation hitting the limits.
      *
-     * @param dampingLimLin the desired viscous damping coefficient (0&rarr;no
-     * damping, 1&rarr;no external force, default=1)
+     * @param dampingLimLin the desired viscous damping ratio (0&rarr;no
+     * damping, 1&rarr;critically damped, default=1)
      */
     public void setDampingLimLin(float dampingLimLin) {
         setDampingLimLin(objectId, dampingLimLin);
@@ -467,8 +467,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's damping for on-axis rotation hitting the limits.
      *
-     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
-     * external force)
+     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
+     * damped)
      */
     public float getDampingLimAng() {
         return getDampingLimAng(objectId);
@@ -479,8 +479,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's damping for on-axis rotation hitting the limits.
      *
-     * @param dampingLimAng the desired viscous damping coefficient (0&rarr;no
-     * damping, 1&rarr;no external force, default=1)
+     * @param dampingLimAng the desired viscous damping ratio (0&rarr;no
+     * damping, 1&rarr;critically damped, default=1)
      */
     public void setDampingLimAng(float dampingLimAng) {
         setDampingLimAng(objectId, dampingLimAng);
@@ -536,8 +536,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's damping for off-axis translation.
      *
-     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
-     * external force)
+     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
+     * damped)
      */
     public float getDampingOrthoLin() {
         return getDampingOrthoLin(objectId);
@@ -548,8 +548,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's damping for off-axis translation.
      *
-     * @param dampingOrthoLin the desired viscous damping coefficient (0&rarr;no
-     * damping, 1&rarr;no external force, default=1)
+     * @param dampingOrthoLin the desired viscous damping ratio (0&rarr;no
+     * damping, 1&rarr;critically damped, default=1)
      */
     public void setDampingOrthoLin(float dampingOrthoLin) {
         setDampingOrthoLin(objectId, dampingOrthoLin);
@@ -605,8 +605,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Read the joint's damping for off-axis rotation.
      *
-     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
-     * external force)
+     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
+     * damped)
      */
     public float getDampingOrthoAng() {
         return getDampingOrthoAng(objectId);
@@ -617,8 +617,8 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * Alter the joint's damping for off-axis rotation.
      *
-     * @param dampingOrthoAng the desired viscous damping coefficient (0&rarr;no
-     * damping, 1&rarr;no external force, default=1)
+     * @param dampingOrthoAng the desired viscous damping ratio (0&rarr;no
+     * damping, 1&rarr;critically damped, default=1)
      */
     public void setDampingOrthoAng(float dampingOrthoAng) {
         setDampingOrthoAng(objectId, dampingOrthoAng);

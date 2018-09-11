@@ -34,6 +34,7 @@ package com.jme3.bullet.objects.infos;
 import java.util.logging.Logger;
 
 /**
+ * Typical tuning parameters for a PhysicsVehicle.
  *
  * @author normenhansen
  */
@@ -46,15 +47,32 @@ public class VehicleTuning {
             = Logger.getLogger(VehicleTuning.class.getName());
 
     // TODO privatize all fields
+    /**
+     * suspension stiffness constant (10&rarr;off-road buggy, 50&rarr;sports
+     * car, 200&rarr;Formula-1 race car, default=5.88)
+     */
     public float suspensionStiffness = 5.88f;
+    /**
+     * suspension damping ratio when compressed (0&rarr;no damping,
+     * 1&rarr;critically damped, default=0.83)
+     */
     public float suspensionCompression = 0.83f;
+    /**
+     * suspension damping ratio when expanded (0&rarr;no damping,
+     * 1&rarr;critically damped, default=0.88)
+     */
     public float suspensionDamping = 0.88f;
+    /**
+     * maximum suspension travel distance (in centimeters, default=500)
+     */
     public float maxSuspensionTravelCm = 500f;
+    /**
+     * maximum force exerted by each wheel's suspension (default=6000)
+     */
     public float maxSuspensionForce = 6000f;
     /**
-     * The coefficient of friction between a tire and the ground. Should be
-     * about 0.8 for realistic cars, but can increased for better handling. Use
-     * 10000 for kart racers.
+     * coefficient of friction between tires and ground (0.8&rarr;realistic car,
+     * 10000&rarr;kart racer, default=10.5)
      */
     public float frictionSlip = 10.5f;
 }

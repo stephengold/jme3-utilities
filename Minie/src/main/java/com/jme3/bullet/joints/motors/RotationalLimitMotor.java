@@ -85,7 +85,7 @@ public class RotationalLimitMotor {
     private native float getLoLimit(long motorId);
 
     /**
-     * Alter the constraint lower limit.
+     * Alter this motor's constraint lower limit.
      *
      * @param loLimit the desired limit value
      */
@@ -184,10 +184,10 @@ public class RotationalLimitMotor {
     private native void setMaxLimitForce(long motorId, float maxLimitForce);
 
     /**
-     * Read this motor's damping value.
+     * Read this motor's damping.
      *
-     * @return the viscous damping coefficient (0&rarr;no damping, 1&rarr;no
-     * external force)
+     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
+     * damped)
      */
     public float getDamping() {
         return getDamping(motorId);
@@ -198,8 +198,8 @@ public class RotationalLimitMotor {
     /**
      * Alter this motor's damping.
      *
-     * @param damping the desired viscous damping coefficient (0&rarr;no
-     * damping, 1&rarr;no external force, default=1)
+     * @param damping the desired viscous damping ratio (0&rarr;no damping,
+     * 1&rarr;critically damped, default=1)
      */
     public void setDamping(float damping) {
         setDamping(motorId, damping);

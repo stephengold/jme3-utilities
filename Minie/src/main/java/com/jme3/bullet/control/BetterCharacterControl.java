@@ -67,8 +67,7 @@ import jme3utilities.Validate;
  * The character keeps their own local coordinate system which adapts based on
  * the gravity working on the character so they will always stand upright.
  * <p>
- * Forces in the local X-Z plane are dampened while those in the local Y
- * direction are applied fully (e.g. jumping, falling).
+ * Motion in the local X-Z plane is damped.
  * <p>
  * This class is shared between JBullet and Native Bullet.
  *
@@ -86,10 +85,16 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     private PhysicsRigidBody rigidBody;
     private float radius;
     private float height;
+    /**
+     * mass of this character
+     */
     private float mass;
+    /**
+     * relative height when ducked (1=full height)
+     */
     private float duckedFactor = 0.6f;
     /**
-     * Local up direction, derived from gravity.
+     * local up direction, derived from gravity
      */
     private final Vector3f localUp = new Vector3f(0f, 1f, 0f);
     /**
@@ -123,6 +128,10 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     private final Vector3f rotatedViewDirection = new Vector3f(0f, 0f, 1f);
     private final Vector3f walkDirection = new Vector3f();
     private final Vector3f jumpForce;
+    /**
+     * X-Z motion damping factor (0&rarr;no damping, 1=no external forces,
+     * default=0.9)
+     */
     private float physicsDamping = 0.9f;
     private final Vector3f scale = new Vector3f(1f, 1f, 1f);
     private final Vector3f velocity = new Vector3f();
@@ -207,7 +216,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
 
         Vector3f currentVelocity = vars.vect2.set(velocity);
 
-        // dampen existing x/z forces
+        // Dampen any existing X-Z motion.
         float existingLeftVelocity = velocity.dot(localLeft);
         float existingForwardVelocity = velocity.dot(localForward);
         Vector3f counter = vars.vect1;
@@ -424,11 +433,9 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Get the current linear velocity along the three axes of the character.
-     * This is prepresented in world coordinates, parent coordinates when the
-     * control is set to applyLocalPhysics.
+     * Access the character's linear velocity in physics-space coordinates.
      *
-     * @return The current linear velocity of the character
+     * @return the pre-existing vector (not null) TODO
      */
     public Vector3f getVelocity() {
         return velocity;
@@ -471,8 +478,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     /**
      * Alter how much motion in the local X-Z plane is damped.
      *
-     * @param physicsDamping the desired damping factor (0&rarr;no damping,
-     * 1&rarr;no external force, default=0.9)
+     * @param physicsDamping the desired damping factor (0&rarr;no damping, 1=no
+     * external forces, default=0.9)
      */
     public void setPhysicsDamping(float physicsDamping) {
         this.physicsDamping = physicsDamping;
@@ -481,7 +488,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     /**
      * Read how much motion in the local X-Z plane is damped.
      *
-     * @return the damping factor (0&rarr;no damping, 1&rarr;no external force)
+     * @return the damping factor (0&rarr;no damping, 1=no external forces)
      */
     public float getPhysicsDamping() {
         return physicsDamping;
@@ -548,7 +555,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
      * a compound collision shape with an offset to set the object center at the
      * bottom of the capsule.
      *
-     * @return a new compound shape
+     * @return a new compound shape (not null)
      */
     protected CollisionShape getShape() {
         //TODO: cleanup size mess..
