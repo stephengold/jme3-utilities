@@ -61,7 +61,7 @@ abstract public class SubtreeControl extends SimpleControl {
     /**
      * subtree managed by this control: set by subclass
      */
-    protected Node subtree = null;  // TODO could also be a Geometry?
+    protected Node subtree = null;  // TODO could be a Geometry
     // *************************************************************************
     // constructors
 
@@ -90,14 +90,14 @@ abstract public class SubtreeControl extends SimpleControl {
      */
     public void traverse(SceneGraphVisitor visitor) {
         Validate.nonNull(visitor, "visitor");
-
         subtree.depthFirstTraversal(visitor);
     }
     // *************************************************************************
-    // AbstractControl methods
+    // SimpleControl methods
 
     /**
      * Clone this control for a different node. No longer used as of JME 3.1.
+     * TODO eviscerate
      *
      * @param cloneSpatial the node for the clone to control (or null)
      * @return a new control (not null)
@@ -163,11 +163,13 @@ abstract public class SubtreeControl extends SimpleControl {
     }
 
     /**
-     * Alter the visibility of this control's subtree by adding or removing it
-     * from the scene graph. This control must be added to a node before its
-     * subtree can be revealed.
+     * Enable or disable this control.
+     * <p>
+     * Disabling the control immediately removes the subtree (if any) from the
+     * controlled node (if any). Enabling the control immediately adds the
+     * subtree to the node.
      *
-     * @param newState if true, reveal the subtree; if false, hide it
+     * @param newState true&rarr;enable the control, false&rarr;disable it
      */
     @Override
     public void setEnabled(boolean newState) {
@@ -201,17 +203,17 @@ abstract public class SubtreeControl extends SimpleControl {
     }
 
     /**
-     * Alter which spatial is controlled. Invoked when the control is added to
-     * or removed from a spatial. Should be invoked only by a subclass or from
+     * Alter which node is controlled. Invoked when the control is added to or
+     * removed from a node. Should be invoked only by a subclass or from
      * Spatial. Do not invoke directly from user code.
      *
-     * @param newSpatial node to control (or null)
+     * @param newSpatial the node to control, or null to remove
      */
     @Override
     public void setSpatial(Spatial newSpatial) {
         if (newSpatial != null && !(newSpatial instanceof Node)) {
             throw new IllegalArgumentException(
-                    "New spatial must be a Node or null.");
+                    "Controlled spatial must be a Node or null.");
         }
 
         if (subtree != null && subtree.getParent() != newSpatial) {
@@ -221,6 +223,7 @@ abstract public class SubtreeControl extends SimpleControl {
                 newNode.attachChild(subtree);
             }
         }
+
         super.setSpatial(spatial);
     }
 
@@ -237,11 +240,9 @@ abstract public class SubtreeControl extends SimpleControl {
         OutputCapsule oc = exporter.getCapsule(this);
         oc.write(subtree, "subtree", null);
     }
-    // *************************************************************************
-    // Object methods
 
     /**
-     * Create a shallow copy of this control.
+     * Create a shallow copy of this control. TODO sort methods
      *
      * @return a new control, equivalent to this one
      * @throws CloneNotSupportedException if superclass isn't cloneable
