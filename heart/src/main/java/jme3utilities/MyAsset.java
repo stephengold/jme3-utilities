@@ -185,7 +185,7 @@ final public class MyAsset {
     }
 
     /**
-     * Create a particle material from the specified texture.
+     * Create a particle material with the specified texture.
      *
      * @param assetManager (not null)
      * @param texture (not null)
@@ -204,7 +204,27 @@ final public class MyAsset {
     }
 
     /**
-     * Create a shaded material for a specified diffuse texture.
+     * Create a non-shiny shaded material with the specified color.
+     *
+     * @param assetManager (not null)
+     * @param color ambient/diffuse color (not null, unaffected)
+     * @return a new instance
+     */
+    public static Material createShadedMaterial(AssetManager assetManager,
+            ColorRGBA color) {
+        Validate.nonNull(assetManager, "asset manager");
+        Validate.nonNull(color, "color");
+
+        Material material = new Material(assetManager, shadedMaterialAssetPath);
+        material.setBoolean("UseMaterialColors", true);
+        material.setColor("Ambient", color.clone());
+        material.setColor("Diffuse", color.clone());
+
+        return material;
+    }
+
+    /**
+     * Create a non-shiny shaded material with the specified diffuse texture.
      *
      * @param assetManager (not null)
      * @param texture (not null)
@@ -222,10 +242,10 @@ final public class MyAsset {
     }
 
     /**
-     * Create a shiny lit material with a specified uniform color.
+     * Create a shiny shaded material with the specified color.
      *
      * @param assetManager (not null)
-     * @param color (not null, unaffected)
+     * @param color ambient/diffuse color (not null, unaffected)
      * @return a new instance
      */
     public static Material createShinyMaterial(AssetManager assetManager,
@@ -233,10 +253,7 @@ final public class MyAsset {
         Validate.nonNull(assetManager, "asset manager");
         Validate.nonNull(color, "color");
 
-        Material material = new Material(assetManager, shadedMaterialAssetPath);
-        material.setBoolean("UseMaterialColors", true);
-        material.setColor("Ambient", color.clone());
-        material.setColor("Diffuse", color.clone());
+        Material material = createShadedMaterial(assetManager, color);
         material.setColor("Specular", new ColorRGBA(1f, 1f, 1f, 1f));
         material.setFloat("Shininess", 1f);
 
@@ -382,7 +399,8 @@ final public class MyAsset {
     }
 
     /**
-     * Create an unshaded material from a texture asset path.
+     * Create an unshaded material with the colormap texture from the specified
+     * asset path.
      *
      * @param assetManager (not null)
      * @param assetPath to the texture asset (not null, not empty)
@@ -400,7 +418,7 @@ final public class MyAsset {
     }
 
     /**
-     * Create an unshaded material for a specified colormap texture.
+     * Create an unshaded material with the specified colormap texture.
      *
      * @param assetManager (not null)
      * @param texture (not null, alias created)
