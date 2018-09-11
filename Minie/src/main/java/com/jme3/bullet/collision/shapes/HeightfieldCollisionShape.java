@@ -52,7 +52,7 @@ import java.util.logging.Logger;
  * <ul>
  * <li>No rotation or translation.</li>
  * <li>The collision bounding box must be centered on (0,0,0) with the height
- * above and below the XZ-plane being equal on either side. If not, the whole
+ * above and below the X-Z plane being equal on either side. If not, the whole
  * collision box is shifted vertically and objects won't collide properly.</li>
  * </ul>
  *
@@ -85,7 +85,7 @@ public class HeightfieldCollisionShape extends CollisionShape {
     }
 
     /**
-     * Instantiate a new shape, based on a height map.
+     * Instantiate a new shape for the specified height map.
      *
      * @param heightmap (not null)
      */
@@ -94,10 +94,10 @@ public class HeightfieldCollisionShape extends CollisionShape {
     }
 
     /**
-     * Instantiate a new shape, based on a height map and scale vector.
+     * Instantiate a new shape for the specified height map and scale vector.
      *
      * @param heightmap (not null)
-     * @param scale (not null)
+     * @param scale (not null, no negative component, unaffected, default=1,1,1)
      */
     public HeightfieldCollisionShape(float[] heightmap, Vector3f scale) {
         createCollisionHeightfield(heightmap, scale);
@@ -132,11 +132,11 @@ public class HeightfieldCollisionShape extends CollisionShape {
                 max = -min;
             }
         }
-        this.minHeight = min;
-        this.maxHeight = max;
+        minHeight = min;
+        maxHeight = max;
 
-        this.upAxis = PhysicsSpace.AXIS_Y;
-        this.flipQuadEdges = false;
+        upAxis = PhysicsSpace.AXIS_Y;
+        flipQuadEdges = false;
 
         heightStickWidth = (int) FastMath.sqrt(heightfieldData.length);
         heightStickLength = heightStickWidth;
@@ -147,16 +147,12 @@ public class HeightfieldCollisionShape extends CollisionShape {
     /**
      * Instantiate the configured shape in Bullet.
      */
-    protected void createShape() {
+    private void createShape() {
         bbuf = BufferUtils.createByteBuffer(heightfieldData.length * 4);
-//        fbuf = bbuf.asFloatBuffer();//FloatBuffer.wrap(heightfieldData);
-//        fbuf.rewind();
-//        fbuf.put(heightfieldData);
         for (int i = 0; i < heightfieldData.length; i++) {
             float f = heightfieldData[i];
             bbuf.putFloat(f);
         }
-//        fbuf.rewind();
         objectId = createShape(heightStickWidth, heightStickLength, bbuf,
                 heightScale, minHeight, maxHeight, upAxis, flipQuadEdges);
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
@@ -180,10 +176,10 @@ public class HeightfieldCollisionShape extends CollisionShape {
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(heightStickWidth, "heightStickWidth", 0);
         capsule.write(heightStickLength, "heightStickLength", 0);
-        capsule.write(heightScale, "heightScale", 0);
-        capsule.write(minHeight, "minHeight", 0);
-        capsule.write(maxHeight, "maxHeight", 0);
-        capsule.write(upAxis, "upAxis", 1);
+        capsule.write(heightScale, "heightScale", 0f);
+        capsule.write(minHeight, "minHeight", 0f);
+        capsule.write(maxHeight, "maxHeight", 0f);
+        capsule.write(upAxis, "upAxis", PhysicsSpace.AXIS_Y);
         capsule.write(heightfieldData, "heightfieldData", new float[0]);
         capsule.write(flipQuadEdges, "flipQuadEdges", false);
     }
@@ -200,10 +196,10 @@ public class HeightfieldCollisionShape extends CollisionShape {
         InputCapsule capsule = im.getCapsule(this);
         heightStickWidth = capsule.readInt("heightStickWidth", 0);
         heightStickLength = capsule.readInt("heightStickLength", 0);
-        heightScale = capsule.readFloat("heightScale", 0);
-        minHeight = capsule.readFloat("minHeight", 0);
-        maxHeight = capsule.readFloat("maxHeight", 0);
-        upAxis = capsule.readInt("upAxis", 1);
+        heightScale = capsule.readFloat("heightScale", 0f);
+        minHeight = capsule.readFloat("minHeight", 0f);
+        maxHeight = capsule.readFloat("maxHeight", 0f);
+        upAxis = capsule.readInt("upAxis", PhysicsSpace.AXIS_Y);
         heightfieldData = capsule.readFloatArray("heightfieldData",
                 new float[0]);
         flipQuadEdges = capsule.readBoolean("flipQuadEdges", false);
