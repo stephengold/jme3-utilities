@@ -130,7 +130,7 @@ public class LandscapeControl extends SubtreeControl {
     // fields
 
     /**
-     * application's asset manager: set by constructor
+     * application's asset manager: set by constructor or read()
      */
     private AssetManager assetManager;
     /**
@@ -187,26 +187,40 @@ public class LandscapeControl extends SubtreeControl {
     }
 
     /**
-     * Calculate the world Y-coordinate of the peak.
+     * Calculate the Y coordinate of the peak.
      *
-     * @return coordinate value (in world units)
+     * @return the Y component (in world coordinates)
      */
     public float peakY() {
         Spatial terrain = MySpatial.findChild(subtree, "terrain");
-        float yScale = terrain.getLocalScale().y;
-        assert yScale > 0f : yScale;
+        float localYScale = terrain.getLocalScale().y;
+        assert localYScale > 0f : localYScale;
         float baseY = MySpatial.getWorldLocation(terrain).y;
-        float result = yScale * terrainHeight + baseY;
+        float result = baseY + localYScale * terrainHeight;
 
         return result;
     }
 
     /**
+     * Alter the monument's radius.
+     *
+     * @param radius the distance from center to edge (&gt;0)
+     */
+    public void setMonumentScale(float radius) {
+        Validate.positive(radius, "radius");
+
+        Spatial monument = MySpatial.findChild(subtree, "monument");
+        float ringRadius = ringDiameter / 2f;
+        float scale = radius / ringRadius;
+        monument.setLocalScale(scale);
+    }
+
+    /**
      * Alter the terrain's radius and vertical relief.
      *
-     * @param radius distance from center to edge (&gt;0)
-     * @param baseY lowest possible Y-coordinate
-     * @param peakY world Y-coordinate of the peak (&gt;baseY)
+     * @param radius the distance from center to edge (&gt;0)
+     * @param baseY the lowest possible world Y-coordinate
+     * @param peakY the world Y-coordinate of the peak (&gt;baseY)
      */
     public void setTerrainScale(float radius, float baseY, float peakY) {
         Validate.positive(radius, "radius");
@@ -274,7 +288,7 @@ public class LandscapeControl extends SubtreeControl {
     // private methods
 
     /**
-     * Create a circular monument which vaguely resembles Stonehenge.
+     * Create a circular monument that vaguely resembles Stonehenge.
      */
     private Node createMonument() {
         Material stoneMaterial = createShadedMaterial(stoneColor);
