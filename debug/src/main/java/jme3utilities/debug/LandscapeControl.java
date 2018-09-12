@@ -184,12 +184,14 @@ public class LandscapeControl extends SubtreeControl {
     /**
      * Access the material applied to the terrain.
      *
-     * @return the material
+     * @return the material (not null)
      */
     final public Material getGrass() {
         if (terrainMaterial == null) {
-            terrainMaterial = createShadedMaterial(defaultGrassColor);
+            terrainMaterial = MyAsset.createShadedMaterial(assetManager,
+                    defaultGrassColor);
         }
+
         return terrainMaterial;
     }
 
@@ -311,7 +313,8 @@ public class LandscapeControl extends SubtreeControl {
      * Create a circular monument that vaguely resembles Stonehenge.
      */
     private Node createMonument() {
-        Material stoneMaterial = createShadedMaterial(defaultStoneColor);
+        Material stoneMaterial
+                = MyAsset.createShadedMaterial(assetManager, defaultStoneColor);
         Node node = new Node("monument");
         float ringRadius = ringDiameter / 2f;
         Box uprightMesh
@@ -354,24 +357,6 @@ public class LandscapeControl extends SubtreeControl {
         }
 
         return node;
-    }
-
-    /**
-     * Create a shaded material for the specified color. TODO move to MyAsset
-     *
-     * @param color ambient/diffuse color (not null, unaffected)
-     * @return new material
-     */
-    private Material createShadedMaterial(ColorRGBA color) {
-        assert color != null;
-
-        Material material
-                = new Material(assetManager, MyAsset.shadedMaterialAssetPath);
-        material.setBoolean("UseMaterialColors", true);
-        material.setColor("Ambient", color.clone());
-        material.setColor("Diffuse", color.clone());
-
-        return material;
     }
 
     /**
