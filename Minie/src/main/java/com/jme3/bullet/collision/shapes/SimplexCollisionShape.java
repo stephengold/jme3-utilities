@@ -51,7 +51,7 @@ public class SimplexCollisionShape extends CollisionShape {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(SimplexCollisionShape.class.getName());
     /**
      * vertex positions

@@ -43,7 +43,8 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**
- * A spherical collision shape based on Bullet's btSphereShape.
+ * A spherical collision shape based on Bullet's btSphereShape. TODO also
+ * provide a shape based on btMultiSphereShape
  *
  * @author normenhansen
  */
@@ -52,7 +53,7 @@ public class SphereCollisionShape extends CollisionShape {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(SphereCollisionShape.class.getName());
 
     /**

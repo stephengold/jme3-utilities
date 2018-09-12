@@ -54,7 +54,7 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(BulletJointDebugControl.class.getName());
 
     final private PhysicsJoint joint;

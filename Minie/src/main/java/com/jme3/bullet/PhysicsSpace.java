@@ -73,7 +73,7 @@ public class PhysicsSpace {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(PhysicsSpace.class.getName());
     /**
      * index of the X axis

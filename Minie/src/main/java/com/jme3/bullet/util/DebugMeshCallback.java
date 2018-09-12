@@ -46,7 +46,7 @@ public class DebugMeshCallback {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(DebugMeshCallback.class.getName());
 
     final private ArrayList<Vector3f> list = new ArrayList<>();

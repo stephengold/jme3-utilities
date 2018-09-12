@@ -54,7 +54,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(PhysicsCharacter.class.getName());
     /**
      * Unique identifier of btKinematicCharacterController (as opposed to its

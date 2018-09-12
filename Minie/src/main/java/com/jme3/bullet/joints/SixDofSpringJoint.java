@@ -56,7 +56,7 @@ public class SixDofSpringJoint extends SixDofJoint {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(SixDofSpringJoint.class.getName());
 
     final boolean springEnabled[] = new boolean[6];

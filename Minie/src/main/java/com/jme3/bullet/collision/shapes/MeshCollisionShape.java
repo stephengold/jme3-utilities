@@ -56,7 +56,7 @@ public class MeshCollisionShape extends CollisionShape {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(MeshCollisionShape.class.getName());
 
     private static final String VERTEX_BASE = "vertexBase";
@@ -234,16 +234,14 @@ public class MeshCollisionShape extends CollisionShape {
      * Instantiate the configured shape in Bullet.
      */
     private void createShape(byte bvh[]) {
-        boolean buildBvh = bvh == null || bvh.length == 0;
-        this.meshId = NativeMeshUtil.createTriangleIndexVertexArray(
+        boolean buildBvh = (bvh == null || bvh.length == 0);
+        meshId = NativeMeshUtil.createTriangleIndexVertexArray(
                 this.triangleIndexBase, this.vertexBase, this.numTriangles,
                 this.numVertices, this.vertexStride, this.triangleIndexStride);
-        logger.log(Level.FINE, "Created Mesh {0}",
-                Long.toHexString(this.meshId));
+        logger.log(Level.FINE, "Created Mesh {0}", Long.toHexString(meshId));
 
-        this.objectId = createShape(memoryOptimized, buildBvh, this.meshId);
-        logger.log(Level.FINE, "Created Shape {0}",
-                Long.toHexString(this.objectId));
+        objectId = createShape(memoryOptimized, buildBvh, meshId);
+        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
         if (!buildBvh) {
             nativeBVHBuffer = setBVH(bvh, this.objectId);
         }
@@ -271,10 +269,9 @@ public class MeshCollisionShape extends CollisionShape {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        logger.log(Level.FINE, "Finalizing Mesh {0}",
-                Long.toHexString(this.meshId));
-        if (this.meshId > 0) {
-            finalizeNative(this.meshId, this.nativeBVHBuffer);
+        logger.log(Level.FINE, "Finalizing Mesh {0}", Long.toHexString(meshId));
+        if (meshId > 0) {
+            finalizeNative(meshId, this.nativeBVHBuffer);
         }
     }
 

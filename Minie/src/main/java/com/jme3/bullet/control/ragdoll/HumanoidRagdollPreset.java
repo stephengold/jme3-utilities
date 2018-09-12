@@ -46,7 +46,7 @@ public class HumanoidRagdollPreset extends RagdollPreset {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(HumanoidRagdollPreset.class.getName());
 
     /**

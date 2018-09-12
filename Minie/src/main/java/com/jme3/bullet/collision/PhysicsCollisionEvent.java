@@ -50,7 +50,7 @@ public class PhysicsCollisionEvent extends EventObject {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(PhysicsCollisionEvent.class.getName());
     /**
      * type value to indicate a new event

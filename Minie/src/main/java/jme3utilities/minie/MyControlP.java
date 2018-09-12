@@ -55,7 +55,7 @@ public class MyControlP {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(MyControlP.class.getName());
     // *************************************************************************
     // constructors

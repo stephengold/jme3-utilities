@@ -65,7 +65,7 @@ public class SixDofJoint extends PhysicsJoint {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(SixDofJoint.class.getName());
 
     private Matrix3f rotA, rotB;

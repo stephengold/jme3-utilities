@@ -49,7 +49,7 @@ public class RigidBodyMotionState {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(RigidBodyMotionState.class.getName());
 
     final private long motionStateId;

@@ -57,7 +57,7 @@ public class PhysicsDescriber extends Describer {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(PhysicsDescriber.class.getName());
     // *************************************************************************
     // new methods exposed

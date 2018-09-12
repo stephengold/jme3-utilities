@@ -56,7 +56,7 @@ public class SliderJoint extends PhysicsJoint {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(SliderJoint.class.getName());
 
     private Matrix3f rotA;

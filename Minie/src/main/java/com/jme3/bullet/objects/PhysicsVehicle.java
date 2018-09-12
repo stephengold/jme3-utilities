@@ -66,7 +66,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(PhysicsVehicle.class.getName());
 
     /**

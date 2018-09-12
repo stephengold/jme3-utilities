@@ -54,7 +54,7 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(BulletCharacterDebugControl.class.getName());
 
     /**

@@ -63,7 +63,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(PhysicsRigidBody.class.getName());
     /**
      * magic mass value used to specify a static body

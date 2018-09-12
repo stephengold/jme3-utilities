@@ -47,7 +47,7 @@ public abstract class RagdollPreset {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(RagdollPreset.class.getName());
     /**
      * map bone names to joint presets

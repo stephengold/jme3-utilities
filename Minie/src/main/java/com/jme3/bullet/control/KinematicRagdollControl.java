@@ -106,7 +106,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(KinematicRagdollControl.class.getName());
 
     /**

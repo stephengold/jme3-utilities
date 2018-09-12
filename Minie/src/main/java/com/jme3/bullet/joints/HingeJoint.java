@@ -57,7 +57,7 @@ public class HingeJoint extends PhysicsJoint {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(HingeJoint.class.getName());
 
     private Vector3f axisA;

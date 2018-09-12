@@ -54,7 +54,7 @@ public class DebugShapeFactory {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(DebugShapeFactory.class.getName());
 
     /**
@@ -69,8 +69,7 @@ public class DebugShapeFactory {
      * This is mostly used internally. To attach a debug shape to a physics
      * object, call <code>attachDebugShape(AssetManager manager);</code> on it.
      *
-     * @param collisionShape the collision shape to visualize (may be null,
-     * unaffected)
+     * @param collisionShape the shape to visualize (may be null, unaffected)
      * @return a new tree of geometries, or null
      */
     public static Spatial getDebugShape(CollisionShape collisionShape) {
@@ -106,10 +105,9 @@ public class DebugShapeFactory {
         } else {
             debugShape = createDebugShape(collisionShape);
         }
-        if (debugShape == null) {
-            return null;
+        if (debugShape != null) {
+            debugShape.updateGeometricState();
         }
-        debugShape.updateGeometricState();
 
         return debugShape;
     }
@@ -121,8 +119,8 @@ public class DebugShapeFactory {
      * @return a new geometry (not null)
      */
     private static Geometry createDebugShape(CollisionShape shape) {
-        Geometry geom = new Geometry();
-        geom.setMesh(DebugShapeFactory.getDebugMesh(shape));
+        Mesh mesh = DebugShapeFactory.getDebugMesh(shape);
+        Geometry geom = new Geometry("debug shape", mesh);
         geom.updateModelBound();
 
         return geom;
@@ -138,7 +136,8 @@ public class DebugShapeFactory {
     public static Mesh getDebugMesh(CollisionShape shape) {
         Mesh mesh = new Mesh();
         DebugMeshCallback callback = new DebugMeshCallback();
-        getVertices(shape.getObjectId(), callback);
+        long id = shape.getObjectId();
+        getVertices(id, callback);
 
         mesh.setBuffer(Type.Position, 3, callback.getVertices());
         mesh.getFloatBuffer(Type.Position).clear();

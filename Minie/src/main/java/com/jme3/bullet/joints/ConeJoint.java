@@ -57,7 +57,7 @@ public class ConeJoint extends PhysicsJoint {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(ConeJoint.class.getName());
 
     private Matrix3f rotA;

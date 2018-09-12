@@ -60,7 +60,7 @@ public class RagdollUtils {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(RagdollUtils.class.getName());
 
     /**

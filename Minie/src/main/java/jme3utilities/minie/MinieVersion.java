@@ -40,7 +40,7 @@ public class MinieVersion {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(MinieVersion.class.getName());
     // *************************************************************************
     // constructors

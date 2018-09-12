@@ -56,7 +56,7 @@ public class Point2PointJoint extends PhysicsJoint {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(Point2PointJoint.class.getName());
 
     /**

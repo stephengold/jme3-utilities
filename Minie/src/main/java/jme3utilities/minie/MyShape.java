@@ -56,7 +56,7 @@ public class MyShape {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(MyShape.class.getName());
     // *************************************************************************
     // constructors

@@ -56,7 +56,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(BulletAppState.class.getName());
     /**
      * true if-and-only-if the physics simulation is running (started but not

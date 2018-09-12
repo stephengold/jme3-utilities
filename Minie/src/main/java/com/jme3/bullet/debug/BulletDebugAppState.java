@@ -48,6 +48,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.control.Control;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +69,7 @@ public class BulletDebugAppState extends AbstractAppState {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(BulletDebugAppState.class.getName());
     /**
      * limit which objects are visualized, or null for visualize all objects
@@ -165,7 +166,7 @@ public class BulletDebugAppState extends AbstractAppState {
         super.initialize(stateManager, app);
 
         setupMaterials(app);
-        physicsDebugRootNode.setCullHint(Spatial.CullHint.Never);
+        physicsDebugRootNode.setCullHint(Spatial.CullHint.Never); // TODO why?
         for (ViewPort viewPort : viewPorts) {
             viewPort.attachScene(physicsDebugRootNode);
         }
@@ -255,7 +256,9 @@ public class BulletDebugAppState extends AbstractAppState {
                     logger.log(Level.FINE, "Create new debug RigidBody");
                     //create new spatial
                     Node node = new Node(physicsObject.toString());
-                    node.addControl(new BulletRigidBodyDebugControl(this, physicsObject));
+                    Control debugControl = new BulletRigidBodyDebugControl(this,
+                            physicsObject);
+                    node.addControl(debugControl);
                     bodies.put(physicsObject, node);
                     physicsDebugRootNode.attachChild(node);
                 }

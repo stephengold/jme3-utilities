@@ -52,7 +52,7 @@ public class ConeCollisionShape extends CollisionShape {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(ConeCollisionShape.class.getName());
 
     /**

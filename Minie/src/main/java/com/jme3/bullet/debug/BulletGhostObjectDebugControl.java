@@ -54,7 +54,7 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(BulletGhostObjectDebugControl.class.getName());
 
     /**

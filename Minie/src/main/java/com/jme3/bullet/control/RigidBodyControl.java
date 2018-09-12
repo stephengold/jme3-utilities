@@ -70,7 +70,7 @@ public class RigidBodyControl extends PhysicsRigidBody
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(RigidBodyControl.class.getName());
     /**
      * local copy of {@link com.jme3.math.Quaternion#IDENTITY}

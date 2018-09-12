@@ -79,7 +79,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(BetterCharacterControl.class.getName());
 
     private PhysicsRigidBody rigidBody;

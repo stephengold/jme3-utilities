@@ -62,7 +62,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(PhysicsGhostObject.class.getName());
 
     final private List<PhysicsCollisionObject> overlappingObjects

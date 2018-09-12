@@ -45,7 +45,7 @@ public class TranslationalLimitMotor {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(TranslationalLimitMotor.class.getName());
     /**
      * Unique identifier of the btTranslationalLimitMotor. The constructor sets

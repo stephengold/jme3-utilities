@@ -59,7 +59,7 @@ public abstract class AbstractPhysicsControl
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(AbstractPhysicsControl.class.getName());
     /**
      * local copy of {@link com.jme3.math.Quaternion#IDENTITY}

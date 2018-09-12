@@ -43,7 +43,7 @@ public class VehicleTuning {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(VehicleTuning.class.getName());
 
     // TODO privatize all fields

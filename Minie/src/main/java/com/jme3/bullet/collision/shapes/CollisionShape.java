@@ -53,7 +53,7 @@ public abstract class CollisionShape implements Savable {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(CollisionShape.class.getName());
 
     /**

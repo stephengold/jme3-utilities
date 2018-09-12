@@ -51,7 +51,7 @@ public class PlaneCollisionShape extends CollisionShape {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(PlaneCollisionShape.class.getName());
 
     /**

@@ -49,7 +49,7 @@ public class VehicleWheel implements Savable {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(VehicleWheel.class.getName());
 
     private long wheelId = 0L;
