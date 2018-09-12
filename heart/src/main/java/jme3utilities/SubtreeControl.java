@@ -96,6 +96,31 @@ abstract public class SubtreeControl extends SimpleControl {
     // SimpleControl methods
 
     /**
+     * Create a shallow copy of this control.
+     *
+     * @return a new control, equivalent to this one
+     * @throws CloneNotSupportedException if superclass isn't cloneable
+     */
+    @Override
+    public SubtreeControl clone() throws CloneNotSupportedException {
+        SubtreeControl clone = (SubtreeControl) super.clone();
+        return clone;
+    }
+
+    /**
+     * Convert this shallow-cloned control into a deep-cloned one, using the
+     * specified cloner and original to resolve copied fields.
+     *
+     * @param cloner the cloner currently cloning this control
+     * @param original the control from which this control was shallow-cloned
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        subtree = cloner.clone(subtree);
+    }
+
+    /**
      * Clone this control for a different node. No longer used as of JME 3.1.
      * TODO eviscerate
      *
@@ -133,19 +158,6 @@ abstract public class SubtreeControl extends SimpleControl {
 
         clone.setSpatial(cloneSpatial);
         return clone;
-    }
-
-    /**
-     * Convert this shallow-cloned control into a deep-cloned one, using the
-     * specified cloner and original to resolve copied fields.
-     *
-     * @param cloner the cloner currently cloning this control
-     * @param original the control from which this control was shallow-cloned
-     */
-    @Override
-    public void cloneFields(Cloner cloner, Object original) {
-        super.cloneFields(cloner, original);
-        subtree = cloner.clone(subtree);
     }
 
     /**
@@ -239,17 +251,5 @@ abstract public class SubtreeControl extends SimpleControl {
 
         OutputCapsule oc = exporter.getCapsule(this);
         oc.write(subtree, "subtree", null);
-    }
-
-    /**
-     * Create a shallow copy of this control. TODO sort methods
-     *
-     * @return a new control, equivalent to this one
-     * @throws CloneNotSupportedException if superclass isn't cloneable
-     */
-    @Override
-    public SubtreeControl clone() throws CloneNotSupportedException {
-        SubtreeControl clone = (SubtreeControl) super.clone();
-        return clone;
     }
 }
