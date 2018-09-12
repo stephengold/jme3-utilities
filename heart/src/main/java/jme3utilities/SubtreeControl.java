@@ -224,7 +224,7 @@ abstract public class SubtreeControl extends SimpleControl {
             }
         }
 
-        super.setSpatial(spatial);
+        super.setSpatial(newSpatial);
     }
 
     /**
