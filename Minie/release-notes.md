@@ -1,13 +1,13 @@
 # release notes for the Minie library and related tests
 
-## Version 0.2.10 released on TBD
+## Version 0.2.10 released on 12 September 2018
 
  + Fixed JME issue #898.
  + Require collision margin > 0.
  + Changed default collision margin from 0 to 0.04.
  + Disabled setMargin() for SphereCollisionShape.
  + Don't allow dynamic bodies to have heightfield or plane shapes.
- + Publicized loggers
+ + Publicized loggers.
  + Added massForStatic constant in PhysicsRigidBody.
  + Added 2 tests.
  + Privatized the HeightfieldCollisionShape.createShape() method.
