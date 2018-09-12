@@ -1,5 +1,11 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.9.2 released on TBD
+
+ + Added setGrass() and setMonumentScale() methods to the
+   LandscapeControl class.
+ + Based on version 2.9 of the heart library.
+
 ## Version 0.9.1 released on 3 September 2018
 
  + Added a describeScale(Vector3f) method to the Describer class.
