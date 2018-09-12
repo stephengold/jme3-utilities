@@ -208,7 +208,7 @@ final public class MyAsset {
      *
      * @param assetManager (not null)
      * @param color ambient/diffuse color (not null, unaffected)
-     * @return a new instance
+     * @return a new instance (not null)
      */
     public static Material createShadedMaterial(AssetManager assetManager,
             ColorRGBA color) {

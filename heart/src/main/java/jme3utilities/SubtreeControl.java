@@ -75,7 +75,7 @@ abstract public class SubtreeControl extends SimpleControl {
     // new public methods
 
     /**
-     * Access this control's subtree.
+     * Access this control's subtree. // TODO change return type
      *
      * @return the pre-existing instance, or null if none
      */
