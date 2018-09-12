@@ -34,7 +34,9 @@ package com.jme3.bullet.objects;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.HeightfieldCollisionShape;
 import com.jme3.bullet.collision.shapes.MeshCollisionShape;
+import com.jme3.bullet.collision.shapes.PlaneCollisionShape;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.objects.infos.RigidBodyMotionState;
 import com.jme3.export.InputCapsule;
@@ -64,11 +66,16 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     final private static Logger logger
             = Logger.getLogger(PhysicsRigidBody.class.getName());
     /**
+     * magic mass value used to specify a static body
+     */
+    final public static float massForStatic = 0f;
+
+    /**
      * motion state
      */
     protected RigidBodyMotionState motionState = new RigidBodyMotionState();
     /**
-     * mass (&gt;0, default=1) of a dynamic body or zero for a static body
+     * mass (&gt;0, default=1) of a dynamic body, or 0 for a static body
      */
     protected float mass = 1f;
     /**
@@ -94,6 +101,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * @param shape the desired shape (not null, alias created)
      */
     public PhysicsRigidBody(CollisionShape shape) {
+        Validate.nonNull(shape, "shape");
+
         collisionShape = shape;
         rebuildRigidBody();
     }
@@ -102,10 +111,13 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * Instantiate a body with the specified collision shape and mass.
      *
      * @param shape the desired shape (not null, alias created)
-     * @param mass if zero, a static body is created; otherwise a dynamic body
-     * is created
+     * @param mass if 0, a static body is created; otherwise a dynamic body is
+     * created (&ge;0)
      */
     public PhysicsRigidBody(CollisionShape shape, float mass) {
+        Validate.nonNull(shape, "shape");
+        Validate.nonNegative(mass, "mass");
+
         collisionShape = shape;
         this.mass = mass;
         rebuildRigidBody();
@@ -116,10 +128,10 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      */
     protected void rebuildRigidBody() {
         boolean removed = false;
-        if (collisionShape instanceof MeshCollisionShape && mass != 0f) {
-            throw new IllegalStateException(
-                    "Dynamic rigidbody cannot have mesh collision shape!");
+        if (mass != massForStatic) {
+            validateDynamicShape(collisionShape);
         }
+
         if (objectId != 0L) {
             if (isInWorld(objectId)) {
                 PhysicsSpace.getPhysicsSpace().remove(this);
@@ -153,7 +165,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * Callback for use by subclasses.
      */
     protected void postRebuild() {
-        if (mass == 0f) {
+        if (mass == massForStatic) {
             setStatic(objectId, true);
         } else {
             setStatic(objectId, false);
@@ -182,7 +194,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native boolean isInWorld(long objectId);
 
     /**
-     * Directly alter the location of this body's center of mass.
+     * Directly alter the location of this body's center of mass. TODO check for
+     * HeightfieldCollisionShape
      *
      * @param location the desired location (not null, unaffected)
      */
@@ -193,7 +206,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void setPhysicsLocation(long objectId, Vector3f location);
 
     /**
-     * Directly alter this body's orientation.
+     * Directly alter this body's orientation. TODO check for
+     * HeightfieldCollisionShape
      *
      * @param rotation the desired orientation (rotation matrix, not null,
      * unaffected)
@@ -205,7 +219,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void setPhysicsRotation(long objectId, Matrix3f rotation);
 
     /**
-     * Directly alter this body's orientation.
+     * Directly alter this body's orientation. TODO check for
+     * HeightfieldCollisionShape
      *
      * @param rotation the desired orientation (quaternion, not null,
      * unaffected)
@@ -251,7 +266,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
-     * Alter the principal components of the local inertia tensor.
+     * Alter the principal components of the local inertia tensor. TODO provide
+     * access to the whole tensor
      *
      * @param gravity (not null, unaffected)
      */
@@ -262,7 +278,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void setInverseInertiaLocal(long objectId, Vector3f gravity);
 
     /**
-     * Read the principal components of the local inverse inertia tensor.
+     * Read the principal components of the local inverse inertia tensor. TODO
+     * provide access to the whole tensor
      *
      * @param trans a vector to store the result in (modified if not null)
      * @return a vector (either the provided storage or a new vector, not null)
@@ -440,19 +457,20 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * Alter this body's mass. Bodies with mass=0 are static.
      *
-     * @param mass the desired mass (&gt;0) or zero for a static body
+     * @param mass the desired mass (&gt;0) or 0 for a static body
      */
     public void setMass(float mass) {
-        this.mass = mass;
-        if (collisionShape instanceof MeshCollisionShape && mass != 0) {
-            throw new IllegalStateException(
-                    "Dynamic rigidbody can not have mesh collision shape!");
+        Validate.nonNegative(mass, "mass");
+        if (mass != massForStatic) {
+            validateDynamicShape(collisionShape);
         }
-        if (objectId != 0) {
+
+        this.mass = mass;
+        if (objectId != 0L) { // TODO necessary?
             if (collisionShape != null) {
                 updateMassProps(objectId, collisionShape.getObjectId(), mass);
             }
-            if (mass == 0.0f) {
+            if (mass == massForStatic) {
                 setStatic(objectId, true);
             } else {
                 setStatic(objectId, false);
@@ -462,7 +480,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     private native void setStatic(long objectId, boolean state);
 
-    private native long updateMassProps(long objectId, long collisionShapeId, float mass);
+    private native long updateMassProps(long objectId, long collisionShapeId,
+            float mass);
 
     /**
      * Copy this body's gravitational acceleration.
@@ -768,14 +787,13 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     @Override
     public void setCollisionShape(CollisionShape collisionShape) {
         Validate.nonNull(collisionShape, "collision shape");
-        if (collisionShape instanceof MeshCollisionShape && mass != 0f) {
-            throw new IllegalStateException(
-                    "Dynamic rigidbody can not have mesh collision shape!");
+        if (mass != massForStatic) {
+            validateDynamicShape(collisionShape);
         }
 
         super.setCollisionShape(collisionShape);
 
-        if (objectId == 0) {
+        if (objectId == 0L) {
             rebuildRigidBody();
         } else {
             setCollisionShape(objectId, collisionShape.getObjectId());
@@ -964,13 +982,33 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * Access the list of joints connected with this body.
      * <p>
-     * This list is only filled when the PhysicsRigidBody is actually added to
-     * the physics space or loaded from disk.
+     * This list is only filled when the PhysicsRigidBody is added to a physics
+     * space.
      *
      * @return the pre-existing list (not null)
      */
     public List<PhysicsJoint> getJoints() {
         return joints;
+    }
+
+    /**
+     * Validate a shape suitable for a dynamic body.
+     *
+     * @param shape (not null, unaffected)
+     */
+    private void validateDynamicShape(CollisionShape shape) {
+        assert shape != null;
+
+        if (shape instanceof HeightfieldCollisionShape) {
+            throw new IllegalStateException(
+                    "Dynamic rigid body can't have heightfield shape!");
+        } else if (shape instanceof MeshCollisionShape) {
+            throw new IllegalStateException(
+                    "Dynamic rigid body can't have mesh shape!");
+        } else if (shape instanceof PlaneCollisionShape) {
+            throw new IllegalStateException(
+                    "Dynamic rigid body can't have plane shape!");
+        }
     }
 
     /**
