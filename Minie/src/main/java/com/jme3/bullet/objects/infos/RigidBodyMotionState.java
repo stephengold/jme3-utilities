@@ -68,7 +68,8 @@ public class RigidBodyMotionState {
      * Instantiate a motion state.
      */
     public RigidBodyMotionState() {
-        this.motionStateId = createMotionState();
+        motionStateId = createMotionState();
+        assert motionStateId != 0L;
         logger.log(Level.FINE, "Created MotionState {0}",
                 Long.toHexString(motionStateId));
     }
