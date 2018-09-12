@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -123,7 +123,7 @@ public class TestPopups extends GuiApplication {
         logger.log(Level.INFO, "jme3-core version is {0}",
                 MyString.quote(JmeVersion.FULL_NAME));
         logger.log(Level.INFO, "jme3-utilities-heart version is {0}",
-                MyString.quote(Misc.getVersionShort()));
+                MyString.quote(Misc.versionShort()));
 
         InputMode inputMode = getDefaultInputMode();
         /*

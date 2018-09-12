@@ -237,27 +237,25 @@ public class Misc {
     }
 
     /**
-     * Read the verbose version string for this library. TODO rename version
+     * Read the verbose version string for this library.
      *
      * @return project name, library name, branch, and revision
+     * @deprecated use {@link #version()}
      */
+    @Deprecated
     public static String getVersion() {
-        return "jme3-utilities jme3-utilities-heart master $Rev: 2.9.0+1 $";
+        return version();
     }
 
     /**
-     * Read the terse version string for this library. TODO rename versionShort
+     * Read the terse version string for this library.
      *
      * @return branch and revision (not null, not empty)
+     * @deprecated use {@link #versionShort()}
      */
+    @Deprecated
     public static String getVersionShort() {
-        String verbose = getVersion();
-        String[] words = verbose.split("\\s+");
-        assert words.length == 6 : words.length;
-        String result = String.format("%s %s", words[2], words[4]);
-
-        assert !result.isEmpty();
-        return result;
+        return versionShort();
     }
 
     /**
@@ -341,6 +339,30 @@ public class Misc {
     public static void setLoggingLevels(Level newLevel) {
         Validate.nonNull(newLevel, "level");
         Logger.getLogger("").setLevel(newLevel);
+    }
+
+    /**
+     * Read the verbose version string for this library.
+     *
+     * @return project name, library name, branch, and revision
+     */
+    public static String version() {
+        return "jme3-utilities jme3-utilities-heart master $Rev: 2.9.0+1 $";
+    }
+
+    /**
+     * Read the terse version string for this library.
+     *
+     * @return branch and revision (not null, not empty)
+     */
+    public static String versionShort() {
+        String verbose = version();
+        String[] words = verbose.split("\\s+");
+        assert words.length == 6 : words.length;
+        String result = String.format("%s %s", words[2], words[4]);
+
+        assert !result.isEmpty();
+        return result;
     }
 
     /**
