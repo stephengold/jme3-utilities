@@ -1,6 +1,6 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.9.2 released on TBD
+## Version 0.9.2 released on 12 September 2018
 
  + Added setGrass() and setMonumentScale() methods to the
    LandscapeControl class.
