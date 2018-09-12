@@ -57,18 +57,21 @@ public abstract class CollisionShape implements Savable {
             = Logger.getLogger(CollisionShape.class.getName());
 
     /**
-     * unique identifier of the Bullet shape. Constructors are responsible for
-     * setting this to a non-zero value. After that, the id never changes.
+     * unique identifier of the Bullet shape
+     * <p>
+     * Constructors are responsible for setting this to a non-zero value. After
+     * that, the id never changes.
      */
     protected long objectId = 0L;
     /**
-     * scaling factors: one for each local axis (default=1,1,1)
+     * cached copy of scaling factors: one for each local axis (default=1,1,1)
      */
     final protected Vector3f scale = new Vector3f(1f, 1f, 1f);
     /**
-     * collision margin (in physics-space units, &ge;0, default=0)
+     * cached copy of collision margin (in physics-space units, &gt;0,
+     * default=0.04)
      */
-    protected float margin = 0f;
+    protected float margin = 0.04f;
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -107,7 +110,7 @@ public abstract class CollisionShape implements Savable {
     /**
      * Access the scaling factors.
      *
-     * @return the pre-existing instance (not null) TODO
+     * @return the pre-existing vector (not null) TODO
      */
     public Vector3f getScale() {
         return scale;
@@ -116,7 +119,7 @@ public abstract class CollisionShape implements Savable {
     /**
      * Read the collision margin for this shape.
      *
-     * @return the margin distance (in physics-space units, &ge;0)
+     * @return the margin distance (in physics-space units, &gt;0)
      */
     public float getMargin() {
         return getMargin(objectId);
@@ -125,16 +128,18 @@ public abstract class CollisionShape implements Savable {
     private native float getMargin(long objectId);
 
     /**
-     * Alter the collision margin for this shape. Increasing the margin doesn't
-     * make the shape larger, but does round off its corners.
+     * Alter the collision margin for this shape. CAUTION: Margin is applied
+     * differently, depending on the type of shape.
      * <p>
      * Note that if the shape is shared (between collision objects and/or
      * compound shapes) changes can have unintended consequences.
      *
-     * @param margin the desired margin distance (in physics-space units, &ge;0,
-     * default=0)
+     * @param margin the desired margin distance (in physics-space units, &gt;0,
+     * default=0.04)
      */
     public void setMargin(float margin) {
+        Validate.positive(margin, "margin");
+
         setMargin(objectId, margin);
         this.margin = margin;
     }
@@ -153,7 +158,7 @@ public abstract class CollisionShape implements Savable {
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(scale, "scale", new Vector3f(1f, 1f, 1f));
-        capsule.write(getMargin(), "margin", 0f);
+        capsule.write(getMargin(), "margin", 0.04f);
     }
 
     /**
@@ -167,7 +172,7 @@ public abstract class CollisionShape implements Savable {
         InputCapsule capsule = im.getCapsule(this);
         Object s = capsule.readSavable("scale", new Vector3f(1f, 1f, 1f));
         this.scale.set((Vector3f) s);
-        this.margin = capsule.readFloat("margin", 0f);
+        this.margin = capsule.readFloat("margin", 0.04f);
     }
 
     /**
