@@ -189,7 +189,7 @@ public class CapsuleCollisionShape extends CollisionShape {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
         radius = capsule.readFloat("radius", 0.5f);
-        height = capsule.readFloat("height", 0.5f);
+        height = capsule.readFloat("height", 1f);
         axis = capsule.readInt("axis", PhysicsSpace.AXIS_Y);
         createShape();
     }
