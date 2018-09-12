@@ -104,6 +104,7 @@ public abstract class CollisionShape implements Savable {
         Validate.nonNegative(scale, "scale");
 
         this.scale.set(scale);
+        logger.log(Level.FINE, "Scaling Shape {0}", Long.toHexString(objectId));
         setLocalScaling(objectId, scale);
     }
 
@@ -184,7 +185,7 @@ public abstract class CollisionShape implements Savable {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        logger.log(Level.FINE, "Finalizing CollisionShape {0}",
+        logger.log(Level.FINE, "Finalizing Shape {0}",
                 Long.toHexString(objectId));
         finalizeNative(objectId);
     }
