@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.9.0 released on TBD
+## Version 2.9.0 released on 12 September 2018
 
  + Added createShadedMaterial() for solid colors to the MyAsset class
 
