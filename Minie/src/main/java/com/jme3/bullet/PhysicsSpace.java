@@ -620,7 +620,7 @@ public class PhysicsSpace {
         }
         logger.log(Level.FINE, "Adding RigidBody {0} to physics space.",
                 node.getObjectId());
-        
+
         if (node instanceof PhysicsVehicle) {
             PhysicsVehicle vehicle = (PhysicsVehicle) node;
             vehicle.createVehicle(this);
@@ -1170,26 +1170,32 @@ public class PhysicsSpace {
     private native void setSolverNumIterations(long physicsSpaceId,
             int numIterations);
 
-    native private static void initNativePhysics();
+    native private static void initNativePhysics(); // TODO where used?
 
     /**
-     * Enumerate broadphase collision-detection algorithms.
+     * Enumerate the available acceleration structures for broadphase collision
+     * detection.
      */
     public enum BroadphaseType {
         /**
-         * the basic algorithm
+         * btSimpleBroadphase: a brute-force reference implementation for
+         * debugging purposes
          */
         SIMPLE,
         /**
-         * better algorithm, needs world bounds, max of 16384 objects
+         * btAxisSweep3: uses incremental 3-D sweep and prune, requires world
+         * bounds, limited to 16_384 objects
          */
         AXIS_SWEEP_3,
         /**
-         * better algorithm, needs world bounds, max of 65536 objects
+         * bt32BitAxisSweep3: uses incremental 3-D sweep and prune, requires
+         * world bounds, limited to 65_536 objects
          */
         AXIS_SWEEP_3_32,
         /**
-         * algorithm allowing quicker addition/removal of physics objects
+         * btDbvtBroadphase: uses a fast, dynamic bounding-volume hierarchy
+         * based on AABB tree to allow quicker addition/removal of physics
+         * objects
          */
         DBVT;
     }

@@ -471,7 +471,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     /**
      * Alter the initial damping (when the suspension is expanded) for new
      * wheels. Effective only before adding wheels. After adding a wheel, use
-     * {@link #setSuspensionCompressionDamping(int, float)}.
+     * {@link #setSuspensionCompression(int, float)}.
      * <p>
      * Set to k * 2 * FastMath.sqrt(suspensionStiffness) where: k=0 for undamped
      * and bouncy, k=1 for critical damping, k between 0.1 and 0.3 are good
