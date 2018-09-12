@@ -87,6 +87,16 @@ public class SphereCollisionShape extends CollisionShape {
     }
 
     /**
+     * Alter the collision margin for this shape. This feature is disabled for
+     * sphere shapes.
+     *
+     * @param margin the desired margin distance (in physics-space units)
+     */
+    @Override
+    public void setMargin(float margin) {
+    }
+
+    /**
      * Serialize this shape, for example when saving to a J3O file.
      *
      * @param ex exporter (not null)
@@ -141,8 +151,7 @@ public class SphereCollisionShape extends CollisionShape {
     private void createShape() {
         objectId = createShape(radius);
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
-        setScale(scale); // Set the scale to 1
-        setMargin(margin);
+        setScale(scale); // Set the scale to 1,1,1
     }
 
     private native long createShape(float radius);
