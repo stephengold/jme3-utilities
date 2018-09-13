@@ -1,13 +1,13 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.8.0 released on TBD
+## Version 0.8.0 released on 13 September 2018
 
  + Improve the extensibility of dialog boxes. Formerly commit-action suffixes
    were constructed in PopScreenController.dialogCommit() based on what
    controls the dialog contained.  That function has moved to the dialog
    controller, providing more flexibility.
- + Added a MinimalDialog class for use as a default and a superclass.
- + Use TextEntryDialog as superclass for all dialog boxes based on
+ + Add a MinimalDialog class for use as a default and a superclass.
+ + Use TextEntryDialog as a superclass for all dialog boxes based on
    Interface/Nifty/dialogs/text-entry.xml .
 
 ## Version 0.7.13 released on 17 August 2018
