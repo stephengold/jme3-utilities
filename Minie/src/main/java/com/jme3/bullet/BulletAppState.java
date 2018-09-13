@@ -123,6 +123,11 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      * view ports in which to render the debug visualization
      */
     private ViewPort[] debugViewPorts = null;
+    /**
+     * filter to limit which objects are visualized in the debug visualization,
+     * or null to visualize all objects
+     */
+    private BulletDebugAppState.DebugAppStateFilter filter = null;
 
     /**
      * Instantiate an app state to manage a new PhysicsSpace with DBVT collision
@@ -352,6 +357,18 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
+     * Alter which which objects are visualized in the visualization.
+     *
+     * @param filter new filter, or or null to visualize all objects
+     */
+    public void setDebugFilter(BulletDebugAppState.DebugAppStateFilter filter) {
+        if (debugAppState != null) {
+            debugAppState.setFilter(filter);
+        }
+        this.filter = filter;
+    }
+
+    /**
      * Alter which view ports will render the debug visualization.
      *
      * @param viewPorts (not null, alias created)
@@ -359,12 +376,10 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     public void setDebugViewPorts(ViewPort[] viewPorts) {
         Validate.nonNull(viewPorts, "view ports");
 
-        debugViewPorts = viewPorts;
-        if (debugEnabled) {
-            if (debugAppState != null) {
-                stateManager.detach(debugAppState);
-            }
+        if (debugAppState != null) {
+            debugAppState.setViewPorts(viewPorts);
         }
+        debugViewPorts = viewPorts;
     }
 
     /**
@@ -417,8 +432,10 @@ public class BulletAppState implements AppState, PhysicsTickListener {
         if (debugEnabled && debugAppState == null) {
             assert pSpace != null;
             assert debugViewPorts != null;
-            debugAppState = new BulletDebugAppState(pSpace, debugViewPorts);
+            debugAppState
+                    = new BulletDebugAppState(pSpace, debugViewPorts, filter);
             stateManager.attach(debugAppState);
+
         } else if (!debugEnabled && debugAppState != null) {
             stateManager.detach(debugAppState);
             debugAppState = null;

@@ -87,7 +87,7 @@ public class BulletDebugAppState extends AbstractAppState {
     /**
      * view ports in which to render (not null)
      */
-    final private ViewPort[] viewPorts;
+    private ViewPort[] viewPorts;
     /**
      * material for inactive rigid bodies
      */
@@ -134,24 +134,37 @@ public class BulletDebugAppState extends AbstractAppState {
      * specified view ports. This constructor should be invoked only by
      * BulletAppState.
      *
-     * @param space physics space to visualize (not null, unaffected)
-     * @param viewPorts view ports in which to render (not null)
+     * @param space physics space to visualize (not null, alias created)
+     * @param viewPorts view ports in which to render (not null, alias created)
+     * @param filter filter to limit which objects are visualized, or null to
+     * visualize all objects (may be null, alias created)
      */
-    public BulletDebugAppState(PhysicsSpace space, ViewPort[] viewPorts) {
+    public BulletDebugAppState(PhysicsSpace space, ViewPort[] viewPorts,
+            DebugAppStateFilter filter) {
         Validate.nonNull(space, "space");
         Validate.nonNull(viewPorts, "view ports");
 
         this.space = space;
         this.viewPorts = viewPorts;
+        this.filter = filter;
     }
 
     /**
      * Alter which which objects are visualized.
      *
-     * @param filter new filter or or null to visualize all objects
+     * @param filter new filter, or or null to visualize all objects
      */
     public void setFilter(DebugAppStateFilter filter) {
         this.filter = filter;
+    }
+
+    /**
+     * Alter the view ports in which to render.
+     *
+     * @param viewPorts the desired view ports (not null, contains no nulls)
+     */
+    public void setViewPorts(ViewPort[] viewPorts) {
+        this.viewPorts = viewPorts;
     }
 
     /**
