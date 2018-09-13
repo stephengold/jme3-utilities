@@ -183,15 +183,13 @@ public class WindowController extends GuiAppState {
     }
 
     /**
-     * Callback to update this controller prior to rendering. (Invoked once per
-     * render pass.)
+     * Update this controller prior to rendering. (Invoked once per frame.)
      *
-     * @param elapsedTime time interval between render passes (in seconds,
-     * &ge;0)
+     * @param tpf time interval between frames (in seconds, &ge;0)
      */
     @Override
-    public void update(float elapsedTime) {
-        super.update(elapsedTime);
+    public void update(float tpf) {
+        super.update(tpf);
 
         boolean isDisplayed = getElement().isVisible();
         if (isDisplayed != isEnabled()) {

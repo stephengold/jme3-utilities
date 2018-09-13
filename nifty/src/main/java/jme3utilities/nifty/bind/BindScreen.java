@@ -171,7 +171,7 @@ public class BindScreen
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param ignored time interval between render passes (in seconds, &ge;0)
+     * @param ignored time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float ignored) {
@@ -292,16 +292,14 @@ public class BindScreen
     }
 
     /**
-     * Callback to update this screen prior to rendering. (Invoked once per
-     * render pass.)
+     * Update this screen prior to rendering. (Invoked once per frame.)
      *
-     * @param simInterval time interval between render passes (in seconds,
-     * &ge;0)
+     * @param tpf time interval between frames (in seconds, &ge;0)
      */
     @Override
-    public void update(float simInterval) {
+    public void update(float tpf) {
         assert isEnabled();
-        super.update(simInterval);
+        super.update(tpf);
 
         Screen screen = getScreen();
         if (!screen.isBound()) {
