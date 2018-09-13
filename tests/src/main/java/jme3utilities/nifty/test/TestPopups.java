@@ -37,6 +37,7 @@ import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.GuiScreenController;
+import jme3utilities.nifty.dialog.MinimalDialog;
 import jme3utilities.ui.InputMode;
 
 /**
@@ -179,7 +180,7 @@ public class TestPopups extends GuiApplication {
                     SimpleApplication.INPUT_MAPPING_EXIT)) {
                 screen.showConfirmDialog(
                         "Close the application? This one?? Are you sure???",
-                        "Close", "really close", null);
+                        "Close", "really close", new MinimalDialog());
                 return;
 
             } else if (actionString.equals("really close")) {

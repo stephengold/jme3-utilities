@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -26,10 +26,6 @@
  */
 package jme3utilities.nifty.dialog;
 
-import de.lessvoid.nifty.controls.Button;
-import de.lessvoid.nifty.controls.TextField;
-import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.render.TextRenderer;
 import java.util.Locale;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -41,7 +37,7 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class BooleanDialog implements DialogController {
+public class BooleanDialog extends TextEntryDialog {
     // *************************************************************************
     // constants and loggers
 
@@ -72,101 +68,45 @@ public class BooleanDialog implements DialogController {
      * if true, "null" is an allowed value, otherwise it is disallowed
      */
     final private boolean allowNull;
-    /**
-     * description of the commit action (not null, not empty, should fit the
-     * button -- about 8 or 9 characters)
-     */
-    final private String commitDescription;
     // *************************************************************************
     // constructors
 
     /**
      * Instantiate a controller.
      *
-     * @param description commit description (not null, not empty)
+     * @param description commit-button text (not null, not empty)
      * @param allowNull if true, "null" will be an allowed value
      */
     public BooleanDialog(String description, boolean allowNull) {
-        Validate.nonEmpty(description, "description");
-
-        commitDescription = description;
+        super(description);
         this.allowNull = allowNull;
     }
     // *************************************************************************
-    // DialogController methods
+    // TextEntryDialog methods
 
     /**
-     * Test whether "commit" actions are allowed.
+     * Determine the feedback message for the specified input text.
      *
-     * @param dialogElement (not null)
-     * @return true if allowed, otherwise false
+     * @param input the input text (not null)
+     * @return the message (not null)
      */
     @Override
-    public boolean allowCommit(Element dialogElement) {
-        Validate.nonNull(dialogElement, "dialog element");
+    protected String feedback(String input) {
+        Validate.nonNull(input, "input");
 
-        String text = getText(dialogElement);
-        String lcText = text.toLowerCase(Locale.ROOT);
-        boolean allowCommit = false;
+        String lcText = input.toLowerCase(Locale.ROOT);
+        String msg = notABoolean();
 
         if (matchesTrue(lcText) || matchesFalse(lcText)) {
-            allowCommit = true;
-        }
-        if (!allowCommit && allowNull && matchesNull(lcText)) {
-            allowCommit = true;
-        }
-
-        return allowCommit;
-    }
-
-    /**
-     * Callback to update the dialog box prior to rendering. (Invoked once per
-     * render pass.)
-     *
-     * @param dialogElement (not null)
-     * @param elapsedTime time interval between render passes (in seconds,
-     * &ge;0)
-     */
-    @Override
-    public void update(Element dialogElement, float elapsedTime) {
-        Validate.nonNull(dialogElement, "dialog element");
-
-        String commitLabel = "";
-        String feedbackMessage = "";
-
-        if (allowCommit(dialogElement)) {
-            commitLabel = commitDescription;
-        } else if (allowNull) {
-            feedbackMessage = "must be true, false, or null";
-        } else {
-            feedbackMessage = "must be true or false";
+            msg = "";
+        } else if (allowNull && matchesNull(lcText)) {
+            msg = "";
         }
 
-        Button commitButton
-                = dialogElement.findNiftyControl("#commit", Button.class);
-        commitButton.setText(commitLabel);
-
-        Element feedbackElement = dialogElement.findElementById("#feedback");
-        TextRenderer renderer = feedbackElement.getRenderer(TextRenderer.class);
-        renderer.setText(feedbackMessage);
+        return msg;
     }
     // *************************************************************************
     // private methods
-
-    /**
-     * Read the text field.
-     *
-     * @param dialogElement (not null)
-     * @return a text string (not null)
-     */
-    private String getText(Element dialogElement) {
-        TextField textField
-                = dialogElement.findNiftyControl("#textfield", TextField.class);
-        String text = textField.getRealText();
-
-        assert text != null;
-        return text;
-    }
 
     /**
      * Test whether the specified string matches falsePattern.
@@ -211,5 +151,18 @@ public class BooleanDialog implements DialogController {
         boolean result = matcher.matches();
 
         return result;
+    }
+
+    /**
+     * Generate a feedback message when the text does not represent a Boolean.
+     *
+     * @return message text (not null, not empty)
+     */
+    private String notABoolean() {
+        if (allowNull) {
+            return "must be true, false, or null";
+        } else {
+            return "must be true or false";
+        }
     }
 }

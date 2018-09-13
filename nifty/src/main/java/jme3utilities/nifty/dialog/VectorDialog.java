@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -29,10 +29,6 @@ package jme3utilities.nifty.dialog;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
-import de.lessvoid.nifty.controls.Button;
-import de.lessvoid.nifty.controls.TextField;
-import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.render.TextRenderer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -47,7 +43,7 @@ import jme3utilities.math.MyVector3f;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class VectorDialog implements DialogController {
+public class VectorDialog extends TextEntryDialog {
     // *************************************************************************
     // constants and loggers
 
@@ -77,27 +73,21 @@ public class VectorDialog implements DialogController {
      * number of elements in the vector (&ge;2, &le;4)
      */
     final private int numElements;
-    /**
-     * description of the commit action (not null, not empty, should fit the
-     * button -- about 8 or 9 characters)
-     */
-    final private String commitDescription;
     // *************************************************************************
     // constructors
 
     /**
      * Instantiate a controller.
      *
-     * @param description commit description (not null, not empty)
+     * @param description commit-button text (not null, not empty)
      * @param numElements number of elements in the vector (&ge;2, &le;4)
      * @param allowNull if true, "null" will be an allowed value
      */
     public VectorDialog(String description, int numElements,
             boolean allowNull) {
-        Validate.nonEmpty(description, "description");
+        super(description);
         Validate.inRange(numElements, "number of elements", 2, 4);
 
-        commitDescription = description;
         this.numElements = numElements;
         this.allowNull = allowNull;
     }
@@ -149,97 +139,47 @@ public class VectorDialog implements DialogController {
         return result;
     }
     // *************************************************************************
-    // DialogController methods
+    // TextEntryDialog methods
 
     /**
-     * Test whether "commit" actions are allowed.
+     * Determine the feedback message for the specified input text.
      *
-     * @param dialogElement (not null)
-     * @return true if allowed, otherwise false
+     * @param input the input text (not null)
+     * @return the message (not null)
      */
     @Override
-    public boolean allowCommit(Element dialogElement) {
-        Validate.nonNull(dialogElement, "dialog element");
+    protected String feedback(String input) {
+        Validate.nonNull(input, "input");
 
-        String text = getText(dialogElement);
-        String lcText = text.toLowerCase(Locale.ROOT);
-        boolean allowCommit = true;
+        String lcText = input.toLowerCase(Locale.ROOT);
+        String msg = "";
 
         Matcher matcher = elementPattern.matcher(lcText);
         int elementCount = 0;
-        while (allowCommit && matcher.find()) {
+        while (msg.isEmpty() && matcher.find()) {
             String element = matcher.group(1);
             try {
                 float inputValue = Float.parseFloat(element);
                 if (Float.isNaN(inputValue)) {
-                    allowCommit = false;
+                    msg = notAVector();
                 }
                 ++elementCount;
             } catch (NumberFormatException e) {
-                allowCommit = false;
+                msg = notAVector();
             }
         }
         if (elementCount != numElements) {
-            allowCommit = false;
+            msg = notAVector();
         }
 
-        if (!allowCommit && allowNull && matchesNull(lcText)) {
-            allowCommit = true;
+        if (!msg.isEmpty() && allowNull && matchesNull(lcText)) {
+            msg = "";
         }
 
-        return allowCommit;
-    }
-
-    /**
-     * Callback to update the dialog box prior to rendering. (Invoked once per
-     * render pass.)
-     *
-     * @param dialogElement (not null)
-     * @param elapsedTime time interval between render passes (in seconds,
-     * &ge;0)
-     */
-    @Override
-    public void update(Element dialogElement, float elapsedTime) {
-        Validate.nonNull(dialogElement, "dialog element");
-
-        String commitLabel = "";
-        String feedbackMessage = "";
-
-        if (allowCommit(dialogElement)) {
-            commitLabel = commitDescription;
-        } else {
-            feedbackMessage
-                    = String.format("must be a %d-element vector", numElements);
-            if (allowNull) {
-                feedbackMessage += " or null";
-            }
-        }
-
-        Button commitButton
-                = dialogElement.findNiftyControl("#commit", Button.class);
-        commitButton.setText(commitLabel);
-
-        Element feedbackElement = dialogElement.findElementById("#feedback");
-        TextRenderer renderer = feedbackElement.getRenderer(TextRenderer.class);
-        renderer.setText(feedbackMessage);
+        return msg;
     }
     // *************************************************************************
     // private methods
-
-    /**
-     * Read the text field.
-     *
-     * @param dialogElement (not null)
-     * @return a text string (not null)
-     */
-    private String getText(Element dialogElement) {
-        TextField textField
-                = dialogElement.findNiftyControl("#textfield", TextField.class);
-        String text = textField.getRealText();
-
-        assert text != null;
-        return text;
-    }
 
     /**
      * Test whether the specified string matches nullPattern.
@@ -248,9 +188,25 @@ public class VectorDialog implements DialogController {
      * @return true for match, otherwise false
      */
     private boolean matchesNull(String lcText) {
+        assert lcText != null;
+
         Matcher matcher = nullPattern.matcher(lcText);
         boolean result = matcher.matches();
 
         return result;
+    }
+
+    /**
+     * Generate a feedback message when the text does not represent a vector.
+     *
+     * @return message text (not null, not empty)
+     */
+    private String notAVector() {
+        String msg = String.format("must be a %d-element vector", numElements);
+        if (allowNull) {
+            msg += " or null";
+        }
+
+        return msg;
     }
 }

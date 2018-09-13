@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -26,10 +26,6 @@
  */
 package jme3utilities.nifty.dialog;
 
-import de.lessvoid.nifty.controls.Button;
-import de.lessvoid.nifty.controls.TextField;
-import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.render.TextRenderer;
 import java.util.Locale;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -42,7 +38,7 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class FloatDialog implements DialogController {
+public class FloatDialog extends TextEntryDialog {
     // *************************************************************************
     // constants and loggers
 
@@ -71,130 +67,64 @@ public class FloatDialog implements DialogController {
      * minimum value to commit
      */
     final private float minValue;
-    /**
-     * description of the commit action (not null, not empty, should fit the
-     * button -- about 8 or 9 characters)
-     */
-    final private String commitDescription;
     // *************************************************************************
     // constructors
 
     /**
      * Instantiate a controller.
      *
-     * @param description commit description (not null, not empty)
+     * @param description commit-button text (not null, not empty)
      * @param min minimum value (&lt;max)
      * @param max minimum value (&gt;min)
      * @param allowNull if true, "null" will be an allowed value
      */
     public FloatDialog(String description, float min, float max,
             boolean allowNull) {
-        Validate.nonEmpty(description, "description");
+        super(description);
         assert min < max : max;
 
-        commitDescription = description;
         minValue = min;
         maxValue = max;
         this.allowNull = allowNull;
     }
     // *************************************************************************
-    // DialogController methods
+    // TextEntryDialog methods
 
     /**
-     * Test whether "commit" actions are allowed.
+     * Determine the feedback message for the specified input text.
      *
-     * @param dialogElement (not null)
-     * @return true if allowed, otherwise false
+     * @param input the input text (not null)
+     * @return the message (not null)
      */
     @Override
-    public boolean allowCommit(Element dialogElement) {
-        Validate.nonNull(dialogElement, "dialog element");
+    protected String feedback(String input) {
+        Validate.nonNull(input, "input");
 
-        String text = getText(dialogElement);
-        boolean result;
+        String msg = "";
         try {
-            float inputValue = Float.parseFloat(text);
-            if (inputValue < minValue || inputValue > maxValue) {
-                result = false;
-            } else if (Float.isNaN(inputValue)) {
-                result = false;
-            } else {
-                result = true;
-            }
-        } catch (NumberFormatException e) {
-            result = false;
-        }
-        String lcText = text.toLowerCase(Locale.ROOT);
-        if (!result && allowNull && matchesNull(lcText)) {
-            result = true;
-        }
-
-        return result;
-    }
-
-    /**
-     * Callback to update the dialog box prior to rendering. (Invoked once per
-     * render pass.)
-     *
-     * @param dialogElement (not null)
-     * @param elapsedTime time interval between render passes (in seconds,
-     * &ge;0)
-     */
-    @Override
-    public void update(Element dialogElement, float elapsedTime) {
-        Validate.nonNull(dialogElement, "dialog element");
-
-        String commitLabel = "";
-        String feedbackMessage = "";
-
-        String text = getText(dialogElement);
-        try {
-            float inputValue = Float.parseFloat(text);
+            float inputValue = Float.parseFloat(input);
             if (inputValue < minValue) {
                 String minText = Float.toString(minValue);
-                feedbackMessage = String.format("must not be < %s", minText);
+                msg = String.format("must not be < %s", minText);
             } else if (inputValue > maxValue) {
                 String maxText = Float.toString(maxValue);
-                feedbackMessage = String.format("must not be > %s", maxText);
+                msg = String.format("must not be > %s", maxText);
             } else if (Float.isNaN(inputValue)) {
-                feedbackMessage = notANumber();
-            } else {
-                commitLabel = commitDescription;
+                msg = notANumber();
             }
         } catch (NumberFormatException e) {
-            feedbackMessage = notANumber();
+            msg = notANumber();
         }
-        String lcText = text.toLowerCase(Locale.ROOT);
+
+        String lcText = input.toLowerCase(Locale.ROOT);
         if (allowNull && matchesNull(lcText)) {
-            feedbackMessage = "";
-            commitLabel = commitDescription;
+            msg = "";
         }
 
-        Button commitButton
-                = dialogElement.findNiftyControl("#commit", Button.class);
-        commitButton.setText(commitLabel);
-
-        Element feedbackElement = dialogElement.findElementById("#feedback");
-        TextRenderer renderer = feedbackElement.getRenderer(TextRenderer.class);
-        renderer.setText(feedbackMessage);
+        return msg;
     }
     // *************************************************************************
     // private methods
-
-    /**
-     * Read the text field.
-     *
-     * @param dialogElement (not null)
-     * @return a text string (not null)
-     */
-    private String getText(Element dialogElement) {
-        TextField textField
-                = dialogElement.findNiftyControl("#textfield", TextField.class);
-        String text = textField.getRealText();
-
-        assert text != null;
-        return text;
-    }
 
     /**
      * Test whether the specified string matches nullPattern.

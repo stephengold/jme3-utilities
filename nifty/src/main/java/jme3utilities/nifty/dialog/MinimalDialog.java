@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -27,34 +27,55 @@
 package jme3utilities.nifty.dialog;
 
 import de.lessvoid.nifty.elements.Element;
+import java.util.logging.Logger;
 
 /**
- * Generic controller interface for dialog boxes.
+ * Controller for a minimal dialog box.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public interface DialogController {
+public class MinimalDialog implements DialogController {
+    // *************************************************************************
+    // constants and loggers
+
+    /**
+     * message logger for this class
+     */
+    final private static Logger logger
+            = Logger.getLogger(MinimalDialog.class.getName());
+    // *************************************************************************
+    // DialogController methods
+
     /**
      * Test whether "commit" actions are allowed.
      *
-     * @param dialogElement (not null)
+     * @param dialogElement (ignored)
      * @return true if allowed, otherwise false
      */
-    boolean allowCommit(Element dialogElement);
+    @Override
+    public boolean allowCommit(Element dialogElement) {
+        return true;
+    }
 
     /**
      * Construct the action-string suffix for a commit.
      *
-     * @param dialogElement (not null)
+     * @param dialogElement (ignored)
      * @return the suffix (not null)
      */
-    String commitSuffix(Element dialogElement);
+    @Override
+    public String commitSuffix(Element dialogElement) {
+        return "";
+    }
 
     /**
-     * Update the dialog box prior to rendering. (Invoked once per frame.)
+     * Callback to update the dialog box prior to rendering. (Invoked once per
+     * render pass.)
      *
      * @param dialogElement (not null)
-     * @param tpf time interval between frames (in seconds, &ge;0)
+     * @param ignored time interval between frames (in seconds, &ge;0)
      */
-    void update(Element dialogElement, float tpf);
+    @Override
+    public void update(Element dialogElement, float ignored) {
+    }
 }

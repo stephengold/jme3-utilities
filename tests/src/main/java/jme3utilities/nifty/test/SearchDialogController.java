@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -26,19 +26,15 @@
  */
 package jme3utilities.nifty.test;
 
-import de.lessvoid.nifty.controls.Button;
-import de.lessvoid.nifty.controls.TextField;
-import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.render.TextRenderer;
 import java.util.logging.Logger;
-import jme3utilities.nifty.dialog.DialogController;
+import jme3utilities.nifty.dialog.TextEntryDialog;
 
 /**
  * A dialog controller used by TestPopups.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-class SearchDialogController implements DialogController {
+class SearchDialogController extends TextEntryDialog {
     // *************************************************************************
     // constants and loggers
 
@@ -48,53 +44,34 @@ class SearchDialogController implements DialogController {
     final private static Logger logger
             = Logger.getLogger(SearchDialogController.class.getName());
     // *************************************************************************
-    // DialogController methods
+    // constructors
 
     /**
-     * Callback to determine whether "commit" actions are allowed.
+     * Instantiate a controller.
+     */
+    public SearchDialogController() {
+        super("Set");
+    }
+    // *************************************************************************
+    // TextEntryDialog methods
+
+    /**
+     * Determine the feedback message for the specified input text.
      *
-     * @param dialogElement (not null)
-     * @return true if allowed, otherwise false
+     * @param inputText (not null)
+     * @return the message (not null)
      */
     @Override
-    public boolean allowCommit(Element dialogElement) {
-        TextField textField
-                = dialogElement.findNiftyControl("#textfield", TextField.class);
-        String enteredText = textField.getRealText();
-        String lc = enteredText.toLowerCase();
+    protected String feedback(String inputText) {
+        String lc = inputText.toLowerCase();
+        String msg;
         if (lc.contains("a") || lc.contains("e") || lc.contains("i")
                 || lc.contains("o") || lc.contains("u")) {
-            return true;
+            msg = "";
         } else {
-            return false;
-        }
-    }
-
-    /**
-     * Callback to update the dialog box prior to rendering. (Invoked once per
-     * render pass.)
-     *
-     * @param dialogElement (not null)
-     * @param elapsedTime time interval between render passes (in seconds,
-     * &ge;0)
-     */
-    @Override
-    public void update(Element dialogElement, float elapsedTime) {
-        String commitLabel, feedbackMessage;
-        if (allowCommit(dialogElement)) {
-            commitLabel = "Set";
-            feedbackMessage = "";
-        } else {
-            commitLabel = "";
-            feedbackMessage = "must contain a vowel";
+            msg = "must contain a vowel";
         }
 
-        Button commitButton
-                = dialogElement.findNiftyControl("#commit", Button.class);
-        commitButton.setText(commitLabel);
-
-        Element feedbackElement = dialogElement.findElementById("#feedback");
-        TextRenderer renderer = feedbackElement.getRenderer(TextRenderer.class);
-        renderer.setText(feedbackMessage);
+        return msg;
     }
 }

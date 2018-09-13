@@ -96,7 +96,7 @@ public class PopScreenController extends BasicScreenController {
      */
     private PopupMenu activePopupMenu = null;
     /**
-     * action prefix of the active modal dialog box (null means none are active)
+     * action prefix of the active modal dialog box (null means none is active)
      */
     private String dialogActionPrefix = null;
     // *************************************************************************
@@ -132,7 +132,7 @@ public class PopScreenController extends BasicScreenController {
         String popupId = dialogElement.getId();
         nifty.closePopup(popupId);
         dialogActionPrefix = null;
-        dialogElement = null;
+        setActiveDialog(null);
         /*
          * Disable the dialog's input mode and
          * resume the screen's input mode, if any.
@@ -236,26 +236,11 @@ public class PopScreenController extends BasicScreenController {
 
         if (dialogActionPrefix == null) {
             closeActiveDialog();
-
         } else {
-            ListBox listBox
-                    = dialogElement.findNiftyControl("#box", ListBox.class);
-            TextField textField = dialogElement.findNiftyControl("#textfield",
-                    TextField.class);
-
-            String commitAction;
-            if (textField != null) { // text-entry dialog
-                String enteredText = textField.getRealText();
-                commitAction = dialogActionPrefix + enteredText;
-
-            } else if (listBox != null) { // multi-select dialog
-                List indices = listBox.getSelectedIndices();
-                commitAction = dialogActionPrefix + MyString.join(",", indices);
-
-            } else { // confirmation dialog
-                commitAction = dialogActionPrefix;
-            }
+            String suffix = dialogController.commitSuffix(dialogElement);
+            String commitAction = dialogActionPrefix + suffix;
             closeActiveDialog();
+
             perform(commitAction);
         }
     }
@@ -333,13 +318,14 @@ public class PopScreenController extends BasicScreenController {
      * @param promptMessage text to display above the buttons (not null)
      * @param commitLabel text for the commit-button label (not null)
      * @param actionString the commit action (not null)
-     * @param controller controller for the dialog box, or null for none
+     * @param controller controller for the dialog box (not null)
      */
     public void showConfirmDialog(String promptMessage, String commitLabel,
             String actionString, DialogController controller) {
         Validate.nonNull(promptMessage, "prompt message");
         Validate.nonNull(commitLabel, "commit-button label");
         Validate.nonNull(actionString, "action string");
+        Validate.nonNull(controller, "controller");
         /*
          * Create a popup using the "dialogs/confirm" layout as a base.
          * Nifty assigns the popup a new id.
@@ -594,24 +580,7 @@ public class PopScreenController extends BasicScreenController {
         activateDialog(popupId, actionPrefix, "#textfield", controller);
     }
     // *************************************************************************
-    // BasicScreenController methods
-
-    /**
-     * Callback to update this controller prior to rendering. (Invoked once per
-     * render pass.)
-     *
-     * @param updateInterval time interval between updates (in seconds, &ge;0)
-     */
-    @Override
-    public void update(float updateInterval) {
-        super.update(updateInterval);
-
-        if (hasActiveDialog() && dialogController != null) {
-            dialogController.update(dialogElement, updateInterval);
-        }
-    }
-    // *************************************************************************
-    // private methods
+    // new protected methods
 
     /**
      * Activate a newly-created modal dialog box.
@@ -622,7 +591,7 @@ public class PopScreenController extends BasicScreenController {
      * first focusable element
      * @param controller controller for the dialog box, or null for none
      */
-    private void activateDialog(String popupId, String actionPrefix,
+    protected void activateDialog(String popupId, String actionPrefix,
             String focusElementId, DialogController controller) {
         Validate.nonNull(popupId, "popup id");
         /*
@@ -654,6 +623,33 @@ public class PopScreenController extends BasicScreenController {
         dialogActionPrefix = actionPrefix;
         dialogController = controller;
     }
+
+    /**
+     * Alter the active dialog.
+     *
+     * @param element which element to activate, or null to deactivate
+     */
+    protected void setActiveDialog(Element element) {
+        dialogElement = element;
+    }
+    // *************************************************************************
+    // BasicScreenController methods
+
+    /**
+     * Update this controller prior to rendering. (Invoked once per frame.)
+     *
+     * @param tpf time interval between frames (in seconds, &ge;0)
+     */
+    @Override
+    public void update(float tpf) {
+        super.update(tpf);
+
+        if (hasActiveDialog() && dialogController != null) {
+            dialogController.update(dialogElement, tpf);
+        }
+    }
+    // *************************************************************************
+    // private methods
 
     /**
      * Activate a newly-created popup menu.

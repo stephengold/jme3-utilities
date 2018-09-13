@@ -27,7 +27,9 @@
 package jme3utilities.nifty.dialog;
 
 import de.lessvoid.nifty.controls.Button;
+import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.render.TextRenderer;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -59,12 +61,38 @@ public class TextEntryDialog implements DialogController {
     /**
      * Instantiate a controller.
      *
-     * @param description commit description (not null, not empty)
+     * @param description commit-button text (not null, not empty)
      */
     public TextEntryDialog(String description) {
         Validate.nonEmpty(description, "description");
-
         commitDescription = description;
+    }
+    // *************************************************************************
+    // new protected methods
+
+    /**
+     * Determine the feedback message for the specified input text.
+     *
+     * @param inputText (not null)
+     * @return the message (not null)
+     */
+    protected String feedback(String inputText) {
+        return "";
+    }
+
+    /**
+     * Read the text field.
+     *
+     * @param dialogElement (not null)
+     * @return a text string (not null)
+     */
+    protected String text(Element dialogElement) {
+        TextField textField
+                = dialogElement.findNiftyControl("#textfield", TextField.class);
+        String text = textField.getRealText();
+
+        assert text != null;
+        return text;
     }
     // *************************************************************************
     // DialogController methods
@@ -77,21 +105,53 @@ public class TextEntryDialog implements DialogController {
      */
     @Override
     public boolean allowCommit(Element dialogElement) {
-        return true;
+        Validate.nonNull(dialogElement, "dialog element");
+
+        String text = text(dialogElement);
+        String feedback = feedback(text);
+        boolean allow = feedback.isEmpty();
+
+        return allow;
     }
 
     /**
-     * Callback to update the dialog box prior to rendering. (Invoked once per
-     * render pass.)
+     * Construct the action-string suffix for a commit.
      *
      * @param dialogElement (not null)
-     * @param elapsedTime time interval between render passes (in seconds,
-     * &ge;0)
+     * @return the suffix (not null)
      */
     @Override
-    public void update(Element dialogElement, float elapsedTime) {
+    public String commitSuffix(Element dialogElement) {
+        Validate.nonNull(dialogElement, "dialog element");
+        String suffix = text(dialogElement);
+        return suffix;
+    }
+
+    /**
+     * Update this dialog box prior to rendering. (Invoked once per frame.)
+     *
+     * @param dialogElement (not null)
+     * @param unused time interval between frames (in seconds, &ge;0)
+     */
+    @Override
+    public void update(Element dialogElement, float unused) {
+        Validate.nonNull(dialogElement, "dialog element");
+
+        String text = text(dialogElement);
+        String feedback = feedback(text);
         Button commitButton
                 = dialogElement.findNiftyControl("#commit", Button.class);
-        commitButton.setText(commitDescription);
+
+        Element feedbackElement = dialogElement.findElementById("#feedback");
+        TextRenderer renderer = feedbackElement.getRenderer(TextRenderer.class);
+        renderer.setText(feedback);
+
+        if (feedback.isEmpty()) {
+            commitButton.setText(commitDescription);
+            commitButton.getElement().show();
+        } else {
+            commitButton.setText("");
+            commitButton.getElement().hide();
+        }
     }
 }
