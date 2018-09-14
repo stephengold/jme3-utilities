@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.8.1 released on TBD
+## Version 0.8.1 released on 14 September 2018
 
  + Allow modal dialog boxes to open popup menus
  + Replace PopScreenController.hasActiveDialog() with getActiveDialog()
