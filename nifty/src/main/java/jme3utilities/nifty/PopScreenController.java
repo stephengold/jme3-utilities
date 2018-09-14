@@ -50,6 +50,7 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 import jme3utilities.nifty.dialog.DialogController;
+import jme3utilities.nifty.dialog.MinimalDialog;
 import jme3utilities.ui.InputMode;
 
 /**
@@ -161,7 +162,7 @@ public class PopScreenController extends BasicScreenController {
     }
 
     /**
-     * Close the active popup, if any.
+     * Close one active popup, targeting menus first. TODO needs synchronized?
      */
     public synchronized void closeAllPopups() {
         if (hasActivePopupMenu()) {
@@ -341,7 +342,8 @@ public class PopScreenController extends BasicScreenController {
         renderer = lineElement.getRenderer(TextRenderer.class);
         renderer.setText(bodyText);
 
-        activateDialog(popupId, null, null, null);
+        DialogController controller = new MinimalDialog();
+        activateDialog(popupId, null, null, controller);
     }
 
     /**
@@ -352,7 +354,7 @@ public class PopScreenController extends BasicScreenController {
      * @param commitLabel text for the commit-button label (not null)
      * @param actionPrefix prefix for the commit action (not null, usually the
      * final character will be a space)
-     * @param controller controller for the dialog box, or null for none
+     * @param controller controller for the dialog box (not null)
      */
     public void showMultiSelectDialog(String promptMessage,
             List<String> itemList, String commitLabel, String actionPrefix,
@@ -361,6 +363,7 @@ public class PopScreenController extends BasicScreenController {
         Validate.nonNull(itemList, "item list");
         Validate.nonNull(commitLabel, "commit label");
         Validate.nonNull(actionPrefix, "action prefix");
+        Validate.nonNull(controller, "controller");
         /*
          * Create a popup using the "dialogs/multiSelect" layout as a base.
          * Nifty assigns the popup a new id.
@@ -512,7 +515,7 @@ public class PopScreenController extends BasicScreenController {
      * @param commitLabel text for the commit-button label (not null)
      * @param actionPrefix prefix for the commit action (not null, usually the
      * final character will be a space)
-     * @param controller controller for the dialog box, or null for none
+     * @param controller controller for the dialog box (not null)
      */
     public void showTextEntryDialog(String promptMessage, String defaultValue,
             String commitLabel, String actionPrefix,
@@ -521,6 +524,7 @@ public class PopScreenController extends BasicScreenController {
         Validate.nonNull(defaultValue, "default value");
         Validate.nonNull(commitLabel, "commit-button label");
         Validate.nonNull(actionPrefix, "action prefix");
+        Validate.nonNull(controller, "controller");
         /*
          * Create a popup using the "dialogs/text-entry" layout as a base.
          * Nifty assigns the popup a new id.
@@ -553,11 +557,12 @@ public class PopScreenController extends BasicScreenController {
      * @param actionPrefix action prefix (may be null)
      * @param focusElementId the Nifty id of the focus element, or null for
      * first focusable element
-     * @param controller controller for the dialog box, or null for none
+     * @param controller controller for the dialog box (not null)
      */
     protected void activateDialog(String popupId, String actionPrefix,
             String focusElementId, DialogController controller) {
         Validate.nonNull(popupId, "popup id");
+        Validate.nonNull(controller, "controller");
         /*
          * Make the popup visible, setting the keyboard focus.
          */
