@@ -90,7 +90,7 @@ class DialogInputMode extends InputMode {
         BasicScreenController controller = guiApplication.getEnabledScreen();
         if (isEnabled() && ongoing && controller != null) {
             PopScreenController psc = (PopScreenController) controller;
-            assert psc.hasActiveDialog();
+            assert psc.getActiveDialog() != null;
             /*
              * Attempt to handle the action.
              */

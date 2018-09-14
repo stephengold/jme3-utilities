@@ -126,7 +126,7 @@ public class PopScreenController extends BasicScreenController {
      * without performing an action.
      */
     void closeActiveDialog() {
-        if (!hasActiveDialog()) {
+        if (dialogController == null) {
             throw new IllegalStateException("no active dialog");
         }
 
@@ -136,7 +136,7 @@ public class PopScreenController extends BasicScreenController {
         setActiveDialog(null);
         resume();
 
-        assert !hasActiveDialog();
+        assert dialogController == null;
     }
 
     /**
@@ -167,7 +167,7 @@ public class PopScreenController extends BasicScreenController {
     public synchronized void closeAllPopups() {
         if (hasActivePopupMenu()) {
             closePopupMenu(activePopupMenu);
-        } else if (hasActiveDialog()) {
+        } else if (dialogController != null) {
             closeActiveDialog();
         }
     }
@@ -199,7 +199,7 @@ public class PopScreenController extends BasicScreenController {
      * close the dialog box.
      */
     void dialogCommit() {
-        if (!hasActiveDialog()) {
+        if (dialogController == null) {
             throw new IllegalStateException("no active dialog");
         }
 
@@ -220,12 +220,12 @@ public class PopScreenController extends BasicScreenController {
     }
 
     /**
-     * Test whether there's an active dialog.
+     * Access the active modal dialog box.
      *
-     * @return true if there's an active dialog, false if there's none
+     * @return the controller of active dialog, or null if there's none
      */
-    boolean hasActiveDialog() {
-        return dialogElement != null;
+    public DialogController getActiveDialog() {
+        return dialogController;
     }
 
     /**
@@ -601,7 +601,7 @@ public class PopScreenController extends BasicScreenController {
     public void update(float tpf) {
         super.update(tpf);
 
-        if (hasActiveDialog() && dialogController != null) {
+        if (dialogController != null) {
             dialogController.update(dialogElement, tpf);
         }
     }
