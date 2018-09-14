@@ -135,8 +135,7 @@ public class PopScreenController extends BasicScreenController {
         dialogActionPrefix = null;
         setActiveDialog(null);
         resume();
-
-        assert dialogController == null;
+        dialogController = null;
     }
 
     /**
