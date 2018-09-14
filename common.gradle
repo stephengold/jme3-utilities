@@ -23,7 +23,7 @@ ext {
     jcommanderVersion = '1.74'
     jme3utilitiesdebugVersion = '0.9.2'
     jme3utilitiesheartVersion = '2.9.0'
-    jme3utilitiesniftyVersion = '0.8.0'
+    jme3utilitiesniftyVersion = '0.8.1'
     jme3utilitiesuiVersion = '0.6.4'
     jme3utilitiesxVersion = '0.2.4'
     jmonkeyengineVersion = '3.2.1-stable'
