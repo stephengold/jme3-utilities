@@ -43,6 +43,7 @@ import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.nifty.tools.SizeValueType;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
@@ -70,33 +71,33 @@ public class PopScreenController extends BasicScreenController {
     // fields
 
     /**
-     * policy for a submenu's X-coordinate (0&rarr;based 100% on mouse pointer,
-     * 1&rarr;based 100% on parent)
+     * policy for a submenu's X-coordinate (0&rarr;based purely on mouse
+     * pointer, 1&rarr;based purely on parent)
      */
     private float warpX = 0f;
     /**
-     * policy for a submenu's Y-coordinate (0&rarr;based 100% on mouse pointer,
-     * 1&rarr;based 100% on parent)
+     * policy for a submenu's Y-coordinate (0&rarr;based purely on mouse
+     * pointer, 1&rarr;based purely on parent)
      */
     private float warpY = 0f;
+    /**
+     * controller for the active modal dialog box (null means none active)
+     */
+    private DialogController dialogController = null;
     /**
      * Nifty element for the active modal dialog box (null means none active)
      */
     private Element dialogElement = null;
     /**
-     * Controller for the active modal dialog box (null means none active)
+     * LIFO stack of suspended input modes TODO move this to the UI library
      */
-    private DialogController dialogController = null;
+    final private List<InputMode> suspendedModes = new ArrayList<>(2);
     /**
-     * this controller's suspended input mode (while a modal popup is active)
-     */
-    private InputMode suspendedMode;
-    /**
-     * active popup menu (null means none are active)
+     * active popup menu (null means none active)
      */
     private PopupMenu activePopupMenu = null;
     /**
-     * action prefix of the active modal dialog box (null means none is active)
+     * action prefix of the active modal dialog box (null means none active)
      */
     private String dialogActionPrefix = null;
     // *************************************************************************
@@ -133,16 +134,7 @@ public class PopScreenController extends BasicScreenController {
         nifty.closePopup(popupId);
         dialogActionPrefix = null;
         setActiveDialog(null);
-        /*
-         * Disable the dialog's input mode and
-         * resume the screen's input mode, if any.
-         */
-        InputMode dialogMode = InputMode.getActiveMode();
-        dialogMode.setEnabled(false);
-        if (suspendedMode != null) {
-            suspendedMode.resume();
-            suspendedMode = null;
-        }
+        resume();
 
         assert !hasActiveDialog();
     }
@@ -165,28 +157,18 @@ public class PopScreenController extends BasicScreenController {
              */
             activePopupMenu.setEnabled(true);
         } else {
-            /*
-             * No parent menu, so disable the menu's input mode and
-             * resume the screen's input mode.
-             */
-            InputMode menuMode = InputMode.getActiveMode();
-            menuMode.setEnabled(false);
-            if (suspendedMode != null) {
-                suspendedMode.resume();
-                suspendedMode = null;
-            }
+            resume();
         }
     }
 
     /**
-     * Close the active popup and its ancestors, if any.
+     * Close the active popup, if any.
      */
     public synchronized void closeAllPopups() {
-        if (hasActiveDialog()) {
-            closeActiveDialog();
-        }
         if (hasActivePopupMenu()) {
             closePopupMenu(activePopupMenu);
+        } else if (hasActiveDialog()) {
+            closeActiveDialog();
         }
     }
 
@@ -209,15 +191,7 @@ public class PopScreenController extends BasicScreenController {
             ancestor = ancestor.getParent();
         }
         activePopupMenu = null;
-        /*
-         * Disable the menu's input mode and resume the screen's input mode.
-         */
-        InputMode menuMode = InputMode.getActiveMode();
-        menuMode.setEnabled(false);
-        if (suspendedMode != null) {
-            suspendedMode.resume();
-            suspendedMode = null;
-        }
+        resume();
     }
 
     /**
@@ -243,15 +217,6 @@ public class PopScreenController extends BasicScreenController {
 
             perform(commitAction);
         }
-    }
-
-    /**
-     * Access the input mode of this screen while it is suspended by a popup.
-     *
-     * @return the pre-existing mode, or null if none or not suspended
-     */
-    public InputMode getSuspendedMode() {
-        return suspendedMode;
     }
 
     /**
@@ -608,17 +573,9 @@ public class PopScreenController extends BasicScreenController {
             focusElement = dialogElement.findElementById(focusElementId);
         }
         nifty.showPopup(screen, popupId, focusElement);
-        /*
-         * Save and suspend the screen's input mode (if any) and
-         * activate the input mode for modal dialogs.
-         */
-        assert suspendedMode == null : suspendedMode;
-        suspendedMode = InputMode.getActiveMode();
-        if (suspendedMode != null) {
-            suspendedMode.suspend();
-        }
+
         InputMode dialogMode = InputMode.findMode(DialogInputMode.name);
-        dialogMode.setEnabled(true);
+        suspendAndActivate(dialogMode);
 
         dialogActionPrefix = actionPrefix;
         dialogController = controller;
@@ -692,17 +649,8 @@ public class PopScreenController extends BasicScreenController {
         nifty.showPopup(screen, elementId, null);
 
         if (activePopupMenu == null) {
-            /*
-             * Save and suspend the screen's input mode (if any) and
-             * activate the input mode for popup menus.
-             */
-            assert suspendedMode == null : suspendedMode;
-            suspendedMode = InputMode.getActiveMode();
-            if (suspendedMode != null) {
-                suspendedMode.suspend();
-            }
             InputMode menuMode = InputMode.findMode(MenuInputMode.name);
-            menuMode.setEnabled(true);
+            suspendAndActivate(menuMode);
         } else {
             /*
              * Disable the parent popup menu.
@@ -800,5 +748,41 @@ public class PopScreenController extends BasicScreenController {
         }.registerPopup(nifty);
 
         return masterId;
+    }
+
+    /**
+     * Disable the active input mode and resume the most recently suspended
+     * mode, typically that of the screen.
+     */
+    private void resume() {
+        InputMode activeMode = InputMode.getActiveMode();
+        if (activeMode != null) {
+            activeMode.setEnabled(false);
+        }
+
+        int numSuspended = suspendedModes.size();
+        assert numSuspended > 0 : numSuspended;
+        InputMode mostRecent = suspendedModes.remove(numSuspended - 1);
+        if (mostRecent != null) {
+            mostRecent.resume();
+        }
+    }
+
+    /**
+     * Save and suspend the active input mode (if any) and activate the
+     * specified mode, typically that of a popup.
+     *
+     * @param newMode the desired input mode, or null for none
+     */
+    private void suspendAndActivate(InputMode newMode) {
+        InputMode oldMode = InputMode.getActiveMode();
+        if (oldMode != null) {
+            oldMode.suspend();
+        }
+        suspendedModes.add(oldMode);
+
+        if (newMode != null) {
+            newMode.setEnabled(true);
+        }
     }
 }
