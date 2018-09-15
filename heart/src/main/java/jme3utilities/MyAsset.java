@@ -69,12 +69,12 @@ final public class MyAsset {
     final private static String particleMaterialAssetPath
             = "Common/MatDefs/Misc/Particle.j3md";
     /**
-     * asset path of the shaded material definition
+     * asset path of the shaded material definition TODO Materials in JME3.3
      */
     final public static String shadedMaterialAssetPath
             = "Common/MatDefs/Light/Lighting.j3md";
     /**
-     * asset path to the Unshaded material definition
+     * asset path to the Unshaded material definition TODO Materials in JME3.3
      */
     final public static String unshadedMaterialAssetPath
             = "Common/MatDefs/Misc/Unshaded.j3md";
