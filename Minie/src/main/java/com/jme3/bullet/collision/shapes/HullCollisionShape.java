@@ -65,7 +65,9 @@ public class HullCollisionShape extends CollisionShape {
     }
 
     /**
-     * Instantiate a collision shape based on the specified JME mesh.
+     * Instantiate a collision shape based on the specified JME mesh. For best
+     * performance and stability, use the mesh should have no more than 100
+     * vertices.
      *
      * @param mesh a mesh on which to base the shape (not null)
      */

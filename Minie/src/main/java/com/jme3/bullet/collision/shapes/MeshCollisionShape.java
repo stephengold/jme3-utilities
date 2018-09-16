@@ -47,7 +47,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A mesh collision shape based on Bullet's btBvhTriangleMeshShape.
+ * A mesh collision shape based on Bullet's btBvhTriangleMeshShape. TODO add
+ * shape based on btScaledBvhTriangleMeshShape
  *
  * @author normenhansen
  */

@@ -48,12 +48,12 @@ import java.util.logging.Logger;
 
 /**
  * A collision object for intangibles, based on Bullet's
- * btPairCachingGhostObject.
+ * btPairCachingGhostObject. This is useful for creating a character controller,
+ * collision sensors/triggers, explosions etc.
  * <p>
  * <i>From Bullet manual:</i><br>
- * GhostObject can keep track of all objects that are overlapping. By default,
- * this overlap is based on the AABB. This is useful for creating a character
- * controller, collision sensors/triggers, explosions etc.
+ * btGhostObject is a special btCollisionObject, useful for fast localized
+ * collision queries.
  *
  * @author normenhansen
  */

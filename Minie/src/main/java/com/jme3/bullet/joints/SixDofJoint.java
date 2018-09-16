@@ -53,10 +53,16 @@ import java.util.logging.Logger;
  * configuring each of the 6 degrees of freedom (dof). The first 3 dof axis are
  * linear axis, which represent translation of rigidbodies, and the latter 3 dof
  * axis represent the angular motion. Each axis can be either locked, free or
- * limited. On construction of a new btGeneric6DofConstraint, all axis are
- * locked. Afterwards the axis can be reconfigured. Note that several
+ * limited. On construction of a new btGeneric6DofSpring2Constraint, all axis
+ * are locked. Afterwards the axis can be reconfigured. Note that several
  * combinations that include free and/or limited angular degrees of freedom are
  * undefined.
+ * <p>
+ * For each axis:<ul>
+ * <li>Lowerlimit = Upperlimit &rarr; axis is locked</i>
+ * <li>Lowerlimit &gt; Upperlimit &rarr; axis is free</i>
+ * <li>Lowerlimit &lt; Upperlimit &rarr; axis it limited in that range
+ * </ul>
  *
  * @author normenhansen
  */

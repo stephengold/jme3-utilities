@@ -39,9 +39,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * The abstract base class for physics joints (such as ConeJoint, HingeJoint,
- * and SixDofJoint) used to connect two dynamic rigid bodies in the same physics
- * space.
+ * The abstract base class for physics joints based on Bullet's
+ * btTypedConstraint, used to connect 2 dynamic rigid bodies in the same
+ * physics space.
+ * <p>
+ * Joints include ConeJoint, HingeJoint, Point2PointJoint, and SixDofJoint.
  *
  * @author normenhansen
  */

@@ -74,11 +74,11 @@ public class VehicleControl extends PhysicsVehicle
      */
     protected boolean enabled = true;
     /**
-     * space to which the physics vehicle is (or would be) added
+     * space to which the vehicle is (or would be) added
      */
     protected PhysicsSpace space = null;
     /**
-     * true&rarr;body is added to the physics space, false&rarr;not added
+     * true&rarr;vehicle is added to the physics space, false&rarr;not added
      */
     protected boolean added = false;
 

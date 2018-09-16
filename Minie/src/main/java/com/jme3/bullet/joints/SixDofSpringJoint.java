@@ -41,13 +41,19 @@ import java.util.logging.Logger;
  * <p>
  * <i>From the Bullet manual:</i><br>
  * This generic constraint can emulate a variety of standard constraints, by
- * configuring each of the 6 degrees of freedom (DoF). The first 3 DoFs are
- * translations of the rigid bodies, and the last 3 DoFs are rotations.
+ * configuring each of the 6 degrees of freedom (dof). The first 3 dof axis are
+ * linear axis, which represent translation of rigidbodies, and the latter 3 dof
+ * axis represent the angular motion. Each axis can be either locked, free or
+ * limited. On construction of a new btGeneric6DofSpring2Constraint, all axis
+ * are locked. Afterwards the axis can be reconfigured. Note that several
+ * combinations that include free and/or limited angular degrees of freedom are
+ * undefined.
  * <p>
- * Each DoF can be locked, free, or limited. On construction of a new
- * btGeneric6DofConstraint, all axes are locked. After that, the axes can be
- * reconfigured. However, some combinations that include free and/or limited
- * angular degrees of freedom are undefined.
+ * For each axis:<ul>
+ * <li>Lowerlimit = Upperlimit &rarr; axis is locked</i>
+ * <li>Lowerlimit &gt; Upperlimit &rarr; axis is free</i>
+ * <li>Lowerlimit &lt; Upperlimit &rarr; axis it limited in that range
+ * </ul>
  *
  * @author normenhansen
  */

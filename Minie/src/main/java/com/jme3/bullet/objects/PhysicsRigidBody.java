@@ -458,7 +458,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
-     * Alter this body's mass. Bodies with mass=0 are static.
+     * Alter this body's mass. Bodies with mass=0 are static. For dynamic
+     * bodies, it is best to keep the mass around 1.
      *
      * @param mass the desired mass (&gt;0) or 0 for a static body (default=1)
      */

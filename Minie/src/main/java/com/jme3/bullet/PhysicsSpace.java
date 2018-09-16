@@ -63,7 +63,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * A jbullet-jme physics space.
+ * A jbullet-jme physics space with its own btDynamicsWorld.
  *
  * @author normenhansen
  */
@@ -1104,7 +1104,8 @@ public class PhysicsSpace {
      * Alter the accuracy (time step) of the physics simulation.
      * <p>
      * In general, the smaller the time step, the more accurate (and
-     * compute-intensive) the simulation will be.
+     * compute-intensive) the simulation will be. Bullet works best with a
+     * timestep of no more than 1/60 second.
      *
      * @param accuracy the desired time step (in seconds, &gt;0, default=1/60)
      */

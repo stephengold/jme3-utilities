@@ -45,9 +45,9 @@ import java.util.logging.Logger;
  * A joint based on Bullet's btPoint2PointConstraint.
  * <p>
  * <i>From the Bullet manual:</i><br>
- * Point-to-point constraint, also known as ball-socket joint, limits the
- * translation so that the local pivot points of 2 rigid bodies match in world
- * space. A chain of rigid bodies can be connected using this constraint.
+ * Point to point constraint limits the translation so that the local pivot
+ * points of 2 rigidbodies match in worldspace. A chain of rigidbodies can be
+ * connected using this constraint.
  *
  * @author normenhansen
  */

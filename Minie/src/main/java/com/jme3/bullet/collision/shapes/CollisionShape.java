@@ -43,8 +43,8 @@ import jme3utilities.Validate;
  * btCollisionShape.
  * <p>
  * Collision shapes include BoxCollisionShape and CapsuleCollisionShape. As
- * suggested in the Bullet manual, collision shapes can be shared between
- * collision objects.
+ * suggested in the Bullet manual, a single collision shape can be shared among
+ * multiple collision objects.
  *
  * @author normenhansen
  */
@@ -129,7 +129,9 @@ public abstract class CollisionShape implements Savable {
 
     /**
      * Alter the collision margin for this shape. CAUTION: Margin is applied
-     * differently, depending on the type of shape.
+     * differently, depending on the type of shape. Generally the collision
+     * margin expands the object, creating a gap. Don't set the collision margin
+     * to zero.
      * <p>
      * Note that if the shape is shared (between collision objects and/or
      * compound shapes) changes can have unintended consequences.

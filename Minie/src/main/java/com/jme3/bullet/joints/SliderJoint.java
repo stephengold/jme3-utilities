@@ -47,7 +47,7 @@ import java.util.logging.Logger;
  * <p>
  * <i>From the Bullet manual:</i><br>
  * The slider constraint allows the body to rotate around one axis and translate
- * along that same axis.
+ * along this axis.
  *
  * @author normenhansen
  */
@@ -82,8 +82,10 @@ public class SliderJoint extends PhysicsJoint {
      * null, alias created) TODO
      * @param pivotB the local offset of the connection point in node B (not
      * null, alias created) TODO
-     * @param rotA the local orientation of the connection to node A (not null, alias created) TODO
-     * @param rotB the local orientation of the connection to node B (not null, alias created) TODO
+     * @param rotA the local orientation of the connection to node A (not null,
+     * alias created) TODO
+     * @param rotB the local orientation of the connection to node B (not null,
+     * alias created) TODO
      * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
      * B
      */

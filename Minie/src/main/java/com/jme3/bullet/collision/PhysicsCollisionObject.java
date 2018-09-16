@@ -133,7 +133,14 @@ public abstract class PhysicsCollisionObject implements Savable {
      */
     public static final int COLLISION_GROUP_16 = 0x00008000;
 
+    /**
+     * collision group to which this physics object belongs (default=group #1)
+     */
     private int collisionGroup = COLLISION_GROUP_01;
+    /**
+     * collision groups with which this object can collide (default=only group
+     * #1)
+     */
     private int collideWithGroups = COLLISION_GROUP_01;
     private Object userObject;
 

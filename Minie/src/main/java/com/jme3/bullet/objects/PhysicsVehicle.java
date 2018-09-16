@@ -50,13 +50,13 @@ import java.util.logging.Logger;
  * btRaycastVehicle.
  * <p>
  * <i>From Bullet manual:</i><br>
- * For most vehicle simulations, it is recommended to use the simplified Bullet
- * vehicle model as provided in btRaycastVehicle. Instead of simulation each
- * wheel and chassis as separate rigid bodies, connected by constraints, it uses
- * a simplified model. This simplified model has many benefits, and is widely
- * used in commercial driving games.
+ * For arcade style vehicle simulations, it is recommended to use the simplified
+ * Bullet vehicle model as provided in btRaycastVehicle. Instead of simulation
+ * each wheel and chassis as separate rigid bodies, connected by constraints, it
+ * uses a simplified model. This simplified model has many benefits, and is
+ * widely used in commercial driving games.
  * <p>
- * The entire vehicle is represented as a single rigid body, the chassis. The
+ * The entire vehicle is represented as a single rigidbody, the chassis. The
  * collision detection of the wheels is approximated by ray casts, and the tire
  * friction is a basic anisotropic friction model.
  *
