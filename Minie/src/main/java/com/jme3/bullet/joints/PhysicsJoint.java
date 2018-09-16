@@ -135,7 +135,7 @@ public abstract class PhysicsJoint implements Savable {
      *
      * @return true if collision are allowed, otherwise false
      */
-    public boolean isCollisionBetweenLinkedBodys() {
+    public boolean isCollisionBetweenLinkedBodies() {
         return collisionBetweenLinkedBodies;
     }
 
@@ -145,7 +145,7 @@ public abstract class PhysicsJoint implements Savable {
      *
      * @param enable true &rarr; allow collisions, false &rarr; prevent them
      */
-    public void setCollisionBetweenLinkedBodys(boolean enable) {
+    public void setCollisionBetweenLinkedBodies(boolean enable) {
         this.collisionBetweenLinkedBodies = enable;
     }
 

@@ -662,7 +662,7 @@ public class PhysicsSpace {
         logger.log(Level.FINE, "Adding Joint {0} to physics space.",
                 Long.toHexString(joint.getObjectId()));
         physicsJoints.put(joint.getObjectId(), joint);
-        addConstraintC(physicsSpaceId, joint.getObjectId(), !joint.isCollisionBetweenLinkedBodys());
+        addConstraintC(physicsSpaceId, joint.getObjectId(), !joint.isCollisionBetweenLinkedBodies());
     }
 
     private void removeJoint(PhysicsJoint joint) {

@@ -750,7 +750,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
                 preset.setupJointForBone(bone.getName(), joint);
 
                 link.joint = joint;
-                joint.setCollisionBetweenLinkedBodys(false);
+                joint.setCollisionBetweenLinkedBodies(false);
             }
             boneLinks.put(bone.getName(), link);
             shapeNode.setUserObject(link);
