@@ -111,6 +111,9 @@ public class PhysicsSpace {
      */
     private static ThreadLocal<PhysicsSpace> physicsSpaceTL
             = new ThreadLocal<PhysicsSpace>();
+    /**
+     * copy of type of acceleration structure used
+     */
     private BroadphaseType broadphaseType = BroadphaseType.DBVT;
     final private Map<Long, PhysicsGhostObject> physicsGhostObjects
             = new ConcurrentHashMap<>();
@@ -1053,7 +1056,7 @@ public class PhysicsSpace {
     }
 
     /**
-     * Read the broadphase collision-detection algorithm that is in use.
+     * Read the type of acceleration structure used.
      *
      * @return an enum value (not null)
      */

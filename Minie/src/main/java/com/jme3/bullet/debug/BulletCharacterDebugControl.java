@@ -70,7 +70,7 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
      */
     private CollisionShape myShape;
     /**
-     * geometry for visualization (not null)
+     * geometry to visualize myShape (not null)
      */
     private Spatial geom;
     /**
@@ -81,7 +81,7 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
     /**
      * Instantiate an enabled control to visualize the specified character.
      *
-     * @param debugAppState which app state (not null)
+     * @param debugAppState which app state (not null, alias created)
      * @param ch the character to visualize (not null, alias created)
      */
     public BulletCharacterDebugControl(BulletDebugAppState debugAppState,

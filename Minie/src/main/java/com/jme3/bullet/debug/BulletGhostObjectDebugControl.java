@@ -74,7 +74,7 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
      */
     private CollisionShape myShape;
     /**
-     * geometry for visualization (not null)
+     * geometry to visualize myShape (not null)
      */
     private Spatial geom;
     /**
@@ -85,7 +85,7 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
     /**
      * Instantiate an enabled control to visualize the specified ghost object.
      *
-     * @param debugAppState which app state (not null)
+     * @param debugAppState which app state (not null, alias created)
      * @param gh which object to visualize (not null, alias created)
      */
     public BulletGhostObjectDebugControl(BulletDebugAppState debugAppState,

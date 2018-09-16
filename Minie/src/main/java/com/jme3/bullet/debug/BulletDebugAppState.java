@@ -72,7 +72,7 @@ public class BulletDebugAppState extends AbstractAppState {
     final public static Logger logger
             = Logger.getLogger(BulletDebugAppState.class.getName());
     /**
-     * limit which objects are visualized, or null for visualize all objects
+     * limit which objects are visualized, or null to visualize all objects
      */
     private DebugAppStateFilter filter;
     /**
@@ -159,9 +159,9 @@ public class BulletDebugAppState extends AbstractAppState {
     }
 
     /**
-     * Alter the view ports in which to render.
+     * Alter which which objects are visualized.
      *
-     * @param viewPorts the desired view ports (not null, contains no nulls)
+     * @param filter new filter, or or null to visualize all objects
      */
     public void setViewPorts(ViewPort[] viewPorts) {
         this.viewPorts = viewPorts;

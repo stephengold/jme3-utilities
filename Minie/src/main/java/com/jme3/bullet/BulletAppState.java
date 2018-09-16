@@ -596,7 +596,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
-     * Callback from Bullet, invoked just before the physics is stepped. A good
+     * Callback from Bullet, invoked just after the physics is stepped. A good
      * time to clear/apply forces.
      *
      * @param space the space that is about to be stepped (not null)
@@ -618,8 +618,6 @@ public class BulletAppState implements AppState, PhysicsTickListener {
         /**
          * Parallel threaded mode: physics update and rendering are executed in
          * parallel, update order is maintained.
-         *
-         * In this mode, multiple BulletAppStates will execute in parallel.
          */
         PARALLEL,
     }

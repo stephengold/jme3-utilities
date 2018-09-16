@@ -74,7 +74,7 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
      */
     private CollisionShape myShape;
     /**
-     * geometry for visualization (not null)
+     * geometry to visualize myShape (not null)
      */
     private Spatial geom;
     /**
@@ -85,7 +85,7 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
     /**
      * Instantiate an enabled control to visualize the specified body.
      *
-     * @param debugAppState which app state (not null)
+     * @param debugAppState which app state (not null, alias created)
      * @param body which body to visualize (not null, alias created)
      */
     public BulletRigidBodyDebugControl(BulletDebugAppState debugAppState,

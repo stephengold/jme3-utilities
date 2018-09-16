@@ -66,7 +66,7 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
     /**
      * Instantiate an enabled control to visualize the specified vehicle.
      *
-     * @param debugAppState which app state (not null)
+     * @param debugAppState which app state (not null, alias created)
      * @param ve which vehicle to visualize (not null, alias created)
      */
     public BulletVehicleDebugControl(BulletDebugAppState debugAppState,

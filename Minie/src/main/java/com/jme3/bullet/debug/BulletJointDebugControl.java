@@ -68,7 +68,7 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
     /**
      * Instantiate an enabled control to visualize the specified joint.
      *
-     * @param debugAppState which app state (not null)
+     * @param debugAppState which app state (not null, alias created)
      * @param jo the joint to visualize (not null, alias created)
      */
     public BulletJointDebugControl(BulletDebugAppState debugAppState,
