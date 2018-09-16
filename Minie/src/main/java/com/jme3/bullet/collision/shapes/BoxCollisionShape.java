@@ -56,7 +56,7 @@ public class BoxCollisionShape extends CollisionShape {
             = Logger.getLogger(BoxCollisionShape.class.getName());
 
     /**
-     * half-extents of the box on each local axis (not null, no negative
+     * copy of half-extents of the box on each local axis (not null, no negative
      * component)
      */
     private Vector3f halfExtents;
@@ -71,7 +71,7 @@ public class BoxCollisionShape extends CollisionShape {
     /**
      * Instantiate a box shape with the specified half extents.
      *
-     * @param halfExtents the half extents to use (not null, no negative
+     * @param halfExtents the desired half extents (not null, no negative
      * component, alias created) TODO
      */
     public BoxCollisionShape(Vector3f halfExtents) {

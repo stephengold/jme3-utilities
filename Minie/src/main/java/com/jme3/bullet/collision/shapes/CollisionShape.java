@@ -64,12 +64,11 @@ public abstract class CollisionShape implements Savable {
      */
     protected long objectId = 0L;
     /**
-     * cached copy of scaling factors: one for each local axis (default=1,1,1)
+     * copy of scaling factors: one for each local axis (default=1,1,1)
      */
     final protected Vector3f scale = new Vector3f(1f, 1f, 1f);
     /**
-     * cached copy of collision margin (in physics-space units, &gt;0,
-     * default=0.04)
+     * copy of collision margin (in physics-space units, &gt;0, default=0.04)
      */
     protected float margin = 0.04f;
 

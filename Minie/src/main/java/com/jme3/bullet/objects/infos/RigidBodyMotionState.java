@@ -77,10 +77,10 @@ public class RigidBodyMotionState {
     private native long createMotionState();
 
     /**
-     * Apply the current transform to the given Spatial if the location has been
-     * updated on the physics side
+     * If the motion state has been updated, apply the new transform to the
+     * specified spatial.
      *
-     * @param spatial where to apply the physics transform (not null)
+     * @param spatial where to apply the physics transform (not null, modified)
      * @return true if changed
      */
     public boolean applyTransform(Spatial spatial) {
@@ -92,11 +92,11 @@ public class RigidBodyMotionState {
             return false;
         }
         if (!applyPhysicsLocal && spatial.getParent() != null) {
-            localLocation.subtractLocal(spatial.getParent().getWorldTranslation());
+            localLocation.subtractLocal(
+                    spatial.getParent().getWorldTranslation());
             localLocation.divideLocal(spatial.getParent().getWorldScale());
-            tmp_inverseWorldRotation.set(spatial.getParent().getWorldRotation()).inverseLocal().multLocal(localLocation);
-
-//            localRotationQuat.set(worldRotationQuat);
+            tmp_inverseWorldRotation.set(spatial.getParent().getWorldRotation())
+                    .inverseLocal().multLocal(localLocation);
             tmp_inverseWorldRotation.mult(localRotationQuat, localRotationQuat);
 
             spatial.setLocalTranslation(localLocation);
@@ -104,12 +104,11 @@ public class RigidBodyMotionState {
         } else {
             spatial.setLocalTranslation(localLocation);
             spatial.setLocalRotation(localRotationQuat);
-//            spatial.setLocalTranslation(worldLocation);
-//            spatial.setLocalRotation(worldRotationQuat);
         }
         if (vehicle != null) {
             vehicle.updateWheels();
         }
+
         return true;
     }
 

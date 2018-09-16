@@ -139,7 +139,7 @@ public class GhostControl extends PhysicsGhostObject
     /**
      * Access whichever spatial translation corresponds to the physics location.
      *
-     * @return the pre-existing vector (not null)
+     * @return the pre-existing vector (not null) TODO
      */
     protected Vector3f getSpatialTranslation() {
         if (MySpatial.isIgnoringTransforms(spatial)) {

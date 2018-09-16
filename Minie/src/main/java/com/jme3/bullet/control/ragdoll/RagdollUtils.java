@@ -262,7 +262,7 @@ public class RagdollUtils {
      * Enumerate vertices that meet the weight threshold for the indexed bone.
      *
      * @param mesh the mesh to analyze (not null)
-     * @param boneIndex the index of the bone to use (&ge;0)
+     * @param boneIndex the index of the bone (&ge;0)
      * @param initialScale a scale applied to vertex positions (not null,
      * unaffected)
      * @param offset an offset subtracted from vertex positions (not null,

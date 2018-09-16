@@ -153,7 +153,7 @@ public class MyControlP {
      * graph and configure their physics spaces. Note: recursive!
      *
      * @param subtree (not null)
-     * @param space physics space to use, or null for none
+     * @param space the physics space to add controls, or null for none
      */
     public static void enablePhysicsControls(Spatial subtree,
             PhysicsSpace space) {

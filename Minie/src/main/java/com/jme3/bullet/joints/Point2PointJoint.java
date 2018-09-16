@@ -75,9 +75,9 @@ public class Point2PointJoint extends PhysicsJoint {
      * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
      * @param pivotA the local offset of the connection point in node A (not
-     * null, alias created)
+     * null, alias created) TODO
      * @param pivotB the local offset of the connection point in node B (not
-     * null, alias created)
+     * null, alias created) TODO
      */
     public Point2PointJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB) {

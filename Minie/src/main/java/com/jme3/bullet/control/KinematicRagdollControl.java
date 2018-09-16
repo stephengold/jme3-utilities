@@ -112,7 +112,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     /**
      * list of registered collision listeners
      */
-    private List<RagdollCollisionListener> listeners;
+    private List<RagdollCollisionListener> listeners; // TODO make final
     private final Set<String> boneList = new TreeSet<>();
     private final Map<String, PhysicsBoneLink> boneLinks = new HashMap<>();
     private final Vector3f modelPosition = new Vector3f();
@@ -1028,7 +1028,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     /**
      * Add a collision listener to this control.
      *
-     * @param listener (alias created)
+     * @param listener (not null, alias created)
      */
     public void addCollisionListener(RagdollCollisionListener listener) {
         if (listeners == null) {

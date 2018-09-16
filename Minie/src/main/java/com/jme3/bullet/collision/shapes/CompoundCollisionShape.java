@@ -111,7 +111,6 @@ public class CompoundCollisionShape extends CollisionShape {
      */
     public void removeChildShape(CollisionShape shape) {
         removeChildShape(objectId, shape.getObjectId());
-//        ((CompoundShape) objectId).removeChildShape(shape.getObjectId());
         for (Iterator<ChildCollisionShape> it = children.iterator();
                 it.hasNext();) {
             ChildCollisionShape childCollisionShape = it.next();

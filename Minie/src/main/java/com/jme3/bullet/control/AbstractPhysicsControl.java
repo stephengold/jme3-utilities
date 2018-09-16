@@ -266,7 +266,7 @@ public abstract class AbstractPhysicsControl
      * <p>
      * When the control is disabled, the physics object is removed from physics
      * space. When the control is enabled again, the physics object is moved to
-     * the current location of the spatial and then added to the physics space.
+     * the spatial's location and then added to the physics space.
      *
      * @param enabled true&rarr;enable the control, false&rarr;disable it
      */
@@ -301,7 +301,7 @@ public abstract class AbstractPhysicsControl
     /**
      * If enabled, add this control's physics object to the specified physics
      * space. If not enabled, alter where the object would be added. The object
-     * is removed from any other space it's currently in.
+     * is removed from any other space it's in.
      *
      * @param newSpace where to add, or null to simply remove
      */

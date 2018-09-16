@@ -64,19 +64,19 @@ public class HingeJoint extends PhysicsJoint {
     private Vector3f axisB;
 
     /**
-     * cached copy of the angular-only flag
+     * copy of the angular-only flag
      */
     private boolean angularOnly = false;
     /**
-     * cached copy of the limit's bias factor
+     * copy of the limit's bias factor
      */
     private float biasFactor = 0.3f;
     /**
-     * cached copy of the limit's relaxation factor
+     * copy of the limit's relaxation factor
      */
     private float relaxationFactor = 1f;
     /**
-     * cached copy of the limit's softness
+     * copy of the limit's softness
      */
     private float limitSoftness = 0.9f;
 
@@ -96,11 +96,13 @@ public class HingeJoint extends PhysicsJoint {
      * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
      * @param pivotA the local offset of the connection point in node A (not
-     * null, alias created)
+     * null, alias created) TODO
      * @param pivotB the local offset of the connection point in node B (not
-     * null, alias created)
-     * @param axisA the local axis of the connection to node A (alias created)
-     * @param axisB the local axis of the connection to node B (alias created)
+     * null, alias created) TODO
+     * @param axisA the local axis of the connection to node A (not null, alias
+     * created) TODO
+     * @param axisB the local axis of the connection to node B (not null, alias
+     * created) TODO
      */
     public HingeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB, Vector3f axisA, Vector3f axisB) {
@@ -109,12 +111,13 @@ public class HingeJoint extends PhysicsJoint {
         this.axisB = axisB;
         createJoint();
         /*
-         * Apply the cached values to synchronize with the Bullet constraint.
+         * Synchronize limits and angular-only flag with the Bullet constraint.
          */
         setAngularOnly(objectId, angularOnly);
         float low = getLowerLimit();
         float high = getUpperLimit();
-        setLimit(objectId, low, high, limitSoftness, biasFactor, relaxationFactor);
+        setLimit(objectId, low, high, limitSoftness, biasFactor,
+                relaxationFactor);
     }
 
     /**

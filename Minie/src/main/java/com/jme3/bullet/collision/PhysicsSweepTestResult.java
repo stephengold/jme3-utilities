@@ -83,7 +83,7 @@ public class PhysicsSweepTestResult {
     /**
      * Access the normal vector at the point of contact.
      *
-     * @return the pre-existing vector
+     * @return the pre-existing vector (not null) TODO
      */
     public Vector3f getHitNormalLocal() {
         return hitNormalLocal;

@@ -104,13 +104,13 @@ public class ConeJoint extends PhysicsJoint {
      * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
      * @param pivotA local translation of the joint connection point in node A
-     * (not null, alias created)
+     * (not null, alias created) TODO
      * @param pivotB local translation of the joint connection point in node B
-     * (not null, alias created)
+     * (not null, alias created) TODO
      * @param rotA the local orientation of the connection to node A (not null,
-     * alias created)
+     * alias created) TODO
      * @param rotB the local orientation of the connection to node B (not null,
-     * alias created)
+     * alias created) TODO
      */
     public ConeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB) {
@@ -140,7 +140,7 @@ public class ConeJoint extends PhysicsJoint {
     /**
      * Alter whether this joint is angular only.
      *
-     * @param value the desired setting
+     * @param value the desired setting (default=false)
      */
     public void setAngularOnly(boolean value) {
         angularOnly = value;

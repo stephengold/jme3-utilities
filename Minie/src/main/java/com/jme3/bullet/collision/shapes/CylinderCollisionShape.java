@@ -58,12 +58,12 @@ public class CylinderCollisionShape extends CollisionShape {
             = Logger.getLogger(CylinderCollisionShape.class.getName());
 
     /**
-     * half-extents of the cylinder on each local axis (not null, no negative
-     * component)
+     * copy of half-extents of the cylinder on each local axis (not null, no
+     * negative component)
      */
     private Vector3f halfExtents;
     /**
-     * main (height) axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
+     * copy of main (height) axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
      */
     private int axis;
 
@@ -77,7 +77,7 @@ public class CylinderCollisionShape extends CollisionShape {
     /**
      * Instantiate a Z-axis cylinder shape with the specified half extents.
      *
-     * @param halfExtents the half extents to use (not null, no negative
+     * @param halfExtents the desired half extents (not null, no negative
      * component, alias created) TODO
      */
     public CylinderCollisionShape(Vector3f halfExtents) {
@@ -91,7 +91,7 @@ public class CylinderCollisionShape extends CollisionShape {
     /**
      * Instantiate a cylinder shape around the specified axis.
      *
-     * @param halfExtents the half extents to use (not null, no negative
+     * @param halfExtents the desired half extents (not null, no negative
      * component, alias created) TODO
      * @param axis which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */

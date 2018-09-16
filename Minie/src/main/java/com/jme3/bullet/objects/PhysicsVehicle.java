@@ -227,7 +227,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * normal car)
      * @param axle The axis of the wheel, pointing right in vehicle direction
      * (should be -X / -1,0,0 for a normal car)
-     * @param suspensionRestLength The current length of the suspension (metres)
+     * @param suspensionRestLength the desired rest length of the suspension (in
+     * metres)
      * @param wheelRadius the wheel radius
      * @param isFrontWheel sets if this wheel is a front wheel (steering)
      * @return the PhysicsVehicleWheel object to get/set infos on the wheel
@@ -614,7 +615,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     private native void brake(long vehicleId, int wheel, float force);
 
     /**
-     * Get the current speed of the vehicle in km/h
+     * Read the vehicle's speed in km/h.
      *
      * @return speed (in kilometers per hour)
      */
@@ -625,7 +626,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     private native float getCurrentVehicleSpeedKmHour(long vehicleId);
 
     /**
-     * Copy the current forward vector of the vehicle.
+     * Copy the vehicle's forward direction.
      *
      * @param vector storage for the result (modified if not null)
      * @return a direction vector (in physics-space coordinates, either the

@@ -278,7 +278,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     }
 
     /**
-     * Count how many CollisionObjects this object is currently overlapping.
+     * Count how many CollisionObjects this object overlaps.
      *
      * @return count (&ge;0)
      */

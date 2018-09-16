@@ -69,7 +69,7 @@ public class PlaneCollisionShape extends CollisionShape {
     /**
      * Instantiate a plane shape defined by the specified plane.
      *
-     * @param plane the plane to use (not null, alias created) TODO
+     * @param plane the desired plane (not null, alias created) TODO
      */
     public PlaneCollisionShape(Plane plane) {
         this.plane = plane;

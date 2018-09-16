@@ -128,7 +128,6 @@ public class GImpactCollisionShape extends CollisionShape {
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
-//        capsule.write(worldScale, "worldScale", new Vector3f(1, 1, 1));
         capsule.write(numVertices, "numVertices", 0);
         capsule.write(numTriangles, "numTriangles", 0);
         capsule.write(vertexStride, "vertexStride", 0);
@@ -148,7 +147,6 @@ public class GImpactCollisionShape extends CollisionShape {
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
-//        worldScale = (Vector3f) capsule.readSavable("worldScale", new Vector3f(1, 1, 1));
         numVertices = capsule.readInt("numVertices", 0);
         numTriangles = capsule.readInt("numTriangles", 0);
         vertexStride = capsule.readInt("vertexStride", 0);

@@ -78,11 +78,11 @@ public class SixDofJoint extends PhysicsJoint {
     final private LinkedList<RotationalLimitMotor> rotationalMotors = new LinkedList<>();
     private TranslationalLimitMotor translationalMotor;
     /**
-     * upper limit for rotation of all 3 axes
+     * upper limits for rotation of all 3 axes
      */
     final private Vector3f angularUpperLimit = new Vector3f(Vector3f.POSITIVE_INFINITY);
     /**
-     * lower limit for rotation of all 3 axes
+     * lower limits for rotation of all 3 axes
      */
     final private Vector3f angularLowerLimit = new Vector3f(Vector3f.NEGATIVE_INFINITY);
     /**
@@ -110,13 +110,13 @@ public class SixDofJoint extends PhysicsJoint {
      * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
      * @param pivotA the local offset of the connection point in node A (not
-     * null, alias created)
+     * null, alias created) TODO
      * @param pivotB the local offset of the connection point in node B (not
-     * null, alias created)
+     * null, alias created) TODO
      * @param rotA the local orientation of the connection to node A (not null,
-     * alias created)
+     * alias created) TODO
      * @param rotB the local orientation of the connection to node B (not null,
-     * alias created)
+     * alias created) TODO
      * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
      * B
      */
@@ -143,9 +143,9 @@ public class SixDofJoint extends PhysicsJoint {
      * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
      * @param pivotA the local offset of the connection point in node A (not
-     * null, alias created)
+     * null, alias created) TODO
      * @param pivotB the local offset of the connection point in node B (not
-     * null, alias created)
+     * null, alias created) TODO
      * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
      * B
      */
@@ -190,7 +190,8 @@ public class SixDofJoint extends PhysicsJoint {
      * Access the indexed RotationalLimitMotor of this joint, the motor which
      * influences rotation around one axis.
      *
-     * @param index the axis index of the desired motor (&ge;0, &le;3)
+     * @param index the axis index of the desired motor: 0&rarr;X, 1&rarr;Y,
+     * 2&rarr;Z
      * @return the pre-existing instance
      */
     public RotationalLimitMotor getRotationalLimitMotor(int index) {

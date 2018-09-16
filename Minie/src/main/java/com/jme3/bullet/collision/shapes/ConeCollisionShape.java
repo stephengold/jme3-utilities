@@ -56,15 +56,15 @@ public class ConeCollisionShape extends CollisionShape {
             = Logger.getLogger(ConeCollisionShape.class.getName());
 
     /**
-     * radius (&ge;0)
+     * copy of radius (&ge;0)
      */
     private float radius;
     /**
-     * height (&ge;0)
+     * copy of height (&ge;0)
      */
     private float height;
     /**
-     * main (height) axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
+     * copy of main (height) axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
      */
     private int axis;
 
@@ -78,8 +78,8 @@ public class ConeCollisionShape extends CollisionShape {
     /**
      * Instantiate a cone shape around the specified main (height) axis.
      *
-     * @param radius the radius to use (&ge;0)
-     * @param height the height to use (&ge;0)
+     * @param radius the desired radius (&ge;0)
+     * @param height the desired height (&ge;0)
      * @param axis which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public ConeCollisionShape(float radius, float height, int axis) {
@@ -94,10 +94,10 @@ public class ConeCollisionShape extends CollisionShape {
     }
 
     /**
-     * Instantiate a cone shape around the Y axis.
+     * Instantiate a cone shape oriented along the Y axis.
      *
-     * @param radius the radius to use (&ge;0)
-     * @param height the height to use (&ge;0)
+     * @param radius the desired radius (&ge;0)
+     * @param height the desired height (&ge;0)
      */
     public ConeCollisionShape(float radius, float height) {
         Validate.nonNegative(radius, "radius");

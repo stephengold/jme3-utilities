@@ -92,7 +92,7 @@ public class HeightfieldCollisionShape extends CollisionShape {
      * buffer for passing height data to Bullet
      * <p>
      * A Java reference must persist after createShape() completes, or else the
-     * buffer may get garbaged collected.
+     * buffer might get garbaged collected.
      */
     private ByteBuffer bbuf;
 

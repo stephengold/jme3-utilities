@@ -58,15 +58,15 @@ public class CapsuleCollisionShape extends CollisionShape {
             = Logger.getLogger(CapsuleCollisionShape.class.getName());
 
     /**
-     * height of the cylindrical portion (&ge;0)
+     * copy of height of the cylindrical portion (&ge;0)
      */
     private float height;
     /**
-     * radius (&ge;0)
+     * copy of radius (&ge;0)
      */
     private float radius;
     /**
-     * main (height) axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
+     * copy of main (height) axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
      */
     private int axis;
 
@@ -80,8 +80,8 @@ public class CapsuleCollisionShape extends CollisionShape {
     /**
      * Instantiate a Y-axis capsule shape with the specified radius and height.
      *
-     * @param radius the radius to use (&ge;0)
-     * @param height the height (of the cylindrical portion) to use (&ge;0)
+     * @param radius the desired radius (&ge;0)
+     * @param height the desired height (of the cylindrical portion) (&ge;0)
      */
     public CapsuleCollisionShape(float radius, float height) {
         Validate.nonNegative(radius, "radius");
@@ -96,8 +96,8 @@ public class CapsuleCollisionShape extends CollisionShape {
     /**
      * Instantiate a capsule shape around the specified main (height) axis.
      *
-     * @param radius the radius to use (&ge;0)
-     * @param height the height (of the cylindrical portion) to use (&ge;0)
+     * @param radius the desired radius (&ge;0)
+     * @param height the desired height (of the cylindrical portion) (&ge;0)
      * @param axis which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public CapsuleCollisionShape(float radius, float height, int axis) {

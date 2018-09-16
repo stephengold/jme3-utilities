@@ -112,8 +112,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     private final Quaternion localForwardRotation
             = new Quaternion(Quaternion.DIRECTION_Z);
     /**
-     * Is a z-forward vector based on the view direction and the current local
-     * x/z plane.
+     * a Z-forward vector based on the view direction and the local X-Z plane.
      */
     private final Vector3f viewDirection = new Vector3f(0f, 0f, 1f);
     /**
@@ -121,8 +120,10 @@ public class BetterCharacterControl extends AbstractPhysicsControl
      */
     private final Vector3f location = new Vector3f();
     /**
-     * spatial rotation, is a z-forward rotation based on the view direction and
-     * the current local X-Z plane. See also rotatedViewDirection.
+     * spatial rotation, a Z-forward rotation based on the view direction and
+     * local X-Z plane.
+     *
+     * @see #rotatedViewDirection
      */
     private final Quaternion rotation = new Quaternion(Quaternion.DIRECTION_Z);
     private final Vector3f rotatedViewDirection = new Vector3f(0f, 0f, 1f);
@@ -382,10 +383,9 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Read the current walk velocity. The length of the vector defines the
-     * speed.
+     * Read the walk velocity. The length of the vector defines the speed.
      *
-     * @return the pre-existing vector TODO
+     * @return the pre-existing vector (not null) TODO
      */
     public Vector3f getWalkDirection() {
         return walkDirection;
@@ -403,10 +403,10 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Gets the current view direction, note this doesn't need to correspond
-     * with the spatials forward direction.
+     * Access the view direction. This need not agree with the spatial's forward
+     * direction.
      *
-     * @return the pre-existing vector
+     * @return the pre-existing vector (not null) TODO
      */
     public Vector3f getViewDirection() {
         return viewDirection;
@@ -414,15 +414,15 @@ public class BetterCharacterControl extends AbstractPhysicsControl
 
     /**
      * Realign the local forward vector to given direction vector, if null is
-     * supplied Vector3f.UNIT_Z is used. Input vector has to be perpendicular to
-     * current gravity vector. This normally only needs to be invoked when the
+     * supplied Vector3f.UNIT_Z is used. The input vector must be perpendicular
+     * to gravity vector. This normally only needs to be invoked when the
      * gravity direction changed continuously and the local forward vector is
      * off due to drift. E.g. after walking around on a sphere "planet" for a
      * while and then going back to a y-up coordinate system the local z-forward
      * might not be 100% aligned with Z axis.
      *
-     * @param vec The new forward vector, has to be perpendicular to the current
-     * gravity vector!
+     * @param vec the desired forward vector (perpendicular to the gravity
+     * vector, may be null, default=0,0,1)
      */
     public void resetForward(Vector3f vec) {
         if (vec == null) {
@@ -550,10 +550,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Gets a new collision shape based on the current scale parameter. The
-     * created collision shape is a capsule collision shape that is attached to
-     * a compound collision shape with an offset to set the object center at the
-     * bottom of the capsule.
+     * Create a collision shape based on the scale parameter. The new shape is a
+     * compound shape containing an offset capsule.
      *
      * @return a new compound shape (not null)
      */

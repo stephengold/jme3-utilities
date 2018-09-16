@@ -170,11 +170,11 @@ public abstract class PhysicsCollisionObject implements Savable {
 
     /**
      * Alter the collision group for this physics object.
-     *
+     * <p>
      * Groups are represented by integer bit masks with exactly 1 bit set.
      * Pre-made variables are available in PhysicsCollisionObject. By default,
      * physics objects are in COLLISION_GROUP_01.
-     *
+     * <p>
      * Two objects can collide only if one of them has the collisionGroup of the
      * other in its collideWithGroups set.
      *
@@ -239,8 +239,8 @@ public abstract class PhysicsCollisionObject implements Savable {
     }
 
     /**
-     * Store collision-group information in the btCollisionObject when building
-     * or rebuilding this object.
+     * Initialize the user pointer and collision-group information of this
+     * object.
      */
     protected void initUserPointer() {
         logger.log(Level.FINE, "initUserPointer() objectId = {0}",

@@ -431,7 +431,7 @@ public class VehicleWheel implements Savable {
     /**
      * Read the rest length of this wheel.
      *
-     * @return the length (in world units)
+     * @return the length
      */
     public float getRestLength() {
         return restLength;
@@ -440,7 +440,7 @@ public class VehicleWheel implements Savable {
     /**
      * Alter the rest length of this wheel.
      *
-     * @param restLength the desired length (in world units)
+     * @param restLength the desired length (default=1)
      */
     public void setRestLength(float restLength) {
         this.restLength = restLength;

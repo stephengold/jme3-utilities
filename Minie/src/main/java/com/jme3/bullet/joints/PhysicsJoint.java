@@ -74,9 +74,6 @@ public abstract class PhysicsJoint implements Savable {
      * local offset of this joint's connection point in node B
      */
     protected Vector3f pivotB;
-    /**
-     * cached flag
-     */
     private boolean collisionBetweenLinkedBodies = true;
 
     /**
@@ -96,9 +93,9 @@ public abstract class PhysicsJoint implements Savable {
      * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
      * @param pivotA local offset of the joint connection point in node A (not
-     * null, alias created)
+     * null, alias created) TODO
      * @param pivotB local offset of the joint connection point in node B (not
-     * null, alias created)
+     * null, alias created) TODO
      */
     protected PhysicsJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB) {
@@ -173,7 +170,7 @@ public abstract class PhysicsJoint implements Savable {
     /**
      * Access the local offset of the joint connection point in node A.
      *
-     * @return the pre-existing vector
+     * @return the pre-existing vector (not null) TODO
      */
     public Vector3f getPivotA() {
         return pivotA;
@@ -182,7 +179,7 @@ public abstract class PhysicsJoint implements Savable {
     /**
      * Access the local offset of the joint connection point in node A.
      *
-     * @return the pre-existing vector
+     * @return the pre-existing vector (not null) TODO
      */
     public Vector3f getPivotB() {
         return pivotB;

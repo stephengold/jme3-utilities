@@ -306,7 +306,7 @@ public class VehicleControl extends PhysicsVehicle
      * <p>
      * When the control is disabled, the vehicle is removed from physics space.
      * When the control is enabled again, the physics object is moved to the
-     * current location of the spatial and then added to the physics space.
+     * spatial's location and then added to the physics space.
      *
      * @param enabled true&rarr;enable the control, false&rarr;disable it
      */
