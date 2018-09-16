@@ -63,8 +63,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * <p>
- * PhysicsSpace - The central jbullet-jme physics space</p>
+ * A jbullet-jme physics space.
  *
  * @author normenhansen
  */
@@ -132,11 +131,13 @@ public class PhysicsSpace {
     final private ConcurrentLinkedQueue<PhysicsTickListener> tickListeners
             = new ConcurrentLinkedQueue<>();
     /**
-     * minimum coordinate values when using AXIS_SWEEP broadphase algorithms
+     * copy of minimum coordinate values when using AXIS_SWEEP broadphase
+     * algorithms
      */
     final private Vector3f worldMin = new Vector3f(-10000f, -10000f, -10000f);
     /**
-     * maximum coordinate values when using AXIS_SWEEP broadphase algorithms
+     * copy of maximum coordinate values when using AXIS_SWEEP broadphase
+     * algorithms
      */
     final private Vector3f worldMax = new Vector3f(10000f, 10000f, 10000f);
     /**
@@ -144,7 +145,7 @@ public class PhysicsSpace {
      */
     private float accuracy = 1f / 60f;
     /**
-     * maximum number of physics steps per frame (&ge;0)
+     * maximum number of physics steps per frame (&ge;0, default=4)
      */
     private int maxSubSteps = 4;
     /**
@@ -152,7 +153,7 @@ public class PhysicsSpace {
      */
     private int rayTestFlags = 1 << 2;
     /**
-     * number of iterations used by the contact-and-constraint solver
+     * copy of number of iterations used by the contact-and-constraint solver
      * (default=10)
      */
     private int solverNumIterations = 10;
@@ -181,9 +182,9 @@ public class PhysicsSpace {
      * thread.
      *
      * @param worldMin the desired minimum coordinates values (not null,
-     * unaffected)
+     * unaffected, default=-10k,-10k,-10k)
      * @param worldMax the desired minimum coordinates values (not null,
-     * unaffected)
+     * unaffected, default=10k,10k,10k)
      * @param broadphaseType which broadphase collision-detection algorithm to
      * use (not null)
      */
@@ -287,7 +288,7 @@ public class PhysicsSpace {
 
     /**
      * Update this space. Invoked (by the Bullet app state) once per frame while
-     * the app state is state is attached and enabled.
+     * the app state is attached and enabled.
      *
      * @param time time-per-frame multiplied by speed (in seconds, &ge;0)
      */
@@ -731,10 +732,11 @@ public class PhysicsSpace {
      * Alter the gravitational acceleration acting on newly-added bodies.
      * <p>
      * Whenever a rigid body is added to a space, the body's gravity gets set to
-     * that of the space. Thus it makes sense to set space's vector before
+     * that of the space. Thus it makes sense to set the space's vector before
      * adding any bodies to the space.
      *
-     * @param gravity the desired acceleration vector (not null, unaffected)
+     * @param gravity the desired acceleration vector (not null, unaffected,
+     * default=0,-9.81,0)
      */
     public void setGravity(Vector3f gravity) {
         this.gravity.set(gravity);
@@ -744,8 +746,8 @@ public class PhysicsSpace {
     private native void setGravity(long spaceId, Vector3f gravity);
 
     /**
-     * gravity-acceleration vector (default is 9.81 in the -Y direction,
-     * corresponding to Earth-normal in MKS units)
+     * copy of gravity-acceleration vector (default is 9.81 in the -Y direction,
+     * corresponding to Earth-normal in MKS units) TODO sort fields
      */
     private final Vector3f gravity = new Vector3f(0, -9.81f, 0);
 
@@ -858,9 +860,9 @@ public class PhysicsSpace {
      * Perform a ray-collision test and return the results as a list of
      * PhysicsRayTestResults sorted by ascending hitFraction.
      *
-     * @param from coordinates of the starting location (in physics-space, not
-     * null, unaffected)
-     * @param to coordinates of the ending location (in physics-space, not null,
+     * @param from the starting location (physics-space coordinates, not null,
+     * unaffected)
+     * @param to the ending location (in physics-space coordinates, not null,
      * unaffected)
      * @return a new list of results (not null)
      */
@@ -875,9 +877,9 @@ public class PhysicsSpace {
      * Perform a ray-collision test and return the results as a list of
      * PhysicsRayTestResults in arbitrary order.
      *
-     * @param from coordinates of the starting location (in physics-space, not
+     * @param from the starting location (in physics-space coordinates, not
      * null, unaffected)
-     * @param to coordinates of the ending location (in physics-space, not null,
+     * @param to the ending location (in physics-space coordinates, not null,
      * unaffected)
      * @return a new list of results (not null)
      */
@@ -893,7 +895,7 @@ public class PhysicsSpace {
      * https://code.google.com/p/bullet/source/browse/trunk/src/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h
      * for possible options. Defaults to using the faster, approximate raytest.
      *
-     * @param flags which flags to use (default=0x4)
+     * @param flags the desired flags, ORed together (default=0x4)
      */
     public void setRayTestFlags(int flags) {
         rayTestFlags = flags;
@@ -923,9 +925,9 @@ public class PhysicsSpace {
      * Perform a ray-collision test and return the results as a list of
      * PhysicsRayTestResults sorted by ascending hitFraction.
      *
-     * @param from coordinates of the starting location (in physics-space, not
+     * @param from coordinates of the starting location (in physics space, not
      * null, unaffected)
-     * @param to coordinates of the ending location (in physics-space, not null,
+     * @param to coordinates of the ending location (in physics space, not null,
      * unaffected)
      * @param results the list to hold results (not null, modified)
      * @return results
@@ -943,9 +945,9 @@ public class PhysicsSpace {
      * Perform a ray-collision test and return the results as a list of
      * PhysicsRayTestResults in arbitrary order.
      *
-     * @param from coordinates of the starting location (in physics-space, not
+     * @param from coordinates of the starting location (in physics space, not
      * null, unaffected)
-     * @param to coordinates of the ending location (in physics-space, not null,
+     * @param to coordinates of the ending location (in physics space, not null,
      * unaffected)
      * @param results the list to hold results (not null, modified)
      * @return results
@@ -964,14 +966,15 @@ public class PhysicsSpace {
     /**
      * Perform a sweep-collision test and return the results as a new list.
      * <p>
-     * The start and end must be at least 0.4f units apart.
+     * The starting and ending locations must be at least 0.4f physics-space
+     * units apart.
      * <p>
      * A sweep test will miss a collision if it starts inside an object and
      * sweeps away from the object's center.
      *
-     * @param shape the shape to use (not null)
-     * @param start the starting transform (not null)
-     * @param end the ending transform (not null)
+     * @param shape the shape to sweep (not null)
+     * @param start the starting physics-space transform (not null)
+     * @param end the ending physics-space transform (not null)
      * @return a new list of results
      */
     public List<PhysicsSweepTestResult> sweepTest(CollisionShape shape,
@@ -984,14 +987,15 @@ public class PhysicsSpace {
     /**
      * Perform a sweep-collision test and store the results in an existing list.
      * <p>
-     * The start and end must be at least 0.4f units apart.
+     * The starting and ending locations must be at least 0.4f physics-space
+     * units apart.
      * <p>
      * A sweep test will miss a collision if it starts inside an object and
      * sweeps away from the object's center.
      *
-     * @param shape the shape to use (not null)
-     * @param start the starting transform (not null)
-     * @param end the ending transform (not null)
+     * @param shape the shape to sweep (not null)
+     * @param start the starting physics-space transform (not null)
+     * @param end the ending physics-space transform (not null)
      * @param results the list to hold results (not null, modified)
      * @return results
      */
@@ -1008,14 +1012,15 @@ public class PhysicsSpace {
     /**
      * Perform a sweep-collision test and store the results in an existing list.
      * <p>
-     * The start and end must be at least 0.4f units apart.
+     * The starting and ending locations must be at least 0.4f physics-space
+     * units apart.
      * <p>
      * A sweep test will miss a collision if it starts inside an object and
      * sweeps away from the object's center.
      *
-     * @param shape the shape to use (not null)
-     * @param start the starting transform (not null)
-     * @param end the ending transform (not null)
+     * @param shape the shape to sweep (not null)
+     * @param start the starting physics-space transform (not null)
+     * @param end the ending physics-space transform (not null)
      * @param results the list to hold results (not null, modified)
      * @param allowedCcdPenetration true&rarr;allow, false&rarr;disallow
      * @return results
@@ -1073,9 +1078,10 @@ public class PhysicsSpace {
      * below 1/accuracy. For example a value of 2 can compensate for frame rates
      * as low as 30fps, assuming the physics has an accuracy of 1/60 sec.
      * <p>
-     * Setting this value too high depress the frame rate.
+     * Setting this value too high can depress the frame rate.
      *
-     * @param steps the maximum number of steps per frame (&ge;1, default=4)
+     * @param steps the desired maximum number of steps per frame (&ge;1,
+     * default=4)
      */
     public void setMaxSubSteps(int steps) {
         Validate.positive(steps, "steps");
@@ -1083,9 +1089,9 @@ public class PhysicsSpace {
     }
 
     /**
-     * Read the current accuracy of the physics simulation.
+     * Read the accuracy (time step) of the physics simulation.
      *
-     * @return the current value (in seconds)
+     * @return the timestep (in seconds, &gt;0)
      */
     public float getAccuracy() {
         return accuracy;
@@ -1097,7 +1103,7 @@ public class PhysicsSpace {
      * In general, the smaller the time step, the more accurate (and
      * compute-intensive) the simulation will be.
      *
-     * @param accuracy (in seconds, &gt;0, default=1/60)
+     * @param accuracy the desired time step (in seconds, &gt;0, default=1/60)
      */
     public void setAccuracy(float accuracy) {
         Validate.positive(accuracy, "accuracy");
@@ -1107,49 +1113,27 @@ public class PhysicsSpace {
     /**
      * Access the minimum coordinate values for this space.
      *
-     * @return the pre-existing vector
+     * @return the pre-existing vector (not null) TODO
      */
     public Vector3f getWorldMin() {
         return worldMin;
     }
 
     /**
-     * Alter the minimum coordinate values for this space. (only affects
-     * AXIS_SWEEP broadphase algorithms)
-     *
-     * @param worldMin the desired minimum coordinate values (not null,
-     * unaffected)
-     */
-    public void setWorldMin(Vector3f worldMin) {
-        this.worldMin.set(worldMin);
-    }
-
-    /**
      * Access the maximum coordinate values for this space.
      *
-     * @return the pre-existing vector
+     * @return the pre-existing vector (not null) TODO
      */
     public Vector3f getWorldMax() {
         return worldMax;
     }
 
     /**
-     * Alter the maximum coordinate values for this space. (only affects
-     * AXIS_SWEEP broadphase algorithms)
-     *
-     * @param worldMax the desired maximum coordinate values (not null,
-     * unaffected)
-     */
-    public void setWorldMax(Vector3f worldMax) {
-        this.worldMax.set(worldMax);
-    }
-
-    /**
-     * Alter the number of iterations used by the contact solver.
+     * Alter the number of iterations used by the contact-and-constraint solver.
      * <p>
-     * The default is 10. Use 4 for low quality, 20 for high quality.
+     * Use 4 for low quality, 20 for high quality.
      *
-     * @param numIterations the number of iterations (&ge;1, default=10)
+     * @param numIterations the desired number of iterations (&ge;1, default=10)
      */
     public void setSolverNumIterations(int numIterations) {
         Validate.positive(numIterations, "number of iterations");
