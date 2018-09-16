@@ -59,11 +59,6 @@ public class SixDofSpringJoint extends SixDofJoint {
     final public static Logger logger
             = Logger.getLogger(SixDofSpringJoint.class.getName());
 
-    final boolean springEnabled[] = new boolean[6];
-    final float equilibriumPoint[] = new float[6];
-    final float springStiffness[] = new float[6];
-    final float springDamping[] = new float[6]; // between 0 and 1 (1 == no damping)
-
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
@@ -83,10 +78,10 @@ public class SixDofSpringJoint extends SixDofJoint {
      * null, alias created) TODO
      * @param pivotB the local offset of the connection point in node B (not
      * null, alias created) TODO
-     * @param rotA the local orientation of the connection to node A (not
-     * null, alias created) TODO
-     * @param rotB the local orientation of the connection to node B (not
-     * null, alias created) TODO
+     * @param rotA the local orientation of the connection to node A (not null,
+     * alias created) TODO
+     * @param rotB the local orientation of the connection to node B (not null,
+     * alias created) TODO
      * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
      * B
      */
