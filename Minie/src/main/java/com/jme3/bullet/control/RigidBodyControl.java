@@ -143,37 +143,13 @@ public class RigidBodyControl extends PhysicsRigidBody
 
     /**
      * Clone this control for a different spatial. No longer used as of JME 3.1.
-     * TODO eviscerate
      *
      * @param spatial the spatial for the clone to control (or null)
      * @return a new control (not null)
      */
     @Override
     public Control cloneForSpatial(Spatial spatial) {
-        RigidBodyControl control = new RigidBodyControl(collisionShape, mass);
-        control.setAngularFactor(getAngularFactor());
-        control.setAngularSleepingThreshold(getAngularSleepingThreshold());
-        control.setCcdMotionThreshold(getCcdMotionThreshold());
-        control.setCcdSweptSphereRadius(getCcdSweptSphereRadius());
-        control.setCollideWithGroups(getCollideWithGroups());
-        control.setCollisionGroup(getCollisionGroup());
-        control.setDamping(getLinearDamping(), getAngularDamping());
-        control.setFriction(getFriction());
-        control.setGravity(getGravity());
-        control.setKinematic(isKinematic());
-        control.setKinematicSpatial(isKinematicSpatial());
-        control.setLinearSleepingThreshold(getLinearSleepingThreshold());
-        control.setPhysicsLocation(getPhysicsLocation(null));
-        control.setPhysicsRotation(getPhysicsRotationMatrix(null));
-        control.setRestitution(getRestitution());
-
-        if (mass > 0) {
-            control.setAngularVelocity(getAngularVelocity());
-            control.setLinearVelocity(getLinearVelocity());
-        }
-        control.setApplyPhysicsLocal(isApplyPhysicsLocal());
-
-        return control;
+        throw new UnsupportedOperationException();
     }
 
     /**

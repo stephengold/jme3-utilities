@@ -154,7 +154,7 @@ public class GhostControl extends PhysicsGhostObject
     /**
      * Access whichever spatial rotation corresponds to the physics rotation.
      *
-     * @return the pre-existing quaternion (not null)
+     * @return the pre-existing quaternion (not null) TODO
      */
     protected Quaternion getSpatialRotation() {
         if (MySpatial.isIgnoringTransforms(spatial)) {
@@ -168,23 +168,13 @@ public class GhostControl extends PhysicsGhostObject
 
     /**
      * Clone this control for a different spatial. No longer used as of JME 3.1.
-     * TODO eviscerate
      *
      * @param spatial the spatial for the clone to control (or null)
      * @return a new control (not null)
      */
     @Override
     public Control cloneForSpatial(Spatial spatial) {
-        GhostControl control = new GhostControl(collisionShape);
-        control.setCcdMotionThreshold(getCcdMotionThreshold());
-        control.setCcdSweptSphereRadius(getCcdSweptSphereRadius());
-        control.setCollideWithGroups(getCollideWithGroups());
-        control.setCollisionGroup(getCollisionGroup());
-        control.setPhysicsLocation(getPhysicsLocation());
-        control.setPhysicsRotation(getPhysicsRotationMatrix());
-        control.setApplyPhysicsLocal(isApplyPhysicsLocal());
-
-        return control;
+        throw new UnsupportedOperationException();
     }
 
     /**

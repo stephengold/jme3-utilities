@@ -366,13 +366,13 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
                 link.bone.setUserTransformsInModelSpace(position, tmpRot1);
 
             } else {
-                //if boneList is empty, this means that every bone in the ragdoll has a collision shape,
-                //so we just update the bone position
+                //If boneList is empty, every bone has a collision shape,
+                //so we simply update the bone position.
                 if (boneList.isEmpty()) {
                     link.bone.setUserTransformsInModelSpace(position, tmpRot1);
                 } else {
                     //boneList is not empty, this means some bones of the skeleton might not be associated with a collision shape.
-                    //So we update them recusively
+                    //So we update them recursively
                     RagdollUtils.setTransform(link.bone, position, tmpRot1, false, boneList);
                 }
             }
@@ -1146,21 +1146,13 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
 
     /**
      * Clone this control for a different spatial. No longer used as of JME 3.1.
-     * TODO eviscerate
      *
      * @param spatial the spatial for the clone to control (or null)
      * @return a new control (not null)
      */
     @Override
     public Control cloneForSpatial(Spatial spatial) {
-        KinematicRagdollControl control
-                = new KinematicRagdollControl(preset, weightThreshold);
-        control.setMode(mode);
-        control.setRootMass(rootMass);
-        control.setWeightThreshold(weightThreshold);
-        control.setApplyPhysicsLocal(isApplyPhysicsLocal());
-
-        return control;
+        throw new UnsupportedOperationException();
     }
 
     /**

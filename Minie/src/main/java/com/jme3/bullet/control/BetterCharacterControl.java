@@ -58,7 +58,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * This class replaces the deprecated CharacterControl class.
+ * This class is intended to replace the CharacterControl class.
  * <p>
  * A rigid body with cylinder collision shape is used and its velocity is set
  * continuously. A ray test is used to test whether the character is on the
@@ -86,7 +86,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     private float radius;
     private float height;
     /**
-     * mass of this character
+     * mass of this character (&gt;0)
      */
     private float mass;
     /**
@@ -288,18 +288,18 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Alter the jump force. The jump force is local to the characters
+     * Alter the jump force. The jump force is local to the character's
      * coordinate system, which normally is always z-forward (in world
      * coordinates, parent coordinates when set to applyLocalPhysics)
      *
-     * @param jumpForce the desired jump force (not null)
+     * @param jumpForce the desired jump force (not null, unaffected)
      */
     public void setJumpForce(Vector3f jumpForce) {
         this.jumpForce.set(jumpForce);
     }
 
     /**
-     * Access the jump force. The default is 5 * character mass in y direction.
+     * Access the jump force. The default is 5 * character mass in Y direction.
      *
      * @return the pre-existing vector (not null) TODO
      */
@@ -353,7 +353,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Alter the height multiplication factor for ducking.
+     * Alter the height multiplier for ducking.
      *
      * @param factor the factor by which the height should be multiplied when
      * ducking (&ge;0, &le;1)
@@ -363,7 +363,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Read the height multiplication factor for ducking.
+     * Read the height multiplier for ducking.
      *
      * @return the factor (&ge;0, &le;1)
      */
@@ -418,8 +418,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl
      * to gravity vector. This normally only needs to be invoked when the
      * gravity direction changed continuously and the local forward vector is
      * off due to drift. E.g. after walking around on a sphere "planet" for a
-     * while and then going back to a y-up coordinate system the local z-forward
-     * might not be 100% aligned with Z axis.
+     * while and then going back to a Y-up coordinate system the local Z-forward
+     * might not be 100% aligned with the Z axis.
      *
      * @param vec the desired forward vector (perpendicular to the gravity
      * vector, may be null, default=0,0,1)
@@ -730,18 +730,13 @@ public class BetterCharacterControl extends AbstractPhysicsControl
 
     /**
      * Clone this control for a different spatial. No longer used as of JME 3.1.
-     * TODO eviscerate
      *
      * @param spatial the spatial for the clone to control (or null)
      * @return a new control (not null)
      */
     @Override
     public Control cloneForSpatial(Spatial spatial) {
-        BetterCharacterControl control
-                = new BetterCharacterControl(radius, height, mass);
-        control.setJumpForce(jumpForce);
-
-        return control;
+        throw new UnsupportedOperationException();
     }
 
     /**
