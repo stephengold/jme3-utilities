@@ -126,7 +126,7 @@ public class VehicleControl extends PhysicsVehicle
      * coordinates.
      *
      * @param applyPhysicsLocal true&rarr;match local coordinates,
-     * false&rarr;match world coordinates (default is false)
+     * false&rarr;match world coordinates (default=false)
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         motionState.setApplyPhysicsLocal(applyPhysicsLocal);

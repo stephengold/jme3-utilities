@@ -40,7 +40,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
- * Stores info about one wheel of a PhysicsVehicle
+ * Information about one wheel of a PhysicsVehicle.
  *
  * @author normenhansen
  */
@@ -601,14 +601,14 @@ public class VehicleWheel implements Savable {
      * Spatial.
      *
      * @param applyLocal true&rarr;match local transform, false&rarr;match world
-     * transform (default is false)
+     * transform (default=false)
      */
     public void setApplyLocal(boolean applyLocal) {
         this.applyLocal = applyLocal;
     }
 
     /**
-     * write the content of the wheelWorldRotation into the store
+     * Copy this wheel's rotation to the specified quaternion.
      *
      * @param store a quaternion to store the result in (modified)
      */
@@ -617,7 +617,7 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * write the content of the wheelWorldLocation into the store
+     * Copy this wheel's location to the specified vector.
      *
      * @param store a vector to store the result in (modified)
      */

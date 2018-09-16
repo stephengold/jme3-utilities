@@ -54,7 +54,8 @@ import java.util.logging.Logger;
  * vehicle model as provided in btRaycastVehicle. Instead of simulation each
  * wheel and chassis as separate rigid bodies, connected by constraints, it uses
  * a simplified model. This simplified model has many benefits, and is widely
- * used in commercial driving games.<br>
+ * used in commercial driving games.
+ * <p>
  * The entire vehicle is represented as a single rigid body, the chassis. The
  * collision detection of the wheels is approximated by ray casts, and the tire
  * friction is a basic anisotropic friction model.
@@ -121,7 +122,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * used internally
      */
     public void updateWheels() {
-        if (vehicleId != 0) {
+        if (vehicleId != 0L) {
             for (int i = 0; i < wheels.size(); i++) {
                 updateWheelTransform(vehicleId, i, true);
                 wheels.get(i).updatePhysicsState();

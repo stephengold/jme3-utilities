@@ -64,19 +64,22 @@ public class HingeJoint extends PhysicsJoint {
     private Vector3f axisB;
 
     /**
-     * copy of the angular-only flag
+     * copy of the angular-only flag (default=false)
      */
     private boolean angularOnly = false;
     /**
-     * copy of the limit's bias factor
+     * copy of the limit's bias factor, how strictly position errors (drift) is
+     * corrected (default=0.3)
      */
     private float biasFactor = 0.3f;
     /**
-     * copy of the limit's relaxation factor
+     * copy of the limit's relaxation factor, the rate at which velocity errors
+     * are corrected (default=1)
      */
     private float relaxationFactor = 1f;
     /**
-     * copy of the limit's softness
+     * copy of the limit's softness, the range fraction at which velocity-error
+     * correction starts operating (default=0.9)
      */
     private float limitSoftness = 0.9f;
 
@@ -121,7 +124,7 @@ public class HingeJoint extends PhysicsJoint {
     }
 
     /**
-     * Enable or disable the motor.
+     * Enable or disable this joint's motor.
      *
      * @param enable true to enable, false to disable
      * @param targetVelocity the desired target velocity
@@ -136,7 +139,7 @@ public class HingeJoint extends PhysicsJoint {
             float targetVelocity, float maxMotorImpulse);
 
     /**
-     * Test whether the motor is enabled.
+     * Test whether this joint's motor is enabled.
      *
      * @return true if enabled, otherwise false
      */
@@ -187,14 +190,14 @@ public class HingeJoint extends PhysicsJoint {
      *
      * @param low the desired lower limit of the hinge angle (in radians)
      * @param high the desired upper limit of the joint angle (in radians)
-     * @param _softness the factor at which the velocity error correction starts
-     * operating, i.e a softness of 0.9 means that the correction starts at 90%
-     * of the limit range.
-     * @param _biasFactor the magnitude of the position correction. It tells you
-     * how strictly the position error (drift) is corrected.
-     * @param _relaxationFactor the rate at which velocity errors are corrected.
-     * This can be seen as the strength of the limits. A low value will make the
-     * limits more spongy.
+     * @param _softness the desired range fraction at which velocity-error
+     * correction starts operating. A softness of 0.9 means that the correction
+     * starts at 90% of the limit range. (default=0.9)
+     * @param _biasFactor the desired magnitude of the position correction, how
+     * strictly position errors (drift) is corrected. (default=0.3)
+     * @param _relaxationFactor the desired rate at which velocity errors are
+     * corrected. This can be seen as the strength of the limits. A low value
+     * will make the limits more spongy. (default=1)
      */
     public void setLimit(float low, float high, float _softness,
             float _biasFactor, float _relaxationFactor) {
@@ -233,6 +236,7 @@ public class HingeJoint extends PhysicsJoint {
      * Alter the hinge translation flag.
      *
      * @param angularOnly true&rarr;rotate only, false&rarr;rotate and translate
+     * (default=false)
      */
     public void setAngularOnly(boolean angularOnly) {
         this.angularOnly = angularOnly;

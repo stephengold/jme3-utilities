@@ -524,9 +524,9 @@ public class BulletAppState implements AppState, PhysicsTickListener {
 
     /**
      * Alter the broadphase type the physics space will use. Not allowed after
-     * attaching the app state. The default is DBVT.
+     * attaching the app state.
      *
-     * @param broadphaseType an enum value (not null)
+     * @param broadphaseType an enum value (not null, default=DBVT)
      */
     public void setBroadphaseType(BroadphaseType broadphaseType) {
         Validate.nonNull(broadphaseType, "broadphase type");

@@ -185,7 +185,7 @@ public abstract class PhysicsCollisionObject implements Savable {
         assert Integer.bitCount(collisionGroup) == 1 : collisionGroup;
 
         this.collisionGroup = collisionGroup;
-        if (objectId != 0) {
+        if (objectId != 0L) {
             setCollisionGroup(objectId, collisionGroup);
         }
     }
@@ -200,7 +200,7 @@ public abstract class PhysicsCollisionObject implements Savable {
      */
     public void addCollideWithGroup(int collisionGroup) {
         this.collideWithGroups = this.collideWithGroups | collisionGroup;
-        if (objectId != 0) {
+        if (objectId != 0L) {
             setCollideWithGroups(objectId, this.collideWithGroups);
         }
     }
@@ -212,7 +212,7 @@ public abstract class PhysicsCollisionObject implements Savable {
      */
     public void removeCollideWithGroup(int collisionGroup) {
         this.collideWithGroups = this.collideWithGroups & ~collisionGroup;
-        if (objectId != 0) {
+        if (objectId != 0L) {
             setCollideWithGroups(this.collideWithGroups);
         }
     }
@@ -224,7 +224,7 @@ public abstract class PhysicsCollisionObject implements Savable {
      */
     public void setCollideWithGroups(int collisionGroups) {
         this.collideWithGroups = collisionGroups;
-        if (objectId != 0) {
+        if (objectId != 0L) {
             setCollideWithGroups(objectId, this.collideWithGroups);
         }
     }

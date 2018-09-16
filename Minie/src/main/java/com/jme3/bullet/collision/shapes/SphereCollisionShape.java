@@ -57,7 +57,7 @@ public class SphereCollisionShape extends CollisionShape {
             = Logger.getLogger(SphereCollisionShape.class.getName());
 
     /**
-     * radius of the sphere (&ge;0)
+     * copy of radius (&ge;0)
      */
     private float radius;
 

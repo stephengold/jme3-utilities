@@ -243,8 +243,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     }
 
     /**
-     * Destroy this object and remove it from memory. (Has no effect.) TODO
-     * remove
+     * (Has no effect.) TODO remove
      */
     public void destroy() {
     }

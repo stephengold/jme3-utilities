@@ -73,14 +73,17 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * motion state
      */
-    protected RigidBodyMotionState motionState = new RigidBodyMotionState();
+    final protected RigidBodyMotionState motionState
+            = new RigidBodyMotionState();
     /**
-     * mass (&gt;0, default=1) of a dynamic body, or 0 for a static body
+     * copy of mass (&gt;0) of a dynamic body, or 0 for a static body
+     * (default=1)
      */
     protected float mass = 1f;
     /**
-     * true&rarr;set kinematic mode (spatial controls body),
-     * false&rarr;dynamic/static mode (body controls spatial)
+     * copy of kinematic flag: true&rarr;set kinematic mode (spatial controls
+     * body), false&rarr;dynamic/static mode (body controls spatial)
+     * (default=false)
      */
     private boolean kinematic = false;
     /**
@@ -153,7 +156,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
-     * Callback for use by subclasses.
+     * For use by subclasses.
      */
     protected void preRebuild() {
     }
@@ -162,7 +165,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
             long collisionShapeId);
 
     /**
-     * Callback for use by subclasses.
+     * For use by subclasses.
      */
     protected void postRebuild() {
         if (mass == massForStatic) {
@@ -359,7 +362,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * movement and weight.
      *
      * @param kinematic true&rarr;set kinematic mode, false&rarr;set
-     * dynamic/static mode
+     * dynamic/static mode (default=false)
      */
     public void setKinematic(boolean kinematic) {
         this.kinematic = kinematic;
@@ -382,10 +385,10 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
-     * Alter the continuous collision detection (CCD) swept sphere radius for
-     * this body.
+     * Alter the radius of the swept sphere used for continuous collision
+     * detection (CCD).
      *
-     * @param radius (&ge;0)
+     * @param radius the desired radius (&ge;0, default=0)
      */
     public void setCcdSweptSphereRadius(float radius) {
         setCcdSweptSphereRadius(objectId, radius);
@@ -410,8 +413,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native void setCcdMotionThreshold(long objectId, float threshold);
 
     /**
-     * Read the radius of the sphere used for continuous collision detection
-     * (CCD).
+     * Read the radius of the swept sphere used for continuous collision
+     * detection (CCD).
      *
      * @return radius (&ge;0)
      */
@@ -457,7 +460,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * Alter this body's mass. Bodies with mass=0 are static.
      *
-     * @param mass the desired mass (&gt;0) or 0 for a static body
+     * @param mass the desired mass (&gt;0) or 0 for a static body (default=1)
      */
     public void setMass(float mass) {
         Validate.nonNegative(mass, "mass");
@@ -613,10 +616,10 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native float getRestitution(long objectId);
 
     /**
-     * Alter this body's restitution (bounciness). For best performance set
+     * Alter this body's restitution (bounciness). For best performance, set
      * restitution=0.
      *
-     * @param restitution the desired value
+     * @param restitution the desired value (default=0)
      */
     public void setRestitution(float restitution) {
         setRestitution(objectId, restitution);
@@ -696,7 +699,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Apply a force to the PhysicsRigidBody. Effective only if the next physics
-     * update steps the physics space.<br>
+     * update steps the physics space.
+     * <p>
      * To apply an impulse, use applyImpulse, use applyContinuousForce to apply
      * continuous force.
      *
@@ -713,7 +717,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Apply a force to the PhysicsRigidBody. Effective only if the next physics
-     * update steps the physics space.<br>
+     * update steps the physics space.
+     * <p>
      * To apply an impulse, use
      * {@link #applyImpulse(com.jme3.math.Vector3f, com.jme3.math.Vector3f)}.
      *
@@ -728,7 +733,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Apply a force to the PhysicsRigidBody. Effective only if the next physics
-     * update steps the physics space.<br>
+     * update steps the physics space.
+     * <p>
      * To apply an impulse, use
      * {@link #applyImpulse(com.jme3.math.Vector3f, com.jme3.math.Vector3f)}.
      *
@@ -829,8 +835,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * These thresholds determine when the body can be deactivated to save
      * resources. Low values keep the body active when it barely moves.
      *
-     * @param linear the desired linear sleeping threshold (&ge;0)
-     * @param angular the desired angular sleeping threshold (&ge;0)
+     * @param linear the desired linear sleeping threshold (&ge;0, default=0.8)
+     * @param angular the desired angular sleeping threshold (&ge;0, default=1)
      */
     public void setSleepingThresholds(float linear, float angular) {
         setSleepingThresholds(objectId, linear, angular);
@@ -842,7 +848,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * Alter this body's linear sleeping threshold.
      *
-     * @param linearSleepingThreshold the desired threshold (&ge;0)
+     * @param linearSleepingThreshold the desired threshold (&ge;0, default=0.8)
      */
     public void setLinearSleepingThreshold(float linearSleepingThreshold) {
         setLinearSleepingThreshold(objectId, linearSleepingThreshold);

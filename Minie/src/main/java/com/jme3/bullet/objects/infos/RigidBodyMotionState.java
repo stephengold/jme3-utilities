@@ -116,7 +116,7 @@ public class RigidBodyMotionState {
             Quaternion rotation);
 
     /**
-     * Copy the location of this motion state.
+     * Copy the location from this motion state.
      *
      * @return the pre-existing location vector (in physics-space coordinates,
      * not null)
@@ -145,7 +145,7 @@ public class RigidBodyMotionState {
      * Read the rotation of this motion state (as a quaternion).
      *
      * @return the pre-existing instance (in physics-space coordinates, not
-     * null)
+     * null) TODO
      */
     public Quaternion getWorldRotationQuat() {
         getWorldRotationQuat(motionStateId, worldRotationQuat);
@@ -177,7 +177,7 @@ public class RigidBodyMotionState {
      * coordinates.
      *
      * @param applyPhysicsLocal true&rarr;match local coordinates,
-     * false&rarr;match world coordinates (default is false)
+     * false&rarr;match world coordinates (default=false)
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         this.applyPhysicsLocal = applyPhysicsLocal;
