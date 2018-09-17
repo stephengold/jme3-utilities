@@ -243,12 +243,6 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     }
 
     /**
-     * (Has no effect.) TODO remove
-     */
-    public void destroy() {
-    }
-
-    /**
      * Access a list of overlapping objects.
      * <p>
      * Another object overlaps with this one if and if only their

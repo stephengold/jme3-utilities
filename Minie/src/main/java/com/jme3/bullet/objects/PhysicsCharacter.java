@@ -619,12 +619,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     }
 
     /**
-     * (Has no effect.) TODO remove
-     */
-    public void destroy() {
-    }
-
-    /**
      * Serialize this character, for example when saving to a J3O file.
      *
      * @param ex exporter (not null)
