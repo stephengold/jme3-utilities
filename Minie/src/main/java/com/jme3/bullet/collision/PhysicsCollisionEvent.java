@@ -38,10 +38,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * An event that describes a collision in the physics world.
- * <p>
- * Do not retain this object, as it will be reused after the collision() method
- * returns. Copy any data you need during the collide() method.
+ * Describe a collision in the physics world.
  *
  * @author normenhansen
  */
@@ -52,23 +49,6 @@ public class PhysicsCollisionEvent extends EventObject {
      */
     final public static Logger logger
             = Logger.getLogger(PhysicsCollisionEvent.class.getName());
-    /**
-     * type value to indicate a new event
-     */
-    public static final int TYPE_ADDED = 0;
-    /**
-     * type value to indicate an event that has been added to a PhysicsSpace
-     * queue
-     */
-    public static final int TYPE_PROCESSED = 1;
-    /**
-     * type value to indicate a cleaned/destroyed event
-     */
-    public static final int TYPE_DESTROYED = 2;
-    /**
-     * type value that indicates the event's status
-     */
-    private int type = TYPE_ADDED;
     /**
      * 1st involved object
      */
@@ -85,56 +65,20 @@ public class PhysicsCollisionEvent extends EventObject {
     /**
      * Instantiate a collision event.
      *
-     * @param type event type (0=added/1=processed/2=destroyed)
-     * @param nodeA 1st involved object (alias created)
-     * @param nodeB 2nd involved object (alias created)
-     * @param manifoldPointObjectId Bullet identifier of the btManifoldPoint
+     * @param nodeA 1st involved object (not null, alias created)
+     * @param nodeB 2nd involved object (not null, alias created)
+     * @param manifoldPointId Bullet identifier of the btManifoldPoint (not 0)
      */
-    public PhysicsCollisionEvent(int type, PhysicsCollisionObject nodeA,
-            PhysicsCollisionObject nodeB, long manifoldPointObjectId) {
+    public PhysicsCollisionEvent(PhysicsCollisionObject nodeA,
+            PhysicsCollisionObject nodeB, long manifoldPointId) {
         super(nodeA);
+        Validate.nonNull(nodeA, "node A");
+        Validate.nonNull(nodeB, "node B");
+        Validate.nonZero(manifoldPointId, "manifold point id");
 
-        this.type = type;
         this.nodeA = nodeA;
         this.nodeB = nodeB;
-        this.manifoldPointObjectId = manifoldPointObjectId;
-    }
-
-    /**
-     * Destroy this event. TODO remove
-     */
-    public void clean() {
-        source = null;
-        this.type = TYPE_ADDED;
-        this.nodeA = null;
-        this.nodeB = null;
-        this.manifoldPointObjectId = 0L;
-    }
-
-    /**
-     * Reuse this event. TODO unused - remove
-     *
-     * @param type event type (added/processed/destroyed)
-     * @param source 1st involved object (alias created)
-     * @param nodeB 2nd involved object (alias created)
-     * @param manifoldPointObjectId Bullet identifier
-     */
-    public void refactor(int type, PhysicsCollisionObject source,
-            PhysicsCollisionObject nodeB, long manifoldPointObjectId) {
-        this.source = source;
-        this.type = type;
-        this.nodeA = source;
-        this.nodeB = nodeB;
-        this.manifoldPointObjectId = manifoldPointObjectId;
-    }
-
-    /**
-     * Read the type of event.
-     *
-     * @return added/processed/destroyed
-     */
-    public int getType() {
-        return type;
+        manifoldPointObjectId = manifoldPointId;
     }
 
     /**
@@ -143,10 +87,13 @@ public class PhysicsCollisionEvent extends EventObject {
      * @return the pre-existing Spatial, or null if none
      */
     public Spatial getNodeA() {
-        if (nodeA.getUserObject() instanceof Spatial) {
-            return (Spatial) nodeA.getUserObject();
+        Spatial result = null;
+        Object userObject = nodeA.getUserObject();
+        if (userObject instanceof Spatial) {
+            result = (Spatial) userObject;
         }
-        return null;
+
+        return result;
     }
 
     /**
@@ -155,10 +102,13 @@ public class PhysicsCollisionEvent extends EventObject {
      * @return the pre-existing Spatial, or null if none
      */
     public Spatial getNodeB() {
-        if (nodeB.getUserObject() instanceof Spatial) {
-            return (Spatial) nodeB.getUserObject();
+        Spatial result = null;
+        Object userObject = nodeB.getUserObject();
+        if (userObject instanceof Spatial) {
+            result = (Spatial) userObject;
         }
-        return null;
+
+        return result;
     }
 
     /**
@@ -167,6 +117,7 @@ public class PhysicsCollisionEvent extends EventObject {
      * @return the pre-existing object (not null)
      */
     public PhysicsCollisionObject getObjectA() {
+        assert nodeA != null;
         return nodeA;
     }
 
@@ -176,6 +127,7 @@ public class PhysicsCollisionEvent extends EventObject {
      * @return the pre-existing object (not null)
      */
     public PhysicsCollisionObject getObjectB() {
+        assert nodeB != null;
         return nodeB;
     }
 
@@ -270,20 +222,14 @@ public class PhysicsCollisionEvent extends EventObject {
     /**
      * Copy the collision's lateral friction direction #1.
      *
-     * @return a new vector (not null)
-     */
-    public Vector3f getLateralFrictionDir1() {
-        return getLateralFrictionDir1(new Vector3f());
-    }
-
-    /**
-     * Copy the collision's lateral friction direction #1.
-     *
-     * @param storeResult storage for the result (not null, modified)
-     * @return direction vector (not null)
+     * @param storeResult storage for the result (modified if not null)
+     * @return a direction vector (either storeResult or a new instance)
      */
     public Vector3f getLateralFrictionDir1(Vector3f storeResult) {
-        Validate.nonNull(storeResult, "store result");
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+
         getLateralFrictionDir1(manifoldPointObjectId, storeResult);
         return storeResult;
     }
@@ -294,20 +240,14 @@ public class PhysicsCollisionEvent extends EventObject {
     /**
      * Copy the collision's lateral friction direction #2.
      *
-     * @return a new vector
-     */
-    public Vector3f getLateralFrictionDir2() {
-        return getLateralFrictionDir2(new Vector3f());
-    }
-
-    /**
-     * Copy the collision's lateral friction direction #2.
-     *
-     * @param storeResult storage for the result (not null, modified)
-     * @return direction vector (not null)
+     * @param storeResult storage for the result (modified if not null)
+     * @return a direction vector (either storeResult or a new instance)
      */
     public Vector3f getLateralFrictionDir2(Vector3f storeResult) {
-        Validate.nonNull(storeResult, "store result");
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+
         getLateralFrictionDir2(manifoldPointObjectId, storeResult);
         return storeResult;
     }
@@ -341,20 +281,15 @@ public class PhysicsCollisionEvent extends EventObject {
     /**
      * Copy the collision's location in the local coordinates of object A.
      *
-     * @return a new location vector (in local coordinates, not null)
-     */
-    public Vector3f getLocalPointA() {
-        return getLocalPointA(new Vector3f());
-    }
-
-    /**
-     * Copy the collision's location in the local coordinates of object A.
-     *
-     * @param storeResult storage for the result (not null, modified)
-     * @return a location vector (in local coordinates, not null)
+     * @param storeResult storage for the result (modified if not null)
+     * @return a location vector (in local coordinates, either storeResult or a
+     * new instance)
      */
     public Vector3f getLocalPointA(Vector3f storeResult) {
-        Validate.nonNull(storeResult, "store result");
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+
         getLocalPointA(manifoldPointObjectId, storeResult);
         return storeResult;
     }
@@ -365,20 +300,15 @@ public class PhysicsCollisionEvent extends EventObject {
     /**
      * Copy the collision's location in the local coordinates of object B.
      *
-     * @return a new location vector (in local coordinates, not null)
-     */
-    public Vector3f getLocalPointB() {
-        return getLocalPointB(new Vector3f());
-    }
-
-    /**
-     * Copy the collision's location in the local coordinates of object B.
-     *
-     * @param storeResult storage for the result (not null, modified)
-     * @return a location vector (in local coordinates, not null)
+     * @param storeResult storage for the result (modified if not null)
+     * @return a location vector (in local coordinates, either storeResult or a
+     * new instance)
      */
     public Vector3f getLocalPointB(Vector3f storeResult) {
-        Validate.nonNull(storeResult, "store result");
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+
         getLocalPointB(manifoldPointObjectId, storeResult);
         return storeResult;
     }
@@ -389,20 +319,15 @@ public class PhysicsCollisionEvent extends EventObject {
     /**
      * Copy the collision's normal on object B.
      *
-     * @return a new normal vector (in physics-space coordinates, not null)
-     */
-    public Vector3f getNormalWorldOnB() {
-        return getNormalWorldOnB(new Vector3f());
-    }
-
-    /**
-     * Copy the collision's normal on object B.
-     *
-     * @param storeResult storage for the result (not null, modified)
-     * @return a normal vector (in physics-space coordinates, not null)
+     * @param storeResult storage for the result (modified if not null)
+     * @return a normal vector (in physics-space coordinates, either storeResult
+     * or a new instance)
      */
     public Vector3f getNormalWorldOnB(Vector3f storeResult) {
-        Validate.nonNull(storeResult, "store result");
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+
         getNormalWorldOnB(manifoldPointObjectId, storeResult);
         return storeResult;
     }
@@ -435,20 +360,15 @@ public class PhysicsCollisionEvent extends EventObject {
     /**
      * Copy the collision's location.
      *
-     * @return a new vector (in physics-space coordinates, not null)
-     */
-    public Vector3f getPositionWorldOnA() {
-        return getPositionWorldOnA(new Vector3f());
-    }
-
-    /**
-     * Copy the collision's location.
-     *
-     * @param storeResult storage for the result (not null, modified)
-     * @return a location vector (in physics-space coordinates, not null)
+     * @param storeResult storage for the result (modified if not null)
+     * @return a location vector (in physics-space coordinates, either
+     * storeResult or a new instance)
      */
     public Vector3f getPositionWorldOnA(Vector3f storeResult) {
-        Validate.nonNull(storeResult, "store result");
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+
         getPositionWorldOnA(manifoldPointObjectId, storeResult);
         return storeResult;
     }
@@ -459,20 +379,15 @@ public class PhysicsCollisionEvent extends EventObject {
     /**
      * Copy the collision's location.
      *
-     * @return a new location vector (in physics-space coordinates, not null)
-     */
-    public Vector3f getPositionWorldOnB() {
-        return getPositionWorldOnB(new Vector3f());
-    }
-
-    /**
-     * Copy the collision's location.
-     *
-     * @param storeResult storage for the result (not null, modified)
-     * @return a location vector (in physics-space coordinates, not null)
+     * @param storeResult storage for the result (modified if not null)
+     * @return a location vector (in physics-space coordinates, either
+     * storeResult or a new instance)
      */
     public Vector3f getPositionWorldOnB(Vector3f storeResult) {
-        Validate.nonNull(storeResult, "store result");
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+
         getPositionWorldOnB(manifoldPointObjectId, storeResult);
         return storeResult;
     }

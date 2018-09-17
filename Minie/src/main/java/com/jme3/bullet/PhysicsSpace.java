@@ -259,12 +259,13 @@ public class PhysicsSpace {
     /**
      * This method is invoked from native code.
      */
-    private void addCollisionEvent_native(PhysicsCollisionObject node,
-            PhysicsCollisionObject node1, long manifoldPointObjectId) {
-//        System.out.println("addCollisionEvent:"+node.getObjectId()+" "+ node1.getObjectId());
-        collisionEvents.add(
-                new PhysicsCollisionEvent(PhysicsCollisionEvent.TYPE_PROCESSED,
-                        node, node1, manifoldPointObjectId));
+    private void addCollisionEvent_native(PhysicsCollisionObject nodeA,
+            PhysicsCollisionObject nodeB, long manifoldPointId) {
+        if (!collisionListeners.isEmpty()) {
+            PhysicsCollisionEvent event
+                    = new PhysicsCollisionEvent(nodeA, nodeB, manifoldPointId);
+            collisionEvents.add(event);
+        }
     }
 
     /**
@@ -322,13 +323,11 @@ public class PhysicsSpace {
      * Distribute each collision event to all listeners.
      */
     void distributeEvents() {
-        while (collisionEvents.isEmpty() == false) {
+        while (!collisionEvents.isEmpty()) {
             PhysicsCollisionEvent physicsCollisionEvent = collisionEvents.pop();
             for (PhysicsCollisionListener listener : collisionListeners) {
                 listener.collision(physicsCollisionEvent);
             }
-
-            physicsCollisionEvent.clean();
         }
     }
 
