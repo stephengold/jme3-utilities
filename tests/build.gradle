@@ -39,11 +39,6 @@ dependencies {
     runtime project(':moon-ccbysa')
 }
 
-tasks.withType(JavaExec) {
-    classpath sourceSets.main.runtimeClasspath
-    enableAssertions true
-}
-
 // cleanup tasks
 clean { dependsOn 'cleanDLLs', 'cleanSOs', 'cleanWrittenAssets' }
 task cleanDLLs(type: Delete) {

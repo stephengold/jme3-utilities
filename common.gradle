@@ -16,6 +16,10 @@ gradle.projectsEvaluated {
         options.deprecation = true
         options.encoding = 'UTF-8'
     }
+    tasks.withType(JavaExec) {
+        classpath sourceSets.main.runtimeClasspath
+        enableAssertions true
+    }
 }
 
 ext {

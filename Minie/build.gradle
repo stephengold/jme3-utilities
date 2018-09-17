@@ -46,11 +46,6 @@ task pom {
     }
 }
 
-tasks.withType(JavaExec) {
-    classpath sourceSets.main.runtimeClasspath
-    enableAssertions true
-}
-
 // cleanup tasks
 clean { dependsOn 'cleanDLLs', 'cleanSOs' }
 task cleanDLLs(type: Delete) {
