@@ -43,19 +43,33 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * A convex hull collision shape based on Bullet's btConvexHullShape.
  */
 public class HullCollisionShape extends CollisionShape {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(HullCollisionShape.class.getName());
+    // *************************************************************************
+    // fields
 
     private float[] points;
+    /**
+     * buffer for passing vertices to Bullet
+     * <p>
+     * A Java reference must persist after createShape() completes, or else the
+     * buffer might get garbage collected.
+     */
+    private ByteBuffer bbuf;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -69,23 +83,32 @@ public class HullCollisionShape extends CollisionShape {
      * performance and stability, use the mesh should have no more than 100
      * vertices.
      *
-     * @param mesh a mesh on which to base the shape (not null)
+     * @param mesh a mesh on which to base the shape (not null, at least one
+     * vertex)
      */
     public HullCollisionShape(Mesh mesh) {
-        this.points = getPoints(mesh);
+        Validate.nonNull(mesh, "mesh");
+        assert mesh.getVertexCount() > 0;
+
+        points = getPoints(mesh);
         createShape();
     }
 
     /**
-     * Instantiate a collision shape based on the specified JME mesh.
+     * Instantiate a collision shape based on the specified array of
+     * coordinates.
      *
      * @param points an array of coordinates on which to base the shape (not
-     * null, length a multiple of 3)
+     * null, not empty, length a multiple of 3)
      */
     public HullCollisionShape(float[] points) {
+        Validate.nonNull(points, "points");
+        Validate.positive(points.length, "length of points");
+
         this.points = points;
         createShape();
     }
+    // *************************************************************************
 
     /**
      * Serialize this shape, for example when saving to a J3O file.
@@ -115,9 +138,9 @@ public class HullCollisionShape extends CollisionShape {
         // for backwards compatability
         Mesh mesh = (Mesh) capsule.readSavable("hullMesh", null);
         if (mesh != null) {
-            this.points = getPoints(mesh);
+            points = getPoints(mesh);
         } else {
-            this.points = capsule.readFloatArray("points", null);
+            points = capsule.readFloatArray("points", null);
         }
         createShape();
     }
@@ -126,14 +149,17 @@ public class HullCollisionShape extends CollisionShape {
      * Instantiate the configured shape in Bullet.
      */
     private void createShape() {
-        ByteBuffer bbuf = BufferUtils.createByteBuffer(points.length * 4);
+        bbuf = BufferUtils.createByteBuffer(points.length * 4);
         for (int i = 0; i < points.length; i++) {
             float f = points[i];
             bbuf.putFloat(f);
         }
         bbuf.rewind();
+
         objectId = createShape(bbuf);
+        assert objectId != 0L;
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+
         setScale(scale);
         setMargin(margin);
     }
