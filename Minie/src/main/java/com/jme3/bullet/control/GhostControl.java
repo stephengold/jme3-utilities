@@ -152,7 +152,7 @@ public class GhostControl extends PhysicsGhostObject
     }
 
     /**
-     * Access whichever spatial rotation corresponds to the physics rotation.
+     * Copy whichever spatial rotation corresponds to the physics rotation.
      *
      * @return the pre-existing quaternion (not null) TODO
      */
@@ -189,8 +189,8 @@ public class GhostControl extends PhysicsGhostObject
         control.setCcdSweptSphereRadius(getCcdSweptSphereRadius());
         control.setCollideWithGroups(getCollideWithGroups());
         control.setCollisionGroup(getCollisionGroup());
-        control.setPhysicsLocation(getPhysicsLocation());
-        control.setPhysicsRotation(getPhysicsRotationMatrix());
+        control.setPhysicsLocation(getPhysicsLocation(null));
+        control.setPhysicsRotation(getPhysicsRotationMatrix(null));
         control.setApplyPhysicsLocal(isApplyPhysicsLocal());
         control.spatial = this.spatial;
 
@@ -208,7 +208,7 @@ public class GhostControl extends PhysicsGhostObject
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
-        this.spatial = cloner.clone(spatial);
+        spatial = cloner.clone(spatial);
     }
 
     /**

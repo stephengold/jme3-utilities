@@ -123,7 +123,8 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     /**
      * Directly alter the location of this object's center.
      *
-     * @param location the desired location (not null, unaffected)
+     * @param location the desired location (in physics-space coordinates, not
+     * null, unaffected)
      */
     public void setPhysicsLocation(Vector3f location) {
         setPhysicsLocation(objectId, location);
@@ -134,8 +135,8 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     /**
      * Directly alter this object's orientation.
      *
-     * @param rotation the desired orientation (rotation matrix, not null,
-     * unaffected)
+     * @param rotation the desired orientation (a rotation matrix in
+     * physics-space coordinates, not null, unaffected)
      */
     public void setPhysicsRotation(Matrix3f rotation) {
         setPhysicsRotation(objectId, rotation);
@@ -158,104 +159,68 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     /**
      * Copy the location of this object's center.
      *
-     * @param trans storage for the result (modified if not null)
-     * @return the physics location (either the provided storage or a new
-     * vector, not null)
+     * @param storeResult storage for the result (modified if not null)
+     * @return a location vector (in physics-space coordinates, either
+     * storeResult or a new vector, not null)
      */
-    public Vector3f getPhysicsLocation(Vector3f trans) {
-        if (trans == null) {
-            trans = new Vector3f();
+    public Vector3f getPhysicsLocation(Vector3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Vector3f();
         }
-        getPhysicsLocation(objectId, trans);
-        return trans;
+        getPhysicsLocation(objectId, storeResult);
+
+        return storeResult;
     }
 
-    private native void getPhysicsLocation(long objectId, Vector3f vector);
+    private native void getPhysicsLocation(long objectId, Vector3f storeResult);
 
     /**
      * Copy this object's orientation to a quaternion.
      *
-     * @param rot storage for the result (modified if not null)
-     * @return the physics orientation (either the provided storage or a new
-     * quaternion, not null)
+     * @param storeResult storage for the result (modified if not null)
+     * @return the orientation (in physics-space coordinates, either storeResult
+     * or a new quaternion, not null)
      */
-    public Quaternion getPhysicsRotation(Quaternion rot) {
-        if (rot == null) {
-            rot = new Quaternion();
+    public Quaternion getPhysicsRotation(Quaternion storeResult) {
+        if (storeResult == null) {
+            storeResult = new Quaternion();
         }
-        getPhysicsRotation(objectId, rot);
-        return rot;
+        getPhysicsRotation(objectId, storeResult);
+
+        return storeResult;
     }
 
-    private native void getPhysicsRotation(long objectId, Quaternion rot);
+    private native void getPhysicsRotation(long objectId,
+            Quaternion storeResult);
 
     /**
      * Copy this object's orientation to a matrix.
      *
-     * @param rot storage for the result (modified if not null)
-     * @return the orientation (either the provided storage or a new matrix, not
-     * null)
+     * @param storeResult storage for the result (modified if not null)
+     * @return the orientation (in physics-space coordinates, either storeResult
+     * or a new matrix, not null)
      */
-    public Matrix3f getPhysicsRotationMatrix(Matrix3f rot) {
-        if (rot == null) {
-            rot = new Matrix3f();
+    public Matrix3f getPhysicsRotationMatrix(Matrix3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Matrix3f();
         }
-        getPhysicsRotationMatrix(objectId, rot);
-        return rot;
+        getPhysicsRotationMatrix(objectId, storeResult);
+
+        return storeResult;
     }
 
-    private native void getPhysicsRotationMatrix(long objectId, Matrix3f rot);
-
-    /**
-     * Copy the location of this object's center.
-     *
-     * @return a new location vector (not null)
-     */
-    public Vector3f getPhysicsLocation() {
-        Vector3f vec = new Vector3f();
-        getPhysicsLocation(objectId, vec);
-
-        return vec;
-    }
-
-    /**
-     * Copy this object's orientation to a quaternion.
-     *
-     * @return a new quaternion (not null)
-     */
-    public Quaternion getPhysicsRotation() {
-        Quaternion quat = new Quaternion();
-        getPhysicsRotation(objectId, quat);
-
-        return quat;
-    }
-
-    /**
-     * Copy this object's orientation to a matrix.
-     *
-     * @return a new matrix (not null)
-     */
-    public Matrix3f getPhysicsRotationMatrix() {
-        Matrix3f mtx = new Matrix3f();
-        getPhysicsRotationMatrix(objectId, mtx);
-
-        return mtx;
-    }
+    private native void getPhysicsRotationMatrix(long objectId,
+            Matrix3f storeResult);
 
     /**
      * Access a list of overlapping objects.
-     * <p>
-     * Another object overlaps with this one if and if only their
-     * CollisionShapes overlap.
      *
      * @return an internal list which may get reused (not null)
      */
     public List<PhysicsCollisionObject> getOverlappingObjects() {
         overlappingObjects.clear();
         getOverlappingObjects(objectId);
-//        for (com.bulletphysics.collision.dispatch.CollisionObject collObj : gObject.getOverlappingPairs()) {
-//            overlappingObjects.add((PhysicsCollisionObject) collObj.getUserPointer());
-//        }
+
         return overlappingObjects;
     }
 
@@ -271,7 +236,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     }
 
     /**
-     * Count how many CollisionObjects this object overlaps.
+     * Count how many collision objects this object overlaps.
      *
      * @return count (&ge;0)
      */
@@ -357,13 +322,13 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     /**
      * Serialize this object, for example when saving to a J3O file.
      *
-     * @param e exporter (not null)
+     * @param ex exporter (not null)
      * @throws IOException from exporter
      */
     @Override
-    public void write(JmeExporter e) throws IOException {
-        super.write(e);
-        OutputCapsule capsule = e.getCapsule(this);
+    public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
+        OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(getPhysicsLocation(new Vector3f()),
                 "physicsLocation", new Vector3f());
         capsule.write(getPhysicsRotationMatrix(new Matrix3f()),

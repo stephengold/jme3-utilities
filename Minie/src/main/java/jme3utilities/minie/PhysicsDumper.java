@@ -89,7 +89,7 @@ public class PhysicsDumper extends Dumper {
     /**
      * Dump the specified Bullet app state.
      *
-     * @param appState the app state to dump (not null)
+     * @param appState the app state to dump (not null, unaffected)
      */
     public void dump(BulletAppState appState) {
         stream.printf("%nBulletAppState ");
@@ -116,7 +116,7 @@ public class PhysicsDumper extends Dumper {
     /**
      * Dump the specified physics character.
      *
-     * @param character the character to dump (not null)
+     * @param character the character to dump (not null, unaffected)
      */
     public void dump(PhysicsCharacter character) {
         long objectId = character.getObjectId();
@@ -133,13 +133,13 @@ public class PhysicsDumper extends Dumper {
     /**
      * Dump the specified ghost object.
      *
-     * @param ghost the ghost object to dump (not null)
+     * @param ghost the ghost object to dump (not null, unaffected)
      */
     public void dump(PhysicsGhostObject ghost) {
         long objectId = ghost.getObjectId();
         stream.printf("  Ghost #%s ", Long.toHexString(objectId));
 
-        Vector3f location = ghost.getPhysicsLocation();
+        Vector3f location = ghost.getPhysicsLocation(null);
         stream.printf("loc=[%.3f, %.3f, %.3f]",
                 location.x, location.y, location.z);
 
@@ -149,7 +149,7 @@ public class PhysicsDumper extends Dumper {
     /**
      * Dump the specified joint.
      *
-     * @param joint the joint to dump (not null)
+     * @param joint the joint to dump (not null, unaffected)
      */
     public void dump(PhysicsJoint joint) {
         long objectId = joint.getObjectId();
@@ -164,7 +164,7 @@ public class PhysicsDumper extends Dumper {
     /**
      * Dump the specified rigid body.
      *
-     * @param body the rigid body to dump (not null)
+     * @param body the rigid body to dump (not null, unaffected)
      */
     public void dump(PhysicsRigidBody body) {
         long objectId = body.getObjectId();
@@ -220,7 +220,7 @@ public class PhysicsDumper extends Dumper {
     /**
      * Dump the specified physics space.
      *
-     * @param space the physics space to dump (not null)
+     * @param space the physics space to dump (not null, unaffected)
      */
     public void dump(PhysicsSpace space) {
         Collection<PhysicsCharacter> characters = space.getCharacterList();
@@ -282,7 +282,7 @@ public class PhysicsDumper extends Dumper {
     /**
      * Dump the specified vehicle.
      *
-     * @param vehicle the vehicle to dump (not null)
+     * @param vehicle the vehicle to dump (not null, unaffected)
      */
     public void dump(PhysicsVehicle vehicle) {
         long objectId = vehicle.getObjectId();
