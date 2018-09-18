@@ -79,7 +79,7 @@ public class PhysicsDescriber extends Describer {
         String result = name;
         if (shape instanceof BoxCollisionShape) {
             BoxCollisionShape box = (BoxCollisionShape) shape;
-            Vector3f he = box.getHalfExtents();
+            Vector3f he = box.getHalfExtents(null);
             result += String.format("[hx=%f,hy=%f,hz=%f]", he.x, he.y, he.z);
 
         } else if (shape instanceof CapsuleCollisionShape) {

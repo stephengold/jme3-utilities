@@ -48,18 +48,24 @@ import jme3utilities.math.MyVector3f;
  * @author normenhansen
  */
 public class BoxCollisionShape extends CollisionShape {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(BoxCollisionShape.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
      * copy of half-extents of the box on each local axis (not null, no negative
      * component)
      */
     private Vector3f halfExtents;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -72,23 +78,30 @@ public class BoxCollisionShape extends CollisionShape {
      * Instantiate a box shape with the specified half extents.
      *
      * @param halfExtents the desired half extents (not null, no negative
-     * component, alias created) TODO
+     * component, unaffected)
      */
     public BoxCollisionShape(Vector3f halfExtents) {
         Validate.nonNegative(halfExtents, "half extents");
 
-        this.halfExtents = halfExtents;
+        this.halfExtents = halfExtents.clone();
         createShape();
     }
+    // *************************************************************************
 
     /**
      * Access the half extents.
      *
-     * @return the pre-existing instance (not null, no negative component) TODO
+     * @param storeResult storage for the result (modified if not null)
+     * @return the half extent for each local axis (either storeResult or a new
+     * vector, not null, no negative component)
      */
-    public final Vector3f getHalfExtents() {
+    public final Vector3f getHalfExtents(Vector3f storeResult) {
         assert MyVector3f.isAllNonNegative(halfExtents) : halfExtents;
-        return halfExtents;
+        if (storeResult == null) {
+            return halfExtents.clone();
+        } else {
+            return storeResult.set(halfExtents);
+        }
     }
 
     /**
@@ -119,6 +132,8 @@ public class BoxCollisionShape extends CollisionShape {
         this.halfExtents = he;
         createShape();
     }
+    // *************************************************************************
+    // private methods
 
     /**
      * Instantiate the configured shape in Bullet.

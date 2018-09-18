@@ -145,8 +145,7 @@ public class MyShape {
 
         if (shape instanceof BoxCollisionShape) {
             BoxCollisionShape box = (BoxCollisionShape) shape;
-            Vector3f halfExtents = box.getHalfExtents();
-            storeResult.set(halfExtents);
+            box.getHalfExtents(storeResult);
 
         } else if (shape instanceof CapsuleCollisionShape) {
             CapsuleCollisionShape capsule = (CapsuleCollisionShape) shape;
@@ -484,7 +483,7 @@ public class MyShape {
 
         if (shape instanceof BoxCollisionShape) {
             BoxCollisionShape box = (BoxCollisionShape) shape;
-            Vector3f halfExtents = box.getHalfExtents();
+            Vector3f halfExtents = box.getHalfExtents(null);
             volume *= MyVolume.boxVolume(halfExtents);
 
         } else if (shape instanceof CapsuleCollisionShape) {
