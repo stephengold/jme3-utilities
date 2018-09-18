@@ -192,20 +192,22 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Alter this character's angular velocity.
      *
-     * @param v the desired angular velocity vector (not null, unaffected)
+     * @param angularVelocity the desired angular velocity vector (not null,
+     * unaffected)
      */
-    public void setAngularVelocity(Vector3f v) {
-        setAngularVelocity(characterId, v);
+    public void setAngularVelocity(Vector3f angularVelocity) {
+        setAngularVelocity(characterId, angularVelocity);
     }
 
-    private native void setAngularVelocity(long characterId, Vector3f v);
+    private native void setAngularVelocity(long characterId,
+            Vector3f angularVelocity);
 
     /**
      * Copy this character's angular velocity.
      *
      * @param storeResult storage for the result (modified if not null)
-     * @return the velocity vector (either the provided storage or a new vector,
-     * not null)
+     * @return the velocity vector (either storeResult or a new vector, not
+     * null)
      */
     public Vector3f getAngularVelocity(Vector3f storeResult) {
         if (storeResult == null) {
@@ -222,19 +224,19 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Alter the linear velocity of this character's center of mass.
      *
-     * @param v the desired velocity vector (not null)
+     * @param velocity the desired velocity vector (not null)
      */
-    public void setLinearVelocity(Vector3f v) {
-        setLinearVelocity(characterId, v);
+    public void setLinearVelocity(Vector3f velocity) {
+        setLinearVelocity(characterId, velocity);
     }
 
-    private native void setLinearVelocity(long characterId, Vector3f v);
+    private native void setLinearVelocity(long characterId, Vector3f velocity);
 
     /**
      * Copy the linear velocity of this character's center of mass.
      *
      * @param storeResult storage for the result (modified if not null)
-     * @return a vector (either the provided storage or a new vector, not null)
+     * @return a vector (either storeResult or a new vector, not null)
      */
     public Vector3f getLinearVelocity(Vector3f storeResult) {
         if (storeResult == null) {
@@ -245,7 +247,8 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         return storeResult;
     }
 
-    private native void getLinearVelocity(long characterId, Vector3f out);
+    private native void getLinearVelocity(long characterId,
+            Vector3f storeResult);
 
     /**
      * Read the index of the "up" axis. TODO deprecate
@@ -334,8 +337,8 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
      * Copy this character's gravitational acceleration.
      *
      * @param storeResult storage for the result (modified if not null)
-     * @return the acceleration vector (either the provided storage or a new
-     * vector, not null)
+     * @return the acceleration vector (either storeResult or a new vector, not
+     * null)
      */
     public Vector3f getGravity(Vector3f storeResult) {
         if (storeResult == null) {
@@ -523,8 +526,8 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
      * Copy the location of this character's center of mass.
      *
      * @param trans storage for the result (modified if not null)
-     * @return the location vector (either the provided storage or a new vector,
-     * not null)
+     * @return the location vector (either storeResult or a new vector, not
+     * null)
      */
     public Vector3f getPhysicsLocation(Vector3f trans) {
         if (trans == null) {

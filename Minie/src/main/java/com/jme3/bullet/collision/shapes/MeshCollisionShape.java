@@ -116,7 +116,7 @@ public class MeshCollisionShape extends CollisionShape {
      */
     public MeshCollisionShape(final Mesh mesh, final boolean memoryOptimized) {
         this.memoryOptimized = memoryOptimized;
-        this.createCollisionMesh(mesh);
+        createCollisionMesh(mesh);
     }
 
     /**
@@ -143,12 +143,12 @@ public class MeshCollisionShape extends CollisionShape {
     }
 
     private void createCollisionMesh(Mesh mesh) {
-        this.triangleIndexBase = BufferUtils.createByteBuffer(mesh.getTriangleCount() * 3 * 4);
-        this.vertexBase = BufferUtils.createByteBuffer(mesh.getVertexCount() * 3 * 4);
-        this.numVertices = mesh.getVertexCount();
-        this.vertexStride = 12; // 3 verts * 4 bytes per.
-        this.numTriangles = mesh.getTriangleCount();
-        this.triangleIndexStride = 12; // 3 index entries * 4 bytes each.
+        triangleIndexBase = BufferUtils.createByteBuffer(mesh.getTriangleCount() * 3 * 4);
+        vertexBase = BufferUtils.createByteBuffer(mesh.getVertexCount() * 3 * 4);
+        numVertices = mesh.getVertexCount();
+        vertexStride = 12; // 3 verts * 4 bytes per.
+        numTriangles = mesh.getTriangleCount();
+        triangleIndexStride = 12; // 3 index entries * 4 bytes each.
 
         IndexBuffer indices = mesh.getIndicesAsList();
         FloatBuffer vertices = mesh.getFloatBuffer(Type.Position);
@@ -167,7 +167,7 @@ public class MeshCollisionShape extends CollisionShape {
         vertices.rewind();
         vertices.clear();
 
-        this.createShape(null);
+        createShape(null);
     }
 
     /**
@@ -211,18 +211,16 @@ public class MeshCollisionShape extends CollisionShape {
     public void read(final JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
-        this.numVertices = capsule.readInt(MeshCollisionShape.NUM_VERTICES, 0);
-        this.numTriangles
-                = capsule.readInt(MeshCollisionShape.NUM_TRIANGLES, 0);
-        this.vertexStride
-                = capsule.readInt(MeshCollisionShape.VERTEX_STRIDE, 0);
-        this.triangleIndexStride
+        numVertices = capsule.readInt(MeshCollisionShape.NUM_VERTICES, 0);
+        numTriangles = capsule.readInt(MeshCollisionShape.NUM_TRIANGLES, 0);
+        vertexStride = capsule.readInt(MeshCollisionShape.VERTEX_STRIDE, 0);
+        triangleIndexStride
                 = capsule.readInt(MeshCollisionShape.TRIANGLE_INDEX_STRIDE, 0);
 
-        this.triangleIndexBase = BufferUtils.createByteBuffer(
+        triangleIndexBase = BufferUtils.createByteBuffer(
                 capsule.readByteArray(MeshCollisionShape.TRIANGLE_INDEX_BASE,
                         null));
-        this.vertexBase = BufferUtils.createByteBuffer(
+        vertexBase = BufferUtils.createByteBuffer(
                 capsule.readByteArray(MeshCollisionShape.VERTEX_BASE, null));
 
         byte[] nativeBvh
@@ -246,8 +244,8 @@ public class MeshCollisionShape extends CollisionShape {
         if (!buildBvh) {
             nativeBVHBuffer = setBVH(bvh, this.objectId);
         }
-        setScale(this.scale);
-        setMargin(this.margin);
+        setScale(scale);
+        setMargin(margin);
     }
 
     /**

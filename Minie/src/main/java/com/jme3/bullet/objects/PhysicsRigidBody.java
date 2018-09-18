@@ -976,13 +976,13 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * Serialize this body, for example when saving to a J3O file.
      *
-     * @param e exporter (not null)
+     * @param ex exporter (not null)
      * @throws IOException from exporter
      */
     @Override
-    public void write(JmeExporter e) throws IOException {
-        super.write(e);
-        OutputCapsule capsule = e.getCapsule(this);
+    public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
+        OutputCapsule capsule = ex.getCapsule(this);
 
         capsule.write(getMass(), "mass", 1f);
 

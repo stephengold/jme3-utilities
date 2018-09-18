@@ -51,8 +51,12 @@ public class RigidBodyMotionState {
      */
     final public static Logger logger
             = Logger.getLogger(RigidBodyMotionState.class.getName());
-
+    /**
+     * Unique identifier of the native object. Constructors are responsible for
+     * setting this to a non-zero value. After that, the id never changes.
+     */
     final private long motionStateId;
+
     final private Vector3f worldLocation = new Vector3f();
     final private Matrix3f worldRotation = new Matrix3f();
     final private Quaternion worldRotationQuat = new Quaternion();
@@ -126,7 +130,7 @@ public class RigidBodyMotionState {
         return worldLocation;
     }
 
-    private native void getWorldLocation(long stateId, Vector3f vec);
+    private native void getWorldLocation(long stateId, Vector3f storeResult);
 
     /**
      * Read the rotation of this motion state (as a matrix).
@@ -139,7 +143,7 @@ public class RigidBodyMotionState {
         return worldRotation;
     }
 
-    private native void getWorldRotation(long stateId, Matrix3f vec);
+    private native void getWorldRotation(long stateId, Matrix3f storeResult);
 
     /**
      * Read the rotation of this motion state (as a quaternion).
@@ -152,7 +156,8 @@ public class RigidBodyMotionState {
         return worldRotationQuat;
     }
 
-    private native void getWorldRotationQuat(long stateId, Quaternion vec);
+    private native void getWorldRotationQuat(long stateId,
+            Quaternion storeResult);
 
     /**
      * @param vehicle which vehicle will use this motion state

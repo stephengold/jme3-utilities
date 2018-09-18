@@ -305,12 +305,12 @@ public abstract class PhysicsCollisionObject implements Savable {
     /**
      * Serialize this object, for example when saving to a J3O file.
      *
-     * @param e exporter (not null)
+     * @param ex exporter (not null)
      * @throws IOException from exporter
      */
     @Override
-    public void write(JmeExporter e) throws IOException {
-        OutputCapsule capsule = e.getCapsule(this);
+    public void write(JmeExporter ex) throws IOException {
+        OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(collisionGroup, "collisionGroup", COLLISION_GROUP_01);
         capsule.write(collideWithGroups, "collisionGroupsMask",
                 COLLISION_GROUP_01);

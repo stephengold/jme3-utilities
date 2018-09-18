@@ -131,7 +131,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
         }
     }
 
-    private native void updateWheelTransform(long vehicleId, int wheel, 
+    private native void updateWheelTransform(long vehicleId, int wheel,
             boolean interpolated);
 
     /**
@@ -620,19 +620,20 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     /**
      * Copy the vehicle's forward direction.
      *
-     * @param vector storage for the result (modified if not null)
-     * @return a direction vector (in physics-space coordinates, either the
-     * provided storage or a new vector)
+     * @param storeResult storage for the result (modified if not null)
+     * @return a direction vector (in physics-space coordinates, either
+     * storeResult or a new vector, not null)
      */
-    public Vector3f getForwardVector(Vector3f vector) {
-        if (vector == null) {
-            vector = new Vector3f();
+    public Vector3f getForwardVector(Vector3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Vector3f();
         }
-        getForwardVector(vehicleId, vector);
-        return vector;
+        getForwardVector(vehicleId, storeResult);
+
+        return storeResult;
     }
 
-    private native void getForwardVector(long objectId, Vector3f vector);
+    private native void getForwardVector(long objectId, Vector3f storeResult);
 
     /**
      * used internally
