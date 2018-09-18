@@ -192,10 +192,10 @@ public class VehicleControl extends PhysicsVehicle
         control.setMaxSuspensionForce(getMaxSuspensionForce());
 
         for (VehicleWheel wheel : wheels) {
-            VehicleWheel newWheel = control.addWheel(wheel.getLocation(),
-                    wheel.getDirection(), wheel.getAxle(),
-                    wheel.getRestLength(), wheel.getRadius(),
-                    wheel.isFrontWheel());
+            VehicleWheel newWheel = control.addWheel(null,
+                    wheel.getLocation(null), wheel.getDirection(null),
+                    wheel.getAxle(null), wheel.getRestLength(),
+                    wheel.getRadius(), wheel.isFrontWheel());
             newWheel.setFrictionSlip(wheel.getFrictionSlip());
             newWheel.setMaxSuspensionTravelCm(wheel.getMaxSuspensionTravelCm());
             newWheel.setSuspensionStiffness(wheel.getSuspensionStiffness());

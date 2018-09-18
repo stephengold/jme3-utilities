@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * A collision object for simplified vehicle simulation based on Bullet's
@@ -180,9 +181,9 @@ public class PhysicsVehicle extends PhysicsRigidBody {
         setCoordinateSystem(vehicleId, 0, 1, 2);
         for (VehicleWheel wheel : wheels) {
             wheel.setVehicleId(vehicleId, addWheel(vehicleId,
-                    wheel.getLocation(), wheel.getDirection(), wheel.getAxle(),
-                    wheel.getRestLength(), wheel.getRadius(), tuning,
-                    wheel.isFrontWheel()));
+                    wheel.getLocation(null), wheel.getDirection(null),
+                    wheel.getAxle(null), wheel.getRestLength(),
+                    wheel.getRadius(), tuning, wheel.isFrontWheel()));
         }
     }
 
@@ -198,53 +199,30 @@ public class PhysicsVehicle extends PhysicsRigidBody {
             VehicleTuning tuning, boolean frontWheel);
 
     /**
-     * Add a wheel to this vehicle
+     * Add a wheel to this vehicle.
      *
-     * @param connectionPoint The starting point of the ray, where the
-     * suspension connects to the chassis (chassis space)
-     * @param direction the direction of the wheel (should be -Y / 0,-1,0 for a
-     * normal car)
-     * @param axle The axis of the wheel, pointing right in vehicle direction
-     * (should be -X / -1,0,0 for a normal car)
-     * @param suspensionRestLength The current length of the suspension (metres)
-     * @param wheelRadius the wheel radius
-     * @param isFrontWheel sets if this wheel is a front wheel (steering)
-     * @return the PhysicsVehicleWheel object to get/set infos on the wheel
-     */
-    public VehicleWheel addWheel(Vector3f connectionPoint, Vector3f direction,
-            Vector3f axle, float suspensionRestLength, float wheelRadius,
-            boolean isFrontWheel) {
-        return addWheel(null, connectionPoint, direction, axle,
-                suspensionRestLength, wheelRadius, isFrontWheel);
-    }
-
-    /**
-     * Add a wheel to this vehicle
-     *
-     * @param spat the wheel Geometry
-     * @param connectionPoint The starting point of the ray, where the
-     * suspension connects to the chassis (chassis space)
-     * @param direction the direction of the wheel (should be -Y / 0,-1,0 for a
-     * normal car)
-     * @param axle The axis of the wheel, pointing right in vehicle direction
-     * (should be -X / -1,0,0 for a normal car)
-     * @param suspensionRestLength the desired rest length of the suspension (in
-     * metres)
-     * @param wheelRadius the wheel radius
-     * @param isFrontWheel sets if this wheel is a front wheel (steering)
-     * @return the PhysicsVehicleWheel object to get/set infos on the wheel
+     * @param spat the associated spatial, or null if none
+     * @param connectionPoint the location where the suspension connects to the
+     * chassis (in chassis coordinates, not null, unaffected)
+     * @param direction the suspension direction (in chassis coordinates, not
+     * null, unaffected, typically down/0,-1,0)
+     * @param axle the axis direction (in chassis coordinates, not null,
+     * unaffected, typically -1,0,0)
+     * @param suspensionRestLength the rest length of the suspension (in
+     * physics-space units)
+     * @param wheelRadius the wheel radius (in physics-space units, &gt;0)
+     * @param isFrontWheel true&rarr;front (steering) wheel,
+     * false&rarr;non-front wheel
+     * @return a new VehicleWheel for access (not null)
      */
     public VehicleWheel addWheel(Spatial spat, Vector3f connectionPoint,
             Vector3f direction, Vector3f axle, float suspensionRestLength,
             float wheelRadius, boolean isFrontWheel) {
-        VehicleWheel wheel;
-        if (spat == null) { // TODO unnecessary test
-            wheel = new VehicleWheel(connectionPoint, direction, axle,
-                    suspensionRestLength, wheelRadius, isFrontWheel);
-        } else {
-            wheel = new VehicleWheel(spat, connectionPoint, direction, axle,
-                    suspensionRestLength, wheelRadius, isFrontWheel);
-        }
+        Validate.positive(wheelRadius, "wheel radius");
+
+        VehicleWheel wheel = new VehicleWheel(spat, connectionPoint, direction,
+                axle, suspensionRestLength, wheelRadius, isFrontWheel);
+
         wheel.setFrictionSlip(tuning.frictionSlip);
         wheel.setMaxSuspensionTravelCm(tuning.maxSuspensionTravelCm);
         wheel.setSuspensionStiffness(tuning.suspensionStiffness);
@@ -252,12 +230,15 @@ public class PhysicsVehicle extends PhysicsRigidBody {
         wheel.setWheelsDampingRelaxation(tuning.suspensionDamping);
         wheel.setMaxSuspensionForce(tuning.maxSuspensionForce);
         wheels.add(wheel);
+
         if (vehicleId != 0L) {
-            wheel.setVehicleId(vehicleId, addWheel(vehicleId,
-                    wheel.getLocation(), wheel.getDirection(), wheel.getAxle(),
+            int index = addWheel(vehicleId, wheel.getLocation(null),
+                    wheel.getDirection(null), wheel.getAxle(null),
                     wheel.getRestLength(), wheel.getRadius(), tuning,
-                    wheel.isFrontWheel()));
+                    wheel.isFrontWheel());
+            wheel.setVehicleId(vehicleId, index);
         }
+
         return wheel;
     }
 
@@ -267,6 +248,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * @param wheel the index of the wheel to remove (&ge;0)
      */
     public void removeWheel(int wheel) {
+        Validate.nonNegative(wheel, "wheel");
         wheels.remove(wheel);
         rebuildRigidBody();
         //Bullet has no API to remove a wheel.
@@ -330,7 +312,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     /**
      * Alter the roll influence of the indexed wheel.
      * <p>
-     * The roll influence factor reduces (or magnifies) any torque contributed
+     * The roll-influence factor reduces (or magnifies) any torque contributed
      * by the wheel that would tend to cause the vehicle to roll over. This is a
      * bit of a hack, but it's quite effective.
      * <p>
@@ -339,7 +321,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * also try lowering the vehicle's center of mass.
      *
      * @param wheel the index of the wheel to modify (&ge;0)
-     * @param rollInfluence the desired roll influence factor (0&rarr;no roll
+     * @param rollInfluence the desired roll-influence factor (0&rarr;no roll
      * torque, 1&rarr;realistic behavior, default=1)
      */
     public void setRollInfluence(int wheel, float rollInfluence) {
@@ -433,9 +415,11 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * wheels. Effective only before adding wheels. After adding a wheel, use
      * {@link #setSuspensionCompression(int, float)}.
      * <p>
-     * Set to k * 2 * FastMath.sqrt(suspensionStiffness) where: k=0 for undamped
-     * and bouncy, k=1 for critical damping, k between 0.1 and 0.3 are good
-     * values.
+     * Set to k * 2 * FastMath.sqrt(m_suspensionStiffness) where k is the
+     * damping ratio:
+     * <p>
+     * k = 0.0 undamped and bouncy, k = 1.0 critical damping, k between 0.1 and
+     * 0.3 are good values
      *
      * @param suspensionCompression the desired damping coefficient
      * (default=0.83)
@@ -448,9 +432,11 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * Alter the damping (when the suspension is compressed) for the indexed
      * wheel.
      * <p>
-     * Set to k * 2 * FastMath.sqrt(suspensionStiffness) where: k=0 for undamped
-     * and bouncy, k=1 for critical damping, k between 0.1 and 0.3 are good
-     * values.
+     * Set to k * 2 * FastMath.sqrt(m_suspensionStiffness) where k is the
+     * damping ratio:
+     * <p>
+     * k = 0.0 undamped and bouncy, k = 1.0 critical damping, k between 0.1 and
+     * 0.3 are good values
      *
      * @param wheel the index of the wheel to modify (&ge;0)
      * @param suspensionCompression the desired damping coefficient
@@ -475,9 +461,11 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * wheels. Effective only before adding wheels. After adding a wheel, use
      * {@link #setSuspensionCompression(int, float)}.
      * <p>
-     * Set to k * 2 * FastMath.sqrt(suspensionStiffness) where: k=0 for undamped
-     * and bouncy, k=1 for critical damping, k between 0.1 and 0.3 are good
-     * values.
+     * Set to k * 2 * FastMath.sqrt(m_suspensionStiffness) where k is the
+     * damping ratio:
+     * <p>
+     * k = 0.0 undamped and bouncy, k = 1.0 critical damping, k between 0.1 and
+     * 0.3 are good values
      *
      * @param suspensionDamping the desired damping coefficient (default=0.88)
      */
@@ -489,9 +477,11 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * Alter the damping (when the suspension is expanded) for the indexed
      * wheel.
      * <p>
-     * Set to k * 2 * FastMath.sqrt(suspensionStiffness) where: k=0 for undamped
-     * and bouncy, k=1 for critical damping, k between 0.1 and 0.3 are good
-     * values.
+     * Set to k * 2 * FastMath.sqrt(m_suspensionStiffness) where k is the
+     * damping ratio:
+     * <p>
+     * k = 0.0 undamped and bouncy, k = 1.0 critical damping, k between 0.1 and
+     * 0.3 are good values
      *
      * @param wheel the index of the wheel to modify (&ge;0)
      * @param suspensionDamping the desired damping coefficient

@@ -100,9 +100,9 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
         suspensionNode.detachAllChildren();
         for (int i = 0; i < vehicle.getNumWheels(); i++) {
             VehicleWheel physicsVehicleWheel = vehicle.getWheel(i);
-            Vector3f wLocation = physicsVehicleWheel.getLocation().clone();
-            Vector3f wDirection = physicsVehicleWheel.getDirection().clone();
-            Vector3f axle = physicsVehicleWheel.getAxle().clone();
+            Vector3f wLocation = physicsVehicleWheel.getLocation(null);
+            Vector3f wDirection = physicsVehicleWheel.getDirection(null);
+            Vector3f axle = physicsVehicleWheel.getAxle(null);
             float restLength = physicsVehicleWheel.getRestLength();
             float radius = physicsVehicleWheel.getRadius();
 
@@ -149,9 +149,9 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
     protected void controlUpdate(float tpf) {
         for (int i = 0; i < vehicle.getNumWheels(); i++) {
             VehicleWheel physicsVehicleWheel = vehicle.getWheel(i);
-            Vector3f wLocation = physicsVehicleWheel.getLocation().clone();
-            Vector3f wDirection = physicsVehicleWheel.getDirection().clone();
-            Vector3f axle = physicsVehicleWheel.getAxle().clone();
+            Vector3f wLocation = physicsVehicleWheel.getLocation(null);
+            Vector3f wDirection = physicsVehicleWheel.getDirection(null);
+            Vector3f axle = physicsVehicleWheel.getAxle(null);
             float restLength = physicsVehicleWheel.getRestLength();
             float radius = physicsVehicleWheel.getRadius();
 

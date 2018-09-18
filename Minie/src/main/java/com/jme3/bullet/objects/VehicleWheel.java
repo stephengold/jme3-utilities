@@ -38,9 +38,10 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.io.IOException;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
- * Information about one wheel of a PhysicsVehicle.
+ * Information about one wheel of a PhysicsVehicle. TODO make Cloneable
  *
  * @author normenhansen
  */
@@ -52,24 +53,65 @@ public class VehicleWheel implements Savable {
     final public static Logger logger
             = Logger.getLogger(VehicleWheel.class.getName());
 
-    private long wheelId = 0L;
+    /**
+     * unique identifier of the btRaycastVehicle
+     */
+    private long vehicleId = 0L;
+    /**
+     * 0-origin index among the vehicle's wheels (&ge;0)
+     */
     private int wheelIndex = 0;
-    private boolean frontWheel;
-    private Vector3f location = new Vector3f();
-    private Vector3f direction = new Vector3f();
-    private Vector3f axle = new Vector3f();
-    private float suspensionStiffness = 20.0f;
+    /**
+     * copy of wheel type: true&rarr;front (steering) wheel,
+     * false&rarr;non-front wheel
+     */
+    private boolean isFront;
+    /**
+     * location where the suspension connects to the chassis (in chassis
+     * coordinates)
+     */
+    private Vector3f location = new Vector3f(); // TODO finalize
+    /**
+     * suspension direction (in chassis coordinates, typically down/0,-1,0)
+     */
+    private Vector3f suspensionDirection = new Vector3f(); // TODO finalize
+    /**
+     * axis direction (in chassis coordinates, typically to the right/-1,0,0)
+     */
+    private Vector3f axisDirection = new Vector3f(); // TODO finalize
+    // TODO use VehicleTuning
+    private float suspensionStiffness = 20f;
     private float wheelsDampingRelaxation = 2.3f;
     private float wheelsDampingCompression = 4.4f;
     private float frictionSlip = 10.5f;
-    private float rollInfluence = 1.0f;
+    /**
+     * copy of roll-influence factor (0&rarr;no roll torque, 1&rarr;realistic
+     * behavior, default=1)
+     */
+    private float rollInfluence = 1f;
     private float maxSuspensionTravelCm = 500f;
     private float maxSuspensionForce = 6000f;
+    /**
+     * copy of wheel radius (in physics-space units, &gt;0)
+     */
     private float radius = 0.5f;
+    /**
+     * copy of rest length of the suspension (in physics-space units)
+     */
     private float restLength = 1f;
+    /**
+     * wheel location in physics-space coordinates
+     */
     final private Vector3f wheelWorldLocation = new Vector3f();
+    /**
+     * wheel orientation in physics-space coordinates
+     */
     final private Quaternion wheelWorldRotation = new Quaternion();
+    /**
+     * associated spatial, or null if none
+     */
     private Spatial wheelSpatial;
+
     final private Matrix3f tmp_Matrix = new com.jme3.math.Matrix3f();
     private final Quaternion tmp_inverseWorldRotation = new Quaternion();
     /**
@@ -88,55 +130,49 @@ public class VehicleWheel implements Savable {
     /**
      * Instantiate a wheel.
      *
-     * @param spat the associated spatial, if any (may be null)
-     * @param location the wheel's location vector (not null, unaffected)
-     * @param direction the wheel's direction vector (not null, unaffected)
-     * @param axle the axle's direction vector (not null, unaffected)
-     * @param restLength the rest length (in physics-space units)
+     * @param spat the associated spatial, or null if none
+     * @param location the location where the suspension connects to the chassis
+     * (in chassis coordinates, not null, unaffected)
+     * @param direction the suspension direction (in chassis coordinates, not
+     * null, unaffected, typically down/0,-1,0)
+     * @param axle the axis direction (in chassis coordinates, not null,
+     * unaffected, typically right/-1,0,0)
+     * @param restLength the rest length of the suspension (in physics-space
+     * units)
      * @param radius the wheel's radius (in physics-space units, &ge;0)
-     * @param frontWheel true&rarr;front wheel, false&rarr;non-front wheel
+     * @param frontWheel true&rarr;front (steering) wheel, false&rarr;non-front
+     * wheel
      */
-    public VehicleWheel(Spatial spat, Vector3f location, Vector3f direction, Vector3f axle,
-            float restLength, float radius, boolean frontWheel) {
-        this(location, direction, axle, restLength, radius, frontWheel);
-        wheelSpatial = spat;
-    }
+    public VehicleWheel(Spatial spat, Vector3f location, Vector3f direction,
+            Vector3f axle, float restLength, float radius, boolean frontWheel) {
+        Validate.positive(radius, "radius");
 
-    /**
-     * Instantiate a wheel without an associated spatial.
-     *
-     * @param location the wheel's location vector (not null, unaffected)
-     * @param direction the wheel's direction vector (not null, unaffected)
-     * @param axle the axle's direction vector (not null, unaffected)
-     * @param restLength the rest length
-     * @param radius the wheel's radius (in physics-space units, &ge;0)
-     * @param frontWheel true&rarr;front wheel, false&rarr;non-front wheel
-     */
-    public VehicleWheel(Vector3f location, Vector3f direction, Vector3f axle,
-            float restLength, float radius, boolean frontWheel) {
+        wheelSpatial = spat;
         this.location.set(location);
-        this.direction.set(direction);
-        this.axle.set(axle);
-        this.frontWheel = frontWheel;
+        this.suspensionDirection.set(direction);
+        this.axisDirection.set(axle);
+        this.isFront = frontWheel;
         this.restLength = restLength;
         this.radius = radius;
     }
 
     /**
-     * Update this wheel's physics location and rotation.
+     * Update this wheel's location and orientation in physics space.
      */
     public void updatePhysicsState() {
-        getWheelLocation(wheelId, wheelIndex, wheelWorldLocation);
-        getWheelRotation(wheelId, wheelIndex, tmp_Matrix);
+        getWheelLocation(vehicleId, wheelIndex, wheelWorldLocation);
+        getWheelRotation(vehicleId, wheelIndex, tmp_Matrix);
         wheelWorldRotation.fromRotationMatrix(tmp_Matrix);
     }
 
-    private native void getWheelLocation(long vehicleId, int wheelId, Vector3f location);
+    private native void getWheelLocation(long vehicleId, int wheelId,
+            Vector3f location);
 
-    private native void getWheelRotation(long vehicleId, int wheelId, Matrix3f location);
+    private native void getWheelRotation(long vehicleId, int wheelId,
+            Matrix3f location);
 
     /**
-     * Apply this wheel's physics location and rotation to its associated
+     * Apply this wheel's physics location and orientation to its associated
      * spatial, if any.
      */
     public void applyWheelTransform() {
@@ -162,23 +198,16 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * Read the id of the btRaycastVehicle.
-     *
-     * @return the unique identifier (not zero)
-     */
-    public long getWheelId() {
-        assert wheelId != 0L;
-        return wheelId;
-    }
-
-    /**
      * Assign this wheel to a vehicle.
      *
-     * @param vehicleId the vehicle's unique identifier (not zero)
+     * @param vehicleId the id of the btRaycastVehicle (not zero)
      * @param wheelIndex index among the vehicle's wheels (&ge;0)
      */
     public void setVehicleId(long vehicleId, int wheelIndex) {
-        this.wheelId = vehicleId;
+        Validate.nonZero(vehicleId, "vehicle id");
+        Validate.nonNegative(wheelIndex, "wheel index");
+
+        this.vehicleId = vehicleId;
         this.wheelIndex = wheelIndex;
         applyInfo();
     }
@@ -189,44 +218,62 @@ public class VehicleWheel implements Savable {
      * @return true if front wheel, otherwise false
      */
     public boolean isFrontWheel() {
-        return frontWheel;
+        return isFront;
     }
 
     /**
-     * Alter whether this wheel is a front wheel.
+     * Alter whether this wheel is a front (steering) wheel.
      *
      * @param frontWheel true&rarr;front wheel, false&rarr;non-front wheel
      */
     public void setFrontWheel(boolean frontWheel) {
-        this.frontWheel = frontWheel;
+        this.isFront = frontWheel;
         applyInfo();
     }
 
     /**
-     * Access this wheel's location.
+     * Copy the location where the suspension connects to the chassis.
      *
-     * @return the pre-existing location vector (not null) TODO
+     * @param storeResult storage for the result (modified if not null)
+     * @return a new location vector (in chassis coordinates, either storeResult
+     * or a new instance)
      */
-    public Vector3f getLocation() {
-        return location;
+    public Vector3f getLocation(Vector3f storeResult) {
+        if (storeResult == null) {
+            return location.clone();
+        } else {
+            return storeResult.set(location);
+        }
     }
 
     /**
-     * Access this wheel's direction.
+     * Copy this wheel's suspension direction.
      *
-     * @return the pre-existing direction vector (not null) TODO
+     * @param storeResult storage for the result (modified if not null)
+     * @return a new direction vector (in chassis coordinates, either
+     * storeResult or a new instance)
      */
-    public Vector3f getDirection() {
-        return direction;
+    public Vector3f getDirection(Vector3f storeResult) {
+        if (storeResult == null) {
+            return suspensionDirection.clone();
+        } else {
+            return storeResult.set(suspensionDirection);
+        }
     }
 
     /**
-     * Access this wheel's axle direction.
+     * Copy this wheel's axis direction.
      *
-     * @return the pre-existing direction vector (not null) TODO
+     * @param storeResult storage for the result (modified if not null)
+     * @return a new direction vector (in chassis coordinates, either
+     * storeResult or a new instance)
      */
-    public Vector3f getAxle() {
-        return axle;
+    public Vector3f getAxle(Vector3f storeResult) {
+        if (storeResult == null) {
+            return axisDirection.clone();
+        } else {
+            return storeResult.set(axisDirection);
+        }
     }
 
     /**
@@ -251,7 +298,7 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * Read this wheel's damping when the suspension is expanding.
+     * Read this wheel's damping when the suspension is expanded.
      *
      * @return the damping
      */
@@ -260,7 +307,13 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * Alter this wheel's damping when the suspension is expanding.
+     * Alter this wheel's damping when the suspension is expanded.
+     * <p>
+     * Set to k * 2 * FastMath.sqrt(m_suspensionStiffness) where k is the
+     * damping ratio:
+     * <p>
+     * k = 0.0 undamped and bouncy, k = 1.0 critical damping, k between 0.1 and
+     * 0.3 are good values
      *
      * @param wheelsDampingRelaxation the desired damping (default=2.3)
      */
@@ -270,7 +323,7 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * Read this wheel's damping when the suspension is compressing.
+     * Read this wheel's damping when the suspension is compressed.
      *
      * @return the damping
      */
@@ -279,10 +332,10 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * Alter this wheel's damping when the suspension is compressing.
+     * Alter this wheel's damping when the suspension is compressed.
      * <p>
-     * Set to k * 2 * FastMath.sqrt(m_suspensionStiffness) where k is
-     * proportional to critical damping:
+     * Set to k * 2 * FastMath.sqrt(m_suspensionStiffness) where k is the
+     * damping ratio:
      * <p>
      * k = 0.0 undamped and bouncy, k = 1.0 critical damping, k between 0.1 and
      * 0.3 are good values
@@ -295,7 +348,7 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * Read the friction between this wheel's tyre and the ground.
+     * Read the friction between this wheel's tire and the ground.
      *
      * @return the coefficient of friction
      */
@@ -304,7 +357,7 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * Alter the friction between this wheel's tyre and the ground.
+     * Alter the friction between this wheel's tire and the ground.
      * <p>
      * Should be about 0.8 for realistic cars, but can increased for better
      * handling. Set large (10000.0) for kart racers.
@@ -319,7 +372,7 @@ public class VehicleWheel implements Savable {
     /**
      * Read this wheel's roll influence.
      *
-     * @return the roll influence factor
+     * @return the roll-influence factor
      */
     public float getRollInfluence() {
         return rollInfluence;
@@ -328,15 +381,15 @@ public class VehicleWheel implements Savable {
     /**
      * Alter this wheel's roll influence.
      * <p>
-     * The roll influence factor reduces (or magnifies) the torque contributed
+     * The roll-influence factor reduces (or magnifies) the torque contributed
      * by this wheel that tends to cause the vehicle to roll over. This is a bit
      * of a hack, but it's quite effective.
      * <p>
-     * If the friction between the tyres and the ground is too high, you may
+     * If the friction between the tires and the ground is too high, you may
      * reduce this factor to prevent the vehicle from rolling over. You should
      * also try lowering the vehicle's centre of mass.
      *
-     * @param rollInfluence the desired roll influence factor (0&rarr;no roll
+     * @param rollInfluence the desired roll-influence factor (0&rarr;no roll
      * torque, 1&rarr;realistic behaviour, default=1)
      */
     public void setRollInfluence(float rollInfluence) {
@@ -387,13 +440,12 @@ public class VehicleWheel implements Savable {
     }
 
     private void applyInfo() {
-        if (wheelId == 0L) {
-            return;
+        if (vehicleId != 0L) {
+            applyInfo(vehicleId, wheelIndex, suspensionStiffness,
+                    wheelsDampingRelaxation, wheelsDampingCompression,
+                    frictionSlip, rollInfluence, maxSuspensionTravelCm,
+                    maxSuspensionForce, radius, isFront, restLength);
         }
-        applyInfo(wheelId, wheelIndex, suspensionStiffness,
-                wheelsDampingRelaxation, wheelsDampingCompression, frictionSlip,
-                rollInfluence, maxSuspensionTravelCm, maxSuspensionForce,
-                radius, frontWheel, restLength);
     }
 
     private native void applyInfo(long wheelId, int wheelIndex,
@@ -438,7 +490,7 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * Alter the rest length of this wheel.
+     * Alter the rest length of the suspension of this wheel.
      *
      * @param restLength the desired length (default=1)
      */
@@ -448,62 +500,52 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * Copy the location where the wheel collides with the ground.
+     * Copy the location where the wheel touches the ground.
      *
-     * @param vec storage for the result (not null, modified)
-     * @return a location vector (in physics-space coordinates, not null)
+     * @param storeResult storage for the result (modified if not null)
+     * @return a new location vector (in physics-space coordinates, either
+     * storeResult or a new instance)
      */
-    public Vector3f getCollisionLocation(Vector3f vec) {
-        getCollisionLocation(wheelId, wheelIndex, vec);
-        return vec;
+    public Vector3f getCollisionLocation(Vector3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+        getCollisionLocation(vehicleId, wheelIndex, storeResult);
+
+        return storeResult;
     }
 
-    private native void getCollisionLocation(long wheelId, int wheelIndex, Vector3f vec);
+    private native void getCollisionLocation(long wheelId, int wheelIndex,
+            Vector3f vec);
 
     /**
-     * Copy the location where the wheel collides with the ground.
+     * Copy the normal where the wheel touches the ground.
      *
-     * @return a new location vector (in physics-space coordinates)
+     * @param storeResult storage for the result (modified if not null)
+     * @return a unit vector (in physics-space coordinates, either storeResult
+     * or a new instance)
      */
-    public Vector3f getCollisionLocation() {
-        Vector3f vec = new Vector3f();
-        getCollisionLocation(wheelId, wheelIndex, vec);
-        return vec;
+    public Vector3f getCollisionNormal(Vector3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+        getCollisionNormal(vehicleId, wheelIndex, storeResult);
+
+        return storeResult;
     }
 
-    /**
-     * Copy the normal where the wheel collides with the ground.
-     *
-     * @param vec a vector to store the result in (modified if not null)
-     * @return a unit vector (in physics-space coordinates)
-     */
-    public Vector3f getCollisionNormal(Vector3f vec) {
-        getCollisionNormal(wheelId, wheelIndex, vec);
-        return vec;
-    }
-
-    private native void getCollisionNormal(long wheelId, int wheelIndex, Vector3f vec);
-
-    /**
-     * Copy the normal where the wheel collides with the ground.
-     *
-     * @return a new unit vector (in physics-space coordinates)
-     */
-    public Vector3f getCollisionNormal() {
-        Vector3f vec = new Vector3f();
-        getCollisionNormal(wheelId, wheelIndex, vec);
-        return vec;
-    }
+    private native void getCollisionNormal(long wheelId, int wheelIndex,
+            Vector3f vec);
 
     /**
      * Calculate to what extent the wheel is skidding (for skid sounds/smoke
      * etc.)
      *
      * @return the relative amount of traction (0&rarr;wheel is sliding,
-     * 1&rarr;wheel has traction)
+     * 1&rarr;wheel has full traction)
      */
     public float getSkidInfo() {
-        return getSkidInfo(wheelId, wheelIndex);
+        return getSkidInfo(vehicleId, wheelIndex);
     }
 
     native private float getSkidInfo(long wheelId, int wheelIndex);
@@ -514,7 +556,7 @@ public class VehicleWheel implements Savable {
      * @return the rotation angle (in radians)
      */
     public float getDeltaRotation() {
-        return getDeltaRotation(wheelId, wheelIndex);
+        return getDeltaRotation(vehicleId, wheelIndex);
     }
 
     native private float getDeltaRotation(long wheelId, int wheelIndex);
@@ -529,16 +571,22 @@ public class VehicleWheel implements Savable {
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
         wheelSpatial = (Spatial) capsule.readSavable("wheelSpatial", null);
-        frontWheel = capsule.readBoolean("frontWheel", false);
-        location = (Vector3f) capsule.readSavable("wheelLocation", new Vector3f());
-        direction = (Vector3f) capsule.readSavable("wheelDirection", new Vector3f());
-        axle = (Vector3f) capsule.readSavable("wheelAxle", new Vector3f());
+        isFront = capsule.readBoolean("frontWheel", false);
+        location = (Vector3f) capsule.readSavable("wheelLocation",
+                new Vector3f());
+        suspensionDirection = (Vector3f) capsule.readSavable("wheelDirection",
+                new Vector3f());
+        axisDirection = (Vector3f) capsule.readSavable("wheelAxle",
+                new Vector3f());
         suspensionStiffness = capsule.readFloat("suspensionStiffness", 20.0f);
-        wheelsDampingRelaxation = capsule.readFloat("wheelsDampingRelaxation", 2.3f);
-        wheelsDampingCompression = capsule.readFloat("wheelsDampingCompression", 4.4f);
+        wheelsDampingRelaxation = capsule.readFloat("wheelsDampingRelaxation",
+                2.3f);
+        wheelsDampingCompression = capsule.readFloat("wheelsDampingCompression",
+                4.4f);
         frictionSlip = capsule.readFloat("frictionSlip", 10.5f);
         rollInfluence = capsule.readFloat("rollInfluence", 1.0f);
-        maxSuspensionTravelCm = capsule.readFloat("maxSuspensionTravelCm", 500f);
+        maxSuspensionTravelCm = capsule.readFloat("maxSuspensionTravelCm",
+                500f);
         maxSuspensionForce = capsule.readFloat("maxSuspensionForce", 6000f);
         radius = capsule.readFloat("wheelRadius", 0.5f);
         restLength = capsule.readFloat("restLength", 1f);
@@ -554,15 +602,16 @@ public class VehicleWheel implements Savable {
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(wheelSpatial, "wheelSpatial", null);
-        capsule.write(frontWheel, "frontWheel", false);
+        capsule.write(isFront, "frontWheel", false);
         capsule.write(location, "wheelLocation", new Vector3f());
-        capsule.write(direction, "wheelDirection", new Vector3f());
-        capsule.write(axle, "wheelAxle", new Vector3f());
-        capsule.write(suspensionStiffness, "suspensionStiffness", 20.0f);
+        capsule.write(suspensionDirection, "wheelDirection", new Vector3f());
+        capsule.write(axisDirection, "wheelAxle", new Vector3f());
+        capsule.write(suspensionStiffness, "suspensionStiffness", 20f);
         capsule.write(wheelsDampingRelaxation, "wheelsDampingRelaxation", 2.3f);
-        capsule.write(wheelsDampingCompression, "wheelsDampingCompression", 4.4f);
+        capsule.write(wheelsDampingCompression, "wheelsDampingCompression",
+                4.4f);
         capsule.write(frictionSlip, "frictionSlip", 10.5f);
-        capsule.write(rollInfluence, "rollInfluence", 1.0f);
+        capsule.write(rollInfluence, "rollInfluence", 1f);
         capsule.write(maxSuspensionTravelCm, "maxSuspensionTravelCm", 500f);
         capsule.write(maxSuspensionForce, "maxSuspensionForce", 6000f);
         capsule.write(radius, "wheelRadius", 0.5f);
@@ -579,7 +628,9 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * @param wheelSpatial the wheelSpatial to set
+     * Alter which spatial is associated with this wheel.
+     *
+     * @param wheelSpatial the desired spatial, or null for none
      */
     public void setWheelSpatial(Spatial wheelSpatial) {
         this.wheelSpatial = wheelSpatial;
@@ -608,20 +659,34 @@ public class VehicleWheel implements Savable {
     }
 
     /**
-     * Copy this wheel's rotation to the specified quaternion.
+     * Copy this wheel's orientation to the specified quaternion.
      *
-     * @param store a quaternion to store the result in (modified)
+     * @param storeResult storage for the result (modified if not null)
+     * @return a quaternion (in physics-space coordinates, either storeResult or
+     * a new instance)
      */
-    public void getWheelWorldRotation(final Quaternion store) {
-        store.set(this.wheelWorldRotation);
+    public Quaternion getWheelWorldRotation(Quaternion storeResult) {
+        if (storeResult == null) {
+            storeResult = new Quaternion();
+        }
+        storeResult.set(wheelWorldRotation);
+
+        return storeResult;
     }
 
     /**
      * Copy this wheel's location to the specified vector.
      *
-     * @param store a vector to store the result in (modified)
+     * @param storeResult storage for the result (modified if not null)
+     * @return a location vector (in physics-space coordinates, either
+     * storeResult or a new instance)
      */
-    public void getWheelWorldLocation(final Vector3f store) {
-        store.set(this.wheelWorldLocation);
+    public Vector3f getWheelWorldLocation(Vector3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+        storeResult.set(wheelWorldLocation);
+
+        return storeResult;
     }
 }
