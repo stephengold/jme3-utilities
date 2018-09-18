@@ -1114,21 +1114,33 @@ public class PhysicsSpace {
     }
 
     /**
-     * Access the minimum coordinate values for this space.
+     * Copy the minimum coordinate values for this space.
      *
-     * @return the pre-existing vector (not null) TODO
+     * @param storeResult storage for the result (modified if not null)
+     * @return the minimum coordinates (either storeResult or a new vector, not
+     * null)
      */
-    public Vector3f getWorldMin() {
-        return worldMin;
+    public Vector3f getWorldMin(Vector3f storeResult) {
+        if (storeResult == null) {
+            return worldMin.clone();
+        } else {
+            return storeResult.set(worldMin);
+        }
     }
 
     /**
-     * Access the maximum coordinate values for this space.
+     * Copy the maximum coordinate values for this space.
      *
-     * @return the pre-existing vector (not null) TODO
+     * @param storeResult storage for the result (modified if not null)
+     * @return the maximum coordinates (either storeResult or a new vector, not
+     * null)
      */
-    public Vector3f getWorldMax() {
-        return worldMax;
+    public Vector3f getWorldMax(Vector3f storeResult) {
+        if (storeResult == null) {
+            return worldMax.clone();
+        } else {
+            return storeResult.set(worldMax);
+        }
     }
 
     /**

@@ -247,7 +247,7 @@ public class PhysicsDumper extends Dumper {
 
         float accuracy = space.getAccuracy();
         PhysicsSpace.BroadphaseType broadphaseType = space.getBroadphaseType();
-        Vector3f gravity = space.getGravity(new Vector3f());
+        Vector3f gravity = space.getGravity(null);
         int maxSubSteps = space.maxSubSteps();
 
         stream.printf(" accu=%f, bphase=%s, grav=%s, maxStep=%d%n",
@@ -257,8 +257,8 @@ public class PhysicsDumper extends Dumper {
         int rayTestFlags = space.getRayTestFlags();
         PhysicsDescriber describer = getDescriber();
         String rtText = describer.describeRayTestFlags(rayTestFlags);
-        Vector3f worldMax = space.getWorldMax();
-        Vector3f worldMin = space.getWorldMin();
+        Vector3f worldMax = space.getWorldMax(null);
+        Vector3f worldMin = space.getWorldMin(null);
         stream.printf(" iters=%d, rayTest=(%s), wMin=%s, wMax=%s%n",
                 numIterations, rtText, worldMin, worldMax);
 
