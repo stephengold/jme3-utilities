@@ -36,20 +36,24 @@ task cleanCopySource(type: Delete) {
 // shape textures
 
 task shapeTextures {
-    dependsOn = ['saltire', 'solidCircle']
+    dependsOn = ['ring', 'saltire', 'solidCircle']
     description 'generate texture assets distributed with jme3-utilities-debug'
 }
 task cleanShapeTextures(type:Delete) {
     delete fileTree(dir: shapes)
 }
 
+task ring(type: JavaExec) {
+    main 'jme3utilities.debug.textures.MakeRing'
+    outputs.files(["$shapes/ring.png"])
+}
 task saltire(type: JavaExec) {
     main 'jme3utilities.debug.textures.MakeSaltire'
-    outputs.files(["${shapes}/saltire.png"])
+    outputs.files(["$shapes/saltire.png"])
 }
 task solidCircle(type: JavaExec) {
     main 'jme3utilities.debug.textures.MakeSolidCircle'
-    outputs.files(["${shapes}/solid circle.png"])
+    outputs.files(["$shapes/solid circle.png"])
 }
 
 // sky textures
@@ -66,9 +70,9 @@ task cleanSkyTextures(type:Delete) {
 
 task clouds(type: JavaExec) {
     main 'jme3utilities.sky.textures.MakeClouds'
-    outputs.files(["${skies}/clouds/clear.png", \
-                   "${skies}/clouds/fbm.png", \
-                   "${skies}/clouds/overcast.png"])
+    outputs.files(["$skies/clouds/clear.png", \
+                   "$skies/clouds/fbm.png", \
+                   "$skies/clouds/overcast.png"])
 }
 task debugEquator(type: JavaExec) {
     args = ['-c', '-p', 'equator']
@@ -80,59 +84,59 @@ task equator(type: JavaExec) {
     args = ['-c', '-p', 'equator']
     inputs.files(bsc)
     main 'jme3utilities.sky.textures.MakeStarMaps'
-    outputs.files(fileTree("${skies}/star-maps/equator"))
+    outputs.files(fileTree("$skies/star-maps/equator"))
 }
 task equator16m(type: JavaExec) {
     args = ['-c', '-p', 'equator_16m']
     inputs.files(bsc)
     main 'jme3utilities.sky.textures.MakeStarMaps'
-    outputs.files(fileTree("${skies}/star-maps/equator16m"))
+    outputs.files(fileTree("$skies/star-maps/equator16m"))
 }
 task moons(type: JavaExec) {
     main 'jme3utilities.sky.textures.MakeMoons'
-    outputs.files(fileTree("${skies}/moon-nonviral"))
+    outputs.files(fileTree("$skies/moon-nonviral"))
 }
 task north(type: JavaExec) {
     args = ['-p', 'north']
     inputs.files(bsc)
     main 'jme3utilities.sky.textures.MakeStarMaps'
-    outputs.files("${skies}/star-maps/northern.png")
+    outputs.files("$skies/star-maps/northern.png")
 }
 task north16m(type: JavaExec) {
     args = ['-p', 'north_16m']
     inputs.files(bsc)
     main 'jme3utilities.sky.textures.MakeStarMaps'
-    outputs.files("${skies}/star-maps/16m/northern.png")
+    outputs.files("$skies/star-maps/16m/northern.png")
 }
 task ramps(type: JavaExec) {
     main 'jme3utilities.sky.textures.MakeRamps'
-    outputs.files("${skies}/ramps/haze.png")
+    outputs.files("$skies/ramps/haze.png")
 }
 task south(type: JavaExec) {
     args = ['-p', 'south']
     inputs.files(bsc)
     main 'jme3utilities.sky.textures.MakeStarMaps'
-    outputs.files("${skies}/star-maps/southern.png")
+    outputs.files("$skies/star-maps/southern.png")
 }
 task south16m(type: JavaExec) {
     args = ['-p', 'south_16m']
     inputs.files(bsc)
     main 'jme3utilities.sky.textures.MakeStarMaps'
-    outputs.files("${skies}/star-maps/16m/southern.png")
+    outputs.files("$skies/star-maps/16m/southern.png")
 }
 task suns(type: JavaExec) {
     main 'jme3utilities.sky.textures.MakeSun'
-    outputs.files(fileTree("${skies}/suns"))
+    outputs.files(fileTree("$skies/suns"))
 }
 task wiltshire(type: JavaExec) {
     args = ['-p', 'wiltshire']
     inputs.files(bsc)
     main 'jme3utilities.sky.textures.MakeStarMaps'
-    outputs.files("${skies}/star-maps/wiltshire.png")
+    outputs.files("$skies/star-maps/wiltshire.png")
 }
 task wiltshire16m(type: JavaExec) {
     args = ['-p', 'wiltshire_16m']
     inputs.files(bsc)
     main 'jme3utilities.sky.textures.MakeStarMaps'
-    outputs.files("${skies}/star-maps/16m/wiltshire.png")
+    outputs.files("$skies/star-maps/16m/wiltshire.png")
 }
