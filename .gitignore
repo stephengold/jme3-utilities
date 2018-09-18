@@ -6,6 +6,8 @@
 /Minie/build/
 /Minie/src/main/java/jme3test/
 /moon-ccbysa/build/
+/nifty/*.dll
+/nifty/*.so
 /nifty/build/
 /SkyControl/build/
 /SkyControl/src/main/resources/Textures/skies/
