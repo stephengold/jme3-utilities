@@ -234,7 +234,7 @@ public class MyVector3f {
      *
      * @param axisIndex 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      * @param length how long (ge;0)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return vector (either storeResult or a new instance)
      */
     public static Vector3f axisVector(int axisIndex, float length,
@@ -508,8 +508,8 @@ public class MyVector3f {
      *
      * @param in1 input direction for 1st basis vector (not null, not zero,
      * modified)
-     * @param store2 2nd basis vector (not null, modified)
-     * @param store3 3nd basis vector (not null, modified)
+     * @param store2 storage for the 2nd basis vector (not null, modified)
+     * @param store3 storage for the 3nd basis vector (not null, modified)
      */
     public static void generateBasis(Vector3f in1, Vector3f store2,
             Vector3f store3) {
@@ -759,7 +759,8 @@ public class MyVector3f {
      * storeResult)
      * @param v1 function value at t=1 (not null, unaffected unless it's also
      * storeResult)
-     * @param storeResult (modified if not null, may be v0 or v1)
+     * @param storeResult storage for the result (modified if not null, may be
+     * v0 or v1)
      * @return an interpolated vector (either storeResult or a new instance)
      */
     public static Vector3f lerp(float t, Vector3f v0, Vector3f v1,
@@ -870,7 +871,7 @@ public class MyVector3f {
      * @param worldDirection input direction to transform (not null, unaffected,
      * length&gt;0)
      * @param spatial which spatial (not null)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return a unit vector (either storeResult or a new instance)
      */
     public static Vector3f localizeDirection(Vector3f worldDirection,
@@ -1043,7 +1044,7 @@ public class MyVector3f {
      * Standardize a vector in preparation for hashing.
      *
      * @param input (not null, unaffected)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return an equivalent vector without negative zeroes (either storeResult
      * or a new instance)
      */

@@ -904,7 +904,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     }
 
     /**
-     * Enable or disable the ragdoll behaviour. if ragdollEnabled is true, the
+     * Enable or disable the ragdoll behavior. if ragdollEnabled is true, the
      * character motion will only be powered by physics else, the character will
      * be animated by the keyframe animation, but will be able to physically
      * interact with its physics environment

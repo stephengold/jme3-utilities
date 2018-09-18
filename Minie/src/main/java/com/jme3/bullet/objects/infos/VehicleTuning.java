@@ -46,20 +46,18 @@ public class VehicleTuning {
     final public static Logger logger
             = Logger.getLogger(VehicleTuning.class.getName());
 
-    // TODO privatize all fields
+    // TODO privatize all fields, add copy constructor
     /**
      * suspension stiffness constant (10&rarr;off-road buggy, 50&rarr;sports
      * car, 200&rarr;Formula-1 race car, default=5.88)
      */
     public float suspensionStiffness = 5.88f;
     /**
-     * suspension damping ratio when compressed (0&rarr;no damping,
-     * 1&rarr;critically damped, default=0.83)
+     * suspension damping when compressed (0&rarr;no damping, default=0.83)
      */
     public float suspensionCompression = 0.83f;
     /**
-     * suspension damping ratio when expanded (0&rarr;no damping,
-     * 1&rarr;critically damped, default=0.88)
+     * suspension damping when expanded (0&rarr;no damping, default=0.88)
      */
     public float suspensionDamping = 0.88f;
     /**

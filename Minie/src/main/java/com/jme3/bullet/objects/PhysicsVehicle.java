@@ -81,7 +81,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      */
     private long rayCasterId = 0L;
     /**
-     * tuning parameters
+     * tuning parameters applied when a wheel is created
      */
     protected VehicleTuning tuning = new VehicleTuning();
     /**
@@ -131,7 +131,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
         }
     }
 
-    private native void updateWheelTransform(long vehicleId, int wheel, boolean interpolated);
+    private native void updateWheelTransform(long vehicleId, int wheel, 
+            boolean interpolated);
 
     /**
      * used internally

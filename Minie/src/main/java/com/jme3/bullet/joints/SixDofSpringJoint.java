@@ -50,9 +50,9 @@ import java.util.logging.Logger;
  * undefined.
  * <p>
  * For each axis:<ul>
- * <li>Lowerlimit = Upperlimit &rarr; axis is locked</i>
- * <li>Lowerlimit &gt; Upperlimit &rarr; axis is free</i>
- * <li>Lowerlimit &lt; Upperlimit &rarr; axis it limited in that range
+ * <li>Lowerlimit = Upperlimit &rarr; axis is locked</li>
+ * <li>Lowerlimit &gt; Upperlimit &rarr; axis is free</li>
+ * <li>Lowerlimit &lt; Upperlimit &rarr; axis it limited in that range</li>
  * </ul>
  *
  * @author normenhansen

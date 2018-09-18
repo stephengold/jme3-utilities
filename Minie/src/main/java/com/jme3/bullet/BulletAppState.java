@@ -357,9 +357,9 @@ public class BulletAppState implements AppState, PhysicsTickListener {
     }
 
     /**
-     * Alter which which objects are visualized in the visualization.
+     * Alter which objects are included in the debug visualization.
      *
-     * @param filter new filter, or or null to visualize all objects
+     * @param filter the desired filter, or or null to visualize all objects
      */
     public void setDebugFilter(BulletDebugAppState.DebugAppStateFilter filter) {
         if (debugAppState != null) {

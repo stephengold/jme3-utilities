@@ -150,18 +150,18 @@ public class BulletDebugAppState extends AbstractAppState {
     }
 
     /**
-     * Alter which which objects are visualized.
+     * Alter which objects are visualized.
      *
-     * @param filter new filter, or or null to visualize all objects
+     * @param filter the desired filter, or or null to visualize all objects
      */
     public void setFilter(DebugAppStateFilter filter) {
         this.filter = filter;
     }
 
     /**
-     * Alter which which objects are visualized.
+     * Alter the view ports in which to render.
      *
-     * @param filter new filter, or or null to visualize all objects
+     * @param viewPorts array of view ports (not null)
      */
     public void setViewPorts(ViewPort[] viewPorts) {
         this.viewPorts = viewPorts;
