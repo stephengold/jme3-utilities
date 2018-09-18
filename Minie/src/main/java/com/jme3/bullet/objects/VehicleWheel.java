@@ -31,6 +31,7 @@
  */
 package com.jme3.bullet.objects;
 
+import com.jme3.bullet.objects.infos.VehicleTuning;
 import com.jme3.export.*;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
@@ -79,18 +80,15 @@ public class VehicleWheel implements Savable {
      * axis direction (in chassis coordinates, typically to the right/-1,0,0)
      */
     private Vector3f axisDirection = new Vector3f(); // TODO finalize
-    // TODO use VehicleTuning
-    private float suspensionStiffness = 20f;
-    private float wheelsDampingRelaxation = 2.3f;
-    private float wheelsDampingCompression = 4.4f;
-    private float frictionSlip = 10.5f;
+    /**
+     * copy of tuning parameters
+     */
+    private VehicleTuning tuning = new VehicleTuning();
     /**
      * copy of roll-influence factor (0&rarr;no roll torque, 1&rarr;realistic
      * behavior, default=1)
      */
     private float rollInfluence = 1f;
-    private float maxSuspensionTravelCm = 500f;
-    private float maxSuspensionForce = 6000f;
     /**
      * copy of wheel radius (in physics-space units, &gt;0)
      */
@@ -111,8 +109,13 @@ public class VehicleWheel implements Savable {
      * associated spatial, or null if none
      */
     private Spatial wheelSpatial;
-
-    final private Matrix3f tmp_Matrix = new com.jme3.math.Matrix3f();
+    /**
+     * reusable rotation matrix
+     */
+    final private Matrix3f tmp_Matrix = new Matrix3f();
+    /**
+     * temporary storage during calculations
+     */
     private final Quaternion tmp_inverseWorldRotation = new Quaternion();
     /**
      * true &rarr; physics coordinates match local transform, false &rarr;
@@ -282,7 +285,7 @@ public class VehicleWheel implements Savable {
      * @return the stiffness constant
      */
     public float getSuspensionStiffness() {
-        return suspensionStiffness;
+        return tuning.suspensionStiffness;
     }
 
     /**
@@ -290,10 +293,10 @@ public class VehicleWheel implements Savable {
      *
      * @param suspensionStiffness the desired stiffness constant
      * (10&rarr;off-road buggy, 50&rarr;sports car, 200&rarr;Formula-1 race car,
-     * default=20)
+     * default=5.88)
      */
     public void setSuspensionStiffness(float suspensionStiffness) {
-        this.suspensionStiffness = suspensionStiffness;
+        tuning.suspensionStiffness = suspensionStiffness;
         applyInfo();
     }
 
@@ -303,7 +306,7 @@ public class VehicleWheel implements Savable {
      * @return the damping
      */
     public float getWheelsDampingRelaxation() {
-        return wheelsDampingRelaxation;
+        return tuning.suspensionDamping;
     }
 
     /**
@@ -315,10 +318,10 @@ public class VehicleWheel implements Savable {
      * k = 0.0 undamped and bouncy, k = 1.0 critical damping, k between 0.1 and
      * 0.3 are good values
      *
-     * @param wheelsDampingRelaxation the desired damping (default=2.3)
+     * @param wheelsDampingRelaxation the desired damping (default=0.88)
      */
     public void setWheelsDampingRelaxation(float wheelsDampingRelaxation) {
-        this.wheelsDampingRelaxation = wheelsDampingRelaxation;
+        tuning.suspensionDamping = wheelsDampingRelaxation;
         applyInfo();
     }
 
@@ -328,7 +331,7 @@ public class VehicleWheel implements Savable {
      * @return the damping
      */
     public float getWheelsDampingCompression() {
-        return wheelsDampingCompression;
+        return tuning.suspensionCompression;
     }
 
     /**
@@ -340,10 +343,10 @@ public class VehicleWheel implements Savable {
      * k = 0.0 undamped and bouncy, k = 1.0 critical damping, k between 0.1 and
      * 0.3 are good values
      *
-     * @param wheelsDampingCompression the desired damping (default=4.4)
+     * @param wheelsDampingCompression the desired damping (default=0.83)
      */
     public void setWheelsDampingCompression(float wheelsDampingCompression) {
-        this.wheelsDampingCompression = wheelsDampingCompression;
+        tuning.suspensionCompression = wheelsDampingCompression;
         applyInfo();
     }
 
@@ -353,7 +356,7 @@ public class VehicleWheel implements Savable {
      * @return the coefficient of friction
      */
     public float getFrictionSlip() {
-        return frictionSlip;
+        return tuning.frictionSlip;
     }
 
     /**
@@ -365,7 +368,7 @@ public class VehicleWheel implements Savable {
      * @param frictionSlip the desired coefficient of friction (default=10.5)
      */
     public void setFrictionSlip(float frictionSlip) {
-        this.frictionSlip = frictionSlip;
+        tuning.frictionSlip = frictionSlip;
         applyInfo();
     }
 
@@ -387,10 +390,10 @@ public class VehicleWheel implements Savable {
      * <p>
      * If the friction between the tires and the ground is too high, you may
      * reduce this factor to prevent the vehicle from rolling over. You should
-     * also try lowering the vehicle's centre of mass.
+     * also try lowering the vehicle's center of mass.
      *
      * @param rollInfluence the desired roll-influence factor (0&rarr;no roll
-     * torque, 1&rarr;realistic behaviour, default=1)
+     * torque, 1&rarr;realistic behavior, default=1)
      */
     public void setRollInfluence(float rollInfluence) {
         this.rollInfluence = rollInfluence;
@@ -403,7 +406,7 @@ public class VehicleWheel implements Savable {
      * @return the maximum travel distance (in centimeters)
      */
     public float getMaxSuspensionTravelCm() {
-        return maxSuspensionTravelCm;
+        return tuning.maxSuspensionTravelCm;
     }
 
     /**
@@ -413,7 +416,7 @@ public class VehicleWheel implements Savable {
      * centimetres, default=500)
      */
     public void setMaxSuspensionTravelCm(float maxSuspensionTravelCm) {
-        this.maxSuspensionTravelCm = maxSuspensionTravelCm;
+        tuning.maxSuspensionTravelCm = maxSuspensionTravelCm;
         applyInfo();
     }
 
@@ -423,7 +426,7 @@ public class VehicleWheel implements Savable {
      * @return the maximum force
      */
     public float getMaxSuspensionForce() {
-        return maxSuspensionForce;
+        return tuning.maxSuspensionForce;
     }
 
     /**
@@ -435,16 +438,23 @@ public class VehicleWheel implements Savable {
      * @param maxSuspensionForce the desired maximum force (default=6000)
      */
     public void setMaxSuspensionForce(float maxSuspensionForce) {
-        this.maxSuspensionForce = maxSuspensionForce;
+        tuning.maxSuspensionForce = maxSuspensionForce;
         applyInfo();
     }
 
     private void applyInfo() {
         if (vehicleId != 0L) {
-            applyInfo(vehicleId, wheelIndex, suspensionStiffness,
-                    wheelsDampingRelaxation, wheelsDampingCompression,
-                    frictionSlip, rollInfluence, maxSuspensionTravelCm,
-                    maxSuspensionForce, radius, isFront, restLength);
+            applyInfo(vehicleId, wheelIndex,
+                    getSuspensionStiffness(),
+                    getWheelsDampingRelaxation(),
+                    getWheelsDampingCompression(),
+                    getFrictionSlip(),
+                    rollInfluence,
+                    getMaxSuspensionTravelCm(),
+                    getMaxSuspensionForce(),
+                    radius,
+                    isFront,
+                    restLength);
         }
     }
 
@@ -578,16 +588,9 @@ public class VehicleWheel implements Savable {
                 new Vector3f());
         axisDirection = (Vector3f) capsule.readSavable("wheelAxle",
                 new Vector3f());
-        suspensionStiffness = capsule.readFloat("suspensionStiffness", 20.0f);
-        wheelsDampingRelaxation = capsule.readFloat("wheelsDampingRelaxation",
-                2.3f);
-        wheelsDampingCompression = capsule.readFloat("wheelsDampingCompression",
-                4.4f);
-        frictionSlip = capsule.readFloat("frictionSlip", 10.5f);
-        rollInfluence = capsule.readFloat("rollInfluence", 1.0f);
-        maxSuspensionTravelCm = capsule.readFloat("maxSuspensionTravelCm",
-                500f);
-        maxSuspensionForce = capsule.readFloat("maxSuspensionForce", 6000f);
+        tuning = (VehicleTuning) capsule.readSavable("tuning",
+                new VehicleTuning());
+        rollInfluence = capsule.readFloat("rollInfluence", 1f);
         radius = capsule.readFloat("wheelRadius", 0.5f);
         restLength = capsule.readFloat("restLength", 1f);
     }
@@ -606,14 +609,8 @@ public class VehicleWheel implements Savable {
         capsule.write(location, "wheelLocation", new Vector3f());
         capsule.write(suspensionDirection, "wheelDirection", new Vector3f());
         capsule.write(axisDirection, "wheelAxle", new Vector3f());
-        capsule.write(suspensionStiffness, "suspensionStiffness", 20f);
-        capsule.write(wheelsDampingRelaxation, "wheelsDampingRelaxation", 2.3f);
-        capsule.write(wheelsDampingCompression, "wheelsDampingCompression",
-                4.4f);
-        capsule.write(frictionSlip, "frictionSlip", 10.5f);
+        capsule.write(tuning, "tuning", new VehicleTuning());
         capsule.write(rollInfluence, "rollInfluence", 1f);
-        capsule.write(maxSuspensionTravelCm, "maxSuspensionTravelCm", 500f);
-        capsule.write(maxSuspensionForce, "maxSuspensionForce", 6000f);
         capsule.write(radius, "wheelRadius", 0.5f);
         capsule.write(restLength, "restLength", 1f);
     }
