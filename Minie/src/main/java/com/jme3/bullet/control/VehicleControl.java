@@ -169,19 +169,19 @@ public class VehicleControl extends PhysicsVehicle
         VehicleControl control = new VehicleControl(collisionShape, mass);
         control.setAngularFactor(getAngularFactor());
         control.setAngularSleepingThreshold(getAngularSleepingThreshold());
-        control.setAngularVelocity(getAngularVelocity());
+        control.setAngularVelocity(getAngularVelocity(null));
         control.setCcdMotionThreshold(getCcdMotionThreshold());
         control.setCcdSweptSphereRadius(getCcdSweptSphereRadius());
         control.setCollideWithGroups(getCollideWithGroups());
         control.setCollisionGroup(getCollisionGroup());
         control.setDamping(getLinearDamping(), getAngularDamping());
         control.setFriction(getFriction());
-        control.setGravity(getGravity());
+        control.setGravity(getGravity(null));
         control.setKinematic(isKinematic());
         control.setLinearSleepingThreshold(getLinearSleepingThreshold());
-        control.setLinearVelocity(getLinearVelocity());
-        control.setPhysicsLocation(getPhysicsLocation());
-        control.setPhysicsRotation(getPhysicsRotationMatrix());
+        control.setLinearVelocity(getLinearVelocity(null));
+        control.setPhysicsLocation(getPhysicsLocation(null));
+        control.setPhysicsRotation(getPhysicsRotationMatrix(null));
         control.setRestitution(getRestitution());
 
         control.setFrictionSlip(getFrictionSlip());

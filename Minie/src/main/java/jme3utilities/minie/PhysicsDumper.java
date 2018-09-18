@@ -178,11 +178,11 @@ public class PhysicsDumper extends Dumper {
         }
         // compare with MyControlP.describe(Control)
 
-        Vector3f location = body.getPhysicsLocation();
+        Vector3f location = body.getPhysicsLocation(null);
         stream.printf(" loc=[%.3f, %.3f, %.3f]",
                 location.x, location.y, location.z);
 
-        Quaternion orientation = body.getPhysicsRotation();
+        Quaternion orientation = body.getPhysicsRotation(null);
         if (!MyQuaternion.isRotationIdentity(orientation)) {
             stream.printf(" orient=%s", orientation);
         }
@@ -290,7 +290,7 @@ public class PhysicsDumper extends Dumper {
         stream.printf("  Vehicle #%s mass=%f", Long.toHexString(objectId),
                 mass);
 
-        Vector3f location = vehicle.getPhysicsLocation();
+        Vector3f location = vehicle.getPhysicsLocation(null);
         stream.printf(" loc=[%.3f, %.3f, %.3f]",
                 location.x, location.y, location.z);
 

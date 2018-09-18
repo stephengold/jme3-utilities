@@ -168,7 +168,7 @@ public class RigidBodyControl extends PhysicsRigidBody
         control.setCollisionGroup(getCollisionGroup());
         control.setDamping(getLinearDamping(), getAngularDamping());
         control.setFriction(getFriction());
-        control.setGravity(getGravity());
+        control.setGravity(getGravity(null));
         control.setKinematic(isKinematic());
         control.setKinematicSpatial(isKinematicSpatial());
         control.setLinearSleepingThreshold(getLinearSleepingThreshold());
@@ -177,8 +177,8 @@ public class RigidBodyControl extends PhysicsRigidBody
         control.setRestitution(getRestitution());
 
         if (mass > 0f) {
-            control.setAngularVelocity(getAngularVelocity());
-            control.setLinearVelocity(getLinearVelocity());
+            control.setAngularVelocity(getAngularVelocity(null));
+            control.setLinearVelocity(getLinearVelocity(null));
         }
         control.setApplyPhysicsLocal(isApplyPhysicsLocal());
         control.spatial = this.spatial;
