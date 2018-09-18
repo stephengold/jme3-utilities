@@ -57,6 +57,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
@@ -366,15 +367,9 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
                 link.bone.setUserTransformsInModelSpace(position, tmpRot1);
 
             } else {
-                //If boneList is empty, every bone has a collision shape,
-                //so we simply update the bone position.
-                if (boneList.isEmpty()) {
-                    link.bone.setUserTransformsInModelSpace(position, tmpRot1);
-                } else {
-                    //boneList is not empty, this means some bones of the skeleton might not be associated with a collision shape.
-                    //So we update them recursively
-                    RagdollUtils.setTransform(link.bone, position, tmpRot1, false, boneList);
-                }
+                //some bones of the skeleton might not be associated with a collision shape.
+                //So we update them recusively
+                RagdollUtils.setTransform(link.bone, position, tmpRot1, false, boneList);
             }
         }
         vars.release();
@@ -412,18 +407,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
                 tmpRot1.set(tmpRot2);
                 position.set(position2);
 
-                //updating bones transforms
-                if (boneList.isEmpty()) {
-                    //we ensure we have the control to update the bone
-                    link.bone.setUserControl(true);
-                    link.bone.setUserTransformsInModelSpace(position, tmpRot1);
-                    //we give control back to the key framed animation.
-                    link.bone.setUserControl(false);
-                } else {
-                    RagdollUtils.setTransform(link.bone, position, tmpRot1,
-                            true, boneList);
-                }
-
+                //update bone transforms
+                RagdollUtils.setTransform(link.bone, position, tmpRot1, true, boneList);
             }
             //setting skeleton transforms to the ragdoll
             matchPhysicObjectToBone(link, position, tmpRot1);
@@ -581,7 +566,6 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         //updating physics location/rotation of the physics bone
         link.rigidBody.setPhysicsLocation(position);
         link.rigidBody.setPhysicsRotation(tmpRot1);
-
     }
 
     /**
@@ -626,6 +610,22 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         model.removeControl(sc);
         model.addControl(sc);
 
+        if (boneList.isEmpty()) {
+            // add all bones to the list
+            skeleton = sc.getSkeleton();
+            for (int boneI = 0; boneI < skeleton.getBoneCount(); boneI++) {
+                String boneName = skeleton.getBone(boneI).getName();
+                boneList.add(boneName);
+            }
+        }
+        // filter out bones without vertices
+        filterBoneList(sc);
+
+        if (boneList.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "No suitable bones were found in the model's skeleton.");
+        }
+
         // put into bind pose and compute bone transforms in model space
         // maybe don't reset to ragdoll out of animations?
         scanSpatial(model);
@@ -643,6 +643,25 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         }
         logger.log(Level.FINE, "Created physics ragdoll for skeleton {0}",
                 skeleton);
+    }
+
+    /**
+     * Remove any bones without vertices from the boneList, so that every hull
+     * shape will contain at least 1 vertex.
+     */
+    private void filterBoneList(SkeletonControl skeletonControl) {
+        Mesh[] targets = skeletonControl.getTargets();
+        Skeleton skel = skeletonControl.getSkeleton();
+        for (int boneI = 0; boneI < skel.getBoneCount(); boneI++) {
+            String boneName = skel.getBone(boneI).getName();
+            if (boneList.contains(boneName)) {
+                boolean hasVertices = RagdollUtils.hasVertices(boneI, targets,
+                        weightThreshold);
+                if (!hasVertices) {
+                    boneList.remove(boneName);
+                }
+            }
+        }
     }
 
     /**
@@ -709,7 +728,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
             PhysicsRigidBody parent, int reccount,
             Map<Integer, List<Float>> pointsMap) {
         PhysicsRigidBody parentShape = parent;
-        if (boneList.isEmpty() || boneList.contains(bone.getName())) {
+        if (boneList.contains(bone.getName())) {
 
             PhysicsBoneLink link = new PhysicsBoneLink();
             link.bone = bone;
