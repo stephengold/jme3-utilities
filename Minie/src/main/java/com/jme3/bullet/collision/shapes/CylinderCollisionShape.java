@@ -50,12 +50,16 @@ import jme3utilities.math.MyVector3f;
  * @author normenhansen
  */
 public class CylinderCollisionShape extends CollisionShape {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(CylinderCollisionShape.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
      * copy of half-extents of the cylinder on each local axis (not null, no
@@ -66,6 +70,8 @@ public class CylinderCollisionShape extends CollisionShape {
      * copy of main (height) axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
      */
     private int axis;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -77,41 +83,48 @@ public class CylinderCollisionShape extends CollisionShape {
     /**
      * Instantiate a Z-axis cylinder shape with the specified half extents.
      *
-     * @param halfExtents the desired half extents (not null, no negative
-     * component, alias created) TODO
+     * @param halfExtents the desired unscaled half extents (not null, no
+     * negative component, unaffected)
      */
     public CylinderCollisionShape(Vector3f halfExtents) {
         Validate.nonNegative(halfExtents, "half extents");
 
-        this.halfExtents = halfExtents;
-        this.axis = PhysicsSpace.AXIS_Z;
+        this.halfExtents = halfExtents.clone();
+        axis = PhysicsSpace.AXIS_Z;
         createShape();
     }
 
     /**
      * Instantiate a cylinder shape around the specified axis.
      *
-     * @param halfExtents the desired half extents (not null, no negative
-     * component, alias created) TODO
+     * @param halfExtents the desired unscaled half extents (not null, no
+     * negative component, unaffected)
      * @param axis which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public CylinderCollisionShape(Vector3f halfExtents, int axis) {
         Validate.nonNegative(halfExtents, "half extents");
         Validate.inRange(axis, "axis", 0, 2);
 
-        this.halfExtents = halfExtents;
+        this.halfExtents = halfExtents.clone();
         this.axis = axis;
         createShape();
     }
+    // *************************************************************************
 
     /**
-     * Access the half extents of the cylinder.
+     * Copy the half extents of the cylinder.
      *
-     * @return the pre-existing vector (not null, no negative component) TODO
+     * @param storeResult storage for the result (modified if not null)
+     * @return the unscaled half extent for each local axis (either storeResult
+     * or a new vector, not null, no negative component)
      */
-    public final Vector3f getHalfExtents() {
+    public final Vector3f getHalfExtents(Vector3f storeResult) {
         assert MyVector3f.isAllNonNegative(halfExtents) : halfExtents;
-        return halfExtents;
+        if (storeResult == null) {
+            return halfExtents.clone();
+        } else {
+            return storeResult.set(halfExtents);
+        }
     }
 
     /**
@@ -176,6 +189,8 @@ public class CylinderCollisionShape extends CollisionShape {
         axis = capsule.readInt("axis", PhysicsSpace.AXIS_Y);
         createShape();
     }
+    // *************************************************************************
+    // private methods
 
     /**
      * Instantiate the configured shape in Bullet.

@@ -107,7 +107,7 @@ public class PhysicsDescriber extends Describer {
             CylinderCollisionShape cylinder = (CylinderCollisionShape) shape;
             int axis = cylinder.getAxis();
             result += describeAxis(axis);
-            Vector3f halfExtents = cylinder.getHalfExtents();
+            Vector3f halfExtents = cylinder.getHalfExtents(null);
             result += String.format("[hx=%f,hy=%f,hz=%f]",
                     halfExtents.x, halfExtents.y, halfExtents.z);
 

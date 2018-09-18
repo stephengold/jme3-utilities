@@ -189,8 +189,7 @@ public class MyShape {
 
         } else if (shape instanceof CylinderCollisionShape) {
             CylinderCollisionShape cylinder = (CylinderCollisionShape) shape;
-            Vector3f halfExtents = cylinder.getHalfExtents();
-            storeResult.set(halfExtents);
+            cylinder.getHalfExtents(storeResult);
 
         } else if (shape instanceof SphereCollisionShape) {
             SphereCollisionShape sphere = (SphereCollisionShape) shape;
@@ -515,7 +514,7 @@ public class MyShape {
 
         } else if (shape instanceof CylinderCollisionShape) {
             CylinderCollisionShape cylinder = (CylinderCollisionShape) shape;
-            Vector3f halfExtents = cylinder.getHalfExtents();
+            Vector3f halfExtents = cylinder.getHalfExtents(null);
             volume *= MyVolume.cylinderVolume(halfExtents);
 
         } else if (shape instanceof SphereCollisionShape) {
