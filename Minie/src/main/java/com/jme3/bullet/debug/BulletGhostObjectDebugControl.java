@@ -93,8 +93,7 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
         super(debugAppState);
         ghost = gh;
         myShape = ghost.getCollisionShape();
-        Vector3f scale = myShape.getScale();
-        oldScale.set(scale);
+        myShape.getScale(oldScale);
         geom = DebugShapeFactory.getDebugShape(myShape);
         geom.setMaterial(debugAppState.DEBUG_YELLOW);
         geom.setName(ghost.toString());
@@ -129,7 +128,7 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
     @Override
     protected void controlUpdate(float tpf) {
         CollisionShape newShape = ghost.getCollisionShape();
-        Vector3f newScale = newShape.getScale();
+        Vector3f newScale = newShape.getScale(null);
         if (myShape != newShape || !oldScale.equals(newScale)) {
             myShape = newShape;
             oldScale.set(newScale);

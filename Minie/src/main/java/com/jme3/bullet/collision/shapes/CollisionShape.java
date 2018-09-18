@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
+import jme3utilities.math.MyVector3f;
 
 /**
  * The abstract base class for collision shapes based on Bullet's
@@ -57,7 +58,7 @@ public abstract class CollisionShape implements Savable {
             = Logger.getLogger(CollisionShape.class.getName());
 
     /**
-     * unique identifier of the Bullet shape
+     * unique identifier of the btCollisionShape
      * <p>
      * Constructors are responsible for setting this to a non-zero value. After
      * that, the id never changes.
@@ -80,7 +81,7 @@ public abstract class CollisionShape implements Savable {
     }
 
     /**
-     * Read the id of the Bullet shape.
+     * Read the id of the btCollisionShape.
      *
      * @return the unique identifier (not zero)
      */
@@ -108,12 +109,19 @@ public abstract class CollisionShape implements Savable {
     }
 
     /**
-     * Access the scaling factors.
+     * Copy the scaling factors.
      *
-     * @return the pre-existing vector (not null) TODO
+     * @param storeResult storage for the result (modified if not null)
+     * @return the scaling factor for each axis (either storeResult or a new
+     * vector, not null)
      */
-    public Vector3f getScale() {
-        return scale;
+    public Vector3f getScale(Vector3f storeResult) {
+        assert MyVector3f.isAllNonNegative(scale);
+        if (storeResult == null) {
+            return scale.clone();
+        } else {
+            return storeResult.set(scale);
+        }
     }
 
     /**

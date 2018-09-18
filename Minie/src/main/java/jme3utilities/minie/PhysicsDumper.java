@@ -192,7 +192,7 @@ public class PhysicsDumper extends Dumper {
         String desc = describer.describe(shape);
         stream.printf("%n   shape=%s", desc);
 
-        Vector3f scale = shape.getScale();
+        Vector3f scale = shape.getScale(null);
         desc = describer.describeScale(scale);
         if (!desc.isEmpty()) {
             stream.print(" " + desc);

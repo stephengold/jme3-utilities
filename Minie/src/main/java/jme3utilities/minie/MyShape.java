@@ -479,9 +479,7 @@ public class MyShape {
      * @return the volume in cubic physics-space units (&ge;0)
      */
     public static float volume(CollisionShape shape) {
-        Vector3f scale = shape.getScale();
-        Validate.nonNegative(scale, "scale");
-
+        Vector3f scale = shape.getScale(null);
         float volume = scale.x * scale.y * scale.z;
 
         if (shape instanceof BoxCollisionShape) {
