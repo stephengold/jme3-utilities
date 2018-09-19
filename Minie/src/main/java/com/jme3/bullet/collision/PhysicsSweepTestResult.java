@@ -35,17 +35,21 @@ import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 
 /**
- * Contains the results of a PhysicsSpace rayTest
+ * Represent the results of a Bullet sweep test.
  *
  * @author normenhansen
  */
 public class PhysicsSweepTestResult {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(PhysicsSweepTestResult.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
      * collision object that was hit
@@ -63,6 +67,8 @@ public class PhysicsSweepTestResult {
      * true&rarr;need to transform normal into world space
      */
     private boolean normalInWorldSpace;
+    // *************************************************************************
+    // constructors
 
     /**
      * A private constructor to inhibit instantiation of this class by Java.
@@ -70,6 +76,8 @@ public class PhysicsSweepTestResult {
      */
     private PhysicsSweepTestResult() {
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Access the collision object that was hit.
@@ -81,16 +89,22 @@ public class PhysicsSweepTestResult {
     }
 
     /**
-     * Access the normal vector at the point of contact.
+     * Copy the normal vector at the point of contact.
      *
-     * @return the pre-existing vector (not null) TODO
+     * @param storeResult storage for the result (modified if not null)
+     * @return a unit vector (either storeResult or a new vector, not null)
      */
-    public Vector3f getHitNormalLocal() {
-        return hitNormalLocal;
+    public Vector3f getHitNormalLocal(Vector3f storeResult) {
+        if (storeResult == null) {
+            return hitNormalLocal.clone();
+        } else {
+            return storeResult.set(hitNormalLocal);
+        }
     }
 
     /**
-     * Read the hit fraction.
+     * Read the fraction of fraction of the way between the transforms (from=0,
+     * to=1, &ge;0, &le;1)
      *
      * @return fraction (from=0, to=1, &ge;0, &le;1)
      */

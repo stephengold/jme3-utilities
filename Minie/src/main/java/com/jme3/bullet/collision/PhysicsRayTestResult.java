@@ -40,12 +40,16 @@ import java.util.logging.Logger;
  * @author Empire-Phoenix,normenhansen
  */
 public class PhysicsRayTestResult {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(PhysicsRayTestResult.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
      * collision object that was hit
@@ -63,6 +67,8 @@ public class PhysicsRayTestResult {
      * true&rarr;need to transform normal into world space
      */
     final private boolean normalInWorldSpace = true;
+    // *************************************************************************
+    // constructors
 
     /**
      * A private constructor to inhibit instantiation of this class by Java.
@@ -70,6 +76,8 @@ public class PhysicsRayTestResult {
      */
     private PhysicsRayTestResult() {
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Access the collision object that was hit.
@@ -81,12 +89,17 @@ public class PhysicsRayTestResult {
     }
 
     /**
-     * Access the normal vector at the point of contact.
+     * Copy the normal vector at the point of contact.
      *
-     * @return the pre-existing vector (not null) TODO
+     * @param storeResult storage for the result (modified if not null)
+     * @return a unit vector (either storeResult or a new vector, not null)
      */
-    public Vector3f getHitNormalLocal() {
-        return hitNormalLocal;
+    public Vector3f getHitNormalLocal(Vector3f storeResult) {
+        if (storeResult == null) {
+            return hitNormalLocal.clone();
+        } else {
+            return storeResult.set(hitNormalLocal);
+        }
     }
 
     /**
