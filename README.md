@@ -2,19 +2,20 @@
 
 The Jme3-utilities Project contains Java packages and assets, developed for
 sgold's jMonkeyEngine projects, which might prove useful in similar projects.
-It consists of 11 sub-projects:
+It contains 11 sub-projects:
 
  1. heart: the "jme3-utilities-heart" library of core classes
  2. SkyControl: the "SkyControl" library for sky simulation
- 3. tests: demos, examples, and test software
- 4. textures: generate textures used by jme3-utilities-debug and SkyControl
- 5. moon-ccbysa: assets for a realistic Moon in SkyControl
- 6. debug: the "jme3-utilities-debug" library of debugging aids
+ 3. moon-ccbysa: assets for a realistic Moon in SkyControl
+ 4. debug: the "jme3-utilities-debug" library of debugging aids
+ 5. tests: demos, examples, and test software
+ 6. textures: generate textures used by jme3-utilities-debug and SkyControl
  7. ui: the "jme3-utilities-ui" library for building user interfaces
- 8. Minie: the "Minie" library for using Bullet Physics with jMonkeyEngine
- 9. nifty: the "jme3-utilities-nifty" library for building NiftyGUI user interfaces
- 10. wes: the "Wes" library for animation editing and retargeting
- 11. x: the "jme3-utilities-x" library of experimental classes
+ 8. nifty: the "jme3-utilities-nifty" library for using NiftyGUI user
+    interfaces with jMonkeyEngine
+ 9. wes: the "Wes" library for animation editing and retargeting
+ 10. Minie: the "Minie" library for using Bullet physics with jMonkeyEngine
+ 11. x: the "jme3-utilities-x" library of experimental software
 
 Summary of SkyControl features:
 
@@ -490,7 +491,8 @@ have gone before.  I therefore acknowledge the following software developers:
 + the creators of (and contributors to) the following software:
     + Adobe Photoshop Elements
     + the Ant and Gradle build tools
-    + the Blender 3D animation suite
+    + the Blender 3-D animation suite
+    + the Bullet real-time physics library
     + the FindBugs source-code analyzer
     + Gimp, the GNU Image Manipulation Program
     + the Git and Subversion revision-control systems
