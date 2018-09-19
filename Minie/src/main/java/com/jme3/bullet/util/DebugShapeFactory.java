@@ -87,14 +87,15 @@ public class DebugShapeFactory {
                 Geometry geometry = createDebugShape(ccollisionShape);
 
                 // apply translation
-                geometry.setLocalTranslation(childCollisionShape.getLocation());
+                geometry.setLocalTranslation(
+                        childCollisionShape.getLocation(null));
 
                 // apply rotation
                 TempVars vars = TempVars.get();
                 Matrix3f tempRot = vars.tempMat3;
 
                 tempRot.set(geometry.getLocalRotation());
-                childCollisionShape.getRotation().mult(tempRot, tempRot);
+                childCollisionShape.getRotation(null).mult(tempRot, tempRot);
                 geometry.setLocalRotation(tempRot);
 
                 vars.release();

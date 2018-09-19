@@ -50,12 +50,16 @@ import jme3utilities.Validate;
  * @author normenhansen
  */
 public class ChildCollisionShape implements Savable {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(ChildCollisionShape.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
      * translation relative to parent shape (not null)
@@ -69,6 +73,8 @@ public class ChildCollisionShape implements Savable {
      * base shape (not null, not a compound shape)
      */
     private CollisionShape shape;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -80,13 +86,10 @@ public class ChildCollisionShape implements Savable {
     /**
      * Instantiate a child shape for use in a compound shape.
      *
-     * @param location translation relative to the parent (not null, alias
-     * created) TODO
-     * @param rotation rotation relative to the parent (not null, alias created)
-     * TODO
+     * @param location translation relative to the parent (not null, unaffected)
+     * @param rotation rotation relative to the parent (not null, unaffected)
      * @param shape the base shape (not null, not a compound shape, alias
      * created)
-     *
      */
     public ChildCollisionShape(Vector3f location, Matrix3f rotation,
             CollisionShape shape) {
@@ -98,27 +101,40 @@ public class ChildCollisionShape implements Savable {
                     "CompoundCollisionShapes cannot be child shapes!");
         }
 
-        this.location = location;
-        this.rotation = rotation;
+        this.location = location.clone();
+        this.rotation = rotation.clone();
         this.shape = shape;
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
-     * Access the translation relative to the parent shape.
+     * Copy the translation relative to the parent shape.
      *
-     * @return the pre-existing vector (not null) TODO
+     * @param storeResult storage for the result (modified if not null)
+     * @return a translation vector (either storeResult or a new vector, not
+     * null)
      */
-    public Vector3f getLocation() {
-        return location;
+    public Vector3f getLocation(Vector3f storeResult) {
+        if (storeResult == null) {
+            return location.clone();
+        } else {
+            return storeResult.set(location);
+        }
     }
 
     /**
-     * Access the rotation relative to the parent shape.
+     * Copy the rotation relative to the parent shape.
      *
-     * @return the pre-existing matrix (not null) TODO
+     * @param storeResult storage for the result (modified if not null)
+     * @return a rotation matrix (either storeResult or a new matrix, not null)
      */
-    public Matrix3f getRotation() {
-        return rotation;
+    public Matrix3f getRotation(Matrix3f storeResult) {
+        if (storeResult == null) {
+            return rotation.clone();
+        } else {
+            return storeResult.set(rotation);
+        }
     }
 
     /**
@@ -129,6 +145,8 @@ public class ChildCollisionShape implements Savable {
     public CollisionShape getShape() {
         return shape;
     }
+    // *************************************************************************
+    // Savable methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.

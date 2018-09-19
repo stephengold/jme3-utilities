@@ -139,13 +139,13 @@ public class PhysicsDescriber extends Describer {
             String desc = describe(child.getShape());
             result.append(desc);
 
-            Vector3f location = child.getLocation();
+            Vector3f location = child.getLocation(null);
             desc = String.format("@[%.3f, %.3f, %.3f]",
                     location.x, location.y, location.z);
             result.append(desc);
 
             Quaternion rotation = new Quaternion();
-            rotation.fromRotationMatrix(child.getRotation());
+            rotation.fromRotationMatrix(child.getRotation(null));
             if (!MyQuaternion.isRotationIdentity(rotation)) {
                 result.append("rot");
                 desc = rotation.toString();

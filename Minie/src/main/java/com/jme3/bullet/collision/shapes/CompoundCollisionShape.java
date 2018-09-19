@@ -171,7 +171,7 @@ public class CompoundCollisionShape extends CollisionShape {
     private void loadChildren() {
         for (ChildCollisionShape child : children) {
             addChildShape(objectId, child.getShape().getObjectId(),
-                    child.getLocation(), child.getRotation());
+                    child.getLocation(null), child.getRotation(null));
         }
     }
 }
