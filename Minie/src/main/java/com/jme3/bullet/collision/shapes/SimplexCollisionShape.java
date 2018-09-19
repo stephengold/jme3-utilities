@@ -47,16 +47,23 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class SimplexCollisionShape extends CollisionShape {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(SimplexCollisionShape.class.getName());
+    // *************************************************************************
+    // fields
+
     /**
      * vertex positions
      */
     private Vector3f vector1, vector2, vector3, vector4;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -68,56 +75,58 @@ public class SimplexCollisionShape extends CollisionShape {
     /**
      * Instantiate a tetrahedral collision shape based on the specified points.
      *
-     * @param point1 the coordinates of 1st point (not null, alias created) TODO
-     * @param point2 the coordinates of 2nd point (not null, alias created) TODO
-     * @param point3 the coordinates of 3rd point (not null, alias created) TODO
-     * @param point4 the coordinates of 4th point (not null, alias created) TODO
+     * @param point1 the coordinates of 1st point (not null, unaffected)
+     * @param point2 the coordinates of 2nd point (not null, unaffected)
+     * @param point3 the coordinates of 3rd point (not null, unaffected)
+     * @param point4 the coordinates of 4th point (not null, unaffected)
      */
     public SimplexCollisionShape(Vector3f point1, Vector3f point2,
             Vector3f point3, Vector3f point4) {
-        vector1 = point1;
-        vector2 = point2;
-        vector3 = point3;
-        vector4 = point4;
+        vector1 = point1.clone();
+        vector2 = point2.clone();
+        vector3 = point3.clone();
+        vector4 = point4.clone();
         createShape();
     }
 
     /**
      * Instantiate a triangular collision shape based on the specified points.
      *
-     * @param point1 the coordinates of 1st point (not null, alias created) TODO
-     * @param point2 the coordinates of 2nd point (not null, alias created) TODO
-     * @param point3 the coordinates of 3rd point (not null, alias created) TODO
+     * @param point1 the coordinates of 1st point (not null, unaffected)
+     * @param point2 the coordinates of 2nd point (not null, unaffected)
+     * @param point3 the coordinates of 3rd point (not null, unaffected)
      */
     public SimplexCollisionShape(Vector3f point1, Vector3f point2,
             Vector3f point3) {
-        vector1 = point1;
-        vector2 = point2;
-        vector3 = point3;
+        vector1 = point1.clone();
+        vector2 = point2.clone();
+        vector3 = point3.clone();
         createShape();
     }
 
     /**
      * Instantiate a line-segment collision shape based on the specified points.
      *
-     * @param point1 the coordinates of 1st point (not null, alias created) TODO
-     * @param point2 the coordinates of 2nd point (not null, alias created) TODO
+     * @param point1 the coordinates of 1st point (not null, unaffected)
+     * @param point2 the coordinates of 2nd point (not null, unaffected)
      */
     public SimplexCollisionShape(Vector3f point1, Vector3f point2) {
-        vector1 = point1;
-        vector2 = point2;
+        vector1 = point1.clone();
+        vector2 = point2.clone();
         createShape();
     }
 
     /**
      * Instantiate a point collision shape based on the specified points.
      *
-     * @param point1 the coordinates of point (not null, alias created) TODO
+     * @param point1 the coordinates of 1st point (not null, unaffected)
      */
     public SimplexCollisionShape(Vector3f point1) {
-        vector1 = point1;
+        vector1 = point1.clone();
         createShape();
     }
+    // *************************************************************************
+    // Savable methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.
@@ -151,6 +160,8 @@ public class SimplexCollisionShape extends CollisionShape {
         vector4 = (Vector3f) capsule.readSavable("simplexPoint4", null);
         createShape();
     }
+    // *************************************************************************
+    // private methods
 
     /**
      * Instantiate the configured shape in Bullet.
@@ -166,6 +177,7 @@ public class SimplexCollisionShape extends CollisionShape {
             objectId = createShape(vector1);
         }
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+
         setScale(scale);
         setMargin(margin);
     }
