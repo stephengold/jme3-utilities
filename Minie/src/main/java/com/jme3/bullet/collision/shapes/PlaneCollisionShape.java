@@ -47,17 +47,23 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class PlaneCollisionShape extends CollisionShape {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(PlaneCollisionShape.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
      * description of the plane
      */
     private Plane plane;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -69,21 +75,25 @@ public class PlaneCollisionShape extends CollisionShape {
     /**
      * Instantiate a plane shape defined by the specified plane.
      *
-     * @param plane the desired plane (not null, alias created) TODO
+     * @param plane the desired plane (not null, unaffected)
      */
     public PlaneCollisionShape(Plane plane) {
-        this.plane = plane;
+        this.plane = plane.clone();
         createShape();
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
-     * Access the defining plane.
+     * Copy the defining plane.
      *
-     * @return the pre-existing instance (not null) TODO
+     * @return a new instance (not null)
      */
-    public final Plane getPlane() {
-        return plane;
+    final public Plane getPlane() {
+        return plane.clone();
     }
+    // *************************************************************************
+    // Savable methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.
@@ -111,6 +121,8 @@ public class PlaneCollisionShape extends CollisionShape {
         plane = (Plane) capsule.readSavable("collisionPlane", new Plane());
         createShape();
     }
+    // *************************************************************************
+    // private methods
 
     /**
      * Instantiate the configured shape in Bullet.
