@@ -31,6 +31,7 @@ import com.jme3.audio.AudioNode;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.font.BitmapText;
 import com.jme3.light.Light;
+import com.jme3.material.MatParamOverride;
 import com.jme3.material.Material;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
@@ -581,6 +582,31 @@ public class MySpatial {
                 if (result != null) {
                     break;
                 }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Access the named M-P override in the specified spatial.
+     *
+     * @param spatial the spatial to search (not null)
+     * @param parameterName which override (not null, not empty)
+     * @return the pre-existing instance, or null if not found
+     */
+    public static MatParamOverride findOverride(Spatial spatial,
+            String parameterName) {
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonEmpty(parameterName, "parameterName");
+
+        MatParamOverride result = null;
+        Collection<MatParamOverride> list = spatial.getLocalMatParamOverrides();
+        for (MatParamOverride override : list) {
+            String name = override.getName();
+            if (parameterName.equals(name)) {
+                result = override;
+                break;
             }
         }
 
