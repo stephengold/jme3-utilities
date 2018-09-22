@@ -891,6 +891,68 @@ public class MySpatial {
     }
 
     /**
+     * Enumerate all geometries using the specified material in the specified
+     * subtree of a scene graph. Note: recursive!
+     *
+     * @param subtree (may be null, aliases created)
+     * @param material the material to search for (may be null, unaffected)
+     * @param addResult (added to if not null)
+     * @return an expanded list (either storeResult or a new instance)
+     */
+    public static List<Geometry> listMaterialUsers(Spatial subtree,
+            Material material, List<Geometry> addResult) {
+        List<Geometry> result
+                = (addResult == null) ? new ArrayList<Geometry>(50) : addResult;
+
+        if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
+            if (geometry.getMaterial() == material) {
+                result.add(geometry);
+            }
+
+        } else if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                listMaterialUsers(child, material, result);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Enumerate all geometries using the specified mesh in the specified
+     * subtree of a scene graph. Note: recursive!
+     *
+     * @param subtree (may be null, aliases created)
+     * @param mesh the mesh to search for (may be null, unaffected)
+     * @param addResult (added to if not null)
+     * @return an expanded list (either storeResult or a new instance)
+     */
+    public static List<Geometry> listMeshUsers(Spatial subtree, Mesh mesh,
+            List<Geometry> addResult) {
+        List<Geometry> result
+                = (addResult == null) ? new ArrayList<Geometry>(50) : addResult;
+
+        if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
+            if (geometry.getMesh() == mesh) {
+                result.add(geometry);
+            }
+
+        } else if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                listMeshUsers(child, mesh, result);
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Clear all cached collision data from the specified subtree of the scene
      * graph and force a bound refresh. Note: recursive!
      *
