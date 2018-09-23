@@ -50,12 +50,16 @@ import jme3utilities.math.MyVector3f;
  * @author normenhansen
  */
 public abstract class CollisionShape implements Savable {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(CollisionShape.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
      * unique identifier of the btCollisionShape
@@ -72,6 +76,8 @@ public abstract class CollisionShape implements Savable {
      * copy of collision margin (in physics-space units, &gt;0, default=0.04)
      */
     protected float margin = 0.04f;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -79,6 +85,8 @@ public abstract class CollisionShape implements Savable {
      */
     public CollisionShape() {
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Read the id of the btCollisionShape.
@@ -103,9 +111,10 @@ public abstract class CollisionShape implements Savable {
     public void setScale(Vector3f scale) {
         Validate.nonNegative(scale, "scale");
 
-        this.scale.set(scale);
-        logger.log(Level.FINE, "Scaling Shape {0}", Long.toHexString(objectId));
         setLocalScaling(objectId, scale);
+        logger.log(Level.FINE, "Scaling Shape {0}", Long.toHexString(objectId));
+
+        this.scale.set(scale);
     }
 
     /**
@@ -136,7 +145,7 @@ public abstract class CollisionShape implements Savable {
     private native float getMargin(long objectId);
 
     /**
-     * Alter the collision margin for this shape. CAUTION: Margin is applied
+     * Alter the collision margin of this shape. CAUTION: Margin is applied
      * differently, depending on the type of shape. Generally the collision
      * margin expands the object, creating a gap. Don't set the collision margin
      * to zero.
@@ -151,6 +160,12 @@ public abstract class CollisionShape implements Savable {
         Validate.positive(margin, "margin");
 
         setMargin(objectId, margin);
+        logger.log(Level.FINE, "Margining Shape {0}",
+                Long.toHexString(objectId));
+
+        float checkMargin = getMargin(objectId);
+        assert checkMargin == margin : checkMargin;
+
         this.margin = margin;
     }
 
@@ -168,7 +183,7 @@ public abstract class CollisionShape implements Savable {
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(scale, "scale", new Vector3f(1f, 1f, 1f));
-        capsule.write(getMargin(), "margin", 0.04f);
+        capsule.write(margin, "margin", 0.04f);
     }
 
     /**
@@ -181,8 +196,8 @@ public abstract class CollisionShape implements Savable {
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
         Object s = capsule.readSavable("scale", new Vector3f(1f, 1f, 1f));
-        this.scale.set((Vector3f) s);
-        this.margin = capsule.readFloat("margin", 0.04f);
+        scale.set((Vector3f) s);
+        margin = capsule.readFloat("margin", 0.04f);
     }
 
     /**
