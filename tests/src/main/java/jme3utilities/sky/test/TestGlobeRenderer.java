@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -222,7 +222,7 @@ public class TestGlobeRenderer
         logger.log(Level.INFO, "jme3-core version is {0}",
                 MyString.quote(JmeVersion.FULL_NAME));
         logger.log(Level.INFO, "SkyControl version is {0}",
-                MyString.quote(Constants.getVersionShort()));
+                MyString.quote(Constants.versionShort()));
 
         flyCam.setEnabled(false);
         initializeUserInterface();
