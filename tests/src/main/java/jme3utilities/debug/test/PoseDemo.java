@@ -192,7 +192,7 @@ public class PoseDemo extends GuiApplication {
         logger.log(Level.INFO, "jme3-utilities-ui version is {0}",
                 MyString.quote(UiVersion.versionShort()));
         logger.log(Level.INFO, "jme3-utilities-nifty version is {0}",
-                MyString.quote(LibraryVersion.getVersionShort()));
+                MyString.quote(LibraryVersion.versionShort()));
         /*
          * Attach screen controllers for the HUD, the scene, and BindScreen.
          */
