@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.8.2 released on TBD
+## Version 0.8.2 released on 23 September 2018
 
  + Require a controller for every dialog box.
  + Rename LibraryVersion.getVersionShort() to versionShort().

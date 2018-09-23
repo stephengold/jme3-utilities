@@ -1,6 +1,6 @@
 # release notes for the Minie library and related tests
 
-## Version 0.3.0 released on TBD
+## Version 0.3.0 released on 23 September 2018
 
  + Fixed JME issue #740.
  + Standardized the design of constructors and accessors to reduce aliasing
