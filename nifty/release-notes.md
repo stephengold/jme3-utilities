@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.8.2 released on TBD
+
+ + Require a controller for every dialog box.
+ + Rename LibraryVersion.getVersionShort() to versionShort().
+ + Based on version 2.10 of the jme3-utilities-heart library.
+
 ## Version 0.8.1 released on 14 September 2018
 
  + Allow modal dialog boxes to open popup menus
@@ -10,7 +16,7 @@
 
  + Improve the extensibility of dialog boxes. Formerly commit-action suffixes
    were constructed in PopScreenController.dialogCommit() based on what
-   controls the dialog contained.  That function has moved to the dialog
+   controls the dialog contained.  That functionality has moved to the dialog
    controller, providing more flexibility.
  + Add a MinimalDialog class for use as a default and a superclass.
  + Use TextEntryDialog as a superclass for all dialog boxes based on

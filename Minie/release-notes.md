@@ -1,10 +1,26 @@
 # release notes for the Minie library and related tests
 
+## Version 0.3.0 released on TBD
+
+ + Fixed JME issue #740.
+ + Standardized the design of constructors and accessors to reduce aliasing
+   of vectors and quaternions and enable the use of caller-allocated storage.
+ + Implemented a more practical approach to filtering debug objects.
+ + Simplified PhysicsCollisionEvent by eliminating event types.
+ + Renamed 2 PhysicsJoint methods that misspelled "bodies".
+ + Removed many needless fields, methods, and constructors.
+ + Made the VehicleTuning class JmeCloneable and Savable.
+ + Addressed the possibility of multiple physics controls added to the
+   same Spatial.
+ + Replaced 6 parameters of VehicleWheel with a VehicleTuning reference.
+ + Eviscerated 5 cloneForSpatial() methods.
+ + Based on version 2.10 of the jme3-utilities-heart library.
+
 ## Version 0.2.10 released on 12 September 2018
 
  + Fixed JME issue #898.
- + Require collision margin > 0.
- + Changed default collision margin from 0 to 0.04.
+ + Require collision margin > 0 .
+ + Changed default collision margin from 0 to 0.04 .
  + Disabled setMargin() for SphereCollisionShape.
  + Don't allow dynamic bodies to have heightfield or plane shapes.
  + Publicized loggers.
