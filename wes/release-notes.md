@@ -1,13 +1,18 @@
 # release notes for the Wes library and related tests
 
+## Version 0.3.7 released on TBD
+
+ + Rename WesVersion.getVersionShort() to versionShort(). (API change)
+ + Base on version 2.10 of the heart library.
+
 ## Version 0.3.6 released on 24 July 2018
 
- + Based on version 2.5 of heart library.
+Base on version 2.5 of the heart library.
 
 ## Version 0.3.5 released on 14 February 2018
 
- + Remove an irrelevant test against track length from
-   TrackEdit.setFrameTime() .
+Remove an irrelevant test against track length from
+TrackEdit.setFrameTime() .
 
 ## Version 0.3.4 released on 7 February 2018
 
@@ -22,7 +27,7 @@
 
 ## Version 0.3.2 released on 25 January 2018
 
- + Base on heart library v2.0 to make this library physics-independent.
+Base on heart library v2.0 to make this library physics-independent.
 
 ## Version 0.3.1 released on 22 January 2018
 

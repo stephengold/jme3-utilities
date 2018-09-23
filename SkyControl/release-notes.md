@@ -1,10 +1,17 @@
 # release notes for the SkyControl library and related tests
 
+## Version 0.9.14 released on TBD
+
+Notable changes:
+ + Renamed Constants.getVersionShort() to versionShort(). (API change)
+ + base on version 2.10 of the heart library
+
 ## Version 0.9.13 released on 24 July 2018
 
+Notable changes:
  + deprecate the old constructors for SkyControl and SkyControlCore
  + rm bogus assert from TestSkyControlRun
- + base on version 2.5 of heart library
+ + base on version 2.5 of the heart library
 
 ## Version 0.9.12 released on 18 February 2018
 

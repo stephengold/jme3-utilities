@@ -1,5 +1,10 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.9.3 released on TBD
+
+ + Added a texture asset for a "ring" point shape.
+ + Based on version 2.10 of the heart library.
+
 ## Version 0.9.2 released on 12 September 2018
 
  + Added setGrass() and setMonumentScale() methods to the
@@ -39,11 +44,11 @@
 
 ## Version 0.8.8 released on 18 February 2018
 
- + Added mesh descriptions when dumping a scene graph.
+Added mesh descriptions when dumping a scene graph.
 
 ## Version 0.8.7 released on 2 February 2018
 
- + Based on version 2.2 of the heart library.
+Based on version 2.2 of the heart library.
 
 ## Version 0.8.6 released on 27 January 2018
 
@@ -116,7 +121,7 @@
 
 ## Version 0.7.1 released on 13 July 2017
 
- + When dumping cameras, split description across two lines
+When dumping cameras, split description across two lines
 
 ## Version 0.7.0 released on 9 July 2017
 
@@ -133,7 +138,7 @@
 
 ## Version 0.5.6 released on 30 May 2017
 
- + Handle null spatials in SkeletonDebugControl
+Handle null spatials in SkeletonDebugControl
 
 ## Version 0.5.5 released on 24 May 2017
 
