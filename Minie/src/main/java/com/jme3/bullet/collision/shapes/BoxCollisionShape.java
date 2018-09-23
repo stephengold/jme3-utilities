@@ -77,8 +77,8 @@ public class BoxCollisionShape extends CollisionShape {
     /**
      * Instantiate a box shape with the specified half extents.
      *
-     * @param halfExtents the desired half extents (not null, no negative
-     * component, unaffected)
+     * @param halfExtents the desired unscaled half extents (not null, no
+     * negative component, unaffected)
      */
     public BoxCollisionShape(Vector3f halfExtents) {
         Validate.nonNegative(halfExtents, "half extents");
@@ -87,13 +87,14 @@ public class BoxCollisionShape extends CollisionShape {
         createShape();
     }
     // *************************************************************************
+    // new methods exposed
 
     /**
-     * Access the half extents.
+     * Copy the half extents of the box.
      *
      * @param storeResult storage for the result (modified if not null)
-     * @return the half extent for each local axis (either storeResult or a new
-     * vector, not null, no negative component)
+     * @return the unscaled half extent for each local axis (either storeResult
+     * or a new vector, not null, no negative component)
      */
     public final Vector3f getHalfExtents(Vector3f storeResult) {
         assert MyVector3f.isAllNonNegative(halfExtents) : halfExtents;
@@ -103,6 +104,8 @@ public class BoxCollisionShape extends CollisionShape {
             return storeResult.set(halfExtents);
         }
     }
+    // *************************************************************************
+    // Savable methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.

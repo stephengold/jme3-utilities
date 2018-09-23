@@ -165,8 +165,10 @@ public class GImpactCollisionShape extends CollisionShape {
                 triangleIndexBase, vertexBase, numTriangles, numVertices,
                 vertexStride, triangleIndexStride);
         logger.log(Level.FINE, "Created Mesh {0}", Long.toHexString(meshId));
+        
         objectId = createShape(meshId);
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        
         setScale(scale);
         setMargin(margin);
     }

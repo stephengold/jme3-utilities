@@ -457,7 +457,8 @@ public class MySkeleton {
     }
 
     /**
-     * Alter all the user-control flags in the specified subtree.
+     * Alter all the user-control flags in the specified subtree of the scene
+     * graph.
      *
      * @param subtree subtree to alter (not null)
      * @param newSetting true to enable user control, false to disable
