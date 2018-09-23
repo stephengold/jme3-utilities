@@ -1,6 +1,6 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.9.3 released on TBD
+## Version 0.9.3 released on 23 September 2018
 
  + Added a texture asset for a "ring" point shape.
  + Based on version 2.10 of the heart library.

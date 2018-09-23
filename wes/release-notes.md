@@ -1,6 +1,6 @@
 # release notes for the Wes library and related tests
 
-## Version 0.3.7 released on TBD
+## Version 0.3.7 released on 23 September 2018
 
  + Rename WesVersion.getVersionShort() to versionShort(). (API change)
  + Base on version 2.10 of the heart library.

@@ -1,6 +1,6 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.14 released on TBD
+## Version 0.9.14 released on 23 September 2018
 
 Notable changes:
  + Renamed Constants.getVersionShort() to versionShort(). (API change)

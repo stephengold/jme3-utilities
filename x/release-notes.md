@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-x library and related tests
 
-## Version 0.2.5 released on TBD
+## Version 0.2.5 released on 23 September 2018
 
  + Renamed XVersion.getVersionShort() to versionShort(). (API change)
  + Based on version 2.10 of the heart library.
