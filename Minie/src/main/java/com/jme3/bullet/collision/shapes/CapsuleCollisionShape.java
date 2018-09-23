@@ -50,12 +50,16 @@ import jme3utilities.math.MyVector3f;
  * @author normenhansen
  */
 public class CapsuleCollisionShape extends CollisionShape {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(CapsuleCollisionShape.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
      * copy of height of the cylindrical portion (&ge;0)
@@ -69,6 +73,8 @@ public class CapsuleCollisionShape extends CollisionShape {
      * copy of main (height) axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
      */
     private int axis;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -110,6 +116,8 @@ public class CapsuleCollisionShape extends CollisionShape {
         this.axis = axis;
         createShape();
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Read the radius of the capsule.
@@ -137,8 +145,20 @@ public class CapsuleCollisionShape extends CollisionShape {
      * @return 0 for local X, 1 for local Y, or 2 for local Z
      */
     public int getAxis() {
-        assert axis == 0 || axis == 1 || axis == 2 : axis;
+        assert axis == PhysicsSpace.AXIS_X
+                || axis == PhysicsSpace.AXIS_Y
+                || axis == PhysicsSpace.AXIS_Z : axis;
         return axis;
+    }
+
+    /**
+     * Alter the collision margin of this shape. This feature is disabled for
+     * capsule shapes.
+     *
+     * @param margin the desired margin distance (in physics-space units)
+     */
+    @Override
+    public void setMargin(float margin) {
     }
 
     /**
@@ -162,6 +182,8 @@ public class CapsuleCollisionShape extends CollisionShape {
                     "CapsuleCollisionShape cannot be scaled non-uniformly.");
         }
     }
+    // *************************************************************************
+    // Savable methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.
@@ -193,20 +215,24 @@ public class CapsuleCollisionShape extends CollisionShape {
         axis = capsule.readInt("axis", PhysicsSpace.AXIS_Y);
         createShape();
     }
+    // *************************************************************************
+    // private methods
 
     /**
      * Instantiate the configured shape in Bullet.
      */
     private void createShape() {
-        assert axis == 0 || axis == 1 || axis == 2 : axis;
+        assert axis == PhysicsSpace.AXIS_X
+                || axis == PhysicsSpace.AXIS_Y
+                || axis == PhysicsSpace.AXIS_Z : axis;
         assert radius >= 0f : radius;
         assert height >= 0f : height;
 
         objectId = createShape(axis, radius, height);
         assert objectId != 0L;
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+
         setScale(scale);
-        setMargin(margin);
     }
 
     private native long createShape(int axis, float radius, float height);
