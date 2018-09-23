@@ -116,14 +116,25 @@ public class Misc {
     }
 
     /**
+     * Return a deep copy of the specified object.
+     *
+     * @param object input (unaffected)
+     * @return an object equivalent to the input
+     * @deprecated use {@link #deepCopy(java.lang.Object)}
+     */
+    @Deprecated
+    public static Object deepClone(Object object) {
+        return deepCopy(object);
+    }
+
+    /**
      * Return a deep copy of the specified object. This works around JME issue
-     * #879, but still doesn't handle all classes. TODO rename - doesn't clone
-     * immutable objects.
+     * #879, but still doesn't handle all classes.
      *
      * @param object input (unaffected)
      * @return an object equivalent to the input
      */
-    public static Object deepClone(Object object) {
+    public static Object deepCopy(Object object) {
         Object clone;
         if (object instanceof Boolean
                 || object instanceof Byte
