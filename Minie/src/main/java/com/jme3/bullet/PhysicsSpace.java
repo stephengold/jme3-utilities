@@ -45,6 +45,7 @@ import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.control.Control;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -210,6 +211,10 @@ public class PhysicsSpace {
         physicsSpaceId = createPhysicsSpace(worldMin.x, worldMin.y, worldMin.z,
                 worldMax.x, worldMax.y, worldMax.z, broadphaseType.ordinal(),
                 false);
+        assert physicsSpaceId != 0L;
+        logger.log(Level.FINE, "Created Space {0}",
+                Long.toHexString(physicsSpaceId));
+
         pQueueTL.set(pQueue);
         physicsSpaceTL.set(this);
     }
@@ -452,25 +457,31 @@ public class PhysicsSpace {
     }
 
     /**
-     * Add all physics controls and joints in the specified subtree of the scene
-     * graph to this space (e.g. after loading from disk). Note: recursive!
+     * Add all collision objects and joints in the specified subtree of the
+     * scene graph to this space (e.g. after loading from disk). Note:
+     * recursive!
      *
      * @param spatial the root of the subtree (not null)
      */
     public void addAll(Spatial spatial) {
         add(spatial);
-
-        if (spatial.getControl(RigidBodyControl.class) != null) {
-            RigidBodyControl control
-                    = spatial.getControl(RigidBodyControl.class);
-            // Add only the joints with the RigidBodyControl as BodyA.
-            List<PhysicsJoint> joints = control.getJoints();
-            for (PhysicsJoint physicsJoint : joints) {
-                if (control == physicsJoint.getBodyA()) {
-                    add(physicsJoint);
+        /*
+         * Add the joints.
+         */
+        int numControls = spatial.getNumControls();
+        for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
+            Control sgc = spatial.getControl(controlIndex);
+            if (sgc instanceof RigidBodyControl) {
+                RigidBodyControl rbc = (RigidBodyControl) sgc;
+                // To avoid duplication, add only the joints that have the
+                // control as BodyA.
+                List<PhysicsJoint> joints = rbc.getJoints();
+                for (PhysicsJoint physicsJoint : joints) {
+                    if (rbc == physicsJoint.getBodyA()) {
+                        add(physicsJoint);
+                    }
                 }
             }
-            // TODO multiple controls per spatial?
         }
         //recursion
         if (spatial instanceof Node) {
@@ -1104,7 +1115,7 @@ public class PhysicsSpace {
      * <p>
      * In general, the smaller the time step, the more accurate (and
      * compute-intensive) the simulation will be. Bullet works best with a
-     * timestep of no more than 1/60 second.
+     * time step of no more than 1/60 second.
      *
      * @param accuracy the desired time step (in seconds, &gt;0, default=1/60)
      */
