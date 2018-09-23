@@ -1,10 +1,10 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.10.0 released on TBD
+## Version 2.10.0 released on 23 September 2018
 
  + Added findOverride(), listMaterialUsers() and listMeshUsers() methods
    to the MySpatial class
- + Renamed Misc.deepClone() and deprecate the old name
+ + Renamed Misc.deepClone() and deprecated the old name
  + Deprecated the Misc.getVersion() and Misc.getVersionShort() methods
 
 ## Version 2.9.0 released on 12 September 2018
