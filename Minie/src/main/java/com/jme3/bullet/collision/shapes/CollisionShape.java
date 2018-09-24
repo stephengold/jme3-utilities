@@ -110,6 +110,7 @@ public abstract class CollisionShape implements Savable {
      */
     public void setScale(Vector3f scale) {
         Validate.nonNegative(scale, "scale");
+        assert objectId != 0L;
 
         setLocalScaling(objectId, scale);
         logger.log(Level.FINE, "Scaling Shape {0}", Long.toHexString(objectId));
@@ -136,10 +137,14 @@ public abstract class CollisionShape implements Savable {
     /**
      * Read the collision margin for this shape.
      *
-     * @return the margin distance (in physics-space units, &gt;0)
+     * @return the margin distance (in physics-space units, &ge;0)
      */
     public float getMargin() {
-        return getMargin(objectId);
+        assert objectId != 0L;
+        assert getMargin(objectId) == margin : getMargin(objectId);
+        assert margin > 0f : margin;
+
+        return margin;
     }
 
     private native float getMargin(long objectId);
@@ -158,14 +163,13 @@ public abstract class CollisionShape implements Savable {
      */
     public void setMargin(float margin) {
         Validate.positive(margin, "margin");
+        assert objectId != 0L;
 
         setMargin(objectId, margin);
         logger.log(Level.FINE, "Margining Shape {0}",
                 Long.toHexString(objectId));
 
-        float checkMargin = getMargin(objectId);
-        assert checkMargin == margin : checkMargin;
-
+        assert getMargin(objectId) == margin : getMargin(objectId);
         this.margin = margin;
     }
 
