@@ -29,6 +29,7 @@ package jme3utilities.minie;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.objects.PhysicsCharacter;
 import com.jme3.bullet.objects.PhysicsGhostObject;
@@ -171,7 +172,7 @@ public class PhysicsDumper extends Dumper {
         stream.printf("  Body #%s", Long.toHexString(objectId));
 
         float mass = body.getMass();
-        if (mass == 0f) {
+        if (mass == RigidBodyControl.massForStatic) {
             stream.print(" sta");
         } else {
             stream.printf(" dyn %f kg", mass);

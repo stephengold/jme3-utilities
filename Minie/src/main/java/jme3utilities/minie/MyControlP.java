@@ -109,7 +109,7 @@ public class MyControlP {
             result = MyControl.describeType(sgc);
             RigidBodyControl rigidBodyControl = (RigidBodyControl) sgc;
             float mass = rigidBodyControl.getMass();
-            if (mass == 0f) {
+            if (mass == RigidBodyControl.massForStatic) {
                 result += "[sta]";
             } else if (rigidBodyControl.isKinematic()) {
                 result += "[kin]";

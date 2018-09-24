@@ -176,7 +176,7 @@ public class RigidBodyControl extends PhysicsRigidBody
         control.setPhysicsRotation(getPhysicsRotationMatrix(null));
         control.setRestitution(getRestitution());
 
-        if (mass > 0f) {
+        if (mass > massForStatic) {
             control.setAngularVelocity(getAngularVelocity(null));
             control.setLinearVelocity(getLinearVelocity(null));
         }
@@ -246,7 +246,7 @@ public class RigidBodyControl extends PhysicsRigidBody
                 return;
             }
         }
-        if (mass > 0) {
+        if (mass > massForStatic) {
             collisionShape
                     = CollisionShapeFactory.createDynamicMeshShape(spatial);
         } else {
