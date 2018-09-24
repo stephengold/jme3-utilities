@@ -1,5 +1,13 @@
 # release notes for the Minie library and related tests
 
+## Version 0.3.1 released on TBD
+
+ + Fixed JME issue #896 and added a test for it.
+ + Disabled getMargin() and setMargin() for capsule and sphere shapes.
+ + Initialized the scale and margin of compound shapes.
+ + Removed various methods and arguments.
+ + Added TestSetMargin to the test project.
+
 ## Version 0.3.0 released on 23 September 2018
 
  + Fixed JME issue #740.

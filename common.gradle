@@ -11,16 +11,19 @@ sourceCompatibility = '1.8'
 
 gradle.projectsEvaluated {
     tasks.withType(JavaCompile) {
-        // compile-time options
+        // compile-time options:
         options.compilerArgs << '-Xdiags:verbose'
         options.compilerArgs << '-Xlint:unchecked'
         options.deprecation = true
         options.encoding = 'UTF-8'
     }
     tasks.withType(JavaExec) {
-        // runtime options
+        // runtime options:
         classpath sourceSets.main.runtimeClasspath
+        //doFirst { println commandLine }
         enableAssertions true
+        jvmArgs '-XX:+UseConcMarkSweepGC'
+        //jvmArgs '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=10'
     }
 }
 
@@ -33,7 +36,7 @@ ext {
     jme3utilitiesuiVersion = '0.6.5'
     jme3utilitiesxVersion = '0.2.5'
     jmonkeyengineVersion = '3.2.1-stable'
-    minieVersion = '0.3.0'
+    minieVersion = '0.3.1'
     skycontrolVersion = '0.9.14'
     wesVersion = '0.3.7'
 }
@@ -41,7 +44,7 @@ ext {
 repositories {
     //mavenLocal()
     maven { url 'https://dl.bintray.com/stephengold/jme3utilities' }
-    maven { url 'https://dl.bintray.com/stephengold/org.jmonkeyengine' } // for tests
+    maven { url 'https://dl.bintray.com/stephengold/org.jmonkeyengine' } // for testdata
     jcenter()
     maven { url 'http://nifty-gui.sourceforge.net/nifty-maven-repo' }
 }
