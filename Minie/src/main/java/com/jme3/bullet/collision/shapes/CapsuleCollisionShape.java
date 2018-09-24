@@ -45,7 +45,8 @@ import jme3utilities.math.MyVector3f;
 
 /**
  * A capsule collision shape based on Bullet's btCapsuleShapeX, btCapsuleShape,
- * or btCapsuleShapeZ.
+ * or btCapsuleShapeZ. These shapes have no margin and can only be scaled
+ * uniformly.
  *
  * @author normenhansen
  */
@@ -120,9 +121,19 @@ public class CapsuleCollisionShape extends CollisionShape {
     // new methods exposed
 
     /**
+     * Read the collision margin for this shape.
+     *
+     * @return the margin distance (in physics-space units, &ge;0)
+     */
+    @Override
+    public float getMargin() {
+        return 0f;
+    }
+
+    /**
      * Read the radius of the capsule.
      *
-     * @return radius (&ge;0)
+     * @return the radius (&ge;0)
      */
     public float getRadius() {
         assert radius >= 0f : radius;
@@ -159,6 +170,8 @@ public class CapsuleCollisionShape extends CollisionShape {
      */
     @Override
     public void setMargin(float margin) {
+        logger.log(Level.SEVERE,
+                "Cannot alter the margin of a CapsuleCollisionShape.");
     }
 
     /**
@@ -233,6 +246,7 @@ public class CapsuleCollisionShape extends CollisionShape {
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
 
         setScale(scale);
+        margin = 0f;
     }
 
     private native long createShape(int axis, float radius, float height);

@@ -43,23 +43,30 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**
- * A spherical collision shape based on Bullet's btSphereShape. TODO also
- * provide a shape based on btMultiSphereShape
+ * A spherical collision shape based on Bullet's btSphereShape. These shapes
+ * have no margin and can only be scaled uniformly. TODO also provide a shape
+ * based on btMultiSphereShape
  *
  * @author normenhansen
  */
 public class SphereCollisionShape extends CollisionShape {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(SphereCollisionShape.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
      * copy of radius (&ge;0)
      */
     private float radius;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -74,28 +81,47 @@ public class SphereCollisionShape extends CollisionShape {
      * @param radius the desired radius (&ge;0)
      */
     public SphereCollisionShape(float radius) {
+        Validate.nonNegative(radius, "radius");
+
         this.radius = radius;
         createShape();
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
-     * Read the radius of this shape.
+     * Read the collision margin for this shape.
+     *
+     * @return the margin distance (in physics-space units, &ge;0)
+     */
+    @Override
+    public float getMargin() {
+        return 0f;
+    }
+
+    /**
+     * Read the radius of the sphere.
      *
      * @return the radius (&ge;0)
      */
     public float getRadius() {
+        assert radius >= 0f : radius;
         return radius;
     }
 
     /**
-     * Alter the collision margin for this shape. This feature is disabled for
+     * Alter the collision margin of this shape. This feature is disabled for
      * sphere shapes.
      *
      * @param margin the desired margin distance (in physics-space units)
      */
     @Override
     public void setMargin(float margin) {
+        logger.log(Level.SEVERE,
+                "Cannot alter the margin of a SphereCollisionShape.");
     }
+    // *************************************************************************
+    // Savable methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.
@@ -145,14 +171,21 @@ public class SphereCollisionShape extends CollisionShape {
                     "SphereCollisionShape cannot be scaled non-uniformly.");
         }
     }
+    // *************************************************************************
+    // private methods
 
     /**
      * Instantiate the configured shape in Bullet.
      */
     private void createShape() {
+        assert radius >= 0f : radius;
+
         objectId = createShape(radius);
+        assert objectId != 0L;
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
-        setScale(scale); // Set the scale to 1,1,1
+
+        setScale(scale);
+        margin = 0f;
     }
 
     private native long createShape(float radius);
