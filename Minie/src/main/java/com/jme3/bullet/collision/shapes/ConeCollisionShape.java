@@ -36,10 +36,12 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
+import com.jme3.math.Vector3f;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
+import jme3utilities.math.MyVector3f;
 
 /**
  * A conical collision shape based on Bullet's btConeShapeX, btConeShape, or
@@ -108,6 +110,7 @@ public class ConeCollisionShape extends CollisionShape {
         this.axis = PhysicsSpace.AXIS_Y;
         createShape();
     }
+    // *************************************************************************
 
     /**
      * Determine the main (height) axis of the cone.
@@ -115,7 +118,9 @@ public class ConeCollisionShape extends CollisionShape {
      * @return 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public int getAxis() {
-        assert axis == 0 || axis == 1 || axis == 2 : axis;
+        assert axis == PhysicsSpace.AXIS_X
+                || axis == PhysicsSpace.AXIS_Y
+                || axis == PhysicsSpace.AXIS_Z : axis;
         return axis;
     }
 
@@ -137,6 +142,23 @@ public class ConeCollisionShape extends CollisionShape {
     public float getHeight() {
         assert height >= 0f : height;
         return height;
+    }
+    // *************************************************************************
+    // CollisionShape methods
+
+    /**
+     * Test whether the specified scaling factors can be applied to this shape.
+     * For cone shapes, radial scaling must be uniform.
+     *
+     * @param scale the desired scaling factor for each local axis (may be null,
+     * unaffected)
+     * @return true if applicable, otherwise false
+     */
+    @Override
+    public boolean canScale(Vector3f scale) {
+        boolean canScale
+                = super.canScale(scale) && MyVector3f.isScaleUniform(scale);
+        return canScale;
     }
 
     /**
@@ -169,14 +191,19 @@ public class ConeCollisionShape extends CollisionShape {
         axis = capsule.readInt("axis", PhysicsSpace.AXIS_Y);
         createShape();
     }
+    // *************************************************************************
+    // private methods
 
     /**
      * Instantiate the configured shape in Bullet.
      */
     private void createShape() {
-        assert axis == 0 || axis == 1 || axis == 2 : axis;
+        assert axis == PhysicsSpace.AXIS_X
+                || axis == PhysicsSpace.AXIS_Y
+                || axis == PhysicsSpace.AXIS_Z : axis;
         assert radius >= 0f : radius;
         assert height >= 0f : height;
+        assert objectId == 0L : objectId;
 
         objectId = createShape(axis, radius, height);
         assert objectId != 0L;

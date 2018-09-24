@@ -87,7 +87,6 @@ public class SphereCollisionShape extends CollisionShape {
         createShape();
     }
     // *************************************************************************
-    // new methods exposed
 
     /**
      * Read the collision margin for this shape.
@@ -108,6 +107,23 @@ public class SphereCollisionShape extends CollisionShape {
         assert radius >= 0f : radius;
         return radius;
     }
+    // *************************************************************************
+    // CollisionShape methods
+
+    /**
+     * Test whether the specified scaling factors can be applied to this shape.
+     * For sphere shapes, scaling must be uniform.
+     *
+     * @param scale the desired scaling factor for each local axis (may be null,
+     * unaffected)
+     * @return true if applicable, otherwise false
+     */
+    @Override
+    public boolean canScale(Vector3f scale) {
+        boolean canScale
+                = super.canScale(scale) && MyVector3f.isScaleUniform(scale);
+        return canScale;
+    }
 
     /**
      * Alter the collision margin of this shape. This feature is disabled for
@@ -120,8 +136,6 @@ public class SphereCollisionShape extends CollisionShape {
         logger.log(Level.SEVERE,
                 "Cannot alter the margin of a SphereCollisionShape.");
     }
-    // *************************************************************************
-    // Savable methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.
@@ -148,28 +162,6 @@ public class SphereCollisionShape extends CollisionShape {
         InputCapsule capsule = im.getCapsule(this);
         radius = capsule.readFloat("radius", 0.5f);
         createShape();
-    }
-
-    /**
-     * Alter the scaling factors of this shape. Non-uniform scaling is disabled
-     * for sphere shapes.
-     * <p>
-     * Note that if the shape is shared (between collision objects and/or
-     * compound shapes) changes can have unexpected consequences.
-     *
-     * @param scale the desired scaling factor for each local axis (not null, no
-     * negative component, unaffected, default=1,1,1)
-     */
-    @Override
-    public void setScale(Vector3f scale) {
-        Validate.nonNegative(scale, "scale");
-
-        if (MyVector3f.isScaleUniform(scale)) {
-            super.setScale(scale);
-        } else {
-            logger.log(Level.SEVERE,
-                    "SphereCollisionShape cannot be scaled non-uniformly.");
-        }
     }
     // *************************************************************************
     // private methods

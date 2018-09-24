@@ -89,6 +89,24 @@ public abstract class CollisionShape implements Savable {
     // new methods exposed
 
     /**
+     * Test whether the specified scaling factors can be applied to this shape.
+     *
+     * @param scale the desired scaling factor for each local axis (may be null,
+     * unaffected)
+     * @return true if applicable, otherwise false
+     */
+    public boolean canScale(Vector3f scale) {
+        boolean result;
+        if (scale == null) {
+            result = false;
+        } else {
+            result = MyVector3f.isAllNonNegative(scale);
+        }
+
+        return result;
+    }
+
+    /**
      * Read the id of the btCollisionShape.
      *
      * @return the unique identifier (not zero)
@@ -109,7 +127,9 @@ public abstract class CollisionShape implements Savable {
      * negative component, unaffected, default=1,1,1)
      */
     public void setScale(Vector3f scale) {
-        Validate.nonNegative(scale, "scale");
+        if (!canScale(scale)) {
+            throw new IllegalArgumentException("Illegal scaling.");
+        }
         assert objectId != 0L;
 
         setLocalScaling(objectId, scale);

@@ -112,6 +112,30 @@ public class CylinderCollisionShape extends CollisionShape {
     // *************************************************************************
 
     /**
+     * Test whether the specified scaling factors can be applied to this shape.
+     * For cylinder shapes, radial scaling must be uniform.
+     *
+     * @param scale the desired scaling factor for each local axis (may be null,
+     * unaffected)
+     * @return true if applicable, otherwise false
+     */
+    @Override
+    public boolean canScale(Vector3f scale) {
+        boolean canScale = super.canScale(scale);
+        if (canScale) {
+            if (axis == PhysicsSpace.AXIS_X && scale.x != scale.y) {
+                canScale = false;
+            } else if (axis == PhysicsSpace.AXIS_Y && scale.x != scale.z) {
+                canScale = false;
+            } else if (axis == PhysicsSpace.AXIS_Z && scale.y != scale.z) {
+                canScale = false;
+            }
+        }
+
+        return canScale;
+    }
+
+    /**
      * Copy the half extents of the cylinder.
      *
      * @param storeResult storage for the result (modified if not null)
@@ -130,34 +154,16 @@ public class CylinderCollisionShape extends CollisionShape {
     /**
      * Determine the main axis of the cylinder.
      *
-     * @return 0&rarr;X, 1&rarr;Y, 2&rarr;Z
+     * @return which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public int getAxis() {
-        assert axis == 0 || axis == 1 || axis == 2 : axis;
+        assert axis == PhysicsSpace.AXIS_X
+                || axis == PhysicsSpace.AXIS_Y
+                || axis == PhysicsSpace.AXIS_Z : axis;
         return axis;
     }
-
-    /**
-     * Alter the scaling factors of this shape. Non-uniform scaling is disabled
-     * for cylinder shapes.
-     * <p>
-     * Note that if the shape is shared (between collision objects and/or
-     * compound shapes) changes can have unexpected consequences.
-     *
-     * @param scale the desired scaling factor for each local axis (not null, no
-     * negative component, unaffected, default=1,1,1)
-     */
-    @Override
-    public void setScale(Vector3f scale) {
-        Validate.nonNegative(halfExtents, "half extents");
-
-        if (MyVector3f.isScaleUniform(scale)) {
-            super.setScale(scale);
-        } else {
-            logger.log(Level.SEVERE,
-                    "CylinderCollisionShape cannot be scaled non-uniformly.");
-        }
-    }
+    // *************************************************************************
+    // Savable methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.
@@ -196,12 +202,16 @@ public class CylinderCollisionShape extends CollisionShape {
      * Instantiate the configured shape in Bullet.
      */
     private void createShape() {
-        assert axis == 0 || axis == 1 || axis == 2 : axis;
+        assert axis == PhysicsSpace.AXIS_X
+                || axis == PhysicsSpace.AXIS_Y
+                || axis == PhysicsSpace.AXIS_Z : axis;
         assert MyVector3f.isAllNonNegative(halfExtents) : halfExtents;
+        assert objectId == 0L : objectId;
 
         objectId = createShape(axis, halfExtents);
         assert objectId != 0L;
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+
         setScale(scale);
         setMargin(margin);
     }

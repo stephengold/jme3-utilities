@@ -63,11 +63,11 @@ public class CapsuleCollisionShape extends CollisionShape {
     // fields
 
     /**
-     * copy of height of the cylindrical portion (&ge;0)
+     * copy of unscaled height of the cylindrical portion (&ge;0)
      */
     private float height;
     /**
-     * copy of radius (&ge;0)
+     * copy of unscaled radius (&ge;0)
      */
     private float radius;
     /**
@@ -103,8 +103,9 @@ public class CapsuleCollisionShape extends CollisionShape {
     /**
      * Instantiate a capsule shape around the specified main (height) axis.
      *
-     * @param radius the desired radius (&ge;0)
-     * @param height the desired height (of the cylindrical portion) (&ge;0)
+     * @param radius the desired unscaled radius (&ge;0)
+     * @param height the desired unscaled height (of the cylindrical portion)
+     * (&ge;0)
      * @param axis which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public CapsuleCollisionShape(float radius, float height, int axis) {
@@ -119,6 +120,22 @@ public class CapsuleCollisionShape extends CollisionShape {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Test whether the specified scaling factors can be applied to this shape.
+     * For capsule shapes, scaling must be uniform.
+     *
+     * @param scale the desired scaling factor for each local axis (may be null,
+     * unaffected)
+     * @return true if applicable, otherwise false
+     */
+    @Override
+    public boolean canScale(Vector3f scale) {
+        boolean canScale = super.canScale(scale)
+                && MyVector3f.isScaleUniform(scale);
+
+        return canScale;
+    }
 
     /**
      * Read the collision margin for this shape.
@@ -153,7 +170,7 @@ public class CapsuleCollisionShape extends CollisionShape {
     /**
      * Determine the main (height) axis of the capsule.
      *
-     * @return 0 for local X, 1 for local Y, or 2 for local Z
+     * @return which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public int getAxis() {
         assert axis == PhysicsSpace.AXIS_X
@@ -172,28 +189,6 @@ public class CapsuleCollisionShape extends CollisionShape {
     public void setMargin(float margin) {
         logger.log(Level.SEVERE,
                 "Cannot alter the margin of a CapsuleCollisionShape.");
-    }
-
-    /**
-     * Alter the scaling factors of this shape. Non-uniform scaling is disabled
-     * for capsule shapes.
-     * <p>
-     * Note that if the shape is shared (between collision objects and/or
-     * compound shapes) changes can have unexpected consequences.
-     *
-     * @param scale the desired scaling factor for each local axis (not null, no
-     * negative component, unaffected, default=1,1,1)
-     */
-    @Override
-    public void setScale(Vector3f scale) {
-        Validate.nonNegative(scale, "scale");
-
-        if (MyVector3f.isScaleUniform(scale)) {
-            super.setScale(scale);
-        } else {
-            logger.log(Level.SEVERE,
-                    "CapsuleCollisionShape cannot be scaled non-uniformly.");
-        }
     }
     // *************************************************************************
     // Savable methods
@@ -240,6 +235,7 @@ public class CapsuleCollisionShape extends CollisionShape {
                 || axis == PhysicsSpace.AXIS_Z : axis;
         assert radius >= 0f : radius;
         assert height >= 0f : height;
+        assert objectId == 0L : objectId;
 
         objectId = createShape(axis, radius, height);
         assert objectId != 0L;
