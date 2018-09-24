@@ -1,6 +1,6 @@
 # release notes for the Minie library and related tests
 
-## Version 0.3.1 released on TBD
+## Version 0.3.1 released on 24 September 2018
 
  + Fixed JME issue #896 and added a test for it.
  + Disabled getMargin() and setMargin() for capsule and sphere shapes.
