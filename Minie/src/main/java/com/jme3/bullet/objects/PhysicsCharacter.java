@@ -31,7 +31,6 @@
  */
 package com.jme3.bullet.objects;
 
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.export.InputCapsule;
@@ -68,7 +67,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     final private Vector3f walkOffset = new Vector3f();
     private float fallSpeed = 55f;
     private float jumpSpeed = 10f;
-    private int upAxis = PhysicsSpace.AXIS_Y; // TODO remove
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -155,30 +153,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     }
 
     /**
-     * @deprecated Deprecated in bullet 2.86.1 use setUp(Vector3f) instead
-     * @param axis which axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
-     */
-    @Deprecated
-    public void setUpAxis(int axis) {
-        if (axis < 0) {
-            axis = PhysicsSpace.AXIS_X;
-        } else if (axis > 2) {
-            axis = PhysicsSpace.AXIS_Z;
-        }
-        upAxis = axis;
-        switch (axis) {
-            case PhysicsSpace.AXIS_X:
-                setUp(Vector3f.UNIT_X);
-                break;
-            case PhysicsSpace.AXIS_Y:
-                setUp(Vector3f.UNIT_Y);
-                break;
-            case PhysicsSpace.AXIS_Z:
-                setUp(Vector3f.UNIT_Z);
-        }
-    }
-
-    /**
      * Alter this character's "up" direction.
      *
      * @param direction the desired direction (not null, not zero, unaffected)
@@ -251,15 +225,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
             Vector3f storeResult);
 
     /**
-     * Read the index of the "up" axis. TODO deprecate
-     *
-     * @return which axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
-     */
-    public int getUpAxis() {
-        return upAxis;
-    }
-
-    /**
      * Alter this character's fall speed.
      *
      * @param fallSpeed the desired speed (default=55)
@@ -302,17 +267,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     }
 
     /**
-     * @deprecated Deprecated in bullet 2.86.1. Use setGravity(Vector3f)
-     * instead.
-     * @param value the desired upward component of the acceleration (typically
-     * negative)
-     */
-    @Deprecated
-    public void setGravity(float value) {
-        setGravity(new Vector3f(0f, value, 0f)); // wrong sign?
-    }
-
-    /**
      * Alter this character's gravitational acceleration.
      *
      * @param gravity the desired acceleration vector (not null, unaffected)
@@ -322,16 +276,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     }
 
     private native void setGravity(long characterId, Vector3f gravity);
-
-    /**
-     * @deprecated Deprecated in bullet 2.86.1. Use getGravity(Vector3f)
-     * instead.
-     * @return the upward component of the acceleration (typically negative)
-     */
-    @Deprecated
-    public float getGravity() {
-        return getGravity(null).y; // wrong sign?
-    }
 
     /**
      * Copy this character's gravitational acceleration.
@@ -475,14 +419,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     }
 
     private native boolean onGround(long characterId);
-
-    /**
-     * @deprecated Deprecated in bullet 2.86.1. Use jump(Vector3f) instead.
-     */
-    @Deprecated
-    public void jump() {
-        jump(Vector3f.UNIT_Y);
-    }
 
     /**
      * Jump in the specified direction.
@@ -632,11 +568,10 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(stepHeight, "stepHeight", 1f);
-        capsule.write(getGravity(), "gravity", 9.8f * 3); // TODO vector
+        capsule.write(getGravity(null), "gravityVector", new Vector3f(0f, -9.81f, 0f));
         capsule.write(getMaxSlope(), "maxSlope", 1f);
         capsule.write(fallSpeed, "fallSpeed", 55f);
         capsule.write(jumpSpeed, "jumpSpeed", 10f);
-        capsule.write(upAxis, "upAxis", PhysicsSpace.AXIS_Y);  // TODO vector
         capsule.write(getCcdMotionThreshold(), "ccdMotionThreshold", 0f);
         capsule.write(getCcdSweptSphereRadius(), "ccdSweptSphereRadius", 0f);
         capsule.write(getPhysicsLocation(new Vector3f()), "physicsLocation",
@@ -656,11 +591,12 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         InputCapsule capsule = im.getCapsule(this);
         stepHeight = capsule.readFloat("stepHeight", 1f);
         buildObject();
-        setGravity(capsule.readFloat("gravity", 9.8f * 3)); // TODO vector
+        Vector3f tmp = (Vector3f) capsule.readSavable("gravityVector",
+                new Vector3f(0f, -9.81f, 0f));
+        setGravity(tmp);
         setMaxSlope(capsule.readFloat("maxSlope", 1f));
         setFallSpeed(capsule.readFloat("fallSpeed", 55f));
         setJumpSpeed(capsule.readFloat("jumpSpeed", 10f));
-        setUpAxis(capsule.readInt("upAxis", PhysicsSpace.AXIS_Y)); // TODO vector
         setCcdMotionThreshold(capsule.readFloat("ccdMotionThreshold", 0f));
         setCcdSweptSphereRadius(capsule.readFloat("ccdSweptSphereRadius", 0f));
         setPhysicsLocation((Vector3f) capsule.readSavable("physicsLocation",
