@@ -52,6 +52,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
+import jme3utilities.math.MyQuaternion;
+import jme3utilities.math.MyVector3f;
 
 /**
  * A collision object for a rigid body, based on Bullet's btRigidBody.
@@ -59,6 +61,8 @@ import jme3utilities.Validate;
  * @author normenhansen
  */
 public class PhysicsRigidBody extends PhysicsCollisionObject {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -69,6 +73,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * magic mass value used to specify a static body
      */
     final public static float massForStatic = 0f;
+    // *************************************************************************
+    // fields
 
     /**
      * motion state
@@ -90,6 +96,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * joint list
      */
     protected ArrayList<PhysicsJoint> joints = new ArrayList<>(2);
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -125,6 +133,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         this.mass = mass;
         rebuildRigidBody();
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Build/rebuild this body after parameters have changed.
@@ -197,38 +207,54 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     private native boolean isInWorld(long objectId);
 
     /**
-     * Directly alter the location of this body's center of mass. TODO check for
-     * HeightfieldCollisionShape
+     * Directly alter the location of this body's center of mass.
      *
      * @param location the desired location (not null, unaffected)
      */
     public void setPhysicsLocation(Vector3f location) {
+        Validate.nonNull(location, "location");
+        if (collisionShape instanceof HeightfieldCollisionShape
+                && !MyVector3f.isZero(location)) {
+            throw new IllegalArgumentException(
+                    "No translation of heightfields.");
+        }
+
         setPhysicsLocation(objectId, location);
     }
 
     private native void setPhysicsLocation(long objectId, Vector3f location);
 
     /**
-     * Directly alter this body's orientation. TODO check for
-     * HeightfieldCollisionShape
+     * Directly alter this body's orientation.
      *
      * @param rotation the desired orientation (rotation matrix, not null,
      * unaffected)
      */
     public void setPhysicsRotation(Matrix3f rotation) {
+        Validate.nonNull(rotation, "location");
+        if (collisionShape instanceof HeightfieldCollisionShape
+                && !rotation.isIdentity()) {
+            throw new IllegalArgumentException("No rotation of heightfields.");
+        }
+
         setPhysicsRotation(objectId, rotation);
     }
 
     private native void setPhysicsRotation(long objectId, Matrix3f rotation);
 
     /**
-     * Directly alter this body's orientation. TODO check for
-     * HeightfieldCollisionShape
+     * Directly alter this body's orientation.
      *
      * @param rotation the desired orientation (quaternion, in physics-space
      * coordinates, not null, unaffected)
      */
     public void setPhysicsRotation(Quaternion rotation) {
+        Validate.nonNull(rotation, "rotation");
+        if (collisionShape instanceof HeightfieldCollisionShape
+                && !MyQuaternion.isRotationIdentity(rotation)) {
+            throw new IllegalArgumentException("No rotation of heightfields.");
+        }
+
         setPhysicsRotation(objectId, rotation);
     }
 
@@ -972,6 +998,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
                     "Dynamic rigid body can't have plane shape!");
         }
     }
+    // *************************************************************************
+    // PhysicsCollisionObject methods
 
     /**
      * Serialize this body, for example when saving to a J3O file.
