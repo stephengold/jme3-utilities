@@ -141,7 +141,7 @@ public class CollisionShapeFactory {
                 } else {
                     Transform trans = getTransform(spatial, realRootNode);
                     shape.addChildShape(
-                            createSingleBoxShape(spatial, realRootNode),
+                            createSingleBoxShape(spatial),
                             trans.getTranslation(),
                             trans.getRotation().toRotationMatrix());
                 }
@@ -255,7 +255,7 @@ public class CollisionShapeFactory {
      */
     public static CollisionShape createBoxShape(Spatial spatial) {
         if (spatial instanceof Geometry) {
-            return createSingleBoxShape((Geometry) spatial, spatial);
+            return createSingleBoxShape((Geometry) spatial);
         } else if (spatial instanceof Node) {
             return createBoxCompoundShape((Node) spatial);
         } else {
@@ -290,12 +290,10 @@ public class CollisionShapeFactory {
      * BoxCollisionShape.
      *
      * @param spatial the spatial on which to base the shape (not null)
-     * @param parent unused TODO
      * @return a new shape with the dimensions of the spatial's bounding box
      * (not null)
      */
-    private static BoxCollisionShape createSingleBoxShape(Spatial spatial,
-            Spatial parent) {
+    private static BoxCollisionShape createSingleBoxShape(Spatial spatial) {
         //TODO: using world bound here instead of "local world" bound...
         BoxCollisionShape shape = new BoxCollisionShape(
                 ((BoundingBox) spatial.getWorldBound()).getExtent(new Vector3f()));
