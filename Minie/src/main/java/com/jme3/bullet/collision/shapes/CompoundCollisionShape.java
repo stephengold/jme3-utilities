@@ -52,24 +52,37 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class CompoundCollisionShape extends CollisionShape {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(CompoundCollisionShape.class.getName());
+    // *************************************************************************
+    // fields
+
     /**
      * children of this shape
      */
     private ArrayList<ChildCollisionShape> children = new ArrayList<>();
+    // *************************************************************************
+    // constructors
 
     /**
      * Instantiate an empty compound shape (with no children).
      */
     public CompoundCollisionShape() {
         objectId = createShape();
+        assert objectId != 0L;
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        
+        setScale(scale);
+        setMargin(margin);
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Add a child shape with the specified local translation.
@@ -96,7 +109,7 @@ public class CompoundCollisionShape extends CollisionShape {
     public void addChildShape(CollisionShape shape, Vector3f location,
             Matrix3f rotation) {
         if (shape instanceof CompoundCollisionShape) {
-            throw new IllegalStateException(
+            throw new IllegalArgumentException(
                     "CompoundCollisionShapes cannot have CompoundCollisionShapes as children!");
         }
         children.add(new ChildCollisionShape(location.clone(),
@@ -135,6 +148,8 @@ public class CompoundCollisionShape extends CollisionShape {
             Vector3f location, Matrix3f rotation);
 
     private native long removeChildShape(long objectId, long childId);
+    // *************************************************************************
+    // Savable methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.
@@ -167,6 +182,8 @@ public class CompoundCollisionShape extends CollisionShape {
         setMargin(margin);
         loadChildren();
     }
+    // *************************************************************************
+    // private methods
 
     private void loadChildren() {
         for (ChildCollisionShape child : children) {
