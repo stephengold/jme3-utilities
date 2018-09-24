@@ -30,47 +30,131 @@ package jme3utilities.minie.test;
  * Test case for visualizing a shape with a changing scale.
  */
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.ModelKey;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
+import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.control.GhostControl;
+import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
+import com.jme3.bullet.collision.shapes.ConeCollisionShape;
+import com.jme3.bullet.collision.shapes.CylinderCollisionShape;
+import com.jme3.bullet.collision.shapes.GImpactCollisionShape;
+import com.jme3.bullet.collision.shapes.HeightfieldCollisionShape;
+import com.jme3.bullet.collision.shapes.HullCollisionShape;
+import com.jme3.bullet.collision.shapes.MeshCollisionShape;
+import com.jme3.bullet.collision.shapes.PlaneCollisionShape;
+import com.jme3.bullet.collision.shapes.SimplexCollisionShape;
+import com.jme3.bullet.collision.shapes.SphereCollisionShape;
+import com.jme3.math.Plane;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
+import com.jme3.terrain.heightmap.AbstractHeightMap;
+import com.jme3.terrain.heightmap.ImageBasedHeightMap;
+import com.jme3.texture.Image;
+import com.jme3.texture.Texture;
+import jme3utilities.MyAsset;
 
-public class TestScaleChange extends SimpleApplication {
-
-    float scale = 1f;
-    GhostControl gc;
-    PhysicsSpace pSpace;
-    CollisionShape box;
+/**
+ * Try the setMargin() function on collision shapes of all types.
+ *
+ * @author Stephen Gold sgold@sonic.net
+ */
+public class TestSetMargin extends SimpleApplication {
+    // *************************************************************************
+    // new methods exposed
 
     public static void main(String[] args) {
-        TestScaleChange app = new TestScaleChange();
+        TestSetMargin app = new TestSetMargin();
         app.start();
     }
+    // *************************************************************************
+    // SimpleApplication methods
 
     @Override
     public void simpleInitApp() {
         BulletAppState bulletAppState = new BulletAppState();
-        bulletAppState.setDebugEnabled(true);
         stateManager.attach(bulletAppState);
-        pSpace = bulletAppState.getPhysicsSpace();
 
-        box = new BoxCollisionShape(new Vector3f(1f, 1f, 1f));
-        box.setScale(new Vector3f(scale, scale, scale));
-        gc = new GhostControl(box);
-        gc.setPhysicsSpace(pSpace);
-    }
+        CollisionShape box = new BoxCollisionShape(new Vector3f(1f, 1f, 1f));
+        assert box.getMargin() == 0.04f;
+        box.setMargin(0.11f);
+        assert box.getMargin() == 0.11f;
 
-    @Override
-    public void simpleUpdate(float tpf) {
-        scale += tpf;
-        if (scale > 2f) {
-            scale = 1f;
-        }
+        CollisionShape capsule = new CapsuleCollisionShape(1f, 1f);
+        assert capsule.getMargin() == 0f;
+        capsule.setMargin(0.12f); // cannot alter margin
+        assert capsule.getMargin() == 0f;
 
-        gc.setPhysicsSpace(null);
-        box.setScale(new Vector3f(scale, scale, scale));
-        gc.setPhysicsSpace(pSpace);
+        CompoundCollisionShape compound = new CompoundCollisionShape();
+        compound.addChildShape(capsule, new Vector3f(0f, 1f, 0f));
+        assert compound.getMargin() == 0.04f;
+        compound.setMargin(0.13f);
+        assert compound.getMargin() == 0.13f;
+
+        CollisionShape cone = new ConeCollisionShape(1f, 1f);
+        assert cone.getMargin() == 0.04f;
+        cone.setMargin(0.14f);
+        assert cone.getMargin() == 0.14f;
+
+        CollisionShape cylinder
+                = new CylinderCollisionShape(new Vector3f(1f, 1f, 1f));
+        assert cylinder.getMargin() == 0.04f;
+        cylinder.setMargin(0.15f);
+        assert cylinder.getMargin() == 0.15f;
+
+        ModelKey key = new ModelKey("Models/Jaime/Jaime.j3o");
+        Node model = (Node) assetManager.loadModel(key);
+        Geometry geo = (Geometry) model.getChild(0);
+        Mesh mesh = geo.getMesh();
+        CollisionShape gimpoact = new GImpactCollisionShape(mesh);
+        assert gimpoact.getMargin() == 0.04f;
+        gimpoact.setMargin(0.16f);
+        assert gimpoact.getMargin() == 0.16f;
+
+        Texture heightTexture = MyAsset.loadTexture(assetManager,
+                "Textures/terrain/height/basin.png");
+        Image heightImage = heightTexture.getImage();
+        float heightScale = 1f;
+        AbstractHeightMap heightMap
+                = new ImageBasedHeightMap(heightImage, heightScale);
+        heightMap.load();
+        float[] heightArray = heightMap.getHeightMap();
+        CollisionShape hcs = new HeightfieldCollisionShape(heightArray);
+        assert hcs.getMargin() == 0.04f;
+        hcs.setMargin(0.17f);
+        assert hcs.getMargin() == 0.17f;
+
+        CollisionShape hull = new HullCollisionShape(mesh);
+        assert hull.getMargin() == 0.04f;
+        hull.setMargin(0.18f);
+        assert hull.getMargin() == 0.18f;
+
+        CollisionShape mcs = new MeshCollisionShape(mesh);
+        assert mcs.getMargin() == 0.04f;
+        mcs.setMargin(0.19f);
+        assert mcs.getMargin() == 0.19f;
+
+        Plane plane = new Plane(new Vector3f(0f, 1f, 0f), 0f);
+        CollisionShape pcs = new PlaneCollisionShape(plane);
+        assert pcs.getMargin() == 0.04f;
+        pcs.setMargin(0.21f);
+        assert pcs.getMargin() == 0.21f;
+
+        Vector3f p1 = new Vector3f(0f, 1f, 1f);
+        Vector3f p2 = new Vector3f(1f, 0f, 1f);
+        Vector3f p3 = new Vector3f(1f, 1f, 0f);
+        CollisionShape simplex = new SimplexCollisionShape(p1, p2, p3);
+        assert simplex.getMargin() == 0.04f;
+        simplex.setMargin(0.22f);
+        assert simplex.getMargin() == 0.22f;
+
+        CollisionShape sphere = new SphereCollisionShape(1f);
+        assert sphere.getMargin() == 0f;
+        sphere.setMargin(0.3f); // cannot alter margin
+        assert sphere.getMargin() == 0f;
+        
+        System.exit(0);
     }
 }
