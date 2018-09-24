@@ -217,7 +217,7 @@ public class BetterCharacterControl extends AbstractPhysicsControl
 
         Vector3f currentVelocity = vars.vect2.set(velocity);
 
-        // Dampen any existing X-Z motion.
+        // Attenuate any existing X-Z motion.
         float existingLeftVelocity = velocity.dot(localLeft);
         float existingForwardVelocity = velocity.dot(localForward);
         Vector3f counter = vars.vect1;

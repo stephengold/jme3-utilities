@@ -178,7 +178,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      * Copy this object's orientation to a quaternion.
      *
      * @param storeResult storage for the result (modified if not null)
-     * @return the orientation (in physics-space coordinates, either storeResult
+     * @return an orientation (in physics-space coordinates, either storeResult
      * or a new quaternion, not null)
      */
     public Quaternion getPhysicsRotation(Quaternion storeResult) {
@@ -197,7 +197,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      * Copy this object's orientation to a matrix.
      *
      * @param storeResult storage for the result (modified if not null)
-     * @return the orientation (in physics-space coordinates, either storeResult
+     * @return an orientation (in physics-space coordinates, either storeResult
      * or a new matrix, not null)
      */
     public Matrix3f getPhysicsRotationMatrix(Matrix3f storeResult) {
