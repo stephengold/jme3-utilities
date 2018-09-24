@@ -458,7 +458,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
             int depth = 0;
             int maxDepth = ikChainDepth.get(bone.getName());
             updateBone(boneLinks.get(bone.getName()),
-                    tpf * (float) FastMath.sqrt(distance), vars, tmpRot1,
+                    tpf * (float) FastMath.sqrt(distance), tmpRot1,
                     tmpRot2, bone, ikTargets.get(boneName), depth, maxDepth);
 
             Vector3f position = vars.vect1;
@@ -475,7 +475,6 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
      *
      * @param link the bone link for the affected bone (may be null)
      * @param tpf the time interval between frames (in seconds, &ge;0)
-     * @param vars unused TODO
      * @param tmpRot1 temporary storage used in calculations (not null)
      * @param tmpRot2 temporary storage used in calculations (not null)
      * @param tipBone (not null)
@@ -483,7 +482,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
      * @param depth depth of the recursion (&ge;0)
      * @param maxDepth recursion limit (&ge;0)
      */
-    public void updateBone(PhysicsBoneLink link, float tpf, TempVars vars,
+    public void updateBone(PhysicsBoneLink link, float tpf,
             Quaternion tmpRot1, Quaternion[] tmpRot2, Bone tipBone,
             Vector3f target, int depth, int maxDepth) {
         if (link == null || link.bone.getParent() == null) {
@@ -538,7 +537,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         if (link.bone.getParent() != null && depth < maxDepth) {
 
             updateBone(boneLinks.get(link.bone.getParent().getName()),
-                    tpf * limbDampening, vars, tmpRot1, tmpRot2, tipBone,
+                    tpf * limbDampening, tmpRot1, tmpRot2, tipBone,
                     target, depth + 1, maxDepth);
         }
     }
