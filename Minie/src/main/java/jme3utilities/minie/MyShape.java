@@ -340,10 +340,12 @@ public class MyShape {
             }
 
         } else {
-            throw new IllegalArgumentException();
+            result = null;
         }
 
-        if (result != null) {
+        if (result != null
+                && !(result instanceof CapsuleCollisionShape)
+                && !(result instanceof SphereCollisionShape)) {
             float margin = oldShape.getMargin();
             result.setMargin(margin);
         }
@@ -399,11 +401,15 @@ public class MyShape {
             result = setHeight(oldShape, newHeight / 2f);
 
         } else {
-            throw new IllegalArgumentException();
+            result = null;
         }
 
-        float margin = oldShape.getMargin();
-        result.setMargin(margin);
+        if (result != null
+                && !(result instanceof CapsuleCollisionShape)
+                && !(result instanceof SphereCollisionShape)) {
+            float margin = oldShape.getMargin();
+            result.setMargin(margin);
+        }
 
         return result;
     }
@@ -461,11 +467,15 @@ public class MyShape {
             result = new SphereCollisionShape(newRadius);
 
         } else {
-            throw new IllegalArgumentException();
+            result = null;
         }
 
-        float margin = oldShape.getMargin();
-        result.setMargin(margin);
+        if (result != null
+                && !(result instanceof CapsuleCollisionShape)
+                && !(result instanceof SphereCollisionShape)) {
+            float margin = oldShape.getMargin();
+            result.setMargin(margin);
+        }
 
         return result;
     }
