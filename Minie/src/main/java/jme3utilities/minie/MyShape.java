@@ -254,8 +254,7 @@ public class MyShape {
      * Calculate the un-scaled radius of the specified shape.
      *
      * @param shape (not null, unaffected)
-     * @return un-scaled radius (&ge;0) or NaN if the shape is not a capsule,
-     * cone, or sphere
+     * @return un-scaled radius (&ge;0) or NaN if the radius is undefined or unknown
      */
     public static float radius(CollisionShape shape) {
         Validate.nonNull(shape, "shape");
@@ -268,6 +267,30 @@ public class MyShape {
         } else if (shape instanceof ConeCollisionShape) {
             ConeCollisionShape cone = (ConeCollisionShape) shape;
             result = cone.getRadius();
+
+        } else if (shape instanceof CylinderCollisionShape) {
+            Vector3f halfExtents = halfExtents(shape, null);
+            int axisIndex = axisIndex(shape);
+            float r1, r2;
+            switch (axisIndex) {
+                case PhysicsSpace.AXIS_X:
+                    r1 = halfExtents.y;
+                    r2 = halfExtents.z;
+                    break;
+                case PhysicsSpace.AXIS_Y:
+                    r1 = halfExtents.x;
+                    r2 = halfExtents.z;
+                    break;
+                case PhysicsSpace.AXIS_Z:
+                    r1 = halfExtents.x;
+                    r2 = halfExtents.y;
+                    break;
+                default:
+                    throw new IllegalArgumentException();
+            }
+            if (r1 == r2) {
+                result = r1;
+            }
 
         } else if (shape instanceof SphereCollisionShape) {
             SphereCollisionShape sphere = (SphereCollisionShape) shape;
