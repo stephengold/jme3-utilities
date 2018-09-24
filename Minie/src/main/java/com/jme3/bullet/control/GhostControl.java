@@ -62,6 +62,8 @@ import jme3utilities.MySpatial;
  */
 public class GhostControl extends PhysicsGhostObject
         implements PhysicsControl, JmeCloneable {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -76,6 +78,9 @@ public class GhostControl extends PhysicsGhostObject
      * local copy of {@link com.jme3.math.Vector3f#ZERO}
      */
     final private static Vector3f translateIdentity = new Vector3f(0f, 0f, 0f);
+    // *************************************************************************
+    // fields
+
     /**
      * spatial to which this control is added, or null if none
      */
@@ -97,6 +102,8 @@ public class GhostControl extends PhysicsGhostObject
      * physics coordinates match world transform
      */
     private boolean applyLocal = false;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -113,6 +120,8 @@ public class GhostControl extends PhysicsGhostObject
     public GhostControl(CollisionShape shape) {
         super(shape);
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Test whether physics-space coordinates should match the spatial's local
@@ -141,7 +150,7 @@ public class GhostControl extends PhysicsGhostObject
      *
      * @return the pre-existing vector (not null) TODO
      */
-    protected Vector3f getSpatialTranslation() {
+    private Vector3f getSpatialTranslation() {
         if (MySpatial.isIgnoringTransforms(spatial)) {
             return translateIdentity;
         } else if (applyLocal) {
@@ -152,11 +161,11 @@ public class GhostControl extends PhysicsGhostObject
     }
 
     /**
-     * Copy whichever spatial rotation corresponds to the physics rotation.
+     * Access whichever spatial rotation corresponds to the physics rotation.
      *
      * @return the pre-existing quaternion (not null) TODO
      */
-    protected Quaternion getSpatialRotation() {
+    private Quaternion getSpatialRotation() {
         if (MySpatial.isIgnoringTransforms(spatial)) {
             return rotateIdentity;
         } else if (applyLocal) {
@@ -176,6 +185,8 @@ public class GhostControl extends PhysicsGhostObject
     public Control cloneForSpatial(Spatial spatial) {
         throw new UnsupportedOperationException();
     }
+    // *************************************************************************
+    // JmeCloneable methods
 
     /**
      * Create a shallow clone for the JME cloner.
@@ -210,6 +221,8 @@ public class GhostControl extends PhysicsGhostObject
     public void cloneFields(Cloner cloner, Object original) {
         spatial = cloner.clone(spatial);
     }
+    // *************************************************************************
+    // PhysicsControl methods
 
     /**
      * Alter which spatial is controlled. Invoked when the control is added to
