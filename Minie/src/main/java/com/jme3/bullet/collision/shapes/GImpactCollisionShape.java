@@ -52,14 +52,17 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class GImpactCollisionShape extends CollisionShape {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(GImpactCollisionShape.class.getName());
+    // *************************************************************************
+    // fields
 
-//    protected Vector3f worldScale;
     private int numTriangles;
     private int numVertices;
     private int triangleIndexStride;
@@ -71,6 +74,8 @@ public class GImpactCollisionShape extends CollisionShape {
      * non-zero value.
      */
     private long meshId = 0L;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -87,14 +92,13 @@ public class GImpactCollisionShape extends CollisionShape {
     public GImpactCollisionShape(Mesh mesh) {
         createCollisionMesh(mesh);
     }
+    // *************************************************************************
 
     private void createCollisionMesh(Mesh mesh) {
         triangleIndexBase = BufferUtils.createByteBuffer(mesh.getTriangleCount() * 3 * 4);
         vertexBase = BufferUtils.createByteBuffer(mesh.getVertexCount() * 3 * 4);
-//        triangleIndexBase = ByteBuffer.allocate(mesh.getTriangleCount() * 3 * 4);
-//        vertexBase = ByteBuffer.allocate(mesh.getVertexCount() * 3 * 4);
         numVertices = mesh.getVertexCount();
-        vertexStride = 12; //3 verts * 4 bytes per.
+        vertexStride = 12; //3 verts * 4 bytes each.
         numTriangles = mesh.getTriangleCount();
         triangleIndexStride = 12; //3 index entries * 4 bytes each.
 
@@ -161,14 +165,19 @@ public class GImpactCollisionShape extends CollisionShape {
      * Instantiate the configured shape in Bullet.
      */
     protected void createShape() {
+        assert meshId == 0L;
+        assert objectId == 0L;
+
         meshId = NativeMeshUtil.createTriangleIndexVertexArray(
                 triangleIndexBase, vertexBase, numTriangles, numVertices,
                 vertexStride, triangleIndexStride);
+        assert meshId != 0L;
         logger.log(Level.FINE, "Created Mesh {0}", Long.toHexString(meshId));
-        
+
         objectId = createShape(meshId);
+        assert objectId != 0L;
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
-        
+
         setScale(scale);
         setMargin(margin);
     }

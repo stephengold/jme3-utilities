@@ -93,7 +93,7 @@ public class PlaneCollisionShape extends CollisionShape {
         return plane.clone();
     }
     // *************************************************************************
-    // Savable methods
+    // CollisionShape methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.
@@ -128,8 +128,12 @@ public class PlaneCollisionShape extends CollisionShape {
      * Instantiate the configured shape in Bullet.
      */
     private void createShape() {
+        assert objectId == 0L;
+
         objectId = createShape(plane.getNormal(), plane.getConstant());
+        assert objectId != 0L;
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+
         setScale(scale);
         setMargin(margin);
     }

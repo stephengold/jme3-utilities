@@ -61,19 +61,23 @@ import jme3utilities.math.MyVector3f;
  * @author Brent Owens
  */
 public class HeightfieldCollisionShape extends CollisionShape {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(HeightfieldCollisionShape.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
-     * number of rows in the heightfield (&gt;1)
+     * copy of number of rows in the heightfield (&gt;1)
      */
     private int heightStickWidth;
     /**
-     * number of columns in the heightfield (&gt;1)
+     * copy of number of columns in the heightfield (&gt;1)
      */
     private int heightStickLength;
     /**
@@ -84,7 +88,7 @@ public class HeightfieldCollisionShape extends CollisionShape {
     private float minHeight;
     private float maxHeight;
     /**
-     * index of the height axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
+     * copy of height axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
      */
     private int upAxis = PhysicsSpace.AXIS_Y;
     private boolean flipQuadEdges = false;
@@ -95,6 +99,8 @@ public class HeightfieldCollisionShape extends CollisionShape {
      * buffer might get garbage collected.
      */
     private ByteBuffer bbuf;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -174,6 +180,8 @@ public class HeightfieldCollisionShape extends CollisionShape {
      * Instantiate the configured shape in Bullet.
      */
     private void createShape() {
+        assert objectId == 0L;
+
         bbuf = BufferUtils.createByteBuffer(heightfieldData.length * 4);
         for (int i = 0; i < heightfieldData.length; i++) {
             float f = heightfieldData[i];
@@ -182,7 +190,9 @@ public class HeightfieldCollisionShape extends CollisionShape {
 
         objectId = createShape(heightStickWidth, heightStickLength, bbuf,
                 heightScale, minHeight, maxHeight, upAxis, flipQuadEdges);
+        assert objectId != 0L;
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+
         setScale(scale);
         setMargin(margin);
     }
@@ -190,6 +200,8 @@ public class HeightfieldCollisionShape extends CollisionShape {
     private native long createShape(int heightStickWidth, int heightStickLength,
             ByteBuffer heightfieldData, float heightScale, float minHeight,
             float maxHeight, int upAxis, boolean flipQuadEdges);
+    // *************************************************************************
+    // CollisionShape methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.

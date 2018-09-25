@@ -115,7 +115,7 @@ public class ConeCollisionShape extends CollisionShape {
     /**
      * Determine the main (height) axis of the cone.
      *
-     * @return 0&rarr;X, 1&rarr;Y, 2&rarr;Z
+     * @return the axis index: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public int getAxis() {
         assert axis == PhysicsSpace.AXIS_X

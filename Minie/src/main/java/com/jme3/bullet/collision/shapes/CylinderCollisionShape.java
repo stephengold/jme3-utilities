@@ -152,9 +152,9 @@ public class CylinderCollisionShape extends CollisionShape {
     }
 
     /**
-     * Determine the main axis of the cylinder.
+     * Determine the main (height) axis of the cylinder.
      *
-     * @return which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
+     * @return the axis index: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public int getAxis() {
         assert axis == PhysicsSpace.AXIS_X
@@ -163,7 +163,7 @@ public class CylinderCollisionShape extends CollisionShape {
         return axis;
     }
     // *************************************************************************
-    // Savable methods
+    // CollisionShape methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.

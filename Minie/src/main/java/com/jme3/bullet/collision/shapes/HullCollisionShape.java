@@ -144,11 +144,15 @@ public class HullCollisionShape extends CollisionShape {
         }
         createShape();
     }
+    // *************************************************************************
+    // private methods
 
     /**
      * Instantiate the configured shape in Bullet.
      */
     private void createShape() {
+        assert objectId == 0L;
+
         bbuf = BufferUtils.createByteBuffer(points.length * 4);
         for (int i = 0; i < points.length; i++) {
             float f = points[i];

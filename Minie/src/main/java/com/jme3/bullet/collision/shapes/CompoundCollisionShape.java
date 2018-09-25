@@ -77,7 +77,7 @@ public class CompoundCollisionShape extends CollisionShape {
         objectId = createShape();
         assert objectId != 0L;
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
-        
+
         setScale(scale);
         setMargin(margin);
     }
@@ -149,7 +149,7 @@ public class CompoundCollisionShape extends CollisionShape {
 
     private native long removeChildShape(long objectId, long childId);
     // *************************************************************************
-    // Savable methods
+    // CollisionShape methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.

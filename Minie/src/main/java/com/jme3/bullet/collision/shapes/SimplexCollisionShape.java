@@ -126,7 +126,7 @@ public class SimplexCollisionShape extends CollisionShape {
         createShape();
     }
     // *************************************************************************
-    // Savable methods
+    // CollisionShape methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.
@@ -167,6 +167,8 @@ public class SimplexCollisionShape extends CollisionShape {
      * Instantiate the configured shape in Bullet.
      */
     private void createShape() {
+        assert objectId == 0L;
+
         if (vector4 != null) {
             objectId = createShape(vector1, vector2, vector3, vector4);
         } else if (vector3 != null) {
@@ -176,6 +178,7 @@ public class SimplexCollisionShape extends CollisionShape {
         } else {
             objectId = createShape(vector1);
         }
+        assert objectId != 0L;
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
 
         setScale(scale);

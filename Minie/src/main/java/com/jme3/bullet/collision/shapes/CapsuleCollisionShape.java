@@ -170,7 +170,7 @@ public class CapsuleCollisionShape extends CollisionShape {
     /**
      * Determine the main (height) axis of the capsule.
      *
-     * @return which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
+     * @return the axis index: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public int getAxis() {
         assert axis == PhysicsSpace.AXIS_X
@@ -178,6 +178,8 @@ public class CapsuleCollisionShape extends CollisionShape {
                 || axis == PhysicsSpace.AXIS_Z : axis;
         return axis;
     }
+    // *************************************************************************
+    // CollisionShape methods
 
     /**
      * Alter the collision margin of this shape. This feature is disabled for
@@ -190,8 +192,6 @@ public class CapsuleCollisionShape extends CollisionShape {
         logger.log(Level.SEVERE,
                 "Cannot alter the margin of a CapsuleCollisionShape.");
     }
-    // *************************************************************************
-    // Savable methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.

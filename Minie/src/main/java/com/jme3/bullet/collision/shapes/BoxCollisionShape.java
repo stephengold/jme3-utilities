@@ -105,7 +105,7 @@ public class BoxCollisionShape extends CollisionShape {
         }
     }
     // *************************************************************************
-    // Savable methods
+    // CollisionShape methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.
@@ -143,10 +143,12 @@ public class BoxCollisionShape extends CollisionShape {
      */
     private void createShape() {
         assert MyVector3f.isAllNonNegative(halfExtents) : halfExtents;
+        assert objectId == 0L;
 
         objectId = createShape(halfExtents);
         assert objectId != 0L;
         logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+
         setScale(scale);
         setMargin(margin);
     }
