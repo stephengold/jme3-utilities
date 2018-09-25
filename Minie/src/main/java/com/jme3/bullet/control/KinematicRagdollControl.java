@@ -155,7 +155,13 @@ public class KinematicRagdollControl
      * accumulate total mass of ragdoll when control is added to a scene
      */
     private float totalMass = 0f;
+    /**
+     * map from IK bone names to goal locations
+     */
     final private Map<String, Vector3f> ikTargets = new HashMap<>();
+    /**
+     * map from IK bone names to chain depths
+     */
     final private Map<String, Integer> ikChainDepth = new HashMap<>();
     /**
      * rotational speed for inverse kinematics (radians per second, default=7)
@@ -1144,6 +1150,7 @@ public class KinematicRagdollControl
             bone = bone.getParent();
             i++;
         }
+        // TODO remove from ikTargets and applyUserControl()
     }
 
     /**
@@ -1164,22 +1171,24 @@ public class KinematicRagdollControl
 
         if (ikTargets.isEmpty()) {
             setKinematicMode();
-        } else {
-            Iterator iterator = ikTargets.keySet().iterator();
 
+        } else {
             TempVars vars = TempVars.get();
 
-            while (iterator.hasNext()) {
-                Bone bone = (Bone) iterator.next();
-                while (bone.getParent() != null) {
-                    Quaternion tmpRot1 = vars.quat1;
-                    Vector3f position = vars.vect1;
-                    matchPhysicObjectToBone(boneLinks.get(bone.getName()),
-                            position, tmpRot1);
+            for (String ikBoneName : ikTargets.keySet()) {
+                Bone bone = skeleton.getBone(ikBoneName);
+                while (bone != null) {
+                    String name = bone.getName();
+                    PhysicsBoneLink link = boneLinks.get(name);
+                    Vector3f tmpVec = vars.vect1;
+                    Quaternion tmpQuat = vars.quat1;
+                    matchPhysicObjectToBone(link, tmpVec, tmpQuat);
+
                     bone.setUserControl(true);
                     bone = bone.getParent();
                 }
             }
+
             vars.release();
         }
     }
