@@ -134,11 +134,18 @@ public class KinematicRagdollControl
     private Vector3f initScale;
     private Mode mode = Mode.Kinematic;
     private boolean debug = false;
-    private boolean blendedControl = false;
-    private float weightThreshold = -1f;
-    private float blendStart = 0f;
     /**
-     * blending interval for animations (in seconds, &ge;0)
+     * true IFF recently switched to kinematic mode and still blending
+     */
+    private boolean isBlending = false;
+    private float weightThreshold = -1f;
+    /**
+     * elapsed time since switching to kinematic mode, if isBlending is true (in
+     * seconds, &ge;0)
+     */
+    private float blendProgress = 0f;
+    /**
+     * blend interval after switching to kinematic mode (in seconds, &ge;0)
      */
     private float blendTime = 1f;
     private float eventDispatchImpulseThreshold = 10f;
@@ -245,7 +252,7 @@ public class KinematicRagdollControl
         }
         if (mode == Mode.IK) {
             ikUpdate(tpf);
-        } else if (mode == mode.Ragdoll
+        } else if (mode == Mode.Ragdoll
                 && targetModel.getLocalTranslation().equals(modelPosition)) {
             //if the ragdoll has the control of the skeleton, we update each bone with its position in physics world space.
             ragDollUpdate(tpf);
@@ -322,38 +329,37 @@ public class KinematicRagdollControl
 //            if(link.usedbyIK){
 //                continue;
 //            }
-            //if blended control this means, keyframed animation is updating the skeleton,
+            //if blending, keyframed animation is updating the skeleton,
             //but to allow smooth transition, we blend this transformation with the saved position of the ragdoll
-            if (blendedControl) {
+            if (isBlending) {
                 Vector3f position2 = vars.vect2;
                 //initialize tmp vars with the start position/rotation of the ragdoll
                 link.copyBlendStart(position, tmpRot1);
 
                 //interpolating between ragdoll position/rotation and keyframed position/rotation
                 tmpRot2.set(tmpRot1).nlerp(link.getBone().getModelSpaceRotation(),
-                        blendStart / blendTime);
+                        blendProgress / blendTime);
                 position2.set(position).interpolateLocal(
                         link.getBone().getModelSpacePosition(),
-                        blendStart / blendTime);
+                        blendProgress / blendTime);
                 tmpRot1.set(tmpRot2);
                 position.set(position2);
 
                 //update bone transforms
                 RagdollUtils.setTransform(link.getBone(), position, tmpRot1, true, boneList);
             }
-            //setting skeleton transforms to the ragdoll
+            //set bone transforms to the ragdoll
             matchPhysicObjectToBone(link, position, tmpRot1);
             modelPosition.set(targetModel.getLocalTranslation());
         }
+        vars.release();
 
-        //time control for blending
-        if (blendedControl) {
-            blendStart += tpf;
-            if (blendStart > blendTime) {
-                blendedControl = false;
+        if (isBlending) {
+            blendProgress += tpf;
+            if (blendProgress > blendTime) {
+                isBlending = false;
             }
         }
-        vars.release();
     }
 
     /**
@@ -896,11 +902,15 @@ public class KinematicRagdollControl
      */
     public void blendToKinematicMode(float blendTime) {
         if (mode == Mode.Kinematic) {
+            // already in kinematic mode
             return;
         }
-        blendedControl = true;
-        this.blendTime = blendTime;
+
         mode = Mode.Kinematic;
+        isBlending = true;
+        this.blendTime = blendTime;
+        blendProgress = 0f;
+
         AnimControl animControl = targetModel.getControl(AnimControl.class);
         animControl.setEnabled(true);
 
@@ -911,8 +921,6 @@ public class KinematicRagdollControl
         for (Bone bone : skeleton.getRoots()) { // TODO MySkeleton
             RagdollUtils.setUserControl(bone, false);
         }
-
-        blendStart = 0f;
     }
 
     /**
@@ -1272,9 +1280,9 @@ public class KinematicRagdollControl
 //        oc.write(preset, "preset", null);//TODO
         oc.write(initScale, "initScale", null);
         oc.write(mode, "mode", null);
-        oc.write(blendedControl, "blendedControl", false);
+        oc.write(isBlending, "blendedControl", false);
         oc.write(weightThreshold, "weightThreshold", -1f);
-        oc.write(blendStart, "blendStart", 0f);
+        oc.write(blendProgress, "blendStart", 0f);
         oc.write(blendTime, "blendTime", 1f);
         oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
                 10);
@@ -1311,9 +1319,9 @@ public class KinematicRagdollControl
 //        preset //TODO
         initScale = (Vector3f) ic.readSavable("initScale", null);
         mode = ic.readEnum("mode", Mode.class, Mode.Kinematic);
-        blendedControl = ic.readBoolean("blendedControl", false);
+        isBlending = ic.readBoolean("blendedControl", false);
         weightThreshold = ic.readFloat("weightThreshold", -1f);
-        blendStart = ic.readFloat("blendStart", 0f);
+        blendProgress = ic.readFloat("blendStart", 0f);
         blendTime = ic.readFloat("blendTime", 1f);
         eventDispatchImpulseThreshold
                 = ic.readFloat("eventDispatchImpulseThreshold", 10f);
