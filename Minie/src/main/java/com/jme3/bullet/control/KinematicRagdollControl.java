@@ -99,14 +99,19 @@ import jme3utilities.Validate;
  *
  * @author Normen Hansen and Rémy Bouquet (Nehon)
  */
-public class KinematicRagdollControl extends AbstractPhysicsControl
+public class KinematicRagdollControl
+        extends AbstractPhysicsControl
         implements PhysicsCollisionListener, JmeCloneable {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(KinematicRagdollControl.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
      * list of registered collision listeners
@@ -152,7 +157,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
      * viscous limb-damping ratio (0&rarr;no damping, 1&rarr;critically damped,
      * default=0.6)
      */
-    private float limbDampening = 0.6f;
+    private float limbDamping = 0.6f;
     /**
      * distance threshold for inverse kinematics (default=0.1)
      */
@@ -175,6 +180,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
          */
         IK
     }
+    // *************************************************************************
+    // constructors
 
     /**
      * Instantiate an enabled control.
@@ -221,6 +228,8 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         this();
         this.preset = preset;
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Update this control. Invoked once per frame during the logical-state
@@ -459,7 +468,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         if (link.getBone().getParent() != null && depth < maxDepth) {
 
             updateBone(boneLinks.get(link.getBone().getParent().getName()),
-                    tpf * limbDampening, tmpRot1, tmpRot2, tipBone,
+                    tpf * limbDamping, tmpRot1, tmpRot2, tipBone,
                     target, depth + 1, maxDepth);
         }
     }
@@ -688,7 +697,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
                 joint.setCollisionBetweenLinkedBodies(false);
             }
 
-            PhysicsBoneLink link 
+            PhysicsBoneLink link
                     = new PhysicsBoneLink(model, bone, shapeNode, joint);
             boneLinks.put(bone.getName(), link);
             shapeNode.setUserObject(link);
@@ -1212,23 +1221,23 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
     }
 
     /**
-     * Read the limb damping. TODO rename getLimbDamping
+     * Read the limb damping.
      *
      * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
      * damped)
      */
-    public float getLimbDampening() {
-        return limbDampening;
+    public float getLimbDamping() {
+        return limbDamping;
     }
 
     /**
-     * Alter the limb damping. TODO rename setLimbDamping
+     * Alter the limb damping.
      *
-     * @param limbDampening the desired viscous damping ratio (0&rarr;no
-     * damping, 1&rarr;critically damped, default=0.6)
+     * @param dampingRatio the desired viscous damping ratio (0&rarr;no damping,
+     * 1&rarr;critically damped, default=0.6)
      */
-    public void setLimbDampening(float limbDampening) {
-        this.limbDampening = limbDampening;
+    public void setLimbDamping(float dampingRatio) {
+        this.limbDamping = dampingRatio;
     }
 
     /**
@@ -1272,7 +1281,7 @@ public class KinematicRagdollControl extends AbstractPhysicsControl
         oc.write(rootMass, "rootMass", 15f);
         oc.write(totalMass, "totalMass", 0f);
         oc.write(ikRotSpeed, "rotSpeed", 7f);
-        oc.write(limbDampening, "limbDampening", 0.6f);
+        oc.write(limbDamping, "limbDampening", 0.6f);
     }
 
     /**
