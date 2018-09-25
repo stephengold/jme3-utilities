@@ -46,8 +46,6 @@ import jme3utilities.Validate;
 
 /**
  * An app state to manage a single Bullet physics space.
- * <p>
- * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */

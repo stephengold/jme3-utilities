@@ -33,8 +33,6 @@ package com.jme3.bullet;
 
 /**
  * Callback interface from the physics thread, used to clear/apply forces.
- * <p>
- * This interface is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */

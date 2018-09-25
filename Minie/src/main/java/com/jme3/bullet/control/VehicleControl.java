@@ -52,8 +52,6 @@ import java.util.logging.Logger;
 
 /**
  * A physics control to link a PhysicsVehicle to a spatial.
- * <p>
- * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */

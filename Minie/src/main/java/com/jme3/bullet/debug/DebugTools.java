@@ -44,8 +44,6 @@ import java.util.logging.Logger;
 
 /**
  * Debugging aids.
- * <p>
- * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */

@@ -38,7 +38,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class is shared between JBullet and Native Bullet.
+ * A preset for a KinematicRagdollControl.
  *
  * @author Nehon
  */

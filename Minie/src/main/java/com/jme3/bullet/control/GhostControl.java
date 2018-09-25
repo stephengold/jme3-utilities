@@ -55,8 +55,6 @@ import jme3utilities.MySpatial;
  * <p>
  * The ghost object moves with the spatial it is attached to and can be used to
  * detect overlaps with other physics objects (e.g. aggro radius).
- * <p>
- * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */

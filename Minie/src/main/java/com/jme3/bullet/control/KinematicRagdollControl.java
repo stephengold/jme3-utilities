@@ -96,8 +96,6 @@ import jme3utilities.Validate;
  * mode the character is entirely controlled by physics, so it will fall under
  * the gravity and move if any force is applied to it.</li>
  * </ul>
- * <p>
- * This class is shared between JBullet and Native Bullet.
  *
  * @author Normen Hansen and Rémy Bouquet (Nehon)
  */

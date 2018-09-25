@@ -44,8 +44,6 @@ import java.util.logging.Logger;
 
 /**
  * A physics-debug control used to visualize a PhysicsGhostObject.
- * <p>
- * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */

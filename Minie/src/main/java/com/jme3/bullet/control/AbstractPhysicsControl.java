@@ -48,8 +48,6 @@ import jme3utilities.MySpatial;
 /**
  * Manage the life cycle of a physics object linked to a spatial in a scene
  * graph.
- * <p>
- * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */

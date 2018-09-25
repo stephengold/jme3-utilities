@@ -42,8 +42,6 @@ import java.util.logging.Logger;
 
 /**
  * A utility class for generating collision shapes from Spatials.
- * <p>
- * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen, tim8dev
  */

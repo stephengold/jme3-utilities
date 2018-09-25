@@ -37,8 +37,6 @@ import com.jme3.scene.control.Control;
 /**
  * An interface for a scene-graph control that links a physics object to a
  * Spatial.
- * <p>
- * This interface is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */

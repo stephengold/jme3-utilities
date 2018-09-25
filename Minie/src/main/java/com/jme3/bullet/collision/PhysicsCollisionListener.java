@@ -34,8 +34,6 @@ package com.jme3.bullet.collision;
 /**
  * Interface to receive notifications whenever an object in a particular physics
  * space collides.
- * <p>
- * This interface is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */

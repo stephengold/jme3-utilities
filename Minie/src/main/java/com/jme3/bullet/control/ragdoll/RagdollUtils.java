@@ -50,8 +50,6 @@ import java.util.logging.Logger;
 
 /**
  * Utility methods used by KinematicRagdollControl.
- * <p>
- * This class is shared between JBullet and Native Bullet.
  *
  * @author Nehon
  */

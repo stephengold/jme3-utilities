@@ -68,8 +68,6 @@ import jme3utilities.Validate;
  * the gravity working on the character so they will always stand upright.
  * <p>
  * Motion in the local X-Z plane is damped.
- * <p>
- * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */

@@ -59,8 +59,6 @@ import jme3utilities.MySpatial;
 
 /**
  * A physics control to link a PhysicsRigidBody to a spatial.
- * <p>
- * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */

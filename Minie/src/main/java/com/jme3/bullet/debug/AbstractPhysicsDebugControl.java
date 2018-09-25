@@ -44,8 +44,6 @@ import java.io.IOException;
  * The abstract base class for physics-debug controls (such as
  * BulletRigidBodyDebugControl) used to visualize individual collision objects
  * and joints. TODO implement controlRender() and setSpatial()
- * <p>
- * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */

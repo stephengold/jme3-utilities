@@ -59,8 +59,6 @@ import jme3utilities.Validate;
 
 /**
  * An app state to manage a debug visualization of a physics space.
- * <p>
- * This class is shared between JBullet and Native Bullet.
  *
  * @author normenhansen
  */
