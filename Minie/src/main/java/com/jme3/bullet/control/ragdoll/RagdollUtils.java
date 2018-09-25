@@ -349,19 +349,6 @@ public class RagdollUtils {
     }
 
     /**
-     * Alter the user-control flags of a bone and all its descendents.
-     *
-     * @param bone the ancestor bone (not null, modified)
-     * @param bool true to enable user control, false to disable
-     */
-    public static void setUserControl(Bone bone, boolean bool) {
-        bone.setUserControl(bool);
-        for (Bone child : bone.getChildren()) {
-            setUserControl(child, bool);
-        }
-    }
-
-    /**
      * Test whether the indexed bone has at least one vertex in the specified
      * meshes with a weight greater than the specified threshold.
      *

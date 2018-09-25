@@ -67,6 +67,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.MySkeleton;
 import jme3utilities.Validate;
 
 /**
@@ -878,20 +879,15 @@ public class KinematicRagdollControl
                 if (mode == Mode.Ragdoll) {
                     Quaternion tmpRot1 = vars.quat1;
                     Vector3f position = vars.vect1;
-                    //making sure that the ragdoll is at the correct place.
+                    //Ensure that the ragdoll is at the correct place.
                     matchPhysicObjectToBone(link, position, tmpRot1);
                 }
 
             }
             vars.release();
-        }
 
-        if (mode != Mode.IK) {
-            for (Bone bone : skeleton.getRoots()) {
-                RagdollUtils.setUserControl(bone, mode == Mode.Ragdoll);
-            }
+            MySkeleton.setUserControl(skeleton, mode == Mode.Ragdoll);
         }
-
     }
 
     /**
@@ -918,9 +914,7 @@ public class KinematicRagdollControl
             link.startBlend();
         }
 
-        for (Bone bone : skeleton.getRoots()) { // TODO MySkeleton
-            RagdollUtils.setUserControl(bone, false);
-        }
+        MySkeleton.setUserControl(skeleton, false);
     }
 
     /**
@@ -1166,9 +1160,7 @@ public class KinematicRagdollControl
      * kinematics and disabled for any other bones.
      */
     public void applyUserControl() {
-        for (Bone bone : skeleton.getRoots()) {
-            RagdollUtils.setUserControl(bone, false);
-        }
+        MySkeleton.setUserControl(skeleton, false);
 
         if (ikTargets.isEmpty()) {
             setKinematicMode();
