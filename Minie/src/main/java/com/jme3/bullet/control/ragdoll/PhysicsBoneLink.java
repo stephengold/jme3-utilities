@@ -41,10 +41,11 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
-import com.jme3.util.TempVars;
 import java.io.IOException;
 import java.util.logging.Logger;
+import jme3utilities.MySpatial;
 import jme3utilities.Validate;
 
 /**
@@ -112,7 +113,9 @@ public class PhysicsBoneLink implements Savable {
         Validate.nonNull(bone, "bone");
         Validate.nonNull(rigidBody, "rigid body");
 
-        this.transformSpatial = cgmRoot; // TODO try an animated geom
+        Geometry animated = MySpatial.findAnimatedGeometry(cgmRoot);
+        this.transformSpatial = (animated == null) ? cgmRoot : animated;
+
         this.bone = bone;
         this.rigidBody = rigidBody;
         this.joint = joint;
@@ -124,7 +127,7 @@ public class PhysicsBoneLink implements Savable {
     // new methods exposed
 
     /**
-     * Copy the bone's location and orientation (in model space) as of the start
+     * Copy the bone's location and orientation (in mesh space) from the start
      * of the most recent transition to kinematic mode.
      *
      * @param storeLocation storage for the orientation (modified if not null)
@@ -187,24 +190,19 @@ public class PhysicsBoneLink implements Savable {
      * Begin a transition to kinematic mode.
      */
     public void startBlend() {
-        Vector3f p = rigidBody.getMotionState().getWorldLocation();
+        Vector3f worldLoc = rigidBody.getMotionState().getWorldLocation();
+        Quaternion worldOri = rigidBody.getMotionState().getWorldRotationQuat();
+        Quaternion q2 = worldOri.clone().multLocal(originalOrientation);
 
-        TempVars vars = TempVars.get();
-        Vector3f position = vars.vect1;
-
-        transformSpatial.getWorldTransform().transformInverseVector(p, position);
-
-        Quaternion q = rigidBody.getMotionState().getWorldRotationQuat();
-        Quaternion q2 = vars.quat1;
-        Quaternion q3 = vars.quat2;
-
-        q2.set(q).multLocal(originalOrientation).normalizeLocal();
-        q3.set(transformSpatial.getWorldRotation()).inverseLocal().mult(q2, q2);
-        q2.normalizeLocal();
-
-        blendLocation.set(position);
-        blendOrientation.set(q2);
-        vars.release();
+        if (MySpatial.isIgnoringTransforms(transformSpatial)) {
+            blendLocation.set(worldLoc);
+            blendOrientation.set(q2);
+        } else {
+            transformSpatial.worldToLocal(worldLoc, blendLocation);
+            Quaternion spatInvRot
+                    = MySpatial.inverseOrientation(transformSpatial);
+            spatInvRot.mult(q2, blendOrientation);
+        }
 
         rigidBody.setKinematic(true);
     }
