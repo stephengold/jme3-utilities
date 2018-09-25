@@ -682,7 +682,7 @@ public class KinematicRagdollControl
 
             PhysicsRigidBody shapeNode
                     = new PhysicsRigidBody(shape, rootMass / (float) reccount);
-
+            shapeNode.setDamping(limbDamping, limbDamping);
             shapeNode.setKinematic(mode == Mode.Kinematic);
             totalMass += rootMass / (float) reccount;
 
@@ -1245,7 +1245,11 @@ public class KinematicRagdollControl
      * 1&rarr;critically damped, default=0.6)
      */
     public void setLimbDamping(float dampingRatio) {
-        this.limbDamping = dampingRatio;
+        limbDamping = dampingRatio;
+
+        for (PhysicsBoneLink link : boneLinks.values()) {
+            link.getRigidBody().setDamping(limbDamping, limbDamping);
+        }
     }
 
     /**
