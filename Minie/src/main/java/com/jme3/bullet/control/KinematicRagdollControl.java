@@ -388,8 +388,8 @@ public class KinematicRagdollControl
             }
             int depth = 0;
             int maxDepth = ikChainDepth.get(bone.getName());
-            updateBone(boneLinks.get(bone.getName()),
-                    tpf * (float) FastMath.sqrt(distance), tmpRot1,
+            float changeAmount = tpf * (float) FastMath.sqrt(distance);
+            updateBone(boneLinks.get(boneName), changeAmount, tmpRot1,
                     tmpRot2, bone, ikTargets.get(boneName), depth, maxDepth);
 
             Vector3f position = vars.vect1;
@@ -405,7 +405,7 @@ public class KinematicRagdollControl
      * Update a bone and its ancestors in IK mode. Note: recursive!
      *
      * @param link the bone link for the affected bone (may be null)
-     * @param tpf the time interval between frames (in seconds, &ge;0)
+     * @param changeAmount amount of change desired (&ge;0)
      * @param tmpRot1 temporary storage used in calculations (not null)
      * @param tmpRot2 temporary storage used in calculations (not null)
      * @param tipBone (not null)
@@ -413,9 +413,11 @@ public class KinematicRagdollControl
      * @param depth depth of the recursion (&ge;0)
      * @param maxDepth recursion limit (&ge;0)
      */
-    public void updateBone(PhysicsBoneLink link, float tpf,
+    private void updateBone(PhysicsBoneLink link, float changeAmount,
             Quaternion tmpRot1, Quaternion[] tmpRot2, Bone tipBone,
             Vector3f target, int depth, int maxDepth) {
+        Validate.nonNegative(changeAmount, "change amount");
+
         if (link == null || link.getBone().getParent() == null) {
             return;
         }
@@ -434,7 +436,7 @@ public class KinematicRagdollControl
             }
 
             for (int posOrNeg = 0; posOrNeg < 2; posOrNeg++) {
-                float rot = ikRotSpeed * tpf / (link.getRigidBody().getMass() * 2);
+                float rot = ikRotSpeed * changeAmount / (link.getRigidBody().getMass() * 2);
 
                 rot = FastMath.clamp(rot,
                         link.getJoint().getRotationalLimitMotor(dirIndex).getLoLimit(),
@@ -464,11 +466,9 @@ public class KinematicRagdollControl
         link.getBone().getLocalRotation().normalizeLocal();
 
         link.getBone().update();
-//        link.usedbyIK = true;
         if (link.getBone().getParent() != null && depth < maxDepth) {
-
             updateBone(boneLinks.get(link.getBone().getParent().getName()),
-                    tpf * limbDamping, tmpRot1, tmpRot2, tipBone,
+                    0.5f * changeAmount, tmpRot1, tmpRot2, tipBone,
                     target, depth + 1, maxDepth);
         }
     }
