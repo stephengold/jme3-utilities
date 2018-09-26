@@ -60,10 +60,10 @@ public class BoxCollisionShape extends CollisionShape {
     // fields
 
     /**
-     * copy of half-extents of the box on each local axis (not null, no negative
+     * copy of unscaled half extent for each local axis (not null, no negative
      * component)
      */
-    private Vector3f halfExtents;
+    final private Vector3f halfExtents = new Vector3f(1f, 1f, 1f);
     // *************************************************************************
     // constructors
 
@@ -83,7 +83,7 @@ public class BoxCollisionShape extends CollisionShape {
     public BoxCollisionShape(Vector3f halfExtents) {
         Validate.nonNegative(halfExtents, "half extents");
 
-        this.halfExtents = halfExtents.clone();
+        this.halfExtents.set(halfExtents);
         createShape();
     }
     // *************************************************************************
@@ -132,7 +132,7 @@ public class BoxCollisionShape extends CollisionShape {
         InputCapsule capsule = im.getCapsule(this);
         Vector3f he = (Vector3f) capsule.readSavable("halfExtents",
                 new Vector3f(1f, 1f, 1f));
-        this.halfExtents = he;
+        halfExtents.set(he);
         createShape();
     }
     // *************************************************************************

@@ -62,10 +62,10 @@ public class CylinderCollisionShape extends CollisionShape {
     // fields
 
     /**
-     * copy of half-extents of the cylinder on each local axis (not null, no
-     * negative component)
+     * copy of unscaled half extent for each local axis (not null, no negative
+     * component)
      */
-    private Vector3f halfExtents;
+    final private Vector3f halfExtents = new Vector3f(0.5f, 0.5f, 0.5f);
     /**
      * copy of main (height) axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
      */
@@ -89,7 +89,7 @@ public class CylinderCollisionShape extends CollisionShape {
     public CylinderCollisionShape(Vector3f halfExtents) {
         Validate.nonNegative(halfExtents, "half extents");
 
-        this.halfExtents = halfExtents.clone();
+        this.halfExtents.set(halfExtents);
         axis = PhysicsSpace.AXIS_Z;
         createShape();
     }
@@ -105,7 +105,7 @@ public class CylinderCollisionShape extends CollisionShape {
         Validate.nonNegative(halfExtents, "half extents");
         Validate.inRange(axis, "axis", 0, 2);
 
-        this.halfExtents = halfExtents.clone();
+        this.halfExtents.set(halfExtents);
         this.axis = axis;
         createShape();
     }
@@ -134,6 +134,8 @@ public class CylinderCollisionShape extends CollisionShape {
 
         return canScale;
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Copy the half extents of the cylinder.
@@ -190,8 +192,9 @@ public class CylinderCollisionShape extends CollisionShape {
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
-        halfExtents = (Vector3f) capsule.readSavable("halfExtents",
+        Vector3f he = (Vector3f) capsule.readSavable("halfExtents",
                 new Vector3f(0.5f, 0.5f, 0.5f));
+        halfExtents.set(he);
         axis = capsule.readInt("axis", PhysicsSpace.AXIS_Y);
         createShape();
     }
