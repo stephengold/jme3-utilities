@@ -41,7 +41,7 @@ import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.RagdollCollisionListener;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
-import com.jme3.bullet.collision.shapes.HullCollisionShape;
+import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.ragdoll.HumanoidRagdollPreset;
 import com.jme3.bullet.control.ragdoll.PhysicsBoneLink;
 import com.jme3.bullet.control.ragdoll.RagdollPreset;
@@ -578,12 +578,11 @@ public class KinematicRagdollControl
         }
 
         // put into bind pose and compute bone transforms in model space
-        // maybe don't reset to ragdoll out of animations?
-        scanSpatial(model);
+        // TODO maybe don't reset to ragdoll out of animations?
+        scanSpatial();
 
         if (parent != null) {
             parent.attachChild(model);
-
         }
         model.setLocalTranslation(initPosition);
         model.setLocalRotation(initRotation);
@@ -644,24 +643,20 @@ public class KinematicRagdollControl
 
     /**
      * Generate physics shapes and bone links for the skeleton.
-     *
-     * @param model the spatial with the model's SkeletonControl (not null)
      */
-    protected void scanSpatial(Spatial model) {
-        AnimControl animControl = model.getControl(AnimControl.class);
+    protected void scanSpatial() {
+        AnimControl animControl = targetModel.getControl(AnimControl.class);
         Map<Integer, List<Float>> pointsMap = null;
         if (weightThreshold == -1.0f) {
-            pointsMap = RagdollUtils.buildPointMap(model);
+            pointsMap = RagdollUtils.buildPointMap(targetModel);
         }
 
         skeleton = animControl.getSkeleton();
         skeleton.resetAndUpdate();
-        for (Bone childBone : skeleton.getRoots()) {
-            if (childBone.getParent() == null) { // TODO assert
-                logger.log(Level.FINE, "Found root bone in skeleton {0}",
-                        skeleton);
-                boneRecursion(model, childBone, baseRigidBody, 1, pointsMap);
-            }
+        for (Bone rootBone : skeleton.getRoots()) {
+            logger.log(Level.FINE, "Found root bone in skeleton {0}",
+                    skeleton);
+            boneRecursion(rootBone, baseRigidBody, 1, pointsMap);
         }
     }
 
@@ -669,19 +664,18 @@ public class KinematicRagdollControl
      * Generate a physics shape and bone links for the specified bone. Note:
      * recursive!
      *
-     * @param model the spatial with the model's SkeletonControl (not null)
      * @param bone the bone to be linked (not null)
      * @param parent the body linked to the parent bone (not null)
      * @param reccount depth of the recursion (&ge;1)
      * @param pointsMap (not null)
      */
-    protected void boneRecursion(Spatial model, Bone bone,
+    protected void boneRecursion(Bone bone,
             PhysicsRigidBody parent, int reccount,
             Map<Integer, List<Float>> pointsMap) {
         PhysicsRigidBody parentShape = parent;
         if (boneList.contains(bone.getName())) {
             //create the collision shape
-            HullCollisionShape shape;
+            CollisionShape shape;
             if (pointsMap != null) {
                 //build a shape for the bone, using the vertices that are most influenced by this bone
                 shape = RagdollUtils.makeShapeFromPointMap(pointsMap,
@@ -689,7 +683,7 @@ public class KinematicRagdollControl
                         initScale, bone.getModelSpacePosition());
             } else {
                 //build a shape for the bone, using the vertices associated with this bone with a weight above the threshold
-                shape = RagdollUtils.makeShapeFromVerticeWeights(model,
+                shape = RagdollUtils.makeShapeFromVerticeWeights(targetModel,
                         RagdollUtils.getBoneIndices(bone, skeleton, boneList),
                         initScale, bone.getModelSpacePosition(),
                         weightThreshold);
@@ -720,15 +714,14 @@ public class KinematicRagdollControl
             }
 
             PhysicsBoneLink link
-                    = new PhysicsBoneLink(model, bone, shapeNode, joint);
+                    = new PhysicsBoneLink(targetModel, bone, shapeNode, joint);
             boneLinks.put(bone.getName(), link);
             shapeNode.setUserObject(link);
             parentShape = shapeNode;
         }
 
         for (Bone childBone : bone.getChildren()) {
-            boneRecursion(model, childBone, parentShape, reccount + 1,
-                    pointsMap);
+            boneRecursion(childBone, parentShape, reccount + 1, pointsMap);
         }
     }
 
