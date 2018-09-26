@@ -45,12 +45,17 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class RigidBodyMotionState {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(RigidBodyMotionState.class.getName());
+    // *************************************************************************
+    // fields
+
     /**
      * Unique identifier of the native object. Constructors are responsible for
      * setting this to a non-zero value. After that, the id never changes.
@@ -67,6 +72,8 @@ public class RigidBodyMotionState {
      * physics coordinates match world transform
      */
     private boolean applyPhysicsLocal = false;
+    // *************************************************************************
+    // constructors
 
     /**
      * Instantiate a motion state.
@@ -77,8 +84,8 @@ public class RigidBodyMotionState {
         logger.log(Level.FINE, "Created MotionState {0}",
                 Long.toHexString(motionStateId));
     }
-
-    private native long createMotionState();
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * If the motion state has been updated, apply the new transform to the
@@ -116,9 +123,6 @@ public class RigidBodyMotionState {
         return true;
     }
 
-    private native boolean applyTransform(long stateId, Vector3f location,
-            Quaternion rotation);
-
     /**
      * Copy the location from this motion state.
      *
@@ -129,8 +133,6 @@ public class RigidBodyMotionState {
         getWorldLocation(motionStateId, worldLocation);
         return worldLocation;
     }
-
-    private native void getWorldLocation(long stateId, Vector3f storeResult);
 
     /**
      * Read the rotation of this motion state (as a matrix).
@@ -143,8 +145,6 @@ public class RigidBodyMotionState {
         return worldRotation;
     }
 
-    private native void getWorldRotation(long stateId, Matrix3f storeResult);
-
     /**
      * Read the rotation of this motion state (as a quaternion).
      *
@@ -155,9 +155,6 @@ public class RigidBodyMotionState {
         getWorldRotationQuat(motionStateId, worldRotationQuat);
         return worldRotationQuat;
     }
-
-    private native void getWorldRotationQuat(long stateId,
-            Quaternion storeResult);
 
     /**
      * @param vehicle which vehicle will use this motion state
@@ -196,6 +193,8 @@ public class RigidBodyMotionState {
     public long getObjectId() {
         return motionStateId;
     }
+    // *************************************************************************
+    // Object methods
 
     /**
      * Finalize this motion state just before it is destroyed. Should be invoked
@@ -210,6 +209,20 @@ public class RigidBodyMotionState {
                 Long.toHexString(motionStateId));
         finalizeNative(motionStateId);
     }
+    // *************************************************************************
+    // private methods
+
+    private native boolean applyTransform(long stateId, Vector3f location,
+            Quaternion rotation);
+
+    private native long createMotionState();
 
     private native void finalizeNative(long objectId);
+
+    private native void getWorldLocation(long stateId, Vector3f storeResult);
+
+    private native void getWorldRotation(long stateId, Matrix3f storeResult);
+
+    private native void getWorldRotationQuat(long stateId,
+            Quaternion storeResult);
 }
