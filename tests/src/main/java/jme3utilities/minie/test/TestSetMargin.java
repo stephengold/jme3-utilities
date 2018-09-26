@@ -26,9 +26,6 @@
  */
 package jme3utilities.minie.test;
 
-/**
- * Test case for visualizing a shape with a changing scale.
- */
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.ModelKey;
 import com.jme3.bullet.BulletAppState;
@@ -154,7 +151,7 @@ public class TestSetMargin extends SimpleApplication {
         assert sphere.getMargin() == 0f;
         sphere.setMargin(0.3f); // cannot alter margin
         assert sphere.getMargin() == 0f;
-        
-        System.exit(0);
+
+        stop();
     }
 }
