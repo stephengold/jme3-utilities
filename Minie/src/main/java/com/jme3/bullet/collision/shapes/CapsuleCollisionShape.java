@@ -37,6 +37,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Vector3f;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -96,7 +97,7 @@ public class CapsuleCollisionShape extends CollisionShape {
 
         this.radius = radius;
         this.height = height;
-        this.axis = PhysicsSpace.AXIS_Y;
+        axis = PhysicsSpace.AXIS_Y;
         createShape();
     }
 
@@ -182,6 +183,36 @@ public class CapsuleCollisionShape extends CollisionShape {
     // CollisionShape methods
 
     /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned shape into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        createShape();
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public CapsuleCollisionShape jmeClone() {
+        try {
+            CapsuleCollisionShape clone = (CapsuleCollisionShape) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    /**
      * Alter the collision margin of this shape. This feature is disabled for
      * capsule shapes.
      *
@@ -227,7 +258,7 @@ public class CapsuleCollisionShape extends CollisionShape {
     // private methods
 
     /**
-     * Instantiate the configured shape in Bullet.
+     * Instantiate the configured btCollisionShape.
      */
     private void createShape() {
         assert axis == PhysicsSpace.AXIS_X
@@ -245,5 +276,5 @@ public class CapsuleCollisionShape extends CollisionShape {
         margin = 0f;
     }
 
-    private native long createShape(int axis, float radius, float height);
+    native private long createShape(int axis, float radius, float height);
 }

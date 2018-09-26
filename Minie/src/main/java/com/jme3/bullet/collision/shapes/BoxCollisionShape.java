@@ -36,6 +36,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Vector3f;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,7 +64,7 @@ public class BoxCollisionShape extends CollisionShape {
      * copy of unscaled half extent for each local axis (not null, no negative
      * component)
      */
-    final private Vector3f halfExtents = new Vector3f(1f, 1f, 1f);
+    private Vector3f halfExtents = new Vector3f(1f, 1f, 1f);
     // *************************************************************************
     // constructors
 
@@ -98,6 +99,7 @@ public class BoxCollisionShape extends CollisionShape {
      */
     public final Vector3f getHalfExtents(Vector3f storeResult) {
         assert MyVector3f.isAllNonNegative(halfExtents) : halfExtents;
+
         if (storeResult == null) {
             return halfExtents.clone();
         } else {
@@ -106,6 +108,37 @@ public class BoxCollisionShape extends CollisionShape {
     }
     // *************************************************************************
     // CollisionShape methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned shape into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        halfExtents = cloner.clone(halfExtents);
+        createShape();
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public BoxCollisionShape jmeClone() {
+        try {
+            BoxCollisionShape clone = (BoxCollisionShape) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 
     /**
      * Serialize this shape, for example when saving to a J3O file.
@@ -139,7 +172,7 @@ public class BoxCollisionShape extends CollisionShape {
     // private methods
 
     /**
-     * Instantiate the configured shape in Bullet.
+     * Instantiate the configured btBoxShape.
      */
     private void createShape() {
         assert MyVector3f.isAllNonNegative(halfExtents) : halfExtents;

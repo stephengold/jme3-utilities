@@ -39,6 +39,7 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.util.BufferUtils;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.logging.Level;
@@ -112,7 +113,8 @@ public class HeightfieldCollisionShape extends CollisionShape {
     /**
      * Instantiate a new shape for the specified height map.
      *
-     * @param heightmap (not null, length&ge;4, length a perfect square)
+     * @param heightmap (not null, length&ge;4, length a perfect square,
+     * unaffected)
      */
     public HeightfieldCollisionShape(float[] heightmap) {
         Validate.nonNull(heightmap, "heightmap");
@@ -124,7 +126,8 @@ public class HeightfieldCollisionShape extends CollisionShape {
     /**
      * Instantiate a new shape for the specified height map and scale vector.
      *
-     * @param heightmap (not null, length&ge;4, length a perfect square)
+     * @param heightmap (not null, length&ge;4, length a perfect square,
+     * unaffected)
      * @param scale (not null, no negative component, unaffected, default=1,1,1)
      */
     public HeightfieldCollisionShape(float[] heightmap, Vector3f scale) {
@@ -133,6 +136,7 @@ public class HeightfieldCollisionShape extends CollisionShape {
 
         createCollisionHeightfield(heightmap, scale);
     }
+    // *************************************************************************
 
     private void createCollisionHeightfield(float[] heightmap,
             Vector3f worldScale) {
@@ -196,12 +200,41 @@ public class HeightfieldCollisionShape extends CollisionShape {
         setScale(scale);
         setMargin(margin);
     }
-
-    private native long createShape(int heightStickWidth, int heightStickLength,
-            ByteBuffer heightfieldData, float heightScale, float minHeight,
-            float maxHeight, int upAxis, boolean flipQuadEdges);
     // *************************************************************************
     // CollisionShape methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned shape into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        // bbuf not cloned
+        // heightfieldData not cloned
+        createShape();
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public HeightfieldCollisionShape jmeClone() {
+        try {
+            HeightfieldCollisionShape clone
+                    = (HeightfieldCollisionShape) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 
     /**
      * Serialize this shape, for example when saving to a J3O file.
@@ -244,4 +277,10 @@ public class HeightfieldCollisionShape extends CollisionShape {
         flipQuadEdges = capsule.readBoolean("flipQuadEdges", false);
         createShape();
     }
+    // *************************************************************************
+    // private methods
+
+    private native long createShape(int heightStickWidth, int heightStickLength,
+            ByteBuffer heightfieldData, float heightScale, float minHeight,
+            float maxHeight, int upAxis, boolean flipQuadEdges);
 }

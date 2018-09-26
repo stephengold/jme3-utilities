@@ -33,6 +33,8 @@ package com.jme3.bullet.collision.shapes;
 
 import com.jme3.export.*;
 import com.jme3.math.Vector3f;
+import com.jme3.util.clone.Cloner;
+import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,7 +51,8 @@ import jme3utilities.math.MyVector3f;
  *
  * @author normenhansen
  */
-public abstract class CollisionShape implements Savable {
+abstract public class CollisionShape
+        implements JmeCloneable, Savable {
     // *************************************************************************
     // constants and loggers
 
@@ -71,7 +74,7 @@ public abstract class CollisionShape implements Savable {
     /**
      * copy of scaling factors: one for each local axis (default=1,1,1)
      */
-    final protected Vector3f scale = new Vector3f(1f, 1f, 1f);
+    protected Vector3f scale = new Vector3f(1f, 1f, 1f);
     /**
      * copy of collision margin (in physics-space units, &gt;0, default=0.04)
      */
@@ -158,8 +161,6 @@ public abstract class CollisionShape implements Savable {
         return margin;
     }
 
-    private native float getMargin(long objectId);
-
     /**
      * Alter the collision margin of this shape. CAUTION: Margin is applied
      * differently, depending on the type of shape. Generally the collision
@@ -183,10 +184,40 @@ public abstract class CollisionShape implements Savable {
         assert getMargin(objectId) == margin : getMargin(objectId);
         this.margin = margin;
     }
+    // *************************************************************************
+    // JmeCloneable methods
 
-    private native void setLocalScaling(long objectId, Vector3f scale);
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned shape into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        scale = cloner.clone(scale);
+        objectId = 0L; // subclass must create the btCollisionShape
+    }
 
-    private native void setMargin(long objectId, float margin);
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public CollisionShape jmeClone() {
+        try {
+            CollisionShape clone = (CollisionShape) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+    // *************************************************************************
+    // Savable methods
 
     /**
      * Serialize this shape, for example when saving to a J3O file.
@@ -210,10 +241,12 @@ public abstract class CollisionShape implements Savable {
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
-        Object s = capsule.readSavable("scale", new Vector3f(1f, 1f, 1f));
+        Savable s = capsule.readSavable("scale", new Vector3f(1f, 1f, 1f));
         scale.set((Vector3f) s);
         margin = capsule.readFloat("margin", 0.04f);
     }
+    // *************************************************************************
+    // Object methods
 
     /**
      * Finalize this shape just before it is destroyed. Should be invoked only
@@ -228,6 +261,14 @@ public abstract class CollisionShape implements Savable {
                 Long.toHexString(objectId));
         finalizeNative(objectId);
     }
+    // *************************************************************************
+    // private methods
 
     private native void finalizeNative(long objectId);
+
+    private native float getMargin(long objectId);
+
+    private native void setLocalScaling(long objectId, Vector3f scale);
+
+    private native void setMargin(long objectId, float margin);
 }

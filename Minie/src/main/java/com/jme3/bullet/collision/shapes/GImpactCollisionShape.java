@@ -40,6 +40,7 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.mesh.IndexBuffer;
 import com.jme3.util.BufferUtils;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -87,7 +88,7 @@ public class GImpactCollisionShape extends CollisionShape {
     /**
      * Instantiate a shape based on the specified JME mesh.
      *
-     * @param mesh the Mesh to use
+     * @param mesh the Mesh to use (not null, unaffected)
      */
     public GImpactCollisionShape(Mesh mesh) {
         createCollisionMesh(mesh);
@@ -120,6 +121,41 @@ public class GImpactCollisionShape extends CollisionShape {
         vertices.clear();
 
         createShape();
+    }
+    // *************************************************************************
+    // CollisionShape methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned shape into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        // triangleIndexBase not cloned
+        // vertexBase not cloned
+        meshId = 0L;
+        createShape();
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public GImpactCollisionShape jmeClone() {
+        try {
+            GImpactCollisionShape clone = (GImpactCollisionShape) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
     /**
@@ -181,8 +217,8 @@ public class GImpactCollisionShape extends CollisionShape {
         setScale(scale);
         setMargin(margin);
     }
-
-    private native long createShape(long meshId);
+    // *************************************************************************
+    // Object methods
 
     /**
      * Finalize this shape just before it is destroyed. Should be invoked only
@@ -196,6 +232,10 @@ public class GImpactCollisionShape extends CollisionShape {
         logger.log(Level.FINE, "Finalizing Mesh {0}", Long.toHexString(meshId));
         finalizeNative(meshId);
     }
+    // *************************************************************************
+    // private methods
+
+    private native long createShape(long meshId);
 
     private native void finalizeNative(long objectId);
 }

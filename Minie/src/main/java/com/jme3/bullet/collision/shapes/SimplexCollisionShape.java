@@ -36,6 +36,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Vector3f;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -127,6 +128,40 @@ public class SimplexCollisionShape extends CollisionShape {
     }
     // *************************************************************************
     // CollisionShape methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned shape into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        vector1 = cloner.clone(vector1);
+        vector2 = cloner.clone(vector2);
+        vector3 = cloner.clone(vector3);
+        vector4 = cloner.clone(vector4);
+        createShape();
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public SimplexCollisionShape jmeClone() {
+        try {
+            SimplexCollisionShape clone = (SimplexCollisionShape) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 
     /**
      * Serialize this shape, for example when saving to a J3O file.

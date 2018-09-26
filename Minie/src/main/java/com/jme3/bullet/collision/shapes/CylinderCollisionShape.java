@@ -37,6 +37,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Vector3f;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,7 +66,7 @@ public class CylinderCollisionShape extends CollisionShape {
      * copy of unscaled half extent for each local axis (not null, no negative
      * component)
      */
-    final private Vector3f halfExtents = new Vector3f(0.5f, 0.5f, 0.5f);
+    private Vector3f halfExtents = new Vector3f(0.5f, 0.5f, 0.5f);
     /**
      * copy of main (height) axis (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
      */
@@ -166,6 +167,38 @@ public class CylinderCollisionShape extends CollisionShape {
     }
     // *************************************************************************
     // CollisionShape methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned shape into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        halfExtents = cloner.clone(halfExtents);
+        createShape();
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public CylinderCollisionShape jmeClone() {
+        try {
+            CylinderCollisionShape clone
+                    = (CylinderCollisionShape) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 
     /**
      * Serialize this shape, for example when saving to a J3O file.

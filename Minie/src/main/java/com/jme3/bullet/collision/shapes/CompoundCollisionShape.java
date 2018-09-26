@@ -38,6 +38,7 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -64,9 +65,9 @@ public class CompoundCollisionShape extends CollisionShape {
     // fields
 
     /**
-     * children of this shape
+     * child shapes of this shape
      */
-    private ArrayList<ChildCollisionShape> children = new ArrayList<>();
+    private ArrayList<ChildCollisionShape> children = new ArrayList<>(6);
     // *************************************************************************
     // constructors
 
@@ -74,12 +75,7 @@ public class CompoundCollisionShape extends CollisionShape {
      * Instantiate an empty compound shape (with no children).
      */
     public CompoundCollisionShape() {
-        objectId = createShape();
-        assert objectId != 0L;
-        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
-
-        setScale(scale);
-        setMargin(margin);
+        createEmpty();
     }
     // *************************************************************************
     // new methods exposed
@@ -136,20 +132,46 @@ public class CompoundCollisionShape extends CollisionShape {
     /**
      * Access the list of children.
      *
-     * @return the pre-existing list (not null)
+     * @return the pre-existing list (not null) TODO
      */
     public List<ChildCollisionShape> getChildren() {
         return children;
     }
-
-    private native long createShape();
-
-    private native long addChildShape(long objectId, long childId,
-            Vector3f location, Matrix3f rotation);
-
-    private native long removeChildShape(long objectId, long childId);
     // *************************************************************************
     // CollisionShape methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned shape into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        children = cloner.clone(children);
+        createEmpty();
+        loadChildren();
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public CompoundCollisionShape jmeClone() {
+        try {
+            CompoundCollisionShape clone
+                    = (CompoundCollisionShape) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 
     /**
      * Serialize this shape, for example when saving to a J3O file.
@@ -178,17 +200,42 @@ public class CompoundCollisionShape extends CollisionShape {
         InputCapsule capsule = im.getCapsule(this);
         children = capsule.readSavableArrayList("children",
                 new ArrayList<ChildCollisionShape>());
-        setScale(scale);
-        setMargin(margin);
+        createEmpty();
         loadChildren();
     }
     // *************************************************************************
     // private methods
 
+    native private long addChildShape(long objectId, long childId,
+            Vector3f location, Matrix3f rotation);
+
+    /**
+     * Instantiate an empty btCompoundShape.
+     */
+    private void createEmpty() {
+        assert objectId == 0L;
+
+        objectId = createShape();
+        assert objectId != 0L;
+        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+
+        setScale(scale);
+        setMargin(margin);
+    }
+
+    native private long createShape();
+
+    /**
+     * Add the configured children to the empty btCompoundShape.
+     */
     private void loadChildren() {
+        assert objectId != 0L;
+
         for (ChildCollisionShape child : children) {
             addChildShape(objectId, child.getShape().getObjectId(),
                     child.getLocation(null), child.getRotation(null));
         }
     }
+
+    native private long removeChildShape(long objectId, long childId);
 }
