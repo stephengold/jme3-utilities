@@ -42,7 +42,7 @@ import java.util.logging.Logger;
  *
  * @author Nehon
  */
-public abstract class RagdollPreset {
+public abstract class RagdollPreset implements Cloneable {
 
     /**
      * message logger for this class
@@ -54,7 +54,7 @@ public abstract class RagdollPreset {
      */
     protected Map<String, JointPreset> boneMap = new HashMap<>();
     /**
-     * lexicon to map bone names to entries
+     * lexicon to map bone names to lexicon entries
      */
     protected Map<String, LexiconEntry> lexicon = new HashMap<>();
 
@@ -110,7 +110,27 @@ public abstract class RagdollPreset {
     }
 
     /**
-     * Range of motion for a joint.
+     * Create a deep copy of this preset.
+     *
+     * @return a new object, equivalent to this one
+     * @throws CloneNotSupportedException if a field isn't cloneable
+     */
+    @Override
+    public RagdollPreset clone() throws CloneNotSupportedException {
+        RagdollPreset clone = (RagdollPreset) super.clone();
+        clone.boneMap = new HashMap<>(boneMap);
+        clone.lexicon = new HashMap<>();
+        for (String boneName : lexicon.keySet()) {
+            LexiconEntry le = lexicon.get(boneName);
+            LexiconEntry leClone = new LexiconEntry(le);
+            clone.lexicon.put(boneName, leClone);
+        }
+
+        return clone;
+    }
+
+    /**
+     * Range of motion for a joint. Note: immutable.
      */
     protected class JointPreset {
 
@@ -161,6 +181,22 @@ public abstract class RagdollPreset {
      * One entry in a bone lexicon.
      */
     protected class LexiconEntry extends HashMap<String, Integer> {
+
+        /**
+         * Null constructor.
+         */
+        public LexiconEntry() {
+            super();
+        }
+
+        /**
+         * Copy constructor.
+         *
+         * @param le the entry to copy (not null)
+         */
+        public LexiconEntry(LexiconEntry le) {
+            super(le);
+        }
 
         /**
          * Add a synonym with the specified score.

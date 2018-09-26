@@ -153,4 +153,16 @@ public class HumanoidRagdollPreset extends RagdollPreset {
         entry.addSynonym("wrist", 75);
         lexicon.put("hand", entry);
     }
+
+    /**
+     * Create a deep copy of this preset.
+     *
+     * @return a new object, equivalent to this one
+     * @throws CloneNotSupportedException if a field isn't cloneable
+     */
+    @Override
+    public HumanoidRagdollPreset clone() throws CloneNotSupportedException {
+        HumanoidRagdollPreset clone = (HumanoidRagdollPreset) super.clone();
+        return clone;
+    }
 }
