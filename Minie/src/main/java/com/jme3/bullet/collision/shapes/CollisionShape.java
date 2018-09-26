@@ -77,15 +77,6 @@ public abstract class CollisionShape implements Savable {
      */
     protected float margin = 0.04f;
     // *************************************************************************
-    // constructors
-
-    /**
-     * No-argument constructor needed by SavableClassUtil. Do not invoke
-     * directly!
-     */
-    public CollisionShape() {
-    }
-    // *************************************************************************
     // new methods exposed
 
     /**
