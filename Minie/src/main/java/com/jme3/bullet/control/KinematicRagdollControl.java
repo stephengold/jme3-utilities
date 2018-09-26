@@ -987,6 +987,16 @@ public class KinematicRagdollControl
     }
 
     /**
+     * Access the physics object that represents the torso.
+     *
+     * @return the pre-existing object (not null)
+     */
+    public PhysicsRigidBody getTorso() {
+        assert baseRigidBody != null;
+        return baseRigidBody;
+    }
+
+    /**
      * Read the ragdoll's total mass. Not allowed until the control has been
      * added to a spatial.
      *
