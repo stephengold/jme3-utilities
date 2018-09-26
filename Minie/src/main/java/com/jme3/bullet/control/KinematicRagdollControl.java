@@ -124,7 +124,7 @@ public class KinematicRagdollControl
     private final Quaternion modelRotation = new Quaternion();
     private final PhysicsRigidBody baseRigidBody;
     /**
-     * model being controlled
+     * root spatial of the model being controlled
      */
     private Spatial targetModel;
     /**
@@ -133,6 +133,9 @@ public class KinematicRagdollControl
     private Skeleton skeleton;
     private RagdollPreset preset = new HumanoidRagdollPreset();
     private Vector3f initScale;
+    /**
+     * mode of operation
+     */
     private Mode mode = Mode.Kinematic;
     private boolean debug = false;
     /**
@@ -150,7 +153,10 @@ public class KinematicRagdollControl
      */
     private float blendTime = 1f;
     private float eventDispatchImpulseThreshold = 10f;
-    private float rootMass = 15f;
+    /**
+     * mass of the torso TODO specify in constructor
+     */
+    private float torsoMass = 15f;
     /**
      * accumulate total mass of ragdoll when control is added to a scene
      */
@@ -201,8 +207,9 @@ public class KinematicRagdollControl
      * Instantiate an enabled control.
      */
     public KinematicRagdollControl() {
-        baseRigidBody = new PhysicsRigidBody(
-                new BoxCollisionShape(Vector3f.UNIT_XYZ.mult(0.1f)), 1f);
+        BoxCollisionShape torsoShape
+                = new BoxCollisionShape(Vector3f.UNIT_XYZ.mult(0.1f));
+        baseRigidBody = new PhysicsRigidBody(torsoShape, torsoMass);
         baseRigidBody.setKinematic(mode == Mode.Kinematic);
     }
 
@@ -687,11 +694,12 @@ public class KinematicRagdollControl
                         weightThreshold);
             }
 
-            PhysicsRigidBody shapeNode
-                    = new PhysicsRigidBody(shape, rootMass / (float) reccount);
+            float limbMass = torsoMass / (float) reccount;
+            assert limbMass > 0f : limbMass;
+            totalMass += limbMass;
+            PhysicsRigidBody shapeNode = new PhysicsRigidBody(shape, limbMass);
             shapeNode.setDamping(limbDamping, limbDamping);
             shapeNode.setKinematic(mode == Mode.Kinematic);
-            totalMass += rootMass / (float) reccount;
 
             SixDofJoint joint = null;
             if (parent != null) {
@@ -981,7 +989,7 @@ public class KinematicRagdollControl
      * @param rootMass the desired mass (&ge;0)
      */
     public void setRootMass(float rootMass) {
-        this.rootMass = rootMass;
+        this.torsoMass = rootMass;
     }
 
     /**
@@ -1103,7 +1111,7 @@ public class KinematicRagdollControl
         KinematicRagdollControl control
                 = new KinematicRagdollControl(preset, weightThreshold);
         control.setMode(mode);
-        control.setRootMass(rootMass);
+        control.setRootMass(torsoMass);
         control.setWeightThreshold(weightThreshold);
         control.setApplyPhysicsLocal(isApplyPhysicsLocal());
         control.spatial = this.spatial;
@@ -1291,7 +1299,7 @@ public class KinematicRagdollControl
         oc.write(blendTime, "blendTime", 1f);
         oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
                 10);
-        oc.write(rootMass, "rootMass", 15f);
+        oc.write(torsoMass, "rootMass", 15f);
         oc.write(totalMass, "totalMass", 0f);
         oc.write(ikRotSpeed, "rotSpeed", 7f);
         oc.write(limbDamping, "limbDampening", 0.6f);
@@ -1330,7 +1338,7 @@ public class KinematicRagdollControl
         blendTime = ic.readFloat("blendTime", 1f);
         eventDispatchImpulseThreshold
                 = ic.readFloat("eventDispatchImpulseThreshold", 10f);
-        rootMass = ic.readFloat("rootMass", 15f);
+        torsoMass = ic.readFloat("rootMass", 15f);
         totalMass = ic.readFloat("totalMass", 0f);
     }
 }
