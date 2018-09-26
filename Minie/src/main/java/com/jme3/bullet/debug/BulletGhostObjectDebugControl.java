@@ -34,6 +34,7 @@ package com.jme3.bullet.debug;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.objects.PhysicsGhostObject;
 import com.jme3.bullet.util.DebugShapeFactory;
+import com.jme3.material.Material;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -48,12 +49,16 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(BulletGhostObjectDebugControl.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
      * ghost object to visualize (not null)
@@ -79,6 +84,8 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
      * physics scale for which geom was generated
      */
     final private Vector3f oldScale = new Vector3f();
+    // *************************************************************************
+    // constructors
 
     /**
      * Instantiate an enabled control to visualize the specified ghost object.
@@ -90,12 +97,16 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
             PhysicsGhostObject gh) {
         super(debugAppState);
         ghost = gh;
+
         myShape = ghost.getCollisionShape();
         myShape.getScale(oldScale);
+
         geom = DebugShapeFactory.getDebugShape(myShape);
-        geom.setMaterial(debugAppState.DEBUG_YELLOW);
         geom.setName(ghost.toString());
+        updateMaterial();
     }
+    // *************************************************************************
+    // AbstractPhysicsDebugControl methods
 
     /**
      * Alter which spatial is controlled. Invoked when the control is added to
@@ -131,16 +142,16 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
             myShape = newShape;
             oldScale.set(newScale);
 
-            Node node = (Node) this.spatial;
+            Node node = (Node) spatial;
             node.detachChild(geom);
 
             geom = DebugShapeFactory.getDebugShape(myShape);
-            geom.setMaterial(debugAppState.DEBUG_YELLOW);
             geom.setName(ghost.toString());
 
             node.attachChild(geom);
         }
 
+        updateMaterial();
         ghost.getPhysicsLocation(location);
         ghost.getPhysicsRotation(rotation);
         applyPhysicsTransform(location, rotation);
@@ -156,5 +167,19 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
      */
     @Override
     protected void controlRender(RenderManager rm, ViewPort vp) {
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Update the material applied to the debug geometry based on the properties
+     * of the ghost object.
+     */
+    private void updateMaterial() {
+        Material material = ghost.getDebugMaterial();
+        if (material == null) {
+            geom.setMaterial(debugAppState.DEBUG_YELLOW);
+        }
+        geom.setMaterial(material);
     }
 }

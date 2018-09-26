@@ -34,6 +34,7 @@ package com.jme3.bullet.debug;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.util.DebugShapeFactory;
+import com.jme3.material.Material;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -48,12 +49,16 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(BulletRigidBodyDebugControl.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
      * rigid body to visualize (not null)
@@ -79,6 +84,8 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
      * physics scale for which geom was generated
      */
     final private Vector3f oldScale = new Vector3f();
+    // *************************************************************************
+    // constructors
 
     /**
      * Instantiate an enabled control to visualize the specified body.
@@ -90,12 +97,16 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
             PhysicsRigidBody body) {
         super(debugAppState);
         this.body = body;
+
         myShape = body.getCollisionShape();
         myShape.getScale(oldScale);
+
         geom = DebugShapeFactory.getDebugShape(myShape);
-        geom.setMaterial(debugAppState.DEBUG_BLUE);
         geom.setName(body.toString());
+        updateMaterial();
     }
+    // *************************************************************************
+    // AbstractPhysicsDebugControl methods
 
     /**
      * Alter which spatial is controlled. Invoked when the control is added to
@@ -131,7 +142,7 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
             myShape = newShape;
             oldScale.set(newScale);
 
-            Node node = (Node) this.spatial;
+            Node node = (Node) spatial;
             node.detachChild(geom);
 
             geom = DebugShapeFactory.getDebugShape(myShape);
@@ -140,11 +151,7 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
             node.attachChild(geom);
         }
 
-        if (body.isActive()) {
-            geom.setMaterial(debugAppState.DEBUG_MAGENTA);
-        } else {
-            geom.setMaterial(debugAppState.DEBUG_BLUE);
-        }
+        updateMaterial();
         body.getPhysicsLocation(location);
         body.getPhysicsRotation(rotation);
         applyPhysicsTransform(location, rotation);
@@ -160,5 +167,23 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
      */
     @Override
     protected void controlRender(RenderManager rm, ViewPort vp) {
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Update the material applied to the debug geometry based on the properties
+     * of the rigid body.
+     */
+    private void updateMaterial() {
+        Material material = body.getDebugMaterial();
+        if (material == null) {
+            if (body.isActive()) {
+                material = debugAppState.DEBUG_MAGENTA;
+            } else {
+                material = debugAppState.DEBUG_BLUE;
+            }
+        }
+        geom.setMaterial(material);
     }
 }

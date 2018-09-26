@@ -34,6 +34,7 @@ package com.jme3.bullet.debug;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.objects.PhysicsCharacter;
 import com.jme3.bullet.util.DebugShapeFactory;
+import com.jme3.material.Material;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -48,12 +49,16 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(BulletCharacterDebugControl.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
      * character to visualize (not null)
@@ -64,7 +69,7 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
      */
     final private Vector3f location = new Vector3f();
     /**
-     * shape for which geom was generated
+     * shape for which geom was generated (not null)
      */
     private CollisionShape myShape;
     /**
@@ -75,6 +80,8 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
      * physics scale for which geom was generated
      */
     final private Vector3f oldScale = new Vector3f();
+    // *************************************************************************
+    // constructors
 
     /**
      * Instantiate an enabled control to visualize the specified character.
@@ -86,12 +93,16 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
             PhysicsCharacter ch) {
         super(debugAppState);
         character = ch;
+
         myShape = character.getCollisionShape();
         myShape.getScale(oldScale);
+
         geom = DebugShapeFactory.getDebugShape(myShape);
-        geom.setMaterial(debugAppState.DEBUG_PINK);
         geom.setName(ch.toString());
+        updateMaterial();
     }
+    // *************************************************************************
+    // AbstractPhysicsDebugControl methods
 
     /**
      * Alter which spatial is controlled. Invoked when the control is added to
@@ -127,16 +138,16 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
             myShape = newShape;
             oldScale.set(newScale);
 
-            Node node = (Node) this.spatial;
+            Node node = (Node) spatial;
             node.detachChild(geom);
 
             geom = DebugShapeFactory.getDebugShape(myShape);
-            geom.setMaterial(debugAppState.DEBUG_PINK);
             geom.setName(character.toString());
 
             node.attachChild(geom);
         }
 
+        updateMaterial();
         character.getPhysicsLocation(location);
         applyPhysicsTransform(location, Quaternion.IDENTITY);
     }
@@ -151,5 +162,19 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
      */
     @Override
     protected void controlRender(RenderManager rm, ViewPort vp) {
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Update the material applied to the debug geometry based on the properties
+     * of the character.
+     */
+    private void updateMaterial() {
+        Material material = character.getDebugMaterial();
+        if (material == null) {
+            geom.setMaterial(debugAppState.DEBUG_PINK);
+        }
+        geom.setMaterial(material);
     }
 }

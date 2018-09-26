@@ -33,6 +33,7 @@ package com.jme3.bullet.collision;
 
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.export.*;
+import com.jme3.material.Material;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,6 +49,8 @@ import jme3utilities.Validate;
  * @author normenhansen
  */
 public abstract class PhysicsCollisionObject implements Savable {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -134,6 +137,10 @@ public abstract class PhysicsCollisionObject implements Savable {
     public static final int COLLISION_GROUP_16 = 0x00008000;
 
     /**
+     * custom material for debug shape, or null to use the default material
+     */
+    private Material debugMaterial = null;
+    /**
      * collision group to which this physics object belongs (default=group #1)
      */
     private int collisionGroup = COLLISION_GROUP_01;
@@ -143,6 +150,8 @@ public abstract class PhysicsCollisionObject implements Savable {
      */
     private int collideWithGroups = COLLISION_GROUP_01;
     private Object userObject;
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Apply the specified CollisionShape to this object. Note that the object
@@ -160,10 +169,30 @@ public abstract class PhysicsCollisionObject implements Savable {
      * Access the shape of this physics object.
      *
      * @return the pre-existing instance, which can then be applied to other
-     * physics objects (increases performance)
+     * physics objects (sharing improves performance)
      */
     public CollisionShape getCollisionShape() {
+        assert collisionShape != null;
         return collisionShape;
+    }
+
+    /**
+     * Access the custom debug material, if specified.
+     *
+     * @return the pre-existing instance, or null if default/unspecified
+     */
+    public Material getDebugMaterial() {
+        return debugMaterial;
+    }
+
+    /**
+     * Alter or remove the custom debug material.
+     *
+     * @param material the desired material, or null for default/unspecified
+     * (alias created)
+     */
+    public void setDebugMaterial(Material material) {
+        debugMaterial = material;
     }
 
     /**
@@ -314,6 +343,7 @@ public abstract class PhysicsCollisionObject implements Savable {
         capsule.write(collisionGroup, "collisionGroup", COLLISION_GROUP_01);
         capsule.write(collideWithGroups, "collisionGroupsMask",
                 COLLISION_GROUP_01);
+        capsule.write(debugMaterial, "debugMaterial", null);
         capsule.write(collisionShape, "collisionShape", null);
     }
 
@@ -329,6 +359,8 @@ public abstract class PhysicsCollisionObject implements Savable {
         collisionGroup = capsule.readInt("collisionGroup", COLLISION_GROUP_01);
         collideWithGroups = capsule.readInt("collisionGroupsMask",
                 COLLISION_GROUP_01);
+        debugMaterial = (Material) capsule.readSavable("debugMaterial", null);
+
         CollisionShape shape
                 = (CollisionShape) capsule.readSavable("collisionShape", null);
         collisionShape = shape;
