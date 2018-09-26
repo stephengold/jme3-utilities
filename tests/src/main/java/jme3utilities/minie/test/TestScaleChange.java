@@ -26,9 +26,6 @@
  */
 package jme3utilities.minie.test;
 
-/**
- * Test case for visualizing a shape with a changing scale.
- */
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
@@ -37,17 +34,26 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.GhostControl;
 import com.jme3.math.Vector3f;
 
+/**
+ * Test case for visualizing a shape with a changing scale.
+ */
 public class TestScaleChange extends SimpleApplication {
+    // *************************************************************************
+    // fields
 
-    float scale = 1f;
-    GhostControl gc;
-    PhysicsSpace pSpace;
-    CollisionShape box;
+    private float scale = 1f;
+    private GhostControl gc;
+    private PhysicsSpace pSpace;
+    private CollisionShape box;
+    // *************************************************************************
+    // new methods exposed
 
     public static void main(String[] args) {
         TestScaleChange app = new TestScaleChange();
         app.start();
     }
+    // *************************************************************************
+    // SimpleApplication methods
 
     @Override
     public void simpleInitApp() {

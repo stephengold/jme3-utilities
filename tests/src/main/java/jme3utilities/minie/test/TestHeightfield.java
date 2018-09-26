@@ -26,9 +26,6 @@
  */
 package jme3utilities.minie.test;
 
-/**
- * Test heightfield collision shapes.
- */
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.TextureKey;
 import com.jme3.bullet.BulletAppState;
@@ -48,17 +45,26 @@ import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 
+/**
+ * Test heightfield collision shapes.
+ */
 public class TestHeightfield extends SimpleApplication {
+    // *************************************************************************
+    // fields
 
-    TerrainQuad quad;
-    BulletAppState bulletAppState = new BulletAppState();
-    float elapsedTime = 0f;
-    boolean debugFlag = false;
+    private TerrainQuad quad;
+    final private BulletAppState bulletAppState = new BulletAppState();
+    private float elapsedTime = 0f;
+    private boolean debugFlag = false;
+    // *************************************************************************
+    // new methods exposed
 
     public static void main(String[] args) {
         TestHeightfield app = new TestHeightfield();
         app.start();
     }
+    // *************************************************************************
+    // SimpleApplication methods
 
     @Override
     public void simpleInitApp() {
@@ -112,6 +118,8 @@ public class TestHeightfield extends SimpleApplication {
             bulletAppState.setDebugEnabled(debugFlag);
         }
     }
+    // *************************************************************************
+    // private methods
 
     private AbstractHeightMap loadHeightMap() {
         boolean flipY = false;

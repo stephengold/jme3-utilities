@@ -26,26 +26,32 @@
  */
 package jme3utilities.minie.test;
 
+import com.jme3.app.SimpleApplication;
+import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.PhysicsSpace;
+
 /**
  * Test case for JME issue #883: extra physicsTicks in ThreadingType.PARALLEL.
  * <p>
  * If successful, physics time and frame time will advance at the same rate.
  */
-import com.jme3.app.SimpleApplication;
-import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.PhysicsSpace;
-
 public class TestIssue883 extends SimpleApplication {
+    // *************************************************************************
+    // fields
 
-    boolean firstPrint = true;
-    float timeToNextPrint = 1f; // in seconds
-    double frameTime; // in seconds
-    double physicsTime; // in seconds
+    private boolean firstPrint = true;
+    private float timeToNextPrint = 1f; // in seconds
+    private double frameTime; // in seconds
+    private double physicsTime; // in seconds
+    // *************************************************************************
+    // new methods exposed
 
     public static void main(String[] args) {
         TestIssue883 app = new TestIssue883();
         app.start();
     }
+    // *************************************************************************
+    // SimpleApplication methods
 
     @Override
     public void simpleInitApp() {
