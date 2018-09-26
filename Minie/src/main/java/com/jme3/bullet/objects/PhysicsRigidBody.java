@@ -171,9 +171,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     protected void preRebuild() {
     }
 
-    private native long createRigidBody(float mass, long motionStateId,
-            long collisionShapeId);
-
     /**
      * For use by subclasses.
      */
@@ -204,8 +201,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         return isInWorld(objectId);
     }
 
-    private native boolean isInWorld(long objectId);
-
     /**
      * Directly alter the location of this body's center of mass.
      *
@@ -221,8 +216,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
         setPhysicsLocation(objectId, location);
     }
-
-    private native void setPhysicsLocation(long objectId, Vector3f location);
 
     /**
      * Directly alter this body's orientation.
@@ -240,8 +233,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         setPhysicsRotation(objectId, rotation);
     }
 
-    private native void setPhysicsRotation(long objectId, Matrix3f rotation);
-
     /**
      * Directly alter this body's orientation.
      *
@@ -258,8 +249,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         setPhysicsRotation(objectId, rotation);
     }
 
-    private native void setPhysicsRotation(long objectId, Quaternion rotation);
-
     /**
      * Copy the location of this body's center of mass.
      *
@@ -275,8 +264,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
         return storeResult;
     }
-
-    private native void getPhysicsLocation(long objectId, Vector3f storeResult);
 
     /**
      * Copy this body's orientation to a quaternion.
@@ -305,9 +292,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         setInverseInertiaLocal(objectId, inverseInertia);
     }
 
-    private native void setInverseInertiaLocal(long objectId,
-            Vector3f inverseInertialLocal);
-
     /**
      * Copy the principal components of the local inverse inertia tensor. TODO
      * provide access to the whole tensor
@@ -323,12 +307,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
         return storeResult;
     }
-
-    private native void getInverseInertiaLocal(long objectId,
-            Vector3f storeResult);
-
-    private native void getPhysicsRotation(long objectId,
-            Quaternion storeResult);
 
     /**
      * Copy this body's orientation to a matrix.
@@ -346,9 +324,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         return storeResult;
     }
 
-    private native void getPhysicsRotationMatrix(long objectId,
-            Matrix3f storeResult);
-
     /**
      * Put this body into kinematic mode or take it out of kinematic mode.
      * <p>
@@ -363,8 +338,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         this.kinematic = kinematic;
         setKinematic(objectId, kinematic);
     }
-
-    private native void setKinematic(long objectId, boolean kinematic);
 
     /**
      * Test whether this body is in kinematic mode.
@@ -389,8 +362,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         setCcdSweptSphereRadius(objectId, radius);
     }
 
-    private native void setCcdSweptSphereRadius(long objectId, float radius);
-
     /**
      * Alter the amount of motion required to activate continuous collision
      * detection (CCD).
@@ -405,8 +376,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         setCcdMotionThreshold(objectId, threshold);
     }
 
-    private native void setCcdMotionThreshold(long objectId, float threshold);
-
     /**
      * Read the radius of the swept sphere used for continuous collision
      * detection (CCD).
@@ -416,8 +385,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     public float getCcdSweptSphereRadius() {
         return getCcdSweptSphereRadius(objectId);
     }
-
-    private native float getCcdSweptSphereRadius(long objectId);
 
     /**
      * Calculate this body's continuous collision detection (CCD) motion
@@ -429,8 +396,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         return getCcdMotionThreshold(objectId);
     }
 
-    private native float getCcdMotionThreshold(long objectId);
-
     /**
      * Calculate the square of this body's continuous collision detection (CCD)
      * motion threshold.
@@ -440,8 +405,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     public float getCcdSquareMotionThreshold() {
         return getCcdSquareMotionThreshold(objectId);
     }
-
-    private native float getCcdSquareMotionThreshold(long objectId);
 
     /**
      * Read this body's mass.
@@ -477,11 +440,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         }
     }
 
-    private native void setStatic(long objectId, boolean state);
-
-    private native long updateMassProps(long objectId, long collisionShapeId,
-            float mass);
-
     /**
      * Copy this body's gravitational acceleration.
      *
@@ -498,8 +456,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         return storeResult;
     }
 
-    private native void getGravity(long objectId, Vector3f storeResult);
-
     /**
      * Alter this body's gravitational acceleration.
      * <p>
@@ -512,8 +468,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         setGravity(objectId, gravity);
     }
 
-    private native void setGravity(long objectId, Vector3f gravity);
-
     /**
      * Read this body's friction.
      *
@@ -522,8 +476,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     public float getFriction() {
         return getFriction(objectId);
     }
-
-    private native float getFriction(long objectId);
 
     /**
      * Alter this body's friction.
@@ -534,8 +486,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         setFriction(objectId, friction);
     }
 
-    private native void setFriction(long objectId, float friction);
-
     /**
      * Alter this body's damping.
      *
@@ -545,9 +495,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     public void setDamping(float linearDamping, float angularDamping) {
         setDamping(objectId, linearDamping, angularDamping);
     }
-
-    private native void setDamping(long objectId, float linearDamping,
-            float angularDamping);
 
     /**
      * Alter this body's linear damping.
@@ -567,8 +514,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         setAngularDamping(objectId, angularDamping);
     }
 
-    private native void setAngularDamping(long objectId, float factor);
-
     /**
      * Read this body's linear damping.
      *
@@ -577,8 +522,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     public float getLinearDamping() {
         return getLinearDamping(objectId);
     }
-
-    private native float getLinearDamping(long objectId);
 
     /**
      * Read this body's angular damping.
@@ -589,8 +532,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         return getAngularDamping(objectId);
     }
 
-    private native float getAngularDamping(long objectId);
-
     /**
      * Read this body's restitution (bounciness).
      *
@@ -599,8 +540,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     public float getRestitution() {
         return getRestitution(objectId);
     }
-
-    private native float getRestitution(long objectId);
 
     /**
      * Alter this body's restitution (bounciness). For best performance, set
@@ -611,10 +550,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     public void setRestitution(float restitution) {
         setRestitution(objectId, restitution);
     }
-
-    private native void setRestitution(long objectId, float factor);
-
-    private native void getAngularVelocity(long objectId, Vector3f storeResult);
 
     /**
      * Copy this body's angular velocity.
@@ -642,10 +577,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         activate();
     }
 
-    private native void setAngularVelocity(long objectId, Vector3f vec);
-
-    private native void getLinearVelocity(long objectId, Vector3f storeResult);
-
     /**
      * Copy the linear velocity of this body's center of mass.
      *
@@ -672,8 +603,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         activate();
     }
 
-    private native void setLinearVelocity(long objectId, Vector3f vec);
-
     /**
      * Apply a force to the PhysicsRigidBody. Effective only if the next physics
      * update steps the physics space.
@@ -689,9 +618,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         activate();
     }
 
-    private native void applyForce(long objectId, Vector3f force,
-            Vector3f location);
-
     /**
      * Apply a force to the PhysicsRigidBody. Effective only if the next physics
      * update steps the physics space.
@@ -705,8 +631,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         applyCentralForce(objectId, force);
         activate();
     }
-
-    private native void applyCentralForce(long objectId, Vector3f force);
 
     /**
      * Apply a force to the PhysicsRigidBody. Effective only if the next physics
@@ -722,8 +646,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         activate();
     }
 
-    private native void applyTorque(long objectId, Vector3f vec);
-
     /**
      * Apply an impulse to the body the next physics update.
      *
@@ -735,9 +657,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         activate();
     }
 
-    private native void applyImpulse(long objectId, Vector3f impulse,
-            Vector3f rel_pos);
-
     /**
      * Apply a torque impulse to the body in the next physics update.
      *
@@ -748,16 +667,12 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         activate();
     }
 
-    private native void applyTorqueImpulse(long objectId, Vector3f vec);
-
     /**
      * Clear all forces acting on this body.
      */
     public void clearForces() {
         clearForces(objectId);
     }
-
-    private native void clearForces(long objectId);
 
     /**
      * Apply the specified CollisionShape to this body.
@@ -784,16 +699,12 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         }
     }
 
-    private native void setCollisionShape(long objectId, long collisionShapeId);
-
     /**
      * Reactivates this body if it has been deactivated due to lack of motion.
      */
     public void activate() {
         activate(objectId);
     }
-
-    private native void activate(long objectId);
 
     /**
      * Test whether this body has been deactivated due to lack of motion.
@@ -803,8 +714,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     public boolean isActive() {
         return isActive(objectId);
     }
-
-    private native boolean isActive(long objectId);
 
     /**
      * Alter this body's sleeping thresholds.
@@ -819,9 +728,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         setSleepingThresholds(objectId, linear, angular);
     }
 
-    private native void setSleepingThresholds(long objectId, float linear,
-            float angular);
-
     /**
      * Alter this body's linear sleeping threshold.
      *
@@ -830,9 +736,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     public void setLinearSleepingThreshold(float linearSleepingThreshold) {
         setLinearSleepingThreshold(objectId, linearSleepingThreshold);
     }
-
-    private native void setLinearSleepingThreshold(long objectId,
-            float linearSleepingThreshold);
 
     /**
      * Alter this body's angular sleeping threshold.
@@ -843,9 +746,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         setAngularSleepingThreshold(objectId, angularSleepingThreshold);
     }
 
-    private native void setAngularSleepingThreshold(long objectId,
-            float angularSleepingThreshold);
-
     /**
      * Read this body's linear sleeping threshold.
      *
@@ -855,8 +755,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         return getLinearSleepingThreshold(objectId);
     }
 
-    private native float getLinearSleepingThreshold(long objectId);
-
     /**
      * Read this body's angular sleeping threshold.
      *
@@ -865,8 +763,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     public float getAngularSleepingThreshold() {
         return getAngularSleepingThreshold(objectId);
     }
-
-    private native float getAngularSleepingThreshold(long objectId);
 
     /**
      * Read this body's angular factor for the X axis.
@@ -893,8 +789,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         return storeResult;
     }
 
-    private native void getAngularFactor(long objectId, Vector3f storeResult);
-
     /**
      * Alter this body's angular factor.
      *
@@ -915,8 +809,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         setAngularFactor(objectId, factor);
     }
 
-    private native void setAngularFactor(long objectId, Vector3f factor);
-
     /**
      * Copy this body's linear factors.
      *
@@ -933,8 +825,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         return storeResult;
     }
 
-    private native void getLinearFactor(long objectId, Vector3f storeResult);
-
     /**
      * Alter this body's linear factors.
      *
@@ -944,8 +834,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     public void setLinearFactor(Vector3f factor) {
         setLinearFactor(objectId, factor);
     }
-
-    private native void setLinearFactor(long objectId, Vector3f factor);
 
     /**
      * Do not invoke directly! Joints are added automatically when created.
@@ -1059,8 +947,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         super.read(im);
 
         InputCapsule capsule = im.getCapsule(this);
-        float mass = capsule.readFloat("mass", 1f);
-        this.mass = mass;
+        mass = capsule.readFloat("mass", 1f);
         rebuildRigidBody();
         setGravity((Vector3f) capsule.readSavable("gravity",
                 Vector3f.ZERO.clone()));
@@ -1092,4 +979,118 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
         joints = capsule.readSavableArrayList("joints", null);
     }
+    // *************************************************************************
+    // private methods
+
+    native private void activate(long objectId);
+
+    native private void applyCentralForce(long objectId, Vector3f force);
+
+    native private void applyForce(long objectId, Vector3f force,
+            Vector3f location);
+
+    native private void applyImpulse(long objectId, Vector3f impulse,
+            Vector3f rel_pos);
+
+    native private void applyTorque(long objectId, Vector3f vec);
+
+    native private void applyTorqueImpulse(long objectId, Vector3f vec);
+
+    native private void clearForces(long objectId);
+
+    native private long createRigidBody(float mass, long motionStateId,
+            long collisionShapeId);
+
+    native private float getAngularDamping(long objectId);
+
+    native private void getAngularFactor(long objectId, Vector3f storeResult);
+
+    native private float getAngularSleepingThreshold(long objectId);
+
+    native private void getAngularVelocity(long objectId, Vector3f storeResult);
+
+    native private float getCcdMotionThreshold(long objectId);
+
+    native private float getCcdSquareMotionThreshold(long objectId);
+
+    native private float getCcdSweptSphereRadius(long objectId);
+
+    native private float getFriction(long objectId);
+
+    native private void getGravity(long objectId, Vector3f storeResult);
+
+    native private void getInverseInertiaLocal(long objectId,
+            Vector3f storeResult);
+
+    native private float getLinearDamping(long objectId);
+
+    native private void getLinearFactor(long objectId, Vector3f storeResult);
+
+    native private float getLinearSleepingThreshold(long objectId);
+
+    native private void getLinearVelocity(long objectId, Vector3f storeResult);
+
+    native private void getPhysicsLocation(long objectId, Vector3f storeResult);
+
+    native private void getPhysicsRotation(long objectId,
+            Quaternion storeResult);
+
+    native private void getPhysicsRotationMatrix(long objectId,
+            Matrix3f storeResult);
+
+    native private float getRestitution(long objectId);
+
+    native private boolean isActive(long objectId);
+
+    native private boolean isInWorld(long objectId);
+
+    native private void setAngularDamping(long objectId, float factor);
+
+    native private void setAngularFactor(long objectId, Vector3f factor);
+
+    native private void setAngularSleepingThreshold(long objectId,
+            float angularSleepingThreshold);
+
+    native private void setAngularVelocity(long objectId, Vector3f vec);
+
+    native private void setCcdMotionThreshold(long objectId, float threshold);
+
+    native private void setCcdSweptSphereRadius(long objectId, float radius);
+
+    native private void setCollisionShape(long objectId, long collisionShapeId);
+
+    native private void setDamping(long objectId, float linearDamping,
+            float angularDamping);
+
+    native private void setFriction(long objectId, float friction);
+
+    native private void setGravity(long objectId, Vector3f gravity);
+
+    native private void setInverseInertiaLocal(long objectId,
+            Vector3f inverseInertialLocal);
+
+    native private void setKinematic(long objectId, boolean kinematic);
+
+    native private void setLinearFactor(long objectId, Vector3f factor);
+
+    native private void setLinearSleepingThreshold(long objectId,
+            float linearSleepingThreshold);
+
+    native private void setLinearVelocity(long objectId, Vector3f vec);
+
+    native private void setPhysicsLocation(long objectId, Vector3f location);
+
+    native private void setPhysicsRotation(long objectId, Matrix3f rotation);
+
+    native private void setPhysicsRotation(long objectId, Quaternion rotation);
+
+    native private void setRestitution(long objectId, float factor);
+
+    native private void setSleepingThresholds(long objectId, float linear,
+            float angular);
+
+    native private void setStatic(long objectId, boolean state);
+
+    native private long updateMassProps(long objectId, long collisionShapeId,
+            float mass);
 }
