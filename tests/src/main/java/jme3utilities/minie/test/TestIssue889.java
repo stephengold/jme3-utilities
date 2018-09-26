@@ -26,12 +26,6 @@
  */
 package jme3utilities.minie.test;
 
-/**
- * Test case for JME issue #889: disabled physics control gets added to a
- * physics space.
- * <p>
- * If successful, no debug meshes will be visible.
- */
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
@@ -43,12 +37,22 @@ import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 
+/**
+ * Test case for JME issue #889: disabled physics control gets added to a
+ * physics space.
+ * <p>
+ * If successful, no debug meshes will be visible.
+ */
 public class TestIssue889 extends SimpleApplication {
+    // *************************************************************************
+    // new methods exposed
 
     public static void main(String[] args) {
         TestIssue889 app = new TestIssue889();
         app.start();
     }
+    // *************************************************************************
+    // SimpleApplication methods
 
     @Override
     public void simpleInitApp() {

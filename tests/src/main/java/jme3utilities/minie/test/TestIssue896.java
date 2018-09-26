@@ -26,12 +26,6 @@
  */
 package jme3utilities.minie.test;
 
-/**
- * Test case for JME issue #896: PhysicsCharacter writes incomplete gravity and
- * upAxis for Native Bullet.
- * <p>
- * If successful, the loaded and saved vectors will be equal.
- */
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
@@ -43,6 +37,12 @@ import com.jme3.scene.Node;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Test case for JME issue #896: PhysicsCharacter writes incomplete gravity and
+ * upAxis for Native Bullet.
+ * <p>
+ * If successful, the loaded and saved vectors will be equal.
+ */
 public class TestIssue896 extends SimpleApplication {
     // *************************************************************************
     // new methods exposed
@@ -93,6 +93,7 @@ public class TestIssue896 extends SimpleApplication {
         loadedControl.getGravity(loadedGravity);
         System.out.printf("gravity  saved=%s  loaded=%s%n", savedGravity,
                 loadedGravity);
+
         stop();
     }
 }
