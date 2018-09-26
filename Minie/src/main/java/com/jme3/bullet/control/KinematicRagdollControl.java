@@ -160,7 +160,7 @@ public class KinematicRagdollControl
     /**
      * accumulate total mass of ragdoll when control is added to a scene
      */
-    private float totalMass = 0f;
+    private float totalMass;
     /**
      * map from IK bone names to goal locations
      */
@@ -209,6 +209,7 @@ public class KinematicRagdollControl
     public KinematicRagdollControl() {
         BoxCollisionShape torsoShape
                 = new BoxCollisionShape(Vector3f.UNIT_XYZ.mult(0.1f));
+        totalMass = torsoMass;
         baseRigidBody = new PhysicsRigidBody(torsoShape, torsoMass);
         baseRigidBody.setKinematic(mode == Mode.Kinematic);
     }
@@ -531,8 +532,8 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Create spatial-dependent data. Invoked when this control is added to a
-     * scene.
+     * Create model-dependent data. Invoked when this control is added to a
+     * spatial.
      *
      * @param model the controlled spatial (not null)
      */
@@ -549,7 +550,7 @@ public class KinematicRagdollControl
         model.setLocalTranslation(Vector3f.ZERO);
         model.setLocalRotation(Quaternion.IDENTITY);
         model.setLocalScale(1);
-        //HACK ALERT change this
+        //HACK ALERT change this TODO
         //I remove the skeletonControl and readd it to the spatial to make sure it's after the ragdollControl in the stack
         //Find a proper way to order the controls.
         SkeletonControl sc = model.getControl(SkeletonControl.class);
@@ -984,20 +985,22 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Alter the ragdoll's root mass.
+     * Alter the ragdoll's root mass. Used only for cloning.
      *
      * @param rootMass the desired mass (&ge;0)
      */
-    public void setRootMass(float rootMass) {
-        this.torsoMass = rootMass;
+    private void setRootMass(float rootMass) {
+        torsoMass = rootMass;
     }
 
     /**
-     * Read the ragdoll's total mass.
+     * Read the ragdoll's total mass. Not allowed until the control has been
+     * added to a spatial.
      *
      * @return mass (&ge;0)
      */
     public float getTotalMass() {
+        assert targetModel != null;
         return totalMass;
     }
 
@@ -1102,7 +1105,7 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Create a shallow clone for the JME cloner.
+     * Create a shallow clone for the JME cloner. TODO wrong
      *
      * @return a new control (not null)
      */
