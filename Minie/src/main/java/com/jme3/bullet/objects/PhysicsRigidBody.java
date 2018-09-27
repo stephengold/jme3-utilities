@@ -734,7 +734,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * @param linearSleepingThreshold the desired threshold (&ge;0, default=0.8)
      */
     public void setLinearSleepingThreshold(float linearSleepingThreshold) {
-        setLinearSleepingThreshold(objectId, linearSleepingThreshold);
+        float ast = getAngularSleepingThreshold(); // work around JME issue #911
+        setSleepingThresholds(objectId, linearSleepingThreshold, ast);
     }
 
     /**
@@ -743,7 +744,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * @param angularSleepingThreshold the desired threshold (&ge;0, default=1)
      */
     public void setAngularSleepingThreshold(float angularSleepingThreshold) {
-        setAngularSleepingThreshold(objectId, angularSleepingThreshold);
+        float lst = getLinearSleepingThreshold(); // work around JME issue #911
+        setSleepingThresholds(objectId, lst, angularSleepingThreshold);
     }
 
     /**
@@ -1048,9 +1050,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     native private void setAngularFactor(long objectId, Vector3f factor);
 
-    native private void setAngularSleepingThreshold(long objectId,
-            float angularSleepingThreshold);
-
     native private void setAngularVelocity(long objectId, Vector3f vec);
 
     native private void setCcdMotionThreshold(long objectId, float threshold);
@@ -1072,9 +1071,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     native private void setKinematic(long objectId, boolean kinematic);
 
     native private void setLinearFactor(long objectId, Vector3f factor);
-
-    native private void setLinearSleepingThreshold(long objectId,
-            float linearSleepingThreshold);
 
     native private void setLinearVelocity(long objectId, Vector3f vec);
 
