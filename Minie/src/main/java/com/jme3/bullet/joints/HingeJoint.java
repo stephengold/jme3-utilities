@@ -53,12 +53,16 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class HingeJoint extends PhysicsJoint {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(HingeJoint.class.getName());
+    // *************************************************************************
+    // fields
 
     private Vector3f axisA;
     private Vector3f axisB;
@@ -82,6 +86,8 @@ public class HingeJoint extends PhysicsJoint {
      * correction starts operating (default=0.9)
      */
     private float limitSoftness = 0.9f;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -122,6 +128,8 @@ public class HingeJoint extends PhysicsJoint {
         setLimit(objectId, low, high, limitSoftness, biasFactor,
                 relaxationFactor);
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Enable or disable this joint's motor.
@@ -135,9 +143,6 @@ public class HingeJoint extends PhysicsJoint {
         enableMotor(objectId, enable, targetVelocity, maxMotorImpulse);
     }
 
-    private native void enableMotor(long objectId, boolean enable,
-            float targetVelocity, float maxMotorImpulse);
-
     /**
      * Test whether this joint's motor is enabled.
      *
@@ -146,8 +151,6 @@ public class HingeJoint extends PhysicsJoint {
     public boolean getEnableMotor() {
         return getEnableAngularMotor(objectId);
     }
-
-    private native boolean getEnableAngularMotor(long objectId);
 
     /**
      * Read the motor's target velocity.
@@ -158,8 +161,6 @@ public class HingeJoint extends PhysicsJoint {
         return getMotorTargetVelocity(objectId);
     }
 
-    private native float getMotorTargetVelocity(long objectId);
-
     /**
      * Read the motor's maximum impulse.
      *
@@ -168,8 +169,6 @@ public class HingeJoint extends PhysicsJoint {
     public float getMaxMotorImpulse() {
         return getMaxMotorImpulse(objectId);
     }
-
-    private native float getMaxMotorImpulse(long objectId);
 
     /**
      * Alter this joint's limits.
@@ -180,8 +179,6 @@ public class HingeJoint extends PhysicsJoint {
     public void setLimit(float low, float high) {
         setLimit(objectId, low, high);
     }
-
-    private native void setLimit(long objectId, float low, float high);
 
     /**
      * Alter this joint's limits. If you're above the softness, velocities that
@@ -207,9 +204,6 @@ public class HingeJoint extends PhysicsJoint {
         setLimit(objectId, low, high, _softness, _biasFactor, _relaxationFactor);
     }
 
-    private native void setLimit(long objectId, float low, float high,
-            float _softness, float _biasFactor, float _relaxationFactor);
-
     /**
      * Read the upper limit of the hinge angle.
      *
@@ -219,8 +213,6 @@ public class HingeJoint extends PhysicsJoint {
         return getUpperLimit(objectId);
     }
 
-    private native float getUpperLimit(long objectId);
-
     /**
      * Read the lower limit of the hinge angle.
      *
@@ -229,8 +221,6 @@ public class HingeJoint extends PhysicsJoint {
     public float getLowerLimit() {
         return getLowerLimit(objectId);
     }
-
-    private native float getLowerLimit(long objectId);
 
     /**
      * Alter the hinge translation flag.
@@ -243,8 +233,6 @@ public class HingeJoint extends PhysicsJoint {
         setAngularOnly(objectId, angularOnly);
     }
 
-    private native void setAngularOnly(long objectId, boolean angularOnly);
-
     /**
      * Read the hinge angle.
      *
@@ -253,8 +241,8 @@ public class HingeJoint extends PhysicsJoint {
     public float getHingeAngle() {
         return getHingeAngle(objectId);
     }
-
-    private native float getHingeAngle(long objectId);
+    // *************************************************************************
+    // PhysicsJoint methods
 
     /**
      * Serialize this joint, for example when saving to a J3O file.
@@ -314,6 +302,8 @@ public class HingeJoint extends PhysicsJoint {
         setLimit(lowerLimit, upperLimit, limitSoftness, biasFactor,
                 relaxationFactor);
     }
+    // *************************************************************************
+    // private methods
 
     /**
      * Create the configured joint in Bullet.
@@ -324,6 +314,28 @@ public class HingeJoint extends PhysicsJoint {
         logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
     }
 
-    private native long createJoint(long objectIdA, long objectIdB,
+    native private long createJoint(long objectIdA, long objectIdB,
             Vector3f pivotA, Vector3f axisA, Vector3f pivotB, Vector3f axisB);
+
+    native private void enableMotor(long objectId, boolean enable,
+            float targetVelocity, float maxMotorImpulse);
+
+    native private boolean getEnableAngularMotor(long objectId);
+
+    native private float getHingeAngle(long objectId);
+
+    native private float getLowerLimit(long objectId);
+
+    native private float getMaxMotorImpulse(long objectId);
+
+    native private float getMotorTargetVelocity(long objectId);
+
+    native private float getUpperLimit(long objectId);
+
+    native private void setAngularOnly(long objectId, boolean angularOnly);
+
+    native private void setLimit(long objectId, float low, float high);
+
+    native private void setLimit(long objectId, float low, float high,
+            float softness, float biasFactor, float relaxationFactor);
 }
