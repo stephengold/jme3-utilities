@@ -46,15 +46,18 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
+import com.jme3.util.SafeArrayList;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -69,6 +72,8 @@ import jme3utilities.Validate;
  * @author normenhansen
  */
 public class PhysicsSpace {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -87,6 +92,9 @@ public class PhysicsSpace {
      * index of the Z axis
      */
     public static final int AXIS_Z = 2;
+    // *************************************************************************
+    // fields
+
     /**
      * Bullet identifier of the physics space. The constructor sets this to a
      * non-zero value.
@@ -95,8 +103,8 @@ public class PhysicsSpace {
     /**
      * first-in/first-out (FIFO) queue of physics tasks for each thread
      */
-    private static ThreadLocal<ConcurrentLinkedQueue<AppTask<?>>> pQueueTL
-            = new ThreadLocal<ConcurrentLinkedQueue<AppTask<?>>>() {
+    private static ThreadLocal<Queue<AppTask<?>>> pQueueTL
+            = new ThreadLocal<Queue<AppTask<?>>>() {
         @Override
         protected ConcurrentLinkedQueue<AppTask<?>> initialValue() {
             return new ConcurrentLinkedQueue<>();
@@ -105,7 +113,7 @@ public class PhysicsSpace {
     /**
      * first-in/first-out (FIFO) queue of physics tasks
      */
-    final private ConcurrentLinkedQueue<AppTask<?>> pQueue
+    final private Queue<AppTask<?>> pQueue
             = new ConcurrentLinkedQueue<>();
     /**
      * physics space for each thread
@@ -126,13 +134,25 @@ public class PhysicsSpace {
             = new ConcurrentHashMap<>();
     final private Map<Long, PhysicsVehicle> physicsVehicles
             = new ConcurrentHashMap<>();
-    final private ArrayList<PhysicsCollisionListener> collisionListeners
-            = new ArrayList<>();
-    final private ArrayDeque<PhysicsCollisionEvent> collisionEvents
+    /**
+     * list of registered collision listeners
+     */
+    final private List<PhysicsCollisionListener> collisionListeners
+            = new SafeArrayList<>(PhysicsCollisionListener.class);
+    /**
+     * queue of collision events not yet distributed to listeners
+     */
+    final private Deque<PhysicsCollisionEvent> collisionEvents
             = new ArrayDeque<>();
+    /**
+     * map from collision groups to registered group listeners
+     */
     final private Map<Integer, PhysicsCollisionGroupListener> collisionGroupListeners
             = new ConcurrentHashMap<>();
-    final private ConcurrentLinkedQueue<PhysicsTickListener> tickListeners
+    /**
+     * queue of registered tick listeners
+     */
+    final private Queue<PhysicsTickListener> tickListeners
             = new ConcurrentLinkedQueue<>();
     /**
      * copy of minimum coordinate values when using AXIS_SWEEP broadphase
@@ -161,6 +181,7 @@ public class PhysicsSpace {
      * (default=10)
      */
     private int solverNumIterations = 10;
+    // *************************************************************************
 
     /**
      * Access the PhysicsSpace <b>running on this thread</b>. For parallel
@@ -1114,8 +1135,8 @@ public class PhysicsSpace {
      * Alter the accuracy (time step) of the physics simulation.
      * <p>
      * In general, the smaller the time step, the more accurate (and
-     * compute-intensive) the simulation will be. Bullet works best with a
-     * time step of no more than 1/60 second.
+     * compute-intensive) the simulation will be. Bullet works best with a time
+     * step of no more than 1/60 second.
      *
      * @param accuracy the desired time step (in seconds, &gt;0, default=1/60)
      */
