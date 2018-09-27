@@ -35,6 +35,7 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * A 6 degree-of-freedom joint based on Bullet's btGeneric6DofSpringConstraint.
@@ -58,12 +59,16 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class SixDofSpringJoint extends SixDofJoint {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(SixDofSpringJoint.class.getName());
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -97,43 +102,42 @@ public class SixDofSpringJoint extends SixDofJoint {
         super(nodeA, nodeB, pivotA, pivotB, rotA, rotB,
                 useLinearReferenceFrameA);
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Enable or disable the spring for the indexed degree of freedom.
      *
-     * @param index which degree of freedom (&ge;0, &lt;6)
+     * @param dofIndex which degree of freedom (&ge;0, &lt;6)
      * @param onOff true &rarr; enable, false &rarr; disable
      */
-    public void enableSpring(int index, boolean onOff) {
-        enableSpring(objectId, index, onOff);
+    public void enableSpring(int dofIndex, boolean onOff) {
+        Validate.inRange(dofIndex, "DOF index", 0, 5);
+        enableSpring(objectId, dofIndex, onOff);
     }
-
-    native void enableSpring(long objectId, int index, boolean onOff);
 
     /**
      * Alter the spring stiffness for the indexed degree of freedom.
      *
-     * @param index which degree of freedom (&ge;0, &lt;6)
+     * @param dofIndex which degree of freedom (&ge;0, &lt;6)
      * @param stiffness the desired stiffness
      */
-    public void setStiffness(int index, float stiffness) {
-        setStiffness(objectId, index, stiffness);
+    public void setStiffness(int dofIndex, float stiffness) {
+        Validate.inRange(dofIndex, "DOF index", 0, 5);
+        setStiffness(objectId, dofIndex, stiffness);
     }
-
-    native void setStiffness(long objectId, int index, float stiffness);
 
     /**
      * Alter the damping for the indexed degree of freedom.
      *
-     * @param index which degree of freedom (&ge;0, &lt;6)
+     * @param dofIndex which degree of freedom (&ge;0, &lt;6)
      * @param damping the desired viscous damping ratio (0&rarr;no damping,
      * 1&rarr;critically damped, default=1)
      */
-    public void setDamping(int index, float damping) {
-        setDamping(objectId, index, damping);
+    public void setDamping(int dofIndex, float damping) {
+        Validate.inRange(dofIndex, "DOF index", 0, 5);
+        setDamping(objectId, dofIndex, damping);
     }
-
-    native void setDamping(long objectId, int index, float damping);
 
     /**
      * Alter the equilibrium points for all degrees of freedom, based on the
@@ -143,22 +147,33 @@ public class SixDofSpringJoint extends SixDofJoint {
         setEquilibriumPoint(objectId);
     }
 
-    native void setEquilibriumPoint(long objectId);
-
     /**
      * Alter the equilibrium point of the indexed degree of freedom, based on
      * the current constraint position/orientation.
      *
-     * @param index which degree of freedom (&ge;0, &lt;6)
+     * @param dofIndex which degree of freedom (&ge;0, &lt;6)
      */
-    public void setEquilibriumPoint(int index) {
-        setEquilibriumPoint(objectId, index);
+    public void setEquilibriumPoint(int dofIndex) {
+        Validate.inRange(dofIndex, "DOF index", 0, 5);
+        setEquilibriumPoint(objectId, dofIndex);
     }
-
-    native void setEquilibriumPoint(long objectId, int index);
+    // *************************************************************************
+    // SixDofJoint methods
 
     @Override
     native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA,
             Matrix3f rotA, Vector3f pivotB, Matrix3f rotB,
             boolean useLinearReferenceFrameA);
+    // *************************************************************************
+    // private methods
+
+    native private void enableSpring(long objectId, int index, boolean onOff);
+
+    native private void setDamping(long objectId, int index, float damping);
+
+    native private void setEquilibriumPoint(long objectId);
+
+    native private void setEquilibriumPoint(long objectId, int index);
+
+    native private void setStiffness(long objectId, int index, float stiffness);
 }
