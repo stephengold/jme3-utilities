@@ -40,18 +40,24 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class RotationalLimitMotor {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(RotationalLimitMotor.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
      * Unique identifier of the btRotationalLimitMotor. The constructor sets
-     * this to a non-zero value.
+     * this to a non-zero value. After that, the id never changes.
      */
     private long motorId = 0L;
+    // *************************************************************************
+    // constructors
 
     /**
      * Instantiate a motor for the identified btRotationalLimitMotor.
@@ -60,13 +66,15 @@ public class RotationalLimitMotor {
      */
     public RotationalLimitMotor(long motor) {
         assert motor != 0L;
-        this.motorId = motor;
+        motorId = motor;
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Read the id of the btRotationalLimitMotor.
      *
-     * @return the identifier of the btRotationalLimitMotor (not zero)
+     * @return the unique identifier (not zero)
      */
     public long getMotor() {
         assert motorId != 0L;
@@ -82,8 +90,6 @@ public class RotationalLimitMotor {
         return getLoLimit(motorId);
     }
 
-    private native float getLoLimit(long motorId);
-
     /**
      * Alter this motor's constraint lower limit.
      *
@@ -92,8 +98,6 @@ public class RotationalLimitMotor {
     public void setLoLimit(float loLimit) {
         setLoLimit(motorId, loLimit);
     }
-
-    private native void setLoLimit(long motorId, float loLimit);
 
     /**
      * Read this motor's constraint upper limit.
@@ -104,8 +108,6 @@ public class RotationalLimitMotor {
         return getHiLimit(motorId);
     }
 
-    private native float getHiLimit(long motorId);
-
     /**
      * Alter this motor's constraint upper limit.
      *
@@ -114,8 +116,6 @@ public class RotationalLimitMotor {
     public void setHiLimit(float hiLimit) {
         setHiLimit(motorId, hiLimit);
     }
-
-    private native void setHiLimit(long motorId, float hiLimit);
 
     /**
      * Read this motor's target velocity.
@@ -126,8 +126,6 @@ public class RotationalLimitMotor {
         return getTargetVelocity(motorId);
     }
 
-    private native float getTargetVelocity(long motorId);
-
     /**
      * Alter this motor's target velocity.
      *
@@ -136,8 +134,6 @@ public class RotationalLimitMotor {
     public void setTargetVelocity(float targetVelocity) {
         setTargetVelocity(motorId, targetVelocity);
     }
-
-    private native void setTargetVelocity(long motorId, float targetVelocity);
 
     /**
      * Read this motor's maximum force.
@@ -148,8 +144,6 @@ public class RotationalLimitMotor {
         return getMaxMotorForce(motorId);
     }
 
-    private native float getMaxMotorForce(long motorId);
-
     /**
      * Alter this motor's maximum force.
      *
@@ -159,10 +153,8 @@ public class RotationalLimitMotor {
         setMaxMotorForce(motorId, maxMotorForce);
     }
 
-    private native void setMaxMotorForce(long motorId, float maxMotorForce);
-
     /**
-     * Read the limit's maximum force.
+     * Read the limit maximum force.
      *
      * @return the maximum force on the limit
      */
@@ -170,18 +162,14 @@ public class RotationalLimitMotor {
         return getMaxLimitForce(motorId);
     }
 
-    private native float getMaxLimitForce(long motorId);
-
     /**
-     * Alter the limit's maximum force.
+     * Alter the limit maximum force.
      *
      * @param maxLimitForce the desired maximum force on the limit
      */
     public void setMaxLimitForce(float maxLimitForce) {
         setMaxLimitForce(motorId, maxLimitForce);
     }
-
-    private native void setMaxLimitForce(long motorId, float maxLimitForce);
 
     /**
      * Read this motor's damping.
@@ -193,8 +181,6 @@ public class RotationalLimitMotor {
         return getDamping(motorId);
     }
 
-    private native float getDamping(long motorId);
-
     /**
      * Alter this motor's damping.
      *
@@ -205,8 +191,6 @@ public class RotationalLimitMotor {
         setDamping(motorId, damping);
     }
 
-    private native void setDamping(long motorId, float damping);
-
     /**
      * Read this motor's limit softness.
      *
@@ -215,8 +199,6 @@ public class RotationalLimitMotor {
     public float getLimitSoftness() {
         return getLimitSoftness(motorId);
     }
-
-    private native float getLimitSoftness(long motorId);
 
     /**
      * Alter this motor's limit softness.
@@ -227,8 +209,6 @@ public class RotationalLimitMotor {
         setLimitSoftness(motorId, limitSoftness);
     }
 
-    private native void setLimitSoftness(long motorId, float limitSoftness);
-
     /**
      * Read this motor's error tolerance at limits.
      *
@@ -237,8 +217,6 @@ public class RotationalLimitMotor {
     public float getERP() {
         return getERP(motorId);
     }
-
-    private native float getERP(long motorId);
 
     /**
      * Alter this motor's error tolerance at limits.
@@ -249,8 +227,6 @@ public class RotationalLimitMotor {
         setERP(motorId, ERP);
     }
 
-    private native void setERP(long motorId, float ERP);
-
     /**
      * Read this motor's bounce.
      *
@@ -259,8 +235,6 @@ public class RotationalLimitMotor {
     public float getBounce() {
         return getBounce(motorId);
     }
-
-    private native float getBounce(long motorId);
 
     /**
      * Alter this motor's bounce.
@@ -271,8 +245,6 @@ public class RotationalLimitMotor {
         setBounce(motorId, bounce);
     }
 
-    private native void setBounce(long motorId, float limitSoftness);
-
     /**
      * Test whether this motor is enabled.
      *
@@ -282,8 +254,6 @@ public class RotationalLimitMotor {
         return isEnableMotor(motorId);
     }
 
-    private native boolean isEnableMotor(long motorId);
-
     /**
      * Enable or disable this motor.
      *
@@ -292,6 +262,46 @@ public class RotationalLimitMotor {
     public void setEnableMotor(boolean enableMotor) {
         setEnableMotor(motorId, enableMotor);
     }
+    // *************************************************************************
+    // private methods
 
-    private native void setEnableMotor(long motorId, boolean enableMotor);
+    native private float getBounce(long motorId);
+
+    native private float getDamping(long motorId);
+
+    native private float getERP(long motorId);
+
+    native private float getHiLimit(long motorId);
+
+    native private float getLimitSoftness(long motorId);
+
+    native private float getLoLimit(long motorId);
+
+    native private float getMaxLimitForce(long motorId);
+
+    native private float getMaxMotorForce(long motorId);
+
+    native private float getTargetVelocity(long motorId);
+
+    native private boolean isEnableMotor(long motorId);
+
+    native private void setBounce(long motorId, float limitSoftness);
+
+    native private void setDamping(long motorId, float damping);
+
+    native private void setEnableMotor(long motorId, boolean enableMotor);
+
+    native private void setERP(long motorId, float ERP);
+
+    native private void setHiLimit(long motorId, float hiLimit);
+
+    native private void setLimitSoftness(long motorId, float limitSoftness);
+
+    native private void setLoLimit(long motorId, float loLimit);
+
+    native private void setMaxLimitForce(long motorId, float maxLimitForce);
+
+    native private void setMaxMotorForce(long motorId, float maxMotorForce);
+
+    native private void setTargetVelocity(long motorId, float targetVelocity);
 }
