@@ -41,17 +41,24 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class TranslationalLimitMotor {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(TranslationalLimitMotor.class.getName());
+    // *************************************************************************
+    // fields
+
     /**
      * Unique identifier of the btTranslationalLimitMotor. The constructor sets
      * this to a non-zero value. After that, the id never changes.
      */
     private long motorId = 0L;
+    // *************************************************************************
+    // constructors
 
     /**
      * Instantiate a motor for the identified btTranslationalLimitMotor.
@@ -60,8 +67,10 @@ public class TranslationalLimitMotor {
      */
     public TranslationalLimitMotor(long motor) {
         assert motor != 0L;
-        this.motorId = motor;
+        motorId = motor;
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Read the id of the btTranslationalLimitMotor.
@@ -85,18 +94,14 @@ public class TranslationalLimitMotor {
         return vec;
     }
 
-    private native void getLowerLimit(long motorId, Vector3f vector);
-
     /**
-     * Alter the constraint lower limits.
+     * Alter this motor's constraint lower limits.
      *
      * @param lowerLimit (unaffected, not null)
      */
     public void setLowerLimit(Vector3f lowerLimit) {
         setLowerLimit(motorId, lowerLimit);
     }
-
-    private native void setLowerLimit(long motorId, Vector3f vector);
 
     /**
      * Copy this motor's constraint upper limits.
@@ -110,8 +115,6 @@ public class TranslationalLimitMotor {
         return vec;
     }
 
-    private native void getUpperLimit(long motorId, Vector3f vector);
-
     /**
      * Alter the constraint upper limits.
      *
@@ -120,8 +123,6 @@ public class TranslationalLimitMotor {
     public void setUpperLimit(Vector3f upperLimit) {
         setUpperLimit(motorId, upperLimit);
     }
-
-    private native void setUpperLimit(long motorId, Vector3f vector);
 
     /**
      * Copy the accumulated impulse.
@@ -135,8 +136,6 @@ public class TranslationalLimitMotor {
         return vec;
     }
 
-    private native void getAccumulatedImpulse(long motorId, Vector3f vector);
-
     /**
      * Alter the accumulated impulse.
      *
@@ -145,8 +144,6 @@ public class TranslationalLimitMotor {
     public void setAccumulatedImpulse(Vector3f accumulatedImpulse) {
         setAccumulatedImpulse(motorId, accumulatedImpulse);
     }
-
-    private native void setAccumulatedImpulse(long motorId, Vector3f vector);
 
     /**
      * Read this motor's limit softness.
@@ -157,8 +154,6 @@ public class TranslationalLimitMotor {
         return getLimitSoftness(motorId);
     }
 
-    private native float getLimitSoftness(long motorId);
-
     /**
      * Alter the limit softness.
      *
@@ -167,8 +162,6 @@ public class TranslationalLimitMotor {
     public void setLimitSoftness(float limitSoftness) {
         setLimitSoftness(motorId, limitSoftness);
     }
-
-    private native void setLimitSoftness(long motorId, float limitSoftness);
 
     /**
      * Read this motor's damping.
@@ -180,8 +173,6 @@ public class TranslationalLimitMotor {
         return getDamping(motorId);
     }
 
-    private native float getDamping(long motorId);
-
     /**
      * Alter this motor's damping.
      *
@@ -192,8 +183,6 @@ public class TranslationalLimitMotor {
         setDamping(motorId, damping);
     }
 
-    private native void setDamping(long motorId, float damping);
-
     /**
      * Read this motor's restitution.
      *
@@ -203,8 +192,6 @@ public class TranslationalLimitMotor {
         return getRestitution(motorId);
     }
 
-    private native float getRestitution(long motorId);
-
     /**
      * Alter this motor's restitution.
      *
@@ -213,6 +200,30 @@ public class TranslationalLimitMotor {
     public void setRestitution(float restitution) {
         setRestitution(motorId, restitution);
     }
+    // *************************************************************************
+    // private methods
 
-    private native void setRestitution(long motorId, float restitution);
+    native private void getAccumulatedImpulse(long motorId, Vector3f vector);
+
+    native private float getDamping(long motorId);
+
+    native private float getLimitSoftness(long motorId);
+
+    native private void getLowerLimit(long motorId, Vector3f vector);
+
+    native private float getRestitution(long motorId);
+
+    native private void getUpperLimit(long motorId, Vector3f vector);
+
+    native private void setAccumulatedImpulse(long motorId, Vector3f vector);
+
+    native private void setDamping(long motorId, float damping);
+
+    native private void setLimitSoftness(long motorId, float limitSoftness);
+
+    native private void setLowerLimit(long motorId, Vector3f vector);
+
+    native private void setRestitution(long motorId, float restitution);
+
+    native private void setUpperLimit(long motorId, Vector3f vector);
 }
