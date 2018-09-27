@@ -67,12 +67,16 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class SixDofJoint extends PhysicsJoint {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(SixDofJoint.class.getName());
+    // *************************************************************************
+    // fields
 
     private Matrix3f rotA, rotB;
     /**
@@ -81,24 +85,31 @@ public class SixDofJoint extends PhysicsJoint {
      * in frameB space
      */
     private boolean useLinearReferenceFrameA;
-    final private LinkedList<RotationalLimitMotor> rotationalMotors = new LinkedList<>();
+    final private LinkedList<RotationalLimitMotor> rotationalMotors
+            = new LinkedList<>();
     private TranslationalLimitMotor translationalMotor;
     /**
      * upper limits for rotation of all 3 axes
      */
-    final private Vector3f angularUpperLimit = new Vector3f(Vector3f.POSITIVE_INFINITY);
+    final private Vector3f angularUpperLimit
+            = new Vector3f(Vector3f.POSITIVE_INFINITY);
     /**
      * lower limits for rotation of all 3 axes
      */
-    final private Vector3f angularLowerLimit = new Vector3f(Vector3f.NEGATIVE_INFINITY);
+    final private Vector3f angularLowerLimit
+            = new Vector3f(Vector3f.NEGATIVE_INFINITY);
     /**
      * upper limit for translation of all 3 axes
      */
-    final private Vector3f linearUpperLimit = new Vector3f(Vector3f.POSITIVE_INFINITY);
+    final private Vector3f linearUpperLimit
+            = new Vector3f(Vector3f.POSITIVE_INFINITY);
     /**
      * lower limits for translation of all 3 axes
      */
-    final private Vector3f linearLowerLimit = new Vector3f(Vector3f.NEGATIVE_INFINITY);
+    final private Vector3f linearLowerLimit
+            = new Vector3f(Vector3f.NEGATIVE_INFINITY);
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -167,6 +178,7 @@ public class SixDofJoint extends PhysicsJoint {
         logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
         gatherMotors();
     }
+    // *************************************************************************
 
     private void gatherMotors() {
         for (int i = 0; i < 3; i++) {
@@ -177,10 +189,6 @@ public class SixDofJoint extends PhysicsJoint {
         translationalMotor = new TranslationalLimitMotor(
                 getTranslationalLimitMotor(objectId));
     }
-
-    private native long getRotationalLimitMotor(long objectId, int index);
-
-    private native long getTranslationalLimitMotor(long objectId);
 
     /**
      * Access the TranslationalLimitMotor of this joint, the motor which
@@ -214,8 +222,6 @@ public class SixDofJoint extends PhysicsJoint {
         setLinearUpperLimit(objectId, vector);
     }
 
-    private native void setLinearUpperLimit(long objectId, Vector3f vector);
-
     /**
      * Alter the joint's lower limits for translation of all 3 axes.
      *
@@ -225,8 +231,6 @@ public class SixDofJoint extends PhysicsJoint {
         linearLowerLimit.set(vector);
         setLinearLowerLimit(objectId, vector);
     }
-
-    private native void setLinearLowerLimit(long objectId, Vector3f vector);
 
     /**
      * Alter the joint's upper limits for rotation of all 3 axes.
@@ -238,8 +242,6 @@ public class SixDofJoint extends PhysicsJoint {
         setAngularUpperLimit(objectId, vector);
     }
 
-    private native void setAngularUpperLimit(long objectId, Vector3f vector);
-
     /**
      * Alter the joint's lower limits for rotation of all 3 axes.
      *
@@ -250,11 +252,11 @@ public class SixDofJoint extends PhysicsJoint {
         setAngularLowerLimit(objectId, vector);
     }
 
-    private native void setAngularLowerLimit(long objectId, Vector3f vector);
-
     native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA,
             Matrix3f rotA, Vector3f pivotB, Matrix3f rotB,
             boolean useLinearReferenceFrameA);
+    // *************************************************************************
+    // PhysicsJoint methods
 
     /**
      * De-serialize this joint, for example when loading from a J3O file.
@@ -332,4 +334,18 @@ public class SixDofJoint extends PhysicsJoint {
         capsule.write(getTranslationalLimitMotor().getRestitution(), "transMotor_Restitution", 0.5f);
         capsule.write(getTranslationalLimitMotor().getUpperLimit(), "transMotor_UpperLimit", Vector3f.ZERO);
     }
+    // *************************************************************************
+    // private methods
+
+    native private long getRotationalLimitMotor(long objectId, int index);
+
+    native private long getTranslationalLimitMotor(long objectId);
+
+    native private void setAngularLowerLimit(long objectId, Vector3f vector);
+
+    native private void setAngularUpperLimit(long objectId, Vector3f vector);
+
+    native private void setLinearLowerLimit(long objectId, Vector3f vector);
+
+    native private void setLinearUpperLimit(long objectId, Vector3f vector);
 }
