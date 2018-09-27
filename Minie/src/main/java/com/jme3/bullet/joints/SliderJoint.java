@@ -52,16 +52,22 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class SliderJoint extends PhysicsJoint {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(SliderJoint.class.getName());
+    // *************************************************************************
+    // fields
 
     private Matrix3f rotA;
     private Matrix3f rotB;
     private boolean useLinearReferenceFrameA;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -123,6 +129,8 @@ public class SliderJoint extends PhysicsJoint {
         this.useLinearReferenceFrameA = useLinearReferenceFrameA;
         createJoint();
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Read the joint's lower limit for on-axis translation.
@@ -133,8 +141,6 @@ public class SliderJoint extends PhysicsJoint {
         return getLowerLinLimit(objectId);
     }
 
-    private native float getLowerLinLimit(long objectId);
-
     /**
      * Alter the joint's lower limit for on-axis translation.
      *
@@ -143,8 +149,6 @@ public class SliderJoint extends PhysicsJoint {
     public void setLowerLinLimit(float lowerLinLimit) {
         setLowerLinLimit(objectId, lowerLinLimit);
     }
-
-    private native void setLowerLinLimit(long objectId, float value);
 
     /**
      * Read the joint's upper limit for on-axis translation.
@@ -155,8 +159,6 @@ public class SliderJoint extends PhysicsJoint {
         return getUpperLinLimit(objectId);
     }
 
-    private native float getUpperLinLimit(long objectId);
-
     /**
      * Alter the joint's upper limit for on-axis translation.
      *
@@ -166,8 +168,6 @@ public class SliderJoint extends PhysicsJoint {
         setUpperLinLimit(objectId, upperLinLimit);
     }
 
-    private native void setUpperLinLimit(long objectId, float value);
-
     /**
      * Read the joint's lower limit for on-axis rotation.
      *
@@ -176,8 +176,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getLowerAngLimit() {
         return getLowerAngLimit(objectId);
     }
-
-    private native float getLowerAngLimit(long objectId);
 
     /**
      * Alter the joint's lower limit for on-axis rotation.
@@ -189,8 +187,6 @@ public class SliderJoint extends PhysicsJoint {
         setLowerAngLimit(objectId, lowerAngLimit);
     }
 
-    private native void setLowerAngLimit(long objectId, float value);
-
     /**
      * Read the joint's upper limit for on-axis rotation.
      *
@@ -199,8 +195,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getUpperAngLimit() {
         return getUpperAngLimit(objectId);
     }
-
-    private native float getUpperAngLimit(long objectId);
 
     /**
      * Alter the joint's upper limit for on-axis rotation.
@@ -212,8 +206,6 @@ public class SliderJoint extends PhysicsJoint {
         setUpperAngLimit(objectId, upperAngLimit);
     }
 
-    private native void setUpperAngLimit(long objectId, float value);
-
     /**
      * Read the joint's softness for on-axis translation between the limits.
      *
@@ -222,8 +214,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getSoftnessDirLin() {
         return getSoftnessDirLin(objectId);
     }
-
-    private native float getSoftnessDirLin(long objectId);
 
     /**
      * Alter the joint's softness for on-axis translation between the limits.
@@ -234,8 +224,6 @@ public class SliderJoint extends PhysicsJoint {
         setSoftnessDirLin(objectId, softnessDirLin);
     }
 
-    private native void setSoftnessDirLin(long objectId, float value);
-
     /**
      * Read the joint's restitution for on-axis translation between the limits.
      *
@@ -244,8 +232,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getRestitutionDirLin() {
         return getRestitutionDirLin(objectId);
     }
-
-    private native float getRestitutionDirLin(long objectId);
 
     /**
      * Alter the joint's restitution for on-axis translation between the limits.
@@ -257,8 +243,6 @@ public class SliderJoint extends PhysicsJoint {
         setRestitutionDirLin(objectId, restitutionDirLin);
     }
 
-    private native void setRestitutionDirLin(long objectId, float value);
-
     /**
      * Read the joint's damping for on-axis translation between the limits.
      *
@@ -268,8 +252,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getDampingDirLin() {
         return getDampingDirLin(objectId);
     }
-
-    private native float getDampingDirLin(long objectId);
 
     /**
      * Alter the joint's damping for on-axis translation between the limits.
@@ -281,8 +263,6 @@ public class SliderJoint extends PhysicsJoint {
         setDampingDirLin(objectId, dampingDirLin);
     }
 
-    private native void setDampingDirLin(long objectId, float value);
-
     /**
      * Read the joint's softness for on-axis rotation between the limits.
      *
@@ -291,8 +271,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getSoftnessDirAng() {
         return getSoftnessDirAng(objectId);
     }
-
-    private native float getSoftnessDirAng(long objectId);
 
     /**
      * Alter the joint's softness for on-axis rotation between the limits.
@@ -303,8 +281,6 @@ public class SliderJoint extends PhysicsJoint {
         setSoftnessDirAng(objectId, softnessDirAng);
     }
 
-    private native void setSoftnessDirAng(long objectId, float value);
-
     /**
      * Read the joint's restitution for on-axis rotation between the limits.
      *
@@ -313,8 +289,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getRestitutionDirAng() {
         return getRestitutionDirAng(objectId);
     }
-
-    private native float getRestitutionDirAng(long objectId);
 
     /**
      * Alter the joint's restitution for on-axis rotation between the limits.
@@ -326,8 +300,6 @@ public class SliderJoint extends PhysicsJoint {
         setRestitutionDirAng(objectId, restitutionDirAng);
     }
 
-    private native void setRestitutionDirAng(long objectId, float value);
-
     /**
      * Read the joint's damping for on-axis rotation between the limits.
      *
@@ -337,8 +309,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getDampingDirAng() {
         return getDampingDirAng(objectId);
     }
-
-    private native float getDampingDirAng(long objectId);
 
     /**
      * Alter the joint's damping for on-axis rotation between the limits.
@@ -350,8 +320,6 @@ public class SliderJoint extends PhysicsJoint {
         setDampingDirAng(objectId, dampingDirAng);
     }
 
-    private native void setDampingDirAng(long objectId, float value);
-
     /**
      * Read the joint's softness for on-axis translation hitting the limits.
      *
@@ -360,8 +328,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getSoftnessLimLin() {
         return getSoftnessLimLin(objectId);
     }
-
-    private native float getSoftnessLimLin(long objectId);
 
     /**
      * Alter the joint's softness for on-axis translation hitting the limits.
@@ -372,8 +338,6 @@ public class SliderJoint extends PhysicsJoint {
         setSoftnessLimLin(objectId, softnessLimLin);
     }
 
-    private native void setSoftnessLimLin(long objectId, float value);
-
     /**
      * Read the joint's restitution for on-axis translation hitting the limits.
      *
@@ -382,8 +346,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getRestitutionLimLin() {
         return getRestitutionLimLin(objectId);
     }
-
-    private native float getRestitutionLimLin(long objectId);
 
     /**
      * Alter the joint's restitution for on-axis translation hitting the limits.
@@ -395,8 +357,6 @@ public class SliderJoint extends PhysicsJoint {
         setRestitutionLimLin(objectId, restitutionLimLin);
     }
 
-    private native void setRestitutionLimLin(long objectId, float value);
-
     /**
      * Read the joint's damping for on-axis translation hitting the limits.
      *
@@ -406,8 +366,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getDampingLimLin() {
         return getDampingLimLin(objectId);
     }
-
-    private native float getDampingLimLin(long objectId);
 
     /**
      * Alter the joint's damping for on-axis translation hitting the limits.
@@ -419,8 +377,6 @@ public class SliderJoint extends PhysicsJoint {
         setDampingLimLin(objectId, dampingLimLin);
     }
 
-    private native void setDampingLimLin(long objectId, float value);
-
     /**
      * Read the joint's softness for on-axis rotation hitting the limits.
      *
@@ -429,8 +385,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getSoftnessLimAng() {
         return getSoftnessLimAng(objectId);
     }
-
-    private native float getSoftnessLimAng(long objectId);
 
     /**
      * Alter the joint's softness for on-axis rotation hitting the limits.
@@ -441,8 +395,6 @@ public class SliderJoint extends PhysicsJoint {
         setSoftnessLimAng(objectId, softnessLimAng);
     }
 
-    private native void setSoftnessLimAng(long objectId, float value);
-
     /**
      * Read the joint's restitution for on-axis rotation hitting the limits.
      *
@@ -451,8 +403,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getRestitutionLimAng() {
         return getRestitutionLimAng(objectId);
     }
-
-    private native float getRestitutionLimAng(long objectId);
 
     /**
      * Alter the joint's restitution for on-axis rotation hitting the limits.
@@ -464,8 +414,6 @@ public class SliderJoint extends PhysicsJoint {
         setRestitutionLimAng(objectId, restitutionLimAng);
     }
 
-    private native void setRestitutionLimAng(long objectId, float value);
-
     /**
      * Read the joint's damping for on-axis rotation hitting the limits.
      *
@@ -475,8 +423,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getDampingLimAng() {
         return getDampingLimAng(objectId);
     }
-
-    private native float getDampingLimAng(long objectId);
 
     /**
      * Alter the joint's damping for on-axis rotation hitting the limits.
@@ -488,8 +434,6 @@ public class SliderJoint extends PhysicsJoint {
         setDampingLimAng(objectId, dampingLimAng);
     }
 
-    private native void setDampingLimAng(long objectId, float value);
-
     /**
      * Read the joint's softness for off-axis translation.
      *
@@ -498,8 +442,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getSoftnessOrthoLin() {
         return getSoftnessOrthoLin(objectId);
     }
-
-    private native float getSoftnessOrthoLin(long objectId);
 
     /**
      * Alter the joint's softness for off-axis translation.
@@ -510,8 +452,6 @@ public class SliderJoint extends PhysicsJoint {
         setSoftnessOrthoLin(objectId, softnessOrthoLin);
     }
 
-    private native void setSoftnessOrthoLin(long objectId, float value);
-
     /**
      * Read the joint's restitution for off-axis translation.
      *
@@ -520,8 +460,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getRestitutionOrthoLin() {
         return getRestitutionOrthoLin(objectId);
     }
-
-    private native float getRestitutionOrthoLin(long objectId);
 
     /**
      * Alter the joint's restitution for off-axis translation.
@@ -533,8 +471,6 @@ public class SliderJoint extends PhysicsJoint {
         setRestitutionOrthoLin(objectId, restitutionOrthoLin);
     }
 
-    private native void setRestitutionOrthoLin(long objectId, float value);
-
     /**
      * Read the joint's damping for off-axis translation.
      *
@@ -544,8 +480,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getDampingOrthoLin() {
         return getDampingOrthoLin(objectId);
     }
-
-    private native float getDampingOrthoLin(long objectId);
 
     /**
      * Alter the joint's damping for off-axis translation.
@@ -557,8 +491,6 @@ public class SliderJoint extends PhysicsJoint {
         setDampingOrthoLin(objectId, dampingOrthoLin);
     }
 
-    private native void setDampingOrthoLin(long objectId, float value);
-
     /**
      * Read the joint's softness for off-axis rotation.
      *
@@ -567,8 +499,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getSoftnessOrthoAng() {
         return getSoftnessOrthoAng(objectId);
     }
-
-    private native float getSoftnessOrthoAng(long objectId);
 
     /**
      * Alter the joint's softness for off-axis rotation.
@@ -579,8 +509,6 @@ public class SliderJoint extends PhysicsJoint {
         setSoftnessOrthoAng(objectId, softnessOrthoAng);
     }
 
-    private native void setSoftnessOrthoAng(long objectId, float value);
-
     /**
      * Read the joint's restitution for off-axis rotation.
      *
@@ -589,8 +517,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getRestitutionOrthoAng() {
         return getRestitutionOrthoAng(objectId);
     }
-
-    private native float getRestitutionOrthoAng(long objectId);
 
     /**
      * Alter the joint's restitution for off-axis rotation.
@@ -602,8 +528,6 @@ public class SliderJoint extends PhysicsJoint {
         setRestitutionOrthoAng(objectId, restitutionOrthoAng);
     }
 
-    private native void setRestitutionOrthoAng(long objectId, float value);
-
     /**
      * Read the joint's damping for off-axis rotation.
      *
@@ -613,8 +537,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getDampingOrthoAng() {
         return getDampingOrthoAng(objectId);
     }
-
-    private native float getDampingOrthoAng(long objectId);
 
     /**
      * Alter the joint's damping for off-axis rotation.
@@ -626,8 +548,6 @@ public class SliderJoint extends PhysicsJoint {
         setDampingOrthoAng(objectId, dampingOrthoAng);
     }
 
-    private native void setDampingOrthoAng(long objectId, float value);
-
     /**
      * Test whether the translation motor is powered.
      *
@@ -636,8 +556,6 @@ public class SliderJoint extends PhysicsJoint {
     public boolean isPoweredLinMotor() {
         return isPoweredLinMotor(objectId);
     }
-
-    private native boolean isPoweredLinMotor(long objectId);
 
     /**
      * Alter whether the translation motor is powered.
@@ -649,8 +567,6 @@ public class SliderJoint extends PhysicsJoint {
         setPoweredLinMotor(objectId, poweredLinMotor);
     }
 
-    private native void setPoweredLinMotor(long objectId, boolean value);
-
     /**
      * Read the velocity target of the translation motor.
      *
@@ -659,8 +575,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getTargetLinMotorVelocity() {
         return getTargetLinMotorVelocity(objectId);
     }
-
-    private native float getTargetLinMotorVelocity(long objectId);
 
     /**
      * Alter the velocity target of the translation motor.
@@ -671,8 +585,6 @@ public class SliderJoint extends PhysicsJoint {
         setTargetLinMotorVelocity(objectId, targetLinMotorVelocity);
     }
 
-    private native void setTargetLinMotorVelocity(long objectId, float value);
-
     /**
      * Read the maximum force of the translation motor.
      *
@@ -681,8 +593,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getMaxLinMotorForce() {
         return getMaxLinMotorForce(objectId);
     }
-
-    private native float getMaxLinMotorForce(long objectId);
 
     /**
      * Alter the maximum force of the translation motor.
@@ -693,8 +603,6 @@ public class SliderJoint extends PhysicsJoint {
         setMaxLinMotorForce(objectId, maxLinMotorForce);
     }
 
-    private native void setMaxLinMotorForce(long objectId, float value);
-
     /**
      * Test whether the rotation motor is powered.
      *
@@ -703,8 +611,6 @@ public class SliderJoint extends PhysicsJoint {
     public boolean isPoweredAngMotor() {
         return isPoweredAngMotor(objectId);
     }
-
-    private native boolean isPoweredAngMotor(long objectId);
 
     /**
      * Alter whether the rotation motor is powered.
@@ -716,8 +622,6 @@ public class SliderJoint extends PhysicsJoint {
         setPoweredAngMotor(objectId, poweredAngMotor);
     }
 
-    private native void setPoweredAngMotor(long objectId, boolean value);
-
     /**
      * Read the velocity target of the rotation motor.
      *
@@ -726,8 +630,6 @@ public class SliderJoint extends PhysicsJoint {
     public float getTargetAngMotorVelocity() {
         return getTargetAngMotorVelocity(objectId);
     }
-
-    private native float getTargetAngMotorVelocity(long objectId);
 
     /**
      * Alter the velocity target of the rotation motor.
@@ -739,8 +641,6 @@ public class SliderJoint extends PhysicsJoint {
         setTargetAngMotorVelocity(objectId, targetAngMotorVelocity);
     }
 
-    private native void setTargetAngMotorVelocity(long objectId, float value);
-
     /**
      * Read the maximum force of the rotation motor.
      *
@@ -750,8 +650,6 @@ public class SliderJoint extends PhysicsJoint {
         return getMaxAngMotorForce(objectId);
     }
 
-    private native float getMaxAngMotorForce(long objectId);
-
     /**
      * Alter the maximum force of the rotation motor.
      *
@@ -760,8 +658,8 @@ public class SliderJoint extends PhysicsJoint {
     public void setMaxAngMotorForce(float maxAngMotorForce) {
         setMaxAngMotorForce(objectId, maxAngMotorForce);
     }
-
-    private native void setMaxAngMotorForce(long objectId, float value);
+    // *************************************************************************
+    // PhysicsJoint methods
 
     /**
      * Serialize this joint, for example when saving to a J3O file.
@@ -895,6 +793,8 @@ public class SliderJoint extends PhysicsJoint {
         setUpperAngLimit(upperAngLimit);
         setUpperLinLimit(upperLinLimit);
     }
+    // *************************************************************************
+    // private methods
 
     /**
      * Instantiate the configured constraint in Bullet.
@@ -908,4 +808,116 @@ public class SliderJoint extends PhysicsJoint {
     private native long createJoint(long objectIdA, long objectIdB,
             Vector3f pivotA, Matrix3f rotA, Vector3f pivotB, Matrix3f rotB,
             boolean useLinearReferenceFrameA);
+
+    private native float getDampingDirAng(long objectId);
+
+    private native float getDampingDirLin(long objectId);
+
+    private native float getDampingLimAng(long objectId);
+
+    private native float getDampingLimLin(long objectId);
+
+    private native float getDampingOrthoAng(long objectId);
+
+    private native float getDampingOrthoLin(long objectId);
+
+    private native float getLowerAngLimit(long objectId);
+
+    private native float getLowerLinLimit(long objectId);
+
+    private native float getMaxAngMotorForce(long objectId);
+
+    private native float getMaxLinMotorForce(long objectId);
+
+    private native float getRestitutionDirAng(long objectId);
+
+    private native float getRestitutionDirLin(long objectId);
+
+    private native float getRestitutionLimAng(long objectId);
+
+    private native float getRestitutionLimLin(long objectId);
+
+    private native float getRestitutionOrthoAng(long objectId);
+
+    private native float getRestitutionOrthoLin(long objectId);
+
+    private native float getSoftnessDirAng(long objectId);
+
+    private native float getSoftnessDirLin(long objectId);
+
+    private native float getSoftnessLimAng(long objectId);
+
+    private native float getSoftnessLimLin(long objectId);
+
+    private native float getSoftnessOrthoAng(long objectId);
+
+    private native float getSoftnessOrthoLin(long objectId);
+
+    private native float getTargetAngMotorVelocity(long objectId);
+
+    private native float getTargetLinMotorVelocity(long objectId);
+
+    private native float getUpperAngLimit(long objectId);
+
+    private native float getUpperLinLimit(long objectId);
+
+    private native boolean isPoweredAngMotor(long objectId);
+
+    private native boolean isPoweredLinMotor(long objectId);
+
+    private native void setDampingDirAng(long objectId, float value);
+
+    private native void setDampingDirLin(long objectId, float value);
+
+    private native void setDampingLimAng(long objectId, float value);
+
+    private native void setDampingLimLin(long objectId, float value);
+
+    private native void setDampingOrthoAng(long objectId, float value);
+
+    private native void setDampingOrthoLin(long objectId, float value);
+
+    private native void setLowerAngLimit(long objectId, float value);
+
+    private native void setLowerLinLimit(long objectId, float value);
+
+    private native void setMaxAngMotorForce(long objectId, float value);
+
+    private native void setMaxLinMotorForce(long objectId, float value);
+
+    private native void setPoweredAngMotor(long objectId, boolean value);
+
+    private native void setPoweredLinMotor(long objectId, boolean value);
+
+    private native void setRestitutionDirAng(long objectId, float value);
+
+    private native void setRestitutionDirLin(long objectId, float value);
+
+    private native void setRestitutionLimAng(long objectId, float value);
+
+    private native void setRestitutionLimLin(long objectId, float value);
+
+    private native void setRestitutionOrthoAng(long objectId, float value);
+
+    private native void setRestitutionOrthoLin(long objectId, float value);
+
+    private native void setSoftnessDirAng(long objectId, float value);
+
+    private native void setSoftnessDirLin(long objectId, float value);
+
+    private native void setSoftnessLimAng(long objectId, float value);
+
+    private native void setSoftnessLimLin(long objectId, float value);
+
+    private native void setSoftnessOrthoAng(long objectId, float value);
+
+    private native void setSoftnessOrthoLin(long objectId, float value);
+
+    private native void setTargetAngMotorVelocity(long objectId, float value);
+
+    private native void setTargetLinMotorVelocity(long objectId, float value);
+
+    private native void setUpperAngLimit(long objectId, float value);
+
+    private native void setUpperLinLimit(long objectId, float value);
 }
