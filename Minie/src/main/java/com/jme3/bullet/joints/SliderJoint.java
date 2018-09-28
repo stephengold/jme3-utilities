@@ -38,6 +38,7 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -662,6 +663,76 @@ public class SliderJoint extends PhysicsJoint {
     // PhysicsJoint methods
 
     /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned object into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+
+        rotA = cloner.clone(rotA);
+        rotB = cloner.clone(rotB);
+        createJoint();
+
+        SliderJoint old = (SliderJoint) original;
+        setDampingDirAng(old.getDampingDirAng());
+        setDampingDirLin(old.getDampingDirLin());
+        setDampingLimAng(old.getDampingLimAng());
+        setDampingLimLin(old.getDampingLimLin());
+        setDampingOrthoAng(old.getDampingOrthoAng());
+        setDampingOrthoLin(old.getDampingOrthoLin());
+
+        setLowerAngLimit(old.getLowerAngLimit());
+        setLowerLinLimit(old.getLowerLinLimit());
+
+        setMaxAngMotorForce(old.getMaxAngMotorForce());
+        setMaxLinMotorForce(old.getMaxLinMotorForce());
+
+        setPoweredAngMotor(old.isPoweredAngMotor());
+        setPoweredLinMotor(old.isPoweredLinMotor());
+
+        setRestitutionDirAng(old.getRestitutionDirAng());
+        setRestitutionDirLin(old.getRestitutionDirLin());
+        setRestitutionLimAng(old.getRestitutionLimAng());
+        setRestitutionLimLin(old.getRestitutionLimLin());
+        setRestitutionOrthoAng(old.getRestitutionOrthoAng());
+        setRestitutionOrthoLin(old.getRestitutionOrthoLin());
+
+        setSoftnessDirAng(old.getSoftnessDirAng());
+        setSoftnessDirLin(old.getSoftnessDirLin());
+        setSoftnessLimAng(old.getSoftnessLimAng());
+        setSoftnessLimLin(old.getSoftnessLimLin());
+        setSoftnessOrthoAng(old.getSoftnessOrthoAng());
+        setSoftnessOrthoLin(old.getSoftnessOrthoLin());
+
+        setTargetAngMotorVelocity(old.getTargetAngMotorVelocity());
+        setTargetLinMotorVelocity(old.getTargetLinMotorVelocity());
+
+        setUpperAngLimit(old.getUpperAngLimit());
+        setUpperLinLimit(old.getUpperLinLimit());
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public SliderJoint jmeClone() {
+        try {
+            SliderJoint clone = (SliderJoint) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    /**
      * Serialize this joint, for example when saving to a J3O file.
      *
      * @param ex exporter (not null)
@@ -800,124 +871,127 @@ public class SliderJoint extends PhysicsJoint {
      * Instantiate the configured constraint in Bullet.
      */
     private void createJoint() {
+        assert objectId == 0L;
+
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA,
                 rotA, pivotB, rotB, useLinearReferenceFrameA);
+        assert objectId != 0L;
         logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
     }
 
-    private native long createJoint(long objectIdA, long objectIdB,
+    native private long createJoint(long objectIdA, long objectIdB,
             Vector3f pivotA, Matrix3f rotA, Vector3f pivotB, Matrix3f rotB,
             boolean useLinearReferenceFrameA);
 
-    private native float getDampingDirAng(long objectId);
+    native private float getDampingDirAng(long objectId);
 
-    private native float getDampingDirLin(long objectId);
+    native private float getDampingDirLin(long objectId);
 
-    private native float getDampingLimAng(long objectId);
+    native private float getDampingLimAng(long objectId);
 
-    private native float getDampingLimLin(long objectId);
+    native private float getDampingLimLin(long objectId);
 
-    private native float getDampingOrthoAng(long objectId);
+    native private float getDampingOrthoAng(long objectId);
 
-    private native float getDampingOrthoLin(long objectId);
+    native private float getDampingOrthoLin(long objectId);
 
-    private native float getLowerAngLimit(long objectId);
+    native private float getLowerAngLimit(long objectId);
 
-    private native float getLowerLinLimit(long objectId);
+    native private float getLowerLinLimit(long objectId);
 
-    private native float getMaxAngMotorForce(long objectId);
+    native private float getMaxAngMotorForce(long objectId);
 
-    private native float getMaxLinMotorForce(long objectId);
+    native private float getMaxLinMotorForce(long objectId);
 
-    private native float getRestitutionDirAng(long objectId);
+    native private float getRestitutionDirAng(long objectId);
 
-    private native float getRestitutionDirLin(long objectId);
+    native private float getRestitutionDirLin(long objectId);
 
-    private native float getRestitutionLimAng(long objectId);
+    native private float getRestitutionLimAng(long objectId);
 
-    private native float getRestitutionLimLin(long objectId);
+    native private float getRestitutionLimLin(long objectId);
 
-    private native float getRestitutionOrthoAng(long objectId);
+    native private float getRestitutionOrthoAng(long objectId);
 
-    private native float getRestitutionOrthoLin(long objectId);
+    native private float getRestitutionOrthoLin(long objectId);
 
-    private native float getSoftnessDirAng(long objectId);
+    native private float getSoftnessDirAng(long objectId);
 
-    private native float getSoftnessDirLin(long objectId);
+    native private float getSoftnessDirLin(long objectId);
 
-    private native float getSoftnessLimAng(long objectId);
+    native private float getSoftnessLimAng(long objectId);
 
-    private native float getSoftnessLimLin(long objectId);
+    native private float getSoftnessLimLin(long objectId);
 
-    private native float getSoftnessOrthoAng(long objectId);
+    native private float getSoftnessOrthoAng(long objectId);
 
-    private native float getSoftnessOrthoLin(long objectId);
+    native private float getSoftnessOrthoLin(long objectId);
 
-    private native float getTargetAngMotorVelocity(long objectId);
+    native private float getTargetAngMotorVelocity(long objectId);
 
-    private native float getTargetLinMotorVelocity(long objectId);
+    native private float getTargetLinMotorVelocity(long objectId);
 
-    private native float getUpperAngLimit(long objectId);
+    native private float getUpperAngLimit(long objectId);
 
-    private native float getUpperLinLimit(long objectId);
+    native private float getUpperLinLimit(long objectId);
 
-    private native boolean isPoweredAngMotor(long objectId);
+    native private boolean isPoweredAngMotor(long objectId);
 
-    private native boolean isPoweredLinMotor(long objectId);
+    native private boolean isPoweredLinMotor(long objectId);
 
-    private native void setDampingDirAng(long objectId, float value);
+    native private void setDampingDirAng(long objectId, float value);
 
-    private native void setDampingDirLin(long objectId, float value);
+    native private void setDampingDirLin(long objectId, float value);
 
-    private native void setDampingLimAng(long objectId, float value);
+    native private void setDampingLimAng(long objectId, float value);
 
-    private native void setDampingLimLin(long objectId, float value);
+    native private void setDampingLimLin(long objectId, float value);
 
-    private native void setDampingOrthoAng(long objectId, float value);
+    native private void setDampingOrthoAng(long objectId, float value);
 
-    private native void setDampingOrthoLin(long objectId, float value);
+    native private void setDampingOrthoLin(long objectId, float value);
 
-    private native void setLowerAngLimit(long objectId, float value);
+    native private void setLowerAngLimit(long objectId, float value);
 
-    private native void setLowerLinLimit(long objectId, float value);
+    native private void setLowerLinLimit(long objectId, float value);
 
-    private native void setMaxAngMotorForce(long objectId, float value);
+    native private void setMaxAngMotorForce(long objectId, float value);
 
-    private native void setMaxLinMotorForce(long objectId, float value);
+    native private void setMaxLinMotorForce(long objectId, float value);
 
-    private native void setPoweredAngMotor(long objectId, boolean value);
+    native private void setPoweredAngMotor(long objectId, boolean value);
 
-    private native void setPoweredLinMotor(long objectId, boolean value);
+    native private void setPoweredLinMotor(long objectId, boolean value);
 
-    private native void setRestitutionDirAng(long objectId, float value);
+    native private void setRestitutionDirAng(long objectId, float value);
 
-    private native void setRestitutionDirLin(long objectId, float value);
+    native private void setRestitutionDirLin(long objectId, float value);
 
-    private native void setRestitutionLimAng(long objectId, float value);
+    native private void setRestitutionLimAng(long objectId, float value);
 
-    private native void setRestitutionLimLin(long objectId, float value);
+    native private void setRestitutionLimLin(long objectId, float value);
 
-    private native void setRestitutionOrthoAng(long objectId, float value);
+    native private void setRestitutionOrthoAng(long objectId, float value);
 
-    private native void setRestitutionOrthoLin(long objectId, float value);
+    native private void setRestitutionOrthoLin(long objectId, float value);
 
-    private native void setSoftnessDirAng(long objectId, float value);
+    native private void setSoftnessDirAng(long objectId, float value);
 
-    private native void setSoftnessDirLin(long objectId, float value);
+    native private void setSoftnessDirLin(long objectId, float value);
 
-    private native void setSoftnessLimAng(long objectId, float value);
+    native private void setSoftnessLimAng(long objectId, float value);
 
-    private native void setSoftnessLimLin(long objectId, float value);
+    native private void setSoftnessLimLin(long objectId, float value);
 
-    private native void setSoftnessOrthoAng(long objectId, float value);
+    native private void setSoftnessOrthoAng(long objectId, float value);
 
-    private native void setSoftnessOrthoLin(long objectId, float value);
+    native private void setSoftnessOrthoLin(long objectId, float value);
 
-    private native void setTargetAngMotorVelocity(long objectId, float value);
+    native private void setTargetAngMotorVelocity(long objectId, float value);
 
-    private native void setTargetLinMotorVelocity(long objectId, float value);
+    native private void setTargetLinMotorVelocity(long objectId, float value);
 
-    private native void setUpperAngLimit(long objectId, float value);
+    native private void setUpperAngLimit(long objectId, float value);
 
-    private native void setUpperLinLimit(long objectId, float value);
+    native private void setUpperLinLimit(long objectId, float value);
 }
