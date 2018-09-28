@@ -37,6 +37,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Vector3f;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,12 +53,16 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class Point2PointJoint extends PhysicsJoint {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(Point2PointJoint.class.getName());
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -84,6 +89,8 @@ public class Point2PointJoint extends PhysicsJoint {
         super(nodeA, nodeB, pivotA, pivotB);
         createJoint();
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Alter the joint's damping.
@@ -95,8 +102,6 @@ public class Point2PointJoint extends PhysicsJoint {
         setDamping(objectId, value);
     }
 
-    private native void setDamping(long objectId, float value);
-
     /**
      * Alter the joint's impulse clamp.
      *
@@ -106,8 +111,6 @@ public class Point2PointJoint extends PhysicsJoint {
         setImpulseClamp(objectId, value);
     }
 
-    private native void setImpulseClamp(long objectId, float value);
-
     /**
      * Alter the joint's tau value.
      *
@@ -116,8 +119,6 @@ public class Point2PointJoint extends PhysicsJoint {
     public void setTau(float value) {
         setTau(objectId, value);
     }
-
-    private native void setTau(long objectId, float value);
 
     /**
      * Read the joint's damping ratio.
@@ -129,8 +130,6 @@ public class Point2PointJoint extends PhysicsJoint {
         return getDamping(objectId);
     }
 
-    private native float getDamping(long objectId);
-
     /**
      * Read the joint's impulse clamp.
      *
@@ -140,8 +139,6 @@ public class Point2PointJoint extends PhysicsJoint {
         return getImpulseClamp(objectId);
     }
 
-    private native float getImpulseClamp(long objectId);
-
     /**
      * Read the joint's tau value.
      *
@@ -150,8 +147,43 @@ public class Point2PointJoint extends PhysicsJoint {
     public float getTau() {
         return getTau(objectId);
     }
+    // *************************************************************************
+    // PhysicsJoint methods
 
-    private native float getTau(long objectId);
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned object into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        createJoint();
+
+        Point2PointJoint old = (Point2PointJoint) original;
+        setDamping(old.getDamping());
+        setImpulseClamp(old.getImpulseClamp());
+        setTau(old.getTau());
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public Point2PointJoint jmeClone() {
+        try {
+            Point2PointJoint clone = (Point2PointJoint) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 
     /**
      * Serialize this joint, for example when saving to a J3O file.
@@ -183,16 +215,32 @@ public class Point2PointJoint extends PhysicsJoint {
         setDamping(cap.readFloat("tau", 0.3f));
         setDamping(cap.readFloat("impulseClamp", 0f));
     }
+    // *************************************************************************
+    // private methods
 
     /**
      * Create the configured joint in Bullet.
      */
     private void createJoint() {
+        assert objectId == 0L;
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA,
                 pivotB);
+        assert objectId != 0L;
         logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
     }
 
-    private native long createJoint(long objectIdA, long objectIdB,
+    native private long createJoint(long objectIdA, long objectIdB,
             Vector3f pivotA, Vector3f pivotB);
+
+    native private float getDamping(long objectId);
+
+    native private float getImpulseClamp(long objectId);
+
+    native private float getTau(long objectId);
+
+    native private void setDamping(long objectId, float value);
+
+    native private void setImpulseClamp(long objectId, float value);
+
+    native private void setTau(long objectId, float value);
 }
