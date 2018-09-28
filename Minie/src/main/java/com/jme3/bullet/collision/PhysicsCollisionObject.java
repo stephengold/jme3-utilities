@@ -34,6 +34,8 @@ package com.jme3.bullet.collision;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.export.*;
 import com.jme3.material.Material;
+import com.jme3.util.clone.Cloner;
+import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,7 +50,8 @@ import jme3utilities.Validate;
  *
  * @author normenhansen
  */
-public abstract class PhysicsCollisionObject implements Savable {
+abstract public class PhysicsCollisionObject
+        implements JmeCloneable, Savable {
     // *************************************************************************
     // constants and loggers
 
@@ -57,6 +60,9 @@ public abstract class PhysicsCollisionObject implements Savable {
      */
     final public static Logger logger
             = Logger.getLogger(PhysicsCollisionObject.class.getName());
+    // *************************************************************************
+    // fields
+
     /**
      * Unique identifier of the btCollisionObject. Constructors are responsible
      * for setting this to a non-zero value. The id might change if the object
@@ -235,9 +241,9 @@ public abstract class PhysicsCollisionObject implements Savable {
      * @param collisionGroup groups to add (bit mask)
      */
     public void addCollideWithGroup(int collisionGroup) {
-        this.collideWithGroups = this.collideWithGroups | collisionGroup;
+        collideWithGroups |= collisionGroup;
         if (objectId != 0L) {
-            setCollideWithGroups(objectId, this.collideWithGroups);
+            setCollideWithGroups(objectId, collideWithGroups);
         }
     }
 
@@ -247,9 +253,9 @@ public abstract class PhysicsCollisionObject implements Savable {
      * @param collisionGroup groups to remove, ORed together (bit mask)
      */
     public void removeCollideWithGroup(int collisionGroup) {
-        this.collideWithGroups = this.collideWithGroups & ~collisionGroup;
+        collideWithGroups &= ~collisionGroup;
         if (objectId != 0L) {
-            setCollideWithGroups(this.collideWithGroups);
+            setCollideWithGroups(collideWithGroups);
         }
     }
 
@@ -259,9 +265,9 @@ public abstract class PhysicsCollisionObject implements Savable {
      * @param collisionGroups desired groups, ORed together (bit mask)
      */
     public void setCollideWithGroups(int collisionGroups) {
-        this.collideWithGroups = collisionGroups;
+        collideWithGroups = collisionGroups;
         if (objectId != 0L) {
-            setCollideWithGroups(objectId, this.collideWithGroups);
+            setCollideWithGroups(objectId, collideWithGroups);
         }
     }
 
@@ -283,8 +289,6 @@ public abstract class PhysicsCollisionObject implements Savable {
                 Long.toHexString(objectId));
         initUserPointer(objectId, collisionGroup, collideWithGroups);
     }
-
-    native private void initUserPointer(long objectId, int group, int groups);
 
     /**
      * Access the user object associated with this collision object.
@@ -314,22 +318,63 @@ public abstract class PhysicsCollisionObject implements Savable {
         assert objectId != 0L;
         return objectId;
     }
+    // *************************************************************************
+    // new protected methods
 
     /**
      * Attach the identified btCollisionShape to the identified
      * btCollisionObject. Native method.
      *
-     * @param objectId the unique identifier of the btCollisionObject (not zero)
-     * @param collisionShapeId the unique identifier of the btCollisionShape
-     * (not zero)
+     * @param objectId the identifier of the btCollisionObject (not zero)
+     * @param collisionShapeId the identifier of the btCollisionShape (not zero)
      */
     native protected void attachCollisionShape(long objectId,
             long collisionShapeId);
 
-    native private void setCollisionGroup(long objectId, int collisionGroup);
+    /**
+     * Finalize the identified btCollisionObject. Native method.
+     *
+     * @param objectId the identifier of the btCollisionObject (not zero)
+     */
+    native protected void finalizeNative(long objectId);
+    // *************************************************************************
+    // JmeCloneable methods
 
-    native private void setCollideWithGroups(long objectId,
-            int collisionGroups);
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned object into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        userObject = cloner.clone(userObject);
+        collisionShape = cloner.clone(collisionShape);
+        debugMaterial = cloner.clone(debugMaterial);
+        objectId = 0L; // subclass must create the btCollisionObject
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner. Note that the cloned object
+     * won't be added to a physics space, even if the original was.
+     *
+     * @return a new instance
+     */
+    @Override
+    public PhysicsCollisionObject jmeClone() {
+        try {
+            PhysicsCollisionObject clone
+                    = (PhysicsCollisionObject) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+    // *************************************************************************
+    // Savable methods
 
     /**
      * Serialize this object, for example when saving to a J3O file.
@@ -365,6 +410,8 @@ public abstract class PhysicsCollisionObject implements Savable {
                 = (CollisionShape) capsule.readSavable("collisionShape", null);
         collisionShape = shape;
     }
+    // *************************************************************************
+    // Object methods
 
     /**
      * Finalize this collision object just before it is destroyed. Should be
@@ -379,11 +426,13 @@ public abstract class PhysicsCollisionObject implements Savable {
                 Long.toHexString(objectId));
         finalizeNative(objectId);
     }
+    // *************************************************************************
+    // private methods
 
-    /**
-     * Finalize the identified btCollisionObject. Native method.
-     *
-     * @param objectId the unique identifier of the btCollisionObject (not zero)
-     */
-    protected native void finalizeNative(long objectId);
+    native private void initUserPointer(long objectId, int group, int groups);
+
+    native private void setCollisionGroup(long objectId, int collisionGroup);
+
+    native private void setCollideWithGroups(long objectId,
+            int collisionGroups);
 }
