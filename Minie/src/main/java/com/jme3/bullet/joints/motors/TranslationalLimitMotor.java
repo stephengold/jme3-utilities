@@ -151,7 +151,7 @@ public class TranslationalLimitMotor {
      * @return the softness
      */
     public float getLimitSoftness() {
-        return getLimitSoftness(motorId);
+        return getLetLimitSoftness(motorId);
     }
 
     /**
@@ -207,7 +207,7 @@ public class TranslationalLimitMotor {
 
     native private float getDamping(long motorId);
 
-    native private float getLimitSoftness(long motorId);
+    native private float getLetLimitSoftness(long motorId); // TODO
 
     native private void getLowerLimit(long motorId, Vector3f vector);
 
