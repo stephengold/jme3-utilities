@@ -38,6 +38,7 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,19 +54,43 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class ConeJoint extends PhysicsJoint {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(ConeJoint.class.getName());
+    // *************************************************************************
+    // fields
 
+    /**
+     * local orientation of the connection to node A
+     */
     private Matrix3f rotA;
+    /**
+     * local orientation of the connection to node B
+     */
     private Matrix3f rotB;
+    /**
+     * copy of span of the 1st swing axis (in radians)
+     */
     private float swingSpan1 = 1e30f;
+    /**
+     * copy of span of the 2nd swing axis (in radians)
+     */
     private float swingSpan2 = 1e30f;
+    /**
+     * copy of span of the twist (local X) axis (in radians)
+     */
     private float twistSpan = 1e30f;
+    /**
+     * true if angular only, otherwise false
+     */
     private boolean angularOnly = false;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -119,13 +144,52 @@ public class ConeJoint extends PhysicsJoint {
         this.rotB = rotB;
         createJoint();
     }
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Read the span of the 1st swing axis.
+     *
+     * @return the span (in radians)
+     */
+    public float getSwingSpan1() {
+        return swingSpan1;
+    }
+
+    /**
+     * Read the span of the 2nd swing axis.
+     *
+     * @return the span (in radians)
+     */
+    public float getSwingSpan2() {
+        return swingSpan2;
+    }
+
+    /**
+     * Read the span of the twist (local X) axis.
+     *
+     * @return the span (in radians)
+     */
+    public float getTwistSpan() {
+        return twistSpan;
+    }
+
+    /**
+     * Test whether this joint is angular only.
+     *
+     * @return true if angular only, otherwise false
+     */
+    public boolean isAngularOnly() {
+        return angularOnly;
+    }
 
     /**
      * Alter the angular limits for this joint.
      *
-     * @param swingSpan1 angle (in radians)
-     * @param swingSpan2 angle (in radians)
-     * @param twistSpan angle (in radians)
+     * @param swingSpan1 the desired span of the 1st swing axis (in radians)
+     * @param swingSpan2 the desired span of the 2nd swing axis (in radians)
+     * @param twistSpan the desired span of the twist (local X) axis (in
+     * radians)
      */
     public void setLimit(float swingSpan1, float swingSpan2, float twistSpan) {
         this.swingSpan1 = swingSpan1;
@@ -133,9 +197,6 @@ public class ConeJoint extends PhysicsJoint {
         this.twistSpan = twistSpan;
         setLimit(objectId, swingSpan1, swingSpan2, twistSpan);
     }
-
-    private native void setLimit(long objectId, float swingSpan1,
-            float swingSpan2, float twistSpan);
 
     /**
      * Alter whether this joint is angular only.
@@ -146,8 +207,40 @@ public class ConeJoint extends PhysicsJoint {
         angularOnly = value;
         setAngularOnly(objectId, value);
     }
+    // *************************************************************************
+    // PhysicsJoint methods
 
-    private native void setAngularOnly(long objectId, boolean value);
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned object into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        rotA = cloner.clone(rotA);
+        rotB = cloner.clone(rotB);
+        createJoint();
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public ConeJoint jmeClone() {
+        try {
+            ConeJoint clone = (ConeJoint) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 
     /**
      * Serialize this joint, for example when saving to a J3O file.
@@ -187,18 +280,29 @@ public class ConeJoint extends PhysicsJoint {
         this.twistSpan = capsule.readFloat("twistSpan", 1e30f);
         createJoint();
     }
+    // *************************************************************************
+    // private methods
 
     /**
      * Create the configured joint in Bullet.
      */
     private void createJoint() {
+        assert objectId == 0L;
+
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(),
                 pivotA, rotA, pivotB, rotB);
+        assert objectId != 0L;
         logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
-        setLimit(objectId, swingSpan1, swingSpan2, twistSpan);
-        setAngularOnly(objectId, angularOnly);
+
+        setLimit(swingSpan1, swingSpan2, twistSpan);
+        setAngularOnly(angularOnly);
     }
 
-    private native long createJoint(long objectIdA, long objectIdB,
+    native private long createJoint(long objectIdA, long objectIdB,
             Vector3f pivotA, Matrix3f rotA, Vector3f pivotB, Matrix3f rotB);
+
+    native private void setAngularOnly(long objectId, boolean value);
+
+    native private void setLimit(long objectId, float swingSpan1,
+            float swingSpan2, float twistSpan);
 }
