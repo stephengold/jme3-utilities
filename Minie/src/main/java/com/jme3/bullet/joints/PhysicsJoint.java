@@ -34,49 +34,61 @@ package com.jme3.bullet.joints;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.export.*;
 import com.jme3.math.Vector3f;
+import com.jme3.util.clone.Cloner;
+import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * The abstract base class for physics joints based on Bullet's
- * btTypedConstraint, used to connect 2 dynamic rigid bodies in the same
- * physics space.
+ * btTypedConstraint, used to connect 2 dynamic rigid bodies in the same physics
+ * space. TODO make this work for static bodies
  * <p>
  * Joints include ConeJoint, HingeJoint, Point2PointJoint, and SixDofJoint.
  *
  * @author normenhansen
  */
-public abstract class PhysicsJoint implements Savable {
+abstract public class PhysicsJoint
+        implements JmeCloneable, Savable {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(PhysicsJoint.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
-     * Unique identifier of the Bullet constraint. Constructors are responsible
+     * Unique identifier of the btTypedConstraint. Constructors are responsible
      * for setting this to a non-zero value. After that, the id never changes.
      */
     protected long objectId = 0L;
     /**
-     * one of the connected rigid bodies
+     * one of the connected dynamic rigid bodies
      */
     protected PhysicsRigidBody nodeA;
     /**
-     * the other connected rigid body
+     * the other connected dynamic rigid body
      */
     protected PhysicsRigidBody nodeB;
     /**
-     * local offset of this joint's connection point in node A
+     * copy of local offset of this joint's connection point in body A
      */
     protected Vector3f pivotA;
     /**
-     * local offset of this joint's connection point in node B
+     * copy of local offset of this joint's connection point in body B
      */
     protected Vector3f pivotB;
+    /**
+     * true IFF bodies A and B are allowed to collide
+     */
     private boolean collisionBetweenLinkedBodies = true;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -110,6 +122,8 @@ public abstract class PhysicsJoint implements Savable {
         nodeA.addJoint(this);
         nodeB.addJoint(this);
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Read the magnitude of the applied impulse.
@@ -119,8 +133,6 @@ public abstract class PhysicsJoint implements Savable {
     public float getAppliedImpulse() {
         return getAppliedImpulse(objectId);
     }
-
-    private native float getAppliedImpulse(long objectId);
 
     /**
      * Read the id of the Bullet constraint.
@@ -142,13 +154,13 @@ public abstract class PhysicsJoint implements Savable {
     }
 
     /**
-     * Enable or disable collisions between the linked bodies. The joint must be
-     * removed from and added to PhysicsSpace for this change to be effective.
+     * Enable or disable collisions between the linked bodies. Changes take
+     * effect when the joint is added to a PhysicsSpace.
      *
      * @param enable true &rarr; allow collisions, false &rarr; prevent them
      */
     public void setCollisionBetweenLinkedBodies(boolean enable) {
-        this.collisionBetweenLinkedBodies = enable;
+        collisionBetweenLinkedBodies = enable;
     }
 
     /**
@@ -179,7 +191,7 @@ public abstract class PhysicsJoint implements Savable {
     }
 
     /**
-     * Access the local offset of the joint connection point in node A.
+     * Access the local offset of the joint connection point in node B.
      *
      * @return the pre-existing vector (not null) TODO
      */
@@ -188,13 +200,49 @@ public abstract class PhysicsJoint implements Savable {
     }
 
     /**
-     * Destroy this joint and remove it from the joint lists of its connected
-     * bodies.
+     * Remove this joint from the joint lists of both connected bodies.
      */
     public void destroy() {
         getBodyA().removeJoint(this);
         getBodyB().removeJoint(this);
     }
+    // *************************************************************************
+    // JmeCloneable methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned object into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        nodeA = cloner.clone(nodeA);
+        nodeB = cloner.clone(nodeB);
+        pivotA = cloner.clone(pivotA);
+        pivotB = cloner.clone(pivotB);
+        objectId = 0L; // subclass must create the btCollisionObject
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public PhysicsJoint jmeClone() {
+        try {
+            PhysicsJoint clone = (PhysicsJoint) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+    // *************************************************************************
+    // Savable methods
 
     /**
      * Serialize this joint, for example when saving to a J3O file.
@@ -227,6 +275,8 @@ public abstract class PhysicsJoint implements Savable {
         this.pivotA = (Vector3f) capsule.readSavable("pivotA", new Vector3f());
         this.pivotB = (Vector3f) capsule.readSavable("pivotB", new Vector3f());
     }
+    // *************************************************************************
+    // Object methods
 
     /**
      * Finalize this physics joint just before it is destroyed. Should be
@@ -241,6 +291,10 @@ public abstract class PhysicsJoint implements Savable {
                 Long.toHexString(objectId));
         finalizeNative(objectId);
     }
+    // *************************************************************************
+    // private methods
 
-    private native void finalizeNative(long objectId);
+    native private void finalizeNative(long objectId);
+
+    native private float getAppliedImpulse(long objectId);
 }

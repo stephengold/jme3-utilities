@@ -37,6 +37,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Vector3f;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -72,17 +73,17 @@ public class HingeJoint extends PhysicsJoint {
      */
     private boolean angularOnly = false;
     /**
-     * copy of the limit's bias factor, how strictly position errors (drift) is
+     * copy of the limit's bias factor: how strictly position errors (drift) is
      * corrected (default=0.3)
      */
     private float biasFactor = 0.3f;
     /**
-     * copy of the limit's relaxation factor, the rate at which velocity errors
+     * copy of the limit's relaxation factor: the rate at which velocity errors
      * are corrected (default=1)
      */
     private float relaxationFactor = 1f;
     /**
-     * copy of the limit's softness, the range fraction at which velocity-error
+     * copy of the limit's softness: the range fraction at which velocity-error
      * correction starts operating (default=0.9)
      */
     private float limitSoftness = 0.9f;
@@ -120,9 +121,10 @@ public class HingeJoint extends PhysicsJoint {
         this.axisB = axisB;
         createJoint();
         /*
-         * Synchronize limits and angular-only flag with the Bullet constraint.
+         * Synchronize the btHingeConstraint with the local copies.
          */
         setAngularOnly(objectId, angularOnly);
+
         float low = getLowerLimit();
         float high = getUpperLimit();
         setLimit(objectId, low, high, limitSoftness, biasFactor,
@@ -144,12 +146,32 @@ public class HingeJoint extends PhysicsJoint {
     }
 
     /**
+     * Read this joint's bias factor.
+     *
+     * @return the magnitude of the position correction: how strictly position
+     * errors (drift) are corrected
+     */
+    public float getBiasFactor() {
+        return biasFactor;
+    }
+
+    /**
      * Test whether this joint's motor is enabled.
      *
      * @return true if enabled, otherwise false
      */
     public boolean getEnableMotor() {
         return getEnableAngularMotor(objectId);
+    }
+
+    /**
+     * Read this joint's limit softness.
+     *
+     * @return the range fraction at which velocity-error correction starts
+     * operating
+     */
+    public float getLimitSoftness() {
+        return limitSoftness;
     }
 
     /**
@@ -171,13 +193,21 @@ public class HingeJoint extends PhysicsJoint {
     }
 
     /**
-     * Alter this joint's limits.
+     * Read this joint's relaxation factor.
      *
-     * @param low the desired lower limit of the hinge angle (in radians)
-     * @param high the desired upper limit of the joint angle (in radians)
+     * @return the rate at which velocity errors are corrected
      */
-    public void setLimit(float low, float high) {
-        setLimit(objectId, low, high);
+    public float getRelaxationFactor() {
+        return relaxationFactor;
+    }
+
+    /**
+     * Test whether this joint is angular only.
+     *
+     * @return true if angular only, otherwise false
+     */
+    public boolean isAngularOnly() {
+        return angularOnly;
     }
 
     /**
@@ -190,8 +220,8 @@ public class HingeJoint extends PhysicsJoint {
      * @param _softness the desired range fraction at which velocity-error
      * correction starts operating. A softness of 0.9 means that the correction
      * starts at 90% of the limit range. (default=0.9)
-     * @param _biasFactor the desired magnitude of the position correction, how
-     * strictly position errors (drift) is corrected. (default=0.3)
+     * @param _biasFactor the desired magnitude of the position correction: how
+     * strictly position errors (drift) are corrected (default=0.3)
      * @param _relaxationFactor the desired rate at which velocity errors are
      * corrected. This can be seen as the strength of the limits. A low value
      * will make the limits more spongy. (default=1)
@@ -209,7 +239,7 @@ public class HingeJoint extends PhysicsJoint {
      *
      * @return angle (in radians)
      */
-    public float getUpperLimit() {
+    final public float getUpperLimit() {
         return getUpperLimit(objectId);
     }
 
@@ -218,7 +248,7 @@ public class HingeJoint extends PhysicsJoint {
      *
      * @return the angle (in radians)
      */
-    public float getLowerLimit() {
+    final public float getLowerLimit() {
         return getLowerLimit(objectId);
     }
 
@@ -243,6 +273,50 @@ public class HingeJoint extends PhysicsJoint {
     }
     // *************************************************************************
     // PhysicsJoint methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned object into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        axisA = cloner.clone(axisA);
+        axisB = cloner.clone(axisB);
+        createJoint();
+
+        setAngularOnly(angularOnly);
+
+        HingeJoint old = (HingeJoint) original;
+        float low = old.getLowerLimit();
+        float high = old.getUpperLimit();
+        setLimit(low, high, limitSoftness, biasFactor, relaxationFactor);
+
+        boolean enable = old.getEnableMotor();
+        float targetVelocity = old.getMotorTargetVelocity();
+        float maxImpulse = old.getMaxMotorImpulse();
+        enableMotor(enable, targetVelocity, maxImpulse);
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public HingeJoint jmeClone() {
+        try {
+            HingeJoint clone = (HingeJoint) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 
     /**
      * Serialize this joint, for example when saving to a J3O file.
@@ -281,16 +355,16 @@ public class HingeJoint extends PhysicsJoint {
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
-        this.axisA = (Vector3f) capsule.readSavable("axisA", new Vector3f());
-        this.axisB = (Vector3f) capsule.readSavable("axisB", new Vector3f());
+        axisA = (Vector3f) capsule.readSavable("axisA", new Vector3f());
+        axisB = (Vector3f) capsule.readSavable("axisB", new Vector3f());
 
-        this.angularOnly = capsule.readBoolean("angularOnly", false);
+        angularOnly = capsule.readBoolean("angularOnly", false);
+
         float lowerLimit = capsule.readFloat("lowerLimit", 1e30f);
         float upperLimit = capsule.readFloat("upperLimit", -1e30f);
-
-        this.biasFactor = capsule.readFloat("biasFactor", 0.3f);
-        this.relaxationFactor = capsule.readFloat("relaxationFactor", 1f);
-        this.limitSoftness = capsule.readFloat("limitSoftness", 0.9f);
+        biasFactor = capsule.readFloat("biasFactor", 0.3f);
+        relaxationFactor = capsule.readFloat("relaxationFactor", 1f);
+        limitSoftness = capsule.readFloat("limitSoftness", 0.9f);
 
         boolean enableAngularMotor
                 = capsule.readBoolean("enableAngularMotor", false);
@@ -299,6 +373,7 @@ public class HingeJoint extends PhysicsJoint {
 
         createJoint();
         enableMotor(enableAngularMotor, targetVelocity, maxMotorImpulse);
+        setAngularOnly(angularOnly);
         setLimit(lowerLimit, upperLimit, limitSoftness, biasFactor,
                 relaxationFactor);
     }
@@ -309,8 +384,11 @@ public class HingeJoint extends PhysicsJoint {
      * Create the configured joint in Bullet.
      */
     private void createJoint() {
+        assert objectId == 0L;
+
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(),
                 pivotA, axisA, pivotB, axisB);
+        assert objectId != 0L;
         logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
     }
 
@@ -333,8 +411,6 @@ public class HingeJoint extends PhysicsJoint {
     native private float getUpperLimit(long objectId);
 
     native private void setAngularOnly(long objectId, boolean angularOnly);
-
-    native private void setLimit(long objectId, float low, float high);
 
     native private void setLimit(long objectId, float low, float high,
             float softness, float biasFactor, float relaxationFactor);
