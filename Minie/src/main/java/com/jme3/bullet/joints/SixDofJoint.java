@@ -40,8 +40,10 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -85,28 +87,27 @@ public class SixDofJoint extends PhysicsJoint {
      * in frameB space
      */
     private boolean useLinearReferenceFrameA;
-    final private LinkedList<RotationalLimitMotor> rotationalMotors
-            = new LinkedList<>();
+    private List<RotationalLimitMotor> rotationalMotors = new LinkedList<>();
     private TranslationalLimitMotor translationalMotor;
     /**
      * upper limits for rotation of all 3 axes
      */
-    final private Vector3f angularUpperLimit
+    private Vector3f angularUpperLimit
             = new Vector3f(Vector3f.POSITIVE_INFINITY);
     /**
      * lower limits for rotation of all 3 axes
      */
-    final private Vector3f angularLowerLimit
+    private Vector3f angularLowerLimit
             = new Vector3f(Vector3f.NEGATIVE_INFINITY);
     /**
      * upper limit for translation of all 3 axes
      */
-    final private Vector3f linearUpperLimit
+    private Vector3f linearUpperLimit
             = new Vector3f(Vector3f.POSITIVE_INFINITY);
     /**
      * lower limits for translation of all 3 axes
      */
-    final private Vector3f linearLowerLimit
+    private Vector3f linearLowerLimit
             = new Vector3f(Vector3f.NEGATIVE_INFINITY);
     // *************************************************************************
     // constructors
@@ -144,11 +145,7 @@ public class SixDofJoint extends PhysicsJoint {
         this.useLinearReferenceFrameA = useLinearReferenceFrameA;
         this.rotA = rotA;
         this.rotB = rotB;
-
-        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA,
-                rotA, pivotB, rotB, useLinearReferenceFrameA);
-        logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
-        gatherMotors();
+        createJoint();
     }
 
     /**
@@ -172,11 +169,7 @@ public class SixDofJoint extends PhysicsJoint {
         this.useLinearReferenceFrameA = useLinearReferenceFrameA;
         rotA = new Matrix3f();
         rotB = new Matrix3f();
-
-        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA,
-                rotA, pivotB, rotB, useLinearReferenceFrameA);
-        logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
-        gatherMotors();
+        createJoint();
     }
     // *************************************************************************
 
@@ -188,6 +181,66 @@ public class SixDofJoint extends PhysicsJoint {
         }
         translationalMotor = new TranslationalLimitMotor(
                 getTranslationalLimitMotor(objectId));
+    }
+
+    /**
+     * Copy the joint's lower limits for rotation on all 3 axes.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the lower limit for each local axis (in radians, either
+     * storeResult or a new vector, not null)
+     */
+    public Vector3f getAngularLowerLimit(Vector3f storeResult) {
+        if (storeResult == null) {
+            return angularLowerLimit.clone();
+        } else {
+            return storeResult.set(angularLowerLimit);
+        }
+    }
+
+    /**
+     * Copy the joint's upper limits for rotation on all 3 axes.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the upper limit for each local axis (in radians, either
+     * storeResult or a new vector, not null)
+     */
+    public Vector3f getAngularUpperLimit(Vector3f storeResult) {
+        if (storeResult == null) {
+            return angularUpperLimit.clone();
+        } else {
+            return storeResult.set(angularUpperLimit);
+        }
+    }
+
+    /**
+     * Copy the joint's lower limits for translation on all 3 axes.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the lower limit for each local axis (in radians, either
+     * storeResult or a new vector, not null)
+     */
+    public Vector3f getLinearLowerLimit(Vector3f storeResult) {
+        if (storeResult == null) {
+            return linearLowerLimit.clone();
+        } else {
+            return storeResult.set(linearLowerLimit);
+        }
+    }
+
+    /**
+     * Copy the joint's upper limits for translation on all 3 axes.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the upper limit for each local axis (in radians, either
+     * storeResult or a new vector, not null)
+     */
+    public Vector3f getLinearUpperLimit(Vector3f storeResult) {
+        if (storeResult == null) {
+            return linearUpperLimit.clone();
+        } else {
+            return storeResult.set(linearUpperLimit);
+        }
     }
 
     /**
@@ -259,6 +312,78 @@ public class SixDofJoint extends PhysicsJoint {
     // PhysicsJoint methods
 
     /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned object into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+
+        rotA = cloner.clone(rotA);
+        rotB = cloner.clone(rotB);
+        rotationalMotors = new LinkedList<>();
+        translationalMotor = null;
+        createJoint();
+
+        angularLowerLimit = cloner.clone(angularLowerLimit);
+        angularUpperLimit = cloner.clone(angularUpperLimit);
+        linearLowerLimit = cloner.clone(linearLowerLimit);
+        linearUpperLimit = cloner.clone(linearUpperLimit);
+
+        SixDofJoint old = (SixDofJoint) original;
+
+        setAngularLowerLimit(old.getAngularLowerLimit(null));
+        setAngularUpperLimit(old.getAngularUpperLimit(null));
+        setLinearLowerLimit(old.getLinearLowerLimit(null));
+        setLinearLowerLimit(old.getLinearUpperLimit(null));
+
+        TranslationalLimitMotor tlm = getTranslationalLimitMotor();
+        TranslationalLimitMotor oldTlm = old.getTranslationalLimitMotor();
+
+        tlm.setDamping(oldTlm.getDamping());
+        tlm.setLimitSoftness(oldTlm.getLimitSoftness());
+        tlm.setLowerLimit(oldTlm.getLowerLimit());
+        tlm.setRestitution(oldTlm.getRestitution());
+        tlm.setUpperLimit(oldTlm.getUpperLimit());
+
+        for (int i = 0; i < 3; i++) {
+            RotationalLimitMotor rlm = getRotationalLimitMotor(i);
+            RotationalLimitMotor oldRlm = old.getRotationalLimitMotor(i);
+
+            rlm.setBounce(oldRlm.getBounce());
+            rlm.setDamping(oldRlm.getDamping());
+            rlm.setEnableMotor(oldRlm.isEnableMotor());
+            rlm.setERP(oldRlm.getERP());
+            rlm.setHiLimit(oldRlm.getHiLimit());
+            rlm.setLimitSoftness(oldRlm.getLimitSoftness());
+            rlm.setLoLimit(oldRlm.getLoLimit());
+            rlm.setMaxLimitForce(oldRlm.getMaxLimitForce());
+            rlm.setMaxMotorForce(oldRlm.getMaxMotorForce());
+            rlm.setTargetVelocity(oldRlm.getTargetVelocity());
+        }
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public SixDofJoint jmeClone() {
+        try {
+            SixDofJoint clone = (SixDofJoint) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    /**
      * De-serialize this joint, for example when loading from a J3O file.
      *
      * @param im importer (not null)
@@ -269,9 +394,7 @@ public class SixDofJoint extends PhysicsJoint {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
 
-        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA, rotA, pivotB, rotB, useLinearReferenceFrameA);
-        logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
-        gatherMotors();
+        createJoint();
 
         setAngularUpperLimit((Vector3f) capsule.readSavable("angularUpperLimit", new Vector3f(Vector3f.POSITIVE_INFINITY)));
         setAngularLowerLimit((Vector3f) capsule.readSavable("angularLowerLimit", new Vector3f(Vector3f.NEGATIVE_INFINITY)));
@@ -336,6 +459,17 @@ public class SixDofJoint extends PhysicsJoint {
     }
     // *************************************************************************
     // private methods
+
+    private void createJoint() {
+        assert objectId == 0L;
+
+        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA,
+                rotA, pivotB, rotB, useLinearReferenceFrameA);
+        assert objectId != 0L;
+        logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
+
+        gatherMotors();
+    }
 
     native private long getRotationalLimitMotor(long objectId, int index);
 
