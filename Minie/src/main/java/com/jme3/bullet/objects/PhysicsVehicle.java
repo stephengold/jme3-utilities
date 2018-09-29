@@ -65,12 +65,16 @@ import jme3utilities.Validate;
  * @author normenhansen
  */
 public class PhysicsVehicle extends PhysicsRigidBody {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(PhysicsVehicle.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
      * Unique identifier of the btRaycastVehicle. The constructor sets this to a
@@ -93,6 +97,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * physics space where this vehicle is added, or null if none
      */
     private PhysicsSpace physicsSpace;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -119,6 +125,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     public PhysicsVehicle(CollisionShape shape, float mass) {
         super(shape, mass);
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * used internally
@@ -631,12 +639,12 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);        
+        motionState.setVehicle(this);
+        
         //physicsSpace not cloned
         tuning = cloner.clone(tuning);
         wheels = cloner.clone(wheels);
-        motionState.setVehicle(this);
-
-        super.cloneFields(cloner, original);
     }
 
     /**
