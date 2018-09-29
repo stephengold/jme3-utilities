@@ -36,6 +36,8 @@ import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
+import com.jme3.util.clone.Cloner;
+import com.jme3.util.clone.JmeCloneable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,7 +46,7 @@ import java.util.logging.Logger;
  *
  * @author normenhansen
  */
-public class RigidBodyMotionState {
+public class RigidBodyMotionState implements JmeCloneable {
     // *************************************************************************
     // constants and loggers
 
@@ -60,13 +62,13 @@ public class RigidBodyMotionState {
      * Unique identifier of the native object. Constructors are responsible for
      * setting this to a non-zero value. After that, the id never changes.
      */
-    final private long motionStateId;
+    private long motionStateId;
 
-    final private Vector3f worldLocation = new Vector3f();
-    final private Matrix3f worldRotation = new Matrix3f();
-    final private Quaternion worldRotationQuat = new Quaternion();
-    final private Quaternion tmp_inverseWorldRotation = new Quaternion();
-    private PhysicsVehicle vehicle;
+    private Vector3f worldLocation = new Vector3f();
+    private Matrix3f worldRotation = new Matrix3f();
+    private Quaternion worldRotationQuat = new Quaternion();
+    private Quaternion tmp_inverseWorldRotation = new Quaternion();
+    private PhysicsVehicle vehicle = null;
     /**
      * true &rarr; physics coordinates match local transform, false &rarr;
      * physics coordinates match world transform
@@ -194,6 +196,43 @@ public class RigidBodyMotionState {
         return motionStateId;
     }
     // *************************************************************************
+    // JmeCloneable methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned state into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this state (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        motionStateId = createMotionState();
+        assert motionStateId != 0L;
+
+        tmp_inverseWorldRotation = cloner.clone(tmp_inverseWorldRotation);
+        worldLocation = cloner.clone(worldLocation);
+        worldRotation = cloner.clone(worldRotation);
+        worldRotationQuat = cloner.clone(worldRotationQuat);
+        vehicle = cloner.clone(vehicle);
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public RigidBodyMotionState jmeClone() {
+        try {
+            RigidBodyMotionState clone = (RigidBodyMotionState) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+    // *************************************************************************
     // Object methods
 
     /**
@@ -212,17 +251,17 @@ public class RigidBodyMotionState {
     // *************************************************************************
     // private methods
 
-    private native boolean applyTransform(long stateId, Vector3f location,
+    native private boolean applyTransform(long stateId, Vector3f location,
             Quaternion rotation);
 
-    private native long createMotionState();
+    native private long createMotionState();
 
-    private native void finalizeNative(long objectId);
+    native private void finalizeNative(long objectId);
 
-    private native void getWorldLocation(long stateId, Vector3f storeResult);
+    native private void getWorldLocation(long stateId, Vector3f storeResult);
 
-    private native void getWorldRotation(long stateId, Matrix3f storeResult);
+    native private void getWorldRotation(long stateId, Matrix3f storeResult);
 
-    private native void getWorldRotationQuat(long stateId,
+    native private void getWorldRotationQuat(long stateId,
             Quaternion storeResult);
 }
