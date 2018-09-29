@@ -47,12 +47,16 @@ import jme3utilities.Validate;
  * @author normenhansen
  */
 public class VehicleWheel implements Savable {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(VehicleWheel.class.getName());
+    // *************************************************************************
+    // fields
 
     /**
      * unique identifier of the btRaycastVehicle
@@ -122,6 +126,8 @@ public class VehicleWheel implements Savable {
      * physics coordinates match world transform
      */
     private boolean applyLocal = false;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -158,6 +164,8 @@ public class VehicleWheel implements Savable {
         this.restLength = restLength;
         this.radius = radius;
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Update this wheel's location and orientation in physics space.
@@ -167,12 +175,6 @@ public class VehicleWheel implements Savable {
         getWheelRotation(vehicleId, wheelIndex, tmp_Matrix);
         wheelWorldRotation.fromRotationMatrix(tmp_Matrix);
     }
-
-    private native void getWheelLocation(long vehicleId, int wheelId,
-            Vector3f location);
-
-    private native void getWheelRotation(long vehicleId, int wheelId,
-            Matrix3f location);
 
     /**
      * Apply this wheel's physics location and orientation to its associated
@@ -458,18 +460,6 @@ public class VehicleWheel implements Savable {
         }
     }
 
-    private native void applyInfo(long wheelId, int wheelIndex,
-            float suspensionStiffness,
-            float wheelsDampingRelaxation,
-            float wheelsDampingCompression,
-            float frictionSlip,
-            float rollInfluence,
-            float maxSuspensionTravelCm,
-            float maxSuspensionForce,
-            float wheelsRadius,
-            boolean frontWheel,
-            float suspensionRestLength);
-
     /**
      * Read the radius of this wheel.
      *
@@ -525,9 +515,6 @@ public class VehicleWheel implements Savable {
         return storeResult;
     }
 
-    private native void getCollisionLocation(long wheelId, int wheelIndex,
-            Vector3f vec);
-
     /**
      * Copy the normal where the wheel touches the ground.
      *
@@ -544,9 +531,6 @@ public class VehicleWheel implements Savable {
         return storeResult;
     }
 
-    private native void getCollisionNormal(long wheelId, int wheelIndex,
-            Vector3f vec);
-
     /**
      * Calculate to what extent the wheel is skidding (for skid sounds/smoke
      * etc.)
@@ -558,8 +542,6 @@ public class VehicleWheel implements Savable {
         return getSkidInfo(vehicleId, wheelIndex);
     }
 
-    native private float getSkidInfo(long wheelId, int wheelIndex);
-
     /**
      * Calculate how much this wheel has turned since the last physics step.
      *
@@ -568,8 +550,8 @@ public class VehicleWheel implements Savable {
     public float getDeltaRotation() {
         return getDeltaRotation(vehicleId, wheelIndex);
     }
-
-    native private float getDeltaRotation(long wheelId, int wheelIndex);
+    // *************************************************************************
+    // Savable methods
 
     /**
      * De-serialize this wheel, for example when loading from a J3O file.
@@ -686,4 +668,34 @@ public class VehicleWheel implements Savable {
 
         return storeResult;
     }
+    // *************************************************************************
+    // private methods
+
+    native private void applyInfo(long wheelId, int wheelIndex,
+            float suspensionStiffness,
+            float wheelsDampingRelaxation,
+            float wheelsDampingCompression,
+            float frictionSlip,
+            float rollInfluence,
+            float maxSuspensionTravelCm,
+            float maxSuspensionForce,
+            float wheelsRadius,
+            boolean frontWheel,
+            float suspensionRestLength);
+
+    native private void getCollisionLocation(long wheelId, int wheelIndex,
+            Vector3f vec);
+
+    native private void getCollisionNormal(long wheelId, int wheelIndex,
+            Vector3f vec);
+
+    native private float getDeltaRotation(long wheelId, int wheelIndex);
+
+    native private float getSkidInfo(long wheelId, int wheelIndex);
+
+    native private void getWheelLocation(long vehicleId, int wheelId,
+            Vector3f location);
+
+    native private void getWheelRotation(long vehicleId, int wheelId,
+            Matrix3f location);
 }
