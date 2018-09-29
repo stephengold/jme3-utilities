@@ -111,13 +111,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
                 Long.toHexString(characterId));
     }
 
-    private native long createGhostObject();
-
-    private native void setCharacterFlags(long objectId);
-
-    private native long createCharacterObject(long objectId, long shapeId,
-            float stepHeight);
-
     /**
      * Directly alter the location of this character's center of mass.
      *
@@ -126,8 +119,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     public void warp(Vector3f location) {
         warp(characterId, location);
     }
-
-    private native void warp(long characterId, Vector3f location);
 
     /**
      * Alter the walk offset. The offset will continue to be applied until
@@ -140,8 +131,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         walkOffset.set(offset);
         setWalkDirection(characterId, offset);
     }
-
-    private native void setWalkDirection(long characterId, Vector3f direction);
 
     /**
      * Access the walk offset.
@@ -161,8 +150,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         setUp(characterId, direction);
     }
 
-    private native void setUp(long characterId, Vector3f direction);
-
     /**
      * Alter this character's angular velocity.
      *
@@ -172,9 +159,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     public void setAngularVelocity(Vector3f angularVelocity) {
         setAngularVelocity(characterId, angularVelocity);
     }
-
-    private native void setAngularVelocity(long characterId,
-            Vector3f angularVelocity);
 
     /**
      * Copy this character's angular velocity.
@@ -192,9 +176,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         return storeResult;
     }
 
-    private native void getAngularVelocity(long characterId,
-            Vector3f storeResult);
-
     /**
      * Alter the linear velocity of this character's center of mass.
      *
@@ -203,8 +184,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     public void setLinearVelocity(Vector3f velocity) {
         setLinearVelocity(characterId, velocity);
     }
-
-    private native void setLinearVelocity(long characterId, Vector3f velocity);
 
     /**
      * Copy the linear velocity of this character's center of mass.
@@ -221,9 +200,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         return storeResult;
     }
 
-    private native void getLinearVelocity(long characterId,
-            Vector3f storeResult);
-
     /**
      * Alter this character's fall speed.
      *
@@ -233,8 +209,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         this.fallSpeed = fallSpeed;
         setFallSpeed(characterId, fallSpeed);
     }
-
-    private native void setFallSpeed(long characterId, float fallSpeed);
 
     /**
      * Read this character's fall speed.
@@ -255,8 +229,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         setJumpSpeed(characterId, jumpSpeed);
     }
 
-    private native void setJumpSpeed(long characterId, float jumpSpeed);
-
     /**
      * Read this character's jump speed.
      *
@@ -275,8 +247,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         setGravity(characterId, gravity);
     }
 
-    private native void setGravity(long characterId, Vector3f gravity);
-
     /**
      * Copy this character's gravitational acceleration.
      *
@@ -293,8 +263,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         return storeResult;
     }
 
-    private native void getGravity(long characterId, Vector3f storeResult);
-
     /**
      * Read this character's linear damping.
      *
@@ -304,8 +272,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     public float getLinearDamping() {
         return getLinearDamping(characterId);
     }
-
-    private native float getLinearDamping(long characterId);
 
     /**
      * Alter this character's linear damping.
@@ -317,8 +283,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         setLinearDamping(characterId, damping);
     }
 
-    private native void setLinearDamping(long characterId, float damping);
-
     /**
      * Read this character's angular damping.
      *
@@ -328,8 +292,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     public float getAngularDamping() {
         return getAngularDamping(characterId);
     }
-
-    private native float getAngularDamping(long characterId);
 
     /**
      * Alter this character's angular damping.
@@ -341,8 +303,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         setAngularDamping(characterId, damping);
     }
 
-    private native void setAngularDamping(long characterId, float damping);
-
     /**
      * Read this character's step height.
      *
@@ -351,8 +311,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     public float getStepHeight() {
         return getStepHeight(characterId);
     }
-
-    private native float getStepHeight(long characterId);
 
     /**
      * Alter this character's step height.
@@ -363,8 +321,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         setStepHeight(characterId, height);
     }
 
-    private native void setStepHeight(long characterId, float height);
-
     /**
      * Read this character's maximum penetration depth.
      *
@@ -373,8 +329,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     public float getMaxPenetrationDepth() {
         return getMaxPenetrationDepth(characterId);
     }
-
-    private native float getMaxPenetrationDepth(long characterId);
 
     /**
      * Alter this character's maximum penetration depth.
@@ -385,8 +339,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         setMaxPenetrationDepth(characterId, depth);
     }
 
-    private native void setMaxPenetrationDepth(long characterId, float depth);
-
     /**
      * Alter this character's maximum slope angle.
      *
@@ -395,8 +347,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     public void setMaxSlope(float slopeRadians) {
         setMaxSlope(characterId, slopeRadians);
     }
-
-    private native void setMaxSlope(long characterId, float slopeRadians);
 
     /**
      * Read this character's maximum slope angle.
@@ -407,8 +357,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         return getMaxSlope(characterId);
     }
 
-    private native float getMaxSlope(long characterId);
-
     /**
      * Test whether this character is on the ground.
      *
@@ -418,8 +366,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         return onGround(characterId);
     }
 
-    private native boolean onGround(long characterId);
-
     /**
      * Jump in the specified direction.
      *
@@ -428,8 +374,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     public void jump(Vector3f dir) {
         jump(characterId, dir);
     }
-
-    private native void jump(long characterId, Vector3f v);
 
     /**
      * Apply the specified CollisionShape to this character. Note that the
@@ -473,8 +417,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         return trans;
     }
 
-    private native void getPhysicsLocation(long objectId, Vector3f vec);
-
     /**
      * Copy the location of this character's center of mass.
      *
@@ -494,8 +436,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         setCcdSweptSphereRadius(objectId, radius);
     }
 
-    private native void setCcdSweptSphereRadius(long objectId, float radius);
-
     /**
      * Alter the amount of motion required to activate continuous collision
      * detection (CCD).
@@ -510,8 +450,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         setCcdMotionThreshold(objectId, threshold);
     }
 
-    private native void setCcdMotionThreshold(long objectId, float threshold);
-
     /**
      * Read the radius of the sphere used for continuous collision detection
      * (CCD).
@@ -521,8 +459,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     public float getCcdSweptSphereRadius() {
         return getCcdSweptSphereRadius(objectId);
     }
-
-    private native float getCcdSweptSphereRadius(long objectId);
 
     /**
      * Calculate this character's continuous collision detection (CCD) motion
@@ -534,8 +470,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         return getCcdMotionThreshold(objectId);
     }
 
-    private native float getCcdMotionThreshold(long objectId);
-
     /**
      * Calculate the square of this character's continuous collision detection
      * (CCD) motion threshold.
@@ -545,8 +479,6 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     public float getCcdSquareMotionThreshold() {
         return getCcdSquareMotionThreshold(objectId);
     }
-
-    private native float getCcdSquareMotionThreshold(long objectId);
 
     /**
      * used internally
@@ -614,6 +546,76 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         super.finalize();
         finalizeNativeCharacter(characterId);
     }
+    // *************************************************************************
+    // private methods
 
-    private native void finalizeNativeCharacter(long characterId);
+    native private long createGhostObject();
+
+    native private long createCharacterObject(long objectId, long shapeId,
+            float stepHeight);
+
+    native private void finalizeNativeCharacter(long characterId);
+
+    native private float getAngularDamping(long characterId);
+
+    native private void getAngularVelocity(long characterId,
+            Vector3f storeResult);
+
+    native private float getCcdMotionThreshold(long objectId);
+
+    native private float getCcdSquareMotionThreshold(long objectId);
+
+    native private float getCcdSweptSphereRadius(long objectId);
+
+    native private void getGravity(long characterId, Vector3f storeResult);
+
+    native private float getLinearDamping(long characterId);
+
+    native private void getLinearVelocity(long characterId,
+            Vector3f storeResult);
+
+    native private float getMaxPenetrationDepth(long characterId);
+
+    native private float getMaxSlope(long characterId);
+
+    native private void getPhysicsLocation(long objectId, Vector3f vec);
+
+    native private float getStepHeight(long characterId);
+
+    native private void jump(long characterId, Vector3f v);
+
+    native private boolean onGround(long characterId);
+
+    native private void setAngularDamping(long characterId, float damping);
+
+    native private void setAngularVelocity(long characterId,
+            Vector3f angularVelocity);
+
+    native private void setCcdMotionThreshold(long objectId, float threshold);
+
+    native private void setCcdSweptSphereRadius(long objectId, float radius);
+
+    native private void setCharacterFlags(long objectId);
+
+    native private void setFallSpeed(long characterId, float fallSpeed);
+
+    native private void setGravity(long characterId, Vector3f gravity);
+
+    native private void setJumpSpeed(long characterId, float jumpSpeed);
+
+    native private void setLinearDamping(long characterId, float damping);
+
+    native private void setLinearVelocity(long characterId, Vector3f velocity);
+
+    native private void setMaxPenetrationDepth(long characterId, float depth);
+
+    native private void setMaxSlope(long characterId, float slopeRadians);
+
+    native private void setStepHeight(long characterId, float height);
+
+    native private void setUp(long characterId, Vector3f direction);
+
+    native private void setWalkDirection(long characterId, Vector3f direction);
+
+    native private void warp(long characterId, Vector3f location);
 }
