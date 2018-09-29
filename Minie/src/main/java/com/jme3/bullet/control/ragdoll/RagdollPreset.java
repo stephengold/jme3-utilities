@@ -43,12 +43,17 @@ import java.util.logging.Logger;
  * @author Nehon
  */
 public abstract class RagdollPreset implements Cloneable {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(RagdollPreset.class.getName());
+    // *************************************************************************
+    // fields
+
     /**
      * map bone names to joint presets
      */
@@ -57,6 +62,8 @@ public abstract class RagdollPreset implements Cloneable {
      * lexicon to map bone names to lexicon entries
      */
     protected Map<String, LexiconEntry> lexicon = new HashMap<>();
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Initialize the map from bone names to joint presets.

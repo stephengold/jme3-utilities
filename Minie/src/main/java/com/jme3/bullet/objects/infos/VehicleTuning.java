@@ -46,7 +46,10 @@ import java.util.logging.Logger;
  *
  * @author normenhansen
  */
-public class VehicleTuning implements JmeCloneable, Savable {
+public class VehicleTuning
+        implements JmeCloneable, Savable {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class

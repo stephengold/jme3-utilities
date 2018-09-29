@@ -49,12 +49,17 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class PhysicsCharacter extends PhysicsCollisionObject {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(PhysicsCharacter.class.getName());
+    // *************************************************************************
+    // fields
+
     /**
      * Unique identifier of btKinematicCharacterController (as opposed to its
      * collision object, which is a ghost). Constructors are responsible for
@@ -67,6 +72,8 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     final private Vector3f walkOffset = new Vector3f();
     private float fallSpeed = 55f;
     private float jumpSpeed = 10f;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -87,19 +94,22 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         this.stepHeight = stepHeight;
         buildObject();
     }
+    // *************************************************************************
 
     /**
-     * Create the configured character in Bullet.
+     * Create the configured btKinematicCharacterController.
      */
     private void buildObject() {
         if (objectId == 0L) {
             objectId = createGhostObject();
+            assert objectId != 0L;
             logger.log(Level.FINE, "Creating GhostObject {0}",
                     Long.toHexString(objectId));
             initUserPointer();
         }
         setCharacterFlags(objectId);
         attachCollisionShape(objectId, collisionShape.getObjectId());
+
         if (characterId != 0L) {
             logger.log(Level.FINE, "Clearing Character {0}",
                     Long.toHexString(objectId));
@@ -107,6 +117,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         }
         characterId = createCharacterObject(objectId,
                 collisionShape.getObjectId(), stepHeight);
+        assert characterId != 0L;
         logger.log(Level.FINE, "Creating Character {0}",
                 Long.toHexString(characterId));
     }
@@ -488,6 +499,8 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     public long getControllerId() {
         return characterId;
     }
+    // *************************************************************************
+    // PhysicsCollisionObject methods
 
     /**
      * Serialize this character, for example when saving to a J3O file.
