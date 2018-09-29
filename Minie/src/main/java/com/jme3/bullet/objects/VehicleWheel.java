@@ -37,16 +37,19 @@ import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
+import com.jme3.util.clone.Cloner;
+import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * Information about one wheel of a PhysicsVehicle. TODO make Cloneable
+ * Information about one wheel of a PhysicsVehicle.
  *
  * @author normenhansen
  */
-public class VehicleWheel implements Savable {
+public class VehicleWheel
+        implements JmeCloneable, Savable {
     // *************************************************************************
     // constants and loggers
 
@@ -75,15 +78,15 @@ public class VehicleWheel implements Savable {
      * location where the suspension connects to the chassis (in chassis
      * coordinates)
      */
-    private Vector3f location = new Vector3f(); // TODO finalize
+    private Vector3f location = new Vector3f();
     /**
      * suspension direction (in chassis coordinates, typically down/0,-1,0)
      */
-    private Vector3f suspensionDirection = new Vector3f(); // TODO finalize
+    private Vector3f suspensionDirection = new Vector3f();
     /**
      * axis direction (in chassis coordinates, typically to the right/-1,0,0)
      */
-    private Vector3f axisDirection = new Vector3f(); // TODO finalize
+    private Vector3f axisDirection = new Vector3f();
     /**
      * copy of tuning parameters
      */
@@ -104,11 +107,11 @@ public class VehicleWheel implements Savable {
     /**
      * wheel location in physics-space coordinates
      */
-    final private Vector3f wheelWorldLocation = new Vector3f();
+    private Vector3f wheelWorldLocation = new Vector3f();
     /**
      * wheel orientation in physics-space coordinates
      */
-    final private Quaternion wheelWorldRotation = new Quaternion();
+    private Quaternion wheelWorldRotation = new Quaternion();
     /**
      * associated spatial, or null if none
      */
@@ -116,11 +119,11 @@ public class VehicleWheel implements Savable {
     /**
      * reusable rotation matrix
      */
-    final private Matrix3f tmp_Matrix = new Matrix3f();
+    private Matrix3f tmp_Matrix = new Matrix3f();
     /**
      * temporary storage during calculations
      */
-    private final Quaternion tmp_inverseWorldRotation = new Quaternion();
+    private Quaternion tmp_inverseWorldRotation = new Quaternion();
     /**
      * true &rarr; physics coordinates match local transform, false &rarr;
      * physics coordinates match world transform
@@ -551,6 +554,45 @@ public class VehicleWheel implements Savable {
         return getDeltaRotation(vehicleId, wheelIndex);
     }
     // *************************************************************************
+    // JmeCloneable methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned body into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this body (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        location = cloner.clone(location);
+        suspensionDirection = cloner.clone(suspensionDirection);
+        axisDirection = cloner.clone(axisDirection);
+        tuning = cloner.clone(tuning);
+        wheelWorldLocation = cloner.clone(wheelWorldLocation);
+        wheelWorldRotation = cloner.clone(wheelWorldRotation);
+        wheelSpatial = cloner.clone(wheelSpatial);
+        tmp_Matrix = cloner.clone(tmp_Matrix);
+        tmp_inverseWorldRotation = cloner.clone(tmp_inverseWorldRotation);
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public VehicleWheel jmeClone() {
+        try {
+            VehicleWheel clone = (VehicleWheel) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+    // *************************************************************************
     // Savable methods
 
     /**
@@ -596,6 +638,7 @@ public class VehicleWheel implements Savable {
         capsule.write(radius, "wheelRadius", 0.5f);
         capsule.write(restLength, "restLength", 1f);
     }
+    // *************************************************************************
 
     /**
      * Access the spatial associated with this wheel.
