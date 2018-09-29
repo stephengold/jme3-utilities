@@ -39,6 +39,7 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.control.Control;
 import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
@@ -53,6 +54,8 @@ import jme3utilities.MySpatial;
  */
 public abstract class AbstractPhysicsControl
         implements PhysicsControl, JmeCloneable {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -67,10 +70,13 @@ public abstract class AbstractPhysicsControl
      * local copy of {@link com.jme3.math.Vector3f#ZERO}
      */
     final private static Vector3f translateIdentity = new Vector3f(0f, 0f, 0f);
+    // *************************************************************************
+    // fields
+
     /**
      * temporary storage during calculations
      */
-    private final Quaternion tmp_inverseWorldRotation = new Quaternion();
+    private Quaternion tmp_inverseWorldRotation = new Quaternion();
     /**
      * spatial to which this control is added, or null if none
      */
@@ -92,6 +98,8 @@ public abstract class AbstractPhysicsControl
      * physics coordinates match world transform
      */
     private boolean applyLocal = false;
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Create spatial-dependent data. Invoked when this control is added to a
@@ -220,6 +228,8 @@ public abstract class AbstractPhysicsControl
         }
 
     }
+    // *************************************************************************
+    // JmeCloneable methods
 
     /**
      * Callback from {@link com.jme3.util.clone.Cloner} to convert this
@@ -232,8 +242,38 @@ public abstract class AbstractPhysicsControl
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
-        this.spatial = cloner.clone(spatial);
-        createSpatialData(this.spatial);
+        tmp_inverseWorldRotation = cloner.clone(tmp_inverseWorldRotation);
+        spatial = cloner.clone(spatial);
+        // space not cloned
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public AbstractPhysicsControl jmeClone() {
+        try {
+            AbstractPhysicsControl clone
+                    = (AbstractPhysicsControl) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+    // *************************************************************************
+    // PhysicsControl methods
+
+    /**
+     * Clone this control for a different spatial. No longer used as of JME 3.1.
+     *
+     * @param spatial the spatial for the clone to control (or null)
+     * @return a new control (not null)
+     */
+    @Override
+    public Control cloneForSpatial(Spatial spatial) {
+        throw new UnsupportedOperationException();
     }
 
     /**

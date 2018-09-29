@@ -60,9 +60,8 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.control.Control;
 import com.jme3.util.TempVars;
-import com.jme3.util.clone.JmeCloneable;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
@@ -102,7 +101,7 @@ import jme3utilities.Validate;
  */
 public class KinematicRagdollControl
         extends AbstractPhysicsControl
-        implements PhysicsCollisionListener, JmeCloneable {
+        implements PhysicsCollisionListener {
     // *************************************************************************
     // constants and loggers
 
@@ -117,12 +116,12 @@ public class KinematicRagdollControl
     /**
      * list of registered collision listeners
      */
-    private List<RagdollCollisionListener> listeners; // TODO make final
-    private final Set<String> boneList = new TreeSet<>();
-    private final Map<String, PhysicsBoneLink> boneLinks = new HashMap<>();
-    private final Vector3f modelPosition = new Vector3f();
-    private final Quaternion modelRotation = new Quaternion();
-    private final PhysicsRigidBody baseRigidBody;
+    private List<RagdollCollisionListener> listeners;
+    private Set<String> boneList = new TreeSet<>();
+    private Map<String, PhysicsBoneLink> boneLinks = new HashMap<>();
+    private Vector3f modelPosition = new Vector3f();
+    private Quaternion modelRotation = new Quaternion();
+    private PhysicsRigidBody baseRigidBody;
     /**
      * root spatial of the model being controlled
      */
@@ -164,11 +163,11 @@ public class KinematicRagdollControl
     /**
      * map from IK bone names to goal locations
      */
-    final private Map<String, Vector3f> ikTargets = new HashMap<>();
+    private Map<String, Vector3f> ikTargets = new HashMap<>();
     /**
      * map from IK bone names to chain depths
      */
-    final private Map<String, Integer> ikChainDepth = new HashMap<>();
+    private Map<String, Integer> ikChainDepth = new HashMap<>();
     /**
      * rotational speed for inverse kinematics (radians per second, default=7)
      */
@@ -251,7 +250,6 @@ public class KinematicRagdollControl
         this.preset = preset;
     }
     // *************************************************************************
-    // new methods exposed
 
     /**
      * Update this control. Invoked once per frame during the logical-state
@@ -275,6 +273,8 @@ public class KinematicRagdollControl
             kinematicUpdate(tpf);
         }
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Update this control in Ragdoll mode, based on Bullet physics.
@@ -1097,32 +1097,45 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Clone this control for a different spatial. No longer used as of JME 3.1.
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned control into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
      *
-     * @param spatial the spatial for the clone to control (or null)
-     * @return a new control (not null)
+     * @param cloner the cloner that's cloning this control (not null)
+     * @param original the control from which this control was shallow-cloned
+     * (unused)
      */
     @Override
-    public Control cloneForSpatial(Spatial spatial) {
-        throw new UnsupportedOperationException();
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        // baseRigidBody not cloned
+        boneLinks = cloner.clone(boneLinks);
+        boneList = cloner.clone(boneList);
+        ikChainDepth = cloner.clone(ikChainDepth);
+        ikTargets = cloner.clone(ikTargets);
+        initScale = cloner.clone(initScale);
+        listeners = cloner.clone(listeners);
+        modelPosition = cloner.clone(modelPosition);
+        modelRotation = cloner.clone(modelRotation);
+        preset = cloner.clone(preset);
+        skeleton = cloner.clone(skeleton);
+        targetModel = cloner.clone(targetModel);
     }
 
     /**
-     * Create a shallow clone for the JME cloner. TODO wrong
+     * Create a shallow clone for the JME cloner.
      *
-     * @return a new control (not null)
+     * @return a new instance
      */
     @Override
-    public Object jmeClone() {
-        KinematicRagdollControl control
-                = new KinematicRagdollControl(preset, weightThreshold);
-        control.setMode(mode);
-        control.setRootMass(torsoMass);
-        control.setWeightThreshold(weightThreshold);
-        control.setApplyPhysicsLocal(isApplyPhysicsLocal());
-        control.spatial = this.spatial;
-
-        return control;
+    public KinematicRagdollControl jmeClone() {
+        try {
+            KinematicRagdollControl clone
+                    = (KinematicRagdollControl) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
     /**

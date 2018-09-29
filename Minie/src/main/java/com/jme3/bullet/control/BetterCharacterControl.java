@@ -48,9 +48,8 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.control.Control;
 import com.jme3.util.TempVars;
-import com.jme3.util.clone.JmeCloneable;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -71,14 +70,19 @@ import jme3utilities.Validate;
  *
  * @author normenhansen
  */
-public class BetterCharacterControl extends AbstractPhysicsControl
-        implements PhysicsTickListener, JmeCloneable {
+public class BetterCharacterControl
+        extends AbstractPhysicsControl
+        implements PhysicsTickListener {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(BetterCharacterControl.class.getName());
+    // *************************************************************************
+    // fields
 
     private PhysicsRigidBody rigidBody;
     private float radius;
@@ -94,57 +98,58 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     /**
      * local up direction, derived from gravity
      */
-    private final Vector3f localUp = new Vector3f(0f, 1f, 0f);
+    private Vector3f localUp = new Vector3f(0f, 1f, 0f);
     /**
      * Local absolute z-forward direction, derived from gravity and UNIT_Z,
      * updated continuously when gravity changes.
      */
-    private final Vector3f localForward = new Vector3f(0f, 0f, 1f);
+    private Vector3f localForward = new Vector3f(0f, 0f, 1f);
     /**
      * Local left direction, derived from up and forward.
      */
-    private final Vector3f localLeft = new Vector3f(1f, 0f, 0f);
+    private Vector3f localLeft = new Vector3f(1f, 0f, 0f);
     /**
      * Local z-forward quaternion for the "local absolute" z-forward direction.
      */
-    private final Quaternion localForwardRotation
+    private Quaternion localForwardRotation
             = new Quaternion(Quaternion.DIRECTION_Z);
     /**
      * a Z-forward vector based on the view direction and the local X-Z plane.
      */
-    private final Vector3f viewDirection = new Vector3f(0f, 0f, 1f);
+    private Vector3f viewDirection = new Vector3f(0f, 0f, 1f);
     /**
      * spatial location, corresponds to RigidBody location.
      */
-    private final Vector3f location = new Vector3f();
+    private Vector3f location = new Vector3f();
     /**
      * spatial rotation, a Z-forward rotation based on the view direction and
      * local X-Z plane.
      *
      * @see #rotatedViewDirection
      */
-    private final Quaternion rotation = new Quaternion(Quaternion.DIRECTION_Z);
-    private final Vector3f rotatedViewDirection = new Vector3f(0f, 0f, 1f);
-    private final Vector3f walkDirection = new Vector3f();
-    private final Vector3f jumpForce;
+    private Quaternion rotation = new Quaternion(Quaternion.DIRECTION_Z);
+    private Vector3f rotatedViewDirection = new Vector3f(0f, 0f, 1f);
+    private Vector3f walkDirection = new Vector3f();
+    private Vector3f jumpForce = new Vector3f();
     /**
-     * X-Z motion damping factor (0&rarr;no damping, 1=no external forces,
+     * X-Z motion attenuation factor (0&rarr;no damping, 1=no external forces,
      * default=0.9)
      */
     private float physicsDamping = 0.9f;
-    private final Vector3f scale = new Vector3f(1f, 1f, 1f);
-    private final Vector3f velocity = new Vector3f();
+    private Vector3f scale = new Vector3f(1f, 1f, 1f);
+    private Vector3f velocity = new Vector3f();
     private boolean jump = false;
     private boolean onGround = false;
     private boolean ducked = false;
     private boolean wantToUnDuck = false;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
     public BetterCharacterControl() {
-        jumpForce = new Vector3f();
     }
 
     /**
@@ -170,6 +175,8 @@ public class BetterCharacterControl extends AbstractPhysicsControl
         jumpForce = new Vector3f(0f, mass * 5f, 0f);
         rigidBody.setAngularFactor(0f);
     }
+    // *************************************************************************
+    // AbstractPhysicsControl exposed
 
     /**
      * Update this control. Invoked once per frame during the logical-state
@@ -728,29 +735,47 @@ public class BetterCharacterControl extends AbstractPhysicsControl
     }
 
     /**
-     * Clone this control for a different spatial. No longer used as of JME 3.1.
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned control into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
      *
-     * @param spatial the spatial for the clone to control (or null)
-     * @return a new control (not null)
+     * @param cloner the cloner that's cloning this control (not null)
+     * @param original the control from which this control was shallow-cloned
+     * (unused)
      */
     @Override
-    public Control cloneForSpatial(Spatial spatial) {
-        throw new UnsupportedOperationException();
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+
+        jumpForce = cloner.clone(jumpForce);
+        localForward = cloner.clone(localForward);
+        localForwardRotation = cloner.clone(localForwardRotation);
+        localLeft = cloner.clone(localLeft);
+        localUp = cloner.clone(localUp);
+        location = cloner.clone(location);
+        //rigidBody not cloned
+        rotatedViewDirection = cloner.clone(rotatedViewDirection);
+        rotation = cloner.clone(rotation);
+        scale = cloner.clone(scale);
+        velocity = cloner.clone(velocity);
+        viewDirection = cloner.clone(viewDirection);
+        walkDirection = cloner.clone(walkDirection);
     }
 
     /**
      * Create a shallow clone for the JME cloner.
      *
-     * @return a new control (not null)
+     * @return a new instance
      */
     @Override
-    public Object jmeClone() {
-        BetterCharacterControl control
-                = new BetterCharacterControl(radius, height, mass);
-        control.setJumpForce(jumpForce);
-        control.spatial = this.spatial;
-
-        return control;
+    public BetterCharacterControl jmeClone() {
+        try {
+            BetterCharacterControl clone
+                    = (BetterCharacterControl) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
     /**
