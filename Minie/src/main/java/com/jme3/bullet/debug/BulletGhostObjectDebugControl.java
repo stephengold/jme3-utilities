@@ -178,7 +178,7 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
     private void updateMaterial() {
         Material material = ghost.getDebugMaterial();
         if (material == null) {
-            geom.setMaterial(debugAppState.DEBUG_YELLOW);
+            material = debugAppState.DEBUG_YELLOW;
         }
         geom.setMaterial(material);
     }
