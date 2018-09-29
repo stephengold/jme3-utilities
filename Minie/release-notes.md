@@ -1,6 +1,6 @@
 # release notes for the Minie library and related tests
 
-## Version 0.3.2 released on TBD
+## Version 0.3.2 released on 28 September 2018
 
  + Made many classes JmeCloneable, especially physics controls.
  + Added custom debug materials to collision objects.
