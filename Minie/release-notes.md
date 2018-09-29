@@ -1,5 +1,19 @@
 # release notes for the Minie library and related tests
 
+## Version 0.3.2 released on TBD
+
+ + Made many classes JmeCloneable, especially physics controls.
+ + Added custom debug materials to collision objects.
+ + Added canScale() method to collision shapes.
+ + Worked around JME issue #919.
+ + Prevented setting the margin of a capsule/sphere shape.
+ + Implemented limb damping in KinematicRagdollControl.
+ + Added getTorso() method to KinematicRagdollControl.
+ + Added check for rotation/translation of a heightfield rigid body.
+ + Converted PhysicsBoneLink to a standalone class.
+ + Removed unnecessary constructor from CollisionShape.
+ + Added tests.
+
 ## Version 0.3.1 released on 24 September 2018
 
  + Fixed JME issue #896 and added a test for it.
