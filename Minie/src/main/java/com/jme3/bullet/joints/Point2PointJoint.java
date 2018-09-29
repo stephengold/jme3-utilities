@@ -157,7 +157,7 @@ public class Point2PointJoint extends PhysicsJoint {
      *
      * @param cloner the cloner that's cloning this shape (not null)
      * @param original the instance from which this instance was shallow-cloned
-     * (unused)
+     * (not null, unaffected)
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {

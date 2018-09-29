@@ -36,7 +36,7 @@ import com.jme3.math.Vector3f;
 import jme3utilities.Misc;
 
 /**
- * Deep clone a rigid body.
+ * Test cloning a rigid body.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -88,13 +88,13 @@ public class TestCloneBody extends SimpleApplication {
         body.setLinearDamping(b + 0.13f);
         body.setLinearFactor(new Vector3f(b + 0.14f, b + 0.15f, b + 0.16f));
         body.setPhysicsLocation(new Vector3f(b + 0.18f, b + 0.19f, b + 0.20f));
-        
+
         Quaternion orient
                 = new Quaternion(b + 0.21f, b + 0.22f, b + 0.23f, b + 0.24f);
         orient.normalizeLocal();
         Matrix3f matrix = orient.toRotationMatrix();
         body.setPhysicsRotation(matrix);
-        
+
         body.setRestitution(b + 0.25f);
     }
 

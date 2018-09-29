@@ -43,7 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A joint based on Bullet's btHingeConstraint.
+ * A hinge joint based on Bullet's btHingeConstraint.
  * <p>
  * <i>From the Bullet manual:</i><br>
  * Hinge constraint, or revolute joint restricts two additional angular degrees
@@ -281,7 +281,7 @@ public class HingeJoint extends PhysicsJoint {
      *
      * @param cloner the cloner that's cloning this shape (not null)
      * @param original the instance from which this instance was shallow-cloned
-     * (unused)
+     * (not null, unaffected)
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
