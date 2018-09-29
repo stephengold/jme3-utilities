@@ -40,6 +40,7 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -131,9 +132,6 @@ public class PhysicsVehicle extends PhysicsRigidBody {
         }
     }
 
-    private native void updateWheelTransform(long vehicleId, int wheel,
-            boolean interpolated);
-
     /**
      * used internally
      */
@@ -187,17 +185,6 @@ public class PhysicsVehicle extends PhysicsRigidBody {
                     wheel.getRadius(), tuning, wheel.isFrontWheel()));
         }
     }
-
-    private native long createVehicleRaycaster(long objectId,
-            long physicsSpaceId);
-
-    private native long createRaycastVehicle(long objectId, long rayCasterId);
-
-    private native void setCoordinateSystem(long objectId, int a, int b, int c);
-
-    private native int addWheel(long objectId, Vector3f location,
-            Vector3f direction, Vector3f axle, float restLength, float radius,
-            VehicleTuning tuning, boolean frontWheel);
 
     /**
      * Add a wheel to this vehicle.
@@ -533,8 +520,6 @@ public class PhysicsVehicle extends PhysicsRigidBody {
         resetSuspension(vehicleId);
     }
 
-    private native void resetSuspension(long vehicleId);
-
     /**
      * Apply the specified engine force to all wheels. Works continuously.
      *
@@ -555,8 +540,6 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     public void accelerate(int wheel, float force) {
         applyEngineForce(vehicleId, wheel, force);
     }
-
-    private native void applyEngineForce(long vehicleId, int wheel, float force);
 
     /**
      * Alter the steering angle of all front wheels.
@@ -581,8 +564,6 @@ public class PhysicsVehicle extends PhysicsRigidBody {
         steer(vehicleId, wheel, value);
     }
 
-    private native void steer(long vehicleId, int wheel, float value);
-
     /**
      * Apply the given brake force to all wheels. Works continuously.
      *
@@ -604,8 +585,6 @@ public class PhysicsVehicle extends PhysicsRigidBody {
         brake(vehicleId, wheel, force);
     }
 
-    private native void brake(long vehicleId, int wheel, float force);
-
     /**
      * Read the vehicle's speed in km/h.
      *
@@ -614,8 +593,6 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     public float getCurrentVehicleSpeedKmHour() {
         return getCurrentVehicleSpeedKmHour(vehicleId);
     }
-
-    private native float getCurrentVehicleSpeedKmHour(long vehicleId);
 
     /**
      * Copy the vehicle's forward direction.
@@ -633,8 +610,6 @@ public class PhysicsVehicle extends PhysicsRigidBody {
         return storeResult;
     }
 
-    private native void getForwardVector(long objectId, Vector3f storeResult);
-
     /**
      * used internally
      *
@@ -642,6 +617,41 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      */
     public long getVehicleId() {
         return vehicleId;
+    }
+    // *************************************************************************
+    // PhysicsCollisionObject methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned body into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this body (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        //physicsSpace not cloned
+        tuning = cloner.clone(tuning);
+        wheels = cloner.clone(wheels);
+        motionState.setVehicle(this);
+
+        super.cloneFields(cloner, original);
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public PhysicsVehicle jmeClone() {
+        try {
+            PhysicsVehicle clone = (PhysicsVehicle) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
     /**
@@ -694,6 +704,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
                 "wheelsList", new ArrayList<VehicleWheel>());
         super.write(ex);
     }
+    // *************************************************************************
+    // Object methods
 
     /**
      * Finalize this vehicle just before it is destroyed. Should be invoked only
@@ -710,6 +722,34 @@ public class PhysicsVehicle extends PhysicsRigidBody {
                 Long.toHexString(vehicleId));
         finalizeNative(rayCasterId, vehicleId);
     }
+    // *************************************************************************
+    // private methods
 
-    private native void finalizeNative(long rayCaster, long vehicle);
+    native private int addWheel(long objectId, Vector3f location,
+            Vector3f direction, Vector3f axle, float restLength, float radius,
+            VehicleTuning tuning, boolean frontWheel);
+
+    native private void applyEngineForce(long vehicleId, int wheel, float force);
+
+    native private void brake(long vehicleId, int wheel, float force);
+
+    native private long createRaycastVehicle(long objectId, long rayCasterId);
+
+    native private long createVehicleRaycaster(long objectId,
+            long physicsSpaceId);
+
+    native private void finalizeNative(long rayCaster, long vehicle);
+
+    native private float getCurrentVehicleSpeedKmHour(long vehicleId);
+
+    native private void getForwardVector(long objectId, Vector3f storeResult);
+
+    native private void resetSuspension(long vehicleId);
+
+    native private void setCoordinateSystem(long objectId, int a, int b, int c);
+
+    native private void steer(long vehicleId, int wheel, float value);
+
+    native private void updateWheelTransform(long vehicleId, int wheel,
+            boolean interpolated);
 }

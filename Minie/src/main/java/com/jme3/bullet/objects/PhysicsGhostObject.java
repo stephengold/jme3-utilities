@@ -40,6 +40,7 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,7 +66,10 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     final public static Logger logger
             = Logger.getLogger(PhysicsGhostObject.class.getName());
 
-    final private List<PhysicsCollisionObject> overlappingObjects
+    /**
+     * TODO reused list
+     */
+    private List<PhysicsCollisionObject> overlappingObjects
             = new LinkedList<>();
 
     /**
@@ -99,10 +103,6 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         attachCollisionShape(objectId, collisionShape.getObjectId());
     }
 
-    private native long createGhostObject();
-
-    private native void setGhostFlags(long objectId);
-
     /**
      * Apply the specified CollisionShape to this object. Note that the object
      * should not be in any physics space while changing shape; the object gets
@@ -113,11 +113,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     @Override
     public void setCollisionShape(CollisionShape collisionShape) {
         super.setCollisionShape(collisionShape);
-        if (objectId == 0) {
-            buildObject();
-        } else {
-            attachCollisionShape(objectId, collisionShape.getObjectId());
-        }
+        buildObject();
     }
 
     /**
@@ -130,8 +126,6 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         setPhysicsLocation(objectId, location);
     }
 
-    private native void setPhysicsLocation(long objectId, Vector3f location);
-
     /**
      * Directly alter this object's orientation.
      *
@@ -142,8 +136,6 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         setPhysicsRotation(objectId, rotation);
     }
 
-    private native void setPhysicsRotation(long objectId, Matrix3f rotation);
-
     /**
      * Directly alter this object's orientation.
      *
@@ -153,8 +145,6 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     public void setPhysicsRotation(Quaternion rotation) {
         setPhysicsRotation(objectId, rotation);
     }
-
-    private native void setPhysicsRotation(long objectId, Quaternion rotation);
 
     /**
      * Copy the location of this object's center.
@@ -172,8 +162,6 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         return storeResult;
     }
 
-    private native void getPhysicsLocation(long objectId, Vector3f storeResult);
-
     /**
      * Copy this object's orientation to a quaternion.
      *
@@ -189,9 +177,6 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
 
         return storeResult;
     }
-
-    private native void getPhysicsRotation(long objectId,
-            Quaternion storeResult);
 
     /**
      * Copy this object's orientation to a matrix.
@@ -209,9 +194,6 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         return storeResult;
     }
 
-    private native void getPhysicsRotationMatrix(long objectId,
-            Matrix3f storeResult);
-
     /**
      * Access a list of overlapping objects.
      *
@@ -224,17 +206,6 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         return overlappingObjects;
     }
 
-    native private void getOverlappingObjects(long objectId);
-
-    /**
-     * This method is invoked from native code.
-     *
-     * @param co the collision object to add
-     */
-    private void addOverlappingObject_native(PhysicsCollisionObject co) {
-        overlappingObjects.add(co);
-    }
-
     /**
      * Count how many collision objects this object overlaps.
      *
@@ -243,8 +214,6 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     public int getOverlappingCount() {
         return getOverlappingCount(objectId);
     }
-
-    private native int getOverlappingCount(long objectId);
 
     /**
      * Access an overlapping collision object by its position in the list.
@@ -266,8 +235,6 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         setCcdSweptSphereRadius(objectId, radius);
     }
 
-    private native void setCcdSweptSphereRadius(long objectId, float radius);
-
     /**
      * Alter the amount of motion required to trigger continuous collision
      * detection (CCD).
@@ -282,8 +249,6 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         setCcdMotionThreshold(objectId, threshold);
     }
 
-    private native void setCcdMotionThreshold(long objectId, float threshold);
-
     /**
      * Read the radius of the sphere used for continuous collision detection
      * (CCD).
@@ -293,8 +258,6 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     public float getCcdSweptSphereRadius() {
         return getCcdSweptSphereRadius(objectId);
     }
-
-    private native float getCcdSweptSphereRadius(long objectId);
 
     /**
      * Read the continuous collision detection (CCD) motion threshold for this
@@ -306,8 +269,6 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         return getCcdMotionThreshold(objectId);
     }
 
-    private native float getCcdMotionThreshold(long objectId);
-
     /**
      * Read the CCD square motion threshold for this object.
      *
@@ -316,8 +277,45 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     public float getCcdSquareMotionThreshold() {
         return getCcdSquareMotionThreshold(objectId);
     }
+    // *************************************************************************
+    // PhysicsCollisionObject methods
 
-    private native float getCcdSquareMotionThreshold(long objectId);
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned object into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this object (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (not null, unaffected)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        overlappingObjects = cloner.clone(overlappingObjects);
+        buildObject();
+
+        PhysicsGhostObject old = (PhysicsGhostObject) original;
+        setCcdMotionThreshold(old.getCcdMotionThreshold());
+        setCcdSweptSphereRadius(old.getCcdSweptSphereRadius());
+        setPhysicsLocation(old.getPhysicsLocation(null));
+        setPhysicsRotation(old.getPhysicsRotationMatrix(null));
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public PhysicsGhostObject jmeClone() {
+        try {
+            PhysicsGhostObject clone = (PhysicsGhostObject) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 
     /**
      * Serialize this object, for example when saving to a J3O file.
@@ -356,4 +354,47 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         setCcdMotionThreshold(capsule.readFloat("ccdMotionThreshold", 0f));
         setCcdSweptSphereRadius(capsule.readFloat("ccdSweptSphereRadius", 0f));
     }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * This method is invoked from native code.
+     *
+     * @param co the collision object to add
+     */
+    private void addOverlappingObject_native(PhysicsCollisionObject co) {
+        overlappingObjects.add(co);
+    }
+
+    native private long createGhostObject();
+
+    native private float getCcdMotionThreshold(long objectId);
+
+    native private float getCcdSquareMotionThreshold(long objectId);
+
+    native private float getCcdSweptSphereRadius(long objectId);
+
+    native private int getOverlappingCount(long objectId);
+
+    native private void getOverlappingObjects(long objectId);
+
+    native private void getPhysicsLocation(long objectId, Vector3f storeResult);
+
+    native private void getPhysicsRotation(long objectId,
+            Quaternion storeResult);
+
+    native private void getPhysicsRotationMatrix(long objectId,
+            Matrix3f storeResult);
+
+    native private void setCcdMotionThreshold(long objectId, float threshold);
+
+    native private void setCcdSweptSphereRadius(long objectId, float radius);
+
+    native private void setGhostFlags(long objectId);
+
+    native private void setPhysicsLocation(long objectId, Vector3f location);
+
+    native private void setPhysicsRotation(long objectId, Matrix3f rotation);
+
+    native private void setPhysicsRotation(long objectId, Quaternion rotation);
 }

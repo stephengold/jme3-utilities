@@ -46,6 +46,7 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,8 +80,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * motion state
      */
-    final protected RigidBodyMotionState motionState
-            = new RigidBodyMotionState();
+    protected RigidBodyMotionState motionState = new RigidBodyMotionState();
     /**
      * copy of mass (&gt;0) of a dynamic body, or 0 for a static body
      * (default=1)
@@ -890,6 +890,55 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
     // *************************************************************************
     // PhysicsCollisionObject methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned body into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this body (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (not null, unaffected)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        rebuildRigidBody();
+
+        joints = cloner.clone(joints);
+        motionState = cloner.clone(motionState);
+
+        PhysicsRigidBody old = (PhysicsRigidBody) original;
+        setAngularDamping(old.getAngularDamping());
+        setAngularFactor(old.getAngularFactor());
+        setAngularSleepingThreshold(old.getAngularSleepingThreshold());
+        setAngularVelocity(old.getAngularVelocity(null));
+        setCcdMotionThreshold(old.getCcdMotionThreshold());
+        setCcdSweptSphereRadius(old.getCcdSweptSphereRadius());
+        setFriction(old.getFriction());
+        setGravity(old.getGravity(null));
+        setLinearDamping(old.getLinearDamping());
+        setLinearFactor(old.getLinearFactor(null));
+        setLinearSleepingThreshold(old.getLinearSleepingThreshold());
+        setPhysicsLocation(old.getPhysicsLocation(null));
+        setPhysicsRotation(old.getPhysicsRotationMatrix(null));
+        setRestitution(old.getRestitution());
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public PhysicsRigidBody jmeClone() {
+        try {
+            PhysicsRigidBody clone = (PhysicsRigidBody) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 
     /**
      * Serialize this body, for example when saving to a J3O file.
