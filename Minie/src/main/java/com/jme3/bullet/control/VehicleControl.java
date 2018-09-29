@@ -163,53 +163,13 @@ public class VehicleControl extends PhysicsVehicle
      * @return a new control (not null)
      */
     @Override
-    public Object jmeClone() {
-        VehicleControl control = new VehicleControl(collisionShape, mass);
-        control.setAngularFactor(getAngularFactor());
-        control.setAngularSleepingThreshold(getAngularSleepingThreshold());
-        control.setAngularVelocity(getAngularVelocity(null));
-        control.setCcdMotionThreshold(getCcdMotionThreshold());
-        control.setCcdSweptSphereRadius(getCcdSweptSphereRadius());
-        control.setCollideWithGroups(getCollideWithGroups());
-        control.setCollisionGroup(getCollisionGroup());
-        control.setDamping(getLinearDamping(), getAngularDamping());
-        control.setFriction(getFriction());
-        control.setGravity(getGravity(null));
-        control.setKinematic(isKinematic());
-        control.setLinearSleepingThreshold(getLinearSleepingThreshold());
-        control.setLinearVelocity(getLinearVelocity(null));
-        control.setPhysicsLocation(getPhysicsLocation(null));
-        control.setPhysicsRotation(getPhysicsRotationMatrix(null));
-        control.setRestitution(getRestitution());
-
-        control.setFrictionSlip(getFrictionSlip());
-        control.setMaxSuspensionTravelCm(getMaxSuspensionTravelCm());
-        control.setSuspensionStiffness(getSuspensionStiffness());
-        control.setSuspensionCompression(tuning.suspensionCompression);
-        control.setSuspensionDamping(tuning.suspensionDamping);
-        control.setMaxSuspensionForce(getMaxSuspensionForce());
-
-        for (VehicleWheel wheel : wheels) {
-            VehicleWheel newWheel = control.addWheel(null,
-                    wheel.getLocation(null), wheel.getDirection(null),
-                    wheel.getAxle(null), wheel.getRestLength(),
-                    wheel.getRadius(), wheel.isFrontWheel());
-            newWheel.setFrictionSlip(wheel.getFrictionSlip());
-            newWheel.setMaxSuspensionTravelCm(wheel.getMaxSuspensionTravelCm());
-            newWheel.setSuspensionStiffness(wheel.getSuspensionStiffness());
-            newWheel.setWheelsDampingCompression(wheel.getWheelsDampingCompression());
-            newWheel.setWheelsDampingRelaxation(wheel.getWheelsDampingRelaxation());
-            newWheel.setMaxSuspensionForce(wheel.getMaxSuspensionForce());
-
-            // Copy the wheel spatial reference directly for now.  They'll
-            // get fixed up in the cloneFields() method
-            newWheel.setWheelSpatial(wheel.getWheelSpatial());
+    public VehicleControl jmeClone() {
+        try {
+            VehicleControl clone = (VehicleControl) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
         }
-        control.setApplyPhysicsLocal(isApplyPhysicsLocal());
-        control.setEnabled(isEnabled());
-
-        control.spatial = spatial;
-        return control;
     }
 
     /**
@@ -223,12 +183,8 @@ public class VehicleControl extends PhysicsVehicle
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
-        this.spatial = cloner.clone(spatial);
-
-        for (VehicleWheel wheel : wheels) {
-            Spatial ws = cloner.clone(wheel.getWheelSpatial());
-            wheel.setWheelSpatial(ws);
-        }
+        super.cloneFields(cloner, original);
+        spatial = cloner.clone(spatial);
     }
 
     /**

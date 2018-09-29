@@ -192,18 +192,13 @@ public class GhostControl extends PhysicsGhostObject
      * @return a new control (not null)
      */
     @Override
-    public Object jmeClone() {
-        GhostControl control = new GhostControl(collisionShape);
-        control.setCcdMotionThreshold(getCcdMotionThreshold());
-        control.setCcdSweptSphereRadius(getCcdSweptSphereRadius());
-        control.setCollideWithGroups(getCollideWithGroups());
-        control.setCollisionGroup(getCollisionGroup());
-        control.setPhysicsLocation(getPhysicsLocation(null));
-        control.setPhysicsRotation(getPhysicsRotationMatrix(null));
-        control.setApplyPhysicsLocal(isApplyPhysicsLocal());
-        control.spatial = this.spatial;
-
-        return control;
+    public GhostControl jmeClone() {
+        try {
+            GhostControl clone = (GhostControl) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
     /**
@@ -217,6 +212,7 @@ public class GhostControl extends PhysicsGhostObject
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
         spatial = cloner.clone(spatial);
     }
     // *************************************************************************
