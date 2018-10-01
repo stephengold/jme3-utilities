@@ -9,14 +9,16 @@ ext {
     baseName = "$artifact-$version"
 }
 
+sourceSets.main {
+    java { srcDir 'src/main/java' }
+    resources { srcDir 'src/main/resources' }
+}
 build { dependsOn 'pom' }
 jar { baseName project.ext.baseName }
 javadocJar { baseName project.ext.baseName }
 sourcesJar { baseName project.ext.baseName }
 
 dependencies {
-    runtime "org.jmonkeyengine:jme3-bullet-native:$jmonkeyengineVersion"
-
     //compile "jme3utilities:jme3-utilities-debug:$jme3utilitiesdebugVersion"
     compile project(':debug')
 

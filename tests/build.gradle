@@ -8,7 +8,6 @@ dependencies {
     compile "com.beust:jcommander:$jcommanderVersion"
     runtime 'com.github.nifty-gui:nifty-style-black:1.4.2'
     runtime "org.jmonkeyengine:jme3-blender:$jmonkeyengineVersion"
-    runtime "org.jmonkeyengine:jme3-bullet-native:$jmonkeyengineVersion"
     runtime "org.jmonkeyengine:jme3-desktop:$jmonkeyengineVersion"
     runtime "org.jmonkeyengine:jme3-jogg:$jmonkeyengineVersion"
     runtime "org.jmonkeyengine:jme3-lwjgl:$jmonkeyengineVersion"
