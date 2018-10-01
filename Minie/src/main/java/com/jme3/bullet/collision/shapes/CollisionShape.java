@@ -65,6 +65,11 @@ abstract public class CollisionShape
     // fields
 
     /**
+     * default margin for new non-sphere/non-capsule shapes (in physics-space
+     * units, &gt;0, default=0.04)
+     */
+    private static float defaultMargin = 0.04f;
+    /**
      * unique identifier of the btCollisionShape
      * <p>
      * Constructors are responsible for setting this to a non-zero value. After
@@ -78,7 +83,7 @@ abstract public class CollisionShape
     /**
      * copy of collision margin (in physics-space units, &gt;0, default=0.04)
      */
-    protected float margin = 0.04f;
+    protected float margin = defaultMargin;
     // *************************************************************************
     // new methods exposed
 
@@ -149,6 +154,17 @@ abstract public class CollisionShape
     }
 
     /**
+     * Read the default margin for new shapes that are neither capsules nor
+     * spheres.
+     *
+     * @return the margin distance (in physics-space units, &gt;0)
+     */
+    public static float getDefaultMargin() {
+        assert defaultMargin > 0f : defaultMargin;
+        return defaultMargin;
+    }
+
+    /**
      * Read the collision margin for this shape.
      *
      * @return the margin distance (in physics-space units, &ge;0)
@@ -159,6 +175,18 @@ abstract public class CollisionShape
         assert margin > 0f : margin;
 
         return margin;
+    }
+
+    /**
+     * Alter the default margin for new shapes that are neither capsules nor
+     * spheres.
+     *
+     * @param margin the desired margin distance (in physics-space units, &gt;0,
+     * default=0.04)
+     */
+    public static void setDefaultMargin(float margin) {
+        Validate.positive(margin, "margin");
+        defaultMargin = margin;
     }
 
     /**
