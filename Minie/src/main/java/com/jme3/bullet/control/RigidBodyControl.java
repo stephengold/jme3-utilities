@@ -56,6 +56,7 @@ import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.MySpatial;
+import jme3utilities.math.MyMath;
 
 /**
  * A physics control to link a PhysicsRigidBody to a spatial.
@@ -405,11 +406,18 @@ public class RigidBodyControl
             setPhysicsRotation(getSpatialRotation());
             if (applyScale) {
                 Vector3f newScale = copySpatialScale(null);
-                if (collisionShape.canScale(newScale)) {
+                if (!collisionShape.canScale(newScale)) {
+                    float factor = MyMath.cubeRoot(
+                            newScale.x * newScale.y * newScale.z);
+                    newScale.set(factor, factor, factor);
+                }
+                Vector3f oldScale = collisionShape.getScale(null);
+                if (!oldScale.equals(newScale)
+                        && collisionShape.canScale(newScale)) {
                     collisionShape.setScale(newScale);
-                    // TODO shape-specific averaging for non-uniform scale factors
                 }
             }
+
         } else if (!MySpatial.isIgnoringTransforms(spatial)) {
             getMotionState().applyTransform(spatial);
             if (applyScale) {
