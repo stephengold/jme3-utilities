@@ -261,7 +261,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
             storeResult = new Vector3f();
         }
         getPhysicsLocation(objectId, storeResult);
-
+        
+        assert Vector3f.isValidVector(storeResult);
         return storeResult;
     }
 
