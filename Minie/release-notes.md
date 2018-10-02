@@ -1,6 +1,6 @@
 # release notes for the Minie library and related tests
 
-## Version 0.3.3 released on TBD
+## Version 0.3.3 released on 2 October 2018
 
  + Added applyScale option to RigidBodyControl and GhostControl.
  + Added default margin for collision shapes other than capsule and sphere.
