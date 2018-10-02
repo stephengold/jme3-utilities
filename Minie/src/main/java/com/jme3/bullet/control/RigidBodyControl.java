@@ -47,12 +47,12 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.util.clone.Cloner;
-import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.MySpatial;
@@ -62,8 +62,11 @@ import jme3utilities.MySpatial;
  *
  * @author normenhansen
  */
-public class RigidBodyControl extends PhysicsRigidBody
-        implements PhysicsControl, JmeCloneable {
+public class RigidBodyControl
+        extends PhysicsRigidBody
+        implements PhysicsControl {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -75,13 +78,25 @@ public class RigidBodyControl extends PhysicsRigidBody
      */
     final private static Quaternion rotateIdentity = new Quaternion();
     /**
+     * local copy of {@link com.jme3.math.Vector3f#UNIT_XYZ}
+     */
+    final private static Vector3f scaleIdentity = new Vector3f(1f, 1f, 1f);
+    /**
      * local copy of {@link com.jme3.math.Vector3f#ZERO}
      */
     final private static Vector3f translateIdentity = new Vector3f(0f, 0f, 0f);
+    // *************************************************************************
+    // fields
+
     /**
      * spatial to which this control is added, or null if none
      */
     protected Spatial spatial;
+    /**
+     * true &rarr; enable shape scaling (to the extent the collision shape
+     * supports it), false &rarr; disable shape scaling (default=false)
+     */
+    private boolean applyScale = false;
     /**
      * true&rarr;control is enabled, false&rarr;control is disabled
      */
@@ -98,6 +113,8 @@ public class RigidBodyControl extends PhysicsRigidBody
      * true&rarr;body is kinematic, false&rarr;body is static or dynamic
      */
     protected boolean kinematicSpatial = true;
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -117,6 +134,8 @@ public class RigidBodyControl extends PhysicsRigidBody
     public RigidBodyControl(float mass) {
         this.mass = mass;
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Instantiate an enabled control with mass=1 and the specified collision
@@ -179,6 +198,8 @@ public class RigidBodyControl extends PhysicsRigidBody
         super.cloneFields(cloner, original);
         spatial = cloner.clone(spatial);
     }
+    // *************************************************************************
+    // PhysicsControl methods
 
     /**
      * Alter which spatial is controlled. Invoked when the control is added to
@@ -303,6 +324,15 @@ public class RigidBodyControl extends PhysicsRigidBody
     }
 
     /**
+     * Test whether the collision-shape scale should match the spatial's scale.
+     *
+     * @return true if matching scales, otherwise false
+     */
+    public boolean isApplyScale() {
+        return applyScale;
+    }
+
+    /**
      * Alter whether physics-space coordinates should match the spatial's local
      * coordinates.
      *
@@ -311,6 +341,21 @@ public class RigidBodyControl extends PhysicsRigidBody
      */
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         motionState.setApplyPhysicsLocal(applyPhysicsLocal);
+    }
+
+    /**
+     * Alter whether the collision-shape scale should match the spatial's scale.
+     * CAUTION: Not all shapes can be scaled arbitrarily.
+     * <p>
+     * Note that if the shape is shared (between collision objects and/or
+     * compound shapes) scaling can have unintended consequences.
+     *
+     * @param setting true &rarr; enable shape scaling (to the extent the
+     * collision shape supports it), false &rarr; disable shape scaling
+     * (default=false)
+     */
+    public void setApplyScale(boolean setting) {
+        applyScale = setting;
     }
 
     /**
@@ -351,12 +396,24 @@ public class RigidBodyControl extends PhysicsRigidBody
      */
     @Override
     public void update(float tpf) {
-        if (enabled && spatial != null) {
-            if (isKinematic() && kinematicSpatial) {
-                setPhysicsLocation(getSpatialTranslation());
-                setPhysicsRotation(getSpatialRotation());
-            } else {
-                getMotionState().applyTransform(spatial);
+        if (!enabled) {
+            return;
+        }
+
+        if (isKinematic() && kinematicSpatial) {
+            setPhysicsLocation(getSpatialTranslation());
+            setPhysicsRotation(getSpatialRotation());
+            if (applyScale) {
+                Vector3f newScale = copySpatialScale(null);
+                if (collisionShape.canScale(newScale)) {
+                    collisionShape.setScale(newScale);
+                    // TODO shape-specific averaging for non-uniform scale factors
+                }
+            }
+        } else if (!MySpatial.isIgnoringTransforms(spatial)) {
+            getMotionState().applyTransform(spatial);
+            if (applyScale) {
+                applySpatialScale();
             }
         }
     }
@@ -409,6 +466,8 @@ public class RigidBodyControl extends PhysicsRigidBody
     public PhysicsSpace getPhysicsSpace() {
         return space;
     }
+    // *************************************************************************
+    // PhysicsGhostObject methods
 
     /**
      * Serialize this control, for example when saving to a J3O file.
@@ -423,6 +482,7 @@ public class RigidBodyControl extends PhysicsRigidBody
         oc.write(enabled, "enabled", true);
         oc.write(motionState.isApplyPhysicsLocal(), "applyLocalPhysics", false);
         oc.write(kinematicSpatial, "kinematicSpatial", true);
+        oc.write(applyScale, "applyScale", false);
         oc.write(spatial, "spatial", null);
     }
 
@@ -440,6 +500,50 @@ public class RigidBodyControl extends PhysicsRigidBody
         kinematicSpatial = ic.readBoolean("kinematicSpatial", true);
         spatial = (Spatial) ic.readSavable("spatial", null);
         motionState.setApplyPhysicsLocal(ic.readBoolean("applyLocalPhysics", false));
-        setUserObject(spatial);
+        applyScale = ic.readBoolean("applyScale", false);
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Update whichever spatial scale corresponds to the shape scale.
+     */
+    private void applySpatialScale() {
+        Vector3f scale = collisionShape.getScale(null);
+        if (!isApplyPhysicsLocal()) {
+            Node parent = spatial.getParent();
+            if (parent != null) {
+                Vector3f parentScale = parent.getWorldScale();
+                if (parentScale.x == 0f || parentScale.y == 0f
+                        || parentScale.z == 0f) {
+                    throw new IllegalStateException("zero in parent scale");
+                }
+                scale.divideLocal(parentScale); // convert world to local
+            }
+        }
+        spatial.setLocalScale(scale);
+    }
+
+    /**
+     * Copy whichever spatial scale corresponds to the shape scale.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the scale factor for each local axis of the shape (either
+     * storeResult or a new vector, not null)
+     */
+    private Vector3f copySpatialScale(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        if (MySpatial.isIgnoringTransforms(spatial)) {
+            result.set(scaleIdentity);
+        } else if (isApplyPhysicsLocal()) {
+            Vector3f scale = spatial.getLocalScale();
+            result.set(scale);
+        } else {
+            Vector3f scale = spatial.getWorldScale();
+            result.set(scale);
+        }
+
+        return result;
     }
 }
