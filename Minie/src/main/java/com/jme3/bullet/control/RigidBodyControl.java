@@ -415,6 +415,7 @@ public class RigidBodyControl
                 if (!oldScale.equals(newScale)
                         && collisionShape.canScale(newScale)) {
                     collisionShape.setScale(newScale);
+                    setCollisionShape(collisionShape);
                 }
             }
 

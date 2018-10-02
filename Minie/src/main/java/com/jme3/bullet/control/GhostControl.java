@@ -331,6 +331,7 @@ public class GhostControl
             if (!oldScale.equals(newScale)
                     && collisionShape.canScale(newScale)) {
                 collisionShape.setScale(newScale);
+                setCollisionShape(collisionShape);
             }
         }
     }
