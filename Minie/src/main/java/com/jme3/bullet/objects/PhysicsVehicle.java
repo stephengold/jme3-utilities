@@ -639,9 +639,9 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
-        super.cloneFields(cloner, original);        
+        super.cloneFields(cloner, original);
         motionState.setVehicle(this);
-        
+
         //physicsSpace not cloned
         tuning = cloner.clone(tuning);
         wheels = cloner.clone(wheels);

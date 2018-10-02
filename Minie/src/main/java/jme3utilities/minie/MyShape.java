@@ -254,7 +254,8 @@ public class MyShape {
      * Calculate the un-scaled radius of the specified shape.
      *
      * @param shape (not null, unaffected)
-     * @return un-scaled radius (&ge;0) or NaN if the radius is undefined or unknown
+     * @return un-scaled radius (&ge;0) or NaN if the radius is undefined or
+     * unknown
      */
     public static float radius(CollisionShape shape) {
         Validate.nonNull(shape, "shape");

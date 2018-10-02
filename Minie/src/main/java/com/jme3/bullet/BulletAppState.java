@@ -49,13 +49,19 @@ import jme3utilities.Validate;
  *
  * @author normenhansen
  */
-public class BulletAppState implements AppState, PhysicsTickListener {
+public class BulletAppState
+        implements AppState, PhysicsTickListener {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(BulletAppState.class.getName());
+    // *************************************************************************
+    // fields
+
     /**
      * true if-and-only-if the physics simulation is running (started but not
      * yet stopped)
@@ -126,6 +132,8 @@ public class BulletAppState implements AppState, PhysicsTickListener {
      * or null to visualize all objects
      */
     private BulletDebugAppState.DebugAppStateFilter filter = null;
+    // *************************************************************************
+    // constructors
 
     /**
      * Instantiate an app state to manage a new PhysicsSpace with DBVT collision
@@ -187,6 +195,7 @@ public class BulletAppState implements AppState, PhysicsTickListener {
         this.worldMax.set(worldMax);
         this.broadphaseType = broadphaseType;
     }
+    // *************************************************************************
 
     /**
      * Allocate the physics space and start physics for ThreadingType.PARALLEL.

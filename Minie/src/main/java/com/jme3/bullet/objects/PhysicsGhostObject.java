@@ -59,6 +59,8 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class PhysicsGhostObject extends PhysicsCollisionObject {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -71,6 +73,8 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      */
     private List<PhysicsCollisionObject> overlappingObjects
             = new LinkedList<>();
+    // *************************************************************************
+    // constructors
 
     /**
      * No-argument constructor needed by SavableClassUtil. Do not invoke
@@ -88,6 +92,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         collisionShape = shape;
         buildObject();
     }
+    // *************************************************************************
 
     /**
      * Create the configured object in Bullet.
