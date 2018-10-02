@@ -1,5 +1,12 @@
 # release notes for the Minie library and related tests
 
+## Version 0.3.3 released on TBD
+
+ + Added applyScale option to RigidBodyControl and GhostControl.
+ + Added default margin for collision shapes other than capsule and sphere.
+ + Eliminated runtime dependency on JME's jme3-bullet-native library.
+ + Removed TestIssue896.
+
 ## Version 0.3.2 released on 28 September 2018
 
  + Made many classes JmeCloneable, especially physics controls.
