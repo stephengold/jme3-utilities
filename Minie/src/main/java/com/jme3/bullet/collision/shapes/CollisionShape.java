@@ -138,7 +138,8 @@ abstract public class CollisionShape
         setLocalScaling(objectId, scale);
         logger.log(Level.FINE, "Scaling Shape {0}", Long.toHexString(objectId));
 
-        this.scale.set(scale);
+        getLocalScaling(objectId, this.scale);
+        assert this.scale.equals(scale) : scale;
     }
 
     /**
@@ -149,12 +150,13 @@ abstract public class CollisionShape
      * vector, not null)
      */
     public Vector3f getScale(Vector3f storeResult) {
-        assert MyVector3f.isAllNonNegative(scale);
-        if (storeResult == null) {
-            return scale.clone();
-        } else {
-            return storeResult.set(scale);
-        }
+        assert objectId != 0L;
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        getLocalScaling(objectId, result);
+
+        assert result.equals(scale);
+        return result;
     }
 
     /**
@@ -175,9 +177,9 @@ abstract public class CollisionShape
      */
     public float getMargin() {
         assert objectId != 0L;
+
         assert getMargin(objectId) == margin : getMargin(objectId);
         assert margin > 0f : margin;
-
         return margin;
     }
 
@@ -276,6 +278,7 @@ abstract public class CollisionShape
         Savable s = capsule.readSavable("scale", new Vector3f(1f, 1f, 1f));
         scale.set((Vector3f) s);
         margin = capsule.readFloat("margin", 0.04f);
+        // subclass must create the btCollisionShape and apply margin and scale
     }
     // *************************************************************************
     // Object methods
@@ -297,6 +300,8 @@ abstract public class CollisionShape
     // private methods
 
     private native void finalizeNative(long objectId);
+
+    private native void getLocalScaling(long objectId, Vector3f scale);
 
     private native float getMargin(long objectId);
 
