@@ -438,6 +438,21 @@ public class PhysicsSpace {
     }
 
     /**
+     * Test whether this space is empty.
+     *
+     * @return true if empty, otherwise false
+     */
+    public boolean isEmpty() {
+        boolean result = physicsGhostObjects.isEmpty()
+                && physicsCharacters.isEmpty()
+                && physicsBodies.isEmpty()
+                && physicsJoints.isEmpty()
+                && physicsVehicles.isEmpty();
+
+        return result;
+    }
+
+    /**
      * Remove the specified object from this space.
      *
      * @param obj the PhysicsCollisionObject to add, or null (modified)
