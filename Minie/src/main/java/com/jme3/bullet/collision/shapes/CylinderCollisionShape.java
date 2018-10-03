@@ -124,11 +124,11 @@ public class CylinderCollisionShape extends CollisionShape {
     public boolean canScale(Vector3f scale) {
         boolean canScale = super.canScale(scale);
         if (canScale) {
-            if (axis == PhysicsSpace.AXIS_X && scale.x != scale.y) {
+            if (axis == PhysicsSpace.AXIS_X && scale.y != scale.z) {
                 canScale = false;
             } else if (axis == PhysicsSpace.AXIS_Y && scale.x != scale.z) {
                 canScale = false;
-            } else if (axis == PhysicsSpace.AXIS_Z && scale.y != scale.z) {
+            } else if (axis == PhysicsSpace.AXIS_Z && scale.x != scale.y) {
                 canScale = false;
             }
         }
