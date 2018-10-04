@@ -54,6 +54,7 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -290,46 +291,56 @@ public class KinematicRagdollControl
      */
     protected void ragDollUpdate(float tpf) {
         TempVars vars = TempVars.get();
+        Vector3f location = vars.vect1;
         Quaternion orientation = vars.quat1;
         Quaternion tmpQuat = vars.quat2;
 
-        for (PhysicsBoneLink link : boneLinks.values()) {
+        Node parent = modelRoot.getParent();
+        Transform localToWorld = parent.getWorldTransform();
+        Transform meshToWorld = modelRoot.getWorldTransform();
+        Quaternion worldToMesh = meshToWorld.getRotation().inverse();
 
-            Vector3f location = vars.vect1;
+        for (PhysicsBoneLink link : boneLinks.values()) {
+            PhysicsRigidBody body = link.getRigidBody();
 
             // Start with the bone's location in world coordinates.
-            Vector3f worldLocation = link.getRigidBody().getMotionState().getWorldLocation();
+            Vector3f worldLocation = body.getMotionState().getWorldLocation();
             // transform into mesh coordinates
-            modelRoot.getWorldTransform().transformInverseVector(worldLocation, location);
+            meshToWorld.transformInverseVector(worldLocation, location);
 
             // Start with the bone's orientation in world coordinates.
-            Quaternion worldOrientation = link.getRigidBody().getMotionState().getWorldRotationQuat();
-
+            Quaternion worldOrientation
+                    = body.getMotionState().getWorldRotationQuat();
             // transform into mesh coordinates
-            orientation.set(worldOrientation).multLocal(link.originalOrientation(null));
-            tmpQuat.set(modelRoot.getWorldRotation()).inverseLocal().mult(orientation, orientation);
+            orientation.set(worldOrientation);
+            orientation.multLocal(link.originalOrientation(null));
+            worldToMesh.mult(orientation, orientation);
             orientation.normalizeLocal();
 
             // If the bone is the root bone, apply its physics transform to the model.
             //TODO assumes only one root bone is linked
-            if (link.getBone().getParent() == null) {
+            Bone bone = link.getBone();
+            if (bone.getParent() == null) {
+                // Transform the physics position/rotation by the root-bone inverse bind position/rotation
+                modelLocation.set(worldLocation);
+                modelLocation.subtractLocal(bone.getBindPosition());
+                localToWorld.transformInverseVector(modelLocation, modelLocation);
 
-                // Update transform of the model root.
-                modelLocation.set(worldLocation).subtractLocal(link.getBone().getBindPosition());
-                modelRoot.getParent().getWorldTransform().transformInverseVector(modelLocation, modelLocation);
-                modelOrientation.set(worldOrientation).multLocal(tmpQuat.set(link.getBone().getBindRotation()).inverseLocal());
+                tmpQuat.set(bone.getBindRotation());
+                tmpQuat.inverseLocal();
+                modelOrientation.set(worldOrientation).multLocal(tmpQuat);
 
                 // Update transform of the model root.
                 modelRoot.setLocalTranslation(modelLocation);
                 modelRoot.setLocalRotation(modelOrientation);
 
                 // Apply to the root bone as a user transform.
-                link.getBone().setUserTransformsInModelSpace(location, orientation);
+                bone.setUserTransformsInModelSpace(location, orientation);
 
             } else {
                 //Some bones might not be associated with a collision shape.
                 //Update them recusively.
-                RagdollUtils.setTransform(link.getBone(), location, orientation, false, boneList);
+                RagdollUtils.setTransform(bone, location, orientation, false, boneList);
             }
         }
         vars.release();
@@ -511,19 +522,23 @@ public class KinematicRagdollControl
      */
     protected void matchPhysicObjectToBone(PhysicsBoneLink link,
             Vector3f location, Quaternion orientation) {
+        Transform meshToWorld = modelRoot.getWorldTransform();
+
         // Compute the location of the bone in world coordinates.
-        modelRoot.getWorldTransform().transformVector(
-                link.getBone().getModelSpacePosition(), location);
+        Bone bone = link.getBone();
+        Vector3f meshLocation = bone.getModelSpacePosition();
+        meshToWorld.transformVector(meshLocation, location);
 
         // Compute the orientation of the bone in world coordinates.
-        orientation.set(link.getBone().getModelSpaceRotation()).multLocal(
-                link.getBone().getModelBindInverseRotation());
-        modelRoot.getWorldRotation().mult(orientation, orientation);
+        orientation.set(bone.getModelSpaceRotation());
+        orientation.multLocal(bone.getModelBindInverseRotation());
+        meshToWorld.getRotation().mult(orientation, orientation);
         orientation.normalizeLocal();
 
         // Update the location and rotation of the physics body.
-        link.getRigidBody().setPhysicsLocation(location);
-        link.getRigidBody().setPhysicsRotation(orientation);
+        PhysicsRigidBody body = link.getRigidBody();
+        body.setPhysicsLocation(location);
+        body.setPhysicsRotation(orientation);
     }
 
     /**
@@ -546,28 +561,28 @@ public class KinematicRagdollControl
      */
     @Override
     protected void createSpatialData(Spatial model) {
-        modelRoot = model;
-        Node parent = model.getParent();
+        modelRoot = model; // TODO move this to reBuild
+        Node parent = modelRoot.getParent();
 
-        Vector3f initPosition = model.getLocalTranslation().clone();
-        Quaternion initRotation = model.getLocalRotation().clone();
-        initScale = model.getLocalScale().clone();
+        Vector3f initPosition = modelRoot.getLocalTranslation().clone();
+        Quaternion initRotation = modelRoot.getLocalRotation().clone();
+        initScale = modelRoot.getLocalScale().clone();
 
-        model.removeFromParent();
-        model.setLocalTranslation(Vector3f.ZERO);
-        model.setLocalRotation(Quaternion.IDENTITY);
-        model.setLocalScale(1f);
+        modelRoot.removeFromParent();
+        modelRoot.setLocalTranslation(Vector3f.ZERO);
+        modelRoot.setLocalRotation(Quaternion.IDENTITY);
+        modelRoot.setLocalScale(1f);
 
         //HACK ALERT change this TODO
         //I remove the skeletonControl and readd it to the spatial to make sure it's after the ragdollControl in the stack
         //Find a proper way to order the controls.
-        SkeletonControl sc = model.getControl(SkeletonControl.class);
+        SkeletonControl sc = modelRoot.getControl(SkeletonControl.class);
         if (sc == null) {
             throw new IllegalArgumentException(
                     "The root node of the model should have a SkeletonControl. Make sure the control is there and that it's not on a sub node.");
         }
-        model.removeControl(sc);
-        model.addControl(sc);
+        modelRoot.removeControl(sc);
+        modelRoot.addControl(sc);
 
         if (boneList.isEmpty()) {
             // Add all bones to the list.
@@ -590,17 +605,16 @@ public class KinematicRagdollControl
         scanSpatial();
 
         if (parent != null) {
-            parent.attachChild(model);
+            parent.attachChild(modelRoot);
         }
-        model.setLocalTranslation(initPosition);
-        model.setLocalRotation(initRotation);
-        model.setLocalScale(initScale);
+        modelRoot.setLocalTranslation(initPosition);
+        modelRoot.setLocalRotation(initRotation);
+        modelRoot.setLocalScale(initScale);
 
         if (added) {
             addPhysics(getPhysicsSpace());
         }
-        logger.log(Level.FINE, "Created physics ragdoll for skeleton {0}",
-                skeleton);
+        logger.log(Level.FINE, "Created ragdoll for skeleton {0}", skeleton);
     }
 
     /**
@@ -676,24 +690,23 @@ public class KinematicRagdollControl
      * @param reccount depth of the recursion (&ge;1)
      * @param pointsMap (not null)
      */
-    protected void boneRecursion(Bone bone,
-            PhysicsRigidBody parent, int reccount,
-            Map<Integer, List<Float>> pointsMap) {
+    protected void boneRecursion(Bone bone, PhysicsRigidBody parent,
+            int reccount, Map<Integer, List<Float>> pointsMap) {
         PhysicsRigidBody parentShape = parent;
         if (boneList.contains(bone.getName())) {
             //create the collision shape
             CollisionShape shape;
+            List<Integer> boneIndices
+                    = RagdollUtils.getBoneIndices(bone, skeleton, boneList);
+            Vector3f meshLocation = bone.getModelSpacePosition();
             if (pointsMap != null) {
                 //build a shape for the bone, using the vertices that are most influenced by this bone
                 shape = RagdollUtils.makeShapeFromPointMap(pointsMap,
-                        RagdollUtils.getBoneIndices(bone, skeleton, boneList),
-                        initScale, bone.getModelSpacePosition());
+                        boneIndices, initScale, meshLocation);
             } else {
                 //build a shape for the bone, using the vertices associated with this bone with a weight above the threshold
                 shape = RagdollUtils.makeShapeFromVerticeWeights(modelRoot,
-                        RagdollUtils.getBoneIndices(bone, skeleton, boneList),
-                        initScale, bone.getModelSpacePosition(),
-                        weightThreshold);
+                        boneIndices, initScale, meshLocation, weightThreshold);
             }
 
             float limbMass = torsoMass / (float) reccount;
@@ -1155,9 +1168,11 @@ public class KinematicRagdollControl
      */
     public Vector3f setIKTarget(Bone bone, Vector3f worldGoal,
             int chainLength) {
-        Vector3f meshGoal = worldGoal.subtract(modelRoot.getWorldTranslation());
-        ikTargets.put(bone.getName(), meshGoal);
-        ikChainDepth.put(bone.getName(), chainLength);
+        Vector3f offset = modelRoot.getWorldTranslation();
+        Vector3f meshGoal = worldGoal.subtract(offset);
+        String boneName = bone.getName();
+        ikTargets.put(boneName, meshGoal);
+        ikChainDepth.put(boneName, chainLength);
         int i = 0;
         while (i < chainLength + 2 && bone.getParent() != null) {
             if (!bone.hasUserControl()) {
