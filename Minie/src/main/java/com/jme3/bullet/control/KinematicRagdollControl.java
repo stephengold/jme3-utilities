@@ -75,6 +75,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MySkeleton;
+import jme3utilities.MySpatial;
 import jme3utilities.Validate;
 
 /**
@@ -141,7 +142,7 @@ public class KinematicRagdollControl
     private RagdollPreset preset = new HumanoidRagdollPreset();
     private Vector3f initScale;
     /**
-     * mode of operation
+     * mode of operation (not null, default=Kinematic)
      */
     private Mode mode = Mode.Kinematic;
     private boolean debug = false;
@@ -300,7 +301,8 @@ public class KinematicRagdollControl
 
         Node parent = modelRoot.getParent();
         Transform localToWorld = parent.getWorldTransform();
-        Transform meshToWorld = modelRoot.getWorldTransform();
+        Spatial transformer = MySpatial.findAnimatedGeometry(modelRoot);
+        Transform meshToWorld = transformer.getWorldTransform();
         Quaternion worldToMesh = meshToWorld.getRotation().inverse();
 
         for (PhysicsBoneLink link : boneLinks.values()) {
@@ -525,7 +527,8 @@ public class KinematicRagdollControl
      */
     protected void matchPhysicObjectToBone(PhysicsBoneLink link,
             Vector3f location, Quaternion orientation) {
-        Transform meshToWorld = modelRoot.getWorldTransform();
+        Spatial transformer = MySpatial.findAnimatedGeometry(modelRoot);
+        Transform meshToWorld = transformer.getWorldTransform();
 
         // Compute the location of the bone in world coordinates.
         Bone bone = link.getBone();
@@ -962,7 +965,7 @@ public class KinematicRagdollControl
     }
 
     /**
-     * returns the mode of this control
+     * Read the mode of this control.
      *
      * @return an enum value
      */
@@ -977,7 +980,7 @@ public class KinematicRagdollControl
      */
     public void addCollisionListener(RagdollCollisionListener listener) {
         if (listeners == null) {
-            listeners = new ArrayList<>();
+            listeners = new ArrayList<>(); // TODO use SafeArrayList
         }
         listeners.add(listener);
     }
@@ -1153,7 +1156,8 @@ public class KinematicRagdollControl
      */
     public Vector3f setIKTarget(Bone bone, Vector3f worldGoal,
             int chainLength) {
-        Vector3f offset = modelRoot.getWorldTranslation();
+        Spatial transformer = MySpatial.findAnimatedGeometry(modelRoot);
+        Vector3f offset = transformer.getWorldTranslation();
         Vector3f meshGoal = worldGoal.subtract(offset);
         String boneName = bone.getName();
         ikTargets.put(boneName, meshGoal);
