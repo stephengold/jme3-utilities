@@ -146,9 +146,13 @@ public class KinematicRagdollControl
     private Mode mode = Mode.Kinematic;
     private boolean debug = false;
     /**
-     * true IFF recently switched to kinematic mode and still blending
+     * true IFF recently transitioned to kinematic mode and still blending
      */
     private boolean isBlending = false;
+    /**
+     * weight threshold for constructing hull shapes: -1 means assign each
+     * vertex to the bone with the most weight
+     */
     private float weightThreshold = -1f;
     /**
      * elapsed time since switching to kinematic mode, if isBlending is true (in
@@ -562,31 +566,22 @@ public class KinematicRagdollControl
     @Override
     protected void createSpatialData(Spatial model) {
         modelRoot = model; // TODO move this to reBuild
-        Node parent = modelRoot.getParent();
-
-        Vector3f initPosition = modelRoot.getLocalTranslation().clone();
-        Quaternion initRotation = modelRoot.getLocalRotation().clone();
         initScale = modelRoot.getLocalScale().clone();
 
-        modelRoot.removeFromParent();
-        modelRoot.setLocalTranslation(Vector3f.ZERO);
-        modelRoot.setLocalRotation(Quaternion.IDENTITY);
-        modelRoot.setLocalScale(1f);
-
-        //HACK ALERT change this TODO
-        //I remove the skeletonControl and readd it to the spatial to make sure it's after the ragdollControl in the stack
-        //Find a proper way to order the controls.
         SkeletonControl sc = modelRoot.getControl(SkeletonControl.class);
         if (sc == null) {
             throw new IllegalArgumentException(
                     "The root node of the model should have a SkeletonControl. Make sure the control is there and that it's not on a sub node.");
         }
+        skeleton = sc.getSkeleton();
+
+        //Remove the skeletonControl and readd it to the spatial to ensure it comes after this control.
+        //TODO Find a better way to order the controls.
         modelRoot.removeControl(sc);
         modelRoot.addControl(sc);
 
         if (boneList.isEmpty()) {
             // Add all bones to the list.
-            skeleton = sc.getSkeleton();
             for (int boneI = 0; boneI < skeleton.getBoneCount(); boneI++) {
                 String boneName = skeleton.getBone(boneI).getName();
                 boneList.add(boneName);
@@ -603,13 +598,6 @@ public class KinematicRagdollControl
         // put into bind pose and compute bone transforms in mesh space
         // TODO maybe don't reset to ragdoll out of animations?
         scanSpatial();
-
-        if (parent != null) {
-            parent.attachChild(modelRoot);
-        }
-        modelRoot.setLocalTranslation(initPosition);
-        modelRoot.setLocalRotation(initRotation);
-        modelRoot.setLocalScale(initScale);
 
         if (added) {
             addPhysics(getPhysicsSpace());
@@ -667,13 +655,11 @@ public class KinematicRagdollControl
      * Generate physics shapes and bone links for the skeleton.
      */
     protected void scanSpatial() {
-        AnimControl animControl = modelRoot.getControl(AnimControl.class);
         Map<Integer, List<Float>> pointsMap = null;
         if (weightThreshold == -1f) {
             pointsMap = RagdollUtils.buildPointMap(modelRoot);
         }
 
-        skeleton = animControl.getSkeleton();
         skeleton.resetAndUpdate();
         for (Bone rootBone : skeleton.getRoots()) {
             logger.log(Level.FINE, "Found root bone in skeleton {0}", skeleton);
@@ -700,11 +686,11 @@ public class KinematicRagdollControl
                     = RagdollUtils.getBoneIndices(bone, skeleton, boneList);
             Vector3f meshLocation = bone.getModelSpacePosition();
             if (pointsMap != null) {
-                //build a shape for the bone, using the vertices that are most influenced by this bone
+                // Build a shape for the bone, using the vertices most influenced by it.
                 shape = RagdollUtils.makeShapeFromPointMap(pointsMap,
                         boneIndices, initScale, meshLocation);
             } else {
-                //build a shape for the bone, using the vertices associated with this bone with a weight above the threshold
+                // Build a shape for the bone, using the vertices for which its weight exceeds the threshold.
                 shape = RagdollUtils.makeShapeFromVerticeWeights(modelRoot,
                         boneIndices, initScale, meshLocation, weightThreshold);
             }
