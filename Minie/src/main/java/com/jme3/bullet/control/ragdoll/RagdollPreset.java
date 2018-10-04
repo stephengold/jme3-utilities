@@ -137,54 +137,6 @@ public abstract class RagdollPreset implements Cloneable {
     }
 
     /**
-     * Range of motion for a joint. Note: immutable.
-     */
-    protected class JointPreset {
-
-        private float maxX, minX, maxY, minY, maxZ, minZ;
-
-        /**
-         * Instantiate a preset with no motion allowed.
-         */
-        public JointPreset() {
-        }
-
-        /**
-         * Instantiate a preset with the specified range of motion.
-         *
-         * @param maxX the maximum rotation on the X axis (in radians)
-         * @param minX the minimum rotation on the X axis (in radians)
-         * @param maxY the maximum rotation on the Y axis (in radians)
-         * @param minY the minimum rotation on the Y axis (in radians)
-         * @param maxZ the maximum rotation on the Z axis (in radians)
-         * @param minZ the minimum rotation on the Z axis (in radians)
-         */
-        public JointPreset(float maxX, float minX, float maxY, float minY,
-                float maxZ, float minZ) {
-            this.maxX = maxX;
-            this.minX = minX;
-            this.maxY = maxY;
-            this.minY = minY;
-            this.maxZ = maxZ;
-            this.minZ = minZ;
-        }
-
-        /**
-         * Apply this preset to the specified joint.
-         *
-         * @param joint where to apply (not null, modified)
-         */
-        public void setupJoint(SixDofJoint joint) {
-            joint.getRotationalLimitMotor(0).setHiLimit(maxX);
-            joint.getRotationalLimitMotor(0).setLoLimit(minX);
-            joint.getRotationalLimitMotor(1).setHiLimit(maxY);
-            joint.getRotationalLimitMotor(1).setLoLimit(minY);
-            joint.getRotationalLimitMotor(2).setHiLimit(maxZ);
-            joint.getRotationalLimitMotor(2).setLoLimit(minZ);
-        }
-    }
-
-    /**
      * One entry in a bone lexicon.
      */
     protected class LexiconEntry extends HashMap<String, Integer> {
