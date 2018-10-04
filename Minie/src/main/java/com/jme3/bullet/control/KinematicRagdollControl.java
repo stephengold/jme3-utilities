@@ -277,8 +277,7 @@ public class KinematicRagdollControl
         }
         if (mode == Mode.IK) {
             ikUpdate(tpf);
-        } else if (mode == Mode.Ragdoll
-                && modelRoot.getLocalTranslation().equals(modelLocation)) {
+        } else if (mode == Mode.Ragdoll) {
             // Update each bone's position and rotation based on dynamics.
             ragDollUpdate(tpf);
         } else {
