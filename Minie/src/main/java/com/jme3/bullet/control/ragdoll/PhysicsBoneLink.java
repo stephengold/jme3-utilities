@@ -41,7 +41,6 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -101,21 +100,19 @@ public class PhysicsBoneLink implements Savable {
     /**
      * Instantiate a link between the specified bone and body.
      *
-     * @param cgmRoot the root of the C-G model containing the linked bone (not
-     * null)
+     * @param transformer the spatial to translate between mesh coordinates and
+     * world coordinates (not null)
      * @param bone the bone to link (not null)
      * @param rigidBody the rigid body to link (not null)
      * @param joint joint between the bone's body and its parent's (may be null)
      */
-    public PhysicsBoneLink(Spatial cgmRoot, Bone bone,
+    public PhysicsBoneLink(Spatial transformer, Bone bone,
             PhysicsRigidBody rigidBody, SixDofJoint joint) {
-        Validate.nonNull(cgmRoot, "model root");
+        Validate.nonNull(transformer, "transformer");
         Validate.nonNull(bone, "bone");
         Validate.nonNull(rigidBody, "rigid body");
 
-        Geometry animated = MySpatial.findAnimatedGeometry(cgmRoot);
-        this.transformSpatial = (animated == null) ? cgmRoot : animated;
-
+        transformSpatial = transformer;
         this.bone = bone;
         this.rigidBody = rigidBody;
         this.joint = joint;

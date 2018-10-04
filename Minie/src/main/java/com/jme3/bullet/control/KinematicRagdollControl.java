@@ -721,8 +721,9 @@ public class KinematicRagdollControl
                 joint.setCollisionBetweenLinkedBodies(false);
             }
 
+            Spatial transformer = MySpatial.findAnimatedGeometry(modelRoot);
             PhysicsBoneLink link
-                    = new PhysicsBoneLink(modelRoot, bone, shapeNode, joint);
+                    = new PhysicsBoneLink(transformer, bone, shapeNode, joint);
             boneLinks.put(bone.getName(), link);
             shapeNode.setUserObject(link);
             parentShape = shapeNode;
