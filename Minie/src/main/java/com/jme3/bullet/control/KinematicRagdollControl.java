@@ -290,46 +290,46 @@ public class KinematicRagdollControl
      */
     protected void ragDollUpdate(float tpf) {
         TempVars vars = TempVars.get();
-        Quaternion tmpRot1 = vars.quat1;
-        Quaternion tmpRot2 = vars.quat2;
+        Quaternion orientation = vars.quat1;
+        Quaternion tmpQuat = vars.quat2;
 
         for (PhysicsBoneLink link : boneLinks.values()) {
 
-            Vector3f position = vars.vect1;
+            Vector3f location = vars.vect1;
 
             // Start with the bone's location in world coordinates.
-            Vector3f p = link.getRigidBody().getMotionState().getWorldLocation();
+            Vector3f worldLocation = link.getRigidBody().getMotionState().getWorldLocation();
             // transform into mesh coordinates
-            modelRoot.getWorldTransform().transformInverseVector(p, position);
+            modelRoot.getWorldTransform().transformInverseVector(worldLocation, location);
 
             // Start with the bone's orientation in world coordinates.
-            Quaternion q = link.getRigidBody().getMotionState().getWorldRotationQuat();
+            Quaternion worldOrientation = link.getRigidBody().getMotionState().getWorldRotationQuat();
 
             // transform into mesh coordinates
-            tmpRot1.set(q).multLocal(link.originalOrientation(null));
-            tmpRot2.set(modelRoot.getWorldRotation()).inverseLocal().mult(tmpRot1, tmpRot1);
-            tmpRot1.normalizeLocal();
+            orientation.set(worldOrientation).multLocal(link.originalOrientation(null));
+            tmpQuat.set(modelRoot.getWorldRotation()).inverseLocal().mult(orientation, orientation);
+            orientation.normalizeLocal();
 
             // If the bone is the root bone, apply its physics transform to the model.
             //TODO assumes only one root bone is linked
             if (link.getBone().getParent() == null) {
 
                 // Update transform of the model root.
-                modelLocation.set(p).subtractLocal(link.getBone().getBindPosition());
+                modelLocation.set(worldLocation).subtractLocal(link.getBone().getBindPosition());
                 modelRoot.getParent().getWorldTransform().transformInverseVector(modelLocation, modelLocation);
-                modelOrientation.set(q).multLocal(tmpRot2.set(link.getBone().getBindRotation()).inverseLocal());
+                modelOrientation.set(worldOrientation).multLocal(tmpQuat.set(link.getBone().getBindRotation()).inverseLocal());
 
                 // Update transform of the model root.
                 modelRoot.setLocalTranslation(modelLocation);
                 modelRoot.setLocalRotation(modelOrientation);
 
                 // Apply to the root bone as a user transform.
-                link.getBone().setUserTransformsInModelSpace(position, tmpRot1);
+                link.getBone().setUserTransformsInModelSpace(location, orientation);
 
             } else {
                 //Some bones might not be associated with a collision shape.
                 //Update them recusively.
-                RagdollUtils.setTransform(link.getBone(), position, tmpRot1, false, boneList);
+                RagdollUtils.setTransform(link.getBone(), location, orientation, false, boneList);
             }
         }
         vars.release();
@@ -506,24 +506,24 @@ public class KinematicRagdollControl
      * TODO rename
      *
      * @param link the bone link connecting the bone and the rigidBody
-     * @param position temporary storage used in calculations (not null)
-     * @param tmpRot1 temporary storage used in calculations (not null)
+     * @param location temporary vector used in calculations (not null)
+     * @param orientation temporary quaternion used in calculations (not null)
      */
     protected void matchPhysicObjectToBone(PhysicsBoneLink link,
-            Vector3f position, Quaternion tmpRot1) {
+            Vector3f location, Quaternion orientation) {
         // Compute the location of the bone in world coordinates.
         modelRoot.getWorldTransform().transformVector(
-                link.getBone().getModelSpacePosition(), position);
+                link.getBone().getModelSpacePosition(), location);
 
         // Compute the orientation of the bone in world coordinates.
-        tmpRot1.set(link.getBone().getModelSpaceRotation()).multLocal(
+        orientation.set(link.getBone().getModelSpaceRotation()).multLocal(
                 link.getBone().getModelBindInverseRotation());
-        modelRoot.getWorldRotation().mult(tmpRot1, tmpRot1);
-        tmpRot1.normalizeLocal();
+        modelRoot.getWorldRotation().mult(orientation, orientation);
+        orientation.normalizeLocal();
 
         // Update the location and rotation of the physics body.
-        link.getRigidBody().setPhysicsLocation(position);
-        link.getRigidBody().setPhysicsRotation(tmpRot1);
+        link.getRigidBody().setPhysicsLocation(location);
+        link.getRigidBody().setPhysicsRotation(orientation);
     }
 
     /**
@@ -1149,13 +1149,14 @@ public class KinematicRagdollControl
      * Add a target for inverse kinematics.
      *
      * @param bone which bone the IK applies to (not null)
-     * @param worldPos the world coordinates of the goal (not null)
+     * @param worldGoal the world coordinates of the goal (not null)
      * @param chainLength number of bones in the chain
      * @return a new instance (not null, already added to ikTargets)
      */
-    public Vector3f setIKTarget(Bone bone, Vector3f worldPos, int chainLength) {
-        Vector3f target = worldPos.subtract(modelRoot.getWorldTranslation());
-        ikTargets.put(bone.getName(), target);
+    public Vector3f setIKTarget(Bone bone, Vector3f worldGoal,
+            int chainLength) {
+        Vector3f meshGoal = worldGoal.subtract(modelRoot.getWorldTranslation());
+        ikTargets.put(bone.getName(), meshGoal);
         ikChainDepth.put(bone.getName(), chainLength);
         int i = 0;
         while (i < chainLength + 2 && bone.getParent() != null) {
@@ -1166,7 +1167,7 @@ public class KinematicRagdollControl
             i++;
         }
 
-        return target;
+        return meshGoal;
     }
 
     /**
