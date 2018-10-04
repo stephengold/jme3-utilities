@@ -616,6 +616,7 @@ public class BulletAppState
     @Override
     public void physicsTick(PhysicsSpace space, float timeStep) {
     }
+    // *************************************************************************
 
     /**
      * Enumerate threading modes.
@@ -623,13 +624,13 @@ public class BulletAppState
     public enum ThreadingType {
         /**
          * Default mode: user update, physics update, and rendering happen
-         * sequentially. (single threaded)
+         * sequentially. (single-threaded)
          */
         SEQUENTIAL,
         /**
          * Parallel threaded mode: physics update and rendering are executed in
          * parallel, update order is maintained.
          */
-        PARALLEL,
+        PARALLEL;
     }
 }
