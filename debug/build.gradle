@@ -9,12 +9,10 @@ ext {
     baseName = "$artifact-$version"
 }
 
-build { dependsOn 'pom' }
 jar { baseName project.ext.baseName }
 javadocJar { baseName project.ext.baseName }
 sourcesJar { baseName project.ext.baseName }
-
-processResources { dependsOn ':textures:shapeTextures' }
+processResources.dependsOn(':textures:shapeTextures')
 
 dependencies {
     compile "org.jmonkeyengine:jme3-effects:$jmonkeyengineVersion"
@@ -24,6 +22,7 @@ dependencies {
     compile project(':heart')
 }
 
+build.dependsOn('pom')
 task pom {
     doLast {
         pom {
