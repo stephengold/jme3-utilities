@@ -40,6 +40,7 @@ import com.jme3.scene.control.Control;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import jme3utilities.MyControl;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.debug.Describer;
@@ -220,7 +221,9 @@ public class PhysicsDescriber extends Describer {
     protected boolean isControlEnabled(Control control) {
         Validate.nonNull(control, "control");
 
-        boolean result = MyControlP.isEnabled(control);
+        boolean result = !MyControlP.canDisable(control)
+                || MyControlP.isEnabled(control);
+        
         return result;
     }
 }

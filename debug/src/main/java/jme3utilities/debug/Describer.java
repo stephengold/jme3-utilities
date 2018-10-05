@@ -841,7 +841,10 @@ public class Describer {
      */
     protected boolean isControlEnabled(Control control) {
         Validate.nonNull(control, "control");
-        boolean result = MyControl.isEnabled(control);
+
+        boolean result = !MyControl.canDisable(control)
+                || MyControl.isEnabled(control);
+
         return result;
     }
 }
