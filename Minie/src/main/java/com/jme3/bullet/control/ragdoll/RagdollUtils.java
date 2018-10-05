@@ -34,8 +34,10 @@ package com.jme3.bullet.control.ragdoll;
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.HullCollisionShape;
 import com.jme3.bullet.joints.SixDofJoint;
+import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
@@ -45,12 +47,11 @@ import com.jme3.scene.VertexBuffer.Type;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * Utility methods used by KinematicRagdollControl.
@@ -84,111 +85,19 @@ public class RagdollUtils {
      */
     public static void setJointLimit(SixDofJoint joint, float maxX, float minX,
             float maxY, float minY, float maxZ, float minZ) {
+        Validate.inRange(maxX, "max X rotation", minX, FastMath.PI);
+        Validate.inRange(minX, "min X rotation", -FastMath.PI, maxX);
+        Validate.inRange(maxY, "max Y rotation", minY, FastMath.PI);
+        Validate.inRange(minY, "min Y rotation", -FastMath.PI, maxY);
+        Validate.inRange(maxZ, "max Z rotation", minZ, FastMath.PI);
+        Validate.inRange(minZ, "min Z rotation", -FastMath.PI, maxZ);
 
-        joint.getRotationalLimitMotor(0).setHiLimit(maxX);
-        joint.getRotationalLimitMotor(0).setLoLimit(minX);
-        joint.getRotationalLimitMotor(1).setHiLimit(maxY);
-        joint.getRotationalLimitMotor(1).setLoLimit(minY);
-        joint.getRotationalLimitMotor(2).setHiLimit(maxZ);
-        joint.getRotationalLimitMotor(2).setLoLimit(minZ);
-    }
-
-    /**
-     * Build a map of mesh vertices in a subtree of the scene graph.
-     *
-     * @param model the root of the subtree (may be null)
-     * @return a new map (not null)
-     */
-    public static Map<Integer, List<Float>> buildPointMap(Spatial model) {
-        Map<Integer, List<Float>> map = new HashMap<>();
-
-        SkeletonControl skeletonCtrl = model.getControl(SkeletonControl.class);
-        Mesh[] targetMeshes = skeletonCtrl.getTargets();
-        for (Mesh mesh : targetMeshes) {
-            buildPointMapForMesh(mesh, map);
-        }
-
-        return map;
-    }
-
-    private static Map<Integer, List<Float>> buildPointMapForMesh(Mesh mesh,
-            Map<Integer, List<Float>> map) {
-        FloatBuffer vertices = mesh.getFloatBuffer(Type.Position);
-        ByteBuffer boneIndices = (ByteBuffer) mesh.getBuffer(Type.BoneIndex).getData();
-        FloatBuffer boneWeight = (FloatBuffer) mesh.getBuffer(Type.BoneWeight).getData();
-
-        vertices.rewind();
-        boneIndices.rewind();
-        boneWeight.rewind();
-
-        int vertexComponents = mesh.getVertexCount() * 3;
-        int k, start, index;
-        float maxWeight;
-
-        for (int i = 0; i < vertexComponents; i += 3) {
-            start = i / 3 * 4;
-            index = 0;
-            maxWeight = -1;
-            for (k = start; k < start + 4; k++) {
-                float weight = boneWeight.get(k);
-                if (weight > maxWeight) {
-                    maxWeight = weight;
-                    index = boneIndices.get(k);
-                }
-            }
-            List<Float> points = map.get(index);
-            if (points == null) {
-                points = new ArrayList<>();
-                map.put(index, points);
-            }
-            points.add(vertices.get(i));
-            points.add(vertices.get(i + 1));
-            points.add(vertices.get(i + 2));
-        }
-
-        return map;
-    }
-
-    /**
-     * Create a hull collision shape from linked vertices to this bone. Vertices
-     * must have previously been gathered using buildPointMap().
-     *
-     * @param pointsMap map from bone indices to coordinates (not null,
-     * unaffected)
-     * @param boneIndices (not null, unaffected)
-     * @param initialScale scale factors (not null, unaffected)
-     * @param initialPosition location (not null, unaffected)
-     * @return a new shape (not null)
-     */
-    public static HullCollisionShape makeShapeFromPointMap(
-            Map<Integer, List<Float>> pointsMap, List<Integer> boneIndices,
-            Vector3f initialScale, Vector3f initialPosition) {
-
-        ArrayList<Float> points = new ArrayList<>();
-        for (Integer index : boneIndices) {
-            List<Float> l = pointsMap.get(index);
-            if (l != null) {
-
-                for (int i = 0; i < l.size(); i += 3) {
-                    Vector3f pos = new Vector3f();
-                    pos.x = l.get(i);
-                    pos.y = l.get(i + 1);
-                    pos.z = l.get(i + 2);
-                    pos.subtractLocal(initialPosition).multLocal(initialScale);
-                    points.add(pos.x);
-                    points.add(pos.y);
-                    points.add(pos.z);
-                }
-            }
-        }
-
-        assert !points.isEmpty();
-        float[] p = new float[points.size()];
-        for (int i = 0; i < points.size(); i++) {
-            p[i] = points.get(i);
-        }
-
-        return new HullCollisionShape(p);
+        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_X).setHiLimit(maxX);
+        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_X).setLoLimit(minX);
+        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Y).setHiLimit(maxY);
+        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Y).setLoLimit(minY);
+        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Z).setHiLimit(maxZ);
+        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Z).setLoLimit(minZ);
     }
 
     /**
@@ -203,13 +112,14 @@ public class RagdollUtils {
     public static List<Integer> getBoneIndices(Bone bone, Skeleton skeleton,
             Set<String> boneList) {
         List<Integer> list = new LinkedList<>();
+
         if (boneList.isEmpty()) {
             list.add(skeleton.getBoneIndex(bone));
         } else {
             list.add(skeleton.getBoneIndex(bone));
-            for (Bone chilBone : bone.getChildren()) {
-                if (!boneList.contains(chilBone.getName())) {
-                    list.addAll(getBoneIndices(chilBone, skeleton, boneList));
+            for (Bone child : bone.getChildren()) {
+                if (!boneList.contains(child.getName())) {
+                    list.addAll(getBoneIndices(child, skeleton, boneList));
                 }
             }
         }
@@ -321,11 +231,11 @@ public class RagdollUtils {
      */
     public static void setTransform(Bone bone, Vector3f pos, Quaternion rot,
             boolean restoreBoneControl, Set<String> boneList) {
-        //we ensure that we have the control
+        // Ensure user control
         if (restoreBoneControl) {
             bone.setUserControl(true);
         }
-        //we set te user transforms of the bone
+        // Set the user transform of the bone.
         bone.setUserTransformsInModelSpace(pos, rot);
         for (Bone childBone : bone.getChildren()) {
             //each child bone that is not in the list is updated

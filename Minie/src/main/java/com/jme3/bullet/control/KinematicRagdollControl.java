@@ -652,15 +652,10 @@ public class KinematicRagdollControl
      * Generate physics shapes and bone links for the skeleton.
      */
     protected void scanSpatial() {
-        Map<Integer, List<Float>> pointsMap = null;
-        if (weightThreshold == -1f) {
-            pointsMap = RagdollUtils.buildPointMap(modelRoot);
-        }
-
         skeleton.resetAndUpdate();
         for (Bone rootBone : skeleton.getRoots()) {
             logger.log(Level.FINE, "Found root bone in skeleton {0}", skeleton);
-            boneRecursion(rootBone, baseRigidBody, 1, pointsMap);
+            boneRecursion(rootBone, baseRigidBody, 1);
         }
     }
 
@@ -671,10 +666,9 @@ public class KinematicRagdollControl
      * @param bone the bone to be linked (not null)
      * @param parent the body linked to the parent bone (not null)
      * @param reccount depth of the recursion (&ge;1)
-     * @param pointsMap (not null)
      */
     protected void boneRecursion(Bone bone, PhysicsRigidBody parent,
-            int reccount, Map<Integer, List<Float>> pointsMap) {
+            int reccount) {
         PhysicsRigidBody parentShape = parent;
         String boneName = bone.getName();
         if (jointMap.containsKey(boneName)) {
@@ -683,15 +677,9 @@ public class KinematicRagdollControl
             List<Integer> boneIndices
                     = RagdollUtils.getBoneIndices(bone, skeleton, jointMap.keySet());
             Vector3f meshLocation = bone.getModelSpacePosition();
-            if (pointsMap != null) {
-                // Build a shape for the bone, using the vertices most influenced by it.
-                shape = RagdollUtils.makeShapeFromPointMap(pointsMap,
-                        boneIndices, initScale, meshLocation);
-            } else {
-                // Build a shape for the bone, using the vertices for which its weight exceeds the threshold.
-                shape = RagdollUtils.makeShapeFromVerticeWeights(modelRoot,
-                        boneIndices, initScale, meshLocation, weightThreshold);
-            }
+            // Build a shape for the bone, using the vertices for which its weight exceeds the threshold.
+            shape = RagdollUtils.makeShapeFromVerticeWeights(modelRoot,
+                    boneIndices, initScale, meshLocation, weightThreshold);
 
             float limbMass = torsoMass / (float) reccount;
             assert limbMass > 0f : limbMass;
@@ -727,7 +715,7 @@ public class KinematicRagdollControl
         }
 
         for (Bone childBone : bone.getChildren()) {
-            boneRecursion(childBone, parentShape, reccount + 1, pointsMap);
+            boneRecursion(childBone, parentShape, reccount + 1);
         }
     }
 
