@@ -614,7 +614,8 @@ public class MySpatial {
     }
 
     /**
-     * Calculate the world scale factor of a uniformly scaled spatial.
+     * Calculate the world scale factor of a uniformly scaled spatial. TODO
+     * rename uniformScale
      *
      * @param spatial spatial to measure (not null, unaffected)
      * @return scale factor
@@ -638,7 +639,8 @@ public class MySpatial {
     }
 
     /**
-     * Calculate the world location of a spatial's center.
+     * Calculate the world location of a spatial's center. TODO rename
+     * copyWorldLocation TODO add copyWorldTransform
      *
      * @param spatial spatial to locate (not null, unaffected)
      * @return a new vector
@@ -657,7 +659,8 @@ public class MySpatial {
     }
 
     /**
-     * Calculate the world orientation of a spatial.
+     * Calculate the world orientation of a spatial. TODO rename
+     * copyWorldOrientation
      *
      * @param spatial spatial to orient (not null, unaffected)
      * @return a new vector
@@ -676,7 +679,7 @@ public class MySpatial {
     }
 
     /**
-     * Calculate the world scale of a spatial.
+     * Calculate the world scale of a spatial. TODO rename copyWorldScale
      *
      * @param spatial which spatial (not null, unaffected)
      * @return a new vector
@@ -695,7 +698,8 @@ public class MySpatial {
     }
 
     /**
-     * Calculate the world elevation of a perfectly horizontal surface.
+     * Calculate the world elevation of a perfectly horizontal surface. TODO
+     * rename yLevel
      *
      * @param geometry surface to measure (not null)
      * @return elevation of the surface (in world coordinates)
