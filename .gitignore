@@ -4,16 +4,14 @@
 /debug/src/main/resources/Textures/shapes/
 /heart/build/
 /Minie/build/
-/Minie/src/main/java/jme3test/
 /moon-ccbysa/build/
-/nifty/*.dll
-/nifty/*.so
 /nifty/build/
 /SkyControl/build/
 /SkyControl/src/main/resources/Textures/skies/
 /tests/*.dll
 /tests/*.so
 /tests/build/
+/tests/src/main/java/jme3test/
 /tests/Written Assets/
 /textures/build/
 /textures/src/main/java/jme3utilities/sky/*.java

@@ -13,27 +13,18 @@ sourceSets.main {
     java { srcDir 'src/main/java' }
     resources { srcDir 'src/main/resources' }
 }
-build { dependsOn 'pom' }
 jar { baseName project.ext.baseName }
 javadocJar { baseName project.ext.baseName }
 sourcesJar { baseName project.ext.baseName }
 
 dependencies {
-    // "jme3utilities:jme3-utilities-debug:$jme3utilitiesdebugVersion"
+    //compile "jme3utilities:jme3-utilities-debug:$jme3utilitiesdebugVersion"
     compile project(':debug')
-
-    // The following dependencies are for testing and should be commented
-    // out when building a release.
-    runtime "org.jmonkeyengine:jme3-desktop:$jmonkeyengineVersion"
-    runtime "org.jmonkeyengine:jme3-lwjgl:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-plugins:$jmonkeyengineVersion"
-    runtime 'org.jmonkeyengine:jme3-testdata:3.1.0-stable'
 }
 
-compileJava {
-    options.headerOutputDirectory = new File('build/cpp')
-}
+compileJava.options.headerOutputDirectory = new File('build/cpp')
 
+build.dependsOn('pom')
 task pom {
     doLast {
         pom {
@@ -50,13 +41,4 @@ task pom {
             }
         }.writeTo("${buildDir}/libs/${project.ext.baseName}.pom")
     }
-}
-
-// cleanup tasks
-clean { dependsOn 'cleanDLLs', 'cleanSOs' }
-task cleanDLLs(type: Delete) {
-    delete fileTree(dir: '.', include: '*.dll')
-}
-task cleanSOs(type: Delete) {
-    delete fileTree(dir: '.', include: '*.so')
 }
