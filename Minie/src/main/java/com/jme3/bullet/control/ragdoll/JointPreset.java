@@ -31,7 +31,6 @@
  */
 package com.jme3.bullet.control.ragdoll;
 
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.math.FastMath;
 import jme3utilities.Validate;
@@ -95,11 +94,6 @@ public class JointPreset {
      * @param joint where to apply this preset (not null, modified)
      */
     public void setupJoint(SixDofJoint joint) {
-        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_X).setHiLimit(maxX);
-        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_X).setLoLimit(minX);
-        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Y).setHiLimit(maxY);
-        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Y).setLoLimit(minY);
-        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Z).setHiLimit(maxZ);
-        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Z).setLoLimit(minZ);
+        RagdollUtils.setJointLimit(joint, maxX, minX, maxY, minY, maxZ, minZ);
     }
 }
