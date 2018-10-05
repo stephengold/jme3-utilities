@@ -47,5 +47,5 @@ public enum StarsOption {
      * for the southern hemisphere. Use this option when combining star motion
      * with an edge filter.
      */
-    TwoDomes;
+    TwoDomes
 }

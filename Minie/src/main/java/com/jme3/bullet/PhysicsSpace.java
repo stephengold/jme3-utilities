@@ -1249,7 +1249,7 @@ public class PhysicsSpace {
          * based on AABB tree to allow quicker addition/removal of physics
          * objects
          */
-        DBVT;
+        DBVT
     }
 
     /**

@@ -631,6 +631,6 @@ public class BulletAppState
          * Parallel threaded mode: physics update and rendering are executed in
          * parallel, update order is maintained.
          */
-        PARALLEL;
+        PARALLEL
     }
 }
