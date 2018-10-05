@@ -42,9 +42,8 @@ import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.RagdollCollisionListener;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.control.ragdoll.HumanoidRagdollPreset;
+import com.jme3.bullet.control.ragdoll.JointPreset;
 import com.jme3.bullet.control.ragdoll.PhysicsBoneLink;
-import com.jme3.bullet.control.ragdoll.RagdollPreset;
 import com.jme3.bullet.control.ragdoll.RagdollUtils;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
@@ -65,13 +64,10 @@ import com.jme3.util.TempVars;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MySkeleton;
@@ -126,7 +122,11 @@ public class KinematicRagdollControl
      * list of registered collision listeners
      */
     private List<RagdollCollisionListener> listeners;
-    private Set<String> boneList = new TreeSet<>(); // TODO threshold for each
+    /**
+     * map bone names to joint presets for createSpatialData()
+     */
+    private Map<String, JointPreset> jointMap = new HashMap<>();
+    // TODO threshold for each bone
     private Map<String, PhysicsBoneLink> boneLinks = new HashMap<>();
     private Vector3f modelLocation = new Vector3f(); // TODO temporary
     private Quaternion modelOrientation = new Quaternion(); // TODO temporary
@@ -139,7 +139,6 @@ public class KinematicRagdollControl
      * skeleton being controlled
      */
     private Skeleton skeleton;
-    private RagdollPreset preset = new HumanoidRagdollPreset();
     private Vector3f initScale;
     /**
      * mode of operation (not null, default=Kinematic)
@@ -216,51 +215,28 @@ public class KinematicRagdollControl
     // constructors
 
     /**
-     * Instantiate an enabled control.
+     * Instantiate an enabled, Kinematic control with no bones a weight
+     * threshold of 0.5 .
      */
     public KinematicRagdollControl() {
+        this(0.5f);
+    }
+
+    /**
+     * Instantiate an enabled, Kinematic control with no bones and the specified
+     * weight threshold.
+     *
+     * @param weightThreshold (&gt;0, &lt;1)
+     */
+    public KinematicRagdollControl(float weightThreshold) {
+        Validate.fraction(weightThreshold, "weight threshold");
+
         BoxCollisionShape torsoShape
                 = new BoxCollisionShape(Vector3f.UNIT_XYZ.mult(0.1f));
         totalMass = torsoMass;
         baseRigidBody = new PhysicsRigidBody(torsoShape, torsoMass);
         baseRigidBody.setKinematic(mode == Mode.Kinematic);
-    }
-
-    /**
-     * Instantiate an enabled control with the specified weight threshold.
-     *
-     * @param weightThreshold (&gt;0, &lt;1)
-     */
-    public KinematicRagdollControl(float weightThreshold) {
-        this();
-        Validate.fraction(weightThreshold, "weight threshold");
         this.weightThreshold = weightThreshold;
-    }
-
-    /**
-     * Instantiate an enabled control with the specified preset and weight
-     * threshold.
-     *
-     * @param preset (not null)
-     * @param weightThreshold (&gt;0, &lt;1)
-     */
-    public KinematicRagdollControl(RagdollPreset preset,
-            float weightThreshold) {
-        this();
-        Validate.fraction(weightThreshold, "weight threshold");
-
-        this.preset = preset;
-        this.weightThreshold = weightThreshold;
-    }
-
-    /**
-     * Instantiate an enabled control with the specified preset.
-     *
-     * @param preset (not null)
-     */
-    public KinematicRagdollControl(RagdollPreset preset) {
-        this();
-        this.preset = preset;
     }
     // *************************************************************************
 
@@ -345,7 +321,7 @@ public class KinematicRagdollControl
             } else {
                 //Some bones might not be associated with a collision shape.
                 //Update them recusively.
-                RagdollUtils.setTransform(bone, location, orientation, false, boneList);
+                RagdollUtils.setTransform(bone, location, orientation, false, jointMap.keySet());
             }
         }
         vars.release();
@@ -383,7 +359,7 @@ public class KinematicRagdollControl
                 position.set(position2);
 
                 //update bone transforms
-                RagdollUtils.setTransform(link.getBone(), position, tmpRot1, true, boneList);
+                RagdollUtils.setTransform(link.getBone(), position, tmpRot1, true, jointMap.keySet());
             }
             //set bone transforms to the ragdoll
             matchPhysicObjectToBone(link, position, tmpRot1);
@@ -582,17 +558,10 @@ public class KinematicRagdollControl
         modelRoot.removeControl(sc);
         modelRoot.addControl(sc);
 
-        if (boneList.isEmpty()) {
-            // Add all bones to the list.
-            for (int boneI = 0; boneI < skeleton.getBoneCount(); boneI++) {
-                String boneName = skeleton.getBone(boneI).getName();
-                boneList.add(boneName);
-            }
-        }
         // Filter out any bones without vertices.
         filterBoneList(sc);
 
-        if (boneList.isEmpty()) {
+        if (jointMap.isEmpty()) {
             throw new IllegalArgumentException(
                     "No suitable bones were found in the model's skeleton.");
         }
@@ -616,11 +585,11 @@ public class KinematicRagdollControl
         Skeleton skel = skeletonControl.getSkeleton();
         for (int boneI = 0; boneI < skel.getBoneCount(); boneI++) {
             String boneName = skel.getBone(boneI).getName();
-            if (boneList.contains(boneName)) {
+            if (jointMap.containsKey(boneName)) {
                 boolean hasVertices = RagdollUtils.hasVertices(boneI, targets,
                         weightThreshold);
                 if (!hasVertices) {
-                    boneList.remove(boneName);
+                    jointMap.remove(boneName);
                 }
             }
         }
@@ -641,16 +610,38 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Add a bone name to this control. Repeated invocations of this method can
-     * be used to specify which bones to use when generating collision shapes.
+     * Add a bone with a joint preset to this control.
      * <p>
-     * Not allowed after attaching the control.
+     * Allowed only when the control is NOT added to a spatial.
      *
-     * @param name the name of the bone to add
+     * @param boneName the name of the bone to add (not null)
+     * @param jointPreset (not null)
+     * @see #setJointLimit(java.lang.String, float, float, float, float, float,
+     * float)
      */
-    public void addBoneName(String name) {
-        assert modelRoot == null;
-        boneList.add(name);
+    public void addBone(String boneName, JointPreset jointPreset) {
+        Validate.nonNull(boneName, "name");
+        Validate.nonNull(jointPreset, "joint preset");
+        if (modelRoot != null) {
+            throw new IllegalStateException(
+                    "Cannot add bone while added to a spatial.");
+        }
+
+        jointMap.put(boneName, jointPreset);
+    }
+
+    /**
+     * Add a bone name to this control and preset the bone's joint to "no
+     * motion". Repeated invocations of this method can be used to specify which
+     * bones to use when generating collision shapes.
+     * <p>
+     * Allowed only when the control is NOT added to a spatial.
+     *
+     * @param boneName the name of the bone to add (not null)
+     */
+    public void addBoneName(String boneName) {
+        Validate.nonNull(boneName, "name");
+        addBone(boneName, new JointPreset());
     }
 
     /**
@@ -681,11 +672,12 @@ public class KinematicRagdollControl
     protected void boneRecursion(Bone bone, PhysicsRigidBody parent,
             int reccount, Map<Integer, List<Float>> pointsMap) {
         PhysicsRigidBody parentShape = parent;
-        if (boneList.contains(bone.getName())) {
+        String boneName = bone.getName();
+        if (jointMap.containsKey(boneName)) {
             //create the collision shape
             CollisionShape shape;
             List<Integer> boneIndices
-                    = RagdollUtils.getBoneIndices(bone, skeleton, boneList);
+                    = RagdollUtils.getBoneIndices(bone, skeleton, jointMap.keySet());
             Vector3f meshLocation = bone.getModelSpacePosition();
             if (pointsMap != null) {
                 // Build a shape for the bone, using the vertices most influenced by it.
@@ -717,7 +709,8 @@ public class KinematicRagdollControl
                 joint = new SixDofJoint(parent, shapeNode,
                         posToParent, new Vector3f(0f, 0f, 0f), true);
 
-                preset.setupJointForBone(bone.getName(), joint);
+                JointPreset preset = jointMap.get(boneName);
+                preset.setupJoint(joint);
                 joint.setCollisionBetweenLinkedBodies(false);
             }
 
@@ -1119,14 +1112,13 @@ public class KinematicRagdollControl
         super.cloneFields(cloner, original);
         // baseRigidBody not cloned
         boneLinks = cloner.clone(boneLinks);
-        boneList = cloner.clone(boneList);
+        jointMap = cloner.clone(jointMap);
         ikChainDepth = cloner.clone(ikChainDepth);
         ikTargets = cloner.clone(ikTargets);
         initScale = cloner.clone(initScale);
         listeners = cloner.clone(listeners);
         modelLocation = cloner.clone(modelLocation);
         modelOrientation = cloner.clone(modelOrientation);
-        preset = cloner.clone(preset);
         skeleton = cloner.clone(skeleton);
         modelRoot = cloner.clone(modelRoot);
     }
@@ -1313,8 +1305,7 @@ public class KinematicRagdollControl
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule oc = ex.getCapsule(this);
-        oc.write(boneList.toArray(new String[boneList.size()]), "boneList",
-                new String[0]);
+        // TODO jointMap
         oc.write(boneLinks.values().toArray(
                 new PhysicsBoneLink[boneLinks.size()]),
                 "boneLinks", new PhysicsBoneLink[0]);
@@ -1322,7 +1313,6 @@ public class KinematicRagdollControl
         oc.write(modelOrientation, "modelRotation", new Quaternion());
         oc.write(modelRoot, "targetModel", null);
         oc.write(skeleton, "skeleton", null);
-//        oc.write(preset, "preset", null);//TODO
         oc.write(initScale, "initScale", null);
         oc.write(mode, "mode", null);
         oc.write(isBlending, "blendedControl", false);
@@ -1347,8 +1337,7 @@ public class KinematicRagdollControl
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule ic = im.getCapsule(this);
-        String[] loadedBoneList = ic.readStringArray("boneList", new String[0]);
-        boneList.addAll(Arrays.asList(loadedBoneList));
+        // TODO jointMap
         PhysicsBoneLink[] loadedBoneLinks
                 = (PhysicsBoneLink[]) ic.readSavableArray("boneList",
                         new PhysicsBoneLink[0]);
@@ -1361,7 +1350,6 @@ public class KinematicRagdollControl
                 new Quaternion()));
         modelRoot = (Spatial) ic.readSavable("targetModel", null);
         skeleton = (Skeleton) ic.readSavable("skeleton", null);
-//        preset //TODO
         initScale = (Vector3f) ic.readSavable("initScale", null);
         mode = ic.readEnum("mode", Mode.class, Mode.Kinematic);
         isBlending = ic.readBoolean("blendedControl", false);
