@@ -91,7 +91,7 @@ import jme3utilities.Validate;
  * collision shape. </li>
  * </ul>
  * <p>
- * There are 2 modes for this control : <ul> <li><strong>The kinematic modes
+ * There are 2 modes for this control: <ul> <li><strong>The kinematic modes
  * :</strong><br> this is the default behavior, this means that the collision
  * shapes of the body are able to interact with physics enabled objects. in this
  * mode physics shapes follow the motion of the animated skeleton (for example
@@ -127,12 +127,15 @@ public class KinematicRagdollControl
      */
     private Map<String, JointPreset> jointMap = new HashMap<>();
     // TODO threshold for each bone
+    /**
+     * map bone names to simulation objects
+     */
     private Map<String, PhysicsBoneLink> boneLinks = new HashMap<>();
     private Vector3f modelLocation = new Vector3f(); // TODO temporary
     private Quaternion modelOrientation = new Quaternion(); // TODO temporary
     private PhysicsRigidBody baseRigidBody;
     /**
-     * root spatial of the model being controlled
+     * spatial being controlled: typically the root spatial of the model
      */
     private Spatial modelRoot;
     /**
@@ -144,7 +147,6 @@ public class KinematicRagdollControl
      * mode of operation (not null, default=Kinematic)
      */
     private Mode mode = Mode.Kinematic;
-    private boolean debug = false;
     /**
      * true IFF recently transitioned to kinematic mode and still blending
      */
@@ -197,13 +199,13 @@ public class KinematicRagdollControl
     /**
      * Enumerate joint-control modes for this control.
      */
-    public static enum Mode {
+    public enum Mode {
         /**
          * collision shapes follow the movements of bones in the skeleton
          */
         Kinematic,
         /**
-         * skeleton is controlled by Bullet physics (gravity and collisions)
+         * skeleton is controlled by Bullet dynamics (gravity and collisions)
          */
         Ragdoll,
         /**
@@ -350,7 +352,8 @@ public class KinematicRagdollControl
                 link.copyBlendStart(position, tmpRot1);
 
                 //interpolate between ragdoll position/rotation and keyframed position/rotation
-                tmpRot2.set(tmpRot1).nlerp(link.getBone().getModelSpaceRotation(),
+                tmpRot2.set(tmpRot1);
+                tmpRot2.nlerp(link.getBone().getModelSpaceRotation(),
                         blendProgress / blendTime);
                 position2.set(position).interpolateLocal(
                         link.getBone().getModelSpacePosition(),
@@ -359,7 +362,8 @@ public class KinematicRagdollControl
                 position.set(position2);
 
                 //update bone transforms
-                RagdollUtils.setTransform(link.getBone(), position, tmpRot1, true, jointMap.keySet());
+                RagdollUtils.setTransform(link.getBone(), position, tmpRot1,
+                        true, jointMap.keySet());
             }
             //set bone transforms to the ragdoll
             matchPhysicObjectToBone(link, position, tmpRot1);
@@ -536,14 +540,14 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Create model-dependent data. Invoked when this control is added to a
+     * Create model-dependent data. Invoked when the control is added to a
      * spatial.
      *
      * @param model the controlled spatial (not null)
      */
     @Override
     protected void createSpatialData(Spatial model) {
-        modelRoot = model; // TODO move this to reBuild
+        modelRoot = model;
         initScale = modelRoot.getLocalScale().clone();
 
         SkeletonControl sc = modelRoot.getControl(SkeletonControl.class);
@@ -566,7 +570,7 @@ public class KinematicRagdollControl
                     "No suitable bones were found in the model's skeleton.");
         }
 
-        // put into bind pose and compute bone transforms in mesh space
+        // Put into bind pose and compute bone transforms in mesh space.
         // TODO maybe don't reset to ragdoll out of animations?
         scanSpatial();
 
@@ -729,7 +733,9 @@ public class KinematicRagdollControl
 
     /**
      * Alter the limits of the joint connecting the specified bone to its
-     * parent. Can only be invoked after adding the control to a spatial.
+     * parent.
+     * <p>
+     * Allowed only when the control IS added to a spatial.
      *
      * @param boneName the name of the bone
      * @param maxX the maximum rotation on the X axis (in radians)
@@ -738,9 +744,16 @@ public class KinematicRagdollControl
      * @param minY the minimum rotation on the Y axis (in radians)
      * @param maxZ the maximum rotation on the Z axis (in radians)
      * @param minZ the minimum rotation on the Z axis (in radians)
+     * @see #addBone(java.lang.String,
+     * com.jme3.bullet.control.ragdoll.JointPreset)
      */
     public void setJointLimit(String boneName, float maxX, float minX,
             float maxY, float minY, float maxZ, float minZ) {
+        if (modelRoot == null) {
+            throw new IllegalStateException(
+                    "Cannot set limits unless added to a spatial.");
+        }
+
         PhysicsBoneLink link = boneLinks.get(boneName);
         if (link != null) {
             RagdollUtils.setJointLimit(link.getJoint(),
@@ -764,7 +777,7 @@ public class KinematicRagdollControl
             return link.getJoint();
         } else {
             logger.log(Level.WARNING,
-                    "Not joint was found for bone {0}. make sure you call spatial.addControl(ragdoll) before setting joints limit", boneName);
+                    "No joint was found for bone {0}. Make sure you call spatial.addControl(ragdoll) before accessing joints.", boneName);
             return null;
         }
     }
@@ -901,10 +914,10 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Smoothly blend from Ragdoll mode to Kinematic mode This is useful to
-     * blend ragdoll actual position to a keyframe animation for example
+     * Smoothly blend from Ragdoll mode to Kinematic mode. This is useful to
+     * blend ragdoll actual position to a keyframe animation, for example.
      *
-     * @param blendTime the blending time between ragdoll to anim.
+     * @param blendTime the blending time between ragdoll to anim (in seconds)
      */
     public void blendToKinematicMode(float blendTime) {
         if (mode == Mode.Kinematic) {
@@ -961,9 +974,10 @@ public class KinematicRagdollControl
     /**
      * Read the mode of this control.
      *
-     * @return an enum value
+     * @return an enum value (not null)
      */
     public Mode getMode() {
+        assert mode != null;
         return mode;
     }
 
