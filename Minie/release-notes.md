@@ -1,17 +1,40 @@
 # release notes for the Minie library and related tests
 
+## Version 0.3.4 released on TBD
+
+Enhancements to `KinematicRagdollControl`:
+
+ + Removed the `weightThreshold = -1` hack.
+ + Replaced `boneList` and `RagdollPreset` with a joint map.
+ + Changed coordinate translation to utilize animated geometries
+   instead of the controlled spatial.
+ + Eliminated the temporary removal of the controlled spatial from the scene.
+ + Changed to continue updating ragdoll even after the controlled spatial moves.
+
+Other noteworthy changes:
+
+ + Fixed 2 logic errors in `CylinderCollisionShape.canScale()`.
+ + Added result validation to `PhysicsRigidBody.getPhysicsLocation()`.
+ + Fixed JME issue #931.
+ + Updated shared libraries to `jme3-bullet-native` v1.0.5 .
+ + Improved `applyScale` option in `GhostControl` and `RigidBodyControl` so that
+   it will fall back to uniform scaling (if necessary) or skip rescale
+   (if scale is unchanged).
+ + Added an `isEmpty()` method to the `PhysicsSpace` class.
+ + Added `TestSetScale`, `TestIssue918`, and `TestIssue919`.
+
 ## Version 0.3.3 released on 2 October 2018
 
- + Added applyScale option to RigidBodyControl and GhostControl.
+ + Added `applyScale` option to `RigidBodyControl` and `GhostControl`.
  + Added default margin for collision shapes other than capsule and sphere.
- + Eliminated runtime dependency on JME's jme3-bullet-native library.
- + Removed TestIssue896.
+ + Eliminated runtime dependency on JME's `jme3-bullet-native` library.
+ + Removed `TestIssue896`.
 
 ## Version 0.3.2 released on 28 September 2018
 
  + Made many classes JmeCloneable, especially physics controls.
  + Added custom debug materials to collision objects.
- + Added canScale() method to collision shapes.
+ + Added `canScale()` method to collision shapes.
  + Worked around JME issue #919.
  + Prevented setting the margin of a capsule/sphere shape.
  + Implemented limb damping in KinematicRagdollControl.
