@@ -35,6 +35,7 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.BufferUtils;
@@ -42,12 +43,13 @@ import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * A convex hull collision shape based on Bullet's btConvexHullShape.
+ * A convex-hull collision shape based on Bullet's btConvexHullShape.
  */
 public class HullCollisionShape extends CollisionShape {
     // *************************************************************************
@@ -61,6 +63,9 @@ public class HullCollisionShape extends CollisionShape {
     // *************************************************************************
     // fields
 
+    /**
+     * array of mesh coordinates (not null, not empty length a multiple of 3)
+     */
     private float[] points;
     /**
      * buffer for passing vertices to Bullet
@@ -85,7 +90,7 @@ public class HullCollisionShape extends CollisionShape {
      * vertices.
      *
      * @param mesh a mesh on which to base the shape (not null, at least one
-     * vertex)
+     * vertex, unaffected)
      */
     public HullCollisionShape(Mesh mesh) {
         Validate.nonNull(mesh, "mesh");
@@ -100,13 +105,35 @@ public class HullCollisionShape extends CollisionShape {
      * coordinates.
      *
      * @param points an array of coordinates on which to base the shape (not
-     * null, not empty, length a multiple of 3)
+     * null, not empty, length a multiple of 3, unaffected)
      */
     public HullCollisionShape(float[] points) {
-        Validate.nonNull(points, "points");
-        Validate.positive(points.length, "length of points");
+        int length = points.length;
+        Validate.positive(length, "length of points");
+        assert (length % 3 == 0) : length;
 
-        this.points = points;
+        this.points = points.clone();
+        createShape();
+    }
+
+    /**
+     * Instantiate a collision shape based on the specified list of coordinates.
+     *
+     * @param vectorList a list of vectors on which to base the shape (not null,
+     * not empty)
+     */
+    public HullCollisionShape(List<Vector3f> vectorList) {
+        int length = vectorList.size();
+        Validate.positive(length, "length of vector list");
+
+        points = new float[3 * length];
+        for (int i = 0; i < vectorList.size(); i++) {
+            Vector3f vec = vectorList.get(i);
+            int j = 3 * i;
+            points[j] = vec.x;
+            points[j + 1] = vec.y;
+            points[j + 2] = vec.z;
+        }
         createShape();
     }
     // *************************************************************************
@@ -125,7 +152,7 @@ public class HullCollisionShape extends CollisionShape {
     public void cloneFields(Cloner cloner, Object original) {
         super.cloneFields(cloner, original);
         // bbuf not cloned
-        // heightfieldData not cloned
+        points = cloner.clone(points);
         createShape();
     }
 
