@@ -90,6 +90,10 @@ public class PhysicsBoneLink implements Savable {
      */
     private Spatial transformSpatial;
     /**
+     * name of parent in the hierarchy of linked bones, or torsoBoneName if none
+     */
+    private String parentName;
+    /**
      * location of the bone (in mesh space) at the start of the most recent
      * transition to kinematic mode
      */
@@ -98,24 +102,27 @@ public class PhysicsBoneLink implements Savable {
     // constructors
 
     /**
-     * Instantiate a link between the specified bone and body.
+     * Instantiate a link between the specified bone and rigid body.
      *
      * @param transformer the spatial to translate between mesh coordinates and
      * world coordinates (not null)
      * @param bone the bone to link (not null)
      * @param rigidBody the rigid body to link (not null)
-     * @param joint joint between the bone's body and its parent's (may be null)
+     * @param parentName the name of the bone's parent in the linked-bone
+     * hierarchy (not null)
      */
     public PhysicsBoneLink(Spatial transformer, Bone bone,
-            PhysicsRigidBody rigidBody, SixDofJoint joint) {
+            PhysicsRigidBody rigidBody, String parentName) {
         Validate.nonNull(transformer, "transformer");
         Validate.nonNull(bone, "bone");
         Validate.nonNull(rigidBody, "rigid body");
+        Validate.nonNull(parentName, "parent name");
 
         transformSpatial = transformer;
         this.bone = bone;
         this.rigidBody = rigidBody;
-        this.joint = joint;
+        this.joint = null;
+        this.parentName = parentName;
 
         Quaternion msr = bone.getModelSpaceRotation();
         originalOrientation.set(msr);
@@ -184,6 +191,26 @@ public class PhysicsBoneLink implements Savable {
     }
 
     /**
+     * Read the name of the bone's parent in the linked-bone hierarchy.
+     *
+     * @return name (not null)
+     */
+    public String parentName() {
+        assert parentName != null;
+        return parentName;
+    }
+
+    /**
+     * Assign a physics joint to this bone link.
+     *
+     * @param joint (not null)
+     */
+    public void setJoint(SixDofJoint joint) {
+        Validate.nonNull(joint, "joint");
+        this.joint = joint;
+    }
+
+    /**
      * Begin a transition to kinematic mode.
      */
     public void startBlend() {
@@ -219,6 +246,7 @@ public class PhysicsBoneLink implements Savable {
         bone = (Bone) ic.readSavable("bone", null);
         transformSpatial = (Spatial) ic.readSavable("transformSpatial", null);
         joint = (SixDofJoint) ic.readSavable("joint", null);
+        parentName = ic.readString("parentName", null);
 
         Quaternion readQuat = (Quaternion) ic.readSavable(
                 "initalWorldRotation", new Quaternion());
@@ -246,6 +274,7 @@ public class PhysicsBoneLink implements Savable {
         oc.write(bone, "bone", null);
         oc.write(transformSpatial, "transformSpatial", null);
         oc.write(joint, "joint", null);
+        oc.write(parentName, "parentName", null);
         oc.write(originalOrientation, "initalWorldRotation", null);
         oc.write(blendOrientation, "startBlendingRot", new Quaternion());
         oc.write(blendLocation, "startBlendingPos", new Vector3f());

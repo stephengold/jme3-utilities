@@ -133,16 +133,15 @@ public class KinematicRagdollControl
     private Map<String, PhysicsBoneLink> boneLinks = new HashMap<>();
     private Vector3f modelLocation = new Vector3f(); // TODO temporary
     private Quaternion modelOrientation = new Quaternion(); // TODO temporary
-    private PhysicsRigidBody baseRigidBody;
     /**
-     * spatial being controlled: typically the root spatial of the model
+     * rigid body for the torso
      */
-    private Spatial modelRoot;
+    private PhysicsRigidBody torsoRigidBody;
     /**
      * skeleton being controlled
      */
-    private Skeleton skeleton;
-    private Vector3f initScale;
+    private Skeleton skeleton = null;
+    private Vector3f initScale = null;
     /**
      * mode of operation (not null, default=Kinematic)
      */
@@ -173,7 +172,7 @@ public class KinematicRagdollControl
     /**
      * accumulate total mass of ragdoll when control is added to a scene
      */
-    private float totalMass;
+    private float totalMass = 0f;
     /**
      * map from IK bone names to goal locations
      */
@@ -195,6 +194,14 @@ public class KinematicRagdollControl
      * distance threshold for inverse kinematics (default=0.1)
      */
     private float IKThreshold = 0.1f;
+    /**
+     * control that's responsible for skinning
+     */
+    private SkeletonControl skeletonControl = null;
+    /**
+     * spatial with the mesh-coordinate transform
+     */
+    private Spatial transformer = null;
 
     /**
      * Enumerate joint-control modes for this control.
@@ -236,8 +243,8 @@ public class KinematicRagdollControl
         BoxCollisionShape torsoShape
                 = new BoxCollisionShape(Vector3f.UNIT_XYZ.mult(0.1f));
         totalMass = torsoMass;
-        baseRigidBody = new PhysicsRigidBody(torsoShape, torsoMass);
-        baseRigidBody.setKinematic(mode == Mode.Kinematic);
+        torsoRigidBody = new PhysicsRigidBody(torsoShape, torsoMass);
+        torsoRigidBody.setKinematic(mode == Mode.Kinematic);
         this.weightThreshold = weightThreshold;
     }
     // *************************************************************************
@@ -267,7 +274,7 @@ public class KinematicRagdollControl
     // new methods exposed
 
     /**
-     * Update this control in Ragdoll mode, based on Bullet physics.
+     * Update the skeleton in Ragdoll mode, based on Bullet dynamics.
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
@@ -277,9 +284,8 @@ public class KinematicRagdollControl
         Quaternion orientation = vars.quat1;
         Quaternion tmpQuat = vars.quat2;
 
-        Node parent = modelRoot.getParent();
+        Node parent = spatial.getParent();
         Transform localToWorld = parent.getWorldTransform();
-        Spatial transformer = MySpatial.findAnimatedGeometry(modelRoot);
         Transform meshToWorld = transformer.getWorldTransform();
         Quaternion worldToMesh = meshToWorld.getRotation().inverse();
 
@@ -313,9 +319,9 @@ public class KinematicRagdollControl
                 tmpQuat.inverseLocal();
                 modelOrientation.set(worldOrientation).multLocal(tmpQuat);
 
-                // Update transform of the model root.
-                modelRoot.setLocalTranslation(modelLocation);
-                modelRoot.setLocalRotation(modelOrientation);
+                // Update local transform of the controlled spatial.
+                spatial.setLocalTranslation(modelLocation);
+                spatial.setLocalRotation(modelOrientation);
 
                 // Apply to the root bone as a user transform.
                 bone.setUserTransformsInModelSpace(location, orientation);
@@ -330,7 +336,8 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Update this control in Kinematic mode, based on bone animation tracks.
+     * Update this control in Kinematic mode, based on the model's transform and
+     * the skeleton's pose.
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
@@ -367,7 +374,7 @@ public class KinematicRagdollControl
             }
             //set bone transforms to the ragdoll
             matchPhysicObjectToBone(link, position, tmpRot1);
-            modelLocation.set(modelRoot.getLocalTranslation());
+            modelLocation.set(spatial.getLocalTranslation());
         }
         vars.release();
 
@@ -450,9 +457,9 @@ public class KinematicRagdollControl
         float[] measureDist = new float[]{Float.POSITIVE_INFINITY,
             Float.POSITIVE_INFINITY};
         for (int dirIndex = 0; dirIndex < 3; dirIndex++) {
-            if (dirIndex == 0) {
+            if (dirIndex == PhysicsSpace.AXIS_X) {
                 vectorAxis = Vector3f.UNIT_Z;
-            } else if (dirIndex == 1) {
+            } else if (dirIndex == PhysicsSpace.AXIS_Y) {
                 vectorAxis = Vector3f.UNIT_X;
             } else {
                 vectorAxis = Vector3f.UNIT_Y;
@@ -507,7 +514,6 @@ public class KinematicRagdollControl
      */
     protected void matchPhysicObjectToBone(PhysicsBoneLink link,
             Vector3f location, Quaternion orientation) {
-        Spatial transformer = MySpatial.findAnimatedGeometry(modelRoot);
         Transform meshToWorld = transformer.getWorldTransform();
 
         // Compute the location of the bone in world coordinates.
@@ -543,27 +549,37 @@ public class KinematicRagdollControl
      * Create model-dependent data. Invoked when the control is added to a
      * spatial.
      *
-     * @param model the controlled spatial (not null)
+     * @param controlledSpatial the controlled spatial (not null)
      */
     @Override
-    protected void createSpatialData(Spatial model) {
-        modelRoot = model;
-        initScale = modelRoot.getLocalScale().clone();
+    protected void createSpatialData(Spatial controlledSpatial) {
+        Validate.nonNull(controlledSpatial, "controlled spatial");
 
-        SkeletonControl sc = modelRoot.getControl(SkeletonControl.class);
-        if (sc == null) {
+        spatial = controlledSpatial;
+        initScale = spatial.getLocalScale().clone();
+
+        skeletonControl = spatial.getControl(SkeletonControl.class);
+        if (skeletonControl == null) {
             throw new IllegalArgumentException(
-                    "The root node of the model should have a SkeletonControl. Make sure the control is there and that it's not on a sub node.");
+                    "The controlled spatial should have a SkeletonControl. Make sure the control is there and not on a subnode.");
         }
-        skeleton = sc.getSkeleton();
-
-        //Remove the skeletonControl and readd it to the spatial to ensure it comes after this control.
-        //TODO Find a better way to order the controls.
-        modelRoot.removeControl(sc);
-        modelRoot.addControl(sc);
+        skeleton = skeletonControl.getSkeleton();
+        /*
+         * Remove the SkeletonControl and readd it to ensure it will be
+         * updated after this control.
+         */
+        spatial.removeControl(skeletonControl);
+        spatial.addControl(skeletonControl);
+        /*
+         * Analyze the model's coordinate systems.
+         */
+        transformer = MySpatial.findAnimatedGeometry(spatial);
+        if (transformer == null) {
+            transformer = spatial;
+        }
 
         // Filter out any bones without vertices.
-        filterBoneList(sc);
+        filterBoneList();
 
         if (jointMap.isEmpty()) {
             throw new IllegalArgumentException(
@@ -577,6 +593,7 @@ public class KinematicRagdollControl
         if (added) {
             addPhysics(getPhysicsSpace());
         }
+
         logger.log(Level.FINE, "Created ragdoll for skeleton {0}", skeleton);
     }
 
@@ -584,7 +601,7 @@ public class KinematicRagdollControl
      * Remove any bones without vertices from the boneList, so that every hull
      * shape will contain at least 1 vertex.
      */
-    private void filterBoneList(SkeletonControl skeletonControl) {
+    private void filterBoneList() {
         Mesh[] targets = skeletonControl.getTargets();
         Skeleton skel = skeletonControl.getSkeleton();
         for (int boneI = 0; boneI < skel.getBoneCount(); boneI++) {
@@ -611,6 +628,9 @@ public class KinematicRagdollControl
             removePhysics(getPhysicsSpace());
         }
         boneLinks.clear();
+        skeletonControl = null;
+        skeleton = null;
+        transformer = null;
     }
 
     /**
@@ -626,7 +646,7 @@ public class KinematicRagdollControl
     public void addBone(String boneName, JointPreset jointPreset) {
         Validate.nonNull(boneName, "name");
         Validate.nonNull(jointPreset, "joint preset");
-        if (modelRoot != null) {
+        if (spatial != null) {
             throw new IllegalStateException(
                     "Cannot add bone while added to a spatial.");
         }
@@ -655,7 +675,7 @@ public class KinematicRagdollControl
         skeleton.resetAndUpdate();
         for (Bone rootBone : skeleton.getRoots()) {
             logger.log(Level.FINE, "Found root bone in skeleton {0}", skeleton);
-            boneRecursion(rootBone, baseRigidBody, 1);
+            boneRecursion(rootBone, torsoRigidBody, 1);
         }
     }
 
@@ -678,7 +698,7 @@ public class KinematicRagdollControl
                     = RagdollUtils.getBoneIndices(bone, skeleton, jointMap.keySet());
             Vector3f meshLocation = bone.getModelSpacePosition();
             // Build a shape for the bone, using the vertices for which its weight exceeds the threshold.
-            shape = RagdollUtils.makeShapeFromVerticeWeights(modelRoot,
+            shape = RagdollUtils.makeShapeFromVerticeWeights(spatial,
                     boneIndices, initScale, meshLocation, weightThreshold);
 
             float limbMass = torsoMass / (float) reccount;
@@ -706,9 +726,9 @@ public class KinematicRagdollControl
                 joint.setCollisionBetweenLinkedBodies(false);
             }
 
-            Spatial transformer = MySpatial.findAnimatedGeometry(modelRoot);
             PhysicsBoneLink link
-                    = new PhysicsBoneLink(transformer, bone, shapeNode, joint);
+                    = new PhysicsBoneLink(transformer, bone, shapeNode, "");
+            link.setJoint(joint);
             boneLinks.put(bone.getName(), link);
             shapeNode.setUserObject(link);
             parentShape = shapeNode;
@@ -737,7 +757,7 @@ public class KinematicRagdollControl
      */
     public void setJointLimit(String boneName, float maxX, float minX,
             float maxY, float minY, float maxZ, float minZ) {
-        if (modelRoot == null) {
+        if (spatial == null) {
             throw new IllegalStateException(
                     "Cannot set limits unless added to a spatial.");
         }
@@ -772,46 +792,40 @@ public class KinematicRagdollControl
 
     @Override
     protected void setPhysicsLocation(Vector3f vec) {
-        if (baseRigidBody != null) {
-            baseRigidBody.setPhysicsLocation(vec);
-        }
+        torsoRigidBody.setPhysicsLocation(vec);
     }
 
     @Override
     protected void setPhysicsRotation(Quaternion quat) {
-        if (baseRigidBody != null) {
-            baseRigidBody.setPhysicsRotation(quat);
-        }
+        torsoRigidBody.setPhysicsRotation(quat);
     }
 
+    /**
+     * Add all managed physics objects to the specified space.
+     *
+     * @param space which physics space to add to (not null)
+     */
     @Override
     protected void addPhysics(PhysicsSpace space) {
-        if (baseRigidBody != null) {
-            space.add(baseRigidBody);
-        }
+        space.add(torsoRigidBody);
         for (PhysicsBoneLink physicsBoneLink : boneLinks.values()) {
-            if (physicsBoneLink.getRigidBody() != null) {
-                space.add(physicsBoneLink.getRigidBody());
-                if (physicsBoneLink.getJoint() != null) {
-                    space.add(physicsBoneLink.getJoint());
-                }
-            }
+            space.add(physicsBoneLink.getRigidBody());
+            space.add(physicsBoneLink.getJoint());
         }
         space.addCollisionListener(this);
     }
 
+    /**
+     * Remove all managed physics objects from the specified space.
+     *
+     * @param space which physics space to remove from (not null)
+     */
     @Override
     protected void removePhysics(PhysicsSpace space) {
-        if (baseRigidBody != null) {
-            space.remove(baseRigidBody);
-        }
+        space.remove(torsoRigidBody);
         for (PhysicsBoneLink physicsBoneLink : boneLinks.values()) {
-            if (physicsBoneLink.getJoint() != null) {
-                space.remove(physicsBoneLink.getJoint());
-                if (physicsBoneLink.getRigidBody() != null) {
-                    space.remove(physicsBoneLink.getRigidBody());
-                }
-            }
+            space.remove(physicsBoneLink.getJoint());
+            space.remove(physicsBoneLink.getRigidBody());
         }
         space.removeCollisionListener(this);
     }
@@ -826,7 +840,7 @@ public class KinematicRagdollControl
         PhysicsCollisionObject objA = event.getObjectA();
         PhysicsCollisionObject objB = event.getObjectB();
 
-        //TODO Ignore collisions that involve 2 parts of the same ragdoll.
+        //TODO Ignore collisions between 2 parts of the same ragdoll.
         if (event.getNodeA() == null && event.getNodeB() == null) {
             return;
         }
@@ -860,7 +874,7 @@ public class KinematicRagdollControl
             }
         }
 
-        //dispatching the event if the ragdoll has been hit
+        // Dispatch the event if the ragdoll has been hit
         if (hit && listeners != null) {
             for (RagdollCollisionListener listener : listeners) {
                 listener.collide(hitBone, hitObject, event);
@@ -878,10 +892,10 @@ public class KinematicRagdollControl
      */
     protected void setMode(Mode mode) {
         this.mode = mode;
-        AnimControl animControl = modelRoot.getControl(AnimControl.class);
+        AnimControl animControl = spatial.getControl(AnimControl.class);
         animControl.setEnabled(mode == Mode.Kinematic);
 
-        baseRigidBody.setKinematic(mode == Mode.Kinematic);
+        torsoRigidBody.setKinematic(mode == Mode.Kinematic);
         if (mode != Mode.IK) {
             TempVars vars = TempVars.get();
 
@@ -918,7 +932,7 @@ public class KinematicRagdollControl
         this.blendTime = blendTime;
         blendProgress = 0f;
 
-        AnimControl animControl = modelRoot.getControl(AnimControl.class);
+        AnimControl animControl = spatial.getControl(AnimControl.class);
         animControl.setEnabled(true);
 
         for (PhysicsBoneLink link : boneLinks.values()) {
@@ -996,8 +1010,8 @@ public class KinematicRagdollControl
      * @return the pre-existing object (not null)
      */
     public PhysicsRigidBody getTorso() {
-        assert baseRigidBody != null;
-        return baseRigidBody;
+        assert torsoRigidBody != null;
+        return torsoRigidBody;
     }
 
     /**
@@ -1007,7 +1021,7 @@ public class KinematicRagdollControl
      * @return mass (&ge;0)
      */
     public float getTotalMass() {
-        assert modelRoot != null;
+        assert spatial != null;
         return totalMass;
     }
 
@@ -1112,7 +1126,7 @@ public class KinematicRagdollControl
     @Override
     public void cloneFields(Cloner cloner, Object original) {
         super.cloneFields(cloner, original);
-        // baseRigidBody not cloned
+
         boneLinks = cloner.clone(boneLinks);
         jointMap = cloner.clone(jointMap);
         ikChainDepth = cloner.clone(ikChainDepth);
@@ -1122,7 +1136,9 @@ public class KinematicRagdollControl
         modelLocation = cloner.clone(modelLocation);
         modelOrientation = cloner.clone(modelOrientation);
         skeleton = cloner.clone(skeleton);
-        modelRoot = cloner.clone(modelRoot);
+        skeletonControl = cloner.clone(skeletonControl);
+        torsoRigidBody = cloner.clone(torsoRigidBody);
+        transformer = cloner.clone(transformer);
     }
 
     /**
@@ -1151,7 +1167,7 @@ public class KinematicRagdollControl
      */
     public Vector3f setIKTarget(Bone bone, Vector3f worldGoal,
             int chainLength) {
-        Spatial transformer = MySpatial.findAnimatedGeometry(modelRoot);
+        Spatial transformer = MySpatial.findAnimatedGeometry(spatial);
         Vector3f offset = transformer.getWorldTranslation();
         Vector3f meshGoal = worldGoal.subtract(offset);
         String boneName = bone.getName();
@@ -1313,8 +1329,9 @@ public class KinematicRagdollControl
                 "boneLinks", new PhysicsBoneLink[0]);
         oc.write(modelLocation, "modelPosition", new Vector3f());
         oc.write(modelOrientation, "modelRotation", new Quaternion());
-        oc.write(modelRoot, "targetModel", null);
         oc.write(skeleton, "skeleton", null);
+        oc.write(skeletonControl, "skeletonControl", null);
+        oc.write(transformer, "transformer", null);
         oc.write(initScale, "initScale", null);
         oc.write(mode, "mode", null);
         oc.write(isBlending, "blendedControl", false);
@@ -1350,8 +1367,11 @@ public class KinematicRagdollControl
                 new Vector3f()));
         modelOrientation.set((Quaternion) ic.readSavable("modelRotation",
                 new Quaternion()));
-        modelRoot = (Spatial) ic.readSavable("targetModel", null);
         skeleton = (Skeleton) ic.readSavable("skeleton", null);
+        skeletonControl
+                = (SkeletonControl) ic.readSavable("skeletonControl", null);
+        transformer
+                = (Spatial) ic.readSavable("transformer", null);
         initScale = (Vector3f) ic.readSavable("initScale", null);
         mode = ic.readEnum("mode", Mode.class, Mode.Kinematic);
         isBlending = ic.readBoolean("blendedControl", false);
