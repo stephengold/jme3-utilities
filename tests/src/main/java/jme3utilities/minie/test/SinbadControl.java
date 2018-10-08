@@ -48,9 +48,8 @@ public class SinbadControl extends KinematicRagdollControl {
     // constructors
 
     public SinbadControl() {
-        super(0.5f);
+        super();
 
-        super.addBoneName("Root");
         super.addBone("Waist",
                 new JointPreset(0.4f, -0.4f, 0.4f, -0.4f, 0.4f, -0.4f));
         super.addBoneName("Stomach");
