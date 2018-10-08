@@ -411,12 +411,7 @@ public class RigidBodyControl
                             newScale.x * newScale.y * newScale.z);
                     newScale.set(factor, factor, factor);
                 }
-                Vector3f oldScale = collisionShape.getScale(null);
-                if (!oldScale.equals(newScale)
-                        && collisionShape.canScale(newScale)) {
-                    collisionShape.setScale(newScale);
-                    setCollisionShape(collisionShape);
-                }
+                setPhysicsScale(newScale, space);
             }
 
         } else if (!MySpatial.isIgnoringTransforms(spatial)) {
@@ -518,7 +513,7 @@ public class RigidBodyControl
      * Update whichever spatial scale corresponds to the shape scale.
      */
     private void applySpatialScale() {
-        Vector3f scale = collisionShape.getScale(null);
+        Vector3f scale = getPhysicsScale(null);
         if (!isApplyPhysicsLocal()) {
             Node parent = spatial.getParent();
             if (parent != null) {

@@ -250,6 +250,33 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
+     * Rescale this body's shape, even if it's added to a physics space.
+     *
+     * @param newScale the desired scaling factor for each local axis (not null,
+     * no negative component, unaffected, default=1,1,1)
+     * @param physicsSpace where added, or null if not added
+     */
+    public void setPhysicsScale(Vector3f newScale, PhysicsSpace physicsSpace) {
+        CollisionShape shape = getCollisionShape();
+        Vector3f oldScale = shape.getScale(null);
+        if (!newScale.equals(oldScale)) {
+            Vector3f saveGravity = null;
+            if (isInWorld()) {
+                saveGravity = getGravity(null);
+                physicsSpace.removeCollisionObject(this);
+            }
+
+            shape.setScale(newScale);
+            setCollisionShape(shape);
+
+            if (saveGravity != null) {
+                physicsSpace.addCollisionObject(this);
+                setGravity(saveGravity);
+            }
+        }
+    }
+
+    /**
      * Copy the location of this body's center of mass.
      *
      * @param storeResult storage for the result (modified if not null)
@@ -261,7 +288,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
             storeResult = new Vector3f();
         }
         getPhysicsLocation(objectId, storeResult);
-        
+
         assert Vector3f.isValidVector(storeResult);
         return storeResult;
     }
@@ -280,6 +307,20 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         getPhysicsRotation(objectId, storeResult);
 
         return storeResult;
+    }
+
+    /**
+     * Copy the scale of the body's shape.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the scaling factor for each local axis (either storeResult or a
+     * new vector, not null)
+     */
+    public Vector3f getPhysicsScale(Vector3f storeResult) {
+        Vector3f result = collisionShape.getScale(storeResult);
+
+        assert Vector3f.isValidVector(result);
+        return result;
     }
 
     /**
@@ -686,6 +727,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     @Override
     public void setCollisionShape(CollisionShape collisionShape) {
         Validate.nonNull(collisionShape, "collision shape");
+        assert !isInWorld();
         if (mass != massForStatic) {
             validateDynamicShape(collisionShape);
         }
