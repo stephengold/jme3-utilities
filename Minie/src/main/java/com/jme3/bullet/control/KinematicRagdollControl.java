@@ -574,6 +574,10 @@ public class KinematicRagdollControl
          * Create a rigid body for the torso.
          */
         List<Vector3f> list = coordsMap.get(torsoFakeBoneName);
+        if (list == null) {
+            throw new IllegalArgumentException(
+                    "No mesh vertices found for the torso. Make sure the model's root bone wasn't added to the control.");
+        }
         CollisionShape torsoShape
                 = createShape(new Transform(), new Vector3f(), list);
         totalMass += torsoMass;
@@ -584,7 +588,10 @@ public class KinematicRagdollControl
         /*
          * Create bone links.
          */
-        scanSpatial(coordsMap, tempLbNames);
+        for (String boneName : jointMap.keySet()) {
+            List<Vector3f> vertexLocations = coordsMap.get(boneName);
+            createLink(boneName, tempLbNames, vertexLocations);
+        }
         /*
          * Add joints to connect each linked bone with its parent.
          */
@@ -648,75 +655,6 @@ public class KinematicRagdollControl
     public void addBoneName(String boneName) {
         Validate.nonNull(boneName, "name");
         addBone(boneName, new JointPreset());
-    }
-
-    /**
-     * Generate physics shapes and bone links for the skeleton.
-     *
-     * @param coordsMap map from bone names to vertex positions (not null)
-     * @param lbNames
-     */
-    protected void scanSpatial(Map<String, List<Vector3f>> coordsMap,
-            String[] lbNames) {
-        skeleton.resetAndUpdate();
-        for (Bone rootBone : skeleton.getRoots()) {
-            logger.log(Level.FINE, "Found root bone in skeleton {0}", skeleton);
-            boneRecursion(rootBone, torsoRigidBody, 1, coordsMap, lbNames);
-        }
-    }
-
-    /**
-     * Generate a physics shape and bone links for the specified bone. Note:
-     * recursive!
-     *
-     * @param bone the bone to be linked (not null)
-     * @param parent the body linked to the parent bone (not null)
-     * @param reccount depth of the recursion (&ge;1)
-     * @param coordsMap map from bone names to vertex positions (not null)
-     * @param lbNames
-     */
-    protected void boneRecursion(Bone bone, PhysicsRigidBody parent,
-            int reccount, Map<String, List<Vector3f>> coordsMap,
-            String[] lbNames) {
-        PhysicsRigidBody parentShape = parent;
-        String boneName = bone.getName();
-        if (jointMap.containsKey(boneName)) {
-            /*
-             * Create the collision shape.
-             */
-            Transform invTransform = bone.getModelBindInverseTransform();
-            List<Vector3f> vertexLocations = coordsMap.get(boneName);
-            Vector3f meshLocation = bone.getModelSpacePosition();
-            CollisionShape shape
-                    = createShape(invTransform, meshLocation, vertexLocations);
-
-            float limbMass = torsoMass / (float) reccount;
-            assert limbMass > 0f : limbMass;
-            totalMass += limbMass;
-            PhysicsRigidBody shapeNode = new PhysicsRigidBody(shape, limbMass);
-            shapeNode.setDamping(limbDamping, limbDamping);
-            shapeNode.setKinematic(mode == Mode.Kinematic);
-
-            String parentBoneName;
-            Bone parentBone = bone.getParent();
-            if (parentBone == null) {
-                parentBoneName = torsoFakeBoneName;
-            } else {
-                int parentIndex = skeleton.getBoneIndex(parentBone);
-                parentBoneName = lbNames[parentIndex];
-            }
-
-            PhysicsBoneLink link = new PhysicsBoneLink(transformer, bone,
-                    shapeNode, parentBoneName);
-            boneLinks.put(bone.getName(), link);
-            shapeNode.setUserObject(link);
-            parentShape = shapeNode;
-        }
-
-        for (Bone childBone : bone.getChildren()) {
-            boneRecursion(childBone, parentShape, reccount + 1, coordsMap,
-                    lbNames);
-        }
     }
 
     /**
@@ -1407,6 +1345,55 @@ public class KinematicRagdollControl
                 addJoints(name);
             }
         }
+    }
+
+    /**
+     * Create a PhysicsBoneLink for the named bone.
+     *
+     * @param name the name of the bone to be linked (not null)
+     * @param lbNames map from bone indices to linked-bone names (not null,
+     * unaffected)
+     * @param coordsMap map from bone names to vertex positions (not null,
+     * unaffected)
+     * @return a new bone link without a joint, added to the boneLinks map
+     */
+    private PhysicsBoneLink createLink(String name, String[] lbNames,
+            List<Vector3f> vertexLocations) {
+        Bone bone = skeleton.getBone(name);
+        /*
+         * Create the collision shape.
+         */
+        Transform invTransform = bone.getModelBindInverseTransform();
+        Vector3f meshLocation = bone.getModelSpacePosition();
+        CollisionShape boneShape
+                = createShape(invTransform, meshLocation, vertexLocations);
+        /*
+         * Create the rigid body.
+         */
+        float boneMass = 0.3f * torsoMass; // TODO configure masses
+        assert boneMass > 0f : boneMass;
+        totalMass += boneMass;
+        PhysicsRigidBody prb = new PhysicsRigidBody(boneShape, boneMass);
+        prb.setDamping(limbDamping, limbDamping);
+        prb.setKinematic(mode == Mode.Kinematic);
+        /*
+         * Find the bone's parent in the linked-bone hierarchy.
+         */
+        Bone parent = bone.getParent();
+        String parentName;
+        if (parent == null) {
+            parentName = torsoFakeBoneName;
+        } else {
+            int parentIndex = skeleton.getBoneIndex(parent);
+            parentName = lbNames[parentIndex];
+        }
+
+        PhysicsBoneLink link
+                = new PhysicsBoneLink(transformer, bone, prb, parentName);
+        prb.setUserObject(link);
+        boneLinks.put(name, link);
+
+        return link;
     }
 
     /**
