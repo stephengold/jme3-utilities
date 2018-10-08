@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -322,7 +322,8 @@ public class Pose implements JmeCloneable {
 
     /**
      * Enumerate all bones in a pre-order depth-first traversal of the skeleton,
-     * such that child bones are never visited before their ancestors.
+     * such that child bones are never visited before their ancestors. TODO use
+     * MySkeleton
      *
      * @return a new array of indices
      */

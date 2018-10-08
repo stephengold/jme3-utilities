@@ -308,7 +308,7 @@ public class MyMesh {
             storeResult[wIndex] = boneIndex;
         }
         /*
-         * Fill with -1.
+         * Fill with -1s.
          */
         int length = storeResult.length;
         for (int wIndex = maxWeightsPerVert; wIndex < length; wIndex++) {
@@ -348,7 +348,7 @@ public class MyMesh {
             storeResult[wIndex] = weightBuffer.get();
         }
         /*
-         * Fill with 0.
+         * Fill with 0s.
          */
         int length = storeResult.length;
         for (int wIndex = maxWeightsPerVert; wIndex < length; wIndex++) {

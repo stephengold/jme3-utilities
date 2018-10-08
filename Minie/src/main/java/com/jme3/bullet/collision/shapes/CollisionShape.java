@@ -146,8 +146,8 @@ abstract public class CollisionShape
      * Copy the scaling factors.
      *
      * @param storeResult storage for the result (modified if not null)
-     * @return the scaling factor for each axis (either storeResult or a new
-     * vector, not null)
+     * @return the scaling factor for each local axis (either storeResult or a
+     * new vector, not null)
      */
     public Vector3f getScale(Vector3f storeResult) {
         assert objectId != 0L;

@@ -531,8 +531,9 @@ public class MySpatial {
      * Note: recursive!
      *
      * @param subtree subtree to measure (not null)
-     * @return array consisting of array[0]: the lowest coordinate for each axis
-     * and array[1]: the highest coordinate for each axis
+     * @return a new array consisting of array[0]: the lowest coordinate for
+     * each axis and array[1]: the highest coordinate for each axis (in world
+     * coordinates, not null)
      */
     public static Vector3f[] findMinMaxCoords(Spatial subtree) {
         Vector3f[] result;
