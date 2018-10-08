@@ -86,12 +86,11 @@ import jme3utilities.Validate;
  * <p>
  * This control creates collision shapes for each bones of the skeleton when you
  * invoke spatial.addControl(ragdollControl). <ul> <li>The shape is
- * HullCollision shape based on the vertices associated with each bone and based
- * on a tweakable weight threshold (see setWeightThreshold)</li> <li>If you
- * don't want each bone to be a collision shape, you can specify what bone to
- * use by using the addBoneName method<br> By using this method, bone that are
- * not used to create a shape, are "merged" to their parent to create the
- * collision shape. </li>
+ * HullCollision shape based on the vertices associated with each bone</li>
+ * <li>If you don't want each bone to be a collision shape, you can specify what
+ * bones to use by using the addBoneName method<br> By using this method, bone
+ * that are not used to create a shape, are "merged" to their parent to create
+ * the collision shape. </li>
  * </ul>
  * <p>
  * There are 2 modes for this control: <ul> <li><strong>The kinematic modes
@@ -159,11 +158,6 @@ public class KinematicRagdollControl
      * true IFF recently transitioned to kinematic mode and still blending
      */
     private boolean isBlending = false;
-    /**
-     * weight threshold for constructing hull shapes: -1 means assign each
-     * vertex to the bone with the most weight
-     */
-    private float weightThreshold = -1f;
     /**
      * elapsed time since switching to kinematic mode, if isBlending is true (in
      * seconds, &ge;0)
@@ -241,22 +235,9 @@ public class KinematicRagdollControl
     // constructors
 
     /**
-     * Instantiate an enabled, Kinematic control with no bones a weight
-     * threshold of 0.5 .
+     * Instantiate an enabled, Kinematic control with no bones.
      */
     public KinematicRagdollControl() {
-        this(0.5f);
-    }
-
-    /**
-     * Instantiate an enabled, Kinematic control with no bones and the specified
-     * weight threshold.
-     *
-     * @param weightThreshold (&gt;0, &lt;1)
-     */
-    public KinematicRagdollControl(float weightThreshold) {
-        Validate.fraction(weightThreshold, "weight threshold");
-        this.weightThreshold = weightThreshold;
     }
     // *************************************************************************
 
@@ -580,13 +561,6 @@ public class KinematicRagdollControl
         }
         meshToModel = modelToMesh.invert();
         initScale = spatial.getLocalScale().clone();
-
-        // Filter out any bones without vertices.
-        filterBoneList();
-        if (jointMap.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "No suitable bones were found in the skeleton.");
-        }
         /*
          * Map bone indices to names of linked bones.
          */
@@ -612,25 +586,6 @@ public class KinematicRagdollControl
         }
 
         logger.log(Level.FINE, "Created ragdoll for skeleton {0}", skeleton);
-    }
-
-    /**
-     * Remove any bones without vertices from the boneList, so that every hull
-     * shape will contain at least 1 vertex.
-     */
-    private void filterBoneList() {
-        Mesh[] targets = skeletonControl.getTargets();
-        Skeleton skel = skeletonControl.getSkeleton();
-        for (int boneI = 0; boneI < skel.getBoneCount(); boneI++) {
-            String boneName = skel.getBone(boneI).getName();
-            if (jointMap.containsKey(boneName)) {
-                boolean hasVertices = RagdollUtils.hasVertices(boneI, targets,
-                        weightThreshold);
-                if (!hasVertices) {
-                    jointMap.remove(boneName);
-                }
-            }
-        }
     }
 
     /**
@@ -1056,24 +1011,6 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Read the ragdoll's weight threshold.
-     *
-     * @return threshold
-     */
-    public float getWeightThreshold() {
-        return weightThreshold;
-    }
-
-    /**
-     * Alter the ragdoll's weight threshold.
-     *
-     * @param weightThreshold the desired threshold
-     */
-    public void setWeightThreshold(float weightThreshold) {
-        this.weightThreshold = weightThreshold;
-    }
-
-    /**
      * Read the ragdoll's event-dispatch impulse threshold.
      *
      * @return threshold
@@ -1367,7 +1304,6 @@ public class KinematicRagdollControl
         oc.write(initScale, "initScale", null);
         oc.write(mode, "mode", null);
         oc.write(isBlending, "blendedControl", false);
-        oc.write(weightThreshold, "weightThreshold", -1f);
         oc.write(blendProgress, "blendStart", 0f);
         oc.write(blendTime, "blendTime", 1f);
         oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
@@ -1409,7 +1345,6 @@ public class KinematicRagdollControl
         initScale = (Vector3f) ic.readSavable("initScale", null);
         mode = ic.readEnum("mode", Mode.class, Mode.Kinematic);
         isBlending = ic.readBoolean("blendedControl", false);
-        weightThreshold = ic.readFloat("weightThreshold", -1f);
         blendProgress = ic.readFloat("blendStart", 0f);
         blendTime = ic.readFloat("blendTime", 1f);
         eventDispatchImpulseThreshold
@@ -1450,22 +1385,20 @@ public class KinematicRagdollControl
                         bestLbName = lbName;
                     }
                 }
-                if (bestTotalWeight > weightThreshold) {
-                    /*
+                /*
                      * Add the bind-pose coordinates of the vertex
                      * to the linked bone's list.
-                     */
-                    List<Vector3f> coordList;
-                    if (coordsMap.containsKey(bestLbName)) {
-                        coordList = coordsMap.get(bestLbName);
-                    } else {
-                        coordList = new ArrayList<>(20);
-                        coordsMap.put(bestLbName, coordList);
-                    }
-                    Vector3f bindPosition = MyMesh.vertexVector3f(mesh,
-                            VertexBuffer.Type.BindPosePosition, vertexI, null);
-                    coordList.add(bindPosition);
+                 */
+                List<Vector3f> coordList;
+                if (coordsMap.containsKey(bestLbName)) {
+                    coordList = coordsMap.get(bestLbName);
+                } else {
+                    coordList = new ArrayList<>(20);
+                    coordsMap.put(bestLbName, coordList);
                 }
+                Vector3f bindPosition = MyMesh.vertexVector3f(mesh,
+                        VertexBuffer.Type.BindPosePosition, vertexI, null);
+                coordList.add(bindPosition);
             }
         }
 
