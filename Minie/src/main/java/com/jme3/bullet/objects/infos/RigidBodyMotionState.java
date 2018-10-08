@@ -34,6 +34,7 @@ package com.jme3.bullet.objects.infos;
 import com.jme3.bullet.objects.PhysicsVehicle;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.util.clone.Cloner;
@@ -129,7 +130,7 @@ public class RigidBodyMotionState implements JmeCloneable {
      * Copy the location from this motion state.
      *
      * @return the pre-existing location vector (in physics-space coordinates,
-     * not null)
+     * not null) TODO
      */
     public Vector3f getWorldLocation() {
         getWorldLocation(motionStateId, worldLocation);
@@ -140,7 +141,7 @@ public class RigidBodyMotionState implements JmeCloneable {
      * Read the rotation of this motion state (as a matrix).
      *
      * @return the pre-existing rotation matrix (in physics-space coordinates,
-     * not null)
+     * not null) TODO
      */
     public Matrix3f getWorldRotation() {
         getWorldRotation(motionStateId, worldRotation);
@@ -159,7 +160,30 @@ public class RigidBodyMotionState implements JmeCloneable {
     }
 
     /**
-     * @param vehicle which vehicle will use this motion state
+     * Calculate the body's physics transform.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the body's transform in physics-space coordinates (either
+     * storeResult or a new instance, not null)
+     */
+    public Transform physicsTransform(Transform storeResult) {
+        Transform transform;
+        if (storeResult == null) {
+            transform = new Transform();
+        } else {
+            transform = storeResult.setScale(1f);
+        }
+
+        getWorldLocation(motionStateId, transform.getTranslation());
+        getWorldRotationQuat(motionStateId, transform.getRotation());
+
+        return transform;
+    }
+
+    /**
+     * Alter which vehicle uses this motion state.
+     * 
+     * @param vehicle the desired vehicle, or null for none (alias created)
      */
     public void setVehicle(PhysicsVehicle vehicle) {
         this.vehicle = vehicle;
