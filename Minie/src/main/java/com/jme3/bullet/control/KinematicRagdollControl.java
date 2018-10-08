@@ -45,6 +45,7 @@ import com.jme3.bullet.collision.shapes.HullCollisionShape;
 import com.jme3.bullet.control.ragdoll.JointPreset;
 import com.jme3.bullet.control.ragdoll.PhysicsBoneLink;
 import com.jme3.bullet.control.ragdoll.RagdollUtils;
+import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.objects.infos.RigidBodyMotionState;
@@ -540,8 +541,8 @@ public class KinematicRagdollControl
         }
         skeleton = skeletonControl.getSkeleton();
         /*
-         * Remove the SkeletonControl and readd it to ensure it will be
-         * updated after this control.
+         * Remove the SkeletonControl and re-add it to ensure it will get
+         * updated *after* this control.
          */
         spatial.removeControl(skeletonControl);
         spatial.addControl(skeletonControl);
@@ -565,7 +566,9 @@ public class KinematicRagdollControl
          * Map bone indices to names of linked bones.
          */
         String[] tempLbNames = linkedBoneNameArray();
-
+        /*
+         * Assign each mesh vertex to a linked bone or else to the torso.
+         */
         Map<String, List<Vector3f>> coordsMap = coordsMap(tempLbNames);
         /*
          * Create a rigid body for the torso.
@@ -578,14 +581,20 @@ public class KinematicRagdollControl
         torsoRigidBody.setDamping(limbDamping, limbDamping);
         torsoRigidBody.setKinematic(mode == Mode.Kinematic);
         torsoRigidBody.setUserObject(this);
-
-        scanSpatial(coordsMap);
+        /*
+         * Create bone links.
+         */
+        scanSpatial(coordsMap, tempLbNames);
+        /*
+         * Add joints to connect each linked bone with its parent.
+         */
+        addJoints(torsoFakeBoneName);
 
         if (added) {
             addPhysics(getPhysicsSpace());
         }
 
-        logger.log(Level.FINE, "Created ragdoll for skeleton {0}", skeleton);
+        logger.log(Level.FINE, "Created ragdoll for skeleton");
     }
 
     /**
@@ -645,12 +654,14 @@ public class KinematicRagdollControl
      * Generate physics shapes and bone links for the skeleton.
      *
      * @param coordsMap map from bone names to vertex positions (not null)
+     * @param lbNames
      */
-    protected void scanSpatial(Map<String, List<Vector3f>> coordsMap) {
+    protected void scanSpatial(Map<String, List<Vector3f>> coordsMap,
+            String[] lbNames) {
         skeleton.resetAndUpdate();
         for (Bone rootBone : skeleton.getRoots()) {
             logger.log(Level.FINE, "Found root bone in skeleton {0}", skeleton);
-            boneRecursion(rootBone, torsoRigidBody, 1, coordsMap);
+            boneRecursion(rootBone, torsoRigidBody, 1, coordsMap, lbNames);
         }
     }
 
@@ -662,9 +673,11 @@ public class KinematicRagdollControl
      * @param parent the body linked to the parent bone (not null)
      * @param reccount depth of the recursion (&ge;1)
      * @param coordsMap map from bone names to vertex positions (not null)
+     * @param lbNames
      */
     protected void boneRecursion(Bone bone, PhysicsRigidBody parent,
-            int reccount, Map<String, List<Vector3f>> coordsMap) {
+            int reccount, Map<String, List<Vector3f>> coordsMap,
+            String[] lbNames) {
         PhysicsRigidBody parentShape = parent;
         String boneName = bone.getName();
         if (jointMap.containsKey(boneName)) {
@@ -684,34 +697,25 @@ public class KinematicRagdollControl
             shapeNode.setDamping(limbDamping, limbDamping);
             shapeNode.setKinematic(mode == Mode.Kinematic);
 
-            SixDofJoint joint = null;
-            if (parent != null) {
-                //get joint position for parent
-                Vector3f posToParent = new Vector3f();
-                if (bone.getParent() != null) {
-                    bone.getModelSpacePosition()
-                            .subtract(bone.getParent().getModelSpacePosition(), posToParent)
-                            .multLocal(initScale);
-                }
-
-                joint = new SixDofJoint(parent, shapeNode,
-                        posToParent, new Vector3f(0f, 0f, 0f), true);
-
-                JointPreset preset = jointMap.get(boneName);
-                preset.setupJoint(joint);
-                joint.setCollisionBetweenLinkedBodies(false);
+            String parentBoneName;
+            Bone parentBone = bone.getParent();
+            if (parentBone == null) {
+                parentBoneName = torsoFakeBoneName;
+            } else {
+                int parentIndex = skeleton.getBoneIndex(parentBone);
+                parentBoneName = lbNames[parentIndex];
             }
 
-            PhysicsBoneLink link
-                    = new PhysicsBoneLink(transformer, bone, shapeNode, "");
-            link.setJoint(joint);
+            PhysicsBoneLink link = new PhysicsBoneLink(transformer, bone,
+                    shapeNode, parentBoneName);
             boneLinks.put(bone.getName(), link);
             shapeNode.setUserObject(link);
             parentShape = shapeNode;
         }
 
         for (Bone childBone : bone.getChildren()) {
-            boneRecursion(childBone, parentShape, reccount + 1, coordsMap);
+            boneRecursion(childBone, parentShape, reccount + 1, coordsMap,
+                    lbNames);
         }
     }
 
@@ -785,8 +789,10 @@ public class KinematicRagdollControl
     protected void addPhysics(PhysicsSpace space) {
         space.add(torsoRigidBody);
         for (PhysicsBoneLink physicsBoneLink : boneLinks.values()) {
-            space.add(physicsBoneLink.getRigidBody());
-            space.add(physicsBoneLink.getJoint());
+            PhysicsRigidBody rigidBody = physicsBoneLink.getRigidBody();
+            space.add(rigidBody);
+            PhysicsJoint joint = physicsBoneLink.getJoint();
+            space.add(joint);
         }
         space.addCollisionListener(this);
     }
@@ -1353,6 +1359,55 @@ public class KinematicRagdollControl
     }
     // *************************************************************************
     // private methods
+
+    /**
+     * Add joints to connect the named parent with each of its children. Note:
+     * recursive!
+     *
+     * @param parentName the name of the parent, which must either be a linked
+     * bone or the torso (not null)
+     */
+    private void addJoints(String parentName) {
+        PhysicsBoneLink parentLink = boneLinks.get(parentName);
+        if (parentLink == null) {
+            assert torsoFakeBoneName.equals(parentName);
+        }
+
+        PhysicsRigidBody parentBody;
+        Vector3f parentLocation;
+        if (parentLink == null) {
+            parentBody = torsoRigidBody;
+            parentLocation = new Vector3f();
+        } else {
+            parentBody = parentLink.getRigidBody();
+            Bone parentBone = skeleton.getBone(parentName);
+            parentLocation = parentBone.getModelSpacePosition();
+        }
+
+        for (String name : boneLinks.keySet()) {
+            PhysicsBoneLink link = boneLinks.get(name);
+            if (link.parentName().equals(parentName)) {
+
+                Bone childBone = skeleton.getBone(name);
+                PhysicsRigidBody childBody = link.getRigidBody();
+                Vector3f posToParent
+                        = childBone.getModelSpacePosition().clone();
+                posToParent.subtractLocal(parentLocation);
+                posToParent.multLocal(initScale);
+
+                SixDofJoint joint = new SixDofJoint(parentBody, childBody,
+                        posToParent, new Vector3f(0f, 0f, 0f), true);
+                assert link.getJoint() == null;
+                link.setJoint(joint);
+
+                JointPreset preset = jointMap.get(name);
+                preset.setupJoint(joint);
+                joint.setCollisionBetweenLinkedBodies(false);
+
+                addJoints(name);
+            }
+        }
+    }
 
     /**
      * Assign each mesh vertex to a linked bone and add its location (mesh
