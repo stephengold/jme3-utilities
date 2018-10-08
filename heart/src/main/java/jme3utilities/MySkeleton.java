@@ -403,6 +403,25 @@ public class MySkeleton {
     }
 
     /**
+     * Enumerate all bones in a pre-order, depth-first traversal of the
+     * skeleton, such that child bones never precede their ancestors.
+     *
+     * @param skeleton the skeleton to traverse (not null, unaffected)
+     * @return a new list of bones
+     */
+    public static List<Bone> preOrderBones(Skeleton skeleton) {
+        int numBones = skeleton.getBoneCount();
+        List<Bone> result = new ArrayList<>(numBones);
+        Bone[] rootBones = skeleton.getRoots();
+        for (Bone rootBone : rootBones) {
+            addPreOrderBones(rootBone, result);
+        }
+
+        assert result.size() == numBones : result.size();
+        return result;
+    }
+
+    /**
      * Rename of the specified bone. The caller is responsible for avoiding
      * duplicate names.
      *
@@ -499,5 +518,24 @@ public class MySkeleton {
         }
 
         return storeResult;
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Helper method: append the specified bone and all its descendants to the
+     * specified list, using a pre-order, depth-first traversal of the skeleton,
+     * such that child bones never precede their ancestors. Note: recursive!
+     *
+     * @param bone bone to add (not null, unaffected)
+     * @param addResult the list to append to (modified)
+     */
+    private static void addPreOrderBones(Bone bone, List<Bone> addResult) {
+        assert bone != null;
+        addResult.add(bone);
+        List<Bone> children = bone.getChildren();
+        for (Bone child : children) {
+            addPreOrderBones(child, addResult);
+        }
     }
 }
