@@ -813,56 +813,56 @@ public class KinematicRagdollControl
      */
     @Override
     public void collision(PhysicsCollisionEvent event) {
-        PhysicsCollisionObject objA = event.getObjectA();
-        PhysicsCollisionObject objB = event.getObjectB();
-
-        //TODO Ignore collisions between 2 parts of the same ragdoll.
         if (event.getNodeA() == null && event.getNodeB() == null) {
             return;
         }
+        /*
+         * Determine which bone was involved (if any) and also the
+         * other collision object involved.
+         */
+        boolean krcInvolved = false;
+        Bone bone = null;
+        PhysicsCollisionObject otherPco = null;
+        PhysicsCollisionObject pcoA = event.getObjectA();
+        PhysicsCollisionObject pcoB = event.getObjectB();
 
-        // Discard low-impulse collisions.
-        if (event.getAppliedImpulse() < eventDispatchImpulseThreshold) {
-            return;
-        }
-
-        boolean hit = false;
-        Bone hitBone = null;
-        PhysicsCollisionObject hitObject = null;
-
-        //Computing which bone has been hit
-        Object userA = objA.getUserObject();
+        Object userA = pcoA.getUserObject();
+        Object userB = pcoB.getUserObject();
         if (userA instanceof PhysicsBoneLink) {
             PhysicsBoneLink link = (PhysicsBoneLink) userA;
             if (link != null) {
-                hit = true;
-                hitBone = link.getBone();
-                hitObject = objB;
+                krcInvolved = true;
+                bone = link.getBone();
+                otherPco = pcoB;
             }
         } else if (userA == this) {
-            hit = true;
-            hitBone = null;
-            hitObject = objB;
-        }
-
-        Object userB = objB.getUserObject();
-        if (userB instanceof PhysicsBoneLink) {
+            krcInvolved = true;
+            bone = null;
+            otherPco = pcoB;
+        } else if (userB instanceof PhysicsBoneLink) {
             PhysicsBoneLink link = (PhysicsBoneLink) userB;
             if (link != null) {
-                hit = true;
-                hitBone = link.getBone();
-                hitObject = objA;
+                krcInvolved = true;
+                bone = link.getBone();
+                otherPco = pcoA;
             }
         } else if (userB == this) {
-            hit = true;
-            hitBone = null;
-            hitObject = objA;
+            krcInvolved = true;
+            bone = null;
+            otherPco = pcoA;
         }
-
-        // Dispatch the event if the ragdoll has been hit
-        if (hit && listeners != null) {
+        /*
+         * Discard low-impulse collisions.
+         */
+        if (event.getAppliedImpulse() < eventDispatchImpulseThreshold) {
+            return;
+        }
+        /*
+         * Dispatch an event if this control was involved in the collision.
+         */
+        if (krcInvolved && listeners != null) {
             for (RagdollCollisionListener listener : listeners) {
-                listener.collide(hitBone, hitObject, event);
+                listener.collide(bone, otherPco, event);
             }
         }
     }
@@ -1135,7 +1135,6 @@ public class KinematicRagdollControl
      */
     public Vector3f setIKTarget(Bone bone, Vector3f worldGoal,
             int chainLength) {
-        Spatial transformer = MySpatial.findAnimatedGeometry(spatial);
         Vector3f offset = transformer.getWorldTranslation();
         Vector3f meshGoal = worldGoal.subtract(offset);
         String boneName = bone.getName();
@@ -1386,8 +1385,8 @@ public class KinematicRagdollControl
                     }
                 }
                 /*
-                     * Add the bind-pose coordinates of the vertex
-                     * to the linked bone's list.
+                 * Add the bind-pose coordinates of the vertex
+                 * to the linked bone's list.
                  */
                 List<Vector3f> coordList;
                 if (coordsMap.containsKey(bestLbName)) {
