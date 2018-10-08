@@ -32,23 +32,16 @@
 package com.jme3.bullet.control.ragdoll;
 
 import com.jme3.animation.Bone;
-import com.jme3.animation.Skeleton;
-import com.jme3.animation.SkeletonControl;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.HullCollisionShape;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer.Type;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
@@ -101,123 +94,6 @@ public class RagdollUtils {
     }
 
     /**
-     * Enumerate the bone indices of the specified bone and all its descendents.
-     *
-     * @param bone the input bone (not null)
-     * @param skeleton the skeleton containing the bone (not null)
-     * @param boneList a set of bone names (not null, unaffected)
-     *
-     * @return a new list (not null)
-     */
-    public static List<Integer> getBoneIndices(Bone bone, Skeleton skeleton,
-            Set<String> boneList) {
-        List<Integer> list = new LinkedList<>();
-
-        if (boneList.isEmpty()) {
-            list.add(skeleton.getBoneIndex(bone));
-        } else {
-            list.add(skeleton.getBoneIndex(bone));
-            for (Bone child : bone.getChildren()) {
-                if (!boneList.contains(child.getName())) {
-                    list.addAll(getBoneIndices(child, skeleton, boneList));
-                }
-            }
-        }
-
-        return list;
-    }
-
-    /**
-     * Create a hull-collision shape from linked vertices to this bone. TODO
-     * rename
-     *
-     * @param model the model on which to base the shape
-     * @param boneIndices indices of relevant bones (not null, unaffected)
-     * @param initialScale scale factors
-     * @param initialPosition location
-     * @param weightThreshold minimum weight for inclusion
-     * @return a new shape
-     */
-    public static HullCollisionShape makeShapeFromVerticeWeights(Spatial model,
-            List<Integer> boneIndices, Vector3f initialScale,
-            Vector3f initialPosition, float weightThreshold) {
-        List<Float> points = new ArrayList<>(100);
-
-        SkeletonControl skeletonCtrl = model.getControl(SkeletonControl.class);
-        Mesh[] targetMeshes = skeletonCtrl.getTargets();
-        for (Mesh mesh : targetMeshes) {
-            for (Integer index : boneIndices) {
-                List<Float> bonePoints = getPoints(mesh, index, initialScale,
-                        initialPosition, weightThreshold);
-                points.addAll(bonePoints);
-            }
-        }
-
-        assert !points.isEmpty();
-        float[] p = new float[points.size()];
-        for (int i = 0; i < points.size(); i++) {
-            p[i] = points.get(i);
-        }
-
-        return new HullCollisionShape(p);
-    }
-
-    /**
-     * Enumerate vertices that meet the weight threshold for the indexed bone.
-     *
-     * @param mesh the mesh to analyze (not null)
-     * @param boneIndex the index of the bone (&ge;0)
-     * @param initialScale a scale applied to vertex positions (not null,
-     * unaffected)
-     * @param offset an offset subtracted from vertex positions (not null,
-     * unaffected)
-     * @param weightThreshold the minimum bone weight for inclusion in the
-     * result (&ge;0, &le;1)
-     * @return a new list of vertex coordinates (not null, length a multiple of
-     * 3)
-     */
-    private static List<Float> getPoints(Mesh mesh, int boneIndex,
-            Vector3f initialScale, Vector3f offset, float weightThreshold) {
-
-        FloatBuffer vertices = mesh.getFloatBuffer(Type.Position);
-        ByteBuffer boneIndices
-                = (ByteBuffer) mesh.getBuffer(Type.BoneIndex).getData();
-        FloatBuffer boneWeight
-                = (FloatBuffer) mesh.getBuffer(Type.BoneWeight).getData();
-
-        vertices.rewind();
-        boneIndices.rewind();
-        boneWeight.rewind();
-
-        ArrayList<Float> results = new ArrayList<>();
-
-        int vertexComponents = mesh.getVertexCount() * 3;
-        for (int i = 0; i < vertexComponents; i += 3) {
-            boolean add = false;
-            int start = i / 3 * 4;
-            for (int k = start; k < start + 4; k++) {
-                if (boneIndices.get(k) == boneIndex
-                        && boneWeight.get(k) >= weightThreshold) {
-                    add = true;
-                    break;
-                }
-            }
-            if (add) {
-                Vector3f pos = new Vector3f(); // TODO garbage
-                pos.x = vertices.get(i);
-                pos.y = vertices.get(i + 1);
-                pos.z = vertices.get(i + 2);
-                pos.subtractLocal(offset).multLocal(initialScale);
-                results.add(pos.x);
-                results.add(pos.y);
-                results.add(pos.z);
-            }
-        }
-
-        return results;
-    }
-
-    /**
      * Updates a bone position and rotation. if the child bones are not in the
      * bone list this means, they are not associated with a physics shape. So
      * they have to be updated
@@ -238,7 +114,7 @@ public class RagdollUtils {
         // Set the user transform of the bone.
         bone.setUserTransformsInModelSpace(pos, rot);
         for (Bone childBone : bone.getChildren()) {
-            //each child bone that is not in the list is updated
+            //each child bone not in the list is updated
             if (!boneList.contains(childBone.getName())) {
                 Transform t = childBone.getCombinedTransform(pos, rot);
                 setTransform(childBone, t.getTranslation(), t.getRotation(),
