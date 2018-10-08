@@ -169,9 +169,9 @@ public class KinematicRagdollControl
     private float blendTime = 1f;
     /**
      * minimum applied impulse for a collision even to be dispatched to
-     * listeners
+     * listeners (default=0)
      */
-    private float eventDispatchImpulseThreshold = 10f;
+    private float eventDispatchImpulseThreshold = 0f;
     /**
      * mass of the torso TODO specify in constructor
      */
@@ -1307,7 +1307,7 @@ public class KinematicRagdollControl
         oc.write(blendProgress, "blendStart", 0f);
         oc.write(blendTime, "blendTime", 1f);
         oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
-                10f);
+                0f);
         oc.write(torsoMass, "rootMass", 15f);
         oc.write(totalMass, "totalMass", 0f);
         oc.write(ikRotSpeed, "rotSpeed", 7f);
@@ -1348,7 +1348,7 @@ public class KinematicRagdollControl
         blendProgress = ic.readFloat("blendStart", 0f);
         blendTime = ic.readFloat("blendTime", 1f);
         eventDispatchImpulseThreshold
-                = ic.readFloat("eventDispatchImpulseThreshold", 10f);
+                = ic.readFloat("eventDispatchImpulseThreshold", 0f);
         torsoMass = ic.readFloat("rootMass", 15f);
         totalMass = ic.readFloat("totalMass", 0f);
     }
