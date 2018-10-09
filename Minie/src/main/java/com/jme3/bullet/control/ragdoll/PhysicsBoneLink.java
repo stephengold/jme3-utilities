@@ -34,6 +34,7 @@ package com.jme3.bullet.control.ragdoll;
 import com.jme3.animation.Bone;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.bullet.objects.infos.RigidBodyMotionState;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -52,7 +53,7 @@ import jme3utilities.Validate;
  *
  * @author Normen Hansen and Rémy Bouquet (Nehon)
  */
-public class PhysicsBoneLink implements Savable {
+public class PhysicsBoneLink implements Savable { // TODO JmeCloneable
     // *************************************************************************
     // constants and loggers
 
@@ -73,31 +74,42 @@ public class PhysicsBoneLink implements Savable {
      */
     private PhysicsRigidBody rigidBody;
     /**
-     * orientation of the bone (in mesh space) at the start of the most recent
-     * transition to kinematic mode
+     * orientation of the bone (in mesh coordinates) at the start of the most
+     * recent transition to kinematic mode
      */
     final private Quaternion blendOrientation = new Quaternion();
     /**
-     * orientation of the bone (in mesh space) when this link was created
+     * orientation of the bone (in mesh coordinates) when this link was created
      */
     final private Quaternion originalOrientation = new Quaternion();
     /**
-     * joint between the bone's body and its parent's body, or null if none
+     * joint between the bone's body and its parent's body, or null if not yet
+     * created
      */
-    private SixDofJoint joint;
+    private SixDofJoint joint = null;
     /**
      * spatial for converting between mesh/world coordinates (not null)
      */
     private Spatial transformSpatial;
     /**
-     * name of parent in the hierarchy of linked bones, or torsoBoneName if none
+     * name of parent in the hierarchy of linked bones, or torsoBoneName if
+     * parented by the torso
      */
     private String parentName;
     /**
-     * location of the bone (in mesh space) at the start of the most recent
-     * transition to kinematic mode
+     * location of the bone (in mesh coordinates) at the start of the most
+     * recent transition to kinematic mode
      */
     final private Vector3f blendLocation = new Vector3f();
+    /**
+     * scale of the bone (in mesh coordinates) at the start of the most recent
+     * transition to kinematic mode
+     */
+    final private Vector3f blendScale = new Vector3f();
+    /**
+     * scale of the bone (in mesh coordinates) when this link was created
+     */
+    final private Vector3f originalScale = new Vector3f(1f, 1f, 1f);
     // *************************************************************************
     // constructors
 
@@ -121,18 +133,20 @@ public class PhysicsBoneLink implements Savable {
         transformSpatial = transformer;
         this.bone = bone;
         this.rigidBody = rigidBody;
-        this.joint = null;
         this.parentName = parentName;
 
         Quaternion msr = bone.getModelSpaceRotation();
         originalOrientation.set(msr);
+
+        Vector3f mss = bone.getModelSpaceScale();
+        originalScale.set(mss);
     }
     // *************************************************************************
     // new methods exposed
 
     /**
-     * Copy the bone's location and orientation (in mesh space) from the start
-     * of the most recent transition to kinematic mode.
+     * Copy the bone's location and orientation (in mesh coordinates) from the
+     * start of the most recent transition to kinematic mode.
      *
      * @param storeLocation storage for the orientation (modified if not null)
      * @param storeOrientation storage for the orientation (modified if not
@@ -146,6 +160,7 @@ public class PhysicsBoneLink implements Savable {
         if (storeOrientation != null) {
             storeOrientation.set(blendOrientation);
         }
+        // TODO blendScale
     }
 
     /**
@@ -176,8 +191,8 @@ public class PhysicsBoneLink implements Savable {
     }
 
     /**
-     * Copy the orientation of the bone (in mesh space) that was captured when
-     * this link was created.
+     * Copy the orientation of the bone (in mesh coordinates) that was captured
+     * when this link was created. TODO is this bind orientation?
      *
      * @param storeResult (modified if not null)
      * @return the orientation (either storeResult or a new instance)
@@ -187,6 +202,21 @@ public class PhysicsBoneLink implements Savable {
             return originalOrientation.clone();
         } else {
             return storeResult.set(originalOrientation);
+        }
+    }
+
+    /**
+     * Copy the scale of the bone (in mesh coordinates) that was captured when
+     * this link was created. TODO is this bind scale?
+     *
+     * @param storeResult (modified if not null)
+     * @return the orientation (either storeResult or a new instance)
+     */
+    public Vector3f originalScale(Vector3f storeResult) {
+        if (storeResult == null) {
+            return originalScale.clone();
+        } else {
+            return storeResult.set(originalScale);
         }
     }
 
@@ -211,22 +241,30 @@ public class PhysicsBoneLink implements Savable {
     }
 
     /**
-     * Begin a transition to kinematic mode.
+     * Start a blended transition to kinematic mode.
      */
     public void startBlend() {
-        Vector3f worldLoc = rigidBody.getMotionState().getWorldLocation();
-        Quaternion worldOri = rigidBody.getMotionState().getWorldRotationQuat();
-        Quaternion q2 = worldOri.clone().multLocal(originalOrientation);
+        RigidBodyMotionState state = rigidBody.getMotionState();
+        Vector3f worldLoc = state.getWorldLocation();
+        Quaternion worldOri = state.getWorldRotationQuat();
+        Vector3f scale = rigidBody.getPhysicsScale(null);
 
-        if (MySpatial.isIgnoringTransforms(transformSpatial)) {
-            blendLocation.set(worldLoc);
-            blendOrientation.set(q2);
-        } else {
-            transformSpatial.worldToLocal(worldLoc, blendLocation);
+        Vector3f loc = worldLoc.clone();
+        Quaternion ori = worldOri.mult(originalOrientation);
+        scale.multLocal(originalScale);
+
+        if (!MySpatial.isIgnoringTransforms(transformSpatial)) {
+            transformSpatial.worldToLocal(worldLoc, loc);
             Quaternion spatInvRot
                     = MySpatial.inverseOrientation(transformSpatial);
-            spatInvRot.mult(q2, blendOrientation);
+            spatInvRot.mult(ori, ori);
+            Vector3f factors = transformSpatial.getWorldScale();
+            scale.divideLocal(factors);
         }
+
+        blendLocation.set(loc);
+        blendOrientation.set(ori);
+        blendScale.set(scale);
 
         rigidBody.setKinematic(true);
     }
@@ -248,17 +286,20 @@ public class PhysicsBoneLink implements Savable {
         joint = (SixDofJoint) ic.readSavable("joint", null);
         parentName = ic.readString("parentName", null);
 
-        Quaternion readQuat = (Quaternion) ic.readSavable(
-                "initalWorldRotation", new Quaternion());
+        Quaternion readQuat = (Quaternion) ic.readSavable("initalWorldRotation",
+                new Quaternion());
         originalOrientation.set(readQuat);
+        Vector3f readVec = (Vector3f) ic.readSavable("originalScale",
+                new Vector3f());
+        originalScale.set(readVec);
 
         readQuat = (Quaternion) ic.readSavable(
                 "startBlendingRot", new Quaternion());
         blendOrientation.set(readQuat);
-
-        Vector3f readVec
-                = (Vector3f) ic.readSavable("startBlendingPos", new Vector3f());
+        readVec = (Vector3f) ic.readSavable("startBlendingPos", new Vector3f());
         blendLocation.set(readVec);
+        readVec = (Vector3f) ic.readSavable("startBlendingScale", new Vector3f());
+        blendScale.set(readVec);
     }
 
     /**
@@ -275,8 +316,12 @@ public class PhysicsBoneLink implements Savable {
         oc.write(transformSpatial, "transformSpatial", null);
         oc.write(joint, "joint", null);
         oc.write(parentName, "parentName", null);
+
         oc.write(originalOrientation, "initalWorldRotation", null);
+        oc.write(originalScale, "originalScale", null);
+
         oc.write(blendOrientation, "startBlendingRot", new Quaternion());
         oc.write(blendLocation, "startBlendingPos", new Vector3f());
+        oc.write(blendScale, "startBlendingScale", new Vector3f());
     }
 }
