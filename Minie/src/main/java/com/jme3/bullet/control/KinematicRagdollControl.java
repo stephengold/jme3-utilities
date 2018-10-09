@@ -282,6 +282,7 @@ public class KinematicRagdollControl
         Transform boneTransform = new Transform();
         Vector3f location = boneTransform.getTranslation();
         Quaternion orientation = boneTransform.getRotation();
+        Vector3f scale = boneTransform.getScale();
 
         for (PhysicsBoneLink link : boneLinks.values()) {
             PhysicsRigidBody body = link.getRigidBody();
@@ -299,6 +300,13 @@ public class KinematicRagdollControl
             orientation.multLocal(link.originalOrientation(null));
             worldToMesh.getRotation().mult(orientation, orientation);
             orientation.normalizeLocal();
+
+            // Start with the bone's scale in world coordinates.
+            Vector3f worldScale = body.getPhysicsScale(null);
+            // transform into mesh coordinates
+            scale.set(worldScale);
+            scale.multLocal(link.originalScale(null));
+            scale.multLocal(worldToMesh.getScale());
 
             Bone bone = link.getBone();
             RagdollUtils.setTransform(bone, boneTransform, false,
@@ -540,6 +548,7 @@ public class KinematicRagdollControl
                     "The controlled spatial must have a SkeletonControl. Make sure the control is there and not on a subnode.");
         }
         skeleton = skeletonControl.getSkeleton();
+        skeleton.resetAndUpdate();
         /*
          * Remove the SkeletonControl and re-add it so that it will get
          * updated *after* this control.
