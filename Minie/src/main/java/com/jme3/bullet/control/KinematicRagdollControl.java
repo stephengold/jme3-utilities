@@ -275,11 +275,13 @@ public class KinematicRagdollControl
         torsoDynamicUpdate();
 
         TempVars vars = TempVars.get();
-        Vector3f location = vars.vect1;
-        Quaternion orientation = vars.quat1;
 
         Transform meshToWorld = transformer.getWorldTransform();
-        Quaternion worldToMesh = meshToWorld.getRotation().inverse();
+        Transform worldToMesh = meshToWorld.invert();
+
+        Transform boneTransform = new Transform();
+        Vector3f location = boneTransform.getTranslation();
+        Quaternion orientation = boneTransform.getRotation();
 
         for (PhysicsBoneLink link : boneLinks.values()) {
             PhysicsRigidBody body = link.getRigidBody();
@@ -295,11 +297,11 @@ public class KinematicRagdollControl
             // transform into mesh coordinates
             orientation.set(worldOrientation);
             orientation.multLocal(link.originalOrientation(null));
-            worldToMesh.mult(orientation, orientation);
+            worldToMesh.getRotation().mult(orientation, orientation);
             orientation.normalizeLocal();
 
             Bone bone = link.getBone();
-            RagdollUtils.setTransform(bone, location, orientation, false,
+            RagdollUtils.setTransform(bone, boneTransform, false,
                     jointMap.keySet());
         }
         vars.release();
@@ -340,8 +342,9 @@ public class KinematicRagdollControl
                 position.set(position2);
 
                 //update bone transforms
-                RagdollUtils.setTransform(link.getBone(), position, tmpRot1,
-                        true, jointMap.keySet());
+                Bone bone = link.getBone();
+                Transform meshT = new Transform(position, tmpRot1);
+                RagdollUtils.setTransform(bone, meshT, true, jointMap.keySet());
             }
             // Apply bone transform to the rigid body.
             matchPhysicObjectToBone(link, position, tmpRot1);

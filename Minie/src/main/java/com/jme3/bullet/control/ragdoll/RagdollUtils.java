@@ -35,9 +35,7 @@ import com.jme3.animation.Bone;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
-import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
 import java.nio.ByteBuffer;
@@ -99,29 +97,34 @@ public class RagdollUtils {
      * they have to be updated
      *
      * @param bone the bone
-     * @param pos the position
-     * @param rot the rotation
-     * @param restoreBoneControl true &rarr; user-control flag should be set
+     * @param localT the bone transform (in local coordinates, not null)
+     * @param restoreBoneControl true &rarr; user-control flag needs to be set
      * @param boneList the names of all bones without collision shapes (not
      * null, unaffected)
      */
-    public static void setTransform(Bone bone, Vector3f pos, Quaternion rot,
+    public static void setTransform(Bone bone, Transform localT,
             boolean restoreBoneControl, Set<String> boneList) {
-        // Ensure user control
+        // Take control of the bone.
         if (restoreBoneControl) {
+            assert !bone.hasUserControl();
             bone.setUserControl(true);
         }
+
         // Set the user transform of the bone.
-        bone.setUserTransformsInModelSpace(pos, rot);
+        bone.setUserTransformsInModelSpace(localT.getTranslation(),
+                localT.getRotation());
+        // TODO scale?
         for (Bone childBone : bone.getChildren()) {
-            //each child bone not in the list is updated
             if (!boneList.contains(childBone.getName())) {
-                Transform t = childBone.getCombinedTransform(pos, rot);
-                setTransform(childBone, t.getTranslation(), t.getRotation(),
-                        restoreBoneControl, boneList);
+                Transform childLocalT = childBone.getCombinedTransform(
+                        localT.getTranslation(), localT.getRotation());
+                childLocalT.setScale(localT.getScale());
+                setTransform(childBone, childLocalT, restoreBoneControl,
+                        boneList);
             }
         }
-        //we give back the control to the keyframed animation
+
+        // Give control back to the animation.
         if (restoreBoneControl) {
             bone.setUserControl(false);
         }
