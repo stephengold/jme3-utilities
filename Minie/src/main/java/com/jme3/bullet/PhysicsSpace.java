@@ -1222,8 +1222,6 @@ public class PhysicsSpace {
     private native void setSolverNumIterations(long physicsSpaceId,
             int numIterations);
 
-    native private static void initNativePhysics(); // TODO where used?
-
     /**
      * Enumerate the available acceleration structures for broadphase collision
      * detection.
