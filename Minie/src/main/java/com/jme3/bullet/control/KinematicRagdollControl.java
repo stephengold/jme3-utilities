@@ -312,6 +312,9 @@ public class KinematicRagdollControl
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     protected void kinematicUpdate(float tpf) {
+        assert torsoRigidBody.isInWorld();
+
+        removePhysics(getPhysicsSpace());
         torsoKinematicUpdate();
 
         TempVars vars = TempVars.get();
@@ -319,9 +322,6 @@ public class KinematicRagdollControl
         Quaternion tmpRot2 = vars.quat2;
         Vector3f position = vars.vect1;
         for (PhysicsBoneLink link : boneLinks.values()) {
-//            if(link.usedbyIK){
-//                continue;
-//            }
             //if blending, keyframed animation is updating the skeleton,
             //but to allow smooth transition, we blend this transformation with the saved position of the ragdoll
             if (isBlending) {
@@ -343,11 +343,12 @@ public class KinematicRagdollControl
                 RagdollUtils.setTransform(link.getBone(), position, tmpRot1,
                         true, jointMap.keySet());
             }
-            //set bone transforms to the ragdoll
+            // Apply bone transform to the rigid body.
             matchPhysicObjectToBone(link, position, tmpRot1);
             modelLocation.set(spatial.getLocalTranslation());
         }
         vars.release();
+        addPhysics(getPhysicsSpace());
 
         if (isBlending) {
             blendProgress += tpf;
@@ -506,9 +507,7 @@ public class KinematicRagdollControl
         PhysicsRigidBody body = link.getRigidBody();
         body.setPhysicsLocation(location);
         body.setPhysicsRotation(orientation);
-
-        PhysicsSpace space = getPhysicsSpace();
-        body.setPhysicsScale(scale, space);
+        body.setPhysicsScale(scale);
     }
 
     /**
@@ -541,7 +540,7 @@ public class KinematicRagdollControl
         }
         skeleton = skeletonControl.getSkeleton();
         /*
-         * Remove the SkeletonControl and re-add it to ensure it will get
+         * Remove the SkeletonControl and re-add it so that it will get
          * updated *after* this control.
          */
         spatial.removeControl(skeletonControl);
@@ -738,7 +737,7 @@ public class KinematicRagdollControl
     /**
      * Remove all managed physics objects from the specified space.
      *
-     * @param space which physics space to remove from (not null)
+     * @param space which physics space to remove from (not null) TODO eliminate
      */
     @Override
     protected void removePhysics(PhysicsSpace space) {
@@ -1325,7 +1324,6 @@ public class KinematicRagdollControl
         for (String name : boneLinks.keySet()) {
             PhysicsBoneLink link = boneLinks.get(name);
             if (link.parentName().equals(parentName)) {
-
                 Bone childBone = skeleton.getBone(name);
                 PhysicsRigidBody childBody = link.getRigidBody();
                 Vector3f posToParent
@@ -1527,12 +1525,12 @@ public class KinematicRagdollControl
     private void torsoKinematicUpdate() {
         Vector3f translation = transformer.getWorldTranslation();
         torsoRigidBody.setPhysicsLocation(translation);
+
         Quaternion orientation = transformer.getWorldRotation();
         torsoRigidBody.setPhysicsRotation(orientation);
 
         Vector3f scale = transformer.getWorldScale();
-        PhysicsSpace space = getPhysicsSpace();
-        torsoRigidBody.setPhysicsScale(scale, space);
+        torsoRigidBody.setPhysicsScale(scale);
     }
 
     /**
@@ -1544,7 +1542,8 @@ public class KinematicRagdollControl
      * unaffected)
      * @return a new map from linked-bone names to total weight
      */
-    private Map<String, Float> weightMap(int[] biArray, float[] bwArray, String[] lbNames) {
+    private Map<String, Float> weightMap(int[] biArray, float[] bwArray,
+            String[] lbNames) {
         assert biArray.length == 4;
         assert bwArray.length == 4;
 

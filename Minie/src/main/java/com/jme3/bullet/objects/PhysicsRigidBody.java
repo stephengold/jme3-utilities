@@ -66,7 +66,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     // constants and loggers
 
     /**
-     * message logger for this class
+     * message logger for this class TODO rename
      */
     final public static Logger logger
             = Logger.getLogger(PhysicsRigidBody.class.getName());
@@ -82,7 +82,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      */
     protected RigidBodyMotionState motionState = new RigidBodyMotionState();
     /**
-     * copy of mass (&gt;0) of a dynamic body, or 0 for a static body
+     * copy of the mass (&gt;0) of a dynamic body, or 0 for a static body
      * (default=1)
      */
     protected float mass = 1f;
@@ -93,7 +93,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      */
     private boolean kinematic = false;
     /**
-     * joint list
+     * list of joints that connect to this body
      */
     protected ArrayList<PhysicsJoint> joints = new ArrayList<>(2);
     // *************************************************************************
@@ -193,7 +193,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
-     * Test whether this body is in a physics space.
+     * Test whether this body is added to any physics space.
      *
      * @return true&rarr;in a space, false&rarr;not in a space
      */
@@ -250,29 +250,21 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
-     * Rescale this body's shape, even if it's added to a physics space.
+     * Rescale this body, which must not be added to any physics space.
      *
      * @param newScale the desired scaling factor for each local axis (not null,
      * no negative component, unaffected, default=1,1,1)
-     * @param physicsSpace where added, or null if not added
      */
-    public void setPhysicsScale(Vector3f newScale, PhysicsSpace physicsSpace) {
+    public void setPhysicsScale(Vector3f newScale) {
         CollisionShape shape = getCollisionShape();
         Vector3f oldScale = shape.getScale(null);
         if (!newScale.equals(oldScale)) {
-            Vector3f saveGravity = null;
             if (isInWorld()) {
-                saveGravity = getGravity(null);
-                physicsSpace.removeCollisionObject(this);
+                throw new IllegalStateException(
+                        "No scaling while in physics space");
             }
-
             shape.setScale(newScale);
             setCollisionShape(shape);
-
-            if (saveGravity != null) {
-                physicsSpace.addCollisionObject(this);
-                setGravity(saveGravity);
-            }
         }
     }
 
@@ -394,6 +386,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         return kinematic;
     }
 
+    // TODO add isDynamic() and isStatic()
     /**
      * Alter the radius of the swept sphere used for continuous collision
      * detection (CCD).
@@ -459,7 +452,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Alter this body's mass. Bodies with mass=0 are static. For dynamic
-     * bodies, it is best to keep the mass around 1.
+     * bodies, it is best to keep the mass on the order of 1.
      *
      * @param mass the desired mass (&gt;0) or 0 for a static body (default=1)
      */
@@ -501,8 +494,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * Alter this body's gravitational acceleration.
      * <p>
-     * Invoke this after adding the body to a PhysicsSpace. Adding a body to a
-     * PhysicsSpace alters its gravity.
+     * Invoke this method <em>after</em> adding the body to a PhysicsSpace.
+     * Adding a body to a PhysicsSpace alters its gravity.
      *
      * @param gravity the desired acceleration vector (not null, unaffected)
      */
@@ -717,17 +710,18 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
-     * Apply the specified CollisionShape to this body.
-     * <p>
-     * Note that the body should not be in any physics space while changing
-     * shape; the body gets rebuilt on the physics side.
+     * Apply the specified CollisionShape to this body, which must not be in any
+     * physics space. The body gets rebuilt on the physics side.
      *
      * @param collisionShape the shape to apply (not null, alias created)
      */
     @Override
     public void setCollisionShape(CollisionShape collisionShape) {
         Validate.nonNull(collisionShape, "collision shape");
-        assert !isInWorld();
+        if (isInWorld()) {
+            throw new IllegalStateException(
+                    "No scaling while in physics space!");
+        }
         if (mass != massForStatic) {
             validateDynamicShape(collisionShape);
         }

@@ -70,7 +70,7 @@ public class RigidBodyControl
     // constants and loggers
 
     /**
-     * message logger for this class
+     * message logger for this class TODO rename
      */
     final public static Logger logger
             = Logger.getLogger(RigidBodyControl.class.getName());
@@ -411,7 +411,7 @@ public class RigidBodyControl
                             newScale.x * newScale.y * newScale.z);
                     newScale.set(factor, factor, factor);
                 }
-                setPhysicsScale(newScale, space);
+                setPhysicsScale(newScale);
             }
 
         } else if (!MySpatial.isIgnoringTransforms(spatial)) {
