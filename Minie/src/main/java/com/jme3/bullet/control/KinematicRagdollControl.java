@@ -140,8 +140,6 @@ public class KinematicRagdollControl
      * map bone names to simulation objects
      */
     private Map<String, PhysicsBoneLink> boneLinks = new HashMap<>();
-    private Vector3f modelLocation = new Vector3f(); // TODO temporary
-    private Quaternion modelOrientation = new Quaternion(); // TODO temporary
     /**
      * rigid body for the torso
      */
@@ -173,7 +171,7 @@ public class KinematicRagdollControl
      */
     private float blendTime = 1f;
     /**
-     * minimum applied impulse for a collision even to be dispatched to
+     * minimum applied impulse for a collision event to be dispatched to
      * listeners (default=0)
      */
     private float eventDispatchImpulseThreshold = 0f;
@@ -278,8 +276,6 @@ public class KinematicRagdollControl
     protected void ragDollUpdate(float tpf) {
         torsoDynamicUpdate();
 
-        TempVars vars = TempVars.get();
-
         Transform meshToWorld = transformer.getWorldTransform();
         Transform worldToMesh = meshToWorld.invert();
 
@@ -293,7 +289,7 @@ public class KinematicRagdollControl
             // Start with the bone's location in world coordinates.
             Vector3f worldLocation = body.getMotionState().getWorldLocation();
             // transform into mesh coordinates
-            meshToWorld.transformInverseVector(worldLocation, location);
+            worldToMesh.transformVector(worldLocation, location);
 
             // Start with the bone's orientation in world coordinates.
             Quaternion worldOrientation
@@ -308,7 +304,6 @@ public class KinematicRagdollControl
             RagdollUtils.setTransform(bone, boneTransform, false,
                     jointMap.keySet());
         }
-        vars.release();
     }
 
     /**
@@ -352,7 +347,6 @@ public class KinematicRagdollControl
             }
             // Apply bone transform to the rigid body.
             matchPhysicObjectToBone(link, position, tmpRot1);
-            modelLocation.set(spatial.getLocalTranslation());
         }
         vars.release();
         addPhysics(getPhysicsSpace());
@@ -1051,8 +1045,6 @@ public class KinematicRagdollControl
         initScale = cloner.clone(initScale);
         listeners = cloner.clone(listeners);
         meshToModel = cloner.clone(meshToModel);
-        modelLocation = cloner.clone(modelLocation);
-        modelOrientation = cloner.clone(modelOrientation);
         skeleton = cloner.clone(skeleton);
         skeletonControl = cloner.clone(skeletonControl);
         torsoRigidBody = cloner.clone(torsoRigidBody);
@@ -1244,8 +1236,6 @@ public class KinematicRagdollControl
         oc.write(boneLinks.values().toArray(
                 new PhysicsBoneLink[boneLinks.size()]),
                 "boneLinks", new PhysicsBoneLink[0]);
-        oc.write(modelLocation, "modelPosition", new Vector3f());
-        oc.write(modelOrientation, "modelRotation", new Quaternion());
         oc.write(skeleton, "skeleton", null);
         oc.write(skeletonControl, "skeletonControl", null);
         oc.write(transformer, "transformer", null);
@@ -1280,10 +1270,6 @@ public class KinematicRagdollControl
         for (PhysicsBoneLink physicsBoneLink : loadedBoneLinks) {
             boneLinks.put(physicsBoneLink.getBone().getName(), physicsBoneLink);
         }
-        modelLocation.set((Vector3f) ic.readSavable("modelPosition",
-                new Vector3f()));
-        modelOrientation.set((Quaternion) ic.readSavable("modelRotation",
-                new Quaternion()));
         skeleton = (Skeleton) ic.readSavable("skeleton", null);
         skeletonControl
                 = (SkeletonControl) ic.readSavable("skeletonControl", null);
@@ -1467,7 +1453,7 @@ public class KinematicRagdollControl
         assert !vertexLocations.isEmpty();
 
         for (Vector3f location : vertexLocations) {
-            location.subtractLocal(offset).mult(initScale);
+            location.subtractLocal(offset);
         }
 
         CollisionShape boneShape = new HullCollisionShape(vertexLocations);
