@@ -150,6 +150,10 @@ public class KinematicRagdollControl
      * skeleton being controlled
      */
     private Skeleton skeleton = null;
+    /**
+     * mesh scale at the time this control was added to a spatial (in world
+     * coordinates)
+     */
     private Vector3f initScale = null;
     /**
      * mode of operation (not null, default=Kinematic)
@@ -563,7 +567,7 @@ public class KinematicRagdollControl
             loopSpatial = loopSpatial.getParent();
         }
         meshToModel = modelToMesh.invert();
-        initScale = spatial.getLocalScale().clone();
+        initScale = transformer.getWorldScale().clone();
         /*
          * Map bone indices to names of linked bones.
          */
