@@ -134,14 +134,14 @@ public abstract class AbstractPhysicsControl
     /**
      * Add all managed physics objects to the specified space.
      *
-     * @param space which physics space to add to (not null)
+     * @param space which physics space to add to (not null) TODO remove
      */
     protected abstract void addPhysics(PhysicsSpace space);
 
     /**
      * Remove all managed physics objects from the specified space.
      *
-     * @param space which physics space to remove from (not null)
+     * @param space which physics space to remove from (not null) TODO remove
      */
     protected abstract void removePhysics(PhysicsSpace space);
 

@@ -49,7 +49,7 @@ import java.util.logging.Logger;
  * btTypedConstraint, used to connect 2 dynamic rigid bodies in the same physics
  * space. TODO make this work for static bodies
  * <p>
- * Joints include ConeJoint, HingeJoint, Point2PointJoint, and SixDofJoint.
+ * Subclasses include: ConeJoint, HingeJoint, Point2PointJoint, and SixDofJoint.
  *
  * @author normenhansen
  */
@@ -272,12 +272,12 @@ abstract public class PhysicsJoint
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
-        this.nodeA = (PhysicsRigidBody) capsule.readSavable("nodeA",
+        nodeA = (PhysicsRigidBody) capsule.readSavable("nodeA",
                 new PhysicsRigidBody());
-        this.nodeB = (PhysicsRigidBody) capsule.readSavable("nodeB",
+        nodeB = (PhysicsRigidBody) capsule.readSavable("nodeB",
                 new PhysicsRigidBody());
-        this.pivotA = (Vector3f) capsule.readSavable("pivotA", new Vector3f());
-        this.pivotB = (Vector3f) capsule.readSavable("pivotB", new Vector3f());
+        pivotA = (Vector3f) capsule.readSavable("pivotA", new Vector3f());
+        pivotB = (Vector3f) capsule.readSavable("pivotB", new Vector3f());
     }
     // *************************************************************************
     // Object methods
