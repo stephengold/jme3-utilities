@@ -31,12 +31,9 @@
  */
 package com.jme3.bullet.control.ragdoll;
 
-import com.jme3.animation.Bone;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.math.FastMath;
-import com.jme3.math.Transform;
-import java.util.Collection;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -85,44 +82,5 @@ public class RagdollUtils {
         joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Y).setLoLimit(minY);
         joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Z).setHiLimit(maxZ);
         joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Z).setLoLimit(minZ);
-    }
-
-    /**
-     * Updates a bone position and rotation. if the child bones are not in the
-     * bone list this means, they are not associated with a physics shape. So
-     * they have to be updated. TODO move to PhysicsBoneLink
-     *
-     * @param bone the bone
-     * @param localT the bone transform (in local coordinates, not null)
-     * @param restoreBoneControl true &rarr; user-control flag needs to be set
-     * @param boneSet the names of all bones with collision shapes (not null,
-     * unaffected)
-     */
-    public static void setTransform(Bone bone, Transform localT,
-            boolean restoreBoneControl, Collection<String> boneSet) {
-        // Take control of the bone.
-        if (restoreBoneControl) {
-            assert !bone.hasUserControl();
-            bone.setUserControl(true);
-        }
-
-        // Set the user transform of the bone.
-        bone.setUserTransformsInModelSpace(localT.getTranslation(),
-                localT.getRotation());
-        // TODO scale?
-        for (Bone childBone : bone.getChildren()) {
-            if (!boneSet.contains(childBone.getName())) {
-                Transform childLocalT = childBone.getCombinedTransform(
-                        localT.getTranslation(), localT.getRotation());
-                childLocalT.setScale(localT.getScale());
-                setTransform(childBone, childLocalT, restoreBoneControl,
-                        boneSet);
-            }
-        }
-
-        // Give control back to the animation.
-        if (restoreBoneControl) {
-            bone.setUserControl(false);
-        }
     }
 }
