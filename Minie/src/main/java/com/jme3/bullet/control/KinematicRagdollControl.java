@@ -138,16 +138,16 @@ public class KinematicRagdollControl
     /**
      * map bone names to masses for createSpatialData()
      */
-    private Map<String, Float> massMap = new HashMap<>();
+    private Map<String, Float> massMap = new HashMap<>(32);
     /**
      * map bone names to joint presets for createSpatialData()
      */
-    private Map<String, JointPreset> jointMap = new HashMap<>();
+    private Map<String, JointPreset> jointMap = new HashMap<>(32);
     // TODO threshold for each bone
     /**
      * map bone names to simulation objects
      */
-    private Map<String, PhysicsBoneLink> boneLinks = new HashMap<>();
+    private Map<String, PhysicsBoneLink> boneLinks = new HashMap<>(32);
     /**
      * rigid body for the torso
      */
@@ -187,8 +187,8 @@ public class KinematicRagdollControl
      */
     private float ikRotSpeed = 7f;
     /**
-     * viscous limb-damping ratio (0&rarr;no damping, 1&rarr;critically damped,
-     * default=0.6)
+     * viscous damping ratio for rigid bodies (0&rarr;no damping,
+     * 1&rarr;critically damped, default=0.6) TODO rename damping
      */
     private float limbDamping = 0.6f;
     /**
@@ -244,8 +244,8 @@ public class KinematicRagdollControl
      * @param boneName the name of the bone to link (not null)
      * @param boneMass the desired mass of the bone (&gt;0)
      * @param jointPreset the desired range of motion (not null)
-     * @see #setJointLimit(java.lang.String, float, float, float, float, float,
-     * float)
+     * @see #setJointLimit(java.lang.String,
+     * com.jme3.bullet.control.ragdoll.JointPreset)
      */
     public void addBone(String boneName, float boneMass,
             JointPreset jointPreset) {
@@ -335,18 +335,36 @@ public class KinematicRagdollControl
     }
 
     /**
+     * Read the mass of the named bone.
+     *
+     * @param boneName the name of the bone to access
+     * @return the mass (&gt;0)
+     */
+    public float boneMass(String boneName) {
+        if (!massMap.containsKey(boneName)) {
+            String msg = "No linked bone named " + MyString.quote(boneName);
+            throw new IllegalArgumentException(msg);
+        }
+        float mass = massMap.get(boneName);
+
+        assert mass > 0f : mass;
+        return mass;
+    }
+
+    /**
      * Access the named bone.
      *
      * @param boneName the name of the skeleton bone to access
      * @return the pre-existing instance, or null if not found
      */
     public Bone getBone(String boneName) {
-        return skeleton.getBone(boneName);
+        Bone result = skeleton.getBone(boneName);
+        return result;
     }
 
     /**
-     * Access the physics link for the named bone. This returns null if it's
-     * invoked when the control is not added to a spatial.
+     * Access the physics link for the named bone. This returns null if invoked
+     * when the control is not added to a spatial.
      *
      * @param boneName the name of the bone to access
      * @return the pre-existing instance, or null if not found
@@ -378,14 +396,33 @@ public class KinematicRagdollControl
     /**
      * Read the distance threshold for inverse kinematics.
      *
-     * @return distance threshold
+     * @return the distance threshold (&ge;0)
      */
     public float getIKThreshold() {
+        assert IKThreshold >= 0f : IKThreshold;
         return IKThreshold;
     }
 
     /**
-     * Read the limb damping.
+     * Access the preset for the joint connecting the named bone to its parent
+     * in the linked-bone hierarchy.
+     *
+     * @param boneName the name of the bone to access
+     * @return the pre-existing instance (not null)
+     */
+    public JointPreset getJointPreset(String boneName) {
+        if (!jointMap.containsKey(boneName)) {
+            String msg = "No linked bone named " + MyString.quote(boneName);
+            throw new IllegalArgumentException(msg);
+        }
+        JointPreset result = jointMap.get(boneName);
+
+        assert result != null;
+        return result;
+    }
+
+    /**
+     * Read the limb damping. TODO rename damping
      *
      * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
      * damped)
@@ -600,7 +637,7 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Alter the limb damping.
+     * Alter the limb damping. TODO rename setDamping()
      *
      * @param dampingRatio the desired viscous damping ratio (0&rarr;no damping,
      * 1&rarr;critically damped, default=0.6)
@@ -626,7 +663,7 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Alters the mass of the torso.
+     * Alter the mass of the torso.
      *
      * @param mass the desired mass (&gt;0)
      */
@@ -637,6 +674,16 @@ public class KinematicRagdollControl
         if (torsoRigidBody != null) {
             torsoRigidBody.setMass(mass);
         }
+    }
+
+    /**
+     * Read the mass of the torso.
+     *
+     * @return the mass (&gt;0)
+     */
+    public float torsoMass() {
+        assert torsoMass > 0f : torsoMass;
+        return torsoMass;
     }
 
     /**
@@ -819,8 +866,10 @@ public class KinematicRagdollControl
         }
         CollisionShape torsoShape
                 = createShape(new Transform(), new Vector3f(), list);
-        torsoRigidBody = new PhysicsRigidBody(torsoShape, torsoMass);
-        torsoRigidBody.setDamping(limbDamping, limbDamping);
+        float mass = torsoMass();
+        torsoRigidBody = new PhysicsRigidBody(torsoShape, mass);
+        float damping = getLimbDamping();
+        torsoRigidBody.setDamping(damping, damping);
         torsoRigidBody.setKinematic(mode == Mode.Kinematic);
         torsoRigidBody.setUserObject(this);
         /*
@@ -1107,7 +1156,7 @@ public class KinematicRagdollControl
                 assert link.getJoint() == null;
                 link.setJoint(joint);
 
-                JointPreset preset = jointMap.get(name);
+                JointPreset preset = getJointPreset(name);
                 preset.setupJoint(joint);
                 joint.setCollisionBetweenLinkedBodies(false);
 
@@ -1139,10 +1188,11 @@ public class KinematicRagdollControl
         /*
          * Create the rigid body.
          */
-        float boneMass = massMap.get(name);
+        float boneMass = boneMass(name);
         assert boneMass > 0f : boneMass;
         PhysicsRigidBody prb = new PhysicsRigidBody(boneShape, boneMass);
-        prb.setDamping(limbDamping, limbDamping);
+        float damping = getLimbDamping();
+        prb.setDamping(damping, damping);
         prb.setKinematic(mode == Mode.Kinematic);
         /*
          * Find the bone's parent in the linked-bone hierarchy.
