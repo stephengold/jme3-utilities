@@ -39,6 +39,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Matrix3f;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
@@ -46,6 +47,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * A joint based on Bullet's btGeneric6DofConstraint.
@@ -174,9 +176,9 @@ public class SixDofJoint extends PhysicsJoint {
     // *************************************************************************
 
     private void gatherMotors() {
-        for (int i = 0; i < 3; i++) {
+        for (int axisIndex = 0; axisIndex < 3; axisIndex++) {
             RotationalLimitMotor rmot = new RotationalLimitMotor(
-                    getRotationalLimitMotor(objectId, i));
+                    getRotationalLimitMotor(objectId, axisIndex));
             rotationalMotors.add(rmot);
         }
         translationalMotor = new TranslationalLimitMotor(
@@ -244,6 +246,33 @@ public class SixDofJoint extends PhysicsJoint {
     }
 
     /**
+     * Copy one of this joint's connection-point locations.
+     *
+     * @param end which end of the joint to copy (not null)
+     * @param storeResult (modified if not null)
+     * @return the location (in local coordinates, either storeResult or a new
+     * instance, not null)
+     */
+    public Vector3f getPivot(JointEnd end, Vector3f storeResult) {
+        Validate.nonNull(end, "end");
+
+        Transform temp = new Transform();
+        switch (end) {
+            case A:
+                getFrameOffsetA(objectId, temp);
+                break;
+            case B:
+                getFrameOffsetB(objectId, temp);
+                break;
+            default:
+                throw new IllegalArgumentException(end.toString());
+        }
+
+        Vector3f result = temp.getTranslation(storeResult);
+        return result;
+    }
+
+    /**
      * Access the TranslationalLimitMotor of this joint, the motor which
      * influences translation on all 3 axes.
      *
@@ -303,6 +332,35 @@ public class SixDofJoint extends PhysicsJoint {
     public void setAngularLowerLimit(Vector3f vector) {
         angularLowerLimit.set(vector);
         setAngularLowerLimit(objectId, vector);
+    }
+
+    /**
+     * Alter one of this joint's connection-point locations.
+     *
+     * @param end which end of the joint to alter (not null)
+     * @param newPivot the desired location (in the object's local coordinates,
+     * not null, unaffected)
+     */
+    public void setPivot(JointEnd end, Vector3f newPivot) {
+        Validate.nonNull(end, "end");
+
+        Transform frameA = new Transform();
+        getFrameOffsetA(objectId, frameA);
+        Transform frameB = new Transform();
+        getFrameOffsetB(objectId, frameB);
+
+        switch (end) {
+            case A:
+                frameA.setTranslation(newPivot);
+                break;
+            case B:
+                frameB.setTranslation(newPivot);
+                break;
+            default:
+                throw new IllegalArgumentException(end.toString());
+        }
+
+        setFrames(objectId, frameA, frameB);
     }
 
     native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA,
@@ -468,8 +526,16 @@ public class SixDofJoint extends PhysicsJoint {
         assert objectId != 0L;
         logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
 
+        Vector3f pivot = new Vector3f();
+        assert getPivot(JointEnd.A, pivot).equals(pivotA);
+        assert getPivot(JointEnd.B, pivot).equals(pivotB);
+
         gatherMotors();
     }
+
+    native private void getFrameOffsetA(long objectId, Transform frameA);
+
+    native private void getFrameOffsetB(long objectId, Transform frameB);
 
     native private long getRotationalLimitMotor(long objectId, int index);
 
@@ -478,6 +544,9 @@ public class SixDofJoint extends PhysicsJoint {
     native private void setAngularLowerLimit(long objectId, Vector3f vector);
 
     native private void setAngularUpperLimit(long objectId, Vector3f vector);
+
+    native private void setFrames(long objectId, Transform frameA,
+            Transform frameB);
 
     native private void setLinearLowerLimit(long objectId, Vector3f vector);
 
