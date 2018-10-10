@@ -806,19 +806,23 @@ public class PhysicsSpace {
     private native void setGravity(long spaceId, Vector3f gravity);
 
     /**
-     * copy of gravity-acceleration vector (default is 9.81 in the -Y direction,
-     * corresponding to Earth-normal in MKS units) TODO sort fields
+     * copy of gravity-acceleration vector for newly-added bodies (default is
+     * 9.81 in the -Y direction, corresponding to Earth-normal in MKS units)
+     * TODO sort fields
      */
     private final Vector3f gravity = new Vector3f(0, -9.81f, 0);
 
     /**
-     * Copy the gravitational acceleration acting on newly-added bodies.
+     * Copy the gravitational acceleration for newly-added bodies.
      *
-     * @param gravity storage for the result (not null, modified)
-     * @return acceleration (in the vector provided)
+     * @param storeResult storage for the result (modified if not null)
+     * @return the acceleration vector (either storeResult or a new instance)
      */
-    public Vector3f getGravity(Vector3f gravity) {
-        return gravity.set(this.gravity);
+    public Vector3f getGravity(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        result.set(gravity);
+
+        return result;
     }
 
     /**
