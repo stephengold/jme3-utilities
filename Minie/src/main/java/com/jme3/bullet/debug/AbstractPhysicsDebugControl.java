@@ -129,7 +129,8 @@ public abstract class AbstractPhysicsDebugControl extends AbstractControl {
     /**
      * Create a shallow clone for the JME cloner.
      *
-     * @return a new control (unused)
+     * @return never
+     * @throws UnsupportedOperationException always
      */
     @Override
     public Object jmeClone() {
@@ -141,7 +142,7 @@ public abstract class AbstractPhysicsDebugControl extends AbstractControl {
      * loading from a J3O file.
      *
      * @param im importer (unused)
-     * @throws IOException never
+     * @throws UnsupportedOperationException always
      */
     @Override
     public void read(JmeImporter im) throws IOException {

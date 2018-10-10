@@ -481,15 +481,14 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Rebuild the ragdoll. This is useful if you applied scale to the ragdoll
-     * after it was initialized. Same as re-attaching. TODO test this
+     * Rebuild the ragdoll. This is useful if you applied scale to the model
+     * after it was initialized. Same as re-attaching.
      */
     public void reBuild() {
-        if (spatial == null) {
-            return;
+        if (spatial != null) {
+            removeSpatialData(spatial);
+            createSpatialData(spatial);
         }
-        removeSpatialData(spatial);
-        createSpatialData(spatial);
     }
 
     /**

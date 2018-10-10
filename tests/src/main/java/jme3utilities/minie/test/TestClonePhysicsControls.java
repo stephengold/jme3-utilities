@@ -81,9 +81,10 @@ public class TestClonePhysicsControls extends SimpleApplication {
                 = (BetterCharacterControl) Misc.deepCopy(bcc);
 
         KinematicRagdollControl krc = new KinematicRagdollControl();
-        KinematicRagdollControl krcClone 
+        KinematicRagdollControl krcClone
                 = (KinematicRagdollControl) Misc.deepCopy(krc);
-        
+
         stop();
+        // TODO test cloning controls added to a scene graph
     }
 }
