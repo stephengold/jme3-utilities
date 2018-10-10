@@ -67,6 +67,7 @@ import com.jme3.util.TempVars;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -263,41 +264,9 @@ public class KinematicRagdollControl
     protected void ragDollUpdate(float tpf) {
         torsoDynamicUpdate();
 
-        Transform meshToWorld = transformer.getWorldTransform();
-        Transform worldToMesh = meshToWorld.invert();
-
-        Transform boneTransform = new Transform();
-        Vector3f location = boneTransform.getTranslation();
-        Quaternion orientation = boneTransform.getRotation();
-        Vector3f scale = boneTransform.getScale();
-
+        Collection<String> boneSet = boneLinks.keySet();
         for (PhysicsBoneLink link : boneLinks.values()) {
-            PhysicsRigidBody body = link.getRigidBody();
-
-            // Start with the bone's location in world coordinates.
-            Vector3f worldLocation = body.getMotionState().getWorldLocation();
-            // transform into mesh coordinates
-            worldToMesh.transformVector(worldLocation, location);
-
-            // Start with the bone's orientation in world coordinates.
-            Quaternion worldOrientation
-                    = body.getMotionState().getWorldRotationQuat();
-            // transform into mesh coordinates
-            orientation.set(worldOrientation);
-            orientation.multLocal(link.originalOrientation(null));
-            worldToMesh.getRotation().mult(orientation, orientation);
-            orientation.normalizeLocal();
-
-            // Start with the bone's scale in world coordinates.
-            Vector3f worldScale = body.getPhysicsScale(null);
-            // transform into mesh coordinates
-            scale.set(worldScale);
-            scale.multLocal(link.originalScale(null));
-            scale.multLocal(worldToMesh.getScale());
-
-            Bone bone = link.getBone();
-            RagdollUtils.setTransform(bone, boneTransform, false,
-                    jointMap.keySet());
+            link.dynamicUpdate(boneSet);
         }
     }
 
@@ -313,8 +282,9 @@ public class KinematicRagdollControl
         removePhysics(getPhysicsSpace());
 
         torsoKinematicUpdate();
+        Collection<String> boneSet = boneLinks.keySet();
         for (PhysicsBoneLink link : boneLinks.values()) {
-            link.kinematicUpdate(tpf, boneLinks.keySet());
+            link.kinematicUpdate(tpf, boneSet);
         }
 
         addPhysics(getPhysicsSpace());
@@ -1430,7 +1400,7 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Tabulate the total weight associated with each linked bone.
+     * Tabulate the total bone weight associated with each linked bone.
      *
      * @param biArray the array of bone indices (not null, unaffected)
      * @param bwArray the array of bone weights (not null, unaffected)
@@ -1443,7 +1413,7 @@ public class KinematicRagdollControl
         assert biArray.length == 4;
         assert bwArray.length == 4;
 
-        Map<String, Float> weightMap = new HashMap<>();
+        Map<String, Float> weightMap = new HashMap<>(4);
         for (int j = 0; j < 4; j++) {
             int boneIndex = biArray[j];
             if (boneIndex != -1) {

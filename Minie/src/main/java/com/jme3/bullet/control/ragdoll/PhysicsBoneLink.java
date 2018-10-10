@@ -45,7 +45,7 @@ import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.io.IOException;
-import java.util.Set;
+import java.util.Collection;
 import java.util.logging.Logger;
 import jme3utilities.MySpatial;
 import jme3utilities.Validate;
@@ -177,6 +177,45 @@ public class PhysicsBoneLink implements Savable { // TODO JmeCloneable
     }
 
     /**
+     * Update this bone in Dynamic mode, based on the transforms of the rigid
+     * body.
+     *
+     * @param boneSet the names of all linked bones (not null)
+     */
+    public void dynamicUpdate(Collection<String> boneSet) {
+        Validate.nonNull(boneSet, "bone set");
+
+        Transform transform = new Transform();
+        Vector3f location = transform.getTranslation();
+        Quaternion orientation = transform.getRotation();
+        Vector3f scale = transform.getScale();
+
+        Transform meshToWorld = transformSpatial.getWorldTransform();
+        Transform worldToMesh = meshToWorld.invert();
+        RigidBodyMotionState state = rigidBody.getMotionState();
+
+        // Compute the bone's location in mesh coordinates.
+        Vector3f worldLocation = state.getWorldLocation();
+        worldToMesh.transformVector(worldLocation, location);
+
+        // Compute the bone's orientation in local coordinates.
+        Quaternion worldOrientation = state.getWorldRotationQuat();
+        orientation.set(worldOrientation);
+        orientation.multLocal(originalOrientation);
+        worldToMesh.getRotation().mult(orientation, orientation);
+        orientation.normalizeLocal();
+
+        // Compute the bone's scale in local coordinates.
+        Vector3f worldScale = rigidBody.getPhysicsScale(null);
+        scale.set(worldScale);
+        scale.multLocal(originalScale);
+        scale.multLocal(worldToMesh.getScale());
+
+        // Update the transforms in the skeleton.
+        RagdollUtils.setTransform(bone, transform, false, boneSet);
+    }
+
+    /**
      * Access the linked bone.
      *
      * @return the pre-existing instance (not null)
@@ -207,9 +246,9 @@ public class PhysicsBoneLink implements Savable { // TODO JmeCloneable
      * Update this bone in Kinematic mode, based on the transforms of the
      * transformSpatial and the skeleton, without blending.
      *
-     * @param boneSet names of all linked bones (not null)
+     * @param boneSet the names of all linked bones (not null)
      */
-    public void kinematicUpdate(Set<String> boneSet) {
+    public void kinematicUpdate(Collection<String> boneSet) {
         Validate.nonNull(boneSet, "bone set");
 
         Transform transform = new Transform();
@@ -222,33 +261,33 @@ public class PhysicsBoneLink implements Savable { // TODO JmeCloneable
         Quaternion msr = bone.getModelSpaceRotation();
         Vector3f mss = bone.getModelSpaceScale();
 
-        // Compute the location of the bone in world coordinates.
+        // Compute the bone's location in world coordinates.
         meshToWorld.transformVector(msp, location);
 
-        // Compute the orientation of the bone in world coordinates.
+        // Compute the bone's orientation in world coordinates.
         orientation.set(msr);
         orientation.multLocal(bone.getModelBindInverseRotation());
         meshToWorld.getRotation().mult(orientation, orientation);
         orientation.normalizeLocal();
 
-        // Compute the scale of the bone in world coordinates.
+        // Compute the bone's scale in world coordinates.
         scale.set(mss);
         scale.multLocal(meshToWorld.getScale());
 
-        // Update the location and rotation of the physics body.
+        // Update the transform of the physics body.
         rigidBody.setPhysicsLocation(location);
         rigidBody.setPhysicsRotation(orientation);
         rigidBody.setPhysicsScale(scale);
     }
 
     /**
-     * Update this bone in Kinematic mode, based on the transforms of the
-     * transformSpatial and the skeleton, blended with the saved transform.
+     * Update this bone in blended Kinematic mode, based on the transforms of
+     * the transformSpatial and the skeleton, blended with the saved transform.
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
-     * @param boneSet names of all linked bones (not null)
+     * @param boneSet the names of all linked bones (not null)
      */
-    public void kinematicUpdate(float tpf, Set<String> boneSet) {
+    public void kinematicUpdate(float tpf, Collection<String> boneSet) {
         Validate.nonNegative(tpf, "time per frame");
         Validate.nonNull(boneSet, "bone set");
 
