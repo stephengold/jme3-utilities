@@ -143,7 +143,6 @@ public class KinematicRagdollControl
      * map bone names to joint presets for createSpatialData()
      */
     private Map<String, JointPreset> jointMap = new HashMap<>(32);
-    // TODO threshold for each bone
     /**
      * map bone names to simulation objects
      */
@@ -188,9 +187,9 @@ public class KinematicRagdollControl
     private float ikRotSpeed = 7f;
     /**
      * viscous damping ratio for rigid bodies (0&rarr;no damping,
-     * 1&rarr;critically damped, default=0.6) TODO rename damping
+     * 1&rarr;critically damped, default=0.6)
      */
-    private float limbDamping = 0.6f;
+    private float damping = 0.6f;
     /**
      * distance threshold for inverse kinematics (default=0.1)
      */
@@ -352,6 +351,17 @@ public class KinematicRagdollControl
     }
 
     /**
+     * Read the damping ratio.
+     *
+     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
+     * damped)
+     */
+    public float damping() {
+        assert damping >= 0f : damping;
+        return damping;
+    }
+
+    /**
      * Access the named bone.
      *
      * @param boneName the name of the skeleton bone to access
@@ -419,17 +429,6 @@ public class KinematicRagdollControl
 
         assert result != null;
         return result;
-    }
-
-    /**
-     * Read the limb damping. TODO rename damping
-     *
-     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
-     * damped)
-     */
-    public float getLimbDamping() {
-        assert limbDamping >= 0f : limbDamping;
-        return limbDamping;
     }
 
     /**
@@ -536,6 +535,22 @@ public class KinematicRagdollControl
     }
 
     /**
+     * Alter the damping ratio.
+     *
+     * @param dampingRatio the desired viscous damping ratio (0&rarr;no damping,
+     * 1&rarr;critically damped, default=0.6)
+     */
+    public void setDamping(float dampingRatio) {
+        Validate.nonNegative(dampingRatio, "damping ratio");
+
+        damping = dampingRatio;
+        torsoRigidBody.setDamping(damping, damping);
+        for (PhysicsBoneLink link : boneLinks.values()) {
+            link.getRigidBody().setDamping(damping, damping);
+        }
+    }
+
+    /**
      * Alter the the event-dispatch impulse threshold of this control.
      *
      * @param threshold the desired threshold (&ge;0)
@@ -633,22 +648,6 @@ public class KinematicRagdollControl
     public void setKinematicMode() {
         if (mode != Mode.Kinematic) {
             setMode(Mode.Kinematic);
-        }
-    }
-
-    /**
-     * Alter the limb damping. TODO rename setDamping()
-     *
-     * @param dampingRatio the desired viscous damping ratio (0&rarr;no damping,
-     * 1&rarr;critically damped, default=0.6)
-     */
-    public void setLimbDamping(float dampingRatio) {
-        Validate.nonNegative(dampingRatio, "damping ratio");
-
-        limbDamping = dampingRatio;
-        torsoRigidBody.setDamping(limbDamping, limbDamping);
-        for (PhysicsBoneLink link : boneLinks.values()) {
-            link.getRigidBody().setDamping(limbDamping, limbDamping);
         }
     }
 
@@ -868,7 +867,7 @@ public class KinematicRagdollControl
                 = createShape(new Transform(), new Vector3f(), list);
         float mass = torsoMass();
         torsoRigidBody = new PhysicsRigidBody(torsoShape, mass);
-        float damping = getLimbDamping();
+        float damping = damping();
         torsoRigidBody.setDamping(damping, damping);
         torsoRigidBody.setKinematic(mode == Mode.Kinematic);
         torsoRigidBody.setUserObject(this);
@@ -1049,7 +1048,7 @@ public class KinematicRagdollControl
                 0f);
         oc.write(torsoMass, "rootMass", 15f);
         oc.write(ikRotSpeed, "rotSpeed", 7f);
-        oc.write(limbDamping, "limbDampening", 0.6f);
+        oc.write(damping, "limbDampening", 0.6f);
     }
     // *************************************************************************
     // PhysicsCollisionListener methods
@@ -1191,7 +1190,7 @@ public class KinematicRagdollControl
         float boneMass = boneMass(name);
         assert boneMass > 0f : boneMass;
         PhysicsRigidBody prb = new PhysicsRigidBody(boneShape, boneMass);
-        float damping = getLimbDamping();
+        float damping = damping();
         prb.setDamping(damping, damping);
         prb.setKinematic(mode == Mode.Kinematic);
         /*
