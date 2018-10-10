@@ -130,10 +130,11 @@ public class RigidBodyMotionState implements JmeCloneable {
      * Copy the location from this motion state.
      *
      * @return the pre-existing location vector (in physics-space coordinates,
-     * not null) TODO
+     * not null) TODO!
      */
     public Vector3f getWorldLocation() {
         getWorldLocation(motionStateId, worldLocation);
+        assert Vector3f.isValidVector(worldLocation);
         return worldLocation;
     }
 
@@ -182,7 +183,7 @@ public class RigidBodyMotionState implements JmeCloneable {
 
     /**
      * Alter which vehicle uses this motion state.
-     * 
+     *
      * @param vehicle the desired vehicle, or null for none (alias created)
      */
     public void setVehicle(PhysicsVehicle vehicle) {
