@@ -1,5 +1,32 @@
 # release notes for the Minie library and related tests
 
+## Version 0.3.5 released on TBD
+
+Enhancements to `KinematicRagdollControl`:
+
+ + Began treating the torso more like a bone.
+ + Implemented a new algorithm to construct hulls without weight thresholds.
+ + Redesigned how mass is configured and totaled.
+ + Lowered the default dispatch threshold from 10 to 0.
+ + Moved all the code in `RagdollUtils` to other classes.
+ + Include the torso in `setDamping()`.
+ + Added `boneMass()`, `getBoneLink()`, `getJointPreset()`, `gravity()`,
+   `linkedBoneNames()`, `setGravity()`, and `torsoMass()` methods.
+
+Other noteworthy changes:
+
+ + Added `getPhysicsScale()` and `setPhysicsScale()` methods to
+   `PhysicsRigidBody`.
+ + Removed the `space` argument from the addPhysics() and removePhysics()
+   methods of `AbstractPhysicsControl` and its subclasses.
+ + Added a list-based constructor for `HullCollisionShape`.
+ + Fixed a logic bug in `MyObject` where vehicles were not recognized.
+ + Added a `setPivot` method to `SixDofJoint.setPivot()`.
+ + Added a `physicsTransform()` method to `RigidBodyMotionState`.
+ + Added `JointEnd` and `TestRagdollScaling` classes.
+ + Updated shared libraries to `jme3-bullet-native` v1.0.7 .
+ + Removed the unused `PhysicsSpace.initNativePhysics()` method.
+
 ## Version 0.3.4 released on 5 October 2018
 
 Enhancements to `KinematicRagdollControl`:
