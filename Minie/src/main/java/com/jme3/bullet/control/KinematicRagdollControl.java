@@ -231,44 +231,409 @@ public class KinematicRagdollControl
     public KinematicRagdollControl() {
     }
     // *************************************************************************
-
-    /**
-     * Update this control. Invoked once per frame during the logical-state
-     * update, provided the control is added to a scene. Do not invoke directly
-     * from user code.
-     *
-     * @param tpf the time interval between frames (in seconds, &ge;0)
-     */
-    @Override
-    public void update(float tpf) {
-        if (!isEnabled()) {
-            return;
-        }
-        if (mode == Mode.IK) {
-            ikUpdate(tpf);
-        } else if (mode == Mode.Ragdoll) {
-            // Update each bone's position and rotation based on dynamics.
-            ragDollUpdate(tpf);
-        } else {
-            kinematicUpdate(tpf);
-        }
-    }
-    // *************************************************************************
     // new methods exposed
 
     /**
-     * Update the skeleton in Ragdoll mode, based on Bullet dynamics.
+     * Add a bone with a joint preset to this control.
+     * <p>
+     * Allowed only when the control is NOT added to a spatial.
      *
-     * @param tpf the time interval between frames (in seconds, &ge;0)
+     * @param boneName the name of the bone to add (not null)
+     * @param jointPreset (not null)
+     * @see #setJointLimit(java.lang.String, float, float, float, float, float,
+     * float)
      */
-    protected void ragDollUpdate(float tpf) {
-        torsoDynamicUpdate();
+    public void addBone(String boneName, JointPreset jointPreset) {
+        Validate.nonNull(boneName, "name");
+        Validate.nonNull(jointPreset, "joint preset");
+        if (spatial != null) {
+            throw new IllegalStateException(
+                    "Cannot add bone while added to a spatial.");
+        }
 
-        Collection<String> boneSet = boneLinks.keySet();
-        for (PhysicsBoneLink link : boneLinks.values()) {
-            link.dynamicUpdate(boneSet);
+        jointMap.put(boneName, jointPreset);
+    }
+
+    /**
+     * Add a bone name to this control and preset the bone's joint to "no
+     * motion". Repeated invocations of this method can be used to specify which
+     * bones to use when generating collision shapes.
+     * <p>
+     * Allowed only when the control is NOT added to a spatial.
+     *
+     * @param boneName the name of the bone to add (not null)
+     */
+    public void addBoneName(String boneName) {
+        Validate.nonNull(boneName, "name");
+        addBone(boneName, new JointPreset());
+    }
+
+    /**
+     * Add a collision listener to this control.
+     *
+     * @param listener (not null, alias created)
+     */
+    public void addCollisionListener(RagdollCollisionListener listener) {
+        if (listeners == null) {
+            listeners = new ArrayList<>(); // TODO use SafeArrayList
+        }
+        listeners.add(listener);
+    }
+
+    /**
+     * Ensure that user control is enabled for any bones used by inverse
+     * kinematics and disabled for any other bones.
+     */
+    public void applyUserControl() {
+        MySkeleton.setUserControl(skeleton, false);
+
+        if (ikTargets.isEmpty()) {
+            setKinematicMode();
+
+        } else {
+            for (String ikBoneName : ikTargets.keySet()) {
+                Bone bone = skeleton.getBone(ikBoneName);
+                while (bone != null) {
+                    String name = bone.getName();
+                    PhysicsBoneLink link = boneLinks.get(name);
+                    link.kinematicUpdate(boneLinks.keySet());
+                    bone.setUserControl(true);
+                    bone = bone.getParent();
+                }
+            }
         }
     }
+
+    /**
+     * Smoothly blend from Ragdoll mode to Kinematic mode. This is useful to
+     * blend ragdoll actual position to a keyframe animation, for example.
+     *
+     * @param blendTime the blending time between ragdoll to anim (in seconds)
+     */
+    public void blendToKinematicMode(float blendTime) {
+        if (mode == Mode.Kinematic) {
+            // already in kinematic mode
+            return;
+        }
+
+        mode = Mode.Kinematic;
+
+        AnimControl animControl = spatial.getControl(AnimControl.class);
+        animControl.setEnabled(true);
+
+        for (PhysicsBoneLink link : boneLinks.values()) {
+            link.startBlend(blendTime);
+        }
+
+        MySkeleton.setUserControl(skeleton, false);
+    }
+
+    /**
+     * Access the named bone.
+     *
+     * @param boneName the name of the bone to access
+     * @return the pre-existing instance, or null if not found
+     */
+    public Bone getBone(String boneName) {
+        return skeleton.getBone(boneName);
+    }
+
+    /**
+     * Access the rigid body associated with the named bone.
+     *
+     * @param boneName the name of the bone to access
+     * @return the pre-existing instance, or null if not found
+     */
+    public PhysicsRigidBody getBoneRigidBody(String boneName) {
+        PhysicsBoneLink link = boneLinks.get(boneName);
+        if (link != null) {
+            return link.getRigidBody();
+        }
+        return null;
+    }
+
+    /**
+     * Read the event-dispatch impulse threshold of this control.
+     *
+     * @return the threshold value (&ge;0)
+     */
+    public float getEventDispatchImpulseThreshold() {
+        assert eventDispatchImpulseThreshold >= 0f;
+        return eventDispatchImpulseThreshold;
+    }
+
+    /**
+     * Read the rotation speed for inverse kinematics.
+     *
+     * @return speed (&ge;0)
+     */
+    public float getIkRotSpeed() {
+        return ikRotSpeed;
+    }
+
+    /**
+     * Read the distance threshold for inverse kinematics.
+     *
+     * @return distance threshold
+     */
+    public float getIKThreshold() {
+        return IKThreshold;
+    }
+
+    /**
+     * Return the joint between the specified bone and its parent. This returns
+     * null if it's invoked before adding the control to a spatial
+     *
+     * @param boneName the name of the bone
+     * @return the joint between the given bone and its parent
+     */
+    public SixDofJoint getJoint(String boneName) {
+        PhysicsBoneLink link = boneLinks.get(boneName);
+        if (link != null) {
+            return link.getJoint();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Read the limb damping.
+     *
+     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
+     * damped)
+     */
+    public float getLimbDamping() {
+        return limbDamping;
+    }
+
+    /**
+     * Read the mode of this control.
+     *
+     * @return an enum value (not null)
+     */
+    public Mode getMode() {
+        assert mode != null;
+        return mode;
+    }
+
+    /**
+     * Access the physics object that represents the torso.
+     *
+     * @return the pre-existing object (not null)
+     */
+    public PhysicsRigidBody getTorso() {
+        assert torsoRigidBody != null;
+        return torsoRigidBody;
+    }
+
+    /**
+     * Read the ragdoll's total mass. Not allowed until the control has been
+     * added to a spatial.
+     *
+     * @return mass (&ge;0)
+     */
+    public float getTotalMass() {
+        assert spatial != null;
+        return totalMass;
+    }
+
+    /**
+     * Rebuild the ragdoll. This is useful if you applied scale on the ragdoll
+     * after it was initialized. Same as re-attaching.
+     */
+    public void reBuild() {
+        if (spatial == null) {
+            return;
+        }
+        removeSpatialData(spatial);
+        createSpatialData(spatial);
+    }
+
+    /**
+     * Remove all inverse-kinematics targets.
+     */
+    public void removeAllIKTargets() {
+        ikTargets.clear();
+        ikChainDepth.clear();
+        applyUserControl();
+    }
+
+    /**
+     * Remove the inverse-kinematics target for the specified bone.
+     *
+     * @param bone which bone has the target (not null, modified)
+     */
+    public void removeIKTarget(Bone bone) {
+        int depth = ikChainDepth.remove(bone.getName());
+        int i = 0;
+        while (i < depth + 2 && bone.getParent() != null) {
+            if (bone.hasUserControl()) {
+                bone.setUserControl(false);
+            }
+            bone = bone.getParent();
+            i++;
+        }
+        // TODO remove from ikTargets and applyUserControl()
+    }
+
+    /**
+     * Alter the CCD motion threshold of all rigid bodies in this control.
+     *
+     * @see PhysicsRigidBody#setCcdMotionThreshold(float)
+     * @param speed the desired threshold speed (&gt;0) or zero to disable CCD
+     * (default=0)
+     */
+    public void setCcdMotionThreshold(float speed) {
+        Validate.nonNegative(speed, "speed");
+
+        torsoRigidBody.setCcdMotionThreshold(speed);
+        for (PhysicsBoneLink link : boneLinks.values()) {
+            link.getRigidBody().setCcdMotionThreshold(speed);
+        }
+    }
+
+    /**
+     * Alter the CCD swept-sphere radius of all rigid bodies in the ragdoll.
+     *
+     * @see PhysicsRigidBody#setCcdSweptSphereRadius(float)
+     * @param radius the desired radius of the sphere used for continuous
+     * collision detection (&ge;0)
+     */
+    public void setCcdSweptSphereRadius(float radius) {
+        Validate.nonNegative(radius, "radius");
+
+        torsoRigidBody.setCcdSweptSphereRadius(radius);
+        for (PhysicsBoneLink link : boneLinks.values()) {
+            link.getRigidBody().setCcdSweptSphereRadius(radius);
+        }
+    }
+
+    /**
+     * Alter the the event-dispatch impulse threshold of this control.
+     *
+     * @param threshold the desired threshold (&ge;0)
+     */
+    public void setEventDispatchImpulseThreshold(float threshold) {
+        Validate.nonNegative(threshold, "threshold");
+        eventDispatchImpulseThreshold = threshold;
+    }
+
+    /**
+     * Sets the control into Inverse Kinematics mode. The affected bones are
+     * affected by IK. physics.
+     */
+    public void setIKMode() {
+        if (mode != Mode.IK) {
+            setMode(Mode.IK);
+        }
+    }
+
+    /**
+     * Alter the rotation speed for inverse kinematics.
+     *
+     * @param ikRotSpeed the desired speed (&ge;0, default=7)
+     */
+    public void setIkRotSpeed(float ikRotSpeed) {
+        this.ikRotSpeed = ikRotSpeed;
+    }
+
+    /**
+     * Add a target for inverse kinematics.
+     *
+     * @param bone which bone the IK applies to (not null)
+     * @param worldGoal the world coordinates of the goal (not null)
+     * @param chainLength number of bones in the chain
+     * @return a new instance (not null, already added to ikTargets)
+     */
+    public Vector3f setIKTarget(Bone bone, Vector3f worldGoal,
+            int chainLength) {
+        Vector3f offset = transformer.getWorldTranslation();
+        Vector3f meshGoal = worldGoal.subtract(offset);
+        String boneName = bone.getName();
+        ikTargets.put(boneName, meshGoal);
+        ikChainDepth.put(boneName, chainLength);
+        int i = 0;
+        while (i < chainLength + 2 && bone.getParent() != null) {
+            if (!bone.hasUserControl()) {
+                bone.setUserControl(true);
+            }
+            bone = bone.getParent();
+            i++;
+        }
+
+        return meshGoal;
+    }
+
+    /**
+     * Alter the distance threshold for inverse kinematics.
+     *
+     * @param IKThreshold the desired distance threshold (default=0.1)
+     */
+    public void setIKThreshold(float IKThreshold) {
+        this.IKThreshold = IKThreshold;
+    }
+
+    /**
+     * Alter the limits of the joint connecting the named linked bone to its
+     * parent.
+     * <p>
+     * Allowed only when the control IS added to a spatial.
+     *
+     * @param boneName the name of the bone (not null)
+     * @param preset the desired range of motion (not null)
+     */
+    public void setJointLimit(String boneName, JointPreset preset) {
+        if (spatial == null) {
+            throw new IllegalStateException(
+                    "Cannot set limits unless added to a spatial.");
+        }
+
+        PhysicsBoneLink link = boneLinks.get(boneName);
+        if (link == null) {
+            throw new IllegalStateException(
+                    "No linked bone named " + MyString.quote(boneName));
+        }
+
+        SixDofJoint joint = link.getJoint();
+        preset.setupJoint(joint);
+    }
+
+    /**
+     * Put the control into Kinematic mode. In this mode, the collision shapes
+     * follow the movements of the skeleton while interacting with the physics
+     * environment.
+     */
+    public void setKinematicMode() {
+        if (mode != Mode.Kinematic) {
+            setMode(Mode.Kinematic);
+        }
+    }
+
+    /**
+     * Alter the limb damping.
+     *
+     * @param dampingRatio the desired viscous damping ratio (0&rarr;no damping,
+     * 1&rarr;critically damped, default=0.6)
+     */
+    public void setLimbDamping(float dampingRatio) {
+        limbDamping = dampingRatio;
+
+        for (PhysicsBoneLink link : boneLinks.values()) {
+            link.getRigidBody().setDamping(limbDamping, limbDamping);
+        }
+    }
+
+    /**
+     * Sets the control mode to Ragdoll. The skeleton is entirely controlled by
+     * physics.
+     */
+    public void setRagdollMode() {
+        if (mode != Mode.Ragdoll) {
+            setMode(Mode.Ragdoll);
+        }
+    }
+    // *************************************************************************
+    // new protected methods
 
     /**
      * Update this control in Kinematic mode, based on the transformer's
@@ -291,130 +656,87 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Update this control in IK mode, based on IK targets.
+     * Update the skeleton in Ragdoll mode, based on Bullet dynamics.
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
-    private void ikUpdate(float tpf) {
-        TempVars vars = TempVars.get();
+    protected void ragDollUpdate(float tpf) {
+        torsoDynamicUpdate();
 
-        Quaternion tmpRot1 = vars.quat1;
-        Quaternion[] tmpRot2 = new Quaternion[]{vars.quat2, new Quaternion()};
-
-        Iterator<String> it = ikTargets.keySet().iterator();
-        float distance;
-        Bone bone;
-        String boneName;
-        while (it.hasNext()) {
-
-            boneName = it.next();
-            bone = (Bone) boneLinks.get(boneName).getBone();
-            if (!bone.hasUserControl()) {
-                logger.log(Level.FINE, "{0} doesn't have user control",
-                        boneName);
-                continue;
-            }
-            distance = bone.getModelSpacePosition().distance(
-                    ikTargets.get(boneName));
-            if (distance < IKThreshold) {
-                logger.log(Level.FINE, "Distance is close enough");
-                continue;
-            }
-            int depth = 0;
-            int maxDepth = ikChainDepth.get(bone.getName());
-            float changeAmount = tpf * (float) FastMath.sqrt(distance);
-            updateBone(boneLinks.get(boneName), changeAmount, tmpRot1,
-                    tmpRot2, bone, ikTargets.get(boneName), depth, maxDepth);
-
-            for (PhysicsBoneLink link : boneLinks.values()) {
-                link.kinematicUpdate(boneLinks.keySet());
-            }
+        Collection<String> boneSet = boneLinks.keySet();
+        for (PhysicsBoneLink link : boneLinks.values()) {
+            link.dynamicUpdate(boneSet);
         }
-        vars.release();
     }
 
     /**
-     * Update a bone and its ancestors in IK mode. Note: recursive!
+     * Alter the control mode.
      *
-     * @param link the bone link for the affected bone (may be null)
-     * @param changeAmount amount of change desired (&ge;0)
-     * @param tmpRot1 temporary storage used in calculations (not null)
-     * @param tmpRot2 temporary storage used in calculations (not null)
-     * @param tipBone (not null)
-     * @param target the location target in model space (not null, unaffected)
-     * @param depth depth of the recursion (&ge;0)
-     * @param maxDepth recursion limit (&ge;0)
+     * @param mode the desired mode (not null)
      */
-    private void updateBone(PhysicsBoneLink link, float changeAmount,
-            Quaternion tmpRot1, Quaternion[] tmpRot2, Bone tipBone,
-            Vector3f target, int depth, int maxDepth) {
-        Validate.nonNegative(changeAmount, "change amount");
+    protected void setMode(Mode mode) {
+        Validate.nonNull(mode, "mode");
 
-        if (link == null || link.getBone().getParent() == null) {
-            return;
-        }
-        Quaternion preQuat = link.getBone().getLocalRotation();
-        Vector3f vectorAxis;
+        this.mode = mode;
+        AnimControl animControl = spatial.getControl(AnimControl.class);
+        animControl.setEnabled(mode == Mode.Kinematic);
 
-        float[] measureDist = new float[]{Float.POSITIVE_INFINITY,
-            Float.POSITIVE_INFINITY};
-        for (int dirIndex = 0; dirIndex < 3; dirIndex++) {
-            if (dirIndex == PhysicsSpace.AXIS_X) {
-                vectorAxis = Vector3f.UNIT_Z;
-            } else if (dirIndex == PhysicsSpace.AXIS_Y) {
-                vectorAxis = Vector3f.UNIT_X;
-            } else {
-                vectorAxis = Vector3f.UNIT_Y;
+        torsoRigidBody.setKinematic(mode == Mode.Kinematic);
+        if (mode != Mode.IK) {
+            for (PhysicsBoneLink link : boneLinks.values()) {
+                link.getRigidBody().setKinematic(mode == Mode.Kinematic);
+                if (mode == Mode.Ragdoll) {
+                    // Ensure that the ragdoll is at the correct place.
+                    link.kinematicUpdate(boneLinks.keySet());
+                }
             }
 
-            for (int posOrNeg = 0; posOrNeg < 2; posOrNeg++) {
-                float rot = ikRotSpeed * changeAmount / (link.getRigidBody().getMass() * 2);
-
-                rot = FastMath.clamp(rot,
-                        link.getJoint().getRotationalLimitMotor(dirIndex).getLoLimit(),
-                        link.getJoint().getRotationalLimitMotor(dirIndex).getHiLimit());
-                tmpRot1.fromAngleAxis(rot, vectorAxis);
-//                tmpRot1.fromAngleAxis(rotSpeed * tpf / (link.rigidBody.getMass() * 2), vectorAxis);
-
-                tmpRot2[posOrNeg] = link.getBone().getLocalRotation().mult(tmpRot1);
-                tmpRot2[posOrNeg].normalizeLocal();
-
-                ikRotSpeed = -ikRotSpeed;
-
-                link.getBone().setLocalRotation(tmpRot2[posOrNeg]);
-                link.getBone().update();
-                measureDist[posOrNeg]
-                        = tipBone.getModelSpacePosition().distance(target);
-                link.getBone().setLocalRotation(preQuat);
-            }
-
-            if (measureDist[0] < measureDist[1]) {
-                link.getBone().setLocalRotation(tmpRot2[0]);
-            } else if (measureDist[0] > measureDist[1]) {
-                link.getBone().setLocalRotation(tmpRot2[1]);
-            }
-
+            MySkeleton.setUserControl(skeleton, mode == Mode.Ragdoll);
         }
-        link.getBone().getLocalRotation().normalizeLocal();
+    }
+    // *************************************************************************
+    // AbstractPhysicsControl methods
 
-        link.getBone().update();
-        if (link.getBone().getParent() != null && depth < maxDepth) {
-            updateBone(boneLinks.get(link.getBone().getParent().getName()),
-                    0.5f * changeAmount, tmpRot1, tmpRot2, tipBone,
-                    target, depth + 1, maxDepth);
+    /**
+     * Add all managed physics objects to the physics space.
+     */
+    @Override
+    protected void addPhysics() {
+        PhysicsSpace space = getPhysicsSpace();
+        space.add(torsoRigidBody);
+        for (PhysicsBoneLink physicsBoneLink : boneLinks.values()) {
+            PhysicsRigidBody rigidBody = physicsBoneLink.getRigidBody();
+            space.add(rigidBody);
+            PhysicsJoint joint = physicsBoneLink.getJoint();
+            space.add(joint);
         }
+        space.addCollisionListener(this);
     }
 
     /**
-     * Rebuild the ragdoll. This is useful if you applied scale on the ragdoll
-     * after it was initialized. Same as re-attaching.
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned control into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this control (not null)
+     * @param original the control from which this control was shallow-cloned
+     * (unused)
      */
-    public void reBuild() {
-        if (spatial == null) {
-            return;
-        }
-        removeSpatialData(spatial);
-        createSpatialData(spatial);
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+
+        boneLinks = cloner.clone(boneLinks);
+        jointMap = cloner.clone(jointMap);
+        ikChainDepth = cloner.clone(ikChainDepth);
+        ikTargets = cloner.clone(ikTargets);
+        initScale = cloner.clone(initScale);
+        listeners = cloner.clone(listeners);
+        meshToModel = cloner.clone(meshToModel);
+        skeleton = cloner.clone(skeleton);
+        skeletonControl = cloner.clone(skeletonControl);
+        torsoRigidBody = cloner.clone(torsoRigidBody);
+        transformer = cloner.clone(transformer);
     }
 
     /**
@@ -500,6 +822,68 @@ public class KinematicRagdollControl
     }
 
     /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public KinematicRagdollControl jmeClone() {
+        try {
+            KinematicRagdollControl clone
+                    = (KinematicRagdollControl) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    /**
+     * De-serialize this control, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
+    @Override
+    public void read(JmeImporter im) throws IOException {
+        super.read(im);
+        InputCapsule ic = im.getCapsule(this);
+        // TODO jointMap
+        PhysicsBoneLink[] loadedBoneLinks
+                = (PhysicsBoneLink[]) ic.readSavableArray("boneList",
+                        new PhysicsBoneLink[0]);
+        for (PhysicsBoneLink physicsBoneLink : loadedBoneLinks) {
+            boneLinks.put(physicsBoneLink.getBone().getName(), physicsBoneLink);
+        }
+        skeleton = (Skeleton) ic.readSavable("skeleton", null);
+        skeletonControl
+                = (SkeletonControl) ic.readSavable("skeletonControl", null);
+        meshToModel
+                = (Transform) ic.readSavable("meshToModel", new Transform());
+        transformer
+                = (Spatial) ic.readSavable("transformer", null);
+        initScale = (Vector3f) ic.readSavable("initScale", null);
+        mode = ic.readEnum("mode", Mode.class, Mode.Kinematic);
+        eventDispatchImpulseThreshold
+                = ic.readFloat("eventDispatchImpulseThreshold", 0f);
+        torsoMass = ic.readFloat("rootMass", 15f);
+        totalMass = ic.readFloat("totalMass", 0f);
+    }
+
+    /**
+     * Remove all managed physics objects from the physics space.
+     */
+    @Override
+    protected void removePhysics() {
+        PhysicsSpace space = getPhysicsSpace();
+        space.remove(torsoRigidBody);
+        for (PhysicsBoneLink physicsBoneLink : boneLinks.values()) {
+            space.remove(physicsBoneLink.getJoint());
+            space.remove(physicsBoneLink.getRigidBody());
+        }
+        space.removeCollisionListener(this);
+    }
+
+    /**
      * Destroy spatial-dependent data. Invoked when this control is removed from
      * a spatial.
      *
@@ -518,120 +902,89 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Add a bone with a joint preset to this control.
-     * <p>
-     * Allowed only when the control is NOT added to a spatial.
+     * Render this control. Invoked once per view port per frame, provided the
+     * control is added to a scene. Should be invoked only by a subclass or by
+     * the RenderManager.
      *
-     * @param boneName the name of the bone to add (not null)
-     * @param jointPreset (not null)
-     * @see #setJointLimit(java.lang.String, float, float, float, float, float,
-     * float)
+     * @param rm the render manager (not null)
+     * @param vp the view port to render (not null)
      */
-    public void addBone(String boneName, JointPreset jointPreset) {
-        Validate.nonNull(boneName, "name");
-        Validate.nonNull(jointPreset, "joint preset");
-        if (spatial != null) {
-            throw new IllegalStateException(
-                    "Cannot add bone while added to a spatial.");
-        }
-
-        jointMap.put(boneName, jointPreset);
+    @Override
+    public void render(RenderManager rm, ViewPort vp) {
     }
 
     /**
-     * Add a bone name to this control and preset the bone's joint to "no
-     * motion". Repeated invocations of this method can be used to specify which
-     * bones to use when generating collision shapes.
-     * <p>
-     * Allowed only when the control is NOT added to a spatial.
+     * Translate the torso to the specified location.
      *
-     * @param boneName the name of the bone to add (not null)
+     * @param vec desired location (not null, unaffected)
      */
-    public void addBoneName(String boneName) {
-        Validate.nonNull(boneName, "name");
-        addBone(boneName, new JointPreset());
-    }
-
-    /**
-     * Alter the limits of the joint connecting the named linked bone to its
-     * parent.
-     * <p>
-     * Allowed only when the control IS added to a spatial.
-     *
-     * @param boneName the name of the bone (not null)
-     * @param preset the desired range of motion (not null)
-     */
-    public void setJointLimit(String boneName, JointPreset preset) {
-        if (spatial == null) {
-            throw new IllegalStateException(
-                    "Cannot set limits unless added to a spatial.");
-        }
-
-        PhysicsBoneLink link = boneLinks.get(boneName);
-        if (link == null) {
-            throw new IllegalStateException(
-                    "No linked bone named " + MyString.quote(boneName));
-        }
-
-        SixDofJoint joint = link.getJoint();
-        preset.setupJoint(joint);
-    }
-
-    /**
-     * Return the joint between the specified bone and its parent. This returns
-     * null if it's invoked before adding the control to a spatial
-     *
-     * @param boneName the name of the bone
-     * @return the joint between the given bone and its parent
-     */
-    public SixDofJoint getJoint(String boneName) {
-        PhysicsBoneLink link = boneLinks.get(boneName);
-        if (link != null) {
-            return link.getJoint();
-        } else {
-            return null;
-        }
-    }
-
     @Override
     protected void setPhysicsLocation(Vector3f vec) {
         torsoRigidBody.setPhysicsLocation(vec);
     }
 
+    /**
+     * Rotate the torso to the specified orientation.
+     *
+     * @param quat desired orientation (not null, unaffected)
+     */
     @Override
     protected void setPhysicsRotation(Quaternion quat) {
         torsoRigidBody.setPhysicsRotation(quat);
     }
 
     /**
-     * Add all managed physics objects to the physics space.
+     * Update this control. Invoked once per frame during the logical-state
+     * update, provided the control is added to a scene. Do not invoke directly
+     * from user code.
+     *
+     * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     @Override
-    protected void addPhysics() {
-        PhysicsSpace space = getPhysicsSpace();
-        space.add(torsoRigidBody);
-        for (PhysicsBoneLink physicsBoneLink : boneLinks.values()) {
-            PhysicsRigidBody rigidBody = physicsBoneLink.getRigidBody();
-            space.add(rigidBody);
-            PhysicsJoint joint = physicsBoneLink.getJoint();
-            space.add(joint);
+    public void update(float tpf) {
+        if (!isEnabled()) {
+            return;
         }
-        space.addCollisionListener(this);
+
+        if (mode == Mode.IK) {
+            ikUpdate(tpf);
+        } else if (mode == Mode.Ragdoll) {
+            // Update each bone's position and rotation based on dynamics.
+            ragDollUpdate(tpf);
+        } else {
+            kinematicUpdate(tpf);
+        }
     }
 
     /**
-     * Remove all managed physics objects from the physics space.
+     * Serialize this control, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
      */
     @Override
-    protected void removePhysics() {
-        PhysicsSpace space = getPhysicsSpace();
-        space.remove(torsoRigidBody);
-        for (PhysicsBoneLink physicsBoneLink : boneLinks.values()) {
-            space.remove(physicsBoneLink.getJoint());
-            space.remove(physicsBoneLink.getRigidBody());
-        }
-        space.removeCollisionListener(this);
+    public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
+        OutputCapsule oc = ex.getCapsule(this);
+        // TODO jointMap
+        oc.write(boneLinks.values().toArray(
+                new PhysicsBoneLink[boneLinks.size()]),
+                "boneLinks", new PhysicsBoneLink[0]);
+        oc.write(skeleton, "skeleton", null);
+        oc.write(skeletonControl, "skeletonControl", null);
+        oc.write(transformer, "transformer", null);
+        oc.write(meshToModel, "meshToModel", new Transform());
+        oc.write(initScale, "initScale", null);
+        oc.write(mode, "mode", null);
+        oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
+                0f);
+        oc.write(torsoMass, "rootMass", 15f);
+        oc.write(totalMass, "totalMass", 0f);
+        oc.write(ikRotSpeed, "rotSpeed", 7f);
+        oc.write(limbDamping, "limbDampening", 0.6f);
     }
+    // *************************************************************************
+    // PhysicsCollisionListener methods
 
     /**
      * For internal use only: callback for collision events.
@@ -692,452 +1045,6 @@ public class KinematicRagdollControl
                 listener.collide(bone, otherPco, event);
             }
         }
-    }
-
-    /**
-     * Enable or disable the ragdoll behavior. if ragdollEnabled is true, the
-     * character motion will only be powered by physics else, the character will
-     * be animated by the keyframe animation, but will be able to physically
-     * interact with its physics environment
-     *
-     * @param mode an enum value (not null)
-     */
-    protected void setMode(Mode mode) {
-        this.mode = mode;
-        AnimControl animControl = spatial.getControl(AnimControl.class);
-        animControl.setEnabled(mode == Mode.Kinematic);
-
-        torsoRigidBody.setKinematic(mode == Mode.Kinematic);
-        if (mode != Mode.IK) {
-            for (PhysicsBoneLink link : boneLinks.values()) {
-                link.getRigidBody().setKinematic(mode == Mode.Kinematic);
-                if (mode == Mode.Ragdoll) {
-                    // Ensure that the ragdoll is at the correct place.
-                    link.kinematicUpdate(boneLinks.keySet());
-                }
-            }
-
-            MySkeleton.setUserControl(skeleton, mode == Mode.Ragdoll);
-        }
-    }
-
-    /**
-     * Smoothly blend from Ragdoll mode to Kinematic mode. This is useful to
-     * blend ragdoll actual position to a keyframe animation, for example.
-     *
-     * @param blendTime the blending time between ragdoll to anim (in seconds)
-     */
-    public void blendToKinematicMode(float blendTime) {
-        if (mode == Mode.Kinematic) {
-            // already in kinematic mode
-            return;
-        }
-
-        mode = Mode.Kinematic;
-
-        AnimControl animControl = spatial.getControl(AnimControl.class);
-        animControl.setEnabled(true);
-
-        for (PhysicsBoneLink link : boneLinks.values()) {
-            link.startBlend(blendTime);
-        }
-
-        MySkeleton.setUserControl(skeleton, false);
-    }
-
-    /**
-     * Put the control into Kinematic mode. In this mode, the collision shapes
-     * follow the movements of the skeleton while interacting with the physics
-     * environment.
-     */
-    public void setKinematicMode() {
-        if (mode != Mode.Kinematic) {
-            setMode(Mode.Kinematic);
-        }
-    }
-
-    /**
-     * Sets the control into Ragdoll mode The skeleton is entirely controlled by
-     * physics.
-     */
-    public void setRagdollMode() {
-        if (mode != Mode.Ragdoll) {
-            setMode(Mode.Ragdoll);
-        }
-    }
-
-    /**
-     * Sets the control into Inverse Kinematics mode. The affected bones are
-     * affected by IK. physics.
-     */
-    public void setIKMode() {
-        if (mode != Mode.IK) {
-            setMode(Mode.IK);
-        }
-    }
-
-    /**
-     * Read the mode of this control.
-     *
-     * @return an enum value (not null)
-     */
-    public Mode getMode() {
-        assert mode != null;
-        return mode;
-    }
-
-    /**
-     * Add a collision listener to this control.
-     *
-     * @param listener (not null, alias created)
-     */
-    public void addCollisionListener(RagdollCollisionListener listener) {
-        if (listeners == null) {
-            listeners = new ArrayList<>(); // TODO use SafeArrayList
-        }
-        listeners.add(listener);
-    }
-
-    /**
-     * Access the physics object that represents the torso.
-     *
-     * @return the pre-existing object (not null)
-     */
-    public PhysicsRigidBody getTorso() {
-        assert torsoRigidBody != null;
-        return torsoRigidBody;
-    }
-
-    /**
-     * Read the ragdoll's total mass. Not allowed until the control has been
-     * added to a spatial.
-     *
-     * @return mass (&ge;0)
-     */
-    public float getTotalMass() {
-        assert spatial != null;
-        return totalMass;
-    }
-
-    /**
-     * Read the ragdoll's event-dispatch impulse threshold.
-     *
-     * @return threshold
-     */
-    public float getEventDispatchImpulseThreshold() {
-        return eventDispatchImpulseThreshold;
-    }
-
-    /**
-     * Alter the ragdoll's event-dispatch impulse threshold.
-     *
-     * @param eventDispatchImpulseThreshold desired threshold
-     */
-    public void setEventDispatchImpulseThreshold(
-            float eventDispatchImpulseThreshold) {
-        this.eventDispatchImpulseThreshold = eventDispatchImpulseThreshold;
-    }
-
-    /**
-     * Alter the CcdMotionThreshold of all rigid bodies in the ragdoll.
-     *
-     * @see PhysicsRigidBody#setCcdMotionThreshold(float)
-     * @param value the desired threshold value (velocity, &gt;0) or zero to
-     * disable CCD (default=0)
-     */
-    public void setCcdMotionThreshold(float value) {
-        for (PhysicsBoneLink link : boneLinks.values()) {
-            link.getRigidBody().setCcdMotionThreshold(value);
-        }
-    }
-
-    /**
-     * Alter the CcdSweptSphereRadius of all rigid bodies in the ragdoll.
-     *
-     * @see PhysicsRigidBody#setCcdSweptSphereRadius(float)
-     * @param value the desired radius of the sphere used for continuous
-     * collision detection (&ge;0)
-     */
-    public void setCcdSweptSphereRadius(float value) {
-        for (PhysicsBoneLink link : boneLinks.values()) {
-            link.getRigidBody().setCcdSweptSphereRadius(value);
-        }
-    }
-
-    /**
-     * Access the rigidBody associated with the named bone.
-     *
-     * @param boneName the name of the bone
-     * @return the associated rigidBody.
-     */
-    public PhysicsRigidBody getBoneRigidBody(String boneName) {
-        PhysicsBoneLink link = boneLinks.get(boneName);
-        if (link != null) {
-            return link.getRigidBody();
-        }
-        return null;
-    }
-
-    /**
-     * Render this control. Invoked once per view port per frame, provided the
-     * control is added to a scene. Should be invoked only by a subclass or by
-     * the RenderManager.
-     *
-     * @param rm the render manager (not null)
-     * @param vp the view port to render (not null)
-     */
-    @Override
-    public void render(RenderManager rm, ViewPort vp) {
-    }
-
-    /**
-     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
-     * shallow-cloned control into a deep-cloned one, using the specified cloner
-     * and original to resolve copied fields.
-     *
-     * @param cloner the cloner that's cloning this control (not null)
-     * @param original the control from which this control was shallow-cloned
-     * (unused)
-     */
-    @Override
-    public void cloneFields(Cloner cloner, Object original) {
-        super.cloneFields(cloner, original);
-
-        boneLinks = cloner.clone(boneLinks);
-        jointMap = cloner.clone(jointMap);
-        ikChainDepth = cloner.clone(ikChainDepth);
-        ikTargets = cloner.clone(ikTargets);
-        initScale = cloner.clone(initScale);
-        listeners = cloner.clone(listeners);
-        meshToModel = cloner.clone(meshToModel);
-        skeleton = cloner.clone(skeleton);
-        skeletonControl = cloner.clone(skeletonControl);
-        torsoRigidBody = cloner.clone(torsoRigidBody);
-        transformer = cloner.clone(transformer);
-    }
-
-    /**
-     * Create a shallow clone for the JME cloner.
-     *
-     * @return a new instance
-     */
-    @Override
-    public KinematicRagdollControl jmeClone() {
-        try {
-            KinematicRagdollControl clone
-                    = (KinematicRagdollControl) super.clone();
-            return clone;
-        } catch (CloneNotSupportedException exception) {
-            throw new RuntimeException(exception);
-        }
-    }
-
-    /**
-     * Add a target for inverse kinematics.
-     *
-     * @param bone which bone the IK applies to (not null)
-     * @param worldGoal the world coordinates of the goal (not null)
-     * @param chainLength number of bones in the chain
-     * @return a new instance (not null, already added to ikTargets)
-     */
-    public Vector3f setIKTarget(Bone bone, Vector3f worldGoal,
-            int chainLength) {
-        Vector3f offset = transformer.getWorldTranslation();
-        Vector3f meshGoal = worldGoal.subtract(offset);
-        String boneName = bone.getName();
-        ikTargets.put(boneName, meshGoal);
-        ikChainDepth.put(boneName, chainLength);
-        int i = 0;
-        while (i < chainLength + 2 && bone.getParent() != null) {
-            if (!bone.hasUserControl()) {
-                bone.setUserControl(true);
-            }
-            bone = bone.getParent();
-            i++;
-        }
-
-        return meshGoal;
-    }
-
-    /**
-     * Remove the inverse-kinematics target for the specified bone.
-     *
-     * @param bone which bone has the target (not null, modified)
-     */
-    public void removeIKTarget(Bone bone) {
-        int depth = ikChainDepth.remove(bone.getName());
-        int i = 0;
-        while (i < depth + 2 && bone.getParent() != null) {
-            if (bone.hasUserControl()) {
-                bone.setUserControl(false);
-            }
-            bone = bone.getParent();
-            i++;
-        }
-        // TODO remove from ikTargets and applyUserControl()
-    }
-
-    /**
-     * Remove all inverse-kinematics targets.
-     */
-    public void removeAllIKTargets() {
-        ikTargets.clear();
-        ikChainDepth.clear();
-        applyUserControl();
-    }
-
-    /**
-     * Ensure that user control is enabled for any bones used by inverse
-     * kinematics and disabled for any other bones.
-     */
-    public void applyUserControl() {
-        MySkeleton.setUserControl(skeleton, false);
-
-        if (ikTargets.isEmpty()) {
-            setKinematicMode();
-
-        } else {
-            for (String ikBoneName : ikTargets.keySet()) {
-                Bone bone = skeleton.getBone(ikBoneName);
-                while (bone != null) {
-                    String name = bone.getName();
-                    PhysicsBoneLink link = boneLinks.get(name);
-                    link.kinematicUpdate(boneLinks.keySet());
-                    bone.setUserControl(true);
-                    bone = bone.getParent();
-                }
-            }
-        }
-    }
-
-    /**
-     * Read the rotation speed for inverse kinematics.
-     *
-     * @return speed (&ge;0)
-     */
-    public float getIkRotSpeed() {
-        return ikRotSpeed;
-    }
-
-    /**
-     * Alter the rotation speed for inverse kinematics.
-     *
-     * @param ikRotSpeed the desired speed (&ge;0, default=7)
-     */
-    public void setIkRotSpeed(float ikRotSpeed) {
-        this.ikRotSpeed = ikRotSpeed;
-    }
-
-    /**
-     * Read the distance threshold for inverse kinematics.
-     *
-     * @return distance threshold
-     */
-    public float getIKThreshold() {
-        return IKThreshold;
-    }
-
-    /**
-     * Alter the distance threshold for inverse kinematics.
-     *
-     * @param IKThreshold the desired distance threshold (default=0.1)
-     */
-    public void setIKThreshold(float IKThreshold) {
-        this.IKThreshold = IKThreshold;
-    }
-
-    /**
-     * Read the limb damping.
-     *
-     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
-     * damped)
-     */
-    public float getLimbDamping() {
-        return limbDamping;
-    }
-
-    /**
-     * Alter the limb damping.
-     *
-     * @param dampingRatio the desired viscous damping ratio (0&rarr;no damping,
-     * 1&rarr;critically damped, default=0.6)
-     */
-    public void setLimbDamping(float dampingRatio) {
-        limbDamping = dampingRatio;
-
-        for (PhysicsBoneLink link : boneLinks.values()) {
-            link.getRigidBody().setDamping(limbDamping, limbDamping);
-        }
-    }
-
-    /**
-     * Access the named bone.
-     *
-     * @param name which bone to access
-     * @return the pre-existing instance, or null if not found
-     */
-    public Bone getBone(String name) {
-        return skeleton.getBone(name);
-    }
-
-    /**
-     * Serialize this control, for example when saving to a J3O file.
-     *
-     * @param ex exporter (not null)
-     * @throws IOException from exporter
-     */
-    @Override
-    public void write(JmeExporter ex) throws IOException {
-        super.write(ex);
-        OutputCapsule oc = ex.getCapsule(this);
-        // TODO jointMap
-        oc.write(boneLinks.values().toArray(
-                new PhysicsBoneLink[boneLinks.size()]),
-                "boneLinks", new PhysicsBoneLink[0]);
-        oc.write(skeleton, "skeleton", null);
-        oc.write(skeletonControl, "skeletonControl", null);
-        oc.write(transformer, "transformer", null);
-        oc.write(meshToModel, "meshToModel", new Transform());
-        oc.write(initScale, "initScale", null);
-        oc.write(mode, "mode", null);
-        oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
-                0f);
-        oc.write(torsoMass, "rootMass", 15f);
-        oc.write(totalMass, "totalMass", 0f);
-        oc.write(ikRotSpeed, "rotSpeed", 7f);
-        oc.write(limbDamping, "limbDampening", 0.6f);
-    }
-
-    /**
-     * De-serialize this control, for example when loading from a J3O file.
-     *
-     * @param im importer (not null)
-     * @throws IOException from importer
-     */
-    @Override
-    public void read(JmeImporter im) throws IOException {
-        super.read(im);
-        InputCapsule ic = im.getCapsule(this);
-        // TODO jointMap
-        PhysicsBoneLink[] loadedBoneLinks
-                = (PhysicsBoneLink[]) ic.readSavableArray("boneList",
-                        new PhysicsBoneLink[0]);
-        for (PhysicsBoneLink physicsBoneLink : loadedBoneLinks) {
-            boneLinks.put(physicsBoneLink.getBone().getName(), physicsBoneLink);
-        }
-        skeleton = (Skeleton) ic.readSavable("skeleton", null);
-        skeletonControl
-                = (SkeletonControl) ic.readSavable("skeletonControl", null);
-        meshToModel
-                = (Transform) ic.readSavable("meshToModel", new Transform());
-        transformer
-                = (Spatial) ic.readSavable("transformer", null);
-        initScale = (Vector3f) ic.readSavable("initScale", null);
-        mode = ic.readEnum("mode", Mode.class, Mode.Kinematic);
-        eventDispatchImpulseThreshold
-                = ic.readFloat("eventDispatchImpulseThreshold", 0f);
-        torsoMass = ic.readFloat("rootMass", 15f);
-        totalMass = ic.readFloat("totalMass", 0f);
     }
     // *************************************************************************
     // private methods
@@ -1314,6 +1221,49 @@ public class KinematicRagdollControl
     }
 
     /**
+     * Update this control in IK mode, based on IK targets.
+     *
+     * @param tpf the time interval between frames (in seconds, &ge;0)
+     */
+    private void ikUpdate(float tpf) {
+        TempVars vars = TempVars.get();
+
+        Quaternion tmpRot1 = vars.quat1;
+        Quaternion[] tmpRot2 = new Quaternion[]{vars.quat2, new Quaternion()};
+
+        Iterator<String> it = ikTargets.keySet().iterator();
+        float distance;
+        Bone bone;
+        String boneName;
+        while (it.hasNext()) {
+
+            boneName = it.next();
+            bone = (Bone) boneLinks.get(boneName).getBone();
+            if (!bone.hasUserControl()) {
+                logger.log(Level.FINE, "{0} doesn't have user control",
+                        boneName);
+                continue;
+            }
+            distance = bone.getModelSpacePosition().distance(
+                    ikTargets.get(boneName));
+            if (distance < IKThreshold) {
+                logger.log(Level.FINE, "Distance is close enough");
+                continue;
+            }
+            int depth = 0;
+            int maxDepth = ikChainDepth.get(bone.getName());
+            float changeAmount = tpf * (float) FastMath.sqrt(distance);
+            updateBone(boneLinks.get(boneName), changeAmount, tmpRot1,
+                    tmpRot2, bone, ikTargets.get(boneName), depth, maxDepth);
+
+            for (PhysicsBoneLink link : boneLinks.values()) {
+                link.kinematicUpdate(boneLinks.keySet());
+            }
+        }
+        vars.release();
+    }
+
+    /**
      * Map bone indices to names of linked bones.
      *
      * @return a new array of bone names
@@ -1376,6 +1326,78 @@ public class KinematicRagdollControl
 
         Vector3f scale = transformer.getWorldScale();
         torsoRigidBody.setPhysicsScale(scale);
+    }
+
+    /**
+     * Update a bone and its ancestors in IK mode. Note: recursive!
+     *
+     * @param link the bone link for the affected bone (may be null)
+     * @param changeAmount amount of change desired (&ge;0)
+     * @param tmpRot1 temporary storage used in calculations (not null)
+     * @param tmpRot2 temporary storage used in calculations (not null)
+     * @param tipBone (not null)
+     * @param target the location target in model space (not null, unaffected)
+     * @param depth depth of the recursion (&ge;0)
+     * @param maxDepth recursion limit (&ge;0)
+     */
+    private void updateBone(PhysicsBoneLink link, float changeAmount,
+            Quaternion tmpRot1, Quaternion[] tmpRot2, Bone tipBone,
+            Vector3f target, int depth, int maxDepth) {
+        Validate.nonNegative(changeAmount, "change amount");
+
+        if (link == null || link.getBone().getParent() == null) {
+            return;
+        }
+        Quaternion preQuat = link.getBone().getLocalRotation();
+        Vector3f vectorAxis;
+
+        float[] measureDist = new float[]{Float.POSITIVE_INFINITY,
+            Float.POSITIVE_INFINITY};
+        for (int dirIndex = 0; dirIndex < 3; dirIndex++) {
+            if (dirIndex == PhysicsSpace.AXIS_X) {
+                vectorAxis = Vector3f.UNIT_Z;
+            } else if (dirIndex == PhysicsSpace.AXIS_Y) {
+                vectorAxis = Vector3f.UNIT_X;
+            } else {
+                vectorAxis = Vector3f.UNIT_Y;
+            }
+
+            for (int posOrNeg = 0; posOrNeg < 2; posOrNeg++) {
+                float rot = ikRotSpeed * changeAmount / (link.getRigidBody().getMass() * 2);
+
+                rot = FastMath.clamp(rot,
+                        link.getJoint().getRotationalLimitMotor(dirIndex).getLoLimit(),
+                        link.getJoint().getRotationalLimitMotor(dirIndex).getHiLimit());
+                tmpRot1.fromAngleAxis(rot, vectorAxis);
+//                tmpRot1.fromAngleAxis(rotSpeed * tpf / (link.rigidBody.getMass() * 2), vectorAxis);
+
+                tmpRot2[posOrNeg] = link.getBone().getLocalRotation().mult(tmpRot1);
+                tmpRot2[posOrNeg].normalizeLocal();
+
+                ikRotSpeed = -ikRotSpeed;
+
+                link.getBone().setLocalRotation(tmpRot2[posOrNeg]);
+                link.getBone().update();
+                measureDist[posOrNeg]
+                        = tipBone.getModelSpacePosition().distance(target);
+                link.getBone().setLocalRotation(preQuat);
+            }
+
+            if (measureDist[0] < measureDist[1]) {
+                link.getBone().setLocalRotation(tmpRot2[0]);
+            } else if (measureDist[0] > measureDist[1]) {
+                link.getBone().setLocalRotation(tmpRot2[1]);
+            }
+
+        }
+        link.getBone().getLocalRotation().normalizeLocal();
+
+        link.getBone().update();
+        if (link.getBone().getParent() != null && depth < maxDepth) {
+            updateBone(boneLinks.get(link.getBone().getParent().getName()),
+                    0.5f * changeAmount, tmpRot1, tmpRot2, tipBone,
+                    target, depth + 1, maxDepth);
+        }
     }
 
     /**
