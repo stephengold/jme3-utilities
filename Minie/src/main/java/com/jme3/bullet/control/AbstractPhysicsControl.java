@@ -132,18 +132,14 @@ public abstract class AbstractPhysicsControl
     protected abstract void setPhysicsRotation(Quaternion quat);
 
     /**
-     * Add all managed physics objects to the specified space.
-     *
-     * @param space which physics space to add to (not null) TODO remove
+     * Add all managed physics objects to the physics space.
      */
-    protected abstract void addPhysics(PhysicsSpace space);
+    protected abstract void addPhysics();
 
     /**
-     * Remove all managed physics objects from the specified space.
-     *
-     * @param space which physics space to remove from (not null) TODO remove
+     * Remove all managed physics objects from the physics space.
      */
-    protected abstract void removePhysics(PhysicsSpace space);
+    protected abstract void removePhysics();
 
     /**
      * Test whether physics-space coordinates should match the spatial's local
@@ -317,10 +313,10 @@ public abstract class AbstractPhysicsControl
                     setPhysicsLocation(getSpatialTranslation());
                     setPhysicsRotation(getSpatialRotation());
                 }
-                addPhysics(space);
+                addPhysics();
                 added = true;
             } else if (!enabled && added) {
-                removePhysics(space);
+                removePhysics();
                 added = false;
             }
         }
@@ -348,19 +344,20 @@ public abstract class AbstractPhysicsControl
         if (space == newSpace) {
             return;
         }
+
         if (added) {
-            removePhysics(space);
+            removePhysics();
             added = false;
         }
+        space = newSpace;
         if (newSpace != null && isEnabled()) {
-            addPhysics(newSpace);
+            addPhysics();
             added = true;
         }
         /*
-         * If this control isn't enabled, its physics object will be
+         * If the control isn't enabled, its physics object will be
          * added to the new space when the control becomes enabled.
          */
-        space = newSpace;
     }
 
     /**

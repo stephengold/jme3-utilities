@@ -279,7 +279,7 @@ public class KinematicRagdollControl
     protected void kinematicUpdate(float tpf) {
         assert torsoRigidBody.isInWorld();
 
-        removePhysics(getPhysicsSpace());
+        removePhysics();
 
         torsoKinematicUpdate();
         Collection<String> boneSet = boneLinks.keySet();
@@ -287,7 +287,7 @@ public class KinematicRagdollControl
             link.kinematicUpdate(tpf, boneSet);
         }
 
-        addPhysics(getPhysicsSpace());
+        addPhysics();
     }
 
     /**
@@ -493,10 +493,10 @@ public class KinematicRagdollControl
         addJoints(torsoFakeBoneName);
 
         if (added) {
-            addPhysics(getPhysicsSpace());
+            addPhysics();
         }
 
-        logger.log(Level.FINE, "Created ragdoll for skeleton");
+        logger.log(Level.FINE, "Created ragdoll for skeleton.");
     }
 
     /**
@@ -508,7 +508,7 @@ public class KinematicRagdollControl
     @Override
     protected void removeSpatialData(Spatial spat) {
         if (added) {
-            removePhysics(getPhysicsSpace());
+            removePhysics();
         }
         boneLinks.clear();
         skeletonControl = null;
@@ -604,12 +604,11 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Add all managed physics objects to the specified space.
-     *
-     * @param space which physics space to add to (not null)
+     * Add all managed physics objects to the physics space.
      */
     @Override
-    protected void addPhysics(PhysicsSpace space) {
+    protected void addPhysics() {
+        PhysicsSpace space = getPhysicsSpace();
         space.add(torsoRigidBody);
         for (PhysicsBoneLink physicsBoneLink : boneLinks.values()) {
             PhysicsRigidBody rigidBody = physicsBoneLink.getRigidBody();
@@ -621,12 +620,11 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Remove all managed physics objects from the specified space.
-     *
-     * @param space which physics space to remove from (not null) TODO eliminate
+     * Remove all managed physics objects from the physics space.
      */
     @Override
-    protected void removePhysics(PhysicsSpace space) {
+    protected void removePhysics() {
+        PhysicsSpace space = getPhysicsSpace();
         space.remove(torsoRigidBody);
         for (PhysicsBoneLink physicsBoneLink : boneLinks.values()) {
             space.remove(physicsBoneLink.getJoint());
