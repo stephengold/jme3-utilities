@@ -799,15 +799,6 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Alter the ragdoll's root mass. Used only for cloning.
-     *
-     * @param rootMass the desired mass (&ge;0)
-     */
-    private void setRootMass(float rootMass) {
-        torsoMass = rootMass;
-    }
-
-    /**
      * Access the physics object that represents the torso.
      *
      * @return the pre-existing object (not null)
