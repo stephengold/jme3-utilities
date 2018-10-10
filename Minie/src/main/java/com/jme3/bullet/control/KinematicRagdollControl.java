@@ -44,7 +44,6 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.HullCollisionShape;
 import com.jme3.bullet.control.ragdoll.JointPreset;
 import com.jme3.bullet.control.ragdoll.PhysicsBoneLink;
-import com.jme3.bullet.control.ragdoll.RagdollUtils;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
@@ -77,6 +76,7 @@ import java.util.logging.Logger;
 import jme3utilities.MyMesh;
 import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
+import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
@@ -553,36 +553,28 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Alter the limits of the joint connecting the specified bone to its
+     * Alter the limits of the joint connecting the named linked bone to its
      * parent.
      * <p>
      * Allowed only when the control IS added to a spatial.
      *
-     * @param boneName the name of the bone
-     * @param maxX the maximum rotation on the X axis (in radians)
-     * @param minX the minimum rotation on the X axis (in radians)
-     * @param maxY the maximum rotation on the Y axis (in radians)
-     * @param minY the minimum rotation on the Y axis (in radians)
-     * @param maxZ the maximum rotation on the Z axis (in radians)
-     * @param minZ the minimum rotation on the Z axis (in radians)
-     * @see #addBone(java.lang.String,
-     * com.jme3.bullet.control.ragdoll.JointPreset)
+     * @param boneName the name of the bone (not null)
+     * @param preset the desired range of motion (not null)
      */
-    public void setJointLimit(String boneName, float maxX, float minX,
-            float maxY, float minY, float maxZ, float minZ) {
+    public void setJointLimit(String boneName, JointPreset preset) {
         if (spatial == null) {
             throw new IllegalStateException(
                     "Cannot set limits unless added to a spatial.");
         }
 
         PhysicsBoneLink link = boneLinks.get(boneName);
-        if (link != null) {
-            RagdollUtils.setJointLimit(link.getJoint(),
-                    maxX, minX, maxY, minY, maxZ, minZ);
-        } else {
-            logger.log(Level.WARNING,
-                    "Not joint was found for bone {0}. make sure you call spatial.addControl(ragdoll) before setting joints limit", boneName);
+        if (link == null) {
+            throw new IllegalStateException(
+                    "No linked bone named " + MyString.quote(boneName));
         }
+
+        SixDofJoint joint = link.getJoint();
+        preset.setupJoint(joint);
     }
 
     /**
@@ -597,8 +589,6 @@ public class KinematicRagdollControl
         if (link != null) {
             return link.getJoint();
         } else {
-            logger.log(Level.WARNING,
-                    "No joint was found for bone {0}. Make sure you call spatial.addControl(ragdoll) before accessing joints.", boneName);
             return null;
         }
     }
