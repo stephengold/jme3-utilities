@@ -520,7 +520,7 @@ public class RigidBodyControl
                 Vector3f parentScale = parent.getWorldScale();
                 if (parentScale.x == 0f || parentScale.y == 0f
                         || parentScale.z == 0f) {
-                    throw new IllegalStateException("zero in parent scale");
+                    throw new IllegalStateException("Zero in parent scale.");
                 }
                 scale.divideLocal(parentScale); // convert world to local
             }

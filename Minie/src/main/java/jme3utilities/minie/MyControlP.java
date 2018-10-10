@@ -226,7 +226,10 @@ public class MyControlP {
             result = vc.isApplyPhysicsLocal();
 
         } else {
-            throw new IllegalArgumentException();
+            String typeName = sgc.getClass().getCanonicalName();
+            String msg = String.format("%s does not support local physics.",
+                    typeName);
+            throw new IllegalArgumentException(msg);
         }
 
         return result;
@@ -329,7 +332,10 @@ public class MyControlP {
             vc.setApplyPhysicsLocal(newSetting);
 
         } else {
-            throw new IllegalArgumentException();
+            String typeName = sgc.getClass().getCanonicalName();
+            String msg = String.format("%s does not support local physics.",
+                    typeName);
+            throw new IllegalArgumentException(msg);
         }
     }
 

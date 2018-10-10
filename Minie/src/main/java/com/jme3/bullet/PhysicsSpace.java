@@ -414,8 +414,9 @@ public class PhysicsSpace {
         } else if (obj instanceof PhysicsJoint) {
             addJoint((PhysicsJoint) obj);
         } else {
-            throw (new IllegalArgumentException(
-                    "Cannot add this kind of object to the physics space."));
+            String typeName = obj.getClass().getCanonicalName();
+            String msg = "Cannot add a " + typeName + " to a physics space.";
+            throw new IllegalArgumentException(msg);
         }
     }
 
@@ -432,8 +433,9 @@ public class PhysicsSpace {
         } else if (obj instanceof PhysicsCharacter) {
             addCharacter((PhysicsCharacter) obj);
         } else {
-            throw (new IllegalArgumentException(
-                    "Unknown type of collision object."));
+            String typeName = obj.getClass().getCanonicalName();
+            String msg = "Unknown type of collision object: " + typeName;
+            throw new IllegalArgumentException(msg);
         }
     }
 
@@ -475,8 +477,10 @@ public class PhysicsSpace {
         } else if (obj instanceof PhysicsJoint) {
             removeJoint((PhysicsJoint) obj);
         } else {
-            throw (new IllegalArgumentException(
-                    "Cannot remove this kind of object from the physics space."));
+            String typeName = obj.getClass().getCanonicalName();
+            String msg
+                    = "Cannot remove a " + typeName + " from a physics space.";
+            throw new IllegalArgumentException(msg);
         }
     }
 
@@ -493,8 +497,9 @@ public class PhysicsSpace {
         } else if (obj instanceof PhysicsCharacter) {
             removeCharacter((PhysicsCharacter) obj);
         } else {
-            throw (new IllegalArgumentException(
-                    "Unknown type of collision object."));
+            String typeName = obj.getClass().getCanonicalName();
+            String msg = "Unknown type of collision object: " + typeName;
+            throw new IllegalArgumentException(msg);
         }
     }
 

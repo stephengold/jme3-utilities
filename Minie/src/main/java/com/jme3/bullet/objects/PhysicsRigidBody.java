@@ -261,7 +261,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         if (!newScale.equals(oldScale)) {
             if (isInWorld()) {
                 throw new IllegalStateException(
-                        "No scaling while in physics space");
+                        "Cannot scale body while in physics space!");
             }
             shape.setScale(newScale);
             setCollisionShape(shape);
@@ -720,7 +720,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         Validate.nonNull(collisionShape, "collision shape");
         if (isInWorld()) {
             throw new IllegalStateException(
-                    "No scaling while in physics space!");
+                    "Cannot reshape body while in physics space!");
         }
         if (mass != massForStatic) {
             validateDynamicShape(collisionShape);

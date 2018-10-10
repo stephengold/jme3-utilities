@@ -164,7 +164,8 @@ public class MyShape {
                     storeResult.set(radius, radius, axisHalfExtent);
                     break;
                 default:
-                    throw new IllegalStateException();
+                    String msg = Integer.toString(axisIndex);
+                    throw new IllegalStateException(msg);
             }
 
         } else if (shape instanceof ConeCollisionShape) {
@@ -184,7 +185,8 @@ public class MyShape {
                     storeResult.set(radius, radius, axisHalfExtent);
                     break;
                 default:
-                    throw new IllegalStateException();
+                    String msg = Integer.toString(axisIndex);
+                    throw new IllegalStateException(msg);
             }
 
         } else if (shape instanceof CylinderCollisionShape) {
@@ -197,7 +199,10 @@ public class MyShape {
             storeResult.set(radius, radius, radius);
 
         } else {
-            throw new IllegalArgumentException();
+            String typeName = shape.getClass().getCanonicalName();
+            String msg = String.format("%s does not have half extents.",
+                    typeName);
+            throw new IllegalArgumentException(msg);
         }
 
         assert MyVector3f.isAllNonNegative(storeResult) : storeResult;
@@ -238,7 +243,8 @@ public class MyShape {
                     result = halfExtents.z;
                     break;
                 default:
-                    throw new IllegalArgumentException();
+                    String msg = Integer.toString(axisIndex);
+                    throw new IllegalStateException(msg);
             }
 
         } else if (shape instanceof SphereCollisionShape) {
@@ -287,7 +293,8 @@ public class MyShape {
                     r2 = halfExtents.y;
                     break;
                 default:
-                    throw new IllegalArgumentException();
+                    String msg = Integer.toString(axisIndex);
+                    throw new IllegalStateException(msg);
             }
             if (r1 == r2) {
                 result = r1;
@@ -339,7 +346,8 @@ public class MyShape {
                     radius2 = newHalfExtents.y;
                     break;
                 default:
-                    throw new IllegalStateException();
+                    String msg = Integer.toString(axisIndex);
+                    throw new IllegalStateException(msg);
             }
             if (radius1 != radius2) {
                 result = null;
@@ -417,7 +425,8 @@ public class MyShape {
                     halfExtents.z = newHeight;
                     break;
                 default:
-                    throw new IllegalArgumentException();
+                    String msg = Integer.toString(axisIndex);
+                    throw new IllegalStateException(msg);
             }
             result = new CylinderCollisionShape(halfExtents, axisIndex);
 
@@ -483,7 +492,8 @@ public class MyShape {
                     halfExtents.y = newRadius;
                     break;
                 default:
-                    throw new IllegalArgumentException();
+                    String msg = Integer.toString(axisIndex);
+                    throw new IllegalStateException(msg);
             }
             result = new CylinderCollisionShape(halfExtents, axisIndex);
 
@@ -558,7 +568,7 @@ public class MyShape {
 
         } else {
             logger.log(Level.SEVERE, "shape={0}", shape.getClass());
-            throw new IllegalArgumentException("shape should be closed");
+            throw new IllegalArgumentException("Shape must be closed!");
         }
 
         assert volume >= 0f : volume;

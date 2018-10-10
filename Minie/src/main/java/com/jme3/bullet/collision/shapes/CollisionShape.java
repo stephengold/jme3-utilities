@@ -130,8 +130,12 @@ abstract public class CollisionShape
      * negative component, unaffected, default=1,1,1)
      */
     public void setScale(Vector3f scale) {
+        Validate.nonNull(scale, "scale");
         if (!canScale(scale)) {
-            throw new IllegalArgumentException("Illegal scaling.");
+            String typeName = this.getClass().getCanonicalName();
+            String msg = String.format("%s cannot be scaled to (%s,%s,%s)",
+                    typeName, scale.x, scale.y, scale.z);
+            throw new IllegalArgumentException(msg);
         }
         assert objectId != 0L;
 
