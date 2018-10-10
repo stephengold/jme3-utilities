@@ -44,6 +44,8 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
+import com.jme3.util.clone.Cloner;
+import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.logging.Logger;
@@ -57,7 +59,8 @@ import jme3utilities.math.MyVector3f;
  *
  * @author Normen Hansen and Rémy Bouquet (Nehon)
  */
-public class PhysicsBoneLink implements Savable { // TODO JmeCloneable
+public class PhysicsBoneLink
+        implements JmeCloneable, Savable {
     // *************************************************************************
     // constants and loggers
 
@@ -90,11 +93,11 @@ public class PhysicsBoneLink implements Savable { // TODO JmeCloneable
      * orientation of the bone (in mesh coordinates) at the start of the most
      * recent transition to kinematic mode
      */
-    final private Quaternion blendOrientation = new Quaternion();
+    private Quaternion blendOrientation = new Quaternion();
     /**
      * orientation of the bone (in mesh coordinates) when this link was created
      */
-    final private Quaternion originalOrientation = new Quaternion();
+    private Quaternion originalOrientation = new Quaternion();
     /**
      * joint between the bone's body and its parent's body, or null if not yet
      * created
@@ -113,16 +116,16 @@ public class PhysicsBoneLink implements Savable { // TODO JmeCloneable
      * location of the bone (in mesh coordinates) at the start of the most
      * recent transition to kinematic mode
      */
-    final private Vector3f blendLocation = new Vector3f();
+    private Vector3f blendLocation = new Vector3f();
     /**
      * scale of the bone (in mesh coordinates) at the start of the most recent
      * transition to kinematic mode
      */
-    final private Vector3f blendScale = new Vector3f();
+    private Vector3f blendScale = new Vector3f();
     /**
      * scale of the bone (in mesh coordinates) when this link was created
      */
-    final private Vector3f originalScale = new Vector3f(1f, 1f, 1f);
+    private Vector3f originalScale = new Vector3f(1f, 1f, 1f);
     // *************************************************************************
     // constructors
 
@@ -414,6 +417,45 @@ public class PhysicsBoneLink implements Savable { // TODO JmeCloneable
         this.blendInterval = blendInterval;
         kinematicWeight = Float.MIN_VALUE;
         rigidBody.setKinematic(true);
+    }
+    // *************************************************************************
+    // JmeCloneable methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned object into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        bone = cloner.clone(bone);
+        rigidBody = cloner.clone(rigidBody);
+        blendOrientation = cloner.clone(blendOrientation);
+        originalOrientation = cloner.clone(originalOrientation);
+        joint = cloner.clone(joint);
+        transformSpatial = cloner.clone(transformSpatial);
+        blendLocation = cloner.clone(blendLocation);
+        blendScale = cloner.clone(blendScale);
+        originalScale = cloner.clone(originalScale);
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public PhysicsBoneLink jmeClone() {
+        try {
+            PhysicsBoneLink clone = (PhysicsBoneLink) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
     }
     // *************************************************************************
     // Savable methods
