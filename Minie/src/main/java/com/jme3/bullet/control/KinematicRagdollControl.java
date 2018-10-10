@@ -62,6 +62,7 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
+import com.jme3.util.SafeArrayList;
 import com.jme3.util.TempVars;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
@@ -131,7 +132,8 @@ public class KinematicRagdollControl
     /**
      * list of registered collision listeners
      */
-    private List<RagdollCollisionListener> listeners;
+    private List<RagdollCollisionListener> listeners
+            = new SafeArrayList(RagdollCollisionListener.class);
     /**
      * map bone names to masses for createSpatialData()
      */
@@ -279,9 +281,7 @@ public class KinematicRagdollControl
      * @param listener (not null, alias created)
      */
     public void addCollisionListener(RagdollCollisionListener listener) {
-        if (listeners == null) {
-            listeners = new ArrayList<>(); // TODO use SafeArrayList
-        }
+        Validate.nonNull(listener, "listener");
         listeners.add(listener);
     }
 
@@ -297,7 +297,7 @@ public class KinematicRagdollControl
 
         } else {
             for (String ikBoneName : ikTargets.keySet()) {
-                Bone bone = skeleton.getBone(ikBoneName);
+                Bone bone = getBone(ikBoneName);
                 while (bone != null) {
                     String name = bone.getName();
                     PhysicsBoneLink link = boneLinks.get(name);
@@ -408,6 +408,7 @@ public class KinematicRagdollControl
      * damped)
      */
     public float getLimbDamping() {
+        assert limbDamping >= 0f : limbDamping;
         return limbDamping;
     }
 
@@ -432,8 +433,8 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Rebuild the ragdoll. This is useful if you applied scale on the ragdoll
-     * after it was initialized. Same as re-attaching.
+     * Rebuild the ragdoll. This is useful if you applied scale to the ragdoll
+     * after it was initialized. Same as re-attaching. TODO test this
      */
     public void reBuild() {
         if (spatial == null) {
@@ -610,8 +611,10 @@ public class KinematicRagdollControl
      * 1&rarr;critically damped, default=0.6)
      */
     public void setLimbDamping(float dampingRatio) {
-        limbDamping = dampingRatio;
+        Validate.nonNegative(dampingRatio, "damping ratio");
 
+        limbDamping = dampingRatio;
+        torsoRigidBody.setDamping(limbDamping, limbDamping);
         for (PhysicsBoneLink link : boneLinks.values()) {
             link.getRigidBody().setDamping(limbDamping, limbDamping);
         }
@@ -644,7 +647,7 @@ public class KinematicRagdollControl
     /**
      * Calculate the ragdoll's total mass.
      *
-     * @return mass (&gt;0)
+     * @return the total amount (&gt;0)
      */
     public float totalMass() {
         float totalMass = torsoMass;
@@ -1061,7 +1064,7 @@ public class KinematicRagdollControl
         /*
          * Dispatch an event if this control was involved in the collision.
          */
-        if (krcInvolved && listeners != null) {
+        if (krcInvolved) {
             for (RagdollCollisionListener listener : listeners) {
                 listener.collide(bone, otherPco, event);
             }
@@ -1090,14 +1093,14 @@ public class KinematicRagdollControl
             parentLocation = new Vector3f();
         } else {
             parentBody = parentLink.getRigidBody();
-            Bone parentBone = skeleton.getBone(parentName);
+            Bone parentBone = getBone(parentName);
             parentLocation = parentBone.getModelSpacePosition();
         }
 
         for (String name : boneLinks.keySet()) {
             PhysicsBoneLink link = boneLinks.get(name);
             if (link.parentName().equals(parentName)) {
-                Bone childBone = skeleton.getBone(name);
+                Bone childBone = getBone(name);
                 PhysicsRigidBody childBody = link.getRigidBody();
                 Vector3f posToParent
                         = childBone.getModelSpacePosition().clone();
@@ -1130,7 +1133,7 @@ public class KinematicRagdollControl
      */
     private PhysicsBoneLink createLink(String name, String[] lbNames,
             List<Vector3f> vertexLocations) {
-        Bone bone = skeleton.getBone(name);
+        Bone bone = getBone(name);
         /*
          * Create the collision shape.
          */
