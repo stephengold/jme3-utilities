@@ -245,10 +245,15 @@ public class BulletDebugAppState extends AbstractAppState {
     private void setupMaterials(Application app) {
         AssetManager am = app.getAssetManager();
         DEBUG_BLUE = MyAsset.createWireframeMaterial(am, ColorRGBA.Blue);
+        DEBUG_BLUE.setName("DEBUG_BLUE");
         DEBUG_GREEN = MyAsset.createWireframeMaterial(am, ColorRGBA.Green);
+        DEBUG_GREEN.setName("DEBUG_GREEN");
         DEBUG_YELLOW = MyAsset.createWireframeMaterial(am, ColorRGBA.Yellow);
+        DEBUG_YELLOW.setName("DEBUG_YELLOW");
         DEBUG_MAGENTA = MyAsset.createWireframeMaterial(am, ColorRGBA.Magenta);
+        DEBUG_MAGENTA.setName("DEBUG_MAGENTA");
         DEBUG_PINK = MyAsset.createWireframeMaterial(am, ColorRGBA.Pink);
+        DEBUG_PINK.setName("DEBUG_PINK");
     }
 
     private void updateRigidBodies() {
