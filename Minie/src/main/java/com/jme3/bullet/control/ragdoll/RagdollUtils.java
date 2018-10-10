@@ -36,11 +36,7 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.math.FastMath;
 import com.jme3.math.Transform;
-import com.jme3.scene.Mesh;
-import com.jme3.scene.VertexBuffer.Type;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.util.Set;
+import java.util.Collection;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -94,16 +90,16 @@ public class RagdollUtils {
     /**
      * Updates a bone position and rotation. if the child bones are not in the
      * bone list this means, they are not associated with a physics shape. So
-     * they have to be updated
+     * they have to be updated. TODO move to PhysicsBoneLink
      *
      * @param bone the bone
      * @param localT the bone transform (in local coordinates, not null)
      * @param restoreBoneControl true &rarr; user-control flag needs to be set
-     * @param boneList the names of all bones without collision shapes (not
-     * null, unaffected)
+     * @param boneSet the names of all bones with collision shapes (not null,
+     * unaffected)
      */
     public static void setTransform(Bone bone, Transform localT,
-            boolean restoreBoneControl, Set<String> boneList) {
+            boolean restoreBoneControl, Collection<String> boneSet) {
         // Take control of the bone.
         if (restoreBoneControl) {
             assert !bone.hasUserControl();
@@ -115,12 +111,12 @@ public class RagdollUtils {
                 localT.getRotation());
         // TODO scale?
         for (Bone childBone : bone.getChildren()) {
-            if (!boneList.contains(childBone.getName())) {
+            if (!boneSet.contains(childBone.getName())) {
                 Transform childLocalT = childBone.getCombinedTransform(
                         localT.getTranslation(), localT.getRotation());
                 childLocalT.setScale(localT.getScale());
                 setTransform(childBone, childLocalT, restoreBoneControl,
-                        boneList);
+                        boneSet);
             }
         }
 
@@ -128,40 +124,5 @@ public class RagdollUtils {
         if (restoreBoneControl) {
             bone.setUserControl(false);
         }
-    }
-
-    /**
-     * Test whether the indexed bone has at least one vertex in the specified
-     * meshes with a weight greater than the specified threshold.
-     *
-     * @param boneIndex the index of the bone (&ge;0)
-     * @param targets the meshes to search (not null, no null elements)
-     * @param weightThreshold the threshold (&ge;0, &le;1)
-     * @return true if at least 1 vertex found, otherwise false
-     */
-    public static boolean hasVertices(int boneIndex, Mesh[] targets,
-            float weightThreshold) {
-        for (Mesh mesh : targets) {
-            ByteBuffer boneIndices
-                    = (ByteBuffer) mesh.getBuffer(Type.BoneIndex).getData();
-            FloatBuffer boneWeight
-                    = (FloatBuffer) mesh.getBuffer(Type.BoneWeight).getData();
-
-            boneIndices.rewind();
-            boneWeight.rewind();
-
-            int vertexComponents = mesh.getVertexCount() * 3;
-            for (int i = 0; i < vertexComponents; i += 3) {
-                int start = i / 3 * 4;
-                for (int k = start; k < start + 4; k++) {
-                    if (boneIndices.get(k) == boneIndex
-                            && boneWeight.get(k) >= weightThreshold) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
     }
 }
