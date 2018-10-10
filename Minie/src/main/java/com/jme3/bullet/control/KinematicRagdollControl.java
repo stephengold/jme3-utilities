@@ -206,6 +206,10 @@ public class KinematicRagdollControl
      * transform mesh coordinates to model coordinates
      */
     private Transform meshToModel = null;
+    /**
+     * gravitational acceleration for dynamic rigid bodies
+     */
+    private Vector3f gravityVector = new Vector3f(0f, -9.8f, 0f);
 
     /**
      * Enumerate joint-control modes for this control.
@@ -452,6 +456,19 @@ public class KinematicRagdollControl
     }
 
     /**
+     * Copy this control's gravitational acceleration.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return an acceleration vector (in physics-space coordinates, either
+     * storeResult or a new vector, not null)
+     */
+    public Vector3f gravity(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        result.set(gravityVector);
+        return result;
+    }
+
+    /**
      * Enumerate all linked bones in this control.
      *
      * @return an unmodifiable collection of names
@@ -558,6 +575,22 @@ public class KinematicRagdollControl
     public void setEventDispatchImpulseThreshold(float threshold) {
         Validate.nonNegative(threshold, "threshold");
         eventDispatchImpulseThreshold = threshold;
+    }
+
+    /**
+     * Alter this control's gravitational acceleration.
+     *
+     * @param gravity the desired acceleration vector (in physics-space
+     * coordinates, not null, unaffected)
+     */
+    public void setGravity(Vector3f gravity) {
+        Validate.nonNull(gravity, "gravity");
+
+        this.gravityVector.set(gravity);
+        torsoRigidBody.setGravity(gravity);
+        for (PhysicsBoneLink link : boneLinks.values()) {
+            link.getRigidBody().setGravity(gravity);
+        }
     }
 
     /**
@@ -770,13 +803,20 @@ public class KinematicRagdollControl
     @Override
     protected void addPhysics() {
         PhysicsSpace space = getPhysicsSpace();
+        Vector3f gravity = gravity(null);
+
         space.add(torsoRigidBody);
+        torsoRigidBody.setGravity(gravity);
+
         for (PhysicsBoneLink physicsBoneLink : boneLinks.values()) {
             PhysicsRigidBody rigidBody = physicsBoneLink.getRigidBody();
             space.add(rigidBody);
+            rigidBody.setGravity(gravity);
+
             PhysicsJoint joint = physicsBoneLink.getJoint();
             space.add(joint);
         }
+
         space.addCollisionListener(this);
     }
 
@@ -794,6 +834,7 @@ public class KinematicRagdollControl
         super.cloneFields(cloner, original);
 
         boneLinks = cloner.clone(boneLinks);
+        gravityVector = cloner.clone(gravityVector);
         jointMap = cloner.clone(jointMap);
         ikChainDepth = cloner.clone(ikChainDepth);
         ikTargets = cloner.clone(ikTargets);
@@ -935,6 +976,7 @@ public class KinematicRagdollControl
         eventDispatchImpulseThreshold
                 = ic.readFloat("eventDispatchImpulseThreshold", 0f);
         torsoMass = ic.readFloat("rootMass", 15f);
+        gravityVector = (Vector3f) ic.readSavable("gravity", null);
     }
 
     /**
@@ -943,11 +985,14 @@ public class KinematicRagdollControl
     @Override
     protected void removePhysics() {
         PhysicsSpace space = getPhysicsSpace();
+
         space.remove(torsoRigidBody);
+
         for (PhysicsBoneLink physicsBoneLink : boneLinks.values()) {
             space.remove(physicsBoneLink.getJoint());
             space.remove(physicsBoneLink.getRigidBody());
         }
+
         space.removeCollisionListener(this);
     }
 
@@ -1049,6 +1094,7 @@ public class KinematicRagdollControl
         oc.write(torsoMass, "rootMass", 15f);
         oc.write(ikRotSpeed, "rotSpeed", 7f);
         oc.write(damping, "limbDampening", 0.6f);
+        oc.write(gravityVector, "gravity", new Vector3f(0f, -9.8f, 0f));
     }
     // *************************************************************************
     // PhysicsCollisionListener methods
