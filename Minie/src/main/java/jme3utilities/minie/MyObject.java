@@ -74,12 +74,14 @@ public class MyObject {
             name = String.format("chara%d", id);
         } else if (pco instanceof PhysicsGhostObject) {
             name = String.format("ghost%d", id);
+        } else if (pco instanceof PhysicsVehicle) {// must test before RigidBody
+            name = String.format("vehic%d", id);
         } else if (pco instanceof PhysicsRigidBody) {
             name = String.format("rigid%d", id);
-        } else if (pco instanceof PhysicsVehicle) {
-            name = String.format("vehic%d", id);
         } else {
-            throw new IllegalArgumentException();
+            String typeName = pco.getClass().getCanonicalName();
+            String msg = "Unknown type of collision object: " + typeName;
+            throw new IllegalArgumentException(msg);
         }
 
         return name;
