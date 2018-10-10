@@ -68,6 +68,7 @@ import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -133,7 +134,7 @@ public class KinematicRagdollControl
      * list of registered collision listeners
      */
     private List<RagdollCollisionListener> listeners
-            = new SafeArrayList(RagdollCollisionListener.class);
+            = new SafeArrayList<>(RagdollCollisionListener.class);
     /**
      * map bone names to masses for createSpatialData()
      */
@@ -300,7 +301,7 @@ public class KinematicRagdollControl
                 Bone bone = getBone(ikBoneName);
                 while (bone != null) {
                     String name = bone.getName();
-                    PhysicsBoneLink link = boneLinks.get(name);
+                    PhysicsBoneLink link = getBoneLink(name);
                     link.kinematicUpdate(boneLinks.keySet());
                     bone.setUserControl(true);
                     bone = bone.getParent();
@@ -336,7 +337,7 @@ public class KinematicRagdollControl
     /**
      * Access the named bone.
      *
-     * @param boneName the name of the bone to access
+     * @param boneName the name of the skeleton bone to access
      * @return the pre-existing instance, or null if not found
      */
     public Bone getBone(String boneName) {
@@ -344,17 +345,15 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Access the rigid body associated with the named bone.
+     * Access the physics link for the named bone. This returns null if it's
+     * invoked when the control is not added to a spatial.
      *
      * @param boneName the name of the bone to access
      * @return the pre-existing instance, or null if not found
      */
-    public PhysicsRigidBody getBoneRigidBody(String boneName) {
+    public PhysicsBoneLink getBoneLink(String boneName) {
         PhysicsBoneLink link = boneLinks.get(boneName);
-        if (link != null) {
-            return link.getRigidBody();
-        }
-        return null;
+        return link;
     }
 
     /**
@@ -386,22 +385,6 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Return the joint between the specified bone and its parent. This returns
-     * null if it's invoked before adding the control to a spatial
-     *
-     * @param boneName the name of the bone
-     * @return the joint between the given bone and its parent
-     */
-    public SixDofJoint getJoint(String boneName) {
-        PhysicsBoneLink link = boneLinks.get(boneName);
-        if (link != null) {
-            return link.getJoint();
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * Read the limb damping.
      *
      * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
@@ -430,6 +413,18 @@ public class KinematicRagdollControl
     public PhysicsRigidBody getTorso() {
         assert torsoRigidBody != null;
         return torsoRigidBody;
+    }
+
+    /**
+     * Enumerate all linked bones in this control.
+     *
+     * @return an unmodifiable collection of names
+     */
+    public Collection<String> linkedBoneNames() {
+        Collection<String> names = jointMap.keySet();
+        Collection<String> result = Collections.unmodifiableCollection(names);
+
+        return result;
     }
 
     /**
@@ -583,7 +578,7 @@ public class KinematicRagdollControl
                     "Cannot set limits unless added to a spatial.");
         }
 
-        PhysicsBoneLink link = boneLinks.get(boneName);
+        PhysicsBoneLink link = getBoneLink(boneName);
         if (link == null) {
             throw new IllegalStateException(
                     "No linked bone named " + MyString.quote(boneName));
@@ -1081,7 +1076,7 @@ public class KinematicRagdollControl
      * bone or the torso (not null)
      */
     private void addJoints(String parentName) {
-        PhysicsBoneLink parentLink = boneLinks.get(parentName);
+        PhysicsBoneLink parentLink = getBoneLink(parentName);
         if (parentLink == null) {
             assert torsoFakeBoneName.equals(parentName);
         }
@@ -1098,7 +1093,7 @@ public class KinematicRagdollControl
         }
 
         for (String name : boneLinks.keySet()) {
-            PhysicsBoneLink link = boneLinks.get(name);
+            PhysicsBoneLink link = getBoneLink(name);
             if (link.parentName().equals(parentName)) {
                 Bone childBone = getBone(name);
                 PhysicsRigidBody childBody = link.getRigidBody();
@@ -1261,7 +1256,7 @@ public class KinematicRagdollControl
         while (it.hasNext()) {
 
             boneName = it.next();
-            bone = (Bone) boneLinks.get(boneName).getBone();
+            bone = getBoneLink(boneName).getBone();
             if (!bone.hasUserControl()) {
                 logger.log(Level.FINE, "{0} doesn't have user control",
                         boneName);
@@ -1276,7 +1271,7 @@ public class KinematicRagdollControl
             int depth = 0;
             int maxDepth = ikChainDepth.get(bone.getName());
             float changeAmount = tpf * (float) FastMath.sqrt(distance);
-            updateBone(boneLinks.get(boneName), changeAmount, tmpRot1,
+            updateBone(getBoneLink(boneName), changeAmount, tmpRot1,
                     tmpRot2, bone, ikTargets.get(boneName), depth, maxDepth);
 
             for (PhysicsBoneLink link : boneLinks.values()) {
@@ -1417,7 +1412,7 @@ public class KinematicRagdollControl
 
         link.getBone().update();
         if (link.getBone().getParent() != null && depth < maxDepth) {
-            updateBone(boneLinks.get(link.getBone().getParent().getName()),
+            updateBone(getBoneLink(link.getBone().getParent().getName()),
                     0.5f * changeAmount, tmpRot1, tmpRot2, tipBone,
                     target, depth + 1, maxDepth);
         }
