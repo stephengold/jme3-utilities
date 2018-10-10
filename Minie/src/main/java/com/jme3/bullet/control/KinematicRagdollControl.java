@@ -158,19 +158,6 @@ public class KinematicRagdollControl
      */
     private Mode mode = Mode.Kinematic;
     /**
-     * true IFF recently transitioned to kinematic mode and still blending
-     */
-    private boolean isBlending = false;
-    /**
-     * elapsed time since switching to kinematic mode, if isBlending is true (in
-     * seconds, &ge;0)
-     */
-    private float blendProgress = 0f;
-    /**
-     * blend interval after switching to kinematic mode (in seconds, &ge;0)
-     */
-    private float blendTime = 1f;
-    /**
      * minimum applied impulse for a collision event to be dispatched to
      * listeners (default=0)
      */
@@ -315,8 +302,8 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Update this control in Kinematic mode, based on the model's transform and
-     * the skeleton's pose.
+     * Update this control in Kinematic mode, based on the transformer's
+     * transform and the skeleton's pose.
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
@@ -324,47 +311,13 @@ public class KinematicRagdollControl
         assert torsoRigidBody.isInWorld();
 
         removePhysics(getPhysicsSpace());
+
         torsoKinematicUpdate();
-
-        TempVars vars = TempVars.get();
-        Quaternion tmpRot1 = vars.quat1;
-        Quaternion tmpRot2 = vars.quat2;
-        Vector3f position = vars.vect1;
         for (PhysicsBoneLink link : boneLinks.values()) {
-            //if blending, keyframed animation is updating the skeleton,
-            //but to allow smooth transition, we blend this transformation with the saved position of the ragdoll
-            if (isBlending) {
-                Vector3f position2 = vars.vect2;
-                //initialize tmp vars with the start position/rotation of the ragdoll
-                link.copyBlendStart(position, tmpRot1);
-
-                //interpolate between ragdoll position/rotation and keyframed position/rotation
-                tmpRot2.set(tmpRot1);
-                tmpRot2.nlerp(link.getBone().getModelSpaceRotation(),
-                        blendProgress / blendTime);
-                position2.set(position).interpolateLocal(
-                        link.getBone().getModelSpacePosition(),
-                        blendProgress / blendTime);
-                tmpRot1.set(tmpRot2);
-                position.set(position2);
-
-                //update bone transforms
-                Bone bone = link.getBone();
-                Transform meshT = new Transform(position, tmpRot1);
-                RagdollUtils.setTransform(bone, meshT, true, jointMap.keySet());
-            }
-            // Apply bone transform to the rigid body.
-            matchPhysicObjectToBone(link, position, tmpRot1);
+            link.kinematicUpdate(tpf, boneLinks.keySet());
         }
-        vars.release();
+
         addPhysics(getPhysicsSpace());
-
-        if (isBlending) {
-            blendProgress += tpf;
-            if (blendProgress > blendTime) {
-                isBlending = false;
-            }
-        }
     }
 
     /**
@@ -403,10 +356,8 @@ public class KinematicRagdollControl
             updateBone(boneLinks.get(boneName), changeAmount, tmpRot1,
                     tmpRot2, bone, ikTargets.get(boneName), depth, maxDepth);
 
-            Vector3f position = vars.vect1;
-
             for (PhysicsBoneLink link : boneLinks.values()) {
-                matchPhysicObjectToBone(link, position, tmpRot1);
+                link.kinematicUpdate(boneLinks.keySet());
             }
         }
         vars.release();
@@ -482,41 +433,6 @@ public class KinematicRagdollControl
                     0.5f * changeAmount, tmpRot1, tmpRot2, tipBone,
                     target, depth + 1, maxDepth);
         }
-    }
-
-    /**
-     * Alter the transforms of a rigidBody to match the transforms of a bone.
-     * This is used to make the ragdoll follow animated motion in Kinematic mode
-     * TODO rename and move to PhysicsBoneLink
-     *
-     * @param link the bone link connecting the bone and the rigidBody
-     * @param location temporary vector used in calculations (not null)
-     * @param orientation temporary quaternion used in calculations (not null)
-     */
-    protected void matchPhysicObjectToBone(PhysicsBoneLink link,
-            Vector3f location, Quaternion orientation) {
-        Transform meshToWorld = transformer.getWorldTransform();
-
-        // Compute the location of the bone in world coordinates.
-        Bone bone = link.getBone();
-        Vector3f meshLocation = bone.getModelSpacePosition();
-        meshToWorld.transformVector(meshLocation, location);
-
-        // Compute the orientation of the bone in world coordinates.
-        orientation.set(bone.getModelSpaceRotation());
-        orientation.multLocal(bone.getModelBindInverseRotation());
-        meshToWorld.getRotation().mult(orientation, orientation);
-        orientation.normalizeLocal();
-
-        // Compute the scale of the bone in world coordinates.
-        Vector3f scale = bone.getModelSpaceScale().clone();
-        scale.multLocal(meshToWorld.getScale());
-
-        // Update the location and rotation of the physics body.
-        PhysicsRigidBody body = link.getRigidBody();
-        body.setPhysicsLocation(location);
-        body.setPhysicsRotation(orientation);
-        body.setPhysicsScale(scale);
     }
 
     /**
@@ -835,19 +751,13 @@ public class KinematicRagdollControl
 
         torsoRigidBody.setKinematic(mode == Mode.Kinematic);
         if (mode != Mode.IK) {
-            TempVars vars = TempVars.get();
-
             for (PhysicsBoneLink link : boneLinks.values()) {
                 link.getRigidBody().setKinematic(mode == Mode.Kinematic);
                 if (mode == Mode.Ragdoll) {
-                    Quaternion tmpRot1 = vars.quat1;
-                    Vector3f position = vars.vect1;
-                    //Ensure that the ragdoll is at the correct place.
-                    matchPhysicObjectToBone(link, position, tmpRot1);
+                    // Ensure that the ragdoll is at the correct place.
+                    link.kinematicUpdate(boneLinks.keySet());
                 }
-
             }
-            vars.release();
 
             MySkeleton.setUserControl(skeleton, mode == Mode.Ragdoll);
         }
@@ -866,15 +776,12 @@ public class KinematicRagdollControl
         }
 
         mode = Mode.Kinematic;
-        isBlending = true;
-        this.blendTime = blendTime;
-        blendProgress = 0f;
 
         AnimControl animControl = spatial.getControl(AnimControl.class);
         animControl.setEnabled(true);
 
         for (PhysicsBoneLink link : boneLinks.values()) {
-            link.startBlend();
+            link.startBlend(blendTime);
         }
 
         MySkeleton.setUserControl(skeleton, false);
@@ -1141,23 +1048,16 @@ public class KinematicRagdollControl
             setKinematicMode();
 
         } else {
-            TempVars vars = TempVars.get();
-
             for (String ikBoneName : ikTargets.keySet()) {
                 Bone bone = skeleton.getBone(ikBoneName);
                 while (bone != null) {
                     String name = bone.getName();
                     PhysicsBoneLink link = boneLinks.get(name);
-                    Vector3f tmpVec = vars.vect1;
-                    Quaternion tmpQuat = vars.quat1;
-                    matchPhysicObjectToBone(link, tmpVec, tmpQuat);
-
+                    link.kinematicUpdate(boneLinks.keySet());
                     bone.setUserControl(true);
                     bone = bone.getParent();
                 }
             }
-
-            vars.release();
         }
     }
 
@@ -1251,9 +1151,6 @@ public class KinematicRagdollControl
         oc.write(meshToModel, "meshToModel", new Transform());
         oc.write(initScale, "initScale", null);
         oc.write(mode, "mode", null);
-        oc.write(isBlending, "blendedControl", false);
-        oc.write(blendProgress, "blendStart", 0f);
-        oc.write(blendTime, "blendTime", 1f);
         oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
                 0f);
         oc.write(torsoMass, "rootMass", 15f);
@@ -1288,9 +1185,6 @@ public class KinematicRagdollControl
                 = (Spatial) ic.readSavable("transformer", null);
         initScale = (Vector3f) ic.readSavable("initScale", null);
         mode = ic.readEnum("mode", Mode.class, Mode.Kinematic);
-        isBlending = ic.readBoolean("blendedControl", false);
-        blendProgress = ic.readFloat("blendStart", 0f);
-        blendTime = ic.readFloat("blendTime", 1f);
         eventDispatchImpulseThreshold
                 = ic.readFloat("eventDispatchImpulseThreshold", 0f);
         torsoMass = ic.readFloat("rootMass", 15f);
