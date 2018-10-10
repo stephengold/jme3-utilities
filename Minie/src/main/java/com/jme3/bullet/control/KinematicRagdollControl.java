@@ -133,6 +133,10 @@ public class KinematicRagdollControl
      */
     private List<RagdollCollisionListener> listeners;
     /**
+     * map bone names to masses for createSpatialData()
+     */
+    private Map<String, Float> massMap = new HashMap<>();
+    /**
      * map bone names to joint presets for createSpatialData()
      */
     private Map<String, JointPreset> jointMap = new HashMap<>();
@@ -164,13 +168,9 @@ public class KinematicRagdollControl
      */
     private float eventDispatchImpulseThreshold = 0f;
     /**
-     * mass of the torso TODO specify in constructor
+     * mass of the torso (default=15)
      */
     private float torsoMass = 15f;
-    /**
-     * accumulate total mass of ragdoll when control is added to a scene
-     */
-    private float totalMass = 0f;
     /**
      * map from IK bone names to goal locations
      */
@@ -234,38 +234,43 @@ public class KinematicRagdollControl
     // new methods exposed
 
     /**
-     * Add a bone with a joint preset to this control.
+     * Link the named bone using a joint preset.
      * <p>
      * Allowed only when the control is NOT added to a spatial.
      *
-     * @param boneName the name of the bone to add (not null)
-     * @param jointPreset (not null)
+     * @param boneName the name of the bone to link (not null)
+     * @param boneMass the desired mass of the bone (&gt;0)
+     * @param jointPreset the desired range of motion (not null)
      * @see #setJointLimit(java.lang.String, float, float, float, float, float,
      * float)
      */
-    public void addBone(String boneName, JointPreset jointPreset) {
+    public void addBone(String boneName, float boneMass,
+            JointPreset jointPreset) {
         Validate.nonNull(boneName, "name");
+        Validate.positive(boneMass, "mass");
         Validate.nonNull(jointPreset, "joint preset");
         if (spatial != null) {
             throw new IllegalStateException(
                     "Cannot add bone while added to a spatial.");
         }
 
+        massMap.put(boneName, boneMass);
         jointMap.put(boneName, jointPreset);
     }
 
     /**
-     * Add a bone name to this control and preset the bone's joint to "no
-     * motion". Repeated invocations of this method can be used to specify which
-     * bones to use when generating collision shapes.
+     * Link the named bone using a joint with no range of motion.
      * <p>
      * Allowed only when the control is NOT added to a spatial.
      *
      * @param boneName the name of the bone to add (not null)
+     * @param boneMass the desired mass of the bone (&gt;0)
      */
-    public void addBoneName(String boneName) {
+    public void addBone(String boneName, float boneMass) {
         Validate.nonNull(boneName, "name");
-        addBone(boneName, new JointPreset());
+        Validate.positive(boneMass, "mass");
+
+        addBone(boneName, boneMass, new JointPreset());
     }
 
     /**
@@ -424,17 +429,6 @@ public class KinematicRagdollControl
     public PhysicsRigidBody getTorso() {
         assert torsoRigidBody != null;
         return torsoRigidBody;
-    }
-
-    /**
-     * Read the ragdoll's total mass. Not allowed until the control has been
-     * added to a spatial.
-     *
-     * @return mass (&ge;0)
-     */
-    public float getTotalMass() {
-        assert spatial != null;
-        return totalMass;
     }
 
     /**
@@ -632,6 +626,35 @@ public class KinematicRagdollControl
             setMode(Mode.Ragdoll);
         }
     }
+
+    /**
+     * Alters the mass of the torso.
+     *
+     * @param mass the desired mass (&gt;0)
+     */
+    public void setTorsoMass(float mass) {
+        Validate.positive(mass, "mass");
+
+        torsoMass = mass;
+        if (torsoRigidBody != null) {
+            torsoRigidBody.setMass(mass);
+        }
+    }
+
+    /**
+     * Calculate the ragdoll's total mass.
+     *
+     * @return mass (&gt;0)
+     */
+    public float totalMass() {
+        float totalMass = torsoMass;
+        for (float mass : massMap.values()) {
+            totalMass += mass;
+        }
+
+        assert totalMass > 0f : totalMass;
+        return totalMass;
+    }
     // *************************************************************************
     // new protected methods
 
@@ -732,6 +755,7 @@ public class KinematicRagdollControl
         ikTargets = cloner.clone(ikTargets);
         initScale = cloner.clone(initScale);
         listeners = cloner.clone(listeners);
+        massMap = cloner.clone(massMap);
         meshToModel = cloner.clone(meshToModel);
         skeleton = cloner.clone(skeleton);
         skeletonControl = cloner.clone(skeletonControl);
@@ -797,7 +821,6 @@ public class KinematicRagdollControl
         }
         CollisionShape torsoShape
                 = createShape(new Transform(), new Vector3f(), list);
-        totalMass += torsoMass;
         torsoRigidBody = new PhysicsRigidBody(torsoShape, torsoMass);
         torsoRigidBody.setDamping(limbDamping, limbDamping);
         torsoRigidBody.setKinematic(mode == Mode.Kinematic);
@@ -847,7 +870,7 @@ public class KinematicRagdollControl
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule ic = im.getCapsule(this);
-        // TODO jointMap
+        // TODO jointMap, massMap
         PhysicsBoneLink[] loadedBoneLinks
                 = (PhysicsBoneLink[]) ic.readSavableArray("boneList",
                         new PhysicsBoneLink[0]);
@@ -866,7 +889,6 @@ public class KinematicRagdollControl
         eventDispatchImpulseThreshold
                 = ic.readFloat("eventDispatchImpulseThreshold", 0f);
         torsoMass = ic.readFloat("rootMass", 15f);
-        totalMass = ic.readFloat("totalMass", 0f);
     }
 
     /**
@@ -966,7 +988,7 @@ public class KinematicRagdollControl
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule oc = ex.getCapsule(this);
-        // TODO jointMap
+        // TODO jointMap, massMap
         oc.write(boneLinks.values().toArray(
                 new PhysicsBoneLink[boneLinks.size()]),
                 "boneLinks", new PhysicsBoneLink[0]);
@@ -979,7 +1001,6 @@ public class KinematicRagdollControl
         oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
                 0f);
         oc.write(torsoMass, "rootMass", 15f);
-        oc.write(totalMass, "totalMass", 0f);
         oc.write(ikRotSpeed, "rotSpeed", 7f);
         oc.write(limbDamping, "limbDampening", 0.6f);
     }
@@ -1120,9 +1141,8 @@ public class KinematicRagdollControl
         /*
          * Create the rigid body.
          */
-        float boneMass = 0.3f * torsoMass; // TODO configure masses
+        float boneMass = massMap.get(name);
         assert boneMass > 0f : boneMass;
-        totalMass += boneMass;
         PhysicsRigidBody prb = new PhysicsRigidBody(boneShape, boneMass);
         prb.setDamping(limbDamping, limbDamping);
         prb.setKinematic(mode == Mode.Kinematic);

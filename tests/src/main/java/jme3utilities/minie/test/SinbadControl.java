@@ -49,43 +49,44 @@ public class SinbadControl extends KinematicRagdollControl {
 
     public SinbadControl() {
         super();
+        super.setTorsoMass(5f);
 
-        super.addBone("Waist",
+        super.addBone("Waist", 5f,
                 new JointPreset(0.4f, -0.4f, 0.4f, -0.4f, 0.4f, -0.4f));
-        super.addBoneName("Stomach");
-        super.addBone("Chest",
+        super.addBone("Stomach", 3f);
+        super.addBone("Chest", 5f,
                 new JointPreset(0.4f, -0.4f, 0f, 0f, 0.4f, -0.4f));
-        super.addBone("Neck",
+        super.addBone("Neck", 2f,
                 new JointPreset(1f, -1f, 1f, -1f, 1f, -1f));
 
-        super.addBoneName("Clavicle.R");
-        super.addBone("Humerus.R",
+        super.addBone("Clavicle.R", 2f);
+        super.addBone("Humerus.R", 3f,
                 new JointPreset(1.6f, -0.8f, 0f, 0f, 1.6f, -0.8f));
-        super.addBone("Ulna.R",
+        super.addBone("Ulna.R", 2f,
                 new JointPreset(1.6f, 0f, 0f, 0f, 0f, 0f));
-        super.addBone("Hand.R",
+        super.addBone("Hand.R", 1f,
                 new JointPreset(0.8f, -0.8f, 0.8f, -0.8f, 0.8f, -0.8f));
 
-        super.addBoneName("Clavicle.L");
-        super.addBone("Humerus.L",
+        super.addBone("Clavicle.L", 2f);
+        super.addBone("Humerus.L", 3f,
                 new JointPreset(1.6f, -0.8f, 0f, 0f, 1.6f, -0.8f));
-        super.addBone("Ulna.L",
+        super.addBone("Ulna.L", 2f,
                 new JointPreset(1.6f, 0f, 0f, 0f, 0f, 0f));
-        super.addBone("Hand.L",
+        super.addBone("Hand.L", 1f,
                 new JointPreset(0.8f, -0.8f, 0.8f, -0.8f, 0.8f, -0.8f));
 
-        super.addBone("Thigh.R",
+        super.addBone("Thigh.R", 3f,
                 new JointPreset(2f, -0.8f, 0.4f, -0.4f, 0.8f, -0.8f));
-        super.addBone("Calf.R",
+        super.addBone("Calf.R", 2f,
                 new JointPreset(0f, -2f, 0f, 0f, 0f, 0f));
-        super.addBone("Foot.R",
+        super.addBone("Foot.R", 1f,
                 new JointPreset(0f, -0.8f, 0.8f, -0.8f, 0.8f, -0.8f));
 
-        super.addBone("Thigh.L",
+        super.addBone("Thigh.L", 3f,
                 new JointPreset(2f, -0.8f, 0.4f, -0.4f, 0.8f, -0.8f));
-        super.addBone("Calf.L",
+        super.addBone("Calf.L", 2f,
                 new JointPreset(0f, -2f, 0f, 0f, 0f, 0f));
-        super.addBone("Foot.L",
+        super.addBone("Foot.L", 1f,
                 new JointPreset(0f, -0.8f, 0.8f, -0.8f, 0.8f, -0.8f));
     }
 }
