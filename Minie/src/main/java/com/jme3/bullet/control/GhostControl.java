@@ -255,14 +255,18 @@ public class GhostControl
      * or removed from a spatial. Should be invoked only by a subclass or from
      * Spatial. Do not invoke directly from user code.
      *
-     * @param spatial the spatial to control (or null)
+     * @param controlledSpatial the spatial to control (or null)
      */
     @Override
-    public void setSpatial(Spatial spatial) {
-        this.spatial = spatial;
-        setUserObject(spatial);
+    public void setSpatial(Spatial controlledSpatial) {
+        if (spatial == controlledSpatial) {
+            return;
+        }
 
-        if (spatial != null) {
+        spatial = controlledSpatial;
+        setUserObject(controlledSpatial); // link from collision object
+
+        if (controlledSpatial != null) {
             setPhysicsLocation(getSpatialTranslation());
             setPhysicsRotation(getSpatialRotation());
         }
