@@ -37,11 +37,13 @@ import com.jme3.math.FastMath;
 import jme3utilities.Validate;
 
 /**
- * Range of motion for a joint. Note: immutable.
+ * Range of motion for a joint. Note: immutable. TODO make Savable
  *
  * @author Nehon
  */
 public class JointPreset {
+    // *************************************************************************
+    // fields
 
     final private float maxX;
     final private float minX;
@@ -49,6 +51,8 @@ public class JointPreset {
     final private float minY;
     final private float maxZ;
     final private float minZ;
+    // *************************************************************************
+    // constructors
 
     /**
      * Instantiate a preset with no motion allowed.
@@ -65,12 +69,12 @@ public class JointPreset {
     /**
      * Instantiate a preset with the specified range of motion.
      *
-     * @param maxX the maximum rotation on the X axis (in radians)
-     * @param minX the minimum rotation on the X axis (in radians)
-     * @param maxY the maximum rotation on the Y axis (in radians)
-     * @param minY the minimum rotation on the Y axis (in radians)
-     * @param maxZ the maximum rotation on the Z axis (in radians)
-     * @param minZ the minimum rotation on the Z axis (in radians)
+     * @param maxX the maximum rotation around the X axis (in radians)
+     * @param minX the minimum rotation around the X axis (in radians)
+     * @param maxY the maximum rotation around the Y axis (in radians)
+     * @param minY the minimum rotation around the Y axis (in radians)
+     * @param maxZ the maximum rotation around the Z axis (in radians)
+     * @param minZ the minimum rotation around the Z axis (in radians)
      */
     public JointPreset(float maxX, float minX, float maxY, float minY,
             float maxZ, float minZ) {
@@ -87,6 +91,64 @@ public class JointPreset {
         this.minY = minY;
         this.maxZ = maxZ;
         this.minZ = minZ;
+    }
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Read the maximum rotation around the indexed axis.
+     *
+     * @param axisIndex which axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
+     *
+     * @return the rotation angle (in radians)
+     */
+    public float getMaxRotation(int axisIndex) {
+        Validate.inRange(axisIndex, "axis index", 0, 2);
+
+        float result;
+        switch (axisIndex) {
+            case PhysicsSpace.AXIS_X:
+                result = maxX;
+                break;
+            case PhysicsSpace.AXIS_Y:
+                result = maxY;
+                break;
+            case PhysicsSpace.AXIS_Z:
+                result = maxZ;
+                break;
+            default:
+                throw new RuntimeException();
+        }
+
+        return result;
+    }
+
+    /**
+     * Read the minimum rotation around the indexed axis.
+     *
+     * @param axisIndex which axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
+     *
+     * @return the rotation angle (in radians)
+     */
+    public float getMinRotation(int axisIndex) {
+        Validate.inRange(axisIndex, "axis index", 0, 2);
+
+        float result;
+        switch (axisIndex) {
+            case PhysicsSpace.AXIS_X:
+                result = minX;
+                break;
+            case PhysicsSpace.AXIS_Y:
+                result = minY;
+                break;
+            case PhysicsSpace.AXIS_Z:
+                result = minZ;
+                break;
+            default:
+                throw new RuntimeException();
+        }
+
+        return result;
     }
 
     /**
