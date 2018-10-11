@@ -103,6 +103,32 @@ final public class Validate {
     }
 
     /**
+     * Validate a finite Vector3f as a method argument.
+     *
+     * @param vector vector to validate (not null, all components finite
+     * numbers)
+     * @param description description of the vector
+     * @throws IllegalArgumentException if the vector has a NaN or infinite
+     * component
+     * @throws NullPointerException if the vector is null
+     */
+    public static void finite(Vector3f vector, String description) {
+        nonNull(vector, description);
+
+        if (!Vector3f.isValidVector(vector)) {
+            String what;
+            if (description == null) {
+                what = "Vector3f argument";
+            } else {
+                what = description;
+            }
+            String message = String.format(
+                    "%s must have all components be finite numbers.", what);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
      * Validate a non-negative proper fraction as a method argument.
      *
      * @param fValue fraction to validate (&le;1, &ge;0)
