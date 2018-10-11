@@ -52,8 +52,8 @@ import jme3utilities.MySpatial;
  *
  * @author normenhansen
  */
-public abstract class AbstractPhysicsControl
-        implements PhysicsControl, JmeCloneable {
+abstract public class AbstractPhysicsControl
+        implements JmeCloneable, PhysicsControl {
     // *************************************************************************
     // constants and loggers
 
@@ -100,6 +100,17 @@ public abstract class AbstractPhysicsControl
     private boolean applyLocal = false;
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Access the controlled spatial.
+     *
+     * @return the spatial, or null if none
+     */
+    public Spatial getSpatial() {
+        return spatial;
+    }
+    // *************************************************************************
+    // new protected methods
 
     /**
      * Create spatial-dependent data. Invoked when this control is added to a
@@ -277,19 +288,20 @@ public abstract class AbstractPhysicsControl
      * or removed from a spatial. Should be invoked only by a subclass or from
      * Spatial. Do not invoke directly from user code.
      *
-     * @param spatial the spatial to control (or null)
+     * @param controlledSpatial the spatial to control (or null)
      */
     @Override
-    public void setSpatial(Spatial spatial) {
-        if (this.spatial != null && this.spatial != spatial) {
-            removeSpatialData(this.spatial);
-        } else if (this.spatial == spatial) {
+    public void setSpatial(Spatial controlledSpatial) {
+        if (spatial == controlledSpatial) {
             return;
+        } else if (spatial != null) {
+            removeSpatialData(spatial);
         }
-        this.spatial = spatial;
 
-        if (spatial != null) {
-            createSpatialData(this.spatial);
+        spatial = controlledSpatial;
+
+        if (controlledSpatial != null) {
+            createSpatialData(spatial);
             setPhysicsLocation(getSpatialTranslation());
             setPhysicsRotation(getSpatialRotation());
         }
