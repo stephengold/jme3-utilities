@@ -208,6 +208,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      */
     public void setPhysicsLocation(Vector3f location) {
         Validate.nonNull(location, "location");
+        assert Vector3f.isValidVector(location); // TODO use Validate.finite()
         if (collisionShape instanceof HeightfieldCollisionShape
                 && !MyVector3f.isZero(location)) {
             throw new IllegalArgumentException(
@@ -224,7 +225,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * unaffected)
      */
     public void setPhysicsRotation(Matrix3f rotation) {
-        Validate.nonNull(rotation, "location");
+        Validate.nonNull(rotation, "rotation");
         if (collisionShape instanceof HeightfieldCollisionShape
                 && !rotation.isIdentity()) {
             throw new IllegalArgumentException("No rotation of heightfields.");
@@ -259,10 +260,10 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         CollisionShape shape = getCollisionShape();
         Vector3f oldScale = shape.getScale(null);
         if (!newScale.equals(oldScale)) {
-            if (isInWorld()) {
-                throw new IllegalStateException(
-                        "Cannot scale body while in physics space!");
-            }
+            //if (isInWorld()) {
+            //    throw new IllegalStateException(
+            //            "Cannot scale body while in physics space!");
+            //}
             shape.setScale(newScale);
             setCollisionShape(shape);
         }
@@ -718,10 +719,10 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     @Override
     public void setCollisionShape(CollisionShape collisionShape) {
         Validate.nonNull(collisionShape, "collision shape");
-        if (isInWorld()) {
-            throw new IllegalStateException(
-                    "Cannot reshape body while in physics space!");
-        }
+        //if (isInWorld()) {
+        //    throw new IllegalStateException(
+        //            "Cannot reshape body while in physics space!");
+        // }
         if (mass != massForStatic) {
             validateDynamicShape(collisionShape);
         }
