@@ -246,10 +246,6 @@ public class PhysicsSpace {
         physicsSpaceTL.set(this);
     }
 
-    private native long createPhysicsSpace(float minX, float minY, float minZ,
-            float maxX, float maxY, float maxZ, int broadphaseType,
-            boolean threading);
-
     /**
      * Callback invoked just before the physics is stepped.
      * <p>
@@ -347,9 +343,6 @@ public class PhysicsSpace {
 
         stepSimulation(physicsSpaceId, time, maxSteps, accuracy);
     }
-
-    private native void stepSimulation(long space, float time, int maxSteps,
-            float accuracy);
 
     /**
      * Distribute each collision event to all listeners.
@@ -571,32 +564,6 @@ public class PhysicsSpace {
         }
     }
 
-    private native void addCollisionObject(long space, long id);
-
-    private native void removeCollisionObject(long space, long id);
-
-    private native void addRigidBody(long space, long id);
-
-    private native void removeRigidBody(long space, long id);
-
-    private native void addCharacterObject(long space, long id);
-
-    private native void removeCharacterObject(long space, long id);
-
-    private native void addAction(long space, long id);
-
-    private native void removeAction(long space, long id);
-
-    private native void addVehicle(long space, long id);
-
-    private native void removeVehicle(long space, long id);
-
-    private native void addConstraint(long space, long id);
-
-    private native void addConstraintC(long space, long id, boolean collision);
-
-    private native void removeConstraint(long space, long id);
-
     private void addGhostObject(PhysicsGhostObject node) {
         if (physicsGhostObjects.containsKey(node.getObjectId())) {
             logger.log(Level.WARNING,
@@ -802,8 +769,6 @@ public class PhysicsSpace {
         this.gravity.set(gravity);
         setGravity(physicsSpaceId, gravity);
     }
-
-    private native void setGravity(long spaceId, Vector3f gravity);
 
     /**
      * copy of gravity-acceleration vector for newly-added bodies (default is
@@ -1024,9 +989,6 @@ public class PhysicsSpace {
         return results;
     }
 
-    private native void rayTest_native(Vector3f from, Vector3f to,
-            long physicsSpaceId, List<PhysicsRayTestResult> results, int flags);
-
     /**
      * Perform a sweep-collision test and return the results as a new list.
      * <p>
@@ -1068,10 +1030,6 @@ public class PhysicsSpace {
             List<PhysicsSweepTestResult> results) {
         return sweepTest(shape, start, end, results, 0.0f);
     }
-
-    native private void sweepTest_native(long shape, Transform from,
-            Transform to, long physicsSpaceId,
-            List<PhysicsSweepTestResult> results, float allowedCcdPenetration);
 
     /**
      * Perform a sweep-collision test and store the results in an existing list.
@@ -1228,9 +1186,6 @@ public class PhysicsSpace {
         return solverNumIterations;
     }
 
-    private native void setSolverNumIterations(long physicsSpaceId,
-            int numIterations);
-
     /**
      * Enumerate the available acceleration structures for broadphase collision
      * detection.
@@ -1272,6 +1227,51 @@ public class PhysicsSpace {
                 Long.toHexString(physicsSpaceId));
         finalizeNative(physicsSpaceId);
     }
+    // *************************************************************************
+    // private methods
 
-    private native void finalizeNative(long objectId);
+    native private void addAction(long space, long id);
+
+    native private void addCharacterObject(long space, long id);
+
+    native private void addCollisionObject(long space, long id);
+
+    native private void addConstraintC(long space, long id, boolean collision);
+
+    native private void addRigidBody(long space, long id);
+
+    native private void addVehicle(long space, long id);
+
+    native private long createPhysicsSpace(float minX, float minY, float minZ,
+            float maxX, float maxY, float maxZ, int broadphaseType,
+            boolean threading);
+
+    native private void finalizeNative(long objectId);
+
+    native private void rayTest_native(Vector3f from, Vector3f to,
+            long physicsSpaceId, List<PhysicsRayTestResult> results, int flags);
+
+    native private void removeAction(long space, long id);
+
+    native private void removeCharacterObject(long space, long id);
+
+    native private void removeCollisionObject(long space, long id);
+
+    native private void removeConstraint(long space, long id);
+
+    native private void removeRigidBody(long space, long id);
+
+    native private void removeVehicle(long space, long id);
+
+    native private void setGravity(long spaceId, Vector3f gravity);
+
+    native private void setSolverNumIterations(long physicsSpaceId,
+            int numIterations);
+
+    native private void stepSimulation(long space, float time, int maxSteps,
+            float accuracy);
+
+    native private void sweepTest_native(long shape, Transform from,
+            Transform to, long physicsSpaceId,
+            List<PhysicsSweepTestResult> results, float allowedCcdPenetration);
 }
