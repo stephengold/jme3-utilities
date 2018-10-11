@@ -255,7 +255,7 @@ public class KinematicRagdollControl
         Validate.nonNull(boneName, "name");
         Validate.positive(boneMass, "mass");
         Validate.nonNull(jointPreset, "joint preset");
-        if (spatial != null) {
+        if (getSpatial() != null) {
             throw new IllegalStateException(
                     "Cannot add bone while added to a spatial.");
         }
@@ -327,7 +327,7 @@ public class KinematicRagdollControl
 
         mode = Mode.Kinematic;
 
-        AnimControl animControl = spatial.getControl(AnimControl.class);
+        AnimControl animControl = getSpatial().getControl(AnimControl.class);
         animControl.setEnabled(true);
 
         for (PhysicsBoneLink link : boneLinks.values()) {
@@ -485,9 +485,10 @@ public class KinematicRagdollControl
      * after it was initialized. Same as re-attaching.
      */
     public void reBuild() {
-        if (spatial != null) {
-            removeSpatialData(spatial);
-            createSpatialData(spatial);
+        Spatial controlledSpatial = getSpatial();
+        if (controlledSpatial != null) {
+            removeSpatialData(controlledSpatial);
+            createSpatialData(controlledSpatial);
         }
     }
 
@@ -657,7 +658,7 @@ public class KinematicRagdollControl
      * @param preset the desired range of motion (not null)
      */
     public void setJointLimit(String boneName, JointPreset preset) {
-        if (spatial == null) {
+        if (getSpatial() == null) { // TODO alter jointMap in this case
             throw new IllegalStateException(
                     "Cannot set limits unless added to a spatial.");
         }
@@ -777,7 +778,7 @@ public class KinematicRagdollControl
         Validate.nonNull(mode, "mode");
 
         this.mode = mode;
-        AnimControl animControl = spatial.getControl(AnimControl.class);
+        AnimControl animControl = getSpatial().getControl(AnimControl.class);
         animControl.setEnabled(mode == Mode.Kinematic);
 
         torsoRigidBody.setKinematic(mode == Mode.Kinematic);
@@ -851,22 +852,22 @@ public class KinematicRagdollControl
      * Create spatial-dependent data. Invoked when the control is added to a
      * spatial.
      *
-     * @param controlledSpatial the controlled spatial (not null)
+     * @param spatial the controlled spatial (not null)
      */
     @Override
-    protected void createSpatialData(Spatial controlledSpatial) {
-        Validate.nonNull(controlledSpatial, "controlled spatial");
+    protected void createSpatialData(Spatial spatial) {
+        Validate.nonNull(spatial, "controlled spatial");
 
-        spatial = controlledSpatial;
         skeletonControl = spatial.getControl(SkeletonControl.class);
         if (skeletonControl == null) {
             throw new IllegalArgumentException(
                     "The controlled spatial must have a SkeletonControl. Make sure the control is there and not on a subnode.");
         }
         skeleton = skeletonControl.getSkeleton();
+        // TODO make sure bone names are unique, non-null, etc.
         skeleton.resetAndUpdate();
         /*
-         * Remove the SkeletonControl and re-add it so that it will get
+         * Remove the SkeletonControl and re-add it to make sure it will get
          * updated *after* this control.
          */
         spatial.removeControl(skeletonControl);
@@ -907,8 +908,8 @@ public class KinematicRagdollControl
                 = createShape(new Transform(), new Vector3f(), list);
         float mass = torsoMass();
         torsoRigidBody = new PhysicsRigidBody(torsoShape, mass);
-        float damping = damping();
-        torsoRigidBody.setDamping(damping, damping);
+        float damp = damping();
+        torsoRigidBody.setDamping(damp, damp);
         torsoRigidBody.setKinematic(mode == Mode.Kinematic);
         torsoRigidBody.setUserObject(this);
         /*
@@ -1235,8 +1236,8 @@ public class KinematicRagdollControl
         float boneMass = boneMass(name);
         assert boneMass > 0f : boneMass;
         PhysicsRigidBody prb = new PhysicsRigidBody(boneShape, boneMass);
-        float damping = damping();
-        prb.setDamping(damping, damping);
+        float damp = damping();
+        prb.setDamping(damp, damp);
         prb.setKinematic(mode == Mode.Kinematic);
         /*
          * Find the bone's parent in the linked-bone hierarchy.
@@ -1412,7 +1413,7 @@ public class KinematicRagdollControl
         torsoRigidBody.getPhysicsScale(scale);
 
         Transform worldToParent; // inverse world transform of the parent
-        Node parent = spatial.getParent();
+        Node parent = getSpatial().getParent();
         if (parent == null) {
             worldToParent = new Transform();
         } else {
@@ -1423,7 +1424,7 @@ public class KinematicRagdollControl
         Transform transform = meshToModel.clone();
         transform.combineWithParent(torsoTransform);
         transform.combineWithParent(worldToParent);
-        spatial.setLocalTransform(transform);
+        getSpatial().setLocalTransform(transform);
     }
 
     /*

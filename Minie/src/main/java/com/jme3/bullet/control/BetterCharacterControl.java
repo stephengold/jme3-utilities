@@ -718,7 +718,7 @@ public class BetterCharacterControl
      */
     @Override
     protected void createSpatialData(Spatial spat) {
-        rigidBody.setUserObject(spatial);
+        rigidBody.setUserObject(spat);
     }
 
     /**

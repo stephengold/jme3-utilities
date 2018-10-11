@@ -80,7 +80,7 @@ abstract public class AbstractPhysicsControl
     /**
      * spatial to which this control is added, or null if none
      */
-    protected Spatial spatial;
+    private Spatial spatial;
     /**
      * true&rarr;control is enabled, false&rarr;control is disabled
      */
