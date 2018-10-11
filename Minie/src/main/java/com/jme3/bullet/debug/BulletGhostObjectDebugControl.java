@@ -37,8 +37,6 @@ import com.jme3.bullet.util.DebugShapeFactory;
 import com.jme3.material.Material;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.logging.Logger;
@@ -155,18 +153,6 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
         ghost.getPhysicsLocation(location);
         ghost.getPhysicsRotation(rotation);
         applyPhysicsTransform(location, rotation);
-    }
-
-    /**
-     * Render this control. Invoked once per view port per frame, provided the
-     * control is enabled and added to a scene. Should be invoked only by a
-     * subclass or by AbstractControl.
-     *
-     * @param rm the render manager (not null)
-     * @param vp the view port to render (not null)
-     */
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
     }
     // *************************************************************************
     // private methods

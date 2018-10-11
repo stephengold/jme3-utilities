@@ -34,8 +34,6 @@ package com.jme3.bullet.debug;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -124,17 +122,5 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
 
         arrowA.setArrowExtent(joint.getPivotA());
         arrowB.setArrowExtent(joint.getPivotB());
-    }
-
-    /**
-     * Render this control. Invoked once per view port per frame, provided the
-     * control is enabled and added to a scene. Should be invoked only by a
-     * subclass or by AbstractControl.
-     *
-     * @param rm the render manager (not null)
-     * @param vp the view port to render (not null)
-     */
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
     }
 }

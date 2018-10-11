@@ -35,8 +35,6 @@ import com.jme3.bullet.objects.PhysicsVehicle;
 import com.jme3.bullet.objects.VehicleWheel;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -181,17 +179,5 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
         }
         applyPhysicsTransform(vehicle.getPhysicsLocation(location),
                 vehicle.getPhysicsRotation(rotation));
-    }
-
-    /**
-     * Render this control. Invoked once per view port per frame, provided the
-     * control is enabled and added to a scene. Should be invoked only by a
-     * subclass or by AbstractControl.
-     *
-     * @param rm the render manager (not null)
-     * @param vp the view port to render (not null)
-     */
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
     }
 }

@@ -35,6 +35,8 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.util.clone.Cloner;
@@ -43,7 +45,7 @@ import java.io.IOException;
 /**
  * The abstract base class for physics-debug controls (such as
  * BulletRigidBodyDebugControl) used to visualize individual collision objects
- * and joints. TODO implement controlRender() and setSpatial()
+ * and joints.
  *
  * @author normenhansen
  */
@@ -142,6 +144,7 @@ public abstract class AbstractPhysicsDebugControl extends AbstractControl {
      * loading from a J3O file.
      *
      * @param im importer (unused)
+     * @throws java.io.IOException never
      * @throws UnsupportedOperationException always
      */
     @Override
@@ -150,10 +153,23 @@ public abstract class AbstractPhysicsDebugControl extends AbstractControl {
     }
 
     /**
+     * Render this control. Invoked once per view port per frame, provided the
+     * control is enabled and added to a scene. Should be invoked only by a
+     * subclass or by AbstractControl.
+     *
+     * @param rm the render manager (not null)
+     * @param vp the view port to render (not null)
+     */
+    @Override
+    protected void controlRender(RenderManager rm, ViewPort vp) {
+    }
+
+    /**
      * Serialize this object, for example when saving to a J3O file.
      *
      * @param ex exporter (unused)
      * @throws IOException never
+     * @throws UnsupportedOperationException always
      */
     @Override
     public void write(JmeExporter ex) throws IOException {
