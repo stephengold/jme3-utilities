@@ -73,6 +73,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyMesh;
@@ -82,30 +84,25 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * <strong>This control is still a WIP, use it at your own risk</strong><br> To
- * use this control you need a model with an AnimControl and a
- * SkeletonControl.<br> This should be the case if you imported an animated
- * model from Ogre or blender.<br> Note enabling/disabling the control
- * add/removes it from the physics space<br>
+ * Before adding this control to a spatial, configure it using addBone() to
+ * specify which bones should be linked to rigid bodies. Leave some bones near
+ * the root of the skeleton to contribute to the torso.
  * <p>
- * This control creates collision shapes for each bones of the skeleton when you
- * invoke spatial.addControl(ragdollControl). <ul> <li>The shape is
- * HullCollision shape based on the vertices associated with each bone</li>
- * <li>If you don't want each bone to be a collision shape, you can specify what
- * bones to use by using the addBoneName method<br> By using this method, bone
- * that are not used to create a shape, are "merged" to their parent to create
- * the collision shape. </li>
- * </ul>
+ * When you add the control to a spatial, it creates a rigid body with a hull
+ * collision shape for the torso and each linked bone. It also creates a
+ * SixDofJoint connecting each bone to its parent in the linked-bone hierarchy.
+ * The mass of each rigid body and the range-of-motion of each joint can be
+ * reconfigured at any time.
  * <p>
- * There are 2 modes for this control: <ul> <li><strong>The kinematic modes
- * :</strong><br> this is the default behavior, this means that the collision
- * shapes of the body are able to interact with physics enabled objects. in this
- * mode physics shapes follow the motion of the animated skeleton (for example
- * animated by a key framed animation) this mode is enabled by calling
- * setKinematicMode(); </li> <li><strong>The ragdoll modes:</strong><br> To
- * enable this behavior, you need to invoke the setRagdollMode() method. In this
- * mode the character is entirely controlled by physics, so it will fall under
- * the gravity and move if any force is applied to it.</li>
+ * This control has 3 modes: <ul> <li><strong>The kinematic modes :</strong><br>
+ * this is the default behavior, this means that the collision shapes of the
+ * body are able to interact with physics enabled objects. in this mode physics
+ * shapes follow the motion of the animated skeleton (for example animated by a
+ * key framed animation) this mode is enabled by calling setKinematicMode();
+ * </li> <li><strong>The ragdoll modes:</strong><br> To enable this behavior,
+ * you need to invoke the setRagdollMode() method. In this mode the character is
+ * entirely controlled by physics, so it will fall under the gravity and move if
+ * any force is applied to it.</li>
  * </ul>
  *
  * TODO handle applyLocal
@@ -982,7 +979,7 @@ public class KinematicRagdollControl
                     "The controlled spatial must have a SkeletonControl. Make sure the control is there and not on a subnode.");
         }
         skeleton = skeletonControl.getSkeleton();
-        // TODO make sure bone names are unique, non-null, etc.
+        validate(skeleton);
         skeleton.resetAndUpdate();
         /*
          * Remove the SkeletonControl and re-add it to make sure it will get
@@ -1426,7 +1423,7 @@ public class KinematicRagdollControl
      * unaffected)
      * @return a new shape
      */
-    private CollisionShape createShape(Transform inverseTransform,
+    private static CollisionShape createShape(Transform inverseTransform,
             Vector3f offset, List<Vector3f> vertexLocations) {
         assert inverseTransform != null;
         assert vertexLocations != null;
@@ -1622,6 +1619,38 @@ public class KinematicRagdollControl
     }
 
     /**
+     * Validate a skeleton.
+     *
+     * @param skeleton the skeleton to validate (not null, unaffected)
+     */
+    private static void validate(Skeleton skeleton) {
+        int numBones = skeleton.getBoneCount();
+        if (numBones < 0) {
+            throw new IllegalArgumentException("Bone count is negative!");
+        }
+
+        Set<String> nameSet = new TreeSet<>();
+        for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
+            Bone bone = skeleton.getBone(boneIndex);
+            if (bone == null) {
+                throw new IllegalArgumentException("Bone is null!");
+            }
+            String boneName = bone.getName();
+            if (boneName == null) {
+                throw new IllegalArgumentException("Bone name is null!");
+            } else if (boneName.isEmpty()) {
+                throw new IllegalArgumentException("Bone name is empty!");
+            } else if (boneName.equals(torsoFakeBoneName)) {
+                throw new IllegalArgumentException("Bone has reserved name.");
+            } else if (nameSet.contains(boneName)) {
+                String msg = "Duplicate bone name: " + boneName;
+                throw new IllegalArgumentException(msg);
+            }
+            nameSet.add(boneName);
+        }
+    }
+
+    /**
      * Tabulate the total bone weight associated with each linked bone.
      *
      * @param biArray the array of bone indices (not null, unaffected)
@@ -1630,7 +1659,7 @@ public class KinematicRagdollControl
      * unaffected)
      * @return a new map from linked-bone names to total weight
      */
-    private Map<String, Float> weightMap(int[] biArray, float[] bwArray,
+    private static Map<String, Float> weightMap(int[] biArray, float[] bwArray,
             String[] lbNames) {
         assert biArray.length == 4;
         assert bwArray.length == 4;
