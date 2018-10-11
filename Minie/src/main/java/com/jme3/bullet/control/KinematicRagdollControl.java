@@ -84,15 +84,16 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * Before adding this control to a spatial, configure it using addBone() to
- * specify which bones should be linked to rigid bodies. Leave some bones near
- * the root of the skeleton to contribute to the torso.
+ * Before adding this control to a spatial, configure it by invoking
+ * {@link #link(java.lang.String, float, com.jme3.bullet.control.ragdoll.JointPreset)}
+ * for each bone that should have its own rigid body. Leave some unliked bones
+ * near the root of the skeleton to form the torso.
  * <p>
- * When you add the control to a spatial, it creates a rigid body with a hull
- * collision shape for the torso and each linked bone. It also creates a
- * SixDofJoint connecting each bone to its parent in the linked-bone hierarchy.
- * The mass of each rigid body and the range-of-motion of each joint can be
- * reconfigured at any time.
+ * When you add the control to a spatial, it generates a rigid body with a hull
+ * collision shape for the torso and for each linked bone. It also creates a
+ * SixDofJoint connecting each linked bone to its parent in the linked-bone
+ * hierarchy. The mass of each rigid body and the range-of-motion of each joint
+ * can be reconfigured on the fly.
  * <p>
  * This control has 3 modes: <ul> <li><strong>The kinematic modes :</strong><br>
  * this is the default behavior, this means that the collision shapes of the
@@ -237,49 +238,6 @@ public class KinematicRagdollControl
     // new methods exposed
 
     /**
-     * Link the named bone using a joint preset.
-     * <p>
-     * Allowed only when the control is NOT added to a spatial.
-     *
-     * @param boneName the name of the bone to link (not null, not empty)
-     * @param mass the desired mass of the bone (&gt;0)
-     * @param jointPreset the desired range of motion (not null)
-     * @see #setJointLimit(java.lang.String,
-     * com.jme3.bullet.control.ragdoll.JointPreset)
-     */
-    public void addBone(String boneName, float mass, JointPreset jointPreset) {
-        Validate.nonEmpty(boneName, "bone name");
-        Validate.positive(mass, "mass");
-        Validate.nonNull(jointPreset, "joint preset");
-        if (getSpatial() != null) {
-            throw new IllegalStateException(
-                    "Cannot add a bone while added to a spatial.");
-        }
-
-        massMap.put(boneName, mass);
-        jointMap.put(boneName, jointPreset);
-    }
-
-    /**
-     * Link the named bone using a joint with no range of motion.
-     * <p>
-     * Allowed only when the control is NOT added to a spatial.
-     *
-     * @param boneName the name of the bone to add (not null, not empty)
-     * @param boneMass the desired mass of the bone (&gt;0)
-     */
-    public void addBone(String boneName, float boneMass) {
-        Validate.nonEmpty(boneName, "name");
-        Validate.positive(boneMass, "mass");
-        if (getSpatial() != null) {
-            throw new IllegalStateException(
-                    "Cannot add a bone while added to a spatial.");
-        }
-
-        addBone(boneName, boneMass, new JointPreset());
-    }
-
-    /**
      * Add a collision listener to this control.
      *
      * @param listener (not null, alias created)
@@ -353,7 +311,6 @@ public class KinematicRagdollControl
      * @return the mass (&gt;0)
      */
     public float boneMass(String boneName) {
-        Validate.nonEmpty(boneName, "bone name");
         if (!isLinked(boneName)) {
             String msg = "No linked bone named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
@@ -372,8 +329,12 @@ public class KinematicRagdollControl
      * @return a new list of names
      */
     public List<String> childNames(String parentName) {
-        List<String> result = new ArrayList<>();
+        if (!isLinked(parentName)) {
+            String msg = "No linked bone named " + MyString.quote(parentName);
+            throw new IllegalArgumentException(msg);
+        }
 
+        List<String> result = new ArrayList<>();
         for (String childName : massMap.keySet()) {
             PhysicsBoneLink link = getBoneLink(childName);
             if (link.parentName().equals(parentName)) {
@@ -392,7 +353,10 @@ public class KinematicRagdollControl
      * @return count (&ge;0)
      */
     public int countChildren(String parentName) {
-        Validate.nonEmpty(parentName, "parent name");
+        if (!isLinked(parentName)) {
+            String msg = "No linked bone named " + MyString.quote(parentName);
+            throw new IllegalArgumentException(msg);
+        }
 
         int result = 0;
         for (String childName : massMap.keySet()) {
@@ -428,8 +392,8 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Access the physics link for the named bone. This returns null when the
-     * control is not added to a spatial.
+     * Access the physics link for the named bone. This returns null if bone is
+     * not linked, or if the control is not added to a spatial.
      *
      * @param boneName the name of the bone (not null, not empty)
      * @return the pre-existing instance, or null if not found
@@ -477,7 +441,6 @@ public class KinematicRagdollControl
      * @return the pre-existing instance (not null)
      */
     public JointPreset getJointLimits(String boneName) {
-        Validate.nonEmpty(boneName, "bone name");
         if (!isLinked(boneName)) {
             String msg = "No linked bone named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
@@ -533,6 +496,30 @@ public class KinematicRagdollControl
     }
 
     /**
+     * Link the named bone using a joint preset.
+     * <p>
+     * Allowed only when the control is NOT added to a spatial.
+     *
+     * @param boneName the name of the bone to link (not null, not empty)
+     * @param mass the desired mass of the bone (&gt;0)
+     * @param jointPreset the desired range of motion (not null)
+     * @see #setJointLimits(java.lang.String,
+     * com.jme3.bullet.control.ragdoll.JointPreset)
+     */
+    public void link(String boneName, float mass, JointPreset jointPreset) {
+        Validate.nonEmpty(boneName, "bone name");
+        Validate.positive(mass, "mass");
+        Validate.nonNull(jointPreset, "joint preset");
+        if (getSpatial() != null) {
+            throw new IllegalStateException(
+                    "Cannot link a bone while added to a spatial.");
+        }
+
+        massMap.put(boneName, mass);
+        jointMap.put(boneName, jointPreset);
+    }
+
+    /**
      * Enumerate all linked bones in this control.
      *
      * @return an unmodifiable collection of names
@@ -551,7 +538,10 @@ public class KinematicRagdollControl
      * @return the bone name or torsoFakeBoneName
      */
     public String parentName(String childName) {
-        Validate.nonEmpty(childName, "child name");
+        if (!isLinked(childName)) {
+            String msg = "No linked bone named " + MyString.quote(childName);
+            throw new IllegalArgumentException(msg);
+        }
 
         String result = torsoFakeBoneName;
         Bone child = getBone(childName);
@@ -610,6 +600,7 @@ public class KinematicRagdollControl
     /**
      * Alter the mass of the named linked bone.
      *
+     * @param boneName (not null, not empty)
      * @param mass the desired mass (&gt;0)
      */
     public void setBoneMass(String boneName, float mass) {
@@ -771,7 +762,6 @@ public class KinematicRagdollControl
      * @param preset the desired range of motion (not null)
      */
     public void setJointLimits(String boneName, JointPreset preset) {
-        Validate.nonEmpty(boneName, "bone name");
         Validate.nonNull(preset, "preset");
         if (!isLinked(boneName)) {
             String msg = "No linked bone named " + MyString.quote(boneName);
@@ -846,6 +836,27 @@ public class KinematicRagdollControl
 
         assert totalMass > 0f : totalMass;
         return totalMass;
+    }
+
+    /**
+     * Unlink the named bone.
+     * <p>
+     * Allowed only when the control is NOT added to a spatial.
+     *
+     * @param boneName the name of the bone to unlink (not null, not empty)
+     */
+    public void unlink(String boneName) {
+        if (!isLinked(boneName)) {
+            String msg = "No linked bone named " + MyString.quote(boneName);
+            throw new IllegalArgumentException(msg);
+        }
+        if (getSpatial() != null) {
+            throw new IllegalStateException(
+                    "Cannot unlink a bone while added to a spatial.");
+        }
+
+        massMap.remove(boneName);
+        jointMap.remove(boneName);
     }
     // *************************************************************************
     // new protected methods
