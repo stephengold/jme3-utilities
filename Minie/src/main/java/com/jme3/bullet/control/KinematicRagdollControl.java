@@ -125,8 +125,8 @@ public class KinematicRagdollControl
     // fields
 
     /**
-     * duration of the torso's current transition to kinematic mode (in seconds,
-     * &ge;0)
+     * duration of the torso's most recent transition to kinematic mode (in
+     * seconds, &ge;0)
      */
     private float torsoBlendInterval = 1f;
     /**
@@ -183,15 +183,16 @@ public class KinematicRagdollControl
      */
     private SkeletonControl skeletonControl = null;
     /**
-     * spatial with the mesh-coordinate transform
+     * spatial that provides the mesh-coordinate transform
      */
     private Spatial transformer = null;
     /**
-     * transform mesh coordinates to model coordinates
+     * transform from mesh coordinates to model coordinates
      */
     private Transform meshToModel = null;
     /**
-     * gravitational acceleration for dynamic rigid bodies
+     * gravitational acceleration for Ragdoll mode (default is 9.8 in the -Y
+     * direction, corresponding to Earth-normal in MKS units)
      */
     private Vector3f gravityVector = new Vector3f(0f, -9.8f, 0f);
     // *************************************************************************
@@ -216,19 +217,21 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Begin transitioning all bones to fully kinematic mode. TODO specify
-     * ending spatial transform
+     * Begin transitioning to torso and all linked bones to fully kinematic
+     * mode. In that mode, collision objects follow the movements of the
+     * skeleton while interacting with the physics environment. TODO callback at
+     * end of transition
      * <p>
      * Allowed only when the control IS added to a spatial.
      *
-     * @param blendInterval the duration of the blend interval (in seconds,
-     * &ge;0)
+     * @param blendInterval the duration of the blend interval for linked bones
+     * (in seconds, &ge;0)
      */
     public void blendToKinematicMode(float blendInterval) {
         Validate.nonNegative(blendInterval, "blend interval");
         if (getSpatial() == null) {
             throw new IllegalStateException(
-                    "Cannot set mode unless added to a spatial.");
+                    "Cannot change modes unless added to a spatial.");
         }
 
         AnimControl animControl = getSpatial().getControl(AnimControl.class);
@@ -318,7 +321,7 @@ public class KinematicRagdollControl
     public Bone getBone(String boneName) {
         if (getSpatial() == null) {
             throw new IllegalStateException(
-                    "Cannot access bone unless added to a spatial.");
+                    "Cannot access bones unless added to a spatial.");
         }
 
         Bone result = skeleton.getBone(boneName);
@@ -370,7 +373,7 @@ public class KinematicRagdollControl
      * Access the rigid body of the named linked bone or the torso.
      *
      * @param boneName the name of the linked bone or the torso (not null)
-     * @return the pre-existing instance, or if not added to a spatial
+     * @return the pre-existing instance, or null if not added to a spatial
      */
     public PhysicsRigidBody getRigidBody(String boneName) {
         PhysicsRigidBody result;
@@ -589,10 +592,10 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Alter this control's gravitational acceleration.
+     * Alter this control's gravitational acceleration for Ragdoll mode.
      *
      * @param gravity the desired acceleration vector (in physics-space
-     * coordinates, not null, unaffected)
+     * coordinates, not null, unaffected, default=0,-9.8,0)
      */
     public void setGravity(Vector3f gravity) {
         Validate.nonNull(gravity, "gravity");
@@ -641,13 +644,18 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Put all bones into fully kinematic mode. In this mode, collision objects
-     * follow the movements of the skeleton while interacting with the physics
-     * environment. TODO specify spatial transform
+     * Immediately put the torso and all linked bones into fully kinematic mode.
+     * In this mode, collision objects follow the movements of the skeleton
+     * while interacting with the physics environment.
      * <p>
      * Allowed only when the control IS added to a spatial.
      */
     public void setKinematicMode() {
+        if (getSpatial() == null) {
+            throw new IllegalStateException(
+                    "Cannot change modes unless added to a spatial.");
+        }
+
         blendToKinematicMode(0f);
     }
 
@@ -676,15 +684,15 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Put all bones into fully dynamic ragdoll mode. In this mode, the skeleton
-     * is entirely controlled by physics, including gravity.
+     * Put all bones into fully dynamic ragdoll mode. The skeleton is entirely
+     * controlled by physics, including gravity.
      * <p>
      * Allowed only when the control IS added to a spatial.
      */
     public void setRagdollMode() {
         if (getSpatial() == null) {
             throw new IllegalStateException(
-                    "Cannot set mode unless added to a spatial.");
+                    "Cannot change modes unless added to a spatial.");
         }
 
         torsoKinematicWeight = 0f;
@@ -698,7 +706,7 @@ public class KinematicRagdollControl
 
     /**
      * Alter a user-mode flag of a skeleton bone. Unlinked child bones are also
-     * altered. Note: recursive!
+     * altered. Intended for internal use. Note: recursive!
      *
      * @param bone the skeleton bone to alter (not null)
      * @param setting the desired flag setting (true&rarr;bone link control,
@@ -906,7 +914,7 @@ public class KinematicRagdollControl
          */
         for (String boneName : massMap.keySet()) {
             List<Vector3f> vertexLocations = coordsMap.get(boneName);
-            createLink(boneName, tempLbNames, vertexLocations);
+            createLink(boneName, vertexLocations);
         }
         /*
          * Add joints to connect each linked bone with its parent.
@@ -1198,7 +1206,8 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Create a PhysicsBoneLink for the named bone.
+     * Create a PhysicsBoneLink for the named bone. TODO move some of this code
+     * to PhysicsBoneLink
      *
      * @param name the name of the bone to be linked (not null)
      * @param lbNames map from bone indices to linked-bone names (not null,
@@ -1207,7 +1216,7 @@ public class KinematicRagdollControl
      * unaffected)
      * @return a new bone link without a joint, added to the boneLinks map
      */
-    private PhysicsBoneLink createLink(String name, String[] lbNames,
+    private PhysicsBoneLink createLink(String name,
             List<Vector3f> vertexLocations) {
         Bone bone = getBone(name);
         /*
@@ -1426,8 +1435,6 @@ public class KinematicRagdollControl
             String boneName = bone.getName();
             if (boneName == null) {
                 throw new IllegalArgumentException("Bone name is null!");
-            } else if (boneName.isEmpty()) {
-                throw new IllegalArgumentException("Bone name is empty!");
             } else if (boneName.equals(torsoFakeBoneName)) {
                 throw new IllegalArgumentException("Bone has reserved name.");
             } else if (nameSet.contains(boneName)) {
