@@ -102,10 +102,6 @@ public class PhysicsBoneLink
      */
     private SixDofJoint joint = null;
     /**
-     * spatial for converting between mesh/world coordinates (not null)
-     */
-    private Spatial transformSpatial;
-    /**
      * name of parent in the hierarchy of linked bones, or torsoBoneName if
      * parented by the torso
      */
@@ -127,23 +123,19 @@ public class PhysicsBoneLink
      * and rigid body.
      *
      * @param krc the control that will manage this link (not null)
-     * @param transformer the spatial to translate between mesh coordinates and
-     * world coordinates (not null) TODO don't store in PBL
      * @param bone the skeleton bone to link (not null)
      * @param rigidBody the rigid body to link (not null)
      * @param parentName the name of the bone's parent in the linked-bone
      * hierarchy (not null)
      */
-    public PhysicsBoneLink(KinematicRagdollControl krc, Spatial transformer,
-            Bone bone, PhysicsRigidBody rigidBody, String parentName) {
+    public PhysicsBoneLink(KinematicRagdollControl krc, Bone bone,
+            PhysicsRigidBody rigidBody, String parentName) {
         Validate.nonNull(krc, "control");
-        Validate.nonNull(transformer, "transformer");
         Validate.nonNull(bone, "bone");
         Validate.nonNull(rigidBody, "rigid body");
         Validate.nonNull(parentName, "parent name");
 
         this.krc = krc;
-        transformSpatial = transformer;
         this.bone = bone;
         this.rigidBody = rigidBody;
         this.parentName = parentName;
@@ -232,6 +224,8 @@ public class PhysicsBoneLink
         Vector3f scale = startTransform.getScale();
 
         RigidBodyMotionState state = rigidBody.getMotionState();
+        Spatial transformSpatial = krc.getTransformer();
+
         Vector3f worldLoc = state.getWorldLocation();
         transformSpatial.worldToLocal(worldLoc, location);
 
@@ -286,7 +280,6 @@ public class PhysicsBoneLink
         rigidBody = cloner.clone(rigidBody);
         bindOrientation = cloner.clone(bindOrientation);
         joint = cloner.clone(joint);
-        transformSpatial = cloner.clone(transformSpatial);
         startTransform = cloner.clone(startTransform);
         bindScale = cloner.clone(bindScale);
     }
@@ -320,7 +313,6 @@ public class PhysicsBoneLink
         // TODO krc
         rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
         bone = (Bone) ic.readSavable("bone", null);
-        transformSpatial = (Spatial) ic.readSavable("transformSpatial", null);
         joint = (SixDofJoint) ic.readSavable("joint", null);
         parentName = ic.readString("parentName", null);
 
@@ -351,7 +343,6 @@ public class PhysicsBoneLink
         // TODO krc
         oc.write(rigidBody, "rigidBody", null);
         oc.write(bone, "bone", null);
-        oc.write(transformSpatial, "transformSpatial", null);
         oc.write(joint, "joint", null);
         oc.write(parentName, "parentName", null);
 
@@ -376,6 +367,7 @@ public class PhysicsBoneLink
         Quaternion orientation = transform.getRotation();
         Vector3f scale = transform.getScale();
 
+        Spatial transformSpatial = krc.getTransformer();
         Transform meshToWorld = transformSpatial.getWorldTransform();
         Transform worldToMesh = meshToWorld.invert();
         RigidBodyMotionState state = rigidBody.getMotionState();
@@ -411,6 +403,7 @@ public class PhysicsBoneLink
         Quaternion orientation = transform.getRotation();
         Vector3f scale = transform.getScale();
 
+        Spatial transformSpatial = krc.getTransformer();
         Transform meshToWorld = transformSpatial.getWorldTransform();
         Vector3f msp = bone.getModelSpacePosition();
         Quaternion msr = bone.getModelSpaceRotation();

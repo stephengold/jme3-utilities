@@ -333,7 +333,7 @@ public class KinematicRagdollControl
      * not linked, or if the control is not added to a spatial.
      *
      * @param boneName the name of the bone (not null, not empty)
-     * @return the pre-existing instance, or null if not found
+     * @return the pre-existing spatial or null
      */
     public PhysicsBoneLink getBoneLink(String boneName) {
         Validate.nonEmpty(boneName, "bone name");
@@ -389,6 +389,17 @@ public class KinematicRagdollControl
         }
 
         return result;
+    }
+
+    /**
+     *
+     * Access the spatial that provides the mesh-coordinate transform. This
+     * returns null if the control is not added to a spatial.
+     *
+     * @return the pre-existing spatial or null
+     */
+    public Spatial getTransformer() {
+        return transformer;
     }
 
     /**
@@ -1237,8 +1248,7 @@ public class KinematicRagdollControl
         prb.setKinematic(true);
 
         String parentName = parentName(name);
-        PhysicsBoneLink link
-                = new PhysicsBoneLink(this, transformer, bone, prb, parentName);
+        PhysicsBoneLink link = new PhysicsBoneLink(this, bone, prb, parentName);
         prb.setUserObject(link);
         boneLinks.put(name, link);
 
