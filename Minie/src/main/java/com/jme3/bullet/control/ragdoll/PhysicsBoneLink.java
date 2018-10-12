@@ -94,11 +94,6 @@ public class PhysicsBoneLink
      */
     private PhysicsRigidBody rigidBody;
     /**
-     * orientation of the bone (in mesh coordinates) at the start of the most
-     * recent transition to kinematic mode
-     */
-    private Quaternion blendOrientation = new Quaternion();
-    /**
      * orientation of the bone (in mesh coordinates) when this link was created
      */
     private Quaternion originalOrientation = new Quaternion();
@@ -117,15 +112,10 @@ public class PhysicsBoneLink
      */
     private String parentName;
     /**
-     * location of the bone (in mesh coordinates) at the start of the most
-     * recent transition to kinematic mode
-     */
-    private Vector3f blendLocation = new Vector3f();
-    /**
-     * scale of the bone (in mesh coordinates) at the start of the most recent
+     * bone transform (in mesh coordinates) at the start of the most recent
      * transition to kinematic mode
      */
-    private Vector3f blendScale = new Vector3f();
+    private Transform startTransform = null;
     /**
      * scale of the bone (in mesh coordinates) when this link was created
      */
@@ -169,25 +159,6 @@ public class PhysicsBoneLink
     // new methods exposed
 
     /**
-     * Copy the bone's location and orientation (in mesh coordinates) from the
-     * start of the most recent transition to kinematic mode.
-     *
-     * @param storeLocation storage for the orientation (modified if not null)
-     * @param storeOrientation storage for the orientation (modified if not
-     * null)
-     */
-    public void copyBlendStart(Vector3f storeLocation,
-            Quaternion storeOrientation) {
-        if (storeLocation != null) {
-            storeLocation.set(blendLocation);
-        }
-        if (storeOrientation != null) {
-            storeOrientation.set(blendOrientation);
-        }
-        // TODO blendScale
-    }
-
-    /**
      * Access the linked bone.
      *
      * @return the pre-existing instance (not null)
@@ -212,36 +183,6 @@ public class PhysicsBoneLink
      */
     public PhysicsRigidBody getRigidBody() {
         return rigidBody;
-    }
-
-    /**
-     * Copy the orientation of the bone (in mesh coordinates) that was captured
-     * when this link was created. TODO is this bind orientation?
-     *
-     * @param storeResult (modified if not null)
-     * @return the orientation (either storeResult or a new instance)
-     */
-    public Quaternion originalOrientation(Quaternion storeResult) {
-        if (storeResult == null) {
-            return originalOrientation.clone();
-        } else {
-            return storeResult.set(originalOrientation);
-        }
-    }
-
-    /**
-     * Copy the scale of the bone (in mesh coordinates) that was captured when
-     * this link was created. TODO is this bind scale?
-     *
-     * @param storeResult (modified if not null)
-     * @return the orientation (either storeResult or a new instance)
-     */
-    public Vector3f originalScale(Vector3f storeResult) {
-        if (storeResult == null) {
-            return originalScale.clone();
-        } else {
-            return storeResult.set(originalScale);
-        }
     }
 
     /**
@@ -302,10 +243,7 @@ public class PhysicsBoneLink
             Vector3f factors = transformSpatial.getWorldScale();
             scale.divideLocal(factors);
         }
-
-        blendLocation.set(loc);
-        blendOrientation.set(ori);
-        blendScale.set(scale);
+        startTransform = new Transform(loc, ori, scale);
 
         this.blendInterval = blendInterval;
         kinematicWeight = Float.MIN_VALUE; // not zero!
@@ -342,13 +280,12 @@ public class PhysicsBoneLink
     @Override
     public void cloneFields(Cloner cloner, Object original) {
         bone = cloner.clone(bone);
+        krc = cloner.clone(krc);
         rigidBody = cloner.clone(rigidBody);
-        blendOrientation = cloner.clone(blendOrientation);
         originalOrientation = cloner.clone(originalOrientation);
         joint = cloner.clone(joint);
         transformSpatial = cloner.clone(transformSpatial);
-        blendLocation = cloner.clone(blendLocation);
-        blendScale = cloner.clone(blendScale);
+        startTransform = cloner.clone(startTransform);
         originalScale = cloner.clone(originalScale);
     }
 
@@ -378,6 +315,7 @@ public class PhysicsBoneLink
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule ic = im.getCapsule(this);
+        // TODO krc
         rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
         bone = (Bone) ic.readSavable("bone", null);
         transformSpatial = (Spatial) ic.readSavable("transformSpatial", null);
@@ -391,13 +329,9 @@ public class PhysicsBoneLink
                 new Vector3f());
         originalScale.set(readVec);
 
-        readQuat = (Quaternion) ic.readSavable(
-                "startBlendingRot", new Quaternion());
-        blendOrientation.set(readQuat);
-        readVec = (Vector3f) ic.readSavable("startBlendingPos", new Vector3f());
-        blendLocation.set(readVec);
-        readVec = (Vector3f) ic.readSavable("startBlendingScale", new Vector3f());
-        blendScale.set(readVec);
+        Transform read
+                = (Transform) ic.readSavable("startTransform", new Transform());
+        startTransform.set(read);
 
         blendInterval = ic.readFloat("blendInterval", 1f);
         kinematicWeight = ic.readFloat("kinematicWeight", 1f);
@@ -412,6 +346,7 @@ public class PhysicsBoneLink
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule oc = ex.getCapsule(this);
+        // TODO krc
         oc.write(rigidBody, "rigidBody", null);
         oc.write(bone, "bone", null);
         oc.write(transformSpatial, "transformSpatial", null);
@@ -421,9 +356,7 @@ public class PhysicsBoneLink
         oc.write(originalOrientation, "initalWorldRotation", null);
         oc.write(originalScale, "originalScale", null);
 
-        oc.write(blendOrientation, "startBlendingRot", new Quaternion());
-        oc.write(blendLocation, "startBlendingPos", new Vector3f());
-        oc.write(blendScale, "startBlendingScale", new Vector3f());
+        oc.write(startTransform, "startTransform", new Transform());
 
         oc.write(blendInterval, "blendInterval", 1f);
         oc.write(kinematicWeight, "kinematicWeight", 1f);
@@ -521,14 +454,18 @@ public class PhysicsBoneLink
             Quaternion orientation = transform.getRotation();
             Vector3f scale = transform.getScale();
 
+            Vector3f startLocation = startTransform.getTranslation();
+            Quaternion startOrientation = startTransform.getRotation();
+            Vector3f startScale = startTransform.getScale();
+
             Vector3f msp = bone.getModelSpacePosition();
             Quaternion msr = bone.getModelSpaceRotation();
             Vector3f mss = bone.getModelSpaceScale();
 
-            MyVector3f.lerp(kinematicWeight, blendLocation, msp, location);
-            MyQuaternion.slerp(kinematicWeight, blendOrientation, msr,
+            MyVector3f.lerp(kinematicWeight, startLocation, msp, location);
+            MyQuaternion.slerp(kinematicWeight, startOrientation, msr,
                     orientation);
-            MyVector3f.lerp(kinematicWeight, blendScale, mss, scale);
+            MyVector3f.lerp(kinematicWeight, startScale, mss, scale);
 
             setTransform(bone, transform);
         }
