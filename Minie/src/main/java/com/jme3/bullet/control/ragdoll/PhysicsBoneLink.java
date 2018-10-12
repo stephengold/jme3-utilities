@@ -49,7 +49,6 @@ import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Logger;
-import jme3utilities.MySpatial;
 import jme3utilities.Validate;
 
 /**
@@ -218,29 +217,8 @@ public class PhysicsBoneLink
     public void startBlendToKinematic(float blendInterval) {
         Validate.nonNegative(blendInterval, "blend interval");
 
-        startTransform = new Transform();
-        Vector3f location = startTransform.getTranslation();
-        Quaternion orientation = startTransform.getRotation();
-        Vector3f scale = startTransform.getScale();
-
-        RigidBodyMotionState state = rigidBody.getMotionState();
-        Spatial transformSpatial = krc.getTransformer();
-
-        Vector3f worldLoc = state.getWorldLocation();
-        transformSpatial.worldToLocal(worldLoc, location);
-
-        Quaternion worldOri = state.getWorldRotationQuat();
-        orientation.set(worldOri);
-        orientation.multLocal(bindOrientation);
-        Quaternion spatInvRot
-                = MySpatial.inverseOrientation(transformSpatial);
-        spatInvRot.mult(orientation, orientation);
-
-        rigidBody.getPhysicsScale(scale);
-        Vector3f meshToWorldScale = transformSpatial.getWorldScale();
-        scale.divideLocal(meshToWorldScale);
-        scale.divideLocal(bindScale);
-
+        startTransform = krc.localBoneTransform(rigidBody, bindOrientation,
+                bindScale, startTransform);
         this.blendInterval = blendInterval;
         kinematicWeight = Float.MIN_VALUE; // not zero!
         rigidBody.setKinematic(true);

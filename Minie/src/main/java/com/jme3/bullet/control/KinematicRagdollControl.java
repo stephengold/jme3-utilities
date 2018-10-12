@@ -464,6 +464,49 @@ public class KinematicRagdollControl
     }
 
     /**
+     * Determine the local bone transform to match the physics transform of the
+     * specified rigid body.
+     *
+     * @param rigidBody the rigid body to match (not null, unaffected)
+     * @param bindOrientation the bone's bind orientation (in model coordinates,
+     * not null, unaffected)
+     * @param bindScale the bone's bind scale (in model coordinates, not null,
+     * unaffected)
+     * @param storeResult storage for the result (modified if not null)
+     * @return the required local bone transform (either storeResult or a new
+     * transform, not null)
+     */
+    public Transform localBoneTransform(PhysicsRigidBody rigidBody,
+            Quaternion bindOrientation, Vector3f bindScale,
+            Transform storeResult) {
+        Transform result
+                = (storeResult == null) ? new Transform() : storeResult;
+        Vector3f location = result.getTranslation();
+        Quaternion orientation = result.getRotation();
+        Vector3f scale = result.getScale();
+
+        RigidBodyMotionState state = rigidBody.getMotionState();
+        Spatial transformSpatial = getTransformer();
+
+        Vector3f worldLoc = state.getWorldLocation();
+        transformSpatial.worldToLocal(worldLoc, location);
+
+        Quaternion worldOri = state.getWorldRotationQuat();
+        orientation.set(worldOri);
+        orientation.multLocal(bindOrientation);
+        Quaternion spatInvRot
+                = MySpatial.inverseOrientation(transformSpatial);
+        spatInvRot.mult(orientation, orientation);
+
+        rigidBody.getPhysicsScale(scale);
+        Vector3f meshToWorldScale = transformSpatial.getWorldScale();
+        scale.divideLocal(meshToWorldScale);
+        scale.divideLocal(bindScale);
+
+        return result;
+    }
+
+    /**
      * Read the mass of the named linked bone or the torso.
      *
      * @param boneName the name of the linked bone or the torso (not null)
@@ -717,7 +760,7 @@ public class KinematicRagdollControl
 
     /**
      * Alter a user-mode flag of a skeleton bone. Unlinked child bones are also
-     * altered. Intended for internal use. Note: recursive!
+     * altered. Note: recursive!
      *
      * @param bone the skeleton bone to alter (not null)
      * @param setting the desired flag setting (true&rarr;bone link control,
