@@ -134,12 +134,13 @@ public class PhysicsBoneLink
     // constructors
 
     /**
-     * Instantiate a link between the specified bone and rigid body.
+     * Instantiate a purely kinematic link between the specified skelton bone
+     * and rigid body.
      *
      * @param krc the control that will manage this link (not null)
      * @param transformer the spatial to translate between mesh coordinates and
      * world coordinates (not null)
-     * @param bone the bone to link (not null)
+     * @param bone the skeleton bone to link (not null)
      * @param rigidBody the rigid body to link (not null)
      * @param parentName the name of the bone's parent in the linked-bone
      * hierarchy (not null)
@@ -188,9 +189,9 @@ public class PhysicsBoneLink
 
     /**
      * Update the skeleton bone in Dynamic mode, based on the transforms of the
-     * rigid body.
+     * rigid body. TODO re-order methods
      */
-    public void dynamicUpdate() {
+    private void dynamicUpdate() {
         Transform transform = new Transform();
         Vector3f location = transform.getTranslation();
         Quaternion orientation = transform.getRotation();
@@ -249,10 +250,10 @@ public class PhysicsBoneLink
     }
 
     /**
-     * Update the rigid body in Kinematic mode, based on the transforms of the
-     * transformSpatial and the skeleton, without blending.
+     * Update the rigid body in pure Kinematic mode, based on the transforms of
+     * the transformSpatial and the skeleton, without blending.
      */
-    public void kinematicUpdate() {
+    private void kinematicUpdate() {
         Transform transform = new Transform();
         Vector3f location = transform.getTranslation();
         Quaternion orientation = transform.getRotation();
@@ -289,7 +290,7 @@ public class PhysicsBoneLink
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
-    public void kinematicUpdate(float tpf) {
+    private void kinematicUpdate(float tpf) {
         Validate.nonNegative(tpf, "time per frame");
 
         if (kinematicWeight < 1f) {
@@ -321,7 +322,9 @@ public class PhysicsBoneLink
         /*
          * If blending, increase the kinematic weight.
          */
-        if (kinematicWeight < 1f) {
+        if (blendInterval == 0f) {
+            kinematicWeight = 1f;
+        } else {
             kinematicWeight += tpf / blendInterval;
             if (kinematicWeight > 1f) {
                 kinematicWeight = 1f; // done blending
@@ -370,6 +373,18 @@ public class PhysicsBoneLink
     }
 
     /**
+     * Put this link into dynamic mode.
+     *
+     * @param uniformAcceleration the uniform acceleration vector (in
+     * physics-space coordinates, not null, unaffected)
+     */
+    public void setDynamic(Vector3f uniformAcceleration) {
+        kinematicWeight = 0f;
+        rigidBody.setGravity(uniformAcceleration);
+        rigidBody.setKinematic(false);
+    }
+
+    /**
      * Assign a physics joint to this bone link.
      *
      * @param joint (not null)
@@ -380,7 +395,7 @@ public class PhysicsBoneLink
     }
 
     /**
-     * Begin transitioning this bone to fully kinematic mode.
+     * Begin transitioning this link to fully kinematic mode.
      *
      * @param blendInterval the duration of the blend interval (in seconds,
      * &ge;0)
@@ -411,8 +426,9 @@ public class PhysicsBoneLink
         blendScale.set(scale);
 
         this.blendInterval = blendInterval;
-        kinematicWeight = Float.MIN_VALUE;
+        kinematicWeight = Float.MIN_VALUE; // not zero!
         rigidBody.setKinematic(true);
+        krc.setUserMode(bone, false);
     }
 
     /**
@@ -534,8 +550,8 @@ public class PhysicsBoneLink
     // private methods
 
     /**
-     * Alter a the transform of a skeleton bone. Child bones not in the bone set
-     * are also updated. Note: recursive!
+     * Alter the transform of a skeleton bone. Unlinked child bones are also
+     * altered. Note: recursive!
      *
      * @param bone the skeleton bone to alter (not null)
      * @param localTransform the desired bone transform (in local coordinates,
@@ -558,7 +574,8 @@ public class PhysicsBoneLink
         // TODO scale?
 
         for (Bone childBone : bone.getChildren()) {
-            if (!krc.isLinked(childBone.getName())) {
+            String childName = childBone.getName();
+            if (!krc.isLinked(childName)) {
                 Transform childLocalTransform
                         = childBone.getCombinedTransform(location, orientation);
                 childLocalTransform.setScale(scale);
