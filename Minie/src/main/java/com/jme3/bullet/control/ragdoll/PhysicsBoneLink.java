@@ -54,6 +54,7 @@ import jme3utilities.Validate;
 
 /**
  * Link an animated bone in a skeleton to a jointed rigid body in a ragdoll.
+ * TODO rename BoneLink
  *
  * @author Normen Hansen and Rémy Bouquet (Nehon)
  */
@@ -94,7 +95,7 @@ public class PhysicsBoneLink
     /**
      * orientation of the bone (in mesh coordinates) when this link was created
      */
-    private Quaternion originalOrientation = new Quaternion();
+    private Quaternion bindOrientation = new Quaternion();
     /**
      * joint between the rigid body and the parent's rigid body, or null if not
      * yet created
@@ -117,17 +118,17 @@ public class PhysicsBoneLink
     /**
      * scale of the bone (in mesh coordinates) when this link was created
      */
-    private Vector3f originalScale = new Vector3f(1f, 1f, 1f);
+    private Vector3f bindScale = new Vector3f(1f, 1f, 1f);
     // *************************************************************************
     // constructors
 
     /**
-     * Instantiate a purely kinematic link between the specified skelton bone
+     * Instantiate a purely kinematic link between the specified skeleton bone
      * and rigid body.
      *
      * @param krc the control that will manage this link (not null)
      * @param transformer the spatial to translate between mesh coordinates and
-     * world coordinates (not null)
+     * world coordinates (not null) TODO don't store in PBL
      * @param bone the skeleton bone to link (not null)
      * @param rigidBody the rigid body to link (not null)
      * @param parentName the name of the bone's parent in the linked-bone
@@ -148,10 +149,10 @@ public class PhysicsBoneLink
         this.parentName = parentName;
 
         Quaternion msr = bone.getModelSpaceRotation();
-        originalOrientation.set(msr);
+        bindOrientation.set(msr);
 
         Vector3f mss = bone.getModelSpaceScale();
-        originalScale.set(mss);
+        bindScale.set(mss);
     }
     // *************************************************************************
     // new methods exposed
@@ -216,7 +217,8 @@ public class PhysicsBoneLink
     }
 
     /**
-     * Begin transitioning this link to fully kinematic mode.
+     * Begin transitioning this link to fully kinematic mode. TODO rename
+     * blendToKinematicMode
      *
      * @param blendInterval the duration of the blend interval (in seconds,
      * &ge;0)
@@ -224,24 +226,26 @@ public class PhysicsBoneLink
     public void startBlendToKinematic(float blendInterval) {
         Validate.nonNegative(blendInterval, "blend interval");
 
+        startTransform = new Transform();
+        Vector3f location = startTransform.getTranslation();
+        Quaternion orientation = startTransform.getRotation();
+        Vector3f scale = startTransform.getScale();
+
         RigidBodyMotionState state = rigidBody.getMotionState();
         Vector3f worldLoc = state.getWorldLocation();
+        transformSpatial.worldToLocal(worldLoc, location);
+
         Quaternion worldOri = state.getWorldRotationQuat();
-        Vector3f scale = rigidBody.getPhysicsScale(null);
+        orientation.set(worldOri);
+        orientation.multLocal(bindOrientation);
+        Quaternion spatInvRot
+                = MySpatial.inverseOrientation(transformSpatial);
+        spatInvRot.mult(orientation, orientation);
 
-        Vector3f loc = worldLoc.clone();
-        Quaternion ori = worldOri.mult(originalOrientation);
-        scale.multLocal(originalScale);
-
-        if (!MySpatial.isIgnoringTransforms(transformSpatial)) {
-            transformSpatial.worldToLocal(worldLoc, loc);
-            Quaternion spatInvRot
-                    = MySpatial.inverseOrientation(transformSpatial);
-            spatInvRot.mult(ori, ori);
-            Vector3f factors = transformSpatial.getWorldScale();
-            scale.divideLocal(factors);
-        }
-        startTransform = new Transform(loc, ori, scale);
+        rigidBody.getPhysicsScale(scale);
+        Vector3f meshToWorldScale = transformSpatial.getWorldScale();
+        scale.divideLocal(meshToWorldScale);
+        scale.divideLocal(bindScale);
 
         this.blendInterval = blendInterval;
         kinematicWeight = Float.MIN_VALUE; // not zero!
@@ -280,11 +284,11 @@ public class PhysicsBoneLink
         bone = cloner.clone(bone);
         krc = cloner.clone(krc);
         rigidBody = cloner.clone(rigidBody);
-        originalOrientation = cloner.clone(originalOrientation);
+        bindOrientation = cloner.clone(bindOrientation);
         joint = cloner.clone(joint);
         transformSpatial = cloner.clone(transformSpatial);
         startTransform = cloner.clone(startTransform);
-        originalScale = cloner.clone(originalScale);
+        bindScale = cloner.clone(bindScale);
     }
 
     /**
@@ -322,10 +326,10 @@ public class PhysicsBoneLink
 
         Quaternion readQuat = (Quaternion) ic.readSavable("initalWorldRotation",
                 new Quaternion());
-        originalOrientation.set(readQuat);
+        bindOrientation.set(readQuat);
         Vector3f readVec = (Vector3f) ic.readSavable("originalScale",
                 new Vector3f());
-        originalScale.set(readVec);
+        bindScale.set(readVec);
 
         Transform read
                 = (Transform) ic.readSavable("startTransform", new Transform());
@@ -351,8 +355,8 @@ public class PhysicsBoneLink
         oc.write(joint, "joint", null);
         oc.write(parentName, "parentName", null);
 
-        oc.write(originalOrientation, "initalWorldRotation", null);
-        oc.write(originalScale, "originalScale", null);
+        oc.write(bindOrientation, "initalWorldRotation", null);
+        oc.write(bindScale, "originalScale", null);
 
         oc.write(startTransform, "startTransform", new Transform());
 
@@ -383,14 +387,14 @@ public class PhysicsBoneLink
         // Compute the bone's orientation in local coordinates.
         Quaternion worldOrientation = state.getWorldRotationQuat();
         orientation.set(worldOrientation);
-        orientation.multLocal(originalOrientation);
+        orientation.multLocal(bindOrientation);
         worldToMesh.getRotation().mult(orientation, orientation);
         orientation.normalizeLocal();
 
         // Compute the bone's scale in local coordinates.
         Vector3f worldScale = rigidBody.getPhysicsScale(null);
         scale.set(worldScale);
-        scale.multLocal(originalScale);
+        scale.multLocal(bindScale);
         scale.multLocal(worldToMesh.getScale());
 
         // Update the transforms in the skeleton.
