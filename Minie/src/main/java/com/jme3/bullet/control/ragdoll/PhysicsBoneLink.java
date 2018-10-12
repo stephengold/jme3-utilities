@@ -51,8 +51,6 @@ import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.MySpatial;
 import jme3utilities.Validate;
-import jme3utilities.math.MyQuaternion;
-import jme3utilities.math.MyVector3f;
 
 /**
  * Link an animated bone in a skeleton to a jointed rigid body in a ragdoll.
@@ -449,24 +447,14 @@ public class PhysicsBoneLink
              * (from the start of the transition to kinematic mode)
              * into the bone transform applied by the AnimControl.
              */
-            Transform transform = new Transform();
-            Vector3f location = transform.getTranslation();
-            Quaternion orientation = transform.getRotation();
-            Vector3f scale = transform.getScale();
-
-            Vector3f startLocation = startTransform.getTranslation();
-            Quaternion startOrientation = startTransform.getRotation();
-            Vector3f startScale = startTransform.getScale();
-
             Vector3f msp = bone.getModelSpacePosition();
             Quaternion msr = bone.getModelSpaceRotation();
             Vector3f mss = bone.getModelSpaceScale();
+            Transform kinematicTransform = new Transform(msp, msr, mss);
 
-            MyVector3f.lerp(kinematicWeight, startLocation, msp, location);
-            MyQuaternion.slerp(kinematicWeight, startOrientation, msr,
-                    orientation);
-            MyVector3f.lerp(kinematicWeight, startScale, mss, scale);
-
+            Transform transform = new Transform();
+            transform.interpolateTransforms(startTransform, kinematicTransform,
+                    kinematicWeight);
             setTransform(bone, transform);
         }
         /*
