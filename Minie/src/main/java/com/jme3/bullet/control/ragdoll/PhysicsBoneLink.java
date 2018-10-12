@@ -35,7 +35,6 @@ import com.jme3.animation.Bone;
 import com.jme3.bullet.control.KinematicRagdollControl;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.bullet.objects.infos.RigidBodyMotionState;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -44,7 +43,6 @@ import com.jme3.export.Savable;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Spatial;
 import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
@@ -336,39 +334,15 @@ public class PhysicsBoneLink
     // private methods
 
     /**
-     * Update the skeleton bone in Dynamic mode, based on the transforms of the
-     * rigid body.
+     * Update the skeleton in Dynamic mode, based on the transform of the rigid
+     * body.
      */
     private void dynamicUpdate() {
-        Transform transform = new Transform();
-        Vector3f location = transform.getTranslation();
-        Quaternion orientation = transform.getRotation();
-        Vector3f scale = transform.getScale();
-
-        Spatial transformSpatial = krc.getTransformer();
-        Transform meshToWorld = transformSpatial.getWorldTransform();
-        Transform worldToMesh = meshToWorld.invert();
-        RigidBodyMotionState state = rigidBody.getMotionState();
-
-        // Compute the bone's location in mesh coordinates.
-        Vector3f worldLocation = state.getWorldLocation();
-        worldToMesh.transformVector(worldLocation, location);
-
-        // Compute the bone's orientation in local coordinates.
-        Quaternion worldOrientation = state.getWorldRotationQuat();
-        orientation.set(worldOrientation);
-        orientation.multLocal(bindOrientation);
-        worldToMesh.getRotation().mult(orientation, orientation);
-        orientation.normalizeLocal();
-
-        // Compute the bone's scale in local coordinates.
-        Vector3f worldScale = rigidBody.getPhysicsScale(null);
-        scale.set(worldScale);
-        scale.multLocal(bindScale);
-        scale.multLocal(worldToMesh.getScale());
+        Transform transform = krc.localBoneTransform(rigidBody, bindOrientation,
+                bindScale, null);
 
         // Update the transforms in the skeleton.
-        setTransform(bone, transform);
+        krc.setTransform(bone, transform);
     }
 
     /**
@@ -376,31 +350,14 @@ public class PhysicsBoneLink
      * the transformSpatial and the skeleton, without blending.
      */
     private void kinematicUpdate() {
-        Transform transform = new Transform();
+        Transform transform
+                = krc.physicsTransform(bone, bindOrientation, bindScale, null);
+
         Vector3f location = transform.getTranslation();
         Quaternion orientation = transform.getRotation();
         Vector3f scale = transform.getScale();
 
-        Spatial transformSpatial = krc.getTransformer();
-        Transform meshToWorld = transformSpatial.getWorldTransform();
-        Vector3f msp = bone.getModelSpacePosition();
-        Quaternion msr = bone.getModelSpaceRotation();
-        Vector3f mss = bone.getModelSpaceScale();
-
-        // Compute the bone's location in world coordinates.
-        meshToWorld.transformVector(msp, location);
-
-        // Compute the bone's orientation in world coordinates.
-        orientation.set(msr);
-        orientation.multLocal(bone.getModelBindInverseRotation());
-        meshToWorld.getRotation().mult(orientation, orientation);
-        orientation.normalizeLocal();
-
-        // Compute the bone's scale in world coordinates.
-        scale.set(mss);
-        scale.multLocal(meshToWorld.getScale());
-
-        // Update the transform of the physics body.
+        // Update the transform of the rigid body. TODO use MotionState?
         rigidBody.setPhysicsLocation(location);
         rigidBody.setPhysicsRotation(orientation);
         rigidBody.setPhysicsScale(scale);
@@ -430,7 +387,7 @@ public class PhysicsBoneLink
             Transform transform = new Transform();
             transform.interpolateTransforms(startTransform, kinematicTransform,
                     kinematicWeight);
-            setTransform(bone, transform);
+            krc.setTransform(bone, transform);
         }
         /*
          * Update the rigid body.
@@ -446,46 +403,6 @@ public class PhysicsBoneLink
             if (kinematicWeight > 1f) {
                 kinematicWeight = 1f; // done blending
             }
-        }
-    }
-
-    /**
-     * Alter the transform of a skeleton bone. Unlinked child bones are also
-     * altered. Note: recursive!
-     *
-     * @param bone the skeleton bone to alter (not null)
-     * @param localTransform the desired bone transform (in local coordinates,
-     * not null, unaffected)
-     */
-    private void setTransform(Bone bone, Transform localTransform) {
-        boolean userControl = bone.hasUserControl();
-        if (!userControl) {
-            // Take control of the bone.
-            bone.setUserControl(true);
-        }
-
-        Vector3f location = localTransform.getTranslation();
-        Quaternion orientation = localTransform.getRotation();
-        Vector3f scale = localTransform.getScale();
-        /*
-         * Set the user transform of the bone.
-         */
-        bone.setUserTransformsInModelSpace(location, orientation);
-        // TODO scale?
-
-        for (Bone childBone : bone.getChildren()) {
-            String childName = childBone.getName();
-            if (!krc.isLinked(childName)) {
-                Transform childLocalTransform
-                        = childBone.getCombinedTransform(location, orientation);
-                childLocalTransform.setScale(scale);
-                setTransform(childBone, childLocalTransform);
-            }
-        }
-
-        if (!userControl) {
-            // Give control back to the animation control.
-            bone.setUserControl(false);
         }
     }
 }

@@ -191,7 +191,7 @@ public class KinematicRagdollControl
      */
     private Transform meshToModel = null;
     /**
-     * gravitational acceleration for Ragdoll mode (default is 9.8 in the -Y
+     * gravitational acceleration for ragdoll (default is 9.8 in the -Y
      * direction, corresponding to Earth-normal in MKS units)
      */
     private Vector3f gravityVector = new Vector3f(0f, -9.8f, 0f);
@@ -464,7 +464,7 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Determine the local bone transform to match the physics transform of the
+     * Calculate the local bone transform to match the physics transform of the
      * specified rigid body.
      *
      * @param rigidBody the rigid body to match (not null, unaffected)
@@ -473,7 +473,7 @@ public class KinematicRagdollControl
      * @param bindScale the bone's bind scale (in model coordinates, not null,
      * unaffected)
      * @param storeResult storage for the result (modified if not null)
-     * @return the required local bone transform (either storeResult or a new
+     * @return the calculated local bone transform (either storeResult or a new
      * transform, not null)
      */
     public Transform localBoneTransform(PhysicsRigidBody rigidBody,
@@ -557,6 +557,49 @@ public class KinematicRagdollControl
     }
 
     /**
+     * Calculate the physics transform to match the local transform of the
+     * specified skeleton bone.
+     *
+     * @param bone the skeleton bone to match (not null, unaffected)
+     * @param bindOrientation the bone's bind orientation (in model coordinates,
+     * not null, unaffected)
+     * @param bindScale the bone's bind scale (in model coordinates, not null,
+     * unaffected)
+     * @param storeResult storage for the result (modified if not null)
+     * @return the calculated physics transform (either storeResult or a new
+     * transform, not null)
+     */
+    public Transform physicsTransform(Bone bone, Quaternion bindOrientation,
+            Vector3f bindScale, Transform storeResult) {
+        Transform result
+                = (storeResult == null) ? new Transform() : storeResult;
+        Vector3f location = result.getTranslation();
+        Quaternion orientation = result.getRotation();
+        Vector3f scale = result.getScale();
+
+        Transform meshToWorld = transformer.getWorldTransform();
+        Vector3f msp = bone.getModelSpacePosition();
+        Quaternion msr = bone.getModelSpaceRotation();
+        Vector3f mss = bone.getModelSpaceScale();
+
+        // Compute the bone's location in world coordinates.
+        meshToWorld.transformVector(msp, location);
+
+        // Compute the bone's orientation in world coordinates.
+        orientation.set(msr);
+        orientation.multLocal(bone.getModelBindInverseRotation());
+        meshToWorld.getRotation().mult(orientation, orientation);
+        orientation.normalizeLocal();
+
+        // Compute the bone's scale in world coordinates.
+        scale.set(mss);
+        // TODO mbis
+        scale.multLocal(meshToWorld.getScale());
+
+        return result;
+    }
+
+    /**
      * Rebuild the ragdoll. This is useful if you applied scale to the model
      * after it was initialized. Same as re-attaching.
      */
@@ -582,6 +625,46 @@ public class KinematicRagdollControl
      */
     public void removeIKTarget(Bone bone) {
         // TODO
+    }
+
+    /**
+     * Alter the transform of a skeleton bone. Unlinked child bones are also
+     * altered. Note: recursive!
+     *
+     * @param bone the skeleton bone to transform (not null, modified)
+     * @param localTransform the desired bone transform (in local coordinates,
+     * not null, unaffected)
+     */
+    public void setTransform(Bone bone, Transform localTransform) {
+        boolean userControl = bone.hasUserControl();
+        if (!userControl) {
+            // Take control of the bone.
+            bone.setUserControl(true);
+        }
+
+        Vector3f location = localTransform.getTranslation();
+        Quaternion orientation = localTransform.getRotation();
+        Vector3f scale = localTransform.getScale();
+        /*
+         * Set the user transform of the bone.
+         */
+        bone.setUserTransformsInModelSpace(location, orientation);
+        // TODO scale?
+
+        for (Bone childBone : bone.getChildren()) {
+            String childName = childBone.getName();
+            if (!isLinked(childName)) {
+                Transform childLocalTransform
+                        = childBone.getCombinedTransform(location, orientation);
+                childLocalTransform.setScale(scale);
+                setTransform(childBone, childLocalTransform);
+            }
+        }
+
+        if (!userControl) {
+            // Give control back to the animation control.
+            bone.setUserControl(false);
+        }
     }
 
     /**
@@ -916,6 +999,9 @@ public class KinematicRagdollControl
         }
         skeleton = skeletonControl.getSkeleton();
         validate(skeleton);
+        /*
+         * Put the skeleton into bind pose.
+         */
         skeleton.resetAndUpdate();
         /*
          * Remove the SkeletonControl and re-add it to make sure it will get
@@ -1049,8 +1135,8 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Destroy spatial-dependent data. Invoked each time this control is removed
-     * from a spatial.
+     * Destroy all spatial-dependent data. Invoked each time this control is
+     * removed from a spatial.
      *
      * @param spat the previously controlled spatial (not null)
      */
@@ -1064,7 +1150,6 @@ public class KinematicRagdollControl
         skeletonControl = null;
         skeleton = null;
         transformer = null;
-        meshToModel = null;
     }
 
     /**
@@ -1134,7 +1219,7 @@ public class KinematicRagdollControl
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule oc = ex.getCapsule(this);
-        // TODO jointMap, massMap
+        // TODO jointMap, massMap, etc.
         oc.write(boneLinks.values().toArray(
                 new PhysicsBoneLink[boneLinks.size()]),
                 "boneLinks", new PhysicsBoneLink[0]);
@@ -1399,8 +1484,8 @@ public class KinematicRagdollControl
         return nameArray;
     }
 
-    /*
-     * Update the controlled spatial's transform based on torso dynamics.
+    /**
+     * Update the root-bone transforms based on the torso's rigid-body dynamics.
      */
     private void torsoDynamicUpdate() {
         RigidBodyMotionState motionState = torsoRigidBody.getMotionState();
@@ -1423,7 +1508,7 @@ public class KinematicRagdollControl
         getSpatial().setLocalTransform(transform);
     }
 
-    /*
+    /**
      * Update the torso to based on the transformer spatial.
      */
     private void torsoKinematicUpdate() {
