@@ -263,7 +263,7 @@ public class KinematicRagdollControl
                 while (bone != null) {
                     String name = bone.getName();
                     PhysicsBoneLink link = getBoneLink(name);
-                    link.kinematicUpdate(boneLinks.keySet());
+                    link.kinematicUpdate();
                     bone.setUserControl(true);
                     bone = bone.getParent();
                 }
@@ -298,7 +298,7 @@ public class KinematicRagdollControl
         animControl.setEnabled(true);
 
         for (PhysicsBoneLink link : boneLinks.values()) {
-            link.startBlend(blendTime);
+            link.startBlendToKinematic(blendTime);
         }
 
         MySkeleton.setUserControl(skeleton, false);
@@ -879,7 +879,7 @@ public class KinematicRagdollControl
         torsoKinematicUpdate();
         Collection<String> boneSet = boneLinks.keySet();
         for (PhysicsBoneLink link : boneLinks.values()) {
-            link.kinematicUpdate(tpf, boneSet);
+            link.kinematicUpdate(tpf);
         }
 
         addPhysics();
@@ -893,9 +893,8 @@ public class KinematicRagdollControl
     protected void ragDollUpdate(float tpf) {
         torsoDynamicUpdate();
 
-        Collection<String> boneSet = boneLinks.keySet();
         for (PhysicsBoneLink link : boneLinks.values()) {
-            link.dynamicUpdate(boneSet);
+            link.dynamicUpdate();
         }
     }
 
@@ -917,7 +916,7 @@ public class KinematicRagdollControl
                 link.getRigidBody().setKinematic(mode == Mode.Kinematic);
                 if (mode == Mode.Ragdoll) {
                     // Ensure that the ragdoll is at the correct place.
-                    link.kinematicUpdate(boneLinks.keySet());
+                    link.kinematicUpdate();
                 }
             }
 
@@ -1301,18 +1300,12 @@ public class KinematicRagdollControl
      * bone or the torso (not null)
      */
     private void addJoints(String parentName) {
-        PhysicsBoneLink parentLink = getBoneLink(parentName);
-        if (parentLink == null) {
-            assert torsoFakeBoneName.equals(parentName);
-        }
+        PhysicsRigidBody parentBody = getRigidBody(parentName);
 
-        PhysicsRigidBody parentBody;
         Vector3f parentLocation;
-        if (parentLink == null) {
-            parentBody = torsoRigidBody;
+        if (torsoFakeBoneName.equals(parentName)) {
             parentLocation = new Vector3f();
         } else {
-            parentBody = parentLink.getRigidBody();
             Bone parentBone = getBone(parentName);
             parentLocation = parentBone.getModelSpacePosition();
         }
@@ -1372,7 +1365,7 @@ public class KinematicRagdollControl
 
         String parentName = parentName(name);
         PhysicsBoneLink link
-                = new PhysicsBoneLink(transformer, bone, prb, parentName);
+                = new PhysicsBoneLink(this, transformer, bone, prb, parentName);
         prb.setUserObject(link);
         boneLinks.put(name, link);
 
@@ -1490,7 +1483,7 @@ public class KinematicRagdollControl
                     tmpRot2, bone, ikTargets.get(boneName), depth, maxDepth);
 
             for (PhysicsBoneLink link : boneLinks.values()) {
-                link.kinematicUpdate(boneLinks.keySet());
+                link.kinematicUpdate();
             }
         }
         vars.release();

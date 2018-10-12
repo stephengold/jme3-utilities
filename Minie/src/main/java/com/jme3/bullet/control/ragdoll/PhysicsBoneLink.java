@@ -32,6 +32,7 @@
 package com.jme3.bullet.control.ragdoll;
 
 import com.jme3.animation.Bone;
+import com.jme3.bullet.control.KinematicRagdollControl;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.objects.infos.RigidBodyMotionState;
@@ -47,7 +48,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.logging.Logger;
 import jme3utilities.MySpatial;
 import jme3utilities.Validate;
@@ -55,7 +55,7 @@ import jme3utilities.math.MyQuaternion;
 import jme3utilities.math.MyVector3f;
 
 /**
- * Link an animated bone to a jointed rigid body.
+ * Link an animated bone in a skeleton to a jointed rigid body in a ragdoll.
  *
  * @author Normen Hansen and Rémy Bouquet (Nehon)
  */
@@ -73,7 +73,7 @@ public class PhysicsBoneLink
     // fields
 
     /**
-     * linked bone (not null)
+     * animated bone in the skeleton (not null)
      */
     private Bone bone;
     /**
@@ -86,7 +86,11 @@ public class PhysicsBoneLink
      */
     private float kinematicWeight = 1f;
     /**
-     * linked rigid body (not null)
+     * back pointer to the control that manages this link
+     */
+    private KinematicRagdollControl krc;
+    /**
+     * rigid body in the ragdoll (not null)
      */
     private PhysicsRigidBody rigidBody;
     /**
@@ -99,8 +103,8 @@ public class PhysicsBoneLink
      */
     private Quaternion originalOrientation = new Quaternion();
     /**
-     * joint between the bone's body and its parent's body, or null if not yet
-     * created
+     * joint between the rigid body and the parent's rigid body, or null if not
+     * yet created
      */
     private SixDofJoint joint = null;
     /**
@@ -132,6 +136,7 @@ public class PhysicsBoneLink
     /**
      * Instantiate a link between the specified bone and rigid body.
      *
+     * @param krc the control that will manage this link (not null)
      * @param transformer the spatial to translate between mesh coordinates and
      * world coordinates (not null)
      * @param bone the bone to link (not null)
@@ -139,13 +144,15 @@ public class PhysicsBoneLink
      * @param parentName the name of the bone's parent in the linked-bone
      * hierarchy (not null)
      */
-    public PhysicsBoneLink(Spatial transformer, Bone bone,
-            PhysicsRigidBody rigidBody, String parentName) {
+    public PhysicsBoneLink(KinematicRagdollControl krc, Spatial transformer,
+            Bone bone, PhysicsRigidBody rigidBody, String parentName) {
+        Validate.nonNull(krc, "control");
         Validate.nonNull(transformer, "transformer");
         Validate.nonNull(bone, "bone");
         Validate.nonNull(rigidBody, "rigid body");
         Validate.nonNull(parentName, "parent name");
 
+        this.krc = krc;
         transformSpatial = transformer;
         this.bone = bone;
         this.rigidBody = rigidBody;
@@ -180,14 +187,10 @@ public class PhysicsBoneLink
     }
 
     /**
-     * Update this bone in Dynamic mode, based on the transforms of the rigid
-     * body.
-     *
-     * @param boneSet the names of all linked bones (not null, unaffected)
+     * Update the skeleton bone in Dynamic mode, based on the transforms of the
+     * rigid body.
      */
-    public void dynamicUpdate(Collection<String> boneSet) {
-        Validate.nonNull(boneSet, "bone set");
-
+    public void dynamicUpdate() {
         Transform transform = new Transform();
         Vector3f location = transform.getTranslation();
         Quaternion orientation = transform.getRotation();
@@ -215,7 +218,7 @@ public class PhysicsBoneLink
         scale.multLocal(worldToMesh.getScale());
 
         // Update the transforms in the skeleton.
-        setTransform(bone, transform, boneSet);
+        setTransform(bone, transform);
     }
 
     /**
@@ -246,14 +249,10 @@ public class PhysicsBoneLink
     }
 
     /**
-     * Update this bone in Kinematic mode, based on the transforms of the
+     * Update the rigid body in Kinematic mode, based on the transforms of the
      * transformSpatial and the skeleton, without blending.
-     *
-     * @param boneSet the names of all linked bones (not null, unaffected)
      */
-    public void kinematicUpdate(Collection<String> boneSet) {
-        Validate.nonNull(boneSet, "bone set");
-
+    public void kinematicUpdate() {
         Transform transform = new Transform();
         Vector3f location = transform.getTranslation();
         Quaternion orientation = transform.getRotation();
@@ -284,15 +283,14 @@ public class PhysicsBoneLink
     }
 
     /**
-     * Update this bone in blended Kinematic mode, based on the transforms of
-     * the transformSpatial and the skeleton, blended with the saved transform.
+     * Update this linked bone in blended Kinematic mode, based on the
+     * transforms of the transformSpatial and the skeleton, blended with the
+     * saved transform.
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
-     * @param boneSet the names of all linked bones (not null, unaffected)
      */
-    public void kinematicUpdate(float tpf, Collection<String> boneSet) {
+    public void kinematicUpdate(float tpf) {
         Validate.nonNegative(tpf, "time per frame");
-        Validate.nonNull(boneSet, "bone set");
 
         if (kinematicWeight < 1f) {
             /*
@@ -309,19 +307,17 @@ public class PhysicsBoneLink
             Quaternion msr = bone.getModelSpaceRotation();
             Vector3f mss = bone.getModelSpaceScale();
 
-            MyVector3f.lerp(kinematicWeight, blendLocation, msp,
-                    location);
+            MyVector3f.lerp(kinematicWeight, blendLocation, msp, location);
             MyQuaternion.slerp(kinematicWeight, blendOrientation, msr,
                     orientation);
-            MyVector3f.lerp(kinematicWeight, blendScale, mss,
-                    scale);
+            MyVector3f.lerp(kinematicWeight, blendScale, mss, scale);
 
-            setTransform(bone, transform, boneSet);
+            setTransform(bone, transform);
         }
         /*
          * Update the rigid body.
          */
-        kinematicUpdate(boneSet);
+        kinematicUpdate();
         /*
          * If blending, increase the kinematic weight.
          */
@@ -384,13 +380,13 @@ public class PhysicsBoneLink
     }
 
     /**
-     * Begin smoothly transitioning this bone to fully kinematic mode.
+     * Begin transitioning this bone to fully kinematic mode.
      *
      * @param blendInterval the duration of the blend interval (in seconds,
      * &ge;0)
      */
-    public void startBlend(float blendInterval) {
-        Validate.nonNegative(blendInterval, "blend time");
+    public void startBlendToKinematic(float blendInterval) {
+        Validate.nonNegative(blendInterval, "blend interval");
 
         RigidBodyMotionState state = rigidBody.getMotionState();
         Vector3f worldLoc = state.getWorldLocation();
@@ -417,6 +413,21 @@ public class PhysicsBoneLink
         this.blendInterval = blendInterval;
         kinematicWeight = Float.MIN_VALUE;
         rigidBody.setKinematic(true);
+    }
+
+    /**
+     * Update this linked bone according to its mode.
+     *
+     * @param tpf the time interval between frames (in seconds, &ge;0)
+     */
+    public void update(float tpf) {
+        Validate.nonNegative(tpf, "time per frame");
+
+        if (kinematicWeight > 0f) {
+            kinematicUpdate(tpf);
+        } else {
+            dynamicUpdate();
+        }
     }
     // *************************************************************************
     // JmeCloneable methods
@@ -529,12 +540,8 @@ public class PhysicsBoneLink
      * @param bone the skeleton bone to alter (not null)
      * @param localTransform the desired bone transform (in local coordinates,
      * not null, unaffected)
-     * @param boneSet the names of all linked bones (not null, unaffected)
      */
-    private static void setTransform(Bone bone, Transform localTransform,
-            Collection<String> boneSet) {
-        Validate.nonNull(boneSet, "bone set");
-
+    private void setTransform(Bone bone, Transform localTransform) {
         boolean userControl = bone.hasUserControl();
         if (!userControl) {
             // Take control of the bone.
@@ -551,11 +558,11 @@ public class PhysicsBoneLink
         // TODO scale?
 
         for (Bone childBone : bone.getChildren()) {
-            if (!boneSet.contains(childBone.getName())) {
+            if (!krc.isLinked(childBone.getName())) {
                 Transform childLocalTransform
                         = childBone.getCombinedTransform(location, orientation);
                 childLocalTransform.setScale(scale);
-                setTransform(childBone, childLocalTransform, boneSet);
+                setTransform(childBone, childLocalTransform);
             }
         }
 
