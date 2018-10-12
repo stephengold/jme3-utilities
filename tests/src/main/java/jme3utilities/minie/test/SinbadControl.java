@@ -49,7 +49,7 @@ public class SinbadControl extends KinematicRagdollControl {
 
     public SinbadControl() {
         super();
-        super.setTorsoMass(5f);
+        super.setMass("", 5f);
 
         super.link("Waist", 5f,
                 new JointPreset(0.4f, -0.4f, 0.4f, -0.4f, 0.4f, -0.4f));
