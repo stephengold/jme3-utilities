@@ -188,41 +188,6 @@ public class PhysicsBoneLink
     }
 
     /**
-     * Update the skeleton bone in Dynamic mode, based on the transforms of the
-     * rigid body. TODO re-order methods
-     */
-    private void dynamicUpdate() {
-        Transform transform = new Transform();
-        Vector3f location = transform.getTranslation();
-        Quaternion orientation = transform.getRotation();
-        Vector3f scale = transform.getScale();
-
-        Transform meshToWorld = transformSpatial.getWorldTransform();
-        Transform worldToMesh = meshToWorld.invert();
-        RigidBodyMotionState state = rigidBody.getMotionState();
-
-        // Compute the bone's location in mesh coordinates.
-        Vector3f worldLocation = state.getWorldLocation();
-        worldToMesh.transformVector(worldLocation, location);
-
-        // Compute the bone's orientation in local coordinates.
-        Quaternion worldOrientation = state.getWorldRotationQuat();
-        orientation.set(worldOrientation);
-        orientation.multLocal(originalOrientation);
-        worldToMesh.getRotation().mult(orientation, orientation);
-        orientation.normalizeLocal();
-
-        // Compute the bone's scale in local coordinates.
-        Vector3f worldScale = rigidBody.getPhysicsScale(null);
-        scale.set(worldScale);
-        scale.multLocal(originalScale);
-        scale.multLocal(worldToMesh.getScale());
-
-        // Update the transforms in the skeleton.
-        setTransform(bone, transform);
-    }
-
-    /**
      * Access the linked bone.
      *
      * @return the pre-existing instance (not null)
@@ -247,89 +212,6 @@ public class PhysicsBoneLink
      */
     public PhysicsRigidBody getRigidBody() {
         return rigidBody;
-    }
-
-    /**
-     * Update the rigid body in pure Kinematic mode, based on the transforms of
-     * the transformSpatial and the skeleton, without blending.
-     */
-    private void kinematicUpdate() {
-        Transform transform = new Transform();
-        Vector3f location = transform.getTranslation();
-        Quaternion orientation = transform.getRotation();
-        Vector3f scale = transform.getScale();
-
-        Transform meshToWorld = transformSpatial.getWorldTransform();
-        Vector3f msp = bone.getModelSpacePosition();
-        Quaternion msr = bone.getModelSpaceRotation();
-        Vector3f mss = bone.getModelSpaceScale();
-
-        // Compute the bone's location in world coordinates.
-        meshToWorld.transformVector(msp, location);
-
-        // Compute the bone's orientation in world coordinates.
-        orientation.set(msr);
-        orientation.multLocal(bone.getModelBindInverseRotation());
-        meshToWorld.getRotation().mult(orientation, orientation);
-        orientation.normalizeLocal();
-
-        // Compute the bone's scale in world coordinates.
-        scale.set(mss);
-        scale.multLocal(meshToWorld.getScale());
-
-        // Update the transform of the physics body.
-        rigidBody.setPhysicsLocation(location);
-        rigidBody.setPhysicsRotation(orientation);
-        rigidBody.setPhysicsScale(scale);
-    }
-
-    /**
-     * Update this linked bone in blended Kinematic mode, based on the
-     * transforms of the transformSpatial and the skeleton, blended with the
-     * saved transform.
-     *
-     * @param tpf the time interval between frames (in seconds, &ge;0)
-     */
-    private void kinematicUpdate(float tpf) {
-        Validate.nonNegative(tpf, "time per frame");
-
-        if (kinematicWeight < 1f) {
-            /*
-             * For a smooth transition, blend the saved bone transform
-             * (from the start of the transition to kinematic mode)
-             * into the bone transform applied by the AnimControl.
-             */
-            Transform transform = new Transform();
-            Vector3f location = transform.getTranslation();
-            Quaternion orientation = transform.getRotation();
-            Vector3f scale = transform.getScale();
-
-            Vector3f msp = bone.getModelSpacePosition();
-            Quaternion msr = bone.getModelSpaceRotation();
-            Vector3f mss = bone.getModelSpaceScale();
-
-            MyVector3f.lerp(kinematicWeight, blendLocation, msp, location);
-            MyQuaternion.slerp(kinematicWeight, blendOrientation, msr,
-                    orientation);
-            MyVector3f.lerp(kinematicWeight, blendScale, mss, scale);
-
-            setTransform(bone, transform);
-        }
-        /*
-         * Update the rigid body.
-         */
-        kinematicUpdate();
-        /*
-         * If blending, increase the kinematic weight.
-         */
-        if (blendInterval == 0f) {
-            kinematicWeight = 1f;
-        } else {
-            kinematicWeight += tpf / blendInterval;
-            if (kinematicWeight > 1f) {
-                kinematicWeight = 1f; // done blending
-            }
-        }
     }
 
     /**
@@ -548,6 +430,124 @@ public class PhysicsBoneLink
     }
     // *************************************************************************
     // private methods
+
+    /**
+     * Update the skeleton bone in Dynamic mode, based on the transforms of the
+     * rigid body.
+     */
+    private void dynamicUpdate() {
+        Transform transform = new Transform();
+        Vector3f location = transform.getTranslation();
+        Quaternion orientation = transform.getRotation();
+        Vector3f scale = transform.getScale();
+
+        Transform meshToWorld = transformSpatial.getWorldTransform();
+        Transform worldToMesh = meshToWorld.invert();
+        RigidBodyMotionState state = rigidBody.getMotionState();
+
+        // Compute the bone's location in mesh coordinates.
+        Vector3f worldLocation = state.getWorldLocation();
+        worldToMesh.transformVector(worldLocation, location);
+
+        // Compute the bone's orientation in local coordinates.
+        Quaternion worldOrientation = state.getWorldRotationQuat();
+        orientation.set(worldOrientation);
+        orientation.multLocal(originalOrientation);
+        worldToMesh.getRotation().mult(orientation, orientation);
+        orientation.normalizeLocal();
+
+        // Compute the bone's scale in local coordinates.
+        Vector3f worldScale = rigidBody.getPhysicsScale(null);
+        scale.set(worldScale);
+        scale.multLocal(originalScale);
+        scale.multLocal(worldToMesh.getScale());
+
+        // Update the transforms in the skeleton.
+        setTransform(bone, transform);
+    }
+
+    /**
+     * Update the rigid body in pure Kinematic mode, based on the transforms of
+     * the transformSpatial and the skeleton, without blending.
+     */
+    private void kinematicUpdate() {
+        Transform transform = new Transform();
+        Vector3f location = transform.getTranslation();
+        Quaternion orientation = transform.getRotation();
+        Vector3f scale = transform.getScale();
+
+        Transform meshToWorld = transformSpatial.getWorldTransform();
+        Vector3f msp = bone.getModelSpacePosition();
+        Quaternion msr = bone.getModelSpaceRotation();
+        Vector3f mss = bone.getModelSpaceScale();
+
+        // Compute the bone's location in world coordinates.
+        meshToWorld.transformVector(msp, location);
+
+        // Compute the bone's orientation in world coordinates.
+        orientation.set(msr);
+        orientation.multLocal(bone.getModelBindInverseRotation());
+        meshToWorld.getRotation().mult(orientation, orientation);
+        orientation.normalizeLocal();
+
+        // Compute the bone's scale in world coordinates.
+        scale.set(mss);
+        scale.multLocal(meshToWorld.getScale());
+
+        // Update the transform of the physics body.
+        rigidBody.setPhysicsLocation(location);
+        rigidBody.setPhysicsRotation(orientation);
+        rigidBody.setPhysicsScale(scale);
+    }
+
+    /**
+     * Update this linked bone in blended Kinematic mode, based on the
+     * transforms of the transformSpatial and the skeleton, blended with the
+     * saved transform.
+     *
+     * @param tpf the time interval between frames (in seconds, &ge;0)
+     */
+    private void kinematicUpdate(float tpf) {
+        Validate.nonNegative(tpf, "time per frame");
+
+        if (kinematicWeight < 1f) {
+            /*
+             * For a smooth transition, blend the saved bone transform
+             * (from the start of the transition to kinematic mode)
+             * into the bone transform applied by the AnimControl.
+             */
+            Transform transform = new Transform();
+            Vector3f location = transform.getTranslation();
+            Quaternion orientation = transform.getRotation();
+            Vector3f scale = transform.getScale();
+
+            Vector3f msp = bone.getModelSpacePosition();
+            Quaternion msr = bone.getModelSpaceRotation();
+            Vector3f mss = bone.getModelSpaceScale();
+
+            MyVector3f.lerp(kinematicWeight, blendLocation, msp, location);
+            MyQuaternion.slerp(kinematicWeight, blendOrientation, msr,
+                    orientation);
+            MyVector3f.lerp(kinematicWeight, blendScale, mss, scale);
+
+            setTransform(bone, transform);
+        }
+        /*
+         * Update the rigid body.
+         */
+        kinematicUpdate();
+        /*
+         * If blending, increase the kinematic weight.
+         */
+        if (blendInterval == 0f) {
+            kinematicWeight = 1f;
+        } else {
+            kinematicWeight += tpf / blendInterval;
+            if (kinematicWeight > 1f) {
+                kinematicWeight = 1f; // done blending
+            }
+        }
+    }
 
     /**
      * Alter the transform of a skeleton bone. Unlinked child bones are also
