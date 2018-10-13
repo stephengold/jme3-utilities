@@ -156,7 +156,7 @@ public class RotationalLimitMotor {
     /**
      * Read the limit maximum force.
      *
-     * @return the maximum force on the limit
+     * @return the maximum force on the limit (default=300)
      */
     public float getMaxLimitForce() {
         return getMaxLimitForce(motorId);
@@ -165,7 +165,7 @@ public class RotationalLimitMotor {
     /**
      * Alter the limit maximum force.
      *
-     * @param maxLimitForce the desired maximum force on the limit
+     * @param maxLimitForce the desired maximum force on the limit (default=300)
      */
     public void setMaxLimitForce(float maxLimitForce) {
         setMaxLimitForce(motorId, maxLimitForce);
@@ -203,25 +203,25 @@ public class RotationalLimitMotor {
     /**
      * Alter this motor's limit softness.
      *
-     * @param limitSoftness the desired limit softness
+     * @param limitSoftness the desired limit softness (default=0.5)
      */
     public void setLimitSoftness(float limitSoftness) {
         setLimitSoftness(motorId, limitSoftness);
     }
 
     /**
-     * Read this motor's error tolerance at limits.
+     * Read this motor's error-reduction parameter.
      *
-     * @return the error tolerance (&gt;0)
+     * @return the error tolerance at limits (&ge;0)
      */
     public float getERP() {
         return getERP(motorId);
     }
 
     /**
-     * Alter this motor's error tolerance at limits.
+     * Alter this motor's error-reduction parameter.
      *
-     * @param ERP the desired error tolerance (&gt;0)
+     * @param ERP the desired error tolerance at limits (&ge;0, default=0.2)
      */
     public void setERP(float ERP) {
         setERP(motorId, ERP);
@@ -239,7 +239,7 @@ public class RotationalLimitMotor {
     /**
      * Alter this motor's bounce.
      *
-     * @param bounce the desired bounce (restitution factor)
+     * @param bounce the desired bounce (restitution factor) (default=0)
      */
     public void setBounce(float bounce) {
         setBounce(motorId, bounce);
