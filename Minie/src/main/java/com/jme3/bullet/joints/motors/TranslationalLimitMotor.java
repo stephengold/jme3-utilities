@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 
 /**
  * A motor based on Bullet's btTranslationalLimitMotor. Motors are used to drive
- * joints.
+ * joints. TODO make JmeCloneable and Savable
  *
  * @author normenhansen
  */
@@ -95,6 +95,20 @@ public class TranslationalLimitMotor {
     }
 
     /**
+     * Copy this motor's error-reduction parameters at the stops.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the error-reduction parameter for each axis (either storeResult
+     * or a new instance, not null)
+     */
+    public Vector3f getERP(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getERP(motorId, result);
+
+        return result;
+    }
+
+    /**
      * Read this motor's limit softness.
      *
      * @return the limit softness
@@ -116,6 +130,20 @@ public class TranslationalLimitMotor {
     }
 
     /**
+     * Copy this motor's maximum motor forces for normal conditions.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the maximum force for each axis (either storeResult or a new
+     * instance)
+     */
+    public Vector3f getMaxMotorForce(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getMaxMotorForce(motorId, result);
+
+        return result;
+    }
+
+    /**
      * Read the id of the btTranslationalLimitMotor.
      *
      * @return the unique identifier (not zero)
@@ -123,6 +151,35 @@ public class TranslationalLimitMotor {
     public long getMotor() {
         assert motorId != 0L;
         return motorId;
+    }
+
+    /**
+     * Copy this motor's constraint-force mixing parameters for normal
+     * conditions.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the mixing parameter for each axis (either storeResult or a new
+     * instance)
+     */
+    public Vector3f getNormalCFM(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getNormalCFM(motorId, result);
+
+        return result;
+    }
+
+    /**
+     * Copy this motor's constraint-force mixing parameters at the stops.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the mixing parameter for each axis (either storeResult or a new
+     * instance)
+     */
+    public Vector3f getStopCFM(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getStopCFM(motorId, result);
+
+        return result;
     }
 
     /**
@@ -166,6 +223,16 @@ public class TranslationalLimitMotor {
     }
 
     /**
+     * Alter this motor's error-reduction parameters at the stops.
+     *
+     * @param erp the desired error-reduction parameter parameter for each axis
+     * (not null, unaffected)
+     */
+    public void setERP(Vector3f erp) {
+        setERP(motorId, erp);
+    }
+
+    /**
      * Alter the limit softness.
      *
      * @param limitSoftness the desired limit softness (default=0.7)
@@ -177,10 +244,42 @@ public class TranslationalLimitMotor {
     /**
      * Alter this motor's constraint lower limits.
      *
-     * @param lowerLimit (unaffected, not null, default=0,0,0)
+     * @param lowerLimit the desired limit value for each axis (unaffected, not
+     * null, default=0,0,0)
      */
     public void setLowerLimit(Vector3f lowerLimit) {
         setLowerLimit(motorId, lowerLimit);
+    }
+
+    /**
+     * Alter this motor's maximum forces.
+     *
+     * @param maxForce the desired maximum force for each axis (not null,
+     * unaffected)
+     */
+    public void setMaxMotorForce(Vector3f maxForce) {
+        setMaxMotorForce(motorId, maxForce);
+    }
+
+    /**
+     * Alter this motor's constraint-force mixing parameters for normal
+     * conditions.
+     *
+     * @param cfm the desired mixing parameter for each axis (not null,
+     * unaffected)
+     */
+    public void setNormalCFM(Vector3f cfm) {
+        setNormalCFM(motorId, cfm);
+    }
+
+    /**
+     * Alter this motor's constraint-force mixing parameters at the stops.
+     *
+     * @param cfm the desired mixing parameter for each axis (not null,
+     * unaffected)
+     */
+    public void setStopCFM(Vector3f cfm) {
+        setStopCFM(motorId, cfm);
     }
 
     /**
@@ -195,7 +294,8 @@ public class TranslationalLimitMotor {
     /**
      * Alter this motor's constraint upper limits.
      *
-     * @param upperLimit (unaffected, not null)
+     * @param upperLimit the desired limit value for each axis (unaffected, not
+     * null)
      */
     public void setUpperLimit(Vector3f upperLimit) {
         setUpperLimit(motorId, upperLimit);
