@@ -97,7 +97,7 @@ public class TranslationalLimitMotor {
     /**
      * Alter this motor's constraint lower limits.
      *
-     * @param lowerLimit (unaffected, not null)
+     * @param lowerLimit (unaffected, not null, default=0,0,0)
      */
     public void setLowerLimit(Vector3f lowerLimit) {
         setLowerLimit(motorId, lowerLimit);
@@ -106,7 +106,7 @@ public class TranslationalLimitMotor {
     /**
      * Copy this motor's constraint upper limits.
      *
-     * @return a new vector (not null)
+     * @return a new vector (not null, default=0,0,0)
      */
     public Vector3f getUpperLimit() {
         Vector3f vec = new Vector3f();
@@ -157,7 +157,7 @@ public class TranslationalLimitMotor {
     /**
      * Alter the limit softness.
      *
-     * @param limitSoftness the desired limit softness (default=0.5)
+     * @param limitSoftness the desired limit softness (default=0.7)
      */
     public void setLimitSoftness(float limitSoftness) {
         setLimitSoftness(motorId, limitSoftness);
@@ -195,7 +195,7 @@ public class TranslationalLimitMotor {
     /**
      * Alter this motor's restitution.
      *
-     * @param restitution the desired restitution (bounce) factor
+     * @param restitution the desired restitution (bounce) factor (default=0.5)
      */
     public void setRestitution(float restitution) {
         setRestitution(motorId, restitution);
@@ -207,11 +207,19 @@ public class TranslationalLimitMotor {
 
     native private float getDamping(long motorId);
 
+    native private void getERP(long motorId, Vector3f vector);
+
     native private float getLimitSoftness(long motorId);
 
     native private void getLowerLimit(long motorId, Vector3f vector);
 
+    native private void getMaxMotorForce(long motorId, Vector3f vector);
+
+    native private void getNormalCFM(long motorId, Vector3f vector);
+
     native private float getRestitution(long motorId);
+
+    native private void getStopCFM(long motorId, Vector3f vector);
 
     native private void getUpperLimit(long motorId, Vector3f vector);
 
@@ -219,11 +227,19 @@ public class TranslationalLimitMotor {
 
     native private void setDamping(long motorId, float damping);
 
+    native private void setERP(long motorId, Vector3f vector);
+
     native private void setLimitSoftness(long motorId, float limitSoftness);
 
     native private void setLowerLimit(long motorId, Vector3f vector);
 
+    native private void setMaxMotorForce(long motorId, Vector3f vector);
+
+    native private void setNormalCFM(long motorId, Vector3f vector);
+
     native private void setRestitution(long motorId, float restitution);
+
+    native private void setStopCFM(long motorId, Vector3f vector);
 
     native private void setUpperLimit(long motorId, Vector3f vector);
 }

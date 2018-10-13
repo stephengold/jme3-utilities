@@ -281,6 +281,10 @@ public class RotationalLimitMotor {
 
     native private float getMaxMotorForce(long motorId);
 
+    native private float getNormalCFM(long motorId);
+
+    native private float getStopCFM(long motorId);
+
     native private float getTargetVelocity(long motorId);
 
     native private boolean isEnableMotor(long motorId);
@@ -302,6 +306,10 @@ public class RotationalLimitMotor {
     native private void setMaxLimitForce(long motorId, float maxLimitForce);
 
     native private void setMaxMotorForce(long motorId, float maxMotorForce);
+
+    native private void setNormalCFM(long motorId, float normalCFM);
+
+    native private void setStopCFM(long motorId, float stopCFM);
 
     native private void setTargetVelocity(long motorId, float targetVelocity);
 }
