@@ -33,7 +33,10 @@ package com.jme3.bullet.control.ragdoll;
 
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.joints.SixDofJoint;
+import com.jme3.bullet.joints.motors.RotationalLimitMotor;
+import com.jme3.bullet.joints.motors.TranslationalLimitMotor;
 import com.jme3.math.FastMath;
+import com.jme3.math.Vector3f;
 import jme3utilities.Validate;
 
 /**
@@ -159,11 +162,31 @@ public class JointPreset {
     public void setupJoint(SixDofJoint joint) {
         Validate.nonNull(joint, "joint");
 
-        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_X).setHiLimit(maxX);
-        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_X).setLoLimit(minX);
-        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Y).setHiLimit(maxY);
-        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Y).setLoLimit(minY);
-        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Z).setHiLimit(maxZ);
-        joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Z).setLoLimit(minZ);
+        RotationalLimitMotor rotX 
+                = joint.getRotationalLimitMotor(PhysicsSpace.AXIS_X);        
+        rotX.setHiLimit(maxX);
+        rotX.setLoLimit(minX);
+        //rotX.setERP(0.8f);
+        //rotX.setLimitSoftness(0f);
+        rotX.setMaxLimitForce(1e6f);
+
+        RotationalLimitMotor rotY 
+                = joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Y);
+        rotY.setHiLimit(maxY);
+        rotY.setLoLimit(minY);
+        //rotY.setERP(0.8f);
+        //rotY.setLimitSoftness(0f);
+        rotY.setMaxLimitForce(1e6f);
+
+        RotationalLimitMotor rotZ
+                = joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Z);
+        rotZ.setHiLimit(maxZ);
+        rotZ.setLoLimit(minZ);
+        //rotZ.setERP(0.8f);
+        //rotZ.setLimitSoftness(0f);
+        rotZ.setMaxLimitForce(1e6f);
+        
+        //TranslationalLimitMotor tra = joint.getTranslationalLimitMotor();        
+        //tra.setLimitSoftness(0f);
     }
 }
