@@ -34,26 +34,48 @@ package com.jme3.bullet.control.ragdoll;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.joints.motors.RotationalLimitMotor;
-import com.jme3.bullet.joints.motors.TranslationalLimitMotor;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.math.FastMath;
-import com.jme3.math.Vector3f;
+import java.io.IOException;
 import jme3utilities.Validate;
 
 /**
- * Range of motion for a joint. Note: immutable. TODO make Savable
+ * Range of motion for a ragdoll joint. Note: immutable.
  *
  * @author Nehon
  */
-public class JointPreset {
+public class JointPreset implements Savable {
     // *************************************************************************
     // fields
 
-    final private float maxX;
-    final private float minX;
-    final private float maxY;
-    final private float minY;
-    final private float maxZ;
-    final private float minZ;
+    /**
+     * maximum rotation angle around the X axis (in radians)
+     */
+    private float maxX;
+    /**
+     * minimum rotation angle around the X axis (in radians)
+     */
+    private float minX;
+    /**
+     * maximum rotation angle around the Y axis (in radians)
+     */
+    private float maxY;
+    /**
+     * minimum rotation angle around the Y axis (in radians)
+     */
+    private float minY;
+    /**
+     * maximum rotation angle around the Z axis (in radians)
+     */
+    private float maxZ;
+    /**
+     * minimum rotation angle around the Z axis (in radians)
+     */
+    private float minZ;
     // *************************************************************************
     // constructors
 
@@ -162,31 +184,58 @@ public class JointPreset {
     public void setupJoint(SixDofJoint joint) {
         Validate.nonNull(joint, "joint");
 
-        RotationalLimitMotor rotX 
-                = joint.getRotationalLimitMotor(PhysicsSpace.AXIS_X);        
+        RotationalLimitMotor rotX
+                = joint.getRotationalLimitMotor(PhysicsSpace.AXIS_X);
         rotX.setUpperLimit(maxX);
         rotX.setLowerLimit(minX);
-        //rotX.setERP(0.8f);
-        //rotX.setLimitSoftness(0f);
         rotX.setMaxLimitForce(1e6f);
 
-        RotationalLimitMotor rotY 
+        RotationalLimitMotor rotY
                 = joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Y);
         rotY.setUpperLimit(maxY);
         rotY.setLowerLimit(minY);
-        //rotY.setERP(0.8f);
-        //rotY.setLimitSoftness(0f);
         rotY.setMaxLimitForce(1e6f);
 
         RotationalLimitMotor rotZ
                 = joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Z);
         rotZ.setUpperLimit(maxZ);
         rotZ.setLowerLimit(minZ);
-        //rotZ.setERP(0.8f);
-        //rotZ.setLimitSoftness(0f);
         rotZ.setMaxLimitForce(1e6f);
-        
-        //TranslationalLimitMotor tra = joint.getTranslationalLimitMotor();        
-        //tra.setLimitSoftness(0f);
+    }
+    // *************************************************************************
+    // Savable methods
+
+    /**
+     * De-serialize this preset, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
+    @Override
+    public void read(JmeImporter im) throws IOException {
+        InputCapsule capsule = im.getCapsule(this);
+        maxX = capsule.readFloat("maxX", 0f);
+        minX = capsule.readFloat("minX", 0f);
+        maxY = capsule.readFloat("maxY", 0f);
+        minY = capsule.readFloat("minY", 0f);
+        maxZ = capsule.readFloat("maxZ", 0f);
+        minZ = capsule.readFloat("minZ", 0f);
+    }
+
+    /**
+     * Serialize this preset, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+        OutputCapsule capsule = ex.getCapsule(this);
+        capsule.write(maxX, "maxX", 0f);
+        capsule.write(minX, "minX", 0f);
+        capsule.write(maxY, "maxY", 0f);
+        capsule.write(minY, "minY", 0f);
+        capsule.write(maxZ, "maxZ", 0f);
+        capsule.write(minZ, "minZ", 0f);
     }
 }
