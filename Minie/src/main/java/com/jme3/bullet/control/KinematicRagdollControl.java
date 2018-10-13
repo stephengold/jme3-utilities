@@ -31,7 +31,6 @@
  */
 package com.jme3.bullet.control;
 
-import com.jme3.animation.AnimControl;
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
@@ -257,11 +256,6 @@ public class KinematicRagdollControl
         if (getSpatial() == null) {
             throw new IllegalStateException(
                     "Cannot change modes unless added to a spatial.");
-        }
-
-        AnimControl animControl = getSpatial().getControl(AnimControl.class);
-        if (animControl != null) {
-            animControl.setEnabled(true);
         }
 
         torsoBlendInterval = blendInterval;
