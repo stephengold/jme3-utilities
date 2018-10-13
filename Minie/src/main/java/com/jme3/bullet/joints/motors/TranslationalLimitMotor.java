@@ -73,13 +73,34 @@ public class TranslationalLimitMotor {
     // new methods exposed
 
     /**
-     * Read the id of the btTranslationalLimitMotor.
+     * Copy the accumulated impulse.
      *
-     * @return the unique identifier (not zero)
+     * @return a new vector (not null)
      */
-    public long getMotor() {
-        assert motorId != 0L;
-        return motorId;
+    public Vector3f getAccumulatedImpulse() {
+        Vector3f vec = new Vector3f();
+        getAccumulatedImpulse(motorId, vec);
+
+        return vec;
+    }
+
+    /**
+     * Read this motor's damping.
+     *
+     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
+     * damped)
+     */
+    public float getDamping() {
+        return getDamping(motorId);
+    }
+
+    /**
+     * Read this motor's limit softness.
+     *
+     * @return the limit softness
+     */
+    public float getLimitSoftness() {
+        return getLimitSoftness(motorId);
     }
 
     /**
@@ -95,12 +116,22 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter this motor's constraint lower limits.
+     * Read the id of the btTranslationalLimitMotor.
      *
-     * @param lowerLimit (unaffected, not null, default=0,0,0)
+     * @return the unique identifier (not zero)
      */
-    public void setLowerLimit(Vector3f lowerLimit) {
-        setLowerLimit(motorId, lowerLimit);
+    public long getMotor() {
+        assert motorId != 0L;
+        return motorId;
+    }
+
+    /**
+     * Read this motor's restitution.
+     *
+     * @return the restitution (bounce) factor
+     */
+    public float getRestitution() {
+        return getRestitution(motorId);
     }
 
     /**
@@ -116,61 +147,12 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter the constraint upper limits.
-     *
-     * @param upperLimit (unaffected, not null)
-     */
-    public void setUpperLimit(Vector3f upperLimit) {
-        setUpperLimit(motorId, upperLimit);
-    }
-
-    /**
-     * Copy the accumulated impulse.
-     *
-     * @return a new vector (not null)
-     */
-    public Vector3f getAccumulatedImpulse() {
-        Vector3f vec = new Vector3f();
-        getAccumulatedImpulse(motorId, vec);
-
-        return vec;
-    }
-
-    /**
      * Alter the accumulated impulse.
      *
      * @param accumulatedImpulse the desired vector (not null, unaffected)
      */
     public void setAccumulatedImpulse(Vector3f accumulatedImpulse) {
         setAccumulatedImpulse(motorId, accumulatedImpulse);
-    }
-
-    /**
-     * Read this motor's limit softness.
-     *
-     * @return the softness
-     */
-    public float getLimitSoftness() {
-        return getLimitSoftness(motorId);
-    }
-
-    /**
-     * Alter the limit softness.
-     *
-     * @param limitSoftness the desired limit softness (default=0.7)
-     */
-    public void setLimitSoftness(float limitSoftness) {
-        setLimitSoftness(motorId, limitSoftness);
-    }
-
-    /**
-     * Read this motor's damping.
-     *
-     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
-     * damped)
-     */
-    public float getDamping() {
-        return getDamping(motorId);
     }
 
     /**
@@ -184,12 +166,21 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Read this motor's restitution.
+     * Alter the limit softness.
      *
-     * @return the restitution (bounce) factor
+     * @param limitSoftness the desired limit softness (default=0.7)
      */
-    public float getRestitution() {
-        return getRestitution(motorId);
+    public void setLimitSoftness(float limitSoftness) {
+        setLimitSoftness(motorId, limitSoftness);
+    }
+
+    /**
+     * Alter this motor's constraint lower limits.
+     *
+     * @param lowerLimit (unaffected, not null, default=0,0,0)
+     */
+    public void setLowerLimit(Vector3f lowerLimit) {
+        setLowerLimit(motorId, lowerLimit);
     }
 
     /**
@@ -199,6 +190,15 @@ public class TranslationalLimitMotor {
      */
     public void setRestitution(float restitution) {
         setRestitution(motorId, restitution);
+    }
+
+    /**
+     * Alter this motor's constraint upper limits.
+     *
+     * @param upperLimit (unaffected, not null)
+     */
+    public void setUpperLimit(Vector3f upperLimit) {
+        setUpperLimit(motorId, upperLimit);
     }
     // *************************************************************************
     // private methods

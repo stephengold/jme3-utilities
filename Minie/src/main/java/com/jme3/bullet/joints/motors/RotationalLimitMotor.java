@@ -72,103 +72,12 @@ public class RotationalLimitMotor {
     // new methods exposed
 
     /**
-     * Read the id of the btRotationalLimitMotor.
+     * Read this motor's bounce.
      *
-     * @return the unique identifier (not zero)
+     * @return the bounce (restitution factor)
      */
-    public long getMotor() {
-        assert motorId != 0L;
-        return motorId;
-    }
-
-    /**
-     * Read this motor's constraint lower limit.
-     *
-     * @return the limit value
-     */
-    public float getLoLimit() {
-        return getLoLimit(motorId);
-    }
-
-    /**
-     * Alter this motor's constraint lower limit.
-     *
-     * @param loLimit the desired limit value
-     */
-    public void setLoLimit(float loLimit) {
-        setLoLimit(motorId, loLimit);
-    }
-
-    /**
-     * Read this motor's constraint upper limit.
-     *
-     * @return the limit value
-     */
-    public float getHiLimit() {
-        return getHiLimit(motorId);
-    }
-
-    /**
-     * Alter this motor's constraint upper limit.
-     *
-     * @param hiLimit the desired limit value
-     */
-    public void setHiLimit(float hiLimit) {
-        setHiLimit(motorId, hiLimit);
-    }
-
-    /**
-     * Read this motor's target velocity.
-     *
-     * @return the target velocity (in radians per second)
-     */
-    public float getTargetVelocity() {
-        return getTargetVelocity(motorId);
-    }
-
-    /**
-     * Alter this motor's target velocity.
-     *
-     * @param targetVelocity the desired target velocity (in radians per second)
-     */
-    public void setTargetVelocity(float targetVelocity) {
-        setTargetVelocity(motorId, targetVelocity);
-    }
-
-    /**
-     * Read this motor's maximum force.
-     *
-     * @return the maximum force
-     */
-    public float getMaxMotorForce() {
-        return getMaxMotorForce(motorId);
-    }
-
-    /**
-     * Alter this motor's maximum force.
-     *
-     * @param maxMotorForce the desired maximum force on the motor
-     */
-    public void setMaxMotorForce(float maxMotorForce) {
-        setMaxMotorForce(motorId, maxMotorForce);
-    }
-
-    /**
-     * Read the limit maximum force.
-     *
-     * @return the maximum force on the limit (default=300)
-     */
-    public float getMaxLimitForce() {
-        return getMaxLimitForce(motorId);
-    }
-
-    /**
-     * Alter the limit maximum force.
-     *
-     * @param maxLimitForce the desired maximum force on the limit (default=300)
-     */
-    public void setMaxLimitForce(float maxLimitForce) {
-        setMaxLimitForce(motorId, maxLimitForce);
+    public float getBounce() {
+        return getBounce(motorId);
     }
 
     /**
@@ -182,13 +91,21 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Alter this motor's damping.
+     * Read this motor's error-reduction parameter.
      *
-     * @param damping the desired viscous damping ratio (0&rarr;no damping,
-     * 1&rarr;critically damped, default=1)
+     * @return the error tolerance at limits (&ge;0)
      */
-    public void setDamping(float damping) {
-        setDamping(motorId, damping);
+    public float getERP() {
+        return getERP(motorId);
+    }
+
+    /**
+     * Read this motor's constraint upper limit.
+     *
+     * @return the limit value
+     */
+    public float getHiLimit() {
+        return getHiLimit(motorId);
     }
 
     /**
@@ -201,48 +118,49 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Alter this motor's limit softness.
+     * Read this motor's constraint lower limit.
      *
-     * @param limitSoftness the desired limit softness (default=0.5)
+     * @return the limit value
      */
-    public void setLimitSoftness(float limitSoftness) {
-        setLimitSoftness(motorId, limitSoftness);
+    public float getLoLimit() {
+        return getLoLimit(motorId);
     }
 
     /**
-     * Read this motor's error-reduction parameter.
+     * Read the limit maximum force.
      *
-     * @return the error tolerance at limits (&ge;0)
+     * @return the maximum force on the limit (default=300)
      */
-    public float getERP() {
-        return getERP(motorId);
+    public float getMaxLimitForce() {
+        return getMaxLimitForce(motorId);
     }
 
     /**
-     * Alter this motor's error-reduction parameter.
+     * Read this motor's maximum force.
      *
-     * @param ERP the desired error tolerance at limits (&ge;0, default=0.2)
+     * @return the maximum force
      */
-    public void setERP(float ERP) {
-        setERP(motorId, ERP);
+    public float getMaxMotorForce() {
+        return getMaxMotorForce(motorId);
     }
 
     /**
-     * Read this motor's bounce.
+     * Read the id of the btRotationalLimitMotor.
      *
-     * @return the bounce (restitution factor)
+     * @return the unique identifier (not zero)
      */
-    public float getBounce() {
-        return getBounce(motorId);
+    public long getMotor() {
+        assert motorId != 0L;
+        return motorId;
     }
 
     /**
-     * Alter this motor's bounce.
+     * Read this motor's target velocity.
      *
-     * @param bounce the desired bounce (restitution factor) (default=0)
+     * @return the target velocity (in radians per second)
      */
-    public void setBounce(float bounce) {
-        setBounce(motorId, bounce);
+    public float getTargetVelocity() {
+        return getTargetVelocity(motorId);
     }
 
     /**
@@ -255,12 +173,94 @@ public class RotationalLimitMotor {
     }
 
     /**
+     * Alter this motor's bounce.
+     *
+     * @param bounce the desired bounce (restitution factor) (default=0)
+     */
+    public void setBounce(float bounce) {
+        setBounce(motorId, bounce);
+    }
+
+    /**
+     * Alter this motor's damping.
+     *
+     * @param damping the desired viscous damping ratio (0&rarr;no damping,
+     * 1&rarr;critically damped, default=1)
+     */
+    public void setDamping(float damping) {
+        setDamping(motorId, damping);
+    }
+
+    /**
      * Enable or disable this motor.
      *
      * @param enableMotor true&rarr;enable, false&rarr;disable
      */
     public void setEnableMotor(boolean enableMotor) {
         setEnableMotor(motorId, enableMotor);
+    }
+
+    /**
+     * Alter this motor's error-reduction parameter.
+     *
+     * @param ERP the desired error tolerance at limits (&ge;0, default=0.2)
+     */
+    public void setERP(float ERP) {
+        setERP(motorId, ERP);
+    }
+
+    /**
+     * Alter this motor's constraint upper limit.
+     *
+     * @param hiLimit the desired limit value
+     */
+    public void setHiLimit(float hiLimit) {
+        setHiLimit(motorId, hiLimit);
+    }
+
+    /**
+     * Alter this motor's limit softness.
+     *
+     * @param limitSoftness the desired limit softness (default=0.5)
+     */
+    public void setLimitSoftness(float limitSoftness) {
+        setLimitSoftness(motorId, limitSoftness);
+    }
+
+    /**
+     * Alter this motor's constraint lower limit.
+     *
+     * @param loLimit the desired limit value
+     */
+    public void setLoLimit(float loLimit) {
+        setLoLimit(motorId, loLimit);
+    }
+
+    /**
+     * Alter the limit maximum force.
+     *
+     * @param maxLimitForce the desired maximum force on the limit (default=300)
+     */
+    public void setMaxLimitForce(float maxLimitForce) {
+        setMaxLimitForce(motorId, maxLimitForce);
+    }
+
+    /**
+     * Alter this motor's maximum force.
+     *
+     * @param maxMotorForce the desired maximum force
+     */
+    public void setMaxMotorForce(float maxMotorForce) {
+        setMaxMotorForce(motorId, maxMotorForce);
+    }
+
+    /**
+     * Alter this motor's target velocity.
+     *
+     * @param targetVelocity the desired target velocity (in radians per second)
+     */
+    public void setTargetVelocity(float targetVelocity) {
+        setTargetVelocity(motorId, targetVelocity);
     }
     // *************************************************************************
     // private methods
