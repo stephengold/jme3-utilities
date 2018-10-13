@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 
 /**
  * A motor based on Bullet's btTranslationalLimitMotor. Motors are used to drive
- * joints. TODO make JmeCloneable and Savable
+ * joints. TODO add getTargetVelocity()
  *
  * @author normenhansen
  */
@@ -310,8 +310,7 @@ public class TranslationalLimitMotor {
     /**
      * Alter this motor's target velocity (m_targetVelocity).
      *
-     * @param velocity the desired velocity (not null,
-     * unaffected)
+     * @param velocity the desired velocity (not null, unaffected)
      */
     public void setTargetVelocity(Vector3f velocity) {
         setTargetVelocity(motorId, velocity);
@@ -368,7 +367,7 @@ public class TranslationalLimitMotor {
     native private void setRestitution(long motorId, float restitution);
 
     native private void setStopCFM(long motorId, Vector3f stopCFM);
-    
+
     native private void setTargetVelocity(long motorId, Vector3f velocity);
 
     native private void setUpperLimit(long motorId, Vector3f vector);

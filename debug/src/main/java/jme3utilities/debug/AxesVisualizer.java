@@ -48,7 +48,8 @@ import jme3utilities.math.MyVector3f;
 /**
  * Subtree control to visualize the coordinate axes of a Node.
  * <p>
- * The controlled spatial must be a Node.
+ * The controlled spatial must be a Node. TODO option to specify a subject
+ * spatial
  * <p>
  * The control is disabled by default. When enabled, it attaches up to 3 arrow
  * geometries to the subtree, each of which represents an axis.

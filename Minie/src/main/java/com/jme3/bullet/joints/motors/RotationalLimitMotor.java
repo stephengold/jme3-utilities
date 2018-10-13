@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 
 /**
  * A motor based on Bullet's btRotationalLimitMotor. Motors are used to drive
- * joints. TODO make JmeCloneable and Savable
+ * joints.
  *
  * @author normenhansen
  */
