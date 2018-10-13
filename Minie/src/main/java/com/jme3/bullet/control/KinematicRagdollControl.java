@@ -284,7 +284,7 @@ public class KinematicRagdollControl
         }
 
         for (BoneLink link : boneLinks.values()) {
-            link.startBlendToKinematic(blendInterval);
+            link.blendToKinematicMode(blendInterval);
         }
     }
 
@@ -666,13 +666,13 @@ public class KinematicRagdollControl
 
     /**
      * Alter the transform of a skeleton bone. Unlinked child bones are also
-     * altered. Note: recursive! TODO rename setBoneTransform
+     * altered. Note: recursive!
      *
      * @param bone the skeleton bone to transform (not null, modified)
      * @param localTransform the desired bone transform (in local coordinates,
      * not null, unaffected)
      */
-    void setTransform(Bone bone, Transform localTransform) {
+    void setBoneTransform(Bone bone, Transform localTransform) {
         boolean userControl = bone.hasUserControl();
         if (!userControl) {
             // Take control of the bone.
@@ -694,7 +694,7 @@ public class KinematicRagdollControl
                 Transform childLocalTransform
                         = childBone.getCombinedTransform(location, orientation);
                 childLocalTransform.setScale(scale);
-                setTransform(childBone, childLocalTransform);
+                setBoneTransform(childBone, childLocalTransform);
             }
         }
 
@@ -1622,7 +1622,7 @@ public class KinematicRagdollControl
                 Transform startTransform = startRootTransform[rootIndex];
                 transform.interpolateTransforms(startTransform,
                         kinematicTransform, torsoKinematicWeight);
-                setTransform(bone, transform);
+                setBoneTransform(bone, transform);
             }
         }
         /*

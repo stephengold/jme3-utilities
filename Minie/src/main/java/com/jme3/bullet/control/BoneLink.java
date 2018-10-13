@@ -145,6 +145,23 @@ public class BoneLink
     // new methods exposed
 
     /**
+     * Begin transitioning this link to fully kinematic mode.
+     *
+     * @param blendInterval the duration of the blend interval (in seconds,
+     * &ge;0)
+     */
+    void blendToKinematicMode(float blendInterval) {
+        Validate.nonNegative(blendInterval, "blend interval");
+
+        startTransform = krc.localBoneTransform(rigidBody, bindOrientation,
+                bindScale, startTransform);
+        this.blendInterval = blendInterval;
+        kinematicWeight = Float.MIN_VALUE; // not zero!
+        rigidBody.setKinematic(true);
+        krc.setUserMode(bone, false);
+    }
+
+    /**
      * Access the linked bone.
      *
      * @return the pre-existing instance (not null)
@@ -201,24 +218,6 @@ public class BoneLink
     public void setJoint(SixDofJoint joint) {
         Validate.nonNull(joint, "joint");
         this.joint = joint;
-    }
-
-    /**
-     * Begin transitioning this link to fully kinematic mode. TODO rename
-     * blendToKinematicMode
-     *
-     * @param blendInterval the duration of the blend interval (in seconds,
-     * &ge;0)
-     */
-    void startBlendToKinematic(float blendInterval) {
-        Validate.nonNegative(blendInterval, "blend interval");
-
-        startTransform = krc.localBoneTransform(rigidBody, bindOrientation,
-                bindScale, startTransform);
-        this.blendInterval = blendInterval;
-        kinematicWeight = Float.MIN_VALUE; // not zero!
-        rigidBody.setKinematic(true);
-        krc.setUserMode(bone, false);
     }
 
     /**
@@ -340,7 +339,7 @@ public class BoneLink
                 bindScale, null);
 
         // Update the transforms in the skeleton.
-        krc.setTransform(bone, transform);
+        krc.setBoneTransform(bone, transform);
     }
 
     /**
@@ -385,7 +384,7 @@ public class BoneLink
             Transform transform = new Transform();
             transform.interpolateTransforms(startTransform, kinematicTransform,
                     kinematicWeight);
-            krc.setTransform(bone, transform);
+            krc.setBoneTransform(bone, transform);
         }
         /*
          * Update the rigid body.
