@@ -190,7 +190,7 @@ public class TestCloneJoints extends SimpleApplication {
         RotationalLimitMotor rot
                 = six.getRotationalLimitMotor(PhysicsSpace.AXIS_Z);
         rot.setEnableMotor(!flag);
-        rot.setBounce(b + 0.01f);
+        rot.setRestitution(b + 0.01f);
         rot.setDamping(b + 0.02f);
         rot.setERP(b + 0.03f);
         rot.setLowerLimit(b + 0.04f);
@@ -319,7 +319,7 @@ public class TestCloneJoints extends SimpleApplication {
         RotationalLimitMotor rot
                 = six.getRotationalLimitMotor(PhysicsSpace.AXIS_Z);
         assert rot.isEnableMotor() == !flag;
-        assert rot.getBounce() == b + 0.01f;
+        assert rot.getRestitution() == b + 0.01f;
         assert rot.getDamping() == b + 0.02f;
         assert rot.getERP() == b + 0.03f;
         assert rot.getLowerLimit() == b + 0.04f;

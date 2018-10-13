@@ -417,7 +417,7 @@ public class SixDofJoint extends PhysicsJoint {
             RotationalLimitMotor rlm = getRotationalLimitMotor(i);
             RotationalLimitMotor oldRlm = old.getRotationalLimitMotor(i);
 
-            rlm.setBounce(oldRlm.getBounce());
+            rlm.setRestitution(oldRlm.getRestitution());
             rlm.setDamping(oldRlm.getDamping());
             rlm.setEnableMotor(oldRlm.isEnableMotor());
             rlm.setERP(oldRlm.getERP());
@@ -467,7 +467,7 @@ public class SixDofJoint extends PhysicsJoint {
 
         for (int i = 0; i < 3; i++) {
             RotationalLimitMotor rotationalLimitMotor = getRotationalLimitMotor(i);
-            rotationalLimitMotor.setBounce(capsule.readFloat("rotMotor" + i + "_Bounce", 0.0f));
+            rotationalLimitMotor.setRestitution(capsule.readFloat("rotMotor" + i + "_Bounce", 0.0f));
             rotationalLimitMotor.setDamping(capsule.readFloat("rotMotor" + i + "_Damping", 1.0f));
             rotationalLimitMotor.setERP(capsule.readFloat("rotMotor" + i + "_ERP", 0.5f));
             rotationalLimitMotor.setUpperLimit(capsule.readFloat("rotMotor" + i + "_HiLimit", Float.POSITIVE_INFINITY));
@@ -502,7 +502,7 @@ public class SixDofJoint extends PhysicsJoint {
         capsule.write(linearLowerLimit, "linearLowerLimit", new Vector3f(Vector3f.NEGATIVE_INFINITY));
         int i = 0;
         for (RotationalLimitMotor rotationalLimitMotor : rotationalMotors) {
-            capsule.write(rotationalLimitMotor.getBounce(), "rotMotor" + i + "_Bounce", 0.0f);
+            capsule.write(rotationalLimitMotor.getRestitution(), "rotMotor" + i + "_Bounce", 0.0f);
             capsule.write(rotationalLimitMotor.getDamping(), "rotMotor" + i + "_Damping", 1.0f);
             capsule.write(rotationalLimitMotor.getERP(), "rotMotor" + i + "_ERP", 0.5f);
             capsule.write(rotationalLimitMotor.getUpperLimit(), "rotMotor" + i + "_HiLimit", Float.POSITIVE_INFINITY);

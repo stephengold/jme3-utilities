@@ -90,15 +90,6 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Read this motor's bounce (m_bounce). TODO rename getRestitution()
-     *
-     * @return the bounce (or restitution factor)
-     */
-    public float getBounce() {
-        return getBounce(motorId);
-    }
-
-    /**
      * Read this motor's damping (m_damping).
      *
      * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
@@ -174,6 +165,15 @@ public class RotationalLimitMotor {
     }
 
     /**
+     * Read this motor's restitution at the limits (m_bounce).
+     *
+     * @return the restitution (bounce) factor
+     */
+    public float getRestitution() {
+        return getBounce(motorId);
+    }
+
+    /**
      * Read this motor's constraint-force mixing parameter at the limits
      * (m_stopCFM).
      *
@@ -208,15 +208,6 @@ public class RotationalLimitMotor {
      */
     public boolean isEnableMotor() {
         return isEnableMotor(motorId);
-    }
-
-    /**
-     * Alter this motor's bounce (m_bounce). TODO rename setRestitution()
-     *
-     * @param bounce the desired bounce (or restitution factor) (default=0)
-     */
-    public void setBounce(float bounce) {
-        setBounce(motorId, bounce);
     }
 
     /**
@@ -292,6 +283,15 @@ public class RotationalLimitMotor {
      */
     public void setNormalCFM(float cfm) {
         setNormalCFM(motorId, cfm);
+    }
+
+    /**
+     * Alter this motor's restitution at the limits (m_bounce).
+     *
+     * @param restitution the desired restitution (bounce) factor (default=0)
+     */
+    public void setRestitution(float restitution) {
+        setBounce(motorId, restitution);
     }
 
     /**
