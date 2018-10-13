@@ -130,41 +130,20 @@ abstract public class PhysicsJoint
     // new methods exposed
 
     /**
+     * Remove this joint from the joint lists of both connected bodies.
+     */
+    public void destroy() {
+        getBodyA().removeJoint(this);
+        getBodyB().removeJoint(this);
+    }
+
+    /**
      * Read the magnitude of the applied impulse.
      *
      * @return impulse
      */
     public float getAppliedImpulse() {
         return getAppliedImpulse(objectId);
-    }
-
-    /**
-     * Read the id of the Bullet constraint.
-     *
-     * @return the unique identifier (not zero)
-     */
-    public long getObjectId() {
-        assert objectId != 0L;
-        return objectId;
-    }
-
-    /**
-     * Test whether collisions are allowed between the linked bodies.
-     *
-     * @return true if collision are allowed, otherwise false
-     */
-    public boolean isCollisionBetweenLinkedBodies() {
-        return collisionBetweenLinkedBodies;
-    }
-
-    /**
-     * Enable or disable collisions between the linked bodies. Changes take
-     * effect when the joint is added to a PhysicsSpace.
-     *
-     * @param enable true &rarr; allow collisions, false &rarr; prevent them
-     */
-    public void setCollisionBetweenLinkedBodies(boolean enable) {
-        collisionBetweenLinkedBodies = enable;
     }
 
     /**
@@ -186,6 +165,16 @@ abstract public class PhysicsJoint
     }
 
     /**
+     * Read the id of the Bullet constraint.
+     *
+     * @return the unique identifier (not zero)
+     */
+    public long getObjectId() {
+        assert objectId != 0L;
+        return objectId;
+    }
+
+    /**
      * Access the local offset of the joint connection point in node A.
      *
      * @return the pre-existing vector (not null) TODO
@@ -204,11 +193,22 @@ abstract public class PhysicsJoint
     }
 
     /**
-     * Remove this joint from the joint lists of both connected bodies.
+     * Test whether collisions are allowed between the linked bodies.
+     *
+     * @return true if collision are allowed, otherwise false
      */
-    public void destroy() {
-        getBodyA().removeJoint(this);
-        getBodyB().removeJoint(this);
+    public boolean isCollisionBetweenLinkedBodies() {
+        return collisionBetweenLinkedBodies;
+    }
+
+    /**
+     * Enable or disable collisions between the linked bodies. Changes take
+     * effect when the joint is added to a PhysicsSpace.
+     *
+     * @param enable true &rarr; allow collisions, false &rarr; prevent them
+     */
+    public void setCollisionBetweenLinkedBodies(boolean enable) {
+        collisionBetweenLinkedBodies = enable;
     }
     // *************************************************************************
     // JmeCloneable methods
@@ -249,21 +249,6 @@ abstract public class PhysicsJoint
     // Savable methods
 
     /**
-     * Serialize this joint, for example when saving to a J3O file.
-     *
-     * @param ex exporter (not null)
-     * @throws IOException from exporter
-     */
-    @Override
-    public void write(JmeExporter ex) throws IOException {
-        OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(nodeA, "nodeA", null);
-        capsule.write(nodeB, "nodeB", null);
-        capsule.write(pivotA, "pivotA", null);
-        capsule.write(pivotB, "pivotB", null);
-    }
-
-    /**
      * De-serialize this joint, for example when loading from a J3O file.
      *
      * @param im importer (not null)
@@ -278,6 +263,21 @@ abstract public class PhysicsJoint
                 new PhysicsRigidBody());
         pivotA = (Vector3f) capsule.readSavable("pivotA", new Vector3f());
         pivotB = (Vector3f) capsule.readSavable("pivotB", new Vector3f());
+    }
+
+    /**
+     * Serialize this joint, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+        OutputCapsule capsule = ex.getCapsule(this);
+        capsule.write(nodeA, "nodeA", null);
+        capsule.write(nodeB, "nodeB", null);
+        capsule.write(pivotA, "pivotA", null);
+        capsule.write(pivotB, "pivotB", null);
     }
     // *************************************************************************
     // Object methods

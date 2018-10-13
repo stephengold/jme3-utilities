@@ -109,48 +109,6 @@ abstract public class AbstractPhysicsControl
     public Spatial getSpatial() {
         return spatial;
     }
-    // *************************************************************************
-    // new protected methods
-
-    /**
-     * Create spatial-dependent data. Invoked when this control is added to a
-     * spatial.
-     *
-     * @param spat the controlled spatial (not null)
-     */
-    protected abstract void createSpatialData(Spatial spat);
-
-    /**
-     * Destroy spatial-dependent data. Invoked when this control is removed from
-     * a spatial.
-     *
-     * @param spat the previously controlled spatial (not null)
-     */
-    protected abstract void removeSpatialData(Spatial spat);
-
-    /**
-     * Translate the physics object to the specified location.
-     *
-     * @param vec desired location (not null, unaffected)
-     */
-    protected abstract void setPhysicsLocation(Vector3f vec);
-
-    /**
-     * Rotate the physics object to the specified orientation.
-     *
-     * @param quat desired orientation (not null, unaffected)
-     */
-    protected abstract void setPhysicsRotation(Quaternion quat);
-
-    /**
-     * Add all managed physics objects to the physics space.
-     */
-    protected abstract void addPhysics();
-
-    /**
-     * Remove all managed physics objects from the physics space.
-     */
-    protected abstract void removePhysics();
 
     /**
      * Test whether physics-space coordinates should match the spatial's local
@@ -173,38 +131,13 @@ abstract public class AbstractPhysicsControl
     public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
         applyLocal = applyPhysicsLocal;
     }
+    // *************************************************************************
+    // new protected methods
 
     /**
-     * Access whichever spatial translation corresponds to the physics location.
-     *
-     * @return the pre-existing location vector (in physics-space coordinates,
-     * not null) TODO
+     * Add all managed physics objects to the physics space.
      */
-    protected Vector3f getSpatialTranslation() {
-        if (MySpatial.isIgnoringTransforms(spatial)) {
-            return translateIdentity;
-        } else if (applyLocal) {
-            return spatial.getLocalTranslation();
-        } else {
-            return spatial.getWorldTranslation();
-        }
-    }
-
-    /**
-     * Access whichever spatial rotation corresponds to the physics rotation.
-     *
-     * @return the pre-existing quaternion (in physics-space coordinates, not
-     * null)
-     */
-    protected Quaternion getSpatialRotation() {
-        if (MySpatial.isIgnoringTransforms(spatial)) {
-            return rotateIdentity;
-        } else if (applyLocal) {
-            return spatial.getLocalRotation();
-        } else {
-            return spatial.getWorldRotation();
-        }
-    }
+    protected abstract void addPhysics();
 
     /**
      * Apply a physics transform to the spatial. TODO use MySpatial
@@ -233,8 +166,74 @@ abstract public class AbstractPhysicsControl
                 spatial.setLocalRotation(worldRotation);
             }
         }
-
     }
+
+    /**
+     * Create spatial-dependent data. Invoked when this control is added to a
+     * spatial.
+     *
+     * @param spat the controlled spatial (not null)
+     */
+    protected abstract void createSpatialData(Spatial spat);
+
+    /**
+     * Access whichever spatial rotation corresponds to the physics rotation.
+     *
+     * @return the pre-existing quaternion (in physics-space coordinates, not
+     * null)
+     */
+    protected Quaternion getSpatialRotation() {
+        if (MySpatial.isIgnoringTransforms(spatial)) {
+            return rotateIdentity;
+        } else if (applyLocal) {
+            return spatial.getLocalRotation();
+        } else {
+            return spatial.getWorldRotation();
+        }
+    }
+
+    /**
+     * Access whichever spatial translation corresponds to the physics location.
+     *
+     * @return the pre-existing location vector (in physics-space coordinates,
+     * not null) TODO
+     */
+    protected Vector3f getSpatialTranslation() {
+        if (MySpatial.isIgnoringTransforms(spatial)) {
+            return translateIdentity;
+        } else if (applyLocal) {
+            return spatial.getLocalTranslation();
+        } else {
+            return spatial.getWorldTranslation();
+        }
+    }
+
+    /**
+     * Destroy spatial-dependent data. Invoked when this control is removed from
+     * a spatial.
+     *
+     * @param spat the previously controlled spatial (not null)
+     */
+    protected abstract void removeSpatialData(Spatial spat);
+
+    /**
+     * Translate the physics object to the specified location.
+     *
+     * @param vec desired location (not null, unaffected)
+     */
+    protected abstract void setPhysicsLocation(Vector3f vec);
+
+    /**
+     * Rotate the physics object to the specified orientation.
+     *
+     * @param quat desired orientation (not null, unaffected)
+     */
+    protected abstract void setPhysicsRotation(Quaternion quat);
+
+    /**
+     * Remove all managed physics objects from the physics space.
+     */
+    protected abstract void removePhysics();
     // *************************************************************************
     // JmeCloneable methods
 
@@ -284,27 +283,38 @@ abstract public class AbstractPhysicsControl
     }
 
     /**
-     * Alter which spatial is controlled. Invoked when the control is added to
-     * or removed from a spatial. Should be invoked only by a subclass or from
-     * Spatial. Do not invoke directly from user code.
+     * Access the physics space to which the object is (or would be) added.
      *
-     * @param controlledSpatial the spatial to control (or null)
+     * @return the pre-existing space, or null for none
      */
     @Override
-    public void setSpatial(Spatial controlledSpatial) {
-        if (spatial == controlledSpatial) {
-            return;
-        } else if (spatial != null) {
-            removeSpatialData(spatial);
-        }
+    public PhysicsSpace getPhysicsSpace() {
+        return space;
+    }
 
-        spatial = controlledSpatial;
+    /**
+     * Test whether this control is enabled.
+     *
+     * @return true if enabled, otherwise false
+     */
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-        if (controlledSpatial != null) {
-            createSpatialData(spatial);
-            setPhysicsLocation(getSpatialTranslation());
-            setPhysicsRotation(getSpatialRotation());
-        }
+    /**
+     * De-serialize this control from the specified importer, for example when
+     * loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
+    @Override
+    public void read(JmeImporter im) throws IOException {
+        InputCapsule ic = im.getCapsule(this);
+        enabled = ic.readBoolean("enabled", true);
+        spatial = (Spatial) ic.readSavable("spatial", null);
+        applyLocal = ic.readBoolean("applyLocalPhysics", false);
     }
 
     /**
@@ -332,16 +342,6 @@ abstract public class AbstractPhysicsControl
                 added = false;
             }
         }
-    }
-
-    /**
-     * Test whether this control is enabled.
-     *
-     * @return true if enabled, otherwise false
-     */
-    @Override
-    public boolean isEnabled() {
-        return enabled;
     }
 
     /**
@@ -373,13 +373,27 @@ abstract public class AbstractPhysicsControl
     }
 
     /**
-     * Access the physics space to which the object is (or would be) added.
+     * Alter which spatial is controlled. Invoked when the control is added to
+     * or removed from a spatial. Should be invoked only by a subclass or from
+     * Spatial. Do not invoke directly from user code.
      *
-     * @return the pre-existing space, or null for none
+     * @param controlledSpatial the spatial to control (or null)
      */
     @Override
-    public PhysicsSpace getPhysicsSpace() {
-        return space;
+    public void setSpatial(Spatial controlledSpatial) {
+        if (spatial == controlledSpatial) {
+            return;
+        } else if (spatial != null) {
+            removeSpatialData(spatial);
+        }
+
+        spatial = controlledSpatial;
+
+        if (controlledSpatial != null) {
+            createSpatialData(spatial);
+            setPhysicsLocation(getSpatialTranslation());
+            setPhysicsRotation(getSpatialRotation());
+        }
     }
 
     /**
@@ -394,20 +408,5 @@ abstract public class AbstractPhysicsControl
         oc.write(enabled, "enabled", true);
         oc.write(applyLocal, "applyLocalPhysics", false);
         oc.write(spatial, "spatial", null);
-    }
-
-    /**
-     * De-serialize this control from the specified importer, for example when
-     * loading from a J3O file.
-     *
-     * @param im importer (not null)
-     * @throws IOException from importer
-     */
-    @Override
-    public void read(JmeImporter im) throws IOException {
-        InputCapsule ic = im.getCapsule(this);
-        enabled = ic.readBoolean("enabled", true);
-        spatial = (Spatial) ic.readSavable("spatial", null);
-        applyLocal = ic.readBoolean("applyLocalPhysics", false);
     }
 }

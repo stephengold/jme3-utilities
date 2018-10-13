@@ -1405,41 +1405,6 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Create a PhysicsBoneLink for the named bone. TODO sort methods
-     *
-     * @param name the name of the bone to be linked (not null)
-     * @param lbNames map from bone indices to linked-bone names (not null,
-     * unaffected)
-     * @param coordsMap map from bone names to vertex positions (not null,
-     * unaffected)
-     * @return a new bone link without a joint, added to the boneLinks map
-     */
-    private BoneLink createLink(String name, List<Vector3f> vertexLocations) {
-        Bone bone = getBone(name);
-        /*
-         * Create the collision shape.
-         */
-        Transform invTransform = bone.getModelBindInverseTransform();
-        Vector3f meshLocation = bone.getModelSpacePosition();
-        CollisionShape boneShape
-                = createShape(invTransform, meshLocation, vertexLocations);
-        /*
-         * Create the rigid body.
-         */
-        float boneMass = mass(name);
-        assert boneMass > 0f : boneMass;
-        PhysicsRigidBody prb = new PhysicsRigidBody(boneShape, boneMass);
-
-        float viscousDamping = damping();
-        prb.setDamping(viscousDamping, viscousDamping);
-
-        BoneLink link = new BoneLink(this, bone, prb);
-        boneLinks.put(name, link);
-
-        return link;
-    }
-
-    /**
      * Assign each mesh vertex to a linked bone and add its location (mesh
      * coordinates in bind pose) to that bone's list.
      *
@@ -1487,6 +1452,41 @@ public class KinematicRagdollControl
         }
 
         return coordsMap;
+    }
+
+    /**
+     * Create a PhysicsBoneLink for the named bone. TODO sort methods
+     *
+     * @param name the name of the bone to be linked (not null)
+     * @param lbNames map from bone indices to linked-bone names (not null,
+     * unaffected)
+     * @param coordsMap map from bone names to vertex positions (not null,
+     * unaffected)
+     * @return a new bone link without a joint, added to the boneLinks map
+     */
+    private BoneLink createLink(String name, List<Vector3f> vertexLocations) {
+        Bone bone = getBone(name);
+        /*
+         * Create the collision shape.
+         */
+        Transform invTransform = bone.getModelBindInverseTransform();
+        Vector3f meshLocation = bone.getModelSpacePosition();
+        CollisionShape boneShape
+                = createShape(invTransform, meshLocation, vertexLocations);
+        /*
+         * Create the rigid body.
+         */
+        float boneMass = mass(name);
+        assert boneMass > 0f : boneMass;
+        PhysicsRigidBody prb = new PhysicsRigidBody(boneShape, boneMass);
+
+        float viscousDamping = damping();
+        prb.setDamping(viscousDamping, viscousDamping);
+
+        BoneLink link = new BoneLink(this, bone, prb);
+        boneLinks.put(name, link);
+
+        return link;
     }
 
     /**

@@ -120,33 +120,6 @@ abstract public class CollisionShape
     }
 
     /**
-     * Alter the scaling factors of this shape. CAUTION: Not all shapes can be
-     * scaled arbitrarily.
-     * <p>
-     * Note that if the shape is shared (between collision objects and/or
-     * compound shapes) changes can have unintended consequences.
-     *
-     * @param scale the desired scaling factor for each local axis (not null, no
-     * negative component, unaffected, default=1,1,1)
-     */
-    public void setScale(Vector3f scale) {
-        Validate.nonNull(scale, "scale");
-        if (!canScale(scale)) {
-            String typeName = this.getClass().getCanonicalName();
-            String msg = String.format("%s cannot be scaled to (%s,%s,%s)",
-                    typeName, scale.x, scale.y, scale.z);
-            throw new IllegalArgumentException(msg);
-        }
-        assert objectId != 0L;
-
-        setLocalScaling(objectId, scale);
-        logger.log(Level.FINE, "Scaling Shape {0}", Long.toHexString(objectId));
-
-        getLocalScaling(objectId, this.scale);
-        assert this.scale.equals(scale) : scale;
-    }
-
-    /**
      * Copy the scaling factors.
      *
      * @param storeResult storage for the result (modified if not null)
@@ -222,6 +195,33 @@ abstract public class CollisionShape
         assert getMargin(objectId) == margin : getMargin(objectId);
         this.margin = margin;
     }
+
+    /**
+     * Alter the scaling factors of this shape. CAUTION: Not all shapes can be
+     * scaled arbitrarily.
+     * <p>
+     * Note that if the shape is shared (between collision objects and/or
+     * compound shapes) changes can have unintended consequences.
+     *
+     * @param scale the desired scaling factor for each local axis (not null, no
+     * negative component, unaffected, default=1,1,1)
+     */
+    public void setScale(Vector3f scale) {
+        Validate.nonNull(scale, "scale");
+        if (!canScale(scale)) {
+            String typeName = this.getClass().getCanonicalName();
+            String msg = String.format("%s cannot be scaled to (%s,%s,%s)",
+                    typeName, scale.x, scale.y, scale.z);
+            throw new IllegalArgumentException(msg);
+        }
+        assert objectId != 0L;
+
+        setLocalScaling(objectId, scale);
+        logger.log(Level.FINE, "Scaling Shape {0}", Long.toHexString(objectId));
+
+        getLocalScaling(objectId, this.scale);
+        assert this.scale.equals(scale) : scale;
+    }
     // *************************************************************************
     // JmeCloneable methods
 
@@ -258,19 +258,6 @@ abstract public class CollisionShape
     // Savable methods
 
     /**
-     * Serialize this shape, for example when saving to a J3O file.
-     *
-     * @param ex exporter (not null)
-     * @throws IOException from exporter
-     */
-    @Override
-    public void write(JmeExporter ex) throws IOException {
-        OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(scale, "scale", new Vector3f(1f, 1f, 1f));
-        capsule.write(margin, "margin", 0.04f);
-    }
-
-    /**
      * De-serialize this shape, for example when loading from a J3O file.
      *
      * @param im importer (not null)
@@ -283,6 +270,19 @@ abstract public class CollisionShape
         scale.set((Vector3f) s);
         margin = capsule.readFloat("margin", 0.04f);
         // subclass must create the btCollisionShape and apply margin and scale
+    }
+
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+        OutputCapsule capsule = ex.getCapsule(this);
+        capsule.write(scale, "scale", new Vector3f(1f, 1f, 1f));
+        capsule.write(margin, "margin", 0.04f);
     }
     // *************************************************************************
     // Object methods

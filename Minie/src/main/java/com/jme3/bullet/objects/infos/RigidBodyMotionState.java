@@ -127,6 +127,15 @@ public class RigidBodyMotionState implements JmeCloneable {
     }
 
     /**
+     * Read the unique id of the native object.
+     *
+     * @return id (not zero)
+     */
+    public long getObjectId() {
+        return motionStateId;
+    }
+
+    /**
      * Copy the location from this motion state.
      *
      * @return the pre-existing location vector (in physics-space coordinates,
@@ -161,6 +170,17 @@ public class RigidBodyMotionState implements JmeCloneable {
     }
 
     /**
+     * Test whether physics-space coordinates should match the spatial's local
+     * coordinates.
+     *
+     * @return true if matching local coordinates, false if matching world
+     * coordinates
+     */
+    public boolean isApplyPhysicsLocal() {
+        return applyPhysicsLocal;
+    }
+
+    /**
      * Calculate the body's physics transform.
      *
      * @param storeResult storage for the result (modified if not null)
@@ -182,26 +202,6 @@ public class RigidBodyMotionState implements JmeCloneable {
     }
 
     /**
-     * Alter which vehicle uses this motion state.
-     *
-     * @param vehicle the desired vehicle, or null for none (alias created)
-     */
-    public void setVehicle(PhysicsVehicle vehicle) {
-        this.vehicle = vehicle;
-    }
-
-    /**
-     * Test whether physics-space coordinates should match the spatial's local
-     * coordinates.
-     *
-     * @return true if matching local coordinates, false if matching world
-     * coordinates
-     */
-    public boolean isApplyPhysicsLocal() {
-        return applyPhysicsLocal;
-    }
-
-    /**
      * Alter whether physics-space coordinates should match the spatial's local
      * coordinates.
      *
@@ -213,12 +213,12 @@ public class RigidBodyMotionState implements JmeCloneable {
     }
 
     /**
-     * Read the unique id of the native object.
+     * Alter which vehicle uses this motion state.
      *
-     * @return id (not zero)
+     * @param vehicle the desired vehicle, or null for none (alias created)
      */
-    public long getObjectId() {
-        return motionStateId;
+    public void setVehicle(PhysicsVehicle vehicle) {
+        this.vehicle = vehicle;
     }
     // *************************************************************************
     // JmeCloneable methods
