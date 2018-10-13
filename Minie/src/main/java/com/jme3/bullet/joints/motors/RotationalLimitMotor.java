@@ -72,16 +72,34 @@ public class RotationalLimitMotor {
     // new methods exposed
 
     /**
-     * Read this motor's bounce.
+     * Read the accumulated impulse (m_accumulatedImpulse).
      *
-     * @return the bounce (restitution factor)
+     * @return the impulse amount
+     */
+    public float getAccumulatedImpulse() {
+        return getAccumulatedImpulse(motorId);
+    }
+
+    /**
+     * Read this motor's current rotation angle (m_currentPosition).
+     *
+     * @return the angle (in radians)
+     */
+    public float getAngle() {
+        return getCurrentPosition(motorId);
+    }
+
+    /**
+     * Read this motor's bounce (m_bounce). TODO rename getRestitution()
+     *
+     * @return the bounce (or restitution factor)
      */
     public float getBounce() {
         return getBounce(motorId);
     }
 
     /**
-     * Read this motor's damping.
+     * Read this motor's damping (m_damping).
      *
      * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
      * damped)
@@ -91,7 +109,7 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Read this motor's error-reduction parameter at the stops.
+     * Read this motor's error-reduction parameter at the limits (m_stopERP).
      *
      * @return the the error-reduction parameter (&ge;0)
      */
@@ -100,16 +118,16 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Read this motor's limit softness.
+     * Read this motor's limit softness (m_limitSoftness).
      *
-     * @return the limit softness
+     * @return the limit softness (or relaxation factor)
      */
     public float getLimitSoftness() {
         return getLimitSoftness(motorId);
     }
 
     /**
-     * Read this motor's constraint lower limit.
+     * Read this motor's constraint lower limit (m_loLimit).
      *
      * @return the limit value
      */
@@ -118,7 +136,7 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Read the limit maximum force.
+     * Read the limit maximum force (m_maxLimitForce).
      *
      * @return the maximum force on the limit (default=300)
      */
@@ -127,7 +145,7 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Read this motor's maximum force for normal conditions.
+     * Read this motor's maximum force for normal conditions (m_maxMotorForce).
      *
      * @return the maximum force
      */
@@ -146,8 +164,8 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Read this motor's constraint-force mixing parameter for normal
-     * conditions.
+     * Read this motor's constraint-force mixing parameter for normal conditions
+     * (m_normalCFM).
      *
      * @return the mixing parameter (&ge;0)
      */
@@ -156,7 +174,8 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Read this motor's constraint-force mixing parameter at the stops.
+     * Read this motor's constraint-force mixing parameter at the limits
+     * (m_stopCFM).
      *
      * @return the mixing parameter (&ge;0)
      */
@@ -165,7 +184,7 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Read this motor's target velocity.
+     * Read this motor's target velocity (m_targetVelocity).
      *
      * @return the target velocity (in radians per second)
      */
@@ -174,7 +193,7 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Read this motor's constraint upper limit.
+     * Read this motor's constraint upper limit (m_hiLimit).
      *
      * @return the limit value
      */
@@ -183,7 +202,7 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Test whether this motor is enabled.
+     * Test whether this motor is enabled (m_enableMotor).
      *
      * @return true if enabled, otherwise false
      */
@@ -192,16 +211,16 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Alter this motor's bounce.
+     * Alter this motor's bounce (m_bounce). TODO rename setRestitution()
      *
-     * @param bounce the desired bounce (restitution factor) (default=0)
+     * @param bounce the desired bounce (or restitution factor) (default=0)
      */
     public void setBounce(float bounce) {
         setBounce(motorId, bounce);
     }
 
     /**
-     * Alter this motor's damping.
+     * Alter this motor's damping (m_damping).
      *
      * @param damping the desired viscous damping ratio (0&rarr;no damping,
      * 1&rarr;critically damped, default=1)
@@ -211,7 +230,7 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Enable or disable this motor.
+     * Enable or disable this motor (m_enableMotor).
      *
      * @param enableMotor true&rarr;enable, false&rarr;disable
      */
@@ -220,7 +239,7 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Alter this motor's error-reduction parameter at the stops.
+     * Alter this motor's error-reduction parameter at the limits (m_stopERP).
      *
      * @param erp the desired error tolerance at limits (&ge;0, default=0.2)
      */
@@ -229,16 +248,17 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Alter this motor's limit softness.
+     * Alter this motor's limit softness (m_limitSoftness).
      *
-     * @param limitSoftness the desired limit softness (default=0.5)
+     * @param limitSoftness the desired limit softness (or relaxation factor)
+     * (default=0.5)
      */
     public void setLimitSoftness(float limitSoftness) {
         setLimitSoftness(motorId, limitSoftness);
     }
 
     /**
-     * Alter this motor's constraint lower limit.
+     * Alter this motor's constraint lower limit (m_loLimit).
      *
      * @param lowerLimit the desired limit value
      */
@@ -247,7 +267,7 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Alter the limit maximum force.
+     * Alter the limit maximum force (m_maxLimitForce).
      *
      * @param maxLimitForce the desired maximum force on the limit (default=300)
      */
@@ -256,7 +276,7 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Alter this motor's maximum force.
+     * Alter this motor's maximum force (m_maxMotorForce).
      *
      * @param maxMotorForce the desired maximum force
      */
@@ -266,7 +286,7 @@ public class RotationalLimitMotor {
 
     /**
      * Alter this motor's constraint-force mixing parameter for normal
-     * conditions.
+     * conditions (m_normalCFM).
      *
      * @param cfm the desired mixing parameter (&ge;0)
      */
@@ -275,7 +295,8 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Alter this motor's constraint-force mixing parameter at the stops.
+     * Alter this motor's constraint-force mixing parameter at the limits
+     * (m_stopCFM).
      *
      * @param cfm the desired mixing parameter (&ge;0)
      */
@@ -284,7 +305,7 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Alter this motor's target velocity.
+     * Alter this motor's target velocity (m_targetVelocity).
      *
      * @param targetVelocity the desired target velocity (in radians per second)
      */
@@ -293,7 +314,7 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Alter this motor's constraint upper limit.
+     * Alter this motor's constraint upper limit (m_hiLimit).
      *
      * @param upperLimit the desired limit value
      */
@@ -303,7 +324,11 @@ public class RotationalLimitMotor {
     // *************************************************************************
     // private methods
 
+    native private float getAccumulatedImpulse(long motorId);
+
     native private float getBounce(long motorId);
+
+    native private float getCurrentPosition(long motorId);
 
     native private float getDamping(long motorId);
 
