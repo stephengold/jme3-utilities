@@ -159,8 +159,10 @@ public class SkeletonVisualizer extends SubtreeControl {
      * Instantiate a disabled control.
      *
      * @param assetManager for loading material definitions (not null)
+     * @param subject the skeleton control to visualize (may be null)
      */
-    public SkeletonVisualizer(AssetManager assetManager) {
+    public SkeletonVisualizer(AssetManager assetManager,
+            SkeletonControl subject) {
         super();
         Validate.nonNull(assetManager, "asset manager");
 
@@ -183,6 +185,8 @@ public class SkeletonVisualizer extends SubtreeControl {
         RenderState headState = headMaterial.getAdditionalRenderState();
         headState.setBlendMode(BlendMode.Alpha);
         headState.setDepthTest(false);
+
+        setSubject(subject);
 
         assert !isEnabled();
     }

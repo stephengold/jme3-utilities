@@ -647,10 +647,11 @@ class ModelState extends SimpleAppState {
         /*
          * Add a skeleton visualizer to the spatial.
          */
-        skeletonVisualizer = new SkeletonVisualizer(assetManager);
+        List<SkeletonControl> scList
+                = MySpatial.listControls(spatial, SkeletonControl.class, null);
+        SkeletonControl sc = scList.get(0);
+        skeletonVisualizer = new SkeletonVisualizer(assetManager, sc);
         spatial.addControl(skeletonVisualizer);
-        SkeletonControl sc = spatial.getControl(SkeletonControl.class);
-        skeletonVisualizer.setSubject(sc);
 
         loadBindPose();
         selectBone(PoseDemoHud.noBone);
