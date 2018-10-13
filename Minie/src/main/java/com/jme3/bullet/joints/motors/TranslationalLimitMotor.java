@@ -73,7 +73,7 @@ public class TranslationalLimitMotor {
     // new methods exposed
 
     /**
-     * Copy the accumulated impulse.
+     * Copy the accumulated impulse (m_accumulatedImpulse).
      *
      * @return a new vector (not null)
      */
@@ -85,7 +85,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Read this motor's damping.
+     * Read this motor's damping (m_damping).
      *
      * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
      * damped)
@@ -95,7 +95,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Copy this motor's error-reduction parameters at the stops.
+     * Copy this motor's error-reduction parameters at the limits (m_stopERP).
      *
      * @param storeResult storage for the result (modified if not null)
      * @return the error-reduction parameter for each axis (either storeResult
@@ -109,16 +109,16 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Read this motor's limit softness.
+     * Read this motor's limit softness (m_limitSoftness).
      *
-     * @return the limit softness
+     * @return the limit softness (or relaxation factor)
      */
     public float getLimitSoftness() {
         return getLimitSoftness(motorId);
     }
 
     /**
-     * Copy this motor's constraint lower limits.
+     * Copy this motor's constraint lower limits (m_lowerLimit).
      *
      * @return a new vector (not null)
      */
@@ -130,7 +130,8 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Copy this motor's maximum motor forces for normal conditions.
+     * Copy this motor's maximum motor forces for normal conditions
+     * (m_maxMotorForce).
      *
      * @param storeResult storage for the result (modified if not null)
      * @return the maximum force for each axis (either storeResult or a new
@@ -155,7 +156,7 @@ public class TranslationalLimitMotor {
 
     /**
      * Copy this motor's constraint-force mixing parameters for normal
-     * conditions.
+     * conditions (m_normalCFM).
      *
      * @param storeResult storage for the result (modified if not null)
      * @return the mixing parameter for each axis (either storeResult or a new
@@ -169,7 +170,21 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Copy this motor's constraint-force mixing parameters at the stops.
+     * Read the offset of the constraint frames (m_currentLinearDiff).
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the offset (either storeResult or a new instance)
+     */
+    public Vector3f getOffset(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getOffset(motorId, result);
+
+        return result;
+    }
+
+    /**
+     * Copy this motor's constraint-force mixing parameters at the limits
+     * (m_stopCFM).
      *
      * @param storeResult storage for the result (modified if not null)
      * @return the mixing parameter for each axis (either storeResult or a new
@@ -183,7 +198,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Read this motor's restitution.
+     * Read this motor's restitution at the limits (m_restitution).
      *
      * @return the restitution (bounce) factor
      */
@@ -192,7 +207,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Copy this motor's constraint upper limits.
+     * Copy this motor's constraint upper limits (m_upperLimit).
      *
      * @return a new vector (not null, default=0,0,0)
      */
@@ -204,7 +219,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter the accumulated impulse.
+     * Alter the accumulated impulse (m_accumulatedImpulse).
      *
      * @param accumulatedImpulse the desired vector (not null, unaffected)
      */
@@ -213,7 +228,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter this motor's damping.
+     * Alter this motor's damping (m_damping).
      *
      * @param damping the desired viscous damping ratio (0&rarr;no damping,
      * 1&rarr;critically damped, default=1)
@@ -223,7 +238,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter this motor's error-reduction parameters at the stops.
+     * Alter this motor's error-reduction parameters at the limits (m_stopERP).
      *
      * @param erp the desired error-reduction parameter parameter for each axis
      * (not null, unaffected)
@@ -233,7 +248,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter the limit softness.
+     * Alter the limit softness (m_limitSoftness).
      *
      * @param limitSoftness the desired limit softness (default=0.7)
      */
@@ -242,7 +257,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter this motor's constraint lower limits.
+     * Alter this motor's constraint lower limits (m_lowerLimit).
      *
      * @param lowerLimit the desired limit value for each axis (unaffected, not
      * null, default=0,0,0)
@@ -252,7 +267,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter this motor's maximum forces.
+     * Alter this motor's maximum forces (m_maxMotorForce).
      *
      * @param maxForce the desired maximum force for each axis (not null,
      * unaffected)
@@ -263,7 +278,7 @@ public class TranslationalLimitMotor {
 
     /**
      * Alter this motor's constraint-force mixing parameters for normal
-     * conditions.
+     * conditions (m_normalCFM).
      *
      * @param cfm the desired mixing parameter for each axis (not null,
      * unaffected)
@@ -273,7 +288,8 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter this motor's constraint-force mixing parameters at the stops.
+     * Alter this motor's constraint-force mixing parameters at the limits
+     * (m_stopCFM).
      *
      * @param cfm the desired mixing parameter for each axis (not null,
      * unaffected)
@@ -283,7 +299,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter this motor's restitution.
+     * Alter this motor's restitution (m_restitution).
      *
      * @param restitution the desired restitution (bounce) factor (default=0.5)
      */
@@ -292,7 +308,17 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter this motor's constraint upper limits.
+     * Alter this motor's target velocity (m_targetVelocity).
+     *
+     * @param velocity the desired velocity (not null,
+     * unaffected)
+     */
+    public void setTargetVelocity(Vector3f velocity) {
+        setTargetVelocity(motorId, velocity);
+    }
+
+    /**
+     * Alter this motor's constraint upper limits (m_upperLimit).
      *
      * @param upperLimit the desired limit value for each axis (unaffected, not
      * null)
@@ -317,6 +343,8 @@ public class TranslationalLimitMotor {
 
     native private void getNormalCFM(long motorId, Vector3f vector);
 
+    native private void getOffset(long motorId, Vector3f vector);
+
     native private float getRestitution(long motorId);
 
     native private void getStopCFM(long motorId, Vector3f vector);
@@ -333,13 +361,15 @@ public class TranslationalLimitMotor {
 
     native private void setLowerLimit(long motorId, Vector3f vector);
 
-    native private void setMaxMotorForce(long motorId, Vector3f vector);
+    native private void setMaxMotorForce(long motorId, Vector3f force);
 
     native private void setNormalCFM(long motorId, Vector3f vector);
 
     native private void setRestitution(long motorId, float restitution);
 
-    native private void setStopCFM(long motorId, Vector3f vector);
+    native private void setStopCFM(long motorId, Vector3f stopCFM);
+    
+    native private void setTargetVelocity(long motorId, Vector3f velocity);
 
     native private void setUpperLimit(long motorId, Vector3f vector);
 }
