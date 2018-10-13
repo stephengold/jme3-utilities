@@ -1405,8 +1405,7 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Create a PhysicsBoneLink for the named bone. TODO move some of this code
-     * to PhysicsBoneLink
+     * Create a PhysicsBoneLink for the named bone. TODO sort methods
      *
      * @param name the name of the bone to be linked (not null)
      * @param lbNames map from bone indices to linked-bone names (not null,
@@ -1415,8 +1414,7 @@ public class KinematicRagdollControl
      * unaffected)
      * @return a new bone link without a joint, added to the boneLinks map
      */
-    private BoneLink createLink(String name,
-            List<Vector3f> vertexLocations) {
+    private BoneLink createLink(String name, List<Vector3f> vertexLocations) {
         Bone bone = getBone(name);
         /*
          * Create the collision shape.
@@ -1431,13 +1429,11 @@ public class KinematicRagdollControl
         float boneMass = mass(name);
         assert boneMass > 0f : boneMass;
         PhysicsRigidBody prb = new PhysicsRigidBody(boneShape, boneMass);
+
         float viscousDamping = damping();
         prb.setDamping(viscousDamping, viscousDamping);
-        prb.setKinematic(true);
 
-        String parentName = parentName(name);
-        BoneLink link = new BoneLink(this, bone, prb, parentName);
-        prb.setUserObject(link);
+        BoneLink link = new BoneLink(this, bone, prb);
         boneLinks.put(name, link);
 
         return link;

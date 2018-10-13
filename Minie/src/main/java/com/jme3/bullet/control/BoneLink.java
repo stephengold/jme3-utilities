@@ -120,20 +120,22 @@ public class BoneLink
      * @param krc the control that will manage this link (not null)
      * @param bone the skeleton bone to link (not null)
      * @param rigidBody the rigid body to link (not null)
-     * @param parentName the name of the bone's parent in the linked-bone
-     * hierarchy (not null)
      */
     public BoneLink(KinematicRagdollControl krc, Bone bone,
-            PhysicsRigidBody rigidBody, String parentName) {
+            PhysicsRigidBody rigidBody) {
         Validate.nonNull(krc, "control");
         Validate.nonNull(bone, "bone");
         Validate.nonNull(rigidBody, "rigid body");
-        Validate.nonNull(parentName, "parent name");
 
         this.krc = krc;
         this.bone = bone;
         this.rigidBody = rigidBody;
-        this.parentName = parentName;
+
+        rigidBody.setKinematic(true);
+        rigidBody.setUserObject(this);
+
+        String name = bone.getName();
+        parentName = krc.parentName(name);
 
         Quaternion msr = bone.getModelSpaceRotation();
         bindOrientation.set(msr);
