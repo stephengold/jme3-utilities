@@ -258,7 +258,7 @@ public class AxesVisualizer extends SubtreeControl {
 
         Vector3f result = null;
         if (isEnabled() && axisIndex < numAxes) {
-            MySpatial.setWorldScale(spatial, axisLength);
+            MySpatial.setWorldScale(subtree, axisLength);
             Geometry arrow = (Geometry) subtree.getChild(axisIndex);
             result = arrow.localToWorld(unitX, null);
         }
@@ -426,7 +426,7 @@ public class AxesVisualizer extends SubtreeControl {
      * Update the existing axis arrows.
      */
     private void updateArrows() {
-        MySpatial.setWorldScale(spatial, axisLength);
+        MySpatial.setWorldScale(subtree, axisLength);
 
         for (Spatial axis : subtree.getChildren()) {
             Geometry geometry = (Geometry) axis;
