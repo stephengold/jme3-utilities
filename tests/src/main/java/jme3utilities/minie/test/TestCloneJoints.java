@@ -193,12 +193,14 @@ public class TestCloneJoints extends SimpleApplication {
         rot.setBounce(b + 0.01f);
         rot.setDamping(b + 0.02f);
         rot.setERP(b + 0.03f);
-        rot.setLoLimit(b + 0.04f);
-        rot.setHiLimit(b + 0.05f);
+        rot.setLowerLimit(b + 0.04f);
+        rot.setUpperLimit(b + 0.05f);
         rot.setLimitSoftness(b + 0.06f);
         rot.setMaxLimitForce(b + 0.07f);
         rot.setMaxMotorForce(b + 0.08f);
         rot.setTargetVelocity(b + 0.09f);
+        rot.setNormalCFM(b + 0.091f);
+        rot.setStopCFM(b + 0.092f);
 
         TranslationalLimitMotor tra = six.getTranslationalLimitMotor();
         tra.setDamping(b + 0.10f);
@@ -206,6 +208,10 @@ public class TestCloneJoints extends SimpleApplication {
         tra.setLowerLimit(new Vector3f(b + 0.12f, b + 0.13f, b + 0.14f));
         tra.setRestitution(b + 0.15f);
         tra.setUpperLimit(new Vector3f(b + 0.16f, b + 0.17f, b + 0.18f));
+        tra.setERP(new Vector3f(0f, 0f, b + 0.19f));
+        tra.setMaxMotorForce(new Vector3f(0f, 0f, b + 0.20f));
+        tra.setNormalCFM(new Vector3f(0f, 0f, b + 0.22f));
+        tra.setStopCFM(new Vector3f(0f, 0f, b + 0.23f));
     }
 
     private void setSlide(SliderJoint slide, float b) {
@@ -316,12 +322,14 @@ public class TestCloneJoints extends SimpleApplication {
         assert rot.getBounce() == b + 0.01f;
         assert rot.getDamping() == b + 0.02f;
         assert rot.getERP() == b + 0.03f;
-        assert rot.getLoLimit() == b + 0.04f;
-        assert rot.getHiLimit() == b + 0.05f;
+        assert rot.getLowerLimit() == b + 0.04f;
+        assert rot.getUpperLimit() == b + 0.05f;
         assert rot.getLimitSoftness() == b + 0.06f;
         assert rot.getMaxLimitForce() == b + 0.07f;
         assert rot.getMaxMotorForce() == b + 0.08f;
         assert rot.getTargetVelocity() == b + 0.09f;
+        assert rot.getNormalCFM() == b + 0.091f;
+        assert rot.getStopCFM() == b + 0.092f;
 
         TranslationalLimitMotor tra = six.getTranslationalLimitMotor();
         assert tra.getDamping() == b + 0.10f;
@@ -333,6 +341,10 @@ public class TestCloneJoints extends SimpleApplication {
         assert tra.getUpperLimit().x == b + 0.16f;
         assert tra.getUpperLimit().y == b + 0.17f;
         assert tra.getUpperLimit().z == b + 0.18f;
+        assert tra.getERP(null).z == b + 0.19f;
+        assert tra.getMaxMotorForce(null).z == b + 0.20f;
+        assert tra.getNormalCFM(null).z == b + 0.22f;
+        assert tra.getStopCFM(null).z == b + 0.23f;
     }
 
     private void verifySlide(SliderJoint slide, float b) {

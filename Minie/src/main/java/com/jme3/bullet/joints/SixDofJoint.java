@@ -404,9 +404,13 @@ public class SixDofJoint extends PhysicsJoint {
         TranslationalLimitMotor oldTlm = old.getTranslationalLimitMotor();
 
         tlm.setDamping(oldTlm.getDamping());
+        tlm.setERP(oldTlm.getERP(null));
         tlm.setLimitSoftness(oldTlm.getLimitSoftness());
         tlm.setLowerLimit(oldTlm.getLowerLimit());
+        tlm.setMaxMotorForce(oldTlm.getMaxMotorForce(null));
+        tlm.setNormalCFM(oldTlm.getNormalCFM(null));
         tlm.setRestitution(oldTlm.getRestitution());
+        tlm.setStopCFM(oldTlm.getStopCFM(null));
         tlm.setUpperLimit(oldTlm.getUpperLimit());
 
         for (int i = 0; i < 3; i++) {
@@ -422,6 +426,8 @@ public class SixDofJoint extends PhysicsJoint {
             rlm.setLowerLimit(oldRlm.getLowerLimit());
             rlm.setMaxLimitForce(oldRlm.getMaxLimitForce());
             rlm.setMaxMotorForce(oldRlm.getMaxMotorForce());
+            rlm.setNormalCFM(oldRlm.getNormalCFM());
+            rlm.setStopCFM(oldRlm.getStopCFM());
             rlm.setTargetVelocity(oldRlm.getTargetVelocity());
         }
     }
