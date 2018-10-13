@@ -29,10 +29,9 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.jme3.bullet.control.ragdoll;
+package com.jme3.bullet.control;
 
 import com.jme3.animation.Bone;
-import com.jme3.bullet.control.KinematicRagdollControl;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.export.InputCapsule;
@@ -51,11 +50,10 @@ import jme3utilities.Validate;
 
 /**
  * Link an animated bone in a skeleton to a jointed rigid body in a ragdoll.
- * TODO rename BoneLink
  *
  * @author Normen Hansen and Rémy Bouquet (Nehon)
  */
-public class PhysicsBoneLink
+public class BoneLink
         implements JmeCloneable, Savable {
     // *************************************************************************
     // constants and loggers
@@ -64,7 +62,7 @@ public class PhysicsBoneLink
      * message logger for this class
      */
     final public static Logger logger
-            = Logger.getLogger(PhysicsBoneLink.class.getName());
+            = Logger.getLogger(BoneLink.class.getName());
     // *************************************************************************
     // fields
 
@@ -125,7 +123,7 @@ public class PhysicsBoneLink
      * @param parentName the name of the bone's parent in the linked-bone
      * hierarchy (not null)
      */
-    public PhysicsBoneLink(KinematicRagdollControl krc, Bone bone,
+    public BoneLink(KinematicRagdollControl krc, Bone bone,
             PhysicsRigidBody rigidBody, String parentName) {
         Validate.nonNull(krc, "control");
         Validate.nonNull(bone, "bone");
@@ -212,7 +210,7 @@ public class PhysicsBoneLink
      * @param blendInterval the duration of the blend interval (in seconds,
      * &ge;0)
      */
-    public void startBlendToKinematic(float blendInterval) {
+    void startBlendToKinematic(float blendInterval) {
         Validate.nonNegative(blendInterval, "blend interval");
 
         startTransform = krc.localBoneTransform(rigidBody, bindOrientation,
@@ -228,7 +226,7 @@ public class PhysicsBoneLink
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
-    public void update(float tpf) {
+    void update(float tpf) {
         Validate.nonNegative(tpf, "time per frame");
 
         if (kinematicWeight > 0f) {
@@ -266,9 +264,9 @@ public class PhysicsBoneLink
      * @return a new instance
      */
     @Override
-    public PhysicsBoneLink jmeClone() {
+    public BoneLink jmeClone() {
         try {
-            PhysicsBoneLink clone = (PhysicsBoneLink) super.clone();
+            BoneLink clone = (BoneLink) super.clone();
             return clone;
         } catch (CloneNotSupportedException exception) {
             throw new RuntimeException(exception);
