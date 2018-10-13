@@ -417,9 +417,9 @@ public class SixDofJoint extends PhysicsJoint {
             rlm.setDamping(oldRlm.getDamping());
             rlm.setEnableMotor(oldRlm.isEnableMotor());
             rlm.setERP(oldRlm.getERP());
-            rlm.setHiLimit(oldRlm.getHiLimit());
+            rlm.setUpperLimit(oldRlm.getUpperLimit());
             rlm.setLimitSoftness(oldRlm.getLimitSoftness());
-            rlm.setLoLimit(oldRlm.getLoLimit());
+            rlm.setLowerLimit(oldRlm.getLowerLimit());
             rlm.setMaxLimitForce(oldRlm.getMaxLimitForce());
             rlm.setMaxMotorForce(oldRlm.getMaxMotorForce());
             rlm.setTargetVelocity(oldRlm.getTargetVelocity());
@@ -464,9 +464,9 @@ public class SixDofJoint extends PhysicsJoint {
             rotationalLimitMotor.setBounce(capsule.readFloat("rotMotor" + i + "_Bounce", 0.0f));
             rotationalLimitMotor.setDamping(capsule.readFloat("rotMotor" + i + "_Damping", 1.0f));
             rotationalLimitMotor.setERP(capsule.readFloat("rotMotor" + i + "_ERP", 0.5f));
-            rotationalLimitMotor.setHiLimit(capsule.readFloat("rotMotor" + i + "_HiLimit", Float.POSITIVE_INFINITY));
+            rotationalLimitMotor.setUpperLimit(capsule.readFloat("rotMotor" + i + "_HiLimit", Float.POSITIVE_INFINITY));
             rotationalLimitMotor.setLimitSoftness(capsule.readFloat("rotMotor" + i + "_LimitSoftness", 0.5f));
-            rotationalLimitMotor.setLoLimit(capsule.readFloat("rotMotor" + i + "_LoLimit", Float.NEGATIVE_INFINITY));
+            rotationalLimitMotor.setLowerLimit(capsule.readFloat("rotMotor" + i + "_LoLimit", Float.NEGATIVE_INFINITY));
             rotationalLimitMotor.setMaxLimitForce(capsule.readFloat("rotMotor" + i + "_MaxLimitForce", 300.0f));
             rotationalLimitMotor.setMaxMotorForce(capsule.readFloat("rotMotor" + i + "_MaxMotorForce", 0.1f));
             rotationalLimitMotor.setTargetVelocity(capsule.readFloat("rotMotor" + i + "_TargetVelocity", 0));
@@ -499,9 +499,9 @@ public class SixDofJoint extends PhysicsJoint {
             capsule.write(rotationalLimitMotor.getBounce(), "rotMotor" + i + "_Bounce", 0.0f);
             capsule.write(rotationalLimitMotor.getDamping(), "rotMotor" + i + "_Damping", 1.0f);
             capsule.write(rotationalLimitMotor.getERP(), "rotMotor" + i + "_ERP", 0.5f);
-            capsule.write(rotationalLimitMotor.getHiLimit(), "rotMotor" + i + "_HiLimit", Float.POSITIVE_INFINITY);
+            capsule.write(rotationalLimitMotor.getUpperLimit(), "rotMotor" + i + "_HiLimit", Float.POSITIVE_INFINITY);
             capsule.write(rotationalLimitMotor.getLimitSoftness(), "rotMotor" + i + "_LimitSoftness", 0.5f);
-            capsule.write(rotationalLimitMotor.getLoLimit(), "rotMotor" + i + "_LoLimit", Float.NEGATIVE_INFINITY);
+            capsule.write(rotationalLimitMotor.getLowerLimit(), "rotMotor" + i + "_LoLimit", Float.NEGATIVE_INFINITY);
             capsule.write(rotationalLimitMotor.getMaxLimitForce(), "rotMotor" + i + "_MaxLimitForce", 300.0f);
             capsule.write(rotationalLimitMotor.getMaxMotorForce(), "rotMotor" + i + "_MaxMotorForce", 0.1f);
             capsule.write(rotationalLimitMotor.getTargetVelocity(), "rotMotor" + i + "_TargetVelocity", 0);

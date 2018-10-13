@@ -164,24 +164,24 @@ public class JointPreset {
 
         RotationalLimitMotor rotX 
                 = joint.getRotationalLimitMotor(PhysicsSpace.AXIS_X);        
-        rotX.setHiLimit(maxX);
-        rotX.setLoLimit(minX);
+        rotX.setUpperLimit(maxX);
+        rotX.setLowerLimit(minX);
         //rotX.setERP(0.8f);
         //rotX.setLimitSoftness(0f);
         rotX.setMaxLimitForce(1e6f);
 
         RotationalLimitMotor rotY 
                 = joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Y);
-        rotY.setHiLimit(maxY);
-        rotY.setLoLimit(minY);
+        rotY.setUpperLimit(maxY);
+        rotY.setLowerLimit(minY);
         //rotY.setERP(0.8f);
         //rotY.setLimitSoftness(0f);
         rotY.setMaxLimitForce(1e6f);
 
         RotationalLimitMotor rotZ
                 = joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Z);
-        rotZ.setHiLimit(maxZ);
-        rotZ.setLoLimit(minZ);
+        rotZ.setUpperLimit(maxZ);
+        rotZ.setLowerLimit(minZ);
         //rotZ.setERP(0.8f);
         //rotZ.setLimitSoftness(0f);
         rotZ.setMaxLimitForce(1e6f);

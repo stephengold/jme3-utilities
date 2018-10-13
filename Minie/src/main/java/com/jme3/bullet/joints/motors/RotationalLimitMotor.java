@@ -100,15 +100,6 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Read this motor's constraint upper limit.
-     *
-     * @return the limit value
-     */
-    public float getHiLimit() {
-        return getHiLimit(motorId);
-    }
-
-    /**
      * Read this motor's limit softness.
      *
      * @return the limit softness
@@ -122,7 +113,7 @@ public class RotationalLimitMotor {
      *
      * @return the limit value
      */
-    public float getLoLimit() {
+    public float getLowerLimit() {
         return getLoLimit(motorId);
     }
 
@@ -161,6 +152,15 @@ public class RotationalLimitMotor {
      */
     public float getTargetVelocity() {
         return getTargetVelocity(motorId);
+    }
+
+    /**
+     * Read this motor's constraint upper limit.
+     *
+     * @return the limit value
+     */
+    public float getUpperLimit() {
+        return getHiLimit(motorId);
     }
 
     /**
@@ -210,15 +210,6 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Alter this motor's constraint upper limit.
-     *
-     * @param hiLimit the desired limit value
-     */
-    public void setHiLimit(float hiLimit) {
-        setHiLimit(motorId, hiLimit);
-    }
-
-    /**
      * Alter this motor's limit softness.
      *
      * @param limitSoftness the desired limit softness (default=0.5)
@@ -232,7 +223,7 @@ public class RotationalLimitMotor {
      *
      * @param loLimit the desired limit value
      */
-    public void setLoLimit(float loLimit) {
+    public void setLowerLimit(float loLimit) {
         setLoLimit(motorId, loLimit);
     }
 
@@ -261,6 +252,15 @@ public class RotationalLimitMotor {
      */
     public void setTargetVelocity(float targetVelocity) {
         setTargetVelocity(motorId, targetVelocity);
+    }
+
+    /**
+     * Alter this motor's constraint upper limit.
+     *
+     * @param hiLimit the desired limit value
+     */
+    public void setUpperLimit(float hiLimit) {
+        setHiLimit(motorId, hiLimit);
     }
     // *************************************************************************
     // private methods
