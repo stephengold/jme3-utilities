@@ -183,6 +183,15 @@ public class TranslationalLimitMotor {
     }
 
     /**
+     * Read this motor's restitution at the limits (m_restitution).
+     *
+     * @return the restitution (bounce) factor
+     */
+    public float getRestitution() {
+        return getRestitution(motorId);
+    }
+
+    /**
      * Copy this motor's constraint-force mixing parameters at the limits
      * (m_stopCFM).
      *
@@ -195,15 +204,6 @@ public class TranslationalLimitMotor {
         getStopCFM(motorId, result);
 
         return result;
-    }
-
-    /**
-     * Read this motor's restitution at the limits (m_restitution).
-     *
-     * @return the restitution (bounce) factor
-     */
-    public float getRestitution() {
-        return getRestitution(motorId);
     }
 
     /**
@@ -288,6 +288,15 @@ public class TranslationalLimitMotor {
     }
 
     /**
+     * Alter this motor's restitution at the limits (m_restitution).
+     *
+     * @param restitution the desired restitution (bounce) factor (default=0.5)
+     */
+    public void setRestitution(float restitution) {
+        setRestitution(motorId, restitution);
+    }
+
+    /**
      * Alter this motor's constraint-force mixing parameters at the limits
      * (m_stopCFM).
      *
@@ -296,15 +305,6 @@ public class TranslationalLimitMotor {
      */
     public void setStopCFM(Vector3f cfm) {
         setStopCFM(motorId, cfm);
-    }
-
-    /**
-     * Alter this motor's restitution (m_restitution).
-     *
-     * @param restitution the desired restitution (bounce) factor (default=0.5)
-     */
-    public void setRestitution(float restitution) {
-        setRestitution(motorId, restitution);
     }
 
     /**
