@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 
 /**
  * A motor based on Bullet's btRotationalLimitMotor. Motors are used to drive
- * joints.
+ * joints. TODO make JmeCloneable and Savable
  *
  * @author normenhansen
  */
@@ -91,9 +91,9 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Read this motor's error-reduction parameter.
+     * Read this motor's error-reduction parameter at the stops.
      *
-     * @return the error tolerance at limits (&ge;0)
+     * @return the the error-reduction parameter (&ge;0)
      */
     public float getERP() {
         return getERP(motorId);
@@ -127,7 +127,7 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Read this motor's maximum force.
+     * Read this motor's maximum force for normal conditions.
      *
      * @return the maximum force
      */
@@ -143,6 +143,25 @@ public class RotationalLimitMotor {
     public long getMotor() {
         assert motorId != 0L;
         return motorId;
+    }
+
+    /**
+     * Read this motor's constraint-force mixing parameter for normal
+     * conditions.
+     *
+     * @return the mixing parameter (&ge;0)
+     */
+    public float getNormalCFM() {
+        return getNormalCFM(motorId);
+    }
+
+    /**
+     * Read this motor's constraint-force mixing parameter at the stops.
+     *
+     * @return the mixing parameter (&ge;0)
+     */
+    public float getStopCFM() {
+        return getStopCFM(motorId);
     }
 
     /**
@@ -201,12 +220,12 @@ public class RotationalLimitMotor {
     }
 
     /**
-     * Alter this motor's error-reduction parameter.
+     * Alter this motor's error-reduction parameter at the stops.
      *
-     * @param ERP the desired error tolerance at limits (&ge;0, default=0.2)
+     * @param erp the desired error tolerance at limits (&ge;0, default=0.2)
      */
-    public void setERP(float ERP) {
-        setERP(motorId, ERP);
+    public void setERP(float erp) {
+        setERP(motorId, erp);
     }
 
     /**
@@ -221,10 +240,10 @@ public class RotationalLimitMotor {
     /**
      * Alter this motor's constraint lower limit.
      *
-     * @param loLimit the desired limit value
+     * @param lowerLimit the desired limit value
      */
-    public void setLowerLimit(float loLimit) {
-        setLoLimit(motorId, loLimit);
+    public void setLowerLimit(float lowerLimit) {
+        setLoLimit(motorId, lowerLimit);
     }
 
     /**
@@ -246,6 +265,25 @@ public class RotationalLimitMotor {
     }
 
     /**
+     * Alter this motor's constraint-force mixing parameter for normal
+     * conditions.
+     *
+     * @param cfm the desired mixing parameter (&ge;0)
+     */
+    public void setNormalCFM(float cfm) {
+        setNormalCFM(motorId, cfm);
+    }
+
+    /**
+     * Alter this motor's constraint-force mixing parameter at the stops.
+     *
+     * @param cfm the desired mixing parameter (&ge;0)
+     */
+    public void setStopCFM(float cfm) {
+        setStopCFM(motorId, cfm);
+    }
+
+    /**
      * Alter this motor's target velocity.
      *
      * @param targetVelocity the desired target velocity (in radians per second)
@@ -257,10 +295,10 @@ public class RotationalLimitMotor {
     /**
      * Alter this motor's constraint upper limit.
      *
-     * @param hiLimit the desired limit value
+     * @param upperLimit the desired limit value
      */
-    public void setUpperLimit(float hiLimit) {
-        setHiLimit(motorId, hiLimit);
+    public void setUpperLimit(float upperLimit) {
+        setHiLimit(motorId, upperLimit);
     }
     // *************************************************************************
     // private methods
