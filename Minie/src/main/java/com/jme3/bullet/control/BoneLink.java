@@ -285,7 +285,7 @@ public class BoneLink
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule ic = im.getCapsule(this);
-        // TODO krc
+        krc = (KinematicRagdollControl) ic.readSavable("krc", null);
         rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
         bone = (Bone) ic.readSavable("bone", null);
         joint = (SixDofJoint) ic.readSavable("joint", null);
@@ -315,7 +315,7 @@ public class BoneLink
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule oc = ex.getCapsule(this);
-        // TODO krc
+        oc.write(krc, "krc", null);
         oc.write(rigidBody, "rigidBody", null);
         oc.write(bone, "bone", null);
         oc.write(joint, "joint", null);
@@ -356,7 +356,7 @@ public class BoneLink
         Quaternion orientation = transform.getRotation();
         Vector3f scale = transform.getScale();
 
-        // Update the transform of the rigid body. TODO use MotionState?
+        // Update the transform of the rigid body.
         rigidBody.setPhysicsLocation(location);
         rigidBody.setPhysicsRotation(orientation);
         rigidBody.setPhysicsScale(scale);
