@@ -131,6 +131,14 @@ public class AxesVisualizer extends SubtreeControl {
     // constructors
 
     /**
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
+     * directly!
+     */
+    public AxesVisualizer() {
+        assetManager = null;
+    }
+
+    /**
      * Instantiate a set of hidden solid coordinate axes.
      *
      * @param manager for loading assets (not null)
