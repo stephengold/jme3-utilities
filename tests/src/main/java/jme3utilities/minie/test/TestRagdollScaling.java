@@ -28,12 +28,16 @@ package jme3utilities.minie.test;
 
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
+import com.jme3.animation.SkeletonControl;
+import com.jme3.asset.AssetNotFoundException;
+import com.jme3.asset.ModelKey;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.control.KinematicRagdollControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.export.binary.BinaryExporter;
 import com.jme3.input.KeyInput;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -47,22 +51,47 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
+import jme3utilities.MyString;
+import jme3utilities.debug.SkeletonVisualizer;
 import jme3utilities.math.MyVector3f;
+import jme3utilities.minie.PhysicsDumper;
 import jme3utilities.ui.ActionApplication;
+import jme3utilities.ui.InputMode;
 
 /**
- * Test scaling on a KinematicRagdollControl.
+ * Test scaling and load/save on a KinematicRagdollControl.
  */
 public class TestRagdollScaling extends ActionApplication {
     // *************************************************************************
+    // constants and loggers
+
+    /**
+     * message logger for this class
+     */
+    final public static Logger logger
+            = Logger.getLogger(TestRagdollScaling.class.getName());
+    /**
+     * asset path for loading and saving
+     */
+    final private static String saveAssetPath = "Models/TestRagdollScaling.j3o";
+    // *************************************************************************
     // fields
 
-    private Node sinbad;
-    private KinematicRagdollControl ragdoll;
+    private AnimControl animControl;
+    private BulletAppState bulletAppState;
+    private KinematicRagdollControl krc;
+    private Node model;
+    private PhysicsSpace physicsSpace;
     private RigidBodyControl boxRbc;
+    private SkeletonVisualizer sv;
+    private String animationName = null;
     // *************************************************************************
     // new methods exposed
 
@@ -80,43 +109,92 @@ public class TestRagdollScaling extends ActionApplication {
     public void actionInitializeApplication() {
         flyCam.setEnabled(false); // TODO FlyByCamera broken in action apps?
 
-        rootNode.scale(1.5f);
-        cam.setLocation(new Vector3f(0f, 8f, 25f));
+        cam.setLocation(new Vector3f(0f, 1.5f, 4f));
 
         viewPort.setBackgroundColor(ColorRGBA.Gray);
         addLighting();
 
-        BulletAppState bulletAppState = new BulletAppState();
-        bulletAppState.setDebugEnabled(true);
+        bulletAppState = new BulletAppState();
+        //bulletAppState.setDebugEnabled(true);
         stateManager.attach(bulletAppState);
+        physicsSpace = bulletAppState.getPhysicsSpace();
 
         addBox();
         addSinbad();
 
-        //sinbad.scale(2f);
-        sinbad.rotate(0f, 1f, 0f);
-        center(sinbad);
+        //model.scale(2f);
+        //ragdoll.reBuild();
+        model.rotate(0f, 0.7f, 0f);
+        //center(model);
+        //ragdoll.setGravity(new Vector3f(0f, 0f, 0f));
+
+        /*
+         * Add and configure the model's controls.
+         */
+        animControl = model.getControl(AnimControl.class);
+        if (animationName != null) {
+            AnimChannel animChannel = animControl.createChannel();
+            animChannel.setAnim(animationName);
+        }
+
+        List<SkeletonControl> scList
+                = MySpatial.listControls(model, SkeletonControl.class, null);
+        SkeletonControl sc = scList.get(0);
+        sv = new SkeletonVisualizer(assetManager, sc);
+        sv.setLineColor(ColorRGBA.Yellow);
+        rootNode.addControl(sv);
+        sv.setEnabled(true);
 
         PhysicsSpace ps = bulletAppState.getPhysicsSpace();
-        ragdoll.setPhysicsSpace(ps);
+        krc.setPhysicsSpace(ps);
         boxRbc.setPhysicsSpace(ps);
-
-        AnimControl animControl = sinbad.getControl(AnimControl.class);
-        AnimChannel animChannel = animControl.createChannel();
-        animChannel.setAnim("Dance");
     }
 
     @Override
     public void moreDefaultBindings() {
-        getDefaultInputMode().bind("rag", KeyInput.KEY_SPACE);
+        InputMode dim = getDefaultInputMode();
+
+        dim.bind("dump physicsSpace", KeyInput.KEY_O);
+        dim.bind("dump scene", KeyInput.KEY_P);
+        dim.bind("load", KeyInput.KEY_L);
+        dim.bind("rag", KeyInput.KEY_SPACE);
+        dim.bind("raise leftHand", KeyInput.KEY_LSHIFT);
+        dim.bind("raise rightHand", KeyInput.KEY_RSHIFT);
+        dim.bind("save", KeyInput.KEY_S);
+        dim.bind("set all kinematic", KeyInput.KEY_K);
+        dim.bind("toggle animation", KeyInput.KEY_A);
     }
 
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
         if (ongoing) {
             switch (actionString) {
+                case "dump physicsSpace":
+                    dumpPhysicsSpace();
+                    return;
+                case "dump scene":
+                    dumpScene();
+                    return;
+                case "load":
+                    load();
+                    return;
                 case "rag":
-                    ragdoll.setRagdollMode();
+                    krc.setRagdollMode();
+                    return;
+                case "raise leftHand":
+                    raiseLeftHand();
+                    return;
+                case "raise rightHand":
+                    raiseRightHand();
+                    return;
+                case "save":
+                    save();
+                    return;
+                case "set all kinematic":
+                    krc.blendToKinematicMode(2f, null);
+                    return;
+                case "toggle animation":
+                    toggleAnimation();
                     return;
             }
         }
@@ -174,18 +252,19 @@ public class TestRagdollScaling extends ActionApplication {
      * Add a Sinbad model with a KinematicRagdollControl.
      */
     private void addSinbad() {
-        sinbad = (Node) assetManager.loadModel("Models/Sinbad/Sinbad.mesh.xml");
-        rootNode.attachChild(sinbad);
-        center(sinbad);
-        sinbad.scale(0.5f);
+        model = (Node) assetManager.loadModel("Models/Sinbad/Sinbad.mesh.xml");
+        rootNode.attachChild(model);
+        setHeight(model, 2f);
+        center(model);
 
-        List<Spatial> s = MySpatial.listSpatials(sinbad, Spatial.class, null);
+        List<Spatial> s = MySpatial.listSpatials(model, Spatial.class, null);
         for (Spatial spatial : s) {
             spatial.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         }
 
-        ragdoll = new SinbadControl();
-        sinbad.addControl(ragdoll);
+        krc = new SinbadControl();
+        model.addControl(krc);
+        animationName = "Dance";
     }
 
     /**
@@ -200,5 +279,123 @@ public class TestRagdollScaling extends ActionApplication {
         Vector3f location = model.getWorldTranslation();
         location.subtractLocal(offset);
         MySpatial.setWorldLocation(model, location);
+    }
+
+    /**
+     * Process a "dump physicsSpace" action.
+     */
+    private void dumpPhysicsSpace() {
+        PhysicsDumper dumper = new PhysicsDumper();
+        dumper.dump(physicsSpace);
+    }
+
+    /**
+     * Process a "dump scene" action.
+     */
+    private void dumpScene() {
+        PhysicsDumper dumper = new PhysicsDumper();
+        //dumper.setDumpBucket(true);
+        //dumper.setDumpCull(true);
+        //dumper.setDumpOverride(true);
+        //dumper.setDumpShadow(true);
+        dumper.setDumpTransform(true);
+        //dumper.setDumpUser(true);
+        dumper.dump(rootNode);
+    }
+
+    /**
+     * Raise the model's left hand.
+     */
+    private void raiseLeftHand() {
+        Vector3f up = new Vector3f(0f, 50f, 0f);
+
+        krc.getBoneLink("Hand.L").setDynamic(up);
+        krc.getBoneLink("Ulna.L").setDynamic(up);
+        krc.getBoneLink("Humerus.L").setDynamic(up);
+        krc.getBoneLink("Clavicle.L").setDynamic(up);
+    }
+
+    /**
+     * Raise the model's right hand.
+     */
+    private void raiseRightHand() {
+        Vector3f up = new Vector3f(0f, 50f, 0f);
+
+        krc.getBoneLink("Hand.R").setDynamic(up);
+        krc.getBoneLink("Ulna.R").setDynamic(up);
+        krc.getBoneLink("Humerus.R").setDynamic(up);
+        krc.getBoneLink("Clavicle.R").setDynamic(up);
+    }
+
+    /**
+     * Load a model from the J3O file.
+     */
+    private void load() {
+        /*
+         * Remove any copy from the asset manager's cache.
+         */
+        ModelKey key = new ModelKey(saveAssetPath);
+        assetManager.deleteFromCache(key);
+
+        Spatial loadedScene;
+        try {
+            loadedScene = assetManager.loadAsset(key);
+        } catch (AssetNotFoundException e) {
+            logger.log(Level.SEVERE, "Didn''t find asset {0}",
+                    MyString.quote(saveAssetPath));
+            return;
+        }
+        logger.log(Level.INFO, "Loaded {0} from asset {1}", new Object[]{
+            MyString.quote(loadedScene.getName()),
+            MyString.quote(saveAssetPath)
+        });
+        Node loadedNode = (Node) loadedScene;
+        // TODO
+    }
+
+    /**
+     * Save the model to a J3O file.
+     */
+    private void save() {
+        String filePath = ActionApplication.filePath(saveAssetPath);
+        File file = new File(filePath);
+        BinaryExporter exporter = BinaryExporter.getInstance();
+
+        try {
+            exporter.save(model, file);
+        } catch (IOException exception) {
+            logger.log(Level.SEVERE,
+                    "Output exception while saving {0} to file {1}",
+                    new Object[]{
+                        MyString.quote(model.getName()),
+                        MyString.quote(filePath)
+                    });
+            return;
+        }
+        logger.log(Level.INFO, "Saved {0} to file {1}", new Object[]{
+            MyString.quote(model.getName()),
+            MyString.quote(filePath)
+        });
+    }
+
+    /**
+     * Scale the specified model uniformly so that it has the specified height.
+     *
+     * @param model (not null, modified)
+     * @param height (in world units)
+     */
+    private void setHeight(Spatial model, float height) {
+        Vector3f[] minMax = MySpatial.findMinMaxCoords(model);
+        float oldHeight = minMax[1].y - minMax[0].y;
+
+        model.scale(height / oldHeight);
+    }
+
+    /**
+     * Toggle the animation control on/off.
+     */
+    private void toggleAnimation() {
+        boolean enabled = animControl.isEnabled();
+        animControl.setEnabled(!enabled);
     }
 }
