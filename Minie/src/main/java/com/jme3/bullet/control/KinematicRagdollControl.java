@@ -40,7 +40,7 @@ import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.RagdollCollisionListener;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.HullCollisionShape;
+import com.jme3.bullet.control.ragdoll.ConfigRagdollControl;
 import com.jme3.bullet.control.ragdoll.JointPreset;
 import com.jme3.bullet.control.ragdoll.KinematicSubmode;
 import com.jme3.bullet.joints.PhysicsJoint;
@@ -54,26 +54,19 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.VertexBuffer;
 import com.jme3.util.SafeArrayList;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.MyMesh;
 import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
@@ -107,7 +100,7 @@ import jme3utilities.Validate;
  * @author Normen Hansen and Rémy Bouquet (Nehon)
  */
 public class KinematicRagdollControl
-        extends AbstractPhysicsControl
+        extends ConfigRagdollControl
         implements PhysicsCollisionListener {
     // *************************************************************************
     // constants and loggers
@@ -117,10 +110,6 @@ public class KinematicRagdollControl
      */
     final public static Logger logger
             = Logger.getLogger(KinematicRagdollControl.class.getName());
-    /**
-     * magic bone name to refer to the model's torso
-     */
-    final public static String torsoFakeBoneName = "";
     // *************************************************************************
     // fields
 
@@ -145,14 +134,6 @@ public class KinematicRagdollControl
     private List<RagdollCollisionListener> listeners
             = new SafeArrayList<>(RagdollCollisionListener.class);
     /**
-     * map linked bone names to masses for createSpatialData()
-     */
-    private Map<String, Float> massMap = new HashMap<>(32);
-    /**
-     * map linked bone names to joint presets for createSpatialData()
-     */
-    private Map<String, JointPreset> jointMap = new HashMap<>(32);
-    /**
      * map bone names to simulation objects
      */
     private Map<String, BoneLink> boneLinks = new HashMap<>(32);
@@ -175,11 +156,7 @@ public class KinematicRagdollControl
      */
     private float eventDispatchImpulseThreshold = 0f;
     /**
-     * mass of the torso (default=15)
-     */
-    private float torsoMass = 15f;
-    /**
-     * viscous damping ratio for rigid bodies (0&rarr;no damping,
+     * viscous damping ratio for new rigid bodies (0&rarr;no damping,
      * 1&rarr;critically damped, default=0.6)
      */
     private float damping = 0.6f;
@@ -210,11 +187,6 @@ public class KinematicRagdollControl
      * recent transition to kinematic mode
      */
     private Transform startRootTransform[] = null;
-    /**
-     * gravitational acceleration for ragdoll (default is 9.8 in the -Y
-     * direction, corresponding to Earth-normal in MKS units)
-     */
-    private Vector3f gravityVector = new Vector3f(0f, -9.8f, 0f);
     /**
      * scale of each root bone in bind pose (in mesh coordinates)
      */
@@ -284,7 +256,7 @@ public class KinematicRagdollControl
 
         MySkeleton.setUserControl(skeleton, false);
 
-        for (BoneLink link : boneLinks.values()) {
+        for (BoneLink link : boneLinkList) {
             link.blendToKinematicMode(KinematicSubmode.Animated, blendInterval);
         }
     }
@@ -303,7 +275,7 @@ public class KinematicRagdollControl
         }
 
         List<String> result = new ArrayList<>(8);
-        for (String childName : massMap.keySet()) {
+        for (String childName : linkedBoneNames()) {
             BoneLink link = getBoneLink(childName);
             if (link.parentName().equals(parentName)) {
                 result.add(childName);
@@ -327,7 +299,7 @@ public class KinematicRagdollControl
         }
 
         int result = 0;
-        for (String childName : massMap.keySet()) {
+        for (String childName : linkedBoneNames()) {
             BoneLink link = getBoneLink(childName);
             if (link.parentName().equals(parentName)) {
                 ++result;
@@ -338,7 +310,7 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Read the damping ratio.
+     * Read the damping ratio for new rigid bodies.
      *
      * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
      * damped)
@@ -390,24 +362,6 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Access the limits of the joint connecting the named linked bone to its
-     * parent in the hierarchy.
-     *
-     * @param boneName the name of the linked bone (not null, not empty)
-     * @return the pre-existing instance (not null)
-     */
-    public JointPreset getJointLimits(String boneName) {
-        if (!isLinked(boneName)) {
-            String msg = "No linked bone named " + MyString.quote(boneName);
-            throw new IllegalArgumentException(msg);
-        }
-        JointPreset result = jointMap.get(boneName);
-
-        assert result != null;
-        return result;
-    }
-
-    /**
      * Access the rigid body of the named linked bone or the torso.
      *
      * @param boneName the name of the linked bone or the torso (not null)
@@ -438,67 +392,6 @@ public class KinematicRagdollControl
      */
     Spatial getTransformer() {
         return transformer;
-    }
-
-    /**
-     * Copy this control's gravitational acceleration.
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return an acceleration vector (in physics-space coordinates, either
-     * storeResult or a new vector, not null)
-     */
-    public Vector3f gravity(Vector3f storeResult) {
-        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
-        result.set(gravityVector);
-        return result;
-    }
-
-    /**
-     * Test whether the named bone is linked by this control.
-     *
-     * @param boneName (not null, not empty)
-     * @return true if linked, otherwise false
-     */
-    public boolean isLinked(String boneName) {
-        Validate.nonEmpty(boneName, "bone name");
-        boolean result = massMap.containsKey(boneName);
-        return result;
-    }
-
-    /**
-     * Link the named bone using a joint preset.
-     * <p>
-     * Allowed only when the control is NOT added to a spatial.
-     *
-     * @param boneName the name of the bone to link (not null, not empty)
-     * @param mass the desired mass of the bone (&gt;0)
-     * @param jointPreset the desired range of motion (not null)
-     * @see #setJointLimits(java.lang.String,
-     * com.jme3.bullet.control.ragdoll.JointPreset)
-     */
-    public void link(String boneName, float mass, JointPreset jointPreset) {
-        Validate.nonEmpty(boneName, "bone name");
-        Validate.positive(mass, "mass");
-        Validate.nonNull(jointPreset, "joint preset");
-        if (getSpatial() != null) {
-            throw new IllegalStateException(
-                    "Cannot link a bone while added to a spatial.");
-        }
-
-        jointMap.put(boneName, jointPreset);
-        massMap.put(boneName, mass);
-    }
-
-    /**
-     * Enumerate all linked bones in this control.
-     *
-     * @return an unmodifiable collection of names
-     */
-    public Collection<String> linkedBoneNames() {
-        Collection<String> names = massMap.keySet();
-        Collection<String> result = Collections.unmodifiableCollection(names);
-
-        return result;
     }
 
     /**
@@ -583,28 +476,6 @@ public class KinematicRagdollControl
         scale.divideLocal(bindScale);
 
         return result;
-    }
-
-    /**
-     * Read the mass of the named linked bone or the torso.
-     *
-     * @param boneName the name of the linked bone or the torso (not null)
-     * @return the mass (&gt;0)
-     */
-    public float mass(String boneName) {
-        float mass;
-
-        if (torsoFakeBoneName.equals(boneName)) {
-            mass = torsoMass;
-        } else if (isLinked(boneName)) {
-            mass = massMap.get(boneName);
-        } else {
-            String msg = "No linked bone named " + MyString.quote(boneName);
-            throw new IllegalArgumentException(msg);
-        }
-
-        assert mass > 0f : mass;
-        return mass;
     }
 
     /**
@@ -757,7 +628,7 @@ public class KinematicRagdollControl
         Validate.nonNegative(speed, "speed");
 
         torsoRigidBody.setCcdMotionThreshold(speed);
-        for (BoneLink link : boneLinks.values()) {
+        for (BoneLink link : boneLinkList) {
             link.getRigidBody().setCcdMotionThreshold(speed);
         }
     }
@@ -773,13 +644,13 @@ public class KinematicRagdollControl
         Validate.nonNegative(radius, "radius");
 
         torsoRigidBody.setCcdSweptSphereRadius(radius);
-        for (BoneLink link : boneLinks.values()) {
+        for (BoneLink link : boneLinkList) {
             link.getRigidBody().setCcdSweptSphereRadius(radius);
         }
     }
 
     /**
-     * Alter the viscous damping ratio.
+     * Alter the viscous damping ratio for new rigid bodies.
      *
      * @param dampingRatio the desired damping ratio (0&rarr;no damping,
      * 1&rarr;critically damped, default=0.6)
@@ -791,7 +662,7 @@ public class KinematicRagdollControl
 
         if (getSpatial() != null) {
             torsoRigidBody.setDamping(damping, damping);
-            for (BoneLink link : boneLinks.values()) {
+            for (BoneLink link : boneLinkList) {
                 link.getRigidBody().setDamping(damping, damping);
             }
         }
@@ -808,25 +679,6 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Alter this control's gravitational acceleration for Ragdoll mode.
-     *
-     * @param gravity the desired acceleration vector (in physics-space
-     * coordinates, not null, unaffected, default=0,-9.8,0)
-     */
-    public void setGravity(Vector3f gravity) {
-        Validate.nonNull(gravity, "gravity");
-
-        this.gravityVector.set(gravity);
-
-        if (getSpatial() != null) {
-            torsoRigidBody.setGravity(gravity);
-            for (BoneLink link : boneLinks.values()) {
-                link.getRigidBody().setGravity(gravity);
-            }
-        }
-    }
-
-    /**
      * Add a target for inverse kinematics.
      *
      * @param bone which bone the target applies to (not null)
@@ -834,29 +686,6 @@ public class KinematicRagdollControl
      */
     public void setIKTarget(Bone bone, Vector3f worldGoal) {
         // TODO
-    }
-
-    /**
-     * Alter the limits of the joint connecting the named linked bone to its
-     * parent in the linked-bone hierarchy.
-     *
-     * @param boneName the name of the bone (not null, not empty)
-     * @param preset the desired range of motion (not null)
-     */
-    public void setJointLimits(String boneName, JointPreset preset) {
-        Validate.nonNull(preset, "preset");
-        if (!isLinked(boneName)) {
-            String msg = "No linked bone named " + MyString.quote(boneName);
-            throw new IllegalArgumentException(msg);
-        }
-
-        jointMap.put(boneName, preset);
-
-        if (getSpatial() != null) {
-            BoneLink link = getBoneLink(boneName);
-            SixDofJoint joint = link.getJoint();
-            preset.setupJoint(joint);
-        }
     }
 
     /**
@@ -877,30 +706,6 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Alter the mass of the named linked bone or the torso.
-     *
-     * @param boneName the name of the linked bone or the torso (not null)
-     * @param mass the desired mass (&gt;0)
-     */
-    public void setMass(String boneName, float mass) {
-        Validate.positive(mass, "mass");
-
-        if (torsoFakeBoneName.equals(boneName)) {
-            torsoMass = mass;
-        } else if (isLinked(boneName)) {
-            massMap.put(boneName, mass);
-        } else {
-            String msg = "No linked bone named " + MyString.quote(boneName);
-            throw new IllegalArgumentException(msg);
-        }
-
-        PhysicsRigidBody rigidBody = getRigidBody(boneName);
-        if (rigidBody != null) {
-            rigidBody.setMass(mass);
-        }
-    }
-
-    /**
      * Put all bones into fully dynamic ragdoll mode. The skeleton is entirely
      * controlled by physics, including gravity.
      * <p>
@@ -913,68 +718,13 @@ public class KinematicRagdollControl
         }
 
         torsoKinematicWeight = 0f;
-        torsoRigidBody.setGravity(gravityVector);
+        Vector3f ragdollGravity = gravity(null);
+        torsoRigidBody.setGravity(ragdollGravity);
         torsoRigidBody.setKinematic(false);
 
-        for (BoneLink link : boneLinks.values()) {
-            link.setDynamic(gravityVector);
+        for (BoneLink link : boneLinkList) {
+            link.setDynamic(ragdollGravity);
         }
-    }
-
-    /**
-     * Alter a user-mode flag of a skeleton bone. Unlinked child bones are also
-     * altered. Note: recursive!
-     *
-     * @param bone the skeleton bone to alter (not null)
-     * @param setting the desired flag setting (true&rarr;bone link control,
-     * false&rarr;animation control)
-     */
-    void setUserMode(Bone bone, boolean setting) {
-        bone.setUserControl(setting);
-
-        for (Bone childBone : bone.getChildren()) {
-            String childName = childBone.getName();
-            if (!isLinked(childName)) {
-                setUserMode(childBone, setting);
-            }
-        }
-    }
-
-    /**
-     * Calculate the ragdoll's total mass.
-     *
-     * @return the total amount (&gt;0)
-     */
-    public float totalMass() {
-        float totalMass = torsoMass;
-        for (float mass : massMap.values()) {
-            totalMass += mass;
-        }
-
-        assert totalMass > 0f : totalMass;
-        return totalMass;
-    }
-
-    /**
-     * Unlink the named bone.
-     * <p>
-     * Allowed only when the control is NOT added to a spatial.
-     *
-     * @param boneName the name of the linked bone to unlink (not null, not
-     * empty)
-     */
-    public void unlink(String boneName) {
-        if (!isLinked(boneName)) {
-            String msg = "No linked bone named " + MyString.quote(boneName);
-            throw new IllegalArgumentException(msg);
-        }
-        if (getSpatial() != null) {
-            throw new IllegalStateException(
-                    "Cannot unlink a bone while added to a spatial.");
-        }
-
-        jointMap.remove(boneName);
-        massMap.remove(boneName);
     }
     // *************************************************************************
     // new protected methods
@@ -991,7 +741,7 @@ public class KinematicRagdollControl
         removePhysics();
 
         torsoKinematicUpdate();
-        for (BoneLink link : boneLinks.values()) {
+        for (BoneLink link : boneLinkList) {
             link.update(tpf);
         }
 
@@ -1006,12 +756,12 @@ public class KinematicRagdollControl
     protected void ragDollUpdate(float tpf) {
         torsoDynamicUpdate();
 
-        for (BoneLink link : boneLinks.values()) {
+        for (BoneLink link : boneLinkList) {
             link.update(tpf);
         }
     }
     // *************************************************************************
-    // AbstractPhysicsControl methods
+    // ConfigRagdollControl methods
 
     /**
      * Add all managed physics objects to the physics space.
@@ -1024,7 +774,7 @@ public class KinematicRagdollControl
         space.add(torsoRigidBody);
         torsoRigidBody.setGravity(gravity);
 
-        for (BoneLink physicsBoneLink : boneLinks.values()) {
+        for (BoneLink physicsBoneLink : boneLinkList) {
             PhysicsRigidBody rigidBody = physicsBoneLink.getRigidBody();
             space.add(rigidBody);
             rigidBody.setGravity(gravity);
@@ -1052,11 +802,8 @@ public class KinematicRagdollControl
         boneLinkList = cloner.clone(boneLinkList);
         boneLinks = cloner.clone(boneLinks);
         endModelTransform = cloner.clone(endModelTransform);
-        gravityVector = cloner.clone(gravityVector);
-        jointMap = cloner.clone(jointMap);
         initScale = cloner.clone(initScale);
         listeners = cloner.clone(listeners);
-        massMap = cloner.clone(massMap);
         meshToModel = cloner.clone(meshToModel);
         rootBindOrientation = cloner.clone(rootBindOrientation);
         rootBindScale = cloner.clone(rootBindScale);
@@ -1130,7 +877,7 @@ public class KinematicRagdollControl
         /*
          * Map bone indices to the names of the bones' managers.
          */
-        String[] tempLbNames = linkedBoneNameArray();
+        String[] tempLbNames = linkedBoneNameArray(skeleton);
         /*
          * Assign each mesh vertex to a linked bone or else to the torso.
          */
@@ -1155,18 +902,21 @@ public class KinematicRagdollControl
         /*
          * Create bone links.
          */
-        assert massMap.size() == jointMap.size(); // parallel maps
-        for (String boneName : massMap.keySet()) {
+        Collection<String> linkedBoneNames = linkedBoneNames();
+        int numLinkedBones = countLinkedBones();
+        assert linkedBoneNames.size() == numLinkedBones;
+        for (String boneName : linkedBoneNames) {
             List<Vector3f> vertexLocations = coordsMap.get(boneName);
             createLink(boneName, vertexLocations);
         }
-        assert boneLinks.size() == massMap.size();
+        assert boneLinks.size() == numLinkedBones;
         /*
          * Add joints to connect each linked bone with its parent.
+         * Also initialize the boneLinkList.
          */
-        boneLinkList = new ArrayList<>(massMap.size());
+        boneLinkList = new ArrayList<>(numLinkedBones);
         addJoints(torsoFakeBoneName);
-        assert boneLinkList.size() == boneLinks.size();
+        assert boneLinkList.size() == numLinkedBones;
 
         if (added) {
             addPhysics();
@@ -1201,7 +951,7 @@ public class KinematicRagdollControl
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule ic = im.getCapsule(this);
-        // TODO jointMap, massMap, boneLinkList, etc.
+        // TODO boneLinkList, etc.
         BoneLink[] loadedBoneLinks
                 = (BoneLink[]) ic.readSavableArray("boneList",
                         new BoneLink[0]);
@@ -1216,8 +966,6 @@ public class KinematicRagdollControl
         initScale = (Vector3f) ic.readSavable("initScale", null);
         eventDispatchImpulseThreshold
                 = ic.readFloat("eventDispatchImpulseThreshold", 0f);
-        torsoMass = ic.readFloat("rootMass", 15f);
-        gravityVector = (Vector3f) ic.readSavable("gravity", null);
 
         torsoBlendInterval = ic.readFloat("torsoBlendInterval", 1f);
         torsoKinematicWeight = ic.readFloat("torsoKinematicWeight", 1f);
@@ -1251,27 +999,73 @@ public class KinematicRagdollControl
             removePhysics();
         }
         boneLinkList = null;
+        boneLinks.clear();
         torsoRigidBody = null;
         skeleton = null;
-        boneLinks.clear();
         initScale = null;
         rootBindOrientation = null;
         transformer = null;
         meshToModel = null;
-        startRootTransform = null;
         rootBindScale = null;
     }
 
     /**
-     * Render this control. Invoked once per view port per frame, provided the
-     * control is added to a scene. Should be invoked only by a subclass or by
-     * the RenderManager.
+     * Alter this control's gravitational acceleration for Ragdoll mode.
      *
-     * @param rm the render manager (not null)
-     * @param vp the view port to render (not null)
+     * @param gravity the desired acceleration vector (in physics-space
+     * coordinates, not null, unaffected, default=0,-9.8,0)
      */
     @Override
-    public void render(RenderManager rm, ViewPort vp) {
+    public void setGravity(Vector3f gravity) {
+        Validate.nonNull(gravity, "gravity");
+        super.setGravity(gravity);
+
+        if (getSpatial() != null) { // TODO make sure it's in ragdoll mode
+            torsoRigidBody.setGravity(gravity);
+            for (BoneLink link : boneLinkList) {
+                link.getRigidBody().setGravity(gravity);
+            }
+        }
+    }
+
+    /**
+     * Alter the limits of the joint connecting the named linked bone to its
+     * parent in the linked-bone hierarchy.
+     *
+     * @param boneName the name of the bone (not null, not empty)
+     * @param preset the desired range of motion (not null)
+     */
+    @Override
+    public void setJointLimits(String boneName, JointPreset preset) {
+        Validate.nonNull(preset, "preset");
+        if (!isLinked(boneName)) {
+            String msg = "No linked bone named " + MyString.quote(boneName);
+            throw new IllegalArgumentException(msg);
+        }
+        super.setJointLimits(boneName, preset);
+
+        if (getSpatial() != null) {
+            BoneLink link = getBoneLink(boneName);
+            SixDofJoint joint = link.getJoint();
+            preset.setupJoint(joint);
+        }
+    }
+
+    /**
+     * Alter the mass of the named linked bone or the torso.
+     *
+     * @param boneName the name of the linked bone or the torso (not null)
+     * @param mass the desired mass (&gt;0)
+     */
+    @Override
+    public void setMass(String boneName, float mass) {
+        Validate.positive(mass, "mass");
+        super.setMass(boneName, mass);
+
+        PhysicsRigidBody rigidBody = getRigidBody(boneName);
+        if (rigidBody != null) {
+            rigidBody.setMass(mass);
+        }
     }
 
     /**
@@ -1331,7 +1125,7 @@ public class KinematicRagdollControl
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule oc = ex.getCapsule(this);
-        // TODO jointMap, massMap, boneLinkList, etc.
+        // TODO boneLinkList, etc.
         oc.write(boneLinks.values().toArray(
                 new BoneLink[boneLinks.size()]),
                 "boneLinks", new BoneLink[0]);
@@ -1341,9 +1135,7 @@ public class KinematicRagdollControl
         oc.write(initScale, "initScale", null);
         oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
                 0f);
-        oc.write(torsoMass, "rootMass", 15f);
         oc.write(damping, "limbDampening", 0.6f);
-        oc.write(gravityVector, "gravity", new Vector3f(0f, -9.8f, 0f));
 
         oc.write(torsoBlendInterval, "torsoBlendInterval", 1f);
         oc.write(torsoKinematicWeight, "torsoKinematicWeight", 1f);
@@ -1453,74 +1245,7 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Add unlinked descendents of the specified bone to the specified list.
-     * Note: recursive.
-     *
-     * @param bone (not null, alias created)
-     * @param addResult (not null, modified)
-     */
-    private void addUnlinkedDescendents(Bone bone, List<Bone> addResult) {
-        for (Bone childBone : bone.getChildren()) {
-            String childName = childBone.getName();
-            if (!isLinked(childName)) {
-                addResult.add(childBone);
-                addUnlinkedDescendents(childBone, addResult);
-            }
-        }
-    }
-
-    /**
-     * Assign each mesh vertex to a linked bone and add its location (mesh
-     * coordinates in bind pose) to that bone's list.
-     *
-     * @param lbNames a map from bone indices to linked-bone names
-     * @return a new map from linked-bone names to coordinates
-     */
-    private static Map<String, List<Vector3f>> coordsMap(Mesh[] meshes,
-            String[] lbNames) {
-        float[] wArray = new float[4];
-        int[] iArray = new int[4];
-        Map<String, List<Vector3f>> coordsMap = new HashMap<>(32);
-        for (Mesh mesh : meshes) {
-            int numVertices = mesh.getVertexCount();
-            for (int vertexI = 0; vertexI < numVertices; vertexI++) {
-                MyMesh.vertexBoneIndices(mesh, vertexI, iArray);
-                MyMesh.vertexBoneWeights(mesh, vertexI, wArray);
-
-                Map<String, Float> weightMap
-                        = weightMap(iArray, wArray, lbNames);
-
-                float bestTotalWeight = Float.NEGATIVE_INFINITY;
-                String bestLbName = null;
-                for (String lbName : weightMap.keySet()) { // TODO use entrySet
-                    float totalWeight = weightMap.get(lbName);
-                    if (totalWeight >= bestTotalWeight) {
-                        bestTotalWeight = totalWeight;
-                        bestLbName = lbName;
-                    }
-                }
-                /*
-                 * Add the bind-pose coordinates of the vertex
-                 * to the linked bone's list.
-                 */
-                List<Vector3f> coordList;
-                if (coordsMap.containsKey(bestLbName)) {
-                    coordList = coordsMap.get(bestLbName);
-                } else {
-                    coordList = new ArrayList<>(20);
-                    coordsMap.put(bestLbName, coordList);
-                }
-                Vector3f bindPosition = MyMesh.vertexVector3f(mesh,
-                        VertexBuffer.Type.BindPosePosition, vertexI, null);
-                coordList.add(bindPosition);
-            }
-        }
-
-        return coordsMap;
-    }
-
-    /**
-     * Create a PhysicsBoneLink for the named bone. TODO sort methods
+     * Create a PhysicsBoneLink for the named bone.
      *
      * @param name the name of the bone to be linked (not null)
      * @param lbNames map from bone indices to linked-bone names (not null,
@@ -1552,57 +1277,6 @@ public class KinematicRagdollControl
         boneLinks.put(name, link);
 
         return link;
-    }
-
-    /**
-     * Create a hull collision shape, using the specified inverse transform and
-     * list of vertex locations.
-     *
-     * @param inverseTransform (not null, unaffected)
-     * @param vertexLocations list of vertex locations (not null, not empty,
-     * unaffected)
-     * @return a new shape
-     */
-    private static CollisionShape createShape(Transform inverseTransform,
-            Vector3f offset, List<Vector3f> vertexLocations) {
-        assert inverseTransform != null;
-        assert vertexLocations != null;
-        assert !vertexLocations.isEmpty();
-
-        for (Vector3f location : vertexLocations) {
-            location.subtractLocal(offset);
-        }
-
-        CollisionShape boneShape = new HullCollisionShape(vertexLocations);
-
-        return boneShape;
-    }
-
-    /**
-     * Map bone indices to names of linked bones.
-     *
-     * @return a new array of bone names
-     */
-    private String[] linkedBoneNameArray() {
-        int numBones = skeleton.getBoneCount();
-        String[] nameArray = new String[numBones];
-        for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
-            Bone bone = skeleton.getBone(boneIndex);
-            while (true) {
-                String boneName = bone.getName();
-                if (isLinked(boneName)) {
-                    nameArray[boneIndex] = boneName;
-                    break;
-                }
-                bone = bone.getParent();
-                if (bone == null) {
-                    nameArray[boneIndex] = torsoFakeBoneName;
-                    break;
-                }
-            }
-        }
-
-        return nameArray;
     }
 
     /**
@@ -1695,67 +1369,5 @@ public class KinematicRagdollControl
                 }
             }
         }
-    }
-
-    /**
-     * Validate a skeleton.
-     *
-     * @param skeleton the skeleton to validate (not null, unaffected)
-     */
-    private static void validate(Skeleton skeleton) {
-        int numBones = skeleton.getBoneCount();
-        if (numBones < 0) {
-            throw new IllegalArgumentException("Bone count is negative!");
-        }
-
-        Set<String> nameSet = new TreeSet<>();
-        for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
-            Bone bone = skeleton.getBone(boneIndex);
-            if (bone == null) {
-                throw new IllegalArgumentException("Bone is null!");
-            }
-            String boneName = bone.getName();
-            if (boneName == null) {
-                throw new IllegalArgumentException("Bone name is null!");
-            } else if (boneName.equals(torsoFakeBoneName)) {
-                throw new IllegalArgumentException("Bone has reserved name.");
-            } else if (nameSet.contains(boneName)) {
-                String msg = "Duplicate bone name: " + boneName;
-                throw new IllegalArgumentException(msg);
-            }
-            nameSet.add(boneName);
-        }
-    }
-
-    /**
-     * Tabulate the total bone weight associated with each linked bone.
-     *
-     * @param biArray the array of bone indices (not null, unaffected)
-     * @param bwArray the array of bone weights (not null, unaffected)
-     * @param lbNames a map from bone indices to linked bone names (not null,
-     * unaffected)
-     * @return a new map from linked-bone names to total weight
-     */
-    private static Map<String, Float> weightMap(int[] biArray, float[] bwArray,
-            String[] lbNames) {
-        assert biArray.length == 4;
-        assert bwArray.length == 4;
-
-        Map<String, Float> weightMap = new HashMap<>(4);
-        for (int j = 0; j < 4; j++) {
-            int boneIndex = biArray[j];
-            if (boneIndex != -1) {
-                String lbName = lbNames[boneIndex];
-                if (weightMap.containsKey(lbName)) {
-                    float oldWeight = weightMap.get(lbName);
-                    float newWeight = oldWeight + bwArray[j];
-                    weightMap.put(lbName, newWeight);
-                } else {
-                    weightMap.put(lbName, bwArray[j]);
-                }
-            }
-        }
-
-        return weightMap;
     }
 }
