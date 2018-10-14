@@ -45,6 +45,7 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
@@ -270,6 +271,18 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
+     * Alter this body's transform, including the scale of its shape.
+     *
+     * @param newTransform the desired transform (in physics-space coordinates,
+     * not null, unaffected)
+     */
+    public void setPhysicsTransform(Transform newTransform) {
+        setPhysicsLocation(newTransform.getTranslation());
+        setPhysicsRotation(newTransform.getRotation());
+        setPhysicsScale(newTransform.getScale());
+    }
+
+    /**
      * Copy the location of this body's center of mass.
      *
      * @param storeResult storage for the result (modified if not null)
@@ -313,6 +326,24 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
         Vector3f result = collisionShape.getScale(storeResult);
 
         assert Vector3f.isValidVector(result);
+        return result;
+    }
+
+    /**
+     * Copy the transform of this body, including the scale of its shape.
+     *
+     * @param storeResult (modified if not null)
+     * @return the transform (in physics-space coordinates, either storeResult
+     * of a new object, not null)
+     */
+    public Transform getPhysicsTransform(Transform storeResult) {
+        Transform result
+                = (storeResult == null) ? new Transform() : storeResult;
+
+        motionState.getLocation(result.getTranslation());
+        motionState.getOrientation(result.getRotation());
+        getPhysicsScale(result.getScale());
+
         return result;
     }
 
