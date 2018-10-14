@@ -169,7 +169,9 @@ public class BoneLink
         this.blendInterval = blendInterval;
         kinematicWeight = Float.MIN_VALUE; // not zero!
         rigidBody.setKinematic(true);
-        krc.setUserMode(bone, false);
+        for (Bone bone : managedBones) {
+            bone.setUserControl(false);
+        }
     }
 
     /**
