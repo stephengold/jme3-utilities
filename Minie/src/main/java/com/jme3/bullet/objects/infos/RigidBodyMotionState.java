@@ -65,9 +65,6 @@ public class RigidBodyMotionState implements JmeCloneable {
      */
     private long motionStateId;
 
-    private Vector3f worldLocation = new Vector3f();
-    private Matrix3f worldRotation = new Matrix3f();
-    private Quaternion worldRotationQuat = new Quaternion();
     private Quaternion tmp_inverseWorldRotation = new Quaternion();
     private PhysicsVehicle vehicle = null;
     /**
@@ -138,35 +135,43 @@ public class RigidBodyMotionState implements JmeCloneable {
     /**
      * Copy the location from this motion state.
      *
-     * @return the pre-existing location vector (in physics-space coordinates,
-     * not null) TODO!
+     * @param storeResult (modified if not null)
+     * @return the location vector (in physics-space coordinates, either
+     * storeResult of a new vector, not null)
      */
-    public Vector3f getWorldLocation() {
-        getWorldLocation(motionStateId, worldLocation);
-        assert Vector3f.isValidVector(worldLocation);
-        return worldLocation;
+    public Vector3f getLocation(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getWorldLocation(motionStateId, result);
+
+        assert Vector3f.isValidVector(result);
+        return result;
     }
 
     /**
-     * Read the rotation of this motion state (as a matrix).
+     * Copy the orientation from this motion state (as a matrix).
      *
-     * @return the pre-existing rotation matrix (in physics-space coordinates,
-     * not null) TODO
+     * @param storeResult (modified if not null)
+     * @return the rotation matrix (in physics-space coordinates, either
+     * storeResult of a new vector, not null)
      */
-    public Matrix3f getWorldRotation() {
-        getWorldRotation(motionStateId, worldRotation);
-        return worldRotation;
+    public Matrix3f getOrientation(Matrix3f storeResult) {
+        Matrix3f result = (storeResult == null) ? new Matrix3f() : storeResult;
+        getWorldRotation(motionStateId, result);
+        return result;
     }
 
     /**
-     * Read the rotation of this motion state (as a quaternion).
+     * Copy the orientation from this motion state (as a quaternion).
      *
-     * @return the pre-existing instance (in physics-space coordinates, not
-     * null) TODO
+     * @param storeResult (modified if not null)
+     * @return the rotation quaternion (in physics-space coordinates, either
+     * storeResult of a new vector, not null)
      */
-    public Quaternion getWorldRotationQuat() {
-        getWorldRotationQuat(motionStateId, worldRotationQuat);
-        return worldRotationQuat;
+    public Quaternion getOrientation(Quaternion storeResult) {
+        Quaternion result
+                = (storeResult == null) ? new Quaternion() : storeResult;
+        getWorldRotationQuat(motionStateId, result);
+        return result;
     }
 
     /**
@@ -237,9 +242,6 @@ public class RigidBodyMotionState implements JmeCloneable {
         assert motionStateId != 0L;
 
         tmp_inverseWorldRotation = cloner.clone(tmp_inverseWorldRotation);
-        worldLocation = cloner.clone(worldLocation);
-        worldRotation = cloner.clone(worldRotation);
-        worldRotationQuat = cloner.clone(worldRotationQuat);
         vehicle = cloner.clone(vehicle);
     }
 
