@@ -46,7 +46,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
-import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -73,7 +72,7 @@ public class BoneLink
      */
     private Bone bone;
     /**
-     * managed bones, in a pre-order, depth-first traversal of the skeleton,
+     * managed bones in a pre-order, depth-first traversal of the skeleton,
      * starting with the linked bone
      */
     private Bone[] managedBones = null;
@@ -223,20 +222,17 @@ public class BoneLink
     }
 
     /**
-     * Assign a physics joint to this bone link and enumerate the managed bones.
+     * Assign a physics joint to this bone link. Also enumerate the managed
+     * bones.
      *
      * @param joint (not null)
      */
     public void setJoint(SixDofJoint joint) {
         Validate.nonNull(joint, "joint");
+        assert this.joint == null;
 
         this.joint = joint;
-
-        List<Bone> bones = krc.listManagedBones(bone.getName(), null);
-        assert bones.get(0) == bone;
-        int numManagedBones = bones.size();
-        managedBones = new Bone[numManagedBones];
-        bones.toArray(managedBones);
+        managedBones = krc.listManagedBones(bone.getName());
     }
 
     /**

@@ -135,6 +135,11 @@ public class KinematicRagdollControl
      */
     private float torsoKinematicWeight = 1f;
     /**
+     * bone links in a pre-order, depth-first traversal of the linked-bone
+     * hierarchy
+     */
+    private List<BoneLink> boneLinkList = null;
+    /**
      * list of registered collision listeners
      */
     private List<RagdollCollisionListener> listeners
@@ -183,7 +188,7 @@ public class KinematicRagdollControl
      */
     private Quaternion rootBindOrientation[] = null;
     /**
-     * control that's responsible for skinning
+     * control that's responsible for skinning TODO don't cache this
      */
     private SkeletonControl skeletonControl = null;
     /**
@@ -506,18 +511,17 @@ public class KinematicRagdollControl
      * never precede their ancestors.
      *
      * @param managerName the name of the manager (not null)
-     * @param addRes (added to if not null)
-     * @return a list of managed bones, including the manager (either addResult
-     * or a new list)
+     * @return a new array of managed bones, including the manager if it is not
+     * the torso
      */
-    public List<Bone> listManagedBones(String managerName, List<Bone> addRes) {
-        List<Bone> result = (addRes == null) ? new ArrayList<Bone>(8) : addRes;
+    Bone[] listManagedBones(String managerName) {
+        List<Bone> list = new ArrayList<>(8);
 
         if (torsoFakeBoneName.equals(managerName)) {
             Bone[] roots = skeleton.getRoots();
             for (Bone rootBone : roots) {
-                result.add(rootBone);
-                addUnlinkedDescendents(rootBone, result);
+                list.add(rootBone);
+                addUnlinkedDescendents(rootBone, list);
             }
 
         } else {
@@ -528,11 +532,17 @@ public class KinematicRagdollControl
                 throw new IllegalArgumentException(msg);
             }
             Bone managerBone = manager.getBone();
-            result.add(managerBone);
-            addUnlinkedDescendents(managerBone, result);
+            list.add(managerBone);
+            addUnlinkedDescendents(managerBone, list);
         }
+        /*
+         * Convert the list to an array.
+         */
+        int numManagedBones = list.size();
+        Bone[] array = new Bone[numManagedBones];
+        list.toArray(array);
 
-        return result;
+        return array;
     }
 
     /**
@@ -1043,6 +1053,7 @@ public class KinematicRagdollControl
     public void cloneFields(Cloner cloner, Object original) {
         super.cloneFields(cloner, original);
 
+        boneLinkList = cloner.clone(boneLinkList);
         boneLinks = cloner.clone(boneLinks);
         endModelTransform = cloner.clone(endModelTransform);
         gravityVector = cloner.clone(gravityVector);
@@ -1121,7 +1132,7 @@ public class KinematicRagdollControl
         meshToModel = modelToMesh.invert();
         initScale = transformer.getWorldScale().clone();
         /*
-         * Map bone indices to names of linked bones.
+         * Map bone indices to the names of the bones' managers.
          */
         String[] tempLbNames = linkedBoneNameArray();
         /*
@@ -1147,14 +1158,18 @@ public class KinematicRagdollControl
         /*
          * Create bone links.
          */
+        assert massMap.size() == jointMap.size(); // parallel maps
         for (String boneName : massMap.keySet()) {
             List<Vector3f> vertexLocations = coordsMap.get(boneName);
             createLink(boneName, vertexLocations);
         }
+        assert boneLinks.size() == massMap.size();
         /*
          * Add joints to connect each linked bone with its parent.
          */
+        boneLinkList = new ArrayList<>(massMap.size());
         addJoints(torsoFakeBoneName);
+        assert boneLinkList.size() == boneLinks.size();
 
         if (added) {
             addPhysics();
@@ -1189,7 +1204,7 @@ public class KinematicRagdollControl
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule ic = im.getCapsule(this);
-        // TODO jointMap, massMap, etc.
+        // TODO jointMap, massMap, boneLinkList, etc.
         BoneLink[] loadedBoneLinks
                 = (BoneLink[]) ic.readSavableArray("boneList",
                         new BoneLink[0]);
@@ -1240,16 +1255,17 @@ public class KinematicRagdollControl
         if (added) {
             removePhysics();
         }
+        boneLinkList = null;
+        torsoRigidBody = null;
+        skeleton = null;
         boneLinks.clear();
         initScale = null;
-        meshToModel = null;
         rootBindOrientation = null;
-        rootBindScale = null;
-        torsoRigidBody = null;
         skeletonControl = null;
-        skeleton = null;
-        startRootTransform = null;
         transformer = null;
+        meshToModel = null;
+        startRootTransform = null;
+        rootBindScale = null;
     }
 
     /**
@@ -1303,8 +1319,10 @@ public class KinematicRagdollControl
         } else {
             torsoDynamicUpdate();
         }
-
-        for (BoneLink link : boneLinks.values()) {
+        /*
+         * Update bone links in pre-order, depth-first.
+         */
+        for (BoneLink link : boneLinkList) {
             link.update(tpf);
         }
     }
@@ -1319,7 +1337,7 @@ public class KinematicRagdollControl
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule oc = ex.getCapsule(this);
-        // TODO jointMap, massMap, etc.
+        // TODO jointMap, massMap, boneLinkList, etc.
         oc.write(boneLinks.values().toArray(
                 new BoneLink[boneLinks.size()]),
                 "boneLinks", new BoneLink[0]);
@@ -1400,8 +1418,8 @@ public class KinematicRagdollControl
     // private methods
 
     /**
-     * Add joints to connect the named parent with each of its children. Note:
-     * recursive!
+     * Add joints to connect the named parent with each of its children. Also
+     * fill in the boneLinkList. Note: recursive!
      *
      * @param parentName the name of the parent, which must either be a linked
      * bone or the torso (not null)
@@ -1431,6 +1449,7 @@ public class KinematicRagdollControl
                     posToParent, new Vector3f(), true);
             assert link.getJoint() == null;
             link.setJoint(joint);
+            boneLinkList.add(link);
 
             JointPreset preset = getJointLimits(childName);
             preset.setupJoint(joint);
