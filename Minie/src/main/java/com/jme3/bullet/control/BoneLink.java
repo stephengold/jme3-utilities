@@ -32,6 +32,7 @@
 package com.jme3.bullet.control;
 
 import com.jme3.animation.Bone;
+import com.jme3.bullet.control.ragdoll.KinematicSubmode;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.export.InputCapsule;
@@ -45,6 +46,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -67,9 +69,14 @@ public class BoneLink
     // fields
 
     /**
-     * animated bone in the skeleton (not null)
+     * linked bone in the skeleton (not null)
      */
     private Bone bone;
+    /**
+     * managed bones, in a pre-order, depth-first traversal of the skeleton,
+     * starting with the linked bone
+     */
+    private Bone[] managedBones = null;
     /**
      * duration of the current transition to kinematic mode (in seconds, &ge;0)
      */
@@ -78,13 +85,13 @@ public class BoneLink
      * weighting of kinematic movement (&ge;0, &le;1, 0=purely dynamic, 1=purely
      * kinematic, default=1)
      */
-    private float kinematicWeight = 1f;
+    private float kinematicWeight;
     /**
-     * back pointer to the control that manages this link
+     * back pointer to the control that manages this linked bone
      */
     private KinematicRagdollControl krc;
     /**
-     * rigid body in the ragdoll (not null)
+     * linked rigid body in the ragdoll (not null)
      */
     private PhysicsRigidBody rigidBody;
     /**
@@ -102,7 +109,7 @@ public class BoneLink
      */
     private String parentName;
     /**
-     * bone transform (in mesh coordinates) at the start of the most recent
+     * transform of bone (in local coordinates) at the start of the most recent
      * transition to kinematic mode
      */
     private Transform startTransform = null;
@@ -131,6 +138,7 @@ public class BoneLink
         this.bone = bone;
         this.rigidBody = rigidBody;
 
+        kinematicWeight = 1f;
         rigidBody.setKinematic(true);
         rigidBody.setUserObject(this);
 
@@ -149,11 +157,13 @@ public class BoneLink
     /**
      * Begin transitioning this link to fully kinematic mode.
      *
+     * @param submode enum value (not null)
      * @param blendInterval the duration of the blend interval (in seconds,
      * &ge;0)
      */
-    void blendToKinematicMode(float blendInterval) {
+    void blendToKinematicMode(KinematicSubmode submode, float blendInterval) {
         Validate.nonNegative(blendInterval, "blend interval");
+        assert submode == KinematicSubmode.Animated;
 
         startTransform = krc.localBoneTransform(rigidBody, bindOrientation,
                 bindScale, startTransform);
@@ -213,13 +223,20 @@ public class BoneLink
     }
 
     /**
-     * Assign a physics joint to this bone link.
+     * Assign a physics joint to this bone link and enumerate the managed bones.
      *
      * @param joint (not null)
      */
     public void setJoint(SixDofJoint joint) {
         Validate.nonNull(joint, "joint");
+
         this.joint = joint;
+
+        List<Bone> bones = krc.listManagedBones(bone.getName(), null);
+        assert bones.get(0) == bone;
+        int numManagedBones = bones.size();
+        managedBones = new Bone[numManagedBones];
+        bones.toArray(managedBones);
     }
 
     /**
@@ -252,6 +269,7 @@ public class BoneLink
     public void cloneFields(Cloner cloner, Object original) {
         bone = cloner.clone(bone);
         krc = cloner.clone(krc);
+        managedBones = cloner.clone(managedBones);
         rigidBody = cloner.clone(rigidBody);
         bindOrientation = cloner.clone(bindOrientation);
         joint = cloner.clone(joint);
@@ -286,6 +304,7 @@ public class BoneLink
     public void read(JmeImporter im) throws IOException {
         InputCapsule ic = im.getCapsule(this);
         krc = (KinematicRagdollControl) ic.readSavable("krc", null);
+        managedBones = (Bone[]) ic.readSavableArray("managedBones", null);
         rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
         bone = (Bone) ic.readSavable("bone", null);
         joint = (SixDofJoint) ic.readSavable("joint", null);
@@ -316,6 +335,7 @@ public class BoneLink
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule oc = ex.getCapsule(this);
         oc.write(krc, "krc", null);
+        oc.write(managedBones, "managedBones", null);
         oc.write(rigidBody, "rigidBody", null);
         oc.write(bone, "bone", null);
         oc.write(joint, "joint", null);

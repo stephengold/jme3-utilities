@@ -42,6 +42,7 @@ import com.jme3.bullet.collision.RagdollCollisionListener;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.HullCollisionShape;
 import com.jme3.bullet.control.ragdoll.JointPreset;
+import com.jme3.bullet.control.ragdoll.KinematicSubmode;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
@@ -73,6 +74,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyMesh;
+import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
@@ -220,7 +222,7 @@ public class KinematicRagdollControl
     // constructors
 
     /**
-     * Instantiate an enabled, Kinematic control with no bones.
+     * Instantiate an enabled control without any linked bones (torso only).
      */
     public KinematicRagdollControl() {
     }
@@ -262,9 +264,6 @@ public class KinematicRagdollControl
         torsoBlendInterval = blendInterval;
         torsoKinematicWeight = Float.MIN_VALUE; // non-zero to start blending
         torsoRigidBody.setKinematic(true);
-        for (Bone bone : skeleton.getRoots()) {
-            setUserMode(bone, false);
-        }
 
         startModelTransform = getSpatial().getLocalTransform().clone();
         if (endModelTransform == null) {
@@ -282,8 +281,10 @@ public class KinematicRagdollControl
                     bindOrientation, bindScale, startRootTransform[rootIndex]);
         }
 
+        MySkeleton.setUserControl(skeleton, false);
+
         for (BoneLink link : boneLinks.values()) {
-            link.blendToKinematicMode(blendInterval);
+            link.blendToKinematicMode(KinematicSubmode.Animated, blendInterval);
         }
     }
 
@@ -495,6 +496,41 @@ public class KinematicRagdollControl
     public Collection<String> linkedBoneNames() {
         Collection<String> names = massMap.keySet();
         Collection<String> result = Collections.unmodifiableCollection(names);
+
+        return result;
+    }
+
+    /**
+     * Enumerate all managed bones of the named linked bone or the torso, in a
+     * pre-order, depth-first traversal of the skeleton, such that child bones
+     * never precede their ancestors.
+     *
+     * @param managerName the name of the manager (not null)
+     * @param addRes (added to if not null)
+     * @return a list of managed bones, including the manager (either addResult
+     * or a new list)
+     */
+    public List<Bone> listManagedBones(String managerName, List<Bone> addRes) {
+        List<Bone> result = (addRes == null) ? new ArrayList<Bone>(8) : addRes;
+
+        if (torsoFakeBoneName.equals(managerName)) {
+            Bone[] roots = skeleton.getRoots();
+            for (Bone rootBone : roots) {
+                result.add(rootBone);
+                addUnlinkedDescendents(rootBone, result);
+            }
+
+        } else {
+            BoneLink manager = getBoneLink(managerName);
+            if (manager == null) {
+                String msg
+                        = "No linked bone named " + MyString.quote(managerName);
+                throw new IllegalArgumentException(msg);
+            }
+            Bone managerBone = manager.getBone();
+            result.add(managerBone);
+            addUnlinkedDescendents(managerBone, result);
+        }
 
         return result;
     }
@@ -1405,6 +1441,23 @@ public class KinematicRagdollControl
     }
 
     /**
+     * Add unlinked descendents of the specified bone to the specified list.
+     * Note: recursive.
+     *
+     * @param bone (not null, alias created)
+     * @param addResult (not null, modified)
+     */
+    private void addUnlinkedDescendents(Bone bone, List<Bone> addResult) {
+        for (Bone childBone : bone.getChildren()) {
+            String childName = childBone.getName();
+            if (!isLinked(childName)) {
+                addResult.add(childBone);
+                addUnlinkedDescendents(childBone, addResult);
+            }
+        }
+    }
+
+    /**
      * Assign each mesh vertex to a linked bone and add its location (mesh
      * coordinates in bind pose) to that bone's list.
      *
@@ -1572,15 +1625,7 @@ public class KinematicRagdollControl
         Bone bone = skeleton.getRoots()[0];
         Transform transform = physicsTransform(bone, rootBindOrientation[0],
                 rootBindScale[0], null);
-
-        Vector3f location = transform.getTranslation();
-        Quaternion orientation = transform.getRotation();
-        Vector3f scale = transform.getScale();
-
-        // Update the transform of the rigid body. TODO use MotionState
-        torsoRigidBody.setPhysicsLocation(location);
-        torsoRigidBody.setPhysicsRotation(orientation);
-        torsoRigidBody.setPhysicsScale(scale);
+        torsoRigidBody.setPhysicsTransform(transform);
     }
 
     /**
