@@ -188,10 +188,6 @@ public class KinematicRagdollControl
      */
     private Quaternion rootBindOrientation[] = null;
     /**
-     * control that's responsible for skinning TODO don't cache this
-     */
-    private SkeletonControl skeletonControl = null;
-    /**
      * spatial that provides the mesh-coordinate transform
      */
     private Spatial transformer = null;
@@ -1065,7 +1061,6 @@ public class KinematicRagdollControl
         rootBindOrientation = cloner.clone(rootBindOrientation);
         rootBindScale = cloner.clone(rootBindScale);
         skeleton = cloner.clone(skeleton);
-        skeletonControl = cloner.clone(skeletonControl);
         startModelTransform = cloner.clone(startModelTransform);
         startRootTransform = cloner.clone(startRootTransform);
         torsoRigidBody = cloner.clone(torsoRigidBody);
@@ -1082,7 +1077,8 @@ public class KinematicRagdollControl
     protected void createSpatialData(Spatial spatial) {
         Validate.nonNull(spatial, "controlled spatial");
 
-        skeletonControl = spatial.getControl(SkeletonControl.class);
+        SkeletonControl skeletonControl
+                = spatial.getControl(SkeletonControl.class);
         if (skeletonControl == null) {
             throw new IllegalArgumentException(
                     "The controlled spatial must have a SkeletonControl. Make sure the control is there and not on a subnode.");
@@ -1138,7 +1134,8 @@ public class KinematicRagdollControl
         /*
          * Assign each mesh vertex to a linked bone or else to the torso.
          */
-        Map<String, List<Vector3f>> coordsMap = coordsMap(tempLbNames);
+        Mesh[] targets = skeletonControl.getTargets();
+        Map<String, List<Vector3f>> coordsMap = coordsMap(targets, tempLbNames);
         /*
          * Create a rigid body for the torso.
          */
@@ -1212,8 +1209,6 @@ public class KinematicRagdollControl
             boneLinks.put(physicsBoneLink.getBone().getName(), physicsBoneLink);
         }
         skeleton = (Skeleton) ic.readSavable("skeleton", null);
-        skeletonControl
-                = (SkeletonControl) ic.readSavable("skeletonControl", null);
         meshToModel
                 = (Transform) ic.readSavable("meshToModel", new Transform());
         transformer
@@ -1261,7 +1256,6 @@ public class KinematicRagdollControl
         boneLinks.clear();
         initScale = null;
         rootBindOrientation = null;
-        skeletonControl = null;
         transformer = null;
         meshToModel = null;
         startRootTransform = null;
@@ -1342,7 +1336,6 @@ public class KinematicRagdollControl
                 new BoneLink[boneLinks.size()]),
                 "boneLinks", new BoneLink[0]);
         oc.write(skeleton, "skeleton", null);
-        oc.write(skeletonControl, "skeletonControl", null);
         oc.write(transformer, "transformer", null);
         oc.write(meshToModel, "meshToModel", new Transform());
         oc.write(initScale, "initScale", null);
@@ -1483,8 +1476,8 @@ public class KinematicRagdollControl
      * @param lbNames a map from bone indices to linked-bone names
      * @return a new map from linked-bone names to coordinates
      */
-    private Map<String, List<Vector3f>> coordsMap(String[] lbNames) {
-        Mesh[] meshes = skeletonControl.getTargets();
+    private static Map<String, List<Vector3f>> coordsMap(Mesh[] meshes,
+            String[] lbNames) {
         float[] wArray = new float[4];
         int[] iArray = new int[4];
         Map<String, List<Vector3f>> coordsMap = new HashMap<>(32);
