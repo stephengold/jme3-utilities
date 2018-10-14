@@ -238,17 +238,18 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Begin transitioning to torso and all linked bones to fully kinematic
-     * mode. In that mode, collision objects follow the movements of the
-     * skeleton while interacting with the physics environment. TODO callback at
-     * end of transition
+     * Begin transitioning the torso and all linked bones to fully kinematic
+     * mode, driven by animation. In that mode, collision objects follow the
+     * movements of the skeleton while interacting with the physics environment.
+     * TODO callback at end of transition
      * <p>
      * Allowed only when the control IS added to a spatial.
      *
      * @param blendInterval the duration of the blend interval for linked bones
      * (in seconds, &ge;0)
      * @param endModelTransform the desired local transform for the controlled
-     * spatial when the transition completes (not null, unaffected)
+     * spatial when the transition completes or null for no change to local
+     * transform (unaffected)
      */
     public void blendToKinematicMode(float blendInterval,
             Transform endModelTransform) {
@@ -266,7 +267,11 @@ public class KinematicRagdollControl
         }
 
         startModelTransform = getSpatial().getLocalTransform().clone();
-        this.endModelTransform.set(endModelTransform);
+        if (endModelTransform == null) {
+            this.endModelTransform.set(startModelTransform);
+        } else {
+            this.endModelTransform.set(endModelTransform);
+        }
 
         Bone[] rootBones = skeleton.getRoots();
         int numRootBones = rootBones.length;
@@ -295,7 +300,7 @@ public class KinematicRagdollControl
             throw new IllegalArgumentException(msg);
         }
 
-        List<String> result = new ArrayList<>(32);
+        List<String> result = new ArrayList<>(8);
         for (String childName : massMap.keySet()) {
             BoneLink link = getBoneLink(childName);
             if (link.parentName().equals(parentName)) {
@@ -516,20 +521,21 @@ public class KinematicRagdollControl
         Quaternion orientation = result.getRotation();
         Vector3f scale = result.getScale();
 
-        RigidBodyMotionState state = rigidBody.getMotionState();
+        Transform world = rigidBody.getPhysicsTransform(null);
         Spatial transformSpatial = getTransformer();
 
-        Vector3f worldLoc = state.getWorldLocation();
+        Vector3f worldLoc = world.getTranslation();
         transformSpatial.worldToLocal(worldLoc, location);
 
-        Quaternion worldOri = state.getWorldRotationQuat();
+        Quaternion worldOri = world.getRotation();
         orientation.set(worldOri);
         orientation.multLocal(bindOrientation);
         Quaternion spatInvRot
                 = MySpatial.inverseOrientation(transformSpatial);
         spatInvRot.mult(orientation, orientation);
 
-        rigidBody.getPhysicsScale(scale);
+        Vector3f worldScale = world.getScale();
+        scale.set(worldScale);
         Vector3f meshToWorldScale = transformSpatial.getWorldScale();
         scale.divideLocal(meshToWorldScale);
         scale.divideLocal(bindScale);
