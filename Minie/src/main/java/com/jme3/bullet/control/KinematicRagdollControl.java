@@ -161,10 +161,6 @@ public class KinematicRagdollControl
      */
     private float damping = 0.6f;
     /**
-     * orientation of each root bone in bind pose (in mesh coordinates)
-     */
-    private Quaternion rootBindOrientation[] = null;
-    /**
      * spatial that provides the mesh-coordinate transform
      */
     private Spatial transformer = null;
@@ -187,10 +183,6 @@ public class KinematicRagdollControl
      * recent transition to kinematic mode
      */
     private Transform startRootTransform[] = null;
-    /**
-     * scale of each root bone in bind pose (in mesh coordinates)
-     */
-    private Vector3f rootBindScale[] = null;
     // *************************************************************************
     // constructors
 
@@ -248,10 +240,8 @@ public class KinematicRagdollControl
         Bone[] rootBones = skeleton.getRoots();
         int numRootBones = rootBones.length;
         for (int rootIndex = 0; rootIndex < numRootBones; rootIndex++) {
-            Quaternion bindOrientation = rootBindOrientation[rootIndex];
-            Vector3f bindScale = rootBindScale[rootIndex];
             startRootTransform[rootIndex] = localBoneTransform(torsoRigidBody,
-                    bindOrientation, bindScale, startRootTransform[rootIndex]);
+                    rootBones[rootIndex], startRootTransform[rootIndex]);
         }
 
         MySkeleton.setUserControl(skeleton, false);
@@ -439,16 +429,12 @@ public class KinematicRagdollControl
      * specified rigid body.
      *
      * @param rigidBody the rigid body to match (not null, unaffected)
-     * @param bindOrientation the bone's bind orientation (in model coordinates,
-     * not null, unaffected)
-     * @param bindScale the bone's bind scale (in model coordinates, not null,
-     * unaffected)
+     * @param bone
      * @param storeResult storage for the result (modified if not null)
      * @return the calculated local bone transform (either storeResult or a new
      * transform, not null)
      */
-    Transform localBoneTransform(PhysicsRigidBody rigidBody,
-            Quaternion bindOrientation, Vector3f bindScale,
+    Transform localBoneTransform(PhysicsRigidBody rigidBody, Bone bone,
             Transform storeResult) {
         Transform result
                 = (storeResult == null) ? new Transform() : storeResult;
@@ -464,6 +450,8 @@ public class KinematicRagdollControl
 
         Quaternion worldOri = world.getRotation();
         orientation.set(worldOri);
+        Quaternion bindOrientation
+                = bone.getModelBindInverseRotation().inverse();
         orientation.multLocal(bindOrientation);
         Quaternion spatInvRot
                 = MySpatial.inverseOrientation(transformSpatial);
@@ -473,7 +461,8 @@ public class KinematicRagdollControl
         scale.set(worldScale);
         Vector3f meshToWorldScale = transformSpatial.getWorldScale();
         scale.divideLocal(meshToWorldScale);
-        scale.divideLocal(bindScale);
+        Vector3f mibs = bone.getModelBindInverseScale();
+        scale.multLocal(mibs);
 
         return result;
     }
@@ -511,16 +500,11 @@ public class KinematicRagdollControl
      * specified skeleton bone.
      *
      * @param bone the skeleton bone to match (not null, unaffected)
-     * @param bindOrientation the bone's bind orientation (in model coordinates,
-     * not null, unaffected)
-     * @param bindScale the bone's bind scale (in model coordinates, not null,
-     * unaffected)
      * @param storeResult storage for the result (modified if not null)
      * @return the calculated physics transform (either storeResult or a new
      * transform, not null)
      */
-    Transform physicsTransform(Bone bone, Quaternion bindOrientation,
-            Vector3f bindScale, Transform storeResult) {
+    Transform physicsTransform(Bone bone, Transform storeResult) {
         Transform result
                 = (storeResult == null) ? new Transform() : storeResult;
         Vector3f location = result.getTranslation();
@@ -805,8 +789,6 @@ public class KinematicRagdollControl
         initScale = cloner.clone(initScale);
         listeners = cloner.clone(listeners);
         meshToModel = cloner.clone(meshToModel);
-        rootBindOrientation = cloner.clone(rootBindOrientation);
-        rootBindScale = cloner.clone(rootBindScale);
         skeleton = cloner.clone(skeleton);
         startModelTransform = cloner.clone(startModelTransform);
         startRootTransform = cloner.clone(startRootTransform);
@@ -837,21 +819,11 @@ public class KinematicRagdollControl
         /*
          * Allocate per-root arrays.
          */
-        rootBindOrientation = new Quaternion[numRootBones];
-        rootBindScale = new Vector3f[numRootBones];
         startRootTransform = new Transform[numRootBones];
         /*
          * Put the skeleton into bind pose.
          */
         skeleton.resetAndUpdate();
-
-        for (int rootIndex = 0; rootIndex < numRootBones; rootIndex++) {
-            Bone bone = rootBones[rootIndex];
-            Quaternion msr = bone.getModelSpaceRotation();
-            rootBindOrientation[rootIndex] = msr.clone();
-            Vector3f mss = bone.getModelSpaceScale();
-            rootBindScale[rootIndex] = mss.clone();
-        }
         /*
          * Remove the SkeletonControl and re-add it to make sure it will get
          * updated *after* this control.
@@ -1003,10 +975,8 @@ public class KinematicRagdollControl
         torsoRigidBody = null;
         skeleton = null;
         initScale = null;
-        rootBindOrientation = null;
         transformer = null;
         meshToModel = null;
-        rootBindScale = null;
     }
 
     /**
@@ -1309,8 +1279,7 @@ public class KinematicRagdollControl
      */
     private void torsoKinematicUpdate() {
         Bone bone = skeleton.getRoots()[0];
-        Transform transform = physicsTransform(bone, rootBindOrientation[0],
-                rootBindScale[0], null);
+        Transform transform = physicsTransform(bone, null);
         torsoRigidBody.setPhysicsTransform(transform);
     }
 

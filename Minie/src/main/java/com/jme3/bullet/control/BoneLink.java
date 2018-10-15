@@ -94,10 +94,6 @@ public class BoneLink
      */
     private PhysicsRigidBody rigidBody;
     /**
-     * orientation of the bone (in mesh coordinates) when this link was created
-     */
-    private Quaternion bindOrientation = new Quaternion();
-    /**
      * joint between the rigid body and the parent's rigid body, or null if not
      * yet created
      */
@@ -112,10 +108,6 @@ public class BoneLink
      * transition to kinematic mode
      */
     private Transform startTransform = null;
-    /**
-     * scale of the bone (in mesh coordinates) when this link was created
-     */
-    private Vector3f bindScale = new Vector3f(1f, 1f, 1f);
     // *************************************************************************
     // constructors
 
@@ -143,12 +135,6 @@ public class BoneLink
 
         String name = bone.getName();
         parentName = krc.parentName(name);
-
-        Quaternion msr = bone.getModelSpaceRotation();
-        bindOrientation.set(msr);
-
-        Vector3f mss = bone.getModelSpaceScale();
-        bindScale.set(mss);
     }
     // *************************************************************************
     // new methods exposed
@@ -164,8 +150,8 @@ public class BoneLink
         Validate.nonNegative(blendInterval, "blend interval");
         assert submode == KinematicSubmode.Animated;
 
-        startTransform = krc.localBoneTransform(rigidBody, bindOrientation,
-                bindScale, startTransform);
+        startTransform
+                = krc.localBoneTransform(rigidBody, bone, startTransform);
         this.blendInterval = blendInterval;
         kinematicWeight = Float.MIN_VALUE; // not zero!
         rigidBody.setKinematic(true);
@@ -269,10 +255,8 @@ public class BoneLink
         krc = cloner.clone(krc);
         managedBones = cloner.clone(managedBones);
         rigidBody = cloner.clone(rigidBody);
-        bindOrientation = cloner.clone(bindOrientation);
         joint = cloner.clone(joint);
         startTransform = cloner.clone(startTransform);
-        bindScale = cloner.clone(bindScale);
     }
 
     /**
@@ -308,13 +292,6 @@ public class BoneLink
         joint = (SixDofJoint) ic.readSavable("joint", null);
         parentName = ic.readString("parentName", null);
 
-        Quaternion readQuat = (Quaternion) ic.readSavable("initalWorldRotation",
-                new Quaternion());
-        bindOrientation.set(readQuat);
-        Vector3f readVec = (Vector3f) ic.readSavable("originalScale",
-                new Vector3f());
-        bindScale.set(readVec);
-
         Transform read
                 = (Transform) ic.readSavable("startTransform", new Transform());
         startTransform.set(read);
@@ -339,9 +316,6 @@ public class BoneLink
         oc.write(joint, "joint", null);
         oc.write(parentName, "parentName", null);
 
-        oc.write(bindOrientation, "initalWorldRotation", null);
-        oc.write(bindScale, "originalScale", null);
-
         oc.write(startTransform, "startTransform", new Transform());
 
         oc.write(blendInterval, "blendInterval", 1f);
@@ -355,8 +329,7 @@ public class BoneLink
      * body.
      */
     private void dynamicUpdate() {
-        Transform transform = krc.localBoneTransform(rigidBody, bindOrientation,
-                bindScale, null);
+        Transform transform = krc.localBoneTransform(rigidBody, bone, null);
 
         // Update the transforms in the skeleton.
         krc.setBoneTransform(bone, transform);
@@ -367,17 +340,8 @@ public class BoneLink
      * the transformSpatial and the skeleton, without blending.
      */
     private void kinematicUpdate() {
-        Transform transform
-                = krc.physicsTransform(bone, bindOrientation, bindScale, null);
-
-        Vector3f location = transform.getTranslation();
-        Quaternion orientation = transform.getRotation();
-        Vector3f scale = transform.getScale();
-
-        // Update the transform of the rigid body.
-        rigidBody.setPhysicsLocation(location);
-        rigidBody.setPhysicsRotation(orientation);
-        rigidBody.setPhysicsScale(scale);
+        Transform transform = krc.physicsTransform(bone, null);
+        rigidBody.setPhysicsTransform(transform);
     }
 
     /**
