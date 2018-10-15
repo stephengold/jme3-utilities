@@ -52,7 +52,7 @@ public class SimpleGhostControl
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(SimpleGhostControl.class.getName());
     // *************************************************************************
     // constructors

@@ -57,7 +57,7 @@ public class CylinderCollisionShape extends CollisionShape {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(CylinderCollisionShape.class.getName());
     // *************************************************************************
     // fields
@@ -246,7 +246,7 @@ public class CylinderCollisionShape extends CollisionShape {
 
         objectId = createShape(axis, halfExtents);
         assert objectId != 0L;
-        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
 
         setScale(scale);
         setMargin(margin);

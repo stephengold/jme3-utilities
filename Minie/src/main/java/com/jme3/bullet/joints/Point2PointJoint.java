@@ -59,7 +59,7 @@ public class Point2PointJoint extends PhysicsJoint {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(Point2PointJoint.class.getName());
     // *************************************************************************
     // constructors
@@ -226,7 +226,7 @@ public class Point2PointJoint extends PhysicsJoint {
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA,
                 pivotB);
         assert objectId != 0L;
-        logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
     }
 
     native private long createJoint(long objectIdA, long objectIdB,

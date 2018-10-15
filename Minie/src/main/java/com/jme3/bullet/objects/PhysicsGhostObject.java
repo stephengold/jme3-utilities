@@ -65,7 +65,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(PhysicsGhostObject.class.getName());
 
     /**
@@ -100,7 +100,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     private void buildObject() {
         if (objectId == 0L) {
             objectId = createGhostObject();
-            logger.log(Level.FINE, "Created Ghost Object {0}",
+            logger2.log(Level.FINE, "Created Ghost Object {0}",
                     Long.toHexString(objectId));
             setGhostFlags(objectId);
             initUserPointer();

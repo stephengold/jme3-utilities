@@ -74,7 +74,7 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(ConfigRagdollControl.class.getName());
     /**
      * magic bone name to refer to the model's torso

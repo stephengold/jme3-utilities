@@ -55,7 +55,7 @@ public class BubbleControl
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(BubbleControl.class.getName());
     // *************************************************************************
     // fields
@@ -112,7 +112,7 @@ public class BubbleControl
          * will pop the bubble.
          */
         if (isEligible(overlappingSpatial)) {
-            logger.log(Level.INFO, "{0} pops {1} at {2}", new Object[]{
+            logger2.log(Level.INFO, "{0} pops {1} at {2}", new Object[]{
                 MyString.quote(overlappingSpatial.getName()),
                 MyString.quote(spatial.getName()),
                 localPoint

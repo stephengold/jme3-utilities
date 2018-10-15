@@ -57,7 +57,7 @@ public class SphereCollisionShape extends CollisionShape {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(SphereCollisionShape.class.getName());
     // *************************************************************************
     // fields
@@ -164,7 +164,7 @@ public class SphereCollisionShape extends CollisionShape {
      */
     @Override
     public void setMargin(float margin) {
-        logger.log(Level.SEVERE,
+        logger2.log(Level.SEVERE,
                 "Cannot alter the margin of a SphereCollisionShape.");
     }
 
@@ -205,7 +205,7 @@ public class SphereCollisionShape extends CollisionShape {
 
         objectId = createShape(radius);
         assert objectId != 0L;
-        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
 
         setScale(scale);
         margin = 0f;

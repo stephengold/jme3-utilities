@@ -55,7 +55,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(PhysicsCharacter.class.getName());
     // *************************************************************************
     // fields
@@ -103,7 +103,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         if (objectId == 0L) {
             objectId = createGhostObject();
             assert objectId != 0L;
-            logger.log(Level.FINE, "Creating GhostObject {0}",
+            logger2.log(Level.FINE, "Creating GhostObject {0}",
                     Long.toHexString(objectId));
             initUserPointer();
         }
@@ -111,14 +111,14 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
         attachCollisionShape(objectId, collisionShape.getObjectId());
 
         if (characterId != 0L) {
-            logger.log(Level.FINE, "Clearing Character {0}",
+            logger2.log(Level.FINE, "Clearing Character {0}",
                     Long.toHexString(objectId));
             finalizeNativeCharacter(characterId);
         }
         characterId = createCharacterObject(objectId,
                 collisionShape.getObjectId(), stepHeight);
         assert characterId != 0L;
-        logger.log(Level.FINE, "Creating Character {0}",
+        logger2.log(Level.FINE, "Creating Character {0}",
                 Long.toHexString(characterId));
     }
 

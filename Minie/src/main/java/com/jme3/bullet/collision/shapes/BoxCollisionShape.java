@@ -55,7 +55,7 @@ public class BoxCollisionShape extends CollisionShape {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(BoxCollisionShape.class.getName());
     // *************************************************************************
     // fields
@@ -180,7 +180,7 @@ public class BoxCollisionShape extends CollisionShape {
 
         objectId = createShape(halfExtents);
         assert objectId != 0L;
-        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
 
         setScale(scale);
         setMargin(margin);

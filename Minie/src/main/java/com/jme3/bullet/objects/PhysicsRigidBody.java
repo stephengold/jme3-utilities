@@ -67,9 +67,9 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     // constants and loggers
 
     /**
-     * message logger for this class TODO rename
+     * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(PhysicsRigidBody.class.getName());
     /**
      * magic mass value used to specify a static body
@@ -151,14 +151,14 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
                 PhysicsSpace.getPhysicsSpace().remove(this);
                 removed = true;
             }
-            logger.log(Level.FINE, "Clearing RigidBody {0}",
+            logger2.log(Level.FINE, "Clearing RigidBody {0}",
                     Long.toHexString(objectId));
             finalizeNative(objectId);
         }
         preRebuild();
         objectId = createRigidBody(mass, motionState.getObjectId(),
                 collisionShape.getObjectId());
-        logger.log(Level.FINE, "Created RigidBody {0}",
+        logger2.log(Level.FINE, "Created RigidBody {0}",
                 Long.toHexString(objectId));
         postRebuild();
         if (removed) {

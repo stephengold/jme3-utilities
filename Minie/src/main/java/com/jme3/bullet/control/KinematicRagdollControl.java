@@ -108,7 +108,7 @@ public class KinematicRagdollControl
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger3
             = Logger.getLogger(KinematicRagdollControl.class.getName());
     // *************************************************************************
     // fields
@@ -922,7 +922,7 @@ public class KinematicRagdollControl
             addPhysics();
         }
 
-        logger.log(Level.FINE, "Created ragdoll for skeleton.");
+        logger3.log(Level.FINE, "Created ragdoll for skeleton.");
     }
 
     /**

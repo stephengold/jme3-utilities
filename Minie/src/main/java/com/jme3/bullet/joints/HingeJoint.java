@@ -60,7 +60,7 @@ public class HingeJoint extends PhysicsJoint {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(HingeJoint.class.getName());
     // *************************************************************************
     // fields
@@ -389,7 +389,7 @@ public class HingeJoint extends PhysicsJoint {
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(),
                 pivotA, axisA, pivotB, axisB);
         assert objectId != 0L;
-        logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
     }
 
     native private long createJoint(long objectIdA, long objectIdB,

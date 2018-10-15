@@ -55,7 +55,7 @@ public class ConeCollisionShape extends CollisionShape {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(ConeCollisionShape.class.getName());
 
     /**
@@ -238,7 +238,7 @@ public class ConeCollisionShape extends CollisionShape {
 
         objectId = createShape(axis, radius, height);
         assert objectId != 0L;
-        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
 
         setScale(scale);
         setMargin(margin);

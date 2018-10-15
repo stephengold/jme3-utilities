@@ -70,9 +70,9 @@ public class RigidBodyControl
     // constants and loggers
 
     /**
-     * message logger for this class TODO rename
+     * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger3
             = Logger.getLogger(RigidBodyControl.class.getName());
     /**
      * local copy of {@link com.jme3.math.Quaternion#IDENTITY}

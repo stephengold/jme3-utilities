@@ -60,7 +60,7 @@ public class MeshCollisionShape extends CollisionShape {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(MeshCollisionShape.class.getName());
 
     private static final String VERTEX_BASE = "vertexBase";
@@ -284,11 +284,11 @@ public class MeshCollisionShape extends CollisionShape {
                 triangleIndexBase, vertexBase, numTriangles,
                 numVertices, vertexStride, triangleIndexStride);
         assert meshId != 0L;
-        logger.log(Level.FINE, "Created Mesh {0}", Long.toHexString(meshId));
+        logger2.log(Level.FINE, "Created Mesh {0}", Long.toHexString(meshId));
 
         boolean buildBvh = (bvh == null || bvh.length == 0);
         objectId = createShape(memoryOptimized, buildBvh, meshId);
-        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
         if (!buildBvh) {
             nativeBVHBuffer = setBVH(bvh, objectId);
             assert nativeBVHBuffer != 0L;
@@ -309,7 +309,7 @@ public class MeshCollisionShape extends CollisionShape {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        logger.log(Level.FINE, "Finalizing Mesh {0}", Long.toHexString(meshId));
+        logger2.log(Level.FINE, "Finalizing Mesh {0}", Long.toHexString(meshId));
         if (meshId != 0L) {
             finalizeNative(meshId, nativeBVHBuffer);
         }

@@ -61,7 +61,7 @@ public class VehicleControl extends PhysicsVehicle
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger4
             = Logger.getLogger(VehicleControl.class.getName());
     /**
      * spatial to which this control is added, or null if none

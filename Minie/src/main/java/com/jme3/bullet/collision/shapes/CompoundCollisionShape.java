@@ -59,7 +59,7 @@ public class CompoundCollisionShape extends CollisionShape {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(CompoundCollisionShape.class.getName());
     // *************************************************************************
     // fields
@@ -217,7 +217,7 @@ public class CompoundCollisionShape extends CollisionShape {
 
         objectId = createShape();
         assert objectId != 0L;
-        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
 
         setScale(scale);
         setMargin(margin);

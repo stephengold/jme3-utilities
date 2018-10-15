@@ -67,7 +67,7 @@ public class GhostControl
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(GhostControl.class.getName());
     /**
      * local copy of {@link com.jme3.math.Quaternion#IDENTITY}

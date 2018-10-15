@@ -58,7 +58,7 @@ public class CapsuleCollisionShape extends CollisionShape {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(CapsuleCollisionShape.class.getName());
     // *************************************************************************
     // fields
@@ -220,7 +220,7 @@ public class CapsuleCollisionShape extends CollisionShape {
      */
     @Override
     public void setMargin(float margin) {
-        logger.log(Level.SEVERE,
+        logger2.log(Level.SEVERE,
                 "Cannot alter the margin of a CapsuleCollisionShape.");
     }
 
@@ -270,7 +270,7 @@ public class CapsuleCollisionShape extends CollisionShape {
 
         objectId = createShape(axis, radius, height);
         assert objectId != 0L;
-        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
 
         setScale(scale);
         margin = 0f;

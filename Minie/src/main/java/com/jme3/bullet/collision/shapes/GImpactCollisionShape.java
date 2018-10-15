@@ -59,7 +59,7 @@ public class GImpactCollisionShape extends CollisionShape {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(GImpactCollisionShape.class.getName());
     // *************************************************************************
     // fields
@@ -208,11 +208,11 @@ public class GImpactCollisionShape extends CollisionShape {
                 triangleIndexBase, vertexBase, numTriangles, numVertices,
                 vertexStride, triangleIndexStride);
         assert meshId != 0L;
-        logger.log(Level.FINE, "Created Mesh {0}", Long.toHexString(meshId));
+        logger2.log(Level.FINE, "Created Mesh {0}", Long.toHexString(meshId));
 
         objectId = createShape(meshId);
         assert objectId != 0L;
-        logger.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
 
         setScale(scale);
         setMargin(margin);
@@ -229,7 +229,7 @@ public class GImpactCollisionShape extends CollisionShape {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        logger.log(Level.FINE, "Finalizing Mesh {0}", Long.toHexString(meshId));
+        logger2.log(Level.FINE, "Finalizing Mesh {0}", Long.toHexString(meshId));
         finalizeNative(meshId);
     }
     // *************************************************************************

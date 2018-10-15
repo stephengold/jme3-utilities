@@ -53,7 +53,7 @@ public class SimpleSolidControl
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(SimpleSolidControl.class.getName());
     // *************************************************************************
     // constructors

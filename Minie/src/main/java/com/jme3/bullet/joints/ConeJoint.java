@@ -60,7 +60,7 @@ public class ConeJoint extends PhysicsJoint {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(ConeJoint.class.getName());
     // *************************************************************************
     // fields
@@ -292,7 +292,7 @@ public class ConeJoint extends PhysicsJoint {
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(),
                 pivotA, rotA, pivotB, rotB);
         assert objectId != 0L;
-        logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
 
         setLimit(swingSpan1, swingSpan2, twistSpan);
         setAngularOnly(angularOnly);

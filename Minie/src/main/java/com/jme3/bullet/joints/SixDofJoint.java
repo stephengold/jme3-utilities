@@ -77,7 +77,7 @@ public class SixDofJoint extends PhysicsJoint {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(SixDofJoint.class.getName());
     // *************************************************************************
     // fields
@@ -530,7 +530,7 @@ public class SixDofJoint extends PhysicsJoint {
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA,
                 rotA, pivotB, rotB, useLinearReferenceFrameA);
         assert objectId != 0L;
-        logger.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
 
         Vector3f pivot = new Vector3f();
         assert getPivot(JointEnd.A, pivot).equals(pivotA);

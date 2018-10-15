@@ -79,7 +79,7 @@ public class BetterCharacterControl
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(BetterCharacterControl.class.getName());
     // *************************************************************************
     // fields
@@ -645,14 +645,14 @@ public class BetterCharacterControl
             } else {
                 newLeft.set(0f, direction.z, -direction.y).normalizeLocal();
             }
-            logger.log(Level.INFO, "Zero left for direction {0}, up {1}",
+            logger2.log(Level.INFO, "Zero left for direction {0}, up {1}",
                     new Object[]{direction, worldUpVector});
         }
         newLeftNegate.set(newLeft).negateLocal();
         direction.set(worldUpVector).crossLocal(newLeftNegate).normalizeLocal();
         if (direction.equals(Vector3f.ZERO)) {
             direction.set(Vector3f.UNIT_Z);
-            logger.log(Level.INFO, "Zero left for left {0}, up {1}",
+            logger2.log(Level.INFO, "Zero left for left {0}, up {1}",
                     new Object[]{newLeft, worldUpVector});
         }
         if (rotation != null) {

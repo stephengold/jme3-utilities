@@ -71,7 +71,7 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger3
             = Logger.getLogger(PhysicsVehicle.class.getName());
     // *************************************************************************
     // fields
@@ -173,17 +173,17 @@ public class PhysicsVehicle extends PhysicsRigidBody {
             throw new IllegalStateException("Physics space is not initialized!");
         }
         if (rayCasterId != 0L) {
-            logger.log(Level.FINE, "Clearing RayCaster {0}",
+            logger3.log(Level.FINE, "Clearing RayCaster {0}",
                     Long.toHexString(rayCasterId));
-            logger.log(Level.FINE, "Clearing Vehicle {0}",
+            logger3.log(Level.FINE, "Clearing Vehicle {0}",
                     Long.toHexString(vehicleId));
             finalizeNative(rayCasterId, vehicleId);
         }
         rayCasterId = createVehicleRaycaster(objectId, space.getSpaceId());
-        logger.log(Level.FINE, "Created RayCaster {0}",
+        logger3.log(Level.FINE, "Created RayCaster {0}",
                 Long.toHexString(rayCasterId));
         vehicleId = createRaycastVehicle(objectId, rayCasterId);
-        logger.log(Level.FINE, "Created Vehicle {0}",
+        logger3.log(Level.FINE, "Created Vehicle {0}",
                 Long.toHexString(vehicleId));
         setCoordinateSystem(vehicleId, 0, 1, 2);
         for (VehicleWheel wheel : wheels) {
@@ -724,9 +724,9 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        logger.log(Level.FINE, "Finalizing RayCaster {0}",
+        logger3.log(Level.FINE, "Finalizing RayCaster {0}",
                 Long.toHexString(rayCasterId));
-        logger.log(Level.FINE, "Finalizing Vehicle {0}",
+        logger3.log(Level.FINE, "Finalizing Vehicle {0}",
                 Long.toHexString(vehicleId));
         finalizeNative(rayCasterId, vehicleId);
     }
