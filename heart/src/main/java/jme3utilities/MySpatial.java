@@ -346,7 +346,7 @@ public class MySpatial {
         if (subtree instanceof Geometry) {
             Geometry geometry = (Geometry) subtree;
             Mesh mesh = geometry.getMesh();
-            if (mesh.isAnimated()) {
+            if (MyMesh.isAnimated(mesh)) {
                 result = geometry;
             }
 
@@ -803,7 +803,7 @@ public class MySpatial {
         if (subtree instanceof Geometry) {
             Geometry geometry = (Geometry) subtree;
             Mesh mesh = geometry.getMesh();
-            if (mesh.isAnimated() && !storeResult.contains(mesh)) {
+            if (MyMesh.isAnimated(mesh) && !storeResult.contains(mesh)) {
                 storeResult.add(mesh);
             }
 

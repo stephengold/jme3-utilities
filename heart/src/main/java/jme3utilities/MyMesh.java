@@ -135,6 +135,24 @@ public class MyMesh {
     }
 
     /**
+     * Test whether the specified mesh is animated. Unlike mesh.isAnimated()
+     * this method checks for bone weights and ignores HW buffers.
+     *
+     * @param mesh which mesh to test (not null, unaffected)
+     * @return true if animated, otherwise false
+     */
+    public static boolean isAnimated(Mesh mesh) {
+        VertexBuffer indices = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
+        boolean hasIndices = indices != null;
+
+        VertexBuffer weights = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
+        boolean hasWeights = weights != null;
+
+        boolean result = hasIndices && hasWeights;
+        return result;
+    }
+
+    /**
      * Enumerate all meshes in the specified subtree of a scene graph. Note:
      * recursive!
      *
@@ -404,7 +422,7 @@ public class MyMesh {
             storeResult = new Vector3f();
         }
 
-        if (mesh.isAnimated()) {
+        if (isAnimated(mesh)) {
             Vector3f b = vertexVector3f(mesh,
                     VertexBuffer.Type.BindPosePosition, vertexIndex, null);
 
@@ -463,7 +481,7 @@ public class MyMesh {
         Validate.nonNull(skinningMatrices, "skinning matrices");
         Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
 
-        if (mesh.isAnimated()) {
+        if (isAnimated(mesh)) {
             Vector3f b = vertexVector3f(mesh, VertexBuffer.Type.BindPoseNormal,
                     vertexIndex, null);
 
@@ -540,7 +558,7 @@ public class MyMesh {
         Validate.nonNull(skinningMatrices, "skinning matrices");
         Vector4f result = (storeResult == null) ? new Vector4f() : storeResult;
 
-        if (mesh.isAnimated()) {
+        if (isAnimated(mesh)) {
             Vector4f b = vertexVector4f(mesh, VertexBuffer.Type.BindPoseTangent,
                     vertexIndex, null);
 
