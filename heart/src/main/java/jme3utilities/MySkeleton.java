@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -101,7 +101,7 @@ public class MySkeleton {
      *
      * @param bone which bone to use (not null, unaffected)
      * @param storeResult (modified if not null)
-     * @return the bone's bind transform in its parent's coordinates (either
+     * @return the bone's bind transform (in its parent's coordinates, either
      * storeResult or a new instance)
      */
     public static Transform copyBindTransform(Bone bone,
@@ -130,7 +130,7 @@ public class MySkeleton {
      *
      * @param bone which bone to use (not null, unaffected)
      * @param storeResult (modified if not null)
-     * @return the bone's transform in its parent's coordinates (either
+     * @return the bone's transform (in its parent's coordinates, either
      * storeResult or a new instance)
      */
     public static Transform copyLocalTransform(Bone bone,
@@ -155,7 +155,7 @@ public class MySkeleton {
      *
      * @param bone which bone to use (not null, unaffected)
      * @param storeResult (modified if not null)
-     * @return the bone transform in mesh coordinates (either storeResult or a
+     * @return the bone transform (in mesh coordinates, either storeResult or a
      * new instance)
      */
     public static Transform copyMeshTransform(Bone bone,
@@ -513,6 +513,34 @@ public class MySkeleton {
     }
 
     /**
+     * Alter the transform of the specified bone relative to its parent. User
+     * control is temporarily overridden. The model transform is not updated.
+     *
+     * @param bone which bone to use (not null, unaffected)
+     * @param transform the desired bone transform (in its parent's coordinates,
+     * not null, unaffected)
+     */
+    public static void setLocalTransform(Bone bone, Transform transform) {
+        boolean hadControl = bone.hasUserControl();
+        if (!hadControl) {
+            bone.setUserControl(true);
+        }
+
+        Vector3f translation = transform.getTranslation();
+        bone.setLocalTranslation(translation);
+
+        Quaternion rotation = transform.getRotation();
+        bone.setLocalRotation(rotation);
+
+        Vector3f scale = transform.getScale();
+        bone.setLocalScale(scale);
+
+        if (!hadControl) {
+            bone.setUserControl(false);
+        }
+    }
+
+    /**
      * Alter all the user-control flags in the specified skeleton.
      *
      * @param skeleton skeleton to alter (not null, modified)
@@ -549,7 +577,8 @@ public class MySkeleton {
      * unaffected)
      * @param boneName (not null)
      * @param storeResult (modified if not null)
-     * @return world coordinates (either storeResult or a new instance)
+     * @return the location (in world coordinates, either storeResult or a new
+     * instance)
      */
     public static Vector3f worldLocation(Spatial spatial, String boneName,
             Vector3f storeResult) {
