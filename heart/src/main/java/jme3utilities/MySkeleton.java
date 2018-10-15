@@ -101,8 +101,8 @@ public class MySkeleton {
      *
      * @param bone which bone to use (not null, unaffected)
      * @param storeResult (modified if not null)
-     * @return transform in local coordinates (either storeResult or a new
-     * instance)
+     * @return the bone's bind transform in its parent's coordinates (either
+     * storeResult or a new instance)
      */
     public static Transform copyBindTransform(Bone bone,
             Transform storeResult) {
@@ -120,6 +120,57 @@ public class MySkeleton {
         if (scale == null) {
             scale = scaleIdentity;
         }
+        storeResult.setScale(scale);
+
+        return storeResult;
+    }
+
+    /**
+     * Copy the transform of the specified bone relative to its parent.
+     *
+     * @param bone which bone to use (not null, unaffected)
+     * @param storeResult (modified if not null)
+     * @return the bone's transform in its parent's coordinates (either
+     * storeResult or a new instance)
+     */
+    public static Transform copyLocalTransform(Bone bone,
+            Transform storeResult) {
+        Transform result
+                = (storeResult == null) ? new Transform() : storeResult;
+
+        Vector3f translation = bone.getLocalPosition();
+        result.setTranslation(translation);
+
+        Quaternion rotation = bone.getLocalRotation();
+        result.setRotation(rotation);
+
+        Vector3f scale = bone.getLocalScale();
+        result.setScale(scale);
+
+        return result;
+    }
+
+    /**
+     * Copy the transform of the specified bone relative to its mesh(es).
+     *
+     * @param bone which bone to use (not null, unaffected)
+     * @param storeResult (modified if not null)
+     * @return the bone transform in mesh coordinates (either storeResult or a
+     * new instance)
+     */
+    public static Transform copyMeshTransform(Bone bone,
+            Transform storeResult) {
+        if (storeResult == null) {
+            storeResult = new Transform();
+        }
+
+        Vector3f translation = bone.getModelSpacePosition();
+        storeResult.setTranslation(translation);
+
+        Quaternion rotation = bone.getModelSpaceRotation();
+        storeResult.setRotation(rotation);
+
+        Vector3f scale = bone.getModelSpaceScale();
         storeResult.setScale(scale);
 
         return storeResult;
@@ -465,7 +516,7 @@ public class MySkeleton {
      * Alter all the user-control flags in the specified skeleton.
      *
      * @param skeleton skeleton to alter (not null, modified)
-     * @param newSetting true to enable user control, false to disable
+     * @param newSetting true to enable user control, false to disable it
      */
     public static void setUserControl(Skeleton skeleton, boolean newSetting) {
         int boneCount = skeleton.getBoneCount();
@@ -492,7 +543,7 @@ public class MySkeleton {
     }
 
     /**
-     * Calculate the world location of (the tail of) a named bone.
+     * Calculate the world location of (the tail/origin of) a named bone.
      *
      * @param spatial skeletonized spatial that contains the bone (not null,
      * unaffected)
