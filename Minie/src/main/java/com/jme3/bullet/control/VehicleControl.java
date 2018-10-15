@@ -285,7 +285,7 @@ public class VehicleControl extends PhysicsVehicle
             space.removeCollisionObject(this);
             added = false;
         }
-        if (newSpace != null && isEnabled()) {
+        if (newSpace != null && isEnabled() && spatial != null) {
             newSpace.addCollisionObject(this);
             added = true;
         }

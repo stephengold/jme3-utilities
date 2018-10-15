@@ -362,7 +362,7 @@ abstract public class AbstractPhysicsControl
             added = false;
         }
         space = newSpace;
-        if (newSpace != null && isEnabled()) {
+        if (newSpace != null && isEnabled() && spatial != null) {
             addPhysics();
             added = true;
         }
