@@ -444,11 +444,11 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
 
                 float bestTotalWeight = Float.NEGATIVE_INFINITY;
                 String bestLbName = null;
-                for (String lbName : weightMap.keySet()) { // TODO use entrySet
-                    float totalWeight = weightMap.get(lbName);
+                for (Map.Entry<String, Float> entry : weightMap.entrySet()) {
+                    float totalWeight = entry.getValue();
                     if (totalWeight >= bestTotalWeight) {
                         bestTotalWeight = totalWeight;
-                        bestLbName = lbName;
+                        bestLbName = entry.getKey();
                     }
                 }
                 /*
@@ -473,7 +473,7 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
 
     /**
      * Create a hull collision shape, using the specified inverse transform and
-     * list of vertex locations.
+     * list of vertex locations. The skeleton is assumed to be in bind pose.
      *
      * @param transform from vertex coordinates to descaled shape coordinates
      * (not null, unaffected)
@@ -487,13 +487,11 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
         assert vertexLocations != null;
         assert !vertexLocations.isEmpty();
 
-        Vector3f tmp = new Vector3f();
         for (Vector3f location : vertexLocations) {
             /*
              * Transform mesh coordinates to descaled shape coordinates.
              */
-            transform.transformVector(location, tmp);
-            location.set(tmp); // TODO is copy necessary?
+            transform.transformVector(location, location);
         }
 
         CollisionShape boneShape = new HullCollisionShape(vertexLocations);

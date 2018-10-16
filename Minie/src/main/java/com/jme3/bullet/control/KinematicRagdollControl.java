@@ -750,10 +750,6 @@ public class KinematicRagdollControl
             startBoneTransforms[mbIndex] = new Transform();
         }
         /*
-         * Put the skeleton into bind pose. TODO is this still necessary?
-         */
-        skeleton.resetAndUpdate();
-        /*
          * Remove the SkeletonControl and re-add it to make sure it will get
          * updated *after* this control. TODO also arrange with AnimControl
          */
@@ -791,6 +787,7 @@ public class KinematicRagdollControl
             throw new IllegalArgumentException(
                     "No mesh vertices for the torso. Make sure the root bone is not linked.");
         }
+        skeleton.resetAndUpdate();
         Transform boneToMesh
                 = MySkeleton.copyMeshTransform(torsoMainBone, null);
         Transform invTransform = boneToMesh.invert();
@@ -1029,9 +1026,9 @@ public class KinematicRagdollControl
              * Not already blending, so copy the latest bone transforms in
              * case blending starts on the next update.
              */
-            for (int mbIndex = 0; mbIndex < skeleton.getRoots().length; mbIndex++) {
-                Transform startTransform = startBoneTransforms[mbIndex];
-                Bone managedBone = skeleton.getRoots()[mbIndex];
+            for (int mbi = 0; mbi < skeleton.getRoots().length; mbi++) {
+                Transform startTransform = startBoneTransforms[mbi];
+                Bone managedBone = skeleton.getRoots()[mbi];
                 MySkeleton.copyLocalTransform(managedBone, startTransform);
             }
         }
@@ -1164,9 +1161,8 @@ public class KinematicRagdollControl
             childToParent.combineWithParent(meshToParent);
 
             Vector3f pivotChild = new Vector3f(0f, 0f, 0f);
-            Vector3f pivotParent
-                    = childToParent.transformVector(pivotChild, null);
-            pivotParent.multLocal(initScale);
+            Vector3f pivotParent = childToParent.getTranslation();
+            pivotParent = pivotParent.mult(initScale);
 
             Matrix3f rotChild = new Matrix3f(); // identity
             Matrix3f rotParent = childToParent.getRotation().toRotationMatrix();
