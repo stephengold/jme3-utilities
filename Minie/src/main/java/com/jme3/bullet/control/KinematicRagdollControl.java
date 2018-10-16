@@ -550,46 +550,6 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Alter the transform of a skeleton bone. Unlinked child bones are also
-     * altered. Note: recursive! TODO delete method
-     *
-     * @param bone the skeleton bone to transform (not null, modified)
-     * @param localTransform the desired bone transform (in local coordinates,
-     * not null, unaffected)
-     */
-    void setBoneTransform(Bone bone, Transform localTransform) {
-        boolean userControl = bone.hasUserControl();
-        if (!userControl) {
-            // Take control of the bone.
-            bone.setUserControl(true);
-        }
-
-        Vector3f location = localTransform.getTranslation();
-        Quaternion orientation = localTransform.getRotation();
-        Vector3f scale = localTransform.getScale();
-        /*
-         * Set the user transform of the bone.
-         */
-        bone.setUserTransformsInModelSpace(location, orientation);
-        // TODO scale?
-
-        for (Bone childBone : bone.getChildren()) {
-            String childName = childBone.getName();
-            if (!isLinked(childName)) {
-                Transform childLocalTransform
-                        = childBone.getCombinedTransform(location, orientation);
-                childLocalTransform.setScale(scale);
-                setBoneTransform(childBone, childLocalTransform);
-            }
-        }
-
-        if (!userControl) {
-            // Give control back to the animation control.
-            bone.setUserControl(false);
-        }
-    }
-
-    /**
      * Alter the CCD motion threshold of all rigid bodies in this control.
      *
      * @see PhysicsRigidBody#setCcdMotionThreshold(float)
@@ -696,41 +656,6 @@ public class KinematicRagdollControl
 
         for (BoneLink link : boneLinkList) {
             link.setDynamic(ragdollGravity);
-        }
-    }
-    // *************************************************************************
-    // new protected methods
-
-    /**
-     * Update this control in Kinematic mode, based on the transformer's
-     * transform and the skeleton's pose. TODO delete method
-     *
-     * @param tpf the time interval between frames (in seconds, &ge;0)
-     */
-    protected void kinematicUpdate(float tpf) {
-        assert torsoRigidBody.isInWorld();
-
-        removePhysics();
-
-        torsoKinematicUpdate();
-        for (BoneLink link : boneLinkList) {
-            link.update(tpf);
-        }
-
-        addPhysics();
-    }
-
-    /**
-     * Update the skeleton in Ragdoll mode, based on Bullet dynamics. TODO
-     * delete method
-     *
-     * @param tpf the time interval between frames (in seconds, &ge;0)
-     */
-    protected void ragDollUpdate(float tpf) {
-        torsoDynamicUpdate();
-
-        for (BoneLink link : boneLinkList) {
-            link.update(tpf);
         }
     }
     // *************************************************************************
@@ -1342,16 +1267,6 @@ public class KinematicRagdollControl
         transform.combineWithParent(torsoTransform);
         transform.combineWithParent(worldToParent);
         getSpatial().setLocalTransform(transform);
-    }
-
-    /**
-     * Update the torso's rigid body based on the transformer spatial and 1st
-     * root bone. TODO delete method
-     */
-    private void torsoKinematicUpdate() {
-        Bone bone = skeleton.getRoots()[0];
-        Transform transform = physicsTransform(bone, null);
-        torsoRigidBody.setPhysicsTransform(transform);
     }
 
     /**
