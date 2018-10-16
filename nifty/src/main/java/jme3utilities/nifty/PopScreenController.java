@@ -567,9 +567,7 @@ public class PopScreenController extends BasicScreenController {
          * Make the popup visible, setting the keyboard focus.
          */
         Screen screen = nifty.getCurrentScreen();
-        if (screen == null) {
-            throw new NullPointerException();
-        }
+        assert screen != null;
         Element focusElement;
         if (focusElementId == null) {
             focusElement = null;

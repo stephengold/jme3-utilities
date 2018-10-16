@@ -88,7 +88,7 @@ public class MySpatial {
      * Re-parent a spatial, keeping its world scale unchanged.
      *
      * NOTE: This method may yield incorrect results in the presence of
-     * non-uniform scaling.
+     * zero scaling.
      *
      * @param newParent (not null)
      * @param child spatial to re-parent (not null, not orphan)

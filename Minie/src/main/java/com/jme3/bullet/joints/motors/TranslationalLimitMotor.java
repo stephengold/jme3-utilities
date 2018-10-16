@@ -207,7 +207,8 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Copy this motor's constraint upper limits (m_upperLimit).
+     * Copy this motor's constraint upper limits (m_upperLimit). TODO
+     * standardize
      *
      * @return a new vector (not null, default=0,0,0)
      */
@@ -219,7 +220,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter the accumulated impulse (m_accumulatedImpulse).
+     * Alter the accumulated impulse (m_accumulatedImpulse). TODO standardize
      *
      * @param accumulatedImpulse the desired vector (not null, unaffected)
      */
@@ -239,6 +240,7 @@ public class TranslationalLimitMotor {
 
     /**
      * Alter this motor's error-reduction parameters at the limits (m_stopERP).
+     * TODO standardize
      *
      * @param erp the desired error-reduction parameter parameter for each axis
      * (not null, unaffected)
@@ -257,7 +259,8 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter this motor's constraint lower limits (m_lowerLimit).
+     * Alter this motor's constraint lower limits (m_lowerLimit). TODO
+     * standardize
      *
      * @param lowerLimit the desired limit value for each axis (unaffected, not
      * null, default=0,0,0)
@@ -267,7 +270,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter this motor's maximum forces (m_maxMotorForce).
+     * Alter this motor's maximum forces (m_maxMotorForce). TODO standardize
      *
      * @param maxForce the desired maximum force for each axis (not null,
      * unaffected)
@@ -278,7 +281,7 @@ public class TranslationalLimitMotor {
 
     /**
      * Alter this motor's constraint-force mixing parameters for normal
-     * conditions (m_normalCFM).
+     * conditions (m_normalCFM). TODO standardize
      *
      * @param cfm the desired mixing parameter for each axis (not null,
      * unaffected)
@@ -298,7 +301,7 @@ public class TranslationalLimitMotor {
 
     /**
      * Alter this motor's constraint-force mixing parameters at the limits
-     * (m_stopCFM).
+     * (m_stopCFM). TODO standardize
      *
      * @param cfm the desired mixing parameter for each axis (not null,
      * unaffected)
@@ -308,7 +311,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter this motor's target velocity (m_targetVelocity).
+     * Alter this motor's target velocity (m_targetVelocity). TODO standardize
      *
      * @param velocity the desired velocity (not null, unaffected)
      */
@@ -317,7 +320,8 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter this motor's constraint upper limits (m_upperLimit).
+     * Alter this motor's constraint upper limits (m_upperLimit). TODO
+     * standardize
      *
      * @param upperLimit the desired limit value for each axis (unaffected, not
      * null)

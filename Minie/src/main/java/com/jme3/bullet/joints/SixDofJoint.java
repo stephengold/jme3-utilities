@@ -166,7 +166,8 @@ public class SixDofJoint extends PhysicsJoint {
      * B
      */
     public SixDofJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
-            Vector3f pivotA, Vector3f pivotB, boolean useLinearReferenceFrameA) {
+            Vector3f pivotA, Vector3f pivotB, 
+            boolean useLinearReferenceFrameA) {
         super(nodeA, nodeB, pivotA, pivotB);
         this.useLinearReferenceFrameA = useLinearReferenceFrameA;
         rotA = new Matrix3f();

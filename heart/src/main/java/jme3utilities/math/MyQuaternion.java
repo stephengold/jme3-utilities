@@ -306,9 +306,11 @@ public class MyQuaternion {
      * for flipping the sign of q0 or q1 when it's appropriate to do so.
      *
      * @param t descaled parameter value (&ge;0, &le;1)
-     * @param q0 function value at t=0 (not null, unaffected, norm=1)
-     * @param q1 function value at t=1 (not null, unaffected, norm=1)
-     * @param storeResult (modified if not null)
+     * @param q0 function value at t=0 (not null, unaffected unless it's also
+     * storeResult, norm=1)
+     * @param q1 function value at t=1 (not null, unaffected unless it's also
+     * storeResult, norm=1)
+     * @param storeResult (modified if not null, may be q0 or q1)
      * @return an interpolated unit quaternion (either storeResult or a new
      * instance)
      */
