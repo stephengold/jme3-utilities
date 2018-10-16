@@ -43,6 +43,7 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.ragdoll.ConfigRagdollControl;
 import com.jme3.bullet.control.ragdoll.JointPreset;
 import com.jme3.bullet.control.ragdoll.KinematicSubmode;
+import com.jme3.bullet.control.ragdoll.RagUtils;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
@@ -51,6 +52,8 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
+import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
@@ -71,6 +74,8 @@ import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.math.MyQuaternion;
+import jme3utilities.math.MyVector3f;
 
 /**
  * Before adding this control to a spatial, configure it by invoking
@@ -95,7 +100,8 @@ import jme3utilities.Validate;
  * any force is applied to it.</li>
  * </ul>
  *
- * TODO handle applyLocal, handle attachments, catch ignoreTransforms
+ * TODO handle applyLocal, handle attachments, catch ignoreTransforms, rename
+ * PhysicsAnimControl or RagdollControl, split off TorsoLink, ghost mode
  *
  * @author Normen Hansen and Rémy Bouquet (Nehon)
  */
@@ -113,6 +119,15 @@ public class KinematicRagdollControl
     // *************************************************************************
     // fields
 
+    /**
+     * managed bone with the greatest animation weight
+     */
+    private Bone torsoMainBone = null;
+    /**
+     * bones managed by the torso, in a pre-order, depth-first traversal of the
+     * skeleton
+     */
+    private Bone[] torsoManagedBones = null;
     /**
      * duration of the torso's most recent transition to kinematic mode (in
      * seconds, &ge;0)
@@ -166,23 +181,23 @@ public class KinematicRagdollControl
     private Spatial transformer = null;
     /**
      * local transform for the controlled spatial at the end of the torso's most
-     * recent transition to kinematic mode
+     * recent transition to kinematic mode, or null for no spatial blending
      */
-    private Transform endModelTransform = new Transform();
+    private Transform endModelTransform = null;
     /**
      * transform from mesh coordinates to model coordinates
      */
     private Transform meshToModel = null;
     /**
      * local transform of the controlled spatial at the start of the torso's
+     * most recent transition to kinematic mode, or null for no spatial blending
+     */
+    private Transform startModelTransform = null;
+    /**
+     * local transform of each bone managed by the torso at the start of the
      * most recent transition to kinematic mode
      */
-    private Transform startModelTransform = new Transform();
-    /**
-     * local transform for each root bone at the start of the torso's most
-     * recent transition to kinematic mode
-     */
-    private Transform startRootTransform[] = null;
+    private Transform[] startBoneTransforms = null;
     // *************************************************************************
     // constructors
 
@@ -227,24 +242,15 @@ public class KinematicRagdollControl
         }
 
         torsoBlendInterval = blendInterval;
-        torsoKinematicWeight = Float.MIN_VALUE; // non-zero to start blending
+        torsoKinematicWeight = Float.MIN_VALUE; // non-zero to trigger blending
         torsoRigidBody.setKinematic(true);
 
-        startModelTransform = getSpatial().getLocalTransform().clone();
+        this.endModelTransform = endModelTransform;
         if (endModelTransform == null) {
-            this.endModelTransform.set(startModelTransform);
+            startModelTransform = null;
         } else {
-            this.endModelTransform.set(endModelTransform);
+            startModelTransform = getSpatial().getLocalTransform().clone();
         }
-
-        Bone[] rootBones = skeleton.getRoots();
-        int numRootBones = rootBones.length;
-        for (int rootIndex = 0; rootIndex < numRootBones; rootIndex++) {
-            startRootTransform[rootIndex] = localBoneTransform(torsoRigidBody,
-                    rootBones[rootIndex], startRootTransform[rootIndex]);
-        }
-
-        MySkeleton.setUserControl(skeleton, false);
 
         for (BoneLink link : boneLinkList) {
             link.blendToKinematicMode(KinematicSubmode.Animated, blendInterval);
@@ -442,27 +448,25 @@ public class KinematicRagdollControl
         Quaternion orientation = result.getRotation();
         Vector3f scale = result.getScale();
 
-        Transform world = rigidBody.getPhysicsTransform(null);
-        Spatial transformSpatial = getTransformer();
-
-        Vector3f worldLoc = world.getTranslation();
-        transformSpatial.worldToLocal(worldLoc, location);
-
-        Quaternion worldOri = world.getRotation();
-        orientation.set(worldOri);
-        Quaternion bindOrientation
-                = bone.getModelBindInverseRotation().inverse();
-        orientation.multLocal(bindOrientation);
-        Quaternion spatInvRot
-                = MySpatial.inverseOrientation(transformSpatial);
-        spatInvRot.mult(orientation, orientation);
-
-        Vector3f worldScale = world.getScale();
-        scale.set(worldScale);
-        Vector3f meshToWorldScale = transformSpatial.getWorldScale();
-        scale.divideLocal(meshToWorldScale);
-        Vector3f mibs = bone.getModelBindInverseScale();
-        scale.multLocal(mibs);
+        rigidBody.getPhysicsTransform(result);
+        /*
+         * Transform to mesh coordinate system.
+         */
+        Transform worldToMesh = transformer.getWorldTransform().invert();
+        result.combineWithParent(worldToMesh);
+        /*
+         * Transform to local coordinates by factoring out the
+         * parent bone's transform.
+         */
+        Bone parentBone = bone.getParent();
+        Vector3f pmTranslate = parentBone.getModelSpacePosition();
+        Quaternion pmRotInv = parentBone.getModelSpaceRotation().inverse();
+        Vector3f pmScale = parentBone.getModelSpaceScale();
+        location.subtractLocal(pmTranslate);
+        location.divideLocal(pmScale);
+        pmRotInv.mult(location, location);
+        scale.divideLocal(pmScale);
+        pmRotInv.mult(orientation, orientation);
 
         return result;
     }
@@ -496,8 +500,7 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Calculate the physics transform to match the local transform of the
-     * specified skeleton bone.
+     * Calculate the physics transform to match the specified skeleton bone.
      *
      * @param bone the skeleton bone to match (not null, unaffected)
      * @param storeResult storage for the result (modified if not null)
@@ -507,35 +510,20 @@ public class KinematicRagdollControl
     Transform physicsTransform(Bone bone, Transform storeResult) {
         Transform result
                 = (storeResult == null) ? new Transform() : storeResult;
-        Vector3f location = result.getTranslation();
-        Quaternion orientation = result.getRotation();
-        Vector3f scale = result.getScale();
 
+        MySkeleton.copyMeshTransform(bone, result);
+        /*
+         * Transform to world coordinates.
+         */
         Transform meshToWorld = transformer.getWorldTransform();
-        Vector3f msp = bone.getModelSpacePosition();
-        Quaternion msr = bone.getModelSpaceRotation();
-        Vector3f mss = bone.getModelSpaceScale();
-
-        // Compute the bone's location in world coordinates.
-        meshToWorld.transformVector(msp, location);
-
-        // Compute the bone's orientation in world coordinates.
-        orientation.set(msr);
-        orientation.multLocal(bone.getModelBindInverseRotation());
-        meshToWorld.getRotation().mult(orientation, orientation);
-        orientation.normalizeLocal();
-
-        // Compute the bone's scale in world coordinates.
-        scale.set(mss);
-        // TODO mbis
-        scale.multLocal(meshToWorld.getScale());
+        result.combineWithParent(meshToWorld);
 
         return result;
     }
 
     /**
      * Rebuild the ragdoll. This is useful if you applied scale to the model
-     * after it was initialized. Same as re-attaching.
+     * after it was initialized. Same as re-attaching. TODO rename?
      */
     public void reBuild() {
         Spatial controlledSpatial = getSpatial();
@@ -563,7 +551,7 @@ public class KinematicRagdollControl
 
     /**
      * Alter the transform of a skeleton bone. Unlinked child bones are also
-     * altered. Note: recursive!
+     * altered. Note: recursive! TODO delete method
      *
      * @param bone the skeleton bone to transform (not null, modified)
      * @param localTransform the desired bone transform (in local coordinates,
@@ -715,7 +703,7 @@ public class KinematicRagdollControl
 
     /**
      * Update this control in Kinematic mode, based on the transformer's
-     * transform and the skeleton's pose.
+     * transform and the skeleton's pose. TODO delete method
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
@@ -733,7 +721,8 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Update the skeleton in Ragdoll mode, based on Bullet dynamics.
+     * Update the skeleton in Ragdoll mode, based on Bullet dynamics. TODO
+     * delete method
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
@@ -790,8 +779,10 @@ public class KinematicRagdollControl
         listeners = cloner.clone(listeners);
         meshToModel = cloner.clone(meshToModel);
         skeleton = cloner.clone(skeleton);
+        startBoneTransforms = cloner.clone(startBoneTransforms);
         startModelTransform = cloner.clone(startModelTransform);
-        startRootTransform = cloner.clone(startRootTransform);
+        torsoMainBone = cloner.clone(torsoMainBone);
+        torsoManagedBones = cloner.clone(torsoManagedBones);
         torsoRigidBody = cloner.clone(torsoRigidBody);
         transformer = cloner.clone(transformer);
     }
@@ -814,19 +805,32 @@ public class KinematicRagdollControl
         }
         skeleton = skeletonControl.getSkeleton();
         validate(skeleton);
-        Bone[] rootBones = skeleton.getRoots();
-        int numRootBones = rootBones.length;
+        torsoManagedBones = listManagedBones(torsoFakeBoneName);
         /*
-         * Allocate per-root arrays.
+         * Find the target meshes and the main bone.  Don't invoke
+         * skeletonControl.getTargets() here since the SkeletonControl
+         * might not be initialized yet.
          */
-        startRootTransform = new Transform[numRootBones];
+        List<Mesh> targetList = MySpatial.listAnimatedMeshes(spatial, null);
+        Mesh[] targets = new Mesh[targetList.size()];
+        targetList.toArray(targets);
+        torsoMainBone = findTorsoMainBone(targets);
+        assert torsoMainBone.getParent() == null;
         /*
-         * Put the skeleton into bind pose.
+         * Allocate storate for startBoneTransforms.
+         */
+        int numManagedBones = skeleton.getRoots().length;
+        startBoneTransforms = new Transform[numManagedBones];
+        for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
+            startBoneTransforms[mbIndex] = new Transform();
+        }
+        /*
+         * Put the skeleton into bind pose. TODO is this still necessary?
          */
         skeleton.resetAndUpdate();
         /*
          * Remove the SkeletonControl and re-add it to make sure it will get
-         * updated *after* this control.
+         * updated *after* this control. TODO also arrange with AnimControl
          */
         spatial.removeControl(skeletonControl);
         spatial.addControl(skeletonControl);
@@ -853,20 +857,24 @@ public class KinematicRagdollControl
         /*
          * Assign each mesh vertex to a linked bone or else to the torso.
          */
-        Mesh[] targets = skeletonControl.getTargets();
         Map<String, List<Vector3f>> coordsMap = coordsMap(targets, tempLbNames);
         /*
-         * Create a rigid body for the torso.
+         * Create a shape for the torso.
          */
-        List<Vector3f> list = coordsMap.get(torsoFakeBoneName);
-        if (list == null) {
+        List<Vector3f> vertexLocations = coordsMap.get(torsoFakeBoneName);
+        if (vertexLocations == null) {
             throw new IllegalArgumentException(
                     "No mesh vertices for the torso. Make sure the root bone is not linked.");
         }
-        CollisionShape torsoShape
-                = createShape(new Transform(), new Vector3f(), list);
-        float mass = mass("");
-        torsoRigidBody = new PhysicsRigidBody(torsoShape, mass);
+        Transform boneToMesh
+                = MySkeleton.copyMeshTransform(torsoMainBone, null);
+        Transform invTransform = boneToMesh.invert();
+        CollisionShape torsoShape = createShape(invTransform, vertexLocations);
+        /*
+         * Create a rigid body for the torso.
+         */
+        float torsoMass = mass(torsoFakeBoneName);
+        torsoRigidBody = new PhysicsRigidBody(torsoShape, torsoMass);
         float viscousDamping = damping();
         torsoRigidBody.setDamping(viscousDamping, viscousDamping);
         torsoRigidBody.setKinematic(true);
@@ -878,7 +886,7 @@ public class KinematicRagdollControl
         int numLinkedBones = countLinkedBones();
         assert linkedBoneNames.size() == numLinkedBones;
         for (String boneName : linkedBoneNames) {
-            List<Vector3f> vertexLocations = coordsMap.get(boneName);
+            vertexLocations = coordsMap.get(boneName);
             createLink(boneName, vertexLocations);
         }
         assert boneLinks.size() == numLinkedBones;
@@ -923,6 +931,19 @@ public class KinematicRagdollControl
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule ic = im.getCapsule(this);
+
+        torsoMainBone = (Bone) ic.readSavable("torsoMainBone", null);
+
+        Savable[] tmp = ic.readSavableArray("torsoManagedBones", null);
+        if (tmp == null) {
+            torsoManagedBones = null;
+        } else {
+            torsoManagedBones = new Bone[tmp.length];
+            for (int i = 0; i < tmp.length; i++) {
+                skeleton.getRoots()[i] = (Bone) tmp[i];
+            }
+        }
+
         // TODO boneLinkList, etc.
         BoneLink[] loadedBoneLinks
                 = (BoneLink[]) ic.readSavableArray("boneList",
@@ -1077,6 +1098,18 @@ public class KinematicRagdollControl
         } else {
             torsoDynamicUpdate();
         }
+
+        if (torsoKinematicWeight == 0f || torsoKinematicWeight == 1f) {
+            /*
+             * Not already blending, so copy the latest bone transforms in
+             * case blending starts on the next update.
+             */
+            for (int mbIndex = 0; mbIndex < skeleton.getRoots().length; mbIndex++) {
+                Transform startTransform = startBoneTransforms[mbIndex];
+                Bone managedBone = skeleton.getRoots()[mbIndex];
+                MySkeleton.copyLocalTransform(managedBone, startTransform);
+            }
+        }
         /*
          * Update bone links in pre-order, depth-first.
          */
@@ -1095,6 +1128,9 @@ public class KinematicRagdollControl
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule oc = ex.getCapsule(this);
+
+        oc.write(torsoMainBone, "torsoMainBone", null);
+        oc.write(skeleton.getRoots(), "torsoManagedBones", null);
         // TODO boneLinkList, etc.
         oc.write(boneLinks.values().toArray(
                 new BoneLink[boneLinks.size()]),
@@ -1182,26 +1218,36 @@ public class KinematicRagdollControl
     private void addJoints(String parentName) {
         PhysicsRigidBody parentBody = getRigidBody(parentName);
 
-        Vector3f parentLocation;
+        Bone parentBone;
         if (torsoFakeBoneName.equals(parentName)) {
-            parentLocation = new Vector3f();
+            parentBone = torsoMainBone;
         } else {
-            Bone parentBone = getBone(parentName);
-            parentLocation = parentBone.getModelSpacePosition();
+            parentBone = getBone(parentName);
         }
+        Transform parentToMesh = MySkeleton.copyMeshTransform(parentBone, null);
+        Transform meshToParent = parentToMesh.invert();
 
         List<String> childNames = childNames(parentName);
         for (String childName : childNames) {
             Bone childBone = getBone(childName);
-            Vector3f posToParent
-                    = childBone.getModelSpacePosition().clone();
-            posToParent.subtractLocal(parentLocation);
-            posToParent.multLocal(initScale);
-
             BoneLink link = getBoneLink(childName);
             PhysicsRigidBody childBody = link.getRigidBody();
+
+            Transform childToMesh
+                    = MySkeleton.copyMeshTransform(childBone, null);
+            Transform childToParent = childToMesh.clone();
+            childToParent.combineWithParent(meshToParent);
+
+            Vector3f pivotChild = new Vector3f(0f, 0f, 0f);
+            Vector3f pivotParent
+                    = childToParent.transformVector(pivotChild, null);
+            pivotParent.multLocal(initScale);
+
+            Matrix3f rotChild = new Matrix3f(); // identity
+            Matrix3f rotParent = childToParent.getRotation().toRotationMatrix();
+
             SixDofJoint joint = new SixDofJoint(parentBody, childBody,
-                    posToParent, new Vector3f(), true);
+                    pivotParent, pivotChild, rotParent, rotChild, true);
             assert link.getJoint() == null;
             link.setJoint(joint);
             boneLinkList.add(link);
@@ -1229,10 +1275,10 @@ public class KinematicRagdollControl
         /*
          * Create the collision shape.
          */
-        Transform invTransform = bone.getModelBindInverseTransform();
-        Vector3f meshLocation = bone.getModelSpacePosition();
-        CollisionShape boneShape
-                = createShape(invTransform, meshLocation, vertexLocations);
+        Transform boneToMesh
+                = MySkeleton.copyMeshTransform(bone, null);
+        Transform invTransform = boneToMesh.invert();
+        CollisionShape boneShape = createShape(invTransform, vertexLocations);
         /*
          * Create the rigid body.
          */
@@ -1247,6 +1293,31 @@ public class KinematicRagdollControl
         boneLinks.put(name, link);
 
         return link;
+    }
+
+    /**
+     * Find the torso's main bone.
+     *
+     * @param targets array of animated meshes to provide bone weights (not
+     * null, unaffected)
+     * @return a root bone, or null if none found
+     */
+    private Bone findTorsoMainBone(Mesh[] targets) {
+        float[] totalWeights = RagUtils.totalWeights(targets, skeleton);
+        Bone[] rootBones = skeleton.getRoots();
+
+        Bone result = null;
+        float greatestTotalWeight = Float.NEGATIVE_INFINITY;
+        for (Bone rootBone : rootBones) {
+            int boneIndex = skeleton.getBoneIndex(rootBone);
+            float weight = totalWeights[boneIndex];
+            if (weight > greatestTotalWeight) {
+                result = rootBone;
+                greatestTotalWeight = weight;
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -1275,7 +1346,7 @@ public class KinematicRagdollControl
 
     /**
      * Update the torso's rigid body based on the transformer spatial and 1st
-     * root bone.
+     * root bone. TODO delete method
      */
     private void torsoKinematicUpdate() {
         Bone bone = skeleton.getRoots()[0];
@@ -1285,52 +1356,79 @@ public class KinematicRagdollControl
 
     /**
      * Update the torso in blended Kinematic mode, based on the transforms of
-     * the transformSpatial blended with the saved transform.
+     * the transformSpatial and the skeleton, blended with the saved transforms.
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     private void torsoKinematicUpdate(float tpf) {
         Validate.nonNegative(tpf, "time per frame");
 
-        if (torsoKinematicWeight < 1f) {
-            /*
-             * For a smooth transition, blend the saved local transform
-             * (from the start of the transition to kinematic mode)
-             * with the ending local transform.
-             */
-            Transform transform = new Transform();
-            transform.interpolateTransforms(startModelTransform,
-                    endModelTransform, torsoKinematicWeight);
+        Transform transform = new Transform();
+        Vector3f location = transform.getTranslation();
+        Quaternion orientation = transform.getRotation();
+        Vector3f scale = transform.getScale();
+
+        if (endModelTransform != null && torsoKinematicWeight < 1f) {
+            transform.set(endModelTransform);
+
+            MyVector3f.lerp(torsoKinematicWeight,
+                    startModelTransform.getTranslation(), location, location);
+
+            if (startModelTransform.getRotation().dot(orientation) < 0f) {
+                orientation.multLocal(-1f);
+            }
+            MyQuaternion.slerp(torsoKinematicWeight,
+                    startModelTransform.getRotation(), orientation,
+                    orientation);
+
+            MyVector3f.lerp(torsoKinematicWeight,
+                    startModelTransform.getScale(), scale, scale);
+
             getSpatial().setLocalTransform(transform);
+        }
+
+        for (int mbIndex = 0; mbIndex < skeleton.getRoots().length; mbIndex++) {
             /*
-             * Also blend the saved root-bone transforms
-             * (from the start of the transition to kinematic mode)
-             * with any bone transforms applied by the AnimControl.
+             * Read the animation's local transform for this bone, assuming
+             * the animation control is enabled.
              */
-            Bone[] rootBones = skeleton.getRoots();
-            int numRootBones = rootBones.length;
-            for (int rootIndex = 0; rootIndex < numRootBones; rootIndex++) {
-                Bone bone = rootBones[rootIndex];
-                Vector3f msp = bone.getModelSpacePosition();
-                Quaternion msr = bone.getModelSpaceRotation();
-                Vector3f mss = bone.getModelSpaceScale();
-                Transform kinematicTransform = new Transform(msp, msr, mss);
-                Transform startTransform = startRootTransform[rootIndex];
-                transform.interpolateTransforms(startTransform,
-                        kinematicTransform, torsoKinematicWeight);
-                setBoneTransform(bone, transform);
+            Bone managedBone = skeleton.getRoots()[mbIndex];
+            MySkeleton.copyLocalTransform(managedBone, transform);
+            // TODO utility method
+            if (torsoKinematicWeight < 1f) {
+                /*
+                 * For a smooth transition, blend the saved bone transform
+                 * (from the start of the transition to kinematic mode)
+                 * into the bone transform from the AnimControl.
+                 */
+                Transform startTransform = startBoneTransforms[mbIndex];
+                MyVector3f.lerp(torsoKinematicWeight,
+                        startTransform.getTranslation(), location, location);
+                if (startTransform.getRotation().dot(orientation) < 0f) {
+                    orientation.multLocal(-1f);
+                }
+                MyQuaternion.slerp(torsoKinematicWeight,
+                        startTransform.getRotation(), orientation, orientation);
+                MyVector3f.lerp(torsoKinematicWeight,
+                        startTransform.getScale(), scale, scale);
+            }
+            /*
+             * Update the managed bone.
+             */
+            MySkeleton.setLocalTransform(managedBone, transform);
+            managedBone.updateModelTransforms();
+
+            if (managedBone == torsoMainBone) {
+                physicsTransform(managedBone, transform);
+                torsoRigidBody.setPhysicsTransform(transform);
             }
         }
-        /*
-         * Update the rigid body.
-         */
-        torsoKinematicUpdate();
         /*
          * If blending, increase the kinematic weight.
          */
         if (torsoKinematicWeight < 1f) {
             if (torsoBlendInterval == 0f) {
-                torsoKinematicWeight = 1f;
+                torsoKinematicWeight = 1f; // done blending
             } else {
                 torsoKinematicWeight += tpf / torsoBlendInterval;
                 if (torsoKinematicWeight > 1f) {

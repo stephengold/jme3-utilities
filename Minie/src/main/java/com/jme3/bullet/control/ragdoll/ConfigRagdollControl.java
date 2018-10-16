@@ -475,20 +475,25 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
      * Create a hull collision shape, using the specified inverse transform and
      * list of vertex locations.
      *
-     * @param inverseTransform (not null, unaffected)
-     * @param offset the location of the shape's center (not null, unaffected)
+     * @param transform from vertex coordinates to descaled shape coordinates
+     * (not null, unaffected)
      * @param vertexLocations list of vertex locations (not null, not empty,
      * unaffected)
      * @return a new shape
      */
-    protected static CollisionShape createShape(Transform inverseTransform,
-            Vector3f offset, List<Vector3f> vertexLocations) {
-        assert inverseTransform != null;
+    protected static CollisionShape createShape(Transform transform,
+            List<Vector3f> vertexLocations) {
+        assert transform != null;
         assert vertexLocations != null;
         assert !vertexLocations.isEmpty();
 
+        Vector3f tmp = new Vector3f();
         for (Vector3f location : vertexLocations) {
-            location.subtractLocal(offset);
+            /*
+             * Transform mesh coordinates to descaled shape coordinates.
+             */
+            transform.transformVector(location, tmp);
+            location.set(tmp); // TODO is copy necessary?
         }
 
         CollisionShape boneShape = new HullCollisionShape(vertexLocations);

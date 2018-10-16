@@ -122,7 +122,7 @@ public class BoneLink
      * @param bone the skeleton bone to link (not null)
      * @param rigidBody the rigid body to link (not null)
      */
-    public BoneLink(KinematicRagdollControl krc, Bone bone,
+    BoneLink(KinematicRagdollControl krc, Bone bone,
             PhysicsRigidBody rigidBody) {
         Validate.nonNull(krc, "control");
         Validate.nonNull(bone, "bone");
@@ -156,11 +156,7 @@ public class BoneLink
         this.blendInterval = blendInterval;
         kinematicWeight = Float.MIN_VALUE; // non-zero to trigger blending
         rigidBody.setKinematic(true);
-
-        for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
-            Transform startTransform = startTransforms[mbIndex];
-            Bone managedBone = managedBones[mbIndex];
-            MySkeleton.copyLocalTransform(managedBone, startTransform);
+        for (Bone managedBone : managedBones) {
             managedBone.setUserControl(false);
         }
     }
@@ -215,12 +211,12 @@ public class BoneLink
     }
 
     /**
-     * Assign a physics joint to this bone link. Also enumerate the managed
+     * Assign the physics joint for this bone link. Also enumerate the managed
      * bones and allocate startTransforms.
      *
-     * @param joint (not null)
+     * @param joint (not null, alias created)
      */
-    public void setJoint(SixDofJoint joint) {
+    void setJoint(SixDofJoint joint) {
         Validate.nonNull(joint, "joint");
         assert this.joint == null;
 
@@ -246,6 +242,18 @@ public class BoneLink
             kinematicUpdate(tpf);
         } else {
             dynamicUpdate();
+        }
+
+        if (kinematicWeight == 0f || kinematicWeight == 1f) {
+            /*
+             * Not already blending, so copy the latest bone transforms in
+             * case blending starts on the next update.
+             */
+            for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
+                Transform startTransform = startTransforms[mbIndex];
+                Bone managedBone = managedBones[mbIndex];
+                MySkeleton.copyLocalTransform(managedBone, startTransform);
+            }
         }
     }
     // *************************************************************************
@@ -335,10 +343,13 @@ public class BoneLink
      * body.
      */
     private void dynamicUpdate() {
-        Transform transform = krc.localBoneTransform(rigidBody, bone, null);
+        Transform transform
+                = krc.localBoneTransform(rigidBody, bone, null);
+        MySkeleton.setLocalTransform(bone, transform);
 
-        // Update bone transforms in the skeleton.
-        krc.setBoneTransform(bone, transform);
+        for (Bone managedBone : managedBones) {
+            managedBone.updateModelTransforms();
+        }
     }
 
     /**
