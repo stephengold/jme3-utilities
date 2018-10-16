@@ -37,6 +37,7 @@ import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioSource.Status;
 import com.jme3.audio.AudioRenderer;
 import de.lessvoid.nifty.spi.sound.SoundHandle;
+import jme3utilities.Validate;
 
 public class SoundHandleJme implements SoundHandle {
 
@@ -60,15 +61,11 @@ public class SoundHandleJme implements SoundHandle {
      * @param fileName filename for sound
      */
     public SoundHandleJme(AudioRenderer ar, AssetManager am, String fileName){
-        if (ar == null || am == null) {
-            throw new NullPointerException();
-        }
+        Validate.nonNull(ar, "audio renderer");
+        Validate.nonNull(am, "asset manager");
+        Validate.nonNull(fileName, "audio filename");
 
         this.am = am;
-        if (fileName == null) {
-            throw new NullPointerException();
-        }
-        
         this.fileName = fileName;
     }
 
