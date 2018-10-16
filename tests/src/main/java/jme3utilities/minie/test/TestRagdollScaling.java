@@ -61,6 +61,7 @@ import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.debug.SkeletonVisualizer;
+import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.minie.PhysicsDumper;
 import jme3utilities.ui.ActionApplication;
@@ -88,6 +89,7 @@ public class TestRagdollScaling extends ActionApplication {
 
     private AnimControl animControl;
     private BulletAppState bulletAppState;
+    private int scaleIndex = 0;
     private KinematicRagdollControl krc;
     private Node model;
     private PhysicsSpace physicsSpace;
@@ -166,7 +168,7 @@ public class TestRagdollScaling extends ActionApplication {
         dim.bind("raise rightHand", KeyInput.KEY_RSHIFT);
         dim.bind("signal rotateLeft", KeyInput.KEY_LEFT);
         dim.bind("signal rotateRight", KeyInput.KEY_RIGHT);
-        //dim.bind("next scale", KeyInput.KEY_1);
+        dim.bind("next scale", KeyInput.KEY_1);
         dim.bind("save", KeyInput.KEY_S);
         dim.bind("toggle animation", KeyInput.KEY_PERIOD);
         dim.bind("toggle skeleton", KeyInput.KEY_V);
@@ -190,6 +192,9 @@ public class TestRagdollScaling extends ActionApplication {
                     return;
                 case "load":
                     load();
+                    return;
+                case "next scale":
+                    nextScale();
                     return;
                 case "raise leftHand":
                     raiseLeftHand();
@@ -363,6 +368,31 @@ public class TestRagdollScaling extends ActionApplication {
         });
         Node loadedNode = (Node) loadedScene;
         // TODO
+    }
+
+    /**
+     * Cycle through different model scales.
+     */
+    private void nextScale() {
+        scaleIndex = MyMath.modulo(scaleIndex + 1, 3);
+        logger.log(Level.SEVERE, "scaleIndex = {0}", scaleIndex);
+
+        float height = 2f;
+        switch (scaleIndex) {
+            case 0:
+                height = 2f;
+                break;
+            case 1:
+                height = 1f;
+                break;
+            case 2:
+                height = 3f;
+                break;
+        }
+
+        setHeight(model, height);
+        center(model);
+        krc.reBuild();
     }
 
     /**
