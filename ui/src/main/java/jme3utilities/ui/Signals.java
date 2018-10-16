@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -128,7 +128,10 @@ public class Signals implements ActionListener {
          * Parse the action string into words.
          */
         String[] words = actionString.split("\\s+");
-        assert words.length == 3;
+        if (words.length > 3) {
+            throw new IllegalArgumentException(
+                    "Signal name cannot contain spaces."); // TODO relax this
+        }
         assert "signal".equals(words[0]);
         String name = words[1];
         int sourceIndex = Integer.parseInt(words[2]);
