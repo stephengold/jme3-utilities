@@ -40,7 +40,6 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.util.clone.Cloner;
@@ -48,8 +47,7 @@ import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.MySkeleton;
-import jme3utilities.math.MyQuaternion;
-import jme3utilities.math.MyVector3f;
+import jme3utilities.math.MyMath;
 
 /**
  * Link an animated bone in a skeleton to a jointed rigid body in a ragdoll.
@@ -385,9 +383,6 @@ public class BoneLink
         assert tpf >= 0f : tpf;
 
         Transform transform = new Transform();
-        Vector3f location = transform.getTranslation();
-        Quaternion orientation = transform.getRotation();
-        Vector3f scale = transform.getScale();
 
         for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
             /*
@@ -396,23 +391,15 @@ public class BoneLink
              */
             Bone managedBone = managedBones[mbIndex];
             MySkeleton.copyLocalTransform(managedBone, transform);
-            // TODO utility method
+
             if (kinematicWeight < 1f) {
                 /*
                  * For a smooth transition, blend the saved bone transform
                  * (from the start of the transition to kinematic mode)
                  * into the bone transform from the AnimControl.
                  */
-                Transform startTransform = startBoneTransforms[mbIndex];
-                MyVector3f.lerp(kinematicWeight,
-                        startTransform.getTranslation(), location, location);
-                if (startTransform.getRotation().dot(orientation) < 0f) {
-                    orientation.multLocal(-1f);
-                }
-                MyQuaternion.slerp(kinematicWeight,
-                        startTransform.getRotation(), orientation, orientation);
-                MyVector3f.lerp(kinematicWeight,
-                        startTransform.getScale(), scale, scale);
+                MyMath.slerp(kinematicWeight, startBoneTransforms[mbIndex],
+                        transform, transform);
             }
             /*
              * Update the managed bone.
