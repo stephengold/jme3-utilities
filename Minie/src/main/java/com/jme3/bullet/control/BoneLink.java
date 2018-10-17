@@ -48,7 +48,6 @@ import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.MySkeleton;
-import jme3utilities.Validate;
 import jme3utilities.math.MyQuaternion;
 import jme3utilities.math.MyVector3f;
 
@@ -80,14 +79,15 @@ public class BoneLink
      */
     private Bone[] managedBones = null;
     /**
-     * duration of the current transition to kinematic mode (in seconds, &ge;0)
+     * duration of the most recent transition to kinematic mode (in seconds,
+     * &ge;0)
      */
     private float blendInterval = 1f;
     /**
      * weighting of kinematic movement (&ge;0, &le;1, 0=purely dynamic, 1=purely
      * kinematic, default=1, progresses from 0 to 1 during the blend interval)
      */
-    private float kinematicWeight;
+    private float kinematicWeight = 1f;
     /**
      * back pointer to the control that manages this linked bone
      */
@@ -110,9 +110,16 @@ public class BoneLink
      * local transform of each managed bone at the start of the most recent
      * transition to kinematic mode
      */
-    private Transform[] startTransforms = null;
+    private Transform[] startBoneTransforms = null;
     // *************************************************************************
     // constructors
+
+    /**
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
+     * directly!
+     */
+    public BoneLink() {
+    }
 
     /**
      * Instantiate a purely kinematic link between the specified skeleton bone
@@ -124,9 +131,9 @@ public class BoneLink
      */
     BoneLink(KinematicRagdollControl krc, Bone bone,
             PhysicsRigidBody rigidBody) {
-        Validate.nonNull(krc, "control");
-        Validate.nonNull(bone, "bone");
-        Validate.nonNull(rigidBody, "rigid body");
+        assert krc != null;
+        assert bone != null;
+        assert rigidBody != null;
 
         this.krc = krc;
         this.bone = bone;
@@ -150,8 +157,8 @@ public class BoneLink
      * &ge;0)
      */
     void blendToKinematicMode(KinematicSubmode submode, float blendInterval) {
-        Validate.nonNegative(blendInterval, "blend interval");
-        assert submode == KinematicSubmode.Animated;
+        assert blendInterval >= 0f : blendInterval;
+        assert submode == KinematicSubmode.Animated; // TODO
 
         this.blendInterval = blendInterval;
         kinematicWeight = Float.MIN_VALUE; // non-zero to trigger blending
@@ -167,6 +174,7 @@ public class BoneLink
      * @return the pre-existing instance (not null)
      */
     public Bone getBone() {
+        assert bone != null;
         return bone;
     }
 
@@ -185,6 +193,7 @@ public class BoneLink
      * @return the pre-existing instance (not null)
      */
     public PhysicsRigidBody getRigidBody() {
+        assert rigidBody != null;
         return rigidBody;
     }
 
@@ -217,16 +226,17 @@ public class BoneLink
      * @param joint (not null, alias created)
      */
     void setJoint(SixDofJoint joint) {
-        Validate.nonNull(joint, "joint");
+        assert joint != null;
         assert this.joint == null;
 
         this.joint = joint;
+
         managedBones = krc.listManagedBones(bone.getName());
 
         int numManagedBones = managedBones.length;
-        startTransforms = new Transform[numManagedBones];
+        startBoneTransforms = new Transform[numManagedBones];
         for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
-            startTransforms[mbIndex] = new Transform();
+            startBoneTransforms[mbIndex] = new Transform();
         }
     }
 
@@ -236,7 +246,7 @@ public class BoneLink
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     void update(float tpf) {
-        Validate.nonNegative(tpf, "time per frame");
+        assert tpf >= 0f : tpf;
 
         if (kinematicWeight > 0f) {
             kinematicUpdate(tpf);
@@ -247,10 +257,10 @@ public class BoneLink
         if (kinematicWeight == 0f || kinematicWeight == 1f) {
             /*
              * Not already blending, so copy the latest bone transforms in
-             * case blending starts on the next update.
+             * case blending starts before the next update.
              */
             for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
-                Transform startTransform = startTransforms[mbIndex];
+                Transform startTransform = startBoneTransforms[mbIndex];
                 Bone managedBone = managedBones[mbIndex];
                 MySkeleton.copyLocalTransform(managedBone, startTransform);
             }
@@ -261,21 +271,21 @@ public class BoneLink
 
     /**
      * Callback from {@link com.jme3.util.clone.Cloner} to convert this
-     * shallow-cloned object into a deep-cloned one, using the specified cloner
+     * shallow-cloned link into a deep-cloned one, using the specified cloner
      * and original to resolve copied fields.
      *
-     * @param cloner the cloner that's cloning this shape (not null)
-     * @param original the instance from which this instance was shallow-cloned
+     * @param cloner the cloner that's cloning this link (not null)
+     * @param original the instance from which this link was shallow-cloned
      * (unused)
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
         bone = cloner.clone(bone);
-        krc = cloner.clone(krc);
         managedBones = cloner.clone(managedBones);
+        krc = cloner.clone(krc);
         rigidBody = cloner.clone(rigidBody);
         joint = cloner.clone(joint);
-        startTransforms = cloner.clone(startTransforms);
+        startBoneTransforms = cloner.clone(startBoneTransforms);
     }
 
     /**
@@ -296,7 +306,7 @@ public class BoneLink
     // Savable methods
 
     /**
-     * De-serialize this bone link, for example when loading from a J3O file.
+     * De-serialize this link, for example when loading from a J3O file.
      *
      * @param im importer (not null)
      * @throws IOException from importer
@@ -304,20 +314,31 @@ public class BoneLink
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule ic = im.getCapsule(this);
-        krc = (KinematicRagdollControl) ic.readSavable("krc", null);
-        managedBones = (Bone[]) ic.readSavableArray("managedBones", null);
-        rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
+
         bone = (Bone) ic.readSavable("bone", null);
-        joint = (SixDofJoint) ic.readSavable("joint", null);
-        parentName = ic.readString("parentName", null);
-        startTransforms = (Transform[]) ic.readSavableArray("startTransforms",
-                new Transform[0]);
+
+        Savable[] tmp = ic.readSavableArray("managedBones", null);
+        if (tmp == null) {
+            managedBones = null;
+        } else {
+            managedBones = new Bone[tmp.length];
+            for (int i = 0; i < tmp.length; i++) {
+                managedBones[i] = (Bone) tmp[i];
+            }
+        }
+
         blendInterval = ic.readFloat("blendInterval", 1f);
         kinematicWeight = ic.readFloat("kinematicWeight", 1f);
+        krc = (KinematicRagdollControl) ic.readSavable("krc", null);
+        rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
+        joint = (SixDofJoint) ic.readSavable("joint", null);
+        parentName = ic.readString("parentName", null);
+        startBoneTransforms = (Transform[]) ic.readSavableArray(
+                "startBoneTransforms", new Transform[0]);
     }
 
     /**
-     * Serialize this bone link, for example when saving to a J3O file.
+     * Serialize this link, for example when saving to a J3O file.
      *
      * @param ex exporter (not null)
      * @throws IOException from exporter
@@ -325,15 +346,16 @@ public class BoneLink
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule oc = ex.getCapsule(this);
-        oc.write(krc, "krc", null);
-        oc.write(managedBones, "managedBones", null);
-        oc.write(rigidBody, "rigidBody", null);
+
         oc.write(bone, "bone", null);
-        oc.write(joint, "joint", null);
-        oc.write(parentName, "parentName", null);
-        oc.write(startTransforms, "startTransforms", new Transform[0]);
+        oc.write(managedBones, "managedBones", null);
         oc.write(blendInterval, "blendInterval", 1f);
         oc.write(kinematicWeight, "kinematicWeight", 1f);
+        oc.write(krc, "krc", null);
+        oc.write(rigidBody, "rigidBody", null);
+        oc.write(joint, "joint", null);
+        oc.write(parentName, "parentName", null);
+        oc.write(startBoneTransforms, "startBoneTransforms", new Transform[0]);
     }
     // *************************************************************************
     // private methods
@@ -360,7 +382,7 @@ public class BoneLink
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
     private void kinematicUpdate(float tpf) {
-        Validate.nonNegative(tpf, "time per frame");
+        assert tpf >= 0f : tpf;
 
         Transform transform = new Transform();
         Vector3f location = transform.getTranslation();
@@ -374,14 +396,14 @@ public class BoneLink
              */
             Bone managedBone = managedBones[mbIndex];
             MySkeleton.copyLocalTransform(managedBone, transform);
-
+            // TODO utility method
             if (kinematicWeight < 1f) {
                 /*
                  * For a smooth transition, blend the saved bone transform
                  * (from the start of the transition to kinematic mode)
                  * into the bone transform from the AnimControl.
                  */
-                Transform startTransform = startTransforms[mbIndex];
+                Transform startTransform = startBoneTransforms[mbIndex];
                 MyVector3f.lerp(kinematicWeight,
                         startTransform.getTranslation(), location, location);
                 if (startTransform.getRotation().dot(orientation) < 0f) {
