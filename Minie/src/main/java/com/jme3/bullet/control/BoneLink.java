@@ -40,6 +40,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.util.clone.Cloner;
@@ -47,6 +48,7 @@ import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.MySkeleton;
+import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
@@ -72,13 +74,12 @@ public class BoneLink
      */
     private Bone bone;
     /**
-     * managed bones in a pre-order, depth-first traversal of the skeleton,
-     * starting with the linked bone
+     * bones managed by this link, in a pre-order, depth-first traversal of the
+     * skeleton, starting with the linked bone
      */
     private Bone[] managedBones = null;
     /**
-     * duration of the most recent transition to kinematic mode (in seconds,
-     * &ge;0)
+     * duration of the most recent blend interval (in seconds, &ge;0)
      */
     private float blendInterval = 1f;
     /**
@@ -87,9 +88,13 @@ public class BoneLink
      */
     private float kinematicWeight = 1f;
     /**
-     * back pointer to the control that manages this linked bone
+     * back pointer to the control that manages this link
      */
     private KinematicRagdollControl krc;
+    /**
+     * submode when kinematic
+     */
+    private KinematicSubmode submode = KinematicSubmode.Animated;
     /**
      * linked rigid body in the ragdoll (not null)
      */
@@ -105,8 +110,12 @@ public class BoneLink
      */
     private String parentName;
     /**
+     * local transform of each managed bone from the previous update
+     */
+    private Transform[] prevBoneTransforms = null;
+    /**
      * local transform of each managed bone at the start of the most recent
-     * transition to kinematic mode
+     * blend interval
      */
     private Transform[] startBoneTransforms = null;
     // *************************************************************************
@@ -148,21 +157,36 @@ public class BoneLink
     // new methods exposed
 
     /**
-     * Begin transitioning this link to fully kinematic mode.
+     * Begin blending this link to a fully kinematic mode. TODO publicize
      *
      * @param submode enum value (not null)
      * @param blendInterval the duration of the blend interval (in seconds,
      * &ge;0)
      */
     void blendToKinematicMode(KinematicSubmode submode, float blendInterval) {
+        assert submode != null;
         assert blendInterval >= 0f : blendInterval;
-        assert submode == KinematicSubmode.Animated; // TODO
 
+        this.submode = submode;
         this.blendInterval = blendInterval;
         kinematicWeight = Float.MIN_VALUE; // non-zero to trigger blending
         rigidBody.setKinematic(true);
+        /*
+         * Save the starting transforms.
+         */
+        for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
+            Transform lastTransform = prevBoneTransforms[mbIndex];
+            startBoneTransforms[mbIndex].set(lastTransform);
+        }
+
+        boolean wantUserControl;
+        if (submode == KinematicSubmode.Animated) {
+            wantUserControl = false;
+        } else {
+            wantUserControl = true;
+        }
         for (Bone managedBone : managedBones) {
-            managedBone.setUserControl(false);
+            managedBone.setUserControl(wantUserControl);
         }
     }
 
@@ -212,34 +236,44 @@ public class BoneLink
      * physics-space coordinates, not null, unaffected)
      */
     public void setDynamic(Vector3f uniformAcceleration) {
+        Validate.nonNull(uniformAcceleration, "uniform acceleration");
+
         kinematicWeight = 0f;
         rigidBody.setGravity(uniformAcceleration);
         rigidBody.setKinematic(false);
+        for (Bone managedBone : managedBones) {
+            managedBone.setUserControl(true);
+        }
     }
 
     /**
      * Assign the physics joint for this bone link. Also enumerate the managed
-     * bones and allocate startTransforms.
+     * bones and allocate transform arrays.
      *
      * @param joint (not null, alias created)
      */
     void setJoint(SixDofJoint joint) {
         assert joint != null;
-        assert this.joint == null;
 
+        assert this.joint == null;
         this.joint = joint;
 
+        assert managedBones == null;
         managedBones = krc.listManagedBones(bone.getName());
 
         int numManagedBones = managedBones.length;
+        assert prevBoneTransforms == null;
+        prevBoneTransforms = new Transform[numManagedBones];
+        assert startBoneTransforms == null;
         startBoneTransforms = new Transform[numManagedBones];
         for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
+            prevBoneTransforms[mbIndex] = new Transform();
             startBoneTransforms[mbIndex] = new Transform();
         }
     }
 
     /**
-     * Update this linked bone according to its mode.
+     * Update this link according to its mode.
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
@@ -251,17 +285,13 @@ public class BoneLink
         } else {
             dynamicUpdate();
         }
-
-        if (kinematicWeight == 0f || kinematicWeight == 1f) {
-            /*
-             * Not already blending, so copy the latest bone transforms in
-             * case blending starts before the next update.
-             */
-            for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
-                Transform startTransform = startBoneTransforms[mbIndex];
-                Bone managedBone = managedBones[mbIndex];
-                MySkeleton.copyLocalTransform(managedBone, startTransform);
-            }
+        /*
+         * Save copies of the latest bone transforms.
+         */
+        for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
+            Transform lastTransform = prevBoneTransforms[mbIndex];
+            Bone managedBone = managedBones[mbIndex];
+            MySkeleton.copyLocalTransform(managedBone, lastTransform);
         }
     }
     // *************************************************************************
@@ -283,6 +313,7 @@ public class BoneLink
         krc = cloner.clone(krc);
         rigidBody = cloner.clone(rigidBody);
         joint = cloner.clone(joint);
+        prevBoneTransforms = cloner.clone(prevBoneTransforms);
         startBoneTransforms = cloner.clone(startBoneTransforms);
     }
 
@@ -328,11 +359,31 @@ public class BoneLink
         blendInterval = ic.readFloat("blendInterval", 1f);
         kinematicWeight = ic.readFloat("kinematicWeight", 1f);
         krc = (KinematicRagdollControl) ic.readSavable("krc", null);
+        submode = ic.readEnum("submode", KinematicSubmode.class,
+                KinematicSubmode.Animated);
         rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
         joint = (SixDofJoint) ic.readSavable("joint", null);
         parentName = ic.readString("parentName", null);
-        startBoneTransforms = (Transform[]) ic.readSavableArray(
-                "startBoneTransforms", new Transform[0]);
+
+        tmp = ic.readSavableArray("prevBoneTransforms", null);
+        if (tmp == null) {
+            prevBoneTransforms = null;
+        } else {
+            prevBoneTransforms = new Transform[tmp.length];
+            for (int i = 0; i < tmp.length; i++) {
+                prevBoneTransforms[i] = (Transform) tmp[i];
+            }
+        }
+
+        tmp = ic.readSavableArray("startBoneTransforms", null);
+        if (tmp == null) {
+            startBoneTransforms = null;
+        } else {
+            startBoneTransforms = new Transform[tmp.length];
+            for (int i = 0; i < tmp.length; i++) {
+                startBoneTransforms[i] = (Transform) tmp[i];
+            }
+        }
     }
 
     /**
@@ -350,17 +401,19 @@ public class BoneLink
         oc.write(blendInterval, "blendInterval", 1f);
         oc.write(kinematicWeight, "kinematicWeight", 1f);
         oc.write(krc, "krc", null);
+        oc.write(submode, "submode", KinematicSubmode.Animated);
         oc.write(rigidBody, "rigidBody", null);
         oc.write(joint, "joint", null);
         oc.write(parentName, "parentName", null);
+        oc.write(prevBoneTransforms, "prevBoneTransforms", new Transform[0]);
         oc.write(startBoneTransforms, "startBoneTransforms", new Transform[0]);
     }
     // *************************************************************************
     // private methods
 
     /**
-     * Update the skeleton in Dynamic mode, based on the transform of the rigid
-     * body.
+     * Update this linked bone in Dynamic mode, based on the transform of the
+     * linked rigid body.
      */
     private void dynamicUpdate() {
         Transform transform
@@ -373,9 +426,7 @@ public class BoneLink
     }
 
     /**
-     * Update this linked bone in blended Kinematic mode, based on the
-     * transforms of the transformSpatial and the skeleton, blended with the
-     * saved transforms.
+     * Update this linked bone in blended Kinematic mode.
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
@@ -385,21 +436,40 @@ public class BoneLink
         Transform transform = new Transform();
 
         for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
-            /*
-             * Read the animation's local transform for this bone, assuming
-             * the animation control is enabled.
-             */
             Bone managedBone = managedBones[mbIndex];
-            MySkeleton.copyLocalTransform(managedBone, transform);
+            switch (submode) {
+                case Amputated:
+                    MySkeleton.copyBindTransform(managedBone, transform);
+                    transform.getScale().set(0.001f, 0.001f, 0.001f);
+                    break;
+                case Animated:
+                    MySkeleton.copyLocalTransform(managedBone, transform);
+                    break;
+                case Bound:
+                    MySkeleton.copyBindTransform(managedBone, transform);
+                    break;
+                case Frozen:
+                    transform.set(prevBoneTransforms[mbIndex]);
+                    break;
+                default:
+                    throw new IllegalStateException(submode.toString());
+            }
 
             if (kinematicWeight < 1f) {
                 /*
                  * For a smooth transition, blend the saved bone transform
-                 * (from the start of the transition to kinematic mode)
-                 * into the bone transform from the AnimControl.
+                 * (from the start of the blend interval)
+                 * into the goal transform.
                  */
+                Transform start = startBoneTransforms[mbIndex];
+                Quaternion startQuat = start.getRotation();
+                Quaternion endQuat = transform.getRotation();
+                if (startQuat.dot(endQuat) < 0f) {
+                    endQuat.multLocal(-1f);
+                }
                 MyMath.slerp(kinematicWeight, startBoneTransforms[mbIndex],
                         transform, transform);
+                // TODO smarter sign flipping for bones
             }
             /*
              * Update the managed bone.
@@ -408,6 +478,9 @@ public class BoneLink
             managedBone.updateModelTransforms();
 
             if (managedBone == bone) {
+                /*
+                 * Update the rigid body.
+                 */
                 krc.physicsTransform(bone, transform);
                 rigidBody.setPhysicsTransform(transform);
             }

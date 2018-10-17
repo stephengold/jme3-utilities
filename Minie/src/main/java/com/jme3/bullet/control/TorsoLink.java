@@ -41,6 +41,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -49,6 +50,7 @@ import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.MySkeleton;
+import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
@@ -74,13 +76,12 @@ public class TorsoLink
      */
     private Bone bone;
     /**
-     * bones managed by the torso, in a pre-order, depth-first traversal of the
+     * bones managed by this link, in a pre-order, depth-first traversal of the
      * skeleton
      */
     private Bone[] managedBones = null;
     /**
-     * duration of the most recent transition to kinematic mode (in seconds,
-     * &ge;0)
+     * duration of the most recent blend interval (in seconds, &ge;0)
      */
     private float blendInterval = 1f;
     /**
@@ -89,9 +90,13 @@ public class TorsoLink
      */
     private float kinematicWeight = 1f;
     /**
-     * back pointer to the control that manages this torso
+     * back pointer to the control that manages this link
      */
     private KinematicRagdollControl krc;
+    /**
+     * submode when kinematic
+     */
+    private KinematicSubmode submode = KinematicSubmode.Animated;
     /**
      * linked rigid body in the ragdoll (not null)
      */
@@ -102,7 +107,7 @@ public class TorsoLink
     private Skeleton skeleton = null;
     /**
      * local transform for the controlled spatial at the end of the torso's most
-     * recent transition to kinematic mode, or null for no spatial blending
+     * recent blend interval, or null for no spatial blending
      */
     private Transform endModelTransform = null;
     /**
@@ -111,12 +116,17 @@ public class TorsoLink
     private Transform meshToModel = null;
     /**
      * local transform of the controlled spatial at the start of the torso's
-     * most recent transition to kinematic mode, or null for no spatial blending
+     * most recent blend interval, or null for no spatial blending
      */
     private Transform startModelTransform = null;
     /**
+     * /**
+     * local transform of each managed bone from the previous update
+     */
+    private Transform[] prevBoneTransforms = null;
+    /**
      * local transform of each managed bone at the start of the most recent
-     * transition to kinematic mode
+     * blend interval
      */
     private Transform[] startBoneTransforms = null;
     // *************************************************************************
@@ -139,7 +149,7 @@ public class TorsoLink
      * coordinates (not null, unaffected)
      * @param rigidBody the rigid body to link (not null)
      */
-    public TorsoLink(KinematicRagdollControl krc, Bone mainBone,
+    TorsoLink(KinematicRagdollControl krc, Bone mainBone,
             Transform meshToModel, PhysicsRigidBody rigidBody) {
         assert krc != null;
         assert mainBone != null;
@@ -153,43 +163,57 @@ public class TorsoLink
 
         kinematicWeight = 1f;
         rigidBody.setKinematic(true);
-        rigidBody.setUserObject(krc);
+        rigidBody.setUserObject(this);
     }
     // *************************************************************************
     // new methods exposed
 
     /**
-     * Begin transitioning this link to fully kinematic mode.
+     * Begin blending this link to a fully kinematic mode. TODO publicize
      *
      * @param submode enum value (not null)
      * @param blendInterval the duration of the blend interval (in seconds,
      * &ge;0)
      * @param endModelTransform the desired local transform for the controlled
-     * spatial when the transition completes or null for no change to local
-     * transform (unaffected)
+     * spatial when the blend completes or null for no change to local transform
+     * (unaffected)
      */
-    public void blendToKinematicMode(KinematicSubmode submode,
+    void blendToKinematicMode(KinematicSubmode submode,
             float blendInterval, Transform endModelTransform) {
+        assert submode != null;
         assert blendInterval >= 0f : blendInterval;
-        assert submode == KinematicSubmode.Animated; // TODO
 
+        this.submode = submode;
         this.blendInterval = blendInterval;
+        this.endModelTransform = endModelTransform;
         kinematicWeight = Float.MIN_VALUE; // non-zero to trigger blending
         rigidBody.setKinematic(true);
-        for (Bone managedBone : managedBones) {
-            managedBone.setUserControl(false);
-        }
-
-        this.endModelTransform = endModelTransform;
+        /*
+         * Save the starting transforms.
+         */
         if (endModelTransform == null) {
             startModelTransform = null;
         } else {
             startModelTransform = krc.getSpatial().getLocalTransform().clone();
         }
+        for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
+            Transform lastTransform = prevBoneTransforms[mbIndex];
+            startBoneTransforms[mbIndex].set(lastTransform);
+        }
+
+        boolean wantUserControl;
+        if (submode == KinematicSubmode.Animated) {
+            wantUserControl = false;
+        } else {
+            wantUserControl = true;
+        }
+        for (Bone managedBone : managedBones) {
+            managedBone.setUserControl(wantUserControl);
+        }
     }
 
     /**
-     * Access the main bone of this torso.
+     * Access the main bone.
      *
      * @return the pre-existing instance (not null)
      */
@@ -215,9 +239,14 @@ public class TorsoLink
      * physics-space coordinates, not null, unaffected)
      */
     public void setDynamic(Vector3f uniformAcceleration) {
+        Validate.nonNull(uniformAcceleration, "uniform acceleration");
+
         kinematicWeight = 0f;
         rigidBody.setGravity(uniformAcceleration);
         rigidBody.setKinematic(false);
+        for (Bone managedBone : managedBones) {
+            managedBone.setUserControl(true);
+        }
     }
 
     /**
@@ -232,6 +261,8 @@ public class TorsoLink
         if (skeleton == null) {
             assert managedBones != null;
             managedBones = null;
+            assert prevBoneTransforms != null;
+            prevBoneTransforms = null;
             assert startBoneTransforms != null;
             startBoneTransforms = null;
 
@@ -240,17 +271,20 @@ public class TorsoLink
             managedBones = krc.listManagedBones(
                     KinematicRagdollControl.torsoFakeBoneName);
 
-            assert startBoneTransforms == null;
             int numManagedBones = managedBones.length;
+            assert prevBoneTransforms == null;
+            prevBoneTransforms = new Transform[numManagedBones];
+            assert startBoneTransforms == null;
             startBoneTransforms = new Transform[numManagedBones];
             for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
+                prevBoneTransforms[mbIndex] = new Transform();
                 startBoneTransforms[mbIndex] = new Transform();
             }
         }
     }
 
     /**
-     * Update this torso according to its mode.
+     * Update this link according to its mode.
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
@@ -262,17 +296,13 @@ public class TorsoLink
         } else {
             dynamicUpdate();
         }
-
-        if (kinematicWeight == 0f || kinematicWeight == 1f) {
-            /*
-             * Not already blending, so copy the latest bone transforms in
-             * case blending starts before the next update.
-             */
-            for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
-                Transform startTransform = startBoneTransforms[mbIndex];
-                Bone managedBone = managedBones[mbIndex];
-                MySkeleton.copyLocalTransform(managedBone, startTransform);
-            }
+        /*
+         * Save copies of the latest bone transforms.
+         */
+        for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
+            Transform lastTransform = prevBoneTransforms[mbIndex];
+            Bone managedBone = managedBones[mbIndex];
+            MySkeleton.copyLocalTransform(managedBone, lastTransform);
         }
     }
     // *************************************************************************
@@ -295,6 +325,7 @@ public class TorsoLink
         rigidBody = cloner.clone(rigidBody);
         endModelTransform = cloner.clone(endModelTransform);
         meshToModel = cloner.clone(meshToModel);
+        prevBoneTransforms = cloner.clone(prevBoneTransforms);
         startBoneTransforms = cloner.clone(startBoneTransforms);
         startModelTransform = cloner.clone(startModelTransform);
     }
@@ -341,6 +372,8 @@ public class TorsoLink
         blendInterval = ic.readFloat("blendInterval", 1f);
         kinematicWeight = ic.readFloat("kinematicWeight", 1f);
         krc = (KinematicRagdollControl) ic.readSavable("krc", null);
+        submode = ic.readEnum("submode", KinematicSubmode.class,
+                KinematicSubmode.Animated);
         rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
         endModelTransform = (Transform) ic.readSavable("endModelTransform",
                 new Transform());
@@ -348,6 +381,16 @@ public class TorsoLink
                 = (Transform) ic.readSavable("meshToModel", new Transform());
         startModelTransform = (Transform) ic.readSavable("startModelTransform",
                 new Transform());
+
+        tmp = ic.readSavableArray("prevBoneTransforms", null);
+        if (tmp == null) {
+            prevBoneTransforms = null;
+        } else {
+            prevBoneTransforms = new Transform[tmp.length];
+            for (int i = 0; i < tmp.length; i++) {
+                prevBoneTransforms[i] = (Transform) tmp[i];
+            }
+        }
 
         tmp = ic.readSavableArray("startBoneTransforms", null);
         if (tmp == null) {
@@ -375,18 +418,20 @@ public class TorsoLink
         oc.write(blendInterval, "blendInterval", 1f);
         oc.write(kinematicWeight, "kinematicWeight", 1f);
         oc.write(krc, "krc", null);
+        oc.write(submode, "submode", KinematicSubmode.Animated);
         oc.write(rigidBody, "rigidBody", null);
         oc.write(skeleton, "skeleton", null);
         oc.write(endModelTransform, "endModelTransforms", new Transform());
         oc.write(meshToModel, "meshToModel", new Transform());
         oc.write(startModelTransform, "startModelTransforms", new Transform());
+        oc.write(prevBoneTransforms, "prevBoneTransforms", new Transform[0]);
         oc.write(startBoneTransforms, "startBoneTransforms", new Transform[0]);
     }
     // *************************************************************************
     // private methods
 
     /**
-     * Update the torso in Dynamic mode, based on the transform of the rigid
+     * Update this torso in Dynamic mode, based on the transform of the rigid
      * body.
      */
     private void dynamicUpdate() {
@@ -415,9 +460,7 @@ public class TorsoLink
     }
 
     /**
-     * Update this linked bone in blended Kinematic mode, based on the
-     * transforms of the transformSpatial and the skeleton, blended with the
-     * saved transforms.
+     * Update this linked bone in blended Kinematic mode.
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
@@ -427,27 +470,51 @@ public class TorsoLink
         Transform transform = new Transform();
 
         if (endModelTransform != null && kinematicWeight < 1f) {
+            Quaternion startQuat = startModelTransform.getRotation();
+            Quaternion endQuat = endModelTransform.getRotation();
+            if (startQuat.dot(endQuat) < 0f) {
+                endQuat.multLocal(-1f);
+            }
             MyMath.slerp(kinematicWeight, startModelTransform,
                     endModelTransform, transform);
             krc.getSpatial().setLocalTransform(transform);
         }
 
         for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
-            /*
-             * Read the animation's local transform for this bone, assuming
-             * the animation control is enabled.
-             */
             Bone managedBone = managedBones[mbIndex];
-            MySkeleton.copyLocalTransform(managedBone, transform);
+            switch (submode) {
+                case Amputated:
+                    MySkeleton.copyBindTransform(managedBone, transform);
+                    transform.getScale().set(0.001f, 0.001f, 0.001f);
+                    break;
+                case Animated:
+                    MySkeleton.copyLocalTransform(managedBone, transform);
+                    break;
+                case Bound:
+                    MySkeleton.copyBindTransform(managedBone, transform);
+                    break;
+                case Frozen:
+                    transform.set(prevBoneTransforms[mbIndex]);
+                    break;
+                default:
+                    throw new IllegalStateException(submode.toString());
+            }
 
             if (kinematicWeight < 1f) {
                 /*
                  * For a smooth transition, blend the saved bone transform
-                 * (from the start of the transition to kinematic mode)
-                 * into the bone transform from the AnimControl.
+                 * (from the start of the blend interval)
+                 * into the goal transform.
                  */
+                Transform start = startBoneTransforms[mbIndex];
+                Quaternion startQuat = start.getRotation();
+                Quaternion endQuat = transform.getRotation();
+                if (startQuat.dot(endQuat) < 0f) {
+                    endQuat.multLocal(-1f);
+                }
                 MyMath.slerp(kinematicWeight, startBoneTransforms[mbIndex],
                         transform, transform);
+                // TODO smarter sign flipping for bones
             }
             /*
              * Update the managed bone.
@@ -456,6 +523,9 @@ public class TorsoLink
             managedBone.updateModelTransforms();
 
             if (managedBone == bone) {
+                /*
+                 * Update the rigid body.
+                 */
                 krc.physicsTransform(bone, transform);
                 rigidBody.setPhysicsTransform(transform);
             }
