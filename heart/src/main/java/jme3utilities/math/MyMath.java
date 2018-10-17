@@ -586,6 +586,42 @@ public class MyMath {
     }
 
     /**
+     * Interpolate between 2 transforms using spherical linear (Slerp)
+     * interpolation. This method is slower (but more accurate) than
+     * {@link com.jme3.math.Transform#interpolateTransforms(com.jme3.math.Transform, com.jme3.math.Transform, float)}
+     * and doesn't trash t1.
+     *
+     * @param t descaled parameter value (&ge;0, &le;1)
+     * @param t0 function value at t=0 (not null, unaffected unless it's also
+     * storeResult)
+     * @param t1 function value at t=1 (not null, unaffected unless it's also
+     * storeResult)
+     * @param storeResult (modified if not null, may be t0 or t1)
+     * @return an interpolated transform (either storeResult or a new instance)
+     */
+    public static Transform slerp(float t, Transform t0, Transform t1,
+            Transform storeResult) {
+        Validate.inRange(t, "t", 0f, 1f);
+        Validate.nonNull(t0, "t0");
+        Validate.nonNull(t1, "t1");
+        Transform result
+                = (storeResult == null) ? new Transform() : storeResult;
+
+        MyVector3f.lerp(t, t0.getTranslation(), t1.getTranslation(),
+                result.getTranslation());
+
+        Quaternion t1rot = t1.getRotation().clone();
+        if (t0.getRotation().dot(t1.getRotation()) < 0f) {
+            t1rot.multLocal(-1f);
+        }
+        MyQuaternion.slerp(t, t0.getRotation(), t1rot, result.getRotation());
+
+        MyVector3f.lerp(t, t0.getScale(), t1.getScale(), result.getScale());
+
+        return result;
+    }
+
+    /**
      * Square the specified double-precision value. Logs a warning in case of
      * overflow.
      *
