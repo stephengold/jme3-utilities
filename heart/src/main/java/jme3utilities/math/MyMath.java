@@ -589,7 +589,8 @@ public class MyMath {
      * Interpolate between 2 transforms using spherical linear (Slerp)
      * interpolation. This method is slower (but more accurate) than
      * {@link com.jme3.math.Transform#interpolateTransforms(com.jme3.math.Transform, com.jme3.math.Transform, float)}
-     * and doesn't trash t1.
+     * and doesn't trash t1. The caller is responsible for flipping quaternion
+     * signs when it's appropriate to do so.
      *
      * @param t descaled parameter value (&ge;0, &le;1)
      * @param t0 function value at t=0 (not null, unaffected unless it's also
@@ -610,13 +611,11 @@ public class MyMath {
         MyVector3f.lerp(t, t0.getTranslation(), t1.getTranslation(),
                 result.getTranslation());
 
-        Quaternion t1rot = t1.getRotation().clone();
-        if (t0.getRotation().dot(t1.getRotation()) < 0f) {
-            t1rot.multLocal(-1f);
-        }
-        MyQuaternion.slerp(t, t0.getRotation(), t1rot, result.getRotation());
+        MyQuaternion.slerp(t, t0.getRotation(), t1.getRotation(),
+                result.getRotation());
 
-        MyVector3f.lerp(t, t0.getScale(), t1.getScale(), result.getScale());
+        MyVector3f.lerp(t, t0.getScale(), t1.getScale(),
+                result.getScale());
 
         return result;
     }
