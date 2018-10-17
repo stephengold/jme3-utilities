@@ -454,7 +454,7 @@ public class RigidBodyControl
             space.removeCollisionObject(this);
             added = false;
         }
-        if (newSpace != null && isEnabled() && spatial != null) {
+        if (newSpace != null && isEnabled()) {
             newSpace.addCollisionObject(this);
             added = true;
         }
