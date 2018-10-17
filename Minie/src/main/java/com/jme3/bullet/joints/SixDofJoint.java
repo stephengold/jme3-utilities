@@ -166,7 +166,7 @@ public class SixDofJoint extends PhysicsJoint {
      * B
      */
     public SixDofJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
-            Vector3f pivotA, Vector3f pivotB, 
+            Vector3f pivotA, Vector3f pivotB,
             boolean useLinearReferenceFrameA) {
         super(nodeA, nodeB, pivotA, pivotB);
         this.useLinearReferenceFrameA = useLinearReferenceFrameA;
@@ -459,6 +459,11 @@ public class SixDofJoint extends PhysicsJoint {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
 
+        rotA = (Matrix3f) capsule.readSavable("rotA", new Matrix3f());
+        rotB = (Matrix3f) capsule.readSavable("rotB", new Matrix3f());
+        useLinearReferenceFrameA
+                = capsule.readBoolean("useLinearReferenceFrameA", false);
+
         createJoint();
 
         setAngularUpperLimit((Vector3f) capsule.readSavable("angularUpperLimit", new Vector3f(Vector3f.POSITIVE_INFINITY)));
@@ -497,6 +502,12 @@ public class SixDofJoint extends PhysicsJoint {
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
+
+        capsule.write(rotA, "rotA", new Matrix3f());
+        capsule.write(rotB, "rotB", new Matrix3f());
+        capsule.write(useLinearReferenceFrameA, "useLinearReferenceFrameA",
+                false);
+
         capsule.write(angularUpperLimit, "angularUpperLimit", new Vector3f(Vector3f.POSITIVE_INFINITY));
         capsule.write(angularLowerLimit, "angularLowerLimit", new Vector3f(Vector3f.NEGATIVE_INFINITY));
         capsule.write(linearUpperLimit, "linearUpperLimit", new Vector3f(Vector3f.POSITIVE_INFINITY));
@@ -527,11 +538,16 @@ public class SixDofJoint extends PhysicsJoint {
 
     private void createJoint() {
         assert objectId == 0L;
+        assert pivotA != null;
+        assert rotA != null;
+        assert pivotB != null;
+        assert rotB != null;
 
         objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA,
                 rotA, pivotB, rotB, useLinearReferenceFrameA);
         assert objectId != 0L;
-        logger2.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Joint {0}",
+                Long.toHexString(objectId));
 
         Vector3f pivot = new Vector3f();
         assert getPivot(JointEnd.A, pivot).equals(pivotA);
