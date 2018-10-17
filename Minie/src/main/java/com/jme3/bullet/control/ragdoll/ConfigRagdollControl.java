@@ -77,7 +77,7 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
     final public static Logger logger2
             = Logger.getLogger(ConfigRagdollControl.class.getName());
     /**
-     * magic bone name to refer to the model's torso
+     * magic bone name to refer to the ragdoll's torso TODO rename torsoLinkName
      */
     final public static String torsoFakeBoneName = "";
     // *************************************************************************
@@ -129,7 +129,7 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
      * @return the pre-existing instance (not null)
      */
     public JointPreset getJointLimits(String boneName) {
-        if (!isLinked(boneName)) {
+        if (!isBoneLinkName(boneName)) {
             String msg = "No linked bone named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
         }
@@ -153,19 +153,43 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Test whether the named bone is linked by this control.
+     * Test whether the named bone link exists.
      *
-     * @param boneName (not null, not empty)
-     * @return true if linked, otherwise false
+     * @param name (may be null)
+     * @return true if found, otherwise false
      */
-    public boolean isLinked(String boneName) {
-        Validate.nonEmpty(boneName, "bone name");
-        boolean result = massMap.containsKey(boneName);
+    public boolean isBoneLinkName(String name) {
+        boolean result;
+        if (name == null) {
+            result = false;
+        } else {
+            result = massMap.containsKey(name);
+        }
+
         return result;
     }
 
     /**
-     * Link the named bone using a joint preset.
+     * Test whether the named link exists.
+     *
+     * @param name (may be null)
+     * @return true if found, otherwise false
+     */
+    public boolean isLinkName(String name) {
+        boolean result;
+        if (name == null) {
+            result = false;
+        } else if (name.equals(torsoFakeBoneName)) {
+            result = true;
+        } else {
+            result = massMap.containsKey(name);
+        }
+
+        return result;
+    }
+
+    /**
+     * Link the named bone using the specified mass and range of motion.
      * <p>
      * Allowed only when the control is NOT added to a spatial.
      *
@@ -203,9 +227,9 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Read the mass of the named linked bone or the torso.
+     * Read the mass of the named link.
      *
-     * @param boneName the name of the linked bone or the torso (not null)
+     * @param boneName the name of the link (not null)
      * @return the mass (&gt;0)
      */
     public float mass(String boneName) {
@@ -213,10 +237,10 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
 
         if (torsoFakeBoneName.equals(boneName)) {
             mass = torsoMass;
-        } else if (isLinked(boneName)) {
+        } else if (isBoneLinkName(boneName)) {
             mass = massMap.get(boneName);
         } else {
-            String msg = "No linked bone named " + MyString.quote(boneName);
+            String msg = "No link named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
         }
 
@@ -239,12 +263,12 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
      * Alter the limits of the joint connecting the named linked bone to its
      * parent in the linked-bone hierarchy.
      *
-     * @param boneName the name of the bone (not null, not empty)
+     * @param boneName the name of the linked bone (not null, not empty)
      * @param preset the desired range of motion (not null)
      */
     public void setJointLimits(String boneName, JointPreset preset) {
         Validate.nonNull(preset, "preset");
-        if (!isLinked(boneName)) {
+        if (!isBoneLinkName(boneName)) {
             String msg = "No linked bone named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
         }
@@ -253,9 +277,9 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Alter the mass of the named linked bone or the torso.
+     * Alter the mass of the named link.
      *
-     * @param boneName the name of the linked bone or the torso (not null)
+     * @param boneName the name of the link (not null)
      * @param mass the desired mass (&gt;0)
      */
     public void setMass(String boneName, float mass) {
@@ -263,10 +287,10 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
 
         if (torsoFakeBoneName.equals(boneName)) {
             torsoMass = mass;
-        } else if (isLinked(boneName)) {
+        } else if (isBoneLinkName(boneName)) {
             massMap.put(boneName, mass);
         } else {
-            String msg = "No linked bone named " + MyString.quote(boneName);
+            String msg = "No link named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
         }
     }
@@ -295,7 +319,7 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
      * empty)
      */
     public void unlink(String boneName) {
-        if (!isLinked(boneName)) {
+        if (!isBoneLinkName(boneName)) {
             String msg = "No linked bone named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
         }
@@ -413,7 +437,7 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
     protected void addUnlinkedDescendents(Bone bone, List<Bone> addResult) {
         for (Bone childBone : bone.getChildren()) {
             String childName = childBone.getName();
-            if (!isLinked(childName)) {
+            if (!isLinkName(childName)) {
                 addResult.add(childBone);
                 addUnlinkedDescendents(childBone, addResult);
             }
@@ -421,15 +445,15 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Assign each mesh vertex to a linked bone and add its location (mesh
-     * coordinates in bind pose) to that bone's list.
+     * Assign each mesh vertex to a link and add its location (mesh coordinates
+     * in bind pose) to that link's list. TODO move to RagUtils
      *
      * @param meshes array of animated meshes to use (not null, unaffected)
-     * @param lbNames a map from bone indices to linked-bone names
-     * @return a new map from linked-bone names to coordinates
+     * @param managerMap a map from bone indices to managing link names
+     * @return a new map from link names to coordinates
      */
     protected static Map<String, List<Vector3f>> coordsMap(Mesh[] meshes,
-            String[] lbNames) {
+            String[] managerMap) {
         float[] wArray = new float[4];
         int[] iArray = new int[4];
         Map<String, List<Vector3f>> coordsMap = new HashMap<>(32);
@@ -440,7 +464,7 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
                 MyMesh.vertexBoneWeights(mesh, vertexI, wArray);
 
                 Map<String, Float> weightMap
-                        = weightMap(iArray, wArray, lbNames);
+                        = weightMap(iArray, wArray, managerMap);
 
                 float bestTotalWeight = Float.NEGATIVE_INFINITY;
                 String bestLbName = null;
@@ -474,6 +498,7 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
     /**
      * Create a hull collision shape, using the specified inverse transform and
      * list of vertex locations. The skeleton is assumed to be in bind pose.
+     * TODO move to RagUtils
      *
      * @param transform from vertex coordinates to descaled shape coordinates
      * (not null, unaffected)
@@ -500,19 +525,19 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Map bone indices to names of linked bones.
+     * Map bone indices to names of the links that manage them.
      *
      * @param skeleton (not null, unaffected)
-     * @return a new array of bone names
+     * @return a new array of link names
      */
-    protected String[] linkedBoneNameArray(Skeleton skeleton) {
+    protected String[] managerMap(Skeleton skeleton) {
         int numBones = skeleton.getBoneCount();
         String[] nameArray = new String[numBones];
         for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
             Bone bone = skeleton.getBone(boneIndex);
             while (true) {
                 String boneName = bone.getName();
-                if (isLinked(boneName)) {
+                if (isBoneLinkName(boneName)) {
                     nameArray[boneIndex] = boneName;
                     break;
                 }
@@ -528,7 +553,7 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Validate a skeleton.
+     * Validate a skeleton. TODO move to RagUtils
      *
      * @param skeleton the skeleton to validate (not null, unaffected)
      */
@@ -542,15 +567,23 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
         for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
             Bone bone = skeleton.getBone(boneIndex);
             if (bone == null) {
-                throw new IllegalArgumentException("Bone is null!");
+                String msg = String.format("Bone %d in skeleton is null!",
+                        boneIndex);
+                throw new IllegalArgumentException(msg);
             }
             String boneName = bone.getName();
             if (boneName == null) {
-                throw new IllegalArgumentException("Bone name is null!");
+                String msg = String.format("Bone %d in skeleton has null name!",
+                        boneIndex);
+                throw new IllegalArgumentException(msg);
             } else if (boneName.equals(torsoFakeBoneName)) {
-                throw new IllegalArgumentException("Bone has reserved name.");
+                String msg = String.format(
+                        "Bone %d in skeleton has a reserved name!",
+                        boneIndex);
+                throw new IllegalArgumentException(msg);
             } else if (nameSet.contains(boneName)) {
-                String msg = "Duplicate bone name: " + boneName;
+                String msg = "Duplicate bone name in skeleton: "
+                        + MyString.quote(boneName);
                 throw new IllegalArgumentException(msg);
             }
             nameSet.add(boneName);
@@ -558,16 +591,17 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Tabulate the total bone weight associated with each linked bone.
+     * Tabulate the total bone weight associated with each link. TODO move to
+     * RagUtils
      *
      * @param biArray the array of bone indices (not null, unaffected)
      * @param bwArray the array of bone weights (not null, unaffected)
-     * @param lbNames a map from bone indices to linked bone names (not null,
+     * @param lbNames a map from bone indices to managing link names (not null,
      * unaffected)
      * @return a new map from linked-bone names to total weight
      */
-    protected static Map<String, Float> weightMap(int[] biArray, float[] bwArray,
-            String[] lbNames) {
+    protected static Map<String, Float> weightMap(int[] biArray,
+            float[] bwArray, String[] lbNames) {
         assert biArray.length == 4;
         assert bwArray.length == 4;
 

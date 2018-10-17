@@ -96,7 +96,7 @@ import jme3utilities.Validate;
  * </ul>
  *
  * TODO handle applyLocal, handle attachments, catch ignoreTransforms, rename
- * PhysicsAnimControl or RagdollControl, split off TorsoLink, ghost mode
+ * PhysicsAnimControl or RagdollControl or DynamicControl, ghost mode
  *
  * @author Normen Hansen and Rémy Bouquet (Nehon)
  */
@@ -177,10 +177,10 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Begin transitioning the torso and all linked bones to fully kinematic
-     * mode, driven by animation. In that mode, collision objects follow the
-     * movements of the skeleton while interacting with the physics environment.
-     * TODO callback at end of transition
+     * Begin blending all links to fully kinematic mode, driven by animation. In
+     * that mode, collision objects follow the movements of the skeleton while
+     * interacting with the physics environment. TODO callback at end of
+     * transition
      * <p>
      * Allowed only when the control IS added to a spatial.
      *
@@ -209,21 +209,21 @@ public class KinematicRagdollControl
 
     /**
      * Enumerate all immediate children (in the linked-bone hierarchy) of the
-     * named linked bone or the torso.
+     * named link.
      *
-     * @param parentName the name of the linked bone or the torso (not null)
-     * @return a new list of names
+     * @param linkName the name of the link (not null)
+     * @return a new list of linked bone names
      */
-    public List<String> childNames(String parentName) {
-        if (!torsoFakeBoneName.equals(parentName) && !isLinked(parentName)) {
-            String msg = "No linked bone named " + MyString.quote(parentName);
+    public List<String> childNames(String linkName) {
+        if (!isLinkName(linkName)) {
+            String msg = "No link named " + MyString.quote(linkName);
             throw new IllegalArgumentException(msg);
         }
 
         List<String> result = new ArrayList<>(8);
         for (String childName : linkedBoneNames()) {
             BoneLink boneLink = getBoneLink(childName);
-            if (boneLink.parentName().equals(parentName)) {
+            if (boneLink.parentName().equals(linkName)) {
                 result.add(childName);
             }
         }
@@ -233,21 +233,21 @@ public class KinematicRagdollControl
 
     /**
      * Count the immediate children (in the linked-bone hierarchy) of the named
-     * linked bone or the torso.
+     * link.
      *
-     * @param parentName the name of the linked bone or the torso (not null)
+     * @param linkName the name of the parent link (not null)
      * @return count (&ge;0)
      */
-    public int countChildren(String parentName) {
-        if (!torsoFakeBoneName.equals(parentName) && !isLinked(parentName)) {
-            String msg = "No linked bone named " + MyString.quote(parentName);
+    public int countChildren(String linkName) {
+        if (!isLinkName(linkName)) {
+            String msg = "No link named " + MyString.quote(linkName);
             throw new IllegalArgumentException(msg);
         }
 
         int result = 0;
         for (String childName : linkedBoneNames()) {
             BoneLink boneLink = getBoneLink(childName);
-            if (boneLink.parentName().equals(parentName)) {
+            if (boneLink.parentName().equals(linkName)) {
                 ++result;
             }
         }
@@ -308,26 +308,27 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Access the rigid body of the named linked bone or the torso.
+     * Access the rigid body of the named link. This returns null if the control
+     * is not added to a spatial.
      *
-     * @param boneName the name of the linked bone or the torso (not null)
-     * @return the pre-existing instance, or null if not added to a spatial
+     * @param linkName the name of the link (not null)
+     * @return the pre-existing instance, or null
      */
-    public PhysicsRigidBody getRigidBody(String boneName) {
+    public PhysicsRigidBody getRigidBody(String linkName) {
         PhysicsRigidBody result;
 
         if (getSpatial() == null) {
             result = null;
 
-        } else if (torsoFakeBoneName.equals(boneName)) {
+        } else if (torsoFakeBoneName.equals(linkName)) {
             result = torsoLink.getRigidBody();
 
-        } else if (isLinked(boneName)) {
-            BoneLink boneLink = boneLinks.get(boneName);
+        } else if (isBoneLinkName(linkName)) {
+            BoneLink boneLink = boneLinks.get(linkName);
             result = boneLink.getRigidBody();
 
         } else {
-            String msg = "No linked bone named " + MyString.quote(boneName);
+            String msg = "No link named " + MyString.quote(linkName);
             throw new IllegalArgumentException(msg);
         }
 
@@ -335,22 +336,32 @@ public class KinematicRagdollControl
     }
 
     /**
+     * Access the physics link for the torso. This returns null if the control
+     * is not added to a spatial.
+     *
+     * @return the pre-existing spatial, or null
+     */
+    public TorsoLink getTorsoLink() {
+        return torsoLink;
+    }
+
+    /**
      *
      * Access the spatial that provides the mesh-coordinate transform. This
      * returns null if the control is not added to a spatial.
      *
-     * @return the pre-existing spatial or null
+     * @return the pre-existing spatial, or null
      */
     Spatial getTransformer() {
         return transformer;
     }
 
     /**
-     * Enumerate all managed bones of the named linked bone or the torso, in a
-     * pre-order, depth-first traversal of the skeleton, such that child bones
-     * never precede their ancestors.
+     * Enumerate all managed bones of the named link, in a pre-order,
+     * depth-first traversal of the skeleton, such that child bones never
+     * precede their ancestors.
      *
-     * @param managerName the name of the manager (not null)
+     * @param managerName the name of the managing link (not null)
      * @return a new array of managed bones, including the manager if it is not
      * the torso
      */
@@ -367,8 +378,7 @@ public class KinematicRagdollControl
         } else {
             BoneLink manager = getBoneLink(managerName);
             if (manager == null) {
-                String msg
-                        = "No linked bone named " + MyString.quote(managerName);
+                String msg = "No link named " + MyString.quote(managerName);
                 throw new IllegalArgumentException(msg);
             }
             Bone managerBone = manager.getBone();
@@ -429,11 +439,11 @@ public class KinematicRagdollControl
     /**
      * Find the parent (in the linked-bone hierarchy) of the named linked bone.
      *
-     * @param childName (not null, not empty)
-     * @return the bone name or torsoFakeBoneName
+     * @param childName the name of the linked bone (not null, not empty)
+     * @return the bone name or torsoFakeBoneName (not null)
      */
     public String parentName(String childName) {
-        if (!isLinked(childName)) {
+        if (!isBoneLinkName(childName)) {
             String msg = "No linked bone named " + MyString.quote(childName);
             throw new IllegalArgumentException(msg);
         }
@@ -444,13 +454,14 @@ public class KinematicRagdollControl
         Bone parent = child.getParent();
         while (parent != null) {
             String name = parent.getName();
-            if (isLinked(name)) {
+            if (isBoneLinkName(name)) {
                 result = name;
                 break;
             }
             parent = parent.getParent();
         }
 
+        assert result != null;
         return result;
     }
 
@@ -714,8 +725,9 @@ public class KinematicRagdollControl
         /*
          * Analyze the model's meshes.
          */
-        String[] tempLbNames = linkedBoneNameArray(skeleton);
-        Map<String, List<Vector3f>> coordsMap = coordsMap(targets, tempLbNames);
+        String[] tempManagerMap = managerMap(skeleton);
+        Map<String, List<Vector3f>> coordsMap
+                = coordsMap(targets, tempManagerMap);
         /*
          * Create a shape for the torso.
          */
@@ -751,7 +763,7 @@ public class KinematicRagdollControl
         assert linkedBoneNames.size() == numLinkedBones;
         for (String boneName : linkedBoneNames) {
             vertexLocations = coordsMap.get(boneName);
-            createLink(boneName, vertexLocations);
+            createBoneLink(boneName, vertexLocations);
         }
         assert boneLinks.size() == numLinkedBones;
         /*
@@ -864,6 +876,7 @@ public class KinematicRagdollControl
     @Override
     public void setGravity(Vector3f gravity) {
         Validate.nonNull(gravity, "gravity");
+
         super.setGravity(gravity);
 
         if (getSpatial() != null) { // TODO make sure it's in ragdoll mode
@@ -883,11 +896,12 @@ public class KinematicRagdollControl
      */
     @Override
     public void setJointLimits(String boneName, JointPreset preset) {
-        Validate.nonNull(preset, "preset");
-        if (!isLinked(boneName)) {
+        if (!isBoneLinkName(boneName)) {
             String msg = "No linked bone named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
         }
+        Validate.nonNull(preset, "preset");
+
         super.setJointLimits(boneName, preset);
 
         if (getSpatial() != null) {
@@ -898,17 +912,18 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Alter the mass of the named linked bone or the torso.
+     * Alter the mass of the named link.
      *
-     * @param boneName the name of the linked bone or the torso (not null)
+     * @param linkName the name of the link (not null)
      * @param mass the desired mass (&gt;0)
      */
     @Override
-    public void setMass(String boneName, float mass) {
+    public void setMass(String linkName, float mass) {
         Validate.positive(mass, "mass");
-        super.setMass(boneName, mass);
 
-        PhysicsRigidBody rigidBody = getRigidBody(boneName);
+        super.setMass(linkName, mass);
+
+        PhysicsRigidBody rigidBody = getRigidBody(linkName);
         if (rigidBody != null) {
             rigidBody.setMass(mass);
         }
@@ -1033,6 +1048,7 @@ public class KinematicRagdollControl
         }
         /*
          * Dispatch an event if this control was involved in the collision.
+         * TODO flag self collisions
          */
         if (krcInvolved) {
             for (RagdollCollisionListener listener : listeners) {
@@ -1044,11 +1060,10 @@ public class KinematicRagdollControl
     // private methods
 
     /**
-     * Add joints to connect the named parent with each of its children. Also
-     * fill in the boneLinkList. Note: recursive!
+     * Add joints to connect the named link with each of its children. Also fill
+     * in the boneLinkList. Note: recursive!
      *
-     * @param parentName the name of the parent, which must either be a linked
-     * bone or the torso (not null)
+     * @param parentName the name of the parent link (not null)
      */
     private void addJoints(String parentName) {
         PhysicsRigidBody parentBody = getRigidBody(parentName);
@@ -1104,7 +1119,7 @@ public class KinematicRagdollControl
      * unaffected)
      * @return a new bone link without a joint, added to the boneLinks map
      */
-    private BoneLink createLink(String name, List<Vector3f> vertexLocations) {
+    private BoneLink createBoneLink(String name, List<Vector3f> vertexLocations) {
         Bone bone = getBone(name);
         /*
          * Create the collision shape.
