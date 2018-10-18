@@ -230,7 +230,7 @@ public class RigidBodyControl
 
     /**
      * Set the collision shape based on the controlled spatial and its
-     * descendents.
+     * descendants.
      */
     protected void createCollisionShape() {
         if (spatial == null) {

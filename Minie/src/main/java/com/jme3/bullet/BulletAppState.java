@@ -359,7 +359,8 @@ public class BulletAppState
     }
 
     /**
-     * Alter whether debug visualization is enabled.
+     * Alter whether debug visualization is enabled. Changes take effect on the
+     * next update.
      *
      * @param debugEnabled true &rarr; enable, false &rarr; disable
      */

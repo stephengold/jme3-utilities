@@ -46,11 +46,11 @@ public enum KinematicSubmode {
      */
     Animated,
     /**
-     * forced to bind pose
+     * forced into bind pose
      */
     Bound,
     /**
-     * frozen in the transform it had when freezeBones() was invoked
+     * frozen in the transform it had when blending started
      */
     Frozen;
 }
