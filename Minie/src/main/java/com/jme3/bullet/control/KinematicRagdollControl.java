@@ -177,6 +177,63 @@ public class KinematicRagdollControl
     }
 
     /**
+     * Begin blending the named linked bone and all its descendants into an
+     * amputated state. This has the effect of hiding the descendants.
+     *
+     * @param boneName the name of the linked bone to amputate (not null, not
+     * empty)
+     * @param blendInterval the duration of the blend interval (in seconds,
+     * &ge;0)
+     */
+    public void amputateHierarchy(String boneName, float blendInterval) {
+        if (!isBoneLinkName(boneName)) {
+            String msg = "No linked bone named " + MyString.quote(boneName);
+            throw new IllegalArgumentException(msg);
+        }
+        Validate.nonNegative(blendInterval, "blend interval");
+        if (getSpatial() == null) {
+            throw new IllegalStateException(
+                    "Cannot change modes unless added to a spatial.");
+        }
+
+        blendDescendants(boneName, KinematicSubmode.Amputated, blendInterval);
+
+        BoneLink boneLink = getBoneLink(boneName);
+        boneLink.blendToKinematicMode(KinematicSubmode.Amputated,
+                blendInterval);
+    }
+
+    /**
+     * Begin blending the named link and all its descendants into bind pose.
+     *
+     * @param linkName the name of the link (not null)
+     * @param blendInterval the duration of the blend interval (in seconds,
+     * &ge;0)
+     */
+    public void bindHierarchy(String linkName, float blendInterval) {
+        if (!isLinkName(linkName)) {
+            String msg = "No link named " + MyString.quote(linkName);
+            throw new IllegalArgumentException(msg);
+        }
+        Validate.nonNegative(blendInterval, "blend interval");
+        if (getSpatial() == null) {
+            throw new IllegalStateException(
+                    "Cannot change modes unless added to a spatial.");
+        }
+
+        blendDescendants(linkName, KinematicSubmode.Bound, blendInterval);
+
+        if (linkName.equals(torsoFakeBoneName)) {
+            torsoLink.blendToKinematicMode(KinematicSubmode.Bound,
+                    blendInterval, null);
+        } else {
+            BoneLink boneLink = getBoneLink(linkName);
+            boneLink.blendToKinematicMode(KinematicSubmode.Bound,
+                    blendInterval);
+        }
+    }
+
+    /**
      * Begin blending all links to fully kinematic mode, driven by animation. In
      * that mode, collision objects follow the movements of the skeleton while
      * interacting with the physics environment. TODO callback at end of
@@ -264,6 +321,31 @@ public class KinematicRagdollControl
     public float damping() {
         assert damping >= 0f : damping;
         return damping;
+    }
+
+    /**
+     * Immediately freeze the named link and all its descendants.
+     *
+     * @param linkName the name of the link (not null)
+     */
+    public void freezeHierarchy(String linkName) {
+        if (!isLinkName(linkName)) {
+            String msg = "No link named " + MyString.quote(linkName);
+            throw new IllegalArgumentException(msg);
+        }
+        if (getSpatial() == null) {
+            throw new IllegalStateException(
+                    "Cannot change modes unless added to a spatial.");
+        }
+
+        blendDescendants(linkName, KinematicSubmode.Frozen, 0f);
+
+        if (linkName.equals(torsoFakeBoneName)) {
+            torsoLink.blendToKinematicMode(KinematicSubmode.Frozen, 0f, null);
+        } else {
+            BoneLink boneLink = getBoneLink(linkName);
+            boneLink.blendToKinematicMode(KinematicSubmode.Frozen, 0f);
+        }
     }
 
     /**
@@ -567,6 +649,66 @@ public class KinematicRagdollControl
     }
 
     /**
+     * Immediately put the named link into dynamic mode.
+     *
+     * @param linkName the name of the link (not null, not empty)
+     * @param uniformAcceleration the uniform acceleration vector (in
+     * physics-space coordinates, not null, unaffected)
+     */
+    public void setDynamic(String linkName, Vector3f uniformAcceleration) {
+        if (!isLinkName(linkName)) {
+            String msg = "No link named " + MyString.quote(linkName);
+            throw new IllegalArgumentException(msg);
+        }
+        Validate.nonNull(uniformAcceleration, "uniform acceleration");
+        if (getSpatial() == null) {
+            throw new IllegalStateException(
+                    "Cannot change modes unless added to a spatial.");
+        }
+
+        if (linkName.equals(torsoFakeBoneName)) {
+            torsoLink.setDynamic(uniformAcceleration);
+        } else {
+            BoneLink boneLink = getBoneLink(linkName);
+            boneLink.setDynamic(uniformAcceleration);
+        }
+    }
+
+    /**
+     * Immediately put the named link and all its descendants into dynamic mode.
+     * Note: recursive!
+     *
+     * @param linkName the name of the link at the root of the subtree (not
+     * null)
+     * @param uniformAcceleration the uniform acceleration vector (in
+     * physics-space coordinates, not null, unaffected)
+     */
+    public void setDynamicHierarchy(String linkName,
+            Vector3f uniformAcceleration) {
+        if (!isLinkName(linkName)) {
+            String msg = "No link named " + MyString.quote(linkName);
+            throw new IllegalArgumentException(msg);
+        }
+        Validate.nonNull(uniformAcceleration, "uniform acceleration");
+        if (getSpatial() == null) {
+            throw new IllegalStateException(
+                    "Cannot change modes unless added to a spatial.");
+        }
+
+        if (linkName.equals(torsoFakeBoneName)) {
+            torsoLink.setDynamic(uniformAcceleration);
+        } else {
+            BoneLink boneLink = getBoneLink(linkName);
+            boneLink.setDynamic(uniformAcceleration);
+        }
+
+        List<String> childNames = childNames(linkName);
+        for (String childName : childNames) {
+            setDynamicHierarchy(childName, uniformAcceleration);
+        }
+    }
+
+    /**
      * Alter the the event-dispatch impulse threshold of this control.
      *
      * @param threshold the desired threshold (&ge;0)
@@ -587,9 +729,9 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Immediately put the torso and all linked bones into fully kinematic mode.
-     * In this mode, collision objects follow the movements of the skeleton
-     * while interacting with the physics environment.
+     * Immediately put all links into fully kinematic mode. In this mode,
+     * collision objects follow the movements of the skeleton while interacting
+     * with the physics environment.
      * <p>
      * Allowed only when the control IS added to a spatial.
      */
@@ -604,8 +746,8 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Immediately put the torso and all linked bones into fully dynamic ragdoll
-     * mode. The skeleton is entirely controlled by physics, including gravity.
+     * Immediately put all links into fully dynamic ragdoll mode. The skeleton
+     * is entirely controlled by physics, including gravity.
      * <p>
      * Allowed only when the control IS added to a spatial.
      */
@@ -1110,7 +1252,30 @@ public class KinematicRagdollControl
     }
 
     /**
-     * Create a PhysicsBoneLink for the named bone.
+     * Begin blending all descendants of the named link to a kinematic submode.
+     * Note: recursive!
+     *
+     * @param linkName the name of the link (not null)
+     * @param submode enum value (not null)
+     * @param blendInterval the duration of the blend interval (in seconds,
+     * &ge;0)
+     */
+    private void blendDescendants(String linkName, KinematicSubmode submode,
+            float blendInterval) {
+        assert linkName != null;
+        assert submode != null;
+        assert blendInterval >= 0f : blendInterval;
+
+        List<String> childNames = childNames(linkName);
+        for (String childName : childNames) {
+            BoneLink boneLink = getBoneLink(childName);
+            boneLink.blendToKinematicMode(submode, blendInterval);
+            blendDescendants(childName, submode, blendInterval);
+        }
+    }
+
+    /**
+     * Create a BoneLink for the named bone.
      *
      * @param name the name of the bone to be linked (not null)
      * @param lbNames map from bone indices to linked-bone names (not null,
@@ -1119,7 +1284,8 @@ public class KinematicRagdollControl
      * unaffected)
      * @return a new bone link without a joint, added to the boneLinks map
      */
-    private BoneLink createBoneLink(String name, List<Vector3f> vertexLocations) {
+    private BoneLink createBoneLink(String name,
+            List<Vector3f> vertexLocations) {
         Bone bone = getBone(name);
         /*
          * Create the collision shape.
