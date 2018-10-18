@@ -33,6 +33,7 @@ package com.jme3.bullet.control;
 
 import com.jme3.animation.Bone;
 import com.jme3.bullet.control.ragdoll.KinematicSubmode;
+import com.jme3.bullet.control.ragdoll.RagUtils;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.export.InputCapsule;
@@ -364,26 +365,10 @@ public class BoneLink
         rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
         joint = (SixDofJoint) ic.readSavable("joint", null);
         parentName = ic.readString("parentName", null);
-
-        tmp = ic.readSavableArray("prevBoneTransforms", null);
-        if (tmp == null) {
-            prevBoneTransforms = null;
-        } else {
-            prevBoneTransforms = new Transform[tmp.length];
-            for (int i = 0; i < tmp.length; i++) {
-                prevBoneTransforms[i] = (Transform) tmp[i];
-            }
-        }
-
-        tmp = ic.readSavableArray("startBoneTransforms", null);
-        if (tmp == null) {
-            startBoneTransforms = null;
-        } else {
-            startBoneTransforms = new Transform[tmp.length];
-            for (int i = 0; i < tmp.length; i++) {
-                startBoneTransforms[i] = (Transform) tmp[i];
-            }
-        }
+        prevBoneTransforms = RagUtils.readTransformArray(ic,
+                "prevBoneTransforms");
+        startBoneTransforms = RagUtils.readTransformArray(ic,
+                "startBoneTransforms");
     }
 
     /**

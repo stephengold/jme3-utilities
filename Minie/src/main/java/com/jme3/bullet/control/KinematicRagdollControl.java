@@ -502,7 +502,7 @@ public class KinematicRagdollControl
         Transform worldToMesh = transformer.getWorldTransform().invert();
         result.combineWithParent(worldToMesh);
         /*
-         * Transform to local coordinates by factoring out the
+         * Transform to local coordinate system by factoring out the
          * parent bone's transform. TODO utility
          */
         Bone parentBone = bone.getParent();
@@ -837,7 +837,7 @@ public class KinematicRagdollControl
         spatial.addControl(skeletonControl);
 
         skeleton = skeletonControl.getSkeleton();
-        validate(skeleton);
+        RagUtils.validate(skeleton);
         /*
          * Find the target meshes and the main bone.  Don't invoke
          * skeletonControl.getTargets() here since the SkeletonControl
@@ -869,7 +869,7 @@ public class KinematicRagdollControl
          */
         String[] tempManagerMap = managerMap(skeleton);
         Map<String, List<Vector3f>> coordsMap
-                = coordsMap(targets, tempManagerMap);
+                = RagUtils.coordsMap(targets, tempManagerMap);
         /*
          * Create a shape for the torso.
          */
@@ -882,7 +882,8 @@ public class KinematicRagdollControl
         Transform boneToMesh
                 = MySkeleton.copyMeshTransform(torsoMainBone, null);
         Transform invTransform = boneToMesh.invert();
-        CollisionShape torsoShape = createShape(invTransform, vertexLocations);
+        CollisionShape torsoShape
+                = RagUtils.createShape(invTransform, vertexLocations);
         /*
          * Create a rigid body for the torso.
          */
@@ -1293,7 +1294,8 @@ public class KinematicRagdollControl
         Transform boneToMesh
                 = MySkeleton.copyMeshTransform(bone, null);
         Transform invTransform = boneToMesh.invert();
-        CollisionShape boneShape = createShape(invTransform, vertexLocations);
+        CollisionShape boneShape
+                = RagUtils.createShape(invTransform, vertexLocations);
         /*
          * Create the rigid body.
          */
