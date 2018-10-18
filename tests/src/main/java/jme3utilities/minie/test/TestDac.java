@@ -72,7 +72,7 @@ import jme3utilities.ui.Signals;
 /**
  * Test scaling and load/save of a DynamicAnimControl.
  */
-public class TestRagdollScaling extends ActionApplication {
+public class TestDac extends ActionApplication {
     // *************************************************************************
     // constants and loggers
 
@@ -80,11 +80,11 @@ public class TestRagdollScaling extends ActionApplication {
      * message logger for this class
      */
     final public static Logger logger
-            = Logger.getLogger(TestRagdollScaling.class.getName());
+            = Logger.getLogger(TestDac.class.getName());
     /**
      * asset path for loading and saving
      */
-    final private static String saveAssetPath = "Models/TestRagdollScaling.j3o";
+    final private static String saveAssetPath = "Models/TestDac.j3o";
     // *************************************************************************
     // fields
 
@@ -102,7 +102,7 @@ public class TestRagdollScaling extends ActionApplication {
     // new methods exposed
 
     public static void main(String[] args) {
-        TestRagdollScaling app = new TestRagdollScaling();
+        TestDac app = new TestDac();
         app.start();
     }
     // *************************************************************************
