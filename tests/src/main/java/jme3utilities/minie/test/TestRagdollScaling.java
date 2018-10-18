@@ -44,6 +44,7 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
@@ -69,7 +70,7 @@ import jme3utilities.ui.InputMode;
 import jme3utilities.ui.Signals;
 
 /**
- * Test scaling and load/save on a DynamicAnimControl.
+ * Test scaling and load/save of a DynamicAnimControl.
  */
 public class TestRagdollScaling extends ActionApplication {
     // *************************************************************************
@@ -96,6 +97,7 @@ public class TestRagdollScaling extends ActionApplication {
     private RigidBodyControl boxRbc;
     private SkeletonVisualizer sv;
     private String animationName = null;
+    private Transform resetTransform;
     // *************************************************************************
     // new methods exposed
 
@@ -125,14 +127,14 @@ public class TestRagdollScaling extends ActionApplication {
 
         CollisionShape.setDefaultMargin(0.01f); // 1 cm
         addBox();
+
         //addJaime();
         addSinbad();
-
-        //model.scale(2f);
-        //ragdoll.reBuild();
-        //center(model);
-        //ragdoll.setGravity(new Vector3f(0f, 0f, 0f));
-
+        rootNode.attachChild(model);
+        setHeight(model, 2f);
+        center(model);
+        resetTransform = model.getLocalTransform().clone();
+        model.addControl(dac);
         /*
          * Add and configure the model's controls.
          */
@@ -176,6 +178,7 @@ public class TestRagdollScaling extends ActionApplication {
         dim.bind("next scale", KeyInput.KEY_1);
         dim.bind("raise leftHand", KeyInput.KEY_LSHIFT);
         dim.bind("raise rightHand", KeyInput.KEY_RSHIFT);
+        dim.bind("reset model transform", KeyInput.KEY_DOWN);
         dim.bind("signal rotateLeft", KeyInput.KEY_LEFT);
         dim.bind("signal rotateRight", KeyInput.KEY_RIGHT);
         dim.bind("save", KeyInput.KEY_S);
@@ -231,6 +234,9 @@ public class TestRagdollScaling extends ActionApplication {
                     dac.setDynamicHierarchy("Clavicle.R",
                             new Vector3f(0f, 50f, 0f));
                     return;
+                case "reset model transform":
+                    model.setLocalTransform(resetTransform);
+                    return;
                 case "save":
                     save();
                     return;
@@ -248,6 +254,11 @@ public class TestRagdollScaling extends ActionApplication {
         super.onAction(actionString, ongoing, tpf);
     }
 
+    /**
+     * Callback invoked once per render pass.
+     *
+     * @param tpf time interval between render passes (in seconds, &ge;0)
+     */
     @Override
     public void simpleUpdate(float tpf) {
         Signals signals = getSignals();
@@ -292,13 +303,7 @@ public class TestRagdollScaling extends ActionApplication {
      */
     private void addJaime() {
         model = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
-
-        rootNode.attachChild(model);
-        setHeight(model, 2f);
-        center(model);
-
         dac = new DynamicAnimControl();
-        model.addControl(dac);
         animationName = "Punches";
     }
 
@@ -326,17 +331,12 @@ public class TestRagdollScaling extends ActionApplication {
      */
     private void addSinbad() {
         model = (Node) assetManager.loadModel("Models/Sinbad/Sinbad.mesh.xml");
-        rootNode.attachChild(model);
-        setHeight(model, 2f);
-        center(model);
-
         List<Spatial> s = MySpatial.listSpatials(model, Spatial.class, null);
         for (Spatial spatial : s) {
             spatial.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         }
 
         dac = new SinbadControl();
-        model.addControl(dac);
         animationName = "Dance";
     }
 
