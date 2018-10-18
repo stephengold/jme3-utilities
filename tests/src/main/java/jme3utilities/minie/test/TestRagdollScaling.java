@@ -116,7 +116,6 @@ public class TestRagdollScaling extends ActionApplication {
         flyCam.setEnabled(false); // TODO FlyByCamera broken in action apps?
 
         cam.setLocation(new Vector3f(0f, 1.5f, 4f));
-
         viewPort.setBackgroundColor(ColorRGBA.Gray);
         addLighting();
 
@@ -127,14 +126,7 @@ public class TestRagdollScaling extends ActionApplication {
 
         CollisionShape.setDefaultMargin(0.01f); // 1 cm
         addBox();
-
-        //addJaime();
-        addSinbad();
-        rootNode.attachChild(model);
-        setHeight(model, 2f);
-        center(model);
-        resetTransform = model.getLocalTransform().clone();
-        model.addControl(dac);
+        addModel();
         /*
          * Add and configure the model's controls.
          */
@@ -299,15 +291,6 @@ public class TestRagdollScaling extends ActionApplication {
     }
 
     /**
-     * Add a Jaime model.
-     */
-    private void addJaime() {
-        model = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
-        dac = new DynamicAnimControl();
-        animationName = "Punches";
-    }
-
-    /**
      * Add lighting to the scene.
      */
     private void addLighting() {
@@ -327,17 +310,17 @@ public class TestRagdollScaling extends ActionApplication {
     }
 
     /**
-     * Add a Sinbad model.
+     * Add a model to the scene.
      */
-    private void addSinbad() {
-        model = (Node) assetManager.loadModel("Models/Sinbad/Sinbad.mesh.xml");
-        List<Spatial> s = MySpatial.listSpatials(model, Spatial.class, null);
-        for (Spatial spatial : s) {
-            spatial.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        }
+    private void addModel() {
+        //addJaime();
+        loadSinbad();
 
-        dac = new SinbadControl();
-        animationName = "Dance";
+        rootNode.attachChild(model);
+        setHeight(model, 2f);
+        center(model);
+        resetTransform = model.getLocalTransform().clone();
+        model.addControl(dac);
     }
 
     /**
@@ -377,7 +360,7 @@ public class TestRagdollScaling extends ActionApplication {
     }
 
     /**
-     * Load a model from the J3O file.
+     * Load the saved model from the J3O file.
      */
     private void load() {
         /*
@@ -400,6 +383,29 @@ public class TestRagdollScaling extends ActionApplication {
         });
         Node loadedNode = (Node) loadedScene;
         // TODO
+    }
+
+    /**
+     * Load a Jaime model.
+     */
+    private void loadJaime() {
+        model = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
+        dac = new DynamicAnimControl();
+        animationName = "Punches";
+    }
+
+    /**
+     * Load a Sinbad model.
+     */
+    private void loadSinbad() {
+        model = (Node) assetManager.loadModel("Models/Sinbad/Sinbad.mesh.xml");
+        List<Spatial> s = MySpatial.listSpatials(model, Spatial.class, null);
+        for (Spatial spatial : s) {
+            spatial.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        }
+
+        dac = new SinbadControl();
+        animationName = "Dance";
     }
 
     /**
