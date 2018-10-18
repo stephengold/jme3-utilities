@@ -454,7 +454,7 @@ public class KinematicRagdollControl
             Bone[] roots = skeleton.getRoots();
             for (Bone rootBone : roots) {
                 list.add(rootBone);
-                addUnlinkedDescendents(rootBone, list);
+                addUnlinkedDescendants(rootBone, list);
             }
 
         } else {
@@ -465,7 +465,7 @@ public class KinematicRagdollControl
             }
             Bone managerBone = manager.getBone();
             list.add(managerBone);
-            addUnlinkedDescendents(managerBone, list);
+            addUnlinkedDescendants(managerBone, list);
         }
         /*
          * Convert the list to an array.

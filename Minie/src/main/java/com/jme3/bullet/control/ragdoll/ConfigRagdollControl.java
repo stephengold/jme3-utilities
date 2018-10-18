@@ -428,18 +428,18 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
     // protected methods
 
     /**
-     * Add unlinked descendents of the specified bone to the specified list.
+     * Add unlinked descendants of the specified bone to the specified list.
      * Note: recursive.
      *
      * @param bone (not null, alias created)
      * @param addResult (not null, modified)
      */
-    protected void addUnlinkedDescendents(Bone bone, List<Bone> addResult) {
+    protected void addUnlinkedDescendants(Bone bone, List<Bone> addResult) {
         for (Bone childBone : bone.getChildren()) {
             String childName = childBone.getName();
             if (!isLinkName(childName)) {
                 addResult.add(childBone);
-                addUnlinkedDescendents(childBone, addResult);
+                addUnlinkedDescendants(childBone, addResult);
             }
         }
     }
