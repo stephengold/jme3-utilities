@@ -204,12 +204,10 @@ public class TestRagdollScaling extends ActionApplication {
                     krc.freezeHierarchy("Chest");
                     return;
                 case "go bind pose":
-                    krc.bindHierarchy(
-                            KinematicRagdollControl.torsoFakeBoneName, 2f);
+                    krc.bindHierarchy(KinematicRagdollControl.torsoName, 2f);
                     return;
                 case "go floating":
-                    krc.setDynamicHierarchy(
-                            KinematicRagdollControl.torsoFakeBoneName,
+                    krc.setDynamicHierarchy(KinematicRagdollControl.torsoName,
                             Vector3f.ZERO);
                     return;
                 case "go limp":

@@ -223,7 +223,7 @@ public class KinematicRagdollControl
 
         blendDescendants(linkName, KinematicSubmode.Bound, blendInterval);
 
-        if (linkName.equals(torsoFakeBoneName)) {
+        if (linkName.equals(torsoName)) {
             torsoLink.blendToKinematicMode(KinematicSubmode.Bound,
                     blendInterval, null);
         } else {
@@ -340,7 +340,7 @@ public class KinematicRagdollControl
 
         blendDescendants(linkName, KinematicSubmode.Frozen, 0f);
 
-        if (linkName.equals(torsoFakeBoneName)) {
+        if (linkName.equals(torsoName)) {
             torsoLink.blendToKinematicMode(KinematicSubmode.Frozen, 0f, null);
         } else {
             BoneLink boneLink = getBoneLink(linkName);
@@ -402,7 +402,7 @@ public class KinematicRagdollControl
         if (getSpatial() == null) {
             result = null;
 
-        } else if (torsoFakeBoneName.equals(linkName)) {
+        } else if (torsoName.equals(linkName)) {
             result = torsoLink.getRigidBody();
 
         } else if (isBoneLinkName(linkName)) {
@@ -450,7 +450,7 @@ public class KinematicRagdollControl
     Bone[] listManagedBones(String managerName) {
         List<Bone> list = new ArrayList<>(8);
 
-        if (torsoFakeBoneName.equals(managerName)) {
+        if (torsoName.equals(managerName)) {
             Bone[] roots = skeleton.getRoots();
             for (Bone rootBone : roots) {
                 list.add(rootBone);
@@ -530,7 +530,7 @@ public class KinematicRagdollControl
             throw new IllegalArgumentException(msg);
         }
 
-        String result = torsoFakeBoneName;
+        String result = torsoName;
 
         Bone child = getBone(childName);
         Bone parent = child.getParent();
@@ -666,7 +666,7 @@ public class KinematicRagdollControl
                     "Cannot change modes unless added to a spatial.");
         }
 
-        if (linkName.equals(torsoFakeBoneName)) {
+        if (linkName.equals(torsoName)) {
             torsoLink.setDynamic(uniformAcceleration);
         } else {
             BoneLink boneLink = getBoneLink(linkName);
@@ -695,7 +695,7 @@ public class KinematicRagdollControl
                     "Cannot change modes unless added to a spatial.");
         }
 
-        if (linkName.equals(torsoFakeBoneName)) {
+        if (linkName.equals(torsoName)) {
             torsoLink.setDynamic(uniformAcceleration);
         } else {
             BoneLink boneLink = getBoneLink(linkName);
@@ -873,7 +873,7 @@ public class KinematicRagdollControl
         /*
          * Create a shape for the torso.
          */
-        List<Vector3f> vertexLocations = coordsMap.get(torsoFakeBoneName);
+        List<Vector3f> vertexLocations = coordsMap.get(torsoName);
         if (vertexLocations == null) {
             throw new IllegalArgumentException(
                     "No mesh vertices for the torso. Make sure the root bone is not linked.");
@@ -886,7 +886,7 @@ public class KinematicRagdollControl
         /*
          * Create a rigid body for the torso.
          */
-        float torsoMass = mass(torsoFakeBoneName);
+        float torsoMass = mass(torsoName);
         PhysicsRigidBody torsoRigidBody
                 = new PhysicsRigidBody(torsoShape, torsoMass);
         float viscousDamping = damping();
@@ -913,7 +913,7 @@ public class KinematicRagdollControl
          * Also initialize the boneLinkList.
          */
         boneLinkList = new ArrayList<>(numLinkedBones);
-        addJoints(torsoFakeBoneName);
+        addJoints(torsoName);
         assert boneLinkList.size() == numLinkedBones;
 
         if (added) {
@@ -1211,7 +1211,7 @@ public class KinematicRagdollControl
         PhysicsRigidBody parentBody = getRigidBody(parentName);
 
         Bone parentBone;
-        if (torsoFakeBoneName.equals(parentName)) {
+        if (torsoName.equals(parentName)) {
             parentBone = torsoLink.getBone();
         } else {
             parentBone = getBone(parentName);

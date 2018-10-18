@@ -268,8 +268,7 @@ public class TorsoLink
 
         } else {
             assert managedBones == null;
-            managedBones = krc.listManagedBones(
-                    KinematicRagdollControl.torsoFakeBoneName);
+            managedBones = krc.listManagedBones(KinematicRagdollControl.torsoName);
 
             int numManagedBones = managedBones.length;
             assert prevBoneTransforms == null;

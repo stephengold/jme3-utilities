@@ -42,14 +42,14 @@ public class SinbadControl extends KinematicRagdollControl {
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger4
             = Logger.getLogger(SinbadControl.class.getName());
     // *************************************************************************
     // constructors
 
     public SinbadControl() {
         super();
-        super.setMass("", 5f);
+        super.setMass(torsoName, 5f);
 
         super.link("Waist", 5f,
                 new JointPreset(0.4f, -0.4f, 0.4f, -0.4f, 0.4f, -0.4f));

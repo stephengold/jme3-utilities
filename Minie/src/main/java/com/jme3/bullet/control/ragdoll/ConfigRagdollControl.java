@@ -77,9 +77,9 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
     final public static Logger logger2
             = Logger.getLogger(ConfigRagdollControl.class.getName());
     /**
-     * magic bone name to refer to the ragdoll's torso TODO rename torsoLinkName
+     * name for the ragdoll's torso, must not be used for any bone
      */
-    final public static String torsoFakeBoneName = "";
+    final public static String torsoName = "";
     // *************************************************************************
     // fields
 
@@ -179,7 +179,7 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
         boolean result;
         if (name == null) {
             result = false;
-        } else if (name.equals(torsoFakeBoneName)) {
+        } else if (name.equals(torsoName)) {
             result = true;
         } else {
             result = massMap.containsKey(name);
@@ -229,18 +229,18 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
     /**
      * Read the mass of the named link.
      *
-     * @param boneName the name of the link (not null)
+     * @param linkName the name of the link (not null)
      * @return the mass (&gt;0)
      */
-    public float mass(String boneName) {
+    public float mass(String linkName) {
         float mass;
 
-        if (torsoFakeBoneName.equals(boneName)) {
+        if (torsoName.equals(linkName)) {
             mass = torsoMass;
-        } else if (isBoneLinkName(boneName)) {
-            mass = massMap.get(boneName);
+        } else if (isBoneLinkName(linkName)) {
+            mass = massMap.get(linkName);
         } else {
-            String msg = "No link named " + MyString.quote(boneName);
+            String msg = "No link named " + MyString.quote(linkName);
             throw new IllegalArgumentException(msg);
         }
 
@@ -279,18 +279,18 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
     /**
      * Alter the mass of the named link.
      *
-     * @param boneName the name of the link (not null)
+     * @param linkName the name of the link (not null)
      * @param mass the desired mass (&gt;0)
      */
-    public void setMass(String boneName, float mass) {
+    public void setMass(String linkName, float mass) {
         Validate.positive(mass, "mass");
 
-        if (torsoFakeBoneName.equals(boneName)) {
+        if (torsoName.equals(linkName)) {
             torsoMass = mass;
-        } else if (isBoneLinkName(boneName)) {
-            massMap.put(boneName, mass);
+        } else if (isBoneLinkName(linkName)) {
+            massMap.put(linkName, mass);
         } else {
-            String msg = "No link named " + MyString.quote(boneName);
+            String msg = "No link named " + MyString.quote(linkName);
             throw new IllegalArgumentException(msg);
         }
     }
@@ -543,7 +543,7 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
                 }
                 bone = bone.getParent();
                 if (bone == null) {
-                    nameArray[boneIndex] = torsoFakeBoneName;
+                    nameArray[boneIndex] = torsoName;
                     break;
                 }
             }
@@ -576,7 +576,7 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
                 String msg = String.format("Bone %d in skeleton has null name!",
                         boneIndex);
                 throw new IllegalArgumentException(msg);
-            } else if (boneName.equals(torsoFakeBoneName)) {
+            } else if (boneName.equals(torsoName)) {
                 String msg = String.format(
                         "Bone %d in skeleton has a reserved name!",
                         boneIndex);
