@@ -87,7 +87,7 @@ public class TestRagdollScaling extends ActionApplication {
     // *************************************************************************
     // fields
 
-    private AnimControl animControl;
+    private AnimChannel animChannel = null;
     private BulletAppState bulletAppState;
     private int scaleIndex = 0;
     private KinematicRagdollControl krc;
@@ -123,7 +123,7 @@ public class TestRagdollScaling extends ActionApplication {
         stateManager.attach(bulletAppState);
         physicsSpace = bulletAppState.getPhysicsSpace();
 
-        CollisionShape.setDefaultMargin(0.01f);
+        CollisionShape.setDefaultMargin(0.01f); // 1 cm
         addBox();
         //addJaime();
         addSinbad();
@@ -136,10 +136,11 @@ public class TestRagdollScaling extends ActionApplication {
         /*
          * Add and configure the model's controls.
          */
-        animControl = model.getControl(AnimControl.class);
+        AnimControl animControl = model.getControl(AnimControl.class);
         if (animationName != null) {
-            AnimChannel animChannel = animControl.createChannel();
+            animChannel = animControl.createChannel();
             animChannel.setAnim(animationName);
+            animChannel.setSpeed(1f);
         }
 
         List<SkeletonControl> scList
@@ -155,22 +156,31 @@ public class TestRagdollScaling extends ActionApplication {
         boxRbc.setPhysicsSpace(ps);
     }
 
+    /**
+     * Add new hotkey bindings and override existing ones.
+     */
     @Override
     public void moreDefaultBindings() {
         InputMode dim = getDefaultInputMode();
 
+        dim.bind("amputate left elbow", KeyInput.KEY_A);
         dim.bind("blend all to kinematic", KeyInput.KEY_K);
         dim.bind("dump physicsSpace", KeyInput.KEY_O);
         dim.bind("dump scene", KeyInput.KEY_P);
-        dim.bind("faint", KeyInput.KEY_SPACE);
+        dim.bind("freeze upper body", KeyInput.KEY_F);
+        dim.bind("go bind pose", KeyInput.KEY_B);
+        dim.bind("go floating", KeyInput.KEY_0);
+        dim.bind("go limp", KeyInput.KEY_SPACE);
+        dim.bind("limp left elbow", KeyInput.KEY_COMMA);
         dim.bind("load", KeyInput.KEY_L);
+        dim.bind("next scale", KeyInput.KEY_1);
         dim.bind("raise leftHand", KeyInput.KEY_LSHIFT);
         dim.bind("raise rightHand", KeyInput.KEY_RSHIFT);
         dim.bind("signal rotateLeft", KeyInput.KEY_LEFT);
         dim.bind("signal rotateRight", KeyInput.KEY_RIGHT);
-        dim.bind("next scale", KeyInput.KEY_1);
         dim.bind("save", KeyInput.KEY_S);
         dim.bind("toggle animation", KeyInput.KEY_PERIOD);
+        dim.bind("toggle physics debug", KeyInput.KEY_SLASH);
         dim.bind("toggle skeleton", KeyInput.KEY_V);
     }
 
@@ -178,8 +188,11 @@ public class TestRagdollScaling extends ActionApplication {
     public void onAction(String actionString, boolean ongoing, float tpf) {
         if (ongoing) {
             switch (actionString) {
+                case "amputate left elbow":
+                    krc.amputateHierarchy("Ulna.L", 2f);
+                    return;
                 case "blend all to kinematic":
-                    krc.blendToKinematicMode(3f, null);
+                    krc.blendToKinematicMode(2f, null);
                     return;
                 case "dump physicsSpace":
                     dumpPhysicsSpace();
@@ -187,8 +200,24 @@ public class TestRagdollScaling extends ActionApplication {
                 case "dump scene":
                     dumpScene();
                     return;
-                case "faint":
+                case "freeze upper body":
+                    krc.freezeHierarchy("Chest");
+                    return;
+                case "go bind pose":
+                    krc.bindHierarchy(
+                            KinematicRagdollControl.torsoFakeBoneName, 2f);
+                    return;
+                case "go floating":
+                    krc.setDynamicHierarchy(
+                            KinematicRagdollControl.torsoFakeBoneName,
+                            Vector3f.ZERO);
+                    return;
+                case "go limp":
                     krc.setRagdollMode();
+                    return;
+                case "limp left elbow":
+                    Vector3f ragdollGravity = krc.gravity(null);
+                    krc.setDynamic("Ulna.L", ragdollGravity);
                     return;
                 case "load":
                     load();
@@ -197,10 +226,12 @@ public class TestRagdollScaling extends ActionApplication {
                     nextScale();
                     return;
                 case "raise leftHand":
-                    raiseLeftHand();
+                    krc.setDynamicHierarchy("Clavicle.L",
+                            new Vector3f(0f, 50f, 0f));
                     return;
                 case "raise rightHand":
-                    raiseRightHand();
+                    krc.setDynamicHierarchy("Clavicle.R",
+                            new Vector3f(0f, 50f, 0f));
                     return;
                 case "save":
                     save();
@@ -210,6 +241,9 @@ public class TestRagdollScaling extends ActionApplication {
                     return;
                 case "toggle skeleton":
                     toggleSkeleton();
+                    return;
+                case "toggle physics debug":
+                    togglePhysicsDebug();
                     return;
             }
         }
@@ -345,7 +379,7 @@ public class TestRagdollScaling extends ActionApplication {
     }
 
     /**
-     * Load a model from the J3O file. TODO re-order methods
+     * Load a model from the J3O file.
      */
     private void load() {
         /*
@@ -396,30 +430,6 @@ public class TestRagdollScaling extends ActionApplication {
     }
 
     /**
-     * Raise the model's left hand.
-     */
-    private void raiseLeftHand() {
-        Vector3f up = new Vector3f(0f, 50f, 0f);
-
-        krc.getBoneLink("Hand.L").setDynamic(up);
-        krc.getBoneLink("Ulna.L").setDynamic(up);
-        krc.getBoneLink("Humerus.L").setDynamic(up);
-        krc.getBoneLink("Clavicle.L").setDynamic(up);
-    }
-
-    /**
-     * Raise the model's right hand.
-     */
-    private void raiseRightHand() {
-        Vector3f up = new Vector3f(0f, 50f, 0f);
-
-        krc.getBoneLink("Hand.R").setDynamic(up);
-        krc.getBoneLink("Ulna.R").setDynamic(up);
-        krc.getBoneLink("Humerus.R").setDynamic(up);
-        krc.getBoneLink("Clavicle.R").setDynamic(up);
-    }
-
-    /**
      * Save the model to a J3O file.
      */
     private void save() {
@@ -458,11 +468,21 @@ public class TestRagdollScaling extends ActionApplication {
     }
 
     /**
-     * Toggle the animation control on/off.
+     * Toggle the animation: paused/running.
      */
     private void toggleAnimation() {
-        boolean enabled = animControl.isEnabled();
-        animControl.setEnabled(!enabled);
+        if (animChannel != null) {
+            float rate = animChannel.getSpeed();
+            animChannel.setSpeed(1f - rate);
+        }
+    }
+
+    /**
+     * Toggle the physics-debug visualization on/off.
+     */
+    private void togglePhysicsDebug() {
+        boolean enabled = bulletAppState.isDebugEnabled();
+        bulletAppState.setDebugEnabled(!enabled);
     }
 
     /**
