@@ -33,7 +33,7 @@ package com.jme3.bullet.animation;
 
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
-import com.jme3.bullet.control.*;
+import com.jme3.bullet.control.AbstractPhysicsControl;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -188,7 +188,8 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
      * @param boneName the name of the bone to link (not null, not empty)
      * @param mass the desired mass of the bone (&gt;0)
      * @param jointPreset the desired range of motion (not null)
-     * @see #setJointLimits(java.lang.String, com.jme3.bullet.animation.JointPreset) 
+     * @see #setJointLimits(java.lang.String,
+     * com.jme3.bullet.animation.JointPreset)
      */
     public void link(String boneName, float mass, JointPreset jointPreset) {
         Validate.nonEmpty(boneName, "bone name");
