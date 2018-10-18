@@ -237,6 +237,20 @@ public class BoneLink
     }
 
     /**
+     * Internal callback, invoked just before the physics is stepped.
+     */
+    void prePhysicsTick() {
+        if (kinematicWeight > 0f) {
+            /*
+             * Update the rigid body's transform, including
+             * the scale of its shape.
+             */
+            Transform transform = control.physicsTransform(bone, null);
+            rigidBody.setPhysicsTransform(transform);
+        }
+    }
+
+    /**
      * Read the name of the bone's parent in the linked-bone hierarchy.
      *
      * @return name (not null)
@@ -280,7 +294,8 @@ public class BoneLink
     }
 
     /**
-     * Update this link according to its mode.
+     * Internal callback, invoked once per frame during the logical-state
+     * update, provided the control is added to a scene.
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
@@ -289,7 +304,8 @@ public class BoneLink
 
         if (prevBoneTransforms == null) {
             /*
-             * On the first update, allocate and initialize array of transforms.
+             * On the first update, allocate and initialize
+             * the array of transforms.
              */
             int numManagedBones = managedBones.length;
             prevBoneTransforms = new Transform[numManagedBones];
@@ -421,6 +437,8 @@ public class BoneLink
      * based on the transform of the linked rigid body.
      */
     private void dynamicUpdate() {
+        assert !rigidBody.isKinematic();
+
         Transform transform
                 = control.localBoneTransform(rigidBody, bone, null);
         MySkeleton.setLocalTransform(bone, transform);
@@ -437,6 +455,7 @@ public class BoneLink
      */
     private void kinematicUpdate(float tpf) {
         assert tpf >= 0f : tpf;
+        assert rigidBody.isKinematic();
 
         Transform transform = new Transform();
 
@@ -481,14 +500,7 @@ public class BoneLink
              */
             MySkeleton.setLocalTransform(managedBone, transform);
             managedBone.updateModelTransforms();
-
-            if (managedBone == bone) {
-                /*
-                 * Update the rigid body.
-                 */
-                control.physicsTransform(bone, transform);
-                rigidBody.setPhysicsTransform(transform);
-            }
+            // The rigid-body transform gets updated by prePhysicsTick().
         }
         /*
          * If blending, increase the kinematic weight.

@@ -35,6 +35,7 @@ import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
@@ -84,7 +85,7 @@ import jme3utilities.Validate;
  * (unaffected by gravity and collisions).
  *
  * TODO handle applyLocal, handle attachments, catch ignoreTransforms, ghost
- * mode
+ * mode, dynamic freezes
  *
  * @author Stephen Gold sgold@sonic.net
  *
@@ -92,7 +93,7 @@ import jme3utilities.Validate;
  */
 public class DynamicAnimControl
         extends ConfigDynamicAnimControl
-        implements PhysicsCollisionListener {
+        implements PhysicsCollisionListener, PhysicsTickListener {
     // *************************************************************************
     // constants and loggers
 
@@ -765,7 +766,7 @@ public class DynamicAnimControl
         }
     }
     // *************************************************************************
-    // ConfigRagdollControl methods
+    // ConfigDynamicAnimControl methods
 
     /**
      * Add all managed physics objects to the physics space.
@@ -789,6 +790,7 @@ public class DynamicAnimControl
         }
 
         space.addCollisionListener(this);
+        space.addTickListener(this);
     }
 
     /**
@@ -1198,6 +1200,35 @@ public class DynamicAnimControl
                 listener.collide(bone, otherPco, event);
             }
         }
+    }
+    // *************************************************************************
+    // PhysicsTickListener methods
+
+    /**
+     * Callback from Bullet, invoked just before the physics is stepped. A good
+     * time to clear/apply forces.
+     *
+     * @param space the space that is about to be stepped (not null)
+     * @param timeStep the time per physics step (in seconds, &ge;0)
+     */
+    @Override
+    public void prePhysicsTick(PhysicsSpace space, float timeStep) {
+        torsoLink.prePhysicsTick();
+        for (BoneLink boneLink : boneLinkList) {
+            boneLink.prePhysicsTick();
+        }
+    }
+
+    /**
+     * Callback from Bullet, invoked just after the physics has been stepped,
+     * use to check for forces etc.
+     *
+     * @param space the space that was just stepped (not null)
+     * @param timeStep the time per physics step (in seconds, &ge;0)
+     */
+    @Override
+    public void physicsTick(PhysicsSpace space, float timeStep) {
+        // does nothing
     }
     // *************************************************************************
     // private methods
