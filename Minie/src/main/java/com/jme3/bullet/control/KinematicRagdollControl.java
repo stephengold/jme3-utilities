@@ -571,9 +571,9 @@ public class KinematicRagdollControl
 
     /**
      * Rebuild the ragdoll. This is useful if you applied scale to the model
-     * after it was initialized. Same as re-attaching. TODO rename?
+     * after it was initialized. Same as re-attaching.
      */
-    public void reBuild() {
+    public void rebuild() {
         Spatial controlledSpatial = getSpatial();
         if (controlledSpatial != null) {
             removeSpatialData(controlledSpatial);

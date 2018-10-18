@@ -426,7 +426,7 @@ public class TestRagdollScaling extends ActionApplication {
 
         setHeight(model, height);
         center(model);
-        krc.reBuild();
+        krc.rebuild();
     }
 
     /**
