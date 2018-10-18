@@ -52,6 +52,7 @@ import jme3utilities.math.MyMath;
 
 /**
  * Link an animated bone in a skeleton to a jointed rigid body in a ragdoll.
+ * TODO superclass shared by all links
  *
  * @author Stephen Gold sgold@sonic.net
  *
@@ -131,7 +132,7 @@ public class BoneLink
 
     /**
      * Instantiate a purely kinematic link between the specified skeleton bone
-     * and rigid body.
+     * and the specified rigid body.
      *
      * @param control the control that will manage this link (not null)
      * @param bone the skeleton bone to link (not null)
@@ -173,13 +174,28 @@ public class BoneLink
         kinematicWeight = Float.MIN_VALUE; // non-zero to trigger blending
         rigidBody.setKinematic(true);
         /*
-         * Save the starting transforms.
+         * Save bone transforms for blending.
          */
-        for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
-            Transform lastTransform = prevBoneTransforms[mbIndex];
-            startBoneTransforms[mbIndex].set(lastTransform);
+        int numManagedBones = managedBones.length;
+        if (startBoneTransforms == null) {
+            startBoneTransforms = new Transform[numManagedBones];
+            for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
+                startBoneTransforms[mbIndex] = new Transform();
+            }
         }
-
+        for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
+            Transform transform;
+            if (prevBoneTransforms == null) { // this link not updated yet
+                Bone managedBone = managedBones[mbIndex];
+                transform = MySkeleton.copyLocalTransform(managedBone, null);
+            } else {
+                transform = prevBoneTransforms[mbIndex];
+            }
+            startBoneTransforms[mbIndex].set(transform);
+        }
+        /*
+         * Take or release control of the managed bones.
+         */
         boolean wantUserControl;
         if (submode == KinematicSubmode.Animated) {
             wantUserControl = false;
@@ -202,7 +218,7 @@ public class BoneLink
     }
 
     /**
-     * Access the joint between the bone's body and its parent's body, if any.
+     * Access the joint between this link's rigid body and that of its parent.
      *
      * @return the pre-existing instance or null
      */
@@ -261,16 +277,6 @@ public class BoneLink
 
         assert managedBones == null;
         managedBones = control.listManagedBones(bone.getName());
-
-        int numManagedBones = managedBones.length;
-        assert prevBoneTransforms == null;
-        prevBoneTransforms = new Transform[numManagedBones];
-        assert startBoneTransforms == null;
-        startBoneTransforms = new Transform[numManagedBones];
-        for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
-            prevBoneTransforms[mbIndex] = new Transform();
-            startBoneTransforms[mbIndex] = new Transform();
-        }
     }
 
     /**
@@ -280,6 +286,20 @@ public class BoneLink
      */
     void update(float tpf) {
         assert tpf >= 0f : tpf;
+
+        if (prevBoneTransforms == null) {
+            /*
+             * On the first update, allocate and initialize array of transforms.
+             */
+            int numManagedBones = managedBones.length;
+            prevBoneTransforms = new Transform[numManagedBones];
+            for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
+                Bone managedBone = managedBones[mbIndex];
+                Transform boneTransform
+                        = MySkeleton.copyLocalTransform(managedBone, null);
+                prevBoneTransforms[mbIndex] = boneTransform;
+            }
+        }
 
         if (kinematicWeight > 0f) {
             kinematicUpdate(tpf);
@@ -397,8 +417,8 @@ public class BoneLink
     // private methods
 
     /**
-     * Update this linked bone in Dynamic mode, based on the transform of the
-     * linked rigid body.
+     * Update this linked bone in Dynamic mode, setting its local transform
+     * based on the transform of the linked rigid body.
      */
     private void dynamicUpdate() {
         Transform transform

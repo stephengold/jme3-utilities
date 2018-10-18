@@ -53,7 +53,8 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
- * Link the torso of an animated model to a rigid body in a ragdoll.
+ * Link the torso of an animated model to a rigid body in a ragdoll. TODO
+ * superclass shared by all links
  *
  * @author Stephen Gold sgold@sonic.net
  *
@@ -73,7 +74,8 @@ public class TorsoLink
     // fields
 
     /**
-     * main bone: the root bone with the most animation weight (not null)
+     * main bone in the skeleton: the root bone with the most animation weight
+     * (not null)
      */
     private Bone bone;
     /**
@@ -103,7 +105,7 @@ public class TorsoLink
      */
     private PhysicsRigidBody rigidBody;
     /**
-     * skeleton being controlled
+     * skeleton being controlled - TODO get from control?
      */
     private Skeleton skeleton = null;
     /**
@@ -190,18 +192,34 @@ public class TorsoLink
         kinematicWeight = Float.MIN_VALUE; // non-zero to trigger blending
         rigidBody.setKinematic(true);
         /*
-         * Save the starting transforms.
+         * Save transforms for blending.
          */
         if (endModelTransform == null) {
             startModelTransform = null;
         } else {
-            startModelTransform = control.getSpatial().getLocalTransform().clone();
+            startModelTransform
+                    = control.getSpatial().getLocalTransform().clone();
         }
-        for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
-            Transform lastTransform = prevBoneTransforms[mbIndex];
-            startBoneTransforms[mbIndex].set(lastTransform);
+        int numManagedBones = managedBones.length;
+        if (startBoneTransforms == null) {
+            startBoneTransforms = new Transform[numManagedBones];
+            for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
+                startBoneTransforms[mbIndex] = new Transform();
+            }
         }
-
+        for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
+            Transform transform;
+            if (prevBoneTransforms == null) { // this link not updated yet
+                Bone managedBone = managedBones[mbIndex];
+                transform = MySkeleton.copyLocalTransform(managedBone, null);
+            } else {
+                transform = prevBoneTransforms[mbIndex];
+            }
+            startBoneTransforms[mbIndex].set(transform);
+        }
+        /*
+         * Take or release control of the managed bones.
+         */
         boolean wantUserControl;
         if (submode == KinematicSubmode.Animated) {
             wantUserControl = false;
@@ -262,24 +280,12 @@ public class TorsoLink
         if (skeleton == null) {
             assert managedBones != null;
             managedBones = null;
-            assert prevBoneTransforms != null;
             prevBoneTransforms = null;
-            assert startBoneTransforms != null;
             startBoneTransforms = null;
-
         } else {
             assert managedBones == null;
-            managedBones = control.listManagedBones(DynamicAnimControl.torsoName);
-
-            int numManagedBones = managedBones.length;
-            assert prevBoneTransforms == null;
-            prevBoneTransforms = new Transform[numManagedBones];
-            assert startBoneTransforms == null;
-            startBoneTransforms = new Transform[numManagedBones];
-            for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
-                prevBoneTransforms[mbIndex] = new Transform();
-                startBoneTransforms[mbIndex] = new Transform();
-            }
+            managedBones
+                    = control.listManagedBones(DynamicAnimControl.torsoName);
         }
     }
 
@@ -290,6 +296,21 @@ public class TorsoLink
      */
     void update(float tpf) {
         assert tpf >= 0f : tpf;
+
+        if (prevBoneTransforms == null) {
+            /*
+             * On the first update, allocate and initialize
+             * the array of transforms.
+             */
+            int numManagedBones = managedBones.length;
+            prevBoneTransforms = new Transform[numManagedBones];
+            for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
+                Bone managedBone = managedBones[mbIndex];
+                Transform boneTransform
+                        = MySkeleton.copyLocalTransform(managedBone, null);
+                prevBoneTransforms[mbIndex] = boneTransform;
+            }
+        }
 
         if (kinematicWeight > 0f) {
             kinematicUpdate(tpf);
@@ -416,8 +437,8 @@ public class TorsoLink
     // private methods
 
     /**
-     * Update this torso in Dynamic mode, based on the transform of the rigid
-     * body.
+     * Update this torso in Dynamic mode, setting the local transform of the
+     * model's root spatial based on the transform of the linked rigid body.
      */
     private void dynamicUpdate() {
         RigidBodyMotionState motionState = rigidBody.getMotionState();
@@ -455,6 +476,10 @@ public class TorsoLink
         Transform transform = new Transform();
 
         if (endModelTransform != null && kinematicWeight < 1f) {
+            /*
+             * For a smooth transition, blend the saved model transform
+             * (from the start of the blend interval) into the goal transform.
+             */
             Quaternion startQuat = startModelTransform.getRotation();
             Quaternion endQuat = endModelTransform.getRotation();
             if (startQuat.dot(endQuat) < 0f) {
