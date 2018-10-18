@@ -408,6 +408,16 @@ public class DynamicAnimControl
     }
 
     /**
+     * Access the skeleton. This returns null if the control is not added to a
+     * spatial.
+     *
+     * @return the pre-existing skeleton, or null
+     */
+    public Skeleton getSkeleton() {
+        return skeleton;
+    }
+
+    /**
      * Access the physics link for the torso. This returns null if the control
      * is not added to a spatial.
      *
