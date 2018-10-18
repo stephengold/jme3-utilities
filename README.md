@@ -469,8 +469,11 @@ have gone before.  I therefore acknowledge the following software developers:
   it ... thank you yet again!
 + Paul Speed, for helpful insights which got me unstuck during debugging
 + Rémy Bouquet (aka "nehon") for creating the BVH Retarget Project (parts of
-  which are incorporated into the Wes library)
-  and also for many helpful insights
+  which are incorporated into the Wes library) and co-creating
+  KinematicRagdollControl (on which DynamicAnimControl is based) and also for
+  many helpful insights
++ Normen Hansen (aka "normen") for creating most of the jme3-bullet library
+ (on which Minie is based) and also for helpful insights
 + Alexandr Brui (aka "javasabr") for a solving a problem with the
   de-serialization of SkyControl
 + the brave souls who volunteered to be alpha testers for SkyControl, including:
