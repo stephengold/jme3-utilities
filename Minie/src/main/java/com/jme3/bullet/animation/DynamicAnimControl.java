@@ -990,6 +990,7 @@ public class DynamicAnimControl
         }
 
         space.removeCollisionListener(this);
+        space.removeTickListener(this);
     }
 
     /**
