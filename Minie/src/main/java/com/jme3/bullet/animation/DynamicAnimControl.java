@@ -1220,15 +1220,21 @@ public class DynamicAnimControl
     }
 
     /**
-     * Callback from Bullet, invoked just after the physics has been stepped,
-     * use to check for forces etc.
+     * Callback from Bullet, invoked just after the physics has been stepped.
+     * Used to re-activate deactivated rigid bodies.
      *
      * @param space the space that was just stepped (not null)
      * @param timeStep the time per physics step (in seconds, &ge;0)
      */
     @Override
     public void physicsTick(PhysicsSpace space, float timeStep) {
-        // does nothing
+        PhysicsRigidBody prb = torsoLink.getRigidBody();
+        prb.activate();
+
+        for (BoneLink boneLink : boneLinkList) {
+            prb = boneLink.getRigidBody();
+            prb.activate();
+        }
     }
     // *************************************************************************
     // private methods
