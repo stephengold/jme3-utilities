@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2018 jMonkeyEngine
+ * Copyright (c) 2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.jme3.bullet.control;
+package com.jme3.bullet.animation;
 
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
@@ -40,10 +40,6 @@ import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.RagdollCollisionListener;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.control.ragdoll.ConfigRagdollControl;
-import com.jme3.bullet.control.ragdoll.JointPreset;
-import com.jme3.bullet.control.ragdoll.KinematicSubmode;
-import com.jme3.bullet.control.ragdoll.RagUtils;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
@@ -74,34 +70,28 @@ import jme3utilities.Validate;
 
 /**
  * Before adding this control to a spatial, configure it by invoking
- * {@link #link(java.lang.String, float, com.jme3.bullet.control.ragdoll.JointPreset)}
+ * {@link #link(java.lang.String, float, com.jme3.bullet.animation.JointPreset)}
  * for each bone that should have its own rigid body. Leave some unlinked bones
- * near the root of the skeleton to form the torso.
+ * near the root of the skeleton to form the torso of the ragdoll.
  * <p>
- * When you add the control to a spatial, it generates a rigid body with a hull
- * collision shape for the torso and for each linked bone. It also creates a
- * SixDofJoint connecting each linked bone to its parent in the linked-bone
- * hierarchy. The mass of each rigid body and the range-of-motion of each joint
- * can be reconfigured on the fly.
+ * When you add the control to a spatial and set its physics space, it generates
+ * a rigid body with a hull collision shape for the torso and for each linked
+ * bone. It also creates a SixDofJoint connecting each linked bone to its parent
+ * in the linked-bone hierarchy. The mass of each rigid body and the
+ * range-of-motion of each joint can be reconfigured on the fly.
  * <p>
- * This control has 3 modes: <ul> <li><strong>The kinematic modes :</strong><br>
- * this is the default behavior, this means that the collision shapes of the
- * body are able to interact with physics enabled objects. in this mode physics
- * shapes follow the motion of the animated skeleton (for example animated by a
- * key framed animation) this mode is enabled by calling setKinematicMode();
- * </li> <li><strong>The ragdoll modes:</strong><br> To enable this behavior,
- * you need to invoke the setRagdollMode() method. In this mode the character is
- * entirely controlled by physics, so it will fall under the gravity and move if
- * any force is applied to it.</li>
- * </ul>
+ * Each link is either dynamic (driven by gravity and collisions) or kinematic
+ * (unaffected by gravity and collisions).
  *
- * TODO handle applyLocal, handle attachments, catch ignoreTransforms, rename
- * PhysicsAnimControl or RagdollControl or DynamicControl, ghost mode
+ * TODO handle applyLocal, handle attachments, catch ignoreTransforms, ghost
+ * mode
  *
- * @author Normen Hansen and Rémy Bouquet (Nehon)
+ * @author Stephen Gold sgold@sonic.net
+ *
+ * Based on KinematicRagdollControl by Normen Hansen and Rémy Bouquet (Nehon).
  */
-public class KinematicRagdollControl
-        extends ConfigRagdollControl
+public class DynamicAnimControl
+        extends ConfigDynamicAnimControl
         implements PhysicsCollisionListener {
     // *************************************************************************
     // constants and loggers
@@ -110,10 +100,20 @@ public class KinematicRagdollControl
      * message logger for this class
      */
     final public static Logger logger3
-            = Logger.getLogger(KinematicRagdollControl.class.getName());
+            = Logger.getLogger(DynamicAnimControl.class.getName());
     // *************************************************************************
     // fields
 
+    /**
+     * viscous damping ratio for new rigid bodies (0&rarr;no damping,
+     * 1&rarr;critically damped, default=0.6)
+     */
+    private float damping = 0.6f;
+    /**
+     * minimum applied impulse for a collision event to be dispatched to
+     * listeners (default=0)
+     */
+    private float eventDispatchImpulseThreshold = 0f;
     /**
      * bone links in a pre-order, depth-first traversal of the linked-bone
      * hierarchy
@@ -133,21 +133,6 @@ public class KinematicRagdollControl
      */
     private Skeleton skeleton = null;
     /**
-     * mesh scale at the time this control was added to a spatial (in world
-     * coordinates)
-     */
-    private Vector3f initScale = null;
-    /**
-     * minimum applied impulse for a collision event to be dispatched to
-     * listeners (default=0)
-     */
-    private float eventDispatchImpulseThreshold = 0f;
-    /**
-     * viscous damping ratio for new rigid bodies (0&rarr;no damping,
-     * 1&rarr;critically damped, default=0.6)
-     */
-    private float damping = 0.6f;
-    /**
      * spatial that provides the mesh-coordinate transform
      */
     private Spatial transformer = null;
@@ -155,13 +140,18 @@ public class KinematicRagdollControl
      * torso link for this control
      */
     private TorsoLink torsoLink = null;
+    /**
+     * mesh scale at the time this control was added to a spatial (in world
+     * coordinates)
+     */
+    private Vector3f initScale = null;
     // *************************************************************************
     // constructors
 
     /**
      * Instantiate an enabled control without any linked bones (torso only).
      */
-    public KinematicRagdollControl() {
+    public DynamicAnimControl() {
     }
     // *************************************************************************
     // new methods exposed
@@ -930,10 +920,10 @@ public class KinematicRagdollControl
      * @return a new instance
      */
     @Override
-    public KinematicRagdollControl jmeClone() {
+    public DynamicAnimControl jmeClone() {
         try {
-            KinematicRagdollControl clone
-                    = (KinematicRagdollControl) super.clone();
+            DynamicAnimControl clone
+                    = (DynamicAnimControl) super.clone();
             return clone;
         } catch (CloneNotSupportedException exception) {
             throw new RuntimeException(exception);
@@ -1156,7 +1146,7 @@ public class KinematicRagdollControl
          * Determine which bone was involved (if any) and also the
          * other collision object involved.
          */
-        boolean krcInvolved = false;
+        boolean thisControlInvolved = false;
         Bone bone = null;
         PhysicsCollisionObject otherPco = null;
         PhysicsCollisionObject pcoA = event.getObjectA();
@@ -1166,20 +1156,20 @@ public class KinematicRagdollControl
         Object userB = pcoB.getUserObject();
         if (userA instanceof BoneLink) {
             BoneLink boneLink = (BoneLink) userA;
-            krcInvolved = true;
+            thisControlInvolved = true;
             bone = boneLink.getBone();
             otherPco = pcoB;
-        } else if (userA == this) {
-            krcInvolved = true;
+        } else if (userA == this) { // TODO check for torsoLink
+            thisControlInvolved = true;
             bone = null;
             otherPco = pcoB;
         } else if (userB instanceof BoneLink) {
             BoneLink boneLink = (BoneLink) userB;
-            krcInvolved = true;
+            thisControlInvolved = true;
             bone = boneLink.getBone();
             otherPco = pcoA;
         } else if (userB == this) {
-            krcInvolved = true;
+            thisControlInvolved = true;
             bone = null;
             otherPco = pcoA;
         }
@@ -1193,7 +1183,7 @@ public class KinematicRagdollControl
          * Dispatch an event if this control was involved in the collision.
          * TODO flag self collisions
          */
-        if (krcInvolved) {
+        if (thisControlInvolved) {
             for (RagdollCollisionListener listener : listeners) {
                 listener.collide(bone, otherPco, event);
             }

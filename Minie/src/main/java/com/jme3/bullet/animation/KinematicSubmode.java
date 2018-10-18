@@ -29,10 +29,10 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.jme3.bullet.control.ragdoll;
+package com.jme3.bullet.animation;
 
 /**
- * Enumerate submodes for a bone link in kinematic mode.
+ * Enumerate submodes for a link in kinematic mode.
  *
  * @author Stephen Gold sgold@sonic.net
  */

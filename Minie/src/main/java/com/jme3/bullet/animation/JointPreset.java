@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2018 jMonkeyEngine
+ * Copyright (c) 2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.jme3.bullet.control.ragdoll;
+package com.jme3.bullet.animation;
 
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.joints.SixDofJoint;
@@ -46,7 +46,9 @@ import jme3utilities.Validate;
 /**
  * Range of motion for a ragdoll joint. Note: immutable.
  *
- * @author Nehon
+ * @author Stephen Gold sgold@sonic.net
+ *
+ * Based on RagdollPreset by Rémy Bouquet (Nehon).
  */
 public class JointPreset implements Savable {
     // *************************************************************************

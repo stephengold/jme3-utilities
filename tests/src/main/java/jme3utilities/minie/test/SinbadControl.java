@@ -26,16 +26,16 @@
  */
 package jme3utilities.minie.test;
 
-import com.jme3.bullet.control.KinematicRagdollControl;
-import com.jme3.bullet.control.ragdoll.JointPreset;
+import com.jme3.bullet.animation.DynamicAnimControl;
+import com.jme3.bullet.animation.JointPreset;
 import java.util.logging.Logger;
 
 /**
- * A KinematicRagdollControl configured specifically for Sinbad.
+ * A DynamicAnimControl configured specifically for the Sinbad model.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class SinbadControl extends KinematicRagdollControl {
+public class SinbadControl extends DynamicAnimControl {
     // *************************************************************************
     // constants and loggers
 

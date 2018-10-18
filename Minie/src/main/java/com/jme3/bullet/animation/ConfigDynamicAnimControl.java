@@ -29,7 +29,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.jme3.bullet.control.ragdoll;
+package com.jme3.bullet.animation;
 
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
@@ -53,12 +53,13 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * Methods to configure a ragdoll control and access its configuration and also
- * some protected utility methods.
+ * Methods to configure a DynamicAnimControl and access its configuration.
  *
  * @author Stephen Gold sgold@sonic.net
+ *
+ * Based on KinematicRagdollControl by Normen Hansen and Rémy Bouquet (Nehon).
  */
-abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
+abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     // *************************************************************************
     // constants and loggers
 
@@ -66,7 +67,7 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
      * message logger for this class
      */
     final public static Logger logger2
-            = Logger.getLogger(ConfigRagdollControl.class.getName());
+            = Logger.getLogger(ConfigDynamicAnimControl.class.getName());
     /**
      * name for the ragdoll's torso, must not be used for any bone
      */
@@ -97,7 +98,7 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
     /**
      * Instantiate an enabled control without any linked bones (torso only).
      */
-    public ConfigRagdollControl() {
+    public ConfigDynamicAnimControl() {
     }
     // *************************************************************************
     // new methods exposed
@@ -187,8 +188,7 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
      * @param boneName the name of the bone to link (not null, not empty)
      * @param mass the desired mass of the bone (&gt;0)
      * @param jointPreset the desired range of motion (not null)
-     * @see #setJointLimits(java.lang.String,
-     * com.jme3.bullet.control.ragdoll.JointPreset)
+     * @see #setJointLimits(java.lang.String, com.jme3.bullet.animation.JointPreset) 
      */
     public void link(String boneName, float mass, JointPreset jointPreset) {
         Validate.nonEmpty(boneName, "bone name");
@@ -349,10 +349,10 @@ abstract public class ConfigRagdollControl extends AbstractPhysicsControl {
      * @return a new instance
      */
     @Override
-    public ConfigRagdollControl jmeClone() {
+    public ConfigDynamicAnimControl jmeClone() {
         try {
-            ConfigRagdollControl clone
-                    = (ConfigRagdollControl) super.clone();
+            ConfigDynamicAnimControl clone
+                    = (ConfigDynamicAnimControl) super.clone();
             return clone;
         } catch (CloneNotSupportedException exception) {
             throw new RuntimeException(exception);

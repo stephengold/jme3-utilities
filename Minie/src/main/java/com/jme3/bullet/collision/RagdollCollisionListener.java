@@ -34,14 +34,15 @@ package com.jme3.bullet.collision;
 import com.jme3.animation.Bone;
 
 /**
- * Interface to receive notifications whenever a KinematicRagdollControl
- * collides with another physics object.
+ * Interface to receive notifications whenever a ragdoll collides with another
+ * physics object.
  *
  * @author Nehon
  */
 public interface RagdollCollisionListener {
+
     /**
-     * Invoked when a collision involving a KinematicRagdollControl occurs.
+     * Invoked when a collision involving a ragdoll occurs.
      *
      * @param bone the ragdoll bone that collided (not null)
      * @param object the collision object that collided with the bone (not null)

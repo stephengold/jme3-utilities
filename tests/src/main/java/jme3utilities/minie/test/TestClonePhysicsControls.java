@@ -27,11 +27,11 @@
 package jme3utilities.minie.test;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.bullet.animation.DynamicAnimControl;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.bullet.control.GhostControl;
-import com.jme3.bullet.control.KinematicRagdollControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
 import com.jme3.math.Vector3f;
@@ -80,9 +80,9 @@ public class TestClonePhysicsControls extends SimpleApplication {
         BetterCharacterControl bccClone
                 = (BetterCharacterControl) Misc.deepCopy(bcc);
 
-        KinematicRagdollControl krc = new KinematicRagdollControl();
-        KinematicRagdollControl krcClone
-                = (KinematicRagdollControl) Misc.deepCopy(krc);
+        DynamicAnimControl dac = new DynamicAnimControl();
+        DynamicAnimControl dacClone
+                = (DynamicAnimControl) Misc.deepCopy(dac);
 
         stop();
         // TODO test cloning controls added to a scene graph

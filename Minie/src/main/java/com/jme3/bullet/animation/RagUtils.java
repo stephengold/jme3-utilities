@@ -29,7 +29,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.jme3.bullet.control.ragdoll;
+package com.jme3.bullet.animation;
 
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
@@ -58,9 +58,11 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * Utility methods used by KinematicRagdollControl and associated classes.
+ * Utility methods used by DynamicAnimControl and associated classes.
  *
  * @author Stephen Gold sgold@sonic.net
+ *
+ * Based on KinematicRagdollControl by Normen Hansen and Rémy Bouquet (Nehon).
  */
 public class RagUtils {
     // *************************************************************************
@@ -259,7 +261,7 @@ public class RagUtils {
     }
 
     /**
-     * Validate a skeleton for use in a KinematicRagdollControl.
+     * Validate a skeleton for use in a DynamicAnimControl.
      *
      * @param skeleton the skeleton to validate (not null, unaffected)
      */
@@ -282,7 +284,7 @@ public class RagUtils {
                 String msg = String.format("Bone %d in skeleton has null name!",
                         boneIndex);
                 throw new IllegalArgumentException(msg);
-            } else if (boneName.equals(ConfigRagdollControl.torsoName)) {
+            } else if (boneName.equals(ConfigDynamicAnimControl.torsoName)) {
                 String msg = String.format(
                         "Bone %d in skeleton has a reserved name!",
                         boneIndex);
@@ -305,7 +307,7 @@ public class RagUtils {
      * unaffected)
      * @return a new map from linked-bone names to total weight
      */
-    protected static Map<String, Float> weightMap(int[] biArray,
+    public static Map<String, Float> weightMap(int[] biArray,
             float[] bwArray, String[] lbNames) {
         assert biArray.length == 4;
         assert bwArray.length == 4;

@@ -33,9 +33,9 @@ import com.jme3.asset.AssetNotFoundException;
 import com.jme3.asset.ModelKey;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.animation.DynamicAnimControl;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.control.KinematicRagdollControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.export.binary.BinaryExporter;
@@ -69,7 +69,7 @@ import jme3utilities.ui.InputMode;
 import jme3utilities.ui.Signals;
 
 /**
- * Test scaling and load/save on a KinematicRagdollControl.
+ * Test scaling and load/save on a DynamicAnimControl.
  */
 public class TestRagdollScaling extends ActionApplication {
     // *************************************************************************
@@ -89,8 +89,8 @@ public class TestRagdollScaling extends ActionApplication {
 
     private AnimChannel animChannel = null;
     private BulletAppState bulletAppState;
+    private DynamicAnimControl dac;
     private int scaleIndex = 0;
-    private KinematicRagdollControl krc;
     private Node model;
     private PhysicsSpace physicsSpace;
     private RigidBodyControl boxRbc;
@@ -152,7 +152,7 @@ public class TestRagdollScaling extends ActionApplication {
         sv.setEnabled(true);
 
         PhysicsSpace ps = bulletAppState.getPhysicsSpace();
-        krc.setPhysicsSpace(ps);
+        dac.setPhysicsSpace(ps);
         boxRbc.setPhysicsSpace(ps);
     }
 
@@ -189,10 +189,10 @@ public class TestRagdollScaling extends ActionApplication {
         if (ongoing) {
             switch (actionString) {
                 case "amputate left elbow":
-                    krc.amputateHierarchy("Ulna.L", 2f);
+                    dac.amputateHierarchy("Ulna.L", 2f);
                     return;
                 case "blend all to kinematic":
-                    krc.blendToKinematicMode(2f, null);
+                    dac.blendToKinematicMode(2f, null);
                     return;
                 case "dump physicsSpace":
                     dumpPhysicsSpace();
@@ -201,21 +201,21 @@ public class TestRagdollScaling extends ActionApplication {
                     dumpScene();
                     return;
                 case "freeze upper body":
-                    krc.freezeHierarchy("Chest");
+                    dac.freezeHierarchy("Chest");
                     return;
                 case "go bind pose":
-                    krc.bindHierarchy(KinematicRagdollControl.torsoName, 2f);
+                    dac.bindHierarchy(DynamicAnimControl.torsoName, 2f);
                     return;
                 case "go floating":
-                    krc.setDynamicHierarchy(KinematicRagdollControl.torsoName,
+                    dac.setDynamicHierarchy(DynamicAnimControl.torsoName,
                             Vector3f.ZERO);
                     return;
                 case "go limp":
-                    krc.setRagdollMode();
+                    dac.setRagdollMode();
                     return;
                 case "limp left elbow":
-                    Vector3f ragdollGravity = krc.gravity(null);
-                    krc.setDynamic("Ulna.L", ragdollGravity);
+                    Vector3f ragdollGravity = dac.gravity(null);
+                    dac.setDynamic("Ulna.L", ragdollGravity);
                     return;
                 case "load":
                     load();
@@ -224,11 +224,11 @@ public class TestRagdollScaling extends ActionApplication {
                     nextScale();
                     return;
                 case "raise leftHand":
-                    krc.setDynamicHierarchy("Clavicle.L",
+                    dac.setDynamicHierarchy("Clavicle.L",
                             new Vector3f(0f, 50f, 0f));
                     return;
                 case "raise rightHand":
-                    krc.setDynamicHierarchy("Clavicle.R",
+                    dac.setDynamicHierarchy("Clavicle.R",
                             new Vector3f(0f, 50f, 0f));
                     return;
                 case "save":
@@ -288,7 +288,7 @@ public class TestRagdollScaling extends ActionApplication {
     }
 
     /**
-     * Add a Jaime model with a KinematicRagdollControl.
+     * Add a Jaime model.
      */
     private void addJaime() {
         model = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
@@ -297,8 +297,8 @@ public class TestRagdollScaling extends ActionApplication {
         setHeight(model, 2f);
         center(model);
 
-        krc = new KinematicRagdollControl();
-        model.addControl(krc);
+        dac = new DynamicAnimControl();
+        model.addControl(dac);
         animationName = "Punches";
     }
 
@@ -322,7 +322,7 @@ public class TestRagdollScaling extends ActionApplication {
     }
 
     /**
-     * Add a Sinbad model with a KinematicRagdollControl.
+     * Add a Sinbad model.
      */
     private void addSinbad() {
         model = (Node) assetManager.loadModel("Models/Sinbad/Sinbad.mesh.xml");
@@ -335,8 +335,8 @@ public class TestRagdollScaling extends ActionApplication {
             spatial.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         }
 
-        krc = new SinbadControl();
-        model.addControl(krc);
+        dac = new SinbadControl();
+        model.addControl(dac);
         animationName = "Dance";
     }
 
@@ -424,7 +424,7 @@ public class TestRagdollScaling extends ActionApplication {
 
         setHeight(model, height);
         center(model);
-        krc.rebuild();
+        dac.rebuild();
     }
 
     /**

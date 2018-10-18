@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2018 jMonkeyEngine
+ * Copyright (c) 2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,11 +29,9 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.jme3.bullet.control;
+package com.jme3.bullet.animation;
 
 import com.jme3.animation.Bone;
-import com.jme3.bullet.control.ragdoll.KinematicSubmode;
-import com.jme3.bullet.control.ragdoll.RagUtils;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.export.InputCapsule;
@@ -55,7 +53,9 @@ import jme3utilities.math.MyMath;
 /**
  * Link an animated bone in a skeleton to a jointed rigid body in a ragdoll.
  *
- * @author Normen Hansen and Rémy Bouquet (Nehon)
+ * @author Stephen Gold sgold@sonic.net
+ *
+ * Based on KinematicRagdollControl by Normen Hansen and Rémy Bouquet (Nehon).
  */
 public class BoneLink
         implements JmeCloneable, Savable {
@@ -80,6 +80,10 @@ public class BoneLink
      */
     private Bone[] managedBones = null;
     /**
+     * back pointer to the control that manages this link
+     */
+    private DynamicAnimControl control;
+    /**
      * duration of the most recent blend interval (in seconds, &ge;0)
      */
     private float blendInterval = 1f;
@@ -88,10 +92,6 @@ public class BoneLink
      * kinematic, default=1, progresses from 0 to 1 during the blend interval)
      */
     private float kinematicWeight = 1f;
-    /**
-     * back pointer to the control that manages this link
-     */
-    private KinematicRagdollControl krc;
     /**
      * submode when kinematic
      */
@@ -133,17 +133,17 @@ public class BoneLink
      * Instantiate a purely kinematic link between the specified skeleton bone
      * and rigid body.
      *
-     * @param krc the control that will manage this link (not null)
+     * @param control the control that will manage this link (not null)
      * @param bone the skeleton bone to link (not null)
      * @param rigidBody the rigid body to link (not null)
      */
-    BoneLink(KinematicRagdollControl krc, Bone bone,
+    BoneLink(DynamicAnimControl control, Bone bone,
             PhysicsRigidBody rigidBody) {
-        assert krc != null;
+        assert control != null;
         assert bone != null;
         assert rigidBody != null;
 
-        this.krc = krc;
+        this.control = control;
         this.bone = bone;
         this.rigidBody = rigidBody;
 
@@ -152,7 +152,7 @@ public class BoneLink
         rigidBody.setUserObject(this);
 
         String name = bone.getName();
-        parentName = krc.parentName(name);
+        parentName = control.parentName(name);
     }
     // *************************************************************************
     // new methods exposed
@@ -260,7 +260,7 @@ public class BoneLink
         this.joint = joint;
 
         assert managedBones == null;
-        managedBones = krc.listManagedBones(bone.getName());
+        managedBones = control.listManagedBones(bone.getName());
 
         int numManagedBones = managedBones.length;
         assert prevBoneTransforms == null;
@@ -311,7 +311,7 @@ public class BoneLink
     public void cloneFields(Cloner cloner, Object original) {
         bone = cloner.clone(bone);
         managedBones = cloner.clone(managedBones);
-        krc = cloner.clone(krc);
+        control = cloner.clone(control);
         rigidBody = cloner.clone(rigidBody);
         joint = cloner.clone(joint);
         prevBoneTransforms = cloner.clone(prevBoneTransforms);
@@ -357,9 +357,9 @@ public class BoneLink
             }
         }
 
+        control = (DynamicAnimControl) ic.readSavable("control", null);
         blendInterval = ic.readFloat("blendInterval", 1f);
         kinematicWeight = ic.readFloat("kinematicWeight", 1f);
-        krc = (KinematicRagdollControl) ic.readSavable("krc", null);
         submode = ic.readEnum("submode", KinematicSubmode.class,
                 KinematicSubmode.Animated);
         rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
@@ -383,9 +383,9 @@ public class BoneLink
 
         oc.write(bone, "bone", null);
         oc.write(managedBones, "managedBones", null);
+        oc.write(control, "control", null);
         oc.write(blendInterval, "blendInterval", 1f);
         oc.write(kinematicWeight, "kinematicWeight", 1f);
-        oc.write(krc, "krc", null);
         oc.write(submode, "submode", KinematicSubmode.Animated);
         oc.write(rigidBody, "rigidBody", null);
         oc.write(joint, "joint", null);
@@ -402,7 +402,7 @@ public class BoneLink
      */
     private void dynamicUpdate() {
         Transform transform
-                = krc.localBoneTransform(rigidBody, bone, null);
+                = control.localBoneTransform(rigidBody, bone, null);
         MySkeleton.setLocalTransform(bone, transform);
 
         for (Bone managedBone : managedBones) {
@@ -466,7 +466,7 @@ public class BoneLink
                 /*
                  * Update the rigid body.
                  */
-                krc.physicsTransform(bone, transform);
+                control.physicsTransform(bone, transform);
                 rigidBody.setPhysicsTransform(transform);
             }
         }

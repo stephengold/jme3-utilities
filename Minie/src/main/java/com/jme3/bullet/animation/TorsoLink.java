@@ -29,12 +29,10 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.jme3.bullet.control;
+package com.jme3.bullet.animation;
 
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
-import com.jme3.bullet.control.ragdoll.KinematicSubmode;
-import com.jme3.bullet.control.ragdoll.RagUtils;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.objects.infos.RigidBodyMotionState;
 import com.jme3.export.InputCapsule;
@@ -58,6 +56,8 @@ import jme3utilities.math.MyMath;
  * Link the torso of an animated model to a rigid body in a ragdoll.
  *
  * @author Stephen Gold sgold@sonic.net
+ *
+ * Based on KinematicRagdollControl by Normen Hansen and Rémy Bouquet (Nehon).
  */
 public class TorsoLink
         implements JmeCloneable, Savable {
@@ -82,6 +82,10 @@ public class TorsoLink
      */
     private Bone[] managedBones = null;
     /**
+     * back pointer to the control that manages this link
+     */
+    private DynamicAnimControl control;
+    /**
      * duration of the most recent blend interval (in seconds, &ge;0)
      */
     private float blendInterval = 1f;
@@ -90,10 +94,6 @@ public class TorsoLink
      * kinematic, default=1, progresses from 0 to 1 during the blend interval)
      */
     private float kinematicWeight = 1f;
-    /**
-     * back pointer to the control that manages this link
-     */
-    private KinematicRagdollControl krc;
     /**
      * submode when kinematic
      */
@@ -144,20 +144,20 @@ public class TorsoLink
      * Instantiate a purely kinematic link between the torso of the specified
      * control and the specified rigid body.
      *
-     * @param krc the control that will manage this link (not null)
+     * @param control the control that will manage this link (not null)
      * @param mainBone the root bone with the most animation weight (not null)
      * @param meshToModel the transform from mesh coordinates to model
      * coordinates (not null, unaffected)
      * @param rigidBody the rigid body to link (not null)
      */
-    TorsoLink(KinematicRagdollControl krc, Bone mainBone,
+    TorsoLink(DynamicAnimControl control, Bone mainBone,
             Transform meshToModel, PhysicsRigidBody rigidBody) {
-        assert krc != null;
+        assert control != null;
         assert mainBone != null;
         assert meshToModel != null;
         assert rigidBody != null;
 
-        this.krc = krc;
+        this.control = control;
         this.bone = mainBone;
         this.meshToModel = meshToModel.clone();
         this.rigidBody = rigidBody;
@@ -195,7 +195,7 @@ public class TorsoLink
         if (endModelTransform == null) {
             startModelTransform = null;
         } else {
-            startModelTransform = krc.getSpatial().getLocalTransform().clone();
+            startModelTransform = control.getSpatial().getLocalTransform().clone();
         }
         for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
             Transform lastTransform = prevBoneTransforms[mbIndex];
@@ -269,7 +269,7 @@ public class TorsoLink
 
         } else {
             assert managedBones == null;
-            managedBones = krc.listManagedBones(KinematicRagdollControl.torsoName);
+            managedBones = control.listManagedBones(DynamicAnimControl.torsoName);
 
             int numManagedBones = managedBones.length;
             assert prevBoneTransforms == null;
@@ -321,7 +321,7 @@ public class TorsoLink
     public void cloneFields(Cloner cloner, Object original) {
         bone = cloner.clone(bone);
         managedBones = cloner.clone(managedBones);
-        krc = cloner.clone(krc);
+        control = cloner.clone(control);
         rigidBody = cloner.clone(rigidBody);
         endModelTransform = cloner.clone(endModelTransform);
         meshToModel = cloner.clone(meshToModel);
@@ -369,12 +369,13 @@ public class TorsoLink
             }
         }
 
+        control = (DynamicAnimControl) ic.readSavable("control", null);
         blendInterval = ic.readFloat("blendInterval", 1f);
         kinematicWeight = ic.readFloat("kinematicWeight", 1f);
-        krc = (KinematicRagdollControl) ic.readSavable("krc", null);
         submode = ic.readEnum("submode", KinematicSubmode.class,
                 KinematicSubmode.Animated);
         rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
+        skeleton = (Skeleton) ic.readSavable("skeleton", null);
         endModelTransform = (Transform) ic.readSavable("endModelTransform",
                 new Transform());
         meshToModel
@@ -399,9 +400,9 @@ public class TorsoLink
 
         oc.write(bone, "bone", null);
         oc.write(managedBones, "managedBones", null);
+        oc.write(control, "control", null);
         oc.write(blendInterval, "blendInterval", 1f);
         oc.write(kinematicWeight, "kinematicWeight", 1f);
-        oc.write(krc, "krc", null);
         oc.write(submode, "submode", KinematicSubmode.Animated);
         oc.write(rigidBody, "rigidBody", null);
         oc.write(skeleton, "skeleton", null);
@@ -425,7 +426,7 @@ public class TorsoLink
         rigidBody.getPhysicsScale(scale);
 
         Transform worldToParent; // inverse world transform of the parent node
-        Node parent = krc.getSpatial().getParent();
+        Node parent = control.getSpatial().getParent();
         if (parent == null) {
             worldToParent = new Transform();
         } else {
@@ -436,7 +437,7 @@ public class TorsoLink
         Transform transform = meshToModel.clone();
         transform.combineWithParent(torsoTransform);
         transform.combineWithParent(worldToParent);
-        krc.getSpatial().setLocalTransform(transform);
+        control.getSpatial().setLocalTransform(transform);
 
         for (Bone managedBone : managedBones) {
             managedBone.updateModelTransforms();
@@ -461,7 +462,7 @@ public class TorsoLink
             }
             MyMath.slerp(kinematicWeight, startModelTransform,
                     endModelTransform, transform);
-            krc.getSpatial().setLocalTransform(transform);
+            control.getSpatial().setLocalTransform(transform);
         }
 
         for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
@@ -510,7 +511,7 @@ public class TorsoLink
                 /*
                  * Update the rigid body.
                  */
-                krc.physicsTransform(bone, transform);
+                control.physicsTransform(bone, transform);
                 rigidBody.setPhysicsTransform(transform);
             }
         }
