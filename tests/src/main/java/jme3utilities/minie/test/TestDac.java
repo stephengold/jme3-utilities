@@ -90,7 +90,6 @@ public class TestDac extends ActionApplication {
     private AnimChannel animChannel = null;
     private BulletAppState bulletAppState;
     private DynamicAnimControl dac;
-    private int scaleIndex = 0;
     private Node model;
     private RigidBodyControl boxRbc;
     private SkeletonVisualizer sv;
@@ -98,6 +97,7 @@ public class TestDac extends ActionApplication {
     private String leftClavicleName;
     private String leftUlnaName;
     private String rightClavicleName;
+    private String upperBodyLinkName;
     private Transform resetTransform;
     // *************************************************************************
     // new methods exposed
@@ -143,7 +143,6 @@ public class TestDac extends ActionApplication {
         sv = new SkeletonVisualizer(assetManager, sc);
         sv.setLineColor(ColorRGBA.Yellow); // TODO clean up visualization
         rootNode.addControl(sv);
-        sv.setEnabled(true);
 
         PhysicsSpace ps = bulletAppState.getPhysicsSpace();
         dac.setPhysicsSpace(ps);
@@ -161,6 +160,7 @@ public class TestDac extends ActionApplication {
         dim.bind("blend all to kinematic", KeyInput.KEY_K);
         dim.bind("dump physicsSpace", KeyInput.KEY_O);
         dim.bind("dump scene", KeyInput.KEY_P);
+        dim.bind("freeze all", KeyInput.KEY_A);
         dim.bind("freeze upper body", KeyInput.KEY_F);
         dim.bind("go bind pose", KeyInput.KEY_B);
         dim.bind("go floating", KeyInput.KEY_0);
@@ -177,6 +177,7 @@ public class TestDac extends ActionApplication {
         dim.bind("signal rotateRight", KeyInput.KEY_RIGHT);
         dim.bind("save", KeyInput.KEY_S);
         dim.bind("toggle animation", KeyInput.KEY_PERIOD);
+        dim.bind("toggle meshes", KeyInput.KEY_M);
         dim.bind("toggle physics debug", KeyInput.KEY_SLASH);
         dim.bind("toggle skeleton", KeyInput.KEY_V);
     }
@@ -197,8 +198,11 @@ public class TestDac extends ActionApplication {
                 case "dump scene":
                     dumpScene();
                     return;
+                case "freeze all":
+                    dac.freezeHierarchy(DynamicAnimControl.torsoName);
+                    return;
                 case "freeze upper body":
-                    dac.freezeHierarchy("Chest"); // TODO for Jaime
+                    dac.freezeHierarchy(upperBodyLinkName);
                     return;
                 case "go bind pose":
                     dac.bindHierarchy(DynamicAnimControl.torsoName, 2f);
@@ -242,6 +246,9 @@ public class TestDac extends ActionApplication {
                     return;
                 case "toggle animation":
                     toggleAnimation();
+                    return;
+                case "toggle meshes":
+                    toggleMeshes();
                     return;
                 case "toggle skeleton":
                     toggleSkeleton();
@@ -403,6 +410,7 @@ public class TestDac extends ActionApplication {
         leftClavicleName = "shoulder.L";
         leftUlnaName = "forearm.L";
         rightClavicleName = "shoulder.R";
+        upperBodyLinkName = "ribs";
     }
 
     /**
@@ -420,6 +428,7 @@ public class TestDac extends ActionApplication {
         leftClavicleName = "Clavicle.L";
         leftUlnaName = "Ulna.L";
         rightClavicleName = "Clavicle.R";
+        upperBodyLinkName = "Chest";
     }
 
     /**
@@ -479,6 +488,19 @@ public class TestDac extends ActionApplication {
             float rate = animChannel.getSpeed();
             animChannel.setSpeed(1f - rate);
         }
+    }
+
+    /**
+     * Toggle mesh rendering on/off.
+     */
+    private void toggleMeshes() {
+        Spatial.CullHint hint = model.getLocalCullHint();
+        if (hint == Spatial.CullHint.Inherit) {
+            hint = Spatial.CullHint.Always;
+        } else if (hint == Spatial.CullHint.Always) {
+            hint = Spatial.CullHint.Inherit;
+        }
+        model.setCullHint(hint);
     }
 
     /**
