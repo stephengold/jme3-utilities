@@ -34,7 +34,6 @@ package com.jme3.bullet.animation;
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.bullet.objects.infos.RigidBodyMotionState;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -457,25 +456,32 @@ public class TorsoLink
      */
     private void dynamicUpdate() {
         assert !rigidBody.isKinematic();
-
-        RigidBodyMotionState motionState = rigidBody.getMotionState();
-        Transform torsoTransform = motionState.physicsTransform(null);
-        Vector3f scale = torsoTransform.getScale();
-        rigidBody.getPhysicsScale(scale);
-
-        Transform worldToParent; // inverse world transform of the parent node
+        /*
+         * Calculate the inverse world transform of the model's parent node.
+         */
+        Transform worldToParent;
         Node parent = control.getSpatial().getParent();
         if (parent == null) {
             worldToParent = new Transform();
         } else {
-            Transform parentTransform = parent.getWorldTransform();
-            worldToParent = parentTransform.invert();
+            Transform parentToWorld = parent.getWorldTransform();
+            worldToParent = parentToWorld.invert();
         }
 
+        Transform shapeToWorld = rigidBody.getPhysicsTransform(null);
+
         Transform transform = meshToModel.clone();
-        transform.combineWithParent(torsoTransform);
+        transform.combineWithParent(shapeToWorld);
         transform.combineWithParent(worldToParent);
         control.getSpatial().setLocalTransform(transform);
+
+        rigidBody.getPhysicsTransform(transform);
+        Transform worldToMesh
+                = control.getTransformer().getWorldTransform().invert();
+        transform.combineWithParent(worldToMesh);
+        for (Bone rootBone : skeleton.getRoots()) {
+            MySkeleton.setLocalTransform(rootBone, transform);
+        }
 
         for (Bone managedBone : managedBones) {
             managedBone.updateModelTransforms();
