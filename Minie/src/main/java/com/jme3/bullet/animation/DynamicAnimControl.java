@@ -909,6 +909,12 @@ public class DynamicAnimControl
         assert linkedBoneNames.size() == numLinkedBones;
         for (String boneName : linkedBoneNames) {
             vertexLocations = coordsMap.get(boneName);
+            if (vertexLocations == null) {
+                String msg = String.format(
+                        "No mesh vertices for the linked bone named %s.",
+                        MyString.quote(boneName));
+                throw new IllegalArgumentException(msg);
+            }
             createBoneLink(boneName, vertexLocations);
         }
         assert boneLinks.size() == numLinkedBones;
@@ -1327,6 +1333,8 @@ public class DynamicAnimControl
      */
     private BoneLink createBoneLink(String name,
             List<Vector3f> vertexLocations) {
+        assert vertexLocations != null;
+
         Bone bone = getBone(name);
         /*
          * Create the collision shape.
