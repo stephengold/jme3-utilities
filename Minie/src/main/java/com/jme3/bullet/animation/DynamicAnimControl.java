@@ -880,6 +880,7 @@ public class DynamicAnimControl
             throw new IllegalArgumentException(
                     "No mesh vertices for the torso. Make sure the root bone is not linked.");
         }
+        MySkeleton.setUserControl(skeleton, false);
         skeleton.resetAndUpdate();
         Transform boneToMesh
                 = MySkeleton.copyMeshTransform(torsoMainBone, null);
@@ -1004,6 +1005,7 @@ public class DynamicAnimControl
         if (added) {
             removePhysics();
         }
+        MySkeleton.setUserControl(skeleton, false);
         boneLinkList = null;
         boneLinks.clear();
         torsoLink.setSkeleton(null);
