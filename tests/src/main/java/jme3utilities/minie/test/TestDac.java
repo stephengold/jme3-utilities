@@ -452,6 +452,7 @@ public class TestDac extends ActionApplication {
     private void loadElephant() {
         model = (Node) assetManager.loadModel(
                 "Models/Elephant/Elephant.mesh.xml");
+        model.setCullHint(Spatial.CullHint.Never);
         model.rotate(0f, 1.6f, 0f);
         dac = new ElephantControl();
         animationName = "legUp";
@@ -551,10 +552,11 @@ public class TestDac extends ActionApplication {
      */
     private void toggleMeshes() {
         Spatial.CullHint hint = model.getLocalCullHint();
-        if (hint == Spatial.CullHint.Inherit) {
+        if (hint == Spatial.CullHint.Inherit
+                || hint == Spatial.CullHint.Never) {
             hint = Spatial.CullHint.Always;
         } else if (hint == Spatial.CullHint.Always) {
-            hint = Spatial.CullHint.Inherit;
+            hint = Spatial.CullHint.Never;
         }
         model.setCullHint(hint);
     }
