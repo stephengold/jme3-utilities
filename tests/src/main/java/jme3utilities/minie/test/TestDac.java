@@ -28,6 +28,7 @@ package jme3utilities.minie.test;
 
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
+import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.asset.AssetNotFoundException;
 import com.jme3.asset.ModelKey;
@@ -59,6 +60,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
+import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.debug.SkeletonVisualizer;
@@ -128,16 +130,19 @@ public class TestDac extends ActionApplication {
         ps.setSolverNumIterations(30);
 
         addBox();
-        addModel();
+
+        sv = new SkeletonVisualizer(assetManager, null);
+        sv.setLineColor(ColorRGBA.Yellow); // TODO clean up visualization
+        rootNode.addControl(sv);
+
+        addModel("Sinbad");
         /*
          * Add and configure the model's controls.
          */
         AnimControl animControl = model.getControl(AnimControl.class);
-        if (animationName != null) {
-            animChannel = animControl.createChannel();
-            animChannel.setAnim(animationName);
-            animChannel.setSpeed(1f);
-        }
+        animChannel = animControl.createChannel();
+        animChannel.setAnim(animationName);
+        animChannel.setSpeed(1f);
 
         List<SkeletonControl> scList
                 = MySpatial.listControls(model, SkeletonControl.class, null);
@@ -146,7 +151,6 @@ public class TestDac extends ActionApplication {
         sv.setLineColor(ColorRGBA.Yellow); // TODO clean up visualization
         rootNode.addControl(sv);
 
-        dac.setPhysicsSpace(ps);
         boxRbc.setPhysicsSpace(ps);
     }
 
@@ -168,6 +172,8 @@ public class TestDac extends ActionApplication {
         dim.bind("go limp", KeyInput.KEY_SPACE);
         dim.bind("limp left elbow", KeyInput.KEY_COMMA);
         dim.bind("load", KeyInput.KEY_L);
+        dim.bind("load jaime", KeyInput.KEY_F2);
+        dim.bind("load sinbad", KeyInput.KEY_F1);
         dim.bind("set height 1", KeyInput.KEY_1);
         dim.bind("set height 2", KeyInput.KEY_2);
         dim.bind("set height 3", KeyInput.KEY_3);
@@ -221,6 +227,12 @@ public class TestDac extends ActionApplication {
                     return;
                 case "load":
                     load();
+                    return;
+                case "load jaime":
+                    addModel("Jaime");
+                    return;
+                case "load sinbad":
+                    addModel("Sinbad");
                     return;
                 case "raise leftHand":
                     dac.setDynamicHierarchy(leftClavicleName,
@@ -330,9 +342,20 @@ public class TestDac extends ActionApplication {
     /**
      * Add an animated model to the scene.
      */
-    private void addModel() {
-        loadJaime();
-        //loadSinbad();
+    private void addModel(String modelName) {
+        if (model != null) {
+            model.removeControl(dac);
+            rootNode.detachChild(model);
+            model = null;
+        }
+        switch (modelName) {
+            case "Jaime":
+                loadJaime();
+                break;
+            case "Sinbad":
+                loadSinbad();
+                break;
+        }
 
         List<Spatial> list = MySpatial.listSpatials(model, Spatial.class, null);
         for (Spatial spatial : list) {
@@ -345,6 +368,16 @@ public class TestDac extends ActionApplication {
         resetTransform = model.getLocalTransform().clone();
 
         model.addControl(dac);
+        PhysicsSpace ps = bulletAppState.getPhysicsSpace();
+        dac.setPhysicsSpace(ps);
+
+        AnimControl animControl = model.getControl(AnimControl.class);
+        animChannel = animControl.createChannel();
+        animChannel.setAnim(animationName);
+        animChannel.setSpeed(1f);
+
+        Skeleton skeleton = MySkeleton.findSkeleton(model);
+        sv.setSkeleton(skeleton);
     }
 
     /**
