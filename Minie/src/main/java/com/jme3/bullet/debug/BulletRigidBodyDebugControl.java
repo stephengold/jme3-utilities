@@ -164,7 +164,7 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
     private void updateMaterial() {
         Material material = body.getDebugMaterial();
         if (material == null) {
-            if (body.isActive()) {
+            if (!body.isKinematic() && body.isActive()) {
                 material = debugAppState.DEBUG_MAGENTA;
             } else {
                 material = debugAppState.DEBUG_BLUE;
