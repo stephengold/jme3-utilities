@@ -54,10 +54,36 @@ public class ElephantControl extends DynamicAnimControl {
         // head
         super.link("joint5", 200f,
                 new JointPreset(1f, -1f, 1f, -1f, 0.6f, -0.3f));
-        super.link("Ear_L", 5f,
-                new JointPreset(0f, 0f, 0.2f, -0.6f, 0f, 0f));
+        
+        super.link("Ear_L", 2f,
+                new JointPreset(0.2f, -0.2f, 0.4f, -1f, 0f, 0f));
+        super.link("Ear_B1_L", 1f,
+                new JointPreset(0.2f, -0.2f, 1f, -1f, 1f, -1f));
+        super.link("Ear_M1_L", 1f,
+                new JointPreset(0.2f, -0.2f, 1f, -1f, 1f, -1f));
+        super.link("Ear_T1_L", 1f,
+                new JointPreset(0.2f, -0.2f, 1f, -1f, 1f, -1f));
+        super.link("Ear_B2_L", 1f,
+                new JointPreset(0.2f, -0.2f, 1f, -1f, 1f, -1f));
+        super.link("Ear_M4_L", 1f,
+                new JointPreset(0.2f, -0.2f, 1f, -1f, 1f, -1f));
+        super.link("Ear_T2_L", 1f,
+                new JointPreset(0.2f, -0.2f, 1f, -1f, 1f, -1f));
+        
         super.link("Ear_R", 5f,
-                new JointPreset(0f, 0f, 0.2f, -0.6f, 0f, 0f));
+                new JointPreset(0.2f, -0.2f, 0.4f, -1f, 0f, 0f));
+        super.link("Ear_B1_R", 1f,
+                new JointPreset(0.2f, -0.2f, 1f, -1f, 1f, -1f));
+        super.link("Ear_M1_R", 1f,
+                new JointPreset(0.2f, -0.2f, 1f, -1f, 1f, -1f));
+        super.link("Ear_T1_R", 1f,
+                new JointPreset(0.2f, -0.2f, 1f, -1f, 1f, -1f));
+        super.link("Ear_B2_R", 1f,
+                new JointPreset(0.2f, -0.2f, 1f, -1f, 1f, -1f));
+        super.link("Ear_M4_R", 1f,
+                new JointPreset(0.2f, -0.2f, 1f, -1f, 1f, -1f));
+        super.link("Ear_T2_R", 1f,
+                new JointPreset(0.2f, -0.2f, 1f, -1f, 1f, -1f));
 
         // trunk
         super.link("joint11", 5f,
