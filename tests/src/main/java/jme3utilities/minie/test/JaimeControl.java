@@ -49,16 +49,16 @@ public class JaimeControl extends DynamicAnimControl {
 
     public JaimeControl() {
         super();
-        super.setMass(torsoName, 5f);
+        super.setMass(torsoName, 2f);
 
-        super.link("spine", 5f,
+        super.link("spine", 3f,
                 new JointPreset(1f, -1f, 1f, -1f, 1f, -1f));
-        super.link("ribs", 5f,
+        super.link("ribs", 3f,
                 new JointPreset(0.6f, -0.6f, 0.4f, -0.4f, 0.4f, -0.4f));
         super.link("neck", 1f,
-                new JointPreset(1f, -0.5f, 0.5f, -0.5f, 0.5f, -0.5f));
-        super.link("head", 5f,
-                new JointPreset(1f, -0.5f, 0.5f, -0.5f, 0.5f, -0.5f));
+                new JointPreset(0.3f, -0.6f, 0.5f, -0.5f, 0.5f, -0.5f));
+        super.link("head", 6f,
+                new JointPreset(0.3f, -0.6f, 0.5f, -0.5f, 0.5f, -0.5f));
 
         super.link("tail.001", 1f,
                 new JointPreset(0.5f, -0.5f, 0.2f, -0.2f, 0.5f, -0.5f));
@@ -80,30 +80,70 @@ public class JaimeControl extends DynamicAnimControl {
         super.link("upper_arm.R", 1f,
                 new JointPreset(0.8f, -1.6f, 1f, -1f, 1.6f, -1.8f));
         super.link("forearm.R", 1f,
-                new JointPreset(0f, 0f, 1f, -1f, 0f, -2f));
+                new JointPreset(0f, -2f, 1f, -1f, 0f, 0f));
         super.link("hand.R", 2f,
-                new JointPreset(0.8f, -0.8f, 0f, 0f, 0.2f, -0.2f));
+                new JointPreset(0.3f, -0.8f, 0f, 0f, 0.2f, -0.2f));
+        super.link("thumb.01.R", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 1f, -1f));
+        super.link("finger_index.01.R", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0.1f, -0.3f));
+        super.link("finger_middle.01.R", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0.2f, -0.2f));
+        super.link("finger_ring.01.R", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0.2f, -0.2f));
+        super.link("finger_pinky.01.R", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0.3f, -0.1f));
+        super.link("thumb.02.R", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0f, 0f));
+        super.link("finger_index.02.R", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0f, 0f));
+        super.link("finger_middle.02.R", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0f, 0f));
+        super.link("finger_ring.02.R", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0f, 0f));
+        super.link("finger_pinky.02.R", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0f, 0f));
 
         super.link("shoulder.L", 3f,
                 new JointPreset(1.6f, -0.8f, 0f, 0f, 0.6f, -0.3f));
         super.link("upper_arm.L", 1f,
                 new JointPreset(0.8f, -1.6f, 1f, -1f, 1.6f, -1.8f));
         super.link("forearm.L", 1f,
-                new JointPreset(0f, 0f, 1f, -1f, 2f, 0f));
+                new JointPreset(0f, -2f, 1f, -1f, 0f, 0f));
         super.link("hand.L", 2f,
-                new JointPreset(0.8f, -0.8f, 0f, 0f, 0.2f, -0.2f));
+                new JointPreset(0.8f, -0.3f, 0f, 0f, 0.2f, -0.2f));
+        super.link("thumb.01.L", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 1f, -1f));
+        super.link("finger_index.01.L", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0.3f, -0.1f));
+        super.link("finger_middle.01.L", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0.2f, -0.2f));
+        super.link("finger_ring.01.L", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0.2f, -0.2f));
+        super.link("finger_pinky.01.L", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0.1f, -0.3f));
+        super.link("thumb.02.L", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0f, 0f));
+        super.link("finger_index.02.L", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0f, 0f));
+        super.link("finger_middle.02.L", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0f, 0f));
+        super.link("finger_ring.02.L", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0f, 0f));
+        super.link("finger_pinky.02.L", 0.1f,
+                new JointPreset(0.5f, -0.2f, 0f, 0f, 0f, 0f));
 
         super.link("thigh.R", 2f,
                 new JointPreset(1f, -0.4f, 0.4f, -0.4f, 0.5f, -0.5f));
         super.link("shin.R", 1f,
-                new JointPreset(0f, 0f, 0.4f, -0.4f, 2f, 0f));
+                new JointPreset(0f, 0f, 0f, 0f, 2f, 0f));
         super.link("foot.R", 2f,
                 new JointPreset(0.6f, -0.6f, 0.2f, -0.2f, 0f, 0f));
 
         super.link("thigh.L", 2f,
                 new JointPreset(1f, -0.4f, 0.4f, -0.4f, 0.5f, -0.5f));
         super.link("shin.L", 1f,
-                new JointPreset(0f, 0f, 0.4f, -0.4f, 0f, -2f));
+                new JointPreset(0f, 0f, 0f, 0f, 0f, -2f));
         super.link("foot.L", 2f,
                 new JointPreset(0.6f, -0.6f, 0.2f, -0.2f, 0f, 0f));
     }
