@@ -521,7 +521,7 @@ public class TestDac extends ActionApplication {
 
         setHeight(model, height);
         center(model);
-        dac.rebuild(); // TODO rebuild breaks dynamic bones
+        dac.rebuild();
     }
 
     /**

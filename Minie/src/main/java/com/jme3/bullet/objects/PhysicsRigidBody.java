@@ -770,13 +770,16 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Reactivates this body if it has been deactivated due to lack of motion.
+     * TODO move to PhysicsCollisionObject and add "force" option
      */
     public void activate() {
         activate(objectId);
+        assert isActive();
     }
 
     /**
-     * Test whether this body has been deactivated due to lack of motion.
+     * Test whether this body has been deactivated due to lack of motion. TODO
+     * move to PhysicsCollisionObject
      *
      * @return true if still active, false if deactivated
      */
