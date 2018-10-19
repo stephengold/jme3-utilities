@@ -114,16 +114,16 @@ public class TestDac extends ActionApplication {
      */
     @Override
     public void actionInitializeApplication() {
-        flyCam.setEnabled(false); // TODO FlyByCamera broken in action apps?
-
+        flyCam.setDragToRotate(true);
+        flyCam.setMoveSpeed(4f);
         cam.setLocation(new Vector3f(0f, 1.2f, 4f));
+
         viewPort.setBackgroundColor(ColorRGBA.Gray);
         addLighting();
 
         bulletAppState = new BulletAppState();
         bulletAppState.setDebugEnabled(true);
         stateManager.attach(bulletAppState);
-
         CollisionShape.setDefaultMargin(0.01f); // 1 cm
         addBox();
         addModel();
@@ -156,12 +156,12 @@ public class TestDac extends ActionApplication {
     public void moreDefaultBindings() {
         InputMode dim = getDefaultInputMode();
 
-        dim.bind("amputate left elbow", KeyInput.KEY_A);
+        dim.bind("amputate left elbow", KeyInput.KEY_DELETE);
         dim.bind("blend all to kinematic", KeyInput.KEY_K);
         dim.bind("dump physicsSpace", KeyInput.KEY_O);
         dim.bind("dump scene", KeyInput.KEY_P);
-        dim.bind("freeze all", KeyInput.KEY_A);
-        dim.bind("freeze upper body", KeyInput.KEY_F);
+        dim.bind("freeze all", KeyInput.KEY_F);
+        dim.bind("freeze upper body", KeyInput.KEY_U);
         dim.bind("go bind pose", KeyInput.KEY_B);
         dim.bind("go floating", KeyInput.KEY_0);
         dim.bind("go limp", KeyInput.KEY_SPACE);
@@ -175,7 +175,7 @@ public class TestDac extends ActionApplication {
         dim.bind("reset model transform", KeyInput.KEY_DOWN);
         dim.bind("signal rotateLeft", KeyInput.KEY_LEFT);
         dim.bind("signal rotateRight", KeyInput.KEY_RIGHT);
-        dim.bind("save", KeyInput.KEY_S);
+        dim.bind("save", KeyInput.KEY_SEMICOLON);
         dim.bind("toggle animation", KeyInput.KEY_PERIOD);
         dim.bind("toggle meshes", KeyInput.KEY_M);
         dim.bind("toggle physics debug", KeyInput.KEY_SLASH);
@@ -268,6 +268,8 @@ public class TestDac extends ActionApplication {
      */
     @Override
     public void simpleUpdate(float tpf) {
+        super.simpleUpdate(tpf);
+
         Signals signals = getSignals();
         if (signals.test("rotateRight")) {
             model.rotate(0f, tpf, 0f);
