@@ -116,15 +116,17 @@ public class TestDac extends ActionApplication {
     public void actionInitializeApplication() {
         flyCam.setDragToRotate(true);
         flyCam.setMoveSpeed(4f);
-        cam.setLocation(new Vector3f(0f, 1.2f, 4f));
+        cam.setLocation(new Vector3f(0f, 1.2f, 5f));
 
         viewPort.setBackgroundColor(ColorRGBA.Gray);
         addLighting();
 
         bulletAppState = new BulletAppState();
-        bulletAppState.setDebugEnabled(true);
         stateManager.attach(bulletAppState);
-        CollisionShape.setDefaultMargin(0.01f); // 1 cm
+        CollisionShape.setDefaultMargin(0.005f); // 5 mm
+        PhysicsSpace ps = bulletAppState.getPhysicsSpace();
+        ps.setSolverNumIterations(30);
+
         addBox();
         addModel();
         /*
@@ -144,7 +146,6 @@ public class TestDac extends ActionApplication {
         sv.setLineColor(ColorRGBA.Yellow); // TODO clean up visualization
         rootNode.addControl(sv);
 
-        PhysicsSpace ps = bulletAppState.getPhysicsSpace();
         dac.setPhysicsSpace(ps);
         boxRbc.setPhysicsSpace(ps);
     }
@@ -294,7 +295,7 @@ public class TestDac extends ActionApplication {
         ColorRGBA color = new ColorRGBA(0.1f, 0.4f, 0.1f, 1f);
         Material material = MyAsset.createShadedMaterial(assetManager, color);
         box.setMaterial(material);
-        box.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        box.setShadowMode(RenderQueue.ShadowMode.Receive);
 
         Vector3f hes = new Vector3f(halfExtent, halfExtent, halfExtent);
         Vector3f worldScale = box.getWorldScale();
@@ -322,7 +323,7 @@ public class TestDac extends ActionApplication {
         DirectionalLightShadowRenderer dlsr
                 = new DirectionalLightShadowRenderer(assetManager, 4096, 3);
         dlsr.setLight(sun);
-        dlsr.setShadowIntensity(0.7f);
+        dlsr.setShadowIntensity(0.5f);
         viewPort.addProcessor(dlsr);
     }
 
@@ -333,10 +334,16 @@ public class TestDac extends ActionApplication {
         loadJaime();
         //loadSinbad();
 
+        List<Spatial> list = MySpatial.listSpatials(model, Spatial.class, null);
+        for (Spatial spatial : list) {
+            spatial.setShadowMode(RenderQueue.ShadowMode.Cast);
+        }
+
         rootNode.attachChild(model);
         setHeight(model, 2f);
         center(model);
         resetTransform = model.getLocalTransform().clone();
+
         model.addControl(dac);
     }
 
@@ -420,11 +427,6 @@ public class TestDac extends ActionApplication {
      */
     private void loadSinbad() {
         model = (Node) assetManager.loadModel("Models/Sinbad/Sinbad.mesh.xml");
-        List<Spatial> s = MySpatial.listSpatials(model, Spatial.class, null);
-        for (Spatial spatial : s) {
-            spatial.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        }
-
         dac = new SinbadControl();
         animationName = "Dance";
         leftClavicleName = "Clavicle.L";

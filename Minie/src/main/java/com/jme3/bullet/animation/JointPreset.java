@@ -34,13 +34,16 @@ package com.jme3.bullet.animation;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.joints.motors.RotationalLimitMotor;
+import com.jme3.bullet.joints.motors.TranslationalLimitMotor;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
 import com.jme3.math.FastMath;
+import com.jme3.math.Vector3f;
 import java.io.IOException;
+import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
@@ -52,32 +55,40 @@ import jme3utilities.Validate;
  */
 public class JointPreset implements Savable {
     // *************************************************************************
+    // constants and loggers
+
+    /**
+     * message logger for this class
+     */
+    final public static Logger logger
+            = Logger.getLogger(JointPreset.class.getName());
+    // *************************************************************************
     // fields
 
     /**
      * maximum rotation angle around the X axis (in radians)
      */
-    private float maxX;
+    private float maxX = 0f;
     /**
      * minimum rotation angle around the X axis (in radians)
      */
-    private float minX;
+    private float minX = 0f;
     /**
      * maximum rotation angle around the Y axis (in radians)
      */
-    private float maxY;
+    private float maxY = 0f;
     /**
      * minimum rotation angle around the Y axis (in radians)
      */
-    private float minY;
+    private float minY = 0f;
     /**
      * maximum rotation angle around the Z axis (in radians)
      */
-    private float maxZ;
+    private float maxZ = 0f;
     /**
      * minimum rotation angle around the Z axis (in radians)
      */
-    private float minZ;
+    private float minZ = 0f;
     // *************************************************************************
     // constructors
 
@@ -85,12 +96,6 @@ public class JointPreset implements Savable {
      * Instantiate a preset with no motion allowed.
      */
     public JointPreset() {
-        maxX = 0f;
-        minX = 0f;
-        maxY = 0f;
-        minY = 0f;
-        maxZ = 0f;
-        minZ = 0f;
     }
 
     /**
@@ -118,6 +123,29 @@ public class JointPreset implements Savable {
         this.minY = minY;
         this.maxZ = maxZ;
         this.minZ = minZ;
+    }
+
+    /**
+     * Instantiate a preset for rotation on a single axis.
+     *
+     * @param axisIndex which axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
+     */
+    public JointPreset(int axisIndex) {
+        switch (axisIndex) {
+            case PhysicsSpace.AXIS_X:
+                maxX = 1f;
+                minX = -1f;
+                break;
+            case PhysicsSpace.AXIS_Y:
+                maxY = 1f;
+                minY = -1f;
+                break;
+            case PhysicsSpace.AXIS_Z:
+                maxZ = 1f;
+                minZ = -1f;
+                break;
+            default:
+        }
     }
     // *************************************************************************
     // new methods exposed
@@ -190,19 +218,25 @@ public class JointPreset implements Savable {
                 = joint.getRotationalLimitMotor(PhysicsSpace.AXIS_X);
         rotX.setUpperLimit(maxX);
         rotX.setLowerLimit(minX);
-        rotX.setMaxLimitForce(1e6f);
 
         RotationalLimitMotor rotY
                 = joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Y);
         rotY.setUpperLimit(maxY);
         rotY.setLowerLimit(minY);
-        rotY.setMaxLimitForce(1e6f);
 
         RotationalLimitMotor rotZ
                 = joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Z);
         rotZ.setUpperLimit(maxZ);
         rotZ.setLowerLimit(minZ);
-        rotZ.setMaxLimitForce(1e6f);
+
+        for (int i = 0; i < 3; i++) {
+            RotationalLimitMotor rot = joint.getRotationalLimitMotor(i);
+            rot.setMaxMotorForce(1e8f);
+            rot.setMaxLimitForce(1e9f);
+        }
+
+        TranslationalLimitMotor tra = joint.getTranslationalLimitMotor();
+        tra.setMaxMotorForce(new Vector3f(1e8f, 1e8f, 1e8f));
     }
     // *************************************************************************
     // Savable methods

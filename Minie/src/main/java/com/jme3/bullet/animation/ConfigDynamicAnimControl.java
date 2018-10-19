@@ -48,6 +48,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
@@ -78,11 +79,11 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     /**
      * map linked bone names to masses for createSpatialData()
      */
-    private Map<String, Float> massMap = new HashMap<>(32);
+    private Map<String, Float> massMap = new HashMap<>(50);
     /**
      * map linked bone names to joint presets for createSpatialData()
      */
-    private Map<String, JointPreset> jointMap = new HashMap<>(32);
+    private Map<String, JointPreset> jointMap = new HashMap<>(50);
     /**
      * mass of the torso (default=15)
      */
@@ -114,8 +115,8 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Access the limits of the joint connecting the named linked bone to its
-     * parent in the hierarchy.
+     * Access the nominal range of motion for the joint connecting the named
+     * linked bone to its parent in the hierarchy.
      *
      * @param boneName the name of the linked bone (not null, not empty)
      * @return the pre-existing instance (not null)
@@ -198,6 +199,10 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
         if (getSpatial() != null) {
             throw new IllegalStateException(
                     "Cannot link a bone while added to a spatial.");
+        }
+        if (isLinkName(boneName)) {
+            logger2.log(Level.WARNING, "Bone {0} is already linked.",
+                    MyString.quote(boneName));
         }
 
         jointMap.put(boneName, jointPreset);
