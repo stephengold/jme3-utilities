@@ -468,47 +468,6 @@ public class DynamicAnimControl
     }
 
     /**
-     * Calculate the local bone transform to match the physics transform of the
-     * specified rigid body. TODO move to BoneLink
-     *
-     * @param rigidBody the rigid body to match (not null, unaffected)
-     * @param bone
-     * @param storeResult storage for the result (modified if not null)
-     * @return the calculated bone transform (in local coordinates, either
-     * storeResult or a new transform, not null)
-     */
-    Transform localBoneTransform(PhysicsRigidBody rigidBody, Bone bone,
-            Transform storeResult) {
-        Transform result
-                = (storeResult == null) ? new Transform() : storeResult;
-        Vector3f location = result.getTranslation();
-        Quaternion orientation = result.getRotation();
-        Vector3f scale = result.getScale();
-
-        rigidBody.getPhysicsTransform(result);
-        /*
-         * Transform to mesh coordinate system.
-         */
-        Transform worldToMesh = meshTransform(null).invert();
-        result.combineWithParent(worldToMesh);
-        /*
-         * Transform to local coordinate system by factoring out the
-         * parent bone's transform. TODO utility
-         */
-        Bone parentBone = bone.getParent();
-        Vector3f pmTranslate = parentBone.getModelSpacePosition();
-        Quaternion pmRotInv = parentBone.getModelSpaceRotation().inverse();
-        Vector3f pmScale = parentBone.getModelSpaceScale();
-        location.subtractLocal(pmTranslate);
-        location.divideLocal(pmScale);
-        pmRotInv.mult(location, location);
-        scale.divideLocal(pmScale);
-        pmRotInv.mult(orientation, orientation);
-
-        return result;
-    }
-
-    /**
      * Copy the model's mesh-to-world transform.
      *
      * @param storeResult storage for the result (modified if not null)
