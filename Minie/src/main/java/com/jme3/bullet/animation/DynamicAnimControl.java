@@ -429,17 +429,6 @@ public class DynamicAnimControl
     }
 
     /**
-     *
-     * Access the spatial that provides the mesh-coordinate transform. This
-     * returns null if the control is not added to a spatial.
-     *
-     * @return the pre-existing spatial, or null
-     */
-    Spatial getTransformer() {
-        return transformer;
-    }
-
-    /**
      * Enumerate all managed bones of the named link, in a pre-order,
      * depth-first traversal of the skeleton, such that child bones never
      * precede their ancestors.
@@ -480,7 +469,7 @@ public class DynamicAnimControl
 
     /**
      * Calculate the local bone transform to match the physics transform of the
-     * specified rigid body.
+     * specified rigid body. TODO move to BoneLink
      *
      * @param rigidBody the rigid body to match (not null, unaffected)
      * @param bone
@@ -500,7 +489,7 @@ public class DynamicAnimControl
         /*
          * Transform to mesh coordinate system.
          */
-        Transform worldToMesh = transformer.getWorldTransform().invert();
+        Transform worldToMesh = meshTransform(null).invert();
         result.combineWithParent(worldToMesh);
         /*
          * Transform to local coordinate system by factoring out the
@@ -516,6 +505,20 @@ public class DynamicAnimControl
         scale.divideLocal(pmScale);
         pmRotInv.mult(orientation, orientation);
 
+        return result;
+    }
+
+    /**
+     * Copy the model's mesh-to-world transform.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the model's mesh transform (in world coordinates, either
+     * storeResult or a new transform, not null)
+     */
+    Transform meshTransform(Transform storeResult) {
+        Transform result
+                = (storeResult == null) ? new Transform() : storeResult;
+        result.set(transformer.getWorldTransform());
         return result;
     }
 
@@ -564,7 +567,7 @@ public class DynamicAnimControl
         /*
          * Transform to world coordinates.
          */
-        Transform meshToWorld = transformer.getWorldTransform();
+        Transform meshToWorld = meshTransform(null);
         result.combineWithParent(meshToWorld);
 
         return result;

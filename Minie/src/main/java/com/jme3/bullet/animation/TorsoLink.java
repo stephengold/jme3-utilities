@@ -476,8 +476,7 @@ public class TorsoLink
         control.getSpatial().setLocalTransform(transform);
 
         rigidBody.getPhysicsTransform(transform);
-        Transform worldToMesh
-                = control.getTransformer().getWorldTransform().invert();
+        Transform worldToMesh = control.meshTransform(null).invert();
         transform.combineWithParent(worldToMesh);
         for (Bone rootBone : skeleton.getRoots()) {
             MySkeleton.setLocalTransform(rootBone, transform);
