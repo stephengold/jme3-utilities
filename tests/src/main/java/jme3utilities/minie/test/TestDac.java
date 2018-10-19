@@ -62,7 +62,6 @@ import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.debug.SkeletonVisualizer;
-import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.minie.PhysicsDumper;
 import jme3utilities.ui.ActionApplication;
@@ -93,10 +92,12 @@ public class TestDac extends ActionApplication {
     private DynamicAnimControl dac;
     private int scaleIndex = 0;
     private Node model;
-    private PhysicsSpace physicsSpace;
     private RigidBodyControl boxRbc;
     private SkeletonVisualizer sv;
     private String animationName = null;
+    private String leftClavicleName;
+    private String leftUlnaName;
+    private String rightClavicleName;
     private Transform resetTransform;
     // *************************************************************************
     // new methods exposed
@@ -115,14 +116,13 @@ public class TestDac extends ActionApplication {
     public void actionInitializeApplication() {
         flyCam.setEnabled(false); // TODO FlyByCamera broken in action apps?
 
-        cam.setLocation(new Vector3f(0f, 1.5f, 4f));
+        cam.setLocation(new Vector3f(0f, 1.2f, 4f));
         viewPort.setBackgroundColor(ColorRGBA.Gray);
         addLighting();
 
         bulletAppState = new BulletAppState();
         bulletAppState.setDebugEnabled(true);
         stateManager.attach(bulletAppState);
-        physicsSpace = bulletAppState.getPhysicsSpace();
 
         CollisionShape.setDefaultMargin(0.01f); // 1 cm
         addBox();
@@ -141,7 +141,7 @@ public class TestDac extends ActionApplication {
                 = MySpatial.listControls(model, SkeletonControl.class, null);
         SkeletonControl sc = scList.get(0);
         sv = new SkeletonVisualizer(assetManager, sc);
-        sv.setLineColor(ColorRGBA.Yellow);
+        sv.setLineColor(ColorRGBA.Yellow); // TODO clean up visualization
         rootNode.addControl(sv);
         sv.setEnabled(true);
 
@@ -167,7 +167,9 @@ public class TestDac extends ActionApplication {
         dim.bind("go limp", KeyInput.KEY_SPACE);
         dim.bind("limp left elbow", KeyInput.KEY_COMMA);
         dim.bind("load", KeyInput.KEY_L);
-        dim.bind("next scale", KeyInput.KEY_1);
+        dim.bind("set height 1", KeyInput.KEY_1);
+        dim.bind("set height 2", KeyInput.KEY_2);
+        dim.bind("set height 3", KeyInput.KEY_3);
         dim.bind("raise leftHand", KeyInput.KEY_LSHIFT);
         dim.bind("raise rightHand", KeyInput.KEY_RSHIFT);
         dim.bind("reset model transform", KeyInput.KEY_DOWN);
@@ -184,7 +186,7 @@ public class TestDac extends ActionApplication {
         if (ongoing) {
             switch (actionString) {
                 case "amputate left elbow":
-                    dac.amputateHierarchy("Ulna.L", 2f);
+                    dac.amputateHierarchy(leftUlnaName, 2f);
                     return;
                 case "blend all to kinematic":
                     dac.blendToKinematicMode(2f, null);
@@ -196,7 +198,7 @@ public class TestDac extends ActionApplication {
                     dumpScene();
                     return;
                 case "freeze upper body":
-                    dac.freezeHierarchy("Chest");
+                    dac.freezeHierarchy("Chest"); // TODO for Jaime
                     return;
                 case "go bind pose":
                     dac.bindHierarchy(DynamicAnimControl.torsoName, 2f);
@@ -210,27 +212,33 @@ public class TestDac extends ActionApplication {
                     return;
                 case "limp left elbow":
                     Vector3f ragdollGravity = dac.gravity(null);
-                    dac.setDynamic("Ulna.L", ragdollGravity);
+                    dac.setDynamic(leftUlnaName, ragdollGravity);
                     return;
                 case "load":
                     load();
                     return;
-                case "next scale":
-                    nextScale();
-                    return;
                 case "raise leftHand":
-                    dac.setDynamicHierarchy("Clavicle.L",
-                            new Vector3f(0f, 50f, 0f));
+                    dac.setDynamicHierarchy(leftClavicleName,
+                            new Vector3f(0f, 30f, 0f));
                     return;
                 case "raise rightHand":
-                    dac.setDynamicHierarchy("Clavicle.R",
-                            new Vector3f(0f, 50f, 0f));
+                    dac.setDynamicHierarchy(rightClavicleName,
+                            new Vector3f(0f, 30f, 0f));
                     return;
                 case "reset model transform":
                     model.setLocalTransform(resetTransform);
                     return;
                 case "save":
                     save();
+                    return;
+                case "set height 1":
+                    setHeight(1f);
+                    return;
+                case "set height 2":
+                    setHeight(2f);
+                    return;
+                case "set height 3":
+                    setHeight(3f);
                     return;
                 case "toggle animation":
                     toggleAnimation();
@@ -310,11 +318,11 @@ public class TestDac extends ActionApplication {
     }
 
     /**
-     * Add a model to the scene.
+     * Add an animated model to the scene.
      */
     private void addModel() {
-        //addJaime();
-        loadSinbad();
+        loadJaime();
+        //loadSinbad();
 
         rootNode.attachChild(model);
         setHeight(model, 2f);
@@ -324,8 +332,8 @@ public class TestDac extends ActionApplication {
     }
 
     /**
-     * Translate a model's center so that it rests on the X-Z plane, directly
-     * above the origin.
+     * Translate a model's center so that the model rests on the X-Z plane, and
+     * its center lies on the Y axis.
      */
     private void center(Spatial model) {
         Vector3f[] minMax = MySpatial.findMinMaxCoords(model);
@@ -342,7 +350,7 @@ public class TestDac extends ActionApplication {
      */
     private void dumpPhysicsSpace() {
         PhysicsDumper dumper = new PhysicsDumper();
-        dumper.dump(physicsSpace);
+        dumper.dump(bulletAppState.getPhysicsSpace());
     }
 
     /**
@@ -390,8 +398,11 @@ public class TestDac extends ActionApplication {
      */
     private void loadJaime() {
         model = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
-        dac = new DynamicAnimControl();
+        dac = new JaimeControl();
         animationName = "Punches";
+        leftClavicleName = "shoulder.L";
+        leftUlnaName = "forearm.L";
+        rightClavicleName = "shoulder.R";
     }
 
     /**
@@ -406,31 +417,9 @@ public class TestDac extends ActionApplication {
 
         dac = new SinbadControl();
         animationName = "Dance";
-    }
-
-    /**
-     * Cycle through different model scales.
-     */
-    private void nextScale() {
-        scaleIndex = MyMath.modulo(scaleIndex + 1, 3);
-        logger.log(Level.SEVERE, "scaleIndex = {0}", scaleIndex);
-
-        float height = 2f;
-        switch (scaleIndex) {
-            case 0:
-                height = 2f;
-                break;
-            case 1:
-                height = 1f;
-                break;
-            case 2:
-                height = 3f;
-                break;
-        }
-
-        setHeight(model, height);
-        center(model);
-        dac.rebuild();
+        leftClavicleName = "Clavicle.L";
+        leftUlnaName = "Ulna.L";
+        rightClavicleName = "Clavicle.R";
     }
 
     /**
@@ -456,6 +445,17 @@ public class TestDac extends ActionApplication {
             MyString.quote(model.getName()),
             MyString.quote(filePath)
         });
+    }
+
+    /**
+     * Test re-scaling the model.
+     */
+    private void setHeight(float height) {
+        assert height > 0f : height;
+
+        setHeight(model, height);
+        center(model);
+        dac.rebuild(); // TODO rebuild breaks dynamic bones
     }
 
     /**
