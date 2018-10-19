@@ -28,7 +28,6 @@ package jme3utilities.minie.test;
 
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
-import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.asset.AssetNotFoundException;
 import com.jme3.asset.ModelKey;
@@ -60,7 +59,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
-import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.debug.SkeletonVisualizer;
@@ -131,11 +129,7 @@ public class TestDac extends ActionApplication {
 
         addBox();
 
-        sv = new SkeletonVisualizer(assetManager, null);
-        sv.setLineColor(ColorRGBA.Yellow); // TODO clean up visualization
-        rootNode.addControl(sv);
-
-        addModel("Sinbad");
+        addModel("Elephant");
         /*
          * Add and configure the model's controls.
          */
@@ -172,6 +166,7 @@ public class TestDac extends ActionApplication {
         dim.bind("go limp", KeyInput.KEY_SPACE);
         dim.bind("limp left elbow", KeyInput.KEY_COMMA);
         dim.bind("load", KeyInput.KEY_L);
+        dim.bind("load elephant", KeyInput.KEY_F3);
         dim.bind("load jaime", KeyInput.KEY_F2);
         dim.bind("load sinbad", KeyInput.KEY_F1);
         dim.bind("set height 1", KeyInput.KEY_1);
@@ -227,6 +222,9 @@ public class TestDac extends ActionApplication {
                     return;
                 case "load":
                     load();
+                    return;
+                case "load elephant":
+                    addModel("Elephant");
                     return;
                 case "load jaime":
                     addModel("Jaime");
@@ -346,9 +344,12 @@ public class TestDac extends ActionApplication {
         if (model != null) {
             model.removeControl(dac);
             rootNode.detachChild(model);
-            model = null;
+            rootNode.removeControl(sv);
         }
         switch (modelName) {
+            case "Elephant":
+                loadElephant();
+                break;
             case "Jaime":
                 loadJaime();
                 break;
@@ -376,8 +377,11 @@ public class TestDac extends ActionApplication {
         animChannel.setAnim(animationName);
         animChannel.setSpeed(1f);
 
-        Skeleton skeleton = MySkeleton.findSkeleton(model);
-        sv.setSkeleton(skeleton);
+        SkeletonControl skeletonControl
+                = model.getControl(SkeletonControl.class);
+        sv = new SkeletonVisualizer(assetManager, skeletonControl);
+        sv.setLineColor(ColorRGBA.Yellow); // TODO clean up visualization
+        rootNode.addControl(sv);
     }
 
     /**
@@ -443,7 +447,22 @@ public class TestDac extends ActionApplication {
     }
 
     /**
-     * Load a Jaime model.
+     * Load the Elephant model.
+     */
+    private void loadElephant() {
+        model = (Node) assetManager.loadModel(
+                "Models/Elephant/Elephant.mesh.xml");
+        model.rotate(0f, 1.6f, 0f);
+        dac = new ElephantControl();
+        animationName = "legUp";
+        leftClavicleName = "Oberschenkel_F_L";
+        leftUlnaName = "Knee_F_L";
+        rightClavicleName = "Oberschenkel_F_R";
+        upperBodyLinkName = "joint5";
+    }
+
+    /**
+     * Load the Jaime model.
      */
     private void loadJaime() {
         model = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
@@ -456,7 +475,7 @@ public class TestDac extends ActionApplication {
     }
 
     /**
-     * Load a Sinbad model.
+     * Load the Sinbad model.
      */
     private void loadSinbad() {
         model = (Node) assetManager.loadModel("Models/Sinbad/Sinbad.mesh.xml");
