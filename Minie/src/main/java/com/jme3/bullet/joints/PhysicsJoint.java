@@ -111,9 +111,9 @@ abstract public class PhysicsJoint
      * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
      * @param pivotA local offset of the joint connection point in node A (not
-     * null, alias created) TODO
+     * null, unaffected)
      * @param pivotB local offset of the joint connection point in node B (not
-     * null, alias created) TODO
+     * null, unaffected)
      */
     protected PhysicsJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB) {
@@ -121,8 +121,8 @@ abstract public class PhysicsJoint
 
         this.nodeA = nodeA;
         this.nodeB = nodeB;
-        this.pivotA = pivotA;
-        this.pivotB = pivotB;
+        this.pivotA = pivotA.clone();
+        this.pivotB = pivotB.clone();
         nodeA.addJoint(this);
         nodeB.addJoint(this);
     }

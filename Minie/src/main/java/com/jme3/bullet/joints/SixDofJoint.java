@@ -130,13 +130,13 @@ public class SixDofJoint extends PhysicsJoint {
      * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
      * @param pivotA the local offset of the connection point in node A (not
-     * null, alias created) TODO
+     * null, unaffected)
      * @param pivotB the local offset of the connection point in node B (not
-     * null, alias created) TODO
+     * null, unaffected)
      * @param rotA the local orientation of the connection to node A (not null,
-     * alias created) TODO
+     * unaffected)
      * @param rotB the local orientation of the connection to node B (not null,
-     * alias created) TODO
+     * unaffected)
      * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
      * B
      */
@@ -145,8 +145,8 @@ public class SixDofJoint extends PhysicsJoint {
             boolean useLinearReferenceFrameA) {
         super(nodeA, nodeB, pivotA, pivotB);
         this.useLinearReferenceFrameA = useLinearReferenceFrameA;
-        this.rotA = rotA;
-        this.rotB = rotB;
+        this.rotA = rotA.clone();
+        this.rotB = rotB.clone();
         createJoint();
     }
 
@@ -159,9 +159,9 @@ public class SixDofJoint extends PhysicsJoint {
      * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
      * @param pivotA the local offset of the connection point in node A (not
-     * null, alias created) TODO
+     * null, unaffected)
      * @param pivotB the local offset of the connection point in node B (not
-     * null, alias created) TODO
+     * null, unaffected)
      * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
      * B
      */

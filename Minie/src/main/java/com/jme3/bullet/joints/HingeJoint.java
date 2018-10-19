@@ -106,19 +106,19 @@ public class HingeJoint extends PhysicsJoint {
      * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
      * @param pivotA the local offset of the connection point in node A (not
-     * null, alias created) TODO
+     * null, unaffected)
      * @param pivotB the local offset of the connection point in node B (not
-     * null, alias created) TODO
-     * @param axisA the local axis of the connection to node A (not null, alias
-     * created) TODO
-     * @param axisB the local axis of the connection to node B (not null, alias
-     * created) TODO
+     * null, unaffected)
+     * @param axisA the local axis of the connection to node A (not null,
+     * unaffected)
+     * @param axisB the local axis of the connection to node B (not null,
+     * unaffected)
      */
     public HingeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB, Vector3f axisA, Vector3f axisB) {
         super(nodeA, nodeB, pivotA, pivotB);
-        this.axisA = axisA;
-        this.axisB = axisB;
+        this.axisA = axisA.clone();
+        this.axisB = axisB.clone();
         createJoint();
         /*
          * Synchronize the btHingeConstraint with the local copies.

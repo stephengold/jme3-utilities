@@ -103,14 +103,12 @@ public class ConeJoint extends PhysicsJoint {
      * Instantiate a ConeJoint. To be effective, the joint must be added to a
      * physics space.
      *
-     * @param nodeA the 1st body connected by the joint (not null, alias
-     * created)
-     * @param nodeB the 2nd body connected by the joint (not null, alias
-     * created)
+     * @param nodeA the 1st body connected by the joint (not null, unaffected)
+     * @param nodeB the 2nd body connected by the joint (not null, unaffected)
      * @param pivotA the local offset of the connection point in node A (not
-     * null, alias created) TODO
+     * null, unaffected)
      * @param pivotB the local offset of the connection point in node B (not
-     * null, alias created) TODO
+     * null, unaffected)
      */
     public ConeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB) {
@@ -129,19 +127,19 @@ public class ConeJoint extends PhysicsJoint {
      * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
      * @param pivotA local translation of the joint connection point in node A
-     * (not null, alias created) TODO
+     * (not null, unaffected)
      * @param pivotB local translation of the joint connection point in node B
-     * (not null, alias created) TODO
+     * (not null, unaffected)
      * @param rotA the local orientation of the connection to node A (not null,
-     * alias created) TODO
+     * unaffected)
      * @param rotB the local orientation of the connection to node B (not null,
-     * alias created) TODO
+     * unaffected)
      */
     public ConeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB) {
         super(nodeA, nodeB, pivotA, pivotB);
-        this.rotA = rotA;
-        this.rotB = rotB;
+        this.rotA = rotA.clone();
+        this.rotB = rotB.clone();
         createJoint();
     }
     // *************************************************************************
