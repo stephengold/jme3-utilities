@@ -1,6 +1,6 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.9.4 released on TBD
+## Version 0.9.4 released on 20 October 2018
 
  + Added a `subject` argument to the `SkeletonVisualizer`
    constructor. (API change)
