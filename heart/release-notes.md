@@ -1,20 +1,34 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.11.0 released on TBD
+
+ + Rename 5 methods in the `MySpatial` class and deprecated the old names
+ + Renamed 2 `Validate.isNumber()` methods and deprecated the old name
+ + Renamed `MyColor.parseColor()` and deprecated the old name
+ + Eviscerated `SubtreeControl.cloneForSpatial()`
+ + Added `copyLocalTransform()`, `copyMeshTransform()`, `preOrderBones()`,
+   and `setLocalTransform()` methods to the `MySkeleton` class
+ + Added a `worldTransform()` method to the `MySpatial` class
+ + Added a `slerp()` method for `Transform` to the `MyMath` class
+ + Added a `finite()` method for `Vector3f` to the `Validate` class
+ + Added an `isAnimated()` method to the `MyMesh` class
+
 ## Version 2.10.0 released on 23 September 2018
 
- + Added findOverride(), listMaterialUsers() and listMeshUsers() methods
-   to the MySpatial class
- + Renamed Misc.deepClone() and deprecated the old name
- + Deprecated the Misc.getVersion() and Misc.getVersionShort() methods
+ + Added `findOverride()`, `listMaterialUsers()`, and `listMeshUsers()` methods
+   to the `MySpatial` class
+ + Renamed `Misc.deepClone()` and deprecated the old name
+ + Deprecated the `Misc.getVersion()` and `Misc.getVersionShort()` methods
 
 ## Version 2.9.0 released on 12 September 2018
 
- + Added createShadedMaterial() for solid colors to the MyAsset class
+ + Added `createShadedMaterial()` for solid colors to the `MyAsset` class
 
 ## Version 2.8.0 released on 3 September 2018
 
- + Added an isScaleUniform() method to the MyVector3f class
- + Added 2 nonZero() methods and a nonNegative() method to the Validate class
+ + Added an `isScaleUniform()` method to the `MyVector3f` class
+ + Added 2 `nonZero()` methods and a `nonNegative()` method to
+   the `Validate` class
 
 ## Version 2.7.0 released on 22 August 2018
 
