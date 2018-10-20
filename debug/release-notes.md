@@ -1,5 +1,15 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.9.4 released on TBD
+
+ + Added a `subject` argument to the `SkeletonVisualizer`
+   constructor. (API change)
+ + Bugfix: `AxisVisualizer` rescaled its controlled spatial.
+ + Bugfix: custom scene-graph control caused Describer to throw an exception.
+ + Bugfix: reading an `AxesVisualizer` from J3O failed due to missing
+   no-arg constructor.
+ + Based on version 2.11 of the heart library.
+
 ## Version 0.9.3 released on 23 September 2018
 
  + Added a texture asset for a "ring" point shape.
@@ -7,27 +17,27 @@
 
 ## Version 0.9.2 released on 12 September 2018
 
- + Added setGrass() and setMonumentScale() methods to the
-   LandscapeControl class.
+ + Added `setGrass()` and `setMonumentScale()` methods to the
+   `LandscapeControl` class.
  + Based on version 2.9 of the heart library.
 
 ## Version 0.9.1 released on 3 September 2018
 
- + Added a describeScale(Vector3f) method to the Describer class.
+ + Added a `describeScale(Vector3f)` method to the `Describer` class.
  + Based on version 2.8 of the heart library.
 
 ## Version 0.9.0 released on 22 August 2018
 
- + Replaced Dumper methods with Describer methods. (API change)
- + Renamed DebugVersion.getVersionShort() to versionShort(). (API change)
- + Renamed 4 "get" methods in AxesVisualizer. (API change)
- + Renamed 2 "get" methods in BoundsVisualizer. (API change)
- + Renamed Describer.getListSeparator() to listSeparator. (API change)
- + Renamed getHeadSize(), getLineWidth(), headColor(), and lineColor()
-   in SkeletonVisualizer. (API change)
- + Renamed PerformanceAppState.getUpdateInterval() to updateInterval().
+ + Replaced `Dumper` methods with `Describer` methods. (API change)
+ + Renamed `DebugVersion.getVersionShort()` to `versionShort()`. (API change)
+ + Renamed 4 "get" methods in `AxesVisualizer`. (API change)
+ + Renamed 2 "get" methods in `BoundsVisualizer`. (API change)
+ + Renamed `Describer.getListSeparator()` to `listSeparator()`. (API change)
+ + Renamed `getHeadSize()`, `getLineWidth()`, `headColor()`, and `lineColor()`
+   in `SkeletonVisualizer`. (API change)
+ + Renamed `PerformanceAppState.getUpdateInterval()` to `updateInterval()`.
    (API change)
- + Added capability to describe depthWrite flag.
+ + Added capability to describe `depthWrite` flag.
  + Generate shape textures programmatically.
  + Based on version 2.7 of the heart library.
 
@@ -40,7 +50,7 @@
 ## Version 0.8.9 released on 24 July 2018
 
  + Based on version 2.5 of the heart library.
- + No longer need to setWireframe flag in visualizer render state.
+ + No longer need to `setWireframe` flag in visualizer render state.
 
 ## Version 0.8.8 released on 18 February 2018
 
@@ -52,8 +62,8 @@ Based on version 2.2 of the heart library.
 
 ## Version 0.8.6 released on 27 January 2018
 
- + Removed the interlock between PerformanceAppState and StatsAppState.
- + Added enable/disable methods to PerformanceAppState.
+ + Removed the interlock between `PerformanceAppState` and `StatsAppState`.
+ + Added enable/disable methods to `PerformanceAppState`.
 
 ## Version 0.8.5 released on 25 January 2018
 
@@ -62,8 +72,8 @@ Based on version 2.2 of the heart library.
 
 ## Version 0.8.4 released on 20 January 2018
 
- + Changed API of SkeletonVisualizer.
- + Bugfix: SkeletonVisualizer didn't apply custom colors to bone heads.
+ + Changed API of `SkeletonVisualizer`.
+ + Bugfix: `SkeletonVisualizer` didn't apply custom colors to bone heads.
  + Described color/intensity of lights.
 
 ## Version 0.8.3 released on 2 January 2018
