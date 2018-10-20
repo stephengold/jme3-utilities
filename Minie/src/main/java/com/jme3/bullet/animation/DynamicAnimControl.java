@@ -481,9 +481,7 @@ public class DynamicAnimControl
      * storeResult or a new transform, not null)
      */
     Transform meshTransform(Transform storeResult) {
-        Transform result
-                = (storeResult == null) ? new Transform() : storeResult;
-        result.set(transformer.getWorldTransform());
+        Transform result = MySpatial.worldTransform(transformer, storeResult);
         return result;
     }
 
@@ -842,7 +840,7 @@ public class DynamicAnimControl
             loopSpatial = loopSpatial.getParent();
         }
         Transform meshToModel = modelToMesh.invert();
-        initScale = transformer.getWorldScale().clone();
+        initScale = MySpatial.worldScale(transformer, null);
         /*
          * Analyze the model's meshes.
          */

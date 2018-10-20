@@ -48,6 +48,7 @@ import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.MySkeleton;
+import jme3utilities.MySpatial;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
@@ -472,7 +473,7 @@ public class TorsoLink
         if (parent == null) {
             worldToParent = new Transform();
         } else {
-            Transform parentToWorld = parent.getWorldTransform();
+            Transform parentToWorld = MySpatial.worldTransform(parent, null);
             worldToParent = parentToWorld.invert();
         }
 
