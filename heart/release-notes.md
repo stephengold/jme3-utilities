@@ -1,8 +1,8 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.11.0 released on TBD
+## Version 2.11.0 released on 19 October 2018
 
- + Rename 5 methods in the `MySpatial` class and deprecated the old names
+ + Renamed 5 methods in the `MySpatial` class and deprecated the old names
  + Renamed 2 `Validate.isNumber()` methods and deprecated the old name
  + Renamed `MyColor.parseColor()` and deprecated the old name
  + Eviscerated `SubtreeControl.cloneForSpatial()`
