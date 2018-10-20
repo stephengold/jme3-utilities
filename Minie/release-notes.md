@@ -1,5 +1,46 @@
 # release notes for the Minie library and related tests
 
+## Version 0.4.0 released on TBD
+
+Extensive design and implementation changes to `KinematicRagdollControl`
+and that ilk, now in its own `com.jme3.bullet.animation` package.
+`DynamicAnimControl` is now the core, with `ConfigDynamicAnimControl` for
+configuration.
+
+ + Bone shapes are now aligned with bone coordinate axes instead of mesh
+   coordinate axes.
+ + The inverse-kinematics code has been removed in anticipation of a
+   complete redesign.
+ + Kinematic mode now has 4 submodes.
+ + Rigid body updates now take place just before each physics tick instead of
+   during scene-graph updates.
+ + Added an interim tool for tuning a `DynamicAnimationControl`.
+ + Added example tunings for the Jaime and Elephant models.
+ + Added per-axis freezing of dynamic joints.
+
+Other noteworthy changes to Minie:
+
+ + Added a getSpatial() method to the `AbstractPhysicsControl` class and
+   privatized its `spatial` field.  Also added an empty controlRender() method.
+ + Bugfix: `NullPointerException` in `PhysicsSpace.getGravity()`.
+ + Bugfix: JVM crashed while reading a `SixDofJoint` from a J3O asset.
+ + Added check for invalid location in `RigidBodyMotionState.getWorldLocation()`
+ + Disabled the `isInWorld` checks in `PhysicsRigidBody`.
+ + Renamed and standardized the accessors of `RigidBodyMotionState`.
+ + In `RotationalLimitMotor`: renamed the limit/bounce accessors, added
+   accessors for CFM parameters, added `getAccumulatedImpulse()` and
+   `getAngle()` methods.
+ + In `TranslationalLimitMotor`: added accessors for 4 parameters, added
+   `getOffset()` and `setTargetVelocity()` methods.
+ + Added `getPhysicsTransform()` and `setPhysicsTransform()` methods to
+   the `PhysicsRigidBody` class.
+ + Bypassed `setSpatial()` in `GhostControl` and `RigidBodyControl` in case the
+   spatial does not change.
+ + Eliminated unnecessary aliasing in joint constructors.
+ + Named the debug textures in `BulletDebugAppState`.
+ + Visualize kinematic bodies in blue instead of magenta, to distinguish
+   them from dynamic bodies.
+
 ## Version 0.3.5 released on 10 October 2018
 
 Enhancements to `KinematicRagdollControl`:
@@ -24,7 +65,7 @@ Other noteworthy changes:
  + Added a `setPivot` method to `SixDofJoint.setPivot()`.
  + Added a `physicsTransform()` method to `RigidBodyMotionState`.
  + Added `JointEnd` and `TestRagdollScaling` classes.
- + Updated shared libraries to `jme3-bullet-native` v1.0.7 .
+ + Updated shared libraries to v1.0.7 of `jme3-bullet-native`.
  + Removed the unused `PhysicsSpace.initNativePhysics()` method.
 
 ## Version 0.3.4 released on 5 October 2018
@@ -43,7 +84,7 @@ Other noteworthy changes:
  + Fixed 2 logic errors in `CylinderCollisionShape.canScale()`.
  + Added result validation to `PhysicsRigidBody.getPhysicsLocation()`.
  + Fixed JME issue #931.
- + Updated shared libraries to `jme3-bullet-native` v1.0.5 .
+ + Updated shared libraries to v1.0.5 of `jme3-bullet-native`.
  + Improved `applyScale` option in `GhostControl` and `RigidBodyControl` so that
    it will fall back to uniform scaling (if necessary) or skip rescale
    (if scale is unchanged).
@@ -59,13 +100,13 @@ Other noteworthy changes:
 
 ## Version 0.3.2 released on 28 September 2018
 
- + Made many classes JmeCloneable, especially physics controls.
+ + Made many classes `JmeCloneable`, especially physics controls.
  + Added custom debug materials to collision objects.
  + Added `canScale()` method to collision shapes.
  + Worked around JME issue #919.
  + Prevented setting the margin of a capsule/sphere shape.
- + Implemented limb damping in KinematicRagdollControl.
- + Added getTorso() method to KinematicRagdollControl.
+ + Implemented limb damping in `KinematicRagdollControl`.
+ + Added `getTorso()` method to `KinematicRagdollControl`.
  + Added check for rotation/translation of a heightfield rigid body.
  + Converted PhysicsBoneLink to a standalone class.
  + Removed unnecessary constructor from CollisionShape.
