@@ -1,0 +1,454 @@
+/*
+ Copyright (c) 2018, Stephen Gold
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ * Redistributions of source code must retain the above copyright
+ notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ notice, this list of conditions and the following disclaimer in the
+ documentation and/or other materials provided with the distribution.
+ * Neither the name of the copyright holder nor the names of its contributors
+ may be used to endorse or promote products derived from this software without
+ specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package jme3utilities.minie.test;
+
+import com.jme3.animation.Bone;
+import com.jme3.animation.Skeleton;
+import com.jme3.animation.SkeletonControl;
+import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.animation.BoneLink;
+import com.jme3.bullet.animation.DynamicAnimControl;
+import com.jme3.bullet.animation.JointPreset;
+import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.joints.SixDofJoint;
+import com.jme3.bullet.joints.motors.RotationalLimitMotor;
+import com.jme3.input.KeyInput;
+import com.jme3.light.AmbientLight;
+import com.jme3.light.DirectionalLight;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Transform;
+import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import jme3utilities.MyAsset;
+import jme3utilities.MySpatial;
+import jme3utilities.MyString;
+import jme3utilities.debug.SkeletonVisualizer;
+import jme3utilities.math.MyMath;
+import jme3utilities.math.MyVector3f;
+import jme3utilities.ui.ActionApplication;
+import jme3utilities.ui.InputMode;
+import jme3utilities.ui.Signals;
+
+/**
+ * Interim tuning tool for DynamicAnimControl.
+ */
+public class TuneDac extends ActionApplication {
+    // *************************************************************************
+    // constants and loggers
+
+    /**
+     * message logger for this class
+     */
+    final public static Logger logger
+            = Logger.getLogger(TuneDac.class.getName());
+    /**
+     * name of each axis
+     */
+    final private static String[] axisNames = new String[]{"X", "Y", "Z"};
+    // *************************************************************************
+    // fields
+
+    private BulletAppState bulletAppState;
+    private DynamicAnimControl dac;
+    private int motorVelocitySign = 0;
+    private int wiggleAxis = -1;
+    private Material magenta;
+    private Node model;
+    private RotationalLimitMotor motor = null;
+    private SkeletonVisualizer sv;
+    private String wiggleBoneName = DynamicAnimControl.torsoName;
+    private Transform resetTransform;
+    // *************************************************************************
+    // new methods exposed
+
+    public static void main(String[] args) {
+        TuneDac app = new TuneDac();
+        app.start();
+    }
+    // *************************************************************************
+    // ActionApplication methods
+
+    /**
+     * Initialize this application.
+     */
+    @Override
+    public void actionInitializeApplication() {
+        flyCam.setEnabled(false);
+
+        cam.setLocation(new Vector3f(0f, 1f, 4f));
+        viewPort.setBackgroundColor(ColorRGBA.Gray);
+        addLighting();
+
+        bulletAppState = new BulletAppState();
+        bulletAppState.setDebugEnabled(true);
+        stateManager.attach(bulletAppState);
+        magenta = MyAsset.createWireframeMaterial(assetManager,
+                ColorRGBA.Magenta);
+
+        CollisionShape.setDefaultMargin(0.005f); // 5 mm
+        PhysicsSpace ps = bulletAppState.getPhysicsSpace();
+        ps.setSolverNumIterations(30);
+        addModel();
+
+        List<SkeletonControl> scList
+                = MySpatial.listControls(model, SkeletonControl.class, null);
+        SkeletonControl sc = scList.get(0);
+        sv = new SkeletonVisualizer(assetManager, sc);
+        sv.setLineColor(ColorRGBA.Yellow);
+        rootNode.addControl(sv);
+
+        dac.setPhysicsSpace(ps);
+        dac.bindHierarchy(DynamicAnimControl.torsoName, 0f);
+        dac.getTorsoLink().getRigidBody().setDebugMaterial(magenta);
+    }
+
+    /**
+     * Add new hotkey bindings and override existing ones.
+     */
+    @Override
+    public void moreDefaultBindings() {
+        InputMode dim = getDefaultInputMode();
+
+        dim.bind("dump skeleton", KeyInput.KEY_P);
+        dim.bind("reset model transform", KeyInput.KEY_DOWN);
+        dim.bind("signal rotateLeft", KeyInput.KEY_LEFT);
+        dim.bind("signal rotateRight", KeyInput.KEY_RIGHT);
+        dim.bind("toggle meshes", KeyInput.KEY_M);
+        dim.bind("toggle physics debug", KeyInput.KEY_SLASH);
+        dim.bind("toggle skeleton", KeyInput.KEY_V);
+        dim.bind("wiggle bone first child", KeyInput.KEY_NUMPAD2);
+        dim.bind("wiggle bone next sibling", KeyInput.KEY_NUMPAD6);
+        dim.bind("wiggle bone parent", KeyInput.KEY_NUMPAD8);
+        dim.bind("wiggle bone prev sibling", KeyInput.KEY_NUMPAD4);
+        dim.bind("wiggle bone x", KeyInput.KEY_X);
+        dim.bind("wiggle bone y", KeyInput.KEY_Y);
+        dim.bind("wiggle bone z", KeyInput.KEY_Z);
+    }
+
+    @Override
+    public void onAction(String actionString, boolean ongoing, float tpf) {
+        if (ongoing) {
+            switch (actionString) {
+                case "dump skeleton":
+                    dumpSkeleton();
+                    return;
+                case "reset model transform":
+                    model.setLocalTransform(resetTransform);
+                    return;
+                case "toggle meshes":
+                    toggleMeshes();
+                    return;
+                case "toggle skeleton":
+                    toggleSkeleton();
+                    return;
+                case "toggle physics debug":
+                    togglePhysicsDebug();
+                    return;
+                case "wiggle bone first child":
+                    List<String> children = dac.childNames(wiggleBoneName);
+                    if (!children.isEmpty()) {
+                        String fc = children.get(0);
+                        setWiggleBoneName(fc);
+                    }
+                    return;
+
+                case "wiggle bone next sibling":
+                    if (!wiggleBoneName.isEmpty()) {
+                        String p = dac.parentName(wiggleBoneName);
+                        List<String> siblings = dac.childNames(p);
+                        int i = siblings.indexOf(wiggleBoneName);
+                        i = MyMath.modulo(i + 1, siblings.size());
+                        String nc = siblings.get(i);
+                        setWiggleBoneName(nc);
+                    }
+                    return;
+
+                case "wiggle bone parent":
+                    if (!wiggleBoneName.isEmpty()) {
+                        String p = dac.parentName(wiggleBoneName);
+                        setWiggleBoneName(p);
+                    }
+                    return;
+
+                case "wiggle bone prev sibling":
+                    if (!wiggleBoneName.isEmpty()) {
+                        String p = dac.parentName(wiggleBoneName);
+                        List<String> siblings = dac.childNames(p);
+                        int i = siblings.indexOf(wiggleBoneName);
+                        i = MyMath.modulo(i - 1, siblings.size());
+                        String pc = siblings.get(i);
+                        setWiggleBoneName(pc);
+                    }
+                    return;
+
+                case "wiggle bone x":
+                    setWiggleBoneAxis(PhysicsSpace.AXIS_X);
+                    return;
+                case "wiggle bone y":
+                    setWiggleBoneAxis(PhysicsSpace.AXIS_Y);
+                    return;
+                case "wiggle bone z":
+                    setWiggleBoneAxis(PhysicsSpace.AXIS_Z);
+                    return;
+            }
+        }
+        super.onAction(actionString, ongoing, tpf);
+    }
+
+    /**
+     * Callback invoked once per render pass.
+     *
+     * @param tpf time interval between render passes (in seconds, &ge;0)
+     */
+    @Override
+    public void simpleUpdate(float tpf) {
+        super.simpleUpdate(tpf);
+
+        Signals signals = getSignals();
+        if (signals.test("rotateRight")) {
+            model.rotate(0f, tpf, 0f);
+        }
+        if (signals.test("rotateLeft")) {
+            model.rotate(0f, -tpf, 0f);
+        }
+
+        String text = wiggleBoneName;
+        if (wiggleBoneName.isEmpty()) {
+            text = "TORSO";
+        }
+        if (motor != null) {
+            motor.setTargetVelocity(motorVelocitySign * 2f);
+
+            float angle = motor.getAngle();
+            String axisSign = (motorVelocitySign < 0) ? "-" : "+";
+            String axisName = axisNames[wiggleAxis];
+            text += String.format(" %s%s angle=%4.2f", axisSign, axisName,
+                    angle);
+            fpsText.setText(text);
+        } else {
+            fpsText.setText(text);
+        }
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Add lighting to the scene.
+     */
+    private void addLighting() {
+        ColorRGBA lightColor = new ColorRGBA(0.7f, 0.7f, 0.7f, 1f);
+        AmbientLight ambient = new AmbientLight(lightColor);
+        rootNode.addLight(ambient);
+
+        Vector3f direction = new Vector3f(1f, -2f, -1f).normalizeLocal();
+        DirectionalLight sun = new DirectionalLight(direction, lightColor);
+        rootNode.addLight(sun);
+    }
+
+    /**
+     * Add an animated model to the scene.
+     */
+    private void addModel() {
+        //loadElephant();
+        //loadJaime();
+        loadSinbad();
+
+        rootNode.attachChild(model);
+        setHeight(model, 2f);
+        center(model);
+        resetTransform = model.getLocalTransform().clone();
+
+        model.addControl(dac);
+    }
+
+    /**
+     * Translate a model's center so that the model rests on the X-Z plane, and
+     * its center lies on the Y axis.
+     */
+    private void center(Spatial model) {
+        Vector3f[] minMax = MySpatial.findMinMaxCoords(model);
+        Vector3f center = MyVector3f.midpoint(minMax[0], minMax[1]);
+        Vector3f offset = new Vector3f(center.x, minMax[0].y, center.z);
+
+        Vector3f location = model.getWorldTranslation();
+        location.subtractLocal(offset);
+        MySpatial.setWorldLocation(model, location);
+    }
+
+    private void dumpBoneAndDescendants(Bone bone, String indent) {
+        System.out.printf("%s%s%n", indent, bone.getName());
+        List<Bone> children = bone.getChildren();
+        for (Bone child : children) {
+            dumpBoneAndDescendants(child, indent + "  ");
+        }
+    }
+
+    /**
+     * Process a "dump skeleton" action. TODO move this to debug library
+     */
+    private void dumpSkeleton() {
+        Skeleton sk = dac.getSkeleton();
+        Bone[] roots = sk.getRoots();
+        for (Bone b : roots) {
+            dumpBoneAndDescendants(b, "");
+        }
+    }
+
+    /**
+     * Load the Elephant model.
+     */
+    private void loadElephant() {
+        model = (Node) assetManager.loadModel(
+                "Models/Elephant/Elephant.mesh.xml");
+        model.setCullHint(Spatial.CullHint.Never);
+        model.rotate(0f, 1.6f, 0f);
+        dac = new ElephantControl();
+    }
+
+    /**
+     * Load the Jaime model.
+     */
+    private void loadJaime() {
+        model = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
+        dac = new JaimeControl();
+    }
+
+    /**
+     * Load the Sinbad model.
+     */
+    private void loadSinbad() {
+        model = (Node) assetManager.loadModel("Models/Sinbad/Sinbad.mesh.xml");
+        dac = new SinbadControl();
+    }
+
+    /**
+     * Scale the specified model uniformly so that it has the specified height.
+     *
+     * @param model (not null, modified)
+     * @param height (in world units)
+     */
+    private void setHeight(Spatial model, float height) {
+        Vector3f[] minMax = MySpatial.findMinMaxCoords(model);
+        float oldHeight = minMax[1].y - minMax[0].y;
+
+        model.scale(height / oldHeight);
+    }
+
+    /**
+     * Start wiggling the indexed rotational axis of the current bone.
+     *
+     * @param axisIndex the axis index: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
+     */
+    private void setWiggleBoneAxis(int axisIndex) {
+        assert axisIndex >= 0 : axisIndex;
+        assert axisIndex < 3 : axisIndex;
+
+        if (wiggleBoneName.isEmpty()) {
+            return;
+        }
+        if (wiggleAxis != axisIndex) {
+            if (motor != null) {
+                motor.setEnableMotor(false);
+            }
+            logger.log(Level.SEVERE, "change rotation axis");
+            wiggleAxis = axisIndex;
+            motorVelocitySign = 1;
+
+            BoneLink link = dac.getBoneLink(wiggleBoneName);
+            SixDofJoint joint = link.getJoint();
+            JointPreset newPreset = new JointPreset(axisIndex);
+            newPreset.setupJoint(joint, false, false, false);
+            motor = joint.getRotationalLimitMotor(axisIndex);
+            motor.setEnableMotor(true);
+            motor.setMaxMotorForce(100f);
+
+        } else {
+            logger.log(Level.SEVERE, "reverse rotation");
+            motorVelocitySign *= -1;
+        }
+    }
+
+    private void setWiggleBoneName(String name) {
+        if (!wiggleBoneName.equals(name)) {
+            logger.log(Level.SEVERE, "change bone to {0}",
+                    MyString.quote(name));
+            wiggleBoneName = name;
+            wiggleAxis = -1;
+            motor = null;
+
+            dac.bindHierarchy(DynamicAnimControl.torsoName, 0.5f);
+            if (wiggleBoneName.isEmpty()) {
+                dac.getTorsoLink().getRigidBody().setDebugMaterial(magenta);
+            } else {
+                dac.getTorsoLink().getRigidBody().setDebugMaterial(null);
+                dac.setDynamic(name, new Vector3f(0f, 0f, 0f), false, false, 
+                        false);
+                BoneLink link = dac.getBoneLink(wiggleBoneName);
+                SixDofJoint joint = link.getJoint();
+                JointPreset newPreset = new JointPreset();
+                newPreset.setupJoint(joint, false, false, false);
+            }
+        }
+    }
+
+    /**
+     * Toggle mesh rendering on/off.
+     */
+    private void toggleMeshes() {
+        Spatial.CullHint hint = model.getLocalCullHint();
+        if (hint == Spatial.CullHint.Inherit
+                || hint == Spatial.CullHint.Never) {
+            hint = Spatial.CullHint.Always;
+        } else if (hint == Spatial.CullHint.Always) {
+            hint = Spatial.CullHint.Never;
+        }
+        model.setCullHint(hint);
+    }
+
+    /**
+     * Toggle the physics-debug visualization on/off.
+     */
+    private void togglePhysicsDebug() {
+        boolean enabled = bulletAppState.isDebugEnabled();
+        bulletAppState.setDebugEnabled(!enabled);
+    }
+
+    /**
+     * Toggle the skeleton visualizer on/off.
+     */
+    private void toggleSkeleton() {
+        boolean enabled = sv.isEnabled();
+        sv.setEnabled(!enabled);
+    }
+}
