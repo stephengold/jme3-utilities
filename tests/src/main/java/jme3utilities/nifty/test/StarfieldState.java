@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -236,7 +236,7 @@ public class StarfieldState extends SimpleAppState {
             Vector3f offset = cam.getDirection().mult(-forwardDistance);
 
             for (Spatial object : objects.getChildren()) {
-                Vector3f location = MySpatial.getWorldLocation(object);
+                Vector3f location = MySpatial.worldLocation(object, null);
                 location.addLocal(offset);
                 location.x = wrapToZone(location.x);
                 location.y = wrapToZone(location.y);

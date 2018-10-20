@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -87,7 +87,7 @@ public class TestMySpatial extends SimpleApplication {
         Vector3f loc = new Vector3f(9f, 7f, 8f);
         System.out.printf("loc = %s%n", loc);
         MySpatial.setWorldLocation(child, loc);
-        Vector3f loc2 = MySpatial.getWorldLocation(child);
+        Vector3f loc2 = MySpatial.worldLocation(child, null);
         System.out.printf("loc2 = %s%n", loc2);
 
         parent.setLocalScale(new Vector3f(2f, 2f, 2f));
@@ -96,7 +96,7 @@ public class TestMySpatial extends SimpleApplication {
         rot.normalizeLocal();
         System.out.printf("rot = %s%n", rot);
         MySpatial.setWorldOrientation(child, rot);
-        Quaternion rot2 = MySpatial.getWorldOrientation(child);
+        Quaternion rot2 = MySpatial.worldOrientation(child, null);
         rot2.normalizeLocal();
         System.out.printf("rot2 = %s%n", rot2);
 

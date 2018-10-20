@@ -214,7 +214,7 @@ public class GlobeRenderer extends SimpleAppState {
      * @return radius in world units (&gt;0)
      */
     public float getGlobeRadius() {
-        float result = MySpatial.getUniformScale(globe);
+        float result = MySpatial.uniformScale(globe);
 
         assert result > 0f : result;
         return result;

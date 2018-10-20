@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -345,7 +345,7 @@ class PoseCameraState
              * Calculate the 3D cursor's distance from the camera.
              */
             Vector3f cameraLocation = cam.getLocation();
-            Vector3f cursorLocation = MySpatial.getWorldLocation(cursor);
+            Vector3f cursorLocation = MySpatial.worldLocation(cursor, null);
             range = cameraLocation.distance(cursorLocation);
         }
         /*
@@ -409,7 +409,7 @@ class PoseCameraState
      * port.
      * <p>
      * This method may dolly the camera in or out in order to clamp its distance
-     * from the 3D cursor.
+     * from the 3-D cursor.
      */
     private void aim() {
         assert isOrbitMode();
@@ -417,7 +417,7 @@ class PoseCameraState
          * Calculate the camera's offset relative to the 3D cursor.
          */
         Vector3f location = cam.getLocation().clone();
-        Vector3f cursorLocation = MySpatial.getWorldLocation(cursor);
+        Vector3f cursorLocation = MySpatial.worldLocation(cursor, null);
         Vector3f offset = location.subtract(cursorLocation);
         /*
          * Convert the offset to spherical coordinates.

@@ -87,8 +87,8 @@ public class MySpatial {
     /**
      * Re-parent a spatial, keeping its world scale unchanged.
      *
-     * NOTE: This method may yield incorrect results in the presence of
-     * zero scaling.
+     * NOTE: This method may yield incorrect results in the presence of zero
+     * scaling.
      *
      * @param newParent (not null)
      * @param child spatial to re-parent (not null, not orphan)
@@ -615,96 +615,65 @@ public class MySpatial {
     }
 
     /**
-     * Calculate the world scale factor of a uniformly scaled spatial. TODO
-     * rename uniformScale
+     * Calculate the world scale factor of a uniformly scaled spatial.
      *
      * @param spatial spatial to measure (not null, unaffected)
      * @return scale factor
      * @throws IllegalArgumentException if the spatial is scaled non-uniformly
+     * @deprecated use {@link #uniformScale(com.jme3.scene.Spatial)}
      */
+    @Deprecated
     public static float getUniformScale(Spatial spatial) {
-        Validate.nonNull(spatial, "spatial");
-
-        float result;
-        if (isIgnoringTransforms(spatial)) {
-            result = 1f;
-        } else {
-            Vector3f worldScale = spatial.getWorldScale();
-            if (!MyVector3f.isScaleUniform(worldScale)) {
-                throw new IllegalArgumentException("non-uniform scaling");
-            }
-            result = worldScale.y;
-        }
-
-        return result;
+        return uniformScale(spatial);
     }
 
     /**
-     * Calculate the world location of a spatial's center. TODO rename
-     * copyWorldLocation TODO add copyWorldTransform
+     * Calculate the world location of a spatial's center.
      *
      * @param spatial spatial to locate (not null, unaffected)
-     * @return a new vector
+     * @return a new location vector (in world coordinates)
+     * @deprecated use
+     * {@link #worldLocation(com.jme3.scene.Spatial, com.jme3.math.Vector3f)}
      */
+    @Deprecated
     public static Vector3f getWorldLocation(Spatial spatial) {
-        Validate.nonNull(spatial, "spatial");
-
-        Vector3f location;
-        if (isIgnoringTransforms(spatial)) {
-            location = new Vector3f();
-        } else {
-            location = spatial.getWorldTranslation().clone();
-        }
-
-        return location;
+        return worldLocation(spatial, null);
     }
 
     /**
-     * Calculate the world orientation of a spatial. TODO rename
-     * copyWorldOrientation
+     * Calculate the world orientation of a spatial.
      *
      * @param spatial spatial to orient (not null, unaffected)
-     * @return a new vector
+     * @return a new quaternion (in world coordinates)
+     * @deprecated use
+     * {@link #worldOrientation(com.jme3.scene.Spatial, com.jme3.math.Quaternion)}
      */
+    @Deprecated
     public static Quaternion getWorldOrientation(Spatial spatial) {
-        Validate.nonNull(spatial, "spatial");
-
-        Quaternion orientation;
-        if (isIgnoringTransforms(spatial)) {
-            orientation = new Quaternion();
-        } else {
-            orientation = spatial.getWorldRotation().clone();
-        }
-
-        return orientation;
+        return worldOrientation(spatial, null);
     }
 
     /**
-     * Calculate the world scale of a spatial. TODO rename copyWorldScale
+     * Calculate the world scale of a spatial.
      *
-     * @param spatial which spatial (not null, unaffected)
-     * @return a new vector
+     * @param spatial which spatial (not null)
+     * @return a new scale vector (in world coordinates)
+     * @deprecated use
+     * {@link #worldScale(com.jme3.scene.Spatial, com.jme3.math.Vector3f)}
      */
+    @Deprecated
     public static Vector3f getWorldScale(Spatial spatial) {
-        Validate.nonNull(spatial, "spatial");
-
-        Vector3f scale;
-        if (isIgnoringTransforms(spatial)) {
-            scale = new Vector3f(1f, 1f, 1f);
-        } else {
-            scale = spatial.getWorldScale().clone();
-        }
-
-        return scale;
+        return worldScale(spatial, null);
     }
 
     /**
-     * Calculate the world elevation of a perfectly horizontal surface. TODO
-     * rename yLevel
+     * Calculate the world elevation of a perfectly horizontal geometry.
      *
-     * @param geometry surface to measure (not null)
+     * @param geometry the surface to measure (not null)
      * @return elevation of the surface (in world coordinates)
+     * @deprecated use {@link #yLevel(com.jme3.scene.Geometry)}
      */
+    @Deprecated
     public static float getYLevel(Geometry geometry) {
         Validate.nonNull(geometry, "geometry");
 
@@ -1183,6 +1152,141 @@ public class MySpatial {
             }
         } else {
             result = false;
+        }
+
+        return result;
+    }
+
+    /**
+     * Calculate the world scale factor of a uniformly scaled spatial.
+     *
+     * @param spatial the spatial to measure (not null, unaffected)
+     * @return the scale factor
+     * @throws IllegalArgumentException if the spatial is scaled non-uniformly
+     */
+    public static float uniformScale(Spatial spatial) {
+        Validate.nonNull(spatial, "spatial");
+
+        float result;
+        if (isIgnoringTransforms(spatial)) {
+            result = 1f;
+        } else {
+            Vector3f worldScale = spatial.getWorldScale();
+            if (!MyVector3f.isScaleUniform(worldScale)) {
+                throw new IllegalArgumentException("non-uniform scaling");
+            }
+            result = worldScale.y;
+        }
+
+        return result;
+    }
+
+    /**
+     * Calculate the world location of a spatial's center.
+     *
+     * @param spatial spatial to locate (not null)
+     * @param storeResult (modified if not null)
+     * @return the location vector (in world coordinates, either storeResult or
+     * a new instance)
+     */
+    public static Vector3f worldLocation(Spatial spatial,
+            Vector3f storeResult) {
+        Validate.nonNull(spatial, "spatial");
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        if (isIgnoringTransforms(spatial)) {
+            result.zero();
+        } else {
+            Vector3f location = spatial.getWorldTranslation();
+            result.set(location);
+        }
+
+        return result;
+    }
+
+    /**
+     * Calculate the world orientation of a spatial.
+     *
+     * @param spatial spatial to orient (not null)
+     * @param storeResult (modified if not null)
+     * @return the orientation (in world coordinates, either storeResult or a
+     * new instance)
+     */
+    public static Quaternion worldOrientation(Spatial spatial,
+            Quaternion storeResult) {
+        Validate.nonNull(spatial, "spatial");
+        Quaternion result
+                = (storeResult == null) ? new Quaternion() : storeResult;
+
+        if (isIgnoringTransforms(spatial)) {
+            result.loadIdentity();
+        } else {
+            Quaternion orientation = spatial.getWorldRotation();
+            result.set(orientation);
+        }
+
+        return result;
+    }
+
+    /**
+     * Calculate the world transform of a spatial.
+     *
+     * @param spatial the spatial (not null)
+     * @param storeResult (modified if not null)
+     * @return the transform (in world coordinates, either storeResult or a new
+     * instance)
+     */
+    public static Transform worldTransform(Spatial spatial,
+            Transform storeResult) {
+        Validate.nonNull(spatial, "spatial");
+        Transform result = (storeResult == null) ? new Transform() : storeResult;
+
+        if (isIgnoringTransforms(spatial)) {
+            result.loadIdentity();
+        } else {
+            Transform transform = spatial.getWorldTransform();
+            result.set(transform);
+        }
+
+        return result;
+    }
+
+    /**
+     * Calculate the world scale of a spatial.
+     *
+     * @param spatial the spatial (not null)
+     * @param storeResult (modified if not null)
+     * @return the scale vector (in world coordinates, either storeResult or a
+     * new instance)
+     */
+    public static Vector3f worldScale(Spatial spatial, Vector3f storeResult) {
+        Validate.nonNull(spatial, "spatial");
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        if (isIgnoringTransforms(spatial)) {
+            result.set(1f, 1f, 1f);
+        } else {
+            Vector3f scale = spatial.getWorldScale();
+            result.set(scale);
+        }
+
+        return result;
+    }
+
+    /**
+     * Calculate the world elevation of a perfectly horizontal geometry.
+     *
+     * @param geometry the surface to measure (not null)
+     * @return the elevation of the surface (in world coordinates)
+     */
+    public static float yLevel(Geometry geometry) {
+        Validate.nonNull(geometry, "geometry");
+
+        Vector3f minMax[] = findMinMaxCoords(geometry, true);
+        float result = minMax[0].y;
+
+        if (minMax[0].y != minMax[1].y) {
+            throw new IllegalArgumentException("not perfectly horizontal");
         }
 
         return result;
