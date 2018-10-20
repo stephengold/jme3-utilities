@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -122,42 +122,14 @@ abstract public class SubtreeControl extends SimpleControl {
 
     /**
      * Clone this control for a different node. No longer used as of JME 3.1.
-     * TODO eviscerate
      *
-     * @param cloneSpatial the node for the clone to control (or null)
-     * @return a new control (not null)
+     * @param cloneNode the node for the clone to control (or null)
+     * @return never
+     * @throws UnsupportedOperationException always
      */
     @Override
-    public Control cloneForSpatial(Spatial cloneSpatial) {
-        if (cloneSpatial != null && !(cloneSpatial instanceof Node)) {
-            throw new IllegalArgumentException(
-                    "Clone's spatial must be a Node or null.");
-        }
-
-        SubtreeControl clone;
-        try {
-            clone = clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException("Can't clone control.", e);
-        }
-
-        Node node = (Node) spatial;
-        int childIndex = node.getChildIndex(subtree);
-        if (cloneSpatial == null || childIndex == -1) {
-            clone.subtree = subtree.clone(true);
-        } else {
-            /*
-             * The subtree was cloned when the controlled node was cloned.
-             * Assume the cloned subtree has the same child index.
-             */
-            Node cloneNode = (Node) cloneSpatial;
-            Spatial cloneChild = cloneNode.getChild(childIndex);
-            assert cloneChild != null;
-            clone.subtree = (Node) cloneChild;
-        }
-
-        clone.setSpatial(cloneSpatial);
-        return clone;
+    public Control cloneForSpatial(Spatial cloneNode) {
+        throw new UnsupportedOperationException();
     }
 
     /**
