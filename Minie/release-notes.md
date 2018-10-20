@@ -1,9 +1,9 @@
 # release notes for the Minie library and related tests
 
-## Version 0.4.0 released on TBD
+## Version 0.4.0 released on 20 October 2018
 
 Extensive design and implementation changes to `KinematicRagdollControl`
-and that ilk, now in its own `com.jme3.bullet.animation` package.
+and its ilk, now in its own `com.jme3.bullet.animation` package.
 `DynamicAnimControl` is now the core, with `ConfigDynamicAnimControl` for
 configuration.
 
