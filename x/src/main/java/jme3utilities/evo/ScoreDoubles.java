@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,7 @@ public class ScoreDoubles implements Comparable<ScoreDoubles> {
             ScoreDoubles.class.getName());
     // *************************************************************************
     // fields
-    
+
     /**
      * array of sub-score values (not null, length &gt;0, all elements numbers,
      * initialized by constructors)
@@ -62,7 +62,7 @@ public class ScoreDoubles implements Comparable<ScoreDoubles> {
      * @param subscore sub-score value (number)
      */
     public ScoreDoubles(double subscore) {
-        Validate.isNumber(subscore, "sub-score");
+        Validate.number(subscore, "sub-score");
 
         subscores = new double[1];
         subscores[0] = subscore;
@@ -75,8 +75,8 @@ public class ScoreDoubles implements Comparable<ScoreDoubles> {
      * @param subscore1 2nd sub-score value (number)
      */
     public ScoreDoubles(double subscore0, double subscore1) {
-        Validate.isNumber(subscore0, "1st sub-score");
-        Validate.isNumber(subscore1, "2nd sub-score");
+        Validate.number(subscore0, "1st sub-score");
+        Validate.number(subscore1, "2nd sub-score");
 
         subscores = new double[2];
         subscores[0] = subscore0;
@@ -97,7 +97,7 @@ public class ScoreDoubles implements Comparable<ScoreDoubles> {
         this.subscores = new double[num];
         for (int index = 0; index < num; index++) {
             double sub = subscores[index];
-            Validate.isNumber(sub, "sub-score");
+            Validate.number(sub, "sub-score");
             this.subscores[index] = sub;
         }
         System.arraycopy(subscores, 0, this.subscores, 0, num);

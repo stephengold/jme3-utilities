@@ -266,45 +266,29 @@ final public class Validate {
     }
 
     /**
-     * Validate a single-precision number as a method argument. TODO rename
-     * number
+     * Validate a single-precision number as a method argument.
      *
      * @param fValue value to validate (number)
      * @param description description of the value
      * @throws IllegalArgumentException if the value is NaN
+     * @deprecated use {@link #number(float, java.lang.String)}
      */
+    @Deprecated
     public static void isNumber(float fValue, String description) {
-        if (Float.isNaN(fValue)) {
-            String what;
-            if (description == null) {
-                what = "float argument";
-            } else {
-                what = description;
-            }
-            String message = String.format("%s must be a number.", what);
-            throw new IllegalArgumentException(message);
-        }
+        number(fValue, description);
     }
 
     /**
-     * Validate a double-precision number as a method argument. TODO rename
-     * number
+     * Validate a double-precision number as a method argument.
      *
      * @param dValue value to validate (number)
      * @param description description of the value
      * @throws IllegalArgumentException if the value is NaN
+     * @deprecated use {@link #number(double, java.lang.String)}
      */
+    @Deprecated
     public static void isNumber(double dValue, String description) {
-        if (Double.isNaN(dValue)) {
-            String what;
-            if (description == null) {
-                what = "double argument";
-            } else {
-                what = description;
-            }
-            String message = String.format("%s must be a number.", what);
-            throw new IllegalArgumentException(message);
-        }
+        number(dValue, description);
     }
 
     /**
@@ -567,6 +551,46 @@ final public class Validate {
                 what = description;
             }
             String message = String.format("%s must not be zero.", what);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Validate a single-precision number as a method argument.
+     *
+     * @param fValue value to validate (number)
+     * @param description description of the value
+     * @throws IllegalArgumentException if the value is NaN
+     */
+    public static void number(float fValue, String description) {
+        if (Float.isNaN(fValue)) {
+            String what;
+            if (description == null) {
+                what = "float argument";
+            } else {
+                what = description;
+            }
+            String message = String.format("%s must be a number.", what);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Validate a double-precision number as a method argument.
+     *
+     * @param dValue value to validate (number)
+     * @param description description of the value
+     * @throws IllegalArgumentException if the value is NaN
+     */
+    public static void number(double dValue, String description) {
+        if (Double.isNaN(dValue)) {
+            String what;
+            if (description == null) {
+                what = "double argument";
+            } else {
+                what = description;
+            }
+            String message = String.format("%s must be a number.", what);
             throw new IllegalArgumentException(message);
         }
     }
