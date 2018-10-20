@@ -315,7 +315,10 @@ public class DynamicAnimControl
     }
 
     /**
-     * Immediately freeze the named link and all its descendants.
+     * Immediately freeze the named link and all its descendants. Note:
+     * recursive!
+     * <p>
+     * Allowed only when the control IS added to a spatial.
      *
      * @param linkName the name of the link (not null)
      */
@@ -329,13 +332,16 @@ public class DynamicAnimControl
                     "Cannot change modes unless added to a spatial.");
         }
 
-        blendDescendants(linkName, KinematicSubmode.Frozen, 0f);
-
         if (linkName.equals(torsoName)) {
-            torsoLink.blendToKinematicMode(KinematicSubmode.Frozen, 0f, null);
+            torsoLink.freeze();
         } else {
             BoneLink boneLink = getBoneLink(linkName);
-            boneLink.blendToKinematicMode(KinematicSubmode.Frozen, 0f);
+            boneLink.freeze();
+        }
+
+        List<String> children = childNames(linkName);
+        for (String childName : children) {
+            freezeHierarchy(childName);
         }
     }
 
@@ -613,12 +619,18 @@ public class DynamicAnimControl
 
     /**
      * Immediately put the named link into dynamic mode.
+     * <p>
+     * Allowed only when the control IS added to a spatial.
      *
      * @param linkName the name of the link (not null, not empty)
      * @param uniformAcceleration the uniform acceleration vector (in
      * physics-space coordinates, not null, unaffected)
+     * @param lockX true to lock the joint's X-axis (if not the torso)
+     * @param lockY true to lock the joint's Y-axis (if not the torso)
+     * @param lockZ true to lock the joint's Z-axis (if not the torso)
      */
-    public void setDynamic(String linkName, Vector3f uniformAcceleration) {
+    public void setDynamic(String linkName, Vector3f uniformAcceleration,
+            boolean lockX, boolean lockY, boolean lockZ) {
         if (!isLinkName(linkName)) {
             String msg = "No link named " + MyString.quote(linkName);
             throw new IllegalArgumentException(msg);
@@ -633,21 +645,24 @@ public class DynamicAnimControl
             torsoLink.setDynamic(uniformAcceleration);
         } else {
             BoneLink boneLink = getBoneLink(linkName);
-            boneLink.setDynamic(uniformAcceleration);
+            boneLink.setDynamic(uniformAcceleration, lockX, lockY, lockZ);
         }
     }
 
     /**
      * Immediately put the named link and all its descendants into dynamic mode.
      * Note: recursive!
+     * <p>
+     * Allowed only when the control IS added to a spatial.
      *
      * @param linkName the name of the link at the root of the subtree (not
      * null)
      * @param uniformAcceleration the uniform acceleration vector (in
      * physics-space coordinates, not null, unaffected)
+     * @param lockAll true to lock all axes of all links (except the torso)
      */
     public void setDynamicHierarchy(String linkName,
-            Vector3f uniformAcceleration) {
+            Vector3f uniformAcceleration, boolean lockAll) {
         if (!isLinkName(linkName)) {
             String msg = "No link named " + MyString.quote(linkName);
             throw new IllegalArgumentException(msg);
@@ -662,12 +677,12 @@ public class DynamicAnimControl
             torsoLink.setDynamic(uniformAcceleration);
         } else {
             BoneLink boneLink = getBoneLink(linkName);
-            boneLink.setDynamic(uniformAcceleration);
+            boneLink.setDynamic(uniformAcceleration, lockAll, lockAll, lockAll);
         }
 
         List<String> childNames = childNames(linkName);
         for (String childName : childNames) {
-            setDynamicHierarchy(childName, uniformAcceleration);
+            setDynamicHierarchy(childName, uniformAcceleration, lockAll);
         }
     }
 
@@ -724,7 +739,7 @@ public class DynamicAnimControl
 
         torsoLink.setDynamic(ragdollGravity);
         for (BoneLink boneLink : boneLinkList) {
-            boneLink.setDynamic(ragdollGravity);
+            boneLink.setDynamic(ragdollGravity, false, false, false);
         }
     }
     // *************************************************************************
@@ -1023,7 +1038,7 @@ public class DynamicAnimControl
         if (getSpatial() != null) {
             BoneLink boneLink = getBoneLink(boneName);
             SixDofJoint joint = boneLink.getJoint();
-            preset.setupJoint(joint);
+            preset.setupJoint(joint, false, false, false);
         }
     }
 
@@ -1250,11 +1265,10 @@ public class DynamicAnimControl
                     pivotParent, pivotChild, rotParent, rotChild, true);
             assert boneLink.getJoint() == null;
             boneLink.setJoint(joint);
+            /*
+             * Add the BoneLink to the pre-order list.
+             */
             boneLinkList.add(boneLink);
-
-            JointPreset preset = getJointLimits(childName);
-            preset.setupJoint(joint);
-            joint.setCollisionBetweenLinkedBodies(false);
 
             addJoints(childName);
         }

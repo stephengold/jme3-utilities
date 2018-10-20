@@ -208,6 +208,17 @@ public class BoneLink
     }
 
     /**
+     * Immediately freeze this link.
+     */
+    void freeze() {
+        if (kinematicWeight > 0f) {
+            blendToKinematicMode(KinematicSubmode.Frozen, 0f);
+        } else {
+            setDynamic(new Vector3f(0f, 0f, 0f), true, true, true);
+        }
+    }
+
+    /**
      * Access the linked bone.
      *
      * @return the pre-existing instance (not null)
@@ -261,25 +272,34 @@ public class BoneLink
     }
 
     /**
-     * Put this link into dynamic mode.
+     * Immediately put this link into dynamic mode.
      *
      * @param uniformAcceleration the uniform acceleration vector (in
      * physics-space coordinates, not null, unaffected)
+     * @param lockX true to lock the joint's X-axis
+     * @param lockY true to lock the joint's Y-axis
+     * @param lockZ true to lock the joint's Z-axis
      */
-    public void setDynamic(Vector3f uniformAcceleration) {
+    public void setDynamic(Vector3f uniformAcceleration, boolean lockX,
+            boolean lockY, boolean lockZ) {
         Validate.nonNull(uniformAcceleration, "uniform acceleration");
 
         kinematicWeight = 0f;
         rigidBody.setGravity(uniformAcceleration);
         rigidBody.setKinematic(false);
+
+        String name = bone.getName();
+        JointPreset preset = control.getJointLimits(name);
+        preset.setupJoint(joint, lockX, lockY, lockZ);
+
         for (Bone managedBone : managedBones) {
             managedBone.setUserControl(true);
         }
     }
 
     /**
-     * Assign the physics joint for this bone link. Also enumerate the managed
-     * bones and allocate transform arrays.
+     * Assign a physics joint to this bone link and configure its range of
+     * motion. Also enumerate the managed bones.
      *
      * @param joint (not null, alias created)
      */
@@ -288,6 +308,12 @@ public class BoneLink
 
         assert this.joint == null;
         this.joint = joint;
+
+        String name = bone.getName();
+        JointPreset preset = control.getJointLimits(name);
+        preset.setupJoint(joint, false, false, false);
+
+        joint.setCollisionBetweenLinkedBodies(false);
 
         assert managedBones == null;
         managedBones = control.listManagedBones(bone.getName());

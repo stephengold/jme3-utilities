@@ -231,6 +231,13 @@ public class TorsoLink
     }
 
     /**
+     * Immediately freeze this link.
+     */
+    void freeze() {
+        blendToKinematicMode(KinematicSubmode.Frozen, 0f, null);
+    }
+
+    /**
      * Access the main bone.
      *
      * @return the pre-existing instance (not null)
@@ -276,6 +283,7 @@ public class TorsoLink
         kinematicWeight = 0f;
         rigidBody.setGravity(uniformAcceleration);
         rigidBody.setKinematic(false);
+
         for (Bone managedBone : managedBones) {
             managedBone.setUserControl(true);
         }

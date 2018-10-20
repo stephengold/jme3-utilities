@@ -211,14 +211,14 @@ public class TestDac extends ActionApplication {
                     return;
                 case "go floating":
                     dac.setDynamicHierarchy(DynamicAnimControl.torsoName,
-                            Vector3f.ZERO);
+                            Vector3f.ZERO, false);
                     return;
                 case "go limp":
                     dac.setRagdollMode();
                     return;
                 case "limp left elbow":
                     Vector3f ragdollGravity = dac.gravity(null);
-                    dac.setDynamic(leftUlnaName, ragdollGravity);
+                    dac.setDynamic(leftUlnaName, ragdollGravity, false, false, false);
                     return;
                 case "load":
                     load();
@@ -234,11 +234,11 @@ public class TestDac extends ActionApplication {
                     return;
                 case "raise leftHand":
                     dac.setDynamicHierarchy(leftClavicleName,
-                            new Vector3f(0f, 30f, 0f));
+                            new Vector3f(0f, 30f, 0f), false);
                     return;
                 case "raise rightHand":
                     dac.setDynamicHierarchy(rightClavicleName,
-                            new Vector3f(0f, 30f, 0f));
+                            new Vector3f(0f, 30f, 0f), false);
                     return;
                 case "reset model transform":
                     model.setLocalTransform(resetTransform);

@@ -207,27 +207,53 @@ public class JointPreset implements Savable {
     }
 
     /**
-     * Apply this preset to the specified joint.
+     * Apply this preset to the specified joint, locking the specified
+     * rotational axes at their current angles.
      *
      * @param joint where to apply this preset (not null, modified)
+     * @param lockX true to lock the joint's X-axis
+     * @param lockY true to lock the joint's Y-axis
+     * @param lockZ true to lock the joint's Z-axis
      */
-    public void setupJoint(SixDofJoint joint) {
+    public void setupJoint(SixDofJoint joint, boolean lockX,
+            boolean lockY, boolean lockZ) {
         Validate.nonNull(joint, "joint");
 
         RotationalLimitMotor rotX
                 = joint.getRotationalLimitMotor(PhysicsSpace.AXIS_X);
-        rotX.setUpperLimit(maxX);
-        rotX.setLowerLimit(minX);
+        if (lockX) {
+            float angle = rotX.getAngle();
+            //angle = FastMath.clamp(angle, minX, maxX);
+            rotX.setUpperLimit(angle);
+            rotX.setLowerLimit(angle);
+        } else {
+            rotX.setUpperLimit(maxX);
+            rotX.setLowerLimit(minX);
+        }
 
         RotationalLimitMotor rotY
                 = joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Y);
-        rotY.setUpperLimit(maxY);
-        rotY.setLowerLimit(minY);
+        if (lockY) {
+            float angle = rotY.getAngle();
+            //angle = FastMath.clamp(angle, minY, maxY);
+            rotY.setUpperLimit(angle);
+            rotY.setLowerLimit(angle);
+        } else {
+            rotY.setUpperLimit(maxY);
+            rotY.setLowerLimit(minY);
+        }
 
         RotationalLimitMotor rotZ
                 = joint.getRotationalLimitMotor(PhysicsSpace.AXIS_Z);
-        rotZ.setUpperLimit(maxZ);
-        rotZ.setLowerLimit(minZ);
+        if (lockZ) {
+            float angle = rotZ.getAngle();
+            //angle = FastMath.clamp(angle, minZ, maxZ);
+            rotZ.setUpperLimit(angle);
+            rotZ.setLowerLimit(angle);
+        } else {
+            rotZ.setUpperLimit(maxY);
+            rotZ.setLowerLimit(minY);
+        }
 
         for (int i = 0; i < 3; i++) {
             RotationalLimitMotor rot = joint.getRotationalLimitMotor(i);
