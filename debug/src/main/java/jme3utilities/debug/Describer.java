@@ -347,7 +347,7 @@ public class Describer {
         Validate.nonNull(spatial, "spatial");
         StringBuilder result = new StringBuilder(30);
 
-        Vector3f location = MySpatial.getWorldLocation(spatial);
+        Vector3f location = MySpatial.worldLocation(spatial, null);
         if (!MyVector3f.isZero(location)) {
             result.append("loc=");
             result.append(location);
@@ -367,7 +367,7 @@ public class Describer {
         Validate.nonNull(spatial, "spatial");
         StringBuilder result = new StringBuilder(30);
 
-        Quaternion orientation = MySpatial.getWorldOrientation(spatial);
+        Quaternion orientation = MySpatial.worldOrientation(spatial, null);
         if (!MyQuaternion.isRotationIdentity(orientation)) {
             result.append("orient=");
             result.append(orientation);
@@ -439,7 +439,7 @@ public class Describer {
     public String describeScale(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
 
-        Vector3f worldScale = MySpatial.getWorldScale(spatial);
+        Vector3f worldScale = MySpatial.worldScale(spatial, null);
         String result = describeScale(worldScale);
 
         return result;

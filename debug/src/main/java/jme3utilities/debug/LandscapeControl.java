@@ -204,7 +204,7 @@ public class LandscapeControl extends SubtreeControl {
         Spatial terrain = MySpatial.findChild(subtree, "terrain");
         float localYScale = terrain.getLocalScale().y;
         assert localYScale > 0f : localYScale;
-        float baseY = MySpatial.getWorldLocation(terrain).y;
+        float baseY = MySpatial.worldLocation(terrain, null).y;
         float result = baseY + localYScale * terrainHeight;
 
         return result;
