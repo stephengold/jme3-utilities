@@ -88,12 +88,12 @@ final public class MyColor {
     }
 
     /**
-     * Parse a color from the specified text string. TODO rename parse()
+     * Parse a color from the specified text string.
      *
      * @param textString input text (not null, not empty)
      * @return a new color instance, or null if text is invalid
      */
-    public static ColorRGBA parseColor(String textString) {
+    public static ColorRGBA parse(String textString) {
         Validate.nonEmpty(textString, "text string");
 
         ColorRGBA result = null;
@@ -112,6 +112,18 @@ final public class MyColor {
         }
 
         return result;
+    }
+
+    /**
+     * Parse a color from the specified text string.
+     *
+     * @param textString input text (not null, not empty)
+     * @return a new color instance, or null if text is invalid
+     * @deprecated use {@link #parse(java.lang.String)}
+     */
+    @Deprecated
+    public static ColorRGBA parseColor(String textString) {
+        return parse(textString);
     }
 
     /**
