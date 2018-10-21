@@ -26,6 +26,8 @@
  */
 package jme3utilities.debug;
 
+import com.jme3.animation.Bone;
+import com.jme3.animation.Skeleton;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -95,6 +97,27 @@ public class Describer {
     private String listSeparator = ",";
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Generate a textual description of a bone, not including its children.
+     *
+     * @param bone (not null, unaffected)
+     * @return a description (not null, not empty)
+     */
+    public String describe(Bone bone) {
+        StringBuilder builder = new StringBuilder(30);
+        String nameText = MyString.quote(bone.getName());
+        builder.append(nameText);
+        List<Bone> children = bone.getChildren();
+        if (!children.isEmpty()) {
+            int numChildren = children.size();
+            String childText = String.format(" with %d child%s:", numChildren,
+                    (numChildren == 1 ? "" : "ren"));
+            builder.append(childText);
+        }
+
+        return builder.toString();
+    }
 
     /**
      * Generate a textual description of a material, not including its
@@ -185,6 +208,24 @@ public class Describer {
         }
 
         return result.toString();
+    }
+
+    /**
+     * Generate a textual description of a skeleton, not including its bones.
+     *
+     * @param skeleton (not null, unaffected)
+     * @return a description (not null, not empty)
+     */
+    public String describe(Skeleton skeleton) {
+        StringBuilder builder = new StringBuilder(30);
+        builder.append("Skeleton");
+        Bone[] rootBones = skeleton.getRoots();
+        int numRoots = rootBones.length;
+        String rootsText = String.format(" with %d root bone%s", numRoots,
+                (numRoots == 1) ? "" : "s");
+        builder.append(rootsText);
+
+        return builder.toString();
     }
 
     /**
