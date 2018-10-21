@@ -36,6 +36,7 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.animation.DynamicAnimControl;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.export.binary.BinaryExporter;
@@ -52,6 +53,7 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Sphere;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import java.io.File;
 import java.io.IOException;
@@ -61,8 +63,10 @@ import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
+import jme3utilities.NameGenerator;
 import jme3utilities.debug.SkeletonVisualizer;
 import jme3utilities.math.MyVector3f;
+import jme3utilities.math.noise.Generator;
 import jme3utilities.minie.PhysicsDumper;
 import jme3utilities.ui.ActionApplication;
 import jme3utilities.ui.InputMode;
@@ -89,9 +93,15 @@ public class TestDac extends ActionApplication {
 
     private AnimChannel animChannel = null;
     private BulletAppState bulletAppState;
+    private CollisionShape ballShape;
     private DynamicAnimControl dac;
+    final private float ballRadius = 0.2f; // mesh units
+    final private Generator random = new Generator();
+    private Material ballMaterial;
+    final private Mesh ballMesh = new Sphere(16, 32, ballRadius);
+    final private NameGenerator nameGenerator = new NameGenerator();
     private Node model;
-    private RigidBodyControl boxRbc;
+    private PhysicsSpace physicsSpace;
     private SkeletonVisualizer sv;
     private String animationName = null;
     private String leftClavicleName;
@@ -118,14 +128,20 @@ public class TestDac extends ActionApplication {
         flyCam.setMoveSpeed(4f);
         cam.setLocation(new Vector3f(0f, 1.2f, 5f));
 
+        ColorRGBA ballColor = new ColorRGBA(0.4f, 0f, 0f, 1f);
+        ballMaterial = MyAsset.createShinyMaterial(assetManager, ballColor);
+        ballMaterial.setFloat("Shininess", 5f);
+        ballShape = new SphereCollisionShape(ballRadius);
+
         viewPort.setBackgroundColor(ColorRGBA.Gray);
         addLighting();
 
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState);
         CollisionShape.setDefaultMargin(0.005f); // 5 mm
-        PhysicsSpace ps = bulletAppState.getPhysicsSpace();
-        ps.setSolverNumIterations(30);
+
+        physicsSpace = bulletAppState.getPhysicsSpace();
+        physicsSpace.setSolverNumIterations(30);
 
         addBox();
 
@@ -144,8 +160,6 @@ public class TestDac extends ActionApplication {
         sv = new SkeletonVisualizer(assetManager, sc);
         sv.setLineColor(ColorRGBA.Yellow); // TODO clean up visualization
         rootNode.addControl(sv);
-
-        boxRbc.setPhysicsSpace(ps);
     }
 
     /**
@@ -175,9 +189,10 @@ public class TestDac extends ActionApplication {
         dim.bind("raise leftHand", KeyInput.KEY_LSHIFT);
         dim.bind("raise rightHand", KeyInput.KEY_RSHIFT);
         dim.bind("reset model transform", KeyInput.KEY_DOWN);
+        dim.bind("save", KeyInput.KEY_SEMICOLON);
         dim.bind("signal rotateLeft", KeyInput.KEY_LEFT);
         dim.bind("signal rotateRight", KeyInput.KEY_RIGHT);
-        dim.bind("save", KeyInput.KEY_SEMICOLON);
+        dim.bind("signal shower", KeyInput.KEY_INSERT);
         dim.bind("toggle animation", KeyInput.KEY_PERIOD);
         dim.bind("toggle meshes", KeyInput.KEY_M);
         dim.bind("toggle physics debug", KeyInput.KEY_SLASH);
@@ -288,38 +303,69 @@ public class TestDac extends ActionApplication {
         if (signals.test("rotateLeft")) {
             model.rotate(0f, -tpf, 0f);
         }
+        if (signals.test("shower")) {
+            addBall();
+        }
     }
     // *************************************************************************
     // private methods
+
+    /**
+     * Add a falling ball to the scene.
+     */
+    private void addBall() {
+        String name = nameGenerator.unique("ball");
+        Geometry geometry = new Geometry(name, ballMesh);
+        rootNode.attachChild(geometry);
+
+        geometry.setMaterial(ballMaterial);
+        geometry.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        Vector3f location = random.nextVector3f();
+        location.multLocal(0.5f, 1f, 0.5f);
+        location.y += 4f;
+        geometry.move(location);
+
+        Vector3f worldScale = geometry.getWorldScale();
+        ballShape.setScale(worldScale);
+        float mass = 0.1f;
+        RigidBodyControl rbc = new RigidBodyControl(ballShape, mass);
+        rbc.setApplyScale(true);
+        rbc.setLinearVelocity(new Vector3f(0f, -1f, 0f));
+        rbc.setKinematic(false);
+
+        rbc.setPhysicsSpace(physicsSpace);
+        rbc.setGravity(new Vector3f(0f, -1f, 0f));
+
+        geometry.addControl(rbc);
+    }
 
     /**
      * Add a large static box to serve as a platform.
      */
     private void addBox() {
         float halfExtent = 50f; // mesh units
-        Mesh boxMesh = new Box(halfExtent, halfExtent, halfExtent);
-        Geometry box = new Geometry("box", boxMesh);
-        rootNode.attachChild(box);
+        Mesh mesh = new Box(halfExtent, halfExtent, halfExtent);
+        Geometry geometry = new Geometry("box", mesh);
+        rootNode.attachChild(geometry);
 
-        box.move(0f, -halfExtent, 0f);
+        geometry.move(0f, -halfExtent, 0f);
         ColorRGBA color = new ColorRGBA(0.1f, 0.4f, 0.1f, 1f);
         Material material = MyAsset.createShadedMaterial(assetManager, color);
-        box.setMaterial(material);
-        box.setShadowMode(RenderQueue.ShadowMode.Receive);
+        geometry.setMaterial(material);
+        geometry.setShadowMode(RenderQueue.ShadowMode.Receive);
 
         Vector3f hes = new Vector3f(halfExtent, halfExtent, halfExtent);
-        Vector3f worldScale = box.getWorldScale();
-        hes.multLocal(worldScale);
         BoxCollisionShape shape = new BoxCollisionShape(hes);
         float mass = PhysicsRigidBody.massForStatic;
-        boxRbc = new RigidBodyControl(shape, mass);
-        boxRbc.setKinematic(true);
-
-        box.addControl(boxRbc);
+        RigidBodyControl rbc = new RigidBodyControl(shape, mass);
+        rbc.setApplyScale(true);
+        rbc.setKinematic(true);
+        rbc.setPhysicsSpace(physicsSpace);
+        geometry.addControl(rbc);
     }
 
     /**
-     * Add lighting to the scene.
+     * Add lighting and shadows to the scene.
      */
     private void addLighting() {
         ColorRGBA ambientColor = new ColorRGBA(0.7f, 0.7f, 0.7f, 1f);
@@ -345,6 +391,8 @@ public class TestDac extends ActionApplication {
             model.removeControl(dac);
             rootNode.detachChild(model);
             rootNode.removeControl(sv);
+            removeAllBalls();
+
         }
         switch (modelName) {
             case "Elephant":
@@ -369,8 +417,7 @@ public class TestDac extends ActionApplication {
         resetTransform = model.getLocalTransform().clone();
 
         model.addControl(dac);
-        PhysicsSpace ps = bulletAppState.getPhysicsSpace();
-        dac.setPhysicsSpace(ps);
+        dac.setPhysicsSpace(physicsSpace);
 
         AnimControl animControl = model.getControl(AnimControl.class);
         animChannel = animControl.createChannel();
@@ -403,7 +450,7 @@ public class TestDac extends ActionApplication {
      */
     private void dumpPhysicsSpace() {
         PhysicsDumper dumper = new PhysicsDumper();
-        dumper.dump(bulletAppState.getPhysicsSpace());
+        dumper.dump(physicsSpace);
     }
 
     /**
@@ -479,13 +526,31 @@ public class TestDac extends ActionApplication {
      * Load the Sinbad model.
      */
     private void loadSinbad() {
-        model = (Node) assetManager.loadModel("Models/Sinbad/Sinbad.mesh.xml");
+        model = (Node) assetManager.loadModel(
+                "Models/Sinbad/Sinbad.mesh.xml");
         dac = new SinbadControl();
         animationName = "Dance";
         leftClavicleName = "Clavicle.L";
         leftUlnaName = "Ulna.L";
         rightClavicleName = "Clavicle.R";
         upperBodyLinkName = "Chest";
+    }
+
+    /**
+     * Remove all balls from the scene.
+     */
+    private void removeAllBalls() {
+        List<Geometry> geometries = rootNode.descendantMatches(Geometry.class);
+        for (Geometry geometry : geometries) {
+            String name = geometry.getName();
+            if (NameGenerator.isFrom(name, "ball")) {
+                RigidBodyControl rbc
+                        = geometry.getControl(RigidBodyControl.class);
+                rbc.setPhysicsSpace(null);
+                geometry.removeControl(rbc);
+                geometry.removeFromParent();
+            }
+        }
     }
 
     /**
