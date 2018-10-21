@@ -97,7 +97,8 @@ public class Describer {
     // new methods exposed
 
     /**
-     * Generate a textual description of a material.
+     * Generate a textual description of a material, not including its
+     * parameters.
      *
      * @param material material to describe (may be null, unaffected)
      * @return a description (not null, may be empty)
@@ -127,14 +128,28 @@ public class Describer {
         result.append(description);
 
         Collection<MatParam> params = material.getParams();
-        for (MatParam param : params) {
-            result.append(' ');
-            String paramName = param.getName();
-            result.append(paramName);
-            result.append('=');
-            String value = param.getValueAsString();
-            result.append(value);
-        }
+        int numParams = params.size();
+        String count = String.format(" %d parameter%s", numParams,
+                (numParams == 1) ? "" : "s");
+        result.append(count);
+
+        return result.toString();
+    }
+
+    /**
+     * Generate a textual description of a material parameter.
+     *
+     * @param matParam the material parameter to describe (not null, unaffected)
+     * @return a description (not null, may be empty)
+     */
+    public String describe(MatParam matParam) {
+        StringBuilder result = new StringBuilder(20);
+        result.append(' ');
+        String paramName = matParam.getName();
+        result.append(paramName);
+        result.append('=');
+        String value = matParam.getValueAsString();
+        result.append(value);
 
         return result.toString();
     }

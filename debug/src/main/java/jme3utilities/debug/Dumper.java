@@ -27,6 +27,7 @@
 package jme3utilities.debug;
 
 import com.jme3.light.LightList;
+import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.Camera;
@@ -38,6 +39,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.terrain.geomipmap.TerrainQuad;
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
@@ -71,6 +73,10 @@ public class Dumper {
      * enable dumping of cull hints
      */
     private boolean dumpCullFlag = false;
+    /**
+     * enable dumping of material parameters
+     */
+    private boolean dumpMatParamFlag = false;
     /**
      * enable dumping of material-parameter overrides
      */
@@ -275,6 +281,18 @@ public class Dumper {
                 stream.println();
                 stream.print(indent);
                 stream.printf(" material %s", description);
+                if (dumpMatParamFlag) {
+                    Collection<MatParam> matParams = material.getParams();
+                    if (!matParams.isEmpty()) {
+                        stream.print(':');
+                    }
+                    for (MatParam matParam : matParams) {
+                        description = describer.describe(matParam);
+                        stream.println();
+                        stream.print(indent + "  ");
+                        stream.print(description);
+                    }
+                }
             }
             Mesh mesh = geometry.getMesh();
             description = describer.describe(mesh);
@@ -379,6 +397,17 @@ public class Dumper {
      */
     public Dumper setDumpCull(boolean newValue) {
         dumpCullFlag = newValue;
+        return this;
+    }
+
+    /**
+     * Configure dumping of material parameters.
+     *
+     * @param newValue true to enable, false to disable
+     * @return this instance for chaining
+     */
+    public Dumper setDumpMatParam(boolean newValue) {
+        dumpMatParamFlag = newValue;
         return this;
     }
 
