@@ -32,6 +32,18 @@ Summary of SkyControl features:
  + demonstration apps and online tutorial provided
  + complete source code provided under FreeBSD license
 
+## Contents of this document
+
+ + [Downloads](#downloads)
+ + [Conventions](#conventions)
+ + [History](#history)
+ + [How to install the SDK and the Jme3-utilities Project](#install)
+ + [How to add SkyControl to an existing game](#addsky)
+ + [External links](#links)
+ + [Acknowledgments](#acks)
+
+<a name="downloads"/>
+
 ### Downloads
 
 Recent releases can be downloaded from
@@ -39,6 +51,8 @@ Recent releases can be downloaded from
 
 Maven artifacts are available from
 [JFrog Bintray](https://bintray.com/stephengold/jme3utilities).
+
+<a name="conventions"/>
 
 ### Conventions
 
@@ -48,9 +62,11 @@ The source code is compatible with JDK 7.
 
 World coordinate system:
 
- + the X axis points toward the northern horizon
- + the Y axis points up (toward the zenith)
- + the Z axis points toward the eastern horizon
+ + the +X axis points toward the northern horizon
+ + the +Y axis points up (toward the zenith)
+ + the +Z axis points toward the eastern horizon
+
+<a name="history"/>
 
 ### History
 
@@ -62,6 +78,8 @@ From November 2013 to September 2015, it was hosted at
 
 Old (2014) versions of the Jme3-utilities Project can still be found in
 [the jMonkeyEngine-Contributions Project](https://github.com/jMonkeyEngine-Contributions/SkyControl).
+
+<a name="install"/>
 
 ## How to install the SDK and the Jme3-utilities Project
 
@@ -123,6 +141,8 @@ Clone the jme3-utilities repository using Git:
  1. In the "Projects" window, right-click on the "tests" sub-project to
     select it.
  2. Select "Build".
+
+<a name="addsky"/>
 
 ## How to add SkyControl to an existing game
 
@@ -452,6 +472,8 @@ can be used, you may wish to study "TestSkyControl.java" in the
 "tests" sub-project.  The easiest way to run TestSkyControl is to right-click
 on the "tests" sub-project and select "Tasks" -> "run" -> "runTestSkyControl".
 
+<a name="links"/>
+
 ## External links
 
   + November 2013 [SkyControl demo video](https://www.youtube.com/watch?v=FsJRM6tr3oQ)
@@ -460,6 +482,8 @@ on the "tests" sub-project and select "Tasks" -> "run" -> "runTestSkyControl".
   + A [flight simulation game](https://github.com/ZoltanTheHun/SkyHussars) that uses SkyControl.
 
   + October 2018 [DynamicAnimControl demo video](https://www.youtube.com/watch?v=A1Rii99nb3Q)
+
+<a name="acks"/>
 
 ## Acknowledgments
 
