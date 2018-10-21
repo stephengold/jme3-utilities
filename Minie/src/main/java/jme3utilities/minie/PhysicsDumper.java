@@ -29,7 +29,6 @@ package jme3utilities.minie;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.objects.PhysicsCharacter;
 import com.jme3.bullet.objects.PhysicsGhostObject;
@@ -169,15 +168,10 @@ public class PhysicsDumper extends Dumper {
      */
     public void dump(PhysicsRigidBody body) {
         long objectId = body.getObjectId();
-        stream.printf("  Body #%s", Long.toHexString(objectId));
+        stream.printf("  Body #%s ", Long.toHexString(objectId));
 
-        float mass = body.getMass();
-        if (mass == RigidBodyControl.massForStatic) {
-            stream.print(" sta");
-        } else {
-            stream.printf(" dyn %f kg", mass);
-        }
-        // compare with MyControlP.describe(Control)
+        String desc = MyObject.describe(body);
+        stream.print(desc);
 
         Vector3f location = body.getPhysicsLocation(null);
         stream.printf(" loc=[%.3f, %.3f, %.3f]",
@@ -190,7 +184,7 @@ public class PhysicsDumper extends Dumper {
 
         CollisionShape shape = body.getCollisionShape();
         PhysicsDescriber describer = getDescriber();
-        String desc = describer.describe(shape);
+        desc = describer.describe(shape);
         stream.printf("%n   shape=%s", desc);
 
         Vector3f scale = shape.getScale(null);

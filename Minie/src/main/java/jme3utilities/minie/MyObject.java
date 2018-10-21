@@ -27,6 +27,7 @@
 package jme3utilities.minie;
 
 import com.jme3.bullet.collision.PhysicsCollisionObject;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.objects.PhysicsCharacter;
 import com.jme3.bullet.objects.PhysicsGhostObject;
 import com.jme3.bullet.objects.PhysicsRigidBody;
@@ -58,6 +59,28 @@ public class MyObject {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Briefly describe a rigid body for MyControlP or PhysicsDumper.
+     *
+     * @param body (not null, unaffected)
+     * @return a descriptive string (not not, not empty)
+     */
+    public static String describe(PhysicsRigidBody body) {
+        String result;
+        float mass = body.getMass();
+        if (mass == RigidBodyControl.massForStatic) {
+            result = "sta";
+        } else if (body.isKinematic()) {
+            result = "kin";
+        } else {
+            boolean active = body.isActive();
+            result = String.format("dyn/%f kg/%sactive", mass,
+                    active ? "" : "in");
+        }
+
+        return result;
+    }
 
     /**
      * Generate a name for the specified physics object.
