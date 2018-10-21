@@ -860,6 +860,8 @@ public class MySpatial {
      * Enumerate all spatials of the specified type in the specified subtree of
      * a scene graph. Note: recursive!
      *
+     * @see com.jme3.scene.Node#descendantMatches(java.lang.Class)
+     *
      * @param <T> superclass of Spatial
      * @param subtree (not null, aliases created)
      * @param spatialType superclass of Spatial to search for
