@@ -26,6 +26,8 @@
  */
 package jme3utilities.debug;
 
+import com.jme3.animation.Bone;
+import com.jme3.animation.Skeleton;
 import com.jme3.light.LightList;
 import com.jme3.material.MatParam;
 import com.jme3.material.Material;
@@ -66,31 +68,31 @@ public class Dumper {
     // fields
 
     /**
-     * enable dumping of render-queue bucket assignments
+     * enable dumping of render-queue bucket assignments (for spatials)
      */
     private boolean dumpBucketFlag = false;
     /**
-     * enable dumping of cull hints
+     * enable dumping of cull hints (for spatials)
      */
     private boolean dumpCullFlag = false;
     /**
-     * enable dumping of material parameters
+     * enable dumping of material parameters (for spatials)
      */
     private boolean dumpMatParamFlag = false;
     /**
-     * enable dumping of material-parameter overrides
+     * enable dumping of material-parameter overrides (for spatials)
      */
     private boolean dumpOverrideFlag = false;
     /**
-     * enable dumping of shadow modes
+     * enable dumping of shadow modes (for spatials)
      */
     private boolean dumpShadowFlag = false;
     /**
-     * enable dumping of location, rotation, and scaling
+     * enable dumping of location, rotation, and scaling (for spatials)
      */
     private boolean dumpTransformFlag = false;
     /**
-     * enable dumping of user data
+     * enable dumping of user data (for spatials)
      */
     private boolean dumpUserFlag = true;
     /**
@@ -129,6 +131,27 @@ public class Dumper {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Dump the specified bone, including its children.
+     *
+     * @param bone (not null, unaffected)
+     * @param indent (not null)
+     */
+    public void dump(Bone bone, String indent) {
+        Validate.nonNull(bone, "bone");
+
+        stream.print(indent);
+        String description = describer.describe(bone);
+        stream.print(description);
+        stream.println();
+
+        List<Bone> children = bone.getChildren();
+        String moreIndent = indent + indentIncrement;
+        for (Bone childBone : children) {
+            dump(childBone, moreIndent);
+        }
+    }
 
     /**
      * Dump the specified list of scenes.
@@ -185,6 +208,30 @@ public class Dumper {
             stream.printf("postView[%d]:%n", index);
             dump(posts.get(index), indentIncrement);
         }
+    }
+
+    /**
+     * Dump a skeleton and all its bones.
+     *
+     * @param skeleton the skeleton to dump (not null, unaffected)
+     * @param indent (not null)
+     */
+    public void dump(Skeleton skeleton, String indent) {
+        Validate.nonNull(skeleton, "skeleton");
+
+        stream.print(indent);
+        String description = describer.describe(skeleton);
+        stream.print(description);
+        stream.println(':');
+
+        Bone[] rootBones = skeleton.getRoots();
+        String moreIndent = indent + indentIncrement;
+        for (Bone rootBone : rootBones) {
+            dump(rootBone, moreIndent);
+        }
+
+        stream.println();
+        stream.flush();
     }
 
     /**

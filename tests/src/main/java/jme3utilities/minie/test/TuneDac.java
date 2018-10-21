@@ -26,7 +26,6 @@
  */
 package jme3utilities.minie.test;
 
-import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.bullet.BulletAppState;
@@ -44,18 +43,19 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
+import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.debug.SkeletonVisualizer;
 import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
+import jme3utilities.minie.PhysicsDumper;
 import jme3utilities.ui.ActionApplication;
 import jme3utilities.ui.InputMode;
 import jme3utilities.ui.Signals;
@@ -161,7 +161,8 @@ public class TuneDac extends ActionApplication {
         if (ongoing) {
             switch (actionString) {
                 case "dump skeleton":
-                    dumpSkeleton();
+                    Skeleton skeleton = MySkeleton.findSkeleton(model);
+                    new PhysicsDumper().dump(skeleton, "");
                     return;
                 case "reset model transform":
                     model.setLocalTransform(resetTransform);
@@ -306,25 +307,6 @@ public class TuneDac extends ActionApplication {
         MySpatial.setWorldLocation(model, location);
     }
 
-    private void dumpBoneAndDescendants(Bone bone, String indent) {
-        System.out.printf("%s%s%n", indent, bone.getName());
-        List<Bone> children = bone.getChildren();
-        for (Bone child : children) {
-            dumpBoneAndDescendants(child, indent + "  ");
-        }
-    }
-
-    /**
-     * Process a "dump skeleton" action. TODO move this to debug library
-     */
-    private void dumpSkeleton() {
-        Skeleton sk = dac.getSkeleton();
-        Bone[] roots = sk.getRoots();
-        for (Bone b : roots) {
-            dumpBoneAndDescendants(b, "");
-        }
-    }
-
     /**
      * Load the Elephant model.
      */
@@ -412,7 +394,7 @@ public class TuneDac extends ActionApplication {
                 dac.getTorsoLink().getRigidBody().setDebugMaterial(magenta);
             } else {
                 dac.getTorsoLink().getRigidBody().setDebugMaterial(null);
-                dac.setDynamic(name, new Vector3f(0f, 0f, 0f), false, false, 
+                dac.setDynamic(name, new Vector3f(0f, 0f, 0f), false, false,
                         false);
                 BoneLink link = dac.getBoneLink(wiggleBoneName);
                 SixDofJoint joint = link.getJoint();
