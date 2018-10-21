@@ -31,7 +31,7 @@ import com.jme3.bullet.animation.JointPreset;
 import java.util.logging.Logger;
 
 /**
- * A DynamicAnimControl configured specifically for the Sinbad model.
+ * A DynamicAnimControl configured specifically for the Elephant model.
  *
  * @author Stephen Gold sgold@sonic.net
  */
