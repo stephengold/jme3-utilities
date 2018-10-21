@@ -452,12 +452,14 @@ can be used, you may wish to study "TestSkyControl.java" in the
 "tests" sub-project.  The easiest way to run TestSkyControl is to right-click
 on the "tests" sub-project and select "Tasks" -> "run" -> "runTestSkyControl".
 
-External links:
+## External links
 
   + November 2013 [SkyControl demo video](https://www.youtube.com/watch?v=FsJRM6tr3oQ)
   + January 2014 [SkyControl update video](https://www.youtube.com/watch?v=gE4wxgBIkaw)
   + A [maze game](https://github.com/stephengold/jme3-maze) that uses the jme3-utilities libraries.
   + A [flight simulation game](https://github.com/ZoltanTheHun/SkyHussars) that uses SkyControl.
+
+  + October 2018 [DynamicAnimControl demo video](https://www.youtube.com/watch?v=A1Rii99nb3Q)
 
 ## Acknowledgments
 
