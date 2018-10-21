@@ -105,18 +105,66 @@ public class MyControlP {
      */
     public static String describe(Control sgc) {
         String result;
+
         if (sgc instanceof RigidBodyControl) {
-            result = MyControl.describeType(sgc);
+            StringBuilder builder = new StringBuilder(60);
+
+            String type = MyControl.describeType(sgc);
+            builder.append(type);
+
             RigidBodyControl rigidBodyControl = (RigidBodyControl) sgc;
-            float mass = rigidBodyControl.getMass();
-            if (mass == RigidBodyControl.massForStatic) {
-                result += "[sta]";
-            } else if (rigidBodyControl.isKinematic()) {
-                result += "[kin]";
-            } else {
-                result += String.format("[dyn %f kg]", mass);
+            builder.append('[');
+
+            String desc = MyObject.describe(rigidBodyControl);
+            builder.append(desc);
+
+            builder.append(' ');
+
+            if (!rigidBodyControl.isInWorld()) {
+                builder.append("NOT");
             }
-            // compare with PhysicsDumper.dump(PhysicsRigidBody)
+            builder.append("inWorld");
+
+            if (!rigidBodyControl.isActive()) {
+                builder.append("NOT");
+            }
+            builder.append("active,");
+
+            if (!rigidBodyControl.isApplyScale()) {
+                builder.append("NOT");
+            }
+            builder.append("applyScale,");
+
+            if (!rigidBodyControl.isApplyPhysicsLocal()) {
+                builder.append("NOT");
+            }
+            builder.append("applyLocal,");
+
+            builder.append(']');
+            result = builder.toString();
+
+        } else if (sgc instanceof GhostControl) {
+            StringBuilder builder = new StringBuilder(60);
+
+            String type = MyControl.describeType(sgc);
+            builder.append(type);
+
+            GhostControl ghostControl = (GhostControl) sgc;
+            builder.append('[');
+
+            if (!ghostControl.isApplyScale()) {
+                builder.append("NOT");
+            }
+            builder.append("applyScale,");
+
+            if (!ghostControl.isApplyPhysicsLocal()) {
+                builder.append("NOT");
+            }
+            builder.append("applyLocal,");
+
+            builder.append(']');
+            result = builder.toString();
+
         } else {
             result = MyControl.describe(sgc);
         }
