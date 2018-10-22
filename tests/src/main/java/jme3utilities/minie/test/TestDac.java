@@ -178,7 +178,8 @@ public class TestDac extends ActionApplication {
         dim.bind("go bind pose", KeyInput.KEY_B);
         dim.bind("go floating", KeyInput.KEY_0);
         dim.bind("go limp", KeyInput.KEY_SPACE);
-        dim.bind("limp left elbow", KeyInput.KEY_COMMA);
+        dim.bind("limp left arm", KeyInput.KEY_LBRACKET);
+        dim.bind("limp right arm", KeyInput.KEY_RBRACKET);
         dim.bind("load", KeyInput.KEY_L);
         dim.bind("load elephant", KeyInput.KEY_F3);
         dim.bind("load jaime", KeyInput.KEY_F2);
@@ -231,9 +232,13 @@ public class TestDac extends ActionApplication {
                 case "go limp":
                     dac.setRagdollMode();
                     return;
-                case "limp left elbow":
-                    Vector3f ragdollGravity = dac.gravity(null);
-                    dac.setDynamic(leftUlnaName, ragdollGravity, false, false, false);
+                case "limp left arm":
+                    dac.setDynamicHierarchy(leftClavicleName,
+                            new Vector3f(0f, -30f, 0f), false);
+                    return;
+                case "limp right arm":
+                    dac.setDynamicHierarchy(rightClavicleName,
+                            new Vector3f(0f, -30f, 0f), false);
                     return;
                 case "load":
                     load();
