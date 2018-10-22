@@ -36,6 +36,7 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.animation.DynamicAnimControl;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.GImpactCollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.objects.PhysicsRigidBody;
@@ -102,6 +103,7 @@ public class TestDac extends ActionApplication {
     final private NameGenerator nameGenerator = new NameGenerator();
     private Node model;
     private PhysicsSpace physicsSpace;
+    private SkeletonControl sc;
     private SkeletonVisualizer sv;
     private String animationName = null;
     private String leftClavicleName;
@@ -145,21 +147,7 @@ public class TestDac extends ActionApplication {
 
         addBox();
 
-        addModel("Elephant");
-        /*
-         * Add and configure the model's controls.
-         */
-        AnimControl animControl = model.getControl(AnimControl.class);
-        animChannel = animControl.createChannel();
-        animChannel.setAnim(animationName);
-        animChannel.setSpeed(1f);
-
-        List<SkeletonControl> scList
-                = MySpatial.listControls(model, SkeletonControl.class, null);
-        SkeletonControl sc = scList.get(0);
-        sv = new SkeletonVisualizer(assetManager, sc);
-        sv.setLineColor(ColorRGBA.Yellow); // TODO clean up visualization
-        rootNode.addControl(sv);
+        addModel("SinbadWithSwords");
     }
 
     /**
@@ -184,6 +172,7 @@ public class TestDac extends ActionApplication {
         dim.bind("load elephant", KeyInput.KEY_F3);
         dim.bind("load jaime", KeyInput.KEY_F2);
         dim.bind("load sinbad", KeyInput.KEY_F1);
+        dim.bind("load sinbadWithSwords", KeyInput.KEY_F4);
         dim.bind("set height 1", KeyInput.KEY_1);
         dim.bind("set height 2", KeyInput.KEY_2);
         dim.bind("set height 3", KeyInput.KEY_3);
@@ -251,6 +240,9 @@ public class TestDac extends ActionApplication {
                     return;
                 case "load sinbad":
                     addModel("Sinbad");
+                    return;
+                case "load sinbadWithSwords":
+                    addModel("SinbadWithSwords");
                     return;
                 case "raise leftHand":
                     dac.setDynamicHierarchy(leftClavicleName,
@@ -397,8 +389,8 @@ public class TestDac extends ActionApplication {
             rootNode.detachChild(model);
             rootNode.removeControl(sv);
             removeAllBalls();
-
         }
+
         switch (modelName) {
             case "Elephant":
                 loadElephant();
@@ -408,6 +400,9 @@ public class TestDac extends ActionApplication {
                 break;
             case "Sinbad":
                 loadSinbad();
+                break;
+            case "SinbadWithSwords":
+                loadSinbadWithSwords();
                 break;
         }
 
@@ -429,9 +424,8 @@ public class TestDac extends ActionApplication {
         animChannel.setAnim(animationName);
         animChannel.setSpeed(1f);
 
-        SkeletonControl skeletonControl
-                = model.getControl(SkeletonControl.class);
-        sv = new SkeletonVisualizer(assetManager, skeletonControl);
+        sc = model.getControl(SkeletonControl.class);
+        sv = new SkeletonVisualizer(assetManager, sc);
         sv.setLineColor(ColorRGBA.Yellow); // TODO clean up visualization
         rootNode.addControl(sv);
     }
@@ -533,6 +527,47 @@ public class TestDac extends ActionApplication {
     private void loadSinbad() {
         model = (Node) assetManager.loadModel(
                 "Models/Sinbad/Sinbad.mesh.xml");
+        dac = new SinbadControl();
+        animationName = "Dance";
+        leftClavicleName = "Clavicle.L";
+        leftUlnaName = "Ulna.L";
+        rightClavicleName = "Clavicle.R";
+        upperBodyLinkName = "Chest";
+    }
+
+    /**
+     * Load the Sinbad model with 2 attached swords.
+     */
+    private void loadSinbadWithSwords() {
+        model = (Node) assetManager.loadModel(
+                "Models/Sinbad/Sinbad.mesh.xml");
+
+        Node sword1 = (Node) assetManager.loadModel(
+                "Models/Sinbad/Sword.mesh.xml");
+        Geometry blade = (Geometry) sword1.getChild(2);
+        Mesh mesh = blade.getMesh();
+        CollisionShape shape = new GImpactCollisionShape(mesh);
+        RigidBodyControl rbc = new RigidBodyControl(shape, 1f);
+        rbc.setApplyScale(true);
+        rbc.setKinematic(true);
+        rbc.setPhysicsSpace(physicsSpace);
+        sword1.addControl(rbc);
+
+        sc = model.getControl(SkeletonControl.class);
+        Node leftHandle = sc.getAttachmentsNode("Handle.L");
+        Node rightHandle = sc.getAttachmentsNode("Handle.R");
+        leftHandle.attachChild(sword1);
+
+        // TODO clone sword1
+        Node sword2 = (Node) assetManager.loadModel(
+                "Models/Sinbad/Sword.mesh.xml");
+        RigidBodyControl rbc2 = new RigidBodyControl(shape, 1f);
+        rbc2.setApplyScale(true);
+        rbc2.setKinematic(true);
+        rbc2.setPhysicsSpace(physicsSpace);
+        sword2.addControl(rbc2);
+        rightHandle.attachChild(sword2);
+
         dac = new SinbadControl();
         animationName = "Dance";
         leftClavicleName = "Clavicle.L";
