@@ -182,6 +182,16 @@ public class ConeJoint extends PhysicsJoint {
     }
 
     /**
+     * Alter whether this joint is angular only.
+     *
+     * @param value the desired setting (default=false)
+     */
+    public void setAngularOnly(boolean value) {
+        angularOnly = value;
+        setAngularOnly(objectId, value);
+    }
+
+    /**
      * Alter the angular limits for this joint.
      *
      * @param swingSpan1 the desired span of the 1st swing axis (in radians)
@@ -194,16 +204,6 @@ public class ConeJoint extends PhysicsJoint {
         this.swingSpan2 = swingSpan2;
         this.twistSpan = twistSpan;
         setLimit(objectId, swingSpan1, swingSpan2, twistSpan);
-    }
-
-    /**
-     * Alter whether this joint is angular only.
-     *
-     * @param value the desired setting (default=false)
-     */
-    public void setAngularOnly(boolean value) {
-        angularOnly = value;
-        setAngularOnly(objectId, value);
     }
     // *************************************************************************
     // PhysicsJoint methods
@@ -241,25 +241,6 @@ public class ConeJoint extends PhysicsJoint {
     }
 
     /**
-     * Serialize this joint, for example when saving to a J3O file.
-     *
-     * @param ex exporter (not null)
-     * @throws IOException from exporter
-     */
-    @Override
-    public void write(JmeExporter ex) throws IOException {
-        super.write(ex);
-        OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(rotA, "rotA", new Matrix3f());
-        capsule.write(rotB, "rotB", new Matrix3f());
-
-        capsule.write(angularOnly, "angularOnly", false);
-        capsule.write(swingSpan1, "swingSpan1", 1e30f);
-        capsule.write(swingSpan2, "swingSpan2", 1e30f);
-        capsule.write(twistSpan, "twistSpan", 1e30f);
-    }
-
-    /**
      * De-serialize this joint, for example when loading from a J3O file.
      *
      * @param im importer (not null)
@@ -277,6 +258,25 @@ public class ConeJoint extends PhysicsJoint {
         this.swingSpan2 = capsule.readFloat("swingSpan2", 1e30f);
         this.twistSpan = capsule.readFloat("twistSpan", 1e30f);
         createJoint();
+    }
+
+    /**
+     * Serialize this joint, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
+        OutputCapsule capsule = ex.getCapsule(this);
+        capsule.write(rotA, "rotA", new Matrix3f());
+        capsule.write(rotB, "rotB", new Matrix3f());
+
+        capsule.write(angularOnly, "angularOnly", false);
+        capsule.write(swingSpan1, "swingSpan1", 1e30f);
+        capsule.write(swingSpan2, "swingSpan2", 1e30f);
+        capsule.write(twistSpan, "twistSpan", 1e30f);
     }
     // *************************************************************************
     // private methods
