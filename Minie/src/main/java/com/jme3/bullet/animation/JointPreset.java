@@ -126,6 +126,26 @@ public class JointPreset implements Savable {
     }
 
     /**
+     * Instantiate a preset with the specified symmetric range of motion.
+     *
+     * @param maxX the maximum rotation around the X axis (in radians, &ge;0)
+     * @param maxY the maximum rotation around the Y axis (in radians, &ge;0)
+     * @param maxZ the maximum rotation around the Z axis (in radians, &ge;0)
+     */
+    public JointPreset(float maxX, float maxY, float maxZ) {
+        Validate.inRange(maxX, "max X rotation", 0f, FastMath.PI);
+        Validate.inRange(maxY, "max Y rotation", 0f, FastMath.PI);
+        Validate.inRange(maxZ, "max Z rotation", 0f, FastMath.PI);
+
+        this.maxX = maxX;
+        this.minX = -maxX;
+        this.maxY = maxY;
+        this.minY = -maxY;
+        this.maxZ = maxZ;
+        this.minZ = -maxZ;
+    }
+
+    /**
      * Instantiate a preset for rotation on a single axis.
      *
      * @param axisIndex which axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z

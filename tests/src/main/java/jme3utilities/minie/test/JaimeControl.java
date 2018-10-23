@@ -52,28 +52,28 @@ public class JaimeControl extends DynamicAnimControl {
         super.setMass(torsoName, 2f);
 
         super.link("spine", 3f,
-                new JointPreset(1f, -1f, 1f, -1f, 1f, -1f));
+                new JointPreset(1f, 1f, 1f));
         super.link("ribs", 3f,
-                new JointPreset(0.6f, -0.6f, 0.4f, -0.4f, 0.4f, -0.4f));
+                new JointPreset(0.6f, 0.4f, 0.4f));
         super.link("neck", 1f,
                 new JointPreset(0.3f, -0.6f, 0.5f, -0.5f, 0.5f, -0.5f));
         super.link("head", 6f,
                 new JointPreset(0.3f, -0.6f, 0.5f, -0.5f, 0.5f, -0.5f));
 
         super.link("tail.001", 1f,
-                new JointPreset(0.5f, -0.5f, 0.2f, -0.2f, 0.5f, -0.5f));
+                new JointPreset(0.5f, 0.2f, 0.5f));
         super.link("tail.002", 0.5f,
-                new JointPreset(0.5f, -0.5f, 0.2f, -0.2f, 0.5f, -0.5f));
+                new JointPreset(0.5f, 0.2f, 0.5f));
         super.link("tail.003", 0.5f,
-                new JointPreset(0.5f, -0.5f, 0.2f, -0.2f, 0.5f, -0.5f));
+                new JointPreset(0.5f, 0.2f, 0.5f));
         super.link("tail.004", 0.5f,
-                new JointPreset(0.5f, -0.5f, 0.2f, -0.2f, 0.5f, -0.5f));
+                new JointPreset(0.5f, 0.2f, 0.5f));
         super.link("tail.005", 0.5f,
-                new JointPreset(0.5f, -0.5f, 0.2f, -0.2f, 0.5f, -0.5f));
+                new JointPreset(0.5f, 0.2f, 0.5f));
         super.link("tail.007", 0.5f,
-                new JointPreset(0.5f, -0.5f, 0.2f, -0.2f, 0.5f, -0.5f));
+                new JointPreset(0.5f, 0.2f, 0.5f));
         super.link("tail.009", 0.5f,
-                new JointPreset(0.5f, -0.5f, 0.2f, -0.2f, 0.5f, -0.5f));
+                new JointPreset(0.5f, 0.2f, 0.5f));
 
         super.link("shoulder.R", 3f,
                 new JointPreset(0.8f, -1.6f, 0f, 0f, 0.3f, -0.6f));
@@ -138,13 +138,13 @@ public class JaimeControl extends DynamicAnimControl {
         super.link("shin.R", 1f,
                 new JointPreset(0f, 0f, 0f, 0f, 2f, 0f));
         super.link("foot.R", 2f,
-                new JointPreset(0.6f, -0.6f, 0.2f, -0.2f, 0f, 0f));
+                new JointPreset(0.6f, 0.2f, 0f));
 
         super.link("thigh.L", 2f,
                 new JointPreset(1f, -0.4f, 0.4f, -0.4f, 0.5f, -0.5f));
         super.link("shin.L", 1f,
                 new JointPreset(0f, 0f, 0f, 0f, 0f, -2f));
         super.link("foot.L", 2f,
-                new JointPreset(0.6f, -0.6f, 0.2f, -0.2f, 0f, 0f));
+                new JointPreset(0.6f, 0.2f, 0f));
     }
 }
