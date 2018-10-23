@@ -165,6 +165,15 @@ public class HingeJoint extends PhysicsJoint {
     }
 
     /**
+     * Read the hinge angle.
+     *
+     * @return the angle (in radians)
+     */
+    public float getHingeAngle() {
+        return getHingeAngle(objectId);
+    }
+
+    /**
      * Read this joint's limit softness.
      *
      * @return the range fraction at which velocity-error correction starts
@@ -172,6 +181,15 @@ public class HingeJoint extends PhysicsJoint {
      */
     public float getLimitSoftness() {
         return limitSoftness;
+    }
+
+    /**
+     * Read the lower limit of the hinge angle.
+     *
+     * @return the angle (in radians)
+     */
+    final public float getLowerLimit() {
+        return getLowerLimit(objectId);
     }
 
     /**
@@ -202,12 +220,32 @@ public class HingeJoint extends PhysicsJoint {
     }
 
     /**
+     * Read the upper limit of the hinge angle.
+     *
+     * @return angle (in radians)
+     */
+    final public float getUpperLimit() {
+        return getUpperLimit(objectId);
+    }
+
+    /**
      * Test whether this joint is angular only.
      *
      * @return true if angular only, otherwise false
      */
     public boolean isAngularOnly() {
         return angularOnly;
+    }
+
+    /**
+     * Alter the hinge translation flag.
+     *
+     * @param angularOnly true&rarr;rotate only, false&rarr;rotate and translate
+     * (default=false)
+     */
+    public void setAngularOnly(boolean angularOnly) {
+        this.angularOnly = angularOnly;
+        setAngularOnly(objectId, angularOnly);
     }
 
     /**
@@ -232,44 +270,6 @@ public class HingeJoint extends PhysicsJoint {
         relaxationFactor = _relaxationFactor;
         limitSoftness = _softness;
         setLimit(objectId, low, high, _softness, _biasFactor, _relaxationFactor);
-    }
-
-    /**
-     * Read the upper limit of the hinge angle.
-     *
-     * @return angle (in radians)
-     */
-    final public float getUpperLimit() {
-        return getUpperLimit(objectId);
-    }
-
-    /**
-     * Read the lower limit of the hinge angle.
-     *
-     * @return the angle (in radians)
-     */
-    final public float getLowerLimit() {
-        return getLowerLimit(objectId);
-    }
-
-    /**
-     * Alter the hinge translation flag.
-     *
-     * @param angularOnly true&rarr;rotate only, false&rarr;rotate and translate
-     * (default=false)
-     */
-    public void setAngularOnly(boolean angularOnly) {
-        this.angularOnly = angularOnly;
-        setAngularOnly(objectId, angularOnly);
-    }
-
-    /**
-     * Read the hinge angle.
-     *
-     * @return the angle (in radians)
-     */
-    public float getHingeAngle() {
-        return getHingeAngle(objectId);
     }
     // *************************************************************************
     // PhysicsJoint methods
@@ -319,33 +319,6 @@ public class HingeJoint extends PhysicsJoint {
     }
 
     /**
-     * Serialize this joint, for example when saving to a J3O file.
-     *
-     * @param ex exporter (not null)
-     * @throws IOException from exporter
-     */
-    @Override
-    public void write(JmeExporter ex) throws IOException {
-        super.write(ex);
-        OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(axisA, "axisA", new Vector3f());
-        capsule.write(axisB, "axisB", new Vector3f());
-
-        capsule.write(angularOnly, "angularOnly", false);
-
-        capsule.write(getLowerLimit(), "lowerLimit", 1e30f);
-        capsule.write(getUpperLimit(), "upperLimit", -1e30f);
-
-        capsule.write(biasFactor, "biasFactor", 0.3f);
-        capsule.write(relaxationFactor, "relaxationFactor", 1f);
-        capsule.write(limitSoftness, "limitSoftness", 0.9f);
-
-        capsule.write(getEnableMotor(), "enableAngularMotor", false);
-        capsule.write(getMotorTargetVelocity(), "targetVelocity", 0f);
-        capsule.write(getMaxMotorImpulse(), "maxMotorImpulse", 0f);
-    }
-
-    /**
      * De-serialize this joint, for example when loading from a J3O file.
      *
      * @param im importer (not null)
@@ -376,6 +349,33 @@ public class HingeJoint extends PhysicsJoint {
         setAngularOnly(angularOnly);
         setLimit(lowerLimit, upperLimit, limitSoftness, biasFactor,
                 relaxationFactor);
+    }
+
+    /**
+     * Serialize this joint, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
+        OutputCapsule capsule = ex.getCapsule(this);
+        capsule.write(axisA, "axisA", new Vector3f());
+        capsule.write(axisB, "axisB", new Vector3f());
+
+        capsule.write(angularOnly, "angularOnly", false);
+
+        capsule.write(getLowerLimit(), "lowerLimit", 1e30f);
+        capsule.write(getUpperLimit(), "upperLimit", -1e30f);
+
+        capsule.write(biasFactor, "biasFactor", 0.3f);
+        capsule.write(relaxationFactor, "relaxationFactor", 1f);
+        capsule.write(limitSoftness, "limitSoftness", 0.9f);
+
+        capsule.write(getEnableMotor(), "enableAngularMotor", false);
+        capsule.write(getMotorTargetVelocity(), "targetVelocity", 0f);
+        capsule.write(getMaxMotorImpulse(), "maxMotorImpulse", 0f);
     }
     // *************************************************************************
     // private methods
