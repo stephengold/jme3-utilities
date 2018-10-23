@@ -132,6 +132,10 @@ public class TorsoLink
      * blend interval
      */
     private Transform[] startBoneTransforms = null;
+    /**
+     * location of the rigid body's center (in the bone's local coordinates)
+     */
+    private Vector3f localOffset;
     // *************************************************************************
     // constructors
 
@@ -146,23 +150,30 @@ public class TorsoLink
      * Instantiate a purely kinematic link between the torso of the specified
      * control and the specified rigid body.
      *
-     * @param control the control that will manage this link (not null)
-     * @param mainBone the root bone with the most animation weight (not null)
+     * @param control the control that will manage this link (not null, alias
+     * created)
+     * @param mainBone the root bone with the most animation weight (not null,
+     * alias created)
+     * @param rigidBody the rigid body to link (not null, alias created)
      * @param meshToModel the transform from mesh coordinates to model
      * coordinates (not null, unaffected)
-     * @param rigidBody the rigid body to link (not null)
+     * @param localOffset the location of the body's center (in the bone's local
+     * coordinates, not null, unaffected)
      */
     TorsoLink(DynamicAnimControl control, Bone mainBone,
-            Transform meshToModel, PhysicsRigidBody rigidBody) {
+            PhysicsRigidBody rigidBody, Transform meshToModel,
+            Vector3f localOffset) {
         assert control != null;
         assert mainBone != null;
-        assert meshToModel != null;
         assert rigidBody != null;
+        assert meshToModel != null;
+        assert localOffset != null;
 
         this.control = control;
         this.bone = mainBone;
-        this.meshToModel = meshToModel.clone();
         this.rigidBody = rigidBody;
+        this.meshToModel = meshToModel.clone();
+        this.localOffset = localOffset.clone();
 
         kinematicWeight = 1f;
         rigidBody.setKinematic(true);
@@ -259,6 +270,32 @@ public class TorsoLink
     }
 
     /**
+     * Copy the local offset of this link.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the offset (in bone local coordinates, either storeResult or a
+     * new vector, not null)
+     */
+    Vector3f localOffset(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        result.set(localOffset);
+        return result;
+    }
+
+    /**
+     * Calculate a physics transform for the rigid body.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the calculated transform (in physics coordinates, either
+     * storeResult or a new transform, not null)
+     */
+    public Transform physicsTransform(Transform storeResult) {
+        Transform result
+                = control.physicsTransform(bone, localOffset, storeResult);
+        return result;
+    }
+
+    /**
      * Internal callback, invoked just before the physics is stepped.
      */
     void prePhysicsTick() {
@@ -267,13 +304,13 @@ public class TorsoLink
              * Update the rigid body's transform, including
              * the scale of its shape.
              */
-            Transform transform = control.physicsTransform(bone, null);
+            Transform transform = physicsTransform(null);
             rigidBody.setPhysicsTransform(transform);
         }
     }
 
     /**
-     * Put this link into dynamic mode.
+     * Immediately put this link into dynamic mode.
      *
      * @param uniformAcceleration the uniform acceleration vector (in
      * physics-space coordinates, not null, unaffected)
@@ -372,6 +409,7 @@ public class TorsoLink
         prevBoneTransforms = cloner.clone(prevBoneTransforms);
         startBoneTransforms = cloner.clone(startBoneTransforms);
         startModelTransform = cloner.clone(startModelTransform);
+        localOffset = cloner.clone(localOffset);
     }
 
     /**
@@ -430,6 +468,7 @@ public class TorsoLink
                 "prevBoneTransforms");
         startBoneTransforms = RagUtils.readTransformArray(ic,
                 "startBoneTransforms");
+        localOffset = (Vector3f) ic.readSavable("offset", new Vector3f());
     }
 
     /**
@@ -455,6 +494,7 @@ public class TorsoLink
         oc.write(startModelTransform, "startModelTransforms", new Transform());
         oc.write(prevBoneTransforms, "prevBoneTransforms", new Transform[0]);
         oc.write(startBoneTransforms, "startBoneTransforms", new Transform[0]);
+        oc.write(localOffset, "offset", new Vector3f());
     }
     // *************************************************************************
     // private methods
@@ -477,16 +517,25 @@ public class TorsoLink
             worldToParent = parentToWorld.invert();
         }
 
-        Transform shapeToWorld = rigidBody.getPhysicsTransform(null);
-
         Transform transform = meshToModel.clone();
+        Transform shapeToWorld = rigidBody.getPhysicsTransform(null);
         transform.combineWithParent(shapeToWorld);
         transform.combineWithParent(worldToParent);
         control.getSpatial().setLocalTransform(transform);
-
+        /*
+         * Start with the body's transform in physics/world coordinates.
+         */
         rigidBody.getPhysicsTransform(transform);
+        /*
+         * Convert to mesh coordinates.
+         */
         Transform worldToMesh = control.meshTransform(null).invert();
         transform.combineWithParent(worldToMesh);
+        /*
+         * Subtract the body's local offset.
+         */
+        transform.getTranslation().subtractLocal(localOffset);
+
         for (Bone rootBone : skeleton.getRoots()) {
             MySkeleton.setLocalTransform(rootBone, transform);
         }
@@ -497,7 +546,7 @@ public class TorsoLink
     }
 
     /**
-     * Update this linked bone in blended Kinematic mode.
+     * Update this link in blended Kinematic mode.
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */

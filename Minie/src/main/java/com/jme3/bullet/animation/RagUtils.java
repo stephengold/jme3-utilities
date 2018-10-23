@@ -86,7 +86,7 @@ public class RagUtils {
 
     /**
      * Add the vertex weights of each bone in the specified mesh to an array of
-     * total weights.
+     * total weights. TODO privatize
      *
      * @param mesh animated mesh to analyze (not null, unaffected)
      * @param totalWeights (not null, modified)
@@ -177,24 +177,33 @@ public class RagUtils {
     }
 
     /**
-     * Create a hull collision shape using the specified inverse transform and
-     * list of vertex locations. The skeleton is assumed to be in bind pose.
+     * Create a hull collision shape using the specified inverse transform,
+     * center, and list of vertex locations. The skeleton is assumed to be in
+     * bind pose.
      *
-     * @param transform from vertex coordinates to descaled shape coordinates
+     * @param transform from vertex coordinates to de-scaled shape coordinates
+     * (not null, unaffected)
+     * @param center the location of the shape's center, in vertex coordinates
      * (not null, unaffected)
      * @param vertexLocations list of vertex locations (not null, not empty,
      * unaffected)
      * @return a new shape
      */
     public static CollisionShape createShape(Transform transform,
-            List<Vector3f> vertexLocations) {
-        assert transform != null;
-        assert vertexLocations != null;
+            Vector3f center, List<Vector3f> vertexLocations) {
+        Validate.nonNull(transform, "transform");
+        Validate.finite(center, "center");
+        Validate.nonNull(vertexLocations, "vertex locations");
         assert !vertexLocations.isEmpty();
 
         for (Vector3f location : vertexLocations) {
             /*
-             * Transform mesh coordinates to descaled shape coordinates.
+             * Translate so that mesh coordinates are relative to
+             * the shape's center.
+             */
+            location.subtractLocal(center);
+            /*
+             * Transform mesh coordinates to de-scaled shape coordinates.
              */
             transform.transformVector(location, location);
         }
@@ -237,9 +246,11 @@ public class RagUtils {
      *
      * @param meshes the animated meshes to analyze (not null, unaffected)
      * @param skeleton (not null, unaffected)
-     * @return map bone indices to total bone weight
+     * @return a map from bone indices to total bone weight
      */
     public static float[] totalWeights(Mesh[] meshes, Skeleton skeleton) {
+        Validate.nonNull(meshes, "meshes");
+
         int numBones = skeleton.getBoneCount();
         float[] result = new float[numBones];
         for (Mesh mesh : meshes) {
@@ -305,7 +316,7 @@ public class RagUtils {
      * @param bwArray the array of bone weights (not null, unaffected)
      * @param lbNames a map from bone indices to managing link names (not null,
      * unaffected)
-     * @return a new map from linked-bone names to total weight
+     * @return a new map from link names to total weight
      */
     public static Map<String, Float> weightMap(int[] biArray,
             float[] bwArray, String[] lbNames) {

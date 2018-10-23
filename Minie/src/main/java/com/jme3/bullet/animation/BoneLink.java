@@ -107,8 +107,7 @@ public class BoneLink
      */
     private SixDofJoint joint = null;
     /**
-     * name of parent in the hierarchy of linked bones, or torsoBoneName if
-     * parented by the torso
+     * name of parent in the link hierarchy (could be torsoBoneName)
      */
     private String parentName;
     /**
@@ -120,6 +119,10 @@ public class BoneLink
      * blend interval
      */
     private Transform[] startBoneTransforms = null;
+    /**
+     * location of the rigid body's center (in the bone's local coordinates)
+     */
+    private Vector3f localOffset;
     // *************************************************************************
     // constructors
 
@@ -134,19 +137,24 @@ public class BoneLink
      * Instantiate a purely kinematic link between the specified skeleton bone
      * and the specified rigid body.
      *
-     * @param control the control that will manage this link (not null)
-     * @param bone the skeleton bone to link (not null)
-     * @param rigidBody the rigid body to link (not null)
+     * @param control the control that will manage this link (not null, alias
+     * created)
+     * @param bone the skeleton bone to link (not null, alias created)
+     * @param rigidBody the rigid body to link (not null, alias created)
+     * @param localOffset the location of the body's center (in the bone's local
+     * coordinates, not null, unaffected)
      */
     BoneLink(DynamicAnimControl control, Bone bone,
-            PhysicsRigidBody rigidBody) {
+            PhysicsRigidBody rigidBody, Vector3f localOffset) {
         assert control != null;
         assert bone != null;
         assert rigidBody != null;
+        assert localOffset != null;
 
         this.control = control;
         this.bone = bone;
         this.rigidBody = rigidBody;
+        this.localOffset = localOffset.clone();
 
         kinematicWeight = 1f;
         rigidBody.setKinematic(true);
@@ -248,6 +256,42 @@ public class BoneLink
     }
 
     /**
+     * Copy the local offset of this link.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the offset (in bone local coordinates, either storeResult or a
+     * new vector, not null)
+     */
+    Vector3f localOffset(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        result.set(localOffset);
+        return result;
+    }
+
+    /**
+     * Read the name of this link's parent in the link hierarchy.
+     *
+     * @return the link name (not null)
+     */
+    public String parentName() {
+        assert parentName != null;
+        return parentName;
+    }
+
+    /**
+     * Calculate a physics transform for the rigid body.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the calculated transform (in physics coordinates, either
+     * storeResult or a new transform, not null)
+     */
+    public Transform physicsTransform(Transform storeResult) {
+        Transform result
+                = control.physicsTransform(bone, localOffset, storeResult);
+        return result;
+    }
+
+    /**
      * Internal callback, invoked just before the physics is stepped.
      */
     void prePhysicsTick() {
@@ -256,19 +300,9 @@ public class BoneLink
              * Update the rigid body's transform, including
              * the scale of its shape.
              */
-            Transform transform = control.physicsTransform(bone, null);
+            Transform transform = physicsTransform(null);
             rigidBody.setPhysicsTransform(transform);
         }
-    }
-
-    /**
-     * Read the name of the bone's parent in the linked-bone hierarchy.
-     *
-     * @return name (not null)
-     */
-    public String parentName() {
-        assert parentName != null;
-        return parentName;
     }
 
     /**
@@ -298,8 +332,8 @@ public class BoneLink
     }
 
     /**
-     * Assign a physics joint to this bone link and configure its range of
-     * motion. Also enumerate the managed bones.
+     * Assign a physics joint to this link and configure its range of motion.
+     * Also initialize its array of managed bones.
      *
      * @param joint (not null, alias created)
      */
@@ -310,8 +344,8 @@ public class BoneLink
         this.joint = joint;
 
         String name = bone.getName();
-        JointPreset preset = control.getJointLimits(name);
-        preset.setupJoint(joint, false, false, false);
+        JointPreset rangeOfMotion = control.getJointLimits(name);
+        rangeOfMotion.setupJoint(joint, false, false, false);
 
         joint.setCollisionBetweenLinkedBodies(false);
 
@@ -378,6 +412,7 @@ public class BoneLink
         joint = cloner.clone(joint);
         prevBoneTransforms = cloner.clone(prevBoneTransforms);
         startBoneTransforms = cloner.clone(startBoneTransforms);
+        localOffset = cloner.clone(localOffset);
     }
 
     /**
@@ -431,6 +466,7 @@ public class BoneLink
                 "prevBoneTransforms");
         startBoneTransforms = RagUtils.readTransformArray(ic,
                 "startBoneTransforms");
+        localOffset = (Vector3f) ic.readSavable("offset", new Vector3f());
     }
 
     /**
@@ -454,18 +490,19 @@ public class BoneLink
         oc.write(parentName, "parentName", null);
         oc.write(prevBoneTransforms, "prevBoneTransforms", new Transform[0]);
         oc.write(startBoneTransforms, "startBoneTransforms", new Transform[0]);
+        oc.write(localOffset, "offset", new Vector3f());
     }
     // *************************************************************************
     // private methods
 
     /**
-     * Update this linked bone in Dynamic mode, setting its local transform
-     * based on the transform of the linked rigid body.
+     * Update this link in Dynamic mode, setting the linked bone's transform
+     * based on the transform of the rigid body.
      */
     private void dynamicUpdate() {
         assert !rigidBody.isKinematic();
 
-        Transform transform = localBoneTransform(rigidBody, bone, null);
+        Transform transform = localBoneTransform(null);
         MySkeleton.setLocalTransform(bone, transform);
 
         for (Bone managedBone : managedBones) {
@@ -474,7 +511,7 @@ public class BoneLink
     }
 
     /**
-     * Update this linked bone in blended Kinematic mode.
+     * Update this link in blended Kinematic mode.
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
@@ -542,30 +579,29 @@ public class BoneLink
 
     /**
      * Calculate the local bone transform to match the physics transform of the
-     * specified rigid body.
+     * rigid body.
      *
-     * @param rigidBody the rigid body to match (not null, unaffected)
-     * @param bone the bone to transform (not null, unaffected)
      * @param storeResult storage for the result (modified if not null)
      * @return the calculated bone transform (in local coordinates, either
      * storeResult or a new transform, not null)
      */
-    private Transform localBoneTransform(PhysicsRigidBody rigidBody, Bone bone,
-            Transform storeResult) {
+    private Transform localBoneTransform(Transform storeResult) {
         Transform result
                 = (storeResult == null) ? new Transform() : storeResult;
         Vector3f location = result.getTranslation();
         Quaternion orientation = result.getRotation();
         Vector3f scale = result.getScale();
-
+        /*
+         * Start with the body's transform in physics/world coordinates.
+         */
         rigidBody.getPhysicsTransform(result);
         /*
-         * Transform to mesh coordinate system.
+         * Convert to mesh coordinates.
          */
         Transform worldToMesh = control.meshTransform(null).invert();
         result.combineWithParent(worldToMesh);
         /*
-         * Transform to local coordinate system by factoring out the
+         * Convert to the bone's local coordinate system by factoring out the
          * parent bone's transform. TODO utility
          */
         Bone parentBone = bone.getParent();
@@ -577,6 +613,10 @@ public class BoneLink
         pmRotInv.mult(location, location);
         scale.divideLocal(pmScale);
         pmRotInv.mult(orientation, orientation);
+        /*
+         * Subtract the body's local offset.
+         */
+        location.subtractLocal(localOffset);
 
         return result;
     }

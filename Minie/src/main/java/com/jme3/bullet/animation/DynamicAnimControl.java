@@ -78,8 +78,8 @@ import jme3utilities.Validate;
  * When you add the control to a spatial and set its physics space, it generates
  * a rigid body with a hull collision shape for the torso and for each linked
  * bone. It also creates a SixDofJoint connecting each linked bone to its parent
- * in the linked-bone hierarchy. The mass of each rigid body and the
- * range-of-motion of each joint can be reconfigured on the fly.
+ * in the link hierarchy. The mass of each rigid body and the range-of-motion of
+ * each joint can be reconfigured on the fly.
  * <p>
  * Each link is either dynamic (driven by gravity and collisions) or kinematic
  * (unaffected by gravity and collisions).
@@ -116,8 +116,7 @@ public class DynamicAnimControl
      */
     private float eventDispatchImpulseThreshold = 0f;
     /**
-     * bone links in a pre-order, depth-first traversal of the linked-bone
-     * hierarchy
+     * bone links in a pre-order, depth-first traversal of the link hierarchy
      */
     private List<BoneLink> boneLinkList = null;
     /**
@@ -256,11 +255,11 @@ public class DynamicAnimControl
     }
 
     /**
-     * Enumerate all immediate children (in the linked-bone hierarchy) of the
-     * named link.
+     * Enumerate all immediate children (in the link hierarchy) of the named
+     * link.
      *
      * @param linkName the name of the link (not null)
-     * @return a new list of linked bone names
+     * @return a new list of bone names
      */
     public List<String> childNames(String linkName) {
         if (!isLinkName(linkName)) {
@@ -280,8 +279,7 @@ public class DynamicAnimControl
     }
 
     /**
-     * Count the immediate children (in the linked-bone hierarchy) of the named
-     * link.
+     * Count the immediate children (in the link hierarchy) of the named link.
      *
      * @param linkName the name of the parent link (not null)
      * @return count (&ge;0)
@@ -486,7 +484,7 @@ public class DynamicAnimControl
     }
 
     /**
-     * Find the parent (in the linked-bone hierarchy) of the named linked bone.
+     * Find the parent (in the link hierarchy) of the named linked bone.
      *
      * @param childName the name of the linked bone (not null, not empty)
      * @return the bone name or torsoFakeBoneName (not null)
@@ -518,17 +516,29 @@ public class DynamicAnimControl
      * Calculate the physics transform to match the specified skeleton bone.
      *
      * @param bone the skeleton bone to match (not null, unaffected)
+     * @param localOffset the location of the body's center (in the bone's local
+     * coordinates, not null, unaffected)
      * @param storeResult storage for the result (modified if not null)
      * @return the calculated physics transform (either storeResult or a new
      * transform, not null)
      */
-    Transform physicsTransform(Bone bone, Transform storeResult) {
+    Transform physicsTransform(Bone bone, Vector3f localOffset,
+            Transform storeResult) {
         Transform result
                 = (storeResult == null) ? new Transform() : storeResult;
-
-        MySkeleton.copyMeshTransform(bone, result);
         /*
-         * Transform to world coordinates.
+         * Start with the body's transform in the bone's local coordinates.
+         */
+        result.setTranslation(localOffset);
+        result.getRotation().loadIdentity();
+        result.getScale().set(1f, 1f, 1f);
+        /*
+         * Convert to mesh coordinates.
+         */
+        Transform localToMesh = MySkeleton.copyMeshTransform(bone, null);
+        result.combineWithParent(localToMesh);
+        /*
+         * Convert to world/physics coordinates.
          */
         Transform meshToWorld = meshTransform(null);
         result.combineWithParent(meshToWorld);
@@ -814,7 +824,7 @@ public class DynamicAnimControl
         spatial.addControl(skeletonControl);
 
         skeleton = skeletonControl.getSkeleton();
-        RagUtils.validate(skeleton);
+        RagUtils.validate(skeleton); // TODO warn if any root bone is linked
         /*
          * Find the target meshes and the main bone.  Don't invoke
          * skeletonControl.getTargets() here since the SkeletonControl
@@ -848,20 +858,24 @@ public class DynamicAnimControl
         Map<String, List<Vector3f>> coordsMap
                 = RagUtils.coordsMap(targets, tempManagerMap);
         /*
-         * Create a shape for the torso.
+         * Create a shape for the torso. TODO move to createTorsoLink()
          */
         List<Vector3f> vertexLocations = coordsMap.get(torsoName);
         if (vertexLocations == null) {
             throw new IllegalArgumentException(
                     "No mesh vertices for the torso. Make sure the root bone is not linked.");
         }
+        Vector3f center = new Vector3f();
         MySkeleton.setUserControl(skeleton, false);
-        skeleton.resetAndUpdate();
+        skeleton.resetAndUpdate(); // TODO clone the skeleton first
         Transform boneToMesh
                 = MySkeleton.copyMeshTransform(torsoMainBone, null);
-        Transform invTransform = boneToMesh.invert();
+        Transform meshToBone = boneToMesh.invert();
         CollisionShape torsoShape
-                = RagUtils.createShape(invTransform, vertexLocations);
+                = RagUtils.createShape(meshToBone, center, vertexLocations);
+
+        meshToBone.getTranslation().zero();
+        Vector3f offset = meshToBone.transformVector(center, null);
         /*
          * Create a rigid body for the torso.
          */
@@ -871,10 +885,10 @@ public class DynamicAnimControl
         float viscousDamping = damping();
         torsoRigidBody.setDamping(viscousDamping, viscousDamping);
         /*
-         * Create torso link.
+         * Create the torso link.
          */
-        torsoLink = new TorsoLink(this, torsoMainBone, meshToModel,
-                torsoRigidBody);
+        torsoLink = new TorsoLink(this, torsoMainBone, torsoRigidBody,
+                meshToModel, offset);
         torsoLink.setSkeleton(skeleton);
         /*
          * Create bone links.
@@ -937,15 +951,13 @@ public class DynamicAnimControl
 
         // TODO boneLinkList, etc.
         BoneLink[] loadedBoneLinks
-                = (BoneLink[]) ic.readSavableArray("boneList",
-                        new BoneLink[0]);
+                = (BoneLink[]) ic.readSavableArray("boneList", new BoneLink[0]);
         for (BoneLink physicsBoneLink : loadedBoneLinks) {
             boneLinks.put(physicsBoneLink.getBone().getName(), physicsBoneLink);
         }
 
         skeleton = (Skeleton) ic.readSavable("skeleton", null);
-        transformer
-                = (Spatial) ic.readSavable("transformer", null);
+        transformer = (Spatial) ic.readSavable("transformer", null);
         initScale = (Vector3f) ic.readSavable("initScale", null);
         eventDispatchImpulseThreshold
                 = ic.readFloat("eventDispatchImpulseThreshold", 0f);
@@ -1017,8 +1029,8 @@ public class DynamicAnimControl
     }
 
     /**
-     * Alter the limits of the joint connecting the named linked bone to its
-     * parent in the linked-bone hierarchy.
+     * Alter the range of motion of the joint connecting the named linked bone
+     * to its parent in the link hierarchy.
      *
      * @param boneName the name of the bone (not null, not empty)
      * @param preset the desired range of motion (not null)
@@ -1301,8 +1313,8 @@ public class DynamicAnimControl
      * @param name the name of the bone to be linked (not null)
      * @param lbNames map from bone indices to linked-bone names (not null,
      * unaffected)
-     * @param coordsMap map from bone names to vertex positions (not null,
-     * unaffected)
+     * @param coordsMap a map from linked-bone names to vertex positions (not
+     * null, unaffected)
      * @return a new bone link without a joint, added to the boneLinks map
      */
     private BoneLink createBoneLink(String name,
@@ -1313,37 +1325,42 @@ public class DynamicAnimControl
         /*
          * Create the collision shape.
          */
-        Transform boneToMesh
-                = MySkeleton.copyMeshTransform(bone, null);
-        Transform invTransform = boneToMesh.invert();
+        Transform boneToMesh = MySkeleton.copyMeshTransform(bone, null);
+        Transform meshToBone = boneToMesh.invert();
+        Vector3f center = new Vector3f();
         CollisionShape boneShape
-                = RagUtils.createShape(invTransform, vertexLocations);
+                = RagUtils.createShape(meshToBone, center, vertexLocations);
+
+        meshToBone.getTranslation().zero();
+        Vector3f offset = meshToBone.transformVector(center, null);
         /*
          * Create the rigid body.
          */
         float boneMass = mass(name);
         assert boneMass > 0f : boneMass;
-        PhysicsRigidBody prb = new PhysicsRigidBody(boneShape, boneMass);
+        PhysicsRigidBody rigidBody = new PhysicsRigidBody(boneShape, boneMass);
 
         float viscousDamping = damping();
-        prb.setDamping(viscousDamping, viscousDamping);
+        rigidBody.setDamping(viscousDamping, viscousDamping);
 
-        BoneLink boneLink = new BoneLink(this, bone, prb);
+        BoneLink boneLink = new BoneLink(this, bone, rigidBody, offset);
         boneLinks.put(name, boneLink);
 
         return boneLink;
     }
 
     /**
-     * Find the torso's main bone.
+     * Find the torso's main root bone.
      *
      * @param targets array of animated meshes to provide bone weights (not
      * null, unaffected)
      * @return a root bone, or null if none found
      */
     private Bone findTorsoMainBone(Mesh[] targets) {
+        assert targets != null;
+
         float[] totalWeights = RagUtils.totalWeights(targets, skeleton);
-        Bone[] rootBones = skeleton.getRoots();
+        Bone[] rootBones = skeleton.getRoots(); // TODO shortcut if only 1 root
 
         Bone result = null;
         float greatestTotalWeight = Float.NEGATIVE_INFINITY;
