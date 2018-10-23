@@ -56,6 +56,24 @@ import jme3utilities.Validate;
 public class BulletAppState
         implements AppState, PhysicsTickListener {
     // *************************************************************************
+    // classes and enums
+
+    /**
+     * Enumerate threading modes.
+     */
+    public enum ThreadingType {
+        /**
+         * Default mode: user update, physics update, and rendering happen
+         * sequentially. (single-threaded)
+         */
+        SEQUENTIAL,
+        /**
+         * Parallel threaded mode: physics update and rendering are executed in
+         * parallel, update order is maintained.
+         */
+        PARALLEL
+    }
+    // *************************************************************************
     // constants and loggers
 
     /**
@@ -75,6 +93,30 @@ public class BulletAppState
      * manager that manages this state, set during attach
      */
     private AppStateManager stateManager;
+
+    private Callable<Boolean> parallelPhysicsUpdate = new Callable<Boolean>() {
+        @Override
+        public Boolean call() throws Exception {
+            pSpace.update(tpf * getSpeed());
+            return true;
+        }
+    };
+    private Callable<Boolean> detachedPhysicsUpdate = new Callable<Boolean>() {
+        @Override
+        public Boolean call() throws Exception {
+            pSpace.update(getPhysicsSpace().getAccuracy() * getSpeed());
+            pSpace.distributeEvents();
+            long update = System.currentTimeMillis() - detachedPhysicsLastUpdate;
+            detachedPhysicsLastUpdate = System.currentTimeMillis();
+            executor.schedule(detachedPhysicsUpdate,
+                    Math.round(getPhysicsSpace().getAccuracy() * 1000000.0f) - (update * 1000),
+                    TimeUnit.MICROSECONDS);
+
+            return true;
+        }
+    };
+
+    private long detachedPhysicsLastUpdate = 0L;
     /**
      * executor service for physics tasks, or null if parallel simulation is not
      * running
@@ -200,58 +242,17 @@ public class BulletAppState
         this.broadphaseType = broadphaseType;
     }
     // *************************************************************************
+    // new methods exposed
 
     /**
-     * Allocate the physics space and start physics for ThreadingType.PARALLEL.
+     * Read which broadphase collision-detection algorithm the physics space
+     * will use.
      *
-     * @return true if successful, otherwise false
+     * @return enum value (not null)
      */
-    private boolean startPhysicsOnExecutor() {
-        if (executor != null) {
-            executor.shutdown();
-        }
-        executor = new ScheduledThreadPoolExecutor(1);
-        final BulletAppState appState = this;
-        Callable<Boolean> call = new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                detachedPhysicsLastUpdate = System.currentTimeMillis();
-                pSpace = new PhysicsSpace(worldMin, worldMax, broadphaseType);
-                pSpace.addTickListener(appState);
-                return true;
-            }
-        };
-        try {
-            return executor.submit(call).get();
-        } catch (InterruptedException | ExecutionException ex) {
-            logger.log(Level.SEVERE, null, ex);
-            return false;
-        }
+    public BroadphaseType getBroadphaseType() {
+        return broadphaseType;
     }
-
-    private Callable<Boolean> parallelPhysicsUpdate = new Callable<Boolean>() {
-        @Override
-        public Boolean call() throws Exception {
-            pSpace.update(tpf * getSpeed());
-            return true;
-        }
-    };
-
-    private long detachedPhysicsLastUpdate = 0L;
-    private Callable<Boolean> detachedPhysicsUpdate = new Callable<Boolean>() {
-        @Override
-        public Boolean call() throws Exception {
-            pSpace.update(getPhysicsSpace().getAccuracy() * getSpeed());
-            pSpace.distributeEvents();
-            long update = System.currentTimeMillis() - detachedPhysicsLastUpdate;
-            detachedPhysicsLastUpdate = System.currentTimeMillis();
-            executor.schedule(detachedPhysicsUpdate,
-                    Math.round(getPhysicsSpace().getAccuracy() * 1000000.0f) - (update * 1000),
-                    TimeUnit.MICROSECONDS);
-
-            return true;
-        }
-    };
 
     /**
      * Access the PhysicsSpace managed by this state. Normally there is none
@@ -264,98 +265,43 @@ public class BulletAppState
     }
 
     /**
-     * Allocate a physics space and start physics.
-     * <p>
-     * Physics starts automatically after the state is attached. To start it
-     * sooner, invoke this method.
-     */
-    public void startPhysics() {
-        if (isRunning) {
-            return;
-        }
-
-        switch (threadingType) {
-            case PARALLEL:
-                boolean success = startPhysicsOnExecutor();
-                assert success;
-                assert pSpace != null;
-                break;
-
-            case SEQUENTIAL:
-                pSpace = new PhysicsSpace(worldMin, worldMax, broadphaseType);
-                pSpace.addTickListener(this);
-                break;
-
-            default:
-                throw new IllegalStateException(threadingType.toString());
-        }
-
-        isRunning = true;
-    }
-
-    /**
-     * Stop physics after this state is detached.
-     */
-    private void stopPhysics() {
-        if (!isRunning) {
-            return;
-        }
-
-        if (executor != null) {
-            executor.shutdown();
-            executor = null;
-        }
-        pSpace.removeTickListener(this);
-        pSpace.destroy();
-        pSpace = null;
-        isRunning = false;
-    }
-
-    /**
-     * Initialize this state prior to its 1st update. Should be invoked only by
-     * a subclass or by the AppStateManager.
+     * Read the simulation speed.
      *
-     * @param stateManager the manager for this state (not null)
-     * @param app the application which owns this state (not null)
+     * @return speed (&ge;0, default=1)
      */
-    @Override
-    public void initialize(AppStateManager stateManager, Application app) {
-        if (debugViewPorts == null) {
-            debugViewPorts = new ViewPort[1];
-            debugViewPorts[0] = app.getViewPort();
-        }
-        startPhysics();
+    public float getSpeed() {
+        return speed;
     }
 
     /**
-     * Test whether the physics simulation is running (started but not yet
-     * stopped).
+     * Read which type of threading this app state uses.
      *
-     * @return true if running, otherwise false
+     * @return the threadingType (not null)
      */
-    @Override
-    public boolean isInitialized() {
-        return isRunning;
+    public ThreadingType getThreadingType() {
+        return threadingType;
     }
 
     /**
-     * Enable or disable this state.
-     *
-     * @param enabled true &rarr; enable, false &rarr; disable
-     */
-    @Override
-    public void setEnabled(boolean enabled) {
-        this.isEnabled = enabled;
-    }
-
-    /**
-     * Test whether this state is enabled.
+     * Test whether debug visualization is enabled.
      *
      * @return true if enabled, otherwise false
      */
-    @Override
-    public boolean isEnabled() {
-        return isEnabled;
+    public boolean isDebugEnabled() {
+        return debugEnabled;
+    }
+
+    /**
+     * Alter the broadphase type the physics space will use. Not allowed after
+     * attaching the app state.
+     *
+     * @param broadphaseType an enum value (not null, default=DBVT)
+     */
+    public void setBroadphaseType(BroadphaseType broadphaseType) {
+        Validate.nonNull(broadphaseType, "broadphase type");
+        assert !isRunning;
+
+        this.broadphaseType = broadphaseType;
     }
 
     /**
@@ -395,12 +341,179 @@ public class BulletAppState
     }
 
     /**
-     * Test whether debug visualization is enabled.
+     * Alter the simulation speed.
+     *
+     * @param speed the desired speed (&ge;0, default=1)
+     */
+    public void setSpeed(float speed) {
+        Validate.nonNegative(speed, "speed");
+        this.speed = speed;
+    }
+
+    /**
+     * Alter which type of threading this app state uses. Not allowed after
+     * attaching the app state.
+     *
+     * @param threadingType the desired type (not null, default=SEQUENTIAL)
+     */
+    public void setThreadingType(ThreadingType threadingType) {
+        assert !isRunning;
+        this.threadingType = threadingType;
+    }
+
+    /**
+     * Alter the coordinate range. Not allowed after attaching the app state.
+     *
+     * @param worldMax the desired maximum coordinate values when using
+     * AXIS_SWEEP broadphase algorithms (not null, unaffected,
+     * default=10k,10k,10k)
+     */
+    public void setWorldMax(Vector3f worldMax) {
+        Validate.nonNull(worldMin, "world max");
+        assert !isRunning;
+
+        this.worldMax.set(worldMax);
+    }
+
+    /**
+     * Alter the coordinate range. Not allowed after attaching the app state.
+     *
+     * @param worldMin the desired minimum coordinate values when using
+     * AXIS_SWEEP broadphase algorithms (not null, unaffected,
+     * default=-10k,-10k,-10k)
+     */
+    public void setWorldMin(Vector3f worldMin) {
+        Validate.nonNull(worldMin, "world min");
+        assert !isRunning;
+
+        this.worldMin.set(worldMin);
+    }
+
+    /**
+     * Allocate a physics space and start physics.
+     * <p>
+     * Physics starts automatically after the state is attached. To start it
+     * sooner, invoke this method.
+     */
+    public void startPhysics() {
+        if (isRunning) {
+            return;
+        }
+
+        switch (threadingType) {
+            case PARALLEL:
+                boolean success = startPhysicsOnExecutor();
+                assert success;
+                assert pSpace != null;
+                break;
+
+            case SEQUENTIAL:
+                pSpace = new PhysicsSpace(worldMin, worldMax, broadphaseType);
+                pSpace.addTickListener(this);
+                break;
+
+            default:
+                throw new IllegalStateException(threadingType.toString());
+        }
+
+        isRunning = true;
+    }
+    // *************************************************************************
+    // AppState methods
+
+    /**
+     * Transition this state from terminating to detached. Should be invoked
+     * only by a subclass or by the AppStateManager. Invoked once for each time
+     * {@link #initialize(com.jme3.app.state.AppStateManager, com.jme3.app.Application)}
+     * is invoked.
+     */
+    @Override
+    public void cleanup() {
+        if (debugAppState != null) {
+            stateManager.detach(debugAppState);
+            debugAppState = null;
+        }
+        stopPhysics();
+    }
+
+    /**
+     * Initialize this state prior to its 1st update. Should be invoked only by
+     * a subclass or by the AppStateManager.
+     *
+     * @param stateManager the manager for this state (not null)
+     * @param app the application which owns this state (not null)
+     */
+    @Override
+    public void initialize(AppStateManager stateManager, Application app) {
+        if (debugViewPorts == null) {
+            debugViewPorts = new ViewPort[1];
+            debugViewPorts[0] = app.getViewPort();
+        }
+        startPhysics();
+    }
+
+    /**
+     * Test whether this state is enabled.
      *
      * @return true if enabled, otherwise false
      */
-    public boolean isDebugEnabled() {
-        return debugEnabled;
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    /**
+     * Test whether the physics simulation is running (started but not yet
+     * stopped).
+     *
+     * @return true if running, otherwise false
+     */
+    @Override
+    public boolean isInitialized() {
+        return isRunning;
+    }
+
+    /**
+     * Update this state after all rendering commands are flushed. Should be
+     * invoked only by a subclass or by the AppStateManager. Invoked once per
+     * frame, provided the state is attached and enabled.
+     */
+    @Override
+    public void postRender() {
+        if (physicsFuture != null) {
+            try {
+                physicsFuture.get();
+                physicsFuture = null;
+            } catch (InterruptedException | ExecutionException ex) {
+                logger.log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    /**
+     * Render this state. Should be invoked only by a subclass or by the
+     * AppStateManager. Invoked once per frame, provided the state is attached
+     * and enabled.
+     *
+     * @param rm the render manager (not null)
+     */
+    @Override
+    public void render(RenderManager rm) {
+        if (threadingType == ThreadingType.PARALLEL) {
+            physicsFuture = executor.submit(parallelPhysicsUpdate);
+        } else if (threadingType == ThreadingType.SEQUENTIAL) {
+            pSpace.update(isEnabled ? tpf * speed : 0);
+        }
+    }
+
+    /**
+     * Enable or disable this state.
+     *
+     * @param enabled true &rarr; enable, false &rarr; disable
+     */
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.isEnabled = enabled;
     }
 
     /**
@@ -455,157 +568,8 @@ public class BulletAppState
 
         pSpace.distributeEvents();
     }
-
-    /**
-     * Render this state. Should be invoked only by a subclass or by the
-     * AppStateManager. Invoked once per frame, provided the state is attached
-     * and enabled.
-     *
-     * @param rm the render manager (not null)
-     */
-    @Override
-    public void render(RenderManager rm) {
-        if (threadingType == ThreadingType.PARALLEL) {
-            physicsFuture = executor.submit(parallelPhysicsUpdate);
-        } else if (threadingType == ThreadingType.SEQUENTIAL) {
-            pSpace.update(isEnabled ? tpf * speed : 0);
-        }
-    }
-
-    /**
-     * Update this state after all rendering commands are flushed. Should be
-     * invoked only by a subclass or by the AppStateManager. Invoked once per
-     * frame, provided the state is attached and enabled.
-     */
-    @Override
-    public void postRender() {
-        if (physicsFuture != null) {
-            try {
-                physicsFuture.get();
-                physicsFuture = null;
-            } catch (InterruptedException | ExecutionException ex) {
-                logger.log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    /**
-     * Transition this state from terminating to detached. Should be invoked
-     * only by a subclass or by the AppStateManager. Invoked once for each time
-     * {@link #initialize(com.jme3.app.state.AppStateManager, com.jme3.app.Application)}
-     * is invoked.
-     */
-    @Override
-    public void cleanup() {
-        if (debugAppState != null) {
-            stateManager.detach(debugAppState);
-            debugAppState = null;
-        }
-        stopPhysics();
-    }
-
-    /**
-     * Read which type of threading this app state uses.
-     *
-     * @return the threadingType (not null)
-     */
-    public ThreadingType getThreadingType() {
-        return threadingType;
-    }
-
-    /**
-     * Alter which type of threading this app state uses. Not allowed after
-     * attaching the app state.
-     *
-     * @param threadingType the desired type (not null, default=SEQUENTIAL)
-     */
-    public void setThreadingType(ThreadingType threadingType) {
-        assert !isRunning;
-        this.threadingType = threadingType;
-    }
-
-    /**
-     * Read which broadphase collision-detection algorithm the physics space
-     * will use.
-     *
-     * @return enum value (not null)
-     */
-    public BroadphaseType getBroadphaseType() {
-        return broadphaseType;
-    }
-
-    /**
-     * Alter the broadphase type the physics space will use. Not allowed after
-     * attaching the app state.
-     *
-     * @param broadphaseType an enum value (not null, default=DBVT)
-     */
-    public void setBroadphaseType(BroadphaseType broadphaseType) {
-        Validate.nonNull(broadphaseType, "broadphase type");
-        assert !isRunning;
-
-        this.broadphaseType = broadphaseType;
-    }
-
-    /**
-     * Alter the coordinate range. Not allowed after attaching the app state.
-     *
-     * @param worldMin the desired minimum coordinate values when using
-     * AXIS_SWEEP broadphase algorithms (not null, unaffected,
-     * default=-10k,-10k,-10k)
-     */
-    public void setWorldMin(Vector3f worldMin) {
-        Validate.nonNull(worldMin, "world min");
-        assert !isRunning;
-
-        this.worldMin.set(worldMin);
-    }
-
-    /**
-     * Alter the coordinate range. Not allowed after attaching the app state.
-     *
-     * @param worldMax the desired maximum coordinate values when using
-     * AXIS_SWEEP broadphase algorithms (not null, unaffected,
-     * default=10k,10k,10k)
-     */
-    public void setWorldMax(Vector3f worldMax) {
-        Validate.nonNull(worldMin, "world max");
-        assert !isRunning;
-
-        this.worldMax.set(worldMax);
-    }
-
-    /**
-     * Read the simulation speed.
-     *
-     * @return speed (&ge;0, default=1)
-     */
-    public float getSpeed() {
-        return speed;
-    }
-
-    /**
-     * Alter the simulation speed.
-     *
-     * @param speed the desired speed (&ge;0, default=1)
-     */
-    public void setSpeed(float speed) {
-        Validate.nonNegative(speed, "speed");
-        this.speed = speed;
-    }
     // *************************************************************************
     // PhysicsTickListener methods
-
-    /**
-     * Callback from Bullet, invoked just before the physics is stepped. A good
-     * time to clear/apply forces.
-     *
-     * @param space the space that is about to be stepped (not null)
-     * @param timeStep the time per physics step (in seconds, &ge;0)
-     */
-    @Override
-    public void prePhysicsTick(PhysicsSpace space, float timeStep) {
-    }
 
     /**
      * Callback from Bullet, invoked just after the physics is stepped. A good
@@ -617,21 +581,63 @@ public class BulletAppState
     @Override
     public void physicsTick(PhysicsSpace space, float timeStep) {
     }
-    // *************************************************************************
 
     /**
-     * Enumerate threading modes.
+     * Callback from Bullet, invoked just before the physics is stepped. A good
+     * time to clear/apply forces.
+     *
+     * @param space the space that is about to be stepped (not null)
+     * @param timeStep the time per physics step (in seconds, &ge;0)
      */
-    public enum ThreadingType {
-        /**
-         * Default mode: user update, physics update, and rendering happen
-         * sequentially. (single-threaded)
-         */
-        SEQUENTIAL,
-        /**
-         * Parallel threaded mode: physics update and rendering are executed in
-         * parallel, update order is maintained.
-         */
-        PARALLEL
+    @Override
+    public void prePhysicsTick(PhysicsSpace space, float timeStep) {
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Allocate the physics space and start physics for ThreadingType.PARALLEL.
+     *
+     * @return true if successful, otherwise false
+     */
+    private boolean startPhysicsOnExecutor() {
+        if (executor != null) {
+            executor.shutdown();
+        }
+        executor = new ScheduledThreadPoolExecutor(1);
+        final BulletAppState appState = this;
+        Callable<Boolean> call = new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                detachedPhysicsLastUpdate = System.currentTimeMillis();
+                pSpace = new PhysicsSpace(worldMin, worldMax, broadphaseType);
+                pSpace.addTickListener(appState);
+                return true;
+            }
+        };
+        try {
+            return executor.submit(call).get();
+        } catch (InterruptedException | ExecutionException ex) {
+            logger.log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    /**
+     * Stop physics after this state is detached.
+     */
+    private void stopPhysics() {
+        if (!isRunning) {
+            return;
+        }
+
+        if (executor != null) {
+            executor.shutdown();
+            executor = null;
+        }
+        pSpace.removeTickListener(this);
+        pSpace.destroy();
+        pSpace = null;
+        isRunning = false;
     }
 }
