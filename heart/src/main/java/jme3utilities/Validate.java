@@ -28,6 +28,7 @@ package jme3utilities;
 
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.math.MyVector3f;
@@ -292,6 +293,29 @@ final public class Validate {
     }
 
     /**
+     * Validate a non-null, non-empty collection as a method argument.
+     *
+     * @param collection the collection to validate (not null, not empty)
+     * @param description a description of the collection
+     * @throws NullPointerException if the collection is null
+     * @throws IllegalArgumentException if the collection is empty
+     */
+    public static void nonEmpty(Collection collection, String description) {
+        nonNull(collection, description);
+
+        if (collection.isEmpty()) {
+            String what;
+            if (description == null) {
+                what = "Collection argument";
+            } else {
+                what = description;
+            }
+            String message = String.format("%s must not be empty.", what);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
      * Validate a non-null, non-empty float array as a method argument.
      *
      * @param array array to validate (not null, not empty)
@@ -305,7 +329,7 @@ final public class Validate {
         if (array.length == 0) {
             String what;
             if (description == null) {
-                what = "String argument";
+                what = "float[] argument";
             } else {
                 what = description;
             }
@@ -440,7 +464,7 @@ final public class Validate {
         if (object == null) {
             String what;
             if (description == null) {
-                what = "method argument";
+                what = "Object argument";
             } else {
                 what = description;
             }
