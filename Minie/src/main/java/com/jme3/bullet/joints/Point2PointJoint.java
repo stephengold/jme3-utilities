@@ -93,34 +93,6 @@ public class Point2PointJoint extends PhysicsJoint {
     // new methods exposed
 
     /**
-     * Alter the joint's damping.
-     *
-     * @param value the desired viscous damping ratio (0&rarr;no damping,
-     * 1&rarr;critically damped, default=1)
-     */
-    public void setDamping(float value) {
-        setDamping(objectId, value);
-    }
-
-    /**
-     * Alter the joint's impulse clamp.
-     *
-     * @param value the desired impulse clamp value (default=0)
-     */
-    public void setImpulseClamp(float value) {
-        setImpulseClamp(objectId, value);
-    }
-
-    /**
-     * Alter the joint's tau value.
-     *
-     * @param value the desired tau value (default=0.3)
-     */
-    public void setTau(float value) {
-        setTau(objectId, value);
-    }
-
-    /**
      * Read the joint's damping ratio.
      *
      * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
@@ -146,6 +118,34 @@ public class Point2PointJoint extends PhysicsJoint {
      */
     public float getTau() {
         return getTau(objectId);
+    }
+
+    /**
+     * Alter the joint's damping.
+     *
+     * @param value the desired viscous damping ratio (0&rarr;no damping,
+     * 1&rarr;critically damped, default=1)
+     */
+    public void setDamping(float value) {
+        setDamping(objectId, value);
+    }
+
+    /**
+     * Alter the joint's impulse clamp.
+     *
+     * @param value the desired impulse clamp value (default=0)
+     */
+    public void setImpulseClamp(float value) {
+        setImpulseClamp(objectId, value);
+    }
+
+    /**
+     * Alter the joint's tau value.
+     *
+     * @param value the desired tau value (default=0.3)
+     */
+    public void setTau(float value) {
+        setTau(objectId, value);
     }
     // *************************************************************************
     // PhysicsJoint methods
@@ -186,21 +186,6 @@ public class Point2PointJoint extends PhysicsJoint {
     }
 
     /**
-     * Serialize this joint, for example when saving to a J3O file.
-     *
-     * @param ex exporter (not null)
-     * @throws IOException from exporter
-     */
-    @Override
-    public void write(JmeExporter ex) throws IOException {
-        super.write(ex);
-        OutputCapsule cap = ex.getCapsule(this);
-        cap.write(getDamping(), "damping", 1f);
-        cap.write(getTau(), "tau", 0.3f);
-        cap.write(getImpulseClamp(), "impulseClamp", 0f);
-    }
-
-    /**
      * De-serialize this joint, for example when loading from a J3O file.
      *
      * @param im importer (not null)
@@ -214,6 +199,21 @@ public class Point2PointJoint extends PhysicsJoint {
         setDamping(cap.readFloat("damping", 1f));
         setDamping(cap.readFloat("tau", 0.3f));
         setDamping(cap.readFloat("impulseClamp", 0f));
+    }
+
+    /**
+     * Serialize this joint, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
+        OutputCapsule cap = ex.getCapsule(this);
+        cap.write(getDamping(), "damping", 1f);
+        cap.write(getTau(), "tau", 0.3f);
+        cap.write(getImpulseClamp(), "impulseClamp", 0f);
     }
     // *************************************************************************
     // private methods
