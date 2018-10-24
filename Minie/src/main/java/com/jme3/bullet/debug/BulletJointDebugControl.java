@@ -120,7 +120,7 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
         geomA.setLocalTransform(a);
         geomB.setLocalTransform(b);
 
-        arrowA.setArrowExtent(joint.getPivotA());
-        arrowB.setArrowExtent(joint.getPivotB());
+        arrowA.setArrowExtent(joint.getPivotA(null));
+        arrowB.setArrowExtent(joint.getPivotB(null));
     }
 }

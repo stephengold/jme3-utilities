@@ -72,11 +72,11 @@ abstract public class PhysicsJoint
      */
     protected long objectId = 0L;
     /**
-     * one of the connected dynamic rigid bodies
+     * 1st body specified in the constructor
      */
     protected PhysicsRigidBody nodeA;
     /**
-     * the other connected dynamic rigid body
+     * 2nd body specified in the constructor
      */
     protected PhysicsRigidBody nodeB;
     /**
@@ -147,7 +147,7 @@ abstract public class PhysicsJoint
     }
 
     /**
-     * Access the 1st body specified in during construction.
+     * Access the 1st body specified in the constructor.
      *
      * @return the pre-existing body
      */
@@ -156,7 +156,7 @@ abstract public class PhysicsJoint
     }
 
     /**
-     * Access the 2nd body specified in during construction.
+     * Access the 2nd body specified in the constructor.
      *
      * @return the pre-existing body
      */
@@ -175,21 +175,29 @@ abstract public class PhysicsJoint
     }
 
     /**
-     * Access the local offset of the joint connection point in node A.
+     * Copy the location of the connection point in body A.
      *
-     * @return the pre-existing vector (not null) TODO
+     * @param storeResult storage for the result (modified if not null)
+     * @return a location vector (in scaled local coordinates, either
+     * storeResult or a new instance)
      */
-    public Vector3f getPivotA() {
-        return pivotA;
+    public Vector3f getPivotA(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        result.set(pivotA);
+        return result;
     }
 
     /**
-     * Access the local offset of the joint connection point in node B.
+     * Copy the location of the connection point in body B.
      *
-     * @return the pre-existing vector (not null) TODO
+     * @param storeResult storage for the result (modified if not null)
+     * @return a location vector (in scaled local coordinates, either
+     * storeResult or a new instance)
      */
-    public Vector3f getPivotB() {
-        return pivotB;
+    public Vector3f getPivotB(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        result.set(pivotB);
+        return result;
     }
 
     /**
