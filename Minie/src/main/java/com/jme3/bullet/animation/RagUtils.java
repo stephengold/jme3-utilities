@@ -40,7 +40,9 @@ import com.jme3.export.Savable;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
+import com.jme3.scene.control.Control;
 import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
@@ -136,7 +138,7 @@ public class RagUtils {
      */
     public static Vector3f center(Collection<Vector3f> locations,
             Vector3f storeResult) {
-        Validate.nonNull(locations, "locations");
+        Validate.nonNull(locations, "locations"); // TODO nonEmpty()
         assert !locations.isEmpty();
         Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
         /*
@@ -220,7 +222,7 @@ public class RagUtils {
         Validate.nonNull(transform, "transform");
         Validate.finite(center, "center");
         Validate.nonNull(vertexLocations, "vertex locations");
-        assert !vertexLocations.isEmpty();
+        assert !vertexLocations.isEmpty(); // TODO nonEmpty()
 
         for (Vector3f location : vertexLocations) {
             /*
@@ -237,6 +239,31 @@ public class RagUtils {
         CollisionShape boneShape = new HullCollisionShape(vertexLocations);
 
         return boneShape;
+    }
+
+    /**
+     * Find the index of the specified scene-graph control in the specified
+     * spatial. TODO move to MySpatial
+     *
+     * @param spatial (not null, unaffected)
+     * @param sgc (not null, unaffected)
+     * @return the index (&ge;0) or -1 if not found
+     */
+    public static int findIndex(Spatial spatial, Control sgc) {
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(sgc, "control");
+
+        int numControls = spatial.getNumControls();
+        int result = -1;
+        for (int i = 0; i < numControls; i++) {
+            Control ci = spatial.getControl(i);
+            if (ci == sgc) {
+                result = i;
+                break;
+            }
+        }
+
+        return result;
     }
 
     /**

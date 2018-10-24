@@ -810,12 +810,7 @@ public class DynamicAnimControl
             throw new IllegalArgumentException(
                     "The controlled spatial must have a SkeletonControl. Make sure the control is there and not on a subnode.");
         }
-        /*
-         * Remove the SkeletonControl and re-add it to make sure it will get
-         * updated *after* this control. TODO also arrange with AnimControl
-         */
-        spatial.removeControl(skeletonControl);
-        spatial.addControl(skeletonControl);
+        sortControls(skeletonControl);
 
         skeleton = skeletonControl.getSkeleton();
         RagUtils.validate(skeleton); // TODO warn if any root bone is linked
@@ -1371,5 +1366,37 @@ public class DynamicAnimControl
         }
 
         return result;
+    }
+
+    /**
+     * Sort the controls of the controlled spatial, such that this control will
+     * come BEFORE the specified SkeletonControl.
+     *
+     * @param skeletonControl (not null)
+     */
+    private void sortControls(SkeletonControl skeletonControl) {
+        assert skeletonControl != null;
+
+        Spatial spatial = getSpatial();
+        int dacIndex = RagUtils.findIndex(spatial, this);
+        assert dacIndex != -1;
+        int scIndex = RagUtils.findIndex(spatial, skeletonControl);
+        assert scIndex != -1;
+        assert dacIndex != scIndex;
+
+        if (dacIndex > scIndex) {
+            /*
+             * Remove the SkeletonControl and re-add it to make sure it will get
+             * updated *after* this control. TODO also arrange with AnimControl
+             */
+            spatial.removeControl(skeletonControl);
+            spatial.addControl(skeletonControl);
+
+            dacIndex = RagUtils.findIndex(spatial, this);
+            assert dacIndex != -1;
+            scIndex = RagUtils.findIndex(spatial, skeletonControl);
+            assert scIndex != -1;
+            assert dacIndex < scIndex;
+        }
     }
 }
