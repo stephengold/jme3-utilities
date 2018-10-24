@@ -1145,21 +1145,6 @@ public class DynamicAnimControl
     // PhysicsTickListener methods
 
     /**
-     * Callback from Bullet, invoked just before the physics is stepped. A good
-     * time to clear/apply forces.
-     *
-     * @param space the space that is about to be stepped (not null)
-     * @param timeStep the time per physics step (in seconds, &ge;0)
-     */
-    @Override
-    public void prePhysicsTick(PhysicsSpace space, float timeStep) {
-        torsoLink.prePhysicsTick();
-        for (BoneLink boneLink : boneLinkList) {
-            boneLink.prePhysicsTick();
-        }
-    }
-
-    /**
      * Callback from Bullet, invoked just after the physics has been stepped.
      * Used to re-activate deactivated rigid bodies.
      *
@@ -1174,6 +1159,21 @@ public class DynamicAnimControl
         for (BoneLink boneLink : boneLinkList) {
             prb = boneLink.getRigidBody();
             prb.activate();
+        }
+    }
+
+    /**
+     * Callback from Bullet, invoked just before the physics is stepped. A good
+     * time to clear/apply forces.
+     *
+     * @param space the space that is about to be stepped (not null)
+     * @param timeStep the time per physics step (in seconds, &ge;0)
+     */
+    @Override
+    public void prePhysicsTick(PhysicsSpace space, float timeStep) {
+        torsoLink.prePhysicsTick();
+        for (BoneLink boneLink : boneLinkList) {
+            boneLink.prePhysicsTick();
         }
     }
     // *************************************************************************
