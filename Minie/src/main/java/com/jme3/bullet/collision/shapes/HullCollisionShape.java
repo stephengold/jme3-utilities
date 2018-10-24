@@ -43,7 +43,7 @@ import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.util.List;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
@@ -117,23 +117,25 @@ public class HullCollisionShape extends CollisionShape {
     }
 
     /**
-     * Instantiate a collision shape based on the specified list of coordinates.
+     * Instantiate a collision shape based on the specified collection of
+     * locations.
      *
-     * @param vectorList a list of vectors on which to base the shape (not null,
-     * not empty)
+     * @param locations a collection of location vectors on which to base the
+     * shape (not null, not empty, unaffected)
      */
-    public HullCollisionShape(List<Vector3f> vectorList) {
-        int length = vectorList.size();
-        Validate.positive(length, "length of vector list");
+    public HullCollisionShape(Collection<Vector3f> locations) {
+        int numLocations = locations.size();
+        Validate.positive(numLocations, "number of locations"); // TODO nonEmpty()
 
-        points = new float[3 * length];
-        for (int i = 0; i < vectorList.size(); i++) {
-            Vector3f vec = vectorList.get(i);
-            int j = 3 * i;
-            points[j] = vec.x;
-            points[j + 1] = vec.y;
-            points[j + 2] = vec.z;
+        points = new float[3 * numLocations];
+        int j = 0;
+        for (Vector3f location : locations) {
+            points[j] = location.x;
+            points[j + 1] = location.y;
+            points[j + 2] = location.z;
+            j += 3;
         }
+
         createShape();
     }
     // *************************************************************************
