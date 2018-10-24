@@ -101,7 +101,7 @@ public class TestDac extends ActionApplication {
     private Material ballMaterial;
     final private Mesh ballMesh = new Sphere(16, 32, ballRadius);
     final private NameGenerator nameGenerator = new NameGenerator();
-    private Node model;
+    private Node cgModel;
     private PhysicsSpace physicsSpace;
     private SkeletonControl sc;
     private SkeletonVisualizer sv;
@@ -172,13 +172,13 @@ public class TestDac extends ActionApplication {
         dim.bind("load jaime", KeyInput.KEY_F2);
         dim.bind("load sinbad", KeyInput.KEY_F1);
         dim.bind("load sinbadWithSwords", KeyInput.KEY_F4);
-        dim.bind("set height 1", KeyInput.KEY_1);
-        dim.bind("set height 2", KeyInput.KEY_2);
-        dim.bind("set height 3", KeyInput.KEY_3);
         dim.bind("raise leftHand", KeyInput.KEY_LSHIFT);
         dim.bind("raise rightHand", KeyInput.KEY_RSHIFT);
         dim.bind("reset model transform", KeyInput.KEY_DOWN);
         dim.bind("save", KeyInput.KEY_SEMICOLON);
+        dim.bind("set height 1", KeyInput.KEY_1);
+        dim.bind("set height 2", KeyInput.KEY_2);
+        dim.bind("set height 3", KeyInput.KEY_3);
         dim.bind("signal rotateLeft", KeyInput.KEY_LEFT);
         dim.bind("signal rotateRight", KeyInput.KEY_RIGHT);
         dim.bind("signal shower", KeyInput.KEY_INSERT);
@@ -252,7 +252,7 @@ public class TestDac extends ActionApplication {
                             new Vector3f(0f, 30f, 0f), false);
                     return;
                 case "reset model transform":
-                    model.setLocalTransform(resetTransform);
+                    cgModel.setLocalTransform(resetTransform);
                     return;
                 case "save":
                     save();
@@ -294,10 +294,10 @@ public class TestDac extends ActionApplication {
 
         Signals signals = getSignals();
         if (signals.test("rotateRight")) {
-            model.rotate(0f, tpf, 0f);
+            cgModel.rotate(0f, tpf, 0f);
         }
         if (signals.test("rotateLeft")) {
-            model.rotate(0f, -tpf, 0f);
+            cgModel.rotate(0f, -tpf, 0f);
         }
         if (signals.test("shower")) {
             addBall();
@@ -383,9 +383,9 @@ public class TestDac extends ActionApplication {
      * Add an animated model to the scene.
      */
     private void addModel(String modelName) {
-        if (model != null) {
-            model.removeControl(dac);
-            rootNode.detachChild(model);
+        if (cgModel != null) {
+            cgModel.removeControl(dac);
+            rootNode.detachChild(cgModel);
             rootNode.removeControl(sv);
             removeAllBalls();
             // TODO remove attachment physics objects?
@@ -406,25 +406,25 @@ public class TestDac extends ActionApplication {
                 break;
         }
 
-        List<Spatial> list = MySpatial.listSpatials(model, Spatial.class, null);
+        List<Spatial> list = MySpatial.listSpatials(cgModel, Spatial.class, null);
         for (Spatial spatial : list) {
             spatial.setShadowMode(RenderQueue.ShadowMode.Cast);
         }
 
-        rootNode.attachChild(model);
-        setHeight(model, 2f);
-        center(model);
-        resetTransform = model.getLocalTransform().clone();
+        rootNode.attachChild(cgModel);
+        setHeight(cgModel, 2f);
+        center(cgModel);
+        resetTransform = cgModel.getLocalTransform().clone();
 
-        model.addControl(dac);
+        cgModel.addControl(dac);
         dac.setPhysicsSpace(physicsSpace);
 
-        AnimControl animControl = model.getControl(AnimControl.class);
+        AnimControl animControl = cgModel.getControl(AnimControl.class);
         animChannel = animControl.createChannel();
         animChannel.setAnim(animationName);
         animChannel.setSpeed(1f);
 
-        sc = model.getControl(SkeletonControl.class);
+        sc = cgModel.getControl(SkeletonControl.class);
         sv = new SkeletonVisualizer(assetManager, sc);
         sv.setLineColor(ColorRGBA.Yellow); // TODO clean up visualization
         rootNode.addControl(sv);
@@ -496,10 +496,10 @@ public class TestDac extends ActionApplication {
      * Load the Elephant model.
      */
     private void loadElephant() {
-        model = (Node) assetManager.loadModel(
+        cgModel = (Node) assetManager.loadModel(
                 "Models/Elephant/Elephant.mesh.xml");
-        model.setCullHint(Spatial.CullHint.Never);
-        model.rotate(0f, 1.6f, 0f);
+        cgModel.setCullHint(Spatial.CullHint.Never);
+        cgModel.rotate(0f, 1.6f, 0f);
         dac = new ElephantControl();
         animationName = "legUp";
         leftClavicleName = "Oberschenkel_F_L";
@@ -512,7 +512,7 @@ public class TestDac extends ActionApplication {
      * Load the Jaime model.
      */
     private void loadJaime() {
-        model = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
+        cgModel = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
         dac = new JaimeControl();
         animationName = "Punches";
         leftClavicleName = "shoulder.L";
@@ -525,7 +525,7 @@ public class TestDac extends ActionApplication {
      * Load the Sinbad model.
      */
     private void loadSinbad() {
-        model = (Node) assetManager.loadModel(
+        cgModel = (Node) assetManager.loadModel(
                 "Models/Sinbad/Sinbad.mesh.xml");
         dac = new SinbadControl();
         animationName = "Dance";
@@ -539,7 +539,7 @@ public class TestDac extends ActionApplication {
      * Load the Sinbad model with 2 attached swords.
      */
     private void loadSinbadWithSwords() {
-        model = (Node) assetManager.loadModel(
+        cgModel = (Node) assetManager.loadModel(
                 "Models/Sinbad/Sinbad.mesh.xml");
 
         Node sword1 = (Node) assetManager.loadModel(
@@ -553,7 +553,7 @@ public class TestDac extends ActionApplication {
         rbc.setPhysicsSpace(physicsSpace);
         sword1.addControl(rbc);
 
-        sc = model.getControl(SkeletonControl.class);
+        sc = cgModel.getControl(SkeletonControl.class);
         Node leftHandle = sc.getAttachmentsNode("Handle.L");
         Node rightHandle = sc.getAttachmentsNode("Handle.R");
         leftHandle.attachChild(sword1);
@@ -602,18 +602,18 @@ public class TestDac extends ActionApplication {
         BinaryExporter exporter = BinaryExporter.getInstance();
 
         try {
-            exporter.save(model, file);
+            exporter.save(cgModel, file);
         } catch (IOException exception) {
             logger.log(Level.SEVERE,
                     "Output exception while saving {0} to file {1}",
                     new Object[]{
-                        MyString.quote(model.getName()),
+                        MyString.quote(cgModel.getName()),
                         MyString.quote(filePath)
                     });
             return;
         }
         logger.log(Level.INFO, "Saved {0} to file {1}", new Object[]{
-            MyString.quote(model.getName()),
+            MyString.quote(cgModel.getName()),
             MyString.quote(filePath)
         });
     }
@@ -624,8 +624,8 @@ public class TestDac extends ActionApplication {
     private void setHeight(float height) {
         assert height > 0f : height;
 
-        setHeight(model, height);
-        center(model);
+        setHeight(cgModel, height);
+        center(cgModel);
         dac.rebuild();
     }
 
@@ -656,14 +656,14 @@ public class TestDac extends ActionApplication {
      * Toggle mesh rendering on/off.
      */
     private void toggleMeshes() {
-        Spatial.CullHint hint = model.getLocalCullHint();
+        Spatial.CullHint hint = cgModel.getLocalCullHint();
         if (hint == Spatial.CullHint.Inherit
                 || hint == Spatial.CullHint.Never) {
             hint = Spatial.CullHint.Always;
         } else if (hint == Spatial.CullHint.Always) {
             hint = Spatial.CullHint.Never;
         }
-        model.setCullHint(hint);
+        cgModel.setCullHint(hint);
     }
 
     /**
