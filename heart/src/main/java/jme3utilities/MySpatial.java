@@ -445,11 +445,36 @@ public class MySpatial {
     }
 
     /**
+     * Find the index of the specified scene-graph control in the specified
+     * spatial.
+     *
+     * @param spatial the spatial to search (not null, unaffected)
+     * @param sgc the control to search for (not null, unaffected)
+     * @return the index (&ge;0) or -1 if not found
+     */
+    public static int findIndex(Spatial spatial, Control sgc) {
+        Validate.nonNull(spatial, "spatial");
+        Validate.nonNull(sgc, "control");
+
+        int numControls = spatial.getNumControls();
+        int result = -1;
+        for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
+            Control control = spatial.getControl(controlIndex);
+            if (control == sgc) {
+                result = controlIndex;
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Find a spatial's 1st local light that is assignable from the specified
      * class.
      *
      * @param <T> subtype of {@link com.jme3.light.Light}
-     * @param spatial spatial to search (not null)
+     * @param spatial the spatial to search (not null)
      * @param lightClass type of Light to search for (not null)
      * @return a pre-existing instance, or null if none found
      */
