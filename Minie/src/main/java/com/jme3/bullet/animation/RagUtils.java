@@ -213,12 +213,12 @@ public class RagUtils {
      * (not null, unaffected)
      * @param center the location of the shape's center, in vertex coordinates
      * (not null, unaffected)
-     * @param vertexLocations list of vertex locations (not null, not empty,
-     * MODIFIED)
+     * @param vertexLocations the collection of vertex locations (not null, not
+     * empty, MODIFIED)
      * @return a new shape
      */
     public static CollisionShape createShape(Transform transform,
-            Vector3f center, List<Vector3f> vertexLocations) {
+            Vector3f center, Collection<Vector3f> vertexLocations) {
         Validate.nonNull(transform, "transform");
         Validate.finite(center, "center");
         Validate.nonNull(vertexLocations, "vertex locations");
