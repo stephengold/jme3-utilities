@@ -522,20 +522,8 @@ public class TorsoLink
         transform.combineWithParent(shapeToWorld);
         transform.combineWithParent(worldToParent);
         control.getSpatial().setLocalTransform(transform);
-        /*
-         * Start with the body's transform in physics/world coordinates.
-         */
-        rigidBody.getPhysicsTransform(transform);
-        /*
-         * Convert to mesh coordinates.
-         */
-        Transform worldToMesh = control.meshTransform(null).invert();
-        transform.combineWithParent(worldToMesh);
-        /*
-         * Subtract the body's local offset.
-         */
-        transform.getTranslation().subtractLocal(localOffset);
 
+        localBoneTransform(transform);
         for (Bone rootBone : skeleton.getRoots()) {
             MySkeleton.setLocalTransform(rootBone, transform);
         }
@@ -625,5 +613,39 @@ public class TorsoLink
                 kinematicWeight = 1f; // done blending
             }
         }
+    }
+
+    /**
+     * Calculate the local bone transform to match the physics transform of the
+     * rigid body.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the calculated bone transform (in local coordinates, either
+     * storeResult or a new transform, not null)
+     */
+    private Transform localBoneTransform(Transform storeResult) {
+        Transform result
+                = (storeResult == null) ? new Transform() : storeResult;
+        Vector3f location = result.getTranslation();
+        Quaternion orientation = result.getRotation();
+        Vector3f scale = result.getScale();
+        /*
+         * Start with the body's transform in physics/world coordinates.
+         */
+        rigidBody.getPhysicsTransform(result);
+        /*
+         * Convert to mesh coordinates.
+         */
+        Transform worldToMesh = control.meshTransform(null).invert();
+        result.combineWithParent(worldToMesh);
+        /*
+         * Subtract the body's local offset, after rotation and scaling.
+         */
+        Vector3f meshOffset = localOffset.clone();
+        meshOffset.multLocal(scale);
+        orientation.mult(meshOffset, meshOffset);
+        location.subtractLocal(meshOffset);
+
+        return result;
     }
 }

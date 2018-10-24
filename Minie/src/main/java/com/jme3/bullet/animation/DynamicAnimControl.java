@@ -140,11 +140,6 @@ public class DynamicAnimControl
      * torso link for this control
      */
     private TorsoLink torsoLink = null;
-    /**
-     * mesh scale at the time this control was added to a spatial (in world
-     * coordinates)
-     */
-    private Vector3f initScale = null;
     // *************************************************************************
     // constructors
 
@@ -795,7 +790,6 @@ public class DynamicAnimControl
         listeners = cloner.clone(listeners);
         boneLinks = cloner.clone(boneLinks);
         skeleton = cloner.clone(skeleton);
-        initScale = cloner.clone(initScale);
         transformer = cloner.clone(transformer);
         torsoLink = cloner.clone(torsoLink);
     }
@@ -850,7 +844,6 @@ public class DynamicAnimControl
             loopSpatial = loopSpatial.getParent();
         }
         Transform meshToModel = modelToMesh.invert();
-        initScale = MySpatial.worldScale(transformer, null);
         /*
          * Analyze the model's meshes.
          */
@@ -865,12 +858,13 @@ public class DynamicAnimControl
             throw new IllegalArgumentException(
                     "No mesh vertices for the torso. Make sure the root bone is not linked.");
         }
-        Vector3f center = new Vector3f();
         MySkeleton.setUserControl(skeleton, false);
         skeleton.resetAndUpdate(); // TODO clone the skeleton first
         Transform boneToMesh
                 = MySkeleton.copyMeshTransform(torsoMainBone, null);
         Transform meshToBone = boneToMesh.invert();
+        Vector3f center = RagUtils.center(vertexLocations, null);
+        center.subtractLocal(torsoMainBone.getModelSpacePosition());
         CollisionShape torsoShape
                 = RagUtils.createShape(meshToBone, center, vertexLocations);
 
@@ -958,7 +952,6 @@ public class DynamicAnimControl
 
         skeleton = (Skeleton) ic.readSavable("skeleton", null);
         transformer = (Spatial) ic.readSavable("transformer", null);
-        initScale = (Vector3f) ic.readSavable("initScale", null);
         eventDispatchImpulseThreshold
                 = ic.readFloat("eventDispatchImpulseThreshold", 0f);
         torsoLink = (TorsoLink) ic.readSavable("torsoLink", null);
@@ -1004,7 +997,6 @@ public class DynamicAnimControl
         torsoLink.setSkeleton(null);
         torsoLink = null;
         skeleton = null;
-        initScale = null;
         transformer = null;
     }
 
@@ -1131,7 +1123,6 @@ public class DynamicAnimControl
                 "boneLinks", new BoneLink[0]);
         oc.write(skeleton, "skeleton", null);
         oc.write(transformer, "transformer", null);
-        oc.write(initScale, "initScale", null);
         oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
                 0f);
         oc.write(damping, "limbDampening", 0.6f);
@@ -1244,49 +1235,54 @@ public class DynamicAnimControl
     private void addJoints(String parentName) {
         PhysicsRigidBody parentBody = getRigidBody(parentName);
 
-        Bone parentBone;
+        Transform parentToWorld;
         if (torsoName.equals(parentName)) {
-            parentBone = torsoLink.getBone();
+            parentToWorld = torsoLink.physicsTransform(null);
         } else {
-            parentBone = getBone(parentName);
+            BoneLink parentLink = getBoneLink(parentName);
+            parentToWorld = parentLink.physicsTransform(null);
         }
-        Transform parentToMesh = MySkeleton.copyMeshTransform(parentBone, null);
-        Transform meshToParent = parentToMesh.invert();
+        parentToWorld.getScale().set(1f, 1f, 1f);
+        Transform worldToParent = parentToWorld.invert();
 
         List<String> childNames = childNames(parentName);
         for (String childName : childNames) {
             Bone childBone = getBone(childName);
-            BoneLink boneLink = getBoneLink(childName);
-            PhysicsRigidBody childBody = boneLink.getRigidBody();
+            BoneLink childLink = getBoneLink(childName);
+            PhysicsRigidBody childBody = childLink.getRigidBody();
 
-            Transform childToMesh
-                    = MySkeleton.copyMeshTransform(childBone, null);
-            Transform childToParent = childToMesh.clone();
-            childToParent.combineWithParent(meshToParent);
+            Transform childToWorld = childLink.physicsTransform(null);
+            childToWorld.getScale().set(1f, 1f, 1f);
 
-            Vector3f pivotChild = new Vector3f(0f, 0f, 0f);
-            Vector3f pivotParent = childToParent.getTranslation();
-            pivotParent = pivotParent.mult(initScale);
+            Transform childToParent = childToWorld.clone();
+            childToParent.combineWithParent(worldToParent);
+
+            Vector3f pivotMesh = childBone.getModelSpacePosition();
+            Vector3f pivotWorld = transformer.localToWorld(pivotMesh, null);
+            Vector3f pivotChild
+                    = childToWorld.transformInverseVector(pivotWorld, null);
+            Vector3f pivotParent
+                    = parentToWorld.transformInverseVector(pivotWorld, null);
 
             Matrix3f rotChild = new Matrix3f(); // identity
             Matrix3f rotParent = childToParent.getRotation().toRotationMatrix();
 
             SixDofJoint joint = new SixDofJoint(parentBody, childBody,
                     pivotParent, pivotChild, rotParent, rotChild, true);
-            assert boneLink.getJoint() == null;
-            boneLink.setJoint(joint);
+            assert childLink.getJoint() == null;
+            childLink.setJoint(joint);
             /*
              * Add the BoneLink to the pre-order list.
              */
-            boneLinkList.add(boneLink);
+            boneLinkList.add(childLink);
 
             addJoints(childName);
         }
     }
 
     /**
-     * Begin blending all descendants of the named link to a kinematic submode.
-     * Note: recursive!
+     * Begin blending all descendants of the named link to the specified
+     * kinematic submode. Note: recursive!
      *
      * @param linkName the name of the link (not null)
      * @param submode enum value (not null)
@@ -1327,7 +1323,8 @@ public class DynamicAnimControl
          */
         Transform boneToMesh = MySkeleton.copyMeshTransform(bone, null);
         Transform meshToBone = boneToMesh.invert();
-        Vector3f center = new Vector3f();
+        Vector3f center = RagUtils.center(vertexLocations, null);
+        center.subtractLocal(bone.getModelSpacePosition());
         CollisionShape boneShape
                 = RagUtils.createShape(meshToBone, center, vertexLocations);
 

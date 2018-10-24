@@ -614,9 +614,12 @@ public class BoneLink
         scale.divideLocal(pmScale);
         pmRotInv.mult(orientation, orientation);
         /*
-         * Subtract the body's local offset.
+         * Subtract the body's local offset, after rotation and scaling.
          */
-        location.subtractLocal(localOffset);
+        Vector3f parentOffset = localOffset.clone();
+        parentOffset.multLocal(scale);
+        orientation.mult(parentOffset, parentOffset);
+        location.subtractLocal(parentOffset);
 
         return result;
     }
