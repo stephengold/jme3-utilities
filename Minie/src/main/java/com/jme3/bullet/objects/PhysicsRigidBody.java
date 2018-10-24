@@ -138,50 +138,295 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     // new methods exposed
 
     /**
-     * Build/rebuild this body after parameters have changed.
+     * Reactivates this body if it has been deactivated due to lack of motion.
+     * TODO move to PhysicsCollisionObject and add "force" option
      */
-    protected void rebuildRigidBody() {
-        boolean removed = false;
-        if (mass != massForStatic) {
-            validateDynamicShape(collisionShape);
-        }
+    public void activate() {
+        activate(objectId);
+        assert isActive();
+    }
 
-        if (objectId != 0L) {
-            if (isInWorld(objectId)) {
-                PhysicsSpace.getPhysicsSpace().remove(this);
-                removed = true;
-            }
-            logger2.log(Level.FINE, "Clearing RigidBody {0}",
-                    Long.toHexString(objectId));
-            finalizeNative(objectId);
-        }
-        preRebuild();
-        objectId = createRigidBody(mass, motionState.getObjectId(),
-                collisionShape.getObjectId());
-        logger2.log(Level.FINE, "Created RigidBody {0}",
-                Long.toHexString(objectId));
-        postRebuild();
-        if (removed) {
-            PhysicsSpace.getPhysicsSpace().add(this);
+    /**
+     * Do not invoke directly! Joints are added automatically when created.
+     *
+     * @param joint the joint to add (not null)
+     */
+    public void addJoint(PhysicsJoint joint) {
+        if (!joints.contains(joint)) {
+            joints.add(joint);
         }
     }
 
     /**
-     * For use by subclasses.
+     * Apply a force to the PhysicsRigidBody. Effective only if the next physics
+     * update steps the physics.
+     * <p>
+     * To apply an impulse, use
+     * {@link #applyImpulse(com.jme3.math.Vector3f, com.jme3.math.Vector3f)}.
+     *
+     * @param force the force (not null, unaffected)
      */
-    protected void preRebuild() {
+    public void applyCentralForce(Vector3f force) {
+        applyCentralForce(objectId, force);
+        activate();
     }
 
     /**
-     * For use by subclasses.
+     * Apply a force to the PhysicsRigidBody. Effective only if the next physics
+     * update steps the physics.
+     * <p>
+     * To apply an impulse, use applyImpulse, use applyContinuousForce to apply
+     * continuous force.
+     *
+     * @param force the force (not null, unaffected)
+     * @param location the location of the force
      */
-    protected void postRebuild() {
-        if (mass == massForStatic) {
-            setStatic(objectId, true);
-        } else {
-            setStatic(objectId, false);
+    public void applyForce(Vector3f force, Vector3f location) {
+        applyForce(objectId, force, location);
+        activate();
+    }
+
+    /**
+     * Apply an impulse to the body on the next physics update.
+     *
+     * @param impulse applied impulse (not null, unaffected)
+     * @param rel_pos location relative to object (not null, unaffected)
+     */
+    public void applyImpulse(Vector3f impulse, Vector3f rel_pos) {
+        applyImpulse(objectId, impulse, rel_pos);
+        activate();
+    }
+
+    /**
+     * Apply a torque to the PhysicsRigidBody. Effective only if the next
+     * physics update steps the physics.
+     * <p>
+     * To apply an impulse, use
+     * {@link #applyImpulse(com.jme3.math.Vector3f, com.jme3.math.Vector3f)}.
+     *
+     * @param torque the torque (not null, unaffected)
+     */
+    public void applyTorque(Vector3f torque) {
+        applyTorque(objectId, torque);
+        activate();
+    }
+
+    /**
+     * Apply a torque impulse to the body in the next physics update.
+     *
+     * @param vec the torque to apply (not null, unaffected)
+     */
+    public void applyTorqueImpulse(Vector3f vec) {
+        applyTorqueImpulse(objectId, vec);
+        activate();
+    }
+
+    /**
+     * Clear all forces acting on this body.
+     */
+    public void clearForces() {
+        clearForces(objectId);
+    }
+
+    /**
+     * Read this body's angular damping.
+     *
+     * @return damping value
+     */
+    public float getAngularDamping() {
+        return getAngularDamping(objectId);
+    }
+
+    /**
+     * Read this body's angular factor for the X axis.
+     *
+     * @return the angular factor
+     */
+    public float getAngularFactor() {
+        return getAngularFactor(null).getX();
+    }
+
+    /**
+     * Copy this body's angular factors.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the angular factor for each axis (either storeResult or a new
+     * vector, not null)
+     */
+    public Vector3f getAngularFactor(Vector3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Vector3f();
         }
-        initUserPointer();
+        getAngularFactor(objectId, storeResult);
+
+        return storeResult;
+    }
+
+    /**
+     * Read this body's angular sleeping threshold.
+     *
+     * @return the angular sleeping threshold (&ge;0)
+     */
+    public float getAngularSleepingThreshold() {
+        return getAngularSleepingThreshold(objectId);
+    }
+
+    /**
+     * Copy this body's angular velocity.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return a velocity vector (in physics-space coordinates, either
+     * storeResult or a new vector, not null))
+     */
+    public Vector3f getAngularVelocity(Vector3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+        getAngularVelocity(objectId, storeResult);
+
+        return storeResult;
+    }
+
+    /**
+     * Calculate this body's continuous collision detection (CCD) motion
+     * threshold.
+     *
+     * @return the threshold velocity (&ge;0)
+     */
+    public float getCcdMotionThreshold() {
+        return getCcdMotionThreshold(objectId);
+    }
+
+    /**
+     * Calculate the square of this body's continuous collision detection (CCD)
+     * motion threshold.
+     *
+     * @return the threshold velocity squared (&ge;0)
+     */
+    public float getCcdSquareMotionThreshold() {
+        return getCcdSquareMotionThreshold(objectId);
+    }
+
+    /**
+     * Read the radius of the swept sphere used for continuous collision
+     * detection (CCD).
+     *
+     * @return radius (&ge;0)
+     */
+    public float getCcdSweptSphereRadius() {
+        return getCcdSweptSphereRadius(objectId);
+    }
+
+    /**
+     * Read this body's friction.
+     *
+     * @return friction value
+     */
+    public float getFriction() {
+        return getFriction(objectId);
+    }
+
+    /**
+     * Copy this body's gravitational acceleration.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return an acceleration vector (in physics-space coordinates, either
+     * storeResult or a new vector, not null)
+     */
+    public Vector3f getGravity(Vector3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+        getGravity(objectId, storeResult);
+
+        return storeResult;
+    }
+
+    /**
+     * Copy the principal components of the local inverse inertia tensor. TODO
+     * provide access to the whole tensor
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return a vector (either storeResult or a new vector, not null)
+     */
+    public Vector3f getInverseInertiaLocal(Vector3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+        getInverseInertiaLocal(objectId, storeResult);
+
+        return storeResult;
+    }
+
+    /**
+     * Access the list of joints connected with this body.
+     * <p>
+     * This list is only filled when the PhysicsRigidBody is added to a physics
+     * space.
+     *
+     * @return the pre-existing list (not null) TODO
+     */
+    public List<PhysicsJoint> getJoints() {
+        return joints;
+    }
+
+    /**
+     * Read this body's linear damping.
+     *
+     * @return damping value
+     */
+    public float getLinearDamping() {
+        return getLinearDamping(objectId);
+    }
+
+    /**
+     * Copy this body's linear factors.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the linear factor for each axis (either storeResult or a new
+     * vector, not null)
+     */
+    public Vector3f getLinearFactor(Vector3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+        getLinearFactor(objectId, storeResult);
+
+        return storeResult;
+    }
+
+    /**
+     * Read this body's linear sleeping threshold.
+     *
+     * @return the linear sleeping threshold (&ge;0)
+     */
+    public float getLinearSleepingThreshold() {
+        return getLinearSleepingThreshold(objectId);
+    }
+
+    /**
+     * Copy the linear velocity of this body's center of mass.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return a velocity vector (in physics-space coordinates, either
+     * storeResult or a new vector, not null)
+     */
+    public Vector3f getLinearVelocity(Vector3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+        getLinearVelocity(objectId, storeResult);
+
+        return storeResult;
+    }
+
+    /**
+     * Read this body's mass.
+     *
+     * @return the mass (&gt;0) or zero for a static body
+     */
+    public float getMass() {
+        return mass;
     }
 
     /**
@@ -194,12 +439,356 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
+     * Copy the location of this body's center of mass.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the location (in physics-space coordinates, either storeResult or
+     * a new vector, not null)
+     */
+    public Vector3f getPhysicsLocation(Vector3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Vector3f();
+        }
+        getPhysicsLocation(objectId, storeResult);
+
+        assert Vector3f.isValidVector(storeResult);
+        return storeResult;
+    }
+
+    /**
+     * Copy this body's orientation to a quaternion.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the orientation (in physics-space coordinates, either storeResult
+     * or a new quaternion, not null)
+     */
+    public Quaternion getPhysicsRotation(Quaternion storeResult) {
+        if (storeResult == null) {
+            storeResult = new Quaternion();
+        }
+        getPhysicsRotation(objectId, storeResult);
+
+        return storeResult;
+    }
+
+    /**
+     * Copy this body's orientation to a matrix.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the orientation (in physics-space coordinates, either storeResult
+     * or a new matrix, not null)
+     */
+    public Matrix3f getPhysicsRotationMatrix(Matrix3f storeResult) {
+        if (storeResult == null) {
+            storeResult = new Matrix3f();
+        }
+        getPhysicsRotationMatrix(objectId, storeResult);
+
+        return storeResult;
+    }
+
+    /**
+     * Copy the scale of the body's shape.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the scaling factor for each local axis (either storeResult or a
+     * new vector, not null)
+     */
+    public Vector3f getPhysicsScale(Vector3f storeResult) {
+        Vector3f result = collisionShape.getScale(storeResult);
+
+        assert Vector3f.isValidVector(result);
+        return result;
+    }
+
+    /**
+     * Copy the transform of this body, including the scale of its shape.
+     *
+     * @param storeResult (modified if not null)
+     * @return the transform (in physics-space coordinates, either storeResult
+     * of a new object, not null)
+     */
+    public Transform getPhysicsTransform(Transform storeResult) {
+        Transform result
+                = (storeResult == null) ? new Transform() : storeResult;
+
+        motionState.getLocation(result.getTranslation());
+        motionState.getOrientation(result.getRotation());
+        getPhysicsScale(result.getScale());
+
+        return result;
+    }
+
+    /**
+     * Read this body's restitution (bounciness).
+     *
+     * @return restitution value
+     */
+    public float getRestitution() {
+        return getRestitution(objectId);
+    }
+
+    /**
+     * Test whether this body has been deactivated due to lack of motion. TODO
+     * move to PhysicsCollisionObject
+     *
+     * @return true if still active, false if deactivated
+     */
+    public boolean isActive() {
+        return isActive(objectId);
+    }
+
+    /**
      * Test whether this body is added to any physics space.
      *
      * @return true&rarr;in a space, false&rarr;not in a space
      */
     public boolean isInWorld() {
         return isInWorld(objectId);
+    }
+
+    /**
+     * Test whether this body is in kinematic mode.
+     * <p>
+     * In kinematic mode, the body is not influenced by physics but can affect
+     * other physics objects. Its kinetic force is calculated based on its
+     * movement and weight.
+     *
+     * @return true if in kinematic mode, otherwise false (dynamic/static mode)
+     */
+    public boolean isKinematic() {
+        return kinematic;
+    }
+
+    // TODO add isDynamic() and isStatic()
+    /**
+     * Do not invoke directly! Joints are removed automatically when destroyed.
+     *
+     * @param joint the joint to remove (not null)
+     */
+    public void removeJoint(PhysicsJoint joint) {
+        joints.remove(joint);
+    }
+
+    /**
+     * Alter this body's angular damping.
+     *
+     * @param angularDamping the desired angular damping value (default=0)
+     */
+    public void setAngularDamping(float angularDamping) {
+        setAngularDamping(objectId, angularDamping);
+    }
+
+    /**
+     * Alter this body's angular factor.
+     *
+     * @param factor the desired angular factor for all axes (not null,
+     * unaffected, default=1)
+     */
+    public void setAngularFactor(float factor) {
+        setAngularFactor(objectId, new Vector3f(factor, factor, factor));
+    }
+
+    /**
+     * Alter this body's angular factors.
+     *
+     * @param factor the desired angular factor for each axis (not null,
+     * unaffected, default=(1,1,1))
+     */
+    public void setAngularFactor(Vector3f factor) {
+        setAngularFactor(objectId, factor);
+    }
+
+    /**
+     * Alter this body's angular sleeping threshold.
+     *
+     * @param angularSleepingThreshold the desired threshold (&ge;0, default=1)
+     */
+    public void setAngularSleepingThreshold(float angularSleepingThreshold) {
+        float lst = getLinearSleepingThreshold(); // work around JME issue #911
+        setSleepingThresholds(objectId, lst, angularSleepingThreshold);
+    }
+
+    /**
+     * Alter this body's angular velocity.
+     *
+     * @param vec the desired angular velocity vector (not null, unaffected)
+     */
+    public void setAngularVelocity(Vector3f vec) {
+        setAngularVelocity(objectId, vec);
+        activate();
+    }
+
+    /**
+     * Alter the amount of motion required to activate continuous collision
+     * detection (CCD).
+     * <p>
+     * This addresses the issue of fast objects passing through other objects
+     * with no collision detected.
+     *
+     * @param threshold the desired threshold velocity (&gt;0) or zero to
+     * disable CCD (default=0)
+     */
+    public void setCcdMotionThreshold(float threshold) {
+        setCcdMotionThreshold(objectId, threshold);
+    }
+
+    /**
+     * Alter the radius of the swept sphere used for continuous collision
+     * detection (CCD).
+     *
+     * @param radius the desired radius (&ge;0, default=0)
+     */
+    public void setCcdSweptSphereRadius(float radius) {
+        setCcdSweptSphereRadius(objectId, radius);
+    }
+
+    /**
+     * Apply the specified CollisionShape to this body, which must not be in any
+     * physics space. The body gets rebuilt on the physics side.
+     *
+     * @param collisionShape the shape to apply (not null, alias created)
+     */
+    @Override
+    public void setCollisionShape(CollisionShape collisionShape) {
+        Validate.nonNull(collisionShape, "collision shape");
+        //if (isInWorld()) {
+        //    throw new IllegalStateException(
+        //            "Cannot reshape body while in physics space!");
+        // }
+        if (mass != massForStatic) {
+            validateDynamicShape(collisionShape);
+        }
+
+        super.setCollisionShape(collisionShape);
+
+        if (objectId == 0L) {
+            rebuildRigidBody();
+        } else {
+            setCollisionShape(objectId, collisionShape.getObjectId());
+            updateMassProps(objectId, collisionShape.getObjectId(), mass);
+        }
+    }
+
+    /**
+     * Alter this body's damping.
+     *
+     * @param linearDamping the desired linear damping value (default=0)
+     * @param angularDamping the desired angular damping value (default=0)
+     */
+    public void setDamping(float linearDamping, float angularDamping) {
+        setDamping(objectId, linearDamping, angularDamping);
+    }
+
+    /**
+     * Alter this body's friction.
+     *
+     * @param friction the desired friction value (default=0.5)
+     */
+    public void setFriction(float friction) {
+        setFriction(objectId, friction);
+    }
+
+    /**
+     * Alter this body's gravitational acceleration.
+     * <p>
+     * Invoke this method <em>after</em> adding the body to a PhysicsSpace.
+     * Adding a body to a PhysicsSpace alters its gravity.
+     *
+     * @param gravity the desired acceleration vector (not null, unaffected)
+     */
+    public void setGravity(Vector3f gravity) {
+        setGravity(objectId, gravity);
+    }
+
+    /**
+     * Alter the principal components of the local inertia tensor. TODO provide
+     * access to the whole tensor
+     *
+     * @param inverseInertia (not null, unaffected)
+     */
+    public void setInverseInertiaLocal(Vector3f inverseInertia) {
+        Validate.nonNull(inverseInertia, "inverse inertia");
+        setInverseInertiaLocal(objectId, inverseInertia);
+    }
+
+    /**
+     * Put this body into kinematic mode or take it out of kinematic mode.
+     * <p>
+     * In kinematic mode, the body is not influenced by physics but can affect
+     * other physics objects. Its kinetic force is calculated based on its
+     * movement and weight.
+     *
+     * @param kinematic true&rarr;set kinematic mode, false&rarr;set
+     * dynamic/static mode (default=false)
+     */
+    public void setKinematic(boolean kinematic) {
+        this.kinematic = kinematic;
+        setKinematic(objectId, kinematic);
+    }
+
+    /**
+     * Alter this body's linear damping.
+     *
+     * @param linearDamping the desired linear damping value (default=0)
+     */
+    public void setLinearDamping(float linearDamping) {
+        setDamping(objectId, linearDamping, getAngularDamping());
+    }
+
+    /**
+     * Alter this body's linear factors.
+     *
+     * @param factor the desired linear factor for each axis (not null,
+     * unaffected, default=(1,1,1))
+     */
+    public void setLinearFactor(Vector3f factor) {
+        setLinearFactor(objectId, factor);
+    }
+
+    /**
+     * Alter this body's linear sleeping threshold.
+     *
+     * @param linearSleepingThreshold the desired threshold (&ge;0, default=0.8)
+     */
+    public void setLinearSleepingThreshold(float linearSleepingThreshold) {
+        float ast = getAngularSleepingThreshold(); // work around JME issue #911
+        setSleepingThresholds(objectId, linearSleepingThreshold, ast);
+    }
+
+    /**
+     * Alter the linear velocity of this body's center of mass.
+     *
+     * @param vec the desired velocity vector (not null)
+     */
+    public void setLinearVelocity(Vector3f vec) {
+        setLinearVelocity(objectId, vec);
+        activate();
+    }
+
+    /**
+     * Alter this body's mass. Bodies with mass=0 are static. For dynamic
+     * bodies, it is best to keep the mass on the order of 1.
+     *
+     * @param mass the desired mass (&gt;0) or 0 for a static body (default=1)
+     */
+    public void setMass(float mass) {
+        Validate.nonNegative(mass, "mass");
+        if (mass != massForStatic) {
+            validateDynamicShape(collisionShape);
+        }
+
+        this.mass = mass;
+        if (objectId != 0L) { // TODO necessary?
+            if (collisionShape != null) {
+                updateMassProps(objectId, collisionShape.getObjectId(), mass);
+            }
+            if (mass == massForStatic) {
+                setStatic(objectId, true);
+            } else {
+                setStatic(objectId, false);
+            }
+        }
     }
 
     /**
@@ -283,332 +872,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
-     * Copy the location of this body's center of mass.
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return the location (in physics-space coordinates, either storeResult or
-     * a new vector, not null)
-     */
-    public Vector3f getPhysicsLocation(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f();
-        }
-        getPhysicsLocation(objectId, storeResult);
-
-        assert Vector3f.isValidVector(storeResult);
-        return storeResult;
-    }
-
-    /**
-     * Copy this body's orientation to a quaternion.
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return the orientation (in physics-space coordinates, either storeResult
-     * or a new quaternion, not null)
-     */
-    public Quaternion getPhysicsRotation(Quaternion storeResult) {
-        if (storeResult == null) {
-            storeResult = new Quaternion();
-        }
-        getPhysicsRotation(objectId, storeResult);
-
-        return storeResult;
-    }
-
-    /**
-     * Copy the scale of the body's shape.
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return the scaling factor for each local axis (either storeResult or a
-     * new vector, not null)
-     */
-    public Vector3f getPhysicsScale(Vector3f storeResult) {
-        Vector3f result = collisionShape.getScale(storeResult);
-
-        assert Vector3f.isValidVector(result);
-        return result;
-    }
-
-    /**
-     * Copy the transform of this body, including the scale of its shape.
-     *
-     * @param storeResult (modified if not null)
-     * @return the transform (in physics-space coordinates, either storeResult
-     * of a new object, not null)
-     */
-    public Transform getPhysicsTransform(Transform storeResult) {
-        Transform result
-                = (storeResult == null) ? new Transform() : storeResult;
-
-        motionState.getLocation(result.getTranslation());
-        motionState.getOrientation(result.getRotation());
-        getPhysicsScale(result.getScale());
-
-        return result;
-    }
-
-    /**
-     * Alter the principal components of the local inertia tensor. TODO provide
-     * access to the whole tensor
-     *
-     * @param inverseInertia (not null, unaffected)
-     */
-    public void setInverseInertiaLocal(Vector3f inverseInertia) {
-        Validate.nonNull(inverseInertia, "inverse inertia");
-        setInverseInertiaLocal(objectId, inverseInertia);
-    }
-
-    /**
-     * Copy the principal components of the local inverse inertia tensor. TODO
-     * provide access to the whole tensor
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return a vector (either storeResult or a new vector, not null)
-     */
-    public Vector3f getInverseInertiaLocal(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f();
-        }
-        getInverseInertiaLocal(objectId, storeResult);
-
-        return storeResult;
-    }
-
-    /**
-     * Copy this body's orientation to a matrix.
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return the orientation (in physics-space coordinates, either storeResult
-     * or a new matrix, not null)
-     */
-    public Matrix3f getPhysicsRotationMatrix(Matrix3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Matrix3f();
-        }
-        getPhysicsRotationMatrix(objectId, storeResult);
-
-        return storeResult;
-    }
-
-    /**
-     * Put this body into kinematic mode or take it out of kinematic mode.
-     * <p>
-     * In kinematic mode, the body is not influenced by physics but can affect
-     * other physics objects. Its kinetic force is calculated based on its
-     * movement and weight.
-     *
-     * @param kinematic true&rarr;set kinematic mode, false&rarr;set
-     * dynamic/static mode (default=false)
-     */
-    public void setKinematic(boolean kinematic) {
-        this.kinematic = kinematic;
-        setKinematic(objectId, kinematic);
-    }
-
-    /**
-     * Test whether this body is in kinematic mode.
-     * <p>
-     * In kinematic mode, the body is not influenced by physics but can affect
-     * other physics objects. Its kinetic force is calculated based on its
-     * movement and weight.
-     *
-     * @return true if in kinematic mode, otherwise false (dynamic/static mode)
-     */
-    public boolean isKinematic() {
-        return kinematic;
-    }
-
-    // TODO add isDynamic() and isStatic()
-    /**
-     * Alter the radius of the swept sphere used for continuous collision
-     * detection (CCD).
-     *
-     * @param radius the desired radius (&ge;0, default=0)
-     */
-    public void setCcdSweptSphereRadius(float radius) {
-        setCcdSweptSphereRadius(objectId, radius);
-    }
-
-    /**
-     * Alter the amount of motion required to activate continuous collision
-     * detection (CCD).
-     * <p>
-     * This addresses the issue of fast objects passing through other objects
-     * with no collision detected.
-     *
-     * @param threshold the desired threshold velocity (&gt;0) or zero to
-     * disable CCD (default=0)
-     */
-    public void setCcdMotionThreshold(float threshold) {
-        setCcdMotionThreshold(objectId, threshold);
-    }
-
-    /**
-     * Read the radius of the swept sphere used for continuous collision
-     * detection (CCD).
-     *
-     * @return radius (&ge;0)
-     */
-    public float getCcdSweptSphereRadius() {
-        return getCcdSweptSphereRadius(objectId);
-    }
-
-    /**
-     * Calculate this body's continuous collision detection (CCD) motion
-     * threshold.
-     *
-     * @return the threshold velocity (&ge;0)
-     */
-    public float getCcdMotionThreshold() {
-        return getCcdMotionThreshold(objectId);
-    }
-
-    /**
-     * Calculate the square of this body's continuous collision detection (CCD)
-     * motion threshold.
-     *
-     * @return the threshold velocity squared (&ge;0)
-     */
-    public float getCcdSquareMotionThreshold() {
-        return getCcdSquareMotionThreshold(objectId);
-    }
-
-    /**
-     * Read this body's mass.
-     *
-     * @return the mass (&gt;0) or zero for a static body
-     */
-    public float getMass() {
-        return mass;
-    }
-
-    /**
-     * Alter this body's mass. Bodies with mass=0 are static. For dynamic
-     * bodies, it is best to keep the mass on the order of 1.
-     *
-     * @param mass the desired mass (&gt;0) or 0 for a static body (default=1)
-     */
-    public void setMass(float mass) {
-        Validate.nonNegative(mass, "mass");
-        if (mass != massForStatic) {
-            validateDynamicShape(collisionShape);
-        }
-
-        this.mass = mass;
-        if (objectId != 0L) { // TODO necessary?
-            if (collisionShape != null) {
-                updateMassProps(objectId, collisionShape.getObjectId(), mass);
-            }
-            if (mass == massForStatic) {
-                setStatic(objectId, true);
-            } else {
-                setStatic(objectId, false);
-            }
-        }
-    }
-
-    /**
-     * Copy this body's gravitational acceleration.
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return an acceleration vector (in physics-space coordinates, either
-     * storeResult or a new vector, not null)
-     */
-    public Vector3f getGravity(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f();
-        }
-        getGravity(objectId, storeResult);
-
-        return storeResult;
-    }
-
-    /**
-     * Alter this body's gravitational acceleration.
-     * <p>
-     * Invoke this method <em>after</em> adding the body to a PhysicsSpace.
-     * Adding a body to a PhysicsSpace alters its gravity.
-     *
-     * @param gravity the desired acceleration vector (not null, unaffected)
-     */
-    public void setGravity(Vector3f gravity) {
-        setGravity(objectId, gravity);
-    }
-
-    /**
-     * Read this body's friction.
-     *
-     * @return friction value
-     */
-    public float getFriction() {
-        return getFriction(objectId);
-    }
-
-    /**
-     * Alter this body's friction.
-     *
-     * @param friction the desired friction value (default=0.5)
-     */
-    public void setFriction(float friction) {
-        setFriction(objectId, friction);
-    }
-
-    /**
-     * Alter this body's damping.
-     *
-     * @param linearDamping the desired linear damping value (default=0)
-     * @param angularDamping the desired angular damping value (default=0)
-     */
-    public void setDamping(float linearDamping, float angularDamping) {
-        setDamping(objectId, linearDamping, angularDamping);
-    }
-
-    /**
-     * Alter this body's linear damping.
-     *
-     * @param linearDamping the desired linear damping value (default=0)
-     */
-    public void setLinearDamping(float linearDamping) {
-        setDamping(objectId, linearDamping, getAngularDamping());
-    }
-
-    /**
-     * Alter this body's angular damping.
-     *
-     * @param angularDamping the desired angular damping value (default=0)
-     */
-    public void setAngularDamping(float angularDamping) {
-        setAngularDamping(objectId, angularDamping);
-    }
-
-    /**
-     * Read this body's linear damping.
-     *
-     * @return damping value
-     */
-    public float getLinearDamping() {
-        return getLinearDamping(objectId);
-    }
-
-    /**
-     * Read this body's angular damping.
-     *
-     * @return damping value
-     */
-    public float getAngularDamping() {
-        return getAngularDamping(objectId);
-    }
-
-    /**
-     * Read this body's restitution (bounciness).
-     *
-     * @return restitution value
-     */
-    public float getRestitution() {
-        return getRestitution(objectId);
-    }
-
-    /**
      * Alter this body's restitution (bounciness). For best performance, set
      * restitution=0.
      *
@@ -616,175 +879,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      */
     public void setRestitution(float restitution) {
         setRestitution(objectId, restitution);
-    }
-
-    /**
-     * Copy this body's angular velocity.
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return a velocity vector (in physics-space coordinates, either
-     * storeResult or a new vector, not null))
-     */
-    public Vector3f getAngularVelocity(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f();
-        }
-        getAngularVelocity(objectId, storeResult);
-
-        return storeResult;
-    }
-
-    /**
-     * Alter this body's angular velocity.
-     *
-     * @param vec the desired angular velocity vector (not null, unaffected)
-     */
-    public void setAngularVelocity(Vector3f vec) {
-        setAngularVelocity(objectId, vec);
-        activate();
-    }
-
-    /**
-     * Copy the linear velocity of this body's center of mass.
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return a velocity vector (in physics-space coordinates, either
-     * storeResult or a new vector, not null)
-     */
-    public Vector3f getLinearVelocity(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f();
-        }
-        getLinearVelocity(objectId, storeResult);
-
-        return storeResult;
-    }
-
-    /**
-     * Alter the linear velocity of this body's center of mass.
-     *
-     * @param vec the desired velocity vector (not null)
-     */
-    public void setLinearVelocity(Vector3f vec) {
-        setLinearVelocity(objectId, vec);
-        activate();
-    }
-
-    /**
-     * Apply a force to the PhysicsRigidBody. Effective only if the next physics
-     * update steps the physics space.
-     * <p>
-     * To apply an impulse, use applyImpulse, use applyContinuousForce to apply
-     * continuous force.
-     *
-     * @param force the force (not null, unaffected)
-     * @param location the location of the force
-     */
-    public void applyForce(Vector3f force, Vector3f location) {
-        applyForce(objectId, force, location);
-        activate();
-    }
-
-    /**
-     * Apply a force to the PhysicsRigidBody. Effective only if the next physics
-     * update steps the physics space.
-     * <p>
-     * To apply an impulse, use
-     * {@link #applyImpulse(com.jme3.math.Vector3f, com.jme3.math.Vector3f)}.
-     *
-     * @param force the force (not null, unaffected)
-     */
-    public void applyCentralForce(Vector3f force) {
-        applyCentralForce(objectId, force);
-        activate();
-    }
-
-    /**
-     * Apply a force to the PhysicsRigidBody. Effective only if the next physics
-     * update steps the physics space.
-     * <p>
-     * To apply an impulse, use
-     * {@link #applyImpulse(com.jme3.math.Vector3f, com.jme3.math.Vector3f)}.
-     *
-     * @param torque the torque (not null, unaffected)
-     */
-    public void applyTorque(Vector3f torque) {
-        applyTorque(objectId, torque);
-        activate();
-    }
-
-    /**
-     * Apply an impulse to the body the next physics update.
-     *
-     * @param impulse applied impulse (not null, unaffected)
-     * @param rel_pos location relative to object (not null, unaffected)
-     */
-    public void applyImpulse(Vector3f impulse, Vector3f rel_pos) {
-        applyImpulse(objectId, impulse, rel_pos);
-        activate();
-    }
-
-    /**
-     * Apply a torque impulse to the body in the next physics update.
-     *
-     * @param vec the torque to apply (not null, unaffected)
-     */
-    public void applyTorqueImpulse(Vector3f vec) {
-        applyTorqueImpulse(objectId, vec);
-        activate();
-    }
-
-    /**
-     * Clear all forces acting on this body.
-     */
-    public void clearForces() {
-        clearForces(objectId);
-    }
-
-    /**
-     * Apply the specified CollisionShape to this body, which must not be in any
-     * physics space. The body gets rebuilt on the physics side.
-     *
-     * @param collisionShape the shape to apply (not null, alias created)
-     */
-    @Override
-    public void setCollisionShape(CollisionShape collisionShape) {
-        Validate.nonNull(collisionShape, "collision shape");
-        //if (isInWorld()) {
-        //    throw new IllegalStateException(
-        //            "Cannot reshape body while in physics space!");
-        // }
-        if (mass != massForStatic) {
-            validateDynamicShape(collisionShape);
-        }
-
-        super.setCollisionShape(collisionShape);
-
-        if (objectId == 0L) {
-            rebuildRigidBody();
-        } else {
-            setCollisionShape(objectId, collisionShape.getObjectId());
-            updateMassProps(objectId, collisionShape.getObjectId(), mass);
-        }
-    }
-
-    /**
-     * Reactivates this body if it has been deactivated due to lack of motion.
-     * TODO move to PhysicsCollisionObject and add "force" option
-     */
-    public void activate() {
-        activate(objectId);
-        assert isActive();
-    }
-
-    /**
-     * Test whether this body has been deactivated due to lack of motion. TODO
-     * move to PhysicsCollisionObject
-     *
-     * @return true if still active, false if deactivated
-     */
-    public boolean isActive() {
-        return isActive(objectId);
     }
 
     /**
@@ -799,170 +893,58 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     public void setSleepingThresholds(float linear, float angular) {
         setSleepingThresholds(objectId, linear, angular);
     }
+    // *************************************************************************
+    // new protected methods
 
     /**
-     * Alter this body's linear sleeping threshold.
-     *
-     * @param linearSleepingThreshold the desired threshold (&ge;0, default=0.8)
+     * For use by subclasses.
      */
-    public void setLinearSleepingThreshold(float linearSleepingThreshold) {
-        float ast = getAngularSleepingThreshold(); // work around JME issue #911
-        setSleepingThresholds(objectId, linearSleepingThreshold, ast);
+    protected void preRebuild() {
     }
 
     /**
-     * Alter this body's angular sleeping threshold.
-     *
-     * @param angularSleepingThreshold the desired threshold (&ge;0, default=1)
+     * For use by subclasses.
      */
-    public void setAngularSleepingThreshold(float angularSleepingThreshold) {
-        float lst = getLinearSleepingThreshold(); // work around JME issue #911
-        setSleepingThresholds(objectId, lst, angularSleepingThreshold);
-    }
-
-    /**
-     * Read this body's linear sleeping threshold.
-     *
-     * @return the linear sleeping threshold (&ge;0)
-     */
-    public float getLinearSleepingThreshold() {
-        return getLinearSleepingThreshold(objectId);
-    }
-
-    /**
-     * Read this body's angular sleeping threshold.
-     *
-     * @return the angular sleeping threshold (&ge;0)
-     */
-    public float getAngularSleepingThreshold() {
-        return getAngularSleepingThreshold(objectId);
-    }
-
-    /**
-     * Read this body's angular factor for the X axis.
-     *
-     * @return the angular factor
-     */
-    public float getAngularFactor() {
-        return getAngularFactor(null).getX();
-    }
-
-    /**
-     * Copy this body's angular factors.
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return the angular factor for each axis (either storeResult or a new
-     * vector, not null)
-     */
-    public Vector3f getAngularFactor(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f();
+    protected void postRebuild() {
+        if (mass == massForStatic) {
+            setStatic(objectId, true);
+        } else {
+            setStatic(objectId, false);
         }
-        getAngularFactor(objectId, storeResult);
-
-        return storeResult;
+        initUserPointer();
     }
 
     /**
-     * Alter this body's angular factor.
-     *
-     * @param factor the desired angular factor for all axes (not null,
-     * unaffected, default=1)
+     * Build/rebuild this body after parameters have changed.
      */
-    public void setAngularFactor(float factor) {
-        setAngularFactor(objectId, new Vector3f(factor, factor, factor));
-    }
-
-    /**
-     * Alter this body's angular factors.
-     *
-     * @param factor the desired angular factor for each axis (not null,
-     * unaffected, default=(1,1,1))
-     */
-    public void setAngularFactor(Vector3f factor) {
-        setAngularFactor(objectId, factor);
-    }
-
-    /**
-     * Copy this body's linear factors.
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return the linear factor for each axis (either storeResult or a new
-     * vector, not null)
-     */
-    public Vector3f getLinearFactor(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f();
+    protected void rebuildRigidBody() {
+        boolean removed = false;
+        if (mass != massForStatic) {
+            validateDynamicShape(collisionShape);
         }
-        getLinearFactor(objectId, storeResult);
 
-        return storeResult;
-    }
-
-    /**
-     * Alter this body's linear factors.
-     *
-     * @param factor the desired linear factor for each axis (not null,
-     * unaffected, default=(1,1,1))
-     */
-    public void setLinearFactor(Vector3f factor) {
-        setLinearFactor(objectId, factor);
-    }
-
-    /**
-     * Do not invoke directly! Joints are added automatically when created.
-     *
-     * @param joint the joint to add (not null)
-     */
-    public void addJoint(PhysicsJoint joint) {
-        if (!joints.contains(joint)) {
-            joints.add(joint);
+        if (objectId != 0L) {
+            if (isInWorld(objectId)) {
+                PhysicsSpace.getPhysicsSpace().remove(this);
+                removed = true;
+            }
+            logger2.log(Level.FINE, "Clearing RigidBody {0}",
+                    Long.toHexString(objectId));
+            finalizeNative(objectId);
+        }
+        preRebuild();
+        objectId = createRigidBody(mass, motionState.getObjectId(),
+                collisionShape.getObjectId());
+        logger2.log(Level.FINE, "Created RigidBody {0}",
+                Long.toHexString(objectId));
+        postRebuild();
+        if (removed) {
+            PhysicsSpace.getPhysicsSpace().add(this);
         }
     }
 
-    /**
-     * Do not invoke directly! Joints are removed automatically when destroyed.
-     *
-     * @param joint the joint to remove (not null)
-     */
-    public void removeJoint(PhysicsJoint joint) {
-        joints.remove(joint);
-    }
-
-    /**
-     * Access the list of joints connected with this body.
-     * <p>
-     * This list is only filled when the PhysicsRigidBody is added to a physics
-     * space.
-     *
-     * @return the pre-existing list (not null)
-     */
-    public List<PhysicsJoint> getJoints() {
-        return joints;
-    }
-
-    /**
-     * Validate a shape suitable for a dynamic body.
-     *
-     * @param shape (not null, unaffected)
-     */
-    private void validateDynamicShape(CollisionShape shape) {
-        assert shape != null;
-
-        if (shape instanceof HeightfieldCollisionShape) {
-            throw new IllegalStateException(
-                    "Dynamic rigid body can't have heightfield shape!");
-        } else if (shape instanceof MeshCollisionShape) {
-            throw new IllegalStateException(
-                    "Dynamic rigid body can't have mesh shape!");
-        } else if (shape instanceof PlaneCollisionShape) {
-            throw new IllegalStateException(
-                    "Dynamic rigid body can't have plane shape!");
-        }
-    }
     // *************************************************************************
     // PhysicsCollisionObject methods
-
     /**
      * Callback from {@link com.jme3.util.clone.Cloner} to convert this
      * shallow-cloned body into a deep-cloned one, using the specified cloner
@@ -1013,6 +995,51 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
+     * De-serialize this body, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public void read(JmeImporter im) throws IOException {
+        super.read(im);
+
+        InputCapsule capsule = im.getCapsule(this);
+        mass = capsule.readFloat("mass", 1f);
+        rebuildRigidBody();
+        setGravity((Vector3f) capsule.readSavable("gravity",
+                Vector3f.ZERO.clone()));
+        setFriction(capsule.readFloat("friction", 0.5f));
+        setKinematic(capsule.readBoolean("kinematic", false));
+
+        setRestitution(capsule.readFloat("restitution", 0f));
+        Vector3f angularFactor = (Vector3f) capsule.readSavable("angularFactor",
+                null);
+        if (angularFactor == null) {
+            setAngularFactor(capsule.readFloat("angularFactor", 1f));
+        } else {
+            setAngularFactor(angularFactor);
+            setLinearFactor((Vector3f) capsule.readSavable("linearFactor",
+                    Vector3f.UNIT_XYZ.clone()));
+        }
+        setDamping(capsule.readFloat("linearDamping", 0f),
+                capsule.readFloat("angularDamping", 0f));
+        setSleepingThresholds(
+                capsule.readFloat("linearSleepingThreshold", 0.8f),
+                capsule.readFloat("angularSleepingThreshold", 1f));
+        setCcdMotionThreshold(capsule.readFloat("ccdMotionThreshold", 0f));
+        setCcdSweptSphereRadius(capsule.readFloat("ccdSweptSphereRadius", 0f));
+
+        setPhysicsLocation((Vector3f) capsule.readSavable("physicsLocation",
+                new Vector3f()));
+        setPhysicsRotation((Matrix3f) capsule.readSavable("physicsRotation",
+                new Matrix3f()));
+
+        joints = capsule.readSavableArrayList("joints", null);
+    }
+
+    /**
      * Serialize this body, for example when saving to a J3O file.
      *
      * @param ex exporter (not null)
@@ -1056,51 +1083,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
                 "physicsRotation", new Matrix3f());
 
         capsule.writeSavableArrayList(joints, "joints", null);
-    }
-
-    /**
-     * De-serialize this body, for example when loading from a J3O file.
-     *
-     * @param im importer (not null)
-     * @throws IOException from importer
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void read(JmeImporter im) throws IOException {
-        super.read(im);
-
-        InputCapsule capsule = im.getCapsule(this);
-        mass = capsule.readFloat("mass", 1f);
-        rebuildRigidBody();
-        setGravity((Vector3f) capsule.readSavable("gravity",
-                Vector3f.ZERO.clone()));
-        setFriction(capsule.readFloat("friction", 0.5f));
-        setKinematic(capsule.readBoolean("kinematic", false));
-
-        setRestitution(capsule.readFloat("restitution", 0f));
-        Vector3f angularFactor = (Vector3f) capsule.readSavable("angularFactor",
-                null);
-        if (angularFactor == null) {
-            setAngularFactor(capsule.readFloat("angularFactor", 1f));
-        } else {
-            setAngularFactor(angularFactor);
-            setLinearFactor((Vector3f) capsule.readSavable("linearFactor",
-                    Vector3f.UNIT_XYZ.clone()));
-        }
-        setDamping(capsule.readFloat("linearDamping", 0f),
-                capsule.readFloat("angularDamping", 0f));
-        setSleepingThresholds(
-                capsule.readFloat("linearSleepingThreshold", 0.8f),
-                capsule.readFloat("angularSleepingThreshold", 1f));
-        setCcdMotionThreshold(capsule.readFloat("ccdMotionThreshold", 0f));
-        setCcdSweptSphereRadius(capsule.readFloat("ccdSweptSphereRadius", 0f));
-
-        setPhysicsLocation((Vector3f) capsule.readSavable("physicsLocation",
-                new Vector3f()));
-        setPhysicsRotation((Matrix3f) capsule.readSavable("physicsRotation",
-                new Matrix3f()));
-
-        joints = capsule.readSavableArrayList("joints", null);
     }
     // *************************************************************************
     // private methods
@@ -1210,4 +1192,24 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     native private long updateMassProps(long objectId, long collisionShapeId,
             float mass);
+
+    /**
+     * Validate a shape suitable for a dynamic body.
+     *
+     * @param shape (not null, unaffected)
+     */
+    private static void validateDynamicShape(CollisionShape shape) {
+        assert shape != null;
+
+        if (shape instanceof HeightfieldCollisionShape) {
+            throw new IllegalStateException(
+                    "Dynamic rigid body can't have heightfield shape!");
+        } else if (shape instanceof MeshCollisionShape) {
+            throw new IllegalStateException(
+                    "Dynamic rigid body can't have mesh shape!");
+        } else if (shape instanceof PlaneCollisionShape) {
+            throw new IllegalStateException(
+                    "Dynamic rigid body can't have plane shape!");
+        }
+    }
 }
