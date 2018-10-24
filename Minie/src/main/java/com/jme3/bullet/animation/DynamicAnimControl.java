@@ -1357,24 +1357,29 @@ public class DynamicAnimControl
     /**
      * Find the torso's main root bone.
      *
-     * @param targets array of animated meshes to provide bone weights (not
-     * null, unaffected)
+     * @param targets an array of animated meshes to provide bone weights (not
+     * null)
      * @return a root bone, or null if none found
      */
     private Bone findTorsoMainBone(Mesh[] targets) {
         assert targets != null;
 
-        float[] totalWeights = RagUtils.totalWeights(targets, skeleton);
-        Bone[] rootBones = skeleton.getRoots(); // TODO shortcut if only 1 root
+        Bone[] rootBones = skeleton.getRoots();
 
-        Bone result = null;
-        float greatestTotalWeight = Float.NEGATIVE_INFINITY;
-        for (Bone rootBone : rootBones) {
-            int boneIndex = skeleton.getBoneIndex(rootBone);
-            float weight = totalWeights[boneIndex];
-            if (weight > greatestTotalWeight) {
-                result = rootBone;
-                greatestTotalWeight = weight;
+        Bone result;
+        if (rootBones.length == 1) {
+            result = rootBones[0];
+        } else {
+            result = null;
+            float[] totalWeights = RagUtils.totalWeights(targets, skeleton);
+            float greatestTotalWeight = Float.NEGATIVE_INFINITY;
+            for (Bone rootBone : rootBones) {
+                int boneIndex = skeleton.getBoneIndex(rootBone);
+                float weight = totalWeights[boneIndex];
+                if (weight > greatestTotalWeight) {
+                    result = rootBone;
+                    greatestTotalWeight = weight;
+                }
             }
         }
 
