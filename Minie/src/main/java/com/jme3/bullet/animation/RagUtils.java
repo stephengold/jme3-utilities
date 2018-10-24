@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -126,6 +127,31 @@ public class RagUtils {
     }
 
     /**
+     * Estimate the center of a convex hull.
+     *
+     * @param locations the vertex locations that define the hull (not null, not
+     * empty, unaffected)
+     * @param storeResult storage for the result (modified if not null)
+     * @return a location vector (either storeResult or a new vector, not null)
+     */
+    public static Vector3f center(Collection<Vector3f> locations,
+            Vector3f storeResult) {
+        Validate.nonNull(locations, "locations");
+        assert !locations.isEmpty();
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        /*
+         * For now, use the arithmentic mean of all vertex locations. TODO
+         */
+        result.zero();
+        for (Vector3f location : locations) {
+            result.addLocal(location);
+        }
+        result.divideLocal(locations.size());
+
+        return result;
+    }
+
+    /**
      * Assign each mesh vertex to a link and add its location (mesh coordinates
      * in bind pose) to that link's list.
      *
@@ -186,7 +212,7 @@ public class RagUtils {
      * @param center the location of the shape's center, in vertex coordinates
      * (not null, unaffected)
      * @param vertexLocations list of vertex locations (not null, not empty,
-     * unaffected)
+     * MODIFIED)
      * @return a new shape
      */
     public static CollisionShape createShape(Transform transform,
