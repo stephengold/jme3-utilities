@@ -822,8 +822,6 @@ public class DynamicAnimControl
         List<Mesh> targetList = MySpatial.listAnimatedMeshes(spatial, null);
         Mesh[] targets = new Mesh[targetList.size()];
         targetList.toArray(targets);
-        Bone torsoMainBone = findTorsoMainBone(targets);
-        assert torsoMainBone.getParent() == null;
         /*
          * Analyze the model's coordinate systems.
          */
@@ -831,14 +829,9 @@ public class DynamicAnimControl
         if (transformer == null) {
             transformer = spatial;
         }
-        Spatial loopSpatial = transformer;
-        Transform modelToMesh = new Transform();
-        while (loopSpatial != spatial) {
-            Transform localTransform = loopSpatial.getLocalTransform();
-            modelToMesh.combineWithParent(localTransform);
-            loopSpatial = loopSpatial.getParent();
-        }
-        Transform meshToModel = modelToMesh.invert();
+
+        MySkeleton.setUserControl(skeleton, false);
+        skeleton.resetAndUpdate(); // TODO clone the skeleton first
         /*
          * Analyze the model's meshes.
          */
@@ -846,39 +839,10 @@ public class DynamicAnimControl
         Map<String, List<Vector3f>> coordsMap
                 = RagUtils.coordsMap(targets, tempManagerMap);
         /*
-         * Create a shape for the torso. TODO move to createTorsoLink()
-         */
-        List<Vector3f> vertexLocations = coordsMap.get(torsoName);
-        if (vertexLocations == null) {
-            throw new IllegalArgumentException(
-                    "No mesh vertices for the torso. Make sure the root bone is not linked.");
-        }
-        MySkeleton.setUserControl(skeleton, false);
-        skeleton.resetAndUpdate(); // TODO clone the skeleton first
-        Transform boneToMesh
-                = MySkeleton.copyMeshTransform(torsoMainBone, null);
-        Transform meshToBone = boneToMesh.invert();
-        Vector3f center = RagUtils.center(vertexLocations, null);
-        center.subtractLocal(torsoMainBone.getModelSpacePosition());
-        CollisionShape torsoShape
-                = RagUtils.createShape(meshToBone, center, vertexLocations);
-
-        meshToBone.getTranslation().zero();
-        Vector3f offset = meshToBone.transformVector(center, null);
-        /*
-         * Create a rigid body for the torso.
-         */
-        float torsoMass = mass(torsoName);
-        PhysicsRigidBody torsoRigidBody
-                = new PhysicsRigidBody(torsoShape, torsoMass);
-        float viscousDamping = damping();
-        torsoRigidBody.setDamping(viscousDamping, viscousDamping);
-        /*
          * Create the torso link.
          */
-        torsoLink = new TorsoLink(this, torsoMainBone, torsoRigidBody,
-                meshToModel, offset);
-        torsoLink.setSkeleton(skeleton);
+        List<Vector3f> vertexLocations = coordsMap.get(torsoName);
+        torsoLink = createTorsoLink(vertexLocations, targets);
         /*
          * Create bone links.
          */
@@ -887,12 +851,6 @@ public class DynamicAnimControl
         assert linkedBoneNames.size() == numLinkedBones;
         for (String boneName : linkedBoneNames) {
             vertexLocations = coordsMap.get(boneName);
-            if (vertexLocations == null) {
-                String msg = String.format(
-                        "No mesh vertices for the linked bone named %s.",
-                        MyString.quote(boneName));
-                throw new IllegalArgumentException(msg);
-            }
             createBoneLink(boneName, vertexLocations);
         }
         assert boneLinks.size() == numLinkedBones;
@@ -1302,25 +1260,26 @@ public class DynamicAnimControl
      * Create a BoneLink for the named bone.
      *
      * @param name the name of the bone to be linked (not null)
-     * @param lbNames map from bone indices to linked-bone names (not null,
-     * unaffected)
-     * @param coordsMap a map from linked-bone names to vertex positions (not
-     * null, unaffected)
+     * @param vertexLocations the collection of vertices (not null, not empty)
      * @return a new bone link without a joint, added to the boneLinks map
      */
     private BoneLink createBoneLink(String name,
             List<Vector3f> vertexLocations) {
-        assert vertexLocations != null;
-
-        Bone bone = getBone(name);
+        if (vertexLocations == null || vertexLocations.isEmpty()) {
+            String msg = String.format(
+                    "No mesh vertices for the linked bone named %s.",
+                    MyString.quote(name));
+            throw new IllegalArgumentException(msg);
+        }
         /*
          * Create the collision shape.
          */
+        Bone bone = getBone(name);
         Transform boneToMesh = MySkeleton.copyMeshTransform(bone, null);
         Transform meshToBone = boneToMesh.invert();
         Vector3f center = RagUtils.center(vertexLocations, null);
         center.subtractLocal(bone.getModelSpacePosition());
-        CollisionShape boneShape
+        CollisionShape shape
                 = RagUtils.createShape(meshToBone, center, vertexLocations);
 
         meshToBone.getTranslation().zero();
@@ -1328,17 +1287,71 @@ public class DynamicAnimControl
         /*
          * Create the rigid body.
          */
-        float boneMass = mass(name);
-        assert boneMass > 0f : boneMass;
-        PhysicsRigidBody rigidBody = new PhysicsRigidBody(boneShape, boneMass);
+        float mass = mass(name);
+        assert mass > 0f : mass;
+        PhysicsRigidBody rigidBody = new PhysicsRigidBody(shape, mass);
 
         float viscousDamping = damping();
         rigidBody.setDamping(viscousDamping, viscousDamping);
 
-        BoneLink boneLink = new BoneLink(this, bone, rigidBody, offset);
-        boneLinks.put(name, boneLink);
+        BoneLink result = new BoneLink(this, bone, rigidBody, offset);
+        boneLinks.put(name, result);
 
-        return boneLink;
+        return result;
+    }
+
+    /**
+     * Create the TorsoLink.
+     *
+     * @param vertexLocations the collection of vertices (not null, not empty)
+     * @param meshes array of animated meshes to use (not null, unaffected)
+     * @return a new torso link
+     */
+    private TorsoLink createTorsoLink(List<Vector3f> vertexLocations,
+            Mesh[] meshes) {
+        if (vertexLocations == null) {
+            throw new IllegalArgumentException(
+                    "No mesh vertices for the torso."
+                    + " Make sure the root bone is not linked.");
+        }
+        /*
+         * Create the collision shape.
+         */
+        Bone bone = findTorsoMainBone(meshes);
+        assert bone.getParent() == null;
+        Transform boneToMesh = MySkeleton.copyMeshTransform(bone, null);
+        Transform meshToBone = boneToMesh.invert();
+        Vector3f center = RagUtils.center(vertexLocations, null);
+        center.subtractLocal(bone.getModelSpacePosition());
+        CollisionShape shape
+                = RagUtils.createShape(meshToBone, center, vertexLocations);
+
+        meshToBone.getTranslation().zero();
+        Vector3f offset = meshToBone.transformVector(center, null);
+        /*
+         * Create the rigid body.
+         */
+        float mass = mass(torsoName);
+        assert mass > 0f : mass;
+        PhysicsRigidBody rigidBody = new PhysicsRigidBody(shape, mass);
+
+        float viscousDamping = damping();
+        rigidBody.setDamping(viscousDamping, viscousDamping);
+
+        Spatial loopSpatial = transformer;
+        Transform modelToMesh = new Transform();
+        while (loopSpatial != getSpatial()) {
+            Transform localTransform = loopSpatial.getLocalTransform();
+            modelToMesh.combineWithParent(localTransform);
+            loopSpatial = loopSpatial.getParent();
+        }
+        Transform meshToModel = modelToMesh.invert();
+
+        TorsoLink result
+                = new TorsoLink(this, bone, rigidBody, meshToModel, offset);
+        result.setSkeleton(skeleton);
+
+        return result;
     }
 
     /**
