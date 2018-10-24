@@ -146,8 +146,7 @@ public class TestDac extends ActionApplication {
         physicsSpace.setSolverNumIterations(30);
 
         addBox();
-
-        addModel("SinbadWithSwords");
+        addModel("Sinbad");
     }
 
     /**
@@ -389,6 +388,7 @@ public class TestDac extends ActionApplication {
             rootNode.detachChild(model);
             rootNode.removeControl(sv);
             removeAllBalls();
+            // TODO remove attachment physics objects?
         }
 
         switch (modelName) {
