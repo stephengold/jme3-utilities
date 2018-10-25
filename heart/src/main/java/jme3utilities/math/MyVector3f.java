@@ -32,6 +32,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -893,6 +894,29 @@ public class MyVector3f {
 
         assert storeResult.isUnitVector();
         return storeResult;
+    }
+
+    /**
+     * Calculate the arithmetic mean of a non-empty collection of vectors.
+     *
+     * @param collection the vectors to average (not null, not empty,
+     * unaffected)
+     * @param storeResult storage for the result (modified if not null)
+     * @return the mean (either storeResult or a new vector, not null)
+     */
+    public static Vector3f mean(Collection<Vector3f> collection,
+            Vector3f storeResult) {
+        Validate.nonEmpty(collection, "locations");
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        result.zero();
+        for (Vector3f location : collection) {
+            result.addLocal(location);
+        }
+        int count = collection.size();
+        result.divideLocal(count);
+
+        return result;
     }
 
     /**
