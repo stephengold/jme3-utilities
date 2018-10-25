@@ -565,8 +565,20 @@ public class DynamicAnimControl
             throw new IllegalStateException(
                     "Cannot rebuild unless added to a spatial.");
         }
+
+        Map<String, BoneLink> saveBones = new HashMap<>(boneLinks);
+        TorsoLink saveTorso = torsoLink;
+
         removeSpatialData(controlledSpatial);
         createSpatialData(controlledSpatial);
+
+        for (Map.Entry<String, BoneLink> entry : boneLinks.entrySet()) {
+            String name = entry.getKey();
+            BoneLink newLink = entry.getValue();
+            BoneLink oldLink = saveBones.get(name);
+            newLink.postRebuild(oldLink);
+        }
+        torsoLink.postRebuild(saveTorso);
     }
 
     /**

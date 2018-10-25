@@ -286,6 +286,35 @@ public class BoneLink
     }
 
     /**
+     * Copy animation data from the specified link, which must have the same
+     * name and the same managed bones.
+     *
+     * @param oldLink the link to copy from (not null, unaffected)
+     */
+    void postRebuild(BoneLink oldLink) {
+        assert oldLink.bone.getName().equals(bone.getName());
+        int numManagedBones = managedBones.length;
+        assert oldLink.managedBones.length == numManagedBones;
+
+        blendInterval = oldLink.blendInterval;
+        kinematicWeight = oldLink.kinematicWeight;
+        submode = oldLink.submode;
+
+        if (prevBoneTransforms == null) {
+            prevBoneTransforms = new Transform[numManagedBones];
+            for (int i = 0; i < numManagedBones; i++) {
+                prevBoneTransforms[i] = new Transform();
+            }
+        }
+        for (int i = 0; i < numManagedBones; i++) {
+            prevBoneTransforms[i].set(oldLink.prevBoneTransforms[i]);
+            startBoneTransforms[i].set(oldLink.startBoneTransforms[i]);
+        }
+
+        rigidBody.setKinematic(oldLink.rigidBody.isKinematic());
+    }
+
+    /**
      * Internal callback, invoked just before the physics is stepped.
      */
     void prePhysicsTick() {

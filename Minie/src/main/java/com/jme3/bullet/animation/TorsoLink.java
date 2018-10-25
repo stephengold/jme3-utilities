@@ -47,6 +47,7 @@ import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Logger;
+import jme3utilities.Misc;
 import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.Validate;
@@ -284,6 +285,37 @@ public class TorsoLink
         Transform result
                 = control.physicsTransform(bone, localOffset, storeResult);
         return result;
+    }
+
+    /**
+     * Initialize animation data from the specified link.
+     *
+     * @param oldLink the link to copy (not null, unaffected)
+     */
+    void postRebuild(TorsoLink oldLink) {
+        assert oldLink.bone.getName().equals(bone.getName());
+        int numManagedBones = managedBones.length;
+        assert oldLink.managedBones.length == numManagedBones;
+
+        blendInterval = oldLink.blendInterval;
+        kinematicWeight = oldLink.kinematicWeight;
+        submode = oldLink.submode;
+        endModelTransform
+                = (Transform) Misc.deepCopy(oldLink.endModelTransform);
+        startModelTransform.set(oldLink.startModelTransform);
+
+        if (prevBoneTransforms == null) {
+            prevBoneTransforms = new Transform[numManagedBones];
+            for (int i = 0; i < numManagedBones; i++) {
+                prevBoneTransforms[i] = new Transform();
+            }
+        }
+        for (int i = 0; i < numManagedBones; i++) {
+            prevBoneTransforms[i].set(oldLink.prevBoneTransforms[i]);
+            startBoneTransforms[i].set(oldLink.startBoneTransforms[i]);
+        }
+
+        rigidBody.setKinematic(oldLink.rigidBody.isKinematic());
     }
 
     /**
