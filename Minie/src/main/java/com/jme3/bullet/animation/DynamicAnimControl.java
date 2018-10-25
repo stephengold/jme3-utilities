@@ -102,6 +102,18 @@ public class DynamicAnimControl
      */
     final public static Logger logger3
             = Logger.getLogger(DynamicAnimControl.class.getName());
+    /**
+     * local copy of {@link com.jme3.math.Matrix3f#IDENTITY}
+     */
+    final private static Matrix3f matrixIdentity = new Matrix3f();
+    /**
+     * local copy of {@link com.jme3.math.Quaternion#IDENTITY}
+     */
+    final private static Quaternion rotateIdentity = new Quaternion();
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#ZERO}
+     */
+    final private static Vector3f translateIdentity = new Vector3f(0f, 0f, 0f);
     // *************************************************************************
     // fields
 
@@ -525,8 +537,8 @@ public class DynamicAnimControl
          * Start with the body's transform in the bone's local coordinates.
          */
         result.setTranslation(localOffset);
-        result.getRotation().loadIdentity();
-        result.getScale().set(1f, 1f, 1f);
+        result.setRotation(rotateIdentity);
+        result.setScale(1f);
         /*
          * Convert to mesh coordinates.
          */
@@ -543,14 +555,18 @@ public class DynamicAnimControl
 
     /**
      * Rebuild the ragdoll. This is useful if you applied scale to the model
-     * after it was initialized. Same as re-attaching.
+     * after it was initialized.
+     * <p>
+     * Allowed only when the control IS added to a spatial.
      */
     public void rebuild() {
         Spatial controlledSpatial = getSpatial();
-        if (controlledSpatial != null) {
-            removeSpatialData(controlledSpatial);
-            createSpatialData(controlledSpatial);
+        if (controlledSpatial == null) {
+            throw new IllegalStateException(
+                    "Cannot rebuild unless added to a spatial.");
         }
+        removeSpatialData(controlledSpatial);
+        createSpatialData(controlledSpatial);
     }
 
     /**
@@ -811,9 +827,31 @@ public class DynamicAnimControl
                     "The controlled spatial must have a SkeletonControl. Make sure the control is there and not on a subnode.");
         }
         sortControls(skeletonControl);
-
+        /*
+         * Analyze the model's skeleton.
+         */
         skeleton = skeletonControl.getSkeleton();
         RagUtils.validate(skeleton); // TODO warn if any root bone is linked
+        String[] tempManagerMap = managerMap(skeleton);
+        int numBones = skeleton.getBoneCount();
+        /*
+         * Temporarily set all local translations and rotations to bind.
+         */
+        MySkeleton.setUserControl(skeleton, true);
+        Transform[] savedTransforms = new Transform[numBones];
+        Vector3f userScale = new Vector3f();
+        for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
+            Bone bone = skeleton.getBone(boneIndex);
+            savedTransforms[boneIndex]
+                    = MySkeleton.copyLocalTransform(bone, null);
+
+            userScale.set(bone.getLocalScale());
+            userScale.divideLocal(bone.getBindScale());
+            bone.setUserTransforms(translateIdentity, rotateIdentity,
+                    userScale);
+        }
+        MySkeleton.setUserControl(skeleton, false);
+        skeleton.updateWorldVectors();
         /*
          * Find the target meshes and the main bone.  Don't invoke
          * skeletonControl.getTargets() here since the SkeletonControl
@@ -829,13 +867,9 @@ public class DynamicAnimControl
         if (transformer == null) {
             transformer = spatial;
         }
-
-        MySkeleton.setUserControl(skeleton, false);
-        skeleton.resetAndUpdate(); // TODO clone the skeleton first
         /*
          * Analyze the model's meshes.
          */
-        String[] tempManagerMap = managerMap(skeleton);
         Map<String, List<Vector3f>> coordsMap
                 = RagUtils.coordsMap(targets, tempManagerMap);
         /*
@@ -855,12 +889,20 @@ public class DynamicAnimControl
         }
         assert boneLinks.size() == numLinkedBones;
         /*
-         * Add joints to connect each linked bone with its parent.
+         * Add joints to connect each BoneLink with its parent.
          * Also initialize the boneLinkList.
          */
         boneLinkList = new ArrayList<>(numLinkedBones);
         addJoints(torsoName);
         assert boneLinkList.size() == numLinkedBones;
+        /*
+         * Restore the skeleton's previous pose.
+         */
+        for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
+            Bone bone = skeleton.getBone(boneIndex);
+            MySkeleton.setLocalTransform(bone, savedTransforms[boneIndex]);
+        }
+        skeleton.updateWorldVectors();
 
         if (added) {
             addPhysics();
@@ -934,10 +976,10 @@ public class DynamicAnimControl
     }
 
     /**
-     * Destroy all spatial-dependent data. Invoked each time this control is
-     * removed from a spatial.
+     * Remove spatial-dependent data. Invoked each time this control is removed
+     * from a spatial.
      *
-     * @param spat the previously controlled spatial (not null)
+     * @param spat the previously controlled spatial (unused)
      */
     @Override
     protected void removeSpatialData(Spatial spat) {
@@ -947,10 +989,9 @@ public class DynamicAnimControl
         MySkeleton.setUserControl(skeleton, false);
         boneLinkList = null;
         boneLinks.clear();
-        torsoLink.setSkeleton(null);
-        torsoLink = null;
         skeleton = null;
         transformer = null;
+        torsoLink = null;
     }
 
     /**
@@ -1195,7 +1236,7 @@ public class DynamicAnimControl
             BoneLink parentLink = getBoneLink(parentName);
             parentToWorld = parentLink.physicsTransform(null);
         }
-        parentToWorld.getScale().set(1f, 1f, 1f);
+        parentToWorld.setScale(1f);
         Transform worldToParent = parentToWorld.invert();
 
         List<String> childNames = childNames(parentName);
@@ -1205,7 +1246,7 @@ public class DynamicAnimControl
             PhysicsRigidBody childBody = childLink.getRigidBody();
 
             Transform childToWorld = childLink.physicsTransform(null);
-            childToWorld.getScale().set(1f, 1f, 1f);
+            childToWorld.setScale(1f);
 
             Transform childToParent = childToWorld.clone();
             childToParent.combineWithParent(worldToParent);
@@ -1217,7 +1258,7 @@ public class DynamicAnimControl
             Vector3f pivotParent
                     = parentToWorld.transformInverseVector(pivotWorld, null);
 
-            Matrix3f rotChild = new Matrix3f(); // identity
+            Matrix3f rotChild = matrixIdentity;
             Matrix3f rotParent = childToParent.getRotation().toRotationMatrix();
 
             SixDofJoint joint = new SixDofJoint(parentBody, childBody,
@@ -1277,6 +1318,7 @@ public class DynamicAnimControl
         Bone bone = getBone(name);
         Transform boneToMesh = MySkeleton.copyMeshTransform(bone, null);
         Transform meshToBone = boneToMesh.invert();
+        meshToBone.setScale(1f);
         Vector3f center = RagUtils.center(vertexLocations, null);
         center.subtractLocal(bone.getModelSpacePosition());
         CollisionShape shape
