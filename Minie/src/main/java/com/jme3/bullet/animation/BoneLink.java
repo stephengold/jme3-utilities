@@ -182,15 +182,9 @@ public class BoneLink
         kinematicWeight = Float.MIN_VALUE; // non-zero to trigger blending
         rigidBody.setKinematic(true);
         /*
-         * Save bone transforms for blending.
+         * Save initial bone transforms for blending.
          */
         int numManagedBones = managedBones.length;
-        if (startBoneTransforms == null) {
-            startBoneTransforms = new Transform[numManagedBones];
-            for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
-                startBoneTransforms[mbIndex] = new Transform();
-            }
-        }
         for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
             Transform transform;
             if (prevBoneTransforms == null) { // this link not updated yet
@@ -351,6 +345,12 @@ public class BoneLink
 
         assert managedBones == null;
         managedBones = control.listManagedBones(bone.getName());
+
+        int numManagedBones = managedBones.length;
+        startBoneTransforms = new Transform[numManagedBones];
+        for (int i = 0; i < numManagedBones; i++) {
+            startBoneTransforms[i] = new Transform();
+        }
     }
 
     /**
@@ -365,7 +365,8 @@ public class BoneLink
         if (prevBoneTransforms == null) {
             /*
              * On the first update, allocate and initialize
-             * the array of transforms.
+             * the array of previous bone transforms, if it wasn't
+             * allocated in blendToKinematicMode().
              */
             int numManagedBones = managedBones.length;
             prevBoneTransforms = new Transform[numManagedBones];
@@ -614,7 +615,7 @@ public class BoneLink
         scale.divideLocal(pmScale);
         pmRotInv.mult(orientation, orientation);
         /*
-         * Subtract the body's local offset, after rotation and scaling.
+         * Subtract the body's local offset, rotated and scaled.
          */
         Vector3f parentOffset = localOffset.clone();
         parentOffset.multLocal(scale);

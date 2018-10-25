@@ -119,11 +119,10 @@ public class TorsoLink
     private Transform meshToModel = null;
     /**
      * local transform of the controlled spatial at the start of the torso's
-     * most recent blend interval, or null for no spatial blending
+     * most recent blend interval
      */
-    private Transform startModelTransform = null;
+    private Transform startModelTransform = new Transform();
     /**
-     * /**
      * local transform of each managed bone from the previous update
      */
     private Transform[] prevBoneTransforms = null;
@@ -203,21 +202,13 @@ public class TorsoLink
         kinematicWeight = Float.MIN_VALUE; // non-zero to trigger blending
         rigidBody.setKinematic(true);
         /*
-         * Save transforms for blending.
+         * Save initial transforms for blending.
          */
-        if (endModelTransform == null) {
-            startModelTransform = null;
-        } else {
-            startModelTransform
-                    = control.getSpatial().getLocalTransform().clone();
+        if (endModelTransform != null) {
+            Transform current = control.getSpatial().getLocalTransform();
+            startModelTransform.set(current);
         }
         int numManagedBones = managedBones.length;
-        if (startBoneTransforms == null) {
-            startBoneTransforms = new Transform[numManagedBones];
-            for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
-                startBoneTransforms[mbIndex] = new Transform();
-            }
-        }
         for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
             Transform transform;
             if (prevBoneTransforms == null) { // this link not updated yet
@@ -328,23 +319,21 @@ public class TorsoLink
     }
 
     /**
-     * Analyze the specified skeleton. If a null skeleton is specified, delete
-     * the existing analysis results.
+     * Analyze the specified skeleton.
      *
-     * @param skeleton (may be null, alias created)
+     * @param skeleton (not null, alias created)
      */
     void setSkeleton(Skeleton skeleton) {
+        assert skeleton != null;
         this.skeleton = skeleton;
 
-        if (skeleton == null) {
-            assert managedBones != null;
-            managedBones = null;
-            prevBoneTransforms = null;
-            startBoneTransforms = null;
-        } else {
-            assert managedBones == null;
-            managedBones
-                    = control.listManagedBones(DynamicAnimControl.torsoName);
+        assert managedBones == null;
+        managedBones = control.listManagedBones(DynamicAnimControl.torsoName);
+
+        int numManagedBones = managedBones.length;
+        startBoneTransforms = new Transform[numManagedBones];
+        for (int i = 0; i < numManagedBones; i++) {
+            startBoneTransforms[i] = new Transform();
         }
     }
 
@@ -360,7 +349,8 @@ public class TorsoLink
         if (prevBoneTransforms == null) {
             /*
              * On the first update, allocate and initialize
-             * the array of transforms.
+             * the array of previous bone transforms, if it wasn't
+             * allocated in blendToKinematicMode().
              */
             int numManagedBones = managedBones.length;
             prevBoneTransforms = new Transform[numManagedBones];
@@ -639,7 +629,7 @@ public class TorsoLink
         Transform worldToMesh = control.meshTransform(null).invert();
         result.combineWithParent(worldToMesh);
         /*
-         * Subtract the body's local offset, after rotation and scaling.
+         * Subtract the body's local offset, rotated and scaled.
          */
         Vector3f meshOffset = localOffset.clone();
         meshOffset.multLocal(scale);
