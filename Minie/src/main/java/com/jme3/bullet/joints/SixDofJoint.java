@@ -336,7 +336,8 @@ public class SixDofJoint extends PhysicsJoint {
     }
 
     /**
-     * Alter one of this joint's connection-point locations.
+     * Alter one of this joint's connection-point locations. TODO why doesn't
+     * this work?
      *
      * @param end which end of the joint to alter (not null)
      * @param newPivot the desired location (in the object's local coordinates,

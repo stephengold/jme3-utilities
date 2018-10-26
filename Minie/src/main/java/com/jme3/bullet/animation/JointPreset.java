@@ -235,8 +235,8 @@ public class JointPreset implements Savable {
      * @param lockY true to lock the joint's Y-axis
      * @param lockZ true to lock the joint's Z-axis
      */
-    public void setupJoint(SixDofJoint joint, boolean lockX,
-            boolean lockY, boolean lockZ) {
+    public void setupJoint(SixDofJoint joint, boolean lockX, boolean lockY,
+            boolean lockZ) {
         Validate.nonNull(joint, "joint");
 
         RotationalLimitMotor rotX

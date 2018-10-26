@@ -148,7 +148,7 @@ public class RagUtils {
         for (Vector3f location : locations) {
             result.addLocal(location);
         }
-        result.divideLocal(locations.size());
+        result.divideLocal(locations.size()); // TODO use MyVector3f.mean()
 
         return result;
     }
@@ -158,7 +158,7 @@ public class RagUtils {
      * in bind pose) to that link's list.
      *
      * @param meshes array of animated meshes to use (not null, unaffected)
-     * @param managerMap a map from bone indices to managing link names
+     * @param managerMap a map from bone indices to managing link names (not null, unaffected)
      * @return a new map from link names to lists of coordinates
      */
     public static Map<String, List<Vector3f>> coordsMap(Mesh[] meshes,
@@ -243,7 +243,7 @@ public class RagUtils {
 
     /**
      * Find the index of the specified scene-graph control in the specified
-     * spatial. TODO move to MySpatial
+     * spatial. TODO use MySpatial
      *
      * @param spatial (not null, unaffected)
      * @param sgc (not null, unaffected)

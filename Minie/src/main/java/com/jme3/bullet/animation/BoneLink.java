@@ -139,7 +139,8 @@ public class BoneLink
      *
      * @param control the control that will manage this link (not null, alias
      * created)
-     * @param bone the skeleton bone to link (not null, alias created)
+     * @param bone the skeleton bone to link (not null, alias created) TODO pass
+     * bone name instead
      * @param rigidBody the rigid body to link (not null, alias created)
      * @param localOffset the location of the body's center (in the bone's local
      * coordinates, not null, unaffected)

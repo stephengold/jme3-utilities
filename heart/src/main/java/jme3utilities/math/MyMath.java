@@ -37,7 +37,7 @@ import jme3utilities.MySpatial;
 import jme3utilities.Validate;
 
 /**
- * Mathematical utility methods.
+ * Mathematical utility methods. TODO method to combine 2 transforms
  *
  * @author Stephen Gold sgold@sonic.net
  */

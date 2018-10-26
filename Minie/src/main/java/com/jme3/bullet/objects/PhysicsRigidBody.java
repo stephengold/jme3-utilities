@@ -291,7 +291,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * Calculate this body's continuous collision detection (CCD) motion
      * threshold.
      *
-     * @return the threshold velocity (&ge;0)
+     * @return the threshold velocity (in physics-space units per second, &ge;0)
      */
     public float getCcdMotionThreshold() {
         return getCcdMotionThreshold(objectId);
@@ -311,7 +311,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * Read the radius of the swept sphere used for continuous collision
      * detection (CCD).
      *
-     * @return radius (&ge;0)
+     * @return radius (in physics-space units, &ge;0)
      */
     public float getCcdSweptSphereRadius() {
         return getCcdSweptSphereRadius(objectId);
@@ -330,8 +330,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * Copy this body's gravitational acceleration.
      *
      * @param storeResult storage for the result (modified if not null)
-     * @return an acceleration vector (in physics-space coordinates, either
-     * storeResult or a new vector, not null)
+     * @return an acceleration vector (in physics-space units per second
+     * squared, either storeResult or a new vector, not null)
      */
     public Vector3f getGravity(Vector3f storeResult) {
         if (storeResult == null) {
@@ -626,8 +626,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * This addresses the issue of fast objects passing through other objects
      * with no collision detected.
      *
-     * @param threshold the desired threshold velocity (&gt;0) or zero to
-     * disable CCD (default=0)
+     * @param threshold the desired threshold velocity (in physics-space units
+     * per second, &gt;0) or zero to disable CCD (default=0)
      */
     public void setCcdMotionThreshold(float threshold) {
         setCcdMotionThreshold(objectId, threshold);
@@ -637,7 +637,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * Alter the radius of the swept sphere used for continuous collision
      * detection (CCD).
      *
-     * @param radius the desired radius (&ge;0, default=0)
+     * @param radius the desired radius (in physics-space units, &ge;0,
+     * default=0)
      */
     public void setCcdSweptSphereRadius(float radius) {
         setCcdSweptSphereRadius(objectId, radius);
@@ -695,7 +696,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * Invoke this method <em>after</em> adding the body to a PhysicsSpace.
      * Adding a body to a PhysicsSpace alters its gravity.
      *
-     * @param gravity the desired acceleration vector (not null, unaffected)
+     * @param gravity the desired acceleration vector (in physics-space units
+     * per second squared, not null, unaffected)
      */
     public void setGravity(Vector3f gravity) {
         setGravity(objectId, gravity);
@@ -841,7 +843,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
-     * Rescale this body, which must not be added to any physics space.
+     * Rescale this body. Note that if it has joints, their pivot points will
+     * not be adjusted.
      *
      * @param newScale the desired scaling factor for each local axis (not null,
      * no negative component, unaffected, default=1,1,1)
@@ -860,7 +863,9 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
-     * Alter this body's transform, including the scale of its shape.
+     * Alter this body's transform, including the scale of its shape. Note that
+     * if it has joints, their pivot points will not be adjusted for scale
+     * changes.
      *
      * @param newTransform the desired transform (in physics-space coordinates,
      * not null, unaffected)

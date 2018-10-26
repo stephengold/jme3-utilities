@@ -502,7 +502,7 @@ public class BulletAppState
         if (threadingType == ThreadingType.PARALLEL) {
             physicsFuture = executor.submit(parallelPhysicsUpdate);
         } else if (threadingType == ThreadingType.SEQUENTIAL) {
-            pSpace.update(isEnabled ? tpf * speed : 0);
+            pSpace.update(isEnabled ? tpf * speed : 0f);
         }
     }
 

@@ -110,7 +110,7 @@ public class TorsoLink
      */
     private Skeleton skeleton = null;
     /**
-     * local transform for the controlled spatial at the end of the torso's most
+     * local transform for the controlled spatial at the end of this link's most
      * recent blend interval, or null for no spatial blending
      */
     private Transform endModelTransform = null;
@@ -119,7 +119,7 @@ public class TorsoLink
      */
     private Transform meshToModel = null;
     /**
-     * local transform of the controlled spatial at the start of the torso's
+     * local transform of the controlled spatial at the start of this link's
      * most recent blend interval
      */
     private Transform startModelTransform = new Transform();
@@ -288,12 +288,13 @@ public class TorsoLink
     }
 
     /**
-     * Initialize animation data from the specified link.
+     * Copy animation data from the specified link, which must have the same
+     * main bone.
      *
-     * @param oldLink the link to copy (not null, unaffected)
+     * @param oldLink the link to copy from (not null, unaffected)
      */
     void postRebuild(TorsoLink oldLink) {
-        assert oldLink.bone.getName().equals(bone.getName());
+        assert oldLink.bone == bone;
         int numManagedBones = managedBones.length;
         assert oldLink.managedBones.length == numManagedBones;
 
@@ -353,7 +354,7 @@ public class TorsoLink
     /**
      * Analyze the specified skeleton.
      *
-     * @param skeleton (not null, alias created)
+     * @param skeleton (not null, alias created) TODO unnecessary
      */
     void setSkeleton(Skeleton skeleton) {
         assert skeleton != null;
@@ -522,7 +523,7 @@ public class TorsoLink
     // private methods
 
     /**
-     * Update this torso in Dynamic mode, setting the local transform of the
+     * Update this link in Dynamic mode, setting the local transform of the
      * model's root spatial based on the transform of the linked rigid body.
      */
     private void dynamicUpdate() {

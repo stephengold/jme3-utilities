@@ -518,7 +518,7 @@ public class MyShape {
      * Compute the volume of a closed collision shape.
      *
      * @param shape (not null, unaffected)
-     * @return the volume in cubic physics-space units (&ge;0)
+     * @return the volume (in physics-space units cubed, &ge;0)
      */
     public static float volume(CollisionShape shape) {
         Vector3f scale = shape.getScale(null);

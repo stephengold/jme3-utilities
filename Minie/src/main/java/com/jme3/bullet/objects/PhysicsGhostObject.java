@@ -95,7 +95,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     // *************************************************************************
 
     /**
-     * Create the configured object in Bullet.
+     * Create the configured object in Bullet. TODO re-order methods
      */
     private void buildObject() {
         if (objectId == 0L) {
@@ -234,7 +234,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      * Alter the continuous collision detection (CCD) swept sphere radius for
      * this object.
      *
-     * @param radius (&ge;0)
+     * @param radius (in physics-space units, &ge;0)
      */
     public void setCcdSweptSphereRadius(float radius) {
         setCcdSweptSphereRadius(objectId, radius);
@@ -247,8 +247,8 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      * This addresses the issue of fast objects passing through other objects
      * with no collision detected.
      *
-     * @param threshold the desired threshold value (squared velocity, &gt;0) or
-     * zero to disable CCD (default=0)
+     * @param threshold the desired threshold value (in physics-space units per
+     * second, &gt;0) or zero to disable CCD (default=0)
      */
     public void setCcdMotionThreshold(float threshold) {
         setCcdMotionThreshold(objectId, threshold);
@@ -258,7 +258,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      * Read the radius of the sphere used for continuous collision detection
      * (CCD).
      *
-     * @return radius (&ge;0)
+     * @return radius (in physics-space units, &ge;0)
      */
     public float getCcdSweptSphereRadius() {
         return getCcdSweptSphereRadius(objectId);
@@ -268,7 +268,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      * Read the continuous collision detection (CCD) motion threshold for this
      * object.
      *
-     * @return threshold value (squared velocity, &ge;0)
+     * @return threshold value (in physics-space units per second, &ge;0)
      */
     public float getCcdMotionThreshold() {
         return getCcdMotionThreshold(objectId);
@@ -277,7 +277,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     /**
      * Read the CCD square motion threshold for this object.
      *
-     * @return threshold value (&ge;0)
+     * @return threshold value (squared velocity, &ge;0)
      */
     public float getCcdSquareMotionThreshold() {
         return getCcdSquareMotionThreshold(objectId);
