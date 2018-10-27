@@ -40,6 +40,7 @@ import java.io.PrintStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
+import jme3utilities.MyString;
 import jme3utilities.debug.Describer;
 import jme3utilities.debug.Dumper;
 import jme3utilities.math.MyQuaternion;
@@ -155,7 +156,11 @@ public class PhysicsDumper extends Dumper {
         long objectId = joint.getObjectId();
         long aId = joint.getBodyA().getObjectId();
         long bId = joint.getBodyB().getObjectId();
-        stream.printf("  Joint #%s a=%s,b=%s", Long.toHexString(objectId),
+        String type = joint.getClass().getSimpleName();
+        if (type.endsWith("Joint")) {
+            type = MyString.removeSuffix(type, "Joint");
+        }
+        stream.printf("  %s #%s a=%s,b=%s", type, Long.toHexString(objectId),
                 Long.toHexString(aId), Long.toHexString(bId));
 
         stream.println();
