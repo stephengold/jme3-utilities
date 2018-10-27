@@ -351,24 +351,6 @@ public class AttachmentLink
     }
 
     /**
-     * Assign a physics joint to this link and configure its range of motion.
-     *
-     * @param joint (not null, alias created)
-     */
-    void setJoint(SixDofJoint joint) {
-        assert joint != null;
-
-        assert this.joint == null;
-        this.joint = joint;
-
-        String name = bone.getName();
-        JointPreset rangeOfMotion = control.getJointLimits(name);
-        rangeOfMotion.setupJoint(joint, false, false, false);
-
-        joint.setCollisionBetweenLinkedBodies(false);
-    }
-
-    /**
      * Internal callback, invoked once per frame during the logical-state
      * update, provided the control is added to a scene.
      *
