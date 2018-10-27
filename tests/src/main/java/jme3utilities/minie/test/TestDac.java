@@ -36,7 +36,6 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.animation.DynamicAnimControl;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.GImpactCollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.objects.PhysicsRigidBody;
@@ -541,34 +540,13 @@ public class TestDac extends ActionApplication {
     private void loadSinbadWithSwords() {
         cgModel = (Node) assetManager.loadModel(
                 "Models/Sinbad/Sinbad.mesh.xml");
-
-        Node sword1 = (Node) assetManager.loadModel(
+        Node sword = (Node) assetManager.loadModel(
                 "Models/Sinbad/Sword.mesh.xml");
-        Geometry blade = (Geometry) sword1.getChild(2);
-        Mesh mesh = blade.getMesh();
-        CollisionShape shape = new GImpactCollisionShape(mesh);
-        RigidBodyControl rbc = new RigidBodyControl(shape, 1f);
-        rbc.setApplyScale(true);
-        rbc.setKinematic(true);
-        rbc.setPhysicsSpace(physicsSpace);
-        sword1.addControl(rbc);
-
-        sc = cgModel.getControl(SkeletonControl.class);
-        Node leftHandle = sc.getAttachmentsNode("Handle.L");
-        Node rightHandle = sc.getAttachmentsNode("Handle.R");
-        leftHandle.attachChild(sword1);
-
-        // TODO clone sword1
-        Node sword2 = (Node) assetManager.loadModel(
-                "Models/Sinbad/Sword.mesh.xml");
-        RigidBodyControl rbc2 = new RigidBodyControl(shape, 1f);
-        rbc2.setApplyScale(true);
-        rbc2.setKinematic(true);
-        rbc2.setPhysicsSpace(physicsSpace);
-        sword2.addControl(rbc2);
-        rightHandle.attachChild(sword2);
 
         dac = new SinbadControl();
+        dac.attach("Handle.L", 5f, sword);
+        dac.attach("Handle.R", 5f, sword);
+
         animationName = "Dance";
         leftClavicleName = "Clavicle.L";
         leftUlnaName = "Ulna.L";

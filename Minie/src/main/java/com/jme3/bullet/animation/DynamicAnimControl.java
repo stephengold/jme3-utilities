@@ -44,6 +44,7 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -53,6 +54,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.util.SafeArrayList;
 import com.jme3.util.clone.Cloner;
@@ -64,6 +66,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Misc;
 import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
@@ -84,8 +87,7 @@ import jme3utilities.Validate;
  * Each link is either dynamic (driven by gravity and collisions) or kinematic
  * (unaffected by gravity and collisions).
  *
- * TODO handle applyLocal, handle attachments, catch ignoreTransforms, ghost
- * mode, dynamic freezes
+ * TODO handle applyLocal, catch ignoreTransforms, ghost mode
  *
  * @author Stephen Gold sgold@sonic.net
  *
@@ -129,6 +131,7 @@ public class DynamicAnimControl
     private float eventDispatchImpulseThreshold = 0f;
     /**
      * bone links in a pre-order, depth-first traversal of the link hierarchy
+     * TODO include attachment links?
      */
     private List<BoneLink> boneLinkList = null;
     /**
@@ -137,7 +140,11 @@ public class DynamicAnimControl
     private List<RagdollCollisionListener> listeners
             = new SafeArrayList<>(RagdollCollisionListener.class);
     /**
-     * map bone names to links
+     * map bone names to attachment links
+     */
+    private Map<String, AttachmentLink> attachmentLinks = new HashMap<>(8);
+    /**
+     * map bone names to bone links
      */
     private Map<String, BoneLink> boneLinks = new HashMap<>(32);
     /**
@@ -231,10 +238,8 @@ public class DynamicAnimControl
     }
 
     /**
-     * Begin blending all links to fully kinematic mode, driven by animation. In
-     * that mode, collision objects follow the movements of the skeleton while
-     * interacting with the physics environment. TODO callback at end of
-     * transition
+     * Begin blending all links to fully kinematic mode, driven by animation.
+     * TODO callback at end of transition
      * <p>
      * Allowed only when the control IS added to a spatial.
      *
@@ -254,10 +259,12 @@ public class DynamicAnimControl
 
         torsoLink.blendToKinematicMode(KinematicSubmode.Animated, blendInterval,
                 endModelTransform);
-
         for (BoneLink boneLink : boneLinkList) {
             boneLink.blendToKinematicMode(KinematicSubmode.Animated,
                     blendInterval);
+        }
+        for (AttachmentLink link : attachmentLinks.values()) {
+            link.blendToKinematicMode(blendInterval, null);
         }
     }
 
@@ -348,6 +355,12 @@ public class DynamicAnimControl
         for (String childName : children) {
             freezeHierarchy(childName);
         }
+
+        for (AttachmentLink link : attachmentLinks.values()) {
+            if (link.managerName().equals(linkName)) {
+                link.freeze();
+            }
+        }
     }
 
     /**
@@ -369,11 +382,11 @@ public class DynamicAnimControl
     }
 
     /**
-     * Access the physics link for the named bone. This returns null if bone is
-     * not linked, or if the control is not added to a spatial.
+     * Access the physics link for the named bone. Returns null if bone is not
+     * linked, or if the control is not added to a spatial.
      *
      * @param boneName the name of the bone (not null, not empty)
-     * @return the pre-existing spatial or null
+     * @return the pre-existing spatial, or null
      */
     public BoneLink getBoneLink(String boneName) {
         Validate.nonEmpty(boneName, "bone name");
@@ -392,8 +405,8 @@ public class DynamicAnimControl
     }
 
     /**
-     * Access the rigid body of the named link. This returns null if the control
-     * is not added to a spatial.
+     * Access the rigid body of the named bone/torso link. Returns null if the
+     * control is not added to a spatial.
      *
      * @param linkName the name of the link (not null)
      * @return the pre-existing instance, or null
@@ -420,18 +433,28 @@ public class DynamicAnimControl
     }
 
     /**
-     * Access the skeleton. This returns null if the control is not added to a
+     * Access the skeleton. Returns null if the control is not added to a
      * spatial.
      *
      * @return the pre-existing skeleton, or null
      */
-    public Skeleton getSkeleton() {
+    Skeleton getSkeleton() {
         return skeleton;
     }
 
     /**
-     * Access the physics link for the torso. This returns null if the control
-     * is not added to a spatial.
+     * Access the spatial with the mesh-coordinate transform. Returns null if
+     * the control is not added to a spatial.
+     *
+     * @return the pre-existing spatial, or null
+     */
+    Spatial getTransformer() {
+        return transformer;
+    }
+
+    /**
+     * Access the physics link for the torso. Returns null if the control is not
+     * added to a spatial.
      *
      * @return the pre-existing spatial, or null
      */
@@ -491,14 +514,14 @@ public class DynamicAnimControl
     }
 
     /**
-     * Find the parent (in the link hierarchy) of the named linked bone.
+     * Find the parent (in the link hierarchy) of the named BoneLink.
      *
      * @param childName the name of the linked bone (not null, not empty)
      * @return the bone name or torsoFakeBoneName (not null)
      */
     public String parentName(String childName) {
         if (!isBoneLinkName(childName)) {
-            String msg = "No linked bone named " + MyString.quote(childName);
+            String msg = "No BoneLink named " + MyString.quote(childName);
             throw new IllegalArgumentException(msg);
         }
 
@@ -601,8 +624,8 @@ public class DynamicAnimControl
      * Alter the CCD motion threshold of all rigid bodies in this control.
      *
      * @see PhysicsRigidBody#setCcdMotionThreshold(float)
-     * @param speed the desired threshold speed (&gt;0) or zero to disable CCD
-     * (default=0)
+     * @param speed the desired threshold speed (in physics-space units per
+     * second, &gt;0) or zero to disable CCD (default=0)
      */
     public void setCcdMotionThreshold(float speed) {
         Validate.nonNegative(speed, "speed");
@@ -610,6 +633,9 @@ public class DynamicAnimControl
         torsoLink.getRigidBody().setCcdMotionThreshold(speed);
         for (BoneLink boneLink : boneLinkList) {
             boneLink.getRigidBody().setCcdMotionThreshold(speed);
+        }
+        for (AttachmentLink link : attachmentLinks.values()) {
+            link.getRigidBody().setCcdMotionThreshold(speed);
         }
     }
 
@@ -626,6 +652,9 @@ public class DynamicAnimControl
         torsoLink.getRigidBody().setCcdSweptSphereRadius(radius);
         for (BoneLink boneLink : boneLinkList) {
             boneLink.getRigidBody().setCcdSweptSphereRadius(radius);
+        }
+        for (AttachmentLink link : attachmentLinks.values()) {
+            link.getRigidBody().setCcdSweptSphereRadius(radius);
         }
     }
 
@@ -644,6 +673,9 @@ public class DynamicAnimControl
             torsoLink.getRigidBody().setDamping(damping, damping);
             for (BoneLink boneLink : boneLinkList) {
                 boneLink.getRigidBody().setDamping(damping, damping);
+            }
+            for (AttachmentLink link : attachmentLinks.values()) {
+                link.getRigidBody().setDamping(damping, damping);
             }
         }
     }
@@ -715,6 +747,11 @@ public class DynamicAnimControl
         for (String childName : childNames) {
             setDynamicHierarchy(childName, uniformAcceleration, lockAll);
         }
+        for (AttachmentLink link : attachmentLinks.values()) {
+            if (link.managerName().equals(linkName)) {
+                link.setDynamic(uniformAcceleration);
+            }
+        }
     }
 
     /**
@@ -738,9 +775,7 @@ public class DynamicAnimControl
     }
 
     /**
-     * Immediately put all links into fully kinematic mode. In this mode,
-     * collision objects follow the movements of the skeleton while interacting
-     * with the physics environment.
+     * Immediately put all links into fully kinematic mode.
      * <p>
      * Allowed only when the control IS added to a spatial.
      */
@@ -755,8 +790,7 @@ public class DynamicAnimControl
     }
 
     /**
-     * Immediately put all links into fully dynamic ragdoll mode. The skeleton
-     * is entirely controlled by physics, including gravity.
+     * Immediately put all links into fully dynamic mode with gravity.
      * <p>
      * Allowed only when the control IS added to a spatial.
      */
@@ -771,6 +805,9 @@ public class DynamicAnimControl
         torsoLink.setDynamic(ragdollGravity);
         for (BoneLink boneLink : boneLinkList) {
             boneLink.setDynamic(ragdollGravity, false, false, false);
+        }
+        for (AttachmentLink link : attachmentLinks.values()) {
+            link.setDynamic(ragdollGravity);
         }
     }
     // *************************************************************************
@@ -797,6 +834,15 @@ public class DynamicAnimControl
             space.add(joint);
         }
 
+        for (AttachmentLink link : attachmentLinks.values()) {
+            rigidBody = link.getRigidBody();
+            space.add(rigidBody);
+            rigidBody.setGravity(gravity);
+
+            PhysicsJoint joint = link.getJoint();
+            space.add(joint);
+        }
+
         space.addCollisionListener(this);
         space.addTickListener(this);
     }
@@ -816,6 +862,7 @@ public class DynamicAnimControl
 
         boneLinkList = cloner.clone(boneLinkList);
         listeners = cloner.clone(listeners);
+        attachmentLinks = cloner.clone(attachmentLinks);
         boneLinks = cloner.clone(boneLinks);
         skeleton = cloner.clone(skeleton);
         transformer = cloner.clone(transformer);
@@ -836,7 +883,8 @@ public class DynamicAnimControl
                 = spatial.getControl(SkeletonControl.class);
         if (skeletonControl == null) {
             throw new IllegalArgumentException(
-                    "The controlled spatial must have a SkeletonControl. Make sure the control is there and not on a subnode.");
+                    "The controlled spatial must have a SkeletonControl. "
+                    + "Make sure the control is there and not on a subnode.");
         }
         sortControls(skeletonControl);
         /*
@@ -866,7 +914,7 @@ public class DynamicAnimControl
         skeleton.updateWorldVectors();
         /*
          * Find the target meshes and the main bone.  Don't invoke
-         * skeletonControl.getTargets() here since the SkeletonControl
+         * skeletonControl.getTargets() here, since the SkeletonControl
          * might not be initialized yet.
          */
         List<Mesh> targetList = MySpatial.listAnimatedMeshes(spatial, null);
@@ -888,7 +936,7 @@ public class DynamicAnimControl
          * Create the torso link.
          */
         List<Vector3f> vertexLocations = coordsMap.get(torsoName);
-        torsoLink = createTorsoLink(vertexLocations, targets);
+        createTorsoLink(vertexLocations, targets);
         /*
          * Create bone links.
          */
@@ -901,14 +949,21 @@ public class DynamicAnimControl
         }
         assert boneLinks.size() == numLinkedBones;
         /*
-         * Add joints to connect each BoneLink with its parent.
+         * Add joints to connect each link with its parent in the hierarchy.
          * Also initialize the boneLinkList.
          */
         boneLinkList = new ArrayList<>(numLinkedBones);
         addJoints(torsoName);
         assert boneLinkList.size() == numLinkedBones;
         /*
-         * Restore the skeleton's previous pose.
+         * Create attachment links with joints.
+         */
+        Collection<String> attachBoneNames = attachmentBoneNames();
+        for (String boneName : attachBoneNames) {
+            createAttachmentLink(boneName, skeletonControl, tempManagerMap);
+        }
+        /*
+         * Restore the skeleton's pose.
          */
         for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
             Bone bone = skeleton.getBone(boneIndex);
@@ -931,8 +986,7 @@ public class DynamicAnimControl
     @Override
     public DynamicAnimControl jmeClone() {
         try {
-            DynamicAnimControl clone
-                    = (DynamicAnimControl) super.clone();
+            DynamicAnimControl clone = (DynamicAnimControl) super.clone();
             return clone;
         } catch (CloneNotSupportedException exception) {
             throw new RuntimeException(exception);
@@ -950,7 +1004,11 @@ public class DynamicAnimControl
         super.read(im);
         InputCapsule ic = im.getCapsule(this);
 
-        // TODO boneLinkList, etc.
+        damping = ic.readFloat("damping", 0.6f);
+        eventDispatchImpulseThreshold
+                = ic.readFloat("eventDispatchImpulseThreshold", 0f);
+
+        // TODO attachmentLinks, boneLinkList, listeners
         BoneLink[] loadedBoneLinks
                 = (BoneLink[]) ic.readSavableArray("boneList", new BoneLink[0]);
         for (BoneLink physicsBoneLink : loadedBoneLinks) {
@@ -959,8 +1017,6 @@ public class DynamicAnimControl
 
         skeleton = (Skeleton) ic.readSavable("skeleton", null);
         transformer = (Spatial) ic.readSavable("transformer", null);
-        eventDispatchImpulseThreshold
-                = ic.readFloat("eventDispatchImpulseThreshold", 0f);
         torsoLink = (TorsoLink) ic.readSavable("torsoLink", null);
     }
 
@@ -983,6 +1039,14 @@ public class DynamicAnimControl
             space.remove(joint);
         }
 
+        for (AttachmentLink link : attachmentLinks.values()) {
+            rigidBody = link.getRigidBody();
+            space.remove(rigidBody);
+
+            PhysicsJoint joint = link.getJoint();
+            space.remove(joint);
+        }
+
         space.removeCollisionListener(this);
         space.removeTickListener(this);
     }
@@ -1000,6 +1064,7 @@ public class DynamicAnimControl
         }
         MySkeleton.setUserControl(skeleton, false);
         boneLinkList = null;
+        attachmentLinks.clear();
         boneLinks.clear();
         skeleton = null;
         transformer = null;
@@ -1023,14 +1088,17 @@ public class DynamicAnimControl
             for (BoneLink boneLink : boneLinkList) {
                 boneLink.getRigidBody().setGravity(gravity);
             }
+            for (AttachmentLink link : attachmentLinks.values()) {
+                link.getRigidBody().setGravity(gravity);
+            }
         }
     }
 
     /**
-     * Alter the range of motion of the joint connecting the named linked bone
-     * to its parent in the link hierarchy.
+     * Alter the range of motion of the joint connecting the named BoneLink to
+     * its parent in the link hierarchy.
      *
-     * @param boneName the name of the bone (not null, not empty)
+     * @param boneName the name of the BoneLink (not null, not empty)
      * @param preset the desired range of motion (not null)
      */
     @Override
@@ -1051,7 +1119,7 @@ public class DynamicAnimControl
     }
 
     /**
-     * Alter the mass of the named link.
+     * Alter the mass of the named bone/torso link.
      *
      * @param linkName the name of the link (not null)
      * @param mass the desired mass (&gt;0)
@@ -1103,11 +1171,11 @@ public class DynamicAnimControl
         }
 
         torsoLink.update(tpf);
-        /*
-         * Update bone links in pre-order, depth-first.
-         */
         for (BoneLink boneLink : boneLinkList) {
             boneLink.update(tpf);
+        }
+        for (AttachmentLink link : attachmentLinks.values()) {
+            link.update(tpf);
         }
     }
 
@@ -1122,16 +1190,14 @@ public class DynamicAnimControl
         super.write(ex);
         OutputCapsule oc = ex.getCapsule(this);
 
-        oc.write(skeleton.getRoots(), "torsoManagedBones", null);
-        // TODO boneLinkList, etc.
-        oc.write(boneLinks.values().toArray(
-                new BoneLink[boneLinks.size()]),
+        oc.write(damping, "limbDampening", 0.6f);
+        oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
+                0f);
+        // TODO boneLinkList, listeners
+        oc.write(boneLinks.values().toArray(new BoneLink[boneLinks.size()]),
                 "boneLinks", new BoneLink[0]);
         oc.write(skeleton, "skeleton", null);
         oc.write(transformer, "transformer", null);
-        oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
-                0f);
-        oc.write(damping, "limbDampening", 0.6f);
         oc.write(torsoLink, "torsoLink", null);
     }
     // *************************************************************************
@@ -1228,13 +1294,16 @@ public class DynamicAnimControl
         for (BoneLink boneLink : boneLinkList) {
             boneLink.prePhysicsTick();
         }
+        for (AttachmentLink link : attachmentLinks.values()) {
+            link.prePhysicsTick();
+        }
     }
     // *************************************************************************
     // private methods
 
     /**
-     * Add joints to connect the named link with each of its children. Also fill
-     * in the boneLinkList. Note: recursive!
+     * Add joints to connect the named bone/torso link with each of its
+     * children. Also fill in the boneLinkList. Note: recursive!
      *
      * @param parentName the name of the parent link (not null)
      */
@@ -1257,6 +1326,7 @@ public class DynamicAnimControl
             BoneLink childLink = getBoneLink(childName);
             PhysicsRigidBody childBody = childLink.getRigidBody();
 
+            // TODO move some of this to BoneLink.setJoint()
             Transform childToWorld = childLink.physicsTransform(null);
             childToWorld.setScale(1f);
 
@@ -1273,12 +1343,13 @@ public class DynamicAnimControl
             Matrix3f rotChild = matrixIdentity;
             Matrix3f rotParent = childToParent.getRotation().toRotationMatrix();
 
+            // TODO try Point2PointJoint or HingeJoint
             SixDofJoint joint = new SixDofJoint(parentBody, childBody,
                     pivotParent, pivotChild, rotParent, rotChild, true);
             assert childLink.getJoint() == null;
             childLink.setJoint(joint);
             /*
-             * Add the BoneLink to the pre-order list.
+             * Add the BoneLink to the pre-order list. TODO attachment links?
              */
             boneLinkList.add(childLink);
 
@@ -1307,27 +1378,67 @@ public class DynamicAnimControl
             boneLink.blendToKinematicMode(submode, blendInterval);
             blendDescendants(childName, submode, blendInterval);
         }
+        for (AttachmentLink link : attachmentLinks.values()) {
+            if (link.managerName().equals(linkName)) {
+                link.blendToKinematicMode(blendInterval, null);
+            }
+        }
     }
 
     /**
-     * Create a BoneLink for the named bone.
+     * Create a jointed AttachmentLink for the named bone, and add it to the
+     * attachLinks map.
      *
-     * @param name the name of the bone to be linked (not null)
-     * @param vertexLocations the collection of vertices (not null, not empty)
-     * @return a new bone link without a joint, added to the boneLinks map
+     * @param boneName the name of the attachment bone to be linked (not null)
+     * @param skeletonControl (not null)
+     * @param managerMap a map from bone indices to managing link names (not
+     * null, unaffected)
+     * @return a attachment link with a joint, added to the boneLinks map
      */
-    private BoneLink createBoneLink(String name,
+    private void createAttachmentLink(String boneName,
+            SkeletonControl skeletonControl, String[] managerMap) {
+        assert boneName != null;
+        assert skeletonControl != null;
+        assert managerMap != null;
+
+        Spatial attachModel = getAttachmentModel(boneName);
+        attachModel = (Spatial) Misc.deepCopy(attachModel);
+
+        Node node = skeletonControl.getAttachmentsNode(boneName);
+        node.attachChild(attachModel);
+
+        Bone bone = skeleton.getBone(boneName);
+        int boneIndex = skeleton.getBoneIndex(bone);
+        String managerName = managerMap[boneIndex];
+
+        CollisionShape shape
+                = CollisionShapeFactory.createDynamicMeshShape(attachModel);
+        float mass = attachmentMass(boneName);
+        PhysicsRigidBody rigidBody = createRigidBody(shape, mass);
+
+        AttachmentLink link = new AttachmentLink(this, boneName, managerName,
+                attachModel, rigidBody);
+        attachmentLinks.put(boneName, link);
+    }
+
+    /**
+     * Create a jointless BoneLink for the named bone, and add it to the
+     * boneLinks map.
+     *
+     * @param boneName the name of the bone to be linked (not null)
+     * @param vertexLocations the collection of vertices (not null, not empty)
+     */
+    private void createBoneLink(String boneName,
             List<Vector3f> vertexLocations) {
         if (vertexLocations == null || vertexLocations.isEmpty()) {
-            String msg = String.format(
-                    "No mesh vertices for the linked bone named %s.",
-                    MyString.quote(name));
+            String msg = String.format("No mesh vertices for linked bone %s.",
+                    MyString.quote(boneName));
             throw new IllegalArgumentException(msg);
         }
         /*
          * Create the collision shape.
          */
-        Bone bone = getBone(name);
+        Bone bone = getBone(boneName);
         Transform boneToMesh = MySkeleton.copyMeshTransform(bone, null);
         Transform meshToBone = boneToMesh.invert();
         meshToBone.setScale(1f);
@@ -1336,22 +1447,32 @@ public class DynamicAnimControl
         CollisionShape shape
                 = RagUtils.createShape(meshToBone, center, vertexLocations);
 
+        float mass = mass(boneName);
+        PhysicsRigidBody rigidBody = createRigidBody(shape, mass);
+
         meshToBone.getTranslation().zero();
         Vector3f offset = meshToBone.transformVector(center, null);
-        /*
-         * Create the rigid body.
-         */
-        float mass = mass(name);
+
+        BoneLink link = new BoneLink(this, bone, rigidBody, offset);
+        boneLinks.put(boneName, link);
+    }
+
+    /**
+     * Create and configure a rigid body for a link.
+     *
+     * @param shape the desired shape (not null, alias created)
+     * @param mass the desired mass (&gt;0)
+     * @return a new instance, not in any physics space
+     */
+    private PhysicsRigidBody createRigidBody(CollisionShape shape, float mass) {
         assert mass > 0f : mass;
+
         PhysicsRigidBody rigidBody = new PhysicsRigidBody(shape, mass);
 
         float viscousDamping = damping();
         rigidBody.setDamping(viscousDamping, viscousDamping);
 
-        BoneLink result = new BoneLink(this, bone, rigidBody, offset);
-        boneLinks.put(name, result);
-
-        return result;
+        return rigidBody;
     }
 
     /**
@@ -1359,9 +1480,8 @@ public class DynamicAnimControl
      *
      * @param vertexLocations the collection of vertices (not null, not empty)
      * @param meshes array of animated meshes to use (not null, unaffected)
-     * @return a new torso link
      */
-    private TorsoLink createTorsoLink(List<Vector3f> vertexLocations,
+    private void createTorsoLink(Collection<Vector3f> vertexLocations,
             Mesh[] meshes) {
         if (vertexLocations == null) {
             throw new IllegalArgumentException(
@@ -1382,16 +1502,11 @@ public class DynamicAnimControl
 
         meshToBone.getTranslation().zero();
         Vector3f offset = meshToBone.transformVector(center, null);
-        /*
-         * Create the rigid body.
-         */
+
         float mass = mass(torsoName);
-        assert mass > 0f : mass;
-        PhysicsRigidBody rigidBody = new PhysicsRigidBody(shape, mass);
+        PhysicsRigidBody rigidBody = createRigidBody(shape, mass);
 
-        float viscousDamping = damping();
-        rigidBody.setDamping(viscousDamping, viscousDamping);
-
+        // TODO utility method spatialToAncestor()
         Spatial loopSpatial = transformer;
         Transform modelToMesh = new Transform();
         while (loopSpatial != getSpatial()) {
@@ -1401,11 +1516,8 @@ public class DynamicAnimControl
         }
         Transform meshToModel = modelToMesh.invert();
 
-        TorsoLink result
-                = new TorsoLink(this, bone, rigidBody, meshToModel, offset);
-        result.setSkeleton(skeleton);
-
-        return result;
+        torsoLink = new TorsoLink(this, bone, rigidBody, meshToModel, offset);
+        torsoLink.setSkeleton(skeleton);
     }
 
     /**

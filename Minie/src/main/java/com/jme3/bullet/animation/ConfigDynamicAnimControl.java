@@ -38,9 +38,11 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
+import com.jme3.scene.Spatial;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.Collection;
@@ -50,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 
@@ -77,6 +80,14 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     // fields
 
     /**
+     * mass of the torso (default=15) TODO change default to 1
+     */
+    private float torsoMass = 15f;
+    /**
+     * map attachment bone names to masses for createSpatialData()
+     */
+    private Map<String, Float> attachMassMap = new HashMap<>(5);
+    /**
      * map linked bone names to masses for createSpatialData()
      */
     private Map<String, Float> massMap = new HashMap<>(50);
@@ -85,11 +96,11 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
      */
     private Map<String, JointPreset> jointMap = new HashMap<>(50);
     /**
-     * mass of the torso (default=15)
+     * map attachment bone names to models for createSpatialData()
      */
-    private float torsoMass = 15f;
+    private Map<String, Spatial> attachModelMap = new HashMap<>(5);
     /**
-     * gravitational acceleration for ragdoll (default is 9.8 in the -Y
+     * gravitational acceleration vector for ragdolls (default is 9.8 in the -Y
      * direction, corresponding to Earth-normal in MKS units)
      */
     private Vector3f gravityVector = new Vector3f(0f, -9.8f, 0f);
@@ -97,12 +108,82 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     // constructors
 
     /**
-     * Instantiate an enabled control without any linked bones (torso only).
+     * Instantiate an enabled control without any attachments or linked bones
+     * (torso only).
      */
     public ConfigDynamicAnimControl() {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Configure the specified model as an attachment.
+     *
+     * @param boneName the name of the associated bone (not null, not empty)
+     * @param mass the desired mass of the model (&gt;0)
+     * @param model the model to attach (not null, orphan, alias created)
+     */
+    public void attach(String boneName, float mass, Spatial model) {
+        Validate.nonEmpty(boneName, "bone name");
+        Validate.positive(mass, "mass");
+        Validate.nonNull(model, "model");
+        assert MySpatial.isOrphan(model);
+        if (getSpatial() != null) {
+            throw new IllegalStateException(
+                    "Cannot attach a model while added to a spatial.");
+        }
+        if (isLinkName(boneName)) {
+            logger2.log(Level.WARNING, "Bone {0} already has an attachment.",
+                    MyString.quote(boneName));
+        }
+
+        attachModelMap.put(boneName, model);
+        attachMassMap.put(boneName, mass);
+    }
+
+    /**
+     * Enumerate all bones with attachments.
+     *
+     * @return an unmodifiable collection of bone names
+     */
+    public Collection<String> attachmentBoneNames() {
+        assert attachMassMap.size() == attachModelMap.size();
+        Collection<String> names = attachMassMap.keySet();
+        Collection<String> result = Collections.unmodifiableCollection(names);
+        assert result.size() == attachMassMap.size();
+
+        return result;
+    }
+
+    /**
+     * Read the mass of the attachment associated with the named bone.
+     *
+     * @param boneName the name of the associated bone (not null, not empty)
+     * @return the mass (&gt;0)
+     */
+    public float attachmentMass(String boneName) {
+        float mass;
+
+        if (attachMassMap.containsKey(boneName)) {
+            mass = attachMassMap.get(boneName);
+        } else {
+            String msg = "No attachment link for " + MyString.quote(boneName);
+            throw new IllegalArgumentException(msg);
+        }
+
+        assert mass > 0f : mass;
+        return mass;
+    }
+
+    /**
+     * Count the attachments.
+     *
+     * @return count (&ge;0)
+     */
+    public int countAttachments() {
+        int result = attachMassMap.size();
+        return result;
+    }
 
     /**
      * Count the linked bones.
@@ -112,6 +193,49 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     public int countLinkedBones() {
         int result = massMap.size();
         return result;
+    }
+
+    /**
+     * Cancel the attachment associated with the named bone.
+     * <p>
+     * Allowed only when the control is NOT added to a spatial.
+     *
+     * @param boneName the name of the bone (not null, not empty)
+     */
+    public void detach(String boneName) {
+        if (!isBoneLinkName(boneName)) {
+            String msg = "No attachment associated with "
+                    + MyString.quote(boneName);
+            throw new IllegalArgumentException(msg);
+        }
+        if (getSpatial() != null) {
+            throw new IllegalStateException(
+                    "Cannot cancel an attachment while added to a spatial.");
+        }
+
+        jointMap.remove(boneName);
+        massMap.remove(boneName);
+    }
+
+    /**
+     * Access the model attached to the named bone.
+     *
+     * @param boneName the name of the associated bone (not null, not empty)
+     * @return the orphan spatial (not null)
+     */
+    public Spatial getAttachmentModel(String boneName) {
+        Spatial model;
+
+        if (attachModelMap.containsKey(boneName)) {
+            model = attachModelMap.get(boneName);
+        } else {
+            String msg = "No attachment link for " + MyString.quote(boneName);
+            throw new IllegalArgumentException(msg);
+        }
+
+        assert model != null;
+        assert MySpatial.isOrphan(model);
+        return model;
     }
 
     /**
@@ -163,7 +287,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Test whether the named link exists.
+     * Test whether the named bone/torso link exists.
      *
      * @param name (may be null)
      * @return true if found, otherwise false
@@ -212,7 +336,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     /**
      * Enumerate all linked bones in this control.
      *
-     * @return an unmodifiable collection of names
+     * @return an unmodifiable collection of bone names
      */
     public Collection<String> linkedBoneNames() {
         assert massMap.size() == jointMap.size();
@@ -257,10 +381,10 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Alter the limits of the joint connecting the named linked bone to its
-     * parent in the linked-bone hierarchy.
+     * Alter the range of motion of the joint connecting the named BoneLink to
+     * its parent in the link hierarchy.
      *
-     * @param boneName the name of the linked bone (not null, not empty)
+     * @param boneName the name of the BoneLink (not null, not empty)
      * @param preset the desired range of motion (not null)
      */
     public void setJointLimits(String boneName, JointPreset preset) {
@@ -274,7 +398,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Alter the mass of the named link.
+     * Alter the mass of the named bone/torso link.
      *
      * @param linkName the name of the link (not null)
      * @param mass the desired mass (&gt;0)
@@ -300,6 +424,9 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     public float totalMass() {
         float totalMass = torsoMass;
         for (float mass : massMap.values()) {
+            totalMass += mass;
+        }
+        for (float mass : attachMassMap.values()) {
             totalMass += mass;
         }
 
@@ -344,8 +471,10 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     public void cloneFields(Cloner cloner, Object original) {
         super.cloneFields(cloner, original);
 
+        attachMassMap = cloner.clone(attachMassMap);
         massMap = cloner.clone(massMap);
         jointMap = cloner.clone(jointMap);
+        attachModelMap = cloner.clone(attachModelMap);
         gravityVector = cloner.clone(gravityVector);
     }
 
@@ -375,7 +504,33 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule ic = im.getCapsule(this);
-        // TODO jointMap, massMap
+
+        jointMap.clear();
+        massMap.clear();
+        String[] linkedBoneNames = ic.readStringArray("linkedBoneNames", null);
+        Savable[] linkedBoneJoints
+                = ic.readSavableArray("linkedBoneJoints", null);
+        float[] linkedBoneMasses = ic.readFloatArray("linkedBoneMasses", null);
+        for (int i = 0; i < linkedBoneNames.length; i++) {
+            String boneName = linkedBoneNames[i];
+            JointPreset jointPreset = (JointPreset) linkedBoneJoints[i];
+            jointMap.put(boneName, jointPreset);
+            massMap.put(boneName, linkedBoneMasses[i]);
+        }
+
+        attachModelMap.clear();
+        attachMassMap.clear();
+        String[] attachBoneNames = ic.readStringArray("attachBoneNames", null);
+        Savable[] attachModels
+                = ic.readSavableArray("attachModels", null);
+        float[] attachMasses = ic.readFloatArray("attachMasses", null);
+        for (int i = 0; i < attachBoneNames.length; i++) {
+            String boneName = attachBoneNames[i];
+            Spatial model = (Spatial) attachModels[i];
+            attachModelMap.put(boneName, model);
+            attachMassMap.put(boneName, attachMasses[i]);
+        }
+
         torsoMass = ic.readFloat("rootMass", 15f);
         gravityVector = (Vector3f) ic.readSavable("gravity", null);
     }
@@ -405,18 +560,33 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
 
         int count = countLinkedBones();
         String[] linkedBoneNames = new String[count];
-        float[] linkedBoneMasses = new float[count];
         JointPreset[] linkedBoneJoints = new JointPreset[count];
+        float[] linkedBoneMasses = new float[count];
         int i = 0;
-        for (Map.Entry<String, Float> e : massMap.entrySet()) {
-            linkedBoneNames[i] = e.getKey();
-            linkedBoneMasses[i] = e.getValue();
-            linkedBoneJoints[i] = jointMap.get(e.getKey());
+        for (Map.Entry<String, Float> entry : massMap.entrySet()) {
+            linkedBoneNames[i] = entry.getKey();
+            linkedBoneJoints[i] = jointMap.get(entry.getKey());
+            linkedBoneMasses[i] = entry.getValue();
             i++;
         }
         oc.write(linkedBoneNames, "linkedBoneNames", null);
+        oc.write(linkedBoneJoints, "linkedBoneJoints", null);
         oc.write(linkedBoneMasses, "linkedBoneMasses", null);
-        oc.write(linkedBoneJoints, "linkedBoneJOints", null);
+
+        count = countAttachments();
+        String[] attachBoneNames = new String[count];
+        Spatial[] attachModels = new Spatial[count];
+        float[] attachMasses = new float[count];
+        i = 0;
+        for (Map.Entry<String, Float> entry : attachMassMap.entrySet()) {
+            attachBoneNames[i] = entry.getKey();
+            attachModels[i] = attachModelMap.get(entry.getKey());
+            attachMasses[i] = entry.getValue();
+            i++;
+        }
+        oc.write(attachBoneNames, "attachBoneNames", null);
+        oc.write(attachModels, "attachModels", null);
+        oc.write(attachMasses, "attachMasses", null);
 
         oc.write(torsoMass, "rootMass", 15f);
         oc.write(gravityVector, "gravity", new Vector3f(0f, -9.8f, 0f));
@@ -442,7 +612,8 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Map bone indices to names of the links that manage them.
+     * Create a map from bone indices to the names of the bone/torso links that
+     * manage them.
      *
      * @param skeleton (not null, unaffected)
      * @return a new array of link names
