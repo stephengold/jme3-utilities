@@ -93,62 +93,66 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
         buildObject();
     }
     // *************************************************************************
+    // new methods exposed
 
     /**
-     * Create the configured object in Bullet. TODO re-order methods
+     * Read the continuous collision detection (CCD) motion threshold for this
+     * object.
+     *
+     * @return threshold value (in physics-space units per second, &ge;0)
      */
-    private void buildObject() {
-        if (objectId == 0L) {
-            objectId = createGhostObject();
-            logger2.log(Level.FINE, "Created Ghost Object {0}",
-                    Long.toHexString(objectId));
-            setGhostFlags(objectId);
-            initUserPointer();
-        }
-        attachCollisionShape(objectId, collisionShape.getObjectId());
+    public float getCcdMotionThreshold() {
+        return getCcdMotionThreshold(objectId);
     }
 
     /**
-     * Apply the specified CollisionShape to this object. Note that the object
-     * should not be in any physics space while changing shape; the object gets
-     * rebuilt on the physics side.
+     * Read the CCD square motion threshold for this object.
      *
-     * @param collisionShape the shape to apply (not null, alias created)
+     * @return threshold value (squared velocity, &ge;0)
      */
-    @Override
-    public void setCollisionShape(CollisionShape collisionShape) {
-        super.setCollisionShape(collisionShape);
-        buildObject();
+    public float getCcdSquareMotionThreshold() {
+        return getCcdSquareMotionThreshold(objectId);
     }
 
     /**
-     * Directly alter the location of this object's center.
+     * Read the radius of the sphere used for continuous collision detection
+     * (CCD).
      *
-     * @param location the desired location (in physics-space coordinates, not
-     * null, unaffected)
+     * @return radius (in physics-space units, &ge;0)
      */
-    public void setPhysicsLocation(Vector3f location) {
-        setPhysicsLocation(objectId, location);
+    public float getCcdSweptSphereRadius() {
+        return getCcdSweptSphereRadius(objectId);
     }
 
     /**
-     * Directly alter this object's orientation.
+     * Access an overlapping collision object by its position in the list.
      *
-     * @param rotation the desired orientation (a rotation matrix in
-     * physics-space coordinates, not null, unaffected)
+     * @param index which list position (&ge;0, &lt;count)
+     * @return the pre-existing object
      */
-    public void setPhysicsRotation(Matrix3f rotation) {
-        setPhysicsRotation(objectId, rotation);
+    public PhysicsCollisionObject getOverlapping(int index) {
+        return overlappingObjects.get(index);
     }
 
     /**
-     * Directly alter this object's orientation.
+     * Count how many collision objects this object overlaps.
      *
-     * @param rotation the desired orientation (quaternion, not null,
-     * unaffected)
+     * @return count (&ge;0)
      */
-    public void setPhysicsRotation(Quaternion rotation) {
-        setPhysicsRotation(objectId, rotation);
+    public int getOverlappingCount() {
+        return getOverlappingCount(objectId);
+    }
+
+    /**
+     * Access a list of overlapping objects.
+     *
+     * @return an internal list which may get reused (not null)
+     */
+    public List<PhysicsCollisionObject> getOverlappingObjects() {
+        overlappingObjects.clear();
+        getOverlappingObjects(objectId);
+
+        return overlappingObjects;
     }
 
     /**
@@ -200,47 +204,6 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     }
 
     /**
-     * Access a list of overlapping objects.
-     *
-     * @return an internal list which may get reused (not null)
-     */
-    public List<PhysicsCollisionObject> getOverlappingObjects() {
-        overlappingObjects.clear();
-        getOverlappingObjects(objectId);
-
-        return overlappingObjects;
-    }
-
-    /**
-     * Count how many collision objects this object overlaps.
-     *
-     * @return count (&ge;0)
-     */
-    public int getOverlappingCount() {
-        return getOverlappingCount(objectId);
-    }
-
-    /**
-     * Access an overlapping collision object by its position in the list.
-     *
-     * @param index which list position (&ge;0, &lt;count)
-     * @return the pre-existing object
-     */
-    public PhysicsCollisionObject getOverlapping(int index) {
-        return overlappingObjects.get(index);
-    }
-
-    /**
-     * Alter the continuous collision detection (CCD) swept sphere radius for
-     * this object.
-     *
-     * @param radius (in physics-space units, &ge;0)
-     */
-    public void setCcdSweptSphereRadius(float radius) {
-        setCcdSweptSphereRadius(objectId, radius);
-    }
-
-    /**
      * Alter the amount of motion required to trigger continuous collision
      * detection (CCD).
      * <p>
@@ -255,32 +218,56 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
     }
 
     /**
-     * Read the radius of the sphere used for continuous collision detection
-     * (CCD).
+     * Alter the continuous collision detection (CCD) swept sphere radius for
+     * this object.
      *
-     * @return radius (in physics-space units, &ge;0)
+     * @param radius (in physics-space units, &ge;0)
      */
-    public float getCcdSweptSphereRadius() {
-        return getCcdSweptSphereRadius(objectId);
+    public void setCcdSweptSphereRadius(float radius) {
+        setCcdSweptSphereRadius(objectId, radius);
     }
 
     /**
-     * Read the continuous collision detection (CCD) motion threshold for this
-     * object.
+     * Apply the specified CollisionShape to this object. Note that the object
+     * should not be in any physics space while changing shape; the object gets
+     * rebuilt on the physics side.
      *
-     * @return threshold value (in physics-space units per second, &ge;0)
+     * @param collisionShape the shape to apply (not null, alias created)
      */
-    public float getCcdMotionThreshold() {
-        return getCcdMotionThreshold(objectId);
+    @Override
+    public void setCollisionShape(CollisionShape collisionShape) {
+        super.setCollisionShape(collisionShape);
+        buildObject();
     }
 
     /**
-     * Read the CCD square motion threshold for this object.
+     * Directly alter the location of this object's center.
      *
-     * @return threshold value (squared velocity, &ge;0)
+     * @param location the desired location (in physics-space coordinates, not
+     * null, unaffected)
      */
-    public float getCcdSquareMotionThreshold() {
-        return getCcdSquareMotionThreshold(objectId);
+    public void setPhysicsLocation(Vector3f location) {
+        setPhysicsLocation(objectId, location);
+    }
+
+    /**
+     * Directly alter this object's orientation.
+     *
+     * @param rotation the desired orientation (a rotation matrix in
+     * physics-space coordinates, not null, unaffected)
+     */
+    public void setPhysicsRotation(Matrix3f rotation) {
+        setPhysicsRotation(objectId, rotation);
+    }
+
+    /**
+     * Directly alter this object's orientation.
+     *
+     * @param rotation the desired orientation (quaternion, not null,
+     * unaffected)
+     */
+    public void setPhysicsRotation(Quaternion rotation) {
+        setPhysicsRotation(objectId, rotation);
     }
     // *************************************************************************
     // PhysicsCollisionObject methods
@@ -369,6 +356,20 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      */
     private void addOverlappingObject_native(PhysicsCollisionObject co) {
         overlappingObjects.add(co);
+    }
+
+    /**
+     * Create the configured object in Bullet.
+     */
+    private void buildObject() {
+        if (objectId == 0L) {
+            objectId = createGhostObject();
+            logger2.log(Level.FINE, "Created Ghost Object {0}",
+                    Long.toHexString(objectId));
+            setGhostFlags(objectId);
+            initUserPointer();
+        }
+        attachCollisionShape(objectId, collisionShape.getObjectId());
     }
 
     native private long createGhostObject();
