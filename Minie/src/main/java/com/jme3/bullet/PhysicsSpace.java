@@ -393,6 +393,8 @@ public class PhysicsSpace {
      * PhysicsCollisionObject, or PhysicsJoint to add (not null, modified)
      */
     public void add(Object obj) {
+        Validate.nonNull(obj, "obj");
+
         if (obj instanceof PhysicsControl) {
             ((PhysicsControl) obj).setPhysicsSpace(this);
         } else if (obj instanceof Spatial) {
