@@ -134,26 +134,26 @@ public class BoneLink
     }
 
     /**
-     * Instantiate a purely kinematic link between the specified skeleton bone
-     * and the specified rigid body.
+     * Instantiate a purely kinematic link between the named skeleton bone and
+     * the specified rigid body.
      *
      * @param control the control that will manage this link (not null, alias
      * created)
-     * @param bone the skeleton bone to link (not null, alias created) TODO pass
-     * bone name instead
+     * @param boneName the name of the linked bone (not null, not empty)
      * @param rigidBody the rigid body to link (not null, alias created)
      * @param localOffset the location of the body's center (in the bone's local
      * coordinates, not null, unaffected)
      */
-    BoneLink(DynamicAnimControl control, Bone bone,
+    BoneLink(DynamicAnimControl control, String boneName,
             PhysicsRigidBody rigidBody, Vector3f localOffset) {
         assert control != null;
-        assert bone != null;
+        assert boneName != null;
+        assert !boneName.isEmpty();
         assert rigidBody != null;
         assert localOffset != null;
 
         this.control = control;
-        this.bone = bone;
+        bone = control.getSkeleton().getBone(boneName);
         this.rigidBody = rigidBody;
         this.localOffset = localOffset.clone();
 

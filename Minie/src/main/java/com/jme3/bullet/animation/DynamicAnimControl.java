@@ -1453,7 +1453,7 @@ public class DynamicAnimControl
         meshToBone.getTranslation().zero();
         Vector3f offset = meshToBone.transformVector(center, null);
 
-        BoneLink link = new BoneLink(this, bone, rigidBody, offset);
+        BoneLink link = new BoneLink(this, boneName, rigidBody, offset);
         boneLinks.put(boneName, link);
     }
 
