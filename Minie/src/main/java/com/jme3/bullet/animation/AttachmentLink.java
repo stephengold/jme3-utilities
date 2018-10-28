@@ -151,7 +151,7 @@ public class AttachmentLink extends PhysicsLink {
                 pivotManager, pivot, rotManager, rot, true);
         setJoint(joint);
 
-        JointPreset rangeOfMotion = new JointPreset();
+        RangeOfMotion rangeOfMotion = new RangeOfMotion();
         rangeOfMotion.setupJoint(joint, false, false, false);
 
         joint.setCollisionBetweenLinkedBodies(false);

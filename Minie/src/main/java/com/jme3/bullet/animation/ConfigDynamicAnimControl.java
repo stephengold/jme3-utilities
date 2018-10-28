@@ -92,9 +92,9 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
      */
     private Map<String, Float> massMap = new HashMap<>(50);
     /**
-     * map linked bone names to joint presets for createSpatialData()
+     * map linked bone names to ranges of motion for createSpatialData()
      */
-    private Map<String, JointPreset> jointMap = new HashMap<>(50);
+    private Map<String, RangeOfMotion> jointMap = new HashMap<>(50);
     /**
      * map attachment bone names to models for createSpatialData()
      */
@@ -245,12 +245,12 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
      * @param boneName the name of the linked bone (not null, not empty)
      * @return the pre-existing instance (not null)
      */
-    public JointPreset getJointLimits(String boneName) {
+    public RangeOfMotion getJointLimits(String boneName) {
         if (!isBoneLinkName(boneName)) {
             String msg = "No linked bone named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
         }
-        JointPreset result = jointMap.get(boneName);
+        RangeOfMotion result = jointMap.get(boneName);
 
         assert result != null;
         return result;
@@ -312,14 +312,14 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
      *
      * @param boneName the name of the bone to link (not null, not empty)
      * @param mass the desired mass of the bone (&gt;0)
-     * @param jointPreset the desired range of motion (not null)
+     * @param rom the desired range of motion (not null)
      * @see #setJointLimits(java.lang.String,
      * com.jme3.bullet.animation.JointPreset)
      */
-    public void link(String boneName, float mass, JointPreset jointPreset) {
+    public void link(String boneName, float mass, RangeOfMotion rom) {
         Validate.nonEmpty(boneName, "bone name");
         Validate.positive(mass, "mass");
-        Validate.nonNull(jointPreset, "joint preset");
+        Validate.nonNull(rom, "range of motion");
         if (getSpatial() != null) {
             throw new IllegalStateException(
                     "Cannot link a bone while added to a spatial.");
@@ -329,7 +329,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
                     MyString.quote(boneName));
         }
 
-        jointMap.put(boneName, jointPreset);
+        jointMap.put(boneName, rom);
         massMap.put(boneName, mass);
     }
 
@@ -385,16 +385,16 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
      * its parent in the link hierarchy.
      *
      * @param boneName the name of the BoneLink (not null, not empty)
-     * @param preset the desired range of motion (not null)
+     * @param rom the desired range of motion (not null)
      */
-    public void setJointLimits(String boneName, JointPreset preset) {
-        Validate.nonNull(preset, "preset");
+    public void setJointLimits(String boneName, RangeOfMotion rom) {
+        Validate.nonNull(rom, "range of motion");
         if (!isBoneLinkName(boneName)) {
             String msg = "No linked bone named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
         }
 
-        jointMap.put(boneName, preset);
+        jointMap.put(boneName, rom);
     }
 
     /**
@@ -513,8 +513,8 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
         float[] linkedBoneMasses = ic.readFloatArray("linkedBoneMasses", null);
         for (int i = 0; i < linkedBoneNames.length; i++) {
             String boneName = linkedBoneNames[i];
-            JointPreset jointPreset = (JointPreset) linkedBoneJoints[i];
-            jointMap.put(boneName, jointPreset);
+            RangeOfMotion rom = (RangeOfMotion) linkedBoneJoints[i];
+            jointMap.put(boneName, rom);
             massMap.put(boneName, linkedBoneMasses[i]);
         }
 
@@ -560,17 +560,17 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
 
         int count = countLinkedBones();
         String[] linkedBoneNames = new String[count];
-        JointPreset[] linkedBoneJoints = new JointPreset[count];
+        RangeOfMotion[] roms = new RangeOfMotion[count];
         float[] linkedBoneMasses = new float[count];
         int i = 0;
         for (Map.Entry<String, Float> entry : massMap.entrySet()) {
             linkedBoneNames[i] = entry.getKey();
-            linkedBoneJoints[i] = jointMap.get(entry.getKey());
+            roms[i] = jointMap.get(entry.getKey());
             linkedBoneMasses[i] = entry.getValue();
             i++;
         }
         oc.write(linkedBoneNames, "linkedBoneNames", null);
-        oc.write(linkedBoneJoints, "linkedBoneJoints", null);
+        oc.write(roms, "linkedBoneJoints", null);
         oc.write(linkedBoneMasses, "linkedBoneMasses", null);
 
         count = countAttachments();

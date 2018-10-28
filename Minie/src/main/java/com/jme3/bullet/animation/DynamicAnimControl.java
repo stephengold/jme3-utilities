@@ -1111,22 +1111,22 @@ public class DynamicAnimControl
      * its parent in the link hierarchy.
      *
      * @param boneName the name of the BoneLink (not null, not empty)
-     * @param preset the desired range of motion (not null)
+     * @param rom the desired range of motion (not null)
      */
     @Override
-    public void setJointLimits(String boneName, JointPreset preset) {
+    public void setJointLimits(String boneName, RangeOfMotion rom) {
         if (!isBoneLinkName(boneName)) {
             String msg = "No linked bone named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
         }
-        Validate.nonNull(preset, "preset");
+        Validate.nonNull(rom, "range of motion");
 
-        super.setJointLimits(boneName, preset);
+        super.setJointLimits(boneName, rom);
 
         if (getSpatial() != null) {
             BoneLink boneLink = getBoneLink(boneName);
             SixDofJoint joint = (SixDofJoint) boneLink.getJoint();
-            preset.setupJoint(joint, false, false, false);
+            rom.setupJoint(joint, false, false, false);
         }
     }
 

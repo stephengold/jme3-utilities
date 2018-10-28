@@ -172,7 +172,7 @@ public class BoneLink extends PhysicsLink {
         super.setDynamic(uniformAcceleration);
 
         String name = getBoneName();
-        JointPreset preset = getControl().getJointLimits(name);
+        RangeOfMotion preset = getControl().getJointLimits(name);
         preset.setupJoint((SixDofJoint) getJoint(), lockX, lockY, lockZ);
 
         for (Bone managedBone : managedBones) {
@@ -377,7 +377,7 @@ public class BoneLink extends PhysicsLink {
         setParent(parentLink);
 
         String name = getBoneName();
-        JointPreset rangeOfMotion = getControl().getJointLimits(name);
+        RangeOfMotion rangeOfMotion = getControl().getJointLimits(name);
         rangeOfMotion.setupJoint(joint, false, false, false);
 
         joint.setCollisionBetweenLinkedBodies(false);

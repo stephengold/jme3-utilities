@@ -32,7 +32,7 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.animation.BoneLink;
 import com.jme3.bullet.animation.DynamicAnimControl;
-import com.jme3.bullet.animation.JointPreset;
+import com.jme3.bullet.animation.RangeOfMotion;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.joints.motors.RotationalLimitMotor;
@@ -369,8 +369,8 @@ public class TuneDac extends ActionApplication {
 
             BoneLink link = dac.getBoneLink(wiggleBoneName);
             SixDofJoint joint = (SixDofJoint) link.getJoint();
-            JointPreset newPreset = new JointPreset(axisIndex);
-            newPreset.setupJoint(joint, false, false, false);
+            RangeOfMotion newRom = new RangeOfMotion(axisIndex);
+            newRom.setupJoint(joint, false, false, false);
             motor = joint.getRotationalLimitMotor(axisIndex);
             motor.setEnableMotor(true);
             motor.setMaxMotorForce(100f);
@@ -398,8 +398,8 @@ public class TuneDac extends ActionApplication {
                         false);
                 BoneLink link = dac.getBoneLink(wiggleBoneName);
                 SixDofJoint joint = (SixDofJoint) link.getJoint();
-                JointPreset newPreset = new JointPreset();
-                newPreset.setupJoint(joint, false, false, false);
+                RangeOfMotion newRom = new RangeOfMotion();
+                newRom.setupJoint(joint, false, false, false);
             }
         }
     }

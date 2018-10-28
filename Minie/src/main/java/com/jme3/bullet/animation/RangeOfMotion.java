@@ -47,14 +47,13 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * Range of motion for a ragdoll joint. Note: immutable. TODO rename
- * RangeOfMotion
+ * Range of motion for a ragdoll joint. Note: immutable.
  *
  * @author Stephen Gold sgold@sonic.net
  *
  * Based on RagdollPreset by Rémy Bouquet (Nehon).
  */
-public class JointPreset implements Savable {
+public class RangeOfMotion implements Savable {
     // *************************************************************************
     // constants and loggers
 
@@ -62,7 +61,7 @@ public class JointPreset implements Savable {
      * message logger for this class
      */
     final public static Logger logger
-            = Logger.getLogger(JointPreset.class.getName());
+            = Logger.getLogger(RangeOfMotion.class.getName());
     // *************************************************************************
     // fields
 
@@ -96,7 +95,7 @@ public class JointPreset implements Savable {
     /**
      * Instantiate a preset with no motion allowed.
      */
-    public JointPreset() {
+    public RangeOfMotion() {
     }
 
     /**
@@ -109,7 +108,7 @@ public class JointPreset implements Savable {
      * @param maxZ the maximum rotation around the Z axis (in radians)
      * @param minZ the minimum rotation around the Z axis (in radians)
      */
-    public JointPreset(float maxX, float minX, float maxY, float minY,
+    public RangeOfMotion(float maxX, float minX, float maxY, float minY,
             float maxZ, float minZ) {
         Validate.inRange(maxX, "max X rotation", minX, FastMath.PI);
         Validate.inRange(minX, "min X rotation", -FastMath.PI, maxX);
@@ -133,7 +132,7 @@ public class JointPreset implements Savable {
      * @param maxY the maximum rotation around the Y axis (in radians, &ge;0)
      * @param maxZ the maximum rotation around the Z axis (in radians, &ge;0)
      */
-    public JointPreset(float maxX, float maxY, float maxZ) {
+    public RangeOfMotion(float maxX, float maxY, float maxZ) {
         Validate.inRange(maxX, "max X rotation", 0f, FastMath.PI);
         Validate.inRange(maxY, "max Y rotation", 0f, FastMath.PI);
         Validate.inRange(maxZ, "max Z rotation", 0f, FastMath.PI);
@@ -151,7 +150,7 @@ public class JointPreset implements Savable {
      *
      * @param axisIndex which axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
-    public JointPreset(int axisIndex) {
+    public RangeOfMotion(int axisIndex) {
         switch (axisIndex) {
             case PhysicsSpace.AXIS_X:
                 maxX = 1f;

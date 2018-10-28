@@ -27,7 +27,7 @@
 package jme3utilities.minie.test;
 
 import com.jme3.bullet.animation.DynamicAnimControl;
-import com.jme3.bullet.animation.JointPreset;
+import com.jme3.bullet.animation.RangeOfMotion;
 import java.util.logging.Logger;
 
 /**
@@ -52,42 +52,42 @@ public class SinbadControl extends DynamicAnimControl {
         super.setMass(torsoName, 5f);
 
         super.link("Waist", 5f,
-                new JointPreset(1f, -0.4f, 0.8f, -0.8f, 0.4f, -0.4f));
+                new RangeOfMotion(1f, -0.4f, 0.8f, -0.8f, 0.4f, -0.4f));
         super.link("Chest", 5f,
-                new JointPreset(0.4f, 0f, 0.4f));
+                new RangeOfMotion(0.4f, 0f, 0.4f));
         super.link("Neck", 2f,
-                new JointPreset(1f, -0.5f, 1f, -1f, 1f, -1f));
+                new RangeOfMotion(1f, -0.5f, 1f, -1f, 1f, -1f));
 
         super.link("Clavicle.R", 2f,
-                new JointPreset(0.3f, -0.6f, 0f, 0f, 0.4f, -0.4f));
+                new RangeOfMotion(0.3f, -0.6f, 0f, 0f, 0.4f, -0.4f));
         super.link("Humerus.R", 3f,
-                new JointPreset(1.6f, -0.8f, 1f, -1f, 1.6f, -1f));
+                new RangeOfMotion(1.6f, -0.8f, 1f, -1f, 1.6f, -1f));
         super.link("Ulna.R", 2f,
-                new JointPreset(0f, 0f, 1f, -1f, 0f, -2f));
+                new RangeOfMotion(0f, 0f, 1f, -1f, 0f, -2f));
         super.link("Hand.R", 1f,
-                new JointPreset(0.8f, 0f, 0.2f));
+                new RangeOfMotion(0.8f, 0f, 0.2f));
 
         super.link("Clavicle.L", 2f,
-                new JointPreset(0.6f, -0.3f, 0f, 0f, 0.4f, -0.4f));
+                new RangeOfMotion(0.6f, -0.3f, 0f, 0f, 0.4f, -0.4f));
         super.link("Humerus.L", 3f,
-                new JointPreset(0.8f, -1.6f, 1f, -1f, 1f, -1.6f));
+                new RangeOfMotion(0.8f, -1.6f, 1f, -1f, 1f, -1.6f));
         super.link("Ulna.L", 2f,
-                new JointPreset(0f, 0f, 1f, -1f, 2f, 0f));
+                new RangeOfMotion(0f, 0f, 1f, -1f, 2f, 0f));
         super.link("Hand.L", 1f,
-                new JointPreset(0.8f, 0f, 0.2f));
+                new RangeOfMotion(0.8f, 0f, 0.2f));
 
         super.link("Thigh.R", 3f,
-                new JointPreset(0.4f, -1f, 0.4f, -0.4f, 0.5f, -0.5f));
+                new RangeOfMotion(0.4f, -1f, 0.4f, -0.4f, 0.5f, -0.5f));
         super.link("Calf.R", 2f,
-                new JointPreset(2f, 0f, 0f, 0f, 0f, 0f));
+                new RangeOfMotion(2f, 0f, 0f, 0f, 0f, 0f));
         super.link("Foot.R", 1f,
-                new JointPreset(0.3f, 0.5f, 0f));
+                new RangeOfMotion(0.3f, 0.5f, 0f));
 
         super.link("Thigh.L", 3f,
-                new JointPreset(1f, -0.4f, 0.4f, -0.4f, 0.5f, -0.5f));
+                new RangeOfMotion(1f, -0.4f, 0.4f, -0.4f, 0.5f, -0.5f));
         super.link("Calf.L", 2f,
-                new JointPreset(2f, 0f, 0f, 0f, 0f, 0f));
+                new RangeOfMotion(2f, 0f, 0f, 0f, 0f, 0f));
         super.link("Foot.L", 1f,
-                new JointPreset(0.3f, 0.5f, 0f));
+                new RangeOfMotion(0.3f, 0.5f, 0f));
     }
 }
