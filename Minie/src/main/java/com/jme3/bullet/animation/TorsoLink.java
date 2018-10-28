@@ -32,7 +32,6 @@
 package com.jme3.bullet.animation;
 
 import com.jme3.animation.Bone;
-import com.jme3.animation.Skeleton;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
@@ -106,10 +105,6 @@ public class TorsoLink
      */
     private PhysicsRigidBody rigidBody;
     /**
-     * skeleton being controlled - TODO get from control?
-     */
-    private Skeleton skeleton = null;
-    /**
      * local transform for the controlled spatial at the end of this link's most
      * recent blend interval, or null for no spatial blending
      */
@@ -178,6 +173,14 @@ public class TorsoLink
         kinematicWeight = 1f;
         rigidBody.setKinematic(true);
         rigidBody.setUserObject(this);
+
+        managedBones = control.listManagedBones(DynamicAnimControl.torsoName);
+
+        int numManagedBones = managedBones.length;
+        startBoneTransforms = new Transform[numManagedBones];
+        for (int i = 0; i < numManagedBones; i++) {
+            startBoneTransforms[i] = new Transform();
+        }
     }
     // *************************************************************************
     // new methods exposed
@@ -352,25 +355,6 @@ public class TorsoLink
     }
 
     /**
-     * Analyze the specified skeleton.
-     *
-     * @param skeleton (not null, alias created) TODO unnecessary
-     */
-    void setSkeleton(Skeleton skeleton) {
-        assert skeleton != null;
-        this.skeleton = skeleton;
-
-        assert managedBones == null;
-        managedBones = control.listManagedBones(DynamicAnimControl.torsoName);
-
-        int numManagedBones = managedBones.length;
-        startBoneTransforms = new Transform[numManagedBones];
-        for (int i = 0; i < numManagedBones; i++) {
-            startBoneTransforms[i] = new Transform();
-        }
-    }
-
-    /**
      * Internal callback, invoked once per frame during the logical-state
      * update, provided the control is added to a scene.
      *
@@ -480,7 +464,6 @@ public class TorsoLink
         submode = ic.readEnum("submode", KinematicSubmode.class,
                 KinematicSubmode.Animated);
         rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
-        skeleton = (Skeleton) ic.readSavable("skeleton", null);
         endModelTransform = (Transform) ic.readSavable("endModelTransform",
                 new Transform());
         meshToModel
@@ -511,7 +494,6 @@ public class TorsoLink
         oc.write(kinematicWeight, "kinematicWeight", 1f);
         oc.write(submode, "submode", KinematicSubmode.Animated);
         oc.write(rigidBody, "rigidBody", null);
-        oc.write(skeleton, "skeleton", null);
         oc.write(endModelTransform, "endModelTransforms", new Transform());
         oc.write(meshToModel, "meshToModel", new Transform());
         oc.write(startModelTransform, "startModelTransforms", new Transform());
@@ -547,7 +529,8 @@ public class TorsoLink
         control.getSpatial().setLocalTransform(transform);
 
         localBoneTransform(transform);
-        for (Bone rootBone : skeleton.getRoots()) {
+        Bone[] rootBones = control.getSkeleton().getRoots();
+        for (Bone rootBone : rootBones) {
             MySkeleton.setLocalTransform(rootBone, transform);
         }
 

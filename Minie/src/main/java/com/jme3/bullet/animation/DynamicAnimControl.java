@@ -1513,7 +1513,6 @@ public class DynamicAnimControl
         Transform meshToModel = modelToMesh.invert();
 
         torsoLink = new TorsoLink(this, bone, rigidBody, meshToModel, offset);
-        torsoLink.setSkeleton(skeleton);
     }
 
     /**
