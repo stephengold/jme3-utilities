@@ -121,10 +121,13 @@ public class PhysicsDumper extends Dumper {
      */
     public void dump(PhysicsCharacter character) {
         long objectId = character.getObjectId();
-        stream.printf("  Character #%s ", Long.toHexString(objectId));
+        stream.printf("  Character #%s", Long.toHexString(objectId));
+
+        String desc = MyObject.describeUser(character);
+        stream.print(desc);
 
         Vector3f location = character.getPhysicsLocation();
-        stream.printf("loc=[%.3f, %.3f, %.3f]",
+        stream.printf(" loc=[%.3f, %.3f, %.3f]",
                 location.x, location.y, location.z);
 
         stream.println();
@@ -138,10 +141,13 @@ public class PhysicsDumper extends Dumper {
      */
     public void dump(PhysicsGhostObject ghost) {
         long objectId = ghost.getObjectId();
-        stream.printf("  Ghost #%s ", Long.toHexString(objectId));
+        stream.printf("  Ghost #%s", Long.toHexString(objectId));
+
+        String desc = MyObject.describeUser(ghost);
+        stream.print(desc);
 
         Vector3f location = ghost.getPhysicsLocation(null);
-        stream.printf("loc=[%.3f, %.3f, %.3f]",
+        stream.printf(" loc=[%.3f, %.3f, %.3f]",
                 location.x, location.y, location.z);
 
         stream.println();
@@ -176,6 +182,9 @@ public class PhysicsDumper extends Dumper {
         stream.printf("  Body #%s ", Long.toHexString(objectId));
 
         String desc = MyObject.describe(body);
+        stream.print(desc);
+
+        desc = MyObject.describeUser(body);
         stream.print(desc);
 
         Vector3f location = body.getPhysicsLocation(null);
@@ -289,6 +298,9 @@ public class PhysicsDumper extends Dumper {
         float mass = vehicle.getMass();
         stream.printf("  Vehicle #%s mass=%f", Long.toHexString(objectId),
                 mass);
+
+        String desc = MyObject.describeUser(vehicle);
+        stream.print(desc);
 
         Vector3f location = vehicle.getPhysicsLocation(null);
         stream.printf(" loc=[%.3f, %.3f, %.3f]",
