@@ -44,6 +44,7 @@ import com.jme3.input.KeyInput;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
@@ -512,6 +513,9 @@ public class TestDac extends ActionApplication {
      */
     private void loadJaime() {
         cgModel = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
+        Geometry g = (Geometry) cgModel.getChild(0);
+        RenderState rs = g.getMaterial().getAdditionalRenderState();
+        rs.setFaceCullMode(RenderState.FaceCullMode.Off);
         dac = new JaimeControl();
         animationName = "Punches";
         leftClavicleName = "shoulder.L";
