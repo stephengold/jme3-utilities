@@ -75,6 +75,10 @@ public class AttachmentLink
      * local copy of {@link com.jme3.math.Matrix3f#IDENTITY}
      */
     final private static Matrix3f matrixIdentity = new Matrix3f();
+    /**
+     * local copy of {@link com.jme3.math.Quaternion#IDENTITY}
+     */
+    final private static Quaternion rotateIdentity = new Quaternion();
     // *************************************************************************
     // fields
 
@@ -122,6 +126,11 @@ public class AttachmentLink
      * recent blend interval
      */
     private Transform startModelTransform = new Transform();
+    /**
+     * location of the rigid body's center (in the attached model's local
+     * coordinates)
+     */
+    private Vector3f localOffset;
     // *************************************************************************
     // constructors
 
@@ -144,22 +153,26 @@ public class AttachmentLink
      * associated bone (not null)
      * @param attachModel the attached model to link (not null, alias created)
      * @param rigidBody the rigid body to link (not null, alias created)
+     * @param localOffset the location of the body's center (in the attached
+     * model's local coordinates, not null, unaffected)
      */
     AttachmentLink(DynamicAnimControl control, String boneName,
             String managerName, Spatial attachModel,
-            PhysicsRigidBody rigidBody) {
+            PhysicsRigidBody rigidBody, Vector3f localOffset) {
         assert control != null;
         assert boneName != null;
         assert !boneName.isEmpty();
         assert managerName != null;
         assert attachModel != null;
         assert rigidBody != null;
+        assert localOffset != null;
 
         this.control = control;
         bone = control.getSkeleton().getBone(boneName);
         this.managerName = managerName;
         this.attachedModel = attachModel;
         this.rigidBody = rigidBody;
+        this.localOffset = localOffset.clone();
 
         kinematicWeight = 1f;
         rigidBody.setKinematic(true);
@@ -274,6 +287,19 @@ public class AttachmentLink
     }
 
     /**
+     * Copy the local offset of this link.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the offset (in the attached model's local coordinates, either
+     * storeResult or a new vector, not null)
+     */
+    Vector3f localOffset(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        result.set(localOffset);
+        return result;
+    }
+
+    /**
      * Read the name of the managing bone/torso link.
      *
      * @return the link name (not null)
@@ -293,11 +319,26 @@ public class AttachmentLink
     final public Transform physicsTransform(Transform storeResult) {
         Transform result
                 = (storeResult == null) ? new Transform() : storeResult;
-
-        result.set(attachedModel.getLocalTransform());
-        Transform tmp = MySkeleton.copyMeshTransform(bone, null);
+        /*
+         * Start with the rigid body's transform in the attached model's
+         * local coordinates.
+         */
+        result.setTranslation(localOffset);
+        result.setRotation(rotateIdentity);
+        result.setScale(1f);
+        /*
+         * Convert to bone local coordinates.
+         */
+        Transform tmp = attachedModel.getLocalTransform();
         result.combineWithParent(tmp);
-
+        /*
+         * Convert to mesh coordinates.
+         */
+        tmp = MySkeleton.copyMeshTransform(bone, null);
+        result.combineWithParent(tmp);
+        /*
+         * Convert to physics/world coordinates.
+         */
         control.meshTransform(tmp);
         result.combineWithParent(tmp);
 
@@ -383,6 +424,7 @@ public class AttachmentLink
         control = cloner.clone(control);
         rigidBody = cloner.clone(rigidBody);
         joint = cloner.clone(joint);
+        localOffset = cloner.clone(localOffset);
     }
 
     /**
@@ -424,6 +466,7 @@ public class AttachmentLink
                 new Transform());
         startModelTransform = (Transform) ic.readSavable("startModelTransform",
                 new Transform());
+        localOffset = (Vector3f) ic.readSavable("offset", new Vector3f());
     }
 
     /**
@@ -446,6 +489,7 @@ public class AttachmentLink
         oc.write(managerName, "managerName", "");
         oc.write(endModelTransform, "endModelTransform", null);
         oc.write(startModelTransform, "startModelTransform", null);
+        oc.write(localOffset, "offset", new Vector3f());
     }
     // *************************************************************************
     // private methods
@@ -456,16 +500,8 @@ public class AttachmentLink
      */
     private void dynamicUpdate() {
         assert !rigidBody.isKinematic();
-        /*
-         * Calculate the inverse world transform of the bone.
-         */
-        Transform boneToWorld = MySkeleton.copyMeshTransform(bone, null);
-        Transform tmp = control.meshTransform(null);
-        boneToWorld.combineWithParent(tmp);
-        Transform worldToBone = boneToWorld.invert();
 
-        Transform transform = rigidBody.getPhysicsTransform(null);
-        transform.combineWithParent(worldToBone);
+        Transform transform = localModelTransform(null);
         attachedModel.setLocalTransform(transform);
     }
 
@@ -506,5 +542,45 @@ public class AttachmentLink
                 kinematicWeight = 1f; // done blending
             }
         }
+    }
+
+    /**
+     * Calculate the local transform for the attached model to match the physics
+     * transform of the rigid body.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the calculated model transform (in local coordinates, either
+     * storeResult or a new transform, not null)
+     */
+    private Transform localModelTransform(Transform storeResult) {
+        Transform result
+                = (storeResult == null) ? new Transform() : storeResult;
+        Vector3f location = result.getTranslation();
+        Quaternion orientation = result.getRotation();
+        Vector3f scale = result.getScale();
+        /*
+         * Start with the rigid body's transform in physics/world coordinates.
+         */
+        rigidBody.getPhysicsTransform(result);
+        /*
+         * Convert to mesh coordinates.
+         */
+        Transform worldToMesh = control.meshTransform(null).invert();
+        result.combineWithParent(worldToMesh);
+        /**
+         * Convert to bone local coordinates.
+         */
+        Transform meshToBone
+                = MySkeleton.copyMeshTransform(bone, null).invert();
+        result.combineWithParent(meshToBone);
+        /*
+         * Subtract the body's local offset, rotated and scaled.
+         */
+        Vector3f modelOffset = localOffset.clone();
+        modelOffset.multLocal(scale);
+        orientation.mult(modelOffset, modelOffset);
+        location.subtractLocal(modelOffset);
+
+        return result;
     }
 }

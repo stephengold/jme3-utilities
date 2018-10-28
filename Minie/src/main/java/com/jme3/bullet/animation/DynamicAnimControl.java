@@ -1416,8 +1416,9 @@ public class DynamicAnimControl
         float mass = attachmentMass(boneName);
         PhysicsRigidBody rigidBody = createRigidBody(shape, mass);
 
+        Vector3f localOffset = translateIdentity;
         AttachmentLink link = new AttachmentLink(this, boneName, managerName,
-                attachModel, rigidBody);
+                attachModel, rigidBody, localOffset);
         attachmentLinks.put(boneName, link);
     }
 
