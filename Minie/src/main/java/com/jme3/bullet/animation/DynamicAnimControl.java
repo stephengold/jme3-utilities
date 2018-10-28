@@ -1507,14 +1507,9 @@ public class DynamicAnimControl
         float mass = mass(torsoName);
         PhysicsRigidBody rigidBody = createRigidBody(shape, mass);
 
-        // TODO utility method spatialToAncestor()
-        Spatial loopSpatial = transformer;
-        Transform modelToMesh = new Transform();
-        while (loopSpatial != getSpatial()) {
-            Transform localTransform = loopSpatial.getLocalTransform();
-            modelToMesh.combineWithParent(localTransform);
-            loopSpatial = loopSpatial.getParent();
-        }
+        Node modelNode = (Node) getSpatial();
+        Transform modelToMesh
+                = RagUtils.relativeTransform(transformer, modelNode, null);
         Transform meshToModel = modelToMesh.invert();
 
         torsoLink = new TorsoLink(this, bone, rigidBody, meshToModel, offset);

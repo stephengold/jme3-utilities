@@ -40,6 +40,7 @@ import com.jme3.export.Savable;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.control.Control;
@@ -158,7 +159,8 @@ public class RagUtils {
      * in bind pose) to that link's list.
      *
      * @param meshes array of animated meshes to use (not null, unaffected)
-     * @param managerMap a map from bone indices to managing link names (not null, unaffected)
+     * @param managerMap a map from bone indices to managing link names (not
+     * null, unaffected)
      * @return a new map from link names to lists of coordinates
      */
     public static Map<String, List<Vector3f>> coordsMap(Mesh[] meshes,
@@ -288,6 +290,36 @@ public class RagUtils {
             for (int i = 0; i < tmp.length; i++) {
                 result[i] = (Transform) tmp[i];
             }
+        }
+
+        return result;
+    }
+
+    /**
+     * Calculate a coordinate transform for the specified spatial relative to a
+     * specified ancestor node. The result incorporates the transform of the
+     * starting spatial, but not that of the ancestor.
+     *
+     * @param startSpatial the starting spatial (not null, unaffected)
+     * @param ancestorNode the ancestor node (not null, unaffected)
+     * @param storeResult storage for the result (modified if not null)
+     * @return a coordinate transform (either storeResult or a new vector, not
+     * null)
+     */
+    public static Transform relativeTransform(Spatial startSpatial,
+            Node ancestorNode, Transform storeResult) {
+        Validate.nonNull(startSpatial, "spatial");
+        Validate.nonNull(ancestorNode, "ancestor");
+        assert startSpatial.hasAncestor(ancestorNode);
+        Transform result
+                = (storeResult == null) ? new Transform() : storeResult;
+
+        result.loadIdentity();
+        Spatial loopSpatial = startSpatial;
+        while (loopSpatial != ancestorNode) {
+            Transform localTransform = loopSpatial.getLocalTransform();
+            result.combineWithParent(localTransform);
+            loopSpatial = loopSpatial.getParent();
         }
 
         return result;
