@@ -112,7 +112,7 @@ public class BoneLink extends PhysicsLink {
         super(control, boneName, rigidBody, localOffset);
     }
     // *************************************************************************
-    // new methods exposed TODO re-order methods
+    // new methods exposed
 
     /**
      * Begin blending this link to a fully kinematic mode. TODO publicize
@@ -157,6 +157,66 @@ public class BoneLink extends PhysicsLink {
     }
 
     /**
+     * Immediately put this link into dynamic mode.
+     *
+     * @param uniformAcceleration the uniform acceleration vector (in
+     * physics-space coordinates, not null, unaffected)
+     * @param lockX true to lock the joint's X-axis
+     * @param lockY true to lock the joint's Y-axis
+     * @param lockZ true to lock the joint's Z-axis
+     */
+    public void setDynamic(Vector3f uniformAcceleration, boolean lockX,
+            boolean lockY, boolean lockZ) {
+        Validate.nonNull(uniformAcceleration, "uniform acceleration");
+
+        super.setDynamic(uniformAcceleration);
+
+        String name = getBoneName();
+        JointPreset preset = getControl().getJointLimits(name);
+        preset.setupJoint((SixDofJoint) getJoint(), lockX, lockY, lockZ);
+
+        for (Bone managedBone : managedBones) {
+            managedBone.setUserControl(true);
+        }
+    }
+    // *************************************************************************
+    // PhysicsLink methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned link into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this link (not null)
+     * @param original the instance from which this link was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+
+        managedBones = cloner.clone(managedBones);
+        prevBoneTransforms = cloner.clone(prevBoneTransforms);
+        startBoneTransforms = cloner.clone(startBoneTransforms);
+    }
+
+    /**
+     * Update this link in Dynamic mode, setting the linked bone's transform
+     * based on the transform of the rigid body.
+     */
+    @Override
+    protected void dynamicUpdate() {
+        assert !getRigidBody().isKinematic();
+
+        Transform transform = localBoneTransform(null);
+        MySkeleton.setLocalTransform(getBone(), transform);
+
+        for (Bone managedBone : managedBones) {
+            managedBone.updateModelTransforms();
+        }
+    }
+
+    /**
      * Immediately freeze this link.
      */
     @Override
@@ -166,6 +226,79 @@ public class BoneLink extends PhysicsLink {
         } else {
             setDynamic(new Vector3f(0f, 0f, 0f), true, true, true);
         }
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public BoneLink jmeClone() {
+        try {
+            BoneLink clone = (BoneLink) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    /**
+     * Update this link in blended Kinematic mode.
+     *
+     * @param tpf the time interval between frames (in seconds, &ge;0)
+     */
+    @Override
+    protected void kinematicUpdate(float tpf) {
+        assert tpf >= 0f : tpf;
+        assert getRigidBody().isKinematic();
+
+        Transform transform = new Transform();
+        for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
+            Bone managedBone = managedBones[mbIndex];
+            switch (submode) {
+                case Amputated:
+                    MySkeleton.copyBindTransform(managedBone, transform);
+                    transform.getScale().set(0.001f, 0.001f, 0.001f);
+                    break;
+                case Animated:
+                    MySkeleton.copyLocalTransform(managedBone, transform);
+                    break;
+                case Bound:
+                    MySkeleton.copyBindTransform(managedBone, transform);
+                    break;
+                case Frozen:
+                    transform.set(prevBoneTransforms[mbIndex]);
+                    break;
+                default:
+                    throw new IllegalStateException(submode.toString());
+            }
+
+            if (isKinematic()) {
+                /*
+                 * For a smooth transition, blend the saved bone transform
+                 * (from the start of the blend interval)
+                 * into the goal transform.
+                 */
+                Transform start = startBoneTransforms[mbIndex];
+                Quaternion startQuat = start.getRotation();
+                Quaternion endQuat = transform.getRotation();
+                if (startQuat.dot(endQuat) < 0f) {
+                    endQuat.multLocal(-1f);
+                }
+                MyMath.slerp(kinematicWeight(), startBoneTransforms[mbIndex],
+                        transform, transform);
+                // TODO smarter sign flipping for bones
+            }
+            /*
+             * Update the managed bone.
+             */
+            MySkeleton.setLocalTransform(managedBone, transform);
+            managedBone.updateModelTransforms();
+            // The rigid-body transform gets updated by prePhysicsTick().
+        }
+
+        super.kinematicUpdate(tpf);
     }
 
     /**
@@ -194,27 +327,32 @@ public class BoneLink extends PhysicsLink {
     }
 
     /**
-     * Immediately put this link into dynamic mode.
+     * De-serialize this link, for example when loading from a J3O file.
      *
-     * @param uniformAcceleration the uniform acceleration vector (in
-     * physics-space coordinates, not null, unaffected)
-     * @param lockX true to lock the joint's X-axis
-     * @param lockY true to lock the joint's Y-axis
-     * @param lockZ true to lock the joint's Z-axis
+     * @param im importer (not null)
+     * @throws IOException from importer
      */
-    public void setDynamic(Vector3f uniformAcceleration, boolean lockX,
-            boolean lockY, boolean lockZ) {
-        Validate.nonNull(uniformAcceleration, "uniform acceleration");
+    @Override
+    public void read(JmeImporter im) throws IOException {
+        super.read(im);
+        InputCapsule ic = im.getCapsule(this);
 
-        super.setDynamic(uniformAcceleration);
-
-        String name = getBoneName();
-        JointPreset preset = getControl().getJointLimits(name);
-        preset.setupJoint((SixDofJoint) getJoint(), lockX, lockY, lockZ);
-
-        for (Bone managedBone : managedBones) {
-            managedBone.setUserControl(true);
+        Savable[] tmp = ic.readSavableArray("managedBones", null);
+        if (tmp == null) {
+            managedBones = null;
+        } else {
+            managedBones = new Bone[tmp.length];
+            for (int i = 0; i < tmp.length; i++) {
+                managedBones[i] = (Bone) tmp[i];
+            }
         }
+
+        submode = ic.readEnum("submode", KinematicSubmode.class,
+                KinematicSubmode.Animated);
+        prevBoneTransforms = RagUtils.readTransformArray(ic,
+                "prevBoneTransforms");
+        startBoneTransforms = RagUtils.readTransformArray(ic,
+                "startBoneTransforms");
     }
 
     /**
@@ -290,72 +428,6 @@ public class BoneLink extends PhysicsLink {
             MySkeleton.copyLocalTransform(managedBone, lastTransform);
         }
     }
-    // *************************************************************************
-    // JmeCloneable methods
-
-    /**
-     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
-     * shallow-cloned link into a deep-cloned one, using the specified cloner
-     * and original to resolve copied fields.
-     *
-     * @param cloner the cloner that's cloning this link (not null)
-     * @param original the instance from which this link was shallow-cloned
-     * (unused)
-     */
-    @Override
-    public void cloneFields(Cloner cloner, Object original) {
-        super.cloneFields(cloner, original);
-
-        managedBones = cloner.clone(managedBones);
-        prevBoneTransforms = cloner.clone(prevBoneTransforms);
-        startBoneTransforms = cloner.clone(startBoneTransforms);
-    }
-
-    /**
-     * Create a shallow clone for the JME cloner.
-     *
-     * @return a new instance
-     */
-    @Override
-    public BoneLink jmeClone() {
-        try {
-            BoneLink clone = (BoneLink) super.clone();
-            return clone;
-        } catch (CloneNotSupportedException exception) {
-            throw new RuntimeException(exception);
-        }
-    }
-    // *************************************************************************
-    // Savable methods
-
-    /**
-     * De-serialize this link, for example when loading from a J3O file.
-     *
-     * @param im importer (not null)
-     * @throws IOException from importer
-     */
-    @Override
-    public void read(JmeImporter im) throws IOException {
-        super.read(im);
-        InputCapsule ic = im.getCapsule(this);
-
-        Savable[] tmp = ic.readSavableArray("managedBones", null);
-        if (tmp == null) {
-            managedBones = null;
-        } else {
-            managedBones = new Bone[tmp.length];
-            for (int i = 0; i < tmp.length; i++) {
-                managedBones[i] = (Bone) tmp[i];
-            }
-        }
-
-        submode = ic.readEnum("submode", KinematicSubmode.class,
-                KinematicSubmode.Animated);
-        prevBoneTransforms = RagUtils.readTransformArray(ic,
-                "prevBoneTransforms");
-        startBoneTransforms = RagUtils.readTransformArray(ic,
-                "startBoneTransforms");
-    }
 
     /**
      * Serialize this link, for example when saving to a J3O file.
@@ -373,80 +445,8 @@ public class BoneLink extends PhysicsLink {
         oc.write(prevBoneTransforms, "prevBoneTransforms", new Transform[0]);
         oc.write(startBoneTransforms, "startBoneTransforms", new Transform[0]);
     }
-
-    /**
-     * Update this link in Dynamic mode, setting the linked bone's transform
-     * based on the transform of the rigid body.
-     */
-    @Override
-    protected void dynamicUpdate() {
-        assert !getRigidBody().isKinematic();
-
-        Transform transform = localBoneTransform(null);
-        MySkeleton.setLocalTransform(getBone(), transform);
-
-        for (Bone managedBone : managedBones) {
-            managedBone.updateModelTransforms();
-        }
-    }
-
-    /**
-     * Update this link in blended Kinematic mode.
-     *
-     * @param tpf the time interval between frames (in seconds, &ge;0)
-     */
-    @Override
-    protected void kinematicUpdate(float tpf) {
-        assert tpf >= 0f : tpf;
-        assert getRigidBody().isKinematic();
-
-        Transform transform = new Transform();
-        for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
-            Bone managedBone = managedBones[mbIndex];
-            switch (submode) {
-                case Amputated:
-                    MySkeleton.copyBindTransform(managedBone, transform);
-                    transform.getScale().set(0.001f, 0.001f, 0.001f);
-                    break;
-                case Animated:
-                    MySkeleton.copyLocalTransform(managedBone, transform);
-                    break;
-                case Bound:
-                    MySkeleton.copyBindTransform(managedBone, transform);
-                    break;
-                case Frozen:
-                    transform.set(prevBoneTransforms[mbIndex]);
-                    break;
-                default:
-                    throw new IllegalStateException(submode.toString());
-            }
-
-            if (isKinematic()) {
-                /*
-                 * For a smooth transition, blend the saved bone transform
-                 * (from the start of the blend interval)
-                 * into the goal transform.
-                 */
-                Transform start = startBoneTransforms[mbIndex];
-                Quaternion startQuat = start.getRotation();
-                Quaternion endQuat = transform.getRotation();
-                if (startQuat.dot(endQuat) < 0f) {
-                    endQuat.multLocal(-1f);
-                }
-                MyMath.slerp(kinematicWeight(), startBoneTransforms[mbIndex],
-                        transform, transform);
-                // TODO smarter sign flipping for bones
-            }
-            /*
-             * Update the managed bone.
-             */
-            MySkeleton.setLocalTransform(managedBone, transform);
-            managedBone.updateModelTransforms();
-            // The rigid-body transform gets updated by prePhysicsTick().
-        }
-
-        super.kinematicUpdate(tpf);
-    }
+    // *************************************************************************
+    // private methods
 
     /**
      * Calculate the local bone transform to match the physics transform of the
