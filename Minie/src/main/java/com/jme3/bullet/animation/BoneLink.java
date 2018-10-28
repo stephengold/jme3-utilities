@@ -39,9 +39,11 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.export.Savable;
+import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Spatial;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -65,6 +67,10 @@ public class BoneLink extends PhysicsLink {
      */
     final public static Logger logger2
             = Logger.getLogger(BoneLink.class.getName());
+    /**
+     * local copy of {@link com.jme3.math.Matrix3f#IDENTITY}
+     */
+    final private static Matrix3f matrixIdentity = new Matrix3f();
     // *************************************************************************
     // fields
 
@@ -357,24 +363,42 @@ public class BoneLink extends PhysicsLink {
 
     /**
      * Assign a physics joint to this link and configure its range of motion.
-     * Also initialize the link's parent and array of managed bones.
+     * Also initialize the link's parent and its array of managed bones. TODO
+     * re-order methods
      *
-     * @param joint (not null, alias created)
+     * @param parentLink (not null, alias created)
      */
-    void setJoint(SixDofJoint joint) {
-        assert joint != null;
+    void addJoint(PhysicsLink parentLink) {
+        assert parentLink != null;
 
-        super.setJoint(joint);
-
-        Bone bone = getBone();
-        String parentName = getControl().findManager(bone);
-        PhysicsLink parentLink;
-        if (DynamicAnimControl.torsoName.equals(parentName)) {
-            parentLink = getControl().getTorsoLink();
-        } else {
-            parentLink = getControl().getBoneLink(parentName);
-        }
         setParent(parentLink);
+
+        Transform parentToWorld = parentLink.physicsTransform(null);
+        parentToWorld.setScale(1f);
+        Transform worldToParent = parentToWorld.invert();
+
+        Transform childToWorld = physicsTransform(null);
+        childToWorld.setScale(1f);
+
+        Transform childToParent = childToWorld.clone();
+        childToParent.combineWithParent(worldToParent);
+
+        Spatial transformer = getControl().getTransformer();
+        Vector3f pivotMesh = getBone().getModelSpacePosition();
+        Vector3f pivotWorld = transformer.localToWorld(pivotMesh, null);
+
+        PhysicsRigidBody parentBody = parentLink.getRigidBody();
+        PhysicsRigidBody childBody = getRigidBody();
+        Vector3f pivotParent
+                = parentToWorld.transformInverseVector(pivotWorld, null);
+        Vector3f pivotChild
+                = childToWorld.transformInverseVector(pivotWorld, null);
+        Matrix3f rotParent = childToParent.getRotation().toRotationMatrix();
+        Matrix3f rotChild = matrixIdentity;
+        // TODO try Point2PointJoint or HingeJoint
+        SixDofJoint joint = new SixDofJoint(parentBody, childBody, pivotParent,
+                pivotChild, rotParent, rotChild, true);
+        super.setJoint(joint);
 
         String name = getBoneName();
         RangeOfMotion rangeOfMotion = getControl().getJointLimits(name);

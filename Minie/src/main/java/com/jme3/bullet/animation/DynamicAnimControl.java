@@ -49,7 +49,6 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
-import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
@@ -104,10 +103,6 @@ public class DynamicAnimControl
      */
     final public static Logger logger3
             = Logger.getLogger(DynamicAnimControl.class.getName());
-    /**
-     * local copy of {@link com.jme3.math.Matrix3f#IDENTITY}
-     */
-    final private static Matrix3f matrixIdentity = new Matrix3f();
     /**
      * local copy of {@link com.jme3.math.Quaternion#IDENTITY}
      */
@@ -1320,46 +1315,17 @@ public class DynamicAnimControl
      * @param parentName the name of the parent link (not null)
      */
     private void addJoints(String parentName) {
-        PhysicsRigidBody parentBody = getRigidBody(parentName);
-
         PhysicsLink parentLink;
         if (torsoName.equals(parentName)) {
             parentLink = torsoLink;
         } else {
             parentLink = getBoneLink(parentName);
         }
-        Transform parentToWorld = parentLink.physicsTransform(null);
-        parentToWorld.setScale(1f);
-        Transform worldToParent = parentToWorld.invert();
 
         List<String> childNames = childNames(parentName);
         for (String childName : childNames) {
-            Bone childBone = getBone(childName);
             BoneLink childLink = getBoneLink(childName);
-            PhysicsRigidBody childBody = childLink.getRigidBody();
-
-            // TODO move some of this to BoneLink.setJoint()
-            Transform childToWorld = childLink.physicsTransform(null);
-            childToWorld.setScale(1f);
-
-            Transform childToParent = childToWorld.clone();
-            childToParent.combineWithParent(worldToParent);
-
-            Vector3f pivotMesh = childBone.getModelSpacePosition();
-            Vector3f pivotWorld = transformer.localToWorld(pivotMesh, null);
-            Vector3f pivotChild
-                    = childToWorld.transformInverseVector(pivotWorld, null);
-            Vector3f pivotParent
-                    = parentToWorld.transformInverseVector(pivotWorld, null);
-
-            Matrix3f rotChild = matrixIdentity;
-            Matrix3f rotParent = childToParent.getRotation().toRotationMatrix();
-
-            // TODO try Point2PointJoint or HingeJoint
-            SixDofJoint joint = new SixDofJoint(parentBody, childBody,
-                    pivotParent, pivotChild, rotParent, rotChild, true);
-            assert childLink.getJoint() == null;
-            childLink.setJoint(joint);
+            childLink.addJoint(parentLink);
             /*
              * Add the BoneLink to the pre-order list. TODO attachment links?
              */
@@ -1405,7 +1371,7 @@ public class DynamicAnimControl
     }
 
     /**
-     * Create a jointed AttachmentLink for the named bone, and add it to the
+     * Create a jointed AttachmentLink for the named bone and add it to the
      * attachLinks map.
      *
      * @param boneName the name of the attachment bone to be linked (not null)
