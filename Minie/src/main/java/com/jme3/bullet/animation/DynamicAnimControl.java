@@ -452,6 +452,16 @@ public class DynamicAnimControl
     }
 
     /**
+     * Access the physics link for the torso. Returns null if the control is not
+     * added to a spatial.
+     *
+     * @return the pre-existing spatial, or null
+     */
+    public TorsoLink getTorsoLink() {
+        return torsoLink;
+    }
+
+    /**
      * Access the spatial with the mesh-coordinate transform. Returns null if
      * the control is not added to a spatial.
      *
@@ -459,16 +469,6 @@ public class DynamicAnimControl
      */
     Spatial getTransformer() {
         return transformer;
-    }
-
-    /**
-     * Access the physics link for the torso. Returns null if the control is not
-     * added to a spatial. TODO re-order methods
-     *
-     * @return the pre-existing spatial, or null
-     */
-    public TorsoLink getTorsoLink() {
-        return torsoLink;
     }
 
     /**
