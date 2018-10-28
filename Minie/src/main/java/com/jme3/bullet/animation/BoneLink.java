@@ -121,6 +121,60 @@ public class BoneLink extends PhysicsLink {
     // new methods exposed
 
     /**
+     * Add a physics joint to this link and configure its range of motion. Also
+     * initialize the link's parent and its array of managed bones.
+     *
+     * @param parentLink (not null, alias created)
+     */
+    void addJoint(PhysicsLink parentLink) {
+        assert parentLink != null;
+
+        setParent(parentLink);
+
+        Transform parentToWorld = parentLink.physicsTransform(null);
+        parentToWorld.setScale(1f);
+        Transform worldToParent = parentToWorld.invert();
+
+        Transform childToWorld = physicsTransform(null);
+        childToWorld.setScale(1f);
+
+        Transform childToParent = childToWorld.clone();
+        childToParent.combineWithParent(worldToParent);
+
+        Spatial transformer = getControl().getTransformer();
+        Vector3f pivotMesh = getBone().getModelSpacePosition();
+        Vector3f pivotWorld = transformer.localToWorld(pivotMesh, null);
+
+        PhysicsRigidBody parentBody = parentLink.getRigidBody();
+        PhysicsRigidBody childBody = getRigidBody();
+        Vector3f pivotParent
+                = parentToWorld.transformInverseVector(pivotWorld, null);
+        Vector3f pivotChild
+                = childToWorld.transformInverseVector(pivotWorld, null);
+        Matrix3f rotParent = childToParent.getRotation().toRotationMatrix();
+        Matrix3f rotChild = matrixIdentity;
+        // TODO try Point2PointJoint or HingeJoint
+        SixDofJoint joint = new SixDofJoint(parentBody, childBody, pivotParent,
+                pivotChild, rotParent, rotChild, true);
+        super.setJoint(joint);
+
+        String name = getBoneName();
+        RangeOfMotion rangeOfMotion = getControl().getJointLimits(name);
+        rangeOfMotion.setupJoint(joint, false, false, false);
+
+        joint.setCollisionBetweenLinkedBodies(false);
+
+        assert managedBones == null;
+        managedBones = getControl().listManagedBones(name);
+
+        int numManagedBones = managedBones.length;
+        startBoneTransforms = new Transform[numManagedBones];
+        for (int i = 0; i < numManagedBones; i++) {
+            startBoneTransforms[i] = new Transform();
+        }
+    }
+
+    /**
      * Begin blending this link to a fully kinematic mode. TODO publicize
      *
      * @param submode enum value (not null)
@@ -359,61 +413,6 @@ public class BoneLink extends PhysicsLink {
                 "prevBoneTransforms");
         startBoneTransforms = RagUtils.readTransformArray(ic,
                 "startBoneTransforms");
-    }
-
-    /**
-     * Assign a physics joint to this link and configure its range of motion.
-     * Also initialize the link's parent and its array of managed bones. TODO
-     * re-order methods
-     *
-     * @param parentLink (not null, alias created)
-     */
-    void addJoint(PhysicsLink parentLink) {
-        assert parentLink != null;
-
-        setParent(parentLink);
-
-        Transform parentToWorld = parentLink.physicsTransform(null);
-        parentToWorld.setScale(1f);
-        Transform worldToParent = parentToWorld.invert();
-
-        Transform childToWorld = physicsTransform(null);
-        childToWorld.setScale(1f);
-
-        Transform childToParent = childToWorld.clone();
-        childToParent.combineWithParent(worldToParent);
-
-        Spatial transformer = getControl().getTransformer();
-        Vector3f pivotMesh = getBone().getModelSpacePosition();
-        Vector3f pivotWorld = transformer.localToWorld(pivotMesh, null);
-
-        PhysicsRigidBody parentBody = parentLink.getRigidBody();
-        PhysicsRigidBody childBody = getRigidBody();
-        Vector3f pivotParent
-                = parentToWorld.transformInverseVector(pivotWorld, null);
-        Vector3f pivotChild
-                = childToWorld.transformInverseVector(pivotWorld, null);
-        Matrix3f rotParent = childToParent.getRotation().toRotationMatrix();
-        Matrix3f rotChild = matrixIdentity;
-        // TODO try Point2PointJoint or HingeJoint
-        SixDofJoint joint = new SixDofJoint(parentBody, childBody, pivotParent,
-                pivotChild, rotParent, rotChild, true);
-        super.setJoint(joint);
-
-        String name = getBoneName();
-        RangeOfMotion rangeOfMotion = getControl().getJointLimits(name);
-        rangeOfMotion.setupJoint(joint, false, false, false);
-
-        joint.setCollisionBetweenLinkedBodies(false);
-
-        assert managedBones == null;
-        managedBones = getControl().listManagedBones(name);
-
-        int numManagedBones = managedBones.length;
-        startBoneTransforms = new Transform[numManagedBones];
-        for (int i = 0; i < numManagedBones; i++) {
-            startBoneTransforms[i] = new Transform();
-        }
     }
 
     /**
