@@ -101,7 +101,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     private Map<String, Spatial> attachModelMap = new HashMap<>(5);
     /**
      * gravitational acceleration vector for ragdolls (default is 9.8 in the -Y
-     * direction, corresponding to Earth-normal in MKS units)
+     * direction, approximating Earth-normal in MKS units)
      */
     private Vector3f gravityVector = new Vector3f(0f, -9.8f, 0f);
     // *************************************************************************
@@ -612,31 +612,47 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
+     * Find the manager of the specified bone.
+     *
+     * @param bone the bone (not null, unaffected)
+     * @return a bone/torso link name (not null)
+     */
+    protected String findManager(Bone bone) {
+        Validate.nonNull(bone, "bone");
+
+        String managerName;
+        while (true) {
+            String boneName = bone.getName();
+            if (isBoneLinkName(boneName)) {
+                managerName = boneName;
+                break;
+            }
+            bone = bone.getParent();
+            if (bone == null) {
+                managerName = torsoName;
+                break;
+            }
+        }
+
+        assert managerName != null;
+        return managerName;
+    }
+
+    /**
      * Create a map from bone indices to the names of the bone/torso links that
      * manage them.
      *
      * @param skeleton (not null, unaffected)
-     * @return a new array of link names
+     * @return a new array of link names (not null)
      */
     protected String[] managerMap(Skeleton skeleton) {
         int numBones = skeleton.getBoneCount();
-        String[] nameArray = new String[numBones];
+        String[] managerMap = new String[numBones];
         for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
             Bone bone = skeleton.getBone(boneIndex);
-            while (true) {
-                String boneName = bone.getName();
-                if (isBoneLinkName(boneName)) {
-                    nameArray[boneIndex] = boneName;
-                    break;
-                }
-                bone = bone.getParent();
-                if (bone == null) {
-                    nameArray[boneIndex] = torsoName;
-                    break;
-                }
-            }
+            managerMap[boneIndex] = findManager(bone);
         }
 
-        return nameArray;
+        return managerMap;
     }
 }
