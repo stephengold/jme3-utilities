@@ -157,7 +157,7 @@ public class AttachmentLink extends PhysicsLink {
         joint.setCollisionBetweenLinkedBodies(false);
     }
     // *************************************************************************
-    // new methods exposed TODO re-order methods
+    // new methods exposed
 
     /**
      * Begin blending this link to a fully kinematic mode.
@@ -184,6 +184,48 @@ public class AttachmentLink extends PhysicsLink {
     }
 
     /**
+     * Access the attached model (not the attachment node).
+     *
+     * @return the pre-existing instance (not null)
+     */
+    public Spatial getAttachedModel() {
+        assert attachedModel != null;
+        return attachedModel;
+    }
+    // *************************************************************************
+    // PhysicsLink methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned link into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this link (not null)
+     * @param original the instance from which this link was shallow-cloned
+     * (unused)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+
+        attachedModel = cloner.clone(attachedModel);
+        endModelTransform = cloner.clone(endModelTransform);
+        startModelTransform = cloner.clone(startModelTransform);
+    }
+
+    /**
+     * Update this link in Dynamic mode, setting the local transform of the
+     * attached model based on the transform of the linked rigid body.
+     */
+    @Override
+    protected void dynamicUpdate() {
+        assert !getRigidBody().isKinematic();
+
+        Transform transform = localModelTransform(null);
+        attachedModel.setLocalTransform(transform);
+    }
+
+    /**
      * Immediately freeze this link.
      */
     @Override
@@ -196,13 +238,49 @@ public class AttachmentLink extends PhysicsLink {
     }
 
     /**
-     * Access the attached model (not the attachment node).
+     * Create a shallow clone for the JME cloner.
      *
-     * @return the pre-existing instance (not null)
+     * @return a new instance
      */
-    public Spatial getAttachedModel() {
-        assert attachedModel != null;
-        return attachedModel;
+    @Override
+    public AttachmentLink jmeClone() {
+        try {
+            AttachmentLink clone = (AttachmentLink) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    /**
+     * Update this link in blended Kinematic mode.
+     *
+     * @param tpf the time interval between frames (in seconds, &ge;0)
+     */
+    @Override
+    protected void kinematicUpdate(float tpf) {
+        assert tpf >= 0f : tpf;
+        assert getRigidBody().isKinematic();
+
+        Transform transform = new Transform();
+
+        if (endModelTransform != null && isKinematic()) {
+            /*
+             * For a smooth transition, blend the saved model transform
+             * (from the start of the blend interval) into the goal transform.
+             */
+            Quaternion startQuat = startModelTransform.getRotation();
+            Quaternion endQuat = endModelTransform.getRotation();
+            if (startQuat.dot(endQuat) < 0f) {
+                endQuat.multLocal(-1f);
+            }
+            MyMath.slerp(kinematicWeight(), startModelTransform,
+                    endModelTransform, transform);
+            attachedModel.setLocalTransform(transform);
+        }
+        // The rigid-body transform gets updated by prePhysicsTick().
+
+        super.kinematicUpdate(tpf);
     }
 
     /**
@@ -256,43 +334,6 @@ public class AttachmentLink extends PhysicsLink {
                 = (Transform) Misc.deepCopy(oldLink.endModelTransform);
         startModelTransform.set(oldLink.startModelTransform);
     }
-    // *************************************************************************
-    // JmeCloneable methods
-
-    /**
-     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
-     * shallow-cloned link into a deep-cloned one, using the specified cloner
-     * and original to resolve copied fields.
-     *
-     * @param cloner the cloner that's cloning this link (not null)
-     * @param original the instance from which this link was shallow-cloned
-     * (unused)
-     */
-    @Override
-    public void cloneFields(Cloner cloner, Object original) {
-        super.cloneFields(cloner, original);
-
-        attachedModel = cloner.clone(attachedModel);
-        endModelTransform = cloner.clone(endModelTransform);
-        startModelTransform = cloner.clone(startModelTransform);
-    }
-
-    /**
-     * Create a shallow clone for the JME cloner.
-     *
-     * @return a new instance
-     */
-    @Override
-    public AttachmentLink jmeClone() {
-        try {
-            AttachmentLink clone = (AttachmentLink) super.clone();
-            return clone;
-        } catch (CloneNotSupportedException exception) {
-            throw new RuntimeException(exception);
-        }
-    }
-    // *************************************************************************
-    // Savable methods
 
     /**
      * De-serialize this link, for example when loading from a J3O file.
@@ -327,49 +368,8 @@ public class AttachmentLink extends PhysicsLink {
         oc.write(endModelTransform, "endModelTransform", null);
         oc.write(startModelTransform, "startModelTransform", null);
     }
-
-    /**
-     * Update this link in Dynamic mode, setting the local transform of the
-     * attached model based on the transform of the linked rigid body.
-     */
-    @Override
-    protected void dynamicUpdate() {
-        assert !getRigidBody().isKinematic();
-
-        Transform transform = localModelTransform(null);
-        attachedModel.setLocalTransform(transform);
-    }
-
-    /**
-     * Update this link in blended Kinematic mode.
-     *
-     * @param tpf the time interval between frames (in seconds, &ge;0)
-     */
-    @Override
-    protected void kinematicUpdate(float tpf) {
-        assert tpf >= 0f : tpf;
-        assert getRigidBody().isKinematic();
-
-        Transform transform = new Transform();
-
-        if (endModelTransform != null && isKinematic()) {
-            /*
-             * For a smooth transition, blend the saved model transform
-             * (from the start of the blend interval) into the goal transform.
-             */
-            Quaternion startQuat = startModelTransform.getRotation();
-            Quaternion endQuat = endModelTransform.getRotation();
-            if (startQuat.dot(endQuat) < 0f) {
-                endQuat.multLocal(-1f);
-            }
-            MyMath.slerp(kinematicWeight(), startModelTransform,
-                    endModelTransform, transform);
-            attachedModel.setLocalTransform(transform);
-        }
-        // The rigid-body transform gets updated by prePhysicsTick().
-
-        super.kinematicUpdate(tpf);
-    }
+    // *************************************************************************
+    // private methods
 
     /**
      * Calculate the local transform for the attached model to match the physics
