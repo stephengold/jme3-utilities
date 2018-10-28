@@ -368,7 +368,7 @@ public class TuneDac extends ActionApplication {
             motorVelocitySign = 1;
 
             BoneLink link = dac.getBoneLink(wiggleBoneName);
-            SixDofJoint joint = link.getJoint();
+            SixDofJoint joint = (SixDofJoint) link.getJoint();
             JointPreset newPreset = new JointPreset(axisIndex);
             newPreset.setupJoint(joint, false, false, false);
             motor = joint.getRotationalLimitMotor(axisIndex);
@@ -397,7 +397,7 @@ public class TuneDac extends ActionApplication {
                 dac.setDynamic(name, new Vector3f(0f, 0f, 0f), false, false,
                         false);
                 BoneLink link = dac.getBoneLink(wiggleBoneName);
-                SixDofJoint joint = link.getJoint();
+                SixDofJoint joint = (SixDofJoint) link.getJoint();
                 JointPreset newPreset = new JointPreset();
                 newPreset.setupJoint(joint, false, false, false);
             }

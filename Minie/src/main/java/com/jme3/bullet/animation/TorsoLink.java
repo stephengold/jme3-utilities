@@ -43,7 +43,6 @@ import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.util.clone.Cloner;
-import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
@@ -53,57 +52,33 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
- * Link the torso of an animated model to a rigid body in a ragdoll. TODO
- * superclass shared by all links
+ * Link the torso of an animated model to a rigid body in a ragdoll.
  *
  * @author Stephen Gold sgold@sonic.net
  *
  * Based on KinematicRagdollControl by Normen Hansen and Rémy Bouquet (Nehon).
  */
-public class TorsoLink
-        implements JmeCloneable, Savable {
+public class TorsoLink extends PhysicsLink {
     // *************************************************************************
     // constants and loggers
 
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(TorsoLink.class.getName());
     // *************************************************************************
     // fields
 
-    /**
-     * main bone in the skeleton: the root bone with the most animation weight
-     * (not null)
-     */
-    private Bone bone;
     /**
      * bones managed by this link, in a pre-order, depth-first traversal of the
      * skeleton
      */
     private Bone[] managedBones = null;
     /**
-     * back pointer to the control that manages this link
-     */
-    private DynamicAnimControl control;
-    /**
-     * duration of the most recent blend interval (in seconds, &ge;0)
-     */
-    private float blendInterval = 1f;
-    /**
-     * weighting of kinematic movement (&ge;0, &le;1, 0=purely dynamic, 1=purely
-     * kinematic, default=1, progresses from 0 to 1 during the blend interval)
-     */
-    private float kinematicWeight = 1f;
-    /**
      * submode when kinematic
      */
     private KinematicSubmode submode = KinematicSubmode.Animated;
-    /**
-     * linked rigid body in the ragdoll (not null)
-     */
-    private PhysicsRigidBody rigidBody;
     /**
      * local transform for the controlled spatial at the end of this link's most
      * recent blend interval, or null for no spatial blending
@@ -127,10 +102,6 @@ public class TorsoLink
      * blend interval
      */
     private Transform[] startBoneTransforms = null;
-    /**
-     * location of the rigid body's center (in the bone's local coordinates)
-     */
-    private Vector3f localOffset;
     // *************************************************************************
     // constructors
 
@@ -158,21 +129,9 @@ public class TorsoLink
     TorsoLink(DynamicAnimControl control, Bone mainBone,
             PhysicsRigidBody rigidBody, Transform meshToModel,
             Vector3f localOffset) {
-        assert control != null;
-        assert mainBone != null;
-        assert rigidBody != null;
-        assert meshToModel != null;
-        assert localOffset != null;
+        super(control, mainBone.getName(), rigidBody, localOffset);
 
-        this.control = control;
-        this.bone = mainBone;
-        this.rigidBody = rigidBody;
         this.meshToModel = meshToModel.clone();
-        this.localOffset = localOffset.clone();
-
-        kinematicWeight = 1f;
-        rigidBody.setKinematic(true);
-        rigidBody.setUserObject(this);
 
         managedBones = control.listManagedBones(DynamicAnimControl.torsoName);
 
@@ -183,7 +142,7 @@ public class TorsoLink
         }
     }
     // *************************************************************************
-    // new methods exposed
+    // new methods exposed TODO re-order methods
 
     /**
      * Begin blending this link to a fully kinematic mode. TODO publicize
@@ -200,16 +159,15 @@ public class TorsoLink
         assert submode != null;
         assert blendInterval >= 0f : blendInterval;
 
+        super.blendToKinematicMode(blendInterval);
+
         this.submode = submode;
-        this.blendInterval = blendInterval;
         this.endModelTransform = endModelTransform;
-        kinematicWeight = Float.MIN_VALUE; // non-zero to trigger blending
-        rigidBody.setKinematic(true);
         /*
          * Save initial transforms for blending.
          */
         if (endModelTransform != null) {
-            Transform current = control.getSpatial().getLocalTransform();
+            Transform current = getControl().getSpatial().getLocalTransform();
             startModelTransform.set(current);
         }
         int numManagedBones = managedBones.length;
@@ -240,54 +198,9 @@ public class TorsoLink
     /**
      * Immediately freeze this link.
      */
+    @Override
     void freeze() {
         blendToKinematicMode(KinematicSubmode.Frozen, 0f, null);
-    }
-
-    /**
-     * Access the main bone.
-     *
-     * @return the pre-existing instance (not null)
-     */
-    public Bone getBone() {
-        assert bone != null;
-        return bone;
-    }
-
-    /**
-     * Access the linked rigid body.
-     *
-     * @return the pre-existing instance (not null)
-     */
-    public PhysicsRigidBody getRigidBody() {
-        assert rigidBody != null;
-        return rigidBody;
-    }
-
-    /**
-     * Copy the local offset of this link.
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return the offset (in bone local coordinates, either storeResult or a
-     * new vector, not null)
-     */
-    Vector3f localOffset(Vector3f storeResult) {
-        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
-        result.set(localOffset);
-        return result;
-    }
-
-    /**
-     * Calculate a physics transform for the rigid body.
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return the calculated transform (in physics coordinates, either
-     * storeResult or a new transform, not null)
-     */
-    public Transform physicsTransform(Transform storeResult) {
-        Transform result
-                = control.physicsTransform(bone, localOffset, storeResult);
-        return result;
     }
 
     /**
@@ -297,12 +210,10 @@ public class TorsoLink
      * @param oldLink the link to copy from (not null, unaffected)
      */
     void postRebuild(TorsoLink oldLink) {
-        assert oldLink.bone == bone;
         int numManagedBones = managedBones.length;
         assert oldLink.managedBones.length == numManagedBones;
 
-        blendInterval = oldLink.blendInterval;
-        kinematicWeight = oldLink.kinematicWeight;
+        super.postRebuild(oldLink);
         submode = oldLink.submode;
         endModelTransform
                 = (Transform) Misc.deepCopy(oldLink.endModelTransform);
@@ -318,22 +229,6 @@ public class TorsoLink
             prevBoneTransforms[i].set(oldLink.prevBoneTransforms[i]);
             startBoneTransforms[i].set(oldLink.startBoneTransforms[i]);
         }
-
-        rigidBody.setKinematic(oldLink.rigidBody.isKinematic());
-    }
-
-    /**
-     * Internal callback, invoked just before the physics is stepped.
-     */
-    void prePhysicsTick() {
-        if (kinematicWeight > 0f) {
-            /*
-             * Update the rigid body's transform, including
-             * the scale of its shape.
-             */
-            Transform transform = physicsTransform(null);
-            rigidBody.setPhysicsTransform(transform);
-        }
     }
 
     /**
@@ -342,12 +237,11 @@ public class TorsoLink
      * @param uniformAcceleration the uniform acceleration vector (in
      * physics-space coordinates, not null, unaffected)
      */
+    @Override
     public void setDynamic(Vector3f uniformAcceleration) {
         Validate.nonNull(uniformAcceleration, "uniform acceleration");
 
-        kinematicWeight = 0f;
-        rigidBody.setGravity(uniformAcceleration);
-        rigidBody.setKinematic(false);
+        super.setDynamic(uniformAcceleration);
 
         for (Bone managedBone : managedBones) {
             managedBone.setUserControl(true);
@@ -360,6 +254,7 @@ public class TorsoLink
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
+    @Override
     void update(float tpf) {
         assert tpf >= 0f : tpf;
 
@@ -379,11 +274,7 @@ public class TorsoLink
             }
         }
 
-        if (kinematicWeight > 0f) {
-            kinematicUpdate(tpf);
-        } else {
-            dynamicUpdate();
-        }
+        super.update(tpf);
         /*
          * Save copies of the latest bone transforms.
          */
@@ -407,16 +298,14 @@ public class TorsoLink
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
-        bone = cloner.clone(bone);
+        super.cloneFields(cloner, original);
+
         managedBones = cloner.clone(managedBones);
-        control = cloner.clone(control);
-        rigidBody = cloner.clone(rigidBody);
         endModelTransform = cloner.clone(endModelTransform);
         meshToModel = cloner.clone(meshToModel);
         prevBoneTransforms = cloner.clone(prevBoneTransforms);
         startBoneTransforms = cloner.clone(startBoneTransforms);
         startModelTransform = cloner.clone(startModelTransform);
-        localOffset = cloner.clone(localOffset);
     }
 
     /**
@@ -444,9 +333,8 @@ public class TorsoLink
      */
     @Override
     public void read(JmeImporter im) throws IOException {
+        super.read(im);
         InputCapsule ic = im.getCapsule(this);
-
-        bone = (Bone) ic.readSavable("bone", null);
 
         Savable[] tmp = ic.readSavableArray("managedBones", null);
         if (tmp == null) {
@@ -458,12 +346,8 @@ public class TorsoLink
             }
         }
 
-        control = (DynamicAnimControl) ic.readSavable("control", null);
-        blendInterval = ic.readFloat("blendInterval", 1f);
-        kinematicWeight = ic.readFloat("kinematicWeight", 1f);
         submode = ic.readEnum("submode", KinematicSubmode.class,
                 KinematicSubmode.Animated);
-        rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
         endModelTransform = (Transform) ic.readSavable("endModelTransform",
                 new Transform());
         meshToModel
@@ -474,7 +358,6 @@ public class TorsoLink
                 "prevBoneTransforms");
         startBoneTransforms = RagUtils.readTransformArray(ic,
                 "startBoneTransforms");
-        localOffset = (Vector3f) ic.readSavable("offset", new Vector3f());
     }
 
     /**
@@ -485,36 +368,29 @@ public class TorsoLink
      */
     @Override
     public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
         OutputCapsule oc = ex.getCapsule(this);
 
-        oc.write(bone, "bone", null);
         oc.write(managedBones, "managedBones", null);
-        oc.write(control, "control", null);
-        oc.write(blendInterval, "blendInterval", 1f);
-        oc.write(kinematicWeight, "kinematicWeight", 1f);
         oc.write(submode, "submode", KinematicSubmode.Animated);
-        oc.write(rigidBody, "rigidBody", null);
         oc.write(endModelTransform, "endModelTransforms", new Transform());
         oc.write(meshToModel, "meshToModel", new Transform());
         oc.write(startModelTransform, "startModelTransforms", new Transform());
         oc.write(prevBoneTransforms, "prevBoneTransforms", new Transform[0]);
         oc.write(startBoneTransforms, "startBoneTransforms", new Transform[0]);
-        oc.write(localOffset, "offset", new Vector3f());
     }
-    // *************************************************************************
-    // private methods
 
     /**
      * Update this link in Dynamic mode, setting the local transform of the
      * model's root spatial based on the transform of the linked rigid body.
      */
-    private void dynamicUpdate() {
-        assert !rigidBody.isKinematic();
+    @Override
+    protected void dynamicUpdate() {
         /*
          * Calculate the inverse world transform of the model's parent node.
          */
         Transform worldToParent;
-        Node parent = control.getSpatial().getParent();
+        Node parent = getControl().getSpatial().getParent();
         if (parent == null) {
             worldToParent = new Transform();
         } else {
@@ -523,13 +399,13 @@ public class TorsoLink
         }
 
         Transform transform = meshToModel.clone();
-        Transform shapeToWorld = rigidBody.getPhysicsTransform(null);
+        Transform shapeToWorld = getRigidBody().getPhysicsTransform(null);
         transform.combineWithParent(shapeToWorld);
         transform.combineWithParent(worldToParent);
-        control.getSpatial().setLocalTransform(transform);
+        getControl().getSpatial().setLocalTransform(transform);
 
         localBoneTransform(transform);
-        Bone[] rootBones = control.getSkeleton().getRoots();
+        Bone[] rootBones = getControl().getSkeleton().getRoots();
         for (Bone rootBone : rootBones) {
             MySkeleton.setLocalTransform(rootBone, transform);
         }
@@ -544,13 +420,14 @@ public class TorsoLink
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
-    private void kinematicUpdate(float tpf) {
+    @Override
+    protected void kinematicUpdate(float tpf) {
         assert tpf >= 0f : tpf;
-        assert rigidBody.isKinematic();
+        assert getRigidBody().isKinematic();
 
         Transform transform = new Transform();
 
-        if (endModelTransform != null && kinematicWeight < 1f) {
+        if (endModelTransform != null && isKinematic()) {
             /*
              * For a smooth transition, blend the saved model transform
              * (from the start of the blend interval) into the goal transform.
@@ -560,9 +437,9 @@ public class TorsoLink
             if (startQuat.dot(endQuat) < 0f) {
                 endQuat.multLocal(-1f);
             }
-            MyMath.slerp(kinematicWeight, startModelTransform,
+            MyMath.slerp(kinematicWeight(), startModelTransform,
                     endModelTransform, transform);
-            control.getSpatial().setLocalTransform(transform);
+            getControl().getSpatial().setLocalTransform(transform);
         }
 
         for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
@@ -585,7 +462,7 @@ public class TorsoLink
                     throw new IllegalStateException(submode.toString());
             }
 
-            if (kinematicWeight < 1f) {
+            if (isKinematic()) {
                 /*
                  * For a smooth transition, blend the saved bone transform
                  * (from the start of the blend interval)
@@ -597,7 +474,7 @@ public class TorsoLink
                 if (startQuat.dot(endQuat) < 0f) {
                     endQuat.multLocal(-1f);
                 }
-                MyMath.slerp(kinematicWeight, startBoneTransforms[mbIndex],
+                MyMath.slerp(kinematicWeight(), startBoneTransforms[mbIndex],
                         transform, transform);
                 // TODO smarter sign flipping for bones
             }
@@ -608,17 +485,8 @@ public class TorsoLink
             managedBone.updateModelTransforms();
             // The rigid-body transform gets updated by prePhysicsTick().
         }
-        /*
-         * If blending, increase the kinematic weight.
-         */
-        if (blendInterval == 0f) {
-            kinematicWeight = 1f; // done blending
-        } else {
-            kinematicWeight += tpf / blendInterval;
-            if (kinematicWeight > 1f) {
-                kinematicWeight = 1f; // done blending
-            }
-        }
+
+        super.kinematicUpdate(tpf);
     }
 
     /**
@@ -636,18 +504,18 @@ public class TorsoLink
         Quaternion orientation = result.getRotation();
         Vector3f scale = result.getScale();
         /*
-         * Start with the body's transform in physics/world coordinates.
+         * Start with the rigid body's transform in physics/world coordinates.
          */
-        rigidBody.getPhysicsTransform(result);
+        getRigidBody().getPhysicsTransform(result);
         /*
          * Convert to mesh coordinates.
          */
-        Transform worldToMesh = control.meshTransform(null).invert();
+        Transform worldToMesh = getControl().meshTransform(null).invert();
         result.combineWithParent(worldToMesh);
         /*
          * Subtract the body's local offset, rotated and scaled.
          */
-        Vector3f meshOffset = localOffset.clone();
+        Vector3f meshOffset = localOffset(null);
         meshOffset.multLocal(scale);
         orientation.mult(meshOffset, meshOffset);
         location.subtractLocal(meshOffset);

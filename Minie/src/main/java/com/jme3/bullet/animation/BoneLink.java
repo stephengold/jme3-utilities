@@ -43,7 +43,6 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.util.clone.Cloner;
-import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.MySkeleton;
@@ -52,64 +51,32 @@ import jme3utilities.math.MyMath;
 
 /**
  * Link an animated bone in a skeleton to a jointed rigid body in a ragdoll.
- * TODO superclass shared by all links
  *
  * @author Stephen Gold sgold@sonic.net
  *
  * Based on KinematicRagdollControl by Normen Hansen and Rémy Bouquet (Nehon).
  */
-public class BoneLink
-        implements JmeCloneable, Savable {
+public class BoneLink extends PhysicsLink {
     // *************************************************************************
     // constants and loggers
 
     /**
      * message logger for this class
      */
-    final public static Logger logger
+    final public static Logger logger2
             = Logger.getLogger(BoneLink.class.getName());
     // *************************************************************************
     // fields
 
-    /**
-     * linked bone in the skeleton (not null)
-     */
-    private Bone bone;
     /**
      * bones managed by this link, in a pre-order, depth-first traversal of the
      * skeleton, starting with the linked bone
      */
     private Bone[] managedBones = null;
     /**
-     * back pointer to the control that manages this link
-     */
-    private DynamicAnimControl control;
-    /**
-     * duration of the most recent blend interval (in seconds, &ge;0)
-     */
-    private float blendInterval = 1f;
-    /**
-     * weighting of kinematic movement (&ge;0, &le;1, 0=purely dynamic, 1=purely
-     * kinematic, default=1, progresses from 0 to 1 during the blend interval)
-     */
-    private float kinematicWeight = 1f;
-    /**
      * submode when kinematic
      */
     private KinematicSubmode submode = KinematicSubmode.Animated;
-    /**
-     * linked rigid body in the ragdoll (not null)
-     */
-    private PhysicsRigidBody rigidBody;
-    /**
-     * joint between the rigid body and the parent's rigid body, or null if not
-     * yet created
-     */
-    private SixDofJoint joint = null;
-    /**
-     * name of parent in the link hierarchy (could be torsoBoneName)
-     */
-    private String parentName;
     /**
      * local transform of each managed bone from the previous update
      */
@@ -119,10 +86,6 @@ public class BoneLink
      * blend interval
      */
     private Transform[] startBoneTransforms = null;
-    /**
-     * location of the rigid body's center (in the bone's local coordinates)
-     */
-    private Vector3f localOffset;
     // *************************************************************************
     // constructors
 
@@ -146,26 +109,10 @@ public class BoneLink
      */
     BoneLink(DynamicAnimControl control, String boneName,
             PhysicsRigidBody rigidBody, Vector3f localOffset) {
-        assert control != null;
-        assert boneName != null;
-        assert !boneName.isEmpty();
-        assert rigidBody != null;
-        assert localOffset != null;
-
-        this.control = control;
-        bone = control.getSkeleton().getBone(boneName);
-        this.rigidBody = rigidBody;
-        this.localOffset = localOffset.clone();
-
-        kinematicWeight = 1f;
-        rigidBody.setKinematic(true);
-        rigidBody.setUserObject(this);
-
-        String name = bone.getName();
-        parentName = control.parentName(name);
+        super(control, boneName, rigidBody, localOffset);
     }
     // *************************************************************************
-    // new methods exposed
+    // new methods exposed TODO re-order methods
 
     /**
      * Begin blending this link to a fully kinematic mode. TODO publicize
@@ -178,10 +125,9 @@ public class BoneLink
         assert submode != null;
         assert blendInterval >= 0f : blendInterval;
 
+        super.blendToKinematicMode(blendInterval);
+
         this.submode = submode;
-        this.blendInterval = blendInterval;
-        kinematicWeight = Float.MIN_VALUE; // non-zero to trigger blending
-        rigidBody.setKinematic(true);
         /*
          * Save initial bone transforms for blending.
          */
@@ -213,77 +159,13 @@ public class BoneLink
     /**
      * Immediately freeze this link.
      */
+    @Override
     void freeze() {
-        if (kinematicWeight > 0f) {
+        if (isKinematic()) {
             blendToKinematicMode(KinematicSubmode.Frozen, 0f);
         } else {
             setDynamic(new Vector3f(0f, 0f, 0f), true, true, true);
         }
-    }
-
-    /**
-     * Access the linked bone.
-     *
-     * @return the pre-existing instance (not null)
-     */
-    public Bone getBone() {
-        assert bone != null;
-        return bone;
-    }
-
-    /**
-     * Access the joint between this link's rigid body and that of its parent.
-     *
-     * @return the pre-existing instance or null
-     */
-    public SixDofJoint getJoint() {
-        return joint;
-    }
-
-    /**
-     * Access the linked rigid body.
-     *
-     * @return the pre-existing instance (not null)
-     */
-    public PhysicsRigidBody getRigidBody() {
-        assert rigidBody != null;
-        return rigidBody;
-    }
-
-    /**
-     * Copy the local offset of this link.
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return the offset (in bone local coordinates, either storeResult or a
-     * new vector, not null)
-     */
-    Vector3f localOffset(Vector3f storeResult) {
-        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
-        result.set(localOffset);
-        return result;
-    }
-
-    /**
-     * Read the name of this link's parent in the link hierarchy.
-     *
-     * @return the link name (not null)
-     */
-    public String parentName() {
-        assert parentName != null;
-        return parentName;
-    }
-
-    /**
-     * Calculate a physics transform for the rigid body.
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return the calculated transform (in physics coordinates, either
-     * storeResult or a new transform, not null)
-     */
-    public Transform physicsTransform(Transform storeResult) {
-        Transform result
-                = control.physicsTransform(bone, localOffset, storeResult);
-        return result;
     }
 
     /**
@@ -293,12 +175,10 @@ public class BoneLink
      * @param oldLink the link to copy from (not null, unaffected)
      */
     void postRebuild(BoneLink oldLink) {
-        assert oldLink.bone.getName().equals(bone.getName());
         int numManagedBones = managedBones.length;
         assert oldLink.managedBones.length == numManagedBones;
 
-        blendInterval = oldLink.blendInterval;
-        kinematicWeight = oldLink.kinematicWeight;
+        super.postRebuild(oldLink);
         submode = oldLink.submode;
 
         if (prevBoneTransforms == null) {
@@ -310,22 +190,6 @@ public class BoneLink
         for (int i = 0; i < numManagedBones; i++) {
             prevBoneTransforms[i].set(oldLink.prevBoneTransforms[i]);
             startBoneTransforms[i].set(oldLink.startBoneTransforms[i]);
-        }
-
-        rigidBody.setKinematic(oldLink.rigidBody.isKinematic());
-    }
-
-    /**
-     * Internal callback, invoked just before the physics is stepped.
-     */
-    void prePhysicsTick() {
-        if (kinematicWeight > 0f) {
-            /*
-             * Update the rigid body's transform, including
-             * the scale of its shape.
-             */
-            Transform transform = physicsTransform(null);
-            rigidBody.setPhysicsTransform(transform);
         }
     }
 
@@ -342,13 +206,11 @@ public class BoneLink
             boolean lockY, boolean lockZ) {
         Validate.nonNull(uniformAcceleration, "uniform acceleration");
 
-        kinematicWeight = 0f;
-        rigidBody.setGravity(uniformAcceleration);
-        rigidBody.setKinematic(false);
+        super.setDynamic(uniformAcceleration);
 
-        String name = bone.getName();
-        JointPreset preset = control.getJointLimits(name);
-        preset.setupJoint(joint, lockX, lockY, lockZ);
+        String name = getBoneName();
+        JointPreset preset = getControl().getJointLimits(name);
+        preset.setupJoint((SixDofJoint) getJoint(), lockX, lockY, lockZ);
 
         for (Bone managedBone : managedBones) {
             managedBone.setUserControl(true);
@@ -357,24 +219,33 @@ public class BoneLink
 
     /**
      * Assign a physics joint to this link and configure its range of motion.
-     * Also initialize its array of managed bones.
+     * Also initialize the link's parent and array of managed bones.
      *
      * @param joint (not null, alias created)
      */
     void setJoint(SixDofJoint joint) {
         assert joint != null;
 
-        assert this.joint == null;
-        this.joint = joint;
+        super.setJoint(joint);
 
-        String name = bone.getName();
-        JointPreset rangeOfMotion = control.getJointLimits(name);
+        Bone bone = getBone();
+        String parentName = getControl().findManager(bone);
+        PhysicsLink parentLink;
+        if (DynamicAnimControl.torsoName.equals(parentName)) {
+            parentLink = getControl().getTorsoLink();
+        } else {
+            parentLink = getControl().getBoneLink(parentName);
+        }
+        setParent(parentLink);
+
+        String name = getBoneName();
+        JointPreset rangeOfMotion = getControl().getJointLimits(name);
         rangeOfMotion.setupJoint(joint, false, false, false);
 
         joint.setCollisionBetweenLinkedBodies(false);
 
         assert managedBones == null;
-        managedBones = control.listManagedBones(bone.getName());
+        managedBones = getControl().listManagedBones(name);
 
         int numManagedBones = managedBones.length;
         startBoneTransforms = new Transform[numManagedBones];
@@ -389,6 +260,7 @@ public class BoneLink
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
+    @Override
     void update(float tpf) {
         assert tpf >= 0f : tpf;
 
@@ -408,11 +280,7 @@ public class BoneLink
             }
         }
 
-        if (kinematicWeight > 0f) {
-            kinematicUpdate(tpf);
-        } else {
-            dynamicUpdate();
-        }
+        super.update(tpf);
         /*
          * Save copies of the latest bone transforms.
          */
@@ -436,14 +304,11 @@ public class BoneLink
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
-        bone = cloner.clone(bone);
+        super.cloneFields(cloner, original);
+
         managedBones = cloner.clone(managedBones);
-        control = cloner.clone(control);
-        rigidBody = cloner.clone(rigidBody);
-        joint = cloner.clone(joint);
         prevBoneTransforms = cloner.clone(prevBoneTransforms);
         startBoneTransforms = cloner.clone(startBoneTransforms);
-        localOffset = cloner.clone(localOffset);
     }
 
     /**
@@ -471,9 +336,8 @@ public class BoneLink
      */
     @Override
     public void read(JmeImporter im) throws IOException {
+        super.read(im);
         InputCapsule ic = im.getCapsule(this);
-
-        bone = (Bone) ic.readSavable("bone", null);
 
         Savable[] tmp = ic.readSavableArray("managedBones", null);
         if (tmp == null) {
@@ -485,19 +349,12 @@ public class BoneLink
             }
         }
 
-        control = (DynamicAnimControl) ic.readSavable("control", null);
-        blendInterval = ic.readFloat("blendInterval", 1f);
-        kinematicWeight = ic.readFloat("kinematicWeight", 1f);
         submode = ic.readEnum("submode", KinematicSubmode.class,
                 KinematicSubmode.Animated);
-        rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
-        joint = (SixDofJoint) ic.readSavable("joint", null);
-        parentName = ic.readString("parentName", null);
         prevBoneTransforms = RagUtils.readTransformArray(ic,
                 "prevBoneTransforms");
         startBoneTransforms = RagUtils.readTransformArray(ic,
                 "startBoneTransforms");
-        localOffset = (Vector3f) ic.readSavable("offset", new Vector3f());
     }
 
     /**
@@ -508,33 +365,25 @@ public class BoneLink
      */
     @Override
     public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
         OutputCapsule oc = ex.getCapsule(this);
 
-        oc.write(bone, "bone", null);
         oc.write(managedBones, "managedBones", null);
-        oc.write(control, "control", null);
-        oc.write(blendInterval, "blendInterval", 1f);
-        oc.write(kinematicWeight, "kinematicWeight", 1f);
         oc.write(submode, "submode", KinematicSubmode.Animated);
-        oc.write(rigidBody, "rigidBody", null);
-        oc.write(joint, "joint", null);
-        oc.write(parentName, "parentName", null);
         oc.write(prevBoneTransforms, "prevBoneTransforms", new Transform[0]);
         oc.write(startBoneTransforms, "startBoneTransforms", new Transform[0]);
-        oc.write(localOffset, "offset", new Vector3f());
     }
-    // *************************************************************************
-    // private methods
 
     /**
      * Update this link in Dynamic mode, setting the linked bone's transform
      * based on the transform of the rigid body.
      */
-    private void dynamicUpdate() {
-        assert !rigidBody.isKinematic();
+    @Override
+    protected void dynamicUpdate() {
+        assert !getRigidBody().isKinematic();
 
         Transform transform = localBoneTransform(null);
-        MySkeleton.setLocalTransform(bone, transform);
+        MySkeleton.setLocalTransform(getBone(), transform);
 
         for (Bone managedBone : managedBones) {
             managedBone.updateModelTransforms();
@@ -546,12 +395,12 @@ public class BoneLink
      *
      * @param tpf the time interval between frames (in seconds, &ge;0)
      */
-    private void kinematicUpdate(float tpf) {
+    @Override
+    protected void kinematicUpdate(float tpf) {
         assert tpf >= 0f : tpf;
-        assert rigidBody.isKinematic();
+        assert getRigidBody().isKinematic();
 
         Transform transform = new Transform();
-
         for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
             Bone managedBone = managedBones[mbIndex];
             switch (submode) {
@@ -572,7 +421,7 @@ public class BoneLink
                     throw new IllegalStateException(submode.toString());
             }
 
-            if (kinematicWeight < 1f) {
+            if (isKinematic()) {
                 /*
                  * For a smooth transition, blend the saved bone transform
                  * (from the start of the blend interval)
@@ -584,7 +433,7 @@ public class BoneLink
                 if (startQuat.dot(endQuat) < 0f) {
                     endQuat.multLocal(-1f);
                 }
-                MyMath.slerp(kinematicWeight, startBoneTransforms[mbIndex],
+                MyMath.slerp(kinematicWeight(), startBoneTransforms[mbIndex],
                         transform, transform);
                 // TODO smarter sign flipping for bones
             }
@@ -595,17 +444,8 @@ public class BoneLink
             managedBone.updateModelTransforms();
             // The rigid-body transform gets updated by prePhysicsTick().
         }
-        /*
-         * If blending, increase the kinematic weight.
-         */
-        if (blendInterval == 0f) {
-            kinematicWeight = 1f; // done blending
-        } else {
-            kinematicWeight += tpf / blendInterval;
-            if (kinematicWeight > 1f) {
-                kinematicWeight = 1f; // done blending
-            }
-        }
+
+        super.kinematicUpdate(tpf);
     }
 
     /**
@@ -623,19 +463,19 @@ public class BoneLink
         Quaternion orientation = result.getRotation();
         Vector3f scale = result.getScale();
         /*
-         * Start with the body's transform in physics/world coordinates.
+         * Start with the rigid body's transform in physics/world coordinates.
          */
-        rigidBody.getPhysicsTransform(result);
+        getRigidBody().getPhysicsTransform(result);
         /*
          * Convert to mesh coordinates.
          */
-        Transform worldToMesh = control.meshTransform(null).invert();
+        Transform worldToMesh = getControl().meshTransform(null).invert();
         result.combineWithParent(worldToMesh);
         /*
          * Convert to the bone's local coordinate system by factoring out the
          * parent bone's transform. TODO utility
          */
-        Bone parentBone = bone.getParent();
+        Bone parentBone = getBone().getParent();
         Vector3f pmTranslate = parentBone.getModelSpacePosition();
         Quaternion pmRotInv = parentBone.getModelSpaceRotation().inverse();
         Vector3f pmScale = parentBone.getModelSpaceScale();
@@ -647,7 +487,7 @@ public class BoneLink
         /*
          * Subtract the body's local offset, rotated and scaled.
          */
-        Vector3f parentOffset = localOffset.clone();
+        Vector3f parentOffset = localOffset(null);
         parentOffset.multLocal(scale);
         orientation.mult(parentOffset, parentOffset);
         location.subtractLocal(parentOffset);
