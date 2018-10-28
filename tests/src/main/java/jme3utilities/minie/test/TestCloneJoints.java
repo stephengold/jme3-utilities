@@ -212,6 +212,7 @@ public class TestCloneJoints extends SimpleApplication {
         tra.setMaxMotorForce(new Vector3f(0f, 0f, b + 0.20f));
         tra.setNormalCFM(new Vector3f(0f, 0f, b + 0.22f));
         tra.setStopCFM(new Vector3f(0f, 0f, b + 0.23f));
+        tra.setTargetVelocity(new Vector3f(0f, 0f, b + 0.24f));
     }
 
     private void setSlide(SliderJoint slide, float b) {
@@ -345,6 +346,7 @@ public class TestCloneJoints extends SimpleApplication {
         assert tra.getMaxMotorForce(null).z == b + 0.20f;
         assert tra.getNormalCFM(null).z == b + 0.22f;
         assert tra.getStopCFM(null).z == b + 0.23f;
+        assert tra.getTargetVelocity(null).z == b + 0.24f;
     }
 
     private void verifySlide(SliderJoint slide, float b) {

@@ -207,6 +207,19 @@ public class TranslationalLimitMotor {
     }
 
     /**
+     * Copy this motor's target velocity (m_targetVelocity).
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the target velocity vector (either storeResult or a new instance)
+     */
+    public Vector3f getTargetVelocity(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getTargetVelocity(motorId, result);
+
+        return result;
+    }
+
+    /**
      * Copy this motor's constraint upper limits (m_upperLimit). TODO
      * standardize
      *
@@ -220,7 +233,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter the accumulated impulse (m_accumulatedImpulse). TODO standardize
+     * Alter the accumulated impulse (m_accumulatedImpulse).
      *
      * @param accumulatedImpulse the desired vector (not null, unaffected)
      */
@@ -240,7 +253,6 @@ public class TranslationalLimitMotor {
 
     /**
      * Alter this motor's error-reduction parameters at the limits (m_stopERP).
-     * TODO standardize
      *
      * @param erp the desired error-reduction parameter parameter for each axis
      * (not null, unaffected)
@@ -259,8 +271,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter this motor's constraint lower limits (m_lowerLimit). TODO
-     * standardize
+     * Alter this motor's constraint lower limits (m_lowerLimit).
      *
      * @param lowerLimit the desired limit value for each axis (unaffected, not
      * null, default=0,0,0)
@@ -270,7 +281,7 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter this motor's maximum forces (m_maxMotorForce). TODO standardize
+     * Alter this motor's maximum forces (m_maxMotorForce).
      *
      * @param maxForce the desired maximum force for each axis (not null,
      * unaffected)
@@ -281,7 +292,7 @@ public class TranslationalLimitMotor {
 
     /**
      * Alter this motor's constraint-force mixing parameters for normal
-     * conditions (m_normalCFM). TODO standardize
+     * conditions (m_normalCFM).
      *
      * @param cfm the desired mixing parameter for each axis (not null,
      * unaffected)
@@ -311,17 +322,16 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Alter this motor's target velocity (m_targetVelocity). TODO standardize
+     * Alter this motor's target velocity (m_targetVelocity).
      *
-     * @param velocity the desired velocity (not null, unaffected)
+     * @param velocity the desired velocity vector (not null, unaffected)
      */
     public void setTargetVelocity(Vector3f velocity) {
         setTargetVelocity(motorId, velocity);
     }
 
     /**
-     * Alter this motor's constraint upper limits (m_upperLimit). TODO
-     * standardize
+     * Alter this motor's constraint upper limits (m_upperLimit).
      *
      * @param upperLimit the desired limit value for each axis (unaffected, not
      * null)
@@ -351,6 +361,8 @@ public class TranslationalLimitMotor {
     native private float getRestitution(long motorId);
 
     native private void getStopCFM(long motorId, Vector3f vector);
+
+    native private void getTargetVelocity(long motorId, Vector3f velocity);
 
     native private void getUpperLimit(long motorId, Vector3f vector);
 

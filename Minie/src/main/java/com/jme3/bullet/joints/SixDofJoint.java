@@ -413,6 +413,7 @@ public class SixDofJoint extends PhysicsJoint {
         tlm.setNormalCFM(oldTlm.getNormalCFM(null));
         tlm.setRestitution(oldTlm.getRestitution());
         tlm.setStopCFM(oldTlm.getStopCFM(null));
+        tlm.setTargetVelocity(oldTlm.getTargetVelocity(null));
         tlm.setUpperLimit(oldTlm.getUpperLimit());
 
         for (int i = 0; i < 3; i++) {
