@@ -139,10 +139,9 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
 
     /**
      * Reactivates this body if it has been deactivated due to lack of motion.
-     * TODO move to PhysicsCollisionObject and add "force" option
      */
     public void activate() {
-        activate(objectId);
+        activate(true);
         assert isActive();
     }
 
@@ -1091,8 +1090,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
     // *************************************************************************
     // private methods
-
-    native private void activate(long objectId);
 
     native private void applyCentralForce(long objectId, Vector3f force);
 

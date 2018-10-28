@@ -164,6 +164,15 @@ abstract public class PhysicsCollisionObject
     // new methods exposed
 
     /**
+     * Reactivate this object if it has been deactivated due to lack of motion.
+     *
+     * @param forceFlag true to force activation
+     */
+    public void activate(boolean forceFlag) {
+        activate(objectId, forceFlag);
+    }
+
+    /**
      * Apply the specified CollisionShape to this object. Note that the object
      * should not be in any physics space while changing shape; the object gets
      * rebuilt on the physics side.
@@ -432,6 +441,8 @@ abstract public class PhysicsCollisionObject
     }
     // *************************************************************************
     // private methods
+
+    native private void activate(long objectId, boolean forceFlag);
 
     native private void initUserPointer(long objectId, int group, int groups);
 
