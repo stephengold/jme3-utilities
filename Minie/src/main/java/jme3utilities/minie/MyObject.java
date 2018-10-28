@@ -32,7 +32,9 @@ import com.jme3.bullet.objects.PhysicsCharacter;
 import com.jme3.bullet.objects.PhysicsGhostObject;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.objects.PhysicsVehicle;
+import com.jme3.scene.Spatial;
 import java.util.logging.Logger;
+import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
@@ -64,7 +66,7 @@ public class MyObject {
      * Briefly describe a rigid body for MyControlP or PhysicsDumper.
      *
      * @param body (not null, unaffected)
-     * @return a descriptive string (not not, not empty)
+     * @return a descriptive string (not null, not empty)
      */
     public static String describe(PhysicsRigidBody body) {
         String result;
@@ -83,10 +85,35 @@ public class MyObject {
     }
 
     /**
+     * Describe the user of a collision object.
+     *
+     * @param pco the collision object to describe (not null, unaffected)
+     * @return a descriptive string (not null)
+     */
+    public static String describeUser(PhysicsCollisionObject pco) {
+        Validate.nonNull(pco, "collision object");
+
+        StringBuilder builder = new StringBuilder(32);
+        Object user = pco.getUserObject();
+        if (user != null) {
+            builder.append(" user=");
+            builder.append(user.getClass().getSimpleName());
+            if (user instanceof Spatial) {
+                Spatial spatial = (Spatial) user;
+                String name = spatial.getName();
+                String text = MyString.quote(name);
+                builder.append(text);
+            }
+        }
+
+        return builder.toString();
+    }
+
+    /**
      * Generate a name for the specified physics object.
      *
      * @param pco object to name (not null, unaffected)
-     * @return name (not null, not empty)
+     * @return the name (not null, not empty)
      */
     public static String objectName(PhysicsCollisionObject pco) {
         Validate.nonNull(pco, "physics object");
