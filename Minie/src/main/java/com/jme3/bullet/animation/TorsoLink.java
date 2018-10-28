@@ -142,7 +142,7 @@ public class TorsoLink extends PhysicsLink {
         }
     }
     // *************************************************************************
-    // new methods exposed TODO re-order methods
+    // new methods exposed
 
     /**
      * Begin blending this link to a fully kinematic mode. TODO publicize
@@ -194,98 +194,8 @@ public class TorsoLink extends PhysicsLink {
             managedBone.setUserControl(wantUserControl);
         }
     }
-
-    /**
-     * Immediately freeze this link.
-     */
-    @Override
-    void freeze() {
-        blendToKinematicMode(KinematicSubmode.Frozen, 0f, null);
-    }
-
-    /**
-     * Copy animation data from the specified link, which must have the same
-     * main bone.
-     *
-     * @param oldLink the link to copy from (not null, unaffected)
-     */
-    void postRebuild(TorsoLink oldLink) {
-        int numManagedBones = managedBones.length;
-        assert oldLink.managedBones.length == numManagedBones;
-
-        super.postRebuild(oldLink);
-        submode = oldLink.submode;
-        endModelTransform
-                = (Transform) Misc.deepCopy(oldLink.endModelTransform);
-        startModelTransform.set(oldLink.startModelTransform);
-
-        if (prevBoneTransforms == null) {
-            prevBoneTransforms = new Transform[numManagedBones];
-            for (int i = 0; i < numManagedBones; i++) {
-                prevBoneTransforms[i] = new Transform();
-            }
-        }
-        for (int i = 0; i < numManagedBones; i++) {
-            prevBoneTransforms[i].set(oldLink.prevBoneTransforms[i]);
-            startBoneTransforms[i].set(oldLink.startBoneTransforms[i]);
-        }
-    }
-
-    /**
-     * Immediately put this link into dynamic mode.
-     *
-     * @param uniformAcceleration the uniform acceleration vector (in
-     * physics-space coordinates, not null, unaffected)
-     */
-    @Override
-    public void setDynamic(Vector3f uniformAcceleration) {
-        Validate.nonNull(uniformAcceleration, "uniform acceleration");
-
-        super.setDynamic(uniformAcceleration);
-
-        for (Bone managedBone : managedBones) {
-            managedBone.setUserControl(true);
-        }
-    }
-
-    /**
-     * Internal callback, invoked once per frame during the logical-state
-     * update, provided the control is added to a scene.
-     *
-     * @param tpf the time interval between frames (in seconds, &ge;0)
-     */
-    @Override
-    void update(float tpf) {
-        assert tpf >= 0f : tpf;
-
-        if (prevBoneTransforms == null) {
-            /*
-             * On the first update, allocate and initialize
-             * the array of previous bone transforms, if it wasn't
-             * allocated in blendToKinematicMode().
-             */
-            int numManagedBones = managedBones.length;
-            prevBoneTransforms = new Transform[numManagedBones];
-            for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
-                Bone managedBone = managedBones[mbIndex];
-                Transform boneTransform
-                        = MySkeleton.copyLocalTransform(managedBone, null);
-                prevBoneTransforms[mbIndex] = boneTransform;
-            }
-        }
-
-        super.update(tpf);
-        /*
-         * Save copies of the latest bone transforms.
-         */
-        for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
-            Transform lastTransform = prevBoneTransforms[mbIndex];
-            Bone managedBone = managedBones[mbIndex];
-            MySkeleton.copyLocalTransform(managedBone, lastTransform);
-        }
-    }
     // *************************************************************************
-    // JmeCloneable methods
+    // PhysicsLink methods
 
     /**
      * Callback from {@link com.jme3.util.clone.Cloner} to convert this
@@ -306,78 +216,6 @@ public class TorsoLink extends PhysicsLink {
         prevBoneTransforms = cloner.clone(prevBoneTransforms);
         startBoneTransforms = cloner.clone(startBoneTransforms);
         startModelTransform = cloner.clone(startModelTransform);
-    }
-
-    /**
-     * Create a shallow clone for the JME cloner.
-     *
-     * @return a new instance
-     */
-    @Override
-    public TorsoLink jmeClone() {
-        try {
-            TorsoLink clone = (TorsoLink) super.clone();
-            return clone;
-        } catch (CloneNotSupportedException exception) {
-            throw new RuntimeException(exception);
-        }
-    }
-    // *************************************************************************
-    // Savable methods
-
-    /**
-     * De-serialize this link, for example when loading from a J3O file.
-     *
-     * @param im importer (not null)
-     * @throws IOException from importer
-     */
-    @Override
-    public void read(JmeImporter im) throws IOException {
-        super.read(im);
-        InputCapsule ic = im.getCapsule(this);
-
-        Savable[] tmp = ic.readSavableArray("managedBones", null);
-        if (tmp == null) {
-            managedBones = null;
-        } else {
-            managedBones = new Bone[tmp.length];
-            for (int i = 0; i < tmp.length; i++) {
-                managedBones[i] = (Bone) tmp[i];
-            }
-        }
-
-        submode = ic.readEnum("submode", KinematicSubmode.class,
-                KinematicSubmode.Animated);
-        endModelTransform = (Transform) ic.readSavable("endModelTransform",
-                new Transform());
-        meshToModel
-                = (Transform) ic.readSavable("meshToModel", new Transform());
-        startModelTransform = (Transform) ic.readSavable("startModelTransform",
-                new Transform());
-        prevBoneTransforms = RagUtils.readTransformArray(ic,
-                "prevBoneTransforms");
-        startBoneTransforms = RagUtils.readTransformArray(ic,
-                "startBoneTransforms");
-    }
-
-    /**
-     * Serialize this link, for example when saving to a J3O file.
-     *
-     * @param ex exporter (not null)
-     * @throws IOException from exporter
-     */
-    @Override
-    public void write(JmeExporter ex) throws IOException {
-        super.write(ex);
-        OutputCapsule oc = ex.getCapsule(this);
-
-        oc.write(managedBones, "managedBones", null);
-        oc.write(submode, "submode", KinematicSubmode.Animated);
-        oc.write(endModelTransform, "endModelTransforms", new Transform());
-        oc.write(meshToModel, "meshToModel", new Transform());
-        oc.write(startModelTransform, "startModelTransforms", new Transform());
-        oc.write(prevBoneTransforms, "prevBoneTransforms", new Transform[0]);
-        oc.write(startBoneTransforms, "startBoneTransforms", new Transform[0]);
     }
 
     /**
@@ -412,6 +250,29 @@ public class TorsoLink extends PhysicsLink {
 
         for (Bone managedBone : managedBones) {
             managedBone.updateModelTransforms();
+        }
+    }
+
+    /**
+     * Immediately freeze this link.
+     */
+    @Override
+    void freeze() {
+        blendToKinematicMode(KinematicSubmode.Frozen, 0f, null);
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public TorsoLink jmeClone() {
+        try {
+            TorsoLink clone = (TorsoLink) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
         }
     }
 
@@ -488,6 +349,145 @@ public class TorsoLink extends PhysicsLink {
 
         super.kinematicUpdate(tpf);
     }
+
+    /**
+     * Copy animation data from the specified link, which must have the same
+     * main bone.
+     *
+     * @param oldLink the link to copy from (not null, unaffected)
+     */
+    void postRebuild(TorsoLink oldLink) {
+        int numManagedBones = managedBones.length;
+        assert oldLink.managedBones.length == numManagedBones;
+
+        super.postRebuild(oldLink);
+        submode = oldLink.submode;
+        endModelTransform
+                = (Transform) Misc.deepCopy(oldLink.endModelTransform);
+        startModelTransform.set(oldLink.startModelTransform);
+
+        if (prevBoneTransforms == null) {
+            prevBoneTransforms = new Transform[numManagedBones];
+            for (int i = 0; i < numManagedBones; i++) {
+                prevBoneTransforms[i] = new Transform();
+            }
+        }
+        for (int i = 0; i < numManagedBones; i++) {
+            prevBoneTransforms[i].set(oldLink.prevBoneTransforms[i]);
+            startBoneTransforms[i].set(oldLink.startBoneTransforms[i]);
+        }
+    }
+
+    /**
+     * De-serialize this link, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
+    @Override
+    public void read(JmeImporter im) throws IOException {
+        super.read(im);
+        InputCapsule ic = im.getCapsule(this);
+
+        Savable[] tmp = ic.readSavableArray("managedBones", null);
+        if (tmp == null) {
+            managedBones = null;
+        } else {
+            managedBones = new Bone[tmp.length];
+            for (int i = 0; i < tmp.length; i++) {
+                managedBones[i] = (Bone) tmp[i];
+            }
+        }
+
+        submode = ic.readEnum("submode", KinematicSubmode.class,
+                KinematicSubmode.Animated);
+        endModelTransform = (Transform) ic.readSavable("endModelTransform",
+                new Transform());
+        meshToModel
+                = (Transform) ic.readSavable("meshToModel", new Transform());
+        startModelTransform = (Transform) ic.readSavable("startModelTransform",
+                new Transform());
+        prevBoneTransforms = RagUtils.readTransformArray(ic,
+                "prevBoneTransforms");
+        startBoneTransforms = RagUtils.readTransformArray(ic,
+                "startBoneTransforms");
+    }
+
+    /**
+     * Immediately put this link into dynamic mode.
+     *
+     * @param uniformAcceleration the uniform acceleration vector (in
+     * physics-space coordinates, not null, unaffected)
+     */
+    @Override
+    public void setDynamic(Vector3f uniformAcceleration) {
+        Validate.nonNull(uniformAcceleration, "uniform acceleration");
+
+        super.setDynamic(uniformAcceleration);
+
+        for (Bone managedBone : managedBones) {
+            managedBone.setUserControl(true);
+        }
+    }
+
+    /**
+     * Internal callback, invoked once per frame during the logical-state
+     * update, provided the control is added to a scene.
+     *
+     * @param tpf the time interval between frames (in seconds, &ge;0)
+     */
+    @Override
+    void update(float tpf) {
+        assert tpf >= 0f : tpf;
+
+        if (prevBoneTransforms == null) {
+            /*
+             * On the first update, allocate and initialize
+             * the array of previous bone transforms, if it wasn't
+             * allocated in blendToKinematicMode().
+             */
+            int numManagedBones = managedBones.length;
+            prevBoneTransforms = new Transform[numManagedBones];
+            for (int mbIndex = 0; mbIndex < numManagedBones; mbIndex++) {
+                Bone managedBone = managedBones[mbIndex];
+                Transform boneTransform
+                        = MySkeleton.copyLocalTransform(managedBone, null);
+                prevBoneTransforms[mbIndex] = boneTransform;
+            }
+        }
+
+        super.update(tpf);
+        /*
+         * Save copies of the latest bone transforms.
+         */
+        for (int mbIndex = 0; mbIndex < managedBones.length; mbIndex++) {
+            Transform lastTransform = prevBoneTransforms[mbIndex];
+            Bone managedBone = managedBones[mbIndex];
+            MySkeleton.copyLocalTransform(managedBone, lastTransform);
+        }
+    }
+
+    /**
+     * Serialize this link, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
+        OutputCapsule oc = ex.getCapsule(this);
+
+        oc.write(managedBones, "managedBones", null);
+        oc.write(submode, "submode", KinematicSubmode.Animated);
+        oc.write(endModelTransform, "endModelTransforms", new Transform());
+        oc.write(meshToModel, "meshToModel", new Transform());
+        oc.write(startModelTransform, "startModelTransforms", new Transform());
+        oc.write(prevBoneTransforms, "prevBoneTransforms", new Transform[0]);
+        oc.write(startBoneTransforms, "startBoneTransforms", new Transform[0]);
+    }
+    // *************************************************************************
+    // private methods
 
     /**
      * Calculate the local bone transform to match the physics transform of the
