@@ -33,7 +33,6 @@ package com.jme3.bullet.animation;
 
 import com.jme3.animation.Bone;
 import com.jme3.bullet.joints.PhysicsJoint;
-import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
@@ -45,6 +44,8 @@ import com.jme3.math.Vector3f;
 import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -94,9 +95,13 @@ abstract public class PhysicsLink
      */
     private PhysicsJoint joint = null;
     /**
-     * parent or manager link in the link hierarchy, or null if none
+     * parent/manager in the link hierarchy, or null if none
      */
-    private PhysicsLink parentLink = null;
+    private PhysicsLink parent = null;
+    /**
+     * children in the link hierarchy (not null)
+     */
+    private List<PhysicsLink> children = new ArrayList<>(8);
     /**
      * linked rigid body in the ragdoll (not null)
      */
@@ -146,6 +151,16 @@ abstract public class PhysicsLink
     // new methods exposed
 
     /**
+     * Count this link's children in the link hierarchy.
+     *
+     * @return the count (&ge;0)
+     */
+    public int countChildren() {
+        int numChildren = children.size();
+        return numChildren;
+    }
+
+    /**
      * Immediately freeze this link.
      */
     abstract void freeze();
@@ -192,12 +207,12 @@ abstract public class PhysicsLink
     }
 
     /**
-     * Access this link's parent in the link hierarchy.
+     * Access this link's parent/manager in the link hierarchy.
      *
      * @return the link, or null if none
      */
     public PhysicsLink getParent() {
-        return parentLink;
+        return parent;
     }
 
     /**
@@ -232,6 +247,19 @@ abstract public class PhysicsLink
         assert kinematicWeight >= 0f : kinematicWeight;
         assert kinematicWeight <= 1f : kinematicWeight;
         return kinematicWeight;
+    }
+
+    /**
+     * Enumerate this link's children in the link hierarchy.
+     *
+     * @return a new array (not null)
+     */
+    public PhysicsLink[] listChildren() {
+        int numChildren = children.size();
+        PhysicsLink[] result = new PhysicsLink[numChildren];
+        children.toArray(result);
+
+        return result;
     }
 
     /**
@@ -374,14 +402,15 @@ abstract public class PhysicsLink
     }
 
     /**
-     * Assign a parent for this link.
+     * Assign a parent/manager for this link.
      *
      * @param parent (not null, alias created)
      */
     final protected void setParent(PhysicsLink parent) {
         assert parent != null;
-        assert this.parentLink == null;
-        this.parentLink = parent;
+        assert this.parent == null;
+        this.parent = parent;
+        parent.children.add(this);
     }
     // *************************************************************************
     // JmeCloneable methods
@@ -399,8 +428,10 @@ abstract public class PhysicsLink
     public void cloneFields(Cloner cloner, Object original) {
         bone = cloner.clone(bone);
         control = cloner.clone(control);
-        rigidBody = cloner.clone(rigidBody);
         joint = cloner.clone(joint);
+        parent = cloner.clone(parent);
+        children = cloner.clone(children);
+        rigidBody = cloner.clone(rigidBody);
         localOffset = cloner.clone(localOffset);
     }
 
@@ -435,8 +466,17 @@ abstract public class PhysicsLink
         control = (DynamicAnimControl) ic.readSavable("control", null);
         blendInterval = ic.readFloat("blendInterval", 1f);
         kinematicWeight = ic.readFloat("kinematicWeight", 1f);
+        joint = (PhysicsJoint) ic.readSavable("joint", null);
+        parent = (PhysicsLink) ic.readSavable("parent", null);
+
+        Savable[] tmp = ic.readSavableArray("children", null);
+        children.clear();
+        for (Savable savable : tmp) {
+            PhysicsLink child = (PhysicsLink) savable;
+            children.add(child);
+        }
+
         rigidBody = (PhysicsRigidBody) ic.readSavable("rigidBody", null);
-        joint = (SixDofJoint) ic.readSavable("joint", null);
         localOffset = (Vector3f) ic.readSavable("offset", new Vector3f());
     }
 
@@ -454,8 +494,10 @@ abstract public class PhysicsLink
         oc.write(control, "control", null);
         oc.write(blendInterval, "blendInterval", 1f);
         oc.write(kinematicWeight, "kinematicWeight", 1f);
-        oc.write(rigidBody, "rigidBody", null);
         oc.write(joint, "joint", null);
+        oc.write(parent, "parent", null);
+        oc.write(listChildren(), "children", null);
+        oc.write(rigidBody, "rigidBody", null);
         oc.write(localOffset, "offset", new Vector3f());
     }
 }
