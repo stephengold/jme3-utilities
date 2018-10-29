@@ -37,6 +37,7 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.HullCollisionShape;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.Savable;
+import com.jme3.math.FastMath;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
@@ -123,7 +124,7 @@ public class RagUtils {
                 float weight = weightBuffer.get();
                 int boneIndex = MyMesh.readIndex(boneIndexBuffer);
                 if (wIndex < maxWeightsPerVert) {
-                    totalWeights[boneIndex] += weight;
+                    totalWeights[boneIndex] += FastMath.abs(weight);
                 }
             }
         }
@@ -399,12 +400,12 @@ public class RagUtils {
      *
      * @param biArray the array of bone indices (not null, unaffected)
      * @param bwArray the array of bone weights (not null, unaffected)
-     * @param lbNames a map from bone indices to managing link names (not null,
-     * unaffected)
+     * @param managerMap a map from bone indices to managing link names (not
+     * null, unaffected)
      * @return a new map from link names to total weight
      */
     public static Map<String, Float> weightMap(int[] biArray,
-            float[] bwArray, String[] lbNames) {
+            float[] bwArray, String[] managerMap) {
         assert biArray.length == 4;
         assert bwArray.length == 4;
 
@@ -412,13 +413,13 @@ public class RagUtils {
         for (int j = 0; j < 4; j++) {
             int boneIndex = biArray[j];
             if (boneIndex != -1) {
-                String lbName = lbNames[boneIndex];
-                if (weightMap.containsKey(lbName)) {
-                    float oldWeight = weightMap.get(lbName);
+                String managerName = managerMap[boneIndex];
+                if (weightMap.containsKey(managerName)) {
+                    float oldWeight = weightMap.get(managerName);
                     float newWeight = oldWeight + bwArray[j];
-                    weightMap.put(lbName, newWeight);
+                    weightMap.put(managerName, newWeight);
                 } else {
-                    weightMap.put(lbName, bwArray[j]);
+                    weightMap.put(managerName, bwArray[j]);
                 }
             }
         }
