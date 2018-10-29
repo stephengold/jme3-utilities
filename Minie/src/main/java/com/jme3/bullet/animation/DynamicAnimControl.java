@@ -158,7 +158,8 @@ public class DynamicAnimControl
     // constructors
 
     /**
-     * Instantiate an enabled control without any linked bones (torso only).
+     * Instantiate an enabled control without any linked bones or attachments
+     * (torso only).
      */
     public DynamicAnimControl() {
     }
@@ -265,7 +266,7 @@ public class DynamicAnimControl
 
     /**
      * Enumerate all immediate children (in the link hierarchy) of the named
-     * bone/torso link, not including attachment links.
+     * bone/torso link, not including attachment links. TODO avoid this
      *
      * @param linkName the name of the link (not null)
      * @return a new list of bone names
@@ -368,6 +369,20 @@ public class DynamicAnimControl
     }
 
     /**
+     * Access the AttachmentLink for the named bone. Returns null if the bone is
+     * not associated with an attachment, or if the control is not added to a
+     * spatial.
+     *
+     * @param boneName the name of the bone (not null, not empty)
+     * @return the pre-existing link, or null
+     */
+    public AttachmentLink getAttachmentLink(String boneName) {
+        Validate.nonEmpty(boneName, "bone name");
+        AttachmentLink link = attachmentLinks.get(boneName);
+        return link;
+    }
+
+    /**
      * Access the named bone.
      * <p>
      * Allowed only when the control IS added to a spatial.
@@ -386,12 +401,11 @@ public class DynamicAnimControl
     }
 
     /**
-     * Access the physics link for the named bone. Returns null if bone is not
-     * linked, or if the control is not added to a spatial. TODO handle
-     * torsoBone?
+     * Access the BoneLink for the named bone. Returns null if bone is not
+     * linked, or if the control is not added to a spatial.
      *
      * @param boneName the name of the bone (not null, not empty)
-     * @return the pre-existing spatial, or null
+     * @return the pre-existing BoneLink, or null
      */
     public BoneLink getBoneLink(String boneName) {
         Validate.nonEmpty(boneName, "bone name");
@@ -448,10 +462,10 @@ public class DynamicAnimControl
     }
 
     /**
-     * Access the physics link for the torso. Returns null if the control is not
-     * added to a spatial.
+     * Access the TorsoLink. Returns null if the control is not added to a
+     * spatial.
      *
-     * @return the pre-existing spatial, or null
+     * @return the pre-existing TorsoLink, or null
      */
     public TorsoLink getTorsoLink() {
         return torsoLink;
@@ -515,35 +529,6 @@ public class DynamicAnimControl
      */
     Transform meshTransform(Transform storeResult) {
         Transform result = MySpatial.worldTransform(transformer, storeResult);
-        return result;
-    }
-
-    /**
-     * Find the parent (in the link hierarchy) of the named BoneLink.
-     *
-     * @param childName the name of the linked bone (not null, not empty)
-     * @return the bone name or torsoFakeBoneName (not null)
-     */
-    public String parentName(String childName) {
-        if (!isBoneLinkName(childName)) {
-            String msg = "No BoneLink named " + MyString.quote(childName);
-            throw new IllegalArgumentException(msg);
-        }
-
-        String result = torsoName;
-
-        Bone child = getBone(childName);
-        Bone parent = child.getParent();
-        while (parent != null) {
-            String name = parent.getName();
-            if (isBoneLinkName(name)) {
-                result = name;
-                break;
-            }
-            parent = parent.getParent();
-        }
-
-        assert result != null;
         return result;
     }
 
@@ -1430,7 +1415,7 @@ public class DynamicAnimControl
         float mass = attachmentMass(boneName);
         PhysicsRigidBody rigidBody = createRigidBody(shape, mass);
 
-        Vector3f localOffset = translateIdentity;
+        Vector3f localOffset = translateIdentity;// TODO estimate center of mass
         AttachmentLink link = new AttachmentLink(this, bone, manager,
                 attachModel, rigidBody, localOffset);
         attachmentLinks.put(boneName, link);
