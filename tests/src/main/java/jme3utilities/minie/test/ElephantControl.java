@@ -99,14 +99,14 @@ public class ElephantControl extends DynamicAnimControl {
                 new RangeOfMotion(0.2f, 1f, 0.1f));
 
         super.link("Oberschenkel_F_R", 100f,
-                new RangeOfMotion(0f, 0.2f, 0.5f));
+                new RangeOfMotion(0f, -0.2f, 0.4f, -0.4f, 0.5f, -0.5f));
         super.link("Knee_F_R", 40f,
                 new RangeOfMotion(0.2f, -0.2f, 0.2f, -0.2f, 0f, -0.5f));
         super.link("Foot_F_R", 10f,
                 new RangeOfMotion(0f, 0.2f, 0.2f));
 
         super.link("Oberschenkel_F_L", 100f,
-                new RangeOfMotion(0f, 0.2f, 0.5f));
+                new RangeOfMotion(0f, -0.2f, 0.4f, -0.4f, 0.5f, -0.5f));
         super.link("Knee_F_L", 40f,
                 new RangeOfMotion(0.2f, -0.2f, 0.2f, -0.2f, 0f, -0.5f));
         super.link("Foot_F_L", 10f,
