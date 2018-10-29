@@ -108,14 +108,14 @@ public class BoneLink extends PhysicsLink {
      *
      * @param control the control that will manage this link (not null, alias
      * created)
-     * @param boneName the name of the linked bone (not null, not empty)
+     * @param bone the linked bone (not null, alias created)
      * @param rigidBody the rigid body to link (not null, alias created)
      * @param localOffset the location of the body's center (in the bone's local
      * coordinates, not null, unaffected)
      */
-    BoneLink(DynamicAnimControl control, String boneName,
-            PhysicsRigidBody rigidBody, Vector3f localOffset) {
-        super(control, boneName, rigidBody, localOffset);
+    BoneLink(DynamicAnimControl control, Bone bone, PhysicsRigidBody rigidBody,
+            Vector3f localOffset) {
+        super(control, bone, rigidBody, localOffset);
     }
     // *************************************************************************
     // new methods exposed

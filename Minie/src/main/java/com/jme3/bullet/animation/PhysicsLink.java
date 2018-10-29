@@ -121,21 +121,20 @@ abstract public class PhysicsLink
      *
      * @param control the control that will manage this link (not null, alias
      * created)
-     * @param boneName the name of the corresponding bone (not null, not empty)
+     * @param bone the corresponding bone (not null, alias created)
      * @param rigidBody the rigid body to link (not null, alias created)
      * @param localOffset the location of the body's center (in the bone's local
      * coordinates, not null, unaffected)
      */
-    PhysicsLink(DynamicAnimControl control, String boneName,
+    PhysicsLink(DynamicAnimControl control, Bone bone,
             PhysicsRigidBody rigidBody, Vector3f localOffset) {
         assert control != null;
-        assert boneName != null;
-        assert !boneName.isEmpty();
+        assert bone != null;
         assert rigidBody != null;
         assert localOffset != null;
 
         this.control = control;
-        bone = control.getSkeleton().getBone(boneName);
+        this.bone = bone;
         this.rigidBody = rigidBody;
         this.localOffset = localOffset.clone();
 

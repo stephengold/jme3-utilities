@@ -1399,6 +1399,12 @@ public class DynamicAnimControl
         Bone bone = skeleton.getBone(boneName);
         int boneIndex = skeleton.getBoneIndex(bone);
         String managerName = managerMap[boneIndex];
+        PhysicsLink manager;
+        if (managerName.equals(torsoName)) {
+            manager = torsoLink;
+        } else {
+            manager = boneLinks.get(managerName);
+        }
 
         CollisionShape shape
                 = CollisionShapeFactory.createDynamicMeshShape(attachModel);
@@ -1406,7 +1412,7 @@ public class DynamicAnimControl
         PhysicsRigidBody rigidBody = createRigidBody(shape, mass);
 
         Vector3f localOffset = translateIdentity;
-        AttachmentLink link = new AttachmentLink(this, boneName, managerName,
+        AttachmentLink link = new AttachmentLink(this, bone, manager,
                 attachModel, rigidBody, localOffset);
         attachmentLinks.put(boneName, link);
     }
@@ -1443,7 +1449,7 @@ public class DynamicAnimControl
         meshToBone.getTranslation().zero();
         Vector3f offset = meshToBone.transformVector(center, null);
 
-        BoneLink link = new BoneLink(this, boneName, rigidBody, offset);
+        BoneLink link = new BoneLink(this, bone, rigidBody, offset);
         boneLinks.put(boneName, link);
     }
 

@@ -118,21 +118,19 @@ public class TorsoLink extends PhysicsLink {
      *
      * @param control the control that will manage this link (not null, alias
      * created)
-     * @param mainBone the root bone with the most animation weight (not null,
-     * alias created)
+     * @param mainRootBone the root bone with the most animation weight (not
+     * null, alias created)
      * @param rigidBody the rigid body to link (not null, alias created)
      * @param meshToModel the transform from mesh coordinates to model
      * coordinates (not null, unaffected)
      * @param localOffset the location of the body's center (in the bone's local
      * coordinates, not null, unaffected)
      */
-    TorsoLink(DynamicAnimControl control, Bone mainBone,
+    TorsoLink(DynamicAnimControl control, Bone mainRootBone,
             PhysicsRigidBody rigidBody, Transform meshToModel,
             Vector3f localOffset) {
-        super(control, mainBone.getName(), rigidBody, localOffset);
-
+        super(control, mainRootBone, rigidBody, localOffset);
         this.meshToModel = meshToModel.clone();
-
         managedBones = control.listManagedBones(DynamicAnimControl.torsoName);
 
         int numManagedBones = managedBones.length;

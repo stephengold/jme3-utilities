@@ -31,6 +31,7 @@
  */
 package com.jme3.bullet.animation;
 
+import com.jme3.animation.Bone;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.export.InputCapsule;
@@ -106,26 +107,24 @@ public class AttachmentLink extends PhysicsLink {
      *
      * @param control the control that will manage this link (not null, alias
      * created)
-     * @param boneName the name of the bone associated with the attachment node
-     * (not null, not empty)
-     * @param managerName the name of the bone/torso link that manages the
-     * associated bone (not null)
+     * @param associatedBone the bone associated with the attachment node (not
+     * null, alias created)
+     * @param manager the bone/torso link that manages the associated bone (not
+     * null, alias created)
      * @param attachModel the attached model to link (not null, alias created)
      * @param rigidBody the rigid body to link (not null, alias created)
      * @param localOffset the location of the body's center (in the attached
      * model's local coordinates, not null, unaffected)
      */
-    AttachmentLink(DynamicAnimControl control, String boneName,
-            String managerName, Spatial attachModel,
+    AttachmentLink(DynamicAnimControl control, Bone associatedBone,
+            PhysicsLink manager, Spatial attachModel,
             PhysicsRigidBody rigidBody, Vector3f localOffset) {
-        super(control, boneName, rigidBody, localOffset);
-        assert managerName != null;
+        super(control, associatedBone, rigidBody, localOffset);
+        assert manager != null;
         assert attachModel != null;
 
         this.attachedModel = attachModel;
-
-        BoneLink manager = control.getBoneLink(managerName);
-        super.setParent(manager);
+        setParent(manager);
 
         PhysicsRigidBody managerBody = manager.getRigidBody();
         Transform managerToWorld = manager.physicsTransform(null);
