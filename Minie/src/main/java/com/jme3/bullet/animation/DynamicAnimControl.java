@@ -73,18 +73,19 @@ import jme3utilities.Validate;
 
 /**
  * Before adding this control to a spatial, configure it by invoking
- * {@link #link(java.lang.String, float, com.jme3.bullet.animation.JointPreset)}
+ * {@link #link(java.lang.String, float, com.jme3.bullet.animation.RangeOfMotion)}
  * for each bone that should have its own rigid body. Leave some unlinked bones
  * near the root of the skeleton to form the torso of the ragdoll.
  * <p>
- * When you add the control to a spatial and set its physics space, it generates
- * a rigid body with a hull collision shape for the torso and for each linked
- * bone. It also creates a SixDofJoint connecting each linked bone to its parent
- * in the link hierarchy. The mass of each rigid body and the range-of-motion of
- * each joint can be reconfigured on the fly.
+ * When you add the control to a spatial, it generates a rigid body with a hull
+ * collision shape for the torso and for each linked bone. It also creates a
+ * SixDofJoint connecting each linked bone to its parent in the link hierarchy.
+ * The mass of each rigid body and the range-of-motion of each joint can be
+ * reconfigured on the fly.
  * <p>
- * Each link is either dynamic (driven by gravity and collisions) or kinematic
- * (unaffected by gravity and collisions).
+ * Each link is either dynamic (driven by forces and collisions) or kinematic
+ * (unaffected by forces and collisions). Transitions from dynamic to kinematic
+ * can be immediate or gradual.
  *
  * TODO handle applyLocal, catch ignoreTransforms, ghost mode
  *
@@ -126,7 +127,6 @@ public class DynamicAnimControl
     private float eventDispatchImpulseThreshold = 0f;
     /**
      * bone links in a pre-order, depth-first traversal of the link hierarchy
-     * TODO include attachment links?
      */
     private List<BoneLink> boneLinkList = null;
     /**
@@ -1286,6 +1286,10 @@ public class DynamicAnimControl
             prb = boneLink.getRigidBody();
             prb.activate();
         }
+        for (AttachmentLink attachmentLink : attachmentLinks.values()) {
+            prb = attachmentLink.getRigidBody();
+            prb.activate();
+        }
     }
 
     /**
@@ -1327,7 +1331,7 @@ public class DynamicAnimControl
             BoneLink childLink = getBoneLink(childName);
             childLink.addJoint(parentLink);
             /*
-             * Add the BoneLink to the pre-order list. TODO attachment links?
+             * Add the BoneLink to the pre-order list.
              */
             boneLinkList.add(childLink);
 
