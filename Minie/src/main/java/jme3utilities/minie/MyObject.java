@@ -26,6 +26,7 @@
  */
 package jme3utilities.minie;
 
+import com.jme3.bullet.animation.PhysicsLink;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.objects.PhysicsCharacter;
@@ -101,6 +102,11 @@ public class MyObject {
             if (user instanceof Spatial) {
                 Spatial spatial = (Spatial) user;
                 String name = spatial.getName();
+                String text = MyString.quote(name);
+                builder.append(text);
+            } else if (user instanceof PhysicsLink) {
+                PhysicsLink link = (PhysicsLink) user;
+                String name = link.getBoneName();
                 String text = MyString.quote(name);
                 builder.append(text);
             }
