@@ -159,10 +159,12 @@ public class BulletDebugAppState extends AbstractAppState {
     /**
      * Alter the view ports in which to render.
      *
-     * @param viewPorts array of view ports (not null)
+     * @param viewPorts array of view ports (not null, unaffected)
      */
     public void setViewPorts(ViewPort[] viewPorts) {
-        this.viewPorts = viewPorts;
+        int length = viewPorts.length;
+        this.viewPorts = new ViewPort[length];
+        System.arraycopy(viewPorts, 0, this.viewPorts, 0, length);
     }
 
     /**
@@ -407,6 +409,7 @@ public class BulletDebugAppState extends AbstractAppState {
      * Interface to restrict which physics objects are visualized.
      */
     public static interface DebugAppStateFilter {
+
         /**
          * Test whether the specified physics object should be displayed.
          *

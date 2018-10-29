@@ -337,7 +337,9 @@ public class BulletAppState
         if (debugAppState != null) {
             debugAppState.setViewPorts(viewPorts);
         }
-        debugViewPorts = viewPorts;
+        int length = viewPorts.length;
+        debugViewPorts = new ViewPort[length];
+        System.arraycopy(viewPorts, 0, debugViewPorts, 0, length);
     }
 
     /**
