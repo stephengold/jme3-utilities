@@ -108,7 +108,7 @@ public class MyMesh {
             for (int wIndex = 0; wIndex < maxWeights; wIndex++) {
                 float weight = weightBuffer.get();
                 int bIndex = readIndex(boneIndexBuffer);
-                if (wIndex < maxWeightsPerVert && weight > 0f
+                if (wIndex < maxWeightsPerVert && weight != 0f
                         && bIndex >= result) {
                     result = bIndex + 1;
                 }
@@ -262,7 +262,7 @@ public class MyMesh {
                 int bIndex = readIndex(boneIndexBuffer);
                 if (wIndex < maxWeightsPerVert
                         && bIndex == boneIndex
-                        && weight > 0f) {
+                        && weight != 0f) {
                     result++;
                 }
             }
