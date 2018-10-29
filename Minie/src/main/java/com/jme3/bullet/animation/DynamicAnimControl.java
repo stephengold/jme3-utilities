@@ -387,7 +387,8 @@ public class DynamicAnimControl
 
     /**
      * Access the physics link for the named bone. Returns null if bone is not
-     * linked, or if the control is not added to a spatial.
+     * linked, or if the control is not added to a spatial. TODO handle
+     * torsoBone?
      *
      * @param boneName the name of the bone (not null, not empty)
      * @return the pre-existing spatial, or null
@@ -1076,6 +1077,24 @@ public class DynamicAnimControl
         skeleton = null;
         transformer = null;
         torsoLink = null;
+    }
+
+    /**
+     * Alter the mass of the attachment associated with the named bone.
+     *
+     * @param boneName the name of the associated bone (not null, not empty)
+     * @param mass the desired mass (&gt;0)
+     */
+    @Override
+    public void setAttachmentMass(String boneName, float mass) {
+        Validate.positive(mass, "mass");
+
+        super.setAttachmentMass(boneName, mass);
+
+        AttachmentLink link = attachmentLinks.get(boneName);
+        if (link != null) {
+            link.getRigidBody().setMass(mass);
+        }
     }
 
     /**

@@ -348,7 +348,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Read the mass of the named link.
+     * Read the mass of the named bone/torso link.
      *
      * @param linkName the name of the link (not null)
      * @return the mass (&gt;0)
@@ -367,6 +367,23 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
 
         assert mass > 0f : mass;
         return mass;
+    }
+
+    /**
+     * Alter the mass of the attachment associated with the named bone.
+     *
+     * @param boneName the name of the associated bone (not null, not empty)
+     * @param mass the desired mass (&gt;0)
+     */
+    public void setAttachmentMass(String boneName, float mass) {
+        Validate.positive(mass, "mass");
+
+        if (attachMassMap.containsKey(boneName)) {
+            attachMassMap.put(boneName, mass);
+        } else {
+            String msg = "No attachment link for " + MyString.quote(boneName);
+            throw new IllegalArgumentException(msg);
+        }
     }
 
     /**
