@@ -200,7 +200,6 @@ public class CompoundCollisionShape extends CollisionShape {
         InputCapsule capsule = im.getCapsule(this);
         children = capsule.readSavableArrayList("children",
                 new ArrayList<ChildCollisionShape>());
-        createEmpty();
         loadChildren();
     }
     // *************************************************************************
