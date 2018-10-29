@@ -46,7 +46,6 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
 import com.jme3.util.clone.Cloner;
-import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -56,7 +55,7 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class VehicleControl extends PhysicsVehicle
-        implements PhysicsControl, JmeCloneable {
+        implements PhysicsControl {
 
     /**
      * message logger for this class
