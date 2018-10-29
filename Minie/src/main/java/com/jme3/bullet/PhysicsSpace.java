@@ -79,6 +79,36 @@ import jme3utilities.Validate;
  */
 public class PhysicsSpace {
     // *************************************************************************
+    // enums
+
+    /**
+     * Enumerate the available acceleration structures for broadphase collision
+     * detection.
+     */
+    public enum BroadphaseType {
+        /**
+         * btSimpleBroadphase: a brute-force reference implementation for
+         * debugging purposes
+         */
+        SIMPLE,
+        /**
+         * btAxisSweep3: uses incremental 3-D sweep and prune, requires world
+         * bounds, limited to 16_384 objects
+         */
+        AXIS_SWEEP_3,
+        /**
+         * bt32BitAxisSweep3: uses incremental 3-D sweep and prune, requires
+         * world bounds, limited to 65_536 objects
+         */
+        AXIS_SWEEP_3_32,
+        /**
+         * btDbvtBroadphase: uses a fast, dynamic bounding-volume hierarchy
+         * based on AABB tree to allow quicker addition/removal of physics
+         * objects
+         */
+        DBVT
+    }
+    // *************************************************************************
     // constants and loggers
 
     /**
@@ -100,6 +130,15 @@ public class PhysicsSpace {
     public static final int AXIS_Z = 2;
     // *************************************************************************
     // fields
+
+    final private static Comparator<PhysicsRayTestResult> hitFractionComparator
+            = new Comparator<PhysicsRayTestResult>() {
+        @Override
+        public int compare(PhysicsRayTestResult r1, PhysicsRayTestResult r2) {
+            float comp = r1.getHitFraction() - r2.getHitFraction();
+            return comp > 0 ? 1 : -1;
+        }
+    };
 
     /**
      * Bullet identifier of the physics space. The constructor sets this to a
@@ -187,26 +226,14 @@ public class PhysicsSpace {
      * (default=10)
      */
     private int solverNumIterations = 10;
+    /**
+     * copy of gravity-acceleration vector for newly-added bodies (default is
+     * 9.81 in the -Y direction, corresponding to Earth-normal in MKS units)
+     * TODO sort fields
+     */
+    final private Vector3f gravity = new Vector3f(0, -9.81f, 0);
     // *************************************************************************
-
-    /**
-     * Access the PhysicsSpace <b>running on this thread</b>. For parallel
-     * physics, this can be invoked from the OpenGL thread.
-     *
-     * @return the PhysicsSpace running on this thread
-     */
-    public static PhysicsSpace getPhysicsSpace() {
-        return physicsSpaceTL.get();
-    }
-
-    /**
-     * Used internally
-     *
-     * @param space which physics space to simulate on this thread
-     */
-    public static void setLocalThreadPhysicsSpace(PhysicsSpace space) {
-        physicsSpaceTL.set(space);
-    }
+    // constructors
 
     /**
      * Instantiate a PhysicsSpace. Must be invoked on the designated physics
@@ -230,161 +257,8 @@ public class PhysicsSpace {
         this.broadphaseType = broadphaseType;
         create();
     }
-
-    /**
-     * Must be invoked on the designated physics thread.
-     */
-    private void create() {
-        physicsSpaceId = createPhysicsSpace(worldMin.x, worldMin.y, worldMin.z,
-                worldMax.x, worldMax.y, worldMax.z, broadphaseType.ordinal(),
-                false);
-        assert physicsSpaceId != 0L;
-        logger.log(Level.FINE, "Created Space {0}",
-                Long.toHexString(physicsSpaceId));
-
-        pQueueTL.set(pQueue);
-        physicsSpaceTL.set(this);
-    }
-
-    /**
-     * Callback invoked just before the physics is stepped.
-     * <p>
-     * This method is invoked from native code.
-     *
-     * @param timeStep the time per physics step (in seconds, &ge;0)
-     */
-    private void preTick_native(float timeStep) {
-        AppTask task;
-        while ((task = pQueue.poll()) != null) {
-            if (task.isCancelled()) {
-                continue;
-            }
-            try {
-                task.invoke();
-            } catch (Exception ex) {
-                logger.log(Level.SEVERE, null, ex);
-            }
-        }
-
-        for (PhysicsTickListener listener : tickListeners) {
-            listener.prePhysicsTick(this, timeStep);
-        }
-    }
-
-    /**
-     * Callback invoked just after the physics is stepped.
-     * <p>
-     * This method is invoked from native code.
-     *
-     * @param timeStep the time per physics step (in seconds, &ge;0)
-     */
-    private void postTick_native(float timeStep) {
-        for (PhysicsTickListener listener : tickListeners) {
-            listener.physicsTick(this, timeStep);
-        }
-    }
-
-    /**
-     * This method is invoked from native code.
-     */
-    private void addCollisionEvent_native(PhysicsCollisionObject nodeA,
-            PhysicsCollisionObject nodeB, long manifoldPointId) {
-        if (!collisionListeners.isEmpty()) {
-            PhysicsCollisionEvent event
-                    = new PhysicsCollisionEvent(nodeA, nodeB, manifoldPointId);
-            collisionEvents.add(event);
-        }
-    }
-
-    /**
-     * This method is invoked from native code.
-     */
-    private boolean notifyCollisionGroupListeners_native(
-            PhysicsCollisionObject node, PhysicsCollisionObject node1) {
-        PhysicsCollisionGroupListener listener
-                = collisionGroupListeners.get(node.getCollisionGroup());
-        PhysicsCollisionGroupListener listener1
-                = collisionGroupListeners.get(node1.getCollisionGroup());
-        boolean result = true;
-
-        if (listener != null) {
-            result = listener.collide(node, node1);
-        }
-        if (listener1 != null
-                && node.getCollisionGroup() != node1.getCollisionGroup()) {
-            result = listener1.collide(node, node1) && result;
-        }
-
-        return result;
-    }
-
-    /**
-     * Update this space. Invoked (by the Bullet app state) once per frame while
-     * the app state is attached and enabled.
-     *
-     * @param time time-per-frame multiplied by speed (in seconds, &ge;0)
-     */
-    void update(float time) {
-        assert time >= 0f : time;
-        update(time, maxSubSteps);
-    }
-
-    /**
-     * Simulate for the specified time interval, using no more than the
-     * specified number of steps.
-     *
-     * @param time the time interval (in seconds, &ge;0)
-     * @param maxSteps the maximum number of steps (&ge;1)
-     */
-    private void update(float time, int maxSteps) {
-        assert time >= 0f : time;
-        assert maxSteps >= 1 : maxSteps;
-        assert accuracy > 0f : accuracy;
-
-        stepSimulation(physicsSpaceId, time, maxSteps, accuracy);
-    }
-
-    /**
-     * Distribute each collision event to all listeners.
-     */
-    void distributeEvents() {
-        while (!collisionEvents.isEmpty()) {
-            PhysicsCollisionEvent physicsCollisionEvent = collisionEvents.pop();
-            for (PhysicsCollisionListener listener : collisionListeners) {
-                listener.collision(physicsCollisionEvent);
-            }
-        }
-    }
-
-    /**
-     * Enqueue a callable on the currently executing thread.
-     *
-     * @param <V> the task's result type
-     * @param callable the task to be executed
-     * @return a new task (not null)
-     */
-    public static <V> Future<V> enqueueOnThisThread(Callable<V> callable) {
-        AppTask<V> task = new AppTask<>(callable);
-        System.out.println("created apptask");
-        pQueueTL.get().add(task);
-
-        return task;
-    }
-
-    /**
-     * Invoke the specified callable during the next physics tick. This is
-     * useful for applying forces.
-     *
-     * @param <V> the return type of the callable
-     * @param callable which callable to invoke
-     * @return Future object
-     */
-    public <V> Future<V> enqueue(Callable<V> callable) {
-        AppTask<V> task = new AppTask<>(callable);
-        pQueue.add(task);
-
-        return task;
-    }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Add the specified object to this space.
@@ -411,89 +285,6 @@ public class PhysicsSpace {
         } else {
             String typeName = obj.getClass().getCanonicalName();
             String msg = "Cannot add a " + typeName + " to a physics space.";
-            throw new IllegalArgumentException(msg);
-        }
-    }
-
-    /**
-     * Add the specified collision object to this space.
-     *
-     * @param obj the PhysicsCollisionObject to add (not null, modified)
-     */
-    public void addCollisionObject(PhysicsCollisionObject obj) {
-        if (obj instanceof PhysicsGhostObject) {
-            addGhostObject((PhysicsGhostObject) obj);
-        } else if (obj instanceof PhysicsRigidBody) {
-            addRigidBody((PhysicsRigidBody) obj);
-        } else if (obj instanceof PhysicsCharacter) {
-            addCharacter((PhysicsCharacter) obj);
-        } else {
-            String typeName = obj.getClass().getCanonicalName();
-            String msg = "Unknown type of collision object: " + typeName;
-            throw new IllegalArgumentException(msg);
-        }
-    }
-
-    /**
-     * Test whether this space is empty.
-     *
-     * @return true if empty, otherwise false
-     */
-    public boolean isEmpty() {
-        boolean result = physicsGhostObjects.isEmpty()
-                && physicsCharacters.isEmpty()
-                && physicsBodies.isEmpty()
-                && physicsJoints.isEmpty()
-                && physicsVehicles.isEmpty();
-
-        return result;
-    }
-
-    /**
-     * Remove the specified object from this space.
-     *
-     * @param obj the PhysicsCollisionObject to add, or null (modified)
-     */
-    public void remove(Object obj) {
-        if (obj == null) {
-            return;
-        }
-        if (obj instanceof PhysicsControl) {
-            ((PhysicsControl) obj).setPhysicsSpace(null);
-        } else if (obj instanceof Spatial) {
-            Spatial node = (Spatial) obj;
-            for (int i = 0; i < node.getNumControls(); i++) {
-                if (node.getControl(i) instanceof PhysicsControl) {
-                    remove(((PhysicsControl) node.getControl(i)));
-                }
-            }
-        } else if (obj instanceof PhysicsCollisionObject) {
-            removeCollisionObject((PhysicsCollisionObject) obj);
-        } else if (obj instanceof PhysicsJoint) {
-            removeJoint((PhysicsJoint) obj);
-        } else {
-            String typeName = obj.getClass().getCanonicalName();
-            String msg
-                    = "Cannot remove a " + typeName + " from a physics space.";
-            throw new IllegalArgumentException(msg);
-        }
-    }
-
-    /**
-     * Remove the specified collision object from this space.
-     *
-     * @param obj the PhysicsControl or Spatial with PhysicsControl to remove
-     */
-    public void removeCollisionObject(PhysicsCollisionObject obj) {
-        if (obj instanceof PhysicsGhostObject) {
-            removeGhostObject((PhysicsGhostObject) obj);
-        } else if (obj instanceof PhysicsRigidBody) {
-            removeRigidBody((PhysicsRigidBody) obj);
-        } else if (obj instanceof PhysicsCharacter) {
-            removeCharacter((PhysicsCharacter) obj);
-        } else {
-            String typeName = obj.getClass().getCanonicalName();
-            String msg = "Unknown type of collision object: " + typeName;
             throw new IllegalArgumentException(msg);
         }
     }
@@ -535,6 +326,405 @@ public class PhysicsSpace {
     }
 
     /**
+     * Register the specified collision-group listener with the specified
+     * collision group of this space.
+     * <p>
+     * Such a listener can disable collisions when they occur. There can be only
+     * one listener per collision group per space.
+     *
+     * @param listener the listener to register (not null)
+     * @param collisionGroup which group it should listen for (bit mask with
+     * exactly one bit set)
+     */
+    public void addCollisionGroupListener(
+            PhysicsCollisionGroupListener listener, int collisionGroup) {
+        Validate.nonNull(listener, "listener");
+        assert collisionGroupListeners.get(collisionGroup) == null;
+        assert Integer.bitCount(collisionGroup) == 1 : collisionGroup;
+
+        collisionGroupListeners.put(collisionGroup, listener);
+    }
+
+    /**
+     * Register the specified collision listener with this space.
+     * <p>
+     * Collision listeners are notified when collisions occur in the space.
+     *
+     * @param listener the listener to register (not null, alias created)
+     */
+    public void addCollisionListener(PhysicsCollisionListener listener) {
+        Validate.nonNull(listener, "listener");
+        assert !collisionListeners.contains(listener);
+
+        collisionListeners.add(listener);
+    }
+
+    /**
+     * Add the specified collision object to this space.
+     *
+     * @param obj the PhysicsCollisionObject to add (not null, modified)
+     */
+    public void addCollisionObject(PhysicsCollisionObject obj) {
+        if (obj instanceof PhysicsGhostObject) {
+            addGhostObject((PhysicsGhostObject) obj);
+        } else if (obj instanceof PhysicsRigidBody) {
+            addRigidBody((PhysicsRigidBody) obj);
+        } else if (obj instanceof PhysicsCharacter) {
+            addCharacter((PhysicsCharacter) obj);
+        } else {
+            String typeName = obj.getClass().getCanonicalName();
+            String msg = "Unknown type of collision object: " + typeName;
+            throw new IllegalArgumentException(msg);
+        }
+    }
+
+    /**
+     * Register the specified tick listener with this space.
+     * <p>
+     * Tick listeners are notified before and after each physics step. A physics
+     * step is not necessarily the same as a frame; it is more influenced by the
+     * accuracy of the physics space.
+     *
+     * @see #setAccuracy(float)
+     *
+     * @param listener the listener to register (not null)
+     */
+    public void addTickListener(PhysicsTickListener listener) {
+        Validate.nonNull(listener, "listener");
+        assert !tickListeners.contains(listener);
+
+        tickListeners.add(listener);
+    }
+
+    /**
+     * Destroy this space so that a new one can be instantiated.
+     */
+    public void destroy() {
+        physicsBodies.clear();
+        physicsJoints.clear();
+    }
+
+    /**
+     * Distribute each collision event to all listeners.
+     */
+    void distributeEvents() {
+        while (!collisionEvents.isEmpty()) {
+            PhysicsCollisionEvent physicsCollisionEvent = collisionEvents.pop();
+            for (PhysicsCollisionListener listener : collisionListeners) {
+                listener.collision(physicsCollisionEvent);
+            }
+        }
+    }
+
+    /**
+     * Invoke the specified callable during the next physics tick. This is
+     * useful for applying forces.
+     *
+     * @param <V> the return type of the callable
+     * @param callable which callable to invoke
+     * @return Future object
+     */
+    public <V> Future<V> enqueue(Callable<V> callable) {
+        AppTask<V> task = new AppTask<>(callable);
+        pQueue.add(task);
+
+        return task;
+    }
+
+    /**
+     * Enqueue a callable on the currently executing thread.
+     *
+     * @param <V> the task's result type
+     * @param callable the task to be executed
+     * @return a new task (not null)
+     */
+    public static <V> Future<V> enqueueOnThisThread(Callable<V> callable) {
+        AppTask<V> task = new AppTask<>(callable);
+        System.out.println("created apptask");
+        pQueueTL.get().add(task);
+
+        return task;
+    }
+
+    /**
+     * Read the accuracy (time step) of the physics simulation.
+     *
+     * @return the timestep (in seconds, &gt;0)
+     */
+    public float getAccuracy() {
+        return accuracy;
+    }
+
+    /**
+     * Read the type of acceleration structure used.
+     *
+     * @return an enum value (not null)
+     */
+    public BroadphaseType getBroadphaseType() {
+        return broadphaseType;
+    }
+
+    /**
+     * Copy the list of physics characters that have been added to this space
+     * and not yet removed.
+     *
+     * @return a new list (not null)
+     */
+    public Collection<PhysicsCharacter> getCharacterList() {
+        return new LinkedList<>(physicsCharacters.values());
+    }
+
+    /**
+     * Copy the list of ghost objects that have been added to this space and not
+     * yet removed.
+     *
+     * @return a new list (not null)
+     */
+    public Collection<PhysicsGhostObject> getGhostObjectList() {
+        return new LinkedList<>(physicsGhostObjects.values());
+    }
+
+    /**
+     * Copy the gravitational acceleration for newly-added bodies.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the acceleration vector (either storeResult or a new instance)
+     */
+    public Vector3f getGravity(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        result.set(gravity);
+
+        return result;
+    }
+
+    /**
+     * Copy the list of physics joints that have been added to this space and
+     * not yet removed.
+     *
+     * @return a new list (not null)
+     */
+    public Collection<PhysicsJoint> getJointList() {
+        return new LinkedList<>(physicsJoints.values());
+    }
+
+    /**
+     * Access the PhysicsSpace <b>running on this thread</b>. For parallel
+     * physics, this can be invoked from the OpenGL thread.
+     *
+     * @return the PhysicsSpace running on this thread
+     */
+    public static PhysicsSpace getPhysicsSpace() {
+        return physicsSpaceTL.get();
+    }
+
+    /**
+     * Read the m_flags used in ray tests. See
+     * https://code.google.com/p/bullet/source/browse/trunk/src/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h
+     * for possible options.
+     *
+     * @return which flags are used
+     */
+    public int getRayTestFlags() {
+        return rayTestFlags;
+    }
+
+    /**
+     * Copy the list of rigid bodies that have been added to this space and not
+     * yet removed.
+     *
+     * @return a new list (not null)
+     */
+    public Collection<PhysicsRigidBody> getRigidBodyList() {
+        return new LinkedList<>(physicsBodies.values());
+    }
+
+    /**
+     * Read the number of iterations used by the contact-and-constraint solver.
+     *
+     * @return the number of iterations used
+     */
+    public int getSolverNumIterations() {
+        return solverNumIterations;
+    }
+
+    /**
+     * Used internally.
+     *
+     * @return the dynamicsWorld
+     */
+    public long getSpaceId() {
+        return physicsSpaceId;
+    }
+
+    /**
+     * Copy the list of physics vehicles that have been added to this space and
+     * not yet removed.
+     *
+     * @return a new list (not null)
+     */
+    public Collection<PhysicsVehicle> getVehicleList() {
+        return new LinkedList<>(physicsVehicles.values());
+    }
+
+    /**
+     * Copy the maximum coordinate values for this space.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the maximum coordinates (either storeResult or a new vector, not
+     * null)
+     */
+    public Vector3f getWorldMax(Vector3f storeResult) {
+        if (storeResult == null) {
+            return worldMax.clone();
+        } else {
+            return storeResult.set(worldMax);
+        }
+    }
+
+    /**
+     * Copy the minimum coordinate values for this space.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the minimum coordinates (either storeResult or a new vector, not
+     * null)
+     */
+    public Vector3f getWorldMin(Vector3f storeResult) {
+        if (storeResult == null) {
+            return worldMin.clone();
+        } else {
+            return storeResult.set(worldMin);
+        }
+    }
+
+    /**
+     * Test whether this space is empty.
+     *
+     * @return true if empty, otherwise false
+     */
+    public boolean isEmpty() {
+        boolean result = physicsGhostObjects.isEmpty()
+                && physicsCharacters.isEmpty()
+                && physicsBodies.isEmpty()
+                && physicsJoints.isEmpty()
+                && physicsVehicles.isEmpty();
+
+        return result;
+    }
+
+    /**
+     * Read the maximum number of steps per frame.
+     *
+     * @return number of steps (&ge;1)
+     */
+    public int maxSubSteps() {
+        assert maxSubSteps >= 1 : maxSubSteps;
+        return maxSubSteps;
+    }
+
+    /**
+     * Perform a ray-collision test and return the results as a list of
+     * PhysicsRayTestResults sorted by ascending hitFraction.
+     *
+     * @param from the starting location (physics-space coordinates, not null,
+     * unaffected)
+     * @param to the ending location (in physics-space coordinates, not null,
+     * unaffected)
+     * @return a new list of results (not null)
+     */
+    public List<PhysicsRayTestResult> rayTest(Vector3f from, Vector3f to) {
+        List<PhysicsRayTestResult> results = new ArrayList<>();
+        rayTest(from, to, results);
+
+        return results;
+    }
+
+    /**
+     * Perform a ray-collision test and return the results as a list of
+     * PhysicsRayTestResults sorted by ascending hitFraction.
+     *
+     * @param from coordinates of the starting location (in physics space, not
+     * null, unaffected)
+     * @param to coordinates of the ending location (in physics space, not null,
+     * unaffected)
+     * @param results the list to hold results (not null, modified)
+     * @return results
+     */
+    public List<PhysicsRayTestResult> rayTest(Vector3f from, Vector3f to,
+            List<PhysicsRayTestResult> results) {
+        results.clear();
+        rayTest_native(from, to, physicsSpaceId, results, rayTestFlags);
+
+        Collections.sort(results, hitFractionComparator);
+        return results;
+    }
+
+    /**
+     * Perform a ray-collision test and return the results as a list of
+     * PhysicsRayTestResults in arbitrary order.
+     *
+     * @param from the starting location (in physics-space coordinates, not
+     * null, unaffected)
+     * @param to the ending location (in physics-space coordinates, not null,
+     * unaffected)
+     * @return a new list of results (not null)
+     */
+    public List rayTestRaw(Vector3f from, Vector3f to) {
+        List<PhysicsRayTestResult> results = new ArrayList<>();
+        rayTestRaw(from, to, results);
+
+        return results;
+    }
+
+    /**
+     * Perform a ray-collision test and return the results as a list of
+     * PhysicsRayTestResults in arbitrary order.
+     *
+     * @param from coordinates of the starting location (in physics space, not
+     * null, unaffected)
+     * @param to coordinates of the ending location (in physics space, not null,
+     * unaffected)
+     * @param results the list to hold results (not null, modified)
+     * @return results
+     */
+    public List<PhysicsRayTestResult> rayTestRaw(Vector3f from, Vector3f to,
+            List<PhysicsRayTestResult> results) {
+        results.clear();
+        rayTest_native(from, to, physicsSpaceId, results, rayTestFlags);
+
+        return results;
+    }
+
+    /**
+     * Remove the specified object from this space.
+     *
+     * @param obj the PhysicsCollisionObject to add, or null (modified)
+     */
+    public void remove(Object obj) {
+        if (obj == null) {
+            return;
+        }
+        if (obj instanceof PhysicsControl) {
+            ((PhysicsControl) obj).setPhysicsSpace(null);
+        } else if (obj instanceof Spatial) {
+            Spatial node = (Spatial) obj;
+            for (int i = 0; i < node.getNumControls(); i++) {
+                if (node.getControl(i) instanceof PhysicsControl) {
+                    remove(((PhysicsControl) node.getControl(i)));
+                }
+            }
+        } else if (obj instanceof PhysicsCollisionObject) {
+            removeCollisionObject((PhysicsCollisionObject) obj);
+        } else if (obj instanceof PhysicsJoint) {
+            removeJoint((PhysicsJoint) obj);
+        } else {
+            String typeName = obj.getClass().getCanonicalName();
+            String msg
+                    = "Cannot remove a " + typeName + " from a physics space.";
+            throw new IllegalArgumentException(msg);
+        }
+    }
+
+    /**
      * Remove all physics controls and joints in the specified subtree of the
      * scene graph from the physics space (e.g. before saving to disk) Note:
      * recursive! TODO delete this method?
@@ -566,195 +756,66 @@ public class PhysicsSpace {
         }
     }
 
-    private void addGhostObject(PhysicsGhostObject node) {
-        if (physicsGhostObjects.containsKey(node.getObjectId())) {
-            logger.log(Level.WARNING,
-                    "GhostObject {0} already exists in PhysicsSpace, cannot add.",
-                    node);
-            return;
-        }
-        physicsGhostObjects.put(node.getObjectId(), node);
-        logger.log(Level.FINE, "Adding ghost object {0} to physics space.",
-                Long.toHexString(node.getObjectId()));
-        addCollisionObject(physicsSpaceId, node.getObjectId());
-    }
+    /**
+     * De-register the specified collision-group listener.
+     *
+     * @see
+     * #addCollisionGroupListener(com.jme3.bullet.collision.PhysicsCollisionGroupListener,
+     * int)
+     * @param collisionGroup the group of the listener to de-register (bit mask
+     * with exactly one bit set)
+     */
+    public void removeCollisionGroupListener(int collisionGroup) {
+        assert collisionGroupListeners.get(collisionGroup) != null;
+        assert Integer.bitCount(collisionGroup) == 1 : collisionGroup;
 
-    private void removeGhostObject(PhysicsGhostObject node) {
-        if (!physicsGhostObjects.containsKey(node.getObjectId())) {
-            logger.log(Level.WARNING,
-                    "GhostObject {0} does not exist in PhysicsSpace, cannot remove.",
-                    node);
-            return;
-        }
-        physicsGhostObjects.remove(node.getObjectId());
-        logger.log(Level.FINE,
-                "Removing ghost object {0} from physics space.",
-                Long.toHexString(node.getObjectId()));
-        removeCollisionObject(physicsSpaceId, node.getObjectId());
-    }
-
-    private void addCharacter(PhysicsCharacter node) {
-        if (physicsCharacters.containsKey(node.getObjectId())) {
-            logger.log(Level.WARNING,
-                    "Character {0} already exists in PhysicsSpace, cannot add.",
-                    node);
-            return;
-        }
-        physicsCharacters.put(node.getObjectId(), node);
-        logger.log(Level.FINE, "Adding character {0} to physics space.",
-                Long.toHexString(node.getObjectId()));
-        addCharacterObject(physicsSpaceId, node.getObjectId());
-        addAction(physicsSpaceId, node.getControllerId());
-    }
-
-    private void removeCharacter(PhysicsCharacter node) {
-        if (!physicsCharacters.containsKey(node.getObjectId())) {
-            logger.log(Level.WARNING,
-                    "Character {0} does not exist in PhysicsSpace, cannot remove.",
-                    node);
-            return;
-        }
-        physicsCharacters.remove(node.getObjectId());
-        logger.log(Level.FINE, "Removing character {0} from physics space.",
-                Long.toHexString(node.getObjectId()));
-        removeAction(physicsSpaceId, node.getControllerId());
-        removeCharacterObject(physicsSpaceId, node.getObjectId());
+        collisionGroupListeners.remove(collisionGroup);
     }
 
     /**
-     * NOTE: When a rigid body is added, its gravity gets set to that of the
-     * physics space.
+     * De-register the specified collision listener.
      *
-     * @param node the body to add (not null, not already in the space)
+     * @see
+     * #addCollisionListener(com.jme3.bullet.collision.PhysicsCollisionListener)
+     * @param listener the listener to de-register (not null)
      */
-    private void addRigidBody(PhysicsRigidBody node) {
-        if (physicsBodies.containsKey(node.getObjectId())) {
-            logger.log(Level.WARNING,
-                    "RigidBody {0} already exists in PhysicsSpace, cannot add.",
-                    node);
-            return;
-        }
-        physicsBodies.put(node.getObjectId(), node);
+    public void removeCollisionListener(PhysicsCollisionListener listener) {
+        Validate.nonNull(listener, "listener");
+        assert collisionListeners.contains(listener);
 
-        //Workaround
-        //It seems that adding a Kinematic RigidBody to the dynamicWorld prevents it from being non-kinematic again afterward.
-        //so we add it non kinematic, then set it kinematic again.
-        boolean kinematic = false;
-        if (node.isKinematic()) {
-            kinematic = true;
-            node.setKinematic(false);
-        }
-        addRigidBody(physicsSpaceId, node.getObjectId());
-        if (kinematic) {
-            node.setKinematic(true);
-        }
-        logger.log(Level.FINE, "Adding RigidBody {0} to physics space.",
-                node.getObjectId());
-
-        if (node instanceof PhysicsVehicle) {
-            PhysicsVehicle vehicle = (PhysicsVehicle) node;
-            vehicle.createVehicle(this);
-            long vehicleId = vehicle.getVehicleId();
-            assert vehicleId != 0L;
-            logger.log(Level.FINE,
-                    "Adding vehicle constraint {0} to physics space.",
-                    Long.toHexString(vehicleId));
-            physicsVehicles.put(vehicleId, vehicle);
-            addVehicle(physicsSpaceId, vehicleId);
-        }
-    }
-
-    private void removeRigidBody(PhysicsRigidBody node) {
-        if (!physicsBodies.containsKey(node.getObjectId())) {
-            logger.log(Level.WARNING,
-                    "RigidBody {0} does not exist in PhysicsSpace, cannot remove.", node);
-            return;
-        }
-        if (node instanceof PhysicsVehicle) {
-            logger.log(Level.FINE,
-                    "Removing vehicle constraint {0} from physics space.",
-                    Long.toHexString(((PhysicsVehicle) node).getVehicleId()));
-            physicsVehicles.remove(((PhysicsVehicle) node).getVehicleId());
-            removeVehicle(physicsSpaceId, ((PhysicsVehicle) node).getVehicleId());
-        }
-        logger.log(Level.FINE, "Removing RigidBody {0} from physics space.",
-                Long.toHexString(node.getObjectId()));
-        physicsBodies.remove(node.getObjectId());
-        removeRigidBody(physicsSpaceId, node.getObjectId());
-    }
-
-    private void addJoint(PhysicsJoint joint) {
-        if (physicsJoints.containsKey(joint.getObjectId())) {
-            logger.log(Level.WARNING, "Joint {0} already exists in PhysicsSpace, cannot add.", joint);
-            return;
-        }
-        logger.log(Level.FINE, "Adding Joint {0} to physics space.",
-                Long.toHexString(joint.getObjectId()));
-        physicsJoints.put(joint.getObjectId(), joint);
-        addConstraintC(physicsSpaceId, joint.getObjectId(), !joint.isCollisionBetweenLinkedBodies());
-    }
-
-    private void removeJoint(PhysicsJoint joint) {
-        if (!physicsJoints.containsKey(joint.getObjectId())) {
-            logger.log(Level.WARNING,
-                    "Joint {0} does not exist in PhysicsSpace, cannot remove.",
-                    joint);
-            return;
-        }
-        logger.log(Level.FINE, "Removing Joint {0} from physics space.",
-                Long.toHexString(joint.getObjectId()));
-        physicsJoints.remove(joint.getObjectId());
-        removeConstraint(physicsSpaceId, joint.getObjectId());
+        collisionListeners.remove(listener);
     }
 
     /**
-     * Copy the list of rigid bodies that have been added to this space and not
-     * yet removed.
+     * Remove the specified collision object from this space.
      *
-     * @return a new list (not null)
+     * @param obj the PhysicsControl or Spatial with PhysicsControl to remove
      */
-    public Collection<PhysicsRigidBody> getRigidBodyList() {
-        return new LinkedList<>(physicsBodies.values());
+    public void removeCollisionObject(PhysicsCollisionObject obj) {
+        if (obj instanceof PhysicsGhostObject) {
+            removeGhostObject((PhysicsGhostObject) obj);
+        } else if (obj instanceof PhysicsRigidBody) {
+            removeRigidBody((PhysicsRigidBody) obj);
+        } else if (obj instanceof PhysicsCharacter) {
+            removeCharacter((PhysicsCharacter) obj);
+        } else {
+            String typeName = obj.getClass().getCanonicalName();
+            String msg = "Unknown type of collision object: " + typeName;
+            throw new IllegalArgumentException(msg);
+        }
     }
 
     /**
-     * Copy the list of ghost objects that have been added to this space and not
-     * yet removed.
+     * De-register the specified tick listener.
      *
-     * @return a new list (not null)
+     * @see #addTickListener(com.jme3.bullet.PhysicsTickListener)
+     * @param listener the listener to de-register (not null)
      */
-    public Collection<PhysicsGhostObject> getGhostObjectList() {
-        return new LinkedList<>(physicsGhostObjects.values());
-    }
+    public void removeTickListener(PhysicsTickListener listener) {
+        Validate.nonNull(listener, "listener");
+        assert tickListeners.contains(listener);
 
-    /**
-     * Copy the list of physics characters that have been added to this space
-     * and not yet removed.
-     *
-     * @return a new list (not null)
-     */
-    public Collection<PhysicsCharacter> getCharacterList() {
-        return new LinkedList<>(physicsCharacters.values());
-    }
-
-    /**
-     * Copy the list of physics joints that have been added to this space and
-     * not yet removed.
-     *
-     * @return a new list (not null)
-     */
-    public Collection<PhysicsJoint> getJointList() {
-        return new LinkedList<>(physicsJoints.values());
-    }
-
-    /**
-     * Copy the list of physics vehicles that have been added to this space and
-     * not yet removed.
-     *
-     * @return a new list (not null)
-     */
-    public Collection<PhysicsVehicle> getVehicleList() {
-        return new LinkedList<>(physicsVehicles.values());
+        tickListeners.remove(listener);
     }
 
     /**
@@ -773,156 +834,33 @@ public class PhysicsSpace {
     }
 
     /**
-     * copy of gravity-acceleration vector for newly-added bodies (default is
-     * 9.81 in the -Y direction, corresponding to Earth-normal in MKS units)
-     * TODO sort fields
-     */
-    private final Vector3f gravity = new Vector3f(0, -9.81f, 0);
-
-    /**
-     * Copy the gravitational acceleration for newly-added bodies.
+     * Used internally
      *
-     * @param storeResult storage for the result (modified if not null)
-     * @return the acceleration vector (either storeResult or a new instance)
+     * @param space which physics space to simulate on this thread
      */
-    public Vector3f getGravity(Vector3f storeResult) {
-        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
-        result.set(gravity);
-
-        return result;
+    public static void setLocalThreadPhysicsSpace(PhysicsSpace space) {
+        physicsSpaceTL.set(space);
     }
 
     /**
-     * Register the specified tick listener with this space.
+     * Alter the maximum number of physics steps per frame.
      * <p>
-     * Tick listeners are notified before and after each physics step. A physics
-     * step is not necessarily the same as a frame; it is more influenced by the
-     * accuracy of the physics space.
-     *
-     * @see #setAccuracy(float)
-     *
-     * @param listener the listener to register (not null)
-     */
-    public void addTickListener(PhysicsTickListener listener) {
-        Validate.nonNull(listener, "listener");
-        assert !tickListeners.contains(listener);
-
-        tickListeners.add(listener);
-    }
-
-    /**
-     * De-register the specified tick listener.
-     *
-     * @see #addTickListener(com.jme3.bullet.PhysicsTickListener)
-     * @param listener the listener to de-register (not null)
-     */
-    public void removeTickListener(PhysicsTickListener listener) {
-        Validate.nonNull(listener, "listener");
-        assert tickListeners.contains(listener);
-
-        tickListeners.remove(listener);
-    }
-
-    /**
-     * Register the specified collision listener with this space.
+     * Extra physics steps help maintain determinism when the render fps drops
+     * below 1/accuracy. For example a value of 2 can compensate for frame rates
+     * as low as 30fps, assuming the physics has an accuracy of 1/60 sec.
      * <p>
-     * Collision listeners are notified when collisions occur in the space.
+     * Setting this value too high can depress the frame rate.
      *
-     * @param listener the listener to register (not null, alias created)
+     * @param steps the desired maximum number of steps per frame (&ge;1,
+     * default=4)
      */
-    public void addCollisionListener(PhysicsCollisionListener listener) {
-        Validate.nonNull(listener, "listener");
-        assert !collisionListeners.contains(listener);
-
-        collisionListeners.add(listener);
+    public void setMaxSubSteps(int steps) {
+        Validate.positive(steps, "steps");
+        maxSubSteps = steps;
     }
 
     /**
-     * De-register the specified collision listener.
-     *
-     * @see
-     * #addCollisionListener(com.jme3.bullet.collision.PhysicsCollisionListener)
-     * @param listener the listener to de-register (not null)
-     */
-    public void removeCollisionListener(PhysicsCollisionListener listener) {
-        Validate.nonNull(listener, "listener");
-        assert collisionListeners.contains(listener);
-
-        collisionListeners.remove(listener);
-    }
-
-    /**
-     * Register the specified collision-group listener with the specified
-     * collision group of this space.
-     * <p>
-     * Such a listener can disable collisions when they occur. There can be only
-     * one listener per collision group per space.
-     *
-     * @param listener the listener to register (not null)
-     * @param collisionGroup which group it should listen for (bit mask with
-     * exactly one bit set)
-     */
-    public void addCollisionGroupListener(
-            PhysicsCollisionGroupListener listener, int collisionGroup) {
-        Validate.nonNull(listener, "listener");
-        assert collisionGroupListeners.get(collisionGroup) == null;
-        assert Integer.bitCount(collisionGroup) == 1 : collisionGroup;
-
-        collisionGroupListeners.put(collisionGroup, listener);
-    }
-
-    /**
-     * De-register the specified collision-group listener.
-     *
-     * @see
-     * #addCollisionGroupListener(com.jme3.bullet.collision.PhysicsCollisionGroupListener,
-     * int)
-     * @param collisionGroup the group of the listener to de-register (bit mask
-     * with exactly one bit set)
-     */
-    public void removeCollisionGroupListener(int collisionGroup) {
-        assert collisionGroupListeners.get(collisionGroup) != null;
-        assert Integer.bitCount(collisionGroup) == 1 : collisionGroup;
-
-        collisionGroupListeners.remove(collisionGroup);
-    }
-
-    /**
-     * Perform a ray-collision test and return the results as a list of
-     * PhysicsRayTestResults sorted by ascending hitFraction.
-     *
-     * @param from the starting location (physics-space coordinates, not null,
-     * unaffected)
-     * @param to the ending location (in physics-space coordinates, not null,
-     * unaffected)
-     * @return a new list of results (not null)
-     */
-    public List<PhysicsRayTestResult> rayTest(Vector3f from, Vector3f to) {
-        List<PhysicsRayTestResult> results = new ArrayList<>();
-        rayTest(from, to, results);
-
-        return results;
-    }
-
-    /**
-     * Perform a ray-collision test and return the results as a list of
-     * PhysicsRayTestResults in arbitrary order.
-     *
-     * @param from the starting location (in physics-space coordinates, not
-     * null, unaffected)
-     * @param to the ending location (in physics-space coordinates, not null,
-     * unaffected)
-     * @return a new list of results (not null)
-     */
-    public List rayTestRaw(Vector3f from, Vector3f to) {
-        List<PhysicsRayTestResult> results = new ArrayList<>();
-        rayTestRaw(from, to, results);
-
-        return results;
-    }
-
-    /**
-     * Alters the m_flags used in ray tests. see
+     * Alter the m_flags used in ray tests. See
      * https://code.google.com/p/bullet/source/browse/trunk/src/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h
      * for possible options. Defaults to using the faster, approximate raytest.
      *
@@ -933,62 +871,31 @@ public class PhysicsSpace {
     }
 
     /**
-     * Reads m_flags used in ray tests. see
-     * https://code.google.com/p/bullet/source/browse/trunk/src/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h
-     * for possible options.
+     * Alter the accuracy (time step) of the physics simulation.
+     * <p>
+     * In general, the smaller the time step, the more accurate (and
+     * compute-intensive) the simulation will be. Bullet works best with a time
+     * step of no more than 1/60 second.
      *
-     * @return which flags are used
+     * @param accuracy the desired time step (in seconds, &gt;0, default=1/60)
      */
-    public int getRayTestFlags() {
-        return rayTestFlags;
-    }
-
-    private static Comparator<PhysicsRayTestResult> hitFractionComparator
-            = new Comparator<PhysicsRayTestResult>() {
-        @Override
-        public int compare(PhysicsRayTestResult r1, PhysicsRayTestResult r2) {
-            float comp = r1.getHitFraction() - r2.getHitFraction();
-            return comp > 0 ? 1 : -1;
-        }
-    };
-
-    /**
-     * Perform a ray-collision test and return the results as a list of
-     * PhysicsRayTestResults sorted by ascending hitFraction.
-     *
-     * @param from coordinates of the starting location (in physics space, not
-     * null, unaffected)
-     * @param to coordinates of the ending location (in physics space, not null,
-     * unaffected)
-     * @param results the list to hold results (not null, modified)
-     * @return results
-     */
-    public List<PhysicsRayTestResult> rayTest(Vector3f from, Vector3f to,
-            List<PhysicsRayTestResult> results) {
-        results.clear();
-        rayTest_native(from, to, physicsSpaceId, results, rayTestFlags);
-
-        Collections.sort(results, hitFractionComparator);
-        return results;
+    public void setAccuracy(float accuracy) {
+        Validate.positive(accuracy, "accuracy");
+        this.accuracy = accuracy;
     }
 
     /**
-     * Perform a ray-collision test and return the results as a list of
-     * PhysicsRayTestResults in arbitrary order.
+     * Alter the number of iterations used by the contact-and-constraint solver.
+     * <p>
+     * Use 4 for low quality, 20 for high quality.
      *
-     * @param from coordinates of the starting location (in physics space, not
-     * null, unaffected)
-     * @param to coordinates of the ending location (in physics space, not null,
-     * unaffected)
-     * @param results the list to hold results (not null, modified)
-     * @return results
+     * @param numIterations the desired number of iterations (&ge;1, default=10)
      */
-    public List<PhysicsRayTestResult> rayTestRaw(Vector3f from, Vector3f to,
-            List<PhysicsRayTestResult> results) {
-        results.clear();
-        rayTest_native(from, to, physicsSpaceId, results, rayTestFlags);
+    public void setSolverNumIterations(int numIterations) {
+        Validate.positive(numIterations, "number of iterations");
 
-        return results;
+        this.solverNumIterations = numIterations;
+        setSolverNumIterations(physicsSpaceId, numIterations);
     }
 
     /**
@@ -1060,161 +967,17 @@ public class PhysicsSpace {
     }
 
     /**
-     * Destroy this space so that a new one can be instantiated.
-     */
-    public void destroy() {
-        physicsBodies.clear();
-        physicsJoints.clear();
-    }
-
-    /**
-     * // * used internally //
+     * Update this space. Invoked (by the Bullet app state) once per frame while
+     * the app state is attached and enabled.
      *
-     * @return the dynamicsWorld //
+     * @param time time-per-frame multiplied by speed (in seconds, &ge;0)
      */
-    public long getSpaceId() {
-        return physicsSpaceId;
+    void update(float time) {
+        assert time >= 0f : time;
+        update(time, maxSubSteps);
     }
-
-    /**
-     * Read the type of acceleration structure used.
-     *
-     * @return an enum value (not null)
-     */
-    public BroadphaseType getBroadphaseType() {
-        return broadphaseType;
-    }
-
-    /**
-     * Read the maximum number of steps per frame.
-     *
-     * @return number of steps (&ge;1)
-     */
-    public int maxSubSteps() {
-        assert maxSubSteps >= 1 : maxSubSteps;
-        return maxSubSteps;
-    }
-
-    /**
-     * Alter the maximum number of physics steps per frame.
-     * <p>
-     * Extra physics steps help maintain determinism when the render fps drops
-     * below 1/accuracy. For example a value of 2 can compensate for frame rates
-     * as low as 30fps, assuming the physics has an accuracy of 1/60 sec.
-     * <p>
-     * Setting this value too high can depress the frame rate.
-     *
-     * @param steps the desired maximum number of steps per frame (&ge;1,
-     * default=4)
-     */
-    public void setMaxSubSteps(int steps) {
-        Validate.positive(steps, "steps");
-        maxSubSteps = steps;
-    }
-
-    /**
-     * Read the accuracy (time step) of the physics simulation.
-     *
-     * @return the timestep (in seconds, &gt;0)
-     */
-    public float getAccuracy() {
-        return accuracy;
-    }
-
-    /**
-     * Alter the accuracy (time step) of the physics simulation.
-     * <p>
-     * In general, the smaller the time step, the more accurate (and
-     * compute-intensive) the simulation will be. Bullet works best with a time
-     * step of no more than 1/60 second.
-     *
-     * @param accuracy the desired time step (in seconds, &gt;0, default=1/60)
-     */
-    public void setAccuracy(float accuracy) {
-        Validate.positive(accuracy, "accuracy");
-        this.accuracy = accuracy;
-    }
-
-    /**
-     * Copy the minimum coordinate values for this space.
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return the minimum coordinates (either storeResult or a new vector, not
-     * null)
-     */
-    public Vector3f getWorldMin(Vector3f storeResult) {
-        if (storeResult == null) {
-            return worldMin.clone();
-        } else {
-            return storeResult.set(worldMin);
-        }
-    }
-
-    /**
-     * Copy the maximum coordinate values for this space.
-     *
-     * @param storeResult storage for the result (modified if not null)
-     * @return the maximum coordinates (either storeResult or a new vector, not
-     * null)
-     */
-    public Vector3f getWorldMax(Vector3f storeResult) {
-        if (storeResult == null) {
-            return worldMax.clone();
-        } else {
-            return storeResult.set(worldMax);
-        }
-    }
-
-    /**
-     * Alter the number of iterations used by the contact-and-constraint solver.
-     * <p>
-     * Use 4 for low quality, 20 for high quality.
-     *
-     * @param numIterations the desired number of iterations (&ge;1, default=10)
-     */
-    public void setSolverNumIterations(int numIterations) {
-        Validate.positive(numIterations, "number of iterations");
-
-        this.solverNumIterations = numIterations;
-        setSolverNumIterations(physicsSpaceId, numIterations);
-    }
-
-    /**
-     * Read the number of iterations used by the contact-and-constraint solver.
-     *
-     * @return the number of iterations used
-     */
-    public int getSolverNumIterations() {
-        return solverNumIterations;
-    }
-
-    /**
-     * Enumerate the available acceleration structures for broadphase collision
-     * detection.
-     */
-    public enum BroadphaseType {
-        /**
-         * btSimpleBroadphase: a brute-force reference implementation for
-         * debugging purposes
-         */
-        SIMPLE,
-        /**
-         * btAxisSweep3: uses incremental 3-D sweep and prune, requires world
-         * bounds, limited to 16_384 objects
-         */
-        AXIS_SWEEP_3,
-        /**
-         * bt32BitAxisSweep3: uses incremental 3-D sweep and prune, requires
-         * world bounds, limited to 65_536 objects
-         */
-        AXIS_SWEEP_3_32,
-        /**
-         * btDbvtBroadphase: uses a fast, dynamic bounding-volume hierarchy
-         * based on AABB tree to allow quicker addition/removal of physics
-         * objects
-         */
-        DBVT
-    }
+    // *************************************************************************
+    // Object methods
 
     /**
      * Finalize this physics space just before it is destroyed. Should be
@@ -1230,7 +993,252 @@ public class PhysicsSpace {
         finalizeNative(physicsSpaceId);
     }
     // *************************************************************************
-    // private methods
+    // private Java methods
+
+    private void addCharacter(PhysicsCharacter node) {
+        if (physicsCharacters.containsKey(node.getObjectId())) {
+            logger.log(Level.WARNING,
+                    "Character {0} already exists in PhysicsSpace, cannot add.",
+                    node);
+            return;
+        }
+        physicsCharacters.put(node.getObjectId(), node);
+        logger.log(Level.FINE, "Adding character {0} to physics space.",
+                Long.toHexString(node.getObjectId()));
+        addCharacterObject(physicsSpaceId, node.getObjectId());
+        addAction(physicsSpaceId, node.getControllerId());
+    }
+
+    /**
+     * This method is invoked from native code.
+     */
+    private void addCollisionEvent_native(PhysicsCollisionObject nodeA,
+            PhysicsCollisionObject nodeB, long manifoldPointId) {
+        if (!collisionListeners.isEmpty()) {
+            PhysicsCollisionEvent event
+                    = new PhysicsCollisionEvent(nodeA, nodeB, manifoldPointId);
+            collisionEvents.add(event);
+        }
+    }
+
+    private void addGhostObject(PhysicsGhostObject node) {
+        if (physicsGhostObjects.containsKey(node.getObjectId())) {
+            logger.log(Level.WARNING,
+                    "GhostObject {0} already exists in PhysicsSpace, cannot add.",
+                    node);
+            return;
+        }
+        physicsGhostObjects.put(node.getObjectId(), node);
+        logger.log(Level.FINE, "Adding ghost object {0} to physics space.",
+                Long.toHexString(node.getObjectId()));
+        addCollisionObject(physicsSpaceId, node.getObjectId());
+    }
+
+    private void addJoint(PhysicsJoint joint) {
+        if (physicsJoints.containsKey(joint.getObjectId())) {
+            logger.log(Level.WARNING, "Joint {0} already exists in PhysicsSpace, cannot add.", joint);
+            return;
+        }
+        logger.log(Level.FINE, "Adding Joint {0} to physics space.",
+                Long.toHexString(joint.getObjectId()));
+        physicsJoints.put(joint.getObjectId(), joint);
+        addConstraintC(physicsSpaceId, joint.getObjectId(), !joint.isCollisionBetweenLinkedBodies());
+    }
+
+    /**
+     * NOTE: When a rigid body is added, its gravity gets set to that of the
+     * physics space.
+     *
+     * @param node the body to add (not null, not already in the space)
+     */
+    private void addRigidBody(PhysicsRigidBody node) {
+        if (physicsBodies.containsKey(node.getObjectId())) {
+            logger.log(Level.WARNING,
+                    "RigidBody {0} already exists in PhysicsSpace, cannot add.",
+                    node);
+            return;
+        }
+        physicsBodies.put(node.getObjectId(), node);
+
+        //Workaround
+        //It seems that adding a Kinematic RigidBody to the dynamicWorld prevents it from being non-kinematic again afterward.
+        //so we add it non kinematic, then set it kinematic again.
+        boolean kinematic = false;
+        if (node.isKinematic()) {
+            kinematic = true;
+            node.setKinematic(false);
+        }
+        addRigidBody(physicsSpaceId, node.getObjectId());
+        if (kinematic) {
+            node.setKinematic(true);
+        }
+        logger.log(Level.FINE, "Adding RigidBody {0} to physics space.",
+                node.getObjectId());
+
+        if (node instanceof PhysicsVehicle) {
+            PhysicsVehicle vehicle = (PhysicsVehicle) node;
+            vehicle.createVehicle(this);
+            long vehicleId = vehicle.getVehicleId();
+            assert vehicleId != 0L;
+            logger.log(Level.FINE,
+                    "Adding vehicle constraint {0} to physics space.",
+                    Long.toHexString(vehicleId));
+            physicsVehicles.put(vehicleId, vehicle);
+            addVehicle(physicsSpaceId, vehicleId);
+        }
+    }
+
+    /**
+     * Must be invoked on the designated physics thread.
+     */
+    private void create() {
+        physicsSpaceId = createPhysicsSpace(worldMin.x, worldMin.y, worldMin.z,
+                worldMax.x, worldMax.y, worldMax.z, broadphaseType.ordinal(),
+                false);
+        assert physicsSpaceId != 0L;
+        logger.log(Level.FINE, "Created Space {0}",
+                Long.toHexString(physicsSpaceId));
+
+        pQueueTL.set(pQueue);
+        physicsSpaceTL.set(this);
+    }
+
+    /**
+     * This method is invoked from native code.
+     */
+    private boolean notifyCollisionGroupListeners_native(
+            PhysicsCollisionObject node, PhysicsCollisionObject node1) {
+        PhysicsCollisionGroupListener listener
+                = collisionGroupListeners.get(node.getCollisionGroup());
+        PhysicsCollisionGroupListener listener1
+                = collisionGroupListeners.get(node1.getCollisionGroup());
+        boolean result = true;
+
+        if (listener != null) {
+            result = listener.collide(node, node1);
+        }
+        if (listener1 != null
+                && node.getCollisionGroup() != node1.getCollisionGroup()) {
+            result = listener1.collide(node, node1) && result;
+        }
+
+        return result;
+    }
+
+    /**
+     * Callback invoked just after the physics is stepped.
+     * <p>
+     * This method is invoked from native code.
+     *
+     * @param timeStep the time per physics step (in seconds, &ge;0)
+     */
+    private void postTick_native(float timeStep) {
+        for (PhysicsTickListener listener : tickListeners) {
+            listener.physicsTick(this, timeStep);
+        }
+    }
+
+    /**
+     * Callback invoked just before the physics is stepped.
+     * <p>
+     * This method is invoked from native code.
+     *
+     * @param timeStep the time per physics step (in seconds, &ge;0)
+     */
+    private void preTick_native(float timeStep) {
+        AppTask task;
+        while ((task = pQueue.poll()) != null) {
+            if (task.isCancelled()) {
+                continue;
+            }
+            try {
+                task.invoke();
+            } catch (Exception ex) {
+                logger.log(Level.SEVERE, null, ex);
+            }
+        }
+
+        for (PhysicsTickListener listener : tickListeners) {
+            listener.prePhysicsTick(this, timeStep);
+        }
+    }
+
+    private void removeCharacter(PhysicsCharacter node) {
+        if (!physicsCharacters.containsKey(node.getObjectId())) {
+            logger.log(Level.WARNING,
+                    "Character {0} does not exist in PhysicsSpace, cannot remove.",
+                    node);
+            return;
+        }
+        physicsCharacters.remove(node.getObjectId());
+        logger.log(Level.FINE, "Removing character {0} from physics space.",
+                Long.toHexString(node.getObjectId()));
+        removeAction(physicsSpaceId, node.getControllerId());
+        removeCharacterObject(physicsSpaceId, node.getObjectId());
+    }
+
+    private void removeGhostObject(PhysicsGhostObject node) {
+        if (!physicsGhostObjects.containsKey(node.getObjectId())) {
+            logger.log(Level.WARNING,
+                    "GhostObject {0} does not exist in PhysicsSpace, cannot remove.",
+                    node);
+            return;
+        }
+        physicsGhostObjects.remove(node.getObjectId());
+        logger.log(Level.FINE,
+                "Removing ghost object {0} from physics space.",
+                Long.toHexString(node.getObjectId()));
+        removeCollisionObject(physicsSpaceId, node.getObjectId());
+    }
+
+    private void removeJoint(PhysicsJoint joint) {
+        if (!physicsJoints.containsKey(joint.getObjectId())) {
+            logger.log(Level.WARNING,
+                    "Joint {0} does not exist in PhysicsSpace, cannot remove.",
+                    joint);
+            return;
+        }
+        logger.log(Level.FINE, "Removing Joint {0} from physics space.",
+                Long.toHexString(joint.getObjectId()));
+        physicsJoints.remove(joint.getObjectId());
+        removeConstraint(physicsSpaceId, joint.getObjectId());
+    }
+
+    private void removeRigidBody(PhysicsRigidBody node) {
+        if (!physicsBodies.containsKey(node.getObjectId())) {
+            logger.log(Level.WARNING,
+                    "RigidBody {0} does not exist in PhysicsSpace, cannot remove.", node);
+            return;
+        }
+        if (node instanceof PhysicsVehicle) {
+            logger.log(Level.FINE,
+                    "Removing vehicle constraint {0} from physics space.",
+                    Long.toHexString(((PhysicsVehicle) node).getVehicleId()));
+            physicsVehicles.remove(((PhysicsVehicle) node).getVehicleId());
+            removeVehicle(physicsSpaceId, ((PhysicsVehicle) node).getVehicleId());
+        }
+        logger.log(Level.FINE, "Removing RigidBody {0} from physics space.",
+                Long.toHexString(node.getObjectId()));
+        physicsBodies.remove(node.getObjectId());
+        removeRigidBody(physicsSpaceId, node.getObjectId());
+    }
+
+    /**
+     * Simulate for the specified time interval, using no more than the
+     * specified number of steps.
+     *
+     * @param time the time interval (in seconds, &ge;0)
+     * @param maxSteps the maximum number of steps (&ge;1)
+     */
+    private void update(float time, int maxSteps) {
+        assert time >= 0f : time;
+        assert maxSteps >= 1 : maxSteps;
+        assert accuracy > 0f : accuracy;
+
+        stepSimulation(physicsSpaceId, time, maxSteps, accuracy);
+    }
+    // *************************************************************************
+    // private native methods
 
     native private void addAction(long space, long id);
 
