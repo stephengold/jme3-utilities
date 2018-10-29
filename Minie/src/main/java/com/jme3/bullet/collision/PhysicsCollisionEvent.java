@@ -57,11 +57,11 @@ public class PhysicsCollisionEvent extends EventObject {
     /**
      * 1st involved object
      */
-    private PhysicsCollisionObject nodeA;
+    final private PhysicsCollisionObject nodeA;
     /**
      * 2nd involved object
      */
-    private PhysicsCollisionObject nodeB;
+    final private PhysicsCollisionObject nodeB;
     /**
      * Bullet identifier of the btManifoldPoint
      */
