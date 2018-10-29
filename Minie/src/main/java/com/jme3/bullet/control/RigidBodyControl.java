@@ -303,7 +303,7 @@ public class RigidBodyControl
      * @return true if the spatial location and rotation are applied to the
      * rigid body, otherwise false
      */
-    public boolean isKinematicSpatial() {
+    final public boolean isKinematicSpatial() {
         return kinematicSpatial;
     }
 
