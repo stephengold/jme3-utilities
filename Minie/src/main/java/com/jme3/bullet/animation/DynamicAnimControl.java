@@ -499,12 +499,20 @@ public class DynamicAnimControl
                     "Cannot rebuild unless added to a spatial.");
         }
 
+        Map<String, AttachmentLink> saveAttach = new HashMap<>(attachmentLinks);
         Map<String, BoneLink> saveBones = new HashMap<>(boneLinks);
         TorsoLink saveTorso = torsoLink;
 
         removeSpatialData(controlledSpatial);
         createSpatialData(controlledSpatial);
 
+        for (Map.Entry<String, AttachmentLink> entry
+                : attachmentLinks.entrySet()) {
+            String name = entry.getKey();
+            AttachmentLink newLink = entry.getValue();
+            AttachmentLink oldLink = saveAttach.get(name);
+            newLink.postRebuild(oldLink);
+        }
         for (Map.Entry<String, BoneLink> entry : boneLinks.entrySet()) {
             String name = entry.getKey();
             BoneLink newLink = entry.getValue();

@@ -285,13 +285,14 @@ abstract public class PhysicsLink
         assert oldLink != null;
         assert oldLink.bone == bone;
 
-        blendInterval = oldLink.blendInterval;
-        kinematicWeight = oldLink.kinematicWeight;
-        rigidBody.setKinematic(oldLink.rigidBody.isKinematic());
-        if (!isKinematic()) {
-            Vector3f acceleration = oldLink.rigidBody.getGravity(null);
-            setDynamic(acceleration);
+        if (oldLink.isKinematic()) {
+            blendInterval = oldLink.blendInterval;
+            kinematicWeight = oldLink.kinematicWeight;
+        } else {
+            blendInterval = 0f;
+            kinematicWeight = 1f;
         }
+
     }
 
     /**

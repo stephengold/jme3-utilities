@@ -359,7 +359,12 @@ public class TorsoLink extends PhysicsLink {
         assert oldLink.managedBones.length == numManagedBones;
 
         super.postRebuild(oldLink);
-        submode = oldLink.submode;
+        if (oldLink.isKinematic()) {
+            submode = oldLink.submode;
+        } else {
+            submode = KinematicSubmode.Frozen;
+        }
+
         endModelTransform
                 = (Transform) Misc.deepCopy(oldLink.endModelTransform);
         startModelTransform.set(oldLink.startModelTransform);

@@ -373,7 +373,11 @@ public class BoneLink extends PhysicsLink {
         assert oldLink.managedBones.length == numManagedBones;
 
         super.postRebuild(oldLink);
-        submode = oldLink.submode;
+        if (oldLink.isKinematic()) {
+            submode = oldLink.submode;
+        } else {
+            submode = KinematicSubmode.Frozen;
+        }
 
         if (prevBoneTransforms == null) {
             prevBoneTransforms = new Transform[numManagedBones];
