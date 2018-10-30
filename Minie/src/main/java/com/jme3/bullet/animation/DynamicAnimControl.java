@@ -448,6 +448,30 @@ public class DynamicAnimControl
     }
 
     /**
+     * Enumerate all the rigid bodies managed by this control.
+     *
+     * @return a new array of rigid bodies (not null)
+     */
+    public PhysicsRigidBody[] listRigidBodies() {
+        int numLinks = countLinks();
+        PhysicsRigidBody[] result = new PhysicsRigidBody[numLinks];
+
+        result[0] = torsoLink.getRigidBody();
+        int linkIndex = 1;
+        for (BoneLink boneLink : boneLinkList) {
+            result[linkIndex] = boneLink.getRigidBody();
+            ++linkIndex;
+        }
+        for (AttachmentLink link : attachmentLinks.values()) {
+            result[linkIndex] = link.getRigidBody();
+            ++linkIndex;
+        }
+        assert linkIndex == numLinks;
+
+        return result;
+    }
+
+    /**
      * Copy the model's mesh-to-world transform.
      *
      * @param storeResult storage for the result (modified if not null)
@@ -538,45 +562,7 @@ public class DynamicAnimControl
     }
 
     /**
-     * Alter the CCD motion threshold of all rigid bodies in this control.
-     *
-     * @see PhysicsRigidBody#setCcdMotionThreshold(float)
-     * @param speed the desired threshold speed (in physics-space units per
-     * second, &gt;0) or zero to disable CCD (default=0)
-     */
-    public void setCcdMotionThreshold(float speed) {
-        Validate.nonNegative(speed, "speed");
-
-        torsoLink.getRigidBody().setCcdMotionThreshold(speed);
-        for (BoneLink boneLink : boneLinkList) {
-            boneLink.getRigidBody().setCcdMotionThreshold(speed);
-        }
-        for (AttachmentLink link : attachmentLinks.values()) {
-            link.getRigidBody().setCcdMotionThreshold(speed);
-        }
-    }
-
-    /**
-     * Alter the CCD swept-sphere radius of all rigid bodies in the ragdoll.
-     *
-     * @see PhysicsRigidBody#setCcdSweptSphereRadius(float)
-     * @param radius the desired radius of the sphere used for continuous
-     * collision detection (&ge;0)
-     */
-    public void setCcdSweptSphereRadius(float radius) {
-        Validate.nonNegative(radius, "radius");
-
-        torsoLink.getRigidBody().setCcdSweptSphereRadius(radius);
-        for (BoneLink boneLink : boneLinkList) {
-            boneLink.getRigidBody().setCcdSweptSphereRadius(radius);
-        }
-        for (AttachmentLink link : attachmentLinks.values()) {
-            link.getRigidBody().setCcdSweptSphereRadius(radius);
-        }
-    }
-
-    /**
-     * Alter the viscous damping ratio for new rigid bodies.
+     * Alter the viscous damping ratio for all rigid bodies, including new ones.
      *
      * @param dampingRatio the desired damping ratio (0&rarr;no damping,
      * 1&rarr;critically damped, default=0.6)
