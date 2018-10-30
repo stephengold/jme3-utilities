@@ -99,7 +99,7 @@ abstract public class PhysicsLink
      */
     private PhysicsLink parent = null;
     /**
-     * children in the link hierarchy (not null)
+     * immediate children in the link hierarchy (not null)
      */
     private List<PhysicsLink> children = new ArrayList<>(8);
     /**
@@ -151,7 +151,7 @@ abstract public class PhysicsLink
     // new methods exposed
 
     /**
-     * Count this link's children in the link hierarchy.
+     * Count this link's immediate children in the link hierarchy.
      *
      * @return the count (&ge;0)
      */
@@ -241,7 +241,7 @@ abstract public class PhysicsLink
     /**
      * Read the kinematic weight of this link.
      *
-     * @return 0 if entirely dynamic
+     * @return 0 if entirely dynamic, 1 if entirely kinematic
      */
     public float kinematicWeight() {
         assert kinematicWeight >= 0f : kinematicWeight;
@@ -250,7 +250,7 @@ abstract public class PhysicsLink
     }
 
     /**
-     * Enumerate this link's children in the link hierarchy.
+     * Enumerate this link's immediate children in the link hierarchy.
      *
      * @return a new array (not null)
      */
@@ -288,6 +288,10 @@ abstract public class PhysicsLink
         blendInterval = oldLink.blendInterval;
         kinematicWeight = oldLink.kinematicWeight;
         rigidBody.setKinematic(oldLink.rigidBody.isKinematic());
+        if (!isKinematic()) {
+            Vector3f acceleration = oldLink.rigidBody.getGravity(null);
+            setDynamic(acceleration);
+        }
     }
 
     /**
@@ -310,7 +314,7 @@ abstract public class PhysicsLink
      * @param uniformAcceleration the uniform acceleration vector (in
      * physics-space coordinates, not null, unaffected)
      */
-    void setDynamic(Vector3f uniformAcceleration) {
+    public void setDynamic(Vector3f uniformAcceleration) {
         Validate.nonNull(uniformAcceleration, "uniform acceleration");
 
         kinematicWeight = 0f;
