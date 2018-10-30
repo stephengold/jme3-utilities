@@ -554,38 +554,6 @@ public class DynamicAnimControl
     }
 
     /**
-     * Immediately put the specified link into dynamic mode.
-     * <p>
-     * Allowed only when the control IS added to a spatial.
-     *
-     * @param link the link to modify (not null)
-     * @param uniformAcceleration the uniform acceleration vector (in
-     * physics-space coordinates, not null, unaffected)
-     * @param lockX true to lock the joint's X-axis (if not the torso)
-     * @param lockY true to lock the joint's Y-axis (if not the torso)
-     * @param lockZ true to lock the joint's Z-axis (if not the torso)
-     */
-    public void setDynamic(PhysicsLink link, Vector3f uniformAcceleration,
-            boolean lockX, boolean lockY, boolean lockZ) {
-        Validate.nonNull(link, "link");
-        Validate.nonNull(uniformAcceleration, "uniform acceleration");
-        if (getSpatial() == null) {
-            throw new IllegalStateException(
-                    "Cannot change modes unless added to a spatial.");
-        }
-
-        if (link == torsoLink) {
-            torsoLink.setDynamic(uniformAcceleration);
-        } else if (link instanceof BoneLink) {
-            BoneLink boneLink = (BoneLink) link;
-            boneLink.setDynamic(uniformAcceleration, lockX, lockY, lockZ);
-        } else {
-            AttachmentLink attachmentLink = (AttachmentLink) link;
-            attachmentLink.setDynamic(uniformAcceleration);
-        }
-    }
-
-    /**
      * Immediately put the specified link and all its descendants into dynamic
      * mode. Note: recursive!
      * <p>

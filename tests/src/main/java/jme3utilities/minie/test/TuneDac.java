@@ -30,6 +30,7 @@ import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.animation.BoneLink;
 import com.jme3.bullet.animation.DynamicAnimControl;
 import com.jme3.bullet.animation.PhysicsLink;
 import com.jme3.bullet.animation.RangeOfMotion;
@@ -393,17 +394,13 @@ public class TuneDac extends ActionApplication {
             motor = null;
 
             TorsoLink torsoLink = dac.getTorsoLink();
-
             dac.bindSubtree(torsoLink, 0.5f);
             if (wiggleLink == torsoLink) {
                 torsoLink.getRigidBody().setDebugMaterial(magenta);
             } else {
                 torsoLink.getRigidBody().setDebugMaterial(null);
-                dac.setDynamic(link, new Vector3f(0f, 0f, 0f), false, false,
-                        false);
-                SixDofJoint joint = (SixDofJoint) wiggleLink.getJoint();
-                RangeOfMotion newRom = new RangeOfMotion();
-                newRom.setupJoint(joint, false, false, false);
+                BoneLink boneLink = (BoneLink) wiggleLink;
+                boneLink.setDynamic(Vector3f.ZERO, false, false, false);
             }
         }
     }
