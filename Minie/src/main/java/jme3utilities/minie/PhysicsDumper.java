@@ -208,22 +208,30 @@ public class PhysicsDumper extends Dumper {
         }
 
         List<PhysicsJoint> joints = body.getJoints();
+        stream.printf(" joints=%d", joints.size());
         if (!joints.isEmpty()) {
-            stream.print(" joints=(");
-            boolean addSeparators = false;
-            for (PhysicsJoint joint : joints) {
-                if (addSeparators) {
-                    stream.print(",");
-                } else {
-                    addSeparators = true;
-                }
-                long jointId = joint.getObjectId();
-                stream.printf("#%s", Long.toHexString(jointId));
-            }
-            stream.print(")");
+            stream.print(":");
         }
-
         stream.println();
+
+        for (PhysicsJoint joint : joints) {
+            String type = joint.getClass().getSimpleName();
+            if (type.endsWith("Joint")) {
+                type = MyString.removeSuffix(type, "Joint");
+            }
+            stream.printf("    %s #%s ", type, Long.toHexString(objectId));
+            long otherId;
+            Vector3f pivot;
+            if (joint.getBodyA() == body) {
+                otherId = joint.getBodyB().getObjectId();
+                pivot = joint.getPivotA(null);
+            } else {
+                assert joint.getBodyB() == body;
+                otherId = joint.getBodyA().getObjectId();
+                pivot = joint.getPivotB(null);
+            }
+            stream.printf("to=#%s piv=%s%n", Long.toHexString(otherId), pivot);
+        }
     }
 
     /**
