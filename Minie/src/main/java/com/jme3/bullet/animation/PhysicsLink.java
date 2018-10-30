@@ -90,6 +90,10 @@ abstract public class PhysicsLink
      */
     private float kinematicWeight = 1f;
     /**
+     * immediate children in the link hierarchy (not null)
+     */
+    private List<PhysicsLink> children = new ArrayList<>(8);
+    /**
      * joint between the rigid body and the parent's rigid body, or null if not
      * yet created
      */
@@ -98,10 +102,6 @@ abstract public class PhysicsLink
      * parent/manager in the link hierarchy, or null if none
      */
     private PhysicsLink parent = null;
-    /**
-     * immediate children in the link hierarchy (not null)
-     */
-    private List<PhysicsLink> children = new ArrayList<>(8);
     /**
      * linked rigid body in the ragdoll (not null)
      */
