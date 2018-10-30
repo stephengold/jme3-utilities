@@ -277,7 +277,7 @@ public class DynamicAnimControl
 
         List<String> result = new ArrayList<>(8);
         for (String childName : linkedBoneNames()) {
-            Bone bone = getBone(childName);
+            Bone bone = findBone(childName);
             Bone parent = bone.getParent();
             if (parent != null && findManager(parent).equals(linkName)) {
                 result.add(childName);
@@ -335,26 +335,26 @@ public class DynamicAnimControl
     /**
      * Access the AttachmentLink for the named bone. Returns null if the bone is
      * not associated with an attachment, or if the control is not added to a
-     * spatial. TODO rename findAttachmentLink
+     * spatial.
      *
      * @param boneName the name of the bone (not null, not empty)
      * @return the pre-existing link, or null
      */
-    public AttachmentLink getAttachmentLink(String boneName) {
+    public AttachmentLink findAttachmentLink(String boneName) {
         Validate.nonEmpty(boneName, "bone name");
         AttachmentLink link = attachmentLinks.get(boneName);
         return link;
     }
 
     /**
-     * Access the named bone. TODO rename findBone
+     * Access the named bone.
      * <p>
      * Allowed only when the control IS added to a spatial.
      *
      * @param boneName the name of the skeleton bone to access
      * @return the pre-existing instance, or null if not found
      */
-    public Bone getBone(String boneName) {
+    public Bone findBone(String boneName) {
         if (getSpatial() == null) {
             throw new IllegalStateException(
                     "Cannot access bones unless added to a spatial.");
@@ -366,13 +366,12 @@ public class DynamicAnimControl
 
     /**
      * Access the BoneLink for the named bone. Returns null if bone is not
-     * linked, or if the control is not added to a spatial. TODO rename
-     * findBoneLink
+     * linked, or if the control is not added to a spatial.
      *
      * @param boneName the name of the bone (not null, not empty)
      * @return the pre-existing BoneLink, or null
      */
-    public BoneLink getBoneLink(String boneName) {
+    public BoneLink findBoneLink(String boneName) {
         Validate.nonEmpty(boneName, "bone name");
         BoneLink boneLink = boneLinks.get(boneName);
         return boneLink;
@@ -428,7 +427,7 @@ public class DynamicAnimControl
             }
 
         } else {
-            BoneLink manager = getBoneLink(managerName);
+            BoneLink manager = findBoneLink(managerName);
             if (manager == null) {
                 String msg = "No link named " + MyString.quote(managerName);
                 throw new IllegalArgumentException(msg);
@@ -1027,7 +1026,7 @@ public class DynamicAnimControl
         super.setJointLimits(boneName, rom);
 
         if (getSpatial() != null) {
-            BoneLink boneLink = getBoneLink(boneName);
+            BoneLink boneLink = findBoneLink(boneName);
             SixDofJoint joint = (SixDofJoint) boneLink.getJoint();
             rom.setupJoint(joint, false, false, false);
         }
@@ -1050,7 +1049,7 @@ public class DynamicAnimControl
             if (torsoName.equals(linkName)) {
                 link = torsoLink;
             } else {
-                link = getBoneLink(linkName);
+                link = findBoneLink(linkName);
             }
             PhysicsRigidBody rigidBody = link.getRigidBody();
             rigidBody.setMass(mass);
@@ -1240,7 +1239,7 @@ public class DynamicAnimControl
              * Also initialize the BoneLink's parent and its array
              * of managed bones.
              */
-            BoneLink childLink = getBoneLink(childName);
+            BoneLink childLink = findBoneLink(childName);
             childLink.addJoint(parentLink);
             /*
              * Add the BoneLink to the pre-order list.
@@ -1339,7 +1338,7 @@ public class DynamicAnimControl
         /*
          * Create the collision shape.
          */
-        Bone bone = getBone(boneName);
+        Bone bone = findBone(boneName);
         Transform boneToMesh = MySkeleton.copyMeshTransform(bone, null);
         Transform meshToBone = boneToMesh.invert();
         meshToBone.setScale(1f);

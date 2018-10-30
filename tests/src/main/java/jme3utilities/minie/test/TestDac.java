@@ -424,10 +424,10 @@ public class TestDac extends ActionApplication {
         cgModel.addControl(dac);
         dac.setPhysicsSpace(physicsSpace);
 
-        leftClavicle = dac.getBoneLink(leftClavicleName);
-        leftUlna = dac.getBoneLink(leftUlnaName);
-        rightClavicle = dac.getBoneLink(rightClavicleName);
-        upperBody = dac.getBoneLink(upperBodyName);
+        leftClavicle = dac.findBoneLink(leftClavicleName);
+        leftUlna = dac.findBoneLink(leftUlnaName);
+        rightClavicle = dac.findBoneLink(rightClavicleName);
+        upperBody = dac.findBoneLink(upperBodyName);
 
         AnimControl animControl = cgModel.getControl(AnimControl.class);
         animChannel = animControl.createChannel();
