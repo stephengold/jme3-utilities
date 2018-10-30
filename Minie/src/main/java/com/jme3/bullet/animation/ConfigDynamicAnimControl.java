@@ -80,9 +80,9 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     // fields
 
     /**
-     * mass of the torso (default=15) TODO change default to 1
+     * mass of the torso (default=1)
      */
-    private float torsoMass = 15f;
+    private float torsoMass = 1f;
     /**
      * map attachment bone names to masses for createSpatialData()
      */
@@ -548,7 +548,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
             attachMassMap.put(boneName, attachMasses[i]);
         }
 
-        torsoMass = ic.readFloat("rootMass", 15f);
+        torsoMass = ic.readFloat("rootMass", 1f);
         gravityVector = (Vector3f) ic.readSavable("gravity", null);
     }
 
@@ -584,7 +584,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
             linkedBoneNames[i] = entry.getKey();
             roms[i] = jointMap.get(entry.getKey());
             linkedBoneMasses[i] = entry.getValue();
-            i++;
+            ++i;
         }
         oc.write(linkedBoneNames, "linkedBoneNames", null);
         oc.write(roms, "linkedBoneJoints", null);
@@ -599,13 +599,13 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
             attachBoneNames[i] = entry.getKey();
             attachModels[i] = attachModelMap.get(entry.getKey());
             attachMasses[i] = entry.getValue();
-            i++;
+            ++i;
         }
         oc.write(attachBoneNames, "attachBoneNames", null);
         oc.write(attachModels, "attachModels", null);
         oc.write(attachMasses, "attachMasses", null);
 
-        oc.write(torsoMass, "rootMass", 15f);
+        oc.write(torsoMass, "rootMass", 1f);
         oc.write(gravityVector, "gravity", new Vector3f(0f, -9.8f, 0f));
     }
     // *************************************************************************
