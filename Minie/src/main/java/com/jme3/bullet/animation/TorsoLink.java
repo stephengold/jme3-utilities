@@ -143,7 +143,7 @@ public class TorsoLink extends PhysicsLink {
     // new methods exposed
 
     /**
-     * Begin blending this link to a fully kinematic mode. TODO publicize
+     * Begin blending this link to a fully kinematic mode.
      *
      * @param submode enum value (not null)
      * @param blendInterval the duration of the blend interval (in seconds,
@@ -152,10 +152,10 @@ public class TorsoLink extends PhysicsLink {
      * spatial when the blend completes or null for no change to local transform
      * (unaffected)
      */
-    void blendToKinematicMode(KinematicSubmode submode,
+    public void blendToKinematicMode(KinematicSubmode submode,
             float blendInterval, Transform endModelTransform) {
-        assert submode != null;
-        assert blendInterval >= 0f : blendInterval;
+        Validate.nonNull(submode, "submode");
+        Validate.nonNegative(blendInterval, "blend interval");
 
         super.blendToKinematicMode(blendInterval);
 

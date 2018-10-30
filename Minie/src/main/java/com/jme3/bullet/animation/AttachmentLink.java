@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MySkeleton;
+import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
@@ -167,9 +168,9 @@ public class AttachmentLink extends PhysicsLink {
      * model the blend completes or null for no change to local transform
      * (unaffected)
      */
-    void blendToKinematicMode(float blendInterval,
+    public void blendToKinematicMode(float blendInterval,
             Transform endModelTransform) {
-        assert blendInterval >= 0f : blendInterval;
+        Validate.nonNegative(blendInterval, "blend interval");
 
         super.blendToKinematicMode(blendInterval);
         this.endModelTransform = endModelTransform;

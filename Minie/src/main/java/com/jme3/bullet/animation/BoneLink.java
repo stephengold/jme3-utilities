@@ -175,15 +175,16 @@ public class BoneLink extends PhysicsLink {
     }
 
     /**
-     * Begin blending this link to a fully kinematic mode. TODO publicize
+     * Begin blending this link to a fully kinematic mode.
      *
      * @param submode enum value (not null)
      * @param blendInterval the duration of the blend interval (in seconds,
      * &ge;0)
      */
-    void blendToKinematicMode(KinematicSubmode submode, float blendInterval) {
-        assert submode != null;
-        assert blendInterval >= 0f : blendInterval;
+    public void blendToKinematicMode(KinematicSubmode submode,
+            float blendInterval) {
+        Validate.nonNull(submode, "submode");
+        Validate.nonNegative(blendInterval, "blend interval");
 
         super.blendToKinematicMode(blendInterval);
 
