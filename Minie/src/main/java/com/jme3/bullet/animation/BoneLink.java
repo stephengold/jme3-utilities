@@ -218,23 +218,6 @@ public class BoneLink extends PhysicsLink {
     }
 
     /**
-     * Immediately put this link into dynamic mode.
-     *
-     * @param uniformAcceleration the uniform acceleration vector (in
-     * physics-space coordinates, not null, unaffected)
-     */
-    @Override
-    public void setDynamic(Vector3f uniformAcceleration) {
-        Validate.nonNull(uniformAcceleration, "uniform acceleration");
-
-        super.setDynamic(uniformAcceleration);
-
-        for (Bone managedBone : managedBones) {
-            managedBone.setUserControl(true);
-        }
-    }
-
-    /**
      * Immediately put this link into dynamic mode and update its joint.
      *
      * @param uniformAcceleration the uniform acceleration vector (in
@@ -431,6 +414,23 @@ public class BoneLink extends PhysicsLink {
                 "prevBoneTransforms");
         startBoneTransforms = RagUtils.readTransformArray(ic,
                 "startBoneTransforms");
+    }
+
+    /**
+     * Immediately put this link into dynamic mode.
+     *
+     * @param uniformAcceleration the uniform acceleration vector (in
+     * physics-space coordinates, not null, unaffected)
+     */
+    @Override
+    public void setDynamic(Vector3f uniformAcceleration) {
+        Validate.nonNull(uniformAcceleration, "uniform acceleration");
+
+        super.setDynamic(uniformAcceleration);
+
+        for (Bone managedBone : managedBones) {
+            managedBone.setUserControl(true);
+        }
     }
 
     /**
