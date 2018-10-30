@@ -96,7 +96,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * list of joints that connect to this body
      */
-    protected ArrayList<PhysicsJoint> joints = new ArrayList<>(2);
+    protected ArrayList<PhysicsJoint> joints = new ArrayList<>(4);
     // *************************************************************************
     // constructors
 
@@ -138,7 +138,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     // new methods exposed
 
     /**
-     * Reactivates this body if it has been deactivated due to lack of motion.
+     * Reactivate this body if it has been deactivated due to lack of motion.
      */
     public void activate() {
         activate(true);
@@ -903,12 +903,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * For use by subclasses.
      */
-    protected void preRebuild() {
-    }
-
-    /**
-     * For use by subclasses.
-     */
     protected void postRebuild() {
         if (mass == massForStatic) {
             setStatic(objectId, true);
@@ -916,6 +910,12 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
             setStatic(objectId, false);
         }
         initUserPointer();
+    }
+
+    /**
+     * For use by subclasses.
+     */
+    protected void preRebuild() {
     }
 
     /**
