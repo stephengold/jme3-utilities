@@ -163,7 +163,7 @@ abstract public class PhysicsLink
     /**
      * Immediately freeze this link.
      */
-    abstract void freeze();
+    public abstract void freeze();
 
     /**
      * Access the corresponding bone.

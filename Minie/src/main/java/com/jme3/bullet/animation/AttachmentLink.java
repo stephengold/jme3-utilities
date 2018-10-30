@@ -229,7 +229,7 @@ public class AttachmentLink extends PhysicsLink {
      * Immediately freeze this link.
      */
     @Override
-    void freeze() {
+    public void freeze() {
         if (isKinematic()) {
             blendToKinematicMode(0f, null);
         } else {
