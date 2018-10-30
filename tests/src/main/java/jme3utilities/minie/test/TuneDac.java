@@ -30,9 +30,10 @@ import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.animation.BoneLink;
 import com.jme3.bullet.animation.DynamicAnimControl;
+import com.jme3.bullet.animation.PhysicsLink;
 import com.jme3.bullet.animation.RangeOfMotion;
+import com.jme3.bullet.animation.TorsoLink;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.joints.motors.RotationalLimitMotor;
@@ -45,6 +46,7 @@ import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -85,9 +87,9 @@ public class TuneDac extends ActionApplication {
     private int wiggleAxis = -1;
     private Material magenta;
     private Node model;
+    private PhysicsLink wiggleLink;
     private RotationalLimitMotor motor = null;
     private SkeletonVisualizer sv;
-    private String wiggleBoneName = DynamicAnimControl.torsoName;
     private Transform resetTransform;
     // *************************************************************************
     // new methods exposed
@@ -129,8 +131,9 @@ public class TuneDac extends ActionApplication {
         rootNode.addControl(sv);
 
         dac.setPhysicsSpace(ps);
-        dac.bindHierarchy(DynamicAnimControl.torsoName, 0f);
-        dac.getTorsoLink().getRigidBody().setDebugMaterial(magenta);
+        TorsoLink torsoLink = dac.getTorsoLink();
+        dac.bindHierarchy(torsoLink, 0f);
+        setWiggleLink(torsoLink);
     }
 
     /**
@@ -176,51 +179,52 @@ public class TuneDac extends ActionApplication {
                 case "toggle physics debug":
                     togglePhysicsDebug();
                     return;
+
                 case "wiggle bone first child":
-                    List<String> children = dac.childNames(wiggleBoneName);
-                    if (!children.isEmpty()) {
-                        String fc = children.get(0);
-                        setWiggleBoneName(fc);
+                    PhysicsLink[] children = wiggleLink.listChildren();
+                    if (children.length > 0) {
+                        PhysicsLink firstChild = children[0];
+                        setWiggleLink(firstChild);
                     }
                     return;
 
                 case "wiggle bone next sibling":
-                    if (!wiggleBoneName.isEmpty()) {
-                        String p = dac.parentName(wiggleBoneName);
-                        List<String> siblings = dac.childNames(p);
-                        int i = siblings.indexOf(wiggleBoneName);
-                        i = MyMath.modulo(i + 1, siblings.size());
-                        String nc = siblings.get(i);
-                        setWiggleBoneName(nc);
+                    PhysicsLink parent = wiggleLink.getParent();
+                    if (parent != null) {
+                        PhysicsLink[] siblings = parent.listChildren();
+                        int i = Arrays.asList(siblings).indexOf(wiggleLink);
+                        i = MyMath.modulo(i + 1, siblings.length);
+                        PhysicsLink nc = siblings[i];
+                        setWiggleLink(nc);
                     }
                     return;
 
                 case "wiggle bone parent":
-                    if (!wiggleBoneName.isEmpty()) {
-                        String p = dac.parentName(wiggleBoneName);
-                        setWiggleBoneName(p);
+                    parent = wiggleLink.getParent();
+                    if (parent != null) {
+                        setWiggleLink(parent);
                     }
                     return;
 
                 case "wiggle bone prev sibling":
-                    if (!wiggleBoneName.isEmpty()) {
-                        String p = dac.parentName(wiggleBoneName);
-                        List<String> siblings = dac.childNames(p);
-                        int i = siblings.indexOf(wiggleBoneName);
-                        i = MyMath.modulo(i - 1, siblings.size());
-                        String pc = siblings.get(i);
-                        setWiggleBoneName(pc);
+                    parent = wiggleLink.getParent();
+                    if (parent != null) {
+                        PhysicsLink[] siblings = parent.listChildren();
+                        int i = Arrays.asList(siblings).indexOf(wiggleLink);
+                        i = MyMath.modulo(i - 1, siblings.length);
+                        PhysicsLink nc = siblings[i];
+                        setWiggleLink(nc);
                     }
                     return;
 
                 case "wiggle bone x":
-                    setWiggleBoneAxis(PhysicsSpace.AXIS_X);
+                    setWiggleAxis(PhysicsSpace.AXIS_X);
                     return;
                 case "wiggle bone y":
-                    setWiggleBoneAxis(PhysicsSpace.AXIS_Y);
+                    setWiggleAxis(PhysicsSpace.AXIS_Y);
                     return;
                 case "wiggle bone z":
-                    setWiggleBoneAxis(PhysicsSpace.AXIS_Z);
+                    setWiggleAxis(PhysicsSpace.AXIS_Z);
                     return;
             }
         }
@@ -244,8 +248,8 @@ public class TuneDac extends ActionApplication {
             model.rotate(0f, -tpf, 0f);
         }
 
-        String text = wiggleBoneName;
-        if (wiggleBoneName.isEmpty()) {
+        String text = wiggleLink.getBoneName();
+        if (wiggleLink.getParent() == null) {
             text = "TORSO";
         }
         if (motor != null) {
@@ -281,9 +285,9 @@ public class TuneDac extends ActionApplication {
      * Add an animated model to the scene.
      */
     private void addModel() {
-        //loadElephant();
+        loadElephant();
         //loadJaime();
-        loadSinbad();
+        //loadSinbad();
 
         rootNode.attachChild(model);
         setHeight(model, 2f);
@@ -348,15 +352,16 @@ public class TuneDac extends ActionApplication {
     }
 
     /**
-     * Start wiggling the indexed rotational axis of the current bone.
+     * Start wiggling the indexed rotational axis of the current joint.
      *
      * @param axisIndex the axis index: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
-    private void setWiggleBoneAxis(int axisIndex) {
+    private void setWiggleAxis(int axisIndex) {
         assert axisIndex >= 0 : axisIndex;
         assert axisIndex < 3 : axisIndex;
 
-        if (wiggleBoneName.isEmpty()) {
+        SixDofJoint joint = (SixDofJoint) wiggleLink.getJoint();
+        if (joint == null) {
             return;
         }
         if (wiggleAxis != axisIndex) {
@@ -366,9 +371,6 @@ public class TuneDac extends ActionApplication {
             logger.log(Level.SEVERE, "change rotation axis");
             wiggleAxis = axisIndex;
             motorVelocitySign = 1;
-
-            BoneLink link = dac.getBoneLink(wiggleBoneName);
-            SixDofJoint joint = (SixDofJoint) link.getJoint();
             RangeOfMotion newRom = new RangeOfMotion(axisIndex);
             newRom.setupJoint(joint, false, false, false);
             motor = joint.getRotationalLimitMotor(axisIndex);
@@ -381,23 +383,25 @@ public class TuneDac extends ActionApplication {
         }
     }
 
-    private void setWiggleBoneName(String name) {
-        if (!wiggleBoneName.equals(name)) {
-            logger.log(Level.SEVERE, "change bone to {0}",
+    private void setWiggleLink(PhysicsLink link) {
+        if (wiggleLink != link) {
+            String name = link.getBoneName();
+            logger.log(Level.SEVERE, "change link to {0}",
                     MyString.quote(name));
-            wiggleBoneName = name;
+            wiggleLink = link;
             wiggleAxis = -1;
             motor = null;
 
-            dac.bindHierarchy(DynamicAnimControl.torsoName, 0.5f);
-            if (wiggleBoneName.isEmpty()) {
-                dac.getTorsoLink().getRigidBody().setDebugMaterial(magenta);
+            TorsoLink torsoLink = dac.getTorsoLink();
+
+            dac.bindHierarchy(torsoLink, 0.5f);
+            if (wiggleLink == torsoLink) {
+                torsoLink.getRigidBody().setDebugMaterial(magenta);
             } else {
-                dac.getTorsoLink().getRigidBody().setDebugMaterial(null);
-                dac.setDynamic(name, new Vector3f(0f, 0f, 0f), false, false,
+                torsoLink.getRigidBody().setDebugMaterial(null);
+                dac.setDynamic(link, new Vector3f(0f, 0f, 0f), false, false,
                         false);
-                BoneLink link = dac.getBoneLink(wiggleBoneName);
-                SixDofJoint joint = (SixDofJoint) link.getJoint();
+                SixDofJoint joint = (SixDofJoint) wiggleLink.getJoint();
                 RangeOfMotion newRom = new RangeOfMotion();
                 newRom.setupJoint(joint, false, false, false);
             }

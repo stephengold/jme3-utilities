@@ -33,6 +33,7 @@ import com.jme3.asset.AssetNotFoundException;
 import com.jme3.asset.ModelKey;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.animation.BoneLink;
 import com.jme3.bullet.animation.DynamicAnimControl;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
@@ -93,6 +94,10 @@ public class TestDac extends ActionApplication {
     // fields
 
     private AnimChannel animChannel = null;
+    private BoneLink leftClavicle;
+    private BoneLink leftUlna;
+    private BoneLink rightClavicle;
+    private BoneLink upperBody;
     private BulletAppState bulletAppState;
     private CollisionShape ballShape;
     private DynamicAnimControl dac;
@@ -109,7 +114,7 @@ public class TestDac extends ActionApplication {
     private String leftClavicleName;
     private String leftUlnaName;
     private String rightClavicleName;
-    private String upperBodyLinkName;
+    private String upperBodyName;
     private Transform resetTransform;
     // *************************************************************************
     // new methods exposed
@@ -193,7 +198,7 @@ public class TestDac extends ActionApplication {
         if (ongoing) {
             switch (actionString) {
                 case "amputate left elbow":
-                    dac.amputateHierarchy(leftUlnaName, 2f);
+                    dac.amputateHierarchy(leftUlna, 2f);
                     return;
                 case "blend all to kinematic":
                     dac.blendToKinematicMode(2f, null);
@@ -205,27 +210,27 @@ public class TestDac extends ActionApplication {
                     dumpScene();
                     return;
                 case "freeze all":
-                    dac.freezeHierarchy(DynamicAnimControl.torsoName);
+                    dac.freezeHierarchy(dac.getTorsoLink());
                     return;
                 case "freeze upper body":
-                    dac.freezeHierarchy(upperBodyLinkName);
+                    dac.freezeHierarchy(upperBody);
                     return;
                 case "go bind pose":
-                    dac.bindHierarchy(DynamicAnimControl.torsoName, 2f);
+                    dac.bindHierarchy(dac.getTorsoLink(), 2f);
                     return;
                 case "go floating":
-                    dac.setDynamicHierarchy(DynamicAnimControl.torsoName,
-                            Vector3f.ZERO, false);
+                    dac.setDynamicHierarchy(dac.getTorsoLink(), Vector3f.ZERO,
+                            false);
                     return;
                 case "go limp":
                     dac.setRagdollMode();
                     return;
                 case "limp left arm":
-                    dac.setDynamicHierarchy(leftClavicleName,
+                    dac.setDynamicHierarchy(leftClavicle,
                             new Vector3f(0f, -30f, 0f), false);
                     return;
                 case "limp right arm":
-                    dac.setDynamicHierarchy(rightClavicleName,
+                    dac.setDynamicHierarchy(rightClavicle,
                             new Vector3f(0f, -30f, 0f), false);
                     return;
                 case "load":
@@ -244,11 +249,11 @@ public class TestDac extends ActionApplication {
                     addModel("SinbadWithSwords");
                     return;
                 case "raise leftHand":
-                    dac.setDynamicHierarchy(leftClavicleName,
+                    dac.setDynamicHierarchy(leftClavicle,
                             new Vector3f(0f, 30f, 0f), false);
                     return;
                 case "raise rightHand":
-                    dac.setDynamicHierarchy(rightClavicleName,
+                    dac.setDynamicHierarchy(rightClavicle,
                             new Vector3f(0f, 30f, 0f), false);
                     return;
                 case "reset model transform":
@@ -388,7 +393,6 @@ public class TestDac extends ActionApplication {
             rootNode.detachChild(cgModel);
             rootNode.removeControl(sv);
             removeAllBalls();
-            // TODO remove attachment physics objects?
         }
 
         switch (modelName) {
@@ -406,7 +410,8 @@ public class TestDac extends ActionApplication {
                 break;
         }
 
-        List<Spatial> list = MySpatial.listSpatials(cgModel, Spatial.class, null);
+        List<Spatial> list
+                = MySpatial.listSpatials(cgModel, Spatial.class, null);
         for (Spatial spatial : list) {
             spatial.setShadowMode(RenderQueue.ShadowMode.Cast);
         }
@@ -418,6 +423,11 @@ public class TestDac extends ActionApplication {
 
         cgModel.addControl(dac);
         dac.setPhysicsSpace(physicsSpace);
+
+        leftClavicle = dac.getBoneLink(leftClavicleName);
+        leftUlna = dac.getBoneLink(leftUlnaName);
+        rightClavicle = dac.getBoneLink(rightClavicleName);
+        upperBody = dac.getBoneLink(upperBodyName);
 
         AnimControl animControl = cgModel.getControl(AnimControl.class);
         animChannel = animControl.createChannel();
@@ -505,7 +515,7 @@ public class TestDac extends ActionApplication {
         leftClavicleName = "Oberschenkel_F_L";
         leftUlnaName = "Knee_F_L";
         rightClavicleName = "Oberschenkel_F_R";
-        upperBodyLinkName = "joint5";
+        upperBodyName = "joint5";
     }
 
     /**
@@ -521,7 +531,7 @@ public class TestDac extends ActionApplication {
         leftClavicleName = "shoulder.L";
         leftUlnaName = "forearm.L";
         rightClavicleName = "shoulder.R";
-        upperBodyLinkName = "ribs";
+        upperBodyName = "ribs";
     }
 
     /**
@@ -535,7 +545,7 @@ public class TestDac extends ActionApplication {
         leftClavicleName = "Clavicle.L";
         leftUlnaName = "Ulna.L";
         rightClavicleName = "Clavicle.R";
-        upperBodyLinkName = "Chest";
+        upperBodyName = "Chest";
     }
 
     /**
@@ -555,7 +565,7 @@ public class TestDac extends ActionApplication {
         leftClavicleName = "Clavicle.L";
         leftUlnaName = "Ulna.L";
         rightClavicleName = "Clavicle.R";
-        upperBodyLinkName = "Chest";
+        upperBodyName = "Chest";
     }
 
     /**

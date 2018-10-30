@@ -78,10 +78,10 @@ import jme3utilities.Validate;
  * near the root of the skeleton to form the torso of the ragdoll.
  * <p>
  * When you add the control to a spatial, it generates a rigid body with a hull
- * collision shape for the torso and for each linked bone. It also creates a
- * SixDofJoint connecting each linked bone to its parent in the link hierarchy.
- * The mass of each rigid body and the range-of-motion of each joint can be
- * reconfigured on the fly.
+ * collision shape for the torso and another for each linked bone. It also
+ * creates a SixDofJoint connecting each rigid body to its parent in the link
+ * hierarchy. The mass of each rigid body and the range-of-motion of each joint
+ * can be reconfigured on the fly.
  * <p>
  * Each link is either dynamic (driven by forces and collisions) or kinematic
  * (unaffected by forces and collisions). Transitions from dynamic to kinematic
@@ -177,59 +177,53 @@ public class DynamicAnimControl
     }
 
     /**
-     * Begin blending the named linked bone and all its descendants into an
-     * amputated state. This has the effect of hiding the descendants.
+     * Begin blending the specified BoneLink and all its descendants into an
+     * amputated state. This has the effect of hiding those links.
      *
-     * @param boneName the name of the linked bone to amputate (not null, not
-     * empty)
+     * @param rootLink the root of the subtree to amputate (not null)
      * @param blendInterval the duration of the blend interval (in seconds,
      * &ge;0)
      */
-    public void amputateHierarchy(String boneName, float blendInterval) {
-        if (!isBoneLinkName(boneName)) {
-            String msg = "No linked bone named " + MyString.quote(boneName);
-            throw new IllegalArgumentException(msg);
-        }
+    public void amputateHierarchy(BoneLink rootLink, float blendInterval) {
+        Validate.nonNull(rootLink, "root link");
         Validate.nonNegative(blendInterval, "blend interval");
         if (getSpatial() == null) {
             throw new IllegalStateException(
                     "Cannot change modes unless added to a spatial.");
         }
 
-        blendDescendants(boneName, KinematicSubmode.Amputated, blendInterval);
-
-        BoneLink boneLink = getBoneLink(boneName);
-        boneLink.blendToKinematicMode(KinematicSubmode.Amputated,
+        blendDescendants(rootLink, KinematicSubmode.Amputated, blendInterval);
+        rootLink.blendToKinematicMode(KinematicSubmode.Amputated,
                 blendInterval);
     }
 
     /**
-     * Begin blending the named link and all its descendants into bind pose.
+     * Begin blending the specified link and all its descendants into bind pose.
      *
-     * @param linkName the name of the link (not null)
+     * @param rootLink the root of the subtree to bind (not null)
      * @param blendInterval the duration of the blend interval (in seconds,
      * &ge;0)
      */
-    public void bindHierarchy(String linkName, float blendInterval) {
-        if (!isLinkName(linkName)) {
-            String msg = "No link named " + MyString.quote(linkName);
-            throw new IllegalArgumentException(msg);
-        }
+    public void bindHierarchy(PhysicsLink rootLink, float blendInterval) {
+        Validate.nonNull(rootLink, "root link");
         Validate.nonNegative(blendInterval, "blend interval");
         if (getSpatial() == null) {
             throw new IllegalStateException(
                     "Cannot change modes unless added to a spatial.");
         }
 
-        blendDescendants(linkName, KinematicSubmode.Bound, blendInterval);
+        blendDescendants(rootLink, KinematicSubmode.Bound, blendInterval);
 
-        if (linkName.equals(torsoName)) {
+        if (rootLink == torsoLink) {
             torsoLink.blendToKinematicMode(KinematicSubmode.Bound,
                     blendInterval, null);
-        } else {
-            BoneLink boneLink = getBoneLink(linkName);
+        } else if (rootLink instanceof BoneLink) {
+            BoneLink boneLink = (BoneLink) rootLink;
             boneLink.blendToKinematicMode(KinematicSubmode.Bound,
                     blendInterval);
+        } else {
+            AttachmentLink attachmentLink = (AttachmentLink) rootLink;
+            attachmentLink.blendToKinematicMode(blendInterval, null);
         }
     }
 
@@ -265,16 +259,20 @@ public class DynamicAnimControl
     }
 
     /**
-     * Enumerate all immediate children (in the link hierarchy) of the named
-     * bone/torso link, not including attachment links. TODO avoid this
+     * Enumerate all immediate child BoneLinks of the named bone/torso link.
+     * TODO privatize this
      *
-     * @param linkName the name of the link (not null)
+     * @param link the bone/torso link (not null)
      * @return a new list of bone names
      */
-    public List<String> childNames(String linkName) {
-        if (!isLinkName(linkName)) {
-            String msg = "No link named " + MyString.quote(linkName);
-            throw new IllegalArgumentException(msg);
+    List<String> childNames(PhysicsLink link) {
+        assert link != null;
+
+        String linkName;
+        if (link == torsoLink) {
+            linkName = torsoName;
+        } else {
+            linkName = link.getBoneName();
         }
 
         List<String> result = new ArrayList<>(8);
@@ -283,36 +281,6 @@ public class DynamicAnimControl
             Bone parent = bone.getParent();
             if (parent != null && findManager(parent).equals(linkName)) {
                 result.add(childName);
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * Count the immediate children (in the link hierarchy) of the named link.
-     *
-     * @param linkName the name of the parent link (not null)
-     * @return count (&ge;0)
-     */
-    public int countChildren(String linkName) {
-        if (!isLinkName(linkName)) {
-            String msg = "No link named " + MyString.quote(linkName);
-            throw new IllegalArgumentException(msg);
-        }
-
-        PhysicsLink manager;
-        if (linkName.equals(torsoName)) {
-            manager = torsoLink;
-        } else {
-            manager = getBoneLink(linkName);
-        }
-
-        int result = 0;
-        for (String childName : linkedBoneNames()) {
-            BoneLink boneLink = getBoneLink(childName);
-            if (boneLink.getParent() == manager) {
-                ++result;
             }
         }
 
@@ -331,47 +299,32 @@ public class DynamicAnimControl
     }
 
     /**
-     * Immediately freeze the named link and all its descendants. Note:
+     * Immediately freeze the specified link and all its descendants. Note:
      * recursive!
      * <p>
      * Allowed only when the control IS added to a spatial.
      *
-     * @param linkName the name of the link (not null)
+     * @param rootLink the root of the subtree to amputate (not null)
      */
-    public void freezeHierarchy(String linkName) {
-        if (!isLinkName(linkName)) {
-            String msg = "No link named " + MyString.quote(linkName);
-            throw new IllegalArgumentException(msg);
-        }
+    public void freezeHierarchy(PhysicsLink rootLink) {
+        Validate.nonNull(rootLink, "root link");
         if (getSpatial() == null) {
             throw new IllegalStateException(
                     "Cannot change modes unless added to a spatial.");
         }
 
-        PhysicsLink manager;
-        if (linkName.equals(torsoName)) {
-            manager = torsoLink;
-        } else {
-            manager = getBoneLink(linkName);
-        }
-        manager.freeze();
+        rootLink.freeze();
 
-        List<String> children = childNames(linkName);
-        for (String childName : children) {
-            freezeHierarchy(childName);
-        }
-
-        for (AttachmentLink link : attachmentLinks.values()) {
-            if (link.getParent() == manager) {
-                link.freeze();
-            }
+        PhysicsLink[] children = rootLink.listChildren();
+        for (PhysicsLink child : children) {
+            freezeHierarchy(child);
         }
     }
 
     /**
      * Access the AttachmentLink for the named bone. Returns null if the bone is
      * not associated with an attachment, or if the control is not added to a
-     * spatial.
+     * spatial. TODO rename findAttachmentLink
      *
      * @param boneName the name of the bone (not null, not empty)
      * @return the pre-existing link, or null
@@ -383,7 +336,7 @@ public class DynamicAnimControl
     }
 
     /**
-     * Access the named bone.
+     * Access the named bone. TODO rename findBone
      * <p>
      * Allowed only when the control IS added to a spatial.
      *
@@ -402,7 +355,8 @@ public class DynamicAnimControl
 
     /**
      * Access the BoneLink for the named bone. Returns null if bone is not
-     * linked, or if the control is not added to a spatial.
+     * linked, or if the control is not added to a spatial. TODO rename
+     * findBoneLink
      *
      * @param boneName the name of the bone (not null, not empty)
      * @return the pre-existing BoneLink, or null
@@ -414,41 +368,14 @@ public class DynamicAnimControl
     }
 
     /**
-     * Read the event-dispatch impulse threshold of this control.
+     * Read the event-dispatch impulse threshold of this control. TODO rename
+     * dispatchThreshold
      *
      * @return the threshold value (&ge;0)
      */
     public float getEventDispatchImpulseThreshold() {
         assert eventDispatchImpulseThreshold >= 0f;
         return eventDispatchImpulseThreshold;
-    }
-
-    /**
-     * Access the rigid body of the named bone/torso link. Returns null if the
-     * control is not added to a spatial.
-     *
-     * @param linkName the name of the link (not null)
-     * @return the pre-existing instance, or null
-     */
-    public PhysicsRigidBody getRigidBody(String linkName) {
-        PhysicsRigidBody result;
-
-        if (getSpatial() == null) {
-            result = null;
-
-        } else if (torsoName.equals(linkName)) {
-            result = torsoLink.getRigidBody();
-
-        } else if (isBoneLinkName(linkName)) {
-            BoneLink boneLink = boneLinks.get(linkName);
-            result = boneLink.getRigidBody();
-
-        } else {
-            String msg = "No link named " + MyString.quote(linkName);
-            throw new IllegalArgumentException(msg);
-        }
-
-        return result;
     }
 
     /**
@@ -671,79 +598,70 @@ public class DynamicAnimControl
     }
 
     /**
-     * Immediately put the named link into dynamic mode.
+     * Immediately put the specified link into dynamic mode.
      * <p>
      * Allowed only when the control IS added to a spatial.
      *
-     * @param linkName the name of the link (not null, not empty)
+     * @param link the link to modify (not null)
      * @param uniformAcceleration the uniform acceleration vector (in
      * physics-space coordinates, not null, unaffected)
      * @param lockX true to lock the joint's X-axis (if not the torso)
      * @param lockY true to lock the joint's Y-axis (if not the torso)
      * @param lockZ true to lock the joint's Z-axis (if not the torso)
      */
-    public void setDynamic(String linkName, Vector3f uniformAcceleration,
+    public void setDynamic(PhysicsLink link, Vector3f uniformAcceleration,
             boolean lockX, boolean lockY, boolean lockZ) {
-        if (!isLinkName(linkName)) {
-            String msg = "No link named " + MyString.quote(linkName);
-            throw new IllegalArgumentException(msg);
-        }
+        Validate.nonNull(link, "link");
         Validate.nonNull(uniformAcceleration, "uniform acceleration");
         if (getSpatial() == null) {
             throw new IllegalStateException(
                     "Cannot change modes unless added to a spatial.");
         }
 
-        if (linkName.equals(torsoName)) {
+        if (link == torsoLink) {
             torsoLink.setDynamic(uniformAcceleration);
-        } else {
-            BoneLink boneLink = getBoneLink(linkName);
+        } else if (link instanceof BoneLink) {
+            BoneLink boneLink = (BoneLink) link;
             boneLink.setDynamic(uniformAcceleration, lockX, lockY, lockZ);
+        } else {
+            AttachmentLink attachmentLink = (AttachmentLink) link;
+            attachmentLink.setDynamic(uniformAcceleration);
         }
     }
 
     /**
-     * Immediately put the named link and all its descendants into dynamic mode.
-     * Note: recursive!
+     * Immediately put the specified link and all its descendants into dynamic
+     * mode. Note: recursive!
      * <p>
      * Allowed only when the control IS added to a spatial.
      *
-     * @param linkName the name of the link at the root of the subtree (not
-     * null)
+     * @param rootLink the root of the subtree to modify (not null)
      * @param uniformAcceleration the uniform acceleration vector (in
      * physics-space coordinates, not null, unaffected)
-     * @param lockAll true to lock all axes of all links (except the torso)
+     * @param lockAll true to lock all axes of links (except the torso)
      */
-    public void setDynamicHierarchy(String linkName,
+    public void setDynamicHierarchy(PhysicsLink rootLink,
             Vector3f uniformAcceleration, boolean lockAll) {
-        if (!isLinkName(linkName)) {
-            String msg = "No link named " + MyString.quote(linkName);
-            throw new IllegalArgumentException(msg);
-        }
+        Validate.nonNull(rootLink, "root link");
         Validate.nonNull(uniformAcceleration, "uniform acceleration");
         if (getSpatial() == null) {
             throw new IllegalStateException(
                     "Cannot change modes unless added to a spatial.");
         }
 
-        PhysicsLink manager;
-        if (linkName.equals(torsoName)) {
+        if (rootLink == torsoLink) {
             torsoLink.setDynamic(uniformAcceleration);
-            manager = torsoLink;
-        } else {
-            BoneLink boneLink = getBoneLink(linkName);
+        } else if (rootLink instanceof BoneLink) {
+            BoneLink boneLink = (BoneLink) rootLink;
             boneLink.setDynamic(uniformAcceleration, lockAll, lockAll, lockAll);
-            manager = boneLink;
+        } else {
+            AttachmentLink attachmentLink = (AttachmentLink) rootLink;
+            attachmentLink.setDynamic(uniformAcceleration);
         }
 
-        List<String> childNames = childNames(linkName);
-        for (String childName : childNames) {
-            setDynamicHierarchy(childName, uniformAcceleration, lockAll);
-        }
-        for (AttachmentLink link : attachmentLinks.values()) {
-            if (link.getParent() == manager) {
-                link.setDynamic(uniformAcceleration);
-            }
+        PhysicsLink[] children = rootLink.listChildren();
+        for (PhysicsLink child : children) {
+            setDynamicHierarchy(child, uniformAcceleration, lockAll);
         }
     }
 
@@ -942,11 +860,11 @@ public class DynamicAnimControl
         }
         assert boneLinks.size() == numLinkedBones;
         /*
-         * Add joints to connect each BoneLink with its parent in the hierarchy.
-         * Also initialize the boneLinkList.
+         * Add joints to connect each BoneLink rigid body with its parent in the
+         * hierarchy.  Also initialize the boneLinkList.
          */
         boneLinkList = new ArrayList<>(numLinkedBones);
-        addJoints(torsoName);
+        addJoints(torsoLink);
         assert boneLinkList.size() == numLinkedBones : boneLinkList.size();
         /*
          * Create attachment links with joints.
@@ -1132,7 +1050,7 @@ public class DynamicAnimControl
     /**
      * Alter the mass of the named bone/torso link.
      *
-     * @param linkName the name of the link (not null)
+     * @param linkName the name of the bone/torso link (not null)
      * @param mass the desired mass (&gt;0)
      */
     @Override
@@ -1141,8 +1059,14 @@ public class DynamicAnimControl
 
         super.setMass(linkName, mass);
 
-        PhysicsRigidBody rigidBody = getRigidBody(linkName);
-        if (rigidBody != null) {
+        if (getSpatial() != null) {
+            PhysicsLink link;
+            if (torsoName.equals(linkName)) {
+                link = torsoLink;
+            } else {
+                link = getBoneLink(linkName);
+            }
+            PhysicsRigidBody rigidBody = link.getRigidBody();
             rigidBody.setMass(mass);
         }
     }
@@ -1320,18 +1244,16 @@ public class DynamicAnimControl
      * Add joints to connect the named bone/torso link with each of its
      * children. Also fill in the boneLinkList. Note: recursive!
      *
-     * @param parentName the name of the parent link (not null)
+     * @param parentName the parent bone/torso link (not null)
      */
-    private void addJoints(String parentName) {
-        PhysicsLink parentLink;
-        if (torsoName.equals(parentName)) {
-            parentLink = torsoLink;
-        } else {
-            parentLink = getBoneLink(parentName);
-        }
-
-        List<String> childNames = childNames(parentName);
+    private void addJoints(PhysicsLink parentLink) {
+        List<String> childNames = childNames(parentLink);
         for (String childName : childNames) {
+            /*
+             * Add the joint and configure its range of motion.
+             * Also initialize the BoneLink's parent and its array
+             * of managed bones.
+             */
             BoneLink childLink = getBoneLink(childName);
             childLink.addJoint(parentLink);
             /*
@@ -1339,42 +1261,35 @@ public class DynamicAnimControl
              */
             boneLinkList.add(childLink);
 
-            addJoints(childName);
+            addJoints(childLink);
         }
     }
 
     /**
-     * Begin blending all descendants of the named link to the specified
+     * Begin blending the descendents of the specified BoneLink to the specified
      * kinematic submode. Note: recursive!
      *
-     * @param linkName the name of the link (not null)
-     * @param submode enum value (not null)
+     * @param rootLink the root of the subtree to amputate (not null)
+     * @param submode an enum value (not null)
      * @param blendInterval the duration of the blend interval (in seconds,
      * &ge;0)
      */
-    private void blendDescendants(String linkName, KinematicSubmode submode,
-            float blendInterval) {
-        assert linkName != null;
+    private void blendDescendants(PhysicsLink rootLink,
+            KinematicSubmode submode, float blendInterval) {
+        assert rootLink != null;
         assert submode != null;
         assert blendInterval >= 0f : blendInterval;
 
-        PhysicsLink manager;
-        if (linkName.equals(torsoName)) {
-            manager = torsoLink;
-        } else {
-            manager = getBoneLink(linkName);
-        }
-
-        List<String> childNames = childNames(linkName);
-        for (String childName : childNames) {
-            BoneLink boneLink = getBoneLink(childName);
-            boneLink.blendToKinematicMode(submode, blendInterval);
-            blendDescendants(childName, submode, blendInterval);
-        }
-        for (AttachmentLink link : attachmentLinks.values()) {
-            if (link.getParent() == manager) {
-                link.blendToKinematicMode(blendInterval, null);
+        PhysicsLink[] children = rootLink.listChildren();
+        for (PhysicsLink child : children) {
+            if (child instanceof BoneLink) {
+                BoneLink boneLink = (BoneLink) child;
+                boneLink.blendToKinematicMode(submode, blendInterval);
+            } else {
+                AttachmentLink attachmentLink = (AttachmentLink) child;
+                attachmentLink.blendToKinematicMode(blendInterval, null);
             }
+            blendDescendants(child, submode, blendInterval);
         }
     }
 
