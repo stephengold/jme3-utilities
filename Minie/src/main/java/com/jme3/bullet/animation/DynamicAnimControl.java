@@ -557,12 +557,9 @@ public class DynamicAnimControl
         damping = dampingRatio;
 
         if (getSpatial() != null) {
-            torsoLink.getRigidBody().setDamping(damping, damping);
-            for (BoneLink boneLink : boneLinkList) {
-                boneLink.getRigidBody().setDamping(damping, damping);
-            }
-            for (AttachmentLink link : attachmentLinks.values()) {
-                link.getRigidBody().setDamping(damping, damping);
+            PhysicsRigidBody[] bodies = listRigidBodies();
+            for (PhysicsRigidBody rigidBody : bodies) {
+                rigidBody.setDamping(damping, damping);
             }
         }
     }
@@ -951,12 +948,9 @@ public class DynamicAnimControl
         super.setGravity(gravity);
 
         if (getSpatial() != null) { // TODO make sure it's in ragdoll mode
-            torsoLink.getRigidBody().setGravity(gravity);
-            for (BoneLink boneLink : boneLinkList) {
-                boneLink.getRigidBody().setGravity(gravity);
-            }
-            for (AttachmentLink link : attachmentLinks.values()) {
-                link.getRigidBody().setGravity(gravity);
+            PhysicsRigidBody[] bodies = listRigidBodies();
+            for (PhysicsRigidBody rigidBody : bodies) {
+                rigidBody.setGravity(gravity);
             }
         }
     }
