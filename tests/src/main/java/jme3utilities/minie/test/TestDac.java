@@ -187,8 +187,8 @@ public class TestDac extends ActionApplication {
         dim.bind("signal rotateLeft", KeyInput.KEY_LEFT);
         dim.bind("signal rotateRight", KeyInput.KEY_RIGHT);
         dim.bind("signal shower", KeyInput.KEY_INSERT);
-        dim.bind("toggle animation", KeyInput.KEY_PERIOD);
         dim.bind("toggle meshes", KeyInput.KEY_M);
+        dim.bind("toggle pause", KeyInput.KEY_PERIOD);
         dim.bind("toggle physics debug", KeyInput.KEY_SLASH);
         dim.bind("toggle skeleton", KeyInput.KEY_V);
     }
@@ -271,17 +271,17 @@ public class TestDac extends ActionApplication {
                 case "set height 3":
                     setHeight(3f);
                     return;
-                case "toggle animation":
-                    toggleAnimation();
-                    return;
                 case "toggle meshes":
                     toggleMeshes();
                     return;
-                case "toggle skeleton":
-                    toggleSkeleton();
+                case "toggle pause":
+                    togglePause();
                     return;
                 case "toggle physics debug":
                     togglePhysicsDebug();
+                    return;
+                case "toggle skeleton":
+                    toggleSkeleton();
                     return;
             }
         }
@@ -635,16 +635,6 @@ public class TestDac extends ActionApplication {
     }
 
     /**
-     * Toggle the animation: paused/running.
-     */
-    private void toggleAnimation() {
-        if (animChannel != null) {
-            float rate = animChannel.getSpeed();
-            animChannel.setSpeed(1f - rate);
-        }
-    }
-
-    /**
      * Toggle mesh rendering on/off.
      */
     private void toggleMeshes() {
@@ -656,6 +646,16 @@ public class TestDac extends ActionApplication {
             hint = Spatial.CullHint.Never;
         }
         cgModel.setCullHint(hint);
+    }
+
+    /**
+     * Toggle the animation and physics simulation: paused/running.
+     */
+    private void togglePause() {
+        float oldSpeed = animChannel.getSpeed();
+        float newSpeed = (oldSpeed > 0f) ? 0f : 1f;
+        animChannel.setSpeed(newSpeed);
+        bulletAppState.setSpeed(newSpeed);
     }
 
     /**
