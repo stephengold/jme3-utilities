@@ -87,7 +87,7 @@ import jme3utilities.Validate;
  * (unaffected by forces and collisions). Transitions from dynamic to kinematic
  * can be immediate or gradual.
  *
- * TODO handle applyLocal, catch ignoreTransforms, ghost mode
+ * TODO catch ignoreTransforms, ghost mode
  *
  * @author Stephen Gold sgold@sonic.net
  *
@@ -270,8 +270,7 @@ public class DynamicAnimControl
     }
 
     /**
-     * Read the event-dispatch impulse threshold of this control. TODO rename
-     * dispatchThreshold
+     * Read the event-dispatch impulse threshold of this control.
      *
      * @return the threshold value (&ge;0)
      */
@@ -529,6 +528,21 @@ public class DynamicAnimControl
      */
     public void removeIKTarget(Bone bone) {
         // TODO
+    }
+
+    /**
+     * Alter whether physics-space coordinates should match the spatial's local
+     * coordinates.
+     *
+     * @param applyPhysicsLocal true&rarr;match local coordinates,
+     * false&rarr;match world coordinates (default=false)
+     */
+    @Override
+    public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
+        if (applyPhysicsLocal) {
+            throw new UnsupportedOperationException(
+                    "DynamicAnimControl does not support local physics.");
+        }
     }
 
     /**
@@ -1052,7 +1066,7 @@ public class DynamicAnimControl
         oc.write(damping, "limbDampening", 0.6f);
         oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
                 0f);
-        // TODO boneLinkList, listeners
+        // TODO attachmentLinks, boneLinkList, listeners
         oc.write(boneLinks.values().toArray(new BoneLink[boneLinks.size()]),
                 "boneLinks", new BoneLink[0]);
         oc.write(skeleton, "skeleton", null);
@@ -1138,6 +1152,7 @@ public class DynamicAnimControl
             prb = boneLink.getRigidBody();
             prb.activate();
         }
+
         for (AttachmentLink attachmentLink : attachmentLinks.values()) {
             prb = attachmentLink.getRigidBody();
             prb.activate();
