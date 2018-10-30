@@ -285,7 +285,7 @@ public class DynamicAnimControl
      * <p>
      * Allowed only when the control IS added to a spatial.
      *
-     * @param rootLink the root of the subtree to amputate (not null)
+     * @param rootLink the root of the subtree to freeze (not null)
      */
     public void freezeSubtree(PhysicsLink rootLink) {
         Validate.nonNull(rootLink, "root link");
@@ -1202,7 +1202,7 @@ public class DynamicAnimControl
      * Begin blending the descendents of the specified BoneLink to the specified
      * kinematic submode. Note: recursive!
      *
-     * @param rootLink the root of the subtree to amputate (not null)
+     * @param rootLink the root of the subtree to blend (not null)
      * @param submode an enum value (not null)
      * @param blendInterval the duration of the blend interval (in seconds,
      * &ge;0)

@@ -47,7 +47,7 @@ import jme3utilities.math.MyQuaternion;
 
 /**
  * Generate compact textual descriptions of jME3 objects. TODO add describe
- * method for Bone, BulletAppState, Skeleton
+ * method for BulletAppState
  *
  * @author Stephen Gold sgold@sonic.net
  */

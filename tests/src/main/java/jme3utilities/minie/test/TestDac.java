@@ -299,10 +299,10 @@ public class TestDac extends ActionApplication {
 
         Signals signals = getSignals();
         if (signals.test("rotateRight")) {
-            cgModel.rotate(0f, tpf, 0f);
+            cgModel.rotate(0f, tpf, 0f); // TODO rotate around world +Y axis
         }
         if (signals.test("rotateLeft")) {
-            cgModel.rotate(0f, -tpf, 0f);
+            cgModel.rotate(0f, -tpf, 0f); // TODO rotate around world +Y axis
         }
         if (signals.test("shower")) {
             addBall();

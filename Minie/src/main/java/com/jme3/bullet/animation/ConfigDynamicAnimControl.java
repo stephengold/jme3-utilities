@@ -324,7 +324,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
      * @param mass the desired mass of the bone (&gt;0)
      * @param rom the desired range of motion (not null)
      * @see #setJointLimits(java.lang.String,
-     * com.jme3.bullet.animation.JointPreset)
+     * com.jme3.bullet.animation.RangeOfMotion)
      */
     public void link(String boneName, float mass, RangeOfMotion rom) {
         Validate.nonEmpty(boneName, "bone name");
