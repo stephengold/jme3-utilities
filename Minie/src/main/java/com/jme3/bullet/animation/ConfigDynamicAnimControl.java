@@ -196,6 +196,16 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
+     * Count the links.
+     *
+     * @return count (&ge;0)
+     */
+    public int countLinks() {
+        int result = countLinkedBones() + countAttachments() + 1;
+        return result;
+    }
+
+    /**
      * Cancel the attachment associated with the named bone.
      * <p>
      * Allowed only when the control is NOT added to a spatial.
