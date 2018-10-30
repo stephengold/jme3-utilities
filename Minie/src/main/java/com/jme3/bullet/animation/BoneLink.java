@@ -221,6 +221,23 @@ public class BoneLink extends PhysicsLink {
      *
      * @param uniformAcceleration the uniform acceleration vector (in
      * physics-space coordinates, not null, unaffected)
+     */
+    @Override
+    public void setDynamic(Vector3f uniformAcceleration) {
+        Validate.nonNull(uniformAcceleration, "uniform acceleration");
+
+        super.setDynamic(uniformAcceleration);
+
+        for (Bone managedBone : managedBones) {
+            managedBone.setUserControl(true);
+        }
+    }
+
+    /**
+     * Immediately put this link into dynamic mode and update its joint.
+     *
+     * @param uniformAcceleration the uniform acceleration vector (in
+     * physics-space coordinates, not null, unaffected)
      * @param lockX true to lock the joint's X-axis
      * @param lockY true to lock the joint's Y-axis
      * @param lockZ true to lock the joint's Z-axis
