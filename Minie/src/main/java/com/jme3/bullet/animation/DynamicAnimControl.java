@@ -299,6 +299,17 @@ public class DynamicAnimControl
     }
 
     /**
+     * Read the event-dispatch impulse threshold of this control. TODO rename
+     * dispatchThreshold
+     *
+     * @return the threshold value (&ge;0)
+     */
+    public float eventDispatchImpulseThreshold() {
+        assert eventDispatchImpulseThreshold >= 0f;
+        return eventDispatchImpulseThreshold;
+    }
+
+    /**
      * Immediately freeze the specified link and all its descendants. Note:
      * recursive!
      * <p>
@@ -365,17 +376,6 @@ public class DynamicAnimControl
         Validate.nonEmpty(boneName, "bone name");
         BoneLink boneLink = boneLinks.get(boneName);
         return boneLink;
-    }
-
-    /**
-     * Read the event-dispatch impulse threshold of this control. TODO rename
-     * dispatchThreshold
-     *
-     * @return the threshold value (&ge;0)
-     */
-    public float getEventDispatchImpulseThreshold() {
-        assert eventDispatchImpulseThreshold >= 0f;
-        return eventDispatchImpulseThreshold;
     }
 
     /**
