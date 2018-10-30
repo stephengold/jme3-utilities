@@ -184,7 +184,7 @@ public class DynamicAnimControl
      * @param blendInterval the duration of the blend interval (in seconds,
      * &ge;0)
      */
-    public void amputateHierarchy(BoneLink rootLink, float blendInterval) {
+    public void amputateSubtree(BoneLink rootLink, float blendInterval) {
         Validate.nonNull(rootLink, "root link");
         Validate.nonNegative(blendInterval, "blend interval");
         if (getSpatial() == null) {
@@ -204,7 +204,7 @@ public class DynamicAnimControl
      * @param blendInterval the duration of the blend interval (in seconds,
      * &ge;0)
      */
-    public void bindHierarchy(PhysicsLink rootLink, float blendInterval) {
+    public void bindSubtree(PhysicsLink rootLink, float blendInterval) {
         Validate.nonNull(rootLink, "root link");
         Validate.nonNegative(blendInterval, "blend interval");
         if (getSpatial() == null) {
@@ -306,7 +306,7 @@ public class DynamicAnimControl
      *
      * @param rootLink the root of the subtree to amputate (not null)
      */
-    public void freezeHierarchy(PhysicsLink rootLink) {
+    public void freezeSubtree(PhysicsLink rootLink) {
         Validate.nonNull(rootLink, "root link");
         if (getSpatial() == null) {
             throw new IllegalStateException(
@@ -317,7 +317,7 @@ public class DynamicAnimControl
 
         PhysicsLink[] children = rootLink.listChildren();
         for (PhysicsLink child : children) {
-            freezeHierarchy(child);
+            freezeSubtree(child);
         }
     }
 
@@ -640,7 +640,7 @@ public class DynamicAnimControl
      * physics-space coordinates, not null, unaffected)
      * @param lockAll true to lock all axes of links (except the torso)
      */
-    public void setDynamicHierarchy(PhysicsLink rootLink,
+    public void setDynamicSubtree(PhysicsLink rootLink,
             Vector3f uniformAcceleration, boolean lockAll) {
         Validate.nonNull(rootLink, "root link");
         Validate.nonNull(uniformAcceleration, "uniform acceleration");
@@ -661,7 +661,7 @@ public class DynamicAnimControl
 
         PhysicsLink[] children = rootLink.listChildren();
         for (PhysicsLink child : children) {
-            setDynamicHierarchy(child, uniformAcceleration, lockAll);
+            setDynamicSubtree(child, uniformAcceleration, lockAll);
         }
     }
 
@@ -861,7 +861,7 @@ public class DynamicAnimControl
         assert boneLinks.size() == numLinkedBones;
         /*
          * Add joints to connect each BoneLink rigid body with its parent in the
-         * hierarchy.  Also initialize the boneLinkList.
+         * link hierarchy.  Also initialize the boneLinkList.
          */
         boneLinkList = new ArrayList<>(numLinkedBones);
         addJoints(torsoLink);

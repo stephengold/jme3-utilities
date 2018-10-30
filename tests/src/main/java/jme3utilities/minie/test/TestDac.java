@@ -198,7 +198,7 @@ public class TestDac extends ActionApplication {
         if (ongoing) {
             switch (actionString) {
                 case "amputate left elbow":
-                    dac.amputateHierarchy(leftUlna, 2f);
+                    dac.amputateSubtree(leftUlna, 2f);
                     return;
                 case "blend all to kinematic":
                     dac.blendToKinematicMode(2f, null);
@@ -210,27 +210,27 @@ public class TestDac extends ActionApplication {
                     dumpScene();
                     return;
                 case "freeze all":
-                    dac.freezeHierarchy(dac.getTorsoLink());
+                    dac.freezeSubtree(dac.getTorsoLink());
                     return;
                 case "freeze upper body":
-                    dac.freezeHierarchy(upperBody);
+                    dac.freezeSubtree(upperBody);
                     return;
                 case "go bind pose":
-                    dac.bindHierarchy(dac.getTorsoLink(), 2f);
+                    dac.bindSubtree(dac.getTorsoLink(), 2f);
                     return;
                 case "go floating":
-                    dac.setDynamicHierarchy(dac.getTorsoLink(), Vector3f.ZERO,
+                    dac.setDynamicSubtree(dac.getTorsoLink(), Vector3f.ZERO,
                             false);
                     return;
                 case "go limp":
                     dac.setRagdollMode();
                     return;
                 case "limp left arm":
-                    dac.setDynamicHierarchy(leftClavicle,
+                    dac.setDynamicSubtree(leftClavicle,
                             new Vector3f(0f, -30f, 0f), false);
                     return;
                 case "limp right arm":
-                    dac.setDynamicHierarchy(rightClavicle,
+                    dac.setDynamicSubtree(rightClavicle,
                             new Vector3f(0f, -30f, 0f), false);
                     return;
                 case "load":
@@ -249,11 +249,11 @@ public class TestDac extends ActionApplication {
                     addModel("SinbadWithSwords");
                     return;
                 case "raise leftHand":
-                    dac.setDynamicHierarchy(leftClavicle,
+                    dac.setDynamicSubtree(leftClavicle,
                             new Vector3f(0f, 30f, 0f), false);
                     return;
                 case "raise rightHand":
-                    dac.setDynamicHierarchy(rightClavicle,
+                    dac.setDynamicSubtree(rightClavicle,
                             new Vector3f(0f, 30f, 0f), false);
                     return;
                 case "reset model transform":

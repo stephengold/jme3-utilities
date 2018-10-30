@@ -132,7 +132,7 @@ public class TuneDac extends ActionApplication {
 
         dac.setPhysicsSpace(ps);
         TorsoLink torsoLink = dac.getTorsoLink();
-        dac.bindHierarchy(torsoLink, 0f);
+        dac.bindSubtree(torsoLink, 0f);
         setWiggleLink(torsoLink);
     }
 
@@ -394,7 +394,7 @@ public class TuneDac extends ActionApplication {
 
             TorsoLink torsoLink = dac.getTorsoLink();
 
-            dac.bindHierarchy(torsoLink, 0.5f);
+            dac.bindSubtree(torsoLink, 0.5f);
             if (wiggleLink == torsoLink) {
                 torsoLink.getRigidBody().setDebugMaterial(magenta);
             } else {
