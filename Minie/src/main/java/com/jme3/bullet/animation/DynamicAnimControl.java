@@ -259,35 +259,6 @@ public class DynamicAnimControl
     }
 
     /**
-     * Enumerate all immediate child BoneLinks of the named bone/torso link.
-     * TODO privatize this
-     *
-     * @param link the bone/torso link (not null)
-     * @return a new list of bone names
-     */
-    List<String> childNames(PhysicsLink link) {
-        assert link != null;
-
-        String linkName;
-        if (link == torsoLink) {
-            linkName = torsoName;
-        } else {
-            linkName = link.getBoneName();
-        }
-
-        List<String> result = new ArrayList<>(8);
-        for (String childName : linkedBoneNames()) {
-            Bone bone = findBone(childName);
-            Bone parent = bone.getParent();
-            if (parent != null && findManager(parent).equals(linkName)) {
-                result.add(childName);
-            }
-        }
-
-        return result;
-    }
-
-    /**
      * Read the damping ratio for new rigid bodies.
      *
      * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
@@ -1276,6 +1247,34 @@ public class DynamicAnimControl
             }
             blendDescendants(child, submode, blendInterval);
         }
+    }
+
+    /**
+     * Enumerate all immediate child BoneLinks of the specified bone/torso link.
+     *
+     * @param link the bone/torso link (not null)
+     * @return a new list of bone names
+     */
+    private List<String> childNames(PhysicsLink link) {
+        assert link != null;
+
+        String linkName;
+        if (link == torsoLink) {
+            linkName = torsoName;
+        } else {
+            linkName = link.getBoneName();
+        }
+
+        List<String> result = new ArrayList<>(8);
+        for (String childName : linkedBoneNames()) {
+            Bone bone = findBone(childName);
+            Bone parent = bone.getParent();
+            if (parent != null && findManager(parent).equals(linkName)) {
+                result.add(childName);
+            }
+        }
+
+        return result;
     }
 
     /**
