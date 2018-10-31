@@ -521,17 +521,10 @@ public class BoneLink extends PhysicsLink {
         result.combineWithParent(worldToMesh);
         /*
          * Convert to the bone's local coordinate system by factoring out the
-         * parent bone's transform. TODO utility
+         * parent bone's transform.
          */
         Bone parentBone = getBone().getParent();
-        Vector3f pmTranslate = parentBone.getModelSpacePosition();
-        Quaternion pmRotInv = parentBone.getModelSpaceRotation().inverse();
-        Vector3f pmScale = parentBone.getModelSpaceScale();
-        location.subtractLocal(pmTranslate);
-        location.divideLocal(pmScale);
-        pmRotInv.mult(location, location);
-        scale.divideLocal(pmScale);
-        pmRotInv.mult(orientation, orientation);
+        RagUtils.meshToLocal(parentBone, result);
         /*
          * Subtract the body's local offset, rotated and scaled.
          */

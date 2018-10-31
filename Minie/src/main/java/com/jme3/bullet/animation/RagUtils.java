@@ -38,6 +38,7 @@ import com.jme3.bullet.collision.shapes.HullCollisionShape;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.Savable;
 import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
@@ -267,6 +268,29 @@ public class RagUtils {
         }
 
         return result;
+    }
+
+    /**
+     * Convert a transform from the mesh coordinate system to the local
+     * coordinate system of the specified bone.
+     *
+     * @param parentBone (not null)
+     * @param transform the transform to convert (not null, modified)
+     */
+    public static void meshToLocal(Bone parentBone, Transform transform) {
+        Vector3f location = transform.getTranslation();
+        Quaternion orientation = transform.getRotation();
+        Vector3f scale = transform.getScale();
+
+        Vector3f pmTranslate = parentBone.getModelSpacePosition();
+        Quaternion pmRotInv = parentBone.getModelSpaceRotation().inverse();
+        Vector3f pmScale = parentBone.getModelSpaceScale();
+
+        location.subtractLocal(pmTranslate);
+        location.divideLocal(pmScale);
+        pmRotInv.mult(location, location);
+        scale.divideLocal(pmScale);
+        pmRotInv.mult(orientation, orientation);
     }
 
     /**
