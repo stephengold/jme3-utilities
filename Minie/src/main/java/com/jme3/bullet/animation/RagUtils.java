@@ -272,6 +272,39 @@ public class RagUtils {
     }
 
     /**
+     * Find the main root bone of a skeleton, based on its total bone weight.
+     *
+     * @param skeleton the skeleton (not null, unaffected)
+     * @param targetMeshes an array of animated meshes to provide bone weights
+     * (not null)
+     * @return a root bone, or null if none found
+     */
+    public static Bone findMainBone(Skeleton skeleton, Mesh[] targetMeshes) {
+        Validate.nonNull(targetMeshes, "target meshes");
+
+        Bone[] rootBones = skeleton.getRoots();
+
+        Bone result;
+        if (rootBones.length == 1) {
+            result = rootBones[0];
+        } else {
+            result = null;
+            float[] totalWeights = totalWeights(targetMeshes, skeleton);
+            float greatestTotalWeight = Float.NEGATIVE_INFINITY;
+            for (Bone rootBone : rootBones) {
+                int boneIndex = skeleton.getBoneIndex(rootBone);
+                float weight = totalWeights[boneIndex];
+                if (weight > greatestTotalWeight) {
+                    result = rootBone;
+                    greatestTotalWeight = weight;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Convert a transform from the mesh coordinate system to the local
      * coordinate system of the specified bone.
      *

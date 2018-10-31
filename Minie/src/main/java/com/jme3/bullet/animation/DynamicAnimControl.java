@@ -1394,7 +1394,7 @@ public class DynamicAnimControl
         /*
          * Create the collision shape.
          */
-        Bone bone = findTorsoMainBone(meshes);
+        Bone bone = RagUtils.findMainBone(skeleton, meshes);
         assert bone.getParent() == null;
         Transform boneToMesh = MySkeleton.copyMeshTransform(bone, null);
         Transform meshToBone = boneToMesh.invert();
@@ -1415,38 +1415,6 @@ public class DynamicAnimControl
         Transform meshToModel = modelToMesh.invert();
 
         torsoLink = new TorsoLink(this, bone, rigidBody, meshToModel, offset);
-    }
-
-    /**
-     * Find the torso's main root bone.
-     *
-     * @param targets an array of animated meshes to provide bone weights (not
-     * null)
-     * @return a root bone, or null if none found
-     */
-    private Bone findTorsoMainBone(Mesh[] targets) {
-        assert targets != null;
-
-        Bone[] rootBones = skeleton.getRoots();
-
-        Bone result;
-        if (rootBones.length == 1) {
-            result = rootBones[0];
-        } else {
-            result = null;
-            float[] totalWeights = RagUtils.totalWeights(targets, skeleton);
-            float greatestTotalWeight = Float.NEGATIVE_INFINITY;
-            for (Bone rootBone : rootBones) {
-                int boneIndex = skeleton.getBoneIndex(rootBone);
-                float weight = totalWeights[boneIndex];
-                if (weight > greatestTotalWeight) {
-                    result = rootBone;
-                    greatestTotalWeight = weight;
-                }
-            }
-        }
-
-        return result;
     }
 
     /**
