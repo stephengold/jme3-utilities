@@ -92,47 +92,6 @@ public class RagUtils {
     // new methods exposed
 
     /**
-     * Add the vertex weights of each bone in the specified mesh to an array of
-     * total weights. TODO privatize
-     *
-     * @param mesh animated mesh to analyze (not null, unaffected)
-     * @param totalWeights (not null, modified)
-     */
-    static void addWeights(Mesh mesh, float[] totalWeights) {
-        assert totalWeights != null;
-
-        int maxWeightsPerVert = mesh.getMaxNumWeights();
-        if (maxWeightsPerVert <= 0) {
-            maxWeightsPerVert = 1;
-        }
-        assert maxWeightsPerVert > 0 : maxWeightsPerVert;
-        assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
-
-        VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
-        Buffer boneIndexBuffer = biBuf.getDataReadOnly();
-        boneIndexBuffer.rewind();
-        int numBoneIndices = boneIndexBuffer.remaining();
-        assert numBoneIndices % 4 == 0 : numBoneIndices;
-        int numVertices = boneIndexBuffer.remaining() / 4;
-
-        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
-        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
-        weightBuffer.rewind();
-        int numWeights = weightBuffer.remaining();
-        assert numWeights == numVertices * 4 : numWeights;
-
-        for (int vIndex = 0; vIndex < numVertices; vIndex++) {
-            for (int wIndex = 0; wIndex < 4; wIndex++) {
-                float weight = weightBuffer.get();
-                int boneIndex = MyMesh.readIndex(boneIndexBuffer);
-                if (wIndex < maxWeightsPerVert) {
-                    totalWeights[boneIndex] += FastMath.abs(weight);
-                }
-            }
-        }
-    }
-
-    /**
      * Estimate the center of a convex hull.
      *
      * @param locations the vertex locations that define the hull (not null, not
@@ -385,37 +344,6 @@ public class RagUtils {
     }
 
     /**
-     * Calculate the total bone weight animated by each bone in the specified
-     * meshes.
-     *
-     * @param meshes the animated meshes to analyze (not null, unaffected)
-     * @param skeleton (not null, unaffected)
-     * @return a map from bone indices to total bone weight
-     */
-    public static float[] totalWeights(Mesh[] meshes, Skeleton skeleton) {
-        Validate.nonNull(meshes, "meshes");
-
-        int numBones = skeleton.getBoneCount();
-        float[] result = new float[numBones];
-        for (Mesh mesh : meshes) {
-            RagUtils.addWeights(mesh, result);
-        }
-
-        List<Bone> bones = MySkeleton.preOrderBones(skeleton);
-        Collections.reverse(bones);
-        for (Bone childBone : bones) {
-            int childIndex = skeleton.getBoneIndex(childBone);
-            Bone parent = childBone.getParent();
-            if (parent != null) {
-                int parentIndex = skeleton.getBoneIndex(parent);
-                result[parentIndex] += result[childIndex];
-            }
-        }
-
-        return result;
-    }
-
-    /**
      * Validate a skeleton for use in a DynamicAnimControl.
      *
      * @param skeleton the skeleton to validate (not null, unaffected)
@@ -489,9 +417,84 @@ public class RagUtils {
 
         return result;
     }
+    // *************************************************************************
+    // private methods
 
     /**
-     * Tabulate the total bone weight associated with each link in a ragdoll.
+     * Add the vertex weights of each bone in the specified mesh to an array of
+     * total weights.
+     *
+     * @param mesh animated mesh to analyze (not null, unaffected)
+     * @param totalWeights (not null, modified)
+     */
+    private static void addWeights(Mesh mesh, float[] totalWeights) {
+        assert totalWeights != null;
+
+        int maxWeightsPerVert = mesh.getMaxNumWeights();
+        if (maxWeightsPerVert <= 0) {
+            maxWeightsPerVert = 1;
+        }
+        assert maxWeightsPerVert > 0 : maxWeightsPerVert;
+        assert maxWeightsPerVert <= 4 : maxWeightsPerVert;
+
+        VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
+        Buffer boneIndexBuffer = biBuf.getDataReadOnly();
+        boneIndexBuffer.rewind();
+        int numBoneIndices = boneIndexBuffer.remaining();
+        assert numBoneIndices % 4 == 0 : numBoneIndices;
+        int numVertices = boneIndexBuffer.remaining() / 4;
+
+        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
+        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
+        weightBuffer.rewind();
+        int numWeights = weightBuffer.remaining();
+        assert numWeights == numVertices * 4 : numWeights;
+
+        for (int vIndex = 0; vIndex < numVertices; vIndex++) {
+            for (int wIndex = 0; wIndex < 4; wIndex++) {
+                float weight = weightBuffer.get();
+                int boneIndex = MyMesh.readIndex(boneIndexBuffer);
+                if (wIndex < maxWeightsPerVert) {
+                    totalWeights[boneIndex] += FastMath.abs(weight);
+                }
+            }
+        }
+    }
+
+    /**
+     * Calculate the total bone weight animated by each bone in the specified
+     * meshes.
+     *
+     * @param meshes the animated meshes to analyze (not null, unaffected)
+     * @param skeleton (not null, unaffected)
+     * @return a map from bone indices to total bone weight
+     */
+    private static float[] totalWeights(Mesh[] meshes, Skeleton skeleton) {
+        Validate.nonNull(meshes, "meshes");
+
+        int numBones = skeleton.getBoneCount();
+        float[] result = new float[numBones];
+        for (Mesh mesh : meshes) {
+            RagUtils.addWeights(mesh, result);
+        }
+
+        List<Bone> bones = MySkeleton.preOrderBones(skeleton);
+        Collections.reverse(bones);
+        for (Bone childBone : bones) {
+            int childIndex = skeleton.getBoneIndex(childBone);
+            Bone parent = childBone.getParent();
+            if (parent != null) {
+                int parentIndex = skeleton.getBoneIndex(parent);
+                result[parentIndex] += result[childIndex];
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Tabulate the total bone weight associated with each bone/torso link in a
+     * ragdoll.
      *
      * @param biArray the array of bone indices (not null, unaffected)
      * @param bwArray the array of bone weights (not null, unaffected)
@@ -499,7 +502,7 @@ public class RagUtils {
      * null, unaffected)
      * @return a new map from link names to total weight
      */
-    public static Map<String, Float> weightMap(int[] biArray,
+    private static Map<String, Float> weightMap(int[] biArray,
             float[] bwArray, String[] managerMap) {
         assert biArray.length == 4;
         assert bwArray.length == 4;
