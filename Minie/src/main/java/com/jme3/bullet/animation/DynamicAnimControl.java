@@ -47,6 +47,7 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
@@ -858,6 +859,7 @@ public class DynamicAnimControl
      * @throws IOException from importer
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule ic = im.getCapsule(this);
@@ -866,11 +868,20 @@ public class DynamicAnimControl
         eventDispatchImpulseThreshold
                 = ic.readFloat("eventDispatchImpulseThreshold", 0f);
 
-        // TODO attachmentLinks, boneLinkList, listeners
-        BoneLink[] loadedBoneLinks
-                = (BoneLink[]) ic.readSavableArray("boneList", new BoneLink[0]);
-        for (BoneLink physicsBoneLink : loadedBoneLinks) {
-            boneLinks.put(physicsBoneLink.getBoneName(), physicsBoneLink);
+        boneLinkList
+                = ic.readSavableArrayList("boneLinkList", new ArrayList<>());
+        for (BoneLink link : boneLinkList) {
+            String name = link.getBoneName();
+            boneLinks.put(name, link);
+        }
+
+        // listeners not saved
+        Savable[] savableArray
+                = ic.readSavableArray("attachmentLinks", new AttachmentLink[0]);
+        for (Savable savable : savableArray) {
+            AttachmentLink link = (AttachmentLink) savable;
+            String name = link.getBoneName();
+            attachmentLinks.put(name, link);
         }
 
         skeleton = (Skeleton) ic.readSavable("skeleton", null);
@@ -1069,12 +1080,21 @@ public class DynamicAnimControl
         super.write(ex);
         OutputCapsule oc = ex.getCapsule(this);
 
-        oc.write(damping, "limbDampening", 0.6f);
+        oc.write(damping, "damping", 0.6f);
         oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
                 0f);
-        // TODO attachmentLinks, boneLinkList, listeners
-        oc.write(boneLinks.values().toArray(new BoneLink[boneLinks.size()]),
-                "boneLinks", new BoneLink[0]);
+
+        int count = countLinkedBones();
+        Savable[] savableArray = new Savable[count];
+        boneLinkList.toArray(savableArray);
+        oc.write(savableArray, "boneLinkList", new Savable[0]);
+
+        // listeners not saved
+        count = countAttachments();
+        AttachmentLink[] links = new AttachmentLink[count];
+        attachmentLinks.values().toArray(links);
+        oc.write(links, "attachmentLinks", new AttachmentLink[0]);
+
         oc.write(skeleton, "skeleton", null);
         oc.write(transformer, "transformer", null);
         oc.write(torsoLink, "torsoLink", null);
