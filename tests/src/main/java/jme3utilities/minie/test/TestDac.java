@@ -210,10 +210,10 @@ public class TestDac extends ActionApplication {
                     dumpScene();
                     return;
                 case "freeze all":
-                    dac.freezeSubtree(dac.getTorsoLink());
+                    dac.freezeSubtree(dac.getTorsoLink(), false);
                     return;
                 case "freeze upper body":
-                    dac.freezeSubtree(upperBody);
+                    dac.freezeSubtree(upperBody, false);
                     return;
                 case "go bind pose":
                     dac.bindSubtree(dac.getTorsoLink(), 2f);

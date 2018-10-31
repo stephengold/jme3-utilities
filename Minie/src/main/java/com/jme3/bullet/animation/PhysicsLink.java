@@ -162,8 +162,11 @@ abstract public class PhysicsLink
 
     /**
      * Immediately freeze this link.
+     *
+     * @param forceKinematic true&rarr;force to kinematic mode,
+     * false&rarr;preserve mode
      */
-    public abstract void freeze();
+    abstract public void freeze(boolean forceKinematic);
 
     /**
      * Access the corresponding bone.

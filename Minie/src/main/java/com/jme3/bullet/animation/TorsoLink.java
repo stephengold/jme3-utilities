@@ -253,9 +253,11 @@ public class TorsoLink extends PhysicsLink {
 
     /**
      * Immediately freeze this link.
+     *
+     * @param forceKinematic ignored
      */
     @Override
-    public void freeze() {
+    public void freeze(boolean forceKinematic) {
         blendToKinematicMode(KinematicSubmode.Frozen, 0f, null);
     }
 

@@ -227,10 +227,13 @@ public class AttachmentLink extends PhysicsLink {
 
     /**
      * Immediately freeze this link.
+     *
+     * @param forceKinematic true&rarr;force to kinematic mode,
+     * false&rarr;preserve mode
      */
     @Override
-    public void freeze() {
-        if (isKinematic()) {
+    public void freeze(boolean forceKinematic) {
+        if (forceKinematic || isKinematic()) {
             blendToKinematicMode(0f, null);
         } else {
             setDynamic(new Vector3f(0f, 0f, 0f));

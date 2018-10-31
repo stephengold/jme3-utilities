@@ -286,19 +286,21 @@ public class DynamicAnimControl
      * Allowed only when the control IS added to a spatial.
      *
      * @param rootLink the root of the subtree to freeze (not null)
+     * @param forceKinematic true&rarr;force link to kinematic mode,
+     * false&rarr;preserve link modes
      */
-    public void freezeSubtree(PhysicsLink rootLink) {
+    public void freezeSubtree(PhysicsLink rootLink, boolean forceKinematic) {
         Validate.nonNull(rootLink, "root link");
         if (getSpatial() == null) {
             throw new IllegalStateException(
                     "Cannot change modes unless added to a spatial.");
         }
 
-        rootLink.freeze();
+        rootLink.freeze(forceKinematic);
 
         PhysicsLink[] children = rootLink.listChildren();
         for (PhysicsLink child : children) {
-            freezeSubtree(child);
+            freezeSubtree(child, forceKinematic);
         }
     }
 
