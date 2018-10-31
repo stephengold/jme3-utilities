@@ -1116,7 +1116,7 @@ public class DynamicAnimControl
          * Determine which bone was involved (if any) and also the
          * other collision object involved.
          */
-        boolean thisControlInvolved = false;
+        boolean isThisControlInvolved = false;
         PhysicsLink physicsLink = null;
         PhysicsCollisionObject otherPco = null;
         PhysicsCollisionObject pcoA = event.getObjectA();
@@ -1126,12 +1126,25 @@ public class DynamicAnimControl
         Object userB = pcoB.getUserObject();
         if (userA instanceof PhysicsLink) {
             physicsLink = (PhysicsLink) userA;
-            thisControlInvolved = true;
+            DynamicAnimControl control = physicsLink.getControl();
+            if (control == this) {
+                isThisControlInvolved = true;
+            }
             otherPco = pcoB;
-        } else if (userB instanceof PhysicsLink) {
+        }
+        if (userB instanceof PhysicsLink) {
             physicsLink = (PhysicsLink) userB;
-            thisControlInvolved = true;
+            DynamicAnimControl control = physicsLink.getControl();
+            if (control == this) {
+                isThisControlInvolved = true;
+            }
             otherPco = pcoA;
+        }
+        /*
+         * Discard collisions that don't involve this control.
+         */
+        if (!isThisControlInvolved) {
+            return;
         }
         /*
          * Discard low-impulse collisions.
@@ -1140,13 +1153,10 @@ public class DynamicAnimControl
             return;
         }
         /*
-         * Dispatch an event if this control was involved in the collision.
-         * TODO flag self collisions
+         * Dispatch an event.
          */
-        if (thisControlInvolved) {
-            for (RagdollCollisionListener listener : listeners) {
-                listener.collide(physicsLink, otherPco, event);
-            }
+        for (RagdollCollisionListener listener : listeners) {
+            listener.collide(physicsLink, otherPco, event);
         }
     }
     // *************************************************************************
